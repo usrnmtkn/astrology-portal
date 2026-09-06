@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "saturn",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "An old responsibility may return because it was never fully released.",
+      "body": "An old responsibility may return because it was never fully released. Saturn conjunct the South Node can bring a former obligation, authority structure, debt of time, or role you have carried for years back into focus. You may be the obvious person to handle it because you already know the system and everyone trusts you to be responsible. That history matters, but it does not create an endless contract. Finish what is actually yours, renegotiate what has changed, and stop treating familiarity as proof that the burden still belongs to you.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.saturn.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "A structure that worked before can support you again if you use it on purpose.",
+      "body": "A structure that worked before can support you again if you use it on purpose. Saturn sextile the South Node can make an old schedule, professional skill, boundary, mentor, or practical system useful again. You may not need a new method for every problem. Reusing something proven can save time and reduce unnecessary strain. The distinction is simple: a structure is useful when it supports the life you have now, not when you keep maintaining it because you once worked hard to build it.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "The old obligation may have become a rule nobody has reconsidered.",
+      "body": "The old obligation may have become a rule nobody has reconsidered. Saturn square the South Node can expose a responsibility, hierarchy, deadline, or standard that keeps repeating because everyone assumes you will continue to carry it. You may feel guilty changing the arrangement because you have been reliable for so long. The pressure is information. A commitment can have history and still need new terms. Do not confuse endurance with consent.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.saturn.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "You may be able to carry the old responsibility so well that nobody notices it should have ended.",
+      "body": "You may be able to carry the old responsibility so well that nobody notices it should have ended. Saturn trine the South Node can make familiar work, rules, authority, and long-practiced duties feel manageable. Your experience may keep the whole thing running with very little drama. That competence is valuable, but it can also hide an expired arrangement. Keep the discipline. Review the obligation.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "A current limit may show you which old responsibility still has too much authority over your choices.",
+      "body": "A current limit may show you which old responsibility still has too much authority over your choices. When Saturn opposes the South Node, a deadline, rule, boss, contract, or practical constraint can force a comparison between what you are responsible for now and what you have simply continued carrying. The old commitment may have been necessary once. That does not make it permanent. Give the present obligation the weight it actually deserves.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}
