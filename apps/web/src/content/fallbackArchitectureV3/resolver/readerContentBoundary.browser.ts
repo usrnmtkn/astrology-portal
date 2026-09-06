@@ -2,6 +2,12 @@
 // interpretive framework. Tarot may exist in an explicitly designated Tarot
 // surface later; mixed astrology/tarot copy fails closed unless separately
 // owner-approved.
+//
+// Migration note: the legacy lunation library predates this boundary and
+// contains historical tarot/astrology blends. Do not blank that entire reader
+// surface in one release. New or explicitly typed content is gated now, while
+// legacy cells enter the gate as they are repaired. The known live Virgo/Gemini
+// offender is included immediately.
 
 export const READER_CONTENT_TYPES = Object.freeze({
   ASTROLOGY: "astrology",
@@ -12,6 +18,7 @@ export const READER_CONTENT_TYPES = Object.freeze({
 export type ReaderContentType = typeof READER_CONTENT_TYPES[keyof typeof READER_CONTENT_TYPES];
 
 export type ReaderContentBoundaryRow = {
+  contentKey?: string | null;
   reader_content_type?: string | null;
   content_type?: string | null;
   headline?: string | null;
@@ -40,6 +47,10 @@ export type ReaderContentBoundaryRow = {
     approvedAt?: string | null;
   } | null;
 };
+
+const LEGACY_ASTROLOGY_BOUNDARY_KEYS = new Set([
+  "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/virgo/rising-gemini/house-4"
+]);
 
 const READER_COPY_FIELDS = Object.freeze([
   "headline",
@@ -83,13 +94,13 @@ function readerCopyStrings(row: ReaderContentBoundaryRow): string[] {
   return values;
 }
 
-export function readerContentType(row: ReaderContentBoundaryRow): ReaderContentType {
+export function readerContentType(row: ReaderContentBoundaryRow): ReaderContentType | null {
   const declared = String(row.reader_content_type ?? row.content_type ?? "")
     .trim()
     .toLowerCase();
   return Object.values(READER_CONTENT_TYPES).includes(declared as ReaderContentType)
     ? declared as ReaderContentType
-    : READER_CONTENT_TYPES.ASTROLOGY;
+    : null;
 }
 
 export function hasTarotReferenceInReaderCopy(row: ReaderContentBoundaryRow): boolean {
@@ -113,6 +124,9 @@ function mixedContentHasOwnerApproval(row: ReaderContentBoundaryRow): boolean {
 
 export function readerContentBoundaryReason(row: ReaderContentBoundaryRow): string | null {
   const contentType = readerContentType(row);
+  const legacyAstrologyBoundaryApplies = LEGACY_ASTROLOGY_BOUNDARY_KEYS.has(String(row.contentKey ?? ""));
+
+  if (!contentType && !legacyAstrologyBoundaryApplies) return null;
   if (contentType === READER_CONTENT_TYPES.TAROT) return null;
   if (contentType === READER_CONTENT_TYPES.MIXED) {
     return mixedContentHasOwnerApproval(row)
