@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -10,6 +11,15 @@ import { renderDoDont } from "../apps/web/src/content/fallbackArchitectureV3/res
 import { createTransitSynastryRenderer } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+execFileSync(process.execPath, ["--import", "tsx", "scripts/test-role-aware-person-model.mjs"], {
+  cwd: repoRoot,
+  stdio: "inherit"
+});
+execFileSync(process.execPath, ["scripts/audit-role-aware-person-migration.mjs"], {
+  cwd: repoRoot,
+  stdio: "inherit"
+});
+
 const source = JSON.parse(fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"),
   "utf8"
