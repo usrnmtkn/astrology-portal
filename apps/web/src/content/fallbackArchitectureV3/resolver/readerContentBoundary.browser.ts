@@ -5,9 +5,9 @@
 //
 // Migration note: the legacy lunation library predates this boundary and
 // contains historical tarot/astrology blends. Do not blank that entire reader
-// surface in one release. New or explicitly typed content is gated now, while
-// legacy cells enter the gate as they are repaired. The known live Virgo/Gemini
-// offender is included immediately.
+// surface in one release. New or explicitly typed content is gated now; legacy
+// cells remain available until an approved astrology-only replacement is
+// layered above them.
 
 export const READER_CONTENT_TYPES = Object.freeze({
   ASTROLOGY: "astrology",
@@ -47,10 +47,6 @@ export type ReaderContentBoundaryRow = {
     approvedAt?: string | null;
   } | null;
 };
-
-const LEGACY_ASTROLOGY_BOUNDARY_KEYS = new Set([
-  "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/virgo/rising-gemini/house-4"
-]);
 
 const READER_COPY_FIELDS = Object.freeze([
   "headline",
@@ -124,9 +120,10 @@ function mixedContentHasOwnerApproval(row: ReaderContentBoundaryRow): boolean {
 
 export function readerContentBoundaryReason(row: ReaderContentBoundaryRow): string | null {
   const contentType = readerContentType(row);
-  const legacyAstrologyBoundaryApplies = LEGACY_ASTROLOGY_BOUNDARY_KEYS.has(String(row.contentKey ?? ""));
 
-  if (!contentType && !legacyAstrologyBoundaryApplies) return null;
+  // Untyped rows are legacy content. Preserve them during migration rather than
+  // treating a new taxonomy field as retroactive authorization to delete copy.
+  if (!contentType) return null;
   if (contentType === READER_CONTENT_TYPES.TAROT) return null;
   if (contentType === READER_CONTENT_TYPES.MIXED) {
     return mixedContentHasOwnerApproval(row)
