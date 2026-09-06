@@ -62,10 +62,13 @@ function adminHeaders(extra = {}) {
 }
 
 function verificationHeaders(extra = {}) {
+  // GitHub Actions exposes missing secrets as empty strings. Use truthy fallback
+  // rather than nullish fallback so an empty service-role value cannot shadow
+  // the configured publishable key used for read-only verification.
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-    ?? process.env.SUPABASE_PUBLISHABLE_KEY
-    ?? process.env.VITE_SUPABASE_ANON_KEY
-    ?? "";
+    || process.env.SUPABASE_PUBLISHABLE_KEY
+    || process.env.VITE_SUPABASE_ANON_KEY
+    || "";
   if (!key) {
     throw new Error("Remote verification requires SUPABASE_SERVICE_ROLE_KEY, SUPABASE_PUBLISHABLE_KEY, or VITE_SUPABASE_ANON_KEY.");
   }
@@ -82,6 +85,22 @@ function verificationAuthMode() {
 }
 
 function canonicalBodies(first, second) {
+  const northNode = "north-node";
+  const southNode = "south-node";
+
+  // Preserve the production Content Studio identities already published before
+  // the South Node release. North Node exact rows are body-first, while the new
+  // South Node pole-specific rows are node-first. This asymmetric key policy is
+  // intentional: changing either side would create duplicate editorial rows.
+  if (first === northNode || second === northNode) {
+    const other = first === northNode ? second : first;
+    return [other, northNode];
+  }
+  if (first === southNode || second === southNode) {
+    const other = first === southNode ? second : first;
+    return [southNode, other];
+  }
+
   const order = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith", "nodes"];
   return order.indexOf(first) <= order.indexOf(second) ? [first, second] : [second, first];
 }
@@ -207,6 +226,12 @@ function buildRows() {
     const southKeys = new Set(southNodeRows.map((row) => row.content_key));
     if (northNodeRows.some((row) => southKeys.has(row.content_key))) {
       throw new Error("North Node and South Node Content Studio rows must remain independently editable identities.");
+    }
+    if (northNodeRows.some((row) => !/^sky\.aspect\.[^.]+\.[^.]+\.north-node$/u.test(row.content_key))) {
+      throw new Error("North Node Content Studio keys drifted from the existing body-first production identity.");
+    }
+    if (southNodeRows.some((row) => !/^sky\.aspect\.south-node\.[^.]+\.[^.]+$/u.test(row.content_key))) {
+      throw new Error("South Node Content Studio keys drifted from the node-first pole-specific production identity.");
     }
   }
   return rows;
