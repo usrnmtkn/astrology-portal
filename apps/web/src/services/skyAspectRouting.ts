@@ -1,3 +1,16 @@
+import southNodeAuthorization from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json";
+import southNodeChiron from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/chiron.json";
+import southNodeJupiter from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/jupiter.json";
+import southNodeLilith from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/lilith.json";
+import southNodeMars from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mars.json";
+import southNodeMercury from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mercury.json";
+import southNodeMoon from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/moon.json";
+import southNodeNeptune from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/neptune.json";
+import southNodePluto from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/pluto.json";
+import southNodeSaturn from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/saturn.json";
+import southNodeSun from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/sun.json";
+import southNodeUranus from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/uranus.json";
+import southNodeVenus from "../../../../packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/venus.json";
 import type {
   ApprovedExactSkyAspectCopy,
   ResolvedSkyCalendarComposedCard
@@ -21,6 +34,108 @@ export type ResolvedApprovedExactSkyAspectCopy = {
   sourceKeys: string[];
   tier: "approved-exact-sky-aspect-v1";
 };
+
+type SouthNodeReviewRecord = {
+  aspect: string;
+  body: string;
+  contentKey: string;
+  mirroredNorthNodeAspect: string;
+  summary: string;
+};
+
+type SouthNodeReviewPacket = {
+  counterpartBody: string;
+  records: SouthNodeReviewRecord[];
+};
+
+type SouthNodeApprovedCopy = {
+  record: SouthNodeReviewRecord;
+  sourcePath: string;
+};
+
+const southNodePacketSources: Array<{ packet: SouthNodeReviewPacket; sourcePath: string }> = [
+  { packet: southNodeSun, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/sun.json" },
+  { packet: southNodeMoon, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/moon.json" },
+  { packet: southNodeMercury, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mercury.json" },
+  { packet: southNodeVenus, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/venus.json" },
+  { packet: southNodeMars, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mars.json" },
+  { packet: southNodeJupiter, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/jupiter.json" },
+  { packet: southNodeSaturn, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/saturn.json" },
+  { packet: southNodeUranus, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/uranus.json" },
+  { packet: southNodeNeptune, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/neptune.json" },
+  { packet: southNodePluto, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/pluto.json" },
+  { packet: southNodeChiron, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/chiron.json" },
+  { packet: southNodeLilith, sourcePath: "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/lilith.json" }
+];
+
+const northToSouthAspect: Record<string, string> = {
+  conjunction: "opposition",
+  sextile: "trine",
+  square: "square",
+  trine: "sextile",
+  opposition: "conjunction"
+};
+
+function normalizedPoint(value: string) {
+  return value.trim().toLowerCase().replace(/[\s_]+/g, "-");
+}
+
+function southNodeCopyKey(counterpart: string, aspect: string) {
+  return `sky.aspect.${normalizedPoint(counterpart)}.${aspect.trim().toLowerCase()}.south-node`;
+}
+
+function buildSouthNodeApprovedCopy() {
+  const authorized = southNodeAuthorization.decision === "approve"
+    && southNodeAuthorization.memberCount === 60
+    && southNodeAuthorization.approvalEffect === "exact_wording_approval";
+
+  if (!authorized) return new Map<string, SouthNodeApprovedCopy>();
+
+  const entries = southNodePacketSources.flatMap(({ packet, sourcePath }) => (
+    packet.records.map((record) => [record.contentKey, { record, sourcePath }] as const)
+  ));
+
+  if (entries.length !== 60 || new Set(entries.map(([key]) => key)).size !== 60) {
+    return new Map<string, SouthNodeApprovedCopy>();
+  }
+
+  return new Map<string, SouthNodeApprovedCopy>(entries);
+}
+
+const southNodeApprovedCopyByKey = buildSouthNodeApprovedCopy();
+
+export function approvedSouthNodeExactCopyCount() {
+  return southNodeApprovedCopyByKey.size;
+}
+
+function southNodeApprovedCopyFor(counterpart: string, aspect: string) {
+  return southNodeApprovedCopyByKey.get(southNodeCopyKey(counterpart, aspect)) ?? null;
+}
+
+function southNodeCounterpart(first: string, second: string, node: "north-node" | "south-node") {
+  const normalizedFirst = normalizedPoint(first);
+  const normalizedSecond = normalizedPoint(second);
+
+  if (normalizedFirst === node && normalizedSecond !== "north-node" && normalizedSecond !== "south-node") {
+    return normalizedSecond;
+  }
+  if (normalizedSecond === node && normalizedFirst !== "north-node" && normalizedFirst !== "south-node") {
+    return normalizedFirst;
+  }
+
+  return null;
+}
+
+function renderedSouthNodeBody(copy: SouthNodeApprovedCopy, slots: TemplateSlotValues) {
+  return interpolateTemplateString(copy.record.body, slots, {
+    contentKey: copy.record.contentKey,
+    field: "body"
+  })
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .join("\n\n");
+}
 
 const calendarAspectLeadVerb: Record<string, string> = {
   conjunction: "conjoins",
@@ -162,24 +277,53 @@ export function resolveApprovedExactSkyAspectCopy({
   second: string;
   slots: TemplateSlotValues;
 }): ResolvedApprovedExactSkyAspectCopy | null {
-  const copy = lookup?.(first, aspect, second);
+  const normalizedAspect = aspect.trim().toLowerCase();
+  const directSouthCounterpart = southNodeCounterpart(first, second, "south-node");
+  const northCounterpart = southNodeCounterpart(first, second, "north-node");
+  const directSouthCopy = directSouthCounterpart
+    ? southNodeApprovedCopyFor(directSouthCounterpart, normalizedAspect)
+    : null;
+  const mirroredSouthCopy = northCounterpart && northToSouthAspect[normalizedAspect]
+    ? southNodeApprovedCopyFor(northCounterpart, northToSouthAspect[normalizedAspect])
+    : null;
+  const copy = lookup?.(first, aspect, second) ?? null;
 
-  if (!copy) {
+  if (!copy && !directSouthCopy && !mirroredSouthCopy) {
     return null;
   }
 
-  const storedBody = interpolateTemplateString(copy.body, slots, {
-    contentKey: copy.contentId,
-    field: "body"
-  })
-    .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean)
-    .join("\n\n");
-  const body = copy.calendarLeadIn === "date-placements-collective-level"
-    && slots.dateLine
-    ? calendarExactLeadIn(storedBody, aspect, slots)
-    : storedBody;
+  let body = "";
+  const sourceKeys: string[] = [];
+
+  if (copy) {
+    const storedBody = interpolateTemplateString(copy.body, slots, {
+      contentKey: copy.contentId,
+      field: "body"
+    })
+      .split(/\n{2,}/)
+      .map((paragraph) => paragraph.trim())
+      .filter(Boolean)
+      .join("\n\n");
+    body = copy.calendarLeadIn === "date-placements-collective-level"
+      && slots.dateLine
+      ? calendarExactLeadIn(storedBody, aspect, slots) ?? ""
+      : storedBody;
+    sourceKeys.push(copy.contentId, `packages/astro-knowledge/data/transits/${copy.sourceId}.json`);
+  }
+
+  if (directSouthCopy) {
+    const southBody = renderedSouthNodeBody(directSouthCopy, slots);
+    body = southBody;
+    sourceKeys.push(directSouthCopy.record.contentKey, directSouthCopy.sourcePath);
+  } else if (mirroredSouthCopy) {
+    const southBody = renderedSouthNodeBody(mirroredSouthCopy, slots);
+    if (southBody) {
+      body = body
+        ? `${body}\n\nSouth Node (${mirroredSouthCopy.record.aspect}): ${southBody}`
+        : `South Node (${mirroredSouthCopy.record.aspect}): ${southBody}`;
+      sourceKeys.push(mirroredSouthCopy.record.contentKey, mirroredSouthCopy.sourcePath);
+    }
+  }
 
   if (!body || !isReaderFacingCopy(body)) {
     return null;
@@ -189,7 +333,7 @@ export function resolveApprovedExactSkyAspectCopy({
     body,
     heading,
     layer: "authored",
-    sourceKeys: [copy.contentId, `packages/astro-knowledge/data/transits/${copy.sourceId}.json`],
+    sourceKeys,
     tier: "approved-exact-sky-aspect-v1"
   };
 }
