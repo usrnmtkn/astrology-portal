@@ -5,11 +5,6 @@ import {
   natalSnapshotBirthTimeIsKnown,
   natalSnapshotWithBirthTimeReliability
 } from "../apps/web/src/services/birthTimeReliability.ts";
-import {
-  manualChartHasReliableBirthTime,
-  manualChartNeedsBirthTime
-} from "../apps/web/src/services/manualCharts.ts";
-import { socialFriendToChart } from "../apps/web/src/services/socialFriends.ts";
 import type { SkySnapshot } from "../apps/web/src/types.ts";
 
 const snapshot = {
@@ -56,27 +51,30 @@ assert.equal(known.midheavenLongitude, 282);
 assert.equal(known.houseCusps?.length, 1);
 assert.equal(known.aspects.length, 3);
 
-const baseSocialFriend = {
-  friendshipId: "friendship-1",
-  userId: "friend-1",
-  handle: "friend_one",
-  displayName: "Friend One",
-  viewerSharesChart: true,
-  friendSharesChart: true,
-  acceptedAt: "2026-09-06T00:00:00.000Z"
-};
-const unknownSocialChart = socialFriendToChart({ ...baseSocialFriend, natalChart: snapshot });
-assert.equal(unknownSocialChart.birthTime, null);
-assert.equal(unknownSocialChart.birthTimeUnknown, true);
-assert.equal(unknownSocialChart.natalChart?.ascendantLongitude, undefined);
-assert.equal(manualChartHasReliableBirthTime(unknownSocialChart), false);
+// Browser-connected services are validated as integration contracts here; the full
+// TypeScript build below validates their actual module graph under the Vite environment.
+const manualCharts = fs.readFileSync("apps/web/src/services/manualCharts.ts", "utf8");
+assert.match(manualCharts, /export function manualChartHasReliableBirthTime\(chart: ManualChart\)/u);
+assert.match(manualCharts, /typeof chart\.natalChart\?\.birthTimeKnown === "boolean"/u);
+assert.match(manualCharts, /return chart\.natalChart\.birthTimeKnown/u);
+assert.match(manualCharts, /natalSnapshotWithBirthTimeReliability\(row\.natal_chart, birthTimeKnown\)/u);
+assert.match(manualCharts, /natalSnapshotWithBirthTimeReliability\(input\.natalChart, birthTimeKnown\)/u);
+assert.match(manualCharts, /manualChartNeedsBirthTime\(chart: ManualChart\)[\s\S]*!manualChartHasReliableBirthTime\(chart\)/u);
 
-const knownSocialChart = socialFriendToChart({ ...baseSocialFriend, natalChart: known });
-assert.equal(knownSocialChart.birthTime, null);
-assert.equal(knownSocialChart.birthTimeUnknown, false);
-assert.equal(knownSocialChart.natalChart?.ascendantLongitude, 12);
-assert.equal(manualChartHasReliableBirthTime(knownSocialChart), true);
-assert.equal(manualChartNeedsBirthTime(knownSocialChart), false);
+const socialFriends = fs.readFileSync("apps/web/src/services/socialFriends.ts", "utf8");
+assert.match(socialFriends, /natalSnapshotBirthTimeIsKnown\(friend\.natalChart\)/u);
+assert.match(socialFriends, /natalSnapshotWithBirthTimeReliability\(friend\.natalChart, birthTimeKnown\)/u);
+assert.match(socialFriends, /birthTime: null,\n    birthTimeUnknown: !birthTimeKnown,/u);
+assert.match(socialFriends, /friendSafeNatalChart\(natalChart, birthTimeKnown\)/u);
+assert.doesNotMatch(
+  socialFriends,
+  /birthTime: "12:00",\n    birthTimeUnknown: false,/u,
+  "Connected Friends must never fabricate a known noon birth time."
+);
+
+const manualController = fs.readFileSync("apps/web/src/features/friends/useManualChartsController.ts", "utf8");
+assert.match(manualController, /natalSnapshotWithBirthTimeReliability\(natalSky, timeKnown\)/u);
+assert.match(manualController, /return reliableNatalSky/u);
 
 const app = fs.readFileSync("apps/web/src/App.tsx", "utf8");
 assert.match(app, /function natalTransitTargets\(natalSky: SkySnapshot, birthTimeKnown = false\)/u);
@@ -84,9 +82,13 @@ assert.match(app, /if \(!birthTimeKnown \|\| typeof natalSky\.ascendantLongitude
 assert.match(app, /birthTimeKnown: manualChartHasReliableBirthTime\(chart\)/u);
 assert.match(app, /!unknownBirthTime && typeof natalSky\?\.ascendantLongitude === "number"/u);
 assert.match(app, /!unknownBirthTime && typeof natalSky\?\.midheavenLongitude === "number"/u);
+assert.match(app, /if \(!birthTimeKnown\) \{[\s\S]*profectedHouse: null[\s\S]*chartRuler: undefined/u);
+assert.match(app, /natalSnapshotWithBirthTimeReliability\(cachedNatalSky, !unknownBirthTime\)/u);
+assert.match(app, /writeCachedSkySnapshot\(natalCacheKey, reliableCachedNatalSky\)/u);
 
 const friendNatal = fs.readFileSync("apps/web/src/features/friends/FriendNatalTab.tsx", "utf8");
 assert.match(friendNatal, /visibleBigThreeRows = birthTimeUnknown[\s\S]*unreliableAngleLabels/u);
+assert.match(friendNatal, /visiblePlacementRows = birthTimeUnknown[\s\S]*unreliableAngleLabels/u);
 assert.match(friendNatal, /visibleEmptyHouseRows = birthTimeUnknown \? \[\] : emptyHouseRows/u);
 
 console.log("Birth-time angle reliability contract passed.");
