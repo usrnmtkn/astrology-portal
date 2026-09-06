@@ -1,5 +1,4 @@
 import {
-  buildAskTldrAnswerPacket,
   compileEvergreenAskPlan,
   compileFreeTextAskPlan,
   type AskTldrAnswerModelConfig,
@@ -8,6 +7,7 @@ import {
   type AskTldrQuestionDefinition
 } from "./ask-tldr-model.js";
 import { applyAskTldrFreeTextFocus } from "./ask-tldr-free-text-focus.js";
+import { buildQuestionFocusedAskTldrAnswerPacket } from "./ask-tldr-relevance.js";
 import {
   askTldrEvidenceFromPersonalTiming,
   askTldrEvidenceFromReportWindow,
@@ -28,7 +28,7 @@ export type AskTldrPreparedCalibration = {
   source: "evergreen" | "free_text";
   plan: AskPlan;
   candidateCount: number;
-  rankedPacket: ReturnType<typeof buildAskTldrAnswerPacket>;
+  rankedPacket: ReturnType<typeof buildQuestionFocusedAskTldrAnswerPacket>;
   governedPacket: ReturnType<typeof buildAskTldrGovernedAnswerPacket>;
   voiceReceipt: ReturnType<typeof buildAskTldrVoiceEvidenceReceipt>;
   writerRequest: ReturnType<typeof buildAskTldrWriterRequest> | null;
@@ -48,7 +48,7 @@ function prepareFromPlan(input: {
   const personal = input.personalTiming == null ? [] : askTldrEvidenceFromPersonalTiming(input.personalTiming);
   const future = input.reportWindow == null ? [] : askTldrEvidenceFromReportWindow(input.reportWindow, now);
   const candidates = combineAskTldrCalculatedEvidence(personal, future);
-  const rankedPacket = buildAskTldrAnswerPacket({ model: input.model, plan: input.plan, candidates, now });
+  const rankedPacket = buildQuestionFocusedAskTldrAnswerPacket({ model: input.model, plan: input.plan, candidates, now });
   const governedPacket = buildAskTldrGovernedAnswerPacket(rankedPacket);
   const voiceReceipt = buildAskTldrVoiceEvidenceReceipt({
     question: governedPacket.question,
