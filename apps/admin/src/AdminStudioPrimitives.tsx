@@ -1,4 +1,4 @@
-import { BarChart3, Plus, RefreshCw, type LucideIcon } from "lucide-react";
+import { AlertTriangle, BarChart3, Plus, RefreshCw, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, type KeyboardEvent } from "react";
 
 export type AdminBreadcrumb = {
@@ -100,6 +100,15 @@ export function AdminPageHeader({
         <p>{description}</p>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+        <a
+          className="admin-create-button"
+          href="/admin/content/coverage?view=attention"
+          style={coverageActionStyle}
+          title="Open the short queue of content work that can affect required reader coverage"
+        >
+          <AlertTriangle size={16} aria-hidden="true" />
+          Needs attention
+        </a>
         <a
           className="admin-create-button"
           href="/admin/content/coverage"
