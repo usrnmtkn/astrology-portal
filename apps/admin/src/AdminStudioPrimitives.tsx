@@ -1,5 +1,6 @@
 import { AlertTriangle, BarChart3, Plus, RefreshCw, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, type KeyboardEvent } from "react";
+import "./admin-content-studio-ux-compat.css";
 
 export type AdminBreadcrumb = {
   current?: boolean;
