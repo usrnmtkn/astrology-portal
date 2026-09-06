@@ -1,0 +1,39 @@
+/* Content Studio diagnostic/source-heading collision fixes.
+   Keep semantic emphasis inline when it appears inside explanatory copy; status pills remain separate UI. */
+
+.admin-dashboard .admin-fallback-diagnostic-heading > div > p:not(.admin-eyebrow) {
+  margin: var(--admin-space-sm) 0 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-heading > div > p:not(.admin-eyebrow) > strong {
+  background: transparent;
+  border: 0;
+  border-radius: var(--admin-space-0);
+  color: var(--admin-text-high);
+  display: inline;
+  line-height: inherit;
+  padding: var(--admin-space-0);
+}
+
+.admin-dashboard .admin-fallback-diagnostic-heading .admin-hook-pattern-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-heading .admin-hook-pattern-list > div {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-fallback-diagnostic-heading .admin-hook-pattern-list code {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+@media (max-width: 720px) {
+  .admin-dashboard .admin-fallback-diagnostic-heading .admin-hook-pattern-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
