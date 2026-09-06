@@ -1,0 +1,14 @@
+{
+  "id":"love",
+  "label":"Love",
+  "description":"Dating, attraction, partnership, sex, commitment, expectations, availability, and relationship patterns.",
+  "defaultEvidencePriority":["7th house / Descendant / 7th-house ruler","Venus, Moon and Mars relationship pattern","5th / 7th / 8th-house activations","active and upcoming transits to relationship factors"],
+  "questions":[
+    {"id":"love.needs","displayQuestion":"What do I actually need from a relationship?","primaryIntent":"relationship_needs","secondaryIntents":["compatibility","availability","expectations"],"questionTypes":["pattern","guidance"],"defaultTimeWindow":"4_months","evidenceFocus":["7th-house and Venus/Moon pattern","current relationship transits"]},
+    {"id":"love.repeating","displayQuestion":"What keeps repeating in my relationships?","primaryIntent":"relationship_pattern","secondaryIntents":["recurrence","expectations","attachment"],"questionTypes":["pattern"],"defaultTimeWindow":"12_months","evidenceFocus":["natal relationship pattern","repeating long transits to relationship factors"]},
+    {"id":"love.gets_under_skin","displayQuestion":"Why do relationships feel more intense right now?","primaryIntent":"relationship_intensity","secondaryIntents":["reactivity","attraction","conflict"],"questionTypes":["current_state","pattern"],"defaultTimeWindow":"1_month","evidenceFocus":["Venus / Moon / Mars / Descendant contacts","5th / 7th / 8th-house triggers"]},
+    {"id":"love.reciprocity","displayQuestion":"Am I giving more than I am getting?","primaryIntent":"reciprocity","secondaryIntents":["effort","availability","boundaries"],"questionTypes":["current_state","guidance"],"defaultTimeWindow":"1_month","evidenceFocus":["Venus / Moon / Saturn / Descendant contacts","7th / 8th-house reciprocity factors"]},
+    {"id":"love.fits_life_now","displayQuestion":"Does this relationship fit the life I have now?","primaryIntent":"relationship_fit","secondaryIntents":["compatibility","schedule","future_direction"],"questionTypes":["decision","current_state"],"defaultTimeWindow":"4_months","evidenceFocus":["6th / 7th / 10th-house links","current relationship and life-structure transits"]},
+    {"id":"love.commit","displayQuestion":"Is this a good time to commit?","primaryIntent":"commitment_timing","secondaryIntents":["commitment","durability","decision"],"questionTypes":["timing","decision"],"defaultTimeWindow":"4_months","evidenceFocus":["Saturn / Jupiter / Venus / Descendant contacts","upcoming 7th-house activations"]}
+  ]
+}
