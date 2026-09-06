@@ -24,6 +24,8 @@ assert.ok(rules.includes("-webkit-line-clamp: unset;"));
 assert.ok(rules.includes("overflow: visible;"));
 assert.ok(rules.includes(".admin-editor-context-line"));
 
+// Production /admin/content loads admin-components.css from the dashboard module;
+// keep the editor UX layer reachable from that stylesheet, not only admin/main.tsx.
 assert.match(
   css,
   /^@import "\.\/admin-content-studio-ux-compat\.css";/u,
