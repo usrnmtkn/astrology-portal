@@ -11,6 +11,7 @@ import {
   updateManualChart
 } from "../../services/manualCharts";
 import type { ManualChart, ManualChartInput, ManualChartType } from "../../services/manualCharts";
+import { natalChartWithReliableAngleLongitudes } from "../../services/natalAngleReliability";
 import {
   fetchNatalAspectPatternsWithCopy,
   skyWithNatalAspectPatternCopy
@@ -67,6 +68,18 @@ export type ManualChartsController = {
   updateField: <Key extends keyof ManualChartForm>(key: Key, value: ManualChartForm[Key]) => void;
 };
 
+function manualChartWithReliableAngleLongitudes(chart: ManualChart): ManualChart {
+  const natalChart = natalChartWithReliableAngleLongitudes(chart.natalChart, chart.birthTimeUnknown);
+
+  return natalChart === chart.natalChart
+    ? chart
+    : { ...chart, natalChart };
+}
+
+function manualChartsWithReliableAngleLongitudes(charts: ManualChart[]) {
+  return charts.map(manualChartWithReliableAngleLongitudes);
+}
+
 async function calculateSky(location: LocationInput, date: Date) {
   const { getAstrodienstSky } = await import("../../services/ephemeris");
   return getAstrodienstSky(location, date);
@@ -102,7 +115,9 @@ export function useManualChartsController({
   socialFriendCharts
 }: UseManualChartsControllerOptions): ManualChartsController {
   const initialCachedCharts = useMemo(
-    () => listCachedManualCharts([chartOwnerUserId, profileId]),
+    () => manualChartsWithReliableAngleLongitudes(
+      listCachedManualCharts([chartOwnerUserId, profileId])
+    ),
     [chartOwnerUserId, profileId]
   );
   const [charts, setCharts] = useState<ManualChart[]>(() => (
@@ -132,7 +147,9 @@ export function useManualChartsController({
     }
 
     if (!chartsReady) {
-      const cachedCharts = listCachedManualCharts([chartOwnerUserId, profileId]);
+      const cachedCharts = manualChartsWithReliableAngleLongitudes(
+        listCachedManualCharts([chartOwnerUserId, profileId])
+      );
 
       if (allowCachedChartsWhileLoading && cachedCharts.length > 0) {
         chartsLoadedRef.current = true;
@@ -149,7 +166,9 @@ export function useManualChartsController({
     }
 
     if (allowCachedChartsWhileLoading && !chartsLoadedRef.current) {
-      const cachedCharts = listCachedManualCharts([chartOwnerUserId, profileId]);
+      const cachedCharts = manualChartsWithReliableAngleLongitudes(
+        listCachedManualCharts([chartOwnerUserId, profileId])
+      );
 
       if (cachedCharts.length > 0) {
         chartsLoadedRef.current = true;
@@ -165,11 +184,12 @@ export function useManualChartsController({
     listManualCharts(chartOwnerUserId)
       .then((nextCharts) => {
         if (!cancelled) {
+          const reliableNextCharts = manualChartsWithReliableAngleLongitudes(nextCharts);
           chartsLoadedRef.current = true;
-          setCharts(nextCharts);
+          setCharts(reliableNextCharts);
           setSelectedChartId((currentId) => (
             currentId && (
-              nextCharts.some((chart) => chart.id === currentId)
+              reliableNextCharts.some((chart) => chart.id === currentId)
               || socialFriendChartsRef.current.some((chart) => chart.id === currentId)
             )
               ? currentId
@@ -225,12 +245,16 @@ export function useManualChartsController({
         const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
         const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
         const calculatedNatalChart = await calculateSky(birthLocation, birthDateTime);
-        const natalChart = await natalSkyWithAspectPatternsForStorage(
+        const storedNatalChart = await natalSkyWithAspectPatternsForStorage(
           calculatedNatalChart,
           birthLocation,
           birthDateTime,
           !chart.birthTimeUnknown,
           showNatalAspectPatterns
+        );
+        const natalChart = natalChartWithReliableAngleLongitudes(
+          storedNatalChart,
+          chart.birthTimeUnknown
         );
         const input: ManualChartInput = {
           chartType: chart.chartType,
@@ -248,7 +272,9 @@ export function useManualChartsController({
           notes: chart.notes ?? null
         };
 
-        return updateManualChart(chartOwnerUserId, chart.id, input);
+        return manualChartWithReliableAngleLongitudes(
+          await updateManualChart(chartOwnerUserId, chart.id, input)
+        );
       },
       (repairedCharts) => {
         setCharts((currentCharts) => {
@@ -338,12 +364,16 @@ export function useManualChartsController({
         : twentyFourHourTimeToDisplay(form.birthTime);
       const birthDateTime = zonedDateTimeToUtc(birthDate, birthTimeForChart, birthLocation.timeZone);
       const calculatedNatalChart = await calculateSky(birthLocation, birthDateTime);
-      const natalChart = await natalSkyWithAspectPatternsForStorage(
+      const storedNatalChart = await natalSkyWithAspectPatternsForStorage(
         calculatedNatalChart,
         birthLocation,
         birthDateTime,
         !form.birthTimeUnknown,
         showNatalAspectPatterns
+      );
+      const natalChart = natalChartWithReliableAngleLongitudes(
+        storedNatalChart,
+        form.birthTimeUnknown
       );
       const [firstName = "", ...lastNameParts] = displayName.split(/\s+/);
       const input: ManualChartInput = {
@@ -362,9 +392,10 @@ export function useManualChartsController({
         notes: null
       };
       const wasEditing = Boolean(editingChartId);
-      const savedChart = editingChartId
+      const persistedChart = editingChartId
         ? await updateManualChart(chartOwnerUserId, editingChartId, input)
         : await createManualChart(chartOwnerUserId, input);
+      const savedChart = manualChartWithReliableAngleLongitudes(persistedChart);
 
       setCharts((currentCharts) => {
         const nextCharts = editingChartId
