@@ -50,3 +50,9 @@ jobs:
 
       - name: Validate Ask TLDR post-write fact lock
         run: npx tsx scripts/test-ask-tldr-fact-lock.mjs
+
+      - name: Validate Ask TLDR answer judge
+        run: npx tsx scripts/test-ask-tldr-judge.mjs
+
+      - name: Validate Ask TLDR calibration release packet
+        run: npx tsx scripts/test-ask-tldr-release.mjs
