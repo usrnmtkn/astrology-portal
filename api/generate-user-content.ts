@@ -15,12 +15,8 @@ import {
 } from "./_lib/report-generation.js";
 import type { ReportDomain, ReportHorizon } from "./_lib/report-types.js";
 import {
-  FRIEND_TRANSIT_READING_CONTENT_TYPE,
-  FRIEND_TRANSIT_READING_EVENT_TYPE,
   FRIEND_TRANSIT_READING_PROMPT_VERSION,
-  assertFriendTransitReadingBrief,
-  friendTransitReadingCanGenerate,
-  friendTransitReadingKnowledgeIds
+  friendTransitReadingRequestLock
 } from "./_lib/friend-transit-reading.js";
 
 type UserContentSubjectType =
@@ -330,33 +326,19 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const userId = await requireAuthenticatedUser(req);
     const input = await readJsonBody(req);
     if (input.subjectType === "friend_transit_reading") {
-      const brief = assertFriendTransitReadingBrief(input.facts?.friendTransitsBrief);
-      if (!friendTransitReadingCanGenerate(brief)) {
-        throw new Error("FRIEND_TRANSIT_READING_NO_PERSONAL_TRANSIT_EVIDENCE");
-      }
-      const targetDate = typeof input.targetDate === "string" && /^\d{4}-\d{2}-\d{2}$/u.test(input.targetDate)
-        ? input.targetDate
-        : "";
-      if (!targetDate) throw new Error("FRIEND_TRANSIT_READING_TARGET_DATE_REQUIRED");
-      input.contentKey = `friend-transit-reading/${input.subjectId}/${targetDate}`;
-      input.surface = "friends";
-      input.mode = "in_depth";
-      input.eventType = FRIEND_TRANSIT_READING_EVENT_TYPE;
-      input.headline = `What's going on with ${brief.friendName} right now?`;
-      input.knowledgeIds = friendTransitReadingKnowledgeIds(brief);
-      input.facts = {
-        contentType: FRIEND_TRANSIT_READING_CONTENT_TYPE,
-        blockType: FRIEND_TRANSIT_READING_CONTENT_TYPE,
-        friendTransitsBrief: brief
-      };
-      input.sourceSnapshot = {
-        schema: "friend-transit-reading-source.v1",
-        briefSchema: brief.schema,
-        friendName: brief.friendName,
-        dateLabel: brief.dateLabel,
-        counts: brief.counts,
-        targetDate
-      };
+      const locked = friendTransitReadingRequestLock({
+        brief: input.facts?.friendTransitsBrief,
+        subjectId: input.subjectId,
+        targetDate: typeof input.targetDate === "string" ? input.targetDate : ""
+      });
+      input.contentKey = locked.contentKey;
+      input.surface = locked.surface;
+      input.mode = locked.mode;
+      input.eventType = locked.eventType;
+      input.headline = locked.headline;
+      input.knowledgeIds = locked.knowledgeIds;
+      input.facts = locked.facts;
+      input.sourceSnapshot = locked.sourceSnapshot;
       input.voiceNotes = undefined;
       input.allowQualityFallback = false;
       input.status = "DRAFT";

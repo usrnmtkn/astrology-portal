@@ -5,6 +5,7 @@ import {
   friendTransitReadingKnowledgeIds,
   friendTransitReadingMeaningPlan,
   friendTransitReadingPrompt,
+  friendTransitReadingRequestLock,
   validateFriendTransitReadingDraft
 } from "../api/_lib/friend-transit-reading.ts";
 
@@ -96,6 +97,39 @@ const rawBrief = {
 const brief = assertFriendTransitReadingBrief(rawBrief);
 assert.equal(brief.friendName, "Alex");
 assert.equal(friendTransitReadingCanGenerate(brief), true);
+const lockedRequest = friendTransitReadingRequestLock({
+  brief: rawBrief,
+  subjectId: "friend-123",
+  targetDate: "2026-09-06"
+});
+assert.equal(lockedRequest.contentKey, "friend-transit-reading/friend-123/2026-09-06");
+assert.equal(lockedRequest.surface, "friends");
+assert.equal(lockedRequest.mode, "in_depth");
+assert.equal(lockedRequest.eventType, "friend-transit-reading");
+assert.equal(lockedRequest.headline, "What's going on with Alex right now?");
+assert.deepEqual(lockedRequest.knowledgeIds, [
+  "you-transit-v3-mars-trine-moon",
+  "you-transit-v3-pluto-square-sun",
+  "house-2"
+]);
+assert.throws(
+  () => friendTransitReadingRequestLock({
+    brief: rawBrief,
+    subjectId: "friend-123",
+    targetDate: "Sep 6"
+  }),
+  /TARGET_DATE_REQUIRED/u
+);
+assert.throws(
+  () => assertFriendTransitReadingBrief({
+    ...rawBrief,
+    primaryThemes: [{
+      ...rawBrief.primaryThemes[0],
+      evidence: { ...rawBrief.primaryThemes[0].evidence, contentKeys: [] }
+    }]
+  }),
+  /PERSONAL_EVIDENCE_INVALID/u
+);
 assert.deepEqual(friendTransitReadingKnowledgeIds(brief), [
   "you-transit-v3-mars-trine-moon",
   "you-transit-v3-pluto-square-sun",

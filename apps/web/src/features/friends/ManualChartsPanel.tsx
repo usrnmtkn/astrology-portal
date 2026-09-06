@@ -963,6 +963,9 @@ export function ManualChartsPanel({
   );
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
   const selectedChart = allFriendCharts.find((chart) => chart.id === selectedChartId) ?? null;
+  const friendTransitReadingSelectionKey = `${selectedChart?.id ?? ""}|${currentSky?.generatedAt.slice(0, 10) ?? ""}`;
+  const friendTransitReadingSelectionKeyRef = useRef(friendTransitReadingSelectionKey);
+  friendTransitReadingSelectionKeyRef.current = friendTransitReadingSelectionKey;
   const selectedFriendNatalChartComplete = selectedChart
     ? natalChartHasCompletePlacements(selectedChart.natalChart, selectedChart.birthTimeUnknown)
     : false;
@@ -1787,10 +1790,11 @@ export function ManualChartsPanel({
     setFriendTransitReading(null);
     setFriendTransitReadingStatus("idle");
     setFriendTransitReadingError(null);
-  }, [selectedChart?.id, selectedFriendTransitReadingDate]);
+  }, [friendTransitReadingSelectionKey]);
 
   async function generateSelectedFriendTransitReading() {
     if (!selectedChart || !selectedFriendTransitReadingDate || !selectedFriendTransitReadingAvailable) return;
+    const requestSelectionKey = friendTransitReadingSelectionKey;
     setFriendTransitReadingStatus("loading");
     setFriendTransitReadingError(null);
     try {
@@ -1807,10 +1811,12 @@ export function ManualChartsPanel({
           friendTransitsBrief: selectedFriendTransitsBrief
         }
       });
+      if (friendTransitReadingSelectionKeyRef.current !== requestSelectionKey) return;
       if (!generated) throw new Error("The short reading was not returned.");
       setFriendTransitReading(generated);
       setFriendTransitReadingStatus("ready");
     } catch (error) {
+      if (friendTransitReadingSelectionKeyRef.current !== requestSelectionKey) return;
       setFriendTransitReading(null);
       setFriendTransitReadingStatus("error");
       setFriendTransitReadingError(error instanceof Error ? error.message : "The short reading could not be generated.");
