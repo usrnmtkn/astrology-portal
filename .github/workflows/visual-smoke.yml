@@ -36,6 +36,9 @@ jobs:
       - name: Verify Content Studio link routing
         run: node --experimental-strip-types scripts/test-content-studio-link-routing.mjs
 
+      - name: Verify Content Studio editor UX
+        run: node scripts/test-admin-content-studio-usability.mjs
+
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 

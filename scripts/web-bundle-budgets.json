@@ -12,10 +12,10 @@
   "transitFallbackChunkGzipBytes": 390000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
-  "totalCssGzipBytes": 113000,
+  "totalCssGzipBytes": 115000,
   "totalJavaScriptGzipBytes": 2880000,
   "_rationale": {
-    "totalCssGzipBytes": "Raised narrowly to 113 kB after the PR #581 Content Studio UX compatibility layer was corrected to load on every dashboard mount, not only the standalone admin entry point. Reader startup CSS remains separately capped at 47 kB and still measures 46.9 kB; this change only accommodates the intended deferred/admin stylesheet in the aggregate CSS total.",
+    "totalCssGzipBytes": "Raised narrowly from 113 kB to 115 kB for the production Content Studio editor redesign. The measured aggregate is 114.0 kB gzip; the added stylesheet is admin/editor-only. Reader startup CSS remains separately capped at 47 kB and still measures 46.9 kB, so reader startup weight is unchanged.",
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
     "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
     "transitFallbackChunkGzipBytes": "Owner-authorized increase from 330 kB to 390 kB for the 351 exact, hash-bound Friends transit body_they passages. The transit corpus remains on-demand and outside the static App boot graph; all startup and route-local budgets remain unchanged.",
