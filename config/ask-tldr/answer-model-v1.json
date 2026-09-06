@@ -60,7 +60,7 @@
   "pillarProfiles": {
     "self": {"houses":[1,12,5],"angles":["Ascendant"],"points":["Sun","Moon"],"themes":["identity","confidence","visibility","personal_change","limits","self_trust"]},
     "love": {"houses":[5,7,8],"angles":["Descendant"],"points":["Venus","Mars","Moon"],"themes":["relationship","dating","attraction","commitment","availability","intimacy","reciprocity"]},
-    "career": {"houses":[10,6,2],"angles":["Midheaven"],"points":["Sun","Saturn","Jupiter"],"themes":["career","recognition","credit","authority","public_role","responsibility","professional_direction"]},
+    "career": {"houses":[10,6,2],"angles":["Midheaven"],"points":["Sun","Saturn","Jupiter"],"themes":["career","recognition","credit","authority","public_role","responsibility","career_direction"]},
     "money": {"houses":[2,8,10],"angles":[],"points":["Venus","Jupiter","Saturn","Pluto"],"themes":["money","income","expenses","rates","resources","financial_terms","shared_resources"]},
     "education": {"houses":[3,9],"angles":[],"points":["Mercury","Jupiter","Saturn"],"themes":["education","learning","applications","teaching","writing","publishing","credentials","worldview"]},
     "home_family": {"houses":[4],"angles":["IC"],"points":["Moon","Saturn"],"themes":["home","family","moving","property","household","caregiving","belonging","responsibility"]},
