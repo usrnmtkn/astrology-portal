@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { buildAskTldrAnswerPacket, compileEvergreenAskPlan } from "../api/_lib/ask-tldr-model.ts";
+import { compileEvergreenAskPlan } from "../api/_lib/ask-tldr-model.ts";
+import { buildQuestionFocusedAskTldrAnswerPacket } from "../api/_lib/ask-tldr-relevance.ts";
 import { askTldrEvidenceFromReportWindow } from "../api/_lib/ask-tldr-evidence-adapter.ts";
 import { buildAskTldrGovernedAnswerPacket } from "../api/_lib/ask-tldr-governed-evidence.ts";
 
@@ -26,7 +27,7 @@ for (const pillarId of pillarFiles) {
   for (const question of pillar.questions) {
     try {
       const plan = compileEvergreenAskPlan({ model, pillar, question });
-      const ranked = buildAskTldrAnswerPacket({ model, plan, candidates, now });
+      const ranked = buildQuestionFocusedAskTldrAnswerPacket({ model, plan, candidates, now });
       const governed = buildAskTldrGovernedAnswerPacket(ranked);
       const primary = governed.evidence.find((factor) => factor.role === "primary") ?? null;
       rows.push({
@@ -36,8 +37,10 @@ for (const pillarId of pillarFiles) {
         questionTypes: question.questionTypes,
         timeWindow: question.defaultTimeWindow,
         focus: plan.focus,
+        relevanceContract: ranked.relevanceContract,
         status: category(ranked, governed),
         candidateCount: candidates.length,
+        questionRelevantCandidateCount: ranked.relevanceContract.questionRelevantCandidates,
         rankedEvidenceCount: ranked.evidence.length,
         governedEvidenceCount: governed.evidence.length,
         primary: primary ? {
@@ -45,6 +48,9 @@ for (const pillarId of pillarFiles) {
           factorKey: primary.factorKey ?? null,
           kind: primary.kind,
           temporalState: primary.temporalState,
+          houses: primary.houses ?? [],
+          angles: primary.angles ?? [],
+          points: primary.points ?? [],
           governedMeaningStatus: primary.governedMeaning.status,
           governedCanonicalIds: primary.governedMeaning.canonicalIds
         } : null,
@@ -71,6 +77,14 @@ assert.deepEqual(exceptions, [], `Evergreen support audit hit pipeline exception
 for (const row of rows.filter((entry) => entry.status === "primary_semantically_ready")) {
   assert.equal(row.primary?.governedMeaningStatus, "full", `${row.questionId} was marked semantically ready without a full primary governed meaning.`);
   assert.ok(row.fullGovernedEvidenceIds.includes(row.primary.id), `${row.questionId} full evidence list omitted its primary factor.`);
+  if (row.relevanceContract.mode === "question_location_required") {
+    const houseMatch = row.primary.houses.some((house) => row.focus.houses.includes(house));
+    const angleMatch = row.primary.angles.some((angle) => row.focus.angles.includes(angle));
+    assert.ok(houseMatch || angleMatch, `${row.questionId} primary factor does not touch its required question location.`);
+  }
+  if (row.relevanceContract.mode === "question_point_required") {
+    assert.ok(row.primary.points.some((point) => row.focus.points.includes(point)), `${row.questionId} primary factor does not touch its required question point.`);
+  }
 }
 
 const counts = rows.reduce((acc, row) => {
@@ -86,8 +100,8 @@ const byPillar = Object.fromEntries(pillarFiles.map((pillarId) => {
 }));
 
 console.log(JSON.stringify({
-  schema: "ask-tldr-evergreen-support-audit.v1",
-  note: "This is a semantic support audit against one rich frozen report-window fixture. It is not a claim that every reader should have relevant astrology for every question at every moment, and it intentionally excludes the separately-tested owner-voice receipt stage.",
+  schema: "ask-tldr-evergreen-support-audit.v2",
+  note: "This is a semantic support audit against one rich frozen report-window fixture. A candidate must now touch the evergreen question's explicit house/angle focus, or its point focus when no location is defined. It is not a claim that every reader should have relevant astrology for every question at every moment, and it intentionally excludes the separately-tested owner-voice receipt stage.",
   totalQuestions: rows.length,
   calculatedCandidateCount: candidates.length,
   counts,
