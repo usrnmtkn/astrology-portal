@@ -7,6 +7,7 @@ import { createServer } from "vite";
 const panelSource = fs.readFileSync("apps/web/src/features/friends/ManualChartsPanel.tsx", "utf8");
 const serviceSource = fs.readFileSync("apps/web/src/services/userGeneratedContent.ts", "utf8");
 const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");
+const generationSource = fs.readFileSync("api/_lib/content-generation.ts", "utf8");
 const surfaceMigrationSource = fs.readFileSync(
   "apps/web/supabase/migrations/20260906190000_add_friends_user_generated_surface.sql",
   "utf8"
@@ -27,6 +28,22 @@ assert.match(apiSource, /const locked = friendTransitReadingRequestLock\(\{/u);
 assert.match(apiSource, /input\.status = "DRAFT"/u);
 assert.match(apiSource, /input\.allowQualityFallback = false/u);
 assert.match(apiSource, /requestSubjectType === "friend_transit_reading"[\s\S]{0,220}This paid reading is currently unavailable/u);
+
+assert.match(generationSource, /const friendTransitReadingGeneratedContentSchema = \{[\s\S]*sceneLock: \{ type: "null" \}[\s\S]*astrologyDrilldown: \{ type: "null" \}/u);
+assert.match(generationSource, /schema: generatedContentSchemaForInput\(input\)/u);
+assert.match(generationSource, /input_schema: generatedContentSchemaForInput\(input\)/u);
+const qualityStart = generationSource.indexOf("function validateGeneratedContentQuality");
+const qualityEnd = generationSource.indexOf("function validateAstrologyDrilldownQuality", qualityStart);
+const qualitySource = generationSource.slice(qualityStart, qualityEnd);
+assert.ok(qualitySource.indexOf("content.body.trim().length < 180") >= 0);
+assert.ok(qualitySource.indexOf("if (isFriendTransitReadingInput(input))") > qualitySource.indexOf("content.body.trim().length < 180"));
+assert.ok(qualitySource.indexOf("if (isPrimaryNatalPlacementGeneration(input))") > qualitySource.indexOf("if (isFriendTransitReadingInput(input))"));
+const validationStart = generationSource.indexOf("function validateGeneratedContentForInput");
+const validationEnd = generationSource.indexOf("function parseResponseJson", validationStart);
+const validationSource = generationSource.slice(validationStart, validationEnd);
+assert.ok(validationSource.indexOf("validateGeneratedContentQuality(content, input)") >= 0);
+assert.ok(validationSource.indexOf("if (isFriendTransitReadingInput(input))") > validationSource.indexOf("validateGeneratedContentQuality(content, input)"));
+assert.ok(validationSource.indexOf("validateAstrologyDrilldownQuality(content)") > validationSource.indexOf("if (isFriendTransitReadingInput(input))"));
 assert.match(
   surfaceMigrationSource,
   /user_generated_interpretations_surface_check[\s\S]{0,260}'friends'/u,
