@@ -24,12 +24,13 @@ jobs:
           python - <<'PY'
           from pathlib import Path
 
-          path = Path('api/_lib/content-generation.ts')
+          path = Path("api/_lib/content-generation.ts")
           source = path.read_text()
 
-          schema_marker = 'const bannedUserFacingPhrases = ['
-          assert schema_marker in source
-          if 'const friendTransitReadingGeneratedContentSchema = {' not in source:
+          schema_marker = "const bannedUserFacingPhrases = ["
+          if schema_marker not in source:
+              raise RuntimeError("schema insertion marker missing")
+          if "const friendTransitReadingGeneratedContentSchema = {" not in source:
               friend_schema = '''const friendTransitReadingGeneratedContentSchema = {
             type: "object",
             additionalProperties: false,
@@ -68,98 +69,90 @@ jobs:
           '''
               source = source.replace(schema_marker, friend_schema + schema_marker, 1)
 
-          old_openai = '          schema: generatedContentSchema\n'
-          assert old_openai in source
-          source = source.replace(old_openai, '          schema: generatedContentSchemaForInput(input)\n', 1)
+          if "schema: generatedContentSchemaForInput(input)" not in source:
+              needle = "schema: generatedContentSchema"
+              if needle not in source:
+                  raise RuntimeError("OpenAI writer schema marker missing")
+              source = source.replace(needle, "schema: generatedContentSchemaForInput(input)", 1)
 
-          old_claude = '            input_schema: generatedContentSchema\n'
-          assert old_claude in source
-          source = source.replace(old_claude, '            input_schema: generatedContentSchemaForInput(input)\n', 1)
+          if "input_schema: generatedContentSchemaForInput(input)" not in source:
+              needle = "input_schema: generatedContentSchema"
+              if needle not in source:
+                  raise RuntimeError("Claude writer schema marker missing")
+              source = source.replace(needle, "input_schema: generatedContentSchemaForInput(input)", 1)
 
-          body_gate = '''  if (content.body.trim().length < 180) {
+          quality_start = source.index("function validateGeneratedContentQuality")
+          quality_end = source.index("function validateAstrologyDrilldownQuality", quality_start)
+          quality = source[quality_start:quality_end]
+          if "if (isFriendTransitReadingInput(input)) {\n    return;\n  }" not in quality:
+              body_gate = '''  if (content.body.trim().length < 180) {
             throw new Error("Generated body is too thin for editorial review.");
           }
-
-          if (isPrimaryNatalPlacementGeneration(input)) {'''
-          assert body_gate in source
-          source = source.replace(body_gate, '''  if (content.body.trim().length < 180) {
-            throw new Error("Generated body is too thin for editorial review.");
-          }
-
-          if (isFriendTransitReadingInput(input)) {
-            return;
-          }
-
-          if (isPrimaryNatalPlacementGeneration(input)) {''', 1)
-
-          old_validation = '''function validateGeneratedContentForInput(content: GeneratedContent, input: GenerateContentInput) {
-            validateGeneratedContentQuality(content, input);
-            validateAstrologyDrilldownQuality(content);
-
-            if (isFriendTransitReadingInput(input)) {
-              const brief = friendTransitReadingBriefFromFacts(input.facts);
-              const expectedHeadline = stringValue(input.headline) || `What's going on with ${brief.friendName} right now?`;
-              const result = validateFriendTransitReadingDraft({ draft: content, brief, expectedHeadline });
-              if (!result.passed) {
-                hardEditorialViolation(
-                  result.issues.map((issue) => issue.code),
-                  `Generated Friends transit reading failed fact lock: ${result.issues.map((issue) => issue.message).join(" ")}`
-                );
-              }
-              return;
-            }
-
-            if (isNatalAspectGenerationContext(input)) {'''
-          assert old_validation in source
-          new_validation = '''function validateGeneratedContentForInput(content: GeneratedContent, input: GenerateContentInput) {
-            validateGeneratedContentQuality(content, input);
-
-            if (isFriendTransitReadingInput(input)) {
-              const brief = friendTransitReadingBriefFromFacts(input.facts);
-              const expectedHeadline = stringValue(input.headline) || `What's going on with ${brief.friendName} right now?`;
-              const result = validateFriendTransitReadingDraft({ draft: content, brief, expectedHeadline });
-              if (!result.passed) {
-                hardEditorialViolation(
-                  result.issues.map((issue) => issue.code),
-                  `Generated Friends transit reading failed fact lock: ${result.issues.map((issue) => issue.message).join(" ")}`
-                );
-              }
-              return;
-            }
-
-            validateAstrologyDrilldownQuality(content);
-
-            if (isNatalAspectGenerationContext(input)) {'''
-          source = source.replace(old_validation, new_validation, 1)
-          path.write_text(source)
-
-          test_path = Path('scripts/test-friend-transit-reading-request-render.mjs')
-          test_source = test_path.read_text()
-          if 'const generationSource = fs.readFileSync("api/_lib/content-generation.ts"' not in test_source:
-              test_source = test_source.replace(
-                  'const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");\n',
-                  'const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");\nconst generationSource = fs.readFileSync("api/_lib/content-generation.ts", "utf8");\n',
+          '''
+              if body_gate not in quality:
+                  body_gate = '''  if (content.body.trim().length < 180) {
+    throw new Error("Generated body is too thin for editorial review.");
+  }
+'''
+              if body_gate not in quality:
+                  raise RuntimeError("Friends quality-return insertion marker missing")
+              quality = quality.replace(
+                  body_gate,
+                  body_gate + '''
+  if (isFriendTransitReadingInput(input)) {
+    return;
+  }
+''',
                   1
               )
-          marker = 'assert.match(apiSource, /requestSubjectType === "friend_transit_reading"[\\s\\S]{0,220}This paid reading is currently unavailable/u);\n'
-          assert marker in test_source
-          additions = r'''
+              source = source[:quality_start] + quality + source[quality_end:]
+
+          validation_start = source.index("function validateGeneratedContentForInput")
+          validation_end = source.index("function parseResponseJson", validation_start)
+          validation = source[validation_start:validation_end]
+          validation = validation.replace("  validateAstrologyDrilldownQuality(content);\n\n", "", 1)
+          if "validateAstrologyDrilldownQuality(content);" not in validation:
+              natal_marker = "  if (isNatalAspectGenerationContext(input)) {"
+              if natal_marker not in validation:
+                  raise RuntimeError("drilldown reinsertion marker missing")
+              validation = validation.replace(
+                  natal_marker,
+                  "  validateAstrologyDrilldownQuality(content);\n\n" + natal_marker,
+                  1
+              )
+          source = source[:validation_start] + validation + source[validation_end:]
+          path.write_text(source)
+
+          test_path = Path("scripts/test-friend-transit-reading-request-render.mjs")
+          test_source = test_path.read_text()
+          generation_decl = 'const generationSource = fs.readFileSync("api/_lib/content-generation.ts", "utf8");\n'
+          if generation_decl not in test_source:
+              api_decl = 'const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");\n'
+              if api_decl not in test_source:
+                  raise RuntimeError("test api source marker missing")
+              test_source = test_source.replace(api_decl, api_decl + generation_decl, 1)
+
+          if "friendTransitReadingGeneratedContentSchema" not in test_source:
+              marker = 'assert.match(apiSource, /requestSubjectType === "friend_transit_reading"[\\s\\S]{0,220}This paid reading is currently unavailable/u);\n'
+              if marker not in test_source:
+                  raise RuntimeError("test assertion insertion marker missing")
+              additions = r'''
           assert.match(generationSource, /const friendTransitReadingGeneratedContentSchema = \{[\s\S]*sceneLock: \{ type: "null" \}[\s\S]*astrologyDrilldown: \{ type: "null" \}/u);
           assert.match(generationSource, /schema: generatedContentSchemaForInput\(input\)/u);
           assert.match(generationSource, /input_schema: generatedContentSchemaForInput\(input\)/u);
-          assert.match(
-            generationSource,
-            /content\.body\.trim\(\)\.length < 180[\s\S]{0,260}isFriendTransitReadingInput\(input\)[\s\S]{0,80}return;[\s\S]{0,120}isPrimaryNatalPlacementGeneration/u,
-            "Friends readings must keep baseline prose checks but skip article-only section requirements."
-          );
-          const friendValidationStart = generationSource.indexOf("function validateGeneratedContentForInput");
-          const friendValidationEnd = generationSource.indexOf("function parseResponseJson", friendValidationStart);
-          const friendValidationSource = generationSource.slice(friendValidationStart, friendValidationEnd);
-          assert.ok(friendValidationSource.indexOf("validateGeneratedContentQuality(content, input)") >= 0);
-          assert.ok(friendValidationSource.indexOf("if (isFriendTransitReadingInput(input))") > friendValidationSource.indexOf("validateGeneratedContentQuality(content, input)"));
-          assert.ok(friendValidationSource.indexOf("validateAstrologyDrilldownQuality(content)") > friendValidationSource.indexOf("if (isFriendTransitReadingInput(input))"));
+          const qualityStart = generationSource.indexOf("function validateGeneratedContentQuality");
+          const qualityEnd = generationSource.indexOf("function validateAstrologyDrilldownQuality", qualityStart);
+          const qualitySource = generationSource.slice(qualityStart, qualityEnd);
+          assert.ok(qualitySource.indexOf("content.body.trim().length < 180") >= 0);
+          assert.ok(qualitySource.indexOf("if (isFriendTransitReadingInput(input))") > qualitySource.indexOf("content.body.trim().length < 180"));
+          assert.ok(qualitySource.indexOf("if (isPrimaryNatalPlacementGeneration(input))") > qualitySource.indexOf("if (isFriendTransitReadingInput(input))"));
+          const validationStart = generationSource.indexOf("function validateGeneratedContentForInput");
+          const validationEnd = generationSource.indexOf("function parseResponseJson", validationStart);
+          const validationSource = generationSource.slice(validationStart, validationEnd);
+          assert.ok(validationSource.indexOf("validateGeneratedContentQuality(content, input)") >= 0);
+          assert.ok(validationSource.indexOf("if (isFriendTransitReadingInput(input))") > validationSource.indexOf("validateGeneratedContentQuality(content, input)"));
+          assert.ok(validationSource.indexOf("validateAstrologyDrilldownQuality(content)") > validationSource.indexOf("if (isFriendTransitReadingInput(input))"));
           '''
-          if 'friendTransitReadingGeneratedContentSchema' not in test_source:
               test_source = test_source.replace(marker, marker + additions, 1)
           test_path.write_text(test_source)
           PY
