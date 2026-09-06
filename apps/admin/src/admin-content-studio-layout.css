@@ -316,12 +316,11 @@
 }
 
 .admin-dashboard .admin-editor-panel .admin-editor-toolbar h2 {
-  font-size: var(--admin-type-22);
+  font-size: var(--admin-type-20);
   letter-spacing: var(--tracking-tight);
   line-height: var(--leading-title);
   margin: var(--admin-space-xs) 0 var(--admin-space-md);
   overflow-wrap: anywhere;
-  text-wrap: balance;
 }
 
 .admin-dashboard .admin-editor-panel .admin-editor-toolbar-actions {
@@ -330,7 +329,7 @@
   flex-wrap: wrap;
   gap: var(--admin-space-md);
   justify-content: flex-end;
-  max-width: 45%;
+  max-width: 50%;
 }
 
 /* Save state on its own line, then one right-aligned row of actions that
