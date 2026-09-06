@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.sextile.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "0d7cea38ebdbed66be4ca729e3ffbe0450f01f0dd150644b8c963917c18877ef",
+  "summary": "A direct ask may cost less than another week spent resenting that nobody volunteered.",
+  "body": "A direct ask may cost less than another week spent resenting that nobody volunteered. When Mars sextiles Chiron, action gives you a manageable way to interrupt a pattern of waiting, overaccommodating, or defending everyone except yourself. Ask for the change, decline the extra work, make the appointment, or take the step you keep wishing somebody else would make easier for you. The move does not need to be dramatic. It only needs to give your own need the same practical response you would give someone else's.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

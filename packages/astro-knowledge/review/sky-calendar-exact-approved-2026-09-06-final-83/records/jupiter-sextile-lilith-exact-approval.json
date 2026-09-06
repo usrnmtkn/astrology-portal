@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.sextile.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "19d21983dece2088f0f896436b2aced39704969e9c9c0c4f4df8ce7b1dcdc6c2",
+  "summary": "An option you expected people to dismiss may get more support than you thought.",
+  "body": "An option you expected people to dismiss may get more support than you thought. When Jupiter sextiles Lilith, money, education, travel, publicity, an introduction, or help from the right person can make an unconventional choice much more practical. The surprise may be realizing that the people who taught you to expect rejection were never the only people whose opinion mattered. You do not have to keep making the idea smaller just because someone else would not choose it. Let it grow as far as the support and evidence justify, then see what becomes possible.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

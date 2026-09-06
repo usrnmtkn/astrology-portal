@@ -3,8 +3,8 @@
   "status": "index-only. No content moved, rewritten, or approved.",
   "deterministic": "This payload contains no timestamps. Identical inputs produce a byte-identical file.",
   "totals": {
-    "canonicalObjects": 14713,
-    "sourceRecordsIndexed": 25628,
+    "canonicalObjects": 14796,
+    "sourceRecordsIndexed": 25711,
     "objectsFoundInMoreThanOneStore": 2048,
     "unresolved": 0,
     "skipped": 55,
@@ -14,7 +14,7 @@
     "ll-matrix-v13": 1014,
     "v13-locked": 301,
     "phrasebank": 7064,
-    "astro-knowledge/data": 3272,
+    "astro-knowledge/data": 3355,
     "authored-placements": 314,
     "daily-glance-config": 31,
     "matrix-v9": 3430,
@@ -29,7 +29,7 @@
     "machine-proposal": 725,
     "owner-approved-prose": 9513,
     "unverified": 7748,
-    "factual-evidence": 7642
+    "factual-evidence": 7725
   },
   "byKind": {
     "aspect-generic": {
@@ -108,10 +108,10 @@
       }
     },
     "document": {
-      "objects": 457,
-      "records": 457,
+      "objects": 540,
+      "records": 540,
       "stores": {
-        "astro-knowledge/data": 457
+        "astro-knowledge/data": 540
       }
     },
     "phrasebank-entry": {
@@ -94942,6 +94942,27 @@
       ]
     },
     {
+      "id": "doc/chiron_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "chiron-conjunction-lilith",
+          "rowKey": "chiron-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/chiron-conjunction-lilith.json",
+          "sourceSha256": "b24b56e68658e6459b511aa67d3edec82d8f4d4a7eabb7da92f822c0219191e7"
+        }
+      ]
+    },
+    {
       "id": "doc/chiron_conjunction_north_node",
       "kind": "document",
       "sources": [
@@ -95047,6 +95068,27 @@
       ]
     },
     {
+      "id": "doc/chiron_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "chiron-opposition-lilith",
+          "rowKey": "chiron-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/chiron-opposition-lilith.json",
+          "sourceSha256": "b495bda4fca278f5c2f25a1391d89ded4445a999fd04ff38bf94c610824b1daa"
+        }
+      ]
+    },
+    {
       "id": "doc/chiron_opposition_north_node",
       "kind": "document",
       "sources": [
@@ -95068,6 +95110,27 @@
       ]
     },
     {
+      "id": "doc/chiron_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "chiron-sextile-lilith",
+          "rowKey": "chiron-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/chiron-sextile-lilith.json",
+          "sourceSha256": "67e63fe1e49337f80fb092f1e6e5a31ea3dbccddb9bd403ec0b227fba880de26"
+        }
+      ]
+    },
+    {
       "id": "doc/chiron_sextile_north_node",
       "kind": "document",
       "sources": [
@@ -95085,6 +95148,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/chiron-sextile-north-node.json",
           "sourceSha256": "d5d7f16cd5c3fe382bde67651327e18665e37d1b37db291c1003f6c395c1e1c2"
+        }
+      ]
+    },
+    {
+      "id": "doc/chiron_square_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "chiron-square-lilith",
+          "rowKey": "chiron-square-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/chiron-square-lilith.json",
+          "sourceSha256": "d4b8f51d8ef5c411f4d084ed28f9e502cd96fc083bd11bf5fbf8478b3145af2c"
         }
       ]
     },
@@ -95557,6 +95641,48 @@
       ]
     },
     {
+      "id": "doc/jupiter_conjunction_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-conjunction-chiron",
+          "rowKey": "jupiter-conjunction-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-conjunction-chiron.json",
+          "sourceSha256": "7243a391bf52d44c2302d588a33b9b023d417c46ebb8565c7c7338f387413ee2"
+        }
+      ]
+    },
+    {
+      "id": "doc/jupiter_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-conjunction-lilith",
+          "rowKey": "jupiter-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-conjunction-lilith.json",
+          "sourceSha256": "3219a920d282485313557c85ce064e613d98f580edd48be411e43a14727178bc"
+        }
+      ]
+    },
+    {
       "id": "doc/jupiter_conjunction_neptune",
       "kind": "document",
       "sources": [
@@ -95721,6 +95847,48 @@
           },
           "path": "packages/astro-knowledge/data/pairs/jupiter-nodes.json",
           "sourceSha256": "cf72ef020537ae8e9eeca81545a4e64ec6ec5de6b37776e8898718988761818d"
+        }
+      ]
+    },
+    {
+      "id": "doc/jupiter_opposition_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-opposition-chiron",
+          "rowKey": "jupiter-opposition-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-opposition-chiron.json",
+          "sourceSha256": "edac86f085835f4efe42ec71ddd07a41f2f59c7d584eefcce0fb61a2adf83d51"
+        }
+      ]
+    },
+    {
+      "id": "doc/jupiter_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-opposition-lilith",
+          "rowKey": "jupiter-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-opposition-lilith.json",
+          "sourceSha256": "b036c5fd325a1dcfe8827a03c8b95993f78e535a48b159d6326ff3fc54fd497c"
         }
       ]
     },
@@ -95893,6 +96061,48 @@
       ]
     },
     {
+      "id": "doc/jupiter_sextile_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-sextile-chiron",
+          "rowKey": "jupiter-sextile-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-sextile-chiron.json",
+          "sourceSha256": "0efb2e81e32aaaa510bc81649c2bf19c8b1be6397fb6896c59fa1205819a7368"
+        }
+      ]
+    },
+    {
+      "id": "doc/jupiter_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-sextile-lilith",
+          "rowKey": "jupiter-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-sextile-lilith.json",
+          "sourceSha256": "d6ff128d5e3ba5316202b98d909ecc4dde98418b79d3c43b6df75517c57aba5c"
+        }
+      ]
+    },
+    {
       "id": "doc/jupiter_sextile_neptune",
       "kind": "document",
       "sources": [
@@ -95994,6 +96204,48 @@
           },
           "path": "packages/astro-knowledge/data/transits/jupiter-sextile-uranus.json",
           "sourceSha256": "291a24db729ef7e2ba85901bd1db0d556c5e0cf37c8b1eac50fda15c12391928"
+        }
+      ]
+    },
+    {
+      "id": "doc/jupiter_square_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-square-chiron",
+          "rowKey": "jupiter-square-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-square-chiron.json",
+          "sourceSha256": "3bb0d7d0b8bfd449f197d7a134a739b09150847f7b325389edb650626c0bd1fa"
+        }
+      ]
+    },
+    {
+      "id": "doc/jupiter_square_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-square-lilith",
+          "rowKey": "jupiter-square-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-square-lilith.json",
+          "sourceSha256": "acf6274c8131b8d6b62ab098426de8cf2897b6af5d11f2d6acec93021edb753d"
         }
       ]
     },
@@ -96523,6 +96775,27 @@
       ]
     },
     {
+      "id": "doc/mars_conjunction_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-conjunction-chiron",
+          "rowKey": "mars-conjunction-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-conjunction-chiron.json",
+          "sourceSha256": "863d070b8f1472352da8c28014acc9f48e997ab743341a790a128172e685c925"
+        }
+      ]
+    },
+    {
       "id": "doc/mars_conjunction_jupiter",
       "kind": "document",
       "sources": [
@@ -96540,6 +96813,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mars-conjunction-jupiter.json",
           "sourceSha256": "545875278e74829a13984c5309243b83e017ecb89d58a4e40b10b5945372a994"
+        }
+      ]
+    },
+    {
+      "id": "doc/mars_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-conjunction-lilith",
+          "rowKey": "mars-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-conjunction-lilith.json",
+          "sourceSha256": "0eadf9b48602b7629f889cda5ecf03081105f4850bba151ccba0a7746eee211a"
         }
       ]
     },
@@ -96733,6 +97027,27 @@
       ]
     },
     {
+      "id": "doc/mars_opposition_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-opposition-chiron",
+          "rowKey": "mars-opposition-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-opposition-chiron.json",
+          "sourceSha256": "7d7aaf3653986a288dcbbc2f94f93095c9c667866daa6bc5e0c289a827f12c24"
+        }
+      ]
+    },
+    {
       "id": "doc/mars_opposition_jupiter",
       "kind": "document",
       "sources": [
@@ -96750,6 +97065,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mars-opposition-jupiter.json",
           "sourceSha256": "f3c2ef17a69ea93a9bd75ab636c14a8568483854ec32e4fc513f49624fd79bfb"
+        }
+      ]
+    },
+    {
+      "id": "doc/mars_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-opposition-lilith",
+          "rowKey": "mars-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-opposition-lilith.json",
+          "sourceSha256": "9d6c9bedc89654e938b5356e5797c1d04e34bafbc88c2dd44e96ed08bd376777"
         }
       ]
     },
@@ -96901,6 +97237,27 @@
       ]
     },
     {
+      "id": "doc/mars_sextile_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-sextile-chiron",
+          "rowKey": "mars-sextile-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-sextile-chiron.json",
+          "sourceSha256": "c6f4ddef8ab65ab8b7c0cbdd5049cf828ed5a29f2a2d659babcd15e8217d4919"
+        }
+      ]
+    },
+    {
       "id": "doc/mars_sextile_jupiter",
       "kind": "document",
       "sources": [
@@ -96918,6 +97275,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mars-sextile-jupiter.json",
           "sourceSha256": "095d923b5551fbd4730f298ef0098c6524e90acc33de7b35516003bf4c9221d8"
+        }
+      ]
+    },
+    {
+      "id": "doc/mars_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-sextile-lilith",
+          "rowKey": "mars-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-sextile-lilith.json",
+          "sourceSha256": "86d4543c0f67283065f014175b6d92902a02185b5148240ac6c633bfd672e091"
         }
       ]
     },
@@ -97027,6 +97405,27 @@
       ]
     },
     {
+      "id": "doc/mars_square_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-square-chiron",
+          "rowKey": "mars-square-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-square-chiron.json",
+          "sourceSha256": "5c1c0c9c2fceb947e41e081e15c63764633df425e5bcaecfc4d2f520cbcd922d"
+        }
+      ]
+    },
+    {
       "id": "doc/mars_square_jupiter",
       "kind": "document",
       "sources": [
@@ -97044,6 +97443,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mars-square-jupiter.json",
           "sourceSha256": "b60fd3319d29c9d37c60a73bc3d9f2e8f9c929b17778fb926f664311f4b4ad69"
+        }
+      ]
+    },
+    {
+      "id": "doc/mars_square_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-square-lilith",
+          "rowKey": "mars-square-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-square-lilith.json",
+          "sourceSha256": "b2fe9c17058b0afacd8904f7073ab46ccbd9bdb5011da538b9f271c0e4ea73d6"
         }
       ]
     },
@@ -97363,6 +97783,27 @@
       ]
     },
     {
+      "id": "doc/mercury_conjunction_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-conjunction-chiron",
+          "rowKey": "mercury-conjunction-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-conjunction-chiron.json",
+          "sourceSha256": "25b28000b47c0306701ed284699abfc8396ab4780eafb8af44bfe2e224f8f65a"
+        }
+      ]
+    },
+    {
       "id": "doc/mercury_conjunction_jupiter",
       "kind": "document",
       "sources": [
@@ -97380,6 +97821,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mercury-conjunction-jupiter.json",
           "sourceSha256": "c0db77e4de154a87474642f616fd104b2ef23ffef8110969c52a187e0242646b"
+        }
+      ]
+    },
+    {
+      "id": "doc/mercury_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-conjunction-lilith",
+          "rowKey": "mercury-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-conjunction-lilith.json",
+          "sourceSha256": "21a75410f9e412d3736eaf0ea99eb58fe995e32fb9821ff68764aa216163e38f"
         }
       ]
     },
@@ -97636,6 +98098,27 @@
       ]
     },
     {
+      "id": "doc/mercury_opposition_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-opposition-chiron",
+          "rowKey": "mercury-opposition-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-opposition-chiron.json",
+          "sourceSha256": "3b03ab4c9f3a441f9c04d09d10f57dfce8484100394675d0e12a0e226e15af7d"
+        }
+      ]
+    },
+    {
       "id": "doc/mercury_opposition_jupiter",
       "kind": "document",
       "sources": [
@@ -97653,6 +98136,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mercury-opposition-jupiter.json",
           "sourceSha256": "266af1f276fc9ceb7a5c2a65e363028cbdb7df743a387f7bc81133cce48b7ee0"
+        }
+      ]
+    },
+    {
+      "id": "doc/mercury_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-opposition-lilith",
+          "rowKey": "mercury-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-opposition-lilith.json",
+          "sourceSha256": "b4c3c26fa7f80dfafa890c16924e3017b264df552ab6f4a604d5da2b4f15cd57"
         }
       ]
     },
@@ -97825,6 +98329,27 @@
       ]
     },
     {
+      "id": "doc/mercury_sextile_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-sextile-chiron",
+          "rowKey": "mercury-sextile-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-sextile-chiron.json",
+          "sourceSha256": "65114954264df52ce27edaea3c5c8383fae0f6908fb48964df94e57295c36311"
+        }
+      ]
+    },
+    {
       "id": "doc/mercury_sextile_jupiter",
       "kind": "document",
       "sources": [
@@ -97842,6 +98367,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mercury-sextile-jupiter.json",
           "sourceSha256": "59d0d053a8d85f3e8594a1046106f7cbfc4a5e2fc007e7c55a2d63cdbf75d8bc"
+        }
+      ]
+    },
+    {
+      "id": "doc/mercury_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-sextile-lilith",
+          "rowKey": "mercury-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-sextile-lilith.json",
+          "sourceSha256": "173ed88a69cbdd4f092a4362c06b8387bab299e1a99bfb84c36213fd74d21f9d"
         }
       ]
     },
@@ -97993,6 +98539,27 @@
       ]
     },
     {
+      "id": "doc/mercury_square_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-square-chiron",
+          "rowKey": "mercury-square-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-square-chiron.json",
+          "sourceSha256": "32309ec4a935feea36caf4ff5b783bffe3194e557196038701ad5e71ccc2e05e"
+        }
+      ]
+    },
+    {
       "id": "doc/mercury_square_jupiter",
       "kind": "document",
       "sources": [
@@ -98010,6 +98577,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mercury-square-jupiter.json",
           "sourceSha256": "9f251258bc037bd31ac630d5daf197df6e65c85d327c3362b8dbf4ba94bd695d"
+        }
+      ]
+    },
+    {
+      "id": "doc/mercury_square_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-square-lilith",
+          "rowKey": "mercury-square-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-square-lilith.json",
+          "sourceSha256": "cae9608c267c01301de95893c226a51be30e3425364f4e34d07d94a6ceae06dd"
         }
       ]
     },
@@ -98434,6 +99022,27 @@
       ]
     },
     {
+      "id": "doc/moon_conjunction_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-conjunction-chiron",
+          "rowKey": "moon-conjunction-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-conjunction-chiron.json",
+          "sourceSha256": "cde8f6f071994105c64f8686e8d69207536b6117a1a933d55a57293c71963596"
+        }
+      ]
+    },
+    {
       "id": "doc/moon_conjunction_jupiter",
       "kind": "document",
       "sources": [
@@ -98451,6 +99060,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/moon-conjunction-jupiter.json",
           "sourceSha256": "6d2f524580e77ff19774e8481a3f151be2f738b5ffea1bac9a65d242886f1f71"
+        }
+      ]
+    },
+    {
+      "id": "doc/moon_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-conjunction-lilith",
+          "rowKey": "moon-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-conjunction-lilith.json",
+          "sourceSha256": "16c39e9bab6958ad0a1a6ba82419990005f54f9a22056f7486ccef21a94efb1e"
         }
       ]
     },
@@ -98770,6 +99400,27 @@
       ]
     },
     {
+      "id": "doc/moon_opposition_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-opposition-chiron",
+          "rowKey": "moon-opposition-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-opposition-chiron.json",
+          "sourceSha256": "02912a20fc2de0189ee6a7de49c9cf3a316a41217648110ea66c246f5b67e1c8"
+        }
+      ]
+    },
+    {
       "id": "doc/moon_opposition_jupiter",
       "kind": "document",
       "sources": [
@@ -98787,6 +99438,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/moon-opposition-jupiter.json",
           "sourceSha256": "3d7c766b298fff2bec79d0c6b314dc5b6c14a325966ff6e68c26452141caa8c3"
+        }
+      ]
+    },
+    {
+      "id": "doc/moon_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-opposition-lilith",
+          "rowKey": "moon-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-opposition-lilith.json",
+          "sourceSha256": "fefc8cd0974612f1748626cf58184ca6730410a09f24473328c4099f4e4f8898"
         }
       ]
     },
@@ -99022,6 +99694,27 @@
       ]
     },
     {
+      "id": "doc/moon_sextile_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-sextile-chiron",
+          "rowKey": "moon-sextile-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-sextile-chiron.json",
+          "sourceSha256": "34cc1ed58831d70d44e2ffd6c6a3863e787f139365ff6d66815bb98b44ba572a"
+        }
+      ]
+    },
+    {
       "id": "doc/moon_sextile_jupiter",
       "kind": "document",
       "sources": [
@@ -99039,6 +99732,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/moon-sextile-jupiter.json",
           "sourceSha256": "649651aa4b280408d35eeb1308fa29989300ec01cbafb4d301918cb9cc6039ef"
+        }
+      ]
+    },
+    {
+      "id": "doc/moon_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-sextile-lilith",
+          "rowKey": "moon-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-sextile-lilith.json",
+          "sourceSha256": "b27b6b993212574eafe68908d9cb9225e72993647ee8acfb9056c4fbc2d72162"
         }
       ]
     },
@@ -99211,6 +99925,27 @@
       ]
     },
     {
+      "id": "doc/moon_square_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-square-chiron",
+          "rowKey": "moon-square-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-square-chiron.json",
+          "sourceSha256": "34245f13f84a2c52d8ca385cdb3e0debc9ea3c4521a92ac879359b1e149dc1ad"
+        }
+      ]
+    },
+    {
       "id": "doc/moon_square_jupiter",
       "kind": "document",
       "sources": [
@@ -99228,6 +99963,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/moon-square-jupiter.json",
           "sourceSha256": "fc27a7e0a594c7ae87dd69017a70eb5b611380fe8d986fce5503727c3052a56b"
+        }
+      ]
+    },
+    {
+      "id": "doc/moon_square_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-square-lilith",
+          "rowKey": "moon-square-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-square-lilith.json",
+          "sourceSha256": "ef9a7332b356dc4a7b12b0f858afe58f5b84209819075e872a4c6957ce9f3f04"
         }
       ]
     },
@@ -99759,6 +100515,48 @@
       ]
     },
     {
+      "id": "doc/neptune_conjunction_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-conjunction-chiron",
+          "rowKey": "neptune-conjunction-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-conjunction-chiron.json",
+          "sourceSha256": "a46353e9c649338a023e674bd1d194b2eb87e0fa6d3ff4e0c49257bc65787d8c"
+        }
+      ]
+    },
+    {
+      "id": "doc/neptune_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-conjunction-lilith",
+          "rowKey": "neptune-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-conjunction-lilith.json",
+          "sourceSha256": "8d941fd3b349386ecdaf264a273464f065e17fdd2490388a3a754a62a6866377"
+        }
+      ]
+    },
+    {
       "id": "doc/neptune_conjunction_north_node",
       "kind": "document",
       "sources": [
@@ -99843,6 +100641,48 @@
       ]
     },
     {
+      "id": "doc/neptune_opposition_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-opposition-chiron",
+          "rowKey": "neptune-opposition-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-opposition-chiron.json",
+          "sourceSha256": "18e0015c4b3fda9e9f3dac33b1b8172e89b8cd03a9e5a2e752824c911328c09c"
+        }
+      ]
+    },
+    {
+      "id": "doc/neptune_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-opposition-lilith",
+          "rowKey": "neptune-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-opposition-lilith.json",
+          "sourceSha256": "8095db06c5a7e13517a5879ade8a8990ed42c09b4c926ad050fbae8206979b6c"
+        }
+      ]
+    },
+    {
       "id": "doc/neptune_opposition_north_node",
       "kind": "document",
       "sources": [
@@ -99906,6 +100746,48 @@
       ]
     },
     {
+      "id": "doc/neptune_sextile_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-sextile-chiron",
+          "rowKey": "neptune-sextile-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-sextile-chiron.json",
+          "sourceSha256": "e2d1dee4d64725c1bf40bc1733dd98f92c4c768abfb09d362098030e8b4ca510"
+        }
+      ]
+    },
+    {
+      "id": "doc/neptune_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-sextile-lilith",
+          "rowKey": "neptune-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-sextile-lilith.json",
+          "sourceSha256": "3d9fa03f7f0215875be4af6fc8f9cef6acb009099255dfd61f7d198209c20e23"
+        }
+      ]
+    },
+    {
       "id": "doc/neptune_sextile_north_node",
       "kind": "document",
       "sources": [
@@ -99944,6 +100826,48 @@
           },
           "path": "packages/astro-knowledge/data/transits/neptune-sextile-pluto.json",
           "sourceSha256": "a87e5a1cfcd61e55b68465e80e7e094a75b329ec7f92462ada3474a5ac05f458"
+        }
+      ]
+    },
+    {
+      "id": "doc/neptune_square_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-square-chiron",
+          "rowKey": "neptune-square-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-square-chiron.json",
+          "sourceSha256": "3f2c020ccb1afffa2d32142516f86e9a67c21230487c47dfed40d8a1c4458077"
+        }
+      ]
+    },
+    {
+      "id": "doc/neptune_square_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-square-lilith",
+          "rowKey": "neptune-square-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-square-lilith.json",
+          "sourceSha256": "a692a459a2a07235f9b0520f24ae20c5537c4ae76f0d78f7bed3b909c86c2deb"
         }
       ]
     },
@@ -100284,6 +101208,48 @@
       ]
     },
     {
+      "id": "doc/pluto_conjunction_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-conjunction-chiron",
+          "rowKey": "pluto-conjunction-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-conjunction-chiron.json",
+          "sourceSha256": "1965c4520ae02120583b5d6223944a6f810ed813adc4d20a2d5983e9866e6b73"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-conjunction-lilith",
+          "rowKey": "pluto-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-conjunction-lilith.json",
+          "sourceSha256": "7df298838d4937b42246c8b4b276a463e469f76e507bbec7fff60a5ae0947367"
+        }
+      ]
+    },
+    {
       "id": "doc/pluto_conjunction_north_node",
       "kind": "document",
       "sources": [
@@ -100347,6 +101313,48 @@
       ]
     },
     {
+      "id": "doc/pluto_opposition_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-opposition-chiron",
+          "rowKey": "pluto-opposition-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-opposition-chiron.json",
+          "sourceSha256": "5e7e4943355372d5a894e4a861fbd17bee41b0a6f7967b63edb7ea02f5ff672b"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-opposition-lilith",
+          "rowKey": "pluto-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-opposition-lilith.json",
+          "sourceSha256": "6d6faed991297ea775bdd900bc58fc2f0bb4d2d2d371ee53daa776238251784e"
+        }
+      ]
+    },
+    {
       "id": "doc/pluto_opposition_north_node",
       "kind": "document",
       "sources": [
@@ -100368,6 +101376,48 @@
       ]
     },
     {
+      "id": "doc/pluto_sextile_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-sextile-chiron",
+          "rowKey": "pluto-sextile-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-sextile-chiron.json",
+          "sourceSha256": "dd384b88e41e64a82eea01202bc5823d590950803fafbe8d7af33de3b01d68a6"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-sextile-lilith",
+          "rowKey": "pluto-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-sextile-lilith.json",
+          "sourceSha256": "1e6d12c5469f7148d3bfda3579b77e6a6e1863da1e53c43e0e0ca335c8dd7952"
+        }
+      ]
+    },
+    {
       "id": "doc/pluto_sextile_north_node",
       "kind": "document",
       "sources": [
@@ -100385,6 +101435,48 @@
           },
           "path": "packages/astro-knowledge/data/transits/pluto-sextile-north-node.json",
           "sourceSha256": "0152e8b1713d4addf68d954325a86037f8c9827f4eafc739c4a3d1dbd21e8d14"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_square_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-square-chiron",
+          "rowKey": "pluto-square-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-square-chiron.json",
+          "sourceSha256": "d5cb91a239eec68856182dfa794262781a0faf3069de1809c58d2591cf3e7d73"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_square_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-square-lilith",
+          "rowKey": "pluto-square-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-square-lilith.json",
+          "sourceSha256": "c6ad4ec70b32268174777d808e23686861c0b628063257ae1b5a83ed202bff41"
         }
       ]
     },
@@ -100725,6 +101817,48 @@
       ]
     },
     {
+      "id": "doc/saturn_conjunction_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-conjunction-chiron",
+          "rowKey": "saturn-conjunction-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-conjunction-chiron.json",
+          "sourceSha256": "09eeba1066d96b62560063ff40db1e41e2323eddb828781e012bc09024b5b30f"
+        }
+      ]
+    },
+    {
+      "id": "doc/saturn_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-conjunction-lilith",
+          "rowKey": "saturn-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-conjunction-lilith.json",
+          "sourceSha256": "0b58a523144149cd9de35859c17231d67bd8d6d1597f6812fc769cdf253b7529"
+        }
+      ]
+    },
+    {
       "id": "doc/saturn_conjunction_neptune",
       "kind": "document",
       "sources": [
@@ -100872,6 +102006,48 @@
       ]
     },
     {
+      "id": "doc/saturn_opposition_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-opposition-chiron",
+          "rowKey": "saturn-opposition-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-opposition-chiron.json",
+          "sourceSha256": "67cb7382d5984b58854b6eec0cf49ed8f510e55dec097bc11716facf67d9e5f3"
+        }
+      ]
+    },
+    {
+      "id": "doc/saturn_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-opposition-lilith",
+          "rowKey": "saturn-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-opposition-lilith.json",
+          "sourceSha256": "7b62ec74b37971f898a9143fc7d15f03382957c7aeecd426ef406659bbb02691"
+        }
+      ]
+    },
+    {
       "id": "doc/saturn_opposition_neptune",
       "kind": "document",
       "sources": [
@@ -100998,6 +102174,48 @@
       ]
     },
     {
+      "id": "doc/saturn_sextile_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-sextile-chiron",
+          "rowKey": "saturn-sextile-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-sextile-chiron.json",
+          "sourceSha256": "2c3c10b25d3093b1ff6f6c35de666bad146d8d17eb472d1e02720433be0ae257"
+        }
+      ]
+    },
+    {
+      "id": "doc/saturn_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-sextile-lilith",
+          "rowKey": "saturn-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-sextile-lilith.json",
+          "sourceSha256": "5038809b31828aa26b9d549086b333aee88be2eb131df4e206b2c991d58cc305"
+        }
+      ]
+    },
+    {
       "id": "doc/saturn_sextile_neptune",
       "kind": "document",
       "sources": [
@@ -101078,6 +102296,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/saturn-sextile-uranus.json",
           "sourceSha256": "5721fa16a9fa9dad1fa24f8bb9d83c8dc063f8585240e703eb2e83027816bd0c"
+        }
+      ]
+    },
+    {
+      "id": "doc/saturn_square_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-square-chiron",
+          "rowKey": "saturn-square-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-square-chiron.json",
+          "sourceSha256": "9d075cb0d72c633570c97589f42c4d849ee9b69fa0b8eb265c00f8d964f7e3ef"
         }
       ]
     },
@@ -102493,6 +103732,27 @@
       ]
     },
     {
+      "id": "doc/sun_conjunction_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-conjunction-chiron",
+          "rowKey": "sun-conjunction-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-conjunction-chiron.json",
+          "sourceSha256": "46b3070fd0d2b5fdc4494c25b053857c09e73fb584b8c403c69079713127bca3"
+        }
+      ]
+    },
+    {
       "id": "doc/sun_conjunction_jupiter",
       "kind": "document",
       "sources": [
@@ -102510,6 +103770,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/sun-conjunction-jupiter.json",
           "sourceSha256": "5236213e1a3c3228017ab11567223701506b96bb5bb3aedf409c69568bceff66"
+        }
+      ]
+    },
+    {
+      "id": "doc/sun_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-conjunction-lilith",
+          "rowKey": "sun-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-conjunction-lilith.json",
+          "sourceSha256": "76a401e494d8ee5a049d686b155c7ad4a47e25ec39dff445358c0eeb97570acb"
         }
       ]
     },
@@ -102850,6 +104131,27 @@
       ]
     },
     {
+      "id": "doc/sun_opposition_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-opposition-chiron",
+          "rowKey": "sun-opposition-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-opposition-chiron.json",
+          "sourceSha256": "7a20527975d7404b33a0b5aaf652273ebe1a8a2c53a1927ccf00da7048a3fe6c"
+        }
+      ]
+    },
+    {
       "id": "doc/sun_opposition_jupiter",
       "kind": "document",
       "sources": [
@@ -102867,6 +104169,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/sun-opposition-jupiter.json",
           "sourceSha256": "271d9442c4b2cb26696308e3fd3c3e6c662b6dd8e247ba463a3e4b5f5ca74e26"
+        }
+      ]
+    },
+    {
+      "id": "doc/sun_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-opposition-lilith",
+          "rowKey": "sun-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-opposition-lilith.json",
+          "sourceSha256": "e11297c97d91f4597b84bab57df9ae9eb4cb7b8d213730f6fe324317ba8f16f4"
         }
       ]
     },
@@ -103060,6 +104383,27 @@
       ]
     },
     {
+      "id": "doc/sun_sextile_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-sextile-chiron",
+          "rowKey": "sun-sextile-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-sextile-chiron.json",
+          "sourceSha256": "87709525c2297c880af03befc93f04cb06494ce5040659cf96b80ea8ce049b21"
+        }
+      ]
+    },
+    {
       "id": "doc/sun_sextile_jupiter",
       "kind": "document",
       "sources": [
@@ -103077,6 +104421,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/sun-sextile-jupiter.json",
           "sourceSha256": "a60fd362700675523afd8a319194d72a0e839b76584f93be3c2ba92e21a0fec0"
+        }
+      ]
+    },
+    {
+      "id": "doc/sun_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-sextile-lilith",
+          "rowKey": "sun-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-sextile-lilith.json",
+          "sourceSha256": "74a4f904a50dd34586f1614abfc7a815f9f67366d058e57065431e0e9296c167"
         }
       ]
     },
@@ -103228,6 +104593,27 @@
       ]
     },
     {
+      "id": "doc/sun_square_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-square-chiron",
+          "rowKey": "sun-square-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-square-chiron.json",
+          "sourceSha256": "9f6b2e83a584d3d0463a5bb4dd0cf2ab80d050a061e545c22cb03070ae2ea950"
+        }
+      ]
+    },
+    {
       "id": "doc/sun_square_jupiter",
       "kind": "document",
       "sources": [
@@ -103245,6 +104631,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/sun-square-jupiter.json",
           "sourceSha256": "2115a15a70e0b46dec0e971d5d648dc7649c05f3e17b43f4d352cc8f55dc4fed"
+        }
+      ]
+    },
+    {
+      "id": "doc/sun_square_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-square-lilith",
+          "rowKey": "sun-square-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-square-lilith.json",
+          "sourceSha256": "ccf7ae85dd091f0d846d26ddd9d1b976e45b5facac6d3dd991a785229891d53e"
         }
       ]
     },
@@ -104072,6 +105479,48 @@
       ]
     },
     {
+      "id": "doc/uranus_conjunction_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-conjunction-chiron",
+          "rowKey": "uranus-conjunction-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-conjunction-chiron.json",
+          "sourceSha256": "0b10f48f11b1afac3b6a9a5d6eea872d32086f9c4e88396511a554df8d937904"
+        }
+      ]
+    },
+    {
+      "id": "doc/uranus_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-conjunction-lilith",
+          "rowKey": "uranus-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-conjunction-lilith.json",
+          "sourceSha256": "542e35910f4c8c3610238c4d6bbeda5675d66e0d95089fd594e0f2dc0a1f8104"
+        }
+      ]
+    },
+    {
       "id": "doc/uranus_conjunction_neptune",
       "kind": "document",
       "sources": [
@@ -104219,6 +105668,48 @@
       ]
     },
     {
+      "id": "doc/uranus_opposition_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-opposition-chiron",
+          "rowKey": "uranus-opposition-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-opposition-chiron.json",
+          "sourceSha256": "fff09f50030c4059ceb8d0ad605e7dcb675a8b2d9c9717c549266a0d86f19844"
+        }
+      ]
+    },
+    {
+      "id": "doc/uranus_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-opposition-lilith",
+          "rowKey": "uranus-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-opposition-lilith.json",
+          "sourceSha256": "944a5bc41e4a4faff48f945672cd1a1bcc838f1f24e107f3cb09c659e9354a57"
+        }
+      ]
+    },
+    {
       "id": "doc/uranus_opposition_neptune",
       "kind": "document",
       "sources": [
@@ -104303,6 +105794,48 @@
       ]
     },
     {
+      "id": "doc/uranus_sextile_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-sextile-chiron",
+          "rowKey": "uranus-sextile-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-sextile-chiron.json",
+          "sourceSha256": "05ed8e6fa2f12d84d2f957f7a45128caffd043bc47ef845912cb64709446ff3e"
+        }
+      ]
+    },
+    {
+      "id": "doc/uranus_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-sextile-lilith",
+          "rowKey": "uranus-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-sextile-lilith.json",
+          "sourceSha256": "59ac44999954c0a196b2569a20ffdd27a2adc716b5d203345605cde2b76e515c"
+        }
+      ]
+    },
+    {
       "id": "doc/uranus_sextile_neptune",
       "kind": "document",
       "sources": [
@@ -104362,6 +105895,48 @@
           },
           "path": "packages/astro-knowledge/data/transits/uranus-sextile-pluto.json",
           "sourceSha256": "ef81dd5d028c3f5613fdf9e01050a4734127b6383a83522cf5a49e99763d40a9"
+        }
+      ]
+    },
+    {
+      "id": "doc/uranus_square_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-square-chiron",
+          "rowKey": "uranus-square-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-square-chiron.json",
+          "sourceSha256": "579eaa2a1690c321988f13bfd42ab8ae2abf0827b7e69669ffd180894e64f965"
+        }
+      ]
+    },
+    {
+      "id": "doc/uranus_square_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-square-lilith",
+          "rowKey": "uranus-square-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-square-lilith.json",
+          "sourceSha256": "5c4ed6793368ddecd69975c3103168459fc5dcb238c62c575cdc48a17d03ef60"
         }
       ]
     },
@@ -104555,6 +106130,27 @@
       ]
     },
     {
+      "id": "doc/venus_conjunction_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-conjunction-chiron",
+          "rowKey": "venus-conjunction-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-conjunction-chiron.json",
+          "sourceSha256": "d90e65051a5d6f47d08fdda50847b34da69e4f1f6416fa5ea3285340bb10d27a"
+        }
+      ]
+    },
+    {
       "id": "doc/venus_conjunction_jupiter",
       "kind": "document",
       "sources": [
@@ -104572,6 +106168,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/venus-conjunction-jupiter.json",
           "sourceSha256": "f51efe6d708e9d3cbb7e17f74ece6686ebe6d9d8d29dc10b4ff98a2dd8663554"
+        }
+      ]
+    },
+    {
+      "id": "doc/venus_conjunction_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-conjunction-lilith",
+          "rowKey": "venus-conjunction-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-conjunction-lilith.json",
+          "sourceSha256": "cbf4f929e0cc8213c9e85a78b9bea8716bf1c5ad5fcbae1d992f489feac59426"
         }
       ]
     },
@@ -104807,6 +106424,27 @@
       ]
     },
     {
+      "id": "doc/venus_opposition_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-opposition-chiron",
+          "rowKey": "venus-opposition-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-opposition-chiron.json",
+          "sourceSha256": "94f868ba1b7a4526e319df1d3daed3384e048ed96d8a58076a705970e057edd2"
+        }
+      ]
+    },
+    {
       "id": "doc/venus_opposition_jupiter",
       "kind": "document",
       "sources": [
@@ -104824,6 +106462,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/venus-opposition-jupiter.json",
           "sourceSha256": "2504f96724ce9860474a911f17bae1a4ffc85a2552d4d22f0bb8d88d9dba5e2f"
+        }
+      ]
+    },
+    {
+      "id": "doc/venus_opposition_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-opposition-lilith",
+          "rowKey": "venus-opposition-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-opposition-lilith.json",
+          "sourceSha256": "d58517d2a0064b810434fdf438a13dc689dde2e78e14f9d9b8946ad6654ecbdf"
         }
       ]
     },
@@ -104996,6 +106655,27 @@
       ]
     },
     {
+      "id": "doc/venus_sextile_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-sextile-chiron",
+          "rowKey": "venus-sextile-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-sextile-chiron.json",
+          "sourceSha256": "a14eafd979cc6a55de755d36e1fe70fe3e536fefce4669412fe309c6a401077e"
+        }
+      ]
+    },
+    {
       "id": "doc/venus_sextile_jupiter",
       "kind": "document",
       "sources": [
@@ -105013,6 +106693,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/venus-sextile-jupiter.json",
           "sourceSha256": "9c690ce471215741646ecd27df4b1b6df3ec0e7ca03fde4a677762c9dacfe259"
+        }
+      ]
+    },
+    {
+      "id": "doc/venus_sextile_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-sextile-lilith",
+          "rowKey": "venus-sextile-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-sextile-lilith.json",
+          "sourceSha256": "a6aa2df1da3cfd65d78b6f55a0f8095a84c9f316fbfb4d567bcb74121b4adec3"
         }
       ]
     },
@@ -105143,6 +106844,27 @@
       ]
     },
     {
+      "id": "doc/venus_square_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-square-chiron",
+          "rowKey": "venus-square-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-square-chiron.json",
+          "sourceSha256": "f427342fe3e1a4502e1d936833a537f7431cf8157b71c90305eeb14e1f8cfad4"
+        }
+      ]
+    },
+    {
       "id": "doc/venus_square_jupiter",
       "kind": "document",
       "sources": [
@@ -105160,6 +106882,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/venus-square-jupiter.json",
           "sourceSha256": "21327ae2e7456fc6d52d70e03c750b4f40e5e0ba643ee80472cd6b9f0619fcc5"
+        }
+      ]
+    },
+    {
+      "id": "doc/venus_square_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-square-lilith",
+          "rowKey": "venus-square-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-square-lilith.json",
+          "sourceSha256": "caf78aa473844d58535d069cae8ebb54ab05707abaced1d567f5e269af5738cc"
         }
       ]
     },
@@ -521325,7 +523068,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "de42da4b06f44cf85e7743de73d77a8c0e3db6205b796b1b7ab4d3e563573f54",
-    "distinctSourceFiles": 3312
+    "contentSha256": "04fa89a17ac7a7071dc2209282b9d03608baf161c8c588445127bf34b9250fea",
+    "distinctSourceFiles": 3395
   }
 }

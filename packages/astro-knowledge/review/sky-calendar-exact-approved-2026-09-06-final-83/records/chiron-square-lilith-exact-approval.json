@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.chiron.square.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "8bb7cdfa04fb781d9d9f2ce7db9415f2d688dc28ab1f0dbf753edc6bf73bd7d2",
+  "summary": "Wanting something different should not require a rebellion, but old shame can make every preference feel like one.",
+  "body": "Wanting something different should not require a rebellion, but old shame can make every preference feel like one. When Chiron squares Lilith, the thing you were mocked, punished, or rejected for wanting can come back with enough force that a simple no carries years of anger behind it. The anger is not random. It remembers what it cost to make yourself easier to approve of. But the person in front of you cannot return the years you spent making yourself acceptable. Say what you want now. If it still creates a rupture, at least you are dealing with the truth of this relationship instead of fighting the past through it.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

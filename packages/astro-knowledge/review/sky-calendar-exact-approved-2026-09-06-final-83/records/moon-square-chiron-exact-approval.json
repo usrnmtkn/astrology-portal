@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.square.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "807157876d5592b66b69b8cf41d9609c7fe17e92fe29235e1bcbf376cecf6ee1",
+  "summary": "Waiting for someone to guess what you need can turn disappointment into evidence that they do not care.",
+  "body": "Waiting for someone to guess what you need can turn disappointment into evidence that they do not care. When the Moon squares Chiron, a genuine need can collide with the old belief that asking for it is embarrassing, excessive, or unsafe, so silence becomes a test the other person does not know they are taking. Their failure to notice may hurt, but it does not answer the question you never asked. Say what would help before you use their guess as the measure of the relationship.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

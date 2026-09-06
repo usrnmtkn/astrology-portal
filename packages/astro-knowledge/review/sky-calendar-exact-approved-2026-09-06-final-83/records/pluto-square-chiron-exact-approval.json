@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.square.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "80f5a100aa913dbe7629c80d9ca6ec07bca1b38c48adbd9579488975438844de",
+  "summary": "The problem with control is that it keeps promising the next piece of information will finally let you relax.",
+  "body": "The problem with control is that it keeps promising the next piece of information will finally let you relax. When Pluto squares Chiron, an old fear around rejection, dependence, trust, or being overruled can turn one unknown into a hunt for certainty: another check, another question, another way to make sure nobody can surprise you. Each answer helps for a minute and then creates another thing to verify. At that point you are no longer gathering information; you are trying to buy emotional certainty with facts, and facts cannot sell it. Make the decision the evidence supports, then stop asking the situation to guarantee you will never regret it.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}
