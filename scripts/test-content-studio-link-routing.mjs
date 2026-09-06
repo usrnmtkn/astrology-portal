@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { isReaderAppHref } from "../apps/admin/src/adminReaderLinks.ts";
+import { isReaderAppHref, normalizeAdminContentHref } from "../apps/admin/src/adminReaderLinks.ts";
 import {
   isContextualReaderHref,
   natalPlacementReaderHref,
@@ -38,6 +38,11 @@ assert.equal(isReaderAppHref("/admin/content/coverage"), false, "Content coverag
 assert.equal(isReaderAppHref("/admin/content"), false, "Content Studio stays in the current tab");
 assert.equal(isReaderAppHref("#slots"), false, "Content Studio hash navigation stays in the current tab");
 assert.equal(isReaderAppHref("https://example.com"), false, "unrelated external links are not reclassified as app links");
+
+assert.equal(normalizeAdminContentHref("#articles?q=sky"), "#sky-writeups", "legacy Sky article routes open the Sky Write-ups workspace");
+assert.equal(normalizeAdminContentHref("#articles?q=SKY&status=LIVE"), "#sky-writeups?status=LIVE", "legacy Sky article routes preserve unrelated query state");
+assert.equal(normalizeAdminContentHref("#articles?q=career"), "#articles?q=career", "ordinary standalone article searches stay in Articles");
+assert.equal(normalizeAdminContentHref("#sky-writeups"), "#sky-writeups", "current Sky routes remain unchanged");
 
 assert.equal(natalPlacementReaderHref("Sun", "Aquarius", 9), "/#/you/placement/sun-aquarius-9h");
 assert.equal(skyPlacementReaderHref("Mercury", "Cancer"), "/#/sky/placement/mercury/cancer");
@@ -134,6 +139,9 @@ assert.deepEqual(
 assert.match(webMain, /isContentCoveragePath\(\)/u, "public web entry recognizes the Content coverage route");
 assert.match(webMain, /ContentCoverageDashboard/u, "public web entry renders Content coverage instead of the reader app");
 assert.match(webMain, /setupAdminReaderLinks/u, "public web-mounted Content Studio enforces reader-link tab behavior");
+assert.match(webMain, /admin-row-selection\.css/u, "public web-mounted Content Studio loads row-selection compatibility styles");
+assert.match(webMain, /admin-form-density\.css/u, "public web-mounted Content Studio loads form-density styles");
+assert.match(webMain, /admin-content-studio-ux-compat\.css/u, "public web-mounted Content Studio loads the current UX compatibility layer");
 assert.match(adminHeader, />\s*Content coverage\s*</u, "Content Studio names the Coverage action clearly");
 
 const modes = Object.values(readerDestinationPolicyBySurface).reduce((counts, policy) => {
