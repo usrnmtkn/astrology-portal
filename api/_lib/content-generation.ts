@@ -436,6 +436,41 @@ const generatedContentSchema = {
     }
   }
 } as const;
+const friendTransitReadingGeneratedContentSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["headline", "tldr", "summary", "body", "action", "timing", "sections", "sceneLock", "astrologyDrilldown"],
+  properties: {
+    headline: { type: "string" },
+    tldr: { type: "string" },
+    summary: { type: "string" },
+    body: { type: "string" },
+    action: { type: "string" },
+    timing: { type: "string" },
+    sections: {
+      type: "array",
+      maxItems: 0,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["heading", "body"],
+        properties: {
+          heading: { type: "string" },
+          body: { type: "string" }
+        }
+      }
+    },
+    sceneLock: { type: "null" },
+    astrologyDrilldown: { type: "null" }
+  }
+} as const;
+
+function generatedContentSchemaForInput(input: GenerateContentInput) {
+  return isFriendTransitReadingInput(input)
+    ? friendTransitReadingGeneratedContentSchema
+    : generatedContentSchema;
+}
+
 const bannedUserFacingPhrases = [
   "same sky, different room",
   "not a permanent trait",
@@ -4787,6 +4822,10 @@ function validateGeneratedContentQuality(content: GeneratedContent, input: Gener
     throw new Error("Generated body is too thin for editorial review.");
   }
 
+  if (isFriendTransitReadingInput(input)) {
+    return;
+  }
+
   if (isPrimaryNatalPlacementGeneration(input)) {
     const hasAspectInputs = arrayRecordValue(input.facts.aspects).length > 0;
     const natalBanned = natalPlacementBannedPhraseFailures(content);
@@ -5148,8 +5187,6 @@ function normalizeGeneratedCopyFields(content: GeneratedContent): GeneratedConte
 
 function validateGeneratedContentForInput(content: GeneratedContent, input: GenerateContentInput) {
   validateGeneratedContentQuality(content, input);
-  validateAstrologyDrilldownQuality(content);
-
   if (isFriendTransitReadingInput(input)) {
     const brief = friendTransitReadingBriefFromFacts(input.facts);
     const expectedHeadline = stringValue(input.headline) || `What's going on with ${brief.friendName} right now?`;
@@ -5162,6 +5199,8 @@ function validateGeneratedContentForInput(content: GeneratedContent, input: Gene
     }
     return;
   }
+
+  validateAstrologyDrilldownQuality(content);
 
   if (isNatalAspectGenerationContext(input)) {
     return;
@@ -5563,7 +5602,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
           type: "json_schema",
           name: "tldr_astro_generated_content",
           strict: true,
-          schema: generatedContentSchema
+          schema: generatedContentSchemaForInput(input)
         }
       }
     }
@@ -5678,7 +5717,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
           {
             name: "tldr_astro_generated_content",
             description: "Return the final TLDR Astro generated content draft.",
-            input_schema: generatedContentSchema
+            input_schema: generatedContentSchemaForInput(input)
           }
         ],
         tool_choice: {
