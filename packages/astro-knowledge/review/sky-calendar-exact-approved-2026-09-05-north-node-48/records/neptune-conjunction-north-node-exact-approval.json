@@ -8,15 +8,15 @@
   "decision": "approve",
   "approvedAt": "2026-09-05",
   "ownerStatement": "yes please continue",
-  "decisionContext": "The owner explicitly approved both 24-row North Node batches, later directly instructed an updated Sun sextile North Node passage, and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
   "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "capabilities": [
     "batch_generation",
     "serving"
   ],
-  "bodySha256": "1810f0e7bf81071bd4c7a23583322dfb03c399e60b3aeac3dab131126daae6b2",
-  "summary": "A possibility can feel deeply important before you can explain exactly how it will work in reality.",
-  "body": "A possibility can feel deeply important before you can explain exactly how it will work in reality. When Neptune conjuncts the North Node, inspiration can begin influencing your choices before you know the cost, timeline, or result. Inspiration is useful, but it is not evidence. Give the idea one concrete test: a draft, an application, a meeting, or a budget. What happens when the idea meets ordinary constraints will tell you more than another round of imagining.",
-  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+  "bodySha256": "e009ca5ee7f3a0de13f7a45f6fe3884d9fb80939e7186e8c313aa2037127a314",
+  "summary": "A possibility can feel important before you can explain exactly what it is supposed to become.",
+  "body": "A possibility can feel important before you can explain exactly what it is supposed to become. When Neptune conjuncts the North Node, a creative idea, compassionate project, intuitive pull, or less conventional plan can begin influencing your choices before you know the cost, timeline, or result. Inspiration can be useful without being evidence. Give the idea one concrete test: a draft, application, meeting, deadline, or budget. What happens when the idea meets ordinary constraints will tell you more than another round of imagining.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
 }

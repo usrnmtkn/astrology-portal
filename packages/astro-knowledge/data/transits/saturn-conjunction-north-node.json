@@ -3,7 +3,7 @@
   "transiting": "saturn",
   "aspect": "conjunction",
   "other": "north-node",
-  "base": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility.",
+  "base": "A decision you have been postponing may become much more concrete once it comes with a deadline, responsibility, or consequence.",
   "business": "The two concerns arrive in the same decision; work with the point they now share.",
   "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
   "arcApplying": "The two concerns become harder to separate as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility.",
-    "body": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility. When Saturn conjuncts the North Node, future direction and practical limitation meet in the same decision, turning a theoretical plan into a concrete requirement for paperwork, commitment, or structure. The pressure to sign the contract or accept the role is not proof that you have to say yes. It simply gives you measurable terms. Read them carefully, and only accept the arrangement if you are prepared to carry the actual weight of the work.",
+    "summary": "A decision you have been postponing may become much more concrete once it comes with a deadline, responsibility, or consequence.",
+    "body": "A decision you have been postponing may become much more concrete once it comes with a deadline, responsibility, or consequence. When Saturn conjuncts the North Node, the part of the plan that was easy to postpone may suddenly come with paperwork, a date, a title, or people depending on your answer. Signing the contract, accepting the role, committing to the schedule, or closing something that has become too expensive to maintain makes the choice harder to keep theoretical. Pressure is not proof that the answer is yes. It gives you terms you can measure. Read them carefully, then decide what you are willing to carry.",
     "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
   }
 }
