@@ -66,6 +66,10 @@ try {
   assert.ok(result.sections.every((section: { body: unknown }) => typeof section.body === "string" && section.body.length > 0));
   assert.ok(result.sections.every((section: { body: string }) => !/\{\{/u.test(section.body)));
   assert.equal(new Set(result.events.map((event: { id: string }) => event.id)).size, 5, "Residency events must not duplicate.");
+  assert.ok(
+    result.sections.every((section: { group?: string }) => section.group === "lessons"),
+    "The pilot must reuse the app's existing Gifts/Lessons classifier; conjunctions and squares remain Lessons."
+  );
 
   const unsupported = await residency.skyPlacementResidencyAspectSections({
     planet: "mars",
@@ -100,9 +104,19 @@ try {
 
   const detailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
   assert.match(detailSource, /skyPlacementResidencyAspectSections/u);
-  assert.match(detailSource, /Aspects shaping this transit/u);
+  assert.doesNotMatch(
+    detailSource,
+    /relatedAspectGrouping\s*=\s*residencyContext[\s\S]*?"event"/u,
+    "Residency enrichment must not replace the existing Gifts/Lessons aspect UI with an event-only group."
+  );
+  assert.match(
+    detailSource,
+    /\{ id: "gifts" as const, label: "Gifts" \}[\s\S]*?\{ id: "lessons" as const, label: "Lessons" \}/u,
+    "Sky Placement must retain the existing Gifts and Lessons aspect section pattern."
+  );
+  assert.match(detailSource, /section\.dateLine/u, "Residency aspect cards must surface the engine-owned exact date.");
 
-  console.log("Sky Placement residency aspects pilot: PASS (Sun in Scorpio 5/5 exact approved aspects; compact selector preserved; base copy drift 0). ");
+  console.log("Sky Placement residency aspects pilot: PASS (Sun in Scorpio 5/5 exact approved aspects; Gifts/Lessons UI preserved; compact selector preserved; base copy drift 0). ");
 } finally {
   await vite.close();
 }
