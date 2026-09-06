@@ -43,6 +43,8 @@ type CoveragePayload = {
     incomplete: number;
     unresolvedQueue: number;
   unresolvedIssues: number;
+  unresolvedOptionalQueue: number;
+  unresolvedOptionalIssues: number;
   unresolvedShadowed: number;
   unresolvedRetired: number;
   };
@@ -51,6 +53,7 @@ type CoveragePayload = {
     friendsIntentionalGap: string | null;
     unresolvedReasonCounts: Record<string, number>;
   unresolvedWorkload: Record<string, { records: number; decisions: number }>;
+  unresolvedOptionalWorkload: Record<string, { records: number; decisions: number }>;
   unresolvedShadowedReasonCounts: Record<string, number>;
   unresolvedRetiredReasonCounts: Record<string, number>;
   };
@@ -172,11 +175,15 @@ export default function ContentCoverageDashboard() {
                 <strong style={{ fontSize: 28 }}>{payload.summary.incomplete}</strong>
               </div>
               <div style={cardStyle}>
-                <p className="admin-eyebrow">Actionable decisions</p>
+                <p className="admin-eyebrow">Required decisions</p>
       <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedIssues}</strong>
     </div>
     <div style={cardStyle}>
-      <p className="admin-eyebrow">Actionable source records</p>
+      <p className="admin-eyebrow">Optional enrichment</p>
+      <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedOptionalIssues}</strong>
+    </div>
+    <div style={cardStyle}>
+      <p className="admin-eyebrow">Required source records</p>
       <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedQueue}</strong>
     </div>
     <div style={cardStyle}>
@@ -187,14 +194,28 @@ export default function ContentCoverageDashboard() {
 
             {Object.keys(payload.notes.unresolvedWorkload).length > 0 && (
     <section style={{ ...cardStyle, marginBottom: 20 }} aria-label="Editorial backlog classes">
-      <p className="admin-eyebrow">Editorial work remaining</p>
+      <p className="admin-eyebrow">Required editorial work</p>
       {Object.entries(payload.notes.unresolvedWorkload).map(([workClass, counts]) => (
         <p key={workClass} style={{ margin: "6px 0 0" }}>
           <strong>{workClass.replaceAll("-", " ")}:</strong> {counts.decisions} decisions · {counts.records} source records
         </p>
       ))}
       <p style={{ margin: "8px 0 0", opacity: 0.72 }}>
-        Shadowed and governed retired source rows remain preserved as audit history and are not counted as owner work.
+        Shadowed and governed retired source rows remain preserved as audit history and are not counted as required owner work.
+      </p>
+    </section>
+  )}
+
+  {Object.keys(payload.notes.unresolvedOptionalWorkload).length > 0 && (
+    <section style={{ ...cardStyle, marginBottom: 20 }} aria-label="Optional editorial enrichment">
+      <p className="admin-eyebrow">Optional enrichment</p>
+      {Object.entries(payload.notes.unresolvedOptionalWorkload).map(([workClass, counts]) => (
+        <p key={workClass} style={{ margin: "6px 0 0" }}>
+          <strong>{workClass.replaceAll("-", " ")}:</strong> {counts.decisions} decisions · {counts.records} source records
+        </p>
+      ))}
+      <p style={{ margin: "8px 0 0", opacity: 0.72 }}>
+        These candidates can improve rotation or depth later, but current reader coverage resolves without them.
       </p>
     </section>
   )}

@@ -23,6 +23,20 @@
       "reason": "superseded-by-owner-approved-v14",
       "evidence": "packages/astro-knowledge/review/empty-house-v14/import-manifest.json",
       "replacement": "fallback-template/natal.empty-house-v14 and its owner-approved V14 source keys"
+    },
+    {
+      "id": "retired-lunation-uranus-reader-layer",
+      "contentKeyPrefix": "fallback-hook/lunation-uranus-layer/",
+      "reason": "governed-reader-layer-retirement",
+      "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+      "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+    },
+    {
+      "id": "superseded-lunar-eclipse-dedicated-book-cells",
+      "contentKeyPrefix": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/",
+      "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+      "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+      "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
     }
   ]
 }

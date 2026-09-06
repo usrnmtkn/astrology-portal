@@ -200,12 +200,13 @@ architecture reader-first while preserving stable machine identifiers.
 See the dated [Composition Map naming and IA audit](../qa/composition-map-ia-audit.md)
 for the current real-catalog baseline and the remaining owner decision.
 
-To review the actionable governed package backlog, open Content Studio >
+To review the required governed package backlog, open Content Studio >
 Unresolved Content (`/admin/content#unresolved-content`). Its active inventory is
 generated from `content-unresolved-queue-v1.json` and contains only pending records
-that still require a decision. Exact-key rows already superseded by reader-eligible
-peers and source families with governed retirements remain in the report as audit
-history but are not presented as owner work. Editorial issues open
+required to close reader coverage. Resolver-supported optional enrichments, exact-key
+rows already superseded by reader-eligible peers, and governed retirements remain in
+the report for audit and future enrichment planning but are not presented as required
+owner work. Editorial issues open
 the exact Content Library row when one exists. A source-repair issue with a
 registered replacement opens an exact-text approval panel in Content Studio:
 the owner reviews the complete candidate, confirms its hash-bound approval
