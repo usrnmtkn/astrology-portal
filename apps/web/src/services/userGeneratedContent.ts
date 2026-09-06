@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "./auth";
+import { dispatchReportReady } from "./reportLibrary";
 import type { GeneratedContentMode, LiveGeneratedContent } from "./generatedContent";
 
 export type UserGeneratedSubjectType =
@@ -109,6 +110,30 @@ function fromRow(row: UserGeneratedContentRow): LiveGeneratedContent {
   };
 }
 
+function friendNameFromRequest(request: GenerateUserContentRequest) {
+  const brief = request.facts?.friendTransitsBrief;
+  if (!brief || typeof brief !== "object" || Array.isArray(brief)) return "";
+  const name = (brief as Record<string, unknown>).friendName;
+  return typeof name === "string" ? name.trim() : "";
+}
+
+function reportReadyTitle(friendName: string) {
+  if (!friendName) return "Your Friends reading is ready";
+  const possessive = /s$/iu.test(friendName) ? `${friendName}'` : `${friendName}'s`;
+  return `${possessive} reading is ready`;
+}
+
+function notifyFriendReadingReady(request: GenerateUserContentRequest, result: LiveGeneratedContent | null) {
+  if (request.subjectType !== "friend_transit_reading" || !result?.id) return result;
+  dispatchReportReady({
+    sourceKind: "generated_interpretation",
+    sourceId: result.id,
+    title: reportReadyTitle(friendNameFromRequest(request)),
+    route: `/reports/generated/${result.id}`
+  });
+  return result;
+}
+
 export async function loadUserGeneratedInterpretation({
   subjectType,
   subjectId,
@@ -198,11 +223,13 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
   const saved = payload?.saved?.[0];
 
   if (saved) {
-    if (request.subjectType === "friend_transit_reading" && saved.status === "DRAFT") {
-      return fromRow(saved);
-    }
-    return saved.status === "LIVE" ? fromRow(saved) : null;
+    const result = request.subjectType === "friend_transit_reading" && saved.status === "DRAFT"
+      ? fromRow(saved)
+      : saved.status === "LIVE"
+        ? fromRow(saved)
+        : null;
+    return notifyFriendReadingReady(request, result);
   }
 
-  return payload?.generated ?? null;
+  return notifyFriendReadingReady(request, payload?.generated ?? null);
 }
