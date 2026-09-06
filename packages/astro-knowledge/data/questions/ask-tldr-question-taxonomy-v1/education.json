@@ -1,0 +1,14 @@
+{
+  "id":"education",
+  "label":"Education",
+  "description":"Learning, school, training, certifications, writing, publishing, teaching, intellectual direction, and study-related travel.",
+  "defaultEvidencePriority":["3rd house / 3rd-house ruler","9th house / 9th-house ruler","Mercury and Jupiter","career links only when the question is explicitly vocational"],
+  "questions":[
+    {"id":"education.learn_now","displayQuestion":"What should I be learning right now?","primaryIntent":"learning_direction","secondaryIntents":["skills","study","curiosity"],"questionTypes":["direction","guidance"],"defaultTimeWindow":"4_months","evidenceFocus":["3rd / 9th-house activations","Mercury / Jupiter contacts"]},
+    {"id":"education.back_to_school","displayQuestion":"Should I go back to school?","primaryIntent":"formal_education","secondaryIntents":["degree","training","commitment"],"questionTypes":["decision","timing"],"defaultTimeWindow":"12_months","evidenceFocus":["9th-house / Jupiter factors","Saturn / Jupiter timing"]},
+    {"id":"education.apply","displayQuestion":"Is this a good time to apply?","primaryIntent":"application_timing","secondaryIntents":["admission","submission","decision"],"questionTypes":["timing","decision"],"defaultTimeWindow":"1_month","evidenceFocus":["Mercury / Jupiter / 9th-ruler transits","near-term 3rd / 9th-house triggers"]},
+    {"id":"education.worth_it","displayQuestion":"Is this course, degree, or certification worth pursuing?","primaryIntent":"education_value","secondaryIntents":["investment","commitment","career_link"],"questionTypes":["decision","guidance"],"defaultTimeWindow":"4_months","evidenceFocus":["3rd / 9th-house factors","2nd / 10th links when genuinely relevant"]},
+    {"id":"education.teach_write_publish","displayQuestion":"Should I teach, write, or publish what I know?","primaryIntent":"knowledge_sharing","secondaryIntents":["writing","publishing","teaching","visibility"],"questionTypes":["direction","timing"],"defaultTimeWindow":"4_months","evidenceFocus":["3rd / 9th / 10th-house links","Mercury / Jupiter / Midheaven contacts"]},
+    {"id":"education.new_direction","displayQuestion":"Where could learning open a new direction for me?","primaryIntent":"learning_opportunity","secondaryIntents":["career_change","worldview","skills"],"questionTypes":["direction","guidance"],"defaultTimeWindow":"12_months","evidenceFocus":["longer 3rd / 9th-house transits","career links when present"]}
+  ]
+}
