@@ -346,7 +346,7 @@ export function validateCopy(copy, {
       });
     }
   }
-  if (register === "third_person" && /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(text)) {
+  if (register === "third_person" && family !== "friend-transit-reading" && /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(text)) {
     violations.push({ category: "register_consistency", detail: "Third-person copy contains second person." });
   }
   if (register === "second_person" && family === "house-horoscope-core" && !/\b(?:you|your|yours|yourself)\b/iu.test(text)) {
