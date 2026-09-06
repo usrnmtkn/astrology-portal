@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-lilith-39",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark as approved and servable",
+  "decisionContext": "The owner confirmed that the 24-row Lilith Batch 5 V4 and 15-row Lilith Batch 6 V2 packages are the authoritative exact-owner-approved Calendar copy and explicitly authorized them for serving by instructing: \"please mark as approved and servable\".",
+  "payloadFiles": [
+    "lilith-batch-5-v4.json",
+    "lilith-batch-6-v2.json"
+  ],
+  "memberCount": 39,
+  "memberSetSha256": "903cb461345606f4b726169781d5ddab09ade54c3b208fc769746dc3048b00ef",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-lilith-39/owner-batch-authorization.json",
+  "previousProjectionPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/current-owner-payloads.json",
+  "scopeGuards": {
+    "target": "lilith",
+    "aspects": [
+      "conjunction",
+      "sextile",
+      "square",
+      "opposition"
+    ],
+    "excluded": [
+      "trine",
+      "quincunx",
+      "south-node",
+      "sky.aspect.saturn.square.lilith"
+    ],
+    "protectedUntouched": [
+      "sky.aspect.sun.opposition.moon",
+      "sky.aspect.saturn.opposition.pluto",
+      "sky.aspect.saturn.square.lilith"
+    ]
+  }
+}
