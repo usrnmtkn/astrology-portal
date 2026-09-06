@@ -9,8 +9,8 @@ import {
 } from "../api/_lib/ask-tldr-model.ts";
 
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(new URL(relativePath, import.meta.url), "utf8"));
-const model = readJson("../packages/astro-knowledge/data/questions/ask-tldr-answer-model-v1.json");
-const career = readJson("../packages/astro-knowledge/data/questions/ask-tldr-question-taxonomy-v1/career.json");
+const model = readJson("../config/ask-tldr/answer-model-v1.json");
+const career = readJson("../config/ask-tldr/pillars/career.json");
 
 assert.equal(model.status, "needs_review");
 assert.equal(model.ownerApproved, false);
