@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.square.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "8c4416950a97194832e8f7e858b65fe228e722e9b081c7ed3f5e286c1e22cab2",
+  "summary": "A relationship can be loving and still depend on you wanting less than you do.",
+  "body": "A relationship can be loving and still depend on you wanting less than you do. When Venus squares Lilith, affection and approval can collide with a desire, boundary, attraction, financial choice, or version of pleasure that does not fit the existing agreement as neatly as everyone would prefer. That does not automatically make the want wise or the relationship wrong. It does mean love cannot solve a conflict nobody is allowed to name. If keeping the relationship requires one person to keep making their desire smaller, the problem is no longer the desire. The terms need to become honest enough for both people to exist inside them.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

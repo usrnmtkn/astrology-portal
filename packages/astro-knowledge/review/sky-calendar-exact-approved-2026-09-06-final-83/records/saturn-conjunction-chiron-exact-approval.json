@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.conjunction.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a7e43cf06d7d928a4f1256c6b2f99e6fb4c100339c4cb9f1bfd9ab6cd75ca2d0",
+  "summary": "Responsibility gets much heavier when you think one mistake will change how people see you.",
+  "body": "Responsibility gets much heavier when you think one mistake will change how people see you. When Saturn conjuncts Chiron, a deadline, review, new title, or person with authority can turn an ordinary requirement into the old fear that competence is the price of being respected. That is how doing the job becomes watching yourself do the job, looking for the error that will expose you. The standard may be legitimate. The surveillance is not part of the assignment. Meet the requirement in front of you without turning every imperfection into evidence against yourself.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

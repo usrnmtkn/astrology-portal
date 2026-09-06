@@ -1,0 +1,18 @@
+{
+  "id": "mercury-opposition-chiron",
+  "transiting": "mercury",
+  "aspect": "opposition",
+  "other": "chiron",
+  "base": "The fastest speaker in the conversation may not be the person who understands the problem best.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The fastest speaker in the conversation may not be the person who understands the problem best.",
+    "body": "The fastest speaker in the conversation may not be the person who understands the problem best. When Mercury opposes Chiron, fluency and sensitivity can separate across an exchange, so one person fills the silence while another needs more time because the subject touches experience the quicker explanation does not account for. Speed can start looking like authority and hesitation like uncertainty. Slow the conversation down enough for the person carrying the missing context to finish the thought before everyone decides what the silence meant.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

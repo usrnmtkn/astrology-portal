@@ -1,0 +1,18 @@
+{
+  "id": "saturn-sextile-chiron",
+  "transiting": "saturn",
+  "aspect": "sextile",
+  "other": "chiron",
+  "base": "Having to explain the same need over and over can make you feel like the need itself is the problem.",
+  "business": "A workable option is available; use the move that connects the two concerns.",
+  "shadow": "The opportunity can remain unused if nobody makes the concrete move it requires.",
+  "arcApplying": "The workable option becomes easier to recognize as exactness approaches.",
+  "arcSeparating": "The opening becomes less immediate after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Having to explain the same need over and over can make you feel like the need itself is the problem.",
+    "body": "Having to explain the same need over and over can make you feel like the need itself is the problem. When Saturn sextiles Chiron, a clear boundary, schedule, payment plan, division of responsibility, or written agreement can stop a sensitive issue from being reopened every time someone forgets, pushes, or asks again. The point of the structure is not to prove that your need is serious enough to deserve accommodation. It is to remove the need for repeated negotiation. A good boundary should save you from having to make the same case every week.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

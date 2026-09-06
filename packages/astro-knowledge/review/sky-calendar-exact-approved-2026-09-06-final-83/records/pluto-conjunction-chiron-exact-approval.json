@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.conjunction.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "921551e109a907cd91c1c0627d7ae1ed94d4c924936b9a366938ce856447d835",
+  "summary": "Having power after a period of powerlessness can make losing any control feel intolerable.",
+  "body": "Having power after a period of powerlessness can make losing any control feel intolerable. When Pluto conjuncts Chiron, money, access, authority, information, or another person's ability to change your options can turn one negotiation into a test of your ability to make sure nobody can trap you again. That is how leverage becomes something you hoard instead of something you use: one more safeguard, one more contingency, one more way to make sure nobody can corner you. Use your power on the condition that actually matters. You do not have to control every possible outcome to prove you are no longer powerless.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}
