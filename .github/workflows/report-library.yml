@@ -9,9 +9,11 @@ on:
       - "apps/web/src/services/reportLibrary.ts"
       - "apps/web/src/services/userGeneratedContent.ts"
       - "apps/web/src/styles/report-library.css"
+      - "apps/web/src/styles/report-notifications.css"
       - "apps/web/src/main.tsx"
       - "apps/web/supabase/migrations/*report_library*.sql"
       - "scripts/test-report-library-notifications.mjs"
+      - "tests/visual/report-library-ui.spec.ts"
       - ".github/workflows/report-library.yml"
   push:
     branches:
@@ -23,9 +25,11 @@ on:
       - "apps/web/src/services/reportLibrary.ts"
       - "apps/web/src/services/userGeneratedContent.ts"
       - "apps/web/src/styles/report-library.css"
+      - "apps/web/src/styles/report-notifications.css"
       - "apps/web/src/main.tsx"
       - "apps/web/supabase/migrations/*report_library*.sql"
       - "scripts/test-report-library-notifications.mjs"
+      - "tests/visual/report-library-ui.spec.ts"
       - ".github/workflows/report-library.yml"
 
 jobs:
@@ -41,9 +45,29 @@ jobs:
       - run: npm ci
       - run: node scripts/test-report-library-notifications.mjs
       - run: npm run test:report-foundation
+      - run: npm run qa:css-audit
       - run: npm run typecheck
       - run: npm run build:knowledge
       - run: npm run build:web
+
+  report-library-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VITE_SUPABASE_URL: https://report-library.supabase.test
+      VITE_SUPABASE_ANON_KEY: report-library-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build knowledge dependency
+        run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Verify standalone Reports UI
+        run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts
 
   report-library-database:
     runs-on: ubuntu-latest
