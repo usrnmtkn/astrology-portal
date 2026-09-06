@@ -1,0 +1,54 @@
+name: Triage remaining editorial backlog
+
+on:
+  push:
+    branches:
+      - chatgpt/editorial-backlog-triage
+
+permissions:
+  contents: read
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Print unique candidate inventory
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const queue = JSON.parse(fs.readFileSync('packages/astro-knowledge/generated/content-unresolved-queue-v1.json','utf8'));
+          const sourceCache = new Map();
+          const load = (p) => { if (!sourceCache.has(p)) sourceCache.set(p, JSON.parse(fs.readFileSync(p,'utf8'))); return sourceCache.get(p); };
+          const pointerGet = (root, pointer) => pointer.split('/').slice(1).reduce((v,raw) => v?.[raw.replaceAll('~1','/').replaceAll('~0','~')], root);
+          const dailyGet = (item) => {
+            const rest = item.contentKey.slice('daily-glance-variant/'.length).split('/');
+            const aspectKey = `${rest[0]}/${rest[1]}`;
+            const kind = rest[2];
+            const id = rest.slice(3).join('/');
+            const set = load(item.sourcePath).keys?.[aspectKey] ?? {};
+            const collection = kind === 'headline' ? set.headlines : kind === 'body' ? set.bodies : set.pairings;
+            return (collection ?? []).find((x) => x.id === id) ?? null;
+          };
+          const sourceObject = (item) => item.contentKey.startsWith('daily-glance-variant/') ? dailyGet(item) : pointerGet(load(item.sourcePath), item.objectPath);
+          const textFields = (obj) => {
+            if (!obj || typeof obj !== 'object') return {};
+            return Object.fromEntries(['body','body_you','body_they','headline','summary','text','template','hook','lived','turn'].filter((k) => typeof obj[k] === 'string').map((k) => [k,obj[k]]));
+          };
+          for (const workClass of ['shared-fallback-authoring','template-review','optional-rotation']) {
+            const items = queue.items.filter((x) => x.workClass === workClass);
+            const groups = new Map();
+            for (const item of items) {
+              const arr = groups.get(item.contentKey) ?? [];
+              const obj = sourceObject(item);
+              arr.push({sourcePath:item.sourcePath,objectPath:item.objectPath,reviewStatus:item.reviewStatus,fields:textFields(obj),raw:obj});
+              groups.set(item.contentKey,arr);
+            }
+            const decisions = [...groups.entries()].sort(([a],[b])=>a.localeCompare(b)).map(([contentKey,records]) => ({contentKey,records}));
+            console.log(`\n=== ${workClass} :: ${decisions.length} decisions / ${items.length} records ===`);
+            console.log(JSON.stringify(decisions,null,2));
+          }
+          NODE
