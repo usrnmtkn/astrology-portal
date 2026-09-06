@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.conjunction.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "cbe3fdb27f9a1292548c6f8cd8a6f2708e7f9916457c2ea8b02d45a5322e6f91",
+  "summary": "A new plan starts feeling more believable when your daily life stops treating it like an emergency.",
+  "body": "A new plan starts feeling more believable when your daily life stops treating it like an emergency. When the Moon conjuncts the North Node, emotional needs and forward movement have to fit inside the same arrangement, so sleep, food, childcare, home, family, and the routines that help you function become part of how well the plan works. If every step forward requires you to be exhausted, displaced, or unavailable to the people who depend on you, the plan is underbuilt. Make the change livable enough that your body does not have to keep pulling you back.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "83bb2805fa55cae17630ff60c995b1b246a4eda097a26ed8ac2c9fc95aca81ad",
+  "summary": "An outdated pattern can look incredibly safe the moment a sudden disruption leaves you disoriented.",
+  "body": "An outdated pattern can look incredibly safe the moment a sudden disruption leaves you disoriented. When Uranus opposes the North Node, the known schedule, old system, or previous way of doing things can become attractive simply because familiarity gives you something predictable while you process what changed. That comfort can buy you useful time. Just make sure the temporary retreat helps you rebuild your options rather than restoring the exact restriction that made change necessary in the first place.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

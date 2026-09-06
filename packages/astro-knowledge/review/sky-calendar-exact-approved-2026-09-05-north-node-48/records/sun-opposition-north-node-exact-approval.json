@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "d1205710af88844b1d81175d1d7ed4f8f6bb9092b2291b20743ab3e69048f50b",
+  "summary": "A comeback offer can be genuinely flattering and still point toward a version of yourself you already know how to be.",
+  "body": "A comeback offer can be genuinely flattering and still point toward a version of yourself you already know how to be. When the Sun opposes the North Node, recognition can collect around an old title, audience, role, or area of expertise because other people already know what you can do there. There may be money, access, or useful leverage in saying yes. The question is what that success pays for. Use the old strength if it gives you more freedom to build something newer; be cautious if the reward only keeps you too busy to leave the old role.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

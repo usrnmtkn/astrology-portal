@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.lilith.square.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b6ed747188139800950b82cc49ab106061f582b0816a183a8e2e30de88b0347c",
+  "summary": "The choice that keeps everyone comfortable may be the exact choice that keeps your own preference out of the plan.",
+  "body": "The choice that keeps everyone comfortable may be the exact choice that keeps your own preference out of the plan. When Lilith squares the North Node, a family expectation, workplace norm, or version of respectability can keep demanding that you soften the decision until it no longer reflects what you wanted. Defiance alone will not build a better setup. Name the specific term you can no longer accept, and decide what you are prepared to walk away from if the other side will not move with you.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

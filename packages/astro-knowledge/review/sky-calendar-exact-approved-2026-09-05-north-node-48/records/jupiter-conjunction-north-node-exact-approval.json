@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.conjunction.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b7a690e5aac958eeac101a9de4acfb82482bd3961497407bb1d9e9be167b9a80",
+  "summary": "A bigger opportunity can make the next direction feel obvious before you have checked what the bigger version will require.",
+  "body": "A bigger opportunity can make the next direction feel obvious before you have checked what the bigger version will require. When Jupiter conjuncts the North Node, growth and forward movement arrive in the same opening, which can bring education, travel, publishing, a larger audience, a new role, or access that materially expands your options. The opportunity may be excellent, but scale can hide the cost until the calendar, budget, or responsibilities have already changed around it. Say yes to the expansion you can still support after the excitement becomes ordinary.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

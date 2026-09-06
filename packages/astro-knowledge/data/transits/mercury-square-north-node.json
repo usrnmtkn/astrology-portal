@@ -1,0 +1,18 @@
+{
+  "id": "mercury-square-north-node",
+  "transiting": "mercury",
+  "aspect": "square",
+  "other": "north-node",
+  "base": "New information can make it obvious that the decision you thought you were making is no longer the one in front of you.",
+  "business": "A practical mismatch needs adjustment; change the arrangement instead of repeating the same workaround.",
+  "shadow": "Pressure escalates when each side keeps demanding terms the other cannot sustain.",
+  "arcApplying": "The mismatch becomes harder to work around as exactness approaches.",
+  "arcSeparating": "The pressure eases after exactness, leaving the changed arrangement to prove itself.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "New information can make it obvious that the decision you thought you were making is no longer the one in front of you.",
+    "body": "New information can make it obvious that the decision you thought you were making is no longer the one in front of you. When Mercury squares the North Node, a changed deadline, conflicting answer, missing requirement, or conversation you kept postponing can expose the assumption that no longer holds. Repeating the old explanation will not solve a problem created by new facts. Update the terms, ask the question you have been avoiding, and let the plan change if the information changed first.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+  }
+}

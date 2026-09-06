@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "77da3bf03e197f16c1fdffff68bd0b79a496aff77a4f54ea5bce068ec7029e21",
+  "summary": "Nostalgia can edit an old situation until returning looks much easier than remembering why you left.",
+  "body": "Nostalgia can edit an old situation until returning looks much easier than remembering why you left. When Neptune opposes the North Node, an old relationship, dream, or identity can become easier to idealize precisely because the unfinished alternative has not had time to collect the same memories. There may be something worth recovering from your history, but make sure you recover the actual value, not the missing context. Compare the memory with what actually happened before you rebuild a new decision around a sanitized version of the past.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

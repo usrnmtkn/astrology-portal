@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "931d035a32e2b5e69f61fe2e92bf082f7248f8e32a1fe0e7315540f3c1736213",
+  "summary": "Missing what was familiar can make returning look more right than it actually is.",
+  "body": "Missing what was familiar can make returning look more right than it actually is. When the Moon opposes the North Node, an old home, family routine, relationship pattern, or former schedule can feel emotionally convincing because your body already knows how to function inside it. That pull may contain useful information, especially if the newer plan has left out rest, belonging, predictability, or care that you still need. Bring the need forward before you bring the whole old arrangement back.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

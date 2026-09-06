@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.square.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "87a2750b5d6d7b4dfc1bd09650469e5bcc50d2be341f4155d1391f97c52b72c2",
+  "summary": "Not knowing exactly what you want next can make a familiar option look more meaningful than it actually is.",
+  "body": "Not knowing exactly what you want next can make a familiar option look more meaningful than it actually is. When Neptune squares the North Node, nostalgia, mixed signals, or a beautiful but vague possibility can make it difficult to tell which uncertainty deserves patience and which one is simply keeping you stuck. You cannot force clarity out of a situation that does not have it yet. Pick the smallest decision that can produce evidence, and let the facts narrow the story instead of waiting for the story to become clear first.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

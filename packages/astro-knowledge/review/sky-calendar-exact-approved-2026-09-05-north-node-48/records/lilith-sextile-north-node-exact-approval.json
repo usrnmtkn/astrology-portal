@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.lilith.sextile.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "6c81e8b20d3b0dfd421a98a8ff927d5578388b581054cf81414f684c2adaad0b",
+  "summary": "A little more freedom may be enough to make an option you dismissed suddenly workable.",
+  "body": "A little more freedom may be enough to make an option you dismissed suddenly workable. When Lilith sextiles the North Node, changing one rule, declining an expectation, or admitting that you want something other people would not choose for you can make a previously awkward option fit much better. You do not need to turn the difference into a dramatic rebellion. Change the specific condition that matters, and see what becomes possible once approval is no longer doing all the deciding.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}
