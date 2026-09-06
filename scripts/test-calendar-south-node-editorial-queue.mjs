@@ -1,19 +1,21 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const recordsDir = path.join(
+const reviewDir = path.join(
   root,
   "packages",
   "astro-knowledge",
   "review",
-  "sky-calendar-south-node-60-v1",
-  "records"
+  "sky-calendar-south-node-60-v1"
 );
+const recordsDir = path.join(reviewDir, "records");
+const approvalPath = path.join(reviewDir, "owner-batch-authorization.json");
 
 const expectedBodies = [
   "sun",
@@ -38,7 +40,28 @@ const mirroredNorthNodeAspect = {
   opposition: "conjunction"
 };
 
+function gitBlobSha(content) {
+  const bytes = Buffer.from(content, "utf8");
+  return createHash("sha1")
+    .update(`blob ${bytes.length}\0`)
+    .update(bytes)
+    .digest("hex");
+}
+
 assert.ok(fs.existsSync(recordsDir), `Missing South Node review directory: ${recordsDir}`);
+assert.ok(fs.existsSync(approvalPath), `Missing South Node owner approval: ${approvalPath}`);
+
+const approval = JSON.parse(fs.readFileSync(approvalPath, "utf8"));
+assert.equal(approval.authority, "owner", "South Node approval authority must be owner.");
+assert.equal(approval.decision, "approve", "South Node batch must carry an owner approve decision.");
+assert.equal(approval.batchId, "sky-calendar-south-node-60-v1", "South Node approval batch id mismatch.");
+assert.equal(approval.ownerStatement, "these are great, approved", "Owner approval statement drifted.");
+assert.equal(approval.approvalEffect, "exact_wording_approval", "South Node approval must bind exact wording.");
+assert.equal(approval.memberCount, 60, "South Node approval must bind exactly 60 records.");
+assert.equal(approval.approvedCandidateHeadSha, "2005e620da8a98f8cbc2e1aa711f4cc127f5ddac", "Approved candidate head SHA drifted.");
+assert.equal(approval.runtimeEligible, false, "Editorial approval must not silently enable runtime serving.");
+assert.equal(approval.servingRequiresSeparateChange, true, "South Node serving must remain a separate implementation change.");
+assert.deepEqual(approval.capabilities, ["editorial_approval"], "South Node approval capabilities must remain editorial-only.");
 
 const files = fs.readdirSync(recordsDir)
   .filter((name) => name.endsWith(".json"))
@@ -50,15 +73,27 @@ assert.deepEqual(
   [...expectedBodies].sort(),
   "South Node queue body files do not match the governed 12-body set."
 );
+assert.deepEqual(
+  Object.keys(approval.recordFileBlobs).sort(),
+  files,
+  "Owner approval must bind every South Node record file and no extras."
+);
 
 const allRecords = [];
 
 for (const body of expectedBodies) {
-  const file = path.join(recordsDir, `${body}.json`);
-  const packet = JSON.parse(fs.readFileSync(file, "utf8"));
+  const fileName = `${body}.json`;
+  const file = path.join(recordsDir, fileName);
+  const raw = fs.readFileSync(file, "utf8");
+  const packet = JSON.parse(raw);
 
+  assert.equal(
+    gitBlobSha(raw),
+    approval.recordFileBlobs[fileName],
+    `${fileName}: approved wording changed after owner approval.`
+  );
   assert.equal(packet.counterpartBody, body, `${body}.json counterpartBody mismatch.`);
-  assert.equal(packet.status, "needs_review", `${body}.json must remain review-gated.`);
+  assert.equal(packet.status, "needs_review", `${body}.json must preserve its pre-approval review snapshot.`);
   assert.ok(Array.isArray(packet.records), `${body}.json records must be an array.`);
   assert.equal(packet.records.length, expectedAspects.length, `${body}.json must contain five major aspects.`);
   assert.deepEqual(
@@ -75,8 +110,8 @@ for (const body of expectedBodies) {
       mirroredNorthNodeAspect[record.aspect],
       `${expectedKey}: mirrored North Node aspect mismatch.`
     );
-    assert.equal(record.reviewStatus, "needs_review", `${expectedKey}: must remain needs_review.`);
-    assert.equal(record.runtimeEligible, false, `${expectedKey}: must remain runtime-ineligible.`);
+    assert.equal(record.reviewStatus, "needs_review", `${expectedKey}: pre-approval snapshot must remain unchanged.`);
+    assert.equal(record.runtimeEligible, false, `${expectedKey}: must remain runtime-ineligible until serving implementation.`);
     assert.ok(typeof record.summary === "string" && record.summary.trim(), `${expectedKey}: missing summary.`);
     assert.ok(typeof record.body === "string" && record.body.trim(), `${expectedKey}: missing body.`);
     assert.match(record.body, /\bSouth Node\b/u, `${expectedKey}: body must name South Node explicitly.`);
@@ -104,4 +139,4 @@ for (const body of expectedBodies) {
   }
 }
 
-console.log("South Node Calendar editorial queue: 60/60 review-gated pole-specific candidates validated.");
+console.log("South Node Calendar editorial queue: 60/60 exact-owner-approved, runtime-gated pole-specific passages validated.");
