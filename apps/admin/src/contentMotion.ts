@@ -52,6 +52,13 @@ export function contentMotion(row: MotionInspectableRow): ContentMotion {
   const identity = `${row.content_key} ${row.event_type ?? ""} ${row.headline ?? ""}`.toLowerCase();
   if (/(?:^|[\s/._-])(?:retrograde|retro|rx)(?:$|[\s/._-])/u.test(identity)) return "retrograde";
   if (/(?:^|[\s/._-])direct(?:$|[\s/._-])/u.test(identity)) return "direct";
+
+  // Canonical placement/article rows are the direct-motion baseline unless the
+  // record explicitly says otherwise. Treating these as "unspecified" made the
+  // Direct filter hide the normal Sun-through-Pluto placement corpus even though
+  // the rows were loaded and reader-governed.
+  if (/^sky[./-](?:placement|article)[./-]/u.test(row.content_key.toLowerCase())) return "direct";
+
   return "unspecified";
 }
 
