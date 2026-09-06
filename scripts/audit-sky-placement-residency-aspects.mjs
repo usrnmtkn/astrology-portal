@@ -51,6 +51,7 @@ async function main() {
 
   try {
     const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");
+    const skyRegistry = await vite.ssrLoadModule("/src/content/skyRegistry.ts");
     const facts = await ephemeris.getSkyPlacementTransitFacts({
       planet: cli.planet,
       sign: cli.sign,
@@ -58,24 +59,41 @@ async function main() {
       timeZone: cli.timeZone
     });
 
-    const events = facts.rankedEventsDuringTransit.map((event) => ({
-      id: event.id,
-      rank: event.rank,
-      eventType: event.eventType,
-      planet: event.planet,
-      otherPlanet: event.otherPlanet,
-      planets: event.planets,
-      aspect: event.aspect,
-      occursAt: event.occursAt,
-      dateKey: event.dateKey,
-      localDate: localDate(event.occursAt, facts.timeZone)
-    }));
+    const events = facts.rankedEventsDuringTransit.map((event) => {
+      const approvedExact = skyRegistry.approvedExactSkyAspectCopy(
+        event.planet,
+        event.aspect,
+        event.otherPlanet
+      );
+
+      return {
+        id: event.id,
+        rank: event.rank,
+        eventType: event.eventType,
+        planet: event.planet,
+        otherPlanet: event.otherPlanet,
+        planets: event.planets,
+        aspect: event.aspect,
+        occursAt: event.occursAt,
+        dateKey: event.dateKey,
+        localDate: localDate(event.occursAt, facts.timeZone),
+        approvedExactAspectCopy: approvedExact ? {
+          resolved: true,
+          contentId: approvedExact.contentId,
+          sourceId: approvedExact.sourceId
+        } : {
+          resolved: false,
+          contentId: null,
+          sourceId: null
+        }
+      };
+    });
 
     const output = {
       schema: "tldrastro-sky-placement-residency-aspect-audit/v1",
       generatedAt: new Date().toISOString(),
       serving: false,
-      note: "Read-only engine audit. No content, approval, release, or production state is mutated.",
+      note: "Read-only engine and exact-aspect-authority audit. No content, approval, release, or production state is mutated.",
       request: {
         planet: cli.planet,
         sign: cli.sign,
@@ -92,6 +110,8 @@ async function main() {
         transitEndLocal: localDate(facts.transitEnd, facts.timeZone)
       },
       aspectCount: events.length,
+      approvedExactAspectCount: events.filter((event) => event.approvedExactAspectCopy.resolved).length,
+      unresolvedExactAspectCount: events.filter((event) => !event.approvedExactAspectCopy.resolved).length,
       aspects: events
     };
 
