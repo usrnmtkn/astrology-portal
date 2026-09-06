@@ -24,6 +24,7 @@ const transit = readJson("../apps/web/src/content/fallbackArchitectureV3/source-
 const fallback = readJson("../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 const queue = readJson("../packages/astro-knowledge/review/reader-copy-repair-queue-2026-08-21.json");
 const manifest = readJson("../apps/web/src/content/fallbackArchitectureV3/bundled-manifest-v3.json");
+const lunationBook = readJson("../apps/web/src/content/fallbackArchitectureV3/bundled-lunation-book-cards-v3.json");
 const lunationBoundaryOverrides = readJson("../apps/web/src/content/fallbackArchitectureV3/owner-overrides/lunation-astrology-boundary-overrides-v1.json");
 const app = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
 const browserFallback = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts", import.meta.url), "utf8");
@@ -174,13 +175,10 @@ assert.equal(
 );
 
 const virgoGeminiKey = "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/virgo/rising-gemini/house-4";
-const historicalVirgoGeminiProbe = {
-  contentKey: virgoGeminiKey,
-  review_status: "approved",
-  body: "The 4th house corresponds to The Chariot in the Major Arcana."
-};
+const historicalVirgoGemini = lunationBook.authoredCards.find((row) => row.contentKey === virgoGeminiKey);
+assert.ok(historicalVirgoGemini, "Historical Virgo/Gemini source row must remain in the protected 288-cell corpus.");
 assert.equal(
-  isGovernedReaderEligible(historicalVirgoGeminiProbe),
+  isGovernedReaderEligible(historicalVirgoGemini),
   true,
   "Historical untyped source remains intact; the exact-key owner override replaces it at reader projection time."
 );
@@ -198,7 +196,20 @@ assert.match(
   /All relationships require give and take, and this New Moon can make it easier to see where the balance at home has become uneven\./u
 );
 assert.doesNotMatch(virgoGeminiOverride.body, /\b(?:tarot|major\s+arcana|minor\s+arcana|chariot)\b/iu);
-const projectedVirgoGemini = [historicalVirgoGeminiProbe, virgoGeminiOverride]
+
+const historicalVirgoGeminiTarotBlock = "All relationships require give and take. The 4th house is ruled by Cancer and corresponds to The Chariot in the Major Arcana. The Chariot symbolizes being active, in control, and taking direction of one's life, as well as needing to take control of one's emotions. The Chariot is a powerful reminder that you control your actions, reactions, and momentum. And, for many, your Chariot is an extension of your home; where you transport your Self and things from one life event to another. The Chariot symbolizes the importance of having a safe and secure container to navigate life successfully.";
+const ownerApprovedVirgoGeminiReplacement = "All relationships require give and take, and this New Moon can make it easier to see where the balance at home has become uneven. You may realize that you need more privacy, more help, a different division of responsibility, or simply a home that works better for the life you are living now. If something about your living situation or family dynamic has been bothering you for a while, this is a good time to stop treating it as background noise and decide what actually needs to change.";
+assert.ok(
+  historicalVirgoGemini.body.includes(historicalVirgoGeminiTarotBlock),
+  "Historical Virgo/Gemini source must still contain the exact Tarot block being replaced."
+);
+assert.equal(
+  virgoGeminiOverride.body,
+  historicalVirgoGemini.body.replace(historicalVirgoGeminiTarotBlock, ownerApprovedVirgoGeminiReplacement),
+  "Virgo/Gemini override must equal the historical body with only the exact Tarot block replaced."
+);
+
+const projectedVirgoGemini = [historicalVirgoGemini, virgoGeminiOverride]
   .reverse()
   .find((row) => isGovernedReaderEligible(row));
 assert.equal(projectedVirgoGemini, virgoGeminiOverride, "Latest eligible exact-key override must win reader projection.");
