@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.sextile.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a252b8d15597224b09d92acbe03454d9dfc779aa37c7c1b6bd7d2684d6c5dcc7",
+  "summary": "A useful message can remove one small obstacle that has been keeping a larger move hypothetical.",
+  "body": "A useful message can remove one small obstacle that has been keeping a larger move hypothetical. When Mercury sextiles the North Node, a reply, introduction, document, or well-timed conversation can give you enough information to act without pretending you know the whole outcome. Follow up while the information is current. Ask the next question, read the terms, schedule the call, or answer the person who offered to connect you. One concrete exchange can teach you more about the possibility than another week spent planning around assumptions.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

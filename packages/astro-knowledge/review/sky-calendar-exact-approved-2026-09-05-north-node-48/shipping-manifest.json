@@ -1,0 +1,409 @@
+{
+  "schemaVersion": 2,
+  "name": "Sky Calendar exact owner-approved North Node release, 2026-09-05, 48 rows",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "memberSetSha256": "100a291cb2b470d3598786fd5c954d16ef5c2b1ae8e79c59cd86e10be6ca157b",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "rowCount": 48,
+  "protectedUntouched": [
+    "sky.aspect.saturn.opposition.pluto",
+    "sky.aspect.sun.opposition.moon"
+  ],
+  "runtimeNodeCanonicalization": "north-node",
+  "previousProjectionPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json",
+  "overlayPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-payload-overlay.json",
+  "rows": [
+    {
+      "contentKey": "sky.aspect.chiron.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/chiron-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/chiron-conjunction-north-node-exact-approval.json",
+      "bodySha256": "c1f0df5deb48ab54b239dc809c6add50df38694e2832b71f28c6dc2cbd17c267",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/chiron-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/chiron-opposition-north-node-exact-approval.json",
+      "bodySha256": "a303bdd35d62baa486d13e23348ef05d7b0bd214037b569f0f0dc8bdfb91cd1d",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/chiron-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/chiron-sextile-north-node-exact-approval.json",
+      "bodySha256": "a3042b9bafd3b466bb192af1a51a2de2ca9d7d90e5ba697c0e6bd6f2b3e9e670",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/chiron-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/chiron-square-north-node-exact-approval.json",
+      "bodySha256": "ee8bfca515d1ec2f16288a931f521df1de9dae4e59554d2624e96db6a690a6f8",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/jupiter-conjunction-north-node-exact-approval.json",
+      "bodySha256": "b7a690e5aac958eeac101a9de4acfb82482bd3961497407bb1d9e9be167b9a80",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/jupiter-opposition-north-node-exact-approval.json",
+      "bodySha256": "5c69b81aa5035b105d38ba8381682b61853b5c5dd565ab65102d255e331beb21",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/jupiter-sextile-north-node-exact-approval.json",
+      "bodySha256": "a47b3507d94413f11e8a9b4ea2407c6f3f06b9721d99522635032ccb04569eab",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/jupiter-square-north-node-exact-approval.json",
+      "bodySha256": "c83a8a23562578a8d9b976bd187825d17aa6d3449ad250318e1f7ef1ebc6d4d0",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/lilith-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/lilith-conjunction-north-node-exact-approval.json",
+      "bodySha256": "8bd5b0b7dd1a7dd44921613d95c594b9d2b053340ade6b36706fe07f5f755d00",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/lilith-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/lilith-opposition-north-node-exact-approval.json",
+      "bodySha256": "03dbf33b362663cf46a1887f68ff8f79e65c1fc54fd59d374983731452d1c08c",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/lilith-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/lilith-sextile-north-node-exact-approval.json",
+      "bodySha256": "7fb9c750367ff27ad06f26fb0d9d1b21532be22d428c675c1286925f0a5bc07b",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/lilith-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/lilith-square-north-node-exact-approval.json",
+      "bodySha256": "9b0480af13de7ab698331a151530b346910fbb2b3df2246131000aaa78937c14",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.mars.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/mars-conjunction-north-node-exact-approval.json",
+      "bodySha256": "a57939e6a182551734b25251d4d1bce4e5ed0ddc97181448c84a2ebb69065209",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.mars.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/mars-opposition-north-node-exact-approval.json",
+      "bodySha256": "5b78282baf2cd92bc6f426f017a517210756b19b75dd8c16a9b771861077d288",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.mars.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/mars-sextile-north-node-exact-approval.json",
+      "bodySha256": "ebebdd9f4fbc1e587cb0ccdd043c8de3349cd5fca873910dfe8e1a4d308ac72f",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.mars.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/mars-square-north-node-exact-approval.json",
+      "bodySha256": "b35113312c3fe0bb161b3e5fcfb07b3552495fceb081888b5f3908563bd48a00",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/mercury-conjunction-north-node-exact-approval.json",
+      "bodySha256": "9aca7ae522a1a899962a59b611dc60a70184357cec60f5dd4bba38d3745e4e34",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/mercury-opposition-north-node-exact-approval.json",
+      "bodySha256": "c67934aab7a08ae04e5c7d3f22b621beb6a5ef57a36ead122d71a325d96ad6c8",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/mercury-sextile-north-node-exact-approval.json",
+      "bodySha256": "a252b8d15597224b09d92acbe03454d9dfc779aa37c7c1b6bd7d2684d6c5dcc7",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/mercury-square-north-node-exact-approval.json",
+      "bodySha256": "e57ea6451c117ecec5c313c2889e41a4145d0f2c0e187550211eac4c97b59610",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.moon.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/moon-conjunction-north-node-exact-approval.json",
+      "bodySha256": "cbe3fdb27f9a1292548c6f8cd8a6f2708e7f9916457c2ea8b02d45a5322e6f91",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.moon.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/moon-opposition-north-node-exact-approval.json",
+      "bodySha256": "931d035a32e2b5e69f61fe2e92bf082f7248f8e32a1fe0e7315540f3c1736213",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/moon-sextile-north-node-exact-approval.json",
+      "bodySha256": "2b717b54c6bd23a37c5e17d2219e3fd946a6988ea2fc1a9bacdc835a7c2f3dc0",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/moon-square-north-node-exact-approval.json",
+      "bodySha256": "6692337f2c46179a641e73252b6336fb00e3a2d353c58a1e82f7a297f30fa4b9",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/neptune-conjunction-north-node-exact-approval.json",
+      "bodySha256": "e009ca5ee7f3a0de13f7a45f6fe3884d9fb80939e7186e8c313aa2037127a314",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/neptune-opposition-north-node-exact-approval.json",
+      "bodySha256": "89e9d06739cd1e81e237447991bdc8da4cae863d24d2aca1bcc956487691600a",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/neptune-sextile-north-node-exact-approval.json",
+      "bodySha256": "7c3b44dbb681c86bbc2c9a7d440a80cf6b7d9a2e6506e521f6a988bbed2ee47e",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/neptune-square-north-node-exact-approval.json",
+      "bodySha256": "7f75ed914c672682ad0684d9941d77bb2f51fb7c558d29684458f8b33a53f397",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/pluto-conjunction-north-node-exact-approval.json",
+      "bodySha256": "ac4bbf7690364e995bdbc756ab06639c3323153a3c968808dc97061ac4a0fa46",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/pluto-opposition-north-node-exact-approval.json",
+      "bodySha256": "6db5186470b185e0b1f63f6443f464a71d5ae6bc3254578cc0d3ac9315648f68",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/pluto-sextile-north-node-exact-approval.json",
+      "bodySha256": "e0a9144d4f00e24a2c56a44732bd216a954476ddac3a41482e52ade1bc24df29",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/pluto-square-north-node-exact-approval.json",
+      "bodySha256": "369c5f5dfc3a395961da1b8981ab8153b14677c3480755be8d025de3d2403320",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/saturn-conjunction-north-node-exact-approval.json",
+      "bodySha256": "394d3f6a7206cd4dab2037ac22b8be721dd6517b8fc883369a6116a989a17efd",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/saturn-opposition-north-node-exact-approval.json",
+      "bodySha256": "2f26d1f911e90b5ce93fefd5a9113608e5f1a0da6585639f35986d5677e06b03",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/saturn-sextile-north-node-exact-approval.json",
+      "bodySha256": "4da351adf39d6fa50d0bb492b820ac8dad40214d4775bec6717021e6e914f4c4",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/saturn-square-north-node-exact-approval.json",
+      "bodySha256": "fce14dc8c305319b2fca1a277187cde670332a4479a7424fa38893159d237559",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/sun-conjunction-north-node-exact-approval.json",
+      "bodySha256": "5a977317e8c16626fdeab716ed453688cb7357b083f531dc731ad94db07bd957",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.sun.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/sun-opposition-north-node-exact-approval.json",
+      "bodySha256": "d1205710af88844b1d81175d1d7ed4f8f6bb9092b2291b20743ab3e69048f50b",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/sun-sextile-north-node-exact-approval.json",
+      "bodySha256": "0f1369d286faea6ced0e5e145ff27b41ac2d2f848e91ca5be5143fc34504731b",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/sun-square-north-node-exact-approval.json",
+      "bodySha256": "4329915f227323a652db73f46d9865b3eb61ce78f190b5f805a7d7e5fa90385f",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/uranus-conjunction-north-node-exact-approval.json",
+      "bodySha256": "5e9153161fbae703f0bd5d8a6b594a10f876d48ceb6d51f26037af6a5cf0a3ea",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/uranus-opposition-north-node-exact-approval.json",
+      "bodySha256": "a45f2ba0e66a3d5e055bd9b6b495325733dcb04d12ac42ad6e89a3f678bf384b",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/uranus-sextile-north-node-exact-approval.json",
+      "bodySha256": "c9397c99df1bfcb45f8401aae6f2c8ae45c4ad3e703c6fd271567d100a8f99f4",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/uranus-square-north-node-exact-approval.json",
+      "bodySha256": "08509e707c05c3efad6d68f4896da69f873543014865b1bb9f9461369d7dd9f4",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.venus.conjunction.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-conjunction-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/venus-conjunction-north-node-exact-approval.json",
+      "bodySha256": "2ff3464961c3aafed608d0371274e6117b7894cb8384f57eac7439df866dae0d",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.venus.opposition.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-opposition-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/venus-opposition-north-node-exact-approval.json",
+      "bodySha256": "f1a4fec3934cadf08740c20df1cc31bad65dd5e4c939df0c8fa554c914005b01",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.venus.sextile.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-sextile-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/venus-sextile-north-node-exact-approval.json",
+      "bodySha256": "4a6751217384ab03a8992eddb3bba100b86b8e753d81497a1dd903e9965038c7",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    },
+    {
+      "contentKey": "sky.aspect.venus.square.north-node",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-square-north-node.json",
+      "sourceCreatedByRelease": true,
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/venus-square-north-node-exact-approval.json",
+      "bodySha256": "c235e2953ea269ca543b575a03554cc4d7c39be75cc436af6cdd2e6d862ad8de",
+      "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
+    }
+  ]
+}

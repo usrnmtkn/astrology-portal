@@ -1,0 +1,18 @@
+{
+  "id": "mercury-opposition-north-node",
+  "transiting": "mercury",
+  "aspect": "opposition",
+  "other": "north-node",
+  "base": "You can make an excellent case for staying with what you already know, especially when the unfamiliar option still has more questions than answers.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "You can make an excellent case for staying with what you already know, especially when the unfamiliar option still has more questions than answers.",
+    "body": "You can make an excellent case for staying with what you already know, especially when the unfamiliar option still has more questions than answers. When Mercury opposes the North Node, old expertise, settled opinions, familiar contacts, or an explanation you have used for years can sound especially convincing because you already know how to defend it. That knowledge still matters, but expertise can turn into a closed argument when no new information is allowed to change the conclusion. Use what you know as evidence, not as a reason to stop asking what the unfamiliar option actually requires.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+  }
+}

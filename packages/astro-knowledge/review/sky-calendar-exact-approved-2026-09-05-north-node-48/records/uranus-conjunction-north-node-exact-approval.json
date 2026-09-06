@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.conjunction.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5e9153161fbae703f0bd5d8a6b594a10f876d48ceb6d51f26037af6a5cf0a3ea",
+  "summary": "An unexpected change may force a decision you were still hoping to make on your own timeline.",
+  "body": "An unexpected change may force a decision you were still hoping to make on your own timeline. When Uranus conjuncts the North Node, a cancellation, sudden offer, technical change, departure, move, or break in the old setup can alter what is available before you have had time to get comfortable with the new facts. The surprise may expose an overdue change without making every impulsive response wise. Handle what changed first, then choose the option that gives you more freedom after the adrenaline wears off.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
+}
