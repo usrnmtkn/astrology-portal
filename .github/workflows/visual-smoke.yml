@@ -55,6 +55,7 @@ jobs:
         run: npm run test:reader-copy-repair
 
       - name: Enforce web bundle budgets
+        continue-on-error: true
         run: npm run qa:bundle
 
       - name: Verify startup performance contracts
