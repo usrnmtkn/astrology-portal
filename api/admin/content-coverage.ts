@@ -167,14 +167,20 @@ function buildCoverage() {
     summary: {
       complete: coverage.filter((row) => row.state === "complete").length,
       incomplete: coverage.filter((row) => row.state === "incomplete").length,
-      unresolvedQueue: Number(unresolved.count ?? 0)
+      unresolvedQueue: Number(unresolved.count ?? 0),
+  unresolvedIssues: Number(unresolved.issueCount ?? unresolved.count ?? 0),
+  unresolvedShadowed: Number(unresolved.shadowedCount ?? 0),
+  unresolvedRetired: Number(unresolved.retiredCount ?? 0)
     },
     coverage,
     notes: {
       friendsIntentionalGap: friendsReady < transitRows.length
         ? `${transitRows.length - friendsReady} canonical Friends transit row currently has no body_they.`
         : null,
-      unresolvedReasonCounts: unresolved.reasonCounts ?? {}
+      unresolvedReasonCounts: unresolved.reasonCounts ?? {},
+  unresolvedWorkload: unresolved.workload ?? {},
+  unresolvedShadowedReasonCounts: unresolved.shadowedReasonCounts ?? {},
+  unresolvedRetiredReasonCounts: unresolved.retiredReasonCounts ?? {}
     }
   };
 }

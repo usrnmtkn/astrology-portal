@@ -39,6 +39,15 @@ function retirementFor(contentKey) {
   )) ?? null;
 }
 
+function workClassFor(contentKey) {
+  if (contentKey.startsWith("daily-glance-variant/")) return "optional-rotation";
+  if (contentKey.startsWith("authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-")
+    || contentKey.startsWith("authored/sky-lunation-macro/")) return "full-copy-review";
+  if (contentKey.startsWith("fallback-hook/lunation-")) return "shared-fallback-authoring";
+  if (contentKey.startsWith("fallback-template/natal.planet-in-sign/")) return "template-review";
+  return "editorial-review";
+}
+
 const candidates = [];
 const recordsByContentKey = new Map();
 
@@ -140,7 +149,7 @@ for (const item of uniqueCandidates) {
 
   const eligiblePeers = eligiblePeersFor(item);
   if (!eligiblePeers.length) {
-    actionableItems.push(item);
+    actionableItems.push({ ...item, workClass: workClassFor(item.contentKey) });
     continue;
   }
   shadowedItems.push({
@@ -161,12 +170,25 @@ function retirementReasonCounts(items) {
 }
 
 const actionableContentKeys = [...new Set(actionableItems.map((item) => item.contentKey))].sort();
+function workloadSummary(items) {
+  const order = ["full-copy-review", "shared-fallback-authoring", "template-review", "optional-rotation", "editorial-review"];
+  return Object.fromEntries(order
+    .filter((workClass) => items.some((item) => item.workClass === workClass))
+    .map((workClass) => {
+      const records = items.filter((item) => item.workClass === workClass);
+      return [workClass, {
+        records: records.length,
+        decisions: new Set(records.map((item) => item.contentKey)).size
+      }];
+    }));
+}
 const report = {
   schema: "tldrastro-content-unresolved-queue/v1",
   generatedFrom: path.relative(repoRoot, sourceRoot),
   count: actionableItems.length,
   issueCount: actionableContentKeys.length,
   actionableContentKeys,
+  workload: workloadSummary(actionableItems),
   reasonCounts: reasonCounts(actionableItems),
   items: actionableItems,
   shadowedCount: shadowedItems.length,

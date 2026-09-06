@@ -94,8 +94,13 @@ change review statuses, or publish content.
 
 `npm run build:content-unresolved-queue` scans the current V3 authoring sources and
 writes `packages/astro-knowledge/generated/content-unresolved-queue-v1.json`.
-This report is an inventory, not an approval grant. It records source paths, object
-paths, statuses, reasons, and source hashes for rows excluded by reader governance.
+This report is an inventory, not an approval grant. Its `items` array is the actionable
+editorial backlog: pending records that have neither an exact-key reader-eligible peer
+nor a governed retirement/supersession decision. `issueCount` counts unique actionable
+content keys, so it is the closer measure of owner/editorial decisions remaining.
+`shadowedItems` and `retiredItems` preserve non-actionable source history with the
+eligible-peer or retirement evidence that removed those records from the active queue.
+No row is approved, deleted, or made reader-eligible by this classification.
 
 Known source-contract failures may declare a hash-bound replacement plan through
 `api/admin/content-source-repair-plans.ts`. Content Studio displays the complete
