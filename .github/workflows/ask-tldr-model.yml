@@ -38,3 +38,6 @@ jobs:
 
       - name: Validate Ask TLDR calculated evidence adapter
         run: npx tsx scripts/test-ask-tldr-evidence-adapter.mjs
+
+      - name: Validate Ask TLDR governed evidence
+        run: npx tsx scripts/test-ask-tldr-governed-evidence.mjs
