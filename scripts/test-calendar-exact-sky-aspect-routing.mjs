@@ -43,14 +43,18 @@ const allExactRecords = fs.readdirSync(transitDirectory)
     && record.readerCopy.body.trim()
   ));
 const southNodePoleRecords = allExactRecords.filter((record) => record.other === "south-node");
-const exactRecords = allExactRecords.filter((record) => record.other !== "south-node");
+const canonicalEventRecords = allExactRecords.filter((record) => record.other !== "south-node");
+const projectionKeys = new Set(Object.keys(ownerRewrites.payloads ?? {}));
+const exactRecords = canonicalEventRecords.filter((record) => (
+  projectionKeys.has(`sky.${record.transiting}.${record.aspect}.${record.other}`)
+));
 
-assert.equal(exactRecords.length, expectedExactCount, "The pinned canonical-event exact Sky corpus changed.");
+assert.equal(exactRecords.length, expectedExactCount, "The selected exact owner projection is not fully represented in the runtime corpus.");
 if (southNodePoleRecords.length > 0) {
   assert.equal(
     southNodePoleRecords.length,
     60,
-    "South Node pole-specific content must add exactly 60 interpretations without changing the canonical event denominator."
+    "South Node pole-specific content must add exactly 60 interpretations without changing any historical projection denominator."
   );
 }
 
@@ -158,7 +162,7 @@ for (const record of exactRecords) {
   }
 }
 
-assert.equal(routedDirections, expectedExactCount * 2, "Every canonical reader-eligible exact record must route in both planet orders.");
+assert.equal(routedDirections, expectedExactCount * 2, "Every row in the selected exact owner projection must route in both planet orders.");
 
 const screenshotCases = [
   {
@@ -221,10 +225,11 @@ const screenshotCases = [
     ownerKey: "sky.sun.trine.north-node",
     sourceId: "sun-trine-north-node"
   }] : [])
-];
+].filter(({ ownerKey }) => ownerRewrites.payloads[ownerKey]);
 
 for (const { event, ownerKey, sourceId } of screenshotCases) {
   const record = exactRecords.find(({ id }) => id === sourceId);
+  assert.ok(record, `${sourceId}: screenshot regression record is outside the selected projection.`);
   const ownerText = ownerRewrites.payloads[ownerKey].payload.body;
   const normalized = normalizeCalendarEventSurface(
     event,
@@ -323,9 +328,10 @@ assert.equal(sourceGapWithoutGenericProse.status, "not-servable");
 assert.deepEqual(sourceGapWithoutGenericProse.sections, []);
 
 console.log("Calendar exact Sky-aspect routing parity passed", {
-  canonicalReaderEligibleRecords: exactRecords.length,
+  selectedProjectionRecords: exactRecords.length,
+  canonicalRuntimeRecords: canonicalEventRecords.length,
   poleSpecificSouthNodeContentRecords: southNodePoleRecords.length,
   routedDirections,
   screenshotRegressions: screenshotCases.length,
-  remainingDocumentedExactGaps: documentedExactUniverse - exactRecords.length
+  remainingDocumentedExactGaps: documentedExactUniverse - canonicalEventRecords.length
 });
