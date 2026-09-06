@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "venus",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.venus.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "An old attraction, spending habit, or way of earning affection can feel especially persuasive.",
+      "body": "An old attraction, spending habit, or way of earning affection can feel especially persuasive. Venus conjunct the South Node can bring a former relationship pattern, familiar pleasure, old client, or predictable money choice back into focus. The pull may be warm, flattering, and genuinely enjoyable because you already know how this story works. Familiarity does not make it bad. It does make it worth asking what you are repeating. Keep the pleasure or value that still holds up, and stop paying for it with a pattern you no longer want.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.venus.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "Something from the past can make a relationship or money decision easier without needing to become your future.",
+      "body": "Something from the past can make a relationship or money decision easier without needing to become your future. Venus sextile the South Node can bring help through an old contact, established customer, former collaborator, trusted taste, or financial habit that has served you well. You may already know the person to call or the option that fits. Take the useful part. A familiar source of ease can support the next move without becoming a reason to rebuild the same arrangement.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.venus.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "The relationship pattern you know best may be exactly what is making the current situation harder.",
+      "body": "The relationship pattern you know best may be exactly what is making the current situation harder. Venus square the South Node can expose an old way of keeping affection, peace, money, or approval in place. You may agree too quickly, spend to soothe the discomfort, choose the familiar person, or make yourself easy to accommodate because the strategy once worked. The friction is useful because it shows the price clearly. Being wanted, liked, or comfortable is not enough reason to keep repeating terms you would not choose from scratch.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.venus.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "The familiar relationship or money choice may feel easy enough to skip the question of what it is actually worth.",
+      "body": "The familiar relationship or money choice may feel easy enough to skip the question of what it is actually worth. Venus trine the South Node can make old chemistry, established tastes, known clients, and comfortable arrangements flow with very little resistance. There can be something genuinely good in returning to what has proven itself. Just do not let ease make the decision for you. Keep what still adds value, and let the rest stay pleasant history instead of automatic policy.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.venus.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "What you value now may be asking for different terms than the ones you have accepted before.",
+      "body": "What you value now may be asking for different terms than the ones you have accepted before. When Venus opposes the South Node, a relationship, offer, purchase, or money decision can put your current priorities directly against an old pattern of choosing. You may see how much loyalty, chemistry, guilt, or familiarity has been carrying the agreement. The past can explain why the terms made sense then. It does not have to decide what they are worth to you now.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}

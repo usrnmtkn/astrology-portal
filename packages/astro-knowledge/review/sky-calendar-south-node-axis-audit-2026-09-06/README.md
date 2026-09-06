@@ -1,24 +1,40 @@
 # Sky Calendar South Node axis audit — 2026-09-06
 
-Status: **governed coverage audit / no new serving copy**
+Status: **geometry audit retained / editorial conclusion superseded**
 
-## Result
+## Superseded editorial conclusion
 
-The Sky Calendar major exact-aspect corpus does **not** need a second 60-card South Node reader corpus under the current canonical calculation contract.
+Later on 2026-09-06, the owner clarified the product intent: North Node and South Node are separate interpretive subjects even when they describe the same astronomical node-axis contact.
 
-The canonical Sky aspect profile defines South Node as the point 180° from North Node and deduplicates the lunar-node axis to one editorial event keyed to North Node. The engine calculates both geometric contacts, then retains the North Node contact as the canonical reader event.
+The geometry findings in this audit remain correct. South Node is always 180° from North Node, the five major aspects mirror exactly, and the product should not create two independent astronomical timestamps for one node-axis event.
 
-That produces 60 South Node major-aspect geometries across the 12 non-node counterpart bodies and five major aspects, but those 60 geometries map one-to-one onto the 60 already owner-approved and serving North Node exact records.
+The earlier conclusion that the Calendar therefore needed **no separate 60-card South Node writing queue** is superseded. Geometry may be deduplicated; editorial meaning may not be collapsed automatically.
+
+The current owner decision is:
+
+**one astronomical event → two possible pole-specific interpretations**
+
+South Node V1 authoring now lives in:
+
+`packages/astro-knowledge/review/sky-calendar-south-node-60-v1/`
+
+Those passages remain review-gated and runtime-ineligible until owner approval and a separate serving implementation.
+
+## Original geometry result
+
+The canonical Sky aspect profile defines South Node as the point 180° from North Node. The engine calculates both geometric contacts and currently canonicalizes them to one North-Node-keyed event.
+
+That produces 60 South Node major-aspect geometries across the 12 non-node counterpart bodies and five major aspects. Each South Node geometry maps one-to-one to the corresponding North Node geometry at the same exact node-axis event.
 
 ## Major-aspect mirror
 
-| South Node geometry | Canonical Calendar event |
+| South Node geometry | Same event, North Node geometry |
 | --- | --- |
-| conjunction | North Node opposition |
-| sextile | North Node trine |
-| square | North Node square |
-| trine | North Node sextile |
-| opposition | North Node conjunction |
+| conjunction | opposition |
+| sextile | trine |
+| square | square |
+| trine | sextile |
+| opposition | conjunction |
 
 Counterpart bodies:
 
@@ -39,35 +55,27 @@ The North Node / South Node pair itself is not a reader event. The nodes are per
 
 ## Reader-copy boundary
 
-This audit does **not** say North Node and South Node have the same meaning.
+North Node and South Node do **not** have the same meaning.
 
-Repository governance already establishes the opposite: North Node and South Node are opposite developmental poles. Axis derivation may establish geometry and event identity, but it must not be used to convert North Node prose into South Node prose.
+Repository governance establishes them as opposite developmental poles. Axis derivation may establish geometry and event identity, but it must not be used to convert North Node prose into South Node prose.
 
-The existing aspect authoring harness collapses both poles to the shared `nodes` pair source for axis-level mechanics. That source is sufficient for the current single canonical node-axis Calendar event. It is **not** authorization to create South Node reader copy by swapping labels or reversing North Node wording.
+The existing aspect authoring harness collapses both poles to the shared `nodes` pair source for axis-level mechanics. That source can establish the shared event mechanism. It is not authorization to create South Node reader copy by swapping labels, reversing sentences, or treating the North Node passage as the South Node draft source.
 
-If the product later chooses to show North Node and South Node as separate simultaneous Calendar cards, that is a product-contract change. It requires:
+The owner has now explicitly chosen pole-specific editorial treatment. The 60 South Node passages therefore require their own mechanism-first authoring, review, and approval set.
 
-1. an explicit owner decision to stop node-axis reader deduplication;
-2. pole-specific South Node mechanism sources;
-3. a distinct exact-copy review and approval set;
-4. duplicate-event UX rules;
-5. serving and routing changes with new regressions.
+## Permanent geometry regression
 
-Until then, separate South Node exact transit files would be duplicate runtime content and should not exist.
-
-## Permanent regression
-
-`scripts/test-calendar-south-node-axis-mirror.mjs` proves:
+`scripts/test-calendar-south-node-axis-mirror.mjs` proves the current calculation contract:
 
 - all 60 major South Node geometries are calculated before canonicalization;
 - every geometry produces the correct mirrored North Node aspect;
-- canonicalization leaves exactly one North Node-keyed editorial event;
+- canonicalization currently leaves exactly one North-Node-keyed astronomical/editorial event;
 - every mirrored event has an existing reader-eligible exact North Node runtime record;
-- exactly 60 unique North Node runtime records cover the 60 South Node geometries;
-- zero South Node exact runtime transit files exist.
+- exactly 60 unique North Node runtime records cover the 60 geometries under the current serving implementation;
+- zero South Node exact runtime transit files exist today.
 
-The regression is part of the Ephemeris release gate so a future calculation or content change cannot silently split, duplicate, or lose the node-axis Calendar coverage.
+Those assertions describe current runtime behavior, not the final editorial product contract. A future serving PR may need to evolve the canonical event payload so one deduplicated event can address both North Node and South Node copy without duplicating the timestamp.
 
-## Scope
+## Scope of the original audit
 
-No reader copy changes. No owner approval changes. No serving changes. No database writes. No astrology calculation changes. No new South Node writing queue is created by this audit.
+The original audit made no reader copy, owner approval, database, or astrology calculation changes. Its geometry work remains valid. Its statement that no South Node writing queue was needed is historical and superseded by the owner decision above.

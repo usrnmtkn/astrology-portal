@@ -1,0 +1,37 @@
+{
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-south-node-60-v1",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json",
+  "ownerStatement": "these are great, approved",
+  "decisionContext": "After reviewing representative Sun conjunct South Node, Mars square South Node, and Neptune conjunct South Node passages from the complete 60-record V1 set, the owner approved the South Node Calendar writing as a batch on 2026-09-06.",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedFields": [
+    "summary",
+    "body"
+  ],
+  "approvalEffect": "exact_wording_approval",
+  "capabilities": [
+    "editorial_approval"
+  ],
+  "approvedAt": "2026-09-06",
+  "memberCount": 60,
+  "approvedCandidateHeadSha": "2005e620da8a98f8cbc2e1aa711f4cc127f5ddac",
+  "runtimeEligible": false,
+  "servingRequiresSeparateChange": true,
+  "recordFileBlobs": {
+    "chiron.json": "d736be8f56695d8233ebec6daa02d374bb7ca07c",
+    "jupiter.json": "390cce27870d2343cba34cc1f5c8d11de347bc3f",
+    "lilith.json": "9fe374370d56c5e7f05887e007942789ac6e2ba1",
+    "mars.json": "5c5829aa9774ac59a6dc1fc6a565a68dea19e4eb",
+    "mercury.json": "73e7359e27d225682a8989d77dfc28b53aab9ec1",
+    "moon.json": "dad9ac8c84a65d8f52ecaf7597d3121ea0703f99",
+    "neptune.json": "398e2203aabfac0358109f832312cfedb772ec90",
+    "pluto.json": "6c2e2f090055a4941886fa7318a0931de801bf18",
+    "saturn.json": "cb53a5823a41ee41b2dd77f224055069600256d3",
+    "sun.json": "3c130691121ded4cbad0ea406077c9ba3c0e5451",
+    "uranus.json": "d957e1e213e2906b0e09518ad77aaa91c97a524b",
+    "venus.json": "af7183868257a308cc1c913210da5bb05a88abcf"
+  }
+}
