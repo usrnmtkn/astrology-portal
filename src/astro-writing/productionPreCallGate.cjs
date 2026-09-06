@@ -104,6 +104,9 @@ function productionValidationContract(input) {
     }
     return { strategyId: "sky-placement", validationProfile: "sky-placement", register: "collective" };
   }
+  if (input?.surface === "friends" && event.includes("transit")) {
+    return { strategyId: "friends-transit", validationProfile: "friends-transit", register: "third_person" };
+  }
   if (input?.surface === "you" && event.includes("transit")) {
     return { strategyId: "friends-transit", validationProfile: "friends-transit", register: "second_person" };
   }
