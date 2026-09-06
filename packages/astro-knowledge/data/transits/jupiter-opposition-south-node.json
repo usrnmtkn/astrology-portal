@@ -1,0 +1,18 @@
+{
+  "id": "jupiter-opposition-south-node",
+  "transiting": "jupiter",
+  "aspect": "opposition",
+  "other": "south-node",
+  "base": "A promising future can make you see which old success story still defines what counts as progress.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "A promising future can make you see which old success story still defines what counts as progress.",
+    "body": "A promising future can make you see which old success story still defines what counts as progress. When Jupiter opposes the South Node, a new opportunity, belief, trip, course, or expansion can stand directly across from a path that once made sense. You may be tempted to measure the new option using an older definition of success. Keep the experience that taught you something. Let the definition change if your life has changed.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}
