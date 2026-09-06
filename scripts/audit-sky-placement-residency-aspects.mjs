@@ -28,7 +28,8 @@ function parseCli(argv) {
   }
 
   const out = valueFor("--out") ? path.resolve(valueFor("--out")) : null;
-  return { planet, sign, referenceDate, timeZone, out };
+  const preview = args.includes("--preview");
+  return { planet, sign, referenceDate, timeZone, out, preview };
 }
 
 function localDate(value, timeZone) {
@@ -38,6 +39,13 @@ function localDate(value, timeZone) {
     year: "numeric",
     timeZone
   }).format(new Date(value));
+}
+
+function title(value) {
+  return String(value)
+    .trim()
+    .replace(/[-_]+/gu, " ")
+    .replace(/\b\w/gu, (match) => match.toUpperCase());
 }
 
 async function main() {
@@ -80,14 +88,60 @@ async function main() {
         approvedExactAspectCopy: approvedExact ? {
           resolved: true,
           contentId: approvedExact.contentId,
-          sourceId: approvedExact.sourceId
+          sourceId: approvedExact.sourceId,
+          body: approvedExact.body
         } : {
           resolved: false,
           contentId: null,
-          sourceId: null
+          sourceId: null,
+          body: null
         }
       };
     });
+
+    let preview = null;
+    if (cli.preview) {
+      const canonical = await vite.ssrLoadModule("/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs");
+      const canonicalPath = path.join(
+        repoRoot,
+        "apps",
+        "web",
+        "src",
+        "content",
+        "fallbackArchitectureV3",
+        "authored-inputs",
+        "sky-v4-canonical-content-studio-stage-v1.json"
+      );
+      const corpus = JSON.parse(fs.readFileSync(canonicalPath, "utf8"));
+      const transitStartLocal = localDate(facts.transitStart, facts.timeZone);
+      const transitEndLocal = localDate(facts.transitEnd, facts.timeZone);
+      const aspectInputs = events.map((event) => ({
+        id: event.id,
+        bodyA: event.planet,
+        bodyB: event.otherPlanet,
+        approved: event.approvedExactAspectCopy.resolved,
+        exactDateTime: event.occursAt,
+        orb: 0,
+        headline: `${title(event.planet)} ${event.aspect} ${title(event.otherPlanet)}`,
+        dateLine: event.localDate,
+        body: event.approvedExactAspectCopy.body || ""
+      }));
+      const renderedPreview = canonical.renderSkyV4ContinuousPreview(corpus, {
+        planet: cli.planet,
+        sign: cli.sign,
+        dateLine: `${transitStartLocal} to ${transitEndLocal}`,
+        facts: {
+          entryDate: transitStartLocal,
+          exitDate: transitEndLocal
+        },
+        aspects: aspectInputs
+      });
+      preview = {
+        resolution: renderedPreview.resolution,
+        selectedAspectIds: renderedPreview.selectedAspectIds,
+        page: renderedPreview.page
+      };
+    }
 
     const output = {
       schema: "tldrastro-sky-placement-residency-aspect-audit/v1",
@@ -98,7 +152,8 @@ async function main() {
         planet: cli.planet,
         sign: cli.sign,
         referenceDate: cli.referenceDate.toISOString(),
-        timeZone: cli.timeZone
+        timeZone: cli.timeZone,
+        preview: cli.preview
       },
       residency: {
         planet: facts.planet,
@@ -112,7 +167,15 @@ async function main() {
       aspectCount: events.length,
       approvedExactAspectCount: events.filter((event) => event.approvedExactAspectCopy.resolved).length,
       unresolvedExactAspectCount: events.filter((event) => !event.approvedExactAspectCopy.resolved).length,
-      aspects: events
+      aspects: events.map((event) => ({
+        ...event,
+        approvedExactAspectCopy: {
+          resolved: event.approvedExactAspectCopy.resolved,
+          contentId: event.approvedExactAspectCopy.contentId,
+          sourceId: event.approvedExactAspectCopy.sourceId
+        }
+      })),
+      preview
     };
 
     const rendered = `${JSON.stringify(output, null, 2)}\n`;
