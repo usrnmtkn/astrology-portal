@@ -3,7 +3,7 @@
    information order without changing content, serving, or approval behavior. */
 
 /* Preserve the established editor title rhythm required by the visual contract. */
-.admin-dashboard .admin-editor-toolbar h2 {
+.admin-dashboard .admin-editor-panel .admin-editor-toolbar h2 {
   margin-top: var(--admin-space-sm);
 }
 
