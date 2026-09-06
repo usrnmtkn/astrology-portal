@@ -142,11 +142,12 @@ export async function loadUserGeneratedInterpretation({
     .eq("user_id", userId)
     .eq("subject_type", subjectType)
     .eq("subject_id", subjectId)
-    .eq("content_key", contentKey)
-    .eq("status", "LIVE")
-    .order("updated_at", { ascending: false })
-    .limit(1);
+    .eq("content_key", contentKey);
 
+  query = subjectType === "friend_transit_reading"
+    ? query.in("status", ["DRAFT", "REVIEWED", "LIVE"])
+    : query.eq("status", "LIVE");
+  query = query.order("updated_at", { ascending: false }).limit(1);
   query = targetDate ? query.eq("target_date", targetDate) : query.is("target_date", null);
 
   const { data, error } = await query.returns<UserGeneratedContentRow[]>();
@@ -172,7 +173,10 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
     throw new Error(error?.message ?? "Sign in before generating personalized content.");
   }
 
-  const response = await fetch("/api/generate-user-content", {
+  const endpoint = request.subjectType === "friend_transit_reading"
+    ? "/api/generate-friend-transit-reading"
+    : "/api/generate-user-content";
+  const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "content-type": "application/json",
