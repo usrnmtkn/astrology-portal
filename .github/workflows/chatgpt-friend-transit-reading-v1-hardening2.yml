@@ -1,0 +1,237 @@
+name: ChatGPT Friend Transit Reading V1 Hardening 2
+
+on:
+  push:
+    branches:
+      - chatgpt/friend-transit-reading-v1-20260906
+
+permissions:
+  contents: write
+
+jobs:
+  harden:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/friend-transit-reading-v1-20260906
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply hardening
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          # Stronger personal-transit proof plus a pure server request lock.
+          path = Path("api/_lib/friend-transit-reading.ts")
+          source = path.read_text()
+          old = '  if ([...primaryThemes, ...longerCycles].some((item) => !item.detailAvailable || !item.evidence.transitPlanet || !item.evidence.aspect || !item.evidence.natalPoint)) {\n    throw new Error("FRIEND_TRANSIT_READING_PERSONAL_EVIDENCE_INVALID");\n  }'
+          new = '  if ([...primaryThemes, ...longerCycles].some((item) => (\n    !item.detailAvailable\n    || !item.id\n    || !item.title\n    || !item.summary\n    || !item.evidence.transitPlanet\n    || !item.evidence.aspect\n    || !item.evidence.natalPoint\n    || item.evidence.contentKeys.length === 0\n  ))) {\n    throw new Error("FRIEND_TRANSIT_READING_PERSONAL_EVIDENCE_INVALID");\n  }'
+          if new not in source:
+              if old not in source: raise SystemExit("personal evidence guard anchor missing")
+              source = source.replace(old, new, 1)
+          anchor = 'export function friendTransitReadingCanGenerate(brief: FriendTransitReadingBrief) {\n  return [...brief.primaryThemes, ...brief.longerCycles].length > 0;\n}\n'
+          addition = '''export function friendTransitReadingCanGenerate(brief: FriendTransitReadingBrief) {
+  return [...brief.primaryThemes, ...brief.longerCycles].length > 0;
+}
+
+export function friendTransitReadingRequestLock(input: { brief: unknown; subjectId: string; targetDate: string }) {
+  const brief = assertFriendTransitReadingBrief(input.brief);
+  const subjectId = stringValue(input.subjectId);
+  const targetDate = stringValue(input.targetDate);
+  if (!subjectId) throw new Error("FRIEND_TRANSIT_READING_SUBJECT_REQUIRED");
+  if (!/^\\d{4}-\\d{2}-\\d{2}$/u.test(targetDate)) throw new Error("FRIEND_TRANSIT_READING_TARGET_DATE_REQUIRED");
+  if (!friendTransitReadingCanGenerate(brief)) throw new Error("FRIEND_TRANSIT_READING_NO_PERSONAL_TRANSIT_EVIDENCE");
+  return {
+    brief,
+    contentKey: `friend-transit-reading/${subjectId}/${targetDate}`,
+    surface: "friends" as const,
+    mode: "in_depth" as const,
+    eventType: FRIEND_TRANSIT_READING_EVENT_TYPE,
+    headline: `What's going on with ${brief.friendName} right now?`,
+    knowledgeIds: friendTransitReadingKnowledgeIds(brief),
+    facts: {
+      contentType: FRIEND_TRANSIT_READING_CONTENT_TYPE,
+      blockType: FRIEND_TRANSIT_READING_CONTENT_TYPE,
+      friendTransitsBrief: brief
+    },
+    sourceSnapshot: {
+      schema: "friend-transit-reading-source.v1",
+      briefSchema: brief.schema,
+      friendName: brief.friendName,
+      dateLabel: brief.dateLabel,
+      counts: brief.counts,
+      targetDate
+    }
+  };
+}
+'''
+          if 'export function friendTransitReadingRequestLock' not in source:
+              if anchor not in source: raise SystemExit("request lock anchor missing")
+              source = source.replace(anchor, addition, 1)
+          path.write_text(source)
+
+          # Use that request lock server-side.
+          path = Path("api/generate-user-content.ts")
+          source = path.read_text()
+          old_import = '''  FRIEND_TRANSIT_READING_CONTENT_TYPE,
+  FRIEND_TRANSIT_READING_EVENT_TYPE,
+  FRIEND_TRANSIT_READING_PROMPT_VERSION,
+  assertFriendTransitReadingBrief,
+  friendTransitReadingCanGenerate,
+  friendTransitReadingKnowledgeIds
+} from "./_lib/friend-transit-reading.js";'''
+          new_import = '''  FRIEND_TRANSIT_READING_PROMPT_VERSION,
+  friendTransitReadingRequestLock
+} from "./_lib/friend-transit-reading.js";'''
+          if new_import not in source:
+              if old_import not in source: raise SystemExit("friend request import anchor missing")
+              source = source.replace(old_import, new_import, 1)
+          start = source.find('    if (input.subjectType === "friend_transit_reading") {')
+          end_marker = '    const reportPayload = input.subjectType === "report_unit"'
+          end = source.find(end_marker, start)
+          if start < 0 or end < 0: raise SystemExit("friend request block bounds missing")
+          current = source[start:end]
+          locked_block = '''    if (input.subjectType === "friend_transit_reading") {
+      const locked = friendTransitReadingRequestLock({
+        brief: input.facts?.friendTransitsBrief,
+        subjectId: input.subjectId,
+        targetDate: typeof input.targetDate === "string" ? input.targetDate : ""
+      });
+      input.contentKey = locked.contentKey;
+      input.surface = locked.surface;
+      input.mode = locked.mode;
+      input.eventType = locked.eventType;
+      input.headline = locked.headline;
+      input.knowledgeIds = locked.knowledgeIds;
+      input.facts = locked.facts;
+      input.sourceSnapshot = locked.sourceSnapshot;
+      input.voiceNotes = undefined;
+      input.allowQualityFallback = false;
+      input.status = "DRAFT";
+    }
+'''
+          if 'const locked = friendTransitReadingRequestLock' not in current:
+              source = source[:start] + locked_block + source[end:]
+          path.write_text(source)
+
+          # Return the immediate generated payload for this DRAFT-only reader product.
+          path = Path("apps/web/src/services/userGeneratedContent.ts")
+          source = path.read_text()
+          old = '  if (saved) {\n    return saved.status === "LIVE" ? fromRow(saved) : null;\n  }\n\n  return payload?.generated ?? null;'
+          new = '  if (saved) {\n    if (saved.status === "LIVE") return fromRow(saved);\n    if (request.subjectType === "friend_transit_reading") return payload?.generated ?? null;\n    return null;\n  }\n\n  return payload?.generated ?? null;'
+          if new not in source:
+              if old not in source: raise SystemExit("draft return anchor missing")
+              source = source.replace(old, new, 1)
+          path.write_text(source)
+
+          # Discard a response if friend/date changed while the request was in flight.
+          path = Path("apps/web/src/features/friends/ManualChartsPanel.tsx")
+          source = path.read_text()
+          old = '  const selectedChart = allFriendCharts.find((chart) => chart.id === selectedChartId) ?? null;\n  const selectedFriendNatalChartComplete = selectedChart'
+          new = '  const selectedChart = allFriendCharts.find((chart) => chart.id === selectedChartId) ?? null;\n  const friendTransitReadingSelectionKey = `${selectedChart?.id ?? ""}|${currentSky?.generatedAt.slice(0, 10) ?? ""}`;\n  const friendTransitReadingSelectionKeyRef = useRef(friendTransitReadingSelectionKey);\n  friendTransitReadingSelectionKeyRef.current = friendTransitReadingSelectionKey;\n  const selectedFriendNatalChartComplete = selectedChart'
+          if new not in source:
+              if old not in source: raise SystemExit("selection key anchor missing")
+              source = source.replace(old, new, 1)
+          source = source.replace('  }, [selectedChart?.id, selectedFriendTransitReadingDate]);', '  }, [friendTransitReadingSelectionKey]);')
+          old = '  async function generateSelectedFriendTransitReading() {\n    if (!selectedChart || !selectedFriendTransitReadingDate || !selectedFriendTransitReadingAvailable) return;\n    setFriendTransitReadingStatus("loading");'
+          new = '  async function generateSelectedFriendTransitReading() {\n    if (!selectedChart || !selectedFriendTransitReadingDate || !selectedFriendTransitReadingAvailable) return;\n    const requestSelectionKey = friendTransitReadingSelectionKey;\n    setFriendTransitReadingStatus("loading");'
+          if new not in source:
+              if old not in source: raise SystemExit("request selection anchor missing")
+              source = source.replace(old, new, 1)
+          old = '      if (!generated) throw new Error("The short reading was not returned.");\n      setFriendTransitReading(generated);\n      setFriendTransitReadingStatus("ready");\n    } catch (error) {\n      setFriendTransitReading(null);'
+          new = '      if (friendTransitReadingSelectionKeyRef.current !== requestSelectionKey) return;\n      if (!generated) throw new Error("The short reading was not returned.");\n      setFriendTransitReading(generated);\n      setFriendTransitReadingStatus("ready");\n    } catch (error) {\n      if (friendTransitReadingSelectionKeyRef.current !== requestSelectionKey) return;\n      setFriendTransitReading(null);'
+          if new not in source:
+              if old not in source: raise SystemExit("stale response anchor missing")
+              source = source.replace(old, new, 1)
+          path.write_text(source)
+
+          # Extend core contract.
+          path = Path("scripts/test-friend-transit-reading-contract.mts")
+          source = path.read_text()
+          if 'friendTransitReadingRequestLock,' not in source:
+              source = source.replace('  friendTransitReadingPrompt,\n  validateFriendTransitReadingDraft', '  friendTransitReadingPrompt,\n  friendTransitReadingRequestLock,\n  validateFriendTransitReadingDraft', 1)
+          marker = 'assert.equal(friendTransitReadingCanGenerate(brief), true);\n'
+          checks = '''assert.equal(friendTransitReadingCanGenerate(brief), true);
+const lockedRequest = friendTransitReadingRequestLock({ brief: rawBrief, subjectId: "friend-123", targetDate: "2026-09-06" });
+assert.equal(lockedRequest.contentKey, "friend-transit-reading/friend-123/2026-09-06");
+assert.equal(lockedRequest.surface, "friends");
+assert.equal(lockedRequest.mode, "in_depth");
+assert.equal(lockedRequest.eventType, "friend-transit-reading");
+assert.equal(lockedRequest.headline, "What's going on with Alex right now?");
+assert.deepEqual(lockedRequest.knowledgeIds, ["you-transit-v3-mars-trine-moon", "you-transit-v3-pluto-square-sun", "house-2"]);
+assert.throws(() => friendTransitReadingRequestLock({ brief: rawBrief, subjectId: "friend-123", targetDate: "Sep 6" }), /TARGET_DATE_REQUIRED/u);
+assert.throws(() => assertFriendTransitReadingBrief({
+  ...rawBrief,
+  primaryThemes: [{ ...rawBrief.primaryThemes[0], evidence: { ...rawBrief.primaryThemes[0].evidence, contentKeys: [] } }]
+}), /PERSONAL_EVIDENCE_INVALID/u);
+'''
+          if 'const lockedRequest = friendTransitReadingRequestLock' not in source:
+              if marker not in source: raise SystemExit("contract marker missing")
+              source = source.replace(marker, checks, 1)
+          path.write_text(source)
+          PY
+
+          cat > scripts/test-friend-transit-reading-request-render.mjs <<'EOF'
+          import assert from "node:assert/strict";
+          import fs from "node:fs";
+          import React from "react";
+          import { renderToStaticMarkup } from "react-dom/server";
+          import { createServer } from "vite";
+
+          const panelSource = fs.readFileSync("apps/web/src/features/friends/ManualChartsPanel.tsx", "utf8");
+          const serviceSource = fs.readFileSync("apps/web/src/services/userGeneratedContent.ts", "utf8");
+          const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");
+          assert.match(panelSource, /friendTransitReadingSelectionKeyRef\.current = friendTransitReadingSelectionKey/u);
+          assert.equal((panelSource.match(/friendTransitReadingSelectionKeyRef\.current !== requestSelectionKey/gu) ?? []).length, 2);
+          assert.match(serviceSource, /request\.subjectType === "friend_transit_reading"\) return payload\?\.generated/u);
+          assert.match(apiSource, /const locked = friendTransitReadingRequestLock\(\{/u);
+          assert.match(apiSource, /input\.status = "DRAFT"/u);
+          assert.match(apiSource, /input\.allowQualityFallback = false/u);
+
+          const server = await createServer({ root: "./apps/web", configFile: false, optimizeDeps: { noDiscovery: true }, server: { middlewareMode: true }, appType: "custom", logLevel: "silent" });
+          try {
+            const { FriendTransitsTab } = await server.ssrLoadModule("/src/features/friends/FriendTransitsTab.tsx");
+            const { buildFriendTransitsBrief } = await server.ssrLoadModule("/src/features/friends/friendTransitsBrief.ts");
+            const brief = buildFriendTransitsBrief({ friendName: "Alex", dateLabel: "Today", personalTransitGroups: [{ key: "short", label: "Short-term themes", transits: [{ id: "mars-moon", title: "Mars trine Moon", durationLabel: "A few days", rangeLabel: "Sep 5-8", timingLabel: "Active now", summary: "Alex can act on what they feel with less friction.", orb: "1°", detailAvailable: true, evidence: { transitPlanet: "Mars", transitSign: "Aries", aspect: "trine", natalPoint: "Moon", natalSign: "Sagittarius", natalHouse: 7, direction: "applying", score: 80, significance: "major", timingBonuses: [], contentKeys: ["authored/transit-aspect/mars/moon/soft"] } }] }], bondTransits: [], houseTransits: [], dailyForecast: null, dailyDoItems: [], dailyDontItems: [], patternItems: [] });
+            const baseProps = { brief, readingAvailable: true, onGenerateReading() {}, onOpenBondTransit() {}, onOpenHouseTransit() {}, onOpenPersonalTransit() {}, patternTimingOverrides: {} };
+            const idle = renderToStaticMarkup(React.createElement(FriendTransitsTab, baseProps));
+            assert.match(idle, /What&#x27;s going on with Alex right now\?/u);
+            assert.match(idle, /Give me the short version/u);
+            const loading = renderToStaticMarkup(React.createElement(FriendTransitsTab, { ...baseProps, readingStatus: "loading" }));
+            assert.match(loading, /Putting Alex&#x27;s current transits together/u);
+            const ready = renderToStaticMarkup(React.createElement(FriendTransitsTab, { ...baseProps, readingStatus: "ready", reading: { headline: "What's going on with Alex right now?", summary: "Alex has more room to move with what they already know today.", body: "Alex can act on what they feel with less friction.\n\nThe transit cards below remain the source of truth." } }));
+            assert.match(ready, /Alex has more room to move/u);
+            assert.match(ready, /The transit cards below remain the source of truth/u);
+            assert.doesNotMatch(ready, /Give me the short version/u);
+            const error = renderToStaticMarkup(React.createElement(FriendTransitsTab, { ...baseProps, readingStatus: "error", readingError: "Generation failed safely." }));
+            assert.match(error, /Generation failed safely/u);
+            assert.match(error, /Try again/u);
+            const unavailable = renderToStaticMarkup(React.createElement(FriendTransitsTab, { ...baseProps, readingAvailable: false }));
+            assert.doesNotMatch(unavailable, /Give me the short version/u);
+          } finally {
+            await server.close();
+          }
+          console.log("Friend transit reading request/render regression passed.");
+          EOF
+      - name: Verify safety boundary
+        run: |
+          test ! -e apps/web/src/features/friends/friendHouseTransitPriority.ts
+          git diff --name-only origin/main...HEAD | grep -qx 'apps/web/src/App.tsx' && exit 1 || true
+      - run: npm ci
+      - run: node --experimental-strip-types scripts/test-friend-transit-reading-contract.mts
+      - run: node scripts/test-friend-transit-reading-request-render.mjs
+      - run: npm run typecheck
+      - run: npm run build:knowledge
+      - run: npm run build:web
+      - name: Commit hardening
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add api/_lib/friend-transit-reading.ts api/generate-user-content.ts apps/web/src/services/userGeneratedContent.ts apps/web/src/features/friends/ManualChartsPanel.tsx scripts/test-friend-transit-reading-contract.mts scripts/test-friend-transit-reading-request-render.mjs
+          git commit -m "Harden Friends transit reading request flow"
+          git push origin HEAD:chatgpt/friend-transit-reading-v1-20260906
