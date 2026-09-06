@@ -5,34 +5,34 @@
   "rows": [
     {
       "contentKey": "sky.aspect.chiron.conjunction.north-node",
-      "summary": "A new opportunity can touch the exact place where you still doubt yourself and still be worth taking.",
-      "body": "A new opportunity can touch the exact place where you still doubt yourself and still be worth taking. When Chiron conjuncts the North Node, a chance to move forward may resemble an earlier experience that left you embarrassed, rejected, or convinced you were not ready. You do not need to feel completely healed before you use what you learned. Let the old experience inform your preparation and sharpen your boundaries, but do not let what happened before make the final decision for you.",
-      "bodySha256": "8708aa19bdc287efd478c424f62bc5fe7102425117f912abde012372706af04f",
-      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "summary": "An opportunity can touch the exact place where you still doubt yourself and still be worth taking.",
+      "body": "An opportunity can touch the exact place where you still doubt yourself and still be worth taking. When Chiron conjuncts the North Node, a new opportunity may resemble an earlier experience that left you embarrassed, rejected, overlooked, or convinced you were not ready. Teaching after being embarrassed, applying after rejection, leading after being ignored, or returning to something you once struggled with can bring the history directly into the present. You do not need to feel completely healed before you use what you learned. Let the old experience inform the decision without letting it make the decision for you.",
+      "bodySha256": "c1f0df5deb48ab54b239dc809c6add50df38694e2832b71f28c6dc2cbd17c267",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05",
       "sourceApprovalLevel": "exact_owner_approved"
     },
     {
       "contentKey": "sky.aspect.chiron.opposition.north-node",
-      "summary": "Being very good at avoiding an old wound can quietly become a reason to keep choosing a life built around safety.",
-      "body": "Being very good at avoiding an old wound can quietly become a reason to keep choosing a life built around safety. When Chiron opposes the North Node, the safer, familiar choice may be the routine or strategy originally designed to keep you from being embarrassed, rejected, or overwhelmed again. That protection may have been necessary in the past. Check if it is still protecting you from a genuine danger, or if it is now simply keeping you away from opportunities that would require a different response.",
-      "bodySha256": "df52e1a8311a608b6355ef000c904e6eec36a85015c43040078919136eeaecac",
-      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "summary": "Being very good at avoiding an old wound can quietly become a reason to keep choosing the life built around avoiding it.",
+      "body": "Being very good at avoiding an old wound can quietly become a reason to keep choosing the life built around avoiding it. When Chiron opposes the North Node, the safer familiar choice may be the role, routine, or strategy designed to keep you from being embarrassed, rejected, overwhelmed, or hurt again. That protection may have been necessary. Check if it is still protecting you from the same danger or if it is now keeping you away from opportunities that would require a different response.",
+      "bodySha256": "a303bdd35d62baa486d13e23348ef05d7b0bd214037b569f0f0dc8bdfb91cd1d",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05",
       "sourceApprovalLevel": "exact_owner_approved"
     },
     {
       "contentKey": "sky.aspect.chiron.sextile.north-node",
       "summary": "Something you learned the hard way may give you a useful advantage in a situation you are only beginning to enter.",
-      "body": "Something you learned the hard way may give you a useful advantage in a situation you are only beginning to enter. When Chiron sextiles the North Node, an old mistake, rejection, or difficult conversation can help you notice the part of a new situation that deserves attention much sooner this time. Use the knowledge where it changes the outcome. Ask the better question, set the boundary earlier, or prepare differently so you can bypass the friction you had to learn alone.",
-      "bodySha256": "40e9e4ecc6a7143b906a67c87954209b5b49223c84da305bc8145f00a003d440",
-      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "body": "Something you learned the hard way may give you a useful advantage in a situation you are only beginning to enter. When Chiron sextiles the North Node, an old mistake, rejection, health issue, difficult conversation, or period of feeling unprepared can help you notice the part of a new situation that deserves attention sooner this time. Use the knowledge where it changes the outcome: ask the better question, set the boundary earlier, prepare differently, or help someone avoid the part you had to learn alone.",
+      "bodySha256": "a3042b9bafd3b466bb192af1a51a2de2ca9d7d90e5ba697c0e6bd6f2b3e9e670",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05",
       "sourceApprovalLevel": "exact_owner_approved"
     },
     {
       "contentKey": "sky.aspect.chiron.square.north-node",
       "summary": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before.",
-      "body": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before. When Chiron squares the North Node, criticism, visibility, or entering a similar situation can bring an earlier experience back into the decision with far more authority than it deserves. The fear may still contain useful information about what needs protection now. Update the boundary or secure better support, but do not assume the only safe choice is avoiding anything that resembles the old problem.",
-      "bodySha256": "5eea24d594a7bcb0edfb94e34af7c746da3ce8ed8aed53aefde886d2796acf23",
-      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "body": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before. When Chiron squares the North Node, criticism, visibility, asking for help, trying again, or entering a similar situation can bring the earlier experience back into the decision with more authority than it deserves. The fear may still contain useful information about what needs protection now. Update the boundary, preparation, or support without assuming the only safe choice is never returning to anything that resembles the old problem.",
+      "bodySha256": "ee8bfca515d1ec2f16288a931f521df1de9dae4e59554d2624e96db6a690a6f8",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05",
       "sourceApprovalLevel": "exact_owner_approved"
     },
     {
