@@ -1,0 +1,18 @@
+{
+  "id": "mercury-conjunction-lilith",
+  "transiting": "mercury",
+  "aspect": "conjunction",
+  "other": "lilith",
+  "base": "The sentence you keep deleting is usually the one the conversation is already organized around.",
+  "business": "The two concerns arrive in the same decision; work with the point they now share.",
+  "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
+  "arcApplying": "The two concerns become harder to separate as exactness approaches.",
+  "arcSeparating": "The fused emphasis begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The sentence you keep deleting is usually the one the conversation is already organized around.",
+    "body": "The sentence you keep deleting is usually the one the conversation is already organized around. When Mercury conjuncts Lilith, the embarrassing detail, unpopular opinion, difficult question, or blunt truth you have been trying to phrase around can become impossible to separate from the discussion itself. Silence does not remove the subject; it makes everybody manage it indirectly. Say the part that changes the meaning of the conversation. You do not need to make it harsher to prove you are being honest, but you do need to stop expecting politeness to carry information it was designed to hide.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

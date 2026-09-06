@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.sextile.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "51282e6c6bfa70f352055016cf335978308d9228686cc1ea0ed09539e0a70c1b",
+  "summary": "A vague longing can become useful once you give it a form you can actually examine.",
+  "body": "A vague longing can become useful once you give it a form you can actually examine. When Neptune sextiles Lilith, a difficult want may become easier to understand through writing, art, music, fantasy, or one private conversation where you do not have to defend it yet. The first version does not need to be practical. It needs to be specific enough to show you what keeps repeating. Once you can name the theme, translate it into ordinary terms: more privacy, different work, more intimacy, more time alone, more freedom to create. Imagination helps most when it brings you back to a request you can make in your actual life.",
+  "sourceApprovalBatch": "sky-lilith-batch-6-v2-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

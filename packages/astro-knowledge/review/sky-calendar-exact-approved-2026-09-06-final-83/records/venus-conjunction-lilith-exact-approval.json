@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.conjunction.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e21f5cac1d61fb4743ef60a7092deded762552c3bb42c1f950da8fafc91ccf55",
+  "summary": "Being wanted is not the same as being wanted on terms you can live with.",
+  "body": "Being wanted is not the same as being wanted on terms you can live with. When Venus conjuncts Lilith, attraction, affection, money, pleasure, or approval can meet the exact desire or boundary you usually make easier for other people to accept. That can expose a bargain you were willing to call love because being chosen felt more important than naming the terms. Chemistry does not settle the question of fit. Appreciation does not require you to accept the arrangement offered with it. Let what you want become part of the relationship before being wanted becomes another reason to abandon it.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

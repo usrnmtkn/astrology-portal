@@ -1,0 +1,18 @@
+{
+  "id": "saturn-opposition-chiron",
+  "transiting": "saturn",
+  "aspect": "opposition",
+  "other": "chiron",
+  "base": "When authority used to humiliate you, even a reasonable limit can feel like a judgment of your worth.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "When authority used to humiliate you, even a reasonable limit can feel like a judgment of your worth.",
+    "body": "When authority used to humiliate you, even a reasonable limit can feel like a judgment of your worth. When Saturn opposes Chiron, a boss, institution, deadline, policy, or firm no can trigger the old instinct to overexplain, comply too quickly, or assume you are already in trouble. That is how a boundary becomes bigger than the boundary itself. Find out what is actually required and what consequence actually exists. You do not have to earn respect by accepting more shame than the situation contains.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.sextile.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "f08969a741bb271deffe842cc056bccfb361187b456070f8b4f0d043df212865",
+  "summary": "You may find out that honesty costs far less affection than pretending not to want what you want.",
+  "body": "You may find out that honesty costs far less affection than pretending not to want what you want. When Venus sextiles Lilith, a relationship, money conversation, style choice, or agreement may have enough flexibility for you to name a desire or limit without blowing up the connection. Use that flexibility. Ask for the different term, choose what actually suits you, or stop apologizing for the part that does not match somebody else's taste. Being loved after you tell the truth gives you information pretending can never provide.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

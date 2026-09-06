@@ -1,0 +1,18 @@
+{
+  "id": "mercury-opposition-lilith",
+  "transiting": "mercury",
+  "aspect": "opposition",
+  "other": "lilith",
+  "base": "Someone says the thing everyone else was thinking, and now the argument is about how they said it.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Someone says the thing everyone else was thinking, and now the argument is about how they said it.",
+    "body": "Someone says the thing everyone else was thinking, and now the argument is about how they said it. When Mercury opposes Lilith, tone can become easier to fight about than the uncomfortable fact underneath it. The person may have been rude. They may have chosen terrible timing. They may still be right about the part nobody wanted to discuss. Deal with those as separate questions. If the information matters, making the speaker more pleasant will not make it disappear. Answer what they said before the argument about delivery becomes a way to avoid the subject completely.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

@@ -1,5 +1,12 @@
 /* Reusable Content Studio shell and workflow primitives. */
 
+/* Standalone Content Studio routes reuse the dashboard grid without rendering
+   a sidebar. Let the lone main panel span both grid tracks instead of collapsing
+   into the 286px sidebar column. */
+.admin-dashboard > .admin-main:only-child {
+  grid-column: 1 / -1;
+}
+
 .admin-dashboard .admin-access-gate {
   align-items: center;
   grid-template-columns: minmax(0, 1fr) minmax(var(--admin-access-actions-min-width), auto);
@@ -402,8 +409,6 @@
   white-space: normal;
 }
 
-
-
 /* Reader destination labels: explain the app destination before the technical key. */
 .admin-dashboard .admin-reader-destination-line {
   align-items: baseline;
@@ -424,4 +429,228 @@
 
 .admin-dashboard .admin-editor-reader-destination {
   color: var(--admin-muted);
+}
+
+/* Content Studio editor UX: keep the writing task primary, retain orientation,
+   and compress implementation detail without hiding governed information. */
+.admin-dashboard .admin-editor-panel.admin-review-detail {
+  background: var(--admin-ui-surface-1);
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-toolbar {
+  align-items: center;
+  background: var(--admin-panel-overlay-strong);
+  border-bottom-color: var(--admin-ui-border-strong);
+  gap: var(--admin-space-2xl) var(--admin-space-4xl);
+  padding: var(--admin-space-3xl) var(--admin-space-5xl);
+}
+
+.admin-dashboard .admin-editor-toolbar > div:first-child {
+  display: grid;
+  gap: var(--admin-space-sm);
+  min-width: 0;
+}
+
+.admin-dashboard .admin-editor-toolbar h2,
+.admin-dashboard .admin-editor-toolbar p {
+  margin: 0;
+}
+
+.admin-dashboard .admin-editor-toolbar h2 {
+  color: var(--admin-ui-text);
+  line-height: var(--leading-title);
+}
+
+.admin-dashboard .admin-editor-toolbar .admin-editor-context-line {
+  margin-top: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-editor-toolbar .admin-editor-context-line code {
+  flex-basis: 100%;
+}
+
+.admin-dashboard .admin-editor-toolbar-actions {
+  align-items: center;
+  gap: var(--admin-space-md);
+}
+
+.admin-dashboard .admin-editor-toolbar-actions > .admin-aspect-context-pill,
+.admin-dashboard .admin-editor-toolbar-actions > [aria-label="Reader status"] {
+  background: transparent;
+  border-color: var(--admin-ui-border);
+  color: var(--admin-ui-muted);
+}
+
+.admin-dashboard .admin-editor-toolbar-actions > [aria-label="Approval status"] {
+  font-weight: var(--weight-semibold);
+}
+
+.admin-dashboard .admin-editor-panel > .admin-post-editor {
+  background: var(--admin-ui-bg);
+  gap: var(--admin-space-4xl);
+  padding: var(--admin-space-4xl) var(--admin-space-5xl) var(--admin-space-8xl);
+}
+
+.admin-dashboard .admin-editor-panel > .admin-post-editor > :where(
+  .admin-title-field,
+  .admin-review-copy-editor,
+  .admin-editor-guidance,
+  .admin-contextual-editor-guidance
+) {
+  width: 100%;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-post-editor > :where(
+  .admin-title-field,
+  .admin-review-copy-editor
+) {
+  max-width: 860px;
+}
+
+.admin-dashboard .admin-editor-panel .admin-review-copy-editor > span,
+.admin-dashboard .admin-editor-panel .admin-title-field > span {
+  color: var(--admin-ui-text);
+}
+
+.admin-dashboard .admin-editor-panel .admin-review-copy-editor textarea {
+  line-height: var(--leading-description);
+}
+
+.admin-dashboard .admin-editor-panel :where(
+  .admin-editor-guidance,
+  .admin-content-role-panel,
+  .admin-package-edit-panel,
+  .admin-fallback-diagnostic-panel,
+  .admin-hook-detail-section
+) {
+  border-color: var(--admin-ui-border);
+  box-shadow: none;
+}
+
+.admin-dashboard .admin-editor-panel .admin-content-role-panel {
+  background: var(--admin-ui-surface-2);
+  border-left: var(--border-width-medium) solid var(--admin-ui-primary);
+}
+
+.admin-dashboard .admin-editor-panel .admin-content-role-panel h3,
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel h3,
+.admin-dashboard .admin-editor-panel .admin-hook-detail-section h3,
+.admin-dashboard .admin-editor-panel .admin-hook-detail-section h4 {
+  margin-bottom: var(--admin-space-sm);
+  margin-top: 0;
+}
+
+.admin-dashboard .admin-editor-panel .admin-package-edit-panel {
+  background: var(--admin-ui-surface-2);
+  gap: var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-editor-panel .admin-package-edit-panel > :where(div, label) {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-editor-panel .admin-package-edit-panel code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel {
+  background: var(--admin-ui-surface-2);
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-heading {
+  align-items: center;
+  gap: var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-heading > strong {
+  flex: 0 0 auto;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-grid {
+  gap: var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-grid > div {
+  background: var(--admin-ui-bg);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-md);
+  min-width: 0;
+  padding: var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-grid code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar {
+  background: var(--admin-panel-overlay-strong) !important;
+  border-top: var(--border-width-thin) solid var(--admin-ui-border-strong) !important;
+  box-shadow: var(--admin-ui-savebar-shadow);
+  gap: var(--admin-space-lg);
+  margin-top: 0;
+  padding: var(--admin-space-xl) var(--admin-space-5xl) !important;
+}
+
+.admin-dashboard .admin-editor-savebar .admin-danger-button {
+  background: transparent;
+  border-color: var(--admin-danger-border);
+  color: var(--admin-ui-danger);
+  margin-left: var(--admin-space-md);
+  opacity: 0.78;
+}
+
+.admin-dashboard .admin-editor-savebar .admin-danger-button:hover:not(:disabled),
+.admin-dashboard .admin-editor-savebar .admin-danger-button:focus-visible {
+  background: var(--admin-ui-danger-soft);
+  opacity: 1;
+}
+
+@media (min-width: 900px) {
+  .admin-dashboard .admin-editor-panel > .admin-editor-toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .admin-dashboard .admin-editor-toolbar-actions {
+    justify-content: flex-end;
+  }
+}
+
+@media (min-width: 1440px) {
+  .admin-dashboard .admin-editor-panel.admin-review-detail:not(.admin-daily-glance-pair-editor) {
+    max-width: 1180px;
+    width: min(80vw, 1180px);
+  }
+
+  .admin-dashboard .admin-editor-panel .admin-package-edit-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-dashboard .admin-editor-panel .admin-package-edit-panel > .admin-package-notes-field {
+    grid-column: 1 / -1;
+  }
+
+  .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .admin-dashboard .admin-editor-panel > .admin-editor-toolbar {
+    align-items: stretch;
+    padding: var(--admin-space-3xl);
+  }
+
+  .admin-dashboard .admin-editor-toolbar-actions {
+    justify-content: flex-start;
+  }
+
+  .admin-dashboard .admin-editor-panel > .admin-post-editor {
+    padding: var(--admin-space-3xl) var(--admin-space-3xl) var(--admin-space-7xl);
+  }
+
+  .admin-dashboard .admin-editor-savebar .admin-danger-button {
+    margin-left: 0;
+  }
 }

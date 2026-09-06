@@ -1,0 +1,18 @@
+{
+  "id": "jupiter-opposition-chiron",
+  "transiting": "jupiter",
+  "aspect": "opposition",
+  "other": "chiron",
+  "base": "The person with the biggest answer may be least equipped to understand the part of the problem that hurt.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The person with the biggest answer may be least equipped to understand the part of the problem that hurt.",
+    "body": "The person with the biggest answer may be least equipped to understand the part of the problem that hurt. When Jupiter opposes Chiron, confidence, expertise, or an expansive solution can sit across from lived experience that does not fit the optimistic version cleanly. Advice may be broadly useful and still miss the cost, history, or vulnerability that changes what is practical for you. Do not reject a helpful opportunity just because it came with an oversimplified explanation. Keep the part that works and insist that the plan account for what you already know from experience.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

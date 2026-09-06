@@ -1,0 +1,28 @@
+{
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "memberCount": 83,
+  "memberSetSha256": "f8a5b4234e5e2be760fcb4b5e54103e9ab36727aea1f0e90fbe2874cbe607208",
+  "payloadFiles": [
+    "approved-payloads-01.json",
+    "approved-payloads-02.json",
+    "approved-payloads-03.json",
+    "approved-payloads-04.json",
+    "approved-payloads-05.json",
+    "approved-payloads-06.json",
+    "approved-payloads-07.json",
+    "approved-payloads-08.json"
+  ],
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+}

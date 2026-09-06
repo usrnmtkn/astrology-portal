@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.square.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "14ed918ce743493d93c42c86f0c2bb64b9ec95fcdf5279f90f5d166cd15ae2f2",
+  "summary": "You are getting rewarded for a role that no longer feels like you.",
+  "body": "You are getting rewarded for a role that no longer feels like you. When the Sun squares Lilith, praise, recognition, or responsibility can make it harder to ignore how much of yourself has been left out of the version other people value. The better you become at being dependable, agreeable, impressive, or easy to understand, the more expensive it can feel to change the terms. That is how success becomes a trap. Do not assume that because the role is working, it still fits. You are allowed to change something even when other people liked you better before the change.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

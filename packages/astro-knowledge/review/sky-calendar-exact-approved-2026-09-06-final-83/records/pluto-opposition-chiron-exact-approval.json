@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.opposition.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7ba77b4f60f33868d504553dca23c16a7899518ab28e546b0e6c74532e27fbe9",
+  "summary": "Needing something from someone changes what you are willing to tolerate.",
+  "body": "Needing something from someone changes what you are willing to tolerate. When Pluto opposes Chiron, the person holding the money, approval, access, or answer can press directly on an old fear that speaking up will cost you the thing you need. That is how unequal arrangements survive. Not because the terms are fair, but because one person has more to lose by objecting. Pay attention to what you are already giving up just to keep the door open. The real question is what would have to change for their no to stop controlling your options.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

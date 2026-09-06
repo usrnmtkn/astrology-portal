@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.opposition.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a4c4c055cc109782440888391b66d630bb98a5002fe17628381f36e17e2233c6",
+  "summary": "Recognizing yourself in someone's pain can make stepping back feel like betrayal.",
+  "body": "Recognizing yourself in someone's pain can make stepping back feel like betrayal. When Neptune opposes Chiron, another person's grief, confusion, illness, disappointment, or vulnerability can look so familiar that saying no to one more request feels like abandoning the person you once were. You may understand exactly why they are hurting and still be unable to fix what happens next. Offer the care they are actually asking for, not the rescue your own history wishes somebody had provided. Understanding their pain does not make you responsible for becoming the ending you wanted for yourself.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}
