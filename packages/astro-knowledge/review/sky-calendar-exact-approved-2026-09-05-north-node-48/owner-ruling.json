@@ -12,7 +12,7 @@
   ],
   "approvedAt": "2026-09-05",
   "ownerStatement": "yes please continue",
-  "decisionContext": "The owner explicitly approved both 24-row North Node batches, later directly instructed an updated Sun sextile North Node passage, and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
   "payloadFiles": [
     "north-node-48-01.json",
     "north-node-48-02.json",
@@ -22,7 +22,7 @@
     "north-node-48-06.json"
   ],
   "memberCount": 48,
-  "memberSetSha256": "1cccabec93374839c7c2abd4367078928be0262913eef596afb6c009505b87f9",
+  "memberSetSha256": "100a291cb2b470d3598786fd5c954d16ef5c2b1ae8e79c59cd86e10be6ca157b",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "previousProjectionPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json",
   "scopeGuards": {
