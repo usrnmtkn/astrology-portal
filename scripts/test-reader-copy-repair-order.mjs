@@ -24,7 +24,7 @@ const transit = readJson("../apps/web/src/content/fallbackArchitectureV3/source-
 const fallback = readJson("../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 const queue = readJson("../packages/astro-knowledge/review/reader-copy-repair-queue-2026-08-21.json");
 const manifest = readJson("../apps/web/src/content/fallbackArchitectureV3/bundled-manifest-v3.json");
-const lunationBoundaryOverrides = readJson("../apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-astrology-boundary-overrides-v1.json");
+const lunationBoundaryOverrides = readJson("../apps/web/src/content/fallbackArchitectureV3/owner-overrides/lunation-astrology-boundary-overrides-v1.json");
 const app = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
 const browserFallback = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts", import.meta.url), "utf8");
 
@@ -103,17 +103,20 @@ const legacyUnclassifiedProbe = {
 assert.equal(
   isGovernedReaderEligible(legacyUnclassifiedProbe),
   true,
-  "Legacy unclassified rows remain migration-safe until their family is repaired instead of blanking the whole surface."
+  "Legacy unclassified rows remain migration-safe until an approved replacement is layered above them."
 );
 
 const virgoGeminiKey = "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/virgo/rising-gemini/house-4";
-const knownLegacyViolationProbe = {
+const historicalVirgoGeminiProbe = {
   contentKey: virgoGeminiKey,
   review_status: "approved",
   body: "The 4th house corresponds to The Chariot in the Major Arcana."
 };
-assert.equal(isGovernedReaderEligible(knownLegacyViolationProbe), false);
-assert.equal(readerEligibilityReason(knownLegacyViolationProbe), "tarot-reference-in-astrology-copy");
+assert.equal(
+  isGovernedReaderEligible(historicalVirgoGeminiProbe),
+  true,
+  "Historical untyped source remains intact; the exact-key owner override replaces it at reader projection time."
+);
 
 assert.equal(lunationBoundaryOverrides.schema, "lunation-astrology-boundary-overrides/v1");
 assert.equal(lunationBoundaryOverrides.count, 1);
@@ -128,6 +131,10 @@ assert.match(
   /All relationships require give and take, and this New Moon can make it easier to see where the balance at home has become uneven\./u
 );
 assert.doesNotMatch(virgoGeminiOverride.body, /\b(?:tarot|major\s+arcana|minor\s+arcana|chariot)\b/iu);
+const projectedVirgoGemini = [historicalVirgoGeminiProbe, virgoGeminiOverride]
+  .reverse()
+  .find((row) => isGovernedReaderEligible(row));
+assert.equal(projectedVirgoGemini, virgoGeminiOverride, "Latest eligible exact-key override must win reader projection.");
 
 const ordinaryAstrologyProbe = {
   contentKey: "probe/astrology/ordinary-card-word",
