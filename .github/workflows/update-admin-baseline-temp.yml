@@ -25,6 +25,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - name: Build astro knowledge dependency
+        run: npm run build -w @tldr/astro-knowledge
       - name: Regenerate visual baselines
         run: npm run qa:visual-baseline:update
       - name: Commit admin home baselines and remove temporary workflow
