@@ -6,6 +6,7 @@ on:
       - "api/_lib/ask-tldr-*.ts"
       - "config/ask-tldr/**"
       - "scripts/test-ask-tldr-*.mjs"
+      - "scripts/audit-ask-tldr-*.mjs"
       - ".github/workflows/ask-tldr-model.yml"
 
 permissions:
@@ -62,3 +63,6 @@ jobs:
 
       - name: Validate Ask TLDR bounded provider harness
         run: npx tsx scripts/test-ask-tldr-provider.mjs
+
+      - name: Audit all Ask TLDR evergreen questions on frozen facts
+        run: npx tsx scripts/audit-ask-tldr-evergreen-support.mjs
