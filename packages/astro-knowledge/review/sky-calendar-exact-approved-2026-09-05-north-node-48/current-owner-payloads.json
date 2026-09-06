@@ -7,7 +7,7 @@
   "previousProjectionPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json",
   "overlayBatchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "overlayEvidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
-  "payloadSetSha256": "3462c7c5cd3f839b1d6bbe3155617d8a990e55cedc0ab030c467cf7bb09e03d4",
+  "payloadSetSha256": "8c101fb486a7689042f1d59dee89ab64ae5911b7fd33f9d1346aba13a4884b67",
   "payloads": {
     "sky.jupiter.conjunction.neptune": {
       "sha256": "69d4e83f88f9ffd51a5def415469c5267c9e0889a8472d00e038ec24d9e803e6",
@@ -1746,31 +1746,31 @@
       }
     },
     "sky.chiron.conjunction.north-node": {
-      "sha256": "f124a1a02a1cd6fae088ae2a9f75ebaa902cdd22acbb39e533bb721eaea11cfc",
+      "sha256": "11db3e66e9706cbc89ac4ff7bdee73f8c686f9d101f7e9d8bccb61eef257d530",
       "payload": {
-        "summary": "A new opportunity can touch the exact place where you still doubt yourself and still be worth taking.",
-        "body": "A new opportunity can touch the exact place where you still doubt yourself and still be worth taking. When Chiron conjuncts the North Node, a chance to move forward may resemble an earlier experience that left you embarrassed, rejected, or convinced you were not ready. You do not need to feel completely healed before you use what you learned. Let the old experience inform your preparation and sharpen your boundaries, but do not let what happened before make the final decision for you."
+        "summary": "An opportunity can touch the exact place where you still doubt yourself and still be worth taking.",
+        "body": "An opportunity can touch the exact place where you still doubt yourself and still be worth taking. When Chiron conjuncts the North Node, a new opportunity may resemble an earlier experience that left you embarrassed, rejected, overlooked, or convinced you were not ready. Teaching after being embarrassed, applying after rejection, leading after being ignored, or returning to something you once struggled with can bring the history directly into the present. You do not need to feel completely healed before you use what you learned. Let the old experience inform the decision without letting it make the decision for you."
       }
     },
     "sky.chiron.opposition.north-node": {
-      "sha256": "9f33de48c2109134dacb1ba42e2c8b84847e81197391bb97287e3ef3ae6841a8",
+      "sha256": "8c2543caf2e49c80ff7ea057b35a55416f7ad1ed026c1406add7c33f4a137b16",
       "payload": {
-        "summary": "Being very good at avoiding an old wound can quietly become a reason to keep choosing a life built around safety.",
-        "body": "Being very good at avoiding an old wound can quietly become a reason to keep choosing a life built around safety. When Chiron opposes the North Node, the safer, familiar choice may be the routine or strategy originally designed to keep you from being embarrassed, rejected, or overwhelmed again. That protection may have been necessary in the past. Check if it is still protecting you from a genuine danger, or if it is now simply keeping you away from opportunities that would require a different response."
+        "summary": "Being very good at avoiding an old wound can quietly become a reason to keep choosing the life built around avoiding it.",
+        "body": "Being very good at avoiding an old wound can quietly become a reason to keep choosing the life built around avoiding it. When Chiron opposes the North Node, the safer familiar choice may be the role, routine, or strategy designed to keep you from being embarrassed, rejected, overwhelmed, or hurt again. That protection may have been necessary. Check if it is still protecting you from the same danger or if it is now keeping you away from opportunities that would require a different response."
       }
     },
     "sky.chiron.sextile.north-node": {
-      "sha256": "f7400a2f615cd863a096ffd7c3968be02e0953f1c72b2f55fff0961022a88d77",
+      "sha256": "76967b1dfa8c0db25d1efd79092d6a3dd6b74c369809aed6ae239db1b718a0bd",
       "payload": {
         "summary": "Something you learned the hard way may give you a useful advantage in a situation you are only beginning to enter.",
-        "body": "Something you learned the hard way may give you a useful advantage in a situation you are only beginning to enter. When Chiron sextiles the North Node, an old mistake, rejection, or difficult conversation can help you notice the part of a new situation that deserves attention much sooner this time. Use the knowledge where it changes the outcome. Ask the better question, set the boundary earlier, or prepare differently so you can bypass the friction you had to learn alone."
+        "body": "Something you learned the hard way may give you a useful advantage in a situation you are only beginning to enter. When Chiron sextiles the North Node, an old mistake, rejection, health issue, difficult conversation, or period of feeling unprepared can help you notice the part of a new situation that deserves attention sooner this time. Use the knowledge where it changes the outcome: ask the better question, set the boundary earlier, prepare differently, or help someone avoid the part you had to learn alone."
       }
     },
     "sky.chiron.square.north-node": {
-      "sha256": "d2b2d3676fcd186682f5cb236b2daef196dc2e19fb725c6d7044a47ef07662fe",
+      "sha256": "13a9b47b12343466c59a88dde94a54d299c0dae635b683170a84dc1ea28dd830",
       "payload": {
         "summary": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before.",
-        "body": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before. When Chiron squares the North Node, criticism, visibility, or entering a similar situation can bring an earlier experience back into the decision with far more authority than it deserves. The fear may still contain useful information about what needs protection now. Update the boundary or secure better support, but do not assume the only safe choice is avoiding anything that resembles the old problem."
+        "body": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before. When Chiron squares the North Node, criticism, visibility, asking for help, trying again, or entering a similar situation can bring the earlier experience back into the decision with more authority than it deserves. The fear may still contain useful information about what needs protection now. Update the boundary, preparation, or support without assuming the only safe choice is never returning to anything that resembles the old problem."
       }
     },
     "sky.jupiter.conjunction.north-node": {
@@ -1802,31 +1802,31 @@
       }
     },
     "sky.lilith.conjunction.north-node": {
-      "sha256": "91ad68c53e1920e45ad2a29d7452a17ccd0af2ff0e97de0e3d89a9d91cbd41a9",
+      "sha256": "e7de21a5b01df212bf72858183603c69a197f66d120402285f74f5bc76259a6a",
       "payload": {
         "summary": "A want you have been treating like a problem may become impossible to separate from the decision about what you actually want next.",
-        "body": "A want you have been treating like a problem may become impossible to separate from the decision about what you actually want next. When Lilith conjuncts the North Node, an unconventional relationship, career move, boundary, or refusal you kept private can start changing the plan itself. Wanting something does not automatically make it wise, but hiding the want makes honest planning impossible. Put your actual preference into the equation and see what has to change once you stop editing it out."
+        "body": "A want you have been treating like a problem may become impossible to separate from the decision about what you actually want next. When Lilith conjuncts the North Node, an unconventional relationship, career move, boundary, lifestyle, creative direction, or refusal you kept private can start changing the plan itself. Wanting something does not automatically make it wise, but hiding the want makes honest planning impossible. Put it into the decision and see what has to change once what you want is no longer being edited out."
       }
     },
     "sky.lilith.opposition.north-node": {
-      "sha256": "28f33645c077058f773cb8461a57231f94ccb99494b3eeee2880399e9c6b3d73",
+      "sha256": "740d4279de1d67c0b479344755f58ab8a8043c833cd6c269fa634e4cfefd0b3c",
       "payload": {
         "summary": "The respectable option can be genuinely easier and still require you to keep pretending you want it.",
-        "body": "The respectable option can be genuinely easier and still require you to keep pretending you want it. When Lilith opposes the North Node, the conventional role, relationship, or socially acceptable answer may come with more approval, money, or practical support than the option you actually prefer. There is nothing noble about making life unnecessarily difficult, so use the support if it is useful. Just do not confuse being rewarded for compliance with evidence that the approved choice actually fits you better."
+        "body": "The respectable option can be genuinely easier and still require you to keep pretending you want it. When Lilith opposes the North Node, the conventional role, relationship, career choice, family expectation, or socially acceptable answer may come with more approval, money, cooperation, or practical support than the option you prefer. There is nothing noble about making life unnecessarily difficult. Use the support that is useful, but do not confuse being rewarded for compliance with evidence that the approved choice fits you better."
       }
     },
     "sky.lilith.sextile.north-node": {
-      "sha256": "5cf8134cc93406cb3f2883d8a2fcd75d5e4e8171fc0b89596857079fa5998611",
+      "sha256": "ab4f9ec8586becd2ddc52278c847fe72543566f46d54f6d0e962b80ce843e84e",
       "payload": {
         "summary": "A little more freedom may be enough to make an option you dismissed suddenly workable.",
-        "body": "A little more freedom may be enough to make an option you dismissed suddenly workable. When Lilith sextiles the North Node, changing one rule, declining an expectation, or admitting that you want something other people would not choose for you can make a previously awkward option fit much better. You do not need to turn the difference into a dramatic rebellion. Change the specific condition that matters, and see what becomes possible once approval is no longer doing all the deciding."
+        "body": "A little more freedom may be enough to make an option you dismissed suddenly workable. When Lilith sextiles the North Node, changing one rule, declining an expectation, asking for different terms, keeping more privacy, or admitting that you want something other people would not choose for you can make a previously awkward option fit much better. You do not need to turn the difference into a rebellion. Use the freedom on the condition that matters and see what becomes possible once approval is no longer doing all the deciding."
       }
     },
     "sky.lilith.square.north-node": {
-      "sha256": "a2b9d4c9f0594801ce16abe7599a4ebe008c025662ffbef90812e66dd3baa228",
+      "sha256": "776ee5bd1da9288332937db2d1b776ea6e1510fe4d55e84483cb6f984004d2c5",
       "payload": {
-        "summary": "The choice that keeps everyone comfortable may be the exact choice that keeps your own preference out of the plan.",
-        "body": "The choice that keeps everyone comfortable may be the exact choice that keeps your own preference out of the plan. When Lilith squares the North Node, a family expectation, workplace norm, or version of respectability can keep demanding that you soften the decision until it no longer reflects what you wanted. Defiance alone will not build a better setup. Name the specific term you can no longer accept, and decide what you are prepared to walk away from if the other side will not move with you."
+        "summary": "The choice that keeps everyone comfortable may be the same choice that keeps your own preference out of the plan.",
+        "body": "The choice that keeps everyone comfortable may be the same choice that keeps your own preference out of the plan. When Lilith squares the North Node, a family expectation, relationship agreement, workplace norm, social rule, or version of respectability can keep demanding that you soften the decision until it no longer reflects what you wanted. Defiance alone will not build a better setup. Name the term you can no longer accept, then decide what you are prepared to change if the other side will not move with you."
       }
     },
     "sky.mars.conjunction.north-node": {
@@ -1914,87 +1914,87 @@
       }
     },
     "sky.neptune.conjunction.north-node": {
-      "sha256": "f7113cab90f673ae66b363c2c99cfea3cdddf56c33e7e39d704d69df915a178f",
+      "sha256": "80437757bb0750f37156068abad7fd7fd9c1d27761387a966b5af06c25c4be9d",
       "payload": {
-        "summary": "A possibility can feel deeply important before you can explain exactly how it will work in reality.",
-        "body": "A possibility can feel deeply important before you can explain exactly how it will work in reality. When Neptune conjuncts the North Node, inspiration can begin influencing your choices before you know the cost, timeline, or result. Inspiration is useful, but it is not evidence. Give the idea one concrete test: a draft, an application, a meeting, or a budget. What happens when the idea meets ordinary constraints will tell you more than another round of imagining."
+        "summary": "A possibility can feel important before you can explain exactly what it is supposed to become.",
+        "body": "A possibility can feel important before you can explain exactly what it is supposed to become. When Neptune conjuncts the North Node, a creative idea, compassionate project, intuitive pull, or less conventional plan can begin influencing your choices before you know the cost, timeline, or result. Inspiration can be useful without being evidence. Give the idea one concrete test: a draft, application, meeting, deadline, or budget. What happens when the idea meets ordinary constraints will tell you more than another round of imagining."
       }
     },
     "sky.neptune.opposition.north-node": {
-      "sha256": "94f61954d18fd5b38681ac654f48a8f8bbbf1d76d5c2d471b2f8004760c81508",
+      "sha256": "228671eb9c1e1270677f8336743d5e87d7d29d0543b9ae07ba49b377b421e47e",
       "payload": {
-        "summary": "Nostalgia can edit an old situation until returning looks much easier than remembering why you left.",
-        "body": "Nostalgia can edit an old situation until returning looks much easier than remembering why you left. When Neptune opposes the North Node, an old relationship, dream, or identity can become easier to idealize precisely because the unfinished alternative has not had time to collect the same memories. There may be something worth recovering from your history, but make sure you recover the actual value, not the missing context. Compare the memory with what actually happened before you rebuild a new decision around a sanitized version of the past."
+        "summary": "Nostalgia can edit an old situation until returning looks easier than remembering why you left.",
+        "body": "Nostalgia can edit an old situation until returning looks easier than remembering why you left. When Neptune opposes the North Node, an old relationship, dream, identity, belief, or plan can become easier to idealize precisely because the unfinished alternative has not had time to collect the same memories. There may be something worth recovering from the past, but recover the value, not the missing context. Compare the memory with what happened before you rebuild a new decision around the version that feels best in retrospect."
       }
     },
     "sky.neptune.sextile.north-node": {
-      "sha256": "9a3dc939e3f5eb6b883fa4a6ebda329797d2682147ed398601e9b63fb0a0f9d7",
+      "sha256": "e69f88ddea84e598d0163b66d37094a01b9decc736e6b7d57ec75f96855b607f",
       "payload": {
-        "summary": "One practical experiment may give shape to a hunch you have only been able to imagine.",
-        "body": "One practical experiment may give shape to a hunch you have only been able to imagine. When Neptune sextiles the North Node, a creative idea, compassionate goal, or intuitive pull can become specific enough to evaluate once you give it something concrete to work through. Make the prototype, schedule the meeting, or price the project. You do not need absolute certainty before beginning. You just need one action that shows you what the idea can support and what deserves more of your time."
+        "summary": "One practical experiment may give shape to something you have only been able to imagine.",
+        "body": "One practical experiment may give shape to something you have only been able to imagine. When Neptune sextiles the North Node, a creative idea, compassionate goal, or intuitive hunch can become specific enough to evaluate once you give it a form outside your head. Make the prototype, schedule the meeting, volunteer once, submit the piece, or price the project. You do not need certainty before beginning. You need one action that shows you what the idea can support and what deserves more of your time."
       }
     },
     "sky.neptune.square.north-node": {
-      "sha256": "3292ddf7afbefd12908cef49cc0a8f7235fdc689d898d9bd18cfc808832f1e18",
+      "sha256": "d1f7a6fe0de2beb1db6e8f8373eb6a382efe673cd8f18e3728e2fd3d7e5b3f04",
       "payload": {
-        "summary": "Not knowing exactly what you want next can make a familiar option look more meaningful than it actually is.",
-        "body": "Not knowing exactly what you want next can make a familiar option look more meaningful than it actually is. When Neptune squares the North Node, nostalgia, mixed signals, or a beautiful but vague possibility can make it difficult to tell which uncertainty deserves patience and which one is simply keeping you stuck. You cannot force clarity out of a situation that does not have it yet. Pick the smallest decision that can produce evidence, and let the facts narrow the story instead of waiting for the story to become clear first."
+        "summary": "Not knowing exactly what you want next can make the familiar option look more meaningful than it really is.",
+        "body": "Not knowing exactly what you want next can make the familiar option look more meaningful than it really is. When Neptune squares the North Node, nostalgia, wishful thinking, mixed signals, or a beautiful but vague possibility can make it difficult to tell which uncertainty deserves patience and which one is keeping you from choosing. The answer is not to force certainty out of a situation that does not have it yet. Pick the smallest decision that can produce evidence, then let the facts narrow the story instead of waiting for the story to become clear first."
       }
     },
     "sky.pluto.conjunction.north-node": {
-      "sha256": "30dbddee27bc170da0e8a822cbea7e35b05aa753f01043af9b3ed1ec9c0f2353",
+      "sha256": "6fad95a1c5a16a146efd1240f417731caf3529c84fbde7bb82f997ef616e9b05",
       "payload": {
-        "summary": "A decision about your next direction may force you to confront whoever actually controls the access, funding, or authority.",
-        "body": "A decision about your next direction may force you to confront whoever actually controls the access, funding, or authority. When Pluto conjuncts the North Node, your plan can become inseparable from the power required to carry it out. A negotiation, difficult boundary, or exit from an unequal setup may matter far more right now than another round of deciding what you want. Wanting change and having leverage are two different problems. Find the leverage, then use it on the specific condition that is limiting your choices."
+        "summary": "A decision about what comes next may force you to confront who actually controls the money, access, information, or authority needed to make it happen.",
+        "body": "A decision about what comes next may force you to confront who actually controls the money, access, information, or authority needed to make it happen. When Pluto conjuncts the North Node, the plan can become inseparable from the power required to carry it out. A negotiation, transfer of authority, difficult boundary, new source of funding, or exit from an unequal setup may matter more than another round of deciding what you want. Wanting change and having leverage are different problems. Find the leverage, then use it on the condition that is limiting your choices."
       }
     },
     "sky.pluto.opposition.north-node": {
-      "sha256": "aba4d776d9e491edaab2f5b805ec976919dc0b209645ab34ec17176a42f5bcaa",
+      "sha256": "83ff07d4477b17fb82e24fecc1b677e283fb7c3859cffc1f2cffc5d1f2533c6a",
       "payload": {
-        "summary": "An old source of power can be difficult to leave because it still gives you access, money, or protection you know how to use.",
-        "body": "An old source of power can be difficult to leave because it still gives you access, money, or protection you know how to use. When Pluto opposes the North Node, an established role, alliance, or arrangement can offer enough leverage that giving it up feels like surrendering options you may not be able to replace immediately. The benefits may be substantial, which is exactly why the decision deserves precision. Build enough leverage outside the arrangement so that staying becomes a choice rather than the price of keeping your options open."
+        "summary": "An old source of power can be difficult to leave because it still gives you access, influence, money, or protection you know how to use.",
+        "body": "An old source of power can be difficult to leave because it still gives you access, influence, money, or protection you know how to use. When Pluto opposes the North Node, an established role, alliance, institution, or arrangement can offer enough leverage that giving it up feels like surrendering options you may not be able to replace immediately. The benefits may be substantial, which is exactly why the decision deserves precision. Build enough leverage outside the arrangement that staying becomes a choice rather than the price of keeping your options."
       }
     },
     "sky.pluto.sextile.north-node": {
-      "sha256": "75c66ef6fcb42779ea15a357a5b35d9961effff521a346055aea97581df11d2c",
+      "sha256": "38c2e8cafb213647e26d95491a74e346e89249db03c88002097a42eacfa23ced",
       "payload": {
         "summary": "A small shift in leverage may give you enough room to change a situation you previously had to work around.",
-        "body": "A small shift in leverage may give you enough room to change a situation you previously had to work around. When Pluto sextiles the North Node, new information, formal authority, or support from someone who can influence the outcome can improve your position enough to alter the terms instead of merely coping with them. Use that advantage on the setup itself. A stronger position matters most when it leaves you with more control after the immediate problem is solved, not simply when it helps you win one difficult conversation."
+        "body": "A small shift in leverage may give you enough room to change a situation you previously had to work around. When Pluto sextiles the North Node, new information, more money, formal authority, a changed rule, or support from someone who can influence the outcome can improve your position enough to alter the terms instead of merely coping with them. Use that advantage on the setup itself. A stronger position matters most when it leaves you with more control after the immediate problem is solved, not simply when it helps you win one difficult conversation."
       }
     },
     "sky.pluto.square.north-node": {
-      "sha256": "876745ea6d450c6c43a2cb044e445da7cea0d673387d4041128cddcbc7e5b4c1",
+      "sha256": "c189aa19465aad9b0f214e3219a20bf06b1cd09ef80f8fe3c9c25d6d0106ba93",
       "payload": {
         "summary": "You can know exactly what needs to change and still be trapped by the person or system that controls the terms.",
-        "body": "You can know exactly what needs to change and still be trapped by the person or system that controls the terms. When Pluto squares the North Node, the change you want can run directly into money, access, secrecy, or dependence that gives someone else the power to delay it or make it expensive. Pushing harder is not always leverage; sometimes it is just exhausting. Identify what the other side can withhold, map your alternatives, and systematically reduce your dependence before turning the struggle into proof that you have to keep fighting on their terms."
+        "body": "You can know exactly what needs to change and still be trapped by the person or system that controls the terms. When Pluto squares the North Node, the change you want can run directly into money, access, secrecy, authority, or dependence that gives someone else the power to delay it, narrow it, or make it expensive. Pushing harder is not always leverage. Identify what the other side can withhold, what alternatives exist, and what would reduce your dependence before turning the struggle itself into proof that you have to keep fighting on their terms."
       }
     },
     "sky.saturn.conjunction.north-node": {
-      "sha256": "4b761821d2bb419bc3781655b060efd186a9c99ad44be5da8308f7a3ebd7264c",
+      "sha256": "b09862d3c7a88e91f629c266887841bc523c99f6284ac8bb4e623d8c798ccb63",
       "payload": {
-        "summary": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility.",
-        "body": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility. When Saturn conjuncts the North Node, future direction and practical limitation meet in the same decision, turning a theoretical plan into a concrete requirement for paperwork, commitment, or structure. The pressure to sign the contract or accept the role is not proof that you have to say yes. It simply gives you measurable terms. Read them carefully, and only accept the arrangement if you are prepared to carry the actual weight of the work."
+        "summary": "A decision you have been postponing may become much more concrete once it comes with a deadline, responsibility, or consequence.",
+        "body": "A decision you have been postponing may become much more concrete once it comes with a deadline, responsibility, or consequence. When Saturn conjuncts the North Node, the part of the plan that was easy to postpone may suddenly come with paperwork, a date, a title, or people depending on your answer. Signing the contract, accepting the role, committing to the schedule, or closing something that has become too expensive to maintain makes the choice harder to keep theoretical. Pressure is not proof that the answer is yes. It gives you terms you can measure. Read them carefully, then decide what you are willing to carry."
       }
     },
     "sky.saturn.opposition.north-node": {
-      "sha256": "74afc253f53581514ae0f786f6bfeb22e6d2a6637b4eca960d7a0b801ba047c7",
+      "sha256": "9cc5bb2451b2e86ab2813dbacdba70e494e081baccf571339b8a267041bcf3b3",
       "payload": {
-        "summary": "A deep sense of responsibility can make leaving an arrangement feel wrong long after it has stopped being useful.",
-        "body": "A deep sense of responsibility can make leaving an arrangement feel wrong long after it has stopped being useful. When Saturn opposes the North Node, institutional loyalty and past promises can make it difficult to walk away from a role you know how to perform perfectly, even when another direction needs more of your time. You may still need to finish what you started or protect the people relying on you. Separate that obligation from the assumption that keeping your word requires staying exactly where you are."
+        "summary": "Being responsible for something can make leaving it feel wrong long after the arrangement has stopped being useful.",
+        "body": "Being responsible for something can make leaving it feel wrong long after the arrangement has stopped being useful. When Saturn opposes the North Node, the strongest argument for staying may be duty: the role you know how to perform, the promise you made, the institution that relies on you, or the commitment that has already taken years of work. You may still need to finish what you promised or protect people who depend on you. Separate that responsibility from the assumption that keeping your word requires preserving the entire setup exactly as it is."
       }
     },
     "sky.saturn.sextile.north-node": {
-      "sha256": "3ee9482b5fe6d0f91526b90671f8584067d0e8c2c0cbc71cfb4e7802c696fc8b",
+      "sha256": "42a777bbb8442d352ba77d0dbdde519f0e11f0b2d6d05b75bc05cc12c3ce43d1",
       "payload": {
-        "summary": "A strict rule or a firm deadline may provide the exact structure an unfamiliar plan needs to survive.",
-        "body": "A strict rule or a firm deadline may provide the exact structure an unfamiliar plan needs to survive. When Saturn sextiles the North Node, formal boundaries can give a new ambition enough structure to become workable. You do not need to view every limitation as a roadblock designed to stop you. Accept the commitment, schedule, or budget that gives your next move enough protection to hold up in ordinary life."
+        "summary": "A clear rule, deadline, or commitment may make an unfamiliar plan easier to build around.",
+        "body": "A clear rule, deadline, or commitment may make an unfamiliar plan easier to build around. When Saturn sextiles the North Node, a formal offer, reliable schedule, defined responsibility, or practical condition can give a newer plan enough structure to become workable. You still have to use what is available. Take the commitment that gives the work enough time, money, authority, or protection to hold up in ordinary life instead of assuming every limit is there to stop you."
       }
     },
     "sky.saturn.square.north-node": {
-      "sha256": "aab9824acb466db71983644be0b4aae94cb04972bbcca6622846b309d4802c5f",
+      "sha256": "bb80a088d508890e160ca02ec3c4cb3044302563ae69e1086ab3c06b86b6a7f4",
       "payload": {
-        "summary": "The responsibility keeping your current life intact may be the exact obligation making it impossible to change your direction.",
-        "body": "The responsibility keeping your current life intact may be the exact obligation making it impossible to change your direction. When Saturn squares the North Node, structural duty can take up enough time, money, or authority that a necessary career move or personal shift keeps getting deferred. Simply carrying a heavier load will not fix a setup that is fundamentally stuck. Put the actual costs on paper, and decide what must be delegated, finished, or renegotiated before duty becomes the only reason nothing else moves."
+        "summary": "The responsibility keeping everything together may also be the responsibility making it impossible to change.",
+        "body": "The responsibility keeping everything together may also be the responsibility making it impossible to change. When Saturn squares the North Node, a job, contract, caregiving role, debt, deadline, or obligation can take up enough time and authority that the choice you need to make keeps getting deferred. The responsibility may be legitimate, but simply carrying more will not solve a conflict built into the setup. Put the cost on paper and decide what has to be renegotiated, delegated, completed, or ended before duty becomes the reason nothing else can move."
       }
     },
     "sky.sun.conjunction.north-node": {
@@ -2012,10 +2012,10 @@
       }
     },
     "sky.sun.sextile.north-node": {
-      "sha256": "5eed33b13d71d646175dfc58e55dac1ef884f94d30d0b77281a79e679b10fd77",
+      "sha256": "e3cbb8d81335aac310bf8a9c9f24a7ce15d269d60d01ccc55a504462204a5b9d",
       "payload": {
-        "summary": "Your established track record can open a door that raw potential simply cannot.",
-        "body": "Your established track record can open a door that raw potential simply cannot. When the Sun sextiles the North Node, recognition you already earned can support something newer through a recommendation, introduction, invitation, or first chance to lead in unfamiliar territory. Do not mistake a reward for past behavior as an obligation to keep repeating it. Leverage your established credibility to secure the access and capital you need to fund your next evolution."
+        "summary": "Past work may open a door you could not have opened from scratch.",
+        "body": "Past work may open a door you could not have opened from scratch. When the Sun sextiles the North Node, recognition you already earned can support something newer through a recommendation, introduction, invitation, or first chance to lead in unfamiliar territory. The useful part is not being rewarded for staying the same; it is that old credibility can give you a chance to try something different. Accept the opportunity if it gives you experience, access, or proof you can carry into the role you want to grow into."
       }
     },
     "sky.sun.square.north-node": {
@@ -2026,31 +2026,31 @@
       }
     },
     "sky.uranus.conjunction.north-node": {
-      "sha256": "33134b0ec03455e8bb7b4bc611d344974c0fb0699d30e876615379c516bc5658",
+      "sha256": "cccd51f89db42d21c56477535ec2ff2d5310790e1e403198d98458ed1d570ee5",
       "payload": {
-        "summary": "An unexpected change can force a pivot you were hoping to make on your own timeline.",
-        "body": "An unexpected change can force a pivot you were hoping to make on your own timeline. When Uranus conjuncts the North Node, sudden disruption can alter what is available before you have had time to get comfortable with the new facts. The surprise may expose a change that was long overdue, but that does not make every impulsive reaction wise. Handle the immediate disruption first, then choose the option that gives you the most freedom after the adrenaline wears off."
+        "summary": "An unexpected change may force a decision you were still hoping to make on your own timeline.",
+        "body": "An unexpected change may force a decision you were still hoping to make on your own timeline. When Uranus conjuncts the North Node, a cancellation, sudden offer, technical change, departure, move, or break in the old setup can alter what is available before you have had time to get comfortable with the new facts. The surprise may expose an overdue change without making every impulsive response wise. Handle what changed first, then choose the option that gives you more freedom after the adrenaline wears off."
       }
     },
     "sky.uranus.opposition.north-node": {
-      "sha256": "092631368dee13a34d59ffe0be4fca7268aa5add2381824c3285e33c8e148750",
+      "sha256": "bd3dbb3ad2b023a68626c93aad5ab20ca61e8e270e60c7d0d2e11568665fd244",
       "payload": {
-        "summary": "An outdated pattern can look incredibly safe the moment a sudden disruption leaves you disoriented.",
-        "body": "An outdated pattern can look incredibly safe the moment a sudden disruption leaves you disoriented. When Uranus opposes the North Node, the known schedule, old system, or previous way of doing things can become attractive simply because familiarity gives you something predictable while you process what changed. That comfort can buy you useful time. Just make sure the temporary retreat helps you rebuild your options rather than restoring the exact restriction that made change necessary in the first place."
+        "summary": "An old pattern can become especially attractive when the alternative requires more change than you expected to make at once.",
+        "body": "An old pattern can become especially attractive when the alternative requires more change than you expected to make at once. When Uranus opposes the North Node, the known schedule, old system, former group, or previous way of doing things can look safer after a sudden change leaves you disoriented. Familiarity may buy useful time, especially while you replace what disappeared. Just make sure the temporary retreat helps you rebuild your options instead of restoring the exact restriction that made change necessary."
       }
     },
     "sky.uranus.sextile.north-node": {
-      "sha256": "c20f5862b4296e3710688869384965c23248601adf50b948d7a6a6b7e45ceb70",
+      "sha256": "eedb12d09db36a82b74a9c3cd021f245abc1838dea30a424a31b8014bfb39d43",
       "payload": {
-        "summary": "An unplanned workaround may give you access to a route the old system made unnecessarily difficult.",
-        "body": "An unplanned workaround may give you access to a route the old system made unnecessarily difficult. When Uranus sextiles the North Node, a new tool, unusual introduction, or sudden exception can remove one stubborn source of friction and make a different approach practical enough to try. You do not need to reinvent your entire life just because one better method appeared. Test the alternative where the old process was blocking you, and keep it if it genuinely gives you more choice."
+        "summary": "A workaround you did not plan may give you access to an option the old system kept making unnecessarily difficult.",
+        "body": "A workaround you did not plan may give you access to an option the old system kept making unnecessarily difficult. When Uranus sextiles the North Node, a new tool, unusual introduction, revised schedule, different route, or exception can remove one stubborn source of friction and make another approach practical enough to try. You do not need to reinvent everything because one better method appeared. Test it where the old process was blocking you and keep it if it gives you more choice without creating another problem you now have to work around."
       }
     },
     "sky.uranus.square.north-node": {
-      "sha256": "b66139f611ce981a7b77935a512b4b42d8d393000b6cca15fe6734f15ad74de9",
+      "sha256": "7fa2b4b5049c89bc31ad5a4e445329a5afaf5d137dee26eadf87e1f3b2f63f70",
       "payload": {
-        "summary": "The urge to break free is usually accurate about the problem, but it can be reckless about the solution.",
-        "body": "The urge to break free is usually accurate about the problem, but it can be reckless about the solution. When Uranus squares the North Node, the old setup may become impossible to tolerate before the replacement is actually stable, affordable, or complete. A sudden exit can remove the restriction, but it may also remove support you still rely on. Identify the specific rule, schedule, or expectation that has become intolerable, and change that part deliberately instead of asking one burst of frustration to design your entire future."
+        "summary": "The urge to break free can be accurate about the problem and reckless about what should replace it.",
+        "body": "The urge to break free can be accurate about the problem and reckless about what should replace it. When Uranus squares the North Node, the old setup may become impossible to tolerate before the replacement is stable, affordable, or complete. A sudden exit can remove the restriction and also remove support you still need. Identify the specific rule, schedule, system, or dependence that has become intolerable, then change that part deliberately instead of asking one burst of frustration to design everything that comes after it."
       }
     },
     "sky.venus.conjunction.north-node": {

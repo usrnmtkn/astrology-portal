@@ -8,15 +8,15 @@
   "decision": "approve",
   "approvedAt": "2026-09-05",
   "ownerStatement": "yes please continue",
-  "decisionContext": "The owner explicitly approved both 24-row North Node batches, later directly instructed an updated Sun sextile North Node passage, and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
   "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "capabilities": [
     "batch_generation",
     "serving"
   ],
-  "bodySha256": "da8b6a2e38f373bf540b55d31b198528aa4801e5ab2b5a147158bed99ef881c7",
+  "bodySha256": "8bd5b0b7dd1a7dd44921613d95c594b9d2b053340ade6b36706fe07f5f755d00",
   "summary": "A want you have been treating like a problem may become impossible to separate from the decision about what you actually want next.",
-  "body": "A want you have been treating like a problem may become impossible to separate from the decision about what you actually want next. When Lilith conjuncts the North Node, an unconventional relationship, career move, boundary, or refusal you kept private can start changing the plan itself. Wanting something does not automatically make it wise, but hiding the want makes honest planning impossible. Put your actual preference into the equation and see what has to change once you stop editing it out.",
-  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+  "body": "A want you have been treating like a problem may become impossible to separate from the decision about what you actually want next. When Lilith conjuncts the North Node, an unconventional relationship, career move, boundary, lifestyle, creative direction, or refusal you kept private can start changing the plan itself. Wanting something does not automatically make it wise, but hiding the want makes honest planning impossible. Put it into the decision and see what has to change once what you want is no longer being edited out.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
 }

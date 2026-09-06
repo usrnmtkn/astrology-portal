@@ -8,15 +8,15 @@
   "decision": "approve",
   "approvedAt": "2026-09-05",
   "ownerStatement": "yes please continue",
-  "decisionContext": "The owner explicitly approved both 24-row North Node batches, later directly instructed an updated Sun sextile North Node passage, and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
   "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "capabilities": [
     "batch_generation",
     "serving"
   ],
-  "bodySha256": "95c0e2c749ac13f2c9b33a4b872b99f060ce92b333e30d6dc15ddf9aa5cbc1e1",
-  "summary": "A deep sense of responsibility can make leaving an arrangement feel wrong long after it has stopped being useful.",
-  "body": "A deep sense of responsibility can make leaving an arrangement feel wrong long after it has stopped being useful. When Saturn opposes the North Node, institutional loyalty and past promises can make it difficult to walk away from a role you know how to perform perfectly, even when another direction needs more of your time. You may still need to finish what you started or protect the people relying on you. Separate that obligation from the assumption that keeping your word requires staying exactly where you are.",
-  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+  "bodySha256": "2f26d1f911e90b5ce93fefd5a9113608e5f1a0da6585639f35986d5677e06b03",
+  "summary": "Being responsible for something can make leaving it feel wrong long after the arrangement has stopped being useful.",
+  "body": "Being responsible for something can make leaving it feel wrong long after the arrangement has stopped being useful. When Saturn opposes the North Node, the strongest argument for staying may be duty: the role you know how to perform, the promise you made, the institution that relies on you, or the commitment that has already taken years of work. You may still need to finish what you promised or protect people who depend on you. Separate that responsibility from the assumption that keeping your word requires preserving the entire setup exactly as it is.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
 }
