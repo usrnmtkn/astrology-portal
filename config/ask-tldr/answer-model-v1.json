@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "recordType": "ask_tldr_answer_model",
+  "version": "ask-tldr-answer-model-v1",
+  "status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "runtimeEnabled": false,
+  "principles": {
+    "calculationAuthority": "TLDR calculation services own astrology facts. The LLM may classify intent and write from supplied evidence but may not calculate or invent placements, aspects, houses, dates, transits, returns, profections, or eclipse contacts.",
+    "questionFlow": "question -> pillar + intents -> deterministic evidence plan -> calculated candidates -> deterministic ranking -> governed interpretation lookup -> answer writer",
+    "maxPrimaryEvidence": 1,
+    "maxSupportingEvidence": 2,
+    "dedupeRepeatedFactorPasses": true,
+    "housesAreRetrievalInputsNotUserNavigation": true
+  },
+  "evidenceKinds": [
+    "natal_placement",
+    "natal_aspect",
+    "transit_to_natal",
+    "transit_through_house",
+    "eclipse",
+    "return",
+    "profection",
+    "solar_return_overlay"
+  ],
+  "temporalStates": ["natal", "active", "upcoming", "annual"],
+  "sourceContracts": {
+    "1_month": ["natal_chart", "active_transits", "upcoming_transits", "lunar_events", "governed_interpretations"],
+    "4_months": ["natal_chart", "active_transits", "upcoming_transits", "slow_transit_arcs", "lunar_events", "governed_interpretations"],
+    "12_months": ["natal_chart", "active_transits", "upcoming_transits", "slow_transit_arcs", "lunar_events", "annual_profection", "solar_return", "governed_interpretations"]
+  },
+  "timeWindowDays": {
+    "1_month": 35,
+    "4_months": 135,
+    "12_months": 380
+  },
+  "temporalWeightsByQuestionType": {
+    "current_state": {"natal": 12, "active": 38, "upcoming": 27, "annual": 18},
+    "pattern": {"natal": 40, "active": 18, "upcoming": 12, "annual": 20},
+    "guidance": {"natal": 24, "active": 31, "upcoming": 27, "annual": 20},
+    "direction": {"natal": 27, "active": 25, "upcoming": 29, "annual": 35},
+    "decision": {"natal": 20, "active": 34, "upcoming": 36, "annual": 22},
+    "timing": {"natal": 8, "active": 36, "upcoming": 44, "annual": 14}
+  },
+  "matchWeights": {
+    "primaryIntentTheme": 24,
+    "secondaryIntentTheme": 10,
+    "pillarHouse": 15,
+    "pillarAngle": 20,
+    "pillarPoint": 12,
+    "questionFocusHouse": 14,
+    "questionFocusAngle": 18,
+    "questionFocusPoint": 12,
+    "majorCandidate": 8,
+    "exactOrPeakWithin14Days": 8,
+    "exactOrPeakWithin30Days": 5,
+    "exactOrPeakWithinWindow": 2
+  },
+  "pillarProfiles": {
+    "self": {"houses":[1,12,5],"angles":["Ascendant"],"points":["Sun","Moon"],"themes":["identity","confidence","visibility","personal_change","limits","self_trust"]},
+    "love": {"houses":[5,7,8],"angles":["Descendant"],"points":["Venus","Mars","Moon"],"themes":["relationship","dating","attraction","commitment","availability","intimacy","reciprocity"]},
+    "career": {"houses":[10,6,2],"angles":["Midheaven"],"points":["Sun","Saturn","Jupiter"],"themes":["career","recognition","credit","authority","public_role","responsibility","career_direction"]},
+    "money": {"houses":[2,8,10],"angles":[],"points":["Venus","Jupiter","Saturn","Pluto"],"themes":["money","income","expenses","rates","resources","financial_terms","shared_resources"]},
+    "education": {"houses":[3,9],"angles":[],"points":["Mercury","Jupiter","Saturn"],"themes":["education","learning","applications","teaching","writing","publishing","credentials","worldview"]},
+    "home_family": {"houses":[4],"angles":["IC"],"points":["Moon","Saturn"],"themes":["home","family","moving","property","household","caregiving","belonging","responsibility"]},
+    "daily_life_health": {"houses":[6,1,12],"angles":["Ascendant"],"points":["Moon","Mercury","Mars","Saturn"],"themes":["schedule","workload","routine","appointments","sleep","meals","recovery","physical_limits","daily_work"]},
+    "social": {"houses":[11,3,7],"angles":[],"points":["Venus","Jupiter","Uranus"],"themes":["friends","groups","community","collaboration","belonging","network","alliances"]},
+    "spirituality": {"houses":[12,9,8],"angles":[],"points":["Moon","Jupiter","Neptune","Saturn"],"themes":["meaning","belief","solitude","private_practice","closure","faith","intuition","spirituality"]}
+  },
+  "answerContracts": {
+    "default": {
+      "order": ["direct_answer", "astrology_reason", "recognizable_manifestations", "practical_consequence"],
+      "maxManifestationExamples": 2,
+      "mustPreservePossibilityLanguageForManifestations": true,
+      "mustNameWhyNowWhenTemporalEvidenceExists": true,
+      "mustExposeEvidenceIdsForWhyThisAnswer": true
+    },
+    "money": {
+      "mayDescribe": ["timing pressure", "income or expense themes", "rates", "payment timing", "scope", "shared resources", "tradeoffs"],
+      "mustNot": ["guarantee profit or loss", "approve an investment", "tell the reader to buy or sell an asset", "present astrology as financial advice"]
+    },
+    "daily_life_health": {
+      "mayDescribe": ["schedule", "workload", "sleep", "meals", "appointments", "recovery", "physical limits", "routine"],
+      "mustNot": ["diagnose illness", "predict disease", "attribute symptoms to a psychological cause", "replace medical advice"]
+    },
+    "spirituality": {
+      "mayDescribe": ["belief", "meaning", "private practice", "solitude", "closure", "faith", "intuition"],
+      "mustNot": ["assert psychic ability", "diagnose a spiritual crisis", "promise awakening", "treat intuition as factual proof"]
+    }
+  }
+}
