@@ -22,6 +22,12 @@ try {
   assert.equal(report.shadowedCount, 47, "Shadowed/reference backlog must preserve 47 rows as audit evidence.");
   assert.equal(report.retiredCount, 62, "Governed retired/superseded backlog must preserve 62 rows as audit evidence.");
   assert.equal(report.count + report.shadowedCount + report.retiredCount, 212, "Queue classification must preserve all 212 pre-classification records.");
+assert.deepEqual(report.workload, {
+  "full-copy-review": { records: 13, decisions: 13 },
+  "shared-fallback-authoring": { records: 44, decisions: 33 },
+  "template-review": { records: 14, decisions: 14 },
+  "optional-rotation": { records: 32, decisions: 32 }
+});
 
   const actionableKeys = new Set(report.items.map((item) => item.contentKey));
   assert.ok(actionableKeys.has("authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-pisces/house-1"));
