@@ -84,7 +84,10 @@ assert.equal(
   "An unknown-time chart requires every body but must not invent timed angles."
 );
 
-const noonUnknownTimeSnapshot = snapshot(SKY_BODY_ORDER, true);
+const noonUnknownTimeSnapshot = {
+  ...snapshot(SKY_BODY_ORDER, true),
+  birthTimeKnown: true
+};
 const sanitizedUnknownTimeSnapshot = natalChartWithReliableAngleLongitudes(
   noonUnknownTimeSnapshot,
   true
@@ -94,12 +97,19 @@ assert.notEqual(
   noonUnknownTimeSnapshot,
   "Unknown-time snapshots with calculated noon angles must be copied before sanitation."
 );
-assert.equal(sanitizedUnknownTimeSnapshot.ascendantLongitude, undefined);
-assert.equal(sanitizedUnknownTimeSnapshot.midheavenLongitude, undefined);
 assert.equal(
-  sanitizedUnknownTimeSnapshot.positions,
-  noonUnknownTimeSnapshot.positions,
-  "Angle sanitation must preserve the calculated planetary positions used by unknown-time charts."
+  sanitizedUnknownTimeSnapshot.birthTimeKnown,
+  false,
+  "Explicit unknown-time chart provenance must override a stale snapshot-level known-time flag."
+);
+assert.equal(sanitizedUnknownTimeSnapshot.ascendant, "");
+assert.equal(sanitizedUnknownTimeSnapshot.ascendantLongitude, undefined);
+assert.equal(sanitizedUnknownTimeSnapshot.midheaven, "");
+assert.equal(sanitizedUnknownTimeSnapshot.midheavenLongitude, undefined);
+assert.deepEqual(
+  sanitizedUnknownTimeSnapshot.positions.map((item) => [item.planet, item.house]),
+  noonUnknownTimeSnapshot.positions.map((item) => [item.planet, 0]),
+  "Unknown-time sanitation must preserve planetary positions while removing house assignments."
 );
 assert.equal(
   noonUnknownTimeSnapshot.ascendantLongitude,
@@ -107,6 +117,7 @@ assert.equal(
   "Angle sanitation must not mutate the calculation snapshot in place."
 );
 assert.equal(noonUnknownTimeSnapshot.midheavenLongitude, 270);
+assert.equal(noonUnknownTimeSnapshot.birthTimeKnown, true);
 assert.equal(
   natalChartWithReliableAngleLongitudes(noonUnknownTimeSnapshot, false),
   noonUnknownTimeSnapshot,
@@ -147,8 +158,13 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /if \(typeof natalSky\.ascendantLongitude !== "number"\) \{\s*return natalSky\.positions;/,
-  "Friends transit targeting must fall back to planetary positions when no reliable Ascendant longitude is present."
+  /function natalTransitTargets\(natalSky: SkySnapshot, birthTimeKnown = false\)/,
+  "Friends transit targeting must carry explicit birth-time reliability provenance."
+);
+assert.match(
+  appSource,
+  /if \(!birthTimeKnown \|\| typeof natalSky\.ascendantLongitude !== "number"\) \{\s*return natalSky\.positions\.filter\(\(position\) => !\["Ascendant", "Descendant", "Midheaven", "Imum Coeli"\]\.includes\(position\.planet\)\);/,
+  "Unknown-time transit targeting must keep planets while excluding every angle pseudo-position."
 );
 assert.match(
   panelSource,

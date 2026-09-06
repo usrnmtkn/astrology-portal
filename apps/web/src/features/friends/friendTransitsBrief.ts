@@ -86,6 +86,41 @@ export type FriendTransitsBrief = {
   };
 };
 
+function reliableHouseNumber(value: unknown) {
+  return typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 12
+    ? value
+    : undefined;
+}
+
+function personalTransitWithReliableHouse(transit: FriendPersonalTransitView): FriendPersonalTransitView {
+  const natalHouse = reliableHouseNumber(transit.evidence.natalHouse);
+
+  if (natalHouse !== undefined) {
+    return transit;
+  }
+
+  const { natalHouse: _unreliableNatalHouse, ...evidence } = transit.evidence;
+  return { ...transit, evidence };
+}
+
+function dailyForecastWithReliableHouse(
+  forecast: FriendDailyForecastView | null,
+  hasReliableNatalHouse: boolean
+): FriendDailyForecastView | null {
+  if (!forecast || hasReliableNatalHouse) {
+    return forecast;
+  }
+
+  return {
+    ...forecast,
+    moonContext: {
+      ...forecast.moonContext,
+      houseLabel: null,
+      topic: null
+    }
+  };
+}
+
 export function buildFriendTransitsBrief({
   friendName,
   dateLabel,
@@ -95,7 +130,8 @@ export function buildFriendTransitsBrief({
   dailyForecast,
   dailyDoItems,
   dailyDontItems,
-  patternItems
+  patternItems,
+  birthTimeKnown
 }: {
   friendName: string;
   dateLabel: string;
@@ -106,19 +142,33 @@ export function buildFriendTransitsBrief({
   dailyDoItems: string[];
   dailyDontItems: string[];
   patternItems: NatalAspectPatternReaderItem[];
+  birthTimeKnown?: boolean;
 }): FriendTransitsBrief {
   const primaryThemes = personalTransitGroups
     .find((group) => group.key === "short")
-    ?.transits.filter((transit) => transit.detailAvailable) ?? [];
+    ?.transits.filter((transit) => transit.detailAvailable)
+    .map(personalTransitWithReliableHouse) ?? [];
   const longerCycles = personalTransitGroups
     .find((group) => group.key === "long")
-    ?.transits.filter((transit) => transit.detailAvailable) ?? [];
-  const houseContext = houseTransits.filter((transit) => transit.detailAvailable);
+    ?.transits.filter((transit) => transit.detailAvailable)
+    .map(personalTransitWithReliableHouse) ?? [];
+  const inferredReliableNatalHouse = houseTransits.some((transit) => (
+    transit.detailAvailable && reliableHouseNumber(transit.house) !== undefined
+  )) || [...primaryThemes, ...longerCycles]
+    .some((transit) => reliableHouseNumber(transit.evidence.natalHouse) !== undefined)
+    || Boolean(dailyForecast?.moonContext.houseLabel || dailyForecast?.moonContext.topic);
+  const hasReliableNatalHouse = birthTimeKnown ?? inferredReliableNatalHouse;
+  const houseContext = hasReliableNatalHouse
+    ? houseTransits.filter((transit) => (
+        transit.detailAvailable && reliableHouseNumber(transit.house) !== undefined
+      ))
+    : [];
+  const reliableDailyForecast = dailyForecastWithReliableHouse(dailyForecast, hasReliableNatalHouse);
   const activePatterns = patternItems.filter((item) => Boolean(item.activationCopy));
   const hasDailyGuidance = dailyDoItems.length === 3 && dailyDontItems.length === 3;
-  const daily = dailyForecast || hasDailyGuidance
+  const daily = reliableDailyForecast || hasDailyGuidance
     ? {
-        forecast: dailyForecast,
+        forecast: reliableDailyForecast,
         doItems: hasDailyGuidance ? [...dailyDoItems] : [],
         dontItems: hasDailyGuidance ? [...dailyDontItems] : []
       }
