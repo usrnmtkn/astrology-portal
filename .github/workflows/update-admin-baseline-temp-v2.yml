@@ -1,0 +1,47 @@
+name: Temp update Needs attention admin baseline v2
+
+on:
+  push:
+    branches:
+      - feature/content-studio-needs-attention-v3
+
+permissions:
+  contents: write
+
+jobs:
+  update-admin-baseline:
+    runs-on: ubuntu-24.04
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feature/content-studio-needs-attention-v3
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Build app and generated knowledge artifacts
+        run: npm run build
+      - name: Regenerate visual baselines
+        run: npm run qa:visual-baseline:update
+      - name: Commit only admin home baselines and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p /tmp/admin-home-baselines
+          cp tests/visual/visual-regression-baseline.spec.ts-snapshots/admin-home-*.png /tmp/admin-home-baselines/
+          git reset --hard HEAD
+          cp /tmp/admin-home-baselines/admin-home-*.png tests/visual/visual-regression-baseline.spec.ts-snapshots/
+          git add tests/visual/visual-regression-baseline.spec.ts-snapshots/admin-home-*.png
+          git rm .github/workflows/update-admin-baseline-temp-v2.yml
+          if git diff --cached --quiet; then
+            echo "No admin baseline changes to commit."
+            exit 1
+          fi
+          git commit -m "test: update Needs attention admin visual baseline"
+          git push origin HEAD:feature/content-studio-needs-attention-v3
