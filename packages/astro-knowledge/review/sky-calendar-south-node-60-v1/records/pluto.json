@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "pluto",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.pluto.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "An old power struggle can return because some part of it still controls your choices.",
+      "body": "An old power struggle can return because some part of it still controls your choices. Pluto conjunct the South Node can bring a familiar obsession, authority dynamic, fear, or need for control back to the surface with unusual force. You may recognize the person, pattern, or feeling immediately, even if the circumstances are different. The repetition is useful because it shows where the past still has leverage. You do not have to win the old battle again to take that leverage back.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.pluto.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "Something you survived before can give you useful leverage now.",
+      "body": "Something you survived before can give you useful leverage now. Pluto sextile the South Node can make an old lesson about power, boundaries, money, secrecy, or consequence available at the right moment. You may see the pressure point sooner because you have already learned what happens when nobody names it. Use the knowledge without recreating the crisis. Experience is most useful when it lets you make a cleaner decision this time.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.pluto.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "Control can become most tempting when the situation resembles something you once could not control.",
+      "body": "Control can become most tempting when the situation resembles something you once could not control. Pluto square the South Node can reactivate an old power dynamic and make checking, pushing, withholding, or trying to force certainty feel protective. The history may explain the intensity, but it does not make every present threat equally dangerous. Notice what you are trying to prevent from happening again. Then deal with the problem that is actually here.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.pluto.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "An old source of power may still work, but you get to decide if you want to keep using it.",
+      "body": "An old source of power may still work, but you get to decide if you want to keep using it. Pluto trine the South Node can make a familiar strategy for influence, survival, focus, or control feel especially effective. You may know exactly how to read the situation and where the leverage is. That skill can protect you. It can also keep you tied to a way of operating that grew out of an older threat. Use the power consciously instead of automatically.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.pluto.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "A present power issue can show you what the past still gets to dictate.",
+      "body": "A present power issue can show you what the past still gets to dictate. When Pluto opposes the South Node, a negotiation, boundary, ending, or high-stakes decision can put an old fear or control pattern directly across from what is happening now. You may feel pulled toward the strategy that once kept you from being vulnerable. The old lesson may still contain useful information. It should not have permanent authority over every new situation.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}
