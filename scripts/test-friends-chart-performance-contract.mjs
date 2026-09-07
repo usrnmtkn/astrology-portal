@@ -292,7 +292,7 @@ assert.ok(
 );
 assert.match(
   socialCoreRefreshMatch.groups.body,
-  /const profileRequest = loadOwnSocialProfile\(\)[\s\S]*const loadedFriends = await listSocialFriends\(\);/,
+  /const profileRequest = loadOwnSocialProfile\(\)[\s\S]*const loadedFriends = await withFriendsLoadingTimeout\(listSocialFriends\(\)\);/,
   "Own-profile hydration must start in parallel without blocking visible friend rows."
 );
 assert.doesNotMatch(

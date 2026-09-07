@@ -1,3 +1,4 @@
+import { FriendDetail } from "./FriendDetail";
 import { X } from "lucide-react";
 import {
   Suspense,
@@ -152,6 +153,20 @@ import { selectEligibleFriendTransits } from "./friendTransitEligibility";
 import { scheduleFriendChartRepair } from "./friendChartLoading";
 import { generateUserContent } from "../../services/userGeneratedContent";
 
+function FriendChartRailPlaceholder() {
+  return (
+    <div className="relationship-detail-left friend-detail-chart-column friend-detail-chart-rail chart-layout__visual" aria-hidden="true">
+      <div className="friend-synastry-wheel-shell">
+        <div className="chart-shell">
+          <div className="wheel natal-wheel friend-wheel chart-frame">
+            <svg viewBox="0 0 100 100" width="100%" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const FriendsWorkspaceShell = lazy(() =>
   import("./FriendsWorkspaceShell").then((module) => ({
     default: module.FriendsWorkspaceShell
@@ -170,13 +185,6 @@ const FriendChartModal = lazy(() =>
   }))
 );
 
-const loadFriendDetailModule = () => import("./FriendDetail");
-const loadFriendDetail = () =>
-  loadFriendDetailModule().then((module) => ({
-    default: module.FriendDetail
-  }));
-const FriendDetail = lazy(loadFriendDetail);
-
 const loadFriendNatalTab = () =>
   import("./FriendNatalTab").then((module) => ({
     default: module.FriendNatalTab
@@ -190,7 +198,7 @@ const loadFriendTransitsTab = () =>
 const FriendTransitsTab = lazy(loadFriendTransitsTab);
 
 const FriendProfileChartRail = lazy(() =>
-  loadFriendDetailModule().then((module) => ({
+  import("./FriendProfileChartRail").then((module) => ({
     default: module.FriendProfileChartRail
   }))
 );
@@ -208,8 +216,6 @@ const loadCompatibilityTab = () =>
 const CompatibilityTab = lazy(loadCompatibilityTab);
 
 export function preloadFriendProfileComponents(tab: FriendProfileTab) {
-  void loadFriendDetail();
-
   if (tab === "compatibility") void loadCompatibilityTab();
   if (tab === "transits") void loadFriendTransitsTab();
   if (tab === "natal") void loadFriendNatalTab();
@@ -1261,6 +1267,9 @@ export function ManualChartsPanel({
       : friendProfileTab === "synastry"
       ? Boolean(selectedFriendReadyNatalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
+  const reserveFriendChartRail = selectedFriendHasChartRail || Boolean(
+    selectedFriendReadyNatalChart && relationshipPersonB && selectedCompatibilityIsLoading
+  );
   const friendChartRailRenderKey = selectedFriendHasChartRail && selectedChart
     ? [selectedChart.id, friendProfileTab, selectedRelationshipComparison?.id ?? "self"].join(":")
     : null;
@@ -1285,7 +1294,7 @@ export function ManualChartsPanel({
     };
   }, [friendChartRailRenderKey]);
 
-  const renderFriendChartRail = renderedFriendChartRailKey === friendChartRailRenderKey;
+  const renderFriendChartRail = Boolean(friendChartRailRenderKey) && renderedFriendChartRailKey === friendChartRailRenderKey;
   const selectedFriendTransitCandidates = useMemo(() => (
     (friendProfileWork.transits || friendProfileWork.compatibility) && currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? dedupeSameBeatPersonalTransits(
@@ -2681,34 +2690,36 @@ export function ManualChartsPanel({
           ariaLabel={`${selectedChart.displayName} chart profile`}
           avatarUrl={selectedSocialFriend?.avatarUrl}
           chartRail={renderFriendChartRail ? (
-            <FriendProfileChartRail
-              activeTab={friendProfileTab}
-              chartIsEvent={selectedChartIsEvent}
-              chartName={selectedChart.displayName}
-              comparisonIsSelf={relationshipComparisonIsSelf}
-              comparisonName={relationshipComparisonName}
-              comparisonOptions={relationshipComparisonOptions}
-              comparisonPickerOpen={relationshipComparisonPickerOpen}
-              comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
-              compositeSky={selectedCompositeSky}
-              currentSkyPositions={currentSky?.positions ?? []}
-              houseSignLabelStyle={houseSignLabelStyle}
-              natalSky={selectedFriendReadyNatalChart}
-              natalTableRows={selectedFriendNatalTableRows}
-              natalViewMode={friendNatalChartViewMode}
-              onComparisonSelect={(id) => {
-                setRelationshipComparisonChartId(id);
-                setRelationshipComparisonPickerOpen(false);
-              }}
-              onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-              onNatalViewModeChange={setFriendNatalChartViewMode}
-              outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
-              relationshipComparisonSky={relationshipComparisonSky}
-              synastryAspects={selectedSynastryAspectLines}
-              transitAspects={selectedFriendTransitAspectLines}
-            />
-          ) : null}
-          className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${selectedFriendHasChartRail ? "" : " relationship-detail-no-chart"}`}
+            <Suspense fallback={<FriendChartRailPlaceholder />}>
+              <FriendProfileChartRail
+                activeTab={friendProfileTab}
+                chartIsEvent={selectedChartIsEvent}
+                chartName={selectedChart.displayName}
+                comparisonIsSelf={relationshipComparisonIsSelf}
+                comparisonName={relationshipComparisonName}
+                comparisonOptions={relationshipComparisonOptions}
+                comparisonPickerOpen={relationshipComparisonPickerOpen}
+                comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
+                compositeSky={selectedCompositeSky}
+                currentSkyPositions={currentSky?.positions ?? []}
+                houseSignLabelStyle={houseSignLabelStyle}
+                natalSky={selectedFriendReadyNatalChart}
+                natalTableRows={selectedFriendNatalTableRows}
+                natalViewMode={friendNatalChartViewMode}
+                onComparisonSelect={(id) => {
+                  setRelationshipComparisonChartId(id);
+                  setRelationshipComparisonPickerOpen(false);
+                }}
+                onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
+                onNatalViewModeChange={setFriendNatalChartViewMode}
+                outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
+                relationshipComparisonSky={relationshipComparisonSky}
+                synastryAspects={selectedSynastryAspectLines}
+                transitAspects={selectedFriendTransitAspectLines}
+              />
+            </Suspense>
+          ) : reserveFriendChartRail ? <FriendChartRailPlaceholder /> : null}
+          className={`friend-profile-panel friend-focus-panel friend-profile-view friend-chart-page friend-chart-page--${friendProfileTab} chart-layout friend-detail-layout relationship-detail-layout${reserveFriendChartRail ? "" : " relationship-detail-no-chart"}`}
           initials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
           isEventChart={selectedChartIsEvent}
           moon={selectedFriendBigThree?.moon ?? "Pending"}
@@ -2732,6 +2743,7 @@ export function ManualChartsPanel({
             ]}
         >
 
+          <Suspense fallback={<FeatureLoadingFallback />}>
           {friendProfileTab === "compatibility" && (
             selectedCompatibilityIsLoading ? (
               <div
@@ -2829,6 +2841,7 @@ export function ManualChartsPanel({
               relationshipCompareStatus={relationshipCompareStatus}
             />
           )}
+          </Suspense>
         </FriendDetail>
       )}
       </FriendsWorkspaceShell>

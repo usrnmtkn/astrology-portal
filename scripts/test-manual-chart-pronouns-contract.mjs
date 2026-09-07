@@ -27,7 +27,7 @@ assert.match(
 );
 assert.match(
   manualChartsSource,
-  /natal_chart: natalChartWithPronouns\(input\.natalChart, pronouns\)/,
+  /natal_chart: natalChartWithPronouns\(\s*natalSnapshotWithBirthTimeReliability\(input\.natalChart, birthTimeKnown\),\s*pronouns\s*\)/,
   "Manual chart writes must preserve pronouns in natal chart metadata for legacy deployed schemas."
 );
 assert.match(

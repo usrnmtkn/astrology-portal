@@ -1,3 +1,4 @@
+import { withFriendsLoadingTimeout } from "./socialFriendsLoading";
 import { Check, ChevronRight, Copy, Link2, MoreHorizontal, Search, X } from "lucide-react";
 import {
   useCallback,
@@ -311,7 +312,7 @@ export function SocialFriendsPanel({
         // The friend list is independently authorized and remains usable when
         // the optional own-profile header cannot hydrate.
       });
-    const loadedFriends = await listSocialFriends();
+    const loadedFriends = await withFriendsLoadingTimeout(listSocialFriends());
     const pendingRemoval = pendingRemovalRef.current?.friend.userId;
     const nextFriends = pendingRemoval
       ? loadedFriends.filter((friend) => friend.userId !== pendingRemoval)
@@ -1058,10 +1059,15 @@ export function SocialFriendsPanel({
         </div>
         <div className="friends-unified-tab-row" aria-label="Friends views">
           <span className="friends-unified-tabs" role="tablist" aria-label="Friends views">
-            <button className={activeView === "circle" ? "active" : ""} type="button" disabled>
+            <button className={activeView === "circle" ? "active" : ""} type="button"
+              role="tab" aria-selected={activeView === "circle"}
+              aria-controls="friends-circle-panel" id="friends-circle-tab"
+              onClick={() => onSelectView("circle")}>
               Circle · 0
             </button>
-            <button type="button" disabled>
+            <button type="button" role="tab" aria-selected={false}
+              aria-controls="friends-charts-panel" id="friends-charts-tab"
+              onClick={() => onSelectView("charts")}>
               Charts · {chartCount}
             </button>
           </span>

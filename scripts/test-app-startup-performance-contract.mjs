@@ -361,8 +361,18 @@ assert.match(
 );
 assert.match(
   manualChartsPanelSource,
-  /const loadFriendDetailModule = \(\) => import\("\.\/FriendDetail"\);[\s\S]*const FriendProfileChartRail = lazy\(\(\) =>\s*loadFriendDetailModule\(\)/u,
-  "The Friends profile chart rail must share the deferred Friend Detail boundary."
+  /const FriendProfileChartRail = lazy\(\(\) =>\s*import\("\.\/FriendProfileChartRail"\)/u,
+  "The Friends profile chart rail must load independently of the detail shell."
+);
+assert.doesNotMatch(
+  friendDetailSource,
+  /from\s+["']\.\/FriendProfileChartRail["']/u,
+  "The detail shell must not pull chart graphics into its loading boundary."
+);
+assert.match(
+  manualChartsPanelSource,
+  /<Suspense fallback=\{<FriendChartRailPlaceholder \/>\}>\s*<FriendProfileChartRail/u,
+  "Loading the chart graphics must preserve the detail shell and reserved chart space."
 );
 assert.match(
   friendProfileChartRailSource,
@@ -635,8 +645,8 @@ assert.match(
 );
 assert.doesNotMatch(
   manualChartsPanelSource,
-  /friend-detail-chart-rail chart-layout__visual/u,
-  "Friends chart-rail presentation must not remain embedded in ManualChartsPanel."
+  /<(?:SkyWheel|SynastryWheel|NatalChartDataTable)\b/u,
+  "Friends chart graphics must remain deferred; the orchestration panel may reserve placeholder space."
 );
 assert.match(
   friendProfileChartRailSource,
