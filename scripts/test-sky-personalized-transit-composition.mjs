@@ -181,16 +181,16 @@ assert.deepEqual(activeEvents[0].memberKeys, ["north", "south"]);
 assert.equal(activeEvents[0].heading, "Sun Conjunction North Node · Sun Opposition South Node");
 assert.equal(activeEvents[0].dateLabel, "Through September 9");
 assert.match(activeEvents[0].body ?? "", /^Your natal North Node is in your 4th house, while your South Node is in your 10th house\./u);
-assert.match(activeEvents[0].body ?? "", /What you are developing now runs through home, family, your living situation, roots, or private life\./u);
-assert.match(activeEvents[0].body ?? "", /Career, public role, responsibility, authority, reputation, or recognition is the side you may already know how to handle\./u);
+assert.match(activeEvents[0].body ?? "", /What you are developing now runs through home, family, and the responsibilities of private life\./u);
+assert.match(activeEvents[0].body ?? "", /The more familiar side involves career, public responsibility, authority, and recognition\./u);
 assert.doesNotMatch(activeEvents[0].body ?? "", /unfamiliar door|microphone|applause|encore|setlist|Sun in Virgo wants/iu);
 assert.equal(activeEvents[1].memberKeys[0], "venus", "Grouping should preserve the upstream significance order of the first event member.");
 assert.equal(activeEvents[2].memberKeys[0], "moon");
 assert.equal(activeEvents.flatMap((event) => event.memberKeys).sort().join(","), "moon,north,south,venus", "Every calculated aspect must remain represented after grouping.");
 assert.equal(activeEvents[1].dateLabel, "Through September 11");
-assert.match(activeEvents[1].body ?? "", /^Your natal Venus is in your 8th house\. Shared money, support, debts, obligations, trust, or intimacy may be easier to work with alongside home, family, your living situation, roots, or private life\. Your Venus describes what you value\./u);
+assert.match(activeEvents[1].body ?? "", /^Your natal Venus is in your 8th house\. Shared money, support, trust, and obligations between you and someone else may be easier to work with alongside home, family, and the responsibilities of private life\. Your Venus describes what you value\./u);
 assert.doesNotMatch(activeEvents[1].body ?? "", /Sun in Virgo wants|Support around shared money/iu);
-assert.match(activeEvents[2].body ?? "", /^Your natal Moon is in your 6th house\. A practical change involving daily work, health, routines, appointments, or your schedule may make home, family, your living situation, roots, or private life easier to handle\. A schedule or responsibility can be adjusted before it becomes urgent\./u);
+assert.match(activeEvents[2].body ?? "", /^Your natal Moon is in your 6th house\. A practical change involving your workload, health, appointments, and daily schedule may make home, family, and the responsibilities of private life easier to handle\. A schedule or responsibility can be adjusted before it becomes urgent\./u);
 
 const loneNode = skyActiveChartEvents([{
   key: "north-only",
@@ -198,7 +198,7 @@ const loneNode = skyActiveChartEvents([{
   body: "While Sun is in your 4th house, it is also trining your natal North Node in your 4th house until September 9. One supported opening appears."
 }]);
 assert.equal(loneNode[0].type, "single", "An unpaired node contact must stay visible instead of being invented into an axis pair.");
-assert.match(loneNode[0].body ?? "", /^Your natal North Node is also in your 4th house, so the emphasis stays on home, family, your living situation, roots, or private life\. One supported opening appears\./u);
+assert.match(loneNode[0].body ?? "", /^Your natal North Node is also in your 4th house, so the emphasis stays on home, family, and the responsibilities of private life\. One supported opening appears\./u);
 
 assert.match(appSource, /personalTransitPackageSection\(transit, generatedAt, "you", \{[\s\S]*?generatedContent,[\s\S]*?transitHouse: house/u);
 assert.match(appSource, /body: packageSection\?\.body \?\? compiledAspect\?\.body \?\? null/u);
