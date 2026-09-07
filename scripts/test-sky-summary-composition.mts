@@ -4,7 +4,7 @@ import { importedSkySummary } from "../apps/admin/src/skySummaryImportedCopy.ts"
 import assert from "node:assert/strict";
 import { buildSkySummaryComposition } from "../apps/admin/src/skySummaryComposition.ts";
 import { skyDailySummaryParts } from "../apps/web/src/content/skyDailySummary.ts";
-import { skySummarySigns } from "../apps/web/src/content/skyDailySummaryCatalog.ts";
+import { skyDailySummaryFields, skySummarySigns } from "../apps/web/src/content/skyDailySummaryCatalog.ts";
 import { skyIngressBodies, skyIngressSummaryFields, skySummaryTemplateErrors } from "../apps/web/src/content/skyDailySummaryCatalog.ts";
 import { publishedIngressTldr } from "../apps/admin/src/skyIngressTldrSources.ts";
 for (const sun of skySummarySigns) for (const moon of skySummarySigns) {
@@ -15,7 +15,8 @@ for (const sun of skySummarySigns) for (const moon of skySummarySigns) {
   assert.equal(working.joined, true);
   const text = working.parts.map(part => part.text).join("");
   for (const [planet, sign] of [["sun", sun], ["moon", moon]]) {
-    assert.ok(text.includes(importedSkySummary(`cms/sky-daily-summary/${planet}/${sign.toLowerCase()}`)!));
+    const key = `cms/sky-daily-summary/${planet}/${sign.toLowerCase()}`;
+    assert.ok(text.includes(skyDailySummaryFields.find(field => field.key === key)!.body || importedSkySummary(key)!));
   }
   assert.ok(!text.includes("..") && !text.includes(".,") && !text.includes("—"));
 }
