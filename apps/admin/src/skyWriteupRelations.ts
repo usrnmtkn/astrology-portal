@@ -1,3 +1,4 @@
+import { memoByObject } from "./derivedCache";
 export type SkyWriteupRelationRow = {
   id: string;
   content_key: string;
@@ -194,7 +195,7 @@ export function skyWriteupSubjectTypeForRow(row: SkyWriteupRelationRow): SkyWrit
   return null;
 }
 
-export function skyWriteupContextForRow(row: SkyWriteupRelationRow): SkyWriteupContext | null {
+function skyWriteupContextForRowUncached(row: SkyWriteupRelationRow): SkyWriteupContext | null {
   const keyParts = keyPlacementParts(row.content_key);
   const lunationKeyParts = row.content_key.toLowerCase().match(/^authored\/sky-lunation-macro\/(?:new-moon|full-moon)\/([^/]+)$/u);
   const isLunationLike = /(?:^|[./-])lunation(?:[./-]|$)/iu.test(row.content_key)
@@ -228,7 +229,7 @@ export function skyWriteupContextForRow(row: SkyWriteupRelationRow): SkyWriteupC
   return { planet, sign: signSet.has(sign) ? sign : null };
 }
 
-export function skyLunationContextForRow(row: SkyWriteupRelationRow): SkyLunationContext | null {
+function skyLunationContextForRowUncached(row: SkyWriteupRelationRow): SkyLunationContext | null {
   const key = row.content_key.toLowerCase();
   const keyMatch = key.match(/^authored\/sky-lunation-macro\/(new-moon|full-moon)\/([^/]+)$/u);
 
@@ -409,3 +410,7 @@ export function personalTransitAspectCmsStarter(
     sourceContentKey: row.content_key
   };
 }
+
+export const skyWriteupContextForRow = memoByObject(skyWriteupContextForRowUncached);
+
+export const skyLunationContextForRow = memoByObject(skyLunationContextForRowUncached);

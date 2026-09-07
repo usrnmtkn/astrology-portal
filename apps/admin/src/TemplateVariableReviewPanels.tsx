@@ -1,6 +1,7 @@
+import { useMemo } from "react";
 import type { TemplateVariableReference } from "./templateVariableReference";
 import { templateVariableSourceCandidates, templateVariableSourceKeyPrefixes, templateVariableSourceSelectionNote } from "./templateVariableSources";
-import { buildCompositionTemplate, type CompositionMapRow } from "./compositionMap";
+import { buildCompositionTemplate, compositionTemplateKey, type CompositionMapRow } from "./compositionMap";
 
 type SourceRow = {
   id: string;
@@ -81,7 +82,12 @@ export function TemplateVariableReviewPanels({
   references, rows, templateContentKey, templateRow, selectedVariableName, selectedSourceId,
   onBackToVariables, onSelectSource, onSelectVariable, onEditSource
 }: Props) {
-  const atomicReferences = buildCompositionTemplate(templateRow, rows).slots;
+  const templateKey = compositionTemplateKey(templateRow);
+  const atomicReferences = useMemo(
+    () => buildCompositionTemplate(templateRow, rows).slots,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [rows, templateKey]
+  );
   const reviewReferences = atomicReferences.length ? atomicReferences : references;
   const variable = reviewReferences.find((candidate) => candidate.name === selectedVariableName);
   if (!variable) return null;
