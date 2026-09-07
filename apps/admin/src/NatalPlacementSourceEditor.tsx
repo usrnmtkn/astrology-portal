@@ -36,7 +36,7 @@ export default function NatalPlacementSourceEditor({ row, label, disabled, onDir
     try {
       if (await onSave(edits ? baseline : row, fields, publish)) {
         setEdits(null);
-        setFeedback(publish ? "Published. The reader preview will refresh." : "Revision saved. Publish when ready.");
+        setFeedback(publish ? "Published. The reader preview will refresh." : "Draft saved · Not live");
       } else {
         setFeedback("Could not save. Your edits are still here; check the error notification for details.");
       }
@@ -56,8 +56,8 @@ export default function NatalPlacementSourceEditor({ row, label, disabled, onDir
         </label>
       ))}
       <div className="admin-natal-source-actions">
-        <button type="button" disabled={disabled || saving || !dirty} onClick={() => void save(false)}>Save revision</button>
         <button type="button" disabled={disabled || saving || (!dirty && !(row.sections as { packageDraft?: unknown })?.packageDraft)} onClick={() => void save(true)}>Save &amp; publish</button>
+        <button type="button" disabled={disabled || saving || !dirty} onClick={() => void save(false)}>Save draft</button>
         {dirty && <button type="button" disabled={saving} onClick={() => { setEdits(null); setFeedback(""); }}>Cancel edits</button>}
       </div>
       <p className="admin-field-hint" role="status">{saving ? "Saving…" : feedback || (dirty ? "Unsaved changes" : "")}</p>

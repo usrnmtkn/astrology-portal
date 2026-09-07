@@ -15,6 +15,13 @@ assert.equal(snapshot.schema, "content-studio-last-known-good-v1");
 assert.equal(snapshot.rowCount, snapshot.rows.length);
 assert.ok(snapshot.rowCount >= 100);
 const keys = new Set();
+const publications = new Map((snapshot.publications ?? []).map(record => [record.content_key, record]));
+assert.equal(publications.size, (snapshot.publications ?? []).length, "Publication keys must be unique.");
+for (const publication of publications.values()) {
+  assert.ok(["live", "retired"].includes(publication.state));
+  assert.ok(Number.isSafeInteger(publication.revision) && publication.revision > 0);
+}
+const identityTime = value => `${Date.parse(value)}:${(value?.match(/\.(\d+)/)?.[1] ?? "").padEnd(6, "0").slice(3, 6)}`;
 let maxRevision = "";
 for (const row of snapshot.rows) {
   assert.equal(row.status, "LIVE");
@@ -24,7 +31,12 @@ for (const row of snapshot.rows) {
   assert.ok(!keys.has(row.content_key), `duplicate last-known-good key: ${row.content_key}`);
   keys.add(row.content_key);
   assert.equal(row.sections?.calendarReleaseHistory, undefined, "Admin recovery history must not be exported publicly");
-  assert.notEqual(row.provider, "tldrastro-fallback-architecture-v3-sky-placement");
+  if (publications.has("__content-publication-ledger/v1") || row.provider === "tldrastro-fallback-architecture-v3-sky-placement") {
+    const publication = publications.get(row.content_key);
+    assert.equal(publication?.state, "live", `${row.content_key}: exported copy must be published`);
+    assert.equal(publication.row_id, row.id, `${row.content_key}: published source identity must match`);
+    assert.equal(identityTime(publication.row_updated_at), identityTime(row.updated_at), `${row.content_key}: exported revision must match`);
+  }
   maxRevision = row.updated_at > maxRevision ? row.updated_at : maxRevision;
 }
 assert.equal(snapshot.sourceRevision, maxRevision);
@@ -34,7 +46,9 @@ assert.doesNotMatch(workflow, /SUPABASE_SERVICE_ROLE_KEY/u, "Nightly fallback mu
 assert.match(workflow, /apps\/web\/public\/content-studio-last-known-good\.json/u);
 assert.match(exporter, /calendarReleaseHistory: _adminRecoveryHistory/u);
 assert.match(exporter, /sb_publishable_/u, "Nightly fallback must use the public reader boundary.");
-assert.match(exporter, /const pageSize = 200/u, "Nightly export must use conservative cursor pages.");
+assert.match(exporter, /const pageSize = 20/u, "Wide source rows need small pages to stay within the database deadline.");
+assert.match(exporter, /const maxPages = 1000/u, "Smaller pages must retain the 20,000-row export capacity.");
+assert.match(exporter, /page === maxPages - 1/u, "Export must still refuse a truncated inventory.");
 assert.match(generated, /fetch\("\/content-studio-last-known-good\.json"/u, "The LKG snapshot must be fetched as a static asset, not bundled into application JS.");
 assert.doesNotMatch(generated, /import\([^)]*content-studio-last-known-good\.json/u);
 assert.ok(!fs.existsSync("apps/web/src/services/contentStudioLastKnownGood.ts"), "LKG must not create a standalone JavaScript chunk.");

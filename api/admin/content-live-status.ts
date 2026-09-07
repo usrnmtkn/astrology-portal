@@ -1,3 +1,4 @@
+import { publicationLedgerKey, validContentPublication, publicationTimestamp } from "../../apps/web/src/content/contentPublicationState.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 loadLocalWebEnv();
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -21,7 +22,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!base || !key) throw new Error("Content storage is not configured.");
     const headers = { apikey: key, authorization: `Bearer ${key}` };
-    const select = "id,content_key,status,lane,review_state,updated_at,provider,headline,summary,body,sections,source_snapshot,facts,mode,flags,surface,event_type";
+    const select = "id,content_key,target_date,status,lane,review_state,updated_at,provider,headline,summary,body,sections,source_snapshot,facts,mode,flags,surface,event_type";
     async function read(params: URLSearchParams, table = "generated_interpretations") {
       const response = await adminFetch(`${base}/rest/v1/${table}?${params}`, { headers });
       const result = await response.json();
@@ -47,7 +48,36 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const ids = new Set(partition.map((row) => row.id));
       candidates.splice(0, candidates.length, ...candidates.filter((row) => !ids.has(row.id)), ...partition);
     }
-    const statuses = contentLiveStatuses(rows, candidates);
+    const publications = new Map();
+    if (keys.length) {
+      const keyFilter = [...keys, publicationLedgerKey].map((key) => `"${key.replaceAll('"', '')}"`).join(",");
+      const includesSkyPartition = rows.some((row) => isSkyPartitionKey(row.content_key));
+      for (let offset = 0; ; offset += 1000) {
+        const params = new URLSearchParams({ select: "content_key,state,revision,row_id,row_updated_at,updated_at", order: "content_key.asc", limit: "1000", offset: String(offset) });
+        if (includesSkyPartition) params.set("or", `(content_key.in.(${keyFilter}),content_key.like.fallback-hook/sky-*,content_key.like.house-horoscope-core/*)`);
+        else params.set("content_key", `in.(${keyFilter})`);
+        const response = await adminFetch(`${base}/rest/v1/content_publications?${params}`, { headers });
+        const records: unknown = await response.json();
+        if (!response.ok || !Array.isArray(records) || !records.every(validContentPublication)) throw new Error("Could not verify publication status.");
+        for (const record of records) publications.set(record.content_key, record);
+        if (records.length < 1000) break;
+      }
+    }
+    const allowsPublication = (row: LiveStatusRow) => {
+      const publication = publications.get(row.content_key);
+      return (!publication && (!publications.has(publicationLedgerKey) || Boolean(row.target_date))) || publication?.state === "live" && (Boolean(row.target_date) || row.id === publication.row_id
+        && row.updated_at && publication.row_updated_at && publicationTimestamp(row.updated_at) === publicationTimestamp(publication.row_updated_at));
+    };
+    const statuses = contentLiveStatuses(rows, candidates, allowsPublication, (row) => publications.get(row.content_key)?.state === "live" && Boolean(allowsPublication(row)));
+    for (const status of statuses) {
+      const publication = publications.get(rows.find((row) => row.id === status.id)?.content_key);
+      if (publication && (publication.state === "retired" || status.source === "package")) {
+        status.live = false; status.label = "Not live"; status.source = null;
+        status.detail = publication.state === "retired"
+          ? "Retired everywhere. Devices apply this retirement when they reconnect."
+          : "This is not the current published version. Older bundled writing cannot replace it.";
+      }
+    }
     const userIds = body.ids.filter((id) => id.startsWith("user:")).map((id) => id.slice(5));
     if (userIds.length) {
       const userSelect = "id,user_id,subject_type,subject_id,content_key,target_date,status,body,updated_at";

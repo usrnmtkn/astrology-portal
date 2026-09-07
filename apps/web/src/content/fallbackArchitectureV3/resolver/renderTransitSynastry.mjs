@@ -1,3 +1,5 @@
+import { assertNodePublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
+export { setNodeBlockedContentKeys } from "./publicationGuard.mjs";
 // TLDR Astro transit + synastry resolver (v1) — Node reference.
 // Authored-first: owner-library cards (full_copy) render verbatim; synastry aspects
 // have a fallback template; everything else without a card is SOURCE_GAP.
@@ -72,6 +74,8 @@ const eligibleRowsByKey = (rows) => {
 const cards = eligibleRowsByKey(lib.authoredCards);
 const vocab = eligibleRowsByKey(rowsFile.vocabularyRows);
 const hooks = eligibleRowsByKey(rowsFile.hookRows);
+const assertKey = (key) => assertNodePublicationKey(key, SourceGapError);
+for (const map of [cards, vocab, hooks]) guardPublicationMap(map, assertKey);
 function dailyGlanceHash(value) {
   let hash = 0x811c9dc5;
   for (let index = 0; index < value.length; index += 1) {
@@ -112,7 +116,7 @@ const FAST = new Set(["moon", "mercury", "venus", "mars"]);
 const ELEMENT = { aries: "fire", leo: "fire", sagittarius: "fire", taurus: "earth", virgo: "earth", capricorn: "earth", gemini: "air", libra: "air", aquarius: "air", cancer: "water", scorpio: "water", pisces: "water" };
 const ORD = { 1: "1st", 2: "2nd", 3: "3rd" };
 const ordinal = (n) => ORD[n] ?? `${n}th`;
-const tpl = (key) => templates.templates.find((t) => t.contentKey === key);
+const tpl = (key) => { assertKey(key); return templates.templates.find((t) => t.contentKey === key); };
 const fill = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(/\s{2,}/g, " ").trim();
 const READER_HOLDER_VERBS = new Map(Object.entries({
   is: "are", was: "were", has: "have", does: "do", feels: "feel", gives: "give",
@@ -1173,6 +1177,7 @@ export function renderSynastryAspect({
   romanticAllowed,
   relationshipType
 }) {
+  assertKey("fallback-template/synastry.aspect-v3");
   const tpl = templates.templates.find((t) => t.contentKey === "fallback-template/synastry.aspect-v3");
   // Exact aspect rows win. Until exact non-conjunction rows are approved, the
   // existing hard/soft family is retained as an explicitly labeled fallback.
@@ -1873,6 +1878,7 @@ function renderSkyPlacementCopy({
   if (articleMode === "archive" && !authoredArticle) {
     throw new SourceGapError(`SOURCE_GAP: sky article archive ${articleKey ?? `${planet}/${sign}`}`);
   }
+  if (authoredArticle) assertKey(authoredArticle.contentKey);
   if (authoredArticle) {
     assertSkyArticleCopy(authoredArticle);
     const finalArticle = renderFinalSkyArticle(authoredArticle, {
@@ -2443,6 +2449,7 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
     try {
       pushPart(renderStoredBody(stored), [stored.contentKey, ...(stored.source_keys ?? [])]);
     } catch (error) {
+    if (error instanceof SourceGapError && error.publicationBlocked) throw error;
       if (!(error instanceof SourceGapError)) throw error;
       flagOmittedSection(id, key);
       return null;
@@ -2507,6 +2514,7 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
     try {
       pushPart(fill(anchor, matchingNewMoonSlots()), ["fallback-hook/lunation-matching-new-moon-anchor/full"]);
     } catch (error) {
+    if (error instanceof SourceGapError && error.publicationBlocked) throw error;
       if (!(kind === "eclipse-lunar" && error instanceof SourceGapError)) throw error;
       flagOmittedSection("matching-new-moon-anchor", "fallback-hook/lunation-matching-new-moon-anchor/full");
     }
@@ -2636,6 +2644,7 @@ export function renderDailyGlance({
     try {
       return fillDailyGlancePersonSlots(raw, personSlots);
     } catch (error) {
+    if (error instanceof SourceGapError && error.publicationBlocked) throw error;
       throw new SourceGapError(
         `SOURCE_GAP: ${contentKey} friend voice slots ${error instanceof Error ? error.message : String(error)}`
       );

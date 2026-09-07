@@ -1,3 +1,4 @@
+import { isContentRetired, publicationAllowsContent, subscribeToContentPublications } from "../content/contentPublicationState";
 import { loadLiveGeneratedContentForSurfaces } from "./generatedContent";
 import { fallbackV3PlanetTopic, fallbackV3SignStyle } from "../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy } from "../content/readerSafety";
@@ -35,13 +36,17 @@ export type SignNeedVocabulary = Map<string, SignNeedPhrases>;
 const natalLanguagePattern = /\b(you|your|yours|yourself|a person|someone|birth chart|natal|meant to|grow through|growth edge)\b/i;
 const fallbackVocabPrefix = "fallback-vocab";
 
+let cacheEpoch = 0;
 let cachedVocabulary: PlanetTopicVocabulary | null = null;
 let cachedSignStyles: SignStyleVocabulary | null = null;
 let cachedSignNeeds: SignNeedVocabulary | null = null;
 let loadingVocabulary: Promise<PlanetTopicVocabulary> | null = null;
 const warnedFallbacks = new Set<string>();
 
+subscribeToContentPublications(clearPlanetTopicVocabularyCache);
+
 export function clearPlanetTopicVocabularyCache() {
+  cacheEpoch++;
   cachedVocabulary = null;
   cachedSignStyles = null;
   cachedSignNeeds = null;
@@ -166,7 +171,7 @@ function warnSignFallback(sign: string, reason: string) {
 }
 
 function fallbackSignStyle(sign: string): SignStylePhrases {
-  return { phrase: fallbackV3SignStyle(sign) };
+  return { phrase: publicationAllowsContent(`fallback-vocab/sign-style/${normalizedSignId(sign)}`) ? fallbackV3SignStyle(sign) : "" };
 }
 
 function fallbackSkyPlanetTopic(planet: string) {
@@ -274,6 +279,7 @@ export function planetTopicPhraseFromVocabulary(
   variant: PlanetTopicVariant = "natal"
 ) {
   const planetId = normalizedPlanetId(planet);
+  if (isContentRetired(`fallback-vocab/planet-topic/${planetId}`)) return "";
   const topic = vocabulary?.get(planetId);
 
   if (variant === "sky") {
@@ -292,6 +298,7 @@ export function planetTopicPhraseFromVocabulary(
 
 export function signStylePhrase(sign: string) {
   const signId = normalizedSignId(sign);
+  if (isContentRetired(`fallback-vocab/sign-style/${signId}`)) return "";
   const style = cachedSignStyles?.get(signId);
 
   if (style?.phrase) {
@@ -305,6 +312,7 @@ export function signStylePhrase(sign: string) {
 
 export function signStyleShortPhrase(sign: string) {
   const signId = normalizedSignId(sign);
+  if (isContentRetired(`fallback-vocab/sign-style/${signId}`)) return "";
   const style = cachedSignStyles?.get(signId);
 
   if (style?.short || style?.phrase) {
@@ -319,6 +327,7 @@ export function signStyleShortPhrase(sign: string) {
 
 export function signNeedPhrase(sign: string, variant: PlanetTopicVariant = "natal") {
   const signId = normalizedSignId(sign);
+  if (isContentRetired(`fallback-vocab/sign-need/${signId}`)) return "";
   const need = cachedSignNeeds?.get(signId);
   const rowValue = variant === "sky"
     ? need?.sky
@@ -334,6 +343,7 @@ export function signNeedPhrase(sign: string, variant: PlanetTopicVariant = "nata
 }
 
 export function planetTopicPhrase(planet: string, variant: PlanetTopicVariant = "natal") {
+  if (isContentRetired(`fallback-vocab/planet-topic/${normalizedPlanetId(planet)}`)) return "";
   if (!cachedVocabulary) {
     if (variant === "sky") {
       return fallbackSkyPlanetTopic(planet);
@@ -355,17 +365,19 @@ function hydratePlanetTopicVocabularyRows(rows: PlanetTopicVocabularyRow[]) {
 
 export async function loadPlanetTopicVocabulary() {
   if (loadingVocabulary) return loadingVocabulary;
+  const epoch = cacheEpoch;
   loadingVocabulary = (async () => {
     const rows = [...(await loadLiveGeneratedContentForSurfaces(["modifier"])).values()]
       .filter((row) => row.contentKey.startsWith("fallback-vocab/")
         || row.contentKey.startsWith("cc/planet/")
         || row.contentKey.startsWith("cc/sign/"))
       .map((row) => ({ content_key: row.contentKey, body: row.body, sections: row.sections }));
+    if (epoch !== cacheEpoch) return new Map<string, PlanetTopicPhrases>();
     return hydratePlanetTopicVocabularyRows(rows);
   })();
   try {
     return await loadingVocabulary;
   } finally {
-    loadingVocabulary = null;
+    if (epoch === cacheEpoch) loadingVocabulary = null;
   }
 }

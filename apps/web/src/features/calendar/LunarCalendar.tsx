@@ -37,7 +37,7 @@ import {
 } from "../../content/readerSafety";
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
-import { resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
+import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   resolveComposedSkyCalendarCard,
@@ -1244,6 +1244,9 @@ export function normalizeCalendarEventSurface(
   composedSkyCalendarCardLookup?: SkyCalendarComposedCardLookup | null,
   generatedContent?: Map<string, LiveGeneratedContent>
 ): NormalizedCalendarEventSurface {
+  if (event.type === "aspect" && event.planets && event.aspect && isSkyAspectRetired(event.planets[0], event.aspect, event.planets[1])) {
+    return { surface: "calendar-event", status: "not-servable", sections: [] };
+  }
   const generatedDescription = firstReaderFacingCopy([
     ...(event.type === "aspect" ? [] : [content?.summary]),
     ...(event.type === "aspect" && content
@@ -2355,7 +2358,8 @@ export function LunarCalendar({
             role
           }
         );
-        if (override) {
+        if (override?.unavailable) guidance = null;
+        else if (override) {
           guidance = {
             ...guidance,
             headline: override.headline || guidance.headline,

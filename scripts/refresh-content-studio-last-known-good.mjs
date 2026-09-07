@@ -54,10 +54,10 @@ function roleAndReview(row) {
 
 function durableRow(row) {
   if (row.status !== "LIVE" || row.lane !== "serving" || row.review_state != null || row.target_date != null) return false;
-  if (row.provider === skyPlacementProvider) return false;
+  if (row.provider === skyPlacementProvider && !publicationByKey.has(row.content_key)) return false;
   const key = String(row.content_key ?? "");
   if (!key || key.startsWith("sample-") || key.startsWith("sky/article-template/") || key.startsWith("sky-article-template/")) return false;
-  if (row.provider !== coreProvider && !durablePrefixes.some((prefix) => key.startsWith(prefix))) return false;
+  if (row.provider !== coreProvider && row.provider !== skyPlacementProvider && !durablePrefixes.some((prefix) => key.startsWith(prefix))) return false;
   const source = isRecord(row.source_snapshot) ? row.source_snapshot : {};
   const facts = isRecord(row.facts) ? row.facts : {};
   if (source.sampleOnly === true || facts.sampleOnly === true) return false;
@@ -84,8 +84,10 @@ function durableRow(row) {
 const select = "id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,judge_score,judge_gate,model,updated_at";
 const rows = [];
 let cursor = null;
-const pageSize = 200;
-for (let page = 0; page < 100; page += 1) {
+// Wide source records can exceed PostgREST's statement deadline in larger pages.
+const pageSize = 20;
+const maxPages = 1000;
+for (let page = 0; page < maxPages; page += 1) {
   const url = new URL(`${supabaseUrl}/rest/v1/generated_interpretations`);
   url.searchParams.set("select", select);
   url.searchParams.set("status", "eq.LIVE");
@@ -112,10 +114,41 @@ for (let page = 0; page < 100; page += 1) {
   }
   if (!lastId) throw new Error("Snapshot pagination did not return a stable id cursor.");
   cursor = lastId;
-  if (page === 99) throw new Error("Snapshot pagination hit its safety page limit; refusing a partial snapshot.");
+  if (page === maxPages - 1) throw new Error("Snapshot pagination hit its safety page limit; refusing a partial snapshot.");
 }
 
-const candidates = rows.filter(durableRow).sort((a, b) => {
+// Export the same durable lifecycle records used by Studio and the reader.
+const publications = [];
+let publicationCursor = null;
+for (;;) {
+  const url = new URL(`${supabaseUrl}/rest/v1/content_publications`);
+  url.searchParams.set("select", "content_key,state,revision,row_id,row_updated_at,updated_at");
+  url.searchParams.set("order", "content_key.asc");
+  url.searchParams.set("limit", "1000");
+  if (publicationCursor) url.searchParams.set("content_key", `gt.${publicationCursor}`);
+  const response = await fetch(url, { headers: { apikey: publishableKey, authorization: `Bearer ${publishableKey}` } });
+  if (!response.ok) throw new Error(`Publication snapshot query failed (${response.status}).`);
+  const page = await response.json();
+  if (!Array.isArray(page) || !page.every((record) => typeof record.content_key === "string" && record.content_key
+    && ["live", "retired"].includes(record.state) && Number.isSafeInteger(record.revision) && record.revision > 0
+    && Number.isFinite(Date.parse(record.updated_at)))) throw new Error("Invalid publication snapshot.");
+  publications.push(...page);
+  if (page.length < 1000) break;
+  const nextCursor = page.at(-1).content_key;
+  if (publicationCursor !== null && nextCursor <= publicationCursor) throw new Error("Publication pagination did not advance.");
+  publicationCursor = nextCursor;
+}
+function publicationTimestamp(value) {
+  return `${Date.parse(value)}:${(value?.match(/\.(\d+)/)?.[1] ?? "").padEnd(6, "0").slice(3, 6)}`;
+}
+const publicationByKey = new Map(publications.map((record) => [record.content_key, record]));
+const isCurrentPublication = (row) => {
+  const publication = publicationByKey.get(row.content_key);
+  return (!publication && !publicationByKey.has("__content-publication-ledger/v1")) || (publication?.state === "live" && publication.row_id === row.id
+    && publicationTimestamp(publication.row_updated_at) === publicationTimestamp(row.updated_at));
+};
+
+const candidates = rows.filter(durableRow).filter(isCurrentPublication).sort((a, b) => {
   const time = Date.parse(b.updated_at) - Date.parse(a.updated_at);
   return time || String(b.id).localeCompare(String(a.id));
 });
@@ -144,6 +177,7 @@ const sourceRevision = snapshotRows.reduce((latest, row) => row.updated_at > lat
 const snapshot = {
   schema: "content-studio-last-known-good-v1",
   sourceRevision,
+  publications,
   rowCount: snapshotRows.length,
   rows: snapshotRows
 };

@@ -114,6 +114,10 @@ async function startApp() {
   }
 
   const { App } = await appModulePromise;
+  if (!isAdminContentPath()) {
+    const { refreshContentPublications } = await import("./services/contentPublications");
+    await refreshContentPublications();
+  }
   const reportPath = isReportPath();
 
   createRoot(document.getElementById("root")!).render(

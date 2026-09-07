@@ -1,3 +1,4 @@
+import { assertPublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 // TLDR Astro fallback resolver — browser/TypeScript build (v3)
 // Same logic as renderFallback.mjs, with NO Node APIs. The app passes the data in
 // (static JSON imports are inlined by every bundler):
@@ -216,7 +217,9 @@ export function natalPlacementMotionExactKey(facts: PlacementFacts): string | nu
   return facts.isRetrograde ? `${directKey}/retrograde` : directKey;
 }
 
-export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: RowsFile) {
+export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: RowsFile, publication: { blockedContentKeys?: readonly string[] } = {}) {
+  const blockedKeys = new Set(publication.blockedContentKeys ?? []);
+  const assertKey = (key: string) => assertPublicationKey(key, blockedKeys, SourceGapError);
   const vocab = new Map<string, VocabRow[]>();
   for (const row of rowsFile.vocabularyRows) {
     const candidates = vocab.get(row.contentKey) ?? [];
@@ -224,6 +227,8 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     vocab.set(row.contentKey, candidates);
   }
   const hooks = new Map((rowsFile.hookRows ?? []).map((r) => [r.contentKey, r]));
+  guardPublicationMap(vocab, assertKey);
+  guardPublicationMap(hooks, assertKey);
 
   const getVocab = (key: string, voice: "you" | "they" = "you", opts: RenderOpts = {}): string | null => {
     const row = [...(vocab.get(key) ?? [])]
@@ -274,6 +279,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     return { ...row, body: row.body_they };
   };
   const findTemplate = (key: string, opts: RenderOpts = {}): TemplateRow | null => {
+    assertKey(key);
     const t = templatesFile.templates.find((x) => x.contentKey === key);
     if (!t) return null;
     if (t.content_role !== "template") throw new RoleViolationError(`${key} is not a template row`);
@@ -350,6 +356,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
 
     const mods: string[] = [];
     const mod = (key: string, extra: Ctx = {}) => {
+      assertKey(key);
       const t = templatesFile.templates.find((x) => x.contentKey === key);
       if (!t) return;
       const raw = voice === "you" ? (t.body_you ?? t.body) : (t.body_they ?? t.body);
@@ -387,6 +394,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
         parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
         partKeys.push(signTemplate.contentKey);
       } catch (err) {
+        if (err instanceof SourceGapError && "publicationBlocked" in err) throw err;
         if (!(err instanceof SourceGapError) || !genericSignLived) throw err;
         parts.push(withModifiers(genericSignLived.body ?? "", !house));
         partKeys.push(genericSignLived.contentKey);
@@ -417,6 +425,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
           parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
           partKeys.push(houseTemplate.contentKey);
         } catch (err) {
+        if (err instanceof SourceGapError && "publicationBlocked" in err) throw err;
           if (!(err instanceof SourceGapError) || !genericHouseLived) throw err;
           parts.push(withModifiers(genericHouseLived.body ?? "", true));
           partKeys.push(genericHouseLived.contentKey);

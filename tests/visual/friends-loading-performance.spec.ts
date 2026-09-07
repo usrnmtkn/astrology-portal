@@ -77,6 +77,7 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
       body: "Friends performance QA uses deterministic local calculations."
     });
   });
+  await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
   await page.route("**/rest/v1/generated_interpretations*", async (route) => {
     if (options.slowRelationshipContent) {
       await delay(FRIENDS_SLOW_NETWORK_LATENCY_MS);
