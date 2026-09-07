@@ -60,7 +60,7 @@ export type SkyActiveChartEvent = {
 type NodeHeading = [transit: string, aspect: string, node: "north" | "south"];
 const nodePattern = /^(.+?)\s+(conjunction|conjunct|opposition|opposite|square|trine|sextile)\s+(?:your\s+)?(?:natal\s+)?(north|south)\s+node$/iu;
 const activeDatePattern = /\b(?:until|through)\s+((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?)/iu;
-const activeFramePattern = /^While\s+.+?\s+(?:is\s+in|moves\s+through)\s+your\s+\d+(?:st|nd|rd|th)\s+house,\s+it\s+is\s+also\s+.*?[.!?]\s*/iu;
+const activeFramePattern = /^While\s+.+?\s+(?:is\s+in|moves\s+through)\s+your\s+\d+(?:st|nd|rd|th)\s+house,\s+it\s+is\s+also\s+.*?\s+your\s+natal\s+(.+?)\s+in\s+your\s+(\d+(?:st|nd|rd|th)\s+house)(?:\s+(?:until|through)\s+[^.]+)?\.\s*/iu;
 
 function parsedNodeHeading(heading: string): NodeHeading | null {
   const match = heading.trim().match(nodePattern);
@@ -85,17 +85,29 @@ function compactActiveAspect(body: string | null) {
   if (!body?.trim()) return { body: null, dateLabel: null };
   const source = body.trim();
   const date = source.match(activeDatePattern)?.[1] ?? null;
-  const shortened = source.replace(activeFramePattern, "").trim();
-  return { body: shortened || source, dateLabel: date ? `Through ${date}` : null };
+  const frame = source.match(activeFramePattern);
+  const shortened = frame
+    ? `Your natal ${frame[1]} is in your ${frame[2]}. ${source.slice(frame[0].length).trim()}`.trim()
+    : source;
+  return { body: shortened, dateLabel: date ? `Through ${date}` : null };
+}
+
+function activeBodyParts(body: string) {
+  const sentenceEnd = body.indexOf(". ");
+  return sentenceEnd > 0
+    ? [body.slice(0, sentenceEnd + 1), body.slice(sentenceEnd + 2)]
+    : ["", body];
 }
 
 function combineActiveNodeBodies(first: string | null, second: string | null) {
   if (!first) return second;
   if (!second || first === second) return first;
-  const firstBreak = first.indexOf(";");
-  const secondBreak = second.indexOf(";");
-  if (firstBreak > 0 && secondBreak > 0 && first.slice(0, firstBreak) === second.slice(0, secondBreak)) {
-    return `${first.slice(0, firstBreak)}. ${first.slice(firstBreak + 1).trim()}\n\n${second.slice(secondBreak + 1).trim()}`;
+  const [firstContext, firstRest] = activeBodyParts(first);
+  const [secondContext, secondRest] = activeBodyParts(second);
+  const firstBreak = firstRest.indexOf(";");
+  const secondBreak = secondRest.indexOf(";");
+  if (firstBreak > 0 && secondBreak > 0 && firstRest.slice(0, firstBreak) === secondRest.slice(0, secondBreak)) {
+    return `${firstContext} ${secondContext} ${firstRest.slice(0, firstBreak)}. ${firstRest.slice(firstBreak + 1).trim()}\n\n${secondRest.slice(secondBreak + 1).trim()}`.trim();
   }
   return `${first}\n\n${second}`;
 }
