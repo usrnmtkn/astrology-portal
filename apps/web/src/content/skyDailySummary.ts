@@ -11,7 +11,7 @@ function savedCopy(content: CmsGeneratedContentMap | undefined, key: string, fal
 }
 
 // Use the owner-selected fuller clauses when available; otherwise render linked facts.
-export type SummaryPart = { text: string; emphasis?: boolean; highlight?: boolean; action?: "lunation" | "sun" | "moon" | "retrograde" | "event"; eventId?: string; planet?: string; sourceKey?: string };
+export type SummaryPart = { text: string; paragraphStart?: boolean; emphasis?: boolean; highlight?: boolean; action?: "lunation" | "sun" | "moon" | "retrograde" | "event"; eventId?: string; planet?: string; sourceKey?: string };
 export type SummaryPlacement = { sign: string; degree?: number };
 export type SkyDailySummaryFacts = {
   sun?: SummaryPlacement;
@@ -89,12 +89,12 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     parts.push({ text: remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming, highlight: true });
   }
   if (facts.exactAspects?.length) {
-    if (parts.length) parts.push({ text: " " });
+    parts.push({ text: facts.exactAspects.length === 1 ? "Today’s exact aspect is " : "Today’s exact aspects are ", paragraphStart: true });
     facts.exactAspects.forEach((aspect, index, all) => {
       if (index) parts.push({ text: index === all.length - 1 ? all.length === 2 ? " and " : ", and " : ", " });
       parts.push({ text: aspect.label, action: "event", eventId: aspect.id, emphasis: true });
     });
-    parts.push({ text: facts.exactAspects.length === 1 ? " is exact today." : " are exact today." });
+    parts.push({ text: "." });
   }
   for (const ingress of facts.ingresses ?? []) {
     if (parts.length) parts.push({ text: " " });
@@ -107,10 +107,18 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       name: facts.event.eclipseType === "solar" ? "Solar Eclipse"
         : facts.event.eclipseType === "lunar" ? "Lunar Eclipse" : facts.event.name
     };
-    if (parts.length) parts.push({ text: " " });
     const template = timing.lunation.includes("{name} in {sign}") ? timing.lunation : defaultTiming.lunation;
     const [prefix, suffix] = template.split("{name} in {sign}");
-    parts.push({ text: prefix.replace("{countdown}", event.countdown) }, { text: `${event.name} in ${event.sign}`, emphasis: true, action: "lunation" }, { text: suffix.replace("{countdown}", event.countdown) });
+    parts.push({ text: prefix.replace("{countdown}", event.countdown), paragraphStart: true }, { text: `${event.name} in ${event.sign}`, emphasis: true, action: "lunation" }, { text: suffix.replace("{countdown}", event.countdown) });
   }
   return parts;
+}
+
+export function skySummaryParagraphs(parts: SummaryPart[]): SummaryPart[][] {
+  const paragraphs: SummaryPart[][] = [];
+  for (const part of parts) {
+    if (!paragraphs.length || part.paragraphStart) paragraphs.push([]);
+    paragraphs[paragraphs.length - 1].push(part);
+  }
+  return paragraphs;
 }

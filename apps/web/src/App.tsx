@@ -1,5 +1,6 @@
 import { calendarDayDistance } from "./services/calendarDayDistance";
-import { skyDailySummaryParts } from "./content/skyDailySummary";
+import { liveSkyReference, remainingSkyMinutes } from "./services/skyClock";
+import { skyDailySummaryParts, skySummaryParagraphs } from "./content/skyDailySummary";
 import { ingressSummaryKeys, skySummaryEventFacts } from "./content/skySummaryEvents";
 import { refreshContentPublications } from "./services/contentPublications";
 import {
@@ -2847,10 +2848,11 @@ function timeInZoneForInput(date: Date, timeZone = browserTimeZone()) {
   return `${hour}:${minute} ${meridiem}`;
 }
 
-function skyDateTimeFromInput(value: string, location: LocationInput) {
+function skyDateTimeFromInput(value: string, location: LocationInput, live = false) {
   const resolvedLocation = withTimeZone(location);
-
-  // Editorial Sky is deterministic: both the page and daily generator use local noon.
+  const current = live && liveSkyReference(value, resolvedLocation.timeZone);
+  if (current) return current;
+  // Other dates and editorial calculations retain the local-noon anchor.
   return zonedDateTimeToUtc(value, "12:00 PM", resolvedLocation.timeZone);
 }
 
@@ -3626,7 +3628,7 @@ function formatRemainingClockCompact(startInput: string | Date, endInput: string
     return formatCountdown(startInput, endInput);
   }
 
-  const remainingMinutes = Math.max(1, Math.ceil(remainingMs / 60_000));
+  const remainingMinutes = remainingSkyMinutes(start, end);
   const hours = Math.floor(remainingMinutes / 60);
   const minutes = remainingMinutes % 60;
 
@@ -10960,11 +10962,14 @@ export function App() {
   const [personalTransitGeneratedContent, setPersonalTransitGeneratedContent] = useState<GeneratedContentMap>(() => new Map());
   const [selectedTransitId, setSelectedTransitId] = useState(sampleTransits[0].id);
   const [skyRefreshKey, setSkyRefreshKey] = useState(() => Date.now());
+  const skyCalculationSelectionRef = useRef("");
   const lastRemoteProfileSaveRef = useRef("");
   const lastSocialProfileSaveRef = useRef("");
   const initialSkyCacheKey = skySnapshotCacheKey(
     withTimeZone(initialLocationState.location),
-    getInitialTransitDate()
+    (mode === "guest" || mode === "member") && liveSkyReference(getInitialTransitDate(), withTimeZone(initialLocationState.location).timeZone)
+      ? `live-${skyDateTimeFromInput(getInitialTransitDate(), initialLocationState.location, true).toISOString()}`
+      : getInitialTransitDate()
   );
   const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
@@ -12418,8 +12423,13 @@ export function App() {
     }
 
     const skyLocation = withTimeZone(location);
-    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation);
-    const cacheKey = skySnapshotCacheKey(skyLocation, skyDate);
+    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member"));
+    const live = (mode === "guest" || mode === "member") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
+    const selectionKey = skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`);
+    const refreshing = skyCalculationSelectionRef.current === selectionKey;
+    skyCalculationSelectionRef.current = selectionKey;
+    // A noon snapshot or earlier live calculation must never stand in for now.
+    const cacheKey = skySnapshotCacheKey(skyLocation, live ? `live-${selectedDateTime.toISOString()}` : skyDate);
     const cachedSky = readCachedSkySnapshot(cacheKey);
     // Give the lazy You route its first paint before starting CPU-heavy
     // background astronomy. Sky itself still starts immediately.
@@ -12428,7 +12438,7 @@ export function App() {
     if (cachedSky) {
       setSky(cachedSky);
       setSkyStatus("cached");
-    } else {
+    } else if (!refreshing) {
       setSky(null);
       setSkyStatus("loading");
     }
@@ -12504,6 +12514,27 @@ export function App() {
       window.clearTimeout(detailedSkyTimer);
     };
   }, [friendCalculationNeeds, location, mode, skyDate, skyRefreshKey]);
+
+  useEffect(() => {
+    if (mode !== "guest" && mode !== "member") return;
+    const timeZone = withTimeZone(location).timeZone;
+    const refresh = () => {
+      if (document.visibilityState === "visible" && liveSkyReference(skyDate, timeZone)) setSkyRefreshKey(Date.now());
+    };
+    const timer = window.setInterval(refresh, 60_000);
+    const boundary = sky?.moonStatus?.until ? Date.parse(sky.moonStatus.until) : NaN;
+    const remaining = boundary - Date.now();
+    const boundaryTimer = Number.isFinite(remaining) && remaining >= 0 && remaining < 2_147_483_000
+      ? window.setTimeout(refresh, remaining + 100) : null;
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      window.clearInterval(timer);
+      if (boundaryTimer !== null) window.clearTimeout(boundaryTimer);
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, [mode, skyDate, location, sky?.moonStatus?.until]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -15617,8 +15648,9 @@ function SkyCards({
           </p>
         </header>
 
-        <p className="sky-daily-summary__body" aria-label="Daily sky summary">
-          {summaryParts.map((part, index) => {
+        <div className="sky-daily-summary__body" aria-label="Daily sky summary">
+          {skySummaryParagraphs(summaryParts).map((paragraph, paragraphIndex) => <p key={paragraphIndex}>
+          {paragraph.map((part, index) => {
             if (part.action === "event") {
               const item = events.find(event => event.id === part.eventId);
               if (!item) return null;
@@ -15651,7 +15683,8 @@ function SkyCards({
             if (part.highlight) return <mark key={index} className="content-highlight">{part.text}</mark>;
             return <span key={index}>{part.text}</span>;
           })}
-        </p>
+          </p>)}
+        </div>
 
         <button className="sky-today-ledger__foot" type="button" onClick={onOpenChart} aria-label="Open full current sky chart">
           <ChartWheelMini />

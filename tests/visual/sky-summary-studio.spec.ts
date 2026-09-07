@@ -221,7 +221,7 @@ test("reader composes selected-day events with a dedicated ingress TLDR", async 
   await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: 1, rows: [row] } }));
   await reader.goto("http://127.0.0.1:4294/#sky");
   const summary = reader.getByLabel("Daily sky summary");
-  await expect(summary).toContainText("Saturn squares Lilith and Mercury opposes Neptune are exact today.");
+  await expect(summary).toContainText("Today’s exact aspects are Saturn squares Lilith and Mercury opposes Neptune.");
   await expect(summary).toContainText("Mercury enters Libra today. Complete supplied short wording for this fixture.");
   await expect(summary).not.toContainText("Venus enters");
   await expect(summary.getByRole("link", { name: "Saturn squares Lilith", exact: true })).toHaveAttribute("href", "#sky/aspect/saturn/square/lilith");

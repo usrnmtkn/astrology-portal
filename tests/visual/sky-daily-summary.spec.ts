@@ -38,12 +38,12 @@ for (const theme of ["light", "dark"] as const) {
       await expect(summary).toContainText("the Moon in Cancer");
       await expect(summary).toContainText("The next New Moon in Virgo is in 3 days.");
       await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx in Aries at 13°, Neptune Rx in Aries at 3°, Pluto Rx in Aquarius at 3°, and Chiron Rx in Taurus at 0°.");
-      await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx in Aries at 13°, Neptune Rx in Aries at 3°, Pluto Rx in Aquarius at 3°, and Chiron Rx in Taurus at 0°. The Moon is void of course for another 49 minutes. The next New Moon in Virgo is in 3 days.");
+      await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx in Aries at 13°, Neptune Rx in Aries at 3°, Pluto Rx in Aquarius at 3°, and Chiron Rx in Taurus at 0°. The Moon is void of course for another 50 minutes.");
       await expect(summary).not.toContainText("Full Moons mark a culmination");
       await expect(summary.locator("mark.content-highlight").filter({ hasText: "Four planets are retrograde" })).toHaveText("Four planets are retrograde");
       await expect(summary.locator("strong")).toHaveCount(0);
       const highlight = summary.locator("mark.content-highlight").filter({ hasText: "void of course" });
-      await expect(highlight).toHaveText("The Moon is void of course for another 49 minutes.");
+      await expect(highlight).toHaveText("The Moon is void of course for another 50 minutes.");
       const highlightStyle = await highlight.evaluate(el => {
         const style = getComputedStyle(el);
         const probe = document.createElement("span");

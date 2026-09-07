@@ -1,0 +1,48 @@
+import { expect, test } from '@playwright/test';
+test.use({ timezoneId: 'America/New_York' });
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+  await page.addInitScript(() => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York, NY', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' })));
+});
+test('Today refreshes across the Moon ingress without reloading', async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors: string[] = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.clock.install({ time: new Date('2026-09-07T16:48:50Z') });
+  await page.goto('/#sky');
+  const summary = page.getByLabel('Daily sky summary');
+  await expect(summary).toContainText('Moon in Cancer', { timeout: 60_000 });
+  await expect(summary).toContainText('another 1 minute');
+  await page.clock.fastForward(45_000);
+  await expect(summary).toContainText('Moon moves through Leo', { timeout: 60_000 });
+  await expect(summary).not.toContainText('void of course');
+  expect(errors).toEqual([]);
+  await page.screenshot({ path: 'test-results/sky-live-ingress.png' });
+});
+test('current evening and historical noon remain distinct', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.clock.setFixedTime(new Date('2026-09-07T21:51:00Z'));
+  await page.goto('/#sky');
+  const summary = page.getByLabel('Daily sky summary');
+  await expect(summary).toContainText('Moon moves through Leo at 2°', { timeout: 60_000 });
+  await expect(summary).not.toContainText('void of course');
+  await page.clock.setFixedTime(new Date('2026-09-08T21:51:00Z'));
+  await page.goto('/?date=2026-09-07#sky');
+  await expect(summary).toContainText('Moon in Cancer at 29°', { timeout: 60_000 });
+  await expect(summary).toContainText('another 50 minutes');
+});
+test('countdowns advance together and focus catches up after inactivity', async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.clock.install({ time: new Date('2026-09-07T16:00:00Z') });
+  await page.goto('/#sky');
+  const summary = page.getByLabel('Daily sky summary');
+  await expect(summary).toContainText('another 50 minutes', { timeout: 60_000 });
+  await expect(page.getByText('0H 50MIN left', { exact: true }).first()).toBeVisible({ timeout: 60_000 });
+  await page.clock.fastForward(60_000);
+  await expect(summary).toContainText('another 49 minutes');
+  await expect(page.getByText('0H 49MIN left', { exact: true }).first()).toBeVisible();
+  await page.clock.setSystemTime(new Date('2026-09-07T21:51:00Z'));
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await expect(summary).toContainText('Moon moves through Leo at 2°');
+  await expect(summary).not.toContainText('void of course');
+});

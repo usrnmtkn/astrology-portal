@@ -1436,6 +1436,16 @@
   text-wrap: pretty;
 }
 
+.sky-daily-summary__body > p {
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.sky-daily-summary__body > p + p {
+  margin-top: var(--space-4);
+}
+
 .sky-daily-summary__link {
   font-weight: var(--weight-semibold);
 }

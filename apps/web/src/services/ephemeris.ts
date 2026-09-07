@@ -1,4 +1,5 @@
 import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
+import { remainingSkyMinutes } from "./skyClock.js";
 import {
   calculateSkyAspects,
   canonicalizeNodeAxisAspects,
@@ -1134,12 +1135,12 @@ function moonVoidPeriodFor(
     startsAt: lastAspect,
     until: ingress.occursAt,
     durationLabel: compactHoursRemaining(lastAspect, ingress.occursAt),
-    remainingLabel: compactHoursRemaining(date, ingress.occursAt)
+    remainingLabel: compactHoursRemaining(date, ingress.occursAt, true)
   };
 }
 
-function compactHoursRemaining(start: Date, end: Date) {
-  const minutes = Math.max(0, Math.round((end.getTime() - start.getTime()) / 60_000));
+function compactHoursRemaining(start: Date, end: Date, remaining = false) {
+  const minutes = remaining ? remainingSkyMinutes(start, end) : Math.max(0, Math.round((end.getTime() - start.getTime()) / 60_000));
 
   if (minutes < 60) {
     return `${Math.max(1, minutes)}min`;
