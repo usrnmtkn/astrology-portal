@@ -18,7 +18,7 @@ try {
   const payload = JSON.parse(fs.readFileSync(outputPath, "utf8"));
   const rows = payload.rows as CompositionMapRow[];
   const map = buildCompositionMap(rows);
-  assert.equal(map.length, payload.counts.templates, "Every materialized template must appear in Composition Map.");
+  assert.ok(map.length >= payload.counts.templates, "Templates and lunar passage sources must appear in Composition Map.");
   assert.ok(map.length > 0);
 
   for (const template of map) {
@@ -29,6 +29,7 @@ try {
       assert.equal(field.rendered.includes("{{"), false, `${template.row.content_key}/${field.key} must not expose unresolved tokens.`);
     }
     for (const source of template.preview.sources) {
+      if (template.preview.lineage === "saved-passage" && source.row.id === template.row.id) continue;
       const matchingSlots = template.slots.filter((slot) => slot.sources.some((candidate) => candidate.row.content_key === source.row.content_key));
       assert.ok(matchingSlots.length > 0, `${template.row.content_key} preview source ${source.row.content_key} must belong to a declared slot.`);
       assert.ok(matchingSlots.some((slot) => slot.sourceContract.prefixes.some((prefix) => source.row.content_key.startsWith(prefix))), `${template.row.content_key} preview source ${source.row.content_key} must stay inside its resolver contract.`);
@@ -37,7 +38,7 @@ try {
     if (template.preview.lineage === "runtime-traceable") {
       const requiredSaved = template.slots.filter((slot) => slot.requirement === "Required" && slot.sourceKind === "saved-copy");
       assert.ok(requiredSaved.every((slot) => slot.sourceContract.confidence !== "inferred"), `${template.row.content_key} cannot claim traceability from inferred namespaces.`);
-    } else {
+    } else if (template.preview.lineage !== "saved-passage") {
       assert.match(template.preview.lineageNote, /cannot be proven/iu, `${template.row.content_key} must explain incomplete lineage.`);
     }
   }

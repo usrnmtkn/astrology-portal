@@ -1241,7 +1241,8 @@ export function normalizeCalendarEventSurface(
   dateLine = "Today",
   knowledgeMatrixV9?: CalendarV9TransitResolver | null,
   approvedExactSkyAspectLookup?: ApprovedExactSkyAspectLookup | null,
-  composedSkyCalendarCardLookup?: SkyCalendarComposedCardLookup | null
+  composedSkyCalendarCardLookup?: SkyCalendarComposedCardLookup | null,
+  generatedContent?: Map<string, LiveGeneratedContent>
 ): NormalizedCalendarEventSurface {
   const generatedDescription = firstReaderFacingCopy([
     ...(event.type === "aspect" ? [] : [content?.summary]),
@@ -1298,7 +1299,7 @@ export function normalizeCalendarEventSurface(
       : null;
     const studioExactResolved = content && event.fromSign && event.toSign
       ? resolveSkyAspectContentStudioExact({
-          generatedContent: new Map([[content.contentKey, content]]),
+          generatedContent: generatedContent ?? new Map([[content.contentKey, content]]),
           first,
           second,
           aspect: event.aspect,
@@ -1442,7 +1443,8 @@ function calendarEventEditorialContent(
     dateLine,
     knowledgeMatrixV9,
     approvedExactSkyAspectLookup,
-    composedSkyCalendarCardLookup
+    composedSkyCalendarCardLookup,
+    generatedContent
   );
   const description = normalized.sections[0];
   const detailsSection = normalized.sections.find((section) => section.slot === "details");

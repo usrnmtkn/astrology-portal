@@ -9794,3 +9794,71 @@ body,
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.admin-dashboard .admin-natal-source-editor,
+.admin-dashboard .admin-natal-source-editor label {
+  display: grid;
+  gap: var(--admin-space-md);
+  min-width: 0;
+}
+
+.admin-dashboard .admin-natal-source-editor textarea {
+  width: 100%;
+  resize: vertical;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+
+.admin-dashboard .admin-natal-source-grid {
+  align-items: start;
+}
+
+.admin-dashboard .admin-natal-source-complete {
+  grid-column: 1 / -1;
+}
+
+.admin-dashboard .admin-natal-source-editor textarea {
+  min-height: var(--admin-field-height);
+}
+
+.admin-dashboard .admin-natal-source-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+}
+
+/* Source selection uses the same composition heading and body roles as the map. */
+.admin-dashboard .admin-composition-source-card {
+  display: grid;
+  gap: var(--admin-space-md);
+  min-width: 0;
+  margin-top: var(--admin-space-lg);
+}
+.admin-dashboard .admin-composition-source-card code {
+  overflow-wrap: anywhere;
+}
+.admin-dashboard .admin-composition-source-copy {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.admin-dashboard .admin-composition-surface-actions select,
+.admin-dashboard .admin-composition-preview-context input {
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+}
+
+.admin-dashboard .admin-composition-source-tools {
+  display: grid;
+  gap: var(--admin-space-md);
+  margin-top: var(--admin-space-md);
+  min-width: 0;
+}

@@ -92,7 +92,7 @@ export function ReportVanityDeliveryView({ slug }: { slug: string }) {
     return <DeliveryState message="This report is being prepared. You can leave this page and come back later." />;
   }
   if (item.status === "needs_attention") {
-    return <DeliveryState message="This report could not be prepared. Return to Friends to try again." />;
+    return <DeliveryState message="This report could not be prepared. Return to the page where you started it to try again." />;
   }
   if (item.sourceKind === "generated_interpretation") {
     return <GeneratedReportDeliveryView reportId={item.sourceId} />;

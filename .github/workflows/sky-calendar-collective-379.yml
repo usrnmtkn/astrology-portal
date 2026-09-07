@@ -68,7 +68,7 @@ jobs:
 
       - name: Verify Calendar content hydration and complete exact routing
         env:
-          SKY_CALENDAR_OWNER_PAYLOADS_PATH: packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/current-owner-payloads.json
+          SKY_CALENDAR_OWNER_PAYLOADS_PATH: packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/current-owner-payloads.json
         run: |
           node scripts/test-calendar-content-hydration.mjs
           node scripts/test-calendar-major-exact-routing-complete.mjs

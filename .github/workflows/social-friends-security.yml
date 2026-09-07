@@ -7,29 +7,42 @@ on:
       - "api/_lib/friend-report-lifecycle.ts"
       - "api/_lib/friend-transit-reading-generation.ts"
       - "api/_lib/friend-transit-reading.ts"
+      - "api/_lib/transit-reading-generation.ts"
+      - "api/_lib/you-report-lifecycle.ts"
+      - "api/_lib/you-transit-reading-generation.ts"
+      - "api/_lib/you-transit-reading.ts"
       - "api/_lib/stripe-report-billing.ts"
       - "api/friend-report-checkout.ts"
       - "api/friend-report-request.ts"
+      - "api/you-report-request.ts"
+      - "api/report-share.ts"
       - "api/generate-friend-transit-reading.ts"
       - "api/stripe-webhook.ts"
       - "api/cron/run-friend-report-jobs.ts"
+      - "api/cron/run-you-report-jobs.ts"
       - "api/admin/friend-report-test-cleanup.ts"
       - "apps/web/src/App.tsx"
       - "apps/web/src/features/friends/**"
+      - "apps/web/src/features/you/**"
+      - "apps/web/src/components/reports/**"
       - "apps/web/src/services/auth.ts"
       - "apps/web/src/services/birthTimeReliability.ts"
       - "apps/web/src/services/chartProfile.ts"
       - "apps/web/src/services/manualCharts.ts"
       - "apps/web/src/services/reportLibrary.ts"
+      - "apps/web/src/services/reportSharing.ts"
       - "apps/web/src/services/socialFriends.ts"
       - "apps/web/src/services/userGeneratedContent.ts"
       - "apps/web/src/styles/report-library.css"
+      - "apps/web/src/styles/you-reports.css"
+      - "apps/web/src/styles.css"
       - "apps/web/src/types.ts"
       - "apps/web/supabase/**"
       - "scripts/test-birth-time-angle-reliability.mts"
       - "scripts/test-friend-report-paid-lifecycle.mts"
       - "scripts/test-friend-transit-reading-contract.mts"
       - "scripts/test-friend-transit-reading-request-render.mjs"
+      - "scripts/test-you-report-paid-lifecycle.mts"
       - "scripts/test-social-friends-contract.mjs"
       - "vercel.json"
       - ".github/workflows/social-friends-security.yml"
@@ -41,29 +54,42 @@ on:
       - "api/_lib/friend-report-lifecycle.ts"
       - "api/_lib/friend-transit-reading-generation.ts"
       - "api/_lib/friend-transit-reading.ts"
+      - "api/_lib/transit-reading-generation.ts"
+      - "api/_lib/you-report-lifecycle.ts"
+      - "api/_lib/you-transit-reading-generation.ts"
+      - "api/_lib/you-transit-reading.ts"
       - "api/_lib/stripe-report-billing.ts"
       - "api/friend-report-checkout.ts"
       - "api/friend-report-request.ts"
+      - "api/you-report-request.ts"
+      - "api/report-share.ts"
       - "api/generate-friend-transit-reading.ts"
       - "api/stripe-webhook.ts"
       - "api/cron/run-friend-report-jobs.ts"
+      - "api/cron/run-you-report-jobs.ts"
       - "api/admin/friend-report-test-cleanup.ts"
       - "apps/web/src/App.tsx"
       - "apps/web/src/features/friends/**"
+      - "apps/web/src/features/you/**"
+      - "apps/web/src/components/reports/**"
       - "apps/web/src/services/auth.ts"
       - "apps/web/src/services/birthTimeReliability.ts"
       - "apps/web/src/services/chartProfile.ts"
       - "apps/web/src/services/manualCharts.ts"
       - "apps/web/src/services/reportLibrary.ts"
+      - "apps/web/src/services/reportSharing.ts"
       - "apps/web/src/services/socialFriends.ts"
       - "apps/web/src/services/userGeneratedContent.ts"
       - "apps/web/src/styles/report-library.css"
+      - "apps/web/src/styles/you-reports.css"
+      - "apps/web/src/styles.css"
       - "apps/web/src/types.ts"
       - "apps/web/supabase/**"
       - "scripts/test-birth-time-angle-reliability.mts"
       - "scripts/test-friend-report-paid-lifecycle.mts"
       - "scripts/test-friend-transit-reading-contract.mts"
       - "scripts/test-friend-transit-reading-request-render.mjs"
+      - "scripts/test-you-report-paid-lifecycle.mts"
       - "scripts/test-social-friends-contract.mjs"
       - "vercel.json"
       - ".github/workflows/social-friends-security.yml"
@@ -83,6 +109,7 @@ jobs:
       - run: node --import tsx scripts/test-birth-time-angle-reliability.mts
       - run: node --experimental-strip-types scripts/test-friend-transit-reading-contract.mts
       - run: node --experimental-strip-types scripts/test-friend-report-paid-lifecycle.mts
+      - run: node --experimental-strip-types scripts/test-you-report-paid-lifecycle.mts
       - run: node scripts/test-friend-transit-reading-request-render.mjs
       - run: npm run typecheck
       - run: npm run build:knowledge
@@ -104,6 +131,10 @@ jobs:
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/social_friend_authorization.sql
       - name: Run Friends report lifecycle authorization test
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/friend_report_lifecycle_authorization.sql
+      - name: Run You report lifecycle authorization test
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/you_report_lifecycle_authorization.sql
+      - name: Run You report production hardening test
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/you_report_production_hardening.sql
       - name: Stop ephemeral Supabase database
         if: always()
         run: supabase stop --workdir apps/web --no-backup

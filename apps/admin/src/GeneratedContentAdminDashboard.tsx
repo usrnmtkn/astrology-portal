@@ -1,3 +1,7 @@
+import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
+import { lunarContentIdentity } from "./lunarCalendarContent";
+import ContentLiveStatusBadge, { ContentLiveStatusProvider, type LiveStatus } from "./ContentLiveStatus";
+import { mergeContentInventory } from "./contentStudioState";
 import {
   ArrowLeft,
   ArrowLeftRight,
@@ -98,6 +102,7 @@ import {
   natalPlacementMotions,
   natalPlacementPlanets,
   natalPlacementSelectionFromText,
+  natalPlacementResolverDependencyKeys,
   natalPlacementSigns,
   ordinalHouse,
   type NatalPlacementHouse,
@@ -163,6 +168,7 @@ import "./admin-form-density.css";
 import "./admin-content-studio-ux-compat.css";
 import "./admin-content-studio-layout.css";
 
+const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const AspectPatternDiagnostics = lazy(async () => {
   const module = await import("./AspectPatternDiagnostics");
@@ -185,6 +191,7 @@ const AdminPaginatedCollection = lazy(() => import("./AdminPaginatedCollection")
 const AdminFilterDisclosure = lazy(() => import("./AdminFilterDisclosure"));
 const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
 const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
+import type { NatalEditableRow, NatalSourceEdits } from "./NatalPlacementSourceEditor";
 const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
 const NatalAspectSourceFinder = lazy(() => import("./NatalAspectSourceFinder"));
 const DailyFallbackWorkspaceGuide = lazy(() => import("./DailyFallbackWorkspaceGuide"));
@@ -462,6 +469,7 @@ type SkyArticleEditorState = {
 };
 
 type AdminDraft = {
+  updatedAt?: string | null;
   id: string | null;
   contentKey: string;
   surface: GeneratedContentSurface;
@@ -590,6 +598,7 @@ type AdminNavItem = {
   icon: typeof Check;
   key?: string;
   category?: AdminContentCategoryFilter;
+  section?: AdminFallbackHookSectionFilter;
   group?: "Publish" | "Write" | "Compose";
 };
 
@@ -609,6 +618,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "content", label: "Natal Chart", icon: Orbit, key: "natal-chart", category: "Natal Chart", group: "Write" },
   { page: "content", label: "Natal Aspects", icon: ArrowLeftRight, key: "natal-aspects", category: "Natal Aspects", group: "Write" },
   { page: "skyWriteups", label: "Sky Write-ups", icon: Moon, group: "Write" },
+  { page: "knowledge", label: "Calendar Write-ups", icon: Moon, key: "calendar-writeups", section: "lunar-calendar", group: "Write" },
   { page: "content", label: "Calendar Aspects", icon: CalendarDays, key: "calendar-aspects", category: "Calendar Aspects", group: "Write" },
   { page: "articles", label: "Articles", icon: FileText, group: "Write" },
   { page: "compatibility", label: "Compatibility", icon: Users, group: "Write" },
@@ -863,7 +873,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
 }
 
 function contentStatusLabel(status: GeneratedContentStatus) {
-  if (status === "LIVE") return "Published";
+  if (status === "LIVE") return "Live";
   if (status === "ERROR") return "Needs review";
   return status.charAt(0) + status.slice(1).toLowerCase();
 }
@@ -1112,6 +1122,7 @@ function draftIsFallbackArchitectureV3(draft: AdminDraft) {
 }
 
 function packageReviewStatusForDraft(draft: AdminDraft) {
+  if (draft.sourceSnapshot?.review_status === "deprecated" || draft.facts?.review_status === "deprecated") return "deprecated";
   if (objectRecord(objectRecord(draft.sections)?.packageDraft)) return "needs_review";
   return sourceSnapshotString(draft.sourceSnapshot, "review_status")
     || (typeof draft.facts?.review_status === "string" ? draft.facts.review_status : "")
@@ -1143,13 +1154,15 @@ function packageFieldString(draft: AdminDraft, key: string) {
 }
 
 function setPackageSectionField(draft: AdminDraft, key: string, value: string): AdminDraft {
+  draft = invalidateContentStudioReview(draft);
+  const copySection = !draft.id && draft.contentKey.startsWith(natalAspectContentKeyPrefix) ? "packageRecord" : "packageDraft";
   const proposal = draftPackageProposal(draft) ?? structuredClone(draftPackageRecord(draft));
   return {
     ...draft,
     body: key === "body_you" ? value : draft.body,
     sections: {
       ...(draft.sections ?? {}),
-      packageDraft: {
+      [copySection]: {
         ...proposal,
         [key]: value
       }
@@ -1158,12 +1171,14 @@ function setPackageSectionField(draft: AdminDraft, key: string, value: string): 
 }
 
 function setPackageRecordField(draft: AdminDraft, key: string, value: string): AdminDraft {
+  draft = invalidateContentStudioReview(draft);
+  const copySection = !draft.id && draft.contentKey.startsWith(natalAspectContentKeyPrefix) ? "packageRecord" : "packageDraft";
   const proposal = draftPackageProposal(draft) ?? structuredClone(draftPackageRecord(draft));
   return {
     ...draft,
     sections: {
       ...(draft.sections ?? {}),
-      packageDraft: {
+      [copySection]: {
         ...proposal,
         [key]: value
       }
@@ -1231,7 +1246,7 @@ function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord)
   const sourceContentSystem = sourceSnapshotString(sourceSnapshot, "contentSystem").toLowerCase().replace(/_/g, "-");
   const sourceRole = normalizedSourceRole(sourceSnapshot);
 
-  if (sourceContentSystem === "cms-surface-override" || contentKey.startsWith("cms/")) {
+  if (sourceContentSystem === "cms-surface-override" || contentKey.startsWith("cms/") || contentKey.startsWith("authored/sky-lunation-macro/")) {
     return "authored-content";
   }
 
@@ -1971,6 +1986,8 @@ async function loadAdminSourceDraftCatalog(secret: string): Promise<AdminSourceD
 
 function rowTitleUncached(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
   if ("content_key" in row) {
+    const lunar = lunarContentIdentity(row.content_key);
+    if (lunar) return lunar.title;
     const structuredIdentity = skyFallbackIdentity(row.content_key);
     if (structuredIdentity) return structuredIdentity.title;
     const fallbackHookTitle = fallbackHookDisplayTitle(row.content_key);
@@ -2131,6 +2148,7 @@ function compareFallbackRows(left: AdminGeneratedContentRow, right: AdminGenerat
 
 function contentClassForRowUncached(row: AdminGeneratedContentRow | AdminReviewRecord): AdminContentClass {
   const contentKey = "content_key" in row ? row.content_key : row.contentKey;
+  if (contentKey.startsWith("authored/sky-lunation-macro/")) return "phrasebank";
   const blockType = "content_key" in row ? row.block_type : row.blockType;
   const promptVersion = "content_key" in row ? row.prompt_version : row.promptVersion;
   const provider = "content_key" in row ? row.provider : row.provider;
@@ -2147,7 +2165,7 @@ function contentClassForRowUncached(row: AdminGeneratedContentRow | AdminReviewR
     if (packageRole === "fallback-hook" || packageRole === "template") return "fallback-hook";
     if (packageRole === "vocabulary") return "vocab";
     if (packageRole === "fallback-source" || packageRole === "source-material") return "reference";
-    if (packageRole === "full-copy") return "phrasebank";
+    if (packageRole === "full-copy" || packageRole === "authored-card") return "phrasebank";
   }
 
   if (
@@ -2330,35 +2348,13 @@ function contentCategoryForRow(row: AdminGeneratedContentRow | AdminReviewRecord
   return "all";
 }
 
-function readerSafetyForRow(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
-  const body = rowBody(row);
-  const headline = "content_key" in row ? normalizeText(row.headline) : rowTitle(row);
-  const status = row.status;
-  const lane = "lane" in row ? row.lane : undefined;
-  const reviewState = "review_state" in row ? row.review_state : undefined;
-
-  if (rowNeedsSourceMaterial(row)) return { key: "needs-source-material", label: "Needs more source copy", detail: "There is not enough reusable writing to build a complete passage." };
-  if ("inventory_only" in row && row.inventory_only === true) {
-    if (status !== "LIVE") return { key: "draft-held", label: "Not published", detail: "This row is saved as a draft and cannot appear in the app." };
-    if (lane && lane !== "serving") return { key: "reference-held", label: "Internal reference", detail: "This row is reference material and cannot appear in the app." };
-    if (reviewState) return { key: "review-held", label: "Awaiting review", detail: "This row still needs editorial review before it can appear in the app." };
-    return { key: "reader-ready", label: "Available in app", detail: "This row is published and available for the app to use." };
-  }
-  if (!body && !headline) return { key: "fallback-needed", label: "Copy missing", detail: "This row has no reader-facing copy." };
-  if (!isReaderFacingCopy(`${headline} ${body}`)) return { key: "reference-held", label: "Internal reference", detail: "This row contains internal notes or metadata, not reader copy." };
-  if (status !== "LIVE") return { key: "draft-held", label: "Not published", detail: "This row is saved as a draft and cannot appear in the app." };
-  if (lane && lane !== "serving") return { key: "reference-held", label: "Internal reference", detail: "This row is reference material and cannot appear in the app." };
-  if (reviewState) return { key: "review-held", label: "Awaiting review", detail: "This row still needs editorial review before it can appear in the app." };
-  return { key: "reader-ready", label: "Available in app", detail: "This row is published and available for the app to use." };
-}
-
 function housePassageAvailabilityLabel(availability: "Reader-ready" | "Source candidate") {
   return availability === "Reader-ready" ? "Complete horoscope" : "Supporting passage";
 }
 
 function fallbackSectionForKey(key: string, surface?: string): Exclude<AdminFallbackHookSectionFilter, "all"> {
   if (key.startsWith("fallback-hook/daily-headline/") || key.startsWith("fallback-hook/daily-body/") || key.startsWith("fallback-hook/pair-daily/")) return "daily";
-  if (key.includes("lunar") || key.startsWith("lunation/") || key.startsWith("season/") || key.startsWith("season-arc/") || key.startsWith("transit-fallback/")) return "lunar-calendar";
+  if (key.startsWith("authored/calendar-weekly-moon/") || key.includes("lunar") || key.startsWith("lunation/") || key.startsWith("season/") || key.startsWith("season-arc/") || key.startsWith("transit-fallback/")) return "lunar-calendar";
   if (key.includes("settings") || surface === "settings") return "settings";
   if (key.includes("friends") || key.includes("synastry") || key.includes("relationship") || key.includes("bond-effect") || surface === "friends" || surface === "relationship" || surface === "synastry" || surface === "composite") return "friends";
   if (key.includes("natal") || key.includes("you") || surface === "you" || surface === "natal") return "you";
@@ -2613,7 +2609,8 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
       ? editablePackageRecord.body_you
       : normalizeText(row.body);
   return {
-    id: row.id,
+    id: row.id.startsWith("package:") ? null : row.id,
+    updatedAt: row.updated_at,
     contentKey: row.content_key,
     surface: row.surface,
     mode: row.mode,
@@ -2765,6 +2762,7 @@ export function GeneratedContentAdminDashboard() {
   const [natalPlacementSign, setNatalPlacementSign] = useState<NatalPlacementSign | "">("");
   const [natalPlacementHouse, setNatalPlacementHouse] = useState<NatalPlacementHouse | "">("");
   const [natalPlacementMotion, setNatalPlacementMotion] = useState<NatalPlacementMotion>("direct");
+  const [natalSourcesLoading, setNatalSourcesLoading] = useState(false);
   const [natalAspectFirst, setNatalAspectFirst] = useState("");
   const [natalAspectName, setNatalAspectName] = useState("");
   const [natalAspectSecond, setNatalAspectSecond] = useState("");
@@ -2830,14 +2828,23 @@ export function GeneratedContentAdminDashboard() {
   const [writingSurfaceAccess, setWritingSurfaceAccess] = useState<Record<string, WritingSurfaceAdminAccess>>({});
   const [writingSurfaceRoleLabels, setWritingSurfaceRoleLabels] = useState<Partial<Record<WritingSurfaceSource["role"], string>>>({});
   const handledHashRef = useRef("");
+  const acceptedHashRef = useRef(window.location.hash || "#review-queue");
+  const routeNavigationGuardRef = useRef<() => boolean>(() => true);
   const guidedReviewOpenedRef = useRef("");
   const editorRef = useRef<HTMLElement | null>(null);
   const editorReturnFocusRef = useRef<HTMLElement | null>(null);
+  const [editorSaveError, setEditorSaveError] = useState("");
   const editorBaselineRef = useRef<string | null>(null);
   const editorSavedInputRef = useRef<string | null>(null);
   const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
   const hookBodyPackagesRef = useRef(new Map<AdminHookCatalogDomain, Map<string, string>>());
   const hookBodyRequestsRef = useRef(new Map<AdminHookCatalogDomain, Promise<Map<string, string>>>());
+  const natalUnsavedSourcesRef = useRef(new Set<string>());
+  const editorSessionRef = useRef(0);
+  const skyArticleSaveQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const skyArticleWorkspaceSaveQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const articleAutosaveRowRef = useRef<AdminGeneratedContentRow | null>(null);
+  const workspaceAutosaveRowRef = useRef<AdminGeneratedContentRow | null>(null);
   const skyArticleAutosaveSequenceRef = useRef(0);
   const skyArticleWorkspaceAutosaveSequenceRef = useRef(0);
   const dashboardLoadSequenceRef = useRef(0);
@@ -2875,6 +2882,27 @@ export function GeneratedContentAdminDashboard() {
   }, [liveOmittedSections, sharedLiveOmittedSections]);
 
   const editableRowsByContentKey = useMemo(() => new Map(rows.map((row) => [row.content_key, row])), [rows]);
+  const [compositionCatalog, setCompositionCatalog] = useState<AdminGeneratedContentRow[]>([]);
+  useEffect(() => {
+    if (activePage !== "compositionMap" || !secret.trim()) return;
+    let cancelled = false;
+    void adminJsonRequest<{ ok: boolean; rows?: Array<{ content_key: string; headline: string | null; role: string }> }>("/api/admin/content-live-status", secret, {
+      method: "POST", body: JSON.stringify({ action: "composition-catalog" })
+    }).then((payload) => {
+      if (cancelled) return;
+      setCompositionCatalog((payload.rows ?? []).map((item) => ({
+        id: `package:${item.content_key}`, content_key: item.content_key, headline: item.headline ?? item.content_key,
+        body: null, summary: null, surface: "sky", status: "DRAFT", sections: null,
+        inventory_only: true, block_type: item.role === "template" ? "fallback_template" : "fallback_hook"
+      } as AdminGeneratedContentRow)));
+    }).catch((error) => { if (!cancelled) setMessage(dashboardErrorMessage(error)); });
+    return () => { cancelled = true; };
+  }, [activePage, secret]);
+  const compositionRows = useMemo(() => {
+    const savedKeys = new Set(rows.filter((row) => !row.id.startsWith("package:")).map((row) => row.content_key));
+    const ids = new Set(rows.map((row) => row.id));
+    return [...rows, ...compositionCatalog.filter((row) => !savedKeys.has(row.content_key) && !ids.has(row.id))];
+  }, [rows, compositionCatalog]);
   const visibleRows = useMemo(() => rows.filter((row) => (
     (showReferenceRows
       || (activePage === "content" && categoryFilter === "Calendar Aspects")
@@ -2882,10 +2910,11 @@ export function GeneratedContentAdminDashboard() {
       || isCompositionPage(activePage)
       || (activePage === "skyWriteups" && isSkyWriteupLibraryRow(row))
       || !isPassiveReferenceAdminRow(row))
+    && !row.id.startsWith("package:")
     && (showRetiredRows || !isRetiredAdminRow(row))
   )), [rows, activePage, categoryFilter, showReferenceRows, showRetiredRows]);
   const savedFallbackRows = useMemo(
-    () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook"),
+    () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook" || row.content_key.startsWith("authored/calendar-weekly-moon/")),
     [visibleRows]
   );
   const dailyGlanceWriteups = useMemo(
@@ -3019,21 +3048,6 @@ export function GeneratedContentAdminDashboard() {
   const statusCounts = useMemo(() => {
     const counts: Record<GeneratedContentStatus | "all", number> = { all: statusCountRows.length, DRAFT: 0, REVIEWED: 0, LIVE: 0, ARCHIVED: 0, ERROR: 0 };
     statusCountRows.forEach((row) => counts[row.status] += 1);
-    return counts;
-  }, [statusCountRows]);
-  const readerCounts = useMemo(() => {
-    const counts: Record<AdminReaderReadinessKey, number> = {
-      "reader-ready": 0,
-      "draft-held": 0,
-      "reference-held": 0,
-      "review-held": 0,
-      "fallback-needed": 0,
-      "needs-source-material": 0
-    };
-    statusCountRows.forEach((row) => {
-      const key = readerSafetyForRow(row).key as AdminReaderReadinessKey;
-      counts[key] += 1;
-    });
     return counts;
   }, [statusCountRows]);
   const filteredRows = useMemo(() => visibleRows.filter((row) => {
@@ -3172,7 +3186,7 @@ export function GeneratedContentAdminDashboard() {
     [slotEditableRows, query]
   );
   const selectedSavedRows = useMemo(
-    () => rows.filter((row) => selectedIds.has(row.id)),
+    () => rows.filter((row) => selectedIds.has(row.id) && !row.id.startsWith("package:")),
     [rows, selectedIds]
   );
   const hasAccessIssue = loadState === "accessDenied" || (!secret.trim() && loadState !== "loaded" && loadState !== "loading");
@@ -3283,7 +3297,7 @@ export function GeneratedContentAdminDashboard() {
       "all",
       (loadedRows, complete) => {
         if (cancelled) return;
-        setRows(loadedRows);
+        setRows((current) => mergeContentInventory(current, loadedRows));
         setMessage(complete
           ? `Loaded the extended ${loadedRows.length}-row content inventory.`
           : `Loaded ${loadedRows.length} extended content records…`);
@@ -3292,7 +3306,7 @@ export function GeneratedContentAdminDashboard() {
     )
       .then((allRows) => {
         if (cancelled) return;
-        setRows(allRows);
+        setRows((current) => mergeContentInventory(current, allRows));
         setAllRowsLoaded(true);
         setMessage(`Loaded the extended ${allRows.length}-row content inventory.`);
       })
@@ -3311,13 +3325,43 @@ export function GeneratedContentAdminDashboard() {
   }, [activePage, categoryFilter, showReferenceRows, showRetiredRows, allRowsLoaded, loadState, secret]);
 
   useEffect(() => {
+    if (loadState !== "loaded" || activePage !== "content" || categoryFilter !== "Natal Chart" || !natalPlacementPlanet || !natalPlacementSign || !secret.trim()) return;
+    const controller = new AbortController();
+    setNatalSourcesLoading(true);
+    const params = new URLSearchParams({ status: "all", visibility: "all", limit: "200" });
+    natalPlacementResolverDependencyKeys(natalPlacementPlanet, natalPlacementSign, natalPlacementHouse, natalPlacementMotion)
+      .forEach((key) => params.append("contentKeys", key));
+    void adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(`/api/admin/generated-content?${params}`, secret, { signal: controller.signal })
+      .then((payload) => {
+        if (controller.signal.aborted) return;
+        setRows((current) => {
+          const merged = new Map(current.map((row) => [row.id, row]));
+          for (const row of payload.rows ?? []) {
+            const previous = merged.get(row.id);
+            if (!previous || previous.inventory_only || (row.updated_at ?? "") >= (previous.updated_at ?? "")) merged.set(row.id, row);
+          }
+          return [...merged.values()];
+        });
+      })
+      .catch((error) => { if (!controller.signal.aborted) setMessage(dashboardErrorMessage(error)); })
+      .finally(() => { if (!controller.signal.aborted) setNatalSourcesLoading(false); });
+    return () => { controller.abort(); setNatalSourcesLoading(false); };
+  }, [activePage, categoryFilter, natalPlacementPlanet, natalPlacementSign, natalPlacementHouse, natalPlacementMotion, secret, loadState, allRowsLoaded]);
+
+  routeNavigationGuardRef.current = () => confirmNatalNavigation() && closeEditor();
+
+  useEffect(() => {
     function applyHash() {
       const hash = window.location.hash || "#review-queue";
       if (handledHashRef.current === hash) return;
+      if (!routeNavigationGuardRef.current()) {
+        window.history.replaceState(null, "", `${window.location.pathname}${window.location.search}${acceptedHashRef.current}`);
+        return;
+      }
       handledHashRef.current = hash;
+      acceptedHashRef.current = hash;
       const { page, params } = parseAdminHash();
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      closeEditor();
       applyAdminRouteState(page, params);
     }
 
@@ -3422,32 +3466,36 @@ export function GeneratedContentAdminDashboard() {
   useEffect(() => {
     if (!skyArticleEditor || !secret.trim()) return;
     const changes = skyArticleEditionFieldChanges(skyArticleEditor.baseEdition, skyArticleEditor.fields);
-    if (changes.length === 0) {
+    if (changes.length === 0 && skyArticleEditor.saveState === "saved") {
       setSkyArticleEditor((current) => current ? { ...current, saveState: "saved", error: null } : current);
       return;
     }
 
+    const editorSession = editorSessionRef.current;
     const sequence = ++skyArticleAutosaveSequenceRef.current;
     setSkyArticleEditor((current) => current ? { ...current, saveState: "unsaved", error: null } : current);
     const timeout = window.setTimeout(() => {
-      void (async () => {
+      skyArticleSaveQueueRef.current = skyArticleSaveQueueRef.current.catch(() => {}).then(async () => {
+        if (sequence !== skyArticleAutosaveSequenceRef.current) return;
         try {
           setSkyArticleEditor((current) => current ? { ...current, saveState: "saving", error: null } : current);
           const revised = await reviseSkyArticleEdition(skyArticleEditor.baseEdition, skyArticleEditor.fields);
-          const persistedArticleRow = rows.find((row) => row.id === skyArticleEditor.rowId);
+          const persistedArticleRow = articleAutosaveRowRef.current;
           const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
             method: "PATCH",
             body: JSON.stringify({
-              id: skyArticleEditor.rowId,
+              id: persistedArticleRow?.id ?? skyArticleEditor.rowId,
               ...(persistedArticleRow?.updated_at ? { expectedUpdatedAt: persistedArticleRow.updated_at } : {}),
               ownerAction: "save-sky-article-edition-revision",
               sections: { skyArticleEdition: revised }
             })
           });
-          if (sequence !== skyArticleAutosaveSequenceRef.current) return;
           const saved = payload.rows?.[0];
           if (!saved) throw new Error("The saved article revision was not returned.");
           setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id)]);
+          if (editorSession !== editorSessionRef.current) return;
+          articleAutosaveRowRef.current = saved;
+          if (sequence !== skyArticleAutosaveSequenceRef.current) return;
           setSelectedRowId(saved.id);
           const savedDraft = draftFromRow(saved);
           setDraft(savedDraft);
@@ -3467,7 +3515,7 @@ export function GeneratedContentAdminDashboard() {
             error: error instanceof Error ? error.message : "Could not autosave the article revision."
           } : current);
         }
-      })();
+      });
     }, 900);
 
     return () => window.clearTimeout(timeout);
@@ -3481,12 +3529,14 @@ export function GeneratedContentAdminDashboard() {
     const authoredSlotValues = Object.entries(form.slotValues).filter(([name, value]) => (
       !Object.prototype.hasOwnProperty.call(facts.slotValues, name) && value.trim()
     ));
-    if (!form.tldr.trim() && authoredSlotValues.length === 0) return;
+    if (form.saveState === "idle" && !form.workspaceId && !workspaceAutosaveRowRef.current && !form.tldr.trim() && authoredSlotValues.length === 0) return;
 
+    const editorSession = editorSessionRef.current;
     const sequence = ++skyArticleWorkspaceAutosaveSequenceRef.current;
     setSkyArticleEditionForm((current) => current ? { ...current, saveState: "unsaved" } : current);
     const timeout = window.setTimeout(() => {
-      void (async () => {
+      skyArticleWorkspaceSaveQueueRef.current = skyArticleWorkspaceSaveQueueRef.current.catch(() => {}).then(async () => {
+        if (sequence !== skyArticleWorkspaceAutosaveSequenceRef.current) return;
         try {
           setSkyArticleEditionForm((current) => current ? { ...current, saveState: "saving" } : current);
           const workspace = {
@@ -3498,11 +3548,9 @@ export function GeneratedContentAdminDashboard() {
             tldr: form.tldr,
             slotValues: form.slotValues
           };
-          const persistedWorkspaceRow = form.workspaceId
-            ? rows.find((row) => row.id === form.workspaceId)
-            : null;
-          const requestBody = form.workspaceId ? {
-            id: form.workspaceId,
+          const persistedWorkspaceRow = workspaceAutosaveRowRef.current;
+          const requestBody = persistedWorkspaceRow ? {
+            id: persistedWorkspaceRow.id,
             ...(persistedWorkspaceRow?.updated_at ? { expectedUpdatedAt: persistedWorkspaceRow.updated_at } : {}),
             headline: `${titleFromKey(facts.planet)} in ${titleFromKey(facts.sign)} article draft`,
             summary: form.tldr,
@@ -3531,13 +3579,15 @@ export function GeneratedContentAdminDashboard() {
             }
           };
           const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
-            method: form.workspaceId ? "PATCH" : "POST",
+            method: persistedWorkspaceRow ? "PATCH" : "POST",
             body: JSON.stringify(requestBody)
           });
-          if (sequence !== skyArticleWorkspaceAutosaveSequenceRef.current) return;
           const saved = payload.rows?.[0];
           if (!saved) throw new Error("The saved article workspace was not returned.");
           setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id)]);
+          if (editorSession !== editorSessionRef.current) return;
+          workspaceAutosaveRowRef.current = saved;
+          if (sequence !== skyArticleWorkspaceAutosaveSequenceRef.current) return;
           setSkyArticleEditionForm((current) => current ? {
             ...current,
             workspaceId: saved.id,
@@ -3548,7 +3598,7 @@ export function GeneratedContentAdminDashboard() {
           setSkyArticleEditionForm((current) => current ? { ...current, saveState: "error" } : current);
           setMessage(error instanceof Error ? error.message : "Could not autosave the article workspace.");
         }
-      })();
+      });
     }, 900);
 
     return () => window.clearTimeout(timeout);
@@ -3563,6 +3613,7 @@ export function GeneratedContentAdminDashboard() {
       window.history.pushState(null, "", nextUrl);
     }
     handledHashRef.current = "";
+    acceptedHashRef.current = nextHash;
   }
 
   function applyAdminRouteState(page: AdminDashboardPage, params: URLSearchParams) {
@@ -3664,6 +3715,29 @@ export function GeneratedContentAdminDashboard() {
     setSelectedTemplateVariableSourceId(null);
   }
 
+  function hasPendingArticleChanges() {
+    return Boolean(
+      skyArticleEditor && skyArticleEditor.saveState !== "saved"
+      || skyArticleEditionForm && ["unsaved", "saving", "error"].includes(skyArticleEditionForm.saveState)
+    );
+  }
+
+  function confirmNatalNavigation() {
+    return natalUnsavedSourcesRef.current.size === 0
+      || window.confirm("Discard the unsaved changes in the natal source editors?");
+  }
+
+  useEffect(() => {
+    const warnBeforeUnload = (event: BeforeUnloadEvent) => {
+      const draftChanged = draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current;
+      if (!draftChanged && !hasPendingArticleChanges() && natalUnsavedSourcesRef.current.size === 0) return;
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warnBeforeUnload);
+    return () => window.removeEventListener("beforeunload", warnBeforeUnload);
+  }, [draft, skyArticleEditor, skyArticleEditionForm]);
+
   function closeEditor() {
     const hasOpenEditor = Boolean(
       selectedRow
@@ -3690,7 +3764,7 @@ export function GeneratedContentAdminDashboard() {
       || draft.body.trim()
     ));
     const hasUnsavedChanges = Boolean(draft && !matchesSavedDraft && hasDraftContent);
-    if (hasUnsavedChanges && !window.confirm("Discard the unsaved changes in this editor?")) {
+    if ((hasUnsavedChanges || hasPendingArticleChanges()) && !window.confirm("Discard the unsaved changes in this editor?")) {
       return false;
     }
     setTemplateVariableReferenceOpen(false);
@@ -3705,7 +3779,9 @@ export function GeneratedContentAdminDashboard() {
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyArticleEditionForm(null);
+    editorSessionRef.current += 1;
     skyArticleAutosaveSequenceRef.current += 1;
+    skyArticleWorkspaceAutosaveSequenceRef.current += 1;
     setSkyArticleEditor(null);
     window.requestAnimationFrame(() => {
       const returnTarget = editorReturnFocusRef.current;
@@ -3727,6 +3803,7 @@ export function GeneratedContentAdminDashboard() {
     setIsMobileNavOpen(false);
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     if (!options.keepEditorOpen) {
+      if (!confirmNatalNavigation()) return;
       if (!closeEditor()) return;
     }
     applyAdminRouteState(page, params ?? new URLSearchParams());
@@ -3750,7 +3827,8 @@ export function GeneratedContentAdminDashboard() {
     }
     navigateAdminPage(
       item.page,
-      item.category ? new URLSearchParams({ category: item.category }) : undefined
+      item.category ? new URLSearchParams({ category: item.category })
+        : item.section ? new URLSearchParams({ section: item.section }) : undefined
     );
   }
 
@@ -3826,7 +3904,7 @@ export function GeneratedContentAdminDashboard() {
           loadsCompatibilityFirst ? "compatibility" : "all",
           (loadedRows, complete) => {
             if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return;
-            setRows(loadedRows);
+            setRows((current) => mergeContentInventory(current, loadedRows));
             const inventoryLabel = loadsCompatibilityFirst ? "compatibility records" : "content records";
             setMessage(complete
               ? `Loaded ${loadedRows.length} ${inventoryLabel}.`
@@ -3849,7 +3927,7 @@ export function GeneratedContentAdminDashboard() {
       const usersPayload = usersResult.status === "fulfilled" ? usersResult.value : { rows: [] };
       const generatedRows = generatedResult.value;
       const reviewRowsPayload = review.rows ?? review.records ?? [];
-      setRows(generatedRows);
+      setRows((current) => mergeContentInventory(current, generatedRows, false));
       setAllRowsLoaded(needsExtendedInventory);
       setReviewRows(reviewRowsPayload.map((record: AdminReviewRecord) => {
         const rawGlobalRow = generatedRows.find((row) => row.id === record.id || row.content_key === record.contentKey);
@@ -3994,7 +4072,10 @@ export function GeneratedContentAdminDashboard() {
         `/api/admin/sky-article-facts?planet=${encodeURIComponent(planet)}&date=${encodeURIComponent(skyArticleEditionForm.referenceDate)}`,
         secret
       );
-      const workspace = skyArticleWorkspaceForm(rows.find((row) => row.content_key === skyArticleWorkspaceContentKey(payload.facts)));
+      const workspaceInventoryRow = rows.find((row) => row.content_key === skyArticleWorkspaceContentKey(payload.facts));
+      const workspaceRow = workspaceInventoryRow ? await hydrateGeneratedContentRow(workspaceInventoryRow) : null;
+      const workspace = skyArticleWorkspaceForm(workspaceRow ?? undefined);
+      workspaceAutosaveRowRef.current = workspaceRow;
       const authoredSource = rows.find((row) => row.content_key === `sky/article-edition/${payload.facts.planet}/${payload.facts.sign}`);
       setSkyArticleEditionForm((current) => current ? {
         ...current,
@@ -4225,9 +4306,13 @@ export function GeneratedContentAdminDashboard() {
   async function saveDraft(
     nextStatus?: GeneratedContentStatus,
     draftOverride?: AdminDraft,
-    sourceLifecycleAction?: "archive" | "restore"
+    sourceLifecycleAction?: "archive" | "restore",
+    updateEditor = true,
+    recoveryAttempt = false
   ) {
+    setEditorSaveError("");
     const activeDraft = draftOverride ?? draft;
+    const recoveryBaseline = editorBaselineRef.current;
     if (!activeDraft) return null;
     const isNewCompatibilityCard = !activeDraft.id && activeDraft.blockType === "compatibility_planet_card";
     const compatibilityIdentity = compatibilityBrowseIdentity(activeDraft.contentKey, activeDraft.facts, activeDraft.sourceSnapshot);
@@ -4249,7 +4334,7 @@ export function GeneratedContentAdminDashboard() {
     const isPackageDraft = draftIsFallbackArchitectureV3(draftForSave);
     const isGuidedHeldReview = isPackageDraft && guidedReviewKey === draftForSave.contentKey;
     const persistedRow = draftForSave.id ? rows.find((row) => row.id === draftForSave.id) : null;
-    const expectedUpdatedAt = persistedRow?.updated_at ?? undefined;
+    const expectedUpdatedAt = draftForSave.updatedAt ?? persistedRow?.updated_at ?? undefined;
 
     try {
       const body = isPackageDraft
@@ -4311,13 +4396,15 @@ export function GeneratedContentAdminDashboard() {
         throw new Error(`${draftForSave.contentKey} did not persist the revision. The edit remains unsaved; reload before trying again.`);
       }
       setRows((current) => {
-        const without = current.filter((row) => row.id !== saved.id);
+        const without = current.filter((row) => row.id !== saved.id && !(row.id.startsWith("package:") && row.content_key === saved.content_key));
         return [saved, ...without];
       });
-      setSelectedRowId(saved.id);
-      setDraft(savedDraft);
-      editorBaselineRef.current = JSON.stringify(savedDraft);
-      editorSavedInputRef.current = JSON.stringify(savedDraft);
+      if (updateEditor) {
+        setSelectedRowId(saved.id);
+        setDraft(savedDraft);
+        editorBaselineRef.current = JSON.stringify(savedDraft);
+        editorSavedInputRef.current = JSON.stringify(savedDraft);
+      }
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setMessage(sourceLifecycleAction === "archive"
         ? `${draftForSave.contentKey} archived. It no longer serves and can be restored here.`
@@ -4326,7 +4413,33 @@ export function GeneratedContentAdminDashboard() {
           : `${draftForSave.contentKey} saved as ${contentStatusLabel(saved.status)}.`);
       return saved;
     } catch (error) {
-      setMessage(dashboardErrorMessage(error));
+      // A timed-out publish may have committed, or only metadata may have
+      // advanced. Refresh the version and rebase text once, with CAS on retry.
+      if (!recoveryAttempt && updateEditor && !sourceLifecycleAction && activeDraft.id
+        && draftHasPackageProposal(activeDraft) && recoveryBaseline
+        && error instanceof AdminRequestError && [408, 409, 504].includes(error.status)) {
+        try {
+          const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+            `/api/admin/generated-content?id=${encodeURIComponent(activeDraft.id)}&status=all&visibility=all&limit=1`, secret);
+          const latest = payload.rows.find((row) => row.id === activeDraft.id);
+          if (!latest || latest.inventory_only) throw new Error("Could not reload the saved version. Your edits are still here; try saving again.");
+          const baseline = JSON.parse(recoveryBaseline) as AdminDraft;
+          if (baseline.id !== activeDraft.id || baseline.contentKey !== activeDraft.contentKey) throw error;
+          if (latest.status === "ARCHIVED") throw new Error("This source was archived while you were editing. Your edits are still here; restore the saved source before applying them.");
+          const latestDraft = draftFromRow(latest);
+          const proposal = recoverContentStudioCopy(
+            draftEditablePackageRecord(baseline), draftEditablePackageRecord(activeDraft), draftEditablePackageRecord(latestDraft));
+          const fields = recoverContentStudioCopy(
+            { headline: baseline.headline, summary: baseline.summary, body: baseline.body, reviewerNotes: baseline.reviewerNotes },
+            { headline: activeDraft.headline, summary: activeDraft.summary, body: activeDraft.body, reviewerNotes: activeDraft.reviewerNotes },
+            { headline: latestDraft.headline, summary: latestDraft.summary, body: latestDraft.body, reviewerNotes: latestDraft.reviewerNotes });
+          const recovered = { ...latestDraft, ...fields, sections: { ...latestDraft.sections, packageDraft: proposal, contentStudioReview: null } } as AdminDraft;
+          return await saveDraft(nextStatus, recovered, undefined, updateEditor, true);
+        } catch (recoveryError) { error = recoveryError; }
+      }
+      const feedback = dashboardErrorMessage(error);
+      setEditorSaveError(feedback);
+      setMessage(feedback);
       return null;
     } finally {
       setIsLoading(false);
@@ -4461,7 +4574,8 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function approvePackageRevision(row: AdminGeneratedContentRow) {
+  async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true) {
+    setEditorSaveError("");
     setIsLoading(true);
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
@@ -4472,17 +4586,21 @@ export function GeneratedContentAdminDashboard() {
       if (!published) throw new Error("The API did not return the published package row.");
       const publishedDraft = draftFromRow(published);
       setRows((current) => [published, ...current.filter((item) => item.id !== published.id && item.id !== row.id)]);
-      setSelectedRowId(published.id);
-      setDraft(publishedDraft);
-      editorBaselineRef.current = JSON.stringify(publishedDraft);
-      editorSavedInputRef.current = JSON.stringify(publishedDraft);
+      if (updateEditor) {
+        setSelectedRowId(published.id);
+        setDraft(publishedDraft);
+        editorBaselineRef.current = JSON.stringify(publishedDraft);
+        editorSavedInputRef.current = JSON.stringify(publishedDraft);
+      }
       announceContentUpdate({
         contentKey: published.content_key,
         published: published.status === "LIVE",
         updatedAt: published.updated_at ?? new Date().toISOString()
       });
       setMessage(`${published.content_key} approved and published to the app.`);
+      return published;
     } catch (error) {
+      setEditorSaveError(dashboardErrorMessage(error));
       setMessage(dashboardErrorMessage(error));
     } finally {
       setIsLoading(false);
@@ -4491,9 +4609,16 @@ export function GeneratedContentAdminDashboard() {
 
   async function applyBulkStatus() {
     if (selectedSavedRows.length === 0) return;
-    const packageRows = selectedSavedRows.filter(rowIsFallbackArchitectureV3);
+    // Inventory rows omit proposals. Hydrate before deciding which publish
+    // action applies, otherwise a saved revision can be mistaken for a status-only change.
+    let actionRows: AdminGeneratedContentRow[];
+    setIsLoading(true);
+    try { actionRows = await Promise.all(selectedSavedRows.map(hydrateGeneratedContentRow)); }
+    catch (error) { setMessage(dashboardErrorMessage(error)); return; }
+    finally { setIsLoading(false); }
+    const packageRows = actionRows.filter(rowIsFallbackArchitectureV3);
     if (packageRows.length > 0 && !["DRAFT", "LIVE"].includes(bulkStatus)) {
-      setMessage("Package rows support Draft or Published in bulk. Reviewed and Archived require their governed package workflow.");
+      setMessage("Package rows support saving drafts or publishing in bulk. Reviewed and Archived require their governed package workflow.");
       return;
     }
     if (bulkStatus === "LIVE") {
@@ -4524,7 +4649,7 @@ export function GeneratedContentAdminDashboard() {
     }
     setIsLoading(true);
     try {
-      const updates = await Promise.all(selectedSavedRows.map((row) => {
+      const updates = await Promise.allSettled(actionRows.map((row) => {
         const isPackageRow = rowIsFallbackArchitectureV3(row);
         const hasProposal = Boolean(objectRecord(objectRecord(row.sections)?.packageDraft));
         const requestBody = isPackageRow
@@ -4541,15 +4666,17 @@ export function GeneratedContentAdminDashboard() {
           body: JSON.stringify(row.updated_at ? { ...requestBody, expectedUpdatedAt: row.updated_at } : requestBody)
         });
       }));
-      const updatedRows = updates.flatMap((payload) => payload.rows ?? []);
+      const updatedRows = updates.flatMap((result) => result.status === "fulfilled" ? result.value.rows ?? [] : []);
+      const failedIds = actionRows.filter((_, index) => updates[index].status === "rejected").map((row) => row.id);
       updatedRows.forEach((row) => announceContentUpdate({
         contentKey: row.content_key,
         published: row.status === "LIVE",
         updatedAt: row.updated_at ?? new Date().toISOString()
       }));
       setRows((current) => current.map((row) => updatedRows.find((updated) => updated.id === row.id) ?? row));
-      setSelectedIds(new Set());
-      setMessage(`Updated ${updatedRows.length} rows to ${contentStatusLabel(bulkStatus)}${packageRows.length ? " using package approval rules" : ""}.`);
+      setSelectedIds(new Set(failedIds));
+      const failure = updates.find((result) => result.status === "rejected");
+      setMessage(`Updated ${updatedRows.length} rows. ${failedIds.length ? `${failedIds.length} failed and remain selected: ${failure?.status === "rejected" ? dashboardErrorMessage(failure.reason) : "Retry the selected rows."}` : "All selected changes saved."}`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not update selected rows.");
     } finally {
@@ -4557,20 +4684,28 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function deleteSelectedDrafts() {
-    const deletable = selectedSavedRows.filter((row) => row.status !== "LIVE");
+  async function deleteSelectedDrafts(targetRows = selectedSavedRows) {
+    const deletable = targetRows.filter((row) => row.status !== "LIVE");
     if (deletable.length === 0) {
       setMessage("Published rows are protected. Demote before deleting.");
       return;
     }
     setIsLoading(true);
     try {
-      await Promise.all(deletable.map((row) => adminJsonRequest<{ ok: boolean }>(`/api/admin/generated-content?id=${encodeURIComponent(row.id)}${row.updated_at ? `&expectedUpdatedAt=${encodeURIComponent(row.updated_at)}` : ""}`, secret, {
+      const results = await Promise.allSettled(deletable.map((row) => adminJsonRequest<{ ok: boolean }>(`/api/admin/generated-content?id=${encodeURIComponent(row.id)}${row.updated_at ? `&expectedUpdatedAt=${encodeURIComponent(row.updated_at)}` : ""}`, secret, {
         method: "DELETE"
       })));
-      setRows((current) => current.filter((row) => !deletable.some((deleted) => deleted.id === row.id)));
-      setSelectedIds(new Set());
-      setMessage(`Deleted ${deletable.length} non-published rows.`);
+      const deleted = deletable.filter((_, index) => results[index].status === "fulfilled");
+      const failed = deletable.filter((_, index) => results[index].status === "rejected");
+      setRows((current) => current.filter((row) => !deleted.some((item) => item.id === row.id)));
+      setSelectedIds(new Set(failed.map((row) => row.id)));
+      if (deleted.some((row) => row.id === selectedRowId)) {
+        setDraft(null);
+        setSelectedRowId(null);
+      }
+      deleted.forEach((row) => announceContentUpdate({ contentKey: row.content_key, published: false, updatedAt: new Date().toISOString() }));
+      const failure = results.find((result) => result.status === "rejected");
+      setMessage(`Deleted ${deleted.length} non-published rows.${failed.length ? ` ${failed.length} failed and remain selected: ${failure?.status === "rejected" ? dashboardErrorMessage(failure.reason) : "Retry the selected rows."}` : ""}`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not delete selected rows.");
     } finally {
@@ -4580,15 +4715,16 @@ export function GeneratedContentAdminDashboard() {
 
   async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow) {
     if (!row.inventory_only) return row;
+    const selector = row.id.startsWith("package:") ? `contentKeys=${encodeURIComponent(row.content_key)}` : `id=${encodeURIComponent(row.id)}`;
     const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-      `/api/admin/generated-content?id=${encodeURIComponent(row.id)}&status=all&visibility=all&limit=1`,
+      `/api/admin/generated-content?${selector}&status=all&visibility=all&limit=1`,
       secret
     );
-    const hydrated = payload.rows?.find((candidate) => candidate.id === row.id);
+    const hydrated = payload.rows?.find((candidate) => candidate.id === row.id || row.id.startsWith("package:") && candidate.content_key === row.content_key);
     if (!hydrated || hydrated.inventory_only) {
       throw new Error(`Could not load the full content document for ${row.content_key}.`);
     }
-    setRows((current) => current.map((candidate) => candidate.id === hydrated.id ? hydrated : candidate));
+    setRows((current) => mergeContentInventory(current.filter((candidate) => candidate.id !== row.id || row.id === hydrated.id), [hydrated]));
     return hydrated;
   }
 
@@ -4601,10 +4737,16 @@ export function GeneratedContentAdminDashboard() {
         .finally(() => setIsLoading(false));
       return;
     }
+    const replacingUnsavedEditor = draft && row.id !== draft.id && (
+      JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
+      || hasPendingArticleChanges()
+    );
+    if (replacingUnsavedEditor && !window.confirm("Discard the unsaved changes in this editor?")) return;
     if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
       editorReturnFocusRef.current = document.activeElement;
     }
     const nextDraft = draftFromRow(row);
+    setEditorSaveError("");
     editorBaselineRef.current = JSON.stringify(nextDraft);
     editorSavedInputRef.current = JSON.stringify(nextDraft);
     const edition = compiledSkyArticleEditionForDraft(nextDraft);
@@ -4621,7 +4763,11 @@ export function GeneratedContentAdminDashboard() {
     setTemplateVariableQuery("");
     setSelectedTemplateVariableName(null);
     setSelectedTemplateVariableSourceId(null);
+    editorSessionRef.current += 1;
     skyArticleAutosaveSequenceRef.current += 1;
+    articleAutosaveRowRef.current = row;
+    workspaceAutosaveRowRef.current = null;
+    skyArticleWorkspaceAutosaveSequenceRef.current += 1;
     setSkyArticleEditor(edition && baseEdition ? {
       baseEdition,
       fields: skyArticleEditableFields(edition),
@@ -4730,7 +4876,9 @@ export function GeneratedContentAdminDashboard() {
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyArticleEditionForm(null);
+    editorSessionRef.current += 1;
     skyArticleAutosaveSequenceRef.current += 1;
+    skyArticleWorkspaceAutosaveSequenceRef.current += 1;
     setSkyArticleEditor(null);
     setDraft({
       id: null,
@@ -4772,7 +4920,9 @@ export function GeneratedContentAdminDashboard() {
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyArticleEditionForm(null);
+    editorSessionRef.current += 1;
     skyArticleAutosaveSequenceRef.current += 1;
+    skyArticleWorkspaceAutosaveSequenceRef.current += 1;
     setSkyArticleEditor(null);
     setDraft({
       id: null,
@@ -4857,14 +5007,14 @@ export function GeneratedContentAdminDashboard() {
     try {
       const saved = savedFallbackRows.find((row) => row.content_key === contentKey || hookKeyFromSavedRow(row) === item.key);
       if (saved) {
-        navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
+        navigateAdminPage("knowledge", new URLSearchParams({ section: item.section, q: query }), { keepEditorOpen: true });
         openRow(saved);
         setMessage(`Opened ${item.label}.`);
         return;
       }
 
       const body = await hookBodyFor(item);
-      navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
+      navigateAdminPage("knowledge", new URLSearchParams({ section: item.section, q: query }), { keepEditorOpen: true });
       setSelectedRowId(null);
       setDraft(emptyDraftForHook({
         ...item,
@@ -4879,8 +5029,13 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  function handleCreateAction(page: AdminDashboardPage, nextMessage: string) {
-    navigateAdminPage(page, undefined, { keepEditorOpen: true });
+  function handleCreateAction(page: AdminDashboardPage, nextMessage: string, calendarSign?: string) {
+    const isCalendarWriteup = page === "knowledge" && activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar";
+    const usedVariants = new Set(rows.filter(row => lunarContentIdentity(row.content_key)?.sign === calendarSign && row.content_key.startsWith("authored/calendar-weekly-moon/")).map(row => lunarContentIdentity(row.content_key)!.variant));
+    const nextVariant = [1, 2, 3, 4].find(variant => !usedVariants.has(variant) && !(calendarSign === "cancer" && variant === 1));
+    if (calendarSign && !nextVariant) { setMessage("All four variants already exist for this sign. Edit or restore an existing passage."); return; }
+    const newMoonKey = calendarSign ? `authored/calendar-weekly-moon/${calendarSign}${nextVariant === 1 ? "" : `/variant-${nextVariant}`}` : "authored/calendar-weekly-moon/new-entry";
+    navigateAdminPage(page, isCalendarWriteup ? new URLSearchParams({ section: "lunar-calendar" }) : undefined, { keepEditorOpen: true });
     setIsCreateMenuOpen(false);
     setSelectedRowId(null);
     setMessage(nextMessage);
@@ -4996,9 +5151,9 @@ export function GeneratedContentAdminDashboard() {
     if (page === "knowledge") {
       setDraft({
         id: null,
-        contentKey: "fallback-hook/manual/new-hook",
+        contentKey: isCalendarWriteup ? newMoonKey : "fallback-hook/manual/new-hook",
         surface: "sky",
-        mode: "feed",
+        mode: isCalendarWriteup ? "in_depth" : "feed",
         status: "DRAFT",
         headline: "",
         summary: "",
@@ -5007,12 +5162,13 @@ export function GeneratedContentAdminDashboard() {
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "fallback_hook",
         promptVersion: "fallback-hook-template-v1",
-        sections: null,
+        sections: isCalendarWriteup ? { packageRecord: { contentKey: newMoonKey, content_role: "full_copy", body: "", focus: "", strategy: "", review_status: "needs_review" } } : null,
         facts: null,
         reviewerNotes: "",
         sourceSnapshot: {
           contentType: "fallback-system",
-          content_role: "fallback_hook",
+          content_role: isCalendarWriteup ? "full_copy" : "fallback_hook",
+          ...(isCalendarWriteup ? { sourcePackage: "tldrastro-fallback-architecture-v3" } : {}),
           review_status: "needs_review",
           hook: "manual/new-hook",
           contentSystem: "fallback",
@@ -5316,21 +5472,22 @@ export function GeneratedContentAdminDashboard() {
   const natalChartWorkspaceActive = activePage === "content" && categoryFilter === "Natal Chart";
   const natalAspectWorkspaceActive = activePage === "content" && categoryFilter === "Natal Aspects";
   const calendarAspectWorkspaceActive = activePage === "content" && categoryFilter === "Calendar Aspects";
-  const currentPageTitle = natalChartWorkspaceActive
+  const lunarWorkspaceActive = activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar";
+  const currentPageTitle = lunarWorkspaceActive ? "Lunar Calendar write-ups" : natalChartWorkspaceActive
     ? "Natal Chart Write-ups"
     : natalAspectWorkspaceActive
       ? "Natal Aspect Write-ups"
       : calendarAspectWorkspaceActive
         ? "Calendar Aspect Cards"
         : adminPageTitle(activePage);
-  const currentPageDescription = natalChartWorkspaceActive
+  const currentPageDescription = lunarWorkspaceActive ? "Manage Moon-sign passages and inspect their composition and variables." : natalChartWorkspaceActive
     ? "Find the exact writing for a planet or point in its sign and house."
     : natalAspectWorkspaceActive
       ? "Find and edit the exact writing for two natal bodies and their aspect."
       : calendarAspectWorkspaceActive
         ? "Edit composed Calendar cards and their reusable sign-specific aspect passages."
         : adminPageDescription(activePage);
-  const currentPageBreadcrumbs = natalChartWorkspaceActive
+  const currentPageBreadcrumbs = lunarWorkspaceActive ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Lunar Calendar" }] : natalChartWorkspaceActive
     ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal chart" }]
     : natalAspectWorkspaceActive
       ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal aspects" }]
@@ -5366,12 +5523,14 @@ export function GeneratedContentAdminDashboard() {
           <p className="admin-eyebrow">{group}</p>
           {primaryAdminNavItems.filter((item) => item.group === group).map((item) => {
             const Icon = item.icon;
-            const isActive = item.category
+            const isActive = item.section
+              ? activePage === item.page && fallbackSectionFilter === item.section
+              : item.category
               ? activePage === item.page && categoryFilter === item.category
               : item.page === "content"
                 ? activePage === "content" && categoryFilter !== "Natal Chart" && categoryFilter !== "Natal Aspects" && categoryFilter !== "Calendar Aspects"
                 : item.page === "compositionMap"
-                  ? isCompositionPage(activePage)
+                  ? isCompositionPage(activePage) && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar")
                   : item.page === "skyWriteups"
                     ? activePage === item.page && skyWriteupWorkspaceView === "catalog"
                   : activePage === item.page;
@@ -5496,6 +5655,11 @@ export function GeneratedContentAdminDashboard() {
   );
 
   return (
+    <ContentLiveStatusProvider request={async (ids) => {
+      const result = await adminJsonRequest<{ ok: boolean; statuses: LiveStatus[] }>("/api/admin/content-live-status", secret, { method: "POST", body: JSON.stringify({ ids }) });
+      if (!Array.isArray(result.statuses)) throw new Error("Could not verify content status.");
+      return result.statuses;
+    }}>
     <main className="admin-dashboard">
       {nav}
       <section className={`admin-main${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
@@ -5538,7 +5702,7 @@ export function GeneratedContentAdminDashboard() {
             },
             {
               key: "fallback",
-              label: "Create fallback hook",
+              label: activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" ? "Create Calendar write-up" : "Create fallback hook",
               description: "Saved route fallback",
               icon: Flag,
               onSelect: () => handleCreateAction("knowledge", "Create fallback hook opened.")
@@ -5587,7 +5751,7 @@ export function GeneratedContentAdminDashboard() {
         {(activePage === "connection" || (!hasAccessIssue && !hasLoadFailure)) && (
         <div className="admin-loaded-workspace" hidden={isInitialDashboardLoad} aria-busy={loadState === "loading"}>
 
-        {isCompositionPage(activePage) && (
+        {isCompositionPage(activePage) && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar") && (
           <nav className="admin-template-tabs admin-composition-tabs" aria-label="Composition workspace">
             {compositionTabs.map((item) => (
               <button key={item.page} type="button" className={activePage === item.page ? "active" : ""} aria-current={activePage === item.page ? "page" : undefined} onClick={() => navigateAdminPage(item.page)}>
@@ -5734,8 +5898,8 @@ export function GeneratedContentAdminDashboard() {
                   : natalAspectWorkspaceActive
                     ? "Choose the first planet or point, the aspect, and the second planet or point. Open any matching passage in the standard editor."
                     : calendarAspectWorkspaceActive
-                      ? "Use Published to edit copy readers can see. Use Draft to continue proposed rewrites. Astrology details stay read-only; prose is editable."
-                    : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.`}</p>
+                      ? "Live means readers can currently receive this copy. Not live means readers cannot currently receive this copy. Astrology details stay read-only; prose is editable."
+                    : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. The Status column shows whether readers can currently receive each copy.`}</p>
               </div>
               {!natalChartWorkspaceActive && !natalAspectWorkspaceActive && !calendarAspectWorkspaceActive && <div className="admin-new-actions" aria-label="Content admin shortcuts">
                 <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
@@ -5786,18 +5950,11 @@ export function GeneratedContentAdminDashboard() {
                     </section>
                   )}
                   {renderContentFilters()}
-                  <section className="admin-reader-safety-panel" aria-label="App visibility status">
+                  <section className="admin-reader-safety-panel" aria-label="Content status definitions">
                     <div>
-                      <p className="admin-eyebrow">App visibility</p>
+                      <p className="admin-eyebrow">Status</p>
                       <h3>What readers can see</h3>
-                      <p>Published app copy can appear for readers. Drafts, internal references, and incomplete writing stay hidden.</p>
-                    </div>
-                    <div className="admin-reader-safety-grid">
-                      <article className="reader-ready"><span>Available in app</span><strong>{readerCounts["reader-ready"]}</strong></article>
-                      <article><span>Not published</span><strong>{readerCounts["draft-held"]}</strong></article>
-                      <article><span>Internal or awaiting review</span><strong>{readerCounts["reference-held"] + readerCounts["review-held"]}</strong></article>
-                      <article className={readerCounts["needs-source-material"] ? "needs-fallback" : ""}><span>Needs more source copy</span><strong>{readerCounts["needs-source-material"]}</strong></article>
-                      <article className={readerCounts["fallback-needed"] ? "needs-fallback" : ""}><span>Copy missing</span><strong>{readerCounts["fallback-needed"]}</strong></article>
+                      <p><strong>Live</strong> means readers can currently receive this copy. <strong>Not live</strong> means readers cannot currently receive this copy.</p>
                     </div>
                   </section>
                   {renderBulkBar()}
@@ -5946,7 +6103,7 @@ export function GeneratedContentAdminDashboard() {
                 {publishedButUnwiredSkyRows.length > 0 && (
                   <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
                     <div>
-                      <p className="admin-eyebrow">Published but not connected</p>
+                      <p className="admin-eyebrow">Not live</p>
                       <h3>{publishedButUnwiredSkyRows.length} approved write-ups have no reader call site</h3>
                       <p>These rows are reported separately from retired content. They are not safe-deletion candidates: publishing finished the editorial step, but the app integration was never completed.</p>
                     </div>
@@ -6058,7 +6215,10 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
-        {activePage === "knowledge" && (
+        {activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" && (
+          <Suspense fallback={<p>Loading Lunar Calendar…</p>}><LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow)} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} onCreate={sign => handleCreateAction("knowledge", "New Moon-sign passage opened.", sign)} /></Suspense>
+        )}
+        {activePage === "knowledge" && fallbackSectionFilter !== "lunar-calendar" && (
           <section className="admin-template-page">
             <section className="admin-content-toolbar">
               <div>
@@ -6275,8 +6435,8 @@ export function GeneratedContentAdminDashboard() {
                           <small>{item.sourcePath}</small>
                         </div>
                         <div className="admin-fallback-row-actions">
-                          <span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved draft" : "Source only"}</span>
-                          <span className="ui-pill admin-status status-draft">Not serving</span>
+                          <span className="admin-field-hint">{saved ? "Saved draft" : "Source only"}</span>
+                          <span className="ui-pill admin-status status-draft">Not live</span>
                           <button type="button" onClick={(event) => { event.stopPropagation(); openSourceDraft(item); }}>{saved ? "Edit" : "Open draft"}</button>
                         </div>
                       </article>
@@ -6336,7 +6496,8 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "compositionMap" && (
           <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
             <CompositionMapWorkspace
-              rows={visibleRows}
+              rows={compositionRows}
+              onLoadRow={(row) => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
               onEditRow={(row, context) => openRow(row as AdminGeneratedContentRow, context ?? null)}
               onStartCmsRow={openCmsStarter}
               editor={renderEditor()}
@@ -6530,7 +6691,7 @@ export function GeneratedContentAdminDashboard() {
                       <td><code>{row.user_id}</code></td>
                       <td className="admin-content-location"><strong>{row.subject_type}</strong><small>{row.subject_id}</small></td>
                       <td className="admin-content-location"><strong>{row.surface}</strong><small>{row.mode}</small></td>
-                      <td><span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span></td>
+                      <td><ContentLiveStatusBadge row={{ id: `user:${row.id}`, updated_at: row.updated_at }} /></td>
                       <td>{row.updated_at?.slice(0, 10) ?? row.created_at?.slice(0, 10) ?? "Local"}</td>
                     </tr>
                   ))}
@@ -6552,6 +6713,7 @@ export function GeneratedContentAdminDashboard() {
 
       </section>
     </main>
+    </ContentLiveStatusProvider>
   );
 
   function updateNatalPlacementSelection(next: {
@@ -6560,6 +6722,7 @@ export function GeneratedContentAdminDashboard() {
     house?: NatalPlacementHouse | "";
     motion?: NatalPlacementMotion;
   }) {
+    if (!confirmNatalNavigation()) return;
     const planet = next.planet ?? natalPlacementPlanet;
     const sign = next.sign ?? natalPlacementSign;
     const house = next.house ?? natalPlacementHouse;
@@ -6588,15 +6751,39 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function saveNatalSource(source: NatalEditableRow, edits: NatalSourceEdits, publish: boolean) {
+    const row = rows.find((candidate) => candidate.id === source.id)
+      ?? (source.id?.startsWith("package:") ? rows.find((candidate) => candidate.content_key === source.content_key && !candidate.id.startsWith("package:")) : undefined);
+    if (!row || row.inventory_only) return false;
+    let revised: AdminDraft = { ...draftFromRow(row), id: row.id.startsWith("package:") ? null : row.id, updatedAt: source.updated_at };
+    for (const [field, value] of Object.entries(edits)) {
+      revised = field === "body_you" || field === "body_they"
+        ? setPackageSectionField(revised, field, value)
+        : setPackageRecordField(revised, field, value);
+    }
+    const alreadySaved = Object.entries(edits).every(([field, value]) => draftEditablePackageRecord(draftFromRow(row))[field] === value)
+      && draftHasPackageProposal(draftFromRow(row));
+    const saved = alreadySaved ? row : await saveDraft(undefined, revised, undefined, false);
+    if (!saved) return false;
+    if (row.id.startsWith("package:")) setRows((current) => current.filter((candidate) => candidate.id !== row.id));
+    return publish ? Boolean(await approvePackageRevision(saved, false)) : true;
+  }
+
   function renderNatalPlacementSourceFinder() {
     if (categoryFilter !== "Natal Chart") return null;
     return (
       <Suspense fallback={<div className="admin-empty-state" role="status"><strong>Loading natal placement finder…</strong></div>}>
         <NatalPlacementSourceFinder
+          key={`${natalPlacementPlanet}/${natalPlacementSign}/${natalPlacementHouse}/${natalPlacementMotion}`}
           house={natalPlacementHouse}
-          isLoading={isLoading}
+          isLoading={isLoading || natalSourcesLoading}
           motion={natalPlacementMotion}
           onCreateOverride={createNatalPlacementOverride}
+          onSaveSource={saveNatalSource}
+          onDirtyChange={(key, dirty) => {
+            if (dirty) natalUnsavedSourcesRef.current.add(key);
+            else natalUnsavedSourcesRef.current.delete(key);
+          }}
           onOpenSource={(contentKey, label, previewTemplate) => void openContentKeyRow(contentKey, label, previewTemplate)}
           onSelectionChange={updateNatalPlacementSelection}
           planet={natalPlacementPlanet}
@@ -6689,9 +6876,9 @@ export function GeneratedContentAdminDashboard() {
           <div className="admin-natal-source-card-heading">
             <h4>{source.label}</h4>
             {resolved?.savedRow
-              ? <span className={`ui-pill admin-status status-${resolved.savedRow.status.toLowerCase()}`}>{contentStatusLabel(resolved.savedRow.status)}</span>
+              ? <ContentLiveStatusBadge row={resolved.savedRow} />
               : resolved
-                ? <span className="ui-pill admin-status status-live">Approved package source</span>
+                ? <ContentLiveStatusBadge row={{ id: `package:${resolved.contentKey}` }} />
                 : source.optional && <span className="ui-pill admin-status status-draft">Optional</span>}
           </div>
           <p>{source.scope}</p>
@@ -7038,7 +7225,8 @@ export function GeneratedContentAdminDashboard() {
           </button>
         </div>
         )}
-        <div className="admin-status-pills" role="tablist" aria-label="Status">
+        <details className="admin-advanced"><summary>Editorial filters</summary>
+        <div className="admin-status-pills" role="tablist" aria-label="Editorial stage">
           {(["all", ...contentStatuses] as Array<GeneratedContentStatus | "all">).map((status) => (
             <button key={status} type="button" role="tab" aria-selected={contentStatusFilter === status} className={contentStatusFilter === status ? "active" : ""} onClick={() => setContentStatusFilter(status)}>
               <span>{status === "all" ? "All" : contentStatusLabel(status)}</span>
@@ -7046,6 +7234,7 @@ export function GeneratedContentAdminDashboard() {
             </button>
           ))}
         </div>
+        </details>
         <div className="admin-review-filter-grid">
           {!calendarAspectWorkspaceActive && (
           <label>
@@ -7246,7 +7435,7 @@ export function GeneratedContentAdminDashboard() {
     return (
       <div className="admin-template-tabs" role="tablist" aria-label="Fallback hook sections">
         {fallbackSections.map((section) => (
-          <button key={section.key} type="button" role="tab" aria-selected={fallbackSectionFilter === section.key} className={fallbackSectionFilter === section.key ? "active" : ""} onClick={() => activePage === "hooks" ? navigateSurfaceMapFilters({ section: section.key }) : setFallbackSectionFilter(section.key)}>
+          <button key={section.key} type="button" role="tab" aria-selected={fallbackSectionFilter === section.key} className={fallbackSectionFilter === section.key ? "active" : ""} onClick={() => activePage === "hooks" ? navigateSurfaceMapFilters({ section: section.key }) : navigateAdminPage("knowledge", new URLSearchParams({ section: section.key, q: query }))}>
             {section.label}
           </button>
         ))}
@@ -7385,17 +7574,14 @@ export function GeneratedContentAdminDashboard() {
             <tr>
               <th className="admin-col-select" scope="col">Select</th>
               <th className="admin-col-content" scope="col">Content</th>
-              <th className="admin-col-visibility" scope="col">App visibility</th>
-              <th className="admin-col-editorial" scope="col">Editorial</th>
+              <th className="admin-col-visibility" scope="col">Status</th>
               {showArticleDestination && <th className="admin-col-destination" scope="col">App destination</th>}
-              {showWiringReason && <th className="admin-col-wiring" scope="col">App connection</th>}
-              <th className="admin-col-source" scope="col">Source</th>
+              <th className="admin-col-source" scope="col">Details</th>
               <th className="admin-col-edit" scope="col">Edit</th>
             </tr>
           </thead>
           <tbody>
             {visibleTableRows.map((row) => {
-              const safety = readerSafetyForRow(row);
               const rowClass = contentClassForRow(row);
               const rowRole = contentRoleDetails(contentRoleForRecord(row));
               const destination = showArticleDestination ? articleAppDestination(row) : null;
@@ -7426,24 +7612,21 @@ export function GeneratedContentAdminDashboard() {
                       {compatibilityIdentity ? `${compatibilityIdentity.detail} · ${rowTypeLabel(row)}` : rowTypeLabel(row)}
                     </small>
                     <code className="admin-content-row-key">{row.content_key}</code>
+                    <span className="admin-content-mobile-status"><ContentLiveStatusBadge row={row} /></span>
                   </td>
-                  <td className="admin-col-visibility"><span className={`admin-reader-state-pill admin-table-tag ${safety.key}`} title={safety.detail}>{safety.label}</span></td>
-                  <td className="admin-col-editorial"><span className={`ui-pill admin-status admin-table-tag status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span></td>
+                  <td className="admin-col-visibility"><ContentLiveStatusBadge row={row} /></td>
                   {destination && (
                     <td className="admin-content-location admin-col-destination">
                       <strong>{destination.label}</strong>
                       <small>{destination.detail}</small>
                     </td>
                   )}
-                  {wiring && (
-                    <td className="admin-content-location admin-wiring-cell admin-col-wiring">
-                      <strong className={`admin-wiring-state ${wiring.state}`}>{wiring.label}</strong>
-                      <small title={wiring.detail}>{wiring.detail}</small>
-                    </td>
-                  )}
-                  <td className="admin-col-source">
-                    <span className="ui-pill admin-status admin-table-tag" title={`${rowRole.label}. ${rowRole.detail}`}>{rowRole.shortLabel}</span>
-                    <small>{contentClassLabel(rowClass)} · {tierForRow(row)}</small>
+                  <td className="admin-col-source" onClick={(event) => event.stopPropagation()}>
+                    <details><summary>Details</summary>
+                      <p className="admin-field-hint">Editorial stage: {contentStatusLabel(row.status)}</p>
+                      <p className="admin-field-hint">{rowRole.label} · {contentClassLabel(rowClass)} · {tierForRow(row)}</p>
+                      {wiring && <p className="admin-field-hint">{wiring.detail}</p>}
+                    </details>
                   </td>
                   <td className="admin-col-edit">
                     <button
@@ -7487,7 +7670,6 @@ export function GeneratedContentAdminDashboard() {
         >
           {(visibleTableRows) => <div className="admin-review-queue-rows" aria-label="Review rows">
           {visibleTableRows.map((row) => {
-            const safety = readerSafetyForRow(row);
             const saved = row.rawGlobalRow;
             const aspectContext = aspectContextForRow(row);
             const readerUse = aspectContext?.label ?? contentCategoryForRow(row);
@@ -7503,8 +7685,7 @@ export function GeneratedContentAdminDashboard() {
                     <code title={row.contentKey}>{row.contentKey}</code>
                   </div>
                   <div className="admin-review-queue-meta-strip">
-                    <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span>
-                    <span className={`admin-reader-state-pill ${safety.key}`}>{safety.label}</span>
+                    <ContentLiveStatusBadge row={saved ?? { id: null }} />
                   </div>
                 </div>
                 <p>{row.summary || row.body || "No preview copy saved."}</p>
@@ -7598,7 +7779,7 @@ export function GeneratedContentAdminDashboard() {
                     <code>{row.content_key}</code>
                   </div>
                   <div className="admin-review-queue-meta-strip">
-                    <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span>
+                    <ContentLiveStatusBadge row={row} />
                     <span className="ui-pill admin-status">Judge {row.judge_score ?? "-"}/3</span>
                   </div>
                 </header>
@@ -7737,7 +7918,7 @@ export function GeneratedContentAdminDashboard() {
     const isVocabularyDraft = draftIsVocabulary(currentDraft);
     const isArticleDraft = draftIsArticle(currentDraft);
     const isFallbackHookDraft = draftIsFallbackHook(currentDraft);
-    const isTemplateDraft = draftIsTemplate(currentDraft);
+    const isTemplateDraft = draftIsTemplate(currentDraft) && !(lunarContentIdentity(currentDraft.contentKey) && !currentDraft.body.includes("{{"));
     const isPackageDraft = draftIsFallbackArchitectureV3(currentDraft);
     const isGuidedHeldReview = isPackageDraft && guidedReviewKey === currentDraft.contentKey;
     const guidedReviewDecision = objectRecord(objectRecord(currentDraft.sections)?.contentStudioReview);
@@ -7807,15 +7988,7 @@ export function GeneratedContentAdminDashboard() {
       && fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus);
     const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes ? "LIVE" : "DRAFT";
     const packageWillPublishOnSave = packageApprovalPublishes && currentDraft.status !== "LIVE";
-    const packageReaderStatusLabel = packageHasProposal
-      ? currentDraft.status === "LIVE"
-        ? "Current copy live; revision pending"
-        : "Revision not live"
-      : packageWillPublishOnSave
-        ? "Will go live on Save"
-        : currentDraft.status === "LIVE"
-          ? "Live"
-          : "Not live";
+    const natalAspectMissingCopy = isExactNatalAspectDraft && !["body", "body_you", "body_they"].some((field) => packageFieldString(currentDraft, field).trim());
     const variableReferences = templateVariableReferences({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
@@ -7864,16 +8037,19 @@ export function GeneratedContentAdminDashboard() {
       source_snapshot: currentDraft.sourceSnapshot
     } : null;
     const hasNatalTemplatePreviewContext = categoryFilter === "Natal Chart"
-      && Boolean(natalPlacementPlanet && natalPlacementSign && natalPlacementHouse)
+      && Boolean(natalPlacementPlanet && natalPlacementSign)
       && (currentDraft.contentKey === `fallback-template/natal.planet-in-sign/${natalPlacementPlanet}`
+        || currentDraft.contentKey === "fallback-template/natal.planet-in-sign"
+        || currentDraft.contentKey === "fallback-template/natal.node-in-sign"
+        || currentDraft.contentKey === "fallback-template/natal.modifier.retrograde"
         || currentDraft.contentKey === "fallback-template/natal.house-context");
     const natalTemplatePreviewOptions = hasNatalTemplatePreviewContext ? {
       exampleValues: {
         planetTitle: titleFromKey(natalPlacementPlanet),
-        planetRef: `the ${titleFromKey(natalPlacementPlanet)}`,
-        planetRefCap: `The ${titleFromKey(natalPlacementPlanet)}`,
+        planetRef: `${["sun", "moon", "north-node", "south-node"].includes(natalPlacementPlanet) ? "the " : ""}${titleFromKey(natalPlacementPlanet)}`,
+        planetRefCap: `${["sun", "moon", "north-node", "south-node"].includes(natalPlacementPlanet) ? "The " : ""}${titleFromKey(natalPlacementPlanet)}`,
         signTitle: titleFromKey(natalPlacementSign),
-        houseOrdinal: ordinalHouse(natalPlacementHouse as NatalPlacementHouse),
+        ...(natalPlacementHouse ? { houseOrdinal: ordinalHouse(natalPlacementHouse) } : {}),
         possessive: "Your",
         possessiveLow: "your"
       },
@@ -7995,7 +8171,7 @@ export function GeneratedContentAdminDashboard() {
     };
     const updateSummary = (summary: string) => {
       const nextDraft = invalidateContentStudioReview({ ...currentDraft, summary });
-      setDraft(isPackageDraft ? setPackageRecordField(nextDraft, "summary", summary) : nextDraft);
+      setDraft(isPackageDraft ? setPackageRecordField(nextDraft, lunarContentIdentity(currentDraft.contentKey) ? "editorial_notes" : "summary", summary) : nextDraft);
     };
     const updateVocabularyBody = (body: string) => {
       const nextDraft = { ...currentDraft, body };
@@ -8034,6 +8210,7 @@ export function GeneratedContentAdminDashboard() {
       setSkyArticleEditor((current) => current ? {
         ...current,
         fields: { ...current.fields, ...next },
+        saveState: "unsaved",
         reviewOpen: false
       } : current);
     };
@@ -8100,7 +8277,7 @@ export function GeneratedContentAdminDashboard() {
       const currentPackageDraft = Object.keys(objectRecord(sections.packageDraft) ?? {}).length
         ? objectRecord(sections.packageDraft) ?? {}
         : structuredClone(original);
-      setDraft({
+      setDraft(invalidateContentStudioReview({
         ...currentDraft,
         sections: {
           ...sections,
@@ -8114,7 +8291,7 @@ export function GeneratedContentAdminDashboard() {
           ...(currentDraft.facts ?? {}),
           review_status: "needs_review"
         }
-      });
+      }));
     };
     const insertSkyFallbackVariable = (variable: string) => {
       if (!skyFallbackEditor || !effectiveSkyFallbackVariableTarget) return;
@@ -8295,7 +8472,8 @@ export function GeneratedContentAdminDashboard() {
                   required: "Full passage"
                 }
       : null;
-    const headlineFieldLabel = fallbackEditorGuidance?.headlineLabel
+    const lunarIdentity = lunarContentIdentity(currentDraft.contentKey);
+    const headlineFieldLabel = lunarIdentity ? "Editor name" : fallbackEditorGuidance?.headlineLabel
       ?? (isVocabularyDraft
         ? "Phrase title"
         : isAuthoredPackageCard || isArticleDraft
@@ -8307,7 +8485,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template name"
                 : "Title / headline");
-    const summaryFieldLabel = fallbackEditorGuidance?.summaryLabel
+    const summaryFieldLabel = lunarIdentity ? "Source notes (not reader copy)" : fallbackEditorGuidance?.summaryLabel
       ?? (isVocabularyDraft
         ? "Editor note (optional)"
         : isSkyArticleSourceDraft
@@ -8319,7 +8497,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = isYouOnlyNatalExactDraft
+    const bodyFieldLabel = lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
       ? "You view exact copy"
       : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
@@ -8388,7 +8566,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
                 : "Create saved row";
-    const editorUseLabel = aspectContext?.label
+    const editorUseLabel = lunarContentIdentity(currentDraft.contentKey)?.destination ?? aspectContext?.label
       ?? (selectedRow
         ? contentCategoryForRow(selectedRow)
         : isArticleDraft
@@ -8501,18 +8679,7 @@ export function GeneratedContentAdminDashboard() {
                 {aspectContext.label}
               </span>
             )}
-            <span
-              aria-label={isPackageDraft ? "Reader status" : "Content status"}
-              className={`ui-pill admin-status ${isPackageDraft
-                ? currentDraft.status === "LIVE"
-                  ? "status-live"
-                  : packageWillPublishOnSave
-                    ? "status-reviewed"
-                    : "status-draft"
-                : `status-${currentDraft.status.toLowerCase()}`}`}
-            >
-              {isPackageDraft ? packageReaderStatusLabel : contentStatusLabel(currentDraft.status)}
-            </span>
+            <ContentLiveStatusBadge label="Reader status" row={{ id: currentDraft.id, updated_at: currentDraft.updatedAt }} unsaved={draftHasUnsavedChanges} />
             {variableReferences.length > 0 && (
               <button
                 type="button"
@@ -8866,7 +9033,12 @@ export function GeneratedContentAdminDashboard() {
                     aria-label="Sky article reference date"
                     type="date"
                     value={skyArticleEditionForm.referenceDate}
-                    onChange={(event) => setSkyArticleEditionForm({
+                    onChange={(event) => {
+                      if (hasPendingArticleChanges() && !window.confirm("Discard the unsaved article draft before changing its date?")) return;
+                      editorSessionRef.current += 1;
+                      skyArticleWorkspaceAutosaveSequenceRef.current += 1;
+                      workspaceAutosaveRowRef.current = null;
+                      setSkyArticleEditionForm({
                       ...skyArticleEditionForm,
                       referenceDate: event.target.value,
                       facts: null,
@@ -8876,7 +9048,8 @@ export function GeneratedContentAdminDashboard() {
                       factBlockedSlots: [],
                       saveState: "idle",
                       workspaceId: null
-                    })}
+                    });
+                    }}
                   />
                   <small className="admin-field-hint">The ephemeris uses this date to identify the active sign and complete residency window.</small>
                 </label>
@@ -8932,7 +9105,8 @@ export function GeneratedContentAdminDashboard() {
                       value={skyArticleEditionForm.tldr}
                       onChange={(event) => setSkyArticleEditionForm({
                         ...skyArticleEditionForm,
-                        tldr: event.target.value
+                        tldr: event.target.value,
+                        saveState: "unsaved"
                       })}
                       placeholder="Write the short TL;DR shown in the Transits list and at the top of the full reading."
                     />
@@ -8953,7 +9127,8 @@ export function GeneratedContentAdminDashboard() {
                             disabled={engineOwned}
                             onChange={(event) => setSkyArticleEditionForm({
                               ...skyArticleEditionForm,
-                              slotValues: { ...skyArticleEditionForm.slotValues, [placeholder.name]: event.target.value }
+                              slotValues: { ...skyArticleEditionForm.slotValues, [placeholder.name]: event.target.value },
+                              saveState: "unsaved"
                             })}
                             placeholder={placeholder.description || `Write the ${placeholder.name} edition passage.`}
                           />
@@ -8961,7 +9136,8 @@ export function GeneratedContentAdminDashboard() {
                           {!engineOwned && skyArticleEditionForm.slotValues[placeholder.name] === undefined && (
                             <button type="button" onClick={() => setSkyArticleEditionForm({
                               ...skyArticleEditionForm,
-                              slotValues: { ...skyArticleEditionForm.slotValues, [placeholder.name]: "" }
+                              slotValues: { ...skyArticleEditionForm.slotValues, [placeholder.name]: "" },
+                              saveState: "unsaved"
                             })}>
                               Deliberately leave this block blank
                             </button>
@@ -9028,7 +9204,10 @@ export function GeneratedContentAdminDashboard() {
                             : "Saved"}
                     </strong>
                   </header>
-                  {skyArticleEditor.error && <p className="admin-inline-error">{skyArticleEditor.error}</p>}
+                  {skyArticleEditor.error && <div>
+                    <p className="admin-inline-error">{skyArticleEditor.error}</p>
+                    <button type="button" onClick={() => updateSkyArticleFields({})}>Retry save</button>
+                  </div>}
 
                   <label className="admin-title-field">
                     <span>Headline</span>
@@ -9168,7 +9347,7 @@ export function GeneratedContentAdminDashboard() {
               <input aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
               {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Reader-facing title shown at the top of this card or write-up. Stored internally as Headline."}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Reader-facing title shown at the top of this card or write-up. Stored internally as Headline."}</small>}
             </label>
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && showSummaryField && (
@@ -9178,7 +9357,7 @@ export function GeneratedContentAdminDashboard() {
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
               {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Short reader-facing takeaway. Leave empty when this surface does not show a TL;DR. Stored internally as Summary."}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Short reader-facing takeaway. Leave empty when this surface does not show a TL;DR. Stored internally as Summary."}</small>}
             </label>
           )}
           {showPackageBodyYou && !skyFallbackEditor && (
@@ -9290,7 +9469,7 @@ export function GeneratedContentAdminDashboard() {
               <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
               <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
               <p>Save as Draft while editing. Publish only when the exact wording is approved; draft and reviewed rows remain invisible to readers.</p>
-              <p><strong>Reader status:</strong> {cmsReaderEligible ? "LIVE and reader-eligible." : "Not serving. The existing approved fallback remains visible."}</p>
+              <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={{ id: currentDraft.id, updated_at: currentDraft.updatedAt }} unsaved={draftHasUnsavedChanges} /></p>
               {cmsTemplateValidation.errors.length > 0 ? (
                 <div role="alert" aria-label="CMS template errors">
                   <strong>Fix before Sign Off</strong>
@@ -9674,7 +9853,7 @@ export function GeneratedContentAdminDashboard() {
                         aria-label="Reader status after save"
                         className={`ui-pill admin-status ${packageStatusAfterSave === "LIVE" ? "status-live" : "status-draft"}`}
                       >
-                        {packageHasProposal ? "Draft revision" : packageStatusAfterSave === "LIVE" ? "Published" : "Draft"}
+                        {packageHasProposal ? "Not live" : packageStatusAfterSave === "LIVE" ? "Live" : "Not live"}
                       </span>
                     ) : (
                       <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
@@ -9692,7 +9871,7 @@ export function GeneratedContentAdminDashboard() {
                           : currentDraft.status === "LIVE"
                             ? "This approved copy is live for readers."
                             : "Approval controls reader availability. Set review status to approved, then Save to publish."
-                        : "Published maps to LIVE and means reader-eligible within this provenance system; it does not outrank a higher-priority system."}
+                        : "This is the editorial workflow stage. The Status badge checks the copy readers can receive."}
                     </small>
                   </label>
                   <label className="admin-metadata-field">
@@ -9738,7 +9917,7 @@ export function GeneratedContentAdminDashboard() {
               <summary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
               <label className="admin-title-field">
                 <span>{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
-                <input aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || isPackageDraft} />
+                <input aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value, ...(isPackageDraft ? { sections: { ...currentDraft.sections, packageRecord: { ...draftPackageRecord(currentDraft), contentKey: event.target.value }, ...(draftPackageProposal(currentDraft) ? { packageDraft: { ...draftPackageProposal(currentDraft), contentKey: event.target.value } } : {}) } } : {}) })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || (isPackageDraft && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar"))} />
                 {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
               </label>
               {isVocabularyDraft && isPackageDraft && <p className="admin-field-hint">Package role: <code>{packageRole || "vocabulary"}</code></p>}
@@ -9777,6 +9956,7 @@ export function GeneratedContentAdminDashboard() {
             </div>
           </details>
         </section>
+        {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
           <span className={`admin-editor-save-state ${isLoading ? "is-saving" : draftHasUnsavedChanges || isNewDraft || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
             {isLoading
@@ -9786,7 +9966,7 @@ export function GeneratedContentAdminDashboard() {
                   ? "Unsaved revision"
                   : "Revision saved; awaiting approval"
                 : packageWillPublishOnSave
-                  ? "Ready to publish"
+                  ? natalAspectMissingCopy ? "Write the passage before publishing" : "Ready to publish"
                   : isNewDraft
                     ? "New draft"
                     : draftHasUnsavedChanges
@@ -9797,8 +9977,8 @@ export function GeneratedContentAdminDashboard() {
             className="admin-primary-button"
             type="button"
             onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)}
-            disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave)}
-            title={!compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
+            disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave)}
+            title={packageWillPublishOnSave && natalAspectMissingCopy ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
             {isGuidedHeldReview
@@ -9843,6 +10023,11 @@ export function GeneratedContentAdminDashboard() {
               {sourceIsArchived ? "Restore as draft" : "Archive source"}
             </button>
           )}
+          {selectedRow && selectedRow.status !== "LIVE" && activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" && (
+            <button type="button" className="admin-danger-button" disabled={isLoading || draftHasUnsavedChanges} onClick={() => void deleteSelectedDrafts([selectedRow])}>
+              Delete draft
+            </button>
+          )}
           {!isPackageDraft && isNewDraft && (
             <span className="admin-savebar-next-step">Save this draft before review or publication.</span>
           )}
@@ -9874,7 +10059,9 @@ export function GeneratedContentAdminDashboard() {
             filteredReferences={filteredVariableReferences}
             query={templateVariableQuery}
             onQueryChange={setTemplateVariableQuery}
-            rows={rows}
+            rows={hasNatalTemplatePreviewContext
+              ? rows.filter((row) => natalPlacementResolverDependencyKeys(natalPlacementPlanet as NatalPlacementPlanet, natalPlacementSign as NatalPlacementSign, natalPlacementHouse, natalPlacementMotion).includes(row.content_key))
+              : rows}
             templateContentKey={currentDraft.contentKey}
             templatePreviewRow={templatePreviewRow}
             reviewTemplateRow={templatePreviewRow ?? {
@@ -9894,10 +10081,7 @@ export function GeneratedContentAdminDashboard() {
             selectedSourceId={selectedTemplateVariableSourceId}
             onSelectVariable={setSelectedTemplateVariableName}
             onSelectSource={setSelectedTemplateVariableSourceId}
-            onEditSource={(row) => {
-              closeVariablesRail();
-              openRow(row as AdminGeneratedContentRow);
-            }}
+            onEditSource={(row) => openRow(row as AdminGeneratedContentRow)}
             onClose={closeVariablesRail}
             onKeyDown={handleEditorKeyDown}
           />

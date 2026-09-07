@@ -23,6 +23,7 @@ for (const row of snapshot.rows) {
   assert.equal(row.target_date, null);
   assert.ok(!keys.has(row.content_key), `duplicate last-known-good key: ${row.content_key}`);
   keys.add(row.content_key);
+  assert.equal(row.sections?.calendarReleaseHistory, undefined, "Admin recovery history must not be exported publicly");
   assert.notEqual(row.provider, "tldrastro-fallback-architecture-v3-sky-placement");
   maxRevision = row.updated_at > maxRevision ? row.updated_at : maxRevision;
 }
@@ -31,6 +32,7 @@ assert.match(workflow, /schedule:[\s\S]*cron:/u);
 assert.match(workflow, /refresh-content-studio-last-known-good\.mjs/u);
 assert.doesNotMatch(workflow, /SUPABASE_SERVICE_ROLE_KEY/u, "Nightly fallback must not require service-role access.");
 assert.match(workflow, /apps\/web\/public\/content-studio-last-known-good\.json/u);
+assert.match(exporter, /calendarReleaseHistory: _adminRecoveryHistory/u);
 assert.match(exporter, /sb_publishable_/u, "Nightly fallback must use the public reader boundary.");
 assert.match(exporter, /const pageSize = 200/u, "Nightly export must use conservative cursor pages.");
 assert.match(generated, /fetch\("\/content-studio-last-known-good\.json"/u, "The LKG snapshot must be fetched as a static asset, not bundled into application JS.");

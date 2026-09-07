@@ -1,6 +1,8 @@
-import { useMemo, useState, type ReactNode } from "react";
+import CompositionSurfaceSources from "./CompositionSourceManager";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   buildCompositionMap,
+  buildCompositionTemplate,
   type CompositionMapRow,
   type CompositionMapSource,
   type CompositionPreviewSegment,
@@ -21,6 +23,9 @@ type Props = {
   onEditRow: (row: CompositionMapRow, context?: CompositionEditorContext) => void;
   onStartCmsRow?: (surface: WritingSurfaceMapItem, starter: WritingSurfaceCmsStarter) => void;
   rows: CompositionMapRow[];
+  templateKeys?: string[];
+  initialKey?: string;
+  onLoadRow?: (row: CompositionMapRow) => Promise<unknown>;
 };
 
 export type CompositionEditorContext = {
@@ -50,8 +55,13 @@ function sourceKindLabel(source: CompositionMapSource) {
 }
 
 function ReaderSurfaceWorkspace({
-  onStartCmsRow
+  onStartCmsRow, rows, templates, onEditRow, onSelectTemplate, onLoadRow
 }: {
+  rows: CompositionMapRow[];
+  templates: ReturnType<typeof buildCompositionMap>;
+  onEditRow: Props["onEditRow"];
+  onSelectTemplate: (key: string) => void;
+  onLoadRow?: Props["onLoadRow"];
   onStartCmsRow?: (surface: WritingSurfaceMapItem, starter: WritingSurfaceCmsStarter) => void;
 }) {
   const [area, setArea] = useState<WritingSurfaceMapItem["area"] | "All">("All");
@@ -145,6 +155,7 @@ function ReaderSurfaceWorkspace({
               <span className={`ui-pill admin-status ${access.editability === "editable" ? "status-live" : access.editability === "missing" ? "status-error" : "status-draft"}`}>{editorialStatus}</span>
             </header>
 
+            <CompositionSurfaceSources key={selected.id} surfaceId={selected.id} rows={rows} templates={templates} onEditRow={onEditRow} onSelectTemplate={onSelectTemplate} onLoadRow={onLoadRow} />
             <section className="admin-composition-surface-summary" aria-label="Writing surface contract">
               <div>
                 <p className="admin-eyebrow">Surface content</p>
@@ -223,15 +234,18 @@ function ReaderSurfaceWorkspace({
   );
 }
 
-export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsRow, rows }: Props) {
-  const [scope, setScope] = useState<CompositionScope>("surfaces");
+export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsRow, rows, templateKeys, initialKey, onLoadRow }: Props) {
+  const [scope, setScope] = useState<CompositionScope>(templateKeys ? "templates" : "surfaces");
   const [destinationFilter, setDestinationFilter] = useState("all");
   const [issuesOnly, setIssuesOnly] = useState(false);
   const [query, setQuery] = useState("");
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [selectedKey, setSelectedKey] = useState<string | null>(initialKey ?? null);
+  const [exampleValues, setExampleValues] = useState<Record<string, string>>({});
   const [view, setView] = useState<CompositionView>("preview");
   const [previewAudience, setPreviewAudience] = useState<"you" | "they">("you");
-  const map = useMemo(() => buildCompositionMap(rows), [rows]);
+  const map = useMemo(() => templateKeys
+    ? rows.filter(row => templateKeys.includes(row.content_key)).map(row => buildCompositionTemplate(row, rows))
+    : buildCompositionMap(rows.filter((row) => !row.id.startsWith("package:") || row.sections)), [rows, templateKeys]);
   const destinations = useMemo(
     () => [...new Set(map.map((template) => template.destination))].sort((left, right) => left.localeCompare(right)),
     [map]
@@ -247,7 +261,21 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
       ...template.slots.flatMap((slot) => [slot.name, slot.label, slot.meaning, slot.source, ...slot.sources.flatMap((source) => [source.label, source.row.content_key])])
     ], query)
   )), [map, destinationFilter, issuesOnly, query]);
-  const selected = filtered.find((template) => template.row.content_key === selectedKey) ?? filtered[0];
+  const selectedBase = filtered.find((template) => template.row.content_key === selectedKey) ?? filtered[0];
+  const selected = useMemo(() => selectedBase && Object.keys(exampleValues).length
+    ? buildCompositionTemplate(selectedBase.row, rows, { exampleValues, includeOptionalSources: true })
+    : selectedBase, [selectedBase, rows, exampleValues]);
+  const [loadError, setLoadError] = useState("");
+  const [retryLoad, setRetryLoad] = useState(0);
+  const pendingRows = scope === "templates" && selected ? [selected.row, ...selected.preview.sources.map(source => source.row)].filter(row => (row as CompositionMapRow & { inventory_only?: boolean }).inventory_only) : [];
+  const pendingKey = pendingRows.map(row => row.id).join("|");
+  useEffect(() => {
+    setLoadError("");
+    if (!onLoadRow || !pendingRows.length) return;
+    let active = true;
+    void Promise.all([...new Map(pendingRows.map(row => [row.id, row])).values()].map(onLoadRow)).catch(error => { if (active) setLoadError(error instanceof Error ? error.message : "Could not load composition sources."); });
+    return () => { active = false; };
+  }, [pendingKey, retryLoad]);
   const selectedEditableSources = selected?.slots.reduce((total, slot) => total + slot.sources.length, 0) ?? 0;
   const selectedRuntimeSlots = selected?.slots.filter((slot) => slot.sourceKind === "runtime").length ?? 0;
   const selectedHasAudienceVariants = Boolean(selected?.preview.fields.some((field) => field.audience === "you")
@@ -265,6 +293,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
 
   function selectTemplate(contentKey: string) {
     setSelectedKey(contentKey);
+    setExampleValues({});
     setView("preview");
     setPreviewAudience("you");
   }
@@ -324,7 +353,9 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
 
   return (
     <section className="admin-template-page admin-composition-map-page">
-      <div className="admin-composition-scope-header">
+      {loadError && <div role="alert"><p>{loadError}</p><button type="button" onClick={() => setRetryLoad(value => value + 1)}>Retry sources</button></div>}
+      {pendingRows.length > 0 && !loadError && <p role="status">Loading full composition sources…</p>}
+      {!templateKeys && <div className="admin-composition-scope-header">
         <div className="admin-composition-scope-tabs" role="tablist" aria-label="Composition Map scope">
           <button type="button" role="tab" aria-selected={scope === "surfaces"} className={scope === "surfaces" ? "active" : ""} onClick={() => setScope("surfaces")}>
             Surfaces &amp; systems <span>{writingSurfaceSourceMap.length}</span>
@@ -333,11 +364,11 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
             Template internals <span>{map.length}</span>
           </button>
         </div>
-      </div>
-      {scope === "surfaces" ? <ReaderSurfaceWorkspace onStartCmsRow={onStartCmsRow} /> : <div className="admin-composition-map-layout">
+      </div>}
+      {scope === "surfaces" ? <ReaderSurfaceWorkspace onStartCmsRow={onStartCmsRow} onLoadRow={onLoadRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
         <aside className="admin-composition-template-list" aria-label="Composition templates">
           <header>
-            <div><p className="admin-eyebrow">Choose a template</p><strong>{filtered.length} of {map.length}</strong></div>
+            <div><p className="admin-eyebrow">{templateKeys ? "Choose a passage or template" : "Choose a template"}</p><strong>{filtered.length} of {map.length}</strong></div>
             <small>Choose one to read its surface.</small>
             <div className="admin-composition-template-tools">
               <span className="admin-composition-search-shell">
@@ -392,7 +423,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
         </aside>
 
         <section className="admin-composition-detail" aria-label="Selected template composition">
-          {selected ? (
+          {selected && !pendingRows.length && !loadError ? (
             <>
               <header className="admin-composition-detail-header">
                 <div>
@@ -401,7 +432,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
                   <p>{selected.description}</p>
                 </div>
                 <button type="button" className="admin-primary-button" onClick={() => onEditRow(selected.row)}>
-                  Edit main template
+                  {selected.preview.lineage === "saved-passage" ? "Edit passage" : "Edit main template"}
                 </button>
               </header>
 
@@ -429,11 +460,11 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
                   <header>
                     <div>
                       <p className="admin-eyebrow">Representative surface preview</p>
-                      <h3>{selected.preview.lineage === "runtime-traceable" ? "Traceable reader rendering" : "Preview lineage is incomplete"}</h3>
-                      <p>{selected.preview.lineageNote} This uses sample chart facts, not a live chart.</p>
+                      <h3>{selected.preview.lineage === "saved-passage" ? "Complete passage preview" : selected.preview.lineage === "runtime-traceable" ? "Traceable reader rendering" : "Preview lineage is incomplete"}</h3>
+                      <p>{selected.preview.lineageNote} {selected.preview.lineage !== "saved-passage" && "This uses sample chart facts, not a live chart."}</p>
                     </div>
-                    <span className={`ui-pill admin-status ${selected.preview.lineage === "runtime-traceable" ? "status-reviewed" : "status-error"}`}>
-                      {selected.preview.lineage === "runtime-traceable" ? "Runtime-traceable" : "Not traceable"}
+                    <span className={`ui-pill admin-status ${selected.preview.lineage !== "not-traceable" ? "status-reviewed" : "status-error"}`}>
+                      {selected.preview.lineage === "saved-passage" ? "Saved passage" : selected.preview.lineage === "runtime-traceable" ? "Runtime-traceable" : "Not traceable"}
                     </span>
                   </header>
 
@@ -506,8 +537,9 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
 
                     <section aria-label="Example calculated facts">
                       <header><div><p className="admin-eyebrow">Example facts</p><h3>Values supplied by the app</h3></div><strong>{selected.preview.facts.length}</strong></header>
+                      <p className="admin-field-hint">Change sample facts to find the wording for a planet, sign, house, or aspect. These inputs do not change anyone’s calculated chart.</p>
                       <dl>
-                        {selected.preview.facts.map((fact) => <div key={fact.name}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}
+                        {selected.preview.facts.map((fact) => <div key={fact.name}><dt><label htmlFor={`composition-fact-${fact.name}`}>{fact.label}</label></dt><dd><input id={`composition-fact-${fact.name}`} value={fact.value} onChange={(event) => setExampleValues((current) => ({ ...current, [fact.name]: event.target.value }))} /></dd></div>)}
                       </dl>
                       {!selected.preview.facts.length && <p className="admin-field-hint">No calculated facts are required by this template.</p>}
                     </section>

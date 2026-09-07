@@ -755,9 +755,14 @@ export function transitV3SameBeatKeyForContentKey(contentKey: string | null | un
 }
 
 export function installFallbackArchitectureV3Bundle(
-  bundle: FallbackArchitectureV3Bundle,
-  packageVersion = bundle.packageManifest?.packageVersion ?? fallbackArchitectureV3PackageVersion
+  bundle: FallbackArchitectureV3Bundle | null,
+  packageVersion = bundle?.packageManifest?.packageVersion ?? fallbackArchitectureV3PackageVersion
 ) {
+  if (!bundle) {
+    dashboardCoreReaderBundle = null;
+    recomposeReaderBundle();
+    return null;
+  }
   const readerBundle = readerEligibleBundle(bundle);
   const manifest = fallbackArchitectureV3ManifestForBundle(readerBundle, packageVersion);
   dashboardCoreReaderBundle = readerBundle;
@@ -767,9 +772,14 @@ export function installFallbackArchitectureV3Bundle(
 }
 
 export function installCompatibilityFallbackArchitectureV3Bundle(
-  bundle: FallbackArchitectureV3Bundle,
-  packageVersion = bundle.packageManifest?.packageVersion ?? fallbackArchitectureV3PackageVersion
+  bundle: FallbackArchitectureV3Bundle | null,
+  packageVersion = bundle?.packageManifest?.packageVersion ?? fallbackArchitectureV3PackageVersion
 ) {
+  if (!bundle) {
+    dashboardCompatibilityReaderBundle = null;
+    recomposeReaderBundle();
+    return null;
+  }
   const readerBundle = readerEligibleBundle(bundle);
   const manifest = fallbackArchitectureV3ManifestForBundle(readerBundle, packageVersion);
   dashboardCompatibilityReaderBundle = readerBundle;
@@ -779,9 +789,14 @@ export function installCompatibilityFallbackArchitectureV3Bundle(
 }
 
 export function installSkyPlacementFallbackArchitectureV3Bundle(
-  bundle: FallbackArchitectureV3Bundle,
-  packageVersion = bundle.packageManifest?.packageVersion ?? fallbackArchitectureV3PackageVersion
+  bundle: FallbackArchitectureV3Bundle | null,
+  packageVersion = bundle?.packageManifest?.packageVersion ?? fallbackArchitectureV3PackageVersion
 ) {
+  if (!bundle) {
+    dashboardSkyPlacementReaderBundle = null;
+    recomposeReaderBundle();
+    return null;
+  }
   const readerBundle = readerEligibleBundle(bundle);
   const manifest = fallbackArchitectureV3ManifestForBundle(readerBundle, packageVersion);
   dashboardSkyPlacementReaderBundle = readerBundle;

@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import os from "node:os";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
@@ -30,17 +32,21 @@ await build({
       VITE_SUPABASE_PUBLISHABLE_KEY: "content-studio-api-test-publishable-key"
     })
   },
-  entryPoints: [path.resolve("apps/web/src/services/generatedContent.ts")],
+  stdin: { loader: "ts", resolveDir: process.cwd(), contents: `
+    export * from "./apps/web/src/services/generatedContent.ts";
+    export { installFallbackArchitectureV3Bundle, fallbackRendererV3, loadDeferredFallbackArchitectureV3Bundle, transitSynastryFallbackRendererV3 } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
+  ` },
   format: "esm",
   logLevel: "silent",
   outfile: bundleFile,
   platform: "node"
 });
 
-const { loadLiveGeneratedContentForKeys } = await import(
+const runtime = await import(
   `${pathToFileURL(bundleFile).href}?t=${Date.now()}`
 );
 
+const { loadLiveGeneratedContentForKeys } = runtime;
 const contentKey = "cms/qa/content-studio-api-roundtrip";
 const rowId = "content-studio-api-roundtrip-row";
 let row = {
@@ -128,9 +134,17 @@ globalThis.fetch = async (input, init = {}) => {
 
   if (method === "PATCH") {
     assert.equal(url.searchParams.get("id"), `eq.${row.id}`);
+    if (!matchesFilter(url.searchParams, "updated_at", row.updated_at)) return Response.json([]);
     const patch = JSON.parse(String(init.body));
     row = { ...row, ...patch };
     return Response.json([row]);
+  }
+
+  if (method === "DELETE") {
+    if (!["id", "status", "updated_at"].every((key) => matchesFilter(url.searchParams, key, row[key]))) return Response.json([]);
+    const removed = row;
+    row = { id: "deleted", content_key: "deleted" };
+    return Response.json([removed]);
   }
 
   if (method === "POST") {
@@ -154,6 +168,8 @@ globalThis.fetch = async (input, init = {}) => {
       matchesFilter(url.searchParams, "content_key", row.content_key),
       matchesFilter(url.searchParams, "status", row.status),
       matchesFilter(url.searchParams, "lane", row.lane),
+      matchesFilter(url.searchParams, "mode", row.mode),
+      matchesFilter(url.searchParams, "target_date", row.target_date),
       matchesFilter(url.searchParams, "review_state", row.review_state)
     ].every(Boolean);
     return Response.json(matches ? [row] : []);
@@ -336,6 +352,49 @@ const recoveredApprovedNatalAspect = await invokeApi("PATCH", "/api/admin/genera
 assert.equal(recoveredApprovedNatalAspect.status, 200);
 assert.equal(recoveredApprovedNatalAspect.payload.rows[0].status, "LIVE", "An approved package row stuck in Draft must recover on Save & publish.");
 assert.equal(recoveredApprovedNatalAspect.payload.rows[0].sections.packageRecord.body_they, "{{Name}} receives older saved friend-view copy.");
+
+
+const chironBaseline = structuredClone(row);
+const chironCopy = JSON.parse(readFileSync("docs/content-management/owner-copy/chiron-jupiter-hard-2026-09-07.json", "utf8"));
+for (const field of ["body_you", "body_they"]) {
+ assert.equal(createHash("sha256").update(chironCopy[field]).digest("hex"), chironCopy[field + "_sha256"]);
+ assert.equal(chironCopy[field].trim().split(/\s+/u).length, chironCopy[field + "_word_count"]);
+}
+const transitSources = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", "utf8"));
+const chironOriginal = transitSources.authoredCards.find(record => record.contentKey === chironCopy.contentKey);
+row = { ...row, id: "qa-chiron-real-package", content_key: chironCopy.contentKey,
+ surface: "you", mode: "feed", headline: "", summary: "", body: chironOriginal.body_you,
+ provider: "tldrastro-fallback-architecture-v3", status: "DRAFT", lane: "reference", review_state: "needs-review",
+ sections: { packageRecord: structuredClone(chironOriginal), body_you: chironOriginal.body_you, body_they: chironOriginal.body_they },
+ facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3" } };
+for (let attempt = 0; attempt < 2; attempt++) {
+ const nextYou = attempt === 0 ? chironOriginal.body_you : chironCopy.body_you;
+ const savedChiron = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id, expectedUpdatedAt: row.updated_at, headline: row.headline, summary: row.summary, body: nextYou,
+  sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, body_you: nextYou, body_they: chironCopy.body_they } },
+  facts: row.facts, sourceSnapshot: row.source_snapshot, reviewStatus: "needs_review"
+ });
+ assert.equal(savedChiron.status, 200, JSON.stringify(savedChiron.payload));
+ const publishedChiron = await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, ownerAction: "approve-package-revision" });
+ assert.equal(publishedChiron.status, 200, JSON.stringify(publishedChiron.payload));
+ assert.equal(row.sections.packageRecord.body_you, nextYou);
+ assert.equal(row.sections.packageRecord.body_they, chironCopy.body_they);
+}
+await runtime.loadDeferredFallbackArchitectureV3Bundle();
+const chironFetch = globalThis.fetch;
+globalThis.fetch = async (input, init) => String(input).includes("/rpc/content_runtime_revision") ? Response.json(row.updated_at) : chironFetch(input, init);
+const chironBundle = await runtime.loadFallbackArchitectureV3DashboardBundle();
+assert.ok(chironBundle?.transitLib.authoredCards.some(item => item.contentKey === chironCopy.contentKey));
+runtime.installFallbackArchitectureV3Bundle(chironBundle);
+for (const [voice, field] of [["you", "body_you"], ["Nikki", "body_they"]]) {
+ const rendered = runtime.transitSynastryFallbackRendererV3.renderTransitAspect({ transiting: "chiron", natal: "jupiter", aspect: "square", voice, window: "Until September 30" });
+ assert.equal(rendered.contentKey, chironCopy.contentKey);
+ const expected = chironCopy[field].replaceAll("{{Name}}", "Nikki").replaceAll("{{aspectWord}}", "square").replaceAll("{{untilDate}}", "September 30");
+ assert.equal(rendered.parts.join("\n\n"), expected);
+}
+globalThis.fetch = chironFetch;
+runtime.installFallbackArchitectureV3Bundle(null);
+row = chironBaseline;
 
 const packageRegressionBaseline = structuredClone(row);
 const placeholderTransitContentKey = "authored/transit-aspect/venus/moon/hard";
@@ -584,6 +643,85 @@ assert.ok(
   "The reader must reload saved copy through the serving-only API query."
 );
 
+// Exact Calendar rows use capitalized Summary/Body fields. Exercise the same
+// save/sign-off path as the Studio editor, including a second revision.
+const beforeCalendar = row;
+const exactRecord = {
+  contentKey: "sky.aspect.mercury.sextile.mars", Headline: "Mercury Sextile Mars",
+  Summary: "Original summary.", Body: "Original summary. Original ending.",
+  content_role: "full_copy", review_status: "approved",
+  render_policy: "content-studio-exact-sky-aspect-v1", studio_content_type: "aspect",
+  studio_editable_fields: [{ path: "Summary" }, { path: "Body" }]
+};
+row = { ...row, content_key: exactRecord.contentKey, status: "LIVE", lane: "serving", review_state: null,
+  event_type: "sky-aspect-owner-approved-exact", headline: exactRecord.Headline,
+  summary: exactRecord.Summary, body: exactRecord.Body,
+  sections: { packageRecord: exactRecord, packageOriginalRecord: structuredClone(exactRecord), body_you: exactRecord.Body, body_they: exactRecord.Body },
+  facts: { fallbackArchitectureV3: true, content_role: "full_copy", review_status: "approved" },
+  source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", contentStudioExactAspect: true, content_role: "full_copy", review_status: "approved" }
+};
+for (const revision of [1, 2]) {
+  const summary = `Calendar QA summary ${revision}.`;
+  const body = `${summary} Calendar QA final sentence ${revision}.`;
+  const previousBody = row.body;
+  const saved = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at,
+    sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, Summary: summary, Body: body } },
+    reviewStatus: "needs_review"
+  });
+  assert.equal(saved.status, 200);
+  assert.equal(row.body, previousBody, "Saving a draft preserves the approved passage.");
+  assert.equal(row.sections.packageDraft.Body, body);
+  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision"
+  });
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  assert.equal(row.status, "LIVE");
+  assert.equal(row.summary, summary, "Sign Off must publish the capitalized Summary field.");
+  assert.equal(row.body, body, "Sign Off must publish the capitalized Body field.");
+  assert.equal(row.sections.body_you, body);
+  assert.equal(row.sections.body_they, body);
+  assert.equal(row.sections.packageRecord.Body, body);
+  assert.equal(row.sections.packageDraft, undefined);
+  // This single-row store models the returned live target after revision
+  // publication; the real target retains its original feed identity.
+  row.mode = "feed";
+}
+// Lunar Calendar articles use their authored key and lowercase body field.
+const moonRecord = JSON.parse(readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", import.meta.url))).authoredCards
+  .find((item) => item.contentKey === "authored/calendar-weekly-moon/cancer/variant-2");
+assert.ok(moonRecord);
+row = {
+  ...row, content_key: moonRecord.contentKey, body: moonRecord.body,
+  event_type: "fallback-hook", mode: "in_depth", status: "LIVE", lane: "serving", review_state: null,
+  sections: { packageRecord: structuredClone(moonRecord) },
+  facts: { fallbackArchitectureV3: true, content_role: "full_copy", review_status: "approved_reuse" },
+  source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", content_role: "full_copy", review_status: "approved_reuse" }
+};
+for (const revision of [1, 2]) {
+  const original = row.body;
+  const body = `${moonRecord.body}\nQA revision ${revision}.`;
+  const saved = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at,
+    sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, body } },
+    reviewStatus: "needs_review"
+  });
+  assert.equal(saved.status, 200);
+  assert.equal(row.body, original);
+  assert.equal(row.sections.packageDraft.body, body);
+  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision"
+  });
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  assert.equal(row.content_key, moonRecord.contentKey);
+  assert.equal(row.body, body);
+  assert.equal(row.sections.packageRecord.body, body);
+  assert.equal(row.sections.packageDraft, undefined);
+  const reader = await loadLiveGeneratedContentForKeys([moonRecord.contentKey]);
+  assert.equal(reader.get(moonRecord.contentKey)?.body, body);
+}
+row = beforeCalendar;
+
 console.log(JSON.stringify({
   adminReadBack: readBack.payload.rows[0].body,
   contentKey,
@@ -592,3 +730,127 @@ console.log(JSON.stringify({
   status: "PASS",
   unauthorizedWriteBlocked: unauthorized.status === 401
 }, null, 2));
+
+// Repeat save, publish, edit, and save again with the real editor wire shape.
+row = { ...packageRegressionBaseline, updated_at: row.updated_at,
+  sections: { packageRecord: { ...packageRegressionBaseline.sections.packageRecord, headline: "Original title", summary: "Original purpose", editorial_notes: "Original notes" } } };
+for (const [field, value] of [["body_you", "First revised copy."], ["summary", "Updated purpose"], ["headline", "Updated title"], ["editorial_notes", "Updated editor notes"], ["body_you", "Second revised copy."]]) {
+  const result = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at,
+    sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, [field]: value } },
+    reviewStatus: "needs_review"
+  });
+  assert.equal(result.status, 200, `The editor must be able to save ${field}: ${JSON.stringify(result.payload)}`);
+  assert.equal(result.payload.rows[0].sections.packageDraft[field], value);
+  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision"
+  });
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  assert.equal(published.payload.rows[0].sections.packageRecord[field], value);
+}
+const stale = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id, expectedUpdatedAt: "2000-01-01T00:00:00.000Z", body: "Do not overwrite a newer edit."
+});
+assert.equal(stale.status, 409);
+const readonly = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id, expectedUpdatedAt: row.updated_at,
+  sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, content_role: "template" } }
+});
+assert.notEqual(readonly.status, 200, "Structural fields must remain protected.");
+const selectedSources = await invokeApi("GET", "/api/admin/generated-content?status=all&contentKeys=fallback-hook%2Fplanet-best%2Furanus&contentKeys=fallback-hook%2Fnatal-you-placement-sign-final%2Furanus%2Fscorpio");
+assert.equal(selectedSources.status, 200);
+assert(selectedSources.payload.rows.some((source) => source.content_key === "fallback-hook/natal-you-placement-sign-final/uranus/scorpio"));
+console.log("PASS: repeat-save metadata, publish, stale-write rejection, structure protection, and package source starters");
+
+// Full lifecycle through the actual handler, including reopen and repeat save.
+row = structuredClone(readBack.payload.rows[0]);
+const liveDelete = await invokeApi("DELETE", `/api/admin/generated-content?id=${row.id}`);
+assert.equal(liveDelete.status, 409);
+for (const status of ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "DRAFT"]) {
+  const result = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at, status, lane: "serving", reviewState: null
+  });
+  assert.equal(result.status, 200, JSON.stringify(result.payload));
+  assert.equal(row.status, status);
+  const reopened = await invokeApi("GET", `/api/admin/generated-content?id=${row.id}&status=all&visibility=all`);
+  assert.equal(reopened.payload.rows[0].status, status);
+}
+for (const body of ["QA edit after restore.", "QA second edit after restore."]) {
+  const result = await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, expectedUpdatedAt: row.updated_at, body });
+  assert.equal(result.status, 200);
+  assert.equal(row.body, body);
+}
+const staleDelete = await invokeApi("DELETE", `/api/admin/generated-content?id=${row.id}&expectedUpdatedAt=2000-01-01`);
+assert.equal(staleDelete.status, 409);
+const deletedId = row.id;
+const deleted = await invokeApi("DELETE", `/api/admin/generated-content?id=${row.id}&expectedUpdatedAt=${encodeURIComponent(row.updated_at)}`);
+assert.equal(deleted.status, 200);
+assert.equal((await invokeApi("GET", `/api/admin/generated-content?id=${deletedId}&status=all`)).payload.rows.length, 0);
+assert.equal((await invokeApi("DELETE", `/api/admin/generated-content?id=${deletedId}`)).status, 404);
+row = structuredClone(packageRegressionBaseline);
+for (const action of ["archive", "restore"]) {
+  const result = await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, expectedUpdatedAt: row.updated_at, sourceLifecycleAction: action });
+  assert.equal(result.status, 200, JSON.stringify(result.payload));
+  assert.equal(row.status, action === "archive" ? "ARCHIVED" : "DRAFT");
+  assert.equal(row.sections.packageRecord.body_you, packageRegressionBaseline.sections.packageRecord.body_you);
+}
+console.log("PASS: read/reopen, draft/review/publish/archive/restore, repeat-save after restore, guarded hard delete, and package lifecycle");
+
+// Starting another draft from the live row must not overwrite pending work.
+row = { ...packageRegressionBaseline, status: "LIVE", mode: "feed", target_date: null,
+  sections: { packageRecord: exactRecord }, content_key: exactRecord.contentKey };
+const normalFetch = globalThis.fetch;
+let revisionCreates = 0;
+globalThis.fetch = async (input, init = {}) => {
+  const url = new URL(String(input));
+  if (url.searchParams.get("mode") === "eq.studio-draft") {
+    return Response.json([{ id: "other-editors-revision", status: "DRAFT", updated_at: row.updated_at }]);
+  }
+  if (init.method === "POST") revisionCreates += 1;
+  return normalFetch(input, init);
+};
+const parallelRevision = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id, expectedUpdatedAt: row.updated_at,
+  sections: { ...row.sections, packageDraft: { ...exactRecord, Body: "Conflicting new draft." } }, reviewStatus: "needs_review"
+});
+assert.equal(parallelRevision.status, 409, JSON.stringify(parallelRevision.payload));
+assert.equal(revisionCreates, 0, "Existing pending copy must not be sent to an upsert.");
+globalThis.fetch = normalFetch;
+console.log("PASS: another editor's pending revision is preserved");
+globalThis.fetch = async (input, init = {}) => {
+  const url = new URL(String(input));
+  if (url.searchParams.get("mode") === "eq.studio-draft") return Response.json([]);
+  if (init.method === "POST") {
+    assert.match(init.headers.prefer, /resolution=ignore-duplicates/);
+    return Response.json([]); // Another request inserted the revision after lookup.
+  }
+  return normalFetch(input, init);
+};
+const creationRace = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id, expectedUpdatedAt: row.updated_at,
+  sections: { ...row.sections, packageDraft: { ...exactRecord, Body: "Concurrent first save." } }, reviewStatus: "needs_review"
+});
+assert.equal(creationRace.status, 409, JSON.stringify(creationRace.payload));
+globalThis.fetch = normalFetch;
+console.log("PASS: simultaneous first revision insert cannot replace another save");
+
+const natalKey = "fallback-hook/natal-aspect-lived/lilith/square/ascendant";
+row = { ...row, id: "qa-new-natal-aspect", content_key: natalKey, provider: "tldrastro-fallback-architecture-v3", status: "DRAFT", lane: "reference", review_state: "needs-review", mode: "in_depth", surface: "you", event_type: "fallback-hook", block_type: "fallback_hook", body: "QA natal aspect opening. QA natal aspect ending.", sections: { packageRecord: { contentKey: natalKey, content_role: "full_copy", grammar_frame: "complete_sentence", reader_only: true, render_policy: "reader-only-exact-lived-v1", review_status: "needs_review", body: "QA natal aspect opening. QA natal aspect ending.", body_they: "{{Name}} receives the QA natal aspect." } }, facts: { fallbackArchitectureV3: true, review_status: "needs_review" }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", review_status: "needs_review" } };
+const pendingNatalRecord = structuredClone(row.sections.packageRecord);
+row.sections.packageRecord.body = "";
+row.sections.packageRecord.body_they = "";
+const emptyNatal = await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, expectedUpdatedAt: row.updated_at, reviewStatus: "approved" });
+assert.equal(emptyNatal.status, 400, "Empty natal drafts must not return a successful publication.");
+assert.equal(row.status, "DRAFT");
+row.sections.packageRecord = pendingNatalRecord;
+const approvedNatal = await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, expectedUpdatedAt: row.updated_at, reviewStatus: "approved" });
+assert.equal(approvedNatal.status, 200, JSON.stringify(approvedNatal.payload));
+assert.equal(row.sections.packageRecord.approval.approvalLevel, "exact_owner_approved");
+assert.match(row.sections.packageRecord.approval.payloadSha256, /^[a-f0-9]{64}$/);
+globalThis.fetch = async (input, init) => String(input).includes("/rpc/content_runtime_revision") ? Response.json(row.updated_at) : normalFetch(input, init);
+const natalBundle = await runtime.loadFallbackArchitectureV3DashboardBundle();
+assert.equal(natalBundle?.rowsFile.hookRows.some((item) => item.contentKey === natalKey), true, "The actual reader loader must accept the newly published aspect.");
+runtime.installFallbackArchitectureV3Bundle(natalBundle);
+assert.equal(runtime.fallbackRendererV3.renderNatalAspect({ planetA: "lilith", aspect: "square", planetB: "ascendant", voice: "you" }).body, row.body, "The shipped reader must render the exact saved passage, including its ending.");
+globalThis.fetch = normalFetch;
+console.log("PASS: new natal aspect explicit approval receipt, actual reader loader, and shipped resolver render");

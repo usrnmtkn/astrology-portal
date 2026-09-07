@@ -4,6 +4,9 @@ import { jsonRequestBody, reportUrl, requireReportUser, sendJson } from "./_lib/
 import { createSupabaseReportAdmin } from "./_lib/supabase-report-admin.js";
 
 type SourceKind = "generated_interpretation" | "premium_report";
+type GeneratedReportKind = "friend_transit_reading" | "you_day_reading" | "you_week_reading";
+
+const generatedReportTypes: GeneratedReportKind[] = ["friend_transit_reading", "you_day_reading", "you_week_reading"];
 
 type ShareRow = {
   id: string;
@@ -17,7 +20,7 @@ type ShareRow = {
 type GeneratedRow = {
   id: string;
   user_id: string;
-  subject_type: string;
+  subject_type: GeneratedReportKind;
   subject_id: string;
   content_key: string;
   status: string;
@@ -26,7 +29,7 @@ type GeneratedRow = {
   headline: string | null;
   summary: string | null;
   body: string;
-  source_snapshot: { friendName?: unknown } | null;
+  source_snapshot: { friendName?: unknown; subjectLabel?: unknown; periodEnd?: unknown } | null;
   created_at: string;
   updated_at: string;
 };
@@ -76,9 +79,18 @@ function validVanitySlug(value: string) {
 }
 
 function generatedSubjectLabel(row: GeneratedRow) {
+  if (row.subject_type === "you_day_reading" || row.subject_type === "you_week_reading") return "You";
   const snapshotName = row.source_snapshot?.friendName;
   if (typeof snapshotName === "string" && snapshotName.trim()) return snapshotName.trim();
   return row.headline?.match(/^What's going on with (.+?) right now\?$/u)?.[1]?.trim() || "Friend";
+}
+
+function generatedPeriodEnd(row: GeneratedRow) {
+  if (row.subject_type === "you_week_reading") {
+    const periodEnd = row.source_snapshot?.periodEnd;
+    if (typeof periodEnd === "string" && /^\d{4}-\d{2}-\d{2}$/u.test(periodEnd)) return periodEnd;
+  }
+  return row.target_date;
 }
 
 async function assertOwnerCanShare(
@@ -93,7 +105,7 @@ async function assertOwnerCanShare(
       new URLSearchParams({
         id: `eq.${sourceId}`,
         user_id: `eq.${userId}`,
-        subject_type: "eq.friend_transit_reading",
+        subject_type: "in.(friend_transit_reading,you_day_reading,you_week_reading)",
         select: "id,status,body"
       })
     );
@@ -209,14 +221,14 @@ async function loadSharedGenerated(
     new URLSearchParams({
       id: `eq.${share.source_id}`,
       user_id: `eq.${share.user_id}`,
-      subject_type: "eq.friend_transit_reading",
+      subject_type: "in.(friend_transit_reading,you_day_reading,you_week_reading)",
       select: "id,user_id,subject_type,subject_id,content_key,status,event_type,target_date,headline,summary,body,source_snapshot,created_at,updated_at"
     })
   );
-  if (!row || !["DRAFT", "LIVE", "ARCHIVED"].includes(row.status) || !row.body.trim()) return null;
+  if (!row || !generatedReportTypes.includes(row.subject_type) || !["DRAFT", "LIVE", "ARCHIVED"].includes(row.status) || !row.body.trim()) return null;
   return {
     sourceKind: "generated_interpretation" as const,
-    reportKind: "friend_transit_reading" as const,
+    reportKind: row.subject_type,
     report: {
       id: row.id,
       subjectType: row.subject_type,
@@ -226,6 +238,7 @@ async function loadSharedGenerated(
       status: row.status,
       eventType: row.event_type,
       targetDate: row.target_date,
+      periodEnd: generatedPeriodEnd(row),
       headline: row.headline,
       summary: row.summary,
       body: row.body,

@@ -1,0 +1,31 @@
+
+> tldrastro-monorepo@0.1.0 qa:css-audit
+> node scripts/run-css-consistency-audit.mjs && node scripts/run-css-token-integrity-audit.mjs
+
+# CSS Consistency Audit
+CSS files scanned: 38
+Eyebrow/section-label rules found: 38
+Eyebrow rule mismatches: 0
+Semantic body contract findings: 0
+Typography token contract findings: 0
+Hardcoded spacing declarations: 0
+Hardcoded font-size declarations: 0
+Hardcoded font-weight declarations: 0
+Hardcoded line-height declarations: 0
+Hardcoded border-radius declarations: 0
+Hardcoded box-shadow declarations: 0
+Hardcoded non-token letter-spacing declarations: 0
+Raw component surface declarations: 0
+Untokenized container boundaries: 0
+Report: /Users/mprez/Code/tldrastro-ui-css-qa-20260907/test-results/css-audit/latest.md
+# CSS Token Integrity Audit
+CSS files scanned: 46
+Unresolved active token references: 0
+Reader raw visual values: 0 / 0
+Admin raw visual values: 0 / 0
+Reader raw component colors: 0 / 0
+Admin raw component colors: 0 / 0
+Reader page-local raw token declarations: 0 / 0
+Admin page-local raw token declarations: 0 / 0
+Contextual token aliases and overrides: 133
+Report: /Users/mprez/Code/tldrastro-ui-css-qa-20260907/test-results/css-audit/token-integrity.md

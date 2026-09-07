@@ -30,6 +30,7 @@ export type NatalAspectSourceDraft = {
       content_role: "full_copy";
       grammar_frame: "complete_sentence";
       body: string;
+      body_you: string;
       body_they: string;
       reader_only: true;
       render_policy: "reader-only-exact-lived-v1";
@@ -96,6 +97,7 @@ export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAs
         content_role: "full_copy",
         grammar_frame: "complete_sentence",
         body: "",
+        body_you: "",
         body_they: "",
         reader_only: true,
         render_policy: "reader-only-exact-lived-v1",

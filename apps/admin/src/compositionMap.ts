@@ -1,3 +1,4 @@
+import { lunarContentIdentity } from "./lunarCalendarContent";
 import { templateVariableReferences, type TemplateVariableReference } from "./templateVariableReference";
 import {
   templateVariableSourceCandidates,
@@ -16,6 +17,8 @@ export type CompositionMapRow = {
   body: string | null;
   surface: string;
   status: string;
+  updated_at?: string | null;
+  inventory_only?: boolean;
   block_type?: string | null;
   sections: unknown;
   source_snapshot?: unknown;
@@ -63,7 +66,7 @@ export type CompositionPreviewFact = {
 export type CompositionPreview = {
   facts: CompositionPreviewFact[];
   fields: CompositionPreviewField[];
-  lineage: "runtime-traceable" | "not-traceable";
+  lineage: "runtime-traceable" | "not-traceable" | "saved-passage";
   lineageNote: string;
   sources: CompositionMapSource[];
 };
@@ -103,7 +106,7 @@ function humanize(value: string) {
 
 function packageRecordForRow(row: CompositionMapRow) {
   const sections = objectRecord(row.sections);
-  return objectRecord(sections?.packageRecord) ?? {};
+  return { ...objectRecord(sections?.packageRecord), ...objectRecord(sections?.packageDraft) };
 }
 
 function variableFieldsForRow(row: CompositionMapRow) {
@@ -186,6 +189,7 @@ function rowRole(row: CompositionMapRow) {
 }
 
 export function compositionDestination(row: CompositionMapRow) {
+  if (lunarContentIdentity(row.content_key)) return "Calendar & lunations";
   const snapshot = objectRecord(row.source_snapshot);
   const declaredDestination = text(snapshot?.readerDestination)
     || text(snapshot?.reader_destination);
@@ -202,6 +206,8 @@ export function compositionDestination(row: CompositionMapRow) {
 }
 
 export function compositionTemplateLabel(row: CompositionMapRow) {
+  const lunar = lunarContentIdentity(row.content_key);
+  if (lunar) return lunar.title;
   const destination = compositionDestination(row);
   const planetVariant = row.content_key.match(/^fallback-template\/natal\.planet-in-sign\/([^/]+)$/u)?.[1];
   let label = row.content_key === "fallback-template/natal.planet-in-sign"
@@ -506,6 +512,10 @@ function compositionPreviewFields(row: CompositionMapRow) {
   add("body_you", "Passage", youBody, splitBody ? "you" : undefined);
   if (splitBody) add("body_they", "Passage", theyBody, "they");
   add("body", youBody ? "Main passage" : "Passage", mainBody, splitBody && !youBody ? "you" : undefined);
+  if (row.content_key.startsWith("authored/calendar-weekly-moon/")) {
+    add("focus", "Focus (stored field)", packageRecord.focus);
+    add("strategy", "Strategy (stored field)", packageRecord.strategy);
+  }
   ([
     ["opening", "Opening"],
     ["tension", "Tension"],
@@ -561,11 +571,13 @@ function buildCompositionPreview(
         rendered: segments.map((segment) => segment.text).join("")
       };
     });
-  const requiredSavedSlots = slots.filter((slot) => slot.requirement === "Required" && slot.sourceKind === "saved-copy");
+  const requiredSavedSlots = slots.filter((slot) => Boolean(slot.issue) || (slot.requirement === "Required" && slot.sourceKind === "saved-copy"));
   const untraceableSlots = requiredSavedSlots.filter((slot) => (
-    slot.sourceContract.confidence === "inferred" || !selectedSavedSlots.has(slot.name)
+    Boolean(slot.issue) || slot.sourceContract.confidence === "inferred" || !selectedSavedSlots.has(slot.name)
   ));
-  const lineage = untraceableSlots.length === 0 ? "runtime-traceable" : "not-traceable";
+  const isLunarPassage = Boolean(lunarContentIdentity(row.content_key)) && slots.length === 0;
+  if (isLunarPassage) sources.push({ kind: "copy", label: lunarContentIdentity(row.content_key)!.title, row });
+  const lineage = isLunarPassage ? "saved-passage" : untraceableSlots.length === 0 ? "runtime-traceable" : "not-traceable";
   return {
     fields,
     facts: slots
@@ -576,7 +588,9 @@ function buildCompositionPreview(
         value: values.get(slot.name) ?? representativeExampleForRow(row, slot.name, slot.example)
       })),
     lineage,
-    lineageNote: lineage === "runtime-traceable"
+    lineageNote: lineage === "saved-passage"
+      ? "This complete saved passage has no substitution variables. Review it as one unit. Publication and runtime selection are separate checks."
+      : lineage === "runtime-traceable"
       ? "Every required saved-copy slot follows a declared resolver contract and resolves to one editable source for these sample facts."
       : `The runtime source cannot be proven for ${untraceableSlots.map((slot) => `{{${slot.name}}}`).join(", ")}. The preview is incomplete until that lineage is declared.`,
     sources
@@ -618,14 +632,14 @@ function buildCompositionTemplateWithCache(
     if (compositionDestination(row) === "Reader destination not declared") {
       issues.unshift("Reader destination is not declared.");
     }
-    if (slots.length === 0) issues.push("No template slots were detected.");
+    if (slots.length === 0 && !lunarContentIdentity(row.content_key)) issues.push("No template slots were detected.");
     if (/^slot-template\/[2-6][a-z]$/iu.test(row.content_key)) {
       issues.push("Legacy template ID needs an explicit human destination and name.");
     }
     const preview = buildCompositionPreview(row, slots, previewOptions);
     return {
       destination: compositionDestination(row),
-      description: text(row.summary) || "No editor-facing template description has been saved.",
+      description: lunarContentIdentity(row.content_key)?.selection || text(row.summary) || "No editor-facing template description has been saved.",
       issues,
       label: compositionTemplateLabel(row),
       preview,

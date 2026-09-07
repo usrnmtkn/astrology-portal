@@ -13,7 +13,7 @@ const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-exact-sky-aspect-r
 const registryBundleFile = path.join(os.tmpdir(), "tldrastro-approved-exact-sky-aspect-registry.bundle.mjs");
 const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf8"));
 const canonicalPayloadRelative = process.env.SKY_CALENDAR_OWNER_PAYLOADS_PATH
-  ?? "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json";
+  ?? "packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/current-owner-payloads.json";
 const canonicalPayloadPath = path.resolve(repoRoot, canonicalPayloadRelative);
 if (!canonicalPayloadPath.startsWith(`${repoRoot}${path.sep}`)) {
   throw new Error("SKY_CALENDAR_OWNER_PAYLOADS_PATH must resolve inside the repository.");
@@ -302,3 +302,12 @@ console.log("Calendar exact Sky-aspect routing parity passed", {
   screenshotRegressions: screenshotCases.length,
   remainingDocumentedExactGaps: documentedExactUniverse - canonicalEventRecords.length
 });
+
+const { buildRows } = await import("./seed-published-calendar-aspect-content-studio.mjs");
+const nodeRows = buildRows().filter((row) => ["sky.aspect.north-node.square.mars", "sky.aspect.south-node.square.mars"].includes(row.content_key));
+const nodeMap = new Map(nodeRows.map((row) => [row.content_key, { ...row, contentKey: row.content_key, sourceSnapshot: row.source_snapshot }]));
+const paired = normalizeCalendarEventSurface(
+  aspectEvent({ first: "Mars", second: "North Node", aspect: "square", fromSign: "Cancer", toSign: "Aries" }),
+  nodeMap.get("sky.aspect.north-node.square.mars"), "Today", null, exactLookup, null, nodeMap
+);
+for (const row of nodeRows) assert.ok(paired.sections[0].body.includes(row.body), `${row.content_key}: Calendar must retain both edited node poles after hydration`);

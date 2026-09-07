@@ -292,6 +292,12 @@ const variableDefinitions: Record<string, VariableDefinition> = {
     example: "Mercury",
     source: "Calculated chart fact"
   },
+  Name: {
+    meaning: "The selected friend’s display name used in Friends reader copy.",
+    example: "Maya",
+    source: "Selected friend profile",
+    sourceKind: "runtime"
+  },
   otherName: {
     meaning: "The other person’s display name in a relationship reading.",
     example: "Maya",

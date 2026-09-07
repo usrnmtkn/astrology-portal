@@ -79,7 +79,7 @@ function buildAttentionItems(coverage: CoveragePayload, liveRows: InventoryRow[]
       id: `unwired-${row.id}`,
       kind: "unwired",
       title: row.headline?.trim() || row.content_key,
-      problem: "Published copy is not connected to a reader surface.",
+      problem: "This copy cannot reach a reader surface.",
       why: "The row is LIVE in the serving lane, but no verified reader call site requests this content-key family.",
       actionLabel: "Open content row",
       actionHref: editorHrefForKey(row.content_key),
@@ -220,7 +220,7 @@ export default function NeedsAttentionDashboard() {
 
   const groupDefinitions = [
     { key: "required", label: "Required editorial decisions", items: groups.required },
-    { key: "unwired", label: "Published but not connected", items: groups.unwired },
+    { key: "unwired", label: "Not live", items: groups.unwired },
     { key: "errors", label: "Content errors", items: groups.errors },
     { key: "coverage", label: "Required coverage gaps", items: groups.coverage }
   ];
