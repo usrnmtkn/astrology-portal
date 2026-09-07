@@ -27,207 +27,75 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
-          def replace_once(path: str, old: str, new: str):
+          def sub_once(path: str, pattern: str, replacement: str, flags=0):
               file = Path(path)
               text = file.read_text()
-              count = text.count(old)
+              updated, count = re.subn(pattern, replacement, text, count=1, flags=flags)
               if count != 1:
-                  raise SystemExit(f"Expected exactly one anchor in {path}; found {count}")
-              file.write_text(text.replace(old, new, 1))
+                  raise SystemExit(f"Expected exactly one structural match in {path}; found {count}: {pattern[:100]}")
+              file.write_text(updated)
 
-          replace_once(
-              "apps/web/src/App.tsx",
-              '''      const body = aspectDetail.body
-                .filter((paragraph): paragraph is string => typeof paragraph === "string")
-                .map((paragraph) => stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(paragraph)).trim())
-                .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph))
-                .join("\\n\\n");
-
-              if (!body) return [];
-
-              return [{
-                orb: aspect.orb,
-                section: {
-                  heading: aspectDetail.title,
-                  body,
-                  role: "aspect" as const,
-                  aspectType: aspect.type,
-                  group: normalizedAspectToneBucket(aspect.type)
-                } satisfies SkyDetailSection
-              }];''',
-              '''      const bodyParagraphs = aspectDetail.body
-                .filter((paragraph): paragraph is string => typeof paragraph === "string")
-                .map((paragraph) => stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(paragraph)).trim())
-                .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph));
-              const southNodeIndex = bodyParagraphs.findIndex((paragraph) => /^South Node \\([^)]+\\):/u.test(paragraph));
-              const body = southNodeIndex >= 0
-                ? [
-                    bodyParagraphs.slice(0, southNodeIndex).join(" "),
-                    bodyParagraphs.slice(southNodeIndex).join(" ")
-                  ].filter(Boolean).join("\\n\\n")
-                : bodyParagraphs.join(" ");
-
-              if (!body) return [];
-
-              return [{
-                orb: aspect.orb,
-                section: {
-                  heading: aspectDetail.title,
-                  body,
-                  dateLine: skyPlacementAspectExactDate(aspect, generatedAt, positions),
-                  role: "aspect" as const,
-                  aspectType: aspect.type,
-                  group: normalizedAspectToneBucket(aspect.type)
-                } satisfies SkyDetailSection
-              }];'''
+          app = "apps/web/src/App.tsx"
+          sub_once(
+              app,
+              r'''(?P<indent>\s*)const body = aspectDetail\.body\s*\.filter\(\(paragraph\): paragraph is string => typeof paragraph === "string"\)\s*\.map\(\(paragraph\) => stripLegacySkyArticleScaffoldPrefix\(stripTldrPrefix\(paragraph\)\)\.trim\(\)\)\s*\.filter\(\(paragraph\) => paragraph && isReaderFacingCopy\(paragraph\)\)\s*\.join\("\\n\\n"\);''',
+              '''\\g<indent>const bodyParagraphs = aspectDetail.body\n\\g<indent>  .filter((paragraph): paragraph is string => typeof paragraph === "string")\n\\g<indent>  .map((paragraph) => stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(paragraph)).trim())\n\\g<indent>  .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph));\n\\g<indent>const southNodeIndex = bodyParagraphs.findIndex((paragraph) => /^South Node \\([^)]+\\):/u.test(paragraph));\n\\g<indent>const body = southNodeIndex >= 0\n\\g<indent>  ? [\n\\g<indent>      bodyParagraphs.slice(0, southNodeIndex).join(" "),\n\\g<indent>      bodyParagraphs.slice(southNodeIndex).join(" ")\n\\g<indent>    ].filter(Boolean).join("\\n\\n")\n\\g<indent>  : bodyParagraphs.join(" ");''',
+              re.S
+          )
+          sub_once(
+              app,
+              r'''heading:\s*aspectDetail\.title,\s*body,\s*role:\s*"aspect" as const,''',
+              '''heading: aspectDetail.title,\n          body,\n          dateLine: skyPlacementAspectExactDate(aspect, generatedAt, positions),\n          role: "aspect" as const,''',
+              re.S
           )
 
-          replace_once(
-              "apps/web/src/features/sky/SkyDetailArticle.tsx",
-              '''                      const bodyParagraphs = typeof section.body === "string"
-                        ? fullDetailReaderFacingParagraphs([section.body]).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
-                        : [];
-                      const sectionHeading = typeof section.heading === "string" ? section.heading : "";''',
-              '''                      const bodyParagraphs = typeof section.body === "string"
-                        ? fullDetailReaderFacingParagraphs([section.body]).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
-                        : [];
-                      const explicitDateLine = typeof section.dateLine === "string" ? section.dateLine.trim() : "";
-                      const inlineDateLine = !explicitDateLine
-                        && bodyParagraphs[0]
-                        && /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\\s+\\d{1,2}(?:,\\s+\\d{4})?$/u.test(bodyParagraphs[0])
-                          ? bodyParagraphs[0]
-                          : "";
-                      const aspectDateLine = explicitDateLine || inlineDateLine;
-                      const copyParagraphs = inlineDateLine ? bodyParagraphs.slice(1) : bodyParagraphs;
-                      const sectionHeading = typeof section.heading === "string" ? section.heading : "";'''
+          detail = "apps/web/src/features/sky/SkyDetailArticle.tsx"
+          sub_once(
+              detail,
+              r'''const bodyParagraphs = typeof section\.body === "string"\s*\? fullDetailReaderFacingParagraphs\(\[section\.body\]\)\.map\(\(paragraph\) => stripLegacySkyArticleScaffoldPrefix\(paragraph\)\)\.filter\(Boolean\)\s*:\s*\[\];\s*const sectionHeading = typeof section\.heading === "string" \? section\.heading : "";''',
+              '''const bodyParagraphs = typeof section.body === "string"\n                        ? fullDetailReaderFacingParagraphs([section.body]).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)\n                        : [];\n                      const explicitDateLine = typeof section.dateLine === "string" ? section.dateLine.trim() : "";\n                      const inlineDateLine = !explicitDateLine\n                        && bodyParagraphs[0]\n                        && /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\\s+\\d{1,2}(?:,\\s+\\d{4})?$/u.test(bodyParagraphs[0])\n                          ? bodyParagraphs[0]\n                          : "";\n                      const aspectDateLine = explicitDateLine || inlineDateLine;\n                      const copyParagraphs = inlineDateLine ? bodyParagraphs.slice(1) : bodyParagraphs;\n                      const sectionHeading = typeof section.heading === "string" ? section.heading : "";''',
+              re.S
           )
-          replace_once(
-              "apps/web/src/features/sky/SkyDetailArticle.tsx",
-              '''                        ? bodyParagraphs.find((paragraph) => paragraph.startsWith("South Node ("))?.match(/^South Node \\(([^)]+)\\):\\s*(.*)$/su)''',
-              '''                        ? copyParagraphs.find((paragraph) => paragraph.startsWith("South Node ("))?.match(/^South Node \\(([^)]+)\\):\\s*(.*)$/su)'''
+          sub_once(
+              detail,
+              r'''\? bodyParagraphs\.find\(\(paragraph\) => paragraph\.startsWith\("South Node \("\)\)\?\.match\(\/\^South Node \\\((\[\^\)\]\+)\\\):\\s\*\(\.\*\)\$\/su\)''',
+              '''? copyParagraphs.find((paragraph) => paragraph.startsWith("South Node ("))?.match(/^South Node \\(([^)]+)\\):\\s*(.*)$/su)'''
           )
-          replace_once(
-              "apps/web/src/features/sky/SkyDetailArticle.tsx",
-              '''                      const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;''',
-              '''                      const bodyAlreadyStartsWithTag = sourceTag && copyParagraphs[0]?.trim() === sourceTag;'''
+          sub_once(
+              detail,
+              r'''const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs\[0\]\?\.trim\(\) === sourceTag;''',
+              '''const bodyAlreadyStartsWithTag = sourceTag && copyParagraphs[0]?.trim() === sourceTag;'''
           )
-          replace_once(
-              "apps/web/src/features/sky/SkyDetailArticle.tsx",
-              '''                          {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
-                          {bodyParagraphs.length > 0
-                            ? bodyParagraphs.map((paragraph, paragraphIndex) => southNodeMatch?.[0] === paragraph ? (
-                              <Fragment key={`${section.key}-${paragraphIndex}`}>
-                                <div className="article-related-aspects__copy-heading"><h4>{southNodeHeading}</h4></div>
-                                <p>{southNodeMatch[2]}</p>
-                              </Fragment>
-                            ) : <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>)''',
-              '''                          {aspectDateLine ? <p className="article-related-aspects__date">{aspectDateLine}</p> : null}
-                          {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
-                          {copyParagraphs.length > 0
-                            ? copyParagraphs.map((paragraph, paragraphIndex) => southNodeMatch?.[0] === paragraph ? (
-                              <div className="article-related-aspects__node-pole" key={`${section.key}-${paragraphIndex}`}>
-                                <div className="article-related-aspects__copy-heading"><h4>{southNodeHeading}</h4></div>
-                                <p>{southNodeMatch[2]}</p>
-                              </div>
-                            ) : <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>)'''
+          sub_once(
+              detail,
+              r'''\{sourceTag && !bodyAlreadyStartsWithTag \? <p>\{sourceTag\}<\/p> : null\}\s*\{bodyParagraphs\.length > 0\s*\? bodyParagraphs\.map\(\(paragraph, paragraphIndex\) => southNodeMatch\?\.\[0\] === paragraph \? \(\s*<Fragment key=\{`\$\{section\.key\}-\$\{paragraphIndex\}`\}>\s*<div className="article-related-aspects__copy-heading"><h4>\{southNodeHeading\}<\/h4><\/div>\s*<p>\{southNodeMatch\[2\]\}<\/p>\s*<\/Fragment>\s*\) : <p key=\{`\$\{section\.key\}-\$\{paragraphIndex\}`\}>\{paragraph\}<\/p>\)''',
+              '''{aspectDateLine ? <p className="article-related-aspects__date">{aspectDateLine}</p> : null}\n                          {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}\n                          {copyParagraphs.length > 0\n                            ? copyParagraphs.map((paragraph, paragraphIndex) => southNodeMatch?.[0] === paragraph ? (\n                              <div className="article-related-aspects__node-pole" key={`${section.key}-${paragraphIndex}`}>\n                                <div className="article-related-aspects__copy-heading"><h4>{southNodeHeading}</h4></div>\n                                <p>{southNodeMatch[2]}</p>\n                              </div>\n                            ) : <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>)''',
+              re.S
           )
 
-          replace_once(
-              "apps/web/src/styles/sky.css",
-              '''.article-related-aspects__copy-heading {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            align-items: start;
-            gap: var(--aspect-row-gap, var(--card-row-gap));
-            margin-bottom: var(--sp-2);
-          }
-
-          .article-related-aspects__copy-heading :is(h3, h4) {''',
-              '''.article-related-aspects__copy-heading {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
-            align-items: start;
-            gap: var(--aspect-row-gap, var(--card-row-gap));
-            margin-bottom: var(--sp-2);
-          }
-
-          .article-related-aspects__copy .article-related-aspects__date {
-            margin: 0 0 var(--space-4);
-            color: var(--muted);
-            font-family: var(--font-body);
-            font-size: var(--type-meta-size);
-            font-weight: var(--weight-medium);
-            line-height: var(--leading-meta);
-          }
-
-          .article-related-aspects__copy .article-related-aspects__date + p {
-            margin-top: 0;
-          }
-
-          .article-related-aspects__node-pole {
-            margin-top: calc(var(--space-7) + var(--space-1));
-          }
-
-          .article-related-aspects__node-pole .article-related-aspects__copy-heading {
-            margin-bottom: var(--sp-2);
-          }
-
-          .article-related-aspects__copy-heading :is(h3, h4) {'''
+          css = "apps/web/src/styles/sky.css"
+          sub_once(
+              css,
+              r'''(\.article-related-aspects__copy-heading \{\s*display: grid;\s*grid-template-columns: minmax\(0, 1fr\) auto;\s*align-items: start;\s*gap: var\(--aspect-row-gap, var\(--card-row-gap\)\);\s*margin-bottom: var\(--sp-2\);\s*\}\s*)''',
+              r'''\1.article-related-aspects__copy .article-related-aspects__date {\n  margin: 0 0 var(--space-4);\n  color: var(--muted);\n  font-family: var(--font-body);\n  font-size: var(--type-meta-size);\n  font-weight: var(--weight-medium);\n  line-height: var(--leading-meta);\n}\n\n.article-related-aspects__copy .article-related-aspects__date + p {\n  margin-top: 0;\n}\n\n.article-related-aspects__node-pole {\n  margin-top: calc(var(--space-7) + var(--space-1));\n}\n\n.article-related-aspects__node-pole .article-related-aspects__copy-heading {\n  margin-bottom: var(--sp-2);\n}\n\n''',
+              re.S
           )
 
-          replace_once(
-              "scripts/test-sky-placement-residency-aspects.mts",
-              '''  assert.doesNotMatch(detailSource, /section\\.dateLine/u, "Residency date rendering should remain inside the dynamically loaded aspect body.");''',
-              '''  assert.match(
-            appSource,
-            /function relatedSkyAspectSectionsForPlacement[\\s\\S]*?dateLine:\\s*skyPlacementAspectExactDate\\(aspect, generatedAt, positions\\)/u,
-            "Current placement aspect cards must retain their calculated exact date when they become Sky detail sections."
-          );
-          assert.match(
-            appSource,
-            /bodyParagraphs[\\s\\S]*?southNodeIndex[\\s\\S]*?join\\(" "\\)/u,
-            "Placement aspect fallback fragments must compose into prose blocks instead of one paragraph per source row."
-          );
-          assert.match(
-            detailSource,
-            /section\\.dateLine[\\s\\S]*?article-related-aspects__date/u,
-            "Related placement aspects must render exact-date metadata when supplied."
-          );
-          assert.match(
-            detailSource,
-            /inlineDateLine[\\s\\S]*?bodyParagraphs\\.slice\\(1\\)/u,
-            "Residency aspects must still promote their dynamically loaded leading exact date out of body prose."
-          );'''
+          residency_test = "scripts/test-sky-placement-residency-aspects.mts"
+          sub_once(
+              residency_test,
+              r'''\s*assert\.doesNotMatch\(detailSource, \/section\\\.dateLine\/u, "Residency date rendering should remain inside the dynamically loaded aspect body\."\);''',
+              '''\n  assert.match(\n    appSource,\n    /function relatedSkyAspectSectionsForPlacement[\\s\\S]*?dateLine:\\s*skyPlacementAspectExactDate\\(aspect, generatedAt, positions\\)/u,\n    "Current placement aspect cards must retain their calculated exact date when they become Sky detail sections."\n  );\n  assert.match(\n    appSource,\n    /bodyParagraphs[\\s\\S]*?southNodeIndex[\\s\\S]*?join\\(" "\\)/u,\n    "Placement aspect fallback fragments must compose into prose blocks instead of one paragraph per source row."\n  );\n  assert.match(\n    detailSource,\n    /section\\.dateLine[\\s\\S]*?article-related-aspects__date/u,\n    "Related placement aspects must render exact-date metadata when supplied."\n  );\n  assert.match(\n    detailSource,\n    /inlineDateLine[\\s\\S]*?bodyParagraphs\\.slice\\(1\\)/u,\n    "Residency aspects must still promote their dynamically loaded leading exact date out of body prose."\n  );'''
           )
 
-          replace_once(
-              "scripts/test-calendar-south-node-serving.mjs",
-              '''assert.match(
-            skyDetailSource,
-            /southNodeMatch[\\s\\S]*?article-related-aspects__copy-heading[\\s\\S]*?<h4>\\{southNodeHeading\\}<\\/h4>/u,
-            "Paired South Node copy must render with the same aspect subtitle treatment as the North Node heading."
-          );
-
-          console.log("South Node Calendar serving + Content Studio contract passed", {''',
-              '''assert.match(
-            skyDetailSource,
-            /southNodeMatch[\\s\\S]*?article-related-aspects__node-pole[\\s\\S]*?article-related-aspects__copy-heading[\\s\\S]*?<h4>\\{southNodeHeading\\}<\\/h4>/u,
-            "Paired South Node copy must render as a spaced peer subsection with the same aspect subtitle treatment as the North Node heading."
-          );
-          assert.match(
-            skyDetailSource,
-            /article-related-aspects__date/u,
-            "Sky placement aspect cards must expose their exact date in the reader UI."
-          );
-          const skyStyles = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/sky.css"), "utf8");
-          assert.match(
-            skyStyles,
-            /\\.article-related-aspects__node-pole\\s*\\{[\\s\\S]*?margin-top:/u,
-            "South Node peer copy must have deliberate vertical separation from the North Node write-up."
-          );
-
-          console.log("South Node Calendar serving + Content Studio contract passed", {'''
+          south_test = "scripts/test-calendar-south-node-serving.mjs"
+          sub_once(
+              south_test,
+              r'''assert\.match\(\s*skyDetailSource,\s*\/southNodeMatch\[\\s\\S\]\*\?article-related-aspects__copy-heading\[\\s\\S\]\*\?<h4>\\\{southNodeHeading\\\}<\\\/h4>\/u,\s*"Paired South Node copy must render with the same aspect subtitle treatment as the North Node heading\."\s*\);''',
+              '''assert.match(\n  skyDetailSource,\n  /southNodeMatch[\\s\\S]*?article-related-aspects__node-pole[\\s\\S]*?article-related-aspects__copy-heading[\\s\\S]*?<h4>\\{southNodeHeading\\}<\\/h4>/u,\n  "Paired South Node copy must render as a spaced peer subsection with the same aspect subtitle treatment as the North Node heading."\n);\nassert.match(\n  skyDetailSource,\n  /article-related-aspects__date/u,\n  "Sky placement aspect cards must expose their exact date in the reader UI."\n);\nconst skyStyles = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/sky.css"), "utf8");\nassert.match(\n  skyStyles,\n  /\\.article-related-aspects__node-pole\\s*\\{[\\s\\S]*?margin-top:/u,\n  "South Node peer copy must have deliberate vertical separation from the North Node write-up."\n);''',
+              re.S
           )
           PY
       - name: Install dependencies
