@@ -51,7 +51,8 @@ assert.match(retrogradeGroups.find((group) => group.key === "motion")?.descripti
 assert.match(retrogradeGroups.find((group) => group.key === "exact")?.description ?? "", /stored separately/u);
 
 const sources = groups.flatMap((group) => group.sources);
-assert.equal(sources.length, 12);
+assert.equal(sources.length, 14);
+assert.ok(sources.some((source) => source.key === "fallback-hook/natal-you-placement-sign-final/chiron/taurus"));
 assert.ok(sources.some((source) => source.key === "fallback-hook/natal-you-placement-complete-final/chiron/taurus/12"));
 assert.ok(sources.some((source) => source.key === "fallback-hook/placement-sentence/chiron/taurus"));
 assert.ok(sources.some((source) => source.key === "fallback-hook/placement-house-sentence/chiron/12"));

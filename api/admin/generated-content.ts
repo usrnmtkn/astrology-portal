@@ -1,3 +1,4 @@
+import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -324,6 +325,7 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
   if (!hasPackageDraft) record.review_status = reviewStatus;
   record.body_they = normalizeNatalAspectTheyNameVariable(body.contentKey, record.body_they);
   if (typeof record.body_they === "string") sections.body_they = record.body_they;
+  if (!hasPackageDraft && body.reviewStatus === "approved") validateAndApproveNatalAspectCopy(record, body.contentKey ?? "");
   sections.packageRecord = record;
   facts.review_status = reviewStatus;
   sourceSnapshot.review_status = reviewStatus;
@@ -345,6 +347,14 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
     sourceSnapshot,
     status: readerServing ? "LIVE" as const : "DRAFT" as const
   };
+}
+
+function validateAndApproveNatalAspectCopy(record: Record<string, unknown>, contentKey: string) {
+  if (!contentKey.startsWith("fallback-hook/natal-aspect-lived/")) return;
+  if (![record.body, record.body_you, record.body_they].some((value) => typeof value === "string" && value.trim())) {
+    throw new GeneratedContentRequestError("Write the natal aspect passage before publishing. You can save an empty draft for later.", 400);
+  }
+  approveNatalAspectStudioCopy(record, contentKey);
 }
 
 function packagePlaceholders(value: unknown) {
@@ -388,7 +398,7 @@ function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, 
       .filter(Boolean)
     : [];
   return studioPaths.includes(path)
-    || ["fact_line", "opening", "tension", "development", "close", "body", "body_you", "body_they"]
+    || ["headline", "summary", "editorial_notes", "fact_line", "opening", "tension", "development", "close", "text", "body", "body_you", "body_they"]
     .includes(path)
     || path.startsWith("era_layer.");
 }
@@ -547,12 +557,13 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   }
   if (
     isSkyV4CanonicalStage
+    && body.sourceLifecycleAction !== "archive"
     && reviewStatus !== "needs_review"
     && !(isSkyV4OwnerApprovedReaderCopy && reviewStatus === "approved")
   ) {
     throw new Error("SKY V4 content may only use an approval state authorized by its hash-bound owner-approval ledger.");
   }
-  if (isCalendarAspectStage && reviewStatus !== "needs_review") {
+  if (isCalendarAspectStage && body.sourceLifecycleAction !== "archive" && reviewStatus !== "needs_review") {
     throw new Error("Calendar aspect drafts require a separate exact owner approval and serving release before promotion.");
   }
 
@@ -720,6 +731,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     record.editorial_notes = body.editorialNotes;
   }
 
+  if (!hasPackageDraft && body.reviewStatus === "approved") validateAndApproveNatalAspectCopy(record, row.content_key);
   sections.packageRecord = record;
   sections.packageOriginalRecord = packageOriginalRecord;
   const versionId = `draft-${String(patch.updated_at).replace(/[^0-9]/gu, "")}`;
@@ -755,7 +767,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   patch.sections = sections;
   patch.facts = facts;
   patch.source_snapshot = sourceSnapshot;
-  patch.status = readerServing ? "LIVE" : "DRAFT";
+  patch.status = reviewStatus === "deprecated" ? "ARCHIVED" : readerServing ? "LIVE" : "DRAFT";
   patch.lane = readerServing ? "serving" : "reference";
   patch.review_state = readerServing
     ? null
@@ -1278,6 +1290,10 @@ async function listGeneratedContent(req: IncomingMessage) {
   const promptVersion = requestUrl.searchParams.get("promptVersion");
   const contentKey = requestUrl.searchParams.get("contentKey");
   const contentKeyPrefix = requestUrl.searchParams.get("contentKeyPrefix");
+  const contentKeys = requestUrl.searchParams.getAll("contentKeys");
+  if (contentKeys.length > 64 || contentKeys.some((key) => !/^[a-zA-Z0-9_./|-]+$/u.test(key))) {
+    throw new GeneratedContentRequestError("Provide at most 64 valid content keys.");
+  }
   const startDate = requestUrl.searchParams.get("startDate");
   const endDate = requestUrl.searchParams.get("endDate");
   const visibility = requestUrl.searchParams.get("visibility") ?? "all";
@@ -1286,7 +1302,7 @@ async function listGeneratedContent(req: IncomingMessage) {
   const limit = boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
   const view = requestUrl.searchParams.get("view") ?? "detail";
   if (!["detail", "inventory"].includes(view)) throw new GeneratedContentRequestError("view must be detail or inventory.");
-  const inventoryView = view === "inventory" && !id && !contentKey && !contentKeyPrefix;
+  const inventoryView = view === "inventory" && !id && !contentKey && !contentKeyPrefix && contentKeys.length === 0;
   const supportsUpdatedCursor = !id && scope !== "compatibility" && !startDate && !endDate;
   const offset = supportsUpdatedCursor ? 0 : Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
   const selectColumns = inventoryView ? generatedContentInventorySelectColumns() : generatedContentDetailSelectColumns();
@@ -1337,6 +1353,8 @@ async function listGeneratedContent(req: IncomingMessage) {
 
   if (!id && contentKey) {
     params.set("content_key", `eq.${contentKey}`);
+  } else if (!id && contentKeys.length) {
+    params.set("content_key", `in.(${contentKeys.join(",")})`);
   } else if (!id && contentKeyPrefix) {
     params.set("content_key", `like.${contentKeyPrefix}%`);
   }
@@ -1356,6 +1374,22 @@ async function listGeneratedContent(req: IncomingMessage) {
     const payload = await response.json().catch(() => null);
 
     if (response.ok) {
+      if (contentKeys.length && Array.isArray(payload)) {
+        const { natalPlacementPackageSources } = await import("./natal-placement-preview.js");
+        const savedKeys = new Set(payload.map((row) => row.content_key));
+        const starters = natalPlacementPackageSources(contentKeys.filter((key) => !savedKeys.has(key))).map((record) => ({
+          id: `package:${record.contentKey}`, content_key: record.contentKey, surface: "you", mode: "in_depth",
+          status: "DRAFT", lane: "reference", review_state: "needs-review", provider: fallbackArchitectureV3Provider,
+          headline: record.headline ?? record.contentKey, summary: record.summary ?? "",
+          body: record.body_you ?? record.body ?? record.text ?? "",
+          sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true },
+          source_snapshot: { sourcePackage: fallbackArchitectureV3Provider, content_role: record.content_role, review_status: record.review_status },
+          block_type: record.content_role === "template" ? "fallback_template" : record.content_role === "vocabulary" ? "vocabulary_phrase" : "fallback_hook",
+          event_type: record.content_role === "template" ? "fallback-template" : "fallback-hook",
+          updated_at: null, package_starter: true
+        }));
+        return [...payload, ...starters];
+      }
       return inventoryView && Array.isArray(payload) ? payload.map(generatedContentInventoryRow) : payload;
     }
 
@@ -1663,18 +1697,38 @@ async function patchGeneratedContentRow(
 }
 
 async function upsertGeneratedContentRow(row: Record<string, unknown>) {
+  const params = new URLSearchParams({
+    select: "id,status,updated_at",
+    content_key: `eq.${row.content_key}`,
+    mode: `eq.${row.mode}`,
+    target_date: row.target_date ? `eq.${row.target_date}` : "is.null",
+    limit: "1"
+  });
+  const lookup = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, { headers: adminHeaders() });
+  const found = await lookup.json().catch(() => null);
+  if (!lookup.ok) throw new Error(`Could not check existing revisions: ${lookup.status}.`);
+  const previous = Array.isArray(found) ? found[0] : null;
+  const conflict = () => new GeneratedContentRequestError("A saved revision already exists for this content. Open that revision to continue editing; its copy has not been overwritten.", 409);
+  if (previous) {
+    if (previous.status !== "ARCHIVED") throw conflict();
+    // A completed revision can be reused, but only if it has not changed since
+    // this lookup. Active revisions are edited by id through the regular path.
+    return patchGeneratedContentRow(previous.id, row, previous.updated_at);
+  }
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
     method: "POST",
     headers: {
       ...adminHeaders(),
-      prefer: "resolution=merge-duplicates,return=representation"
+      prefer: "resolution=ignore-duplicates,return=representation"
     },
     body: JSON.stringify(row)
   });
   const payload = await response.json().catch(() => null);
   if (!response.ok) {
-    throw new Error(`Supabase revision upsert failed with ${response.status}: ${JSON.stringify(payload)}`);
+    if (response.status === 409) throw conflict();
+    throw new Error(`Supabase revision create failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
+  if (!Array.isArray(payload) || payload.length === 0) throw conflict();
   return payload as ExistingGeneratedContentRow[];
 }
 
