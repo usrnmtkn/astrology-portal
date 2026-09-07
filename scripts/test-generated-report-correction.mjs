@@ -12,11 +12,13 @@ const bundle = await build({
   plugins: [{
     name: "report-test-transport",
     setup(builder) {
-      builder.onResolve({ filter: /transit-reading-production\.js$/ }, () => ({ path: "transport", namespace: "fixture" }));
+      builder.onResolve({ filter: /report-model-client\.js$/ }, () => ({ path: "transport", namespace: "fixture" }));
+      builder.onResolve({ filter: /productionPreCallGate\.cjs$/ }, () => ({ path: "gate", namespace: "fixture" }));
       builder.onResolve({ filter: /openAIResponses\.cjs$/ }, () => ({ path: "instructions", namespace: "fixture" }));
       builder.onLoad({ filter: /.*/, namespace: "fixture" }, ({ path }) => ({ contents: path === "transport"
-        ? `export const prepareTransitReadingProductionKernel = () => ({});
-           export const callGovernedTransitReadingModel = (input) => globalThis.reportCorrectionFixture(input);`
+        ? `export const callReportCalibrationModel = async (input) => { await input.beforeProviderCall(); return globalThis.reportCorrectionFixture(input); };`
+        : path === "gate"
+          ? `export const prepareProductionPreCallGate = () => ({}); export const assertProductionPreCallGate = () => true;`
         : `export const governedInstructionsForRole = () => "Test governed instructions";`
       }));
     }
@@ -35,6 +37,8 @@ try {
     const prompts = [];
     let judgeCalls = 0;
     globalThis.reportCorrectionFixture = async ({ prompt }) => {
+      assert.ok(prompt.includes("EXACT OWNER-AUTHORED REPORT VOICE EVIDENCE"));
+      if (prompts.length) assert.equal(prompt.split("EXACT OWNER-AUTHORED REPORT VOICE EVIDENCE")[1], prompts[0].split("EXACT OWNER-AUTHORED REPORT VOICE EVIDENCE")[1]);
       assert.ok(prompt.includes("BROADEN BEFORE SPECIFYING"), "Every writer attempt, including correction/recovery, must load the breadth contract.");
       assert.ok(prompt.includes("Prose movement and owner voice"));
       events.push("writer");
@@ -50,7 +54,7 @@ try {
       family: "fixture",
       schemaName: "fixture",
       toolDescription: "fixture",
-      productionInput: {},
+      productionInput: { surface: "friends", contentKey: "fixture", eventType: "transit", facts: { friendTransitsBrief: brief }, knowledgeIds: ["fixture"], sourceSnapshot: {} },
       promptForAttempt: (source, headline, feedback) => JSON.stringify(source) + feedback,
       validate: (draft, source) => {
         events.push("validate");

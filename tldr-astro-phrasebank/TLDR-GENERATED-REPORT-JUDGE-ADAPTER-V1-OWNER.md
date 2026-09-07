@@ -48,3 +48,15 @@ If the first judgment blocks a draft, the runtime may give those findings to the
 Judge findings are run-local correction material. They are not owner evidence, do not alter future prompts, and are not promoted into the voice system.
 
 Owner Draft Review feedback is separate. It may become future writer/judge evidence only through an explicit owner approval action. Candidate or rejected feedback must never enter a writer or judge packet.
+
+## Owner corpus comparison (adapter v1.2)
+
+Friends and You writers and judges receive the same three complete owner-final
+report passages from the existing premium report corpus. Retrieval uses the
+locked brief within the overview register and opening/development/close
+functions. Compare words, phrases, sentence rhythm, paragraph movement, and
+endings against this exact evidence, not only abstract voice instructions.
+Historical examples supply language evidence only; the target brief supplies
+facts. A missing or altered passage blocks the provider call. The pass audit
+records source identifiers, hashes, and word counts without promoting any new
+draft into owner-authored evidence.
