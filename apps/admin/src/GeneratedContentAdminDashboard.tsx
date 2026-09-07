@@ -1,6 +1,6 @@
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
 import { SkyDailySummaryStudio } from "./SkyDailySummaryStudio";
-import { currentSkySummaryWording, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
+import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
@@ -5241,7 +5241,7 @@ export function GeneratedContentAdminDashboard() {
       } else {
         const nextDraft: AdminDraft = {
           id: null, contentKey: field.key, surface: "sky", mode: "card", status: "DRAFT",
-          headline: field.label, summary: "", body: importedSkySummary(field.key) ?? field.body, lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED",
+          headline: field.label, summary: "", body: field.body || importedSkySummary(field.key) || "", lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED",
           blockType: "essay", promptVersion: "cms-surface-template-v1", sections: null, facts: null, reviewerNotes: "",
           sourceSnapshot: {
             contentType: "mustache-template", contentSystem: "cms-surface-override", contentLevel: "owner-authored",
@@ -5260,7 +5260,7 @@ export function GeneratedContentAdminDashboard() {
         setEditorSaveError("");
         setDraft(nextDraft);
       }
-      setMessage(`Opened ${field.label}. Save a draft, then Publish to app when the wording is approved.`);
+      setMessage(`Opened ${field.label}. Save & publish makes your edits live in one step.`);
       scrollEditorToTop();
     } catch (error) {
       setMessage(dashboardErrorMessage(error));
@@ -8253,6 +8253,9 @@ export function GeneratedContentAdminDashboard() {
       ? skyArticleEditionFieldChanges(skyArticleEditor.baseEdition, skyArticleEditor.fields)
       : [];
     const isSkySummaryDraft = currentDraft.contentKey.startsWith("cms/sky-daily-summary/");
+    const summaryBuiltin = skyDailySummaryFields.find(field => field.key === currentDraft.contentKey);
+    const matchesBuiltinSummary = Boolean(summaryBuiltin?.body && currentDraft.body.trim() === summaryBuiltin.body.trim());
+    const editorStatusRow = { id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : null), updated_at: currentDraft.updatedAt };
     const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override" || currentDraft.contentKey.startsWith("cms/");
     const cmsAllowedSlots = Array.isArray(currentDraft.sourceSnapshot?.allowedSlots)
       ? currentDraft.sourceSnapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
@@ -8656,7 +8659,7 @@ export function GeneratedContentAdminDashboard() {
           : isCompatibilityCardDraft
             ? "Write the complete directional compatibility reading."
             : undefined;
-    const publishReady = Boolean(currentDraft.body.trim()) && !isNewDraft;
+    const publishReady = Boolean(currentDraft.body.trim()) && (!isNewDraft || isCmsSurfaceDraft);
     const compatibilityNewDraftReady = !isNewDraft || !isCompatibilityWorkspaceDraft || Boolean(
       currentDraft.headline.trim()
       && currentDraft.body.trim()
@@ -8673,7 +8676,7 @@ export function GeneratedContentAdminDashboard() {
       const wordCount = value.trim() ? value.trim().split(/\s+/u).length : 0;
       return `${wordCount} ${wordCount === 1 ? "word" : "words"} · ${value.length} ${value.length === 1 ? "character" : "characters"}`;
     };
-    const editorHeading = currentDraft.id
+    const editorHeading = isSkySummaryDraft ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
         : compatibilityIdentity
@@ -8813,7 +8816,7 @@ export function GeneratedContentAdminDashboard() {
                 {aspectContext.label}
               </span>
             )}
-            <ContentLiveStatusBadge label="Reader status" row={{ id: currentDraft.id, updated_at: currentDraft.updatedAt }} unsaved={draftHasUnsavedChanges} />
+            <ContentLiveStatusBadge label="Reader status" row={editorStatusRow} unsaved={draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} />
             {variableReferences.length > 0 && (
               <button
                 type="button"
@@ -9602,8 +9605,8 @@ export function GeneratedContentAdminDashboard() {
               <strong>Reader-facing CMS override</strong>
               <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
               <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
-              <p>Save as Draft while editing. Publish only when the exact wording is approved; draft and reviewed rows remain invisible to readers.</p>
-              <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={{ id: currentDraft.id, updated_at: currentDraft.updatedAt }} unsaved={draftHasUnsavedChanges} /></p>
+              <p>Save & publish makes your wording live in one step. Save draft keeps an unfinished revision for later.</p>
+              <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={editorStatusRow} unsaved={draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} /></p>
               {cmsTemplateValidation.errors.length > 0 ? (
                 <div role="alert" aria-label="CMS template errors">
                   <strong>Fix before Sign Off</strong>
@@ -10115,16 +10118,16 @@ export function GeneratedContentAdminDashboard() {
                 const saved = draftHasUnsavedChanges || !selectedRow ? await saveDraft() : selectedRow;
                 if (saved) await approvePackageRevision(saved);
               } else {
-                await saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined);
+                await saveDraft(isCmsSurfaceDraft ? "LIVE" : undefined);
               }
             })()}
-            disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision)}
+            disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !(isCmsSurfaceDraft && currentDraft.status !== "LIVE"))}
             title={packageWillPublishOnSave && natalAspectMissingCopy ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
             {isGuidedHeldReview
               ? "Save held draft"
-              : packageCanApproveRevision
+              : isCmsSurfaceDraft || packageCanApproveRevision
                 ? "Save & publish"
                 : packageHasProposal
                 ? "Save draft"
@@ -10132,12 +10135,12 @@ export function GeneratedContentAdminDashboard() {
                   ? "Save & publish"
                   : "Save"}
           </button>
-          {isPackageDraft && packageCanApproveRevision && (
+          {(isCmsSurfaceDraft || isPackageDraft && packageCanApproveRevision) && (
             <button
               className="admin-secondary-button"
               type="button"
-              onClick={() => void saveDraft()}
-              disabled={isLoading || !draftHasUnsavedChanges}
+              onClick={() => void saveDraft(isCmsSurfaceDraft ? "DRAFT" : undefined)}
+              disabled={isLoading || (!isNewDraft && !draftHasUnsavedChanges)}
               title="Keep this revision Not live."
             >
               <Save size={16} aria-hidden="true" />
@@ -10175,10 +10178,10 @@ export function GeneratedContentAdminDashboard() {
               Delete draft
             </button>
           )}
-          {!isPackageDraft && isNewDraft && (
+          {!isPackageDraft && !isCmsSurfaceDraft && isNewDraft && (
             <span className="admin-savebar-next-step">Save this draft before review or publication.</span>
           )}
-          {!isPackageDraft && !isNewDraft && (
+          {!isPackageDraft && !isCmsSurfaceDraft && !isNewDraft && (
             <>
               <button className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady} title={!publishReady ? "Add the required main copy before review." : "Mark this saved copy as editorially reviewed."}>
                 <Check size={16} aria-hidden="true" />

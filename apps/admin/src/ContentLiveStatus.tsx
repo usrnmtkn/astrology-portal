@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
+import { publicationTimestamp } from "../../web/src/content/contentPublicationState";
 export type LiveStatus = { id: string; live: boolean; label: "Live" | "Not live"; detail: string; source: string | null; updatedAt: string | null };
 type StatusRow = { id?: string | null; updated_at?: string | null };
 type Load = (row: StatusRow) => Promise<LiveStatus>;
@@ -36,7 +37,7 @@ export function useContentLiveStatusLoader(request: (ids: string[]) => Promise<L
       const pendingStatus = cache.get(key)!;
       void pendingStatus.catch(() => cache.delete(key));
       return pendingStatus.then((status) => {
-        if (row.updated_at && status.updatedAt && Date.parse(row.updated_at) !== Date.parse(status.updatedAt)) throw new Error("Status could not be verified.");
+        if (row.updated_at && status.updatedAt && publicationTimestamp(row.updated_at) !== publicationTimestamp(status.updatedAt)) throw new Error("Status could not be verified.");
         return status;
       });
     };

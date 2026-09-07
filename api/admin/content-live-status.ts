@@ -4,7 +4,7 @@ loadLocalWebEnv();
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminFetch, readAdminJsonBody, sendAdminJson, adminErrorStatus, adminErrorMessage } from "../_lib/admin-http.js";
-import { contentLiveStatuses, servingPackageRecords, isSkyPartitionKey, type LiveStatusRow } from "../_lib/content-live-status.js";
+import { contentLiveStatuses, servingPackageRecords, builtinContentRecords, isSkyPartitionKey, type LiveStatusRow } from "../_lib/content-live-status.js";
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!await isContentAdminAuthorized(req)) return sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
@@ -29,15 +29,31 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if (!response.ok || !Array.isArray(result)) throw new Error("Could not verify content status.");
       return result as LiveStatusRow[];
     }
-    const ids = body.ids.filter((id) => !id.startsWith("package:") && !id.startsWith("user:"));
+    const ids = body.ids.filter((id) => !id.startsWith("package:") && !id.startsWith("builtin:") && !id.startsWith("user:"));
     const rows = ids.length ? await read(new URLSearchParams({ select, id: `in.(${ids.join(",")})` })) : [];
+    for (const id of body.ids.filter(id => id.startsWith("builtin:"))) {
+      rows.push(builtinContentRecords.get(id.slice(8)) ?? { id, content_key: id.slice(8) });
+    }
     for (const id of body.ids.filter((id) => id.startsWith("package:"))) {
       const source = servingPackageRecords.get(id.slice(8));
       rows.push({ id, content_key: id.slice(8), ...(source ? { sections: { packageRecord: source } } : {}) });
     }
     const keys = [...new Set(rows.map((row) => row.content_key))];
     const candidates = keys.length ? await read(new URLSearchParams({ select, content_key: `in.(${keys.map((key) => `"${key.replaceAll('"', '')}"`).join(",")})`, order: "updated_at.desc,id.desc" })) : [];
-    if (rows.some((row) => isSkyPartitionKey(row.content_key))) {
+    const publications = new Map();
+    if (keys.length) {
+      const keyFilter = [...keys, publicationLedgerKey].map((key) => `"${key.replaceAll('"', '')}"`).join(",");
+      for (let offset = 0; ; offset += 1000) {
+        const params = new URLSearchParams({ select: "content_key,state,revision,row_id,row_updated_at,updated_at", order: "content_key.asc", limit: "1000", offset: String(offset) });
+        params.set("content_key", `in.(${keyFilter})`);
+        const response = await adminFetch(`${base}/rest/v1/content_publications?${params}`, { headers });
+        const records: unknown = await response.json();
+        if (!response.ok || !Array.isArray(records) || !records.every(validContentPublication)) throw new Error("Could not verify publication status.");
+        for (const record of records) publications.set(record.content_key, record);
+        if (records.length < 1000) break;
+      }
+    }
+    if (!publications.has(publicationLedgerKey) && rows.some((row) => isSkyPartitionKey(row.content_key))) {
       // The reader accepts this partition only as a complete, valid mirror.
       const partition: LiveStatusRow[] = [];
       for (let offset = 0; ; offset += 1000) {
@@ -47,21 +63,6 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
       const ids = new Set(partition.map((row) => row.id));
       candidates.splice(0, candidates.length, ...candidates.filter((row) => !ids.has(row.id)), ...partition);
-    }
-    const publications = new Map();
-    if (keys.length) {
-      const keyFilter = [...keys, publicationLedgerKey].map((key) => `"${key.replaceAll('"', '')}"`).join(",");
-      const includesSkyPartition = rows.some((row) => isSkyPartitionKey(row.content_key));
-      for (let offset = 0; ; offset += 1000) {
-        const params = new URLSearchParams({ select: "content_key,state,revision,row_id,row_updated_at,updated_at", order: "content_key.asc", limit: "1000", offset: String(offset) });
-        if (includesSkyPartition) params.set("or", `(content_key.in.(${keyFilter}),content_key.like.fallback-hook/sky-*,content_key.like.house-horoscope-core/*)`);
-        else params.set("content_key", `in.(${keyFilter})`);
-        const response = await adminFetch(`${base}/rest/v1/content_publications?${params}`, { headers });
-        const records: unknown = await response.json();
-        if (!response.ok || !Array.isArray(records) || !records.every(validContentPublication)) throw new Error("Could not verify publication status.");
-        for (const record of records) publications.set(record.content_key, record);
-        if (records.length < 1000) break;
-      }
     }
     const allowsPublication = (row: LiveStatusRow) => {
       const publication = publications.get(row.content_key);

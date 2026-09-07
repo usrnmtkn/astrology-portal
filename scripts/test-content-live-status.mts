@@ -127,3 +127,71 @@ assert.equal(contentLiveStatuses([saturn], [update])[0].live, false, "A differen
 assert.equal(contentLiveStatuses([{ ...update, source_snapshot: { ...update.source_snapshot, exactSkyAspectIdentity: { a: "mars", b: "lilith", aspect: "square" } } }])[0].live, false, "Mismatched reader identity cannot serve.");
 assert.equal(contentLiveStatuses([{ ...update, review_state: "needs-review" }])[0].live, false);
 console.log(`PASS: ${exactRows.length} actual Calendar exact rows, pending revisions, bundled baseline, active versions, reader identity, and review holds`);
+
+// Audit the second source class: installed CMS defaults with no database mirror.
+const { builtinContentRecords } = await import('../api/_lib/content-live-status');
+const { skyDailySummaryFields } = await import('../apps/web/src/content/skyDailySummaryCatalog');
+for (const field of skyDailySummaryFields) {
+  const baseline = builtinContentRecords.get(field.key)!;
+  assert.equal(contentLiveStatuses([baseline], [])[0].live, field.readerEnabled !== false && Boolean(field.body.trim()), field.key);
+  const mirror = { ...baseline, id: 'summary-mirror', status: 'DRAFT', lane: 'serving', review_state: 'EDITORIAL_REVIEW_REQUIRED' };
+  assert.equal(contentLiveStatuses([mirror], [mirror])[0].live, field.readerEnabled !== false && Boolean(field.body.trim()), `${field.key}: exact bundled wording is live independently of a draft mirror`);
+  if (field.readerEnabled === false) {
+    const published = { ...mirror, status: 'LIVE', review_state: null };
+    assert.equal(contentLiveStatuses([published], [published])[0].live, false, 'Unused template fields never inherit a Live row status');
+  }
+  assert.equal(contentLiveStatuses([{ ...mirror, body: 'QA unsaved different summary' }], [])[0].live, false);
+}
+assert.equal(contentLiveStatuses([safe], [safe], () => false)[0].live, false, 'A raw LIVE row must not bypass the publication ledger');
+const summaryKey = 'cms/sky-daily-summary/sun/virgo';
+const summaryBuiltin = builtinContentRecords.get(summaryKey)!;
+dbRows = [];
+publications = [];
+globalThis.fetch = async input => {
+  const url = new URL(String(input));
+  assert.equal(url.origin, 'https://studio-live-status.invalid');
+  return Response.json(url.pathname.endsWith('/content_publications') ? publications : dbRows);
+};
+assert.equal((await request([summaryBuiltin.id])).statuses[0].label, 'Live');
+const summaryRow = { ...summaryBuiltin, id: 'summary-published', status: 'LIVE', lane: 'serving', review_state: null, body: 'QA current summary wording', updated_at: '2026-09-07T22:00:00.000123Z' };
+dbRows = [summaryRow];
+publications = [{ content_key: summaryKey, state: 'live', revision: 1, row_id: summaryRow.id, row_updated_at: summaryRow.updated_at, updated_at: summaryRow.updated_at }];
+assert.equal((await request([summaryBuiltin.id])).statuses[0].label, 'Not live');
+assert.equal((await request([summaryRow.id])).statuses[0].label, 'Live');
+publications = [{ ...publications[0], state: 'retired', revision: 2 }];
+assert.equal((await request([summaryRow.id, summaryBuiltin.id])).statuses.every((status: any) => !status.live), true);
+globalThis.fetch = originalFetch;
+console.log(`PASS: all ${skyDailySummaryFields.length} Daily Sky defaults, absent/identical/different CMS rows, current publication, retired sources, and ordinary-row ledger checks`);
+
+// Initialized publications make each Sky source independent; status must not load a giant legacy mirror.
+const { isSkyPartitionKey } = await import('../api/_lib/content-live-status');
+const skySource = [...servingPackageRecords.values()].find(record => isSkyPartitionKey(record.contentKey) && (record.body || record.body_you))!;
+const skyRow = { id: 'qa-current-sky', content_key: skySource.contentKey, status: 'LIVE', lane: 'serving', review_state: null,
+  body: skySource.body ?? skySource.body_you, updated_at: '2026-09-07T22:30:00Z', provider: 'tldrastro-fallback-architecture-v3-sky-placement',
+  sections: { packageRecord: skySource }, source_snapshot: { contentType: 'fallback-system', content_role: skySource.content_role, review_status: skySource.review_status } };
+const skyPublications = [
+  { content_key: '__content-publication-ledger/v1', state: 'live', revision: 1, row_id: null, row_updated_at: null, updated_at: skyRow.updated_at },
+  { content_key: skyRow.content_key, state: 'live', revision: 1, row_id: skyRow.id, row_updated_at: skyRow.updated_at, updated_at: skyRow.updated_at }
+];
+let skyReads = 0;
+globalThis.fetch = async input => {
+  const url = new URL(String(input));
+  assert.equal(url.origin, 'https://studio-live-status.invalid');
+  assert.equal(url.searchParams.has('provider'), false, 'A status check must not load the obsolete full Sky partition');
+  skyReads++;
+  return Response.json(url.pathname.endsWith('/content_publications') ? skyPublications : [skyRow]);
+};
+assert.equal((await request([skyRow.id])).statuses[0].label, 'Live');
+assert.equal(skyReads, 3, 'Read the selected row, key candidates, and publication identities only');
+globalThis.fetch = originalFetch;
+console.log('PASS bounded current-Sky status lookup without bulk partition loading');
+
+const { default: summaryClauses } = await import('../apps/web/src/content/skyDailySummaryClauses.json', { with: { type: 'json' } });
+for (const [part, body] of Object.entries(summaryClauses.provenance.previousClauses)) {
+  const key = `cms/sky-daily-summary/${part}`;
+  const builtin = builtinContentRecords.get(key)!;
+  const previousRow = { ...builtin, id: `qa-previous-${part}`, body, status: 'LIVE', lane: 'serving', review_state: null };
+  assert.equal(contentLiveStatuses([previousRow, builtin], [previousRow]).every(status => status.live), true,
+    'Studio compares the same approved wording migration as the reader');
+}
+console.log('PASS installed and saved summary status follow the current approved wording');

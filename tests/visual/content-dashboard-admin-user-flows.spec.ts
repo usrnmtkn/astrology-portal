@@ -2660,16 +2660,15 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.locator("p", { hasText: "Allowed slots:" })).toContainText("{{houseOrdinal}}");
     await fillAdminEditorField(editor, "Full passage / body", "Your {{houseOrdinal}} house begins in {{missingTopic}}.");
     await expect(editor.getByRole("alert", { name: "CMS template errors" })).toContainText("{{missingTopic}}");
-    await expect(editor.getByText("Save this draft before review or publication.")).toBeVisible();
-    await expect(editor.getByRole("button", { name: "Publish to app" })).toHaveCount(0);
+    await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeDisabled();
     await fillAdminEditorField(editor, "Full passage / body", "Your {{houseOrdinal}} house begins in {{sign}}. Review what you repeat here each month.");
     await expect(editor.getByRole("alert", { name: "CMS template errors" })).toHaveCount(0);
     await expect(editor.getByLabel("CMS template preview")).toContainText("Your 2nd house begins in Taurus.");
-    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
-    await expect(editor.getByRole("button", { name: "Mark reviewed" })).toBeEnabled();
-    await expect(editor.getByRole("button", { name: "Publish to app" })).toBeEnabled();
+    await expect(editor.getByRole("button", { name: "Mark reviewed" })).toHaveCount(0);
+    await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
     expect(cmsWrite?.method).toBe("POST");
     expect(cmsWrite?.payload.sourceSnapshot).toMatchObject({
       contentType: "mustache-template",
