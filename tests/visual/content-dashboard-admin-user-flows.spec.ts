@@ -748,6 +748,15 @@ async function seedAdminApi(
         return;
       }
 
+      if (method === "DELETE") {
+        const id = url.searchParams.get("id");
+        options.onGeneratedContentWrite?.({ method, payload: { id } });
+        const index = apiGeneratedContentRows.findIndex((row) => row.id === id);
+        if (index >= 0) apiGeneratedContentRows.splice(index, 1);
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
+        return;
+      }
+
       if (options.generatedContentDelayMs) {
         await new Promise((resolve) => setTimeout(resolve, options.generatedContentDelayMs));
       }
@@ -1171,6 +1180,101 @@ test.describe("content dashboard admin user flow case studies", () => {
       }
     }
 
+    await assertNoBrowserErrors();
+  });
+
+  test("Calendar Write-ups navigation finds Cancer Variant 2 and saves its exact package key", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const contentKey = "authored/calendar-weekly-moon/cancer/variant-2";
+    const source = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", "utf8"));
+    const record = Object.values(source).flat().find((item: any) => item?.contentKey === contentKey) as Record<string, any>;
+    expect(record).toBeTruthy();
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const moonRow = {
+      ...generatedContentRows[0], id: "qa-calendar-moon-cancer", content_key: contentKey,
+      headline: "Variant 2", body: record.body, surface: "sky", mode: "in_depth",
+      status: "LIVE", lane: "serving", review_state: null, block_type: "fallback_hook",
+      event_type: "fallback-hook", provider: "tldrastro-fallback-architecture-v3",
+      facts: { fallbackArchitectureV3: true, content_role: "full_copy", review_status: "approved_reuse" },
+      source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", content_role: "full_copy", review_status: "approved_reuse" },
+      sections: { packageRecord: record }
+    };
+    await seedAdminApi(page, { generatedRows: [moonRow], onGeneratedContentWrite: (write) => writes.push(write) });
+    await expectAdminRouteLoads(page, "/admin/content");
+    const nav = page.getByRole("navigation", { name: "Content operations" });
+    const calendarNav = nav.getByRole("button", { name: "Calendar Write-ups", exact: true });
+    const labels = await nav.getByRole("button").allTextContents();
+    expect(labels.indexOf("Calendar Write-ups") + 1).toBe(labels.indexOf("Calendar Aspects"));
+    await calendarNav.click();
+    await expect(page).toHaveURL(/fallback-hooks\?section=lunar-calendar/);
+    await expect(calendarNav).toHaveAttribute("aria-current", "page");
+    await expect(nav.getByRole("button", { name: "Composition", exact: true })).not.toHaveAttribute("aria-current", "page");
+    await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
+    const listRow = page.locator(".admin-content-row", { hasText: contentKey });
+    await expect(listRow).toBeVisible();
+    const search = page.getByRole("textbox", { name: "Search fallback articles and passages" });
+    await search.fill("Cancer Variant 2");
+    await expect(listRow).toBeVisible();
+    await listRow.getByRole("button", { name: "Edit", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(contentKey);
+    const body = editor.locator("textarea").filter({ hasText: record.body });
+    await expect(body).toHaveValue(record.body);
+    await body.fill(record.body + "\nQA revision.");
+    await editor.getByRole("button", { name: "Save revision", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].method).toBe("PATCH");
+    expect(writes[0].payload).toMatchObject({ id: moonRow.id, sections: { packageDraft: { contentKey, body: record.body + "\nQA revision." } } });
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await listRow.getByRole("button", { name: "Edit", exact: true }).click();
+    await expect(editor.locator("textarea").filter({ hasText: "QA revision." })).toHaveValue(record.body + "\nQA revision.");
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const colorScheme of ["light", "dark"] as const) {
+        await page.emulateMedia({ colorScheme });
+        if (width === 390) await page.getByRole("button", { name: "Open Content Studio navigation" }).click();
+        await expect(calendarNav).toBeVisible();
+        const styles = await nav.evaluate((el) => {
+          const nodes = [...el.querySelectorAll("button")];
+          return ["Calendar Write-ups", "Calendar Aspects"].map(label => {
+            const c = getComputedStyle(nodes.find(n => n.textContent?.trim() === label)!);
+            return [c.fontFamily, c.fontSize, c.fontWeight, c.lineHeight, c.letterSpacing, c.textTransform, c.textAlign];
+          });
+        });
+        expect(styles[0]).toEqual(styles[1]);
+        if (width === 390) await page.getByRole("button", { name: "Close Content Studio navigation" }).click();
+        await search.fill("no-such-calendar-passage-qa");
+        await expect(page.getByText("No rows match these filters.", { exact: true })).toBeVisible();
+        await search.fill("Cancer");
+        await expect(listRow).toBeVisible();
+      }
+    }
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.reload();
+    await expect(calendarNav).toHaveAttribute("aria-current", "page");
+    await openCreateMenu(page);
+    await page.getByRole("menuitem", { name: "Create Calendar write-up" }).click();
+    await editor.locator("details.admin-editor-details > summary").click();
+    await editor.locator("summary").filter({ hasText: /^Content key$/ }).click();
+    await editor.getByLabel("Content key", { exact: true }).fill("authored/calendar-weekly-moon/cancer/variant-4");
+    await editor.locator("textarea.admin-copy-field-body").fill("QA new Calendar passage.");
+    await editor.getByRole("button", { name: /Save/, exact: false }).first().click();
+    await expect.poll(() => writes.length).toBe(2);
+    expect(writes[1]).toMatchObject({ method: "POST", payload: {
+      contentKey: "authored/calendar-weekly-moon/cancer/variant-4",
+      body: "QA new Calendar passage.", reviewStatus: "needs_review"
+    } });
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await expect(page.locator(".admin-content-row", { hasText: "authored/calendar-weekly-moon/cancer/variant-4" })).toBeVisible();
+    const newRow = page.locator(".admin-content-row", { hasText: "authored/calendar-weekly-moon/cancer/variant-4" });
+    await newRow.getByRole("button", { name: "Edit", exact: true }).click();
+    await editor.getByRole("button", { name: "Delete draft", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(3);
+    expect(writes[2].method).toBe("DELETE");
+    await expect(newRow).toHaveCount(0);
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await page.screenshot({ path: path.join(adminScreenshotDir, "calendar-writeups-desktop.png") });
     await assertNoBrowserErrors();
   });
 
