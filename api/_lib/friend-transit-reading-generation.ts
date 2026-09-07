@@ -8,9 +8,12 @@ import {
 import { createSupabaseReportAdmin } from "./supabase-report-admin.js";
 import {
   generateGovernedTransitReading,
+  TRANSIT_READING_PROVIDER_SCHEMA,
   type GeneratedTransitReadingDraft
 } from "./transit-reading-generation.js";
 import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
+
+export const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA = TRANSIT_READING_PROVIDER_SCHEMA;
 
 export type FriendTransitReadingRow = {
   id: string;
@@ -60,6 +63,7 @@ function promptForAttempt(brief: FriendTransitReadingBrief, headline: string, fe
     "",
     "PROVIDER RESPONSE CONTRACT",
     "Return exactly four JSON fields: headline, tldr, summary, body.",
+    "Do not return action, timing, sections, sceneLock, or astrologyDrilldown. The server supplies those empty fields after validation.",
     feedback ? `\nRETRY CORRECTION\n${feedback}` : ""
   ].filter(Boolean).join("\n");
 }
