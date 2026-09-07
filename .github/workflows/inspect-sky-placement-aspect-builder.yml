@@ -16,6 +16,5 @@ jobs:
           from pathlib import Path
           text = Path('apps/web/src/App.tsx').read_text()
           start = text.index('function relatedSkyAspectSectionsForPlacement({')
-          end = text.index('\nfunction skyPlacementAspectExactMoment(', start)
-          print(text[start:end])
+          print(text[start:start + 7000])
           PY
