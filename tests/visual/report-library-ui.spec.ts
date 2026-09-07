@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("standalone Reports route renders with the TLDR design system across themes and viewports", async ({ browser }) => {
+test("Reports route keeps the TLDR navigation and design system across themes and viewports", async ({ browser }) => {
   const bodyBackgrounds = new Map<string, string>();
 
   for (const viewport of [
@@ -18,25 +18,48 @@ test("standalone Reports route renders with the TLDR design system across themes
 
       const heading = page.getByRole("heading", { level: 1, name: "Reports", exact: true });
       const tabs = page.getByRole("tablist", { name: "Report library" });
-      const back = page.getByRole("button", { name: "TLDR Astro", exact: true });
+      const topbar = page.locator(".topbar");
+      const navPill = page.locator(".nav-pill");
+      const primaryNavigation = page.getByRole("navigation", { name: "Primary navigation" });
+      const menuToggle = page.getByRole("button", { name: "Open menu" });
 
       await expect(heading).toBeVisible();
       await expect(tabs).toBeVisible();
-      await expect(back).toBeVisible();
+      await expect(topbar).toBeVisible();
+      await expect(navPill).toBeVisible();
+      await expect(menuToggle).toBeVisible();
       await expect(page.locator(".report-route-root")).toHaveClass(new RegExp(`theme-${theme}`));
+
+      if (viewport.name === "desktop") {
+        await expect(primaryNavigation).toBeVisible();
+        await expect(primaryNavigation.getByRole("button", { name: "Sky" })).toBeVisible();
+        await expect(primaryNavigation.getByRole("button", { name: "Calendar" })).toBeVisible();
+        await expect(primaryNavigation.getByRole("button", { name: "You" })).toBeVisible();
+        await expect(primaryNavigation.getByRole("button", { name: "Friends" })).toBeVisible();
+      } else {
+        await expect(primaryNavigation).toBeHidden();
+      }
+
+      await menuToggle.click();
+      const siteMenu = page.getByRole("menu", { name: "Site menu" });
+      await expect(siteMenu).toBeVisible();
+      await expect(siteMenu.getByRole("menuitem", { name: "Reports" })).toBeVisible();
+      await page.getByRole("button", { name: "Close menu" }).click();
 
       const computed = await page.evaluate(() => {
         const headingElement = document.querySelector<HTMLElement>("#report-library-title");
         const pageElement = document.querySelector<HTMLElement>(".report-library-page");
         const tabsElement = document.querySelector<HTMLElement>(".report-library-tabs");
-        const backElement = document.querySelector<HTMLElement>(".report-library-back");
-        if (!headingElement || !pageElement || !tabsElement || !backElement) throw new Error("Reports UI did not mount.");
+        const navElement = document.querySelector<HTMLElement>(".nav-pill");
+        if (!headingElement || !pageElement || !tabsElement || !navElement) throw new Error("Reports UI did not mount.");
 
         const headingStyle = getComputedStyle(headingElement);
         const pageStyle = getComputedStyle(pageElement);
         const tabsStyle = getComputedStyle(tabsElement);
-        const backStyle = getComputedStyle(backElement);
+        const navStyle = getComputedStyle(navElement);
         const bodyStyle = getComputedStyle(document.body);
+        const topbarBox = document.querySelector<HTMLElement>(".topbar")?.getBoundingClientRect();
+        const headingBox = headingElement.getBoundingClientRect();
 
         return {
           htmlTheme: document.documentElement.dataset.theme,
@@ -44,20 +67,22 @@ test("standalone Reports route renders with the TLDR design system across themes
           headingFontWeight: headingStyle.fontWeight,
           pageDisplay: pageStyle.display,
           tabsDisplay: tabsStyle.display,
-          backBorderRadius: backStyle.borderRadius,
+          navBorderRadius: navStyle.borderRadius,
           bodyBackgroundImage: bodyStyle.backgroundImage,
           bodyBackgroundColor: bodyStyle.backgroundColor,
+          headingClearsTopbar: !topbarBox || headingBox.top > topbarBox.bottom,
           horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 1
         };
       });
 
-      expect(computed.htmlTheme, `${viewport.name} ${theme}: saved theme reaches the standalone route`).toBe(theme);
+      expect(computed.htmlTheme, `${viewport.name} ${theme}: saved theme reaches the Reports route`).toBe(theme);
       expect(computed.headingFontFamily, `${viewport.name} ${theme}: page title uses TLDR Newsreader`).toContain("Newsreader");
       expect(computed.headingFontWeight, `${viewport.name} ${theme}: page title is not browser-default bold`).not.toBe("700");
       expect(computed.pageDisplay, `${viewport.name} ${theme}: route CSS is attached`).toBe("grid");
       expect(["grid", "inline-grid"], `${viewport.name} ${theme}: shared segmented control is styled`).toContain(computed.tabsDisplay);
-      expect(computed.backBorderRadius, `${viewport.name} ${theme}: shared back control is not browser-default`).not.toBe("0px");
+      expect(computed.navBorderRadius, `${viewport.name} ${theme}: the TLDR navigation pill is styled`).not.toBe("0px");
       expect(computed.bodyBackgroundImage, `${viewport.name} ${theme}: TLDR background treatment is present`).not.toBe("none");
+      expect(computed.headingClearsTopbar, `${viewport.name} ${theme}: Reports content clears the fixed main navigation`).toBe(true);
       expect(computed.horizontalOverflow, `${viewport.name} ${theme}: Reports does not overflow horizontally`).toBe(false);
       bodyBackgrounds.set(`${viewport.name}-${theme}`, computed.bodyBackgroundColor);
 
