@@ -133,7 +133,7 @@ export function contentWiringStatus(row: ContentWiringRow): ContentWiringStatus 
   if (isParkedForFutureRuntime(contentKey)) {
     return {
       detail: row.status === "LIVE"
-        ? "This row is published, but no live reader call site requests this key family. Runtime integration was never completed."
+        ? "Readers cannot currently receive this copy because no live reader call site requests this key family. Runtime integration was never completed."
         : "This key family was imported for future app use, but no live reader call site requests it yet.",
       label: row.status === "LIVE" ? "Needs connection" : "Not connected",
       reason: "unfinished",
@@ -161,7 +161,7 @@ export function contentWiringStatus(row: ContentWiringRow): ContentWiringStatus 
 
   if (contentKey.startsWith("article/") && row.mode === "article") {
     return {
-      detail: "Publishing an article does not create a reader destination. Connect this key to an article page before expecting it in the app.",
+      detail: "A Live reader status requires a reader destination. Connect this key to an article page before expecting it in the app.",
       label: "Needs destination",
       reason: "unfinished",
       state: "not-connected"
