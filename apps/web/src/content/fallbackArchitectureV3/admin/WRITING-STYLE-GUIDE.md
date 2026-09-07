@@ -72,6 +72,32 @@ Examples of the register distinction:
 
 Second person is not forbidden on Calendar. It is an available editorial device, not a personalization claim. The word `you` is allowed when the sentence stays conditional or observational; unsupported certainty is not.
 
+### Collective human pressure for stronger aspects
+
+Some Calendar aspects carry more pressure than others. Stronger writing does not mean making the prediction more certain or making the language more dramatic. It means naming the shared human pressure more clearly.
+
+For hard or high-impact contacts, especially Lilith, Pluto, Mars-Saturn, Mars-Pluto, and Saturn-Uranus, this movement is available:
+
+**Collective condition -> collective human pressure -> astrology mechanism -> recognizable consequence -> occasional `you` only when it genuinely improves the passage.**
+
+Useful collective-pressure constructions include:
+
+- `There may be less tolerance for...`
+- `This can be a moment when...`
+- `The pressure builds around...`
+- `A broader frustration can surface around...`
+- `Questions of control become harder to ignore...`
+- `The mood can shift toward...`
+- `What has been tolerated becomes harder to keep tolerating...`
+
+These are available movements, not sentence templates. Do not rotate through them mechanically, force them into every aspect, or use the phrase `collective energy` as filler. The passage should still sound written rather than assembled.
+
+Do not rewrite strong copy merely to create more intensity or more second person. Preserve a passage that already lands cleanly. The owner-approved Saturn square Lilith is the benchmark for this restraint:
+
+> A rule becomes harder to obey when compliance repeatedly requires the same non-negotiable boundary to be violated. When Saturn squares Lilith, structure and autonomy create friction, bringing duty into conflict with a refusal that is no longer willing to carry the old cost. What looks like defiance can be the point where keeping the arrangement intact becomes more damaging than dealing with the consequence of challenging it. The rule is easier to judge once the cost of obedience is counted along with the cost of refusal.
+
+The target is collective astrology with human consequence, not a detached description of "the collective" and not a personal diagnosis of the reader.
+
 ## 3. Punctuation and formatting
 
 - **STRICT no em dash rule.** Never use em dashes. Use colons, semicolons, or periods to break ideas. (Machine-enforced.)
