@@ -6,8 +6,11 @@ import { GeneratedContentAdminDashboard } from "./GeneratedContentAdminDashboard
 import { setupAdminReaderLinkTargets } from "./adminReaderLinks";
 
 const ContentCoverageDashboard = lazy(() => import("./ContentCoverageDashboard"));
+const AskTldrStudio = lazy(() => import("./AskTldrStudio"));
 
-const isCoverageRoute = window.location.pathname.replace(/\/$/u, "") === "/admin/content/coverage";
+const normalizedPath = window.location.pathname.replace(/\/$/u, "");
+const isCoverageRoute = normalizedPath === "/admin/content/coverage";
+const isAskTldrRoute = normalizedPath === "/admin/content/ask-tldr";
 const root = document.getElementById("root")!;
 
 createRoot(root).render(
@@ -15,6 +18,10 @@ createRoot(root).render(
     {isCoverageRoute ? (
       <Suspense fallback={<div style={{ padding: 24 }}>Loading content coverage…</div>}>
         <ContentCoverageDashboard />
+      </Suspense>
+    ) : isAskTldrRoute ? (
+      <Suspense fallback={<div style={{ padding: 24 }}>Loading Ask TLDR…</div>}>
+        <AskTldrStudio />
       </Suspense>
     ) : (
       <GeneratedContentAdminDashboard />
