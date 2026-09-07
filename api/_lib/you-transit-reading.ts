@@ -58,6 +58,16 @@ const BODY_PATTERN = BODY_ALIASES.sort((a, b) => b.length - a.length).map(escape
 const ASPECT_PATTERN = ASPECT_ALIASES.sort((a, b) => b.length - a.length).map(escapeRegex).join("|");
 const SIGN_PATTERN = SIGNS.map((sign) => sign.toLowerCase()).join("|");
 
+function canonicalAspect(value: string) {
+  const normalized = value.toLowerCase();
+  if (normalized === "conjunct" || normalized === "conjunction") return "conjunction";
+  if (normalized === "opposes" || normalized === "opposite" || normalized === "opposition") return "opposition";
+  if (normalized === "squares" || normalized === "square") return "square";
+  if (normalized === "trines" || normalized === "trine") return "trine";
+  if (normalized === "sextiles" || normalized === "sextile") return "sextile";
+  return normalized;
+}
+
 function record(value: unknown): RecordLike | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as RecordLike : null;
 }
@@ -207,7 +217,7 @@ export function validateYouTransitReadingDraft(input: {
     if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_body", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
   }
   for (const match of text.matchAll(new RegExp(`\\b(${ASPECT_PATTERN})\\b`, "giu"))) {
-    if (!source.includes(match[0].toLowerCase().replace(/s$/u, ""))) issues.push({ code: "untraceable_aspect", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
+    if (!source.includes(canonicalAspect(match[0]))) issues.push({ code: "untraceable_aspect", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
   }
   for (const match of text.matchAll(new RegExp(`\\b(${SIGN_PATTERN})\\b`, "giu"))) {
     if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_sign", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
