@@ -1,0 +1,233 @@
+[WebServer] (node:93087) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:93088) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:93089) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:93090) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:93090) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:93220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 
+[WebServer] (!) Some chunks are larger than 2200 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[WebServer] (node:93286) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:93295) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:1727:3 › client-facing user flow case studies › signed-in user can inspect friend chart relationship tabs and actions (8.4s)
+(node:93346) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3358:3 › client-facing user flow case studies › signed-in user can open friend natal placement detail (6.7s)
+(node:93435) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3456:3 › client-facing user flow case studies › Sun in Virgo detail serves the exact canonical V4 owner-approved article (6.7s)
+(node:93545) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3476:3 › client-facing user flow case studies › Sky placement renders approved related aspects as full write-ups without source-gap rows (5.9s)
+(node:93579) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3525:3 › client-facing user flow case studies › SKY V4 seasonal context uses the product location hemisphere (1.8s)
+  ✘  6 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3813:3 › client-facing user flow case studies › content fallback copy resolves authored synastry detail before emergency fallback (30.3s)
+
+
+  1) [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:1727:3 › client-facing user flow case studies › signed-in user can inspect friend chart relationship tabs and actions 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.friend-aspect-row:has(.synastry-contact-description)').first().locator('.synastry-contact-description')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('.friend-aspect-row:has(.synastry-contact-description)').first().locator('.synastry-contact-description')
+
+
+      1855 |     const synastryContactDescription = synastryContactCard.locator(".synastry-contact-description");
+      1856 |     const synastryContactTag = synastryContactCard.locator(".aspect-row-subtitle");
+    > 1857 |     await expect(synastryContactDescription).toBeVisible();
+           |                                              ^
+      1858 |     await expect(synastryContactTag).toBeVisible();
+      1859 |     const descriptionBox = await synastryContactDescription.boundingBox();
+      1860 |     const tagBox = await synastryContactTag.boundingBox();
+        at /Users/mprez/Code/tldrastro-ui-css-qa-20260907/tests/visual/client-facing-user-flows.spec.ts:1857:46
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-1bab4-lationship-tabs-and-actions-chromium-desktop/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/playwright/client-facing-user-flows-c-1bab4-lationship-tabs-and-actions-chromium-desktop/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-1bab4-lationship-tabs-and-actions-chromium-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playwright/client-facing-user-flows-c-1bab4-lationship-tabs-and-actions-chromium-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3358:3 › client-facing user flow case studies › signed-in user can open friend natal placement detail 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.app-shell.mode-detail')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 5000ms
+      - waiting for locator('.app-shell.mode-detail')
+
+
+      3371 |     await expect(bigThree).toBeVisible();
+      3372 |     await bigThree.getByRole("button").first().click();
+    > 3373 |     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+           |                                                          ^
+      3374 |     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
+      3375 |     await expect(page.getByRole("heading", { level: 3, name: "Planetary aspects", exact: true })).toBeVisible();
+      3376 |     await expectNoDuplicateArticleHeadings(page, "Friend natal placement detail");
+        at /Users/mprez/Code/tldrastro-ui-css-qa-20260907/tests/visual/client-facing-user-flows.spec.ts:3373:58
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-b7d2f-iend-natal-placement-detail-chromium-desktop/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/playwright/client-facing-user-flows-c-b7d2f-iend-natal-placement-detail-chromium-desktop/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-b7d2f-iend-natal-placement-detail-chromium-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playwright/client-facing-user-flows-c-b7d2f-iend-natal-placement-detail-chromium-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3456:3 › client-facing user flow case studies › Sun in Virgo detail serves the exact canonical V4 owner-approved article 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.sky-detail-article')
+    Expected substring: "Your thoughts can feel unusually personal when saying what you mean also feels like saying who you are."
+    Received string:    "Placement/TThe Sun in VirgoAugust 22 to September 22, 2026The Sun in Virgo makes the systems that keep life functioning easier to see, especially the ones taking more time and energy than they give back.A routine should support your life, not become another standard you have to keep proving you can meet.Virgo season makes the invisible work of keeping things running harder to overlook. You notice the process that keeps wasting time, the habit that stopped helping, the work that quietly became yours, and all the small things that only get done because somebody remembers them. Being good at noticing what needs attention can become its own trap when you start treating everything you notice as your responsibility.This is where Virgo’s discernment is useful. Some problems need a better system. Others need fewer steps, less work, a clearer boundary, or an honest admission that the system itself is no longer worth maintaining. If something has become daily punishment disguised as productivity, doing it more efficiently is not necessarily the answer.You do not need to improve every part of your life just because you can see what could be better. Pay attention to what actually gives you time, energy, or capacity back. The system that works is the one that makes your life easier to live.Key datesAugust 22, 2026 - September 22, 2026Horoscopes by rising signAries & Aries RisingSun in Virgo moves through your 6th house of daily routines and health, so the task that usually stays in the background may become the part of the day everybody notices. You may also see more clearly what your body and schedule can no longer absorb. The tiny inefficiency is probably not tiny if it keeps stealing an hour from the day.Taurus & Taurus RisingSun in Virgo moves through your 5th house of fun and creativity, so a date, creative project, celebration, or hobby may feel worth making room for again. You may want to enjoy what you made instead of immediately turning it into work. A creative project can lose all its pleasure if every draft turns into another reason it is not ready.Gemini & Gemini RisingSun in Virgo moves through your 4th house of home and family, so a family role or private responsibility may need more of your attention, even if nobody outside the house sees how much you are carrying. The home may feel calmer after one repair, list, or division of labor stops being somebody's invisible job.Cancer & Cancer RisingSun in Virgo moves through your 3rd house of communication and daily reality, so a message, post, pitch, or decision may put your point of view in front of more people. You may care more about saying it clearly and having your name attached to it. The missing detail may be the whole problem, and fixing it can save a much longer argument.Leo & Leo RisingSun in Virgo moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and what your time is worth can feel more personal than usual. A number on a bill or paycheck may tell you quickly what still feels worth it. The number that looked fine at first may stop working once you count the hours, fees, repairs, or repeated cost.Virgo & Virgo RisingSun in Virgo moves through your 1st house of identity and self-expression, so you may become more aware of the role you are claiming, the name you put on the work, and what you want other people to take seriously. A small flaw in the role, routine, or way you present yourself can become hard to ignore once you see it.Libra & Libra RisingSun in Virgo moves through your 12th house of endings and closure, so something you have been carrying privately may need more attention before you can keep pretending it is background noise. Rest, privacy, or an ending may become more important than appearances. Rest is harder when your mind keeps turning recovery into another project to optimize.Scorpio & Scorpio RisingSun in Virgo moves through your 11th house of friendships and community, so a friendship, group, or audience may put more attention on what you contribute and how you want to be known among other people. A group works better when somebody names the job, deadline, and person responsible instead of assuming goodwill will handle it.Sagittarius & Sagittarius RisingSun in Virgo moves through your 10th house of career and public life, so your work may be more visible, and so may the question of who gets the title, credit, authority, or recognition attached to it. Competence gets noticed, but so does the work nobody assigned because you kept quietly fixing it.Capricorn & Capricorn RisingSun in Virgo moves through your 9th house of belief and adventure, so you may want to go farther, learn more, publish, teach, or put your name on an idea you have been developing. A trip, course, or belief can become more personal once you have to live by it. A big idea gets more useful once you know the application date, cost, route, source, or actual requirement.Aquarius & Aquarius RisingSun in Virgo moves through your 8th house of shared resources and privacy, so shared money, privacy, or an obligation between two people may become much harder to leave vague. Credit, access, and who gets a say can feel especially personal. The agreement may feel very different once the amount, deadline, access, or responsibility is written down.Pisces & Pisces RisingSun in Virgo moves through your 7th house of one-on-one bonds, so a close relationship may make it obvious how much room each person gets to have a preference, opinion, or plan. A relationship may improve through one practical change that both people can actually repeat.✦Aspect detailsGiftsSun Trine LilithExact · September 2 and September 10, 2026A fuller version of identity can become easier to show without preparing a defense before anything has actually been challenged. When the Sun trines Lilith, identity and autonomy reinforce each other, making an inconvenient, unconventional, less polished, or less approved part easier to include in public view. The point is not becoming shocking. The ease reveals how much energy had been going into apologizing for something that did not need to be treated as a problem first.Sun Sextile MarsExact · September 14, 2026Momentum is easier to find when intention and action point in the same direction. When the Sun sextiles Mars, initiative gets more support, making decisions, conversations, and plans easier to move from consideration into action. The ease is useful, but speed can start looking more convincing than the purpose behind it. Momentum is strongest when the reason is already clear and the remaining problem is execution rather than another round of planning.Sun Trine ChironExact · August 23Being seen can become easier in an area where embarrassment or judgment once felt almost guaranteed. When the Sun trines Chiron, identity and sensitivity reinforce each other, allowing difficult history to exist beside current recognition without canceling it. A setback, mistake, changed appearance, or period of feeling unprepared can become part of the story without remaining the reason to hide. The old reaction does not have to disappear before the present deserves visibility.LessonsSun Conjunction MercuryExact · August 27, 2026Ideas can feel unusually personal when saying what matters also feels like saying who gets to define the direction. When the Sun conjoins Mercury, purpose and communication fuse, making opinions easier to state with confidence and disagreement harder to separate from identity. Writing, pitching, deciding, and serious conversations can benefit from the added focus. A better idea still deserves to replace an earlier one even when certainty arrived first.Sun Square UranusExact · August 28, 2026The urge to change everything gets louder when one part of a role, routine, or identity has felt restrictive for too long. When the Sun squares Uranus, purpose and disruption create friction, making the familiar version suddenly difficult to tolerate. The restlessness contains useful information without designing the replacement automatically. Experimentation can reveal which part actually needs to change before a permanent break turns one source of confinement into several new problems.Sun Square LilithExact · September 20, 2026Recognition can become a trap when success keeps rewarding the exact role that has stopped feeling honest enough to keep repeating. When the Sun squares Lilith, identity and autonomy create friction, making praise, responsibility, or approval highlight what has been edited out to preserve the valued version. The role can be working and still no longer fit the whole person inside it. Success becomes easier to judge once being rewarded is separated from the question of what still deserves to continue.Sun Opposition North NodeExact · August 22A comeback offer can be flattering and materially useful while pointing toward a role that is already well understood. When the Sun opposes the North Node, familiar recognition and forward movement face each other directly, making an old title, audience, or area of expertise attractive because credibility already exists there. Money, access, and influence can make the old strength worth using. The opportunity becomes limiting when the reward only leaves less room to develop what is newer."
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('.sky-detail-article')
+        14 × locator resolved to <article class="article-shell sky-detail-article">…</article>
+           - unexpected value "Placement/TThe Sun in VirgoAugust 22 to September 22, 2026The Sun in Virgo makes the systems that keep life functioning easier to see, especially the ones taking more time and energy than they give back.A routine should support your life, not become another standard you have to keep proving you can meet.Virgo season makes the invisible work of keeping things running harder to overlook. You notice the process that keeps wasting time, the habit that stopped helping, the work that quietly became yours, and all the small things that only get done because somebody remembers them. Being good at noticing what needs attention can become its own trap when you start treating everything you notice as your responsibility.This is where Virgo’s discernment is useful. Some problems need a better system. Others need fewer steps, less work, a clearer boundary, or an honest admission that the system itself is no longer worth maintaining. If something has become daily punishment disguised as productivity, doing it more efficiently is not necessarily the answer.You do not need to improve every part of your life just because you can see what could be better. Pay attention to what actually gives you time, energy, or capacity back. The system that works is the one that makes your life easier to live.Key datesAugust 22, 2026 - September 22, 2026Horoscopes by rising signAries & Aries RisingSun in Virgo moves through your 6th house of daily routines and health, so the task that usually stays in the background may become the part of the day everybody notices. You may also see more clearly what your body and schedule can no longer absorb. The tiny inefficiency is probably not tiny if it keeps stealing an hour from the day.Taurus & Taurus RisingSun in Virgo moves through your 5th house of fun and creativity, so a date, creative project, celebration, or hobby may feel worth making room for again. You may want to enjoy what you made instead of immediately turning it into work. A creative project can lose all its pleasure if every draft turns into another reason it is not ready.Gemini & Gemini RisingSun in Virgo moves through your 4th house of home and family, so a family role or private responsibility may need more of your attention, even if nobody outside the house sees how much you are carrying. The home may feel calmer after one repair, list, or division of labor stops being somebody's invisible job.Cancer & Cancer RisingSun in Virgo moves through your 3rd house of communication and daily reality, so a message, post, pitch, or decision may put your point of view in front of more people. You may care more about saying it clearly and having your name attached to it. The missing detail may be the whole problem, and fixing it can save a much longer argument.Leo & Leo RisingSun in Virgo moves through your 2nd house of disposable income and foundation, so pay, ownership, credit, and what your time is worth can feel more personal than usual. A number on a bill or paycheck may tell you quickly what still feels worth it. The number that looked fine at first may stop working once you count the hours, fees, repairs, or repeated cost.Virgo & Virgo RisingSun in Virgo moves through your 1st house of identity and self-expression, so you may become more aware of the role you are claiming, the name you put on the work, and what you want other people to take seriously. A small flaw in the role, routine, or way you present yourself can become hard to ignore once you see it.Libra & Libra RisingSun in Virgo moves through your 12th house of endings and closure, so something you have been carrying privately may need more attention before you can keep pretending it is background noise. Rest, privacy, or an ending may become more important than appearances. Rest is harder when your mind keeps turning recovery into another project to optimize.Scorpio & Scorpio RisingSun in Virgo moves through your 11th house of friendships and community, so a friendship, group, or audience may put more attention on what you contribute and how you want to be known among other people. A group works better when somebody names the job, deadline, and person responsible instead of assuming goodwill will handle it.Sagittarius & Sagittarius RisingSun in Virgo moves through your 10th house of career and public life, so your work may be more visible, and so may the question of who gets the title, credit, authority, or recognition attached to it. Competence gets noticed, but so does the work nobody assigned because you kept quietly fixing it.Capricorn & Capricorn RisingSun in Virgo moves through your 9th house of belief and adventure, so you may want to go farther, learn more, publish, teach, or put your name on an idea you have been developing. A trip, course, or belief can become more personal once you have to live by it. A big idea gets more useful once you know the application date, cost, route, source, or actual requirement.Aquarius & Aquarius RisingSun in Virgo moves through your 8th house of shared resources and privacy, so shared money, privacy, or an obligation between two people may become much harder to leave vague. Credit, access, and who gets a say can feel especially personal. The agreement may feel very different once the amount, deadline, access, or responsibility is written down.Pisces & Pisces RisingSun in Virgo moves through your 7th house of one-on-one bonds, so a close relationship may make it obvious how much room each person gets to have a preference, opinion, or plan. A relationship may improve through one practical change that both people can actually repeat.✦Aspect detailsGiftsSun Trine LilithExact · September 2 and September 10, 2026A fuller version of identity can become easier to show without preparing a defense before anything has actually been challenged. When the Sun trines Lilith, identity and autonomy reinforce each other, making an inconvenient, unconventional, less polished, or less approved part easier to include in public view. The point is not becoming shocking. The ease reveals how much energy had been going into apologizing for something that did not need to be treated as a problem first.Sun Sextile MarsExact · September 14, 2026Momentum is easier to find when intention and action point in the same direction. When the Sun sextiles Mars, initiative gets more support, making decisions, conversations, and plans easier to move from consideration into action. The ease is useful, but speed can start looking more convincing than the purpose behind it. Momentum is strongest when the reason is already clear and the remaining problem is execution rather than another round of planning.Sun Trine ChironExact · August 23Being seen can become easier in an area where embarrassment or judgment once felt almost guaranteed. When the Sun trines Chiron, identity and sensitivity reinforce each other, allowing difficult history to exist beside current recognition without canceling it. A setback, mistake, changed appearance, or period of feeling unprepared can become part of the story without remaining the reason to hide. The old reaction does not have to disappear before the present deserves visibility.LessonsSun Conjunction MercuryExact · August 27, 2026Ideas can feel unusually personal when saying what matters also feels like saying who gets to define the direction. When the Sun conjoins Mercury, purpose and communication fuse, making opinions easier to state with confidence and disagreement harder to separate from identity. Writing, pitching, deciding, and serious conversations can benefit from the added focus. A better idea still deserves to replace an earlier one even when certainty arrived first.Sun Square UranusExact · August 28, 2026The urge to change everything gets louder when one part of a role, routine, or identity has felt restrictive for too long. When the Sun squares Uranus, purpose and disruption create friction, making the familiar version suddenly difficult to tolerate. The restlessness contains useful information without designing the replacement automatically. Experimentation can reveal which part actually needs to change before a permanent break turns one source of confinement into several new problems.Sun Square LilithExact · September 20, 2026Recognition can become a trap when success keeps rewarding the exact role that has stopped feeling honest enough to keep repeating. When the Sun squares Lilith, identity and autonomy create friction, making praise, responsibility, or approval highlight what has been edited out to preserve the valued version. The role can be working and still no longer fit the whole person inside it. Success becomes easier to judge once being rewarded is separated from the question of what still deserves to continue.Sun Opposition North NodeExact · August 22A comeback offer can be flattering and materially useful while pointing toward a role that is already well understood. When the Sun opposes the North Node, familiar recognition and forward movement face each other directly, making an old title, audience, or area of expertise attractive because credibility already exists there. Money, access, and influence can make the old strength worth using. The opportunity becomes limiting when the reward only leaves less room to develop what is newer."
+
+
+      3468 |     await expect(article.getByRole("heading", { name: "Lessons" })).toBeVisible();
+      3469 |     await expect(article).toContainText("Sun Trine Chiron");
+    > 3470 |     await expect(article).toContainText("Your thoughts can feel unusually personal when saying what you mean also feels like saying who you are.");
+           |                           ^
+      3471 |     await expect(article).not.toContainText("The Sun in Virgo ties confidence to usefulness, accuracy");
+      3472 |     await expectNoDuplicateArticleHeadings(page, "Sun in Virgo placement detail");
+      3473 |     await assertNoClientErrors();
+        at /Users/mprez/Code/tldrastro-ui-css-qa-20260907/tests/visual/client-facing-user-flows.spec.ts:3470:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-50b1d-l-V4-owner-approved-article-chromium-desktop/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/playwright/client-facing-user-flows-c-50b1d-l-V4-owner-approved-article-chromium-desktop/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-50b1d-l-V4-owner-approved-article-chromium-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playwright/client-facing-user-flows-c-50b1d-l-V4-owner-approved-article-chromium-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3476:3 › client-facing user flow case studies › Sky placement renders approved related aspects as full write-ups without source-gap rows 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.sky-detail-article').locator('.article-related-aspects__copy').filter({ hasText: 'Sun Trine Lilith' })
+    Expected substring: "You may be able to show more of who you are without preparing a defense first."
+    Received string:    "Sun Trine LilithExact · September 2 and September 10, 2026A fuller version of identity can become easier to show without preparing a defense before anything has actually been challenged. When the Sun trines Lilith, identity and autonomy reinforce each other, making an inconvenient, unconventional, less polished, or less approved part easier to include in public view. The point is not becoming shocking. The ease reveals how much energy had been going into apologizing for something that did not need to be treated as a problem first."
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" with timeout 5000ms
+      - waiting for locator('.sky-detail-article').locator('.article-related-aspects__copy').filter({ hasText: 'Sun Trine Lilith' })
+        3 × locator resolved to <section class="article-section sky-detail-section article-related-aspects__copy">…</section>
+          - unexpected value "Sun Trine LilithExact · September 2A fuller version of identity can become easier to show without preparing a defense before anything has actually been challenged. When the Sun trines Lilith, identity and autonomy reinforce each other, making an inconvenient, unconventional, less polished, or less approved part easier to include in public view. The point is not becoming shocking. The ease reveals how much energy had been going into apologizing for something that did not need to be treated as a problem first."
+        11 × locator resolved to <section class="article-section sky-detail-section article-related-aspects__copy">…</section>
+           - unexpected value "Sun Trine LilithExact · September 2 and September 10, 2026A fuller version of identity can become easier to show without preparing a defense before anything has actually been challenged. When the Sun trines Lilith, identity and autonomy reinforce each other, making an inconvenient, unconventional, less polished, or less approved part easier to include in public view. The point is not becoming shocking. The ease reveals how much energy had been going into apologizing for something that did not need to be treated as a problem first."
+
+
+      3484 |     const sunLilith = article.locator(".article-related-aspects__copy").filter({ hasText: "Sun Trine Lilith" });
+      3485 |     await expect(sunLilith).toBeVisible();
+    > 3486 |     await expect(sunLilith).toContainText("You may be able to show more of who you are without preparing a defense first.");
+           |                             ^
+      3487 |     await expect(article.locator(".aspect-row-list")).toHaveCount(0);
+      3488 |     await assertNoClientErrors();
+      3489 |   });
+        at /Users/mprez/Code/tldrastro-ui-css-qa-20260907/tests/visual/client-facing-user-flows.spec.ts:3486:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-0fc5c-ups-without-source-gap-rows-chromium-desktop/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/playwright/client-facing-user-flows-c-0fc5c-ups-without-source-gap-rows-chromium-desktop/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-0fc5c-ups-without-source-gap-rows-chromium-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playwright/client-facing-user-flows-c-0fc5c-ups-without-source-gap-rows-chromium-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3813:3 › client-facing user flow case studies › content fallback copy resolves authored synastry detail before emergency fallback 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.textContent: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.app-shell.mode-detail')
+
+
+      3828 |     await expectNoDuplicateArticleHeadings(page, "Authored synastry detail");
+      3829 |     const detail = page.locator(".app-shell.mode-detail");
+    > 3830 |     const text = ((await detail.textContent()) ?? "").replace(/\s+/g, " ").trim();
+           |                                 ^
+      3831 |
+      3832 |     expect(mercuryAscendantHardSource, "V3 contains the approved Mercury-Ascendant hard-aspect source row").toBeTruthy();
+      3833 |     const headingText = (await authoredHeading.innerText()).trim();
+        at /Users/mprez/Code/tldrastro-ui-css-qa-20260907/tests/visual/client-facing-user-flows.spec.ts:3830:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-f0a65-l-before-emergency-fallback-chromium-desktop/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/playwright/client-facing-user-flows-c-f0a65-l-before-emergency-fallback-chromium-desktop/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-f0a65-l-before-emergency-fallback-chromium-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playwright/client-facing-user-flows-c-f0a65-l-before-emergency-fallback-chromium-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5 failed
+    [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:1727:3 › client-facing user flow case studies › signed-in user can inspect friend chart relationship tabs and actions 
+    [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3358:3 › client-facing user flow case studies › signed-in user can open friend natal placement detail 
+    [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3456:3 › client-facing user flow case studies › Sun in Virgo detail serves the exact canonical V4 owner-approved article 
+    [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3476:3 › client-facing user flow case studies › Sky placement renders approved related aspects as full write-ups without source-gap rows 
+    [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3813:3 › client-facing user flow case studies › content fallback copy resolves authored synastry detail before emergency fallback 
+  1 passed (1.3m)
