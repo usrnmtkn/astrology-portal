@@ -168,18 +168,57 @@ function supabaseAuthConfig() {
   return { url, key };
 }
 
+function configuredOwnerEmails() {
+  return [...new Set(
+    (process.env.CONTENT_ADMIN_EMAILS ?? "")
+      .split(/[\s,]+/u)
+      .map((value) => value.trim().toLowerCase())
+      .filter(Boolean)
+  )];
+}
+
+async function configuredOwnerIdentity(): Promise<OwnerIdentity | null> {
+  const ownerEmails = configuredOwnerEmails();
+  if (ownerEmails.length !== 1) return null;
+  const { url } = supabaseAuthConfig();
+  const serviceRoleKey = words(process.env.SUPABASE_SERVICE_ROLE_KEY);
+  if (!url || !serviceRoleKey) return null;
+  const response = await fetch(`${url}/auth/v1/admin/users?page=1&per_page=1000`, {
+    headers: {
+      apikey: serviceRoleKey,
+      authorization: `Bearer ${serviceRoleKey}`
+    }
+  });
+  if (!response.ok) return null;
+  const payload = await response.json().catch(() => null) as {
+    users?: Array<{ id?: unknown; email?: unknown }>;
+  } | Array<{ id?: unknown; email?: unknown }> | null;
+  const users = Array.isArray(payload) ? payload : (Array.isArray(payload?.users) ? payload.users : []);
+  const ownerEmail = ownerEmails[0];
+  const match = users.find((user) => words(user.email).toLowerCase() === ownerEmail);
+  const id = words(match?.id);
+  if (!id) return null;
+  return { id, email: words(match?.email) || ownerEmail };
+}
+
 async function ownerIdentity(req: IncomingMessage): Promise<OwnerIdentity | null> {
   const token = words(firstHeader(req.headers[CONTENT_ADMIN_SESSION_HEADER]));
   const { url, key } = supabaseAuthConfig();
-  if (!token || !url || !key) return null;
-  const response = await fetch(`${url}/auth/v1/user`, {
-    headers: { apikey: key, authorization: `Bearer ${token}` }
-  });
-  if (!response.ok) return null;
-  const payload = await response.json().catch(() => null) as { id?: unknown; email?: unknown } | null;
-  const id = words(payload?.id);
-  if (!id) return null;
-  return { id, email: words(payload?.email) || null };
+  if (token && url && key) {
+    const response = await fetch(`${url}/auth/v1/user`, {
+      headers: { apikey: key, authorization: `Bearer ${token}` }
+    });
+    if (response.ok) {
+      const payload = await response.json().catch(() => null) as { id?: unknown; email?: unknown } | null;
+      const id = words(payload?.id);
+      if (id) return { id, email: words(payload?.email) || null };
+    }
+    return null;
+  }
+  if (!token && process.env.CONTENT_GENERATION_SECRET) {
+    return configuredOwnerIdentity();
+  }
+  return null;
 }
 
 async function askRows(store: SupabaseReportAdmin) {
@@ -259,7 +298,7 @@ function chartName(data: unknown, fallback: string | null) {
 
 async function ownerChartContext(identity: OwnerIdentity | null, store: SupabaseReportAdmin): Promise<ChartContext> {
   if (!identity) {
-    return { ready: false, reason: "Sign in with the owner account to preview against your chart." };
+    return { ready: false, reason: "Owner chart could not be resolved from this Content Studio session. Refresh the preview or use Test chart." };
   }
   try {
     const profileRow = await store.selectOne<{ data?: unknown }>(
