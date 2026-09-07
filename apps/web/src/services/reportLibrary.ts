@@ -14,6 +14,7 @@ export type ReportLibraryItem = {
   subtitle: string;
   status: ReportLibraryStatus;
   targetDate: string | null;
+  periodEnd: string | null;
   createdAt: string;
   updatedAt: string;
   readyAt: string | null;
@@ -175,9 +176,10 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       sourceId: row.id,
       reportKind: "friend_transit_reading",
       title: row.headline?.trim() || "Friends reading",
-      subtitle: ["Friends", "Right now", compactDate(row.target_date)].filter(Boolean).join(" · "),
+      subtitle: "Friends",
       status: "ready",
       targetDate: row.target_date,
+      periodEnd: row.target_date,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       readyAt: row.updated_at,
@@ -199,6 +201,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       subtitle: [compactDate(row.period_start), compactDate(row.period_end)].filter(Boolean).join(" - "),
       status: premiumReportStatus(row),
       targetDate: row.period_start,
+      periodEnd: row.period_end,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       readyAt: row.delivered_at,
