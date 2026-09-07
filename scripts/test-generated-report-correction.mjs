@@ -35,6 +35,8 @@ try {
     const prompts = [];
     let judgeCalls = 0;
     globalThis.reportCorrectionFixture = async ({ prompt }) => {
+      assert.ok(prompt.includes("BROADEN BEFORE SPECIFYING"), "Every writer attempt, including correction/recovery, must load the breadth contract.");
+      assert.ok(prompt.includes("Prose movement and owner voice"));
       events.push("writer");
       prompts.push(prompt);
       assert.ok(prompts.length <= (scenario === "invalid-initial" ? 3 : 2), "The rewrite budget must be bounded.");
@@ -71,7 +73,7 @@ try {
             verdict: scenario === "first-pass" || (judgeCalls === 2 && scenario === "corrected-pass") ? "pass" : "below_threshold",
             overall: 0.9,
             scores: { owner_voice: 3 },
-            findings: [{ category: "owner_voice", location: "body", finding: "Fixture diagnostic" }]
+            findings: [{ category: "over_specification", location: "body", finding: "Fixture diagnostic" }]
           },
           version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85
         };

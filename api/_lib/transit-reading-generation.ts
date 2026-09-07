@@ -1,4 +1,5 @@
 import { contentGenerationProvider } from "./provider-config.js";
+import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import {
   callGovernedTransitReadingModel,
   prepareTransitReadingProductionKernel,
@@ -174,6 +175,8 @@ function writerPrompt<TBrief>(
     canonicalInstructions,
     "",
     options.promptForAttempt(brief, options.headline, feedback),
+    "",
+    generatedReportWritingContract(),
     "",
     "OWNER-APPROVED GENERATED-REPORT FEEDBACK EVIDENCE",
     approvedOwnerEvidence.length

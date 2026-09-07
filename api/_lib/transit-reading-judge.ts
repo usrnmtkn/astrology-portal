@@ -1,9 +1,11 @@
 import fs from "node:fs";
+import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import { REPORT_JUDGE_THRESHOLD, reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import type { GeneratedTransitReadingDraft } from "./transit-reading-generation.js";
 import type { GeneratedTransitReportSurface } from "./transit-reading-owner-evidence.js";
 import {
   GENERATED_REPORT_JUDGE_CATEGORIES,
+  GENERATED_REPORT_JUDGE_FINDING_CATEGORIES,
   generatedReportJudgeOverall,
   generatedReportJudgeVerdict,
   type GeneratedReportJudgeFinding,
@@ -17,7 +19,7 @@ import {
 } from "./transit-reading-production.js";
 import { instructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
 
-export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.0";
+export const GENERATED_REPORT_JUDGE_ADAPTER_VERSION = "generated-report-judge-adapter-v1.1";
 export const GENERATED_REPORT_JUDGE_ADAPTER_PATH = "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md";
 const REPORT_JUDGE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-JUDGE-RUBRIC-V3.4-OWNER.md";
 const REPORT_OWNER_REVIEW_EVIDENCE_PATH = "tldr-astro-phrasebank/TLDR-REPORT-OWNER-REVIEW-EVIDENCE-2026-08-11.md";
@@ -58,7 +60,7 @@ export const GENERATED_REPORT_JUDGE_SCHEMA = {
         additionalProperties: false,
         required: ["category", "location", "finding"],
         properties: {
-          category: { type: "string", enum: [...GENERATED_REPORT_JUDGE_CATEGORIES] },
+          category: { type: "string", enum: [...GENERATED_REPORT_JUDGE_FINDING_CATEGORIES] },
           location: { type: "string" },
           finding: { type: "string" }
         }
@@ -82,7 +84,7 @@ function assertProviderPayload(value: unknown): JudgeProviderPayload {
     if (typeof score !== "number" || score < 0 || score > 4) throw new Error(`Generated report judge returned an invalid ${category} score.`);
   }
   for (const finding of payload.findings) {
-    if (!finding || !GENERATED_REPORT_JUDGE_CATEGORIES.includes(finding.category) || !finding.location?.trim() || !finding.finding?.trim()) {
+    if (!finding || !GENERATED_REPORT_JUDGE_FINDING_CATEGORIES.includes(finding.category) || !finding.location?.trim() || !finding.finding?.trim()) {
       throw new Error("Generated report judge returned an invalid finding.");
     }
   }
@@ -105,6 +107,8 @@ function judgePrompt(input: {
     requiredFile(REPORT_JUDGE_PATH),
     "",
     requiredFile(GENERATED_REPORT_JUDGE_ADAPTER_PATH),
+    "",
+    generatedReportWritingContract(),
     "",
     "OWNER REVIEW EVIDENCE",
     requiredFile(REPORT_OWNER_REVIEW_EVIDENCE_PATH),
@@ -164,7 +168,7 @@ export async function judgeGeneratedTransitReading(input: {
     result: {
       scores,
       overall,
-      verdict: generatedReportJudgeVerdict(scores, REPORT_JUDGE_THRESHOLD),
+      verdict: generatedReportJudgeVerdict(scores, REPORT_JUDGE_THRESHOLD, providerResult.findings),
       findings: providerResult.findings
     } satisfies GeneratedReportJudgeResult,
     provider: response.provider,

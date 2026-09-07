@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
+import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
 import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
 import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mjs";
@@ -4520,6 +4521,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     const headline = stringValue(input.headline) || `What's going on with ${brief.friendName} right now?`;
     return [
       friendTransitReadingPrompt({ brief, headline }),
+      generatedReportWritingContract(),
       qualityFeedback ? `QUALITY_FEEDBACK_FROM_PRIOR_DRAFT\n${qualityFeedback}` : ""
     ].filter(Boolean).join("\n\n");
   }
