@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "batch": "calendar-collective-pressure-pass-2026-09-07",
+  "reviewStatus": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "surface": "sky-calendar-exact-aspect",
+  "register": "collective",
+  "lockedUnchanged": [
+    "sky.aspect.saturn.square.lilith",
+    "sky.aspect.mars.square.saturn",
+    "sky.aspect.saturn.square.uranus"
+  ],
+  "entries": {
+    "sky.aspect.pluto.conjunction.lilith": {
+      "summary": "A source of control becomes much harder to protect once the rule, threat, secret, or consequence behind compliance is out in the open.",
+      "body": "A source of control becomes much harder to protect once the rule, threat, secret, or consequence behind compliance is out in the open. When Pluto conjoins Lilith, control and refusal intensify together, bringing the leverage behind an unequal arrangement into clearer view. There may be far less willingness to keep cooperating once the price of cooperation is obvious. The balance can change quickly after the old pressure stops working. The strongest change removes the leverage instead of rebuilding the same control from the other side."
+    },
+    "sky.aspect.pluto.opposition.lilith": {
+      "summary": "A threat loses power once the consequence behind it is no longer enough to force compliance.",
+      "body": "A threat loses power once the consequence behind it is no longer enough to force compliance. When Pluto opposes Lilith, concentrated power meets a refusal that is no longer willing to pay the same price for access, approval, money, status, or peace. Questions of control become harder to ignore once the consequence is named plainly. What has been tolerated can become much harder to keep tolerating after the threat stops feeling absolute. The useful shift is the one that reduces the old source of control instead of turning resistance into another contest for domination."
+    },
+    "sky.aspect.pluto.square.lilith": {
+      "summary": "Power struggles become harder to contain when an old expectation of compliance stops working.",
+      "body": "Power struggles become harder to contain when an old expectation of compliance stops working. When Pluto squares Lilith, the drive for control meets a refusal that is no longer willing to cooperate on the old terms. There may be far less tolerance for the unspoken rules about who gets to call the shots and who is expected to stay quiet. What has been tolerated for the sake of keeping the peace becomes harder to keep tolerating once the price is obvious. The pushback can be intense, but not every act of defiance needs to become a fight for total control."
+    },
+    "sky.aspect.saturn.conjunction.lilith": {
+      "summary": "An obligation looks different once it becomes obvious that the arrangement works only because one person keeps absorbing the part nobody else wants.",
+      "body": "An obligation looks different once it becomes obvious that the arrangement works only because one person keeps absorbing the part nobody else wants. When Saturn conjoins Lilith, duty and refusal intensify together, making a role, promise, contract, or responsibility harder to carry under the old terms. There may be less tolerance for responsibility that only works because one person keeps taking the extra work, cost, or consequence. The commitment can still matter without every condition attached to it deserving to survive. A fairer arrangement names who does what and what happens when they cannot keep carrying it."
+    },
+    "sky.aspect.saturn.opposition.lilith": {
+      "summary": "A rule can be called non-negotiable at the exact moment the cost of obeying it becomes harder to justify.",
+      "body": "A rule can be called non-negotiable at the exact moment the cost of obeying it becomes harder to justify. When Saturn opposes Lilith, authority and refusal face each other directly through rules, contracts, roles, or expectations that may still matter but no longer feel neutral. The pressure builds around arrangements that ask the person with less power to keep paying the same price. Some limits protect something worth keeping; others survive because challenging them has been more expensive than complying. The difference becomes clearer once the purpose of the rule and the cost of obedience are counted together."
+    },
+    "sky.aspect.uranus.conjunction.lilith": {
+      "summary": "A sudden break from expectation can bring a preference or refusal into the open before anyone has a plan for what comes next.",
+      "body": "A sudden break from expectation can bring a preference or refusal into the open before anyone has a plan for what comes next. When Uranus conjoins Lilith, disruption and autonomy move together, making an unconventional choice, abrupt exit, changed rule, or long-suppressed no harder to keep contained. There may be much less patience for preserving an arrangement simply because it is familiar. The break can create freedom and extra problems at the same time. The useful change is the one that removes the restriction that stopped fitting without destroying every support around it."
+    },
+    "sky.aspect.uranus.opposition.lilith": {
+      "summary": "Someone else's refusal to keep following the old rules can expose how much comfort depended on their continued cooperation.",
+      "body": "Someone else's refusal to keep following the old rules can expose how much comfort depended on their continued cooperation. When Uranus opposes Lilith, disruption and autonomy face each other directly, making the old expectation harder to defend once one side stops agreeing to it. A broader frustration can surface around who was expected to adjust, wait, stay agreeable, or absorb the disruption so everyone else could keep the same arrangement. The change may feel sudden even when the dissatisfaction is not. The situation becomes easier to understand once the old expectation and the cost of maintaining it are named separately."
+    },
+    "sky.aspect.uranus.square.lilith": {
+      "summary": "The urge to break a rule gets stronger when the rule keeps blocking a choice that no longer feels optional.",
+      "body": "The urge to break a rule gets stronger when the rule keeps blocking a choice that no longer feels optional. When Uranus squares Lilith, disruption and refusal create friction, making compromise feel increasingly pointless when every compromise preserves the same restriction. What has been tolerated becomes harder to keep tolerating when nothing meaningful changes. If you feel the urge to reject the whole arrangement, it may help to separate the rule that no longer works from the support that still does. Change has more staying power when it removes the actual restriction instead of treating disruption itself as proof of freedom."
+    },
+    "sky.aspect.mars.conjunction.lilith": {
+      "summary": "Anger becomes more useful when it reveals the request, rule, or expectation that has stopped being tolerable.",
+      "body": "Anger becomes more useful when it reveals the request, rule, or expectation that has stopped being tolerable. When Mars conjoins Lilith, action and refusal fuse, making a long-suppressed no much harder to keep smiling through. There may be much less patience for a demand, assumption, or boundary violation that has already gone too far. The reaction can be larger than the immediate offense because the immediate offense is not the whole pattern. The strongest use of the anger is the boundary that changes participation in the problem instead of turning the entire arrangement into a fight."
+    },
+    "sky.aspect.mars.opposition.lilith": {
+      "summary": "Questions of authority become harder to ignore when pressure to act meets a refusal to be managed.",
+      "body": "Questions of authority become harder to ignore when pressure to act meets a refusal to be managed. When Mars opposes Lilith, a disagreement can keep circling the details while the harder issue is who gets to decide and whose refusal is being treated as negotiable. If you catch yourself arguing the details, notice if the harder question is who actually gets a say. Compromise works only when everyone involved still has agency. Exhausting one side until it gives in may end the argument without creating agreement."
+    },
+    "sky.aspect.mars.square.lilith": {
+      "summary": "The first boundary can carry the force of every boundary that was never allowed to stand.",
+      "body": "The first boundary can carry the force of every boundary that was never allowed to stand. When Mars squares Lilith, action and refusal create friction, and a small demand can land with the weight of every earlier no that was softened, ignored, or negotiated away. A broader frustration can surface when people who have been expected to stay agreeable stop doing it. The anger may describe the pattern accurately while asking one moment to repair too much history at once. The boundary is easier to hold when it deals with the current demand without needing to settle every old score."
+    },
+    "sky.aspect.chiron.conjunction.lilith": {
+      "summary": "An old hurt can look different once the desire, anger, or boundary that was shamed out of the story is allowed back in.",
+      "body": "An old hurt can look different once the desire, anger, or boundary that was shamed out of the story is allowed back in. When Chiron conjoins Lilith, sensitivity and refusal intensify together, bringing an old rejection or criticism into contact with the part that became harder to admit afterward. There may be less willingness to keep treating a desire or refusal as embarrassing simply because it once drew criticism. The pressure is not only around what hurt; it is around what had to stay hidden afterward. The meaning of the old injury can change once the missing want is allowed to count as part of the story."
+    },
+    "sky.aspect.chiron.opposition.lilith": {
+      "summary": "A strategy built to avoid criticism can start fighting the very desire or boundary it was built to protect.",
+      "body": "A strategy built to avoid criticism can start fighting the very desire or boundary it was built to protect. When Chiron opposes Lilith, sensitivity and autonomy pull against each other, exposing the rules people build around avoiding rejection, embarrassment, or punishment. This can be a moment when staying acceptable starts costing more than the criticism it was meant to prevent. The protection may have worked and still be too expensive now. The tension becomes clearer once the old source of judgment is separated from what the present actually allows."
+    },
+    "sky.aspect.chiron.square.lilith": {
+      "summary": "A simple preference can carry far more heat when wanting something different has a history of punishment or rejection.",
+      "body": "A simple preference can carry far more heat when wanting something different has a history of punishment or rejection. When Chiron squares Lilith, sensitivity and refusal create friction, making a present no carry more force than the current decision alone explains. A broader frustration can surface around the old bargain that said approval depended on staying agreeable, easy, or quiet. The anger is not random, but the current person or decision cannot repair every earlier loss attached to it. Today's boundary becomes more useful once it is allowed to belong to today."
+    },
+    "sky.aspect.mars.conjunction.saturn": {
+      "summary": "Pressure does not make a fixed limit move faster simply because the need to act has become urgent.",
+      "body": "Pressure does not make a fixed limit move faster simply because the need to act has become urgent. When Mars conjoins Saturn, drive meets rules, deadlines, responsibility, and sequence. This can be a moment when every delay feels personal even though the restriction is part of the structure. More force can create another problem without changing what has to happen first. Progress comes from identifying the required step and putting the effort there."
+    },
+    "sky.aspect.mars.opposition.saturn": {
+      "summary": "Urgency can make every restriction feel hostile even when some limits are protecting something that still matters.",
+      "body": "Urgency can make every restriction feel hostile even when some limits are protecting something that still matters. When Mars opposes Saturn, the need to act comes directly up against rules, responsibility, or a hard no. The pressure builds around the difference between a limit that protects something and a limit that survives because nobody has challenged it. Frustration can make those two things look identical. The conflict becomes more workable once the fixed constraint and the negotiable one are no longer being treated as the same problem."
+    },
+    "sky.aspect.mars.conjunction.pluto": {
+      "summary": "A routine conflict can become a high-stakes power struggle once winning starts to matter more than the original issue.",
+      "body": "A routine conflict can become a high-stakes power struggle once winning starts to matter more than the original issue. When Mars conjoins Pluto, action and power intensify each other, making force, leverage, and control harder to separate from the result anyone actually wants. Questions of control become harder to ignore once the argument starts producing consequences bigger than the original disagreement. Escalation can spend money, access, goodwill, or options that the actual goal still needs later. The strongest move protects the priority without turning every disagreement into a test of who can dominate whom."
+    },
+    "sky.aspect.mars.opposition.pluto": {
+      "summary": "A conflict can keep looking like a communication problem when the harder issue is who actually holds the leverage.",
+      "body": "A conflict can keep looking like a communication problem when the harder issue is who actually holds the leverage. When Mars opposes Pluto, action meets concentrated power through money, access, authority, information, or institutional control. The pressure builds around what gives one side more ability to decide what happens next. More force does not make an unequal position equal. The conflict becomes clearer once the source of leverage, the remaining alternatives, and the cost of continuing are visible."
+    },
+    "sky.aspect.mars.square.pluto": {
+      "summary": "A power struggle becomes destructive when winning starts to matter more than protecting the outcome that caused the conflict.",
+      "body": "A power struggle becomes destructive when winning starts to matter more than protecting the outcome that caused the conflict. When Mars squares Pluto, force and control press against each other, making escalation unusually easy to justify. A broader frustration can surface when neither side wants to be the one that backs down first. Pushing harder can drain leverage without changing the structure underneath the fight. The conflict is easier to judge once the actual stakes and the cost of continuing are separated from pride."
+    },
+    "sky.aspect.saturn.conjunction.uranus": {
+      "summary": "Change becomes harder to postpone when an old structure can no longer carry what is being asked of it.",
+      "body": "Change becomes harder to postpone when an old structure can no longer carry what is being asked of it. When Saturn conjoins Uranus, rules and disruption occupy the same ground, forcing attention onto the parts of a system that still work and the parts surviving mainly through workarounds. There may be less tolerance for calling a broken process stable simply because it is familiar. The tension is not always change versus stability. It can be about changing enough of the structure that the whole thing stops requiring constant repair."
+    },
+    "sky.aspect.saturn.opposition.uranus": {
+      "summary": "A system can keep working and still become difficult to live with once every exception turns into another workaround.",
+      "body": "A system can keep working and still become difficult to live with once every exception turns into another workaround. When Saturn opposes Uranus, structure and disruption pull against each other, making the cost of preserving the old arrangement increasingly visible. The pressure builds around rules that still serve a purpose and rules that are now creating more work than they prevent. Change can feel irresponsible while keeping everything the same becomes its own risk. The useful distinction is which support needs protecting and which restriction has already outlived its job."
+    }
+  }
+}
