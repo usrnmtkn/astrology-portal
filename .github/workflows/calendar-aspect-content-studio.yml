@@ -109,8 +109,7 @@ jobs:
       - name: Mirror or verify published exact aspects in Content Studio
         env:
           SUPABASE_URL: https://hdmdufozrgrajkfhydit.supabase.co
-          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_iX90KdzcQzw8a8OydBHHXA_COnEMcns
-          SUPABASE_PUBLISHABLE_KEY: sb_publishable_iX90KdzcQzw8a8OydBHHXA_COnEMcns
+          VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhkbWR1Zm96cmdyYWprZmh5ZGl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwMDg1NDIsImV4cCI6MjA5NTU4NDU0Mn0.R_V1i-UBLNq-6ya2eYU3A60CshKkQHxwte2ACQtD2n0
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           node scripts/test-published-calendar-aspect-content-studio.mjs
