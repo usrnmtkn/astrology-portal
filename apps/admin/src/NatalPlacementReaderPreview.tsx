@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
-import { effectivePackageRecord } from "./skyFallbackWorkspace";
 import {
   natalPlacementExactKey,
   natalPlacementLabel,
@@ -66,7 +65,7 @@ function record(value: unknown): Record<string, unknown> {
 function packageRowFromSavedRow(row: PreviewRow) {
   if (!row.content_key.startsWith("fallback-")) return null;
   const sections = record(row.sections);
-  const source = effectivePackageRecord(row.sections);
+  const source = record(sections.packageRecord);
   if (typeof source.content_role !== "string") return null;
   const reviewStatus = typeof source.review_status === "string" ? source.review_status : "";
   return {
@@ -95,7 +94,7 @@ function previewOverrideCandidate(row: PreviewRow) {
 }
 
 function sourceLabel(contentKey: string) {
-  if (contentKey.includes("planet-in-sign")) return "Planet-in-sign section";
+  if (contentKey.includes("planet-in-sign") || contentKey.includes("placement-sign-final")) return "Planet-in-sign section";
   if (contentKey.includes("house-context")) return "House section";
   if (contentKey.includes("natal.modifier.retrograde")) return "Retrograde modifier";
   if (contentKey.includes("complete-final")) return "Exact full write-up";
@@ -162,7 +161,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
     [house, motion, planet, sign]
   );
   const overrides = useMemo(() => rows
-    .filter((row) => dependencyKeys.has(row.content_key))
+    .filter((row) => dependencyKeys.has(row.content_key) && !row.id?.startsWith("package:"))
     .map(previewOverrideCandidate)
     .filter((row): row is NonNullable<ReturnType<typeof previewOverrideCandidate>> => Boolean(row)), [dependencyKeys, rows]);
 
@@ -271,9 +270,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             })}
           </div>
           <div className="admin-natal-reader-preview-provenance">
-            <span className={`ui-pill admin-status ${exactServing || usingLiveStudioSources ? "status-live" : "status-reviewed"}`}>
-              {provenanceLabel}
-            </span>
+            <span className="ui-pill admin-status status-live" title={provenanceLabel}>Live</span>
             <span className={`ui-pill admin-status ${motion === "retrograde" ? "status-reviewed" : "status-live"}`}>
               {motion === "retrograde" ? "Retrograde chart context" : "Direct chart context"}
             </span>

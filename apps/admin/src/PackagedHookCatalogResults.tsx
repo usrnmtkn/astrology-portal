@@ -41,7 +41,7 @@ export function PackagedHookCatalogResults({ items, savedKeys, resetKey, onOpen 
                     <code>{contentKey}</code>
                   </div>
                   <div className="admin-fallback-row-actions">
-                    <span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved source" : "Source only"}</span>
+                    <span className="admin-field-hint">{saved ? "Saved source" : "Source only"}</span>
                     <button type="button" onClick={() => onOpen(item)}>{saved ? "Edit source" : "View source"}</button>
                   </div>
                 </article>

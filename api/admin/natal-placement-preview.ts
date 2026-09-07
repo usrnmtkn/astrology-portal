@@ -165,6 +165,13 @@ function productionBaseReaderRows() {
   };
 }
 
+export function natalPlacementPackageSources(keys: string[]) {
+  const requested = new Set(keys);
+  const base = productionBaseReaderRows();
+  return [...base.hookRows, ...base.vocabularyRows, ...base.templates]
+    .filter((row) => requested.has(row.contentKey));
+}
+
 export function renderNatalPlacementPreviewState(input: ReturnType<typeof normalizeNatalPlacementPreviewInput>) {
   // Build from the generated reader projection, not the authoring source files.
   // The web app first installs this approved-only eager + deferred package and

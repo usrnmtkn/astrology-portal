@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-09-04a",
-  "contentHash": "b9df8d924732fceefafb0f04196ee7e2",
-  "keyManifestHash": "ad3b78b91851349d48f78053cada7089",
-  "keyCount": 9271,
+  "packageVersion": "v3-2026-09-07a",
+  "contentHash": "edeb0df580bee081b62274f354ca34c5",
+  "keyManifestHash": "0379efd90780ae6d27cca8236a39e0c9",
+  "keyCount": 9272,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -4536,6 +4536,7 @@
     "hook:fallback-hook/natal-you-placement-sign-final/moon/scorpio",
     "hook:fallback-hook/natal-you-placement-sign-final/moon/taurus",
     "hook:fallback-hook/natal-you-placement-sign-final/moon/virgo",
+    "hook:fallback-hook/natal-you-placement-sign-final/uranus/scorpio",
     "hook:fallback-hook/node-journey/north-node",
     "hook:fallback-hook/node-journey/south-node",
     "hook:fallback-hook/pair-daily/bond-clause/hard/chiron",
