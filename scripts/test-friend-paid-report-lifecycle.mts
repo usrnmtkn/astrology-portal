@@ -9,6 +9,7 @@ const endpoint = read("api/generate-friend-transit-reading.ts");
 const worker = read("api/_lib/friend-report-generation.ts");
 const lifecycle = read("api/_lib/friend-report-lifecycle.ts");
 const placeholder = read("api/_lib/friend-report-placeholder.ts");
+const revocation = read("api/_lib/friend-report-revocation.ts");
 const statusApi = read("api/friend-report-status.ts");
 const checkout = read("api/friend-report-checkout.ts");
 const webhook = read("api/stripe-webhook.ts");
@@ -75,7 +76,11 @@ assert.match(checkout, /metadata\[entitlement_id\]/u);
 assert.match(webhook, /product_kind\) === "friend_transit_reading"/u);
 assert.match(webhook, /activateFriendReportEntitlementFromStripe/u);
 assert.match(webhook, /ensureFriendReportPlaceholder/u);
-assert.match(webhook, /revokeFriendReportEntitlementByPaymentIntent/u);
+assert.match(webhook, /revokeFriendReportPurchase/u);
+assert.match(revocation, /revokeFriendReportEntitlementByPaymentIntent/u);
+assert.match(revocation, /status: "ARCHIVED"/u, "A refund must remove the Friends reading from normal retrieval.");
+assert.match(revocation, /report_share_links/u);
+assert.match(revocation, /revoked_at: now/u, "A refund must invalidate any active recipient link.");
 
 assert.match(library, /from\("friend_report_entitlements"\)/u);
 assert.match(library, /from\("friend_report_jobs"\)/u);
@@ -127,4 +132,4 @@ for (const domain of ["home", "family", "living situation", "private life"]) {
 assert.doesNotMatch(writerSummary, /moving|move house|relocat/iu,
   "House specificity must name domains without inventing a move or other biographical event.");
 
-console.log("Friends paid report lifecycle, billing, async recovery, and house specificity regression passed.");
+console.log("Friends paid report lifecycle, billing, async recovery, refund revocation, and house specificity regression passed.");
