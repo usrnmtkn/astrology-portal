@@ -133,7 +133,7 @@ function judgeOutputSchema(timingApplicable: boolean) {
         required: ["applicable", "reason"],
         properties: {
           applicable: { type: "boolean", const: timingApplicable },
-          reason: { type: "string", minLength: 1 }
+          reason: { type: "string" }
         }
       },
       findings: {
