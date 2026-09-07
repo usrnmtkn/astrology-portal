@@ -33,7 +33,7 @@
 
 .you-report-offer__actions button,
 .you-report-offer__message button {
-  min-height: var(--control-height);
+  min-height: var(--button-height);
   padding: 0 var(--space-3);
   border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--control-radius);
@@ -47,7 +47,7 @@
 
 .you-report-offer__actions button:disabled {
   cursor: default;
-  opacity: var(--disabled-opacity);
+  opacity: 0.5;
 }
 
 .you-report-offer__message {
