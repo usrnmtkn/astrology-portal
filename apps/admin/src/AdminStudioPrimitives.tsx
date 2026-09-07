@@ -1,4 +1,4 @@
-import { AlertTriangle, BarChart3, LogIn, Plus, RefreshCw, type LucideIcon } from "lucide-react";
+import { AlertTriangle, BarChart3, LogIn, Plus, RefreshCw, Sparkles, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import "./admin-content-studio-ux-compat.css";
 import "./admin-content-studio-editor-redesign.css";
@@ -120,6 +120,15 @@ export function AdminPageHeader({
         >
           <BarChart3 size={16} aria-hidden="true" />
           Content coverage
+        </a>
+        <a
+          className="admin-create-button admin-secondary-button"
+          href="/admin/content/ask-tldr"
+          style={coverageActionStyle}
+          title="Edit Ask TLDR questions and run owner-only governed previews"
+        >
+          <Sparkles size={16} aria-hidden="true" />
+          Ask TLDR
         </a>
         <div className="admin-create-menu">
           <button

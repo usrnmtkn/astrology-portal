@@ -4,6 +4,11 @@ on:
   pull_request:
     paths:
       - "api/_lib/ask-tldr-*.ts"
+      - "api/admin/ask-tldr.ts"
+      - "apps/admin/src/AskTldrStudio.tsx"
+      - "apps/admin/src/AdminStudioPrimitives.tsx"
+      - "apps/admin/src/main.tsx"
+      - "apps/web/supabase/migrations/*ask_tldr*.sql"
       - "config/ask-tldr/**"
       - "scripts/test-ask-tldr-*.mjs"
       - "scripts/audit-ask-tldr-*.mjs"
@@ -69,3 +74,12 @@ jobs:
 
       - name: Audit all Ask TLDR evergreen questions on frozen facts
         run: npx tsx scripts/audit-ask-tldr-evergreen-support.mjs
+
+      - name: Validate Ask TLDR Content Studio owner preview contract
+        run: npx tsx scripts/test-ask-tldr-content-studio.mjs
+
+      - name: Compile Ask TLDR admin API module
+        run: npx tsx -e "import('./api/admin/ask-tldr.ts').then(() => console.log('Ask TLDR admin API compiled.'))"
+
+      - name: Build Content Studio admin app
+        run: npm run build:admin
