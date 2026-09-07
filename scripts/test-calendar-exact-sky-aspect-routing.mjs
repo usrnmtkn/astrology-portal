@@ -302,3 +302,12 @@ console.log("Calendar exact Sky-aspect routing parity passed", {
   screenshotRegressions: screenshotCases.length,
   remainingDocumentedExactGaps: documentedExactUniverse - canonicalEventRecords.length
 });
+
+const { buildRows } = await import("./seed-published-calendar-aspect-content-studio.mjs");
+const nodeRows = buildRows().filter((row) => ["sky.aspect.north-node.square.mars", "sky.aspect.south-node.square.mars"].includes(row.content_key));
+const nodeMap = new Map(nodeRows.map((row) => [row.content_key, { ...row, contentKey: row.content_key, sourceSnapshot: row.source_snapshot }]));
+const paired = normalizeCalendarEventSurface(
+  aspectEvent({ first: "Mars", second: "North Node", aspect: "square", fromSign: "Cancer", toSign: "Aries" }),
+  nodeMap.get("sky.aspect.north-node.square.mars"), "Today", null, exactLookup, null, nodeMap
+);
+for (const row of nodeRows) assert.ok(paired.sections[0].body.includes(row.body), `${row.content_key}: Calendar must retain both edited node poles after hydration`);

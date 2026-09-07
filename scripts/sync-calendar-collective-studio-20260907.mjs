@@ -82,3 +82,23 @@ if (process.argv.includes("--apply")) {
   }
   console.log(`Verified ${updates.length} saved Calendar baselines; South Node rows untouched.`);
 }
+if (process.argv.includes("--refresh-snapshot")) {
+  assert.equal(updates.length, 0, "Verify the completed remote sync before refreshing the public snapshot");
+  const snapshotPath = new URL("../apps/web/public/content-studio-last-known-good.json", import.meta.url);
+  const snapshot = JSON.parse(fs.readFileSync(snapshotPath));
+  const fields = "id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,judge_score,judge_gate,model,updated_at".split(",");
+  const safeRows = current.map((row) => {
+    const safe = Object.fromEntries(fields.map((field) => [field, row[field]]));
+    // Recovery history is admin data, never part of the public fallback asset.
+    safe.sections = { packageRecord: row.sections.packageRecord, packageOriginalRecord: row.sections.packageOriginalRecord, body_you: row.body, body_they: row.body };
+    return safe;
+  });
+  snapshot.rows = snapshot.rows.filter((row) => !paths.has(row.source_snapshot?.sourceFile));
+  snapshot.rows.push(...safeRows);
+  snapshot.rows.sort((a, b) => a.content_key.localeCompare(b.content_key));
+  assert.equal(new Set(snapshot.rows.map((row) => row.content_key)).size, snapshot.rows.length);
+  snapshot.rowCount = snapshot.rows.length;
+  snapshot.sourceRevision = snapshot.rows.reduce((latest, row) => row.updated_at > latest ? row.updated_at : latest, "");
+  fs.writeFileSync(snapshotPath, `${JSON.stringify(snapshot)}\n`);
+  console.log("Refreshed only the 379 released public fallback rows.");
+}
