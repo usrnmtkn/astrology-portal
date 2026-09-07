@@ -1,22 +1,27 @@
 import { calendarDayDistance } from "../apps/web/src/services/calendarDayDistance.ts";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { skyDailySummaryParts } from "../apps/web/src/content/skyDailySummary.ts";
 
 const clauses = JSON.parse(readFileSync(new URL("../apps/web/src/content/skyDailySummaryClauses.json", import.meta.url), "utf8"));
+const virgoRevision = clauses.provenance.revisions.find((row: { key: string }) => row.key === "cms/sky-daily-summary/sun/virgo");
+assert.equal(clauses.sun.virgo, virgoRevision.body);
+assert.equal(createHash("sha256").update(clauses.sun.virgo).digest("hex"), virgoRevision.sha256);
+assert.equal(clauses.sun.virgo.split(/\s+/u).length, virgoRevision.wordCount);
 const text = (facts: Parameters<typeof skyDailySummaryParts>[0]) => skyDailySummaryParts(facts).map(p => p.text).join("");
 const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 for (const sunSign of signs) {
   for (const moonSign of signs) {
     const result = text({ sun: { sign: sunSign, degree: 29.99 }, moon: { sign: moonSign, degree: 0 }, moonIsVoid: false });
-    assert.ok(result.includes(clauses.sun[sunSign.toLowerCase()] ?? `The Sun is in ${sunSign} at 29°.`));
-    assert.ok(result.includes(clauses.moon[moonSign.toLowerCase()] ?? `The Moon is moving through ${moonSign} at 0°.`));
+    assert.ok(result.includes(clauses.sun[sunSign.toLowerCase()] ?? `The Sun is in ${sunSign} at 29°,`));
+    assert.ok(result.includes(clauses.moon[moonSign.toLowerCase()] ?? `while the Moon moves through ${moonSign} at 0°.`));
     assert.ok(result.includes("29°") && result.includes("0°") && !result.includes("30°"));
     assert.ok(!/—|undefined|null|\{\{|void of course/u.test(result));
   }
 }
 const facts = { sun: { sign: "Gemini", degree: 9 }, moon: { sign: "Sagittarius", degree: 2 }, moonIsVoid: true, voidRemainingLabel: "49 min", event: { name: "Full Moon", sign: "Sagittarius", countdown: "in 3 days" } };
-assert.ok(text(facts).startsWith("The Sun is in Gemini at 9°."));
+assert.ok(text(facts).startsWith("The Sun is in Gemini at 9°,"));
 assert.ok(text(facts).includes("Sagittarius at 2°"));
 assert.ok(text(facts).includes("The Moon is void of course for another 49 minutes."));
 assert.ok(text(facts).includes("The next Full Moon arrives in Sagittarius in 3 days."));
@@ -36,7 +41,7 @@ for (const [planets, expected] of [
 }
 assert.ok(text({ ...facts, retrogradePlanets: ["Saturn", "Saturn", ""] }).includes("One planet is retrograde right now: Saturn."));
 assert.equal(text({ sun: { sign: "Virgo", degree: 15 }, moon: { sign: "Cancer", degree: 29 }, moonIsVoid: false }),
-  "The Sun is in Virgo at 15°, making it easier to notice what needs fixing and what could be made simpler, while the Moon moves through Cancer at 29°, bringing more attention to home, family, and whether the care we give is coming back to us.");
+  "The Sun is in Virgo at 15°, turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing, while the Moon moves through Cancer at 29°, bringing more attention to home, family, and whether the care we give is coming back to us.");
 assert.ok(!text(facts).includes("care we give"), "Cancer meaning must never serve for another Moon sign");
 
 
@@ -62,7 +67,7 @@ for (const [name, eclipseType, label] of [["New Moon", "solar", "Solar Eclipse"]
 }
 
 const fallback = skyDailySummaryParts({ sun: { sign: "Libra", degree: 15 }, moon: { sign: "Aries", degree: 29 }, moonIsVoid: false });
-assert.equal(fallback.map(part => part.text).join(""), "The Sun is in Libra at 15°. The Moon is moving through Aries at 29°.");
+assert.equal(fallback.map(part => part.text).join(""), "The Sun is in Libra at 15°, while the Moon moves through Aries at 29°.");
 assert.ok(fallback.filter(part => part.emphasis).every(part => part.action));
 assert.ok(!text(facts).includes("Talk your way") && !text(facts).includes("Give the feeling"));
 console.log("Sky summary: 144 sign pairs, full-clause and facts-only states, article links, timing, retrogrades, and eclipse labels passed.");
@@ -100,3 +105,5 @@ assert.equal(retrogradeLinkParts.map(part => part.text).join(""), "Four planets 
 assert.equal(calendarDayDistance(new Date("2026-09-07T16:00:00Z"), new Date("2026-09-11T03:27:00Z"), "America/New_York"), 3);
 assert.equal(calendarDayDistance(new Date("2026-09-07T16:00:00Z"), new Date("2026-09-11T03:27:00Z"), "UTC"), 4);
 assert.equal(calendarDayDistance(new Date("2026-03-07T17:00:00Z"), new Date("2026-03-09T16:00:00Z"), "America/New_York"), 2);
+
+assert.deepEqual(skyDailySummaryParts(facts).filter(part => part.action === "sun" || part.action === "moon").map(part => part.text), ["Sun", "Moon"]);
