@@ -6,6 +6,7 @@ import { createServer } from "vite";
 
 const panelSource = fs.readFileSync("apps/web/src/features/friends/ManualChartsPanel.tsx", "utf8");
 const transitsSource = fs.readFileSync("apps/web/src/features/friends/FriendTransitsTab.tsx", "utf8");
+const briefSource = fs.readFileSync("apps/web/src/features/friends/friendTransitsBrief.ts", "utf8");
 const serviceSource = fs.readFileSync("apps/web/src/services/userGeneratedContent.ts", "utf8");
 const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");
 const friendApiSource = fs.readFileSync("api/generate-friend-transit-reading.ts", "utf8");
@@ -19,6 +20,11 @@ assert.equal(
   (panelSource.match(/friendTransitReadingSelectionKeyRef\.current !== requestSelectionKey/gu) ?? []).length,
   2,
   "Both success and error paths must discard stale friend/date responses."
+);
+assert.match(
+  briefSource,
+  /personalTransitHasGenerationEvidence[\s\S]*evidence\.contentKeys\.some/u,
+  "The client brief must enforce the same traceable evidence requirement as the backend request lock."
 );
 assert.match(
   serviceSource,
@@ -89,34 +95,81 @@ try {
     "/src/features/friends/friendTransitsBrief.ts"
   );
 
+  const validTransit = {
+    id: "mars-moon",
+    title: "Mars trine Moon",
+    durationLabel: "A few days",
+    rangeLabel: "Sep 5-8",
+    timingLabel: "Active now",
+    summary: "Alex can act on what they feel with less friction.",
+    orb: "1°",
+    detailAvailable: true,
+    evidence: {
+      transitPlanet: "Mars",
+      transitSign: "Aries",
+      aspect: "trine",
+      natalPoint: "Moon",
+      natalSign: "Sagittarius",
+      natalHouse: 7,
+      direction: "applying",
+      score: 80,
+      significance: "major",
+      timingBonuses: [],
+      contentKeys: ["authored/transit-aspect/mars/moon/soft"]
+    }
+  };
+
   const brief = buildFriendTransitsBrief({
     friendName: "Alex",
     dateLabel: "Today",
     personalTransitGroups: [{
       key: "short",
       label: "Short-term themes",
+      transits: [validTransit]
+    }],
+    bondTransits: [],
+    houseTransits: [],
+    dailyForecast: null,
+    dailyDoItems: [],
+    dailyDontItems: [],
+    patternItems: []
+  });
+
+  const mixedEvidenceBrief = buildFriendTransitsBrief({
+    friendName: "Social Friend",
+    dateLabel: "Today",
+    personalTransitGroups: [{
+      key: "short",
+      label: "Short-term themes",
+      transits: [
+        {
+          ...validTransit,
+          id: "contentless-transit",
+          evidence: { ...validTransit.evidence, contentKeys: [] }
+        },
+        validTransit
+      ]
+    }],
+    bondTransits: [],
+    houseTransits: [],
+    dailyForecast: null,
+    dailyDoItems: [],
+    dailyDontItems: [],
+    patternItems: []
+  });
+  assert.equal(mixedEvidenceBrief.primaryThemes.length, 1, "Contentless display transits must not poison an otherwise valid Friends generation brief.");
+  assert.equal(mixedEvidenceBrief.primaryThemes[0]?.id, "mars-moon");
+
+  const contentlessOnlyBrief = buildFriendTransitsBrief({
+    friendName: "Social Friend",
+    dateLabel: "Today",
+    personalTransitGroups: [{
+      key: "short",
+      label: "Short-term themes",
       transits: [{
-        id: "mars-moon",
-        title: "Mars trine Moon",
-        durationLabel: "A few days",
-        rangeLabel: "Sep 5-8",
-        timingLabel: "Active now",
-        summary: "Alex can act on what they feel with less friction.",
-        orb: "1°",
-        detailAvailable: true,
-        evidence: {
-          transitPlanet: "Mars",
-          transitSign: "Aries",
-          aspect: "trine",
-          natalPoint: "Moon",
-          natalSign: "Sagittarius",
-          natalHouse: 7,
-          direction: "applying",
-          score: 80,
-          significance: "major",
-          timingBonuses: [],
-          contentKeys: ["authored/transit-aspect/mars/moon/soft"]
-        }
+        ...validTransit,
+        id: "contentless-transit",
+        evidence: { ...validTransit.evidence, contentKeys: [] }
       }]
     }],
     bondTransits: [],
@@ -126,6 +179,8 @@ try {
     dailyDontItems: [],
     patternItems: []
   });
+  assert.equal(contentlessOnlyBrief.primaryThemes.length, 0);
+  assert.equal(contentlessOnlyBrief.hasAnyTransit, false, "An impossible request must fail closed before it reaches the paid-reading endpoint.");
 
   const baseProps = {
     brief,
