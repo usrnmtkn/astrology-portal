@@ -23,13 +23,8 @@ jobs:
 
           detail_path = Path('apps/web/src/features/sky/SkyDetailArticle.tsx')
           detail = detail_path.read_text()
-          old = '''  const detailSections = residencyContext
-            ? [
-                ...(detail.sections ?? []).filter((section) => section.role !== "aspect"),
-                ...(residencyAspectSections ?? [])
-              ]
-            : (detail.sections ?? []);
-          '''
+          start = detail.index('  const detailSections = residencyContext\n')
+          end = detail.index('  const metaRows = detailMetaRows(detail.meta);\n', start)
           new = '''  const detailSections = residencyAspectSections
             ? [
                 ...residencyAspectSections,
@@ -40,9 +35,7 @@ jobs:
               ]
             : (detail.sections ?? []);
           '''
-          if old not in detail:
-              raise SystemExit('SkyDetailArticle residency merge target not found')
-          detail_path.write_text(detail.replace(old, new, 1))
+          detail_path.write_text(detail[:start] + new + detail[end:])
 
           test_path = Path('scripts/test-sky-placement-residency-aspects.mts')
           test = test_path.read_text()
