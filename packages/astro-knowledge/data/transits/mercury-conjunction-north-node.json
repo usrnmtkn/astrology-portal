@@ -3,7 +3,7 @@
   "transiting": "mercury",
   "aspect": "conjunction",
   "other": "north-node",
-  "base": "One conversation can make the next decision impossible to keep vague.",
+  "base": "One conversation or piece of information can make the next decision impossible to keep vague.",
   "business": "The two concerns arrive in the same decision; work with the point they now share.",
   "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
   "arcApplying": "The two concerns become harder to separate as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "One conversation can make the next decision impossible to keep vague.",
-    "body": "One conversation can make the next decision impossible to keep vague. When Mercury conjuncts the North Node, a message, application, introduction, contract term, or answer to one important question can put a concrete choice where speculation had been. You may still need time to decide, but now you know what you are deciding about. Get the date, amount, requirement, name, or answer that changes your options, then stop planning around information you no longer need to guess at.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+    "summary": "One conversation or piece of information can make the next decision impossible to keep vague.",
+    "body": "One conversation or piece of information can make the next decision impossible to keep vague. When Mercury conjoins the North Node, communication and forward movement meet in the same exchange, allowing a message, application, introduction, contract term, or answer to put a concrete choice where speculation had been. More time may still be needed. The important change is that the decision now has facts, dates, amounts, names, or requirements attached to it.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }

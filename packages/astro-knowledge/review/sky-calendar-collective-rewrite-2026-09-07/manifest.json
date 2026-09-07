@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "batchId": "sky-calendar-collective-rewrite-2026-09-07",
+  "surface": "sky-calendar-exact-aspect",
+  "targetTemporality": "current_sky",
+  "targetRegister": "collective",
+  "sourceProjection": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/current-owner-payloads.json",
+  "sourceProjectionBlobSha": "86c4d85938bca192550d60992ecf28080ba06e27",
+  "sourcePayloadSetSha256": "149f6b393f33c60443b07721ac2b0eed458030a5ceb60c08f722ee0c6d6c2e67",
+  "expectedRowCount": 379,
+  "effectiveRowCount": 379,
+  "payloadFiles": [
+    { "path": "candidate-payloads-01.json", "rowCount": 45 },
+    { "path": "candidate-payloads-02.json", "rowCount": 42 },
+    { "path": "candidate-payloads-03.json", "rowCount": 50 },
+    { "path": "candidate-payloads-04.json", "rowCount": 37 },
+    { "path": "candidate-payloads-05.json", "rowCount": 40 },
+    { "path": "candidate-payloads-06.json", "rowCount": 60 },
+    { "path": "candidate-payloads-07.json", "rowCount": 55 },
+    { "path": "candidate-payloads-08.json", "rowCount": 50 }
+  ],
+  "readerAddressOverlay": {
+    "path": "reader-address-overlay.json",
+    "rowCount": 40,
+    "selectionPolicy": "editorial_not_quota",
+    "summariesRemainCollective": true,
+    "bodyAddressMode": "conditional_or_observational",
+    "directionApproved": true
+  },
+  "reviewStatus": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "servingChanged": false,
+  "canonicalTransitCorpusChanged": false,
+  "contentStudioServingRowsChanged": false,
+  "approvalNote": "Owner approved the collective-register direction, the initial sample corrections, a random ten-row review sample, and the selective reader-address direction. Remaining unseen exact wording is intentionally held for exact-text review before any serving promotion."
+}

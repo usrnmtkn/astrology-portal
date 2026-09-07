@@ -3,7 +3,7 @@
   "transiting": "mercury",
   "aspect": "opposition",
   "other": "north-node",
-  "base": "You can make an excellent case for staying with what you already know, especially when the unfamiliar option still has more questions than answers.",
+  "base": "A strong case for what is already known can make an unfamiliar option look weaker simply because it still contains more unanswered questions.",
   "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
   "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
   "arcApplying": "The two positions become more explicit as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "You can make an excellent case for staying with what you already know, especially when the unfamiliar option still has more questions than answers.",
-    "body": "You can make an excellent case for staying with what you already know, especially when the unfamiliar option still has more questions than answers. When Mercury opposes the North Node, old expertise, settled opinions, familiar contacts, or an explanation you have used for years can sound especially convincing because you already know how to defend it. That knowledge still matters, but expertise can turn into a closed argument when no new information is allowed to change the conclusion. Use what you know as evidence, not as a reason to stop asking what the unfamiliar option actually requires.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+    "summary": "A strong case for what is already known can make an unfamiliar option look weaker simply because it still contains more unanswered questions.",
+    "body": "A strong case for what is already known can make an unfamiliar option look weaker simply because it still contains more unanswered questions. When Mercury opposes the North Node, familiar expertise and forward movement face each other directly, giving settled opinions and established explanations an advantage because they are easier to defend. Existing knowledge still matters. It becomes limiting when no new information is allowed to change the conclusion.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }

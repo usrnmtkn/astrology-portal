@@ -1,0 +1,30 @@
+{
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-collective-approved-2026-09-07-serving",
+  "sourceEditorialBatchId": "sky-calendar-collective-approved-2026-09-07",
+  "sourceEditorialAuthorizationPath": "packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json",
+  "ownerStatement": "please proceed with the merge and push live. Make sure all the updated aspects are editble in the content studio",
+  "decisionContext": "The owner explicitly authorized the current hash-bound 379-row collective Calendar exact-aspect package to merge to main, serve in production, and remain editable through Content Studio.",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedFields": [
+    "summary",
+    "body"
+  ],
+  "approvalEffect": "serving_and_content_studio_authorization",
+  "capabilities": [
+    "batch_generation",
+    "serving",
+    "content_studio_sync"
+  ],
+  "authorizedAt": "2026-09-07",
+  "memberCount": 379,
+  "readerAddressOverlayCount": 40,
+  "approvedCandidateHeadSha": "04dca0df25d6089922b311ce6a4544fe5e9a7c2b",
+  "runtimeEligible": true,
+  "contentStudioEditable": true,
+  "contentStudioSignedOffExactOverridesCanonicalBaseline": true,
+  "preserveUnchangedSouthNodeRows": true
+}

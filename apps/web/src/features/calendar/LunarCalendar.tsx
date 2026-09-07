@@ -1318,7 +1318,7 @@ export function normalizeCalendarEventSurface(
     const selected = selectSkyAspectCopyByPrecedence<CalendarSkyAspectCandidate>({
       composed,
       signSpecific: packageCandidates.signSpecific,
-      exact: exact ?? studioExact,
+      exact: studioExact ?? exact,
       phrasebook: packageCandidates.phrasebook,
       generated
     });

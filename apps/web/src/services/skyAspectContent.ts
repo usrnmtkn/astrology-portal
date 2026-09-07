@@ -33,6 +33,14 @@ const contentStudioExactBodyOrder = [
   "lilith"
 ];
 
+const southNodeAspectForNorthNodeAspect: Record<string, string> = {
+  conjunction: "opposition",
+  sextile: "trine",
+  square: "square",
+  trine: "sextile",
+  opposition: "conjunction"
+};
+
 function canonicalCollectiveSkyPoint(value: string) {
   const point = slugContentPart(value);
   return ["north-node", "south-node", "true-node", "node", "nodes", "lunar-nodes"].includes(point)
@@ -227,12 +235,12 @@ function skyAspectContentKeysFromExpected(expected: ExpectedSkyAspectFacts, targ
   return [evergreenKey, datedKey, skyAspectContentKey(expected.a, expected.aspect, expected.b)].filter(Boolean);
 }
 
-export function resolveSkyAspectContentStudioExact(options: ResolveSkyAspectContentOptions) {
-  const expected = normalizedContentStudioExactSkyAspectFacts(options);
-  if (!expected) return null;
-
+function contentStudioExactRow(
+  generatedContent: Map<string, LiveGeneratedContent>,
+  expected: Pick<ExpectedSkyAspectFacts, "a" | "b" | "aspect">
+) {
   const contentKey = `sky.aspect.${expected.a}.${expected.aspect}.${expected.b}`;
-  const content = options.generatedContent.get(contentKey);
+  const content = generatedContent.get(contentKey);
   const source = content?.sourceSnapshot ?? {};
   const identity = recordField(source.exactSkyAspectIdentity);
   const body = content ? skyAspectBody(content) : "";
@@ -252,10 +260,52 @@ export function resolveSkyAspectContentStudioExact(options: ResolveSkyAspectCont
   return { body, content };
 }
 
+export function resolveSkyAspectContentStudioExact(options: ResolveSkyAspectContentOptions) {
+  const expected = normalizedContentStudioExactSkyAspectFacts(options);
+  if (!expected) return null;
+
+  const primary = contentStudioExactRow(options.generatedContent, expected);
+  if (!primary) return null;
+
+  if (expected.a === "north-node") {
+    const southAspect = southNodeAspectForNorthNodeAspect[expected.aspect];
+    const south = southAspect
+      ? contentStudioExactRow(options.generatedContent, {
+          a: "south-node",
+          b: expected.b,
+          aspect: southAspect
+        })
+      : null;
+
+    if (south) {
+      return {
+        body: [
+          `North Node (${expected.aspect}): ${primary.body}`,
+          `South Node (${southAspect}): ${south.body}`
+        ].join("\n\n"),
+        content: primary.content
+      };
+    }
+  }
+
+  return primary;
+}
+
 export function skyAspectGeneratedContentKeys(options: SkyAspectContentKeyOptions) {
   const expected = normalizedCollectiveSkyAspectFacts(options);
+  const studioExpected = normalizedContentStudioExactSkyAspectFacts(options);
+  const keys = expected ? skyAspectContentKeysFromExpected(expected, options.targetDate) : [];
 
-  return expected ? skyAspectContentKeysFromExpected(expected, options.targetDate) : [];
+  if (studioExpected) {
+    keys.push(`sky.aspect.${studioExpected.a}.${studioExpected.aspect}.${studioExpected.b}`);
+
+    if (studioExpected.a === "north-node") {
+      const southAspect = southNodeAspectForNorthNodeAspect[studioExpected.aspect];
+      if (southAspect) keys.push(`sky.aspect.south-node.${southAspect}.${studioExpected.b}`);
+    }
+  }
+
+  return Array.from(new Set(keys));
 }
 
 export function resolveSkyAspectGeneratedContent(options: ResolveSkyAspectContentOptions) {

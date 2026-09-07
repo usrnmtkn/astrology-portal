@@ -3,7 +3,7 @@
   "transiting": "mercury",
   "aspect": "opposition",
   "other": "lilith",
-  "base": "Someone says the thing everyone else was thinking, and now the argument is about how they said it.",
+  "base": "Someone can say the thing everyone was thinking and leave the group arguing about the delivery instead of the information.",
   "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
   "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
   "arcApplying": "The two positions become more explicit as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "Someone says the thing everyone else was thinking, and now the argument is about how they said it.",
-    "body": "Someone says the thing everyone else was thinking, and now the argument is about how they said it. When Mercury opposes Lilith, tone can become easier to fight about than the uncomfortable fact underneath it. The person may have been rude. They may have chosen terrible timing. They may still be right about the part nobody wanted to discuss. Deal with those as separate questions. If the information matters, making the speaker more pleasant will not make it disappear. Answer what they said before the argument about delivery becomes a way to avoid the subject completely.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+    "summary": "Someone can say the thing everyone was thinking and leave the group arguing about the delivery instead of the information.",
+    "body": "Someone can say the thing everyone was thinking and leave the group arguing about the delivery instead of the information. When Mercury opposes Lilith, communication and refusal face each other directly, making tone easier to fight about than the uncomfortable fact underneath it. The speaker can be rude and still raise a valid issue. Delivery and substance become more useful when treated as separate questions rather than allowing one to erase the other.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }

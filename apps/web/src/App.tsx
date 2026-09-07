@@ -4371,14 +4371,7 @@ function approvedExactSkyAspectWritingSection(
       })
     : null;
 
-  const loadedExactRegistry = contentRegistryFor("sky");
-
-  if (
-    studio
-    && loadedExactRegistry
-    && loadedExactRegistry.approvedExactSkyAspectCopy
-    && !loadedExactRegistry.approvedExactSkyAspectCopy(aspect.from, aspect.type, aspect.to)
-  ) {
+  if (studio) {
     return {
       slot: "meaning",
       required: true,

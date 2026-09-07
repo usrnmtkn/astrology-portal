@@ -3,7 +3,7 @@
   "transiting": "moon",
   "aspect": "conjunction",
   "other": "lilith",
-  "base": "You keep telling yourself you are just in a bad mood, but the irritation is pointing to something you actually need.",
+  "base": "Irritation can reveal a need that has been dismissed as inconvenient long enough to become difficult to ignore.",
   "business": "The two concerns arrive in the same decision; work with the point they now share.",
   "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
   "arcApplying": "The two concerns become harder to separate as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "You keep telling yourself you are just in a bad mood, but the irritation is pointing to something you actually need.",
-    "body": "You keep telling yourself you are just in a bad mood, but the irritation is pointing to something you actually need. When the Moon conjuncts Lilith, restlessness, jealousy, exhaustion, anger, or the urge to be left alone can make a buried need harder to dismiss. Maybe you need more privacy, more help, more rest, or simply less responsibility for keeping everyone else comfortable. The feeling is not automatically an instruction, but it is information. Before you criticize yourself for being difficult, look at what has been missing from the arrangement. A need does not become unreasonable just because acknowledging it would inconvenience somebody else.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+    "summary": "Irritation can reveal a need that has been dismissed as inconvenient long enough to become difficult to ignore.",
+    "body": "Irritation can reveal a need that has been dismissed as inconvenient long enough to become difficult to ignore. When the Moon conjoins Lilith, care and refusal fuse, making exhaustion, jealousy, anger, overstimulation, loneliness, or the need for privacy more visible. A feeling is not automatically an instruction. It is still information about where a routine or relationship may have stopped accounting for what someone actually needs.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }

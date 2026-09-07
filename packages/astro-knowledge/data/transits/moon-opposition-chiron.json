@@ -3,7 +3,7 @@
   "transiting": "moon",
   "aspect": "opposition",
   "other": "chiron",
-  "base": "One person can keep offering help while the other keeps proving they do not need it.",
+  "base": "One person can keep offering help while another keeps proving that accepting it would cost too much autonomy.",
   "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
   "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
   "arcApplying": "The two positions become more explicit as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "One person can keep offering help while the other keeps proving they do not need it.",
-    "body": "One person can keep offering help while the other keeps proving they do not need it. When the Moon opposes Chiron, care and discomfort with receiving it can split across a relationship, leaving one person pushing harder and the other refusing more firmly until both feel misunderstood. The giver may need to stop making care compulsory, and the receiver may need to stop treating acceptance like surrender. A useful exchange begins when the help has terms both people can actually agree to.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+    "summary": "One person can keep offering help while another keeps proving that accepting it would cost too much autonomy.",
+    "body": "One person can keep offering help while another keeps proving that accepting it would cost too much autonomy. When the Moon opposes Chiron, care and sensitivity face each other directly, creating a cycle in which the giver pushes harder and the receiver refuses more firmly until both feel misunderstood. Care becomes easier to receive when it stops being compulsory. Help becomes more useful when its terms leave enough room for both people to agree to the exchange.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }
