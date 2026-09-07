@@ -406,15 +406,14 @@ export function SkyDetailArticle({
     ? residencyAspectState[1]
     : null;
   const existingDetailSections = detail.sections ?? [];
-const existingAspectSections = existingDetailSections.filter((section) => section.role === "aspect");
-const residencyAspectHeadings = new Set(
-  (residencyAspectSections ?? []).map((section) => section.heading.trim().toLowerCase())
-);
-const detailSections = residencyContext && residencyAspectSections !== null
+const detailSections = residencyContext && residencyAspectSections
   ? [
       ...existingDetailSections.filter((section) => section.role !== "aspect"),
       ...residencyAspectSections,
-      ...existingAspectSections.filter((section) => !residencyAspectHeadings.has(section.heading.trim().toLowerCase()))
+      ...existingDetailSections.filter((section) => (
+        section.role === "aspect"
+        && !residencyAspectSections.some((candidate) => candidate.heading === section.heading)
+      ))
     ]
   : existingDetailSections;
   const metaRows = detailMetaRows(detail.meta);
