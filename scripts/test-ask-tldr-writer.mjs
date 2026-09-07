@@ -37,6 +37,10 @@ assert.match(request.instructions, /Do not calculate astrology/u);
 assert.match(request.instructions, /Every astrology factor supplied to you has passed the governed-meaning gate/u);
 assert.match(request.instructions, /GOVERNED SEMANTIC EVIDENCE controls what the astrology means/u);
 assert.match(request.instructions, /OWNER REGISTER EVIDENCE controls vocabulary/u);
+assert.match(request.instructions, /Do not write generic coaching with astrology pasted onto it/u);
+assert.match(request.instructions, /compare and contrast/u);
+assert.match(request.instructions, /Why the astrology points here/u);
+assert.match(request.instructions, /historical comparison/u);
 assert.match(request.input, /USER QUESTION/u);
 assert.match(request.input, /Jupiter/u);
 assert.match(request.input, /Midheaven/u);
@@ -80,7 +84,7 @@ assert.throws(() => validateAskTldrWriterOutput({
   question: auditPacketWithPartial.question,
   evidence: auditPacketWithPartial.evidence,
   value: {
-    answer: "This is a fixture with enough sentences to satisfy the mechanical validator. It should still fail because it cites evidence the writer was never allowed to use.",
+    answer: "This is a fixture with enough sentences to satisfy the mechanical validator. It should still fail because it cites evidence the writer was never allowed to use.\n\nWhy the astrology points here\n\nThe astrology section is present so the evidence-id failure is isolated. It does not change which evidence the writer is allowed to cite.",
     evidenceIdsUsed: [requestWithPartialAudit.primaryEvidenceId, partialProfection.id],
     primaryEvidenceId: requestWithPartialAudit.primaryEvidenceId,
     whyNowEvidenceId: requestWithPartialAudit.primaryEvidenceId,
@@ -89,7 +93,7 @@ assert.throws(() => validateAskTldrWriterOutput({
 }), /ASK_TLDR_WRITER_EVIDENCE_IDS_INVALID/u);
 
 const goodValue = {
-  answer: "Recognition is more available when you put the work where people can see and respond to it. Jupiter opposing your Midheaven around September 15 can make public opportunity and visibility feel larger, but it can also make other people's reaction seem more important than the result itself.\n\nUse the opening to show the concrete work, ask for the credit or role attached to it, and let the response give you information. You may get more from a visible result and a specific request than from trying to manage how everyone feels about what you are doing.",
+  answer: "Recognition is more available when you put the work where people can see and respond to it. Ask for the credit, title, or authority that matches work you can already point to instead of adding more responsibility just to prove the case.\n\nWhy the astrology points here\n\nJupiter opposing your Midheaven around September 15 enlarges questions of public role, recognition, and how much professional territory you are ready to occupy. The useful part of that pressure is not simply being more visible; it is noticing where growth gives you more leverage and where it only gives you more work.",
   evidenceIdsUsed: [request.primaryEvidenceId],
   primaryEvidenceId: request.primaryEvidenceId,
   whyNowEvidenceId: request.primaryEvidenceId,
@@ -123,8 +127,15 @@ assert.throws(() => validateAskTldrWriterOutput({
   request,
   question: governed.question,
   evidence: governed.evidence,
-  value: { ...goodValue, answer: goodValue.answer.replace("public opportunity", "public opportunity — and certainty") }
+  value: { ...goodValue, answer: goodValue.answer.replace("public role", "public role — and certainty") }
 }), /ASK_TLDR_WRITER_PROSE_INVALID/u);
+
+assert.throws(() => validateAskTldrWriterOutput({
+  request,
+  question: governed.question,
+  evidence: governed.evidence,
+  value: { ...goodValue, answer: goodValue.answer.replace("\n\nWhy the astrology points here\n\nJupiter", "\n\nJupiter") }
+}), /astrology_support_section_missing/u);
 
 assert.throws(() => validateAskTldrWriterOutput({
   request,
@@ -144,4 +155,4 @@ const mismatchedReceipt = structuredClone(receipt);
 mismatchedReceipt.semanticSources[0].packetSha256 = "bad";
 assert.throws(() => buildAskTldrWriterRequest({ packet: governed, receipt: mismatchedReceipt }), /ASK_TLDR_VOICE_RECEIPT_TAMPERED|ASK_TLDR_WRITER_SEMANTIC_RECEIPT_MISMATCH/u);
 
-console.log("Ask TLDR writer contract passed: the generated provider schema compiles, no provider call is enabled, only fully governed factors can reach the writer, semantic meaning and owner register evidence stay separate, and output must cite the ranked primary evidence without leaking internal metadata or banned prose.");
+console.log("Ask TLDR writer contract passed: astrology must materially drive the answer, temporal contrast and reinforcement are available when evidence supports them, a reader-facing astrology section is mandatory, historical recurrence cannot be invented, and only fully governed evidence can reach the writer.");
