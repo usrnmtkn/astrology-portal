@@ -283,7 +283,7 @@ test("reader composes selected-day events with a dedicated ingress TLDR", async 
   await expect(summary).toContainText("Today’s exact aspects are Saturn squares Lilith and Mercury opposes Neptune.");
   await expect(summary).toContainText("Mercury enters Libra today. Complete supplied short wording for this fixture.");
   await expect(summary).not.toContainText("Venus enters");
-  await expect(summary.getByRole("link", { name: "Saturn squares Lilith", exact: true })).toHaveAttribute("href", "#sky/aspect/saturn/square/lilith");
+  await expect(summary.getByRole("link", { name: "Saturn squares Lilith", exact: true })).toHaveAttribute("href", `#sky/aspect/saturn/square/lilith/at/${encodeURIComponent(event.startsAt)}`);
   await summary.getByRole("link", { name: "Mercury enters Libra", exact: true }).click();
   await expect(reader).toHaveURL(/#sky\/placement\/mercury\/libra/);
 });
