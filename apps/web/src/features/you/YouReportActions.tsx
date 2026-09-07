@@ -25,16 +25,16 @@ function isPending(state: ActionState) {
 
 function findPersistedReport(
   items: ReportLibraryItem[],
-  window: YouTransitReportWindow,
+  reportWindow: YouTransitReportWindow,
   targetDate: string | null,
   periodEnd: string | null
 ) {
   if (!targetDate) return null;
-  const reportKind = window === "day" ? "you_day_reading" : "you_week_reading";
+  const reportKind = reportWindow === "day" ? "you_day_reading" : "you_week_reading";
   return items.find((item) => (
     item.reportKind === reportKind
     && item.targetDate === targetDate
-    && (window === "day" || item.periodEnd === periodEnd)
+    && (reportWindow === "day" || item.periodEnd === periodEnd)
   )) ?? null;
 }
 
@@ -99,29 +99,29 @@ export function YouReportActions({
     return () => window.clearInterval(interval);
   }, [reconcilePersistedReports, shouldPoll]);
 
-  async function createReport(window: YouTransitReportWindow) {
-    const brief = window === "day" ? dayBrief : weekBrief;
+  async function createReport(reportWindow: YouTransitReportWindow) {
+    const brief = reportWindow === "day" ? dayBrief : weekBrief;
     if (!brief) return;
-    const setAction = window === "day" ? setDayAction : setWeekAction;
+    const setAction = reportWindow === "day" ? setDayAction : setWeekAction;
     setAction({ state: "loading", route: null });
     setMessage("");
     try {
       const result = await requestYouTransitReport(brief);
       setAction({ state: result.status === "ready" ? "checking" : "queued", route: null });
       setMessage(result.status === "ready"
-        ? `Your ${window} report is ready.`
-        : `Your ${window} report is being prepared. You can leave this page.`);
+        ? `Your ${reportWindow} report is ready.`
+        : `Your ${reportWindow} report is being prepared. You can leave this page.`);
       await reconcilePersistedReports();
     } catch (error) {
       setAction({ state: "error", route: null });
-      setMessage(error instanceof Error ? error.message : `Your ${window} report could not be started.`);
+      setMessage(error instanceof Error ? error.message : `Your ${reportWindow} report could not be started.`);
     }
   }
 
-  function reportButton(window: YouTransitReportWindow, action: ReportAction, available: boolean) {
+  function reportButton(reportWindow: YouTransitReportWindow, action: ReportAction, available: boolean) {
     const pending = available && isPending(action.state);
     const ready = available && action.state === "ready" && Boolean(action.route);
-    const label = window === "day" ? "day" : "week";
+    const label = reportWindow === "day" ? "day" : "week";
     const buttonLabel = ready
       ? `Read ${label} report`
       : action.state === "error"
@@ -139,7 +139,7 @@ export function YouReportActions({
             window.location.assign(action.route);
             return;
           }
-          void createReport(window);
+          void createReport(reportWindow);
         }}
       >
         {pending ? (
