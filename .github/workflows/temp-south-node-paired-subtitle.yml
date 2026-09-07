@@ -15,88 +15,13 @@ jobs:
       - uses: actions/checkout@v6
         with:
           ref: fix/south-node-paired-subtitle-20260907
-      - name: Render South Node as a peer aspect subtitle
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-
-          detail_path = Path('apps/web/src/features/sky/SkyDetailArticle.tsx')
-          detail = detail_path.read_text()
-
-          detail, import_count = re.subn(
-              r'(articleAspectTypeFromText,\n)(\s*)(normalizedArticleAspectToneBucket)',
-              r'\1\2articleNodeAxisBodyParts,\n\2\3',
-              detail,
-              count=1,
-          )
-          if import_count != 1:
-              raise SystemExit(f'articleAspects import target count: {import_count}')
-
-          locals_pattern = re.compile(
-              r'(const glyphParts = sectionHeading \? articleAspectGlyphPartsFromHeading\(sectionHeading\) : null;\n)(\s*)(const sourceTag = inferredSectionQaSourceTag\(section\);)',
-              re.M,
-          )
-          detail, locals_count = locals_pattern.subn(
-              r'\1\2const nodeAxisBody = sectionHeading ? articleNodeAxisBodyParts(sectionHeading, bodyParagraphs) : null;\n'
-              r'\2const southNodeGlyphParts = nodeAxisBody ? articleAspectGlyphPartsFromHeading(nodeAxisBody.southHeading) : null;\n'
-              r'\2\3',
-              detail,
-              count=1,
-          )
-          if locals_count != 1:
-              raise SystemExit(f'aspect rendering locals target count: {locals_count}')
-
-          render_pattern = re.compile(
-              r'\{bodyParagraphs\.length > 0\n\s*\? bodyParagraphs\.map\(\(paragraph, paragraphIndex\) => \(\n\s*<p key=\{`\$\{section\.key\}-\$\{paragraphIndex\}`\}>\{paragraph\}</p>\n\s*\)\)\n\s*: <p>\{typeof section\.body === "string" \? stripLegacySkyArticleScaffoldPrefix\(section\.body\) : section\.body\}</p>\}',
-              re.M,
-          )
-          replacement = '''{nodeAxisBody ? (
-                            <>
-                              {nodeAxisBody.primaryParagraphs.map((paragraph, paragraphIndex) => (
-                                <p key={`${section.key}-north-${paragraphIndex}`}>{paragraph}</p>
-                              ))}
-                              <div className="article-related-aspects__copy-heading">
-                                {southNodeGlyphParts ? <AspectGlyphs from={southNodeGlyphParts.from} aspect={southNodeGlyphParts.aspect} to={southNodeGlyphParts.to} /> : null}
-                                <h4>{nodeAxisBody.southHeading}</h4>
-                              </div>
-                              {nodeAxisBody.southParagraphs.map((paragraph, paragraphIndex) => (
-                                <p key={`${section.key}-south-${paragraphIndex}`}>{paragraph}</p>
-                              ))}
-                            </>
-                          ) : bodyParagraphs.length > 0
-                            ? bodyParagraphs.map((paragraph, paragraphIndex) => (
-                              <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>
-                            ))
-                            : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}'''
-          detail, render_count = render_pattern.subn(replacement, detail, count=1)
-          if render_count != 1:
-              raise SystemExit(f'aspect body rendering target count: {render_count}')
-          detail_path.write_text(detail)
-
-          test_path = Path('scripts/test-calendar-south-node-serving.mjs')
-          test = test_path.read_text()
-          anchor = 'assert.equal(studioSouth?.body, marsSouth.body);'
-          insertion = '''assert.equal(studioSouth?.body, marsSouth.body);
-
-const skyDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
-assert.match(
-  skyDetailSource,
-  /articleNodeAxisBodyParts[\\s\\S]*?article-related-aspects__copy-heading[\\s\\S]*?<h4>\\{nodeAxisBody\\.southHeading\\}<\\/h4>/u,
-  "Paired South Node copy must render with the same aspect subtitle treatment as the North Node heading."
-);'''
-          if test.count(anchor) != 1:
-              raise SystemExit(f'South Node serving regression anchor count: {test.count(anchor)}')
-          test_path.write_text(test.replace(anchor, insertion, 1))
-          PY
-          git diff --check
-      - name: Commit repair and remove temporary workflow
-        shell: bash
+      - name: Apply paired subtitle repair
+        run: node scripts/temp-apply-south-node-paired-subtitle.mjs
+      - name: Commit repair and remove temporary helpers
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm .github/workflows/temp-south-node-paired-subtitle.yml
+          git rm .github/workflows/temp-south-node-paired-subtitle.yml scripts/temp-apply-south-node-paired-subtitle.mjs
           git add apps/web/src/features/sky/SkyDetailArticle.tsx scripts/test-calendar-south-node-serving.mjs
           git commit -m "Render South Node as paired aspect subtitle"
           git push origin HEAD:fix/south-node-paired-subtitle-20260907
