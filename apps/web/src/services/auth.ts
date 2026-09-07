@@ -118,7 +118,11 @@ export async function getVerifiedAuthUser(client?: SupabaseClient | null) {
 }
 
 function redirectTo() {
-  return authRedirectUrl || window.location.origin;
+  const currentOrigin = window.location.origin;
+  if (window.location.hostname.endsWith(".vercel.app")) {
+    return currentOrigin;
+  }
+  return authRedirectUrl || currentOrigin;
 }
 
 function authAccountFromUser(user: User): AuthAccount {
