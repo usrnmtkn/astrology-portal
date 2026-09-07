@@ -3059,8 +3059,8 @@ export function GeneratedContentAdminDashboard() {
     activePage === "content" && (statusFiltersOpen || contentStatusFilter !== "all"));
   const statusCounts = {
     all: statusCountRows.length,
-    LIVE: liveStatusResults ? [...liveStatusResults.statuses.values()].filter((status) => status.live).length : "…",
-    NOT_LIVE: liveStatusResults ? [...liveStatusResults.statuses.values()].filter((status) => !status.live).length : "…"
+    LIVE: liveStatusResults && !liveStatusResults.pending ? [...liveStatusResults.statuses.values()].filter((status) => status.live).length : "…",
+    NOT_LIVE: liveStatusResults && !liveStatusResults.pending ? [...liveStatusResults.statuses.values()].filter((status) => !status.live).length : "…"
   };
   const filteredRows = useMemo(() => statusCountRows.filter((row) =>
     contentStatusFilter === "all" || liveStatusResults?.statuses.get(row.id)?.live === (contentStatusFilter === "LIVE")
@@ -7290,7 +7290,7 @@ export function GeneratedContentAdminDashboard() {
             </button>
           ))}
         </div>
-        {statusFiltersOpen && !liveStatusResults && <p role="status" className="admin-field-hint">Checking reader status…</p>}
+        {statusFiltersOpen && (!liveStatusResults || liveStatusResults.pending > 0) && <p role="status" className="admin-field-hint">Checking reader status…</p>}
         {Boolean(liveStatusResults?.failed) && <p role="status" className="admin-field-hint">Status unavailable for {liveStatusResults?.failed} entries. These entries are excluded from Live and Not live filters. Refresh rows to retry.</p>}
         </details>
         <div className="admin-review-filter-grid">
@@ -7562,7 +7562,7 @@ export function GeneratedContentAdminDashboard() {
     const visibleGroups = groups.filter((group) => (groupedRows.get(group.key)?.length ?? 0) > 0);
 
     const showDailyGlanceStudio = fallbackSectionFilter === "daily";
-    if (visibleGroups.length === 0 && !showDailyGlanceStudio) return <p className="admin-empty">{contentStatusFilter !== "all" && !liveStatusResults ? "Checking reader status…" : "No rows match these filters."}</p>;
+    if (visibleGroups.length === 0 && !showDailyGlanceStudio) return <p className="admin-empty">{contentStatusFilter !== "all" && (!liveStatusResults || liveStatusResults.pending > 0) ? "Checking reader status…" : "No rows match these filters."}</p>;
 
     return (
       <div className="admin-sky-edition-fields" aria-label="Fallback content grouped by reader use">
@@ -7703,7 +7703,7 @@ export function GeneratedContentAdminDashboard() {
             })}
           </tbody>
         </table>
-          {tableRows.length === 0 && <p className="admin-empty">{activePage === "content" && contentStatusFilter !== "all" && !liveStatusResults ? "Checking reader status…" : "No rows match these filters."}</p>}
+          {tableRows.length === 0 && <p className="admin-empty">{activePage === "content" && contentStatusFilter !== "all" && (!liveStatusResults || liveStatusResults.pending > 0) ? "Checking reader status…" : "No rows match these filters."}</p>}
         </div>}
       </AdminPaginatedCollection></Suspense>
     );

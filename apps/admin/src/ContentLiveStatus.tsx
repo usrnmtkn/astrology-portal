@@ -47,20 +47,25 @@ export function ContentLiveStatusProvider({ load, children }: { load: Load; chil
   return <Context.Provider value={load}>{children}</Context.Provider>;
 }
 export function useContentLiveStatusResults(load: Load, rows: StatusRow[], enabled: boolean) {
-  const [result, setResult] = useState<{ load: Load; rows: StatusRow[]; statuses: Map<string, LiveStatus>; failed: number } | null>(null);
+  const [result, setResult] = useState<{ load: Load; rows: StatusRow[]; statuses: Map<string, LiveStatus>; failed: number; pending: number } | null>(null);
   useEffect(() => {
     if (!enabled) return;
     let cancelled = false;
-    void Promise.allSettled(rows.map((row) => load(row))).then((results) => {
-      if (cancelled) return;
+    void (async () => {
       const statuses = new Map<string, LiveStatus>();
       let failed = 0;
-      for (const result of results) {
-        if (result.status === "fulfilled") statuses.set(result.value.id, result.value);
-        else failed++;
+      // Stream matching rows as batches resolve and stop scheduling work when
+      // the editor changes the search/category or leaves this screen.
+      for (let offset = 0; offset < rows.length || offset === 0; offset += 64) {
+        const results = await Promise.allSettled(rows.slice(offset, offset + 64).map((row) => load(row)));
+        if (cancelled) return;
+        for (const result of results) {
+          if (result.status === "fulfilled") statuses.set(result.value.id, result.value);
+          else failed++;
+        }
+        setResult({ load, rows, statuses: new Map(statuses), failed, pending: Math.max(0, rows.length - offset - 64) });
       }
-      setResult({ load, rows, statuses, failed });
-    });
+    })();
     return () => { cancelled = true; };
   }, [load, rows, enabled]);
   return result?.load === load && result.rows === rows ? result : null;
