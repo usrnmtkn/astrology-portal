@@ -180,14 +180,10 @@ const PackagedHookCatalogResults = lazy(async () => {
   const module = await import("./PackagedHookCatalogResults");
   return { default: module.PackagedHookCatalogResults };
 });
-const TemplateVariableReviewPanels = lazy(async () => {
-  const module = await import("./TemplateVariableReviewPanels");
-  return { default: module.TemplateVariableReviewPanels };
-});
 const SkyV4StudioReviewPanel = lazy(() => import("./SkyV4StudioReviewPanel"));
 const AdminPaginatedCollection = lazy(() => import("./AdminPaginatedCollection")) as typeof import("./AdminPaginatedCollection").AdminPaginatedCollection;
 const AdminFilterDisclosure = lazy(() => import("./AdminFilterDisclosure"));
-const TemplateReaderDrilldown = lazy(() => import("./TemplateReaderDrilldown"));
+const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
 const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
 const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
 const NatalAspectSourceFinder = lazy(() => import("./NatalAspectSourceFinder"));
@@ -594,6 +590,7 @@ type AdminNavItem = {
   icon: typeof Check;
   key?: string;
   category?: AdminContentCategoryFilter;
+  group?: "Publish" | "Write" | "Compose";
 };
 
 const compositionPages: AdminDashboardPage[] = ["compositionMap", "templates", "slotDictionary", "vocabulary", "knowledge", "hooks"];
@@ -606,19 +603,20 @@ const compositionTabs: AdminNavItem[] = [
   { page: "hooks", label: "Surface Map", icon: Flag }
 ];
 const primaryAdminNavItems: AdminNavItem[] = [
-  { page: "reviewQueue", label: "Review Queue", icon: Check },
-  { page: "unresolvedContent", label: "Unresolved Content", icon: Flag },
-  { page: "content", label: "Content Library", icon: BookOpenText },
-  { page: "content", label: "Natal Chart", icon: Orbit, key: "natal-chart", category: "Natal Chart" },
-  { page: "content", label: "Natal Aspects", icon: ArrowLeftRight, key: "natal-aspects", category: "Natal Aspects" },
-  { page: "skyWriteups", label: "Sky Write-ups", icon: Moon },
-  { page: "content", label: "Calendar Aspects", icon: CalendarDays, key: "calendar-aspects", category: "Calendar Aspects" },
-  { page: "articles", label: "Articles", icon: FileText },
-  { page: "compatibility", label: "Compatibility", icon: Users },
-  { page: "compositeByType", label: "Composite Review", icon: Users },
-  { page: "compositionMap", label: "Composition", icon: Sparkles },
-  { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText }
+  { page: "reviewQueue", label: "Review Queue", icon: Check, group: "Publish" },
+  { page: "unresolvedContent", label: "Unresolved Content", icon: Flag, group: "Publish" },
+  { page: "content", label: "Content Library", icon: BookOpenText, group: "Write" },
+  { page: "content", label: "Natal Chart", icon: Orbit, key: "natal-chart", category: "Natal Chart", group: "Write" },
+  { page: "content", label: "Natal Aspects", icon: ArrowLeftRight, key: "natal-aspects", category: "Natal Aspects", group: "Write" },
+  { page: "skyWriteups", label: "Sky Write-ups", icon: Moon, group: "Write" },
+  { page: "content", label: "Calendar Aspects", icon: CalendarDays, key: "calendar-aspects", category: "Calendar Aspects", group: "Write" },
+  { page: "articles", label: "Articles", icon: FileText, group: "Write" },
+  { page: "compatibility", label: "Compatibility", icon: Users, group: "Write" },
+  { page: "compositeByType", label: "Composite Review", icon: Users, group: "Write" },
+  { page: "compositionMap", label: "Composition", icon: Sparkles, group: "Compose" },
+  { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText, group: "Compose" }
 ];
+const primaryAdminNavGroups = ["Publish", "Write", "Compose"] as const;
 const advancedAdminNavItems: AdminNavItem[] = [
   { page: "sourceDrafts", label: "Sky Aspect Drafts", icon: FileText },
   { page: "users", label: "Users", icon: Users },
@@ -2730,6 +2728,20 @@ export function GeneratedContentAdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  // A plain "Loaded …" confirmation is useful once; warnings and errors stay until dismissed.
+  useEffect(() => {
+    if (loadState !== "loaded" || !/^Loaded /u.test(message) || message.includes("Partial load:")) return;
+    const timer = window.setTimeout(() => setMessage((current) => current === message ? "" : current), 4000);
+    return () => window.clearTimeout(timer);
+  }, [message, loadState]);
+  const [operationsNavOpen, setOperationsNavOpen] = useState<boolean | null>(null);
+  const [isDesktopNav, setIsDesktopNav] = useState(() => typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches);
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktopNav(media.matches);
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
   const [contentStatusFilter, setContentStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [contentLibraryView, setContentLibraryView] = useState<ContentLibraryView>("all");
   const [reviewStatusFilter, setReviewStatusFilter] = useState<GeneratedContentStatus | "all">("all");
@@ -3635,6 +3647,21 @@ export function GeneratedContentAdminDashboard() {
       setCompatibilitySort("updated-desc");
       setCompatibilityQuery("");
     }
+  }
+
+  async function copyContentKey(contentKey: string) {
+    try {
+      await navigator.clipboard.writeText(contentKey);
+      setMessage(`Copied ${contentKey}`);
+    } catch {
+      setMessage("Copy is unavailable in this browser; select the key text instead.");
+    }
+  }
+
+  function closeVariablesRail() {
+    setTemplateVariableReferenceOpen(false);
+    setSelectedTemplateVariableName(null);
+    setSelectedTemplateVariableSourceId(null);
   }
 
   function closeEditor() {
@@ -5334,9 +5361,10 @@ export function GeneratedContentAdminDashboard() {
           : <span className="admin-mobile-nav-icon" aria-hidden="true"><i /><i /><i /></span>}
       </button>
       <nav id="admin-content-navigation" className="admin-nav" aria-label="Content operations">
-        <section className="admin-nav-section" aria-label="Content">
-          <p className="admin-eyebrow">Content</p>
-          {primaryAdminNavItems.map((item) => {
+        {primaryAdminNavGroups.map((group) => (
+        <section className="admin-nav-section" aria-label={group} key={group}>
+          <p className="admin-eyebrow">{group}</p>
+          {primaryAdminNavItems.filter((item) => item.group === group).map((item) => {
             const Icon = item.icon;
             const isActive = item.category
               ? activePage === item.page && categoryFilter === item.category
@@ -5414,7 +5442,7 @@ export function GeneratedContentAdminDashboard() {
                         onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "house-transits", audience: "friends" }))}
                         aria-current={window.location.hash.includes("audience=friends") && activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits" ? "page" : undefined}
                       >
-                        <span>Where it lands (house transit)</span>
+                        <span>House transit</span>
                       </button>
                     </div>
                   </>
@@ -5423,8 +5451,13 @@ export function GeneratedContentAdminDashboard() {
             );
           })}
         </section>
-        <details className="admin-nav-advanced" open={advancedAdminNavItems.some((item) => item.page === activePage) || undefined}>
-          <summary className="admin-eyebrow">Operations / Advanced</summary>
+        ))}
+        <details
+          className="admin-nav-advanced"
+          open={operationsNavOpen ?? (isDesktopNav || advancedAdminNavItems.some((item) => item.page === activePage))}
+          onToggle={(event) => setOperationsNavOpen(event.currentTarget.open)}
+        >
+          <summary className="admin-eyebrow">Operations</summary>
           <section className="admin-nav-section" aria-label="Operations and advanced tools">
             {advancedAdminNavItems.map((item) => {
               const Icon = item.icon;
@@ -5438,20 +5471,26 @@ export function GeneratedContentAdminDashboard() {
           </section>
         </details>
       </nav>
-      <section className="admin-sidebar-status" aria-label="Admin status">
-        <span className={`ui-pill admin-status ${loadState === "loaded" ? "status-live" : loadState === "accessDenied" || loadState === "error" ? "status-error" : "status-draft"}`}>
+      <section
+        className={`admin-sidebar-status is-${loadState === "loaded" ? "ok" : loadState === "accessDenied" || loadState === "error" ? "error" : "pending"}`}
+        aria-label="Admin status"
+        title={`Fallback package ${hookCatalogPackageVersion}`}
+      >
+        <span className="admin-sidebar-status-dot" aria-hidden="true" />
+        <span>
           {loadState === "loaded"
-            ? "Access verified"
+            ? `Connected · ${rows.length.toLocaleString()} rows`
             : loadState === "loading"
-            ? "Loading"
-            : loadState === "accessDenied"
-            ? "Access denied"
-            : secret.trim()
-            ? "Access saved"
-            : "Local only"}
+              ? "Loading…"
+              : loadState === "accessDenied"
+                ? "Access denied"
+                : loadState === "error"
+                  ? "Connection error"
+                  : secret.trim()
+                    ? "Access saved"
+                    : "Not connected"}
         </span>
-        <small>{loadState === "loaded" ? `${rows.length} saved rows loaded` : "Rows not loaded"}</small>
-        <small>Fallback package {hookCatalogPackageVersion}</small>
+        <button type="button" className="admin-sidebar-status-link" onClick={() => navigateAdminPage("connection")}>Connection</button>
       </section>
     </aside>
   );
@@ -8367,10 +8406,44 @@ export function GeneratedContentAdminDashboard() {
           : activePage === "knowledge" && friendsTransitAudience && fallbackSectionFilter === "friends" && query.includes("bond-effect")
             ? "Friends → Transits → Between you two"
             : null;
+    const isNewCompatibilityWorkspaceDraft = isNewDraft && isCompatibilityWorkspaceDraft;
+    const showVocabularyGuidance = isVocabularyDraft && !isNewCompatibilityWorkspaceDraft;
+    const showFallbackGuidance = Boolean(fallbackEditorGuidance) && !isNewCompatibilityWorkspaceDraft;
+    const showTemplateGuidance = isTemplateDraft && !isNewCompatibilityWorkspaceDraft;
+    const hasEditorBrief = Boolean(authoringBrief)
+      || showVocabularyGuidance
+      || Boolean(isVocabularyDraft && vocabularyUsage)
+      || showFallbackGuidance
+      || isAuthoredPackageCard
+      || showTemplateGuidance;
+    // One line of orientation above the copy fields; the full guidance stays one click away.
+    const editorBrief: { title: string; hint: string | null } = showFallbackGuidance && fallbackEditorGuidance
+      ? { title: fallbackEditorGuidance.title, hint: fallbackEditorGuidance.writingRule }
+      : authoringBrief
+        ? { title: authoringBrief.title, hint: authoringBrief.description }
+        : showVocabularyGuidance
+          ? { title: isPackageDraft ? "Edit this variable value" : "Create a reusable phrase", hint: vocabularyUsage ? `Used by the app as ${vocabularyUsage.label}` : null }
+          : isAuthoredPackageCard
+            ? { title: "Exact source shown in Reader Preview", hint: "Saving updates this row and the Composition Map preview together." }
+            : showTemplateGuidance
+              ? { title: "Assembly pattern, not final prose", hint: "Check the complete result in Reader preview before publishing." }
+              : { title: "How this row is used", hint: null };
+    const editorDetailsSummary = [
+      currentDraft.surface,
+      currentDraft.mode,
+      currentDraft.lane,
+      isPackageDraft ? packageReviewStatusLabel(packageReviewStatus) : null
+    ].filter(Boolean).join(" · ");
     const handleEditorKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
       if (event.key === "Escape") {
         event.preventDefault();
         if (isLoading) return;
+        if (templateVariableReferenceOpen) {
+          if (selectedTemplateVariableSourceId) setSelectedTemplateVariableSourceId(null);
+          else if (selectedTemplateVariableName) setSelectedTemplateVariableName(null);
+          else closeVariablesRail();
+          return;
+        }
         closeEditor();
         return;
       }
@@ -8395,7 +8468,7 @@ export function GeneratedContentAdminDashboard() {
     return (
       <>
       <button type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={closeEditor} disabled={isLoading} />
-      <aside ref={editorRef} className="admin-editor-panel admin-review-detail" role="dialog" aria-modal="true" aria-label="Generated content editor" aria-busy={isLoading} onKeyDown={handleEditorKeyDown}>
+      <aside ref={editorRef} className={`admin-editor-panel admin-review-detail${templateVariableReferenceOpen ? " has-variables-rail" : ""}`} role="dialog" aria-modal="true" aria-label="Generated content editor" aria-busy={isLoading} onKeyDown={handleEditorKeyDown}>
         {skyWriteupParent && (
           <button type="button" className="admin-sky-writeup-back" onClick={returnToSkyWriteup} disabled={isLoading}>
             <ArrowLeft size={16} aria-hidden="true" />
@@ -8411,21 +8484,21 @@ export function GeneratedContentAdminDashboard() {
               {editorReaderDestination && (
                 <span className="admin-editor-reader-destination"><strong>Where readers see this:</strong> {editorReaderDestination}</span>
               )}
-              <code title={currentDraft.contentKey}>{currentDraft.contentKey}</code>
+              <button
+                type="button"
+                className="admin-editor-key-copy"
+                onClick={() => void copyContentKey(currentDraft.contentKey)}
+                aria-label={`Copy key ${currentDraft.contentKey}`}
+                title="Click to copy the key"
+              >
+                <code title={currentDraft.contentKey}>{currentDraft.contentKey}</code>
+              </button>
             </p>
           </div>
           <div className="admin-editor-toolbar-actions">
             {aspectContext && (
               <span className="ui-pill admin-status admin-aspect-context-pill" title={aspectContext.detail}>
                 {aspectContext.label}
-              </span>
-            )}
-            {isPackageDraft && (
-              <span
-                aria-label="Approval status"
-                className={`ui-pill admin-status ${fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus) ? "status-live" : "status-draft"}`}
-              >
-                {packageReviewStatusLabel(packageReviewStatus)}
               </span>
             )}
             <span
@@ -8521,31 +8594,19 @@ export function GeneratedContentAdminDashboard() {
               )}
             </fieldset>
           )}
-          {authoringBrief && (
-            <section className="admin-editor-guidance admin-authoring-brief" aria-label="What you are creating">
-              <p className="admin-eyebrow">{authoringBrief.eyebrow}</p>
-              <strong>{authoringBrief.title}</strong>
-              <p>{authoringBrief.description}</p>
-              <div className="admin-authoring-steps" role="list" aria-label="Authoring steps">
-                <span role="listitem"><b>1</b> Write {authoringBrief.required.toLowerCase()}</span>
-                <span role="listitem"><b>2</b> Save draft</span>
-                <span role="listitem"><b>3</b> Review, then publish</span>
-              </div>
-            </section>
-          )}
-          {compositionEditorContext && (
-            <section className="admin-editor-guidance admin-contextual-editor-guidance admin-reader-sentence-context" aria-label="Reader sentence context">
-              <p className="admin-eyebrow">In the reader preview · {compositionEditorContext.audience === "they" ? "They" : "You"}</p>
-              <strong>{compositionEditorContext.templateLabel} · {compositionEditorContext.fieldLabel}</strong>
-              <div className="admin-contextual-copy-example">
-                <span>Full reader sentence</span>
-                <q>
-                  {compositionEditorContext.before}
-                  <mark>{compositionContextValue || compositionEditorContext.active}</mark>
-                  {compositionEditorContext.after}
-                </q>
-              </div>
-              <p>The highlighted words are the source you are editing. The surrounding words come from the template and other variables.</p>
+          {ownerApprovedArticleKey && (
+            <section className="admin-editor-guidance" aria-label="Reader source status">
+              <strong>{ownerApprovedReplacementLabel}</strong>
+              <p>
+                Readers receive <code>{ownerApprovedArticleKey}</code>, not this generated candidate.
+              </p>
+              <button
+                type="button"
+                onClick={() => void openOwnerApprovedSkyPlacementArticle(ownerApprovedArticleKey, currentDraft.headline || titleFromKey(currentDraft.contentKey))}
+                disabled={isLoading}
+              >
+                Open owner-approved source
+              </button>
             </section>
           )}
           {compatibilityIdentity && !isNewDraft && (
@@ -8577,188 +8638,94 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
           )}
-          {isVocabularyDraft && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
-            <div className="admin-editor-guidance" aria-label="Phrase authoring guidance">
-              <strong>{isPackageDraft ? "Edit this variable value" : "Create a reusable phrase"}</strong>
-              <p>{isPackageDraft
-                ? "This is one saved ingredient the app can insert into a larger fallback passage. Edit the variable value below; the empty article fields and publishing controls do not apply to this row."
-                : "Choose a section, name the phrase, then write the reusable wording. The internal key is generated from the section and title so phrases stay grouped in the dashboard."}</p>
-            </div>
-          )}
-          {isVocabularyDraft && vocabularyUsage && (
-            <section className="admin-content-role-panel admin-vocabulary-usage" aria-label="Variable usage">
-              <div>
-                <p className="admin-eyebrow">Used by the app as</p>
-                <h3>{vocabularyUsage.label}</h3>
-              </div>
-              <p>{vocabularyUsage.description}</p>
-              <p><strong>Reader behavior:</strong> the app combines this phrase with other approved ingredients. It is not shown as a standalone article.</p>
-            </section>
-          )}
-          {fallbackEditorGuidance && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
-            <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="How this source is used">
-              <p className="admin-eyebrow">{fallbackEditorGuidance.area}</p>
-              <strong>{fallbackEditorGuidance.title}</strong>
-              <p>{fallbackEditorGuidance.description}</p>
-              {fallbackEditorGuidance.example && (
-                <div className="admin-contextual-copy-example">
-                  <span>Example in a reading</span>
-                  <q>{fallbackEditorGuidance.example}</q>
-                </div>
-              )}
-              <p><strong>Writing shape:</strong> {fallbackEditorGuidance.writingRule}</p>
-              {fallbackEditorGuidance.audienceLabel && (
-                <div className="admin-editor-audience-note" role="note" aria-label={fallbackEditorGuidance.audienceLabel}>
-                  <strong>{fallbackEditorGuidance.audienceLabel}</strong>
-                  <span>{fallbackEditorGuidance.audienceHint}</span>
-                </div>
-              )}
-            </section>
-          )}
-          {isAuthoredPackageCard && (
-            <div className="admin-editor-guidance" aria-label="Reader source guidance">
-              <strong>Edit the exact source shown in Reader Preview</strong>
-              <p>The article headline and body below are the saved fields used by the selected template. Saving updates this source row and the Composition Map preview together.</p>
-            </div>
-          )}
-          {isTemplateDraft && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
-            <div className="admin-editor-guidance" aria-label="Template source guidance">
-              <strong>Assembly pattern, not final prose</strong>
-              <p>The template pattern combines fixed words, <code>{"{{variables}}"}</code>, and reviewed source phrases. Use Reader Preview to check the complete result before publishing the pattern.</p>
-            </div>
-          )}
-          {isSkyPlacementFrameTemplate && (
-            <section className="admin-content-role-panel admin-sky-placement-composition" aria-label="Sky Placement fallback composition">
-              <div>
-                <p className="admin-eyebrow">Sky Placement fallback composition</p>
-                <h3>Educational sections</h3>
-              </div>
-              <p>These switches set the global defaults for every canonical Sky Placement fallback page. Individual articles do not override them here.</p>
-              <label className="admin-composition-option">
-                <input
-                  type="checkbox"
-                  checked={skyPlacementTemplateOptions.includePlanetLore}
-                  onChange={(event) => updateSkyFallbackField("compositionOptions.includePlanetLore", event.target.checked)}
-                />
-                <span>
-                  <strong>Include planet explanation</strong>
-                  <small>Shows the reviewed <code>sky-placement-frame/&#123;planet&#125;</code> section.</small>
+          {hasEditorBrief && (
+            <details className="admin-editor-brief" aria-label="Editing guidance">
+              <summary>
+                <span className="admin-editor-brief-line">
+                  <strong>{editorBrief.title}</strong>
+                  {editorBrief.hint && <span>{editorBrief.hint}</span>}
                 </span>
-              </label>
-              <label className="admin-composition-option">
-                <input
-                  type="checkbox"
-                  checked={skyPlacementTemplateOptions.includeSignLore}
-                  onChange={(event) => updateSkyFallbackField("compositionOptions.includeSignLore", event.target.checked)}
-                />
-                <span>
-                  <strong>Include sign history and symbolism</strong>
-                  <small>Shows the reviewed <code>sky-placement-lore/&#123;sign&#125;</code> section.</small>
-                </span>
-              </label>
-              <p className="admin-field-hint"><strong>Review rule:</strong> changing a switch creates a non-serving package proposal. It does not change reader pages until the proposal is approved, regenerated, and deployed.</p>
-            </section>
-          )}
-          {isSkyV4OverlaySettings && (
-            <section className="admin-content-role-panel" aria-label="SKY V4 contextual overlay settings">
-              <div>
-                <p className="admin-eyebrow">SKY V4 preview settings</p>
-                <h3>Contextual transit overlays</h3>
-              </div>
-              <p>These independent switches affect the canonical stage preview only. They do not change stored Hook copy and cannot enable serving.</p>
-              <label className="admin-composition-option">
-                <input
-                  type="checkbox"
-                  checked={skyV4OverlaysEnabled}
-                  onChange={(event) => updateSkyFallbackField("contextualTransitOverlaysEnabled", event.target.checked)}
-                />
-                <span>
-                  <strong>Use contextual transit overlays</strong>
-                  <small>Default ON. Adds up to two exact, trigger-matched reviewed overlays to a full page.</small>
-                </span>
-              </label>
-              <label className="admin-composition-option">
-                <input
-                  type="checkbox"
-                  checked={skyV4FallbackOverlayEnabled}
-                  disabled={!skyV4OverlaysEnabled}
-                  onChange={(event) => updateSkyFallbackField("includeContextualOverlayInFallbackHook", event.target.checked)}
-                />
-                <span>
-                  <strong>Include transit context in fallback hook</strong>
-                  <small>Default OFF. Inserts at most one eligible overlay after Opening without modifying the saved fallback fields.</small>
-                </span>
-              </label>
-              <p className="admin-field-hint"><strong>Limits:</strong> two overlays on a full page; one in a fallback. Exact aspect and event suppression remains read-only.</p>
-            </section>
-          )}
-          {isCmsSurfaceDraft && (
-            <div className="admin-editor-guidance" aria-label="CMS surface template guidance">
-              <strong>Reader-facing CMS override</strong>
-              <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
-              <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
-              <p>Save as Draft while editing. Publish only when the exact wording is approved; draft and reviewed rows remain invisible to readers.</p>
-              <p><strong>Reader status:</strong> {cmsReaderEligible ? "LIVE and reader-eligible." : "Not serving. The existing approved fallback remains visible."}</p>
-              {cmsTemplateValidation.errors.length > 0 ? (
-                <div role="alert" aria-label="CMS template errors">
-                  <strong>Fix before Sign Off</strong>
-                  <ul>{cmsTemplateValidation.errors.map((error) => <li key={error}>{error}</li>)}</ul>
-                </div>
-              ) : (
-                <div aria-label="CMS template preview">
-                  <strong>Preview with representative chart facts</strong>
-                  {currentDraft.headline.trim() && <h4>{renderCmsTemplatePreview(currentDraft.headline, cmsTemplateValidation.previewSlots, "headline")}</h4>}
-                  {currentDraft.summary.trim() && <p>{renderCmsTemplatePreview(currentDraft.summary, cmsTemplateValidation.previewSlots, "summary")}</p>}
-                  <p>{renderCmsTemplatePreview(currentDraft.body, cmsTemplateValidation.previewSlots, "body")}</p>
-                  {cmsTemplateValidation.usedSlots.length > 0 && <small>Slots used: {cmsTemplateValidation.usedSlots.map((slot) => `{{${slot}}}`).join(", ")}</small>}
-                </div>
-              )}
-            </div>
-          )}
-          {!fallbackEditorGuidance && !(isNewDraft && isCompatibilityWorkspaceDraft) && <section className="admin-content-role-panel" aria-label="Content role">
-            <div>
-              <p className="admin-eyebrow">Content role</p>
-              <h3>{skyFallbackContentIdentity?.typeLabel ?? contentRole.label}</h3>
-            </div>
-            <p>{skyFallbackContentIdentity
-              ? skyFallbackContentIdentity.description
-                ?? `Reader-facing ${skyFallbackContentIdentity.groupLabel.toLowerCase()} content. Its internal fallback key remains visible for traceability.`
-              : contentRole.detail}</p>
-            {contentRole.label === "Fallback source/helper" && (
-              <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>
-            )}
-          </section>}
-          {skyFallbackContentIdentity?.typeLabel === "Sky Placement fallback article section" && (
-            <section className="admin-content-role-panel" aria-label="Sky Placement fallback article structure">
-              <div>
-                <p className="admin-eyebrow">Fallback article structure</p>
-                <h3>Four sections readers receive</h3>
-              </div>
-              <p>The labels below describe complete pieces of reader copy. They are not calculated variables.</p>
-              <dl className="admin-hook-pattern-list">
-                {skyPlacementFallbackSectionOutline.map((section) => (
-                  <div key={section.key}>
-                    <dt>{section.label}</dt>
-                    <dd>{section.description}</dd>
+                <span className="admin-editor-brief-more" aria-hidden="true">More</span>
+              </summary>
+              <div className="admin-editor-brief-body">
+              {authoringBrief && (
+                <section className="admin-editor-guidance admin-authoring-brief" aria-label="What you are creating">
+                  <p className="admin-eyebrow">{authoringBrief.eyebrow}</p>
+                  <strong>{authoringBrief.title}</strong>
+                  <p>{authoringBrief.description}</p>
+                  <div className="admin-authoring-steps" role="list" aria-label="Authoring steps">
+                    <span role="listitem"><b>1</b> Write {authoringBrief.required.toLowerCase()}</span>
+                    <span role="listitem"><b>2</b> Save draft</span>
+                    <span role="listitem"><b>3</b> Review, then publish</span>
                   </div>
-                ))}
-              </dl>
-              <p className="admin-field-hint">Stored field names remain <code>tagline</code>, <code>hook</code>, <code>lived</code>, and <code>turn</code> for runtime compatibility.</p>
-            </section>
+                </section>
+              )}
+              {isVocabularyDraft && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
+                <div className="admin-editor-guidance" aria-label="Phrase authoring guidance">
+                  <strong>{isPackageDraft ? "Edit this variable value" : "Create a reusable phrase"}</strong>
+                  <p>{isPackageDraft
+                    ? "This is one saved ingredient the app can insert into a larger fallback passage. Edit the variable value below; the empty article fields and publishing controls do not apply to this row."
+                    : "Choose a section, name the phrase, then write the reusable wording. The internal key is generated from the section and title so phrases stay grouped in the dashboard."}</p>
+                </div>
+              )}
+              {isVocabularyDraft && vocabularyUsage && (
+                <section className="admin-content-role-panel admin-vocabulary-usage" aria-label="Variable usage">
+                  <div>
+                    <p className="admin-eyebrow">Used by the app as</p>
+                    <h3>{vocabularyUsage.label}</h3>
+                  </div>
+                  <p>{vocabularyUsage.description}</p>
+                  <p><strong>Reader behavior:</strong> the app combines this phrase with other approved ingredients. It is not shown as a standalone article.</p>
+                </section>
+              )}
+              {fallbackEditorGuidance && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
+                <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="How this source is used">
+                  <p className="admin-eyebrow">{fallbackEditorGuidance.area}</p>
+                  <strong>{fallbackEditorGuidance.title}</strong>
+                  <p>{fallbackEditorGuidance.description}</p>
+                  {fallbackEditorGuidance.example && (
+                    <div className="admin-contextual-copy-example">
+                      <span>Example in a reading</span>
+                      <q>{fallbackEditorGuidance.example}</q>
+                    </div>
+                  )}
+                  <p><strong>Writing shape:</strong> {fallbackEditorGuidance.writingRule}</p>
+                  {fallbackEditorGuidance.audienceLabel && (
+                    <div className="admin-editor-audience-note" role="note" aria-label={fallbackEditorGuidance.audienceLabel}>
+                      <strong>{fallbackEditorGuidance.audienceLabel}</strong>
+                      <span>{fallbackEditorGuidance.audienceHint}</span>
+                    </div>
+                  )}
+                </section>
+              )}
+              {isAuthoredPackageCard && (
+                <div className="admin-editor-guidance" aria-label="Reader source guidance">
+                  <strong>Edit the exact source shown in Reader Preview</strong>
+                  <p>The article headline and body below are the saved fields used by the selected template. Saving updates this source row and the Composition Map preview together.</p>
+                </div>
+              )}
+              {isTemplateDraft && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
+                <div className="admin-editor-guidance" aria-label="Template source guidance">
+                  <strong>Assembly pattern, not final prose</strong>
+                  <p>The template pattern combines fixed words, <code>{"{{variables}}"}</code>, and reviewed source phrases. Use Reader Preview to check the complete result before publishing the pattern.</p>
+                </div>
+              )}
+              </div>
+            </details>
           )}
-          {ownerApprovedArticleKey && (
-            <section className="admin-editor-guidance" aria-label="Reader source status">
-              <strong>{ownerApprovedReplacementLabel}</strong>
-              <p>
-                Readers receive <code>{ownerApprovedArticleKey}</code>, not this generated candidate.
-              </p>
-              <button
-                type="button"
-                onClick={() => void openOwnerApprovedSkyPlacementArticle(ownerApprovedArticleKey, currentDraft.headline || titleFromKey(currentDraft.contentKey))}
-                disabled={isLoading}
-              >
-                Open owner-approved source
-              </button>
+          {compositionEditorContext && (
+            <section className="admin-editor-guidance admin-contextual-editor-guidance admin-reader-sentence-context" aria-label="Reader sentence context">
+              <p className="admin-eyebrow">In the reader preview · {compositionEditorContext.audience === "they" ? "They" : "You"}</p>
+              <strong>{compositionEditorContext.templateLabel} · {compositionEditorContext.fieldLabel}</strong>
+              <div className="admin-contextual-copy-example">
+                <span>Full reader sentence</span>
+                <q>
+                  {compositionEditorContext.before}
+                  <mark>{compositionContextValue || compositionEditorContext.active}</mark>
+                  {compositionEditorContext.after}
+                </q>
+              </div>
+              <p>The highlighted words are the source you are editing. The surrounding words come from the template and other variables.</p>
             </section>
           )}
           {skyFallbackEditor && (
@@ -8767,20 +8734,19 @@ export function GeneratedContentAdminDashboard() {
                 <div>
                   <p className="admin-eyebrow">Reader source workspace</p>
                   <h3>{skyFallbackContentIdentity?.title ?? skyFallbackEditor.title}</h3>
-                  <p><strong>{skyFallbackContentIdentity?.typeLabel ?? skyFallbackEditor.title}.</strong> See the complete reader copy, calculated facts, related passages, and every proposed change in one place.</p>
+                  <p><strong>{skyFallbackContentIdentity?.typeLabel ?? skyFallbackEditor.title}.</strong> Saving creates a non-serving proposal for owner review; the package original stays unchanged.</p>
                 </div>
-                <dl className="admin-hook-pattern-list">
-                  <div><dt>Serving key</dt><dd><code>{currentDraft.contentKey}</code></dd></div>
-                  <div><dt>Render policy</dt><dd>{String(effectiveSkyFallback.render_policy ?? "Package renderer")}</dd></div>
-                  <div><dt>Current approval</dt><dd>{String(packageRecord.review_status ?? packageReviewStatus)}</dd></div>
-                  <div><dt>Proposal</dt><dd>{skyFallbackChanges.length ? `${skyFallbackChanges.length} changed field${skyFallbackChanges.length === 1 ? "" : "s"}` : "No changes"}</dd></div>
-                </dl>
+                <details className="admin-workspace-details">
+                  <summary>Source details</summary>
+                  <dl className="admin-hook-pattern-list">
+                    <div><dt>Serving key</dt><dd><code>{currentDraft.contentKey}</code></dd></div>
+                    <div><dt>Render policy</dt><dd>{String(effectiveSkyFallback.render_policy ?? "Package renderer")}</dd></div>
+                    <div><dt>Current approval</dt><dd>{String(packageRecord.review_status ?? packageReviewStatus)}</dd></div>
+                    <div><dt>Proposal</dt><dd>{skyFallbackChanges.length ? `${skyFallbackChanges.length} changed field${skyFallbackChanges.length === 1 ? "" : "s"}` : "No changes"}</dd></div>
+                  </dl>
+                  <p className="admin-field-hint" role="note"><strong>Safe editing boundary:</strong> saving here creates a proposal with <code>needs_review</code> status. It does not change the app until the exact diff is owner-approved, landed in source, regenerated, and deployed.</p>
+                </details>
               </header>
-
-              <div className="admin-editor-guidance" role="note">
-                <strong>Safe editing boundary</strong>
-                <p>The package original remains immutable. Saving here creates a non-serving proposal with <code>needs_review</code> status. It does not change the app until the exact diff is owner-approved, landed in source, regenerated, and deployed.</p>
-              </div>
 
               {isSkyV4StudioRecord && (
                 <Suspense fallback={null}>
@@ -8850,26 +8816,26 @@ export function GeneratedContentAdminDashboard() {
                 ))}
               </section>
 
-              <section className="admin-hook-detail-section" aria-label="Review fallback changes">
-                <div className="admin-fallback-diagnostic-heading">
-                  <div>
-                    <p className="admin-eyebrow">Review diff</p>
-                    <h3>{skyFallbackChanges.length ? "Proposed changes" : "Nothing changed"}</h3>
-                  </div>
-                  {skyFallbackChanges.length > 0 && (
-                    <div className="admin-toolbar-actions">
-                      <button type="button" onClick={exportSkyFallbackProposal}>Export proposal</button>
-                      <button type="button" onClick={discardSkyFallbackProposal}>Discard proposal</button>
+              {skyFallbackChanges.length > 0 && (
+                <section className="admin-hook-detail-section" aria-label="Review fallback changes">
+                  <div className="admin-fallback-diagnostic-heading">
+                    <div>
+                      <p className="admin-eyebrow">Review diff</p>
+                      <h3>{skyFallbackChanges.length === 1 ? "1 proposed change" : `${skyFallbackChanges.length} proposed changes`}</h3>
                     </div>
-                  )}
-                </div>
-                {skyFallbackChanges.map((change) => (
-                  <article className="admin-sky-article-diff" key={change.key}>
-                    <div><strong>{change.label} · package original</strong><p>{change.before}</p></div>
-                    <div><strong>{change.label} · proposal</strong><p>{change.after}</p></div>
-                  </article>
-                ))}
-              </section>
+                    <div className="admin-toolbar-actions">
+                      <button type="button" className="admin-secondary-button" onClick={exportSkyFallbackProposal}>Export proposal</button>
+                      <button type="button" className="admin-secondary-button" onClick={discardSkyFallbackProposal}>Discard proposal</button>
+                    </div>
+                  </div>
+                  {skyFallbackChanges.map((change) => (
+                    <article className="admin-sky-article-diff" key={change.key}>
+                      <div><strong>{change.label} · package original</strong><p>{change.before}</p></div>
+                      <div><strong>{change.label} · proposal</strong><p>{change.after}</p></div>
+                    </article>
+                  ))}
+                </section>
+              )}
             </section>
           )}
           {isSkyArticleTemplate && selectedRow && skyArticleEditionForm && (
@@ -9318,6 +9284,29 @@ export function GeneratedContentAdminDashboard() {
               <small className="admin-field-hint">Used when the app describes someone else in Friends, Compatibility, or another person-focused view.</small>
             </label>
           )}
+          {isCmsSurfaceDraft && (
+            <div className="admin-editor-guidance" aria-label="CMS surface template guidance">
+              <strong>Reader-facing CMS override</strong>
+              <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
+              <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
+              <p>Save as Draft while editing. Publish only when the exact wording is approved; draft and reviewed rows remain invisible to readers.</p>
+              <p><strong>Reader status:</strong> {cmsReaderEligible ? "LIVE and reader-eligible." : "Not serving. The existing approved fallback remains visible."}</p>
+              {cmsTemplateValidation.errors.length > 0 ? (
+                <div role="alert" aria-label="CMS template errors">
+                  <strong>Fix before Sign Off</strong>
+                  <ul>{cmsTemplateValidation.errors.map((error) => <li key={error}>{error}</li>)}</ul>
+                </div>
+              ) : (
+                <div aria-label="CMS template preview">
+                  <strong>Preview with representative chart facts</strong>
+                  {currentDraft.headline.trim() && <h4>{renderCmsTemplatePreview(currentDraft.headline, cmsTemplateValidation.previewSlots, "headline")}</h4>}
+                  {currentDraft.summary.trim() && <p>{renderCmsTemplatePreview(currentDraft.summary, cmsTemplateValidation.previewSlots, "summary")}</p>}
+                  <p>{renderCmsTemplatePreview(currentDraft.body, cmsTemplateValidation.previewSlots, "body")}</p>
+                  {cmsTemplateValidation.usedSlots.length > 0 && <small>Slots used: {cmsTemplateValidation.usedSlots.map((slot) => `{{${slot}}}`).join(", ")}</small>}
+                </div>
+              )}
+            </div>
+          )}
           {skyWriteupContext && selectedRow && (
             <section className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
@@ -9473,194 +9462,323 @@ export function GeneratedContentAdminDashboard() {
               )}
             </section>
           )}
-          {fallbackDiagnostic && !isVocabularyDraft && (
-            <section className="admin-fallback-diagnostic-panel" aria-label="Fallback composition check">
-              <div className="admin-fallback-diagnostic-heading">
-                <div>
-                  <p className="admin-eyebrow">Fallback system</p>
-                  <h3>{fallbackDiagnostic.title}</h3>
-                </div>
-                <strong>{fallbackDiagnostic.status}</strong>
-              </div>
-              <p>{fallbackDiagnostic.body}</p>
-              <div className="admin-fallback-diagnostic-grid">
-                <div>
-                  <span>Template</span>
-                  <code>{fallbackDiagnostic.template}</code>
-                </div>
-                <div>
-                  <span>Assembled slots</span>
-                  <ul>
-                    {fallbackDiagnostic.slots.map((slot) => <li key={slot}><code>{slot}</code></li>)}
-                  </ul>
-                </div>
-                <div>
-                  <span>Source lanes</span>
-                  <ul>
-                    {fallbackDiagnostic.sourceLanes.map((lane) => <li key={lane}><code>{lane}</code></li>)}
-                  </ul>
-                </div>
-              </div>
-              <p><strong>Fix path:</strong> {fallbackDiagnostic.action}</p>
-            </section>
-          )}
-          {isPackageDraft && (isVocabularyDraft ? (
-            <section className="admin-package-edit-panel admin-vocabulary-settings" aria-label="Variable settings">
-              <label>
-                <span>Approval</span>
-                <select aria-label="Variable approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)}>
-                  {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => (
-                    <option key={reviewStatus} value={reviewStatus}>
-                      {reviewStatus === "needs_review" ? "Needs review" : reviewStatus === "approved_reuse" ? "Approved for reuse" : reviewStatus === "deprecated" ? "Retired (not for reuse)" : "Approved for use"}
-                    </option>
-                  ))}
-                </select>
-                <small className="admin-field-hint">Approval allows the resolver to use this phrase as an ingredient. It does not turn it into a standalone article.</small>
-              </label>
-              <label className="admin-package-notes-field">
-                <span>Editor notes (optional)</span>
-                <textarea aria-label="Editor notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} placeholder="Add context for another editor; readers never see these notes." />
-              </label>
-            </section>
-          ) : (
-            <section className="admin-package-edit-panel" aria-label="Package row details">
+          <details className="admin-editor-details" aria-label="Details">
+            <summary>
+              <span>Details</span>
+              <span className="admin-editor-details-summary">{editorDetailsSummary}</span>
+            </summary>
+            <div className="admin-editor-details-body">
+            {!fallbackEditorGuidance && !(isNewDraft && isCompatibilityWorkspaceDraft) && <section className="admin-content-role-panel" aria-label="Content role">
               <div>
-                <span>content key</span>
-                <code>{currentDraft.contentKey}</code>
+                <p className="admin-eyebrow">Content role</p>
+                <h3>{skyFallbackContentIdentity?.typeLabel ?? contentRole.label}</h3>
               </div>
-              <div>
-                <span>role</span>
-                <strong>{packageRole || "package row"}</strong>
-              </div>
-              <label>
-                <span>Approval</span>
-                <select aria-label="Approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={packageHasProposal || isGuidedHeldReview || packageIsSkyV4Governed}>
-                  {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{packageReviewStatusLabel(reviewStatus)}</option>)}
-                </select>
-                {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Approved copy becomes live when Save &amp; publish completes.</small>}
-                {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">This row is source material. Approval makes it available to the resolver as an ingredient; it cannot publish as exact reader copy.</small>}
-                {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Use “Save &amp; publish revision” below to save this revision and make that exact saved copy live.</small>}
-                {packageHasProposal && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Save this source-material revision for review. Source ingredients cannot publish as exact reader copy.</small>}
-                {packageIsSkyV4Governed && <small className="admin-field-hint">This Sky V4 row uses its hash-bound owner-approval workflow; its status cannot be changed here.</small>}
-                {isGuidedHeldReview && <small className="admin-field-hint">Locked at needs_review in this review flow. Use “Record owner copy review” above when the exact copy is correct; publication remains a separate governed step.</small>}
-              </label>
-              <label className="admin-package-notes-field">
-                <span>editorial notes</span>
-                <textarea aria-label="Editorial notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} />
-              </label>
-            </section>
-          ))}
-          {!(isVocabularyDraft && isPackageDraft) && <details className="admin-advanced admin-editor-settings">
-            <summary>Publishing and technical settings</summary>
-            <fieldset className="admin-metadata-fields">
-            <label className="admin-metadata-field">
-              <span>{isPackageDraft ? "Reader status after save" : "Status"}</span>
-              {isPackageDraft ? (
-                <span
-                  aria-label="Reader status after save"
-                  className={`ui-pill admin-status ${packageStatusAfterSave === "LIVE" ? "status-live" : "status-draft"}`}
-                >
-                  {packageHasProposal ? "Draft revision" : packageStatusAfterSave === "LIVE" ? "Published" : "Draft"}
-                </span>
-              ) : (
-                <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
-                  {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
-                </select>
+              <p>{skyFallbackContentIdentity
+                ? skyFallbackContentIdentity.description
+                  ?? `Reader-facing ${skyFallbackContentIdentity.groupLabel.toLowerCase()} content. Its internal fallback key remains visible for traceability.`
+                : contentRole.detail}</p>
+              {contentRole.label === "Fallback source/helper" && (
+                <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>
               )}
-              <small className="admin-field-hint">
-                {isPackageDraft
-                  ? packageHasProposal
-                    ? packageRoleCanServeExactCopy
-                      ? "Save the revision first, then approve and publish it with the dedicated action below."
-                      : "This saved revision is source material and cannot become exact reader copy."
-                    : packageWillPublishOnSave
-                    ? "This copy is approved. Save to publish it to readers."
-                    : currentDraft.status === "LIVE"
-                      ? "This approved copy is live for readers."
-                      : "Approval controls reader availability. Set review status to approved, then Save to publish."
-                  : "Published maps to LIVE and means reader-eligible within this provenance system; it does not outrank a higher-priority system."}
-              </small>
-            </label>
-            <label className="admin-metadata-field">
-              <span>Surface</span>
-              <select aria-label="Surface" value={currentDraft.surface} onChange={(event) => setDraft({ ...currentDraft, surface: event.target.value as GeneratedContentSurface })} disabled={isPackageDraft}>
-                {["sky", "you", "natal", "synastry", "composite", "relationship", "modifier"].map((surface) => <option key={surface} value={surface}>{surface}</option>)}
-              </select>
-            </label>
-            <label className="admin-metadata-field">
-              <span>Mode</span>
-              <select aria-label="Mode" value={currentDraft.mode} onChange={(event) => setDraft({ ...currentDraft, mode: event.target.value })} disabled={isPackageDraft}>
-                {["feed", "in_depth", "article", "card"].map((mode) => <option key={mode} value={mode}>{mode}</option>)}
-              </select>
-            </label>
-            <label className="admin-metadata-field">
-              <span>Lane</span>
-              <select aria-label="Lane" value={currentDraft.lane} onChange={(event) => setDraft({ ...currentDraft, lane: event.target.value })} disabled={isPackageDraft}>
-                <option value="serving">serving</option>
-                <option value="reference">reference</option>
-              </select>
-            </label>
-            <label className="admin-metadata-field">
-              <span>Review state</span>
-              <input aria-label="Review state" value={currentDraft.reviewState} onChange={(event) => setDraft({ ...currentDraft, reviewState: event.target.value })} disabled={isPackageDraft} />
-            </label>
-            {isFallbackHookDraft && !isPackageDraft && (
-              <label className="admin-metadata-field">
-                <span>Fallback review status</span>
-                <select aria-label="Fallback review status" value={fallbackReviewStatus} onChange={(event) => updateFallbackReviewStatus(event.target.value)}>
-                  {fallbackHookReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{reviewStatus}</option>)}
-                </select>
-              </label>
+            </section>}
+            {skyFallbackContentIdentity?.typeLabel === "Sky Placement fallback article section" && (
+              <section className="admin-content-role-panel" aria-label="Sky Placement fallback article structure">
+                <div>
+                  <p className="admin-eyebrow">Fallback article structure</p>
+                  <h3>Four sections readers receive</h3>
+                </div>
+                <p>The labels below describe complete pieces of reader copy. They are not calculated variables.</p>
+                <dl className="admin-hook-pattern-list">
+                  {skyPlacementFallbackSectionOutline.map((section) => (
+                    <div key={section.key}>
+                      <dt>{section.label}</dt>
+                      <dd>{section.description}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <p className="admin-field-hint">Stored field names remain <code>tagline</code>, <code>hook</code>, <code>lived</code>, and <code>turn</code> for runtime compatibility.</p>
+              </section>
             )}
-            <label className="admin-metadata-field">
-              <span>Block type</span>
-              <input aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} disabled={isPackageDraft} />
-            </label>
-            </fieldset>
-          </details>}
-          <details className="admin-advanced admin-editor-key-details">
-            <summary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
-            <label className="admin-title-field">
-              <span>{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
-              <input aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || isPackageDraft} />
-              {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
-            </label>
-            {isVocabularyDraft && isPackageDraft && <p className="admin-field-hint">Package role: <code>{packageRole || "vocabulary"}</code></p>}
-          </details>
-          {isArticleDraft && (
-            <section className="admin-display-source-panel" aria-label="Article content system">
-              <div>
-                <p className="admin-eyebrow">Reader behavior</p>
-                <h3>Content System</h3>
-                <p>Reader pages distinguish authored, generated, and fallback copy. On Sky aspects, approved authored and reviewed package copy always outrank generated prose.</p>
+            {fallbackDiagnostic && !isVocabularyDraft && (
+              <section className="admin-fallback-diagnostic-panel" aria-label="Fallback composition check">
+                <div className="admin-fallback-diagnostic-heading">
+                  <div>
+                    <p className="admin-eyebrow">Fallback system</p>
+                    <h3>{fallbackDiagnostic.title}</h3>
+                  </div>
+                  <strong>{fallbackDiagnostic.status}</strong>
+                </div>
+                <p>{fallbackDiagnostic.body}</p>
+                <div className="admin-fallback-diagnostic-grid">
+                  <div>
+                    <span>Template</span>
+                    <code>{fallbackDiagnostic.template}</code>
+                  </div>
+                  <div>
+                    <span>Assembled slots</span>
+                    <ul>
+                      {fallbackDiagnostic.slots.map((slot) => <li key={slot}><code>{slot}</code></li>)}
+                    </ul>
+                  </div>
+                  <div>
+                    <span>Source lanes</span>
+                    <ul>
+                      {fallbackDiagnostic.sourceLanes.map((lane) => <li key={lane}><code>{lane}</code></li>)}
+                    </ul>
+                  </div>
+                </div>
+                <p><strong>Fix path:</strong> {fallbackDiagnostic.action}</p>
+              </section>
+            )}
+            {isPackageDraft && (isVocabularyDraft ? (
+              <section className="admin-package-edit-panel admin-vocabulary-settings" aria-label="Variable settings">
+                <div>
+                  <span>Approval status</span>
+                  <span
+                    aria-label="Approval status"
+                    className={`ui-pill admin-status ${fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus) ? "status-live" : "status-draft"}`}
+                  >
+                    {packageReviewStatusLabel(packageReviewStatus)}
+                  </span>
+                </div>
+                <label>
+                  <span>Approval</span>
+                  <select aria-label="Variable approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)}>
+                    {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => (
+                      <option key={reviewStatus} value={reviewStatus}>
+                        {reviewStatus === "needs_review" ? "Needs review" : reviewStatus === "approved_reuse" ? "Approved for reuse" : reviewStatus === "deprecated" ? "Retired (not for reuse)" : "Approved for use"}
+                      </option>
+                    ))}
+                  </select>
+                  <small className="admin-field-hint">Approval allows the resolver to use this phrase as an ingredient. It does not turn it into a standalone article.</small>
+                </label>
+                <label className="admin-package-notes-field">
+                  <span>Editor notes (optional)</span>
+                  <textarea aria-label="Editor notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} placeholder="Add context for another editor; readers never see these notes." />
+                </label>
+              </section>
+            ) : (
+              <section className="admin-package-edit-panel" aria-label="Package row details">
+                <div>
+                  <span>Role</span>
+                  <strong>{packageRole || "package row"}</strong>
+                </div>
+                <div>
+                  <span>Approval status</span>
+                  <span
+                    aria-label="Approval status"
+                    className={`ui-pill admin-status ${fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus) ? "status-live" : "status-draft"}`}
+                  >
+                    {packageReviewStatusLabel(packageReviewStatus)}
+                  </span>
+                </div>
+                <label>
+                  <span>Approval</span>
+                  <select aria-label="Approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={packageHasProposal || isGuidedHeldReview || packageIsSkyV4Governed}>
+                    {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{packageReviewStatusLabel(reviewStatus)}</option>)}
+                  </select>
+                  {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Approved copy becomes live when Save &amp; publish completes.</small>}
+                  {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">This row is source material. Approval makes it available to the resolver as an ingredient; it cannot publish as exact reader copy.</small>}
+                  {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Use “Save &amp; publish revision” below to save this revision and make that exact saved copy live.</small>}
+                  {packageHasProposal && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Save this source-material revision for review. Source ingredients cannot publish as exact reader copy.</small>}
+                  {packageIsSkyV4Governed && <small className="admin-field-hint">This Sky V4 row uses its hash-bound owner-approval workflow; its status cannot be changed here.</small>}
+                  {isGuidedHeldReview && <small className="admin-field-hint">Locked at needs_review in this review flow. Use “Record owner copy review” above when the exact copy is correct; publication remains a separate governed step.</small>}
+                </label>
+                <label className="admin-package-notes-field">
+                  <span>Editorial notes</span>
+                  <textarea aria-label="Editorial notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} />
+                </label>
+              </section>
+            ))}
+            {isSkyPlacementFrameTemplate && (
+              <section className="admin-content-role-panel admin-sky-placement-composition" aria-label="Sky Placement fallback composition">
+                <div>
+                  <p className="admin-eyebrow">Sky Placement fallback composition</p>
+                  <h3>Educational sections</h3>
+                </div>
+                <p>These switches set the global defaults for every canonical Sky Placement fallback page. Individual articles do not override them here.</p>
+                <label className="admin-composition-option">
+                  <input
+                    type="checkbox"
+                    checked={skyPlacementTemplateOptions.includePlanetLore}
+                    onChange={(event) => updateSkyFallbackField("compositionOptions.includePlanetLore", event.target.checked)}
+                  />
+                  <span>
+                    <strong>Include planet explanation</strong>
+                    <small>Shows the reviewed <code>sky-placement-frame/&#123;planet&#125;</code> section.</small>
+                  </span>
+                </label>
+                <label className="admin-composition-option">
+                  <input
+                    type="checkbox"
+                    checked={skyPlacementTemplateOptions.includeSignLore}
+                    onChange={(event) => updateSkyFallbackField("compositionOptions.includeSignLore", event.target.checked)}
+                  />
+                  <span>
+                    <strong>Include sign history and symbolism</strong>
+                    <small>Shows the reviewed <code>sky-placement-lore/&#123;sign&#125;</code> section.</small>
+                  </span>
+                </label>
+                <p className="admin-field-hint"><strong>Review rule:</strong> changing a switch creates a non-serving package proposal. It does not change reader pages until the proposal is approved, regenerated, and deployed.</p>
+              </section>
+            )}
+            {isSkyV4OverlaySettings && (
+              <section className="admin-content-role-panel" aria-label="SKY V4 contextual overlay settings">
+                <div>
+                  <p className="admin-eyebrow">SKY V4 preview settings</p>
+                  <h3>Contextual transit overlays</h3>
+                </div>
+                <p>These independent switches affect the canonical stage preview only. They do not change stored Hook copy and cannot enable serving.</p>
+                <label className="admin-composition-option">
+                  <input
+                    type="checkbox"
+                    checked={skyV4OverlaysEnabled}
+                    onChange={(event) => updateSkyFallbackField("contextualTransitOverlaysEnabled", event.target.checked)}
+                  />
+                  <span>
+                    <strong>Use contextual transit overlays</strong>
+                    <small>Default ON. Adds up to two exact, trigger-matched reviewed overlays to a full page.</small>
+                  </span>
+                </label>
+                <label className="admin-composition-option">
+                  <input
+                    type="checkbox"
+                    checked={skyV4FallbackOverlayEnabled}
+                    disabled={!skyV4OverlaysEnabled}
+                    onChange={(event) => updateSkyFallbackField("includeContextualOverlayInFallbackHook", event.target.checked)}
+                  />
+                  <span>
+                    <strong>Include transit context in fallback hook</strong>
+                    <small>Default OFF. Inserts at most one eligible overlay after Opening without modifying the saved fallback fields.</small>
+                  </span>
+                </label>
+                <p className="admin-field-hint"><strong>Limits:</strong> two overlays on a full page; one in a fallback. Exact aspect and event suppression remains read-only.</p>
+              </section>
+            )}
+            {!(isVocabularyDraft && isPackageDraft) && (
+              <div className="admin-editor-metadata" aria-label="Row metadata">
+                <dl className="admin-editor-meta-summary">
+                  <div><dt>Surface</dt><dd>{currentDraft.surface}</dd></div>
+                  <div><dt>Mode</dt><dd>{currentDraft.mode}</dd></div>
+                  <div><dt>Lane</dt><dd>{currentDraft.lane}</dd></div>
+                  <div><dt>Block type</dt><dd>{currentDraft.blockType || "—"}</dd></div>
+                  {currentDraft.reviewState && <div><dt>Review state</dt><dd>{currentDraft.reviewState}</dd></div>}
+                </dl>
+                <details className="admin-advanced admin-editor-settings">
+                  <summary>{isPackageDraft ? "Publishing settings" : "Edit metadata"}</summary>
+                  <fieldset className="admin-metadata-fields">
+                  <label className="admin-metadata-field">
+                    <span>{isPackageDraft ? "Reader status after save" : "Status"}</span>
+                    {isPackageDraft ? (
+                      <span
+                        aria-label="Reader status after save"
+                        className={`ui-pill admin-status ${packageStatusAfterSave === "LIVE" ? "status-live" : "status-draft"}`}
+                      >
+                        {packageHasProposal ? "Draft revision" : packageStatusAfterSave === "LIVE" ? "Published" : "Draft"}
+                      </span>
+                    ) : (
+                      <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
+                        {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
+                      </select>
+                    )}
+                    <small className="admin-field-hint">
+                      {isPackageDraft
+                        ? packageHasProposal
+                          ? packageRoleCanServeExactCopy
+                            ? "Save the revision first, then approve and publish it with the dedicated action below."
+                            : "This saved revision is source material and cannot become exact reader copy."
+                          : packageWillPublishOnSave
+                          ? "This copy is approved. Save to publish it to readers."
+                          : currentDraft.status === "LIVE"
+                            ? "This approved copy is live for readers."
+                            : "Approval controls reader availability. Set review status to approved, then Save to publish."
+                        : "Published maps to LIVE and means reader-eligible within this provenance system; it does not outrank a higher-priority system."}
+                    </small>
+                  </label>
+                  <label className="admin-metadata-field">
+                    <span>Surface</span>
+                    <select aria-label="Surface" value={currentDraft.surface} onChange={(event) => setDraft({ ...currentDraft, surface: event.target.value as GeneratedContentSurface })} disabled={isPackageDraft}>
+                      {["sky", "you", "natal", "synastry", "composite", "relationship", "modifier"].map((surface) => <option key={surface} value={surface}>{surface}</option>)}
+                    </select>
+                  </label>
+                  <label className="admin-metadata-field">
+                    <span>Mode</span>
+                    <select aria-label="Mode" value={currentDraft.mode} onChange={(event) => setDraft({ ...currentDraft, mode: event.target.value })} disabled={isPackageDraft}>
+                      {["feed", "in_depth", "article", "card"].map((mode) => <option key={mode} value={mode}>{mode}</option>)}
+                    </select>
+                  </label>
+                  <label className="admin-metadata-field">
+                    <span>Lane</span>
+                    <select aria-label="Lane" value={currentDraft.lane} onChange={(event) => setDraft({ ...currentDraft, lane: event.target.value })} disabled={isPackageDraft}>
+                      <option value="serving">serving</option>
+                      <option value="reference">reference</option>
+                    </select>
+                  </label>
+                  <label className="admin-metadata-field">
+                    <span>Review state</span>
+                    <input aria-label="Review state" value={currentDraft.reviewState} onChange={(event) => setDraft({ ...currentDraft, reviewState: event.target.value })} disabled={isPackageDraft} />
+                  </label>
+                  {isFallbackHookDraft && !isPackageDraft && (
+                    <label className="admin-metadata-field">
+                      <span>Fallback review status</span>
+                      <select aria-label="Fallback review status" value={fallbackReviewStatus} onChange={(event) => updateFallbackReviewStatus(event.target.value)}>
+                        {fallbackHookReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{reviewStatus}</option>)}
+                      </select>
+                    </label>
+                  )}
+                  <label className="admin-metadata-field">
+                    <span>Block type</span>
+                    <input aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} disabled={isPackageDraft} />
+                  </label>
+                  </fieldset>
+                </details>
               </div>
-              <div className="admin-content-level-readout">
-                <span>System</span>
-                <strong className={`ui-pill admin-status ${contentSystem === "authored" ? "status-live" : contentSystem === "generated" ? "status-reviewed" : "status-draft"}`}>
-                  {contentSystemLabel(contentSystem)}
-                </strong>
-              </div>
-              <small className="admin-field-hint">
-                Published is a status. Authored, generated, and fallback are provenance systems; publication never changes one system into another.
-              </small>
-            </section>
-          )}
-
-          {selectedRow && (
-            <details className="admin-advanced admin-review-json">
-              <summary>Structured fields</summary>
-              <pre>{sectionsText({
-                id: selectedRow.id,
-                contentKey: selectedRow.content_key,
-                facts: selectedRow.facts,
-                sourceSnapshot: selectedRow.source_snapshot,
-                sections: selectedRow.sections
-              })}</pre>
+            )}
+            <details className="admin-advanced admin-editor-key-details">
+              <summary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
+              <label className="admin-title-field">
+                <span>{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
+                <input aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || isPackageDraft} />
+                {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
+              </label>
+              {isVocabularyDraft && isPackageDraft && <p className="admin-field-hint">Package role: <code>{packageRole || "vocabulary"}</code></p>}
             </details>
-          )}
+            {isArticleDraft && (
+              <section className="admin-display-source-panel" aria-label="Article content system">
+                <div>
+                  <p className="admin-eyebrow">Reader behavior</p>
+                  <h3>Content System</h3>
+                  <p>Reader pages distinguish authored, generated, and fallback copy. On Sky aspects, approved authored and reviewed package copy always outrank generated prose.</p>
+                </div>
+                <div className="admin-content-level-readout">
+                  <span>System</span>
+                  <strong className={`ui-pill admin-status ${contentSystem === "authored" ? "status-live" : contentSystem === "generated" ? "status-reviewed" : "status-draft"}`}>
+                    {contentSystemLabel(contentSystem)}
+                  </strong>
+                </div>
+                <small className="admin-field-hint">
+                  Published is a status. Authored, generated, and fallback are provenance systems; publication never changes one system into another.
+                </small>
+              </section>
+            )}
+
+            {selectedRow && (
+              <details className="admin-advanced admin-review-json">
+                <summary>Structured fields</summary>
+                <pre>{sectionsText({
+                  id: selectedRow.id,
+                  contentKey: selectedRow.content_key,
+                  facts: selectedRow.facts,
+                  sourceSnapshot: selectedRow.source_snapshot,
+                  sections: selectedRow.sections
+                })}</pre>
+              </details>
+            )}
+            </div>
+          </details>
         </section>
-        {!compiledSkyArticleEdition && <div className="admin-toolbar-actions admin-editor-savebar">
-          <span className={`admin-editor-save-state ${draftHasUnsavedChanges || isNewDraft || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
+        {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
+          <span className={`admin-editor-save-state ${isLoading ? "is-saving" : draftHasUnsavedChanges || isNewDraft || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
             {isLoading
               ? "Saving…"
               : packageHasProposal
@@ -9710,7 +9828,7 @@ export function GeneratedContentAdminDashboard() {
             <span className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</span>
           )}
           {isPackageDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
-            <button type="button" onClick={revertPackageDraft} disabled={isLoading}>
+            <button type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
               Revert to package original
             </button>
           )}
@@ -9750,132 +9868,16 @@ export function GeneratedContentAdminDashboard() {
         </div>}
       </aside>
       {templateVariableReferenceOpen && (
-        <>
-          <button
-            type="button"
-            className="admin-editor-backdrop admin-variable-reference-backdrop"
-            aria-label="Close template variable reference"
-            onClick={() => setTemplateVariableReferenceOpen(false)}
-          />
-          <aside
-            className="admin-editor-panel admin-variable-reference-panel"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Template variable reference"
-          >
-            <header className="admin-editor-toolbar">
-              <div>
-                <p className="admin-eyebrow">Template help</p>
-                <h2>Reader write-up &amp; variables</h2>
-                <p className="admin-field-hint">Read the assembled result first, then click a colored value to follow it to editable saved writing or a calculated fact.</p>
-              </div>
-              <button type="button" onClick={() => setTemplateVariableReferenceOpen(false)}>Back to editor</button>
-            </header>
-            <div className="admin-post-editor">
-              {templatePreviewRow && (
-                <Suspense fallback={<div className="admin-empty-state"><strong>Building reader preview…</strong></div>}>
-                  <TemplateReaderDrilldown
-                    rows={rows}
-                    templateRow={templatePreviewRow}
-                    previewOptions={natalTemplatePreviewOptions}
-                    onOpenVariable={(name, sourceId) => {
-                      setSelectedTemplateVariableName(name);
-                      setSelectedTemplateVariableSourceId(sourceId);
-                    }}
-                  />
-                </Suspense>
-              )}
-
-              <details className="admin-hook-detail-section admin-variable-syntax-guide" aria-label="Template syntax guide" role="region">
-                <summary>Template syntax help</summary>
-                <div>
-                  <h3>How to read the raw template</h3>
-                  <dl className="admin-hook-pattern-list">
-                    <div>
-                      <dt><code>{"{{planetTitle}}"}</code></dt>
-                      <dd>Inserts one value, such as <em>Jupiter</em>.</dd>
-                    </div>
-                    <div>
-                      <dt><code>{"{{#planetIntro}}…{{/planetIntro}}"}</code></dt>
-                      <dd>Includes the whole block only when that optional copy is available.</dd>
-                    </div>
-                    <div>
-                      <dt><code>{"{{.}}"}</code></dt>
-                      <dd>Inserts the current sentence while the app moves through a list.</dd>
-                    </div>
-                  </dl>
-                </div>
-              </details>
-
-              <label className="admin-field-wide admin-variable-reference-search">
-                <span>Find a variable or meaning</span>
-                <input
-                  type="search"
-                  value={templateVariableQuery}
-                  onChange={(event) => setTemplateVariableQuery(event.target.value)}
-                  placeholder="Try planet, sign, optional…"
-                  autoFocus
-                />
-              </label>
-
-              <p className="admin-field-hint admin-variable-reference-count" aria-live="polite">
-                Showing {filteredVariableReferences.length} of {variableReferences.length} variables used in this row.
-              </p>
-
-              <section className="admin-sky-edition-fields admin-variable-reference-list" aria-label="Variables used in this row">
-                {filteredVariableReferences.map((variable) => (
-                    <article className="admin-hook-detail-section admin-variable-reference-card" key={variable.name}>
-                      <header className="admin-fallback-diagnostic-heading">
-                        <div>
-                          <code>{`{{${variable.name}}}`}</code>
-                          <h3>{variable.label}</h3>
-                        </div>
-                        <span className={`ui-pill admin-status status-${variable.requirement === "Required" ? "live" : variable.requirement === "Optional" ? "draft" : "reviewed"}`}>{variable.requirement}</span>
-                      </header>
-                      <p>{variable.meaning}</p>
-                      <dl className="admin-hook-pattern-list">
-                        {variable.sourceKind === "runtime" ? (
-                          <div><dt>Example value</dt><dd>{variable.example}</dd></div>
-                        ) : variable.sourceKind === "unmapped" ? (
-                          <div><dt>Wiring status</dt><dd>No canonical source row is currently connected.</dd></div>
-                        ) : (
-                          <div><dt>Saved writing</dt><dd>Open the source rows to read or edit the actual copy that can fill this variable.</dd></div>
-                        )}
-                        <div><dt>Comes from</dt><dd>{variable.source}</dd></div>
-                        <div><dt>Used in</dt><dd>{variable.fields.join(", ")}</dd></div>
-                      </dl>
-                      <button
-                        type="button"
-                        className="admin-variable-review-button"
-                        onClick={() => {
-                          setSelectedTemplateVariableSourceId(null);
-                          setSelectedTemplateVariableName(variable.name);
-                        }}
-                      >
-                        {variable.sourceKind === "runtime"
-                          ? "See how this value is filled"
-                          : variable.sourceKind === "unmapped" ? "Review wiring" : "Review source writing"}
-                      </button>
-                    </article>
-                ))}
-                {filteredVariableReferences.length === 0 && (
-                  <div className="admin-empty-state">
-                    <strong>No matching variables</strong>
-                    <p>Try a variable name such as <code>planetTitle</code>, or search by a meaning such as “sign.”</p>
-                  </div>
-                )}
-              </section>
-            </div>
-          </aside>
-        </>
-      )}
-      {templateVariableReferenceOpen && selectedTemplateVariableName && (
         <Suspense fallback={null}>
-          <TemplateVariableReviewPanels
+          <TemplateVariablesRail
             references={variableReferences}
+            filteredReferences={filteredVariableReferences}
+            query={templateVariableQuery}
+            onQueryChange={setTemplateVariableQuery}
             rows={rows}
             templateContentKey={currentDraft.contentKey}
-            templateRow={templatePreviewRow ?? {
+            templatePreviewRow={templatePreviewRow}
+            reviewTemplateRow={templatePreviewRow ?? {
               id: currentDraft.id ?? "draft-template",
               content_key: currentDraft.contentKey,
               headline: currentDraft.headline,
@@ -9887,23 +9889,17 @@ export function GeneratedContentAdminDashboard() {
               sections: currentDraft.sections,
               source_snapshot: currentDraft.sourceSnapshot
             }}
+            previewOptions={natalTemplatePreviewOptions}
             selectedVariableName={selectedTemplateVariableName}
             selectedSourceId={selectedTemplateVariableSourceId}
-            onBackToVariables={() => {
-              setSelectedTemplateVariableSourceId(null);
-              setSelectedTemplateVariableName(null);
-            }}
+            onSelectVariable={setSelectedTemplateVariableName}
             onSelectSource={setSelectedTemplateVariableSourceId}
-            onSelectVariable={(name) => {
-              setSelectedTemplateVariableSourceId(null);
-              setSelectedTemplateVariableName(name);
-            }}
             onEditSource={(row) => {
-              setSelectedTemplateVariableSourceId(null);
-              setSelectedTemplateVariableName(null);
-              setTemplateVariableReferenceOpen(false);
+              closeVariablesRail();
               openRow(row as AdminGeneratedContentRow);
             }}
+            onClose={closeVariablesRail}
+            onKeyDown={handleEditorKeyDown}
           />
         </Suspense>
       )}
