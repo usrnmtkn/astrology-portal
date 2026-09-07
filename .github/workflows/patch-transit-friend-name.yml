@@ -35,8 +35,6 @@ jobs:
                   raise SystemExit(f"{path}: expected {expected} matches, found {count} for {old!r}")
               p.write_text(text.replace(old, new))
 
-          # Content Studio API: normalize and permit {{Name}} on They-facing
-          # soft/hard transit-effect fallback hooks, just like authored transit cards.
           api = "api/admin/generated-content.ts"
           replace_exact(
               api,
@@ -49,8 +47,6 @@ jobs:
               '        row.content_key.startsWith("fallback-hook/natal-aspect-lived/")\n        || row.content_key.startsWith("authored/transit-aspect/")\n        || /^fallback-hook\\/transit-effect-(?:soft|hard)\\//u.test(row.content_key)'
           )
 
-          # Resolver: the fallback transit-effect hook already receives natalArea;
-          # add the selected friend display name for They voice.
           for resolver in [
               "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs",
               "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts",
@@ -82,7 +78,7 @@ jobs:
           git add api/admin/generated-content.ts \
             apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs \
             apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts \
-            apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js \
             .github/workflows/patch-transit-friend-name.yml
+          git add -f apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
           git commit -m "Wire Name into Friends transit-effect fallbacks"
           git push origin HEAD:fix/personal-transit-source-label
