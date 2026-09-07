@@ -1,4 +1,4 @@
-import { Archive, ChevronLeft, ChevronRight, FileText, MoreHorizontal, RotateCcw } from "lucide-react";
+import { Archive, ChevronLeft, FileText, MoreHorizontal, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SegmentedControl } from "../SegmentedControl";
 import {
@@ -10,15 +10,87 @@ import {
   type ReportLibraryItem
 } from "../../services/reportLibrary";
 
+const reportMonthNames = [
+  "Jan", "Feb", "Mar", "Apr", "May", "June",
+  "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+] as const;
+
+type ReportCalendarDate = {
+  year: number;
+  month: number;
+  day: number;
+};
+
 function generatedReportIdFromPath() {
   return window.location.pathname.match(/^\/reports\/generated\/([^/]+)$/u)?.[1] ?? "";
 }
 
-function formatTimestamp(value: string | null) {
+function ordinalSuffix(day: number) {
+  const remainder100 = day % 100;
+  if (remainder100 >= 11 && remainder100 <= 13) return "th";
+  const remainder10 = day % 10;
+  if (remainder10 === 1) return "st";
+  if (remainder10 === 2) return "nd";
+  if (remainder10 === 3) return "rd";
+  return "th";
+}
+
+function parseReportCalendarDate(value: string | null): ReportCalendarDate | null {
+  if (!value) return null;
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/u);
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (!Number.isInteger(year) || month < 1 || month > 12 || day < 1 || day > 31) return null;
+  return { year, month, day };
+}
+
+function sameReportCalendarDate(left: ReportCalendarDate, right: ReportCalendarDate) {
+  return left.year === right.year && left.month === right.month && left.day === right.day;
+}
+
+function isToday(date: ReportCalendarDate) {
+  const today = new Date();
+  return date.year === today.getFullYear()
+    && date.month === today.getMonth() + 1
+    && date.day === today.getDate();
+}
+
+function formatCalendarDay(date: ReportCalendarDate, includeYear = false) {
+  const base = `${reportMonthNames[date.month - 1]} ${date.day}${ordinalSuffix(date.day)}`;
+  return includeYear ? `${base}, ${date.year}` : base;
+}
+
+function formatReadingWindow(item: ReportLibraryItem) {
+  const start = parseReportCalendarDate(item.targetDate);
+  const end = parseReportCalendarDate(item.periodEnd ?? item.targetDate);
+  if (!start) return item.subtitle;
+  if (!end || sameReportCalendarDate(start, end)) {
+    return `${isToday(start) ? "Today, " : ""}${formatCalendarDay(start)}`;
+  }
+  if (start.year === end.year && start.month === end.month) {
+    return `${reportMonthNames[start.month - 1]} ${start.day}${ordinalSuffix(start.day)}–${end.day}${ordinalSuffix(end.day)}`;
+  }
+  if (start.year === end.year) {
+    return `${formatCalendarDay(start)}–${formatCalendarDay(end)}`;
+  }
+  return `${formatCalendarDay(start, true)}–${formatCalendarDay(end, true)}`;
+}
+
+function formatCreatedDate(value: string | null) {
   if (!value) return "";
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return "";
-  return parsed.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return `${reportMonthNames[parsed.getMonth()]} ${parsed.getDate()}`;
+}
+
+function reportSubtitle(item: ReportLibraryItem) {
+  const readingWindow = formatReadingWindow(item);
+  if (item.reportKind === "friend_transit_reading") {
+    return ["Friends", readingWindow].filter(Boolean).join(" · ");
+  }
+  return readingWindow;
 }
 
 function statusLabel(item: ReportLibraryItem) {
@@ -77,12 +149,9 @@ function ReportLibraryRow({
               <span className={`report-library-status ui-pill ui-pill--neutral report-library-status--${item.status}`}>{status}</span>
             ) : null}
           </span>
-          <span className="report-library-row__subtitle type-meta">{item.subtitle}</span>
-          <span className="report-library-row__date type-meta">
-            {item.status === "ready" ? `Saved ${formatTimestamp(item.readyAt ?? item.updatedAt)}` : `Updated ${formatTimestamp(item.updatedAt)}`}
-          </span>
+          <span className="report-library-row__subtitle type-meta">{reportSubtitle(item)}</span>
+          <span className="report-library-row__date type-meta">Created {formatCreatedDate(item.createdAt)}</span>
         </span>
-        <ChevronRight className="report-library-row__chevron" size={18} aria-hidden="true" />
       </button>
 
       <div className="report-library-row__actions" ref={actionRef}>
@@ -282,7 +351,7 @@ export function GeneratedReportDeliveryView() {
         <div className="saved-generated-report__body">
           {report.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p className="type-body" key={paragraph}>{paragraph}</p>)}
         </div>
-        <footer className="type-meta">Saved {formatTimestamp(report.updatedAt)}</footer>
+        <footer className="type-meta">Created {formatCreatedDate(report.createdAt)}</footer>
       </article>
     </main>
   );
