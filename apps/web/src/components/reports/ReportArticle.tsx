@@ -101,7 +101,7 @@ function ReportKeyDateSheet({
   );
 }
 
-export function ReportArticle({ report }: { report: ReportDocument }) {
+export function ReportArticle({ report, backHref = "/reports/" }: { report: ReportDocument; backHref?: string }) {
   const [activeKeyDateId, setActiveKeyDateId] = useState<string | null>(null);
   const chapters = useMemo(() => dedupeArticleSectionHeadings(
     report.chapters.map((chapter) => ({ ...chapter, heading: chapter.title })),
@@ -120,8 +120,8 @@ export function ReportArticle({ report }: { report: ReportDocument }) {
       <button
         className="report-article-back floating-back-button"
         type="button"
-        aria-label="Back to Reports"
-        onClick={() => window.location.assign("/reports/")}
+        aria-label="Back"
+        onClick={() => window.location.assign(backHref)}
       >
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
