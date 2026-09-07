@@ -423,3 +423,125 @@
 .admin-dashboard .admin-composition-template-list > header > div:first-child > :last-child {
   white-space: nowrap;
 }
+
+/* ---------- Control hierarchy ----------
+   One primary per view (filled accent). Secondary = surface fill with a
+   border. Tertiary = text. Destructive = red outline. Pills are status only.
+   Pages opt controls out of the accent with .admin-secondary-button; the
+   savebar and source cards are handled structurally below. */
+
+.admin-dashboard .admin-secondary-button.admin-secondary-button {
+  background: var(--admin-ui-surface-2);
+  border-color: var(--admin-ui-border-strong);
+  color: var(--admin-ui-text);
+  font-weight: var(--weight-medium);
+}
+
+.admin-dashboard .admin-secondary-button.admin-secondary-button:hover:not(:disabled),
+.admin-dashboard .admin-secondary-button.admin-secondary-button:focus-visible {
+  background: var(--admin-ui-surface-3);
+  border-color: var(--admin-ui-border-strong);
+  color: var(--admin-ui-text);
+}
+
+/* Source cards: the edit action is one of four on the page, so it is a
+   secondary button in the card footer, not a full-width tinted bar. */
+.admin-dashboard .admin-natal-source-card > button {
+  background: var(--admin-ui-surface-2);
+  border-color: var(--admin-ui-border-strong);
+  color: var(--admin-ui-text);
+  font-weight: var(--weight-medium);
+  justify-self: end;
+  width: auto;
+}
+
+.admin-dashboard .admin-natal-source-card > button:hover:not(:disabled) {
+  background: var(--admin-ui-surface-3);
+}
+
+/* Variables panel: same treatment for the per-variable review action. */
+.admin-dashboard .admin-variable-review-button {
+  justify-self: end;
+  margin-top: var(--admin-space-xs);
+  width: auto;
+}
+
+/* Savebar: destructive on the left, save state beside it, secondary then
+   primary on the right. When a Publish action is present it is the primary
+   and Save becomes a secondary "save draft"; two filled buttons never share
+   the bar. */
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar {
+  justify-content: flex-start;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar > .admin-editor-save-state {
+  flex: 1 1 100%;
+  order: -3;
+  width: auto;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar > .admin-danger-button {
+  margin-right: auto;
+  order: -2;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar > .admin-savebar-next-step {
+  flex: 1 1 100%;
+  font-size: var(--admin-type-13);
+  order: -1;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar > .admin-review-button {
+  order: 1;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar > .admin-primary-button {
+  order: 2;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar > .admin-publish-button {
+  order: 3;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar:has(> .admin-publish-button:not(:disabled)) > .admin-primary-button {
+  background: var(--admin-ui-surface-2);
+  border-color: var(--admin-ui-border-strong);
+  color: var(--admin-ui-text);
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar > .admin-review-button {
+  background: var(--admin-ui-surface-2);
+  border-color: var(--admin-ui-border-strong);
+  color: var(--admin-ui-text);
+}
+
+/* Fallback diagnostics: the status reads as a chip, and the slot lists run
+   inline instead of stacking one chip per line. */
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-heading > strong {
+  background: var(--admin-ui-pill-surface);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-radius-pill);
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-type-12);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-meta);
+  padding: var(--admin-space-micro) var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-grid ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- Pills: one spec ---------- */
+.admin-dashboard :is(.ui-pill, .admin-status, .admin-reader-state-pill, .admin-template-badge) {
+  border-radius: var(--admin-radius-pill);
+  font-size: var(--admin-type-12);
+  line-height: var(--leading-meta);
+  min-height: var(--admin-space-6xl);
+  padding: var(--admin-space-micro) var(--admin-space-lg);
+}
