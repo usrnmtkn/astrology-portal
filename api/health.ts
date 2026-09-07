@@ -65,6 +65,42 @@ async function checkContentGenerationImport(): Promise<DependencyResult> {
   }
 }
 
+async function checkReportFulfillment(): Promise<DependencyResult> {
+  const startedAt = performance.now();
+
+  try {
+    const [{ createSupabaseReportAdmin }, { reportBillingMode }] = await Promise.all([
+      import("./_lib/supabase-report-admin.js"),
+      import("./_lib/report-fulfillment-config.js")
+    ]);
+    const admin = createSupabaseReportAdmin();
+    const control = await admin.selectOne<{ id?: unknown; worker_paused?: unknown }>(
+      "report_fulfillment_controls",
+      new URLSearchParams({
+        id: "eq.true",
+        select: "id,worker_paused"
+      })
+    );
+    const controlRowAvailable = control?.id === true;
+
+    return {
+      ok: controlRowAvailable,
+      elapsedMs: elapsedSince(startedAt),
+      detail: {
+        controlRowAvailable,
+        workerPaused: control?.worker_paused === true,
+        billingMode: reportBillingMode()
+      }
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      elapsedMs: elapsedSince(startedAt),
+      error: error instanceof Error ? error.message : "Report fulfillment check failed."
+    };
+  }
+}
+
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
   res.setHeader("content-type", "application/json; charset=utf-8");
@@ -82,11 +118,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
 
-  const [ephemeris, contentGeneration] = await Promise.all([
+  const [ephemeris, contentGeneration, reportFulfillment] = await Promise.all([
     checkEphemeris(),
-    checkContentGenerationImport()
+    checkContentGenerationImport(),
+    checkReportFulfillment()
   ]);
-  const ok = ephemeris.ok && contentGeneration.ok;
+  const ok = ephemeris.ok && contentGeneration.ok && reportFulfillment.ok;
 
   sendJson(res, ok ? 200 : 503, {
     ok,
@@ -94,7 +131,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     timestamp: new Date().toISOString(),
     dependencies: {
       ephemeris,
-      contentGeneration
+      contentGeneration,
+      reportFulfillment
     }
   });
 }
