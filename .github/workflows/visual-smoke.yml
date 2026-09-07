@@ -51,6 +51,9 @@ jobs:
       - name: Verify production health endpoint imports
         run: npm run test:production-health
 
+      - name: Verify production report smoke contract
+        run: node scripts/test-production-report-smoke.mjs
+
       - name: Enforce browser knowledge boundary
         run: npm run test:browser-knowledge-boundary
 
