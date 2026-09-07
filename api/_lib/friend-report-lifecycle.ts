@@ -63,6 +63,16 @@ export function friendReportAmountCents() {
   return Number.isInteger(value) && value > 0 ? value : null;
 }
 
+export function friendReportEntitlementGrantsAccess(
+  entitlement: FriendReportEntitlementRow | null | undefined,
+  billingMode = friendReportBillingMode()
+) {
+  if (!entitlement || entitlement.status !== "active" || entitlement.revoked_at) return false;
+  return billingMode === "free_test"
+    ? entitlement.source === "free_test" || entitlement.source === "stripe"
+    : entitlement.source === "stripe";
+}
+
 function entitlementQuery(userId: string, contentKey: string) {
   return new URLSearchParams({
     user_id: `eq.${userId}`,
@@ -92,6 +102,10 @@ export async function ensureFreeTestFriendReportEntitlement(input: {
   brief: FriendTransitReadingBrief;
 }) {
   const admin = input.admin ?? createSupabaseReportAdmin();
+  const existing = await findFriendReportEntitlement(admin, input.userId, input.contentKey);
+  if (existing?.status === "active" && existing.source === "stripe" && !existing.revoked_at) {
+    return existing;
+  }
   const now = new Date().toISOString();
   const rows = await admin.insert<FriendReportEntitlementRow>("friend_report_entitlements", {
     user_id: input.userId,
@@ -102,6 +116,10 @@ export async function ensureFreeTestFriendReportEntitlement(input: {
     brief: input.brief,
     status: "active",
     source: "free_test",
+    stripe_event_id: null,
+    stripe_checkout_session_id: null,
+    stripe_customer_id: null,
+    stripe_payment_intent_id: null,
     purchased_at: now,
     activated_at: now,
     revoked_at: null
@@ -122,7 +140,7 @@ export async function ensurePendingStripeFriendReportEntitlement(input: {
 }) {
   const admin = input.admin ?? createSupabaseReportAdmin();
   const existing = await findFriendReportEntitlement(admin, input.userId, input.contentKey);
-  if (existing?.status === "active") return existing;
+  if (existing?.status === "active" && existing.source === "stripe" && !existing.revoked_at) return existing;
   const rows = await admin.insert<FriendReportEntitlementRow>("friend_report_entitlements", {
     user_id: input.userId,
     subject_id: input.subjectId,
@@ -132,6 +150,12 @@ export async function ensurePendingStripeFriendReportEntitlement(input: {
     brief: input.brief,
     status: "pending_payment",
     source: "stripe",
+    stripe_event_id: null,
+    stripe_checkout_session_id: null,
+    stripe_customer_id: null,
+    stripe_payment_intent_id: null,
+    purchased_at: null,
+    activated_at: null,
     revoked_at: null
   }, { onConflict: "user_id,content_key" });
   const row = rows[0] ?? await findFriendReportEntitlement(admin, input.userId, input.contentKey);
@@ -147,7 +171,7 @@ export async function attachFriendCheckoutSession(input: {
   const admin = input.admin ?? createSupabaseReportAdmin();
   await admin.update<FriendReportEntitlementRow>(
     "friend_report_entitlements",
-    `id=eq.${encodeURIComponent(input.entitlementId)}&status=eq.pending_payment`,
+    `id=eq.${encodeURIComponent(input.entitlementId)}&status=eq.pending_payment&source=eq.stripe`,
     { stripe_checkout_session_id: input.checkoutSessionId }
   );
 }
@@ -168,6 +192,7 @@ export async function activateFriendReportEntitlementFromStripe(input: {
     new URLSearchParams({
       id: `eq.${input.entitlementId}`,
       user_id: `eq.${input.userId}`,
+      source: "eq.stripe",
       select: "*"
     })
   );
@@ -191,7 +216,7 @@ export async function activateFriendReportEntitlementFromStripe(input: {
       revoked_at: null
     }
   );
-  const entitlement = updated[0] ?? existing;
+  const entitlement = updated[0] ?? { ...existing, status: "active" as const, source: "stripe" as const, revoked_at: null };
   const job = await ensureFriendReportJob({ admin, entitlement });
   return { entitlement, job };
 }
@@ -206,6 +231,7 @@ export async function revokeFriendReportEntitlementByPaymentIntent(input: {
     "friend_report_entitlements",
     new URLSearchParams({
       stripe_payment_intent_id: `eq.${input.paymentIntentId}`,
+      source: "eq.stripe",
       select: "*"
     })
   );
@@ -229,7 +255,7 @@ export async function ensureFriendReportJob(input: {
   entitlement: FriendReportEntitlementRow;
 }) {
   const admin = input.admin ?? createSupabaseReportAdmin();
-  if (input.entitlement.status !== "active") throw new Error("FRIEND_REPORT_ACTIVE_ENTITLEMENT_REQUIRED");
+  if (!friendReportEntitlementGrantsAccess(input.entitlement)) throw new Error("FRIEND_REPORT_ACTIVE_ENTITLEMENT_REQUIRED");
   const rows = await admin.insert<FriendReportJobRow>("friend_report_jobs", {
     entitlement_id: input.entitlement.id,
     user_id: input.entitlement.user_id,
@@ -251,15 +277,37 @@ export async function ensureFriendReportJob(input: {
     })
   );
   if (!row) throw new Error("FRIEND_REPORT_JOB_NOT_CREATED");
+  if (row.entitlement_id !== input.entitlement.id) {
+    const relinked = await admin.update<FriendReportJobRow>(
+      "friend_report_jobs",
+      `id=eq.${encodeURIComponent(row.id)}`,
+      {
+        entitlement_id: input.entitlement.id,
+        brief: input.entitlement.brief,
+        friend_name: input.entitlement.friend_name,
+        subject_id: input.entitlement.subject_id,
+        target_date: input.entitlement.target_date,
+        state: "queued",
+        run_after: new Date().toISOString(),
+        locked_at: null,
+        locked_by: null,
+        result_id: null,
+        last_error: null
+      }
+    );
+    return relinked[0] ?? row;
+  }
   if (["failed", "cancelled"].includes(row.state)) {
     const reset = await admin.update<FriendReportJobRow>(
       "friend_report_jobs",
       `id=eq.${encodeURIComponent(row.id)}`,
       {
+        brief: input.entitlement.brief,
         state: "queued",
         run_after: new Date().toISOString(),
         locked_at: null,
         locked_by: null,
+        result_id: null,
         last_error: null
       }
     );
