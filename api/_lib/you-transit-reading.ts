@@ -3,7 +3,7 @@ type RecordLike = Record<string, unknown>;
 export const YOU_TRANSIT_READING_BRIEF_SCHEMA = "tldr.you-transit-reading-brief.v1";
 export const YOU_DAY_READING_SUBJECT_TYPE = "you_day_reading";
 export const YOU_WEEK_READING_SUBJECT_TYPE = "you_week_reading";
-export const YOU_TRANSIT_READING_PROMPT_VERSION = "you-transit-reading-v1.2";
+export const YOU_TRANSIT_READING_PROMPT_VERSION = "you-transit-reading-v1.3";
 
 export type YouTransitReadingWindow = "day" | "week";
 
@@ -156,9 +156,9 @@ export function youTransitReadingPrompt(input: { brief: YouTransitReadingBrief; 
   const { brief } = input;
   const bodyContract = brief.window === "day"
     ? "body: 2-3 natural paragraphs, roughly 120-220 words. Start with what matters today, connect the strongest supplied threads, and end with the practical consequence or useful perspective."
-    : "body: 3-5 natural paragraphs, roughly 220-380 words. Give the week a clear through-line, preserve supplied timing when it matters, and distinguish the main theme from secondary pressure or support.";
+    : "body: 3-5 natural paragraphs, roughly 220-380 words. Build the internal stages what is happening → where it hits → trap → what to do from the supplied evidence, without section headings. Advance the TLDR instead of restarting it. Preserve supplied timing and distinguish the main theme from secondary pressure or support; never invent a trap or action to fill a stage.";
   return [
-    "TLDR ASTRO PERSONAL TRANSIT SYNTHESIS V1.2",
+    "TLDR ASTRO PERSONAL TRANSIT SYNTHESIS V1.3",
     "",
     "TASK",
     `Write one in-depth ${brief.window} report for the reader.`,

@@ -19,7 +19,10 @@ export const GENERATED_REPORT_JUDGE_HARD_GATES = [
 ] as const;
 
 export type GeneratedReportJudgeCategory = typeof GENERATED_REPORT_JUDGE_CATEGORIES[number];
-export const GENERATED_REPORT_JUDGE_FINDING_CATEGORIES = [...GENERATED_REPORT_JUDGE_CATEGORIES, "over_specification"] as const;
+export const GENERATED_REPORT_JUDGE_BLOCKING_FINDINGS = [
+  "over_specification", "narrative_repetition", "unsupported_interpretation", "unsupported_timing", "owner_language"
+] as const;
+export const GENERATED_REPORT_JUDGE_FINDING_CATEGORIES = [...GENERATED_REPORT_JUDGE_CATEGORIES, ...GENERATED_REPORT_JUDGE_BLOCKING_FINDINGS] as const;
 export type GeneratedReportJudgeScores = Record<GeneratedReportJudgeCategory, number>;
 export type GeneratedReportJudgeFinding = {
   category: typeof GENERATED_REPORT_JUDGE_FINDING_CATEGORIES[number];
@@ -39,7 +42,7 @@ export function generatedReportJudgeOverall(scores: GeneratedReportJudgeScores) 
 }
 
 export function generatedReportJudgeVerdict(scores: GeneratedReportJudgeScores, threshold: number, findings: GeneratedReportJudgeFinding[] = []) {
-  if (findings.some((finding) => finding.category === "over_specification")) return "below_threshold" as const;
+  if (findings.some((finding) => GENERATED_REPORT_JUDGE_BLOCKING_FINDINGS.some((category) => category === finding.category))) return "below_threshold" as const;
   const hardGatesPass = GENERATED_REPORT_JUDGE_HARD_GATES.every((category) => scores[category] >= 3);
   const releaseFloorsPass = scores.owner_voice >= 4 && scores.natural_language >= 4;
   return generatedReportJudgeOverall(scores) >= threshold && hardGatesPass && releaseFloorsPass
