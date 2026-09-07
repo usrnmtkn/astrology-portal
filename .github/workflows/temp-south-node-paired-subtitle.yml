@@ -1,0 +1,111 @@
+name: Temporary South Node paired subtitle repair
+
+on:
+  push:
+    branches:
+      - fix/south-node-paired-subtitle-20260907
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fix/south-node-paired-subtitle-20260907
+      - name: Render South Node as a peer aspect subtitle
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          detail_path = Path('apps/web/src/features/sky/SkyDetailArticle.tsx')
+          detail = detail_path.read_text()
+
+          old_import = '''import {
+            articleAspectGlyphPartsFromHeading,
+            articleAspectTypeFromText,
+            normalizedArticleAspectToneBucket
+          } from "../../utils/articleAspects";'''
+          new_import = '''import {
+            articleAspectGlyphPartsFromHeading,
+            articleAspectTypeFromText,
+            articleNodeAxisBodyParts,
+            normalizedArticleAspectToneBucket
+          } from "../../utils/articleAspects";'''
+          if old_import not in detail:
+              raise SystemExit('articleAspects import target not found')
+          detail = detail.replace(old_import, new_import, 1)
+
+          old_locals = '''                      const glyphParts = sectionHeading ? articleAspectGlyphPartsFromHeading(sectionHeading) : null;
+                      const sourceTag = inferredSectionQaSourceTag(section);
+                      const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;'''
+          new_locals = '''                      const glyphParts = sectionHeading ? articleAspectGlyphPartsFromHeading(sectionHeading) : null;
+                      const nodeAxisBody = sectionHeading ? articleNodeAxisBodyParts(sectionHeading, bodyParagraphs) : null;
+                      const southNodeGlyphParts = nodeAxisBody ? articleAspectGlyphPartsFromHeading(nodeAxisBody.southHeading) : null;
+                      const sourceTag = inferredSectionQaSourceTag(section);
+                      const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;'''
+          if old_locals not in detail:
+              raise SystemExit('aspect rendering locals target not found')
+          detail = detail.replace(old_locals, new_locals, 1)
+
+          old_render = '''                          {bodyParagraphs.length > 0
+                            ? bodyParagraphs.map((paragraph, paragraphIndex) => (
+                              <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>
+                            ))
+                            : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}'''
+          new_render = '''                          {nodeAxisBody ? (
+                            <>
+                              {nodeAxisBody.primaryParagraphs.map((paragraph, paragraphIndex) => (
+                                <p key={`${section.key}-north-${paragraphIndex}`}>{paragraph}</p>
+                              ))}
+                              <div className="article-related-aspects__copy-heading">
+                                {southNodeGlyphParts ? <AspectGlyphs from={southNodeGlyphParts.from} aspect={southNodeGlyphParts.aspect} to={southNodeGlyphParts.to} /> : null}
+                                <h4>{nodeAxisBody.southHeading}</h4>
+                              </div>
+                              {nodeAxisBody.southParagraphs.map((paragraph, paragraphIndex) => (
+                                <p key={`${section.key}-south-${paragraphIndex}`}>{paragraph}</p>
+                              ))}
+                            </>
+                          ) : bodyParagraphs.length > 0
+                            ? bodyParagraphs.map((paragraph, paragraphIndex) => (
+                              <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>
+                            ))
+                            : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}'''
+          if old_render not in detail:
+              raise SystemExit('aspect body rendering target not found')
+          detail_path.write_text(detail.replace(old_render, new_render, 1))
+
+          test_path = Path('scripts/test-calendar-south-node-serving.mjs')
+          test = test_path.read_text()
+          anchor = '''assert.equal(studioNorth?.body, marsNorth.body);
+          assert.equal(studioSouth?.body, marsSouth.body);
+
+          console.log("South Node Calendar serving + Content Studio contract passed", {'''
+          insertion = '''assert.equal(studioNorth?.body, marsNorth.body);
+          assert.equal(studioSouth?.body, marsSouth.body);
+
+          const skyDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
+          assert.match(
+            skyDetailSource,
+            /articleNodeAxisBodyParts[\\s\\S]*?article-related-aspects__copy-heading[\\s\\S]*?<h4>\\{nodeAxisBody\\.southHeading\\}<\\/h4>/u,
+            "Paired South Node copy must render with the same aspect subtitle treatment as the North Node heading."
+          );
+
+          console.log("South Node Calendar serving + Content Studio contract passed", {'''
+          if anchor not in test:
+              raise SystemExit('South Node serving regression anchor not found')
+          test_path.write_text(test.replace(anchor, insertion, 1))
+          PY
+          git diff --check
+      - name: Commit repair and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/temp-south-node-paired-subtitle.yml
+          git add apps/web/src/features/sky/SkyDetailArticle.tsx scripts/test-calendar-south-node-serving.mjs
+          git commit -m "Render South Node as paired aspect subtitle"
+          git push origin HEAD:fix/south-node-paired-subtitle-20260907
