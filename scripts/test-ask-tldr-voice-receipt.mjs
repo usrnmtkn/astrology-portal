@@ -58,9 +58,31 @@ assert.equal(receipt.semanticSources[0].factorKey, "transit:jupiter:opposition:m
 assert.equal(receipt.semanticSources[0].governedSourceKind, "owner_approved_cms_snapshot");
 assert.doesNotThrow(() => assertAskTldrVoiceEvidenceReceipt(receipt));
 
-const tampered = structuredClone(receipt);
-tampered.ownerPassages[0].text += " changed";
-assert.throws(() => assertAskTldrVoiceEvidenceReceipt(tampered), /ASK_TLDR_OWNER_PASSAGE_EVIDENCE_INVALID/u);
+const runtimeCorrection = {
+  before: "Make your contribution easy to identify and ask directly for recognition.",
+  after: "For guidance questions, translate the advice into a decision, request, preparation step, boundary, or observable action the reader can actually take.",
+  ownerReason: "The reader should not have to translate polished coaching language into the next step.",
+  category: "owner_feedback",
+  family: "ask-tldr:career",
+  rule: "owner_approved_runtime_guidance",
+  sourcePath: "content-studio:ask-tldr-preview/test-preview",
+  relevanceScore: 100
+};
+const learnedReceipt = buildAskTldrVoiceEvidenceReceipt({
+  question: governed.question,
+  evidence: governed.evidence,
+  governedGenerationAllowed: governed.generationAllowed,
+  governedGenerationBlockReason: governed.generationBlockReason,
+  ownerCorrections: [runtimeCorrection]
+});
+assert.deepEqual(learnedReceipt.ownerCorrections[0], runtimeCorrection, "Explicitly approved runtime owner feedback must outrank packaged corrections.");
+assert.ok(learnedReceipt.ownerCorrections.length <= 8);
+assert.doesNotThrow(() => assertAskTldrVoiceEvidenceReceipt(learnedReceipt));
+assert.notEqual(learnedReceipt.receiptSha256, receipt.receiptSha256, "Promoted owner feedback must be part of the hashed voice receipt.");
+
+const tampered = structuredClone(learnedReceipt);
+tampered.ownerCorrections[0].after += " changed";
+assert.throws(() => assertAskTldrVoiceEvidenceReceipt(tampered), /ASK_TLDR_VOICE_RECEIPT_TAMPERED/u);
 
 const profectionCandidate = calculated.find((factor) => factor.kind === "profection");
 assert.ok(profectionCandidate);
@@ -81,4 +103,4 @@ assert.equal(blocked.generationAllowed, false);
 assert.equal(blocked.generationBlockReason, "PRIMARY_GOVERNED_INTERPRETATION_INCOMPLETE");
 assert.throws(() => assertAskTldrVoiceEvidenceReceipt(blocked), /ASK_TLDR_VOICE_RECEIPT_BLOCKED/u);
 
-console.log(`Ask TLDR voice receipt passed: ${receipt.ownerPassages.length} exact owner-authored passages, ${receipt.ownerCorrections.length} owner corrections, semantic provenance, and active do-not-use rules are required before writing.`);
+console.log(`Ask TLDR voice receipt passed: ${receipt.ownerPassages.length} exact owner-authored passages, packaged corrections, explicitly approved runtime owner feedback, semantic provenance, and active do-not-use rules are hashed before writing.`);
