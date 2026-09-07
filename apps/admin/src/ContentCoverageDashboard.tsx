@@ -6,6 +6,8 @@ import NeedsAttentionDashboard from "./NeedsAttentionDashboard";
 import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./ownerSession";
 import "./admin.css";
 import "./admin-components.css";
+import "./admin-form-density.css";
+import "./admin-content-studio-layout.css";
 
 type CoverageAuthority = {
   id: string;
@@ -77,6 +79,9 @@ function CoverageDashboard() {
   const [credential, setCredential] = useState("");
   const [emergencySecret, setEmergencySecret] = useState(() => normalizeAdminSecret(window.localStorage.getItem(adminSecretStorageKey) ?? ""));
   const [loading, setLoading] = useState(false);
+  // True until the owner-session check has decided whether there is a credential
+  // to load with, so the sign-in gate never flashes while data is on its way.
+  const [bootstrapping, setBootstrapping] = useState(true);
   const [error, setError] = useState("");
 
   async function loadCoverage(nextCredential: string) {
@@ -109,6 +114,7 @@ function CoverageDashboard() {
       if (cancelled) return;
       const nextCredential = token || saved;
       if (nextCredential) void loadCoverage(nextCredential);
+      setBootstrapping(false);
     });
     const stopWatching = watchOwnerSessionAccessToken((token) => {
       if (!cancelled && token) void loadCoverage(token);
@@ -142,10 +148,10 @@ function CoverageDashboard() {
             </p>
           </div>
           <div className="admin-toolbar-actions">
-            <a className="admin-create-button" href="/admin/content/coverage?view=attention">Needs attention</a>
+            <a className="admin-create-button admin-secondary-button" href="/admin/content/coverage?view=attention">Needs attention</a>
             <button
               type="button"
-              className="admin-create-button"
+              className="admin-create-button admin-secondary-button"
               onClick={() => credential && void loadCoverage(credential)}
               disabled={!credential || loading}
             >
@@ -155,7 +161,18 @@ function CoverageDashboard() {
           </div>
         </header>
 
-        {!payload && (
+        {!payload && (loading || bootstrapping) && (
+          <section className="admin-content-toolbar admin-initial-loading" aria-label="Loading" aria-live="polite">
+            <div>
+              <p className="admin-eyebrow">Connecting to Content Studio</p>
+              <h2>Loading…</h2>
+              <p>Checking access and loading coverage.</p>
+            </div>
+            <RefreshCw size={22} aria-hidden="true" />
+          </section>
+        )}
+
+        {!payload && !loading && !bootstrapping && (
           <>
             <AdminAccessGate
               disabled={!normalizeAdminSecret(emergencySecret) || loading}
