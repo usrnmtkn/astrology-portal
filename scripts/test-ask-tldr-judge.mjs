@@ -38,7 +38,7 @@ const writerOutput = validateAskTldrWriterOutput({
   question: governed.question,
   evidence: governed.evidence,
   value: {
-    answer: "Recognition is more available when you put the work where people can see and respond to it. Jupiter opposing your Midheaven around September 15 can make public opportunity and visibility feel larger, but it can also make other people's reaction seem more important than the result itself.\n\nUse the opening to show the concrete work, ask for the credit or role attached to it, and let the response give you information. You may get more from a visible result and a specific request than from trying to manage how everyone feels about what you are doing.",
+    answer: "Recognition is more available when you put the work where people can see and respond to it. Ask for the credit, title, or authority that matches work you can already point to instead of adding more responsibility just to prove the case.\n\nWhy the astrology points here\n\nJupiter opposing your Midheaven around September 15 enlarges questions of public role, recognition, and how much professional territory you are ready to occupy. The useful part of that pressure is not simply being more visible; it is noticing where growth gives you more leverage and where it only gives you more work.",
     evidenceIdsUsed: [writerRequest.primaryEvidenceId],
     primaryEvidenceId: writerRequest.primaryEvidenceId,
     whyNowEvidenceId: writerRequest.primaryEvidenceId,
@@ -54,6 +54,9 @@ assert.equal(request.runtimeEnabled, false);
 assert.deepEqual(request.usedEvidenceIds, writerOutput.evidenceIdsUsed);
 assert.equal(request.timingApplicable, true);
 assert.match(request.instructions, /Do not output a pass\/fail verdict/u);
+assert.match(request.instructions, /generic coaching advice/u);
+assert.match(request.instructions, /Why the astrology points here/u);
+assert.match(request.instructions, /historical comparison/u);
 assert.match(request.input, /USER QUESTION/u);
 assert.match(request.input, /READER ANSWER/u);
 assert.match(request.input, /OWNER REGISTER EVIDENCE/u);
@@ -103,8 +106,8 @@ assert.throws(() => validateAskTldrJudgeOutput(request, {
   timingApplicability: { applicable: true, reason: "Temporal evidence is used." },
   findings: [{
     category: "astrology_fidelity",
-    location: "paragraph 1",
-    finding: "The aspect meaning changed.",
+    location: "astrology support",
+    finding: "The aspect meaning changed or the astrology does not support the conclusion.",
     evidenceIds: [],
     ownerPassageIds: []
   }]
@@ -136,4 +139,4 @@ assert.throws(() => buildAskTldrJudgeRequest({
   factLock: { ...factLock, passed: false, issues: [{ code: "fixture" }] }
 }), /ASK_TLDR_JUDGE_FACT_LOCK_MUST_PASS/u);
 
-console.log("Ask TLDR judge contract passed: the generated provider schema compiles, the reviewer cannot self-declare pass, practical usefulness must be release-quality, findings cite the correct evidence lane, and deterministic owner-set score floors decide release quality.");
+console.log("Ask TLDR judge contract passed: astrology must materially support the conclusion, the reader-facing astrology section and trajectory are judged when evidence supports them, practical usefulness must be release-quality, historical lookbacks require calculated evidence, and deterministic score floors decide release quality.");
