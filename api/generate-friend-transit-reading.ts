@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { friendTransitReadingRequestLock } from "./_lib/friend-transit-reading.js";
+import { friendReportWriterBrief } from "./_lib/friend-report-specificity.js";
 import {
   claimAndProcessFriendReportJob,
   existingFriendTransitReading,
@@ -50,6 +51,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       subjectId,
       targetDate
     });
+    const writerBrief = friendReportWriterBrief(locked.brief);
     const admin = createSupabaseReportAdmin();
 
     const existing = await existingFriendTransitReading({
@@ -73,7 +75,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         contentKey: locked.contentKey,
         targetDate,
         friendName: locked.brief.friendName,
-        brief: locked.brief
+        brief: writerBrief
       });
     } else if (!entitlement || entitlement.status !== "active") {
       sendJson(res, 402, {
