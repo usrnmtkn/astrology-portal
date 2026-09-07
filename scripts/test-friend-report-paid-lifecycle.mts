@@ -106,15 +106,12 @@ assert.doesNotMatch(migration, /grant (?:insert|update|delete) on public\.friend
 assert.match(securityMigration, /revoke all on function public\.claim_friend_report_jobs/u);
 assert.match(securityMigration, /grant execute on function public\.claim_friend_report_jobs[\s\S]*to service_role/u);
 
-assert.match(reportStyles, /\.report-library-row:has\(\.report-library-row__menu\) \{[\s\S]*z-index: var\(--z-popover\)/u,
-  "The row with the open menu must own the higher stacking context.");
-assert.match(reportStyles, /\.report-library-row__actions \{[\s\S]*z-index: 1/u,
-  "The row divider and overflow trigger must remain below the popover itself.");
-assert.match(reportStyles, /\.report-library-row__menu \{[\s\S]*z-index: calc\(var\(--z-popover\) \+ 1\)/u);
-assert.match(reportStyles, /\.report-library-row__menu \{[\s\S]*isolation: isolate/u);
+assert.match(reportStyles, /\.report-library-row__actions \{[\s\S]*z-index: auto/u,
+  "Inactive row action columns must not claim a popover stacking level.");
+assert.match(reportStyles, /\.report-library-row__menu \{[\s\S]*z-index: var\(--z-popover\)/u);
 assert.match(reportStyles, /\.report-library-row__menu \{[\s\S]*background: var\(--surface\)/u,
   "The context menu must use an opaque TLDR surface so row rules and icons cannot bleed through it.");
 assert.doesNotMatch(reportStyles, /\.report-library-row__menu \{[\s\S]*background: var\(--overlay-bg\)/u,
   "The translucent overlay token must not be used for this card-like context menu.");
 
-console.log("Friends paid report lifecycle, async delivery, cleanup, payment gate, and opaque menu stacking contract passed.");
+console.log("Friends paid report lifecycle, async delivery, cleanup, payment gate, and opaque menu contract passed.");
