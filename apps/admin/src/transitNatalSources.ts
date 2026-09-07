@@ -169,13 +169,13 @@ export function transitNatalSourceGroups(selection: TransitNatalSelection): Tran
     },
     {
       key: "fallback",
-      label: "Alternate complete write-up (advanced, shared across signs & houses)",
-      description: "Shared across all signs and houses. Current sign, Transit house, and Natal house update the reader preview above, but they do not change this standalone source. To open a different standalone row, change the Transiting planet, Natal planet or point, or move to a different hard/soft aspect family. Two exact aspects can still share the same row when they belong to the same family. This write-up is used only when the four-part Personal Transit cannot be completed, or when the transit is opened without house information.",
+      label: "Complete Personal Transit write-up (shared across signs & houses)",
+      description: "The authored passage below is the primary reader-facing transit-to-natal write-up when an eligible authored row exists. It is shared across all signs and houses; Current sign, Transit house, and Natal house update the reader preview above but do not change this source. Change the Transiting planet, Natal planet or point, or hard/soft aspect family to open a different authored row. The template beside it is fallback-only and is used when no eligible authored passage can render.",
       sources: [
         {
           id: "standalone",
-          label: `Standalone ${planet} ${selection.aspect} ${natalPoint} passage`,
-          scope: "Shared across all signs and houses. Current sign, Transit house, and Natal house affect the preview above, not this row. The row is keyed by transiting planet, natal point, and hard/soft aspect family, so changing the exact aspect can also keep the same source when it stays in the same family. The editor exposes separate You and Friends passages so each reader voice can be authored directly.",
+          label: `Primary ${planet} ${selection.aspect} ${natalPoint} passage`,
+          scope: "Primary authored transit-to-natal passage when an eligible authored row exists. It is shared across all signs and houses. Current sign, Transit house, and Natal house affect the preview above, not this row. The row is keyed by transiting planet, natal point, and hard/soft aspect family, so changing the exact aspect can keep the same source when it stays in the same family. The editor exposes separate You and Friends passages so each reader voice can be authored directly.",
           candidateKeys: [
             `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${selection.aspect}`,
             `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${family}`
@@ -183,8 +183,8 @@ export function transitNatalSourceGroups(selection: TransitNatalSelection): Tran
         },
         {
           id: "template",
-          label: "Standalone transit-aspect template",
-          scope: "Controls the fallback sentence order for transit-to-natal pages without a complete authored passage.",
+          label: "Fallback transit-aspect template",
+          scope: "Controls the fallback sentence order for transit-to-natal pages without a complete eligible authored passage.",
           candidateKeys: ["fallback-template/transit.aspect"]
         }
       ]
@@ -219,7 +219,7 @@ export function renderTransitNatalPreview(
   if (!frame || !wants || !natal || !effect) {
     return {
       headline: transitNatalLabel(selection),
-      body: "This Personal Transit is incomplete. Add or repair the missing passages below; the reader app will use its alternate complete write-up until all four passages are available.",
+      body: "This Personal Transit is incomplete. Add or repair the missing passages below. The reader app can still use the complete authored passage when an eligible one is available.",
       complete: false,
       sourceKeys: [frame, wants, natal, effect].filter((source): source is TransitNatalResolvedSource => Boolean(source)).map((source) => source.key),
       missing
