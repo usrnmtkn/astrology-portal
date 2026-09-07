@@ -34,7 +34,7 @@
     },
     {
       "path": "/api/cron/run-friend-report-jobs",
-      "schedule": "*/5 * * * *"
+      "schedule": "* * * * *"
     }
   ]
 }
