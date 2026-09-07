@@ -55,6 +55,7 @@ type GeneratedReportRow = {
   summary: string | null;
   body: string;
   source_snapshot: Record<string, unknown> | null;
+  friend_report_entitlement_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -134,6 +135,12 @@ function generatedSubjectLabel(row: Pick<GeneratedReportRow, "source_snapshot" |
   return headlineName || "Friend";
 }
 
+function generatedReportStatus(row: GeneratedReportRow): ReportLibraryStatus {
+  if (row.body.trim()) return "ready";
+  if (row.status === "ERROR") return "needs_attention";
+  return "generating";
+}
+
 function stateKey(sourceKind: ReportLibrarySourceKind, sourceId: string) {
   return `${sourceKind}:${sourceId}`;
 }
@@ -159,10 +166,10 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
   const [generatedResult, premiumResult, stateResult, shareResult] = await Promise.all([
     client
       .from("user_generated_interpretations")
-      .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, created_at, updated_at")
+      .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, created_at, updated_at")
       .eq("user_id", userId)
       .eq("subject_type", "friend_transit_reading")
-      .in("status", ["DRAFT", "LIVE", "ARCHIVED"])
+      .in("status", ["DRAFT", "LIVE", "ARCHIVED", "ERROR"])
       .order("updated_at", { ascending: false })
       .returns<GeneratedReportRow[]>(),
     client
@@ -198,10 +205,13 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
   );
 
   const generated = (generatedResult.data ?? []).flatMap<ReportLibraryItem>((row) => {
-    if (!row.body.trim()) return [];
+    const hasBody = Boolean(row.body.trim());
+    const lifecyclePlaceholder = Boolean(row.friend_report_entitlement_id);
+    if (!hasBody && !lifecyclePlaceholder) return [];
     const state = states.get(stateKey("generated_interpretation", row.id));
     const title = row.headline?.trim() || "Friends reading";
     const subjectLabel = generatedSubjectLabel(row);
+    const status = generatedReportStatus(row);
     const vanitySlug = reportVanitySlug({ targetDate: row.target_date, createdAt: row.created_at, subjectLabel, title });
     return [{
       id: `generated_interpretation:${row.id}`,
@@ -211,15 +221,15 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       title,
       subjectLabel,
       subtitle: "Friends",
-      status: "ready",
+      status,
       targetDate: row.target_date,
       periodEnd: row.target_date,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
-      readyAt: row.updated_at,
+      readyAt: status === "ready" ? row.updated_at : null,
       seenAt: state?.seen_at ?? null,
       archivedAt: state ? state.archived_at : (row.status === "ARCHIVED" ? row.updated_at : null),
-      isShared: activeShares.has(stateKey("generated_interpretation", row.id)),
+      isShared: status === "ready" && activeShares.has(stateKey("generated_interpretation", row.id)),
       vanitySlug,
       route: `/reports/${vanitySlug}`
     }];
@@ -269,7 +279,7 @@ export async function loadGeneratedReportById(reportId: string): Promise<Generat
   const { client, userId } = context;
   const { data, error } = await client
     .from("user_generated_interpretations")
-    .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, created_at, updated_at")
+    .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, created_at, updated_at")
     .eq("user_id", userId)
     .eq("id", reportId)
     .eq("subject_type", "friend_transit_reading")
