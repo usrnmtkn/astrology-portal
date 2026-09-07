@@ -12,6 +12,7 @@ const studio = read("apps/admin/src/AskTldrStudio.tsx");
 const adminMain = read("apps/admin/src/main.tsx");
 const webMain = read("apps/web/src/main.tsx");
 const primitives = read("apps/admin/src/AdminStudioPrimitives.tsx");
+const reportModelClient = read("api/_lib/report-model-client.ts");
 const migration = read("apps/web/supabase/migrations/20260907071500_ask_tldr_owner_preview_content_studio.sql");
 const model = readJson("config/ask-tldr/answer-model-v1.json");
 const manifest = readJson("config/ask-tldr/manifest.json");
@@ -76,6 +77,13 @@ assert.match(api, /toLowerCase\(\) === ownerEmail/u, "Owner fallback must exact-
 const savePreviewBlock = api.slice(api.indexOf("async function savePreviewDraft"), api.indexOf("async function saveQuestionOverlay"));
 assert.doesNotMatch(savePreviewBlock, /birthDate|birthTime|latitude|longitude|timeZone/u, "Saved review drafts must not persist test-chart birth data.");
 
+assert.match(reportModelClient, /const directKey = process\.env\.OPENAI_API_KEY/u, "Direct OpenAI must remain the first-choice report transport.");
+assert.match(reportModelClient, /process\.env\.VERCEL_ENV === "preview"/u, "Vercel AI Gateway fallback must be preview-only.");
+assert.match(reportModelClient, /AI_GATEWAY_API_KEY \?\? process\.env\.VERCEL_OIDC_TOKEN/u, "Preview fallback must authenticate with an explicit gateway key or Vercel OIDC.");
+assert.match(reportModelClient, /https:\/\/ai-gateway\.vercel\.sh\/v1\/responses/u, "Preview fallback must use Vercel's OpenAI-compatible Responses endpoint.");
+assert.match(reportModelClient, /`openai\/\$\{model\}`/u, "Gateway fallback must preserve the same OpenAI model through the gateway namespace.");
+assert.match(reportModelClient, /throw new Error\("OPENAI_API_KEY is not configured\."\)/u, "Non-preview production behavior must still fail closed when the direct OpenAI credential is missing.");
+
 assert.match(studio, /Owner preview only/u);
 assert.match(studio, /Runtime:/u);
 assert.match(studio, /Preview/u);
@@ -99,4 +107,4 @@ const questions = pillarFiles.flatMap((file) => readJson(`config/ask-tldr/pillar
 assert.equal(questions.length, 54, "Content Studio must surface the complete governed evergreen question set.");
 assert.equal(new Set(questions.map((question) => question.id)).size, 54, "Ask TLDR Content Studio question IDs must remain unique.");
 
-console.log("Ask TLDR Content Studio contract passed: 54 governed questions are wording-editable, owner/test-chart previews use bounded calculated calibration, preview-domain admin access can resolve exactly one configured owner without cross-origin session storage, revision drafts are comparable without persisting test birth data, generated_interpretations keeps existing RLS, and the database forbids LIVE Ask TLDR rows.");
+console.log("Ask TLDR Content Studio contract passed: 54 governed questions are wording-editable, owner/test-chart previews use bounded calculated calibration, preview-domain admin access can resolve exactly one configured owner without cross-origin session storage, OpenAI report calls can use Vercel OIDC only in preview while production remains direct-key gated, revision drafts are comparable without persisting test birth data, generated_interpretations keeps existing RLS, and the database forbids LIVE Ask TLDR rows.");
