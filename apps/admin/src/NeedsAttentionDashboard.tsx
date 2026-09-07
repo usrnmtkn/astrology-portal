@@ -79,8 +79,8 @@ function buildAttentionItems(coverage: CoveragePayload, liveRows: InventoryRow[]
       id: `unwired-${row.id}`,
       kind: "unwired",
       title: row.headline?.trim() || row.content_key,
-      problem: "Published copy is not connected to a reader surface.",
-      why: "The row is LIVE in the serving lane, but no verified reader call site requests this content-key family.",
+      problem: "This copy is Not live because it is not connected to a reader surface.",
+      why: "Its stored row is on the serving lane, but no verified reader call site requests this content-key family.",
       actionLabel: "Open content row",
       actionHref: editorHrefForKey(row.content_key),
       contentKey: row.content_key
@@ -220,7 +220,7 @@ export default function NeedsAttentionDashboard() {
 
   const groupDefinitions = [
     { key: "required", label: "Required editorial decisions", items: groups.required },
-    { key: "unwired", label: "Published but not connected", items: groups.unwired },
+    { key: "unwired", label: "Not live · missing reader connection", items: groups.unwired },
     { key: "errors", label: "Content errors", items: groups.errors },
     { key: "coverage", label: "Required coverage gaps", items: groups.coverage }
   ];
@@ -277,7 +277,7 @@ export default function NeedsAttentionDashboard() {
               <section className="admin-empty-state" aria-label="No required content attention">
                 <CheckCircle2 size={20} aria-hidden="true" />
                 <strong>No required content work is waiting.</strong>
-                <p>Required editorial decisions, known publishing errors, published-but-unconnected rows, and required corpus gaps are all clear. Optional enrichment remains available separately.</p>
+                <p>Required editorial decisions, known content errors, Not-live rows missing reader connections, and required corpus gaps are all clear. Optional enrichment remains available separately.</p>
                 {coverage.summary.unresolvedOptionalIssues > 0 && <a href="/admin/content#unresolved-content">Review optional enrichment</a>}
               </section>
             ) : (
