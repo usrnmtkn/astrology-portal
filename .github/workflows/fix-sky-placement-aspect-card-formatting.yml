@@ -1,0 +1,248 @@
+name: Fix Sky placement aspect formatting
+
+on:
+  push:
+    branches:
+      - fix/sky-placement-aspect-card-formatting-20260907
+    paths:
+      - .github/workflows/fix-sky-placement-aspect-card-formatting.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fix/sky-placement-aspect-card-formatting-20260907
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply bounded formatting repair
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str):
+              file = Path(path)
+              text = file.read_text()
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"Expected exactly one anchor in {path}; found {count}")
+              file.write_text(text.replace(old, new, 1))
+
+          replace_once(
+              "apps/web/src/App.tsx",
+              '''      const body = aspectDetail.body
+                .filter((paragraph): paragraph is string => typeof paragraph === "string")
+                .map((paragraph) => stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(paragraph)).trim())
+                .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph))
+                .join("\\n\\n");
+
+              if (!body) return [];
+
+              return [{
+                orb: aspect.orb,
+                section: {
+                  heading: aspectDetail.title,
+                  body,
+                  role: "aspect" as const,
+                  aspectType: aspect.type,
+                  group: normalizedAspectToneBucket(aspect.type)
+                } satisfies SkyDetailSection
+              }];''',
+              '''      const bodyParagraphs = aspectDetail.body
+                .filter((paragraph): paragraph is string => typeof paragraph === "string")
+                .map((paragraph) => stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(paragraph)).trim())
+                .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph));
+              const southNodeIndex = bodyParagraphs.findIndex((paragraph) => /^South Node \\([^)]+\\):/u.test(paragraph));
+              const body = southNodeIndex >= 0
+                ? [
+                    bodyParagraphs.slice(0, southNodeIndex).join(" "),
+                    bodyParagraphs.slice(southNodeIndex).join(" ")
+                  ].filter(Boolean).join("\\n\\n")
+                : bodyParagraphs.join(" ");
+
+              if (!body) return [];
+
+              return [{
+                orb: aspect.orb,
+                section: {
+                  heading: aspectDetail.title,
+                  body,
+                  dateLine: skyPlacementAspectExactDate(aspect, generatedAt, positions),
+                  role: "aspect" as const,
+                  aspectType: aspect.type,
+                  group: normalizedAspectToneBucket(aspect.type)
+                } satisfies SkyDetailSection
+              }];'''
+          )
+
+          replace_once(
+              "apps/web/src/features/sky/SkyDetailArticle.tsx",
+              '''                      const bodyParagraphs = typeof section.body === "string"
+                        ? fullDetailReaderFacingParagraphs([section.body]).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
+                        : [];
+                      const sectionHeading = typeof section.heading === "string" ? section.heading : "";''',
+              '''                      const bodyParagraphs = typeof section.body === "string"
+                        ? fullDetailReaderFacingParagraphs([section.body]).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
+                        : [];
+                      const explicitDateLine = typeof section.dateLine === "string" ? section.dateLine.trim() : "";
+                      const inlineDateLine = !explicitDateLine
+                        && bodyParagraphs[0]
+                        && /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\\s+\\d{1,2}(?:,\\s+\\d{4})?$/u.test(bodyParagraphs[0])
+                          ? bodyParagraphs[0]
+                          : "";
+                      const aspectDateLine = explicitDateLine || inlineDateLine;
+                      const copyParagraphs = inlineDateLine ? bodyParagraphs.slice(1) : bodyParagraphs;
+                      const sectionHeading = typeof section.heading === "string" ? section.heading : "";'''
+          )
+          replace_once(
+              "apps/web/src/features/sky/SkyDetailArticle.tsx",
+              '''                        ? bodyParagraphs.find((paragraph) => paragraph.startsWith("South Node ("))?.match(/^South Node \\(([^)]+)\\):\\s*(.*)$/su)''',
+              '''                        ? copyParagraphs.find((paragraph) => paragraph.startsWith("South Node ("))?.match(/^South Node \\(([^)]+)\\):\\s*(.*)$/su)'''
+          )
+          replace_once(
+              "apps/web/src/features/sky/SkyDetailArticle.tsx",
+              '''                      const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;''',
+              '''                      const bodyAlreadyStartsWithTag = sourceTag && copyParagraphs[0]?.trim() === sourceTag;'''
+          )
+          replace_once(
+              "apps/web/src/features/sky/SkyDetailArticle.tsx",
+              '''                          {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
+                          {bodyParagraphs.length > 0
+                            ? bodyParagraphs.map((paragraph, paragraphIndex) => southNodeMatch?.[0] === paragraph ? (
+                              <Fragment key={`${section.key}-${paragraphIndex}`}>
+                                <div className="article-related-aspects__copy-heading"><h4>{southNodeHeading}</h4></div>
+                                <p>{southNodeMatch[2]}</p>
+                              </Fragment>
+                            ) : <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>)''',
+              '''                          {aspectDateLine ? <p className="article-related-aspects__date">{aspectDateLine}</p> : null}
+                          {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
+                          {copyParagraphs.length > 0
+                            ? copyParagraphs.map((paragraph, paragraphIndex) => southNodeMatch?.[0] === paragraph ? (
+                              <div className="article-related-aspects__node-pole" key={`${section.key}-${paragraphIndex}`}>
+                                <div className="article-related-aspects__copy-heading"><h4>{southNodeHeading}</h4></div>
+                                <p>{southNodeMatch[2]}</p>
+                              </div>
+                            ) : <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>)'''
+          )
+
+          replace_once(
+              "apps/web/src/styles/sky.css",
+              '''.article-related-aspects__copy-heading {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: start;
+            gap: var(--aspect-row-gap, var(--card-row-gap));
+            margin-bottom: var(--sp-2);
+          }
+
+          .article-related-aspects__copy-heading :is(h3, h4) {''',
+              '''.article-related-aspects__copy-heading {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            align-items: start;
+            gap: var(--aspect-row-gap, var(--card-row-gap));
+            margin-bottom: var(--sp-2);
+          }
+
+          .article-related-aspects__copy .article-related-aspects__date {
+            margin: 0 0 var(--space-4);
+            color: var(--muted);
+            font-family: var(--font-body);
+            font-size: var(--type-meta-size);
+            font-weight: var(--weight-medium);
+            line-height: var(--leading-meta);
+          }
+
+          .article-related-aspects__copy .article-related-aspects__date + p {
+            margin-top: 0;
+          }
+
+          .article-related-aspects__node-pole {
+            margin-top: calc(var(--space-7) + var(--space-1));
+          }
+
+          .article-related-aspects__node-pole .article-related-aspects__copy-heading {
+            margin-bottom: var(--sp-2);
+          }
+
+          .article-related-aspects__copy-heading :is(h3, h4) {'''
+          )
+
+          replace_once(
+              "scripts/test-sky-placement-residency-aspects.mts",
+              '''  assert.doesNotMatch(detailSource, /section\\.dateLine/u, "Residency date rendering should remain inside the dynamically loaded aspect body.");''',
+              '''  assert.match(
+            appSource,
+            /function relatedSkyAspectSectionsForPlacement[\\s\\S]*?dateLine:\\s*skyPlacementAspectExactDate\\(aspect, generatedAt, positions\\)/u,
+            "Current placement aspect cards must retain their calculated exact date when they become Sky detail sections."
+          );
+          assert.match(
+            appSource,
+            /bodyParagraphs[\\s\\S]*?southNodeIndex[\\s\\S]*?join\\(" "\\)/u,
+            "Placement aspect fallback fragments must compose into prose blocks instead of one paragraph per source row."
+          );
+          assert.match(
+            detailSource,
+            /section\\.dateLine[\\s\\S]*?article-related-aspects__date/u,
+            "Related placement aspects must render exact-date metadata when supplied."
+          );
+          assert.match(
+            detailSource,
+            /inlineDateLine[\\s\\S]*?bodyParagraphs\\.slice\\(1\\)/u,
+            "Residency aspects must still promote their dynamically loaded leading exact date out of body prose."
+          );'''
+          )
+
+          replace_once(
+              "scripts/test-calendar-south-node-serving.mjs",
+              '''assert.match(
+            skyDetailSource,
+            /southNodeMatch[\\s\\S]*?article-related-aspects__copy-heading[\\s\\S]*?<h4>\\{southNodeHeading\\}<\\/h4>/u,
+            "Paired South Node copy must render with the same aspect subtitle treatment as the North Node heading."
+          );
+
+          console.log("South Node Calendar serving + Content Studio contract passed", {''',
+              '''assert.match(
+            skyDetailSource,
+            /southNodeMatch[\\s\\S]*?article-related-aspects__node-pole[\\s\\S]*?article-related-aspects__copy-heading[\\s\\S]*?<h4>\\{southNodeHeading\\}<\\/h4>/u,
+            "Paired South Node copy must render as a spaced peer subsection with the same aspect subtitle treatment as the North Node heading."
+          );
+          assert.match(
+            skyDetailSource,
+            /article-related-aspects__date/u,
+            "Sky placement aspect cards must expose their exact date in the reader UI."
+          );
+          const skyStyles = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/sky.css"), "utf8");
+          assert.match(
+            skyStyles,
+            /\\.article-related-aspects__node-pole\\s*\\{[\\s\\S]*?margin-top:/u,
+            "South Node peer copy must have deliberate vertical separation from the North Node write-up."
+          );
+
+          console.log("South Node Calendar serving + Content Studio contract passed", {'''
+          )
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Verify focused Sky contracts
+        run: |
+          node --experimental-strip-types scripts/test-sky-placement-residency-aspects.mts
+          node scripts/test-calendar-south-node-serving.mjs
+          npm run typecheck
+          git diff --check
+      - name: Commit verified repair
+        run: |
+          git rm .github/workflows/fix-sky-placement-aspect-card-formatting.yml
+          git config user.name "usrnmtkn"
+          git config user.email "usrnmtkn@proton.me"
+          git add apps/web/src/App.tsx apps/web/src/features/sky/SkyDetailArticle.tsx apps/web/src/styles/sky.css scripts/test-sky-placement-residency-aspects.mts scripts/test-calendar-south-node-serving.mjs
+          git commit -m "Fix Sky placement aspect formatting and dates"
+          git push origin HEAD:fix/sky-placement-aspect-card-formatting-20260907
