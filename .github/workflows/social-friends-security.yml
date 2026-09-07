@@ -14,6 +14,10 @@ on:
       - "api/_lib/transit-reading-owner-evidence.ts"
       - "api/_lib/transit-reading-owner-evidence-rules.ts"
       - "api/_lib/transit-reading-production.ts"
+      - "api/_lib/transit-reading-owner-voice.ts"
+      - "api/_lib/report-owner-voice-corpus-v2.ts"
+      - "artifacts/owner-author-*-2026-*.md"
+      - "scripts/test-generated-report-owner-corpus.mjs"
       - "api/_lib/transit-reading-production-evidence.ts"
       - "api/_lib/you-report-lifecycle.ts"
       - "api/_lib/you-transit-reading-generation.ts"
@@ -77,6 +81,10 @@ on:
       - "api/_lib/transit-reading-owner-evidence.ts"
       - "api/_lib/transit-reading-owner-evidence-rules.ts"
       - "api/_lib/transit-reading-production.ts"
+      - "api/_lib/transit-reading-owner-voice.ts"
+      - "api/_lib/report-owner-voice-corpus-v2.ts"
+      - "artifacts/owner-author-*-2026-*.md"
+      - "scripts/test-generated-report-owner-corpus.mjs"
       - "api/_lib/transit-reading-production-evidence.ts"
       - "api/_lib/you-report-lifecycle.ts"
       - "api/_lib/you-transit-reading-generation.ts"
@@ -144,6 +152,7 @@ jobs:
       - run: node --experimental-strip-types scripts/test-you-report-paid-lifecycle.mts
       - run: node --experimental-strip-types scripts/test-generated-report-judge-governance.mts
       - run: node scripts/test-generated-report-correction.mjs
+      - run: node scripts/test-generated-report-owner-corpus.mjs
       - run: node scripts/test-generated-report-breadth.mjs
       - run: node scripts/test-friend-transit-reading-request-render.mjs
       - run: npm run typecheck

@@ -3,7 +3,7 @@ type RecordLike = Record<string, unknown>;
 export const FRIEND_TRANSIT_READING_CONTENT_TYPE = "friend_transit_reading";
 export const FRIEND_TRANSIT_READING_EVENT_TYPE = "friend-transit-reading";
 export const FRIEND_TRANSITS_BRIEF_SCHEMA = "tldr.friend-transits-brief.v1";
-export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.3";
+export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.4";
 
 export type FriendTransitReadingBrief = {
   schema: typeof FRIEND_TRANSITS_BRIEF_SCHEMA;
@@ -401,7 +401,7 @@ export function friendTransitReadingMeaningPlan(brief: FriendTransitReadingBrief
 export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingBrief; headline: string }) {
   const { brief } = input;
   return [
-    "TLDR ASTRO FRIEND TRANSIT SYNTHESIS V1.3",
+    "TLDR ASTRO FRIEND TRANSIT SYNTHESIS V1.4",
     "",
     "TASK",
     `Write one short answer to: ${input.headline}`,

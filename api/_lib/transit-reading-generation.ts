@@ -1,3 +1,4 @@
+import type { TransitReadingOwnerVoiceReceipt } from "./transit-reading-owner-voice.js";
 import { contentGenerationProvider } from "./provider-config.js";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import {
@@ -38,11 +39,13 @@ export type TransitReadingJudgeOutcome = {
   model: string;
   version: string;
   threshold: number;
+  ownerVoiceEvidence?: TransitReadingOwnerVoiceReceipt;
 };
 
 export type TransitReadingJudgeAudit = {
   version: string;
   threshold: number;
+  ownerVoiceEvidence?: TransitReadingOwnerVoiceReceipt;
   verdict: "pass";
   overall: number;
   provider: string;
@@ -271,7 +274,8 @@ function judgeAudit(judged: TransitReadingJudgeOutcome, attempts: 1 | 2): Transi
     overall: judged.result.overall,
     provider: judged.provider,
     model: judged.model,
-    attempts
+    attempts,
+    ...(judged.ownerVoiceEvidence ? { ownerVoiceEvidence: judged.ownerVoiceEvidence } : {})
   };
 }
 

@@ -1,3 +1,4 @@
+import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt } from "./transit-reading-owner-voice.js";
 import fs from "node:fs";
 import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
@@ -4522,6 +4523,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     return [
       friendTransitReadingPrompt({ brief, headline }),
       generatedReportWritingContract(),
+      transitReadingOwnerVoicePrompt(transitReadingOwnerVoice(input.facts, "friends")),
       qualityFeedback ? `QUALITY_FEEDBACK_FROM_PRIOR_DRAFT\n${qualityFeedback}` : ""
     ].filter(Boolean).join("\n\n");
   }
