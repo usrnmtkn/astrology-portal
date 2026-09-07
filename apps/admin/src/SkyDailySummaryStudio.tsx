@@ -68,7 +68,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, draftCopy }: {
           <strong>{source.field.label}</strong><p>{source.status}{source.emptyWorkingCopy ? ". Empty working copy; the preview uses the app fallback." : ""}</p>
           <button type="button" disabled={busy} onClick={() => onEdit(source.field)}>Edit {source.body === "sun" ? "Sun" : "Moon"} source</button>
         </div>)}
-        <p>{composition.joined ? 'Both summaries are present. The sentence template joins them with “while the Moon moves through”.' : "A summary is missing, so the sentence template keeps Sun and Moon in separate sentences and uses a factual placement where needed."}</p>
+        <p>The sentence template joins Sun and Moon with “while the Moon moves through”, adding each summary when available.</p>
         <p>Editing the source updates the working preview. Publishing remains a separate action.</p>
       </div>
     </section>

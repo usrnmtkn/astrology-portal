@@ -3,10 +3,21 @@
     "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
     "date": "2026-09-07",
     "ownerRequest": "is this the article, can you add this in. It reads better.",
-    "scope": "The fuller Sun-in-Virgo and Moon-in-Cancer summary sentence selected in this task. Signs and degrees remain calculated slots; full articles are unchanged."
+    "scope": "The fuller Sun-in-Virgo and Moon-in-Cancer summary sentence selected in this task. Signs and degrees remain calculated slots; full articles are unchanged.",
+    "revisions": [
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-07",
+        "key": "cms/sky-daily-summary/sun/virgo",
+        "ownerRequest": "It's missing the updated copy: This is for the Sun in Virgo",
+        "body": "turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing",
+        "sha256": "fa34053561ef215e79570e3cad059a4d49fdf587ad6bd5dd68d0842d8b048d71",
+        "wordCount": 27
+      }
+    ]
   },
   "sun": {
-    "virgo": "making it easier to notice what needs fixing and what could be made simpler"
+    "virgo": "turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing"
   },
   "moon": {
     "cancer": "bringing more attention to home, family, and whether the care we give is coming back to us"

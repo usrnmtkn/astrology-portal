@@ -66,7 +66,7 @@ for (const width of [390, 1440]) {
       await expect(preview).toContainText("The Sun is in Aries, putting more emphasis on starting");
       await expect(preview).toContainText("while the Moon moves through Leo, making appreciation land harder");
       await map.getByLabel("Composition copy view").selectOption("reader");
-      await expect(preview).toHaveText("The Sun is in Aries. The Moon is moving through Leo.");
+      await expect(preview).toHaveText("The Sun is in Aries, while the Moon moves through Leo.");
       await page.screenshot({ path: `test-results/sky-composition-empty-${width}-${theme}.png`, fullPage: true });
       await map.getByLabel("Composition copy view").selectOption("working");
       await map.getByLabel("Composition Sun sign").selectOption("Virgo");
@@ -136,7 +136,7 @@ test("composition follows open drafts and keeps reader copy separate", async ({ 
   const preview = map.getByLabel("Combined Sun and Moon preview");
   await expect(preview).toContainText("Browser-only draft wording");
   await map.getByLabel("Composition copy view").selectOption("reader");
-  await expect(preview).toContainText("making it easier to notice what needs fixing");
+  await expect(preview).toContainText("turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing");
   await expect(preview).not.toContainText("Browser-only draft wording");
   await map.getByLabel("Composition copy view").selectOption("working");
   await map.getByRole("link", { name: "Edit Sun in Virgo summary", exact: true }).click();
