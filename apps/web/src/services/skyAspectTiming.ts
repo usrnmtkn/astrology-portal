@@ -29,14 +29,6 @@ function monthDay(date: Date, timeZone?: string) {
   return new Intl.DateTimeFormat(undefined, { month: "long", day: "numeric", timeZone: safeTimeZone(timeZone) }).format(date);
 }
 
-function month(date: Date, includeYear = false, timeZone?: string) {
-  return new Intl.DateTimeFormat(undefined, {
-    month: "long",
-    ...(includeYear ? { year: "numeric" as const } : {}),
-    timeZone: safeTimeZone(timeZone)
-  }).format(date);
-}
-
 function localDateParts(date: Date, timeZone?: string) {
   return Object.fromEntries(new Intl.DateTimeFormat("en-US", {
     year: "numeric",
@@ -52,17 +44,6 @@ function sameLocalDate(first: Date, second: Date, timeZone?: string) {
   return firstParts.year === secondParts.year
     && firstParts.month === secondParts.month
     && firstParts.day === secondParts.day;
-}
-
-function ordinal(value: number) {
-  if (value === 1) return "First";
-  if (value === 2) return "Second";
-  if (value === 3) return "Third";
-  return `${value}th`;
-}
-
-function countWord(value: number) {
-  return ["zero", "one", "two", "three", "four", "five"][value] ?? String(value);
 }
 
 export function timingGroupLabel(group?: SkyAspectTimingGroup | null) {
@@ -99,29 +80,12 @@ export function skyAspectLifecycleLine(aspect: SkyAspect, referenceInput: string
 
 export function skyAspectMultiPassLine(aspect: SkyAspect) {
   const timing = aspect.timing;
-  const timeZone = timing?.timeZone;
   const passes = timing?.exactPasses ?? [];
   const index = timing?.passIndex ?? 0;
-
-  if (passes.length < 2 || index < 1 || index > passes.length) return null;
-
-  const first = validDate(passes[0]?.exactAt);
-  const next = validDate(passes[index]?.exactAt);
-  const final = validDate(passes.at(-1)?.exactAt);
-  if (!first || !final) return null;
-
-  let line: string;
-  if (index === 1 && next) {
-    line = `First of ${countWord(passes.length)} passes; it returns ${month(next, false, timeZone)} and completes ${month(final, true, timeZone)}.`;
-  } else if (index === passes.length) {
-    line = `Final pass; what started in ${month(first, false, timeZone)} gets settled.`;
-  } else if (index === 2) {
-    line = `Second pass of ${countWord(passes.length)}; the review round.`;
-  } else {
-    line = `${ordinal(index)} pass of ${countWord(passes.length)}.`;
-  }
-
-  return FORBIDDEN_TIMING_LANGUAGE.test(line) ? null : line;
+  if (passes.length < 2 || !Number.isInteger(index) || index < 1 || index > passes.length) return null;
+  const times = passes.map(pass => validDate(pass.exactAt)?.getTime());
+  if (times.some((time, i) => time === undefined || (i > 0 && time <= times[i - 1]!))) return null;
+  return `Pass ${index} of ${passes.length}.`;
 }
 
 export function skyAspectCycleLocationLine(aspect: SkyAspect) {

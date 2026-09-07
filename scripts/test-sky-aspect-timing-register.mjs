@@ -60,7 +60,7 @@ try {
   const undercurrent = aspectNamed("Neptune", "sextile", "Pluto");
   assert.equal(undercurrent?.timing?.group, "undercurrent");
   assert.ok((undercurrent?.timing?.exactPasses.length ?? 0) > 1);
-  assert.match(timing.skyAspectMultiPassLine(undercurrent), /^First of .+ passes;/);
+  assert.match(timing.skyAspectMultiPassLine(undercurrent), /^Pass 1 of \d+\.$/);
   const cycleLine = timing.skyAspectCycleLocationLine(undercurrent);
   assert.ok(cycleLine === null || /\b\d{4}\b/.test(cycleLine));
 
@@ -103,7 +103,7 @@ try {
       relation: null
     }
   };
-  assert.equal(timing.skyAspectMultiPassLine(synthetic), "Second pass of three; the review round.");
+  assert.equal(timing.skyAspectMultiPassLine(synthetic), "Pass 2 of 3.");
   assert.equal(
     timing.skyAspectCycleLocationLine(synthetic),
     "A new 81-year cycle between Uranus and Pluto begins here; the last one started in 1965."

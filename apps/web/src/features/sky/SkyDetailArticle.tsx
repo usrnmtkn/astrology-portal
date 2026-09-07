@@ -4,6 +4,7 @@ import type { ContentBundle } from "../../content/types";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import {
   pointGlyph,
+  aspectGlyph,
   signGlyph,
   zodiacAssetHref,
   zodiacSignIconFiles
@@ -80,6 +81,7 @@ export type SkyDetail = {
   title: string;
   meta: string;
   duration?: string;
+  residencyDuration?: string;
   tagline?: string;
   keyDates?: SkyDetailKeyDate[];
   keyDatesIntro?: string | null;
@@ -239,13 +241,11 @@ function articlePlacementGlyphs(title: string, meta = "") {
 }
 
 function articleEyebrowLabel(title: string, kicker?: string) {
-  if (/\b(?:rx|retrograde)\b/i.test(title)) {
-    return "Retrograde";
-  }
-
   if (/\b(conjunction|opposition|square|trine|sextile|quincunx|aspect)\b/i.test(title)) {
     return "Aspect";
   }
+
+  if (/\b(?:rx|retrograde)\b/i.test(title)) return "Retrograde";
 
   if (articleTitleSignGlyph(title)) {
     return "Placement";
@@ -267,6 +267,19 @@ function articleEyebrowGlyphs({
 
   if (placementGlyphs.length > 0) {
     return placementGlyphs;
+  }
+
+  const aspect = articleAspectGlyphPartsFromHeading(title);
+  if (aspect) {
+    const pointGlyphs = (label: string) => {
+      const point = label.replace(/\s+Rx$/iu, "");
+      return [textArticleGlyph(pointGlyph(point), point),
+        point !== label ? textArticleGlyph("℞", `${point} Retrograde`) : null];
+    };
+    return uniqueArticleGlyphs([
+      ...pointGlyphs(aspect.from), textArticleGlyph(aspectGlyph(aspect.aspect), aspect.aspect),
+      ...pointGlyphs(aspect.to)
+    ]);
   }
 
   const sign = zodiacSigns.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(`${title} ${meta}`));
@@ -495,7 +508,7 @@ export function SkyDetailArticle({
   const fallbackParagraphs = leadingPlacementDate
     ? rawFallbackParagraphs.slice(1)
     : rawFallbackParagraphs;
-  const headerDate = leadingSectionDate ?? leadingPlacementDate ?? detail.duration;
+  const headerDate = detail.retrograde ? detail.duration : leadingSectionDate ?? leadingPlacementDate ?? detail.duration;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const eyebrowLabel = articleEyebrowLabel(detail.title, detail.kicker);
   const eyebrowGlyphs = articleEyebrowGlyphs({
@@ -594,6 +607,7 @@ export function SkyDetailArticle({
             {headerDate ? (
               <p className="article-duration">{headerDate}</p>
             ) : null}
+            {detail.residencyDuration ? <p className="article-duration">{detail.residencyDuration}</p> : null}
             {articleSub ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>

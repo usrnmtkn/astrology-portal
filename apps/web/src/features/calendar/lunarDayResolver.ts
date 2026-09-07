@@ -1,3 +1,4 @@
+import { calendarMotionTitle } from "../../content/skyMotionLabels";
 import { skyBodyOrderIndex } from "../../astrologyConfig";
 import { firstReaderFacingCopy, isReaderFacingCopy } from "../../content/readerSafety";
 import type { LunarCalendarDay, LunarCalendarEvent } from "../../services/ephemeris";
@@ -114,7 +115,7 @@ function normalizeTransits(events: LunarCalendarEvent[]) {
     .sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime())
     .map((event): LunarDayTransit => ({
       type: eventTransitType(event),
-      title: event.title,
+      title: calendarMotionTitle(event),
       bodies: bodiesForEvent(event),
       symbolKey: symbolKeyForEvent(event),
       exactAt: event.startsAt,
@@ -289,7 +290,7 @@ function arcPointFor(event: LunarCalendarEvent | null, fallbackSign: string): Lu
     sign: eventSign(event, fallbackSign),
     degree: null,
     datetime: event.startsAt,
-    title: event.title,
+    title: calendarMotionTitle(event),
     eclipseType: event.eclipseType ?? null
   } : null;
 }
