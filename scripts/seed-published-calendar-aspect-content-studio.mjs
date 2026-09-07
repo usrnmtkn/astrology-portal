@@ -100,7 +100,7 @@ function nodeAxisPoleFor(a, b) {
   return null;
 }
 
-function buildRows() {
+export function buildRows() {
   const files = fs.readdirSync(transitRoot).filter((file) => file.endsWith(".json")).sort();
   const rows = [];
   for (const file of files) {
@@ -241,6 +241,7 @@ async function verifyRows(rows) {
   const url = new URL(`${supabaseUrl()}/rest/v1/generated_interpretations`);
   url.searchParams.set("select", "content_key,status,lane,review_state,body,source_snapshot");
   url.searchParams.set("prompt_version", "eq.exact-sky-aspect-content-studio-v1");
+  url.searchParams.set("status", "eq.LIVE");
   url.searchParams.set("limit", "500");
   // Supabase accepts the public key as either a request header or `apikey`
   // query parameter. Keep both so CI remains robust across gateway/header
@@ -260,21 +261,24 @@ async function verifyRows(rows) {
   return payload;
 }
 
-const rows = buildRows();
-let applied = [];
-if (apply) applied = await upsertRows(rows);
-let verified = [];
-if (verifyRemote) verified = await verifyRows(rows);
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
 
-console.log(JSON.stringify({
-  ok: true,
-  rows: rows.length,
-  northNodeRows: rows.filter((row) => row.source_snapshot.nodeAxisPole === "north-node").length,
-  southNodeRows: rows.filter((row) => row.source_snapshot.nodeAxisPole === "south-node").length,
-  apply,
-  appliedRows: applied.length,
-  verifyRemote,
-  verifiedRows: verified.length,
-  verificationAuth: verifyRemote ? verificationAuthMode() : "none",
-  servingCopyChanged: false
-}, null, 2));
+  const rows = buildRows();
+  let applied = [];
+  if (apply) applied = await upsertRows(rows);
+  let verified = [];
+  if (verifyRemote) verified = await verifyRows(rows);
+
+  console.log(JSON.stringify({
+    ok: true,
+    rows: rows.length,
+    northNodeRows: rows.filter((row) => row.source_snapshot.nodeAxisPole === "north-node").length,
+    southNodeRows: rows.filter((row) => row.source_snapshot.nodeAxisPole === "south-node").length,
+    apply,
+    appliedRows: applied.length,
+    verifyRemote,
+    verifiedRows: verified.length,
+    verificationAuth: verifyRemote ? verificationAuthMode() : "none",
+    servingCopyChanged: false
+  }, null, 2));
+}

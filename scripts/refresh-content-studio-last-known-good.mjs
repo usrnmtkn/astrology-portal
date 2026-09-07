@@ -121,7 +121,11 @@ const candidates = rows.filter(durableRow).sort((a, b) => {
 });
 const newest = new Map();
 for (const row of candidates) if (!newest.has(row.content_key)) newest.set(row.content_key, row);
-const snapshotRows = [...newest.values()].sort((a, b) => String(a.content_key).localeCompare(String(b.content_key)));
+const snapshotRows = [...newest.values()].map((row) => {
+  if (!isRecord(row.sections) || !("calendarReleaseHistory" in row.sections)) return row;
+  const { calendarReleaseHistory: _adminRecoveryHistory, ...sections } = row.sections;
+  return { ...row, sections };
+}).sort((a, b) => String(a.content_key).localeCompare(String(b.content_key)));
 if (snapshotRows.length < 100) throw new Error(`Refusing implausibly small last-known-good snapshot (${snapshotRows.length} rows).`);
 
 let previous = null;
