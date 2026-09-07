@@ -16,7 +16,7 @@ type OwnerVoicePassage = {
   relevanceScore: number;
 };
 
-type OwnerCorrection = {
+export type AskTldrOwnerCorrection = {
   before: string;
   after: string;
   ownerReason: string;
@@ -34,7 +34,7 @@ export type AskTldrVoiceEvidenceReceipt = {
   question: Record<string, unknown>;
   semanticSources: Array<Record<string, unknown>>;
   ownerPassages: OwnerVoicePassage[];
-  ownerCorrections: OwnerCorrection[];
+  ownerCorrections: AskTldrOwnerCorrection[];
   doNotUse: {
     sourcePath: string;
     sourceFileSha256: string;
@@ -59,6 +59,7 @@ const MIN_OWNER_PASSAGES = 3;
 const MAX_OWNER_PASSAGES = 5;
 const MAX_PASSAGES_PER_SOURCE = 2;
 const MAX_CORRECTIONS = 8;
+const MAX_RUNTIME_CORRECTIONS = 4;
 const STOP_WORDS = new Set([
   "about", "after", "again", "also", "because", "been", "before", "being", "between", "both", "but",
   "can", "could", "does", "from", "have", "into", "just", "more", "most", "much", "need", "right",
@@ -283,7 +284,7 @@ function selectOwnerCorrections(question: Record<string, unknown>, evidence: Ask
     })
     .sort((left, right) => right.score - left.score || left.index - right.index)
     .slice(0, MAX_CORRECTIONS)
-    .map(({ entry, score }): OwnerCorrection => ({
+    .map(({ entry, score }): AskTldrOwnerCorrection => ({
       before: words(entry.bad),
       after: words(entry.corrected),
       ownerReason: words(entry.owner_reason ?? entry.why),
@@ -293,6 +294,35 @@ function selectOwnerCorrections(question: Record<string, unknown>, evidence: Ask
       sourcePath: entry.sourcePath,
       relevanceScore: score
     }));
+}
+
+function runtimeCorrections(input: AskTldrOwnerCorrection[] | undefined) {
+  return (input ?? []).map((correction): AskTldrOwnerCorrection => ({
+    before: words(correction.before),
+    after: words(correction.after),
+    ownerReason: words(correction.ownerReason),
+    category: words(correction.category) || "owner_feedback",
+    family: words(correction.family) || "any",
+    rule: words(correction.rule) || null,
+    sourcePath: words(correction.sourcePath),
+    relevanceScore: Number.isFinite(correction.relevanceScore) ? correction.relevanceScore : 100
+  })).filter((correction) => correction.before && correction.after && correction.sourcePath).slice(0, MAX_RUNTIME_CORRECTIONS);
+}
+
+function combinedOwnerCorrections(input: {
+  question: Record<string, unknown>;
+  evidence: AskTldrGovernedFactor[];
+  ownerCorrections?: AskTldrOwnerCorrection[];
+}) {
+  const dynamic = runtimeCorrections(input.ownerCorrections);
+  const seen = new Set(dynamic.map((correction) => `${correction.before.toLowerCase()}\u0000${correction.after.toLowerCase()}`));
+  const packaged = selectOwnerCorrections(input.question, input.evidence).filter((correction) => {
+    const key = `${correction.before.toLowerCase()}\u0000${correction.after.toLowerCase()}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  return [...dynamic, ...packaged].slice(0, MAX_CORRECTIONS);
 }
 
 function semanticReceipt(evidence: AskTldrGovernedFactor[]) {
@@ -318,10 +348,15 @@ export function buildAskTldrVoiceEvidenceReceipt(input: {
   evidence: AskTldrGovernedFactor[];
   governedGenerationAllowed: boolean;
   governedGenerationBlockReason?: string | null;
+  ownerCorrections?: AskTldrOwnerCorrection[];
 }): AskTldrVoiceEvidenceReceipt {
   const semanticSources = semanticReceipt(input.evidence);
   const ownerPassages = selectOwnerPassages(input.question, input.evidence);
-  const ownerCorrections = selectOwnerCorrections(input.question, input.evidence);
+  const ownerCorrections = combinedOwnerCorrections({
+    question: input.question,
+    evidence: input.evidence,
+    ownerCorrections: input.ownerCorrections
+  });
   const doNotUse = doNotUseEvidence();
   const primary = input.evidence.find((factor) => factor.role === "primary");
 
@@ -366,6 +401,11 @@ export function assertAskTldrVoiceEvidenceReceipt(receipt: AskTldrVoiceEvidenceR
     }
   }
   if (!receipt.ownerCorrections.length) throw new Error("ASK_TLDR_OWNER_CORRECTION_EVIDENCE_MISSING");
+  for (const correction of receipt.ownerCorrections) {
+    if (!correction.before || !correction.after || !correction.sourcePath) {
+      throw new Error("ASK_TLDR_OWNER_CORRECTION_EVIDENCE_INVALID");
+    }
+  }
   if (!receipt.doNotUse.text || sha256(receipt.doNotUse.text) !== receipt.doNotUse.sectionSha256) {
     throw new Error("ASK_TLDR_DO_NOT_USE_EVIDENCE_INVALID");
   }
