@@ -1,4 +1,5 @@
 import {
+  Asterisk,
   CalendarDays,
   FileText,
   LogOut,
@@ -33,7 +34,7 @@ function storedReportTheme(): ReportTheme {
   return window.localStorage.getItem("tldrastro:theme") === "dark" ? "dark" : "light";
 }
 
-function ReportBrandIcon({ size = 18 }: { size?: number }) {
+function ReportSkyNavIcon({ size = 18 }: { size?: number }) {
   return (
     <svg aria-hidden="true" fill="none" height={size} viewBox="0 0 24 24" width={size} xmlns="http://www.w3.org/2000/svg">
       <path
@@ -118,14 +119,14 @@ function ReportTopNavigation({
     <header className="topbar report-topbar">
       <div className="nav-pill">
         <button className="brand-dot" type="button" aria-label="Home" onClick={() => goToAppRoute("sky")}>
-          <ReportBrandIcon size={18} />
+          <Asterisk size={18} aria-hidden="true" />
         </button>
         <button className="brand-word" type="button" onClick={() => goToAppRoute("sky")}>
           TLDR Astro
         </button>
         <nav className="site-nav" aria-label="Primary navigation">
           <button type="button" onClick={() => goToAppRoute("sky")}>
-            <ReportBrandIcon size={18} />
+            <ReportSkyNavIcon size={18} />
             <span>Sky</span>
           </button>
           <button type="button" onClick={() => goToAppRoute("calendar")}>
@@ -167,7 +168,7 @@ function ReportTopNavigation({
         {menuOpen ? (
           <div className="site-menu" id="report-site-overflow-menu" ref={menuRef} role="menu" aria-label="Site menu">
             <button type="button" role="menuitem" onClick={() => navigate("sky")}>
-              <ReportBrandIcon size={20} />
+              <ReportSkyNavIcon size={20} />
               <span>Sky</span>
             </button>
             <button type="button" role="menuitem" onClick={() => navigate("calendar")}>
