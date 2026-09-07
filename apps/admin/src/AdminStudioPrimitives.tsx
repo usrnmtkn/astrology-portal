@@ -1,5 +1,6 @@
-import { AlertTriangle, BarChart3, LogIn, Plus, RefreshCw, type LucideIcon } from "lucide-react";
-import { useEffect, useRef, type KeyboardEvent } from "react";
+import { AlertTriangle, BarChart3, LogIn, MessageCircleQuestion, Plus, RefreshCw, type LucideIcon } from "lucide-react";
+import { createPortal } from "react-dom";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import "./admin-content-studio-ux-compat.css";
 import "./admin-content-studio-editor-redesign.css";
 import "./admin-access-feedback.css";
@@ -60,11 +61,16 @@ export function AdminPageHeader({
 }: AdminPageHeaderProps) {
   const createButtonRef = useRef<HTMLButtonElement>(null);
   const createMenuRef = useRef<HTMLDivElement>(null);
+  const [contentNavTarget, setContentNavTarget] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!createMenuOpen) return;
     createMenuRef.current?.querySelector<HTMLButtonElement>("[role='menuitem']")?.focus();
   }, [createMenuOpen]);
+
+  useEffect(() => {
+    setContentNavTarget(document.querySelector<HTMLElement>("#admin-content-navigation .admin-nav-section[aria-label='Content']"));
+  }, []);
 
   function handleCreateMenuKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (event.key !== "Escape") return;
@@ -164,6 +170,18 @@ export function AdminPageHeader({
           )}
         </div>
       </div>
+      {contentNavTarget ? createPortal(
+        <button
+          type="button"
+          data-content-studio-destination="ask-tldr"
+          title="Review Ask TLDR questions, calibration support, and governance"
+          onClick={() => window.location.assign("/admin/content/ask-tldr")}
+        >
+          <MessageCircleQuestion size={16} aria-hidden="true" />
+          <span>Ask TLDR</span>
+        </button>,
+        contentNavTarget
+      ) : null}
     </header>
   );
 }
