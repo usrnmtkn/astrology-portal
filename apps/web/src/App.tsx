@@ -11232,6 +11232,11 @@ export function App() {
 
   function openSkyDetail(detail: SkyDetail) {
     selectedCalendarTransitEventRef.current = null;
+    if (detail.routePath?.startsWith("friends?")) {
+      // The clicked article was assembled with the current overlay. Only a
+      // subsequent overlay revision should invalidate it, not its first render.
+      friendDetailOverlayRefreshKeyRef.current = `${detail.routePath}:${fallbackDashboardOverlayVersion}`;
+    }
     setSelectedSkyDetail(personalizedSkyPlacementDetail(
       detail,
       profileNatalSky?.ascendant ?? userProfile?.rising,
