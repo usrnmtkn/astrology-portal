@@ -1,0 +1,82 @@
+name: Clean transit friend runtime diff
+
+on:
+  push:
+    branches:
+      - fix/personal-transit-source-label
+
+permissions:
+  contents: write
+
+jobs:
+  clean:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/personal-transit-source-label
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Restore unrelated runtime changes and keep friend-name resolution only
+        run: |
+          git checkout origin/main -- apps/web/src/content/fallbackArchitectureV3Runtime.ts
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("apps/web/src/content/fallbackArchitectureV3Runtime.ts")
+          text = p.read_text()
+          old = '''function createAppTransitRenderer(readerBundle: FallbackArchitectureV3Bundle) {
+  return createTransitSynastryRenderer(
+    readerBundle.transitLib,
+    readerBundle.templatesFile,
+    readerBundle.rowsFile
+  );
+}'''
+          new = '''function fillTransitFriendName(value: unknown, voice: string) {
+  return typeof value === "string"
+    ? value.replace(/\\{\\{Name\\}\\}|\\{Name\\}/gu, () => voice)
+    : value;
+}
+
+function createAppTransitRenderer(readerBundle: FallbackArchitectureV3Bundle) {
+  const renderer = createTransitSynastryRenderer(
+    readerBundle.transitLib,
+    readerBundle.templatesFile,
+    readerBundle.rowsFile
+  );
+  const renderTransitAspect = renderer.renderTransitAspect.bind(renderer);
+  renderer.renderTransitAspect = (input: Record<string, unknown>) => {
+    const rendered = renderTransitAspect(input);
+    const voice = typeof input?.voice === "string" ? input.voice.trim() : "";
+    if (!voice || voice === "you" || !rendered || typeof rendered !== "object") return rendered;
+    return {
+      ...rendered,
+      headline: fillTransitFriendName(rendered.headline, voice),
+      body: fillTransitFriendName(rendered.body, voice),
+      parts: Array.isArray(rendered.parts)
+        ? rendered.parts.map((part: unknown) => fillTransitFriendName(part, voice))
+        : rendered.parts
+    };
+  };
+  return renderer;
+}'''
+          if text.count(old) != 1:
+              raise SystemExit(f"Expected one createAppTransitRenderer block, found {text.count(old)}")
+          p.write_text(text.replace(old, new))
+          PY
+      - name: Validate
+        run: |
+          node scripts/test-content-approval-governance.mjs
+          npm run typecheck --if-present
+      - name: Commit clean runtime diff and remove one-off workflow
+        run: |
+          rm .github/workflows/clean-transit-friend-runtime.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/content/fallbackArchitectureV3Runtime.ts .github/workflows/clean-transit-friend-runtime.yml
+          git commit -m "Keep Personal Transit friend-name runtime change scoped"
+          git push origin HEAD:fix/personal-transit-source-label
