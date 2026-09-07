@@ -16,6 +16,9 @@ const healthLocation: LocationInput = {
   timeZone: "America/New_York"
 };
 
+const expectedExactAspectStudioRows = 439;
+const expectedNodePoleStudioRows = 60;
+
 function elapsedSince(startedAt: number) {
   return Math.round(performance.now() - startedAt);
 }
@@ -65,6 +68,87 @@ async function checkContentGenerationImport(): Promise<DependencyResult> {
   }
 }
 
+async function checkReportFulfillment(): Promise<DependencyResult> {
+  const startedAt = performance.now();
+
+  try {
+    const [{ createSupabaseReportAdmin }, { reportBillingMode }] = await Promise.all([
+      import("./_lib/supabase-report-admin.js"),
+      import("./_lib/report-fulfillment-config.js")
+    ]);
+    const admin = createSupabaseReportAdmin();
+    const control = await admin.selectOne<{ id?: unknown; worker_paused?: unknown }>(
+      "report_fulfillment_controls",
+      new URLSearchParams({
+        id: "eq.true",
+        select: "id,worker_paused"
+      })
+    );
+    const controlRowAvailable = control?.id === true;
+
+    return {
+      ok: controlRowAvailable,
+      elapsedMs: elapsedSince(startedAt),
+      detail: {
+        controlRowAvailable,
+        workerPaused: control?.worker_paused === true,
+        billingMode: reportBillingMode()
+      }
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      elapsedMs: elapsedSince(startedAt),
+      error: error instanceof Error ? error.message : "Report fulfillment check failed."
+    };
+  }
+}
+
+async function checkContentStudioExactAspects(): Promise<DependencyResult> {
+  const startedAt = performance.now();
+
+  try {
+    const { createSupabaseReportAdmin } = await import("./_lib/supabase-report-admin.js");
+    const admin = createSupabaseReportAdmin();
+    const params = new URLSearchParams({
+      select: "content_key,source_snapshot",
+      prompt_version: "eq.exact-sky-aspect-content-studio-v1",
+      status: "eq.LIVE",
+      lane: "eq.serving",
+      review_state: "is.null",
+      limit: "500"
+    });
+    const rows = await admin.request<Array<{
+      content_key?: unknown;
+      source_snapshot?: { nodeAxisPole?: unknown } | null;
+    }>>(`generated_interpretations?${params}`);
+    const northNodeRows = rows.filter((row) => row.source_snapshot?.nodeAxisPole === "north-node").length;
+    const southNodeRows = rows.filter((row) => row.source_snapshot?.nodeAxisPole === "south-node").length;
+    const exactRows = rows.length;
+    const mirrorComplete = exactRows === expectedExactAspectStudioRows
+      && northNodeRows === expectedNodePoleStudioRows
+      && southNodeRows === expectedNodePoleStudioRows;
+
+    return {
+      ok: mirrorComplete,
+      elapsedMs: elapsedSince(startedAt),
+      detail: {
+        exactRows,
+        northNodeRows,
+        southNodeRows,
+        expectedExactRows: expectedExactAspectStudioRows,
+        expectedNodePoleRows: expectedNodePoleStudioRows
+      }
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      elapsedMs: elapsedSince(startedAt),
+      error: error instanceof Error ? error.message : "Content Studio exact-aspect check failed."
+    };
+  }
+}
+
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
   res.setHeader("content-type", "application/json; charset=utf-8");
@@ -82,11 +166,16 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
 
-  const [ephemeris, contentGeneration] = await Promise.all([
+  const [ephemeris, contentGeneration, reportFulfillment, contentStudioExactAspects] = await Promise.all([
     checkEphemeris(),
-    checkContentGenerationImport()
+    checkContentGenerationImport(),
+    checkReportFulfillment(),
+    checkContentStudioExactAspects()
   ]);
-  const ok = ephemeris.ok && contentGeneration.ok;
+  const ok = ephemeris.ok
+    && contentGeneration.ok
+    && reportFulfillment.ok
+    && contentStudioExactAspects.ok;
 
   sendJson(res, ok ? 200 : 503, {
     ok,
@@ -94,7 +183,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     timestamp: new Date().toISOString(),
     dependencies: {
       ephemeris,
-      contentGeneration
+      contentGeneration,
+      reportFulfillment,
+      contentStudioExactAspects
     }
   });
 }
