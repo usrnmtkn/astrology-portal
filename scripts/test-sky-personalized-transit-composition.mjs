@@ -12,7 +12,9 @@ import { createTransitSynastryRenderer } from "../apps/web/src/content/fallbackA
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const detailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
 const cmsBundleFile = path.join(os.tmpdir(), "tldrastro-personal-transit-cms.bundle.mjs");
+const activeChartBundleFile = path.join(os.tmpdir(), "tldrastro-sky-active-chart-events.bundle.mjs");
 await build({
   bundle: true,
   define: { "import.meta.env": "{}" },
@@ -22,7 +24,16 @@ await build({
   outfile: cmsBundleFile,
   platform: "node"
 });
+await build({
+  bundle: true,
+  entryPoints: [path.join(repoRoot, "apps/web/src/services/skyActiveChartEvents.ts")],
+  format: "esm",
+  logLevel: "silent",
+  outfile: activeChartBundleFile,
+  platform: "node"
+});
 const { cmsSurfaceKeys, resolveCmsSurfaceOverride } = await import(`${pathToFileURL(cmsBundleFile).href}?t=${Date.now()}`);
+const { skyActiveChartEvents } = await import(`${pathToFileURL(activeChartBundleFile).href}?t=${Date.now()}`);
 const require = createRequire(import.meta.url);
 const shippedRenderer = createTransitSynastryRenderer(
   require("../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json"),
@@ -152,9 +163,53 @@ assert.equal(
   "Jupiter in your 3rd house is squaring your natal Moon in your 6th house until September 5."
 );
 
+const activeEvents = skyActiveChartEvents([
+  {
+    key: "north",
+    heading: "Sun Conjunction North Node",
+    body: "While Sun is in your 4th house, it is also sitting right on your natal North Node in your 4th house until September 9. Sun in Virgo wants the practical change named clearly; your North Node describes the unfamiliar direction. A new private-life role can feel awkward before it feels normal."
+  },
+  {
+    key: "venus",
+    heading: "Sun Trine Venus",
+    body: "While Sun is in your 4th house, it is also trining your natal Venus in your 8th house until September 11. Support around shared money, trust, or responsibility can be easier to receive."
+  },
+  {
+    key: "south",
+    heading: "Sun Opposition South Node",
+    body: "While Sun is in your 4th house, it is also opposing your natal South Node in your 10th house until September 9. Sun in Virgo wants the practical change named clearly; your South Node describes the role you already know how to carry. Familiar recognition can keep competing with the private life that needs more room."
+  },
+  {
+    key: "moon",
+    heading: "Sun Sextile Moon",
+    body: "While Sun is in your 4th house, it is also sextiling your natal Moon in your 6th house until September 8. A schedule or responsibility can be adjusted before it becomes urgent."
+  }
+]);
+assert.equal(activeEvents.length, 3, "A mirrored North/South Node pair should become one reader event without hiding other aspects.");
+assert.equal(activeEvents[0].type, "nodal-axis");
+assert.deepEqual(activeEvents[0].memberKeys, ["north", "south"]);
+assert.equal(activeEvents[0].heading, "Sun Conjunction North Node · Sun Opposition South Node");
+assert.equal(activeEvents[0].dateLabel, "Through September 9");
+assert.doesNotMatch(activeEvents[0].body ?? "", /^While Sun is in your 4th house/u);
+assert.equal((activeEvents[0].body?.match(/Sun in Virgo wants the practical change named clearly/gu) ?? []).length, 1, "Shared transit/sign setup should appear once inside a grouped nodal event.");
+assert.equal(activeEvents[1].memberKeys[0], "venus", "Grouping should preserve the upstream significance order of the first event member.");
+assert.equal(activeEvents[2].memberKeys[0], "moon");
+assert.equal(activeEvents.flatMap((event) => event.memberKeys).sort().join(","), "moon,north,south,venus", "Every calculated aspect must remain represented after grouping.");
+
+const loneNode = skyActiveChartEvents([{
+  key: "north-only",
+  heading: "Sun Trine North Node",
+  body: "While Sun is in your 4th house, it is also trining your natal North Node in your 4th house until September 9. One supported opening appears."
+}]);
+assert.equal(loneNode[0].type, "single", "An unpaired node contact must stay visible instead of being invented into an axis pair.");
+
 assert.match(appSource, /personalTransitPackageSection\(transit, generatedAt, "you", \{[\s\S]*?generatedContent,[\s\S]*?transitHouse: house/u);
 assert.match(appSource, /body: packageSection\?\.body \?\? compiledAspect\?\.body \?\? null/u);
 assert.match(appSource, /personalTransitAspectContentKeys = skyPlacementPersonalizationTransits\.flatMap/u);
 assert.match(appSource, /natalHouse: transit\.natalHouse/u);
+assert.match(detailSource, /skyActiveChartEvents\(detail\.personalizedPlacement\?\.natalAspects \?\? \[\]\)/u);
+assert.match(detailSource, /<h3>Active in your chart<\/h3>/u);
+assert.match(detailSource, /event\.dateLabel/u);
+assert.doesNotMatch(detailSource, /Aspects to the natal chart/u);
 
 console.log("Sky personalized transit composition checks passed.");
