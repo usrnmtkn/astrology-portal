@@ -395,7 +395,7 @@ export function SkyDetailArticle({
       .then(({ skyPlacementResidencyAspectSections }) => skyPlacementResidencyAspectSections(residencyContext))
       .then(
         ({ sections }) => !cancelled && setResidencyAspectState([residencyContextKey, sections]),
-        () => !cancelled && setResidencyAspectState([residencyContextKey, []])
+        () => undefined
       );
     return () => {
       cancelled = true;
