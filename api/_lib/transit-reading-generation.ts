@@ -1,5 +1,10 @@
 import { contentGenerationProvider } from "./provider-config.js";
-import { callOpenAIResponses } from "../../src/astro-writing/openAIResponses.cjs";
+import {
+  callGovernedTransitReadingModel,
+  prepareTransitReadingProductionKernel,
+  type TransitReadingProductionInput
+} from "./transit-reading-production.js";
+import { governedInstructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
 
 export type TransitReadingProvider = "openai" | "claude";
 
@@ -52,6 +57,7 @@ export type GovernedTransitReadingOptions<TBrief> = {
   family: string;
   schemaName: string;
   toolDescription: string;
+  productionInput: TransitReadingProductionInput;
   promptForAttempt: (brief: TBrief, headline: string, feedback: string) => string;
   validate: (draft: GeneratedTransitReadingDraft, brief: TBrief, headline: string) => TransitReadingValidationResult;
   compactBriefForRecovery: (brief: TBrief) => TBrief;
@@ -101,39 +107,12 @@ export function isTransitReadingJudgeBlockedError(error: unknown): error is Tran
     || Boolean(error && typeof error === "object" && (error as { code?: unknown }).code === "TRANSIT_READING_JUDGE_BLOCKED");
 }
 
-function requireEnv(name: string) {
-  const value = process.env[name];
-  if (!value) throw new Error(`${name} is not configured.`);
-  return value;
-}
-
 function stringValue(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
 function stripTldrPrefix(value: string) {
   return value.trim().replace(/^tldr\s*:\s*/iu, "").trim();
-}
-
-function responseOutputText(payload: {
-  output_text?: string;
-  output?: Array<{ content?: Array<{ text?: string }> }>;
-}) {
-  if (payload.output_text) return payload.output_text;
-  return payload.output
-    ?.flatMap((item) => item.content ?? [])
-    .map((content) => content.text)
-    .filter((text): text is string => Boolean(text))
-    .join("\n")
-    .trim();
-}
-
-function claudeToolInput(payload: {
-  content?: Array<{ type?: string; name?: string; input?: unknown }>;
-}, schemaName: string) {
-  return payload.content?.find((item) => (
-    item.type === "tool_use" && item.name === schemaName && item.input
-  ))?.input;
 }
 
 function normalizeProviderDraft(
@@ -187,7 +166,13 @@ function writerPrompt<TBrief>(
   options: GovernedTransitReadingOptions<TBrief>
 ) {
   const approvedOwnerEvidence = options.ownerEvidence?.filter((entry) => entry.trim()) ?? [];
+  const canonicalInstructions = governedInstructionsForRole("WRITER", {
+    surface: options.surface,
+    family: options.family
+  });
   return [
+    canonicalInstructions,
+    "",
     options.promptForAttempt(brief, options.headline, feedback),
     "",
     "OWNER-APPROVED GENERATED-REPORT FEEDBACK EVIDENCE",
@@ -198,85 +183,10 @@ function writerPrompt<TBrief>(
   ].join("\n");
 }
 
-async function generateOpenAI<TBrief>(
-  brief: TBrief,
-  feedback: string,
-  retryCount: number,
-  options: GovernedTransitReadingOptions<TBrief>
-) {
-  const apiKey = requireEnv("OPENAI_API_KEY");
-  const model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? "gpt-4.1-mini";
-  const { response, payload } = await callOpenAIResponses({
-    apiKey,
-    role: "WRITER",
-    surface: options.surface,
-    family: options.family,
-    request: {
-      model,
-      input: writerPrompt(brief, feedback, options),
-      text: {
-        format: {
-          type: "json_schema",
-          name: options.schemaName,
-          strict: true,
-          schema: TRANSIT_READING_PROVIDER_SCHEMA
-        }
-      }
-    }
-  });
-  const typedPayload = payload as {
-    id?: string;
-    output_text?: string;
-    output?: Array<{ content?: Array<{ text?: string }> }>;
-    error?: { message?: string };
-  };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI transit reading request failed with ${response.status}.`);
-  const output = responseOutputText(typedPayload);
-  if (!output) throw new Error("OpenAI transit reading response did not include generated text.");
-  return normalizeProviderDraft(JSON.parse(output) as Record<string, unknown>, options.headline, model, typedPayload.id, retryCount);
-}
-
-async function generateClaude<TBrief>(
-  brief: TBrief,
-  feedback: string,
-  retryCount: number,
-  options: GovernedTransitReadingOptions<TBrief>
-) {
-  const apiKey = requireEnv("ANTHROPIC_API_KEY");
-  const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-6";
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: options.claudeMaxTokens ?? 2200,
-      messages: [{
-        role: "user",
-        content: [{ type: "text", text: writerPrompt(brief, feedback, options) }]
-      }],
-      tools: [{
-        name: options.schemaName,
-        description: options.toolDescription,
-        input_schema: TRANSIT_READING_PROVIDER_SCHEMA
-      }],
-      tool_choice: { type: "tool", name: options.schemaName }
-    })
-  });
-  const payload = await response.json().catch(() => null) as {
-    id?: string;
-    content?: Array<{ type?: string; name?: string; input?: unknown }>;
-    error?: { message?: string };
-  } | null;
-  if (!response.ok) throw new Error(payload?.error?.message ?? `Claude transit reading request failed with ${response.status}.`);
-  const toolInput = payload ? claudeToolInput(payload, options.schemaName) : null;
-  if (!toolInput || typeof toolInput !== "object" || Array.isArray(toolInput)) {
-    throw new Error("Claude transit reading response did not include generated content.");
-  }
-  return normalizeProviderDraft(toolInput as Record<string, unknown>, options.headline, model, payload?.id, retryCount);
+function writerModel(provider: TransitReadingProvider) {
+  return provider === "claude"
+    ? process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-6"
+    : process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? "gpt-4.1-mini";
 }
 
 async function providerDraft<TBrief>(
@@ -286,9 +196,20 @@ async function providerDraft<TBrief>(
   retryCount: number,
   options: GovernedTransitReadingOptions<TBrief>
 ) {
-  return provider === "claude"
-    ? generateClaude(brief, feedback, retryCount, options)
-    : generateOpenAI(brief, feedback, retryCount, options);
+  const model = writerModel(provider);
+  const kernel = prepareTransitReadingProductionKernel({
+    productionInput: options.productionInput,
+    role: "WRITER"
+  });
+  const response = await callGovernedTransitReadingModel<Record<string, unknown>>({
+    kernel,
+    provider,
+    model,
+    prompt: writerPrompt(brief, feedback, options),
+    schemaName: options.schemaName,
+    schema: TRANSIT_READING_PROVIDER_SCHEMA as unknown as Record<string, unknown>
+  });
+  return normalizeProviderDraft(response.value, options.headline, response.model, response.responseId, retryCount);
 }
 
 async function initialValidatedDraft<TBrief>(
