@@ -1467,7 +1467,8 @@
 }
 
 @media (min-width: 721px) {
-  .sky-daily-summary .sky-today-ledger__head {
+  .sky-daily-summary .sky-today-ledger__head,
+  .sky-daily-summary .sky-today-ledger__foot {
     display: none;
   }
 }

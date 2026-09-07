@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 for (const theme of ["light", "dark"] as const) {
-  for (const width of [390, 1440]) {
+  for (const width of [390, 768, 1024, 1440]) {
     test(`daily summary ${theme} at ${width}px`, async ({ page }) => {
       test.setTimeout(90_000);
       const errors: string[] = [];
@@ -91,8 +91,14 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.getByRole("heading", { name: /New Moon in Virgo/i }).first()).toBeVisible({ timeout: 60_000 });
       await page.goto("/#sky");
       await expect(page.getByLabel("Daily sky summary")).toBeVisible();
-      await page.getByRole("button", { name: "Open full current sky chart" }).click();
-      await expect(page.getByRole("dialog", { name: "Full sky chart" })).toBeVisible();
+      const chartButton = page.getByRole("button", { name: "Open full current sky chart" });
+      if (width <= 720) {
+        await chartButton.click();
+        await expect(page.getByRole("dialog", { name: "Full sky chart" })).toBeVisible();
+      } else {
+        await expect(chartButton).toBeHidden();
+        await expect(page.getByRole("region", { name: "Current sky", exact: true })).toBeVisible();
+      }
       expect(errors).toEqual([]);
     });
   }
