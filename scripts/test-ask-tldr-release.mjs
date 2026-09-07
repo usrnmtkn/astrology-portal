@@ -32,7 +32,7 @@ const writerOutput = validateAskTldrWriterOutput({
   question: governed.question,
   evidence: governed.evidence,
   value: {
-    answer: "Recognition is more available when you put the work where people can see and respond to it. Jupiter opposing your Midheaven around September 15 can make public opportunity and visibility feel larger, but it can also make other people's reaction seem more important than the result itself.\n\nUse the opening to show the concrete work, ask for the credit or role attached to it, and let the response give you information. You may get more from a visible result and a specific request than from trying to manage how everyone feels about what you are doing.",
+    answer: "Recognition is more available when you put the work where people can see and respond to it. Ask for the credit, title, or authority that matches work you can already point to instead of adding more responsibility just to prove the case.\n\nWhy the astrology points here\n\nJupiter opposing your Midheaven around September 15 enlarges questions of public role, recognition, and how much professional territory you are ready to occupy. The useful part of that pressure is not simply being more visible; it is noticing where growth gives you more leverage and where it only gives you more work.",
     evidenceIdsUsed: [writerRequest.primaryEvidenceId],
     primaryEvidenceId: writerRequest.primaryEvidenceId,
     whyNowEvidenceId: writerRequest.primaryEvidenceId,
@@ -115,4 +115,4 @@ assert.throws(() => buildAskTldrCalibrationReleasePacket({
   judge
 }), /ASK_TLDR_RELEASE_JUDGE_SCOPE_MISMATCH/u);
 
-console.log("Ask TLDR calibration release packet passed: deterministic facts + judge quality can create a calibration candidate, but generated copy remains non-serving, non-promoted, and not owner approved.");
+console.log("Ask TLDR calibration release packet passed: deterministic facts + judge quality can create a calibration candidate only when the reader answer includes its astrology support, while generated copy remains non-serving, non-promoted, and not owner approved.");
