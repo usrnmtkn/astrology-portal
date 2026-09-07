@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { friendTransitReadingRequestLock } from "./_lib/friend-transit-reading.js";
+import { friendReportWriterBrief } from "./_lib/friend-report-specificity.js";
 import {
   FRIEND_REPORT_PRODUCT_KEY,
   attachFriendCheckoutSession,
@@ -44,6 +45,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       subjectId,
       targetDate
     });
+    const writerBrief = friendReportWriterBrief(locked.brief);
     const priceId = friendReportPriceId();
     if (!priceId) throw new Error("STRIPE_FRIEND_TRANSIT_READING_PRICE is not configured.");
 
@@ -55,7 +57,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       contentKey: locked.contentKey,
       targetDate,
       friendName: locked.brief.friendName,
-      brief: locked.brief
+      brief: writerBrief
     });
     if (entitlement.status === "active") {
       return sendJson(res, 200, { alreadyPurchased: true, contentKey: locked.contentKey });
