@@ -1,0 +1,18 @@
+{
+  "id": "sun-opposition-south-node",
+  "transiting": "sun",
+  "aspect": "opposition",
+  "other": "south-node",
+  "base": "A current decision may show you exactly how much an old identity still has a vote.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "A current decision may show you exactly how much an old identity still has a vote.",
+    "body": "A current decision may show you exactly how much an old identity still has a vote. When the Sun opposes the South Node, the person you are trying to be can come face to face with a role, expectation, or source of recognition that has shaped you for a long time. You may feel pulled between keeping a familiar place and making room for something less established. The past does not have to be rejected to stop running the decision. Carry forward the part that still works and leave the rest where it belongs.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}

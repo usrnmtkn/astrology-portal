@@ -1,6 +1,8 @@
-import { AlertTriangle, BarChart3, Plus, RefreshCw, type LucideIcon } from "lucide-react";
+import { AlertTriangle, BarChart3, LogIn, Plus, RefreshCw, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import "./admin-content-studio-ux-compat.css";
+import "./admin-content-studio-editor-redesign.css";
+import "./admin-access-feedback.css";
 
 export type AdminBreadcrumb = {
   current?: boolean;
@@ -102,7 +104,7 @@ export function AdminPageHeader({
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
         <a
-          className="admin-create-button"
+          className="admin-create-button admin-attention-button"
           href="/admin/content/coverage?view=attention"
           style={coverageActionStyle}
           title="Open the short queue of content work that can affect required reader coverage"
@@ -181,25 +183,46 @@ export function AdminAccessGate({ disabled, onChange, onSubmit, value }: AdminAc
   return (
     <section className="admin-content-toolbar admin-access-gate" aria-label="Admin access required">
       <div>
-        <p className="admin-eyebrow">Admin access required</p>
-        <h2>Connect Content Studio to continue</h2>
-        <p>Sign in with the owner account. If account access is unavailable, use the emergency access key.</p>
+        <p className="admin-eyebrow">Owner access required</p>
+        <h2>Sign in to Content Studio</h2>
+        <p>
+          This preview uses a separate site address, so your regular TLDR Astro sign-in may not carry over.
+          Sign in as the owner here, or use the emergency admin secret for this deployment.
+        </p>
       </div>
       <div className="admin-access-gate-actions">
+        <a
+          className="admin-access-owner-signin"
+          href="/?auth=login"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <LogIn size={16} aria-hidden="true" />
+          Sign in as owner
+        </a>
+        <p className="admin-access-gate-note">
+          After you sign in, return to this tab. Content Studio should reconnect automatically.
+        </p>
+        <div className="admin-access-divider" aria-hidden="true">
+          <span>Or use emergency access</span>
+        </div>
         <label className="admin-access-inline-field">
-          <span>Emergency access key</span>
+          <span>Emergency admin secret</span>
           <input
-            aria-label="Secret"
+            aria-label="Emergency admin secret"
             type="password"
             value={value}
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Paste emergency access key"
+            placeholder="Paste emergency admin secret"
           />
         </label>
+        <p className="admin-access-secret-note">
+          Use the <code>CONTENT_GENERATION_SECRET</code> configured for this deployment. This is not a content key.
+        </p>
         <button type="button" onClick={onSubmit} disabled={disabled}>
           <RefreshCw size={16} aria-hidden="true" />
-          Load content
+          Verify emergency access
         </button>
       </div>
     </section>

@@ -7,6 +7,7 @@ on:
       - "apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json"
       - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json"
       - "apps/web/src/content/fallbackArchitectureV3/resolver/calendarAspectContentStudio.mjs"
+      - "apps/web/src/services/skyAspectContent.ts"
       - "api/admin/sky-v4-preview.ts"
       - "apps/admin/src/GeneratedContentAdminDashboard.tsx"
       - "scripts/stage-calendar-aspect-content-studio-drafts.mjs"
@@ -25,6 +26,7 @@ on:
     paths:
       - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json"
       - "apps/web/src/content/fallbackArchitectureV3/resolver/calendarAspectContentStudio.mjs"
+      - "apps/web/src/services/skyAspectContent.ts"
       - "api/admin/sky-v4-preview.ts"
       - "apps/admin/src/GeneratedContentAdminDashboard.tsx"
       - "scripts/stage-calendar-aspect-content-studio-drafts.mjs"
@@ -42,7 +44,7 @@ on:
         default: false
         type: boolean
       sync_published_exact_aspects:
-        description: "Mirror all LIVE exact Sky Calendar aspects into Content Studio and verify the remote set"
+        description: "Mirror all LIVE exact Sky Calendar aspects, including pole-specific South Node copy, into Content Studio and verify the remote set"
         required: true
         default: false
         type: boolean
@@ -104,19 +106,17 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: Mirror published exact aspects into Content Studio
+      - name: Mirror or verify published exact aspects in Content Studio
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_URL: https://hdmdufozrgrajkfhydit.supabase.co
+          SUPABASE_PUBLISHABLE_KEY: sb_publishable_iX90KdzcQzw8a8OydBHHXA_COnEMcns
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-            echo "::error::SUPABASE_SERVICE_ROLE_KEY is not configured for this repository."
-            exit 1
-          fi
-          if [ -z "$SUPABASE_URL" ] && [ -z "$VITE_SUPABASE_URL" ]; then
-            echo "::error::Neither SUPABASE_URL nor VITE_SUPABASE_URL is configured for this repository."
-            exit 1
-          fi
           node scripts/test-published-calendar-aspect-content-studio.mjs
-          node scripts/seed-published-calendar-aspect-content-studio.mjs --apply --verify-remote
+          if [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "Service-role credentials are available; applying and verifying the governed exact-aspect mirror."
+            node scripts/seed-published-calendar-aspect-content-studio.mjs --apply --verify-remote
+          else
+            echo "::warning::SUPABASE_SERVICE_ROLE_KEY is not available to GitHub Actions. Skipping the write and performing read-only byte-for-byte verification of the existing 439-row Content Studio mirror."
+            node scripts/seed-published-calendar-aspect-content-studio.mjs --verify-remote
+          fi

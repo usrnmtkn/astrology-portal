@@ -233,15 +233,6 @@
   scroll-padding-bottom: calc(var(--admin-space-10xl) + var(--admin-space-4xl));
 }
 
-.admin-dashboard .admin-editor-panel > .admin-editor-savebar {
-  bottom: auto !important;
-  flex: 0 0 auto;
-  margin-top: var(--admin-space-xl);
-  position: relative !important;
-  width: 100%;
-  z-index: auto !important;
-}
-
 /* These are independent sibling cards. Keep the native details containers in
    normal block flow so an open section always contributes its full height before
    the next card is laid out. */
@@ -322,7 +313,7 @@
 
 .admin-dashboard .admin-nav-workspace-group {
   gap: var(--admin-space-2xs);
-  margin-left: calc(16px + var(--admin-space-xl));
+  margin-left: calc(var(--admin-space-3xl) + var(--admin-space-xl));
 }
 
 .admin-dashboard .admin-nav-workspace-group button {
@@ -582,15 +573,6 @@
 .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-grid code {
   overflow-wrap: anywhere;
   white-space: normal;
-}
-
-.admin-dashboard .admin-editor-panel > .admin-editor-savebar {
-  background: var(--admin-panel-overlay-strong) !important;
-  border-top: var(--border-width-thin) solid var(--admin-ui-border-strong) !important;
-  box-shadow: var(--admin-ui-savebar-shadow);
-  gap: var(--admin-space-lg);
-  margin-top: 0;
-  padding: var(--admin-space-xl) var(--admin-space-5xl) !important;
 }
 
 .admin-dashboard .admin-editor-savebar .admin-danger-button {
