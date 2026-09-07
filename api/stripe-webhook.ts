@@ -1,4 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { waitUntil } from "@vercel/functions";
+import {
+  activateFriendReportCheckout,
+  friendReportBillingMode,
+  refundFriendReportByPaymentIntent,
+  runFriendReportJobs
+} from "./_lib/friend-report-lifecycle.js";
 import { reportBillingMode, reportSku } from "./_lib/report-fulfillment-config.js";
 import { revokeEntitlement } from "./_lib/report-entitlements.js";
 import { rawRequestBody, sendJson } from "./_lib/report-http.js";
@@ -10,7 +17,9 @@ function recordValue(value: unknown) { return value && typeof value === "object"
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST") return sendJson(res, 405, { error: "Use POST." });
-  if (reportBillingMode() === "free_test") return sendJson(res, 503, { configured: false, billingMode: "free_test", error: "Stripe webhooks are disabled during the free-test shadow launch." });
+  if (reportBillingMode() === "free_test" && friendReportBillingMode() === "free_test") {
+    return sendJson(res, 503, { configured: false, billingMode: "free_test", error: "Stripe webhooks are disabled during the free-test shadow launch." });
+  }
   const admin = createSupabaseReportAdmin();
   let eventId = "";
   try {
@@ -28,32 +37,55 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const object = event.data.object;
     if (event.type === "checkout.session.completed") {
       const metadata = recordValue(object.metadata);
-      const sku = reportSku(stringValue(metadata.product_key));
-      if (!sku) throw new Error("Stripe checkout metadata contains an unknown report product.");
-      const purchasedAt = new Date((event.created ?? Math.floor(Date.now() / 1000)) * 1000).toISOString();
-      await admin.insert("report_entitlements", {
-        user_id: stringValue(metadata.user_id) || stringValue(object.client_reference_id),
-        subject_id: stringValue(metadata.subject_id) || null,
-        product_key: sku.key,
-        report_domain: sku.reportDomain,
-        report_horizon: sku.reportHorizon,
-        window_anchor: stringValue(metadata.window_anchor),
-        selected_start: stringValue(metadata.selected_start) || null,
-        period_start: stringValue(metadata.period_start),
-        period_end: stringValue(metadata.period_end),
-        requires_birth_time: sku.requiresBirthTime,
-        status: stringValue(metadata.birth_data_status) === "awaiting_birth_data" ? "awaiting_birth_data" : "active",
-        source: "stripe",
-        stripe_event_id: event.id,
-        stripe_checkout_session_id: stringValue(object.id),
-        stripe_customer_id: stringValue(object.customer) || null,
-        stripe_payment_intent_id: stringValue(object.payment_intent) || null,
-        purchased_at: purchasedAt
-      }, { onConflict: "stripe_event_id", ignoreDuplicates: true });
+      if (stringValue(metadata.purchase_kind) === "friend_transit_reading") {
+        if (friendReportBillingMode() !== "stripe") throw new Error("Friends report Stripe checkout is not enabled.");
+        const activated = await activateFriendReportCheckout({
+          intentId: stringValue(metadata.friend_checkout_intent_id),
+          stripeEventId: event.id,
+          checkoutSessionId: stringValue(object.id),
+          customerId: stringValue(object.customer) || null,
+          paymentIntentId: stringValue(object.payment_intent) || null,
+          admin
+        });
+        waitUntil(runFriendReportJobs({
+          workerId: `friend-report-stripe-${process.pid}-${Date.now()}`,
+          jobId: activated.job.id,
+          admin
+        }).catch((error) => console.error("Friends Stripe fulfillment failed", error)));
+      } else {
+        if (reportBillingMode() !== "stripe") throw new Error("Purchased report Stripe checkout is not enabled.");
+        const sku = reportSku(stringValue(metadata.product_key));
+        if (!sku) throw new Error("Stripe checkout metadata contains an unknown report product.");
+        const purchasedAt = new Date((event.created ?? Math.floor(Date.now() / 1000)) * 1000).toISOString();
+        await admin.insert("report_entitlements", {
+          user_id: stringValue(metadata.user_id) || stringValue(object.client_reference_id),
+          subject_id: stringValue(metadata.subject_id) || null,
+          product_key: sku.key,
+          report_domain: sku.reportDomain,
+          report_horizon: sku.reportHorizon,
+          window_anchor: stringValue(metadata.window_anchor),
+          selected_start: stringValue(metadata.selected_start) || null,
+          period_start: stringValue(metadata.period_start),
+          period_end: stringValue(metadata.period_end),
+          requires_birth_time: sku.requiresBirthTime,
+          status: stringValue(metadata.birth_data_status) === "awaiting_birth_data" ? "awaiting_birth_data" : "active",
+          source: "stripe",
+          stripe_event_id: event.id,
+          stripe_checkout_session_id: stringValue(object.id),
+          stripe_customer_id: stringValue(object.customer) || null,
+          stripe_payment_intent_id: stringValue(object.payment_intent) || null,
+          purchased_at: purchasedAt
+        }, { onConflict: "stripe_event_id", ignoreDuplicates: true });
+      }
     } else if (event.type === "charge.refunded") {
+      const paymentIntentId = stringValue(object.payment_intent) || undefined;
+      const chargeId = stringValue(object.id) || undefined;
+      if (paymentIntentId) {
+        await refundFriendReportByPaymentIntent({ paymentIntentId, chargeId, admin });
+      }
       await revokeEntitlement(admin, {
-        paymentIntentId: stringValue(object.payment_intent) || undefined,
-        chargeId: stringValue(object.id) || undefined,
+        paymentIntentId,
+        chargeId,
         reason: "refunded",
         now: new Date().toISOString()
       });
@@ -63,7 +95,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       processed_at: new Date().toISOString(),
       error: null
     });
-    sendJson(res, 200, { ok: true });
+    return sendJson(res, 200, { ok: true });
   } catch (error) {
     if (eventId) {
       await admin.update("report_stripe_events", `event_id=eq.${encodeURIComponent(eventId)}`, {
@@ -71,6 +103,6 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         error: error instanceof Error ? error.message : "Unknown webhook error."
       }).catch(() => undefined);
     }
-    sendJson(res, 400, { error: error instanceof Error ? error.message : "Stripe webhook failed." });
+    return sendJson(res, 400, { error: error instanceof Error ? error.message : "Stripe webhook failed." });
   }
 }

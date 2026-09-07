@@ -135,7 +135,7 @@
 
 .report-library-row__actions {
   position: relative;
-  z-index: var(--z-popover);
+  z-index: auto;
   display: grid;
   align-items: center;
   padding: var(--space-2);
@@ -164,7 +164,7 @@
   padding: var(--space-2);
   border: var(--border-width-thin) solid var(--overlay-border);
   border-radius: var(--card-radius-sm);
-  background: var(--surface);
+  background: var(--overlay-bg);
   box-shadow: var(--overlay-shadow);
 }
 
