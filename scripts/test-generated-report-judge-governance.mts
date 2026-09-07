@@ -75,11 +75,14 @@ assert.doesNotThrow(() => productionEvidence.buildProductionCatalogEvidence({
 }));
 
 const weekKnowledgeIds = youTransitReadingProductionKnowledgeIds({
+  approvedReaderText: {
+    horoscope: { body: "The Virgo new moon activates your 4th House of Home and Family." }
+  },
   technicalEvidence: {
     readings: [{ source: "lunation", driverLabel: "New Moon in Virgo", house: null }]
   }
 });
-assert.deepEqual(weekKnowledgeIds, ["canonical:body/moon", "canonical:body/sun"]);
+assert.deepEqual(weekKnowledgeIds, ["house-4"]);
 assert.doesNotThrow(() => productionEvidence.buildProductionCatalogEvidence({
   contentKey: "you-transit-reading/week/2026-09-07",
   surface: "you",
@@ -88,7 +91,7 @@ assert.doesNotThrow(() => productionEvidence.buildProductionCatalogEvidence({
   facts: { type: "you-transit-reading" },
   knowledgeIds: weekKnowledgeIds,
   sourceSnapshot: {}
-}), "A governed lunation week must resolve production evidence before the writer or judge can run.");
+}), "A governed lunation week must resolve the personalized approved house before the writer or judge can run.");
 
 const sharedGenerator = read("api/_lib/transit-reading-generation.ts");
 assert.match(sharedGenerator, /initialValidatedDraft/u, "Deterministic validation must precede the judge.");
