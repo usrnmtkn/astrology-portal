@@ -74,9 +74,12 @@ function verificationKey() {
 
 function verificationHeaders(extra = {}) {
   const key = verificationKey();
-  const headers = { apikey: key, "content-type": "application/json", ...extra };
-  if (!key.startsWith("sb_publishable_")) headers.authorization = `Bearer ${key}`;
-  return headers;
+  return {
+    apikey: key,
+    authorization: `Bearer ${key}`,
+    "content-type": "application/json",
+    ...extra
+  };
 }
 
 function verificationAuthMode() {
