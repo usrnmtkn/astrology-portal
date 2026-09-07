@@ -125,7 +125,7 @@ function reportReadyTitle(friendName: string) {
 }
 
 function notifyFriendReadingReady(request: GenerateUserContentRequest, result: LiveGeneratedContent | null) {
-  if (request.subjectType !== "friend_transit_reading" || !result?.id) return;
+  if (request.subjectType !== "friend_transit_reading" || !result?.id || !result.body.trim()) return;
   const friendName = friendNameFromRequest(request);
   dispatchReportReady({
     sourceKind: "generated_interpretation",
@@ -175,7 +175,7 @@ export async function loadUserGeneratedInterpretation({
     .eq("content_key", contentKey);
 
   query = subjectType === "friend_transit_reading"
-    ? query.in("status", ["DRAFT", "REVIEWED", "LIVE"])
+    ? query.in("status", ["DRAFT", "REVIEWED", "LIVE", "ERROR"])
     : query.eq("status", "LIVE");
   query = query.order("updated_at", { ascending: false }).limit(1);
   query = targetDate ? query.eq("target_date", targetDate) : query.is("target_date", null);
@@ -188,6 +188,22 @@ export async function loadUserGeneratedInterpretation({
   }
 
   return data?.[0] ? fromRow(data[0]) : null;
+}
+
+async function friendCheckout(request: GenerateUserContentRequest, accessToken: string) {
+  const response = await fetch("/api/friend-report-checkout", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${accessToken}`
+    },
+    body: JSON.stringify(request)
+  });
+  const payload = await response.json().catch(() => null) as { url?: string; error?: string } | null;
+  if (!response.ok || !payload?.url) {
+    throw new GenerateUserContentError(response.status, payload as GenerateUserContentErrorPayload | null);
+  }
+  window.location.assign(payload.url);
 }
 
 export async function generateUserContent(request: GenerateUserContentRequest) {
@@ -203,8 +219,9 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
     throw new Error(error?.message ?? "Sign in before generating personalized content.");
   }
 
-  const endpoint = request.subjectType === "friend_transit_reading"
-    ? "/api/generate-friend-transit-reading"
+  const friendReading = request.subjectType === "friend_transit_reading";
+  const endpoint = friendReading
+    ? "/api/friend-report-request"
     : "/api/generate-user-content";
   const response = await fetch(endpoint, {
     method: "POST",
@@ -215,22 +232,40 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
     body: JSON.stringify(request)
   });
   const payload = await response.json().catch(() => null) as {
+    status?: "ready" | "queued" | "payment_required" | "unavailable";
     generated?: LiveGeneratedContent;
     saved?: UserGeneratedContentRow[];
+    reportId?: string | null;
+    jobId?: string | null;
     error?: string;
     errorType?: string;
   } | null;
 
-  if (!response.ok) {
+  if (friendReading && (response.status === 402 || payload?.status === "payment_required")) {
+    await friendCheckout(request, data.session.access_token);
+    return null;
+  }
+
+  if (!response.ok && response.status !== 202) {
     throw new GenerateUserContentError(response.status, payload);
+  }
+
+  if (friendReading && (response.status === 202 || payload?.status === "queued")) {
+    return loadUserGeneratedInterpretation({
+      subjectType: "friend_transit_reading",
+      subjectId: request.subjectId,
+      contentKey: request.contentKey,
+      targetDate: request.targetDate
+    });
   }
 
   const saved = payload?.saved?.[0];
 
   if (saved) {
-    if (request.subjectType === "friend_transit_reading" && saved.status === "DRAFT") {
-      notifyFriendReadingReady(request, fromRow(saved));
-      return fromRow(saved);
+    if (friendReading && saved.status === "DRAFT") {
+      const result = fromRow(saved);
+      notifyFriendReadingReady(request, result);
+      return result;
     }
     if (saved.status === "LIVE") {
       const result = fromRow(saved);
