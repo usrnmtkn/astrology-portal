@@ -47,7 +47,10 @@ assert.match(libraryView, /floating-back-button/u);
 assert.match(libraryView, /Archived/u);
 assert.match(libraryView, /Archive/u);
 assert.match(libraryView, /Restore/u);
-assert.match(libraryView, /without generating or paying for it again/u);
+assert.match(libraryView, /Your readings are saved here, so you can return to them anytime\./u);
+assert.match(libraryView, /MoreHorizontal/u, "Library rows must keep secondary management actions behind a compact overflow control.");
+assert.match(libraryView, /aria-haspopup="menu"/u);
+assert.match(libraryView, /if \(item\.status === "ready"\) return item\.seenAt \? null : "New"/u, "Seen reports must not carry a redundant Ready badge.");
 assert.match(libraryView, /loadGeneratedReportById/u);
 assert.match(libraryView, /Paid reading/u);
 assert.match(libraryView, /if \(item\.status !== "ready"\)[\s\S]*window\.location\.assign\(item\.route\)/u, "Opening an in-progress report must not mark it seen before it finishes.");
@@ -67,6 +70,8 @@ assert.match(libraryStyles, /var\(--report-page-padding\)/u);
 assert.match(libraryStyles, /var\(--card-bg\)/u);
 assert.match(libraryStyles, /var\(--card-shadow\)/u);
 assert.match(libraryStyles, /var\(--container-reading\)/u);
+assert.match(libraryStyles, /\.report-library-row__menu/u, "Archive and restore belong in the row overflow menu.");
+assert.doesNotMatch(libraryStyles, /\.report-library-row__archive/u, "Archive must not consume a permanent full-height action column.");
 assert.doesNotMatch(libraryStyles, /\.report-ready-toast|\.reports-menu-slot/u, "Report-route CSS must stay independent from the global notification layer.");
 assert.doesNotMatch(libraryStyles, /--font-serif|--font-sans|--text-small/u, "Reports must use current semantic TLDR typography tokens, not legacy aliases.");
 
@@ -92,4 +97,4 @@ assert.match(migration, /for insert/u);
 assert.match(migration, /for update/u);
 assert.match(migration, /for delete/u);
 
-console.log("Report library, notification, and standalone styling contract passed.");
+console.log("Report library, notification, standalone styling, and library UX contract passed.");
