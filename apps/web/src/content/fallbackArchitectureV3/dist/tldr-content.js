@@ -1441,7 +1441,7 @@ ${passHook2}`;
     const effectRaw = hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v) ?? (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null) ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
     const natalCoreVal = hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body;
     const transitEffectArea = ANGLES.has(natal) ? natalCoreVal : natalArea;
-    const transitEffect = effectRaw && transitEffectArea ? fill(effectRaw, { natalArea: transitEffectArea }) : null;
+    const transitEffect = effectRaw && transitEffectArea ? fill(effectRaw, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" }) : null;
     const ctx = {
       timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
       transitTitle: title2(transiting),
@@ -1467,7 +1467,7 @@ ${passHook2}`;
     const cWants = (sign ? hookVoice(`fallback-hook/transit-house-event-wants/${transiting}/${sign}`, v) : null) ?? hookVoice(`fallback-hook/transit-house-event-wants/${transiting}`, v);
     const cHolds = hookVoice(`fallback-hook/transit-house-event-natal/${natal}`, v);
     const cScenes = hookVoice(`fallback-hook/transit-house-event-scenes/${transiting}/${natal}/${effectFamily}`, v) ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v);
-    const cScenesFinal = cScenes ?? ctx.transitTypeLine ?? null;
+    const cScenesFinal = cScenes ? fillKeep(cScenes, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" }) : ctx.transitTypeLine ?? null;
     let body;
     if (AVERB[aspect] && cWants && cHolds && cScenesFinal) {
       const opener = v === "you" ? `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} your natal ${ctx.natalTitle}.` : `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} ${otherPoss} natal ${ctx.natalTitle}.`;
