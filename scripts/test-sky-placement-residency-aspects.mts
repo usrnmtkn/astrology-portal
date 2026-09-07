@@ -102,6 +102,40 @@ try {
     "The pilot must reuse the app's existing Gifts/Lessons classifier; conjunctions and squares remain Lessons."
   );
 
+  const sunVirgo = await residency.skyPlacementResidencyAspectSections({
+    planet: "sun",
+    sign: "virgo",
+    referenceDate: "2026-09-07T12:00:00.000Z",
+    timeZone: "America/New_York"
+  });
+  const virgoLilithEvents = sunVirgo.events.filter((event: { heading: string }) => event.heading === "Sun Trine Lilith");
+  const virgoLilithSections = sunVirgo.sections.filter((section: { heading: string }) => section.heading === "Sun Trine Lilith");
+  assert.equal(virgoLilithEvents.length, 2, "Sun in Virgo must preserve both exact Sun trine Lilith events for auditability.");
+  assert.equal(virgoLilithSections.length, 1, "A repeated exact aspect must render one reader passage, not repeat the prose.");
+  assert.equal(
+    (virgoLilithSections[0]?.body as string).split("\n\n", 1)[0],
+    "September 2 and September 10, 2026",
+    "Repeated exact hits must share one natural-language exact-date line."
+  );
+  const firstVirgoEventTimeByHeading = new Map<string, number>();
+  for (const event of sunVirgo.events as Array<{ heading: string; occursAt: string }>) {
+    const time = new Date(event.occursAt).getTime();
+    firstVirgoEventTimeByHeading.set(
+      event.heading,
+      Math.min(firstVirgoEventTimeByHeading.get(event.heading) ?? Number.POSITIVE_INFINITY, time)
+    );
+  }
+  for (const group of ["gifts", "lessons"] as const) {
+    const sectionTimes = sunVirgo.sections
+      .filter((section: { group?: string }) => section.group === group)
+      .map((section: { heading: string }) => firstVirgoEventTimeByHeading.get(section.heading) ?? Number.POSITIVE_INFINITY);
+    assert.deepEqual(
+      sectionTimes,
+      [...sectionTimes].sort((first, second) => first - second),
+      `Sun in Virgo ${group} must be ordered from earliest exact date to latest.`
+    );
+  }
+
   const unsupported = await residency.skyPlacementResidencyAspectSections({
     planet: "mars",
     sign: "scorpio",
@@ -160,6 +194,11 @@ assert.match(
     "Sky Placement must retain the existing Gifts and Lessons aspect section pattern."
   );
   assert.doesNotMatch(detailSource, /section\.dateLine/u, "Residency date rendering should remain inside the dynamically loaded aspect body.");
+  assert.match(
+    detailSource,
+    /skyAspectExactDateLinePattern[\s\S]*?and\\s/u,
+    "Sky placement exact-date parsing must accept a natural-language list of repeated exact dates."
+  );
 
   console.log("Sky Placement residency aspects pilot: PASS (engine 5/5; exact approved copy 5/5; Gifts/Lessons UI preserved; compact selector preserved; base copy drift 0). ");
 } finally {
