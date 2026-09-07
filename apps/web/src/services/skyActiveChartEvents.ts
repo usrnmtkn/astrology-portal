@@ -43,6 +43,17 @@ function compact(body: string | null) {
   return { body: shortened || source, dateLabel: date ? `Through ${date}` : null };
 }
 
+function combine(first: string | null, second: string | null) {
+  if (!first) return second;
+  if (!second || first === second) return first;
+  const firstBreak = first.indexOf(";");
+  const secondBreak = second.indexOf(";");
+  if (firstBreak > 0 && first.slice(0, firstBreak) === second.slice(0, secondBreak)) {
+    return `${first.slice(0, firstBreak)}. ${first.slice(firstBreak + 1).trim()}\n\n${second.slice(secondBreak + 1).trim()}`;
+  }
+  return `${first}\n\n${second}`;
+}
+
 function single(aspect: SkyActiveChartAspect): SkyActiveChartEvent {
   const copy = compact(aspect.body);
   return { key: aspect.key, type: "single", heading: aspect.heading, ...copy, memberKeys: [aspect.key] };
@@ -71,12 +82,11 @@ export function skyActiveChartEvents(aspects: SkyActiveChartAspect[]): SkyActive
     const ordered = parsed[2] === "north" ? [aspect, match] : [match, aspect];
     const first = compact(ordered[0].body);
     const second = compact(ordered[1].body);
-    const bodies = [first.body, second.body].filter((body, bodyIndex, all): body is string => Boolean(body) && all.indexOf(body) === bodyIndex);
     events.push({
       key: `nodal-axis:${ordered.map((member) => member.key).join(":")}`,
       type: "nodal-axis",
       heading: ordered.map((member) => member.heading).join(" · "),
-      body: bodies.join("\n\n") || null,
+      body: combine(first.body, second.body),
       dateLabel: first.dateLabel === second.dateLabel ? first.dateLabel : null,
       memberKeys: ordered.map((member) => member.key)
     });
