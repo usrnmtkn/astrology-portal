@@ -1,4 +1,3 @@
-import { FileText } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import type { DailyHoroscopeAssembly, PersonalTimingSummary } from "./YouPage";
@@ -55,37 +54,30 @@ export function YouReportActions({
 
   if (!dayBrief && !weekBrief) return null;
 
+  const reportStarted = [dayState, weekState].some((state) => state === "ready" || state === "queued");
+
   return (
-    <section className="you-report-offer you-horoscope-card" aria-label="In-depth transit reports">
-      <div className="you-report-offer__icon" aria-hidden="true"><FileText size={18} /></div>
-      <div className="you-report-offer__copy">
-        <span className="eyebrow section-label">In-depth reports</span>
-        <h3>Your transits, pulled together.</h3>
-        <p>Create a saved reading for the selected day or the current week. It will stay in Reports while it is being prepared.</p>
-      </div>
-      <div className="you-report-offer__actions">
-        <button
-          type="button"
-          disabled={!dayBrief || dayState === "loading"}
-          onClick={() => void createReport("day")}
-        >
-          {dayState === "loading" ? "Starting…" : dayState === "queued" ? "Day report preparing" : dayState === "ready" ? "Day report ready" : "Create day report"}
-        </button>
-        <button
-          type="button"
-          disabled={!weekBrief || weekState === "loading"}
-          onClick={() => void createReport("week")}
-        >
-          {weekState === "loading" ? "Starting…" : weekState === "queued" ? "Week report preparing" : weekState === "ready" ? "Week report ready" : "Create week report"}
-        </button>
-      </div>
-      {message ? (
-        <div className={`you-report-offer__message${dayState === "error" || weekState === "error" ? " is-error" : ""}`} role="status">
-          <span>{message}</span>
-          {dayState === "ready" || dayState === "queued" || weekState === "ready" || weekState === "queued" ? (
-            <button type="button" onClick={() => window.location.assign("/reports/")}>Open Reports</button>
-          ) : null}
-        </div>
+    <section className="you-empty-card" aria-label="In-depth transit reports">
+      <span>Reports</span>
+      <h3>Day and week reports</h3>
+      <p>Create a saved reading for the selected day or the current week. It will stay in Reports while it is being prepared.</p>
+      <button
+        type="button"
+        disabled={!dayBrief || dayState === "loading"}
+        onClick={() => void createReport("day")}
+      >
+        {dayState === "loading" ? "Starting…" : dayState === "queued" ? "Day report preparing" : dayState === "ready" ? "Day report ready" : "Create day report"}
+      </button>
+      <button
+        type="button"
+        disabled={!weekBrief || weekState === "loading"}
+        onClick={() => void createReport("week")}
+      >
+        {weekState === "loading" ? "Starting…" : weekState === "queued" ? "Week report preparing" : weekState === "ready" ? "Week report ready" : "Create week report"}
+      </button>
+      {message ? <p role="status">{message}</p> : null}
+      {reportStarted ? (
+        <button type="button" onClick={() => window.location.assign("/reports/")}>Open Reports →</button>
       ) : null}
     </section>
   );
