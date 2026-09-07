@@ -78,7 +78,8 @@ for (const [key, candidate] of entries) {
   const runtime = JSON.parse(fs.readFileSync(runtimePath, "utf8"));
   assert.equal(runtime.status, "LIVE", `${key}: current runtime baseline must be LIVE`);
   assert.ok(runtime.readerCopy?.body, `${key}: current runtime body missing`);
-  assert.notEqual(candidate.body, runtime.readerCopy.body, `${key}: candidate must be an actual refinement`);
+  assert.equal(candidate.summary, runtime.readerCopy.summary, `${key}: approved summary must serve verbatim`);
+  assert.equal(candidate.body, runtime.readerCopy.body, `${key}: approved body must serve verbatim`);
 }
 
 assert.deepEqual(
@@ -93,7 +94,7 @@ assert.deepEqual(
 const lockedBodies = {
   "sky.aspect.saturn.square.lilith": "A rule becomes harder to obey when compliance repeatedly requires the same non-negotiable boundary to be violated. When Saturn squares Lilith, structure and autonomy create friction, bringing duty into conflict with a refusal that is no longer willing to carry the old cost. What looks like defiance can be the point where keeping the arrangement intact becomes more damaging than dealing with the consequence of challenging it. The rule is easier to judge once the cost of obedience is counted along with the cost of refusal.",
   "sky.aspect.mars.square.saturn": "Momentum meets resistance when action runs into rules, deadlines, delays, or limits that will not move on demand. When Mars squares Saturn, the push to act can make every constraint feel like a personal obstruction even when the restriction is simply part of the structure. More force is unlikely to make a fixed limit disappear. The useful question is which constraint is fixed, which one can change, and where effort can still produce movement.",
-  "sky.aspect.saturn.square.uranus": "The urge to break free gets louder when a structure keeps requiring workarounds for a problem nobody is fixing. When Saturn squares Uranus, restriction and disruption create friction until the old method becomes difficult to maintain and the replacement still carries costs people do not want to absorb. Exhaustion can make total demolition look cleaner than it is. The change works better when it removes the restriction that caused the problem without discarding every support built around it."
+  "sky.aspect.saturn.square.uranus": "The urge to break free gets louder when a structure keeps requiring workarounds for a problem nobody is fixing. When Saturn squares Uranus, restriction and disruption create friction until the old method becomes difficult to maintain and the replacement still carries costs people do not want to absorb. You may be more willing to question a rule, routine, or obligation that has survived mainly because everyone learned to work around it. The useful change removes the restriction causing the problem without discarding every support built around it."
 };
 
 for (const [key, expectedBody] of Object.entries(lockedBodies)) {
@@ -103,4 +104,4 @@ for (const [key, expectedBody] of Object.entries(lockedBodies)) {
   assert.equal(runtime.readerCopy?.body, expectedBody, `${key}: locked benchmark drifted`);
 }
 
-console.log("Calendar collective-pressure pass: 21 review candidates valid; 3 strong benchmarks locked; 2 conditional reader turns.");
+console.log("Calendar collective-pressure pass: 21 approved refinements serve verbatim; 3 strong benchmarks locked; 2 conditional reader turns.");

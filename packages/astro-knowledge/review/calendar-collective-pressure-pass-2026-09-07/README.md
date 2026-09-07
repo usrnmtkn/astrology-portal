@@ -75,3 +75,9 @@ The owner approved the **direction**, the collective-pressure constructions, and
 ## Next step
 
 Review the candidate bodies cold as Calendar copy. After exact owner approval, promotion should update the existing canonical transit rows and the corresponding editable Content Studio LIVE rows through a separate governed release. The three locked passages must remain byte-identical during that release.
+
+## Approved release
+
+On 2026-09-07 the owner explicitly approved these 21 exact refinements for live serving. See `owner-release-authorization.json` for the statement, task provenance, exact hashes, prior copy, and locked-file hashes. The candidate packet remains immutable historical review evidence. `current-owner-payloads.json` carries the complete current 379-row projection with only these 21 replacements.
+
+The original Saturn square Uranus test fixture omitted its previously approved reader-address overlay. The release test now protects the actual existing live passage, unchanged by this release.

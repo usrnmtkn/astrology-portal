@@ -3,7 +3,7 @@
   "transiting": "saturn",
   "aspect": "opposition",
   "other": "lilith",
-  "base": "Authority can call something non-negotiable at the same moment compliance becomes more costly than refusal.",
+  "base": "A rule can be called non-negotiable at the exact moment the cost of obeying it becomes harder to justify.",
   "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
   "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
   "arcApplying": "The two positions become more explicit as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "Authority can call something non-negotiable at the same moment compliance becomes more costly than refusal.",
-    "body": "Authority can call something non-negotiable at the same moment compliance becomes more costly than refusal. When Saturn opposes Lilith, structure and autonomy face each other directly through a boss, institution, family role, contract, or long-standing obligation. Some rules protect something worth protecting; others survive because the cost of challenging them falls on the person with less power. The conflict becomes clearer once the purpose of the rule, the available negotiation, and the actual consequence of saying no are separated.",
-    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+    "summary": "A rule can be called non-negotiable at the exact moment the cost of obeying it becomes harder to justify.",
+    "body": "A rule can be called non-negotiable at the exact moment the cost of obeying it becomes harder to justify. When Saturn opposes Lilith, authority and refusal face each other directly through rules, contracts, roles, or expectations that may still matter but no longer feel neutral. The pressure builds around arrangements that ask the person with less power to keep paying the same price. Some limits protect something worth keeping; others survive because challenging them has been more expensive than complying. The difference becomes clearer once the purpose of the rule and the cost of obedience are counted together.",
+    "approvedVia": "Owner-approved refinement of sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/owner-release-authorization.json; task 01a07b36-6921-7b60-925e-388b908a9a41, 2026-09-07"
   }
 }
