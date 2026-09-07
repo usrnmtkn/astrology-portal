@@ -9531,7 +9531,7 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-editor-guidance" aria-label="CMS surface template guidance">
               <strong>Reader-facing CMS override</strong>
               <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
-              <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}`).join(", ") : "This row has no calculated slots."}</p>
+              <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
               <p>Save as Draft while editing. Publish only when the exact wording is approved; draft and reviewed rows remain invisible to readers.</p>
               <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={{ id: currentDraft.id, updated_at: currentDraft.updatedAt }} unsaved={draftHasUnsavedChanges} /></p>
               {cmsTemplateValidation.errors.length > 0 ? (
@@ -9545,7 +9545,7 @@ export function GeneratedContentAdminDashboard() {
                   {!isSkySummaryDraft && currentDraft.headline.trim() && <h4>{renderCmsTemplatePreview(currentDraft.headline, cmsTemplateValidation.previewSlots, "headline")}</h4>}
                   {!isSkySummaryDraft && currentDraft.summary.trim() && <p>{renderCmsTemplatePreview(currentDraft.summary, cmsTemplateValidation.previewSlots, "summary")}</p>}
                   <p>{renderCmsTemplatePreview(currentDraft.body, cmsTemplateValidation.previewSlots, "body")}</p>
-                  {cmsTemplateValidation.usedSlots.length > 0 && <small>Slots used: {cmsTemplateValidation.usedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}`).join(", ")}</small>}
+                  {cmsTemplateValidation.usedSlots.length > 0 && <small>Slots used: {cmsTemplateValidation.usedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}}`).join(", ")}</small>}
                 </div>
               )}
             </div>
