@@ -74,7 +74,11 @@ export function buildQuestionBoundAskTldrJudgeRequest(input: {
   ].join("\n");
   const withoutHash = {
     ...base,
-    instructions: `${base.instructions}\nFor question_answering and astrology_fidelity, also verify that the reader-facing connection between each used factor and the question follows GOVERNED QUESTION RELEVANCE EVIDENCE rather than an inferred generic house, angle, or pillar meaning.`,
+    instructions: [
+      base.instructions,
+      "For question_answering and astrology_fidelity, also verify that the reader-facing connection between each used factor and the question follows GOVERNED QUESTION RELEVANCE EVIDENCE rather than an inferred generic house, angle, or pillar meaning.",
+      "APPLICATION STANDARD FOR practical_usefulness: when the question asks for guidance, help, what to do, how to approach something, or decision support, a score of 4 requires a concrete decision, request, preparation step, boundary, question, or observable action the reader can actually apply. Abstract coaching verbs alone do not earn a 4 if the reader still has to translate them into the next step. Conditional domain examples are good when they clarify application without inventing personal events."
+    ].join("\n"),
     input: `${base.input}\n\n${relevanceSection}`
   };
   const requestWithoutHash = Object.fromEntries(Object.entries(withoutHash).filter(([key]) => key !== "requestSha256"));
