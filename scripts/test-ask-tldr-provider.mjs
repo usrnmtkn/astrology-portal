@@ -69,7 +69,7 @@ assert.ok(prepared.writerRequest);
 const answerScope = askTldrAnswerCalibrationScope(prepared);
 const primaryId = prepared.writerRequest.primaryEvidenceId;
 const goodWriterValue = {
-  answer: "Recognition is more available when you put the work where people can see and respond to it. Jupiter opposing your Midheaven around September 15 can make public opportunity and visibility feel larger, but it can also make other people's reaction seem more important than the result itself.\n\nUse the opening to show the concrete work, ask for the credit or role attached to it, and let the response give you information. You may get more from a visible result and a specific request than from trying to manage how everyone feels about what you are doing.",
+  answer: "Recognition is more available when you put the work where people can see and respond to it. Ask for the credit, title, or authority that matches work you can already point to instead of adding more responsibility just to prove the case.\n\nWhy the astrology points here\n\nJupiter opposing your Midheaven around September 15 enlarges questions of public role, recognition, and how much professional territory you are ready to occupy. The useful part of that pressure is not simply being more visible; it is noticing where growth gives you more leverage and where it only gives you more work.",
   evidenceIdsUsed: [primaryId],
   primaryEvidenceId: primaryId,
   whyNowEvidenceId: primaryId,
@@ -77,7 +77,7 @@ const goodWriterValue = {
 };
 const revisedWriterValue = {
   ...goodWriterValue,
-  answer: "Recognition is more available when you make the work easy to attribute to you. Jupiter opposing your Midheaven around September 15 can enlarge public opportunity and visibility, so this is a useful time to connect a visible result to a specific request.\n\nIf you are already doing work above your title, name the work and ask about the title. If your contribution is being presented without your name attached, ask for the credit directly. Bring the result, the part you owned, and the change you want into the same conversation rather than taking on more work just to prove the point."
+  answer: "Recognition is more useful when it changes what you can actually own. If your work is already visible, use this period to connect a result you can point to with a specific change in title, credit, authority, or scope instead of accepting a larger workload as a substitute for advancement.\n\nWhy the astrology points here\n\nJupiter opposing your Midheaven around September 15 amplifies the public-role question itself: how much space the work takes up, how much of it is clearly yours, and what comes with increased visibility. That makes the distinction between more responsibility and more leverage especially important now."
 };
 const perfectScores = Object.fromEntries(ASK_TLDR_JUDGE_CATEGORIES.map((category) => [category, 4]));
 const roles = [];
@@ -218,4 +218,4 @@ assert.equal(badFactResult.judgeRequest, null);
 assert.equal(badFactResult.judge, null);
 assert.equal(badFactResult.releasePacket, null);
 
-console.log("Ask TLDR provider harness passed: exact authorization scope gates every injected provider call, classifier uses one call, a passing draft uses writer+judge, a judge-blocked draft gets one bounded rewrite and final re-judge, and factual failure stops before the judge call.");
+console.log("Ask TLDR provider harness passed: exact authorization scope gates every injected provider call, classifier uses one call, a passing draft uses writer+judge, a judge-blocked draft gets one bounded rewrite and final re-judge, astrology must drive both drafts, and factual failure stops before the judge call.");
