@@ -1,0 +1,25 @@
+{
+  "schema": "ask-tldr-internal-semantic-authority/v1",
+  "id": "natal-angle-ascendant-v1",
+  "canonicalId": "natal-angle/ascendant",
+  "factorKey": "natal-angle:ascendant",
+  "status": "owner_approved",
+  "ownerApproved": true,
+  "approvedOn": "2026-09-06",
+  "approvedScope": "ask-tldr-internal-semantic-authority",
+  "meaning": "Your rising sign describes how you enter the world and how other people first experience you. It also shapes the way you instinctively approach new situations and make sense of what is happening around you.",
+  "meaningSha256": "6181083942c0c2252263653561acb5397cebeaab2d118f2a94d32294b085113b",
+  "governance": {
+    "readerCopyApproved": false,
+    "servingChangesAuthorized": false,
+    "promotionAuthorized": false,
+    "runtimeEnabled": false,
+    "autoPublish": false
+  },
+  "boundaries": [
+    "This approval covers the generic natal Ascendant meaning only.",
+    "It does not approve sign-specific rising-sign prose.",
+    "It does not broaden any Ascendant aspect approval.",
+    "It is semantic mechanism authority for Ask TLDR, not mandatory reader-facing copy."
+  ]
+}
