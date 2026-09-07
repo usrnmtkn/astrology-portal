@@ -42,6 +42,8 @@ validation was removed; the shared loader remains the single version check.
 
 The knowledge build is an explicit prerequisite for both the Content Studio API
 suite and CI's plain Node startup check. The new JavaScript size overrun was
-resolved without increasing a budget. The remaining bundle failures match main:
-reader initial CSS and the Sky detail chunk. The unrelated writing-kernel
-provider-call drift is also present on main.
+resolved without increasing a budget. After rebasing onto the report changes
+in main, all five browser checks, the API/CRUD suite, server startup, typecheck,
+and CSS audit passed again. CI grammar checks also passed. The remaining CI
+bundle failures match that updated main baseline: reader initial CSS, the Sky
+detail chunk, and total JavaScript. No budget was increased by this patch.
