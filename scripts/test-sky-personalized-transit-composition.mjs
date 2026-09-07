@@ -177,7 +177,7 @@ const activeEvents = skyActiveChartEvents([
   {
     key: "south",
     heading: "Sun Opposition South Node",
-    body: "While Sun is in your 4th house, it is also opposing your natal South Node in your 10th house until September 9. Sun in Virgo wants the practical change named clearly; your South Node describes the role you already know how to carry. Familiar recognition can keep competing with the private life that needs more room."
+    body: "While Sun is in your 4th house, it is also opposing your natal South Node in your 10th house until September 9. Sun in Virgo wants the practical change named clearly; the South Node describes the role you already know how to carry. Familiar recognition can keep competing with the private life that needs more room."
   },
   {
     key: "moon",
@@ -193,7 +193,7 @@ assert.equal(activeEvents[0].dateLabel, "Through September 9");
 assert.match(activeEvents[0].body ?? "", /^Your natal North Node is in your 4th house, while your South Node is in your 10th house\./u);
 assert.equal((activeEvents[0].body?.match(/Sun in Virgo wants the practical change named clearly/gu) ?? []).length, 0, "Shared transit/sign setup belongs in the placement paragraph, not every active-chart event.");
 assert.match(activeEvents[0].body ?? "", /Your North Node describes the unfamiliar direction\./u);
-assert.match(activeEvents[0].body ?? "", /Your South Node describes the role you already know how to carry\./u);
+assert.match(activeEvents[0].body ?? "", /The South Node describes the role you already know how to carry\./u);
 assert.equal(activeEvents[1].memberKeys[0], "venus", "Grouping should preserve the upstream significance order of the first event member.");
 assert.equal(activeEvents[2].memberKeys[0], "moon");
 assert.equal(activeEvents.flatMap((event) => event.memberKeys).sort().join(","), "moon,north,south,venus", "Every calculated aspect must remain represented after grouping.");
