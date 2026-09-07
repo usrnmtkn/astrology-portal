@@ -49,18 +49,18 @@ const activeFramePattern = /^While\s+.+?\s+(?:is\s+in|moves\s+through)\s+your\s+
 const transitSignLeadPattern = /^(?:The\s+)?[A-Za-z]+(?:\s+[A-Za-z]+){0,2}\s+in\s+[A-Z][a-z]+\b/u;
 const houseFocus = [
   "",
-  "identity, body, appearance, or how you take up space",
-  "money, possessions, values, self-worth, or what you can rely on",
-  "communication, learning, messages, short trips, or daily logistics",
-  "home, family, your living situation, roots, or private life",
-  "creativity, dating, children, hobbies, pleasure, or visibility",
-  "daily work, health, routines, appointments, or your schedule",
-  "partnerships, close relationships, agreements, conflict, or negotiation",
-  "shared money, support, debts, obligations, trust, or intimacy",
-  "travel, education, publishing, law, beliefs, or long-distance plans",
-  "career, public role, responsibility, authority, reputation, or recognition",
-  "friends, groups, community, collaboration, audience, networks, or future plans",
-  "rest, privacy, endings, closure, retreat, or behind-the-scenes matters"
+  "how you show up, take up space, and make decisions for yourself",
+  "your money, what your time is worth, and what you can rely on",
+  "messages, conversations, errands, and the logistics of daily life",
+  "home, family, and the responsibilities of private life",
+  "dating, creativity, pleasure, and the things you make room to enjoy",
+  "your workload, health, appointments, and daily schedule",
+  "a close relationship, agreement, or one-to-one responsibility",
+  "shared money, support, trust, and obligations between you and someone else",
+  "travel, study, publishing, legal matters, or a belief you are acting on",
+  "career, public responsibility, authority, and recognition",
+  "friends, groups, collaborators, your audience, and future plans",
+  "rest, privacy, endings, and what needs to happen behind the scenes"
 ];
 
 function parsedNodeHeading(heading: string): NodeHeading | null {
@@ -145,15 +145,15 @@ function nodeAxisBody(first: CompactActiveAspect, second: CompactActiveAspect, n
   const intro = `Your natal ${first.natalLabel} is in your ${first.natalHouse}, while your ${second.natalLabel} is in your ${second.natalHouse}.`;
   if (!north || !south) return `${intro} ${[first.body, second.body].filter(Boolean).join(" ")}`.trim();
   if (northAspect === "square") {
-    return `${intro} The current pressure lands on both ends of the axis: ${north} is what you are learning to develop, while ${south} is what you already know how to do. The decision may need a different balance than the one you usually choose.`;
+    return `${intro} The current pressure lands on both ends of the axis. You are learning something through ${north}, while ${south} is the more familiar side. The decision may need a different balance than the one you usually choose.`;
   }
   if (northAspect === "trine" || northAspect === "sextile") {
     return `${intro} There is a workable opening between ${north} and ${south}. What you already know how to do can support the direction you are still developing instead of competing with it.`;
   }
   if (northAspect === "opposition") {
-    return `${intro} ${capitalized(south)} may be especially easy to fall back into, while ${north} is the direction that needs more deliberate room. Familiarity is useful, but it should not make the whole decision for you.`;
+    return `${intro} It may be especially easy to fall back into ${south}, while ${north} needs more deliberate room. Familiarity is useful, but it should not make the whole decision for you.`;
   }
-  return `${intro} What you are developing now runs through ${north}. ${capitalized(south)} is the side you may already know how to handle. You do not have to reject what you know, but it should not make the whole decision for you.`;
+  return `${intro} What you are developing now runs through ${north}. The more familiar side involves ${south}. You do not have to reject what you know, but it should not make the whole decision for you.`;
 }
 
 export function skyActiveChartEvents(aspects: SkyActiveChartAspect[]): SkyActiveChartEvent[] {
