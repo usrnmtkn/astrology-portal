@@ -1,8 +1,13 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { ReportCheckoutResultView, ReportDeliveryView } from "../components/reports/ReportDeliveryView";
+import type { ReportTheme } from "../components/reports/ReportTopNavigation";
 import "../styles/report-article.css";
 import "../styles/report-library.css";
+
+const ReportTopNavigation = lazy(() =>
+  import("../components/reports/ReportTopNavigation").then((module) => ({ default: module.ReportTopNavigation }))
+);
 
 const ReportLibraryView = lazy(() =>
   import("../components/reports/ReportLibraryView").then((module) => ({ default: module.ReportLibraryView }))
@@ -16,12 +21,12 @@ function LibraryFallback() {
   return <main className="report-delivery-state" role="status" />;
 }
 
-function storedReportTheme() {
+function storedReportTheme(): ReportTheme {
   return window.localStorage.getItem("tldrastro:theme") === "dark" ? "dark" : "light";
 }
 
 function ReportThemeBoundary({ children }: { children: ReactNode }) {
-  const theme = storedReportTheme();
+  const [theme, setTheme] = useState<ReportTheme>(storedReportTheme);
 
   useEffect(() => {
     const previousTheme = document.documentElement.dataset.theme;
@@ -32,7 +37,14 @@ function ReportThemeBoundary({ children }: { children: ReactNode }) {
     };
   }, [theme]);
 
-  return <div className={`report-route-root theme-${theme}`}>{children}</div>;
+  return (
+    <div className={`app-shell mode-detail report-route-root theme-${theme}`}>
+      <Suspense fallback={null}>
+        <ReportTopNavigation theme={theme} onThemeChange={setTheme} />
+      </Suspense>
+      {children}
+    </div>
+  );
 }
 
 export function ReportRoute() {
