@@ -1,0 +1,61 @@
+name: Temporary Sky residency bundle trim 2
+
+on:
+  push:
+    branches:
+      - fix/sky-residency-visual-smoke-20260906
+
+permissions:
+  contents: write
+
+jobs:
+  trim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fix/sky-residency-visual-smoke-20260906
+      - name: Reduce merge overhead
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path('apps/web/src/features/sky/SkyDetailArticle.tsx')
+          s = p.read_text()
+          a = s.index('  const existingDetailSections = detail.sections ?? [];\n')
+          b = s.index('  const metaRows = detailMetaRows(detail.meta);\n', a)
+          repl = '''  const detailSections = residencyAspectSections
+            ? [
+                ...residencyAspectSections,
+                ...(detail.sections ?? []).filter((section) => (
+                  section.role !== "aspect"
+                  || !residencyAspectSections.some((candidate) => candidate.heading === section.heading)
+                ))
+              ]
+            : (detail.sections ?? []);
+          '''
+          p.write_text(s[:a] + repl + s[b:])
+
+          p = Path('scripts/test-sky-placement-residency-aspects.mts')
+          s = p.read_text()
+          old = r'''    /residencyContext && residencyAspectSections !== null[\s\S]*?existingAspectSections\.filter[\s\S]*?residencyAspectHeadings/u,'''
+          if old in s:
+              s = s.replace(old, r'''    /residencyAspectSections[\s\S]*?residencyAspectSections\.some/u,''', 1)
+          else:
+              old = r'''    /residencyContext && residencyAspectSections[\s\S]*?residencyAspectSections\.some/u,'''
+              if old not in s:
+                  raise SystemExit('test assertion target not found')
+              s = s.replace(old, r'''    /residencyAspectSections[\s\S]*?residencyAspectSections\.some/u,''', 1)
+          p.write_text(s)
+          PY
+          git diff --check
+      - name: Commit and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/temp-sky-residency-bundle-trim-2.yml
+          git add apps/web/src/features/sky/SkyDetailArticle.tsx scripts/test-sky-placement-residency-aspects.mts
+          git commit -m "Reduce Sky residency merge overhead"
+          git push origin HEAD:fix/sky-residency-visual-smoke-20260906
