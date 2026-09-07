@@ -97,7 +97,7 @@ jobs:
           node scripts/stage-calendar-aspect-content-studio-drafts.mjs --apply --verify-remote --out=/tmp/calendar-aspect-content-studio-drafts.json
 
   sync-published-exact-aspects:
-    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.sync_published_exact_aspects)
+    if: github.event_name == 'pull_request' || github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.sync_published_exact_aspects)
     needs: calendar-aspect-content-studio
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -114,7 +114,10 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           node scripts/test-published-calendar-aspect-content-studio.mjs
-          if [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "Pull request verification is read-only; checking the production 439-row exact-aspect mirror byte-for-byte."
+            node scripts/seed-published-calendar-aspect-content-studio.mjs --verify-remote
+          elif [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
             echo "Service-role credentials are available; applying and verifying the governed exact-aspect mirror."
             node scripts/seed-published-calendar-aspect-content-studio.mjs --apply --verify-remote
           else
