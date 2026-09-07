@@ -112,6 +112,21 @@ assert.deepEqual(lockedRequest.knowledgeIds, [
   "you-transit-v3-pluto-square-sun",
   "house-2"
 ]);
+
+const socialSubjectId = "social:91b75380-8fce-4dd4-93d9-b69a964a1279";
+const socialLockedRequest = friendTransitReadingRequestLock({
+  brief: { ...rawBrief, friendName: "Social Friend" },
+  subjectId: socialSubjectId,
+  targetDate: "2026-09-06"
+});
+assert.equal(
+  socialLockedRequest.contentKey,
+  `friend-transit-reading/${socialSubjectId}/2026-09-06`,
+  "Accepted social friends must use the same paid-reading request lock as manually saved charts."
+);
+assert.equal(socialLockedRequest.surface, "friends");
+assert.equal(socialLockedRequest.headline, "What's going on with Social Friend right now?");
+
 assert.throws(
   () => friendTransitReadingRequestLock({
     brief: rawBrief,
