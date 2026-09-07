@@ -60,10 +60,21 @@ export function isDynamicNatalPlacementExactRecord(record: FallbackDashboardExte
     && record.render_policy === "reader-only-exact-lived-v1";
 }
 
+const natalAspectBodies = new Set([...natalBodies, "ascendant", "midheaven", "descendant", "imum-coeli", "vertex", "part-of-fortune"]);
+const natalAspects = new Set(["conjunction", "opposition", "square", "trine", "sextile", "quincunx", "semisextile", "semisquare", "sesquiquadrate", "quintile", "biquintile"]);
+export function isDynamicNatalAspectExactRecord(record: FallbackDashboardExtensionRecord) {
+  const prefix = "fallback-hook/natal-aspect-lived/";
+  if (!record.contentKey.startsWith(prefix)) return false;
+  const parts = record.contentKey.slice(prefix.length).split("/");
+  return parts.length === 3 && natalAspectBodies.has(parts[0]) && natalAspects.has(parts[1]) && natalAspectBodies.has(parts[2])
+    && parts[0] !== parts[2] && record.content_role === "full_copy" && record.reader_only === true && record.render_policy === "reader-only-exact-lived-v1";
+}
+
 export function isFallbackDashboardRecordAllowed(
   record: FallbackDashboardExtensionRecord,
   currentPackageKeys: ReadonlySet<string>
 ) {
   return currentPackageKeys.has(record.contentKey)
-    || isDynamicNatalPlacementExactRecord(record);
+    || isDynamicNatalPlacementExactRecord(record)
+    || isDynamicNatalAspectExactRecord(record);
 }

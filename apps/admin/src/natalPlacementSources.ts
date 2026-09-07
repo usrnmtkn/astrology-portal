@@ -172,8 +172,9 @@ export function natalPlacementSourceGroups(
   const signGroup: NatalPlacementSourceGroup = {
     key: "sign",
     label: `${planetLabel} in ${signLabel}`,
-    description: "These rows build the first paragraph about the planet or point in its zodiac sign.",
+    description: "Edit the complete sign passage or the shared variables below. A published complete passage takes priority over the shared sign assembly.",
     sources: [
+      { key: `fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, label: `Complete ${planetLabel} in ${signLabel} passage`, scope: `When published, this complete You-view passage replaces the shared sign assembly across every house.` },
       { key: `fallback-hook/planet-intro/${planet}`, label: `${planetLabel} introduction`, scope: `Used by every natal ${planetLabel} placement.` },
       { key: `fallback-vocab/planet-verb/${planet}`, label: `${planetLabel} action phrase`, scope: `Used by every natal ${planetLabel} sign placement.` },
       { key: `fallback-vocab/sign-adverb/${sign}`, label: `${signLabel} style phrase`, scope: `Used by every natal placement in ${signLabel}.` },
@@ -234,6 +235,7 @@ export function natalPlacementSourceGroups(
       label: `${planetLabel} in the ${houseLabel} house`,
       description: "These rows build the second paragraph about how this placement works in the selected house.",
       sources: [
+        { key: `fallback-hook/natal-you-placement-house-final/${planet}/${house}`, label: `Complete ${planetLabel} in the ${houseLabel} house passage`, scope: `When published, this You-view passage takes priority over the shared house assembly across every zodiac sign.` },
         { key: `fallback-hook/house-meaning/${house}`, label: `${houseLabel} house meaning`, scope: `Used by every natal placement in the ${houseLabel} house.` },
         { key: `fallback-hook/placement-house-sentence/${planet}/${house}`, label: `${planetLabel} in the ${houseLabel} house passage`, scope: `Used for ${planetLabel} in the ${houseLabel} house, across every zodiac sign.` }
       ]

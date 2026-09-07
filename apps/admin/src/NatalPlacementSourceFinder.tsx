@@ -1,3 +1,5 @@
+import ContentLiveStatusBadge from "./ContentLiveStatus";
+import NatalPlacementSourceEditor, { type NatalEditableRow, type NatalSourceEdits } from "./NatalPlacementSourceEditor";
 import NatalPlacementReaderPreview, { natalPlacementOverrideDraft } from "./NatalPlacementReaderPreview";
 import { natalPlacementReaderHref, openContextualReaderHref } from "./adminReaderDestinations";
 import {
@@ -15,6 +17,9 @@ import {
 } from "./natalPlacementSources";
 
 type PreviewRow = {
+  id?: string | null;
+  inventory_only?: boolean;
+  updated_at?: string | null;
   body: string | null;
   content_key: string;
   headline: string | null;
@@ -27,6 +32,8 @@ type Props = {
   house: NatalPlacementHouse | "";
   isLoading: boolean;
   onCreateOverride: (contentKey: string, label: string, body: string) => void;
+  onDirtyChange: (key: string, dirty: boolean) => void;
+  onSaveSource: (row: NatalEditableRow, edits: NatalSourceEdits, publish: boolean) => Promise<boolean>;
   onOpenSource: (contentKey: string, label: string, previewTemplate?: boolean) => void;
   motion: NatalPlacementMotion;
   onSelectionChange: (next: { house?: NatalPlacementHouse | ""; motion?: NatalPlacementMotion; planet?: NatalPlacementPlanet | ""; sign?: NatalPlacementSign | "" }) => void;
@@ -46,15 +53,8 @@ function normalizeText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function statusLabel(status: string) {
-  if (status === "LIVE") return "Published";
-  if (status === "REVIEWED") return "Reviewed";
-  if (status === "ARCHIVED") return "Archived";
-  if (status === "ERROR") return "Error";
-  return "Draft";
-}
 
-export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onOpenSource, onSelectionChange, planet, rows, secret, sign }: Props) {
+export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onDirtyChange, onSaveSource, onOpenSource, onSelectionChange, planet, rows, secret, sign }: Props) {
   const signSelectionComplete = Boolean(planet && sign);
   const fullSelectionComplete = Boolean(signSelectionComplete && house);
   const readerHref = fullSelectionComplete
@@ -65,21 +65,38 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
     : [];
 
   const renderSource = (source: ReturnType<typeof natalPlacementSourceGroups>[number]["sources"][number], previewTemplate = false) => {
+    if (source.key.startsWith("fallback-template/natal.planet-in-sign/") && !rows.some((row) => row.content_key === source.key)) {
+      source = { ...source, key: "fallback-template/natal.planet-in-sign" };
+    }
+    if (source.key.startsWith("fallback-hook/planet-intro/")) {
+      const preferredKey = source.key.replace("/planet-intro/", "/planet-lived/");
+      if (rows.some((row) => row.content_key === preferredKey)) {
+        source = { ...source, key: preferredKey, scope: `Preferred You-view introduction for ${titleFromKey(planet)} when the shared sign assembly is used.` };
+      }
+    }
+    if (source.key.includes("/natal-you-placement-house-final/")) {
+      const preferredKey = source.key.replace("/natal-you-placement-house-final/", "/placement-house-lived/");
+      if (!rows.some((row) => row.content_key === source.key) && rows.some((row) => row.content_key === preferredKey)) source = { ...source, key: preferredKey };
+      if (!rows.some((row) => row.content_key === source.key)) return null;
+    }
     const savedRow = rows.find((row) => row.content_key === source.key);
-    const isOptionalExactOverride = source.key.startsWith("fallback-hook/natal-you-placement-complete-final/");
+    const isOptionalExactOverride = source.key.startsWith("fallback-hook/natal-you-placement-complete-final/") || source.key.startsWith("fallback-hook/natal-you-placement-sign-final/");
     const preview = savedRow ? normalizeText(savedRow.body) || normalizeText(savedRow.summary) || normalizeText(savedRow.headline) : "";
     return (
-      <article className="admin-natal-source-card" key={source.key}>
+      <article className={`admin-natal-source-card${source.key.includes("placement-sign-final/") ? " admin-natal-source-complete" : ""}`} key={source.key}>
         <div className="admin-natal-source-card-copy">
           <div className="admin-natal-source-card-heading">
             <h4>{source.label}</h4>
-            {savedRow && <span className={`ui-pill admin-status status-${savedRow.status.toLowerCase()}`}>{statusLabel(savedRow.status)}</span>}
+            {savedRow && <ContentLiveStatusBadge row={savedRow} />}
           </div>
           <p>{source.scope}</p>
           <p className="admin-natal-source-key"><span>Source key</span><code>{source.key}</code></p>
-          {preview && <blockquote>{preview}</blockquote>}
+          {preview && (previewTemplate || savedRow?.inventory_only) && <blockquote>{preview}</blockquote>}
           {isOptionalExactOverride && !savedRow && <p className="admin-field-hint">No exact override is saved. The reader currently receives the composed preview shown above.</p>}
         </div>
+        {savedRow && !savedRow.inventory_only && !previewTemplate && (
+          <NatalPlacementSourceEditor row={savedRow} onDirtyChange={onDirtyChange} label={source.label} disabled={isLoading} onSave={onSaveSource} />
+        )}
         {(!isOptionalExactOverride || savedRow) && (
           <button type="button" onClick={() => onOpenSource(source.key, source.label, previewTemplate)} disabled={isLoading}>
             {previewTemplate ? savedRow ? "Preview template" : "Load preview" : savedRow ? "Edit source" : "Load and edit"}

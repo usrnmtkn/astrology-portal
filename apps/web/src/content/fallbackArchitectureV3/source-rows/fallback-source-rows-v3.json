@@ -96366,6 +96366,31 @@
     "payloadSha256": "9e7a0ed358ceeb5aa88936f5ed5fa15d31e18283944cd5459f8b24c6b8ff8c00",
     "approvedAt": "2026-08-31"
    }
+  },
+  {
+   "contentKey": "fallback-hook/natal-you-placement-sign-final/uranus/scorpio",
+   "content_role": "full_copy",
+   "grammar_frame": "complete_sentence",
+   "headline": "Uranus in Scorpio",
+   "body": "Uranus describes the part of you that needs freedom to think for yourself, question what you inherited, and change the rules when they no longer make sense. It is not rebellion for the sake of rebellion. It is the part of you that has a hard time pretending something works once you can see that it does not.\nWith Uranus in Scorpio, you are especially sensitive to what is being controlled, withheld, or left unsaid. Surface explanations rarely satisfy you when you know there is more happening underneath. You want to understand who has power, what people are afraid to admit, and why a pattern keeps repeating even after everyone claims the problem has been solved.\nScorpio is a fixed sign, so you may tolerate more than people realize before deciding something has to change. Then, once you understand what is really happening, it can be difficult to keep participating in the old arrangement. The challenge is not waiting until you are so frustrated that freedom feels possible only through a complete break. Some situations need to end. Others can change because you were willing to name the problem before resentment made the decision for you.\nAt your best, you are willing to examine what other people would rather avoid. You can stay with a difficult question long enough to understand what is actually driving it, and once you understand the pattern, you are capable of changing it at the root. Your freedom comes from knowing what has power over you well enough to choose differently.",
+   "reader_only": true,
+   "render_policy": "reader-only-exact-lived-v1",
+   "review_status": "approved",
+   "source_keys": [
+    "docs/content-management/owner-copy/uranus-in-scorpio-2026-09-07.txt",
+    "docs/content-management/owner-copy/uranus-in-scorpio-2026-09-07.json"
+   ],
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "docs/content-management/owner-copy/uranus-in-scorpio-2026-09-07.json",
+    "payloadSha256": "06c6cd212215749bd6cbad6a858a4ee4850e885cca61a9e118799ad16acd1ef7",
+    "approvedAt": "2026-09-07"
+   },
+   "owner_approved": true,
+   "body_sha256": "06c6cd212215749bd6cbad6a858a4ee4850e885cca61a9e118799ad16acd1ef7",
+   "word_count": 256,
+   "runtime_family": "natal-you-placement-sign-final",
+   "runtime_key": "uranus|scorpio"
   }
  ]
 }

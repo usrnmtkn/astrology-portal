@@ -1,3 +1,4 @@
+import ContentLiveStatusBadge from "./ContentLiveStatus";
 import {
   natalAspectDisplayTitle,
   natalAspectMatchesSelection,
@@ -9,6 +10,8 @@ import {
 } from "./natalAspectSources";
 
 type PreviewRow = {
+  id?: string | null;
+  updated_at?: string | null;
   body: string | null;
   content_key: string;
   headline: string | null;
@@ -31,13 +34,6 @@ function titleCase(value: string) {
   return value.split("-").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
 }
 
-function statusLabel(status: string) {
-  if (status === "LIVE") return "Published";
-  if (status === "REVIEWED") return "Reviewed";
-  if (status === "ARCHIVED") return "Archived";
-  if (status === "ERROR") return "Error";
-  return "Draft";
-}
 
 function previewForRow(row: PreviewRow) {
   return row.body?.trim() || row.summary?.trim() || row.headline?.trim() || "";
@@ -151,7 +147,7 @@ export default function NatalAspectSourceFinder({
                   <div className="admin-natal-source-card-copy">
                     <div className="admin-natal-source-card-heading">
                       <h4>{title}</h4>
-                      <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{statusLabel(row.status)}</span>
+                      <ContentLiveStatusBadge row={row} />
                     </div>
                     <p>Exact natal aspect writing for the reader’s birth chart.</p>
                     <p className="admin-natal-source-key"><span>Source key</span><code>{row.content_key}</code></p>

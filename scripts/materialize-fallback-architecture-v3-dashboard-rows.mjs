@@ -208,7 +208,7 @@ function statusForReview(role, reviewStatus, contentKey) {
   }
 
   if (
-    ["full_copy", "house_horoscope_core"].includes(role)
+    ["full_copy", "house_horoscope_core", "authored_card"].includes(role)
     && ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)
   ) {
     return { status: "LIVE", lane: "serving", reviewState: null };
@@ -432,6 +432,7 @@ function mapPackageRecord(record, bucket) {
     knowledge_ids: [],
     source_snapshot: {
       contentType: bucket,
+      ...(contentKey.startsWith("authored/sky-lunation-macro/") ? { contentSystem: "authored", authoringSource: "owner-approved-lunation-macro" } : {}),
       content_role: contentRole,
       review_status: reviewStatus,
       positive_test: record.positive_test ?? null,

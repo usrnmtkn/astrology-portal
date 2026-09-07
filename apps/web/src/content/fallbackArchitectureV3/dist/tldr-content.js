@@ -485,6 +485,79 @@ function fillDailyGlancePersonSlots(bodyThey, slots) {
   });
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/readerContentBoundary.browser.ts
+var READER_CONTENT_TYPES = Object.freeze({
+  ASTROLOGY: "astrology",
+  TAROT: "tarot",
+  MIXED: "mixed"
+});
+var READER_COPY_FIELDS = Object.freeze([
+  "headline",
+  "tagline",
+  "title",
+  "body",
+  "body_you",
+  "body_they",
+  "focus",
+  "strategy",
+  "summary",
+  "preview_note",
+  "core_theme",
+  "sign_jurisdiction",
+  "lived_experience",
+  "rulership_twist",
+  "history_echo",
+  "closing_charge"
+]);
+var EXPLICIT_TAROT_REFERENCE = /\b(?:tarot|major\s+arcana|minor\s+arcana)\b/iu;
+var DISTINCTIVE_MAJOR_ARCANA_CARD_NAME = "(?:the\\s+)?(?:chariot|emperor|empress|hierophant|high\\s+priestess|hermit|magician|fool|lovers|devil|hanged\\s+man|wheel\\s+of\\s+fortune|temperance|judg(?:e)?ment)";
+var AMBIGUOUS_MAJOR_ARCANA_CARD_NAME = "(?:Strength|Justice|Death|The\\s+Tower|The\\s+Star|The\\s+Moon|The\\s+Sun|The\\s+World)";
+var MINOR_ARCANA_CARD_NAME = "(?:ace|two|three|four|five|six|seven|eight|nine|ten|page|knight|queen|king)\\s+of\\s+(?:wands|cups|swords|pentacles|coins)";
+var DISTINCTIVE_OR_MINOR_CARD_NAME = `(?:${DISTINCTIVE_MAJOR_ARCANA_CARD_NAME}|${MINOR_ARCANA_CARD_NAME})`;
+var TAROT_CARD_CONTEXT = new RegExp(
+  `(?:\\b${DISTINCTIVE_OR_MINOR_CARD_NAME}\\b[^.!?\\n]{0,80}\\b(?:cards?|arcana|tarot)\\b|\\b(?:cards?|arcana|tarot)\\b[^.!?\\n]{0,80}\\b${DISTINCTIVE_OR_MINOR_CARD_NAME}\\b|\\b(?:corresponds?\\s+to|represented\\s+by|associated\\s+with|symboli[sz]ed\\s+by)\\b[^.!?\\n]{0,80}\\b${DISTINCTIVE_OR_MINOR_CARD_NAME}\\b)`,
+  "iu"
+);
+var AMBIGUOUS_TAROT_CARD_CONTEXT = new RegExp(
+  `(?:\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b[^.!?\\n]{0,24}\\bcard\\b|\\b(?:tarot|arcana)\\b[^.!?\\n]{0,80}\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b|\\bcard\\b[^.!?\\n]{0,24}\\b(?:called|named|is)\\s+${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b|\\b(?:corresponds?\\s+to|represented\\s+by|symboli[sz]ed\\s+by)\\b[^.!?\\n]{0,80}\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b)`,
+  "u"
+);
+function readerCopyStrings(row) {
+  const values = READER_COPY_FIELDS.map((field) => row[field]).filter((value) => typeof value === "string");
+  for (const section of row.article_sections ?? []) {
+    if (typeof section?.heading === "string") values.push(section.heading);
+    if (typeof section?.body === "string") values.push(section.body);
+  }
+  for (const entry of row.rising_horoscopes ?? []) {
+    if (typeof entry?.body === "string") values.push(entry.body);
+  }
+  return values;
+}
+function readerContentType(row) {
+  const declared = String(row.reader_content_type ?? row.content_type ?? "").trim().toLowerCase();
+  return Object.values(READER_CONTENT_TYPES).includes(declared) ? declared : null;
+}
+function hasTarotReferenceInReaderCopy(row) {
+  return readerCopyStrings(row).some((value) => EXPLICIT_TAROT_REFERENCE.test(value) || TAROT_CARD_CONTEXT.test(value) || AMBIGUOUS_TAROT_CARD_CONTEXT.test(value));
+}
+function mixedContentHasOwnerApproval(row) {
+  const boundary = row.content_boundary;
+  const approval = row.approval;
+  return boundary?.mixedOwnerApproved === true && approval?.approvalLevel === "exact_owner_approved" && typeof approval.recordPath === "string" && approval.recordPath.trim().length > 0 && typeof approval.payloadSha256 === "string" && /^[a-f0-9]{64}$/iu.test(approval.payloadSha256) && typeof approval.approvedAt === "string" && approval.approvedAt.trim().length > 0;
+}
+function readerContentBoundaryReason(row) {
+  const contentType = readerContentType(row);
+  if (!contentType) return null;
+  if (contentType === READER_CONTENT_TYPES.TAROT) return null;
+  if (contentType === READER_CONTENT_TYPES.MIXED) {
+    return mixedContentHasOwnerApproval(row) ? null : "mixed-astrology-tarot-owner-approval-required";
+  }
+  return hasTarotReferenceInReaderCopy(row) ? "tarot-reference-in-astrology-copy" : null;
+}
+function passesReaderContentBoundary(row) {
+  return readerContentBoundaryReason(row) === null;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts
 var READER_ELIGIBLE_REVIEW_STATUSES = /* @__PURE__ */ new Set([
   "approved",
@@ -515,6 +588,7 @@ function transitReaderTier(row) {
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return null;
   }
+  if (!passesReaderContentBoundary(row)) return null;
   return hasExactOwnerApproval(row) ? "exact-owner-approved" : "legacy-reviewed";
 }
 function synastryReaderTier(row) {
@@ -522,6 +596,7 @@ function synastryReaderTier(row) {
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return null;
   }
+  if (!passesReaderContentBoundary(row)) return null;
   const aspect = row.contentKey.split("/").at(-1) ?? "";
   if (EXACT_SYNASTRY_ASPECTS.has(aspect) && hasExactOwnerApproval(row)) {
     return "exact-owner-approved";
@@ -547,6 +622,7 @@ function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) {
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return false;
   }
+  if (!passesReaderContentBoundary(row)) return false;
   if (row.contentKey.startsWith("fallback-hook/synastry-pair/")) {
     return synastryReaderTier(row) !== null;
   }
@@ -3780,6 +3856,12 @@ var CONTINUOUS_PLANETS = Object.freeze([
   "pluto",
   "chiron"
 ]);
+var PLACEMENT_LUNAR_EVENT_TYPES = Object.freeze([
+  "new-moon",
+  "full-moon",
+  "solar-eclipse",
+  "lunar-eclipse"
+]);
 var CONTINUOUS_OWNER_APPROVED_KEYS = new Set(sky_v4_continuous_120_owner_approval_v1_default.approved_keys);
 var READER_COPY_OWNER_APPROVED_KEYS = new Set(sky_v4_reader_copy_280_owner_approval_v1_default.approved_keys);
 var READER_COPY_SERVING_KEYS = new Set(sky_v4_reader_copy_280_owner_approval_v1_default.approved_keys);
@@ -3825,6 +3907,101 @@ function withoutUnresolvedSlots(value) {
 }
 function fillFacts(value, facts) {
   return text(value).replace(/\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu, (match, key) => Object.hasOwn(facts, key) ? text(facts[key]) : match);
+}
+function releasedPackage(source, schema, recordCount, chunkCount, expectedKeys, complete) {
+  if (source?.schema !== schema || source.review_status !== "approved" || source.owner_approved !== true || source.serving_enabled !== true || !text(source.approval_id).trim() || !text(source.release_id).trim() || source.expected_records !== recordCount || source.records?.length !== recordCount || source.chunks?.length !== chunkCount) return null;
+  const actual = new Set(source.records.map((row) => row.ContentKey));
+  return actual.size === recordCount && expectedKeys.every((key) => actual.has(key)) && source.records.every(complete) ? source : null;
+}
+var CONTINUOUS_CORRECTION_KEYS = CONTINUOUS_PLANETS.flatMap((planet) => SIGNS.map((sign) => `sky-placement/article/${planet}/${sign}`));
+var PLACEMENT_LUNAR_CONTEXT_KEYS = CONTINUOUS_PLANETS.flatMap((planet) => PLACEMENT_LUNAR_EVENT_TYPES.map((event) => `sky-placement/lunar-context/${event}/${planet}`));
+function releasedCorrectionPackage(source) {
+  return releasedPackage(
+    source,
+    "tldrastro-sky-v4-continuous-corpus-correction/v1",
+    120,
+    4,
+    CONTINUOUS_CORRECTION_KEYS,
+    (row) => row.TLDRWhat?.trim() && row.TLDRTakeaway?.trim() && row.Fallback?.hook?.trim() && row.Fallback?.lived?.trim() && row.Fallback?.turn?.trim()
+  );
+}
+function applySkyV4ContinuousCorpusCorrection(corpus, source) {
+  const released = releasedCorrectionPackage(source);
+  if (!released) return corpus;
+  const next = structuredClone(record(corpus));
+  const corrections = new Map(released.records.map((row) => [row.ContentKey, row]));
+  next.content.continuous = next.content.continuous.map((article) => {
+    const correction = corrections.get(article.contentKey);
+    if (!correction) return article;
+    return {
+      ...article,
+      tldrWhat: correction.TLDRWhat,
+      tldrTakeaway: correction.TLDRTakeaway,
+      ...correction.PlacementArticle?.trim() ? { placementArticle: correction.PlacementArticle } : {},
+      fallback: structuredClone(correction.Fallback),
+      editorialStatus: "owner_approved_corpus_correction_2026_09_01",
+      implementationStatus: "serving_via_owner_approved_correction_layer",
+      ownerApprovedForV4Role: true,
+      qa: "PASS_OWNER_APPROVED_CORPUS_CORRECTION"
+    };
+  });
+  next.activeContinuousCorrection = {
+    schema: released.schema,
+    approvalId: released.approval_id,
+    releaseId: released.release_id,
+    expectedRecords: released.expected_records
+  };
+  return next;
+}
+function releaseState(source) {
+  return {
+    schema: source.schema,
+    expectedRecords: source.expected_records,
+    recordCount: source.records.length,
+    ownerApproved: source.owner_approved === true,
+    servingEnabled: source.serving_enabled === true,
+    reviewStatus: source.review_status,
+    approvalId: source.approval_id,
+    releaseId: source.release_id
+  };
+}
+function skyV4ContinuousCorrectionReleaseState(source) {
+  return {
+    ...releaseState(source),
+    parentCanonicalPackageVersion: source.parent_canonical_package_version,
+    parentCanonicalJsonSha256: source.parent_canonical_json_sha256
+  };
+}
+function releasedLunarContextPackage(source) {
+  return releasedPackage(
+    source,
+    "tldrastro-sky-v4-placement-lunar-context/v1",
+    40,
+    2,
+    PLACEMENT_LUNAR_CONTEXT_KEYS,
+    (row) => row.FullPageBody?.trim() && row.FallbackBody?.trim()
+  );
+}
+function placementLunarContext(source, input) {
+  const released = releasedLunarContextPackage(source);
+  if (!released || lower(input.route) !== "placement") return null;
+  const context = (input.contexts ?? []).find((candidate) => lower(candidate.contextKind) === "placement-lunar-event");
+  const eventType = slug(context?.contextBodyOrEvent);
+  const eventSign = slug(context?.contextSign);
+  if (!PLACEMENT_LUNAR_EVENT_TYPES.includes(eventType) || !SIGNS.includes(eventSign)) return null;
+  const module = released.records.find((row) => lower(row.Planet) === lower(input.planet) && row.EventType === eventType);
+  if (!module) return null;
+  return {
+    module,
+    facts: {
+      ...record(input.facts),
+      eventSign: title3(eventSign),
+      oppositeSign: title3(SIGNS[(SIGNS.indexOf(eventSign) + 6) % 12])
+    }
+  };
+}
+function skyV4PlacementLunarContextReleaseState(source) {
+  return releaseState(source);
 }
 function assertSkyV4CanonicalPackage(corpus) {
   if (corpus?.packageVersion !== SKY_V4_CANONICAL_PACKAGE_VERSION) {
@@ -4392,7 +4569,7 @@ function renderSkyV4ContinuousPreview(corpus, input) {
     "fallback"
   );
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook ? fallbackOverlays[0]?.FallbackHookOverlay ?? "" : "";
-  const fallback = article && input.fallbackAvailable !== false ? [article.fallback?.hook, fallbackOverlay, article.fallback?.lived, article.fallback?.turn].filter(Boolean).map((part) => withoutUnresolvedSlots(fillFacts(part, facts))).join("\n\n") : "";
+  const fallback = article && input.fallbackAvailable !== false ? [article.fallback?.hook, input.lunarFallbackBody, fallbackOverlay, article.fallback?.lived, article.fallback?.turn].filter(Boolean).map((part) => withoutUnresolvedSlots(fillFacts(part, facts))).join("\n\n") : "";
   const mainBody = fullArticle || fallback;
   const resolution = fullArticle ? "canonical-article" : fallback ? "exact-fallback" : "facts-only";
   const aspects = selectSkyV4Aspects(input.aspects, { subjectBody: input.planet });
@@ -4406,6 +4583,7 @@ function renderSkyV4ContinuousPreview(corpus, input) {
 **Takeaway:** ${article.tldrTakeaway}`);
     if (input.seasonalContext) blocks.push(input.seasonalContext);
     blocks.push(mainBody);
+    if (fullArticle && text(input.lunarFullPageBody).trim()) blocks.push(input.lunarFullPageBody);
     if (fullArticle && overlays.length) blocks.push(overlays.map((overlay) => overlay.OverlayBody).join("\n\n"));
   }
   if ((input.motionConditions ?? []).length) {
@@ -4684,7 +4862,7 @@ ${renderAspect(aspect)}`
   };
 }
 function renderSkyV4StudioPreview(corpus, input) {
-  const source = skyV4ContentStudioRecords(corpus).find((row) => row.contentKey === input.contentKey) ?? (input.governedAspectSource ? skyV4GovernedAspectStudioRecord(input.governedAspectSource) : null);
+  const source = skyV4ContentStudioRecords(corpus).find((row) => row.contentKey === input.contentKey) ?? input.placementLunarContextSource ?? (input.governedAspectSource ? skyV4GovernedAspectStudioRecord(input.governedAspectSource) : null);
   if (!source) throw new Error(`SKY_V4_SOURCE_GAP: ${input.contentKey}`);
   const allowed = new Set(source.studio_editable_fields.map((field) => field.path));
   const draftFields = record(input.draftFields);
@@ -4739,6 +4917,32 @@ function renderSkyV4StudioPreview(corpus, input) {
       servingEnabled: false
     };
   }
+  if (effective.studio_content_type === "placement-lunar-context") {
+    const surface = record(input.previewSurface);
+    const subjectSign = text(surface.subjectSign || "Aries");
+    const facts2 = {
+      eventSign: text(record(input.facts).eventSign || "Aries"),
+      oppositeSign: text(record(input.facts).oppositeSign || "Libra"),
+      ...record(input.facts)
+    };
+    const base = renderSkyV4ContinuousPreview(corpus, {
+      ...input,
+      planet: effective.Planet,
+      sign: subjectSign,
+      facts: facts2
+    });
+    const fullPageBody = withoutUnresolvedSlots(fillFacts(effective.FullPageBody, facts2));
+    const fallbackBody = withoutUnresolvedSlots(fillFacts(effective.FallbackBody, facts2));
+    return {
+      ...base,
+      contentKey: input.contentKey,
+      contentType: effective.studio_content_type,
+      sourceBaselineSha256: effective.source_baseline_sha256,
+      servingEnabled: false,
+      resolution: "placement-lunar-context-review",
+      page: [base.page, "## What changes on the matching event day", fullPageBody, "## Fallback version", fallbackBody].filter(Boolean).join("\n\n")
+    };
+  }
   const facts = record(input.facts);
   const body = withoutUnresolvedSlots(fillFacts(studioReaderBody(effective), facts));
   const blocks = [`# ${text(effective.headline) || title3(input.contentKey)}`, body];
@@ -4783,7 +4987,7 @@ function nodePlacementKey(body, sign) {
   if (normalized === "south-node" || normalized === "south node") return `sky-nodes/south-node/${lower(sign)}`;
   return null;
 }
-function renderSkyV4ReaderRoute(corpus, input) {
+function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   if (input.draftFields && Object.keys(input.draftFields).length) {
     throw new Error("SKY_V4_READER_BOUNDARY: drafts cannot render on reader routes.");
   }
@@ -4823,7 +5027,21 @@ function renderSkyV4ReaderRoute(corpus, input) {
     contentKey = `sky-placement/seasonal-context/${lower(input.sign)}/${lower(input.hemisphere)}`;
   }
   const source = releasedReaderRecord(corpus, contentKey);
-  const preview = renderSkyV4StudioPreview(corpus, { ...input, contentKey, draftFields: {} });
+  const lunarContext = placementLunarContext(lunarContextSource, input);
+  const lunarFacts = lunarContext?.facts ?? record(input.facts);
+  const lunarFullPageBody = lunarContext ? withoutUnresolvedSlots(fillFacts(lunarContext.module.FullPageBody, lunarFacts)) : "";
+  const lunarFullPageSection = lunarFullPageBody ? `## What changes today
+
+${lunarFullPageBody}` : "";
+  const lunarFallbackBody = lunarContext ? withoutUnresolvedSlots(fillFacts(lunarContext.module.FallbackBody, lunarFacts)) : "";
+  const preview = renderSkyV4StudioPreview(corpus, {
+    ...input,
+    facts: lunarFacts,
+    contentKey,
+    draftFields: {},
+    lunarFullPageBody: lunarFullPageSection,
+    lunarFallbackBody
+  });
   const baseBody = studioReaderBody(source);
   const readerParts = [];
   const pushReaderBody = (value) => {
@@ -4846,6 +5064,7 @@ function renderSkyV4ReaderRoute(corpus, input) {
     }
   }
   if (baseBody) pushReaderBody(baseBody);
+  if (lunarFullPageBody) readerParts.push(lunarFullPageBody);
   for (const overlayKey of preview.selectedOverlayKeys ?? []) {
     const overlay = releasedReaderRecord(corpus, overlayKey);
     pushReaderBody(overlay.OverlayBody);
@@ -4871,6 +5090,7 @@ function renderSkyV4ReaderRoute(corpus, input) {
     servingEnabled: true,
     versionStatus: "approved-serving-baseline",
     sourceBaselineSha256: source.source_baseline_sha256,
+    ...lunarContext ? { placementLunarContextKey: lunarContext.module.ContentKey } : {},
     readerParts,
     page: preview.page
   };
@@ -4896,7 +5116,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-04a";
+var PACKAGE_VERSION = "v3-2026-09-07a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -4966,6 +5186,7 @@ export {
   SKY_V4_OVERLAY_DEFAULTS,
   SourceGapError,
   TRUE_LILITH_KEY_DATES_INTRO,
+  applySkyV4ContinuousCorpusCorrection,
   assertSkyV4CanonicalPackage,
   assertSkyV4ContinuousOwnerApproval,
   assertSkyV4ReaderCopyOwnerApproval,
@@ -4991,8 +5212,10 @@ export {
   skyPlacementKeyDates,
   skyPlacementKeyDatesIntro,
   skyV4ContentStudioRecords,
+  skyV4ContinuousCorrectionReleaseState,
   skyV4FieldValue,
   skyV4GovernedAspectStudioRecord,
+  skyV4PlacementLunarContextReleaseState,
   skyV4RuntimeCoverage,
   vocabularyBodyForVoice
 };
