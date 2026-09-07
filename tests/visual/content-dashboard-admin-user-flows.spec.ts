@@ -3578,7 +3578,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const houseGroup = page.getByRole("region", { name: "House horoscopes" });
     await expect(houseGroup.getByText("Jupiter in Leo · 10th House", { exact: true })).toBeVisible();
     await expect(houseGroup.getByText("House horoscope", { exact: true })).toBeVisible();
-    const compactTags = houseGroup.locator(".admin-table-tag");
+    const compactTags = houseGroup.locator(".admin-table-tag:visible");
     await expect(compactTags.first()).toBeVisible();
     const tagHeights = await compactTags.evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().height)));
     expect(tagHeights.length).toBeGreaterThan(0);

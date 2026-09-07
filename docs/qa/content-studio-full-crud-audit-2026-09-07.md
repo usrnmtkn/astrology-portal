@@ -60,12 +60,17 @@ The natal-specific source-loading, contextual preview, inline editing, and exact
 - Admin/web typechecks, application builds, CSS/token audits, and diff whitespace checks passed. Desktop/mobile source editing and light/dark variants were inspected during the natal work.
 - Sky article workspace creation/restoration was reviewed in code and shares the serialization correction; its complete production authoring/approval lifecycle was not exercised against live storage. The article revision overlap was exercised in the browser.
 
-Three wider repository checks remain failing independently of these fixes:
+Wider repository checks remain failing independently of these fixes:
 
 1. `test:content` stops at an existing unresolved-queue test requiring a positive item count even though the current generated queue is empty. This was reproduced in an untouched baseline; tests later in that chain are not claimed as passed.
 2. `qa:admin-bundle` builds but exceeds its existing budgets. The untouched baseline measured 156.9 kB entry gzip / 221.1 kB total gzip against limits of 152/203 kB. The expanded fixes measure 158.4/223.5 kB. Budgets were not increased.
 3. The broader `test-fallback-refresh-wiring.mjs` also fails an old expected Chiron/Jupiter opening. It produced the identical failure on the untouched `549c7ce3` baseline. That separate wording assertion was not replaced to make this audit green.
 
-## Release status
+4. Release CI also reproduces existing web bundle ceiling failures for reader startup CSS and the Sky detail chunk, seen independently on PR #654. No ceilings were raised.
+5. The writing-kernel drift check fails on `api/_lib/transit-reading-generation.ts|provider_call`. The same failure was reproduced on clean baseline `549c7ce3`; this release does not change that provider call or relax the boundary.
 
-No commit, push, release merge, deployment, or production content synchronization was performed. Production permissions, deployed database triggers, and the owner's exact live session have not been verified by this local audit. The code fixes and exact owner content are ready for review through the normal main-branch release process; this document does not claim that the live site has changed.
+## Release verification
+
+Release PR: [#655](https://github.com/usrnmtkn/astrology-portal/pull/655). The owner authorized merging and pushing live in this task. The branch was rebased onto `04870234`, preserving the separately merged Calendar Write-ups navigation and draft CRUD. The delete conflict was resolved by clearing the editor only for successfully deleted rows while retaining failed rows for retry.
+
+The combined browser run passed 65 of 66 flows; the remaining assertion selected the intentionally hidden mobile status badge on desktop. Its selector was corrected to measure visible badges. The API lifecycle, Calendar CRUD guard, exact owner copy, CSS audit, wiring labels, and usability assertions passed on the rebased code. Production deployment and final live-session evidence are recorded with the release PR rather than inferred from local tests.
