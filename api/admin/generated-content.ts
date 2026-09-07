@@ -285,6 +285,7 @@ function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, va
   const supportsNamedFriendCopy = Boolean(
     contentKey?.startsWith("fallback-hook/natal-aspect-lived/")
     || contentKey?.startsWith("authored/transit-aspect/")
+    || /^fallback-hook\/transit-effect-(?:soft|hard)\//u.test(contentKey ?? "")
   );
   if (!supportsNamedFriendCopy || typeof value !== "string") return value;
   return value.replace(/\{\{Name\}\}|\{Name\}/gu, "{{Name}}");
@@ -475,6 +476,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       const isAllowedFriendName = (
         row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
         || row.content_key.startsWith("authored/transit-aspect/")
+        || /^fallback-hook\/transit-effect-(?:soft|hard)\//u.test(row.content_key)
       )
         && field.endsWith("body_they")
         && slot === "{{Name}}";
@@ -627,6 +629,17 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     record.body_you = [record.opening, record.tension, record.development, record.close]
       .filter((part) => typeof part === "string" && part.trim())
       .join("\n\n");
+  }
+
+  // Exact Calendar copies declare capitalized fields as their editable source.
+  // Refresh every reader mirror from that source after Sign Off or a revert.
+  if (!hasPackageDraft && record.render_policy === "content-studio-exact-sky-aspect-v1") {
+    patch.headline = stringFrom(record.Headline) || row.headline || "";
+    patch.summary = stringFrom(record.Summary);
+    record.body_you = stringFrom(record.Body);
+    record.body_they = record.body_you;
+    sections.body_you = record.body_you;
+    sections.body_they = record.body_they;
   }
 
   const calendarDraftBody = isCalendarAspectStage
