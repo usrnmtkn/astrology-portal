@@ -545,3 +545,25 @@
   min-height: var(--admin-space-6xl);
   padding: var(--admin-space-micro) var(--admin-space-lg);
 }
+
+/* Access gate: the actions column was sized to its longest note, which left
+   the sign-in copy a 130px column at laptop widths. Cap the actions column
+   and let the notes wrap. */
+.admin-dashboard .admin-access-gate {
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(var(--admin-access-actions-min-width), 460px);
+}
+
+.admin-dashboard .admin-access-gate > div:first-child {
+  max-width: 420px;
+}
+
+@media (max-width: 1100px) {
+  .admin-dashboard .admin-access-gate {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-dashboard .admin-access-gate > div:first-child {
+    max-width: none;
+  }
+}
