@@ -69,6 +69,14 @@ jobs:
       - name: Verify startup performance contracts
         run: npm run test:performance-contracts
 
+      - name: Verify daily Sky summary composition
+        run: npm run test:sky-daily-summary
+
+      - name: Verify daily Sky summary reader and Studio
+        run: |
+          npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-daily-summary.spec.ts
+          npx playwright test -c playwright.sky-studio.config.ts
+
       - name: Run Content Studio admin user flows
         run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts
 

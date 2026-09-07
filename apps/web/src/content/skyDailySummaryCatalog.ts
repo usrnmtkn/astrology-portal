@@ -1,5 +1,5 @@
-import clauses from "./skyDailySummaryClauses.json";
-import timing from "./skyDailySummaryTiming.json";
+import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
+import timing from "./skyDailySummaryTiming.json" with { type: "json" };
 
 export const skySummarySigns = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 export type SkySummaryField = { key: string; label: string; group: string; body: string; allowedSlots: string[] };
