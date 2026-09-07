@@ -10,6 +10,8 @@ const transitRoot = path.join(repoRoot, "packages/astro-knowledge/data/transits"
 const apply = process.argv.includes("--apply");
 const verifyRemote = process.argv.includes("--verify-remote");
 const packageVersion = "EXACT-SKY-ASPECT-CONTENT-STUDIO-2026-09-01";
+const defaultSupabaseUrl = "https://hdmdufozrgrajkfhydit.supabase.co";
+const defaultSupabasePublishableKey = "sb_publishable_iX90KdzcQzw8a8OydBHHXA_COnEMcns";
 
 function text(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -53,7 +55,7 @@ function requireEnv(name) {
 }
 
 function supabaseUrl() {
-  return String(process.env.SUPABASE_URL ?? requireEnv("VITE_SUPABASE_URL")).replace(/\/$/u, "");
+  return String(process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? defaultSupabaseUrl).replace(/\/$/u, "");
 }
 
 function adminHeaders(extra = {}) {
@@ -61,24 +63,30 @@ function adminHeaders(extra = {}) {
   return { apikey: key, authorization: `Bearer ${key}`, "content-type": "application/json", ...extra };
 }
 
-function verificationHeaders(extra = {}) {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+function verificationKey() {
+  return process.env.SUPABASE_SERVICE_ROLE_KEY
+    ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY
     ?? process.env.SUPABASE_PUBLISHABLE_KEY
     ?? process.env.VITE_SUPABASE_ANON_KEY
-    ?? "";
-  if (!key) {
-    throw new Error("Remote verification requires SUPABASE_SERVICE_ROLE_KEY, SUPABASE_PUBLISHABLE_KEY, or VITE_SUPABASE_ANON_KEY.");
-  }
-  const headers = { apikey: key, "content-type": "application/json", ...extra };
-  if (!key.startsWith("sb_publishable_")) headers.authorization = `Bearer ${key}`;
-  return headers;
+    ?? process.env.SUPABASE_ANON_KEY
+    ?? defaultSupabasePublishableKey;
+}
+
+function verificationHeaders(extra = {}) {
+  const key = verificationKey();
+  return {
+    apikey: key,
+    authorization: `Bearer ${key}`,
+    "content-type": "application/json",
+    ...extra
+  };
 }
 
 function verificationAuthMode() {
   if (process.env.SUPABASE_SERVICE_ROLE_KEY) return "service-role";
-  if (process.env.SUPABASE_PUBLISHABLE_KEY) return "publishable";
-  if (process.env.VITE_SUPABASE_ANON_KEY) return "anon";
-  return "none";
+  if (process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY) return "publishable-env";
+  if (process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY) return "anon-env";
+  return "publishable-default";
 }
 
 function canonicalBodies(first, second) {
@@ -230,7 +238,15 @@ async function upsertRows(rows) {
 
 async function verifyRows(rows) {
   loadLocalWebEnv();
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?select=content_key,status,lane,review_state,body,source_snapshot&prompt_version=eq.exact-sky-aspect-content-studio-v1&limit=500`, { headers: verificationHeaders() });
+  const url = new URL(`${supabaseUrl()}/rest/v1/generated_interpretations`);
+  url.searchParams.set("select", "content_key,status,lane,review_state,body,source_snapshot");
+  url.searchParams.set("prompt_version", "eq.exact-sky-aspect-content-studio-v1");
+  url.searchParams.set("limit", "500");
+  // Supabase accepts the public key as either a request header or `apikey`
+  // query parameter. Keep both so CI remains robust across gateway/header
+  // forwarding changes while retaining read-only RLS enforcement.
+  url.searchParams.set("apikey", verificationKey());
+  const response = await fetch(url, { headers: verificationHeaders() });
   const payload = await response.json().catch(() => null);
   if (!response.ok) throw new Error(`Published Calendar aspect verification failed with ${response.status}: ${JSON.stringify(payload)}`);
   if (!Array.isArray(payload) || payload.length !== rows.length) throw new Error(`Expected ${rows.length} published exact aspects; found ${Array.isArray(payload) ? payload.length : 0}.`);
