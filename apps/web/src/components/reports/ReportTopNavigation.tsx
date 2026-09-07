@@ -10,7 +10,7 @@ import {
   User
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { signOutAuth } from "../../services/auth";
+import { getAuthAccount, signOutAuth } from "../../services/auth";
 
 export type ReportTheme = "light" | "dark";
 
@@ -58,8 +58,19 @@ export function ReportTopNavigation({
   onThemeChange: (theme: ReportTheme) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [signedIn, setSignedIn] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const menuTriggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void getAuthAccount().then((account) => {
+      if (!cancelled) setSignedIn(Boolean(account));
+    }).catch(() => {
+      if (!cancelled) setSignedIn(false);
+    });
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -167,25 +178,29 @@ export function ReportTopNavigation({
               <FileText size={20} aria-hidden="true" />
               <span>Reports</span>
             </button>
-            <button type="button" role="menuitem" onClick={() => navigate("account")}>
-              <User size={20} aria-hidden="true" />
-              <span>Account</span>
-            </button>
-            <button type="button" role="menuitem" onClick={() => navigate("settings")}>
-              <Settings size={20} aria-hidden="true" />
-              <span>Settings</span>
-            </button>
-            <button
-              type="button"
-              role="menuitem"
-              onClick={() => {
-                setMenuOpen(false);
-                void signOutAuth().finally(() => goToAppRoute("sky"));
-              }}
-            >
-              <LogOut size={20} aria-hidden="true" />
-              <span>Sign out</span>
-            </button>
+            {signedIn ? (
+              <>
+                <button type="button" role="menuitem" onClick={() => navigate("account")}>
+                  <User size={20} aria-hidden="true" />
+                  <span>Account</span>
+                </button>
+                <button type="button" role="menuitem" onClick={() => navigate("settings")}>
+                  <Settings size={20} aria-hidden="true" />
+                  <span>Settings</span>
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    void signOutAuth().finally(() => goToAppRoute("sky"));
+                  }}
+                >
+                  <LogOut size={20} aria-hidden="true" />
+                  <span>Sign out</span>
+                </button>
+              </>
+            ) : null}
           </div>
         ) : null}
       </div>

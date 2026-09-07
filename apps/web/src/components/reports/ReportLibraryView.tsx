@@ -1,4 +1,4 @@
-import { Archive, ChevronLeft, FileText, MoreHorizontal, RotateCcw } from "lucide-react";
+import { Archive, ChevronLeft, FileText, MoreHorizontal, RotateCcw, Share2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SegmentedControl } from "../SegmentedControl";
 import {
@@ -9,6 +9,7 @@ import {
   type GeneratedReportRecord,
   type ReportLibraryItem
 } from "../../services/reportLibrary";
+import { createReportShareLink } from "../../services/reportSharing";
 
 const reportMonthNames = [
   "Jan", "Feb", "Mar", "Apr", "May", "June",
@@ -62,7 +63,7 @@ function formatCalendarDay(date: ReportCalendarDate, includeYear = false) {
   return includeYear ? `${base}, ${date.year}` : base;
 }
 
-function formatReadingWindowDates(startValue: string | null, endValue: string | null = startValue) {
+export function formatReadingWindowDates(startValue: string | null, endValue: string | null = startValue) {
   const start = parseReportCalendarDate(startValue);
   const end = parseReportCalendarDate(endValue ?? startValue);
   if (!start) return "";
@@ -111,12 +112,43 @@ function openItem(item: ReportLibraryItem) {
   void markReportSeen(item).finally(() => window.location.assign(item.route));
 }
 
+async function copyText(value: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+  const input = document.createElement("textarea");
+  input.value = value;
+  input.style.position = "fixed";
+  input.style.opacity = "0";
+  document.body.appendChild(input);
+  input.select();
+  document.execCommand("copy");
+  input.remove();
+}
+
+async function shareLink(item: ReportLibraryItem) {
+  const url = await createReportShareLink(item);
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: item.title, url });
+      return "shared" as const;
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return "cancelled" as const;
+    }
+  }
+  await copyText(url);
+  return "copied" as const;
+}
+
 function ReportLibraryRow({
   item,
-  onArchiveChange
+  onArchiveChange,
+  onShare
 }: {
   item: ReportLibraryItem;
   onArchiveChange: (item: ReportLibraryItem, archived: boolean) => Promise<void>;
+  onShare: (item: ReportLibraryItem) => Promise<void>;
 }) {
   const archived = Boolean(item.archivedAt);
   const status = statusLabel(item);
@@ -171,6 +203,20 @@ function ReportLibraryRow({
         </button>
         {menuOpen ? (
           <div className="report-library-row__menu" role="menu" aria-label={`Options for ${item.title}`}>
+            {item.status === "ready" ? (
+              <button
+                className="report-library-row__menu-item"
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setMenuOpen(false);
+                  void onShare(item);
+                }}
+              >
+                <Share2 size={17} aria-hidden="true" />
+                <span>Share</span>
+              </button>
+            ) : null}
             <button
               className="report-library-row__menu-item"
               type="button"
@@ -217,6 +263,7 @@ export function ReportLibraryView() {
   const [items, setItems] = useState<ReportLibraryItem[]>([]);
   const [view, setView] = useState<"active" | "archived">("active");
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [shareNotice, setShareNotice] = useState("");
 
   async function refresh() {
     try {
@@ -241,6 +288,18 @@ export function ReportLibraryView() {
       await refresh();
     } catch {
       setStatus("error");
+    }
+  }
+
+  async function shareReport(item: ReportLibraryItem) {
+    try {
+      const result = await shareLink(item);
+      if (result === "cancelled") return;
+      setShareNotice(result === "copied" ? "Share link copied." : "Report shared.");
+      window.setTimeout(() => setShareNotice(""), 2600);
+    } catch {
+      setShareNotice("This report could not be shared right now.");
+      window.setTimeout(() => setShareNotice(""), 3200);
     }
   }
 
@@ -277,22 +336,23 @@ export function ReportLibraryView() {
           {status === "error" ? <p className="report-library-loading type-body-muted">Your reports could not be loaded right now.</p> : null}
           {status === "ready" && visible.length === 0 ? <ReportLibraryEmpty view={view} /> : null}
           {status === "ready" ? visible.map((item) => (
-            <ReportLibraryRow key={item.id} item={item} onArchiveChange={changeArchive} />
+            <ReportLibraryRow key={item.id} item={item} onArchiveChange={changeArchive} onShare={shareReport} />
           )) : null}
         </section>
       </section>
+      {shareNotice ? <div className="report-library-share-toast" role="status" aria-live="polite">{shareNotice}</div> : null}
     </main>
   );
 }
 
-function GeneratedReportState({ message }: { message: string }) {
+function GeneratedReportState({ message, backHref = "/reports/" }: { message: string; backHref?: string }) {
   return (
     <section className="article-page sky-detail-page saved-generated-report saved-generated-report--state">
       <button
         className="sky-detail-back floating-back-button"
         type="button"
-        aria-label="Back to Reports"
-        onClick={() => window.location.assign("/reports/")}
+        aria-label="Back"
+        onClick={() => window.location.assign(backHref)}
       >
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
@@ -306,35 +366,13 @@ function GeneratedReportState({ message }: { message: string }) {
   );
 }
 
-export function GeneratedReportDeliveryView() {
-  const reportId = useMemo(generatedReportIdFromPath, []);
-  const [report, setReport] = useState<GeneratedReportRecord | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
-
-  useEffect(() => {
-    let cancelled = false;
-    void loadGeneratedReportById(reportId).then(async (value) => {
-      if (cancelled) return;
-      if (!value) {
-        setStatus("error");
-        return;
-      }
-      setReport(value);
-      setStatus("ready");
-      try {
-        await markReportSeen({ sourceKind: "generated_interpretation", sourceId: value.id });
-      } catch {
-        // The saved reading remains readable even if its notification state cannot update.
-      }
-    }).catch(() => {
-      if (!cancelled) setStatus("error");
-    });
-    return () => { cancelled = true; };
-  }, [reportId]);
-
-  if (status === "loading") return <GeneratedReportState message="Loading report…" />;
-  if (status === "error" || !report) return <GeneratedReportState message="This report is unavailable." />;
-
+export function GeneratedReportArticle({
+  report,
+  backHref = "/reports/"
+}: {
+  report: GeneratedReportRecord;
+  backHref?: string;
+}) {
   const readingWindow = formatReadingWindowDates(report.targetDate);
   const paragraphs = report.body.split(/\n{2,}/u).map((paragraph) => paragraph.trim()).filter(Boolean);
 
@@ -347,8 +385,8 @@ export function GeneratedReportDeliveryView() {
       <button
         className="sky-detail-back floating-back-button"
         type="button"
-        aria-label="Back to Reports"
-        onClick={() => window.location.assign("/reports/")}
+        aria-label="Back"
+        onClick={() => window.location.assign(backHref)}
       >
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
@@ -391,4 +429,40 @@ export function GeneratedReportDeliveryView() {
       </article>
     </section>
   );
+}
+
+export function GeneratedReportDeliveryView({ reportId: reportIdProp }: { reportId?: string } = {}) {
+  const pathReportId = useMemo(generatedReportIdFromPath, []);
+  const reportId = reportIdProp ?? pathReportId;
+  const [report, setReport] = useState<GeneratedReportRecord | null>(null);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!reportId) {
+      setStatus("error");
+      return () => { cancelled = true; };
+    }
+    void loadGeneratedReportById(reportId).then(async (value) => {
+      if (cancelled) return;
+      if (!value) {
+        setStatus("error");
+        return;
+      }
+      setReport(value);
+      setStatus("ready");
+      try {
+        await markReportSeen({ sourceKind: "generated_interpretation", sourceId: value.id });
+      } catch {
+        // The saved reading remains readable even if its notification state cannot update.
+      }
+    }).catch(() => {
+      if (!cancelled) setStatus("error");
+    });
+    return () => { cancelled = true; };
+  }, [reportId]);
+
+  if (status === "loading") return <GeneratedReportState message="Loading report…" />;
+  if (status === "error" || !report) return <GeneratedReportState message="This report is unavailable." />;
+  return <GeneratedReportArticle report={report} />;
 }
