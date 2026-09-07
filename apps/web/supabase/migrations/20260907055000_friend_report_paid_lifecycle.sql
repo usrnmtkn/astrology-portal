@@ -39,6 +39,8 @@ create table if not exists public.friend_report_checkout_intents (
   facts jsonb not null,
   source_snapshot jsonb not null default '{}'::jsonb,
   status text not null default 'pending' check (status in ('pending', 'converted', 'cancelled', 'expired')),
+  stripe_checkout_session_id text unique,
+  checkout_url text,
   expires_at timestamptz not null default (now() + interval '24 hours'),
   converted_at timestamptz,
   created_at timestamptz not null default now(),
@@ -47,6 +49,9 @@ create table if not exists public.friend_report_checkout_intents (
 
 create index if not exists friend_report_checkout_intents_owner_idx
   on public.friend_report_checkout_intents (user_id, status, created_at desc);
+create unique index if not exists friend_report_checkout_intents_pending_target_idx
+  on public.friend_report_checkout_intents (user_id, subject_id, target_date)
+  where status = 'pending';
 
 create table if not exists public.friend_report_jobs (
   id uuid primary key default gen_random_uuid(),
