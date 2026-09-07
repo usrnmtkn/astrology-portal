@@ -30,7 +30,7 @@ const knowledgeResolver = require("../../packages/astro-knowledge/scripts/knowle
 type FactRecord = Record<string, unknown>;
 type TargetUsage = "primary" | "mechanism-reference";
 type EvidenceSurface = "you-natal" | "you-transit";
-type GovernedMeaningSourceKind = "knowledge_index" | "owner_approved_cms_snapshot";
+type GovernedMeaningSourceKind = "knowledge_index" | "owner_approved_cms_snapshot" | "owner_approved_eclipse_snapshot";
 
 type RankedCalculatedEvidence = AskTldrRankedEvidence & Pick<
   AskTldrCalculatedEvidenceCandidate,
@@ -70,6 +70,14 @@ const CMS_TRANSIT_AUTHORIZATION_URL = new URL(
   "../../packages/astro-knowledge/review/transit-aspect-you-refresh-376-owner-live-2026-09-04.json",
   import.meta.url
 );
+const LUNAR_ECLIPSE_SECTIONS_URL = new URL(
+  "../../apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-sections-v1.json",
+  import.meta.url
+);
+const LUNAR_ECLIPSE_SECTION_KEYS = [
+  "authored/lunation-eclipse-section/shared/lunar/nature",
+  "authored/lunation-eclipse-section/shared/lunar/mechanics"
+] as const;
 const CONJUNCTION_SOFT_PLANETS = new Set(["venus", "sun", "mercury", "jupiter"]);
 
 let cmsTransitSnapshotCache: null | {
@@ -77,6 +85,11 @@ let cmsTransitSnapshotCache: null | {
   authorizationFileSha256: string;
   recordsByKey: Map<string, FactRecord>;
   approvalsByKey: Map<string, FactRecord>;
+} = null;
+let lunarEclipseSnapshotCache: null | {
+  sourceSha256: string;
+  sourceArtifact: string;
+  records: FactRecord[];
 } = null;
 
 function words(value: unknown) {
@@ -102,6 +115,10 @@ function sha256Json(value: unknown) {
 function parseJsonFile(url: URL) {
   const raw = fs.readFileSync(url, "utf8");
   return { raw, value: JSON.parse(raw) as FactRecord, sha256: sha256(raw) };
+}
+
+function record(value: unknown): FactRecord | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as FactRecord : null;
 }
 
 function recordArray(value: unknown) {
@@ -317,6 +334,112 @@ function cmsTransitGovernedMeaning(
   return null;
 }
 
+function loadApprovedLunarEclipseSnapshot() {
+  if (lunarEclipseSnapshotCache) return lunarEclipseSnapshotCache;
+  const source = parseJsonFile(LUNAR_ECLIPSE_SECTIONS_URL);
+  if (source.value.schema !== "lunation-eclipse-sections/v1" || source.value.status !== "owner-approved") {
+    throw new Error("ASK_TLDR_LUNAR_ECLIPSE_SOURCE_NOT_APPROVED");
+  }
+  const sourceArtifact = words(source.value.source_artifact);
+  const rows = recordArray(source.value.authoredCards);
+  const records = LUNAR_ECLIPSE_SECTION_KEYS.map((contentKey) => {
+    const row = rows.find((candidate) => words(candidate.contentKey) === contentKey);
+    if (!row) throw new Error(`ASK_TLDR_LUNAR_ECLIPSE_SECTION_MISSING: ${contentKey}`);
+    const body = words(row.body);
+    const approval = record(row.approval);
+    const protectedContent = record(row.protected_content);
+    const approvedSha = words(approval?.payloadSha256);
+    const protectedSha = words(protectedContent?.body_sha256);
+    if (row.review_status !== "approved"
+      || row.owner_authored !== true
+      || row.promotion_authorized !== true
+      || words(approval?.approvalLevel) !== "exact_owner_approved"
+      || !body
+      || !approvedSha
+      || approvedSha !== protectedSha
+      || sha256(body) !== approvedSha) {
+      throw new Error(`ASK_TLDR_LUNAR_ECLIPSE_SECTION_APPROVAL_INVALID: ${contentKey}`);
+    }
+    return row;
+  });
+  lunarEclipseSnapshotCache = { sourceSha256: source.sha256, sourceArtifact, records };
+  return lunarEclipseSnapshotCache;
+}
+
+function lunarEclipseGovernedMeaning(
+  candidate: RankedCalculatedEvidence,
+  surface: EvidenceSurface,
+  unresolvedKnowledgeIds: string[]
+): AskTldrGovernedFactor["governedMeaning"] | null {
+  if (surface !== "you-transit" || candidate.kind !== "eclipse") return null;
+  if (!words(candidate.facts.kind).toLowerCase().includes("lunar_eclipse")) return null;
+  const snapshot = loadApprovedLunarEclipseSnapshot();
+  const evidence = snapshot.records.map((row, index) => {
+    const contentKey = words(row.contentKey);
+    const body = words(row.body);
+    const approval = record(row.approval)!;
+    return {
+      authorityClass: "owner-approved-prose",
+      surfacePermission: ["you-transit"],
+      store: "owner-approved-lunar-eclipse-section-snapshot",
+      path: "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-sections-v1.json",
+      field: "body",
+      rowKey: contentKey,
+      sourceSha256: snapshot.sourceSha256,
+      text: body,
+      usage: index === 0 ? "primary" : "mechanism-reference",
+      temporality: "temporary-window",
+      framingAllowed: true,
+      evidenceSha256: sha256Json({
+        contentKey,
+        payloadSha256: words(approval.payloadSha256),
+        approvedAt: words(approval.approvedAt),
+        sourceArtifact: snapshot.sourceArtifact
+      })
+    };
+  });
+  const packetWithoutHash = {
+    schemaVersion: 1,
+    packetKind: "ask-tldr-owner-approved-lunar-eclipse",
+    surface: "you-transit",
+    register: "article",
+    evidence,
+    authorization: {
+      sourceArtifact: snapshot.sourceArtifact,
+      sourceSha256: snapshot.sourceSha256,
+      approvalLevel: "exact_owner_approved"
+    }
+  };
+  const packetSha256 = sha256Json(packetWithoutHash);
+  const packet = { ...packetWithoutHash, packetSha256 };
+  const canonicalIds = snapshot.records.map((row) => `owner-eclipse:${words(row.contentKey)}`);
+  const promptEvidence = [
+    "CANONICAL OBJECT: owner-approved generic lunar-eclipse mechanism",
+    "TEMPORALITY: temporary-window",
+    "SURFACE: you-transit",
+    "",
+    "ASTROLOGICAL TRUTH (owner-approved lunar-eclipse meaning; use as mechanism, not as a prose template)",
+    ...snapshot.records.flatMap((row) => [
+      `--- [owner-approved-prose; source=${words(row.contentKey)}]`,
+      words(row.body)
+    ])
+  ].join("\n");
+  return {
+    status: "full",
+    sourceKind: "owner_approved_eclipse_snapshot",
+    evidenceSurface: surface,
+    canonicalIds,
+    targetUsages: snapshot.records.map((_, index) => index === 0 ? "primary" : "mechanism-reference"),
+    mappingBases: ["owner-approved-generic-lunar-eclipse-sections"],
+    unresolvedKnowledgeIds,
+    packet,
+    promptEvidence,
+    indexSha256: null,
+    governanceSourceSha256: snapshot.sourceSha256,
+    packetSha256
+  };
+}
+
 function derivedMeaningTargets(candidate: RankedCalculatedEvidence, surface: EvidenceSurface): MeaningTarget[] {
   const targets: MeaningTarget[] = [];
 
@@ -503,6 +626,8 @@ export function resolveAskTldrGovernedFactor(candidate: RankedCalculatedEvidence
   if (status !== "full") {
     const cmsMeaning = cmsTransitGovernedMeaning(candidate, surface, explicit.unresolvedKnowledgeIds);
     if (cmsMeaning) return { ...candidate, governedMeaning: cmsMeaning };
+    const eclipseMeaning = lunarEclipseGovernedMeaning(candidate, surface, explicit.unresolvedKnowledgeIds);
+    if (eclipseMeaning) return { ...candidate, governedMeaning: eclipseMeaning };
   }
 
   if (!targets.length) {
