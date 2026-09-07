@@ -39,15 +39,11 @@ jobs:
 
           p = Path('scripts/test-sky-placement-residency-aspects.mts')
           s = p.read_text()
-          old = r'''    /residencyContext && residencyAspectSections !== null[\s\S]*?existingAspectSections\.filter[\s\S]*?residencyAspectHeadings/u,'''
-          if old in s:
-              s = s.replace(old, r'''    /residencyAspectSections[\s\S]*?residencyAspectSections\.some/u,''', 1)
-          else:
-              old = r'''    /residencyContext && residencyAspectSections[\s\S]*?residencyAspectSections\.some/u,'''
-              if old not in s:
-                  raise SystemExit('test assertion target not found')
-              s = s.replace(old, r'''    /residencyAspectSections[\s\S]*?residencyAspectSections\.some/u,''', 1)
-          p.write_text(s)
+          old = '/residencyContext && residencyAspectSections[\\s\\S]*?residencyAspectSections\\.some/u,'
+          new = '/residencyAspectSections[\\s\\S]*?residencyAspectSections\\.some/u,'
+          if old not in s:
+              raise SystemExit('test assertion target not found')
+          p.write_text(s.replace(old, new, 1))
           PY
           git diff --check
       - name: Commit and remove temporary workflow
