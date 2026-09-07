@@ -120,8 +120,10 @@ begin
   with candidates as (
     select id
     from public.friend_report_jobs
-    where state in ('queued', 'retry')
-      and run_after <= now()
+    where (
+        (state in ('queued', 'retry') and run_after <= now())
+        or (state = 'running' and locked_at < now() - interval '10 minutes')
+      )
       and (requested_job_id is null or id = requested_job_id)
     order by run_after, created_at
     for update skip locked
