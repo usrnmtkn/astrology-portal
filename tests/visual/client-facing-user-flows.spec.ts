@@ -3467,7 +3467,9 @@ test.describe("client-facing user flow case studies", () => {
     await expect(article.getByRole("heading", { name: "Gifts" })).toBeVisible();
     await expect(article.getByRole("heading", { name: "Lessons" })).toBeVisible();
     await expect(article).toContainText("Sun Trine Chiron");
-    await expect(article).toContainText("Your thoughts can feel unusually personal when saying what you mean also feels like saying who you are.");
+    const mercuryCopy = JSON.parse(readFileSync(path.resolve("packages/astro-knowledge/data/transits/sun-conjunction-mercury.json"), "utf8"));
+    expect(mercuryCopy.status).toBe("LIVE");
+    await expect(article).toContainText(mercuryCopy.readerCopy.body);
     await expect(article).not.toContainText("The Sun in Virgo ties confidence to usefulness, accuracy");
     await expectNoDuplicateArticleHeadings(page, "Sun in Virgo placement detail");
     await assertNoClientErrors();
@@ -3483,7 +3485,9 @@ test.describe("client-facing user flow case studies", () => {
     await expect(article).toBeVisible();
     const sunLilith = article.locator(".article-related-aspects__copy").filter({ hasText: "Sun Trine Lilith" });
     await expect(sunLilith).toBeVisible();
-    await expect(sunLilith).toContainText("You may be able to show more of who you are without preparing a defense first.");
+    const lilithCopy = JSON.parse(readFileSync(path.resolve("packages/astro-knowledge/data/transits/sun-trine-lilith.json"), "utf8"));
+    expect(lilithCopy.status).toBe("LIVE");
+    await expect(sunLilith).toContainText(lilithCopy.readerCopy.body);
     await expect(article.locator(".aspect-row-list")).toHaveCount(0);
     await assertNoClientErrors();
   });
