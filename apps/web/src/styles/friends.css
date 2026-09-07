@@ -1063,7 +1063,7 @@
 .friend-chart-page .friend-profile-copy-column > .friend-section-label,
 .friend-chart-page .friend-profile-copy-column > .section-label,
 .friend-chart-page .synastry-placements-comparison > .friend-section-label {
-  margin: var(--friend-section-label-margin);
+  margin: var(--label-eyebrow-margin);
   color: var(--card-meta-color);
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-semibold);
