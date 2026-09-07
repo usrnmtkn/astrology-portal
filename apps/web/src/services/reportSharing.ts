@@ -1,11 +1,11 @@
 import { getSupabaseClient } from "./auth";
-import type { GeneratedReportRecord, ReportLibraryItem, ReportLibrarySourceKind } from "./reportLibrary";
+import type { GeneratedReportKind, GeneratedReportRecord, ReportLibraryItem, ReportLibrarySourceKind } from "./reportLibrary";
 import type { ReportDeliveryPayload } from "./reportFulfillment";
 
 export type SharedReportPayload =
   | {
       sourceKind: "generated_interpretation";
-      reportKind: "friend_transit_reading";
+      reportKind: GeneratedReportKind;
       report: GeneratedReportRecord;
     }
   | {
@@ -68,5 +68,5 @@ export async function loadSharedReport(shareKey: string): Promise<SharedReportPa
 }
 
 export function reportShareSourceLabel(sourceKind: ReportLibrarySourceKind) {
-  return sourceKind === "generated_interpretation" ? "Friends reading" : "Report";
+  return sourceKind === "generated_interpretation" ? "Saved reading" : "Report";
 }
