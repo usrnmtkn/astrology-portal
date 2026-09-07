@@ -171,3 +171,8 @@ Reviewed the Linux CI Sky screenshot: the exact-aspect summary now includes its
 Rx endpoint, the canonical Sun preview is populated after the legacy source-gap
 repair, and the current main summary typography/layout is retained. Updated only
 the affected desktop-light baseline from that reviewed CI rendering.
+
+The repository's controlled Calendar release workflow refreshed the production
+Sky comparison packet hashes in follow-up commit `6a97b9c2`. Reviewed that diff:
+only generated packet hashes changed; source wording and evidence payload hashes
+remain intact. The local comparison freshness check passes on that revision.
