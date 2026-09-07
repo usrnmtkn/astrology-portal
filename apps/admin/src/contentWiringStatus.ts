@@ -91,11 +91,17 @@ function isSourceMaterial(row: ContentWiringRow) {
     || role === "fallback-source"
     || renderPolicy.includes("reference-only")
     || reviewState === "source-material-generic-aspect-baseline"
-    || row.lane === "reference";
+    || row.lane === "reference" && !row.content_key.startsWith("authored/sky-lunation-macro/");
 }
 
 function isKnownRenderedKey(contentKey: string) {
   return contentKey.startsWith("sky.placement.")
+    || contentKey.startsWith("sky.aspect.")
+    || contentKey.startsWith("cms/")
+    || contentKey.startsWith("compatibility.")
+    || contentKey.startsWith("natal.")
+    || contentKey.startsWith("synastry.")
+    || contentKey.startsWith("composite.")
     || contentKey.startsWith("sky-article/")
     || contentKey.startsWith("house-horoscope-core/")
     || contentKey.startsWith("fallback-hook/natal-you-placement-complete-final/")
