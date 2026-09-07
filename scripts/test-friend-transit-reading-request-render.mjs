@@ -10,6 +10,8 @@ const briefSource = fs.readFileSync("apps/web/src/features/friends/friendTransit
 const serviceSource = fs.readFileSync("apps/web/src/services/userGeneratedContent.ts", "utf8");
 const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");
 const friendApiSource = fs.readFileSync("api/generate-friend-transit-reading.ts", "utf8");
+const friendGenerationSource = fs.readFileSync("api/_lib/friend-transit-reading-generation.ts", "utf8");
+const friendRequestSource = fs.readFileSync("api/friend-report-request.ts", "utf8");
 const surfaceMigrationSource = fs.readFileSync(
   "apps/web/supabase/migrations/20260906190000_add_friends_user_generated_surface.sql",
   "utf8"
@@ -28,19 +30,30 @@ assert.match(
 );
 assert.match(
   serviceSource,
-  /request\.subjectType === "friend_transit_reading"[\s\S]{0,120}saved\.status === "DRAFT"[\s\S]{0,120}return fromRow\(saved\)/u,
-  "The on-demand DRAFT must remain visible in the current session without being promoted LIVE."
+  /friendReading[\s\S]{0,160}"\/api\/friend-report-request"/u,
+  "Friends paid readings must use the durable lifecycle request endpoint."
 );
 assert.match(
   serviceSource,
-  /subjectType === "friend_transit_reading"[\s\S]{0,120}query\.in\("status", \["DRAFT", "REVIEWED", "LIVE"\]\)/u,
-  "A successfully generated Friends DRAFT must survive a refresh without another provider call."
+  /subjectType === "friend_transit_reading"[\s\S]{0,140}query\.in\("status", \["DRAFT", "REVIEWED", "LIVE", "ERROR"\]\)/u,
+  "A queued, completed, or failed Friends reading must survive refresh without another provider call."
 );
 assert.match(
   serviceSource,
-  /request\.subjectType === "friend_transit_reading"[\s\S]{0,140}"\/api\/generate-friend-transit-reading"/u,
-  "Friends paid readings must use the dedicated short-reading endpoint instead of the generic article generator."
+  /response\.status === 202[\s\S]{0,220}loadUserGeneratedInterpretation/u,
+  "A queued Friends request must return its persisted placeholder instead of waiting for the provider."
 );
+assert.doesNotMatch(
+  serviceSource,
+  /friendReading[\s\S]{0,160}"\/api\/generate-friend-transit-reading"/u,
+  "The customer Friends flow must not call the synchronous generator directly."
+);
+assert.match(
+  friendRequestSource,
+  /waitUntil\(runFriendReportJobs/u,
+  "Friends generation must continue after the customer request has returned."
+);
+assert.match(friendRequestSource, /status: "queued"/u);
 assert.match(
   transitsSource,
   /loadUserGeneratedInterpretation\(\{[\s\S]{0,260}subjectType:\s*"friend_transit_reading"[\s\S]{0,260}targetDate:\s*persistedIdentity\.targetDate/u,
@@ -51,24 +64,26 @@ assert.match(
   /contentKey:\s*`friend-transit-reading\/\$\{subjectId\}\/\$\{targetDate\}`/u,
   "Refresh hydration must use the same friend/date content key as generation."
 );
-assert.match(
-  transitsSource,
-  /const effectiveReading = reading \?\? \(readingStatus === "idle" \? persistedReading : null\)/u,
-  "A restored saved reading must become the displayed paid reading while parent generation state is idle."
-);
+assert.match(transitsSource, /queuedReadingPollMs/u, "A queued reading must be polled until its saved row is complete.");
+assert.match(transitsSource, /savedReading\?\.status === "ERROR"/u, "Terminal background failure must become the safe retry state.");
+assert.match(transitsSource, /You can leave this page and come back later/u);
 
 assert.match(apiSource, /const locked = friendTransitReadingRequestLock\(\{/u);
 assert.match(apiSource, /input\.status = "DRAFT"/u);
 assert.match(apiSource, /input\.allowQualityFallback = false/u);
 assert.match(apiSource, /requestSubjectType === "friend_transit_reading"[\s\S]{0,220}This paid reading is currently unavailable/u);
 
-assert.match(friendApiSource, /const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA|export const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA/u);
-assert.match(friendApiSource, /required: \["headline", "tldr", "summary", "body"\]/u);
-assert.doesNotMatch(friendApiSource, /maxItems\s*:/u, "The live Friends provider schema must not use unsupported array-size constraints.");
-assert.doesNotMatch(friendApiSource, /type:\s*"null"/u, "The live Friends provider schema must not require null-only article fields.");
-assert.match(friendApiSource, /validateFriendTransitReadingDraft\(\{ draft, brief, expectedHeadline \}\)/u);
-assert.match(friendApiSource, /validationProfile:\s*"friends-transit"[\s\S]{0,120}family:\s*"friend-transit-reading"[\s\S]{0,120}register:\s*"third_person"/u);
-assert.match(friendApiSource, /\["DRAFT", "REVIEWED", "LIVE"\]\.includes\(existing\.status\)/u, "A saved paid reading must be reused instead of regenerated.");
+assert.match(friendGenerationSource, /export const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA/u);
+assert.match(friendGenerationSource, /required: \["headline", "tldr", "summary", "body"\]/u);
+assert.doesNotMatch(friendGenerationSource, /maxItems\s*:/u, "The live Friends provider schema must not use unsupported array-size constraints.");
+assert.doesNotMatch(friendGenerationSource, /type:\s*"null"/u, "The live Friends provider schema must not require null-only article fields.");
+assert.match(friendGenerationSource, /validateFriendTransitReadingDraft\(\{ draft, brief, expectedHeadline \}\)/u);
+assert.match(friendGenerationSource, /validationProfile:\s*"friends-transit"[\s\S]{0,120}family:\s*"friend-transit-reading"[\s\S]{0,120}register:\s*"third_person"/u);
+assert.match(friendGenerationSource, /\["DRAFT", "REVIEWED", "LIVE"\]\.includes\(existing\.status\)[\s\S]{0,120}existing\.body\.trim\(\)/u,
+  "A completed saved paid reading must be reused instead of regenerated.");
+assert.match(friendApiSource, /friendReportBillingMode\(\) === "stripe"/u,
+  "The legacy generator must close once paid Friends billing is enabled.");
+assert.match(friendApiSource, /errorType:\s*"paid_lifecycle_required"/u);
 assert.match(friendApiSource, /console\.error\("generate-friend-transit-reading failed", error\)/u);
 assert.match(friendApiSource, /errorType:\s*"paid_reading_unavailable"[\s\S]{0,120}This paid reading is currently unavailable/u);
 assert.doesNotMatch(friendApiSource, /error:\s*error instanceof Error \? error\.message/u, "Provider details must not be returned to the customer.");
@@ -204,13 +219,28 @@ try {
   }));
   assert.match(loading, /Preparing Alex&#x27;s reading/u);
 
+  const queued = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
+    ...baseProps,
+    readingStatus: "ready",
+    reading: {
+      headline: "What's going on with Alex right now?",
+      summary: null,
+      body: "",
+      status: "DRAFT"
+    }
+  }));
+  assert.match(queued, /Preparing Alex&#x27;s reading/u);
+  assert.match(queued, /leave this page and come back later/u);
+  assert.doesNotMatch(queued, /Generate reading/u);
+
   const ready = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
     readingStatus: "ready",
     reading: {
       headline: "What's going on with Alex right now?",
       summary: "Alex has more room to move with what they already know today.",
-      body: "Alex can act on what they feel with less friction.\n\nThe transit cards below remain the source of truth."
+      body: "Alex can act on what they feel with less friction.\n\nThe transit cards below remain the source of truth.",
+      status: "DRAFT"
     }
   }));
   assert.match(ready, /Alex has more room to move/u);
