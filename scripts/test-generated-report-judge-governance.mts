@@ -1,19 +1,27 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import {
   GENERATED_REPORT_JUDGE_CATEGORIES,
   generatedReportJudgeVerdict,
   type GeneratedReportJudgeScores
-} from "../api/_lib/transit-reading-judge.ts";
+} from "../api/_lib/transit-reading-judge-rules.ts";
 import {
   eligibleGeneratedReportOwnerEvidence,
   type GeneratedReportOwnerFeedbackRow
-} from "../api/_lib/transit-reading-owner-evidence.ts";
+} from "../api/_lib/transit-reading-owner-evidence-rules.ts";
+import { youTransitReadingProductionKnowledgeIds } from "../api/_lib/transit-reading-production-evidence.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relative: string) => fs.readFileSync(path.join(repoRoot, relative), "utf8");
+const require = createRequire(import.meta.url);
+const productionEvidence = require("../src/astro-writing/productionEvidenceAdapter.cjs") as {
+  buildProductionCatalogEvidence: (input: Record<string, unknown>) => {
+    mapped: { canonicalIds: string[] };
+  };
+};
 
 const perfectScores = Object.fromEntries(GENERATED_REPORT_JUDGE_CATEGORIES.map((category) => [category, 4])) as GeneratedReportJudgeScores;
 assert.equal(generatedReportJudgeVerdict(perfectScores, 0.85), "pass");
@@ -49,6 +57,39 @@ assert.deepEqual(evidence, [
   "Do not reward generic coaching closers."
 ]);
 
+const dayKnowledgeIds = youTransitReadingProductionKnowledgeIds({
+  technicalEvidence: {
+    qualifyingTransits: [{ transitPlanet: "Sun", natalPoint: "Moon", aspect: "opposition", house: 6 }]
+  }
+});
+assert.ok(dayKnowledgeIds.includes("you-transit-v3-sun-opposition-moon"));
+assert.ok(dayKnowledgeIds.includes("house-6"));
+assert.doesNotThrow(() => productionEvidence.buildProductionCatalogEvidence({
+  contentKey: "you-transit-reading/day/2026-09-07",
+  surface: "you",
+  mode: "in_depth",
+  eventType: "you-transit-you-day-reading",
+  facts: { type: "you-transit-reading" },
+  knowledgeIds: dayKnowledgeIds,
+  sourceSnapshot: {}
+}));
+
+const weekKnowledgeIds = youTransitReadingProductionKnowledgeIds({
+  technicalEvidence: {
+    readings: [{ source: "lunation", driverLabel: "New Moon in Virgo", house: null }]
+  }
+});
+assert.deepEqual(weekKnowledgeIds, ["canonical:body/moon", "canonical:body/sun"]);
+assert.doesNotThrow(() => productionEvidence.buildProductionCatalogEvidence({
+  contentKey: "you-transit-reading/week/2026-09-07",
+  surface: "you",
+  mode: "in_depth",
+  eventType: "you-transit-you-week-reading",
+  facts: { type: "you-transit-reading" },
+  knowledgeIds: weekKnowledgeIds,
+  sourceSnapshot: {}
+}), "A governed lunation week must resolve production evidence before the writer or judge can run.");
+
 const sharedGenerator = read("api/_lib/transit-reading-generation.ts");
 assert.match(sharedGenerator, /initialValidatedDraft/u, "Deterministic validation must precede the judge.");
 assert.match(sharedGenerator, /firstJudgment\.result\.verdict === "pass"/u);
@@ -58,6 +99,25 @@ assert.match(sharedGenerator, /secondJudgment\.result\.verdict !== "pass"\) thro
 assert.match(sharedGenerator, /validateShape\(corrected, options, initial\.brief\)/u, "The judge correction must be deterministically revalidated before re-judge.");
 assert.match(sharedGenerator, /judgeAudit\(secondJudgment, 2\)/u);
 assert.doesNotMatch(sharedGenerator, /findings:\s*judged\.result\.findings/u, "Judge findings must not be persisted in the pass audit.");
+assert.doesNotMatch(sharedGenerator, /callOpenAIResponses\s*\(/u, "Friends/You writers may not open a direct provider path.");
+assert.doesNotMatch(sharedGenerator, /api\.anthropic\.com/u, "Friends/You writers may not open a direct Claude path.");
+assert.match(sharedGenerator, /prepareTransitReadingProductionKernel/u);
+assert.match(sharedGenerator, /callGovernedTransitReadingModel/u);
+
+const judgeRuntime = read("api/_lib/transit-reading-judge.ts");
+assert.doesNotMatch(judgeRuntime, /callOpenAIResponses\s*\(/u, "Generated report judge may not open a direct provider path.");
+assert.doesNotMatch(judgeRuntime, /api\.anthropic\.com/u, "Generated report judge may not open a direct Claude path.");
+assert.match(judgeRuntime, /role: "REVIEWER"/u);
+assert.match(judgeRuntime, /draftValidated: true/u);
+assert.match(judgeRuntime, /callGovernedTransitReadingModel/u);
+
+const productionRuntime = read("api/_lib/transit-reading-production.ts");
+assert.match(productionRuntime, /prepareProductionPreCallGate/u);
+assert.match(productionRuntime, /assertProductionPreCallGate/u);
+assert.match(productionRuntime, /beforeProviderCall/u);
+assert.match(productionRuntime, /callReportCalibrationModel/u, "Generated reports must reuse the centralized structured provider transport.");
+assert.match(productionRuntime, /TRANSIT_READING_REVIEW_VALIDATION_REQUIRED/u);
+assert.match(productionRuntime, /you-transit-\$\{input\.eventType\}/u);
 
 const friendGenerator = read("api/_lib/friend-transit-reading-generation.ts");
 const youGenerator = read("api/_lib/you-transit-reading-generation.ts");
@@ -65,9 +125,11 @@ for (const source of [friendGenerator, youGenerator]) {
   assert.match(source, /loadApprovedGeneratedReportOwnerEvidence/u);
   assert.match(source, /judgeGeneratedTransitReading/u);
   assert.match(source, /generatedReportQualityGate/u);
+  assert.match(source, /productionInput/u);
 }
 assert.match(friendGenerator, /reportKind: "friend_transit_reading"/u);
-assert.match(youGenerator, /brief\.window === "day" \? "you_day_reading" : "you_week_reading"/u);
+assert.match(youGenerator, /locked\.brief\.window === "day" \? "you_day_reading" : "you_week_reading"/u);
+assert.match(youGenerator, /youTransitReadingProductionKnowledgeIds/u);
 
 const friendLifecycle = read("api/_lib/friend-report-lifecycle.ts");
 const youLifecycle = read("api/_lib/you-report-lifecycle.ts");
@@ -109,4 +171,4 @@ assert.match(draftReview, /Judge findings are never promoted here automatically/
 const adminPanel = read("apps/admin/src/ReportFulfillmentAdminPanel.tsx");
 assert.match(adminPanel, /GeneratedReportDraftReview/u);
 
-console.log("Friends and You generated reports are judge-gated, one-pass-correctable, and owner-feedback-governed.");
+console.log("Friends and You generated reports are judge-gated, production-kernel-gated, one-pass-correctable, and owner-feedback-governed.");
