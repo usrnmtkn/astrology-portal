@@ -81,7 +81,11 @@ export function buildQuestionBoundAskTldrWriterRequest(input: {
   const base = buildAskTldrWriterRequest({ packet: semanticPacket, receipt: input.voiceReceipt });
   const withoutHash = {
     ...base,
-    instructions: `${base.instructions}\nQUESTION RELEVANCE EVIDENCE controls why a supplied astrology factor answers this specific question. Do not substitute a broader pillar association, a generic house keyword, or an inferred life-domain meaning for the supplied relevance evidence.`,
+    instructions: [
+      base.instructions,
+      "QUESTION RELEVANCE EVIDENCE controls why a supplied astrology factor answers this specific question. Do not substitute a broader pillar association, a generic house keyword, or an inferred life-domain meaning for the supplied relevance evidence.",
+      "APPLICATION STANDARD: When the question asks for guidance, help, what to do, how to approach something, or decision support, do not stop at abstract coaching language. Translate the central advice into at least one concrete decision, request, preparation step, boundary, question, or observable action the reader could actually take. Conditional examples must stay tightly tied to the question's domain and must not invent a personal event or history. The reader should not have to translate phrases such as 'make your contribution visible' or 'be more intentional' into the next step themselves."
+    ].join("\n"),
     input: `${base.input}\n\n${relevanceInput(evidence)}\n\nQUESTION RELEVANCE RECEIPT\n${JSON.stringify({
       receiptSha256: input.relevanceReceipt.receiptSha256,
       eligibleEvidenceIds: input.relevanceReceipt.eligibleEvidenceIds,
