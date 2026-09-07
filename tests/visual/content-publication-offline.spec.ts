@@ -64,3 +64,19 @@ test('published Sky house writing loads independently of an obsolete mirror and 
   expect(await page.evaluate(async()=> (window as any).qa.loadFallbackArchitectureV3SkyPlacementDashboardBundle())).toBeNull();
   expect(await page.evaluate(key=>(window as any).qa.isContentRetired(key),record.contentKey)).toBe(true);
 });
+
+test('an empty-house edit preserves the other bundled assembly sources', async ({ page, context }) => {
+  const bundled=await build({stdin:{contents:`export {installFallbackArchitectureV3Bundle,loadEmptyHouseFallbackArchitectureV3Bundle,fallbackRendererV3} from './apps/web/src/content/fallbackArchitectureV3Runtime.ts';`,resolveDir:process.cwd()},bundle:true,format:'esm',write:false,define:{'import.meta.env':'{}'},logLevel:'silent'});
+  await context.route('**/empty-house-qa',route=>route.fulfill({contentType:'text/html',body:'<html><body><script type="module">import * as qa from "/empty-house-qa.js";window.qa=qa;</script></body></html>'}));
+  await context.route('**/empty-house-qa.js',route=>route.fulfill({contentType:'text/javascript',body:bundled.outputFiles[0].text}));
+  await page.goto('/empty-house-qa');await page.waitForFunction(()=>Boolean((window as any).qa));
+  const result=await page.evaluate(async()=>{
+    const qa=(window as any).qa;
+    qa.installFallbackArchitectureV3Bundle({transitLib:{authoredCards:[]},templatesFile:{templates:[]},rowsFile:{vocabularyRows:[],hookRows:[{contentKey:'fallback-hook/empty-house/base/1',content_role:'fallback_hook',review_status:'approved',body_you:'QA saved empty-house introduction.',body_they:'QA friend empty-house introduction.'}]}});
+    await qa.loadEmptyHouseFallbackArchitectureV3Bundle();
+    return qa.fallbackRendererV3.renderNatalEmptyHouse({house:1,sign:'gemini',rulerHouse:10,voice:'you'});
+  });
+  expect(result.note).toBe('QA saved empty-house introduction.');
+  expect(result.body).toContain('You can understand yourself by talking long enough to hear what you actually think.');
+  expect(result.sourceKeys).toContain('fallback-hook/empty-house/rising-ruler/gemini/mercury/10');
+});

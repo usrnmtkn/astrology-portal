@@ -852,17 +852,17 @@ export async function loadDeferredFallbackArchitectureV3Bundle() {
 }
 
 export function isEmptyHouseFallbackArchitectureV3BundleLoaded() {
-  return Boolean(localEmptyHouseReaderBundle || dashboardCoreReaderBundle);
+  return Boolean(localEmptyHouseReaderBundle);
 }
 
 export async function loadEmptyHouseFallbackArchitectureV3Bundle() {
-  if (localEmptyHouseReaderBundle || dashboardCoreReaderBundle) {
+  if (localEmptyHouseReaderBundle) {
     return false;
   }
 
   emptyHouseFallbackBundlePromise ??= import("./fallbackArchitectureV3EmptyHouseBundle")
     .then(({ emptyHouseFallbackArchitectureV3Bundle }) => {
-      if (localEmptyHouseReaderBundle || dashboardCoreReaderBundle) {
+      if (localEmptyHouseReaderBundle) {
         return false;
       }
 

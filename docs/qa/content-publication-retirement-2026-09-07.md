@@ -70,3 +70,13 @@ Replaced only `authored/sky-lunation-macro/new-moon/virgo` with the exact saved 
 The dedicated regression checks exact body equality in Node, browser source, shipped resolver, and both generated partitions. A You-page browser regression checks the recovered opening and final sentence and rejects the old checklist opening. This is a prepared source replacement; production deployment remains pending.
 
 The actual You-page regression passed after updating the legacy fixed-opening guard to recognize the recovered Virgo opening. TypeScript, CSS/token, package-cache, and publication regression checks also pass.
+
+## Natal Empty Houses editing
+
+Natal Chart now has an **Empty houses** entry opening the corresponding Composition Map directly. Select the empty house, cusp sign, and ruler's house to find the base introduction, sign passage, specific ruler passage, applicable bridge, and vocabulary. The scope includes `natal.empty-house` templates and empty-house vocabulary previously missed by the surface-family matcher. “Show all empty-house sources” exposes the full family; the existing CMS starters and package-source hydration support creation through the standard editor. Editing, saving, publishing, archiving/restoring, and retirement reuse existing guarded CRUD actions.
+
+The selector follows the reader's current modern-ruler system and excludes impossible same-house ruler placements. All 1,584 valid combinations are compared against the shipped resolver's actual source keys. The source manager retains the standard editor and Live status rather than introducing a second save path.
+
+Fixed an independent reader loader bug: a partial Studio core override no longer marks the full local empty-house partition as loaded. A browser regression installs a single edited introduction, then verifies that Gemini's first-house sign and Mercury-in-tenth-house passages still assemble around it. No astrology prose changes accompany this workspace addition.
+
+Focused browser checks pass for direct navigation, exact-source and vocabulary selection, consecutive edits, retirement/reload, desktop/mobile layouts, and partial-overlay reader assembly. Existing source-manager and package-only starter tests also pass. Publication/database/API tests, selector parity, TypeScript, and CSS/token audits pass.

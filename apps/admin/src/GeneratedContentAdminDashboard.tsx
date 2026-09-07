@@ -5995,6 +5995,7 @@ export function GeneratedContentAdminDashboard() {
             {natalChartWorkspaceActive
               ? (
                 <>
+                  <div className="admin-new-actions"><button type="button" onClick={() => navigateAdminPage("compositionMap", new URLSearchParams({ surface: "natal-empty-house" }))}>Empty houses</button></div>
                   {renderNatalPlacementSourceFinder()}
                   {renderEditor()}
                 </>
@@ -6579,6 +6580,8 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "compositionMap" && (
           <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
             <CompositionMapWorkspace
+              key={new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("surface") ?? "all"}
+              initialSurfaceId={new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("surface") ?? undefined}
               rows={compositionRows}
               onLoadRow={(row) => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
               onEditRow={(row, context) => openRow(row as AdminGeneratedContentRow, context ?? null)}

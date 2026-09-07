@@ -5265,3 +5265,43 @@ test("Live filters keep unknown status separate and retry after refresh", async 
   await filters.getByRole("tab", { name: "Live 1", exact: true }).click();
   await expect(page.locator(".admin-content-row:visible")).toHaveCount(1);
 });
+
+
+test("Natal Empty Houses opens exact sources and supports repeated edits and retirement", async ({ page }) => {
+  const writes: Array<{method:string;payload:Record<string,unknown>}> = [];
+  const key="fallback-hook/empty-house/base/1";
+  const record=servingPackageRecords.get(key)!;
+  const row={...generatedContentRows[0],id:"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",content_key:key,headline:"Empty first house introduction",body:record.body_you,
+    status:"LIVE",lane:"serving",review_state:null,target_date:null,provider:"tldrastro-fallback-architecture-v3",event_type:"fallback-hook",block_type:"fallback_hook",
+    facts:{fallbackArchitectureV3:true},source_snapshot:{sourcePackage:"tldrastro-fallback-architecture-v3"},sections:{packageRecord:record}};
+  await seedAdminApi(page,{generatedRows:[row],onGeneratedContentWrite:write=>writes.push(write),compositionCatalog:[
+    {content_key:"fallback-hook/empty-house/rising-ruler/gemini/mercury/10",headline:"Gemini rising ruler in tenth house",role:"fallback_hook"},
+    {content_key:"fallback-vocab/empty-house-ruler-jurisdiction/10",headline:"Tenth house jurisdiction",role:"vocabulary"}
+  ]});
+  await expectAdminRouteLoads(page,"/admin/content#exact-content?category=Natal+Chart");
+  await page.getByRole("button",{name:"Empty houses",exact:true}).click();
+  const manager=page.getByRole("region",{name:"Manage composition sources"});
+  await expect(manager.getByLabel("Empty house",{exact:true})).toBeVisible();
+  await manager.getByLabel("Empty house cusp sign").selectOption("gemini");
+  await manager.getByLabel("Empty house ruler house").selectOption("10");
+  await expect(manager.getByLabel("Selected composition source")).toContainText("Gemini rising ruler in tenth house");
+  await expect(manager.getByLabel("Selected composition source")).toContainText("Tenth house jurisdiction");
+  for (const width of [1440,390]) {
+    await page.setViewportSize({width,height:1000});
+    await expectNoHorizontalOverflow(page,`Empty house manager ${width}`);
+  }
+  await manager.getByLabel("Selected composition source").selectOption(row.id);
+  await manager.getByRole("button",{name:"Edit selected source"}).click();
+  const editor=page.getByRole("dialog",{name:"Generated content editor"});
+  for(const text of ["QA empty house first edit.","QA empty house second edit."]) {
+    await editor.getByLabel("Reader phrase · You",{exact:true}).fill(text);
+    await editor.getByRole("button",{name:/^Save(?: draft)?$/}).click();
+    await expect(editor.getByRole("button",{name:/^Save(?: draft)?$/})).toBeDisabled();
+  }
+  expect(writes).toHaveLength(2);
+  await editor.getByRole("button",{name:"Retire everywhere",exact:true}).click();
+  await expect(editor.getByRole("button",{name:"Publish again",exact:true})).toBeVisible();
+  await editor.getByRole("button",{name:"Close",exact:true}).click();
+  await page.reload();
+  await expect(manager.getByLabel("Empty house",{exact:true})).toBeVisible();
+});

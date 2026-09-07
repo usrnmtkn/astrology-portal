@@ -648,7 +648,7 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
   "natal-empty-house": {
     readerLocation: "You or Friends > empty-house card and detail",
     editability: "editable",
-    routes: [{ label: "Edit empty-house copy", hash: "#exact-content?q=cms%2Fnatal-empty-house", purpose: "reader-copy", note: "Opens LIVE-first card and detail templates." }],
+    routes: [{ label: "Edit empty-house copy", hash: "#composition-map?surface=natal-empty-house", purpose: "reader-copy", note: "Choose the empty house, cusp sign, and ruler’s house to manage its passages, templates, and vocabulary." }],
     cmsStarters: [
       { label: "Start your empty-house card", contentKey: "cms/natal-empty-house/card/you/template", surface: "natal", headline: "{{houseOrdinal}} house", allowedSlots: ["house", "houseOrdinal", "sign", "ruler", "rulerSign", "rulerHouse", "rulerHouseOrdinal", "ownerName"] },
       { label: "Start empty-house detail template", contentKey: "cms/natal-empty-house/detail/you/template", surface: "natal", headline: "{{houseOrdinal}} house", allowedSlots: ["house", "houseOrdinal", "sign", "ruler", "rulerSign", "rulerHouse", "rulerHouseOrdinal"] },
