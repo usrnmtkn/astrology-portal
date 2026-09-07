@@ -384,45 +384,31 @@ export function SkyDetailArticle({
 
   const residencyContext = detail.placementResidencyContext;
   const residencyContextKey = residencyContext
-    ? [residencyContext.planet, residencyContext.sign, residencyContext.referenceDate, residencyContext.timeZone].join("|")
+    ? `${residencyContext.planet}|${residencyContext.sign}|${residencyContext.referenceDate}|${residencyContext.timeZone}`
     : "";
-  const [residencyAspectState, setResidencyAspectState] = useState<{
-    key: string;
-    sections: SkyDetailSection[];
-  } | null>(null);
+  const [residencyAspectState, setResidencyAspectState] = useState<[string, SkyDetailSection[]] | null>(null);
 
   useEffect(() => {
+    if (!residencyContext) return;
     let cancelled = false;
-
-    if (!residencyContext || !residencyContextKey) {
-      setResidencyAspectState(null);
-      return () => {
-        cancelled = true;
-      };
-    }
-
     setResidencyAspectState(null);
     void import("../../services/skyPlacementResidencyAspects")
       .then(({ skyPlacementResidencyAspectSections }) => skyPlacementResidencyAspectSections(residencyContext))
-      .then((result) => {
-        if (!cancelled) {
-          setResidencyAspectState({ key: residencyContextKey, sections: result.sections });
+      .then(
+        (result) => {
+          if (!cancelled) setResidencyAspectState([residencyContextKey, result.sections]);
+        },
+        () => {
+          if (!cancelled) setResidencyAspectState([residencyContextKey, []]);
         }
-      })
-      .catch((error) => {
-        if (!cancelled) {
-          console.warn("Sky Placement residency aspect enrichment failed closed.", error);
-          setResidencyAspectState({ key: residencyContextKey, sections: [] });
-        }
-      });
-
+      );
     return () => {
       cancelled = true;
     };
   }, [residencyContextKey]);
 
-  const residencyAspectSections = residencyAspectState?.key === residencyContextKey
-    ? residencyAspectState.sections
+  const residencyAspectSections = residencyAspectState?.[0] === residencyContextKey
+    ? residencyAspectState[1]
     : null;
   const detailSections = residencyContext
     ? [
@@ -511,7 +497,7 @@ export function SkyDetailArticle({
   const relatedAspectRows = (detail.relatedAspects?.rows ?? []).map(normalizeRelatedAspectRow);
   const relatedAspectGrouping = detail.relatedAspects?.grouping ?? "tone";
   const aspectGroupDefinitions = relatedAspectGrouping === "event"
-    ? ([{ id: "key-aspects" as const, label: detail.relatedAspects?.heading?.trim() || "Key aspects" }])
+    ? ([{ id: "key-aspects" as const, label: "Key aspects" }])
     : relatedAspectGrouping === "counterpart"
     ? ([
         { id: "planets" as const, label: "Planetary aspects" },
