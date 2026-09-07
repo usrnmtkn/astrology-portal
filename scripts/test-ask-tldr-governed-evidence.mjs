@@ -57,6 +57,37 @@ for (const factor of governed.evidence) {
   }
 }
 
+const lunarEclipse = calculated.find((item) => item.kind === "eclipse" && item.id.includes("lunar_eclipse-2026-08-28"));
+assert.ok(lunarEclipse, "Frozen Marie report facts must include the August 28 lunar eclipse.");
+const governedLunarEclipse = resolveAskTldrGovernedFactor({
+  ...lunarEclipse,
+  score: 90,
+  role: "supporting",
+  reasons: ["fixture"]
+});
+assert.equal(governedLunarEclipse.governedMeaning.status, "full", "Exact owner-approved generic lunar-eclipse sections should make lunar eclipse semantics usable in Ask TLDR.");
+assert.equal(governedLunarEclipse.governedMeaning.sourceKind, "owner_approved_eclipse_snapshot");
+assert.match(governedLunarEclipse.governedMeaning.promptEvidence, /owner-approved lunar-eclipse meaning/iu);
+assert.match(governedLunarEclipse.governedMeaning.promptEvidence, /Eclipses warp time and shift the course of events/iu);
+assert.match(governedLunarEclipse.governedMeaning.promptEvidence, /Lunar eclipses are portals into your soul/iu);
+assert.ok(governedLunarEclipse.governedMeaning.governanceSourceSha256);
+assert.equal(governedLunarEclipse.governedMeaning.indexSha256, null, "Approved eclipse-section snapshots must not pretend to come from the knowledge index.");
+for (const record of packetRecords(governedLunarEclipse.governedMeaning.packet)) {
+  assert.equal(record.authorityClass, "owner-approved-prose");
+  assert.equal(record.store, "owner-approved-lunar-eclipse-section-snapshot");
+}
+
+const solarEclipse = calculated.find((item) => item.kind === "eclipse" && item.id.includes("solar_eclipse-2026-08-12"));
+assert.ok(solarEclipse, "Frozen Marie report facts must include the August 12 solar eclipse.");
+const governedSolarEclipse = resolveAskTldrGovernedFactor({
+  ...solarEclipse,
+  score: 80,
+  role: "supporting",
+  reasons: ["fixture"]
+});
+assert.notEqual(governedSolarEclipse.governedMeaning.sourceKind, "owner_approved_eclipse_snapshot", "Lunar approval must never be generalized to solar-eclipse meaning.");
+assert.notEqual(governedSolarEclipse.governedMeaning.status, "full", "Review-held generic solar-eclipse semantics must remain unavailable to Ask TLDR.");
+
 const profection = calculated.find((item) => item.kind === "profection");
 assert.ok(profection);
 const governedProfection = resolveAskTldrGovernedFactor({
@@ -91,4 +122,4 @@ assert.throws(() => resolveAskTldrGovernedFactor({
   knowledgeIds: []
 }), /ASK_TLDR_CALCULATED_FACTS_REQUIRED/u);
 
-console.log("Ask TLDR governed evidence passed: ranked calculated factors resolve only through approved/factual TLDR knowledge or hash-verified owner-approved CMS snapshots, preserve provenance, and incomplete technique coverage fails closed.");
+console.log("Ask TLDR governed evidence passed: ranked calculated factors resolve only through approved/factual TLDR knowledge, hash-verified owner-approved CMS snapshots, or exact owner-approved lunar-eclipse sections; solar eclipse source gaps and incomplete techniques still fail closed.");
