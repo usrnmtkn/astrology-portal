@@ -2966,6 +2966,9 @@ test.describe("client-facing user flow case studies", () => {
       await expect(page.getByText("friends.")).toBeVisible();
       await page.getByRole("button", { name: "Open Nikki" }).click();
       await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
+      await page.getByRole("tab", { name: "Natal", exact: true }).click();
+      await expect(page.getByRole("tab", { name: "Natal", exact: true })).toHaveAttribute("aria-selected", "true");
+      await expect(page.getByRole("region", { name: /Nikki's natal placements/ })).toBeVisible();
       await expectSharedLabelContract(page, `${viewport.name} Friends natal`);
       await expectNoHorizontalOverflow(page, `${viewport.name} Friends natal label audit`);
       await captureResponsiveSurface(page, viewport.name, "label-audit-friends-natal");
