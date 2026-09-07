@@ -285,6 +285,7 @@ function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, va
   const supportsNamedFriendCopy = Boolean(
     contentKey?.startsWith("fallback-hook/natal-aspect-lived/")
     || contentKey?.startsWith("authored/transit-aspect/")
+    || /^fallback-hook\/transit-effect-(?:soft|hard)\//u.test(contentKey ?? "")
   );
   if (!supportsNamedFriendCopy || typeof value !== "string") return value;
   return value.replace(/\{\{Name\}\}|\{Name\}/gu, "{{Name}}");
@@ -475,6 +476,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       const isAllowedFriendName = (
         row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
         || row.content_key.startsWith("authored/transit-aspect/")
+        || /^fallback-hook\/transit-effect-(?:soft|hard)\//u.test(row.content_key)
       )
         && field.endsWith("body_they")
         && slot === "{{Name}}";
