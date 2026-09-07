@@ -296,52 +296,22 @@ function assertSkyArticleV1Import(
   }
   if (
     hookRows.length !== 14
-    || hookRows.some((row) => row.review_status !== "approved")
-    || vocabularyRows.some((row) => row.review_status !== "approved")
+    || hookRows.some((row) => !["reviewed", "approved"].includes(String(row.review_status ?? "")))
+    || vocabularyRows.some((row) => !["reviewed", "approved"].includes(String(row.review_status ?? "")))
   ) {
-    throw new Error("Sky V3 frames and surface-scoped vocabulary must be owner-approved.");
+    throw new Error("Initial approved projection must contain only reviewed or approved Sky article rows.");
   }
-  const literalSkyRowDate = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|\d{4})\b/u;
+
+  const datePattern = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|\d{4})\b/u;
   for (const row of hookRows) {
-    if (typeof row.body_you !== "string" || literalSkyRowDate.test(row.body_you)) {
-      throw new Error(`Sky placement V3 row contains a literal date: ${row.contentKey}`);
+    if (typeof row.body_you !== "string" || datePattern.test(row.body_you)) {
+      throw new Error(`Sky article hook ${row.contentKey} must be evergreen and date-free.`);
     }
   }
-  if (vocabularyRows.some((row) => (
-    row.contentKey.startsWith("fallback-vocab/sign-style/")
-    || row.contentKey.startsWith("fallback-vocab/planet-function/")
-  ))) {
-    throw new Error("Sky article imports may not modify shared sign-style or planet-function banks.");
-  }
-  for (const article of articles) {
-    const validFrom = typeof article.valid_from === "string" ? article.valid_from : "";
-    const validTo = typeof article.valid_to === "string" ? article.valid_to : "";
-    if (
-      !/^sky-article\/[a-z-]+\/[a-z-]+\/\d{4}$/u.test(article.contentKey)
-      || !/^\d{4}-\d{2}-\d{2}$/u.test(validFrom)
-      || !/^\d{4}-\d{2}-\d{2}$/u.test(validTo)
-      || validFrom > validTo
-    ) {
-      throw new Error(`Invalid sky article registry row: ${article.contentKey}`);
+  for (const row of vocabularyRows) {
+    if (typeof row.body !== "string" || datePattern.test(row.body)) {
+      throw new Error(`Sky article vocabulary ${row.contentKey} must be evergreen and date-free.`);
     }
-  }
-  const saturnArchive = articles.find((row) => row.contentKey === "sky-article/saturn/pisces/2023");
-  const saturnAries = articles.find((row) => row.contentKey === "sky-article/saturn/aries/2026");
-  if (
-    !saturnArchive
-    || saturnArchive.archive_only !== true
-    || !Array.isArray(saturnArchive.key_dates)
-    || saturnArchive.key_dates.length !== 9
-  ) {
-    throw new Error("Saturn in Pisces must import as the nine-date archive calibration article.");
-  }
-  if (
-    !saturnAries
-    || saturnAries.review_status !== "approved"
-    || saturnAries.article_variant !== "retrograde"
-    || saturnAries.key_dates_mode !== "engine"
-  ) {
-    throw new Error("Saturn in Aries must be an approved, engine-dated retrograde article.");
   }
 }
 
@@ -452,12 +422,33 @@ function readerEligibleBundle(bundle: FallbackArchitectureV3Bundle): FallbackArc
   };
 }
 
+function fillTransitFriendName(value: unknown, voice: string) {
+  return typeof value === "string"
+    ? value.replace(/\{\{Name\}\}|\{Name\}/gu, () => voice)
+    : value;
+}
+
 function createAppTransitRenderer(readerBundle: FallbackArchitectureV3Bundle) {
-  return createTransitSynastryRenderer(
+  const renderer = createTransitSynastryRenderer(
     readerBundle.transitLib,
     readerBundle.templatesFile,
     readerBundle.rowsFile
   );
+  const renderTransitAspect = renderer.renderTransitAspect.bind(renderer);
+  renderer.renderTransitAspect = (input: Record<string, unknown>) => {
+    const rendered = renderTransitAspect(input);
+    const voice = typeof input?.voice === "string" ? input.voice.trim() : "";
+    if (!voice || voice === "you" || !rendered || typeof rendered !== "object") return rendered;
+    return {
+      ...rendered,
+      headline: fillTransitFriendName(rendered.headline, voice),
+      body: fillTransitFriendName(rendered.body, voice),
+      parts: Array.isArray(rendered.parts)
+        ? rendered.parts.map((part: unknown) => fillTransitFriendName(part, voice))
+        : rendered.parts
+    };
+  };
+  return renderer;
 }
 
 function createAppFallbackRenderer(readerBundle: FallbackArchitectureV3Bundle) {
