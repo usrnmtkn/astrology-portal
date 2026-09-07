@@ -1,0 +1,41 @@
+{
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-collective-approved-2026-09-07",
+  "sourceCandidateBatchId": "sky-calendar-collective-rewrite-2026-09-07",
+  "sourceCandidatePath": "packages/astro-knowledge/review/sky-calendar-collective-rewrite-2026-09-07",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json",
+  "ownerStatement": "please proceed with the merge and push live. Make sure all the updated aspects are editble in the content studio",
+  "decisionContext": "The owner reviewed and approved ten randomly selected passages from the complete 379-row collective Calendar candidate set, approved the selective second-person direction, then explicitly directed the hash-bound package to merge and production. This authorization binds only the exact candidate files and reader-address overlay listed below.",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedFields": [
+    "summary",
+    "body"
+  ],
+  "approvalEffect": "exact_wording_approval",
+  "capabilities": [
+    "editorial_approval"
+  ],
+  "approvedAt": "2026-09-07",
+  "memberCount": 379,
+  "readerAddressOverlayCount": 40,
+  "approvedCandidateHeadSha": "04dca0df25d6089922b311ce6a4544fe5e9a7c2b",
+  "rebasedCandidateHeadSha": "6f1026a8962c25dcab142181082f919bfa4ddab7",
+  "sourceProjectionPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/current-owner-payloads.json",
+  "sourceProjectionBlobSha": "86c4d85938bca192550d60992ecf28080ba06e27",
+  "sourceProjectionPayloadSetSha256": "149f6b393f33c60443b07721ac2b0eed458030a5ceb60c08f722ee0c6d6c2e67",
+  "runtimeEligible": false,
+  "servingRequiresSeparateChange": true,
+  "recordFileBlobs": {
+    "candidate-payloads-01.json": "7556dfdd4044806685ea80f48e311e4fcaa1588b",
+    "candidate-payloads-02.json": "2637fc8e034837c17e532889108232ce328da280",
+    "candidate-payloads-03.json": "2cdec7f77ce9859e1867c98fe8a8855e665a2847",
+    "candidate-payloads-04.json": "c5952f02b98e6281d69e3e03231b36f8b788e8b7",
+    "candidate-payloads-05.json": "ff5739e5b7a204f951697c8ced29047670b5e1f7",
+    "candidate-payloads-06.json": "877190f0a3f609be53285cdce13b52841a2d8ef8",
+    "candidate-payloads-07.json": "0b79ceeb9cb298ec7701f684266131367579a798",
+    "candidate-payloads-08.json": "21a73c9a65aae0ad94168cf3ffbc593f7f60fb24",
+    "reader-address-overlay.json": "6f62e8ef125bae91ae0c6747ae5c432244ff3420"
+  }
+}

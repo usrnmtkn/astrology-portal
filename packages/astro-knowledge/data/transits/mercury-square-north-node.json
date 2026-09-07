@@ -3,7 +3,7 @@
   "transiting": "mercury",
   "aspect": "square",
   "other": "north-node",
-  "base": "New information can make it obvious that the decision you thought you were making is no longer the one in front of you.",
+  "base": "New information can reveal that the decision everyone thought was being made is no longer the decision actually in front of them.",
   "business": "A practical mismatch needs adjustment; change the arrangement instead of repeating the same workaround.",
   "shadow": "Pressure escalates when each side keeps demanding terms the other cannot sustain.",
   "arcApplying": "The mismatch becomes harder to work around as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "New information can make it obvious that the decision you thought you were making is no longer the one in front of you.",
-    "body": "New information can make it obvious that the decision you thought you were making is no longer the one in front of you. When Mercury squares the North Node, a changed deadline, conflicting answer, missing requirement, or conversation you kept postponing can expose the assumption that no longer holds. Repeating the old explanation will not solve a problem created by new facts. Update the terms, ask the question you have been avoiding, and let the plan change if the information changed first.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+    "summary": "New information can reveal that the decision everyone thought was being made is no longer the decision actually in front of them.",
+    "body": "New information can reveal that the decision everyone thought was being made is no longer the decision actually in front of them. When Mercury squares the North Node, communication and forward movement create friction through changed deadlines, conflicting answers, missing requirements, or a conversation that alters the assumptions underneath the plan. Repeating the old explanation cannot solve a problem created by new facts. The direction needs room to change when the information changed first.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }

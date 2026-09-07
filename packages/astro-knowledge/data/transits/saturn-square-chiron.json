@@ -3,7 +3,7 @@
   "transiting": "saturn",
   "aspect": "square",
   "other": "chiron",
-  "base": "If every small correction makes you work twice as hard, the standard is no longer the only thing you are responding to.",
+  "base": "A small correction can trigger an outsized response when the standard is tangled with an old fear of being fundamentally inadequate.",
   "business": "A practical mismatch needs adjustment; change the arrangement instead of repeating the same workaround.",
   "shadow": "Pressure escalates when each side keeps demanding terms the other cannot sustain.",
   "arcApplying": "The mismatch becomes harder to work around as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "If every small correction makes you work twice as hard, the standard is no longer the only thing you are responding to.",
-    "body": "If every small correction makes you work twice as hard, the standard is no longer the only thing you are responding to. When Saturn squares Chiron, criticism, delay, or a difficult requirement can wake up the old belief that one mistake exposes something fundamentally lacking in you. That is how improvement turns into penance: one revision becomes an all-nighter, one missed detail becomes proof you should have known better, one no becomes a reason to lower your expectations of yourself. Fix what needs fixing. You do not have to pay for a mistake with your entire sense of competence.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+    "summary": "A small correction can trigger an outsized response when the standard is tangled with an old fear of being fundamentally inadequate.",
+    "body": "A small correction can trigger an outsized response when the standard is tangled with an old fear of being fundamentally inadequate. When Saturn squares Chiron, structure and sensitivity create friction, making one revision turn into an all-nighter or one missed detail sound like proof that far more is wrong. If one correction suddenly feels like a verdict on your competence, you may notice the emotional consequence has grown far beyond the practical mistake. Accountability works better when the repair remains proportional to what actually needs fixing.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }

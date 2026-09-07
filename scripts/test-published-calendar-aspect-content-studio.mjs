@@ -16,16 +16,16 @@ assert.match(skyContent, /source\.contentStudioExactAspect !== true/u, "Exact St
 assert.match(skyContent, /canonicalContentStudioExactSkyPoint/u, "Exact Studio identity must preserve node poles instead of collapsing them to a generic nodes key.");
 assert.match(skyContent, /point === "south-node"\) return "south-node"/u, "South Node must remain a first-class exact Content Studio identity.");
 assert.match(skyContent, /Published exact-aspect Content Studio rows have always put the node first/u, "Existing North Node Content Studio keys must remain stable while South Node is added.");
-assert.match(app, /const loadedExactRegistry = contentRegistryFor\("sky"\);[\s\S]*!loadedExactRegistry\.approvedExactSkyAspectCopy\(aspect\.from, aspect\.type, aspect\.to\)[\s\S]*tier: "content-studio-exact-sky-aspect-v1"/u, "Sky detail may use Studio exact copy only for a true canonical exact gap.");
-assert.match(calendar, /exact: exact \?\? studioExact/u, "Calendar cards must keep canonical exact copy authoritative over the Studio mirror.");
+assert.match(app, /if \(studio\) \{[\s\S]*tier: "content-studio-exact-sky-aspect-v1"/u, "Sky detail must prefer a signed-off Studio exact version over the canonical exact baseline.");
+assert.match(calendar, /exact: studioExact \?\? exact/u, "Calendar cards must prefer a signed-off Studio exact version over the canonical exact baseline.");
 assert.match(seed, /studio_content_type: "aspect"/u, "Published exact rows must use versioned aspect editing.");
 assert.match(seed, /studio_editable_fields:[\s\S]*Summary[\s\S]*Body/u, "Summary and Body must remain editable fields for every exact aspect baseline.");
 assert.match(seed, /nodeAxisPole/u, "Published node aspect rows must carry explicit pole metadata in Content Studio.");
 assert.match(seed, /southNodeRows\.length !== 60/u, "Once released, Content Studio must require all 60 South Node exact rows.");
 assert.match(seed, /content_key: contentKey[\s\S]*status: "LIVE"[\s\S]*lane: "serving"/u, "The imported baseline must be visible as published.");
 assert.equal(mercuryMars.status, "LIVE");
-assert.equal(mercuryMars.readerCopy.body.startsWith("A direct conversation can clear a problem that has been taking far more mental energy than the actual solution requires."), true);
+assert.equal(mercuryMars.readerCopy.body.startsWith(mercuryMars.readerCopy.summary), true);
 assert.equal(sunMercury.status, "LIVE");
-assert.equal(sunMercury.readerCopy.body.startsWith("Your thoughts can feel unusually personal when saying what you mean also feels like saying who you are."), true);
+assert.equal(sunMercury.readerCopy.body.startsWith(sunMercury.readerCopy.summary), true);
 
 console.log("Published Calendar aspect Content Studio authority contract passed.");

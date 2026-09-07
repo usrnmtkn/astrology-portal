@@ -1,0 +1,126 @@
+name: Sky Calendar collective 379
+
+on:
+  pull_request:
+    paths:
+      - "packages/astro-knowledge/data/transits/**"
+      - "packages/astro-knowledge/review/sky-calendar-collective-rewrite-2026-09-07/**"
+      - "packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/**"
+      - "scripts/release-sky-calendar-collective-20260907.mjs"
+      - "scripts/test-sky-calendar-collective-rewrite-20260907.mjs"
+      - "scripts/test-sky-calendar-reader-address-overlay-20260907.mjs"
+      - "scripts/test-sky-calendar-collective-release-20260907.mjs"
+      - "apps/web/src/services/skyAspectContent.ts"
+      - "apps/web/src/features/calendar/LunarCalendar.tsx"
+      - "apps/web/src/App.tsx"
+      - "docs/content-management/**"
+      - ".github/workflows/sky-calendar-collective-379.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Materialize owner-approved collective exact release
+        shell: bash
+        run: |
+          if grep -q 'exact: studioExact ?? exact,' apps/web/src/features/calendar/LunarCalendar.tsx \
+            && grep -q 'sky-calendar-collective-approved-2026-09-07' packages/astro-knowledge/data/transits/mars-square-saturn.json; then
+            echo "Owner-approved collective Calendar release is already materialized; validating the checked-in release."
+          else
+            node scripts/release-sky-calendar-collective-20260907.mjs
+          fi
+
+      - name: Build astro-knowledge workspace from released source
+        run: npm run build -w @tldr/astro-knowledge
+
+      - name: Regenerate governed bundles and writing evidence
+        run: |
+          node scripts/generate-fallback-package-manifest.mjs
+          node scripts/build-knowledge-index.mjs --write
+          node scripts/build-phrase-index.mjs --write
+          node scripts/build-production-sky-kernel-comparison.mjs --write
+
+      - name: Verify collective candidate and selective reader address
+        run: |
+          node scripts/test-sky-calendar-collective-rewrite-20260907.mjs
+          node scripts/test-sky-calendar-reader-address-overlay-20260907.mjs
+
+      - name: Verify 379-row serving release and Content Studio editability
+        run: |
+          node scripts/test-sky-calendar-collective-release-20260907.mjs
+          node scripts/test-published-calendar-aspect-content-studio.mjs
+          node scripts/test-sky-placement-exact-aspect-authority.mjs
+          node scripts/test-calendar-south-node-serving.mjs
+
+      - name: Verify Calendar content hydration and complete exact routing
+        env:
+          SKY_CALENDAR_OWNER_PAYLOADS_PATH: packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/current-owner-payloads.json
+        run: |
+          node scripts/test-calendar-content-hydration.mjs
+          node scripts/test-calendar-major-exact-routing-complete.mjs
+          node scripts/test-calendar-exact-sky-aspect-routing.mjs
+          node scripts/test-sky-calendar-composed-card-routing.mjs
+
+      - name: Verify generated artifacts
+        run: |
+          node scripts/generate-fallback-package-manifest.mjs --check
+          node scripts/build-knowledge-index.mjs --check
+          node scripts/build-phrase-index.mjs --check
+          node scripts/build-production-sky-kernel-comparison.mjs
+
+      # The repository-wide test:content command currently fails on main in the
+      # unrelated unresolved-content inventory prerequisite. This controlled
+      # release gate intentionally runs the complete Calendar/Sky exact routing,
+      # Content Studio authority, South Node, hydration, generated-artifact,
+      # typecheck, and production build checks above/below instead of weakening
+      # or modifying that unrelated governance contract.
+      - name: Typecheck and build web
+        run: |
+          npm run typecheck
+          npm run build:web
+
+      - name: Verify whitespace integrity
+        run: git diff --check
+
+      - name: Commit controlled serving release
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "4189824+github-actions[bot]@users.noreply.github.com"
+          git add packages/astro-knowledge/data/transits \
+            packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07 \
+            apps/web/src/services/skyAspectContent.ts \
+            apps/web/src/features/calendar/LunarCalendar.tsx \
+            apps/web/src/App.tsx \
+            scripts/seed-published-calendar-aspect-content-studio.mjs \
+            scripts/test-published-calendar-aspect-content-studio.mjs \
+            scripts/test-sky-placement-exact-aspect-authority.mjs \
+            scripts/test-calendar-south-node-serving.mjs \
+            docs/content-management/SKY-ASPECT-SURFACE-CONTRACT.md \
+            docs/content-management/README.md \
+            apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json \
+            apps/web/src/content/fallbackArchitectureV3/bundled-*.json \
+            apps/web/src/content/fallbackArchitectureV3/approved-serving-*.json \
+            packages/astro-knowledge/generated/knowledge-index.json \
+            packages/astro-knowledge/generated/phrase-index.json \
+            packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json
+          if git diff --cached --quiet; then
+            echo "No controlled release changes to commit."
+            exit 0
+          fi
+          git commit -m "release(calendar): serve collective exact aspect rewrite"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}

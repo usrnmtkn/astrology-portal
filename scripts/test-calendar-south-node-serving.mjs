@@ -178,7 +178,10 @@ const studioSouth = resolveSkyAspectContentStudioExact({
 assert.equal(studioNorth?.content.contentKey, "sky.aspect.north-node.square.mars");
 assert.equal(studioSouth?.content.contentKey, "sky.aspect.south-node.square.mars");
 assert.notEqual(studioNorth?.content.contentKey, studioSouth?.content.contentKey, "Content Studio exact resolver collapsed the two node poles.");
-assert.equal(studioNorth?.body, marsNorth.body);
+assert.ok(studioNorth?.body.includes(marsNorth.body));
+assert.ok(studioNorth?.body.includes(marsSouth.body));
+assert.match(studioNorth?.body ?? "", /North Node \(square\):/u);
+assert.match(studioNorth?.body ?? "", /South Node \(square\):/u);
 assert.equal(studioSouth?.body, marsSouth.body);
 
 const skyDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
