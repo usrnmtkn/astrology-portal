@@ -1,6 +1,6 @@
 import type { ContentArea, ContentBundle, KnowledgeItem, SourceFactors, VoiceContentItem } from "./types";
-import { equivalentAstroContentKeys } from "./keyAliases";
-import { firstReaderFacingCopy, readerFacingParagraphs } from "./readerSafety";
+import { equivalentAstroContentKeys } from "./keyAliases.js";
+import { firstReaderFacingCopy, readerFacingParagraphs } from "./readerSafety.js";
 
 export const defaultVoiceId = "tldr-astro-v1";
 

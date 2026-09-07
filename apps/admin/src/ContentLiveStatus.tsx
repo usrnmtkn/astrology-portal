@@ -4,7 +4,7 @@ export type LiveStatus = { id: string; live: boolean; label: "Live" | "Not live"
 type StatusRow = { id?: string | null; updated_at?: string | null };
 type Load = (row: StatusRow) => Promise<LiveStatus>;
 const Context = createContext<Load | null>(null);
-export function ContentLiveStatusProvider({ request, children }: { request: (ids: string[]) => Promise<LiveStatus[]>; children: ReactNode }) {
+export function useContentLiveStatusLoader(request: (ids: string[]) => Promise<LiveStatus[]>, identity: string) {
   const requestRef = useRef(request);
   requestRef.current = request;
   const [revision, setRevision] = useState(0);
@@ -33,10 +33,37 @@ export function ContentLiveStatusProvider({ request, children }: { request: (ids
           }
         }, 0);
       }));
-      return cache.get(key)!;
+      const pendingStatus = cache.get(key)!;
+      void pendingStatus.catch(() => { if (cache.get(key) === pendingStatus) cache.delete(key); });
+      return pendingStatus.then((status) => {
+        if (row.updated_at && status.updatedAt && Date.parse(row.updated_at) !== Date.parse(status.updatedAt)) throw new Error("Content changed. Refresh rows to verify status.");
+        return status;
+      });
     };
-  }, [revision]);
+  }, [revision, identity]);
+  return load;
+}
+export function ContentLiveStatusProvider({ load, children }: { load: Load; children: ReactNode }) {
   return <Context.Provider value={load}>{children}</Context.Provider>;
+}
+export function useContentLiveStatusResults(load: Load, rows: StatusRow[], enabled: boolean) {
+  const [result, setResult] = useState<{ load: Load; rows: StatusRow[]; statuses: Map<string, LiveStatus>; failed: number } | null>(null);
+  useEffect(() => {
+    if (!enabled) return;
+    let cancelled = false;
+    void Promise.allSettled(rows.map((row) => load(row))).then((results) => {
+      if (cancelled) return;
+      const statuses = new Map<string, LiveStatus>();
+      let failed = 0;
+      for (const result of results) {
+        if (result.status === "fulfilled") statuses.set(result.value.id, result.value);
+        else failed++;
+      }
+      setResult({ load, rows, statuses, failed });
+    });
+    return () => { cancelled = true; };
+  }, [load, rows, enabled]);
+  return result?.load === load && result.rows === rows ? result : null;
 }
 export default function ContentLiveStatusBadge({ row, unsaved = false, label }: { row: StatusRow; unsaved?: boolean; label?: string }) {
   const load = useContext(Context);

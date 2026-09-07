@@ -2892,8 +2892,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
     await expect(page.locator("section[aria-label='Content list filters']")).toBeVisible();
     await page.getByText("Editorial filters", { exact: true }).click();
-    await expect(page.locator("[aria-label='Editorial stage']").getByRole("tab", { name: /Draft/ })).toBeVisible();
-    await expect(page.locator("[aria-label='Editorial stage']").getByRole("tab", { name: /Live/ })).toBeVisible();
+    await expect(page.locator("[aria-label='Reader status']").getByRole("tab", { name: /Not live/ })).toBeVisible();
+    await expect(page.locator("[aria-label='Reader status']").getByRole("tab", { name: /Live/ })).toBeVisible();
     await expect(page.getByRole("region", { name: "Content status definitions" })).toContainText("readers can currently receive this copy");
 
     await page.getByLabel("Search content").fill("moon");
@@ -5160,4 +5160,52 @@ test("Chiron transit recovers stale save versions and keeps conflicting edits vi
   await page.setViewportSize({ width: 390, height: 844 });
   await editor.getByRole("alert").scrollIntoViewIfNeeded();
   await expect(editor.getByRole("alert")).toBeVisible();
+});
+
+for (const width of [1440, 390]) {
+  test(`Calendar Live filters agree with reader status at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    const { buildRows } = await import("../../scripts/seed-published-calendar-aspect-content-studio.mjs");
+    const baseline = buildRows().find((row: any) => row.content_key === "sky.aspect.saturn.square.lilith");
+    const live = { ...baseline, id: "qa-calendar-live", updated_at: now };
+    const pending = { ...baseline, id: "qa-calendar-pending", updated_at: now, headline: "QA pending Calendar revision", sections: { ...baseline.sections, packageDraft: { ...baseline.sections.packageRecord, Body: "QA pending Calendar revision." } } };
+    await seedAdminApi(page, { generatedRows: [live, pending] });
+    await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Calendar+Aspects");
+    await page.getByText("Editorial filters", { exact: true }).click();
+    const filters = page.getByRole("tablist", { name: "Reader status" });
+    await expect(filters.getByRole("tab", { name: "Live 1", exact: true })).toBeVisible();
+    await expect(filters.getByRole("tab", { name: "Not live 1", exact: true })).toBeVisible();
+    await filters.getByRole("tab", { name: "Live 1", exact: true }).click();
+    const rows = page.locator(".admin-content-row:visible");
+    await expect(rows).toHaveCount(1);
+    await expect(rows.first()).toContainText("Saturn Square Lilith");
+    await expect(rows.first().locator(".admin-status:visible").filter({ hasText: /^Live$/ })).toBeVisible();
+    await expect(rows.first().getByText("Not live", { exact: true })).toHaveCount(0);
+    await filters.getByRole("tab", { name: "Not live 1", exact: true }).click();
+    await expect(rows).toHaveCount(1);
+    await expect(rows.first()).toContainText("QA pending Calendar revision");
+    await expect(rows.first().locator(".admin-status:visible").filter({ hasText: /^Not live$/ })).toBeVisible();
+  });
+}
+
+test("Live filters keep unknown status separate and retry after refresh", async ({ page }) => {
+  const { buildRows } = await import("../../scripts/seed-published-calendar-aspect-content-studio.mjs");
+  const row = { ...buildRows().find((row: any) => row.content_key === "sky.aspect.saturn.square.lilith"), id: "qa-status-retry", updated_at: now };
+  await seedAdminApi(page, { generatedRows: [row] });
+  let omit = true;
+  await page.route("**/api/admin/content-live-status", async (route) => {
+    if (omit && route.request().postDataJSON().ids) await route.fulfill({ json: { ok: true, statuses: [] } });
+    else await route.fallback();
+  });
+  await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Calendar+Aspects");
+  await page.getByText("Editorial filters", { exact: true }).click();
+  await expect(page.getByText(/Status unavailable for 1 entries/)).toBeVisible();
+  const filters = page.getByRole("tablist", { name: "Reader status" });
+  await filters.getByRole("tab", { name: "Not live 0", exact: true }).click();
+  await expect(page.locator(".admin-content-row:visible")).toHaveCount(0);
+  omit = false;
+  await page.getByRole("button", { name: "Refresh rows", exact: true }).click();
+  await expect(filters.getByRole("tab", { name: "Live 1", exact: true })).toBeVisible();
+  await filters.getByRole("tab", { name: "Live 1", exact: true }).click();
+  await expect(page.locator(".admin-content-row:visible")).toHaveCount(1);
 });

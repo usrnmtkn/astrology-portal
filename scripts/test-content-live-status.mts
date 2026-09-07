@@ -100,3 +100,21 @@ user.status = "DRAFT";
 assert.equal((await request(["user:qa-user"])).statuses[0].label, "Not live");
 globalThis.fetch = originalFetch;
 console.log("PASS: personalized status uses the private reader table and selection scope");
+
+// The same exact-aspect catalog feeds Studio and the real Calendar/Sky reader.
+const { buildRows } = await import("./seed-published-calendar-aspect-content-studio.mjs");
+const exactRows = buildRows().map((row: any, i: number) => ({ ...row, id: `exact-${i}` }));
+assert(exactRows.length >= 379);
+for (const row of exactRows) {
+  assert.equal(contentLiveStatuses([row])[0].live, true, row.content_key);
+  const revised = { ...row, sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, Body: "QA pending exact revision." } } };
+  assert.equal(contentLiveStatuses([revised])[0].live, false, `${row.content_key}: pending copy cannot inherit live metadata`);
+}
+const saturn = exactRows.find((row: any) => row.content_key === "sky.aspect.saturn.square.lilith");
+assert.equal(contentLiveStatuses([{ ...saturn, status: "DRAFT", lane: "reference" }])[0].source, "package", "The actual installed reader baseline remains available independently of mirror metadata.");
+const update = { ...saturn, id: "current-exact", updated_at: "2026-09-07T18:00:00Z", body: "QA newly published exact aspect.", sections: { ...saturn.sections, packageRecord: { ...saturn.sections.packageRecord, Body: "QA newly published exact aspect." } } };
+assert.equal(contentLiveStatuses([update])[0].source, "studio");
+assert.equal(contentLiveStatuses([saturn], [update])[0].live, false, "A different active exact version supersedes the baseline.");
+assert.equal(contentLiveStatuses([{ ...update, source_snapshot: { ...update.source_snapshot, exactSkyAspectIdentity: { a: "mars", b: "lilith", aspect: "square" } } }])[0].live, false, "Mismatched reader identity cannot serve.");
+assert.equal(contentLiveStatuses([{ ...update, review_state: "needs-review" }])[0].live, false);
+console.log(`PASS: ${exactRows.length} actual Calendar exact rows, pending revisions, bundled baseline, active versions, reader identity, and review holds`);

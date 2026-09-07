@@ -3,7 +3,7 @@ import { SkyDailySummaryStudio } from "./SkyDailySummaryStudio";
 import { skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
 import { lunarContentIdentity } from "./lunarCalendarContent";
-import ContentLiveStatusBadge, { ContentLiveStatusProvider, type LiveStatus } from "./ContentLiveStatus";
+import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
 import { mergeContentInventory } from "./contentStudioState";
 import {
   ArrowLeft,
@@ -2742,7 +2742,7 @@ export function GeneratedContentAdminDashboard() {
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
   }, []);
-  const [contentStatusFilter, setContentStatusFilter] = useState<GeneratedContentStatus | "all">("all");
+  const [contentStatusFilter, setContentStatusFilter] = useState<"LIVE" | "NOT_LIVE" | "all">("all");
   const [contentLibraryView, setContentLibraryView] = useState<ContentLibraryView>("all");
   const [reviewStatusFilter, setReviewStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [skyVoiceQueueView, setSkyVoiceQueueView] = useState<SkyVoiceQueueView>("all");
@@ -3042,31 +3042,29 @@ export function GeneratedContentAdminDashboard() {
 
     return [...rowsByKey.values()];
   }, [reviewRows, visibleRows]);
-  const statusCountRows = useMemo(
-    () => calendarAspectFilterScopeActive
-      ? visibleRows.filter((row) => contentCategoryForRow(row) === "Calendar Aspects")
-      : visibleRows,
-    [calendarAspectFilterScopeActive, visibleRows]
-  );
-  const statusCounts = useMemo(() => {
-    const counts: Record<GeneratedContentStatus | "all", number> = { all: statusCountRows.length, DRAFT: 0, REVIEWED: 0, LIVE: 0, ARCHIVED: 0, ERROR: 0 };
-    statusCountRows.forEach((row) => counts[row.status] += 1);
-    return counts;
-  }, [statusCountRows]);
-  const filteredRows = useMemo(() => visibleRows.filter((row) => {
-    const rowClass = contentClassForRow(row);
-    const rowTier = tierForRow(row);
-    const rowCategory = contentCategoryForRow(row);
-
-    const search = query.trim().toLowerCase();
-
-    return (contentLibraryView === "all" || isCompatibilityRow(row))
-      && (contentStatusFilter === "all" || row.status === contentStatusFilter)
-      && (calendarAspectFilterScopeActive || contentClassFilter === "all" || rowClass === contentClassFilter)
-      && (calendarAspectFilterScopeActive || tierFilter === "all" || rowTier === tierFilter)
-      && (categoryFilter === "all" || rowCategory === categoryFilter)
-      && matchesAdminSearch(visibleRowSearchText(row), search);
-  }), [visibleRows, contentLibraryView, contentStatusFilter, contentClassFilter, tierFilter, categoryFilter, query, calendarAspectFilterScopeActive]);
+  const [statusFiltersOpen, setStatusFiltersOpen] = useState(false);
+  const loadLiveStatus = useContentLiveStatusLoader(async (ids) => {
+    const result = await adminJsonRequest<{ ok: boolean; statuses: LiveStatus[] }>("/api/admin/content-live-status", secret, { method: "POST", body: JSON.stringify({ ids }) });
+    if (!Array.isArray(result.statuses)) throw new Error("Could not verify content status.");
+    return result.statuses;
+  }, secret);
+  const statusCountRows = useMemo(() => visibleRows.filter((row) =>
+    (contentLibraryView === "all" || isCompatibilityRow(row))
+    && (calendarAspectFilterScopeActive || contentClassFilter === "all" || contentClassForRow(row) === contentClassFilter)
+    && (calendarAspectFilterScopeActive || tierFilter === "all" || tierForRow(row) === tierFilter)
+    && (categoryFilter === "all" || contentCategoryForRow(row) === categoryFilter)
+    && matchesAdminSearch(visibleRowSearchText(row), query.trim().toLowerCase())
+  ), [visibleRows, contentLibraryView, calendarAspectFilterScopeActive, contentClassFilter, tierFilter, categoryFilter, query]);
+  const liveStatusResults = useContentLiveStatusResults(loadLiveStatus, statusCountRows,
+    activePage === "content" && (statusFiltersOpen || contentStatusFilter !== "all"));
+  const statusCounts = {
+    all: statusCountRows.length,
+    LIVE: liveStatusResults ? [...liveStatusResults.statuses.values()].filter((status) => status.live).length : "…",
+    NOT_LIVE: liveStatusResults ? [...liveStatusResults.statuses.values()].filter((status) => !status.live).length : "…"
+  };
+  const filteredRows = useMemo(() => statusCountRows.filter((row) =>
+    contentStatusFilter === "all" || liveStatusResults?.statuses.get(row.id)?.live === (contentStatusFilter === "LIVE")
+  ), [statusCountRows, liveStatusResults, contentStatusFilter]);
   const normalizedContentLibraryQuery = query.trim().toLowerCase();
   const contentLibraryTransitShortcut: "transits-to-natal" | "house-transits" | null = categoryFilter === "Personal Transits"
     || /(?:personal[- /]transit|transit[- /]to[- /]natal)/u.test(normalizedContentLibraryQuery)
@@ -5707,11 +5705,7 @@ export function GeneratedContentAdminDashboard() {
   );
 
   return (
-    <ContentLiveStatusProvider request={async (ids) => {
-      const result = await adminJsonRequest<{ ok: boolean; statuses: LiveStatus[] }>("/api/admin/content-live-status", secret, { method: "POST", body: JSON.stringify({ ids }) });
-      if (!Array.isArray(result.statuses)) throw new Error("Could not verify content status.");
-      return result.statuses;
-    }}>
+    <ContentLiveStatusProvider load={loadLiveStatus}>
     <main className="admin-dashboard">
       {nav}
       <section className={`admin-main${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
@@ -7287,15 +7281,17 @@ export function GeneratedContentAdminDashboard() {
           </button>
         </div>
         )}
-        <details className="admin-advanced"><summary>Editorial filters</summary>
-        <div className="admin-status-pills" role="tablist" aria-label="Editorial stage">
-          {(["all", ...contentStatuses] as Array<GeneratedContentStatus | "all">).map((status) => (
+        <details className="admin-advanced" onToggle={(event) => setStatusFiltersOpen(event.currentTarget.open)}><summary>Editorial filters</summary>
+        <div className="admin-status-pills" role="tablist" aria-label="Reader status">
+          {(["all", "LIVE", "NOT_LIVE"] as const).map((status) => (
             <button key={status} type="button" role="tab" aria-selected={contentStatusFilter === status} className={contentStatusFilter === status ? "active" : ""} onClick={() => setContentStatusFilter(status)}>
-              <span>{status === "all" ? "All" : contentStatusLabel(status)}</span>
+              <span>{status === "all" ? "All" : status === "LIVE" ? "Live" : "Not live"}</span>
               <strong>{statusCounts[status]}</strong>
             </button>
           ))}
         </div>
+        {statusFiltersOpen && !liveStatusResults && <p role="status" className="admin-field-hint">Checking reader status…</p>}
+        {Boolean(liveStatusResults?.failed) && <p role="status" className="admin-field-hint">Status unavailable for {liveStatusResults?.failed} entries. These entries are excluded from Live and Not live filters. Refresh rows to retry.</p>}
         </details>
         <div className="admin-review-filter-grid">
           {!calendarAspectWorkspaceActive && (
@@ -7566,7 +7562,7 @@ export function GeneratedContentAdminDashboard() {
     const visibleGroups = groups.filter((group) => (groupedRows.get(group.key)?.length ?? 0) > 0);
 
     const showDailyGlanceStudio = fallbackSectionFilter === "daily";
-    if (visibleGroups.length === 0 && !showDailyGlanceStudio) return <p className="admin-empty">No rows match these filters.</p>;
+    if (visibleGroups.length === 0 && !showDailyGlanceStudio) return <p className="admin-empty">{contentStatusFilter !== "all" && !liveStatusResults ? "Checking reader status…" : "No rows match these filters."}</p>;
 
     return (
       <div className="admin-sky-edition-fields" aria-label="Fallback content grouped by reader use">
@@ -7707,7 +7703,7 @@ export function GeneratedContentAdminDashboard() {
             })}
           </tbody>
         </table>
-          {tableRows.length === 0 && <p className="admin-empty">No rows match these filters.</p>}
+          {tableRows.length === 0 && <p className="admin-empty">{activePage === "content" && contentStatusFilter !== "all" && !liveStatusResults ? "Checking reader status…" : "No rows match these filters."}</p>}
         </div>}
       </AdminPaginatedCollection></Suspense>
     );

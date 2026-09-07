@@ -23,7 +23,7 @@ async function emit(relative) {
     : text);
   if (relative.endsWith(".json")) return;
   const dependencies = [
-    ...ts.preProcessFile(text, true, true).importedFiles.map((item) => item.fileName),
+    ...ts.preProcessFile(fs.readFileSync(destination, "utf8"), true, true).importedFiles.map((item) => item.fileName),
     ...[...text.matchAll(/\brequire\(["']([^"']+)["']\)/gu)].map((match) => match[1])
   ];
   for (const dependency of dependencies.filter((item) => item.startsWith("."))) {

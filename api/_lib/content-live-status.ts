@@ -1,3 +1,5 @@
+import { createDomainRegistry } from "../../apps/web/src/content/domainRegistry.js";
+import { contentStudioExactRow } from "../../apps/web/src/services/skyAspectContent.js";
 // @ts-ignore Generated reader artifact has no declarations.
 import { createPackageManifest } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { createRequire } from "node:module";
@@ -32,6 +34,33 @@ for (const partition of readerPartitions as Record<string, any>[]) {
   for (const bucket of ["authoredCards", "hookRows", "vocabularyRows", "templates"]) {
     for (const record of partition[bucket] ?? []) servingPackageRecords.set(record.contentKey, record);
   }
+}
+// Calendar and Sky share this approved exact-aspect registry, outside the V3 partitions.
+const { approvedExactSkyAspectCopy } = createDomainRegistry(require("../../packages/astro-knowledge/dist/sky-runtime-web.json"));
+function exactAspectStatus(row: LiveStatusRow, candidates: LiveStatusRow[]): ContentLiveStatus | null {
+  const match = /^sky\.aspect\.([^.]+)\.([^.]+)\.([^.]+)$/.exec(row.content_key);
+  if (!match) return null;
+  const [, a, aspect, b] = match;
+  const current = [...candidates].sort((x, y) => (y.updated_at ?? "").localeCompare(x.updated_at ?? ""))
+    .find((candidate) => candidate.content_key === row.content_key && candidate.status === "LIVE"
+      && candidate.lane === "serving" && !candidate.review_state && candidate.body?.trim()
+      && isReaderServableGeneratedContentRow(candidate) && isGeneratedContentReaderBoundaryAllowed(candidate));
+  const resolved = current ? contentStudioExactRow(new Map([[current.content_key, {
+    body: current.body!, sourceSnapshot: current.source_snapshot ?? {}
+  } as any]]), { a, b, aspect }) : null;
+  const baseline = approvedExactSkyAspectCopy(a, aspect, b);
+  const servingBody = resolved?.body ?? baseline?.body;
+  const servingSummary = resolved ? current?.summary : baseline?.summary;
+  const copy = row.sections?.packageDraft ?? row.sections?.packageRecord;
+  const body = copy?.Body ?? copy?.body ?? row.body;
+  const summary = copy?.Summary ?? copy?.summary ?? row.summary;
+  const live = Boolean(servingBody && body?.trim() === servingBody.trim()
+    && (summary ?? "").trim() === (servingSummary ?? "").trim());
+  return { id: row.id, live, label: live ? "Live" : "Not live",
+    source: live ? resolved ? "studio" : "package" : null,
+    detail: live ? resolved ? "Readers can receive this saved exact-aspect copy." : "Readers can receive this exact copy from the installed Calendar and Sky registry."
+      : servingBody ? "Readers receive a different version of this exact aspect. This revision is not live." : "No approved reader copy exists for this exact aspect.",
+    updatedAt: row.updated_at ?? null };
 }
 const skyManifest = require("../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json");
 const currentKeys = new Set(servingPackageRecords.keys());
@@ -86,6 +115,8 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
     if (row.provider && approved.has(reviewStatus) && isReaderServableGeneratedContentRow(row) && isGovernedReaderEligible({ ...source, contentKey: row.content_key, review_status: reviewStatus })) overlays.set(row.content_key, row);
   }
   return rows.map((row) => {
+    const exact = exactAspectStatus(row, candidates);
+    if (exact) return exact;
     let source: ContentLiveStatus["source"] = null;
     let detail = "Readers cannot currently receive this copy.";
     const packageRecord = record(row);

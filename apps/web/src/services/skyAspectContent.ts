@@ -1,6 +1,6 @@
-import { isReaderFacingCopy } from "../content/readerSafety";
+import { isReaderFacingCopy } from "../content/readerSafety.js";
 import type { LiveGeneratedContent } from "./generatedContent";
-import { skyAspectContentKey, skyAspectInstanceContentKey, slugContentPart } from "./generatedContentKeys";
+import { skyAspectContentKey, skyAspectInstanceContentKey, slugContentPart } from "./generatedContentKeys.js";
 
 const collectiveSkyAspectBodyOrder = [
   "sun",
@@ -235,7 +235,7 @@ function skyAspectContentKeysFromExpected(expected: ExpectedSkyAspectFacts, targ
   return [evergreenKey, datedKey, skyAspectContentKey(expected.a, expected.aspect, expected.b)].filter(Boolean);
 }
 
-function contentStudioExactRow(
+export function contentStudioExactRow(
   generatedContent: Map<string, LiveGeneratedContent>,
   expected: Pick<ExpectedSkyAspectFacts, "a" | "b" | "aspect">
 ) {
