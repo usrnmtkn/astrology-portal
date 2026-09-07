@@ -863,7 +863,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
 }
 
 function contentStatusLabel(status: GeneratedContentStatus) {
-  if (status === "LIVE") return "Published";
+  if (status === "LIVE") return "Live";
   if (status === "ERROR") return "Needs review";
   return status.charAt(0) + status.slice(1).toLowerCase();
 }
@@ -1277,7 +1277,7 @@ function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord)
   }
 
   const contentClass = contentClassForRow(row);
-  if (sourceContentSystem === "authored") return "authored-content";
+  if (sourceContentSystem === "authored" || sourceContentType === "authored-content" || sourceRole === "authored-card") return "authored-content";
   if (sourceContentSystem === "generated" || contentClass === "generated") return "generated-content";
   if (contentClass === "reference") return "source-material";
   if (contentClass === "legacy" || (provider && !/phrasebank|migration|local-normalized-dashboard-source|manual-admin/i.test(provider))) return "legacy-generated";
@@ -2337,19 +2337,19 @@ function readerSafetyForRow(row: AdminGeneratedContentRow | AdminReviewRecord | 
   const lane = "lane" in row ? row.lane : undefined;
   const reviewState = "review_state" in row ? row.review_state : undefined;
 
-  if (rowNeedsSourceMaterial(row)) return { key: "needs-source-material", label: "Needs more source copy", detail: "There is not enough reusable writing to build a complete passage." };
+  if (rowNeedsSourceMaterial(row)) return { key: "needs-source-material", label: "Not live", detail: "There is not enough reusable writing to build a complete passage." };
   if ("inventory_only" in row && row.inventory_only === true) {
-    if (status !== "LIVE") return { key: "draft-held", label: "Not published", detail: "This row is saved as a draft and cannot appear in the app." };
-    if (lane && lane !== "serving") return { key: "reference-held", label: "Internal reference", detail: "This row is reference material and cannot appear in the app." };
-    if (reviewState) return { key: "review-held", label: "Awaiting review", detail: "This row still needs editorial review before it can appear in the app." };
-    return { key: "reader-ready", label: "Available in app", detail: "This row is published and available for the app to use." };
+    if (status !== "LIVE") return { key: "draft-held", label: "Not live", detail: "This row is saved as a draft and cannot appear in the app." };
+    if (lane && lane !== "serving") return { key: "reference-held", label: "Not live", detail: "This row is reference material and cannot appear in the app." };
+    if (reviewState) return { key: "review-held", label: "Not live", detail: "This row still needs editorial review before it can appear in the app." };
+    return { key: "reader-ready", label: "Live", detail: "This row is published and available for the app to use." };
   }
-  if (!body && !headline) return { key: "fallback-needed", label: "Copy missing", detail: "This row has no reader-facing copy." };
-  if (!isReaderFacingCopy(`${headline} ${body}`)) return { key: "reference-held", label: "Internal reference", detail: "This row contains internal notes or metadata, not reader copy." };
-  if (status !== "LIVE") return { key: "draft-held", label: "Not published", detail: "This row is saved as a draft and cannot appear in the app." };
-  if (lane && lane !== "serving") return { key: "reference-held", label: "Internal reference", detail: "This row is reference material and cannot appear in the app." };
-  if (reviewState) return { key: "review-held", label: "Awaiting review", detail: "This row still needs editorial review before it can appear in the app." };
-  return { key: "reader-ready", label: "Available in app", detail: "This row is published and available for the app to use." };
+  if (!body && !headline) return { key: "fallback-needed", label: "Not live", detail: "This row has no reader-facing copy." };
+  if (!isReaderFacingCopy(`${headline} ${body}`)) return { key: "reference-held", label: "Not live", detail: "This row contains internal notes or metadata, not reader copy." };
+  if (status !== "LIVE") return { key: "draft-held", label: "Not live", detail: "This row is saved as a draft and cannot appear in the app." };
+  if (lane && lane !== "serving") return { key: "reference-held", label: "Not live", detail: "This row is reference material and cannot appear in the app." };
+  if (reviewState) return { key: "review-held", label: "Not live", detail: "This row still needs editorial review before it can appear in the app." };
+  return { key: "reader-ready", label: "Live", detail: "This row is published and available for the app to use." };
 }
 
 function housePassageAvailabilityLabel(availability: "Reader-ready" | "Source candidate") {
@@ -4560,7 +4560,7 @@ export function GeneratedContentAdminDashboard() {
   async function deleteSelectedDrafts() {
     const deletable = selectedSavedRows.filter((row) => row.status !== "LIVE");
     if (deletable.length === 0) {
-      setMessage("Published rows are protected. Demote before deleting.");
+      setMessage("Live rows are protected. Move them to Not live before deleting.");
       return;
     }
     setIsLoading(true);
@@ -5734,8 +5734,8 @@ export function GeneratedContentAdminDashboard() {
                   : natalAspectWorkspaceActive
                     ? "Choose the first planet or point, the aspect, and the second planet or point. Open any matching passage in the standard editor."
                     : calendarAspectWorkspaceActive
-                      ? "Use Published to edit copy readers can see. Use Draft to continue proposed rewrites. Astrology details stay read-only; prose is editable."
-                    : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.`}</p>
+                      ? "Use Live to edit copy readers can see. Use Not live for proposed rewrites. Astrology details stay read-only; prose is editable."
+                    : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Live means readers can currently receive the copy; Not live means they cannot.`}</p>
               </div>
               {!natalChartWorkspaceActive && !natalAspectWorkspaceActive && !calendarAspectWorkspaceActive && <div className="admin-new-actions" aria-label="Content admin shortcuts">
                 <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
@@ -5790,14 +5790,11 @@ export function GeneratedContentAdminDashboard() {
                     <div>
                       <p className="admin-eyebrow">App visibility</p>
                       <h3>What readers can see</h3>
-                      <p>Published app copy can appear for readers. Drafts, internal references, and incomplete writing stay hidden.</p>
+                      <p><strong>Live</strong> means readers can currently receive this copy. <strong>Not live</strong> means readers cannot currently receive this copy.</p>
                     </div>
                     <div className="admin-reader-safety-grid">
-                      <article className="reader-ready"><span>Available in app</span><strong>{readerCounts["reader-ready"]}</strong></article>
-                      <article><span>Not published</span><strong>{readerCounts["draft-held"]}</strong></article>
-                      <article><span>Internal or awaiting review</span><strong>{readerCounts["reference-held"] + readerCounts["review-held"]}</strong></article>
-                      <article className={readerCounts["needs-source-material"] ? "needs-fallback" : ""}><span>Needs more source copy</span><strong>{readerCounts["needs-source-material"]}</strong></article>
-                      <article className={readerCounts["fallback-needed"] ? "needs-fallback" : ""}><span>Copy missing</span><strong>{readerCounts["fallback-needed"]}</strong></article>
+                      <article className="reader-ready"><span>Live</span><strong>{readerCounts["reader-ready"]}</strong></article>
+                      <article><span>Not live</span><strong>{readerCounts["draft-held"] + readerCounts["reference-held"] + readerCounts["review-held"] + readerCounts["needs-source-material"] + readerCounts["fallback-needed"]}</strong></article>
                     </div>
                   </section>
                   {renderBulkBar()}
@@ -7385,10 +7382,8 @@ export function GeneratedContentAdminDashboard() {
             <tr>
               <th className="admin-col-select" scope="col">Select</th>
               <th className="admin-col-content" scope="col">Content</th>
-              <th className="admin-col-visibility" scope="col">App visibility</th>
-              <th className="admin-col-editorial" scope="col">Editorial</th>
+              <th className="admin-col-visibility" scope="col">Status</th>
               {showArticleDestination && <th className="admin-col-destination" scope="col">App destination</th>}
-              {showWiringReason && <th className="admin-col-wiring" scope="col">App connection</th>}
               <th className="admin-col-source" scope="col">Source</th>
               <th className="admin-col-edit" scope="col">Edit</th>
             </tr>
@@ -7400,6 +7395,16 @@ export function GeneratedContentAdminDashboard() {
               const rowRole = contentRoleDetails(contentRoleForRecord(row));
               const destination = showArticleDestination ? articleAppDestination(row) : null;
               const wiring = showWiringReason ? contentWiringStatus(row) : null;
+              const blockedByDestination = Boolean(destination && destination.state !== "connected");
+              const blockedByWiring = Boolean(wiring && (wiring.state === "not-connected" || wiring.state === "not-serving"));
+              const isLive = safety.key === "reader-ready" && !blockedByDestination && !blockedByWiring;
+              const readerStatusDetail = isLive
+                ? "Readers can currently receive this copy."
+                : blockedByDestination
+                  ? destination?.detail ?? safety.detail
+                  : blockedByWiring
+                    ? wiring?.detail ?? safety.detail
+                    : safety.detail;
               const compatibilityIdentity = showCompatibilityIdentity ? compatibilityBrowseIdentityForRow(row) : null;
               const displayTitle = compatibilityIdentity?.title ?? rowTitle(row);
               return (
@@ -7427,18 +7432,11 @@ export function GeneratedContentAdminDashboard() {
                     </small>
                     <code className="admin-content-row-key">{row.content_key}</code>
                   </td>
-                  <td className="admin-col-visibility"><span className={`admin-reader-state-pill admin-table-tag ${safety.key}`} title={safety.detail}>{safety.label}</span></td>
-                  <td className="admin-col-editorial"><span className={`ui-pill admin-status admin-table-tag status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span></td>
+                  <td className="admin-col-visibility"><span className={`admin-reader-state-pill admin-table-tag ${isLive ? "reader-ready" : "draft-held"}`} title={readerStatusDetail}>{isLive ? "Live" : "Not live"}</span></td>
                   {destination && (
                     <td className="admin-content-location admin-col-destination">
                       <strong>{destination.label}</strong>
                       <small>{destination.detail}</small>
-                    </td>
-                  )}
-                  {wiring && (
-                    <td className="admin-content-location admin-wiring-cell admin-col-wiring">
-                      <strong className={`admin-wiring-state ${wiring.state}`}>{wiring.label}</strong>
-                      <small title={wiring.detail}>{wiring.detail}</small>
                     </td>
                   )}
                   <td className="admin-col-source">
@@ -9674,7 +9672,7 @@ export function GeneratedContentAdminDashboard() {
                         aria-label="Reader status after save"
                         className={`ui-pill admin-status ${packageStatusAfterSave === "LIVE" ? "status-live" : "status-draft"}`}
                       >
-                        {packageHasProposal ? "Draft revision" : packageStatusAfterSave === "LIVE" ? "Published" : "Draft"}
+                        {packageHasProposal ? "Draft revision" : packageStatusAfterSave === "LIVE" ? "Live" : "Not live"}
                       </span>
                     ) : (
                       <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
@@ -9692,7 +9690,7 @@ export function GeneratedContentAdminDashboard() {
                           : currentDraft.status === "LIVE"
                             ? "This approved copy is live for readers."
                             : "Approval controls reader availability. Set review status to approved, then Save to publish."
-                        : "Published maps to LIVE and means reader-eligible within this provenance system; it does not outrank a higher-priority system."}
+                        : "Live means readers can currently receive this copy. Not live means readers cannot currently receive this copy. Approval and source provenance are shown separately."}
                     </small>
                   </label>
                   <label className="admin-metadata-field">

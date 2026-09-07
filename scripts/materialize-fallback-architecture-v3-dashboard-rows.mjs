@@ -208,7 +208,8 @@ function statusForReview(role, reviewStatus, contentKey) {
   }
 
   if (
-    ["full_copy", "house_horoscope_core"].includes(role)
+    (["full_copy", "house_horoscope_core"].includes(role)
+      || (role === "authored_card" && contentKey.startsWith("authored/sky-lunation-macro/")))
     && ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)
   ) {
     return { status: "LIVE", lane: "serving", reviewState: null };
