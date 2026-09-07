@@ -40,6 +40,17 @@ type AskPillar = {
   questions: AskQuestion[];
 };
 
+type ChartMode = "owner" | "test";
+type TestChartDraft = {
+  name: string;
+  birthDate: string;
+  birthTime: string;
+  timeZone: string;
+  locationLabel: string;
+  latitude: string;
+  longitude: string;
+};
+
 type AskHistory = {
   id: string;
   question: string;
@@ -49,6 +60,12 @@ type AskHistory = {
   reviewerNotes: string;
   model: string | null;
   createdAt: string | null;
+  pillarId: string | null;
+  questionId: string | null;
+  source: string | null;
+  chartMode: string;
+  chartLabel: string | null;
+  chartFingerprint: string | null;
   diagnostics: Record<string, unknown>;
 };
 
@@ -86,6 +103,7 @@ type PreviewResponse = {
   ok: true;
   ownerPreviewOnly: true;
   runtimeEnabled: false;
+  chart: { ready: true; mode: ChartMode; label: string; fingerprint?: string } | { ready: false; mode: ChartMode; reason: string };
   preparation: {
     allowed: boolean;
     reason?: string | null;
@@ -116,6 +134,15 @@ const cardStyle = {
   background: "var(--admin-surface, #fff)"
 } as const;
 const mutedStyle = { color: "var(--admin-text-muted, #666)" } as const;
+const emptyTestChart: TestChartDraft = {
+  name: "Test chart",
+  birthDate: "",
+  birthTime: "",
+  timeZone: "",
+  locationLabel: "",
+  latitude: "",
+  longitude: ""
+};
 
 function formatDate(value: string | null) {
   if (!value) return "";
@@ -125,6 +152,17 @@ function formatDate(value: string | null) {
 
 function compactHash(value?: string | null) {
   return value ? `${value.slice(0, 10)}…${value.slice(-6)}` : "";
+}
+
+function finiteCoordinate(value: string, min: number, max: number) {
+  const number = Number(value);
+  return value.trim() !== "" && Number.isFinite(number) && number >= min && number <= max;
+}
+
+function revisionKey(row: AskHistory) {
+  const questionKey = row.questionId || row.question.trim().toLowerCase();
+  const chartKey = row.chartFingerprint || `${row.chartMode}:${row.chartLabel ?? ""}`;
+  return `${questionKey}::${chartKey}`;
 }
 
 export default function AskTldrStudio() {
@@ -139,6 +177,8 @@ export default function AskTldrStudio() {
   const [questionId, setQuestionId] = useState("career.recognition");
   const [useFreeText, setUseFreeText] = useState(false);
   const [freeText, setFreeText] = useState("");
+  const [chartMode, setChartMode] = useState<ChartMode>("owner");
+  const [testChart, setTestChart] = useState<TestChartDraft>(emptyTestChart);
   const [preview, setPreview] = useState<PreviewResponse | null>(null);
   const [generating, setGenerating] = useState(false);
   const [questionSearch, setQuestionSearch] = useState("");
@@ -211,6 +251,15 @@ export default function AskTldrStudio() {
   const selectedPillar = payload?.pillars.find((pillar) => pillar.id === pillarId) ?? null;
   const selectedQuestion = selectedPillar?.questions.find((question) => question.id === questionId) ?? null;
   const chartReason = payload && !payload.chart.ready ? payload.chart.reason : "";
+  const testChartReady = Boolean(
+    testChart.birthDate
+    && testChart.birthTime
+    && testChart.timeZone.trim()
+    && testChart.locationLabel.trim()
+    && finiteCoordinate(testChart.latitude, -90, 90)
+    && finiteCoordinate(testChart.longitude, -180, 180)
+  );
+  const selectedChartReady = chartMode === "test" ? testChartReady : Boolean(payload?.chart.ready);
   const visibleQuestions = useMemo(() => {
     if (!payload) return [] as Array<{ pillar: AskPillar; question: AskQuestion }>;
     const term = questionSearch.trim().toLowerCase();
@@ -230,6 +279,17 @@ export default function AskTldrStudio() {
     setPreview(null);
   }
 
+  function changeChartMode(nextMode: ChartMode) {
+    setChartMode(nextMode);
+    setPreview(null);
+    setError("");
+  }
+
+  function updateTestChart(key: keyof TestChartDraft, value: string) {
+    setTestChart((current) => ({ ...current, [key]: value }));
+    setPreview(null);
+  }
+
   function submitEmergencyAccess() {
     const normalized = normalizeAdminSecret(emergencySecret);
     if (!normalized) return;
@@ -244,6 +304,10 @@ export default function AskTldrStudio() {
       return;
     }
     if (!useFreeText && !selectedQuestion) return;
+    if (!selectedChartReady) {
+      setError(chartMode === "test" ? "Complete the test chart birth time, time zone, location, latitude, and longitude first." : chartReason || "Your owner chart is not available.");
+      return;
+    }
     setGenerating(true);
     setError("");
     setPreview(null);
@@ -254,7 +318,13 @@ export default function AskTldrStudio() {
           action: "preview",
           pillarId: selectedPillar.id,
           questionId: useFreeText ? undefined : selectedQuestion?.id,
-          freeText: useFreeText ? freeText.trim() : undefined
+          freeText: useFreeText ? freeText.trim() : undefined,
+          chartMode,
+          testChart: chartMode === "test" ? {
+            ...testChart,
+            latitude: Number(testChart.latitude),
+            longitude: Number(testChart.longitude)
+          } : undefined
         })
       });
       setPreview(next);
@@ -334,7 +404,7 @@ export default function AskTldrStudio() {
             <a href="/admin/content"><ArrowLeft size={15} aria-hidden="true" /> Content Studio</a>
             <p className="admin-eyebrow">Owner preview · not reader-serving</p>
             <h1>Ask TLDR</h1>
-            <p>Edit governed question wording, preview answers against your chart, and review saved calibration drafts.</p>
+            <p>Edit governed question wording, preview answers against your chart or a test chart, and review saved calibration drafts.</p>
           </div>
           <button type="button" className="admin-create-button admin-secondary-button" onClick={() => void loadStudio(credential)} disabled={loading}>
             <RefreshCw size={16} aria-hidden="true" /> {loading ? "Refreshing…" : "Refresh"}
@@ -346,11 +416,11 @@ export default function AskTldrStudio() {
           <span>Runtime: <strong>{payload.governance.runtimeEnabled ? "ON" : "OFF"}</strong></span>
           <span>Promotion: <strong>{payload.governance.promotionAuthorized ? "authorized" : "not authorized"}</strong></span>
           <span>{payload.governance.questionCount} questions · {payload.governance.pillarCount} pillars</span>
-          <span>Chart: <strong>{payload.chart.ready ? payload.chart.label : "not available"}</strong></span>
+          <span>Owner chart: <strong>{payload.chart.ready ? payload.chart.label : "not available"}</strong></span>
         </section>
 
         {!payload.storage.available && <p role="alert" style={cardStyle}>Draft storage unavailable: {payload.storage.error}</p>}
-        {!payload.chart.ready && <p role="alert" style={cardStyle}><CircleAlert size={17} aria-hidden="true" /> {chartReason}</p>}
+        {chartMode === "owner" && !payload.chart.ready && <p role="alert" style={cardStyle}><CircleAlert size={17} aria-hidden="true" /> {chartReason}</p>}
         {error && <p role="alert" style={cardStyle}>{error}</p>}
 
         <nav style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 18 }} aria-label="Ask TLDR Studio sections">
@@ -360,9 +430,45 @@ export default function AskTldrStudio() {
         </nav>
 
         {view === "preview" && (
-          <div style={{ display: "grid", gridTemplateColumns: "minmax(300px, .8fr) minmax(360px, 1.2fr)", gap: 18, alignItems: "start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(320px, .85fr) minmax(360px, 1.15fr)", gap: 18, alignItems: "start" }}>
             <section style={cardStyle}>
               <h2>Ask a question</h2>
+              <p className="admin-eyebrow">Chart</p>
+              <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                <button type="button" className={chartMode === "owner" ? "admin-create-button" : "admin-create-button admin-secondary-button"} onClick={() => changeChartMode("owner")}>My chart</button>
+                <button type="button" className={chartMode === "test" ? "admin-create-button" : "admin-create-button admin-secondary-button"} onClick={() => changeChartMode("test")}>Test chart</button>
+              </div>
+              {chartMode === "owner" ? (
+                <p style={{ ...mutedStyle, marginTop: 0 }}>{payload.chart.ready ? `Using ${payload.chart.label}.` : chartReason}</p>
+              ) : (
+                <div style={{ ...cardStyle, padding: 12, marginBottom: 14 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                    <label style={{ display: "grid", gap: 5, gridColumn: "1 / -1" }}>Chart name
+                      <input value={testChart.name} onChange={(event) => updateTestChart("name", event.target.value)} placeholder="Test chart" />
+                    </label>
+                    <label style={{ display: "grid", gap: 5 }}>Birth date
+                      <input type="date" value={testChart.birthDate} onChange={(event) => updateTestChart("birthDate", event.target.value)} />
+                    </label>
+                    <label style={{ display: "grid", gap: 5 }}>Birth time
+                      <input type="time" value={testChart.birthTime} onChange={(event) => updateTestChart("birthTime", event.target.value)} />
+                    </label>
+                    <label style={{ display: "grid", gap: 5, gridColumn: "1 / -1" }}>Time zone
+                      <input value={testChart.timeZone} onChange={(event) => updateTestChart("timeZone", event.target.value)} placeholder="America/New_York" />
+                    </label>
+                    <label style={{ display: "grid", gap: 5, gridColumn: "1 / -1" }}>Location
+                      <input value={testChart.locationLabel} onChange={(event) => updateTestChart("locationLabel", event.target.value)} placeholder="New York, NY" />
+                    </label>
+                    <label style={{ display: "grid", gap: 5 }}>Latitude
+                      <input type="number" step="any" value={testChart.latitude} onChange={(event) => updateTestChart("latitude", event.target.value)} placeholder="40.7128" />
+                    </label>
+                    <label style={{ display: "grid", gap: 5 }}>Longitude
+                      <input type="number" step="any" value={testChart.longitude} onChange={(event) => updateTestChart("longitude", event.target.value)} placeholder="-74.0060" />
+                    </label>
+                  </div>
+                  <p style={{ ...mutedStyle, fontSize: 13, marginBottom: 0 }}>Birth data is sent only to the calculation service for this preview. Draft Review stores the chart label and a fingerprint, not the birth data.</p>
+                </div>
+              )}
+
               <label style={{ display: "grid", gap: 6, marginBottom: 12 }}>Pillar
                 <select value={pillarId} onChange={(event) => changePillar(event.target.value)}>{payload.pillars.map((pillar) => <option key={pillar.id} value={pillar.id}>{pillar.label}</option>)}</select>
               </label>
@@ -380,7 +486,7 @@ export default function AskTldrStudio() {
                 </label>
               )}
               <p style={mutedStyle}>{selectedPillar?.description}</p>
-              <button type="button" className="admin-create-button" onClick={() => void generatePreview()} disabled={generating || !payload.chart.ready || !payload.storage.available || (useFreeText ? !freeText.trim() : !selectedQuestion)}>
+              <button type="button" className="admin-create-button" onClick={() => void generatePreview()} disabled={generating || !selectedChartReady || !payload.storage.available || (useFreeText ? !freeText.trim() : !selectedQuestion)}>
                 <Sparkles size={16} aria-hidden="true" /> {generating ? "Generating governed preview…" : "Generate owner preview"}
               </button>
               <p style={{ ...mutedStyle, fontSize: 13 }}>Evergreen: 2 model calls. Free text: 3 model calls maximum. Public runtime remains disabled.</p>
@@ -391,7 +497,7 @@ export default function AskTldrStudio() {
               {preview && !preview.preview && <><h2>Generation stopped safely</h2><p>{preview.preparation.reason ?? "The governed evidence was not sufficient for this question."}</p></>}
               {preview?.preview && (
                 <>
-                  <p className="admin-eyebrow">Reader-facing preview</p>
+                  <p className="admin-eyebrow">Reader-facing preview · {preview.chart.ready ? preview.chart.label : chartMode}</p>
                   <h2>{preview.preview.questionText}</h2>
                   <div style={{ fontSize: 18, lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{preview.preview.answer}</div>
                   <p>Fact lock: <strong>{preview.preview.factLock.passed ? "passed" : "blocked"}</strong> · Judge: <strong>{preview.preview.releaseStatus}</strong></p>
@@ -447,19 +553,31 @@ export default function AskTldrStudio() {
         {view === "drafts" && (
           <section style={{ display: "grid", gap: 12 }}>
             {payload.history.length === 0 && <div style={cardStyle}><h2>No Ask TLDR drafts yet.</h2><p style={mutedStyle}>Generate an owner preview and it will appear here automatically.</p></div>}
-            {payload.history.map((row) => (
-              <article key={row.id} style={cardStyle}>
-                <p className="admin-eyebrow">{row.reviewState.replaceAll("_", " ")} · {formatDate(row.createdAt)}</p>
-                <h2>{row.question}</h2>
-                <div style={{ fontSize: 17, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{row.answer}</div>
-                <label style={{ display: "grid", gap: 6, marginTop: 12 }}>Owner notes<textarea rows={3} value={reviewNotes[row.id] ?? ""} onChange={(event) => setReviewNotes((current) => ({ ...current, [row.id]: event.target.value }))} /></label>
-                <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-                  <button type="button" className="admin-create-button" disabled={reviewingId === row.id} onClick={() => void reviewDraft(row, "approved")}><Check size={15} aria-hidden="true" /> Approve preview</button>
-                  <button type="button" className="admin-create-button admin-secondary-button" disabled={reviewingId === row.id} onClick={() => void reviewDraft(row, "rejected")}><X size={15} aria-hidden="true" /> Reject preview</button>
-                </div>
-                <details style={{ marginTop: 10 }}><summary>Evidence, judge, and release packet</summary><pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{JSON.stringify(row.diagnostics, null, 2)}</pre></details>
-              </article>
-            ))}
+            {payload.history.map((row, index) => {
+              const previous = payload.history.slice(index + 1).find((candidate) => revisionKey(candidate) === revisionKey(row));
+              return (
+                <article key={row.id} style={cardStyle}>
+                  <p className="admin-eyebrow">{row.reviewState.replaceAll("_", " ")} · {formatDate(row.createdAt)} · {row.chartMode === "test" ? "test chart" : "owner chart"}{row.chartLabel ? ` · ${row.chartLabel}` : ""}</p>
+                  <h2>{row.question}</h2>
+                  <div style={{ fontSize: 17, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{row.answer}</div>
+                  {previous && (
+                    <details style={{ marginTop: 12 }}>
+                      <summary>Compare with previous revision</summary>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 10 }}>
+                        <div style={{ ...cardStyle, padding: 12 }}><strong>Current · {formatDate(row.createdAt)}</strong><p style={{ whiteSpace: "pre-wrap" }}>{row.answer}</p></div>
+                        <div style={{ ...cardStyle, padding: 12 }}><strong>Previous · {formatDate(previous.createdAt)}</strong><p style={{ whiteSpace: "pre-wrap" }}>{previous.answer}</p></div>
+                      </div>
+                    </details>
+                  )}
+                  <label style={{ display: "grid", gap: 6, marginTop: 12 }}>Owner notes<textarea rows={3} value={reviewNotes[row.id] ?? ""} onChange={(event) => setReviewNotes((current) => ({ ...current, [row.id]: event.target.value }))} placeholder="What was right, wrong, missing, too generic, or off-voice?" /></label>
+                  <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                    <button type="button" className="admin-create-button" disabled={reviewingId === row.id} onClick={() => void reviewDraft(row, "approved")}><Check size={15} aria-hidden="true" /> Approve preview</button>
+                    <button type="button" className="admin-create-button admin-secondary-button" disabled={reviewingId === row.id} onClick={() => void reviewDraft(row, "rejected")}><X size={15} aria-hidden="true" /> Reject preview</button>
+                  </div>
+                  <details style={{ marginTop: 10 }}><summary>Evidence, judge, and release packet</summary><pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{JSON.stringify(row.diagnostics, null, 2)}</pre></details>
+                </article>
+              );
+            })}
           </section>
         )}
       </section>
