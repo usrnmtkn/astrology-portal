@@ -4,7 +4,7 @@ import { reportVanityPath, reportVanitySlug } from "./reportLinks";
 export const reportReadyEvent = "tldrastro:report-ready";
 
 export type ReportLibrarySourceKind = "generated_interpretation" | "premium_report";
-export type ReportLibraryStatus = "generating" | "ready" | "needs_attention";
+export type ReportLibraryStatus = "generating" | "ready" | "needs_attention" | "failed";
 
 export type ReportLibraryItem = {
   id: string;
@@ -56,6 +56,18 @@ type GeneratedReportRow = {
   body: string;
   source_snapshot: Record<string, unknown> | null;
   created_at: string;
+  updated_at: string;
+};
+
+type FriendReportEntitlementRow = {
+  content_key: string;
+  status: "pending_payment" | "active" | "revoked" | "refunded";
+  source: "free_test" | "stripe";
+};
+
+type FriendReportJobRow = {
+  content_key: string;
+  state: "queued" | "running" | "retry" | "complete" | "failed" | "cancelled";
   updated_at: string;
 };
 
@@ -156,7 +168,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
   if (!context) return [];
   const { client, userId } = context;
 
-  const [generatedResult, premiumResult, stateResult, shareResult] = await Promise.all([
+  const [generatedResult, premiumResult, stateResult, shareResult, friendEntitlementResult, friendJobResult] = await Promise.all([
     client
       .from("user_generated_interpretations")
       .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, created_at, updated_at")
@@ -180,13 +192,25 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       .from("report_share_links")
       .select("source_kind, source_id, revoked_at")
       .eq("user_id", userId)
-      .returns<ReportShareStateRow[]>()
+      .returns<ReportShareStateRow[]>(),
+    client
+      .from("friend_report_entitlements")
+      .select("content_key, status, source")
+      .eq("user_id", userId)
+      .returns<FriendReportEntitlementRow[]>(),
+    client
+      .from("friend_report_jobs")
+      .select("content_key, state, updated_at")
+      .eq("user_id", userId)
+      .returns<FriendReportJobRow[]>()
   ]);
 
   if (generatedResult.error) throw generatedResult.error;
   if (premiumResult.error) throw premiumResult.error;
   if (stateResult.error) throw stateResult.error;
   if (shareResult.error) throw shareResult.error;
+  if (friendEntitlementResult.error) throw friendEntitlementResult.error;
+  if (friendJobResult.error) throw friendJobResult.error;
 
   const states = new Map(
     (stateResult.data ?? []).map((row) => [stateKey(row.source_kind, row.source_id), row])
@@ -196,9 +220,29 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       .filter((row) => !row.revoked_at)
       .map((row) => stateKey(row.source_kind, row.source_id))
   );
+  const friendEntitlements = new Map(
+    (friendEntitlementResult.data ?? []).map((row) => [row.content_key, row])
+  );
+  const friendJobs = new Map(
+    (friendJobResult.data ?? []).map((row) => [row.content_key, row])
+  );
 
   const generated = (generatedResult.data ?? []).flatMap<ReportLibraryItem>((row) => {
-    if (!row.body.trim()) return [];
+    const entitlement = friendEntitlements.get(row.content_key);
+    if (entitlement && ["pending_payment", "revoked", "refunded"].includes(entitlement.status)) return [];
+    const job = friendJobs.get(row.content_key);
+    const hasBody = Boolean(row.body.trim());
+    let reportStatus: ReportLibraryStatus;
+    if (hasBody) {
+      reportStatus = "ready";
+    } else if (job && ["queued", "running", "retry"].includes(job.state)) {
+      reportStatus = "generating";
+    } else if (job && ["failed", "cancelled"].includes(job.state)) {
+      reportStatus = "failed";
+    } else {
+      return [];
+    }
+
     const state = states.get(stateKey("generated_interpretation", row.id));
     const title = row.headline?.trim() || "Friends reading";
     const subjectLabel = generatedSubjectLabel(row);
@@ -211,15 +255,15 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       title,
       subjectLabel,
       subtitle: "Friends",
-      status: "ready",
+      status: reportStatus,
       targetDate: row.target_date,
       periodEnd: row.target_date,
       createdAt: row.created_at,
-      updatedAt: row.updated_at,
-      readyAt: row.updated_at,
+      updatedAt: hasBody ? row.updated_at : (job?.updated_at ?? row.updated_at),
+      readyAt: hasBody ? row.updated_at : null,
       seenAt: state?.seen_at ?? null,
       archivedAt: state ? state.archived_at : (row.status === "ARCHIVED" ? row.updated_at : null),
-      isShared: activeShares.has(stateKey("generated_interpretation", row.id)),
+      isShared: hasBody && activeShares.has(stateKey("generated_interpretation", row.id)),
       vanitySlug,
       route: `/reports/${vanitySlug}`
     }];
