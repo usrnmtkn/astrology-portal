@@ -23,6 +23,8 @@ const vercel = read("vercel.json");
 
 assert.match(lifecycle, /FriendReportBillingMode = "free_test" \| "stripe"/u);
 assert.match(lifecycle, /process\.env\.FRIEND_REPORT_BILLING_MODE/u);
+assert.doesNotMatch(lifecycle, /process\.env\.REPORT_BILLING_MODE/u,
+  "Friends billing must remain free-test unless the Friends-specific billing mode is explicitly enabled.");
 assert.match(lifecycle, /entitlement\.source === "stripe" \|\| entitlement\.source === "comp"/u,
   "Stripe mode must not treat free-test entitlements as paid access.");
 assert.match(lifecycle, /friend_report_entitlements/u);
