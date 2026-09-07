@@ -13,14 +13,14 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 115000,
-  "totalJavaScriptGzipBytes": 2900000,
+  "totalJavaScriptGzipBytes": 2907000,
   "_rationale": {
     "totalCssGzipBytes": "Raised narrowly from 113 kB to 115 kB for the production Content Studio editor redesign. The measured aggregate is 114.0 kB gzip; the added stylesheet is admin/editor-only. Reader startup CSS remains separately capped at 47 kB and still measures 46.9 kB, so reader startup weight is unchanged.",
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
     "skyDetailChunkGzipBytes": "Raised narrowly from 5.0 kB to 5.2 kB for the owner-requested South Node peer subtitle inside grouped node-axis Sky Placement cards. The measured deferred Sky detail chunk is about 5.05 kB gzip; reader boot, App, Content Studio, and content-family budgets are unchanged.",
     "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
     "transitFallbackChunkGzipBytes": "Owner-authorized increase from 330 kB to 390 kB for the 351 exact, hash-bound Friends transit body_they passages. The transit corpus remains on-demand and outside the static App boot graph; all startup and route-local budgets remain unchanged.",
-    "totalJavaScriptGzipBytes": "Raised narrowly from 2.88 MB to 2.90 MB for the 60 exact owner-approved South Node Calendar interpretations and their Content Studio-addressable runtime records. The astronomical event denominator remains 379, the additional pole-specific prose stays in deferred/on-demand content, and all startup, App, route-local, and content-family chunk budgets remain unchanged.",
+    "totalJavaScriptGzipBytes": "Raised narrowly from 2.88 MB to 2.90 MB for the 60 exact owner-approved South Node Calendar interpretations and their Content Studio-addressable runtime records. The astronomical event denominator remains 379, the additional pole-specific prose stays in deferred/on-demand content, and all startup, App, route-local, and content-family chunk budgets remain unchanged. On 2026-09-07, the owner explicitly approved a further 7 kB increase to 2,907,000 bytes for Ask TLDR owner-preview JavaScript. Independent fresh builds measured 2,899,495 bytes on main and 2,906,215 bytes on this branch (6,720 bytes added). All startup and per-route limits remain unchanged.",
     "authorization": "Owner authorized the 60 South Node Calendar serving release, Content Studio editing, production launch, and the peer South Node Sky Placement subtitle on 2026-09-06."
   }
 }

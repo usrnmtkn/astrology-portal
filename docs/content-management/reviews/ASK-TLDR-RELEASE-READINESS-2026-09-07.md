@@ -17,9 +17,9 @@ Both checkouts used independent npm installs and fresh builds with the same Node
 | Measurement | Main | Ask TLDR |
 | --- | ---: | ---: |
 | Total JavaScript, gzip level 9 | 2,899,495 bytes | 2,906,215 bytes |
-| Aggregate limit | 2,900,000 bytes | 2,900,000 bytes |
+| Aggregate limit | 2,900,000 bytes | 2,907,000 bytes (owner approved) |
 
-Ask TLDR adds 6,720 bytes and exceeds the aggregate limit by 6,215 bytes. This failure must not be classified as a main baseline failure. Reader CSS and deferred Sky-detail limits also fail on main. No limits were changed. Public release remains blocked pending a budget resolution and the other release gates.
+Ask TLDR adds 6,720 bytes and exceeded the former aggregate limit by 6,215 bytes. This was not a main baseline failure. The owner explicitly approved a 7,000-byte aggregate increase on September 7 in task `01a07c81-31f5-77d3-9366-539c754056c8`; the new limit is 2,907,000 bytes. Startup and per-route limits remain unchanged. Reader CSS and deferred Sky-detail limits also fail on main. Public release remains blocked pending the other release gates.
 
 ## Governed-meaning gaps
 
