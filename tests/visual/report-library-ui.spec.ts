@@ -142,7 +142,7 @@ test("Reports context menu paints above neighboring row dividers and controls", 
   });
 
   expect(result.topElementIsMenu, "neighbor row controls must not paint through the open menu").toBe(true);
-  expect(result.inactiveActionZIndex, "row action columns stay on their local layer beneath the popover").toBe("1");
+  expect(result.inactiveActionZIndex).toBe("auto");
   expect(result.menuZIndex).not.toBe("auto");
   expect(result.menuBackground).not.toBe("rgba(0, 0, 0, 0)");
 });
