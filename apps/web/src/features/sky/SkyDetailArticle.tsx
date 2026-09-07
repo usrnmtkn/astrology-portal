@@ -18,6 +18,7 @@ import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import {
   articleAspectGlyphPartsFromHeading,
   articleAspectTypeFromText,
+  articleNodeAxisBodyParts,
   normalizedArticleAspectToneBucket
 } from "../../utils/articleAspects";
 import {
@@ -743,6 +744,8 @@ export function SkyDetailArticle({
                         : [];
                       const sectionHeading = typeof section.heading === "string" ? section.heading : "";
                       const glyphParts = sectionHeading ? articleAspectGlyphPartsFromHeading(sectionHeading) : null;
+                      const nodeAxisBody = sectionHeading ? articleNodeAxisBodyParts(sectionHeading, bodyParagraphs) : null;
+                      const southNodeGlyphParts = nodeAxisBody ? articleAspectGlyphPartsFromHeading(nodeAxisBody.southHeading) : null;
                       const sourceTag = inferredSectionQaSourceTag(section);
                       const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;
 
@@ -755,7 +758,20 @@ export function SkyDetailArticle({
                             </div>
                           ) : null}
                           {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
-                          {bodyParagraphs.length > 0
+                          {nodeAxisBody ? (
+                            <>
+                              {nodeAxisBody.primaryParagraphs.map((paragraph, paragraphIndex) => (
+                                <p key={`${section.key}-north-${paragraphIndex}`}>{paragraph}</p>
+                              ))}
+                              <div className="article-related-aspects__copy-heading">
+                                {southNodeGlyphParts ? <AspectGlyphs from={southNodeGlyphParts.from} aspect={southNodeGlyphParts.aspect} to={southNodeGlyphParts.to} /> : null}
+                                <h4>{nodeAxisBody.southHeading}</h4>
+                              </div>
+                              {nodeAxisBody.southParagraphs.map((paragraph, paragraphIndex) => (
+                                <p key={`${section.key}-south-${paragraphIndex}`}>{paragraph}</p>
+                              ))}
+                            </>
+                          ) : bodyParagraphs.length > 0
                             ? bodyParagraphs.map((paragraph, paragraphIndex) => (
                               <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>
                             ))
