@@ -19,6 +19,21 @@ function sha256Json(value: unknown) {
   return sha256(JSON.stringify(value));
 }
 
+function words(value: unknown) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function questionTypes(receipt: AskTldrVoiceEvidenceReceipt) {
+  return Array.isArray(receipt.question.questionTypes)
+    ? receipt.question.questionTypes.filter((value): value is string => typeof value === "string")
+    : [];
+}
+
+function directionalQuestion(receipt: AskTldrVoiceEvidenceReceipt) {
+  const types = new Set(questionTypes(receipt));
+  return types.has("direction") || types.has("guidance") || types.has("decision");
+}
+
 function usedRelevantFactors(input: {
   writerOutput: AskTldrWriterOutput;
   evidence: AskTldrQuestionRelevantFactor[];
@@ -46,6 +61,8 @@ export function buildQuestionBoundAskTldrJudgeRequest(input: {
   factLock: { passed: boolean; issues: unknown[]; checkedEvidenceIds: string[] };
 }): AskTldrJudgeRequest {
   const factors = usedRelevantFactors(input);
+  const isDirectional = directionalQuestion(input.receipt);
+  const pillarId = words(input.receipt.question.pillarId);
   const base = buildAskTldrJudgeRequest({
     writerRequest: input.writerRequest,
     writerOutput: input.writerOutput,
@@ -72,13 +89,23 @@ export function buildQuestionBoundAskTldrJudgeRequest(input: {
       primaryEvidenceId: input.relevanceReceipt.primaryEvidenceId
     }, null, 2)
   ].join("\n");
+  const instructions = [
+    base.instructions,
+    "For question_answering and astrology_fidelity, also verify that the reader-facing connection between each used factor and the question follows GOVERNED QUESTION RELEVANCE EVIDENCE rather than an inferred generic house, angle, or pillar meaning.",
+    "ASTROLOGY-VALUE STANDARD: A polished piece of common-sense coaching with astrology attached afterward is not a 4. For question_answering, astrology_fidelity, and practical_usefulness, require the chart factors to create the answer's central distinction, timing, or recommendation. The reader should understand what the astrology adds beyond advice they could have received without a chart.",
+    "APPLICATION STANDARD FOR practical_usefulness: when the question asks for guidance, help, what to do, how to approach something, or decision support, a score of 4 requires a concrete decision, request, preparation step, boundary, question, or observable action the reader can actually apply. Abstract coaching verbs alone do not earn a 4 if the reader still has to translate them into the next step. Conditional domain examples are good when they clarify application without inventing personal events.",
+    isDirectional
+      ? "DIRECTIONAL SYNTHESIS STANDARD: A score of 4 for question_answering requires movement through time or state when the supplied evidence supports it: establish the current pattern or pressure, identify what is being amplified, redirected, exposed, or developed, and distinguish the kind of growth the astrology favors from a superficially larger version of the same problem. When two or more governed relevant factors are used, judge whether they form one coherent arc rather than a list of unrelated astrology facts."
+      : "",
+    pillarId === "career" && isDirectional
+      ? "CAREER DIRECTION STANDARD: Prefer specific distinctions involving scope, authority, ownership, leverage, resources, responsibility, visibility, recognition, and control of the outcome. Do not reward generic language about worth, scrutiny, confidence, or ambition when the supplied astrology supports a more concrete professional distinction. Check that the answer distinguishes responsibility growing by itself from responsibility growing alongside authority, resources, ownership, or recognition."
+      : "",
+    "CHART-RATIONALE STANDARD: The answer must end with a paragraph beginning exactly 'Why your chart points here:' and the paragraph must explain the mechanism behind the recommendation in 2–4 sentences. Merely naming the transit, eclipse, house, or date is insufficient. If the chart rationale could be deleted without changing the logic of the advice, astrology is functioning decoratively and the answer is below release quality.",
+    "HISTORICAL-LOOKBACK STANDARD: Do not reward or permit claims about a previous occurrence, recurrence, or 'last time this happened' unless that historical analogue is explicitly supplied in calculated evidence. Absence of a historical analogue is not a defect when none was supplied."
+  ].filter(Boolean).join("\n");
   const withoutHash = {
     ...base,
-    instructions: [
-      base.instructions,
-      "For question_answering and astrology_fidelity, also verify that the reader-facing connection between each used factor and the question follows GOVERNED QUESTION RELEVANCE EVIDENCE rather than an inferred generic house, angle, or pillar meaning.",
-      "APPLICATION STANDARD FOR practical_usefulness: when the question asks for guidance, help, what to do, how to approach something, or decision support, a score of 4 requires a concrete decision, request, preparation step, boundary, question, or observable action the reader can actually apply. Abstract coaching verbs alone do not earn a 4 if the reader still has to translate them into the next step. Conditional domain examples are good when they clarify application without inventing personal events."
-    ].join("\n"),
+    instructions,
     input: `${base.input}\n\n${relevanceSection}`
   };
   const requestWithoutHash = Object.fromEntries(Object.entries(withoutHash).filter(([key]) => key !== "requestSha256"));
