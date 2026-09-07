@@ -5,6 +5,7 @@ import {
   activateFriendReportEntitlementFromStripe,
   revokeFriendReportEntitlementByPaymentIntent
 } from "./_lib/friend-report-lifecycle.js";
+import { ensureFriendReportPlaceholder } from "./_lib/friend-report-placeholder.js";
 import { rawRequestBody, sendJson } from "./_lib/report-http.js";
 import { parseVerifiedStripeEvent } from "./_lib/stripe-report-billing.js";
 import { createSupabaseReportAdmin } from "./_lib/supabase-report-admin.js";
@@ -37,7 +38,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         const entitlementId = stringValue(metadata.entitlement_id);
         const userId = stringValue(metadata.user_id) || stringValue(object.client_reference_id);
         if (!entitlementId || !userId) throw new Error("Stripe Friends checkout metadata is incomplete.");
-        await activateFriendReportEntitlementFromStripe({
+        const activated = await activateFriendReportEntitlementFromStripe({
           admin,
           entitlementId,
           userId,
@@ -47,6 +48,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
           paymentIntentId: stringValue(object.payment_intent) || null,
           purchasedAt
         });
+        await ensureFriendReportPlaceholder({ admin, entitlement: activated.entitlement });
       } else {
         const sku = reportSku(stringValue(metadata.product_key));
         if (!sku) throw new Error("Stripe checkout metadata contains an unknown report product.");
