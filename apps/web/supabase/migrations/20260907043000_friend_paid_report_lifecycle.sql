@@ -89,8 +89,13 @@ begin
     select id
     from public.friend_report_jobs
     where id = target_job_id
-      and state in ('queued', 'retry')
-      and run_after <= now()
+      and (
+        (state in ('queued', 'retry') and run_after <= now())
+        or (
+          state = 'running'
+          and (locked_at is null or locked_at < now() - interval '6 minutes')
+        )
+      )
     for update skip locked
     limit 1
   )
@@ -114,8 +119,13 @@ begin
   with candidates as (
     select id
     from public.friend_report_jobs
-    where state in ('queued', 'retry')
-      and run_after <= now()
+    where (
+      (state in ('queued', 'retry') and run_after <= now())
+      or (
+        state = 'running'
+        and (locked_at is null or locked_at < now() - interval '6 minutes')
+      )
+    )
     order by run_after, created_at
     for update skip locked
     limit greatest(1, least(batch_limit, 10))
@@ -156,4 +166,4 @@ grant select on public.friend_report_jobs to authenticated;
 comment on table public.friend_report_entitlements is
   'Server-written entitlement snapshot for one saved Friends transit reading. free_test preserves test-mode UX; stripe is the paid path.';
 comment on table public.friend_report_jobs is
-  'Durable short-reading queue. Generation may run inline for fast UX, but the queued job survives navigation or a terminated request.';
+  'Durable short-reading queue. Generation may run inline for fast UX; the cron worker can reclaim a stale running lease after six minutes if a request terminates mid-generation.';
