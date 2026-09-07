@@ -1248,7 +1248,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByRole("heading").first()).toContainText("Moon in Cancer · Variant 2");
     await expect(editor.getByLabel("Source notes (not reader copy)")).toHaveValue(record.notes);
     await editor.getByLabel("Full lunar passage").fill(record.body + "\nQA revision.");
-    await editor.getByRole("button", { name: "Save revision", exact: true }).click();
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByRole("tab", { name: "Write-ups", exact: true }).click();
@@ -1267,7 +1267,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByRole("button", { name: "New Moon-sign passage" }).click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/calendar-weekly-moon/cancer/variant-3");
     await editor.getByLabel("Full lunar passage").fill("QA new lunar passage.");
-    await editor.getByRole("button", { name: /Save/ }).first().click();
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(4);
     expect(writes[3].method).toBe("POST");
     await editor.getByRole("button", { name: "Delete draft", exact: true }).click();
@@ -2011,12 +2011,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     for (const body of ["QA first revised macro.", "QA second revised macro."]) {
       await editor.getByLabel("Full lunar passage", { exact: true }).fill(body);
       await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
-      await editor.getByRole("button", { name: "Save revision", exact: true }).click();
-      await expect(editor.getByRole("button", { name: "Save revision", exact: true })).toBeDisabled();
+      await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+      await expect(editor.getByRole("button", { name: "Save draft", exact: true })).toBeDisabled();
       await expect(editor.getByLabel("Full lunar passage", { exact: true })).toHaveValue(body);
     }
     expect(writes.filter((write) => !write.payload.ownerAction)).toHaveLength(2);
-    await editor.getByRole("button", { name: "Save & publish revision", exact: true }).click();
+    await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await row.getByRole("button", { name: "Edit", exact: true }).click();
@@ -2795,13 +2795,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(mobileEditorBox!.width).toBeLessThanOrEqual(390);
 
     await editor.getByLabel("Variable value").fill("Agreeing before checking your capacity");
-    await editor.getByRole("button", { name: "Save revision", exact: true }).click();
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0].method).toBe("PATCH");
     expect(writes[0].payload.body).toBe("Agreeing before checking your capacity");
     expect((writes[0].payload.sections as { packageDraft: { body: string } }).packageDraft.body)
       .toBe("Agreeing before checking your capacity");
-    await expect(editor.getByText("Revision saved; awaiting approval", { exact: true })).toBeVisible();
+    await expect(editor.getByText("Draft saved · Not live", { exact: true })).toBeVisible();
     await mkdir(adminScreenshotDir, { recursive: true });
     await page.screenshot({
       animations: "disabled",
@@ -2872,7 +2872,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await editor.getByLabel("You version").fill("identity, purpose, and where you take up space");
     await editor.getByLabel("They version").fill("identity, purpose, and where they take up space");
-    await editor.getByRole("button", { name: "Save revision", exact: true }).click();
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0].payload.body).toBe("identity, purpose, and where you take up space");
     expect((writes[0].payload.sections as { packageDraft: { body: string; body_they: string } }).packageDraft)
@@ -3428,9 +3428,21 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Approval status")).toHaveText("Needs review");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
-    await expect(editor.getByText("Revision saved; awaiting approval", { exact: true })).toBeVisible();
+    await expect(editor.getByText("Draft saved · Not live", { exact: true })).toBeVisible();
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
-    const publishRevisionButton = editor.getByRole("button", { name: "Save & publish revision" });
+    const publishRevisionButton = editor.getByRole("button", { name: "Save & publish" });
+    await expect(publishRevisionButton).toBeEnabled();
+    let unconfirmedPublish = true;
+    await page.route("**/api/admin/generated-content", async route => {
+      if (unconfirmedPublish && route.request().method() === "PATCH"
+        && route.request().postDataJSON().ownerAction === "approve-package-revision") {
+        unconfirmedPublish = false;
+        await route.fulfill({ json: { ok: true, rows: [pendingRevision] } });
+      } else await route.fallback();
+    });
+    await publishRevisionButton.click();
+    await expect(editor.getByRole("alert")).toContainText("Publication was not confirmed");
+    await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
     await expect(publishRevisionButton).toBeEnabled();
     await publishRevisionButton.click();
 
@@ -3444,7 +3456,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
-    await expect(editor.getByRole("button", { name: "Save & publish revision" })).toHaveCount(0);
+    await expect(editor.getByRole("button", { name: "Save & publish" })).toHaveCount(0);
     await expect(page.getByRole("status")).toContainText(`${contentKey} approved and published to the app`);
     await assertNoBrowserErrors();
   });
@@ -3535,7 +3547,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByText("Package renderer")).toHaveCount(0);
     await editor.getByLabel("Fallback field Development / turn").fill("The work keeps its own shape.");
     await expect(editor.getByRole("region", { name: "Review fallback changes" })).toContainText("The work keeps its own shape.");
-    await editor.getByRole("button", { name: "Save revision", exact: true }).click();
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0].payload).toMatchObject({
       id: "qa-jupiter-leo-serving-article",
@@ -4035,7 +4047,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectFormShellDoesNotOverlap(editor, "Template editor desktop");
 
     await fillAdminEditorField(editor, "Template purpose (optional)", "Updated template purpose");
-    await editor.getByRole("button", { name: "Save revision", exact: true }).click();
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0]?.payload).toMatchObject({
       id: templateRow.id,
@@ -4045,7 +4057,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         }
       }
     });
-    await expect(editor.getByText("Revision saved; awaiting approval", { exact: true })).toBeVisible();
+    await expect(editor.getByText("Draft saved · Not live", { exact: true })).toBeVisible();
 
     let discardPrompts = 0;
     page.on("dialog", async (dialog) => {
@@ -4059,7 +4071,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await detail.getByRole("button", { name: "Edit main template" }).click();
     editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Template purpose (optional)")).toHaveValue("Updated template purpose");
-    await expect(editor.getByRole("button", { name: "Save & publish revision" })).toBeVisible();
+    await expect(editor.getByRole("button", { name: "Save & publish" })).toBeVisible();
     await page.screenshot({
       animations: "disabled",
       path: path.join(adminScreenshotDir, "template-editor-saved-desktop.png")
@@ -4248,7 +4260,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const revisedBody = `${retrogradeHookBody} A reversible QA edit.`;
     await editor.getByLabel("Reader passage").fill(revisedBody);
-    await editor.getByRole("button", { name: "Save revision", exact: true }).click();
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0].method).toBe("PATCH");
     expect(writes[0].payload.body).toBe(revisedBody);
@@ -4859,18 +4871,18 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Natal placement zodiac sign", { exact: true }).selectOption("libra");
     await expect(field).toHaveValue("first test revision");
 
-    await action.getByRole("button", { name: "Save revision", exact: true }).click();
-    await expect(action).toContainText("Revision saved. Publish when ready.");
+    await action.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect(action).toContainText("Draft saved · Not live");
     await field.fill("second test revision");
-    await expect(action.getByRole("button", { name: "Save revision", exact: true })).toBeEnabled();
-    await action.getByRole("button", { name: "Save revision", exact: true }).click();
+    await expect(action.getByRole("button", { name: "Save draft", exact: true })).toBeEnabled();
+    await action.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(2);
     expect((writes[1].payload.sections as { packageDraft: { body: string } }).packageDraft.body).toBe("second test revision");
     await action.getByRole("button", { name: "Save & publish", exact: true }).click();
     await expect(action).toContainText("Published. The reader preview will refresh.");
     await field.fill("third test revision");
-    await action.getByRole("button", { name: "Save revision", exact: true }).click();
-    await expect(action).toContainText("Revision saved. Publish when ready.");
+    await action.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect(action).toContainText("Draft saved · Not live");
     await expect(page.getByRole("dialog", { name: "Generated content editor" })).toHaveCount(0);
     // Shared phrase changes cannot splice into the author-final sign passage.
     await expect(preview).toContainText(opening);
@@ -4888,7 +4900,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       for (const width of [1440, 390]) {
         await page.setViewportSize({ width, height: 1000 });
         await complete.scrollIntoViewIfNeeded();
-        await expect(complete.getByRole("button", { name: "Save revision", exact: true })).toBeVisible();
+        await expect(complete.getByRole("button", { name: "Save draft", exact: true })).toBeVisible();
         await expect(complete.getByRole("button", { name: "Save & publish", exact: true })).toBeVisible();
         await expectNoHorizontalOverflow(page, `Natal inline editor ${theme} ${width}`);
         await page.screenshot({ path: path.join(adminScreenshotDir, `natal-inline-${theme}-${width}.png`) });
@@ -5084,8 +5096,8 @@ test("surface maps select source families and manage repeated edits across theme
   await expect(editor.getByLabel("Content key")).toHaveValue(key);
   for (const value of ["QA first edited introduction.", "QA second edited introduction."]) {
     await editor.getByLabel("Reader phrase · You", { exact: true }).fill(value);
-    await editor.getByRole("button", { name: /^Save(?: revision)?$/ }).click();
-    await expect(editor.getByRole("button", { name: /^Save(?: revision)?$/ })).toBeDisabled();
+    await editor.getByRole("button", { name: /^Save(?: draft)?$/ }).click();
+    await expect(editor.getByRole("button", { name: /^Save(?: draft)?$/ })).toBeDisabled();
   }
   await editor.getByRole("button", { name: "Close", exact: true }).click();
   await expect(manager).toContainText("QA second edited introduction.");
@@ -5142,18 +5154,24 @@ test("Chiron transit recovers stale save versions and keeps conflicting edits vi
       await route.fulfill({ json: { ok: true, rows: [latest] } });
     } else await route.fallback();
   });
-  await editor.getByRole("button", { name: "Save revision", exact: true }).click();
-  await expect(editor.getByText("Revision saved; awaiting approval", { exact: true })).toBeVisible();
+  await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await expect(editor.locator(".admin-editor-savebar")).toContainText("All changes saved");
+  expect(writes).toHaveLength(2);
+  expect(writes[1].payload.ownerAction).toBe("approve-package-revision");
   expect(writes[0].payload.expectedUpdatedAt).toBe("2026-09-07T14:19:16.750192+00:00");
   expect((writes[0].payload.sections as any).packageDraft.body_they).toBe(copy.body_they);
+  await page.setViewportSize({ width: 390, height: 844 });
   await editor.getByLabel("You view copy", { exact: true }).fill(copy.body_you + "\n");
-  await editor.getByRole("button", { name: "Save & publish revision", exact: true }).click();
+  await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
   await expect(editor.locator(".admin-editor-savebar")).toContainText("All changes saved");
+  expect(writes).toHaveLength(4);
+  expect(writes[3].payload.ownerAction).toBe("approve-package-revision");
+  await expect(editor.getByText("Draft saved · Not live", { exact: true })).toHaveCount(0);
   const savedWriteCount = writes.length;
   rejectNext = true;
   competingCopy = true;
   await editor.getByLabel("You view copy", { exact: true }).fill(copy.body_you + "\n\n");
-  await editor.getByRole("button", { name: "Save revision", exact: true }).click();
+  await editor.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect(editor.getByRole("alert")).toContainText("Your edits are still here");
   expect(writes.length).toBe(savedWriteCount);
   await expect(editor.getByLabel("You view copy", { exact: true })).toHaveValue(copy.body_you + "\n\n");

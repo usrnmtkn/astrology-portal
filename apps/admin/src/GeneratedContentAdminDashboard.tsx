@@ -4582,8 +4582,13 @@ export function GeneratedContentAdminDashboard() {
         body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-package-revision" })
       });
       const published = payload.rows?.[0];
-      if (!published) throw new Error("The API did not return the published package row.");
+      if (!payload.ok || !published || published.content_key !== row.content_key || published.status !== "LIVE") {
+        throw new Error("Publication was not confirmed. Your revision is saved; try Save & publish again.");
+      }
       const publishedDraft = draftFromRow(published);
+      if (draftHasPackageProposal(publishedDraft)) {
+        throw new Error("The API returned an unpublished revision. Your revision is saved; try Save & publish again.");
+      }
       setRows((current) => [published, ...current.filter((item) => item.id !== published.id && item.id !== row.id)]);
       if (updateEditor) {
         setSelectedRowId(published.id);
@@ -8033,6 +8038,7 @@ export function GeneratedContentAdminDashboard() {
     const packageRoleCanServeExactCopy = !["fallback_source", "source_material"].includes(packageContentRole);
     const packageCanApproveRevision = isPackageDraft
       && packageHasProposal
+      && !isGuidedHeldReview
       && !packageIsSkyV4Governed
       && packageRoleCanServeExactCopy;
     const packageApprovalPublishes = isPackageDraft
@@ -8041,7 +8047,7 @@ export function GeneratedContentAdminDashboard() {
       && !packageIsSkyV4Governed
       && packageRoleCanServeExactCopy
       && fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus);
-    const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes ? "LIVE" : "DRAFT";
+    const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes || packageCanApproveRevision ? "LIVE" : "DRAFT";
     const packageWillPublishOnSave = packageApprovalPublishes && currentDraft.status !== "LIVE";
     const natalAspectMissingCopy = isExactNatalAspectDraft && !["body", "body_you", "body_they"].some((field) => packageFieldString(currentDraft, field).trim());
     const variableReferences = templateVariableReferences({
@@ -9815,7 +9821,7 @@ export function GeneratedContentAdminDashboard() {
                   </select>
                   {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Approved copy becomes live when Save &amp; publish completes.</small>}
                   {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">This row is source material. Approval makes it available to the resolver as an ingredient; it cannot publish as exact reader copy.</small>}
-                  {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Use “Save &amp; publish revision” below to save this revision and make that exact saved copy live.</small>}
+                  {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Save &amp; publish makes your exact edits live in one step. Save draft keeps the revision Not live.</small>}
                   {packageHasProposal && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Save this source-material revision for review. Source ingredients cannot publish as exact reader copy.</small>}
                   {packageIsSkyV4Governed && <small className="admin-field-hint">This Sky V4 row uses its hash-bound owner-approval workflow; its status cannot be changed here.</small>}
                   {isGuidedHeldReview && <small className="admin-field-hint">Locked at needs_review in this review flow. Use “Record owner copy review” above when the exact copy is correct; publication remains a separate governed step.</small>}
@@ -9910,7 +9916,7 @@ export function GeneratedContentAdminDashboard() {
                         aria-label="Reader status after save"
                         className={`ui-pill admin-status ${packageStatusAfterSave === "LIVE" ? "status-live" : "status-draft"}`}
                       >
-                        {packageHasProposal ? "Not live" : packageStatusAfterSave === "LIVE" ? "Live" : "Not live"}
+                        {packageStatusAfterSave === "LIVE" ? "Live" : "Not live"}
                       </span>
                     ) : (
                       <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
@@ -9921,7 +9927,7 @@ export function GeneratedContentAdminDashboard() {
                       {isPackageDraft
                         ? packageHasProposal
                           ? packageRoleCanServeExactCopy
-                            ? "Save the revision first, then approve and publish it with the dedicated action below."
+                            ? "Save & publish makes your exact edits live in one step. Choose Save draft to keep a revision Not live."
                             : "This saved revision is source material and cannot become exact reader copy."
                           : packageWillPublishOnSave
                           ? "This copy is approved. Save to publish it to readers."
@@ -10021,7 +10027,7 @@ export function GeneratedContentAdminDashboard() {
               : packageHasProposal
                 ? draftHasUnsavedChanges
                   ? "Unsaved revision"
-                  : "Revision saved; awaiting approval"
+                  : "Draft saved · Not live"
                 : packageWillPublishOnSave
                   ? natalAspectMissingCopy ? "Write the passage before publishing" : "Ready to publish"
                   : isNewDraft
@@ -10031,34 +10037,40 @@ export function GeneratedContentAdminDashboard() {
                       : "All changes saved"}
           </span>
           <button
-            className="admin-primary-button"
+            className={packageCanApproveRevision ? "admin-publish-button" : "admin-primary-button"}
             type="button"
-            onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)}
-            disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave)}
+            onClick={() => void (async () => {
+              if (packageCanApproveRevision) {
+                const saved = draftHasUnsavedChanges || !selectedRow ? await saveDraft() : selectedRow;
+                if (saved) await approvePackageRevision(saved);
+              } else {
+                await saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined);
+              }
+            })()}
+            disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision)}
             title={packageWillPublishOnSave && natalAspectMissingCopy ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
             {isGuidedHeldReview
               ? "Save held draft"
-              : packageHasProposal
-                ? "Save revision"
+              : packageCanApproveRevision
+                ? "Save & publish"
+                : packageHasProposal
+                ? "Save draft"
                 : packageWillPublishOnSave
                   ? "Save & publish"
                   : "Save"}
           </button>
-          {isPackageDraft && packageCanApproveRevision && selectedRow && (
+          {isPackageDraft && packageCanApproveRevision && (
             <button
-              className="admin-publish-button"
+              className="admin-secondary-button"
               type="button"
-              onClick={() => void (async () => {
-                const rowToPublish = draftHasUnsavedChanges ? await saveDraft() : selectedRow;
-                if (rowToPublish) await approvePackageRevision(rowToPublish);
-              })()}
-              disabled={isLoading}
-              title={draftHasUnsavedChanges ? "Save this revision and publish the exact saved copy." : "Publish this saved revision to readers."}
+              onClick={() => void saveDraft()}
+              disabled={isLoading || !draftHasUnsavedChanges}
+              title="Keep this revision Not live."
             >
-              <Check size={16} aria-hidden="true" />
-              Save &amp; publish revision
+              <Save size={16} aria-hidden="true" />
+              Save draft
             </button>
           )}
           {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (

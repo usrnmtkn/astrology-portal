@@ -47,3 +47,28 @@ in main, all five browser checks, the API/CRUD suite, server startup, typecheck,
 and CSS audit passed again. CI grammar checks also passed. The remaining CI
 bundle failures match that updated main baseline: reader initial CSS, the Sky
 detail chunk, and total JavaScript. No budget was increased by this patch.
+
+## Owner edits: one primary save action
+
+The revision editor previously made Save revision its primary action, even
+though a separate button already supported saving and publishing in one click.
+That default left owner edits as pending revisions and displayed “awaiting
+approval,” implying a second owner decision was mandatory.
+
+For publishable package revisions, the primary action is now Save & publish.
+It persists the exact edit and immediately invokes the existing authorized,
+version-checked publication endpoint using the returned saved version. Already
+saved revisions publish directly. Save draft is a separate secondary action,
+including for new passages, and explicitly reports “Draft saved · Not live.”
+The natal inline source editor uses the same action names and ordering.
+
+Publication succeeds in the editor only when the API confirms the same content
+key as LIVE with no outstanding proposal. An unconfirmed result keeps the saved
+revision available and presents a retryable error. Existing server authorization,
+review provenance, held-source rules, and unrelated preview runtime gates remain
+in force. No existing database drafts were bulk approved or overwritten.
+
+Browser coverage includes consecutive one-click Chiron edits, stale-version
+recovery, competing-edit preservation, draft save/reopen, a rejected publication
+response followed by retry, and natal inline editing in desktop/mobile and both
+themes. Older lunar tests now target the existing Full lunar passage field name.
