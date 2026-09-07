@@ -31,6 +31,7 @@ export type UserGeneratedSubjectType =
 
 export type ReportHorizon = "1_month" | "4_months" | "6_months" | "12_months";
 export type ReportDomain = "general" | "work_money" | "love_connection" | "personal_health";
+export type FriendReportJobState = "idle" | "pending_payment" | "queued" | "running" | "retry" | "complete" | "failed" | "cancelled";
 
 type UserGeneratedContentRow = {
   id: string;
@@ -139,6 +140,99 @@ function notifyFriendReadingReady(request: GenerateUserContentRequest, result: L
   });
 }
 
+async function signedInSession() {
+  const supabase = await getSupabaseClient();
+  if (!supabase) return null;
+  const { data, error } = await supabase.auth.getSession();
+  if (error || !data.session?.access_token || !data.session.user.id) return null;
+  return { supabase, session: data.session };
+}
+
+export async function loadFriendReportJobStatus({
+  subjectId,
+  targetDate
+}: {
+  subjectId: string;
+  targetDate: string;
+}): Promise<{ state: FriendReportJobState; saved: LiveGeneratedContent | null }> {
+  const context = await signedInSession();
+  if (!context || !subjectId || !/^\d{4}-\d{2}-\d{2}$/u.test(targetDate)) {
+    return { state: "idle", saved: null };
+  }
+  const params = new URLSearchParams({ subjectId, targetDate });
+  const response = await fetch(`/api/friend-report-status?${params}`, {
+    headers: {
+      accept: "application/json",
+      authorization: `Bearer ${context.session.access_token}`
+    }
+  });
+  const payload = await response.json().catch(() => null) as {
+    state?: FriendReportJobState;
+    saved?: UserGeneratedContentRow[];
+  } | null;
+  if (!response.ok) return { state: "idle", saved: null };
+  return {
+    state: payload?.state ?? "idle",
+    saved: payload?.saved?.[0] ? fromRow(payload.saved[0]) : null
+  };
+}
+
+async function waitForFriendReport(request: GenerateUserContentRequest) {
+  const targetDate = request.targetDate ?? "";
+  const deadline = Date.now() + 5 * 60_000;
+  while (Date.now() < deadline) {
+    const status = await loadFriendReportJobStatus({ subjectId: request.subjectId, targetDate });
+    if (status.saved) {
+      notifyFriendReadingReady(request, status.saved);
+      return status.saved;
+    }
+    if (status.state === "failed" || status.state === "cancelled") {
+      throw new GenerateUserContentError(500, {
+        ok: false,
+        errorType: "paid_reading_unavailable",
+        error: "This paid reading is currently unavailable."
+      });
+    }
+    await new Promise((resolve) => window.setTimeout(resolve, 2500));
+  }
+  throw new GenerateUserContentError(202, {
+    ok: false,
+    errorType: "generation_pending",
+    error: "This reading is still being prepared."
+  });
+}
+
+async function beginFriendReportCheckout(request: GenerateUserContentRequest, accessToken: string) {
+  const response = await fetch("/api/friend-report-checkout", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${accessToken}`
+    },
+    body: JSON.stringify({
+      subjectId: request.subjectId,
+      targetDate: request.targetDate,
+      facts: request.facts
+    })
+  });
+  const payload = await response.json().catch(() => null) as {
+    url?: string;
+    alreadyPurchased?: boolean;
+    error?: string;
+  } | null;
+  if (!response.ok) {
+    throw new GenerateUserContentError(response.status, {
+      ok: false,
+      errorType: "checkout_unavailable",
+      error: payload?.error ?? "Checkout is unavailable right now."
+    });
+  }
+  if (payload?.alreadyPurchased) return "already_purchased" as const;
+  if (!payload?.url) throw new Error("Checkout did not return a destination.");
+  window.location.assign(payload.url);
+  return "redirected" as const;
+}
+
 export async function loadUserGeneratedInterpretation({
   subjectType,
   subjectId,
@@ -190,19 +284,7 @@ export async function loadUserGeneratedInterpretation({
   return data?.[0] ? fromRow(data[0]) : null;
 }
 
-export async function generateUserContent(request: GenerateUserContentRequest) {
-  const supabase = await getSupabaseClient();
-
-  if (!supabase) {
-    throw new Error("Sign in before generating personalized content.");
-  }
-
-  const { data, error } = await supabase.auth.getSession();
-
-  if (error || !data.session?.access_token) {
-    throw new Error(error?.message ?? "Sign in before generating personalized content.");
-  }
-
+async function postGenerationRequest(request: GenerateUserContentRequest, accessToken: string) {
   const endpoint = request.subjectType === "friend_transit_reading"
     ? "/api/generate-friend-transit-reading"
     : "/api/generate-user-content";
@@ -210,27 +292,50 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      authorization: `Bearer ${data.session.access_token}`
+      authorization: `Bearer ${accessToken}`
     },
     body: JSON.stringify(request)
   });
   const payload = await response.json().catch(() => null) as {
     generated?: LiveGeneratedContent;
     saved?: UserGeneratedContentRow[];
+    queued?: boolean;
     error?: string;
     errorType?: string;
   } | null;
+  return { response, payload };
+}
+
+export async function generateUserContent(request: GenerateUserContentRequest) {
+  const context = await signedInSession();
+  if (!context) {
+    throw new Error("Sign in before generating personalized content.");
+  }
+
+  let { response, payload } = await postGenerationRequest(request, context.session.access_token);
+
+  if (response.status === 402 && request.subjectType === "friend_transit_reading" && payload?.errorType === "payment_required") {
+    const checkout = await beginFriendReportCheckout(request, context.session.access_token);
+    if (checkout === "redirected") {
+      throw new GenerateUserContentError(402, {
+        ok: false,
+        errorType: "checkout_redirect",
+        error: "Opening checkout."
+      });
+    }
+    ({ response, payload } = await postGenerationRequest(request, context.session.access_token));
+  }
 
   if (!response.ok) {
     throw new GenerateUserContentError(response.status, payload);
   }
 
   const saved = payload?.saved?.[0];
-
   if (saved) {
     if (request.subjectType === "friend_transit_reading" && saved.status === "DRAFT") {
-      notifyFriendReadingReady(request, fromRow(saved));
-      return fromRow(saved);
+      const result = fromRow(saved);
+      notifyFriendReadingReady(request, result);
+      return result;
     }
     if (saved.status === "LIVE") {
       const result = fromRow(saved);
@@ -238,6 +343,10 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
       return result;
     }
     return null;
+  }
+
+  if (request.subjectType === "friend_transit_reading" && (response.status === 202 || payload?.queued)) {
+    return waitForFriendReport(request);
   }
 
   const generated = payload?.generated ?? null;
