@@ -211,7 +211,7 @@ import {
   clearSharedGeneratedContentCache,
   loadSharedGeneratedContent
 } from "./services/sharedGeneratedContentCache";
-import { subscribeToContentUpdates } from "./services/contentUpdateSignal";
+import { subscribeToContentUpdates, subscribeToContentRevalidation } from "./services/contentUpdateSignal";
 import {
   cmsSurfaceKeys,
   resolveCmsSurfaceOverride
@@ -11572,14 +11572,11 @@ export function App() {
       return;
     }
 
+    let cancelled = false;
     compatibilityDashboardHydrationVersionRef.current = contentRefreshVersion;
     void loadFallbackArchitectureV3CompatibilityDashboardBundle()
       .then((bundle) => {
-        if (!bundle) {
-          compatibilityDashboardHydrationVersionRef.current = null;
-          return;
-        }
-
+        if (cancelled) return;
         installCompatibilityFallbackArchitectureV3Bundle(bundle);
         setFallbackArchitectureV3Version((version) => version + 1);
       })
@@ -11587,6 +11584,7 @@ export function App() {
         compatibilityDashboardHydrationVersionRef.current = null;
         console.warn("Compatibility dashboard content failed to install; bundled relationship copy remains active.", error);
       });
+    return () => { cancelled = true; compatibilityDashboardHydrationVersionRef.current = null; };
   }, [contentRefreshVersion, friendRelationshipContentRequests, mode]);
 
   useEffect(() => {
@@ -11601,13 +11599,11 @@ export function App() {
       return;
     }
 
+    let cancelled = false;
     fallbackDashboardHydrationRequestedRef.current = true;
     void loadFallbackArchitectureV3DashboardBundle()
       .then((bundle) => {
-        if (!bundle) {
-          return;
-        }
-
+        if (cancelled) return;
         installFallbackArchitectureV3Bundle(bundle);
         setFallbackArchitectureV3Version((version) => version + 1);
         setFallbackDashboardOverlayVersion((version) => version + 1);
@@ -11615,6 +11611,7 @@ export function App() {
       .catch((error) => {
         console.warn("Fallback architecture V3 dashboard bundle failed to install; local JSON snapshot remains active.", error);
       });
+    return () => { cancelled = true; fallbackDashboardHydrationRequestedRef.current = false; };
   }, [contentRefreshVersion, friendNatalContentRequested, friendRelationshipContentRequests, mode]);
 
   useEffect(() => {
@@ -11648,8 +11645,9 @@ export function App() {
       });
     const dashboardLoad = loadFallbackArchitectureV3SkyPlacementDashboardBundle()
       .then((dashboardBundle) => {
-        if (!dashboardBundle || cancelled) return false;
+        if (cancelled) return false;
         installSkyPlacementFallbackArchitectureV3Bundle(dashboardBundle);
+        markAvailable();
         return true;
       });
 
@@ -11862,7 +11860,8 @@ export function App() {
     };
   }, []);
 
-  useEffect(() => subscribeToContentUpdates(() => {
+  useEffect(() => {
+    const refreshContent = () => {
     clearSharedGeneratedContentCache();
     clearPlanetTopicVocabularyCache();
     clearNatalCardTaglineCache();
@@ -11870,7 +11869,11 @@ export function App() {
     fallbackDashboardHydrationRequestedRef.current = false;
     compatibilityDashboardHydrationVersionRef.current = null;
     setContentRefreshVersion((version) => version + 1);
-  }), []);
+    };
+    const unsubscribe = subscribeToContentUpdates(refreshContent);
+    const stopRevalidation = subscribeToContentRevalidation(refreshContent);
+    return () => { unsubscribe(); stopRevalidation(); };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

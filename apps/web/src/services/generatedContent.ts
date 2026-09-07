@@ -2,10 +2,13 @@ import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedConte
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
 import { getSupabaseClient } from "./auth";
 
+let contentStudioLastKnownGoodLoadedAt = 0;
 let contentStudioLastKnownGoodRowsPromise: Promise<GeneratedContentRow[]> | null = null;
 
 export async function loadContentStudioLastKnownGoodRows(): Promise<GeneratedContentRow[]> {
+  if (Date.now() - contentStudioLastKnownGoodLoadedAt > 5 * 60 * 1000) contentStudioLastKnownGoodRowsPromise = null;
   if (!contentStudioLastKnownGoodRowsPromise) {
+    contentStudioLastKnownGoodLoadedAt = Date.now();
     contentStudioLastKnownGoodRowsPromise = (async () => {
       try {
         const response = await fetch("/content-studio-last-known-good.json", { cache: "no-cache" });
@@ -1570,7 +1573,10 @@ export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(): P
   }
 
   const dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
-  if (!dashboardVersion) return cached?.bundle ?? null;
+  if (!dashboardVersion) {
+    clearCachedFallbackArchitectureV3SkyPlacementBundle();
+    return null;
+  }
   if (cached?.version === dashboardVersion) return cached.bundle;
 
   const rows: GeneratedContentRow[] = [];

@@ -9,7 +9,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   if (!await isContentAdminAuthorized(req)) return sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
   if (req.method !== "POST") return sendAdminJson(res, 405, { ok: false, error: "Use POST." });
   try {
-    const body = await readAdminJsonBody<{ ids?: string[] }>(req);
+    const body = await readAdminJsonBody<{ ids?: string[]; action?: string }>(req);
+    if (body.action === "composition-catalog") {
+      const rows = [...servingPackageRecords.values()]
+        .filter((record) => /^(?:fallback-hook|fallback-template|fallback-vocab|vocab|slot-template)\//.test(record.contentKey))
+        .map((record) => ({ content_key: record.contentKey, headline: record.headline ?? null, role: record.content_role }));
+      return sendAdminJson(res, 200, { ok: true, rows });
+    }
     if (!Array.isArray(body.ids) || body.ids.length > 64 || body.ids.some((id) => typeof id !== "string" || !/^[a-zA-Z0-9_./:|-]+$/.test(id))) throw new AdminHttpError(400, "Provide at most 64 content row IDs.");
     const base = (process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;

@@ -3817,3 +3817,13 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 });
+
+test("published Uranus Scorpio reader retains the complete owner passage after hydration", async ({ page }) => {
+  await seedClientState(page, { profile: true, profileBirthTime: "2:00 PM", preloadProfileNatalSky: true });
+  await expectClientRouteLoads(page, "/#you/placement/uranus-scorpio-6h");
+  const article = page.getByRole("region", { name: "Uranus in Scorpio in the 6th house" });
+  const ownerCopy = readFileSync(path.join(process.cwd(), "docs/content-management/owner-copy/uranus-in-scorpio-2026-09-07.txt"), "utf8").trim().replace(/\s+/g, " ");
+  await expect(article).toBeVisible();
+  await expect(article).toContainText(ownerCopy);
+  await expect(article).toContainText("Your freedom comes from knowing what has power over you well enough to choose differently.");
+});
