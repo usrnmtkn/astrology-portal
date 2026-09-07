@@ -1,0 +1,15 @@
+{
+  "id":"daily_life_health",
+  "label":"Daily Life & Health",
+  "description":"Schedule, workload, routines, coworkers, appointments, sleep, meals, recovery, and practical physical limits. Never medical diagnosis.",
+  "defaultEvidencePriority":["6th house / 6th-house ruler","Moon and daily-rhythm factors when relevant","active transits affecting workload or routine","links to 10th / 12th / 4th houses when work, recovery or caregiving creates the load"],
+  "questions":[
+    {"id":"daily_life_health.impossible_schedule","displayQuestion":"Why does my schedule feel impossible right now?","primaryIntent":"schedule_pressure","secondaryIntents":["workload","time","responsibilities"],"questionTypes":["current_state","pattern"],"defaultTimeWindow":"1_month","evidenceFocus":["6th-house activations","hard aspects linking the 6th house to other demands"]},
+    {"id":"daily_life_health.overcommitting","displayQuestion":"Where am I overcommitting?","primaryIntent":"overcommitment","secondaryIntents":["workload","availability","boundaries"],"questionTypes":["current_state","guidance"],"defaultTimeWindow":"1_month","evidenceFocus":["Jupiter / Saturn contacts to 6th-house factors","near-term workload triggers"]},
+    {"id":"daily_life_health.taking_more_out","displayQuestion":"What is taking more out of me than I expected?","primaryIntent":"effort_cost","secondaryIntents":["recovery","workload","time"],"questionTypes":["current_state","guidance"],"defaultTimeWindow":"1_month","evidenceFocus":["Saturn / Mars / Moon contacts","6th-house cost and recovery factors"]},
+    {"id":"daily_life_health.routine_attention","displayQuestion":"What part of my routine needs more attention?","primaryIntent":"routine_priority","secondaryIntents":["habits","appointments","daily_systems"],"questionTypes":["guidance","current_state"],"defaultTimeWindow":"1_month","evidenceFocus":["6th-house ruler and active 6th-house factors","Moon / Mercury / Saturn contacts"]},
+    {"id":"daily_life_health.limits","displayQuestion":"What responsibilities need different limits?","primaryIntent":"responsibility_limits","secondaryIntents":["boundaries","workload","availability"],"questionTypes":["guidance","decision"],"defaultTimeWindow":"4_months","evidenceFocus":["Saturn / Uranus contacts to workload factors","6th / 10th / 12th-house links"]},
+    {"id":"daily_life_health.protect_time","displayQuestion":"What should I protect time for this week?","primaryIntent":"time_priority","secondaryIntents":["schedule","recovery","appointments","responsibilities"],"questionTypes":["guidance","current_state"],"defaultTimeWindow":"1_month","evidenceFocus":["near-term 6th-house and Moon factors","links to 4th / 10th / 12th-house demands when present"]}
+  ],
+  "answerBoundary":"Discuss workload, routines, appointments, sleep, meals, recovery, and practical physical limits. Do not diagnose illness, infer symptoms, predict a medical crisis, or replace medical care."
+}

@@ -1,0 +1,19 @@
+{
+  "id": "self",
+  "label": "Self",
+  "description": "Identity, confidence, visibility, personal change, limits, and what the reader is becoming.",
+  "defaultEvidencePriority": [
+    "1st house / Ascendant / chart ruler",
+    "Sun and identity-relevant natal aspects",
+    "active transits to identity factors",
+    "12th-house and annual-context factors when change or closure is relevant"
+  ],
+  "questions": [
+    {"id":"self.outgrowing","displayQuestion":"What am I outgrowing?","primaryIntent":"change","secondaryIntents":["identity","closure","role_change"],"questionTypes":["current_state","direction"],"defaultTimeWindow":"4_months","evidenceFocus":["12th-house / closure factors","Uranus, Saturn, Pluto contacts to identity factors"]},
+    {"id":"self.underestimating","displayQuestion":"Where am I underestimating myself?","primaryIntent":"self_assessment","secondaryIntents":["confidence","visibility","strengths"],"questionTypes":["guidance","pattern"],"defaultTimeWindow":"1_month","evidenceFocus":["Sun / Ascendant / chart-ruler contacts","supportive or pressurizing visibility transits"]},
+    {"id":"self.stop_proving","displayQuestion":"What do I need to stop proving?","primaryIntent":"validation","secondaryIntents":["pressure","self_worth","boundaries"],"questionTypes":["pattern","guidance"],"defaultTimeWindow":"4_months","evidenceFocus":["Saturn / Pluto / Sun contacts","1st-10th house pressure when present"]},
+    {"id":"self.ready_to_be_seen","displayQuestion":"What part of me is ready to be seen?","primaryIntent":"visibility","secondaryIntents":["identity","confidence","recognition"],"questionTypes":["direction","guidance"],"defaultTimeWindow":"4_months","evidenceFocus":["1st / 5th / 10th-house activation","Sun / Ascendant visibility transits"]},
+    {"id":"self.pulled_two_directions","displayQuestion":"Why do I feel pulled in two directions?","primaryIntent":"conflict","secondaryIntents":["competing_demands","identity","decision"],"questionTypes":["current_state","pattern"],"defaultTimeWindow":"1_month","evidenceFocus":["active squares / oppositions to Sun / Ascendant","1st / 12th-house identity-axis conflict"]},
+    {"id":"self.trust_now","displayQuestion":"What should I trust about myself right now?","primaryIntent":"self_trust","secondaryIntents":["judgment","confidence","instinct"],"questionTypes":["guidance","current_state"],"defaultTimeWindow":"1_month","evidenceFocus":["Sun / Moon / Ascendant / chart-ruler contacts","near-term triggers"]}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id":"social",
+  "label":"Social",
+  "description":"Friendships, groups, community, collaboration, networks, belonging, alliances, and social opportunities.",
+  "defaultEvidencePriority":["11th house / 11th-house ruler","friendship and network-relevant natal factors","active transits to social factors","7th / 10th-house links only when one-to-one collaboration or career networks are actually relevant"],
+  "questions":[
+    {"id":"social.belong","displayQuestion":"Where do I actually belong?","primaryIntent":"belonging","secondaryIntents":["community","friendships","groups"],"questionTypes":["pattern","direction"],"defaultTimeWindow":"12_months","evidenceFocus":["natal 11th-house pattern","longer 11th-house transits"]},
+    {"id":"social.outgrowing_friends","displayQuestion":"What is changing in my friendships right now?","primaryIntent":"friendship_change","secondaryIntents":["closure","belonging","boundaries"],"questionTypes":["current_state","pattern"],"defaultTimeWindow":"4_months","evidenceFocus":["11th / 12th-house activations","long transits to 11th-house factors"]},
+    {"id":"social.friendship_needs","displayQuestion":"What do I need from friendship right now?","primaryIntent":"friendship_needs","secondaryIntents":["expectations","belonging","support"],"questionTypes":["current_state","guidance"],"defaultTimeWindow":"1_month","evidenceFocus":["natal 11th-house pattern","active transits to 11th-house factors","Moon / Venus contacts when relevant"]},
+    {"id":"social.collaborate","displayQuestion":"What would make a collaboration worth saying yes to?","primaryIntent":"collaboration_timing","secondaryIntents":["alliances","projects","networks"],"questionTypes":["timing","decision"],"defaultTimeWindow":"4_months","evidenceFocus":["11th / 7th / 10th-house links","Jupiter / Saturn / Venus timing"]},
+    {"id":"social.opportunity_relationships","displayQuestion":"What kind of connections could open new opportunities?","primaryIntent":"network_opportunity","secondaryIntents":["alliances","introductions","career"],"questionTypes":["direction","guidance"],"defaultTimeWindow":"4_months","evidenceFocus":["11th-10th house links","Jupiter / Venus contacts to social factors"]},
+    {"id":"social.stay_included","displayQuestion":"Where am I doing too much to stay included?","primaryIntent":"social_overextension","secondaryIntents":["belonging","boundaries","effort"],"questionTypes":["current_state","guidance"],"defaultTimeWindow":"1_month","evidenceFocus":["11th / 6th / 12th-house links","Saturn / Moon / Venus contacts"]}
+  ]
+}
