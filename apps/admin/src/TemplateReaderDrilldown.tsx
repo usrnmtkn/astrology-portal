@@ -12,6 +12,8 @@ type Props = {
   templateRow: CompositionMapRow;
   onOpenVariable: (name: string, sourceId: string | null) => void;
   previewOptions?: CompositionPreviewOptions;
+  /** Rail mode: no explanatory header or footer, just the write-up and its key. */
+  compact?: boolean;
 };
 
 function segmentButton(
@@ -41,7 +43,7 @@ function segmentButton(
   );
 }
 
-export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVariable, previewOptions }: Props) {
+export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVariable, previewOptions, compact = false }: Props) {
   const [audience, setAudience] = useState<"you" | "they">("you");
   // The parent rebuilds `templateRow` on every render, so key the memo on its
   // content rather than its identity; otherwise every keystroke in the editor
@@ -57,12 +59,12 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
   const fields = template.preview.fields.filter((field) => !field.audience || field.audience === audience);
 
   return (
-    <section className="admin-template-reader-drilldown" aria-label="Example reader write-up">
+    <section className={`admin-template-reader-drilldown${compact ? " is-compact" : ""}`} aria-label="Example reader write-up">
       <header>
         <div>
-          <p className="admin-eyebrow">Start with the reader-facing result</p>
-          <h3>Read the assembled write-up</h3>
-          <p>This representative passage replaces template tokens with sample chart facts and saved writing. Click any colored value to trace it to its atomic source.</p>
+          <p className="admin-eyebrow">{compact ? "Assembled write-up" : "Start with the reader-facing result"}</p>
+          {!compact && <h3>Read the assembled write-up</h3>}
+          {!compact && <p>This representative passage replaces template tokens with sample chart facts and saved writing. Click any colored value to trace it to its atomic source.</p>}
         </div>
         <span className="ui-pill admin-status status-reviewed">Example data</span>
       </header>
@@ -112,7 +114,7 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
           )}
         </div>
       </div>
-      <p className="admin-field-hint">The preview is representative, not a live chart. Its colors show which words are calculated and which come from editable saved writing.</p>
+      {!compact && <p className="admin-field-hint">The preview is representative, not a live chart. Its colors show which words are calculated and which come from editable saved writing.</p>}
     </section>
   );
 }

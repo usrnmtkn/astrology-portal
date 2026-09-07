@@ -838,7 +838,7 @@ async function expectAdminRouteLoads(page: Page, route: string) {
     await expect(page.locator(".admin-dashboard-header h1")).toBeVisible({
       timeout: routeReadyTimeoutMs
     });
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("saved rows loaded", {
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected ·", {
       timeout: routeReadyTimeoutMs
     });
   });
@@ -897,6 +897,12 @@ async function expectNoHorizontalOverflow(page: Page, label: string) {
 
   expect(maxScrollWidth, `${label} does not create horizontal overflow`).toBeLessThanOrEqual(dimensions.viewportWidth + 4);
 }
+
+const railShellSelectors = {
+  header: ":scope > .admin-variables-rail-header",
+  body: ":scope > .admin-variables-rail-body",
+  footer: ":scope > .admin-variables-rail-footer"
+};
 
 async function expectFormShellDoesNotOverlap(
   shell: Locator,
@@ -1011,7 +1017,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Loading saved content" })).toBeVisible();
     await expect(page.getByRole("navigation", { name: "Review queue views" })).toBeHidden();
 
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`${generatedContentRows.length} saved rows loaded`, {
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`Connected · ${generatedContentRows.length.toLocaleString("en-US")} rows`, {
       timeout: routeReadyTimeoutMs
     });
     await expect(page.getByRole("region", { name: "Loading saved content" })).toBeHidden();
@@ -1028,7 +1034,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
 
     await expectAdminRouteLoads(page, "/admin/content#review-queue");
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`${generatedContentRows.length} saved rows loaded`);
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`Connected · ${generatedContentRows.length.toLocaleString("en-US")} rows`);
     await expect(page.getByRole("region", { name: "Admin status" })).not.toContainText("Rows not loaded");
     expect(generatedContentReads).toBe(2);
   });
@@ -1063,7 +1069,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(reads[0]?.searchParams.get("scope")).toBe("compatibility");
     expect(reads[0]?.searchParams.get("limit")).toBe("500");
 
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("1261 saved rows loaded", {
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected · 1,261 rows", {
       timeout: routeReadyTimeoutMs
     });
   });
@@ -1082,7 +1088,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await seedAdminApi(page, { generatedRows: scaleRows });
     await expectAdminRouteLoads(page, "/admin/content#exact-content");
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("7200 saved rows loaded", {
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected · 7,200 rows", {
       timeout: routeReadyTimeoutMs
     });
 
@@ -1129,7 +1135,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("button", { name: "Verify emergency access" })).toBeEnabled();
     await page.getByRole("button", { name: "Verify emergency access" }).click();
 
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`${generatedContentRows.length} saved rows loaded`, {
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`Connected · ${generatedContentRows.length.toLocaleString("en-US")} rows`, {
       timeout: routeReadyTimeoutMs
     });
     await expect(page.getByRole("status")).toContainText(`Loaded ${generatedContentRows.length} saved rows`);
@@ -1145,9 +1151,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("navigation", { name: "Content operations" })).toBeVisible();
     await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
     await expect(page.getByRole("button", { name: "Studio Home" })).toHaveCount(0);
+    const navigationGroups = page.getByRole("navigation", { name: "Content operations" }).locator(".admin-nav-section > .admin-eyebrow, details.admin-nav-advanced > summary");
+    await expect(navigationGroups).toHaveText(["Publish", "Write", "Compose", "Operations"]);
     const advanced = page.locator("details.admin-nav-advanced");
-    await expect(advanced).not.toHaveAttribute("open", "");
-    await advanced.getByText("Operations / Advanced").click();
+    // Operations stays expanded at desktop widths so Users / Reports / Connection are one click away.
+    await expect(advanced).toHaveAttribute("open", "");
     await expect(advanced.getByRole("button", { name: "Connection" })).toBeVisible();
 
     for (const [index, adminPage] of adminPages.entries()) {
@@ -1352,18 +1360,18 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await sourceFinder.getByText("Sentence structure (advanced)", { exact: true }).click();
     await sourceFinder.getByRole("button", { name: "Preview template" }).first().click();
-    await expect(page.getByRole("dialog", { name: "Template variable reference" })).toBeVisible();
+    await expect(page.getByRole("complementary", { name: "Template variable reference" })).toBeVisible();
     const templatePreview = page.getByRole("region", { name: "Example reader write-up" });
     await expect(templatePreview).toBeVisible();
     await expect(templatePreview.locator(".variable-fact")).toContainText(["Sun", "Cancer"]);
     const stylePhrase = templatePreview.getByRole("button", { name: /protectively.*Open the saved source for Sign Adverb/u });
     await expect(stylePhrase).toBeVisible();
     await stylePhrase.click();
-    const variableDetails = page.getByRole("dialog", { name: "Sign adverb variable details" });
+    const variableDetails = page.getByRole("region", { name: "Sign adverb variable details" });
     await expect(variableDetails.getByRole("region", { name: "Saved source copy" })).toContainText("protectively");
     await variableDetails.getByRole("button", { name: "Sources" }).click();
     await variableDetails.getByRole("button", { name: "All variables" }).click();
-    await page.getByRole("button", { name: "Back to editor" }).click();
+    await page.getByRole("button", { name: "Close variables" }).click();
     await page.getByRole("button", { name: "Close", exact: true }).click();
 
     await navigation.getByRole("button", { name: "Content Library" }).click();
@@ -1773,6 +1781,9 @@ test.describe("content dashboard admin user flow case studies", () => {
       "House horoscopes"
     ]);
     await expect(relatedPassages.locator("details[open]")).toHaveCount(0);
+    const details = editor.locator("details.admin-editor-details");
+    await expect(details).not.toHaveAttribute("open", "");
+    await details.locator("> summary").click();
     const fallbackDiagnostic = editor.getByRole("region", { name: "Fallback composition check" });
     await expect(fallbackDiagnostic).toBeVisible();
 
@@ -2575,6 +2586,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await listRow.getByRole("button", { name: "Edit" }).click();
 
     const editor = page.locator(".admin-editor-panel");
+    await expect(editor.locator("details.admin-editor-brief > summary")).toContainText("Edit this variable value");
+    await editor.locator("details.admin-editor-brief > summary").click();
     await expect(editor.getByLabel("Phrase authoring guidance")).toContainText("Edit this variable value");
     await expect(editor.getByRole("region", { name: "Variable usage" })).toContainText("Daily Moon caution");
     await expect(editor.getByRole("region", { name: "Variable usage" })).toContainText("Moon is in Pisces");
@@ -2586,6 +2599,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Status", { exact: true })).toHaveCount(0);
     await expect(editor.getByLabel("Surface")).toHaveCount(0);
     await expect(editor.getByText("Fallback ingredient check")).toHaveCount(0);
+    await editor.locator("details.admin-editor-details > summary").click();
     await expect(editor.getByText("Internal source details")).toBeVisible();
 
     await page.setViewportSize({ width: 390, height: 844 });
@@ -3082,7 +3096,8 @@ test.describe("content dashboard admin user flow case studies", () => {
       "SMALL"
     ]);
 
-    await editor.getByText("Publishing and technical settings", { exact: true }).click();
+    await editor.locator("details.admin-editor-details > summary").click();
+    await editor.locator("details.admin-editor-settings > summary").click();
     await editor.getByLabel("Approval", { exact: true }).selectOption("approved");
     await expect(editor.getByLabel("Fallback review status")).toHaveCount(0);
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
@@ -3401,6 +3416,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const houseEditor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(houseEditor.getByLabel("Editor label"))
       .toHaveValue("Jupiter in Leo · 10th House");
+    await houseEditor.locator("details.admin-editor-brief > summary").click();
     await expect(houseEditor.getByRole("note", { name: "Current source: You" })).toContainText("Friends also has horoscope content");
     await expect(houseEditor.getByLabel("Reader passage · You")).toHaveValue("Jupiter in Leo moves through your 10th house.");
     await expect(houseEditor.getByLabel(/They/)).toHaveCount(0);
@@ -4216,6 +4232,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await list.locator(".admin-content-row", { hasText: "Pluto · Relationship role phrase" }).getByRole("button", { name: "Edit" }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Edit Pluto · Relationship role phrase" })).toBeVisible();
+    await editor.locator("details.admin-editor-brief > summary").click();
     const guidance = editor.getByRole("region", { name: "How this source is used" });
     await expect(guidance).toContainText("Compatibility and relationship readings");
     await expect(guidance).toContainText("What Pluto represents for each person");
@@ -4300,6 +4317,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await list.locator(".admin-content-row", { hasText: "Sun · Transit dates and opening" }).getByRole("button", { name: "Edit" }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await editor.locator("details.admin-editor-brief > summary").click();
     const sourceGuidance = editor.getByRole("region", { name: "How this source is used" });
     await expect(sourceGuidance).toContainText("Sun · Transit dates and opening");
     await expect(sourceGuidance).toContainText("Shared Sun opening with calculated sign, entry date, and exit date");
@@ -4383,12 +4401,16 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByLabel("You view copy").fill(editedBody);
     await editor.getByRole("button", { name: /^Reader preview & variables \(\d+\)$/u }).click();
 
-    const variableGuide = page.getByRole("dialog", { name: "Template variable reference" });
+    const variableGuide = page.getByRole("complementary", { name: "Template variable reference" });
     await expect(variableGuide).toBeVisible();
-    await expectFormShellDoesNotOverlap(variableGuide, "template variable reference desktop dialog");
-    await expect(variableGuide.getByRole("heading", { name: "Reader write-up & variables" })).toBeVisible();
+    await expectFormShellDoesNotOverlap(variableGuide, "template variable rail desktop", railShellSelectors);
+    await expect(variableGuide.getByRole("heading", { name: /in this row$/u })).toBeVisible();
+    // The rail docks beside the editor instead of covering it.
+    const editorBox = await editor.boundingBox();
+    const railBox = await variableGuide.boundingBox();
+    expect(editorBox!.x + editorBox!.width).toBeLessThanOrEqual(railBox!.x + 1);
     const readerWriteup = variableGuide.getByRole("region", { name: "Example reader write-up" });
-    await expect(readerWriteup.getByRole("heading", { name: "Read the assembled write-up" })).toBeVisible();
+    await expect(readerWriteup.getByText("Assembled write-up", { exact: true })).toBeVisible();
     await expect(readerWriteup).toContainText("Sun in Leo");
     await expect(readerWriteup).toContainText("QA draft remains here.");
     await expect(readerWriteup).not.toContainText("{{planetTitle}}");
@@ -4402,63 +4424,58 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
 
     await readerWriteup.getByRole("button", { name: /At your best.*Open the saved source for Planet Best/u }).click();
-    let variableDetails = page.getByRole("dialog", { name: "Planet best variable details" });
+    let variableDetails = variableGuide.getByRole("region", { name: "Planet best variable details" });
     await expect(variableDetails).toContainText("At your best,");
     await expect(variableDetails.getByRole("region", { name: "Saved source copy" }).getByRole("button", { name: "{{planetTitle}}" })).toBeVisible();
     await expect(variableDetails.getByRole("region", { name: "Variables inside Planet Best" })).toContainText("Planet Title");
     await variableDetails.getByRole("region", { name: "Saved source copy" }).getByRole("button", { name: "{{planetTitle}}" }).click();
-    variableDetails = page.getByRole("dialog", { name: "Planet title variable details" });
+    variableDetails = variableGuide.getByRole("region", { name: "Planet title variable details" });
     await expect(variableDetails).toContainText("Calculated by app");
     await expect(variableDetails).toContainText("No saved passage to review");
     await variableDetails.getByRole("button", { name: "All variables" }).click();
 
+    await variableGuide.locator("summary[aria-label='Template syntax help']").click();
     const syntaxGuide = variableGuide.getByRole("region", { name: "Template syntax guide" });
-    await syntaxGuide.getByText("Template syntax help", { exact: true }).click();
-    await expect(syntaxGuide).toContainText("Includes the whole block only when that optional copy is available");
+    await expect(syntaxGuide).toContainText("Includes the block only when that optional copy is available");
+    await variableGuide.locator("summary[aria-label='Template syntax help']").click();
 
-    const verbCard = variableGuide.locator(".admin-variable-reference-card", { hasText: "{{planetVerb}}" });
-    await expect(verbCard).toContainText("Required");
-    await expect(verbCard).toContainText("base-form action associated with the planet");
-    await expect(verbCard).toContainText("Planet vocabulary");
-    const introCard = variableGuide.locator(".admin-variable-reference-card", { hasText: "{{planetIntro}}" });
-    await expect(introCard).toContainText("Optional");
-    await expect(introCard).toContainText("introductory sentences");
-    await expect(introCard).toContainText("Open the source rows to read or edit the actual copy");
-    await expect(introCard).not.toContainText("The Sun describes identity, purpose, and the need to create.");
+    const verbRow = variableGuide.locator(".admin-variables-rail-row", { hasText: "{{planetVerb}}" });
+    await expect(verbRow).toContainText("Required");
+    await expect(verbRow).toContainText("Planet vocabulary");
+    const introRow = variableGuide.locator(".admin-variables-rail-row", { hasText: "{{planetIntro}}" });
+    await expect(introRow).toContainText("Optional");
+    await introRow.click();
+    variableDetails = variableGuide.getByRole("region", { name: "Planet intro variable details" });
+    await expect(variableDetails).toContainText("introductory sentences");
+    await expect(variableDetails).toContainText("fallback-hook/planet-intro/sun");
+    await expect(variableDetails).not.toContainText("The Sun describes identity, purpose, and the need to create.");
+    await variableDetails.getByRole("button", { name: "All variables" }).click();
 
-    await variableGuide.getByRole("searchbox", { name: "Find a variable or meaning" }).fill("modifier");
-    await expect(variableGuide.locator(".admin-variable-reference-card")).toHaveCount(1);
-    await expect(variableGuide).toContainText("Showing 1 of");
+    await variableGuide.getByRole("searchbox", { name: "Find a variable" }).fill("modifier");
+    await expect(variableGuide.locator(".admin-variables-rail-row")).toHaveCount(1);
+    await expect(variableGuide).toContainText("1 of");
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await expectFormShellDoesNotOverlap(variableGuide, "template variable reference mobile dialog");
-    await expectNoHorizontalOverflow(page, "Template variable reference mobile slide-out");
+    await expectFormShellDoesNotOverlap(variableGuide, "template variable rail mobile", railShellSelectors);
+    await expectNoHorizontalOverflow(page, "Template variable rail mobile");
     await page.screenshot({
       animations: "disabled",
       fullPage: true,
       path: path.join(adminScreenshotDir, "mobile-template-reader-drilldown.png")
     });
-    await variableGuide.getByRole("button", { name: "Back to editor" }).click();
+    await variableGuide.getByRole("button", { name: "Close variables" }).click();
     await expect(variableGuide).toBeHidden();
     await expect(editor.getByLabel("You view copy")).toHaveValue(editedBody);
     await expectNoHorizontalOverflow(page, "Template editor with variable action on mobile");
 
     await editor.getByRole("button", { name: /^Reader preview & variables \(\d+\)$/u }).click();
-    await variableGuide.getByRole("searchbox", { name: "Find a variable or meaning" }).fill("planet intro");
-    await variableGuide.locator(".admin-variable-reference-card", { hasText: "{{planetIntro}}" })
-      .getByRole("button", { name: "Review source writing" })
-      .click();
+    await variableGuide.getByRole("searchbox", { name: "Find a variable" }).fill("planet intro");
+    await variableGuide.locator(".admin-variables-rail-row", { hasText: "{{planetIntro}}" }).click();
 
-    variableDetails = page.getByRole("dialog", { name: "Planet intro variable details" });
+    variableDetails = variableGuide.getByRole("region", { name: "Planet intro variable details" });
     await expect(variableDetails).toContainText("fallback-hook/planet-intro/sun");
-    await expectFormShellDoesNotOverlap(variableDetails, "stacked variable detail mobile dialog");
-    const detailToolbarBox = await variableDetails.locator(".admin-editor-toolbar").boundingBox();
-    const detailBodyBox = await variableDetails.locator(".admin-post-editor").boundingBox();
-    expect(detailToolbarBox).not.toBeNull();
-    expect(detailBodyBox).not.toBeNull();
-    expect(detailToolbarBox!.height).toBeLessThan(260);
-    expect(detailBodyBox!.y - (detailToolbarBox!.y + detailToolbarBox!.height)).toBeLessThanOrEqual(24);
-    await expectNoHorizontalOverflow(page, "Stacked variable detail mobile slide-out");
+    await expect(variableDetails.getByRole("navigation", { name: "Variable path" })).toContainText("Planet Intro");
+    await expectNoHorizontalOverflow(page, "Variable detail in the mobile rail");
     await variableDetails.locator(".admin-variable-source-row", { hasText: "Sun introduction" }).click();
     await expect(variableDetails).toContainText("The Sun describes identity, purpose, and the need to create.");
     await variableDetails.getByRole("button", { name: "Edit source" }).click();
@@ -4495,12 +4512,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     await phrase.getByRole("button", { name: "Edit" }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await editor.getByRole("button", { name: "Variables (2)" }).click();
-    const variableGuide = page.getByRole("dialog", { name: "Template variable reference" });
-    const transitTopicCard = variableGuide.locator(".admin-variable-reference-card", { hasText: "{{transitTopic}}" });
-    await expect(transitTopicCard).toContainText("Planet-topic vocabulary selected by the transit resolver");
-    await transitTopicCard.getByRole("button", { name: "Review source writing" }).click();
+    const variableGuide = page.getByRole("complementary", { name: "Template variable reference" });
+    const transitTopicRow = variableGuide.locator(".admin-variables-rail-row", { hasText: "{{transitTopic}}" });
+    await expect(transitTopicRow).toContainText("Planet-topic vocabulary selected by the transit resolver");
+    await transitTopicRow.click();
 
-    const transitTopicDetails = page.getByRole("dialog", { name: "Transit topic variable details" });
+    const transitTopicDetails = variableGuide.getByRole("region", { name: "Transit topic variable details" });
     await expect(transitTopicDetails).toContainText("The resolver selects one planet-topic phrase using the transiting planet.");
     await expect(transitTopicDetails).toContainText("fallback-vocab/planet-topic/saturn");
     await expect(transitTopicDetails).toContainText("fallback-vocab/planet-topic/venus");
@@ -4516,7 +4533,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await mkdir(adminScreenshotDir, { recursive: true });
     await seedAdminApi(page);
-    const readPrimaryNavRhythm = () => page.getByRole("region", { name: "Content" }).evaluate((section) => {
+    const readPrimaryNavRhythm = () => page.getByRole("region", { name: "Write" }).evaluate((section) => {
       const button = section.querySelector("button");
       const sectionStyle = getComputedStyle(section);
       const buttonStyle = button ? getComputedStyle(button) : null;

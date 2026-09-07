@@ -217,6 +217,10 @@
   /* Content Studio layout rhythm: page padding and the gap between page-level blocks. */
   --admin-studio-page-padding: var(--admin-space-8xl) clamp(var(--admin-space-7xl), 3vw, var(--admin-space-36));
   --admin-studio-gap: var(--admin-space-6xl);
+  --admin-variables-rail-width: 360px;
+  /* The admin type scale aliases --admin-type-14 to the 15px body step; Content
+     Studio controls need a real 14px so buttons sit below body copy. */
+  --admin-control-type: 14px;
   --admin-composition-detail-padding: clamp(var(--admin-space-3xl), 2vw, var(--admin-space-7xl));
   --admin-composition-preview-padding: clamp(var(--admin-space-4xl), 3vw, var(--admin-space-9xl));
   --admin-radius-hairline: 2px;
