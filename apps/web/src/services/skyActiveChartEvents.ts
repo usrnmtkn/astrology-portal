@@ -48,7 +48,7 @@ function combine(first: string | null, second: string | null) {
   if (!second || first === second) return first;
   const firstBreak = first.indexOf(";");
   const secondBreak = second.indexOf(";");
-  if (firstBreak > 0 && first.slice(0, firstBreak) === second.slice(0, secondBreak)) {
+  if (firstBreak > 0 && secondBreak > 0 && first.slice(0, firstBreak) === second.slice(0, secondBreak)) {
     return `${first.slice(0, firstBreak)}. ${first.slice(firstBreak + 1).trim()}\n\n${second.slice(secondBreak + 1).trim()}`;
   }
   return `${first}\n\n${second}`;
