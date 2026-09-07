@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "./auth";
+import { reportVanityPath, reportVanitySlug } from "./reportLinks";
 
 export const reportReadyEvent = "tldrastro:report-ready";
 
@@ -11,6 +12,7 @@ export type ReportLibraryItem = {
   sourceId: string;
   reportKind: "friend_transit_reading" | "premium_report";
   title: string;
+  subjectLabel: string;
   subtitle: string;
   status: ReportLibraryStatus;
   targetDate: string | null;
@@ -20,6 +22,7 @@ export type ReportLibraryItem = {
   readyAt: string | null;
   seenAt: string | null;
   archivedAt: string | null;
+  vanitySlug: string;
   route: string;
 };
 
@@ -27,6 +30,7 @@ export type GeneratedReportRecord = {
   id: string;
   subjectType: string;
   subjectId: string;
+  subjectLabel: string;
   contentKey: string;
   status: string;
   eventType: string | null;
@@ -49,6 +53,7 @@ type GeneratedReportRow = {
   headline: string | null;
   summary: string | null;
   body: string;
+  source_snapshot: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 };
@@ -115,6 +120,13 @@ function premiumReportStatus(row: PremiumReportRow): ReportLibraryStatus {
   return "generating";
 }
 
+function generatedSubjectLabel(row: Pick<GeneratedReportRow, "source_snapshot" | "headline">) {
+  const snapshotName = row.source_snapshot?.friendName;
+  if (typeof snapshotName === "string" && snapshotName.trim()) return snapshotName.trim();
+  const headlineName = row.headline?.match(/^What's going on with (.+?) right now\?$/u)?.[1]?.trim();
+  return headlineName || "Friend";
+}
+
 function stateKey(sourceKind: ReportLibrarySourceKind, sourceId: string) {
   return `${sourceKind}:${sourceId}`;
 }
@@ -140,7 +152,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
   const [generatedResult, premiumResult, stateResult] = await Promise.all([
     client
       .from("user_generated_interpretations")
-      .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, created_at, updated_at")
+      .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, created_at, updated_at")
       .eq("user_id", userId)
       .eq("subject_type", "friend_transit_reading")
       .in("status", ["DRAFT", "LIVE", "ARCHIVED"])
@@ -170,12 +182,16 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
   const generated = (generatedResult.data ?? []).flatMap<ReportLibraryItem>((row) => {
     if (!row.body.trim()) return [];
     const state = states.get(stateKey("generated_interpretation", row.id));
+    const title = row.headline?.trim() || "Friends reading";
+    const subjectLabel = generatedSubjectLabel(row);
+    const vanitySlug = reportVanitySlug({ targetDate: row.target_date, createdAt: row.created_at, subjectLabel, title });
     return [{
       id: `generated_interpretation:${row.id}`,
       sourceKind: "generated_interpretation",
       sourceId: row.id,
       reportKind: "friend_transit_reading",
-      title: row.headline?.trim() || "Friends reading",
+      title,
+      subjectLabel,
       subtitle: "Friends",
       status: "ready",
       targetDate: row.target_date,
@@ -185,19 +201,24 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       readyAt: row.updated_at,
       seenAt: state?.seen_at ?? null,
       archivedAt: state ? state.archived_at : (row.status === "ARCHIVED" ? row.updated_at : null),
-      route: `/reports/generated/${row.id}`
+      vanitySlug,
+      route: `/reports/${vanitySlug}`
     }];
   });
 
   const premium = (premiumResult.data ?? []).flatMap<ReportLibraryItem>((row) => {
     if (!customerPremiumFulfillmentStates.has(row.fulfillment_status) || row.revoked_at) return [];
     const state = states.get(stateKey("premium_report", row.id));
+    const title = premiumReportTitle(row);
+    const subjectLabel = title;
+    const vanitySlug = reportVanitySlug({ targetDate: row.period_start, createdAt: row.created_at, subjectLabel, title });
     return [{
       id: `premium_report:${row.id}`,
       sourceKind: "premium_report",
       sourceId: row.id,
       reportKind: "premium_report",
-      title: premiumReportTitle(row),
+      title,
+      subjectLabel,
       subtitle: [compactDate(row.period_start), compactDate(row.period_end)].filter(Boolean).join(" - "),
       status: premiumReportStatus(row),
       targetDate: row.period_start,
@@ -207,7 +228,8 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       readyAt: row.delivered_at,
       seenAt: state?.seen_at ?? null,
       archivedAt: state?.archived_at ?? null,
-      route: `/reports/${row.id}`
+      vanitySlug,
+      route: `/reports/${vanitySlug}`
     }];
   });
 
@@ -216,13 +238,18 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
   ));
 }
 
+export async function resolveReportLibraryItemByVanitySlug(slug: string) {
+  const items = await listReportLibrary();
+  return items.find((item) => item.vanitySlug === slug) ?? null;
+}
+
 export async function loadGeneratedReportById(reportId: string): Promise<GeneratedReportRecord | null> {
   const context = await authenticatedContext();
   if (!context) return null;
   const { client, userId } = context;
   const { data, error } = await client
     .from("user_generated_interpretations")
-    .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, created_at, updated_at")
+    .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, created_at, updated_at")
     .eq("user_id", userId)
     .eq("id", reportId)
     .eq("subject_type", "friend_transit_reading")
@@ -236,6 +263,7 @@ export async function loadGeneratedReportById(reportId: string): Promise<Generat
     id: row.id,
     subjectType: row.subject_type,
     subjectId: row.subject_id,
+    subjectLabel: generatedSubjectLabel(row),
     contentKey: row.content_key,
     status: row.status,
     eventType: row.event_type,
@@ -246,6 +274,15 @@ export async function loadGeneratedReportById(reportId: string): Promise<Generat
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
+}
+
+export function generatedReportVanityPath(report: Pick<GeneratedReportRecord, "targetDate" | "createdAt" | "subjectLabel" | "headline">) {
+  return reportVanityPath({
+    targetDate: report.targetDate,
+    createdAt: report.createdAt,
+    subjectLabel: report.subjectLabel,
+    title: report.headline
+  });
 }
 
 async function upsertLibraryState(
