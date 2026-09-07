@@ -6,7 +6,7 @@ test("September 8 uses the revised Virgo clause and links planet names", async (
   await page.goto("/?date=2026-09-08#sky");
   const summary = page.getByLabel("Daily sky summary");
   await expect(summary).toContainText("The Sun is in Virgo at 16°, turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing, while the Moon moves through Leo at 13°", { timeout: 60_000 });
-  await expect(summary.getByRole("link")).toHaveText(["Sun", "Moon", "Saturn", "Neptune", "Pluto", "Chiron", "New Moon"]);
+  await expect(summary.getByRole("link")).toHaveText(["Sun", "Moon", "Saturn Rx", "Neptune Rx", "Pluto Rx", "Chiron Rx", "New Moon"]);
   await expect(summary).not.toContainText("making it easier to notice what needs fixing");
   await page.screenshot({ path: "test-results/sky-summary-september-8.png" });
 });
@@ -33,8 +33,8 @@ for (const theme of ["light", "dark"] as const) {
       await expect(summary).not.toContainText("Tend what feels like home");
       await expect(summary).toContainText("the Moon moves through");
       await expect(summary).toContainText("The next New Moon arrives in Virgo in 3 days.");
-      await expect(summary).toContainText("Four planets are retrograde right now: Saturn, Neptune, Pluto, and Chiron.");
-      await expect(summary).toContainText("Four planets are retrograde right now: Saturn, Neptune, Pluto, and Chiron. The Moon is void of course for another 49 minutes. The next New Moon arrives in Virgo in 3 days.");
+      await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx, Neptune Rx, Pluto Rx, and Chiron Rx.");
+      await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx, Neptune Rx, Pluto Rx, and Chiron Rx. The Moon is void of course for another 49 minutes. The next New Moon arrives in Virgo in 3 days.");
       await expect(summary).not.toContainText("Full Moons mark a culmination");
       await expect(summary.locator("mark.content-highlight").filter({ hasText: "Four planets are retrograde" })).toHaveText("Four planets are retrograde");
       await expect(summary.locator("strong")).toHaveCount(0);
@@ -88,7 +88,7 @@ for (const theme of ["light", "dark"] as const) {
       }
       for (const [planet, sign] of [["Saturn", "Aries"], ["Neptune", "Aries"], ["Pluto", "Aquarius"], ["Chiron", "Taurus"]]) {
         const link = summary.getByRole("link", { name: `Read about ${planet} in ${sign}`, exact: true });
-        await expect(link).toHaveText(planet);
+        await expect(link).toHaveText(`${planet} Rx`);
         await expect(link).toHaveAttribute("href", `#sky/placement/${planet.toLowerCase()}/${sign.toLowerCase()}`);
         expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain("underline");
         expect(await link.evaluate(el => getComputedStyle(el).fontWeight)).toBe("600");
