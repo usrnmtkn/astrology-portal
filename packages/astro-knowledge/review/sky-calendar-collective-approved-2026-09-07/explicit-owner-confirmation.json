@@ -1,0 +1,27 @@
+{
+  "type": "explicit_owner_release_confirmation",
+  "authority": "owner",
+  "decision": "approve",
+  "ownerStatement": "I explicitly approve all 379 exact Calendar aspect candidate payloads, including the 40 reader-address overlays, and authorize promotion to serving copy and Content Studio.",
+  "approvedAt": "2026-09-07",
+  "source": {
+    "type": "codex_task",
+    "taskId": "01a07aed-53ad-7d52-bab8-304ba9b4d1b1",
+    "date": "2026-09-07"
+  },
+  "batchId": "sky-calendar-collective-approved-2026-09-07",
+  "memberCount": 379,
+  "readerAddressOverlayCount": 40,
+  "approvedFields": [
+    "summary",
+    "body"
+  ],
+  "capabilities": [
+    "editorial_approval",
+    "serving",
+    "content_studio_sync"
+  ],
+  "payloadSetSha256": "cef9ca9ab00d027be5e5462f5ef2c1bf6de36ab87214d3ab9f52e573471ad5ef",
+  "payloadProjectionPath": "packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/current-owner-payloads.json",
+  "servingReleaseCommit": "74318375e94311226ba20fa2f211ee5f53ab7336"
+}
