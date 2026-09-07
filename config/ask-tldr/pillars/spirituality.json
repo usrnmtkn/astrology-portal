@@ -1,0 +1,15 @@
+{
+  "id":"spirituality",
+  "label":"Spirituality",
+  "description":"Faith, meaning, solitude, private practice, intuition, belief, retreat, closure, and larger questions about meaning.",
+  "defaultEvidencePriority":["9th house / 9th-house ruler","12th house / 12th-house ruler","Jupiter and Neptune when governed by the actual chart","Moon / Mercury only when discernment or inner processing is the question"],
+  "questions":[
+    {"id":"spirituality.make_sense","displayQuestion":"What am I trying to make sense of right now?","primaryIntent":"meaning_making","secondaryIntents":["belief","uncertainty","perspective"],"questionTypes":["current_state","pattern"],"defaultTimeWindow":"4_months","evidenceFocus":["9th / 12th-house activations","Jupiter / Neptune contacts"]},
+    {"id":"spirituality.time_alone","displayQuestion":"Why do I need more time alone?","primaryIntent":"solitude","secondaryIntents":["withdrawal","privacy","recovery"],"questionTypes":["current_state","guidance"],"defaultTimeWindow":"1_month","evidenceFocus":["12th-house activations","Saturn / Neptune / Moon contacts"]},
+    {"id":"spirituality.question_belief","displayQuestion":"What belief am I starting to question?","primaryIntent":"belief_change","secondaryIntents":["worldview","faith","meaning"],"questionTypes":["pattern","direction"],"defaultTimeWindow":"12_months","evidenceFocus":["9th-house / Jupiter / Neptune pattern","long transits / eclipses affecting 9th-house factors"]},
+    {"id":"spirituality.let_go","displayQuestion":"What am I ready to let go of?","primaryIntent":"release","secondaryIntents":["closure","ending","withdrawal"],"questionTypes":["direction","guidance"],"defaultTimeWindow":"4_months","evidenceFocus":["12th-house activation","Saturn / Neptune / Pluto contacts"]},
+    {"id":"spirituality.intuition","displayQuestion":"How can I tell intuition from wishful thinking?","primaryIntent":"intuition","secondaryIntents":["discernment","uncertainty","inner_signal"],"questionTypes":["guidance","pattern"],"defaultTimeWindow":"1_month","evidenceFocus":["Moon / Neptune / Mercury pattern","9th / 12th-house activations when relevant"]},
+    {"id":"spirituality.begin_practice","displayQuestion":"What kind of spiritual practice could support me right now?","primaryIntent":"spiritual_practice","secondaryIntents":["ritual","study","solitude"],"questionTypes":["guidance","direction"],"defaultTimeWindow":"4_months","evidenceFocus":["9th / 12th-house activations","Saturn / Jupiter / Neptune timing"]}
+  ],
+  "answerBoundary":"Discuss belief, meaning, solitude, private practice, and discernment without asserting psychic certainty, supernatural ability, spiritual awakening, or hidden facts about other people."
+}

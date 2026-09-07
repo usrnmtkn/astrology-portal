@@ -1,0 +1,15 @@
+{
+  "id":"money",
+  "label":"Money",
+  "description":"Income, expenses, rates, resources, debt, shared money, financial decisions, risk, and priorities.",
+  "defaultEvidencePriority":["2nd house / 2nd-house ruler","8th house when debt, shared resources, tax or leverage is relevant","active transits to money factors","2nd / 10th links when earnings depend on work"],
+  "questions":[
+    {"id":"money.prioritize","displayQuestion":"What deserves my attention financially right now?","primaryIntent":"financial_priority","secondaryIntents":["cash_flow","expenses","resources"],"questionTypes":["guidance","current_state"],"defaultTimeWindow":"1_month","evidenceFocus":["2nd / 8th-house activations","near-term money triggers"]},
+    {"id":"money.changing","displayQuestion":"What is changing about my finances?","primaryIntent":"financial_change","secondaryIntents":["income","expenses","resources"],"questionTypes":["current_state","direction"],"defaultTimeWindow":"4_months","evidenceFocus":["longer transits to 2nd / 8th-house factors","annual financial context"]},
+    {"id":"money.compensation","displayQuestion":"What makes now a better or worse time to negotiate pay or rates?","primaryIntent":"compensation","secondaryIntents":["rates","income","negotiation","timing"],"questionTypes":["timing","guidance"],"defaultTimeWindow":"1_month","evidenceFocus":["2nd-10th house links","2nd-ruler / Midheaven contacts","near-term Mercury / Venus / Jupiter / Saturn timing when relevant"]},
+    {"id":"money.risk","displayQuestion":"What pressure or tradeoff should I understand before a big financial decision?","primaryIntent":"financial_decision_context","secondaryIntents":["risk","resources","timing"],"questionTypes":["decision","guidance"],"defaultTimeWindow":"1_month","evidenceFocus":["2nd / 8th-house activations","Saturn / Jupiter / Uranus / Pluto contacts when relevant"]},
+    {"id":"money.shared_resources","displayQuestion":"What should I know about debt, taxes, or shared money right now?","primaryIntent":"shared_resources","secondaryIntents":["debt","taxes","obligations","shared_money"],"questionTypes":["current_state","guidance"],"defaultTimeWindow":"4_months","evidenceFocus":["8th house / 8th-house ruler","Saturn / Jupiter / Pluto contacts and eclipses affecting shared-resource factors when present"]},
+    {"id":"money.income_growth","displayQuestion":"Where should I focus if I want to increase my income?","primaryIntent":"earnings_growth","secondaryIntents":["income","career","work","resources"],"questionTypes":["guidance","direction"],"defaultTimeWindow":"4_months","evidenceFocus":["2nd / 6th / 10th-house links","2nd-ruler / Midheaven transits"]}
+  ],
+  "answerBoundary":"Use astrology to surface financial pressures, priorities, tradeoffs, and timing context. Do not recommend or guarantee an investment, trade, loan, debt action, purchase, sale, or other financial transaction."
+}
