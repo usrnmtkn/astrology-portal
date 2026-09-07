@@ -1,3 +1,4 @@
+import { calendarDayDistance } from "../apps/web/src/services/calendarDayDistance.ts";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { skyDailySummaryParts } from "../apps/web/src/content/skyDailySummary.ts";
@@ -95,3 +96,7 @@ console.log("Studio summary fields: catalog, slot validation, published override
 const retrogradeLinkParts = skyDailySummaryParts({ moonIsVoid: false, retrogradePlanets: ["Saturn", "Neptune", "Pluto", "Chiron", "Saturn"] });
 assert.deepEqual(retrogradeLinkParts.filter(part => part.action === "retrograde").map(part => [part.text, part.planet]), [["Saturn", "Saturn"], ["Neptune", "Neptune"], ["Pluto", "Pluto"], ["Chiron", "Chiron"]]);
 assert.equal(retrogradeLinkParts.map(part => part.text).join(""), "Four planets are retrograde right now: Saturn, Neptune, Pluto, and Chiron.");
+
+assert.equal(calendarDayDistance(new Date("2026-09-07T16:00:00Z"), new Date("2026-09-11T03:27:00Z"), "America/New_York"), 3);
+assert.equal(calendarDayDistance(new Date("2026-09-07T16:00:00Z"), new Date("2026-09-11T03:27:00Z"), "UTC"), 4);
+assert.equal(calendarDayDistance(new Date("2026-03-07T17:00:00Z"), new Date("2026-03-09T16:00:00Z"), "America/New_York"), 2);

@@ -1,3 +1,4 @@
+import { calendarDayDistance } from "./services/calendarDayDistance";
 import { skyDailySummaryParts } from "./content/skyDailySummary";
 import {
   ArrowDownRight,
@@ -2973,8 +2974,8 @@ function localDayStart(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
-function lunationCountdownLabel(selectedDate: Date, exactAt: Date) {
-  const daysUntil = Math.max(0, Math.round((localDayStart(exactAt).getTime() - localDayStart(selectedDate).getTime()) / 86_400_000));
+function lunationCountdownLabel(selectedDate: Date, exactAt: Date, timeZone?: string) {
+  const daysUntil = Math.max(0, calendarDayDistance(selectedDate, exactAt, timeZone));
 
   if (daysUntil === 0) {
     return "TODAY";
@@ -15559,7 +15560,7 @@ function SkyCards({
       name: event.name,
       eclipseType: event.eclipseType,
       sign: event.sign,
-      countdown: lunationCountdownLabel(selectedDate, eventDate).toLowerCase()
+      countdown: lunationCountdownLabel(selectedDate, eventDate, sky.location.timeZone).toLowerCase()
     } : undefined
   }, generatedContent);
 
