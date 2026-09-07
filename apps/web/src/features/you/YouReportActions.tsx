@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { listReportLibrary, type ReportLibraryItem } from "../../services/reportLibrary";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
+import "../../styles/you-reports.css";
 import type { DailyHoroscopeAssembly, PersonalTimingSummary } from "./YouPage";
 import {
   buildYouDayReportBrief,
