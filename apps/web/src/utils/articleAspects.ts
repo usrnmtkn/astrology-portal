@@ -90,7 +90,8 @@ function combineActiveNodeBodies(first: string | null, second: string | null) {
   const firstBreak = firstRest.indexOf(";");
   const secondBreak = secondRest.indexOf(";");
   if (firstSentence > 0 && secondSentence > 0 && firstBreak > 0 && secondBreak > 0 && firstRest.slice(0, firstBreak) === secondRest.slice(0, secondBreak)) {
-    return `${first.slice(0, firstSentence + 1)} ${second.slice(0, secondSentence + 1)} ${firstRest.slice(0, firstBreak)}. ${firstRest.slice(firstBreak + 1).trim()}\n\n${secondRest.slice(secondBreak + 1).trim()}`;
+    const secondTail = secondRest.slice(secondBreak + 1).trim();
+    return `${first.slice(0, firstSentence + 1)} ${second.slice(0, secondSentence + 1)} ${firstRest.slice(0, firstBreak)}; ${firstRest.slice(firstBreak + 1).trim()}\n\n${secondTail[0].toUpperCase()}${secondTail.slice(1)}`;
   }
   return `${first}\n\n${second}`;
 }
