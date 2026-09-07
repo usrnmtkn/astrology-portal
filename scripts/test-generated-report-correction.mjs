@@ -37,6 +37,8 @@ try {
     const prompts = [];
     let judgeCalls = 0;
     globalThis.reportCorrectionFixture = async ({ prompt }) => {
+      assert.ok(prompt.includes("Weekly progression and contextual owner corrections"));
+      assert.ok(prompt.includes("narrative_repetition"));
       assert.ok(prompt.includes("EXACT OWNER-AUTHORED REPORT VOICE EVIDENCE"));
       if (prompts.length) assert.equal(prompt.split("EXACT OWNER-AUTHORED REPORT VOICE EVIDENCE")[1], prompts[0].split("EXACT OWNER-AUTHORED REPORT VOICE EVIDENCE")[1]);
       assert.ok(prompt.includes("BROADEN BEFORE SPECIFYING"), "Every writer attempt, including correction/recovery, must load the breadth contract.");
