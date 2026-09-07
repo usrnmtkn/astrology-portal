@@ -1,5 +1,6 @@
 import { friendTransitReadingRequestLock } from "./friend-transit-reading.js";
 import { generateFriendTransitReadingForUser, type FriendTransitReadingRow } from "./friend-transit-reading-generation.js";
+import { isTransitReadingJudgeBlockedError } from "./transit-reading-generation.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
 
 export type FriendReportBillingMode = "free_test" | "stripe";
@@ -183,12 +184,19 @@ async function ensureJob(input: {
   );
   if (existing) {
     if (["failed", "cancelled"].includes(existing.state) && input.entitlement.status === "active") {
+      await input.admin.update(
+        "user_generated_interpretations",
+        `friend_report_entitlement_id=eq.${input.entitlement.id}&subject_type=eq.friend_transit_reading`,
+        { status: "DRAFT", error: null }
+      );
       const rows = await input.admin.update<FriendReportJob>("friend_report_jobs", `id=eq.${existing.id}`, {
         state: "queued",
+        attempt: 0,
         run_after: new Date().toISOString(),
         locked_at: null,
         locked_by: null,
-        last_error: null
+        last_error: null,
+        result_id: null
       });
       return rows[0] ?? existing;
     }
@@ -574,9 +582,14 @@ export async function runFriendReportJobs(input: {
       });
       results.push({ jobId: job.id, status: "complete", ...(resultId ? { resultId } : {}) });
     } catch (error) {
-      const failed = job.attempt >= attemptCap;
+      const judgeBlocked = isTransitReadingJudgeBlockedError(error);
+      const failed = judgeBlocked || job.attempt >= attemptCap;
       const delayMinutes = Math.min(30, Math.max(1, job.attempt * 2));
-      const errorMessage = error instanceof Error ? error.message.slice(0, 2000) : "Friends report generation failed.";
+      const errorMessage = judgeBlocked
+        ? "Writing quality gate did not pass after one corrective rewrite and re-judge."
+        : error instanceof Error
+          ? error.message.slice(0, 2000)
+          : "Friends report generation failed.";
       await admin.update("friend_report_jobs", `id=eq.${job.id}`, {
         state: failed ? "failed" : "retry",
         run_after: failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),

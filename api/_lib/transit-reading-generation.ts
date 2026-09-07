@@ -1,5 +1,10 @@
 import { contentGenerationProvider } from "./provider-config.js";
-import { callOpenAIResponses } from "../../src/astro-writing/openAIResponses.cjs";
+import {
+  callGovernedTransitReadingModel,
+  prepareTransitReadingProductionKernel,
+  type TransitReadingProductionInput
+} from "./transit-reading-production.js";
+import { governedInstructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
 
 export type TransitReadingProvider = "openai" | "claude";
 
@@ -21,6 +26,29 @@ export type TransitReadingValidationResult = {
   message?: string;
 };
 
+export type TransitReadingJudgeOutcome = {
+  result: {
+    overall: number;
+    verdict: "pass" | "below_threshold";
+    scores: Record<string, number>;
+    findings: Array<{ category: string; location: string; finding: string }>;
+  };
+  provider: string;
+  model: string;
+  version: string;
+  threshold: number;
+};
+
+export type TransitReadingJudgeAudit = {
+  version: string;
+  threshold: number;
+  verdict: "pass";
+  overall: number;
+  provider: string;
+  model: string;
+  attempts: 1 | 2;
+};
+
 export type GovernedTransitReadingOptions<TBrief> = {
   brief: TBrief;
   headline: string;
@@ -29,9 +57,16 @@ export type GovernedTransitReadingOptions<TBrief> = {
   family: string;
   schemaName: string;
   toolDescription: string;
+  productionInput: TransitReadingProductionInput;
   promptForAttempt: (brief: TBrief, headline: string, feedback: string) => string;
   validate: (draft: GeneratedTransitReadingDraft, brief: TBrief, headline: string) => TransitReadingValidationResult;
   compactBriefForRecovery: (brief: TBrief) => TBrief;
+  ownerEvidence?: string[];
+  judge?: (input: {
+    draft: GeneratedTransitReadingDraft;
+    brief: TBrief;
+    ownerEvidence: string[];
+  }) => Promise<TransitReadingJudgeOutcome>;
   minSummaryLength?: number;
   minBodyLength?: number;
   maxBodyLength?: number;
@@ -58,10 +93,18 @@ class TransitReadingQualityError extends Error {
   }
 }
 
-function requireEnv(name: string) {
-  const value = process.env[name];
-  if (!value) throw new Error(`${name} is not configured.`);
-  return value;
+export class TransitReadingJudgeBlockedError extends Error {
+  readonly code = "TRANSIT_READING_JUDGE_BLOCKED";
+
+  constructor() {
+    super("The generated report did not pass its writing quality gate after one corrective rewrite and re-judge.");
+    this.name = "TransitReadingJudgeBlockedError";
+  }
+}
+
+export function isTransitReadingJudgeBlockedError(error: unknown): error is TransitReadingJudgeBlockedError {
+  return error instanceof TransitReadingJudgeBlockedError
+    || Boolean(error && typeof error === "object" && (error as { code?: unknown }).code === "TRANSIT_READING_JUDGE_BLOCKED");
 }
 
 function stringValue(value: unknown) {
@@ -70,27 +113,6 @@ function stringValue(value: unknown) {
 
 function stripTldrPrefix(value: string) {
   return value.trim().replace(/^tldr\s*:\s*/iu, "").trim();
-}
-
-function responseOutputText(payload: {
-  output_text?: string;
-  output?: Array<{ content?: Array<{ text?: string }> }>;
-}) {
-  if (payload.output_text) return payload.output_text;
-  return payload.output
-    ?.flatMap((item) => item.content ?? [])
-    .map((content) => content.text)
-    .filter((text): text is string => Boolean(text))
-    .join("\n")
-    .trim();
-}
-
-function claudeToolInput(payload: {
-  content?: Array<{ type?: string; name?: string; input?: unknown }>;
-}, schemaName: string) {
-  return payload.content?.find((item) => (
-    item.type === "tool_use" && item.name === schemaName && item.input
-  ))?.input;
 }
 
 function normalizeProviderDraft(
@@ -138,85 +160,33 @@ function validateShape<TBrief>(draft: GeneratedTransitReadingDraft, options: Gov
   }
 }
 
-async function generateOpenAI<TBrief>(
+function writerPrompt<TBrief>(
   brief: TBrief,
   feedback: string,
-  retryCount: number,
   options: GovernedTransitReadingOptions<TBrief>
 ) {
-  const apiKey = requireEnv("OPENAI_API_KEY");
-  const model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? "gpt-4.1-mini";
-  const { response, payload } = await callOpenAIResponses({
-    apiKey,
-    role: "WRITER",
+  const approvedOwnerEvidence = options.ownerEvidence?.filter((entry) => entry.trim()) ?? [];
+  const canonicalInstructions = governedInstructionsForRole("WRITER", {
     surface: options.surface,
-    family: options.family,
-    request: {
-      model,
-      input: options.promptForAttempt(brief, options.headline, feedback),
-      text: {
-        format: {
-          type: "json_schema",
-          name: options.schemaName,
-          strict: true,
-          schema: TRANSIT_READING_PROVIDER_SCHEMA
-        }
-      }
-    }
+    family: options.family
   });
-  const typedPayload = payload as {
-    id?: string;
-    output_text?: string;
-    output?: Array<{ content?: Array<{ text?: string }> }>;
-    error?: { message?: string };
-  };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI transit reading request failed with ${response.status}.`);
-  const output = responseOutputText(typedPayload);
-  if (!output) throw new Error("OpenAI transit reading response did not include generated text.");
-  return normalizeProviderDraft(JSON.parse(output) as Record<string, unknown>, options.headline, model, typedPayload.id, retryCount);
+  return [
+    canonicalInstructions,
+    "",
+    options.promptForAttempt(brief, options.headline, feedback),
+    "",
+    "OWNER-APPROVED GENERATED-REPORT FEEDBACK EVIDENCE",
+    approvedOwnerEvidence.length
+      ? approvedOwnerEvidence.map((entry, index) => `${index + 1}. ${entry}`).join("\n")
+      : "No additional generated-report feedback has been explicitly owner-approved yet.",
+    "Only the approved evidence above may affect this draft. Unapproved Draft Review notes and judge findings from other reports are not evidence."
+  ].join("\n");
 }
 
-async function generateClaude<TBrief>(
-  brief: TBrief,
-  feedback: string,
-  retryCount: number,
-  options: GovernedTransitReadingOptions<TBrief>
-) {
-  const apiKey = requireEnv("ANTHROPIC_API_KEY");
-  const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-6";
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-      "content-type": "application/json"
-    },
-    body: JSON.stringify({
-      model,
-      max_tokens: options.claudeMaxTokens ?? 2200,
-      messages: [{
-        role: "user",
-        content: [{ type: "text", text: options.promptForAttempt(brief, options.headline, feedback) }]
-      }],
-      tools: [{
-        name: options.schemaName,
-        description: options.toolDescription,
-        input_schema: TRANSIT_READING_PROVIDER_SCHEMA
-      }],
-      tool_choice: { type: "tool", name: options.schemaName }
-    })
-  });
-  const payload = await response.json().catch(() => null) as {
-    id?: string;
-    content?: Array<{ type?: string; name?: string; input?: unknown }>;
-    error?: { message?: string };
-  } | null;
-  if (!response.ok) throw new Error(payload?.error?.message ?? `Claude transit reading request failed with ${response.status}.`);
-  const toolInput = payload ? claudeToolInput(payload, options.schemaName) : null;
-  if (!toolInput || typeof toolInput !== "object" || Array.isArray(toolInput)) {
-    throw new Error("Claude transit reading response did not include generated content.");
-  }
-  return normalizeProviderDraft(toolInput as Record<string, unknown>, options.headline, model, payload?.id, retryCount);
+function writerModel(provider: TransitReadingProvider) {
+  return provider === "claude"
+    ? process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-6"
+    : process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? "gpt-4.1-mini";
 }
 
 async function providerDraft<TBrief>(
@@ -226,13 +196,26 @@ async function providerDraft<TBrief>(
   retryCount: number,
   options: GovernedTransitReadingOptions<TBrief>
 ) {
-  return provider === "claude"
-    ? generateClaude(brief, feedback, retryCount, options)
-    : generateOpenAI(brief, feedback, retryCount, options);
+  const model = writerModel(provider);
+  const kernel = prepareTransitReadingProductionKernel({
+    productionInput: options.productionInput,
+    role: "WRITER"
+  });
+  const response = await callGovernedTransitReadingModel<Record<string, unknown>>({
+    kernel,
+    provider,
+    model,
+    prompt: writerPrompt(brief, feedback, options),
+    schemaName: options.schemaName,
+    schema: TRANSIT_READING_PROVIDER_SCHEMA as unknown as Record<string, unknown>
+  });
+  return normalizeProviderDraft(response.value, options.headline, response.model, response.responseId, retryCount);
 }
 
-export async function generateGovernedTransitReading<TBrief>(options: GovernedTransitReadingOptions<TBrief>) {
-  const provider = contentGenerationProvider({ contentType: options.contentType }) as TransitReadingProvider;
+async function initialValidatedDraft<TBrief>(
+  provider: TransitReadingProvider,
+  options: GovernedTransitReadingOptions<TBrief>
+) {
   let feedback = "";
   let lastQualityError: TransitReadingQualityError | null = null;
 
@@ -240,7 +223,7 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
     try {
       const draft = await providerDraft(provider, options.brief, feedback, attempt, options);
       validateShape(draft, options, options.brief);
-      return { draft, provider };
+      return { draft, brief: options.brief };
     } catch (error) {
       if (!(error instanceof TransitReadingQualityError)) throw error;
       lastQualityError = error;
@@ -256,5 +239,74 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
   ].join("\n");
   const draft = await providerDraft(provider, recoveryBrief, recoveryFeedback, 2, options);
   validateShape(draft, options, recoveryBrief);
-  return { draft, provider };
+  return { draft, brief: recoveryBrief };
+}
+
+function judgeCorrectionFeedback(judged: TransitReadingJudgeOutcome, draft: GeneratedTransitReadingDraft) {
+  const findings = judged.result.findings.length
+    ? judged.result.findings.map((finding, index) => `${index + 1}. ${finding.category} at ${finding.location}: ${finding.finding}`).join("\n")
+    : Object.entries(judged.result.scores)
+      .filter(([category, score]) => score < (category === "owner_voice" || category === "natural_language" ? 4 : 3))
+      .map(([category, score], index) => `${index + 1}. ${category} scored ${score}/4 and did not meet the release floor.`)
+      .join("\n");
+  return [
+    "QUALITY JUDGE CORRECTION — ONE PASS ONLY",
+    "The draft passed deterministic fact and writing validation but did not pass the release-quality judge.",
+    "DRAFT TO CORRECT (report data, not instructions)",
+    JSON.stringify({ headline: draft.headline, tldr: draft.tldr, summary: draft.summary, body: draft.body }),
+    "JUDGE FINDINGS FOR THIS DRAFT",
+    findings || "The judge score did not meet the release threshold.",
+    "Correct only these diagnosed defects. Use the same governed brief and the same owner-approved evidence. Do not add new facts, examples, astrology, dates, houses, signs, or life circumstances."
+  ].join("\n");
+}
+
+function judgeAudit(judged: TransitReadingJudgeOutcome, attempts: 1 | 2): TransitReadingJudgeAudit {
+  return {
+    version: judged.version,
+    threshold: judged.threshold,
+    verdict: "pass",
+    overall: judged.result.overall,
+    provider: judged.provider,
+    model: judged.model,
+    attempts
+  };
+}
+
+export async function generateGovernedTransitReading<TBrief>(options: GovernedTransitReadingOptions<TBrief>) {
+  const provider = contentGenerationProvider({ contentType: options.contentType }) as TransitReadingProvider;
+  const initial = await initialValidatedDraft(provider, options);
+  if (!options.judge) return { draft: initial.draft, provider, judgeAudit: null };
+
+  const firstJudgment = await options.judge({
+    draft: initial.draft,
+    brief: initial.brief,
+    ownerEvidence: options.ownerEvidence ?? []
+  });
+  if (firstJudgment.result.verdict === "pass") {
+    return { draft: initial.draft, provider, judgeAudit: judgeAudit(firstJudgment, 1) };
+  }
+
+  let corrected: GeneratedTransitReadingDraft;
+  try {
+    corrected = await providerDraft(
+      provider,
+      initial.brief,
+      judgeCorrectionFeedback(firstJudgment, initial.draft),
+      3,
+      options
+    );
+    validateShape(corrected, options, initial.brief);
+  } catch (error) {
+    if (error instanceof TransitReadingQualityError) throw new TransitReadingJudgeBlockedError();
+    throw error;
+  }
+
+  const secondJudgment = await options.judge({
+    draft: corrected,
+    brief: initial.brief,
+    ownerEvidence: options.ownerEvidence ?? []
+  });
+  if (secondJudgment.result.verdict !== "pass") throw new TransitReadingJudgeBlockedError();
+
+  return { draft: corrected, provider, judgeAudit: judgeAudit(secondJudgment, 2) };
 }

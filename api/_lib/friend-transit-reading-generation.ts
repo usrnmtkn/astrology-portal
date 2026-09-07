@@ -9,8 +9,12 @@ import { createSupabaseReportAdmin } from "./supabase-report-admin.js";
 import {
   generateGovernedTransitReading,
   TRANSIT_READING_PROVIDER_SCHEMA,
-  type GeneratedTransitReadingDraft
+  type GeneratedTransitReadingDraft,
+  type TransitReadingJudgeAudit
 } from "./transit-reading-generation.js";
+import { judgeGeneratedTransitReading } from "./transit-reading-judge.js";
+import { loadApprovedGeneratedReportOwnerEvidence } from "./transit-reading-owner-evidence.js";
+import type { TransitReadingProductionInput } from "./transit-reading-production.js";
 import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
 
 export const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA = {
@@ -98,18 +102,45 @@ function validateGeneratedReading(
   return { passed: true };
 }
 
-async function generateReading(brief: FriendTransitReadingBrief, headline: string) {
+function productionInputForLocked(locked: ReturnType<typeof friendTransitReadingRequestLock>): TransitReadingProductionInput {
+  return {
+    contentKey: locked.contentKey,
+    surface: locked.surface,
+    mode: locked.mode,
+    eventType: locked.eventType,
+    facts: locked.facts,
+    knowledgeIds: locked.knowledgeIds,
+    sourceSnapshot: locked.sourceSnapshot
+  };
+}
+
+async function generateReading(locked: ReturnType<typeof friendTransitReadingRequestLock>) {
+  const ownerEvidence = await loadApprovedGeneratedReportOwnerEvidence({
+    surface: "friends",
+    reportKind: "friend_transit_reading"
+  });
+  const productionInput = productionInputForLocked(locked);
   return generateGovernedTransitReading({
-    brief,
-    headline,
+    brief: locked.brief,
+    headline: locked.headline,
     contentType: "friend_transit_reading",
     surface: "friends",
     family: "friends-transit",
     schemaName: "tldr_astro_friend_transit_reading",
     toolDescription: "Return the short TLDR Astro Friends transit reading.",
+    productionInput,
     promptForAttempt,
     validate: validateGeneratedReading,
     compactBriefForRecovery,
+    ownerEvidence,
+    judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence }) => judgeGeneratedTransitReading({
+      surface: "friends",
+      reportKind: "friend_transit_reading",
+      brief: governedBrief,
+      draft,
+      productionInput,
+      ownerEvidence: approvedEvidence
+    }),
     minSummaryLength: 40,
     minBodyLength: 180,
     claudeMaxTokens: 2200,
@@ -142,6 +173,7 @@ async function saveReading(input: {
   locked: ReturnType<typeof friendTransitReadingRequestLock>;
   generated: GeneratedTransitReadingDraft;
   provider: "openai" | "claude";
+  judgeAudit: TransitReadingJudgeAudit | null;
 }) {
   const admin = createSupabaseReportAdmin();
   return admin.insert<FriendTransitReadingRow>("user_generated_interpretations", {
@@ -156,7 +188,10 @@ async function saveReading(input: {
     target_date: input.targetDate,
     facts: input.locked.facts,
     knowledge_ids: input.locked.knowledgeIds,
-    source_snapshot: input.locked.sourceSnapshot,
+    source_snapshot: {
+      ...input.locked.sourceSnapshot,
+      ...(input.judgeAudit ? { generatedReportQualityGate: input.judgeAudit } : {})
+    },
     prompt_version: FRIEND_TRANSIT_READING_PROMPT_VERSION,
     provider: input.provider,
     model: input.generated.model,
@@ -187,7 +222,7 @@ export async function generateFriendTransitReadingForUser(input: {
     return { reused: true, contentKey: locked.contentKey, saved: [existing], generated: null };
   }
 
-  const { draft, provider } = await generateReading(locked.brief, locked.headline);
+  const { draft, provider, judgeAudit } = await generateReading(locked);
   const saved = await saveReading({
     userId: input.userId,
     subjectId: input.subjectId,
@@ -195,7 +230,8 @@ export async function generateFriendTransitReadingForUser(input: {
     entitlementId: input.entitlementId,
     locked,
     generated: draft,
-    provider
+    provider,
+    judgeAudit
   });
-  return { reused: false, contentKey: locked.contentKey, saved, generated: draft };
+  return { reused: false, contentKey: locked.contentKey, saved, generated: draft, judgeAudit };
 }

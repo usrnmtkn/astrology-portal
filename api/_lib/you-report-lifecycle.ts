@@ -1,5 +1,6 @@
 import { youTransitReadingRequestLock, type YouTransitReadingWindow } from "./you-transit-reading.js";
 import { generateYouTransitReadingForUser, type YouTransitReadingRow } from "./you-transit-reading-generation.js";
+import { isTransitReadingJudgeBlockedError } from "./transit-reading-generation.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
 
 export type YouReportJobState = "queued" | "running" | "retry" | "complete" | "failed" | "cancelled";
@@ -295,9 +296,14 @@ export async function runYouReportJobs(input: {
       });
       results.push({ jobId: job.id, status: "complete", ...(resultId ? { resultId } : {}) });
     } catch (error) {
-      const failed = job.attempt >= attemptCap;
+      const judgeBlocked = isTransitReadingJudgeBlockedError(error);
+      const failed = judgeBlocked || job.attempt >= attemptCap;
       const delayMinutes = Math.min(30, Math.max(1, job.attempt * 2));
-      const errorMessage = error instanceof Error ? error.message.slice(0, 2000) : "You report generation failed.";
+      const errorMessage = judgeBlocked
+        ? "Writing quality gate did not pass after one corrective rewrite and re-judge."
+        : error instanceof Error
+          ? error.message.slice(0, 2000)
+          : "You report generation failed.";
       await admin.update("you_report_jobs", `id=eq.${job.id}`, {
         state: failed ? "failed" : "retry",
         run_after: failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),
