@@ -128,12 +128,19 @@ async function ensureJob(input: {
   );
   if (existing) {
     if (["failed", "cancelled"].includes(existing.state) && input.entitlement.status === "active") {
+      await input.admin.update(
+        "user_generated_interpretations",
+        `you_report_entitlement_id=eq.${input.entitlement.id}&subject_type=eq.${input.locked.subjectType}`,
+        { status: "DRAFT", error: null }
+      );
       const rows = await input.admin.update<YouReportJob>("you_report_jobs", `id=eq.${existing.id}`, {
         state: "queued",
+        attempt: 0,
         run_after: new Date().toISOString(),
         locked_at: null,
         locked_by: null,
-        last_error: null
+        last_error: null,
+        result_id: null
       });
       return rows[0] ?? existing;
     }
