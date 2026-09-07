@@ -42,39 +42,27 @@ export function articleAspectGlyphPartsFromHeading(heading: string) {
   };
 }
 
-export type SkyActiveChartAspect = {
-  key: string;
-  heading: string;
-  body: string | null;
-};
-
-export type SkyActiveChartEvent = {
-  key: string;
+export type SkyActiveChartAspect = { key: string; heading: string; body: string | null };
+export type SkyActiveChartEvent = SkyActiveChartAspect & {
   type: "single" | "nodal-axis";
-  heading: string;
-  body: string | null;
   dateLabel: string | null;
   memberKeys: string[];
 };
 
-type NodeHeading = [transit: string, aspect: string, node: "north" | "south"];
+type NodeHeading = [string, string, "north" | "south"];
 const nodePattern = /^(.+?)\s+(conjunction|conjunct|opposition|opposite|square|trine|sextile)\s+(?:your\s+)?(?:natal\s+)?(north|south)\s+node$/iu;
-const activeDatePattern = /\b(?:until|through)\s+((?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?)/iu;
-const activeFramePattern = /^While\s+.+?\s+(?:is\s+in|moves\s+through)\s+your\s+\d+(?:st|nd|rd|th)\s+house,\s+it\s+is\s+also\s+.*?\s+your\s+natal\s+(.+?)\s+in\s+your\s+(\d+(?:st|nd|rd|th)\s+house)(?:\s+(?:until|through)\s+[^.]+)?\.\s*/iu;
+const activeDatePattern = /\b(?:until|through)\s+([A-Z][a-z]+\s+\d{1,2}(?:,\s+\d{4})?)/u;
+const activeFramePattern = /^While\s+.+?\s+your\s+natal\s+(.+?)\s+in\s+your\s+(\d+(?:st|nd|rd|th)\s+house)(?:\s+(?:until|through)\s+[^.]+)?\.\s*/iu;
 
 function parsedNodeHeading(heading: string): NodeHeading | null {
   const match = heading.trim().match(nodePattern);
   if (!match) return null;
   const raw = match[2].toLowerCase();
-  return [
-    match[1].trim().toLowerCase(),
-    raw === "conjunct" ? "conjunction" : raw === "opposite" ? "opposition" : raw,
-    match[3].toLowerCase() as "north" | "south"
-  ];
+  return [match[1].trim().toLowerCase(), raw === "conjunct" ? "conjunction" : raw === "opposite" ? "opposition" : raw, match[3].toLowerCase() as "north" | "south"];
 }
 
 function mirroredNodeAspect(first: string, second: string) {
-  return first === second && first === "square"
+  return first === "square" && second === first
     || first === "conjunction" && second === "opposition"
     || first === "opposition" && second === "conjunction"
     || first === "trine" && second === "sextile"
@@ -86,35 +74,25 @@ function compactActiveAspect(body: string | null) {
   const source = body.trim();
   const date = source.match(activeDatePattern)?.[1] ?? null;
   const frame = source.match(activeFramePattern);
-  const shortened = frame
-    ? `Your natal ${frame[1]} is in your ${frame[2]}. ${source.slice(frame[0].length).trim()}`.trim()
-    : source;
-  return { body: shortened, dateLabel: date ? `Through ${date}` : null };
-}
-
-function activeBodyParts(body: string) {
-  const sentenceEnd = body.indexOf(". ");
-  return sentenceEnd > 0
-    ? [body.slice(0, sentenceEnd + 1), body.slice(sentenceEnd + 2)]
-    : ["", body];
+  return {
+    body: frame ? `Your natal ${frame[1]} is in your ${frame[2]}. ${source.slice(frame[0].length).trim()}`.trim() : source,
+    dateLabel: date ? `Through ${date}` : null
+  };
 }
 
 function combineActiveNodeBodies(first: string | null, second: string | null) {
   if (!first) return second;
   if (!second || first === second) return first;
-  const [firstContext, firstRest] = activeBodyParts(first);
-  const [secondContext, secondRest] = activeBodyParts(second);
+  const firstSentence = first.indexOf(". ");
+  const secondSentence = second.indexOf(". ");
+  const firstRest = firstSentence > 0 ? first.slice(firstSentence + 2) : first;
+  const secondRest = secondSentence > 0 ? second.slice(secondSentence + 2) : second;
   const firstBreak = firstRest.indexOf(";");
   const secondBreak = secondRest.indexOf(";");
-  if (firstBreak > 0 && secondBreak > 0 && firstRest.slice(0, firstBreak) === secondRest.slice(0, secondBreak)) {
-    return `${firstContext} ${secondContext} ${firstRest.slice(0, firstBreak)}. ${firstRest.slice(firstBreak + 1).trim()}\n\n${secondRest.slice(secondBreak + 1).trim()}`.trim();
+  if (firstSentence > 0 && secondSentence > 0 && firstBreak > 0 && secondBreak > 0 && firstRest.slice(0, firstBreak) === secondRest.slice(0, secondBreak)) {
+    return `${first.slice(0, firstSentence + 1)} ${second.slice(0, secondSentence + 1)} ${firstRest.slice(0, firstBreak)}. ${firstRest.slice(firstBreak + 1).trim()}\n\n${secondRest.slice(secondBreak + 1).trim()}`;
   }
   return `${first}\n\n${second}`;
-}
-
-function singleActiveChartEvent(aspect: SkyActiveChartAspect): SkyActiveChartEvent {
-  const copy = compactActiveAspect(aspect.body);
-  return { key: aspect.key, type: "single", heading: aspect.heading, ...copy, memberKeys: [aspect.key] };
 }
 
 export function skyActiveChartEvents(aspects: SkyActiveChartAspect[]): SkyActiveChartEvent[] {
@@ -129,17 +107,18 @@ export function skyActiveChartEvents(aspects: SkyActiveChartAspect[]): SkyActive
       const other = parsedNodeHeading(candidate.heading);
       return Boolean(other && parsed[0] === other[0] && parsed[2] !== other[2] && mirroredNodeAspect(parsed[1], other[1]));
     }) : -1;
+    const copy = compactActiveAspect(aspect.body);
 
     if (matchIndex < 0 || !parsed) {
-      events.push(singleActiveChartEvent(aspect));
+      events.push({ ...aspect, ...copy, type: "single", memberKeys: [aspect.key] });
       return;
     }
 
     used.add(matchIndex);
     const match = aspects[matchIndex];
     const ordered = parsed[2] === "north" ? [aspect, match] : [match, aspect];
-    const first = compactActiveAspect(ordered[0].body);
-    const second = compactActiveAspect(ordered[1].body);
+    const first = parsed[2] === "north" ? copy : compactActiveAspect(match.body);
+    const second = parsed[2] === "north" ? compactActiveAspect(match.body) : copy;
     events.push({
       key: `nodal-axis:${ordered.map((member) => member.key).join(":")}`,
       type: "nodal-axis",
