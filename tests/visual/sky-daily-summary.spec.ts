@@ -1,5 +1,16 @@
 import { expect, test } from "@playwright/test";
 
+test("September 8 uses the revised Virgo clause and links planet names", async ({ page }) => {
+  await page.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
+  await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
+  await page.goto("/?date=2026-09-08#sky");
+  const summary = page.getByLabel("Daily sky summary");
+  await expect(summary).toContainText("The Sun is in Virgo at 16°, turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing, while the Moon moves through Leo at 13°", { timeout: 60_000 });
+  await expect(summary.getByRole("link")).toHaveText(["Sun", "Moon", "Saturn", "Neptune", "Pluto", "Chiron", "New Moon"]);
+  await expect(summary).not.toContainText("making it easier to notice what needs fixing");
+  await page.screenshot({ path: "test-results/sky-summary-september-8.png" });
+});
+
 for (const theme of ["light", "dark"] as const) {
   for (const width of [390, 768, 1024, 1440]) {
     test(`daily summary ${theme} at ${width}px`, async ({ page }) => {
@@ -17,7 +28,7 @@ for (const theme of ["light", "dark"] as const) {
       const summary = page.getByLabel("Daily sky summary");
       await expect(summary).toBeVisible({ timeout: 60_000 });
       await expect(summary).toContainText("The Sun is in Virgo");
-      await expect(summary).toContainText("The Sun is in Virgo at 15°, making it easier to notice what needs fixing and what could be made simpler, while the Moon moves through Cancer at 29°, bringing more attention to home, family, and whether the care we give is coming back to us.");
+      await expect(summary).toContainText("The Sun is in Virgo at 15°, turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing, while the Moon moves through Cancer at 29°, bringing more attention to home, family, and whether the care we give is coming back to us.");
       await expect(summary).not.toContainText("Fix what matters");
       await expect(summary).not.toContainText("Tend what feels like home");
       await expect(summary).toContainText("the Moon moves through");
@@ -46,6 +57,7 @@ for (const theme of ["light", "dark"] as const) {
       for (const name of ["Sun in Virgo", "Moon in Cancer"]) {
         const link = summary.getByRole("link", { name: `Read about ${name}` });
         await expect(link).toBeVisible();
+        await expect(link).toHaveText(name.split(" ")[0]);
         expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain("underline");
       }
       await expect(summary).not.toContainText(/—|undefined|\{\{/);
@@ -132,7 +144,7 @@ for (const width of [390, 1440]) {
     await page.goto("/#sky");
     const summary = page.getByLabel("Daily sky summary");
     await expect(summary).toBeVisible({ timeout: 60_000 });
-    await expect(summary).toContainText(/^The Sun is in Libra at \d+°\. The Moon is moving through \w+ at \d+°\./);
+    await expect(summary).toContainText(/^The Sun is in Libra at \d+°, while the Moon moves through \w+ at \d+°\./);
     await expect(summary.locator("strong")).toHaveCount(0);
     expect(await summary.locator("span").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
     expect(await summary.getByRole("link").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("600");

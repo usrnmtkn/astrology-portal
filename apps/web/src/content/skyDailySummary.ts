@@ -34,8 +34,9 @@ function placementParts(body: "sun" | "moon", placement?: SummaryPlacement, cont
     : "";
   const clause = fullerClause(body, placement.sign, content);
   return [
-    { text: `${continuation ? "while the" : "The"} ${body === "sun" ? "Sun is in" : clause ? "Moon moves through" : "Moon is moving through"} ` },
-    { text: `${placement.sign}${degreeLabel}`, emphasis: true, action: body },
+    { text: continuation ? "while the " : "The " },
+    { text: body === "sun" ? "Sun" : "Moon", emphasis: true, action: body },
+    { text: `${body === "sun" ? " is in " : " moves through "}${placement.sign}${degreeLabel}` },
     { text: clause ? `, ${clause}.` : ".", sourceKey: clause ? `cms/sky-daily-summary/${body}/${placement.sign.toLowerCase()}` : undefined }
   ];
 }
@@ -47,10 +48,10 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     timing[key] = savedCopy(content, field.key, field.body);
   }
   const parts = placementParts("sun", facts.sun, false, content);
-  const joined = Boolean(fullerClause("sun", facts.sun?.sign, content) && fullerClause("moon", facts.moon?.sign, content));
+  const joined = Boolean(facts.sun?.sign && facts.moon?.sign);
   const moon = placementParts("moon", facts.moon, joined, content);
   if (parts.length && moon.length) {
-    if (joined) parts[parts.length - 1].text = `, ${fullerClause("sun", facts.sun?.sign, content)},`;
+    if (joined) parts[parts.length - 1].text = parts[parts.length - 1].text.replace(/\.$/u, ",");
     parts.push({ text: " " });
   }
   parts.push(...moon);
