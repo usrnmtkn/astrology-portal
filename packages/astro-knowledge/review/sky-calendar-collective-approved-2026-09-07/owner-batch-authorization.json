@@ -37,5 +37,6 @@
     "candidate-payloads-07.json": "0b79ceeb9cb298ec7701f684266131367579a798",
     "candidate-payloads-08.json": "21a73c9a65aae0ad94168cf3ffbc593f7f60fb24",
     "reader-address-overlay.json": "6f62e8ef125bae91ae0c6747ae5c432244ff3420"
-  }
+  },
+  "explicitOwnerConfirmationPath": "packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/explicit-owner-confirmation.json"
 }
