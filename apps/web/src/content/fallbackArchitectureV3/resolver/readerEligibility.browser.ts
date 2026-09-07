@@ -2,7 +2,7 @@ import {
   passesReaderContentBoundary,
   readerContentBoundaryReason,
   type ReaderContentBoundaryRow
-} from "./readerContentBoundary.browser";
+} from "./readerContentBoundary.browser.js";
 
 export type GovernedReaderRow = ReaderContentBoundaryRow & {
   contentKey: string;
