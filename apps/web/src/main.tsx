@@ -30,12 +30,17 @@ function isContentCoveragePath() {
   return window.location.pathname.replace(/\/$/u, "") === "/admin/content/coverage";
 }
 
+function isAskTldrPath() {
+  return window.location.pathname.replace(/\/$/u, "") === "/admin/content/ask-tldr";
+}
+
 function isAdminContentPath() {
   return (
     window.location.pathname === "/admin/content" ||
     window.location.pathname === "/admin/generated-content" ||
     window.location.pathname === "/content/admin" ||
-    isContentCoveragePath()
+    isContentCoveragePath() ||
+    isAskTldrPath()
   );
 }
 
@@ -63,9 +68,11 @@ function redirectLocalAdminPath() {
 
   const adminPath = isContentCoveragePath()
     ? "/admin/content/coverage"
-    : window.location.pathname === "/admin/generated-content"
-      ? "/admin/generated-content"
-      : "/admin/content";
+    : isAskTldrPath()
+      ? "/admin/content/ask-tldr"
+      : window.location.pathname === "/admin/generated-content"
+        ? "/admin/generated-content"
+        : "/admin/content";
   window.location.replace(`${localAdminOrigin}${adminPath}${window.location.search}${window.location.hash}`);
   return true;
 }
@@ -89,6 +96,18 @@ async function startApp() {
     createRoot(document.getElementById("root")!).render(
       <React.StrictMode>
         <ContentCoverageDashboard />
+      </React.StrictMode>
+    );
+    await setupAdminReaderLinks();
+    return;
+  }
+
+  if (isAskTldrPath()) {
+    await loadAdminPresentationStyles();
+    const { default: AskTldrStudio } = await import("../../admin/src/AskTldrStudio");
+    createRoot(document.getElementById("root")!).render(
+      <React.StrictMode>
+        <AskTldrStudio />
       </React.StrictMode>
     );
     await setupAdminReaderLinks();
