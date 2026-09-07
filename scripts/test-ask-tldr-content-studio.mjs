@@ -67,6 +67,12 @@ assert.match(api, /type ChartMode = "owner" \| "test"/u, "Preview must support o
 assert.match(api, /function testChartContext/u);
 assert.match(api, /function chartFingerprint/u);
 assert.match(api, /chartFingerprint:\s*input\.chartFingerprint/u);
+assert.match(api, /function configuredOwnerEmails/u, "Preview-domain Content Studio access must be able to resolve the configured owner without cross-origin localStorage.");
+assert.match(api, /ownerEmails\.length !== 1/u, "Admin-secret owner lookup must fail closed unless there is exactly one configured owner email.");
+assert.match(api, /auth\/v1\/admin\/users\?page=1&per_page=1000/u, "Owner fallback must resolve only the server-configured owner through Supabase Admin.");
+assert.match(api, /SUPABASE_SERVICE_ROLE_KEY/u, "Owner fallback must stay server-side behind the service role.");
+assert.match(api, /if \(!token && process\.env\.CONTENT_GENERATION_SECRET\)/u, "Owner fallback must only run for the already-authorized Content Studio secret path when no browser session exists.");
+assert.match(api, /toLowerCase\(\) === ownerEmail/u, "Owner fallback must exact-match the configured owner email rather than select an arbitrary user.");
 const savePreviewBlock = api.slice(api.indexOf("async function savePreviewDraft"), api.indexOf("async function saveQuestionOverlay"));
 assert.doesNotMatch(savePreviewBlock, /birthDate|birthTime|latitude|longitude|timeZone/u, "Saved review drafts must not persist test-chart birth data.");
 
@@ -93,4 +99,4 @@ const questions = pillarFiles.flatMap((file) => readJson(`config/ask-tldr/pillar
 assert.equal(questions.length, 54, "Content Studio must surface the complete governed evergreen question set.");
 assert.equal(new Set(questions.map((question) => question.id)).size, 54, "Ask TLDR Content Studio question IDs must remain unique.");
 
-console.log("Ask TLDR Content Studio contract passed: 54 governed questions are wording-editable, owner/test-chart previews use bounded calculated calibration, revision drafts are comparable without persisting test birth data, generated_interpretations keeps existing RLS, and the database forbids LIVE Ask TLDR rows.");
+console.log("Ask TLDR Content Studio contract passed: 54 governed questions are wording-editable, owner/test-chart previews use bounded calculated calibration, preview-domain admin access can resolve exactly one configured owner without cross-origin session storage, revision drafts are comparable without persisting test birth data, generated_interpretations keeps existing RLS, and the database forbids LIVE Ask TLDR rows.");
