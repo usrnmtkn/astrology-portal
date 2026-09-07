@@ -50,7 +50,10 @@ export type FriendReportCheckoutIntent = {
   facts: Record<string, unknown>;
   source_snapshot: Record<string, unknown>;
   status: "pending" | "converted" | "cancelled" | "expired";
+  stripe_checkout_session_id: string | null;
+  checkout_url: string | null;
   expires_at: string;
+  converted_at?: string | null;
 };
 
 export function friendReportBillingMode(): FriendReportBillingMode {
@@ -94,14 +97,14 @@ export async function findFriendReportEntitlement(input: {
   );
 }
 
-export async function findCompletedFriendReading(input: {
+async function findFriendReading(input: {
   userId: string;
   subjectId: string;
   targetDate: string;
   contentKey: string;
-  admin?: SupabaseReportAdmin;
+  admin: SupabaseReportAdmin;
 }) {
-  return adminClient(input.admin).selectOne<FriendTransitReadingRow>(
+  return input.admin.selectOne<FriendTransitReadingRow>(
     "user_generated_interpretations",
     new URLSearchParams({
       user_id: `eq.${input.userId}`,
@@ -113,7 +116,19 @@ export async function findCompletedFriendReading(input: {
       select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,provider,model,updated_at,friend_report_entitlement_id",
       order: "updated_at.desc"
     })
-  ).then((row) => row?.body?.trim() ? row : null);
+  );
+}
+
+export async function findCompletedFriendReading(input: {
+  userId: string;
+  subjectId: string;
+  targetDate: string;
+  contentKey: string;
+  admin?: SupabaseReportAdmin;
+}) {
+  const admin = adminClient(input.admin);
+  const row = await findFriendReading({ ...input, admin });
+  return row?.body?.trim() ? row : null;
 }
 
 async function ensurePlaceholder(input: {
@@ -121,6 +136,17 @@ async function ensurePlaceholder(input: {
   entitlement: FriendReportEntitlement;
   locked: ReturnType<typeof friendTransitReadingRequestLock>;
 }) {
+  const existing = await findFriendReading({
+    userId: input.entitlement.user_id,
+    subjectId: input.entitlement.subject_id,
+    targetDate: input.entitlement.target_date,
+    contentKey: input.locked.contentKey,
+    admin: input.admin
+  });
+  if (existing?.body?.trim() && existing.friend_report_entitlement_id === input.entitlement.id) {
+    return existing;
+  }
+
   const rows = await input.admin.insert<FriendTransitReadingRow>("user_generated_interpretations", {
     user_id: input.entitlement.user_id,
     subject_type: "friend_transit_reading",
@@ -212,6 +238,12 @@ async function createFreeTestEntitlement(input: {
   return existing;
 }
 
+function entitlementGrantsAccess(entitlement: FriendReportEntitlement | null, billingMode: FriendReportBillingMode) {
+  if (!entitlement || entitlement.status !== "active") return false;
+  if (billingMode === "free_test") return true;
+  return entitlement.source === "stripe" || entitlement.source === "comp";
+}
+
 export async function requestFriendReport(input: {
   userId: string;
   subjectId: string;
@@ -225,6 +257,21 @@ export async function requestFriendReport(input: {
     subjectId: input.subjectId,
     targetDate: input.targetDate
   });
+  const billingMode = friendReportBillingMode();
+  let entitlement = await findFriendReportEntitlement({
+    userId: input.userId,
+    subjectId: input.subjectId,
+    targetDate: input.targetDate,
+    admin
+  });
+
+  if (billingMode === "stripe" && !entitlementGrantsAccess(entitlement, billingMode)) {
+    if (entitlement && entitlement.status !== "active") {
+      return { status: "unavailable" as const, entitlement, job: null };
+    }
+    return { status: "payment_required" as const, locked, entitlement, job: null };
+  }
+
   const completed = await findCompletedFriendReading({
     userId: input.userId,
     subjectId: input.subjectId,
@@ -232,18 +279,11 @@ export async function requestFriendReport(input: {
     contentKey: locked.contentKey,
     admin
   });
-  if (completed) return { status: "ready" as const, reading: completed, entitlement: null, job: null };
+  if (completed && (billingMode === "free_test" || completed.friend_report_entitlement_id === entitlement?.id)) {
+    return { status: "ready" as const, reading: completed, entitlement, job: null };
+  }
 
-  let entitlement = await findFriendReportEntitlement({
-    userId: input.userId,
-    subjectId: input.subjectId,
-    targetDate: input.targetDate,
-    admin
-  });
   if (!entitlement) {
-    if (friendReportBillingMode() === "stripe") {
-      return { status: "payment_required" as const, locked, entitlement: null, job: null };
-    }
     entitlement = await createFreeTestEntitlement({
       admin,
       userId: input.userId,
@@ -252,13 +292,16 @@ export async function requestFriendReport(input: {
       contentKey: locked.contentKey
     });
   }
-  if (entitlement.status !== "active") {
+  if (!entitlementGrantsAccess(entitlement, billingMode)) {
     return { status: "unavailable" as const, entitlement, job: null };
   }
 
   const placeholder = await ensurePlaceholder({ admin, entitlement, locked });
   const job = await ensureJob({ admin, entitlement, locked });
-  return { status: job.state === "complete" && placeholder?.body?.trim() ? "ready" as const : "queued" as const, reading: placeholder, entitlement, job };
+  if (job.state === "complete" && placeholder?.body?.trim()) {
+    return { status: "ready" as const, reading: placeholder, entitlement, job };
+  }
+  return { status: "queued" as const, reading: placeholder, entitlement, job };
 }
 
 export async function createFriendReportCheckoutIntent(input: {
@@ -274,6 +317,37 @@ export async function createFriendReportCheckoutIntent(input: {
     subjectId: input.subjectId,
     targetDate: input.targetDate
   });
+  const entitlement = await findFriendReportEntitlement({
+    userId: input.userId,
+    subjectId: input.subjectId,
+    targetDate: input.targetDate,
+    admin
+  });
+  if (entitlement?.status === "active" && entitlement.source !== "free_test") {
+    throw new Error("This Friends reading is already available to this account.");
+  }
+  if (entitlement && entitlement.status !== "active") {
+    throw new Error("This Friends reading cannot be purchased again right now.");
+  }
+
+  const existing = await admin.selectOne<FriendReportCheckoutIntent>(
+    "friend_report_checkout_intents",
+    new URLSearchParams({
+      user_id: `eq.${input.userId}`,
+      subject_id: `eq.${input.subjectId}`,
+      target_date: `eq.${input.targetDate}`,
+      status: "eq.pending",
+      select: "*",
+      order: "created_at.desc"
+    })
+  );
+  if (existing && Date.parse(existing.expires_at) > Date.now()) {
+    return { intent: existing, locked };
+  }
+  if (existing) {
+    await admin.update("friend_report_checkout_intents", `id=eq.${existing.id}`, { status: "expired" });
+  }
+
   const rows = await admin.insert<FriendReportCheckoutIntent>("friend_report_checkout_intents", {
     user_id: input.userId,
     subject_id: input.subjectId,
@@ -288,6 +362,20 @@ export async function createFriendReportCheckoutIntent(input: {
   return { intent, locked };
 }
 
+export async function recordFriendReportCheckoutSession(input: {
+  intentId: string;
+  checkoutSessionId: string;
+  checkoutUrl: string;
+  admin?: SupabaseReportAdmin;
+}) {
+  const admin = adminClient(input.admin);
+  const rows = await admin.update<FriendReportCheckoutIntent>("friend_report_checkout_intents", `id=eq.${input.intentId}&status=eq.pending`, {
+    stripe_checkout_session_id: input.checkoutSessionId,
+    checkout_url: input.checkoutUrl
+  });
+  return rows[0] ?? null;
+}
+
 export async function activateFriendReportCheckout(input: {
   intentId: string;
   stripeEventId: string;
@@ -299,46 +387,86 @@ export async function activateFriendReportCheckout(input: {
   const admin = adminClient(input.admin);
   const intent = await admin.selectOne<FriendReportCheckoutIntent>(
     "friend_report_checkout_intents",
-    new URLSearchParams({ id: `eq.${input.intentId}`, status: "eq.pending", select: "*" })
+    new URLSearchParams({ id: `eq.${input.intentId}`, select: "*" })
   );
-  if (!intent) throw new Error("Friends report checkout intent is unavailable or already converted.");
-  if (Date.parse(intent.expires_at) <= Date.now()) {
-    await admin.update("friend_report_checkout_intents", `id=eq.${intent.id}`, { status: "expired" });
+  if (!intent) throw new Error("Friends report checkout intent is unavailable.");
+  if (intent.status === "expired" || intent.status === "cancelled" || Date.parse(intent.expires_at) <= Date.now()) {
+    if (intent.status === "pending") {
+      await admin.update("friend_report_checkout_intents", `id=eq.${intent.id}`, { status: "expired" });
+    }
     throw new Error("Friends report checkout intent expired.");
   }
-  const rows = await admin.insert<FriendReportEntitlement>("friend_report_entitlements", {
-    user_id: intent.user_id,
-    subject_id: intent.subject_id,
-    target_date: intent.target_date,
-    content_key: intent.content_key,
-    product_key: "friend_transit_daily",
-    source: "stripe",
-    status: "active",
-    stripe_event_id: input.stripeEventId,
-    stripe_checkout_session_id: input.checkoutSessionId,
-    stripe_customer_id: input.customerId ?? null,
-    stripe_payment_intent_id: input.paymentIntentId ?? null,
-    purchased_at: new Date().toISOString()
-  }, { onConflict: "user_id,subject_id,target_date", ignoreDuplicates: true });
-  const entitlement = rows[0] ?? await findFriendReportEntitlement({
+
+  let entitlement = await findFriendReportEntitlement({
     userId: intent.user_id,
     subjectId: intent.subject_id,
     targetDate: intent.target_date,
     admin
   });
-  if (!entitlement || entitlement.status !== "active") throw new Error("Friends report entitlement activation failed.");
+  if (intent.status === "converted") {
+    if (!entitlement || entitlement.status !== "active" || entitlement.source !== "stripe") {
+      throw new Error("Converted Friends checkout is missing its active entitlement.");
+    }
+  } else if (entitlement?.source === "free_test" && entitlement.status === "active") {
+    const updated = await admin.update<FriendReportEntitlement>("friend_report_entitlements", `id=eq.${entitlement.id}`, {
+      source: "stripe",
+      stripe_event_id: input.stripeEventId,
+      stripe_checkout_session_id: input.checkoutSessionId,
+      stripe_customer_id: input.customerId ?? null,
+      stripe_payment_intent_id: input.paymentIntentId ?? null,
+      purchased_at: new Date().toISOString()
+    });
+    entitlement = updated[0] ?? entitlement;
+  } else if (!entitlement) {
+    const rows = await admin.insert<FriendReportEntitlement>("friend_report_entitlements", {
+      user_id: intent.user_id,
+      subject_id: intent.subject_id,
+      target_date: intent.target_date,
+      content_key: intent.content_key,
+      product_key: "friend_transit_daily",
+      source: "stripe",
+      status: "active",
+      stripe_event_id: input.stripeEventId,
+      stripe_checkout_session_id: input.checkoutSessionId,
+      stripe_customer_id: input.customerId ?? null,
+      stripe_payment_intent_id: input.paymentIntentId ?? null,
+      purchased_at: new Date().toISOString()
+    }, { onConflict: "user_id,subject_id,target_date", ignoreDuplicates: true });
+    entitlement = rows[0] ?? await findFriendReportEntitlement({
+      userId: intent.user_id,
+      subjectId: intent.subject_id,
+      targetDate: intent.target_date,
+      admin
+    });
+  }
+  if (!entitlement || entitlement.status !== "active" || entitlement.source !== "stripe") {
+    throw new Error("Friends report entitlement activation failed.");
+  }
+
   const locked = friendTransitReadingRequestLock({
     brief: intent.facts.friendTransitsBrief,
     subjectId: intent.subject_id,
     targetDate: intent.target_date
   });
-  await ensurePlaceholder({ admin, entitlement, locked });
+  const placeholder = await ensurePlaceholder({ admin, entitlement, locked });
   const job = await ensureJob({ admin, entitlement, locked });
-  await admin.update("friend_report_checkout_intents", `id=eq.${intent.id}`, {
-    status: "converted",
-    converted_at: new Date().toISOString()
-  });
-  return { entitlement, job };
+  if (intent.status !== "converted") {
+    await admin.update("friend_report_checkout_intents", `id=eq.${intent.id}`, {
+      status: "converted",
+      converted_at: new Date().toISOString(),
+      stripe_checkout_session_id: input.checkoutSessionId
+    });
+  }
+  return { entitlement, job, reading: placeholder };
+}
+
+async function revokeFriendReportShares(admin: SupabaseReportAdmin, reportIds: string[], now: string) {
+  if (reportIds.length === 0) return;
+  await admin.update(
+    "report_share_links",
+    `source_kind=eq.generated_interpretation&source_id=in.(${reportIds.join(",")})&revoked_at=is.null`,
+    { revoked_at: now, updated_at: now }
+  );
 }
 
 export async function refundFriendReportByPaymentIntent(input: {
@@ -352,9 +480,10 @@ export async function refundFriendReportByPaymentIntent(input: {
     new URLSearchParams({ stripe_payment_intent_id: `eq.${input.paymentIntentId}`, select: "*" })
   );
   if (!entitlement) return null;
+  const now = new Date().toISOString();
   await admin.update("friend_report_entitlements", `id=eq.${entitlement.id}`, {
     status: "refunded",
-    revoked_at: new Date().toISOString(),
+    revoked_at: now,
     ...(input.chargeId ? { stripe_charge_id: input.chargeId } : {})
   });
   await admin.update("friend_report_jobs", `entitlement_id=eq.${entitlement.id}&state=in.(queued,running,retry)`, {
@@ -363,6 +492,18 @@ export async function refundFriendReportByPaymentIntent(input: {
     locked_by: null,
     last_error: "Entitlement refunded before completion."
   });
+  const reports = await admin.request<Array<{ id: string }>>(
+    `user_generated_interpretations?friend_report_entitlement_id=eq.${entitlement.id}&subject_type=eq.friend_transit_reading&select=id`
+  );
+  const reportIds = reports.map((row) => row.id);
+  if (reportIds.length > 0) {
+    await admin.update(
+      "user_generated_interpretations",
+      `friend_report_entitlement_id=eq.${entitlement.id}&subject_type=eq.friend_transit_reading`,
+      { status: "ERROR", body: "", summary: null, error: "Friends report entitlement refunded." }
+    );
+    await revokeFriendReportShares(admin, reportIds, now);
+  }
   return entitlement;
 }
 
@@ -380,6 +521,14 @@ async function claimJobs(input: {
       requested_job_id: input.jobId ?? null
     })
   });
+}
+
+async function markPlaceholderFailed(admin: SupabaseReportAdmin, job: FriendReportJob, message: string) {
+  await admin.update(
+    "user_generated_interpretations",
+    `friend_report_entitlement_id=eq.${job.entitlement_id}&subject_type=eq.friend_transit_reading`,
+    { status: "ERROR", error: message.slice(0, 2000) }
+  );
 }
 
 export async function runFriendReportJobs(input: {
@@ -405,6 +554,7 @@ export async function runFriendReportJobs(input: {
         locked_by: null,
         last_error: "Active entitlement is unavailable."
       });
+      await markPlaceholderFailed(admin, job, "This reading is unavailable because its entitlement is no longer active.");
       results.push({ jobId: job.id, status: "cancelled" });
       continue;
     }
@@ -428,13 +578,15 @@ export async function runFriendReportJobs(input: {
     } catch (error) {
       const failed = job.attempt >= attemptCap;
       const delayMinutes = Math.min(30, Math.max(1, job.attempt * 2));
+      const errorMessage = error instanceof Error ? error.message.slice(0, 2000) : "Friends report generation failed.";
       await admin.update("friend_report_jobs", `id=eq.${job.id}`, {
         state: failed ? "failed" : "retry",
         run_after: failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),
         locked_at: null,
         locked_by: null,
-        last_error: error instanceof Error ? error.message.slice(0, 2000) : "Friends report generation failed."
+        last_error: errorMessage
       });
+      if (failed) await markPlaceholderFailed(admin, job, errorMessage);
       results.push({ jobId: job.id, status: failed ? "failed" : "retry" });
     }
   }
