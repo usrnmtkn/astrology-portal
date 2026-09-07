@@ -19,9 +19,10 @@ export const GENERATED_REPORT_JUDGE_HARD_GATES = [
 ] as const;
 
 export type GeneratedReportJudgeCategory = typeof GENERATED_REPORT_JUDGE_CATEGORIES[number];
+export const GENERATED_REPORT_JUDGE_FINDING_CATEGORIES = [...GENERATED_REPORT_JUDGE_CATEGORIES, "over_specification"] as const;
 export type GeneratedReportJudgeScores = Record<GeneratedReportJudgeCategory, number>;
 export type GeneratedReportJudgeFinding = {
-  category: GeneratedReportJudgeCategory;
+  category: typeof GENERATED_REPORT_JUDGE_FINDING_CATEGORIES[number];
   location: string;
   finding: string;
 };
@@ -37,7 +38,8 @@ export function generatedReportJudgeOverall(scores: GeneratedReportJudgeScores) 
     / (4 * GENERATED_REPORT_JUDGE_CATEGORIES.length);
 }
 
-export function generatedReportJudgeVerdict(scores: GeneratedReportJudgeScores, threshold: number) {
+export function generatedReportJudgeVerdict(scores: GeneratedReportJudgeScores, threshold: number, findings: GeneratedReportJudgeFinding[] = []) {
+  if (findings.some((finding) => finding.category === "over_specification")) return "below_threshold" as const;
   const hardGatesPass = GENERATED_REPORT_JUDGE_HARD_GATES.every((category) => scores[category] >= 3);
   const releaseFloorsPass = scores.owner_voice >= 4 && scores.natural_language >= 4;
   return generatedReportJudgeOverall(scores) >= threshold && hardGatesPass && releaseFloorsPass

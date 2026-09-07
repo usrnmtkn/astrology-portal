@@ -10,6 +10,7 @@ on:
       - "api/_lib/transit-reading-generation.ts"
       - "api/_lib/transit-reading-judge.ts"
       - "api/_lib/transit-reading-judge-rules.ts"
+      - "api/_lib/transit-reading-writing-contract.ts"
       - "api/_lib/transit-reading-owner-evidence.ts"
       - "api/_lib/transit-reading-owner-evidence-rules.ts"
       - "api/_lib/transit-reading-production.ts"
@@ -54,6 +55,8 @@ on:
       - "scripts/test-you-report-paid-lifecycle.mts"
       - "scripts/test-generated-report-judge-governance.mts"
       - "scripts/test-generated-report-correction.mjs"
+      - "scripts/test-generated-report-breadth.mjs"
+      - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md"
       - "scripts/test-generated-report-owner-feedback-authorization.sql"
       - "scripts/test-social-friends-contract.mjs"
       - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md"
@@ -70,6 +73,7 @@ on:
       - "api/_lib/transit-reading-generation.ts"
       - "api/_lib/transit-reading-judge.ts"
       - "api/_lib/transit-reading-judge-rules.ts"
+      - "api/_lib/transit-reading-writing-contract.ts"
       - "api/_lib/transit-reading-owner-evidence.ts"
       - "api/_lib/transit-reading-owner-evidence-rules.ts"
       - "api/_lib/transit-reading-production.ts"
@@ -114,6 +118,8 @@ on:
       - "scripts/test-you-report-paid-lifecycle.mts"
       - "scripts/test-generated-report-judge-governance.mts"
       - "scripts/test-generated-report-correction.mjs"
+      - "scripts/test-generated-report-breadth.mjs"
+      - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md"
       - "scripts/test-generated-report-owner-feedback-authorization.sql"
       - "scripts/test-social-friends-contract.mjs"
       - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md"
@@ -138,6 +144,7 @@ jobs:
       - run: node --experimental-strip-types scripts/test-you-report-paid-lifecycle.mts
       - run: node --experimental-strip-types scripts/test-generated-report-judge-governance.mts
       - run: node scripts/test-generated-report-correction.mjs
+      - run: node scripts/test-generated-report-breadth.mjs
       - run: node scripts/test-friend-transit-reading-request-render.mjs
       - run: npm run typecheck
       - run: npm run build:knowledge
