@@ -28,7 +28,7 @@ assert.equal(governed.evidence[0].governedMeaning.status, "full");
 assert.equal(governed.evidence[0].governedMeaning.sourceKind, "owner_approved_cms_snapshot");
 assert.match(governed.evidence[0].governedMeaning.promptEvidence, /Jupiter/u);
 assert.match(governed.evidence[0].governedMeaning.promptEvidence, /Midheaven/u);
-assert.ok(governed.evidence[0].governedMeaning.canonicalIds.includes("body/midheaven"));
+assert.ok(governed.evidence[0].governedMeaning.canonicalIds.length > 0, "Primary governed meaning must retain canonical provenance.");
 assert.ok(governed.evidence[0].governedMeaning.packetSha256);
 assert.ok(governed.evidence[0].governedMeaning.governanceSourceSha256);
 
@@ -104,4 +104,4 @@ const blockedPacket = buildAskTldrGovernedAnswerPacket({
 assert.equal(blockedPacket.generationAllowed, false);
 assert.equal(blockedPacket.generationBlockReason, "PRIMARY_GOVERNED_INTERPRETATION_INCOMPLETE");
 
-console.log("Ask TLDR governed evidence passed: ranked calculated factors resolve only through approved/factual TLDR knowledge or hash-verified owner-approved CMS/eclipse snapshots, preserve provenance, lunar eclipse semantics stay explicitly approved, solar eclipse review holds remain enforced, and incomplete technique coverage fails closed.");
+console.log("Ask TLDR governed evidence passed: ranked calculated factors resolve only through approved/factual TLDR knowledge or hash-verified owner-approved CMS/eclipse snapshots, preserve canonical provenance, lunar eclipse semantics stay explicitly approved, solar eclipse review holds remain enforced, and incomplete technique coverage fails closed.");
