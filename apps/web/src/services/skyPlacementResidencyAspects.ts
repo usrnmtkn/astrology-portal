@@ -72,8 +72,7 @@ function exactAspectSection({
 }): SkyDetailSection {
   return {
     heading: `${first} ${titleCase(aspect)} ${second}`,
-    body,
-    dateLine: date,
+    body: `${date}\n\n${body}`,
     role: "aspect",
     aspectType: aspect,
     group: normalizedArticleAspectToneBucket(aspect) as AspectToneBucket,
