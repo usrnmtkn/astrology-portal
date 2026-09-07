@@ -3,7 +3,7 @@ type RecordLike = Record<string, unknown>;
 export const FRIEND_TRANSIT_READING_CONTENT_TYPE = "friend_transit_reading";
 export const FRIEND_TRANSIT_READING_EVENT_TYPE = "friend-transit-reading";
 export const FRIEND_TRANSITS_BRIEF_SCHEMA = "tldr.friend-transits-brief.v1";
-export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.1";
+export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.2";
 
 export type FriendTransitReadingBrief = {
   schema: typeof FRIEND_TRANSITS_BRIEF_SCHEMA;
@@ -105,6 +105,20 @@ const ASPECT_ALIASES = new Map([
 const BODY_PATTERN = [...BODY_ALIASES.keys()].filter((value) => value !== "rising").sort((a, b) => b.length - a.length).map(escapeRegex).join("|");
 const ASPECT_PATTERN = [...ASPECT_ALIASES.keys()].sort((a, b) => b.length - a.length).map(escapeRegex).join("|");
 const SIGN_PATTERN = SIGNS.map((sign) => sign.toLowerCase()).join("|");
+const HOUSE_LIFE_DOMAINS: Record<number, string[]> = {
+  1: ["identity", "body", "appearance", "how they take up space"],
+  2: ["money", "possessions", "values", "what they can rely on"],
+  3: ["communication", "messages", "learning", "local plans"],
+  4: ["home", "family", "living situation", "private life"],
+  5: ["creativity", "pleasure", "dating", "children"],
+  6: ["daily work", "routines", "health", "appointments", "schedule"],
+  7: ["partnerships", "agreements", "one-to-one relationships"],
+  8: ["shared money", "debts", "obligations", "intimacy"],
+  9: ["travel", "education", "publishing", "beliefs", "long-range plans"],
+  10: ["career", "public role", "title", "responsibility", "recognition"],
+  11: ["friends", "groups", "community", "collaboration", "future plans"],
+  12: ["rest", "privacy", "retreat", "closure", "what happens behind the scenes"]
+};
 
 function escapeRegex(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
@@ -136,6 +150,10 @@ function canonicalAspect(value: string) {
 
 function slug(value: string) {
   return value.trim().toLowerCase().replace(/&/gu, " and ").replace(/[^a-z0-9]+/gu, "-").replace(/^-+|-+$/gu, "");
+}
+
+export function friendTransitHouseLifeDomains(house: number | undefined) {
+  return typeof house === "number" ? [...(HOUSE_LIFE_DOMAINS[house] ?? [])] : [];
 }
 
 function assertPersonalTransit(value: unknown): FriendTransitReadingPersonalTransit {
@@ -301,13 +319,34 @@ export function friendTransitReadingRequestLock(input: {
   };
 }
 
+function readerTransit(item: FriendTransitReadingPersonalTransit) {
+  const { title, durationLabel, rangeLabel, timingLabel, summary } = item;
+  return {
+    title,
+    durationLabel,
+    rangeLabel,
+    timingLabel,
+    summary,
+    lifeDomains: friendTransitHouseLifeDomains(item.evidence.natalHouse)
+  };
+}
+
 function approvedReaderText(brief: FriendTransitReadingBrief) {
   return {
     daily: brief.daily,
     relationshipActivations: brief.relationshipActivations.map(({ headline, effectBody, activationBody }) => ({ headline, effectBody, activationBody })),
-    primaryThemes: brief.primaryThemes.map(({ title, durationLabel, rangeLabel, timingLabel, summary }) => ({ title, durationLabel, rangeLabel, timingLabel, summary })),
-    houseContext: brief.houseContext.map(({ title, durationLabel, timingRange, rowSummary, termLabel, keywords, houseLabel }) => ({ title, durationLabel, timingRange, rowSummary, termLabel, keywords, houseLabel })),
-    longerCycles: brief.longerCycles.map(({ title, durationLabel, rangeLabel, timingLabel, summary }) => ({ title, durationLabel, rangeLabel, timingLabel, summary })),
+    primaryThemes: brief.primaryThemes.map(readerTransit),
+    houseContext: brief.houseContext.map(({ title, durationLabel, timingRange, rowSummary, termLabel, keywords, houseLabel, house }) => ({
+      title,
+      durationLabel,
+      timingRange,
+      rowSummary,
+      termLabel,
+      keywords,
+      houseLabel,
+      lifeDomains: friendTransitHouseLifeDomains(house)
+    })),
+    longerCycles: brief.longerCycles.map(readerTransit),
     activePatterns: brief.activePatterns.map((pattern) => ({
       id: stringValue(pattern.id),
       activationCopy: stringValue(pattern.activationCopy),
@@ -352,6 +391,7 @@ export function friendTransitReadingMeaningPlan(brief: FriendTransitReadingBrief
       "Do not calculate astrology.",
       "Do not re-rank the brief.",
       "Do not invent a concrete life event or example.",
+      "Named house life domains describe semantic scope, not a claim that a specific event happened there.",
       "Do not turn relationship context into a claim about the friend's own life.",
       "Do not turn current transits into permanent personality traits."
     ]
@@ -361,7 +401,7 @@ export function friendTransitReadingMeaningPlan(brief: FriendTransitReadingBrief
 export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingBrief; headline: string }) {
   const { brief } = input;
   return [
-    "TLDR ASTRO FRIEND TRANSIT SYNTHESIS V1",
+    "TLDR ASTRO FRIEND TRANSIT SYNTHESIS V1.2",
     "",
     "TASK",
     `Write one short answer to: ${input.headline}`,
@@ -375,6 +415,12 @@ export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingB
     "Do not expose scores, significance labels, timing bonuses, content keys, IDs, source rows, approval state, schemas, or backend language.",
     "No tarot. No em dashes. No bullets. No section labels inside the body.",
     "Do not invent a menu-ordering, texting, workplace, money, family, health, or relationship example unless that concrete situation is already in the approved reader text.",
+    "",
+    "SPECIFICITY WITHOUT INVENTION",
+    "When an approved transit includes lifeDomains, use one or two of those concrete domains when they clarify what the transit touches.",
+    "A house domain is permission to name the area of life, not permission to claim an event. For example, home or family can be named when the 4th house is supplied, but do not claim a move, argument, pregnancy, job change, diagnosis, purchase, breakup, or other event unless the approved reader text says it happened.",
+    "Prefer the supplied nouns themselves: home, family, living situation, career, public role, money, schedule, partnerships, friends, travel, and similar domains. Do not retreat to vague phrases such as 'an area of life,' 'something important,' 'the next step,' 'a role or responsibility,' or 'unfinished responsibilities' when a known house gives you a clearer subject.",
+    "Concrete domains are not scene examples. Do not invent who called, what was bought, what meeting happened, or what decision was made.",
     "",
     "CONTENT PRIORITY",
     "Daily is immediate context, not the master ranking.",
