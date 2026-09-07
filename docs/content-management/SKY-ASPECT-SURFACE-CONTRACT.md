@@ -1,6 +1,6 @@
 # Sky aspect surface contract
 
-Updated: 2026-08-12
+Updated: 2026-09-07
 
 This document protects the reader-facing contract for the aspect section on
 the Sky page. Read it before changing aspect content selection, hydration,
@@ -202,3 +202,30 @@ write-up exists, do not restore generic prose or weaken the test.
 - Missing approved copy produces `SOURCE_GAP` for interpretation only. The
   calculated aspect remains visible with its factual title, timing, and orb,
   and no interpretation paragraph.
+
+## Motion, dated events, and repeat passes
+
+Core aspect content identity is independent of motion. Keep the same approved
+planet/aspect/sign copy and source keys for all four endpoint direct/Rx
+combinations. Motion is an ephemeris fact for the title and glyphs, not authority
+to create or select a new interpretive variant.
+
+Current Sky cards and articles use the selected snapshot's motion. Calendar
+aspect events carry optional `fromMotion` / `toMotion` alongside `fromSign` /
+`toSign`, all calculated at `startsAt`. Calendar and daily-summary event labels
+use those facts. Missing motion stays unknown; never fill it from today's Sky.
+The exact-aspect sentence keeps its whole linked phrase and existing singular/
+plural agreement. Event verbs include `conjoins`, `opposes`, `squares`, `trines`,
+and `sextiles`; article headings retain the existing aspect noun treatment.
+
+A Calendar aspect's existing timestamped event ID stays stable. Its reader link
+adds `/at/{encoded startsAt}` to the neutral aspect route. Reloading that dated
+route recalculates the event-time snapshot; the article shows exact timing,
+not an estimated current transit range. Generic Sky routes remain unchanged.
+Stations remain separate events and retain their explicit direction.
+
+Reuse `timing.exactPasses` and `passIndex`; Rx alone does not establish repetition.
+Display valid, ordered multi-hit metadata as `Pass X of Y`. Do not attach promises
+of review, resolution, or completion to the numeric pass. The current engine uses
+bounded searches and gap-based grouping; these counts describe that calculated
+series, not a guarantee that no later recurrence exists.

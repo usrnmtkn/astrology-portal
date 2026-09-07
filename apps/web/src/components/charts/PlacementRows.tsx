@@ -402,11 +402,15 @@ export function InlineGlyphIcon({
 }
 
 export function AspectGlyphs({ from, aspect, to }: { from: string; aspect: string; to: string }) {
+  const fromPoint = from.replace(/\s+Rx$/iu, "");
+  const toPoint = to.replace(/\s+Rx$/iu, "");
   return (
     <span className="aspect-row-glyphs" aria-hidden="true">
-      <InlineGlyphIcon fallback={pointGlyph(from)} href={zodiacAssetHref(pointIconFiles[from])} label={from} preferTextGlyph />
+      <InlineGlyphIcon fallback={pointGlyph(fromPoint)} href={zodiacAssetHref(pointIconFiles[fromPoint])} label={from} preferTextGlyph />
+      {fromPoint !== from ? <span>℞</span> : null}
       <InlineGlyphIcon fallback={aspectGlyph(aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(aspect)])} label={aspect} preferTextGlyph />
-      <InlineGlyphIcon fallback={pointGlyph(to)} href={zodiacAssetHref(pointIconFiles[to])} label={to} preferTextGlyph />
+      <InlineGlyphIcon fallback={pointGlyph(toPoint)} href={zodiacAssetHref(pointIconFiles[toPoint])} label={to} preferTextGlyph />
+      {toPoint !== to ? <span>℞</span> : null}
     </span>
   );
 }

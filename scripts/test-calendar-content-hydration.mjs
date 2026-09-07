@@ -445,7 +445,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const detailAspect: SkySnapshot\["aspects"\]\[number\] = \{[\s\S]*?orb: 0[\s\S]*?currentSkyAspectDetailArticle\(detailAspect, generatedAt, new Map\(\)\)/u,
+  /const detailAspect: SkySnapshot\["aspects"\]\[number\] = \{[\s\S]*?exactAt: event\.startsAt,[\s\S]*?fromSign: event\.fromSign,[\s\S]*?toSign: event\.toSign,[\s\S]*?fromMotion: event\.fromMotion,[\s\S]*?toMotion: event\.toMotion,[\s\S]*?orb: 0[\s\S]*?currentSkyAspectDetailArticle\(detailAspect, generatedAt, generatedContent\)/u,
   "Calendar aspect details must not borrow current-sky aspect or degree facts for a different event date."
 );
 assert.match(

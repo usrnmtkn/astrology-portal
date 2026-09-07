@@ -1315,9 +1315,12 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   });
   const baseBody = studioReaderBody(source);
   const readerParts = [];
-  const pushReaderBody = (value) => {
+  const pushReaderBody = (value, prepend = false) => {
     const body = withoutUnresolvedSlots(fillFacts(text(value), record(input.facts))).trim();
-    if (body) readerParts.push(body);
+    if (body) {
+      if (prepend) readerParts.unshift(body);
+      else readerParts.push(body);
+    }
   };
   const what = text(source.TLDR_What || source.tldrWhat).trim();
   const takeaway = text(source.TLDR_Takeaway || source.tldrTakeaway || source.TLDR).trim();
@@ -1350,7 +1353,7 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   if (route === "placement" && (input.isRetrograde === true || input.stationSupported === true)) {
     const retrograde = resolveSkyV4Retrograde(corpus, { body: input.planet, sign: input.sign, stationSupported: input.stationSupported });
     if (retrograde.body && retrograde.lookupKey && READER_COPY_SERVING_KEYS.has(retrograde.lookupKey)) {
-      pushReaderBody(retrograde.body);
+      pushReaderBody(retrograde.body, true);
     }
   }
   return {

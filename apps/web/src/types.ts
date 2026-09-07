@@ -131,6 +131,11 @@ export type SkySnapshot = {
     separation?: number;
     orb: number;
     exactAt?: string | null;
+    /** Optional facts at exactAt for a dated Calendar event. */
+    fromSign?: string;
+    toSign?: string;
+    fromMotion?: "direct" | "retrograde";
+    toMotion?: "direct" | "retrograde";
     applying?: boolean;
     timing?: {
       group: "this-week" | "this-season" | "undercurrent";
