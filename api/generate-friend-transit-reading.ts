@@ -11,7 +11,8 @@ import {
   ensureFreeTestFriendReportEntitlement,
   ensureFriendReportJob,
   findFriendReportEntitlement,
-  friendReportBillingMode
+  friendReportBillingMode,
+  friendReportEntitlementGrantsAccess
 } from "./_lib/friend-report-lifecycle.js";
 import { jsonRequestBody, requireReportUser, sendJson } from "./_lib/report-http.js";
 import { createSupabaseReportAdmin } from "./_lib/supabase-report-admin.js";
@@ -54,6 +55,18 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     });
     const writerBrief = friendReportWriterBrief(locked.brief);
     const admin = createSupabaseReportAdmin();
+    const billingMode = friendReportBillingMode();
+    let entitlement = await findFriendReportEntitlement(admin, user.id, locked.contentKey);
+
+    if (billingMode === "stripe" && !friendReportEntitlementGrantsAccess(entitlement, billingMode)) {
+      sendJson(res, 402, {
+        ok: false,
+        errorType: "payment_required",
+        error: "Purchase this reading to generate it.",
+        contentKey: locked.contentKey
+      });
+      return;
+    }
 
     const existing = await existingFriendTransitReading({
       admin,
@@ -67,8 +80,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       return;
     }
 
-    let entitlement = await findFriendReportEntitlement(admin, user.id, locked.contentKey);
-    if (friendReportBillingMode() === "free_test") {
+    if (billingMode === "free_test") {
       entitlement = await ensureFreeTestFriendReportEntitlement({
         admin,
         userId: user.id,
@@ -78,17 +90,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         friendName: locked.brief.friendName,
         brief: writerBrief
       });
-    } else if (!entitlement || entitlement.status !== "active") {
-      sendJson(res, 402, {
-        ok: false,
-        errorType: "payment_required",
-        error: "Purchase this reading to generate it.",
-        contentKey: locked.contentKey
-      });
-      return;
     }
 
-    if (!entitlement || entitlement.status !== "active") {
+    if (!friendReportEntitlementGrantsAccess(entitlement, billingMode)) {
       throw new Error("FRIEND_REPORT_ACTIVE_ENTITLEMENT_REQUIRED");
     }
 
