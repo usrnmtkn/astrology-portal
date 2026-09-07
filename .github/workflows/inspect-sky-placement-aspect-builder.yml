@@ -1,0 +1,21 @@
+name: Inspect sky placement aspect builder
+
+on:
+  push:
+    branches:
+      - fix/sky-placement-aspect-dedupe-order-20260907
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Print bounded builder
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text = Path('apps/web/src/App.tsx').read_text()
+          start = text.index('function relatedSkyAspectSectionsForPlacement({')
+          end = text.index('\nfunction skyPlacementAspectExactMoment(', start)
+          print(text[start:end])
+          PY
