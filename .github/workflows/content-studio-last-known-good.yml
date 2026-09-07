@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: content-studio-last-known-good
@@ -25,7 +26,9 @@ jobs:
         run: node scripts/refresh-content-studio-last-known-good.mjs
       - name: Verify snapshot contract
         run: node scripts/test-content-studio-last-known-good.mjs
-      - name: Commit snapshot only when content changed
+      - name: Publish validated snapshot through a pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           if git diff --quiet -- apps/web/public/content-studio-last-known-good.json; then
             echo "Last-known-good snapshot is already current."
@@ -33,6 +36,13 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          snapshot_branch="automation/content-studio-snapshot-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git switch -c "$snapshot_branch"
           git add apps/web/public/content-studio-last-known-good.json
           git commit -m "chore(content): refresh CMS last-known-good snapshot"
-          git push
+          snapshot_commit=$(git rev-parse HEAD)
+          git push origin "$snapshot_branch"
+          snapshot_pr=$(gh pr create --base main --head "$snapshot_branch" \
+            --title "Refresh validated Content Studio offline snapshot" \
+            --body "Refresh the generated offline snapshot from current publication records. The snapshot contract verifies each exported source identity and revision. No source writing is edited.")
+          gh pr merge "$snapshot_pr" --squash --match-head-commit "$snapshot_commit" --delete-branch
