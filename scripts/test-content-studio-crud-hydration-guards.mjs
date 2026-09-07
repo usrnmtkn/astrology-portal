@@ -138,6 +138,25 @@ result = await invoke("POST", "/api/admin/generated-content", {
 });
 assert.equal(result.status, 409);
 
+const moonKey = "authored/calendar-weekly-moon/cancer/variant-4";
+result = await invoke("POST", "/api/admin/generated-content", {
+  contentKey: moonKey, surface: "sky", mode: "in_depth", eventType: "fallback-hook",
+  body: "QA Calendar draft.", reviewStatus: "needs_review",
+  sections: {
+    packageRecord: { contentKey: moonKey, content_role: "full_copy", body: "", review_status: "needs_review" },
+    packageDraft: { contentKey: moonKey, content_role: "full_copy", body: "QA Calendar draft.", review_status: "needs_review" }
+  },
+  sourceSnapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", content_role: "full_copy", review_status: "needs_review" }
+});
+assert.equal(result.status, 200, JSON.stringify(result.payload));
+const moon = result.payload.rows[0];
+assert.equal(moon.status, "DRAFT");
+assert.equal(moon.content_key, moonKey);
+assert.equal(moon.sections.packageDraft.body, "QA Calendar draft.");
+result = await invoke("DELETE", `/api/admin/generated-content?id=${moon.id}&expectedUpdatedAt=${encodeURIComponent(moon.updated_at)}`);
+assert.equal(result.status, 200);
+assert.equal(rows.has(moon.id), false);
+
 const firstPage = await invoke("GET", "/api/admin/generated-content?status=all&visibility=all&limit=2");
 assert.equal(firstPage.status, 200);
 assert.ok(firstPage.payload.nextCursor);

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 import os from "node:os";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
@@ -616,7 +617,7 @@ for (const revision of [1, 2]) {
   const published = await invokeApi("PATCH", "/api/admin/generated-content", {
     id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision"
   });
-  assert.equal(published.status, 200);
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
   assert.equal(row.status, "LIVE");
   assert.equal(row.summary, summary, "Sign Off must publish the capitalized Summary field.");
   assert.equal(row.body, body, "Sign Off must publish the capitalized Body field.");
@@ -624,6 +625,39 @@ for (const revision of [1, 2]) {
   assert.equal(row.sections.body_they, body);
   assert.equal(row.sections.packageRecord.Body, body);
   assert.equal(row.sections.packageDraft, undefined);
+}
+// Lunar Calendar articles use their authored key and lowercase body field.
+const moonRecord = JSON.parse(readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", import.meta.url))).authoredCards
+  .find((item) => item.contentKey === "authored/calendar-weekly-moon/cancer/variant-2");
+assert.ok(moonRecord);
+row = {
+  ...row, content_key: moonRecord.contentKey, body: moonRecord.body,
+  event_type: "fallback-hook", mode: "in_depth", status: "LIVE", lane: "serving", review_state: null,
+  sections: { packageRecord: structuredClone(moonRecord) },
+  facts: { fallbackArchitectureV3: true, content_role: "full_copy", review_status: "approved_reuse" },
+  source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", content_role: "full_copy", review_status: "approved_reuse" }
+};
+for (const revision of [1, 2]) {
+  const original = row.body;
+  const body = `${moonRecord.body}\nQA revision ${revision}.`;
+  const saved = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at,
+    sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, body } },
+    reviewStatus: "needs_review"
+  });
+  assert.equal(saved.status, 200);
+  assert.equal(row.body, original);
+  assert.equal(row.sections.packageDraft.body, body);
+  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision"
+  });
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  assert.equal(row.content_key, moonRecord.contentKey);
+  assert.equal(row.body, body);
+  assert.equal(row.sections.packageRecord.body, body);
+  assert.equal(row.sections.packageDraft, undefined);
+  const reader = await loadLiveGeneratedContentForKeys([moonRecord.contentKey]);
+  assert.equal(reader.get(moonRecord.contentKey)?.body, body);
 }
 row = beforeCalendar;
 
