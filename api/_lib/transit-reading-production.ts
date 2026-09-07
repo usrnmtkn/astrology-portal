@@ -1,3 +1,4 @@
+import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, assertTransitReadingOwnerVoice } from "./transit-reading-owner-voice.js";
 import {
   callReportCalibrationModel,
   type ReportModelResult
@@ -30,6 +31,7 @@ export type TransitReadingProductionKernel = {
   input: TransitReadingProductionInput;
   gate: ReturnType<typeof prepareProductionPreCallGate>;
   role: TransitReadingProductionRole;
+  ownerVoice: ReturnType<typeof transitReadingOwnerVoice>;
   draftValidation: TransitReadingDraftValidation | null;
 };
 
@@ -61,6 +63,7 @@ export function prepareTransitReadingProductionKernel(input: {
   return {
     input: normalizedInput,
     gate,
+    ownerVoice: transitReadingOwnerVoice(normalizedInput.facts, normalizedInput.surface),
     role: input.role,
     draftValidation: input.role === "REVIEWER"
       ? { checked: true, passed: true, violations: [] }
@@ -69,6 +72,7 @@ export function prepareTransitReadingProductionKernel(input: {
 }
 
 export function assertTransitReadingProductionKernel(kernel: TransitReadingProductionKernel) {
+  assertTransitReadingOwnerVoice(kernel.ownerVoice);
   return assertProductionPreCallGate(kernel.gate, {
     role: kernel.role,
     input: kernel.input,
@@ -92,10 +96,12 @@ export async function callGovernedTransitReadingModel<T>(input: {
   schema: Record<string, unknown>;
   validateResponse?: (value: T) => void;
 }): Promise<ReportModelResult<T>> {
+  assertTransitReadingProductionKernel(input.kernel);
+  const ownerVoicePrompt = transitReadingOwnerVoicePrompt(input.kernel.ownerVoice);
   return callReportCalibrationModel<T>({
     provider: input.provider,
     model: input.model,
-    prompt: input.prompt,
+    prompt: `${input.prompt}\n\n${ownerVoicePrompt}`,
     schemaName: input.schemaName,
     schema: input.schema,
     validateResponse: input.validateResponse,

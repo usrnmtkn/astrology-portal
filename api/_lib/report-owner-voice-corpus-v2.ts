@@ -112,10 +112,25 @@ const FUNCTION_TARGETS: Record<ReportVoiceUnitType, ReportComparisonFunction[]> 
   closing: ["opening", "turn", "close"]
 };
 
-/** Candidate v2 retrieval. It is intentionally not called by active v3.2/v5 runtime code. */
-export function reportOwnerVoiceComparisonSetV2(reportDomain: ReportDomain, unitId: string) {
+/** Shared owner-final report retrieval. Optional relevance ranking preserves the default premium selection. */
+export function reportOwnerVoiceComparisonSetV2(reportDomain: ReportDomain, unitId: string, options: { relevanceText?: string } = {}) {
   const unitType = reportVoiceUnitType(unitId);
   const candidates = reportOwnerVoiceCorpusV2().filter((passage) => passage.unitType === unitType);
+  // Rank within the established register/function/domain constraints. Only the
+  // locked brief supplies relevance; generated drafts never influence retrieval.
+  if (options.relevanceText) {
+    const terms = (value: string) => new Set(value.toLowerCase().match(/\b[a-z]{4,}\b/gu) ?? []);
+    const query = terms(options.relevanceText);
+    const documents = candidates.map((passage) => terms(passage.text));
+    const score = (index: number) => [...documents[index]].reduce((total, term) => {
+      if (!query.has(term)) return total;
+      const frequency = documents.filter((document) => document.has(term)).length;
+      return total + Math.log(1 + documents.length / frequency);
+    }, 0);
+    const ranked = candidates.map((passage, index) => ({ passage, score: score(index) }));
+    ranked.sort((a, b) => b.score - a.score || a.passage.evidenceId.localeCompare(b.passage.evidenceId));
+    candidates.splice(0, candidates.length, ...ranked.map((entry) => entry.passage));
+  }
   const selected: ReportOwnerVoiceCorpusPassage[] = [];
   for (const functionTag of FUNCTION_TARGETS[unitType]) {
     const unusedSources = new Set(selected.map((passage) => passage.provenance.sourcePath));
