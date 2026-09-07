@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "recordType": "ask_tldr_evergreen_question_taxonomy",
+  "version": "ask-tldr-question-taxonomy-v1",
+  "status": "owner-approved",
+  "ownerApproved": true,
+  "promotionAuthorized": false,
+  "runtimeEnabled": false,
+  "pillarCount": 9,
+  "questionCount": 54,
+  "allowedQuestionTypes": [
+    "current_state",
+    "pattern",
+    "guidance",
+    "direction",
+    "decision",
+    "timing"
+  ],
+  "allowedTimeWindows": [
+    "1_month",
+    "4_months",
+    "12_months"
+  ],
+  "routingPolicy": {
+    "evergreenAndFreeTextShareIntentLayer": true,
+    "pillarIsUserFacingAndDoesNotEqualHouse": true,
+    "astrologyRetrievedAfterIntentClassification": true,
+    "llmMustNotCalculateAstrology": true,
+    "freeTextMayRouteToOnePrimaryAndMultipleSecondaryIntents": true,
+    "evergreenQuestionTextIsIntentNotEvidence": true,
+    "answerMustNotTreatQuestionPremiseAsProvenFact": true
+  },
+  "pillarFiles": [
+    "self.json",
+    "love.json",
+    "career.json",
+    "money.json",
+    "education.json",
+    "home_family.json",
+    "daily_life_health.json",
+    "social.json",
+    "spirituality.json"
+  ]
+}
