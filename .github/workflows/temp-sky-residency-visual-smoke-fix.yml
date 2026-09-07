@@ -23,14 +23,13 @@ jobs:
 
           detail_path = Path('apps/web/src/features/sky/SkyDetailArticle.tsx')
           detail = detail_path.read_text()
-          old = '''  const detailSections = residencyContext
-            ? [
-                ...(detail.sections ?? []).filter((section) => section.role !== "aspect"),
-                ...(residencyAspectSections ?? [])
-              ]
-            : (detail.sections ?? []);
-          '''
-          new = '''  const existingDetailSections = detail.sections ?? [];
+          start_marker = '  const detailSections = residencyContext\n'
+          end_marker = '  const metaRows = detailMetaRows(detail.meta);\n'
+          start = detail.find(start_marker)
+          end = detail.find(end_marker, start)
+          if start < 0 or end < 0:
+              raise SystemExit('SkyDetailArticle replacement target not found')
+          replacement = '''  const existingDetailSections = detail.sections ?? [];
           const existingAspectSections = existingDetailSections.filter((section) => section.role === "aspect");
           const residencyAspectHeadings = new Set(
             (residencyAspectSections ?? []).map((section) => section.heading.trim().toLowerCase())
@@ -43,14 +42,11 @@ jobs:
               ]
             : existingDetailSections;
           '''
-          if old not in detail:
-              raise SystemExit('SkyDetailArticle replacement target not found')
-          detail_path.write_text(detail.replace(old, new, 1))
+          detail_path.write_text(detail[:start] + replacement + detail[end:])
 
           test_path = Path('scripts/test-sky-placement-residency-aspects.mts')
           test = test_path.read_text()
-          anchor = '''  assert.match(detailSource, /skyPlacementResidencyAspectSections/u);
-          '''
+          anchor = '  assert.match(detailSource, /skyPlacementResidencyAspectSections/u);\n'
           insertion = '''  assert.match(detailSource, /skyPlacementResidencyAspectSections/u);
           assert.match(
             detailSource,
