@@ -15,6 +15,7 @@ const reportMonthNames = [
   "Jan", "Feb", "Mar", "Apr", "May", "June",
   "July", "Aug", "Sept", "Oct", "Nov", "Dec"
 ] as const;
+const reportLibraryPollMs = 10_000;
 
 type ReportCalendarDate = {
   year: number;
@@ -100,7 +101,7 @@ function reportSubtitle(item: ReportLibraryItem) {
 
 function statusLabel(item: ReportLibraryItem) {
   if (item.status === "ready") return item.seenAt ? null : "New";
-  if (item.status === "needs_attention") return "Needs information";
+  if (item.status === "needs_attention") return "Needs attention";
   return "Preparing";
 }
 
@@ -290,7 +291,13 @@ export function ReportLibraryView() {
     }
   }
 
-  useEffect(() => { void refresh(); }, []);
+  useEffect(() => {
+    void refresh();
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === "visible") void refresh();
+    }, reportLibraryPollMs);
+    return () => window.clearInterval(interval);
+  }, []);
 
   const visible = useMemo(() => items.filter((item) => (
     view === "archived" ? Boolean(item.archivedAt) : !item.archivedAt
