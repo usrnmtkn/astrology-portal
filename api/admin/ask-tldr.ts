@@ -22,7 +22,8 @@ import type {
 } from "../_lib/ask-tldr-model.js";
 import {
   createTldrAstroReportFactsClient,
-  type ReportChartSubject
+  type ReportChartSubject,
+  type ReportNatalPointLongitudes
 } from "../_lib/report-facts.js";
 import {
   natalPointLongitudesFromChart,
@@ -86,6 +87,24 @@ type GeneratedContentRow = {
 };
 
 type OwnerIdentity = { id: string; email: string | null };
+type ChartMode = "owner" | "test";
+type TestChartInput = {
+  name?: string;
+  birthDate?: string;
+  birthTime?: string;
+  timeZone?: string;
+  locationLabel?: string;
+  latitude?: number | string;
+  longitude?: number | string;
+};
+type ReadyChartContext = {
+  ready: true;
+  label: string;
+  birthDate: string;
+  subject: ReportChartSubject;
+  natalPointLongitudes: ReportNatalPointLongitudes;
+};
+type ChartContext = ReadyChartContext | { ready: false; reason: string };
 
 type AskTldrRequestBody = {
   action?: "save_question" | "reset_question" | "preview" | "review_preview";
@@ -96,6 +115,8 @@ type AskTldrRequestBody = {
   previewId?: string;
   decision?: "approved" | "rejected";
   reviewerNotes?: string;
+  chartMode?: ChartMode;
+  testChart?: TestChartInput;
 };
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -203,20 +224,29 @@ function previewHistory(rows: GeneratedContentRow[]) {
   return rows
     .filter((row) => row.mode === "preview" && row.content_key.startsWith(PREVIEW_PREFIX))
     .slice(0, PREVIEW_HISTORY_LIMIT)
-    .map((row) => ({
-      id: row.id,
-      question: row.headline ?? "",
-      answer: row.body ?? "",
-      summary: row.summary ?? "",
-      status: row.status ?? "DRAFT",
-      reviewState: row.review_state ?? "needs_owner_review",
-      reviewerNotes: row.reviewer_notes ?? "",
-      provider: row.provider ?? null,
-      model: row.model ?? null,
-      createdAt: row.created_at ?? null,
-      updatedAt: row.updated_at ?? null,
-      diagnostics: row.sections ?? {}
-    }));
+    .map((row) => {
+      const diagnostics = record(row.sections) ?? {};
+      return {
+        id: row.id,
+        question: row.headline ?? "",
+        answer: row.body ?? "",
+        summary: row.summary ?? "",
+        status: row.status ?? "DRAFT",
+        reviewState: row.review_state ?? "needs_owner_review",
+        reviewerNotes: row.reviewer_notes ?? "",
+        provider: row.provider ?? null,
+        model: row.model ?? null,
+        createdAt: row.created_at ?? null,
+        updatedAt: row.updated_at ?? null,
+        pillarId: words(diagnostics.pillarId) || null,
+        questionId: words(diagnostics.questionId) || null,
+        source: words(diagnostics.source) || null,
+        chartMode: words(diagnostics.chartMode) || "owner",
+        chartLabel: words(diagnostics.chartLabel) || null,
+        chartFingerprint: words(diagnostics.chartFingerprint) || null,
+        diagnostics
+      };
+    });
 }
 
 function chartName(data: unknown, fallback: string | null) {
@@ -227,9 +257,9 @@ function chartName(data: unknown, fallback: string | null) {
   return words(first?.name) || fallback || "Owner chart";
 }
 
-async function ownerChartContext(identity: OwnerIdentity | null, store: SupabaseReportAdmin) {
+async function ownerChartContext(identity: OwnerIdentity | null, store: SupabaseReportAdmin): Promise<ChartContext> {
   if (!identity) {
-    return { ready: false as const, reason: "Sign in with the owner account to preview against your chart." };
+    return { ready: false, reason: "Sign in with the owner account to preview against your chart." };
   }
   try {
     const profileRow = await store.selectOne<{ data?: unknown }>(
@@ -241,23 +271,108 @@ async function ownerChartContext(identity: OwnerIdentity | null, store: Supabase
       new URLSearchParams({ user_id: `eq.${identity.id}`, select: "natal_chart" })
     );
     const birth = requireReportBirthProfile(profileRow?.data, true);
+    const location = birth.birthLocation;
+    if (!location) throw new Error("Birth location is required for Ask TLDR owner preview.");
+    const label = chartName(profileRow?.data, identity.email);
     const natalPointLongitudes = {
       ...(birth.natalPointLongitudes ?? {}),
       ...natalPointLongitudesFromChart(socialProfile?.natal_chart)
     };
     return {
-      ready: true as const,
-      userId: identity.id,
-      label: chartName(profileRow?.data, identity.email),
-      birth,
+      ready: true,
+      label,
+      birthDate: birth.birthDate,
+      subject: {
+        name: label,
+        datetime: {
+          date: birth.birthDate,
+          time: birth.birthTime,
+          timeKnown: Boolean(birth.birthTime && !birth.birthTimeUnknown),
+          timeZone: location.timeZone ?? null
+        },
+        location,
+        settings: { houseSystem: "whole_sign", zodiac: "tropical", aspectProfile: "standard" }
+      },
       natalPointLongitudes
     };
   } catch (error) {
     return {
-      ready: false as const,
+      ready: false,
       reason: error instanceof Error ? error.message.replace(/^[A-Z_]+:\s*/u, "") : "Owner chart could not be loaded."
     };
   }
+}
+
+function numericCoordinate(value: unknown, label: string, min: number, max: number) {
+  const parsed = typeof value === "number" ? value : Number(words(value));
+  if (!Number.isFinite(parsed) || parsed < min || parsed > max) {
+    throw new Error(`${label} must be a number between ${min} and ${max}.`);
+  }
+  return parsed;
+}
+
+function validateTimeZone(value: string) {
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: value }).format(new Date());
+  } catch {
+    throw new Error("Test chart time zone must be a valid IANA time zone, for example America/New_York.");
+  }
+}
+
+function testChartContext(input: TestChartInput | undefined): ChartContext {
+  try {
+    if (!input) throw new Error("Enter the test chart birth data before generating a preview.");
+    const birthDate = words(input.birthDate);
+    const birthTime = words(input.birthTime);
+    const timeZone = words(input.timeZone);
+    const locationLabel = words(input.locationLabel);
+    const label = words(input.name) || "Test chart";
+    if (!/^\d{4}-\d{2}-\d{2}$/u.test(birthDate) || Number.isNaN(Date.parse(`${birthDate}T00:00:00Z`))) {
+      throw new Error("Test chart birth date must be a valid YYYY-MM-DD date.");
+    }
+    if (Date.parse(`${birthDate}T00:00:00Z`) > Date.now()) {
+      throw new Error("Test chart birth date cannot be in the future.");
+    }
+    if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/u.test(birthTime)) {
+      throw new Error("Test chart birth time must use 24-hour HH:MM format.");
+    }
+    if (!timeZone) throw new Error("Test chart time zone is required.");
+    validateTimeZone(timeZone);
+    if (!locationLabel) throw new Error("Test chart location label is required.");
+    const latitude = numericCoordinate(input.latitude, "Latitude", -90, 90);
+    const longitude = numericCoordinate(input.longitude, "Longitude", -180, 180);
+    return {
+      ready: true,
+      label,
+      birthDate,
+      subject: {
+        name: label,
+        datetime: {
+          date: birthDate,
+          time: birthTime,
+          timeKnown: true,
+          timeZone
+        },
+        location: {
+          label: locationLabel,
+          latitude,
+          longitude,
+          timeZone
+        },
+        settings: { houseSystem: "whole_sign", zodiac: "tropical", aspectProfile: "standard" }
+      },
+      natalPointLongitudes: {}
+    };
+  } catch (error) {
+    return { ready: false, reason: error instanceof Error ? error.message : "Test chart could not be validated." };
+  }
+}
+
+function chartFingerprint(chart: ReadyChartContext) {
+  return crypto.createHash("sha256").update(JSON.stringify({
+    subject: chart.subject,
+    natalPointLongitudes: chart.natalPointLongitudes
+  })).digest("hex");
 }
 
 function reportDomainForPillar(pillarId: AskTldrPillarId): ReportDomain {
@@ -271,23 +386,8 @@ function reportHorizon(timeWindow: AskTldrTimeWindow): ReportHorizon {
   return timeWindow;
 }
 
-function reportSubject(chart: Awaited<ReturnType<typeof ownerChartContext>> & { ready: true }): ReportChartSubject {
-  const location = chart.birth.birthLocation!;
-  return {
-    name: chart.label,
-    datetime: {
-      date: chart.birth.birthDate,
-      time: chart.birth.birthTime,
-      timeKnown: Boolean(chart.birth.birthTime && !chart.birth.birthTimeUnknown),
-      timeZone: location.timeZone ?? null
-    },
-    location,
-    settings: { houseSystem: "whole_sign", zodiac: "tropical", aspectProfile: "standard" }
-  };
-}
-
 async function calculatedReportWindow(input: {
-  chart: Awaited<ReturnType<typeof ownerChartContext>> & { ready: true };
+  chart: ReadyChartContext;
   pillarId: AskTldrPillarId;
   timeWindow: AskTldrTimeWindow;
   now: Date;
@@ -296,12 +396,11 @@ async function calculatedReportWindow(input: {
   const window = reportBillingWindow({
     horizon,
     purchasedAt: input.now.toISOString(),
-    birthDate: input.chart.birth.birthDate
+    birthDate: input.chart.birthDate
   });
-  const subject = reportSubject(input.chart);
   return createTldrAstroReportFactsClient().reportWindow({
-    natalSubject: subject,
-    location: subject.location,
+    natalSubject: input.chart.subject,
+    location: input.chart.subject.location,
     reportDomain: reportDomainForPillar(input.pillarId),
     reportHorizon: horizon,
     start: window.start,
@@ -351,6 +450,9 @@ async function savePreviewDraft(input: {
   questionId: string | null;
   questionText: string;
   source: "evergreen" | "free_text";
+  chartMode: ChartMode;
+  chartLabel: string;
+  chartFingerprint: string;
   prepared: ReturnType<typeof prepareEvergreenAskTldrCalibration>;
   result: Awaited<ReturnType<typeof runPreparedAskTldrAnswerCalibration>>;
   classifier: unknown;
@@ -372,6 +474,9 @@ async function savePreviewDraft(input: {
       pillarId: input.pillarId,
       questionId: input.questionId,
       source: input.source,
+      chartMode: input.chartMode,
+      chartLabel: input.chartLabel,
+      chartFingerprint: input.chartFingerprint,
       plan: input.prepared.plan,
       evidence: summarizeEvidence(input.prepared),
       relevanceReceiptSha256: input.prepared.relevanceReceipt.receiptSha256,
@@ -387,6 +492,9 @@ async function savePreviewDraft(input: {
       answerModelVersion: answerModel.version,
       taxonomyVersion: manifestJson.version,
       writerRequestSha256: input.prepared.writerRequest?.requestSha256 ?? null,
+      chartMode: input.chartMode,
+      chartLabel: input.chartLabel,
+      chartFingerprint: input.chartFingerprint,
       ownerPreviewOnly: true,
       runtimeEnabled: false
     },
@@ -492,6 +600,21 @@ async function previewAnswer(input: {
   const pillar = pillarsById.get(pillarId)!;
   const overlays = activeQuestionOverlays(input.rows);
   const now = new Date();
+  const chartMode: ChartMode = input.body.chartMode === "test" ? "test" : "owner";
+  const chart = chartMode === "test"
+    ? testChartContext(input.body.testChart)
+    : await ownerChartContext(input.identity, input.store);
+  if (!chart.ready) {
+    return {
+      ok: true as const,
+      ownerPreviewOnly: true as const,
+      runtimeEnabled: false as const,
+      preview: null,
+      preparation: { allowed: false, reason: chart.reason },
+      chart: { ready: false, mode: chartMode, reason: chart.reason }
+    };
+  }
+
   const freeText = words(input.body.freeText);
   let questionId: string | null = null;
   let questionText = "";
@@ -522,17 +645,6 @@ async function previewAnswer(input: {
     timeWindow = source.defaultTimeWindow;
   }
 
-  const chart = await ownerChartContext(input.identity, input.store);
-  if (!chart.ready) {
-    return {
-      ok: true as const,
-      ownerPreviewOnly: true as const,
-      runtimeEnabled: false as const,
-      preview: null,
-      preparation: { allowed: false, reason: chart.reason },
-      chart: { ready: false, reason: chart.reason }
-    };
-  }
   const reportWindow = await calculatedReportWindow({ chart, pillarId, timeWindow, now });
 
   let prepared;
@@ -573,7 +685,7 @@ async function previewAnswer(input: {
         candidateCount: prepared.candidateCount,
         evidence: summarizeEvidence(prepared)
       },
-      chart: { ready: true, label: chart.label }
+      chart: { ready: true, mode: chartMode, label: chart.label }
     };
   }
 
@@ -588,12 +700,16 @@ async function previewAnswer(input: {
     },
     callModel
   });
+  const fingerprint = chartFingerprint(chart);
   const draftId = await savePreviewDraft({
     store: input.store,
     pillarId,
     questionId,
     questionText,
     source: freeText ? "free_text" : "evergreen",
+    chartMode,
+    chartLabel: chart.label,
+    chartFingerprint: fingerprint,
     prepared,
     result,
     classifier: classificationResult
@@ -603,7 +719,7 @@ async function previewAnswer(input: {
     ok: true as const,
     ownerPreviewOnly: true as const,
     runtimeEnabled: false as const,
-    chart: { ready: true, label: chart.label },
+    chart: { ready: true, mode: chartMode, label: chart.label, fingerprint },
     preparation: {
       allowed: true,
       candidateCount: prepared.candidateCount,
