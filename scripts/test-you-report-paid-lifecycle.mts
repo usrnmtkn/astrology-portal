@@ -93,7 +93,7 @@ const actions = read("apps/web/src/features/you/YouReportActions.tsx");
 const youPage = read("apps/web/src/features/you/YouPage.tsx");
 const library = read("apps/web/src/services/reportLibrary.ts");
 const sharing = read("api/report-share.ts");
-const migration = read("apps/web/supabase/migrations/20260907090000_you_report_paid_lifecycle.sql");
+const migration = read("apps/web/supabase/migrations/20260907133521_you_report_paid_lifecycle.sql");
 const vercel = read("vercel.json");
 
 assert.match(friendGenerator, /generateGovernedTransitReading/u, "Friends must use the shared governed transit writer core.");
