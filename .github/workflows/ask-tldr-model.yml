@@ -86,4 +86,4 @@ jobs:
         run: npm run build:admin
 
       - name: Build deployed web route
-        run: npm run build:web
+        run: npm run build
