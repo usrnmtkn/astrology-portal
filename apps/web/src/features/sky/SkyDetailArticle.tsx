@@ -754,7 +754,6 @@ export function SkyDetailArticle({
                               <h4>{sectionHeading}</h4>
                             </div>
                           ) : null}
-                          {section.dateLine ? <p>{section.dateLine}</p> : null}
                           {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
                           {bodyParagraphs.length > 0
                             ? bodyParagraphs.map((paragraph, paragraphIndex) => (
