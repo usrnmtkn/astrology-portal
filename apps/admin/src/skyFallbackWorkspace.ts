@@ -1,3 +1,4 @@
+import { memoByString } from "./derivedCache";
 export type SkyFallbackField = {
   key: string;
   label: string;
@@ -116,7 +117,7 @@ function ordinalHouse(value: string) {
   return `${house}th House`;
 }
 
-export function skyFallbackIdentity(contentKey: string): SkyFallbackIdentity | null {
+function skyFallbackIdentityUncached(contentKey: string): SkyFallbackIdentity | null {
   const parts = contentKey.split("/").filter(Boolean);
 
   if (contentKey.startsWith("sky-placement/article/") && parts.length === 4) {
@@ -414,3 +415,6 @@ export function renderWorkspacePreview(fields: SkyFallbackField[], values: Recor
     .map((field) => fill(field.value).trim())
     .filter(Boolean);
 }
+
+/** Cached per content key; see derivedCache.ts. */
+export const skyFallbackIdentity = memoByString(skyFallbackIdentityUncached);

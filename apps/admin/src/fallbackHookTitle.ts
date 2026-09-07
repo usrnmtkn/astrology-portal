@@ -1,3 +1,4 @@
+import { memoByString } from "./derivedCache";
 const ordinalSuffix = (value: number) => {
   const mod100 = value % 100;
   if (mod100 >= 11 && mod100 <= 13) return "th";
@@ -115,7 +116,7 @@ function pairDailyTitle(args: string[]) {
 }
 
 /** Builds a stable editorial title from the hook's canonical identity. */
-export function fallbackHookDisplayTitle(contentKey: string) {
+function fallbackHookDisplayTitleUncached(contentKey: string) {
   const parts = contentKey.split("/").filter(Boolean);
   if (parts[0] !== "fallback-hook" || !parts[1]) return null;
 
@@ -151,3 +152,6 @@ export function fallbackHookDisplayTitle(contentKey: string) {
   const identity = args.map((argument) => argumentLabel(family, argument));
   return identity.length ? `${identity.join(" · ")} · ${familyLabel(family)}` : familyLabel(family);
 }
+
+/** Cached per content key: the parser is regex-heavy and rows are titled thousands of times per load. */
+export const fallbackHookDisplayTitle = memoByString(fallbackHookDisplayTitleUncached);

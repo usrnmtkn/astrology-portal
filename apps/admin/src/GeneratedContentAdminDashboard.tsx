@@ -152,6 +152,7 @@ import type {
   WritingSurfaceSource
 } from "./writingSurfaceSourceMap";
 import type { CompositionEditorContext } from "./CompositionMapWorkspace";
+import { memoByObject, naturalCollator } from "./derivedCache";
 import "./admin.css";
 import "./admin-components.css";
 // Presentation layers that must ship with the dashboard itself. The production
@@ -1484,7 +1485,7 @@ function articlePointForRow(row: AdminGeneratedContentRow): AdminArticlePointFil
     : "other";
 }
 
-function rowSearchText(row: AdminGeneratedContentRow) {
+function rowSearchTextUncached(row: AdminGeneratedContentRow) {
   return [
     row.content_key,
     row.headline,
@@ -1501,7 +1502,7 @@ function rowSearchText(row: AdminGeneratedContentRow) {
   ].join(" ").toLowerCase();
 }
 
-function visibleRowSearchText(row: AdminGeneratedContentRow) {
+function visibleRowSearchTextUncached(row: AdminGeneratedContentRow) {
   return [
     row.content_key,
     rowTitle(row),
@@ -1516,7 +1517,7 @@ function visibleRowSearchText(row: AdminGeneratedContentRow) {
   ].join(" ").toLowerCase();
 }
 
-function skyWriteupSearchText(row: AdminGeneratedContentRow) {
+function skyWriteupSearchTextUncached(row: AdminGeneratedContentRow) {
   return [
     rowSearchText(row),
     rowTitle(row),
@@ -1525,7 +1526,7 @@ function skyWriteupSearchText(row: AdminGeneratedContentRow) {
   ].join(" ").toLowerCase();
 }
 
-function fallbackHookVisibleSearchText(row: AdminGeneratedContentRow) {
+function fallbackHookVisibleSearchTextUncached(row: AdminGeneratedContentRow) {
   return [
     row.content_key,
     rowTitle(row),
@@ -1970,7 +1971,7 @@ async function loadAdminSourceDraftCatalog(secret: string): Promise<AdminSourceD
   return payload.rows;
 }
 
-function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
+function rowTitleUncached(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
   if ("content_key" in row) {
     const structuredIdentity = skyFallbackIdentity(row.content_key);
     if (structuredIdentity) return structuredIdentity.title;
@@ -2073,7 +2074,7 @@ function aspectContextForFields({
   };
 }
 
-function aspectContextForRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
+function aspectContextForRowUncached(row: AdminGeneratedContentRow | AdminReviewRecord) {
   if ("content_key" in row) {
     return aspectContextForFields({
       contentKey: row.content_key,
@@ -2105,7 +2106,7 @@ function aspectContextForDraft(draft: AdminDraft) {
   });
 }
 
-function rowTypeLabel(row: AdminGeneratedContentRow) {
+function rowTypeLabelUncached(row: AdminGeneratedContentRow) {
   const structuredIdentity = skyFallbackIdentity(row.content_key);
   if (structuredIdentity) return structuredIdentity.typeLabel;
   if (row.content_key.startsWith("slot-template/")) return `Copy pattern for ${templateDestinationLabel(row.content_key).toLowerCase()}`;
@@ -2118,7 +2119,7 @@ function rowTypeLabel(row: AdminGeneratedContentRow) {
 }
 
 function compareFallbackRows(left: AdminGeneratedContentRow, right: AdminGeneratedContentRow, sort: AdminFallbackRowSort) {
-  const compare = (first: string, second: string) => first.localeCompare(second, undefined, { numeric: true, sensitivity: "base" });
+  const compare = (first: string, second: string) => naturalCollator.compare(first, second);
   const titleDifference = compare(rowTitle(left), rowTitle(right));
 
   if (sort === "title-desc") return -titleDifference || compare(right.content_key, left.content_key);
@@ -2130,7 +2131,7 @@ function compareFallbackRows(left: AdminGeneratedContentRow, right: AdminGenerat
   return titleDifference || compare(left.content_key, right.content_key);
 }
 
-function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminContentClass {
+function contentClassForRowUncached(row: AdminGeneratedContentRow | AdminReviewRecord): AdminContentClass {
   const contentKey = "content_key" in row ? row.content_key : row.contentKey;
   const blockType = "content_key" in row ? row.block_type : row.blockType;
   const promptVersion = "content_key" in row ? row.prompt_version : row.promptVersion;
@@ -2546,6 +2547,10 @@ async function loadAllGeneratedContentRows(
   const pageSize = scope === "compatibility" ? 500 : 400;
   const allRows: AdminGeneratedContentRow[] = [];
   let cursor: string | null = null;
+  // Every onPage call re-derives the whole dashboard, so with ~24 pages of a
+  // 9,000-row inventory the page did that work 24 times. Emit the first page
+  // (so the table appears), then at most every 600 ms, and always the last.
+  let lastEmitAt = 0;
 
   for (let page = 0; page < 125; page += 1) {
     if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
@@ -2558,7 +2563,11 @@ async function loadAllGeneratedContentRows(
 
     allRows.push(...pageRows);
     const complete = !result.nextCursor;
-    onPage?.(dedupeGeneratedContentRows(allRows), complete);
+    const now = Date.now();
+    if (complete || page === 0 || now - lastEmitAt >= 600) {
+      lastEmitAt = now;
+      onPage?.(dedupeGeneratedContentRows(allRows), complete);
+    }
     if (complete) break;
     cursor = result.nextCursor ?? null;
   }
@@ -2691,6 +2700,18 @@ function useSavedSecret() {
 
   return [secret, saveSecret, setTransientCredential] as const;
 }
+
+
+/* Per-row derivations are pure in the row object, so each runs once per row.
+   See derivedCache.ts for why this matters at 9,000 rows. */
+const rowTitle = memoByObject(rowTitleUncached);
+const rowTypeLabel = memoByObject(rowTypeLabelUncached);
+const contentClassForRow = memoByObject(contentClassForRowUncached);
+const rowSearchText = memoByObject(rowSearchTextUncached);
+const visibleRowSearchText = memoByObject(visibleRowSearchTextUncached);
+const skyWriteupSearchText = memoByObject(skyWriteupSearchTextUncached);
+const fallbackHookVisibleSearchText = memoByObject(fallbackHookVisibleSearchTextUncached);
+const aspectContextForRow = memoByObject(aspectContextForRowUncached);
 
 export function GeneratedContentAdminDashboard() {
   const [secret, setSecret, setTransientCredential] = useSavedSecret();
