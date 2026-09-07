@@ -517,6 +517,8 @@ async function seedAdminApi(
   } = {}
 ) {
   const apiGeneratedContentRows = structuredClone(options.generatedRows ?? generatedContentRows) as Record<string, unknown>[];
+  const publications = new Map<string, Record<string, unknown>>();
+  await page.route("**/rest/v1/content_publications*", (route) => route.fulfill({ json: [...publications.values()] }));
   let generatedContentFailuresRemaining = options.generatedContentFailuresBeforeSuccess ?? 0;
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
@@ -561,6 +563,14 @@ async function seedAdminApi(
       return;
     }
 
+    if (pathname.endsWith("/content-publication")) {
+      const request = route.request().postDataJSON();
+      const source = apiGeneratedContentRows.find((row) => row.id === request.id && row.content_key === request.contentKey);
+      if (!source || source.updated_at !== request.expectedUpdatedAt) { await route.fulfill({ status: 409, json: { ok: false, error: "Source changed." } }); return; }
+      const publication = { content_key: request.contentKey, state: request.action === "publish" ? "live" : "retired", revision: Number(publications.get(request.contentKey)?.revision ?? 0) + 1, row_id: request.id, row_updated_at: source.updated_at, updated_at: now };
+      publications.set(request.contentKey, publication);
+      await route.fulfill({ json: { ok: true, publication } }); return;
+    }
     if (pathname.endsWith("/content-live-status")) {
       if (route.request().postDataJSON().action === "composition-catalog") {
         await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, rows: options.compositionCatalog ?? [] }) });
@@ -572,7 +582,7 @@ async function seedAdminApi(
         const source = servingPackageRecords.get(id.slice(8));
         rows.push({ id, content_key: id.slice(8), ...(source ? { sections: { packageRecord: source } } : {}) });
       }
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, statuses: contentLiveStatuses(rows, apiGeneratedContentRows as LiveStatusRow[]) }) });
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, statuses: contentLiveStatuses(rows, apiGeneratedContentRows as LiveStatusRow[]).map((status) => publications.get(rows.find((row) => row.id === status.id)?.content_key ?? "")?.state === "retired" ? { ...status, live: false, label: "Not live", source: null, detail: "Retired everywhere." } : status) }) });
       return;
     }
 
@@ -1975,6 +1985,34 @@ test.describe("content dashboard admin user flow case studies", () => {
       fullPage: true,
       path: path.join(adminScreenshotDir, "narrow-sky-fallback-diagnostic.png")
     });
+    await assertNoBrowserErrors();
+  });
+
+  test("Retire everywhere persists across reload; explicit publication restores it", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const contentKey = "authored/sky-lunation-macro/new-moon/virgo";
+    const record = servingPackageRecords.get(contentKey)!;
+    const macro = { ...generatedContentRows[0], id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", target_date: null, content_key: contentKey, mode: "article", event_type: "sky-lunation-macro", status: "LIVE", lane: "serving", review_state: null, provider: "tldrastro-fallback-architecture-v3", headline: record.headline, summary: record.summary, body: record.body, facts: { fallbackArchitectureV3: true, moonEvent: { name: "New Moon", sign: "Virgo" } }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", contentType: "authored-content" }, sections: { packageRecord: record } };
+    await seedAdminApi(page, { generatedRows: [macro] });
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups");
+    const row = page.locator(".admin-content-row", { hasText: contentKey });
+    await row.getByRole("button", { name: "Edit", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await editor.getByRole("button", { name: "Retire everywhere", exact: true }).click();
+    await expect(editor.getByRole("button", { name: "Publish again", exact: true })).toBeEnabled();
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
+    const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:content-publications:v1") ?? "[]"));
+    expect(stored.find((record: any) => record.content_key === contentKey).state).toBe("retired");
+    await page.reload();
+    await row.getByRole("button", { name: "Edit", exact: true }).click();
+    await expect(editor.getByRole("button", { name: "Publish again", exact: true })).toBeEnabled();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expectNoHorizontalOverflow(page, "Retirement mobile editor");
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await page.screenshot({ path: path.join(adminScreenshotDir, "retire-everywhere-mobile.png") });
+    await editor.getByRole("button", { name: "Publish again", exact: true }).click();
+    await expect(editor.getByRole("button", { name: "Retire everywhere", exact: true })).toBeEnabled();
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await assertNoBrowserErrors();
   });
 

@@ -1,3 +1,5 @@
+import { assertNodePublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
+export { setNodeBlockedContentKeys } from "./publicationGuard.mjs";
 // TLDR Astro fallback resolver — reference implementation (v3)
 // Renders a per-surface fallback template from role-labeled rows.
 // Enforces: role safety (fallback_source never renders), no unresolved slots,
@@ -94,6 +96,8 @@ function withoutLegacyHouseBridge(body, house, voice) {
 }
 
 const hooks = new Map((rowsFile.hookRows ?? []).map((r) => [r.contentKey, r]));
+const assertKey = (key) => assertNodePublicationKey(key, SourceGapError);
+for (const map of [vocab, hooks]) guardPublicationMap(map, assertKey);
 
 function getHook(key, voice, { allowUnreviewed = false } = {}) {
   const row = hooks.get(key);
@@ -158,6 +162,7 @@ function renderTemplate(template, ctx, gapLabel, voice = "you") {
 }
 
 const findTemplate = (key, { allowUnreviewed = false } = {}) => {
+  assertKey(key);
   const t = templates.templates.find((x) => x.contentKey === key);
   if (!t) return null;
   if (t.content_role !== "template") throw new RoleViolationError(`${key} is not a template row`);
@@ -245,7 +250,8 @@ export function renderNatalPlacement(facts, opts = {}) {
   // modifiers (attach to the house paragraph when present, else the sign paragraph)
   const mods = [];
   const mod = (key, extra = {}) => {
-    const t = templates.templates.find((x) => x.contentKey === key);
+    assertKey(key);
+  const t = templates.templates.find((x) => x.contentKey === key);
     if (!t) return;
     const body = facts.voice === "you" ? (t.body_you ?? t.body) : (t.body_they ?? t.body);
     mods.push(mustache(body, { ...ctx, ...extra }));
@@ -282,6 +288,7 @@ export function renderNatalPlacement(facts, opts = {}) {
       parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
       partKeys.push(signTemplate.contentKey);
     } catch (err) {
+        if (err instanceof SourceGapError && "publicationBlocked" in err) throw err;
       if (!(err instanceof SourceGapError) || !genericSignLived) throw err;
       parts.push(withModifiers(genericSignLived.body, !house));
       partKeys.push(genericSignLived.contentKey);
@@ -312,6 +319,7 @@ export function renderNatalPlacement(facts, opts = {}) {
         parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
         partKeys.push(houseTemplate.contentKey);
       } catch (err) {
+        if (err instanceof SourceGapError && "publicationBlocked" in err) throw err;
         if (!(err instanceof SourceGapError) || !genericHouseLived) throw err;
         parts.push(withModifiers(genericHouseLived.body, true));
         partKeys.push(genericHouseLived.contentKey);

@@ -1,3 +1,19 @@
+// apps/web/src/content/fallbackArchitectureV3/resolver/publicationGuard.mjs
+function assertPublicationKey(key, blockedKeys, SourceGapError2) {
+  if (!blockedKeys.has(key)) return;
+  const error = new SourceGapError2(`SOURCE_GAP: Publication unavailable for ${key}.`);
+  error.publicationBlocked = true;
+  throw error;
+}
+function guardPublicationMap(map, assertKey) {
+  const get = map.get.bind(map);
+  map.get = (key) => {
+    assertKey(key);
+    return get(key);
+  };
+  return map;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
@@ -43,7 +59,9 @@ function natalPlacementMotionExactKey(facts) {
   const directKey = `fallback-hook/natal-you-placement-complete-final/${facts.planet}/${facts.sign}/${facts.house}`;
   return facts.isRetrograde ? `${directKey}/retrograde` : directKey;
 }
-function createFallbackRenderer(templatesFile, rowsFile) {
+function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
+  const blockedKeys = new Set(publication.blockedContentKeys ?? []);
+  const assertKey = (key) => assertPublicationKey(key, blockedKeys, SourceGapError);
   const vocab = /* @__PURE__ */ new Map();
   for (const row of rowsFile.vocabularyRows) {
     const candidates = vocab.get(row.contentKey) ?? [];
@@ -51,6 +69,8 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     vocab.set(row.contentKey, candidates);
   }
   const hooks = new Map((rowsFile.hookRows ?? []).map((r) => [r.contentKey, r]));
+  guardPublicationMap(vocab, assertKey);
+  guardPublicationMap(hooks, assertKey);
   const getVocab = (key, voice = "you", opts2 = {}) => {
     const row = [...vocab.get(key) ?? []].reverse().find((candidate) => opts2.allowUnreviewed || READER_ELIGIBLE.has(candidate.review_status));
     if (!row) return null;
@@ -93,6 +113,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     return { ...row, body: row.body_they };
   };
   const findTemplate = (key, opts2 = {}) => {
+    assertKey(key);
     const t = templatesFile.templates.find((x) => x.contentKey === key);
     if (!t) return null;
     if (t.content_role !== "template") throw new RoleViolationError(`${key} is not a template row`);
@@ -156,6 +177,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     };
     const mods = [];
     const mod = (key, extra = {}) => {
+      assertKey(key);
       const t = templatesFile.templates.find((x) => x.contentKey === key);
       if (!t) return;
       const raw = voice === "you" ? t.body_you ?? t.body : t.body_they ?? t.body;
@@ -190,6 +212,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
         parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
         partKeys.push(signTemplate.contentKey);
       } catch (err) {
+        if (err instanceof SourceGapError && "publicationBlocked" in err) throw err;
         if (!(err instanceof SourceGapError) || !genericSignLived) throw err;
         parts.push(withModifiers(genericSignLived.body ?? "", !house));
         partKeys.push(genericSignLived.contentKey);
@@ -219,6 +242,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
           parts.push(renderTemplate(houseTemplate, houseCtx, gapLabel, voice));
           partKeys.push(houseTemplate.contentKey);
         } catch (err) {
+          if (err instanceof SourceGapError && "publicationBlocked" in err) throw err;
           if (!(err instanceof SourceGapError) || !genericHouseLived) throw err;
           parts.push(withModifiers(genericHouseLived.body ?? "", true));
           partKeys.push(genericHouseLived.contentKey);
@@ -1061,9 +1085,12 @@ function eligibleRowsByKey(rows, allowUnreviewed) {
 }
 function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts2 = {}) {
   const allowUnreviewed = Boolean(opts2.allowUnreviewed);
+  const blockedKeys = new Set(opts2.blockedContentKeys ?? []);
+  const assertKey = (key) => assertPublicationKey(key, blockedKeys, SourceGapError);
   const cards = eligibleRowsByKey(transitLib.authoredCards, allowUnreviewed);
   const vocab = eligibleRowsByKey(rowsFile.vocabularyRows, allowUnreviewed);
   const hooks = eligibleRowsByKey(rowsFile.hookRows ?? [], allowUnreviewed);
+  for (const map of [cards, vocab, hooks]) guardPublicationMap(map, assertKey);
   function renderSkyPlacementHouseCore({ planet, sign, house }) {
     const normalizedPlanet = String(planet ?? "").trim().toLowerCase();
     const normalizedSign = String(sign ?? "").trim().toLowerCase();
@@ -1081,6 +1108,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     };
   }
   const tpl = (key) => {
+    assertKey(key);
     const t = templatesFile.templates.find((x) => x.contentKey === key);
     if (!t) throw new SourceGapError(`SOURCE_GAP: missing template ${key}`);
     return t;
@@ -2183,6 +2211,7 @@ ${passHook}`;
     if (articleMode === "archive" && !authoredArticle) {
       throw new SourceGapError(`SOURCE_GAP: sky article archive ${articleKey ?? `${planet}/${sign}`}`);
     }
+    if (authoredArticle) assertKey(authoredArticle.contentKey);
     if (authoredArticle) {
       assertSkyArticleCopy(authoredArticle);
       const finalArticle = renderFinalSkyArticle(authoredArticle, {
@@ -2801,6 +2830,7 @@ ${passHook}`;
       try {
         pushPart(renderStoredBody(stored), [stored.contentKey, ...stored.source_keys ?? []]);
       } catch (error) {
+        if (error instanceof SourceGapError && "publicationBlocked" in error) throw error;
         if (!(error instanceof SourceGapError)) throw error;
         flagOmittedSection(id, key);
         return null;
@@ -2865,6 +2895,7 @@ ${passHook}`;
       try {
         pushPart(fill(anchor, matchingNewMoonSlots()), ["fallback-hook/lunation-matching-new-moon-anchor/full"]);
       } catch (error) {
+        if (error instanceof SourceGapError && "publicationBlocked" in error) throw error;
         if (!(kind === "eclipse-lunar" && error instanceof SourceGapError)) throw error;
         flagOmittedSection("matching-new-moon-anchor", "fallback-hook/lunation-matching-new-moon-anchor/full");
       }
@@ -2977,6 +3008,7 @@ ${passHook}`;
       try {
         return fillDailyGlancePersonSlots(raw, personSlots);
       } catch (error) {
+        if (error instanceof SourceGapError && "publicationBlocked" in error) throw error;
         throw new SourceGapError(
           `SOURCE_GAP: ${contentKey} friend voice slots ${error instanceof Error ? error.message : String(error)}`
         );
@@ -5116,7 +5148,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-07a";
+var PACKAGE_VERSION = "v3-2026-09-07b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -5125,7 +5157,7 @@ function stablePackageValue(value) {
     return value;
   }
   return Object.fromEntries(
-    Object.keys(value).filter((key) => key !== "review_status" && key !== "reviewStatus").sort().map((key) => [key, stablePackageValue(value[key])])
+    Object.keys(value).filter((key) => !["review_status", "reviewStatus", "publicationRowId", "publicationRowUpdatedAt"].includes(key)).sort().map((key) => [key, stablePackageValue(value[key])])
   );
 }
 function packageRowsByKey(rows, allowRowsWithoutReviewState = false) {

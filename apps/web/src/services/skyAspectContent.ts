@@ -1,3 +1,4 @@
+import { isContentRetired } from "../content/contentPublicationState.js";
 import { isReaderFacingCopy } from "../content/readerSafety.js";
 import type { LiveGeneratedContent } from "./generatedContent";
 import { skyAspectContentKey, skyAspectInstanceContentKey, slugContentPart } from "./generatedContentKeys.js";
@@ -233,6 +234,13 @@ function skyAspectContentKeysFromExpected(expected: ExpectedSkyAspectFacts, targ
     : "";
 
   return [evergreenKey, datedKey, skyAspectContentKey(expected.a, expected.aspect, expected.b)].filter(Boolean);
+}
+
+export function isSkyAspectRetired(first: string, aspect: string, second: string) {
+  const a = canonicalContentStudioExactSkyPoint(first);
+  const b = canonicalContentStudioExactSkyPoint(second);
+  const relation = slugContentPart(aspect);
+  return isContentRetired(`sky.aspect.${a}.${relation}.${b}`) || isContentRetired(`sky.aspect.${b}.${relation}.${a}`);
 }
 
 export function contentStudioExactRow(

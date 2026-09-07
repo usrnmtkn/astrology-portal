@@ -179,13 +179,15 @@
     "build:fallback-manifest": "node scripts/generate-fallback-package-manifest.mjs",
     "build:knowledge": "npm run build -w @tldr/astro-knowledge",
     "build:web": "npm run build -w @tldr/web",
-    "test:sky-calendar-composed-routing": "node scripts/test-sky-calendar-composed-card-routing.mjs"
+    "test:sky-calendar-composed-routing": "node scripts/test-sky-calendar-composed-card-routing.mjs",
+    "test:content-publications": "node --import tsx scripts/test-content-publication-database.mjs && node --import tsx scripts/test-content-publication-reader.mts && node --import tsx scripts/test-content-publication-api.mts"
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "^0.27.7",
     "@rollup/rollup-linux-x64-gnu": "^4.60.4"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@playwright/test": "^1.61.0",
     "@types/node": "^25.9.1",
     "postcss": "^8.5.6",

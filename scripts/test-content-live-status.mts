@@ -36,12 +36,14 @@ process.env.SUPABASE_URL = "https://studio-live-status.invalid";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "live-status-qa-service";
 const macro = servingPackageRecords.get(key)!;
 let dbRows: any[] = [{ id: "qa-virgo", content_key: key, status: "DRAFT", lane: "reference", sections: { packageRecord: macro } }];
+let publications: any[] = [];
 let storageReads = 0;
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (input) => {
   const url = new URL(String(input));
   assert.equal(url.origin, "https://studio-live-status.invalid");
   storageReads++;
+  if (url.pathname === "/rest/v1/content_publications") return Response.json(publications);
   if (url.searchParams.has("provider")) return Response.json([]);
   return Response.json(dbRows.filter((row) => (!url.searchParams.has("id") || url.searchParams.get("id")!.includes(row.id)) && (!url.searchParams.has("status") || row.status === "LIVE")));
 };
@@ -72,6 +74,13 @@ assert.equal(storageReads, 0, "Unauthorized callers must not reach content stora
 assert.equal((await request(Array(65).fill("qa-virgo"))).code, 400);
 assert.equal((await request(["bad,id"])).code, 400);
 assert.equal((await request(["qa-virgo"])).statuses[0].label, "Live");
+publications = [{ content_key: key, state: "retired", revision: 1, row_id: "qa-virgo", row_updated_at: null, updated_at: "2026-09-07T18:00:00Z" }];
+assert.equal((await request(["qa-virgo"])).statuses[0].label, "Not live", "Retirement overrides bundled copy.");
+assert.equal((await request([`package:${key}`])).statuses[0].label, "Not live");
+publications = [{ ...publications[0], state: "live", revision: 2, row_id: "missing-current-row", row_updated_at: "2026-09-07T18:00:00Z" }];
+assert.equal((await request(["qa-virgo"])).statuses[0].label, "Not live", "An unavailable current publication cannot fall back to an older bundle.");
+publications = [];
+
 dbRows[0].sections.packageDraft = { ...macro, body: "QA unsent revised macro." };
 assert.equal((await request(["qa-virgo"])).statuses[0].label, "Not live");
 assert.equal((await request([`package:${key}`])).statuses[0].label, "Live");

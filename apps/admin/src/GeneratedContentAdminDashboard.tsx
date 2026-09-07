@@ -1,6 +1,8 @@
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
 import { SkyDailySummaryStudio } from "./SkyDailySummaryStudio";
 import { skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
+import { refreshContentPublications } from "../../web/src/services/contentPublications";
+import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
@@ -2719,6 +2721,12 @@ export function GeneratedContentAdminDashboard() {
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
   const [allRowsLoaded, setAllRowsLoaded] = useState(false);
   const [reviewRows, setReviewRows] = useState<AdminReviewRecord[]>([]);
+  const [, setPublicationVersion] = useState(0);
+  useEffect(() => {
+    const unsubscribe = subscribeToContentPublications(() => setPublicationVersion((version) => version + 1));
+    void refreshContentPublications(true);
+    return unsubscribe;
+  }, []);
   const [userRows, setUserRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [facts, setFacts] = useState<AdminContentFact[]>([]);
   const [message, setMessage] = useState("Loading saved content…");
@@ -4571,6 +4579,23 @@ export function GeneratedContentAdminDashboard() {
     } else {
       setMessage("The Daily At-a-Glance write-up was not saved.");
     }
+  }
+
+  async function retireContentEverywhere(action: "retire" | "publish" = "retire") {
+    if (!draft?.id || !draft.updatedAt) return;
+    setIsLoading(true);
+    setEditorSaveError("");
+    try {
+      const result = await adminJsonRequest<{ ok: boolean; publication: unknown }>("/api/admin/content-publication", secret, {
+        method: "POST", body: JSON.stringify({ action, contentKey: draft.contentKey, id: draft.id, expectedUpdatedAt: draft.updatedAt })
+      });
+      if (!result.ok || !validContentPublication(result.publication) || result.publication.content_key !== draft.contentKey
+        || result.publication.state !== (action === "publish" ? "live" : "retired")) throw new Error("Publication change was not confirmed.");
+      installContentPublications([result.publication]);
+      announceContentUpdate({ contentKey: draft.contentKey, published: action === "publish", updatedAt: new Date().toISOString() });
+      setMessage(action === "retire" ? `${draft.contentKey} retired everywhere. Devices apply the retirement when they reconnect.` : `${draft.contentKey} published again.`);
+    } catch (error) { setEditorSaveError(dashboardErrorMessage(error)); }
+    finally { setIsLoading(false); }
   }
 
   async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true) {
@@ -10034,7 +10059,7 @@ export function GeneratedContentAdminDashboard() {
                     ? "New draft"
                     : draftHasUnsavedChanges
                       ? "Unsaved changes"
-                      : "All changes saved"}
+                      : isContentRetired(currentDraft.contentKey) ? "Retired everywhere" : "All changes saved"}
           </span>
           <button
             className={packageCanApproveRevision ? "admin-publish-button" : "admin-primary-button"}
@@ -10079,6 +10104,13 @@ export function GeneratedContentAdminDashboard() {
           {isPackageDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
             <button type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
               Revert to package original
+            </button>
+          )}
+          {currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
+            <button type="button" className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges}
+              onClick={() => void retireContentEverywhere(isContentRetired(currentDraft.contentKey) ? "publish" : "retire")}
+              title={isContentRetired(currentDraft.contentKey) ? "Restore this saved version for readers." : "Retire this content key across Studio, bundled writing, and synced offline copies."}>
+              {isContentRetired(currentDraft.contentKey) ? "Publish again" : "Retire everywhere"}
             </button>
           )}
           {currentDraft.id && (

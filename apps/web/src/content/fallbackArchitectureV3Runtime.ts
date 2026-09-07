@@ -1,3 +1,4 @@
+import { publicationAllowsContent, contentPublicationRecords, subscribeToContentPublications } from "./contentPublicationState";
 import bundledInitialReaderRowsV3 from "./fallbackArchitectureV3/bundled-initial-reader-rows-v3.json";
 import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
 import bundledSkyAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-sky-authored-cards-v3.json";
@@ -452,21 +453,35 @@ function readerEligibleBundle(bundle: FallbackArchitectureV3Bundle): FallbackArc
   };
 }
 
+function withoutRetiredContent(bundle: FallbackArchitectureV3Bundle): FallbackArchitectureV3Bundle {
+  const active = <T extends { contentKey: string }>(rows: T[]) => rows.filter((row) => {
+    const identity = row as T & { publicationRowId?: string; publicationRowUpdatedAt?: string };
+    return publicationAllowsContent(row.contentKey, identity.publicationRowId, identity.publicationRowUpdatedAt);
+  });
+  return {
+    transitLib: { ...bundle.transitLib, authoredCards: active(bundle.transitLib.authoredCards) },
+    templatesFile: { ...bundle.templatesFile, templates: active(bundle.templatesFile.templates) },
+    rowsFile: { ...bundle.rowsFile, hookRows: active(bundle.rowsFile.hookRows ?? []), vocabularyRows: active(bundle.rowsFile.vocabularyRows ?? []) }
+  };
+}
+
+function blockedPublicationKeys(bundle: FallbackArchitectureV3Bundle) {
+  const records = [...bundle.transitLib.authoredCards, ...bundle.templatesFile.templates,
+    ...(bundle.rowsFile.hookRows ?? []), ...(bundle.rowsFile.vocabularyRows ?? [])] as Array<{ contentKey: string; publicationRowId?: string; publicationRowUpdatedAt?: string }>;
+  const available = new Set(records.filter((row) => publicationAllowsContent(row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt)).map((row) => row.contentKey));
+  return contentPublicationRecords().filter((record) => !available.has(record.content_key)).map((record) => record.content_key);
+}
+
 function createAppTransitRenderer(readerBundle: FallbackArchitectureV3Bundle) {
-  return createTransitSynastryRenderer(
-    readerBundle.transitLib,
-    readerBundle.templatesFile,
-    readerBundle.rowsFile
-  );
+  return createTransitSynastryRenderer(readerBundle.transitLib, readerBundle.templatesFile, readerBundle.rowsFile,
+    { blockedContentKeys: blockedPublicationKeys(readerBundle) });
 }
 
 function createAppFallbackRenderer(readerBundle: FallbackArchitectureV3Bundle) {
-  return createFallbackRenderer({
-    templates: readerBundle.templatesFile.templates
-  }, {
+  return createFallbackRenderer(readerBundle.templatesFile, {
     hookRows: readerBundle.rowsFile.hookRows,
     vocabularyRows: readerBundle.rowsFile.vocabularyRows
-  });
+  }, { blockedContentKeys: blockedPublicationKeys(readerBundle) });
 }
 
 export function fallbackArchitectureV3ManifestForBundle(
@@ -530,13 +545,14 @@ let lunationBookFallbackBundlePromise: Promise<boolean> | null = null;
 let skyPlacementFallbackBundlePromise: Promise<boolean> | null = null;
 export let fallbackRendererV3 = createAppFallbackRenderer(initialReaderBundle);
 export let transitSynastryFallbackRendererV3 = createAppTransitRenderer(initialReaderBundle);
-let vocabularyRowsByKey = vocabularyRowsByContentKey(initialReaderBundle.rowsFile);
-let hookRowsByKey = hookRowsByContentKey(initialReaderBundle.rowsFile);
-let transitAuthoredCardsByKey = authoredCardsByContentKey(initialReaderBundle.transitLib);
+let vocabularyRowsByKey = vocabularyRowsByContentKey(withoutRetiredContent(initialReaderBundle).rowsFile);
+let hookRowsByKey = hookRowsByContentKey(withoutRetiredContent(initialReaderBundle).rowsFile);
+let transitAuthoredCardsByKey = authoredCardsByContentKey(withoutRetiredContent(initialReaderBundle).transitLib);
 
 function activateReaderBundle(readerBundle: FallbackArchitectureV3Bundle) {
   fallbackRendererV3 = createAppFallbackRenderer(readerBundle);
   transitSynastryFallbackRendererV3 = createAppTransitRenderer(readerBundle);
+  readerBundle = withoutRetiredContent(readerBundle);
   vocabularyRowsByKey = vocabularyRowsByContentKey(readerBundle.rowsFile);
   hookRowsByKey = hookRowsByContentKey(readerBundle.rowsFile);
   transitAuthoredCardsByKey = authoredCardsByContentKey(readerBundle.transitLib);
@@ -547,6 +563,7 @@ function mergeReaderBundles(
   extension: FallbackArchitectureV3Bundle | null
 ): FallbackArchitectureV3Bundle {
   if (!extension) return base;
+  extension = withoutRetiredContent(extension);
 
   return readerEligibleBundle({
     transitLib: {
@@ -585,9 +602,11 @@ function recomposeReaderBundle() {
   // contain the same key (including exact natal sign + house passages).
   const dashboardCore = mergeReaderBundles(localCoreWithLunationBook, dashboardCoreReaderBundle);
   const core = mergeReaderBundles(dashboardCore, dashboardCompatibilityReaderBundle);
-  const placement = dashboardSkyPlacementReaderBundle ?? localSkyPlacementReaderBundle;
-  activateReaderBundle(mergeReaderBundles(core, placement));
+  const withLocalSky = mergeReaderBundles(core, localSkyPlacementReaderBundle);
+  activateReaderBundle(mergeReaderBundles(withLocalSky, dashboardSkyPlacementReaderBundle));
 }
+
+subscribeToContentPublications(recomposeReaderBundle);
 
 const signRulers: Record<string, string> = {
   aries: "Mars",
@@ -891,14 +910,14 @@ export function isSkyPlacementFallbackArchitectureV3BundleLoaded() {
 }
 
 export async function loadSkyPlacementFallbackArchitectureV3Bundle() {
-  if (loadedSkyV4ReaderRoute && (localSkyPlacementReaderBundle || dashboardSkyPlacementReaderBundle)) {
+  if (loadedSkyV4ReaderRoute && localSkyPlacementReaderBundle) {
     return false;
   }
 
   skyPlacementFallbackBundlePromise ??= import("./fallbackArchitectureV3SkyPlacementBundle")
     .then(async ({ skyPlacementFallbackArchitectureV3Bundle, loadCanonicalSkyV4ReaderRoute }) => {
       loadedSkyV4ReaderRoute = await loadCanonicalSkyV4ReaderRoute();
-      if (localSkyPlacementReaderBundle || dashboardSkyPlacementReaderBundle) {
+      if (localSkyPlacementReaderBundle) {
         return false;
       }
 

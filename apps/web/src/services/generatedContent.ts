@@ -1,3 +1,5 @@
+import { publicationLedgerReady, isContentRetired, installContentPublications, publicationAllowsContent, contentPublication, contentPublicationRecords } from "../content/contentPublicationState";
+import { refreshContentPublications } from "./contentPublications";
 import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey, generatedRowPackageRole } from "../content/generatedContentEligibility";
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
 import { getSupabaseClient } from "./auth";
@@ -13,12 +15,11 @@ export async function loadContentStudioLastKnownGoodRows(): Promise<GeneratedCon
       try {
         const response = await fetch("/content-studio-last-known-good.json", { cache: "no-cache" });
         if (!response.ok) return [];
-        const snapshot = await response.json() as { schema?: unknown; rowCount?: unknown; rows?: unknown };
-        return snapshot.schema === "content-studio-last-known-good-v1"
-          && Array.isArray(snapshot.rows)
-          && snapshot.rowCount === snapshot.rows.length
-          ? snapshot.rows as GeneratedContentRow[]
-          : [];
+        const snapshot = await response.json() as { schema?: unknown; rowCount?: unknown; rows?: unknown; publications?: unknown };
+        if (snapshot.schema !== "content-studio-last-known-good-v1" || !Array.isArray(snapshot.rows)
+          || snapshot.rowCount !== snapshot.rows.length) return [];
+        if (Array.isArray(snapshot.publications)) installContentPublications(snapshot.publications);
+        return snapshot.rows as GeneratedContentRow[];
       } catch {
         return [];
       }
@@ -26,7 +27,7 @@ export async function loadContentStudioLastKnownGoodRows(): Promise<GeneratedCon
   }
   const rows = await contentStudioLastKnownGoodRowsPromise;
   if (!rows.length) contentStudioLastKnownGoodRowsPromise = null;
-  return rows;
+  return rows.filter((row) => !isContentRetired(row.content_key));
 }
 import {
   hasMissingTemplateSlots,
@@ -144,10 +145,9 @@ const fallbackArchitectureV3SkyPlacementBundleCacheSchema = "fallback-architectu
 
 function isSkyPlacementFallbackPartitionKey(contentKey: string) {
   return contentKey.startsWith("fallback-hook/sky-sign-copy/")
-    || (
-      contentKey.startsWith("fallback-hook/sky-placement-")
-      && !contentKey.startsWith("fallback-hook/sky-placement-sign/")
-    );
+    || contentKey.startsWith("fallback-hook/sky-placement-")
+    || contentKey.startsWith("house-horoscope-core/")
+    || contentKey.startsWith("fallback-hook/sky-planet-education/");
 }
 
 function isSkyPlacementDashboardDistributionEligible(row: GeneratedContentRow) {
@@ -621,7 +621,7 @@ export function renderGeneratedContentTemplate(
   content: LiveGeneratedContent | null | undefined,
   slots?: TemplateSlotValues
 ): LiveGeneratedContent | null {
-  if (!content) {
+  if (!content || !publicationAllowsContent(content.contentKey, content.id, content.updatedAt, content.targetDate)) {
     return null;
   }
 
@@ -1007,9 +1007,7 @@ async function fallbackArchitectureV3BundleManifestIfValid(
   loadBundledPartitionManifest: () => Promise<FallbackArchitectureV3PackageManifest>,
   { allowEditorialContentOverrides = false }: { allowEditorialContentOverrides?: boolean } = {}
 ): Promise<FallbackArchitectureV3PackageManifest | null> {
-  if (metadata.packageVersion !== fallbackArchitectureV3BundledManifestSummary.packageVersion) {
-    return null;
-  }
+  if (metadata.packageVersion !== fallbackArchitectureV3BundledManifestSummary.packageVersion) return null;
 
   const manifest = fallbackArchitectureV3ManifestForBundle(bundle, metadata.packageVersion);
   const bundledManifest = await loadBundledPartitionManifest();
@@ -1300,6 +1298,8 @@ function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | nu
 
   return {
     ...record,
+    publicationRowId: row.id,
+    publicationRowUpdatedAt: row.updated_at,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "full_copy",
     ...(recordBody ? { body: recordBody } : {}),
@@ -1322,6 +1322,8 @@ function packageHookRowFromRow(row: GeneratedContentRow): HookRow | null {
 
   return {
     ...record,
+    publicationRowId: row.id,
+    publicationRowUpdatedAt: row.updated_at,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "fallback_hook",
     ...(recordBody ? { body: recordBody } : {}),
@@ -1343,6 +1345,8 @@ function packageVocabRowFromRow(row: GeneratedContentRow): VocabRow | null {
 
   return {
     ...record,
+    publicationRowId: row.id,
+    publicationRowUpdatedAt: row.updated_at,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "vocabulary",
     ...(grammarFrame ? { grammar_frame: grammarFrame } : {}),
@@ -1362,6 +1366,8 @@ function packageTemplateRowFromRow(row: GeneratedContentRow): TemplateRow | null
 
   return {
     ...record,
+    publicationRowId: row.id,
+    publicationRowUpdatedAt: row.updated_at,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "template",
     body,
@@ -1377,6 +1383,7 @@ function packageFallbackArchitectureV3CoreRows(
   rows: GeneratedContentRow[],
   currentCoreManifest: FallbackArchitectureV3PackageManifest
 ): FallbackArchitectureV3Bundle | null {
+  rows = rows.filter((row) => publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date));
   const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {
     const separatorIndex = manifestKey.indexOf(":");
     return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
@@ -1429,6 +1436,7 @@ function packageFallbackArchitectureV3CompatibilityRows(rows: GeneratedContentRo
   const seen = new Set<string>();
   const authoredCards: AuthoredCard[] = [];
   for (const row of sortGeneratedRowsNewestFirst(rows)) {
+    if (!publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date)) continue;
     if (seen.has(row.content_key)) continue;
     seen.add(row.content_key);
     if (!row.provider || !isApprovedFallbackArchitectureV3Row(row, row.provider)) continue;
@@ -1446,6 +1454,7 @@ async function loadContentStudioLastKnownGoodCompatibilityBundle() {
 }
 
 export async function loadFallbackArchitectureV3DashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
+  await refreshContentPublications();
   const supabase = await getSupabaseClient();
   const cached = readCachedFallbackArchitectureV3Bundle();
 
@@ -1521,6 +1530,7 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
 }
 
 export async function loadFallbackArchitectureV3CompatibilityDashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
+  await refreshContentPublications();
   const supabase = await getSupabaseClient();
   if (!supabase) return loadContentStudioLastKnownGoodCompatibilityBundle();
 
@@ -1553,7 +1563,47 @@ export async function loadFallbackArchitectureV3CompatibilityDashboardBundle(): 
 
 }
 
+const skyPublicationCacheKey = "tldrastro:sky-publication-rows:v1";
+
+async function loadPublishedSkyBundle(): Promise<FallbackArchitectureV3Bundle | null> {
+  const manifest = await loadFallbackArchitectureV3BundledSkyPlacementManifest();
+  const keys = new Set(manifest.keys.map((key) => key.slice(key.indexOf(":") + 1)));
+  const eligible = (row: GeneratedContentRow) => Boolean(row && typeof row === "object") && keys.has(row.content_key)
+    && contentPublication(row.content_key)?.state === "live"
+    && publicationAllowsContent(row.content_key, row.id, row.updated_at)
+    && row.status === "LIVE" && row.lane === "serving" && !row.review_state
+    && isReaderServableGeneratedContentRow(row) && isGeneratedContentReaderBoundaryAllowed(row);
+  const packageRows = (rows: GeneratedContentRow[]): FallbackArchitectureV3Bundle | null => {
+    const hookRows = rows.filter(eligible).map(packageHookRowFromRow).filter((row): row is HookRow => Boolean(row));
+    return hookRows.length ? { transitLib: { authoredCards: [] }, templatesFile: { templates: [] }, rowsFile: { hookRows, vocabularyRows: [] } } : null;
+  };
+  let cached: GeneratedContentRow[] = [];
+  try {
+    const value = JSON.parse(window.localStorage.getItem(skyPublicationCacheKey) ?? "[]");
+    if (Array.isArray(value)) cached = value;
+  } catch { /* Keep the canonical publication guard even when storage is unavailable. */ }
+  const fallback = async () => packageRows(cached) ?? packageRows(await loadContentStudioLastKnownGoodRows());
+  const client = await getSupabaseClient();
+  if (!client || typeof navigator !== "undefined" && navigator.onLine === false) return fallback();
+  const ids = contentPublicationRecords().filter((publication) => publication.state === "live" && keys.has(publication.content_key) && publication.row_id).map((publication) => publication.row_id!);
+  const rows: GeneratedContentRow[] = [];
+  for (let offset = 0; offset < ids.length; offset += 200) {
+    const { data, error } = await client.from("generated_interpretations")
+      .select("id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,judge_score,judge_gate,model,updated_at")
+      .in("id", ids.slice(offset, offset + 200)).abortSignal(AbortSignal.timeout(8000)).returns<GeneratedContentRow[]>();
+    if (error || !data) return fallback();
+    rows.push(...data);
+  }
+  const current = rows.filter(eligible);
+  try { window.localStorage.setItem(skyPublicationCacheKey, JSON.stringify(current)); } catch { /* Memory remains guarded. */ }
+  return packageRows(current);
+}
+
 export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
+  await refreshContentPublications();
+  if (publicationLedgerReady() || contentPublicationRecords().some((publication) => isSkyPlacementFallbackPartitionKey(publication.content_key))) {
+    return loadPublishedSkyBundle();
+  }
   const supabase = await getSupabaseClient();
   const cached = await readCachedFallbackArchitectureV3SkyPlacementBundle();
 
@@ -1631,7 +1681,7 @@ export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(): P
     seen.add(row.content_key);
 
     const { contentType, role } = fallbackSystemBucket(row);
-    if (contentType === "source-material" || role !== "fallback_hook") continue;
+    if (contentType === "source-material" || !["fallback_hook", "house_horoscope_core"].includes(role)) continue;
     const hook = packageHookRowFromRow(row);
     if (hook) hookRows.push(hook);
   }
@@ -1744,6 +1794,7 @@ export async function loadLiveGeneratedContentForSurfaces(
   targetDate?: string,
   previewMode: GeneratedContentPreviewMode = readGeneratedContentPreviewMode()
 ) {
+  await refreshContentPublications();
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
@@ -1793,6 +1844,7 @@ export async function loadLiveGeneratedContentForSurfaces(
 }
 
 export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
+  await refreshContentPublications();
   const keys = Array.from(new Set(contentKeys.map((key) => key.trim()).filter(Boolean)));
 
   if (keys.length === 0) {
@@ -1841,6 +1893,7 @@ function generatedContentMapFromRows(
     // Snapshot loading must apply the same serving filter as the live database query.
     if (row.content_key.startsWith("cms/sky-daily-summary/")
       && (row.status !== "LIVE" || row.lane !== "serving" || row.review_state)) continue;
+    if (!publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date)) continue;
     if (!isGeneratedContentReaderBoundaryAllowed(row)) {
       continue;
     }

@@ -1680,6 +1680,7 @@ async function patchGeneratedContentRow(
     method: "PATCH",
     headers: {
       ...adminHeaders(),
+      ...(patch.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "return=representation"
     },
     body: JSON.stringify(patch)
@@ -1721,6 +1722,7 @@ async function upsertGeneratedContentRow(row: Record<string, unknown>) {
     method: "POST",
     headers: {
       ...adminHeaders(),
+      ...(row.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "resolution=ignore-duplicates,return=representation"
     },
     body: JSON.stringify(row)
@@ -2414,6 +2416,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     method: "PATCH",
     headers: {
       ...adminHeaders(),
+      ...(patch.status === "LIVE" && body.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "return=representation"
     },
     body: JSON.stringify(patch)

@@ -1499,7 +1499,7 @@ export async function buildWeeklyHoroscope({
       );
       macro = {
         headline: override?.headline || rendered.headline,
-        body: override?.body || rendered.body
+        body: override?.body ?? rendered.body
       };
     } catch (error) {
       if (!(error instanceof SourceGapError)) throw error;
@@ -1507,6 +1507,8 @@ export async function buildWeeklyHoroscope({
       // personalized weekly path unchanged and never trigger synthesized copy.
     }
   }
+  sections = sections.filter((section) => section.body.trim());
+  if (macro && !macro.body.trim()) macro = undefined;
   const horoscope = composeWeeklyReading(sections);
 
   return {

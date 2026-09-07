@@ -1,10 +1,12 @@
+import { natalPlacementResolverDependencyKeys } from "../../apps/admin/src/natalPlacementSources.js";
+import { publicationLedgerKey, validContentPublication, publicationTimestamp, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 // The generated package bundle is the production renderer used by the reader app.
 // @ts-ignore The generated JavaScript bundle intentionally has no declaration file.
 import { createFallbackRenderer } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { AdminHttpError, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminFetch, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
 
@@ -172,7 +174,7 @@ export function natalPlacementPackageSources(keys: string[]) {
     .filter((row) => requested.has(row.contentKey));
 }
 
-export function renderNatalPlacementPreviewState(input: ReturnType<typeof normalizeNatalPlacementPreviewInput>) {
+export function renderNatalPlacementPreviewState(input: ReturnType<typeof normalizeNatalPlacementPreviewInput>, publications: ContentPublication[] = []) {
   // Build from the generated reader projection, not the authoring source files.
   // The web app first installs this approved-only eager + deferred package and
   // only then layers eligible LIVE dashboard rows over it. Reconstructing from
@@ -183,7 +185,15 @@ export function renderNatalPlacementPreviewState(input: ReturnType<typeof normal
   const hooks = new Map(base.hookRows.map((row) => [row.contentKey, row]));
   const vocabulary = new Map(base.vocabularyRows.map((row) => [row.contentKey, row]));
   const templates = new Map(base.templates.map((row) => [row.contentKey, row]));
-  const productionOverrides = productionNatalPlacementPreviewOverrides(input.overrides);
+  const byKey = new Map(publications.map((publication) => [publication.content_key, publication]));
+  const productionOverrides = productionNatalPlacementPreviewOverrides(input.overrides.filter((candidate) => {
+    const publication = byKey.get(candidate.packageRow.contentKey);
+    return !publication || publication.state === "live" && publication.row_id === candidate.id
+      && publication.row_updated_at && candidate.updatedAt
+      && publicationTimestamp(publication.row_updated_at) === publicationTimestamp(candidate.updatedAt);
+  }));
+  const applied = new Set(productionOverrides.appliedOverrideKeys);
+  const blockedContentKeys = publications.filter((publication) => publication.state === "retired" || !applied.has(publication.content_key)).map((publication) => publication.content_key);
 
   productionOverrides.appliedRows.forEach((row) => {
     if (row.contentKey.startsWith("fallback-template/")) templates.set(row.contentKey, row);
@@ -193,7 +203,8 @@ export function renderNatalPlacementPreviewState(input: ReturnType<typeof normal
 
   const renderer = createFallbackRenderer(
     { templates: [...templates.values()] },
-    { hookRows: [...hooks.values()], vocabularyRows: [...vocabulary.values()] }
+    { hookRows: [...hooks.values()], vocabularyRows: [...vocabulary.values()] },
+    { blockedContentKeys }
   );
   const rendered = renderer.renderNatalPlacement({
     ...(input.house ? { house: Number(input.house) } : {}),
@@ -224,7 +235,40 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
   try {
-    const state = renderNatalPlacementPreviewState(normalizeNatalPlacementPreviewInput(await readAdminJsonBody<unknown>(req, 512_000)));
+    const input = normalizeNatalPlacementPreviewInput(await readAdminJsonBody<unknown>(req, 512_000));
+    const base = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!base || !key) throw new AdminHttpError(503, "Publication status is unavailable. The reader preview cannot be verified.");
+    const dependencyKeys = natalPlacementResolverDependencyKeys(
+      input.planet as Parameters<typeof natalPlacementResolverDependencyKeys>[0],
+      input.sign as Parameters<typeof natalPlacementResolverDependencyKeys>[1],
+      input.house as Parameters<typeof natalPlacementResolverDependencyKeys>[2], input.motion
+    );
+    const headers = { apikey: key, authorization: `Bearer ${key}` };
+    const response = await adminFetch(`${base}/rest/v1/content_publications?${new URLSearchParams({ select: "content_key,state,revision,row_id,row_updated_at,updated_at", content_key: `in.(${[...dependencyKeys, publicationLedgerKey].map((key) => `"${key}"`).join(",")})` })}`, { headers });
+    const publications: unknown = await response.json();
+    if (!response.ok || !Array.isArray(publications) || !publications.every(validContentPublication)) throw new AdminHttpError(503, "Publication status could not be verified.");
+    if (publications.some((publication) => publication.content_key === publicationLedgerKey)) input.overrides = [];
+    const publishedIds = publications.filter((publication) => publication.state === "live" && publication.row_id).map((publication) => publication.row_id);
+    if (publishedIds.length) {
+      const sourceResponse = await adminFetch(`${base}/rest/v1/generated_interpretations?${new URLSearchParams({ select: "id,content_key,status,lane,review_state,provider,updated_at,headline,body,sections", id: `in.(${publishedIds.join(",")})` })}`, { headers });
+      const sources = await sourceResponse.json();
+      if (!sourceResponse.ok || !Array.isArray(sources)) throw new AdminHttpError(503, "The current published sources could not be loaded.");
+      const canonicalKeys = new Set(publications.map((publication) => publication.content_key));
+      input.overrides = input.overrides.filter((candidate) => !canonicalKeys.has(candidate.packageRow.contentKey));
+      for (const source of sources) {
+        const sections = source.sections ?? {};
+        const record = sections.packageRecord ?? {};
+        const candidate = normalizeOverrideCandidate({
+          id: source.id, status: source.review_state ? "DRAFT" : source.status, lane: source.lane, provider: source.provider, updatedAt: source.updated_at,
+          packageRow: { ...record, contentKey: source.content_key, headline: record.headline ?? source.headline,
+            body: sections.body ?? record.body ?? source.body,
+            body_you: sections.body_you ?? record.body_you, body_they: sections.body_they ?? record.body_they }
+        });
+        if (candidate) input.overrides.push(candidate);
+      }
+    }
+    const state = renderNatalPlacementPreviewState(input, publications);
     sendAdminJson(res, 200, { ok: true, ...state });
   } catch (error) {
     const status = error instanceof AdminHttpError ? error.statusCode : 400;
