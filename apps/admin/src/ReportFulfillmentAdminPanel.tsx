@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
+import { GeneratedReportDraftReview } from "./GeneratedReportDraftReview";
 import { RefreshCw } from "lucide-react";
 
 type AdminResponse = {
@@ -197,6 +198,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
 
   return (
     <section className="admin-template-page">
+      <GeneratedReportDraftReview secret={secret} />
       <section className="admin-content-toolbar">
         <div><p className="admin-eyebrow">Purchased reports</p><h2>Fulfillment</h2><p>Queue health, gate outcomes, delivery time, spend, audit sampling, and terminal exceptions.</p></div>
         <div className="admin-toolbar-actions">
