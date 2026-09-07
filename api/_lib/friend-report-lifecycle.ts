@@ -57,9 +57,7 @@ export type FriendReportCheckoutIntent = {
 };
 
 export function friendReportBillingMode(): FriendReportBillingMode {
-  const configured = process.env.FRIEND_REPORT_BILLING_MODE?.trim()
-    || process.env.REPORT_BILLING_MODE?.trim()
-    || "free_test";
+  const configured = process.env.FRIEND_REPORT_BILLING_MODE?.trim() || "free_test";
   if (configured !== "free_test" && configured !== "stripe") {
     throw new Error(`Unsupported Friends report billing mode '${configured}'.`);
   }
