@@ -26,6 +26,7 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) {
     expect(styles[1].font).toEqual(styles[0].font);
     expect(styles[1].size).toEqual(styles[0].size);
     expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain('underline');
+    expect(await summary.locator("a").evaluateAll(links => links.every(el => getComputedStyle(el).fontWeight === "400"))).toBe(true);
     expect(errors).toEqual([]);
     await page.screenshot({ path: `test-results/sky-paragraphs-${theme}-${width}.png`, fullPage: false });
   });

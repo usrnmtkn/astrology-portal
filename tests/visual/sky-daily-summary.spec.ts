@@ -95,7 +95,7 @@ for (const theme of ["light", "dark"] as const) {
         await expect(link).toContainText(`${planet} Rx in ${sign} at `);
         await expect(link).toHaveAttribute("href", `#sky/placement/${planet.toLowerCase()}/${sign.toLowerCase()}`);
         expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain("underline");
-        expect(await link.evaluate(el => getComputedStyle(el).fontWeight)).toBe("600");
+        expect(await link.evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
         await link.click();
         await expect(page.getByRole("heading", { name: new RegExp(`${planet}.*${sign}`, "i") }).first()).toBeVisible({ timeout: 15_000 });
         await page.goto("/#sky");
@@ -142,7 +142,7 @@ for (const [date, label] of [["2026-08-10T16:00:00Z", "Solar Eclipse"], ["2026-0
 }
 
 for (const width of [390, 1440]) {
-  test(`placements without fuller summaries bold only linked facts at ${width}px`, async ({ page }) => {
+  test(`placements without fuller summaries underline linked facts without bold at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 });
     await page.clock.setFixedTime(new Date("2026-10-10T16:00:00Z"));
     await page.goto("/#sky");
@@ -151,7 +151,7 @@ for (const width of [390, 1440]) {
     await expect(summary).toContainText(/^The Sun is in Libra at \d+°, while the Moon moves through \w+ at \d+°\./);
     await expect(summary.locator("strong")).toHaveCount(0);
     expect(await summary.locator("span").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
-    expect(await summary.getByRole("link").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("600");
+    expect(await summary.getByRole("link").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
     await expect(summary.getByRole("link", { name: "Read about Sun in Libra" })).toBeVisible();
     await expect(page.locator(".retrograde-section")).toHaveCount(0);
     await expect(summary).toContainText("Venus");

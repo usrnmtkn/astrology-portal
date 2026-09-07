@@ -1447,10 +1447,7 @@
 }
 
 .sky-daily-summary__link {
-  font-weight: var(--weight-semibold);
-}
-
-.sky-daily-summary__link {
+  font-weight: var(--weight-regular);
   display: inline;
   padding: 0;
   border: 0;
