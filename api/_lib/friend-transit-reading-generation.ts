@@ -14,6 +14,7 @@ import {
 } from "./transit-reading-generation.js";
 import { judgeGeneratedTransitReading } from "./transit-reading-judge.js";
 import { loadApprovedGeneratedReportOwnerEvidence } from "./transit-reading-owner-evidence.js";
+import type { TransitReadingProductionInput } from "./transit-reading-production.js";
 import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
 
 export const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA = {
@@ -101,19 +102,33 @@ function validateGeneratedReading(
   return { passed: true };
 }
 
-async function generateReading(brief: FriendTransitReadingBrief, headline: string) {
+function productionInputForLocked(locked: ReturnType<typeof friendTransitReadingRequestLock>): TransitReadingProductionInput {
+  return {
+    contentKey: locked.contentKey,
+    surface: locked.surface,
+    mode: locked.mode,
+    eventType: locked.eventType,
+    facts: locked.facts,
+    knowledgeIds: locked.knowledgeIds,
+    sourceSnapshot: locked.sourceSnapshot
+  };
+}
+
+async function generateReading(locked: ReturnType<typeof friendTransitReadingRequestLock>) {
   const ownerEvidence = await loadApprovedGeneratedReportOwnerEvidence({
     surface: "friends",
     reportKind: "friend_transit_reading"
   });
+  const productionInput = productionInputForLocked(locked);
   return generateGovernedTransitReading({
-    brief,
-    headline,
+    brief: locked.brief,
+    headline: locked.headline,
     contentType: "friend_transit_reading",
     surface: "friends",
     family: "friends-transit",
     schemaName: "tldr_astro_friend_transit_reading",
     toolDescription: "Return the short TLDR Astro Friends transit reading.",
+    productionInput,
     promptForAttempt,
     validate: validateGeneratedReading,
     compactBriefForRecovery,
@@ -123,6 +138,7 @@ async function generateReading(brief: FriendTransitReadingBrief, headline: strin
       reportKind: "friend_transit_reading",
       brief: governedBrief,
       draft,
+      productionInput,
       ownerEvidence: approvedEvidence
     }),
     minSummaryLength: 40,
@@ -206,7 +222,7 @@ export async function generateFriendTransitReadingForUser(input: {
     return { reused: true, contentKey: locked.contentKey, saved: [existing], generated: null };
   }
 
-  const { draft, provider, judgeAudit } = await generateReading(locked.brief, locked.headline);
+  const { draft, provider, judgeAudit } = await generateReading(locked);
   const saved = await saveReading({
     userId: input.userId,
     subjectId: input.subjectId,
