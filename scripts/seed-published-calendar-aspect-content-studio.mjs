@@ -10,6 +10,8 @@ const transitRoot = path.join(repoRoot, "packages/astro-knowledge/data/transits"
 const apply = process.argv.includes("--apply");
 const verifyRemote = process.argv.includes("--verify-remote");
 const packageVersion = "EXACT-SKY-ASPECT-CONTENT-STUDIO-2026-09-01";
+const defaultSupabaseUrl = "https://hdmdufozrgrajkfhydit.supabase.co";
+const defaultSupabasePublishableKey = "sb_publishable_iX90KdzcQzw8a8OydBHHXA_COnEMcns";
 
 function text(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -53,7 +55,7 @@ function requireEnv(name) {
 }
 
 function supabaseUrl() {
-  return String(process.env.SUPABASE_URL ?? requireEnv("VITE_SUPABASE_URL")).replace(/\/$/u, "");
+  return String(process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? defaultSupabaseUrl).replace(/\/$/u, "");
 }
 
 function adminHeaders(extra = {}) {
@@ -61,14 +63,17 @@ function adminHeaders(extra = {}) {
   return { apikey: key, authorization: `Bearer ${key}`, "content-type": "application/json", ...extra };
 }
 
-function verificationHeaders(extra = {}) {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+function verificationKey() {
+  return process.env.SUPABASE_SERVICE_ROLE_KEY
+    ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY
     ?? process.env.SUPABASE_PUBLISHABLE_KEY
     ?? process.env.VITE_SUPABASE_ANON_KEY
-    ?? "";
-  if (!key) {
-    throw new Error("Remote verification requires SUPABASE_SERVICE_ROLE_KEY, SUPABASE_PUBLISHABLE_KEY, or VITE_SUPABASE_ANON_KEY.");
-  }
+    ?? process.env.SUPABASE_ANON_KEY
+    ?? defaultSupabasePublishableKey;
+}
+
+function verificationHeaders(extra = {}) {
+  const key = verificationKey();
   const headers = { apikey: key, "content-type": "application/json", ...extra };
   if (!key.startsWith("sb_publishable_")) headers.authorization = `Bearer ${key}`;
   return headers;
@@ -76,9 +81,9 @@ function verificationHeaders(extra = {}) {
 
 function verificationAuthMode() {
   if (process.env.SUPABASE_SERVICE_ROLE_KEY) return "service-role";
-  if (process.env.SUPABASE_PUBLISHABLE_KEY) return "publishable";
-  if (process.env.VITE_SUPABASE_ANON_KEY) return "anon";
-  return "none";
+  if (process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY) return "publishable-env";
+  if (process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY) return "anon-env";
+  return "publishable-default";
 }
 
 function canonicalBodies(first, second) {
