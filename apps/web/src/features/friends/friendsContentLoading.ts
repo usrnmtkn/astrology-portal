@@ -65,18 +65,8 @@ export function shouldLoadRelationshipFallbackContent({
 
 export function shouldStartRelationshipFallbackEnhancement({
   mode,
-  friendRelationshipContentRequests,
-  currentSkyReady,
-  profileNatalReady
-}: Pick<FriendsContentLoadingState, "mode" | "friendRelationshipContentRequests"> & {
-  currentSkyReady: boolean;
-  profileNatalReady: boolean;
-}) {
-  if (!shouldLoadRelationshipFallbackContent({ mode, friendRelationshipContentRequests })) {
-    return false;
-  }
-
-  return [...friendRelationshipContentRequests].some((request) => (
-    request === "transits" ? currentSkyReady : profileNatalReady
-  ));
+  friendRelationshipContentRequests
+}: Pick<FriendsContentLoadingState, "mode" | "friendRelationshipContentRequests">) {
+  // Explicit chart intent can fetch content while calculations run independently.
+  return shouldLoadRelationshipFallbackContent({ mode, friendRelationshipContentRequests });
 }

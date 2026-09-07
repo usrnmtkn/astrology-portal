@@ -657,7 +657,19 @@ async function hasRemoteUser(userId: string) {
   return user?.id === userId;
 }
 
-async function listRemoteManualCharts(userId: string): Promise<ManualChart[]> {
+const remoteManualChartReads = new Map<string, Promise<ManualChart[]>>();
+
+function listRemoteManualCharts(userId: string): Promise<ManualChart[]> {
+  const existing = remoteManualChartReads.get(userId);
+  if (existing) return existing;
+  const request = fetchRemoteManualCharts(userId).finally(() => {
+    if (remoteManualChartReads.get(userId) === request) remoteManualChartReads.delete(userId);
+  });
+  remoteManualChartReads.set(userId, request);
+  return request;
+}
+
+async function fetchRemoteManualCharts(userId: string): Promise<ManualChart[]> {
   const client = await getSupabaseClient();
 
   if (!client) {

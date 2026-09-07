@@ -250,8 +250,8 @@ assert.equal(
     currentSkyReady: false,
     profileNatalReady: false
   }),
-  false,
-  "A relationship fallback package must not block the active chart calculation's first paint."
+  true,
+  "Explicit relationship intent must fetch its package independently of chart calculation readiness."
 );
 assert.equal(
   shouldStartRelationshipFallbackEnhancement({
