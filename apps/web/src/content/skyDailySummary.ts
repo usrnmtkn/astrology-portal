@@ -1,23 +1,26 @@
 import clauses from "./skyDailySummaryClauses.json";
 import defaultTiming from "./skyDailySummaryTiming.json";
-import { skyDailySummaryFields, skySummaryTemplateErrors } from "./skyDailySummaryCatalog";
+import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "./skyDailySummaryCatalog";
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
 
 function savedCopy(content: CmsGeneratedContentMap | undefined, key: string, fallback: string) {
   // The reader loader filters LIVE, serving, review-clear rows before normalizing this map.
   const row = content?.get(key);
   if (!row || (row.status && row.status !== "LIVE") || !row.body.trim() || skySummaryTemplateErrors(key, row.body).length) return fallback;
-  return row.body.trim();
+  return currentSkySummaryWording(key, row.body.trim());
 }
 
 // Use the owner-selected fuller clauses when available; otherwise render linked facts.
-export type SummaryPart = { text: string; emphasis?: boolean; highlight?: boolean; action?: "lunation" | "sun" | "moon" | "retrograde"; planet?: string; sourceKey?: string };
+export type SummaryPart = { text: string; emphasis?: boolean; highlight?: boolean; action?: "lunation" | "sun" | "moon" | "retrograde" | "event"; eventId?: string; planet?: string; sourceKey?: string };
 export type SummaryPlacement = { sign: string; degree?: number };
 export type SkyDailySummaryFacts = {
   sun?: SummaryPlacement;
   moon?: SummaryPlacement;
   moonIsVoid: boolean;
   retrogradePlanets?: string[];
+  retrogradePlacements?: Array<SummaryPlacement & { planet: string }>;
+  exactAspects?: Array<{ id: string; label: string }>;
+  ingresses?: Array<{ id: string; label: string; tldr?: string }>;
   voidRemainingLabel?: string;
   event?: { name: string; sign: string; countdown: string; eclipseType?: "solar" | "lunar" };
 };
@@ -35,9 +38,8 @@ function placementParts(body: "sun" | "moon", placement?: SummaryPlacement, cont
   const clause = fullerClause(body, placement.sign, content);
   return [
     { text: continuation ? "while the " : "The " },
-    { text: body === "sun" ? "Sun" : "Moon", emphasis: true, action: body },
-    { text: `${body === "sun" ? " is in " : " moves through "}${placement.sign}${degreeLabel}` },
-    { text: clause ? `, ${clause}.` : ".", sourceKey: clause ? `cms/sky-daily-summary/${body}/${placement.sign.toLowerCase()}` : undefined }
+    { text: `${body === "sun" ? "Sun" : "Moon"}${clause ? " in " : body === "sun" ? " is in " : " moves through "}${placement.sign}${degreeLabel}`, emphasis: true, action: body },
+    { text: clause ? ` ${clause}.` : ".", sourceKey: clause ? `cms/sky-daily-summary/${body}/${placement.sign.toLowerCase()}` : undefined }
   ];
 }
 
@@ -55,8 +57,8 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     parts.push({ text: " " });
   }
   parts.push(...moon);
-  if (facts.retrogradePlanets) {
-    const planets = [...new Set(facts.retrogradePlanets.map(name => name.trim()).filter(Boolean))];
+  if (facts.retrogradePlacements?.length || facts.retrogradePlanets?.length) {
+    const planets = [...new Set((facts.retrogradePlacements?.map(p => p.planet) ?? facts.retrogradePlanets ?? []).map(name => name.trim()).filter(Boolean))];
     if (parts.length) parts.push({ text: " " });
     const count = planets.length;
     const countWords = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
@@ -73,7 +75,9 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       parts[parts.length - 1].text = parts[parts.length - 1].text.trimEnd() + " ";
       planets.forEach((planet, index) => {
         if (index) parts.push({ text: index === count - 1 ? count === 2 ? " and " : ", and " : ", " });
-        parts.push({ text: `${planet} Rx`, planet, action: "retrograde", emphasis: true });
+        const placement = facts.retrogradePlacements?.find(p => p.planet === planet);
+        const degree = placement?.degree;
+        parts.push({ text: `${planet} Rx${placement ? ` in ${placement.sign}${typeof degree === "number" && Number.isFinite(degree) && degree >= 0 && degree < 30 ? ` at ${Math.floor(degree)}°` : ""}` : ""}`, planet, action: "retrograde", emphasis: true });
       });
       parts.push({ text: "." });
     }
@@ -84,6 +88,19 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, count) => `${count} ${count === "1" ? "hour" : "hours"}`);
     parts.push({ text: remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming, highlight: true });
   }
+  if (facts.exactAspects?.length) {
+    if (parts.length) parts.push({ text: " " });
+    facts.exactAspects.forEach((aspect, index, all) => {
+      if (index) parts.push({ text: index === all.length - 1 ? all.length === 2 ? " and " : ", and " : ", " });
+      parts.push({ text: aspect.label, action: "event", eventId: aspect.id, emphasis: true });
+    });
+    parts.push({ text: facts.exactAspects.length === 1 ? " is exact today." : " are exact today." });
+  }
+  for (const ingress of facts.ingresses ?? []) {
+    if (parts.length) parts.push({ text: " " });
+    parts.push({ text: ingress.label, action: "event", eventId: ingress.id, emphasis: true }, { text: " today." });
+    if (ingress.tldr) parts.push({ text: ` ${ingress.tldr}` });
+  }
   if (facts.event) {
     const event = {
       ...facts.event,
@@ -91,13 +108,9 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
         : facts.event.eclipseType === "lunar" ? "Lunar Eclipse" : facts.event.name
     };
     if (parts.length) parts.push({ text: " " });
-    const [prefix, suffix] = timing.lunation.split("{name}");
-    parts.push(
-      { text: prefix.replace(/\{(sign|countdown)\}/gu, (_, slot: "sign" | "countdown") => event[slot]) },
-      { text: event.name, emphasis: true, action: "lunation" },
-      { text: suffix.replace(/\{(sign|countdown)\}/gu, (_, slot: "sign" | "countdown") => event[slot]) }
-    );
-    if (facts.event.name === "Full Moon") parts.push({ text: ` ${timing.fullMoonMeaning}` });
+    const template = timing.lunation.includes("{name} in {sign}") ? timing.lunation : defaultTiming.lunation;
+    const [prefix, suffix] = template.split("{name} in {sign}");
+    parts.push({ text: prefix.replace("{countdown}", event.countdown) }, { text: `${event.name} in ${event.sign}`, emphasis: true, action: "lunation" }, { text: suffix.replace("{countdown}", event.countdown) });
   }
   return parts;
 }

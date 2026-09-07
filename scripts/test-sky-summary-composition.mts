@@ -5,6 +5,8 @@ import assert from "node:assert/strict";
 import { buildSkySummaryComposition } from "../apps/admin/src/skySummaryComposition.ts";
 import { skyDailySummaryParts } from "../apps/web/src/content/skyDailySummary.ts";
 import { skySummarySigns } from "../apps/web/src/content/skyDailySummaryCatalog.ts";
+import { skyIngressBodies, skyIngressSummaryFields, skySummaryTemplateErrors } from "../apps/web/src/content/skyDailySummaryCatalog.ts";
+import { publishedIngressTldr } from "../apps/admin/src/skyIngressTldrSources.ts";
 for (const sun of skySummarySigns) for (const moon of skySummarySigns) {
   const preview = buildSkySummaryComposition(sun, moon, [], false);
   assert.deepEqual(preview.parts, skyDailySummaryParts({ sun: { sign: sun }, moon: { sign: moon }, moonIsVoid: false }));
@@ -36,7 +38,22 @@ for (const row of supplied.rows) {
 }
 assert.equal(supplied.provenance.promotionAuthorized, false);
 
-const revised = supplied.rows.find(row => row.key === "cms/sky-daily-summary/sun/virgo")!.body;
+const revised = importedSkySummary("cms/sky-daily-summary/sun/virgo")!;
 const revisedPreview = buildSkySummaryComposition("Virgo", "Cancer", [], true);
-assert.ok(revisedPreview.parts.some(part => part.text === `, ${revised},`));
-assert.ok(revisedPreview.parts.map(part => part.text).join("").startsWith(`The Sun is in Virgo, ${revised}, while the Moon moves through Cancer,`));
+assert.ok(revisedPreview.parts.some(part => part.text === ` ${revised},`));
+assert.ok(revisedPreview.parts.map(part => part.text).join("").startsWith(`The Sun in Virgo ${revised}, while the Moon in Cancer`));
+
+assert.equal(skyIngressSummaryFields.length, skyIngressBodies.length * 12);
+for (const field of skyIngressSummaryFields) {
+  assert.equal(field.body, "");
+  assert.deepEqual(skySummaryTemplateErrors(field.key, "An existing short passage is available here."), []);
+}
+assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/ingress/mercury/libra", "Unsupported {sign}").length);
+const ingress = { content_key: "sky.ingress.mercury.libra", summary: "An existing short passage is available here.", body: "A complete passage remains available when readers open the article.", status: "LIVE", lane: "serving", review_state: null };
+assert.equal(publishedIngressTldr([ingress], "Mercury", "Libra"), ingress);
+assert.equal(publishedIngressTldr([{ ...ingress, summary: "" }], "Mercury", "Libra"), undefined);
+assert.equal(publishedIngressTldr([{ ...ingress, status: "DRAFT" }], "Mercury", "Libra"), undefined);
+assert.equal(publishedIngressTldr([{ ...ingress, review_state: "EDITORIAL_REVIEW_REQUIRED" }], "Mercury", "Libra"), undefined);
+assert.equal(publishedIngressTldr([ingress], "Mercury", "Virgo"), undefined);
+assert.equal(publishedIngressTldr([{ ...ingress, content_key: "sky.ingress.mercury.libra.2026-09-10" }], "Mercury", "Libra"), undefined);
+assert.ok(publishedIngressTldr([{ ...ingress, content_key: "sky.ingress.north_node.libra" }], "North Node", "Libra"));
