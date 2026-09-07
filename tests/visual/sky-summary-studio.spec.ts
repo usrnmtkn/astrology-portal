@@ -54,7 +54,9 @@ for (const width of [390, 1440]) {
       expect(await map.getByRole("heading", { name: "Sun and Moon together" }).evaluate(typeStyle)).toEqual(summaryHeadingStyle);
       const sourceLink = map.getByRole("link", { name: "Edit Sun in Virgo summary", exact: true });
       expect(await sourceLink.evaluate(el => getComputedStyle(el).display)).toBe("inline");
-      expect(await preview.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+      await page.evaluate(() => document.fonts.ready);
+      const previewWidth = await preview.evaluate(el => ({ scroll: el.scrollWidth, client: el.clientWidth }));
+      expect(previewWidth.scroll, JSON.stringify(previewWidth)).toBeLessThanOrEqual(previewWidth.client);
       await expect(preview).toHaveText("The Sun is in Virgo, turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing, while the Moon moves through Cancer, making home, care, and who checked in matter more than usual.");
       await map.getByLabel("Composition Moon sign").selectOption("Leo");
       await expect(preview).toContainText("punishing, while the Moon moves through Leo, making appreciation land harder");

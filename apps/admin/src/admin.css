@@ -9887,3 +9887,8 @@ body,
 .admin-dashboard .admin-sky-summary-composition span.variable-fact {
   cursor: default;
 }
+
+/* Summary links use accessible labels and do not have the generic variable tooltip. */
+.admin-dashboard .admin-sky-summary-composition .admin-composition-variable::after {
+  content: none;
+}

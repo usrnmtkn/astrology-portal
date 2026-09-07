@@ -69,6 +69,9 @@ jobs:
       - name: Verify startup performance contracts
         run: npm run test:performance-contracts
 
+      - name: Run visual regression and smoke screens
+        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
+
       - name: Verify daily Sky summary composition
         run: npm run test:sky-daily-summary
 
@@ -85,9 +88,6 @@ jobs:
 
       - name: Run Friends loading performance matrix
         run: npm run qa:friends-loading-matrix
-
-      - name: Run visual regression and smoke screens
-        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
 
       - name: Upload visual smoke artifacts
         if: always()
