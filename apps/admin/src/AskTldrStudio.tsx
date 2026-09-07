@@ -51,6 +51,14 @@ type TestChartDraft = {
   longitude: string;
 };
 
+type OwnerFeedbackState = {
+  status: string;
+  guidance: string;
+  pillarId: string | null;
+  approvedAt: string | null;
+  revokedAt: string | null;
+} | null;
+
 type AskHistory = {
   id: string;
   question: string;
@@ -66,6 +74,7 @@ type AskHistory = {
   chartMode: string;
   chartLabel: string | null;
   chartFingerprint: string | null;
+  ownerFeedback: OwnerFeedbackState;
   diagnostics: Record<string, unknown>;
 };
 
@@ -80,6 +89,7 @@ type AskPayload = {
     pillarCount: number;
     questionCount: number;
   };
+  modelTransport: { provider: string; ready: boolean; label: string };
   storage: { available: boolean; error: string | null };
   chart: { ready: true; label: string } | { ready: false; reason: string };
   pillars: AskPillar[];
@@ -110,6 +120,7 @@ type PreviewResponse = {
     evidence?: EvidenceItem[];
     relevanceReceiptSha256?: string;
     voiceReceiptSha256?: string;
+    approvedOwnerCorrections?: number;
   };
   preview: null | {
     draftId: string | null;
@@ -119,7 +130,8 @@ type PreviewResponse = {
     judge: Record<string, unknown> | null;
     releaseStatus: string;
     blockers: string[];
-    calls: Array<{ role: string; provider: string | null; model: string | null }>;
+    revision: { attempted?: boolean; reason?: string; trigger?: string } | null;
+    calls: Array<{ role: string; stage?: string; provider: string | null; model: string | null }>;
     classifier: unknown;
   };
 };
@@ -308,6 +320,10 @@ export default function AskTldrStudio() {
       setError(chartMode === "test" ? "Complete the test chart birth time, time zone, location, latitude, and longitude first." : chartReason || "Your owner chart is not available.");
       return;
     }
+    if (!payload?.modelTransport.ready) {
+      setError("Direct OpenAI is not available on this deployment. Redeploy after enabling OPENAI_API_KEY for this environment.");
+      return;
+    }
     setGenerating(true);
     setError("");
     setPreview(null);
@@ -379,6 +395,28 @@ export default function AskTldrStudio() {
     }
   }
 
+  async function setFutureFeedback(row: AskHistory, action: "approve_feedback" | "revoke_feedback") {
+    if (!credential) return;
+    const note = reviewNotes[row.id]?.trim() ?? "";
+    if (action === "approve_feedback" && note.length < 12) {
+      setError("Write the reusable lesson in Owner notes before using it in future answers.");
+      return;
+    }
+    setReviewingId(row.id);
+    setError("");
+    try {
+      await request(credential, {
+        method: "POST",
+        body: JSON.stringify({ action, previewId: row.id, reviewerNotes: note })
+      });
+      await loadStudio(credential);
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Owner feedback could not be updated.");
+    } finally {
+      setReviewingId("");
+    }
+  }
+
   if (!payload && (bootstrapping || loading)) {
     return <main className="admin-dashboard"><section className="admin-main" style={{ padding: 28 }}><h1>Loading Ask TLDR…</h1></section></main>;
   }
@@ -417,9 +455,11 @@ export default function AskTldrStudio() {
           <span>Promotion: <strong>{payload.governance.promotionAuthorized ? "authorized" : "not authorized"}</strong></span>
           <span>{payload.governance.questionCount} questions · {payload.governance.pillarCount} pillars</span>
           <span>Owner chart: <strong>{payload.chart.ready ? payload.chart.label : "not available"}</strong></span>
+          <span>Model: <strong>{payload.modelTransport.label}</strong></span>
         </section>
 
         {!payload.storage.available && <p role="alert" style={cardStyle}>Draft storage unavailable: {payload.storage.error}</p>}
+        {!payload.modelTransport.ready && <p role="alert" style={cardStyle}><CircleAlert size={17} aria-hidden="true" /> Direct OpenAI is not configured on this deployment. Enable OPENAI_API_KEY for this environment and redeploy.</p>}
         {chartMode === "owner" && !payload.chart.ready && <p role="alert" style={cardStyle}><CircleAlert size={17} aria-hidden="true" /> {chartReason}</p>}
         {error && <p role="alert" style={cardStyle}>{error}</p>}
 
@@ -486,10 +526,10 @@ export default function AskTldrStudio() {
                 </label>
               )}
               <p style={mutedStyle}>{selectedPillar?.description}</p>
-              <button type="button" className="admin-create-button" onClick={() => void generatePreview()} disabled={generating || !selectedChartReady || !payload.storage.available || (useFreeText ? !freeText.trim() : !selectedQuestion)}>
+              <button type="button" className="admin-create-button" onClick={() => void generatePreview()} disabled={generating || !selectedChartReady || !payload.storage.available || !payload.modelTransport.ready || (useFreeText ? !freeText.trim() : !selectedQuestion)}>
                 <Sparkles size={16} aria-hidden="true" /> {generating ? "Generating governed preview…" : "Generate owner preview"}
               </button>
-              <p style={{ ...mutedStyle, fontSize: 13 }}>Evergreen: 2 model calls. Free text: 3 model calls maximum. Public runtime remains disabled.</p>
+              <p style={{ ...mutedStyle, fontSize: 13 }}>Evergreen: 2 calls when the first draft passes; up to 4 after one judge-requested rewrite. Free text adds one classifier call, for a maximum of 5. Public runtime remains disabled.</p>
             </section>
 
             <section style={{ ...cardStyle, minHeight: 340 }} aria-live="polite">
@@ -500,6 +540,7 @@ export default function AskTldrStudio() {
                   <p className="admin-eyebrow">Reader-facing preview · {preview.chart.ready ? preview.chart.label : chartMode}</p>
                   <h2>{preview.preview.questionText}</h2>
                   <div style={{ fontSize: 18, lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{preview.preview.answer}</div>
+                  {preview.preview.revision?.attempted && <p><strong>Rewritten once after the first judge block.</strong> The answer above is the corrected draft and the displayed judge result is the final re-judge.</p>}
                   <p>Fact lock: <strong>{preview.preview.factLock.passed ? "passed" : "blocked"}</strong> · Judge: <strong>{preview.preview.releaseStatus}</strong></p>
                   {preview.preview.blockers.length > 0 && <p role="alert">Release blockers: {preview.preview.blockers.join(", ")}</p>}
                   <details>
@@ -515,9 +556,9 @@ export default function AskTldrStudio() {
                         ].join(", ") || "governed bridge"}</p>
                       </div>
                     ))}
-                    <small style={mutedStyle}>Relevance {compactHash(preview.preparation.relevanceReceiptSha256)} · voice {compactHash(preview.preparation.voiceReceiptSha256)}</small>
+                    <small style={mutedStyle}>Relevance {compactHash(preview.preparation.relevanceReceiptSha256)} · voice {compactHash(preview.preparation.voiceReceiptSha256)} · approved owner feedback used: {preview.preparation.approvedOwnerCorrections ?? 0}</small>
                   </details>
-                  <details><summary>Model calls and judge detail</summary><pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{JSON.stringify({ calls: preview.preview.calls, judge: preview.preview.judge, classifier: preview.preview.classifier }, null, 2)}</pre></details>
+                  <details><summary>Model calls, revision, and judge detail</summary><pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{JSON.stringify({ calls: preview.preview.calls, revision: preview.preview.revision, judge: preview.preview.judge, classifier: preview.preview.classifier }, null, 2)}</pre></details>
                 </>
               )}
             </section>
@@ -555,6 +596,9 @@ export default function AskTldrStudio() {
             {payload.history.length === 0 && <div style={cardStyle}><h2>No Ask TLDR drafts yet.</h2><p style={mutedStyle}>Generate an owner preview and it will appear here automatically.</p></div>}
             {payload.history.map((row, index) => {
               const previous = payload.history.slice(index + 1).find((candidate) => revisionKey(candidate) === revisionKey(row));
+              const pillarLabel = payload.pillars.find((pillar) => pillar.id === row.pillarId)?.label ?? row.pillarId ?? "this pillar";
+              const feedbackActive = row.ownerFeedback?.status === "approved";
+              const note = reviewNotes[row.id] ?? "";
               return (
                 <article key={row.id} style={cardStyle}>
                   <p className="admin-eyebrow">{row.reviewState.replaceAll("_", " ")} · {formatDate(row.createdAt)} · {row.chartMode === "test" ? "test chart" : "owner chart"}{row.chartLabel ? ` · ${row.chartLabel}` : ""}</p>
@@ -569,12 +613,19 @@ export default function AskTldrStudio() {
                       </div>
                     </details>
                   )}
-                  <label style={{ display: "grid", gap: 6, marginTop: 12 }}>Owner notes<textarea rows={3} value={reviewNotes[row.id] ?? ""} onChange={(event) => setReviewNotes((current) => ({ ...current, [row.id]: event.target.value }))} placeholder="What was right, wrong, missing, too generic, or off-voice?" /></label>
-                  <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                  <label style={{ display: "grid", gap: 6, marginTop: 12 }}>Owner notes<textarea rows={3} value={note} onChange={(event) => setReviewNotes((current) => ({ ...current, [row.id]: event.target.value }))} placeholder="What was right, wrong, missing, too generic, or off-voice?" /></label>
+                  <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
                     <button type="button" className="admin-create-button" disabled={reviewingId === row.id} onClick={() => void reviewDraft(row, "approved")}><Check size={15} aria-hidden="true" /> Approve preview</button>
                     <button type="button" className="admin-create-button admin-secondary-button" disabled={reviewingId === row.id} onClick={() => void reviewDraft(row, "rejected")}><X size={15} aria-hidden="true" /> Reject preview</button>
+                    {feedbackActive ? (
+                      <button type="button" className="admin-create-button admin-secondary-button" disabled={reviewingId === row.id} onClick={() => void setFutureFeedback(row, "revoke_feedback")}><RotateCcw size={15} aria-hidden="true" /> Stop using note in future {pillarLabel} answers</button>
+                    ) : (
+                      <button type="button" className="admin-create-button admin-secondary-button" disabled={reviewingId === row.id || note.trim().length < 12} onClick={() => void setFutureFeedback(row, "approve_feedback")}><Sparkles size={15} aria-hidden="true" /> Use note in future {pillarLabel} answers</button>
+                    )}
                   </div>
-                  <details style={{ marginTop: 10 }}><summary>Evidence, judge, and release packet</summary><pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{JSON.stringify(row.diagnostics, null, 2)}</pre></details>
+                  {feedbackActive && <p style={{ ...mutedStyle, marginBottom: 0 }}><strong>Future guidance active for {pillarLabel}:</strong> {row.ownerFeedback?.guidance}</p>}
+                  {!feedbackActive && <p style={{ ...mutedStyle, marginBottom: 0 }}>Rejecting a preview does not teach future answers by itself. Only the separate future-guidance button promotes your note into the governed writer/judge evidence for this pillar.</p>}
+                  <details style={{ marginTop: 10 }}><summary>Evidence, judge, revision, and release packet</summary><pre style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{JSON.stringify(row.diagnostics, null, 2)}</pre></details>
                 </article>
               );
             })}
