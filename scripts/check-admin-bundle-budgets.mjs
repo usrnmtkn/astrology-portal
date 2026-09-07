@@ -15,6 +15,12 @@ const budgetsPath = path.join(repoRoot, "scripts/admin-bundle-budgets.json");
 // Personal Transit, House Transit, and paired Daily At-a-Glance workspaces,
 // including its rendered Friend-variable guide, their CRUD lifecycle, and
 // bounded API-failure handling. Deferred content markers remain forbidden.
+// 2026-09-07 release baseline: main 0720c198 already measured 604,777 bytes
+// raw / 171,182 gzip at entry and 297,811 gzip total with the isolated runtime.
+// Main 380aeb7e leaves Admin sources unchanged. The Sky template release measures
+// 610.3 kB raw / 172.9 kB gzip at entry and 298.9 kB gzip total. Limits allow
+// narrow headroom for that existing application plus this release. Lazy-group
+// boundaries and forbidden payload checks remain enforced independently.
 
 function formatBytes(value) {
   if (value < 1000) return `${value} B`;
