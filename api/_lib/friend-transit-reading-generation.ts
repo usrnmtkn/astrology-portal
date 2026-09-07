@@ -13,7 +13,10 @@ import {
 } from "./transit-reading-generation.js";
 import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
 
-export const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA = TRANSIT_READING_PROVIDER_SCHEMA;
+export const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA = {
+  ...TRANSIT_READING_PROVIDER_SCHEMA,
+  required: ["headline", "tldr", "summary", "body"]
+} as const;
 
 export type FriendTransitReadingRow = {
   id: string;
