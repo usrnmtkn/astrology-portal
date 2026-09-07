@@ -452,33 +452,12 @@ function readerEligibleBundle(bundle: FallbackArchitectureV3Bundle): FallbackArc
   };
 }
 
-function fillTransitFriendName(value: unknown, voice: string) {
-  return typeof value === "string"
-    ? value.replace(/\{\{Name\}\}|\{Name\}/gu, () => voice)
-    : value;
-}
-
 function createAppTransitRenderer(readerBundle: FallbackArchitectureV3Bundle) {
-  const renderer = createTransitSynastryRenderer(
+  return createTransitSynastryRenderer(
     readerBundle.transitLib,
     readerBundle.templatesFile,
     readerBundle.rowsFile
   );
-  const renderTransitAspect = renderer.renderTransitAspect.bind(renderer);
-  renderer.renderTransitAspect = (input: Record<string, unknown>) => {
-    const rendered = renderTransitAspect(input);
-    const voice = typeof input?.voice === "string" ? input.voice.trim() : "";
-    if (!voice || voice === "you" || !rendered || typeof rendered !== "object") return rendered;
-    return {
-      ...rendered,
-      headline: fillTransitFriendName(rendered.headline, voice),
-      body: fillTransitFriendName(rendered.body, voice),
-      parts: Array.isArray(rendered.parts)
-        ? rendered.parts.map((part: unknown) => fillTransitFriendName(part, voice))
-        : rendered.parts
-    };
-  };
-  return renderer;
 }
 
 function createAppFallbackRenderer(readerBundle: FallbackArchitectureV3Bundle) {
