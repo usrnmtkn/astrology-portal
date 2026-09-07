@@ -40,6 +40,7 @@ const weekBrief = assertYouTransitReadingBrief({
   dateLabel: "September 7 through September 13",
   approvedReaderText: {
     macro: { headline: "A week with competing demands", body: "The week asks you to decide what gets your time first." },
+    horoscope: { body: "The weekly source names your 4th House of Home and Family." },
     aspects: [{ dayLabel: "Thursday", body: "A conversation can make the tradeoff clearer." }]
   },
   technicalEvidence: {
@@ -66,6 +67,29 @@ const validDraft = {
   body: "The Sun opposite your Moon puts the conflict into view. With the 6th house named in the source, the pressure can center on the work and routines already filling the day. The useful distinction is which demand actually belongs at the top of the list."
 };
 assert.equal(validateYouTransitReadingDraft({ draft: validDraft, brief: dayBrief, expectedHeadline: dayLock.headline }).passed, true);
+
+const governedReaderHouse = validateYouTransitReadingDraft({
+  draft: {
+    headline: weekLock.headline,
+    summary: "Home and family are clearly named in the approved weekly material.",
+    body: "Your 4th House of Home and Family is named directly in the approved reader text, so the weekly synthesis can carry that life area forward."
+  },
+  brief: weekBrief,
+  expectedHeadline: weekLock.headline
+});
+assert.equal(governedReaderHouse.passed, true, "A house explicitly present in approved reader text must pass even when it is absent from numeric technical evidence.");
+
+const inventedHouse = validateYouTransitReadingDraft({
+  draft: {
+    headline: weekLock.headline,
+    summary: "This summary is long enough to exercise the weekly house fact lock.",
+    body: "Your 5th House becomes the center of the week."
+  },
+  brief: weekBrief,
+  expectedHeadline: weekLock.headline
+});
+assert.equal(inventedHouse.passed, false);
+assert.ok(inventedHouse.issues.some((issue) => issue.code === "untraceable_house"));
 
 const inventedAspect = validateYouTransitReadingDraft({
   draft: { ...validDraft, body: "The Sun trine your Moon makes everything easier." },
@@ -108,6 +132,8 @@ assert.match(lifecycle, /you_transit_week/u);
 assert.match(lifecycle, /ensurePlaceholder/u);
 assert.match(lifecycle, /claim_you_report_jobs/u);
 assert.match(lifecycle, /YOU_REPORT_JOB_ATTEMPT_CAP/u);
+assert.match(lifecycle, /attempt: 0/u, "A user retry must receive a fresh bounded attempt budget.");
+assert.match(lifecycle, /\{ status: "DRAFT", error: null \}/u, "A user retry must restore the placeholder to generating state.");
 assert.match(requestApi, /waitUntil\(runYouReportJobs/u);
 assert.match(client, /\/api\/you-report-request/u);
 assert.match(actions, /Create \$\{label\} report/u);

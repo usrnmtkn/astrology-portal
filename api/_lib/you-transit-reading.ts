@@ -199,6 +199,12 @@ function sourceText(brief: YouTransitReadingBrief) {
   return JSON.stringify({ approvedReaderText: brief.approvedReaderText, technicalEvidence: brief.technicalEvidence }).toLowerCase();
 }
 
+function sourceContainsHouse(source: string, houseNumber: number) {
+  const compactSource = source.replace(/\s+/gu, "");
+  if (compactSource.includes(`\"house\":${houseNumber}`)) return true;
+  return new RegExp(`\\b${houseNumber}(?:st|nd|rd|th)?\\s+house\\b`, "iu").test(source);
+}
+
 export function validateYouTransitReadingDraft(input: {
   draft: YouTransitReadingDraft;
   brief: YouTransitReadingBrief;
@@ -223,8 +229,7 @@ export function validateYouTransitReadingDraft(input: {
     if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_sign", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
   }
   for (const match of text.matchAll(/\b([1-9]|1[0-2])(?:st|nd|rd|th)?\s+house\b/giu)) {
-    const numeric = `\"house\":${Number(match[1])}`;
-    if (!source.replace(/\s+/gu, "").includes(numeric)) issues.push({ code: "untraceable_house", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
+    if (!sourceContainsHouse(source, Number(match[1]))) issues.push({ code: "untraceable_house", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
   }
   for (const match of text.matchAll(/\b\d{1,3}(?:\.\d+)?°/gu)) {
     if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_degree", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
