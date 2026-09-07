@@ -5,6 +5,7 @@ const read = (path: string) => fs.readFileSync(new URL(`../${path}`, import.meta
 
 const lifecycle = read("api/_lib/friend-report-lifecycle.ts");
 const generation = read("api/_lib/friend-transit-reading-generation.ts");
+const legacyGenerationApi = read("api/generate-friend-transit-reading.ts");
 const requestApi = read("api/friend-report-request.ts");
 const checkoutApi = read("api/friend-report-checkout.ts");
 const webhook = read("api/stripe-webhook.ts");
@@ -14,9 +15,10 @@ const stripe = read("api/_lib/stripe-report-billing.ts");
 const client = read("apps/web/src/services/userGeneratedContent.ts");
 const friendTab = read("apps/web/src/features/friends/FriendTransitsTab.tsx");
 const library = read("apps/web/src/services/reportLibrary.ts");
+const libraryView = read("apps/web/src/components/reports/ReportLibraryView.tsx");
 const reportStyles = read("apps/web/src/styles/report-library.css");
-const migration = read("apps/web/supabase/migrations/20260907055000_friend_report_paid_lifecycle.sql");
-const securityMigration = read("apps/web/supabase/migrations/20260907062000_friend_report_lifecycle_security.sql");
+const migration = read("apps/web/supabase/migrations/20260907070000_friend_report_paid_lifecycle.sql");
+const securityMigration = read("apps/web/supabase/migrations/20260907071000_friend_report_lifecycle_security.sql");
 const vercel = read("vercel.json");
 
 assert.match(lifecycle, /FriendReportBillingMode = "free_test" \| "stripe"/u);
@@ -42,6 +44,9 @@ assert.match(lifecycle, /revokeFriendReportShares/u, "Refunds must revoke extern
 assert.match(generation, /generateFriendTransitReadingForUser/u);
 assert.match(generation, /entitlementId\?: string \| null/u);
 assert.match(generation, /friend_report_entitlement_id/u);
+assert.match(legacyGenerationApi, /friendReportBillingMode\(\) === "stripe"/u,
+  "The legacy synchronous endpoint must not bypass payment when Stripe mode is enabled.");
+assert.match(legacyGenerationApi, /paid_lifecycle_required/u);
 
 assert.match(requestApi, /waitUntil\(runFriendReportJobs/u, "The request must detach fulfillment from the page request.");
 assert.match(requestApi, /status: "queued"/u);
@@ -78,6 +83,9 @@ assert.match(library, /"DRAFT", "LIVE", "ARCHIVED", "ERROR"/u);
 assert.match(library, /lifecyclePlaceholder/u);
 assert.match(library, /generatedReportStatus/u);
 assert.match(library, /row\.status === "ERROR"/u);
+assert.match(libraryView, /reportLibraryPollMs/u, "Standalone Reports must refresh while background fulfillment runs.");
+assert.match(libraryView, /document\.visibilityState === "visible"/u);
+assert.match(libraryView, /Needs attention/u);
 
 assert.match(cleanup, /requireReportAdmin/u);
 assert.match(cleanup, /PURGE FRIEND REPORT TEST DATA/u);
