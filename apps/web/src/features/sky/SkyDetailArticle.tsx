@@ -405,17 +405,15 @@ export function SkyDetailArticle({
   const residencyAspectSections = residencyAspectState?.[0] === residencyContextKey
     ? residencyAspectState[1]
     : null;
-  const existingDetailSections = detail.sections ?? [];
-const detailSections = residencyContext && residencyAspectSections
+  const detailSections = residencyAspectSections
   ? [
-      ...existingDetailSections.filter((section) => section.role !== "aspect"),
       ...residencyAspectSections,
-      ...existingDetailSections.filter((section) => (
-        section.role === "aspect"
-        && !residencyAspectSections.some((candidate) => candidate.heading === section.heading)
+      ...(detail.sections ?? []).filter((section) => (
+        section.role !== "aspect"
+        || !residencyAspectSections.some((candidate) => candidate.heading === section.heading)
       ))
     ]
-  : existingDetailSections;
+  : (detail.sections ?? []);
   const metaRows = detailMetaRows(detail.meta);
   const articleBody = detail.body.filter((node) => (
     !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
