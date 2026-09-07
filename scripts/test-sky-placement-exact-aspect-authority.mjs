@@ -21,12 +21,12 @@ assert.match(builder, /\.sort\(\(first, second\) => first\.firstExactTime - seco
 assert.doesNotMatch(builder, /\.sort\(\(first, second\) => first\.orb - second\.orb\)/u);
 assert.doesNotMatch(builder, /\.slice\(0, 2\)|giftSection|lessonSection/u);
 assert.match(routing, /return composed \?\? exact \?\? signSpecific \?\? phrasebook \?\? generated \?\? fallback \?\? null;/u);
-assert.match(calendar, /exact: exact \?\? studioExact/u);
+assert.match(calendar, /exact: studioExact \?\? exact/u);
 assert.match(app, /const contentRegistryVersion = useContentRegistryRevision\(\);/u);
 assert.doesNotMatch(app, /setContentRegistryVersion/u);
 assert.match(app, /const refreshKey = [^\n]*contentRegistryVersion[^\n]*personalizationKey/u);
 assert.match(app, /\[contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky\?\.ascendant/u);
-assert.match(app, /const loadedExactRegistry = contentRegistryFor\("sky"\);[\s\S]*studio[\s\S]*loadedExactRegistry[\s\S]*!loadedExactRegistry\.approvedExactSkyAspectCopy/u);
+assert.match(app, /if \(studio\) \{[\s\S]*tier: "content-studio-exact-sky-aspect-v1"/u);
 assert.doesNotMatch(app, /sourceGapAspectRows/u);
 
 console.log("Sky placement exact-aspect authority contract passed.");

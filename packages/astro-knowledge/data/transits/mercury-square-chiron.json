@@ -3,7 +3,7 @@
   "transiting": "mercury",
   "aspect": "square",
   "other": "chiron",
-  "base": "A neutral question can sound condescending when it lands on an old place where you learned not to trust your own voice.",
+  "base": "A neutral question can sound condescending when it lands on an old place where confidence in one's own voice was already damaged.",
   "business": "A practical mismatch needs adjustment; change the arrangement instead of repeating the same workaround.",
   "shadow": "Pressure escalates when each side keeps demanding terms the other cannot sustain.",
   "arcApplying": "The mismatch becomes harder to work around as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "A neutral question can sound condescending when it lands on an old place where you learned not to trust your own voice.",
-    "body": "A neutral question can sound condescending when it lands on an old place where you learned not to trust your own voice. When Mercury squares Chiron, a correction, interruption, delayed reply, or badly chosen phrase can carry more insult than the current exchange may actually contain. The sharp response that follows can protect you from feeling dismissed while also making it harder to find out what the other person meant. Answer the sentence they said before you answer the history it reminded you of.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+    "summary": "A neutral question can sound condescending when it lands on an old place where confidence in one's own voice was already damaged.",
+    "body": "A neutral question can sound condescending when it lands on an old place where confidence in one's own voice was already damaged. When Mercury squares Chiron, communication and sensitivity create friction, making corrections, interruptions, delayed replies, or badly chosen phrases carry more insult than the present exchange may contain. The reaction can protect against feeling dismissed while making it harder to discover what was actually meant. The current sentence deserves to be separated from the history it accidentally touched.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }

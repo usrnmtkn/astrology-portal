@@ -3,7 +3,7 @@
   "transiting": "neptune",
   "aspect": "opposition",
   "other": "chiron",
-  "base": "Recognizing yourself in someone's pain can make stepping back feel like betrayal.",
+  "base": "Recognizing an old pain in someone else can make stepping back feel like betrayal even when the problem cannot be fixed from outside.",
   "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
   "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
   "arcApplying": "The two positions become more explicit as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "Recognizing yourself in someone's pain can make stepping back feel like betrayal.",
-    "body": "Recognizing yourself in someone's pain can make stepping back feel like betrayal. When Neptune opposes Chiron, another person's grief, confusion, illness, disappointment, or vulnerability can look so familiar that saying no to one more request feels like abandoning the person you once were. You may understand exactly why they are hurting and still be unable to fix what happens next. Offer the care they are actually asking for, not the rescue your own history wishes somebody had provided. Understanding their pain does not make you responsible for becoming the ending you wanted for yourself.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+    "summary": "Recognizing an old pain in someone else can make stepping back feel like betrayal even when the problem cannot be fixed from outside.",
+    "body": "Recognizing an old pain in someone else can make stepping back feel like betrayal even when the problem cannot be fixed from outside. When Neptune opposes Chiron, compassion and sensitivity face each other directly, making another person's vulnerability easy to experience as a call to provide the rescue that was once missing elsewhere. Understanding the pain does not create control over the outcome. Care becomes more sustainable when it responds to what is actually being asked instead of trying to rewrite a previous ending through somebody else's life.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }

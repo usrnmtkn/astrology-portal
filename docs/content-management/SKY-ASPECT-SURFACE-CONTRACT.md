@@ -31,17 +31,14 @@ Resolve each calculated Sky aspect in this order:
 
 ```text
 1. Owner-approved sign-specific Sky aspect copy for the current signs
-2. Owner-approved exact-aspect reader copy from the canonical transit corpus
-3. Approved exact or pair-specific Sky aspect phrasebook hook
-4. Explicitly approved generated write-up for the current planet/aspect/sign facts
-5. SOURCE_GAP
+2. Governed LIVE Content Studio exact-aspect version for the exact identity after Sign Off
+3. Owner-approved exact-aspect reader copy from the canonical transit corpus as the baseline
+4. Approved exact or pair-specific Sky aspect phrasebook hook
+5. Explicitly approved generated write-up for the current planet/aspect/sign facts
+6. SOURCE_GAP
 ```
 
-Owner-approved sign-specific and exact-aspect copy is author-final and immutable. A generated
-row must never replace it, even when the generated row is more sign-specific,
-newer, or judge-scored. Generated content is an enhancement only when no
-approved exact or phrasebook unit exists, and it must be labeled as generated
-in application provenance rather than `authored`.
+Owner-approved sign-specific copy and the canonical exact-aspect baseline remain author-final historical sources. A signed-off Content Studio exact row is a separately approved version of the same exact identity, not a mutation of that historical baseline. DRAFT or pending-review Studio rows are never reader-eligible. A generated row must never replace an approved sign-specific, signed-off exact Studio, or canonical exact unit, even when the generated row is more sign-specific, newer, or judge-scored. Generated content is an enhancement only when no approved exact or phrasebook unit exists, and it must be labeled as generated in application provenance rather than `authored`.
 
 The app should render approved local copy immediately. It may never replace
 owner-approved exact or phrasebook copy with generated prose. A network

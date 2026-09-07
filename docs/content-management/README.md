@@ -75,9 +75,11 @@ exact authored unit
 ```
 
 On the Sky aspect surface, approved sign-specific copy wins for its exact sign
-combination. Otherwise, an exact-aspect `readerCopy` with `status: "LIVE"` in
-the canonical transit corpus is the authored unit. Both must be selected before
-generic phrasebook, generated, or general fallback prose. A DRAFT transit
+combination. Otherwise, a governed LIVE Content Studio exact row that has been
+Signed Off is the current approved version for that exact identity. If no such
+Studio version exists, an exact-aspect `readerCopy` with `status: "LIVE"` in
+the canonical transit corpus is the authored baseline. These exact tiers must be
+selected before generic phrasebook, generated, or general fallback prose. A DRAFT transit
 record remains source material and is never promoted merely because the file exists.
 
 Sky Placement distribution has an additional independent gate. Editorially
