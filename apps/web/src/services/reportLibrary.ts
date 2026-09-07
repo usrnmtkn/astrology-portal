@@ -5,12 +5,13 @@ export const reportReadyEvent = "tldrastro:report-ready";
 
 export type ReportLibrarySourceKind = "generated_interpretation" | "premium_report";
 export type ReportLibraryStatus = "generating" | "ready" | "needs_attention";
+export type GeneratedReportKind = "friend_transit_reading" | "you_day_reading" | "you_week_reading";
 
 export type ReportLibraryItem = {
   id: string;
   sourceKind: ReportLibrarySourceKind;
   sourceId: string;
-  reportKind: "friend_transit_reading" | "premium_report";
+  reportKind: GeneratedReportKind | "premium_report";
   title: string;
   subjectLabel: string;
   subtitle: string;
@@ -29,13 +30,14 @@ export type ReportLibraryItem = {
 
 export type GeneratedReportRecord = {
   id: string;
-  subjectType: string;
+  subjectType: GeneratedReportKind;
   subjectId: string;
   subjectLabel: string;
   contentKey: string;
   status: string;
   eventType: string | null;
   targetDate: string | null;
+  periodEnd: string | null;
   headline: string | null;
   summary: string | null;
   body: string;
@@ -45,7 +47,7 @@ export type GeneratedReportRecord = {
 
 type GeneratedReportRow = {
   id: string;
-  subject_type: string;
+  subject_type: GeneratedReportKind;
   subject_id: string;
   content_key: string;
   status: string;
@@ -56,6 +58,7 @@ type GeneratedReportRow = {
   body: string;
   source_snapshot: Record<string, unknown> | null;
   friend_report_entitlement_id: string | null;
+  you_report_entitlement_id: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -96,6 +99,12 @@ export type ReportReadyEventDetail = {
   route: string;
 };
 
+const generatedReportSubjectTypes: GeneratedReportKind[] = [
+  "friend_transit_reading",
+  "you_day_reading",
+  "you_week_reading"
+];
+
 const customerPremiumFulfillmentStates = new Set([
   "awaiting_birth_data",
   "queued",
@@ -128,11 +137,24 @@ function premiumReportStatus(row: PremiumReportRow): ReportLibraryStatus {
   return "generating";
 }
 
-function generatedSubjectLabel(row: Pick<GeneratedReportRow, "source_snapshot" | "headline">) {
+function generatedSubjectLabel(row: Pick<GeneratedReportRow, "subject_type" | "source_snapshot" | "headline">) {
+  if (row.subject_type === "you_day_reading" || row.subject_type === "you_week_reading") return "You";
   const snapshotName = row.source_snapshot?.friendName;
   if (typeof snapshotName === "string" && snapshotName.trim()) return snapshotName.trim();
   const headlineName = row.headline?.match(/^What's going on with (.+?) right now\?$/u)?.[1]?.trim();
   return headlineName || "Friend";
+}
+
+function generatedVanitySubject(row: Pick<GeneratedReportRow, "subject_type" | "source_snapshot" | "headline">) {
+  if (row.subject_type === "you_day_reading") return "your-day";
+  if (row.subject_type === "you_week_reading") return "your-week";
+  return generatedSubjectLabel(row);
+}
+
+function generatedPeriodEnd(row: Pick<GeneratedReportRow, "subject_type" | "source_snapshot" | "target_date">) {
+  if (row.subject_type === "friend_transit_reading" || row.subject_type === "you_day_reading") return row.target_date;
+  const periodEnd = row.source_snapshot?.periodEnd;
+  return typeof periodEnd === "string" && /^\d{4}-\d{2}-\d{2}$/u.test(periodEnd) ? periodEnd : row.target_date;
 }
 
 function generatedReportStatus(row: GeneratedReportRow): ReportLibraryStatus {
@@ -166,9 +188,9 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
   const [generatedResult, premiumResult, stateResult, shareResult] = await Promise.all([
     client
       .from("user_generated_interpretations")
-      .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, created_at, updated_at")
+      .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, you_report_entitlement_id, created_at, updated_at")
       .eq("user_id", userId)
-      .eq("subject_type", "friend_transit_reading")
+      .in("subject_type", generatedReportSubjectTypes)
       .in("status", ["DRAFT", "LIVE", "ARCHIVED", "ERROR"])
       .order("updated_at", { ascending: false })
       .returns<GeneratedReportRow[]>(),
@@ -206,24 +228,26 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
 
   const generated = (generatedResult.data ?? []).flatMap<ReportLibraryItem>((row) => {
     const hasBody = Boolean(row.body.trim());
-    const lifecyclePlaceholder = Boolean(row.friend_report_entitlement_id);
+    const lifecyclePlaceholder = Boolean(row.friend_report_entitlement_id || row.you_report_entitlement_id);
     if (!hasBody && !lifecyclePlaceholder) return [];
     const state = states.get(stateKey("generated_interpretation", row.id));
-    const title = row.headline?.trim() || "Friends reading";
+    const title = row.headline?.trim() || (row.subject_type === "friend_transit_reading" ? "Friends reading" : "Your transit report");
     const subjectLabel = generatedSubjectLabel(row);
     const status = generatedReportStatus(row);
-    const vanitySlug = reportVanitySlug({ targetDate: row.target_date, createdAt: row.created_at, subjectLabel, title });
+    const singleDayWindow = { periodEnd: row.target_date };
+    const periodEnd = row.subject_type === "you_week_reading" ? generatedPeriodEnd(row) : singleDayWindow.periodEnd;
+    const vanitySlug = reportVanitySlug({ targetDate: row.target_date, createdAt: row.created_at, subjectLabel: generatedVanitySubject(row), title });
     return [{
       id: `generated_interpretation:${row.id}`,
       sourceKind: "generated_interpretation",
       sourceId: row.id,
-      reportKind: "friend_transit_reading",
+      reportKind: row.subject_type,
       title,
       subjectLabel,
-      subtitle: "Friends",
+      subtitle: row.subject_type === "friend_transit_reading" ? "Friends" : "You",
       status,
       targetDate: row.target_date,
-      periodEnd: row.target_date,
+      periodEnd,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       readyAt: status === "ready" ? row.updated_at : null,
@@ -279,10 +303,10 @@ export async function loadGeneratedReportById(reportId: string): Promise<Generat
   const { client, userId } = context;
   const { data, error } = await client
     .from("user_generated_interpretations")
-    .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, created_at, updated_at")
+    .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, you_report_entitlement_id, created_at, updated_at")
     .eq("user_id", userId)
     .eq("id", reportId)
-    .eq("subject_type", "friend_transit_reading")
+    .in("subject_type", generatedReportSubjectTypes)
     .in("status", ["DRAFT", "LIVE", "ARCHIVED"])
     .limit(1)
     .returns<GeneratedReportRow[]>();
@@ -298,6 +322,7 @@ export async function loadGeneratedReportById(reportId: string): Promise<Generat
     status: row.status,
     eventType: row.event_type,
     targetDate: row.target_date,
+    periodEnd: generatedPeriodEnd(row),
     headline: row.headline,
     summary: row.summary,
     body: row.body,
@@ -306,11 +331,16 @@ export async function loadGeneratedReportById(reportId: string): Promise<Generat
   };
 }
 
-export function generatedReportVanityPath(report: Pick<GeneratedReportRecord, "targetDate" | "createdAt" | "subjectLabel" | "headline">) {
+export function generatedReportVanityPath(report: Pick<GeneratedReportRecord, "subjectType" | "targetDate" | "createdAt" | "subjectLabel" | "headline">) {
+  const subjectLabel = report.subjectType === "you_day_reading"
+    ? "your-day"
+    : report.subjectType === "you_week_reading"
+      ? "your-week"
+      : report.subjectLabel;
   return reportVanityPath({
     targetDate: report.targetDate,
     createdAt: report.createdAt,
-    subjectLabel: report.subjectLabel,
+    subjectLabel,
     title: report.headline
   });
 }
