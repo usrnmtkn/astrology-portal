@@ -84,8 +84,10 @@ function durableRow(row) {
 const select = "id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,judge_score,judge_gate,model,updated_at";
 const rows = [];
 let cursor = null;
-const pageSize = 200;
-for (let page = 0; page < 100; page += 1) {
+// Wide source records can exceed PostgREST's statement deadline in larger pages.
+const pageSize = 20;
+const maxPages = 1000;
+for (let page = 0; page < maxPages; page += 1) {
   const url = new URL(`${supabaseUrl}/rest/v1/generated_interpretations`);
   url.searchParams.set("select", select);
   url.searchParams.set("status", "eq.LIVE");
@@ -112,7 +114,7 @@ for (let page = 0; page < 100; page += 1) {
   }
   if (!lastId) throw new Error("Snapshot pagination did not return a stable id cursor.");
   cursor = lastId;
-  if (page === 99) throw new Error("Snapshot pagination hit its safety page limit; refusing a partial snapshot.");
+  if (page === maxPages - 1) throw new Error("Snapshot pagination hit its safety page limit; refusing a partial snapshot.");
 }
 
 // Export the same durable lifecycle records used by Studio and the reader.

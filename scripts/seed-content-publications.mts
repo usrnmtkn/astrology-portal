@@ -22,14 +22,15 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const base=(process.env.SUPABASE_URL??process.env.VITE_SUPABASE_URL??'https://hdmdufozrgrajkfhydit.supabase.co').replace(/\/$/,'');
   const key=process.env.SUPABASE_PUBLISHABLE_KEY??process.env.VITE_SUPABASE_PUBLISHABLE_KEY??'sb_publishable_iX90KdzcQzw8a8OydBHHXA_COnEMcns';
   const rows:LiveStatusRow[]=[];
+  const pageSize=20;
   let cursor:string|null=null;
   for (;;) {
-    const params=new URLSearchParams({select:'id,content_key,target_date,status,lane,review_state,updated_at,provider,headline,summary,body,sections,source_snapshot,facts,mode,flags,surface,event_type',status:'eq.LIVE',lane:'eq.serving',review_state:'is.null',target_date:'is.null',order:'id.asc',limit:'100'});
+    const params=new URLSearchParams({select:'id,content_key,target_date,status,lane,review_state,updated_at,provider,headline,summary,body,sections,source_snapshot,facts,mode,flags,surface,event_type',status:'eq.LIVE',lane:'eq.serving',review_state:'is.null',target_date:'is.null',order:'id.asc',limit:String(pageSize)});
     if(cursor)params.set('id',`gt.${cursor}`);
     const response=await fetch(`${base}/rest/v1/generated_interpretations?${params}`,{headers:{apikey:key,authorization:`Bearer ${key}`},signal:AbortSignal.timeout(30000)});
     const page=await response.json();
     if(!response.ok||!Array.isArray(page))throw new Error(`Publication preflight failed (${response.status}, ${page?.code ?? "unknown"}: ${page?.message ?? "no detail"}).`);
-    rows.push(...page);if(page.length<100)break;cursor=page.at(-1).id;
+    rows.push(...page);if(page.length<pageSize)break;cursor=page.at(-1).id;
   }
   const {selected,sql}=publicationBootstrap(rows);
   const output=process.argv.find(value=>value.startsWith('--out='))?.slice(6);
