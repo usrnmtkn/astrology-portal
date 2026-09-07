@@ -3,7 +3,7 @@ import type { TemplateVariableReference } from "./templateVariableReference";
 import { templateVariableSourceCandidates, templateVariableSourceKeyPrefixes, templateVariableSourceSelectionNote } from "./templateVariableSources";
 import { buildCompositionTemplate, compositionTemplateKey, type CompositionMapRow } from "./compositionMap";
 
-type SourceRow = {
+export type TemplateVariableSourceRow = {
   id: string;
   content_key: string;
   surface: string;
@@ -18,7 +18,7 @@ type SourceRow = {
 
 type Props = {
   references: TemplateVariableReference[];
-  rows: SourceRow[];
+  rows: TemplateVariableSourceRow[];
   templateContentKey: string;
   templateRow: CompositionMapRow;
   selectedVariableName: string;
@@ -26,14 +26,14 @@ type Props = {
   onBackToVariables: () => void;
   onSelectSource: (id: string | null) => void;
   onSelectVariable: (name: string) => void;
-  onEditSource: (row: SourceRow) => void;
+  onEditSource: (row: TemplateVariableSourceRow) => void;
 };
 
 function record(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
 
-function readableCopy(row: SourceRow) {
+function readableCopy(row: TemplateVariableSourceRow) {
   const sections = record(row.sections);
   const savedPackage = record(sections.packageDraft ?? sections.packageRecord ?? sections);
   const values = [
@@ -46,11 +46,11 @@ function readableCopy(row: SourceRow) {
   return values.filter(([_, value], index) => value.trim() && values.findIndex((candidate) => candidate[1] === value) === index);
 }
 
-function title(row: SourceRow) {
+function title(row: TemplateVariableSourceRow) {
   return row.headline?.trim() || row.content_key.split("/").at(-1)?.replace(/[-_]/gu, " ") || row.content_key;
 }
 
-function status(row: SourceRow) {
+function status(row: TemplateVariableSourceRow) {
   return row.status === "LIVE" ? "Published" : row.status === "REVIEWED" ? "Reviewed" : "Draft";
 }
 
@@ -100,73 +100,80 @@ export function TemplateVariableReviewPanels({
     const parents = "parents" in candidate && Array.isArray(candidate.parents) ? candidate.parents : [];
     return parents.includes(variable.name);
   });
-  const back = () => source ? onSelectSource(null) : onBackToVariables();
+  const body = (
+    <>
+      {source ? (
+        <>
+          <p><strong>{status(source)}</strong> · fills <code>{`{{${variable.name}}}`}</code></p>
+          <section className="admin-variable-source-copy" aria-label="Saved source copy">
+            {copy.map(([label, value]) => (
+              <article className="admin-hook-detail-section" key={label}>
+                <p className="admin-eyebrow">{label}</p>
+                <div className="admin-variable-source-prose">{sourceCopyParts(value, reviewReferences, onSelectVariable)}</div>
+              </article>
+            ))}
+          </section>
+          {directDependencies.length > 0 && (
+            <section className="admin-variable-atomic-list" aria-label={`Variables inside ${variable.label}`}>
+              <div>
+                <p className="admin-eyebrow">Continue to the atomic level</p>
+                <h3>Variables inside this saved writing</h3>
+                <p>Open a nested value to see whether it is calculated or backed by another editable source.</p>
+              </div>
+              {directDependencies.map((dependency) => (
+                <button type="button" key={dependency.name} onClick={() => onSelectVariable(dependency.name)}>
+                  <span><code>{`{{${dependency.name}}}`}</code><strong>{dependency.label}</strong></span>
+                  <span>{dependency.sourceKind === "runtime" ? dependency.example : "Open source →"}</span>
+                </button>
+              ))}
+            </section>
+          )}
+        </>
+      ) : (
+        <>
+          <section className="admin-hook-detail-section admin-variable-source-summary">
+            <p>{variable.meaning}</p>
+            <p><strong>{hasEditableSources ? "Editable saved writing" : variable.sourceKind === "unmapped" ? "Wiring gap" : "Calculated by app"}</strong> · {variable.source}</p>
+          </section>
+          {variable.sourceKind === "unmapped" && !sources.length ? (
+            <div className="admin-empty-state admin-variable-runtime-note"><strong>Not connected to a source row</strong><p>This slot is declared by the template, but the current catalog and resolver do not provide editable writing for it.</p></div>
+          ) : !hasEditableSources ? (
+            <div className="admin-empty-state admin-variable-runtime-note"><strong>No saved passage to review</strong><p>The app calculates this value from live chart, date, or person data.</p></div>
+          ) : (
+            <section className="admin-variable-source-list" aria-label={`Source rows for ${variable.label}`}>
+              {sourceSelectionNote && <p>{sourceSelectionNote}</p>}
+              <p>{sources.length === 1 ? "1 source row" : `${sources.length} source rows`} can fill this variable.</p>
+              {sources.map((row) => <button type="button" className="admin-variable-source-row" key={row.id} onClick={() => onSelectSource(row.id)}><span><strong>{title(row)}</strong><code>{row.content_key}</code></span><span className="ui-pill admin-status">{status(row)}</span></button>)}
+              {sources.length === 0 && <p>No matching rows. Expected <code>{templateVariableSourceKeyPrefixes(variable, templateContentKey).join(" or ")}</code></p>}
+            </section>
+          )}
+        </>
+      )}
+    </>
+  );
 
   return (
-    <>
-      <button type="button" className="admin-editor-backdrop admin-variable-detail-backdrop" aria-label="Back" onClick={back} />
-      <aside className="admin-editor-panel admin-variable-detail-panel" role="dialog" aria-modal="true" aria-label={`${variable.label} variable details`}>
-        <header className="admin-editor-toolbar">
-          <div>
-            <p className="admin-eyebrow">{source ? "Saved variable source" : "Template variable"}</p>
-            <h2>{source ? title(source) : <code>{`{{${variable.name}}}`}</code>}</h2>
-            {source && <code>{source.content_key}</code>}
-          </div>
-          <div className="admin-editor-toolbar-actions">
-            <button type="button" onClick={back}>{source ? "Sources" : "All variables"}</button>
-            {source && <button type="button" onClick={() => onEditSource(source)}>Edit source</button>}
-          </div>
-        </header>
-        <div className="admin-post-editor">
-          {source ? (
-            <>
-              <p><strong>{status(source)}</strong> · fills <code>{`{{${variable.name}}}`}</code></p>
-              <section className="admin-variable-source-copy" aria-label="Saved source copy">
-                {copy.map(([label, value]) => (
-                  <article className="admin-hook-detail-section" key={label}>
-                    <p className="admin-eyebrow">{label}</p>
-                    <div className="admin-variable-source-prose">{sourceCopyParts(value, reviewReferences, onSelectVariable)}</div>
-                  </article>
-                ))}
-              </section>
-              {directDependencies.length > 0 && (
-                <section className="admin-variable-atomic-list" aria-label={`Variables inside ${variable.label}`}>
-                  <div>
-                    <p className="admin-eyebrow">Continue to the atomic level</p>
-                    <h3>Variables inside this saved writing</h3>
-                    <p>Open a nested value to see whether it is calculated or backed by another editable source.</p>
-                  </div>
-                  {directDependencies.map((dependency) => (
-                    <button type="button" key={dependency.name} onClick={() => onSelectVariable(dependency.name)}>
-                      <span><code>{`{{${dependency.name}}}`}</code><strong>{dependency.label}</strong></span>
-                      <span>{dependency.sourceKind === "runtime" ? dependency.example : "Open source →"}</span>
-                    </button>
-                  ))}
-                </section>
-              )}
-            </>
-          ) : (
-            <>
-              <section className="admin-hook-detail-section admin-variable-source-summary">
-                <p>{variable.meaning}</p>
-                <p><strong>{hasEditableSources ? "Editable saved writing" : variable.sourceKind === "unmapped" ? "Wiring gap" : "Calculated by app"}</strong> · {variable.source}</p>
-              </section>
-              {variable.sourceKind === "unmapped" && !sources.length ? (
-                <div className="admin-empty-state admin-variable-runtime-note"><strong>Not connected to a source row</strong><p>This slot is declared by the template, but the current catalog and resolver do not provide editable writing for it.</p></div>
-              ) : !hasEditableSources ? (
-                <div className="admin-empty-state admin-variable-runtime-note"><strong>No saved passage to review</strong><p>The app calculates this value from live chart, date, or person data.</p></div>
-              ) : (
-                <section className="admin-variable-source-list" aria-label={`Source rows for ${variable.label}`}>
-                  {sourceSelectionNote && <p>{sourceSelectionNote}</p>}
-                  <p>{sources.length === 1 ? "1 source row" : `${sources.length} source rows`} can fill this variable.</p>
-                  {sources.map((row) => <button type="button" className="admin-variable-source-row" key={row.id} onClick={() => onSelectSource(row.id)}><span><strong>{title(row)}</strong><code>{row.content_key}</code></span><span className="ui-pill admin-status">{status(row)}</span></button>)}
-                  {sources.length === 0 && <p>No matching rows. Expected <code>{templateVariableSourceKeyPrefixes(variable, templateContentKey).join(" or ")}</code></p>}
-                </section>
-              )}
-            </>
-          )}
+    <section className="admin-variables-rail-detail" role="region" aria-label={`${variable.label} variable details`}>
+      <nav className="admin-variables-rail-breadcrumb" aria-label="Variable path">
+        <button type="button" onClick={onBackToVariables}>All variables</button>
+        <span aria-hidden="true">›</span>
+        {source ? (
+          <>
+            <button type="button" onClick={() => onSelectSource(null)}>Sources</button>
+            <span aria-hidden="true">›</span>
+            <strong>{title(source)}</strong>
+          </>
+        ) : (
+          <strong>{variable.label}</strong>
+        )}
+      </nav>
+      {source && (
+        <div className="admin-variables-rail-source-head">
+          <code>{source.content_key}</code>
+          <button type="button" className="admin-secondary-button" onClick={() => onEditSource(source)}>Edit source</button>
         </div>
-      </aside>
-    </>
+      )}
+      <div className="admin-variables-rail-detail-body">{body}</div>
+    </section>
   );
 }
