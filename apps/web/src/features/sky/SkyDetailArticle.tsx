@@ -13,6 +13,7 @@ import {
   isReaderFacingCopy
 } from "../../content/readerSafety";
 import type { GeneratedContentDrilldown } from "../../services/generatedContent";
+import { skyActiveChartEvents } from "../../services/skyActiveChartEvents";
 import { zodiacSignGlyphs, zodiacSigns } from "../../services/chartMath";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import {
@@ -537,6 +538,7 @@ export function SkyDetailArticle({
       drilldown
   );
   const isAspectsOnlyArticle = hasAspectCard && !hasReadableBody;
+  const activeChartEvents = skyActiveChartEvents(detail.personalizedPlacement?.natalAspects ?? []);
   const risingHoroscopesSection = detail.risingHoroscopes?.length ? (
     <section
       className="article-section sky-detail-section"
@@ -822,15 +824,23 @@ export function SkyDetailArticle({
                 <div className="article-body-inner">
                   <section className="article-section sky-detail-section">
                     <p>{detail.personalizedPlacement.body}</p>
-                    {detail.personalizedPlacement.natalAspects.length > 0 ? (
+                    {activeChartEvents.length > 0 ? (
                       <>
-                        <h3>Aspects to the natal chart</h3>
-                        {detail.personalizedPlacement.natalAspects.map((aspect) => (
-                          <section className="sky-detail-personalized-aspect" key={aspect.key}>
-                            <h4>{aspect.heading}</h4>
-                            {aspect.body ? <p>{aspect.body}</p> : null}
-                          </section>
-                        ))}
+                        <h3>Active in your chart</h3>
+                        {activeChartEvents.map((event) => {
+                          const eventParagraphs = event.body ? fullDetailReaderFacingParagraphs([event.body]) : [];
+                          return (
+                            <section className="sky-detail-personalized-aspect" key={event.key}>
+                              <h4>{event.heading}</h4>
+                              {event.dateLabel ? <p className="article-related-aspects__date">{event.dateLabel}</p> : null}
+                              {eventParagraphs.length > 0
+                                ? eventParagraphs.map((paragraph, paragraphIndex) => (
+                                  <p key={`${event.key}-${paragraphIndex}`}>{paragraph}</p>
+                                ))
+                                : event.body ? <p>{event.body}</p> : null}
+                            </section>
+                          );
+                        })}
                       </>
                     ) : null}
                   </section>
