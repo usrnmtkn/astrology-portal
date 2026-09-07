@@ -54,7 +54,7 @@ export const ASK_TLDR_JUDGE_SCORE_FLOORS: Record<AskTldrJudgeCategory, number> =
   lived_specificity: 3,
   owner_voice: 4,
   natural_language: 4,
-  practical_usefulness: 3,
+  practical_usefulness: 4,
   boundary_compliance: 4
 };
 
