@@ -1,0 +1,64 @@
+[WebServer] (node:93984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:93985) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:93988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:93989) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:93989) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:94053) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 
+[WebServer] (!) Some chunks are larger than 2200 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[WebServer] (node:94100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:94113) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2732:3 › client-facing user flow case studies › direct links restore sky and friend detail state (1.6s)
+  ✓  2 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3358:3 › client-facing user flow case studies › signed-in user can open friend natal placement detail (2.4s)
+  ✘  3 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3813:3 › client-facing user flow case studies › content fallback copy resolves authored synastry detail before emergency fallback (30.3s)
+
+
+  1) [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3813:3 › client-facing user flow case studies › content fallback copy resolves authored synastry detail before emergency fallback 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.textContent: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.app-shell.mode-detail')
+
+
+      3828 |     await expectNoDuplicateArticleHeadings(page, "Authored synastry detail");
+      3829 |     const detail = page.locator(".app-shell.mode-detail");
+    > 3830 |     const text = ((await detail.textContent()) ?? "").replace(/\s+/g, " ").trim();
+           |                                 ^
+      3831 |
+      3832 |     expect(mercuryAscendantHardSource, "V3 contains the approved Mercury-Ascendant hard-aspect source row").toBeTruthy();
+      3833 |     const headingText = (await authoredHeading.innerText()).trim();
+        at /Users/mprez/Code/tldrastro-ui-css-qa-20260907/tests/visual/client-facing-user-flows.spec.ts:3830:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-f0a65-l-before-emergency-fallback-chromium-desktop/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/playwright/client-facing-user-flows-c-f0a65-l-before-emergency-fallback-chromium-desktop/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/playwright/client-facing-user-flows-c-f0a65-l-before-emergency-fallback-chromium-desktop/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/playwright/client-facing-user-flows-c-f0a65-l-before-emergency-fallback-chromium-desktop/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3813:3 › client-facing user flow case studies › content fallback copy resolves authored synastry detail before emergency fallback 
+  2 passed (49.8s)

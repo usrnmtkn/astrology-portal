@@ -1,0 +1,45 @@
+[WebServer] (node:91799) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:91800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:91801) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:91802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:91802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:91873) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 
+[WebServer] (!) Some chunks are larger than 2200 kB after minification. Consider:
+[WebServer] - Using dynamic import() to code-split the application
+[WebServer] - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+[WebServer] - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[WebServer] (node:91925) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 19 tests using 1 worker
+
+(node:91940) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:1123:3 › client-facing user flow case studies › guest can read the current sky and open a detail article (2.0s)
+  ✓   2 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:1279:3 › client-facing user flow case studies › guest can navigate public calendar and settings surfaces (1.7s)
+  ✓   3 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:1900:3 › client-facing user flow case studies › friend chart section pills and overflow menu fit a narrow viewport (1.6s)
+  ✓   4 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:1920:3 › client-facing user flow case studies › settings preferences persist across reload (1.3s)
+  ✓   5 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:1947:3 › client-facing user flow case studies › calendar day selection and view controls are interactive (1.0s)
+  ✓   6 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2503:3 › client-facing user flow case studies › guest can move between login and account creation screens (778ms)
+  ✓   7 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2541:3 › client-facing user flow case studies › mobile sky controls and menu navigation work (3.3s)
+  ✓   8 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2602:3 › client-facing user flow case studies › narrow mobile sky cards and header stay inside their rails (965ms)
+  ✓   9 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2667:3 › client-facing user flow case studies › narrow mobile calendar surfaces stay inside the page container (2.1s)
+  ✓  10 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2750:3 › client-facing user flow case studies › signed-in user can sign out from the site menu (1.5s)
+  ✓  11 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2766:3 › client-facing user flow case studies › captures light and dark visual flow across client-facing surfaces (7.9s)
+  ✓  12 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2804:3 › client-facing user flow case studies › desktop web viewport supports core client-facing flows (4.4s)
+  ✓  13 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2843:3 › client-facing user flow case studies › mobile viewport supports core client-facing flows (4.4s)
+  ✓  14 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2885:3 › client-facing user flow case studies › synastry placement data stays inside each card after lazy styles load (3.1s)
+  ✓  15 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2918:3 › client-facing user flow case studies › main app pages keep shared label styling across desktop and mobile (8.5s)
+  ✓  16 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:2986:3 › client-facing user flow case studies › guest can open and close the full current sky chart modal (2.6s)
+  ✓  17 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3112:3 › client-facing user flow case studies › guest can close account screen and return to sky (901ms)
+  ✓  18 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3150:3 › client-facing user flow case studies › keyboard Escape closes menu and full sky chart modal (2.4s)
+  ✓  19 [chromium-desktop] › tests/visual/client-facing-user-flows.spec.ts:3279:3 › client-facing user flow case studies › mobile guest can navigate calendar and switch views (1.6s)
+
+  19 passed (1.1m)
