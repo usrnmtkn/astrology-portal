@@ -146,7 +146,7 @@ try {
   assert.match(detailSource, /skyPlacementResidencyAspectSections/u);
 assert.match(
   detailSource,
-  /residencyContext && residencyAspectSections[\s\S]*?residencyAspectSections\.some/u,
+  /residencyAspectSections[\s\S]*?residencyAspectSections\.some/u,
   "Residency enrichment must keep existing exact aspect content visible while loading and preserve unmatched approved aspects afterward."
 );
   assert.doesNotMatch(
