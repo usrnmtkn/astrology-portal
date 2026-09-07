@@ -13,8 +13,12 @@ const ReportLibraryView = lazy(() =>
   import("../components/reports/ReportLibraryView").then((module) => ({ default: module.ReportLibraryView }))
 );
 
-const GeneratedReportDeliveryView = lazy(() =>
-  import("../components/reports/ReportLibraryView").then((module) => ({ default: module.GeneratedReportDeliveryView }))
+const ReportVanityDeliveryView = lazy(() =>
+  import("../components/reports/ReportVanityDeliveryView").then((module) => ({ default: module.ReportVanityDeliveryView }))
+);
+
+const LegacyGeneratedReportRedirect = lazy(() =>
+  import("../components/reports/ReportVanityDeliveryView").then((module) => ({ default: module.LegacyGeneratedReportRedirect }))
 );
 
 function LibraryFallback() {
@@ -47,6 +51,10 @@ function ReportThemeBoundary({ children }: { children: ReactNode }) {
   );
 }
 
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(value);
+}
+
 export function ReportRoute() {
   const path = window.location.pathname.replace(/\/+$/u, "") || "/";
   let content: ReactNode;
@@ -54,9 +62,19 @@ export function ReportRoute() {
   if (path === "/reports/checkout/success") content = <ReportCheckoutResultView result="success" />;
   else if (path === "/reports/checkout/cancel") content = <ReportCheckoutResultView result="cancel" />;
   else if (path === "/reports") content = <Suspense fallback={<LibraryFallback />}><ReportLibraryView /></Suspense>;
-  else if (/^\/reports\/generated\/[^/]+$/u.test(path)) {
-    content = <Suspense fallback={<LibraryFallback />}><GeneratedReportDeliveryView /></Suspense>;
-  } else content = <ReportDeliveryView />;
+  else {
+    const legacyGeneratedId = path.match(/^\/reports\/generated\/([^/]+)$/u)?.[1] ?? "";
+    const singleSegment = path.match(/^\/reports\/([^/]+)$/u)?.[1] ?? "";
+    if (legacyGeneratedId && isUuid(legacyGeneratedId)) {
+      content = <Suspense fallback={<LibraryFallback />}><LegacyGeneratedReportRedirect reportId={legacyGeneratedId} /></Suspense>;
+    } else if (singleSegment && isUuid(singleSegment)) {
+      content = <ReportDeliveryView reportId={singleSegment} />;
+    } else if (singleSegment) {
+      content = <Suspense fallback={<LibraryFallback />}><ReportVanityDeliveryView slug={singleSegment} /></Suspense>;
+    } else {
+      content = <LibraryFallback />;
+    }
+  }
 
   return <ReportThemeBoundary>{content}</ReportThemeBoundary>;
 }
