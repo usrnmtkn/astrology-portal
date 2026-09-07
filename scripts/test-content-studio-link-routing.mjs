@@ -16,7 +16,9 @@ import { writingSurfaceSourceMap } from "../apps/admin/src/writingSurfaceSourceM
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const adminSrcRoot = path.join(repoRoot, "apps/admin/src");
 const webMain = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
+const adminMain = fs.readFileSync(path.join(adminSrcRoot, "main.tsx"), "utf8");
 const adminHeader = fs.readFileSync(path.join(adminSrcRoot, "AdminStudioPrimitives.tsx"), "utf8");
+const askTldrStudio = fs.readFileSync(path.join(adminSrcRoot, "AskTldrStudio.tsx"), "utf8");
 
 function walkSourceFiles(root) {
   const files = [];
@@ -35,6 +37,7 @@ assert.equal(isReaderAppHref("#/you/placement/sun-aquarius-9h"), true, "reader h
 assert.equal(isReaderAppHref("/#/you/placement/sun-aquarius-9h"), true, "root reader hash routes open outside Content Studio");
 assert.equal(isReaderAppHref("/reports/example-report"), true, "public app paths open outside Content Studio");
 assert.equal(isReaderAppHref("/admin/content/coverage"), false, "Content coverage stays inside Content Studio");
+assert.equal(isReaderAppHref("/admin/content/ask-tldr"), false, "Ask TLDR stays inside Content Studio");
 assert.equal(isReaderAppHref("/admin/content"), false, "Content Studio stays in the current tab");
 assert.equal(isReaderAppHref("#slots"), false, "Content Studio hash navigation stays in the current tab");
 assert.equal(isReaderAppHref("https://example.com"), false, "unrelated external links are not reclassified as app links");
@@ -70,6 +73,7 @@ for (const href of [
   "/#calendar",
   "/admin/content",
   "/admin/content/coverage",
+  "/admin/content/ask-tldr",
   "https://example.com"
 ]) {
   assert.equal(isContextualReaderHref(href), false, `${href || "empty href"} must not qualify as View in app context`);
@@ -142,11 +146,22 @@ assert.deepEqual(
 
 assert.match(webMain, /isContentCoveragePath\(\)/u, "public web entry recognizes the Content coverage route");
 assert.match(webMain, /ContentCoverageDashboard/u, "public web entry renders Content coverage instead of the reader app");
+assert.match(webMain, /isAskTldrPath\(\)/u, "public web entry recognizes the Ask TLDR route");
+assert.match(webMain, /AskTldrStudio/u, "public web entry renders Ask TLDR instead of the reader app");
 assert.match(webMain, /setupAdminReaderLinks/u, "public web-mounted Content Studio enforces reader-link tab behavior");
 assert.match(webMain, /admin-row-selection\.css/u, "public web-mounted Content Studio loads row-selection compatibility styles");
 assert.match(webMain, /admin-form-density\.css/u, "public web-mounted Content Studio loads form-density styles");
 assert.match(webMain, /admin-content-studio-ux-compat\.css/u, "public web-mounted Content Studio loads the current UX compatibility layer");
+assert.match(adminMain, /AskTldrStudio/u, "admin entry mounts the Ask TLDR workspace");
+assert.match(adminMain, /\/admin\/content\/ask-tldr/u, "admin entry owns the Ask TLDR route");
 assert.match(adminHeader, />\s*Content coverage\s*</u, "Content Studio names the Coverage action clearly");
+assert.match(adminHeader, /#admin-content-navigation \.admin-nav-section\[aria-label='Content'\]/u, "Ask TLDR targets the primary Content navigation section");
+assert.match(adminHeader, /data-content-studio-destination="ask-tldr"/u, "Ask TLDR has a stable primary-navigation destination marker");
+assert.match(adminHeader, /window\.location\.assign\("\/admin\/content\/ask-tldr"\)/u, "Ask TLDR primary navigation opens the dedicated Studio route");
+assert.doesNotMatch(adminHeader, /href="\/admin\/content\/ask-tldr"/u, "Ask TLDR must not remain a header action");
+assert.match(askTldrStudio, /Questions ·/u, "Ask TLDR workspace exposes the Questions section");
+assert.match(askTldrStudio, /Answer calibration ·/u, "Ask TLDR workspace exposes the Answer calibration section");
+assert.match(askTldrStudio, /does not approve or serve generated answers/u, "Ask TLDR workspace states the non-serving review wall");
 
 const modes = Object.values(readerDestinationPolicyBySurface).reduce((counts, policy) => {
   counts[policy.mode] = (counts[policy.mode] ?? 0) + 1;
