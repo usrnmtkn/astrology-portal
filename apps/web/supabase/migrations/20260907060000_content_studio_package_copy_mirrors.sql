@@ -88,6 +88,42 @@ begin
 end;
 $$;
 
+-- Migration-time contract checks. These fail the migration instead of letting
+-- a casing regression reach Content Studio production data.
+do $content_studio_copy_contract$
+declare
+  exact_aspect jsonb := jsonb_build_object(
+    'Headline', 'Sun Trine Lilith',
+    'Summary', 'edited summary',
+    'Body', 'edited body',
+    'summary', 'stale summary mirror',
+    'body_you', 'stale body mirror',
+    'studio_editable_fields', jsonb_build_array(
+      jsonb_build_object('path', 'Summary', 'label', 'Summary'),
+      jsonb_build_object('path', 'Body', 'label', 'Body')
+    )
+  );
+  legacy_package jsonb := jsonb_build_object(
+    'headline', 'Legacy headline',
+    'summary', 'Legacy summary',
+    'body_you', 'Legacy body'
+  );
+begin
+  if public.content_studio_package_copy_value(exact_aspect, 'summary') is distinct from 'edited summary' then
+    raise exception 'Content Studio copy contract failed: declared Summary did not beat stale lowercase summary.';
+  end if;
+  if public.content_studio_package_copy_value(exact_aspect, 'body') is distinct from 'edited body' then
+    raise exception 'Content Studio copy contract failed: declared Body did not beat stale body_you.';
+  end if;
+  if public.content_studio_package_copy_value(legacy_package, 'headline') is distinct from 'Legacy headline'
+    or public.content_studio_package_copy_value(legacy_package, 'summary') is distinct from 'Legacy summary'
+    or public.content_studio_package_copy_value(legacy_package, 'body') is distinct from 'Legacy body'
+  then
+    raise exception 'Content Studio copy contract failed: legacy lowercase package aliases changed behavior.';
+  end if;
+end;
+$content_studio_copy_contract$;
+
 create or replace function public.content_studio_sync_package_copy_mirrors()
 returns trigger
 language plpgsql
