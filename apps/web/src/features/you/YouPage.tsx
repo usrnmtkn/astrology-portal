@@ -21,6 +21,7 @@ import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 import { updateYouTabUrl, youTabFromUrl, type YouTab } from "./youRouting";
+import { YouReportActions } from "./YouReportActions";
 
 type NatalChartViewMode = "circle" | "table";
 type AspectToneBucket = "gifts" | "lessons";
@@ -587,6 +588,14 @@ function YouUpdatesTab({
           ) : null}
         </section>
       )}
+      {hasSavedCurrentCity ? (
+        <YouReportActions
+          dailyHoroscopeAssembly={dailyHoroscopeAssembly}
+          dailyUpdateSummary={dailyUpdateSummary}
+          weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
+          transitDateLabel={transitDateLabel}
+        />
+      ) : null}
       {hasSavedCurrentCity
         && dailyHoroscopeAssembly?.doItems?.length === 3
         && dailyHoroscopeAssembly.dontItems?.length === 3 ? (
@@ -886,7 +895,6 @@ function YouTransitArticlePage({
     ...introParagraphs,
     ...displayArticle.sections.flatMap((section) => articleParagraphs(section.body))
   ].map(normalizedArticleCopy).filter(Boolean);
-  // TLDR is an authored slot. Never infer it from subtitle, summary, or body.
   const articleTldrCandidate = cleanArticleText(displayArticle.tldr || rawSectionTldr);
   const normalizedTldrCandidate = normalizedArticleCopy(articleTldrCandidate);
   const articleTldr = articleTldrCandidate && !authoredBodyCopies.some((body) => (
