@@ -1,4 +1,3 @@
-import { getVercelOidcToken } from "@vercel/oidc";
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import { assertOpenAiStrictResponseSchema, ReportProviderSchemaError } from "./report-provider-schema.js";
 import { assertReportProductionKernel, type ReportProductionKernel } from "./report-production-gate.js";
@@ -54,32 +53,12 @@ function outputText(payload: Record<string, unknown>) {
   }).join("\n");
 }
 
-async function openAiTransport(model: string) {
-  const directKey = process.env.OPENAI_API_KEY?.trim() ?? "";
-  if (directKey) {
-    return {
-      key: directKey,
-      url: "https://api.openai.com/v1/responses",
-      model,
-      provider: "openai"
-    };
-  }
-
+function requireOpenAiKey() {
+  const key = process.env.OPENAI_API_KEY?.trim() ?? "";
+  if (key) return key;
   if (process.env.VERCEL_ENV === "preview") {
-    const configuredGatewayKey = process.env.AI_GATEWAY_API_KEY?.trim() ?? "";
-    const oidcToken = configuredGatewayKey ? "" : (await getVercelOidcToken())?.trim() ?? "";
-    const gatewayKey = configuredGatewayKey || oidcToken;
-    if (gatewayKey) {
-      return {
-        key: gatewayKey,
-        url: "https://ai-gateway.vercel.sh/v1/responses",
-        model: model.includes("/") ? model : `openai/${model}`,
-        provider: "vercel-ai-gateway/openai"
-      };
-    }
-    throw new Error("ASK_TLDR_PREVIEW_MODEL_AUTH_UNAVAILABLE: Vercel Preview could not obtain an AI Gateway credential or runtime OIDC token.");
+    throw new Error("OPENAI_API_KEY is not configured for this Preview deployment. If the Preview environment variable was just added or changed in Vercel, redeploy this branch before testing again.");
   }
-
   throw new Error("OPENAI_API_KEY is not configured.");
 }
 
@@ -100,12 +79,12 @@ async function callOpenAi<T>(input: {
   try { await input.beforeProviderCall?.(attempt); } catch (error) { throw new ReportModelLifecycleError("before", error); }
   let result: ReportModelResult<T>;
   try {
-    const transport = await openAiTransport(input.model);
-    const response = await fetch(transport.url, {
+    const key = requireOpenAiKey();
+    const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
-      headers: { authorization: `Bearer ${transport.key}`, "content-type": "application/json" },
+      headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
       body: JSON.stringify({
-        model: transport.model,
+        model: input.model,
         input: input.prompt,
         text: { format: { type: "json_schema", name: input.schemaName, strict: true, schema: input.schema } }
       })
@@ -143,7 +122,7 @@ async function callOpenAi<T>(input: {
       );
     }
     result = {
-      value, model: input.model, provider: transport.provider,
+      value, model: input.model, provider: input.provider,
       responseId: payload.id, usage: responseUsage
     };
   } catch (error) {
