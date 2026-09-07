@@ -93,3 +93,43 @@ test("Reports route keeps the TLDR navigation and design system across themes an
   expect(bodyBackgrounds.get("desktop-light")).not.toBe(bodyBackgrounds.get("desktop-dark"));
   expect(bodyBackgrounds.get("mobile-light")).not.toBe(bodyBackgrounds.get("mobile-dark"));
 });
+
+test("a shared Friends reading opens from a vanity URL without an owner session", async ({ page }) => {
+  const shareKey = "11111111-1111-4111-8111-111111111111";
+  await page.route(`**/api/report-share?share=${shareKey}`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        sourceKind: "generated_interpretation",
+        reportKind: "friend_transit_reading",
+        report: {
+          id: "a0ab8f1a-5ea0-4f96-bab6-40b914b449d5",
+          subjectType: "friend_transit_reading",
+          subjectId: "66d2d042-f3e8-4cb4-8fb6-4262e42461ae",
+          subjectLabel: "Nikki",
+          contentKey: "friend-transit-reading/66d2d042-f3e8-4cb4-8fb6-4262e42461ae/2026-09-06",
+          status: "DRAFT",
+          eventType: "friend_transit_reading",
+          targetDate: "2026-09-06",
+          headline: "What's going on with Nikki right now?",
+          summary: "A concise saved reading for Nikki.",
+          body: "The first paragraph of the shared reading.\n\nThe second paragraph stays inside the article page.",
+          createdAt: "2026-09-07T01:04:58.197Z",
+          updatedAt: "2026-09-07T01:04:58.197Z"
+        }
+      })
+    });
+  });
+
+  await page.goto(`/reports/2026-09-06-nikki#share=${shareKey}`);
+
+  await expect(page).toHaveURL(new RegExp(`/reports/2026-09-06-nikki#share=${shareKey}$`));
+  await expect(page.getByRole("heading", { level: 1, name: "What's going on with Nikki right now?" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Back" })).toBeVisible();
+  await expect(page.locator(".topbar")).toBeVisible();
+  await expect(page.locator(".article-shell")).toBeVisible();
+  await expect(page.getByText("The second paragraph stays inside the article page.")).toBeVisible();
+  expect(page.url()).not.toContain("/generated/");
+  expect(page.url()).not.toContain("?share=");
+});

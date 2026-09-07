@@ -1,6 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { ReportCheckoutResultView, ReportDeliveryView } from "../components/reports/ReportDeliveryView";
 import type { ReportTheme } from "../components/reports/ReportTopNavigation";
 import "../styles/report-article.css";
 import "../styles/report-library.css";
@@ -13,12 +12,28 @@ const ReportLibraryView = lazy(() =>
   import("../components/reports/ReportLibraryView").then((module) => ({ default: module.ReportLibraryView }))
 );
 
-const GeneratedReportDeliveryView = lazy(() =>
-  import("../components/reports/ReportLibraryView").then((module) => ({ default: module.GeneratedReportDeliveryView }))
+const ReportVanityDeliveryView = lazy(() =>
+  import("../components/reports/ReportVanityDeliveryView").then((module) => ({ default: module.ReportVanityDeliveryView }))
+);
+
+const LegacyGeneratedReportRedirect = lazy(() =>
+  import("../components/reports/ReportVanityDeliveryView").then((module) => ({ default: module.LegacyGeneratedReportRedirect }))
+);
+
+const ReportDeliveryView = lazy(() =>
+  import("../components/reports/ReportDeliveryView").then((module) => ({ default: module.ReportDeliveryView }))
+);
+
+const ReportCheckoutResultView = lazy(() =>
+  import("../components/reports/ReportDeliveryView").then((module) => ({ default: module.ReportCheckoutResultView }))
 );
 
 function LibraryFallback() {
   return <main className="report-delivery-state" role="status" />;
+}
+
+function deferred(node: ReactNode) {
+  return <Suspense fallback={<LibraryFallback />}>{node}</Suspense>;
 }
 
 function storedReportTheme(): ReportTheme {
@@ -47,16 +62,30 @@ function ReportThemeBoundary({ children }: { children: ReactNode }) {
   );
 }
 
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(value);
+}
+
 export function ReportRoute() {
   const path = window.location.pathname.replace(/\/+$/u, "") || "/";
   let content: ReactNode;
 
-  if (path === "/reports/checkout/success") content = <ReportCheckoutResultView result="success" />;
-  else if (path === "/reports/checkout/cancel") content = <ReportCheckoutResultView result="cancel" />;
-  else if (path === "/reports") content = <Suspense fallback={<LibraryFallback />}><ReportLibraryView /></Suspense>;
-  else if (/^\/reports\/generated\/[^/]+$/u.test(path)) {
-    content = <Suspense fallback={<LibraryFallback />}><GeneratedReportDeliveryView /></Suspense>;
-  } else content = <ReportDeliveryView />;
+  if (path === "/reports/checkout/success") content = deferred(<ReportCheckoutResultView result="success" />);
+  else if (path === "/reports/checkout/cancel") content = deferred(<ReportCheckoutResultView result="cancel" />);
+  else if (path === "/reports") content = deferred(<ReportLibraryView />);
+  else {
+    const legacyGeneratedId = path.match(/^\/reports\/generated\/([^/]+)$/u)?.[1] ?? "";
+    const singleSegment = path.match(/^\/reports\/([^/]+)$/u)?.[1] ?? "";
+    if (legacyGeneratedId && isUuid(legacyGeneratedId)) {
+      content = deferred(<LegacyGeneratedReportRedirect reportId={legacyGeneratedId} />);
+    } else if (singleSegment && isUuid(singleSegment)) {
+      content = deferred(<ReportDeliveryView reportId={singleSegment} />);
+    } else if (singleSegment) {
+      content = deferred(<ReportVanityDeliveryView slug={singleSegment} />);
+    } else {
+      content = <LibraryFallback />;
+    }
+  }
 
   return <ReportThemeBoundary>{content}</ReportThemeBoundary>;
 }
