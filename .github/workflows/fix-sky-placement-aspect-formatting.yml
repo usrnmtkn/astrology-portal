@@ -21,6 +21,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run build -w @tldr/astro-knowledge
       - run: python .github/scripts/apply-sky-placement-aspect-formatting.py
       - run: node scripts/test-sky-placement-exact-aspect-authority.mjs
       - run: node scripts/test-calendar-south-node-serving.mjs
