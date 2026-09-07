@@ -19,7 +19,16 @@ function numberOverlap(values: number[] | undefined, targets: number[]) {
   return (values ?? []).some((value) => wanted.has(value));
 }
 
+function candidateHasGovernedKindCoverage(candidate: AskTldrEvidenceCandidate) {
+  if (candidate.kind !== "eclipse") return true;
+  // Ask TLDR currently has exact owner-approved generic lunar-eclipse semantics.
+  // Generic solar-eclipse semantics are still review-held, so solar eclipses must
+  // not consume one of the three ranked evidence slots until that source gap is approved.
+  return candidate.id.toLowerCase().includes("lunar_eclipse");
+}
+
 export function askTldrCandidateMatchesQuestionFocus(candidate: AskTldrEvidenceCandidate, plan: AskTldrRetrievalPlan) {
+  if (!candidateHasGovernedKindCoverage(candidate)) return false;
   const hasLocationFocus = plan.focus.houses.length > 0 || plan.focus.angles.length > 0;
   const hasPointFocus = plan.focus.points.length > 0;
   const locationMatch = numberOverlap(candidate.houses, plan.focus.houses)
