@@ -61,6 +61,7 @@ assert.match(request.input, /DETERMINISTIC FACT LOCK/u);
 assert.ok(request.ownerPassageIds.length >= 3);
 assert.doesNotThrow(() => assertOpenAiStrictResponseSchema(request.outputSchema, "ask_tldr_judge_v1"), "The actual judge schema must compile against the production provider subset.");
 assert.ok(request.requestSha256);
+assert.equal(ASK_TLDR_JUDGE_SCORE_FLOORS.practical_usefulness, 4, "Ask TLDR guidance must be fully usable without a reader translation step before release.");
 
 const scores = Object.fromEntries(ASK_TLDR_JUDGE_CATEGORIES.map((category) => [category, 4]));
 const passing = validateAskTldrJudgeOutput(request, {
@@ -83,6 +84,19 @@ const voiceBelowFloor = validateAskTldrJudgeOutput(request, {
   }]
 });
 assert.equal(voiceBelowFloor.verdict, "below_threshold");
+
+const practicalThree = validateAskTldrJudgeOutput(request, {
+  scores: { ...scores, practical_usefulness: 3 },
+  timingApplicability: { applicable: true, reason: "The answer uses upcoming transit timing." },
+  findings: [{
+    category: "practical_usefulness",
+    location: "closing advice",
+    finding: "The answer gives polished guidance but leaves the reader to translate it into the next concrete step.",
+    evidenceIds: [],
+    ownerPassageIds: []
+  }]
+});
+assert.equal(practicalThree.verdict, "below_threshold", "A fixable application gap must trigger the corrective rewrite instead of releasing the first draft.");
 
 assert.throws(() => validateAskTldrJudgeOutput(request, {
   scores: { ...scores, astrology_fidelity: 2 },
@@ -122,4 +136,4 @@ assert.throws(() => buildAskTldrJudgeRequest({
   factLock: { ...factLock, passed: false, issues: [{ code: "fixture" }] }
 }), /ASK_TLDR_JUDGE_FACT_LOCK_MUST_PASS/u);
 
-console.log("Ask TLDR judge contract passed: the generated provider schema compiles, the reviewer cannot self-declare pass, findings must cite the correct evidence lane, and deterministic owner-set score floors decide release quality.");
+console.log("Ask TLDR judge contract passed: the generated provider schema compiles, the reviewer cannot self-declare pass, practical usefulness must be release-quality, findings cite the correct evidence lane, and deterministic owner-set score floors decide release quality.");
