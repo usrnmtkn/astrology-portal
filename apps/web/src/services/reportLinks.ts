@@ -33,8 +33,10 @@ export function reportVanityPath(input: ReportVanityInput) {
 }
 
 export function reportShareKeyFromHash(hash: string) {
-  const match = hash.match(/^#share=([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/iu);
-  return match?.[1] ?? "";
+  const shortMatch = hash.match(/^#s=([A-Za-z0-9_-]{22})$/u);
+  if (shortMatch?.[1]) return shortMatch[1];
+  const legacyMatch = hash.match(/^#share=([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/iu);
+  return legacyMatch?.[1] ?? "";
 }
 
 export function isReportUuidSegment(value: string) {

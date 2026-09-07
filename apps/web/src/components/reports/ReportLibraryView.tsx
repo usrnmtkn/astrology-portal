@@ -1,4 +1,4 @@
-import { Archive, ChevronLeft, FileText, MoreHorizontal, RotateCcw, Share2 } from "lucide-react";
+import { Archive, ChevronLeft, FileText, Link2Off, MoreHorizontal, RotateCcw, Share2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SegmentedControl } from "../SegmentedControl";
 import {
@@ -9,7 +9,7 @@ import {
   type GeneratedReportRecord,
   type ReportLibraryItem
 } from "../../services/reportLibrary";
-import { createReportShareLink } from "../../services/reportSharing";
+import { createReportShareLink, stopReportSharing } from "../../services/reportSharing";
 
 const reportMonthNames = [
   "Jan", "Feb", "Mar", "Apr", "May", "June",
@@ -144,11 +144,13 @@ async function shareLink(item: ReportLibraryItem) {
 function ReportLibraryRow({
   item,
   onArchiveChange,
-  onShare
+  onShare,
+  onStopSharing
 }: {
   item: ReportLibraryItem;
   onArchiveChange: (item: ReportLibraryItem, archived: boolean) => Promise<void>;
   onShare: (item: ReportLibraryItem) => Promise<void>;
+  onStopSharing: (item: ReportLibraryItem) => Promise<void>;
 }) {
   const archived = Boolean(item.archivedAt);
   const status = statusLabel(item);
@@ -215,6 +217,20 @@ function ReportLibraryRow({
               >
                 <Share2 size={17} aria-hidden="true" />
                 <span>Share</span>
+              </button>
+            ) : null}
+            {item.status === "ready" && item.isShared ? (
+              <button
+                className="report-library-row__menu-item"
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setMenuOpen(false);
+                  void onStopSharing(item);
+                }}
+              >
+                <Link2Off size={17} aria-hidden="true" />
+                <span>Stop sharing</span>
               </button>
             ) : null}
             <button
@@ -295,10 +311,23 @@ export function ReportLibraryView() {
     try {
       const result = await shareLink(item);
       if (result === "cancelled") return;
+      await refresh();
       setShareNotice(result === "copied" ? "Share link copied." : "Report shared.");
       window.setTimeout(() => setShareNotice(""), 2600);
     } catch {
       setShareNotice("This report could not be shared right now.");
+      window.setTimeout(() => setShareNotice(""), 3200);
+    }
+  }
+
+  async function stopSharingReport(item: ReportLibraryItem) {
+    try {
+      await stopReportSharing(item);
+      await refresh();
+      setShareNotice("Sharing stopped.");
+      window.setTimeout(() => setShareNotice(""), 2600);
+    } catch {
+      setShareNotice("Sharing could not be stopped right now.");
       window.setTimeout(() => setShareNotice(""), 3200);
     }
   }
@@ -336,7 +365,13 @@ export function ReportLibraryView() {
           {status === "error" ? <p className="report-library-loading type-body-muted">Your reports could not be loaded right now.</p> : null}
           {status === "ready" && visible.length === 0 ? <ReportLibraryEmpty view={view} /> : null}
           {status === "ready" ? visible.map((item) => (
-            <ReportLibraryRow key={item.id} item={item} onArchiveChange={changeArchive} onShare={shareReport} />
+            <ReportLibraryRow
+              key={item.id}
+              item={item}
+              onArchiveChange={changeArchive}
+              onShare={shareReport}
+              onStopSharing={stopSharingReport}
+            />
           )) : null}
         </section>
       </section>

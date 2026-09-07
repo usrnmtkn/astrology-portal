@@ -94,8 +94,8 @@ test("Reports route keeps the TLDR navigation and design system across themes an
   expect(bodyBackgrounds.get("mobile-light")).not.toBe(bodyBackgrounds.get("mobile-dark"));
 });
 
-test("a shared Friends reading opens from a vanity URL without an owner session", async ({ page }) => {
-  const shareKey = "11111111-1111-4111-8111-111111111111";
+test("a shared Friends reading opens from a compact vanity URL without an owner session", async ({ page }) => {
+  const shareKey = "K7m4q9W2xP8vR3tN5cY6Zg";
   await page.route(`**/api/report-share?share=${shareKey}`, async (route) => {
     await route.fulfill({
       status: 200,
@@ -122,9 +122,9 @@ test("a shared Friends reading opens from a vanity URL without an owner session"
     });
   });
 
-  await page.goto(`/reports/2026-09-06-nikki#share=${shareKey}`);
+  await page.goto(`/reports/2026-09-06-nikki#s=${shareKey}`);
 
-  await expect(page).toHaveURL(new RegExp(`/reports/2026-09-06-nikki#share=${shareKey}$`));
+  await expect(page).toHaveURL(new RegExp(`/reports/2026-09-06-nikki#s=${shareKey}$`));
   await expect(page.getByRole("heading", { level: 1, name: "What's going on with Nikki right now?" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Back" })).toBeVisible();
   await expect(page.locator(".topbar")).toBeVisible();
