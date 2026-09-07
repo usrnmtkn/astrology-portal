@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { friendReportBillingMode } from "./_lib/friend-report-lifecycle.js";
 import {
   FRIEND_TRANSIT_READING_PROVIDER_SCHEMA,
   generateFriendTransitReadingForUser
@@ -20,6 +21,13 @@ function stringValue(value: unknown) {
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST") return sendJson(res, 405, { error: "Use POST." });
+  if (friendReportBillingMode() === "stripe") {
+    return sendJson(res, 410, {
+      ok: false,
+      errorType: "paid_lifecycle_required",
+      error: "Use the paid Friends report flow for this reading."
+    });
+  }
 
   try {
     const user = await requireReportUser(req);
