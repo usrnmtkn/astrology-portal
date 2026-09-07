@@ -13,6 +13,8 @@ const adminMain = read("apps/admin/src/main.tsx");
 const webMain = read("apps/web/src/main.tsx");
 const primitives = read("apps/admin/src/AdminStudioPrimitives.tsx");
 const reportModelClient = read("api/_lib/report-model-client.ts");
+const provider = read("api/_lib/ask-tldr-provider.ts");
+const voiceReceipt = read("api/_lib/ask-tldr-voice-receipt.ts");
 const migration = read("apps/web/supabase/migrations/20260907071500_ask_tldr_owner_preview_content_studio.sql");
 const model = readJson("config/ask-tldr/answer-model-v1.json");
 const manifest = readJson("config/ask-tldr/manifest.json");
@@ -59,10 +61,15 @@ assert.match(api, /prepareFreeTextAskTldrCalibration/u);
 assert.match(api, /runAskTldrClassifierCalibration/u);
 assert.match(api, /runPreparedAskTldrAnswerCalibration/u);
 assert.match(api, /maxCalls:\s*1/u, "Free-text classification must remain a one-call bounded calibration.");
-assert.match(api, /maxCalls:\s*2/u, "Writer + judge must remain a two-call bounded calibration.");
+assert.match(api, /maxCalls:\s*4/u, "Writer/judge calibration must authorize one bounded rewrite and re-judge.");
+assert.match(provider, /CORRECTIVE REVISION PASS/u, "A below-threshold judge result must feed a bounded corrective writer pass.");
+assert.match(provider, /revision_writer/u);
+assert.match(provider, /revision_judge/u);
+assert.match(provider, /input\.authorization\.maxCalls < 4/u, "The correction cycle must never exceed the explicit four-call cap.");
 assert.match(api, /factLock:\s*input\.result\.factLock/u);
 assert.match(api, /judge:\s*input\.result\.judge/u);
 assert.match(api, /releasePacket:\s*input\.result\.releasePacket/u);
+assert.match(api, /revision:\s*input\.result\.revision/u);
 
 assert.match(api, /type ChartMode = "owner" \| "test"/u, "Preview must support owner and test-chart calculation modes.");
 assert.match(api, /function testChartContext/u);
@@ -77,6 +84,16 @@ assert.match(api, /toLowerCase\(\) === ownerEmail/u, "Owner fallback must exact-
 const savePreviewBlock = api.slice(api.indexOf("async function savePreviewDraft"), api.indexOf("async function saveQuestionOverlay"));
 assert.doesNotMatch(savePreviewBlock, /birthDate|birthTime|latitude|longitude|timeZone/u, "Saved review drafts must not persist test-chart birth data.");
 
+assert.match(api, /approve_feedback/u, "Draft Review must have an explicit owner-feedback promotion action.");
+assert.match(api, /revoke_feedback/u, "Owner-promoted feedback must be revocable.");
+assert.match(api, /ask-tldr-owner-feedback\.v1/u);
+assert.match(api, /approvedOwnerCorrections/u, "Approved Studio feedback must be selected for later generations.");
+assert.match(voiceReceipt, /ownerCorrections\?: AskTldrOwnerCorrection\[\]/u, "Runtime owner corrections must enter the hashed voice receipt.");
+assert.match(voiceReceipt, /dynamic, \.\.\.packaged/u, "Approved runtime feedback must outrank packaged corrections.");
+assert.match(studio, /Use note in future \{pillarLabel\} answers/u, "Owner notes must require a separate explicit promotion action.");
+assert.match(studio, /Rejecting a preview does not teach future answers by itself/u, "Rejecting a draft must not silently become durable model guidance.");
+assert.match(studio, /Stop using note in future \{pillarLabel\} answers/u, "Owner feedback promotion must be reversible.");
+
 assert.match(reportModelClient, /function requireOpenAiKey\(\)/u, "Report transport must explicitly require the direct OpenAI credential.");
 assert.match(reportModelClient, /process\.env\.OPENAI_API_KEY/u, "Direct OpenAI must remain the report transport credential.");
 assert.match(reportModelClient, /https:\/\/api\.openai\.com\/v1\/responses/u, "Report model calls must use the direct OpenAI Responses endpoint.");
@@ -87,6 +104,7 @@ assert.doesNotMatch(reportModelClient, /getVercelOidcToken/u, "Report model tran
 
 assert.match(studio, /Owner preview only/u);
 assert.match(studio, /Runtime:/u);
+assert.match(studio, /Model: <strong>\{payload\.modelTransport\.label\}<\/strong>/u);
 assert.match(studio, /Preview/u);
 assert.match(studio, /Questions \(/u);
 assert.match(studio, /Draft review \(/u);
@@ -95,6 +113,7 @@ assert.match(studio, /Generate owner preview/u);
 assert.match(studio, />My chart</u);
 assert.match(studio, />Test chart</u);
 assert.match(studio, /Birth data is sent only to the calculation service/u);
+assert.match(studio, /Rewritten once after the first judge block/u);
 assert.match(studio, /Compare with previous revision/u, "Draft Review must support revision comparison.");
 assert.match(studio, /chartFingerprint/u, "Revision comparison must stay scoped to the same chart fingerprint.");
 assert.match(studio, /Approve preview/u);
@@ -108,4 +127,4 @@ const questions = pillarFiles.flatMap((file) => readJson(`config/ask-tldr/pillar
 assert.equal(questions.length, 54, "Content Studio must surface the complete governed evergreen question set.");
 assert.equal(new Set(questions.map((question) => question.id)).size, 54, "Ask TLDR Content Studio question IDs must remain unique.");
 
-console.log("Ask TLDR Content Studio contract passed: 54 governed questions are wording-editable, owner/test-chart previews use bounded calculated calibration, preview-domain admin access can resolve exactly one configured owner without cross-origin session storage, report model calls stay on direct OpenAI without a Vercel AI Gateway billing fallback, revision drafts are comparable without persisting test birth data, generated_interpretations keeps existing RLS, and the database forbids LIVE Ask TLDR rows.");
+console.log("Ask TLDR Content Studio contract passed: 54 governed questions are wording-editable, owner/test-chart previews use bounded calculated calibration, judge-blocked drafts get one bounded rewrite and re-judge, explicitly promoted owner notes enter future writer/judge voice receipts for the same pillar, preview-domain admin access resolves the configured owner, report model calls stay on direct OpenAI, revision drafts are comparable without persisting test birth data, generated_interpretations keeps existing RLS, and the database forbids LIVE Ask TLDR rows.");
