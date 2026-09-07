@@ -52,6 +52,7 @@ const MECHANICAL_BANS = [
   /\bthe thread\b/giu,
   /\bmoves through your topics\b/giu
 ];
+const ASTROLOGY_SECTION_HEADING = "Why the astrology points here";
 
 function sha256(value: string) {
   return createHash("sha256").update(value).digest("hex");
@@ -103,15 +104,26 @@ function validateReceiptMatchesPacket(packet: GovernedAnswerPacket, receipt: Ask
 
 function writerInstructions(packet: GovernedAnswerPacket) {
   const pillarId = words(packet.question.pillarId);
+  const questionTypes = Array.isArray(packet.question.questionTypes) ? packet.question.questionTypes.map(words) : [];
+  const guidanceLike = questionTypes.some((type) => ["guidance", "direction", "decision", "timing"].includes(type));
   return [
     "You write one TLDR Astro answer to the user's question.",
-    "Do not calculate astrology. Do not infer a placement, aspect, house, transit, date, return, profection, eclipse contact, or timing window that is not explicitly supplied in CALCULATED EVIDENCE.",
+    "Do not calculate astrology. Do not infer a placement, aspect, house, transit, date, return, profection, eclipse contact, historical recurrence, or timing window that is not explicitly supplied in CALCULATED EVIDENCE.",
     "Every astrology factor supplied to you has passed the governed-meaning gate. Do not introduce or rely on any factor that is not supplied in this request.",
-    "Use the ranked astrology in the order supplied. The primary factor must carry the answer; supporting factors may clarify it but may not replace it.",
+    "Use the ranked astrology in the order supplied. The primary factor must carry the answer; supporting factors may clarify, reinforce, contrast, or extend the time horizon but may not replace it.",
     "GOVERNED SEMANTIC EVIDENCE controls what the astrology means. OWNER REGISTER EVIDENCE controls vocabulary, sentence movement, examples, and tone only. Never transfer an astrology claim from an owner passage into this person's chart unless that claim also appears in the calculated/governed semantic evidence.",
-    "Answer the human question first. Explain the astrology only enough to show why the answer follows. Use recognizable possibilities rather than inventing a personal event or history.",
+    "Do not write generic coaching with astrology pasted onto it. The astrology must change the answer: name what the primary factor is amplifying, pressuring, opening, exposing, or redirecting, then explain what that changes about the reader's choice or direction.",
+    "When the evidence contains more than one relevant time layer, compare and contrast them. Distinguish the current pressure or opening from the broader direction suggested by upcoming or annual evidence. Do not force a trajectory when the evidence does not support one.",
+    "When a supporting factor reinforces the same life area as the primary factor, explain the reinforcement as amplification or continuation instead of listing another transit. When it complicates the primary factor, name the tension clearly.",
+    "Do not mention 'the last time this happened,' a previous similar transit, or a historical cycle unless CALCULATED EVIDENCE explicitly supplies that historical comparison. Planetary periodicity alone is not evidence about the reader's past.",
+    "Answer the human question first. Explain the astrology enough to show why the answer follows. Use recognizable possibilities rather than inventing a personal event or history.",
+    guidanceLike
+      ? "For a guidance, direction, decision, or timing question, make the central advice usable. Translate it into a concrete decision, request, preparation step, boundary, question, comparison, or observable action that follows from the astrology. Do not stop at phrases the reader still has to translate into what to do."
+      : "Give the reader a concrete perspective or consequence that follows from the astrology rather than a generic life lesson.",
     "Use second person. Use ordinary language. Keep manifestations conditional with may, can, might, or another clear possibility construction when the facts support more than one lived outcome.",
     "When you use active, upcoming, or annual evidence, name why the timing matters from the supplied timing facts instead of leaving the reader with an undated generalization.",
+    `After the main answer, include a separate reader-facing section headed exactly '${ASTROLOGY_SECTION_HEADING}'. In that section, explain the mechanism behind the advice in plain language: identify the primary astrology, explain what it is doing, and use any genuinely relevant supporting factor to show reinforcement, contrast, or the larger arc. Do not merely repeat transit labels.`,
+    "The astrology section is not an evidence dump. It should make the answer more convincing by showing why these particular chart factors support this particular conclusion.",
     "Do not imitate an owner passage sentence-by-sentence. Write new prose from the supplied meaning using the retrieved passages as register evidence.",
     "Do not add a generic reassurance, summary, or life-coach ending after the useful point has landed.",
     packet.decisionMode === "decision_support_not_outcome"
@@ -240,6 +252,10 @@ function sentenceCount(paragraph: string) {
   return (paragraph.match(/[.!?]+(?=\s|$)/gu) ?? []).length;
 }
 
+function isAllowedHeading(paragraph: string) {
+  return paragraph.trim() === ASTROLOGY_SECTION_HEADING;
+}
+
 function validateReaderProse(answer: string, pillarId: string, decisionMode: string) {
   const issues: string[] = [];
   if (!answer.trim()) issues.push("empty_answer");
@@ -248,7 +264,8 @@ function validateReaderProse(answer: string, pillarId: string, decisionMode: str
     if (pattern.test(answer)) issues.push(`banned_pattern:${pattern.source}`);
   }
   const paragraphs = answer.trim().split(/\n\s*\n/gu).map((paragraph) => paragraph.trim()).filter(Boolean);
-  if (paragraphs.length > 1 && paragraphs.some((paragraph) => sentenceCount(paragraph) < 2)) issues.push("one_sentence_paragraph");
+  if (paragraphs.length > 1 && paragraphs.some((paragraph) => !isAllowedHeading(paragraph) && sentenceCount(paragraph) < 2)) issues.push("one_sentence_paragraph");
+  if (!paragraphs.some(isAllowedHeading)) issues.push("astrology_support_section_missing");
   if (/\b(?:evidence|factor)[-_ ]?id\b/iu.test(answer) || /\btldrastro-api\b/iu.test(answer) || /sha256/iu.test(answer)) issues.push("internal_metadata_leak");
   if (decisionMode === "decision_support_not_outcome" && /\b(?:astrology|chart|transit) (?:says|shows|proves) (?:you should|that you should)\b/iu.test(answer)) issues.push("decision_outcome_claim");
   if (pillarId === "money" && /\b(?:you should|i recommend|astrology says to)\s+(?:buy|sell|invest|borrow|take out (?:a )?loan|refinance)\b/iu.test(answer)) issues.push("financial_transaction_directive");
