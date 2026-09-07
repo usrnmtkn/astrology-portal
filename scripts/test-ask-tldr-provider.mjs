@@ -75,6 +75,10 @@ const goodWriterValue = {
   whyNowEvidenceId: primaryId,
   decisionOutcomeClaimed: false
 };
+const revisedWriterValue = {
+  ...goodWriterValue,
+  answer: "Recognition is more available when you make the work easy to attribute to you. Jupiter opposing your Midheaven around September 15 can enlarge public opportunity and visibility, so this is a useful time to connect a visible result to a specific request.\n\nIf you are already doing work above your title, name the work and ask about the title. If your contribution is being presented without your name attached, ask for the credit directly. Bring the result, the part you owned, and the change you want into the same conversation rather than taking on more work just to prove the point."
+};
 const perfectScores = Object.fromEntries(ASK_TLDR_JUDGE_CATEGORIES.map((category) => [category, 4]));
 const roles = [];
 const goodResult = await runPreparedAskTldrAnswerCalibration({
@@ -104,14 +108,75 @@ assert.deepEqual(roles, ["writer", "judge"]);
 assert.equal(goodResult.callsUsed, 2);
 assert.equal(goodResult.status, "calibration_candidate");
 assert.equal(goodResult.runtimeEnabled, false);
+assert.equal(goodResult.revision, null);
 assert.equal(goodResult.releasePacket.readerServingEnabled, false);
 assert.equal(goodResult.releasePacket.ownerApproved, false);
 assert.equal(goodResult.releasePacket.promotionAuthorized, false);
 
+const ownerPassageId = prepared.voiceReceipt.ownerPassages[0]?.id;
+assert.ok(ownerPassageId);
+const belowThresholdScores = { ...perfectScores, owner_voice: 3 };
+const revisionRoles = [];
+let writerPass = 0;
+let judgePass = 0;
+const revisedResult = await runPreparedAskTldrAnswerCalibration({
+  prepared,
+  authorization: { authorized: true, purpose: "ask_tldr_calibration", scopeSha256: answerScope, maxCalls: 4 },
+  callModel: async (request) => {
+    revisionRoles.push(request.role);
+    if (request.role === "writer") {
+      writerPass += 1;
+      if (writerPass === 2) {
+        assert.match(request.prompt, /CORRECTIVE REVISION PASS/u);
+        assert.match(request.prompt, /JUDGE FINDINGS TO FIX/u);
+      }
+      return {
+        provider: "fixture",
+        model: "fixture-writer",
+        responseId: `writer-${writerPass}`,
+        value: writerPass === 1 ? goodWriterValue : revisedWriterValue
+      };
+    }
+    if (request.role === "judge") {
+      judgePass += 1;
+      return {
+        provider: "fixture",
+        model: "fixture-judge",
+        responseId: `judge-${judgePass}`,
+        value: judgePass === 1 ? {
+          scores: belowThresholdScores,
+          timingApplicability: { applicable: true, reason: "The answer uses the supplied upcoming transit timing." },
+          findings: [{
+            category: "owner_voice",
+            location: "overall structure",
+            finding: "The draft reads like distilled coaching copy and needs a more human decision point.",
+            evidenceIds: [],
+            ownerPassageIds: [ownerPassageId]
+          }]
+        } : {
+          scores: perfectScores,
+          timingApplicability: { applicable: true, reason: "The revised answer keeps the supplied timing and makes the decision point concrete." },
+          findings: []
+        }
+      };
+    }
+    throw new Error(`Unexpected role ${request.role}`);
+  }
+});
+assert.deepEqual(revisionRoles, ["writer", "judge", "writer", "judge"]);
+assert.deepEqual(revisedResult.calls.map((call) => call.stage), ["initial_writer", "initial_judge", "revision_writer", "revision_judge"]);
+assert.equal(revisedResult.callsUsed, 4);
+assert.equal(revisedResult.revision?.attempted, true);
+assert.equal(revisedResult.revision?.trigger, "judge_below_threshold");
+assert.equal(revisedResult.revision?.initialJudge.verdict, "below_threshold");
+assert.equal(revisedResult.writerOutput.answer, revisedWriterValue.answer);
+assert.equal(revisedResult.judge.verdict, "pass");
+assert.equal(revisedResult.status, "calibration_candidate");
+
 let wrongScopeCalls = 0;
 await assert.rejects(() => runPreparedAskTldrAnswerCalibration({
   prepared,
-  authorization: { authorized: true, purpose: "ask_tldr_calibration", scopeSha256: "wrong", maxCalls: 2 },
+  authorization: { authorized: true, purpose: "ask_tldr_calibration", scopeSha256: "wrong", maxCalls: 4 },
   callModel: async () => {
     wrongScopeCalls += 1;
     return { value: {} };
@@ -133,7 +198,7 @@ assert.equal(callCapCalls, 0, "Insufficient call authorization must fail before 
 const badFactRoles = [];
 const badFactResult = await runPreparedAskTldrAnswerCalibration({
   prepared,
-  authorization: { authorized: true, purpose: "ask_tldr_calibration", scopeSha256: answerScope, maxCalls: 2 },
+  authorization: { authorized: true, purpose: "ask_tldr_calibration", scopeSha256: answerScope, maxCalls: 4 },
   callModel: async (request) => {
     badFactRoles.push(request.role);
     if (request.role !== "writer") throw new Error("Judge must not be called after deterministic fact failure.");
@@ -153,4 +218,4 @@ assert.equal(badFactResult.judgeRequest, null);
 assert.equal(badFactResult.judge, null);
 assert.equal(badFactResult.releasePacket, null);
 
-console.log("Ask TLDR provider harness passed: exact authorization scope gates every injected provider call, classifier uses one call, answers use at most writer+judge, and factual failure stops before the judge call.");
+console.log("Ask TLDR provider harness passed: exact authorization scope gates every injected provider call, classifier uses one call, a passing draft uses writer+judge, a judge-blocked draft gets one bounded rewrite and final re-judge, and factual failure stops before the judge call.");
