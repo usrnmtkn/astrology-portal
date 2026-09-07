@@ -18,7 +18,6 @@ import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import {
   articleAspectGlyphPartsFromHeading,
   articleAspectTypeFromText,
-  articleNodeAxisBodyParts,
   normalizedArticleAspectToneBucket
 } from "../../utils/articleAspects";
 import {
@@ -744,8 +743,12 @@ export function SkyDetailArticle({
                         : [];
                       const sectionHeading = typeof section.heading === "string" ? section.heading : "";
                       const glyphParts = sectionHeading ? articleAspectGlyphPartsFromHeading(sectionHeading) : null;
-                      const nodeAxisBody = sectionHeading ? articleNodeAxisBodyParts(sectionHeading, bodyParagraphs) : null;
-                      const southNodeGlyphParts = nodeAxisBody ? articleAspectGlyphPartsFromHeading(nodeAxisBody.southHeading) : null;
+                      const southNodeMatch = sectionHeading.endsWith("North Node")
+                        ? bodyParagraphs.find((paragraph) => paragraph.startsWith("South Node ("))?.match(/^South Node \(([^)]+)\):\s*(.*)$/su)
+                        : null;
+                      const southNodeHeading = southNodeMatch
+                        ? `${glyphParts?.from} ${southNodeMatch[1][0].toUpperCase()}${southNodeMatch[1].slice(1)} South Node`
+                        : "";
                       const sourceTag = inferredSectionQaSourceTag(section);
                       const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;
 
@@ -758,23 +761,13 @@ export function SkyDetailArticle({
                             </div>
                           ) : null}
                           {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
-                          {nodeAxisBody ? (
-                            <>
-                              {nodeAxisBody.primaryParagraphs.map((paragraph, paragraphIndex) => (
-                                <p key={`${section.key}-north-${paragraphIndex}`}>{paragraph}</p>
-                              ))}
-                              <div className="article-related-aspects__copy-heading">
-                                {southNodeGlyphParts ? <AspectGlyphs from={southNodeGlyphParts.from} aspect={southNodeGlyphParts.aspect} to={southNodeGlyphParts.to} /> : null}
-                                <h4>{nodeAxisBody.southHeading}</h4>
-                              </div>
-                              {nodeAxisBody.southParagraphs.map((paragraph, paragraphIndex) => (
-                                <p key={`${section.key}-south-${paragraphIndex}`}>{paragraph}</p>
-                              ))}
-                            </>
-                          ) : bodyParagraphs.length > 0
-                            ? bodyParagraphs.map((paragraph, paragraphIndex) => (
-                              <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>
-                            ))
+                          {bodyParagraphs.length > 0
+                            ? bodyParagraphs.map((paragraph, paragraphIndex) => southNodeMatch?.[0] === paragraph ? (
+                              <Fragment key={`${section.key}-${paragraphIndex}`}>
+                                <div className="article-related-aspects__copy-heading"><h4>{southNodeHeading}</h4></div>
+                                <p>{southNodeMatch[2]}</p>
+                              </Fragment>
+                            ) : <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>)
                             : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}
                         </section>
                       );
