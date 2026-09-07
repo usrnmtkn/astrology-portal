@@ -1,0 +1,15 @@
+{
+  "contentKey": "authored/transit-aspect/chiron/jupiter/hard",
+  "body_you": "A moment of real growth can unexpectedly pull an old insecurity straight to the surface. When a big opportunity makes you second-guess yourself, the immediate reflex is to overcompensate. You might feel a sudden, intense pressure to say yes to everything and overcommit, just to prove you actually deserve the space you are taking up. The opportunity itself may be good. The problem starts when you turn it into proof that you can handle more, carry more, or ask less in return. You do not have to make an opportunity harder on yourself to feel like you earned it.\n\nWith Chiron {{aspectWord}} your Jupiter until {{untilDate}}, you can step fully into this expansion without letting insecurity push you into a massive obligation you will just have to back out of later.",
+  "body_they": "A moment of real growth can unexpectedly pull an old insecurity straight to the surface for {{Name}}. When a big opportunity makes them second-guess themselves, their immediate reflex is to overcompensate. They might feel a sudden, intense pressure to say yes to everything and overcommit, just to prove they actually deserve the space they are taking up. The opportunity itself may be good. The problem starts when they turn it into proof that they can handle more, carry more, or ask less in return. They do not have to make an opportunity harder on themselves to feel like they earned it.\n\nWith Chiron {{aspectWord}} their Jupiter until {{untilDate}}, {{Name}} can step fully into this expansion without letting insecurity push them into a massive obligation they will just have to back out of later.",
+  "body_you_sha256": "0184fb4ac62a4b508447558083b4484582c58381f89ab902edf26283188afafe",
+  "body_you_word_count": 131,
+  "body_they_sha256": "b2871d9656249b9dfd43fe545b7f68273b3de510b6ad3387179188d463724786",
+  "body_they_word_count": 133,
+  "provenance": {
+    "taskId": "01a07b0b-8090-7f11-81de-cfeefbe5644c",
+    "date": "2026-09-07",
+    "instruction": "I just tried to make an edit to the transiting planet aspect to natal chart, and the file did not save.",
+    "scope": "Exact You and Friend passages supplied with that instruction; authored/transit-aspect/chiron/jupiter/hard only."
+  }
+}

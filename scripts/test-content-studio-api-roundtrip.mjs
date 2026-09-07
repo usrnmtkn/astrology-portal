@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import os from "node:os";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -33,7 +34,7 @@ await build({
   },
   stdin: { loader: "ts", resolveDir: process.cwd(), contents: `
     export * from "./apps/web/src/services/generatedContent.ts";
-    export { installFallbackArchitectureV3Bundle, fallbackRendererV3 } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
+    export { installFallbackArchitectureV3Bundle, fallbackRendererV3, loadDeferredFallbackArchitectureV3Bundle, transitSynastryFallbackRendererV3 } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
   ` },
   format: "esm",
   logLevel: "silent",
@@ -351,6 +352,49 @@ const recoveredApprovedNatalAspect = await invokeApi("PATCH", "/api/admin/genera
 assert.equal(recoveredApprovedNatalAspect.status, 200);
 assert.equal(recoveredApprovedNatalAspect.payload.rows[0].status, "LIVE", "An approved package row stuck in Draft must recover on Save & publish.");
 assert.equal(recoveredApprovedNatalAspect.payload.rows[0].sections.packageRecord.body_they, "{{Name}} receives older saved friend-view copy.");
+
+
+const chironBaseline = structuredClone(row);
+const chironCopy = JSON.parse(readFileSync("docs/content-management/owner-copy/chiron-jupiter-hard-2026-09-07.json", "utf8"));
+for (const field of ["body_you", "body_they"]) {
+ assert.equal(createHash("sha256").update(chironCopy[field]).digest("hex"), chironCopy[field + "_sha256"]);
+ assert.equal(chironCopy[field].trim().split(/\s+/u).length, chironCopy[field + "_word_count"]);
+}
+const transitSources = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", "utf8"));
+const chironOriginal = transitSources.authoredCards.find(record => record.contentKey === chironCopy.contentKey);
+row = { ...row, id: "qa-chiron-real-package", content_key: chironCopy.contentKey,
+ surface: "you", mode: "feed", headline: "", summary: "", body: chironOriginal.body_you,
+ provider: "tldrastro-fallback-architecture-v3", status: "DRAFT", lane: "reference", review_state: "needs-review",
+ sections: { packageRecord: structuredClone(chironOriginal), body_you: chironOriginal.body_you, body_they: chironOriginal.body_they },
+ facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3" } };
+for (let attempt = 0; attempt < 2; attempt++) {
+ const nextYou = attempt === 0 ? chironOriginal.body_you : chironCopy.body_you;
+ const savedChiron = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id, expectedUpdatedAt: row.updated_at, headline: row.headline, summary: row.summary, body: nextYou,
+  sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, body_you: nextYou, body_they: chironCopy.body_they } },
+  facts: row.facts, sourceSnapshot: row.source_snapshot, reviewStatus: "needs_review"
+ });
+ assert.equal(savedChiron.status, 200, JSON.stringify(savedChiron.payload));
+ const publishedChiron = await invokeApi("PATCH", "/api/admin/generated-content", { id: row.id, ownerAction: "approve-package-revision" });
+ assert.equal(publishedChiron.status, 200, JSON.stringify(publishedChiron.payload));
+ assert.equal(row.sections.packageRecord.body_you, nextYou);
+ assert.equal(row.sections.packageRecord.body_they, chironCopy.body_they);
+}
+await runtime.loadDeferredFallbackArchitectureV3Bundle();
+const chironFetch = globalThis.fetch;
+globalThis.fetch = async (input, init) => String(input).includes("/rpc/content_runtime_revision") ? Response.json(row.updated_at) : chironFetch(input, init);
+const chironBundle = await runtime.loadFallbackArchitectureV3DashboardBundle();
+assert.ok(chironBundle?.transitLib.authoredCards.some(item => item.contentKey === chironCopy.contentKey));
+runtime.installFallbackArchitectureV3Bundle(chironBundle);
+for (const [voice, field] of [["you", "body_you"], ["Nikki", "body_they"]]) {
+ const rendered = runtime.transitSynastryFallbackRendererV3.renderTransitAspect({ transiting: "chiron", natal: "jupiter", aspect: "square", voice, window: "Until September 30" });
+ assert.equal(rendered.contentKey, chironCopy.contentKey);
+ const expected = chironCopy[field].replaceAll("{{Name}}", "Nikki").replaceAll("{{aspectWord}}", "square").replaceAll("{{untilDate}}", "September 30");
+ assert.equal(rendered.parts.join("\n\n"), expected);
+}
+globalThis.fetch = chironFetch;
+runtime.installFallbackArchitectureV3Bundle(null);
+row = chironBaseline;
 
 const packageRegressionBaseline = structuredClone(row);
 const placeholderTransitContentKey = "authored/transit-aspect/venus/moon/hard";

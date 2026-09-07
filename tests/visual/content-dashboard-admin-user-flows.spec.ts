@@ -5114,3 +5114,50 @@ test("composition map loads a package-only hook before opening its editable star
   await manager.getByRole("button", { name: "Edit selected source" }).click();
   await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByLabel("Content key")).toHaveValue(key);
 });
+
+test("Chiron transit recovers stale save versions and keeps conflicting edits visible", async ({ page }) => {
+  const copy = JSON.parse(readFileSync("docs/content-management/owner-copy/chiron-jupiter-hard-2026-09-07.json", "utf8"));
+  const original = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", "utf8")).authoredCards.find((row: any) => row.contentKey === copy.contentKey);
+  const row = { ...generatedContentRows[0], id: "qa-chiron-repeat-save", content_key: copy.contentKey,
+    headline: "Chiron Hard your Jupiter", summary: "", body: original.body_you, surface: "you", mode: "feed",
+    status: "LIVE", lane: "serving", review_state: null, provider: "tldrastro-fallback-architecture-v3",
+    facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3" },
+    sections: { packageRecord: original, body_you: original.body_you, body_they: original.body_they } };
+  const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+  await seedAdminApi(page, { generatedRows: [row], onGeneratedContentWrite: write => writes.push(write) });
+  await expectAdminRouteLoads(page, "/admin/content#exact-content");
+  await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  await editor.getByLabel("You view copy", { exact: true }).fill(copy.body_you);
+  await editor.getByLabel("Friend view copy", { exact: true }).fill(copy.body_they);
+  let rejectNext = true;
+  let competingCopy = false;
+  await page.route("**/api/admin/generated-content**", async route => {
+    if (route.request().method() === "PATCH" && rejectNext) {
+      rejectNext = false;
+      await route.fulfill({ status: 409, json: { error: "This content changed after the editor was opened." } });
+    } else if (route.request().method() === "GET" && new URL(route.request().url()).searchParams.get("id") === row.id) {
+      const latest = { ...row, updated_at: "2026-09-07T14:19:16.750192+00:00" };
+      if (competingCopy) latest.sections = { ...row.sections, packageRecord: { ...original, body_you: "A competing saved revision." } };
+      await route.fulfill({ json: { ok: true, rows: [latest] } });
+    } else await route.fallback();
+  });
+  await editor.getByRole("button", { name: "Save revision", exact: true }).click();
+  await expect(editor.getByText("Revision saved; awaiting approval", { exact: true })).toBeVisible();
+  expect(writes[0].payload.expectedUpdatedAt).toBe("2026-09-07T14:19:16.750192+00:00");
+  expect((writes[0].payload.sections as any).packageDraft.body_they).toBe(copy.body_they);
+  await editor.getByLabel("You view copy", { exact: true }).fill(copy.body_you + "\n");
+  await editor.getByRole("button", { name: "Save & publish revision", exact: true }).click();
+  await expect(editor.locator(".admin-editor-savebar")).toContainText("All changes saved");
+  const savedWriteCount = writes.length;
+  rejectNext = true;
+  competingCopy = true;
+  await editor.getByLabel("You view copy", { exact: true }).fill(copy.body_you + "\n\n");
+  await editor.getByRole("button", { name: "Save revision", exact: true }).click();
+  await expect(editor.getByRole("alert")).toContainText("Your edits are still here");
+  expect(writes.length).toBe(savedWriteCount);
+  await expect(editor.getByLabel("You view copy", { exact: true })).toHaveValue(copy.body_you + "\n\n");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await editor.getByRole("alert").scrollIntoViewIfNeeded();
+  await expect(editor.getByRole("alert")).toBeVisible();
+});
