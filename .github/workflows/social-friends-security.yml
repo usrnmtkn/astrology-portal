@@ -133,6 +133,8 @@ jobs:
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/friend_report_lifecycle_authorization.sql
       - name: Run You report lifecycle authorization test
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/you_report_lifecycle_authorization.sql
+      - name: Run You report production hardening test
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/you_report_production_hardening.sql
       - name: Stop ephemeral Supabase database
         if: always()
         run: supabase stop --workdir apps/web --no-backup
