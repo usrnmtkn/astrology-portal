@@ -49,10 +49,18 @@ export type SkyActiveChartEvent = SkyActiveChartAspect & {
   memberKeys: string[];
 };
 
+type CompactActiveAspect = {
+  body: string | null;
+  dateLabel: string | null;
+  natalLabel: string | null;
+  natalHouse: string | null;
+};
+
 type NodeHeading = [string, string, "north" | "south"];
 const nodePattern = /^(.+?)\s+(conjunction|conjunct|opposition|opposite|square|trine|sextile)\s+(?:your\s+)?(?:natal\s+)?(north|south)\s+node$/iu;
 const activeDatePattern = /\b(?:until|through)\s+([A-Z][a-z]+\s+\d{1,2}(?:,\s+\d{4})?)/u;
 const activeFramePattern = /^While\s+.+?\s+your\s+natal\s+(.+?)\s+in\s+your\s+(\d+(?:st|nd|rd|th)\s+house)(?:\s+(?:until|through)\s+[^.]+)?\.\s*/iu;
+const transitSignLeadPattern = /\b(?:Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|North Node|South Node|Lilith)\s+in\s+[A-Z][a-z]+\b/u;
 
 function parsedNodeHeading(heading: string): NodeHeading | null {
   const match = heading.trim().match(nodePattern);
@@ -69,31 +77,58 @@ function mirroredNodeAspect(first: string, second: string) {
     || first === "sextile" && second === "trine";
 }
 
-function compactActiveAspect(body: string | null) {
-  if (!body?.trim()) return { body: null, dateLabel: null };
+function capitalized(value: string) {
+  return value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
+}
+
+function stripSharedTransitLead(value: string) {
+  const semicolon = value.indexOf(";");
+  if (semicolon < 0) return value;
+
+  const lead = value.slice(0, semicolon).trim();
+  const tail = value.slice(semicolon + 1).trim();
+  if (
+    lead.length > 180
+    || !transitSignLeadPattern.test(lead)
+    || !/^your\b/iu.test(tail)
+  ) {
+    return value;
+  }
+
+  return capitalized(tail);
+}
+
+function compactActiveAspect(body: string | null): CompactActiveAspect {
+  if (!body?.trim()) {
+    return { body: null, dateLabel: null, natalLabel: null, natalHouse: null };
+  }
+
   const source = body.trim();
   const date = source.match(activeDatePattern)?.[1] ?? null;
   const frame = source.match(activeFramePattern);
+  const remainder = frame ? source.slice(frame[0].length).trim() : source;
+
   return {
-    body: frame ? `Your natal ${frame[1]} is in your ${frame[2]}. ${source.slice(frame[0].length).trim()}`.trim() : source,
-    dateLabel: date ? `Through ${date}` : null
+    body: frame ? stripSharedTransitLead(remainder) : source,
+    dateLabel: date ? `Through ${date}` : null,
+    natalLabel: frame?.[1] ?? null,
+    natalHouse: frame?.[2] ?? null
   };
 }
 
-function combineActiveNodeBodies(first: string | null, second: string | null) {
-  if (!first) return second;
-  if (!second || first === second) return first;
-  const firstSentence = first.indexOf(". ");
-  const secondSentence = second.indexOf(". ");
-  const firstRest = firstSentence > 0 ? first.slice(firstSentence + 2) : first;
-  const secondRest = secondSentence > 0 ? second.slice(secondSentence + 2) : second;
-  const firstBreak = firstRest.indexOf(";");
-  const secondBreak = secondRest.indexOf(";");
-  if (firstSentence > 0 && secondSentence > 0 && firstBreak > 0 && secondBreak > 0 && firstRest.slice(0, firstBreak) === secondRest.slice(0, secondBreak)) {
-    const secondTail = secondRest.slice(secondBreak + 1).trim();
-    return `${first.slice(0, firstSentence + 1)} ${second.slice(0, secondSentence + 1)} ${firstRest.slice(0, firstBreak)}; ${firstRest.slice(firstBreak + 1).trim()}\n\n${secondTail[0].toUpperCase()}${secondTail.slice(1)}`;
-  }
-  return `${first}\n\n${second}`;
+function withNatalHouse(copy: CompactActiveAspect) {
+  if (!copy.body) return null;
+  return copy.natalLabel && copy.natalHouse
+    ? `Your natal ${copy.natalLabel} is in your ${copy.natalHouse}. ${copy.body}`
+    : copy.body;
+}
+
+function combineActiveNodeBodies(first: CompactActiveAspect, second: CompactActiveAspect) {
+  const intro = first.natalLabel && first.natalHouse && second.natalLabel && second.natalHouse
+    ? `Your natal ${first.natalLabel} is in your ${first.natalHouse}, while your ${second.natalLabel} is in your ${second.natalHouse}.`
+    : null;
+  const secondBody = second.body && second.body !== first.body ? second.body : null;
+  return [intro, first.body, secondBody].filter(Boolean).join(" ") || null;
 }
 
 export function skyActiveChartEvents(aspects: SkyActiveChartAspect[]): SkyActiveChartEvent[] {
@@ -111,7 +146,13 @@ export function skyActiveChartEvents(aspects: SkyActiveChartAspect[]): SkyActive
     const copy = compactActiveAspect(aspect.body);
 
     if (matchIndex < 0 || !parsed) {
-      events.push({ ...aspect, ...copy, type: "single", memberKeys: [aspect.key] });
+      events.push({
+        ...aspect,
+        body: withNatalHouse(copy),
+        dateLabel: copy.dateLabel,
+        type: "single",
+        memberKeys: [aspect.key]
+      });
       return;
     }
 
@@ -124,7 +165,7 @@ export function skyActiveChartEvents(aspects: SkyActiveChartAspect[]): SkyActive
       key: `nodal-axis:${ordered.map((member) => member.key).join(":")}`,
       type: "nodal-axis",
       heading: ordered.map((member) => member.heading).join(" · "),
-      body: combineActiveNodeBodies(first.body, second.body),
+      body: combineActiveNodeBodies(first, second),
       dateLabel: first.dateLabel === second.dateLabel ? first.dateLabel : null,
       memberKeys: ordered.map((member) => member.key)
     });
