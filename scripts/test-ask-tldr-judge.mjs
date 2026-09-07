@@ -64,6 +64,16 @@ assert.match(request.input, /DETERMINISTIC FACT LOCK/u);
 assert.ok(request.ownerPassageIds.length >= 3);
 assert.doesNotThrow(() => assertOpenAiStrictResponseSchema(request.outputSchema, "ask_tldr_judge_v1"), "The actual judge schema must compile against the production provider subset.");
 assert.ok(request.requestSha256);
+const citationSchema = request.outputSchema.properties.findings.items.properties;
+assert.deepEqual(citationSchema.evidenceIds.items.enum, writerOutput.evidenceIdsUsed,
+  "Provider schema must constrain citation IDs before the live judge can invent a label or canonical ID.");
+assert.deepEqual(citationSchema.ownerPassageIds.items.enum, request.ownerPassageIds);
+assert.throws(() => validateAskTldrJudgeOutput(request, {
+  scores: Object.fromEntries(ASK_TLDR_JUDGE_CATEGORIES.map((category) => [category, 4])),
+  timingApplicability: { applicable: true, reason: "Fixture uses temporal evidence." },
+  findings: [{ category: "astrology_fidelity", location: "rationale", finding: "Synthetic invalid citation.", evidenceIds: ["invented-factor"], ownerPassageIds: [] }]
+}), /ASK_TLDR_JUDGE_FINDING_EVIDENCE_INVALID/u,
+  "Deterministic citation validation remains in place behind the strict provider enum.");
 assert.equal(ASK_TLDR_JUDGE_SCORE_FLOORS.practical_usefulness, 4, "Ask TLDR guidance must be fully usable without a reader translation step before release.");
 
 const scores = Object.fromEntries(ASK_TLDR_JUDGE_CATEGORIES.map((category) => [category, 4]));

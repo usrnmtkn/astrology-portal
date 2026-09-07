@@ -108,11 +108,12 @@ function judgeInstructions() {
     "Do not reward a historical lookback unless the calculated evidence explicitly contains a historical comparison. A model-generated guess based on planetary periodicity is a factual defect.",
     "Boundary compliance: enforce the supplied pillar boundary and decision-support rule. Astrology must not become financial, medical, or spiritual certainty where prohibited.",
     "A score of 4 means no meaningful defect in that category. A 3 means good but with a specific fixable weakness. A 2 or below means the answer is not release quality.",
+    "For findings, use only the exact evidenceIds and ownerPassageIds allowed by OUTPUT SCHEMA. A canonical meaning ID, source path, factor key, or descriptive label is not a finding citation ID. Leave an unrelated citation lane empty rather than inventing an ID.",
     "Do not output a pass/fail verdict. TLDR computes release status deterministically from your scores."
   ].join("\n");
 }
 
-function judgeOutputSchema(timingApplicable: boolean) {
+function judgeOutputSchema(timingApplicable: boolean, evidenceIds: string[], ownerPassageIds: string[]) {
   const scoreProperties = Object.fromEntries(ASK_TLDR_JUDGE_CATEGORIES.map((category) => [
     category,
     category === "timing_relevance" && !timingApplicable
@@ -149,8 +150,8 @@ function judgeOutputSchema(timingApplicable: boolean) {
             category: { type: "string", enum: [...ASK_TLDR_JUDGE_CATEGORIES] },
             location: { type: "string" },
             finding: { type: "string" },
-            evidenceIds: { type: "array", items: { type: "string" } },
-            ownerPassageIds: { type: "array", items: { type: "string" } }
+            evidenceIds: { type: "array", items: { type: "string", enum: evidenceIds } },
+            ownerPassageIds: { type: "array", items: { type: "string", enum: ownerPassageIds } }
           }
         }
       }
@@ -225,7 +226,7 @@ export function buildAskTldrJudgeRequest(input: {
       "DETERMINISTIC FACT LOCK",
       JSON.stringify(input.factLock)
     ].filter((line) => line !== "").join("\n"),
-    outputSchema: judgeOutputSchema(timingApplicable),
+    outputSchema: judgeOutputSchema(timingApplicable, factors.map((factor) => factor.id), ownerPassageIds),
     usedEvidenceIds: factors.map((factor) => factor.id),
     ownerPassageIds,
     timingApplicable
