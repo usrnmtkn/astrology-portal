@@ -22,6 +22,7 @@ export type ReportLibraryItem = {
   readyAt: string | null;
   seenAt: string | null;
   archivedAt: string | null;
+  isShared: boolean;
   vanitySlug: string;
   route: string;
 };
@@ -79,6 +80,12 @@ type ReportLibraryStateRow = {
   source_id: string;
   archived_at: string | null;
   seen_at: string | null;
+};
+
+type ReportShareStateRow = {
+  source_kind: ReportLibrarySourceKind;
+  source_id: string;
+  revoked_at: string | null;
 };
 
 export type ReportReadyEventDetail = {
@@ -149,7 +156,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
   if (!context) return [];
   const { client, userId } = context;
 
-  const [generatedResult, premiumResult, stateResult] = await Promise.all([
+  const [generatedResult, premiumResult, stateResult, shareResult] = await Promise.all([
     client
       .from("user_generated_interpretations")
       .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, created_at, updated_at")
@@ -168,15 +175,26 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       .from("user_report_library_state")
       .select("source_kind, source_id, archived_at, seen_at")
       .eq("user_id", userId)
-      .returns<ReportLibraryStateRow[]>()
+      .returns<ReportLibraryStateRow[]>(),
+    client
+      .from("report_share_links")
+      .select("source_kind, source_id, revoked_at")
+      .eq("user_id", userId)
+      .returns<ReportShareStateRow[]>()
   ]);
 
   if (generatedResult.error) throw generatedResult.error;
   if (premiumResult.error) throw premiumResult.error;
   if (stateResult.error) throw stateResult.error;
+  if (shareResult.error) throw shareResult.error;
 
   const states = new Map(
     (stateResult.data ?? []).map((row) => [stateKey(row.source_kind, row.source_id), row])
+  );
+  const activeShares = new Set(
+    (shareResult.data ?? [])
+      .filter((row) => !row.revoked_at)
+      .map((row) => stateKey(row.source_kind, row.source_id))
   );
 
   const generated = (generatedResult.data ?? []).flatMap<ReportLibraryItem>((row) => {
@@ -201,6 +219,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       readyAt: row.updated_at,
       seenAt: state?.seen_at ?? null,
       archivedAt: state ? state.archived_at : (row.status === "ARCHIVED" ? row.updated_at : null),
+      isShared: activeShares.has(stateKey("generated_interpretation", row.id)),
       vanitySlug,
       route: `/reports/${vanitySlug}`
     }];
@@ -228,6 +247,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       readyAt: row.delivered_at,
       seenAt: state?.seen_at ?? null,
       archivedAt: state?.archived_at ?? null,
+      isShared: activeShares.has(stateKey("premium_report", row.id)),
       vanitySlug,
       route: `/reports/${vanitySlug}`
     }];
