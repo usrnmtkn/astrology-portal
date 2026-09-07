@@ -17,11 +17,11 @@ const FRIEND_CHART_REPAIR_FALLBACK_DELAY_MS = 16;
 
 export function resolveFriendChartLoadingState({
   authAccountChecked,
-  isAuthConfigured,
-  remoteAccountId,
-  remoteProfileReady
+  isAuthConfigured
 }: FriendChartLoadingStateInput) {
-  const databaseReady = remoteAccountId ? remoteProfileReady : authAccountChecked;
+  // Account/profile ownership is verified before authAccountChecked becomes true.
+  // Migration is background reconciliation, not a prerequisite for reading charts.
+  const databaseReady = authAccountChecked;
 
   return {
     allowCachedChartsWhileLoading: !isAuthConfigured || databaseReady,

@@ -10932,6 +10932,7 @@ export function App() {
   const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
   const appActiveRef = useRef(true);
   const appliedAuthAccountIdRef = useRef<string | null>(null);
+  const authBootstrapGenerationRef = useRef(0);
   const remoteProfileReadyRef = useRef(false);
   const [accountIntent, setAccountIntentState] = useState<AuthMode>(getInitialAccountIntent);
   const setAccountIntent = useCallback((intent: AuthMode) => {
@@ -11564,9 +11565,7 @@ export function App() {
     let cancelled = false;
     if (!shouldStartRelationshipFallbackEnhancement({
       mode,
-      friendRelationshipContentRequests,
-      currentSkyReady: Boolean(sky),
-      profileNatalReady: Boolean(profileNatalSky)
+      friendRelationshipContentRequests
     })) {
       return () => {
         cancelled = true;
@@ -11586,7 +11585,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendRelationshipContentRequests, mode, profileNatalSky, sky]);
+  }, [friendRelationshipContentRequests, mode]);
 
   useEffect(() => {
     if (
@@ -13107,7 +13106,8 @@ export function App() {
   ]);
 
   const applyAuthAccount = useCallback(async (account: AuthAccount | null) => {
-    const isCancelled = () => !appActiveRef.current;
+    let generation = authBootstrapGenerationRef.current;
+    const isCancelled = () => !appActiveRef.current || generation !== authBootstrapGenerationRef.current;
 
     if (isCancelled()) {
       return;
@@ -13128,6 +13128,7 @@ export function App() {
       }
     }
 
+    generation = ++authBootstrapGenerationRef.current;
     setAuthAccountChecked(false);
 
     if (!account) {
@@ -14405,6 +14406,7 @@ export function App() {
               {mode === "friends" && userProfile && (
                 <FriendsRoute>
                   <ManualChartsPanel
+                    key={`${remoteAccountId ?? userProfile.id}:${authAccountChecked}`}
                     profile={userProfile}
                     profileHandle={ownSocialProfile?.handle ?? null}
                     currentSky={selectedDateSky}

@@ -39,6 +39,16 @@ assert.match(
 );
 const loadingStateCases = [
   {
+    name: "account switch must reverify ownership despite prior migration readiness",
+    input: {
+      authAccountChecked: false,
+      isAuthConfigured: true,
+      remoteAccountId: "account-2",
+      remoteProfileReady: true
+    },
+    expected: { allowCachedChartsWhileLoading: false, chartsReady: false }
+  },
+  {
     name: "local auth without Supabase",
     input: {
       authAccountChecked: false,
@@ -69,14 +79,14 @@ const loadingStateCases = [
     expected: { allowCachedChartsWhileLoading: true, chartsReady: true }
   },
   {
-    name: "remote account before profile migration",
+    name: "verified remote account before background migration",
     input: {
       authAccountChecked: true,
       isAuthConfigured: true,
       remoteAccountId: "account-1",
       remoteProfileReady: false
     },
-    expected: { allowCachedChartsWhileLoading: false, chartsReady: false }
+    expected: { allowCachedChartsWhileLoading: true, chartsReady: true }
   },
   {
     name: "remote account after profile migration",
@@ -104,7 +114,7 @@ assert.doesNotMatch(
 );
 assert.match(
   manualChartsControllerSource,
-  /allowCachedChartsWhileLoading && cachedCharts\.length > 0/,
+  /allowCachedChartsWhileLoading && reliableCachedCharts\.length > 0/,
   "ManualChartsPanel must only render cached charts during loading when explicitly allowed."
 );
 assert.match(
