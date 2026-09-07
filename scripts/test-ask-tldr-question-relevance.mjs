@@ -27,11 +27,19 @@ assert.equal(primary.questionRelevance.status, "full");
 assert.ok(primary.questionRelevance.packetSha256);
 assert.ok(primary.questionRelevance.promptEvidence);
 
-const supporting = prepared.questionBoundPacket.evidence.find((factor) => factor.role === "supporting" && factor.governedMeaning.status === "full");
-assert.ok(supporting, "Fixture should expose at least one full supporting factor for relevance-exclusion regression.");
-const supportingMissingPacket = {
+const supporting = {
+  ...primary,
+  id: `${primary.id}:supporting-relevance-regression`,
+  role: "supporting"
+};
+const supportingFixturePacket = {
   ...prepared.questionBoundPacket,
-  evidence: prepared.questionBoundPacket.evidence.map((factor) => factor.id === supporting.id ? {
+  evidence: [...prepared.questionBoundPacket.evidence, supporting],
+  evidenceIds: [...prepared.questionBoundPacket.evidenceIds, supporting.id]
+};
+const supportingMissingPacket = {
+  ...supportingFixturePacket,
+  evidence: supportingFixturePacket.evidence.map((factor) => factor.id === supporting.id ? {
     ...factor,
     questionRelevance: {
       status: "missing",
