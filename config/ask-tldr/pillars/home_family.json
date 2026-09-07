@@ -1,0 +1,14 @@
+{
+  "id":"home_family",
+  "label":"Home & Family",
+  "description":"Home, moving, property, household responsibilities, parents, family relationships, caregiving, and belonging.",
+  "defaultEvidencePriority":["4th house / IC / 4th-house ruler","Moon and family/home pattern","active transits to home factors","6th-house links when caregiving or household workload is the actual issue"],
+  "questions":[
+    {"id":"home_family.change_home","displayQuestion":"What needs to change at home?","primaryIntent":"home_change","secondaryIntents":["household","living_arrangement","repair"],"questionTypes":["current_state","guidance"],"defaultTimeWindow":"4_months","evidenceFocus":["4th-house / IC activation","Moon / 4th-ruler transits"]},
+    {"id":"home_family.move","displayQuestion":"What would a move need to solve for me right now?","primaryIntent":"move_timing","secondaryIntents":["relocation","housing","decision"],"questionTypes":["timing","decision"],"defaultTimeWindow":"4_months","evidenceFocus":["4th-house / IC timing","Uranus / Saturn / Jupiter / eclipse contacts when present"]},
+    {"id":"home_family.responsibility","displayQuestion":"Where do I need clearer responsibility at home?","primaryIntent":"household_responsibility","secondaryIntents":["caregiving","boundaries","household_work"],"questionTypes":["guidance","current_state"],"defaultTimeWindow":"1_month","evidenceFocus":["Saturn / Moon / 4th-house contacts","4th-6th house links"]},
+    {"id":"home_family.carrying_more","displayQuestion":"Where do home or family responsibilities need to be divided differently?","primaryIntent":"family_load","secondaryIntents":["caregiving","household_work","reciprocity"],"questionTypes":["current_state","guidance"],"defaultTimeWindow":"1_month","evidenceFocus":["4th / 6th / 7th-house links","Saturn / Moon contacts"]},
+    {"id":"home_family.pattern","displayQuestion":"What family pattern needs to work differently now?","primaryIntent":"family_pattern","secondaryIntents":["recurrence","roles","boundaries"],"questionTypes":["pattern","guidance"],"defaultTimeWindow":"12_months","evidenceFocus":["natal 4th-house / IC / Moon pattern","long transits / eclipse cycles affecting home factors"]},
+    {"id":"home_family.major_decision","displayQuestion":"What should carry the most weight in a major home decision?","primaryIntent":"home_decision","secondaryIntents":["property","move","household"],"questionTypes":["timing","decision"],"defaultTimeWindow":"4_months","evidenceFocus":["4th-ruler / IC / Moon transits","upcoming home activations"]}
+  ]
+}
