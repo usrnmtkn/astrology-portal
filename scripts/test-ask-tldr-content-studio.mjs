@@ -9,7 +9,8 @@ const readJson = (relative) => JSON.parse(read(relative));
 
 const api = read("api/admin/ask-tldr.ts");
 const studio = read("apps/admin/src/AskTldrStudio.tsx");
-const main = read("apps/admin/src/main.tsx");
+const adminMain = read("apps/admin/src/main.tsx");
+const webMain = read("apps/web/src/main.tsx");
 const primitives = read("apps/admin/src/AdminStudioPrimitives.tsx");
 const migration = read("apps/web/supabase/migrations/20260907071500_ask_tldr_owner_preview_content_studio.sql");
 const model = readJson("config/ask-tldr/answer-model-v1.json");
@@ -20,8 +21,10 @@ assert.equal(model.ownerApproved, false, "Owner preview must not silently approv
 assert.equal(model.promotionAuthorized, false, "Owner preview must not silently authorize promotion.");
 assert.equal(manifest.runtimeEnabled, false, "Question taxonomy remains non-serving during owner preview.");
 
-assert.match(main, /lazy\(\(\) => import\("\.\/AskTldrStudio"\)\)/u);
-assert.match(main, /\/admin\/content\/ask-tldr/u);
+assert.match(adminMain, /lazy\(\(\) => import\("\.\/AskTldrStudio"\)\)/u);
+assert.match(adminMain, /\/admin\/content\/ask-tldr/u);
+assert.match(webMain, /function isAskTldrPath\(\)/u, "Deployed web entry must recognize the Ask TLDR Studio path.");
+assert.match(webMain, /import\("\.\.\/\.\.\/admin\/src\/AskTldrStudio"\)/u, "Deployed web entry must mount the owner-preview Studio component.");
 assert.match(primitives, /href="\/admin\/content\/ask-tldr"/u);
 assert.match(primitives, />\s*Ask TLDR\s*</u);
 
@@ -60,6 +63,13 @@ assert.match(api, /factLock:\s*input\.result\.factLock/u);
 assert.match(api, /judge:\s*input\.result\.judge/u);
 assert.match(api, /releasePacket:\s*input\.result\.releasePacket/u);
 
+assert.match(api, /type ChartMode = "owner" \| "test"/u, "Preview must support owner and test-chart calculation modes.");
+assert.match(api, /function testChartContext/u);
+assert.match(api, /function chartFingerprint/u);
+assert.match(api, /chartFingerprint:\s*input\.chartFingerprint/u);
+const savePreviewBlock = api.slice(api.indexOf("async function savePreviewDraft"), api.indexOf("async function saveQuestionOverlay"));
+assert.doesNotMatch(savePreviewBlock, /birthDate|birthTime|latitude|longitude|timeZone/u, "Saved review drafts must not persist test-chart birth data.");
+
 assert.match(studio, /Owner preview only/u);
 assert.match(studio, /Runtime:/u);
 assert.match(studio, /Preview/u);
@@ -67,6 +77,11 @@ assert.match(studio, /Questions \(/u);
 assert.match(studio, /Draft review \(/u);
 assert.match(studio, /Advanced routing \(read-only\)/u);
 assert.match(studio, /Generate owner preview/u);
+assert.match(studio, />My chart</u);
+assert.match(studio, />Test chart</u);
+assert.match(studio, /Birth data is sent only to the calculation service/u);
+assert.match(studio, /Compare with previous revision/u, "Draft Review must support revision comparison.");
+assert.match(studio, /chartFingerprint/u, "Revision comparison must stay scoped to the same chart fingerprint.");
 assert.match(studio, /Approve preview/u);
 assert.match(studio, /Reject preview/u);
 assert.match(studio, /evidence inspector/u);
@@ -78,4 +93,4 @@ const questions = pillarFiles.flatMap((file) => readJson(`config/ask-tldr/pillar
 assert.equal(questions.length, 54, "Content Studio must surface the complete governed evergreen question set.");
 assert.equal(new Set(questions.map((question) => question.id)).size, 54, "Ask TLDR Content Studio question IDs must remain unique.");
 
-console.log("Ask TLDR Content Studio contract passed: 54 governed questions are editable as wording-only overlays, owner previews use bounded calibration, drafts reuse generated_interpretations with existing RLS, and the database forbids LIVE Ask TLDR rows.");
+console.log("Ask TLDR Content Studio contract passed: 54 governed questions are wording-editable, owner/test-chart previews use bounded calculated calibration, revision drafts are comparable without persisting test birth data, generated_interpretations keeps existing RLS, and the database forbids LIVE Ask TLDR rows.");
