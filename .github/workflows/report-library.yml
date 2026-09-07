@@ -3,10 +3,13 @@ name: Report library
 on:
   pull_request:
     paths:
+      - "api/report-share.ts"
       - "apps/web/src/components/reports/**"
       - "apps/web/src/features/reports/**"
       - "apps/web/src/routes/ReportRoute.tsx"
       - "apps/web/src/services/reportLibrary.ts"
+      - "apps/web/src/services/reportLinks.ts"
+      - "apps/web/src/services/reportSharing.ts"
       - "apps/web/src/services/userGeneratedContent.ts"
       - "apps/web/src/styles/report-library.css"
       - "apps/web/src/styles/report-notifications.css"
@@ -19,10 +22,13 @@ on:
     branches:
       - main
     paths:
+      - "api/report-share.ts"
       - "apps/web/src/components/reports/**"
       - "apps/web/src/features/reports/**"
       - "apps/web/src/routes/ReportRoute.tsx"
       - "apps/web/src/services/reportLibrary.ts"
+      - "apps/web/src/services/reportLinks.ts"
+      - "apps/web/src/services/reportSharing.ts"
       - "apps/web/src/services/userGeneratedContent.ts"
       - "apps/web/src/styles/report-library.css"
       - "apps/web/src/styles/report-notifications.css"
@@ -104,6 +110,25 @@ jobs:
                 and cmd = 'UPDATE'
             ) then
               raise exception 'report library UPDATE RLS policy is missing';
+            end if;
+            if to_regclass('public.report_share_links') is null then
+              raise exception 'report_share_links is missing';
+            end if;
+            if not exists (
+              select 1 from pg_policies
+              where schemaname = 'public'
+                and tablename = 'report_share_links'
+                and cmd = 'SELECT'
+            ) then
+              raise exception 'report share SELECT RLS policy is missing';
+            end if;
+            if exists (
+              select 1 from pg_policies
+              where schemaname = 'public'
+                and tablename = 'report_share_links'
+                and cmd in ('INSERT', 'UPDATE', 'DELETE')
+            ) then
+              raise exception 'report share links must remain server-write-only';
             end if;
           end
           $$;
