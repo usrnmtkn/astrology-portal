@@ -88,3 +88,11 @@ Sky Write-ups now offers separate Planet or point, Zodiac sign, and Motion selec
 Result titles identify the placement and motion; a secondary label distinguishes placement templates, saved editions, and lunation macros. The stored editorial title and reader copy remain unchanged. Clear filters resets all selectors. A browser fixture deliberately mentions Sun in Virgo in unrelated Jupiter/Leo copy and verifies that exact selectors exclude it.
 
 All 76 Studio and publication/offline browser flows pass. Relationship checks, TypeScript, and the CSS/token audit pass. The targeted filter test also covers desktop/mobile, light/dark themes, empty results, and label typography/order. These changes are prepared on the feature branch; production release remains pending.
+
+## Release integration
+
+Rebased onto main including PR 670's Daily Sky work. Preserved both summary eligibility and publication eligibility checks, and both sets of server dependency checks. Regenerated fallback distribution, manifests, content book, and knowledge index with no additional artifact drift. Compared approved source records against main: only the authorized Virgo macro differs.
+
+The rebased branch passes 76 Studio/offline browser checks, seven dedicated Daily Sky Studio checks, publication database/API/reader parity, the Studio CRUD/API suite, TypeScript, CSS/token audit, corpus grammar, and plain Node endpoint startup. Report and visual smoke fixtures now explicitly mock the new publication endpoint, matching their existing fake Supabase configuration; the same eight report/visual checks pass with CI's placeholder environment. No assertion or timeout was relaxed.
+
+Public inventory pagination timed out twice. The connected database reported the same 6,371 source rows and latest update `2026-09-07T15:32:34.947748Z`, preceding the existing bootstrap's generation. The bootstrap still checks exact source timestamps during insertion; rollout must verify all 3,619 selected identities before committing initialization.
