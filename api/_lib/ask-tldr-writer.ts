@@ -201,7 +201,7 @@ function outputSchema(evidenceIds: string[], primaryEvidenceId: string) {
     additionalProperties: false,
     required: ["answer", "evidenceIdsUsed", "primaryEvidenceId", "whyNowEvidenceId", "decisionOutcomeClaimed"],
     properties: {
-      answer: { type: "string", minLength: 1 },
+      answer: { type: "string" },
       evidenceIdsUsed: {
         type: "array",
         minItems: 1,
