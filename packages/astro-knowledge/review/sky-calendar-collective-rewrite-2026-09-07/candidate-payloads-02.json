@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "batch": "sky-calendar-collective-rewrite-2026-09-07-02",
+  "reviewStatus": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "entries": {
+    "sky.mercury.conjunction.jupiter": {
+      "summary": "An idea can become a promise faster than its details become a plan once other people start getting excited about it.",
+      "body": "An idea can become a promise faster than its details become a plan once other people start getting excited about it. When Mercury conjoins Jupiter, thinking and expansion reinforce each other, helping a pitch, application, announcement, or ambitious conversation gain momentum quickly. Enthusiasm can quietly turn an explored possibility into an assumed commitment. Clear language about what is decided, what is still possible, and what needs more time keeps the opportunity from becoming larger than the agreement."
+    },
+    "sky.mercury.conjunction.mars": {
+      "summary": "A conversation can move from useful to confrontational before anyone has decided how much the disagreement actually matters.",
+      "body": "A conversation can move from useful to confrontational before anyone has decided how much the disagreement actually matters. When Mercury conjoins Mars, thought and action fuse, making opinions faster, sharper, and harder to hold back once irritation appears. The same force can cut through confusion or turn a solvable issue into a fight about tone and authority. Precision is more useful than volume when the goal is to get an answer, make a decision, or move something forward."
+    },
+    "sky.mercury.conjunction.neptune": {
+      "summary": "An idea or intuitive impression can feel convincing enough to shape a plan before its practical details have been checked.",
+      "body": "An idea or intuitive impression can feel convincing enough to shape a plan before its practical details have been checked. When Mercury conjoins Neptune, thought and imagination fuse, strengthening creativity, symbolism, and associative thinking while making facts easier to blur. Inspiration deserves to be captured before it disappears. Permanent decisions deserve enough logistics on paper to show what the idea can actually support."
+    },
+    "sky.mercury.conjunction.pluto": {
+      "summary": "One question can take a conversation much deeper once the polite explanation no longer accounts for what is happening.",
+      "body": "One question can take a conversation much deeper once the polite explanation no longer accounts for what is happening. When Mercury conjoins Pluto, thought and power fuse, sharpening attention around hidden motives, missing information, and the part of the story with leverage behind it. Research and difficult conversations can become unusually productive under this aspect. The useful question is the one that changes the next decision, not the one that keeps an interrogation going after enough is already known."
+    },
+    "sky.mercury.conjunction.saturn": {
+      "summary": "A conversation can end with a firm answer, deadline, or commitment that leaves much less open to interpretation.",
+      "body": "A conversation can end with a firm answer, deadline, or commitment that leaves much less open to interpretation. When Mercury conjoins Saturn, thought and responsibility fuse, making details, consequences, and precise language harder to brush aside. Contracts, boundaries, serious decisions, and written terms benefit from the extra specificity. The answer may be slower or stricter than hoped, but clarity creates something concrete to plan around."
+    },
+    "sky.mercury.conjunction.uranus": {
+      "summary": "Unexpected information or one unusual idea can change the understanding of a situation in minutes.",
+      "body": "Unexpected information or one unusual idea can change the understanding of a situation in minutes. When Mercury conjoins Uranus, thought and disruption fuse, speeding up insight and making strange connections, sudden discoveries, and abrupt changes of mind more likely. A breakthrough can be worth capturing immediately without requiring the entire existing structure to be discarded with it. A useful idea will still make sense after the first rush of surprise has passed."
+    },
+    "sky.mercury.conjunction.venus": {
+      "summary": "The right language can make an invitation, apology, money conversation, or difficult subject much easier to receive.",
+      "body": "The right language can make an invitation, apology, money conversation, or difficult subject much easier to receive. When Mercury conjoins Venus, communication and connection reinforce each other, giving words more tact and making agreement, affection, and creativity easier to express. A softer delivery can protect the relationship without making the actual requirement disappear. Kindness works best when the meaning remains clear enough that nobody has to guess what was being asked."
+    },
+    "sky.mercury.opposition.jupiter": {
+      "summary": "A big claim can sound convincing until the details left out of the headline have to answer for themselves.",
+      "body": "A big claim can sound convincing until the details left out of the headline have to answer for themselves. When Mercury opposes Jupiter, information and expansion pull against each other, creating tension between the inspiring big picture and the facts that complicate it. An ambitious promise can be broadly right and still be much less simple than advertised. The strongest version of the idea is the one that can survive questions about dates, numbers, responsibilities, and the actual plan."
+    },
+    "sky.mercury.opposition.mars": {
+      "summary": "One person may want an answer immediately while another is still trying to understand what is actually being asked.",
+      "body": "One person may want an answer immediately while another is still trying to understand what is actually being asked. When Mercury opposes Mars, thought and action face each other directly, turning questions, timing, and tone into possible sources of conflict. Discussion can look like delay from one side while immediate action looks reckless from the other. The disagreement becomes more workable once the exact missing information and the actual deadline are separated from the pressure of the exchange."
+    },
+    "sky.mercury.opposition.neptune": {
+      "summary": "A convincing account can start falling apart once it is compared with what was actually said, promised, or documented.",
+      "body": "A convincing account can start falling apart once it is compared with what was actually said, promised, or documented. When Mercury opposes Neptune, facts and imagination pull against each other, making rumors, assumptions, selective memory, and emotionally satisfying explanations difficult to separate from the record. A story can feel true while containing details that were never confirmed. Clarity returns when the documented facts are allowed to stand without extra explanation being supplied on their behalf."
+    },
+    "sky.mercury.opposition.pluto": {
+      "summary": "A conversation can become a power struggle when one side keeps asking for answers and the other controls the information.",
+      "body": "A conversation can become a power struggle when one side keeps asking for answers and the other controls the information. When Mercury opposes Pluto, communication meets leverage through withheld details, strategic silence, probing questions, or loaded language. More pressure can make the imbalance easier to see without producing the missing answer. Precise questions are especially useful because an attempt to evade them becomes information too."
+    },
+    "sky.mercury.opposition.saturn": {
+      "summary": "A request for an answer can run directly into a rule, deadline, missing document, or person who cannot authorize more.",
+      "body": "A request for an answer can run directly into a rule, deadline, missing document, or person who cannot authorize more. When Mercury opposes Saturn, communication meets limitation, making delays and refusals difficult to talk around. The answer may disappoint, but the exact condition behind it is useful information. A defined roadblock makes it possible to distinguish a route that can be repaired from one that is genuinely closed."
+    },
+    "sky.mercury.opposition.uranus": {
+      "summary": "Unexpected information can overturn a plan faster than everyone involved can agree on what the new facts mean.",
+      "body": "Unexpected information can overturn a plan faster than everyone involved can agree on what the new facts mean. When Mercury opposes Uranus, information and disruption face each other directly, bringing reversals, contradictory messages, and sudden changes of perspective. The first update can be important without being complete. Confirmed change becomes easier to act on once panic, speculation, and incomplete reporting are kept from joining the facts."
+    },
+    "sky.mercury.sextile.jupiter": {
+      "summary": "A conversation, application, introduction, or piece of good news can open a larger opportunity than expected.",
+      "body": "A conversation, application, introduction, or piece of good news can open a larger opportunity than expected. When Mercury sextiles Jupiter, communication and expansion cooperate, helping ideas travel farther and connect with people, audiences, or resources that can help them grow. The opening becomes more useful when the desired outcome is stated plainly instead of buried under explanation. Momentum needs a concrete next step if the opportunity is going to become more than an encouraging exchange."
+    },
+    "sky.mercury.sextile.mars": {
+      "summary": "A direct conversation can clear a problem that has been taking far more mental energy than the solution requires.",
+      "body": "A direct conversation can clear a problem that has been taking far more mental energy than the solution requires. When Mercury sextiles Mars, thought and action cooperate, making the useful question, correction, or instruction easier to say and easier to act on. Precision can clear a bottleneck without creating another conflict around the delivery. The shortest route is often the exact request or piece of information that allows the next action to happen."
+    },
+    "sky.mercury.sextile.neptune": {
+      "summary": "A feeling that has been difficult to explain can finally find language another person can understand.",
+      "body": "A feeling that has been difficult to explain can finally find language another person can understand. When Mercury sextiles Neptune, thought and intuition cooperate, making emotional conversations, writing, symbolism, and subtle observations easier to translate into something shareable. Feeling does not have to be stripped out of the message to make it clear. One concrete example can give an abstract truth enough shape for another person to respond to it."
+    },
+    "sky.mercury.sextile.pluto": {
+      "summary": "One precise question can reveal more than another hour spent arguing with the surface version of a problem.",
+      "body": "One precise question can reveal more than another hour spent arguing with the surface version of a problem. When Mercury sextiles Pluto, thought and depth cooperate, helping research and difficult conversations reach information with actual leverage behind it. A discrepancy, missing detail, or part of the story that never added up can become especially useful. The goal is not a total confession; it is enough truth to know what the next move should be."
+    },
+    "sky.mercury.sextile.saturn": {
+      "summary": "One clarified deadline, document, or requirement can turn uncertainty into something concrete enough to plan around.",
+      "body": "One clarified deadline, document, or requirement can turn uncertainty into something concrete enough to plan around. When Mercury sextiles Saturn, communication and structure cooperate, helping practical details become useful instead of merely restrictive. Contracts, schedules, applications, and difficult emails benefit from the added precision. Administrative clarity can prevent a much more expensive misunderstanding later."
+    },
+    "sky.mercury.sextile.uranus": {
+      "summary": "A clever shortcut or unexpected suggestion can solve a problem that has been approached the same way for too long.",
+      "body": "A clever shortcut or unexpected suggestion can solve a problem that has been approached the same way for too long. When Mercury sextiles Uranus, thought and experimentation cooperate, making unusual ideas easier to test without requiring everything that already works to be discarded. A different tool, question, or order of operations can expose how much of the friction belonged to the method. The new approach earns its place by removing the bottleneck, not by being novel."
+    },
+    "sky.mercury.sextile.venus": {
+      "summary": "A difficult subject can become easier to discuss when honesty no longer has to arrive with unnecessary friction.",
+      "body": "A difficult subject can become easier to discuss when honesty no longer has to arrive with unnecessary friction. When Mercury sextiles Venus, communication and connection cooperate, helping apologies, invitations, money conversations, and disagreements move with more tact. A relationship can be protected without making the requirement impossible to hear. Grace in the exchange matters most when the actual meaning remains intact."
+    },
+    "sky.mercury.square.jupiter": {
+      "summary": "An exciting idea can grow into a promise much faster than the facts underneath it are growing.",
+      "body": "An exciting idea can grow into a promise much faster than the facts underneath it are growing. When Mercury squares Jupiter, thought and expansion create friction, making exaggeration and conclusions that outrun the evidence easier to slip into ordinary conversation. One encouraging result can start sounding like proof of an entire future. Dates, numbers, and baseline assumptions deserve more scrutiny when the pitch has become charismatic enough to make verification feel unnecessary."
+    },
+    "sky.mercury.square.mars": {
+      "summary": "One sharp reply can turn a practical disagreement into an argument that takes much longer to repair than the original problem.",
+      "body": "One sharp reply can turn a practical disagreement into an argument that takes much longer to repair than the original problem. When Mercury squares Mars, thought and anger grind against each other, making impatience easier to hear and disagreement easier to read as disrespect. The issue may need confronting while the first sentence still carries more heat than the solution requires. A response built from the cold facts is more likely to secure the objective than one built mainly to discharge the irritation."
+    },
+    "sky.mercury.square.neptune": {
+      "summary": "Mixed messages, missing context, or a story that keeps changing can make certainty feel harder to reach than usual.",
+      "body": "Mixed messages, missing context, or a story that keeps changing can make certainty feel harder to reach than usual. When Mercury squares Neptune, thought and imagination blur together, making assumptions, rumors, and emotionally satisfying explanations easier to mistake for facts. One missing piece of information can matter more than ten theories about what it might mean. Blank space is safer left blank until enough evidence exists to fill it."
+    },
+    "sky.mercury.square.pluto": {
+      "summary": "A conversation can become obsessive when one more piece of information starts to look like the thing that will finally create control.",
+      "body": "A conversation can become obsessive when one more piece of information starts to look like the thing that will finally create control. When Mercury squares Pluto, thought and power grind against each other, making secrets, selective language, and unanswered questions unusually difficult to leave alone. Digging deeper may uncover something important, but investigation can also become a substitute for accepting uncertainty. Enough information is the amount needed to make the next decision, not every answer another person or system could possibly withhold."
+    },
+    "sky.mercury.square.saturn": {
+      "summary": "An answer can be delayed, denied, or returned with conditions that force attention onto one frustratingly specific requirement.",
+      "body": "An answer can be delayed, denied, or returned with conditions that force attention onto one frustratingly specific requirement. When Mercury squares Saturn, communication hits a structural limit through a rule, deadline, missing proof, or hard no. The obstacle can feel larger because it is so concrete. That same specificity makes it possible to identify what can be corrected and what genuinely needs a different plan."
+    },
+    "sky.mercury.square.uranus": {
+      "summary": "A message, cancellation, technical problem, or unexpected update can throw a plan off course before the new facts have fully landed.",
+      "body": "A message, cancellation, technical problem, or unexpected update can throw a plan off course before the new facts have fully landed. When Mercury squares Uranus, information arrives with disruption attached, making schedules shift and the mind race toward the next solution. Speed can imitate clarity under this aspect. Confirming exactly what changed creates a better foundation for rebuilding than reacting to every possibility the surprise seems to imply."
+    },
+    "sky.mercury.trine.jupiter": {
+      "summary": "A big idea can become easier for other people to understand when the vision and the practical explanation support each other.",
+      "body": "A big idea can become easier for other people to understand when the vision and the practical explanation support each other. When Mercury trines Jupiter, thinking expands without losing as much contact with useful detail, helping pitches, teaching, publishing, and ambitious conversations travel farther. The larger purpose can lead without forcing enthusiasm to cover missing logistics. A clear reason, number, timeline, or next step gives other people something concrete to join."
+    },
+    "sky.mercury.trine.mars": {
+      "summary": "Clear direction can save a decision from another round of discussion when the next action is already obvious.",
+      "body": "Clear direction can save a decision from another round of discussion when the next action is already obvious. When Mercury trines Mars, thought and action reinforce each other, making decisions, instructions, and difficult conversations easier to execute quickly. Naming the responsibility, task, and next step can remove unnecessary interpretation. Speed works best when it comes from clarity rather than pressure."
+    },
+    "sky.mercury.trine.neptune": {
+      "summary": "Emotional truth can be communicated without exaggerating the facts to make the message matter.",
+      "body": "Emotional truth can be communicated without exaggerating the facts to make the message matter. When Mercury trines Neptune, language can carry nuance, grief, imagination, or compassion while staying connected to the details that make a story credible. Writing, art, and difficult conversations can benefit from that combination. A moving truth does not need extra drama to earn attention."
+    },
+    "sky.mercury.trine.pluto": {
+      "summary": "Evidence can lead further than the explanation everyone has already agreed to repeat.",
+      "body": "Evidence can lead further than the explanation everyone has already agreed to repeat. When Mercury trines Pluto, concentration and depth reinforce each other, helping hidden connections, financial details, and difficult facts become easier to follow. Research or a serious conversation can reach the source of a decision more directly. The strongest insight is the one that remains loyal to what can actually be proved."
+    },
+    "sky.mercury.trine.saturn": {
+      "summary": "Important details become more useful once they are written down instead of being left in everyone's memory.",
+      "body": "Important details become more useful once they are written down instead of being left in everyone's memory. When Mercury trines Saturn, thinking becomes more disciplined and communication more precise around contracts, deadlines, boundaries, and decisions with consequences. A date, responsibility, requirement, or term can prevent the same disagreement from being reconstructed later. Clarity now creates something everyone can refer back to."
+    },
+    "sky.mercury.trine.uranus": {
+      "summary": "The answer can be hiding in the detail everyone else has treated as irrelevant.",
+      "body": "The answer can be hiding in the detail everyone else has treated as irrelevant. When Mercury trines Uranus, thought and innovation reinforce each other, making patterns, errors, shortcuts, and alternatives easier to see. An odd detail can expose a solution that the old assumptions kept obscuring. A small insight deserves attention when it removes a much larger bottleneck."
+    },
+    "sky.neptune.conjunction.pluto": {
+      "summary": "A story becomes much harder to question when belief and power start reinforcing each other.",
+      "body": "A story becomes much harder to question when belief and power start reinforcing each other. When Neptune conjoins Pluto, ideals, fears, imagination, and collective longing fuse with control, secrecy, and influence, giving movements, institutions, and narratives unusual emotional force. Something can feel sacred or inevitable and still deserve scrutiny. The strongest warning sign is what becomes easier to justify once enough power depends on everyone believing the same account."
+    },
+    "sky.neptune.opposition.pluto": {
+      "summary": "An inspiring story becomes harder to accept when the power structure underneath it can no longer be ignored.",
+      "body": "An inspiring story becomes harder to accept when the power structure underneath it can no longer be ignored. When Neptune opposes Pluto, ideals and belief face control, secrecy, money, and concentrated leverage directly. The contradiction can expose the distance between what an institution says it protects and what its choices allow. A value can remain worth caring about even when the person or structure claiming to represent it has made its own motives harder to trust."
+    },
+    "sky.neptune.sextile.pluto": {
+      "summary": "Strong feeling can become more trustworthy when curiosity reaches the motive, history, or power underneath the first version of the story.",
+      "body": "Strong feeling can become more trustworthy when curiosity reaches the motive, history, or power underneath the first version of the story. When Neptune sextiles Pluto, empathy and intuition support deeper investigation without requiring cynicism. Learning who benefits, what shaped the situation, and where influence sits can clarify what deserves loyalty, money, or trust. Care becomes more useful when it is attached to the thing actually happening rather than the story that was easiest to sell."
+    },
+    "sky.neptune.square.pluto": {
+      "summary": "A belief can become harder to examine when accepting the power underneath it would force a painful revision of the story.",
+      "body": "A belief can become harder to examine when accepting the power underneath it would force a painful revision of the story. When Neptune squares Pluto, hope, fear, loyalty, and idealism can make an unequal dynamic easier to justify because seeing the control clearly threatens what people want to believe. Scrutiny does not require distrusting everything that matters. The avoided question, the person who benefits, and the condition that suddenly becomes difficult to excuse often reveal where belief has started protecting power."
+    },
+    "sky.neptune.trine.pluto": {
+      "summary": "Understanding the deeper reason behind a behavior can increase compassion without making the behavior more acceptable.",
+      "body": "Understanding the deeper reason behind a behavior can increase compassion without making the behavior more acceptable. When Neptune trines Pluto, emotional insight and depth reinforce each other, making history, fear, grief, desire, and power easier to see together. Context can change the understanding of a situation without erasing the boundary it still requires. Knowing why something happened and deciding it cannot continue are compatible conclusions."
+    },
+    "sky.saturn.conjunction.neptune": {
+      "summary": "A vision becomes a commitment when it needs money, time, limits, and someone responsible for what happens next.",
+      "body": "A vision becomes a commitment when it needs money, time, limits, and someone responsible for what happens next. When Saturn conjoins Neptune, imagination and structure fuse, giving an intangible goal enough form to become possible while exposing where hope had been covering missing support. The dream is not less meaningful because it needs a budget or deadline. If something matters enough to build, the structure carrying it matters too."
+    },
+    "sky.saturn.conjunction.pluto": {
+      "summary": "When the stakes are high, control can start looking like responsibility and fear can make almost any restriction seem reasonable.",
+      "body": "When the stakes are high, control can start looking like responsibility and fear can make almost any restriction seem reasonable. When Saturn conjoins Pluto, structure and power fuse, giving rules, consequences, and hard decisions unusual force while making them difficult to challenge once established. Some limits may be necessary, but emergency measures can outlive the conditions that justified them. What becomes permanent under pressure deserves as much attention as what the rule was originally meant to solve."
+    },
+    "sky.saturn.conjunction.uranus": {
+      "summary": "A new system stops being an experiment once other people have to organize their lives around it.",
+      "body": "A new system stops being an experiment once other people have to organize their lives around it. When Saturn conjoins Uranus, disruption and structure fuse, giving a new rule, habit, technology, or boundary enough authority to replace what came before. The change can solve a necessary problem while still imposing uneven costs on the people expected to adapt. Reinvention becomes durable when the replacement can carry what still needs to function."
+    },
+    "sky.saturn.opposition.neptune": {
+      "summary": "A generous promise can look different once the budget, policy, or deadline shows who will actually be left without what was promised.",
+      "body": "A generous promise can look different once the budget, policy, or deadline shows who will actually be left without what was promised. When Saturn opposes Neptune, ideals and practical limits face each other directly, exposing the distance between what people want to provide and what a structure can support. Good intentions do not pay the bill or make an inaccessible system usable. The promise is easier to judge by what actually reaches the people it was meant to help."
+    },
+    "sky.saturn.opposition.pluto": {
+      "summary": "Formal authority can collide with a person or institution powerful enough to operate around the rule.",
+      "body": "Formal authority can collide with a person or institution powerful enough to operate around the rule. When Saturn opposes Pluto, enforcement and concentrated leverage face each other directly, exposing the difference between who officially decides and who can afford to ignore the decision. Money, access, and private consequences can make enforcement selective. A rule has more meaning when the limit applies to the powerful office or institution as well as to the person easiest to punish."
+    }
+  }
+}

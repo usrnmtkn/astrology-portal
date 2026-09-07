@@ -25,10 +25,10 @@
   },
   "voiceNeutral": true,
   "status": "LIVE",
-  "base": "Emotion meets power and intensity. Feelings run deep and extreme, with strong swings. Psychologically the opposition is inner tension to integrate: Emotional power struggles, jealousy, and compulsion. The growth is owning both sides instead of splitting them.",
+  "base": "Emotional vulnerability changes a conversation when one side also controls money, housing, access, or a decision the other side depends on.",
   "readerCopy": {
-    "summary": "If someone controls the money, housing, access, or decision you depend on, your emotional vulnerability changes the balance of the conversation.",
-    "body": "If someone controls the money, housing, access, or decision you depend on, your emotional vulnerability changes the balance of the conversation. When the Moon opposes Pluto, private needs face material power directly, which can make asking for help feel much more loaded than the request itself. Do not pretend the leverage is equal if it is not. Be clear about what you need, what the other person controls, and what alternatives exist if they refuse.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-through-2026-09-03; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json"
+    "summary": "Emotional vulnerability changes a conversation when one side also controls money, housing, access, or a decision the other side depends on.",
+    "body": "Emotional vulnerability changes a conversation when one side also controls money, housing, access, or a decision the other side depends on. When the Moon opposes Pluto, private needs face material power directly, making an ordinary request much more loaded than it looks. The imbalance matters even when nobody says it out loud. The situation becomes clearer when the need, the source of leverage, and the available alternatives are named separately.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }

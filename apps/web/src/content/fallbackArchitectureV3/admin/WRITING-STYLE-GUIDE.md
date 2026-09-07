@@ -1,4 +1,4 @@
-# TLDR Astro writing style guide (owner-issued 2026-07-22; revised 2026-08-31)
+# TLDR Astro writing style guide (owner-issued 2026-07-22; revised 2026-09-07)
 
 The canonical voice system for ALL reader-facing copy: authored cards, fallback rows, and any future authoring session (human or AI). The tone benchmark is the Lilith-in-Scorpio natal render at the bottom. This file is the reference; the machine-enforceable parts live in `contracts/CONTENT-ROLE-CONTRACT.json` styleRules and are checked by the verify scripts.
 
@@ -23,13 +23,13 @@ For transit and forecast copy, especially Calendar copy, use this order unless t
 1. **What may happen or become clearer.** Start with the recognizable result: a project moves, a decision has to be made, support arrives, the workload changes, a conversation clears something up, a deadline sets the limit. Use one or more sentences when needed. Do not compress a clear two-sentence explanation into one overloaded sentence just to satisfy the structure.
 2. **Why this astrology matters.** Name the transit or aspect and explain its mechanism in normal language. The astrology supports the situation; it is not the situation.
 3. **What can go wrong.** Name the specific mistake the ease, pressure, conflict, or excitement can create.
-4. **What to do with it.** End with the decision, boundary, check, or practical response that changes the outcome.
+4. **What to do with it.** End with the decision, boundary, check, or practical response that changes the outcome. On collective surfaces, phrase this as a useful distinction or available response rather than a command that assumes the reader is personally living the event.
 
 ### The opening test
 
 Cover the astrology explanation and read only the consequence-first opening. The first sentence should make sense on its own, but the opening may continue for another sentence or two when the situation needs more room. If a reader could reasonably ask "what does that mean?" or "what is actually happening?" after reading the opening, rewrite it.
 
-An opening should contain a recognizable subject and consequence. Prefer statements such as "A deadline may force an answer" or "New information may change a plan you already committed to" over conceptual summaries such as "structure meets growth" or "an opening for change appears."
+An opening should contain a recognizable subject and consequence. Prefer statements such as "A deadline may force an answer" or "New information may change a plan already in motion" over conceptual summaries such as "structure meets growth" or "an opening for change appears."
 
 Prefer observable results over conceptual shorthand. Phrases such as "growth meets structure," "support and limits agree," "ambition finds somewhere to go," "an opening appears," "the current setup shifts," or "the confident version gets repeated" are not enough on their own because the reader still has to translate them.
 
@@ -38,6 +38,39 @@ Concrete does not mean niche. Do not invent a narrow scene just to make the copy
 For exact-day Calendar copy, the date already anchors the event. Do not add "this week," "last month," or another time comparison unless the underlying event data supports that comparison.
 
 Use soft certainty for forecasts. "May," "can," and "could" are preferred when the astrology describes a possibility rather than a guaranteed event.
+
+### Calendar current-sky register
+
+Calendar exact aspects are transit-to-transit current-sky events. They describe a collective condition, not a natalized personal event. The writing can be intimate and concrete without claiming that a specific reader is currently arguing with someone, making a particular decision, repeating a childhood pattern, feeling insecure, or experiencing a named relationship problem.
+
+Use this distinction:
+
+- **Calendar / current sky:** what kind of moment is moving through the collective sky.
+- **You / personal transit:** why the moment matters specifically in the reader's chart.
+
+For Calendar current-sky copy:
+
+- make the collective condition or recognizable situation the subject;
+- name the aspect mechanism after the human consequence is clear;
+- use possibility language when a manifestation is not guaranteed;
+- keep summaries collective by default;
+- allow selective second person in the body when it makes the passage warmer or easier to recognize;
+- use `you` for possibility, observation, or reflection, such as `you may notice`, `you might find`, `if you catch yourself`, or `if this is showing up for you`;
+- do not add second person by quota or mechanically; many Calendar passages should remain fully collective;
+- do not use `you` to invent personal history, motives, emotional states, relationships, decisions, or events;
+- do not use a personal imperative whose authority depends on pretending the aspect is natalized;
+- do not solve the problem by flattening the copy into generic "people may feel" language when a concrete collective subject is available.
+
+Examples of the register distinction:
+
+- Too personal for Calendar: "You are arguing about the decision, but the fight is really about who gets to make it."
+- Collective Calendar: "Questions of authority become harder to ignore when pressure to act meets a refusal to be managed."
+- Allowed reader turn: "If you catch yourself arguing the details, notice if the harder question is who actually gets a say."
+- Too personal for Calendar: "Hitting a brick wall when you are ready to make a move feels like a personal punishment."
+- Collective Calendar: "Momentum meets resistance when action runs into rules, deadlines, delays, or limits that will not move on demand."
+- Allowed reader turn: "You may notice that frustration rises faster when the limit is slowing something that already feels urgent."
+
+Second person is not forbidden on Calendar. It is an available editorial device, not a personalization claim. The word `you` is allowed when the sentence stays conditional or observational; unsupported certainty is not.
 
 ## 3. Punctuation and formatting
 
@@ -57,7 +90,8 @@ Use soft certainty for forecasts. "May," "can," and "could" are preferred when t
 
 ## 5. Voice shift: perspective rules
 
-- **Self-voice (reader's own copy):** direct imperatives and self-sovereignty. Boundaries, accountability, direct choice. "Power games start where honesty stopped. Go first."
+- **Self-voice (reader's own natal and personal-transit copy):** direct imperatives and self-sovereignty. Boundaries, accountability, direct choice. "Power games start where honesty stopped. Go first." This rule does not override a collective surface contract such as Calendar current sky.
+- **Collective voice (Calendar current sky):** describe the shared condition directly, then give a useful distinction or response without pretending to know the reader's specific circumstances. Selective conditional or observational second person is allowed; chart-specific personalization belongs in a chart-aware layer.
 - **Friend-voice (third person / synastry / friend charts):** convert imperatives into objective behavioral descriptions. Never give the reader direct advice about someone else. Self-voice "Stop over-explaining your choices." becomes friend-voice "They tend to over-explain their choices when feeling put on the spot." Friend-voice bodies are AUTHORED separately (body_they), never pronoun-substituted.
 
 ## 6. Tone benchmark (target cadence)

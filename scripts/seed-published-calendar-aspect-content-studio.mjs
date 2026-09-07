@@ -9,7 +9,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const transitRoot = path.join(repoRoot, "packages/astro-knowledge/data/transits");
 const apply = process.argv.includes("--apply");
 const verifyRemote = process.argv.includes("--verify-remote");
-const packageVersion = "EXACT-SKY-ASPECT-CONTENT-STUDIO-2026-09-01";
+const packageVersion = "EXACT-SKY-ASPECT-CONTENT-STUDIO-2026-09-07-COLLECTIVE";
 const defaultSupabaseUrl = "https://hdmdufozrgrajkfhydit.supabase.co";
 const defaultSupabasePublishableKey = "sb_publishable_iX90KdzcQzw8a8OydBHHXA_COnEMcns";
 

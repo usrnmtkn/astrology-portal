@@ -3,7 +3,7 @@
   "transiting": "mars",
   "aspect": "opposition",
   "other": "lilith",
-  "base": "You are arguing about the decision, but the fight is really about who gets to make it.",
+  "base": "Questions of authority become harder to ignore when pressure to act meets a refusal to be managed.",
   "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
   "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
   "arcApplying": "The two positions become more explicit as exactness approaches.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "You are arguing about the decision, but the fight is really about who gets to make it.",
-    "body": "You are arguing about the decision, but the fight is really about who gets to make it. When Mars opposes Lilith, pressure to act, agree, comply, or settle something can run straight into another person's refusal to be managed. You can keep debating the details for hours and get nowhere if the deeper disagreement is about authority. Before another round of arguing, establish who actually has the right to decide what. A compromise only counts if both people have a say. One person finally giving in because they are exhausted is not the same thing as agreement.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+    "summary": "Questions of authority become harder to ignore when pressure to act meets a refusal to be managed.",
+    "body": "Questions of authority become harder to ignore when pressure to act meets a refusal to be managed. When Mars opposes Lilith, a disagreement can keep circling the details while the deeper issue is who gets to decide and whose refusal is being treated as negotiable. Compromise works only when everyone involved still has agency. Exhausting one side until it gives in may end the argument without creating agreement.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }

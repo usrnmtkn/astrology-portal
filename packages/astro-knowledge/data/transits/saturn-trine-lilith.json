@@ -3,7 +3,7 @@
   "transiting": "saturn",
   "aspect": "trine",
   "other": "lilith",
-  "base": "A refusal becomes much harder to dismiss once it has a clear boundary around it.",
+  "base": "A refusal becomes harder to dismiss once it has a clear, enforceable boundary around it.",
   "business": "A supportive opening is available here; use what becomes easier without assuming ease will do the work for you.",
   "shadow": "The ease of a trine can make the opening easy to miss, leave unused, or go unexamined.",
   "arcApplying": "Support and coordination build toward exactness.",
@@ -11,8 +11,8 @@
   "voiceNeutral": true,
   "status": "LIVE",
   "readerCopy": {
-    "summary": "A refusal becomes much harder to dismiss once it has a clear boundary around it.",
-    "body": "A refusal becomes much harder to dismiss once it has a clear boundary around it. Saturn trine Lilith can help turn something you have repeatedly objected to into a rule, condition, deadline, contract term, or responsibility that other people have to account for. Instead of explaining again why the situation bothers you, specify what you will and will not do. The boundary works because it is enforceable, not because everyone agrees with it.",
-    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-04-held-trines-33; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json"
+    "summary": "A refusal becomes harder to dismiss once it has a clear, enforceable boundary around it.",
+    "body": "A refusal becomes harder to dismiss once it has a clear, enforceable boundary around it. When Saturn trines Lilith, structure and autonomy reinforce each other, allowing a repeated objection to become a rule, condition, deadline, contract term, or defined responsibility. Agreement from everyone is not required for the boundary to work. The strength comes from knowing what happens next and making the terms consistent enough that the same conflict does not have to be renegotiated every time.",
+    "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
   }
 }
