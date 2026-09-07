@@ -1,0 +1,57 @@
+name: Finalize transit name bundle
+
+on:
+  push:
+    branches:
+      - fix/personal-transit-source-label
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/personal-transit-source-label
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Narrow browser bundle to current main plus friend-name support
+        run: |
+          git fetch origin main
+          git show origin/main:apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js > apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js")
+          text = p.read_text()
+          old_effect = 'const transitEffect = effectRaw && transitEffectArea ? fill(effectRaw, { natalArea: transitEffectArea }) : null;'
+          new_effect = 'const transitEffect = effectRaw && transitEffectArea ? fill(effectRaw, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" }) : null;'
+          old_scenes = 'const cScenesFinal = cScenes ?? ctx.transitTypeLine ?? null;'
+          new_scenes = 'const cScenesFinal = cScenes ? fillKeep(cScenes, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" }) : ctx.transitTypeLine ?? null;'
+          if text.count(old_effect) != 1:
+              raise SystemExit(f"Expected one transitEffect target, found {text.count(old_effect)}")
+          if text.count(old_scenes) != 1:
+              raise SystemExit(f"Expected one cScenesFinal target, found {text.count(old_scenes)}")
+          p.write_text(text.replace(old_effect, new_effect).replace(old_scenes, new_scenes))
+          PY
+      - name: Validate
+        run: |
+          test "$(git diff --numstat origin/main -- apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js | awk '{print $1":"$2}')" = "2:2"
+          grep -F 'Name: v === "they" ? voice : ""' apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+          node scripts/test-content-approval-governance.mjs
+          npm run typecheck --if-present
+      - name: Commit narrowed bundle and remove workflow
+        run: |
+          rm .github/workflows/finalize-transit-name-bundle.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/workflows/finalize-transit-name-bundle.yml
+          git add -f apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+          git commit -m "Narrow Personal Transit friend-name browser bundle"
+          git push origin HEAD:fix/personal-transit-source-label
