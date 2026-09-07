@@ -14,6 +14,10 @@ import {
 } from "./transit-reading-generation.js";
 import { judgeGeneratedTransitReading } from "./transit-reading-judge.js";
 import { loadApprovedGeneratedReportOwnerEvidence, type GeneratedTransitReportKind } from "./transit-reading-owner-evidence.js";
+import {
+  youTransitReadingProductionKnowledgeIds,
+  type TransitReadingProductionInput
+} from "./transit-reading-production.js";
 import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
 
 export type YouTransitReadingRow = {
@@ -71,34 +75,52 @@ function validateGeneratedReading(
   return { passed: true };
 }
 
-async function generateReading(brief: YouTransitReadingBrief, headline: string) {
-  const reportKind: GeneratedTransitReportKind = brief.window === "day" ? "you_day_reading" : "you_week_reading";
+function productionInputForLocked(locked: ReturnType<typeof youTransitReadingRequestLock>): TransitReadingProductionInput {
+  return {
+    contentKey: locked.contentKey,
+    surface: locked.surface,
+    mode: locked.mode,
+    eventType: locked.eventType,
+    facts: locked.facts,
+    knowledgeIds: youTransitReadingProductionKnowledgeIds(locked.brief),
+    sourceSnapshot: locked.sourceSnapshot
+  };
+}
+
+async function generateReading(locked: ReturnType<typeof youTransitReadingRequestLock>) {
+  const reportKind: GeneratedTransitReportKind = locked.brief.window === "day" ? "you_day_reading" : "you_week_reading";
   const ownerEvidence = await loadApprovedGeneratedReportOwnerEvidence({ surface: "you", reportKind });
-  return generateGovernedTransitReading({
-    brief,
-    headline,
-    contentType: reportKind,
-    surface: "you",
-    family: "you-transit-reading",
-    schemaName: "tldr_astro_you_transit_reading",
-    toolDescription: `Return the TLDR Astro in-depth ${brief.window} transit reading.`,
-    promptForAttempt,
-    validate: validateGeneratedReading,
-    compactBriefForRecovery: compactYouTransitReadingBrief,
-    ownerEvidence,
-    judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence }) => judgeGeneratedTransitReading({
+  const productionInput = productionInputForLocked(locked);
+  return {
+    productionInput,
+    generated: await generateGovernedTransitReading({
+      brief: locked.brief,
+      headline: locked.headline,
+      contentType: reportKind,
       surface: "you",
-      reportKind,
-      brief: governedBrief,
-      draft,
-      ownerEvidence: approvedEvidence
-    }),
-    minSummaryLength: 40,
-    minBodyLength: brief.window === "day" ? 180 : 320,
-    maxBodyLength: brief.window === "day" ? 2200 : 4200,
-    claudeMaxTokens: brief.window === "day" ? 2200 : 3200,
-    recoveryLabel: brief.window === "day" ? "You day report" : "You week report"
-  });
+      family: "you-transit-reading",
+      schemaName: "tldr_astro_you_transit_reading",
+      toolDescription: `Return the TLDR Astro in-depth ${locked.brief.window} transit reading.`,
+      productionInput,
+      promptForAttempt,
+      validate: validateGeneratedReading,
+      compactBriefForRecovery: compactYouTransitReadingBrief,
+      ownerEvidence,
+      judge: ({ draft, brief: governedBrief, ownerEvidence: approvedEvidence }) => judgeGeneratedTransitReading({
+        surface: "you",
+        reportKind,
+        brief: governedBrief,
+        draft,
+        productionInput,
+        ownerEvidence: approvedEvidence
+      }),
+      minSummaryLength: 40,
+      minBodyLength: locked.brief.window === "day" ? 180 : 320,
+      maxBodyLength: locked.brief.window === "day" ? 2200 : 4200,
+      claudeMaxTokens: locked.brief.window === "day" ? 2200 : 3200,
+      recoveryLabel: locked.brief.window === "day" ? "You day report" : "You week report"
+    })
+  };
 }
 
 async function existingReading(
@@ -128,6 +150,7 @@ async function saveReading(input: {
   generated: GeneratedTransitReadingDraft;
   provider: "openai" | "claude";
   judgeAudit: TransitReadingJudgeAudit | null;
+  knowledgeIds: string[];
 }) {
   const admin = createSupabaseReportAdmin();
   return admin.insert<YouTransitReadingRow>("user_generated_interpretations", {
@@ -141,7 +164,7 @@ async function saveReading(input: {
     event_type: input.locked.eventType,
     target_date: input.locked.brief.targetDate,
     facts: input.locked.facts,
-    knowledge_ids: input.locked.knowledgeIds,
+    knowledge_ids: input.knowledgeIds,
     source_snapshot: {
       ...input.locked.sourceSnapshot,
       ...(input.judgeAudit ? { generatedReportQualityGate: input.judgeAudit } : {})
@@ -170,14 +193,16 @@ export async function generateYouTransitReadingForUser(input: {
     return { reused: true, contentKey: locked.contentKey, saved: [existing], generated: null };
   }
 
-  const { draft, provider, judgeAudit } = await generateReading(locked.brief, locked.headline);
+  const result = await generateReading(locked);
+  const { draft, provider, judgeAudit } = result.generated;
   const saved = await saveReading({
     userId: input.userId,
     entitlementId: input.entitlementId,
     locked,
     generated: draft,
     provider,
-    judgeAudit
+    judgeAudit,
+    knowledgeIds: result.productionInput.knowledgeIds
   });
   return { reused: false, contentKey: locked.contentKey, saved, generated: draft, judgeAudit };
 }
