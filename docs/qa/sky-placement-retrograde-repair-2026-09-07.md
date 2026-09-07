@@ -166,3 +166,8 @@ indexes. The knowledge-index change only refreshes source hashes for versioned
 bundles; approved prose is unchanged. Updated the Calendar hydration assertion
 to require exact event signs and endpoint motions with the approved-content map.
 All 11 browser tests and targeted type/content/CSS checks pass on this baseline.
+
+Reviewed the Linux CI Sky screenshot: the exact-aspect summary now includes its
+Rx endpoint, the canonical Sun preview is populated after the legacy source-gap
+repair, and the current main summary typography/layout is retained. Updated only
+the affected desktop-light baseline from that reviewed CI rendering.
