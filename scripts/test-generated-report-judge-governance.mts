@@ -151,7 +151,7 @@ assert.match(adapter, /A second judge failure remains blocked/u);
 assert.match(adapter, /Judge findings are run-local correction material/u);
 assert.match(adapter, /only through an explicit owner approval action/u);
 
-const migration = read("apps/web/supabase/migrations/20260907145500_generated_report_owner_feedback.sql");
+const migration = read("apps/web/supabase/migrations/20260907155157_generated_report_owner_feedback.sql");
 assert.match(migration, /status text not null default 'candidate'/u);
 assert.match(migration, /status <> 'approved'[\s\S]*governed_evidence_text is not null/u);
 assert.match(migration, /revoke all on table public\.generated_report_owner_feedback from public, anon, authenticated/u);
