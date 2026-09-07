@@ -72,15 +72,16 @@ try {
     ],
     "Sun in Scorpio 2026 must expose the complete chronological major-aspect sequence."
   );
+  const expectedDateLines = [
+    "October 23, 2026",
+    "October 26, 2026",
+    "November 4, 2026",
+    "November 18, 2026",
+    "November 19, 2026"
+  ];
   assert.deepEqual(
     result.events.map((event: { dateLine: string }) => event.dateLine),
-    [
-      "October 23, 2026",
-      "October 26, 2026",
-      "November 4, 2026",
-      "November 18, 2026",
-      "November 19, 2026"
-    ],
+    expectedDateLines,
     "Residency aspect dates must come from the engine and remain chronological in the reader timezone."
   );
   assert.equal(result.events.length, 5);
@@ -88,7 +89,11 @@ try {
   assert.deepEqual(result.unresolvedEventIds, []);
   assert.ok(result.events.every((event: { resolution: string }) => event.resolution === "resolved-approved-exact"));
   assert.ok(result.sections.every((section: { role?: string }) => section.role === "aspect"));
-  assert.ok(result.sections.every((section: { dateLine?: string }) => Boolean(section.dateLine)));
+  assert.deepEqual(
+    result.sections.map((section: { body: string }) => section.body.split("\n\n", 1)[0]),
+    expectedDateLines,
+    "Each residency aspect card must surface the engine-owned exact date as its first paragraph."
+  );
   assert.ok(result.sections.every((section: { body: unknown }) => typeof section.body === "string" && section.body.length > 0));
   assert.ok(result.sections.every((section: { body: string }) => !/\{\{/u.test(section.body)));
   assert.equal(new Set(result.events.map((event: { id: string }) => event.id)).size, 5, "Residency events must not duplicate.");
@@ -149,7 +154,7 @@ try {
     /\{ id: "gifts" as const, label: "Gifts" \}[\s\S]*?\{ id: "lessons" as const, label: "Lessons" \}/u,
     "Sky Placement must retain the existing Gifts and Lessons aspect section pattern."
   );
-  assert.match(detailSource, /section\.dateLine/u, "Residency aspect cards must surface the engine-owned exact date.");
+  assert.doesNotMatch(detailSource, /section\.dateLine/u, "Residency date rendering should remain inside the dynamically loaded aspect body.");
 
   console.log("Sky Placement residency aspects pilot: PASS (engine 5/5; exact approved copy 5/5; Gifts/Lessons UI preserved; compact selector preserved; base copy drift 0). ");
 } finally {
