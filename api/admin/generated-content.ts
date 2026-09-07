@@ -1375,11 +1375,11 @@ async function listGeneratedContent(req: IncomingMessage) {
 
     if (response.ok) {
       if (contentKeys.length && Array.isArray(payload)) {
-        const { natalPlacementPackageSources } = await import("./natal-placement-preview.js");
+        const { servingPackageRecords, isSkyPartitionKey } = await import("../_lib/content-live-status.js");
         const savedKeys = new Set(payload.map((row) => row.content_key));
-        const starters = natalPlacementPackageSources(contentKeys.filter((key) => !savedKeys.has(key))).map((record) => ({
+        const starters = contentKeys.filter((key) => !savedKeys.has(key)).flatMap((key) => servingPackageRecords.has(key) ? [servingPackageRecords.get(key)!] : []).map((record) => ({
           id: `package:${record.contentKey}`, content_key: record.contentKey, surface: "you", mode: "in_depth",
-          status: "DRAFT", lane: "reference", review_state: "needs-review", provider: fallbackArchitectureV3Provider,
+          status: "DRAFT", lane: "reference", review_state: "needs-review", provider: isSkyPartitionKey(record.contentKey) ? "tldrastro-fallback-architecture-v3-sky-placement" : fallbackArchitectureV3Provider,
           headline: record.headline ?? record.contentKey, summary: record.summary ?? "",
           body: record.body_you ?? record.body ?? record.text ?? "",
           sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true },

@@ -54,6 +54,19 @@ async function request(ids: unknown, secret = "live-status-qa-secret") {
   await handler(req, res);
   return { code: res.statusCode, ...result };
 }
+async function catalog(secret: string) {
+  const req: any = Readable.from([JSON.stringify({ action: "composition-catalog" })]);
+  req.method = "POST"; req.headers = { "x-content-generation-secret": secret };
+  let result: any;
+  const res: any = { statusCode: 0, setHeader() {}, end(body: string) { result = JSON.parse(body); } };
+  await handler(req, res);
+  return { code: res.statusCode, ...result };
+}
+assert.equal((await catalog("wrong")).code, 401);
+const catalogResult = await catalog("live-status-qa-secret");
+assert.equal(catalogResult.code, 200);
+assert.ok(catalogResult.rows.some((row: any) => row.content_key === "fallback-hook/natal-you-placement-sign-final/uranus/scorpio"));
+assert.ok(catalogResult.rows.every((row: any) => !row.body && !row.sections), "Initial catalog should load identifiers; complete sources load on selection.");
 assert.equal((await request(["qa-virgo"], "wrong")).code, 401);
 assert.equal(storageReads, 0, "Unauthorized callers must not reach content storage.");
 assert.equal((await request(Array(65).fill("qa-virgo"))).code, 400);

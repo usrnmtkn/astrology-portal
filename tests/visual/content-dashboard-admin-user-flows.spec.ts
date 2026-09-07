@@ -561,6 +561,10 @@ async function seedAdminApi(
     }
 
     if (pathname.endsWith("/content-live-status")) {
+      if (route.request().postDataJSON().action === "composition-catalog") {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, rows: [] }) });
+        return;
+      }
       const ids = route.request().postDataJSON().ids as string[];
       const rows = apiGeneratedContentRows.filter((row) => ids.includes(String(row.id))) as LiveStatusRow[];
       for (const id of ids.filter((id) => id.startsWith("package:"))) {
@@ -5028,4 +5032,57 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(writes.map((write) => write.payload.status)).toEqual(["LIVE", "LIVE", "ARCHIVED", "DRAFT", "DRAFT"]);
   });
 
+});
+
+
+test("surface maps select source families and manage repeated edits across themes and sizes", async ({ page }) => {
+  test.setTimeout(90_000);
+  const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+  const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+  const key = "fallback-hook/planet-intro/uranus";
+  const row = {
+    ...generatedContentRows[0], id: "qa-map-uranus", content_key: key,
+    headline: "Uranus introduction", body: "QA introduction used by the source manager.",
+    surface: "you", status: "LIVE", lane: "serving", review_state: null,
+    provider: "tldrastro-fallback-architecture-v3", event_type: "fallback-hook", block_type: "fallback_hook",
+    facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3" },
+    sections: { packageRecord: { contentKey: key, content_role: "fallback_hook", review_status: "approved", body_you: "QA introduction used by the source manager.", body_they: "QA friend introduction." } }
+  };
+  await seedAdminApi(page, { generatedRows: [row], onGeneratedContentWrite: (write) => writes.push(write) });
+  await expectAdminRouteLoads(page, "/admin/content#composition-map");
+  await page.getByLabel("Search surfaces and systems").fill("natal placement detail");
+  const manager = page.getByRole("region", { name: "Manage composition sources" });
+  await expect(manager.getByLabel("Selected composition source")).toHaveValue(key);
+  await manager.getByLabel("Source family").selectOption("fallback-hook/planet-intro");
+  for (const theme of ["light", "dark"]) {
+    await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await expect(manager.getByRole("heading", { name: "Select and manage sources" })).toBeVisible();
+      const style = async (locator: Locator) => locator.evaluate((element) => {
+        const css = getComputedStyle(element);
+        return [css.fontFamily, css.fontSize, css.fontWeight, css.lineHeight, css.letterSpacing, css.textTransform];
+      });
+      expect(await style(manager.locator("h3"))).toEqual(await style(page.getByRole("heading", { name: "Required content parts" })));
+      await expectNoHorizontalOverflow(page, `Composition source manager ${theme} ${width}`);
+      await mkdir(adminScreenshotDir, { recursive: true });
+      await manager.screenshot({ path: path.join(adminScreenshotDir, `source-manager-${theme}-${width}.png`) });
+      await manager.getByLabel("Search composition sources").fill("no-matching-source");
+      await expect(manager.getByRole("status")).toContainText("No sources match");
+      await expectNoHorizontalOverflow(page, `Empty composition source manager ${theme} ${width}`);
+      await manager.getByLabel("Search composition sources").fill("");
+    }
+  }
+  await manager.getByRole("button", { name: "Edit selected source" }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  await expect(editor.getByLabel("Content key")).toHaveValue(key);
+  for (const value of ["QA first edited introduction.", "QA second edited introduction."]) {
+    await editor.getByLabel("Reader phrase · You", { exact: true }).fill(value);
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(editor.getByRole("button", { name: "Save", exact: true })).toBeDisabled();
+  }
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(manager).toContainText("QA second edited introduction.");
+  expect(writes).toHaveLength(2);
+  await assertNoBrowserErrors();
 });

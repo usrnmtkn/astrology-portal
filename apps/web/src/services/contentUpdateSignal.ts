@@ -69,3 +69,28 @@ export function subscribeToContentUpdates(listener: (notice: ContentUpdateNotice
   };
 }
 
+
+/** Recheck other-device edits without depending on a same-origin Studio tab. */
+export function subscribeToContentRevalidation(listener: () => void, intervalMs = 5 * 60 * 1000) {
+  if (typeof window === "undefined") return () => undefined;
+  let lastCheck = Date.now();
+  const revalidate = (force = false) => {
+    if (document.visibilityState === "hidden" || window.navigator.onLine === false) return;
+    const now = Date.now();
+    // Focus and visibility commonly fire together; coalesce them.
+    if (now - lastCheck < (force ? 1000 : intervalMs)) return;
+    lastCheck = now;
+    listener();
+  };
+  const resume = () => revalidate(true);
+  const timer = window.setInterval(() => revalidate(), intervalMs);
+  window.addEventListener("focus", resume);
+  window.addEventListener("online", resume);
+  document.addEventListener("visibilitychange", resume);
+  return () => {
+    window.clearInterval(timer);
+    window.removeEventListener("focus", resume);
+    window.removeEventListener("online", resume);
+    document.removeEventListener("visibilitychange", resume);
+  };
+}
