@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "mars",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.mars.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "An old fight can come back with enough heat to feel like it never ended.",
+      "body": "An old fight can come back with enough heat to feel like it never ended. Mars conjunct the South Node can reactivate a familiar conflict, competitive instinct, survival response, or way of forcing movement when you feel blocked. You may know exactly how to push, defend, quit, or take over because that response has protected you before. The anger may still be justified. The important part is noticing when the strategy belongs to an earlier battle. Act on what is actually happening now, not only on what your body remembers.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.mars.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "A skill you learned under pressure can help you move something forward now.",
+      "body": "A skill you learned under pressure can help you move something forward now. Mars sextile the South Node can make an old tactic, practiced response, former teammate, or hard-earned competence available at the right time. You may know how to handle the deadline, defend the boundary, or solve the practical problem because you have already survived a version of it. Use the skill without recreating the emergency that taught it to you. Competence does not require another crisis to prove itself.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.mars.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "You may be spending all your force on a fight you already know how to have.",
+      "body": "You may be spending all your force on a fight you already know how to have. Mars square the South Node can make the old reaction immediate: push harder, take over, cut someone off, prove the point, or turn frustration into a contest. The conflict may be real, but the response can still be automatic. Notice what keeps getting your energy because it is familiar territory. Winning another round is not useful if it leaves the larger pattern exactly where it was.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.mars.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "Old muscle memory can make the familiar move feel obviously right.",
+      "body": "Old muscle memory can make the familiar move feel obviously right. Mars trine the South Node can give you easy access to a practiced way of acting, competing, defending yourself, or getting something done. The response may be efficient because you have used it many times. That is a strength when the situation actually calls for it. It is a problem when speed keeps you from noticing that a different kind of action would cost less and solve more.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.mars.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "The action in front of you may force you to choose between an old reflex and a different result.",
+      "body": "The action in front of you may force you to choose between an old reflex and a different result. When Mars opposes the South Node, a deadline, conflict, boundary, or practical demand can make the familiar strategy impossible to ignore. You may know how to fight this fight, but that does not mean you have to. Use the strength the old experience gave you without reenacting the whole pattern. The goal is not to prove you can survive the same situation again.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}

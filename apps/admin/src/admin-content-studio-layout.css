@@ -1,0 +1,425 @@
+/* Content Studio layout layer.
+   One spacing and component rhythm for every Studio page: page padding,
+   card padding, section headers, notices, tabs, chips, buttons. Loaded after
+   the other admin stylesheets so it is the last word on layout. Colours and
+   sizes come from admin-theme.css tokens only. */
+
+/* ---------- Page shell ---------- */
+
+.admin-dashboard .admin-main {
+  gap: var(--admin-studio-gap);
+  padding: var(--admin-studio-page-padding);
+}
+
+.admin-dashboard .admin-dashboard-header {
+  gap: var(--admin-space-7xl);
+  margin: 0;
+}
+
+.admin-dashboard .admin-dashboard-header h1 {
+  font-size: var(--admin-type-28);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-h1);
+  margin: var(--admin-space-sm) 0 var(--admin-space-xs);
+}
+
+.admin-dashboard .admin-dashboard-header p:not(.admin-breadcrumb) {
+  font-size: var(--admin-type-15);
+  line-height: var(--leading-description);
+  margin: 0;
+  max-width: 720px;
+}
+
+.admin-dashboard .admin-dashboard-header > div:last-child {
+  padding-top: var(--admin-space-2xs);
+}
+
+/* ---------- Notices ---------- */
+
+/* The load confirmation and every other message share one slim bar under the
+   page header instead of a floating pill that pushes the page down. */
+.admin-dashboard .admin-save-toast {
+  align-items: center;
+  border-radius: var(--admin-radius-md);
+  box-shadow: none;
+  display: flex;
+  font-size: var(--admin-type-14);
+  font-weight: var(--weight-medium);
+  gap: var(--admin-space-xl);
+  justify-self: stretch;
+  line-height: var(--leading-description);
+  margin: calc(var(--admin-studio-gap) * -1 + var(--admin-space-md)) 0 0;
+  max-width: none;
+  padding: var(--admin-space-lg) var(--admin-space-2xl);
+  width: 100%;
+}
+
+.admin-dashboard .admin-save-toast span {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-save-toast button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--admin-radius-sm);
+  color: inherit;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: var(--admin-space-7xl);
+  justify-content: center;
+  margin: 0;
+  min-height: 0;
+  opacity: 0.8;
+  padding: 0;
+  width: var(--admin-space-7xl);
+}
+
+.admin-dashboard .admin-save-toast button:hover,
+.admin-dashboard .admin-save-toast button:focus-visible {
+  background: var(--admin-surface-hover);
+  opacity: 1;
+}
+
+.admin-dashboard .admin-save-toast.is-warning {
+  background: var(--admin-ui-warning-soft);
+  border-color: var(--admin-ui-draft-border);
+  color: var(--admin-ui-draft-copy);
+}
+
+/* ---------- Cards ---------- */
+
+.admin-dashboard :where(
+  .admin-content-toolbar,
+  .admin-content-filters,
+  .admin-list-panel,
+  .admin-template-card,
+  .admin-review-queue-groups,
+  .admin-review-queue-rows,
+  .admin-reader-safety-panel,
+  .admin-phrasebook-panel,
+  .admin-message-card
+) {
+  border-radius: var(--admin-radius-lg);
+}
+
+.admin-dashboard :where(.admin-content-toolbar, .admin-reader-safety-panel, .admin-phrasebook-panel) {
+  gap: var(--admin-space-5xl) var(--admin-space-8xl);
+  padding: var(--admin-space-5xl) var(--admin-space-7xl);
+}
+
+.admin-dashboard :where(.admin-content-toolbar) > div:first-child {
+  min-width: 0;
+}
+
+/* Section header inside a card: eyebrow, title, description with a fixed
+   rhythm. The title is a section title, not a second page title. */
+.admin-dashboard :where(.admin-content-toolbar, .admin-template-card) .admin-eyebrow {
+  margin: 0 0 var(--admin-space-sm);
+}
+
+.admin-dashboard :where(.admin-content-toolbar) h2,
+.admin-dashboard :where(.admin-template-card) h3 {
+  font-size: var(--admin-type-18);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-title);
+  margin: 0 0 var(--admin-space-sm);
+}
+
+.admin-dashboard :where(.admin-content-toolbar) > div > p:not(.admin-eyebrow),
+.admin-dashboard :where(.admin-content-toolbar) .admin-content-toolbar-copy p:not(.admin-eyebrow) {
+  font-size: var(--admin-type-14);
+  line-height: var(--leading-description);
+  margin: 0;
+  max-width: 720px;
+}
+
+/* A group of shortcut buttons gets its own row under the copy instead of
+   squeezing the description into a narrow column beside it. */
+.admin-dashboard .admin-content-toolbar:has(> .admin-new-actions, > .admin-surface-actions) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.admin-dashboard .admin-content-toolbar > :is(.admin-new-actions, .admin-surface-actions) {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+  justify-content: flex-start;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Finder and source-card headings follow the same section-header rhythm. */
+.admin-dashboard :where(.admin-natal-placement-finder-heading, .admin-natal-source-card-heading) .admin-eyebrow {
+  margin: 0 0 var(--admin-space-sm);
+}
+
+.admin-dashboard :where(.admin-natal-placement-finder-heading, .admin-natal-source-card-heading) :is(h2, h3) {
+  font-size: var(--admin-type-18);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-title);
+  margin: 0 0 var(--admin-space-sm);
+}
+
+.admin-dashboard :where(.admin-natal-placement-finder-heading, .admin-natal-source-card-heading) > div > p:not(.admin-eyebrow) {
+  font-size: var(--admin-type-14);
+  line-height: var(--leading-description);
+  margin: 0;
+  max-width: 720px;
+}
+
+/* The review-queue command bar is a section header like every other card. */
+.admin-dashboard :where(.admin-review-queue-commandbar-copy, .admin-review-queue-hero) h2 {
+  font-size: var(--admin-type-18);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-title);
+  margin: 0 0 var(--admin-space-sm);
+}
+
+.admin-dashboard :where(.admin-review-queue-commandbar-copy) .admin-eyebrow {
+  margin: 0 0 var(--admin-space-sm);
+}
+
+.admin-dashboard :where(.admin-review-queue-commandbar-copy) > p:not(.admin-eyebrow) {
+  font-size: var(--admin-type-14);
+  line-height: var(--leading-description);
+  margin: 0;
+  max-width: 720px;
+}
+
+/* Actions beside a section header sit on the header's baseline. */
+.admin-dashboard :where(.admin-content-toolbar) > :is(.admin-toolbar-actions, .admin-new-actions, .admin-surface-actions, .ui-pill, button, a) {
+  align-self: start;
+}
+
+.admin-dashboard :where(.admin-content-toolbar) > .ui-pill {
+  margin-top: var(--admin-space-2xs);
+}
+
+.admin-dashboard .admin-content-filters {
+  gap: var(--admin-space-3xl);
+  padding: var(--admin-space-5xl) var(--admin-space-7xl);
+}
+
+.admin-dashboard .admin-template-page,
+.admin-dashboard .admin-template-card-list {
+  gap: var(--admin-studio-gap);
+}
+
+/* Template and composite cards were surfaces with no inner spacing. */
+.admin-dashboard .admin-template-card {
+  display: grid;
+  gap: var(--admin-space-3xl);
+  padding: var(--admin-space-5xl) var(--admin-space-7xl);
+}
+
+.admin-dashboard .admin-template-card > .admin-section-heading-row {
+  align-items: flex-start;
+  gap: var(--admin-space-3xl);
+}
+
+.admin-dashboard .admin-template-card > .admin-section-heading-row > div {
+  display: grid;
+  gap: var(--admin-space-xs);
+  min-width: 0;
+}
+
+.admin-dashboard .admin-template-card > .admin-section-heading-row > div h3 {
+  margin: 0;
+}
+
+.admin-dashboard .admin-template-card > .admin-section-heading-row code {
+  background: var(--admin-ui-surface-2);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-radius-sm);
+  color: var(--admin-ui-muted);
+  display: inline-block;
+  font-size: var(--admin-type-12);
+  justify-self: start;
+  line-height: var(--leading-meta);
+  max-width: 100%;
+  overflow: hidden;
+  padding: var(--admin-space-micro) var(--admin-space-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-template-card > .admin-template-rendered-preview {
+  background: var(--admin-ui-surface-2);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-radius-md);
+  padding: var(--admin-space-2xl) var(--admin-space-3xl);
+}
+
+.admin-dashboard .admin-template-card > .admin-template-rendered-preview p {
+  margin: 0;
+  max-width: 76ch;
+}
+
+/* Relationship-type variants: equal cards, no orphan row at desktop widths. */
+.admin-dashboard .admin-dependency-map-grid {
+  gap: var(--admin-space-xl);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.admin-dashboard .admin-dependency-map-grid article {
+  border-radius: var(--admin-radius-md);
+  gap: var(--admin-space-sm);
+  padding: var(--admin-space-2xl) var(--admin-space-3xl);
+}
+
+.admin-dashboard .admin-dependency-map-grid article > span {
+  margin-bottom: var(--admin-space-micro);
+}
+
+.admin-dashboard .admin-dependency-map-grid article > strong {
+  font-size: var(--admin-type-15);
+}
+
+/* ---------- Tabs, chips, buttons ---------- */
+
+.admin-dashboard .admin-template-tabs {
+  gap: var(--admin-space-sm);
+  padding: 0;
+}
+
+.admin-dashboard .admin-template-tabs button {
+  border-radius: var(--admin-radius-md);
+  font-size: var(--admin-type-14);
+  min-height: var(--admin-control-height-sm);
+  padding: var(--admin-space-sm) var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-content-filters .admin-template-tabs {
+  padding: 0;
+}
+
+.admin-dashboard .admin-dashboard-header .admin-create-button {
+  font-size: var(--admin-type-14);
+  min-height: var(--admin-control-height-md);
+  padding: var(--admin-space-sm) var(--admin-space-2xl);
+}
+
+/* ---------- Editor drawer ---------- */
+
+.admin-dashboard .admin-editor-panel .admin-editor-toolbar {
+  align-items: start;
+  column-gap: var(--admin-space-5xl);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-dashboard .admin-editor-panel .admin-editor-toolbar > div:first-child {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-editor-panel .admin-editor-toolbar h2 {
+  font-size: var(--admin-type-20);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-title);
+  margin: var(--admin-space-xs) 0 var(--admin-space-md);
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-editor-panel .admin-editor-toolbar-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+  justify-content: flex-end;
+  max-width: 50%;
+}
+
+/* Save state on its own line, then one right-aligned row of actions that
+   never splits a button off on its own. */
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-lg) var(--admin-space-md);
+  justify-content: flex-end;
+  padding: var(--admin-space-2xl) var(--admin-space-7xl);
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar > .admin-editor-save-state {
+  flex: 1 1 100%;
+  font-size: var(--admin-type-13);
+  margin: 0;
+  min-width: 0;
+  width: auto;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar > button {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+@media (max-width: 1100px) {
+  .admin-dashboard .admin-editor-panel .admin-editor-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-dashboard .admin-editor-panel .admin-editor-toolbar-actions {
+    justify-content: flex-start;
+    max-width: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-dashboard .admin-main {
+    padding: var(--admin-space-5xl) var(--admin-space-3xl);
+  }
+
+  .admin-dashboard :where(.admin-content-toolbar, .admin-content-filters, .admin-template-card) {
+    padding: var(--admin-space-3xl);
+  }
+}
+
+/* ---------- Composition map ---------- */
+
+/* Keep the surface picker beside the detail down to laptop widths. The
+   horizontal card strip that used to appear under 1240px clipped cards at the
+   right edge with no visible scroll affordance. */
+@media (min-width: 1025px) and (max-width: 1240px) {
+  .admin-dashboard .admin-composition-map-layout {
+    grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  }
+
+  .admin-dashboard .admin-composition-template-list {
+    max-height: calc(100vh - 220px);
+    overflow: hidden;
+    position: sticky;
+    top: var(--admin-space-3xl);
+  }
+
+  .admin-dashboard .admin-composition-template-items {
+    display: grid;
+    max-height: calc(100vh - 292px);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .admin-dashboard .admin-composition-template-items > button {
+    flex: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .admin-dashboard .admin-composition-template-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    max-height: 360px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .admin-dashboard .admin-composition-template-items > button {
+    flex: none;
+  }
+}
+
+.admin-dashboard .admin-composition-template-list > header > div:first-child > :last-child {
+  white-space: nowrap;
+}

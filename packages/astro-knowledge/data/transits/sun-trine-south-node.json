@@ -1,0 +1,18 @@
+{
+  "id": "sun-trine-south-node",
+  "transiting": "sun",
+  "aspect": "trine",
+  "other": "south-node",
+  "base": "The old version of you may fit so easily that nobody notices you have outgrown it.",
+  "business": "A supportive opening is available here; use what becomes easier without assuming ease will do the work for you.",
+  "shadow": "The ease of a trine can make the opening easy to miss, leave unused, or go unexamined.",
+  "arcApplying": "Support and coordination build toward exactness.",
+  "arcSeparating": "The opening begins to recede after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The old version of you may fit so easily that nobody notices you have outgrown it.",
+    "body": "The old version of you may fit so easily that nobody notices you have outgrown it. The Sun trine the South Node can make an established role, talent, or public identity feel effortless and reassuring. Other people may gladly hand you the work you are known for, and you may be able to do it without much strain. Ease is useful information, but it is not the same as relevance. Keep the strength. Let the identity built around it become optional.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "id": "saturn-conjunction-south-node",
+  "transiting": "saturn",
+  "aspect": "conjunction",
+  "other": "south-node",
+  "base": "An old responsibility may return because it was never fully released.",
+  "business": "The two concerns arrive in the same decision; work with the point they now share.",
+  "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
+  "arcApplying": "The two concerns become harder to separate as exactness approaches.",
+  "arcSeparating": "The fused emphasis begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "An old responsibility may return because it was never fully released.",
+    "body": "An old responsibility may return because it was never fully released. Saturn conjunct the South Node can bring a former obligation, authority structure, debt of time, or role you have carried for years back into focus. You may be the obvious person to handle it because you already know the system and everyone trusts you to be responsible. That history matters, but it does not create an endless contract. Finish what is actually yours, renegotiate what has changed, and stop treating familiarity as proof that the burden still belongs to you.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}
