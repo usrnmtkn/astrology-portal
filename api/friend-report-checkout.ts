@@ -2,7 +2,8 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import {
   createFriendReportCheckoutIntent,
   friendReportBillingMode,
-  friendReportStripePriceId
+  friendReportStripePriceId,
+  recordFriendReportCheckoutSession
 } from "./_lib/friend-report-lifecycle.js";
 import { jsonRequestBody, reportUrl, requireReportUser, sendJson } from "./_lib/report-http.js";
 import { stripePost } from "./_lib/stripe-report-billing.js";
@@ -42,6 +43,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       targetDate: stringValue(body.targetDate),
       facts: body.facts
     });
+    if (intent.checkout_url && intent.stripe_checkout_session_id) {
+      return sendJson(res, 200, { checkoutSessionId: intent.stripe_checkout_session_id, url: intent.checkout_url, reused: true });
+    }
+
     const session = await stripePost<{ id: string; url: string }>("checkout/sessions", {
       mode: "payment",
       "line_items[0][price]": priceId,
@@ -58,8 +63,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       "payment_intent_data[metadata][purchase_kind]": "friend_transit_reading",
       "payment_intent_data[metadata][user_id]": user.id,
       "payment_intent_data[metadata][friend_checkout_intent_id]": intent.id
+    }, fetch, `friend-report-checkout-${intent.id}`);
+    await recordFriendReportCheckoutSession({
+      intentId: intent.id,
+      checkoutSessionId: session.id,
+      checkoutUrl: session.url
     });
-    return sendJson(res, 200, { checkoutSessionId: session.id, url: session.url });
+    return sendJson(res, 200, { checkoutSessionId: session.id, url: session.url, reused: false });
   } catch (error) {
     console.error("friend-report-checkout failed", error);
     return sendJson(res, 400, { error: error instanceof Error ? error.message : "Could not create Friends report checkout." });
