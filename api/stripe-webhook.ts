@@ -1,11 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { reportBillingMode, reportSku } from "./_lib/report-fulfillment-config.js";
 import { revokeEntitlement } from "./_lib/report-entitlements.js";
-import {
-  activateFriendReportEntitlementFromStripe,
-  revokeFriendReportEntitlementByPaymentIntent
-} from "./_lib/friend-report-lifecycle.js";
+import { activateFriendReportEntitlementFromStripe } from "./_lib/friend-report-lifecycle.js";
 import { ensureFriendReportPlaceholder } from "./_lib/friend-report-placeholder.js";
+import { revokeFriendReportPurchase } from "./_lib/friend-report-revocation.js";
 import { rawRequestBody, sendJson } from "./_lib/report-http.js";
 import { parseVerifiedStripeEvent } from "./_lib/stripe-report-billing.js";
 import { createSupabaseReportAdmin } from "./_lib/supabase-report-admin.js";
@@ -75,7 +73,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     } else if (event.type === "charge.refunded") {
       const paymentIntentId = stringValue(object.payment_intent) || undefined;
       const friendRevoked = paymentIntentId
-        ? await revokeFriendReportEntitlementByPaymentIntent({
+        ? await revokeFriendReportPurchase({
             admin,
             paymentIntentId,
             status: "refunded"
