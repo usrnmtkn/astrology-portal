@@ -36,6 +36,7 @@ assert.equal(evergreen.relevanceReceipt.generationAllowed, true);
 assert.equal(evergreen.relevanceReceipt.primaryEvidenceId, evergreen.writerRequest.primaryEvidenceId);
 assert.ok(evergreen.writerRequest.input.includes("GOVERNED QUESTION RELEVANCE EVIDENCE"));
 assert.ok(evergreen.writerRequest.input.includes(evergreen.relevanceReceipt.receiptSha256));
+assert.match(evergreen.writerRequest.instructions, /Why the astrology points here/u);
 
 const freeText = prepareFreeTextAskTldrCalibration({
   model,
@@ -81,7 +82,7 @@ assert.deepEqual(renegotiationFreeText.plan.focus, {
 
 const primaryId = evergreen.writerRequest.primaryEvidenceId;
 const writerValue = {
-  answer: "Recognition is more available when you put the work where people can see and respond to it. Jupiter opposing your Midheaven around September 15 can make public opportunity and visibility feel larger, but it can also make other people's reaction seem more important than the result itself.\n\nUse the opening to show the concrete work, ask for the credit or role attached to it, and let the response give you information. You may get more from a visible result and a specific request than from trying to manage how everyone feels about what you are doing.",
+  answer: "Recognition is more available when you put the work where people can see and respond to it. Ask for the credit, title, or authority that matches work you can already point to instead of adding more responsibility just to prove the case.\n\nWhy the astrology points here\n\nJupiter opposing your Midheaven around September 15 enlarges questions of public role, recognition, and how much professional territory you are ready to occupy. The useful part of that pressure is not simply being more visible; it is noticing where growth gives you more leverage and where it only gives you more work.",
   evidenceIdsUsed: [primaryId],
   primaryEvidenceId: primaryId,
   whyNowEvidenceId: primaryId,
@@ -109,6 +110,7 @@ assert.equal(finalized.releasePacket.ownerApproved, false);
 assert.equal(finalized.releasePacket.sourceBindings.relevanceReceiptSha256, evergreen.relevanceReceipt.receiptSha256);
 assert.ok(finalized.releasePacket.sourceBindings.questionRelevancePacketSha256ByEvidenceId[primaryId]);
 assert.ok(finalized.judgeRequest.input.includes("GOVERNED QUESTION RELEVANCE EVIDENCE"));
+assert.ok(finalized.judgeRequest.input.includes("Why the astrology points here"));
 
 const badFacts = finalizeAskTldrCalibration({
   prepared: evergreen,
@@ -124,4 +126,4 @@ assert.equal(badFacts.blockReason, "deterministic_fact_lock_failed");
 assert.equal(badFacts.judgeRequest, null, "A factually invalid writer answer must not spend a judge call.");
 assert.equal(badFacts.releasePacket, null);
 
-console.log("Ask TLDR end-to-end calibration pipeline passed: evergreen and free-text share one question-focused astrology engine, every writer factor carries governed question relevance, invalid facts stop before judging, and passing generated copy remains non-serving calibration only.");
+console.log("Ask TLDR end-to-end calibration pipeline passed: evergreen and free-text share one question-focused astrology engine, every writer factor carries governed question relevance, reader answers explain the astrology mechanism, invalid facts stop before judging, and passing generated copy remains non-serving calibration only.");
