@@ -90,7 +90,7 @@ function stripSharedTransitLead(value: string) {
   if (
     lead.length > 180
     || !transitSignLeadPattern.test(lead)
-    || !/^your\b/iu.test(tail)
+    || !/^(?:your|the)\b/iu.test(tail)
   ) {
     return value;
   }
