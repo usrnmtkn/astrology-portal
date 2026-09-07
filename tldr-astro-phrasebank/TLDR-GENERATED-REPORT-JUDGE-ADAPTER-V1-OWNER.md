@@ -1,7 +1,7 @@
 # Generated Friends / You report judge adapter v1
 
 **Status:** `owner_approved`
-**Version:** `generated-report-judge-adapter-v1.0`
+**Version:** `generated-report-judge-adapter-v1.1`
 **Approved:** 2026-09-07
 **Owner approved:** `true`
 **Active in production:** `true`
@@ -38,6 +38,8 @@ A finding must name an observable defect in the submitted draft. Do not invent m
 Use the same `0.85` threshold and hard-gate standard as Report Judge v3.4. `owner_voice` and `natural_language` must each score 4 for release.
 
 The judge returns scores and findings only. The runtime recomputes the overall score and release verdict.
+
+The 2026-09-07 owner-directed breadth and voice contract is loaded for every writer and judge call from `TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md`. Any `over_specification` finding blocks release even when numeric scores pass. This revision does not promote the rejected personal report or its proposed rewrite into owner exemplars.
 
 ## Corrective pass governance
 
