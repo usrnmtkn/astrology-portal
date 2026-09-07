@@ -29,6 +29,7 @@ await build({
         isDeferredFallbackArchitectureV3BundleLoaded,
         isEmptyHouseFallbackArchitectureV3BundleLoaded,
         isRelationshipFallbackArchitectureV3BundleLoaded,
+        installFallbackArchitectureV3Bundle,
         loadFallbackArchitectureV3BundledManifest,
         loadDeferredFallbackArchitectureV3Bundle,
         loadEmptyHouseFallbackArchitectureV3Bundle,
@@ -206,6 +207,16 @@ assert.throws(
 );
 assert.equal(await runtime.loadDeferredFallbackArchitectureV3Bundle(), false);
 
+// A hydrated CMS core is only an override layer; it need not contain any
+// relationship rows. It must not suppress the lazy relationship package.
+runtime.installFallbackArchitectureV3Bundle({
+  transitLib: { authoredCards: [] },
+  templatesFile: { templates: [] },
+  rowsFile: { hookRows: [], vocabularyRows: [] }
+});
+assert.equal(runtime.isRelationshipFallbackArchitectureV3BundleLoaded(), false,
+  "A partial CMS core must not claim the relationship package is ready.");
+
 assert.equal(await runtime.loadRelationshipFallbackArchitectureV3Bundle(), true);
 assert.equal(runtime.isRelationshipFallbackArchitectureV3BundleLoaded(), true);
 const compatibilityAfter = runtime.transitSynastryFallbackRendererV3.renderCompat({
@@ -217,5 +228,13 @@ const compatibilityAfter = runtime.transitSynastryFallbackRendererV3.renderCompa
 assert.equal(compatibilityAfter.contentKey, "authored/compat-deep/moon/aries/taurus");
 assert.ok(compatibilityAfter.body.includes("Alex"));
 assert.equal(await runtime.loadRelationshipFallbackArchitectureV3Bundle(), false);
+
+const synastry = runtime.transitSynastryFallbackRendererV3.renderSynastryAspect({
+  planetA: "moon", planetB: "neptune", aspect: "sextile", otherName: "Alex",
+  romanticAllowed: false
+});
+assert.equal(synastry.contentKey, "fallback-hook/synastry-pair/moon/neptune/soft");
+assert.ok(synastry.body.includes("Alex often knows when you need gentleness"),
+  "Approved Synastry copy remains available after a partial CMS core loads first.");
 
 console.log("Deferred fallback runtime parity passed.");
