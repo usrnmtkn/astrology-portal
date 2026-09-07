@@ -126,12 +126,12 @@
 
 .relationship-explainer-card {
   display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
+  grid-template-columns: max-content minmax(0, 1fr);
   align-items: start;
-  gap: calc(var(--space-5) + var(--space-1) / 2);
+  gap: var(--space-4);
   width: 100%;
   min-width: 0;
-  padding: var(--space-6) calc(var(--space-7) - var(--space-1));
+  padding: var(--natal-card-padding);
   border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
@@ -203,7 +203,7 @@
   gap: calc(var(--space-2) + var(--space-1) / 2);
   width: 100%;
   min-width: 0;
-  padding: calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-7) - var(--space-1));
+  padding: var(--natal-card-padding);
   border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
@@ -261,9 +261,14 @@
 }
 
 .friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--friend-composite-row-gap);
-  padding: var(--friend-composite-row-padding);
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--card-row-padding-compact);
+}
+
+.composite-placements-section .placement-table-row__glyph {
+  align-self: center;
 }
 
 .friend-chart-legend {
@@ -331,11 +336,21 @@
   gap: calc(var(--space-3) + var(--space-1) / 2);
 }
 
+.synastry-placements-comparison {
+  container-type: inline-size;
+}
+
 .synastry-placement-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: calc(var(--space-4) + var(--space-1) / 2);
   align-items: start;
+}
+
+@container (max-width: 480px) {
+  .synastry-placement-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* This surface is lazy loaded after the global responsive sheet. Keep its
@@ -442,7 +457,11 @@
   background: var(--synastry-row-bg);
 }
 
+/* Both people share geometry; only their surface and glyph colors differ. */
 .synastry-placement-table > .synastry-placement-row {
+  grid-template-columns: max-content max-content minmax(0, 1fr);
+  gap: var(--space-2);
+  padding: var(--card-row-padding-compact);
   border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
@@ -760,6 +779,7 @@
 .friend-chart-page .friend-placement-row-compact,
 .friend-placement-column-compact .friend-placement-row {
   display: block;
+  min-width: 0;
   min-height: 0;
   padding: 0;
   border-bottom: 0;
@@ -894,7 +914,7 @@
 }
 
 .friend-placement-column-compact .friend-placement-table {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .friend-placement-column-compact .friend-placement-row {
@@ -927,5 +947,16 @@
     position: relative;
     top: auto;
     order: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .relationship-explainer-card {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--card-row-padding);
+  }
+
+  .relationship-api-summary {
+    padding: var(--card-row-padding);
   }
 }

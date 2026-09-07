@@ -2893,6 +2893,111 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  for (const theme of ["light", "dark"] as const) {
+    test(`empty Friends directory keeps its heading rail in ${theme} theme`, async ({ page }) => {
+      await seedClientState(page, { profile: true, theme });
+      await expectClientRouteLoads(page, "/#friends?tab=charts");
+      await expect(page.getByRole("region", { name: "No charts" })).toBeVisible();
+      for (const width of [1440, 390]) {
+        await page.setViewportSize({ width, height: 1000 });
+        const title = page.getByRole("heading", { name: "friends.", level: 1, exact: true });
+        const heading = await title.boundingBox();
+        const panel = await page.locator(".friends-unified-panel").boundingBox();
+        expect(Math.abs(heading!.x - panel!.x)).toBeLessThan(1);
+        expect(heading!.y + heading!.height).toBeLessThan(panel!.y);
+        const navigation = await page.getByRole("button", { name: "Open menu" }).boundingBox();
+        const clearance = heading!.y - navigation!.y - navigation!.height;
+        expect(clearance, "Heading clears the fixed navigation").toBeGreaterThan(0);
+        expect(clearance, "Mobile and desktop clearance is applied only once").toBeLessThan(96);
+        await mkdir(responsiveScreenshotDir, { recursive: true });
+        await page.screenshot({ path: path.join(responsiveScreenshotDir, `friends-empty-${theme}-${width}.png`) });
+      }
+    });
+
+    test(`friends relationship layouts align and fit in ${theme} theme`, async ({ page }) => {
+      test.setTimeout(120_000);
+      const assertNoClientErrors = await expectNoClientErrors(page);
+      await seedClientState(page, { profile: true, friends: true, theme });
+      await expectClientRouteLoads(page, "/#friends?tab=charts");
+      await expect(page.locator(".app-shell")).toHaveClass(new RegExp(`theme-${theme}`));
+      await mkdir(responsiveScreenshotDir, { recursive: true });
+      for (const width of [1440, 390]) {
+        await page.setViewportSize({ width, height: 1000 });
+        const heading = page.locator(".friends-page-heading");
+        const panel = page.locator(".friends-unified-panel");
+        const headingBox = await heading.boundingBox();
+        const panelBox = await panel.boundingBox();
+        expect(Math.abs(headingBox!.x - panelBox!.x), "Friends title shares the directory rail").toBeLessThan(1);
+        await expect(heading.locator("h1")).toHaveText("friends.");
+        expect(headingBox!.y + headingBox!.height).toBeLessThan(panelBox!.y);
+        await page.screenshot({ path: path.join(responsiveScreenshotDir, `friends-list-${theme}-${width}.png`) });
+      }
+      await page.getByRole("button", { name: "Open Nikki" }).click();
+      for (const view of ["Synastry", "Composite"] as const) {
+        await selectFriendDetailTab(page, view);
+        const rows = page.locator(view === "Synastry" ? ".synastry-placement-row" : ".composite-placements-section .placement-table-row");
+        await expect(rows.first()).toBeVisible();
+        for (const width of [1440, 1280, 1080, 1024, 820, 768, 390, 320]) {
+          await page.setViewportSize({ width, height: 1000 });
+          // Force offscreen placement cards to render before measuring them.
+          for (const row of await rows.all()) await row.scrollIntoViewIfNeeded();
+          const defects = await rows.evaluateAll(rows => rows.flatMap(row => {
+            const box = row.getBoundingClientRect();
+            const rail = row.closest(".friend-detail-content-column")!.getBoundingClientRect();
+            const issues: string[] = [];
+            if (box.left < rail.left - 1 || box.right > rail.right + 1) issues.push("card exceeds content rail");
+            for (const child of row.querySelectorAll(".synastry-placement-lead, .synastry-placement-sign, .synastry-placement-degree, .synastry-placement-house, .placement-table-row__body, .placement-table-row__glyph")) {
+              const bounds = child.getBoundingClientRect();
+              if (bounds.left < box.left - 1 || bounds.right > box.right + 1) issues.push(`clipped ${child.className}`);
+            }
+            return issues;
+          }));
+          expect(defects, `${view} ${theme} ${width}px`).toEqual([]);
+          if (view === "Synastry") {
+            const geometry = await rows.evaluateAll(rows => rows.map(row => ({height:row.getBoundingClientRect().height,padding:getComputedStyle(row).padding})));
+            expect(new Set(geometry.map(row => row.height)).size, "Both people's rows have equal height").toBe(1);
+            expect(new Set(geometry.map(row => row.padding)).size, "Both people's rows have equal padding").toBe(1);
+          }
+          await expectNoHorizontalOverflow(page, `${view} ${theme} ${width}px`);
+          await page.evaluate(() => window.scrollTo(0, 0));
+          await page.screenshot({ path: path.join(responsiveScreenshotDir, `friends-${view}-${theme}-${width}.png`) });
+          await rows.first().scrollIntoViewIfNeeded();
+          await page.screenshot({ path: path.join(responsiveScreenshotDir, `friends-${view}-placements-${theme}-${width}.png`) });
+        }
+      }
+      await assertNoClientErrors();
+    });
+  }
+
+  for (const theme of ["light", "dark"] as const) {
+    test(`synastry write-ups appear on first visit and open in full in ${theme} theme`, async ({ page }) => {
+      const assertNoClientErrors = await expectNoClientErrors(page);
+      await seedClientState(page, { profile: true, friends: true, theme });
+      await expectClientRouteLoads(page, "/#friends?tab=charts");
+      await page.getByRole("button", { name: "Open Nikki" }).click();
+      await selectFriendDetailTab(page, "Synastry");
+      const card = page.getByRole("button", { name: "Open full entry for Your Moon sextile Nikki's Neptune", exact: true });
+      const copy = card.locator(".synastry-contact-description");
+      const source = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === "fallback-hook/synastry-pair/moon/neptune/soft");
+      expect(source?.body_you).toBeTruthy();
+      const expectedCopy = source!.body_you!.replaceAll("{{holder2}}", "Nikki");
+      await expect(copy).toHaveText(expectedCopy, { timeout: 15_000 });
+      await mkdir(responsiveScreenshotDir, { recursive: true });
+      for (const width of [1440, 390, 320]) {
+        await page.setViewportSize({ width, height: 1000 });
+        await card.scrollIntoViewIfNeeded();
+        const cardBox = await card.boundingBox();
+        const copyBox = await copy.boundingBox();
+        expect(copyBox!.x).toBeGreaterThanOrEqual(cardBox!.x);
+        expect(copyBox!.x + copyBox!.width).toBeLessThanOrEqual(cardBox!.x + cardBox!.width);
+        await card.screenshot({ path: path.join(responsiveScreenshotDir, `synastry-write-up-${theme}-${width}.png`) });
+      }
+      await card.click();
+      await expect(page.locator(".app-shell.mode-detail")).toContainText(expectedCopy);
+      await assertNoClientErrors();
+    });
+  }
+
   test("synastry placement data stays inside each card after lazy styles load", async ({ page }) => {
     test.setTimeout(60_000);
     await seedClientState(page, { profile: true, friends: true });
