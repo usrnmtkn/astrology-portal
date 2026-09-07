@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   assertFriendTransitReadingBrief,
+  friendTransitHouseLifeDomains,
   friendTransitReadingCanGenerate,
   friendTransitReadingKnowledgeIds,
   friendTransitReadingMeaningPlan,
@@ -97,6 +98,9 @@ const rawBrief = {
 const brief = assertFriendTransitReadingBrief(rawBrief);
 assert.equal(brief.friendName, "Alex");
 assert.equal(friendTransitReadingCanGenerate(brief), true);
+assert.deepEqual(friendTransitHouseLifeDomains(4), ["home", "family", "living situation", "private life"]);
+assert.deepEqual(friendTransitHouseLifeDomains(10), ["career", "public role", "title", "responsibility", "recognition"]);
+assert.deepEqual(friendTransitHouseLifeDomains(undefined), []);
 const lockedRequest = friendTransitReadingRequestLock({
   brief: rawBrief,
   subjectId: "friend-123",
@@ -153,6 +157,7 @@ assert.deepEqual(friendTransitReadingKnowledgeIds(brief), [
 const plan = friendTransitReadingMeaningPlan(brief);
 assert.equal(plan.rankingAuthority, "brief-order-is-final");
 assert.equal(plan.leadLane, "daily");
+assert.ok(plan.guardrails.some((rule) => /life domains describe semantic scope/u.test(rule)));
 
 const prompt = friendTransitReadingPrompt({ brief, headline: "What's going on with Alex right now?" });
 assert.match(prompt, /synthesis only/i);
@@ -160,6 +165,11 @@ assert.match(prompt, /Do not re-rank the evidence/i);
 assert.match(prompt, /Things between you and \${brief\.friendName}|Things between you and Alex/i);
 assert.match(prompt, /Do not use you\/your outside relationship context/i);
 assert.match(prompt, /Mars trine Moon/);
+assert.match(prompt, /SPECIFICITY WITHOUT INVENTION/u);
+assert.match(prompt, /"lifeDomains": \[\s*"partnerships"/u, "Known natal houses must expose concrete semantic domains to the writer.");
+assert.match(prompt, /"lifeDomains": \[\s*"daily work"/u, "Long-cycle natal houses must expose concrete semantic domains to the writer.");
+assert.match(prompt, /"lifeDomains": \[\s*"money"/u, "House-context rows must expose concrete semantic domains to the writer.");
+assert.match(prompt, /Do not retreat to vague phrases/u);
 assert.match(prompt, /TECHNICAL EVIDENCE - FACT LOCK ONLY/);
 assert.doesNotMatch(prompt, /score": 80|significance": "major"|timingBonuses/u, "The writer prompt must not expose ranking metadata.");
 
@@ -170,7 +180,7 @@ const valid = validateFriendTransitReadingDraft({
     headline: "What's going on with Alex right now?",
     tldr: "Alex has more room to act on what they feel today, while a slower cycle is making the old plan harder to carry unchanged.",
     summary: "Alex has more room to act on what they feel today, while a slower cycle is making the old plan harder to carry unchanged.",
-    body: "Alex can name what needs attention today without making every reaction bigger than it is. Mars trine Moon supports that quicker emotional follow-through. Things between you and Alex may need a little more patience right now, which is separate from what Alex is dealing with personally.\n\nUnderneath that, Pluto square Sun is a slower pressure cycle. Money and what Alex can rely on also need more deliberate structure while Saturn moves through the 2nd house. The immediate shift and the longer background are different stories, but both point toward handling what is actually changing instead of forcing the old plan to keep working.",
+    body: "Alex can name what needs attention today without making every reaction bigger than it is. Mars trine Moon supports that quicker emotional follow-through in partnerships. Things between you and Alex may need a little more patience right now, which is separate from what Alex is dealing with personally.\n\nUnderneath that, Pluto square Sun is a slower pressure cycle touching daily work and schedule. Money and what Alex can rely on also need more deliberate structure while Saturn moves through the 2nd house. The immediate shift and the longer background are different stories, but both point toward handling what is actually changing instead of forcing the old plan to keep working.",
     action: "",
     timing: "",
     sections: []
