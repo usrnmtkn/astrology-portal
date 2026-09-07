@@ -186,6 +186,23 @@
   white-space: nowrap;
 }
 
+.report-library-share-toast {
+  position: fixed;
+  z-index: calc(var(--z-popover) + 1);
+  right: var(--page-gutter);
+  bottom: var(--page-gutter);
+  max-width: min(var(--container-dialog), calc(100vw - var(--page-gutter) * 2));
+  padding: var(--space-3) var(--space-5);
+  border: var(--border-width-thin) solid var(--overlay-border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--overlay-shadow);
+  font-family: var(--font-ui);
+  font-size: var(--text-description);
+  line-height: var(--leading-label);
+}
+
 .report-library-empty {
   display: grid;
   justify-items: center;
@@ -255,5 +272,13 @@
 
   .report-library-row__actions {
     padding: var(--space-1);
+  }
+
+  .report-library-share-toast {
+    right: var(--mobile-page-gutter);
+    bottom: var(--mobile-page-gutter);
+    left: var(--mobile-page-gutter);
+    max-width: none;
+    text-align: center;
   }
 }
