@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomBytes } from "node:crypto";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { jsonRequestBody, reportUrl, requireReportUser, sendJson } from "./_lib/report-http.js";
 import { createSupabaseReportAdmin } from "./_lib/supabase-report-admin.js";
@@ -51,6 +51,24 @@ function validUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu.test(value);
 }
 
+function validShortShareKey(value: string) {
+  return /^[A-Za-z0-9_-]{22}$/u.test(value);
+}
+
+function validShareKey(value: string) {
+  return validShortShareKey(value) || validUuid(value);
+}
+
+function createShareKey() {
+  return randomBytes(16).toString("base64url");
+}
+
+function shareFragment(shareKey: string) {
+  return validShortShareKey(shareKey)
+    ? `#s=${shareKey}`
+    : `#share=${shareKey}`;
+}
+
 function validVanitySlug(value: string) {
   return value.length >= 3
     && value.length <= 120
@@ -98,16 +116,24 @@ async function assertOwnerCanShare(
   }
 }
 
+function parseSourceRequest(body: { sourceKind?: unknown; sourceId?: unknown }) {
+  const sourceKind = body.sourceKind;
+  const sourceId = typeof body.sourceId === "string" ? body.sourceId : "";
+  if (sourceKind !== "generated_interpretation" && sourceKind !== "premium_report") {
+    throw new Error("Unsupported report source.");
+  }
+  if (!validUuid(sourceId)) {
+    throw new Error("Invalid report share request.");
+  }
+  return { sourceKind, sourceId } as const;
+}
+
 async function createOrReuseShare(req: IncomingMessage, res: ServerResponse) {
   const user = await requireReportUser(req);
   const body = await jsonRequestBody<{ sourceKind?: unknown; sourceId?: unknown; vanitySlug?: unknown }>(req);
-  const sourceKind = body.sourceKind;
-  const sourceId = typeof body.sourceId === "string" ? body.sourceId : "";
+  const { sourceKind, sourceId } = parseSourceRequest(body);
   const vanitySlug = typeof body.vanitySlug === "string" ? body.vanitySlug : "";
-  if (sourceKind !== "generated_interpretation" && sourceKind !== "premium_report") {
-    return sendJson(res, 400, { error: "Unsupported report source." });
-  }
-  if (!validUuid(sourceId) || !validVanitySlug(vanitySlug)) {
+  if (!validVanitySlug(vanitySlug)) {
     return sendJson(res, 400, { error: "Invalid report share request." });
   }
 
@@ -126,7 +152,7 @@ async function createOrReuseShare(req: IncomingMessage, res: ServerResponse) {
 
   let shareKey = existing?.share_key ?? "";
   if (!existing) {
-    shareKey = randomUUID();
+    shareKey = createShareKey();
     await admin.insert<ShareRow>("report_share_links", {
       user_id: user.id,
       source_kind: sourceKind,
@@ -134,7 +160,7 @@ async function createOrReuseShare(req: IncomingMessage, res: ServerResponse) {
       share_key: shareKey
     });
   } else if (existing.revoked_at) {
-    shareKey = randomUUID();
+    shareKey = createShareKey();
     await admin.update<ShareRow>("report_share_links", `id=eq.${existing.id}`, {
       share_key: shareKey,
       revoked_at: null,
@@ -144,8 +170,34 @@ async function createOrReuseShare(req: IncomingMessage, res: ServerResponse) {
 
   res.setHeader("cache-control", "no-store");
   return sendJson(res, 200, {
-    shareUrl: reportUrl(`/reports/${vanitySlug}#share=${shareKey}`, req)
+    shareUrl: reportUrl(`/reports/${vanitySlug}${shareFragment(shareKey)}`, req)
   });
+}
+
+async function revokeShare(req: IncomingMessage, res: ServerResponse) {
+  const user = await requireReportUser(req);
+  const body = await jsonRequestBody<{ sourceKind?: unknown; sourceId?: unknown }>(req);
+  const { sourceKind, sourceId } = parseSourceRequest(body);
+  const admin = createSupabaseReportAdmin();
+  const existing = await admin.selectOne<ShareRow>(
+    "report_share_links",
+    new URLSearchParams({
+      user_id: `eq.${user.id}`,
+      source_kind: `eq.${sourceKind}`,
+      source_id: `eq.${sourceId}`,
+      select: "id,user_id,source_kind,source_id,share_key,revoked_at"
+    })
+  );
+  if (!existing || existing.revoked_at) {
+    res.setHeader("cache-control", "no-store");
+    return sendJson(res, 200, { ok: true, revoked: false });
+  }
+  await admin.update<ShareRow>("report_share_links", `id=eq.${existing.id}`, {
+    revoked_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  });
+  res.setHeader("cache-control", "no-store");
+  return sendJson(res, 200, { ok: true, revoked: true });
 }
 
 async function loadSharedGenerated(
@@ -235,7 +287,7 @@ async function loadSharedPremium(
 
 async function loadShare(req: IncomingMessage, res: ServerResponse) {
   const shareKey = new URL(req.url ?? "/api/report-share", "http://localhost").searchParams.get("share") ?? "";
-  if (!validUuid(shareKey)) return sendJson(res, 400, { error: "Invalid share link." });
+  if (!validShareKey(shareKey)) return sendJson(res, 400, { error: "Invalid share link." });
   const admin = createSupabaseReportAdmin();
   const share = await admin.selectOne<ShareRow>(
     "report_share_links",
@@ -258,8 +310,9 @@ async function loadShare(req: IncomingMessage, res: ServerResponse) {
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   try {
     if (req.method === "POST") return await createOrReuseShare(req, res);
+    if (req.method === "DELETE") return await revokeShare(req, res);
     if (req.method === "GET") return await loadShare(req, res);
-    return sendJson(res, 405, { error: "Use GET or POST." });
+    return sendJson(res, 405, { error: "Use GET, POST, or DELETE." });
   } catch (error) {
     return sendJson(res, 400, { error: error instanceof Error ? error.message : "Could not share the report." });
   }
