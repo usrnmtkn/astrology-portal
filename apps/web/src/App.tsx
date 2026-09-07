@@ -5281,6 +5281,14 @@ function currentSkyPlacementDetailArticle({
     tldr: placementSection?.tldr,
     risingHoroscopes: placementSection?.risingHoroscopes,
     articleAspectPassages: placementSection?.articleAspectPassages,
+    placementResidencyContext: articleMode === "current" && normalizeContentIdPart(position.planet) === "sun"
+      ? {
+          planet: position.planet,
+          sign: position.sign,
+          referenceDate: generatedAt,
+          timeZone: locationTimeZone || position.transitTimeZone || "UTC"
+        }
+      : undefined,
     retrograde: isRetrograde,
     plainBody: displayArticleSections.length === 0
       && normalized.sections.some((section) => section.layer === "authored"),

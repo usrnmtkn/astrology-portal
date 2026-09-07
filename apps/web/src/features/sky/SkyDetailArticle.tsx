@@ -1,5 +1,5 @@
 import { ChevronLeft } from "lucide-react";
-import { Fragment, isValidElement, useLayoutEffect, type ReactNode } from "react";
+import { Fragment, isValidElement, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 import type { ContentBundle } from "../../content/types";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import {
@@ -43,6 +43,7 @@ export type SkyDetailRelatedAspectRow = {
 export type SkyDetailSection = {
   heading: string;
   body: ReactNode;
+  dateLine?: string;
   sourceTag?: string;
   sourceKeys?: string[];
   role?: "main" | "aspect";
@@ -85,6 +86,12 @@ export type SkyDetail = {
   closingCharge?: string | null;
   risingHoroscopes?: { risingSign?: string | null; house?: number; body: string; contentKey?: string }[];
   articleAspectPassages?: { natalPoint: string; aspect: string; body: string; contentKey: string }[];
+  placementResidencyContext?: {
+    planet: string;
+    sign: string;
+    referenceDate: string;
+    timeZone: string;
+  };
   subtitle?: string;
   tldr?: string;
   suppressTldr?: boolean;
@@ -375,12 +382,41 @@ export function SkyDetailArticle({
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [detail.title, detail.meta]);
 
+  const residencyContext = detail.placementResidencyContext;
+  const residencyContextKey = residencyContext
+    ? `${residencyContext.referenceDate}|${residencyContext.timeZone}`
+    : "";
+  const [residencyAspectState, setResidencyAspectState] = useState<[string, SkyDetailSection[]] | null>(null);
+
+  useEffect(() => {
+    if (!residencyContext) return;
+    let cancelled = false;
+    void import("../../services/skyPlacementResidencyAspects")
+      .then(({ skyPlacementResidencyAspectSections }) => skyPlacementResidencyAspectSections(residencyContext))
+      .then(
+        ({ sections }) => !cancelled && setResidencyAspectState([residencyContextKey, sections]),
+        () => undefined
+      );
+    return () => {
+      cancelled = true;
+    };
+  }, [residencyContextKey]);
+
+  const residencyAspectSections = residencyAspectState?.[0] === residencyContextKey
+    ? residencyAspectState[1]
+    : null;
+  const detailSections = residencyContext
+    ? [
+        ...(detail.sections ?? []).filter((section) => section.role !== "aspect"),
+        ...(residencyAspectSections ?? [])
+      ]
+    : (detail.sections ?? []);
   const metaRows = detailMetaRows(detail.meta);
   const articleBody = detail.body.filter((node) => (
     !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
   ));
   const paragraphs = articleBody;
-  const rawGeneratedSections = (detail.sections ?? []).filter(
+  const rawGeneratedSections = detailSections.filter(
     (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
   ).map((section) => ({
     ...section,
