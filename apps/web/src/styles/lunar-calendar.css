@@ -2932,7 +2932,6 @@ a.tx-card.has-article:hover .tx-more {
 .lunar-selected-card__body-section + .lunar-selected-card__body-section {
   margin-top: var(--lunar-space-8);
   padding-top: var(--lunar-space-14);
-  border-top: var(--border-width-thin) solid var(--line);
 }
 
 .lunar-selected-card__body-section h3,
