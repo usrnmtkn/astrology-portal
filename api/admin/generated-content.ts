@@ -631,6 +631,17 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       .join("\n\n");
   }
 
+  // Exact Calendar copies declare capitalized fields as their editable source.
+  // Refresh every reader mirror from that source after Sign Off or a revert.
+  if (!hasPackageDraft && record.render_policy === "content-studio-exact-sky-aspect-v1") {
+    patch.headline = stringFrom(record.Headline) || row.headline || "";
+    patch.summary = stringFrom(record.Summary);
+    record.body_you = stringFrom(record.Body);
+    record.body_they = record.body_you;
+    sections.body_you = record.body_you;
+    sections.body_they = record.body_they;
+  }
+
   const calendarDraftBody = isCalendarAspectStage
     ? stringFrom(packageValueAt(hasPackageDraft ? sections.packageDraft : null, "Body") ?? record.Body ?? record.CurrentServingBody)
     : "";

@@ -584,6 +584,49 @@ assert.ok(
   "The reader must reload saved copy through the serving-only API query."
 );
 
+// Exact Calendar rows use capitalized Summary/Body fields. Exercise the same
+// save/sign-off path as the Studio editor, including a second revision.
+const beforeCalendar = row;
+const exactRecord = {
+  contentKey: "sky.aspect.mercury.sextile.mars", Headline: "Mercury Sextile Mars",
+  Summary: "Original summary.", Body: "Original summary. Original ending.",
+  content_role: "full_copy", review_status: "approved",
+  render_policy: "content-studio-exact-sky-aspect-v1", studio_content_type: "aspect",
+  studio_editable_fields: [{ path: "Summary" }, { path: "Body" }]
+};
+row = { ...row, content_key: exactRecord.contentKey, status: "LIVE", lane: "serving", review_state: null,
+  event_type: "sky-aspect-owner-approved-exact", headline: exactRecord.Headline,
+  summary: exactRecord.Summary, body: exactRecord.Body,
+  sections: { packageRecord: exactRecord, packageOriginalRecord: structuredClone(exactRecord), body_you: exactRecord.Body, body_they: exactRecord.Body },
+  facts: { fallbackArchitectureV3: true, content_role: "full_copy", review_status: "approved" },
+  source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", contentStudioExactAspect: true, content_role: "full_copy", review_status: "approved" }
+};
+for (const revision of [1, 2]) {
+  const summary = `Calendar QA summary ${revision}.`;
+  const body = `${summary} Calendar QA final sentence ${revision}.`;
+  const previousBody = row.body;
+  const saved = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at,
+    sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, Summary: summary, Body: body } },
+    reviewStatus: "needs_review"
+  });
+  assert.equal(saved.status, 200);
+  assert.equal(row.body, previousBody, "Saving a draft preserves the approved passage.");
+  assert.equal(row.sections.packageDraft.Body, body);
+  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision"
+  });
+  assert.equal(published.status, 200);
+  assert.equal(row.status, "LIVE");
+  assert.equal(row.summary, summary, "Sign Off must publish the capitalized Summary field.");
+  assert.equal(row.body, body, "Sign Off must publish the capitalized Body field.");
+  assert.equal(row.sections.body_you, body);
+  assert.equal(row.sections.body_they, body);
+  assert.equal(row.sections.packageRecord.Body, body);
+  assert.equal(row.sections.packageDraft, undefined);
+}
+row = beforeCalendar;
+
 console.log(JSON.stringify({
   adminReadBack: readBack.payload.rows[0].body,
   contentKey,
