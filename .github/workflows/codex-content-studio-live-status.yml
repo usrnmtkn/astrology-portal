@@ -1,0 +1,179 @@
+name: Codex Content Studio Live Status
+
+on:
+  push:
+    branches:
+      - codex/content-studio-live-status-v2
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-test:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Apply targeted Content Studio fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              text = p.read_text()
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path}: expected exactly one occurrence, found {count}: {old[:100]!r}")
+              p.write_text(text.replace(old, new, 1))
+
+          def replace_all(path, old, new, minimum=1):
+              p = Path(path)
+              text = p.read_text()
+              count = text.count(old)
+              if count < minimum:
+                  raise SystemExit(f"{path}: expected at least {minimum} occurrences, found {count}: {old!r}")
+              p.write_text(text.replace(old, new))
+              return count
+
+          api = "api/admin/generated-content.ts"
+          replace_once(
+              api,
+              '|| ["fact_line", "opening", "tension", "development", "close", "body", "body_you", "body_they"]',
+              '|| ["headline", "summary", "fact_line", "opening", "tension", "development", "close", "body", "body_you", "body_they"]'
+          )
+
+          materializer = "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs"
+          replace_once(
+              materializer,
+              '["full_copy", "house_horoscope_core"].includes(role)\n    && ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)',
+              '(["full_copy", "house_horoscope_core"].includes(role)\n      || (role === "authored_card" && contentKey.startsWith("authored/sky-lunation-macro/")))\n    && ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)'
+          )
+
+          dashboard = "apps/admin/src/GeneratedContentAdminDashboard.tsx"
+          replace_once(dashboard, 'if (status === "LIVE") return "Published";', 'if (status === "LIVE") return "Live";')
+          replace_once(
+              dashboard,
+              'if (sourceContentSystem === "authored") return "authored-content";',
+              'if (sourceContentSystem === "authored" || sourceContentType === "authored-content" || sourceRole === "authored-card") return "authored-content";'
+          )
+          replace_all(dashboard, 'label: "Available in app"', 'label: "Live"', 1)
+          replace_all(dashboard, 'label: "Not published"', 'label: "Not live"', 1)
+          replace_all(dashboard, 'label: "Internal reference"', 'label: "Not live"', 1)
+          replace_all(dashboard, 'label: "Awaiting review"', 'label: "Not live"', 1)
+          replace_all(dashboard, 'label: "Needs more source copy"', 'label: "Not live"', 1)
+          replace_all(dashboard, 'label: "Copy missing"', 'label: "Not live"', 1)
+
+          replace_once(
+              dashboard,
+              '''              <th className="admin-col-visibility" scope="col">App visibility</th>\n              <th className="admin-col-editorial" scope="col">Editorial</th>\n              {showArticleDestination && <th className="admin-col-destination" scope="col">App destination</th>}\n              {showWiringReason && <th className="admin-col-wiring" scope="col">App connection</th>}''',
+              '''              <th className="admin-col-visibility" scope="col">Status</th>\n              {showArticleDestination && <th className="admin-col-destination" scope="col">App destination</th>}'''
+          )
+          replace_once(
+              dashboard,
+              '''              const destination = showArticleDestination ? articleAppDestination(row) : null;\n              const wiring = showWiringReason ? contentWiringStatus(row) : null;\n              const compatibilityIdentity = showCompatibilityIdentity ? compatibilityBrowseIdentityForRow(row) : null;''',
+              '''              const destination = showArticleDestination ? articleAppDestination(row) : null;\n              const wiring = showWiringReason ? contentWiringStatus(row) : null;\n              const blockedByDestination = Boolean(destination && destination.state !== "connected");\n              const blockedByWiring = Boolean(wiring && (wiring.state === "not-connected" || wiring.state === "not-serving"));\n              const isLive = safety.key === "reader-ready" && !blockedByDestination && !blockedByWiring;\n              const readerStatusDetail = isLive\n                ? "Readers can currently receive this copy."\n                : blockedByDestination\n                  ? destination?.detail ?? safety.detail\n                  : blockedByWiring\n                    ? wiring?.detail ?? safety.detail\n                    : safety.detail;\n              const compatibilityIdentity = showCompatibilityIdentity ? compatibilityBrowseIdentityForRow(row) : null;'''
+          )
+          replace_once(
+              dashboard,
+              '''                  <td className="admin-col-visibility"><span className={`admin-reader-state-pill admin-table-tag ${safety.key}`} title={safety.detail}>{safety.label}</span></td>\n                  <td className="admin-col-editorial"><span className={`ui-pill admin-status admin-table-tag status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span></td>''',
+              '''                  <td className="admin-col-visibility"><span className={`admin-reader-state-pill admin-table-tag ${isLive ? "reader-ready" : "draft-held"}`} title={readerStatusDetail}>{isLive ? "Live" : "Not live"}</span></td>'''
+          )
+          replace_once(
+              dashboard,
+              '''                  {wiring && (\n                    <td className="admin-content-location admin-wiring-cell admin-col-wiring">\n                      <strong className={`admin-wiring-state ${wiring.state}`}>{wiring.label}</strong>\n                      <small title={wiring.detail}>{wiring.detail}</small>\n                    </td>\n                  )}\n''',
+              ''
+          )
+
+          replace_once(
+              dashboard,
+              '''                      <p>Published app copy can appear for readers. Drafts, internal references, and incomplete writing stay hidden.</p>\n                    </div>\n                    <div className="admin-reader-safety-grid">\n                      <article className="reader-ready"><span>Available in app</span><strong>{readerCounts["reader-ready"]}</strong></article>\n                      <article><span>Not published</span><strong>{readerCounts["draft-held"]}</strong></article>\n                      <article><span>Internal or awaiting review</span><strong>{readerCounts["reference-held"] + readerCounts["review-held"]}</strong></article>\n                      <article className={readerCounts["needs-source-material"] ? "needs-fallback" : ""}><span>Needs more source copy</span><strong>{readerCounts["needs-source-material"]}</strong></article>\n                      <article className={readerCounts["fallback-needed"] ? "needs-fallback" : ""}><span>Copy missing</span><strong>{readerCounts["fallback-needed"]}</strong></article>''',
+              '''                      <p><strong>Live</strong> means readers can currently receive this copy. <strong>Not live</strong> means readers cannot currently receive this copy.</p>\n                    </div>\n                    <div className="admin-reader-safety-grid">\n                      <article className="reader-ready"><span>Live</span><strong>{readerCounts["reader-ready"]}</strong></article>\n                      <article><span>Not live</span><strong>{readerCounts["draft-held"] + readerCounts["reference-held"] + readerCounts["review-held"] + readerCounts["needs-source-material"] + readerCounts["fallback-needed"]}</strong></article>'''
+          )
+
+          replacements = {
+              '"Published rows are protected. Demote before deleting."': '"Live rows are protected. Move them to Not live before deleting."',
+              '"Published copy is unchanged."': '"Live copy is unchanged."',
+              '? "Published" : "Draft"': '? "Live" : "Not live"',
+              '"Published maps to LIVE and means reader-eligible within this provenance system; it does not outrank a higher-priority system."': '"Live means readers can currently receive this copy. Not live means readers cannot currently receive this copy. Approval and source provenance are shown separately."',
+              '"Use Published to edit copy readers can see. Use Draft to continue proposed rewrites. Astrology details stay read-only; prose is editable."': '"Use Live to edit copy readers can see. Use Not live for proposed rewrites. Astrology details stay read-only; prose is editable."',
+              '`${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.`': '`${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Live means readers can currently receive the copy; Not live means they cannot.`'
+          }
+          for old, new in replacements.items():
+              if old in Path(dashboard).read_text():
+                  replace_once(dashboard, old, new)
+
+          article = "apps/admin/src/articleWorkspace.ts"
+          replace_once(article, 'detail: "This article is still an editorial draft and cannot appear for readers.",\n      label: "Draft—not published",', 'detail: "Readers cannot currently receive this article.",\n      label: "Not live",')
+
+          natal_preview = "apps/admin/src/NatalPlacementReaderPreview.tsx"
+          replace_once(natal_preview, 'if (reason === "not-live") return "not published";', 'if (reason === "not-live") return "not live";')
+
+          reader_contract = "scripts/test-reader-facing-content-contract.mjs"
+          replace_once(
+              reader_contract,
+              'assert.match(adminDashboard, /label: "Available in app"/, "Published serving rows must use a clear app-visibility label without implying that every eligible row is currently selected.");',
+              'assert.match(adminDashboard, /label: "Live"/, "Reader-serving rows must use the single Live status.");'
+          )
+          replace_once(
+              reader_contract,
+              'assert.match(adminDashboard, /label: "Not published"/, "Draft rows must use a clear publishing label instead of internal held-state jargon.");',
+              'assert.match(adminDashboard, /label: "Not live"/, "Rows readers cannot receive must use the single Not live status.");'
+          )
+
+          article_test = "scripts/test-admin-article-workspace.mjs"
+          replace_once(article_test, 'detail: "This article is still an editorial draft and cannot appear for readers.",\n  label: "Draft—not published",', 'detail: "Readers cannot currently receive this article.",\n  label: "Not live",')
+
+          visual = Path("tests/visual/content-dashboard-admin-user-flows.spec.ts")
+          visual_text = visual.read_text()
+          visual_text = visual_text.replace('getByRole("tab", { name: /Published/ })', 'getByRole("tab", { name: /Live/ })')
+          visual_text = visual_text.replace('getByText("App visibility")', 'getByText("App visibility")')
+          visual.write_text(visual_text)
+
+          test = Path("scripts/test-content-studio-live-status-and-repeat-save.mjs")
+          test.write_text(r'''import assert from "node:assert/strict";
+          import fs from "node:fs";
+
+          const dashboard = fs.readFileSync("apps/admin/src/GeneratedContentAdminDashboard.tsx", "utf8");
+          const api = fs.readFileSync("api/admin/generated-content.ts", "utf8");
+          const materializer = fs.readFileSync("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs", "utf8");
+
+          assert.match(api, /\["headline", "summary", "fact_line", "opening", "tension", "development", "close", "body", "body_you", "body_they"\]/u,
+            "Package revisions must allow a second edit to title/summary after body edits.");
+          assert.match(materializer, /role === "authored_card" && contentKey\.startsWith\("authored\/sky-lunation-macro\/"\)/u,
+            "Approved lunation macros must mirror the reader-serving package as Live in Content Studio.");
+          assert.match(dashboard, /scope="col">Status<\/th>/u);
+          assert.doesNotMatch(dashboard, /scope="col">App visibility<\/th>/u);
+          assert.doesNotMatch(dashboard, /scope="col">Editorial<\/th>/u);
+          assert.doesNotMatch(dashboard, /scope="col">App connection<\/th>/u);
+          assert.match(dashboard, /\? "Live" : "Not live"/u);
+          assert.match(dashboard, /sourceContentType === "authored-content" \|\| sourceRole === "authored-card"/u,
+            "Authored package cards must not be labeled Legacy.");
+          console.log("Content Studio binary Live status and repeated package-edit contract passed.");
+          ''')
+          PY
+      - name: Run focused regression checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/test-reader-facing-content-contract.mjs
+          node --experimental-strip-types scripts/test-admin-article-workspace.mjs
+          node scripts/test-content-studio-live-status-and-repeat-save.mjs
+      - name: Commit tested fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/codex-content-studio-live-status.yml
+          git add api/admin/generated-content.ts apps/admin/src/GeneratedContentAdminDashboard.tsx apps/admin/src/articleWorkspace.ts apps/admin/src/NatalPlacementReaderPreview.tsx scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs scripts/test-reader-facing-content-contract.mjs scripts/test-admin-article-workspace.mjs scripts/test-content-studio-live-status-and-repeat-save.mjs tests/visual/content-dashboard-admin-user-flows.spec.ts
+          git commit -m "fix(admin): use Live status and allow repeated package edits"
+          git push origin HEAD:codex/content-studio-live-status-v2
