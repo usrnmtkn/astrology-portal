@@ -880,7 +880,7 @@ export async function loadRelationshipFallbackArchitectureV3Bundle() {
         return false;
       }
 
-      localRelationshipReaderBundle = readerEligibleBundle(fallbackArchitectureV3Bundle);
+      localRelationshipReaderBundle = readerEligibleBundle(relationshipFallbackArchitectureV3Bundle);
       recomposeReaderBundle();
       return true;
     })
