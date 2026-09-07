@@ -115,7 +115,7 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
   await expect(summary).toContainText("The next New Moon arrives in 3 days in Virgo.");
   await expect(summary.getByRole("link", { name: "New Moon", exact: true })).toHaveText("New Moon");
   await expect(summary.locator("mark.content-highlight").filter({ hasText: "void of course" })).toContainText("void of course");
-  await expect(summary).toContainText("Saturn, Neptune, Pluto, and Chiron");
+  await expect(summary).toContainText("Saturn Rx, Neptune Rx, Pluto Rx, and Chiron Rx");
   await page.reload();
   await field.getByRole("button", { name: "Edit wording" }).click();
   await expect(body).toHaveValue(edited);

@@ -73,7 +73,7 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       parts[parts.length - 1].text = parts[parts.length - 1].text.trimEnd() + " ";
       planets.forEach((planet, index) => {
         if (index) parts.push({ text: index === count - 1 ? count === 2 ? " and " : ", and " : ", " });
-        parts.push({ text: planet, planet, action: "retrograde", emphasis: true });
+        parts.push({ text: `${planet} Rx`, planet, action: "retrograde", emphasis: true });
       });
       parts.push({ text: "." });
     }
