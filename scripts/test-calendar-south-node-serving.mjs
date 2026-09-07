@@ -187,6 +187,22 @@ assert.match(
   /southNodeMatch[\s\S]*?article-related-aspects__copy-heading[\s\S]*?<h4>\{southNodeHeading\}<\/h4>/u,
   "Paired South Node copy must render with the same aspect subtitle treatment as the North Node heading."
 );
+assert.match(
+  skyDetailSource,
+  /article-related-aspects__copy-heading article-related-aspects__copy-heading--paired/u,
+  "Paired South Node copy must carry a dedicated spacing hook."
+);
+assert.match(
+  skyDetailSource,
+  /skyAspectExactDateLine[\s\S]*?article-related-aspects__date/u,
+  "Sky placement aspect cards must render their exact date as metadata."
+);
+const skyCssSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/sky.css"), "utf8");
+assert.match(
+  skyCssSource,
+  /\.article-related-aspects__copy-heading--paired\s*\{[^}]*margin-top:/su,
+  "Paired South Node subsection must have explicit vertical separation."
+);
 
 console.log("South Node Calendar serving + Content Studio contract passed", {
   geometryEventsAdded: 0,
