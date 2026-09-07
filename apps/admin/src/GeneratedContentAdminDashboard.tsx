@@ -5515,7 +5515,7 @@ export function GeneratedContentAdminDashboard() {
 
         {message && (
           <div
-            className={`admin-save-toast ${loadState === "error" || loadState === "accessDenied" ? "is-error" : message.includes("Partial load:") ? "is-warning" : ""}`}
+            className={`admin-save-toast ${loadState === "error" || loadState === "accessDenied" ? "is-error" : message.includes("Partial load:") || loadState === "idle" ? "is-warning" : ""}`}
             role={loadState === "error" || loadState === "accessDenied" ? "alert" : "status"}
           >
             <span>{message}</span>
