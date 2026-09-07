@@ -238,7 +238,15 @@ async function upsertRows(rows) {
 
 async function verifyRows(rows) {
   loadLocalWebEnv();
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?select=content_key,status,lane,review_state,body,source_snapshot&prompt_version=eq.exact-sky-aspect-content-studio-v1&limit=500`, { headers: verificationHeaders() });
+  const url = new URL(`${supabaseUrl()}/rest/v1/generated_interpretations`);
+  url.searchParams.set("select", "content_key,status,lane,review_state,body,source_snapshot");
+  url.searchParams.set("prompt_version", "eq.exact-sky-aspect-content-studio-v1");
+  url.searchParams.set("limit", "500");
+  // Supabase accepts the public key as either a request header or `apikey`
+  // query parameter. Keep both so CI remains robust across gateway/header
+  // forwarding changes while retaining read-only RLS enforcement.
+  url.searchParams.set("apikey", verificationKey());
+  const response = await fetch(url, { headers: verificationHeaders() });
   const payload = await response.json().catch(() => null);
   if (!response.ok) throw new Error(`Published Calendar aspect verification failed with ${response.status}: ${JSON.stringify(payload)}`);
   if (!Array.isArray(payload) || payload.length !== rows.length) throw new Error(`Expected ${rows.length} published exact aspects; found ${Array.isArray(payload) ? payload.length : 0}.`);
