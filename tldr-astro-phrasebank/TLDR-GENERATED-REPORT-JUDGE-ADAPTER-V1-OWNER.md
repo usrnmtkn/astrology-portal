@@ -60,3 +60,16 @@ Historical examples supply language evidence only; the target brief supplies
 facts. A missing or altered passage blocks the provider call. The pass audit
 records source identifiers, hashes, and word counts without promoting any new
 draft into owner-authored evidence.
+
+## Weekly editorial review (adapter v1.3)
+
+Apply the shared breadth-and-voice contract's weekly progression and contextual
+owner corrections to the entire report. The TLDR and body have different jobs;
+internal stages do not authorize visible headings or invented claims. Return
+`narrative_repetition`, `unsupported_interpretation`, `unsupported_timing`, or
+`owner_language` only for the specific defects defined there. These findings
+block release regardless of numeric scores and use the existing single
+corrective rewrite budget. An explicitly supplied lunar cycle remains eligible;
+a New Moon label or an unrelated corpus passage is not evidence for a duration.
+The owner accepted the direction of the reviewed weekly report, not its exact
+prose or the proposed alternative; neither becomes positive voice evidence.
