@@ -10,7 +10,7 @@ import { isReportUuidSegment, reportShareKeyFromHash } from "../../services/repo
 import { loadSharedReport, type SharedReportPayload } from "../../services/reportSharing";
 import { ReportArticle } from "./ReportArticle";
 import { documentFromDelivery, ReportDeliveryView } from "./ReportDeliveryView";
-import { GeneratedReportArticle, GeneratedReportDeliveryView } from "./ReportLibraryView";
+import { GeneratedReportArticle, GeneratedReportDeliveryView, GeneratedReportState } from "./ReportLibraryView";
 
 function DeliveryState({ message }: { message: string }) {
   return <main className="report-delivery-state" role="status"><p>{message}</p></main>;
@@ -89,6 +89,12 @@ export function ReportVanityDeliveryView({ slug }: { slug: string }) {
   if (shared) return <SharedReportView payload={shared} />;
   if (!item) return <DeliveryState message="This report is unavailable." />;
   if (item.sourceKind === "generated_interpretation") {
+    if (item.status === "generating") {
+      return <GeneratedReportState message="This report is still being prepared." />;
+    }
+    if (item.status === "failed") {
+      return <GeneratedReportState message="This report couldn't be completed." />;
+    }
     return <GeneratedReportDeliveryView reportId={item.sourceId} />;
   }
   return <ReportDeliveryView reportId={item.sourceId} />;

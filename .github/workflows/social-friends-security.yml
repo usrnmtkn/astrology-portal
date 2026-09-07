@@ -4,6 +4,11 @@ on:
   pull_request:
     paths:
       - "api/account.ts"
+      - "api/generate-friend-transit-reading.ts"
+      - "api/friend-report-*.ts"
+      - "api/cron/run-friend-report-jobs.ts"
+      - "api/stripe-webhook.ts"
+      - "api/_lib/friend-report-*.ts"
       - "apps/web/src/App.tsx"
       - "apps/web/src/features/friends/**"
       - "apps/web/src/services/auth.ts"
@@ -11,11 +16,13 @@ on:
       - "apps/web/src/services/chartProfile.ts"
       - "apps/web/src/services/manualCharts.ts"
       - "apps/web/src/services/socialFriends.ts"
+      - "apps/web/src/services/userGeneratedContent.ts"
       - "apps/web/src/types.ts"
       - "apps/web/supabase/**"
       - "scripts/test-birth-time-angle-reliability.mts"
       - "scripts/test-friend-transit-reading-contract.mts"
       - "scripts/test-friend-transit-reading-request-render.mjs"
+      - "scripts/test-friend-paid-report-lifecycle.mts"
       - "scripts/test-social-friends-contract.mjs"
       - ".github/workflows/social-friends-security.yml"
   push:
@@ -23,6 +30,11 @@ on:
       - main
     paths:
       - "api/account.ts"
+      - "api/generate-friend-transit-reading.ts"
+      - "api/friend-report-*.ts"
+      - "api/cron/run-friend-report-jobs.ts"
+      - "api/stripe-webhook.ts"
+      - "api/_lib/friend-report-*.ts"
       - "apps/web/src/App.tsx"
       - "apps/web/src/features/friends/**"
       - "apps/web/src/services/auth.ts"
@@ -30,18 +42,20 @@ on:
       - "apps/web/src/services/chartProfile.ts"
       - "apps/web/src/services/manualCharts.ts"
       - "apps/web/src/services/socialFriends.ts"
+      - "apps/web/src/services/userGeneratedContent.ts"
       - "apps/web/src/types.ts"
       - "apps/web/supabase/**"
       - "scripts/test-birth-time-angle-reliability.mts"
       - "scripts/test-friend-transit-reading-contract.mts"
       - "scripts/test-friend-transit-reading-request-render.mjs"
+      - "scripts/test-friend-paid-report-lifecycle.mts"
       - "scripts/test-social-friends-contract.mjs"
       - ".github/workflows/social-friends-security.yml"
 
 jobs:
   social-contract:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -52,6 +66,7 @@ jobs:
       - run: node scripts/test-social-friends-contract.mjs
       - run: node --import tsx scripts/test-birth-time-angle-reliability.mts
       - run: node --experimental-strip-types scripts/test-friend-transit-reading-contract.mts
+      - run: node --import tsx scripts/test-friend-paid-report-lifecycle.mts
       - run: node scripts/test-friend-transit-reading-request-render.mjs
       - run: npm run typecheck
       - run: npm run build:knowledge
@@ -59,7 +74,7 @@ jobs:
 
   database-authorization:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
       - uses: supabase/setup-cli@v1
@@ -71,6 +86,44 @@ jobs:
         run: supabase db reset --local --workdir apps/web
       - name: Run rollback-only cross-user authorization test
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/social_friend_authorization.sql
+      - name: Verify Friends paid report tables stay owner-read-only
+        run: |
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 <<'SQL'
+          do $$
+          begin
+            if to_regclass('public.friend_report_entitlements') is null then
+              raise exception 'friend_report_entitlements is missing';
+            end if;
+            if to_regclass('public.friend_report_jobs') is null then
+              raise exception 'friend_report_jobs is missing';
+            end if;
+            if not exists (
+              select 1 from pg_policies
+              where schemaname = 'public'
+                and tablename = 'friend_report_entitlements'
+                and cmd = 'SELECT'
+            ) then
+              raise exception 'Friends entitlement SELECT policy missing';
+            end if;
+            if not exists (
+              select 1 from pg_policies
+              where schemaname = 'public'
+                and tablename = 'friend_report_jobs'
+                and cmd = 'SELECT'
+            ) then
+              raise exception 'Friends job SELECT policy missing';
+            end if;
+            if exists (
+              select 1 from pg_policies
+              where schemaname = 'public'
+                and tablename in ('friend_report_entitlements', 'friend_report_jobs')
+                and cmd in ('INSERT', 'UPDATE', 'DELETE')
+            ) then
+              raise exception 'Friends paid report tables must remain server-write-only';
+            end if;
+          end
+          $$;
+          SQL
       - name: Stop ephemeral Supabase database
         if: always()
         run: supabase stop --workdir apps/web --no-backup
