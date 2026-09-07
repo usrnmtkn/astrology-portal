@@ -8,6 +8,7 @@ on:
       - "apps/admin/src/AskTldrStudio.tsx"
       - "apps/admin/src/AdminStudioPrimitives.tsx"
       - "apps/admin/src/main.tsx"
+      - "apps/web/src/main.tsx"
       - "apps/web/supabase/migrations/*ask_tldr*.sql"
       - "config/ask-tldr/**"
       - "scripts/test-ask-tldr-*.mjs"
@@ -83,3 +84,6 @@ jobs:
 
       - name: Build Content Studio admin app
         run: npm run build:admin
+
+      - name: Build deployed web route
+        run: npm run build:web
