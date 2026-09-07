@@ -1,6 +1,6 @@
 .report-article-page {
   min-height: 100svh;
-  padding: var(--report-page-padding);
+  padding: var(--sky-page-padding);
   color: var(--ink);
   font-family: var(--font-body);
 }
@@ -235,7 +235,7 @@
 
 @media (max-width: 700px) {
   .report-article-page {
-    padding: var(--space-6) var(--space-4) var(--mobile-page-bottom);
+    padding: var(--mobile-route-padding);
   }
 
   .report-article {
