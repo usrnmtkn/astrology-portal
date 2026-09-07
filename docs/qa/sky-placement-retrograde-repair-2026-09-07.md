@@ -156,3 +156,13 @@ PLAYWRIGHT_BASE_URL=http://127.0.0.1:4286 npx playwright test tests/visual/sky-p
 
 Calendar screenshots are in `test-results/sky-retrograde/calendar-light-1440.png`
 and `calendar-dark-390.png`. No commit, deployment, or CMS publication was made.
+
+## Merge validation
+
+Owner requested commit and merge. Rebased onto `636444ef` (live Sky clock and
+summary layout), retaining both the new clock test and motion tests. Regenerated
+resolver distribution, fallback manifests, content book, and writing-evidence
+indexes. The knowledge-index change only refreshes source hashes for versioned
+bundles; approved prose is unchanged. Updated the Calendar hydration assertion
+to require exact event signs and endpoint motions with the approved-content map.
+All 11 browser tests and targeted type/content/CSS checks pass on this baseline.
