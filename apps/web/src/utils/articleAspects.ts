@@ -60,7 +60,7 @@ type NodeHeading = [string, string, "north" | "south"];
 const nodePattern = /^(.+?)\s+(conjunction|conjunct|opposition|opposite|square|trine|sextile)\s+(?:your\s+)?(?:natal\s+)?(north|south)\s+node$/iu;
 const activeDatePattern = /\b(?:until|through)\s+([A-Z][a-z]+\s+\d{1,2}(?:,\s+\d{4})?)/u;
 const activeFramePattern = /^While\s+.+?\s+your\s+natal\s+(.+?)\s+in\s+your\s+(\d+(?:st|nd|rd|th)\s+house)(?:\s+(?:until|through)\s+[^.]+)?\.\s*/iu;
-const transitSignLeadPattern = /\b(?:Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|North Node|South Node|Lilith)\s+in\s+[A-Z][a-z]+\b/u;
+const transitSignLeadPattern = /^(?:The\s+)?[A-Za-z]+(?:\s+[A-Za-z]+){0,2}\s+in\s+[A-Z][a-z]+\b/u;
 
 function parsedNodeHeading(heading: string): NodeHeading | null {
   const match = heading.trim().match(nodePattern);
@@ -77,10 +77,6 @@ function mirroredNodeAspect(first: string, second: string) {
     || first === "sextile" && second === "trine";
 }
 
-function capitalized(value: string) {
-  return value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
-}
-
 function stripSharedTransitLead(value: string) {
   const semicolon = value.indexOf(";");
   if (semicolon < 0) return value;
@@ -95,7 +91,7 @@ function stripSharedTransitLead(value: string) {
     return value;
   }
 
-  return capitalized(tail);
+  return `${tail.charAt(0).toUpperCase()}${tail.slice(1)}`;
 }
 
 function compactActiveAspect(body: string | null): CompactActiveAspect {
