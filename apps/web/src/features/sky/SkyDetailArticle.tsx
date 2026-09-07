@@ -371,7 +371,7 @@ function skyPlacementDateLine(value: ReactNode) {
   return skyPlacementDateLinePattern.test(normalized) ? normalized : null;
 }
 
-const skyAspectExactDateLinePattern = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?$/iu;
+const skyAspectExactDateLinePattern = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?(?:(?:,\s+and\s+|,\s+|\s+and\s+)(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?)*$/iu;
 
 function skyAspectExactDateLine(value: ReactNode) {
   if (typeof value !== "string") {

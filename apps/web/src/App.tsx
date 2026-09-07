@@ -4584,8 +4584,6 @@ function relatedSkyAspectSectionsForPlacement({
   const resolvedSections = aspects
     .filter((aspect) => aspect.from === pointName || aspect.to === pointName)
     .filter((aspect, index, matchingAspects) => uniqueNatalAspectRows(matchingAspects).includes(aspect))
-    .slice()
-    .sort((first, second) => first.orb - second.orb)
     .flatMap((aspect) => {
       const aspectDetail = currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions);
       const body = aspectDetail.body
@@ -4593,22 +4591,73 @@ function relatedSkyAspectSectionsForPlacement({
         .map((paragraph) => stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(paragraph)).trim())
         .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph))
         .join("\n\n");
+      const exactMoment = skyPlacementAspectExactMoment(aspect, generatedAt, positions);
       const exactDate = skyPlacementAspectExactDate(aspect, generatedAt, positions);
 
       if (!body) return [];
 
       return [{
-        orb: aspect.orb,
+        body,
+        exactDate,
+        exactTime: exactMoment.getTime(),
         section: {
           heading: aspectDetail.title,
-          body: `${exactDate}\n\n${body}`,
+          body,
           role: "aspect" as const,
           aspectType: aspect.type,
           group: normalizedAspectToneBucket(aspect.type)
         } satisfies SkyDetailSection
       }];
     });
-  return resolvedSections.map(({ section }) => section);
+  const groupedSections = new Map<string, {
+    body: string;
+    dates: Array<{ label: string; time: number }>;
+    firstExactTime: number;
+    section: SkyDetailSection;
+  }>();
+
+  for (const candidate of resolvedSections) {
+    const key = `${candidate.section.heading}|${candidate.section.aspectType ?? ""}|${candidate.body}`;
+    const existing = groupedSections.get(key);
+
+    if (existing) {
+      existing.dates.push({ label: candidate.exactDate, time: candidate.exactTime });
+      existing.firstExactTime = Math.min(existing.firstExactTime, candidate.exactTime);
+      continue;
+    }
+
+    groupedSections.set(key, {
+      body: candidate.body,
+      dates: [{ label: candidate.exactDate, time: candidate.exactTime }],
+      firstExactTime: candidate.exactTime,
+      section: candidate.section
+    });
+  }
+
+  const naturalDateList = (values: string[]) => {
+    if (values.length <= 1) return values[0] ?? "";
+    if (values.length === 2) return `${values[0]} and ${values[1]}`;
+    return `${values.slice(0, -1).join(", ")}, and ${values.at(-1)}`;
+  };
+
+  return Array.from(groupedSections.values())
+    .map(({ body, dates, firstExactTime, section }) => {
+      const exactDates = dates
+        .slice()
+        .sort((first, second) => first.time - second.time)
+        .filter((date, index, sortedDates) => index === 0 || date.label !== sortedDates[index - 1]?.label)
+        .map((date) => date.label);
+
+      return {
+        firstExactTime,
+        section: {
+          ...section,
+          body: `${naturalDateList(exactDates)}\n\n${body}`
+        }
+      };
+    })
+    .sort((first, second) => first.firstExactTime - second.firstExactTime)
+    .map(({ section }) => section);
 }
 
 function skyPlacementAspectExactMoment(
