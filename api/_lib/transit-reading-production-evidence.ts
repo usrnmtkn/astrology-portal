@@ -13,6 +13,7 @@ const ASPECT_ALIASES = new Map<string, string>([
 ]);
 const BODY_PATTERN = "Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|Lilith|North Node|South Node|Ascendant|Rising|Midheaven|MC|Descendant|IC";
 const DRIVER_ASPECT = new RegExp(`^(${BODY_PATTERN})\\s+(conjunct|conjunction|opposes|opposite|opposition|square|squares|trine|trines|sextile|sextiles)\\s+(${BODY_PATTERN})$`, "iu");
+const HOUSE_TEXT_PATTERN = /\b([1-9]|1[0-2])(?:st|nd|rd|th)?(?:\s+|-)house\b/giu;
 
 function slug(value: unknown) {
   return typeof value === "string"
@@ -48,16 +49,10 @@ function addTransit(ids: Set<string>, transitPlanet: unknown, aspect: unknown, n
   if (planet && canonical && point) ids.add(`you-transit-v3-${planet}-${canonical}-${point}`);
 }
 
-function addDriver(ids: Set<string>, driverLabel: unknown, source: unknown) {
+function addDriver(ids: Set<string>, driverLabel: unknown) {
   const driver = stringValue(driverLabel);
   const match = DRIVER_ASPECT.exec(driver);
   if (match) addTransit(ids, match[1], match[2], match[3]);
-
-  const sourceToken = slug(source);
-  if (sourceToken === "lunation" || /^(?:new|full)\s+moon\b/iu.test(driver)) {
-    ids.add("canonical:body/moon");
-    ids.add("canonical:body/sun");
-  }
 }
 
 function walkTechnicalEvidence(ids: Set<string>, value: unknown) {
@@ -71,23 +66,43 @@ function walkTechnicalEvidence(ids: Set<string>, value: unknown) {
   addTransit(ids, item.transitPlanet, item.aspect, item.natalPoint);
   addHouse(ids, item.house);
   addHouse(ids, item.natalHouse);
-  addDriver(ids, item.driverLabel, item.source);
+  addDriver(ids, item.driverLabel);
 
-  for (const [key, entry] of Object.entries(item)) {
-    if (key === "moonDriver" && entry) ids.add("canonical:body/moon");
+  for (const entry of Object.values(item)) {
     if (entry && typeof entry === "object") walkTechnicalEvidence(ids, entry);
   }
+}
+
+function walkApprovedReaderText(ids: Set<string>, value: unknown) {
+  if (typeof value === "string") {
+    for (const match of value.matchAll(HOUSE_TEXT_PATTERN)) addHouse(ids, Number(match[1]));
+    return;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((entry) => walkApprovedReaderText(ids, entry));
+    return;
+  }
+  const item = record(value);
+  if (!item) return;
+  Object.values(item).forEach((entry) => walkApprovedReaderText(ids, entry));
 }
 
 /**
  * These identifiers authorize the production model call against catalogued
  * mechanism evidence. They do not calculate new astrology and they do not
  * expand the factual ceiling; the You brief and fact lock remain authoritative.
+ *
+ * Weekly assemblies can intentionally carry `house: null` in a compact
+ * technical reading while their approved personalized reader text already
+ * names the governed house. In that case the named approved house is valid
+ * evidence identity, just as it is for the deterministic fact lock.
  */
 export function youTransitReadingProductionKnowledgeIds(brief: {
+  approvedReaderText?: Record<string, unknown>;
   technicalEvidence?: Record<string, unknown>;
 }) {
   const ids = new Set<string>();
   walkTechnicalEvidence(ids, brief.technicalEvidence ?? {});
+  walkApprovedReaderText(ids, brief.approvedReaderText ?? {});
   return [...ids];
 }
