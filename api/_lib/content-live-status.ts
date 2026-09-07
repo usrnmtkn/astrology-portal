@@ -11,6 +11,12 @@ import { isGovernedReaderEligible } from "../../apps/web/src/content/fallbackArc
 import { fallbackArchitectureV3DashboardPackageDestination } from "../../apps/web/src/services/fallbackArchitectureV3DashboardPackaging.js";
 import { isReaderServableGeneratedContentRow, isGeneratedContentReaderBoundaryAllowed, generatedRowPackageRole } from "../../apps/web/src/content/generatedContentEligibility.js";
 import { hasExactSkyArticleOwnerApproval, skyArticleEditionRecord } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
+import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
+
+// These are the same defaults consumed by the Daily Sky reader, not CMS drafts.
+export const builtinContentRecords = new Map(skyDailySummaryFields.map(field => [field.key, {
+  id: `builtin:${field.key}`, content_key: field.key, body: field.body, headline: field.label, readerEnabled: field.readerEnabled
+}]));
 
 const require = createRequire(import.meta.url);
 const readerPartitions = [
@@ -125,6 +131,22 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
     if (row.provider && approved.has(reviewStatus) && isReaderServableGeneratedContentRow(row) && isGovernedReaderEligible({ ...source, contentKey: row.content_key, review_status: reviewStatus })) overlays.set(row.content_key, row);
   }
   return rows.map((row) => {
+    const builtin = builtinContentRecords.get(row.content_key);
+    if (builtin) {
+      if (builtin.readerEnabled === false) return { id: row.id, live: false, label: "Not live", source: null,
+        detail: "The current Daily Sky template does not use this field.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
+      const current = [...candidates].sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))
+        .find(candidate => candidate.content_key === row.content_key && candidate.status === "LIVE"
+          && candidate.lane === "serving" && !candidate.review_state && candidate.body?.trim()
+          && isGeneratedContentReaderBoundaryAllowed(candidate) && isReaderServableGeneratedContentRow(candidate)
+          && !skySummaryTemplateErrors(candidate.content_key, candidate.body).length);
+      const servingBody = currentSkySummaryWording(row.content_key, current?.body ?? builtin.body).trim();
+      const live = Boolean(servingBody && currentSkySummaryWording(row.content_key, row.body ?? "").trim() === servingBody);
+      return { id: row.id, live, label: live ? "Live" : "Not live",
+        source: live ? current ? "studio" : "package" : null,
+        detail: live ? "Readers can currently receive this exact summary wording." : "Readers cannot currently receive this summary wording.",
+        updatedAt: row.updated_at ?? null, servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
+    }
     const exact = exactAspectStatus(row, candidates);
     if (exact) return exact;
     let source: ContentLiveStatus["source"] = null;
@@ -155,7 +177,7 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
     } else {
       const wiring = contentWiringStatus(row);
       const edition = skyArticleEditionRecord(row.sections?.skyArticleEdition);
-      const eligible = row.status === "LIVE" && row.lane === "serving" && !row.review_state
+      const eligible = allowsPublication(row) && row.status === "LIVE" && row.lane === "serving" && !row.review_state
         && wiring.state === "connected" && isGeneratedContentReaderBoundaryAllowed(row)
         && Boolean(row.body?.trim()) && isReaderServableGeneratedContentRow(row)
         && (!edition || row.content_key === edition.contentKey && hasExactSkyArticleOwnerApproval(edition, row.source_snapshot));

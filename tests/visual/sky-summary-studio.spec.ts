@@ -1,10 +1,15 @@
 import { expect, test, type Page } from "@playwright/test";
+import { builtinContentRecords, contentLiveStatuses } from "../../api/_lib/content-live-status";
 
 async function mockStudio(page: Page, stored: any[]) {
   await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "summary-test-only"));
   await page.route("**/api/admin/**", async route => {
     const url = new URL(route.request().url());
     let data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
+    if (url.pathname.endsWith("/content-live-status")) {
+      const ids = route.request().postDataJSON().ids ?? [];
+      data.statuses = contentLiveStatuses(ids.map((id: string) => stored.find(row => row.id === id) ?? builtinContentRecords.get(id.replace(/^builtin:/, ""))).filter(Boolean), stored);
+    }
     if (url.pathname.endsWith("/generated-content")) {
       if (["POST", "PATCH"].includes(route.request().method())) {
         const input = route.request().postDataJSON();
@@ -76,7 +81,9 @@ for (const width of [390, 1440]) {
       await expect(studio.getByText("No summary fields match this search.")).toBeVisible();
       await studio.getByLabel("Search summary wording").fill("");
       await studio.getByLabel("Summary section").selectOption("Timing and retrogrades");
-      await expect(studio.getByRole("article")).toHaveCount(7);
+      await expect(studio.getByRole("article")).toHaveCount(5);
+      await expect(studio.getByRole("article", { name: "Full Moon explanation", exact: true })).toHaveCount(0);
+      await expect(studio.getByRole("article", { name: "No retrograde planets", exact: true })).toHaveCount(0);
       await studio.getByLabel("Summary section").selectOption("Ingress TLDRs");
       await expect(studio.getByRole("article")).toHaveCount(1);
       await expect(studio.getByRole("article")).toContainText("No ingress TLDR added here.");
@@ -96,7 +103,7 @@ test("missing ingress TLDR saves and reloads as a separate draft", async ({ page
   const body = page.getByRole("textbox", { name: "Summary wording", exact: true });
   await expect(body).toHaveValue("");
   await body.fill("Separate short wording for browser verification.");
-  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   expect(stored[0].content_key).toBe("cms/sky-daily-summary/ingress/mercury/libra");
   await page.reload();
@@ -132,13 +139,13 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
   await expect(body).toHaveValue("The next {name} in {sign} is {countdown}.");
   const edited = "The next {name} in {sign} happens {countdown}.";
   await body.fill(edited);
-  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   await page.reload();
   await field.getByRole("button", { name: "Edit wording" }).click();
   await expect(body).toHaveValue(edited);
   await body.fill("The next {name} arrives.");
-  await expect(page.getByRole("button", { name: "Publish to app", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Save & publish", exact: true })).toBeDisabled();
   await body.fill(edited);
   const reader = await context.newPage();
   await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
@@ -155,7 +162,7 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
   await expect(moonLink).toHaveText("Moon in Cancer at 29°");
   await expect(sunLink).toHaveAttribute("href", /sky\/placement\/sun\/virgo/);
   await expect(moonLink).toHaveAttribute("href", /sky\/placement\/moon\/cancer/);
-  await page.getByRole("button", { name: "Publish to app", exact: true }).click();
+  await page.getByRole("button", { name: "Save & publish", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("LIVE");
   await reader.reload();
   await expect(summary).toContainText("The next New Moon in Virgo happens in 3 days.");
@@ -166,7 +173,7 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
   await field.getByRole("button", { name: "Edit wording" }).click();
   await expect(body).toHaveValue(edited);
   await body.fill("The next {name} in {sign} is {countdown}.");
-  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   await reader.reload();
   await expect(summary).toContainText("The next New Moon in Virgo is in 3 days.");
@@ -197,16 +204,68 @@ test("supplied wording opens intact as an editable unsaved draft", async ({ page
   const stored: any[] = [];
   await mockStudio(page, stored);
   await page.goto("/#sky-writeups?view=daily-summary");
-  const field = page.getByRole("article", { name: "Moon in Cancer", exact: true });
-  await expect(field).toContainText("Supplied working copy");
+  const field = page.getByRole("article", { name: "Moon in Leo", exact: true });
+  await expect(field).toContainText("Not live");
   await field.getByRole("button", { name: "Edit wording" }).click();
-  await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("brings more attention to home, family, and whether the care we give is coming back to us");
+  await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("making appreciation land harder and being overlooked harder to shrug off");
   expect(stored).toHaveLength(0);
-  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   expect(stored[0].source_snapshot.suppliedCopy.sourceAttachment).toBe("9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt");
   await page.reload();
-  await expect(field).toContainText("Saved draft");
+  await expect(field).toContainText("Not live");
+});
+
+test('live bundled summary stays Live when opened, then publishes twice without another approval', async ({ page }) => {
+  const stored: any[] = [];
+  await mockStudio(page, stored);
+  await page.goto('/#sky-writeups?view=daily-summary');
+  const field = page.getByRole('article', { name: 'Sun in Virgo', exact: true });
+  await expect(field.getByText('Live', { exact: true })).toBeVisible();
+  const map = page.getByRole('region', { name: 'Sun and Moon composition map' });
+  await map.getByRole('button', { name: 'Edit Sun source', exact: true }).click();
+  const editor = page.getByRole('dialog', { name: 'Generated content editor' });
+  await expect(editor.getByRole('heading', { name: 'Edit Sun in Virgo', exact: true })).toBeVisible();
+  const status = editor.getByLabel('Reader status', { exact: true });
+  await expect(status).toHaveText('Live');
+  const body = editor.getByRole('textbox', { name: 'Summary wording', exact: true });
+  const baseline = await body.inputValue();
+  await expect(map.getByLabel('Combined Sun and Moon preview')).toContainText(baseline);
+  await body.fill('QA first published summary');
+  await expect(status).toHaveText('Not live');
+  await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
+  await expect.poll(() => stored[0]?.status).toBe('LIVE');
+  await expect(status).toHaveText('Live');
+  await body.fill('QA second published summary');
+  await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
+  await expect.poll(() => stored[0]?.body).toBe('QA second published summary');
+  await expect(status).toHaveText('Live');
+  expect(stored).toHaveLength(1);
+  await page.reload();
+  await field.getByRole('button', { name: 'Edit wording', exact: true }).click();
+  await expect(body).toHaveValue('QA second published summary');
+  await expect(status).toHaveText('Live');
+  await body.fill('QA unpublished revision');
+  await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+  await expect.poll(() => stored[0]?.status).toBe('DRAFT');
+  await expect(status).toHaveText('Not live');
+});
+
+test('Daily Sky retirement and an unavailable publication never reveal older bundled copy', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-09-07T16:00:00Z'));
+  const key = 'cms/sky-daily-summary/sun/virgo';
+  const publication = { content_key: key, state: 'retired', revision: 1, row_id: 'missing-summary', row_updated_at: '2026-09-07T15:00:00Z', updated_at: '2026-09-07T15:00:00Z' };
+  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
+    schema: 'content-studio-last-known-good-v1', rowCount: 0, rows: [], publications: [publication]
+  } }));
+  await page.goto('http://127.0.0.1:4294/#sky');
+  const summary = page.getByLabel('Daily sky summary');
+  await expect(summary).toContainText('The Sun is in Virgo');
+  await expect(summary).not.toContainText('turns our attention to the daily rituals');
+  publication.state = 'live'; publication.revision = 2;
+  await page.reload();
+  await expect(summary).toContainText('The Sun is in Virgo');
+  await expect(summary).not.toContainText('turns our attention to the daily rituals');
 });
 
 test("reader composes selected-day events with a dedicated ingress TLDR", async ({ context }) => {

@@ -85,3 +85,34 @@ assert.equal(publicationAllowsContent('new-import'),true,'Static baseline remain
 assert.equal(publicationAllowsContent('new-import','dated',record.updated_at,'2026-09-09'),true,'Dated instances retain their own selection');
 installContentPublications([]);
 assert.equal(publicationAllowsContent('new-import','unregistered',record.updated_at),false,'An older snapshot cannot undo initialization');
+
+const { skyDailySummaryParts } = await import('../apps/web/src/content/skyDailySummary.ts');
+const summaryFacts = { sun: { sign: 'Virgo' }, moon: { sign: 'Cancer' }, moonIsVoid: true, voidRemainingLabel: '20 minutes', retrogradePlanets: ['Saturn', 'Chiron'], event: { name: 'New Moon', sign: 'Virgo', countdown: 'in 3 days' } };
+const summaryText = (content?: any) => skyDailySummaryParts(summaryFacts, content).map(part => part.text).join('');
+assert.match(summaryText(), /daily rituals/);
+const summaryKeys = ['cms/sky-daily-summary/sun/virgo', 'cms/sky-daily-summary/retrograde', 'cms/sky-daily-summary/voidRemaining', 'cms/sky-daily-summary/lunation'];
+for (const content_key of summaryKeys) installContentPublications([{ ...retired, content_key, revision: 20 }]);
+assert.doesNotMatch(summaryText(), /daily rituals|retrograde|void of course|New Moon/);
+assert.match(summaryText(), /Sun is in Virgo/);
+assert.match(summaryText(), /brings more attention to home/);
+const summaryKey = summaryKeys[0];
+installContentPublications([{ ...record, content_key: summaryKey, revision: 21 }]);
+assert.doesNotMatch(summaryText(), /daily rituals/, 'An unavailable publication cannot reveal older local summary prose');
+assert.doesNotMatch(summaryText(new Map([[summaryKey, { id: 'older-source', updatedAt: record.row_updated_at, status: 'LIVE', body: 'QA stale summary' }]])), /QA stale summary/);
+assert.match(summaryText(new Map([[summaryKey, { id: record.row_id, updatedAt: record.row_updated_at, status: 'LIVE', body: 'QA republished summary' }]])), /QA republished summary/);
+console.log('PASS Daily Sky retirement, unavailable publication, republish, and isolation of unrelated writing');
+
+const { skySummaryEventFacts } = await import('../apps/web/src/content/skySummaryEvents.ts');
+const ingressKey = 'cms/sky-daily-summary/ingress/mercury/libra';
+const ingressEvent = { id: 'qa-ingress', type: 'ingress', planet: 'Mercury', toSign: 'Libra', sign: 'Libra', dateKey: '2026-09-07' };
+const olderIngress = { id: 'older-ingress', contentKey: 'sky.ingress.mercury.libra', status: 'LIVE', summary: 'QA older ingress TLDR', body: 'QA older article' };
+const ingressContent = new Map<string, any>([['sky.ingress.mercury.libra', olderIngress]]);
+const ingressFacts = () => skySummaryEventFacts([ingressEvent as any], ingressContent).ingresses[0];
+installContentPublications([{ ...retired, content_key: ingressKey, revision: 30 }]);
+assert.equal(ingressFacts().tldr, undefined, 'Retired ingress wording cannot reveal an older article TLDR');
+assert.equal(ingressFacts().label, 'Mercury enters Libra', 'Retirement preserves the calculated ingress');
+installContentPublications([{ ...record, content_key: ingressKey, revision: 31 }]);
+assert.equal(ingressFacts().tldr, undefined, 'A missing current ingress publication blocks older fallback writing');
+ingressContent.set(ingressKey, { id: record.row_id, updatedAt: record.row_updated_at, status: 'LIVE', body: 'QA current ingress TLDR' });
+assert.equal(ingressFacts().tldr, 'QA current ingress TLDR');
+console.log('PASS ingress-summary retirement, unavailable publication, and current publication identity');

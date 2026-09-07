@@ -2,11 +2,15 @@ import clauses from "./skyDailySummaryClauses.json";
 import defaultTiming from "./skyDailySummaryTiming.json";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "./skyDailySummaryCatalog";
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
+import { contentPublication, publicationAllowsContent } from "./contentPublicationState";
 
-function savedCopy(content: CmsGeneratedContentMap | undefined, key: string, fallback: string) {
+function savedCopy(content: CmsGeneratedContentMap | undefined, key: string, fallback: string, editorialPreview = false) {
+  const publication = editorialPreview ? undefined : contentPublication(key);
+  if (publication?.state === "retired") return "";
   // The reader loader filters LIVE, serving, review-clear rows before normalizing this map.
   const row = content?.get(key);
-  if (!row || (row.status && row.status !== "LIVE") || !row.body.trim() || skySummaryTemplateErrors(key, row.body).length) return fallback;
+  if (publication && (!row || !publicationAllowsContent(key, row.id, row.updatedAt))) return "";
+  if (!row || (row.status && row.status !== "LIVE") || !row.body.trim() || skySummaryTemplateErrors(key, row.body).length) return publication ? "" : fallback;
   return currentSkySummaryWording(key, row.body.trim());
 }
 
@@ -25,17 +29,17 @@ export type SkyDailySummaryFacts = {
   event?: { name: string; sign: string; countdown: string; eclipseType?: "solar" | "lunar" };
 };
 
-function fullerClause(body: "sun" | "moon", sign?: string, content?: CmsGeneratedContentMap) {
-  return sign ? savedCopy(content, `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`, (clauses[body] as Record<string, string>)[sign.toLowerCase()] ?? "") : "";
+function fullerClause(body: "sun" | "moon", sign?: string, content?: CmsGeneratedContentMap, editorialPreview = false) {
+  return sign ? savedCopy(content, `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`, (clauses[body] as Record<string, string>)[sign.toLowerCase()] ?? "", editorialPreview) : "";
 }
 
-function placementParts(body: "sun" | "moon", placement?: SummaryPlacement, continuation = false, content?: CmsGeneratedContentMap): SummaryPart[] {
+function placementParts(body: "sun" | "moon", placement?: SummaryPlacement, continuation = false, content?: CmsGeneratedContentMap, editorialPreview = false): SummaryPart[] {
   if (!placement?.sign) return [];
   const degree = placement.degree;
   const degreeLabel = typeof degree === "number" && Number.isFinite(degree) && degree >= 0 && degree < 30
     ? ` at ${Math.floor(degree)}°`
     : "";
-  const clause = fullerClause(body, placement.sign, content);
+  const clause = fullerClause(body, placement.sign, content, editorialPreview);
   return [
     { text: continuation ? "while the " : "The " },
     { text: `${body === "sun" ? "Sun" : "Moon"}${clause ? " in " : body === "sun" ? " is in " : " moves through "}${placement.sign}${degreeLabel}`, emphasis: true, action: body },
@@ -43,22 +47,22 @@ function placementParts(body: "sun" | "moon", placement?: SummaryPlacement, cont
   ];
 }
 
-export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap): SummaryPart[] {
+export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false } = {}): SummaryPart[] {
   const timing = { ...defaultTiming };
   for (const field of skyDailySummaryFields.filter(field => field.group === "Timing and retrogrades")) {
     const key = field.key.split("/").at(-1) as Exclude<keyof typeof timing, "provenance">;
-    timing[key] = savedCopy(content, field.key, field.body);
+    timing[key] = savedCopy(content, field.key, field.body, editorialPreview);
   }
-  const parts = placementParts("sun", facts.sun, false, content);
+  const parts = placementParts("sun", facts.sun, false, content, editorialPreview);
   const joined = Boolean(facts.sun?.sign && facts.moon?.sign);
-  const moon = placementParts("moon", facts.moon, joined, content);
+  const moon = placementParts("moon", facts.moon, joined, content, editorialPreview);
   if (parts.length && moon.length) {
     if (joined) parts[parts.length - 1].text = parts[parts.length - 1].text.replace(/\.$/u, ",");
     parts.push({ text: " " });
   }
   parts.push(...moon);
-  if (facts.retrogradePlacements?.length || facts.retrogradePlanets?.length) {
-    const planets = [...new Set((facts.retrogradePlacements?.map(p => p.planet) ?? facts.retrogradePlanets ?? []).map(name => name.trim()).filter(Boolean))];
+  const planets = [...new Set((facts.retrogradePlacements?.map(p => p.planet) ?? facts.retrogradePlanets ?? []).map(name => name.trim()).filter(Boolean))];
+  if (planets.length && (planets.length === 1 ? timing.singleRetrograde : timing.retrograde)) {
     if (parts.length) parts.push({ text: " " });
     const count = planets.length;
     const countWords = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
@@ -82,7 +86,7 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       parts.push({ text: "." });
     }
   }
-  if (facts.moon && facts.moonIsVoid) {
+  if (facts.moon && facts.moonIsVoid && (facts.voidRemainingLabel ? timing.voidRemaining : timing.voidWithoutTiming)) {
     if (parts.length) parts.push({ text: " " });
     const remaining = facts.voidRemainingLabel?.replace(/(\d+)\s*(?:min|m)\b/giu, (_, count) => `${count} ${count === "1" ? "minute" : "minutes"}`)
       .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, count) => `${count} ${count === "1" ? "hour" : "hours"}`);
@@ -101,7 +105,7 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     parts.push({ text: ingress.label, action: "event", eventId: ingress.id, emphasis: true }, { text: " today." });
     if (ingress.tldr) parts.push({ text: ` ${ingress.tldr}` });
   }
-  if (facts.event) {
+  if (facts.event && timing.lunation) {
     const event = {
       ...facts.event,
       name: facts.event.eclipseType === "solar" ? "Solar Eclipse"

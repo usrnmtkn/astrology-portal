@@ -1,5 +1,6 @@
 import type { LunarCalendarEvent } from "../services/ephemeris";
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
+import { contentPublication, publicationAllowsContent } from "./contentPublicationState";
 import { skyIngressContentKey, skyIngressInstanceContentKey, slugContentPart } from "../services/generatedContentKeys";
 
 export function ingressSummaryKeys(event: LunarCalendarEvent) {
@@ -23,10 +24,13 @@ export function skySummaryEventFacts(events: LunarCalendarEvent[], content: CmsG
       if (event.type !== "ingress" || !event.planet || !(event.toSign || event.sign)) return [];
       let tldr: string | undefined;
       for (const key of ingressSummaryKeys(event)) {
+        const publication = contentPublication(key);
         const row = content.get(key);
+        if (publication && (publication.state === "retired" || !row || !publicationAllowsContent(key, row.id, row.updatedAt, row.targetDate))) break;
         if (!row || row.status && row.status !== "LIVE") continue;
         const copy = key.startsWith("cms/") ? row.body : row.summary;
         if (copy?.trim()) { tldr = copy; break; }
+        if (publication) break;
       }
       return [{ id: event.id, label: `${event.planet} enters ${event.toSign || event.sign}`, tldr }];
     })

@@ -2,7 +2,7 @@ import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
 import timing from "./skyDailySummaryTiming.json" with { type: "json" };
 
 export const skySummarySigns = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
-export type SkySummaryField = { key: string; label: string; group: string; body: string; allowedSlots: string[] };
+export type SkySummaryField = { key: string; label: string; group: string; body: string; allowedSlots: string[]; readerEnabled?: boolean };
 // Exact owner-approved replacements only. Other editorial wording remains untouched.
 export function currentSkySummaryWording(key: string, body: string): string {
   const part = key.replace("cms/sky-daily-summary/", "");
@@ -34,6 +34,7 @@ export const skyDailySummaryFields: SkySummaryField[] = [
   ...Object.entries(timingLabels).map(([key, label]) => ({
     key: `cms/sky-daily-summary/${key}`, label, group: "Timing and retrogrades",
     body: timing[key as keyof typeof timing] as string,
+    readerEnabled: !["noRetrogrades", "fullMoonMeaning"].includes(key),
     allowedSlots: key === "retrograde" ? ["count"] : key === "voidRemaining" ? ["remaining"] : key === "lunation" ? ["name", "sign", "countdown"] : []
   }))
 ];

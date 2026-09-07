@@ -5,6 +5,7 @@ import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedConte
 import type { LiveGeneratedContent } from "../../web/src/services/generatedContent";
 
 export type SummaryCompositionRow = {
+  id?: string; updated_at?: string | null;
   content_key: string; body?: string | null; status: string; lane?: string | null;
   summary?: string | null;
   review_state?: string | null; inventory_only?: boolean; source_snapshot?: Record<string, unknown> | null;
@@ -25,21 +26,23 @@ export function buildSkySummaryComposition(sun: string, moon: string, rows: Summ
     const useSaved = saved && !saved.inventory_only && (working
       ? ["DRAFT", "REVIEWED", "LIVE"].includes(saved.status) && saved.lane === "serving"
       : readerReady);
-    const imported = working ? importedSkySummary(key) : undefined;
+    const imported = working ? field.body || importedSkySummary(key) : undefined;
     const copy = editor?.body ?? (useSaved ? saved.body : imported);
     const validation = copy ? skySummaryTemplateErrors(key, copy) : [];
     if (saved?.inventory_only) errors.push(`${field.label}: saved wording is still loading.`);
     errors.push(...validation.map(error => `${field.label}: ${error}`));
     if (copy?.trim() && !validation.length) {
       // This map is private to the editorial preview. Drafts are never passed to the reader.
-      content.set(key, { id: key, contentKey: key, surface: "sky", mode: "feed", eventType: null,
-        targetDate: null, headline: null, summary: null, body: copy, sections: null, model: null, updatedAt: "", status: "LIVE" });
+      content.set(key, { id: saved?.id ?? key, contentKey: key, surface: "sky", mode: "feed", eventType: null,
+        targetDate: null, headline: null, summary: null, body: copy, sections: null, model: null, updatedAt: saved?.updated_at ?? "", status: "LIVE" });
     }
     return { body, field, copy: copy?.trim() || field.body, status: editor ? "Open editor copy"
       : useSaved ? saved.status === "LIVE" ? readerReady ? "Published copy" : "Held copy (preview only)" : `Saved ${saved.status.toLowerCase()}`
       : imported !== undefined ? "Supplied working copy" : field.body ? "Current app copy" : "No summary; placement only",
+      statusRow: useSaved ? saved : { id: `builtin:${key}` },
+      unsaved: Boolean(editor && editor.body !== (useSaved ? saved.body : field.body)) || !useSaved && Boolean(copy && copy !== field.body),
       emptyWorkingCopy: copy !== undefined && !copy?.trim() };
   });
-  const parts = skyDailySummaryParts({ sun: { sign: sun }, moon: { sign: moon }, moonIsVoid: false }, content);
+  const parts = skyDailySummaryParts({ sun: { sign: sun }, moon: { sign: moon }, moonIsVoid: false }, content, { editorialPreview: working });
   return { parts, sources, errors, joined: sources.every(source => Boolean(source.copy)) };
 }

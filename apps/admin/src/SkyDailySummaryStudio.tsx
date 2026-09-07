@@ -1,4 +1,5 @@
 import { importedSkySummary } from "./skySummaryImportedCopy";
+import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { useMemo, useState } from "react";
 import { currentSkySummaryWording, skyDailySummaryFields, skyIngressBodies, skyIngressSummaryFields, skySummarySigns, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { publishedIngressTldr } from "./skyIngressTldrSources";
@@ -18,7 +19,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
   const [ingressSign, setIngressSign] = useState("Libra");
   const isIngress = group === "Ingress TLDRs";
   const ingressSource = isIngress ? publishedIngressTldr(rows, ingressPlanet, ingressSign) : undefined;
-  const visible = (isIngress ? skyIngressSummaryFields.filter(field => field.label === `${ingressPlanet} enters ${ingressSign}`) : skyDailySummaryFields).filter(field => (group === "all" || field.group === group)
+  const visible = (isIngress ? skyIngressSummaryFields.filter(field => field.label === `${ingressPlanet} enters ${ingressSign}`) : skyDailySummaryFields).filter(field => field.readerEnabled !== false && (group === "all" || field.group === group)
     && `${field.label} ${field.body} ${importedSkySummary(field.key) ?? ""} ${rows.find(row => row.content_key === field.key)?.body ?? ""}`.toLowerCase().includes(query.toLowerCase()));
   return <section className="admin-daily-glance-studio" aria-label="Daily Sky Summary editor">
     <header className="admin-section-heading-row">
@@ -26,7 +27,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
         <p className="admin-eyebrow">Sky Write-ups</p>
         <h3>Daily Sky Summary</h3>
         <p>Edit the wording in the paragraph at the top of Sky. Signs, degrees, planet names, and timing come from the calculated sky.</p>
-        <p>Start Sun and Moon summaries with a finite verb, such as “turns” or “brings”, without a final period. The template reads: The Sun in [sign] [summary], while the Moon in [sign] [summary]. If no summary is published or included in the app, Sky shows the placement alone. Save keeps changes in Draft; Publish to app makes them live.</p>
+        <p>Start Sun and Moon summaries with a finite verb, such as “turns” or “brings”, without a final period. The template reads: The Sun in [sign] [summary], while the Moon in [sign] [summary]. If no summary is published or included in the app, Sky shows the placement alone. Save & publish makes your edits live. Save draft keeps your changes for later.</p>
       </div>
     </header>
     <section className="admin-template-reader-drilldown admin-sky-summary-composition" aria-label="Sun and Moon composition map">
@@ -65,7 +66,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
       )}
       <div className="admin-editor-guidance" aria-label="Composition sources">
         {composition.sources.map(source => <div key={source.body}>
-          <strong>{source.field.label}</strong><p>{source.status}{source.emptyWorkingCopy ? ". Empty working copy; the preview uses the app fallback." : ""}</p>
+          <strong>{source.field.label}</strong><p><ContentLiveStatusBadge row={source.statusRow} unsaved={source.unsaved} />{source.emptyWorkingCopy ? " · Empty working copy; the preview uses the app fallback." : ""}</p>
           <button type="button" disabled={busy} onClick={() => onEdit(source.field)}>Edit {source.body === "sun" ? "Sun" : "Moon"} source</button>
         </div>)}
         <p>The sentence template joins Sun and Moon with “while the”, adding each published summary after its placement.</p>
@@ -93,8 +94,8 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
         return <article key={field.key} aria-label={field.label}>
           <div>
             <strong>{field.label}</strong>
-            <p>{(saved?.body ? currentSkySummaryWording(field.key, saved.body) : undefined) ?? ingressSource?.summary ?? importedSkySummary(field.key) ?? (field.body || (isIngress ? "No ingress TLDR added here. Add your wording, or open an existing ingress write-up to edit its TLDR." : "No summary added. Sky shows the calculated placement."))}</p>
-            <small>{saved ? `Saved ${saved.status.toLowerCase()}` : ingressSource ? "Published ingress TLDR" : importedSkySummary(field.key) !== undefined ? "Supplied working copy" : field.body ? "Current app copy" : isIngress ? "Optional ingress TLDR" : "Optional summary"}</small>
+            <p>{(saved?.body ? currentSkySummaryWording(field.key, saved.body) : undefined) ?? ingressSource?.summary ?? (field.body || importedSkySummary(field.key) || (isIngress ? "No ingress TLDR added here. Add your wording, or open an existing ingress write-up to edit its TLDR." : "No summary added. Sky shows the calculated placement."))}</p>
+            <ContentLiveStatusBadge row={saved ?? ingressSource ?? (isIngress ? {} : { id: `builtin:${field.key}` })} />
             {field.allowedSlots.length > 0 && <small> · Calculated fields: {field.allowedSlots.map(slot => `{${slot}}`).join(", ")}</small>}
           </div>
           <button type="button" disabled={busy} onClick={() => onEdit(!saved && ingressSource ? { ...field, key: ingressSource.content_key } : field)}>{!saved && ingressSource ? "Edit existing write-up" : "Edit wording"}</button>
