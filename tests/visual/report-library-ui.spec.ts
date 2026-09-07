@@ -94,6 +94,59 @@ test("Reports route keeps the TLDR navigation and design system across themes an
   expect(bodyBackgrounds.get("mobile-light")).not.toBe(bodyBackgrounds.get("mobile-dark"));
 });
 
+test("Reports context menu paints above neighboring row dividers and controls", async ({ page }) => {
+  await page.goto("/reports/");
+  await expect(page.locator(".report-library-list")).toBeVisible();
+  await page.evaluate(() => {
+    const list = document.querySelector<HTMLElement>(".report-library-list");
+    if (!list) throw new Error("Reports list did not mount.");
+    list.innerHTML = `
+      <article class="report-library-row">
+        <button class="report-library-row__open" type="button">
+          <span class="report-library-row__icon">A</span><span>First report</span>
+        </button>
+        <div class="report-library-row__actions">
+          <button class="report-library-row__menu-trigger" type="button">...</button>
+          <div class="report-library-row__menu" role="menu" aria-label="First report options">
+            <button class="report-library-row__menu-item" type="button">Share</button>
+            <button class="report-library-row__menu-item" type="button">Stop sharing</button>
+            <button class="report-library-row__menu-item" type="button">Archive</button>
+          </div>
+        </div>
+      </article>
+      <article class="report-library-row">
+        <button class="report-library-row__open" type="button">
+          <span class="report-library-row__icon">B</span><span>Second report</span>
+        </button>
+        <div class="report-library-row__actions">
+          <button class="report-library-row__menu-trigger" data-underlay-control type="button">...</button>
+        </div>
+      </article>`;
+  });
+
+  const menu = page.getByRole("menu", { name: "First report options" });
+  await expect(menu).toBeVisible();
+  const result = await page.evaluate(() => {
+    const menuElement = document.querySelector<HTMLElement>('.report-library-row__menu[aria-label="First report options"]');
+    const inactiveActions = document.querySelectorAll<HTMLElement>(".report-library-row__actions")[1];
+    if (!menuElement || !inactiveActions) throw new Error("Synthetic Reports menu did not mount.");
+    const box = menuElement.getBoundingClientRect();
+    const probe = document.elementFromPoint(box.right - 12, box.top + Math.min(box.height - 12, box.height * 0.7));
+    const menuStyle = getComputedStyle(menuElement);
+    return {
+      topElementIsMenu: Boolean(probe?.closest(".report-library-row__menu")),
+      inactiveActionZIndex: getComputedStyle(inactiveActions).zIndex,
+      menuBackground: menuStyle.backgroundColor,
+      menuZIndex: menuStyle.zIndex
+    };
+  });
+
+  expect(result.topElementIsMenu, "neighbor row controls must not paint through the open menu").toBe(true);
+  expect(result.inactiveActionZIndex).toBe("auto");
+  expect(result.menuZIndex).not.toBe("auto");
+  expect(result.menuBackground).not.toBe("rgba(0, 0, 0, 0)");
+});
+
 test("a shared Friends reading opens from a compact vanity URL without an owner session", async ({ page }) => {
   const shareKey = "K7m4q9W2xP8vR3tN5cY6Zg";
   await page.route(`**/api/report-share?share=${shareKey}`, async (route) => {
