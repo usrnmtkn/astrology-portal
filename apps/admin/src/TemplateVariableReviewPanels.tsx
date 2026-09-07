@@ -1,3 +1,4 @@
+import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { useMemo } from "react";
 import type { TemplateVariableReference } from "./templateVariableReference";
 import { templateVariableSourceCandidates, templateVariableSourceKeyPrefixes, templateVariableSourceSelectionNote } from "./templateVariableSources";
@@ -51,7 +52,7 @@ function title(row: TemplateVariableSourceRow) {
 }
 
 function status(row: TemplateVariableSourceRow) {
-  return row.status === "LIVE" ? "Published" : row.status === "REVIEWED" ? "Reviewed" : "Draft";
+  return <ContentLiveStatusBadge row={row} />;
 }
 
 function variableKind(reference: TemplateVariableReference) {
@@ -143,7 +144,7 @@ export function TemplateVariableReviewPanels({
             <section className="admin-variable-source-list" aria-label={`Source rows for ${variable.label}`}>
               {sourceSelectionNote && <p>{sourceSelectionNote}</p>}
               <p>{sources.length === 1 ? "1 source row" : `${sources.length} source rows`} can fill this variable.</p>
-              {sources.map((row) => <button type="button" className="admin-variable-source-row" key={row.id} onClick={() => onSelectSource(row.id)}><span><strong>{title(row)}</strong><code>{row.content_key}</code></span><span className="ui-pill admin-status">{status(row)}</span></button>)}
+              {sources.map((row) => <button type="button" className="admin-variable-source-row" key={row.id} onClick={() => onSelectSource(row.id)}><span><strong>{title(row)}</strong><code>{row.content_key}</code></span><span>{status(row)}</span></button>)}
               {sources.length === 0 && <p>No matching rows. Expected <code>{templateVariableSourceKeyPrefixes(variable, templateContentKey).join(" or ")}</code></p>}
             </section>
           )}

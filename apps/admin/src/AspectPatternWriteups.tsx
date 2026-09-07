@@ -384,7 +384,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
           </select>
         </label>
         <label>
-          <span>Status</span>
+          <span>Editorial stage</span>
           <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as AuthoredStatus | "all")}>
             <option value="all">All statuses</option>
             {statusOptions.map((status) => <option key={status} value={status}>{titlePart(status)}</option>)}
@@ -430,7 +430,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
             >
               <strong>{row.patternName}{row.targetRoleLabel ? `: ${row.targetRoleLabel}` : ""}</strong>
               <span>{row.record.id}</span>
-              <small>{titlePart(row.status)} · {titlePart(row.validationState)} · {row.productionSelected ? "selected" : "fallback available"}</small>
+              <span className={`ui-pill admin-status ${row.productionSelected ? "status-live" : "status-draft"}`}>{row.productionSelected ? "Live" : "Not live"}</span>
             </button>
           ))}
           {!filteredRows.length && <p className="admin-empty">No aspect-pattern write-ups match these filters.</p>}
@@ -473,7 +473,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
             </div>
 
             <label className="aspect-writeups-status">
-              <span>Status</span>
+              <span>Editorial stage</span>
               <select value={draft.status} onChange={(event) => setDraft({ ...draft, status: event.target.value as AuthoredStatus })}>
                 {statusOptions.map((status) => <option key={status} value={status}>{titlePart(status)}</option>)}
               </select>

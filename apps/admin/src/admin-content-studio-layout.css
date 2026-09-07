@@ -1491,3 +1491,19 @@
   max-width: 100%;
   width: 100%;
 }
+
+/* Keep the primary copy status next to the title in compact content tables. */
+.admin-dashboard .admin-content-mobile-status {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .admin-dashboard .admin-content-mobile-status {
+    display: block;
+    margin-top: var(--admin-space-md);
+  }
+
+  .admin-dashboard .admin-content-table--browse .admin-col-visibility {
+    display: none;
+  }
+}

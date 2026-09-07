@@ -28,4 +28,7 @@ assert.equal(isFallbackDashboardRecordAllowed(row(retrograde), currentPackageKey
 assert.equal(isFallbackDashboardRecordAllowed({ ...row("fallback-hook/arbitrary/new-key") }, currentPackageKeys), false);
 assert.equal(isFallbackDashboardRecordAllowed({ ...row("fallback-hook/placement-sentence/jupiter/leo") }, currentPackageKeys), true);
 
+assert.equal(isFallbackDashboardRecordAllowed(row("fallback-hook/natal-aspect-lived/lilith/square/ascendant"), currentPackageKeys), true);
+for (const key of ["fallback-hook/natal-aspect-lived/unknown/square/ascendant", "fallback-hook/natal-aspect-lived/lilith/fake/ascendant", "fallback-hook/natal-aspect-lived/lilith/square/lilith"]) assert.equal(isFallbackDashboardRecordAllowed(row(key), currentPackageKeys), false);
+assert.equal(isFallbackDashboardRecordAllowed({ ...row("fallback-hook/natal-aspect-lived/lilith/square/ascendant"), content_role: "source_material" }, currentPackageKeys), false);
 console.log("Dynamic natal exact Content Studio extension-key contract passed.");
