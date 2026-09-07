@@ -1,5 +1,6 @@
 import { getSupabaseClient } from "./auth";
 import { dispatchReportReady } from "./reportLibrary";
+import { reportVanityPath } from "./reportLinks";
 import type { GeneratedContentMode, LiveGeneratedContent } from "./generatedContent";
 
 export type UserGeneratedSubjectType =
@@ -125,11 +126,16 @@ function reportReadyTitle(friendName: string) {
 
 function notifyFriendReadingReady(request: GenerateUserContentRequest, result: LiveGeneratedContent | null) {
   if (request.subjectType !== "friend_transit_reading" || !result?.id) return;
+  const friendName = friendNameFromRequest(request);
   dispatchReportReady({
     sourceKind: "generated_interpretation",
     sourceId: result.id,
-    title: reportReadyTitle(friendNameFromRequest(request)),
-    route: `/reports/generated/${result.id}`
+    title: reportReadyTitle(friendName),
+    route: reportVanityPath({
+      targetDate: request.targetDate ?? result.targetDate,
+      subjectLabel: friendName,
+      title: result.headline
+    })
   });
 }
 
