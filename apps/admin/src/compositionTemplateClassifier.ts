@@ -1,3 +1,4 @@
+import { lunarContentIdentity } from "./lunarCalendarContent";
 export type CompositionTemplateCandidateRow = {
   block_type?: string | null;
   content_key: string;
@@ -23,6 +24,7 @@ function rowRole(row: CompositionTemplateCandidateRow) {
 }
 
 export function isCompositionTemplateRow(row: CompositionTemplateCandidateRow) {
+  if (lunarContentIdentity(row.content_key)) return true;
   const role = rowRole(row);
   if (role === "template") return true;
   if (row.content_key.startsWith("fallback-hook/")

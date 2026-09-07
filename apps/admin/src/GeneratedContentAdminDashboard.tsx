@@ -1,3 +1,4 @@
+import { lunarContentIdentity } from "./lunarCalendarContent";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, type LiveStatus } from "./ContentLiveStatus";
 import { mergeContentInventory } from "./contentStudioState";
 import {
@@ -166,6 +167,7 @@ import "./admin-form-density.css";
 import "./admin-content-studio-ux-compat.css";
 import "./admin-content-studio-layout.css";
 
+const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const AspectPatternDiagnostics = lazy(async () => {
   const module = await import("./AspectPatternDiagnostics");
@@ -1119,6 +1121,7 @@ function draftIsFallbackArchitectureV3(draft: AdminDraft) {
 }
 
 function packageReviewStatusForDraft(draft: AdminDraft) {
+  if (draft.sourceSnapshot?.review_status === "deprecated" || draft.facts?.review_status === "deprecated") return "deprecated";
   if (objectRecord(objectRecord(draft.sections)?.packageDraft)) return "needs_review";
   return sourceSnapshotString(draft.sourceSnapshot, "review_status")
     || (typeof draft.facts?.review_status === "string" ? draft.facts.review_status : "")
@@ -1982,6 +1985,8 @@ async function loadAdminSourceDraftCatalog(secret: string): Promise<AdminSourceD
 
 function rowTitleUncached(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
   if ("content_key" in row) {
+    const lunar = lunarContentIdentity(row.content_key);
+    if (lunar) return lunar.title;
     const structuredIdentity = skyFallbackIdentity(row.content_key);
     if (structuredIdentity) return structuredIdentity.title;
     const fallbackHookTitle = fallbackHookDisplayTitle(row.content_key);
@@ -4968,8 +4973,12 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  function handleCreateAction(page: AdminDashboardPage, nextMessage: string) {
+  function handleCreateAction(page: AdminDashboardPage, nextMessage: string, calendarSign?: string) {
     const isCalendarWriteup = page === "knowledge" && activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar";
+    const usedVariants = new Set(rows.filter(row => lunarContentIdentity(row.content_key)?.sign === calendarSign && row.content_key.startsWith("authored/calendar-weekly-moon/")).map(row => lunarContentIdentity(row.content_key)!.variant));
+    const nextVariant = [1, 2, 3, 4].find(variant => !usedVariants.has(variant) && !(calendarSign === "cancer" && variant === 1));
+    if (calendarSign && !nextVariant) { setMessage("All four variants already exist for this sign. Edit or restore an existing passage."); return; }
+    const newMoonKey = calendarSign ? `authored/calendar-weekly-moon/${calendarSign}${nextVariant === 1 ? "" : `/variant-${nextVariant}`}` : "authored/calendar-weekly-moon/new-entry";
     navigateAdminPage(page, isCalendarWriteup ? new URLSearchParams({ section: "lunar-calendar" }) : undefined, { keepEditorOpen: true });
     setIsCreateMenuOpen(false);
     setSelectedRowId(null);
@@ -5086,7 +5095,7 @@ export function GeneratedContentAdminDashboard() {
     if (page === "knowledge") {
       setDraft({
         id: null,
-        contentKey: isCalendarWriteup ? "authored/calendar-weekly-moon/new-entry" : "fallback-hook/manual/new-hook",
+        contentKey: isCalendarWriteup ? newMoonKey : "fallback-hook/manual/new-hook",
         surface: "sky",
         mode: isCalendarWriteup ? "in_depth" : "feed",
         status: "DRAFT",
@@ -5097,7 +5106,7 @@ export function GeneratedContentAdminDashboard() {
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "fallback_hook",
         promptVersion: "fallback-hook-template-v1",
-        sections: isCalendarWriteup ? { packageRecord: { contentKey: "authored/calendar-weekly-moon/new-entry", content_role: "full_copy", body: "", focus: "", strategy: "", review_status: "needs_review" } } : null,
+        sections: isCalendarWriteup ? { packageRecord: { contentKey: newMoonKey, content_role: "full_copy", body: "", focus: "", strategy: "", review_status: "needs_review" } } : null,
         facts: null,
         reviewerNotes: "",
         sourceSnapshot: {
@@ -5407,21 +5416,22 @@ export function GeneratedContentAdminDashboard() {
   const natalChartWorkspaceActive = activePage === "content" && categoryFilter === "Natal Chart";
   const natalAspectWorkspaceActive = activePage === "content" && categoryFilter === "Natal Aspects";
   const calendarAspectWorkspaceActive = activePage === "content" && categoryFilter === "Calendar Aspects";
-  const currentPageTitle = natalChartWorkspaceActive
+  const lunarWorkspaceActive = activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar";
+  const currentPageTitle = lunarWorkspaceActive ? "Lunar Calendar write-ups" : natalChartWorkspaceActive
     ? "Natal Chart Write-ups"
     : natalAspectWorkspaceActive
       ? "Natal Aspect Write-ups"
       : calendarAspectWorkspaceActive
         ? "Calendar Aspect Cards"
         : adminPageTitle(activePage);
-  const currentPageDescription = natalChartWorkspaceActive
+  const currentPageDescription = lunarWorkspaceActive ? "Manage Moon-sign passages and inspect their composition and variables." : natalChartWorkspaceActive
     ? "Find the exact writing for a planet or point in its sign and house."
     : natalAspectWorkspaceActive
       ? "Find and edit the exact writing for two natal bodies and their aspect."
       : calendarAspectWorkspaceActive
         ? "Edit composed Calendar cards and their reusable sign-specific aspect passages."
         : adminPageDescription(activePage);
-  const currentPageBreadcrumbs = natalChartWorkspaceActive
+  const currentPageBreadcrumbs = lunarWorkspaceActive ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Lunar Calendar" }] : natalChartWorkspaceActive
     ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal chart" }]
     : natalAspectWorkspaceActive
       ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal aspects" }]
@@ -6149,7 +6159,10 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
-        {activePage === "knowledge" && (
+        {activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" && (
+          <Suspense fallback={<p>Loading Lunar Calendar…</p>}><LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow)} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} onCreate={sign => handleCreateAction("knowledge", "New Moon-sign passage opened.", sign)} /></Suspense>
+        )}
+        {activePage === "knowledge" && fallbackSectionFilter !== "lunar-calendar" && (
           <section className="admin-template-page">
             <section className="admin-content-toolbar">
               <div>
@@ -6198,7 +6211,7 @@ export function GeneratedContentAdminDashboard() {
                     : renderContentTable(filteredFallbackRows, false, true)
                 )}
                 {filteredHookCatalog.length > 0
-                  && (Boolean(query.trim()) || fallbackSectionFilter === "friends" || fallbackSectionFilter === "lunar-calendar")
+                  && (Boolean(query.trim()) || fallbackSectionFilter === "friends")
                   && !(fallbackSectionFilter === "daily" && !query.includes("pair-daily")) && (
                   <Suspense fallback={<p className="admin-empty">Loading packaged source phrases…</p>}>
                     <PackagedHookCatalogResults
@@ -6209,7 +6222,7 @@ export function GeneratedContentAdminDashboard() {
                     />
                   </Suspense>
                 )}
-                {filteredFallbackRows.length === 0 && (filteredHookCatalog.length === 0 || (!query.trim() && fallbackSectionFilter !== "friends" && fallbackSectionFilter !== "lunar-calendar")) && <p className="admin-empty">No rows match these filters.</p>}
+                {filteredFallbackRows.length === 0 && (filteredHookCatalog.length === 0 || (!query.trim() && fallbackSectionFilter !== "friends")) && <p className="admin-empty">No rows match these filters.</p>}
               </aside>
             </section>
           </section>
@@ -7848,7 +7861,7 @@ export function GeneratedContentAdminDashboard() {
     const isVocabularyDraft = draftIsVocabulary(currentDraft);
     const isArticleDraft = draftIsArticle(currentDraft);
     const isFallbackHookDraft = draftIsFallbackHook(currentDraft);
-    const isTemplateDraft = draftIsTemplate(currentDraft);
+    const isTemplateDraft = draftIsTemplate(currentDraft) && !(lunarContentIdentity(currentDraft.contentKey) && !currentDraft.body.includes("{{"));
     const isPackageDraft = draftIsFallbackArchitectureV3(currentDraft);
     const isGuidedHeldReview = isPackageDraft && guidedReviewKey === currentDraft.contentKey;
     const guidedReviewDecision = objectRecord(objectRecord(currentDraft.sections)?.contentStudioReview);
@@ -8101,7 +8114,7 @@ export function GeneratedContentAdminDashboard() {
     };
     const updateSummary = (summary: string) => {
       const nextDraft = invalidateContentStudioReview({ ...currentDraft, summary });
-      setDraft(isPackageDraft ? setPackageRecordField(nextDraft, "summary", summary) : nextDraft);
+      setDraft(isPackageDraft ? setPackageRecordField(nextDraft, lunarContentIdentity(currentDraft.contentKey) ? "editorial_notes" : "summary", summary) : nextDraft);
     };
     const updateVocabularyBody = (body: string) => {
       const nextDraft = { ...currentDraft, body };
@@ -8402,7 +8415,8 @@ export function GeneratedContentAdminDashboard() {
                   required: "Full passage"
                 }
       : null;
-    const headlineFieldLabel = fallbackEditorGuidance?.headlineLabel
+    const lunarIdentity = lunarContentIdentity(currentDraft.contentKey);
+    const headlineFieldLabel = lunarIdentity ? "Editor name" : fallbackEditorGuidance?.headlineLabel
       ?? (isVocabularyDraft
         ? "Phrase title"
         : isAuthoredPackageCard || isArticleDraft
@@ -8414,7 +8428,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template name"
                 : "Title / headline");
-    const summaryFieldLabel = fallbackEditorGuidance?.summaryLabel
+    const summaryFieldLabel = lunarIdentity ? "Source notes (not reader copy)" : fallbackEditorGuidance?.summaryLabel
       ?? (isVocabularyDraft
         ? "Editor note (optional)"
         : isSkyArticleSourceDraft
@@ -8426,7 +8440,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = isYouOnlyNatalExactDraft
+    const bodyFieldLabel = lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
       ? "You view exact copy"
       : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
@@ -8495,7 +8509,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
                 : "Create saved row";
-    const editorUseLabel = aspectContext?.label
+    const editorUseLabel = lunarContentIdentity(currentDraft.contentKey)?.destination ?? aspectContext?.label
       ?? (selectedRow
         ? contentCategoryForRow(selectedRow)
         : isArticleDraft
@@ -9276,7 +9290,7 @@ export function GeneratedContentAdminDashboard() {
               <input aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
               {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Reader-facing title shown at the top of this card or write-up. Stored internally as Headline."}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Reader-facing title shown at the top of this card or write-up. Stored internally as Headline."}</small>}
             </label>
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && showSummaryField && (
@@ -9286,7 +9300,7 @@ export function GeneratedContentAdminDashboard() {
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
               {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Short reader-facing takeaway. Leave empty when this surface does not show a TL;DR. Stored internally as Summary."}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Short reader-facing takeaway. Leave empty when this surface does not show a TL;DR. Stored internally as Summary."}</small>}
             </label>
           )}
           {showPackageBodyYou && !skyFallbackEditor && (
