@@ -4,6 +4,11 @@ on:
   pull_request:
     paths:
       - "api/report-share.ts"
+      - "api/friend-report-*.ts"
+      - "api/generate-friend-transit-reading.ts"
+      - "api/cron/run-friend-report-jobs.ts"
+      - "api/stripe-webhook.ts"
+      - "api/_lib/friend-report-*.ts"
       - "apps/web/src/components/reports/**"
       - "apps/web/src/features/reports/**"
       - "apps/web/src/routes/ReportRoute.tsx"
@@ -15,14 +20,22 @@ on:
       - "apps/web/src/styles/report-notifications.css"
       - "apps/web/src/main.tsx"
       - "apps/web/supabase/migrations/*report_library*.sql"
+      - "apps/web/supabase/migrations/*friend_paid_report*.sql"
       - "scripts/test-report-library-notifications.mjs"
+      - "scripts/test-friend-paid-report-lifecycle.mts"
       - "tests/visual/report-library-ui.spec.ts"
+      - "vercel.json"
       - ".github/workflows/report-library.yml"
   push:
     branches:
       - main
     paths:
       - "api/report-share.ts"
+      - "api/friend-report-*.ts"
+      - "api/generate-friend-transit-reading.ts"
+      - "api/cron/run-friend-report-jobs.ts"
+      - "api/stripe-webhook.ts"
+      - "api/_lib/friend-report-*.ts"
       - "apps/web/src/components/reports/**"
       - "apps/web/src/features/reports/**"
       - "apps/web/src/routes/ReportRoute.tsx"
@@ -34,8 +47,11 @@ on:
       - "apps/web/src/styles/report-notifications.css"
       - "apps/web/src/main.tsx"
       - "apps/web/supabase/migrations/*report_library*.sql"
+      - "apps/web/supabase/migrations/*friend_paid_report*.sql"
       - "scripts/test-report-library-notifications.mjs"
+      - "scripts/test-friend-paid-report-lifecycle.mts"
       - "tests/visual/report-library-ui.spec.ts"
+      - "vercel.json"
       - ".github/workflows/report-library.yml"
 
 jobs:
@@ -50,6 +66,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node scripts/test-report-library-notifications.mjs
+      - run: node --import tsx scripts/test-friend-paid-report-lifecycle.mts
       - run: npm run test:report-foundation
       - run: npm run qa:css-audit
       - run: npm run typecheck
@@ -77,7 +94,7 @@ jobs:
 
   report-library-database:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
       - uses: supabase/setup-cli@v1
@@ -129,6 +146,18 @@ jobs:
                 and cmd in ('INSERT', 'UPDATE', 'DELETE')
             ) then
               raise exception 'report share links must remain server-write-only';
+            end if;
+            if to_regclass('public.friend_report_entitlements') is null
+               or to_regclass('public.friend_report_jobs') is null then
+              raise exception 'Friends paid report lifecycle tables are missing';
+            end if;
+            if exists (
+              select 1 from pg_policies
+              where schemaname = 'public'
+                and tablename in ('friend_report_entitlements', 'friend_report_jobs')
+                and cmd in ('INSERT', 'UPDATE', 'DELETE')
+            ) then
+              raise exception 'Friends paid report lifecycle must remain server-write-only';
             end if;
           end
           $$;
