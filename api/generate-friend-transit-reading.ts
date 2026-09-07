@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { friendTransitReadingRequestLock } from "./_lib/friend-transit-reading.js";
 import { friendReportWriterBrief } from "./_lib/friend-report-specificity.js";
+import { ensureFriendReportPlaceholder } from "./_lib/friend-report-placeholder.js";
 import {
   claimAndProcessFriendReportJob,
   existingFriendTransitReading,
@@ -91,6 +92,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       throw new Error("FRIEND_REPORT_ACTIVE_ENTITLEMENT_REQUIRED");
     }
 
+    await ensureFriendReportPlaceholder({ admin, entitlement });
     const job = await ensureFriendReportJob({ admin, entitlement });
     if (job.state === "complete") {
       const saved = await existingFriendTransitReading({
