@@ -362,6 +362,7 @@ export function natalPlacementDescription(
     cmsSurfaceKeys.placementRow(planet),
     { planet, sign, voice: context === "self" ? "you" : "they", ownerName: ownerName ?? "" }
   );
+  if (override?.unavailable) return "";
   let body = override?.body ?? "";
 
   if (!body && context === "person" && ownerName?.trim()) {

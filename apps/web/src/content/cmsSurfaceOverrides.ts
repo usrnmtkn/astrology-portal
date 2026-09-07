@@ -1,3 +1,4 @@
+import { isContentRetired, contentPublication } from "./contentPublicationState";
 import {
   generatedContentParagraphs,
   renderGeneratedContentTemplate,
@@ -76,6 +77,8 @@ export type CmsSurfaceOverride = {
   contentKey: string;
   headline: string | null;
   sourceKeys: string[];
+  retired?: boolean;
+  unavailable?: boolean;
 };
 
 /**
@@ -88,10 +91,12 @@ export function resolveCmsSurfaceOverride(
   contentKeys: readonly string[],
   slots: TemplateSlotValues = {}
 ): CmsSurfaceOverride | null {
-  if (!generatedContent) return null;
-
   for (const contentKey of contentKeys) {
-    const rendered = renderGeneratedContentTemplate(generatedContent.get(contentKey), slots);
+    const retired = isContentRetired(contentKey);
+    const rendered = retired ? null : renderGeneratedContentTemplate(generatedContent?.get(contentKey), slots);
+    if (!rendered && contentPublication(contentKey)) {
+      return { body: "", headline: null, contentKey, sourceKeys: [contentKey], retired, unavailable: true };
+    }
     if (!rendered) continue;
     const body = generatedContentParagraphs(rendered).join("\n\n").trim();
     if (!body) continue;

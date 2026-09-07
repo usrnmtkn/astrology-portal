@@ -1,3 +1,4 @@
+import { assertPublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 // TLDR Astro transit + synastry resolver — browser/TypeScript build (v1)
 // Same logic as renderTransitSynastry.mjs, with NO Node APIs. The app passes the data in
 // (static JSON imports are inlined by every bundler):
@@ -85,7 +86,7 @@ export interface AuthoredCard {
   };
 }
 export interface TransitLibFile { authoredCards: AuthoredCard[] }
-export interface TransitRendererOpts { allowUnreviewed?: boolean }
+export interface TransitRendererOpts { allowUnreviewed?: boolean; blockedContentKeys?: readonly string[] }
 
 export interface TransitHouseEventFacts { planet: string; house: number; sign?: string | null; natal: string; natalHouse?: number | null; aspect: string; window?: string | null; voice?: string; variant?: number | string | null }
 export interface TransitHouseFacts { planet: string; house: number; sign?: string | null; window?: string | null; voice?: string; variant?: number | null; events?: { natal: string; natalHouse?: number | null; aspect: string; window?: string | null }[]; isRetrograde?: boolean }
@@ -575,9 +576,12 @@ export function createTransitSynastryRenderer(
   opts: TransitRendererOpts = {}
 ) {
   const allowUnreviewed = Boolean(opts.allowUnreviewed);
+  const blockedKeys = new Set(opts.blockedContentKeys ?? []);
+  const assertKey = (key: string) => assertPublicationKey(key, blockedKeys, SourceGapError);
   const cards = eligibleRowsByKey(transitLib.authoredCards, allowUnreviewed);
   const vocab = eligibleRowsByKey(rowsFile.vocabularyRows, allowUnreviewed);
   const hooks = eligibleRowsByKey(rowsFile.hookRows ?? [], allowUnreviewed);
+  for (const map of [cards, vocab, hooks]) guardPublicationMap(map, assertKey);
 
   function renderSkyPlacementHouseCore({ planet, sign, house }: SkyPlacementHouseCoreFacts) {
     const normalizedPlanet = String(planet ?? "").trim().toLowerCase();
@@ -607,6 +611,7 @@ export function createTransitSynastryRenderer(
   }
 
   const tpl = (key: string) => {
+    assertKey(key);
     const t = templatesFile.templates.find((x) => x.contentKey === key);
     if (!t) throw new SourceGapError(`SOURCE_GAP: missing template ${key}`);
     return t;
@@ -2006,6 +2011,7 @@ export function createTransitSynastryRenderer(
     if (articleMode === "archive" && !authoredArticle) {
       throw new SourceGapError(`SOURCE_GAP: sky article archive ${articleKey ?? `${planet}/${sign}`}`);
     }
+    if (authoredArticle) assertKey(authoredArticle.contentKey);
     if (authoredArticle) {
       assertSkyArticleCopy(authoredArticle);
       const finalArticle = renderFinalSkyArticle(authoredArticle, {
@@ -2802,6 +2808,7 @@ export function createTransitSynastryRenderer(
       try {
         pushPart(renderStoredBody(stored), [stored.contentKey, ...(stored.source_keys ?? [])]);
       } catch (error) {
+      if (error instanceof SourceGapError && "publicationBlocked" in error) throw error;
         if (!(error instanceof SourceGapError)) throw error;
         flagOmittedSection(id, key);
         return null;
@@ -2866,6 +2873,7 @@ export function createTransitSynastryRenderer(
       try {
         pushPart(fill(anchor, matchingNewMoonSlots()), ["fallback-hook/lunation-matching-new-moon-anchor/full"]);
       } catch (error) {
+      if (error instanceof SourceGapError && "publicationBlocked" in error) throw error;
         if (!(kind === "eclipse-lunar" && error instanceof SourceGapError)) throw error;
         flagOmittedSection("matching-new-moon-anchor", "fallback-hook/lunation-matching-new-moon-anchor/full");
       }
@@ -3007,6 +3015,7 @@ export function createTransitSynastryRenderer(
       try {
         return fillDailyGlancePersonSlots(raw, personSlots);
       } catch (error) {
+      if (error instanceof SourceGapError && "publicationBlocked" in error) throw error;
         throw new SourceGapError(
           `SOURCE_GAP: ${contentKey} friend voice slots ${error instanceof Error ? error.message : String(error)}`
         );

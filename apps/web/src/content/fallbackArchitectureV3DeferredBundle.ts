@@ -13,6 +13,10 @@ const NEW_MOON_MACRO_OPEN = "New Moons begin a six-month cycle, and what starts 
 const FULL_MOON_MACRO_OPEN = "Full Moons bring what has been building into clearer view.";
 const OWNER_BOOK_MACRO_OPENS = new Map([
   [
+    "authored/sky-lunation-macro/new-moon/virgo",
+    "You do not need another plan for becoming a better version of yourself."
+  ],
+  [
     "authored/sky-lunation-macro/full-moon/pisces",
     "Full moons are about illuminating that unconscious and that which is unseen."
   ]

@@ -1,4 +1,4 @@
-import { equivalentAstroContentKeys } from "../content/keyAliases";
+import { equivalentAstroContentKeys } from "../content/keyAliases.js";
 
 export type GeneratedContentAliasRow = {
   content_key: string;

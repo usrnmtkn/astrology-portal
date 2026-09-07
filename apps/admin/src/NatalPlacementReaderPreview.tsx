@@ -1,3 +1,4 @@
+import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 import {
@@ -148,6 +149,8 @@ export function natalPlacementOverrideDraft(contentKey: string, label: string, b
 }
 
 export default function NatalPlacementReaderPreview({ house, initialAudience = "you", motion, onCreateOverride, onOpenSource, planet, rows, secret, sign }: Props) {
+  const [publicationVersion, setPublicationVersion] = useState(0);
+  useEffect(() => subscribeToContentPublications(() => setPublicationVersion((version) => version + 1)), []);
   const [audience, setAudience] = useState<"you" | "they">(initialAudience);
   const [preview, setPreview] = useState<PreviewState>({
     appliedOverrideKeys: [],
@@ -199,7 +202,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
       });
     });
     return () => controller.abort();
-  }, [audience, house, motion, overrides, planet, secret, sign]);
+  }, [audience, house, motion, overrides, planet, secret, sign, publicationVersion]);
 
   const exactKey = house ? natalPlacementExactKey(planet, sign, house, motion) : "";
   const exactSaved = Boolean(exactKey && rows.some((row) => row.content_key === exactKey));

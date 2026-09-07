@@ -25,6 +25,7 @@ type Props = {
   rows: CompositionMapRow[];
   templateKeys?: string[];
   initialKey?: string;
+  initialSurfaceId?: string;
   onLoadRow?: (row: CompositionMapRow) => Promise<unknown>;
 };
 
@@ -55,8 +56,9 @@ function sourceKindLabel(source: CompositionMapSource) {
 }
 
 function ReaderSurfaceWorkspace({
-  onStartCmsRow, rows, templates, onEditRow, onSelectTemplate, onLoadRow
+  onStartCmsRow, rows, templates, onEditRow, onSelectTemplate, onLoadRow, initialSurfaceId
 }: {
+  initialSurfaceId?: string;
   rows: CompositionMapRow[];
   templates: ReturnType<typeof buildCompositionMap>;
   onEditRow: Props["onEditRow"];
@@ -66,7 +68,7 @@ function ReaderSurfaceWorkspace({
 }) {
   const [area, setArea] = useState<WritingSurfaceMapItem["area"] | "All">("All");
   const [query, setQuery] = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(initialSurfaceId ?? null);
   const areas = useMemo(
     () => ["All", ...new Set(writingSurfaceSourceMap.map((surface) => surface.area))] as Array<WritingSurfaceMapItem["area"] | "All">,
     []
@@ -234,7 +236,7 @@ function ReaderSurfaceWorkspace({
   );
 }
 
-export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsRow, rows, templateKeys, initialKey, onLoadRow }: Props) {
+export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsRow, rows, templateKeys, initialKey, onLoadRow, initialSurfaceId }: Props) {
   const [scope, setScope] = useState<CompositionScope>(templateKeys ? "templates" : "surfaces");
   const [destinationFilter, setDestinationFilter] = useState("all");
   const [issuesOnly, setIssuesOnly] = useState(false);
@@ -365,7 +367,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
           </button>
         </div>
       </div>}
-      {scope === "surfaces" ? <ReaderSurfaceWorkspace onStartCmsRow={onStartCmsRow} onLoadRow={onLoadRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
+      {scope === "surfaces" ? <ReaderSurfaceWorkspace initialSurfaceId={initialSurfaceId} onStartCmsRow={onStartCmsRow} onLoadRow={onLoadRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
         <aside className="admin-composition-template-list" aria-label="Composition templates">
           <header>
             <div><p className="admin-eyebrow">{templateKeys ? "Choose a passage or template" : "Choose a template"}</p><strong>{filtered.length} of {map.length}</strong></div>

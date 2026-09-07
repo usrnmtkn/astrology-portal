@@ -1,6 +1,7 @@
+import { publicationAllowsContent } from "./contentPublicationState.js";
 import type { ContentArea, ContentBundle, KnowledgeItem, SourceFactors, VoiceContentItem } from "./types";
-import { equivalentAstroContentKeys } from "./keyAliases";
-import { firstReaderFacingCopy, readerFacingParagraphs } from "./readerSafety";
+import { equivalentAstroContentKeys } from "./keyAliases.js";
+import { firstReaderFacingCopy, readerFacingParagraphs } from "./readerSafety.js";
 
 export const defaultVoiceId = "tldr-astro-v1";
 
@@ -1004,7 +1005,13 @@ export function createDomainRegistry(bundleInput: unknown) {
   }
 
   function approvedExactSkyAspectCopy(planetA: string, aspect: string, planetB: string) {
-    return approvedExactSkyAspectCopyById.get(currentSkyAspectContentId(planetA, aspect, planetB)) ?? null;
+    const key = currentSkyAspectContentId(planetA, aspect, planetB);
+    const publicationKeys = [
+      `sky.aspect.${normalizeIdPart(planetA)}.${normalizeIdPart(aspect)}.${normalizeIdPart(planetB)}`,
+      `sky.aspect.${normalizeIdPart(planetB)}.${normalizeIdPart(aspect)}.${normalizeIdPart(planetA)}`
+    ];
+    return publicationKeys.every((contentKey) => publicationAllowsContent(contentKey))
+      ? approvedExactSkyAspectCopyById.get(key) ?? null : null;
   }
 
   function skyCalendarComposedCard(

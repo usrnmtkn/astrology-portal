@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+test.beforeEach(async ({ page }) => {
+  await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
+});
+
 test("Reports route keeps the TLDR navigation and design system across themes and viewports", async ({ browser }) => {
   const bodyBackgrounds = new Map<string, string>();
 
@@ -10,6 +14,7 @@ test("Reports route keeps the TLDR navigation and design system across themes an
     for (const theme of ["light", "dark"] as const) {
       const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height } });
       const page = await context.newPage();
+      await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
 
       await page.addInitScript((selectedTheme) => {
         window.localStorage.setItem("tldrastro:theme", selectedTheme);

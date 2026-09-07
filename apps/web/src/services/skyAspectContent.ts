@@ -1,6 +1,7 @@
-import { isReaderFacingCopy } from "../content/readerSafety";
+import { isContentRetired } from "../content/contentPublicationState.js";
+import { isReaderFacingCopy } from "../content/readerSafety.js";
 import type { LiveGeneratedContent } from "./generatedContent";
-import { skyAspectContentKey, skyAspectInstanceContentKey, slugContentPart } from "./generatedContentKeys";
+import { skyAspectContentKey, skyAspectInstanceContentKey, slugContentPart } from "./generatedContentKeys.js";
 
 const collectiveSkyAspectBodyOrder = [
   "sun",
@@ -235,7 +236,14 @@ function skyAspectContentKeysFromExpected(expected: ExpectedSkyAspectFacts, targ
   return [evergreenKey, datedKey, skyAspectContentKey(expected.a, expected.aspect, expected.b)].filter(Boolean);
 }
 
-function contentStudioExactRow(
+export function isSkyAspectRetired(first: string, aspect: string, second: string) {
+  const a = canonicalContentStudioExactSkyPoint(first);
+  const b = canonicalContentStudioExactSkyPoint(second);
+  const relation = slugContentPart(aspect);
+  return isContentRetired(`sky.aspect.${a}.${relation}.${b}`) || isContentRetired(`sky.aspect.${b}.${relation}.${a}`);
+}
+
+export function contentStudioExactRow(
   generatedContent: Map<string, LiveGeneratedContent>,
   expected: Pick<ExpectedSkyAspectFacts, "a" | "b" | "aspect">
 ) {

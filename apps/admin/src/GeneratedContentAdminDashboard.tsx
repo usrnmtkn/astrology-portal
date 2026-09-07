@@ -1,9 +1,11 @@
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
 import { SkyDailySummaryStudio } from "./SkyDailySummaryStudio";
 import { skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
+import { refreshContentPublications } from "../../web/src/services/contentPublications";
+import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
 import { lunarContentIdentity } from "./lunarCalendarContent";
-import ContentLiveStatusBadge, { ContentLiveStatusProvider, type LiveStatus } from "./ContentLiveStatus";
+import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
 import { mergeContentInventory } from "./contentStudioState";
 import {
   ArrowLeft,
@@ -61,6 +63,8 @@ import {
   relatedHousePassages,
   relatedLunationHoroscopes,
   skyLunationContextForRow,
+  skyPlacementBodies,
+  skyPlacementSigns,
   skyWriteupContextForRow,
   skyWriteupSubjectTypeForRow
 } from "./skyWriteupRelations";
@@ -190,8 +194,8 @@ const PackagedHookCatalogResults = lazy(async () => {
   return { default: module.PackagedHookCatalogResults };
 });
 const SkyV4StudioReviewPanel = lazy(() => import("./SkyV4StudioReviewPanel"));
-const AdminPaginatedCollection = lazy(() => import("./AdminPaginatedCollection")) as typeof import("./AdminPaginatedCollection").AdminPaginatedCollection;
-const AdminFilterDisclosure = lazy(() => import("./AdminFilterDisclosure"));
+import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
+import AdminFilterDisclosure from "./AdminFilterDisclosure";
 const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
 const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
 import type { NatalEditableRow, NatalSourceEdits } from "./NatalPlacementSourceEditor";
@@ -2719,6 +2723,12 @@ export function GeneratedContentAdminDashboard() {
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
   const [allRowsLoaded, setAllRowsLoaded] = useState(false);
   const [reviewRows, setReviewRows] = useState<AdminReviewRecord[]>([]);
+  const [, setPublicationVersion] = useState(0);
+  useEffect(() => {
+    const unsubscribe = subscribeToContentPublications(() => setPublicationVersion((version) => version + 1));
+    void refreshContentPublications(true);
+    return unsubscribe;
+  }, []);
   const [userRows, setUserRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [facts, setFacts] = useState<AdminContentFact[]>([]);
   const [message, setMessage] = useState("Loading saved content…");
@@ -2742,7 +2752,7 @@ export function GeneratedContentAdminDashboard() {
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
   }, []);
-  const [contentStatusFilter, setContentStatusFilter] = useState<GeneratedContentStatus | "all">("all");
+  const [contentStatusFilter, setContentStatusFilter] = useState<"LIVE" | "NOT_LIVE" | "all">("all");
   const [contentLibraryView, setContentLibraryView] = useState<ContentLibraryView>("all");
   const [reviewStatusFilter, setReviewStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [skyVoiceQueueView, setSkyVoiceQueueView] = useState<SkyVoiceQueueView>("all");
@@ -2776,6 +2786,8 @@ export function GeneratedContentAdminDashboard() {
   const [vocabularyCategory, setVocabularyCategory] = useState<AdminVocabularyCategoryFilter>("planets");
   const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("LIVE");
   const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
+  const [skyPlacementBody, setSkyPlacementBody] = useState("all");
+  const [skyPlacementSign, setSkyPlacementSign] = useState("all");
   const [skyWriteupSubjectFilter, setSkyWriteupSubjectFilter] = useState<AdminSkyWriteupSubjectFilter>("all");
   const [skyWriteupQuery, setSkyWriteupQuery] = useState("");
   const [skyWriteupMotionFilter, setSkyWriteupMotionFilter] = useState<ContentMotionFilter>("all");
@@ -2957,11 +2969,13 @@ export function GeneratedContentAdminDashboard() {
     [visibleRows]
   );
   const filteredSkyWriteupRows = useMemo(() => sortPlacementRows(skyWriteupRows.filter((row) => (
-    (skyWriteupSubjectFilter === "all" || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
+    (skyPlacementBody === "all" || skyWriteupContextForRow(row)?.planet === skyPlacementBody)
+    && (skyPlacementSign === "all" || skyWriteupContextForRow(row)?.sign === skyPlacementSign)
+    && (skyWriteupSubjectFilter === "all" || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
     && (skyWriteupMotionFilter === "all" || contentMotion(row) === skyWriteupMotionFilter)
     && (skyWriteupDestinationFilter === "all" || contentDestinations(row).has(skyWriteupDestinationFilter))
     && matchesAdminSearch(skyWriteupSearchText(row), skyWriteupQuery)
-  )), skyWriteupSort), [skyWriteupDestinationFilter, skyWriteupMotionFilter, skyWriteupQuery, skyWriteupRows, skyWriteupSort, skyWriteupSubjectFilter]);
+  )), skyWriteupSort), [skyPlacementBody, skyPlacementSign, skyWriteupDestinationFilter, skyWriteupMotionFilter, skyWriteupQuery, skyWriteupRows, skyWriteupSort, skyWriteupSubjectFilter]);
   const publishedButUnwiredSkyRows = useMemo(
     () => skyWriteupRows.filter(isPublishedButUnwired),
     [skyWriteupRows]
@@ -3042,31 +3056,26 @@ export function GeneratedContentAdminDashboard() {
 
     return [...rowsByKey.values()];
   }, [reviewRows, visibleRows]);
-  const statusCountRows = useMemo(
-    () => calendarAspectFilterScopeActive
-      ? visibleRows.filter((row) => contentCategoryForRow(row) === "Calendar Aspects")
-      : visibleRows,
-    [calendarAspectFilterScopeActive, visibleRows]
-  );
-  const statusCounts = useMemo(() => {
-    const counts: Record<GeneratedContentStatus | "all", number> = { all: statusCountRows.length, DRAFT: 0, REVIEWED: 0, LIVE: 0, ARCHIVED: 0, ERROR: 0 };
-    statusCountRows.forEach((row) => counts[row.status] += 1);
-    return counts;
-  }, [statusCountRows]);
-  const filteredRows = useMemo(() => visibleRows.filter((row) => {
-    const rowClass = contentClassForRow(row);
-    const rowTier = tierForRow(row);
-    const rowCategory = contentCategoryForRow(row);
-
-    const search = query.trim().toLowerCase();
-
-    return (contentLibraryView === "all" || isCompatibilityRow(row))
-      && (contentStatusFilter === "all" || row.status === contentStatusFilter)
-      && (calendarAspectFilterScopeActive || contentClassFilter === "all" || rowClass === contentClassFilter)
-      && (calendarAspectFilterScopeActive || tierFilter === "all" || rowTier === tierFilter)
-      && (categoryFilter === "all" || rowCategory === categoryFilter)
-      && matchesAdminSearch(visibleRowSearchText(row), search);
-  }), [visibleRows, contentLibraryView, contentStatusFilter, contentClassFilter, tierFilter, categoryFilter, query, calendarAspectFilterScopeActive]);
+  const [statusFiltersOpen, setStatusFiltersOpen] = useState(false);
+  const loadLiveStatus = useContentLiveStatusLoader(async (ids) => {
+    const result = await adminJsonRequest<{ ok: boolean; statuses: LiveStatus[] }>("/api/admin/content-live-status", secret, { method: "POST", body: JSON.stringify({ ids }) });
+    if (!Array.isArray(result.statuses)) throw new Error("Could not verify content status.");
+    return result.statuses;
+  }, secret);
+  const statusCountRows = useMemo(() => visibleRows.filter((row) =>
+    (contentLibraryView === "all" || isCompatibilityRow(row))
+    && (calendarAspectFilterScopeActive || contentClassFilter === "all" || contentClassForRow(row) === contentClassFilter)
+    && (calendarAspectFilterScopeActive || tierFilter === "all" || tierForRow(row) === tierFilter)
+    && (categoryFilter === "all" || contentCategoryForRow(row) === categoryFilter)
+    && matchesAdminSearch(visibleRowSearchText(row), query.trim().toLowerCase())
+  ), [visibleRows, contentLibraryView, calendarAspectFilterScopeActive, contentClassFilter, tierFilter, categoryFilter, query]);
+  const liveStatusResults = useContentLiveStatusResults(loadLiveStatus, statusCountRows,
+    activePage === "content" && (statusFiltersOpen || contentStatusFilter !== "all"));
+  const statusChecking = !liveStatusResults || liveStatusResults.pending > 0;
+  const liveCount = liveStatusResults ? [...liveStatusResults.statuses.values()].filter((status) => status.live).length : 0;
+  const filteredRows = useMemo(() => statusCountRows.filter((row) =>
+    contentStatusFilter === "all" || liveStatusResults?.statuses.get(row.id)?.live === (contentStatusFilter === "LIVE")
+  ), [statusCountRows, liveStatusResults, contentStatusFilter]);
   const normalizedContentLibraryQuery = query.trim().toLowerCase();
   const contentLibraryTransitShortcut: "transits-to-natal" | "house-transits" | null = categoryFilter === "Personal Transits"
     || /(?:personal[- /]transit|transit[- /]to[- /]natal)/u.test(normalizedContentLibraryQuery)
@@ -4578,6 +4587,23 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function retireContentEverywhere(action: "retire" | "publish" = "retire") {
+    if (!draft?.id || !draft.updatedAt) return;
+    setIsLoading(true);
+    setEditorSaveError("");
+    try {
+      const result = await adminJsonRequest<{ ok: boolean; publication: unknown }>("/api/admin/content-publication", secret, {
+        method: "POST", body: JSON.stringify({ action, contentKey: draft.contentKey, id: draft.id, expectedUpdatedAt: draft.updatedAt })
+      });
+      if (!result.ok || !validContentPublication(result.publication) || result.publication.content_key !== draft.contentKey
+        || result.publication.state !== (action === "publish" ? "live" : "retired")) throw new Error("Publication change was not confirmed.");
+      installContentPublications([result.publication]);
+      announceContentUpdate({ contentKey: draft.contentKey, published: action === "publish", updatedAt: new Date().toISOString() });
+      setMessage(action === "retire" ? `${draft.contentKey} retired everywhere. Devices apply the retirement when they reconnect.` : `${draft.contentKey} published again.`);
+    } catch (error) { setEditorSaveError(dashboardErrorMessage(error)); }
+    finally { setIsLoading(false); }
+  }
+
   async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true) {
     setEditorSaveError("");
     setIsLoading(true);
@@ -4587,8 +4613,13 @@ export function GeneratedContentAdminDashboard() {
         body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-package-revision" })
       });
       const published = payload.rows?.[0];
-      if (!published) throw new Error("The API did not return the published package row.");
+      if (!payload.ok || !published || published.content_key !== row.content_key || published.status !== "LIVE") {
+        throw new Error("Publication was not confirmed. Your revision is saved; try Save & publish again.");
+      }
       const publishedDraft = draftFromRow(published);
+      if (draftHasPackageProposal(publishedDraft)) {
+        throw new Error("The API returned an unpublished revision. Your revision is saved; try Save & publish again.");
+      }
       setRows((current) => [published, ...current.filter((item) => item.id !== published.id && item.id !== row.id)]);
       if (updateEditor) {
         setSelectedRowId(published.id);
@@ -5707,11 +5738,7 @@ export function GeneratedContentAdminDashboard() {
   );
 
   return (
-    <ContentLiveStatusProvider request={async (ids) => {
-      const result = await adminJsonRequest<{ ok: boolean; statuses: LiveStatus[] }>("/api/admin/content-live-status", secret, { method: "POST", body: JSON.stringify({ ids }) });
-      if (!Array.isArray(result.statuses)) throw new Error("Could not verify content status.");
-      return result.statuses;
-    }}>
+    <ContentLiveStatusProvider value={loadLiveStatus}>
     <main className="admin-dashboard">
       {nav}
       <section className={`admin-main${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
@@ -5858,7 +5885,7 @@ export function GeneratedContentAdminDashboard() {
               </button>
             </nav>
             {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && (
-              <Suspense fallback={null}><AdminFilterDisclosure summary="Status, class, tier, and search">
+              <AdminFilterDisclosure summary="Status, class, tier, and search">
                 <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
                   <div className="admin-review-filter-grid">
                     <label>
@@ -5897,7 +5924,7 @@ export function GeneratedContentAdminDashboard() {
                     </label>
                   </div>
                 </section>
-              </AdminFilterDisclosure></Suspense>
+              </AdminFilterDisclosure>
             )}
             {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && renderBulkBar()}
             {skyVoiceQueueView === "all" && renderReviewTable(filteredReviewRows)}
@@ -5974,6 +6001,7 @@ export function GeneratedContentAdminDashboard() {
             {natalChartWorkspaceActive
               ? (
                 <>
+                  <div className="admin-new-actions"><button type="button" onClick={() => navigateAdminPage("compositionMap", new URLSearchParams({ surface: "natal-empty-house" }))}>Empty houses</button></div>
                   {renderNatalPlacementSourceFinder()}
                   {renderEditor()}
                 </>
@@ -6099,7 +6127,27 @@ export function GeneratedContentAdminDashboard() {
                 <section className="admin-content-filters" aria-label="Sky write-up filters">
                   <div className="admin-review-filter-grid">
                     <label>
-                      <span>Planet, angle, or point</span>
+                      <span>Planet or point</span>
+                      <select aria-label="Sky placement planet or point" value={skyPlacementBody} onChange={(event) => setSkyPlacementBody(event.target.value)}>
+                        <option value="all">All planets and points</option>
+                        {skyPlacementBodies.map((body) => <option key={body} value={body}>{titleFromKey(body)}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Zodiac sign</span>
+                      <select aria-label="Sky placement zodiac sign" value={skyPlacementSign} onChange={(event) => setSkyPlacementSign(event.target.value)}>
+                        <option value="all">All signs</option>
+                        {skyPlacementSigns.map((sign) => <option key={sign} value={sign}>{titleFromKey(sign)}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Motion</span>
+                      <select aria-label="Sky write-up motion" value={skyWriteupMotionFilter} onChange={(event) => setSkyWriteupMotionFilter(event.target.value as ContentMotionFilter)}>
+                        {skyWriteupMotionFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Content group</span>
                       <select
                         aria-label="Sky write-up type"
                         value={skyWriteupSubjectFilter}
@@ -6121,12 +6169,6 @@ export function GeneratedContentAdminDashboard() {
                       />
                     </label>
                     <label>
-                      <span>Motion</span>
-                      <select aria-label="Sky write-up motion" value={skyWriteupMotionFilter} onChange={(event) => setSkyWriteupMotionFilter(event.target.value as ContentMotionFilter)}>
-                        {skyWriteupMotionFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                      </select>
-                    </label>
-                    <label>
                       <span>Reader use</span>
                       <select aria-label="Sky write-up reader use" value={skyWriteupDestinationFilter} onChange={(event) => setSkyWriteupDestinationFilter(event.target.value as ContentDestinationFilter)}>
                         {skyWriteupDestinationFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
@@ -6141,6 +6183,8 @@ export function GeneratedContentAdminDashboard() {
                     <button
                       type="button"
                       onClick={() => {
+                        setSkyPlacementBody("all");
+                        setSkyPlacementSign("all");
                         setSkyWriteupSubjectFilter("all");
                         setSkyWriteupMotionFilter("all");
                         setSkyWriteupDestinationFilter("all");
@@ -6148,7 +6192,7 @@ export function GeneratedContentAdminDashboard() {
                         setSkyWriteupQuery("");
                       }}
                       disabled={
-                        skyWriteupSubjectFilter === "all"
+                        skyPlacementBody === "all" && skyPlacementSign === "all" && skyWriteupSubjectFilter === "all"
                         && skyWriteupMotionFilter === "all"
                         && skyWriteupDestinationFilter === "all"
                         && skyWriteupSort === "updated-desc"
@@ -6558,6 +6602,8 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "compositionMap" && (
           <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
             <CompositionMapWorkspace
+              key={new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("surface") ?? "all"}
+              initialSurfaceId={new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("surface") ?? undefined}
               rows={compositionRows}
               onLoadRow={(row) => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
               onEditRow={(row, context) => openRow(row as AdminGeneratedContentRow, context ?? null)}
@@ -6640,7 +6686,7 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-template-card-list">
               {compositeRows.length === 0 && <p className="admin-empty">No composite rows with relationship-type sections are loaded yet.</p>}
               {renderEditor()}
-              <Suspense fallback={null}><AdminPaginatedCollection
+              <AdminPaginatedCollection
                 items={compositeRows}
                 label="Composite Review"
                 pageSize={compositeReviewPageSize}
@@ -6673,7 +6719,7 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </article>
                 ))}</>}
-              </AdminPaginatedCollection></Suspense>
+              </AdminPaginatedCollection>
             </div>
           </section>
         )}
@@ -7287,15 +7333,17 @@ export function GeneratedContentAdminDashboard() {
           </button>
         </div>
         )}
-        <details className="admin-advanced"><summary>Editorial filters</summary>
-        <div className="admin-status-pills" role="tablist" aria-label="Editorial stage">
-          {(["all", ...contentStatuses] as Array<GeneratedContentStatus | "all">).map((status) => (
+        <details className="admin-advanced" onToggle={(event) => setStatusFiltersOpen(event.currentTarget.open)}><summary>Editorial filters</summary>
+        <div className="admin-status-pills" role="tablist" aria-label="Reader status">
+          {(["all", "LIVE", "NOT_LIVE"] as const).map((status) => (
             <button key={status} type="button" role="tab" aria-selected={contentStatusFilter === status} className={contentStatusFilter === status ? "active" : ""} onClick={() => setContentStatusFilter(status)}>
-              <span>{status === "all" ? "All" : contentStatusLabel(status)}</span>
-              <strong>{statusCounts[status]}</strong>
+              <span>{status === "all" ? "All" : status === "LIVE" ? "Live" : "Not live"}</span>
+              <strong>{status === "all" ? statusCountRows.length : statusChecking ? "…" : status === "LIVE" ? liveCount : liveStatusResults.statuses.size - liveCount}</strong>
             </button>
           ))}
         </div>
+        {statusFiltersOpen && statusChecking && <p role="status" className="admin-field-hint">Checking reader status…</p>}
+        {Boolean(liveStatusResults?.failed) && <p role="status" className="admin-field-hint">Status unavailable for {liveStatusResults?.failed} entries. Refresh rows to retry.</p>}
         </details>
         <div className="admin-review-filter-grid">
           {!calendarAspectWorkspaceActive && (
@@ -7566,7 +7614,7 @@ export function GeneratedContentAdminDashboard() {
     const visibleGroups = groups.filter((group) => (groupedRows.get(group.key)?.length ?? 0) > 0);
 
     const showDailyGlanceStudio = fallbackSectionFilter === "daily";
-    if (visibleGroups.length === 0 && !showDailyGlanceStudio) return <p className="admin-empty">No rows match these filters.</p>;
+    if (visibleGroups.length === 0 && !showDailyGlanceStudio) return <p className="admin-empty">{contentStatusFilter !== "all" && statusChecking ? "Checking reader status…" : "No rows match these filters."}</p>;
 
     return (
       <div className="admin-sky-edition-fields" aria-label="Fallback content grouped by reader use">
@@ -7629,7 +7677,7 @@ export function GeneratedContentAdminDashboard() {
     ].join(":");
 
     return (
-      <Suspense fallback={null}><AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
+      <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
         {(visibleTableRows) => <div className="admin-content-table-scroll">
           <table className="admin-content-table admin-content-table--browse">
           <thead className="admin-content-table-head">
@@ -7649,7 +7697,16 @@ export function GeneratedContentAdminDashboard() {
               const destination = showArticleDestination ? articleAppDestination(row) : null;
               const wiring = showWiringReason ? contentWiringStatus(row) : null;
               const compatibilityIdentity = showCompatibilityIdentity ? compatibilityBrowseIdentityForRow(row) : null;
-              const displayTitle = compatibilityIdentity?.title ?? rowTitle(row);
+              const placement = activePage === "skyWriteups" ? skyWriteupContextForRow(row) : null;
+              const lunation = placement ? skyLunationContextForRow(row) : null;
+              const placementLabel = placement?.sign && !row.content_key.includes("/station/")
+                ? lunation ? `${titleFromKey(placement.sign)} ${titleFromKey(lunation.kind)}`
+                  : `${titleFromKey(placement.planet)} in ${titleFromKey(placement.sign)}${contentMotion(row) === "unspecified" ? "" : ` · ${titleFromKey(contentMotion(row))}`}`
+                : null;
+              const displayTitle = placementLabel ?? compatibilityIdentity?.title ?? rowTitle(row);
+              const placementKind = placement ? row.content_key.startsWith("sky/article-template/") ? "Placement template"
+                : row.content_key.startsWith("sky/article-edition/") ? "Saved placement edition"
+                  : lunation ? "Lunation macro" : "Sky placement" : null;
               return (
                 <tr
                   key={row.id}
@@ -7669,9 +7726,9 @@ export function GeneratedContentAdminDashboard() {
                     </label>
                   </td>
                   <td className="admin-content-title-cell admin-col-content">
-                    <strong className="admin-content-row-title">{displayTitle}</strong>
+                    <strong className="admin-content-row-title" title={rowTitle(row)}>{displayTitle}</strong>
                     <small className="admin-content-type-label admin-field-hint">
-                      {compatibilityIdentity ? `${compatibilityIdentity.detail} · ${rowTypeLabel(row)}` : rowTypeLabel(row)}
+                      {placementKind ?? (compatibilityIdentity ? `${compatibilityIdentity.detail} · ${rowTypeLabel(row)}` : rowTypeLabel(row))}
                     </small>
                     <code className="admin-content-row-key">{row.content_key}</code>
                     <span className="admin-content-mobile-status"><ContentLiveStatusBadge row={row} /></span>
@@ -7707,9 +7764,9 @@ export function GeneratedContentAdminDashboard() {
             })}
           </tbody>
         </table>
-          {tableRows.length === 0 && <p className="admin-empty">No rows match these filters.</p>}
+          {tableRows.length === 0 && <p className="admin-empty">{activePage === "content" && contentStatusFilter !== "all" && statusChecking ? "Checking reader status…" : "No rows match these filters."}</p>}
         </div>}
-      </AdminPaginatedCollection></Suspense>
+      </AdminPaginatedCollection>
     );
   }
 
@@ -7724,7 +7781,7 @@ export function GeneratedContentAdminDashboard() {
             </button>
           ))}
         </aside>
-        <Suspense fallback={null}><AdminPaginatedCollection
+        <AdminPaginatedCollection
           items={tableRows}
           label="Review queue"
           pageSize={reviewQueuePageSize}
@@ -7759,7 +7816,7 @@ export function GeneratedContentAdminDashboard() {
           })}
           {tableRows.length === 0 && <p className="admin-empty">No review rows match these filters.</p>}
           </div>}
-        </AdminPaginatedCollection></Suspense>
+        </AdminPaginatedCollection>
       </section>
     );
   }
@@ -8040,6 +8097,7 @@ export function GeneratedContentAdminDashboard() {
     const packageRoleCanServeExactCopy = !["fallback_source", "source_material"].includes(packageContentRole);
     const packageCanApproveRevision = isPackageDraft
       && packageHasProposal
+      && !isGuidedHeldReview
       && !packageIsSkyV4Governed
       && packageRoleCanServeExactCopy;
     const packageApprovalPublishes = isPackageDraft
@@ -8048,7 +8106,7 @@ export function GeneratedContentAdminDashboard() {
       && !packageIsSkyV4Governed
       && packageRoleCanServeExactCopy
       && fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus);
-    const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes ? "LIVE" : "DRAFT";
+    const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes || packageCanApproveRevision ? "LIVE" : "DRAFT";
     const packageWillPublishOnSave = packageApprovalPublishes && currentDraft.status !== "LIVE";
     const natalAspectMissingCopy = isExactNatalAspectDraft && !["body", "body_you", "body_they"].some((field) => packageFieldString(currentDraft, field).trim());
     const variableReferences = templateVariableReferences({
@@ -9822,7 +9880,7 @@ export function GeneratedContentAdminDashboard() {
                   </select>
                   {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Approved copy becomes live when Save &amp; publish completes.</small>}
                   {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">This row is source material. Approval makes it available to the resolver as an ingredient; it cannot publish as exact reader copy.</small>}
-                  {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Use “Save &amp; publish revision” below to save this revision and make that exact saved copy live.</small>}
+                  {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Save &amp; publish makes your exact edits live in one step. Save draft keeps the revision Not live.</small>}
                   {packageHasProposal && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Save this source-material revision for review. Source ingredients cannot publish as exact reader copy.</small>}
                   {packageIsSkyV4Governed && <small className="admin-field-hint">This Sky V4 row uses its hash-bound owner-approval workflow; its status cannot be changed here.</small>}
                   {isGuidedHeldReview && <small className="admin-field-hint">Locked at needs_review in this review flow. Use “Record owner copy review” above when the exact copy is correct; publication remains a separate governed step.</small>}
@@ -9917,7 +9975,7 @@ export function GeneratedContentAdminDashboard() {
                         aria-label="Reader status after save"
                         className={`ui-pill admin-status ${packageStatusAfterSave === "LIVE" ? "status-live" : "status-draft"}`}
                       >
-                        {packageHasProposal ? "Not live" : packageStatusAfterSave === "LIVE" ? "Live" : "Not live"}
+                        {packageStatusAfterSave === "LIVE" ? "Live" : "Not live"}
                       </span>
                     ) : (
                       <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
@@ -9928,7 +9986,7 @@ export function GeneratedContentAdminDashboard() {
                       {isPackageDraft
                         ? packageHasProposal
                           ? packageRoleCanServeExactCopy
-                            ? "Save the revision first, then approve and publish it with the dedicated action below."
+                            ? "Save & publish makes your exact edits live in one step. Choose Save draft to keep a revision Not live."
                             : "This saved revision is source material and cannot become exact reader copy."
                           : packageWillPublishOnSave
                           ? "This copy is approved. Save to publish it to readers."
@@ -10028,44 +10086,50 @@ export function GeneratedContentAdminDashboard() {
               : packageHasProposal
                 ? draftHasUnsavedChanges
                   ? "Unsaved revision"
-                  : "Revision saved; awaiting approval"
+                  : "Draft saved · Not live"
                 : packageWillPublishOnSave
                   ? natalAspectMissingCopy ? "Write the passage before publishing" : "Ready to publish"
                   : isNewDraft
                     ? "New draft"
                     : draftHasUnsavedChanges
                       ? "Unsaved changes"
-                      : "All changes saved"}
+                      : isContentRetired(currentDraft.contentKey) ? "Retired everywhere" : "All changes saved"}
           </span>
           <button
-            className="admin-primary-button"
+            className={packageCanApproveRevision ? "admin-publish-button" : "admin-primary-button"}
             type="button"
-            onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)}
-            disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave)}
+            onClick={() => void (async () => {
+              if (packageCanApproveRevision) {
+                const saved = draftHasUnsavedChanges || !selectedRow ? await saveDraft() : selectedRow;
+                if (saved) await approvePackageRevision(saved);
+              } else {
+                await saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined);
+              }
+            })()}
+            disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision)}
             title={packageWillPublishOnSave && natalAspectMissingCopy ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
             {isGuidedHeldReview
               ? "Save held draft"
-              : packageHasProposal
-                ? "Save revision"
+              : packageCanApproveRevision
+                ? "Save & publish"
+                : packageHasProposal
+                ? "Save draft"
                 : packageWillPublishOnSave
                   ? "Save & publish"
                   : "Save"}
           </button>
-          {isPackageDraft && packageCanApproveRevision && selectedRow && (
+          {isPackageDraft && packageCanApproveRevision && (
             <button
-              className="admin-publish-button"
+              className="admin-secondary-button"
               type="button"
-              onClick={() => void (async () => {
-                const rowToPublish = draftHasUnsavedChanges ? await saveDraft() : selectedRow;
-                if (rowToPublish) await approvePackageRevision(rowToPublish);
-              })()}
-              disabled={isLoading}
-              title={draftHasUnsavedChanges ? "Save this revision and publish the exact saved copy." : "Publish this saved revision to readers."}
+              onClick={() => void saveDraft()}
+              disabled={isLoading || !draftHasUnsavedChanges}
+              title="Keep this revision Not live."
             >
-              <Check size={16} aria-hidden="true" />
-              Save &amp; publish revision
+              <Save size={16} aria-hidden="true" />
+              Save draft
             </button>
           )}
           {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (
@@ -10074,6 +10138,13 @@ export function GeneratedContentAdminDashboard() {
           {isPackageDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
             <button type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
               Revert to package original
+            </button>
+          )}
+          {currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
+            <button type="button" className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges}
+              onClick={() => void retireContentEverywhere(isContentRetired(currentDraft.contentKey) ? "publish" : "retire")}
+              title={isContentRetired(currentDraft.contentKey) ? "Restore this saved version for readers." : "Retire this content key across Studio, bundled writing, and synced offline copies."}>
+              {isContentRetired(currentDraft.contentKey) ? "Publish again" : "Retire everywhere"}
             </button>
           )}
           {currentDraft.id && (

@@ -648,3 +648,10 @@ For every content task:
 
 When facts or owner intent are ambiguous, stop and route the ambiguity to the
 owner. Do not fill uncertainty with plausible astrology or plausible prose.
+
+
+## Shared publication lifecycle
+
+Content Studio, reader overrides, and offline snapshots use `content_publications` to identify the published version of a shared content key. A retirement is durable even when its editable source is removed. Reader fallback lookup stops at a retired key rather than exposing bundled copy underneath it. Only an explicit authorized publication can undo retirement. Offline clients retain lifecycle revisions separately from cached writing and learn new retirements when they reconnect.
+
+See [publication retirement verification and rollout](../qa/content-publication-retirement-2026-09-07.md) for the migration, identity checks, compatibility behavior, and release sequence.

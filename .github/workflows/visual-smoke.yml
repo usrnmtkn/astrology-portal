@@ -40,7 +40,10 @@ jobs:
         run: node scripts/test-admin-content-studio-usability.mjs
 
       - name: Verify Content Studio server module startup
-        run: node scripts/test-content-live-status-node-runtime.mjs
+        run: npm run build:knowledge && node scripts/test-content-live-status-node-runtime.mjs
+
+      - name: Verify publication lifecycle and offline retirement
+        run: npm run test:content-publications
 
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
@@ -73,7 +76,7 @@ jobs:
         run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
 
       - name: Run Content Studio admin user flows
-        run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts
+        run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts
 
       - name: Run client-facing user flows
         run: npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts tests/visual/report-library-ui.spec.ts

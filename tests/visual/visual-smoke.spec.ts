@@ -5,6 +5,7 @@ import path from "node:path";
 const screenshotDir = path.join("test-results", "visual-smoke");
 
 async function preparePage(page: Page, theme: "light" | "dark" = "light", seedFriends = false) {
+  await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
   await page.addInitScript(({ selectedTheme, shouldSeedFriends }) => {
     window.localStorage.setItem("tldrastro:theme", selectedTheme);
     window.localStorage.setItem("tldrastro:sunriseOrb", "true");

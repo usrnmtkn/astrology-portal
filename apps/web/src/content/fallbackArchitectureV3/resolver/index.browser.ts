@@ -11,7 +11,7 @@ export * from "./skyPlacementV4Canonical.mjs";
 // Version stamp: the app must surface this in its debug/about screen and the dashboard
 // admin must show it next to the import status, so the owner can verify at a glance
 // that the running app and the dashboard are on the current package.
-export const PACKAGE_VERSION = "v3-2026-09-07a";
+export const PACKAGE_VERSION = "v3-2026-09-07c";
 
 type PackageRow = {
   contentKey: string;
@@ -56,7 +56,7 @@ function stablePackageValue(value: unknown): unknown {
       // Review state controls whether a row enters the reader bundle. Once it
       // does, the content hash covers the serving record rather than mirror-only
       // approval metadata, which Supabase may normalize for RLS visibility.
-      .filter((key) => key !== "review_status" && key !== "reviewStatus")
+      .filter((key) => !["review_status", "reviewStatus", "publicationRowId", "publicationRowUpdatedAt"].includes(key))
       .sort()
       .map((key) => [key, stablePackageValue((value as Record<string, unknown>)[key])])
   );

@@ -1,5 +1,6 @@
 import { calendarDayDistance } from "./services/calendarDayDistance";
 import { skyDailySummaryParts } from "./content/skyDailySummary";
+import { refreshContentPublications } from "./services/contentPublications";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -219,7 +220,7 @@ import {
   cmsSurfaceKeys,
   resolveCmsSurfaceOverride
 } from "./content/cmsSurfaceOverrides";
-import { resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
+import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   selectSkyAspectCopyByPrecedence
@@ -4470,6 +4471,7 @@ function normalizeSkyAspectSurface(
   positions?: PlanetPosition[],
   generatedAt?: string
 ): NormalizedSkyAspectArticle {
+  if (isSkyAspectRetired(aspect.from, aspect.type, aspect.to)) return { surface: "sky-aspect", status: "not-servable", sections: [] };
   const signAwareSection = reviewedSkyAspectWritingSection(aspect, positions, "sign-aware");
   const authoredSection = approvedExactSkyAspectWritingSection(aspect, positions, generatedContent);
   const reviewedSection = reviewedSkyAspectWritingSection(aspect, positions, "generic");
@@ -6934,6 +6936,7 @@ function normalizeEmptyHouseCardSurface(
     }
   );
 
+  if (override?.unavailable) return { surface: "empty-house", status: "not-servable", note: null, sections: [] };
   if (override) {
     const section = normalizedEmptyHouseSection(
       "card-summary",
@@ -7059,6 +7062,7 @@ function normalizeEmptyHouseDetailSurface({
       rulerHouseOrdinal: rulerPosition?.house ? ordinalHouse(rulerPosition.house) : ""
     }
   );
+  if (override?.unavailable) return { surface: "empty-house", status: "not-servable", note: null, sections: [] };
   if (override) {
     const section = normalizedEmptyHouseSection(
       "house-sign",
@@ -7766,6 +7770,7 @@ function personalTransitPackageSection(
     }
   );
 
+  if (cmsOverride?.unavailable) return null;
   if (cmsOverride) {
     return {
       slot: "meaning",
@@ -7954,6 +7959,7 @@ function normalizeTransitHouseSurface(
     }
   );
 
+  if (override?.unavailable) return { surface: "transit-house", status: "not-servable", sections: [], detailSections: [] };
   if (override) {
     section = {
       slot: "house-activation",
@@ -11880,6 +11886,7 @@ export function App() {
 
   useEffect(() => {
     const refreshContent = () => {
+    void refreshContentPublications(true);
     clearSharedGeneratedContentCache();
     clearPlanetTopicVocabularyCache();
     clearNatalCardTaglineCache();

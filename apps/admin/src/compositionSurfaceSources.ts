@@ -22,7 +22,7 @@ export const compositionSurfaceFamilies: Record<string, RegExp> = {
   "sky-calendar-day-cards": /^(?:cms\/calendar-day|fallback-hook\/(?:moon-|season-marker|sky-event))/,
   "sky-horoscopes": /^(?:cms\/weekly-horoscope|fallback-template\/(?:lunation|sky[.]horoscope)|fallback-hook\/(?:sky-horoscope|lunation-))/,
   "chart-placement-row-microcopy": /^(?:cms\/chart-placement-row|fallback-hook\/(?:planet-intro|placement-sentence|dignity-line))/,
-  "natal-empty-house": /^(?:cms\/natal-empty-house|fallback-template\/empty-house|fallback-hook\/(?:empty-house|house-cusp|house-glossary|ruler-method))/,
+  "natal-empty-house": /^(?:cms\/natal-empty-house|fallback-template\/(?:empty-house|natal[.]empty-house)|fallback-vocab\/empty-house-|fallback-hook\/(?:empty-house|house-cusp|house-glossary|ruler-method))/,
   "personal-transit-house": /^(?:cms\/personal-transit-house|fallback-template\/transit[.]house|fallback-hook\/(?:transit-house|transit-effect-house|house-meaning))/,
   "generated-reports": /^(?:report\/|fallback-template\/(?:career|profection|circle)|fallback-hook\/(?:career-|profection-|circle-))/,
   "surface-specs-builders": /^(?:fallback-vocab\/|vocab\/|slot-template\/)/

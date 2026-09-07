@@ -1,3 +1,4 @@
+import { isContentRetired, publicationAllowsContent, subscribeToContentPublications } from "../content/contentPublicationState";
 import { loadLiveGeneratedContentForKeys } from "./generatedContent";
 import { firstReaderFacingCopy } from "../content/readerSafety";
 
@@ -39,10 +40,14 @@ type NatalCardTaglineRow = {
   sections: unknown;
 };
 
+let cacheEpoch = 0;
 let cachedTaglines: Map<string, string> | null = null;
 let loadingTaglines: Promise<Map<string, string>> | null = null;
 
+subscribeToContentPublications(clearNatalCardTaglineCache);
+
 export function clearNatalCardTaglineCache() {
+  cacheEpoch++;
   cachedTaglines = null;
   loadingTaglines = null;
 }
@@ -109,13 +114,17 @@ export function natalCardTaglinesFromRows(rows: NatalCardTaglineRow[]) {
 export function natalCardTagline(point: string) {
   const pointId = normalizedNatalCardTaglinePoint(point);
 
-  return cachedTaglines?.get(pointId) || fallbackNatalCardTagline(point);
+  const key = `vocab/natal-card-tagline/${pointId}`;
+  if (isContentRetired(key)) return "";
+  return cachedTaglines?.get(pointId) || (publicationAllowsContent(key) ? fallbackNatalCardTagline(point) : "");
 }
 
 export async function loadNatalCardTaglines() {
   if (loadingTaglines) return loadingTaglines;
+  const epoch = cacheEpoch;
   loadingTaglines = (async () => {
     const content = await loadLiveGeneratedContentForKeys(natalCardTaglinePoints.map(natalCardTaglineContentKey));
+    if (epoch !== cacheEpoch) return new Map<string, string>();
     cachedTaglines = natalCardTaglinesFromRows([...content.values()].map((row) => ({
       content_key: row.contentKey, body: row.body, sections: row.sections
     })));
@@ -124,6 +133,6 @@ export async function loadNatalCardTaglines() {
   try {
     return await loadingTaglines;
   } finally {
-    loadingTaglines = null;
+    if (epoch === cacheEpoch) loadingTaglines = null;
   }
 }
