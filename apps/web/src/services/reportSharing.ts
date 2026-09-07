@@ -40,6 +40,24 @@ export async function createReportShareLink(item: Pick<ReportLibraryItem, "sourc
   return payload.shareUrl;
 }
 
+export async function stopReportSharing(item: Pick<ReportLibraryItem, "sourceKind" | "sourceId">) {
+  const token = await accessToken();
+  if (!token) throw new Error("Sign in to manage report sharing.");
+  const response = await fetch("/api/report-share", {
+    method: "DELETE",
+    headers: {
+      authorization: `Bearer ${token}`,
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      sourceKind: item.sourceKind,
+      sourceId: item.sourceId
+    })
+  });
+  const payload = await response.json().catch(() => null) as { ok?: boolean; error?: string } | null;
+  if (!response.ok || !payload?.ok) throw new Error(payload?.error ?? "Could not stop sharing this report.");
+}
+
 export async function loadSharedReport(shareKey: string): Promise<SharedReportPayload> {
   const response = await fetch(`/api/report-share?share=${encodeURIComponent(shareKey)}`, {
     headers: { accept: "application/json" }
