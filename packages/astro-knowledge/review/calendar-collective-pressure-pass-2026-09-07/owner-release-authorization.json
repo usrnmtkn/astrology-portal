@@ -1,0 +1,361 @@
+{
+  "type": "explicit_owner_release_confirmation",
+  "authority": "owner",
+  "decision": "approve",
+  "ownerStatement": "The Calendar Aspects have been updated. Please review and push live. I approve the 21 refinements to be served live.",
+  "approvedAt": "2026-09-07",
+  "source": {
+    "type": "codex_task",
+    "taskId": "01a07b36-6921-7b60-925e-388b908a9a41",
+    "date": "2026-09-07"
+  },
+  "candidateHeadSha": "a7557caf9c3ec1e16e1932330660a7bcbc834c79",
+  "candidateFileSha256": "dcf72aa8cc3baabb72b8008404a47f8fe9c16e47322a97ac3b2c7ab193b72661",
+  "memberCount": 21,
+  "approvedFields": [
+    "summary",
+    "body"
+  ],
+  "capabilities": [
+    "editorial_approval",
+    "serving",
+    "content_studio_sync"
+  ],
+  "records": [
+    {
+      "contentKey": "sky.aspect.pluto.conjunction.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/pluto-conjunction-lilith.json",
+      "summarySha256": "73b4c6f9a1c779e8a2338bfd5481127c09744f08db50f6c640c5296af0e31415",
+      "bodySha256": "759b64317466ce845c2b0d2c5c2348b804d5f5ff16b0f92259771ca04fbb9b9a",
+      "bodyWordCount": 89,
+      "previousReaderCopy": {
+        "summary": "A source of control can lose force quickly once the secret, threat, shame, money, or private rule behind compliance becomes explicit.",
+        "body": "A source of control can lose force quickly once the secret, threat, shame, money, or private rule behind compliance becomes explicit. When Pluto conjoins Lilith, power and refusal fuse, allowing buried anger to surface alongside the leverage that kept an unequal arrangement in place. The discovery can permanently change what people are willing to tolerate. Reversing the balance is most useful when it removes the leverage rather than recreating the same humiliation or control from the other side.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "0d891dc8d5652b82d2758879233ad6cf4f153443a910c5b9317ea95b1cc32b67",
+      "summary": "A source of control becomes much harder to protect once the rule, threat, secret, or consequence behind compliance is out in the open.",
+      "body": "A source of control becomes much harder to protect once the rule, threat, secret, or consequence behind compliance is out in the open. When Pluto conjoins Lilith, control and refusal intensify together, bringing the source of power behind an unequal arrangement into clearer view. There may be far less willingness to keep cooperating once the price of cooperation is obvious. The balance can change quickly after the old pressure stops working. The strongest change removes the source of control instead of rebuilding the same control from the other side."
+    },
+    {
+      "contentKey": "sky.aspect.pluto.opposition.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/pluto-opposition-lilith.json",
+      "summarySha256": "604c49b892d14199b839b83785f41473a643913f2c6d5ca43fa39c2927c9a257",
+      "bodySha256": "537cfb7f37826d3c6af5612b666f73d32737fc21de8f74f10b169d16a44a96ee",
+      "bodyWordCount": 97,
+      "previousReaderCopy": {
+        "summary": "A threat loses power once the consequence behind it is no longer enough to force compliance.",
+        "body": "A threat loses power once the consequence behind it is no longer enough to force compliance. When Pluto opposes Lilith, concentrated leverage faces refusal directly through money, access, secrets, status, approval, or fear on one side and a decision to stop paying that price on the other. The balance can shift quickly after the threat stops working. The strongest use of the change is protecting what matters and reducing the old source of control, not proving that domination can now run in the opposite direction.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "82b9457fb75eaac2db59f86e4b914eecba882cf338ae1f2e27b99c15112b581e",
+      "summary": "A threat loses power once the consequence behind it is no longer enough to force compliance.",
+      "body": "A threat loses power once the consequence behind it is no longer enough to force compliance. When Pluto opposes Lilith, concentrated power meets a refusal that is no longer willing to pay the same price for access, approval, money, status, or peace. Questions of control become harder to ignore once the consequence is named plainly. What has been tolerated can become much harder to keep tolerating after the threat stops feeling absolute. The useful shift is the one that reduces the old source of control instead of turning resistance into another contest over who controls the terms."
+    },
+    {
+      "contentKey": "sky.aspect.pluto.square.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/pluto-square-lilith.json",
+      "summarySha256": "a3e0d0a4af57afd3e5aa6f20c5d504e847e5ef85127d43234315129cf282dcd5",
+      "bodySha256": "3e4c0a80ccf3d847720c17462769debbed9b1eea57e1ce4be9bbbb929993acb4",
+      "bodyWordCount": 100,
+      "previousReaderCopy": {
+        "summary": "A current power struggle can become much larger when it touches the same place where wanting something once came with punishment.",
+        "body": "A current power struggle can become much larger when it touches the same place where wanting something once came with punishment. When Pluto squares Lilith, control and refusal create friction until the present decision starts carrying the force of an older history of being silenced or overruled. The determination to win can make exposure, withholding, or forcing an admission look necessary. The history matters, but the current leverage and the term that actually needs to change still belong to the present.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "20e592f8525741107bed7727a6d2cbf9bd56f7832bb459e49c74f244a5585465",
+      "summary": "Power struggles become harder to contain when an old expectation of compliance stops working.",
+      "body": "Power struggles become harder to contain when an old expectation of compliance stops working. When Pluto squares Lilith, the drive for control meets a refusal that is no longer willing to cooperate on the old terms. There may be far less tolerance for the unspoken rules about who gets to call the shots and who is expected to stay quiet. What has been tolerated for the sake of keeping the peace becomes harder to keep tolerating once the price is obvious. The pushback can be intense, but not every act of defiance needs to become a fight for total control."
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-conjunction-lilith.json",
+      "summarySha256": "4e6368e91312292351083eabeb643d964a5d7c2a6f9d4a4f43909cb3ad51807e",
+      "bodySha256": "899c487f6a2c69314ffe886667e3705a1d7007fb25b6d2ac3b8f37372088be96",
+      "bodyWordCount": 97,
+      "previousReaderCopy": {
+        "summary": "An obligation can look completely different once it becomes obvious that the arrangement works only because one person keeps absorbing the part nobody else wants.",
+        "body": "An obligation can look completely different once it becomes obvious that the arrangement works only because one person keeps absorbing the part nobody else wants. When Saturn conjoins Lilith, duty and refusal fuse, making a role, promise, contract, or responsibility harder to carry under the old terms. The commitment can still matter without every condition attached to it deserving to survive. The arrangement becomes more honest when responsibility is redistributed instead of hidden inside the person most accustomed to taking it.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "f2245c86b554a4f4b0f038a55fa7feb03dcf278e57559293f20d08de51102c1e",
+      "summary": "An obligation looks different once it becomes obvious that the arrangement works only because one person keeps absorbing the part nobody else wants.",
+      "body": "An obligation looks different once it becomes obvious that the arrangement works only because one person keeps absorbing the part nobody else wants. When Saturn conjoins Lilith, duty and refusal intensify together, making a role, promise, contract, or responsibility harder to carry under the old terms. There may be less tolerance for responsibility that only works because one person keeps taking the extra work, cost, or consequence. The commitment can still matter without every condition attached to it deserving to survive. A fairer arrangement names who does what and what happens when they cannot keep carrying it."
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-opposition-lilith.json",
+      "summarySha256": "2af04030177dcef17d5e0cb628d2a0f54f2ae37420f20e708600624964f66422",
+      "bodySha256": "7910d88af2f69aacba42bd0f50bf4f00411565eadf2ae837fa8d53833f589936",
+      "bodyWordCount": 98,
+      "previousReaderCopy": {
+        "summary": "Authority can call something non-negotiable at the same moment compliance becomes more costly than refusal.",
+        "body": "Authority can call something non-negotiable at the same moment compliance becomes more costly than refusal. When Saturn opposes Lilith, structure and autonomy face each other directly through a boss, institution, family role, contract, or long-standing obligation. Some rules protect something worth protecting; others survive because the cost of challenging them falls on the person with less power. The conflict becomes clearer once the purpose of the rule, the available negotiation, and the actual consequence of saying no are separated.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "fd1b1898dec7dc1d3d37752887e8835423c27ba425bf8996b3de7865d7201669",
+      "summary": "A rule can be called non-negotiable at the exact moment the cost of obeying it becomes harder to justify.",
+      "body": "A rule can be called non-negotiable at the exact moment the cost of obeying it becomes harder to justify. When Saturn opposes Lilith, authority and refusal face each other directly through rules, contracts, roles, or expectations that may still matter but no longer feel neutral. The pressure builds around arrangements that ask the person with less power to keep paying the same price. Some limits protect something worth keeping; others survive because challenging them has been more expensive than complying. The difference becomes clearer once the purpose of the rule and the cost of obedience are counted together."
+    },
+    {
+      "contentKey": "sky.aspect.uranus.conjunction.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/uranus-conjunction-lilith.json",
+      "summarySha256": "9c34ff3127836bb52f12a419c8f6cbe80f7f92ffedfa50eaf532a3ed86867833",
+      "bodySha256": "f3428d2a9de96a7f6e65f7617c4f55afaec527a347aed472cda979bfa3cf7eda",
+      "bodyWordCount": 93,
+      "previousReaderCopy": {
+        "summary": "A sudden break from expectation can make a long-suppressed preference or refusal impossible to keep pretending is irrelevant.",
+        "body": "A sudden break from expectation can make a long-suppressed preference or refusal impossible to keep pretending is irrelevant. When Uranus conjoins Lilith, disruption and autonomy fuse, making an unconventional choice, changed rule, abrupt exit, or private desire move quickly into the open. The break can create freedom and collateral damage at the same time. The strongest change is the one that releases the actual restriction without requiring chaos to prove that the old expectation has lost its authority.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "0a6ec3041f89d5cfadbadec74c9df13b10499ea684bc47352ad57acaef353457",
+      "summary": "A sudden break from expectation can bring a preference or refusal into the open before anyone has a plan for what comes next.",
+      "body": "A sudden break from expectation can bring a preference or refusal into the open before anyone has a plan for what comes next. When Uranus conjoins Lilith, disruption and autonomy move together, making an unconventional choice, abrupt exit, changed rule, or long-suppressed no harder to keep contained. There may be much less patience for preserving an arrangement simply because it is familiar. The break can create freedom and extra problems at the same time. The useful change is the one that removes the restriction that stopped fitting without destroying every support around it."
+    },
+    {
+      "contentKey": "sky.aspect.uranus.opposition.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/uranus-opposition-lilith.json",
+      "summarySha256": "5b0ad11cb63e531941770c9207269fc7f8184719dc987874ccd9c6b6b871cb84",
+      "bodySha256": "dc81ec83718b336079e51dfc43d0454ee660aa9cce039e46a65e258110351ed5",
+      "bodyWordCount": 102,
+      "previousReaderCopy": {
+        "summary": "Someone else's refusal to keep following the old rules can expose how much comfort depended on their continued cooperation.",
+        "body": "Someone else's refusal to keep following the old rules can expose how much comfort depended on their continued cooperation. When Uranus opposes Lilith, disruption and autonomy face each other directly, making a changed boundary, exit, unconventional choice, or demand for freedom difficult to absorb without renegotiating the surrounding structure. The refusal may be inconvenient without being negotiable. The next arrangement becomes clearer once the old expectation is no longer treated as something another person is required to restore.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "1a015dfb313da0ca9a14ccaf371ed13b4779c46290a1b71e94bf6b588e7c578b",
+      "summary": "Someone else's refusal to keep following the old rules can expose how much the familiar arrangement depended on their continued cooperation.",
+      "body": "Someone else's refusal to keep following the old rules can expose how much the familiar arrangement depended on their continued cooperation. When Uranus opposes Lilith, disruption and autonomy face each other directly, making the old expectation harder to defend once one side stops agreeing to it. A broader frustration can surface around who was expected to adjust, wait, stay agreeable, or absorb the disruption so everyone else could keep the same arrangement. The change may feel sudden even when the dissatisfaction is not. The situation becomes easier to understand once the old expectation and the cost of maintaining it are named separately."
+    },
+    {
+      "contentKey": "sky.aspect.uranus.square.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/uranus-square-lilith.json",
+      "summarySha256": "aa5338c8d403c5dc44ed43dcda32286016fc713a14ce6c1cd855a8dcb9f29d23",
+      "bodySha256": "55d7ab5ad9c5ff034c5b3ed9c4cf33e17bbd7ee4a5f991bb27750193029f7b8c",
+      "bodyWordCount": 101,
+      "previousReaderCopy": {
+        "summary": "The urge to reject every rule can become strongest when one particular restriction has been allowed to dominate for too long.",
+        "body": "The urge to reject every rule can become strongest when one particular restriction has been allowed to dominate for too long. When Uranus squares Lilith, disruption and autonomy create friction, making abrupt rebellion look cleaner than the complicated work of changing the exact expectation causing the problem. A rule may deserve to be broken without every surrounding structure needing to collapse with it. The useful distinction is the freedom being sought and the damage produced only by impatience.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "533e75eb49a6fb8078367177e110103aa8e4f3dda8df273b856d8da8a2793c89",
+      "summary": "The urge to break a rule gets stronger when the rule keeps blocking a choice that no longer feels optional.",
+      "body": "The urge to break a rule gets stronger when the rule keeps blocking a choice that no longer feels optional. When Uranus squares Lilith, disruption and refusal create friction, making compromise feel increasingly pointless when every compromise preserves the same restriction. What has been tolerated becomes harder to keep tolerating when nothing meaningful changes. If you feel the urge to reject the whole arrangement, it may help to separate the rule that no longer works from the support that still does. Change has more staying power when it removes the actual restriction instead of treating disruption itself as proof of freedom."
+    },
+    {
+      "contentKey": "sky.aspect.mars.conjunction.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-conjunction-lilith.json",
+      "summarySha256": "91bf2d7ea6a26b36497be7ba6d858ec8ee6bd4c2959034ebcb94de18e702e90e",
+      "bodySha256": "b497b9244534922198a9682242bbdf50bc9eca52ffd93c33ac0c1607313a8d26",
+      "bodyWordCount": 96,
+      "previousReaderCopy": {
+        "summary": "Anger becomes more useful when it reveals the request, rule, or expectation that has stopped being tolerable.",
+        "body": "Anger becomes more useful when it reveals the request, rule, or expectation that has stopped being tolerable. When Mars conjoins Lilith, action and refusal fuse, making a long-suppressed no much harder to keep smiling through. The reaction may be larger than today's offense because today's offense is not the whole history. The strongest use of the force is the boundary that changes participation in the part causing the resentment rather than destruction of the entire arrangement.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "64224da0adf0d1331013f6be2672ae6033246121df9b9dfdfe18f23cc48fb255",
+      "summary": "Anger becomes more useful when it reveals the request, rule, or expectation that has stopped being tolerable.",
+      "body": "Anger becomes more useful when it reveals the request, rule, or expectation that has stopped being tolerable. When Mars conjoins Lilith, action and refusal fuse, making a long-suppressed no much harder to keep smiling through. There may be much less patience for a demand, assumption, or boundary violation that has already gone too far. The reaction can be larger than the immediate offense because the immediate offense is not the whole pattern. The strongest use of the anger is the boundary that changes participation in the problem instead of turning the entire arrangement into a fight."
+    },
+    {
+      "contentKey": "sky.aspect.mars.opposition.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-opposition-lilith.json",
+      "summarySha256": "4b88809d0dc2ac5d1ebe028daa19de43471cf0c5d8d5d2a12043ce43b6a49d9f",
+      "bodySha256": "7572202b6837296ba9fd4ef41d1db57088f271f4cc6571c6b0af4996e6e8f905",
+      "bodyWordCount": 86,
+      "previousReaderCopy": {
+        "summary": "Questions of authority become harder to ignore when pressure to act meets a refusal to be managed.",
+        "body": "Questions of authority become harder to ignore when pressure to act meets a refusal to be managed. When Mars opposes Lilith, a disagreement can keep circling the details while the deeper issue is who gets to decide and whose refusal is being treated as negotiable. Compromise works only when everyone involved still has agency. Exhausting one side until it gives in may end the argument without creating agreement.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "7f1bae50b5cc7ecc5847efb3533160ad70a28e34605752c7aec107c0f5fa8287",
+      "summary": "Questions of authority become harder to ignore when pressure to act meets a refusal to be managed.",
+      "body": "Questions of authority become harder to ignore when pressure to act meets a refusal to be managed. When Mars opposes Lilith, a disagreement can keep circling the details while the harder issue is who gets to decide and whose refusal is being treated as negotiable. If you catch yourself arguing the details, notice if the harder question is who actually gets a say. Compromise works only when everyone involved still has agency. Exhausting one side until it gives in may end the argument without creating agreement."
+    },
+    {
+      "contentKey": "sky.aspect.mars.square.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-square-lilith.json",
+      "summarySha256": "2fbc642b3c7beda404402c8ba4774f264c1d7965fe02a6af0b81ed7a1019d605",
+      "bodySha256": "85db021c889627218662a5a9b7522acf8f0e54dc96c8ed42dc62f7a55f47ad43",
+      "bodyWordCount": 100,
+      "previousReaderCopy": {
+        "summary": "The first boundary can carry every boundary that was never set when anger has been unacceptable for too long.",
+        "body": "The first boundary can carry every boundary that was never set when anger has been unacceptable for too long. When Mars squares Lilith, action and refusal create friction, allowing a current frustration to collide with years of swallowed noes, softened objections, or unwanted accommodation. The anger may accurately describe the pattern while exaggerating what one moment can repair. Today's boundary becomes clearer when it is not forced to carry the entire backlog.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "a0534b4e91ccf58d63fdcaf8336f6c2f4ce4d2c8afd203f8bf83fdc614914a0a",
+      "summary": "The first boundary can carry the force of every boundary that was never allowed to stand.",
+      "body": "The first boundary can carry the force of every boundary that was never allowed to stand. When Mars squares Lilith, action and refusal create friction, and a small demand can land with the weight of every earlier no that was softened, ignored, or negotiated away. A broader frustration can surface when people who have been expected to stay agreeable stop doing it. The anger may describe the pattern accurately while asking one moment to repair too much history at once. The boundary is easier to hold when it deals with the current demand without needing to settle every old score."
+    },
+    {
+      "contentKey": "sky.aspect.chiron.conjunction.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/chiron-conjunction-lilith.json",
+      "summarySha256": "f7958aa698f1cd3fbbe02807ac5033353fa5ac09a3ba09d6bbe7eea3a36412f7",
+      "bodySha256": "83c3fdf5041a05f49c4ba8adbf0b1cb657cc4ed22cb0a70bf0512ea38aae86d5",
+      "bodyWordCount": 107,
+      "previousReaderCopy": {
+        "summary": "An old hurt can look different once the desire, anger, or boundary that was shamed out of the story is allowed back in.",
+        "body": "An old hurt can look different once the desire, anger, or boundary that was shamed out of the story is allowed back in. When Chiron conjoins Lilith, sensitivity and refusal fuse, bringing an old rejection or criticism into contact with the part that became harder to admit afterward. It is difficult to understand what hurt while the want itself is still being treated as unacceptable. The meaning of the old injury can change once the missing desire is acknowledged plainly.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "9a89ebeaf468c41f474a58e870459ed71ce9571e20b0ef8582558ec8032fbe62",
+      "summary": "An old hurt can look different once the desire, anger, or boundary that was shamed out of the story is allowed back in.",
+      "body": "An old hurt can look different once the desire, anger, or boundary that was shamed out of the story is allowed back in. When Chiron conjoins Lilith, sensitivity and refusal intensify together, bringing an old rejection or criticism into contact with the part that became harder to admit afterward. There may be less willingness to keep treating a desire or refusal as embarrassing simply because it once drew criticism. The pressure is not only around what hurt; it is around what had to stay hidden afterward. The meaning of the old injury can change once the missing want is allowed to count as part of the story."
+    },
+    {
+      "contentKey": "sky.aspect.chiron.opposition.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/chiron-opposition-lilith.json",
+      "summarySha256": "33d40fac5c3f60108b90a16c1ebeec12a51501d9b5e3df272849b4c66352da63",
+      "bodySha256": "f1f4b0df05df080a9424e6833795061b7a75cb0fb259570378b9f02a81a652f8",
+      "bodyWordCount": 89,
+      "previousReaderCopy": {
+        "summary": "A strategy built to avoid criticism can end up sitting directly across from the desire or boundary that no longer fits inside it.",
+        "body": "A strategy built to avoid criticism can end up sitting directly across from the desire or boundary that no longer fits inside it. When Chiron opposes Lilith, protection and autonomy face each other directly, exposing how much a role, habit, or agreeable persona may have been organized around preventing one old reaction. The protection may have worked and still be too expensive now. The tension clarifies what would be chosen if the old source of judgment no longer got the first vote.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "70d0c4a231bb23e88f9c2a742058023bd346b1d7e2630e162c7c464895607c04",
+      "summary": "A strategy built to avoid criticism can start fighting the very desire or boundary it was built to protect.",
+      "body": "A strategy built to avoid criticism can start fighting the very desire or boundary it was built to protect. When Chiron opposes Lilith, sensitivity and autonomy pull against each other, exposing the rules people build around avoiding rejection, embarrassment, or punishment. This can be a moment when staying acceptable starts costing more than the criticism it was meant to prevent. The protection may have worked and still be too expensive now. The tension becomes clearer once the old source of judgment is separated from what the present actually allows."
+    },
+    {
+      "contentKey": "sky.aspect.chiron.square.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/chiron-square-lilith.json",
+      "summarySha256": "994381dd2cad3cb7a081a24be16b008d6c39cdccc6aa0993da2630fbe579017b",
+      "bodySha256": "843b60d7c24ae6e6615e731fe0a0cc819059cdaa48f16c7ac8b705a1f706e065",
+      "bodyWordCount": 92,
+      "previousReaderCopy": {
+        "summary": "A simple preference can carry years of anger when wanting something different was once treated like a punishable offense.",
+        "body": "A simple preference can carry years of anger when wanting something different was once treated like a punishable offense. When Chiron squares Lilith, sensitivity and refusal create friction, making a present no carry the heat of earlier criticism, rejection, or shame. If today's boundary feels much bigger than the immediate request, you may be hearing the backlog as well as the current moment. The anger can describe the history accurately without requiring one present conflict to repair all of it.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "260a5cb71aede2bcdd4603ddadecfd9393e54f0fc9389c5b8e92dfc85938ded8",
+      "summary": "A simple preference can carry far more heat when wanting something different has a history of punishment or rejection.",
+      "body": "A simple preference can carry far more heat when wanting something different has a history of punishment or rejection. When Chiron squares Lilith, sensitivity and refusal create friction, making a present no carry more force than the current decision alone explains. A broader frustration can surface around the old bargain that said approval depended on staying agreeable, easy, or quiet. The anger is not random, but the current person or decision cannot repair every earlier loss attached to it. Today's boundary becomes more useful once it is allowed to belong to today."
+    },
+    {
+      "contentKey": "sky.aspect.mars.conjunction.saturn",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-conjunction-saturn.json",
+      "summarySha256": "8491e413cba941e4bff94e7559ee97a590e3fe7acc33c72771a962378a54fe6d",
+      "bodySha256": "9880346d00181d28612f50ba003ea1f89eedaa68675a910911b99ddcf8a04678",
+      "bodyWordCount": 73,
+      "previousReaderCopy": {
+        "summary": "A strong push to move can meet a limit that refuses to speed up simply because the pressure has increased.",
+        "body": "A strong push to move can meet a limit that refuses to speed up simply because the pressure has increased. When Mars conjoins Saturn, drive meets rules, deadlines, responsibilities, and restrictions that demand sequence and restraint. Ignoring the limit can create a larger problem than accepting what has to happen first. Progress becomes more possible once energy is spent on the required step instead of on proving that the restriction should not exist.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "d9ae9b4d95d451b93b135bd36e74cdf6a4495b97dbf16c5da55657758b47451a",
+      "summary": "Pressure does not make a fixed limit move faster simply because the need to act has become urgent.",
+      "body": "Pressure does not make a fixed limit move faster simply because the need to act has become urgent. When Mars conjoins Saturn, drive meets rules, deadlines, responsibility, and sequence. This can be a moment when every delay feels personal even though the restriction is part of the structure. More force can create another problem without changing what has to happen first. Progress comes from identifying the required step and putting the effort there."
+    },
+    {
+      "contentKey": "sky.aspect.mars.opposition.saturn",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-opposition-saturn.json",
+      "summarySha256": "ee27c00d54acaf5fd9036b6dad43a0fa26be73f7c847817e5dd772e0f2c9b5a6",
+      "bodySha256": "9108e139da642751e786f83290887b447943ed91b6e1bffa53eb72307b0bd925",
+      "bodyWordCount": 87,
+      "previousReaderCopy": {
+        "summary": "Urgency can make every restriction feel hostile even when some limits are protecting something that still matters.",
+        "body": "Urgency can make every restriction feel hostile even when some limits are protecting something that still matters. When Mars opposes Saturn, the need to act comes directly up against rules, responsibilities, and boundaries that slow the pace. You may notice frustration rising faster when the limit is blocking something that already feels time-sensitive. The useful distinction is which constraint protects something worth keeping and which one survives mainly because nobody has challenged it.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "921577760d5f4da1514170f5070efdebf2dc16f1a6ea51ab516d1bfde55cec41",
+      "summary": "Urgency can make every restriction feel hostile even when some limits are protecting something that still matters.",
+      "body": "Urgency can make every restriction feel hostile even when some limits are protecting something that still matters. When Mars opposes Saturn, the need to act comes directly up against rules, responsibility, or a hard no. The pressure builds around the difference between a limit that protects something and a limit that survives because nobody has challenged it. Frustration can make those two things look identical. The conflict becomes more workable once the fixed constraint and the negotiable one are no longer being treated as the same problem."
+    },
+    {
+      "contentKey": "sky.aspect.mars.conjunction.pluto",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-conjunction-pluto.json",
+      "summarySha256": "bc765d19f99de97b9a37f431224cb12299faa8f1e755312d7ee1c4f9c2d73473",
+      "bodySha256": "c60e10eec259ac2bf6a54cb764ada4e7e656875e008ad9984d0601bcab17e3a5",
+      "bodyWordCount": 94,
+      "previousReaderCopy": {
+        "summary": "A routine conflict can become a high-stakes power struggle once winning starts to matter more than the original issue.",
+        "body": "A routine conflict can become a high-stakes power struggle once winning starts to matter more than the original issue. When Mars conjoins Pluto, action and power intensify each other, making force, leverage, and control unusually difficult to separate from the desired outcome. Escalation can spend resources that the actual goal still needs later. The strongest action is the one that protects the priority without turning every disagreement into a contest of dominance.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "d088e3ee896e6796c5d7c24713ea7c2645c9c4929b721db050148c27245a3108",
+      "summary": "A routine conflict can become a high-stakes power struggle once winning starts to matter more than the original issue.",
+      "body": "A routine conflict can become a high-stakes power struggle once winning starts to matter more than the original issue. When Mars conjoins Pluto, action and power intensify each other, making force, advantage, and control harder to separate from the result anyone actually wants. Questions of control become harder to ignore once the argument starts producing consequences bigger than the original disagreement. Escalation can spend money, access, goodwill, or options that the actual goal still needs later. The strongest move protects the priority without turning every disagreement into a test of who can dominate whom."
+    },
+    {
+      "contentKey": "sky.aspect.mars.opposition.pluto",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-opposition-pluto.json",
+      "summarySha256": "758562df79ebefc10878a9865a2ebef390765b89ffafcd302638f5be022b8226",
+      "bodySha256": "e86b4e1c29e4fa84f7851cce3824bb0c533a69654b37c618b77357be077c4f1f",
+      "bodyWordCount": 78,
+      "previousReaderCopy": {
+        "summary": "A conflict can keep looking like a communication problem when the harder issue is who actually holds the leverage.",
+        "body": "A conflict can keep looking like a communication problem when the harder issue is who actually holds the leverage. When Mars opposes Pluto, visible effort meets concentrated power through money, access, authority, secrecy, or institutional control. More force does not make an unequal position equal. The conflict becomes clearer once the source of leverage, the remaining alternatives, and the actual cost of continuing the fight are visible.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "9244c4a549d6439d4b520e691b09cbaea2620d37711928ecd76ee118c4e02a69",
+      "summary": "A conflict can keep looking like a communication problem when the harder issue is who actually controls the terms.",
+      "body": "A conflict can keep looking like a communication problem when the harder issue is who actually controls the terms. When Mars opposes Pluto, action meets concentrated power through money, access, authority, information, or institutional control. The pressure builds around what gives one side more ability to decide what happens next. More force does not make an unequal position equal. The conflict becomes clearer once the source of control, the remaining alternatives, and the cost of continuing are visible."
+    },
+    {
+      "contentKey": "sky.aspect.mars.square.pluto",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-square-pluto.json",
+      "summarySha256": "aec1564ba5668e2ca293417d64a3f0c7fd8c23548cbf66f3a4ad998f49ce8f41",
+      "bodySha256": "50d38a62c410f0fd95f29e832b17d4fddf372c76e8a3e16914e38ff88887e83b",
+      "bodyWordCount": 89,
+      "previousReaderCopy": {
+        "summary": "A power struggle becomes destructive when winning starts to matter more than protecting the outcome that caused the conflict.",
+        "body": "A power struggle becomes destructive when winning starts to matter more than protecting the outcome that caused the conflict. When Mars squares Pluto, force and control press against each other, making escalation unusually easy to justify. Pushing harder can drain leverage without changing the underlying structure. The conflict is easier to judge once the remaining control, the actual stakes, and the cost of continuing are separated from pride.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "9aeaa4e469569b9c124dfb26dfb7aadd95fd201c7058b8dd4cf5156c3854de04",
+      "summary": "A power struggle becomes destructive when winning starts to matter more than protecting the outcome that caused the conflict.",
+      "body": "A power struggle becomes destructive when winning starts to matter more than protecting the outcome that caused the conflict. When Mars squares Pluto, force and control press against each other, making escalation unusually easy to justify. A broader frustration can surface when neither side wants to be the one that backs down first. Pushing harder can drain the advantage one side still has without changing the structure underneath the fight. The conflict is easier to judge once the actual stakes and the cost of continuing are separated from pride."
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.uranus",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-conjunction-uranus.json",
+      "summarySha256": "12da3a022c3b0a37af0c9b799dfefd19b16a5cd77cae3671d93762e64e4c37a8",
+      "bodySha256": "f3b88e449110cd000d1cfa2cac4d5ed6e770c6a173d2b8e99f0074b1ff234073",
+      "bodyWordCount": 89,
+      "previousReaderCopy": {
+        "summary": "A new system stops being an experiment once other people have to organize their lives around it.",
+        "body": "A new system stops being an experiment once other people have to organize their lives around it. When Saturn conjoins Uranus, disruption and structure fuse, giving a new rule, habit, technology, or boundary enough authority to replace what came before. The change can solve a necessary problem while still imposing uneven costs on the people expected to adapt. Reinvention becomes durable when the replacement can carry what still needs to function.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "d00766725626707206e020f048d3802b47a386d62af279ba1f9ea55544eb8c0a",
+      "summary": "Change becomes harder to postpone when an old structure can no longer carry what is being asked of it.",
+      "body": "Change becomes harder to postpone when an old structure can no longer carry what is being asked of it. When Saturn conjoins Uranus, rules and disruption occupy the same ground, forcing attention onto the parts of a system that still work and the parts surviving mainly through workarounds. There may be less tolerance for calling a broken process stable simply because it is familiar. The tension is not always change versus stability. It can be about changing enough of the structure that the whole thing stops requiring constant repair."
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.uranus",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-opposition-uranus.json",
+      "summarySha256": "97392e9bf728c4b4afdb90b0fc337d7aa9cc83a2e3cc5d37dee54ce6401e0693",
+      "bodySha256": "695c99c99e005a30d3d3b419e827dc7952252bac3b7ce9f925b9f12aa4834314",
+      "bodyWordCount": 90,
+      "previousReaderCopy": {
+        "summary": "Necessary change can still threaten something people rely on, making every option look like it sacrifices an important part of the arrangement.",
+        "body": "Necessary change can still threaten something people rely on, making every option look like it sacrifices an important part of the arrangement. When Saturn opposes Uranus, structure and disruption face each other directly, exposing what the old system protects and what it prevents. Keeping everything the same can preserve the restriction that created the problem. Change is more durable when it protects the function that still matters instead of preserving the entire old structure by default.",
+        "approvedVia": "bounded owner-approved collective Calendar batch sky-calendar-collective-approved-2026-09-07; packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-batch-authorization.json; serving and Content Studio authorized by packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/owner-serving-authorization.json"
+      },
+      "previousFileSha256": "63a451b4d101cf722e7cb8de37489c23cb02a2ed5a5ddd2320e652b0b5fece4c",
+      "summary": "A system can keep working and still become difficult to live with once every exception turns into another workaround.",
+      "body": "A system can keep working and still become difficult to live with once every exception turns into another workaround. When Saturn opposes Uranus, structure and disruption pull against each other, making the cost of preserving the old arrangement increasingly visible. The pressure builds around rules that still serve a purpose and rules that are now creating more work than they prevent. Change can feel irresponsible while keeping everything the same becomes its own risk. The useful distinction is which support needs protecting and which restriction has already outlived its job."
+    }
+  ],
+  "locked": [
+    {
+      "contentKey": "sky.aspect.saturn.square.lilith",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-square-lilith.json",
+      "fileSha256": "a9b4a53a07e1c1ef8996fbcca56e517bdad6ece25373e5798ed6e3538f3686d7",
+      "bodySha256": "974044818ad922cc02f4b854aca3e16f6547924cfa0b2fdd5327dc7b084e82fc"
+    },
+    {
+      "contentKey": "sky.aspect.mars.square.saturn",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-square-saturn.json",
+      "fileSha256": "05b267e083e48e01a901c41ee6a74e0214b9e2aa7c4810ec190bd4716e49884c",
+      "bodySha256": "b4daa4fc798b7aaebc76c253b7f7773af48fe845f442aba3eae44e4e98f7b286"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.uranus",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-square-uranus.json",
+      "fileSha256": "55b51da218645501e38a8e49a02747631d5d2967a3e82cfa074a7c0c00dcf32e",
+      "bodySha256": "9ae4cf993164b0b65ceca4f9074205dbead9f0ff6af514bf3f155a7effcd6d5d"
+    }
+  ]
+}

@@ -13,7 +13,7 @@ const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-exact-sky-aspect-r
 const registryBundleFile = path.join(os.tmpdir(), "tldrastro-approved-exact-sky-aspect-registry.bundle.mjs");
 const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf8"));
 const canonicalPayloadRelative = process.env.SKY_CALENDAR_OWNER_PAYLOADS_PATH
-  ?? "packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/current-owner-payloads.json";
+  ?? "packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/current-owner-payloads.json";
 const canonicalPayloadPath = path.resolve(repoRoot, canonicalPayloadRelative);
 if (!canonicalPayloadPath.startsWith(`${repoRoot}${path.sep}`)) {
   throw new Error("SKY_CALENDAR_OWNER_PAYLOADS_PATH must resolve inside the repository.");

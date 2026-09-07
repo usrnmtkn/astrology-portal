@@ -10,7 +10,7 @@ import { build } from "esbuild";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const transitDirectory = path.join(repoRoot, "packages/astro-knowledge/data/transits");
 const projectionRelative = process.env.SKY_CALENDAR_OWNER_PAYLOADS_PATH
-  ?? "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/current-owner-payloads.json";
+  ?? "packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/current-owner-payloads.json";
 const projectionPath = path.resolve(repoRoot, projectionRelative);
 const ownerProjection = JSON.parse(fs.readFileSync(projectionPath, "utf8"));
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");

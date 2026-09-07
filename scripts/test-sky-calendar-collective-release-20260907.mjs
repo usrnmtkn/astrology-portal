@@ -14,6 +14,11 @@ const manifest = JSON.parse(fs.readFileSync(path.join(releaseRoot, "shipping-man
 const records = JSON.parse(fs.readFileSync(path.join(releaseRoot, "exact-approval-records.json"), "utf8"));
 const editorial = JSON.parse(fs.readFileSync(path.join(releaseRoot, "owner-batch-authorization.json"), "utf8"));
 const serving = JSON.parse(fs.readFileSync(path.join(releaseRoot, "owner-serving-authorization.json"), "utf8"));
+const refinements = JSON.parse(fs.readFileSync(path.join(repoRoot, 'packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/owner-release-authorization.json'), 'utf8'));
+assert.equal(refinements.authority, 'owner');
+assert.equal(refinements.decision, 'approve');
+assert.equal(refinements.memberCount, 21);
+const refinementByKey = new Map(refinements.records.map(row => [row.contentKey.replace('sky.aspect.', 'sky.'), row]));
 const transitRoot = path.join(repoRoot, "packages/astro-knowledge/data/transits");
 
 const sha256 = (value) => crypto.createHash("sha256").update(value, "utf8").digest("hex");
@@ -60,8 +65,8 @@ for (const [legacyKey, entry] of Object.entries(projection.payloads)) {
   const runtime = JSON.parse(fs.readFileSync(path.join(repoRoot, manifestRow.runtimeFile), "utf8"));
   assert.equal(runtime.status, "LIVE", `${legacyKey}: runtime row is not LIVE.`);
   assert.equal(runtime.voiceNeutral, true, `${legacyKey}: runtime row lost collective voice metadata.`);
-  assert.equal(runtime.readerCopy.summary, payload.summary, `${legacyKey}: runtime summary drifted.`);
-  assert.equal(runtime.readerCopy.body, payload.body, `${legacyKey}: runtime body drifted.`);
+  assert.equal(runtime.readerCopy.summary, refinementByKey.get(legacyKey)?.summary ?? payload.summary, `${legacyKey}: runtime summary drifted.`);
+  assert.equal(runtime.readerCopy.body, refinementByKey.get(legacyKey)?.body ?? payload.body, `${legacyKey}: runtime body drifted.`);
   assert.match(runtime.readerCopy.approvedVia, /sky-calendar-collective-approved-2026-09-07/u, `${legacyKey}: runtime approval provenance missing.`);
 }
 assert.equal(readerAddressRows, 40, "Exactly the 40 selectively authored rows should contain direct second person.");
