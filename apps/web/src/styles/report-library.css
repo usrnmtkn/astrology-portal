@@ -164,7 +164,7 @@
   padding: var(--space-2);
   border: var(--border-width-thin) solid var(--overlay-border);
   border-radius: var(--card-radius-sm);
-  background: var(--overlay-bg);
+  background: var(--surface);
   box-shadow: var(--overlay-shadow);
 }
 
