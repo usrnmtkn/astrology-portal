@@ -649,3 +649,8 @@ export function buildCompositionMap(rows: CompositionMapRow[]): CompositionMapTe
     .sort((left, right) => left.destination.localeCompare(right.destination)
     || left.label.localeCompare(right.label));
 }
+
+/** Stable content key for memoising a template preview whose row object is rebuilt each render. */
+export function compositionTemplateKey(row: CompositionMapRow) {
+  return [row.content_key, row.headline, row.summary, row.body, row.surface, row.status, row.block_type, JSON.stringify(row.sections ?? null), JSON.stringify(row.source_snapshot ?? null)].join("\u0000");
+}
