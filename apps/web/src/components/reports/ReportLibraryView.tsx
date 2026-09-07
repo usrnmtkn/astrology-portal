@@ -96,6 +96,12 @@ function reportSubtitle(item: ReportLibraryItem) {
   if (item.reportKind === "friend_transit_reading") {
     return ["Friends", readingWindow].filter(Boolean).join(" · ");
   }
+  if (item.reportKind === "you_day_reading") {
+    return ["You", "Day", readingWindow].filter(Boolean).join(" · ");
+  }
+  if (item.reportKind === "you_week_reading") {
+    return ["You", "Week", readingWindow].filter(Boolean).join(" · ");
+  }
   return readingWindow;
 }
 
@@ -415,8 +421,11 @@ export function GeneratedReportArticle({
   report: GeneratedReportRecord;
   backHref?: string;
 }) {
-  const readingWindow = formatReadingWindowDates(report.targetDate);
+  const readingWindow = formatReadingWindowDates(report.targetDate, report.periodEnd ?? report.targetDate);
   const paragraphs = report.body.split(/\n{2,}/u).map((paragraph) => paragraph.trim()).filter(Boolean);
+  const isFriendsReading = report.subjectType === "friend_transit_reading";
+  const reportLabel = report.subjectType === "you_week_reading" ? "Week report" : report.subjectType === "you_day_reading" ? "Day report" : "Paid reading";
+  const surfaceLabel = isFriendsReading ? "Friends" : "You";
 
   return (
     <section
@@ -437,10 +446,10 @@ export function GeneratedReportArticle({
       <article className="article-shell sky-detail-article saved-generated-report__article">
         <div className="article-card sky-detail-card saved-generated-report__card">
           <header className="article-id sky-detail-id saved-generated-report__header">
-            <div className="article-eyebrow" aria-label="Friends paid reading">
-              <span>Friends</span>
+            <div className="article-eyebrow" aria-label={`${surfaceLabel} ${reportLabel}`}>
+              <span>{surfaceLabel}</span>
               <span className="article-eyebrow__slash" aria-hidden="true">/</span>
-              <span>Paid reading</span>
+              <span>{reportLabel}</span>
             </div>
             <h1 className="article-title" id="saved-generated-report-title">{report.headline ?? "Saved reading"}</h1>
             {readingWindow ? <p className="article-duration">{readingWindow}</p> : null}
