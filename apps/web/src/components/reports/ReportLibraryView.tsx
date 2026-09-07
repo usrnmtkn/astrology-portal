@@ -62,10 +62,10 @@ function formatCalendarDay(date: ReportCalendarDate, includeYear = false) {
   return includeYear ? `${base}, ${date.year}` : base;
 }
 
-function formatReadingWindow(item: ReportLibraryItem) {
-  const start = parseReportCalendarDate(item.targetDate);
-  const end = parseReportCalendarDate(item.periodEnd ?? item.targetDate);
-  if (!start) return item.subtitle;
+function formatReadingWindowDates(startValue: string | null, endValue: string | null = startValue) {
+  const start = parseReportCalendarDate(startValue);
+  const end = parseReportCalendarDate(endValue ?? startValue);
+  if (!start) return "";
   if (!end || sameReportCalendarDate(start, end)) {
     return `${isToday(start) ? "Today, " : ""}${formatCalendarDay(start)}`;
   }
@@ -76,6 +76,10 @@ function formatReadingWindow(item: ReportLibraryItem) {
     return `${formatCalendarDay(start)}–${formatCalendarDay(end)}`;
   }
   return `${formatCalendarDay(start, true)}–${formatCalendarDay(end, true)}`;
+}
+
+function formatReadingWindow(item: ReportLibraryItem) {
+  return formatReadingWindowDates(item.targetDate, item.periodEnd ?? item.targetDate) || item.subtitle;
 }
 
 function formatCreatedDate(value: string | null) {
@@ -243,13 +247,6 @@ export function ReportLibraryView() {
   return (
     <main className="report-library-page">
       <section className="report-library-shell" aria-labelledby="report-library-title">
-        <div className="report-library-toolbar">
-          <button className="report-library-back floating-back-button" type="button" onClick={() => window.location.assign("/")}>
-            <ChevronLeft size={18} aria-hidden="true" />
-            <span>TLDR Astro</span>
-          </button>
-        </div>
-
         <header className="report-library-header">
           <p className="type-section-label">Your library</p>
           <h1 className="type-page-title" id="report-library-title">Reports</h1>
@@ -290,15 +287,22 @@ export function ReportLibraryView() {
 
 function GeneratedReportState({ message }: { message: string }) {
   return (
-    <main className="saved-generated-report saved-generated-report--state">
-      <div className="saved-generated-report__toolbar">
-        <button className="report-library-back floating-back-button" type="button" onClick={() => window.location.assign("/reports/")}>
-          <ChevronLeft size={18} aria-hidden="true" />
-          <span>Reports</span>
-        </button>
-      </div>
-      <p className="report-library-loading type-body-muted">{message}</p>
-    </main>
+    <section className="article-page sky-detail-page saved-generated-report saved-generated-report--state">
+      <button
+        className="sky-detail-back floating-back-button"
+        type="button"
+        aria-label="Back to Reports"
+        onClick={() => window.location.assign("/reports/")}
+      >
+        <ChevronLeft size={18} aria-hidden="true" />
+        <span>Back</span>
+      </button>
+      <article className="article-shell sky-detail-article">
+        <div className="article-card sky-detail-card saved-generated-report__state-card">
+          <p className="report-library-loading type-body-muted">{message}</p>
+        </div>
+      </article>
+    </section>
   );
 }
 
@@ -331,28 +335,60 @@ export function GeneratedReportDeliveryView() {
   if (status === "loading") return <GeneratedReportState message="Loading report…" />;
   if (status === "error" || !report) return <GeneratedReportState message="This report is unavailable." />;
 
+  const readingWindow = formatReadingWindowDates(report.targetDate);
+  const paragraphs = report.body.split(/\n{2,}/u).map((paragraph) => paragraph.trim()).filter(Boolean);
+
   return (
-    <main className="saved-generated-report">
-      <div className="saved-generated-report__toolbar">
-        <button className="report-library-back floating-back-button" type="button" onClick={() => window.location.assign("/reports/")}>
-          <ChevronLeft size={18} aria-hidden="true" />
-          <span>Reports</span>
-        </button>
-      </div>
-      <article className="saved-generated-report__article">
-        <header className="saved-generated-report__header">
-          <div className="saved-generated-report__topline">
-            <span className="type-section-label">Friends</span>
-            <span className="ui-pill ui-pill--neutral">Paid reading</span>
-          </div>
-          <h1 className="type-page-title">{report.headline ?? "Saved reading"}</h1>
-          {report.summary ? <p className="saved-generated-report__summary type-body">{report.summary}</p> : null}
-        </header>
-        <div className="saved-generated-report__body">
-          {report.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p className="type-body" key={paragraph}>{paragraph}</p>)}
+    <section
+      className="article-page sky-detail-page saved-generated-report"
+      aria-label={`${report.headline ?? "Saved reading"} article`}
+      aria-labelledby="saved-generated-report-title"
+    >
+      <button
+        className="sky-detail-back floating-back-button"
+        type="button"
+        aria-label="Back to Reports"
+        onClick={() => window.location.assign("/reports/")}
+      >
+        <ChevronLeft size={18} aria-hidden="true" />
+        <span>Back</span>
+      </button>
+
+      <article className="article-shell sky-detail-article saved-generated-report__article">
+        <div className="article-card sky-detail-card saved-generated-report__card">
+          <header className="article-id sky-detail-id saved-generated-report__header">
+            <div className="article-eyebrow" aria-label="Friends paid reading">
+              <span>Friends</span>
+              <span className="article-eyebrow__slash" aria-hidden="true">/</span>
+              <span>Paid reading</span>
+            </div>
+            <h1 className="article-title" id="saved-generated-report-title">{report.headline ?? "Saved reading"}</h1>
+            {readingWindow ? <p className="article-duration">{readingWindow}</p> : null}
+            {report.summary ? (
+              <div className="article-tldr">
+                <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
+                <p className="article-sub article-tldr__copy">{report.summary}</p>
+              </div>
+            ) : null}
+          </header>
+
+          {paragraphs.length > 0 ? <hr className="article-rule" /> : null}
+
+          {paragraphs.length > 0 ? (
+            <div className="article-body-card sky-detail-body saved-generated-report__body">
+              <div className="article-body-inner">
+                <section className="article-section sky-detail-section">
+                  {paragraphs.map((paragraph, index) => (
+                    <p key={`${report.id}-paragraph-${index}`}>{paragraph}</p>
+                  ))}
+                </section>
+                <p className="saved-generated-report__created type-meta">Created {formatCreatedDate(report.createdAt)}</p>
+                <div className="sky-detail-end" aria-hidden="true">✦</div>
+              </div>
+            </div>
+          ) : null}
         </div>
-        <footer className="type-meta">Created {formatCreatedDate(report.createdAt)}</footer>
       </article>
-    </main>
+    </section>
   );
 }
