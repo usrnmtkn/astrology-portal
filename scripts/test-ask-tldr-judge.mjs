@@ -12,6 +12,7 @@ import {
   buildAskTldrJudgeRequest,
   validateAskTldrJudgeOutput
 } from "../api/_lib/ask-tldr-judge.ts";
+import { assertOpenAiStrictResponseSchema } from "../api/_lib/report-provider-schema.ts";
 
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(new URL(relativePath, import.meta.url), "utf8"));
 const model = readJson("../config/ask-tldr/answer-model-v1.json");
@@ -58,6 +59,7 @@ assert.match(request.input, /READER ANSWER/u);
 assert.match(request.input, /OWNER REGISTER EVIDENCE/u);
 assert.match(request.input, /DETERMINISTIC FACT LOCK/u);
 assert.ok(request.ownerPassageIds.length >= 3);
+assert.doesNotThrow(() => assertOpenAiStrictResponseSchema(request.outputSchema, "ask_tldr_judge_v1"), "The actual judge schema must compile against the production provider subset.");
 assert.ok(request.requestSha256);
 
 const scores = Object.fromEntries(ASK_TLDR_JUDGE_CATEGORIES.map((category) => [category, 4]));
@@ -106,6 +108,12 @@ assert.throws(() => validateAskTldrJudgeOutput(request, {
   }]
 }), /ASK_TLDR_JUDGE_OWNER_VOICE_PASSAGE_REQUIRED/u);
 
+assert.throws(() => validateAskTldrJudgeOutput(request, {
+  scores,
+  timingApplicability: { applicable: true, reason: "   " },
+  findings: []
+}), /ASK_TLDR_JUDGE_TIMING_APPLICABILITY_INVALID/u, "Empty timing reasons remain forbidden by the deterministic validator even though minLength is not sent to the provider.");
+
 assert.throws(() => buildAskTldrJudgeRequest({
   writerRequest,
   writerOutput,
@@ -114,4 +122,4 @@ assert.throws(() => buildAskTldrJudgeRequest({
   factLock: { ...factLock, passed: false, issues: [{ code: "fixture" }] }
 }), /ASK_TLDR_JUDGE_FACT_LOCK_MUST_PASS/u);
 
-console.log("Ask TLDR judge contract passed: the reviewer cannot self-declare pass, findings must cite the correct evidence lane, and deterministic owner-set score floors decide release quality.");
+console.log("Ask TLDR judge contract passed: the generated provider schema compiles, the reviewer cannot self-declare pass, findings must cite the correct evidence lane, and deterministic owner-set score floors decide release quality.");
