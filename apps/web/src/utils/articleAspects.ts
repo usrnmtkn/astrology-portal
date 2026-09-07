@@ -117,9 +117,14 @@ function capitalized(value: string) {
 
 function houseBridge(copy: CompactActiveAspect, heading: string) {
   if (!copy.body || !copy.natalLabel || !copy.natalHouse || !copy.transitHouse) return copy.body;
-  const natal = houseFocus[houseNumber(copy.natalHouse)];
-  const transit = houseFocus[houseNumber(copy.transitHouse)];
+  const natalHouseNumber = houseNumber(copy.natalHouse);
+  const transitHouseNumber = houseNumber(copy.transitHouse);
+  const natal = houseFocus[natalHouseNumber];
+  const transit = houseFocus[transitHouseNumber];
   if (!natal || !transit) return `Your natal ${copy.natalLabel} is in your ${copy.natalHouse}. ${copy.body}`;
+  if (natalHouseNumber === transitHouseNumber) {
+    return `Your natal ${copy.natalLabel} is also in your ${copy.natalHouse}, so the emphasis stays on ${natal}. ${copy.body}`;
+  }
   const aspect = articleAspectGlyphPartsFromHeading(heading)?.aspect;
   const bridge = aspect === "trine"
     ? `${capitalized(natal)} may be easier to work with alongside ${transit}.`
