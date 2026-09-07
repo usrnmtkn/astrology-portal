@@ -53,6 +53,30 @@ function outputText(payload: Record<string, unknown>) {
   }).join("\n");
 }
 
+function openAiTransport(model: string) {
+  const directKey = process.env.OPENAI_API_KEY?.trim() ?? "";
+  if (directKey) {
+    return {
+      key: directKey,
+      url: "https://api.openai.com/v1/responses",
+      model,
+      provider: "openai"
+    };
+  }
+
+  const gatewayKey = (process.env.AI_GATEWAY_API_KEY ?? process.env.VERCEL_OIDC_TOKEN ?? "").trim();
+  if (process.env.VERCEL_ENV === "preview" && gatewayKey) {
+    return {
+      key: gatewayKey,
+      url: "https://ai-gateway.vercel.sh/v1/responses",
+      model: model.includes("/") ? model : `openai/${model}`,
+      provider: "vercel-ai-gateway/openai"
+    };
+  }
+
+  throw new Error("OPENAI_API_KEY is not configured.");
+}
+
 async function callOpenAi<T>(input: {
   provider: string;
   model: string;
@@ -70,17 +94,16 @@ async function callOpenAi<T>(input: {
   try { await input.beforeProviderCall?.(attempt); } catch (error) { throw new ReportModelLifecycleError("before", error); }
   let result: ReportModelResult<T>;
   try {
-    const key = process.env.OPENAI_API_KEY;
-    if (!key) throw new Error("OPENAI_API_KEY is not configured.");
-    const response = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      model: input.model,
-      input: input.prompt,
-      text: { format: { type: "json_schema", name: input.schemaName, strict: true, schema: input.schema } }
-    })
-  });
+    const transport = openAiTransport(input.model);
+    const response = await fetch(transport.url, {
+      method: "POST",
+      headers: { authorization: `Bearer ${transport.key}`, "content-type": "application/json" },
+      body: JSON.stringify({
+        model: transport.model,
+        input: input.prompt,
+        text: { format: { type: "json_schema", name: input.schemaName, strict: true, schema: input.schema } }
+      })
+    });
     const payload = await response.json() as Record<string, unknown> & { error?: { message?: string }; id?: string };
     if (!response.ok) throw new Error(payload.error?.message ?? `Report model call failed with ${response.status}.`);
     const rawUsage = payload.usage && typeof payload.usage === "object" ? payload.usage as Record<string, unknown> : {};
@@ -114,7 +137,7 @@ async function callOpenAi<T>(input: {
       );
     }
     result = {
-      value, model: input.model, provider: input.provider,
+      value, model: input.model, provider: transport.provider,
       responseId: payload.id, usage: responseUsage
     };
   } catch (error) {
@@ -140,20 +163,20 @@ async function callClaude<T>(input: {
     const key = process.env.ANTHROPIC_API_KEY;
     if (!key) throw new Error("ANTHROPIC_API_KEY is not configured.");
     const response = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({
-      model: input.model,
-      max_tokens: 12_000,
-      messages: [{ role: "user", content: input.prompt }],
-      tools: [{ name: input.schemaName, description: "Return structured report fulfillment output.", input_schema: input.schema }],
-      tool_choice: { type: "tool", name: input.schemaName }
-    })
-  });
+      method: "POST",
+      headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      body: JSON.stringify({
+        model: input.model,
+        max_tokens: 12_000,
+        messages: [{ role: "user", content: input.prompt }],
+        tools: [{ name: input.schemaName, description: "Return structured report fulfillment output.", input_schema: input.schema }],
+        tool_choice: { type: "tool", name: input.schemaName }
+      })
+    });
     const payload = await response.json() as {
-    id?: string; content?: Array<{ type?: string; name?: string; input?: T }>;
-    usage?: { input_tokens?: number; output_tokens?: number }; error?: { message?: string };
-  };
+      id?: string; content?: Array<{ type?: string; name?: string; input?: T }>;
+      usage?: { input_tokens?: number; output_tokens?: number }; error?: { message?: string };
+    };
     if (!response.ok) throw new Error(payload.error?.message ?? `Anthropic report call failed with ${response.status}.`);
     const responseUsage = usage(payload.usage?.input_tokens, payload.usage?.output_tokens);
     const value = payload.content?.find((entry) => entry.type === "tool_use" && entry.name === input.schemaName)?.input;
