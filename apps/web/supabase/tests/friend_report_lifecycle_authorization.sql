@@ -5,7 +5,7 @@ begin;
 do $friend_report_auth_test$
 declare
   member_a uuid := gen_random_uuid();
-  entitlement_id uuid;
+  created_entitlement_id uuid;
 begin
   if to_regclass('public.friend_report_entitlements') is null
     or to_regclass('public.friend_report_checkout_intents') is null
@@ -67,23 +67,25 @@ begin
     'friend-transit-reading/social:test/2026-09-07',
     'free_test',
     'active'
-  ) returning id into entitlement_id;
+  ) returning id into created_entitlement_id;
 
   insert into public.friend_report_jobs (
     entitlement_id, user_id, subject_id, target_date, content_key, facts
   )
   select
-    entitlement_id,
+    created_entitlement_id,
     member_a,
     entitlement.subject_id,
     entitlement.target_date,
     entitlement.content_key,
     '{}'::jsonb
   from public.friend_report_entitlements entitlement
-  where entitlement.id = entitlement_id;
+  where entitlement.id = created_entitlement_id;
 
   if not exists (
-    select 1 from public.friend_report_jobs where entitlement_id = entitlement_id
+    select 1
+    from public.friend_report_jobs job
+    where job.entitlement_id = created_entitlement_id
   ) then
     raise exception 'A valid social-friend report job could not be persisted.';
   end if;
