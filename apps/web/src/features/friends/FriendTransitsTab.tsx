@@ -10,6 +10,8 @@ import type {
   FriendTransitsBrief
 } from "./friendTransitsBrief";
 
+const queuedReadingPollMs = 5_000;
+
 function FriendPersonalTransitCard({
   onOpen,
   transit
@@ -46,6 +48,7 @@ export type FriendTransitReadingView = {
   headline: string | null;
   summary: string | null;
   body: string;
+  status?: string;
 };
 
 type PersistedFriendTransitReadingIdentity = {
@@ -110,49 +113,82 @@ export function FriendTransitsTab({
     ? `${persistedIdentity.subjectId}|${persistedIdentity.targetDate}`
     : "";
   const [persistedReading, setPersistedReading] = useState<FriendTransitReadingView | null>(null);
-  const [persistedReadingStatus, setPersistedReadingStatus] = useState<"idle" | "loading" | "ready">("idle");
+  const [persistedReadingStatus, setPersistedReadingStatus] = useState<"idle" | "loading" | "ready" | "locked">("idle");
+  const readingQueued = readingStatus === "ready" && Boolean(reading) && !reading?.body.trim() && reading?.status !== "ERROR";
 
   useEffect(() => {
-    if (!readingAvailable || readingStatus !== "idle" || !persistedIdentity) {
+    const shouldHydrate = readingStatus === "idle";
+    const shouldPollQueued = readingQueued;
+    if (!readingAvailable || !persistedIdentity || (!shouldHydrate && !shouldPollQueued)) {
       setPersistedReading(null);
       setPersistedReadingStatus("idle");
       return undefined;
     }
 
     let cancelled = false;
+    let pollTimer: number | undefined;
     setPersistedReading(null);
     setPersistedReadingStatus("loading");
 
-    void loadUserGeneratedInterpretation({
-      subjectType: "friend_transit_reading",
-      subjectId: persistedIdentity.subjectId,
-      contentKey: persistedIdentity.contentKey,
-      targetDate: persistedIdentity.targetDate
-    }).then((savedReading) => {
-      if (cancelled) return;
+    const load = async () => {
+      try {
+        const savedReading = await loadUserGeneratedInterpretation({
+          subjectType: "friend_transit_reading",
+          subjectId: persistedIdentity.subjectId,
+          contentKey: persistedIdentity.contentKey,
+          targetDate: persistedIdentity.targetDate
+        });
+        if (cancelled) return;
 
-      if (savedReading) {
-        setPersistedReading(savedReading);
-        setPersistedReadingStatus("ready");
-        return;
-      }
-
-      setPersistedReadingStatus("idle");
-    }).catch(() => {
-      if (!cancelled) {
+        if (savedReading?.status === "ERROR") {
+          setPersistedReading(null);
+          setPersistedReadingStatus("locked");
+          return;
+        }
+        if (savedReading?.body.trim()) {
+          setPersistedReading(savedReading);
+          setPersistedReadingStatus("ready");
+          return;
+        }
+        if (savedReading || shouldPollQueued) {
+          setPersistedReading(savedReading);
+          setPersistedReadingStatus("loading");
+          pollTimer = window.setTimeout(() => { void load(); }, queuedReadingPollMs);
+          return;
+        }
         setPersistedReadingStatus("idle");
+      } catch {
+        if (!cancelled) {
+          setPersistedReadingStatus(shouldPollQueued ? "loading" : "idle");
+          if (shouldPollQueued) {
+            pollTimer = window.setTimeout(() => { void load(); }, queuedReadingPollMs);
+          }
+        }
       }
-    });
+    };
 
+    void load();
     return () => {
       cancelled = true;
+      if (pollTimer !== undefined) window.clearTimeout(pollTimer);
     };
-  }, [persistedIdentityKey, readingAvailable, readingStatus]);
+  }, [persistedIdentityKey, readingAvailable, readingQueued, readingStatus]);
 
-  const effectiveReading = reading ?? (readingStatus === "idle" ? persistedReading : null);
-  const effectiveReadingStatus = readingStatus === "idle" && persistedReadingStatus !== "idle"
-    ? persistedReadingStatus
-    : readingStatus;
+  const directReadingReady = Boolean(reading?.body.trim());
+  const effectiveReading = persistedReading?.body.trim()
+    ? persistedReading
+    : directReadingReady
+      ? reading ?? null
+      : persistedReading ?? reading ?? null;
+  const effectiveReadingStatus = persistedReadingStatus === "locked"
+    ? "locked"
+    : persistedReadingStatus === "ready"
+      ? "ready"
+      : readingQueued || persistedReadingStatus === "loading"
+        ? "loading"
+        : readingStatus === "idle" && persistedReadingStatus !== "idle"
+          ? persistedReadingStatus
+          : readingStatus;
 
   return (
     <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${friendName} transits`}>
@@ -175,7 +211,7 @@ export function FriendTransitsTab({
                 {effectiveReading.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               </>
             ) : effectiveReadingStatus === "loading" ? (
-              <p role="status">Preparing {friendName}&apos;s reading…</p>
+              <p role="status">Preparing {friendName}&apos;s reading. You can leave this page and come back later.</p>
             ) : effectiveReadingStatus === "locked" ? (
               <>
                 <p>This reading is unavailable right now. You can try generating it again.</p>
