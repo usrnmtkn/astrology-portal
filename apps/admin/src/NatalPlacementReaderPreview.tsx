@@ -103,7 +103,7 @@ function sourceLabel(contentKey: string) {
 }
 
 function ignoredReasonLabel(reason: IgnoredPreviewOverride["reason"]) {
-  if (reason === "not-live") return "not published";
+  if (reason === "not-live") return "not live";
   if (reason === "not-serving") return "not on the serving lane";
   if (reason === "wrong-provider") return "not part of the fallback package mirror";
   if (reason === "not-current-package-key") return "not in the currently installed reader package";

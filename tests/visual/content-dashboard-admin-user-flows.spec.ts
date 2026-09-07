@@ -2708,7 +2708,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator("section[aria-label='Content list filters']")).toBeVisible();
     await expect(page.locator("[aria-label='Status']")).toBeVisible();
     await expect(page.locator("[aria-label='Status']").getByRole("tab", { name: /Draft/ })).toBeVisible();
-    await expect(page.locator("[aria-label='Status']").getByRole("tab", { name: /Published/ })).toBeVisible();
+    await expect(page.locator("[aria-label='Status']").getByRole("tab", { name: /Live/ })).toBeVisible();
     await expect(page.getByRole("region", { name: "App visibility status" }).getByText("App visibility")).toBeVisible();
 
     await page.getByLabel("Search content").fill("moon");

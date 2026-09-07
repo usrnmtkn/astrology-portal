@@ -388,7 +388,7 @@ function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, 
       .filter(Boolean)
     : [];
   return studioPaths.includes(path)
-    || ["fact_line", "opening", "tension", "development", "close", "body", "body_you", "body_they"]
+    || ["headline", "summary", "fact_line", "opening", "tension", "development", "close", "body", "body_you", "body_they"]
     .includes(path)
     || path.startsWith("era_layer.");
 }
