@@ -139,6 +139,10 @@ function notifyFriendReadingReady(request: GenerateUserContentRequest, result: L
   });
 }
 
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => window.setTimeout(resolve, ms));
+}
+
 export async function loadUserGeneratedInterpretation({
   subjectType,
   subjectId,
@@ -187,7 +191,10 @@ export async function loadUserGeneratedInterpretation({
     return null;
   }
 
-  return data?.[0] ? fromRow(data[0]) : null;
+  const row = data?.[0];
+  if (!row) return null;
+  if (subjectType === "friend_transit_reading" && (!row.body.trim() || row.status === "ERROR")) return null;
+  return fromRow(row);
 }
 
 async function friendCheckout(request: GenerateUserContentRequest, accessToken: string) {
@@ -204,6 +211,20 @@ async function friendCheckout(request: GenerateUserContentRequest, accessToken: 
     throw new GenerateUserContentError(response.status, payload as GenerateUserContentErrorPayload | null);
   }
   window.location.assign(payload.url);
+}
+
+async function waitForFriendReading(request: GenerateUserContentRequest) {
+  for (let attempt = 0; attempt < 150; attempt += 1) {
+    const reading = await loadUserGeneratedInterpretation({
+      subjectType: "friend_transit_reading",
+      subjectId: request.subjectId,
+      contentKey: request.contentKey,
+      targetDate: request.targetDate
+    });
+    if (reading?.body.trim()) return reading;
+    await sleep(2_000);
+  }
+  throw new Error("The reading is still being prepared. It will appear in Reports when it is ready.");
 }
 
 export async function generateUserContent(request: GenerateUserContentRequest) {
@@ -251,18 +272,15 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
   }
 
   if (friendReading && (response.status === 202 || payload?.status === "queued")) {
-    return loadUserGeneratedInterpretation({
-      subjectType: "friend_transit_reading",
-      subjectId: request.subjectId,
-      contentKey: request.contentKey,
-      targetDate: request.targetDate
-    });
+    const result = await waitForFriendReading(request);
+    notifyFriendReadingReady(request, result);
+    return result;
   }
 
   const saved = payload?.saved?.[0];
 
   if (saved) {
-    if (friendReading && saved.status === "DRAFT") {
+    if (friendReading && saved.status === "DRAFT" && saved.body.trim()) {
       const result = fromRow(saved);
       notifyFriendReadingReady(request, result);
       return result;
