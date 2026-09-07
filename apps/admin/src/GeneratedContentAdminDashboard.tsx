@@ -190,8 +190,8 @@ const PackagedHookCatalogResults = lazy(async () => {
   return { default: module.PackagedHookCatalogResults };
 });
 const SkyV4StudioReviewPanel = lazy(() => import("./SkyV4StudioReviewPanel"));
-const AdminPaginatedCollection = lazy(() => import("./AdminPaginatedCollection")) as typeof import("./AdminPaginatedCollection").AdminPaginatedCollection;
-const AdminFilterDisclosure = lazy(() => import("./AdminFilterDisclosure"));
+import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
+import AdminFilterDisclosure from "./AdminFilterDisclosure";
 const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
 const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
 import type { NatalEditableRow, NatalSourceEdits } from "./NatalPlacementSourceEditor";
@@ -3057,11 +3057,8 @@ export function GeneratedContentAdminDashboard() {
   ), [visibleRows, contentLibraryView, calendarAspectFilterScopeActive, contentClassFilter, tierFilter, categoryFilter, query]);
   const liveStatusResults = useContentLiveStatusResults(loadLiveStatus, statusCountRows,
     activePage === "content" && (statusFiltersOpen || contentStatusFilter !== "all"));
-  const statusCounts = {
-    all: statusCountRows.length,
-    LIVE: liveStatusResults && !liveStatusResults.pending ? [...liveStatusResults.statuses.values()].filter((status) => status.live).length : "…",
-    NOT_LIVE: liveStatusResults && !liveStatusResults.pending ? [...liveStatusResults.statuses.values()].filter((status) => !status.live).length : "…"
-  };
+  const statusChecking = !liveStatusResults || liveStatusResults.pending > 0;
+  const liveCount = liveStatusResults ? [...liveStatusResults.statuses.values()].filter((status) => status.live).length : 0;
   const filteredRows = useMemo(() => statusCountRows.filter((row) =>
     contentStatusFilter === "all" || liveStatusResults?.statuses.get(row.id)?.live === (contentStatusFilter === "LIVE")
   ), [statusCountRows, liveStatusResults, contentStatusFilter]);
@@ -5705,7 +5702,7 @@ export function GeneratedContentAdminDashboard() {
   );
 
   return (
-    <ContentLiveStatusProvider load={loadLiveStatus}>
+    <ContentLiveStatusProvider value={loadLiveStatus}>
     <main className="admin-dashboard">
       {nav}
       <section className={`admin-main${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
@@ -5852,7 +5849,7 @@ export function GeneratedContentAdminDashboard() {
               </button>
             </nav>
             {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && (
-              <Suspense fallback={null}><AdminFilterDisclosure summary="Status, class, tier, and search">
+              <AdminFilterDisclosure summary="Status, class, tier, and search">
                 <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
                   <div className="admin-review-filter-grid">
                     <label>
@@ -5891,7 +5888,7 @@ export function GeneratedContentAdminDashboard() {
                     </label>
                   </div>
                 </section>
-              </AdminFilterDisclosure></Suspense>
+              </AdminFilterDisclosure>
             )}
             {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && renderBulkBar()}
             {skyVoiceQueueView === "all" && renderReviewTable(filteredReviewRows)}
@@ -6634,7 +6631,7 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-template-card-list">
               {compositeRows.length === 0 && <p className="admin-empty">No composite rows with relationship-type sections are loaded yet.</p>}
               {renderEditor()}
-              <Suspense fallback={null}><AdminPaginatedCollection
+              <AdminPaginatedCollection
                 items={compositeRows}
                 label="Composite Review"
                 pageSize={compositeReviewPageSize}
@@ -6667,7 +6664,7 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </article>
                 ))}</>}
-              </AdminPaginatedCollection></Suspense>
+              </AdminPaginatedCollection>
             </div>
           </section>
         )}
@@ -7286,12 +7283,12 @@ export function GeneratedContentAdminDashboard() {
           {(["all", "LIVE", "NOT_LIVE"] as const).map((status) => (
             <button key={status} type="button" role="tab" aria-selected={contentStatusFilter === status} className={contentStatusFilter === status ? "active" : ""} onClick={() => setContentStatusFilter(status)}>
               <span>{status === "all" ? "All" : status === "LIVE" ? "Live" : "Not live"}</span>
-              <strong>{statusCounts[status]}</strong>
+              <strong>{status === "all" ? statusCountRows.length : statusChecking ? "…" : status === "LIVE" ? liveCount : liveStatusResults.statuses.size - liveCount}</strong>
             </button>
           ))}
         </div>
-        {statusFiltersOpen && (!liveStatusResults || liveStatusResults.pending > 0) && <p role="status" className="admin-field-hint">Checking reader status…</p>}
-        {Boolean(liveStatusResults?.failed) && <p role="status" className="admin-field-hint">Status unavailable for {liveStatusResults?.failed} entries. These entries are excluded from Live and Not live filters. Refresh rows to retry.</p>}
+        {statusFiltersOpen && statusChecking && <p role="status" className="admin-field-hint">Checking reader status…</p>}
+        {Boolean(liveStatusResults?.failed) && <p role="status" className="admin-field-hint">Status unavailable for {liveStatusResults?.failed} entries. Refresh rows to retry.</p>}
         </details>
         <div className="admin-review-filter-grid">
           {!calendarAspectWorkspaceActive && (
@@ -7562,7 +7559,7 @@ export function GeneratedContentAdminDashboard() {
     const visibleGroups = groups.filter((group) => (groupedRows.get(group.key)?.length ?? 0) > 0);
 
     const showDailyGlanceStudio = fallbackSectionFilter === "daily";
-    if (visibleGroups.length === 0 && !showDailyGlanceStudio) return <p className="admin-empty">{contentStatusFilter !== "all" && (!liveStatusResults || liveStatusResults.pending > 0) ? "Checking reader status…" : "No rows match these filters."}</p>;
+    if (visibleGroups.length === 0 && !showDailyGlanceStudio) return <p className="admin-empty">{contentStatusFilter !== "all" && statusChecking ? "Checking reader status…" : "No rows match these filters."}</p>;
 
     return (
       <div className="admin-sky-edition-fields" aria-label="Fallback content grouped by reader use">
@@ -7625,7 +7622,7 @@ export function GeneratedContentAdminDashboard() {
     ].join(":");
 
     return (
-      <Suspense fallback={null}><AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
+      <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
         {(visibleTableRows) => <div className="admin-content-table-scroll">
           <table className="admin-content-table admin-content-table--browse">
           <thead className="admin-content-table-head">
@@ -7703,9 +7700,9 @@ export function GeneratedContentAdminDashboard() {
             })}
           </tbody>
         </table>
-          {tableRows.length === 0 && <p className="admin-empty">{activePage === "content" && contentStatusFilter !== "all" && (!liveStatusResults || liveStatusResults.pending > 0) ? "Checking reader status…" : "No rows match these filters."}</p>}
+          {tableRows.length === 0 && <p className="admin-empty">{activePage === "content" && contentStatusFilter !== "all" && statusChecking ? "Checking reader status…" : "No rows match these filters."}</p>}
         </div>}
-      </AdminPaginatedCollection></Suspense>
+      </AdminPaginatedCollection>
     );
   }
 
@@ -7720,7 +7717,7 @@ export function GeneratedContentAdminDashboard() {
             </button>
           ))}
         </aside>
-        <Suspense fallback={null}><AdminPaginatedCollection
+        <AdminPaginatedCollection
           items={tableRows}
           label="Review queue"
           pageSize={reviewQueuePageSize}
@@ -7755,7 +7752,7 @@ export function GeneratedContentAdminDashboard() {
           })}
           {tableRows.length === 0 && <p className="admin-empty">No review rows match these filters.</p>}
           </div>}
-        </AdminPaginatedCollection></Suspense>
+        </AdminPaginatedCollection>
       </section>
     );
   }

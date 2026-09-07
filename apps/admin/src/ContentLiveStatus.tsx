@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 export type LiveStatus = { id: string; live: boolean; label: "Live" | "Not live"; detail: string; source: string | null; updatedAt: string | null };
 type StatusRow = { id?: string | null; updated_at?: string | null };
@@ -11,7 +11,7 @@ export function useContentLiveStatusLoader(request: (ids: string[]) => Promise<L
   useEffect(() => subscribeToContentUpdates(() => setRevision((value) => value + 1)), []);
   const load = useMemo<Load>(() => {
     const cache = new Map<string, Promise<LiveStatus>>();
-    let pending: Array<{ id: string; resolve: (status: LiveStatus) => void; reject: (error: Error) => void }> = [];
+    let pending: Array<{ id: string; resolve: (status: LiveStatus) => void; reject: (error: unknown) => void }> = [];
     let scheduled = false;
     return (row) => {
       const key = `${row.id}/${row.updated_at ?? ""}`;
@@ -29,23 +29,21 @@ export function useContentLiveStatusLoader(request: (ids: string[]) => Promise<L
                 const status = statuses.find((value) => value.id === item.id);
                 if (status) item.resolve(status); else item.reject(new Error("Status could not be verified."));
               }
-            } catch (error) { group.forEach((item) => item.reject(error instanceof Error ? error : new Error("Status could not be verified."))); }
+            } catch (error) { group.forEach((item) => item.reject(error)); }
           }
         }, 0);
       }));
       const pendingStatus = cache.get(key)!;
-      void pendingStatus.catch(() => { if (cache.get(key) === pendingStatus) cache.delete(key); });
+      void pendingStatus.catch(() => cache.delete(key));
       return pendingStatus.then((status) => {
-        if (row.updated_at && status.updatedAt && Date.parse(row.updated_at) !== Date.parse(status.updatedAt)) throw new Error("Content changed. Refresh rows to verify status.");
+        if (row.updated_at && status.updatedAt && Date.parse(row.updated_at) !== Date.parse(status.updatedAt)) throw new Error("Status could not be verified.");
         return status;
       });
     };
   }, [revision, identity]);
   return load;
 }
-export function ContentLiveStatusProvider({ load, children }: { load: Load; children: ReactNode }) {
-  return <Context.Provider value={load}>{children}</Context.Provider>;
-}
+export const ContentLiveStatusProvider = Context.Provider;
 export function useContentLiveStatusResults(load: Load, rows: StatusRow[], enabled: boolean) {
   const [result, setResult] = useState<{ load: Load; rows: StatusRow[]; statuses: Map<string, LiveStatus>; failed: number; pending: number } | null>(null);
   useEffect(() => {
@@ -57,12 +55,10 @@ export function useContentLiveStatusResults(load: Load, rows: StatusRow[], enabl
       // Stream matching rows as batches resolve and stop scheduling work when
       // the editor changes the search/category or leaves this screen.
       for (let offset = 0; offset < rows.length || offset === 0; offset += 64) {
-        const results = await Promise.allSettled(rows.slice(offset, offset + 64).map((row) => load(row)));
+        await Promise.all(rows.slice(offset, offset + 64).map((row) => load(row)
+          .then((status) => { statuses.set(status.id, status); })
+          .catch(() => { failed++; })));
         if (cancelled) return;
-        for (const result of results) {
-          if (result.status === "fulfilled") statuses.set(result.value.id, result.value);
-          else failed++;
-        }
         setResult({ load, rows, statuses: new Map(statuses), failed, pending: Math.max(0, rows.length - offset - 64) });
       }
     })();
@@ -72,19 +68,16 @@ export function useContentLiveStatusResults(load: Load, rows: StatusRow[], enabl
 }
 export default function ContentLiveStatusBadge({ row, unsaved = false, label }: { row: StatusRow; unsaved?: boolean; label?: string }) {
   const load = useContext(Context);
-  const [status, setStatus] = useState<LiveStatus | null>(null);
-  const [failed, setFailed] = useState(false);
+  const [status, setStatus] = useState<LiveStatus | "unavailable" | null>(null);
   useEffect(() => {
     let cancelled = false;
-    setStatus(null); setFailed(false);
+    setStatus(null);
     if (!row.id || !load || unsaved) return;
-    void load(row).then((value) => { if (!cancelled) {
-      if (row.updated_at && value.updatedAt && Date.parse(row.updated_at) !== Date.parse(value.updatedAt)) setFailed(true);
-      else setStatus(value);
-    } }).catch(() => { if (!cancelled) setFailed(true); });
+    void load(row).then((value) => { if (!cancelled) setStatus(value); })
+      .catch(() => { if (!cancelled) setStatus("unavailable"); });
     return () => { cancelled = true; };
   }, [load, row.id, row.updated_at, unsaved]);
   if (unsaved || !row.id) return <span aria-label={label} className="ui-pill admin-status status-draft" title="These edits have not been saved and published.">Not live</span>;
-  if (!status) return <span aria-label={label} className="admin-field-hint" title={failed ? "Could not verify reader status. Reload to retry." : undefined}>{failed ? "Status unavailable" : "Checking status…"}</span>;
+  if (!status || status === "unavailable") return <span aria-label={label} className="admin-field-hint" title={status === "unavailable" ? "Status unavailable. Refresh rows to retry." : undefined}>{status === "unavailable" ? "Status unavailable" : "Checking status…"}</span>;
   return <span aria-label={label} className={`ui-pill admin-status admin-table-tag ${status.live ? "status-live" : "status-draft"}`} title={status.detail}>{status.label}</span>;
 }

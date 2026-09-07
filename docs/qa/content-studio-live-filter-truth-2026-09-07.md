@@ -34,3 +34,14 @@ Validation:
 
 No reader copy or content eligibility rules were changed. The checked-in
 fallback resolver artifact remains unchanged because its behavior is unchanged.
+
+Large catalogs stream verified matches in bounded batches and stop scheduling
+checks when the search/category changes. Filter and pagination helpers now ship
+with the dashboard rather than as two additional tiny chunks. Duplicate badge
+validation was removed; the shared loader remains the single version check.
+
+The knowledge build is an explicit prerequisite for both the Content Studio API
+suite and CI's plain Node startup check. The new JavaScript size overrun was
+resolved without increasing a budget. The remaining bundle failures match main:
+reader initial CSS and the Sky detail chunk. The unrelated writing-kernel
+provider-call drift is also present on main.
