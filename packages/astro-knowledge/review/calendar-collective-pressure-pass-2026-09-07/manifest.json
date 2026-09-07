@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "batchId": "calendar-collective-pressure-pass-2026-09-07",
+  "surface": "sky-calendar-exact-aspect",
+  "temporality": "current_sky",
+  "register": "collective",
+  "baseMainSha": "020840f5a8a64120715cf71f776baa41b2fdfcf9",
+  "servingBaseline": "sky-calendar-collective-approved-2026-09-07",
+  "candidatePath": "packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/candidate-payloads.json",
+  "candidateRowCount": 21,
+  "lockedUnchanged": [
+    "sky.aspect.saturn.square.lilith",
+    "sky.aspect.mars.square.saturn",
+    "sky.aspect.saturn.square.uranus"
+  ],
+  "readerAddressCandidateCount": 2,
+  "reviewStatus": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "canonicalTransitCorpusChanged": false,
+  "contentStudioLiveRowsChanged": false,
+  "readerServingChanged": false,
+  "directionNote": "Owner approved a stronger collective-human-pressure direction for selected Calendar aspects, preferred constructions such as 'There may be less tolerance for...' and 'The pressure builds around...', and explicitly preferred the existing Saturn square Lilith passage unchanged. New exact candidate wording remains held for exact-text review."
+}

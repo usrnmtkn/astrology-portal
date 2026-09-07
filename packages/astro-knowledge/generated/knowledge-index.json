@@ -94958,7 +94958,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/chiron-conjunction-lilith.json",
-          "sourceSha256": "9a89ebeaf468c41f474a58e870459ed71ce9571e20b0ef8582558ec8032fbe62"
+          "sourceSha256": "9a70f6467f5d87ebd54cd08570cf19743dfd9cbae79979c3e8ceb9d0c7f10067"
         }
       ]
     },
@@ -95105,7 +95105,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/chiron-opposition-lilith.json",
-          "sourceSha256": "70d0c4a231bb23e88f9c2a742058023bd346b1d7e2630e162c7c464895607c04"
+          "sourceSha256": "34a903988e302e0f71bbf16d6f609d00112178162c97f61b0d022d82f095d732"
         }
       ]
     },
@@ -95231,7 +95231,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/chiron-square-lilith.json",
-          "sourceSha256": "260a5cb71aede2bcdd4603ddadecfd9393e54f0fc9389c5b8e92dfc85938ded8"
+          "sourceSha256": "4cfc5e6de4577abd90f37f741d391c2acb38455aa2313af65a63b7e7e4e5f5f2"
         }
       ]
     },
@@ -97148,7 +97148,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mars-conjunction-lilith.json",
-          "sourceSha256": "64224da0adf0d1331013f6be2672ae6033246121df9b9dfdfe18f23cc48fb255"
+          "sourceSha256": "254da8f94e8ba1ad0279c48da2594d45a58a5ab7ef0f54eac46c18e97efc03cc"
         }
       ]
     },
@@ -97211,7 +97211,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mars-conjunction-pluto.json",
-          "sourceSha256": "d088e3ee896e6796c5d7c24713ea7c2645c9c4929b721db050148c27245a3108"
+          "sourceSha256": "9a784685a5aaa57d986b543ea31ea8578ae3714d8f4b5bf1272cf29bafcf3fb8"
         }
       ]
     },
@@ -97232,7 +97232,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mars-conjunction-saturn.json",
-          "sourceSha256": "d9ae9b4d95d451b93b135bd36e74cdf6a4495b97dbf16c5da55657758b47451a"
+          "sourceSha256": "aa323a476f9e7bd285de6ce94459ad352fa61ad897f810ca6a8c03ab668d22d4"
         }
       ]
     },
@@ -97421,7 +97421,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mars-opposition-lilith.json",
-          "sourceSha256": "7f1bae50b5cc7ecc5847efb3533160ad70a28e34605752c7aec107c0f5fa8287"
+          "sourceSha256": "99d135522dc711e8703c78f7617640f99d13b66d0e5c8d1cf2dc7959afb7cf57"
         }
       ]
     },
@@ -97484,7 +97484,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mars-opposition-pluto.json",
-          "sourceSha256": "9244c4a549d6439d4b520e691b09cbaea2620d37711928ecd76ee118c4e02a69"
+          "sourceSha256": "1a90aeb8723a3996d18caa79e947da49804331805467277bd9346342fe69c82f"
         }
       ]
     },
@@ -97505,7 +97505,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mars-opposition-saturn.json",
-          "sourceSha256": "921577760d5f4da1514170f5070efdebf2dc16f1a6ea51ab516d1bfde55cec41"
+          "sourceSha256": "b1ed4cc462a2c3f3bf0a1fd1a91da83a230d046f83b1f90fb4733efbe12732d3"
         }
       ]
     },
@@ -97841,7 +97841,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mars-square-lilith.json",
-          "sourceSha256": "a0534b4e91ccf58d63fdcaf8336f6c2f4ce4d2c8afd203f8bf83fdc614914a0a"
+          "sourceSha256": "d558e3c9a53e7b7713c076731967e73489e08074a550b326499ba86827c7016d"
         }
       ]
     },
@@ -97904,7 +97904,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mars-square-pluto.json",
-          "sourceSha256": "9aeaa4e469569b9c124dfb26dfb7aadd95fd201c7058b8dd4cf5156c3854de04"
+          "sourceSha256": "a0055fb1fa26471524c8a6a9a957a2710db5b6873726458d63ea3463119729b4"
         }
       ]
     },
@@ -101980,7 +101980,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/pluto-conjunction-lilith.json",
-          "sourceSha256": "0d891dc8d5652b82d2758879233ad6cf4f153443a910c5b9317ea95b1cc32b67"
+          "sourceSha256": "0e35e30f7c601a6962e6f79536ee6476c629eea58106fe09342685aa94583117"
         }
       ]
     },
@@ -102106,7 +102106,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/pluto-opposition-lilith.json",
-          "sourceSha256": "82b9457fb75eaac2db59f86e4b914eecba882cf338ae1f2e27b99c15112b581e"
+          "sourceSha256": "29dcc5afaee43e3c33b5dcd997926e094b7b21ee74ebafa294842c13a8d0a4c6"
         }
       ]
     },
@@ -102274,7 +102274,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/pluto-square-lilith.json",
-          "sourceSha256": "20e592f8525741107bed7727a6d2cbf9bd56f7832bb459e49c74f244a5585465"
+          "sourceSha256": "696370ddb6095e5af9752d07ac3c328a6d76eedb4469c3ce77454d6365cf432a"
         }
       ]
     },
@@ -102694,7 +102694,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/saturn-conjunction-lilith.json",
-          "sourceSha256": "f2245c86b554a4f4b0f038a55fa7feb03dcf278e57559293f20d08de51102c1e"
+          "sourceSha256": "b91aa5fcd88a7ff6ebe65fd782769c2c1d7a5435998b33abd93fd34b8be11b71"
         }
       ]
     },
@@ -102799,7 +102799,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/saturn-conjunction-uranus.json",
-          "sourceSha256": "d00766725626707206e020f048d3802b47a386d62af279ba1f9ea55544eb8c0a"
+          "sourceSha256": "17f2df6bbe03bed389cea4836c18fae3fe07c3a4183253d954a6aff01f69f4c2"
         }
       ]
     },
@@ -102904,7 +102904,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/saturn-opposition-lilith.json",
-          "sourceSha256": "fd1b1898dec7dc1d3d37752887e8835423c27ba425bf8996b3de7865d7201669"
+          "sourceSha256": "77067067c36342688c2192baaab6fb697ae56ca52625ad95a1643f6c5be89021"
         }
       ]
     },
@@ -103009,7 +103009,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/saturn-opposition-uranus.json",
-          "sourceSha256": "63a451b4d101cf722e7cb8de37489c23cb02a2ed5a5ddd2320e652b0b5fece4c"
+          "sourceSha256": "70d8f9af40663f329d26bada7f3b340f3bba36ad15bf258b1cadc06acafd185b"
         }
       ]
     },
@@ -106566,7 +106566,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/uranus-conjunction-lilith.json",
-          "sourceSha256": "0a6ec3041f89d5cfadbadec74c9df13b10499ea684bc47352ad57acaef353457"
+          "sourceSha256": "e4082fd3bb30318f04024d25ef9104657f52c6ce0c4f250e61ff4e76bf643228"
         }
       ]
     },
@@ -106776,7 +106776,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/uranus-opposition-lilith.json",
-          "sourceSha256": "1a015dfb313da0ca9a14ccaf371ed13b4779c46290a1b71e94bf6b588e7c578b"
+          "sourceSha256": "c22eabf03cbdc4f269a6620a9c4a9ff0f9a3fe479e8d99df149aeb694688e455"
         }
       ]
     },
@@ -107049,7 +107049,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/uranus-square-lilith.json",
-          "sourceSha256": "533e75eb49a6fb8078367177e110103aa8e4f3dda8df273b856d8da8a2793c89"
+          "sourceSha256": "70ae44e33cf21bd4214f92e5dec8890fa9a00ae19a9398da738ee349204d37d8"
         }
       ]
     },
@@ -524328,7 +524328,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "f3cc379240bc5e6765cac14e3992c3296be4d92701f453d3f9df9c676ff8b946",
+    "contentSha256": "9493f08d4d374fa7cae9edbc39c6aef26bda0e24420175a843efcffd19a04f2f",
     "distinctSourceFiles": 3455
   }
 }
