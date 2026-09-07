@@ -148,6 +148,10 @@ async function signedInSession() {
   return { supabase, session: data.session };
 }
 
+function delay(ms: number) {
+  return new Promise((resolve) => globalThis.setTimeout(resolve, ms));
+}
+
 export async function loadFriendReportJobStatus({
   subjectId,
   targetDate
@@ -173,27 +177,38 @@ export async function loadFriendReportJobStatus({
   if (!response.ok) return { state: "idle", saved: null };
   return {
     state: payload?.state ?? "idle",
-    saved: payload?.saved?.[0] ? fromRow(payload.saved[0]) : null
+    saved: payload?.saved?.[0]?.body?.trim() ? fromRow(payload.saved[0]) : null
   };
+}
+
+async function waitForFriendReportByIdentity(
+  subjectId: string,
+  targetDate: string,
+  timeoutMs = 5 * 60_000
+) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const status = await loadFriendReportJobStatus({ subjectId, targetDate });
+    if (status.saved) return status;
+    if (["failed", "cancelled", "idle", "pending_payment"].includes(status.state)) return status;
+    await delay(2500);
+  }
+  return { state: "retry" as FriendReportJobState, saved: null };
 }
 
 async function waitForFriendReport(request: GenerateUserContentRequest) {
   const targetDate = request.targetDate ?? "";
-  const deadline = Date.now() + 5 * 60_000;
-  while (Date.now() < deadline) {
-    const status = await loadFriendReportJobStatus({ subjectId: request.subjectId, targetDate });
-    if (status.saved) {
-      notifyFriendReadingReady(request, status.saved);
-      return status.saved;
-    }
-    if (status.state === "failed" || status.state === "cancelled") {
-      throw new GenerateUserContentError(500, {
-        ok: false,
-        errorType: "paid_reading_unavailable",
-        error: "This paid reading is currently unavailable."
-      });
-    }
-    await new Promise((resolve) => window.setTimeout(resolve, 2500));
+  const status = await waitForFriendReportByIdentity(request.subjectId, targetDate);
+  if (status.saved) {
+    notifyFriendReadingReady(request, status.saved);
+    return status.saved;
+  }
+  if (status.state === "failed" || status.state === "cancelled") {
+    throw new GenerateUserContentError(500, {
+      ok: false,
+      errorType: "paid_reading_unavailable",
+      error: "This paid reading is currently unavailable."
+    });
   }
   throw new GenerateUserContentError(202, {
     ok: false,
@@ -281,7 +296,12 @@ export async function loadUserGeneratedInterpretation({
     return null;
   }
 
-  return data?.[0] ? fromRow(data[0]) : null;
+  const row = data?.[0];
+  if (row?.body?.trim()) return fromRow(row);
+  if (subjectType !== "friend_transit_reading" || !targetDate) return null;
+
+  const status = await waitForFriendReportByIdentity(subjectId, targetDate);
+  return status.saved;
 }
 
 async function postGenerationRequest(request: GenerateUserContentRequest, accessToken: string) {
@@ -331,7 +351,7 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
   }
 
   const saved = payload?.saved?.[0];
-  if (saved) {
+  if (saved?.body?.trim()) {
     if (request.subjectType === "friend_transit_reading" && saved.status === "DRAFT") {
       const result = fromRow(saved);
       notifyFriendReadingReady(request, result);
@@ -345,7 +365,7 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
     return null;
   }
 
-  if (request.subjectType === "friend_transit_reading" && (response.status === 202 || payload?.queued)) {
+  if (request.subjectType === "friend_transit_reading" && (response.status === 202 || payload?.queued || saved)) {
     return waitForFriendReport(request);
   }
 
