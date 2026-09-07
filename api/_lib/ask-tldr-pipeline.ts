@@ -16,7 +16,10 @@ import {
 import { buildAskTldrGovernedAnswerPacket } from "./ask-tldr-governed-evidence.js";
 import { bindAskTldrQuestionRelevance } from "./ask-tldr-relevance-bound.js";
 import { buildAskTldrQuestionRelevanceReceipt } from "./ask-tldr-relevance-receipt.js";
-import { buildAskTldrVoiceEvidenceReceipt } from "./ask-tldr-voice-receipt.js";
+import {
+  buildAskTldrVoiceEvidenceReceipt,
+  type AskTldrOwnerCorrection
+} from "./ask-tldr-voice-receipt.js";
 import { validateAskTldrWriterOutput } from "./ask-tldr-writer.js";
 import { buildQuestionBoundAskTldrWriterRequest } from "./ask-tldr-question-bound-writer.js";
 import { verifyAskTldrFactLock } from "./ask-tldr-fact-lock.js";
@@ -49,6 +52,7 @@ function prepareFromPlan(input: {
   personalTiming?: unknown;
   reportWindow?: unknown;
   now?: Date;
+  ownerCorrections?: AskTldrOwnerCorrection[];
 }): AskTldrPreparedCalibration {
   const now = input.now ?? new Date();
   const personal = input.personalTiming == null ? [] : askTldrEvidenceFromPersonalTiming(input.personalTiming);
@@ -62,7 +66,8 @@ function prepareFromPlan(input: {
     question: questionBoundPacket.question,
     evidence: questionBoundPacket.evidence,
     governedGenerationAllowed: questionBoundPacket.generationAllowed,
-    governedGenerationBlockReason: questionBoundPacket.generationBlockReason
+    governedGenerationBlockReason: questionBoundPacket.generationBlockReason,
+    ownerCorrections: input.ownerCorrections
   });
   let writerRequest: ReturnType<typeof buildQuestionBoundAskTldrWriterRequest> | null = null;
   let preparationBlockReason: string | null = null;
@@ -102,6 +107,7 @@ export function prepareEvergreenAskTldrCalibration(input: {
   personalTiming?: unknown;
   reportWindow?: unknown;
   now?: Date;
+  ownerCorrections?: AskTldrOwnerCorrection[];
 }) {
   const plan = compileEvergreenAskPlan({ model: input.model, pillar: input.pillar, question: input.question });
   return prepareFromPlan({
@@ -110,7 +116,8 @@ export function prepareEvergreenAskTldrCalibration(input: {
     plan,
     personalTiming: input.personalTiming,
     reportWindow: input.reportWindow,
-    now: input.now
+    now: input.now,
+    ownerCorrections: input.ownerCorrections
   });
 }
 
@@ -122,6 +129,7 @@ export function prepareFreeTextAskTldrCalibration(input: {
   personalTiming?: unknown;
   reportWindow?: unknown;
   now?: Date;
+  ownerCorrections?: AskTldrOwnerCorrection[];
 }) {
   const basePlan = compileFreeTextAskPlan({
     model: input.model,
@@ -140,7 +148,8 @@ export function prepareFreeTextAskTldrCalibration(input: {
     plan,
     personalTiming: input.personalTiming,
     reportWindow: input.reportWindow,
-    now: input.now
+    now: input.now,
+    ownerCorrections: input.ownerCorrections
   });
 }
 
