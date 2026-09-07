@@ -96,6 +96,7 @@ test("Reports route keeps the TLDR navigation and design system across themes an
 
 test("Reports context menu paints above neighboring row dividers and controls", async ({ page }) => {
   await page.goto("/reports/");
+  await expect(page.locator(".report-library-list")).toBeVisible();
   await page.evaluate(() => {
     const list = document.querySelector<HTMLElement>(".report-library-list");
     if (!list) throw new Error("Reports list did not mount.");
