@@ -40,6 +40,8 @@ jobs:
         run: npm run typecheck
       - name: Build admin
         run: npm run build:admin
+      - name: Build astro knowledge
+        run: npm run build -w @tldr/astro-knowledge
       - name: Build web
         run: npm run build:web
       - name: Commit source and generated changes
