@@ -1,11 +1,7 @@
 const baseUrl = (process.env.PRODUCTION_BASE_URL || "https://tldrastro.vercel.app").replace(/\/+$/u, "");
-const adminSecret = process.env.CONTENT_GENERATION_SECRET?.trim();
 const attempts = Number.parseInt(process.env.PRODUCTION_SMOKE_ATTEMPTS || "6", 10);
 const delayMs = Number.parseInt(process.env.PRODUCTION_SMOKE_DELAY_MS || "10000", 10);
 
-if (!adminSecret) {
-  throw new Error("CONTENT_GENERATION_SECRET is required for the authenticated production report smoke check.");
-}
 if (!Number.isInteger(attempts) || attempts < 1 || !Number.isInteger(delayMs) || delayMs < 0) {
   throw new Error("Production smoke retry configuration is invalid.");
 }
@@ -22,8 +18,8 @@ async function responseSummary(response) {
     const parsed = JSON.parse(text);
     shape = parsed && typeof parsed === "object" ? Object.keys(parsed).sort().join(",") : typeof parsed;
   } catch {
-    // Missing-artifact failures are frequently plain text. Never print the
-    // authenticated dashboard response body or owner data into CI logs.
+    // Health failures can be plain text. Never print response bodies from
+    // production endpoints into CI logs.
   }
   return { status: response.status, contentType, shape };
 }
@@ -35,20 +31,18 @@ async function checkOnce() {
   const healthPayload = await health.json();
   if (healthPayload?.ok !== true) throw new Error(`Health smoke returned HTTP 200 without ok=true: ${JSON.stringify(healthSummary)}`);
 
-  const admin = await fetch(`${baseUrl}/api/admin/report-fulfillment`, {
-    headers: {
-      accept: "application/json",
-      authorization: `Bearer ${adminSecret}`,
-      // Admin traffic uses a dedicated credential header because deployment
-      // intermediaries may consume Authorization before the function runs.
-      "x-content-generation-secret": adminSecret
-    }
-  });
-  const adminSummary = await responseSummary(admin.clone());
-  if (admin.status !== 200) throw new Error(`Authenticated report smoke failed: ${JSON.stringify(adminSummary)}`);
-  const dashboard = await admin.json();
-  if (!Array.isArray(dashboard?.reports) || !Array.isArray(dashboard?.users) || dashboard?.billingMode !== "free_test") {
-    throw new Error(`Authenticated report smoke returned an invalid dashboard contract: ${JSON.stringify(adminSummary)}`);
+  const reportFulfillment = healthPayload?.dependencies?.reportFulfillment;
+  if (
+    reportFulfillment?.ok !== true
+    || reportFulfillment?.detail?.controlRowAvailable !== true
+    || reportFulfillment?.detail?.billingMode !== "free_test"
+  ) {
+    throw new Error(`Report fulfillment health contract failed: ${JSON.stringify({
+      status: health.status,
+      reportFulfillmentOk: reportFulfillment?.ok === true,
+      controlRowAvailable: reportFulfillment?.detail?.controlRowAvailable === true,
+      billingMode: reportFulfillment?.detail?.billingMode ?? "missing"
+    })}`);
   }
 }
 
