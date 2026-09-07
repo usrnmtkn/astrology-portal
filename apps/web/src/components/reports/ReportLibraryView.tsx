@@ -101,6 +101,7 @@ function reportSubtitle(item: ReportLibraryItem) {
 function statusLabel(item: ReportLibraryItem) {
   if (item.status === "ready") return item.seenAt ? null : "New";
   if (item.status === "needs_attention") return "Needs information";
+  if (item.status === "failed") return "Couldn't finish";
   return "Preparing";
 }
 
@@ -380,7 +381,7 @@ export function ReportLibraryView() {
   );
 }
 
-function GeneratedReportState({ message, backHref = "/reports/" }: { message: string; backHref?: string }) {
+export function GeneratedReportState({ message, backHref = "/reports/" }: { message: string; backHref?: string }) {
   return (
     <section className="article-page sky-detail-page saved-generated-report saved-generated-report--state">
       <button
