@@ -81,7 +81,9 @@ for (const width of [390, 1440]) {
       await expect(studio.getByText("No summary fields match this search.")).toBeVisible();
       await studio.getByLabel("Search summary wording").fill("");
       await studio.getByLabel("Summary section").selectOption("Timing and retrogrades");
-      await expect(studio.getByRole("article")).toHaveCount(7);
+      await expect(studio.getByRole("article")).toHaveCount(5);
+      await expect(studio.getByRole("article", { name: "Full Moon explanation", exact: true })).toHaveCount(0);
+      await expect(studio.getByRole("article", { name: "No retrograde planets", exact: true })).toHaveCount(0);
       await studio.getByLabel("Summary section").selectOption("Ingress TLDRs");
       await expect(studio.getByRole("article")).toHaveCount(1);
       await expect(studio.getByRole("article")).toContainText("No ingress TLDR added here.");

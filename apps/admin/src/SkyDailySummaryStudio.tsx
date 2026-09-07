@@ -19,7 +19,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
   const [ingressSign, setIngressSign] = useState("Libra");
   const isIngress = group === "Ingress TLDRs";
   const ingressSource = isIngress ? publishedIngressTldr(rows, ingressPlanet, ingressSign) : undefined;
-  const visible = (isIngress ? skyIngressSummaryFields.filter(field => field.label === `${ingressPlanet} enters ${ingressSign}`) : skyDailySummaryFields).filter(field => (group === "all" || field.group === group)
+  const visible = (isIngress ? skyIngressSummaryFields.filter(field => field.label === `${ingressPlanet} enters ${ingressSign}`) : skyDailySummaryFields).filter(field => field.readerEnabled !== false && (group === "all" || field.group === group)
     && `${field.label} ${field.body} ${importedSkySummary(field.key) ?? ""} ${rows.find(row => row.content_key === field.key)?.body ?? ""}`.toLowerCase().includes(query.toLowerCase()));
   return <section className="admin-daily-glance-studio" aria-label="Daily Sky Summary editor">
     <header className="admin-section-heading-row">

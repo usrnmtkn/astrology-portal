@@ -15,7 +15,7 @@ import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErro
 
 // These are the same defaults consumed by the Daily Sky reader, not CMS drafts.
 export const builtinContentRecords = new Map(skyDailySummaryFields.map(field => [field.key, {
-  id: `builtin:${field.key}`, content_key: field.key, body: field.body, headline: field.label
+  id: `builtin:${field.key}`, content_key: field.key, body: field.body, headline: field.label, readerEnabled: field.readerEnabled
 }]));
 
 const require = createRequire(import.meta.url);
@@ -133,6 +133,8 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
   return rows.map((row) => {
     const builtin = builtinContentRecords.get(row.content_key);
     if (builtin) {
+      if (builtin.readerEnabled === false) return { id: row.id, live: false, label: "Not live", source: null,
+        detail: "The current Daily Sky template does not use this field.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
       const current = [...candidates].sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))
         .find(candidate => candidate.content_key === row.content_key && candidate.status === "LIVE"
           && candidate.lane === "serving" && !candidate.review_state && candidate.body?.trim()

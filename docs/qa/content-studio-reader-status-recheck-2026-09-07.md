@@ -63,3 +63,6 @@ Composition Map. The combined 12-test Studio browser suite passed. Status
 comparison follows the reader's explicit approved-wording migration. The new
 ingress-summary fallback also observes retirement and current publication
 identity, with regression coverage for older TLDR suppression and republish.
+The template's two unused fields (zero-retrograde wording and Full Moon
+explanation) are excluded from the Daily Sky editor. Existing copies correctly
+report Not live. The 31-field audit includes these two inactive fields.

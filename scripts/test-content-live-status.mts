@@ -133,9 +133,13 @@ const { builtinContentRecords } = await import('../api/_lib/content-live-status'
 const { skyDailySummaryFields } = await import('../apps/web/src/content/skyDailySummaryCatalog');
 for (const field of skyDailySummaryFields) {
   const baseline = builtinContentRecords.get(field.key)!;
-  assert.equal(contentLiveStatuses([baseline], [])[0].live, Boolean(field.body.trim()), field.key);
+  assert.equal(contentLiveStatuses([baseline], [])[0].live, field.readerEnabled !== false && Boolean(field.body.trim()), field.key);
   const mirror = { ...baseline, id: 'summary-mirror', status: 'DRAFT', lane: 'serving', review_state: 'EDITORIAL_REVIEW_REQUIRED' };
-  assert.equal(contentLiveStatuses([mirror], [mirror])[0].live, Boolean(field.body.trim()), `${field.key}: exact bundled wording is live independently of a draft mirror`);
+  assert.equal(contentLiveStatuses([mirror], [mirror])[0].live, field.readerEnabled !== false && Boolean(field.body.trim()), `${field.key}: exact bundled wording is live independently of a draft mirror`);
+  if (field.readerEnabled === false) {
+    const published = { ...mirror, status: 'LIVE', review_state: null };
+    assert.equal(contentLiveStatuses([published], [published])[0].live, false, 'Unused template fields never inherit a Live row status');
+  }
   assert.equal(contentLiveStatuses([{ ...mirror, body: 'QA unsaved different summary' }], [])[0].live, false);
 }
 assert.equal(contentLiveStatuses([safe], [safe], () => false)[0].live, false, 'A raw LIVE row must not bypass the publication ledger');
