@@ -1,3 +1,4 @@
+import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, type LiveStatus } from "./ContentLiveStatus";
 import { mergeContentInventory } from "./contentStudioState";
@@ -2832,6 +2833,7 @@ export function GeneratedContentAdminDashboard() {
   const guidedReviewOpenedRef = useRef("");
   const editorRef = useRef<HTMLElement | null>(null);
   const editorReturnFocusRef = useRef<HTMLElement | null>(null);
+  const [editorSaveError, setEditorSaveError] = useState("");
   const editorBaselineRef = useRef<string | null>(null);
   const editorSavedInputRef = useRef<string | null>(null);
   const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
@@ -4305,9 +4307,12 @@ export function GeneratedContentAdminDashboard() {
     nextStatus?: GeneratedContentStatus,
     draftOverride?: AdminDraft,
     sourceLifecycleAction?: "archive" | "restore",
-    updateEditor = true
+    updateEditor = true,
+    recoveryAttempt = false
   ) {
+    setEditorSaveError("");
     const activeDraft = draftOverride ?? draft;
+    const recoveryBaseline = editorBaselineRef.current;
     if (!activeDraft) return null;
     const isNewCompatibilityCard = !activeDraft.id && activeDraft.blockType === "compatibility_planet_card";
     const compatibilityIdentity = compatibilityBrowseIdentity(activeDraft.contentKey, activeDraft.facts, activeDraft.sourceSnapshot);
@@ -4408,7 +4413,33 @@ export function GeneratedContentAdminDashboard() {
           : `${draftForSave.contentKey} saved as ${contentStatusLabel(saved.status)}.`);
       return saved;
     } catch (error) {
-      setMessage(dashboardErrorMessage(error));
+      // A timed-out publish may have committed, or only metadata may have
+      // advanced. Refresh the version and rebase text once, with CAS on retry.
+      if (!recoveryAttempt && updateEditor && !sourceLifecycleAction && activeDraft.id
+        && draftHasPackageProposal(activeDraft) && recoveryBaseline
+        && error instanceof AdminRequestError && [408, 409, 504].includes(error.status)) {
+        try {
+          const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+            `/api/admin/generated-content?id=${encodeURIComponent(activeDraft.id)}&status=all&visibility=all&limit=1`, secret);
+          const latest = payload.rows.find((row) => row.id === activeDraft.id);
+          if (!latest || latest.inventory_only) throw new Error("Could not reload the saved version. Your edits are still here; try saving again.");
+          const baseline = JSON.parse(recoveryBaseline) as AdminDraft;
+          if (baseline.id !== activeDraft.id || baseline.contentKey !== activeDraft.contentKey) throw error;
+          if (latest.status === "ARCHIVED") throw new Error("This source was archived while you were editing. Your edits are still here; restore the saved source before applying them.");
+          const latestDraft = draftFromRow(latest);
+          const proposal = recoverContentStudioCopy(
+            draftEditablePackageRecord(baseline), draftEditablePackageRecord(activeDraft), draftEditablePackageRecord(latestDraft));
+          const fields = recoverContentStudioCopy(
+            { headline: baseline.headline, summary: baseline.summary, body: baseline.body, reviewerNotes: baseline.reviewerNotes },
+            { headline: activeDraft.headline, summary: activeDraft.summary, body: activeDraft.body, reviewerNotes: activeDraft.reviewerNotes },
+            { headline: latestDraft.headline, summary: latestDraft.summary, body: latestDraft.body, reviewerNotes: latestDraft.reviewerNotes });
+          const recovered = { ...latestDraft, ...fields, sections: { ...latestDraft.sections, packageDraft: proposal, contentStudioReview: null } } as AdminDraft;
+          return await saveDraft(nextStatus, recovered, undefined, updateEditor, true);
+        } catch (recoveryError) { error = recoveryError; }
+      }
+      const feedback = dashboardErrorMessage(error);
+      setEditorSaveError(feedback);
+      setMessage(feedback);
       return null;
     } finally {
       setIsLoading(false);
@@ -4544,6 +4575,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true) {
+    setEditorSaveError("");
     setIsLoading(true);
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
@@ -4568,6 +4600,7 @@ export function GeneratedContentAdminDashboard() {
       setMessage(`${published.content_key} approved and published to the app.`);
       return published;
     } catch (error) {
+      setEditorSaveError(dashboardErrorMessage(error));
       setMessage(dashboardErrorMessage(error));
     } finally {
       setIsLoading(false);
@@ -4713,6 +4746,7 @@ export function GeneratedContentAdminDashboard() {
       editorReturnFocusRef.current = document.activeElement;
     }
     const nextDraft = draftFromRow(row);
+    setEditorSaveError("");
     editorBaselineRef.current = JSON.stringify(nextDraft);
     editorSavedInputRef.current = JSON.stringify(nextDraft);
     const edition = compiledSkyArticleEditionForDraft(nextDraft);
@@ -9922,6 +9956,7 @@ export function GeneratedContentAdminDashboard() {
             </div>
           </details>
         </section>
+        {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
           <span className={`admin-editor-save-state ${isLoading ? "is-saving" : draftHasUnsavedChanges || isNewDraft || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
             {isLoading

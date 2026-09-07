@@ -1,0 +1,10 @@
+import assert from "node:assert/strict";
+import { recoverContentStudioCopy } from "../apps/admin/src/contentStudioCopyRecovery.ts";
+const baseline = { body_you: "You baseline", body_they: "Friend baseline", approval: { hash: "old" } };
+const edited = { ...baseline, body_you: "Exact owner You revision" };
+assert.deepEqual(recoverContentStudioCopy(baseline, edited, { ...baseline, approval: { hash: "new" } }), { ...edited, approval: { hash: "new" } });
+assert.deepEqual(recoverContentStudioCopy(baseline, edited, { ...baseline, body_they: "Independent Friend edit" }), { ...edited, body_they: "Independent Friend edit" });
+assert.deepEqual(recoverContentStudioCopy(baseline, edited, edited), edited, "A committed but timed-out save can be recovered.");
+assert.throws(() => recoverContentStudioCopy(baseline, edited, { ...baseline, body_you: "Competing You revision" }), /body_you/);
+assert.equal(baseline.body_you, "You baseline");
+console.log("PASS: metadata refresh, disjoint edits, committed timeout, and same-field conflict protection");
