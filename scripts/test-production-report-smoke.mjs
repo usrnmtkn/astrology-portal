@@ -7,13 +7,15 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 let failHealth = false;
 let failReportFulfillment = false;
+let failContentStudio = false;
 const requests = [];
 const server = http.createServer((req, res) => {
   requests.push({ url: req.url });
   res.setHeader("content-type", "application/json");
   if (req.url === "/api/health") {
     const reportFulfillmentOk = !failReportFulfillment;
-    const ok = !failHealth && reportFulfillmentOk;
+    const contentStudioOk = !failContentStudio;
+    const ok = !failHealth && reportFulfillmentOk && contentStudioOk;
     res.statusCode = ok ? 200 : 503;
     res.end(JSON.stringify({
       ok,
@@ -24,6 +26,14 @@ const server = http.createServer((req, res) => {
           detail: {
             controlRowAvailable: reportFulfillmentOk,
             billingMode: "free_test"
+          }
+        },
+        contentStudioExactAspects: {
+          ok: contentStudioOk,
+          detail: {
+            exactRows: contentStudioOk ? 439 : 438,
+            northNodeRows: 60,
+            southNodeRows: contentStudioOk ? 60 : 59
           }
         }
       }
@@ -63,7 +73,7 @@ function runSmoke() {
 try {
   const passed = await runSmoke();
   assert.equal(passed.status, 0, passed.stderr);
-  assert.match(passed.stdout, /Production report smoke passed/u);
+  assert.match(passed.stdout, /Production report and Content Studio smoke passed/u);
   assert.deepEqual(requests.map((request) => request.url), ["/api/health"]);
 
   requests.length = 0;
@@ -75,6 +85,14 @@ try {
 
   requests.length = 0;
   failReportFulfillment = false;
+  failContentStudio = true;
+  const studioFailed = await runSmoke();
+  assert.notEqual(studioFailed.status, 0);
+  assert.match(studioFailed.stderr, /Health smoke failed|Content Studio exact-aspect health contract failed/u);
+  assert.deepEqual(requests.map((request) => request.url), ["/api/health"]);
+
+  requests.length = 0;
+  failContentStudio = false;
   failHealth = true;
   const healthFailed = await runSmoke();
   assert.notEqual(healthFailed.status, 0);
@@ -84,4 +102,4 @@ try {
   await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
 }
 
-console.log("Production report smoke contract passed: public health must include a healthy report-fulfillment dependency, and non-200 fails closed.");
+console.log("Production smoke contract passed: public health must include healthy report-fulfillment and exact-aspect Content Studio dependencies, and non-200 fails closed.");
