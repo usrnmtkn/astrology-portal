@@ -85,7 +85,7 @@
 
 .report-library-row__open {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: var(--card-row-gap);
   min-width: 0;
@@ -143,8 +143,7 @@
   color: var(--card-body-color);
 }
 
-.report-library-row__date,
-.report-library-row__chevron {
+.report-library-row__date {
   color: var(--card-meta-color);
 }
 
