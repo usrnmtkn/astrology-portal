@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   fullDetailReaderFacingParagraphs,
@@ -117,6 +117,16 @@ export function ReportArticle({ report }: { report: ReportDocument }) {
 
   return (
     <main className="report-article-page" data-report-id={report.id} data-report-type={report.reportType}>
+      <button
+        className="report-article-back floating-back-button"
+        type="button"
+        aria-label="Back to Reports"
+        onClick={() => window.location.assign("/reports/")}
+      >
+        <ChevronLeft size={18} aria-hidden="true" />
+        <span>Back</span>
+      </button>
+
       <article className="report-article" aria-labelledby="report-cover-title">
         <header className="report-cover" data-report-block="cover">
           <p className="report-label">{report.cover.kicker}</p>
