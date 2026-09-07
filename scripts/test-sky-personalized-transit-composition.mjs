@@ -172,7 +172,7 @@ const activeEvents = skyActiveChartEvents([
   {
     key: "venus",
     heading: "Sun Trine Venus",
-    body: "While Sun is in your 4th house, it is also trining your natal Venus in your 8th house until September 11. Support around shared money, trust, or responsibility can be easier to receive."
+    body: "While Sun is in your 4th house, it is also trining your natal Venus in your 8th house until September 11. Sun in Virgo wants the practical change named clearly; your Venus describes what you value. Support around shared money, trust, or responsibility can be easier to receive."
   },
   {
     key: "south",
@@ -190,11 +190,17 @@ assert.equal(activeEvents[0].type, "nodal-axis");
 assert.deepEqual(activeEvents[0].memberKeys, ["north", "south"]);
 assert.equal(activeEvents[0].heading, "Sun Conjunction North Node · Sun Opposition South Node");
 assert.equal(activeEvents[0].dateLabel, "Through September 9");
-assert.doesNotMatch(activeEvents[0].body ?? "", /^While Sun is in your 4th house/u);
-assert.equal((activeEvents[0].body?.match(/Sun in Virgo wants the practical change named clearly/gu) ?? []).length, 1, "Shared transit/sign setup should appear once inside a grouped nodal event.");
+assert.match(activeEvents[0].body ?? "", /^Your natal North Node is in your 4th house, while your South Node is in your 10th house\./u);
+assert.equal((activeEvents[0].body?.match(/Sun in Virgo wants the practical change named clearly/gu) ?? []).length, 0, "Shared transit/sign setup belongs in the placement paragraph, not every active-chart event.");
+assert.match(activeEvents[0].body ?? "", /Your North Node describes the unfamiliar direction\./u);
+assert.match(activeEvents[0].body ?? "", /Your South Node describes the role you already know how to carry\./u);
 assert.equal(activeEvents[1].memberKeys[0], "venus", "Grouping should preserve the upstream significance order of the first event member.");
 assert.equal(activeEvents[2].memberKeys[0], "moon");
 assert.equal(activeEvents.flatMap((event) => event.memberKeys).sort().join(","), "moon,north,south,venus", "Every calculated aspect must remain represented after grouping.");
+assert.equal(activeEvents[1].dateLabel, "Through September 11");
+assert.match(activeEvents[1].body ?? "", /^Your natal Venus is in your 8th house\. Your Venus describes what you value\./u);
+assert.doesNotMatch(activeEvents[1].body ?? "", /Sun in Virgo wants the practical change named clearly/u);
+assert.match(activeEvents[2].body ?? "", /^Your natal Moon is in your 6th house\. A schedule or responsibility/u);
 
 const loneNode = skyActiveChartEvents([{
   key: "north-only",
@@ -202,6 +208,7 @@ const loneNode = skyActiveChartEvents([{
   body: "While Sun is in your 4th house, it is also trining your natal North Node in your 4th house until September 9. One supported opening appears."
 }]);
 assert.equal(loneNode[0].type, "single", "An unpaired node contact must stay visible instead of being invented into an axis pair.");
+assert.match(loneNode[0].body ?? "", /^Your natal North Node is in your 4th house\. One supported opening appears\./u);
 
 assert.match(appSource, /personalTransitPackageSection\(transit, generatedAt, "you", \{[\s\S]*?generatedContent,[\s\S]*?transitHouse: house/u);
 assert.match(appSource, /body: packageSection\?\.body \?\? compiledAspect\?\.body \?\? null/u);
