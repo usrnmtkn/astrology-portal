@@ -86,6 +86,8 @@ const goodResult = await runPreparedAskTldrAnswerCalibration({
   authorization: { authorized: true, purpose: "ask_tldr_calibration", scopeSha256: answerScope, maxCalls: 2 },
   callModel: async (request) => {
     roles.push(request.role);
+    assert.match(request.prompt, /Why the astrology points here/u);
+    assert.doesNotMatch(request.prompt, /Why your chart points here:/u);
     if (request.role === "writer") {
       return { provider: "fixture", model: "fixture-writer", responseId: "writer-1", value: goodWriterValue };
     }
@@ -124,6 +126,8 @@ const revisedResult = await runPreparedAskTldrAnswerCalibration({
   authorization: { authorized: true, purpose: "ask_tldr_calibration", scopeSha256: answerScope, maxCalls: 4 },
   callModel: async (request) => {
     revisionRoles.push(request.role);
+    assert.match(request.prompt, /Why the astrology points here/u);
+    assert.doesNotMatch(request.prompt, /Why your chart points here:/u);
     if (request.role === "writer") {
       writerPass += 1;
       if (writerPass === 2) {

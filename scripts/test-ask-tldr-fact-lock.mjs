@@ -51,8 +51,32 @@ for (const [answer, code] of [
   assert.ok(locked.issues.some((issue) => issue.code === code), JSON.stringify(locked.issues));
 }
 
+// A matching month/day must not authorize an invented previous cycle's year.
+for (const date of ["September 15, 2014", "Sep 15 2038", "September 15th, 2014"]) {
+  const locked = verifyAskTldrFactLock({
+    output: { ...output, answer: goodValue.answer.replace("September 15", date) },
+    evidence: governed.evidence
+  });
+  assert.equal(locked.passed, false, `Invented lookback/future date must fail: ${date}`);
+  assert.ok(locked.issues.some((issue) => issue.code === "untraceable_date"));
+}
+for (const date of ["September 15, 2026", "Sep 15 2026", "September 15th, 2026"]) {
+  const locked = verifyAskTldrFactLock({
+    output: { ...output, answer: goodValue.answer.replace("September 15", date) },
+    evidence: governed.evidence
+  });
+  assert.equal(locked.passed, true, JSON.stringify(locked.issues));
+}
+
 const supporting = governed.evidence.find((factor) => factor.id !== request.primaryEvidenceId && factor.governedMeaning.status === "full");
 if (supporting) {
+  const reordered = verifyAskTldrFactLock({
+    output: { ...output, evidenceIdsUsed: [supporting.id, request.primaryEvidenceId] },
+    evidence: governed.evidence
+  });
+  assert.equal(reordered.passed, true, JSON.stringify(reordered.issues));
+  assert.deepEqual(reordered.checkedEvidenceIds, [supporting.id, request.primaryEvidenceId],
+    "A valid writer declaration order must survive the fact lock for judge scope validation.");
   const undeclared = verifyAskTldrFactLock({
     output: {
       ...output,
@@ -64,4 +88,24 @@ if (supporting) {
   assert.equal(undeclared.checkedEvidenceIds.includes(supporting.id), false, "The fact lock must scope itself to the evidence IDs the writer declared.");
 }
 
-console.log("Ask TLDR fact lock passed: dates, named aspects, returns, house claims, and sign claims are checked across the reader answer including its astrology-support section, using only the writer's declared calculated evidence.");
+const lunarCandidate = calculated.find((factor) => factor.kind === "eclipse" && factor.facts.kind === "lunar_eclipse");
+assert.ok(lunarCandidate);
+// Explicit synthetic facts distinguish the event house from a contacted point's house.
+const lunarEvidence = { ...lunarCandidate, houses: [4, 10], facts: { ...lunarCandidate.facts, natalHouse: 4 } };
+for (const [answer, passed] of [
+  ["A lunar eclipse in your 4th house.", true],
+  ["A lunar eclipse in your 10th house.", false],
+  ["A solar eclipse in your 4th house.", false]
+]) {
+  const locked = verifyAskTldrFactLock({
+    output: { ...output, answer, evidenceIdsUsed: [lunarEvidence.id] },
+    evidence: [lunarEvidence]
+  });
+  assert.equal(locked.passed, passed, JSON.stringify(locked.issues));
+}
+assert.equal(verifyAskTldrFactLock({
+  output: { ...output, answer: "A lunar eclipse supports the answer." },
+  evidence: governed.evidence.filter((factor) => factor.kind !== "eclipse")
+}).passed, false, "An undeclared eclipse must not enter the rationale.");
+
+console.log("Ask TLDR fact lock passed: dates, named aspects, returns, house claims, and sign claims are checked only against the writer's declared calculated evidence.");

@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import type { AskTldrGovernedFactor } from "./ask-tldr-governed-evidence.js";
 import type { AskTldrVoiceEvidenceReceipt } from "./ask-tldr-voice-receipt.js";
-import type { AskTldrWriterOutput, AskTldrWriterRequest } from "./ask-tldr-writer.js";
+import { ASTROLOGY_SECTION_HEADING, type AskTldrWriterOutput, type AskTldrWriterRequest } from "./ask-tldr-writer.js";
 
 export const ASK_TLDR_JUDGE_CATEGORIES = [
   "question_answering",
@@ -103,8 +103,8 @@ function judgeInstructions() {
     "Owner voice: compare sentence movement, vocabulary, directness, and stopping point to OWNER REGISTER EVIDENCE. Do not confuse semantic CMS copy with owner-authored voice evidence.",
     "Natural language: flag technically correct but written-sounding phrases, vague referents, abstract handbook language, keyword stacks, clever lines that need decoding, and unnecessary summaries.",
     "Practical usefulness: the answer should leave the reader with a concrete perspective, choice, boundary, question, comparison, preparation step, or next move that follows from the astrology and the question. Common-sense advice earns less credit when the astrology has not changed or sharpened it.",
-    "The answer must include a separate 'Why the astrology points here' section. That section should explain the primary mechanism in plain language and, when supplied evidence allows it, use supporting factors to show reinforcement, contrast, or a larger arc. Merely restating transit labels is not enough.",
-    "If the supplied evidence contains reinforcing annual or upcoming factors, check whether the answer uses them to show amplification or trajectory. Do not require reinforcement when the selected evidence does not support it.",
+    `The answer must include a separate '${ASTROLOGY_SECTION_HEADING}' section. The heading must follow the main answer and precede one final explanatory paragraph. That paragraph should explain the primary mechanism in plain language and, when supplied evidence allows it, use supporting factors to show reinforcement, contrast, or a larger arc. Merely restating transit labels is not enough.`,
+    "If the supplied evidence contains reinforcing annual or upcoming factors, check whether the answer uses them to show amplification or trajectory. Do not require reinforcement when the selected evidence does not support it. Sharing a house or pillar is insufficient evidence of reinforcement.",
     "Do not reward a historical lookback unless the calculated evidence explicitly contains a historical comparison. A model-generated guess based on planetary periodicity is a factual defect.",
     "Boundary compliance: enforce the supplied pillar boundary and decision-support rule. Astrology must not become financial, medical, or spiritual certainty where prohibited.",
     "A score of 4 means no meaningful defect in that category. A 3 means good but with a specific fixable weakness. A 2 or below means the answer is not release quality.",

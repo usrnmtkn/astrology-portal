@@ -2,7 +2,7 @@ import type { AskTldrGovernedFactor } from "./ask-tldr-governed-evidence.ts";
 import type { AskTldrWriterOutput } from "./ask-tldr-writer.ts";
 
 export type AskTldrFactLockIssue = {
-  code: "untraceable_date" | "untraceable_degree" | "untraceable_attribution" | "untraceable_house_claim" | "untraceable_sign_claim";
+  code: "untraceable_date" | "untraceable_degree" | "untraceable_attribution" | "untraceable_house_claim" | "untraceable_sign_claim" | "untraceable_eclipse_claim";
   value: string;
   message: string;
 };
@@ -63,7 +63,9 @@ function dateTokens(evidence: AskTldrGovernedFactor[]) {
     const month = date.getUTCMonth();
     const day = date.getUTCDate();
     tokens.add(`${MONTH_LONG[month]} ${day}`.toLowerCase());
+    tokens.add(`${MONTH_LONG[month]} ${day} ${date.getUTCFullYear()}`.toLowerCase());
     tokens.add(`${MONTH_SHORT[month]} ${day}`.toLowerCase());
+    tokens.add(`${MONTH_SHORT[month]} ${day} ${date.getUTCFullYear()}`.toLowerCase());
     tokens.add(value.slice(0, 10).toLowerCase());
   }
   return tokens;
@@ -157,7 +159,12 @@ export function verifyAskTldrFactLock(input: {
   output: AskTldrWriterOutput;
   evidence: AskTldrGovernedFactor[];
 }) {
-  const used = input.evidence.filter((factor) => input.output.evidenceIdsUsed.includes(factor.id));
+  const byId = new Map(input.evidence.map((factor) => [factor.id, factor]));
+  // Preserve declaration order: the judge verifies this exact fact-lock scope.
+  const used = input.output.evidenceIdsUsed.flatMap((id) => {
+    const factor = byId.get(id);
+    return factor ? [factor] : [];
+  });
   const issues: AskTldrFactLockIssue[] = [];
   if (!used.length) {
     return {
@@ -173,9 +180,9 @@ export function verifyAskTldrFactLock(input: {
 
   const answer = input.output.answer;
   const allowedDates = dateTokens(used);
-  const dates = answer.match(/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}\b/giu) ?? [];
+  const dates = answer.match(/\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?\b(?:,?\s+\d{4}\b)?/giu) ?? [];
   for (const date of dates) {
-    if (!allowedDates.has(date.toLowerCase())) {
+    if (!allowedDates.has(date.toLowerCase().replace(/(\d)(?:st|nd|rd|th)\b/gu, "$1").replace(/,/gu, "").replace(/\s+/gu, " "))) {
       issues.push({ code: "untraceable_date", value: date, message: `${date} is not present in the writer's declared calculated evidence.` });
     }
   }
@@ -183,6 +190,23 @@ export function verifyAskTldrFactLock(input: {
   for (const date of isoDates) {
     if (!allowedDates.has(date.toLowerCase())) {
       issues.push({ code: "untraceable_date", value: date, message: `${date} is not present in the writer's declared calculated evidence.` });
+    }
+  }
+
+  // Eclipse meaning may be generic, but the event type and natal house are
+  // calculated facts. Contact houses used for retrieval are not event houses.
+  const eclipses = used.filter((factor) => factor.kind === "eclipse");
+  for (const match of answer.matchAll(/\b(?:(solar|lunar)\s+)?eclipses?\b/giu)) {
+    const eventType = match[1]?.toLowerCase();
+    if (!eclipses.some((factor) => !eventType || factor.facts.kind === `${eventType}_eclipse`)) {
+      issues.push({ code: "untraceable_eclipse_claim", value: match[0], message: "The named eclipse type is absent from the declared calculated evidence." });
+    }
+  }
+  for (const match of answer.matchAll(/\b(?:(solar|lunar)\s+)?eclipses?\s+(?:in|through|activating)\s+(?:your\s+|the\s+)?(1[0-2]|[1-9])(?:st|nd|rd|th)?\s+house\b/giu)) {
+    const eventType = match[1]?.toLowerCase();
+    const house = Number(match[2]);
+    if (!eclipses.some((factor) => (!eventType || factor.facts.kind === `${eventType}_eclipse`) && Number(factor.facts.natalHouse) === house)) {
+      issues.push({ code: "untraceable_house_claim", value: match[0], message: "The eclipse natal house must come from the calculated event, not a contact house or interpretation." });
     }
   }
 

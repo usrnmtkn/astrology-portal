@@ -63,6 +63,7 @@ export type AskTldrIntentClassification = {
 };
 
 export type AskTldrEvidenceCandidate = {
+  facts?: Record<string, unknown>;
   id: string;
   factorKey?: string;
   kind: AskTldrEvidenceKind;

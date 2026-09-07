@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { askTldrEvidenceFromReportWindow } from "../api/_lib/ask-tldr-evidence-adapter.ts";
+import { askTldrCandidateMatchesQuestionFocus } from "../api/_lib/ask-tldr-relevance.ts";
 import { prepareEvergreenAskTldrCalibration } from "../api/_lib/ask-tldr-pipeline.ts";
 import { buildAskTldrQuestionRelevanceReceipt } from "../api/_lib/ask-tldr-relevance-receipt.ts";
 import { buildQuestionBoundAskTldrWriterRequest } from "../api/_lib/ask-tldr-question-bound-writer.ts";
@@ -20,6 +22,23 @@ const prepared = prepareEvergreenAskTldrCalibration({
 });
 assert.equal(prepared.preparationAllowed, true, prepared.preparationBlockReason);
 assert.ok(prepared.writerRequest);
+assert.equal(prepared.writerRequest.outputSchema.properties.evidenceIdsUsed.minItems, 1,
+  "Eligible supporting evidence must not force an unsupported synthesis.");
+assert.doesNotMatch(prepared.writerRequest.instructions, /Why your chart points here:/u,
+  "The question-bound prompt must not contradict the shared section heading.");
+const lunar = askTldrEvidenceFromReportWindow(reportWindow).find((factor) =>
+  factor.kind === "eclipse" && factor.facts.kind === "lunar_eclipse" && factor.houses.includes(10));
+assert.ok(lunar);
+assert.equal(askTldrCandidateMatchesQuestionFocus(lunar, prepared.plan), true,
+  "Calculated lunar eclipses with hyphenated IDs must remain eligible.");
+assert.equal(askTldrCandidateMatchesQuestionFocus({ ...lunar, id: "opaque-calculator-id" }, prepared.plan), true);
+assert.equal(askTldrCandidateMatchesQuestionFocus({ ...lunar, id: "lunar_eclipse_fake", facts: { ...lunar.facts, kind: "solar_eclipse" } }, prepared.plan), false,
+  "An ID cannot authorize unsupported solar-eclipse meaning.");
+assert.equal(askTldrCandidateMatchesQuestionFocus({ ...lunar, facts: undefined }, prepared.plan), false);
+const selectedLunar = prepared.questionBoundPacket.evidence.find((factor) => factor.id === lunar.id);
+assert.ok(selectedLunar, "The eligible career lunar eclipse must reach the actual prepared packet.");
+assert.equal(selectedLunar.governedMeaning.status, "full");
+assert.equal(selectedLunar.governedMeaning.sourceKind, "owner_approved_eclipse_snapshot");
 const primary = prepared.questionBoundPacket.evidence.find((factor) => factor.role === "primary");
 assert.ok(primary);
 assert.equal(primary.governedMeaning.status, "full");

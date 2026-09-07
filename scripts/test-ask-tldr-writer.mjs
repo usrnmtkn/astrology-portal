@@ -151,6 +151,19 @@ assert.throws(() => validateAskTldrWriterOutput({
   value: { ...goodValue, answer: "   " }
 }), /ASK_TLDR_WRITER_EVIDENCE_IDS_INVALID/u, "Empty reader prose remains forbidden by the deterministic validator even though minLength is not sent to the provider.");
 
+for (const answer of [
+  goodValue.answer.split("\n\nWhy the astrology points here")[0],
+  goodValue.answer.split("\n\nWhy the astrology points here")[0] + "\n\nWhy the astrology points here",
+  "Why the astrology points here\n\n" + goodValue.answer,
+  goodValue.answer + "\n\nWhy the astrology points here"
+]) {
+  assert.throws(() => validateAskTldrWriterOutput({
+    request, question: governed.question, evidence: governed.evidence,
+    value: { ...goodValue, answer }
+  }), /astrology_support_section_(?:missing|structure_invalid)/u,
+  "Missing, empty, duplicated, and misplaced support sections must fail.");
+}
+
 const mismatchedReceipt = structuredClone(receipt);
 mismatchedReceipt.semanticSources[0].packetSha256 = "bad";
 assert.throws(() => buildAskTldrWriterRequest({ packet: governed, receipt: mismatchedReceipt }), /ASK_TLDR_VOICE_RECEIPT_TAMPERED|ASK_TLDR_WRITER_SEMANTIC_RECEIPT_MISMATCH/u);

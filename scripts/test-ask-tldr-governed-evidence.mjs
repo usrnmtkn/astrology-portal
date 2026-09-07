@@ -34,6 +34,7 @@ assert.ok(governed.evidence[0].governedMeaning.governanceSourceSha256);
 
 function packetRecords(packet) {
   if (!packet || typeof packet !== "object") return [];
+  if (Array.isArray(packet.evidence)) return packet.evidence;
   if (packet.record && typeof packet.record === "object") return [packet.record];
   if (Array.isArray(packet.records)) return packet.records;
   if (Array.isArray(packet.packets)) return packet.packets.flatMap(packetRecords);
@@ -66,6 +67,7 @@ assert.match(governedLunarEclipse.governedMeaning.promptEvidence, /Eclipses warp
 assert.match(governedLunarEclipse.governedMeaning.promptEvidence, /Lunar eclipses are portals into your soul/iu);
 assert.ok(governedLunarEclipse.governedMeaning.governanceSourceSha256);
 assert.equal(governedLunarEclipse.governedMeaning.indexSha256, null, "Approved eclipse-section snapshots must not pretend to come from the knowledge index.");
+assert.equal(packetRecords(governedLunarEclipse.governedMeaning.packet).length, 2, "The lunar governance checks must inspect both actual evidence records.");
 for (const record of packetRecords(governedLunarEclipse.governedMeaning.packet)) {
   assert.equal(record.authorityClass, "owner-approved-prose");
   assert.equal(record.store, "owner-approved-lunar-eclipse-section-snapshot");
@@ -91,8 +93,8 @@ const profection = resolveAskTldrGovernedFactor({
   reasons: ["fixture"]
 });
 assert.equal(profection.governedMeaning.status, "partial");
-assert.equal(profection.governedMeaning.sourceKind, "factual_only");
-assert.equal(profection.governedMeaning.promptEvidence, null);
+assert.equal(profection.governedMeaning.sourceKind, "knowledge_index");
+assert.ok(profection.governedMeaning.canonicalIds.includes("house/12"), "Partial house doctrine preserves provenance without authorizing profection technique meaning.");
 
 const blockedPacket = buildAskTldrGovernedAnswerPacket({
   ...ranked,

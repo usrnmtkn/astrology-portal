@@ -24,7 +24,7 @@ function candidateHasGovernedKindCoverage(candidate: AskTldrEvidenceCandidate) {
   // Ask TLDR currently has exact owner-approved generic lunar-eclipse semantics.
   // Generic solar-eclipse semantics are still review-held, so solar eclipses must
   // not consume one of the three ranked evidence slots until that source gap is approved.
-  return candidate.id.toLowerCase().includes("lunar_eclipse");
+  return candidate.facts?.kind === "lunar_eclipse";
 }
 
 export function askTldrCandidateMatchesQuestionFocus(candidate: AskTldrEvidenceCandidate, plan: AskTldrRetrievalPlan) {
