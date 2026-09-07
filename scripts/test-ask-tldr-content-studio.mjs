@@ -15,6 +15,9 @@ const primitives = read("apps/admin/src/AdminStudioPrimitives.tsx");
 const reportModelClient = read("api/_lib/report-model-client.ts");
 const provider = read("api/_lib/ask-tldr-provider.ts");
 const voiceReceipt = read("api/_lib/ask-tldr-voice-receipt.ts");
+const questionWriter = read("api/_lib/ask-tldr-question-bound-writer.ts");
+const questionJudge = read("api/_lib/ask-tldr-question-bound-judge.ts");
+const judge = read("api/_lib/ask-tldr-judge.ts");
 const migration = read("apps/web/supabase/migrations/20260907071500_ask_tldr_owner_preview_content_studio.sql");
 const model = readJson("config/ask-tldr/answer-model-v1.json");
 const manifest = readJson("config/ask-tldr/manifest.json");
@@ -71,6 +74,13 @@ assert.match(api, /judge:\s*input\.result\.judge/u);
 assert.match(api, /releasePacket:\s*input\.result\.releasePacket/u);
 assert.match(api, /revision:\s*input\.result\.revision/u);
 
+assert.match(questionWriter, /APPLICATION STANDARD/u, "Guidance writers must translate advice into an applicable next move.");
+assert.match(questionWriter, /decision, request, preparation step, boundary, question, or observable action/u);
+assert.match(questionWriter, /must not invent a personal event or history/u);
+assert.match(questionJudge, /APPLICATION STANDARD FOR practical_usefulness/u, "The judge must grade the same application standard used by the writer.");
+assert.match(questionJudge, /Abstract coaching verbs alone do not earn a 4/u);
+assert.match(judge, /practical_usefulness:\s*4/u, "Practical usefulness must clear the release-quality floor instead of passing at a fixable 3.");
+
 assert.match(api, /type ChartMode = "owner" \| "test"/u, "Preview must support owner and test-chart calculation modes.");
 assert.match(api, /function testChartContext/u);
 assert.match(api, /function chartFingerprint/u);
@@ -89,7 +99,7 @@ assert.match(api, /revoke_feedback/u, "Owner-promoted feedback must be revocable
 assert.match(api, /ask-tldr-owner-feedback\.v1/u);
 assert.match(api, /approvedOwnerCorrections/u, "Approved Studio feedback must be selected for later generations.");
 assert.match(voiceReceipt, /ownerCorrections\?: AskTldrOwnerCorrection\[\]/u, "Runtime owner corrections must enter the hashed voice receipt.");
-assert.match(voiceReceipt, /dynamic, \.\.\.packaged/u, "Approved runtime feedback must outrank packaged corrections.");
+assert.match(voiceReceipt, /\.\.\.dynamic, \.\.\.packaged/u, "Approved runtime feedback must outrank packaged corrections.");
 assert.match(studio, /Use note in future \{pillarLabel\} answers/u, "Owner notes must require a separate explicit promotion action.");
 assert.match(studio, /Rejecting a preview does not teach future answers by itself/u, "Rejecting a draft must not silently become durable model guidance.");
 assert.match(studio, /Stop using note in future \{pillarLabel\} answers/u, "Owner feedback promotion must be reversible.");
@@ -127,4 +137,4 @@ const questions = pillarFiles.flatMap((file) => readJson(`config/ask-tldr/pillar
 assert.equal(questions.length, 54, "Content Studio must surface the complete governed evergreen question set.");
 assert.equal(new Set(questions.map((question) => question.id)).size, 54, "Ask TLDR Content Studio question IDs must remain unique.");
 
-console.log("Ask TLDR Content Studio contract passed: 54 governed questions are wording-editable, owner/test-chart previews use bounded calculated calibration, judge-blocked drafts get one bounded rewrite and re-judge, explicitly promoted owner notes enter future writer/judge voice receipts for the same pillar, preview-domain admin access resolves the configured owner, report model calls stay on direct OpenAI, revision drafts are comparable without persisting test birth data, generated_interpretations keeps existing RLS, and the database forbids LIVE Ask TLDR rows.");
+console.log("Ask TLDR Content Studio contract passed: 54 governed questions are wording-editable, owner/test-chart previews use bounded calculated calibration, guidance answers must include an application layer, judge-blocked drafts get one bounded rewrite and re-judge, explicitly promoted owner notes enter future writer/judge voice receipts for the same pillar, preview-domain admin access resolves the configured owner, report model calls stay on direct OpenAI, revision drafts are comparable without persisting test birth data, generated_interpretations keeps existing RLS, and the database forbids LIVE Ask TLDR rows.");
