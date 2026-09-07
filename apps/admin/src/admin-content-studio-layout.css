@@ -668,7 +668,6 @@
   border: var(--border-width-thin) solid var(--admin-ui-border);
   border-radius: var(--admin-ui-radius-sm);
   color: var(--admin-ui-code-copy);
-  direction: rtl;
   display: block;
   font-size: var(--admin-type-12);
   max-width: 100%;
