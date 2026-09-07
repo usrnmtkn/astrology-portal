@@ -116,7 +116,7 @@ assert.match(contentStudioDashboard, /contentKey\.startsWith\("fallback-hook\/sk
 assert.match(contentStudioDashboard, /if \(isCalendarAspectContentRow\(row\)\) return "Calendar Aspects";/u);
 assert.match(contentStudioDashboard, /categoryFilter === "Calendar Aspects"/u);
 assert.match(contentStudioDashboard, /Edit Calendar aspect cards/u);
-assert.match(contentStudioDashboard, /Use Published to edit copy readers can see\. Use Draft to continue proposed rewrites\./u);
+assert.match(contentStudioDashboard, /Use Live to edit copy readers can see\. Use Not live for proposed rewrites\./u);
 
 const styleGuide = readText("apps/web/src/content/fallbackArchitectureV3/admin/WRITING-STYLE-GUIDE.md");
 assert.match(styleGuide, /Human consequence first/u);
