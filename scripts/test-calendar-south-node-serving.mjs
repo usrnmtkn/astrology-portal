@@ -184,7 +184,7 @@ assert.equal(studioSouth?.body, marsSouth.body);
 const skyDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
 assert.match(
   skyDetailSource,
-  /articleNodeAxisBodyParts[\s\S]*?article-related-aspects__copy-heading[\s\S]*?<h4>\{nodeAxisBody\.southHeading\}<\/h4>/u,
+  /southNodeMatch[\s\S]*?article-related-aspects__copy-heading[\s\S]*?<h4>\{southNodeHeading\}<\/h4>/u,
   "Paired South Node copy must render with the same aspect subtitle treatment as the North Node heading."
 );
 
