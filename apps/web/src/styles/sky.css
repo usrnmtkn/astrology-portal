@@ -420,6 +420,16 @@
   margin-bottom: var(--sp-2);
 }
 
+.article-related-aspects__date {
+  margin: 0 0 var(--sp-4);
+  color: var(--muted);
+  font-size: var(--type-sm);
+}
+
+.article-related-aspects__copy-heading--paired {
+  margin-top: var(--sp-6);
+}
+
 .article-related-aspects__copy-heading :is(h3, h4) {
   grid-column: 1;
   grid-row: 1;

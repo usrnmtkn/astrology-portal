@@ -12,6 +12,8 @@ assert.ok(functionStart >= 0 && functionEnd > functionStart, "Related Sky aspect
 const builder = app.slice(functionStart, functionEnd);
 
 assert.match(builder, /const resolvedSections = aspects[\s\S]*?\.sort\(\(first, second\) => first\.orb - second\.orb\)/u);
+assert.match(builder, /const exactDate = skyPlacementAspectExactDate\(aspect, generatedAt, positions\);/u);
+assert.match(builder, /body: `\$\{exactDate\}\\n\\n\$\{body\}`/u);
 assert.match(builder, /return resolvedSections\.map\(\(\{ section \}\) => section\);/u);
 assert.doesNotMatch(builder, /\.slice\(0, 2\)|giftSection|lessonSection/u);
 assert.match(routing, /return composed \?\? exact \?\? signSpecific \?\? phrasebook \?\? generated \?\? fallback \?\? null;/u);
