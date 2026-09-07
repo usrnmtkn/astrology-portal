@@ -181,6 +181,13 @@ assert.notEqual(studioNorth?.content.contentKey, studioSouth?.content.contentKey
 assert.equal(studioNorth?.body, marsNorth.body);
 assert.equal(studioSouth?.body, marsSouth.body);
 
+const skyDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
+assert.match(
+  skyDetailSource,
+  /southNodeMatch[\s\S]*?article-related-aspects__copy-heading[\s\S]*?<h4>\{southNodeHeading\}<\/h4>/u,
+  "Paired South Node copy must render with the same aspect subtitle treatment as the North Node heading."
+);
+
 console.log("South Node Calendar serving + Content Studio contract passed", {
   geometryEventsAdded: 0,
   southNodeRuntimeRecords: runtimeCount,
