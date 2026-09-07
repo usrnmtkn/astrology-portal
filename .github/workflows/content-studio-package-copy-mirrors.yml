@@ -1,0 +1,28 @@
+name: Content Studio package copy mirrors
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/supabase/migrations/20260907060000_content_studio_package_copy_mirrors.sql"
+      - "scripts/test-content-studio-package-copy-mirrors.mjs"
+      - ".github/workflows/content-studio-package-copy-mirrors.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/supabase/migrations/20260907060000_content_studio_package_copy_mirrors.sql"
+      - "scripts/test-content-studio-package-copy-mirrors.mjs"
+      - ".github/workflows/content-studio-package-copy-mirrors.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  package-copy-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/test-content-studio-package-copy-mirrors.mjs
