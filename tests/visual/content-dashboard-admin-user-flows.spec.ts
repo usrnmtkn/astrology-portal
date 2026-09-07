@@ -2009,18 +2009,18 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     for (const body of ["QA first revised macro.", "QA second revised macro."]) {
-      await editor.getByLabel("Article body", { exact: true }).fill(body);
+      await editor.getByLabel("Full lunar passage", { exact: true }).fill(body);
       await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
       await editor.getByRole("button", { name: "Save revision", exact: true }).click();
       await expect(editor.getByRole("button", { name: "Save revision", exact: true })).toBeDisabled();
-      await expect(editor.getByLabel("Article body", { exact: true })).toHaveValue(body);
+      await expect(editor.getByLabel("Full lunar passage", { exact: true })).toHaveValue(body);
     }
     expect(writes.filter((write) => !write.payload.ownerAction)).toHaveLength(2);
     await editor.getByRole("button", { name: "Save & publish revision", exact: true }).click();
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await row.getByRole("button", { name: "Edit", exact: true }).click();
-    await expect(editor.getByLabel("Article body", { exact: true })).toHaveValue("QA second revised macro.");
+    await expect(editor.getByLabel("Full lunar passage", { exact: true })).toHaveValue("QA second revised macro.");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await assertNoBrowserErrors();
   });
@@ -2103,14 +2103,14 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const editor = page.locator(".admin-editor-panel");
     const related = editor.getByRole("region", { name: "Related reader horoscope passages" });
-    await expect(editor.getByLabel("Article body")).toHaveValue("Check the details without treating reality as a betrayal of the dream.");
+    await expect(editor.getByLabel("Full lunar passage")).toHaveValue("Check the details without treating reality as a betrayal of the dream.");
     await expect(related.locator("dl > div", { hasText: "Eclipse" })).toContainText("Lunar eclipse");
     await expect(related.locator("details > summary > span")).toHaveText([
       "Aspect passages",
       "Rising-sign horoscopes"
     ]);
     const readingOrder = await editor.locator(".admin-post-editor").evaluate((postEditor) => {
-      const body = postEditor.querySelector('[aria-label="Article body"]')?.closest("label");
+      const body = postEditor.querySelector('[aria-label="Full lunar passage"]')?.closest("label");
       const relatedRegion = postEditor.querySelector('[aria-label="Related reader horoscope passages"]');
       const [aspects, horoscopes] = relatedRegion ? Array.from(relatedRegion.querySelectorAll(":scope > details")) : [];
       return Boolean(body && relatedRegion && aspects && horoscopes
@@ -3050,7 +3050,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(guidedEditor).toBeVisible();
     await expect(guidedEditor.getByRole("region", { name: "Guided unresolved-content review" })).toContainText("The populated Headline and Body fields below are the copy under review");
     await expect(guidedEditor.getByRole("region", { name: "Guided unresolved-content review" })).toContainText(editableUnresolvedItem?.contentKey ?? "");
-    await expect(guidedEditor.getByLabel("Full passage / body")).toHaveValue(String(guidedLunationRecord.body));
+    await expect(guidedEditor.getByLabel("Full lunar passage")).toHaveValue(String(guidedLunationRecord.body));
     await expect(guidedEditor.getByLabel("body_you")).toHaveCount(0);
     await expect(guidedEditor.getByLabel("body_they")).toHaveCount(0);
     await expect(guidedEditor.getByLabel("Approval", { exact: true })).toBeDisabled();

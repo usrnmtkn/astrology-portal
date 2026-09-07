@@ -1,0 +1,162 @@
+{
+  "provenance": {
+    "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+    "date": "2026-09-07",
+    "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+    "ownerRequest": "here are the write-ups:",
+    "status": "needs_review",
+    "promotionAuthorized": false
+  },
+  "rows": [
+    {
+      "key": "cms/sky-daily-summary/sun/aries",
+      "body": "putting more emphasis on starting, acting, and finding out what works by doing it.",
+      "sha256": "19beb30ecaf5caf4d8f3aa98b60ab6e6647ef16619be810eb26f39e750454141",
+      "wordCount": 14
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/taurus",
+      "body": "slowing the pace enough to notice what is worth keeping, building, or spending on.",
+      "sha256": "4b3cd08829bbfb6d6e8618553a68f0df1dafe8a3490105bdfbe8cbc02813ace8",
+      "wordCount": 14
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/gemini",
+      "body": "making questions, conversation, and new information harder to ignore.",
+      "sha256": "041549d3f8d09f948bb8fbd8394d72b8c80a4fd1f0ed61d14b614039b893fb08",
+      "wordCount": 9
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/cancer",
+      "body": "bringing more attention to home, care, family, and what you want to protect.",
+      "sha256": "4419912332f98e70d7f2a0ff3fe9e73ec9eb4c008bb3ecc3b71a581a298bcbfe",
+      "wordCount": 13
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/leo",
+      "body": "making it easier to put your name on the work and let yourself be seen doing it.",
+      "sha256": "5614684f916db1b4e39eae6590ddbc455997052c60f4a0cd903e4ae169015a3b",
+      "wordCount": 17
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/virgo",
+      "body": "turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing",
+      "sha256": "fa34053561ef215e79570e3cad059a4d49fdf587ad6bd5dd68d0842d8b048d71",
+      "wordCount": 27,
+      "provenance": {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-07",
+        "ownerRequest": "This is for the Sun in Virgo; The Sun is in [sign], [Sun summary], while the Moon moves through [sign], [Moon summary].",
+        "status": "owner-supplied revision"
+      }
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/libra",
+      "body": "putting more attention on agreements, tradeoffs, and decisions that affect more than one person.",
+      "sha256": "dfdc16a9b4e082dc1d01ccd9b5929a2d1ead2b8e46181ee5c20b9b5f003db87e",
+      "wordCount": 14
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/scorpio",
+      "body": "making it harder to ignore what has been avoided, hidden, or left unresolved.",
+      "sha256": "a240a97bde3bc29ccb82e268783920c47a17796310b06318a6b0bc48243abe8a",
+      "wordCount": 13
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/sagittarius",
+      "body": "making the bigger question, the farther trip, or the next thing to learn more compelling.",
+      "sha256": "35f1e19f63c863ab332d1329754067cff95fea0f0e49a2c926eefde69cfba319",
+      "wordCount": 15
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/capricorn",
+      "body": "putting the focus on responsibility, deadlines, and what you are willing to build over time.",
+      "sha256": "dd1123d11dbcf3036071fb9582ad8a10ed503971551b747a5ea0f72902b0f3a7",
+      "wordCount": 15
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/aquarius",
+      "body": "making it easier to see the system behind the problem and question rules that no longer help.",
+      "sha256": "73cb9d159ac4392435eb4dc0bbddf158f79485af2a02c2d9db8719eb586c46b6",
+      "wordCount": 17
+    },
+    {
+      "key": "cms/sky-daily-summary/sun/pisces",
+      "body": "softening the pace enough for imagination, compassion, and unfinished feelings to have more room.",
+      "sha256": "d73c57b0f7788a6a05aa6c2f0f7129c6eab3ceb0eabea8c8b0c35688e64c6285",
+      "wordCount": 14
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aries",
+      "body": "making reactions faster and harder to hide than usual.",
+      "sha256": "0bb6edbceac491fd2ec5b2fcd983beb5b0e8bba173e4f9dcf57f6a05130864c3",
+      "wordCount": 9
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/taurus",
+      "body": "making comfort, familiar routines, and a slower pace more appealing.",
+      "sha256": "49af13d7318061904ed41aa32600a71a718e3024a060e3befd8ba24405184418",
+      "wordCount": 10
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/gemini",
+      "body": "making it easier to talk through a feeling, ask another question, or change your mind.",
+      "sha256": "b73349777fd5f1406238464160da6f3b12c907a09d759ddbe1060a2bfd204618",
+      "wordCount": 15
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/cancer",
+      "body": "making home, care, and who checked in matter more than usual.",
+      "sha256": "b5e3939b011e4f210cb222be67deb060a1d48a5ad09a03a2a0956de7ae04a906",
+      "wordCount": 11
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/leo",
+      "body": "making appreciation land harder and being overlooked harder to shrug off.",
+      "sha256": "6e620e2a15d5ee1e2659b158c46b6ae95b138fdc87610a1de5f50f5d6841954a",
+      "wordCount": 11
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/virgo",
+      "body": "turning vague unease into a task, a list, or something concrete to fix.",
+      "sha256": "f41434bc5abc84925dd78c5c4dc38a19763ce8d377294f3826279f2258337e5a",
+      "wordCount": 13
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/libra",
+      "body": "making fairness, tone, and the give-and-take between people easier to notice.",
+      "sha256": "5c234c7717496ae5879faddfaae1c76641ece25a8408860310a374d1fd0ad758",
+      "wordCount": 11
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/scorpio",
+      "body": "making trust, privacy, and what is not being said harder to ignore.",
+      "sha256": "296b7219a173f00cd117488e587b6eca1891b2637babb37f581a58edf44a7434",
+      "wordCount": 12
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/sagittarius",
+      "body": "making space, movement, and a bigger perspective feel more necessary.",
+      "sha256": "dbc659b06838efdbf8e4d07026418420d2dcb0820c92eed20add1e79f9c51da7",
+      "wordCount": 10
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/capricorn",
+      "body": "making it easier to handle what has to be done before talking about how it feels.",
+      "sha256": "a31a3a0ad273a47a3cd270393ef278bd61e8f3f46e1f7a9a37d0a7391d468dac",
+      "wordCount": 16
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aquarius",
+      "body": "making a little distance useful for seeing the pattern behind the mood.",
+      "sha256": "ee8662a4cdc25e370f63d81ebd5d47f40fa9645a65021531b7859025a6872315",
+      "wordCount": 12
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/pisces",
+      "body": "softening focus and making rest, imagination, and the atmosphere around you harder to tune out.",
+      "sha256": "3eb1a44ef59fe5613eea64566f455f7eddd5a3a9cc7791697288dd3f748f3ab3",
+      "wordCount": 15
+    }
+  ]
+}

@@ -1,3 +1,6 @@
+import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
+import { SkyDailySummaryStudio } from "./SkyDailySummaryStudio";
+import { skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, type LiveStatus } from "./ContentLiveStatus";
@@ -270,7 +273,7 @@ type AdminWritingSurfaceMapPayload = {
 };
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
-type SkyWriteupWorkspaceView = "catalog" | "transits-to-natal" | "house-transits";
+type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits";
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
@@ -3665,7 +3668,8 @@ export function GeneratedContentAdminDashboard() {
     setNatalAspectName(page === "content" && category === "Natal Aspects" ? natalAspectNameParam : "");
     setNatalAspectSecond(page === "content" && category === "Natal Aspects" ? natalAspectSecondParam : "");
     setSkyWriteupWorkspaceView(
-      page === "skyWriteups" && view === "transits-to-natal"
+      page === "skyWriteups" && view === "daily-summary" ? "daily-summary"
+        : page === "skyWriteups" && view === "transits-to-natal"
         ? "transits-to-natal"
         : page === "skyWriteups" && view === "house-transits"
           ? "house-transits"
@@ -5179,6 +5183,49 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function openSkySummaryField(field: SkySummaryField) {
+    if (draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
+      && !window.confirm("Discard the unsaved changes in this editor?")) return;
+    setIsLoading(true);
+    try {
+      const result = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(field.key)}&limit=1`, secret);
+      if (!Array.isArray(result.rows)) throw new Error("Could not load the saved summary wording. Please try again.");
+      const existing = result.rows.find(row => row.content_key === field.key);
+      if (existing) {
+        setRows(current => [existing, ...current.filter(row => row.id !== existing.id)]);
+        openRow(existing);
+      } else {
+        const nextDraft: AdminDraft = {
+          id: null, contentKey: field.key, surface: "sky", mode: "card", status: "DRAFT",
+          headline: field.label, summary: "", body: importedSkySummary(field.key) ?? field.body, lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED",
+          blockType: "essay", promptVersion: "cms-surface-template-v1", sections: null, facts: null, reviewerNotes: "",
+          sourceSnapshot: {
+            contentType: "mustache-template", contentSystem: "cms-surface-override", contentLevel: "owner-authored",
+            authoringSource: "admin-dashboard", cmsSurfaceId: "sky-daily-summary", readerLocation: "Sky → Daily Sky Summary",
+            allowedSlots: field.allowedSlots,
+            ...(importedSkySummary(field.key) !== undefined ? { suppliedCopy: skySummaryImportProvenance } : {})
+          }
+        };
+        editorBaselineRef.current = JSON.stringify(nextDraft);
+        editorSavedInputRef.current = JSON.stringify(nextDraft);
+        setSelectedRowId(null);
+        setCompositionEditorContext(null);
+        setSkyArticleEditor(null);
+        setSkyArticleEditionForm(null);
+        setDailyGlancePairSelector(null);
+        setEditorSaveError("");
+        setDraft(nextDraft);
+      }
+      setMessage(`Opened ${field.label}. Save a draft, then Publish to app when the wording is approved.`);
+      scrollEditorToTop();
+    } catch (error) {
+      setMessage(dashboardErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   function openCmsStarter(
     surfaceItem: WritingSurfaceMapItem,
     starter: NonNullable<WritingSurfaceAdminAccess["cmsStarters"]>[number]
@@ -5551,6 +5598,11 @@ export function GeneratedContentAdminDashboard() {
                 </button>
                 {item.page === "skyWriteups" && (
                   <div className="admin-nav-workspace-group" aria-label="Sky Write-ups sections">
+                    <button type="button"
+                      onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "daily-summary" }))}
+                      aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "daily-summary" ? "page" : undefined}>
+                      <span>Daily Sky Summary</span>
+                    </button>
                     <button
                       type="button"
                       onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal" }))}
@@ -5981,6 +6033,11 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
             <section className="admin-template-tabs" role="tablist" aria-label="Sky Write-ups workspaces">
+              <button type="button" role="tab" aria-selected={skyWriteupWorkspaceView === "daily-summary"}
+                className={skyWriteupWorkspaceView === "daily-summary" ? "active" : ""}
+                onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "daily-summary" }))}>
+                Daily Sky Summary
+              </button>
               <button
                 type="button"
                 role="tab"
@@ -6022,7 +6079,12 @@ export function GeneratedContentAdminDashboard() {
                 House Transits
               </button>
             </section>
-            {skyWriteupWorkspaceView === "transits-to-natal" ? (
+            {skyWriteupWorkspaceView === "daily-summary" ? (
+              <>
+                <SkyDailySummaryStudio draftCopy={draft} rows={rows} onEdit={field => void openSkySummaryField(field)} busy={isLoading} />
+                {renderEditor()}
+              </>
+            ) : skyWriteupWorkspaceView === "transits-to-natal" ? (
               <>
                 {renderTransitNatalSourceFinder()}
                 {renderEditor()}
@@ -8120,6 +8182,7 @@ export function GeneratedContentAdminDashboard() {
     const skyArticleChanges = skyArticleEditor
       ? skyArticleEditionFieldChanges(skyArticleEditor.baseEdition, skyArticleEditor.fields)
       : [];
+    const isSkySummaryDraft = currentDraft.contentKey.startsWith("cms/sky-daily-summary/");
     const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override" || currentDraft.contentKey.startsWith("cms/");
     const cmsAllowedSlots = Array.isArray(currentDraft.sourceSnapshot?.allowedSlots)
       ? currentDraft.sourceSnapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
@@ -8130,6 +8193,7 @@ export function GeneratedContentAdminDashboard() {
       summary: currentDraft.summary,
       body: currentDraft.body
     });
+    cmsTemplateValidation.errors.push(...skySummaryTemplateErrors(currentDraft.contentKey, currentDraft.body));
     const cmsCanSignOff = !isCmsSurfaceDraft || cmsTemplateValidation.errors.length === 0;
     const cmsReaderEligible = isCmsSurfaceDraft
       && currentDraft.status === "LIVE"
@@ -8473,7 +8537,7 @@ export function GeneratedContentAdminDashboard() {
                 }
       : null;
     const lunarIdentity = lunarContentIdentity(currentDraft.contentKey);
-    const headlineFieldLabel = lunarIdentity ? "Editor name" : fallbackEditorGuidance?.headlineLabel
+    const headlineFieldLabel = isSkySummaryDraft ? "Editor name" : lunarIdentity ? "Editor name" : fallbackEditorGuidance?.headlineLabel
       ?? (isVocabularyDraft
         ? "Phrase title"
         : isAuthoredPackageCard || isArticleDraft
@@ -8497,7 +8561,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
+    const bodyFieldLabel = isSkySummaryDraft ? "Summary wording" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
       ? "You view exact copy"
       : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
@@ -9347,17 +9411,17 @@ export function GeneratedContentAdminDashboard() {
               <input aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
               {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Reader-facing title shown at the top of this card or write-up. Stored internally as Headline."}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Reader-facing title shown at the top of this card or write-up. Stored internally as Headline."}</small>}
             </label>
           )}
-          {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && showSummaryField && (
+          {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && showSummaryField && !isSkySummaryDraft && (
             <label className="admin-review-copy-editor">
               <span>{summaryFieldLabel}</span>
               <textarea className="admin-copy-field-summary" aria-label={summaryFieldLabel} value={currentDraft.summary} onChange={(event) => updateSummary(event.target.value)} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
               {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Short reader-facing takeaway. Leave empty when this surface does not show a TL;DR. Stored internally as Summary."}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Short reader-facing takeaway. Leave empty when this surface does not show a TL;DR. Stored internally as Summary."}</small>}
             </label>
           )}
           {showPackageBodyYou && !skyFallbackEditor && (
@@ -9467,7 +9531,7 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-editor-guidance" aria-label="CMS surface template guidance">
               <strong>Reader-facing CMS override</strong>
               <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
-              <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
+              <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
               <p>Save as Draft while editing. Publish only when the exact wording is approved; draft and reviewed rows remain invisible to readers.</p>
               <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={{ id: currentDraft.id, updated_at: currentDraft.updatedAt }} unsaved={draftHasUnsavedChanges} /></p>
               {cmsTemplateValidation.errors.length > 0 ? (
@@ -9478,10 +9542,10 @@ export function GeneratedContentAdminDashboard() {
               ) : (
                 <div aria-label="CMS template preview">
                   <strong>Preview with representative chart facts</strong>
-                  {currentDraft.headline.trim() && <h4>{renderCmsTemplatePreview(currentDraft.headline, cmsTemplateValidation.previewSlots, "headline")}</h4>}
-                  {currentDraft.summary.trim() && <p>{renderCmsTemplatePreview(currentDraft.summary, cmsTemplateValidation.previewSlots, "summary")}</p>}
+                  {!isSkySummaryDraft && currentDraft.headline.trim() && <h4>{renderCmsTemplatePreview(currentDraft.headline, cmsTemplateValidation.previewSlots, "headline")}</h4>}
+                  {!isSkySummaryDraft && currentDraft.summary.trim() && <p>{renderCmsTemplatePreview(currentDraft.summary, cmsTemplateValidation.previewSlots, "summary")}</p>}
                   <p>{renderCmsTemplatePreview(currentDraft.body, cmsTemplateValidation.previewSlots, "body")}</p>
-                  {cmsTemplateValidation.usedSlots.length > 0 && <small>Slots used: {cmsTemplateValidation.usedSlots.map((slot) => `{{${slot}}}`).join(", ")}</small>}
+                  {cmsTemplateValidation.usedSlots.length > 0 && <small>Slots used: {cmsTemplateValidation.usedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}}`).join(", ")}</small>}
                 </div>
               )}
             </div>

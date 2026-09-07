@@ -1226,13 +1226,6 @@
   }
 }
 
-.sky-lunar-pills {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--snap-group-gap);
-  width: 100%;
-}
-
 .sky-today-ledger {
   display: none;
   overflow: hidden;
@@ -1280,107 +1273,8 @@
   text-align: right;
 }
 
-.sky-today-ledger__row,
 .sky-today-ledger__foot {
   border-top: var(--border-width-thin) solid var(--line);
-}
-
-.sky-today-ledger__row {
-  display: flex;
-  align-items: center;
-  gap: calc(var(--space-3) + var(--space-1) / 4);
-  padding: calc(var(--space-3) + var(--space-1) / 2) var(--space-5);
-}
-
-.sky-today-ledger__badge {
-  display: grid;
-  place-items: center;
-  flex: 0 0 36px;
-  width: 36px;
-  height: 36px;
-  border: var(--border-width-thin) solid var(--line);
-  border-radius: var(--radius-circle);
-  background: var(--surface-2);
-  color: var(--wheel-glyph);
-}
-
-.sky-today-ledger__glyph {
-  font-family: var(--font-glyph);
-  font-size: var(--sky-ledger-glyph-size);
-  line-height: var(--leading-label);
-}
-
-.sky-today-ledger__badge .moon-phase-art {
-  width: 23px;
-  height: 23px;
-  border: 0;
-  box-shadow: var(--shadow-flat);
-}
-
-.sky-today-ledger__badge .moon-phase-art--full-moon {
-  background: var(--moon-phase-light);
-}
-
-.sky-today-ledger__label {
-  flex: 0 0 58px;
-  color: var(--muted);
-  font-family: var(--font-label);
-  font-size: var(--label-eyebrow-font-size);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--label-eyebrow-tracking);
-  line-height: var(--label-eyebrow-line-height);
-  text-transform: uppercase;
-}
-
-.sky-today-ledger__value {
-  display: grid;
-  flex: 1 1 auto;
-  min-width: 0;
-  gap: calc(var(--space-1) * 0.75);
-  color: var(--ink);
-  font-family: var(--font-body);
-  line-height: var(--leading-title);
-}
-
-.sky-today-ledger__value strong {
-  min-width: 0;
-  color: var(--card-title-color);
-  font-family: var(--font-display);
-  font-size: var(--retrograde-row-title-size);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-title);
-  line-height: var(--leading-title);
-}
-
-.sky-today-ledger__value small {
-  color: var(--card-meta-color);
-  font-family: var(--font-body);
-  font-size: var(--retrograde-row-degree-size);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-number);
-  line-height: var(--leading-meta);
-  font-variant-numeric: tabular-nums;
-}
-
-.sky-today-ledger__value span {
-  min-width: 0;
-  overflow: hidden;
-  color: var(--muted);
-  font-family: var(--font-body);
-  font-size: var(--sky-ledger-meta-size);
-  font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-body);
-  line-height: var(--leading-title);
-  text-overflow: ellipsis;
-}
-
-.sky-today-ledger__value .sky-today-ledger__name {
-  color: var(--card-title-color);
-  font-family: var(--font-display);
-  font-size: var(--retrograde-row-title-size);
-  font-weight: var(--weight-medium);
-  line-height: var(--leading-title);
-  letter-spacing: var(--tracking-title);
 }
 
 .sky-today-ledger__foot {
@@ -1454,109 +1348,6 @@
   transform: translateX(2px);
 }
 
-.sky-lunar-pill {
-  display: grid;
-  grid-template-columns: var(--snap-icon-size) minmax(0, 1fr);
-  align-items: center;
-  min-width: 0;
-  min-height: 0;
-  gap: var(--snap-card-gap);
-  padding: var(--snap-card-padding);
-  border-radius: var(--snap-card-radius);
-  text-align: left;
-}
-
-.sky-lunar-pill-icon,
-.nl-badge {
-  display: grid;
-  place-items: center;
-  justify-self: center;
-  width: var(--snap-icon-size);
-  height: var(--snap-icon-size);
-  flex: 0 0 var(--snap-icon-size);
-  border: var(--border-width-thin) solid var(--card-border);
-  border-radius: var(--radius-circle);
-  background: color-mix(in srgb, var(--app-card) 82%, var(--app-text) 7%);
-  color: var(--card-glyph-color);
-  font-family: var(--font-glyph);
-  font-size: var(--snap-glyph-size);
-  line-height: var(--leading-label);
-}
-
-.sky-lunar-pill-icon:not(.sky-lunar-pill-phase),
-.nl-badge .g {
-  transform: translateY(var(--lunar-card-glyph-optical-y));
-}
-
-.sky-lunar-pill-copy {
-  display: grid;
-  min-width: 0;
-  gap: var(--sp-1);
-}
-
-.sky-lunar-pill-copy em,
-.nl-eyebrow {
-  display: block;
-  color: var(--card-meta-color);
-  font-family: var(--label-eyebrow-font-family);
-  font-size: var(--label-eyebrow-font-size);
-  font-style: normal;
-  font-weight: var(--label-eyebrow-font-weight);
-  letter-spacing: var(--snap-eyebrow-tracking);
-  line-height: var(--leading-label);
-  text-transform: uppercase;
-}
-
-.nl-copy em {
-  letter-spacing: var(--snap-upcoming-tracking);
-}
-
-.sky-lunar-pill-copy h3 {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sign-degree-gap);
-  align-items: baseline;
-  min-width: 0;
-  margin: 0;
-  color: var(--card-title-color);
-  font-family: var(--font-display);
-  font-size: var(--retrograde-row-title-size);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-title);
-  line-height: var(--leading-title);
-}
-
-.sky-lunar-pill-copy h3 span,
-.sky-lunar-pill-copy h3 small {
-  min-width: 0;
-}
-
-.sky-lunar-pill-copy h3 small {
-  color: var(--card-meta-color);
-  font-family: var(--font-body);
-  font-size: var(--retrograde-row-degree-size);
-  font-variant-numeric: tabular-nums;
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-number);
-  line-height: var(--leading-meta);
-  transform: translateY(var(--sign-degree-offset-y));
-}
-
-.sky-lunar-pill-sub {
-  margin-top: 0;
-  color: var(--card-meta-color);
-  font-family: var(--font-body);
-  font-size: var(--type-meta-size);
-  font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-body);
-  line-height: var(--leading-meta);
-  white-space: nowrap;
-}
-
-.sky-lunar-pill-sub--spacer {
-  visibility: hidden;
-}
-
 .moon-phase-art {
   position: relative;
   display: block;
@@ -1628,83 +1419,55 @@
   right: var(--moon-phase-mask-bleed);
 }
 
-.next-lun {
-  display: grid;
-  grid-template-columns: var(--snap-icon-size) minmax(0, 1fr);
-  align-items: center;
-  box-sizing: border-box;
-  min-height: 0;
-  padding: var(--snap-next-padding);
-  gap: var(--snap-next-gap);
-  border-radius: var(--snap-card-radius);
-  text-align: left;
-}
-
-.nl-badge .g {
-  color: var(--card-glyph-color);
-  font-family: var(--font-glyph);
-  font-size: var(--snap-glyph-size);
-  line-height: var(--leading-label);
-}
-
-.nl-main {
-  min-width: 0;
-  flex: 1;
-}
-
-.nl-top {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  min-width: 0;
-  gap: var(--snap-next-gap);
-}
-
-.nl-copy {
-  display: grid;
-  min-width: 0;
-  gap: var(--sp-1);
-}
-
-.nl-top h4 {
-  display: flex;
-  align-items: baseline;
-  gap: var(--sp-1);
-  min-width: 0;
-  margin: 0;
-  overflow: hidden;
-  color: var(--card-title-color);
-  font-family: var(--font-display);
-  font-size: var(--retrograde-row-title-size);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-title);
-  line-height: var(--leading-title);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.nl-top h4 > span {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.nl-until {
-  align-self: center;
-  justify-self: end;
-}
-
-.nl-sub {
+/* The same narrative replaces the desktop chips and phone ledger rows. */
+.sky-daily-summary {
   display: block;
-  max-width: 100%;
-  margin-top: var(--sp-1);
-  overflow: hidden;
-  color: var(--card-meta-color);
-  font-family: var(--font-ui);
-  font-size: var(--text-meta-size);
-  font-variant-numeric: tabular-nums;
+}
+
+.sky-daily-summary__body {
+  margin: 0;
+  padding: var(--space-5);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  line-height: var(--leading-meta);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  text-wrap: pretty;
+}
+
+.sky-daily-summary__link {
+  font-weight: var(--weight-semibold);
+}
+
+.sky-daily-summary__link {
+  display: inline;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  text-decoration: underline;
+  text-underline-offset: var(--space-1);
+  cursor: pointer;
+}
+
+.sky-daily-summary__link:hover {
+  color: var(--muted);
+}
+
+.sky-daily-summary__link:focus-visible {
+  outline: var(--border-width-medium) solid var(--ink);
+  outline-offset: var(--space-1);
+}
+
+@media (min-width: 721px) {
+  .sky-daily-summary .sky-today-ledger__head {
+    display: none;
+  }
 }

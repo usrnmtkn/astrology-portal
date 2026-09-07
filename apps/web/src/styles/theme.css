@@ -246,6 +246,20 @@
   --font-glyph: var(--font-symbol);
   --font-brand: var(--font-label);
 
+  /* Reusable content highlight: an inline marker for noteworthy passages.
+     Use with .content-highlight on mark or span, never as a heading or pill.
+     Monospaced, lightly tracked text follows the shared body size and leading. */
+  --font-highlight: var(--font-mono);
+  --text-highlight: var(--text-body);
+  --weight-highlight: var(--weight-regular);
+  --leading-highlight: var(--leading-body);
+  --tracking-highlight: var(--tracking-pill);
+  --content-highlight-color: var(--ink);
+  --content-highlight-tint: rgba(231, 240, 176, 0.55);
+  --content-highlight-background: linear-gradient(180deg, transparent 0%, var(--content-highlight-tint) 28%, var(--content-highlight-tint) 82%, transparent 100%);
+  --content-highlight-shadow: 0 0 var(--space-1) var(--content-highlight-tint);
+
+
   --tracking-body: normal;
   --tracking-normal: normal;
   --tracking-display: -0.012em;
@@ -1133,6 +1147,7 @@
 .theme-dark,
 [data-theme="dark"] {
   --color-bg-warm: #16181b;
+  --content-highlight-tint: rgba(205, 217, 116, 0.18);
   --color-paper: #16181b;
   --color-surface: #1f222b;
   --color-surface-2: #2a2e39;
