@@ -24,6 +24,8 @@ const shortShareMigration = read("apps/web/supabase/migrations/20260907032000_re
 assert.match(service, /from\("user_generated_interpretations"\)[\s\S]*friend_transit_reading/u);
 assert.match(service, /from\("user_reports"\)/u);
 assert.match(service, /from\("user_report_library_state"\)/u);
+assert.match(service, /from\("report_share_links"\)/u, "The library must know whether a report already has an active share link.");
+assert.match(service, /isShared:\s*activeShares\.has/u);
 assert.match(service, /source_snapshot/u, "Friends library rows must retain the subject label used in vanity links.");
 assert.match(service, /vanitySlug = reportVanitySlug/u);
 assert.match(service, /route: `\/reports\/\$\{vanitySlug\}`/u);
@@ -86,9 +88,14 @@ assert.match(libraryView, /SegmentedControl/u);
 assert.match(libraryView, /Archived/u);
 assert.match(libraryView, /Share2/u, "Ready reports must offer Share in the overflow menu.");
 const shareLabelIndex = libraryView.indexOf("<span>Share</span>");
+const stopSharingLabelIndex = libraryView.indexOf("<span>Stop sharing</span>");
 const archiveLabelIndex = libraryView.indexOf('<span>{archived ? "Restore" : "Archive"}</span>');
-assert.ok(shareLabelIndex >= 0 && archiveLabelIndex > shareLabelIndex, "Overflow actions must present Share before Archive/Restore.");
+assert.ok(shareLabelIndex >= 0 && stopSharingLabelIndex > shareLabelIndex, "Active share revocation must follow Share in the overflow menu.");
+assert.ok(archiveLabelIndex > stopSharingLabelIndex, "Archive/Restore must remain the final overflow action.");
+assert.match(libraryView, /item\.status === "ready" && item\.isShared/u, "Stop sharing must only appear for an actively shared completed report.");
 assert.match(libraryView, /createReportShareLink/u);
+assert.match(libraryView, /stopReportSharing/u);
+assert.match(libraryView, /Sharing stopped\./u);
 assert.match(libraryView, /navigator\.share/u);
 assert.match(libraryView, /navigator\.clipboard/u);
 assert.match(libraryView, /Share link copied\./u);
@@ -162,4 +169,4 @@ assert.match(shortShareMigration, /alter column share_key type text using share_
 assert.match(shortShareMigration, /\^\[A-Za-z0-9_-\]\{22\}\$/u);
 assert.match(shortShareMigration, /legacy UUID keys remain valid until revoked/u);
 
-console.log("Report library, vanity links, compact secure sharing, notification, article navigation, date labels, and library UX contract passed.");
+console.log("Report library, vanity links, compact secure sharing, share revocation, notification, article navigation, date labels, and library UX contract passed.");
