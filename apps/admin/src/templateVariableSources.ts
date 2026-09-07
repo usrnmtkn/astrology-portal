@@ -142,7 +142,7 @@ export function templateVariableSourceCandidates<T extends TemplateVariableSourc
 ): T[] {
   const prefixes = templateVariableSourceKeyPrefixes(reference, templateContentKey);
   if (prefixes.length === 0) return [];
-  const candidates = rows.filter((row) => prefixes.some((prefix) => row.content_key.startsWith(prefix)));
+  const candidates = prefixes.flatMap((prefix) => rowsWithKeyPrefix(rows, prefix));
   const context = templateContextTokens(templateContentKey);
   if (context.length === 0) return candidates.sort((left, right) => left.content_key.localeCompare(right.content_key));
   const contextualCandidates = candidates.filter((row) => {
@@ -151,4 +151,23 @@ export function templateVariableSourceCandidates<T extends TemplateVariableSourc
   });
   return (contextualCandidates.length > 0 ? contextualCandidates : candidates)
     .sort((left, right) => left.content_key.localeCompare(right.content_key));
+}
+
+/* Prefix scans are the hot path when a template's variables are resolved
+   against the whole row list (once per variable, per open, per keystroke). A
+   per-row-array cache keyed by prefix turns the repeated 9,000-row filters into
+   one scan per prefix. */
+const prefixCache = new WeakMap<object, Map<string, unknown[]>>();
+
+function rowsWithKeyPrefix<T extends TemplateVariableSourceRow>(rows: T[], prefix: string): T[] {
+  let byPrefix = prefixCache.get(rows);
+  if (!byPrefix) {
+    byPrefix = new Map();
+    prefixCache.set(rows, byPrefix);
+  }
+  const cached = byPrefix.get(prefix) as T[] | undefined;
+  if (cached) return cached;
+  const matches = rows.filter((row) => row.content_key.startsWith(prefix));
+  byPrefix.set(prefix, matches);
+  return matches;
 }
