@@ -8,6 +8,8 @@ on:
       - "api/_lib/friend-transit-reading-generation.ts"
       - "api/_lib/friend-transit-reading.ts"
       - "api/_lib/transit-reading-generation.ts"
+      - "api/_lib/transit-reading-judge.ts"
+      - "api/_lib/transit-reading-owner-evidence.ts"
       - "api/_lib/you-report-lifecycle.ts"
       - "api/_lib/you-transit-reading-generation.ts"
       - "api/_lib/you-transit-reading.ts"
@@ -21,6 +23,9 @@ on:
       - "api/cron/run-friend-report-jobs.ts"
       - "api/cron/run-you-report-jobs.ts"
       - "api/admin/friend-report-test-cleanup.ts"
+      - "api/admin/generated-report-feedback.ts"
+      - "apps/admin/src/GeneratedReportDraftReview.tsx"
+      - "apps/admin/src/ReportFulfillmentAdminPanel.tsx"
       - "apps/web/src/App.tsx"
       - "apps/web/src/features/friends/**"
       - "apps/web/src/features/you/**"
@@ -43,7 +48,10 @@ on:
       - "scripts/test-friend-transit-reading-contract.mts"
       - "scripts/test-friend-transit-reading-request-render.mjs"
       - "scripts/test-you-report-paid-lifecycle.mts"
+      - "scripts/test-generated-report-judge-governance.mts"
+      - "scripts/test-generated-report-owner-feedback-authorization.sql"
       - "scripts/test-social-friends-contract.mjs"
+      - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md"
       - "vercel.json"
       - ".github/workflows/social-friends-security.yml"
   push:
@@ -55,6 +63,8 @@ on:
       - "api/_lib/friend-transit-reading-generation.ts"
       - "api/_lib/friend-transit-reading.ts"
       - "api/_lib/transit-reading-generation.ts"
+      - "api/_lib/transit-reading-judge.ts"
+      - "api/_lib/transit-reading-owner-evidence.ts"
       - "api/_lib/you-report-lifecycle.ts"
       - "api/_lib/you-transit-reading-generation.ts"
       - "api/_lib/you-transit-reading.ts"
@@ -68,6 +78,9 @@ on:
       - "api/cron/run-friend-report-jobs.ts"
       - "api/cron/run-you-report-jobs.ts"
       - "api/admin/friend-report-test-cleanup.ts"
+      - "api/admin/generated-report-feedback.ts"
+      - "apps/admin/src/GeneratedReportDraftReview.tsx"
+      - "apps/admin/src/ReportFulfillmentAdminPanel.tsx"
       - "apps/web/src/App.tsx"
       - "apps/web/src/features/friends/**"
       - "apps/web/src/features/you/**"
@@ -90,7 +103,10 @@ on:
       - "scripts/test-friend-transit-reading-contract.mts"
       - "scripts/test-friend-transit-reading-request-render.mjs"
       - "scripts/test-you-report-paid-lifecycle.mts"
+      - "scripts/test-generated-report-judge-governance.mts"
+      - "scripts/test-generated-report-owner-feedback-authorization.sql"
       - "scripts/test-social-friends-contract.mjs"
+      - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-JUDGE-ADAPTER-V1-OWNER.md"
       - "vercel.json"
       - ".github/workflows/social-friends-security.yml"
 
@@ -110,6 +126,7 @@ jobs:
       - run: node --experimental-strip-types scripts/test-friend-transit-reading-contract.mts
       - run: node --experimental-strip-types scripts/test-friend-report-paid-lifecycle.mts
       - run: node --experimental-strip-types scripts/test-you-report-paid-lifecycle.mts
+      - run: node --experimental-strip-types scripts/test-generated-report-judge-governance.mts
       - run: node scripts/test-friend-transit-reading-request-render.mjs
       - run: npm run typecheck
       - run: npm run build:knowledge
@@ -135,6 +152,8 @@ jobs:
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/you_report_lifecycle_authorization.sql
       - name: Run You report production hardening test
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/you_report_production_hardening.sql
+      - name: Run generated report owner feedback authorization test
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f scripts/test-generated-report-owner-feedback-authorization.sql
       - name: Stop ephemeral Supabase database
         if: always()
         run: supabase stop --workdir apps/web --no-backup
