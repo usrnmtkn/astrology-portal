@@ -90,6 +90,7 @@ const lifecycle = read("api/_lib/you-report-lifecycle.ts");
 const requestApi = read("api/you-report-request.ts");
 const client = read("apps/web/src/features/you/youTransitReports.ts");
 const actions = read("apps/web/src/features/you/YouReportActions.tsx");
+const actionStyles = read("apps/web/src/styles/you-reports.css");
 const youPage = read("apps/web/src/features/you/YouPage.tsx");
 const library = read("apps/web/src/services/reportLibrary.ts");
 const sharing = read("api/report-share.ts");
@@ -109,8 +110,19 @@ assert.match(lifecycle, /claim_you_report_jobs/u);
 assert.match(lifecycle, /YOU_REPORT_JOB_ATTEMPT_CAP/u);
 assert.match(requestApi, /waitUntil\(runYouReportJobs/u);
 assert.match(client, /\/api\/you-report-request/u);
-assert.match(actions, /Create day report/u);
-assert.match(actions, /Create week report/u);
+assert.match(actions, /Create \$\{label\} report/u);
+assert.match(actions, /Read \$\{label\} report/u);
+assert.match(actions, /listReportLibrary/u, "You report CTAs must restore persisted report state after reload.");
+assert.match(actions, /findPersistedReport/u);
+assert.match(actions, /item\.status === "ready"/u);
+assert.match(actions, /item\.status === "generating"/u);
+assert.match(actions, /you-report-actions__loading-dots/u);
+assert.match(actions, /window\.location\.assign\(action\.route\)/u);
+assert.match(actions, /import "\.\.\/\.\.\/styles\/you-reports\.css"/u, "You report CTA styles must stay route-local instead of joining startup CSS.");
+assert.doesNotMatch(actions, /Open Reports →/u, "The per-report Read CTA replaces the generic Reports CTA.");
+assert.match(actionStyles, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/u, "Day and week CTAs must stay side by side.");
+assert.match(actionStyles, /\.you-report-actions__button\.is-ready[\s\S]*border:[\s\S]*background: transparent/u, "Ready report CTAs must be outlined, not solid.");
+assert.match(actionStyles, /\.you-report-actions__loading-dots > span:nth-child\(3\)/u, "Loading state must render three dots.");
 assert.match(youPage, /<YouReportActions/u);
 
 assert.match(library, /you_day_reading/u);
@@ -127,4 +139,4 @@ assert.match(migration, /revoke all on function public\.claim_you_report_jobs\(t
 assert.match(migration, /grant execute on function public\.claim_you_report_jobs\(text, integer, uuid\)[\s\S]*to service_role/u);
 assert.match(vercel, /\/api\/cron\/run-you-report-jobs/u);
 
-console.log("You day/week reports share the Friends writer core, persist durably, and stay server-governed.");
+console.log("You day/week reports share the Friends writer core, persist CTA state, and stay server-governed.");
