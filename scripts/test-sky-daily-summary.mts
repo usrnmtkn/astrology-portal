@@ -2,7 +2,7 @@ import { calendarDayDistance } from "../apps/web/src/services/calendarDayDistanc
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { skyDailySummaryParts } from "../apps/web/src/content/skyDailySummary.ts";
+import { skyDailySummaryParts, skySummaryParagraphs } from "../apps/web/src/content/skyDailySummary.ts";
 
 const clauses = JSON.parse(readFileSync(new URL("../apps/web/src/content/skyDailySummaryClauses.json", import.meta.url), "utf8"));
 const virgoRevision = clauses.provenance.revisions.find((row: { key: string }) => row.key === "cms/sky-daily-summary/sun/virgo");
@@ -113,11 +113,11 @@ const example = skyDailySummaryParts({ sun: { sign: "Virgo", degree: 15 }, moon:
   exactAspects: [{ id: "a", label: "Saturn squares Lilith" }, { id: "b", label: "Mercury opposes Neptune" }], event: { name: "New Moon", sign: "Virgo", countdown: "in 3 days" }
 });
 assert.deepEqual(example.filter(p => p.action).map(p => p.text), ["Sun in Virgo at 15°", "Moon in Cancer at 29°", "Saturn Rx in Aries at 13°", "Neptune Rx in Aries at 1°", "Pluto Rx in Aquarius at 3°", "Chiron Rx in Taurus at 0°", "Saturn squares Lilith", "Mercury opposes Neptune", "New Moon in Virgo"]);
-assert.ok(example.map(p => p.text).join("").includes("Saturn squares Lilith and Mercury opposes Neptune are exact today."));
+assert.ok(example.map(p => p.text).join("").includes("Today’s exact aspects are Saturn squares Lilith and Mercury opposes Neptune."));
 for (const count of [0, 1, 2, 3]) {
   const labels = ["Saturn squares Lilith", "Mercury opposes Neptune", "Venus trines Jupiter"].slice(0, count);
   const rendered = text({ moonIsVoid: false, exactAspects: labels.map((label, i) => ({ id: String(i), label })) });
-  assert.equal(rendered, count === 0 ? "" : count === 1 ? `${labels[0]} is exact today.` : count === 2 ? `${labels[0]} and ${labels[1]} are exact today.` : `${labels[0]}, ${labels[1]}, and ${labels[2]} are exact today.`);
+  assert.equal(rendered, count === 0 ? "" : count === 1 ? `Today’s exact aspect is ${labels[0]}.` : count === 2 ? `Today’s exact aspects are ${labels[0]} and ${labels[1]}.` : `Today’s exact aspects are ${labels[0]}, ${labels[1]}, and ${labels[2]}.`);
 }
 assert.equal(text({ moonIsVoid: false, retrogradePlacements: [{ planet: "Saturn", sign: "Aries", degree: 13 }] }), "One planet is retrograde right now: Saturn Rx in Aries at 13°.");
 const { skySummaryEventFacts, ingressSummaryKeys } = await import("../apps/web/src/content/skySummaryEvents.ts");
@@ -132,3 +132,8 @@ console.log("Finite-verb template: full placement links, exact-aspect agreement,
 const currentFacts = { sun: { sign: "Virgo", degree: 15 }, moon: { sign: "Cancer", degree: 29 }, moonIsVoid: false };
 const prior = new Map(Object.entries(clauses.provenance.previousClauses).map(([part, body]) => [`cms/sky-daily-summary/${part}`, { body, status: "LIVE" } as any]));
 assert.deepEqual(skyDailySummaryParts(currentFacts, prior), skyDailySummaryParts(currentFacts));
+
+const paragraphs = skySummaryParagraphs(example).map(parts => parts.map(p => p.text).join(""));
+assert.equal(paragraphs.length, 3);
+assert.ok(paragraphs[1].startsWith("Today’s exact aspects are "));
+assert.ok(paragraphs[2].startsWith("The next New Moon"));
