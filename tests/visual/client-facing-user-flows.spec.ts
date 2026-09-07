@@ -2882,6 +2882,39 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("synastry placement data stays inside each card after lazy styles load", async ({ page }) => {
+    test.setTimeout(60_000);
+    await seedClientState(page, { profile: true, friends: true });
+    await expectClientRouteLoads(page, "/#friends?tab=charts");
+    await page.getByRole("button", { name: "Open Nikki" }).click();
+    await selectFriendDetailTab(page, "Synastry");
+    const rows = page.locator(".synastry-placement-row:not(.synastry-placement-row-empty)");
+    await expect(rows.first()).toBeVisible();
+    for (const theme of ["light", "dark"]) {
+      await page.evaluate((theme) => {
+        localStorage.setItem("tldrastro:theme", theme);
+      }, theme);
+      await page.reload();
+      await expect(rows.first()).toBeVisible();
+      for (const width of [320, 390, 768, 1440]) {
+        await page.setViewportSize({ width, height: 1000 });
+        const overflow = await rows.evaluateAll((rows) => rows.flatMap((row) => {
+          const bounds = row.getBoundingClientRect();
+          return Array.from(row.querySelectorAll(".synastry-placement-lead, .synastry-placement-sign, .synastry-placement-degree, .synastry-placement-house"))
+            .filter((child) => {
+              const box = child.getBoundingClientRect();
+              return box.left < bounds.left - 1 || box.right > bounds.right + 1;
+            }).map((child) => child.textContent);
+        }));
+        expect(overflow, `${theme} synastry at ${width}px`).toEqual([]);
+        await mkdir(responsiveScreenshotDir, { recursive: true });
+        await page.locator(".synastry-placements-comparison").screenshot({
+          path: path.join(responsiveScreenshotDir, `synastry-${theme}-${width}.png`)
+        });
+      }
+    }
+  });
+
   test("main app pages keep shared label styling across desktop and mobile", async ({ page }) => {
     test.setTimeout(60_000);
     const assertNoClientErrors = await expectNoClientErrors(page);

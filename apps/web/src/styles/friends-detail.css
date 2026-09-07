@@ -338,6 +338,37 @@
   align-items: start;
 }
 
+/* This surface is lazy loaded after the global responsive sheet. Keep its
+   narrow layout with the component so loading order cannot restore two
+   desktop columns on a phone. */
+@media (max-width: 800px) {
+  .synastry-placements-comparison .synastry-placement-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .synastry-placement-table > .synastry-placement-row {
+    grid-template-columns: max-content max-content minmax(0, 1fr);
+    grid-template-areas: "glyph sign meta";
+    gap: var(--space-2);
+    padding: var(--card-row-padding-compact);
+  }
+
+  .synastry-placement-row .synastry-placement-lead {
+    grid-area: glyph;
+  }
+
+  .synastry-placement-row .synastry-placement-sign {
+    grid-area: sign;
+  }
+
+  .synastry-placement-row .synastry-placement-meta {
+    grid-area: meta;
+    display: flex;
+    gap: var(--space-1);
+    width: auto;
+  }
+}
+
 .synastry-placement-column,
 .synastry-placement-panel {
   display: grid;

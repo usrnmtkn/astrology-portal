@@ -597,6 +597,10 @@
   --radius-sm: 14px;
   --radius-circle: 50%;
   --radius-pill: 999px;
+  /* Half-disc geometry: percentage radii preserve an elliptical lunar
+     terminator at every icon size; pill radii flatten its vertical curve. */
+  --radius-half-disc-left: 100% 0 0 100% / 50%;
+  --radius-half-disc-right: 0 100% 100% 0 / 50%;
 
   /* 3. COMPONENT TOKENS */
   --card-bg: var(--surface);
