@@ -144,6 +144,11 @@ try {
 
   const detailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
   assert.match(detailSource, /skyPlacementResidencyAspectSections/u);
+assert.match(
+  detailSource,
+  /residencyContext && residencyAspectSections !== null[\s\S]*?existingAspectSections\.filter[\s\S]*?residencyAspectHeadings/u,
+  "Residency enrichment must keep existing exact aspect content visible while the async residency scan loads and preserve unmatched approved aspects afterward."
+);
   assert.doesNotMatch(
     detailSource,
     /relatedAspectGrouping\s*=\s*residencyContext[\s\S]*?"event"/u,
