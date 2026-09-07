@@ -54,8 +54,8 @@ jobs:
           PY
 
           git diff --check
-          node scripts/test-calendar-south-node-serving.mjs
           npm ci
+          node scripts/test-calendar-south-node-serving.mjs
           npm run build
           npm run qa:bundle
       - name: Commit trim and remove temporary workflow
