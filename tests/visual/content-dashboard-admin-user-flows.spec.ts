@@ -5049,12 +5049,17 @@ test("surface maps select source families and manage repeated edits across theme
     facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3" },
     sections: { packageRecord: { contentKey: key, content_role: "fallback_hook", review_status: "approved", body_you: "QA introduction used by the source manager.", body_they: "QA friend introduction." } }
   };
-  await seedAdminApi(page, { generatedRows: [row], onGeneratedContentWrite: (write) => writes.push(write) });
+  const alternate = { ...row, id: "qa-map-uranus-alternate", mode: "in_depth", headline: "Uranus alternate saved row" };
+  await seedAdminApi(page, { generatedRows: [row, alternate], onGeneratedContentWrite: (write) => writes.push(write) });
   await expectAdminRouteLoads(page, "/admin/content#composition-map");
   await page.getByLabel("Search surfaces and systems").fill("natal placement detail");
   const manager = page.getByRole("region", { name: "Manage composition sources" });
-  await expect(manager.getByLabel("Selected composition source")).toHaveValue(key);
+  await expect(manager.getByLabel("Selected composition source")).toHaveValue(row.id);
   await manager.getByLabel("Source family").selectOption("fallback-hook/planet-intro");
+  await manager.getByLabel("Selected composition source").selectOption(alternate.id);
+  await expect(manager.locator(".admin-composition-source-card > strong")).toHaveText(alternate.headline);
+  await manager.getByLabel("Selected composition source").selectOption(row.id);
+
   for (const theme of ["light", "dark"]) {
     await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
     for (const width of [1440, 390]) {

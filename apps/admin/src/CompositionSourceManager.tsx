@@ -15,19 +15,19 @@ type Props = {
 export default function CompositionSurfaceSources({ surfaceId, rows, templates, onEditRow, onSelectTemplate, onLoadRow }: Props) {
   const [query, setQuery] = useState("");
   const [family, setFamily] = useState("");
-  const [selectedKey, setSelectedKey] = useState("");
+  const [selectedId, setSelectedId] = useState("");
   const [allSources, setAllSources] = useState(false);
   const sources = useMemo(() => allSources ? rows : compositionSourcesForSurface(surfaceId, rows, templates), [surfaceId, rows, templates, allSources]);
   const families = [...new Set(sources.map((row) => compositionSourceFamily(row.content_key)))].sort();
   const filtered = sources.filter((row) => (!family || compositionSourceFamily(row.content_key) === family)
     && query.toLowerCase().split(/\s+/).every((term) => `${row.content_key} ${row.headline ?? ""} ${row.body ?? ""}`.toLowerCase().includes(term)));
-  const selected = filtered.find((row) => row.content_key === selectedKey) ?? filtered[0];
+  const selected = filtered.find((row) => row.id === selectedId) ?? filtered[0];
   const [loadError, setLoadError] = useState("");
   const [retry, setRetry] = useState(0);
   useEffect(() => {
     setLoadError("");
     if (!selected) return;
-    setSelectedKey(selected.content_key);
+    setSelectedId(selected.id);
     if (!selected.inventory_only || !onLoadRow) return;
     let active = true;
     void onLoadRow(selected).catch((error) => { if (active) setLoadError(error instanceof Error ? error.message : "Could not load this source."); });
@@ -46,8 +46,8 @@ export default function CompositionSurfaceSources({ surfaceId, rows, templates, 
         <option value="">All source families</option>{families.map((key) => <option key={key} value={key}>{key}</option>)}
       </select>
       <button type="button" aria-pressed={allSources} onClick={() => { setAllSources((value) => !value); setFamily(""); }}>Search all Studio sources</button>
-      <label>Selected source<select aria-label="Selected composition source" value={selected?.content_key ?? ""} onChange={(event) => setSelectedKey(event.target.value)}>
-        {filtered.map((row) => <option key={row.id || row.content_key} value={row.content_key}>{row.headline || row.content_key} · {row.content_key}</option>)}
+      <label>Selected source<select aria-label="Selected composition source" value={selected?.id ?? ""} onChange={(event) => setSelectedId(event.target.value)}>
+        {filtered.map((row) => <option key={row.id || row.content_key} value={row.id}>{row.headline || row.content_key} · {row.content_key}</option>)}
       </select></label>
     </div>
     {loadError && <p role="alert">{loadError} <button type="button" onClick={() => setRetry((value) => value + 1)}>Retry source</button></p>}
