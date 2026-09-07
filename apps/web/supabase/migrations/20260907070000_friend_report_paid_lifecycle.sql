@@ -160,7 +160,20 @@ create policy "Users can view their Friends report jobs"
   using (auth.uid() = user_id);
 
 -- Browsers may inspect their own lifecycle state. Minting entitlements, converting
--- Stripe checkout intents, queue mutations, retries, and cleanup remain server-only.
+-- Stripe checkout intents, queue mutations, retries, cleanup, and job claims remain server-only.
 grant select on public.friend_report_entitlements to authenticated;
 grant select on public.friend_report_checkout_intents to authenticated;
 grant select on public.friend_report_jobs to authenticated;
+revoke insert, update, delete, truncate, references, trigger
+  on public.friend_report_entitlements
+  from anon, authenticated;
+revoke insert, update, delete, truncate, references, trigger
+  on public.friend_report_checkout_intents
+  from anon, authenticated;
+revoke insert, update, delete, truncate, references, trigger
+  on public.friend_report_jobs
+  from anon, authenticated;
+revoke all on function public.claim_friend_report_jobs(text, integer, uuid)
+  from public, anon, authenticated;
+grant execute on function public.claim_friend_report_jobs(text, integer, uuid)
+  to service_role;
