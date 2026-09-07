@@ -6,7 +6,7 @@ function reportIdFromPath() {
   return window.location.pathname.match(/^\/reports\/([^/]+)$/u)?.[1] ?? "";
 }
 
-function documentFromDelivery(payload: NonNullable<ReportDeliveryPayload["report"]>): ReportDocument {
+export function documentFromDelivery(payload: NonNullable<ReportDeliveryPayload["report"]>): ReportDocument {
   const overview = payload.units.find((unit) => unit.content_key.endsWith(":overview")) ?? payload.units[0];
   const chapters = payload.units.filter((unit) => unit !== overview).flatMap((unit, index) => {
     const unitId = unit.content_key.split(":").at(-1) ?? String(index);
@@ -23,8 +23,9 @@ function documentFromDelivery(payload: NonNullable<ReportDeliveryPayload["report
   };
 }
 
-export function ReportDeliveryView() {
-  const reportId = useMemo(reportIdFromPath, []);
+export function ReportDeliveryView({ reportId: reportIdProp }: { reportId?: string } = {}) {
+  const pathReportId = useMemo(reportIdFromPath, []);
+  const reportId = reportIdProp ?? pathReportId;
   const [payload, setPayload] = useState<ReportDeliveryPayload | null>(null);
   const [error, setError] = useState("");
   useEffect(() => {
@@ -44,7 +45,8 @@ export function ReportDeliveryView() {
         if (!cancelled) setError(reason instanceof Error ? reason.message : "Report unavailable.");
       }
     }
-    void refresh();
+    if (reportId) void refresh();
+    else setError("Report unavailable.");
     return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, [reportId]);
   if (error) return <main className="report-delivery-state" data-report-error="unavailable" />;
