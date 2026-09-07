@@ -19,6 +19,7 @@ const reportRoute = read("apps/web/src/routes/ReportRoute.tsx");
 const main = read("apps/web/src/main.tsx");
 const migration = read("apps/web/supabase/migrations/20260906214000_report_library_state.sql");
 const shareMigration = read("apps/web/supabase/migrations/20260907014500_report_library_share_links.sql");
+const shortShareMigration = read("apps/web/supabase/migrations/20260907032000_report_library_short_share_keys.sql");
 
 assert.match(service, /from\("user_generated_interpretations"\)[\s\S]*friend_transit_reading/u);
 assert.match(service, /from\("user_reports"\)/u);
@@ -39,18 +40,25 @@ assert.match(service, /status === "ready" && !item\.seenAt && !item\.archivedAt/
 assert.match(links, /export function reportVanitySlug/u);
 assert.match(links, /return `\$\{date\}-\$\{subject\}`/u, "Vanity slugs must use yyyy-mm-dd-subject form.");
 assert.match(links, /export function reportShareKeyFromHash/u);
-assert.match(links, /\^#share=/u, "Share credentials must stay in the URL fragment.");
+assert.match(links, /\^#s=/u, "New share credentials must use the compact fragment key.");
+assert.match(links, /\^#share=/u, "Legacy UUID share fragments must remain readable.");
 
 assert.match(sharingService, /method: "POST"/u);
 assert.match(sharingService, /authorization: `Bearer \$\{token\}`/u);
 assert.match(sharingService, /\/api\/report-share/u);
+assert.match(sharingService, /export async function stopReportSharing/u);
+assert.match(sharingService, /method: "DELETE"/u);
 assert.match(sharingService, /export async function loadSharedReport/u);
 
 assert.match(shareApi, /requireReportUser\(req\)/u, "Creating a share link must require the owner session.");
 assert.match(shareApi, /report_share_links/u);
-assert.match(shareApi, /randomUUID\(\)/u);
-assert.match(shareApi, /#share=\$\{shareKey\}/u, "Share URLs must keep the bearer credential in the fragment.");
+assert.match(shareApi, /randomBytes\(16\)\.toString\("base64url"\)/u, "New share keys must carry 128 bits of random entropy without UUID formatting overhead.");
+assert.match(shareApi, /#s=\$\{shareKey\}/u, "New share URLs must keep the compact bearer credential in the fragment.");
+assert.match(shareApi, /#share=\$\{shareKey\}/u, "Existing UUID share URLs must remain backward compatible.");
+assert.match(shareApi, /validShareKey/u);
 assert.match(shareApi, /revoked_at: "is\.null"/u);
+assert.match(shareApi, /async function revokeShare/u);
+assert.match(shareApi, /req\.method === "DELETE"/u);
 assert.match(shareApi, /Only completed saved readings can be shared/u);
 assert.match(shareApi, /Only completed active reports can be shared/u);
 const loadShareStart = shareApi.indexOf("async function loadShare");
@@ -150,5 +158,8 @@ assert.match(shareMigration, /enable row level security/u);
 assert.match(shareMigration, /for select/u);
 assert.doesNotMatch(shareMigration, /for (?:insert|update|delete)/u, "Browsers must not mint or mutate share bearer links directly.");
 assert.match(shareMigration, /grant select on public\.report_share_links to authenticated/u);
+assert.match(shortShareMigration, /alter column share_key type text using share_key::text/u);
+assert.match(shortShareMigration, /\^\[A-Za-z0-9_-\]\{22\}\$/u);
+assert.match(shortShareMigration, /legacy UUID keys remain valid until revoked/u);
 
-console.log("Report library, vanity links, secure sharing, notification, article navigation, date labels, and library UX contract passed.");
+console.log("Report library, vanity links, compact secure sharing, notification, article navigation, date labels, and library UX contract passed.");
