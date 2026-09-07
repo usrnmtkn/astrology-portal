@@ -65,6 +65,10 @@
   box-shadow: var(--card-shadow);
 }
 
+.report-library-row:has(.report-library-row__menu) {
+  z-index: var(--z-popover);
+}
+
 .report-library-row__open {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -135,7 +139,7 @@
 
 .report-library-row__actions {
   position: relative;
-  z-index: auto;
+  z-index: 1;
   display: grid;
   align-items: center;
   padding: var(--space-2);
@@ -155,7 +159,8 @@
 
 .report-library-row__menu {
   position: absolute;
-  z-index: var(--z-popover);
+  z-index: calc(var(--z-popover) + 1);
+  isolation: isolate;
   top: 100%;
   right: 0;
   display: grid;
@@ -164,7 +169,7 @@
   padding: var(--space-2);
   border: var(--border-width-thin) solid var(--overlay-border);
   border-radius: var(--card-radius-sm);
-  background: var(--overlay-bg);
+  background: var(--surface);
   box-shadow: var(--overlay-shadow);
 }
 
