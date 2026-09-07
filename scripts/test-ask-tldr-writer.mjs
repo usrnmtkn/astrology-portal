@@ -8,6 +8,7 @@ import {
 } from "../api/_lib/ask-tldr-governed-evidence.ts";
 import { buildAskTldrVoiceEvidenceReceipt } from "../api/_lib/ask-tldr-voice-receipt.ts";
 import { buildAskTldrWriterRequest, validateAskTldrWriterOutput } from "../api/_lib/ask-tldr-writer.ts";
+import { assertOpenAiStrictResponseSchema } from "../api/_lib/report-provider-schema.ts";
 
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(new URL(relativePath, import.meta.url), "utf8"));
 const model = readJson("../config/ask-tldr/answer-model-v1.json");
@@ -45,6 +46,7 @@ assert.match(request.input, /OWNER CORRECTIONS/u);
 assert.match(request.input, /ACTIVE DO-NOT-USE RULES/u);
 assert.doesNotMatch(request.input, /OWNER PASSAGE 1; source=undefined/u);
 assert.deepEqual(request.outputSchema.properties.primaryEvidenceId, { type: "string", const: request.primaryEvidenceId });
+assert.doesNotThrow(() => assertOpenAiStrictResponseSchema(request.outputSchema, "ask_tldr_writer_v1"), "The actual writer schema must compile against the production provider subset.");
 assert.ok(request.requestSha256);
 
 const profectionCandidate = calculated.find((factor) => factor.kind === "profection");
@@ -131,8 +133,15 @@ assert.throws(() => validateAskTldrWriterOutput({
   value: { ...goodValue, whyNowEvidenceId: null }
 }), /ASK_TLDR_WRITER_WHY_NOW_REQUIRED/u);
 
+assert.throws(() => validateAskTldrWriterOutput({
+  request,
+  question: governed.question,
+  evidence: governed.evidence,
+  value: { ...goodValue, answer: "   " }
+}), /ASK_TLDR_WRITER_EVIDENCE_IDS_INVALID/u, "Empty reader prose remains forbidden by the deterministic validator even though minLength is not sent to the provider.");
+
 const mismatchedReceipt = structuredClone(receipt);
 mismatchedReceipt.semanticSources[0].packetSha256 = "bad";
 assert.throws(() => buildAskTldrWriterRequest({ packet: governed, receipt: mismatchedReceipt }), /ASK_TLDR_VOICE_RECEIPT_TAMPERED|ASK_TLDR_WRITER_SEMANTIC_RECEIPT_MISMATCH/u);
 
-console.log("Ask TLDR writer contract passed: no provider call is enabled, only fully governed factors can reach the writer, semantic meaning and owner register evidence stay separate, and output must cite the ranked primary evidence without leaking internal metadata or banned prose.");
+console.log("Ask TLDR writer contract passed: the generated provider schema compiles, no provider call is enabled, only fully governed factors can reach the writer, semantic meaning and owner register evidence stay separate, and output must cite the ranked primary evidence without leaking internal metadata or banned prose.");
