@@ -41,6 +41,9 @@ assert.match(request.instructions, /Do not write generic coaching with astrology
 assert.match(request.instructions, /compare and contrast/u);
 assert.match(request.instructions, /Why the astrology points here/u);
 assert.match(request.instructions, /historical comparison/u);
+assert.equal(governed.question.referenceDate, now.toISOString(), "The calculation date must survive governance into the writer contract.");
+assert.ok(request.input.includes(`"referenceDate": "${now.toISOString()}"`));
+assert.match(request.instructions, /Annual evidence may include dates that have already passed/u);
 assert.match(request.input, /USER QUESTION/u);
 assert.match(request.input, /Jupiter/u);
 assert.match(request.input, /Midheaven/u);

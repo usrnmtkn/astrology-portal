@@ -121,6 +121,7 @@ function writerInstructions(packet: GovernedAnswerPacket) {
       ? "For a guidance, direction, decision, or timing question, make the central advice usable. Translate it into a concrete decision, request, preparation step, boundary, question, comparison, or observable action that follows from the astrology. Do not stop at phrases the reader still has to translate into what to do."
       : "Give the reader a concrete perspective or consequence that follows from the astrology rather than a generic life lesson.",
     "Use second person. Use ordinary language. Keep manifestations conditional with may, can, might, or another clear possibility construction when the facts support more than one lived outcome.",
+    "Use QUESTION CONTRACT referenceDate as the date of this answer. Annual evidence may include dates that have already passed: describe those as past context, never as an upcoming appointment or instruction to act then. A past exact date does not prove the factor remains active; only an explicitly supplied active window can establish that. Frame preparation as practical preparation, not as an invented astrological lead-in period. Do not imply there are months left before a date only days away.",
     "When you use active, upcoming, or annual evidence, name why the timing matters from the supplied timing facts instead of leaving the reader with an undated generalization.",
     `After the main answer, include a separate reader-facing section headed exactly '${ASTROLOGY_SECTION_HEADING}'. Put the heading on its own paragraph, followed by one final explanatory paragraph of at least two sentences. In that paragraph, explain the mechanism behind the advice in plain language: identify the primary astrology, explain what it is doing, and use any genuinely relevant supporting factor to show reinforcement, contrast, or the larger arc. Do not merely repeat transit labels.`,
     "The astrology section is not an evidence dump. It should make the answer more convincing by showing why these particular chart factors support this particular conclusion.",
@@ -158,6 +159,7 @@ function writerInput(
       secondaryIntents: packet.question.secondaryIntents,
       questionTypes: packet.question.questionTypes,
       timeWindow: packet.question.timeWindow,
+      referenceDate: packet.question.referenceDate ?? null,
       decisionMode: packet.decisionMode,
       answerContract: packet.answerContract
     }, null, 2),

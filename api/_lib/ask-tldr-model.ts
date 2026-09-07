@@ -343,7 +343,8 @@ export function buildAskTldrAnswerPacket(input: {
   candidates: AskTldrEvidenceCandidate[];
   now?: Date;
 }) {
-  const evidence = rankAskTldrEvidence(input);
+  const now = input.now ?? new Date();
+  const evidence = rankAskTldrEvidence({ ...input, now });
   return {
     schema: "ask-tldr-answer-packet.v1" as const,
     question: {
@@ -354,7 +355,8 @@ export function buildAskTldrAnswerPacket(input: {
       primaryIntent: input.plan.primaryIntent,
       secondaryIntents: input.plan.secondaryIntents,
       questionTypes: input.plan.questionTypes,
-      timeWindow: input.plan.timeWindow
+      timeWindow: input.plan.timeWindow,
+      referenceDate: now.toISOString()
     },
     decisionMode: input.plan.decisionMode,
     answerContract: {

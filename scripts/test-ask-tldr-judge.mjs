@@ -57,6 +57,8 @@ assert.match(request.instructions, /Do not output a pass\/fail verdict/u);
 assert.match(request.instructions, /generic coaching advice/u);
 assert.match(request.instructions, /Why the astrology points here/u);
 assert.match(request.instructions, /historical comparison/u);
+assert.ok(request.input.includes(`"referenceDate": "${now.toISOString()}"`), "The judge must receive the same calculation date as the writer.");
+assert.match(request.instructions, /Annual evidence can include past events/u);
 assert.match(request.input, /USER QUESTION/u);
 assert.match(request.input, /READER ANSWER/u);
 assert.match(request.input, /OWNER REGISTER EVIDENCE/u);
