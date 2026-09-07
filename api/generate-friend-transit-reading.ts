@@ -323,6 +323,30 @@ async function generateClaude(
   return normalizeProviderDraft(toolInput as ProviderPayload, headline, model, payload?.id, retryCount);
 }
 
+function compactBriefForRecovery(brief: FriendTransitReadingBrief): FriendTransitReadingBrief {
+  const primaryThemes = brief.primaryThemes.slice(0, 2);
+  const longerCycles = brief.longerCycles.slice(0, 2);
+  const relationshipActivations = brief.relationshipActivations.slice(0, 1);
+  const houseContext = brief.houseContext.slice(0, 2);
+  const activePatterns = brief.activePatterns.slice(0, 1);
+  return {
+    ...brief,
+    primaryThemes,
+    relationshipActivations,
+    houseContext,
+    longerCycles,
+    activePatterns,
+    counts: {
+      ...brief.counts,
+      primaryThemes: primaryThemes.length,
+      relationshipActivations: relationshipActivations.length,
+      houseContext: houseContext.length,
+      longerCycles: longerCycles.length,
+      activePatterns: activePatterns.length
+    }
+  };
+}
+
 async function generateReading(brief: FriendTransitReadingBrief, headline: string) {
   const provider = generationProvider();
   let feedback = "";
@@ -342,7 +366,22 @@ async function generateReading(brief: FriendTransitReadingBrief, headline: strin
     }
   }
 
-  throw lastQualityError ?? new FriendTransitReadingQualityError("Friends reading failed validation.");
+  const recoveryBrief = compactBriefForRecovery(brief);
+  const recoveryFeedback = [
+    lastQualityError?.message ?? "The earlier draft did not pass the Friends reading quality lock.",
+    "Final recovery attempt: use only the strongest evidence in this reduced governed brief.",
+    "Keep the synthesis plain and concise. Do not add facts, examples, sections, dates, houses, signs, or technical claims that are not explicitly supplied."
+  ].join("\n");
+  try {
+    const draft = provider === "claude"
+      ? await generateClaude(recoveryBrief, headline, recoveryFeedback, 2)
+      : await generateOpenAI(recoveryBrief, headline, recoveryFeedback, 2);
+    validateGeneratedReading(draft, recoveryBrief, headline);
+    return { draft, provider };
+  } catch (error) {
+    if (!(error instanceof FriendTransitReadingQualityError)) throw error;
+    throw error;
+  }
 }
 
 async function existingReading(userId: string, subjectId: string, contentKey: string, targetDate: string) {
