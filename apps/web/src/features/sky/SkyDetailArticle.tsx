@@ -13,13 +13,13 @@ import {
   isReaderFacingCopy
 } from "../../content/readerSafety";
 import type { GeneratedContentDrilldown } from "../../services/generatedContent";
-import { skyActiveChartEvents } from "../../services/skyActiveChartEvents";
 import { zodiacSignGlyphs, zodiacSigns } from "../../services/chartMath";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import {
   articleAspectGlyphPartsFromHeading,
   articleAspectTypeFromText,
-  normalizedArticleAspectToneBucket
+  normalizedArticleAspectToneBucket,
+  skyActiveChartEvents
 } from "../../utils/articleAspects";
 import {
   cleanGeneratedSectionBody,
@@ -276,8 +276,7 @@ function articleEyebrowGlyphs({
     ...(glyph ? glyph.split(/\s+/).filter(Boolean).map((part) => textArticleGlyph(part)) : []),
     sign ? signArticleGlyph(sign) : null,
     articleTitleHouseToken(title, meta)
-      ? { key: `house-${articleTitleHouseToken(title, meta)}`, label: articleTitleHouseToken(title, meta), text: articleTitleHouseToken(title, meta), house: true }
-      : null
+      ? { key: `house-${articleTitleHouseToken(title, meta)}`, label: articleTitleHouseToken(title, meta), text: articleTitleHouseToken(title, meta), house: true } : null
   ]);
 }
 
@@ -827,20 +826,13 @@ export function SkyDetailArticle({
                     {activeChartEvents.length > 0 ? (
                       <>
                         <h3>Active in your chart</h3>
-                        {activeChartEvents.map((event) => {
-                          const eventParagraphs = event.body ? fullDetailReaderFacingParagraphs([event.body]) : [];
-                          return (
-                            <section className="sky-detail-personalized-aspect" key={event.key}>
-                              <h4>{event.heading}</h4>
-                              {event.dateLabel ? <p className="article-related-aspects__date">{event.dateLabel}</p> : null}
-                              {eventParagraphs.length > 0
-                                ? eventParagraphs.map((paragraph, paragraphIndex) => (
-                                  <p key={`${event.key}-${paragraphIndex}`}>{paragraph}</p>
-                                ))
-                                : event.body ? <p>{event.body}</p> : null}
-                            </section>
-                          );
-                        })}
+                        {activeChartEvents.map((event) => (
+                          <section className="sky-detail-personalized-aspect" key={event.key}>
+                            <h4>{event.heading}</h4>
+                            {event.dateLabel ? <p className="article-related-aspects__date">{event.dateLabel}</p> : null}
+                            {event.body ? <p>{event.body}</p> : null}
+                          </section>
+                        ))}
                       </>
                     ) : null}
                   </section>
