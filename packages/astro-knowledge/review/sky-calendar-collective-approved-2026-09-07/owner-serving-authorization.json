@@ -26,5 +26,6 @@
   "runtimeEligible": true,
   "contentStudioEditable": true,
   "contentStudioSignedOffExactOverridesCanonicalBaseline": true,
-  "preserveUnchangedSouthNodeRows": true
+  "preserveUnchangedSouthNodeRows": true,
+  "explicitOwnerConfirmationPath": "packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/explicit-owner-confirmation.json"
 }
