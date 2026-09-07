@@ -384,23 +384,18 @@ export function SkyDetailArticle({
 
   const residencyContext = detail.placementResidencyContext;
   const residencyContextKey = residencyContext
-    ? `${residencyContext.planet}|${residencyContext.sign}|${residencyContext.referenceDate}|${residencyContext.timeZone}`
+    ? `${residencyContext.referenceDate}|${residencyContext.timeZone}`
     : "";
   const [residencyAspectState, setResidencyAspectState] = useState<[string, SkyDetailSection[]] | null>(null);
 
   useEffect(() => {
     if (!residencyContext) return;
     let cancelled = false;
-    setResidencyAspectState(null);
     void import("../../services/skyPlacementResidencyAspects")
       .then(({ skyPlacementResidencyAspectSections }) => skyPlacementResidencyAspectSections(residencyContext))
       .then(
-        (result) => {
-          if (!cancelled) setResidencyAspectState([residencyContextKey, result.sections]);
-        },
-        () => {
-          if (!cancelled) setResidencyAspectState([residencyContextKey, []]);
-        }
+        ({ sections }) => !cancelled && setResidencyAspectState([residencyContextKey, sections]),
+        () => !cancelled && setResidencyAspectState([residencyContextKey, []])
       );
     return () => {
       cancelled = true;
