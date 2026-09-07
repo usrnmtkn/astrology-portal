@@ -234,7 +234,8 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
     const title = row.headline?.trim() || (row.subject_type === "friend_transit_reading" ? "Friends reading" : "Your transit report");
     const subjectLabel = generatedSubjectLabel(row);
     const status = generatedReportStatus(row);
-    const periodEnd = generatedPeriodEnd(row);
+    const singleDayWindow = { periodEnd: row.target_date };
+    const periodEnd = row.subject_type === "you_week_reading" ? generatedPeriodEnd(row) : singleDayWindow.periodEnd;
     const vanitySlug = reportVanitySlug({ targetDate: row.target_date, createdAt: row.created_at, subjectLabel: generatedVanitySubject(row), title });
     return [{
       id: `generated_interpretation:${row.id}`,
