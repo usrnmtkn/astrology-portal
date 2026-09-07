@@ -20,6 +20,7 @@ import type {
   AskTldrQuestionDefinition,
   AskTldrTimeWindow
 } from "../_lib/ask-tldr-model.js";
+import type { AskTldrOwnerCorrection } from "../_lib/ask-tldr-voice-receipt.js";
 import {
   createTldrAstroReportFactsClient,
   type ReportChartSubject,
@@ -66,6 +67,7 @@ const QUESTION_PREFIX = "ask-tldr/question/";
 const PREVIEW_PREFIX = "ask-tldr/preview/";
 const PREVIEW_HISTORY_LIMIT = 30;
 const MAX_BODY_BYTES = 32_000;
+const MAX_RUNTIME_OWNER_CORRECTIONS = 4;
 
 type GeneratedContentRow = {
   id: string;
@@ -107,7 +109,7 @@ type ReadyChartContext = {
 type ChartContext = ReadyChartContext | { ready: false; reason: string };
 
 type AskTldrRequestBody = {
-  action?: "save_question" | "reset_question" | "preview" | "review_preview";
+  action?: "save_question" | "reset_question" | "preview" | "review_preview" | "approve_feedback" | "revoke_feedback";
   questionId?: string;
   displayQuestion?: string;
   pillarId?: AskTldrPillarId;
@@ -259,6 +261,18 @@ function effectivePillars(rows: GeneratedContentRow[]) {
   }));
 }
 
+function ownerFeedbackFromDiagnostics(diagnostics: Record<string, unknown>) {
+  const feedback = record(diagnostics.ownerFeedback);
+  if (!feedback) return null;
+  return {
+    status: words(feedback.status) || "",
+    guidance: words(feedback.guidance),
+    pillarId: words(feedback.pillarId) || null,
+    approvedAt: words(feedback.approvedAt) || null,
+    revokedAt: words(feedback.revokedAt) || null
+  };
+}
+
 function previewHistory(rows: GeneratedContentRow[]) {
   return rows
     .filter((row) => row.mode === "preview" && row.content_key.startsWith(PREVIEW_PREFIX))
@@ -283,9 +297,35 @@ function previewHistory(rows: GeneratedContentRow[]) {
         chartMode: words(diagnostics.chartMode) || "owner",
         chartLabel: words(diagnostics.chartLabel) || null,
         chartFingerprint: words(diagnostics.chartFingerprint) || null,
+        ownerFeedback: ownerFeedbackFromDiagnostics(diagnostics),
         diagnostics
       };
     });
+}
+
+function approvedOwnerCorrections(rows: GeneratedContentRow[], pillarId: AskTldrPillarId): AskTldrOwnerCorrection[] {
+  const corrections: AskTldrOwnerCorrection[] = [];
+  for (const row of rows) {
+    if (row.mode !== "preview" || !row.content_key.startsWith(PREVIEW_PREFIX)) continue;
+    const diagnostics = record(row.sections) ?? {};
+    const feedback = record(diagnostics.ownerFeedback);
+    if (!feedback || words(feedback.status) !== "approved" || words(feedback.pillarId) !== pillarId) continue;
+    const guidance = words(feedback.guidance);
+    const before = words(row.body);
+    if (!guidance || !before) continue;
+    corrections.push({
+      before,
+      after: guidance,
+      ownerReason: "Owner-approved future guidance from Ask TLDR Draft Review.",
+      category: "owner_feedback",
+      family: `ask-tldr:${pillarId}`,
+      rule: "owner_approved_runtime_guidance",
+      sourcePath: `content-studio:ask-tldr-preview/${row.id}`,
+      relevanceScore: 100
+    });
+    if (corrections.length >= MAX_RUNTIME_OWNER_CORRECTIONS) break;
+  }
+  return corrections;
 }
 
 function chartName(data: unknown, fallback: string | null) {
@@ -496,7 +536,7 @@ async function savePreviewDraft(input: {
   result: Awaited<ReturnType<typeof runPreparedAskTldrAnswerCalibration>>;
   classifier: unknown;
 }) {
-  const writerCall = input.result.calls.find((call) => call.role === "writer");
+  const writerCall = [...input.result.calls].reverse().find((call) => call.role === "writer");
   const previewKey = `${PREVIEW_PREFIX}${crypto.randomUUID()}`;
   const rows = await input.store.insert<GeneratedContentRow>("generated_interpretations", {
     content_key: previewKey,
@@ -520,9 +560,11 @@ async function savePreviewDraft(input: {
       evidence: summarizeEvidence(input.prepared),
       relevanceReceiptSha256: input.prepared.relevanceReceipt.receiptSha256,
       voiceReceiptSha256: input.prepared.voiceReceipt.receiptSha256,
+      ownerCorrections: input.prepared.voiceReceipt.ownerCorrections,
       factLock: input.result.factLock,
       judge: input.result.judge,
       releasePacket: input.result.releasePacket,
+      revision: input.result.revision,
       calls: input.result.calls,
       classifier: input.classifier
     },
@@ -628,6 +670,38 @@ async function reviewPreview(store: SupabaseReportAdmin, previewId: string, deci
   return updated[0] ?? existing;
 }
 
+async function updatePreviewFeedback(store: SupabaseReportAdmin, previewId: string, reviewerNotes: string, status: "approved" | "revoked") {
+  const existing = await store.selectOne<GeneratedContentRow>(
+    "generated_interpretations",
+    new URLSearchParams({ id: `eq.${previewId}`, surface: "eq.ask_tldr", mode: "eq.preview", select: "*" })
+  );
+  if (!existing) throw new Error("Ask TLDR preview draft was not found.");
+  const diagnostics = record(existing.sections) ?? {};
+  const pillarId = words(diagnostics.pillarId);
+  if (!pillarId || !pillarsById.has(pillarId as AskTldrPillarId)) throw new Error("Preview pillar could not be resolved for owner feedback.");
+  const previous = record(diagnostics.ownerFeedback);
+  const guidance = status === "approved" ? reviewerNotes.trim() : words(previous?.guidance);
+  if (status === "approved" && (guidance.length < 12 || guidance.length > 1200)) {
+    throw new Error("Write a reusable owner note between 12 and 1200 characters before using it in future answers.");
+  }
+  const now = new Date().toISOString();
+  const ownerFeedback = {
+    schema: "ask-tldr-owner-feedback.v1",
+    status,
+    guidance,
+    pillarId,
+    sourcePreviewId: existing.id,
+    approvedAt: status === "approved" ? now : words(previous?.approvedAt) || null,
+    revokedAt: status === "revoked" ? now : null
+  };
+  const params = new URLSearchParams({ id: `eq.${previewId}` });
+  const updated = await store.update<GeneratedContentRow>("generated_interpretations", params.toString(), {
+    sections: { ...diagnostics, ownerFeedback },
+    reviewer_notes: reviewerNotes.trim() || existing.reviewer_notes || null
+  });
+  return updated[0] ?? existing;
+}
+
 async function previewAnswer(input: {
   body: AskTldrRequestBody;
   rows: GeneratedContentRow[];
@@ -638,6 +712,7 @@ async function previewAnswer(input: {
   if (!pillarId || !pillarsById.has(pillarId)) throw new Error("Choose an Ask TLDR pillar first.");
   const pillar = pillarsById.get(pillarId)!;
   const overlays = activeQuestionOverlays(input.rows);
+  const ownerCorrections = approvedOwnerCorrections(input.rows, pillarId);
   const now = new Date();
   const chartMode: ChartMode = input.body.chartMode === "test" ? "test" : "owner";
   const chart = chartMode === "test"
@@ -694,7 +769,8 @@ async function previewAnswer(input: {
       questionText,
       classification: classificationResult.classification,
       reportWindow,
-      now
+      now,
+      ownerCorrections
     });
   } else {
     const sourceQuestion = pillar.questions.find((question) => question.id === questionId)!;
@@ -708,7 +784,8 @@ async function previewAnswer(input: {
       pillar: effectivePillar,
       question: effectiveQuestion,
       reportWindow,
-      now
+      now,
+      ownerCorrections
     });
   }
 
@@ -735,7 +812,7 @@ async function previewAnswer(input: {
       authorized: true,
       purpose: "ask_tldr_calibration",
       scopeSha256: scope,
-      maxCalls: 2
+      maxCalls: 4
     },
     callModel
   });
@@ -764,7 +841,8 @@ async function previewAnswer(input: {
       candidateCount: prepared.candidateCount,
       evidence: summarizeEvidence(prepared),
       relevanceReceiptSha256: prepared.relevanceReceipt.receiptSha256,
-      voiceReceiptSha256: prepared.voiceReceipt.receiptSha256
+      voiceReceiptSha256: prepared.voiceReceipt.receiptSha256,
+      approvedOwnerCorrections: ownerCorrections.length
     },
     preview: {
       draftId,
@@ -777,6 +855,7 @@ async function previewAnswer(input: {
       judge: result.judge,
       releaseStatus: result.releasePacket?.releaseStatus ?? "blocked",
       blockers: result.releasePacket?.blockers ?? [],
+      revision: result.revision,
       calls: result.calls,
       classifier: classificationResult
     }
@@ -811,6 +890,11 @@ async function getPayload(req: IncomingMessage) {
       runtimeEnabled: answerModelJson.runtimeEnabled,
       pillarCount: manifestJson.pillarCount,
       questionCount: manifestJson.questionCount
+    },
+    modelTransport: {
+      provider: "openai",
+      ready: Boolean(process.env.OPENAI_API_KEY?.trim()),
+      label: process.env.OPENAI_API_KEY?.trim() ? "Direct OpenAI" : "Direct OpenAI key missing"
     },
     storage: { available: Boolean(store && !storageError), error: storageError },
     chart: chart.ready ? { ready: true, label: chart.label } : { ready: false, reason: chart.reason },
@@ -853,6 +937,18 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         throw new Error("Preview id and approved/rejected decision are required.");
       }
       const row = await reviewPreview(store, previewId, body.decision, words(body.reviewerNotes));
+      sendJson(res, 200, { ok: true, ownerPreviewOnly: true, runtimeEnabled: false, row });
+      return;
+    }
+    if (body.action === "approve_feedback" || body.action === "revoke_feedback") {
+      const previewId = words(body.previewId);
+      if (!previewId) throw new Error("Preview id is required for owner feedback.");
+      const row = await updatePreviewFeedback(
+        store,
+        previewId,
+        words(body.reviewerNotes),
+        body.action === "approve_feedback" ? "approved" : "revoked"
+      );
       sendJson(res, 200, { ok: true, ownerPreviewOnly: true, runtimeEnabled: false, row });
       return;
     }
