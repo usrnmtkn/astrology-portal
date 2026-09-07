@@ -5695,7 +5695,7 @@ export function GeneratedContentAdminDashboard() {
         {(activePage === "connection" || (!hasAccessIssue && !hasLoadFailure)) && (
         <div className="admin-loaded-workspace" hidden={isInitialDashboardLoad} aria-busy={loadState === "loading"}>
 
-        {isCompositionPage(activePage) && (
+        {isCompositionPage(activePage) && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar") && (
           <nav className="admin-template-tabs admin-composition-tabs" aria-label="Composition workspace">
             {compositionTabs.map((item) => (
               <button key={item.page} type="button" className={activePage === item.page ? "active" : ""} aria-current={activePage === item.page ? "page" : undefined} onClick={() => navigateAdminPage(item.page)}>

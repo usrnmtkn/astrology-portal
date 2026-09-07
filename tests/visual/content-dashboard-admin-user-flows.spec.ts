@@ -1279,9 +1279,22 @@ test.describe("content dashboard admin user flow case studies", () => {
       await page.setViewportSize({ width, height: 900 });
       for (const colorScheme of ["light", "dark"] as const) {
         await page.emulateMedia({ colorScheme });
+        await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, colorScheme);
         await search.fill("Cancer");
         await expect(detail.getByRole("heading", { name: "Moon in Cancer · Variant 2" })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        await expect(page.locator('.admin-dashboard-header h1')).toHaveText('Lunar Calendar write-ups');
+        await expect(page.getByRole('region', { name: 'Lunar Calendar workspace' }).getByRole('heading', { level: 2, name: 'Lunar Calendar write-ups' })).toBeVisible();
+        const headingStyle = (element: Element) => {
+          const style = getComputedStyle(element);
+          return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
+        };
+        const browseStyle = await detail.getByRole('heading', { level: 2 }).evaluate(headingStyle);
+        await page.getByRole('tab', { name: 'Composition & variables' }).click();
+        expect(await composition.getByRole('heading', { level: 2 }).evaluate(headingStyle)).toEqual(browseStyle);
+        await page.getByRole('tab', { name: 'Write-ups', exact: true }).click();
+        await mkdir(adminScreenshotDir, { recursive: true });
+        await page.screenshot({ path: path.join(adminScreenshotDir, `lunar-${colorScheme}-${width}.png`), fullPage: true });
         await search.fill("no-matching-lunar-passage");
         await expect(page.getByText("No lunar passages match these filters.")).toBeVisible();
       }
