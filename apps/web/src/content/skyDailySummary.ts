@@ -1,0 +1,102 @@
+import clauses from "./skyDailySummaryClauses.json";
+import defaultTiming from "./skyDailySummaryTiming.json";
+import { skyDailySummaryFields, skySummaryTemplateErrors } from "./skyDailySummaryCatalog";
+import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
+
+function savedCopy(content: CmsGeneratedContentMap | undefined, key: string, fallback: string) {
+  // The reader loader filters LIVE, serving, review-clear rows before normalizing this map.
+  const row = content?.get(key);
+  if (!row || (row.status && row.status !== "LIVE") || !row.body.trim() || skySummaryTemplateErrors(key, row.body).length) return fallback;
+  return row.body.trim();
+}
+
+// Use the owner-selected fuller clauses when available; otherwise render linked facts.
+export type SummaryPart = { text: string; emphasis?: boolean; highlight?: boolean; action?: "lunation" | "sun" | "moon" | "retrograde"; planet?: string; sourceKey?: string };
+export type SummaryPlacement = { sign: string; degree?: number };
+export type SkyDailySummaryFacts = {
+  sun?: SummaryPlacement;
+  moon?: SummaryPlacement;
+  moonIsVoid: boolean;
+  retrogradePlanets?: string[];
+  voidRemainingLabel?: string;
+  event?: { name: string; sign: string; countdown: string; eclipseType?: "solar" | "lunar" };
+};
+
+function fullerClause(body: "sun" | "moon", sign?: string, content?: CmsGeneratedContentMap) {
+  return sign ? savedCopy(content, `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`, (clauses[body] as Record<string, string>)[sign.toLowerCase()] ?? "") : "";
+}
+
+function placementParts(body: "sun" | "moon", placement?: SummaryPlacement, continuation = false, content?: CmsGeneratedContentMap): SummaryPart[] {
+  if (!placement?.sign) return [];
+  const degree = placement.degree;
+  const degreeLabel = typeof degree === "number" && Number.isFinite(degree) && degree >= 0 && degree < 30
+    ? ` at ${Math.floor(degree)}°`
+    : "";
+  const clause = fullerClause(body, placement.sign, content);
+  return [
+    { text: `${continuation ? "while the" : "The"} ${body === "sun" ? "Sun is in" : clause ? "Moon moves through" : "Moon is moving through"} ` },
+    { text: `${placement.sign}${degreeLabel}`, emphasis: true, action: body },
+    { text: clause ? `, ${clause}.` : ".", sourceKey: clause ? `cms/sky-daily-summary/${body}/${placement.sign.toLowerCase()}` : undefined }
+  ];
+}
+
+export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap): SummaryPart[] {
+  const timing = { ...defaultTiming };
+  for (const field of skyDailySummaryFields.filter(field => field.group === "Timing and retrogrades")) {
+    const key = field.key.split("/").at(-1) as Exclude<keyof typeof timing, "provenance">;
+    timing[key] = savedCopy(content, field.key, field.body);
+  }
+  const parts = placementParts("sun", facts.sun, false, content);
+  const joined = Boolean(fullerClause("sun", facts.sun?.sign, content) && fullerClause("moon", facts.moon?.sign, content));
+  const moon = placementParts("moon", facts.moon, joined, content);
+  if (parts.length && moon.length) {
+    if (joined) parts[parts.length - 1].text = `, ${fullerClause("sun", facts.sun?.sign, content)},`;
+    parts.push({ text: " " });
+  }
+  parts.push(...moon);
+  if (facts.retrogradePlanets) {
+    const planets = [...new Set(facts.retrogradePlanets.map(name => name.trim()).filter(Boolean))];
+    if (parts.length) parts.push({ text: " " });
+    const count = planets.length;
+    const countWords = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
+    parts.push({ text: count === 0 ? timing.noRetrogrades : count === 1 ? timing.singleRetrograde
+      : timing.retrograde.replace("{count}", countWords[count] ?? String(count)) });
+    const retrogradeIntro = parts.pop()!;
+    const highlightedIntro = retrogradeIntro.text.match(/^.*?\bretrograde\b/iu)?.[0];
+    if (highlightedIntro) {
+      parts.push({ text: highlightedIntro, highlight: true }, { text: retrogradeIntro.text.slice(highlightedIntro.length) });
+    } else {
+      parts.push(retrogradeIntro);
+    }
+    if (count) {
+      parts[parts.length - 1].text = parts[parts.length - 1].text.trimEnd() + " ";
+      planets.forEach((planet, index) => {
+        if (index) parts.push({ text: index === count - 1 ? count === 2 ? " and " : ", and " : ", " });
+        parts.push({ text: planet, planet, action: "retrograde", emphasis: true });
+      });
+      parts.push({ text: "." });
+    }
+  }
+  if (facts.moon && facts.moonIsVoid) {
+    if (parts.length) parts.push({ text: " " });
+    const remaining = facts.voidRemainingLabel?.replace(/(\d+)\s*(?:min|m)\b/giu, (_, count) => `${count} ${count === "1" ? "minute" : "minutes"}`)
+      .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, count) => `${count} ${count === "1" ? "hour" : "hours"}`);
+    parts.push({ text: remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming, highlight: true });
+  }
+  if (facts.event) {
+    const event = {
+      ...facts.event,
+      name: facts.event.eclipseType === "solar" ? "Solar Eclipse"
+        : facts.event.eclipseType === "lunar" ? "Lunar Eclipse" : facts.event.name
+    };
+    if (parts.length) parts.push({ text: " " });
+    const [prefix, suffix] = timing.lunation.split("{name}");
+    parts.push(
+      { text: prefix.replace(/\{(sign|countdown)\}/gu, (_, slot: "sign" | "countdown") => event[slot]) },
+      { text: event.name, emphasis: true, action: "lunation" },
+      { text: suffix.replace(/\{(sign|countdown)\}/gu, (_, slot: "sign" | "countdown") => event[slot]) }
+    );
+    if (facts.event.name === "Full Moon") parts.push({ text: ` ${timing.fullMoonMeaning}` });
+  }
+  return parts;
+}

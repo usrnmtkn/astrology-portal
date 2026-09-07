@@ -1838,6 +1838,9 @@ function generatedContentMapFromRows(
   const byKey = new Map<string, LiveGeneratedContent>();
 
   for (const row of rows) {
+    // Snapshot loading must apply the same serving filter as the live database query.
+    if (row.content_key.startsWith("cms/sky-daily-summary/")
+      && (row.status !== "LIVE" || row.lane !== "serving" || row.review_state)) continue;
     if (!isGeneratedContentReaderBoundaryAllowed(row)) {
       continue;
     }

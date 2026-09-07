@@ -302,3 +302,19 @@ svg {
   color: var(--card-glyph-color);
   font-family: var(--font-glyph);
 }
+
+/* Shared inline content emphasis. Clone the marker on every wrapped line. */
+.content-highlight {
+  display: inline;
+  padding: 0 var(--space-1);
+  color: var(--content-highlight-color);
+  background: var(--content-highlight-background);
+  box-shadow: var(--content-highlight-shadow);
+  font-family: var(--font-highlight);
+  font-size: var(--text-highlight);
+  font-weight: var(--weight-highlight);
+  line-height: var(--leading-highlight);
+  letter-spacing: var(--tracking-highlight);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}

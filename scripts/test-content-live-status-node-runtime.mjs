@@ -38,8 +38,11 @@ async function emit(relative) {
 try {
   fs.writeFileSync(path.join(output, "package.json"), '{"type":"module"}');
   await emit("api/admin/content-live-status.ts");
+  await emit("apps/web/src/content/skyDailySummaryCatalog.ts");
   const result = execFileSync(process.execPath, ["--input-type=module", "-e", `
     import assert from "node:assert/strict";
+    const { skySummaryTemplateErrors } = await import("./apps/web/src/content/skyDailySummaryCatalog.js");
+    assert.deepEqual(skySummaryTemplateErrors("cms/sky-daily-summary/lunation", "The next {name} arrives in {sign} {countdown}."), []);
     process.env.NODE_ENV = "production";
     process.env.CONTENT_GENERATION_SECRET = "node-runtime-test";
     const { default: handler } = await import("./api/admin/content-live-status.js");

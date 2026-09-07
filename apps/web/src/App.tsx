@@ -1,3 +1,5 @@
+import { calendarDayDistance } from "./services/calendarDayDistance";
+import { skyDailySummaryParts } from "./content/skyDailySummary";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -212,6 +214,7 @@ import {
   loadSharedGeneratedContent
 } from "./services/sharedGeneratedContentCache";
 import { subscribeToContentUpdates, subscribeToContentRevalidation } from "./services/contentUpdateSignal";
+import { skyDailySummaryFields } from "./content/skyDailySummaryCatalog";
 import {
   cmsSurfaceKeys,
   resolveCmsSurfaceOverride
@@ -2897,18 +2900,6 @@ function formatPlacementDegree(position?: PlanetPosition) {
   return formatPlanetDegree(position);
 }
 
-function formatBriefPlacementDegree(position?: PlanetPosition) {
-  if (!position) {
-    return "";
-  }
-
-  return `${Math.round(position.degree)}°`;
-}
-
-function compactSkyChicletSign(label: string) {
-  return label === "Sagittarius" ? "Sag." : label;
-}
-
 function positionFromLongitude({
   planet,
   glyph,
@@ -2983,8 +2974,8 @@ function localDayStart(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
-function lunationCountdownLabel(selectedDate: Date, exactAt: Date) {
-  const daysUntil = Math.max(0, Math.round((localDayStart(exactAt).getTime() - localDayStart(selectedDate).getTime()) / 86_400_000));
+function lunationCountdownLabel(selectedDate: Date, exactAt: Date, timeZone?: string) {
+  const daysUntil = Math.max(0, calendarDayDistance(selectedDate, exactAt, timeZone));
 
   if (daysUntil === 0) {
     return "TODAY";
@@ -5500,6 +5491,28 @@ function skyDetailFromRoutePath(
       position: routedPosition,
       positions: displayPositions
     }) : null;
+  }
+
+  if (detailType === "lunation" && firstPart && secondPart) {
+    const event = sky.moonEvent;
+    if (!event || event.occursAt.slice(0, 10) !== firstPart || !skyRoutePartMatches(event.sign, secondPart)) {
+      return null;
+    }
+    return currentSkyV4LunationDetailArticle({
+      event: {
+        id: `lunation-${event.occursAt}`,
+        type: "lunation",
+        title: `${event.name} in ${event.sign}`,
+        startsAt: event.occursAt,
+        dateKey: firstPart,
+        glyph: signGlyph(event.sign),
+        primary: true,
+        sign: event.sign,
+        eclipseType: event.eclipseType
+      },
+      sky,
+      generatedContent
+    });
   }
 
   if (detailType === "aspect" && firstPart && secondPart && thirdPart) {
@@ -12022,6 +12035,7 @@ export function App() {
     const currentSkyContentKeys = [
       ...new Set([
         ...cmsSurfaceKeys.retrogradeSummary(),
+        ...skyDailySummaryFields.map(field => field.key),
         ...aspectContentKeys,
         ...personalTransitAspectContentKeys
       ])
@@ -14246,6 +14260,7 @@ export function App() {
                       <SkyLoadingCards compact />
                     ) : sky ? (
                       <SkyCards
+                        generatedContent={skyGeneratedContent}
                         sky={sky}
                         dateLabel={formatSkyFullChartDate(skyDate)}
                         locationLabel={compactCityLabel(location.label)}
@@ -14256,24 +14271,6 @@ export function App() {
                           setMobileSkyControlsOpen(false);
                           setSkyFullChartOpen(true);
                         }}
-                        onOpenLunation={sky.moonEvent ? () => {
-                          const moonEvent = sky.moonEvent!;
-                          openSkyDetail(currentSkyV4LunationDetailArticle({
-                            event: {
-                              id: `lunation-${moonEvent.occursAt}`,
-                              type: "lunation",
-                              title: `${moonEvent.name} in ${moonEvent.sign}`,
-                              startsAt: moonEvent.occursAt,
-                              dateKey: moonEvent.occursAt.slice(0, 10),
-                              glyph: signGlyph(moonEvent.sign),
-                              primary: true,
-                              sign: moonEvent.sign,
-                              eclipseType: moonEvent.eclipseType
-                            },
-                            sky,
-                            generatedContent: skyGeneratedContent
-                          }));
-                        } : undefined}
                       />
                     ) : (
                       <div className="sky-card sky-card--empty" aria-live="polite">
@@ -14283,17 +14280,6 @@ export function App() {
                   </section>
                   {isSkyLoading && (
                     <SkyLoadingCards />
-                  )}
-                  {!isSkyLoading && sky && (
-                    <RetrogradeCallout
-                      aspects={sky.aspects}
-                      positions={sky.positions}
-                      generatedAt={sky.generatedAt}
-                      generatedContent={skyGeneratedContent}
-                      locationLatitude={sky.location.latitude}
-                      moonEvent={sky.moonEvent}
-                      onOpenDetail={openSkyDetail}
-                    />
                   )}
                   {!isSkyLoading && sky && mode === "guest" && (
                     <TodayView
@@ -15543,47 +15529,44 @@ function ChartWheelMini() {
 }
 
 function SkyCards({
+  generatedContent,
   sky,
   dateLabel,
   locationLabel,
-  onOpenChart,
-  onOpenLunation
+  onOpenChart
 }: {
+  generatedContent: Map<string, LiveGeneratedContent>;
   sky: SkySnapshot;
   dateLabel: string;
   locationLabel: string;
   onOpenChart: () => void;
-  onOpenLunation?: () => void;
 }) {
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
-  const sunDegree = formatBriefPlacementDegree(sun);
-  const moonDegree = formatBriefPlacementDegree(moon);
-  const sunSignLabel = compactSkyChicletSign(sun?.sign ?? "Current");
-  const moonSign = sky.moonStatus?.sign ?? moon?.sign ?? "Current";
-  const moonSignLabel = compactSkyChicletSign(moonSign);
-  const moonIsVoid = sky.moonStatus?.kind === "void";
-  const shouldShowMoonDegree = !moonIsVoid;
-  const moonTitleLabel = moonSignLabel;
-  const voidRemainingLabel = sky.moonStatus?.remainingLabel
-    ?.replace(/\b(\d+)\s*hrs?\b/iu, "$1h")
-    .replace(/\b(\d+)\s*min\b/iu, "$1m");
-  const moonSubLabel = moonIsVoid && voidRemainingLabel
-    ? `VoC · ${voidRemainingLabel} left`
-    : sky.moonPhase;
-  const event = nextMoonEvent(sky);
-  const exactAt = event?.occursAt;
+  // Use the event-time ephemeris event supplied by the snapshot. Do not infer
+  // a future event sign from the Moon's mean motion for this narrative.
+  const event = sky.moonEvent;
   const selectedDate = new Date(sky.generatedAt);
-  const nextTitle = event ? `${event.name} in ${event.sign}` : "Next lunation";
-  const nextDateTimeLabel = exactAt && !Number.isNaN(exactAt.getTime()) ? formatLunationDateTime(exactAt) : "";
-  const nextCountdownLabel = exactAt && !Number.isNaN(exactAt.getTime())
-    ? lunationCountdownLabel(selectedDate, exactAt).toLowerCase()
-    : "";
-  const nextTimingLabel = [nextDateTimeLabel, nextCountdownLabel].filter(Boolean).join(" · ");
+  const eventDate = event ? new Date(event.occursAt) : null;
+  const validEvent = event && eventDate && Number.isFinite(eventDate.getTime())
+    && Number.isFinite(selectedDate.getTime()) && eventDate >= selectedDate;
+  const summaryParts = skyDailySummaryParts({
+    sun,
+    moon,
+    moonIsVoid: sky.moonStatus?.kind === "void",
+    retrogradePlanets: activeRetrogradePositions(sky.positions).map(position => skyDisplayPlanetName(position.planet)),
+    voidRemainingLabel: sky.moonStatus?.remainingLabel,
+    event: validEvent ? {
+      name: event.name,
+      eclipseType: event.eclipseType,
+      sign: event.sign,
+      countdown: lunationCountdownLabel(selectedDate, eventDate, sky.location.timeZone).toLowerCase()
+    } : undefined
+  }, generatedContent);
 
   return (
     <>
-      <section className="sky-today-ledger" aria-label="The sky today">
+      <section className="sky-today-ledger sky-daily-summary" aria-label="The sky today">
         <header className="sky-today-ledger__head">
           <h3>
             <span>The sky</span>
@@ -15596,37 +15579,30 @@ function SkyCards({
           </p>
         </header>
 
-        <div className="sky-today-ledger__row">
-          <span className="sky-today-ledger__badge" aria-hidden="true">
-            <span className="sky-today-ledger__glyph">{"☉\uFE0E"}</span>
-          </span>
-          <span className="sky-today-ledger__label">Sun</span>
-          <span className="sky-today-ledger__value">
-            <strong>{sunSignLabel} {sunDegree && <small>{sunDegree}</small>}</strong>
-          </span>
-        </div>
-
-        <div className="sky-today-ledger__row">
-          <span className="sky-today-ledger__badge sky-today-ledger__badge--disc" aria-hidden="true">
-            <MoonPhaseArt phase={sky.moonPhase} />
-          </span>
-          <span className="sky-today-ledger__label">Moon</span>
-          <span className="sky-today-ledger__value">
-            <strong>{moonTitleLabel} {moonDegree && shouldShowMoonDegree && <small>{moonDegree}</small>}</strong>
-            <span>{moonSubLabel}</span>
-          </span>
-        </div>
-
-        <div className="sky-today-ledger__row">
-          <span className="sky-today-ledger__badge sky-today-ledger__badge--disc" aria-hidden="true">
-            <MoonPhaseArt phase={event?.name ?? "Full Moon"} />
-          </span>
-          <span className="sky-today-ledger__label">Next</span>
-          <span className="sky-today-ledger__value">
-            <strong className="sky-today-ledger__name">{nextTitle}</strong>
-            {nextTimingLabel && <span>{nextTimingLabel}</span>}
-          </span>
-        </div>
+        <p className="sky-daily-summary__body" aria-label="Daily sky summary">
+          {summaryParts.map((part, index) => {
+            const placement = part.action === "sun" ? sun : part.action === "moon" ? moon
+              : part.action === "retrograde" ? sky.positions.find(position => skyDisplayPlanetName(position.planet) === part.planet) : undefined;
+            if (placement) {
+              return (
+                <a key={index} className="sky-daily-summary__link" href={`#${skyPlacementRoutePath(placement)}`}
+                  aria-label={`Read about ${placement.planet} in ${placement.sign}`}>
+                  {part.text}
+                </a>
+              );
+            }
+            if (part.action === "lunation" && event) {
+              return (
+                <a key={index} className="sky-daily-summary__link"
+                  href={`#sky/lunation/${event.occursAt.slice(0, 10)}/${normalizeContentIdPart(event.sign)}`}>
+                  {part.text}
+                </a>
+              );
+            }
+            if (part.highlight) return <mark key={index} className="content-highlight">{part.text}</mark>;
+            return <span key={index}>{part.text}</span>;
+          })}
+        </p>
 
         <button className="sky-today-ledger__foot" type="button" onClick={onOpenChart} aria-label="Open full current sky chart">
           <ChartWheelMini />
@@ -15637,84 +15613,7 @@ function SkyCards({
         </button>
       </section>
 
-      <section className="sky-lunar-brief" aria-label="Sky highlights">
-        <div className="sky-lunar-pills" aria-label="Current Sun and Moon phase">
-          <span className="sky-card sky-lunar-pill snap-card">
-            <span className="sky-lunar-pill-icon snap-ic" aria-hidden="true">☉</span>
-            <span className="sky-lunar-pill-copy">
-              <em className="snap-cl">Sun</em>
-              <h3>
-                <span className="snap-sign">{sunSignLabel}</span>
-                {sunDegree && <small className="deg">{sunDegree}</small>}
-              </h3>
-              <small className="sky-lunar-pill-sub sky-lunar-pill-sub--spacer snap-phase" aria-hidden="true">
-                &nbsp;
-              </small>
-            </span>
-          </span>
-          <span className="sky-card sky-lunar-pill sky-lunar-pill--moon snap-card">
-            <span className="sky-lunar-pill-icon sky-lunar-pill-phase snap-ic" aria-hidden="true">
-              <MoonPhaseArt phase={sky.moonPhase} />
-            </span>
-            <span className="sky-lunar-pill-copy">
-              <em className="snap-cl">Moon</em>
-              <h3>
-                <span className="snap-sign">{moonTitleLabel}</span>
-                {moonDegree && shouldShowMoonDegree && <small className="deg">{moonDegree}</small>}
-              </h3>
-              <small className="sky-lunar-pill-sub snap-phase">{moonSubLabel}</small>
-            </span>
-          </span>
-        </div>
-        <NextLunationChicklet sky={sky} onOpenDetail={onOpenLunation} />
-      </section>
     </>
-  );
-}
-
-function NextLunationChicklet({ sky, onOpenDetail }: { sky: SkySnapshot; onOpenDetail?: () => void }) {
-  const event = nextMoonEvent(sky);
-  const exactAt = event?.occursAt;
-  const selectedDate = new Date(sky.generatedAt);
-  const glyph = zodiacGlyphText(event?.sign ?? "");
-
-  if (!event || !exactAt || Number.isNaN(exactAt.getTime()) || Number.isNaN(selectedDate.getTime()) || !glyph) {
-    return null;
-  }
-
-  const title = `${event.name} in ${event.sign}`;
-  const dateTimeLabel = formatLunationDateTime(exactAt);
-  const countdownLabel = lunationCountdownLabel(selectedDate, exactAt);
-
-  return (
-    <button
-      type="button"
-      className="sky-card next-lun"
-      aria-label={`${title}, ${countdownLabel.toLowerCase()}, ${dateTimeLabel}`}
-      onClick={onOpenDetail}
-      disabled={!onOpenDetail}
-    >
-      <span className="nl-badge" aria-hidden="true">
-        <span className="g">{glyph}</span>
-      </span>
-
-      <div className="nl-main">
-        <div className="nl-top">
-          <div className="nl-copy">
-            <em className="nl-eyebrow">Upcoming</em>
-            <h4>
-              <span>{title}</span>
-            </h4>
-          </div>
-          <span className="ui-pill ui-pill--neutral ui-pill--mixed nl-until">
-            <DurationLabelText label={countdownLabel} />
-          </span>
-        </div>
-        <span className="nl-sub" data-when={exactAt.toISOString()}>
-          {dateTimeLabel}
-        </span>
-      </div>
-    </button>
   );
 }
 

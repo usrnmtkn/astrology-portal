@@ -69,6 +69,9 @@ jobs:
       - name: Verify startup performance contracts
         run: npm run test:performance-contracts
 
+      - name: Run visual regression and smoke screens
+        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
+
       - name: Run Content Studio admin user flows
         run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts
 
@@ -78,9 +81,6 @@ jobs:
       - name: Run Friends loading performance matrix
         run: npm run qa:friends-loading-matrix
 
-      - name: Run visual regression and smoke screens
-        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
-
       - name: Upload visual smoke artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -89,4 +89,33 @@ jobs:
           path: |
             test-results/
             playwright-report/
+          if-no-files-found: ignore
+
+  sky-summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build:knowledge
+      - name: Verify daily Sky summary composition
+        run: npm run test:sky-daily-summary
+      - name: Verify daily Sky summary reader and Studio
+        run: |
+          npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-daily-summary.spec.ts
+          npx playwright test -c playwright.sky-studio.config.ts
+      - name: Upload Sky summary artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: sky-summary-results
+          path: test-results/
           if-no-files-found: ignore
