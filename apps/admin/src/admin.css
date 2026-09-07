@@ -9862,3 +9862,28 @@ body,
   margin-top: var(--admin-space-md);
   min-width: 0;
 }
+
+/* Daily Sky composition follows the existing Studio section-heading contract. */
+.admin-dashboard .admin-sky-summary-composition h4 {
+  font-family: inherit;
+  font-size: var(--admin-type-18);
+  font-weight: var(--weight-semibold);
+  line-height: inherit;
+  letter-spacing: inherit;
+  margin: var(--admin-space-xs) 0 0;
+}
+
+.admin-dashboard .admin-sky-summary-composition .admin-template-reader-copy .admin-composition-preview-field p {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+.admin-dashboard .admin-sky-summary-composition .admin-composition-variable {
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.admin-dashboard .admin-sky-summary-composition span.variable-fact {
+  cursor: default;
+}

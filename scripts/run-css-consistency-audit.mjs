@@ -54,6 +54,11 @@ const validBodyFontSizes = new Set([
 ]);
 
 const requiredTypographyTokenValues = new Map([
+  ["--font-highlight", "var(--font-mono)"],
+  ["--text-highlight", "var(--text-body)"],
+  ["--weight-highlight", "var(--weight-regular)"],
+  ["--leading-highlight", "var(--leading-body)"],
+  ["--tracking-highlight", "var(--tracking-pill)"],
   ["--type-description-size", "var(--type-body-size)"],
   ["--text-body", "var(--type-body-size)"],
   ["--text-body-sm", "var(--text-body)"],

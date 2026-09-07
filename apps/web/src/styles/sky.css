@@ -1708,3 +1708,56 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* The same narrative replaces the desktop chips and phone ledger rows. */
+.sky-daily-summary {
+  display: block;
+}
+
+.sky-daily-summary__body {
+  margin: 0;
+  padding: var(--space-5);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  text-wrap: pretty;
+}
+
+.sky-daily-summary__link {
+  font-weight: var(--weight-semibold);
+}
+
+.sky-daily-summary__link {
+  display: inline;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  text-decoration: underline;
+  text-underline-offset: var(--space-1);
+  cursor: pointer;
+}
+
+.sky-daily-summary__link:hover {
+  color: var(--muted);
+}
+
+.sky-daily-summary__link:focus-visible {
+  outline: var(--border-width-medium) solid var(--ink);
+  outline-offset: var(--space-1);
+}
+
+@media (min-width: 721px) {
+  .sky-daily-summary .sky-today-ledger__head {
+    display: none;
+  }
+}

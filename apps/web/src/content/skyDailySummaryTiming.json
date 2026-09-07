@@ -1,0 +1,14 @@
+{
+  "provenance": {
+    "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+    "date": "2026-09-07",
+    "scope": "Owner-supplied retrograde, void-of-course, and next-lunation wording. Count, names, sign, and time are calculated slots."
+  },
+  "retrograde": "{count} planets are retrograde right now: ",
+  "singleRetrograde": "One planet is retrograde right now: ",
+  "noRetrogrades": "No planets are retrograde right now.",
+  "voidRemaining": "The Moon is void of course for another {remaining}.",
+  "voidWithoutTiming": "The Moon is void of course.",
+  "lunation": "The next {name} arrives in {sign} {countdown}.",
+  "fullMoonMeaning": "Full Moons mark a culmination, when something that has been building becomes easier to see."
+}

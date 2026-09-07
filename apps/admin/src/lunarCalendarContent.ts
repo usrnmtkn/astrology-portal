@@ -2,6 +2,7 @@
 export const lunarSigns = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
 const words = (value: string) => value.replace(/[-_.]/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
 export function lunarContentIdentity(key: string) {
+  if (key.startsWith("cms/sky-daily-summary/")) return null;
   const moon = key.match(/^authored\/calendar-weekly-moon\/([^/]+)(?:\/variant-(\d+))?$/);
   if (moon) return { family: 'Moon-sign passages', sign: moon[1], variant: Number(moon[2] ?? 1), title: `Moon in ${words(moon[1])} · Variant ${moon[2] ?? 1}`, kind: 'Complete passage', destination: 'Calendar day and week', selection: 'The Calendar selects one complete passage using the Moon sign, week and day role. Variants are alternatives; they are never joined together.', excluded: key === 'authored/calendar-weekly-moon/cancer' };
   if (!/lunar|lunation|moon-phase|moon-sign|eclipse|(?:new|full)-moon|cms\/calendar-day/.test(key)) return null;

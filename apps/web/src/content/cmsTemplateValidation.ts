@@ -3,6 +3,10 @@ import { interpolateTemplateString, type TemplateSlotValues } from "../services/
 const templateTokenPattern = /\{\{\s*([#^/]?)\s*([A-Za-z0-9_]+)\s*\}\}|\{(?!\{)\s*([A-Za-z0-9_]+)\s*\}(?!\})/g;
 
 const previewSlotExamples: Record<string, string | number> = {
+  count: "Four",
+  remaining: "49 minutes",
+  name: "New Moon",
+  countdown: "in 3 days",
   aspect: "trine",
   aspectAdj: "trining",
   aspectTone: "supportive",

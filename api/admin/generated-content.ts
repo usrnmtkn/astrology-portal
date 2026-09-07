@@ -1,3 +1,4 @@
+import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createHash } from "node:crypto";
@@ -158,6 +159,7 @@ function assertValidCmsTemplate({
     summary: summary ?? "",
     body: body ?? ""
   });
+  validation.errors.push(...skySummaryTemplateErrors(contentKey ?? "", body ?? ""));
   if (validation.errors.length > 0) {
     throw new Error(`CMS template cannot be published: ${validation.errors.join(" ")}`);
   }

@@ -1,0 +1,14 @@
+{
+  "provenance": {
+    "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+    "date": "2026-09-07",
+    "ownerRequest": "is this the article, can you add this in. It reads better.",
+    "scope": "The fuller Sun-in-Virgo and Moon-in-Cancer summary sentence selected in this task. Signs and degrees remain calculated slots; full articles are unchanged."
+  },
+  "sun": {
+    "virgo": "making it easier to notice what needs fixing and what could be made simpler"
+  },
+  "moon": {
+    "cancer": "bringing more attention to home, family, and whether the care we give is coming back to us"
+  }
+}
