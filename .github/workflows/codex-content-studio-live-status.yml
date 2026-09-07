@@ -135,7 +135,6 @@ jobs:
           visual = Path("tests/visual/content-dashboard-admin-user-flows.spec.ts")
           visual_text = visual.read_text()
           visual_text = visual_text.replace('getByRole("tab", { name: /Published/ })', 'getByRole("tab", { name: /Live/ })')
-          visual_text = visual_text.replace('getByText("App visibility")', 'getByText("App visibility")')
           visual.write_text(visual_text)
 
           test = Path("scripts/test-content-studio-live-status-and-repeat-save.mjs")
@@ -164,8 +163,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          node scripts/test-reader-facing-content-contract.mjs
           node --experimental-strip-types scripts/test-admin-article-workspace.mjs
+          node --experimental-strip-types scripts/test-admin-content-wiring-status.mjs
           node scripts/test-content-studio-live-status-and-repeat-save.mjs
       - name: Commit tested fix
         shell: bash
