@@ -55,12 +55,13 @@ function sourceKindLabel(source: CompositionMapSource) {
 }
 
 function ReaderSurfaceWorkspace({
-  onStartCmsRow, rows, templates, onEditRow, onSelectTemplate
+  onStartCmsRow, rows, templates, onEditRow, onSelectTemplate, onLoadRow
 }: {
   rows: CompositionMapRow[];
   templates: ReturnType<typeof buildCompositionMap>;
   onEditRow: Props["onEditRow"];
   onSelectTemplate: (key: string) => void;
+  onLoadRow?: Props["onLoadRow"];
   onStartCmsRow?: (surface: WritingSurfaceMapItem, starter: WritingSurfaceCmsStarter) => void;
 }) {
   const [area, setArea] = useState<WritingSurfaceMapItem["area"] | "All">("All");
@@ -154,7 +155,7 @@ function ReaderSurfaceWorkspace({
               <span className={`ui-pill admin-status ${access.editability === "editable" ? "status-live" : access.editability === "missing" ? "status-error" : "status-draft"}`}>{editorialStatus}</span>
             </header>
 
-            <CompositionSurfaceSources key={selected.id} surfaceId={selected.id} rows={rows} templates={templates} onEditRow={onEditRow} onSelectTemplate={onSelectTemplate} />
+            <CompositionSurfaceSources key={selected.id} surfaceId={selected.id} rows={rows} templates={templates} onEditRow={onEditRow} onSelectTemplate={onSelectTemplate} onLoadRow={onLoadRow} />
             <section className="admin-composition-surface-summary" aria-label="Writing surface contract">
               <div>
                 <p className="admin-eyebrow">Surface content</p>
@@ -266,7 +267,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
     : selectedBase, [selectedBase, rows, exampleValues]);
   const [loadError, setLoadError] = useState("");
   const [retryLoad, setRetryLoad] = useState(0);
-  const pendingRows = selected ? [selected.row, ...selected.preview.sources.map(source => source.row)].filter(row => (row as CompositionMapRow & { inventory_only?: boolean }).inventory_only) : [];
+  const pendingRows = scope === "templates" && selected ? [selected.row, ...selected.preview.sources.map(source => source.row)].filter(row => (row as CompositionMapRow & { inventory_only?: boolean }).inventory_only) : [];
   const pendingKey = pendingRows.map(row => row.id).join("|");
   useEffect(() => {
     setLoadError("");
@@ -364,7 +365,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
           </button>
         </div>
       </div>}
-      {scope === "surfaces" ? <ReaderSurfaceWorkspace onStartCmsRow={onStartCmsRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
+      {scope === "surfaces" ? <ReaderSurfaceWorkspace onStartCmsRow={onStartCmsRow} onLoadRow={onLoadRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
         <aside className="admin-composition-template-list" aria-label="Composition templates">
           <header>
             <div><p className="admin-eyebrow">{templateKeys ? "Choose a passage or template" : "Choose a template"}</p><strong>{filtered.length} of {map.length}</strong></div>

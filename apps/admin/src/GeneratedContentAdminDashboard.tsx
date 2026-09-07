@@ -4691,7 +4691,7 @@ export function GeneratedContentAdminDashboard() {
     if (!hydrated || hydrated.inventory_only) {
       throw new Error(`Could not load the full content document for ${row.content_key}.`);
     }
-    setRows((current) => [...current.filter((candidate) => candidate.id !== row.id && candidate.id !== hydrated.id), hydrated]);
+    setRows((current) => mergeContentInventory(current.filter((candidate) => candidate.id !== row.id || row.id === hydrated.id), [hydrated]));
     return hydrated;
   }
 
@@ -6463,6 +6463,7 @@ export function GeneratedContentAdminDashboard() {
           <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
             <CompositionMapWorkspace
               rows={compositionRows}
+              onLoadRow={(row) => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
               onEditRow={(row, context) => openRow(row as AdminGeneratedContentRow, context ?? null)}
               onStartCmsRow={openCmsStarter}
               editor={renderEditor()}

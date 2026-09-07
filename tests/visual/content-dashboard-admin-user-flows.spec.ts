@@ -513,6 +513,7 @@ async function seedAdminApi(
     generatedContentWriteReturnsEmpty?: boolean;
     onGeneratedContentRead?: (url: URL) => void;
     reviewRows?: Record<string, unknown>[];
+    compositionCatalog?: Array<{ content_key: string; headline: string | null; role: string }>;
   } = {}
 ) {
   const apiGeneratedContentRows = structuredClone(options.generatedRows ?? generatedContentRows) as Record<string, unknown>[];
@@ -562,7 +563,7 @@ async function seedAdminApi(
 
     if (pathname.endsWith("/content-live-status")) {
       if (route.request().postDataJSON().action === "composition-catalog") {
-        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, rows: [] }) });
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, rows: options.compositionCatalog ?? [] }) });
         return;
       }
       const ids = route.request().postDataJSON().ids as string[];
@@ -5078,11 +5079,33 @@ test("surface maps select source families and manage repeated edits across theme
   await expect(editor.getByLabel("Content key")).toHaveValue(key);
   for (const value of ["QA first edited introduction.", "QA second edited introduction."]) {
     await editor.getByLabel("Reader phrase · You", { exact: true }).fill(value);
-    await editor.getByRole("button", { name: "Save", exact: true }).click();
-    await expect(editor.getByRole("button", { name: "Save", exact: true })).toBeDisabled();
+    await editor.getByRole("button", { name: /^Save(?: revision)?$/ }).click();
+    await expect(editor.getByRole("button", { name: /^Save(?: revision)?$/ })).toBeDisabled();
   }
   await editor.getByRole("button", { name: "Close", exact: true }).click();
   await expect(manager).toContainText("QA second edited introduction.");
   expect(writes).toHaveLength(2);
   await assertNoBrowserErrors();
+});
+
+
+test("composition map loads a package-only hook before opening its editable starter", async ({ page }) => {
+  const key = "fallback-hook/natal-you-placement-sign-final/uranus/scorpio";
+  const record = servingPackageRecords.get(key)!;
+  await seedAdminApi(page, { generatedRows: [], compositionCatalog: [{ content_key: key, headline: "Uranus in Scorpio", role: "fallback_hook" }] });
+  await page.route("**/api/admin/generated-content?**", async (route) => {
+    if (!new URL(route.request().url()).searchParams.getAll("contentKeys").includes(key)) return route.fallback();
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, rows: [{
+      ...generatedContentRows[0], id: `package:${key}`, content_key: key, headline: "Uranus in Scorpio", body: record.body_you ?? record.body,
+      surface: "you", status: "DRAFT", lane: "reference", review_state: "needs-review", provider: "tldrastro-fallback-architecture-v3",
+      sections: { packageRecord: record }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3" }, facts: { fallbackArchitectureV3: true },
+      inventory_only: false, package_starter: true
+    }] }) });
+  });
+  await expectAdminRouteLoads(page, "/admin/content#composition-map");
+  await page.getByLabel("Search surfaces and systems").fill("natal placement detail");
+  const manager = page.getByRole("region", { name: "Manage composition sources" });
+  await expect(manager).toContainText("Your freedom comes from knowing what has power over you well enough to choose differently.");
+  await manager.getByRole("button", { name: "Edit selected source" }).click();
+  await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByLabel("Content key")).toHaveValue(key);
 });

@@ -18,6 +18,7 @@ export type CompositionMapRow = {
   surface: string;
   status: string;
   updated_at?: string | null;
+  inventory_only?: boolean;
   block_type?: string | null;
   sections: unknown;
   source_snapshot?: unknown;

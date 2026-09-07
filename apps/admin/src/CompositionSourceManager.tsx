@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CompositionMapRow, CompositionMapTemplate } from "./compositionMap";
 import { compositionSourceFamily, compositionSourcesForSurface } from "./compositionSurfaceSources";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
@@ -9,9 +9,10 @@ type Props = {
   templates: CompositionMapTemplate[];
   onEditRow: (row: CompositionMapRow) => void;
   onSelectTemplate: (key: string) => void;
+  onLoadRow?: (row: CompositionMapRow) => Promise<unknown>;
 };
 
-export default function CompositionSurfaceSources({ surfaceId, rows, templates, onEditRow, onSelectTemplate }: Props) {
+export default function CompositionSurfaceSources({ surfaceId, rows, templates, onEditRow, onSelectTemplate, onLoadRow }: Props) {
   const [query, setQuery] = useState("");
   const [family, setFamily] = useState("");
   const [selectedKey, setSelectedKey] = useState("");
@@ -21,23 +22,35 @@ export default function CompositionSurfaceSources({ surfaceId, rows, templates, 
   const filtered = sources.filter((row) => (!family || compositionSourceFamily(row.content_key) === family)
     && query.toLowerCase().split(/\s+/).every((term) => `${row.content_key} ${row.headline ?? ""} ${row.body ?? ""}`.toLowerCase().includes(term)));
   const selected = filtered.find((row) => row.content_key === selectedKey) ?? filtered[0];
+  const [loadError, setLoadError] = useState("");
+  const [retry, setRetry] = useState(0);
+  useEffect(() => {
+    setLoadError("");
+    if (!selected) return;
+    setSelectedKey(selected.content_key);
+    if (!selected.inventory_only || !onLoadRow) return;
+    let active = true;
+    void onLoadRow(selected).catch((error) => { if (active) setLoadError(error instanceof Error ? error.message : "Could not load this source."); });
+    return () => { active = false; };
+  }, [selected?.id, selected?.inventory_only, retry]);
   const template = selected && templates.find((item) => item.row.content_key === selected.content_key);
   const sections = selected?.sections as { packageDraft?: Record<string, unknown>; packageRecord?: Record<string, unknown>; body_you?: string; body_they?: string } | undefined;
   const record = sections?.packageDraft ?? sections?.packageRecord;
-  const copy = [record?.body_you ?? sections?.body_you ?? selected?.body, record?.body_they ?? sections?.body_they]
+  const copy = [record?.body_you ?? sections?.body_you ?? record?.body ?? record?.text ?? selected?.body, record?.body_they ?? sections?.body_they]
     .filter((value, index, values): value is string => typeof value === "string" && Boolean(value) && values.indexOf(value) === index);
   return <section className="admin-composition-surface-actions" aria-label="Manage composition sources">
-    <header><div><p className="admin-eyebrow">Composition Map</p><h3>Select and manage sources</h3></div><strong>{filtered.length} sources</strong></header>
+    <header><div><p className="admin-eyebrow">Composition Map</p><h3>Select and manage sources</h3></div><strong>{filtered.length} source{filtered.length === 1 ? "" : "s"}</strong></header>
     <div className="admin-composition-source-tools">
       <input aria-label="Search composition sources" placeholder="Planet, sign, house, phrase, or key" value={query} onChange={(event) => setQuery(event.target.value)} />
       <select aria-label="Source family" value={family} onChange={(event) => setFamily(event.target.value)}>
         <option value="">All source families</option>{families.map((key) => <option key={key} value={key}>{key}</option>)}
       </select>
-      <label><input type="checkbox" checked={allSources} onChange={(event) => { setAllSources(event.target.checked); setFamily(""); }} /> Search all Studio sources</label>
+      <button type="button" aria-pressed={allSources} onClick={() => { setAllSources((value) => !value); setFamily(""); }}>Search all Studio sources</button>
       <label>Selected source<select aria-label="Selected composition source" value={selected?.content_key ?? ""} onChange={(event) => setSelectedKey(event.target.value)}>
         {filtered.map((row) => <option key={row.id || row.content_key} value={row.content_key}>{row.headline || row.content_key} · {row.content_key}</option>)}
       </select></label>
     </div>
+    {loadError && <p role="alert">{loadError} <button type="button" onClick={() => setRetry((value) => value + 1)}>Retry source</button></p>}
     {selected ? <article className="admin-composition-source-card">
       <strong>{selected.headline || selected.content_key}</strong>
       <ContentLiveStatusBadge row={selected} />
