@@ -80,3 +80,11 @@ The selector follows the reader's current modern-ruler system and excludes impos
 Fixed an independent reader loader bug: a partial Studio core override no longer marks the full local empty-house partition as loaded. A browser regression installs a single edited introduction, then verifies that Gemini's first-house sign and Mercury-in-tenth-house passages still assemble around it. No astrology prose changes accompany this workspace addition.
 
 Focused browser checks pass for direct navigation, exact-source and vocabulary selection, consecutive edits, retirement/reload, desktop/mobile layouts, and partial-overlay reader assembly. Existing source-manager and package-only starter tests also pass. Publication/database/API tests, selector parity, TypeScript, and CSS/token audits pass.
+
+## Sky placement filters
+
+Sky Write-ups now offers separate Planet or point, Zodiac sign, and Motion selectors. Planet/sign matching reads placement identity rather than words mentioned in the body. Canonical article-edition, article-template, station, and authored-placement keys are recognized, including normalized node names. The former broad subject selector is labeled Content group.
+
+Result titles identify the placement and motion; a secondary label distinguishes placement templates, saved editions, and lunation macros. The stored editorial title and reader copy remain unchanged. Clear filters resets all selectors. A browser fixture deliberately mentions Sun in Virgo in unrelated Jupiter/Leo copy and verifies that exact selectors exclude it.
+
+All 76 Studio and publication/offline browser flows pass. Relationship checks, TypeScript, and the CSS/token audit pass. The targeted filter test also covers desktop/mobile, light/dark themes, empty results, and label typography/order. These changes are prepared on the feature branch; production release remains pending.

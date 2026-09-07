@@ -63,6 +63,8 @@ import {
   relatedHousePassages,
   relatedLunationHoroscopes,
   skyLunationContextForRow,
+  skyPlacementBodies,
+  skyPlacementSigns,
   skyWriteupContextForRow,
   skyWriteupSubjectTypeForRow
 } from "./skyWriteupRelations";
@@ -2784,6 +2786,8 @@ export function GeneratedContentAdminDashboard() {
   const [vocabularyCategory, setVocabularyCategory] = useState<AdminVocabularyCategoryFilter>("planets");
   const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("LIVE");
   const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
+  const [skyPlacementBody, setSkyPlacementBody] = useState("all");
+  const [skyPlacementSign, setSkyPlacementSign] = useState("all");
   const [skyWriteupSubjectFilter, setSkyWriteupSubjectFilter] = useState<AdminSkyWriteupSubjectFilter>("all");
   const [skyWriteupQuery, setSkyWriteupQuery] = useState("");
   const [skyWriteupMotionFilter, setSkyWriteupMotionFilter] = useState<ContentMotionFilter>("all");
@@ -2965,11 +2969,13 @@ export function GeneratedContentAdminDashboard() {
     [visibleRows]
   );
   const filteredSkyWriteupRows = useMemo(() => sortPlacementRows(skyWriteupRows.filter((row) => (
-    (skyWriteupSubjectFilter === "all" || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
+    (skyPlacementBody === "all" || skyWriteupContextForRow(row)?.planet === skyPlacementBody)
+    && (skyPlacementSign === "all" || skyWriteupContextForRow(row)?.sign === skyPlacementSign)
+    && (skyWriteupSubjectFilter === "all" || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
     && (skyWriteupMotionFilter === "all" || contentMotion(row) === skyWriteupMotionFilter)
     && (skyWriteupDestinationFilter === "all" || contentDestinations(row).has(skyWriteupDestinationFilter))
     && matchesAdminSearch(skyWriteupSearchText(row), skyWriteupQuery)
-  )), skyWriteupSort), [skyWriteupDestinationFilter, skyWriteupMotionFilter, skyWriteupQuery, skyWriteupRows, skyWriteupSort, skyWriteupSubjectFilter]);
+  )), skyWriteupSort), [skyPlacementBody, skyPlacementSign, skyWriteupDestinationFilter, skyWriteupMotionFilter, skyWriteupQuery, skyWriteupRows, skyWriteupSort, skyWriteupSubjectFilter]);
   const publishedButUnwiredSkyRows = useMemo(
     () => skyWriteupRows.filter(isPublishedButUnwired),
     [skyWriteupRows]
@@ -6121,7 +6127,27 @@ export function GeneratedContentAdminDashboard() {
                 <section className="admin-content-filters" aria-label="Sky write-up filters">
                   <div className="admin-review-filter-grid">
                     <label>
-                      <span>Planet, angle, or point</span>
+                      <span>Planet or point</span>
+                      <select aria-label="Sky placement planet or point" value={skyPlacementBody} onChange={(event) => setSkyPlacementBody(event.target.value)}>
+                        <option value="all">All planets and points</option>
+                        {skyPlacementBodies.map((body) => <option key={body} value={body}>{titleFromKey(body)}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Zodiac sign</span>
+                      <select aria-label="Sky placement zodiac sign" value={skyPlacementSign} onChange={(event) => setSkyPlacementSign(event.target.value)}>
+                        <option value="all">All signs</option>
+                        {skyPlacementSigns.map((sign) => <option key={sign} value={sign}>{titleFromKey(sign)}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Motion</span>
+                      <select aria-label="Sky write-up motion" value={skyWriteupMotionFilter} onChange={(event) => setSkyWriteupMotionFilter(event.target.value as ContentMotionFilter)}>
+                        {skyWriteupMotionFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Content group</span>
                       <select
                         aria-label="Sky write-up type"
                         value={skyWriteupSubjectFilter}
@@ -6143,12 +6169,6 @@ export function GeneratedContentAdminDashboard() {
                       />
                     </label>
                     <label>
-                      <span>Motion</span>
-                      <select aria-label="Sky write-up motion" value={skyWriteupMotionFilter} onChange={(event) => setSkyWriteupMotionFilter(event.target.value as ContentMotionFilter)}>
-                        {skyWriteupMotionFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                      </select>
-                    </label>
-                    <label>
                       <span>Reader use</span>
                       <select aria-label="Sky write-up reader use" value={skyWriteupDestinationFilter} onChange={(event) => setSkyWriteupDestinationFilter(event.target.value as ContentDestinationFilter)}>
                         {skyWriteupDestinationFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
@@ -6163,6 +6183,8 @@ export function GeneratedContentAdminDashboard() {
                     <button
                       type="button"
                       onClick={() => {
+                        setSkyPlacementBody("all");
+                        setSkyPlacementSign("all");
                         setSkyWriteupSubjectFilter("all");
                         setSkyWriteupMotionFilter("all");
                         setSkyWriteupDestinationFilter("all");
@@ -6170,7 +6192,7 @@ export function GeneratedContentAdminDashboard() {
                         setSkyWriteupQuery("");
                       }}
                       disabled={
-                        skyWriteupSubjectFilter === "all"
+                        skyPlacementBody === "all" && skyPlacementSign === "all" && skyWriteupSubjectFilter === "all"
                         && skyWriteupMotionFilter === "all"
                         && skyWriteupDestinationFilter === "all"
                         && skyWriteupSort === "updated-desc"
@@ -7675,7 +7697,16 @@ export function GeneratedContentAdminDashboard() {
               const destination = showArticleDestination ? articleAppDestination(row) : null;
               const wiring = showWiringReason ? contentWiringStatus(row) : null;
               const compatibilityIdentity = showCompatibilityIdentity ? compatibilityBrowseIdentityForRow(row) : null;
-              const displayTitle = compatibilityIdentity?.title ?? rowTitle(row);
+              const placement = activePage === "skyWriteups" ? skyWriteupContextForRow(row) : null;
+              const lunation = placement ? skyLunationContextForRow(row) : null;
+              const placementLabel = placement?.sign && !row.content_key.includes("/station/")
+                ? lunation ? `${titleFromKey(placement.sign)} ${titleFromKey(lunation.kind)}`
+                  : `${titleFromKey(placement.planet)} in ${titleFromKey(placement.sign)}${contentMotion(row) === "unspecified" ? "" : ` · ${titleFromKey(contentMotion(row))}`}`
+                : null;
+              const displayTitle = placementLabel ?? compatibilityIdentity?.title ?? rowTitle(row);
+              const placementKind = placement ? row.content_key.startsWith("sky/article-template/") ? "Placement template"
+                : row.content_key.startsWith("sky/article-edition/") ? "Saved placement edition"
+                  : lunation ? "Lunation macro" : "Sky placement" : null;
               return (
                 <tr
                   key={row.id}
@@ -7695,9 +7726,9 @@ export function GeneratedContentAdminDashboard() {
                     </label>
                   </td>
                   <td className="admin-content-title-cell admin-col-content">
-                    <strong className="admin-content-row-title">{displayTitle}</strong>
+                    <strong className="admin-content-row-title" title={rowTitle(row)}>{displayTitle}</strong>
                     <small className="admin-content-type-label admin-field-hint">
-                      {compatibilityIdentity ? `${compatibilityIdentity.detail} · ${rowTypeLabel(row)}` : rowTypeLabel(row)}
+                      {placementKind ?? (compatibilityIdentity ? `${compatibilityIdentity.detail} · ${rowTypeLabel(row)}` : rowTypeLabel(row))}
                     </small>
                     <code className="admin-content-row-key">{row.content_key}</code>
                     <span className="admin-content-mobile-status"><ContentLiveStatusBadge row={row} /></span>

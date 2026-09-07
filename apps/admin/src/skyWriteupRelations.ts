@@ -47,7 +47,7 @@ export type PersonalTransitAspectCmsStarter = {
   sourceContentKey: string;
 };
 
-const planets = [
+export const skyPlacementBodies = [
   "sun",
   "moon",
   "mercury",
@@ -64,7 +64,7 @@ const planets = [
   "lilith"
 ] as const;
 
-const signs = [
+export const skyPlacementSigns = [
   "aries",
   "taurus",
   "gemini",
@@ -79,6 +79,8 @@ const signs = [
   "pisces"
 ] as const;
 
+const planets = skyPlacementBodies;
+const signs = skyPlacementSigns;
 const planetSet = new Set<string>(planets);
 const signSet = new Set<string>(signs);
 const signOrder = [...signs];
@@ -134,11 +136,14 @@ function nestedString(record: Record<string, unknown> | null | undefined, paths:
 function keyPlacementParts(contentKey: string) {
   const normalizedKey = contentKey.toLowerCase();
   const matches = [
+    normalizedKey.match(/^sky\/station\/([a-z_-]+)\/(?:retrograde|direct)\/([a-z_-]+)/u),
+    normalizedKey.match(/^sky\/article-(?:edition|template)\/([a-z_-]+)\/([a-z_-]+)/u),
+    normalizedKey.match(/^authored\/sky-placement\/([a-z_-]+)\/([a-z_-]+)/u),
     normalizedKey.match(/^sky\.placement\.(?:base|topper)\.([a-z_-]+)\.([a-z_-]+)/u),
     normalizedKey.match(/^sky[./-]placement[./-](?:base[./-]|topper[./-])?([a-z_-]+)[./-]([a-z_-]+)/u),
     normalizedKey.match(/^fallback-hook\/sky-sign-copy\/([a-z_-]+)\/([a-z_-]+)/u)
   ];
-  const match = matches.find(Boolean);
+  const match = matches.find((match) => match && planetSet.has(normalizedToken(match[1])) && signSet.has(normalizedToken(match[2])));
   return match ? { planet: match[1], sign: match[2] } : null;
 }
 
@@ -221,8 +226,8 @@ function skyWriteupContextForRowUncached(row: SkyWriteupRelationRow): SkyWriteup
     || row.block_type === "sky_article"
     || row.mode === "article"
     || /^sky\.placement\./iu.test(row.content_key)
-    || /^sky[./-](?:placement|article)[./-]/iu.test(row.content_key)
-    || /^authored\/sky-lunation-macro\//iu.test(row.content_key)
+    || /^sky[./-](?:placement|article|station)[./-]/iu.test(row.content_key)
+    || /^authored\/sky-(?:lunation-macro|placement)\//iu.test(row.content_key)
     || /^fallback-hook\/sky-(?:placement|sign-copy)\//iu.test(row.content_key);
 
   if (!isSkyWriteup || !planetSet.has(planet)) return null;

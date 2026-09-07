@@ -5305,3 +5305,44 @@ test("Natal Empty Houses opens exact sources and supports repeated edits and ret
   await page.reload();
   await expect(manager.getByLabel("Empty house",{exact:true})).toBeVisible();
 });
+
+
+test("Sky placement filters select exact planet sign and motion independently of prose", async ({ page }) => {
+  const make=(id:string,key:string,headline:string,motion:string)=>({...generatedContentRows[0],id,content_key:key,headline,body:"Sun in Virgo is mentioned here, but does not define this placement.",block_type:"sky_article",mode:"article",facts:{motion}});
+  const target=make("qa-sky-exact","sky/article-template/sun/virgo","Templated article — arbitrary editorial title","direct");
+  const mercury=make("qa-sky-rx","sky/placement/mercury/virgo/retrograde","Bespoke edition — Mercury","retrograde");
+  const wrong=make("qa-sky-wrong","sky/article-edition/jupiter/leo","Bespoke edition — Jupiter Enters Leo","direct");
+  await seedAdminApi(page,{generatedRows:[target,mercury,wrong]});
+  await expectAdminRouteLoads(page,"/admin/content#sky-writeups");
+  await page.getByLabel("Sky placement planet or point").selectOption("sun");
+  await page.getByLabel("Sky placement zodiac sign").selectOption("virgo");
+  await page.getByLabel("Sky write-up motion").selectOption("direct");
+  await expect(page.locator(".admin-content-row")).toHaveCount(1);
+  await expect(page.locator(".admin-content-row .admin-content-row-title")).toHaveText("Sun in Virgo · Direct");
+  await page.getByLabel("Sky placement planet or point").selectOption("mercury");
+  await page.getByLabel("Sky write-up motion").selectOption("retrograde");
+  await expect(page.locator(".admin-content-row")).toHaveCount(1);
+  await expect(page.locator(".admin-content-row .admin-content-row-title")).toHaveText("Mercury in Virgo · Retrograde");
+  for(const theme of ["light","dark"]) for(const width of [1440,390]) {
+    await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+    await page.setViewportSize({width,height:1000});
+    await expectNoHorizontalOverflow(page,`Sky selectors ${theme} ${width}`);
+    const filters = page.getByRole("region", { name: "Sky write-up filters" });
+    await expect(filters.locator("label > span").first()).toHaveText("Planet or point");
+    await expect(filters.locator("label > span").nth(1)).toHaveText("Zodiac sign");
+    await expect(filters.locator("label > span").nth(2)).toHaveText("Motion");
+    const typography = (element: Element) => {
+      const style = getComputedStyle(element);
+      return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "marginTop", "marginBottom", "textTransform", "textAlign"].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
+    };
+    expect(await filters.locator("label > span").first().evaluate(typography)).toEqual(await filters.locator("label > span").nth(3).evaluate(typography));
+    await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+    await expect(page.locator(".admin-content-row")).toHaveCount(0);
+    await expectNoHorizontalOverflow(page,`Empty Sky selectors ${theme} ${width}`);
+    await page.getByLabel("Sky placement zodiac sign").selectOption("virgo");
+  }
+  await page.getByRole("button",{name:"Clear filters",exact:true}).click();
+  await expect(page.getByLabel("Sky placement planet or point")).toHaveValue("all");
+  await expect(page.getByLabel("Sky placement zodiac sign")).toHaveValue("all");
+  await expect(page.locator(".admin-content-row")).toHaveCount(3);
+});
