@@ -130,6 +130,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       body: "QA flow tests use local fallback content instead of the deployed API."
     });
   });
+  await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
   await page.route("**/rest/v1/generated_interpretations*", async (route) => {
     if (options.generatedInterpretations) {
       await route.fulfill({
