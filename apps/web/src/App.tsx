@@ -1,3 +1,5 @@
+import { skyBodyLabel } from "./content/skyMotionLabels";
+import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
 import { calendarDayDistance } from "./services/calendarDayDistance";
 import { liveSkyReference, remainingSkyMinutes } from "./services/skyClock";
 import { skyDailySummaryParts, skySummaryParagraphs } from "./content/skyDailySummary";
@@ -593,6 +595,7 @@ type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> 
   keyDates?: SkyDetailKeyDate[];
   keyDatesIntro?: string | null;
   articleWindow?: string | null;
+  residencyWindow?: string;
   articleMode?: "current" | "archive" | null;
   risingHoroscopes?: { risingSign?: string | null; house?: number; body: string; contentKey?: string }[];
   articleAspectPassages?: { natalPoint: string; aspect: string; body: string; contentKey: string }[];
@@ -1223,7 +1226,7 @@ function skyAspectSign(aspect: SkySnapshot["aspects"][number], point: string, po
     return signedAspect.toSign;
   }
 
-  return skyAspectPosition(point, positions)?.sign ?? "";
+  return (point === aspect.from ? aspect.fromSign : aspect.toSign) ?? skyAspectPosition(point, positions)?.sign ?? "";
 }
 
 function skyAspectTemplateSlots(aspect: SkySnapshot["aspects"][number], positions?: PlanetPosition[]): TemplateSlotValues {
@@ -4302,6 +4305,11 @@ function natalAspectDetailArticle(
   };
 }
 
+function skyAspectMotionName(point: string, positions?: PlanetPosition[]) {
+  const position = skyAspectPosition(point, positions);
+  return skyBodyLabel(point, position && isDisplayRetrograde(position) ? "retrograde" : undefined);
+}
+
 function skyAspectDisplayTitle(aspect: SkySnapshot["aspects"][number]) {
   return `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
 }
@@ -4316,8 +4324,8 @@ function generatedSkyAspectWritingSection(
     return null;
   }
 
-  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
+  const firstSign = aspect.fromSign ?? skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = aspect.toSign ?? skyAspectPosition(aspect.to, positions)?.sign;
 
   if (!firstSign || !secondSign) {
     return null;
@@ -4353,8 +4361,8 @@ function approvedExactSkyAspectWritingSection(
   positions?: PlanetPosition[],
   generatedContent?: GeneratedContentMap
 ): NormalizedSkyAspectSection | null {
-  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
+  const firstSign = aspect.fromSign ?? skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = aspect.toSign ?? skyAspectPosition(aspect.to, positions)?.sign;
   const studio = generatedContent && firstSign && secondSign
     ? resolveSkyAspectContentStudioExact({
         generatedContent,
@@ -4410,8 +4418,8 @@ function reviewedSkyAspectWritingSection(
   positions: PlanetPosition[] | undefined,
   scope: "sign-aware" | "generic"
 ): NormalizedSkyAspectSection | null {
-  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
-  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
+  const firstSign = aspect.fromSign ?? skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = aspect.toSign ?? skyAspectPosition(aspect.to, positions)?.sign;
 
   try {
     const rendered = transitSynastryFallbackRendererV3.renderSkyAspectCard({
@@ -4525,7 +4533,9 @@ function currentSkyAspectDetailArticle(
   generatedContent: GeneratedContentMap,
   positions?: PlanetPosition[]
 ): SkyDetail {
-  const title = skyAspectDisplayTitle(aspect);
+  const fromLabel = aspect.fromMotion ? skyBodyLabel(aspect.from, aspect.fromMotion) : skyAspectMotionName(aspect.from, positions);
+  const toLabel = aspect.toMotion ? skyBodyLabel(aspect.to, aspect.toMotion) : skyAspectMotionName(aspect.to, positions);
+  const title = `${fromLabel} ${titleCase(aspect.type)} ${toLabel}`;
   const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt);
   const body = normalized.sections.flatMap((section) => taggedSectionParagraphs(section));
   const timing = currentSkyAspectTransitRange(aspect, generatedAt, positions);
@@ -4533,7 +4543,7 @@ function currentSkyAspectDetailArticle(
 
   return {
     routePath: skyAspectRoutePath(aspect),
-    glyph: `${pointGlyph(aspect.from)} ${aspectGlyph(aspect.type)} ${pointGlyph(aspect.to)}`,
+    glyph: `${pointGlyph(aspect.from)}${fromLabel.endsWith(" Rx") ? " ℞" : ""} ${aspectGlyph(aspect.type)} ${pointGlyph(aspect.to)}${toLabel.endsWith(" Rx") ? " ℞" : ""}`,
     kicker: "",
     title,
     meta: `${aspectTone(aspect.type).toUpperCase()} · ${timing}`,
@@ -4547,6 +4557,14 @@ function currentSkyAspectDetailArticle(
     historicalLookback,
     astrologyDrilldown: null
   };
+}
+
+function datedSkyAspectDetail(detail: SkyDetail, startsAt: string, timeZone: string): SkyDetail {
+  const exactLabel = `Exact · ${new Intl.DateTimeFormat("en-US", {
+    month: "long", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit", timeZone
+  }).format(new Date(startsAt))}`;
+  return { ...detail, routePath: `${detail.routePath}/at/${encodeURIComponent(startsAt)}`,
+    duration: exactLabel, meta: exactLabel, seriesLine: null };
 }
 
 function skyAspectsForPlacement(planet: string, aspects: SkySnapshot["aspects"]) {
@@ -4918,7 +4936,7 @@ function skyPlacementWritingSection(
   const canonicalDateLine = entryYear && entryYear === exitYear
     ? `${canonicalEntryDate.replace(/, \d{4}$/u, "")} to ${canonicalExitDate}`
     : `${canonicalEntryDate} to ${canonicalExitDate}`;
-  let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderSkyPlacement>;
+  let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderSkyPlacement> | null = null;
 
   try {
     rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({
@@ -4956,8 +4974,8 @@ function skyPlacementWritingSection(
       throw error;
     }
 
-    console.warn("Sky placement source gap; omitting unavailable sign copy.", error);
-    return null;
+    console.warn("Sky placement source gap; checking canonical reader copy.", error);
+    if (isArchiveArticle) return null;
   }
   try {
     if (isFallbackOnlySkyPlacementPreview()) {
@@ -5014,6 +5032,7 @@ function skyPlacementWritingSection(
     if (skyV4.servingEnabled === true && skyV4.versionStatus === "approved-serving-baseline" && skyV4.readerParts?.length) {
       rendered = {
         ...rendered,
+        headline: rendered?.headline ?? skyPlacementDisplayTitle(position),
         tagline: null,
         closingCharge: null,
         body: skyV4.readerParts.join("\n\n"),
@@ -5032,7 +5051,13 @@ function skyPlacementWritingSection(
       throw error;
     }
   }
-  const allRenderedParagraphs = rendered.parts.length ? rendered.parts : [rendered.body];
+  if (!rendered) return null;
+  const motionCopy = skyPlacementMotionCopy(planet, hasRetrogradeGuidance, skyV4ReaderRenderer);
+  // Rx must never fall back to a direct-only reading while its approved module is unavailable.
+  if (hasRetrogradeGuidance && !motionCopy) return null;
+  const allRenderedParagraphs = skyPlacementMotionParts(
+    rendered.parts.length ? rendered.parts : [rendered.body], motionCopy
+  );
   const renderedParagraphs = rendered.closingCharge
     && allRenderedParagraphs.at(-1) === rendered.closingCharge
     ? allRenderedParagraphs.slice(0, -1)
@@ -5082,17 +5107,22 @@ function skyPlacementWritingSection(
     sourceKeys: [
       "fallback-architecture-v3",
       rendered.templateKey,
-      rendered.contentKey ?? ""
+      rendered.contentKey ?? "",
+      motionCopy?.contentKey ?? ""
     ].filter(Boolean),
+    tldr: motionCopy?.body,
     heading: rendered.headline || skyPlacementDisplayTitle(position),
     tagline: rendered.tagline,
     closingCharge: rendered.closingCharge,
     keyDates,
     keyDatesIntro: rendered.keyDatesIntro ?? null,
     articleWindow: rendered.articleWindow,
+    residencyWindow: canonicalDateLine,
     articleMode: rendered.articleMode,
     risingHoroscopes,
-    articleSections: rendered.articleSections,
+    articleSections: motionCopy && rendered.articleSections?.length && rendered.templateKey !== "sky-v4-canonical-reader-v1"
+      ? [{ kind: "retrograde-variant", heading: "", body: motionCopy.body }, ...(rendered.articleSections ?? [])]
+      : rendered.articleSections,
     body
   };
 }
@@ -5223,7 +5253,7 @@ function currentSkyPlacementDetailArticle({
   moonEvent?: SkySnapshot["moonEvent"] | null;
 }): SkyDetail {
   const activeAspects = skyAspectsForPlacement(position.planet, aspects);
-  const fallbackTitle = placementDetailTitle(position, activeAspects);
+  const fallbackTitle = articleMode === "archive" ? skyPlacementDisplayTitle(position) : placementDetailTitle(position, activeAspects);
   const isRetrograde = articleMode === "archive" ? false : isDisplayRetrograde(position);
   const transitRangeLabel = isRetrograde
     ? retrogradeRangeText(position)
@@ -5303,12 +5333,15 @@ function currentSkyPlacementDetailArticle({
       : skyPlacementRoutePath(position),
     glyph: detailGlyphForPlacement(position),
     kicker: placementDetailKicker(position, activeAspects),
-    title: placementSection?.heading || fallbackTitle,
+    title: isRetrograde ? fallbackTitle : placementSection?.heading || fallbackTitle,
     meta: [
       articleMode === "archive" ? null : formatPlacementPosition(position).toUpperCase(),
       isRegistryArticle || isContinuousFallback ? null : effectiveTransitRangeLabel
     ].filter(Boolean).join(" · "),
-    duration: isFallbackOnlyPreview
+    residencyDuration: isRetrograde && placementSection?.residencyWindow
+      ? `In ${position.sign}: ${placementSection.residencyWindow}`
+      : undefined,
+    duration: isRetrograde ? transitRangeLabel ?? undefined : isFallbackOnlyPreview
       ? fallbackDateLine ?? effectiveTransitRangeLabel ?? undefined
       : isRegistryArticle || isContinuousFallback
         ? undefined
@@ -11366,10 +11399,18 @@ export function App() {
         from: planetA,
         to: planetB,
         type: event.aspect,
+        exactAt: event.startsAt,
+        fromSign: event.fromSign,
+        toSign: event.toSign,
+        fromMotion: event.fromMotion,
+        toMotion: event.toMotion,
         orb: 0
       };
 
-      const detail = currentSkyAspectDetailArticle(detailAspect, generatedAt, new Map());
+      const detail = datedSkyAspectDetail(
+        currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent),
+        event.startsAt, sky.location.timeZone || "UTC"
+      );
       const eventBody = calendarEventDetailBody(event, generatedContent, description);
       const hasAspectBody = skyDetailHasReaderFacingMainBody(detail);
 
@@ -11405,7 +11446,7 @@ export function App() {
       degree: eventDegree,
       sign: eventSign ?? position.sign,
       signGlyph: eventSign ? signGlyph(eventSign) : position.signGlyph,
-      motion: isRetrogradeEvent ? "retrograde" : position.motion,
+      motion: event.direction ?? (isRetrogradeEvent ? "retrograde" : position.motion),
       transitStart: event.type === "ingress" ? event.startsAt : position.transitStart,
       transitEnd: event.type === "ingress" ? event.endsAt ?? null : position.transitEnd
     };
@@ -11827,7 +11868,27 @@ export function App() {
       return;
     }
 
-    const calendarEvent = selectedCalendarTransitEventRef.current;
+    const storedCalendarEvent = selectedCalendarTransitEventRef.current;
+    const calendarEvent = storedCalendarEvent?.event.type === "aspect"
+      && storedCalendarEvent.event.planets && storedCalendarEvent.event.aspect
+      && skyDetailRoutePath !== `${skyAspectRoutePath({ from: storedCalendarEvent.event.planets[0], to: storedCalendarEvent.event.planets[1], type: storedCalendarEvent.event.aspect })}/at/${encodeURIComponent(storedCalendarEvent.event.startsAt)}`
+      ? null : storedCalendarEvent;
+    const [baseRoute, encodedExactAt] = skyDetailRoutePath.split("/at/");
+    if (!calendarEvent && encodedExactAt && baseRoute.startsWith("sky/aspect/")) {
+      const exactAt = decodeURIComponent(encodedExactAt);
+      if (Number.isNaN(Date.parse(exactAt))) { setSelectedSkyDetail(null); return; }
+      let cancelled = false;
+      setSelectedSkyDetail(null);
+      // Recompute the dated event on reload; never borrow today's motion or signs.
+      void getAstrodienstSky(sky.location, new Date(exactAt)).then(eventSky => {
+        if (cancelled) return;
+        const detail = skyDetailFromRoutePath(baseRoute, eventSky, skyGeneratedContent, openSkyDetail);
+        selectedSkyDetailRefreshKeyRef.current = refreshKey;
+        selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
+        setSelectedSkyDetail(detail ? datedSkyAspectDetail(detail, exactAt, sky.location.timeZone || "UTC") : null);
+      }).catch(error => { if (!cancelled) console.warn("Dated aspect calculation failed.", error); });
+      return () => { cancelled = true; };
+    }
     const detail = calendarEvent
       ? calendarTransitDetailWithContent(
           calendarEvent.event,
@@ -15655,7 +15716,7 @@ function SkyCards({
               const item = events.find(event => event.id === part.eventId);
               if (!item) return null;
               const route = item.type === "aspect" && item.planets && item.aspect
-                ? skyAspectRoutePath({ from: item.planets[0], to: item.planets[1], type: item.aspect })
+                ? `${skyAspectRoutePath({ from: item.planets[0], to: item.planets[1], type: item.aspect })}/at/${encodeURIComponent(item.startsAt)}`
                 : skyPlacementRoutePath({ planet: item.planet!, sign: item.toSign || item.sign });
               return <a key={index} className="sky-daily-summary__link" href={`#${route}`} onClick={click => {
                 if (click.metaKey || click.ctrlKey || click.shiftKey || click.altKey) return;
@@ -15980,7 +16041,9 @@ function ActiveAspects({
       {visibleAspectGroups.map((group) => (
         <SkyAspectGroup id={group.key} key={group.key} label={group.label}>
           {group.aspects.map(({ aspect, normalized }) => {
-            const title = `${aspect.from} ${aspect.type} ${aspect.to}`;
+            const fromLabel = skyAspectMotionName(aspect.from, positions);
+            const toLabel = skyAspectMotionName(aspect.to, positions);
+            const title = `${fromLabel} ${aspect.type} ${toLabel}`;
             const timing = skyAspectTimingDisplay(aspect, generatedAt);
             const narrativeTiming = skyAspectNarrativeTimingLines(aspect, generatedAt);
             const exactChip = wholeDegreeOrb(aspect.orb) === "0°";
@@ -15998,7 +16061,7 @@ function ActiveAspects({
                 aria-label={`Read more about ${title}`}
                 onClick={() => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))}
               >
-                <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
+                <AspectGlyphs from={fromLabel} aspect={aspect.type} to={toLabel} />
                 <div className="aspect-row-copy">
                   <h3>{title}</h3>
                   <span className="aspect-row-timing" aria-label={timing.label}>

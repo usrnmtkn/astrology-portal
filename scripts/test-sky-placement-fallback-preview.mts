@@ -62,8 +62,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /duration: isFallbackOnlyPreview[\s\S]*?fallbackDateLine \?\? effectiveTransitRangeLabel/u,
-  "Fallback-only previews must keep the full calculated date line in the article header."
+  /duration: isRetrograde \? transitRangeLabel \?\? undefined : isFallbackOnlyPreview[\s\S]*?fallbackDateLine \?\? effectiveTransitRangeLabel/u,
+  "Rx headers must prioritize the computed retrograde window; direct fallback previews keep the residency date line."
 );
 assert.match(
   appSource,

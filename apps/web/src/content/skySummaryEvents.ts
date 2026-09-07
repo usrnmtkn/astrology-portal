@@ -1,3 +1,4 @@
+import { calendarMotionTitle, skyAspectVerbs } from "./skyMotionLabels";
 import type { LunarCalendarEvent } from "../services/ephemeris";
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
 import { contentPublication, publicationAllowsContent } from "./contentPublicationState";
@@ -15,11 +16,10 @@ export function ingressSummaryKeys(event: LunarCalendarEvent) {
 }
 
 export function skySummaryEventFacts(events: LunarCalendarEvent[], content: CmsGeneratedContentMap) {
-  const verbs: Record<string, string> = { conjunction: "conjoins", opposition: "opposes", square: "squares", trine: "trines", sextile: "sextiles" };
   const unique = [...new Map(events.map(event => [event.id, event])).values()];
   return {
-    exactAspects: unique.flatMap(event => event.type === "aspect" && event.planets && event.aspect && verbs[event.aspect.toLowerCase()]
-      ? [{ id: event.id, label: `${event.planets[0]} ${verbs[event.aspect.toLowerCase()]} ${event.planets[1]}` }] : []),
+    exactAspects: unique.flatMap(event => event.type === "aspect" && event.planets && event.aspect && skyAspectVerbs[event.aspect.toLowerCase()]
+      ? [{ id: event.id, label: calendarMotionTitle(event) }] : []),
     ingresses: unique.flatMap(event => {
       if (event.type !== "ingress" || !event.planet || !(event.toSign || event.sign)) return [];
       let tldr: string | undefined;

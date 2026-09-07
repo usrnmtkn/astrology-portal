@@ -16,7 +16,7 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) {
     await expect(summary.locator(':scope > p').nth(1)).toHaveText('Today’s exact aspect is Moon sextiles Mercury.');
     await expect(summary.locator(':scope > p').nth(2)).toHaveText('The next New Moon in Virgo is in 3 days.');
     const link = summary.getByRole('link', { name: 'Moon sextiles Mercury', exact: true });
-    await expect(link).toHaveAttribute('href', '#sky/aspect/moon/sextile/mercury');
+    await expect(link).toHaveAttribute('href', '#sky/aspect/moon/sextile/mercury/at/2026-09-07T20%3A00%3A00Z');
     const styles = await summary.locator(':scope > p').evaluateAll(ps => ps.map(p => {
       const s = getComputedStyle(p);
       return { margin: parseFloat(s.marginTop), font: s.fontFamily, size: s.fontSize };

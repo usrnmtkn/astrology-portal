@@ -94,6 +94,9 @@ export type LunarCalendarEvent = {
   sunSign?: string;
   fromSign?: string;
   toSign?: string;
+  /** Endpoint motion calculated at startsAt, independent of the selected Sky date. */
+  fromMotion?: PlanetDirection;
+  toMotion?: PlanetDirection;
   direction?: PlanetDirection;
   phase?: RetrogradePhase;
   longitude?: number;
@@ -2622,7 +2625,9 @@ function findSkyAspects(
                 // Each body's sign at exactness, so the collective write-up can read
                 // "Neptune in Aries is sextile Pluto in Aquarius" (aSign/bSign).
                 fromSign: exactPlanetSign(swe, firstPlanetId, occursAt),
-                toSign: exactPlanetSign(swe, secondPlanetId, occursAt)
+                toSign: exactPlanetSign(swe, secondPlanetId, occursAt),
+                fromMotion: exactPlanetSpeed(swe, firstPlanetId, occursAt) < 0 ? "retrograde" : "direct",
+                toMotion: exactPlanetSpeed(swe, secondPlanetId, occursAt) < 0 ? "retrograde" : "direct"
               });
             }
           }
@@ -3171,7 +3176,9 @@ function findSkyPlacementResidencyAspects(
           planets: [planet, otherPlanet],
           aspect,
           fromSign: exactPlanetSign(swe, planetId, occursAt),
-          toSign: exactPlanetSign(swe, otherPlanetId, occursAt)
+          toSign: exactPlanetSign(swe, otherPlanetId, occursAt),
+          fromMotion: exactPlanetSpeed(swe, planetId, occursAt) < 0 ? "retrograde" : "direct",
+          toMotion: exactPlanetSpeed(swe, otherPlanetId, occursAt) < 0 ? "retrograde" : "direct"
         });
       }
     }

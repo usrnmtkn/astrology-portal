@@ -1,3 +1,4 @@
+import { calendarMotionTitle } from "../../content/skyMotionLabels";
 import { CalendarDays, ChevronLeft, ChevronRight, Loader2, MapPin, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
@@ -650,7 +651,7 @@ function calendarDayTooltipLines(
     formatSelectedDay(day, timeZone),
     calendarPhaseLabelForDay(day, calendarDays),
     `Moon in ${day.moonSign}`,
-    ...events.map((event) => event.title),
+    ...events.map(calendarMotionTitle),
     ...(voidWindow ? [`Void of course · ${voidWindow}`] : [])
   ];
 }
@@ -797,7 +798,7 @@ function monthCellEventLabel(event: LunarCalendarEvent) {
 
   if (event.type === "aspect" && event.planets && event.aspect) {
     const [firstGlyph = "", secondGlyph = ""] = Array.from(event.glyph);
-    return `${firstGlyph}${aspectGlyphs[event.aspect] ?? ""}${secondGlyph}`;
+    return `${firstGlyph}${event.fromMotion === "retrograde" ? retrogradeGlyph : ""}${aspectGlyphs[event.aspect] ?? ""}${secondGlyph}${event.toMotion === "retrograde" ? retrogradeGlyph : ""}`;
   }
 
   return event.glyph;
@@ -833,8 +834,10 @@ function transitCardGlyphParts(event: LunarCalendarEvent) {
 
     return [
       { value: firstGlyph, className: "" },
+      { value: event.fromMotion === "retrograde" ? retrogradeGlyph : "", className: "tx-rx" },
       { value: aspectGlyphs[event.aspect] ?? "", className: "tx-link" },
-      { value: secondGlyph, className: "" }
+      { value: secondGlyph, className: "" },
+      { value: event.toMotion === "retrograde" ? retrogradeGlyph : "", className: "tx-rx" }
     ].filter((part) => part.value);
   }
 
@@ -1496,6 +1499,7 @@ function calendarEventEditorialContent(
 }
 
 function calendarEventTitle(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
+  if (event.type === "aspect") return calendarMotionTitle(event);
   return content?.headline?.trim() || event.title;
 }
 
@@ -2753,7 +2757,7 @@ export function LunarCalendar({
               <div className="lunar-selected-card__transit-notes" aria-label="Daily transit notes">
                 {selectedTransitNotes.map((note) => (
                   <section key={note.transitRef}>
-                    <span>{note.event?.title ?? note.title}</span>
+                    <span>{note.event ? calendarMotionTitle(note.event) : note.title}</span>
                     {textParagraphs(note.body ?? "").map((paragraph) => (
                       <p key={paragraph}>{paragraph}</p>
                     ))}
@@ -3101,7 +3105,7 @@ export function LunarCalendar({
                       {tooltipEvents.length > 0 && (
                         <span className="lunar-calendar-day-tooltip__events">
                           {tooltipEvents.map((event) => (
-                            <span className="lunar-calendar-day-tooltip__event" key={event.id}>{event.title}</span>
+                            <span className="lunar-calendar-day-tooltip__event" key={event.id}>{calendarMotionTitle(event)}</span>
                           ))}
                         </span>
                       )}
@@ -3334,7 +3338,7 @@ export function LunarCalendar({
                         {tooltipEvents.length > 0 && (
                           <span className="lunar-calendar-day-tooltip__events">
                             {tooltipEvents.map((event) => (
-                              <span className="lunar-calendar-day-tooltip__event" key={event.id}>{event.title}</span>
+                              <span className="lunar-calendar-day-tooltip__event" key={event.id}>{calendarMotionTitle(event)}</span>
                             ))}
                           </span>
                         )}

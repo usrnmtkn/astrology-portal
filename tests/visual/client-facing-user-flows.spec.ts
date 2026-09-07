@@ -2021,7 +2021,7 @@ test.describe("client-facing user flow case studies", () => {
     const cases = [
       { date: "2026-07-09", eventType: "ingress", title: "Venus enters Virgo", usesV9: true },
       { date: "2026-07-23", eventType: "station", title: "Mercury stations direct", usesV9: true },
-      { date: "2026-07-13", eventType: "aspect", title: "Venus square Uranus", usesV9: false }
+      { date: "2026-07-13", eventType: "aspect", title: "Venus squares Uranus", usesV9: false }
     ];
 
     await seedClientState(page, { now: "2026-07-31T12:00:00.000Z" });
@@ -2174,7 +2174,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator("#lunar-weekly-2026-08-05 .lunar-weekly-day__guidance")).toBeVisible();
     await expect(lastQuarterTaurus).not.toContainText("The waning Moon carries things out");
     await expect(weeklyEvents.getByRole("heading", { name: "Venus enters Libra" })).toBeVisible();
-    await expect(weeklyEvents.getByRole("heading", { name: "Sun trine Saturn" })).toBeVisible();
+    await expect(weeklyEvents.getByRole("heading", { name: "Sun trines Saturn" })).toBeVisible();
     await expect(weeklyEvents.getByRole("heading", { name: "Mercury enters Leo" })).toBeVisible();
 
     await expect(page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__facts span").first()).toHaveText("Waning Gibbous");
@@ -2385,10 +2385,10 @@ test.describe("client-facing user flow case studies", () => {
 
     const selectedDay = page.getByLabel("Selected lunar day");
     const aspectDay = page.getByLabel("Selected week").getByRole("button", {
-      name: /Full Moon\. Moon in Aquarius\. Venus square Mars/
+      name: /Full Moon\. Moon in Aquarius\. Venus squares Mars/
     });
     await aspectDay.click();
-    await expect(selectedDay.getByRole("button", { name: "Venus square Mars" })).toBeVisible({ timeout: 15_000 });
+    await expect(selectedDay.getByRole("button", { name: "Venus squares Mars" })).toBeVisible({ timeout: 15_000 });
     await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(exactBody);
     await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).not.toHaveText(signSpecificBody);
 
