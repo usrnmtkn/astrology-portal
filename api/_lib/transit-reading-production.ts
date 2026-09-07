@@ -33,6 +33,18 @@ export type TransitReadingProductionKernel = {
   draftValidation: TransitReadingDraftValidation | null;
 };
 
+function productionGateInput(input: TransitReadingProductionInput): TransitReadingProductionInput {
+  if (input.surface !== "you" || /transit/iu.test(input.eventType)) return input;
+  return {
+    ...input,
+    // The persisted product event names are `you-day-reading` and
+    // `you-week-reading`. The production writing kernel already governs this
+    // content under its You-transit lane, so normalize only the pre-call event
+    // identity. Reader/runtime persistence remains unchanged.
+    eventType: `you-transit-${input.eventType}`
+  };
+}
+
 export function prepareTransitReadingProductionKernel(input: {
   productionInput: TransitReadingProductionInput;
   role: TransitReadingProductionRole;
@@ -44,9 +56,10 @@ export function prepareTransitReadingProductionKernel(input: {
   if (input.role === "REVIEWER" && input.draftValidated !== true) {
     throw new Error("TRANSIT_READING_REVIEW_VALIDATION_REQUIRED: deterministic validation must pass before the judge can run.");
   }
-  const gate = prepareProductionPreCallGate(input.productionInput);
+  const normalizedInput = productionGateInput(input.productionInput);
+  const gate = prepareProductionPreCallGate(normalizedInput);
   return {
-    input: input.productionInput,
+    input: normalizedInput,
     gate,
     role: input.role,
     draftValidation: input.role === "REVIEWER"
