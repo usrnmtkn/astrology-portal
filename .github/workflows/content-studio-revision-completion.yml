@@ -1,0 +1,28 @@
+name: Content Studio revision completion
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/supabase/migrations/20260907061500_content_studio_revision_completion.sql"
+      - "scripts/test-content-studio-revision-completion.mjs"
+      - ".github/workflows/content-studio-revision-completion.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/supabase/migrations/20260907061500_content_studio_revision_completion.sql"
+      - "scripts/test-content-studio-revision-completion.mjs"
+      - ".github/workflows/content-studio-revision-completion.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  revision-completion-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/test-content-studio-revision-completion.mjs
