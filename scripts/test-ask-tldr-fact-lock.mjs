@@ -27,7 +27,7 @@ const receipt = buildAskTldrVoiceEvidenceReceipt({
 });
 const request = buildAskTldrWriterRequest({ packet: governed, receipt });
 const goodValue = {
-  answer: "Recognition is more available when you put the work where people can see and respond to it. Jupiter opposing your Midheaven around September 15 can make public opportunity and visibility feel larger, but it can also make other people's reaction seem more important than the result itself.\n\nUse the opening to show the concrete work, ask for the credit or role attached to it, and let the response give you information. You may get more from a visible result and a specific request than from trying to manage how everyone feels about what you are doing.",
+  answer: "Recognition is more available when you put the work where people can see and respond to it. Ask for the credit, title, or authority that matches work you can already point to instead of adding more responsibility just to prove the case.\n\nWhy the astrology points here\n\nJupiter opposing your Midheaven around September 15 enlarges questions of public role, recognition, and how much professional territory you are ready to occupy. The useful part of that pressure is not simply being more visible; it is noticing where growth gives you more leverage and where it only gives you more work.",
   evidenceIdsUsed: [request.primaryEvidenceId],
   primaryEvidenceId: request.primaryEvidenceId,
   whyNowEvidenceId: request.primaryEvidenceId,
@@ -64,4 +64,4 @@ if (supporting) {
   assert.equal(undeclared.checkedEvidenceIds.includes(supporting.id), false, "The fact lock must scope itself to the evidence IDs the writer declared.");
 }
 
-console.log("Ask TLDR fact lock passed: dates, named aspects, returns, house claims, and sign claims are checked only against the writer's declared calculated evidence.");
+console.log("Ask TLDR fact lock passed: dates, named aspects, returns, house claims, and sign claims are checked across the reader answer including its astrology-support section, using only the writer's declared calculated evidence.");
