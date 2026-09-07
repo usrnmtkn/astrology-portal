@@ -33,13 +33,13 @@ assert.ok(!text({ sun: { sign: "Virgo", degree: NaN }, moonIsVoid: false }).incl
 assert.deepEqual(skyDailySummaryParts(facts).filter(p => p.action === "sun" || p.action === "moon").map(p => p.action), ["sun", "moon"]);
 for (const [planets, expected] of [
   [[], "No planets are retrograde right now."],
-  [["Saturn"], "One planet is retrograde right now: Saturn."],
-  [["Saturn", "Neptune"], "Two planets are retrograde right now: Saturn and Neptune."],
-  [["Saturn", "Neptune", "Pluto", "Chiron"], "Four planets are retrograde right now: Saturn, Neptune, Pluto, and Chiron."]
+  [["Saturn"], "One planet is retrograde right now: Saturn Rx."],
+  [["Saturn", "Neptune"], "Two planets are retrograde right now: Saturn Rx and Neptune Rx."],
+  [["Saturn", "Neptune", "Pluto", "Chiron"], "Four planets are retrograde right now: Saturn Rx, Neptune Rx, Pluto Rx, and Chiron Rx."]
 ] as const) {
   assert.ok(text({ ...facts, retrogradePlanets: [...planets] }).includes(expected));
 }
-assert.ok(text({ ...facts, retrogradePlanets: ["Saturn", "Saturn", ""] }).includes("One planet is retrograde right now: Saturn."));
+assert.ok(text({ ...facts, retrogradePlanets: ["Saturn", "Saturn", ""] }).includes("One planet is retrograde right now: Saturn Rx."));
 assert.equal(text({ sun: { sign: "Virgo", degree: 15 }, moon: { sign: "Cancer", degree: 29 }, moonIsVoid: false }),
   "The Sun is in Virgo at 15°, turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing, while the Moon moves through Cancer at 29°, bringing more attention to home, family, and whether the care we give is coming back to us.");
 assert.ok(!text(facts).includes("care we give"), "Cancer meaning must never serve for another Moon sign");
@@ -99,8 +99,8 @@ assert.ok(skyDailySummaryParts(studioFacts, new Map([[studioKey, studioRow(studi
 console.log("Studio summary fields: catalog, slot validation, published overrides, link preservation, and draft/invalid fallback passed.");
 
 const retrogradeLinkParts = skyDailySummaryParts({ moonIsVoid: false, retrogradePlanets: ["Saturn", "Neptune", "Pluto", "Chiron", "Saturn"] });
-assert.deepEqual(retrogradeLinkParts.filter(part => part.action === "retrograde").map(part => [part.text, part.planet]), [["Saturn", "Saturn"], ["Neptune", "Neptune"], ["Pluto", "Pluto"], ["Chiron", "Chiron"]]);
-assert.equal(retrogradeLinkParts.map(part => part.text).join(""), "Four planets are retrograde right now: Saturn, Neptune, Pluto, and Chiron.");
+assert.deepEqual(retrogradeLinkParts.filter(part => part.action === "retrograde").map(part => [part.text, part.planet]), [["Saturn Rx", "Saturn"], ["Neptune Rx", "Neptune"], ["Pluto Rx", "Pluto"], ["Chiron Rx", "Chiron"]]);
+assert.equal(retrogradeLinkParts.map(part => part.text).join(""), "Four planets are retrograde right now: Saturn Rx, Neptune Rx, Pluto Rx, and Chiron Rx.");
 
 assert.equal(calendarDayDistance(new Date("2026-09-07T16:00:00Z"), new Date("2026-09-11T03:27:00Z"), "America/New_York"), 3);
 assert.equal(calendarDayDistance(new Date("2026-09-07T16:00:00Z"), new Date("2026-09-11T03:27:00Z"), "UTC"), 4);
