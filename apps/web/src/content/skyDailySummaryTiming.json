@@ -9,6 +9,6 @@
   "noRetrogrades": "No planets are retrograde right now.",
   "voidRemaining": "The Moon is void of course for another {remaining}.",
   "voidWithoutTiming": "The Moon is void of course.",
-  "lunation": "The next {name} arrives in {sign} {countdown}.",
+  "lunation": "The next {name} in {sign} is {countdown}.",
   "fullMoonMeaning": "Full Moons mark a culmination, when something that has been building becomes easier to see."
 }

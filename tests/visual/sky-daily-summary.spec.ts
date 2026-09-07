@@ -1,12 +1,16 @@
 import { expect, test } from "@playwright/test";
 
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: new URL(route.request().url()).searchParams.get("date"), events: [] }] } } }));
+});
+
 test("September 8 uses the revised Virgo clause and links planet names", async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
   await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
   await page.goto("/?date=2026-09-08#sky");
   const summary = page.getByLabel("Daily sky summary");
-  await expect(summary).toContainText("The Sun is in Virgo at 16°, turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing, while the Moon moves through Leo at 13°", { timeout: 60_000 });
-  await expect(summary.getByRole("link")).toHaveText(["Sun", "Moon", "Saturn Rx", "Neptune Rx", "Pluto Rx", "Chiron Rx", "New Moon"]);
+  await expect(summary).toContainText("The Sun in Virgo at 16° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon moves through Leo at 13°", { timeout: 60_000 });
+  await expect(summary.getByRole("link")).toHaveText(["Sun in Virgo at 16°", "Moon moves through Leo at 13°", "Saturn Rx in Aries at 13°", "Neptune Rx in Aries at 3°", "Pluto Rx in Aquarius at 3°", "Chiron Rx in Taurus at 0°", "New Moon in Virgo"]);
   await expect(summary).not.toContainText("making it easier to notice what needs fixing");
   await page.screenshot({ path: "test-results/sky-summary-september-8.png" });
 });
@@ -27,14 +31,14 @@ for (const theme of ["light", "dark"] as const) {
       await page.goto("/#sky");
       const summary = page.getByLabel("Daily sky summary");
       await expect(summary).toBeVisible({ timeout: 60_000 });
-      await expect(summary).toContainText("The Sun is in Virgo");
-      await expect(summary).toContainText("The Sun is in Virgo at 15°, turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing, while the Moon moves through Cancer at 29°, bringing more attention to home, family, and whether the care we give is coming back to us.");
+      await expect(summary).toContainText("The Sun in Virgo");
+      await expect(summary).toContainText("The Sun in Virgo at 15° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Cancer at 29° brings more attention to home, family, and whether the care we give is coming back to us.");
       await expect(summary).not.toContainText("Fix what matters");
       await expect(summary).not.toContainText("Tend what feels like home");
-      await expect(summary).toContainText("the Moon moves through");
-      await expect(summary).toContainText("The next New Moon arrives in Virgo in 3 days.");
-      await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx, Neptune Rx, Pluto Rx, and Chiron Rx.");
-      await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx, Neptune Rx, Pluto Rx, and Chiron Rx. The Moon is void of course for another 49 minutes. The next New Moon arrives in Virgo in 3 days.");
+      await expect(summary).toContainText("the Moon in Cancer");
+      await expect(summary).toContainText("The next New Moon in Virgo is in 3 days.");
+      await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx in Aries at 13°, Neptune Rx in Aries at 3°, Pluto Rx in Aquarius at 3°, and Chiron Rx in Taurus at 0°.");
+      await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx in Aries at 13°, Neptune Rx in Aries at 3°, Pluto Rx in Aquarius at 3°, and Chiron Rx in Taurus at 0°. The Moon is void of course for another 49 minutes. The next New Moon in Virgo is in 3 days.");
       await expect(summary).not.toContainText("Full Moons mark a culmination");
       await expect(summary.locator("mark.content-highlight").filter({ hasText: "Four planets are retrograde" })).toHaveText("Four planets are retrograde");
       await expect(summary.locator("strong")).toHaveCount(0);
@@ -57,7 +61,7 @@ for (const theme of ["light", "dark"] as const) {
       for (const name of ["Sun in Virgo", "Moon in Cancer"]) {
         const link = summary.getByRole("link", { name: `Read about ${name}` });
         await expect(link).toBeVisible();
-        await expect(link).toHaveText(name.split(" ")[0]);
+        await expect(link).toHaveText(`${name} at ${name.startsWith("Sun") ? 15 : 29}°`);
         expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain("underline");
       }
       await expect(summary).not.toContainText(/—|undefined|\{\{/);
@@ -88,7 +92,7 @@ for (const theme of ["light", "dark"] as const) {
       }
       for (const [planet, sign] of [["Saturn", "Aries"], ["Neptune", "Aries"], ["Pluto", "Aquarius"], ["Chiron", "Taurus"]]) {
         const link = summary.getByRole("link", { name: `Read about ${planet} in ${sign}`, exact: true });
-        await expect(link).toHaveText(`${planet} Rx`);
+        await expect(link).toContainText(`${planet} Rx in ${sign} at `);
         await expect(link).toHaveAttribute("href", `#sky/placement/${planet.toLowerCase()}/${sign.toLowerCase()}`);
         expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain("underline");
         expect(await link.evaluate(el => getComputedStyle(el).fontWeight)).toBe("600");
@@ -97,7 +101,7 @@ for (const theme of ["light", "dark"] as const) {
         await page.goto("/#sky");
         await expect(summary).toBeVisible();
       }
-      await summary.getByRole("link", { name: "New Moon", exact: true }).click();
+      await summary.getByRole("link", { name: "New Moon in Virgo", exact: true }).click();
       await expect(page.getByRole("heading", { name: /New Moon in Virgo/i }).first()).toBeVisible({ timeout: 15_000 });
       await page.reload();
       await expect(page.getByRole("heading", { name: /New Moon in Virgo/i }).first()).toBeVisible({ timeout: 60_000 });
@@ -116,13 +120,13 @@ for (const theme of ["light", "dark"] as const) {
   }
 }
 
-test("Full Moon summary adds the owner-supplied culmination sentence", async ({ page }) => {
+test("Full Moon summary uses the linked name and sign", async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-09-15T16:00:00Z"));
   await page.goto("/#sky");
   const summary = page.getByLabel("Daily sky summary");
   await expect(summary).toBeVisible({ timeout: 60_000 });
-  await expect(summary.getByRole("link", { name: "Full Moon", exact: true })).toBeVisible();
-  await expect(summary).toContainText("Full Moons mark a culmination, when something that has been building becomes easier to see.");
+  await expect(summary.getByRole("link", { name: /^Full Moon in / })).toBeVisible();
+  await expect(summary).not.toContainText("Full Moons mark a culmination");
   await expect(summary).not.toContainText("The next New Moon");
 });
 
@@ -132,7 +136,7 @@ for (const [date, label] of [["2026-08-10T16:00:00Z", "Solar Eclipse"], ["2026-0
     await page.goto("/#sky");
     const summary = page.getByLabel("Daily sky summary");
     await expect(summary).toBeVisible({ timeout: 60_000 });
-    await expect(summary.getByRole("link", { name: label, exact: true })).toBeVisible();
+    await expect(summary.getByRole("link", { name: new RegExp(`^${label} in `) })).toBeVisible();
     await expect(summary).not.toContainText(/The next (?:New Moon|Full Moon)/);
   });
 }

@@ -99,7 +99,9 @@ export default defineConfig(({ command, mode }) => {
         output: {
           onlyExplicitManualChunks: true,
           manualChunks(id) {
-            if (/apps\/admin\/src\/(?:AdminFilterDisclosure|AdminPaginatedCollection|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {
+            // Shared controls are rendered immediately. Keeping them in this
+            // lazy group pulls the whole editor group into the startup graph.
+            if (/apps\/admin\/src\/(?:NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {
               return "admin-deferred-editor-tools";
             }
             if (/apps\/admin\/src\/(?:AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview)\.tsx$/u.test(id)) {

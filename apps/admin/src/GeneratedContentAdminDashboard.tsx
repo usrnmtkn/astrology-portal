@@ -1,6 +1,6 @@
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
 import { SkyDailySummaryStudio } from "./SkyDailySummaryStudio";
-import { skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
+import { currentSkySummaryWording, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
@@ -5222,10 +5222,22 @@ export function GeneratedContentAdminDashboard() {
       const result = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
         `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(field.key)}&limit=1`, secret);
       if (!Array.isArray(result.rows)) throw new Error("Could not load the saved summary wording. Please try again.");
-      const existing = result.rows.find(row => row.content_key === field.key);
+      let existing = result.rows.find(row => row.content_key === field.key);
+      if (!existing && field.key.startsWith("cms/sky-daily-summary/ingress/")) {
+        const { ingressTldrSourceKeys, publishedIngressTldr } = await import("./skyIngressTldrSources");
+        const [planet, sign] = field.label.split(" enters ");
+        const sources = await Promise.all(ingressTldrSourceKeys(planet, sign).map(async key => {
+          const response = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+            `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1`, secret);
+          if (!Array.isArray(response.rows)) throw new Error("Could not check the existing ingress TLDR. Please try again.");
+          return response.rows;
+        }));
+        existing = publishedIngressTldr(sources.flat(), planet, sign);
+      }
       if (existing) {
-        setRows(current => [existing, ...current.filter(row => row.id !== existing.id)]);
-        openRow(existing);
+        const current = { ...existing, body: currentSkySummaryWording(existing.content_key, existing.body ?? "") };
+        setRows(rows => [current, ...rows.filter(row => row.id !== current.id)]);
+        openRow(current);
       } else {
         const nextDraft: AdminDraft = {
           id: null, contentKey: field.key, surface: "sky", mode: "card", status: "DRAFT",
@@ -6109,7 +6121,7 @@ export function GeneratedContentAdminDashboard() {
             </section>
             {skyWriteupWorkspaceView === "daily-summary" ? (
               <>
-                <SkyDailySummaryStudio draftCopy={draft} rows={rows} onEdit={field => void openSkySummaryField(field)} busy={isLoading} />
+                <SkyDailySummaryStudio rows={rows} onEdit={field => void openSkySummaryField(field)} busy={isLoading} />
                 {renderEditor()}
               </>
             ) : skyWriteupWorkspaceView === "transits-to-natal" ? (
