@@ -1,0 +1,14 @@
+{
+  "id":"career",
+  "label":"Career",
+  "description":"Public role, ambition, recognition, authority, professional direction, titles, responsibility, and visibility.",
+  "defaultEvidencePriority":["10th house / Midheaven / 10th-house ruler","Sun and Saturn career pattern","active transits through or to career factors","annual career context when relevant"],
+  "questions":[
+    {"id":"career.recognition","displayQuestion":"How can I get recognized?","primaryIntent":"recognition","secondaryIntents":["visibility","credit","authority","public_role"],"questionTypes":["guidance","direction"],"defaultTimeWindow":"4_months","evidenceFocus":["Midheaven / 10th-ruler / Sun transits","10th-house activation"]},
+    {"id":"career.known_for","displayQuestion":"What should I be known for?","primaryIntent":"professional_identity","secondaryIntents":["reputation","specialization","visibility"],"questionTypes":["direction","pattern"],"defaultTimeWindow":"12_months","evidenceFocus":["natal Midheaven / 10th-house pattern","annual career context"]},
+    {"id":"career.right_role","displayQuestion":"What kind of role would make better use of my strengths right now?","primaryIntent":"role_fit","secondaryIntents":["direction","responsibility","satisfaction","workload"],"questionTypes":["direction","current_state"],"defaultTimeWindow":"4_months","evidenceFocus":["Midheaven / Sun / Saturn contacts","6th-10th house links"]},
+    {"id":"career.authority","displayQuestion":"Where am I ready for more authority at work?","primaryIntent":"authority","secondaryIntents":["responsibility","leadership","recognition"],"questionTypes":["direction","guidance"],"defaultTimeWindow":"4_months","evidenceFocus":["Midheaven / Saturn / Sun contacts","6th-10th house links"]},
+    {"id":"career.renegotiate","displayQuestion":"What matters most if I'm deciding whether to stay, renegotiate, or leave?","primaryIntent":"renegotiation","secondaryIntents":["role_change","terms","authority","exit"],"questionTypes":["decision","timing"],"defaultTimeWindow":"4_months","evidenceFocus":["Uranus / Saturn / Pluto contacts to career factors","upcoming 6th / 10th-house changes"]},
+    {"id":"career.build_toward","displayQuestion":"What should I be building toward professionally?","primaryIntent":"career_direction","secondaryIntents":["growth","responsibility","long_term_goal"],"questionTypes":["direction","guidance"],"defaultTimeWindow":"12_months","evidenceFocus":["annual career context","long transits to Midheaven / 10th ruler"]}
+  ]
+}
