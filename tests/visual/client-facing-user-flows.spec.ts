@@ -3827,3 +3827,36 @@ test("published Uranus Scorpio reader retains the complete owner passage after h
   await expect(article).toContainText(ownerCopy);
   await expect(article).toContainText("Your freedom comes from knowing what has power over you well enough to choose differently.");
 });
+
+test("Chiron Jupiter owner revision renders its complete opening and ending", async ({ page }) => {
+  const copy = JSON.parse(readFileSync("docs/content-management/owner-copy/chiron-jupiter-hard-2026-09-07.json", "utf8"));
+  const row = { id: "qa-chiron-owner-copy", content_key: copy.contentKey, surface: "you", mode: "feed", status: "LIVE", lane: "serving", review_state: null,
+    provider: "tldrastro-fallback-architecture-v3", updated_at: "2026-09-07T15:26:32.577389+00:00", body: copy.body_you,
+    facts: { content_role: "full_copy", review_status: "approved" },
+    source_snapshot: { content_role: "full_copy", review_status: "approved", sourcePackage: "tldrastro-fallback-architecture-v3" },
+    sections: { packageRecord: { contentKey: copy.contentKey, content_role: "full_copy", review_status: "approved", body_you: copy.body_you, body_they: copy.body_they } } };
+  await seedClientState(page, { profile: true, preloadProfileNatalSky: true, now: "2026-09-07T14:27:30.000Z", generatedInterpretations: [row] });
+  await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: row.updated_at }));
+  let releaseCopy!: () => void;
+  const contentReady = new Promise<void>(resolve => { releaseCopy = resolve; });
+  await page.route("**/rest/v1/generated_interpretations*", async route => {
+    await contentReady;
+    await route.fulfill({ json: [row] });
+  });
+  await page.route("**/content-studio-last-known-good.json", async route => {
+    await contentReady;
+    await route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: 1, rows: [row] } });
+  });
+  await expectClientRouteLoads(page, "/#you");
+  await page.getByRole("tab", { name: /updates|transits/i }).click();
+  const card = page.getByRole("button", { name: /^Chiron challenging growth/ }).first();
+  await expect(card).toBeVisible({ timeout: 30_000 });
+  await card.click();
+  const detail = page.getByRole("region", { name: "Chiron square your Jupiter", exact: true });
+  await expect(detail).toBeVisible();
+  releaseCopy();
+  await expect(detail).toContainText("A moment of real growth can unexpectedly pull an old insecurity straight to the surface.");
+  await expect(detail).toContainText("You do not have to make an opportunity harder on yourself to feel like you earned it.");
+  await expect(detail).toContainText("you can step fully into this expansion without letting insecurity push you into a massive obligation you will just have to back out of later.");
+  await expect(detail).not.toContainText(/\{\{(?:Name|aspectWord|untilDate)\}\}/);
+});
