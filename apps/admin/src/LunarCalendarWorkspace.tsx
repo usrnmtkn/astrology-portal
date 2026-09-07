@@ -2,7 +2,10 @@ import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 're
 import type { CompositionMapRow } from './compositionMap';
 import { lunarContentIdentity, lunarSigns } from './lunarCalendarContent';
 const CompositionMapWorkspace = lazy(() => import('./CompositionMapWorkspace'));
-type Row = CompositionMapRow & { inventory_only?: boolean };
+type Row = CompositionMapRow & { inventory_only?: boolean; facts?: Record<string, unknown> | null };
+const isArchived = (row: Row) => row.status === 'ARCHIVED'
+  || (row.source_snapshot as Record<string, unknown> | null)?.review_status === 'deprecated'
+  || (row.facts as Record<string, unknown> | null)?.review_status === 'deprecated';
 type Props = { rows: Row[]; editor: ReactNode; query: string; onQuery: (value: string) => void; onEdit: (row: Row) => void; onLoad: (row: Row) => Promise<unknown>; onCreate: (sign: string) => void };
 export default function LunarCalendarWorkspace({ rows, editor, query, onQuery, onEdit, onLoad, onCreate }: Props) {
   const [family, setFamily] = useState('all');
@@ -18,8 +21,7 @@ export default function LunarCalendarWorkspace({ rows, editor, query, onQuery, o
   }), [rows]);
   const families = [...new Set(entries.map(entry => entry.identity.family))];
   const filtered = entries.filter(({ row, identity }) => {
-    const snapshot = row.source_snapshot as Record<string, unknown> | null;
-    const archived = row.status === 'ARCHIVED' || snapshot?.review_status === 'deprecated';
+    const archived = isArchived(row);
     const haystack = `${identity.title} ${identity.family} ${row.content_key} ${row.body ?? ''}`.toLowerCase();
     return (family === 'all' || identity.family === family) && (sign === 'all' || identity.sign === sign)
       && (status === 'all' || (status === 'archived' ? archived : status === 'active' ? !archived : row.status === status && !archived))
@@ -47,7 +49,7 @@ export default function LunarCalendarWorkspace({ rows, editor, query, onQuery, o
     {view === 'composition' ? <Suspense fallback={<p>Loading composition…</p>}><CompositionMapWorkspace rows={rows} templateKeys={keys} initialKey={selectedKey || selected?.row.content_key} onEditRow={onEdit} onLoadRow={onLoad} editor={editor} /></Suspense> : <>
       {editor}
       <div className="admin-composition-map-layout">
-        <aside className="admin-composition-template-list" aria-label="Lunar passages"><header><strong>{filtered.length} passages</strong></header><div className="admin-composition-template-items">{filtered.map(({ row, identity }) => <button type="button" key={row.id} className={row.id === selected?.row.id ? 'active' : ''} aria-pressed={row.id === selected?.row.id} onClick={() => setSelectedKey(row.content_key)}><small>{identity.family}</small><strong>{identity.title}</strong><span>{row.status === 'LIVE' ? 'Published' : row.status.toLowerCase()} · {identity.kind}{identity.excluded ? ' · Excluded by owner' : ''}</span></button>)}</div>{!filtered.length && <p className="admin-empty">No lunar passages match these filters.</p>}</aside>
+        <aside className="admin-composition-template-list" aria-label="Lunar passages"><header><strong>{filtered.length} {filtered.length === 1 ? 'passage' : 'passages'}</strong></header><div className="admin-composition-template-items">{filtered.map(({ row, identity }) => <button type="button" key={row.id} className={row.id === selected?.row.id ? 'active' : ''} aria-pressed={row.id === selected?.row.id} onClick={() => setSelectedKey(row.content_key)}><small>{identity.family}</small><strong>{identity.title}</strong><span>{isArchived(row) ? 'Archived' : row.status === 'LIVE' ? 'Published' : row.status.toLowerCase()} · {identity.kind}{identity.excluded ? ' · Excluded by owner' : ''}</span></button>)}</div>{!filtered.length && <p className="admin-empty">No lunar passages match these filters.</p>}</aside>
         <section className="admin-composition-detail" aria-label="Selected lunar passage">{selected && <>
           <header className="admin-composition-detail-header"><div><p className="admin-eyebrow">{selected.identity.destination}</p><h2>{selected.identity.title}</h2></div><button type="button" onClick={() => onEdit(selected.row)}>Edit passage</button></header>
           <p>{selected.identity.selection}</p>{selected.identity.excluded && <p role="note">The owner excluded this base Cancer passage. The Calendar selects another approved variant even when this stored row says Published.</p>}
