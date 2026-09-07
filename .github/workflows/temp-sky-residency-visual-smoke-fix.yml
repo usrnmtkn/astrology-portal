@@ -1,0 +1,76 @@
+name: Temporary Sky residency visual-smoke repair
+
+on:
+  push:
+    branches:
+      - fix/sky-residency-visual-smoke-20260906
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fix/sky-residency-visual-smoke-20260906
+      - name: Preserve existing aspect content during residency enrichment
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          detail_path = Path('apps/web/src/features/sky/SkyDetailArticle.tsx')
+          detail = detail_path.read_text()
+          old = '''  const detailSections = residencyContext
+            ? [
+                ...(detail.sections ?? []).filter((section) => section.role !== "aspect"),
+                ...(residencyAspectSections ?? [])
+              ]
+            : (detail.sections ?? []);
+          '''
+          new = '''  const existingDetailSections = detail.sections ?? [];
+          const existingAspectSections = existingDetailSections.filter((section) => section.role === "aspect");
+          const residencyAspectHeadings = new Set(
+            (residencyAspectSections ?? []).map((section) => section.heading.trim().toLowerCase())
+          );
+          const detailSections = residencyContext && residencyAspectSections !== null
+            ? [
+                ...existingDetailSections.filter((section) => section.role !== "aspect"),
+                ...residencyAspectSections,
+                ...existingAspectSections.filter((section) => !residencyAspectHeadings.has(section.heading.trim().toLowerCase()))
+              ]
+            : existingDetailSections;
+          '''
+          if old not in detail:
+              raise SystemExit('SkyDetailArticle replacement target not found')
+          detail_path.write_text(detail.replace(old, new, 1))
+
+          test_path = Path('scripts/test-sky-placement-residency-aspects.mts')
+          test = test_path.read_text()
+          anchor = '''  assert.match(detailSource, /skyPlacementResidencyAspectSections/u);
+          '''
+          insertion = '''  assert.match(detailSource, /skyPlacementResidencyAspectSections/u);
+          assert.match(
+            detailSource,
+            /residencyContext && residencyAspectSections !== null[\\s\\S]*?existingAspectSections\\.filter[\\s\\S]*?residencyAspectHeadings/u,
+            "Residency enrichment must keep existing exact aspect content visible while the async residency scan loads and preserve unmatched approved aspects afterward."
+          );
+          '''
+          if anchor not in test:
+              raise SystemExit('Residency regression insertion target not found')
+          test_path.write_text(test.replace(anchor, insertion, 1))
+          PY
+
+          git diff --check
+          git diff -- apps/web/src/features/sky/SkyDetailArticle.tsx scripts/test-sky-placement-residency-aspects.mts
+      - name: Commit repair and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/temp-sky-residency-visual-smoke-fix.yml
+          git add apps/web/src/features/sky/SkyDetailArticle.tsx scripts/test-sky-placement-residency-aspects.mts
+          git commit -m "Preserve Sky aspect content during residency enrichment"
+          git push origin HEAD:fix/sky-residency-visual-smoke-20260906
