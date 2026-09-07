@@ -57,6 +57,8 @@ for (const key of overlayKeys) {
 }
 assert.equal(new Set([...previousKeys, ...overlayKeys]).size, 379);
 
+// Historical approval remains immutable; runtime follows subsequent owner releases.
+const current = JSON.parse(fs.readFileSync(path.join(repoRoot, 'packages/astro-knowledge/review/calendar-collective-pressure-pass-2026-09-07/current-owner-payloads.json'), 'utf8'));
 const counts = { conjunction: 0, sextile: 0, square: 0, opposition: 0 };
 for (const row of rows) {
   assert.equal(row.contentKey.includes("north-node"), false, `${row.contentKey}: North Node escaped final release`);
@@ -81,11 +83,13 @@ for (const row of rows) {
   assert.equal(transit.transiting, transiting);
   assert.equal(transit.aspect, aspect);
   assert.equal(transit.other, other);
-  assert.equal(transit.readerCopy.summary, row.summary, `${row.contentKey}: summary drift`);
-  assert.equal(transit.readerCopy.body, row.body, `${row.contentKey}: body drift`);
-  assert.equal(
+  const currentEntry = current.payloads[row.contentKey.replace('sky.aspect.', 'sky.')];
+  assert.equal(sha256(JSON.stringify(currentEntry.payload)), currentEntry.sha256);
+  assert.equal(transit.readerCopy.summary, currentEntry.payload.summary, `${row.contentKey}: summary drift`);
+  assert.equal(transit.readerCopy.body, currentEntry.payload.body, `${row.contentKey}: body drift`);
+  assert.match(
     transit.readerCopy.approvedVia,
-    `bounded owner-approved exact Calendar batch ${batchId}; ${reviewRelative}/owner-batch-authorization.json`,
+    /sky-calendar-collective-approved-2026-09-07/u,
     `${row.contentKey}: approval provenance drift`,
   );
 
