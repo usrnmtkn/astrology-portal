@@ -20,43 +20,39 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           detail_path = Path('apps/web/src/features/sky/SkyDetailArticle.tsx')
           detail = detail_path.read_text()
 
-          old_import = '''import {
-            articleAspectGlyphPartsFromHeading,
-            articleAspectTypeFromText,
-            normalizedArticleAspectToneBucket
-          } from "../../utils/articleAspects";'''
-          new_import = '''import {
-            articleAspectGlyphPartsFromHeading,
-            articleAspectTypeFromText,
-            articleNodeAxisBodyParts,
-            normalizedArticleAspectToneBucket
-          } from "../../utils/articleAspects";'''
-          if old_import not in detail:
-              raise SystemExit('articleAspects import target not found')
-          detail = detail.replace(old_import, new_import, 1)
+          detail, import_count = re.subn(
+              r'(articleAspectTypeFromText,\n)(\s*)(normalizedArticleAspectToneBucket)',
+              r'\1\2articleNodeAxisBodyParts,\n\2\3',
+              detail,
+              count=1,
+          )
+          if import_count != 1:
+              raise SystemExit(f'articleAspects import target count: {import_count}')
 
-          old_locals = '''                      const glyphParts = sectionHeading ? articleAspectGlyphPartsFromHeading(sectionHeading) : null;
-                      const sourceTag = inferredSectionQaSourceTag(section);
-                      const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;'''
-          new_locals = '''                      const glyphParts = sectionHeading ? articleAspectGlyphPartsFromHeading(sectionHeading) : null;
-                      const nodeAxisBody = sectionHeading ? articleNodeAxisBodyParts(sectionHeading, bodyParagraphs) : null;
-                      const southNodeGlyphParts = nodeAxisBody ? articleAspectGlyphPartsFromHeading(nodeAxisBody.southHeading) : null;
-                      const sourceTag = inferredSectionQaSourceTag(section);
-                      const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;'''
-          if old_locals not in detail:
-              raise SystemExit('aspect rendering locals target not found')
-          detail = detail.replace(old_locals, new_locals, 1)
+          locals_pattern = re.compile(
+              r'(const glyphParts = sectionHeading \? articleAspectGlyphPartsFromHeading\(sectionHeading\) : null;\n)(\s*)(const sourceTag = inferredSectionQaSourceTag\(section\);)',
+              re.M,
+          )
+          detail, locals_count = locals_pattern.subn(
+              r'\1\2const nodeAxisBody = sectionHeading ? articleNodeAxisBodyParts(sectionHeading, bodyParagraphs) : null;\n'
+              r'\2const southNodeGlyphParts = nodeAxisBody ? articleAspectGlyphPartsFromHeading(nodeAxisBody.southHeading) : null;\n'
+              r'\2\3',
+              detail,
+              count=1,
+          )
+          if locals_count != 1:
+              raise SystemExit(f'aspect rendering locals target count: {locals_count}')
 
-          old_render = '''                          {bodyParagraphs.length > 0
-                            ? bodyParagraphs.map((paragraph, paragraphIndex) => (
-                              <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>
-                            ))
-                            : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}'''
-          new_render = '''                          {nodeAxisBody ? (
+          render_pattern = re.compile(
+              r'\{bodyParagraphs\.length > 0\n\s*\? bodyParagraphs\.map\(\(paragraph, paragraphIndex\) => \(\n\s*<p key=\{`\$\{section\.key\}-\$\{paragraphIndex\}`\}>\{paragraph\}</p>\n\s*\)\)\n\s*: <p>\{typeof section\.body === "string" \? stripLegacySkyArticleScaffoldPrefix\(section\.body\) : section\.body\}</p>\}',
+              re.M,
+          )
+          replacement = '''{nodeAxisBody ? (
                             <>
                               {nodeAxisBody.primaryParagraphs.map((paragraph, paragraphIndex) => (
                                 <p key={`${section.key}-north-${paragraphIndex}`}>{paragraph}</p>
@@ -74,29 +70,24 @@ jobs:
                               <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>
                             ))
                             : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}'''
-          if old_render not in detail:
-              raise SystemExit('aspect body rendering target not found')
-          detail_path.write_text(detail.replace(old_render, new_render, 1))
+          detail, render_count = render_pattern.subn(replacement, detail, count=1)
+          if render_count != 1:
+              raise SystemExit(f'aspect body rendering target count: {render_count}')
+          detail_path.write_text(detail)
 
           test_path = Path('scripts/test-calendar-south-node-serving.mjs')
           test = test_path.read_text()
-          anchor = '''assert.equal(studioNorth?.body, marsNorth.body);
-          assert.equal(studioSouth?.body, marsSouth.body);
+          anchor = 'assert.equal(studioSouth?.body, marsSouth.body);'
+          insertion = '''assert.equal(studioSouth?.body, marsSouth.body);
 
-          console.log("South Node Calendar serving + Content Studio contract passed", {'''
-          insertion = '''assert.equal(studioNorth?.body, marsNorth.body);
-          assert.equal(studioSouth?.body, marsSouth.body);
-
-          const skyDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
-          assert.match(
-            skyDetailSource,
-            /articleNodeAxisBodyParts[\\s\\S]*?article-related-aspects__copy-heading[\\s\\S]*?<h4>\\{nodeAxisBody\\.southHeading\\}<\\/h4>/u,
-            "Paired South Node copy must render with the same aspect subtitle treatment as the North Node heading."
-          );
-
-          console.log("South Node Calendar serving + Content Studio contract passed", {'''
-          if anchor not in test:
-              raise SystemExit('South Node serving regression anchor not found')
+const skyDetailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
+assert.match(
+  skyDetailSource,
+  /articleNodeAxisBodyParts[\\s\\S]*?article-related-aspects__copy-heading[\\s\\S]*?<h4>\\{nodeAxisBody\\.southHeading\\}<\\/h4>/u,
+  "Paired South Node copy must render with the same aspect subtitle treatment as the North Node heading."
+);'''
+          if test.count(anchor) != 1:
+              raise SystemExit(f'South Node serving regression anchor count: {test.count(anchor)}')
           test_path.write_text(test.replace(anchor, insertion, 1))
           PY
           git diff --check
