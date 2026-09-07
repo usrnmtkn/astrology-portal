@@ -44,17 +44,33 @@ async function checkOnce() {
       billingMode: reportFulfillment?.detail?.billingMode ?? "missing"
     })}`);
   }
+
+  const exactAspects = healthPayload?.dependencies?.contentStudioExactAspects;
+  if (
+    exactAspects?.ok !== true
+    || exactAspects?.detail?.exactRows !== 439
+    || exactAspects?.detail?.northNodeRows !== 60
+    || exactAspects?.detail?.southNodeRows !== 60
+  ) {
+    throw new Error(`Content Studio exact-aspect health contract failed: ${JSON.stringify({
+      status: health.status,
+      exactAspectsOk: exactAspects?.ok === true,
+      exactRows: exactAspects?.detail?.exactRows ?? "missing",
+      northNodeRows: exactAspects?.detail?.northNodeRows ?? "missing",
+      southNodeRows: exactAspects?.detail?.southNodeRows ?? "missing"
+    })}`);
+  }
 }
 
 let lastError;
 for (let attempt = 1; attempt <= attempts; attempt += 1) {
   try {
     await checkOnce();
-    console.log(`Production report smoke passed at ${baseUrl} on attempt ${attempt}/${attempts}.`);
+    console.log(`Production report and Content Studio smoke passed at ${baseUrl} on attempt ${attempt}/${attempts}.`);
     process.exit(0);
   } catch (error) {
     lastError = error;
-    console.error(`Production report smoke attempt ${attempt}/${attempts} failed: ${error instanceof Error ? error.message : String(error)}`);
+    console.error(`Production smoke attempt ${attempt}/${attempts} failed: ${error instanceof Error ? error.message : String(error)}`);
     if (attempt < attempts) await wait(delayMs);
   }
 }
