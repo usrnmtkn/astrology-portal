@@ -156,6 +156,14 @@ function nodeAxisBody(first: CompactActiveAspect, second: CompactActiveAspect, n
   return `${intro} What you are developing now runs through ${north}. The more familiar side involves ${south}. You do not have to reject what you know, but it should not make the whole decision for you.`;
 }
 
+function nodeAxisHeading(first: SkyActiveChartAspect, second: SkyActiveChartAspect) {
+  const firstParts = articleAspectGlyphPartsFromHeading(first.heading);
+  const secondParts = articleAspectGlyphPartsFromHeading(second.heading);
+  if (!firstParts || !secondParts) return `${first.heading} · ${second.heading}`;
+  const verb = (aspect: string) => aspect === "conjunction" ? "conjunct" : aspect === "opposition" ? "opposite" : aspect;
+  return `${firstParts.from} ${verb(firstParts.aspect)} ${firstParts.to} · ${verb(secondParts.aspect)} ${secondParts.to}`;
+}
+
 export function skyActiveChartEvents(aspects: SkyActiveChartAspect[]): SkyActiveChartEvent[] {
   const used = new Set<number>();
   const events: SkyActiveChartEvent[] = [];
@@ -184,7 +192,7 @@ export function skyActiveChartEvents(aspects: SkyActiveChartAspect[]): SkyActive
     events.push({
       key: `nodal-axis:${ordered.map((member) => member.key).join(":")}`,
       type: "nodal-axis",
-      heading: ordered.map((member) => member.heading).join(" · "),
+      heading: nodeAxisHeading(ordered[0], ordered[1]),
       body: nodeAxisBody(first, second, northAspect),
       dateLabel: first.dateLabel === second.dateLabel ? first.dateLabel : null,
       memberKeys: ordered.map((member) => member.key)
