@@ -2880,6 +2880,27 @@ export function GeneratedContentAdminDashboard() {
   }, [liveOmittedSections, sharedLiveOmittedSections]);
 
   const editableRowsByContentKey = useMemo(() => new Map(rows.map((row) => [row.content_key, row])), [rows]);
+  const [compositionCatalog, setCompositionCatalog] = useState<AdminGeneratedContentRow[]>([]);
+  useEffect(() => {
+    if (activePage !== "compositionMap" || !secret.trim()) return;
+    let cancelled = false;
+    void adminJsonRequest<{ ok: boolean; rows?: Array<{ content_key: string; headline: string | null; role: string }> }>("/api/admin/content-live-status", secret, {
+      method: "POST", body: JSON.stringify({ action: "composition-catalog" })
+    }).then((payload) => {
+      if (cancelled) return;
+      setCompositionCatalog((payload.rows ?? []).map((item) => ({
+        id: `package:${item.content_key}`, content_key: item.content_key, headline: item.headline ?? item.content_key,
+        body: null, summary: null, surface: "sky", status: "DRAFT", sections: null,
+        inventory_only: true, block_type: item.role === "template" ? "fallback_template" : "fallback_hook"
+      } as AdminGeneratedContentRow)));
+    }).catch((error) => { if (!cancelled) setMessage(dashboardErrorMessage(error)); });
+    return () => { cancelled = true; };
+  }, [activePage, secret]);
+  const compositionRows = useMemo(() => {
+    const savedKeys = new Set(rows.filter((row) => !row.id.startsWith("package:")).map((row) => row.content_key));
+    const ids = new Set(rows.map((row) => row.id));
+    return [...rows, ...compositionCatalog.filter((row) => !savedKeys.has(row.content_key) && !ids.has(row.id))];
+  }, [rows, compositionCatalog]);
   const visibleRows = useMemo(() => rows.filter((row) => (
     (showReferenceRows
       || (activePage === "content" && categoryFilter === "Calendar Aspects")
@@ -4661,15 +4682,16 @@ export function GeneratedContentAdminDashboard() {
 
   async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow) {
     if (!row.inventory_only) return row;
+    const selector = row.id.startsWith("package:") ? `contentKeys=${encodeURIComponent(row.content_key)}` : `id=${encodeURIComponent(row.id)}`;
     const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-      `/api/admin/generated-content?id=${encodeURIComponent(row.id)}&status=all&visibility=all&limit=1`,
+      `/api/admin/generated-content?${selector}&status=all&visibility=all&limit=1`,
       secret
     );
-    const hydrated = payload.rows?.find((candidate) => candidate.id === row.id);
+    const hydrated = payload.rows?.find((candidate) => candidate.id === row.id || row.id.startsWith("package:") && candidate.content_key === row.content_key);
     if (!hydrated || hydrated.inventory_only) {
       throw new Error(`Could not load the full content document for ${row.content_key}.`);
     }
-    setRows((current) => current.map((candidate) => candidate.id === hydrated.id ? hydrated : candidate));
+    setRows((current) => mergeContentInventory(current.filter((candidate) => candidate.id !== row.id || row.id === hydrated.id), [hydrated]));
     return hydrated;
   }
 
@@ -6440,7 +6462,8 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "compositionMap" && (
           <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
             <CompositionMapWorkspace
-              rows={visibleRows}
+              rows={compositionRows}
+              onLoadRow={(row) => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
               onEditRow={(row, context) => openRow(row as AdminGeneratedContentRow, context ?? null)}
               onStartCmsRow={openCmsStarter}
               editor={renderEditor()}

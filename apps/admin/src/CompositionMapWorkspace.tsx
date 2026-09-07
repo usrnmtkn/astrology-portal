@@ -1,3 +1,4 @@
+import CompositionSurfaceSources from "./CompositionSourceManager";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   buildCompositionMap,
@@ -54,8 +55,13 @@ function sourceKindLabel(source: CompositionMapSource) {
 }
 
 function ReaderSurfaceWorkspace({
-  onStartCmsRow
+  onStartCmsRow, rows, templates, onEditRow, onSelectTemplate, onLoadRow
 }: {
+  rows: CompositionMapRow[];
+  templates: ReturnType<typeof buildCompositionMap>;
+  onEditRow: Props["onEditRow"];
+  onSelectTemplate: (key: string) => void;
+  onLoadRow?: Props["onLoadRow"];
   onStartCmsRow?: (surface: WritingSurfaceMapItem, starter: WritingSurfaceCmsStarter) => void;
 }) {
   const [area, setArea] = useState<WritingSurfaceMapItem["area"] | "All">("All");
@@ -149,6 +155,7 @@ function ReaderSurfaceWorkspace({
               <span className={`ui-pill admin-status ${access.editability === "editable" ? "status-live" : access.editability === "missing" ? "status-error" : "status-draft"}`}>{editorialStatus}</span>
             </header>
 
+            <CompositionSurfaceSources key={selected.id} surfaceId={selected.id} rows={rows} templates={templates} onEditRow={onEditRow} onSelectTemplate={onSelectTemplate} onLoadRow={onLoadRow} />
             <section className="admin-composition-surface-summary" aria-label="Writing surface contract">
               <div>
                 <p className="admin-eyebrow">Surface content</p>
@@ -233,11 +240,12 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
   const [issuesOnly, setIssuesOnly] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedKey, setSelectedKey] = useState<string | null>(initialKey ?? null);
+  const [exampleValues, setExampleValues] = useState<Record<string, string>>({});
   const [view, setView] = useState<CompositionView>("preview");
   const [previewAudience, setPreviewAudience] = useState<"you" | "they">("you");
   const map = useMemo(() => templateKeys
     ? rows.filter(row => templateKeys.includes(row.content_key)).map(row => buildCompositionTemplate(row, rows))
-    : buildCompositionMap(rows), [rows, templateKeys]);
+    : buildCompositionMap(rows.filter((row) => !row.id.startsWith("package:") || row.sections)), [rows, templateKeys]);
   const destinations = useMemo(
     () => [...new Set(map.map((template) => template.destination))].sort((left, right) => left.localeCompare(right)),
     [map]
@@ -253,10 +261,13 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
       ...template.slots.flatMap((slot) => [slot.name, slot.label, slot.meaning, slot.source, ...slot.sources.flatMap((source) => [source.label, source.row.content_key])])
     ], query)
   )), [map, destinationFilter, issuesOnly, query]);
-  const selected = filtered.find((template) => template.row.content_key === selectedKey) ?? filtered[0];
+  const selectedBase = filtered.find((template) => template.row.content_key === selectedKey) ?? filtered[0];
+  const selected = useMemo(() => selectedBase && Object.keys(exampleValues).length
+    ? buildCompositionTemplate(selectedBase.row, rows, { exampleValues, includeOptionalSources: true })
+    : selectedBase, [selectedBase, rows, exampleValues]);
   const [loadError, setLoadError] = useState("");
   const [retryLoad, setRetryLoad] = useState(0);
-  const pendingRows = selected ? [selected.row, ...selected.preview.sources.map(source => source.row)].filter(row => (row as CompositionMapRow & { inventory_only?: boolean }).inventory_only) : [];
+  const pendingRows = scope === "templates" && selected ? [selected.row, ...selected.preview.sources.map(source => source.row)].filter(row => (row as CompositionMapRow & { inventory_only?: boolean }).inventory_only) : [];
   const pendingKey = pendingRows.map(row => row.id).join("|");
   useEffect(() => {
     setLoadError("");
@@ -282,6 +293,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
 
   function selectTemplate(contentKey: string) {
     setSelectedKey(contentKey);
+    setExampleValues({});
     setView("preview");
     setPreviewAudience("you");
   }
@@ -353,7 +365,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
           </button>
         </div>
       </div>}
-      {scope === "surfaces" ? <ReaderSurfaceWorkspace onStartCmsRow={onStartCmsRow} /> : <div className="admin-composition-map-layout">
+      {scope === "surfaces" ? <ReaderSurfaceWorkspace onStartCmsRow={onStartCmsRow} onLoadRow={onLoadRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
         <aside className="admin-composition-template-list" aria-label="Composition templates">
           <header>
             <div><p className="admin-eyebrow">{templateKeys ? "Choose a passage or template" : "Choose a template"}</p><strong>{filtered.length} of {map.length}</strong></div>
@@ -525,8 +537,9 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
 
                     <section aria-label="Example calculated facts">
                       <header><div><p className="admin-eyebrow">Example facts</p><h3>Values supplied by the app</h3></div><strong>{selected.preview.facts.length}</strong></header>
+                      <p className="admin-field-hint">Change sample facts to find the wording for a planet, sign, house, or aspect. These inputs do not change anyone’s calculated chart.</p>
                       <dl>
-                        {selected.preview.facts.map((fact) => <div key={fact.name}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}
+                        {selected.preview.facts.map((fact) => <div key={fact.name}><dt><label htmlFor={`composition-fact-${fact.name}`}>{fact.label}</label></dt><dd><input id={`composition-fact-${fact.name}`} value={fact.value} onChange={(event) => setExampleValues((current) => ({ ...current, [fact.name]: event.target.value }))} /></dd></div>)}
                       </dl>
                       {!selected.preview.facts.length && <p className="admin-field-hint">No calculated facts are required by this template.</p>}
                     </section>

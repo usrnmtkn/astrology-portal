@@ -17,6 +17,8 @@ export type CompositionMapRow = {
   body: string | null;
   surface: string;
   status: string;
+  updated_at?: string | null;
+  inventory_only?: boolean;
   block_type?: string | null;
   sections: unknown;
   source_snapshot?: unknown;
@@ -104,7 +106,7 @@ function humanize(value: string) {
 
 function packageRecordForRow(row: CompositionMapRow) {
   const sections = objectRecord(row.sections);
-  return objectRecord(sections?.packageRecord) ?? {};
+  return { ...objectRecord(sections?.packageRecord), ...objectRecord(sections?.packageDraft) };
 }
 
 function variableFieldsForRow(row: CompositionMapRow) {

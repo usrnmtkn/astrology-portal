@@ -65,4 +65,6 @@ assert.match(
 );
 assert.notEqual(after.parts.join("\n"), before.parts.join("\n"));
 
-console.log("Friends Transit dashboard override contract passed.");
+runtime.installFallbackArchitectureV3Bundle(null);
+assert.equal(renderVenusMoon().parts.join("\n"), before.parts.join("\n"), "Removing the last Studio override must restore the bundled copy, not keep the removed overlay in memory.");
+console.log("Friends Transit dashboard override and removal contract passed.");
