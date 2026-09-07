@@ -16678,6 +16678,25 @@ function ProfileView({
   generatedContent: GeneratedContentMap;
 }) {
   const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
+
+  useEffect(() => {
+    setTransitArticle((current) => {
+      if (!current) return current;
+      const transit = transitItems.find((item) => personalTransitGeneratedContentKey(item, targetDate) === current.id);
+      if (!transit) return current;
+      const normalized = normalizePersonalTransitSurface(transit, targetDate);
+      if (!normalizedSurfaceHasReaderDetail(normalized)) return current;
+      const sections = normalized.sections.map((section, index) => ({
+        heading: current.sections[index]?.heading || section.heading || current.title,
+        tldr: "",
+        body: taggedSectionBody(section)
+      }));
+      const generated = personalTransitGeneratedContent.get(current.id) ?? null;
+      if (JSON.stringify(sections) === JSON.stringify(current.sections) && generated === current.generatedContent) return current;
+      return { ...current, sections, generatedContent: generated };
+    });
+  }, [fallbackArchitectureV3Version, personalTransitGeneratedContent, targetDate, transitItems]);
+
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
   const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);
   const [dailyMatchingNewMoon, setDailyMatchingNewMoon] = useState<{
