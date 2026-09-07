@@ -180,7 +180,7 @@
     "build:knowledge": "npm run build -w @tldr/astro-knowledge",
     "build:web": "npm run build -w @tldr/web",
     "test:sky-calendar-composed-routing": "node scripts/test-sky-calendar-composed-card-routing.mjs",
-    "test:content-publications": "node --import tsx scripts/test-content-publication-database.mjs && node --import tsx scripts/test-content-publication-reader.mts && node --import tsx scripts/test-content-publication-api.mts"
+    "test:content-publications": "node --import tsx scripts/test-content-publication-database.mjs && node --import tsx scripts/test-content-publication-reader.mts && node --import tsx scripts/test-content-publication-api.mts && node --import tsx scripts/test-virgo-new-moon-owner.mts"
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "^0.27.7",

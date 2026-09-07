@@ -1,6 +1,6 @@
 # Content publication and retirement verification — 2026-09-07
 
-This change prevents a retired Content Studio key from exposing older bundled or cached writing. It does not alter the owner-approved Uranus, Chiron/Jupiter, or other authored source prose.
+This change prevents a retired Content Studio key from exposing older bundled or cached writing. It preserves the owner-approved Uranus and Chiron/Jupiter writing. The later owner-authorized Virgo macro recovery is documented below.
 
 ## Publication contract
 
@@ -60,3 +60,13 @@ The production migration has **not** been applied and no real content has been r
 5. Verify retirement/republication using isolated fixture content, then verify the protected owner passages and representative Calendar, Sky, Natal, and Friends reader surfaces.
 
 Never roll back by deleting the ledger or removing tombstones. Keep publication records and identity-sequence state in database backups. A code rollback must retain the lifecycle guards or retired bundled prose could become visible again.
+
+## Virgo New Moon recovery
+
+The owner reported the old Virgo macro returning and asked on 2026-09-07: “Can this old and outdated copy be removed or replaced, so it does not show up again.” The exact rewrite was still present in Live Studio row `36e59565-46a7-491b-9e62-ec32df4b3acb`, updated `2026-09-07T08:20:26.999535Z`. The old passage remained in the local fallback source and both generated reader partitions; the offline snapshot contained no override for this key.
+
+Replaced only `authored/sky-lunation-macro/new-moon/virgo` with the exact saved 249-word body, preserving its headline. Receipt: `docs/content-management/owner-copy/virgo-new-moon-2026-09-07.json`, SHA-256 `3c017d688f550206e4d49b017ce87417e9f04ad248c930f9907839c3c64200ec`. The bundled package version advances to `v3-2026-09-07c` to invalidate older cached package copies. Generated partitions, content book, and evidence hashes are rebuilt. Historical revision/audit records remain historical and are not reader fallbacks.
+
+The dedicated regression checks exact body equality in Node, browser source, shipped resolver, and both generated partitions. A You-page browser regression checks the recovered opening and final sentence and rejects the old checklist opening. This is a prepared source replacement; production deployment remains pending.
+
+The actual You-page regression passed after updating the legacy fixed-opening guard to recognize the recovered Virgo opening. TypeScript, CSS/token, package-cache, and publication regression checks also pass.

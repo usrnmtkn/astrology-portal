@@ -1443,6 +1443,16 @@ test.describe("client-facing user flow case studies", () => {
     }
   });
 
+  test("You preserves the saved Virgo New Moon rewrite in the bundled fallback", async ({ page }) => {
+    await seedClientState(page, { profile: true, preloadProfileNatalSky: true, now: "2026-09-10T12:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#you");
+    const macro = page.locator(".weekly-horoscope__macro");
+    await expect(macro).toBeVisible({ timeout: 30_000 });
+    await expect(macro).toContainText("You do not need another plan for becoming a better version of yourself.");
+    await expect(macro).toContainText("They need a life that does not require you to keep treating yourself as the problem.");
+    await expect(macro).not.toContainText("A Virgo New Moon begins with the checklist");
+  });
+
   test("You serves the protected book card on an exact lunation day", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
