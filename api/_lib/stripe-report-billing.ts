@@ -23,12 +23,18 @@ export function stripeForm(fields: Record<string, unknown>) {
   return form;
 }
 
-export async function stripePost<T>(path: string, fields: Record<string, unknown>, fetchImpl: FetchLike = fetch) {
+export async function stripePost<T>(
+  path: string,
+  fields: Record<string, unknown>,
+  fetchImpl: FetchLike = fetch,
+  idempotencyKey = ""
+) {
   const response = await fetchImpl(`https://api.stripe.com/v1/${path.replace(/^\//u, "")}`, {
     method: "POST",
     headers: {
       authorization: `Bearer ${requireStripeSecret()}`,
-      "content-type": "application/x-www-form-urlencoded"
+      "content-type": "application/x-www-form-urlencoded",
+      ...(idempotencyKey ? { "idempotency-key": idempotencyKey } : {})
     },
     body: stripeForm(fields)
   });
