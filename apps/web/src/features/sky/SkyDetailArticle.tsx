@@ -371,6 +371,17 @@ function skyPlacementDateLine(value: ReactNode) {
   return skyPlacementDateLinePattern.test(normalized) ? normalized : null;
 }
 
+const skyAspectExactDateLinePattern = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?$/iu;
+
+function skyAspectExactDateLine(value: ReactNode) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = value.replace(/\s+/gu, " ").trim();
+  return skyAspectExactDateLinePattern.test(normalized) ? normalized : null;
+}
+
 export function SkyDetailArticle({
   detail,
   onClose
@@ -741,9 +752,11 @@ export function SkyDetailArticle({
                     {group.sections.length ? (
                       <div className="article-related-aspects__copy-list">
                         {group.sections.map((section) => {
-                      const bodyParagraphs = typeof section.body === "string"
+                      const rawBodyParagraphs = typeof section.body === "string"
                         ? fullDetailReaderFacingParagraphs([section.body]).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                         : [];
+                      const exactDateLine = skyAspectExactDateLine(rawBodyParagraphs[0]);
+                      const bodyParagraphs = exactDateLine ? rawBodyParagraphs.slice(1) : rawBodyParagraphs;
                       const sectionHeading = typeof section.heading === "string" ? section.heading : "";
                       const glyphParts = sectionHeading ? articleAspectGlyphPartsFromHeading(sectionHeading) : null;
                       const southNodeMatch = sectionHeading.endsWith("North Node")
@@ -763,11 +776,12 @@ export function SkyDetailArticle({
                               <h4>{sectionHeading}</h4>
                             </div>
                           ) : null}
+                          {exactDateLine ? <p className="article-related-aspects__date">Exact · {exactDateLine}</p> : null}
                           {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
                           {bodyParagraphs.length > 0
                             ? bodyParagraphs.map((paragraph, paragraphIndex) => southNodeMatch?.[0] === paragraph ? (
                               <Fragment key={`${section.key}-${paragraphIndex}`}>
-                                <div className="article-related-aspects__copy-heading"><h4>{southNodeHeading}</h4></div>
+                                <div className="article-related-aspects__copy-heading article-related-aspects__copy-heading--paired"><h4>{southNodeHeading}</h4></div>
                                 <p>{southNodeMatch[2]}</p>
                               </Fragment>
                             ) : <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>)

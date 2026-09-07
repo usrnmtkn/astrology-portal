@@ -4593,6 +4593,7 @@ function relatedSkyAspectSectionsForPlacement({
         .map((paragraph) => stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(paragraph)).trim())
         .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph))
         .join("\n\n");
+      const exactDate = skyPlacementAspectExactDate(aspect, generatedAt, positions);
 
       if (!body) return [];
 
@@ -4600,7 +4601,7 @@ function relatedSkyAspectSectionsForPlacement({
         orb: aspect.orb,
         section: {
           heading: aspectDetail.title,
-          body,
+          body: `${exactDate}\n\n${body}`,
           role: "aspect" as const,
           aspectType: aspect.type,
           group: normalizedAspectToneBucket(aspect.type)
