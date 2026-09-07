@@ -879,17 +879,19 @@ export async function loadEmptyHouseFallbackArchitectureV3Bundle() {
 }
 
 export function isRelationshipFallbackArchitectureV3BundleLoaded() {
-  return Boolean(localRelationshipReaderBundle || dashboardCoreReaderBundle);
+  return Boolean(localRelationshipReaderBundle);
 }
 
 export async function loadRelationshipFallbackArchitectureV3Bundle() {
-  if (localRelationshipReaderBundle || dashboardCoreReaderBundle) {
+  // The CMS core can be partial. Only this domain's local load establishes
+  // readiness; recomposeReaderBundle still applies eligible CMS overrides.
+  if (localRelationshipReaderBundle) {
     return false;
   }
 
   relationshipFallbackBundlePromise ??= import("./fallbackArchitectureV3RelationshipBundle")
     .then(({ relationshipFallbackArchitectureV3Bundle }) => {
-      if (localRelationshipReaderBundle || dashboardCoreReaderBundle) {
+      if (localRelationshipReaderBundle) {
         return false;
       }
 

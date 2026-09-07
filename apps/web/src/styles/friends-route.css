@@ -22,7 +22,12 @@
   width: 100%;
 }
 
-.app-shell.mode-friends .friends-page:not(.friend-detail-page) .friends-page-heading,
+@media (min-width: 940px) {
+  .app-shell.mode-friends .friends-page:not(.friend-detail-page) {
+    margin-top: var(--page-top);
+  }
+}
+
 .app-shell.mode-friends .friends-page:not(.friend-detail-page) .manual-chart-workspace-list-only,
 .app-shell.mode-friends .friends-page:not(.friend-detail-page) .friends-feed-view {
   justify-self: center;
@@ -252,7 +257,7 @@
   .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout {
     align-items: start;
     column-gap: var(--friends-route-column-gap);
-    grid-template-columns: minmax(min(var(--shared-chart-size), 48vw), 1fr) var(--friend-detail-copy-width);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     justify-content: stretch;
   }
 
@@ -803,6 +808,7 @@
 }
 
 /* Unified Friends directory */
+.app-shell.mode-friends .friends-page:not(.friend-detail-page) .friends-page-heading,
 .friends-page:not(.friend-detail-page) .friends-unified-panel {
   width: min(var(--friends-content-width), 100%);
   max-width: var(--friends-content-width);
