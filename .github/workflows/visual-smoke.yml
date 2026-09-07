@@ -40,7 +40,7 @@ jobs:
         run: node scripts/test-admin-content-studio-usability.mjs
 
       - name: Verify Content Studio server module startup
-        run: node scripts/test-content-live-status-node-runtime.mjs
+        run: npm run build:knowledge && node scripts/test-content-live-status-node-runtime.mjs
 
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
