@@ -405,12 +405,15 @@ export function SkyDetailArticle({
   const residencyAspectSections = residencyAspectState?.[0] === residencyContextKey
     ? residencyAspectState[1]
     : null;
-  const detailSections = residencyContext
-    ? [
-        ...(detail.sections ?? []).filter((section) => section.role !== "aspect"),
-        ...(residencyAspectSections ?? [])
-      ]
-    : (detail.sections ?? []);
+  const detailSections = residencyAspectSections
+  ? [
+      ...residencyAspectSections,
+      ...(detail.sections ?? []).filter((section) => (
+        section.role !== "aspect"
+        || !residencyAspectSections.some((candidate) => candidate.heading === section.heading)
+      ))
+    ]
+  : (detail.sections ?? []);
   const metaRows = detailMetaRows(detail.meta);
   const articleBody = detail.body.filter((node) => (
     !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
@@ -743,6 +746,12 @@ export function SkyDetailArticle({
                         : [];
                       const sectionHeading = typeof section.heading === "string" ? section.heading : "";
                       const glyphParts = sectionHeading ? articleAspectGlyphPartsFromHeading(sectionHeading) : null;
+                      const southNodeMatch = sectionHeading.endsWith("North Node")
+                        ? bodyParagraphs.find((paragraph) => paragraph.startsWith("South Node ("))?.match(/^South Node \(([^)]+)\):\s*(.*)$/su)
+                        : null;
+                      const southNodeHeading = southNodeMatch
+                        ? `${glyphParts?.from} ${southNodeMatch[1][0].toUpperCase()}${southNodeMatch[1].slice(1)} South Node`
+                        : "";
                       const sourceTag = inferredSectionQaSourceTag(section);
                       const bodyAlreadyStartsWithTag = sourceTag && bodyParagraphs[0]?.trim() === sourceTag;
 
@@ -756,9 +765,12 @@ export function SkyDetailArticle({
                           ) : null}
                           {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
                           {bodyParagraphs.length > 0
-                            ? bodyParagraphs.map((paragraph, paragraphIndex) => (
-                              <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>
-                            ))
+                            ? bodyParagraphs.map((paragraph, paragraphIndex) => southNodeMatch?.[0] === paragraph ? (
+                              <Fragment key={`${section.key}-${paragraphIndex}`}>
+                                <div className="article-related-aspects__copy-heading"><h4>{southNodeHeading}</h4></div>
+                                <p>{southNodeMatch[2]}</p>
+                              </Fragment>
+                            ) : <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>)
                             : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}
                         </section>
                       );
