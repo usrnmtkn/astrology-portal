@@ -1,0 +1,88 @@
+name: Patch transit friend Name slot
+
+on:
+  push:
+    branches:
+      - fix/personal-transit-source-label
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/personal-transit-source-label
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Patch Friends Name slot support
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace_exact(path, old, new, expected=1):
+              p = Path(path)
+              text = p.read_text()
+              count = text.count(old)
+              if count != expected:
+                  raise SystemExit(f"{path}: expected {expected} matches, found {count} for {old!r}")
+              p.write_text(text.replace(old, new))
+
+          # Content Studio API: normalize and permit {{Name}} on They-facing
+          # soft/hard transit-effect fallback hooks, just like authored transit cards.
+          api = "api/admin/generated-content.ts"
+          replace_exact(
+              api,
+              '    contentKey?.startsWith("fallback-hook/natal-aspect-lived/")\n    || contentKey?.startsWith("authored/transit-aspect/")',
+              '    contentKey?.startsWith("fallback-hook/natal-aspect-lived/")\n    || contentKey?.startsWith("authored/transit-aspect/")\n    || /^fallback-hook\\/transit-effect-(?:soft|hard)\\//u.test(contentKey ?? "")'
+          )
+          replace_exact(
+              api,
+              '        row.content_key.startsWith("fallback-hook/natal-aspect-lived/")\n        || row.content_key.startsWith("authored/transit-aspect/")',
+              '        row.content_key.startsWith("fallback-hook/natal-aspect-lived/")\n        || row.content_key.startsWith("authored/transit-aspect/")\n        || /^fallback-hook\\/transit-effect-(?:soft|hard)\\//u.test(row.content_key)'
+          )
+
+          # Resolver: the fallback transit-effect hook already receives natalArea;
+          # add the selected friend display name for They voice.
+          for resolver in [
+              "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs",
+              "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts",
+          ]:
+              replace_exact(
+                  resolver,
+                  'fill(effectRaw, { natalArea: transitEffectArea })',
+                  'fill(effectRaw, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" })'
+              )
+              old = 'const cScenesFinal = cScenes ?? ctx.transitTypeLine ?? null;'
+              new = 'const cScenesFinal = cScenes\n      ? fillKeep(cScenes, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" })\n      : ctx.transitTypeLine ?? null;' if resolver.endswith('.ts') else 'const cScenesFinal = cScenes\n    ? fillKeep(cScenes, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" })\n    : ctx.transitTypeLine ?? null;'
+              replace_exact(resolver, old, new)
+          PY
+      - name: Rebuild browser fallback runtime
+        run: |
+          npx esbuild apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts \
+            --bundle \
+            --format=esm \
+            --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+      - name: Validate
+        run: |
+          node scripts/test-content-approval-governance.mjs
+          npm run typecheck --if-present
+      - name: Commit patch and remove one-off workflow
+        run: |
+          rm .github/workflows/patch-transit-friend-name.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add api/admin/generated-content.ts \
+            apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs \
+            apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts \
+            apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js \
+            .github/workflows/patch-transit-friend-name.yml
+          git commit -m "Wire Name into Friends transit-effect fallbacks"
+          git push origin HEAD:fix/personal-transit-source-label
