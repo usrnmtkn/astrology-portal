@@ -331,6 +331,11 @@ export interface SynastryRenderResult extends TransitRenderResult {
 }
 export interface TransitLabelResult { label: string; noun: string; window: string }
 
+export function fillTransitFriendNameSlot(body: string | null, voice: string = "you"): string | null {
+  if (!body || voice === "you") return body;
+  return body.replace(/\{\{Name\}\}/gu, voice).trim();
+}
+
 function dailyGlanceHash(value: string) {
   let hash = 0x811c9dc5;
   for (let index = 0; index < value.length; index += 1) {
@@ -928,6 +933,11 @@ export function createTransitSynastryRenderer(
 
   const fillKeep = (body: string, ctx: Ctx): string => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => (ctx[k] != null ? String(ctx[k]) : `{{${k}}}`)).trim();
 
+  function fillTransitFriendNameSlotLocal(body: string | null, voice: string = "you"): string | null {
+    if (!body || voice === "you") return body;
+    return fillKeep(body, { Name: voice });
+  }
+
   const EVENT_QUALITY: Record<string, string> = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
   const EVENT_VERB: Record<string, string> = { conjunction: "sitting right on", square: "squaring", opposition: "opposing", trine: "trining", sextile: "sextiling" };
   const CONJ_SOFT = new Set(["venus", "sun", "mercury", "jupiter"]);
@@ -966,7 +976,8 @@ export function createTransitSynastryRenderer(
     const wants = sign ? hookVoice(wantsKey, v) : null;
     const holds = hookVoice(holdsKey, v);
     const sceneKey = sceneKeys.find((key) => Boolean(hookVoice(key, v))) ?? null;
-    const scenes = sceneKey ? hookVoice(sceneKey, v) : null;
+    const scenesRaw = sceneKey ? hookVoice(sceneKey, v) : null;
+    const scenes = scenesRaw ? fillTransitFriendNameSlotLocal(scenesRaw, voice) : null;
 
     if (frame && wants && holds && scenes && sceneKey) {
       const body = `${frame} ${wants}; ${holds}. ${scenes}`.trim();
@@ -1174,7 +1185,7 @@ export function createTransitSynastryRenderer(
       ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
     const natalCoreVal = hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body;
     const transitEffectArea = ANGLES.has(natal) ? natalCoreVal : natalArea;
-    const transitEffect = effectRaw && transitEffectArea ? fill(effectRaw, { natalArea: transitEffectArea }) : null;
+    const transitEffect = effectRaw && transitEffectArea ? fillTransitFriendNameSlotLocal(fill(effectRaw, { natalArea: transitEffectArea }), voice) : null;
     const ctx: Ctx = {
       timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
       transitTitle: title(transiting), transitRef: transitRef(transiting, sign), natalTitle: title(natal), aspectName: aspect,
@@ -1195,8 +1206,9 @@ export function createTransitSynastryRenderer(
     const cWants = (sign ? hookVoice(`fallback-hook/transit-house-event-wants/${transiting}/${sign}`, v) : null)
       ?? hookVoice(`fallback-hook/transit-house-event-wants/${transiting}`, v);
     const cHolds = hookVoice(`fallback-hook/transit-house-event-natal/${natal}`, v);
-    const cScenes = hookVoice(`fallback-hook/transit-house-event-scenes/${transiting}/${natal}/${effectFamily}`, v)
+    const cScenesRaw = hookVoice(`fallback-hook/transit-house-event-scenes/${transiting}/${natal}/${effectFamily}`, v)
       ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v);
+    const cScenes = cScenesRaw ? fillTransitFriendNameSlotLocal(cScenesRaw, voice) : null;
     const cScenesFinal = cScenes ?? ctx.transitTypeLine ?? null;
     let body;
     if (AVERB[aspect] && cWants && cHolds && cScenesFinal) {

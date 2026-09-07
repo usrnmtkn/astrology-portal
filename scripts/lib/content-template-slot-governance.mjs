@@ -71,14 +71,24 @@ export function buildTemplateSlotPreflight({ beforeText, afterText, contentKey, 
   const afterSlots = extractTemplateSlots(afterText);
   const dailyFriendField = /^fallback-hook\/daily-(?:headline|body)\//u.test(String(contentKey))
     && textField === "body_they";
+  const transitFriendNameField = (
+    /^fallback-hook\/transit-effect-(?:soft|hard)\//u.test(String(contentKey))
+    || /^fallback-hook\/transit-house-event-scenes\//u.test(String(contentKey))
+  ) && textField === "body_they";
   const allowedSlots = new Set(slotContract?.allowedSlots ?? (
     dailyFriendField
       ? [...new Set([...beforeSlots, ...DAILY_GLANCE_PERSON_SLOT_KEYS])]
-      : beforeSlots
+      : transitFriendNameField
+        ? [...new Set([...beforeSlots, "Name"])]
+        : beforeSlots
   ));
   const requiredSlots = new Set(slotContract?.requiredSlots ?? beforeSlots);
   const supportedSlots = new Set(familySupportedSlots ?? (
-    dailyFriendField ? DAILY_GLANCE_PERSON_SLOT_KEYS : beforeSlots
+    dailyFriendField
+      ? DAILY_GLANCE_PERSON_SLOT_KEYS
+      : transitFriendNameField
+        ? [...new Set([...beforeSlots, "Name"])]
+        : beforeSlots
   ));
   const addedSlots = afterSlots.filter((slot) => !beforeSlots.includes(slot));
   const removedSlots = beforeSlots.filter((slot) => !afterSlots.includes(slot));

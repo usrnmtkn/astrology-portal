@@ -595,6 +595,11 @@ const result = (c, templateKey) => ({
 
 const fillKeep = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).trim();
 
+export function fillTransitFriendNameSlot(body, voice = "you") {
+  if (!body || voice === "you") return body;
+  return fillKeep(body, { Name: voice });
+}
+
 const EVENT_QUALITY = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
 const EVENT_VERB = { conjunction: "sitting right on", square: "squaring", opposition: "opposing", trine: "trining", sextile: "sextiling" };
 const CONJ_SOFT = new Set(["venus", "sun", "mercury", "jupiter"]);
@@ -633,7 +638,8 @@ export function renderTransitHouseEvent({ planet, house, sign, natal, natalHouse
   const wants = sign ? hookVoice(wantsKey, v) : null;
   const holds = hookVoice(holdsKey, v);
   const sceneKey = sceneKeys.find((key) => Boolean(hookVoice(key, v))) ?? null;
-  const scenes = sceneKey ? hookVoice(sceneKey, v) : null;
+  const scenesRaw = sceneKey ? hookVoice(sceneKey, v) : null;
+  const scenes = scenesRaw ? fillTransitFriendNameSlot(scenesRaw, voice) : null;
 
   if (frame && wants && holds && scenes && sceneKey) {
     const body = `${frame} ${wants}; ${holds}. ${scenes}`.trim();
@@ -848,7 +854,7 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, pass, 
     ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
   const natalCoreVal = hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body;
   const transitEffectArea = ANGLES.has(natal) ? natalCoreVal : natalArea;
-  const transitEffect = effectRaw && transitEffectArea ? fill(effectRaw, { natalArea: transitEffectArea }) : null;
+  const transitEffect = effectRaw && transitEffectArea ? fillTransitFriendNameSlot(fill(effectRaw, { natalArea: transitEffectArea }), voice) : null;
   const ctx = {
     timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
     transitTitle: title(transiting), transitRef: transitRef(transiting, sign), natalTitle: title(natal), aspectName: aspect,
@@ -869,8 +875,9 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, pass, 
   const cWants = (sign ? hookVoice(`fallback-hook/transit-house-event-wants/${transiting}/${sign}`, v) : null)
     ?? hookVoice(`fallback-hook/transit-house-event-wants/${transiting}`, v);
   const cHolds = hookVoice(`fallback-hook/transit-house-event-natal/${natal}`, v);
-  const cScenes = hookVoice(`fallback-hook/transit-house-event-scenes/${transiting}/${natal}/${effectFamily}`, v)
+  const cScenesRaw = hookVoice(`fallback-hook/transit-house-event-scenes/${transiting}/${natal}/${effectFamily}`, v)
     ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v);
+  const cScenes = cScenesRaw ? fillTransitFriendNameSlot(cScenesRaw, voice) : null;
   const cScenesFinal = cScenes ?? ctx.transitTypeLine ?? null;
   let body;
   if (AVERB[aspect] && cWants && cHolds && cScenesFinal) {

@@ -185,6 +185,26 @@ assert.deepEqual(friendSlotPreflight.addedSlots, ["personSubject"]);
 assert.deepEqual(friendSlotPreflight.fixtures.map((fixture) => fixture.profile), ["she/her", "he/him", "they/them"]);
 assert.equal(friendSlotPreflight.fixtures.every((fixture) => !fixture.rendered.includes("{{")), true);
 
+const transitFriendNamePreflight = buildTemplateSlotPreflight({
+  beforeText: "They may respond more openly around {{natalArea}}.",
+  afterText: "{{Name}} may respond more openly around {{natalArea}}.",
+  contentKey: "fallback-hook/transit-effect-soft/sun/venus",
+  textField: "body_they"
+});
+assert.deepEqual(transitFriendNamePreflight.addedSlots, ["Name"]);
+assert.equal(transitFriendNamePreflight.allowedSlots.includes("Name"), true);
+assert.equal(transitFriendNamePreflight.familySupportedSlots.includes("Name"), true);
+assert.equal(transitFriendNamePreflight.renderPersonFixtures, false);
+assert.throws(
+  () => buildTemplateSlotPreflight({
+    beforeText: "You may respond more openly around {{natalArea}}.",
+    afterText: "{{Name}} may respond more openly around {{natalArea}}.",
+    contentKey: "fallback-hook/transit-effect-soft/sun/venus",
+    textField: "body_you"
+  }),
+  /PROMOTION_UNSUPPORTED_TEMPLATE_SLOT/u
+);
+
 assert.throws(
   () => buildTemplateSlotPreflight({
     beforeText: "{{houseTopic}} matters.",

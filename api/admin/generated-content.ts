@@ -281,12 +281,16 @@ function packageRoleCanServeExactCopy(contentRole: string) {
   return !["fallback_source", "source_material"].includes(contentRole);
 }
 
+function supportsNamedFriendCopy(contentKey: string | undefined) {
+  const key = contentKey ?? "";
+  return key.startsWith("fallback-hook/natal-aspect-lived/")
+    || key.startsWith("authored/transit-aspect/")
+    || /^fallback-hook\/transit-effect-(?:soft|hard)\//u.test(key)
+    || key.startsWith("fallback-hook/transit-house-event-scenes/");
+}
+
 function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, value: unknown) {
-  const supportsNamedFriendCopy = Boolean(
-    contentKey?.startsWith("fallback-hook/natal-aspect-lived/")
-    || contentKey?.startsWith("authored/transit-aspect/")
-  );
-  if (!supportsNamedFriendCopy || typeof value !== "string") return value;
+  if (!supportsNamedFriendCopy(contentKey) || typeof value !== "string") return value;
   return value.replace(/\{\{Name\}\}|\{Name\}/gu, "{{Name}}");
 }
 
@@ -472,10 +476,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       ? packagePlaceholders(record.body_you)
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
-      const isAllowedFriendName = (
-        row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
-        || row.content_key.startsWith("authored/transit-aspect/")
-      )
+      const isAllowedFriendName = supportsNamedFriendCopy(row.content_key)
         && field.endsWith("body_they")
         && slot === "{{Name}}";
       if (isAllowedFriendName) continue;

@@ -15,6 +15,8 @@ assert.match(dashboard, /const isAuthoredTransitAspectDraft = isPackageDraft[\s\
 assert.match(dashboard, /const showPackageBodyThey = isPackageDraft[\s\S]{0,260}isAuthoredTransitAspectDraft/u);
 assert.match(dashboard, /Friends uses this complete third-person passage/u);
 assert.match(dashboard, /transit-aspect-they-name-hint/u);
-assert.match(api, /authored\/transit-aspect\/[\s\S]{0,220}slot === "\{\{Name\}\}"/u);
+assert.match(api, /function supportsNamedFriendCopy[\s\S]{0,600}transit-effect-[\s\S]{0,600}transit-house-event-scenes/u);
+assert.match(api, /supportsNamedFriendCopy\(row\.content_key\)[\s\S]{0,160}field\.endsWith\("body_they"\)[\s\S]{0,160}slot === "\{\{Name\}\}"/u);
 assert.match(transitSources, /separate You and Friends passages/u);
+assert.match(transitSources, /Complete Personal Transit write-up/u);
 console.log("Content Studio Transit to Natal Friends editor contract passed.");

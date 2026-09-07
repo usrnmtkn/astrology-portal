@@ -16,6 +16,11 @@ type VariableDefinition = Pick<TemplateVariableReference, "meaning" | "example" 
 };
 
 const variableDefinitions: Record<string, VariableDefinition> = {
+  Name: {
+    meaning: "The selected friend’s display name in a Friends Personal Transit.",
+    example: "Avery",
+    source: "Calculated viewer context"
+  },
   possessive: {
     meaning: "The possessive wording for the person whose chart is being read.",
     example: "Your or Maya's",
