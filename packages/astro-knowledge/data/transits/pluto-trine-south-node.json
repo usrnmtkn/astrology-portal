@@ -1,0 +1,18 @@
+{
+  "id": "pluto-trine-south-node",
+  "transiting": "pluto",
+  "aspect": "trine",
+  "other": "south-node",
+  "base": "An old source of power may still work, but you get to decide if you want to keep using it.",
+  "business": "A supportive opening is available here; use what becomes easier without assuming ease will do the work for you.",
+  "shadow": "The ease of a trine can make the opening easy to miss, leave unused, or go unexamined.",
+  "arcApplying": "Support and coordination build toward exactness.",
+  "arcSeparating": "The opening begins to recede after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "An old source of power may still work, but you get to decide if you want to keep using it.",
+    "body": "An old source of power may still work, but you get to decide if you want to keep using it. Pluto trine the South Node can make a familiar strategy for influence, survival, focus, or control feel especially effective. You may know exactly how to read the situation and where the leverage is. That skill can protect you. It can also keep you tied to a way of operating that grew out of an older threat. Use the power consciously instead of automatically.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}

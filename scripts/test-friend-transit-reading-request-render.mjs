@@ -5,8 +5,14 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { createServer } from "vite";
 
 const panelSource = fs.readFileSync("apps/web/src/features/friends/ManualChartsPanel.tsx", "utf8");
+const transitsSource = fs.readFileSync("apps/web/src/features/friends/FriendTransitsTab.tsx", "utf8");
 const serviceSource = fs.readFileSync("apps/web/src/services/userGeneratedContent.ts", "utf8");
 const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");
+const friendApiSource = fs.readFileSync("api/generate-friend-transit-reading.ts", "utf8");
+const surfaceMigrationSource = fs.readFileSync(
+  "apps/web/supabase/migrations/20260906190000_add_friends_user_generated_surface.sql",
+  "utf8"
+);
 
 assert.match(panelSource, /friendTransitReadingSelectionKeyRef\.current = friendTransitReadingSelectionKey/u);
 assert.equal(
@@ -19,9 +25,52 @@ assert.match(
   /request\.subjectType === "friend_transit_reading"[\s\S]{0,120}saved\.status === "DRAFT"[\s\S]{0,120}return fromRow\(saved\)/u,
   "The on-demand DRAFT must remain visible in the current session without being promoted LIVE."
 );
+assert.match(
+  serviceSource,
+  /subjectType === "friend_transit_reading"[\s\S]{0,120}query\.in\("status", \["DRAFT", "REVIEWED", "LIVE"\]\)/u,
+  "A successfully generated Friends DRAFT must survive a refresh without another provider call."
+);
+assert.match(
+  serviceSource,
+  /request\.subjectType === "friend_transit_reading"[\s\S]{0,140}"\/api\/generate-friend-transit-reading"/u,
+  "Friends paid readings must use the dedicated short-reading endpoint instead of the generic article generator."
+);
+assert.match(
+  transitsSource,
+  /loadUserGeneratedInterpretation\(\{[\s\S]{0,260}subjectType:\s*"friend_transit_reading"[\s\S]{0,260}targetDate:\s*persistedIdentity\.targetDate/u,
+  "The Friends card must hydrate an existing saved reading when the page is refreshed."
+);
+assert.match(
+  transitsSource,
+  /contentKey:\s*`friend-transit-reading\/\$\{subjectId\}\/\$\{targetDate\}`/u,
+  "Refresh hydration must use the same friend/date content key as generation."
+);
+assert.match(
+  transitsSource,
+  /const effectiveReading = reading \?\? \(readingStatus === "idle" \? persistedReading : null\)/u,
+  "A restored saved reading must become the displayed paid reading while parent generation state is idle."
+);
+
 assert.match(apiSource, /const locked = friendTransitReadingRequestLock\(\{/u);
 assert.match(apiSource, /input\.status = "DRAFT"/u);
 assert.match(apiSource, /input\.allowQualityFallback = false/u);
+assert.match(apiSource, /requestSubjectType === "friend_transit_reading"[\s\S]{0,220}This paid reading is currently unavailable/u);
+
+assert.match(friendApiSource, /const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA|export const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA/u);
+assert.match(friendApiSource, /required: \["headline", "tldr", "summary", "body"\]/u);
+assert.doesNotMatch(friendApiSource, /maxItems\s*:/u, "The live Friends provider schema must not use unsupported array-size constraints.");
+assert.doesNotMatch(friendApiSource, /type:\s*"null"/u, "The live Friends provider schema must not require null-only article fields.");
+assert.match(friendApiSource, /validateFriendTransitReadingDraft\(\{ draft, brief, expectedHeadline \}\)/u);
+assert.match(friendApiSource, /validationProfile:\s*"friends-transit"[\s\S]{0,120}family:\s*"friend-transit-reading"[\s\S]{0,120}register:\s*"third_person"/u);
+assert.match(friendApiSource, /\["DRAFT", "REVIEWED", "LIVE"\]\.includes\(existing\.status\)/u, "A saved paid reading must be reused instead of regenerated.");
+assert.match(friendApiSource, /console\.error\("generate-friend-transit-reading failed", error\)/u);
+assert.match(friendApiSource, /errorType:\s*"paid_reading_unavailable"[\s\S]{0,120}This paid reading is currently unavailable/u);
+assert.doesNotMatch(friendApiSource, /error:\s*error instanceof Error \? error\.message/u, "Provider details must not be returned to the customer.");
+assert.match(
+  surfaceMigrationSource,
+  /user_generated_interpretations_surface_check[\s\S]{0,260}'friends'/u,
+  "The user-generated content surface constraint must allow Friends readings to persist."
+);
 
 const server = await createServer({
   root: "./apps/web",
@@ -90,13 +139,15 @@ try {
 
   const idle = renderToStaticMarkup(React.createElement(FriendTransitsTab, baseProps));
   assert.match(idle, /What&#x27;s going on with Alex right now\?/u);
-  assert.match(idle, /Give me the short version/u);
+  assert.match(idle, /Paid reading/u);
+  assert.match(idle, /Generate reading/u);
+  assert.doesNotMatch(idle, /Purchase access|Unlock this reading/u);
 
   const loading = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
     readingStatus: "loading"
   }));
-  assert.match(loading, /Putting Alex&#x27;s current transits together/u);
+  assert.match(loading, /Preparing Alex&#x27;s reading/u);
 
   const ready = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
@@ -109,21 +160,21 @@ try {
   }));
   assert.match(ready, /Alex has more room to move/u);
   assert.match(ready, /The transit cards below remain the source of truth/u);
-  assert.doesNotMatch(ready, /Give me the short version/u);
+  assert.doesNotMatch(ready, /Generate reading/u);
 
-  const error = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
+  const locked = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
-    readingStatus: "error",
-    readingError: "Generation failed safely."
+    readingStatus: "locked"
   }));
-  assert.match(error, /Generation failed safely/u);
-  assert.match(error, /Try again/u);
+  assert.match(locked, /This reading is unavailable right now/u);
+  assert.match(locked, /Try again/u);
+  assert.doesNotMatch(locked, /Anthropic|Claude|API|credit balance|Generation failed|Purchase access|Unlock this reading/iu);
 
   const unavailable = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
     readingAvailable: false
   }));
-  assert.doesNotMatch(unavailable, /Give me the short version/u);
+  assert.doesNotMatch(unavailable, /Generate reading/u);
 } finally {
   await server.close();
 }

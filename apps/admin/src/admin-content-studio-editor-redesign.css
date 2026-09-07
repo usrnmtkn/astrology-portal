@@ -1,0 +1,294 @@
+/* Production Content Studio editor redesign.
+   Editorial work is primary; resolver and provenance detail remain available below it. */
+
+/* Calendar Aspect rows need a real desktop workspace, not the legacy 760px rail. */
+@media (min-width: 1180px) {
+  #root .admin-dashboard .admin-editor-panel.admin-review-detail:not(.admin-daily-glance-pair-editor):has(.admin-editor-context-line code[title^="sky.aspect."]) {
+    max-width: calc(100vw - var(--admin-space-7xl));
+    width: min(78vw, 1040px);
+  }
+}
+
+/* Header: title/context first, decision state second. */
+#root .admin-dashboard .admin-editor-panel > .admin-editor-toolbar {
+  align-items: start;
+  background: var(--admin-panel-overlay-strong);
+  border-bottom: var(--border-width-thin) solid var(--admin-ui-border-strong);
+  display: grid;
+  gap: var(--admin-space-4xl) var(--admin-space-7xl);
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: var(--admin-space-6xl) var(--admin-space-7xl) var(--admin-space-5xl);
+}
+
+#root .admin-dashboard .admin-editor-toolbar > div:first-child {
+  display: grid;
+  gap: var(--admin-space-sm);
+  min-width: 0;
+}
+
+#root .admin-dashboard .admin-editor-toolbar :where(.admin-eyebrow, h2, .admin-editor-context-line) {
+  margin-bottom: 0;
+}
+
+#root .admin-dashboard .admin-editor-toolbar h2 {
+  color: var(--admin-ui-text);
+  font-size: var(--admin-ui-type-panel-title);
+  line-height: var(--leading-title);
+  margin-top: var(--admin-space-sm);
+}
+
+#root .admin-dashboard .admin-editor-toolbar .admin-editor-context-line {
+  gap: var(--admin-space-md) var(--admin-space-lg);
+  margin-top: var(--admin-space-md);
+}
+
+#root .admin-dashboard .admin-editor-toolbar .admin-editor-context-line code {
+  background: var(--admin-code-surface);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-sm);
+  flex-basis: 100%;
+  justify-self: start;
+  padding: var(--admin-space-sm) var(--admin-space-lg);
+  width: fit-content;
+}
+
+#root .admin-dashboard .admin-editor-toolbar-actions {
+  align-items: center;
+  align-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+  justify-content: flex-end;
+  max-width: 500px;
+}
+
+#root .admin-dashboard .admin-editor-toolbar-actions > .admin-status {
+  min-height: 30px;
+  padding: var(--admin-space-sm) var(--admin-space-lg);
+}
+
+/* Form canvas: consistent rhythm instead of stacked inherited margins. */
+#root .admin-dashboard .admin-editor-panel > .admin-post-editor {
+  background: var(--admin-ui-bg);
+  gap: var(--admin-space-5xl);
+  padding: var(--admin-space-6xl) var(--admin-space-7xl) var(--admin-space-9xl);
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-post-editor > :where(section, fieldset, details, label) {
+  margin-block: 0;
+}
+
+/* Content role is orientation, not the main task. */
+#root .admin-dashboard .admin-editor-panel .admin-content-role-panel {
+  background: var(--admin-ui-surface-2);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-left: var(--border-width-thick) solid var(--admin-ui-primary);
+  border-radius: var(--admin-ui-radius-lg);
+  display: grid;
+  gap: var(--admin-space-sm);
+  padding: var(--admin-space-2xl) var(--admin-space-4xl);
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-content-role-panel :where(.admin-eyebrow, h3, p) {
+  margin: 0;
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-content-role-panel p:last-child {
+  color: var(--admin-ui-muted);
+  line-height: var(--leading-description);
+  max-width: 78ch;
+}
+
+/* Reader Source Workspace becomes an editorial workflow rather than one large
+   diagnostic panel. Ordering is inherited from the workflow layer loaded beside
+   this file; this layer supplies component spacing and desktop composition. */
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  display: grid;
+  gap: var(--admin-space-4xl);
+  grid-template-columns: minmax(0, 1fr);
+  overflow: visible;
+  padding: 0;
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-fallback-diagnostic-heading {
+  align-items: start;
+  background: var(--admin-ui-surface-2);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  display: grid;
+  gap: var(--admin-space-3xl);
+  padding: var(--admin-space-4xl);
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-fallback-diagnostic-heading :where(.admin-eyebrow, h3, p) {
+  margin: 0;
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-fallback-diagnostic-heading .admin-hook-pattern-list {
+  display: grid;
+  gap: 0 var(--admin-space-5xl);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-fallback-diagnostic-heading .admin-hook-pattern-list > div {
+  border-top: var(--border-width-thin) solid var(--admin-ui-border);
+  display: grid;
+  gap: var(--admin-space-xs);
+  min-width: 0;
+  padding: var(--admin-space-lg) 0;
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-fallback-diagnostic-heading .admin-hook-pattern-list :where(dt, dd) {
+  margin: 0;
+  min-width: 0;
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-fallback-diagnostic-heading .admin-hook-pattern-list code {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+/* Safe editing reads as a guardrail rather than a competing work surface. */
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-editor-guidance[role="note"] {
+  background: var(--admin-warning-soft);
+  border: var(--border-width-thin) solid var(--admin-warning-ui-border);
+  border-left: var(--border-width-thick) solid var(--admin-warning-ui-copy);
+  border-radius: var(--admin-ui-radius-lg);
+  gap: var(--admin-space-sm) var(--admin-space-4xl);
+  padding: var(--admin-space-2xl) var(--admin-space-4xl);
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-editor-guidance[role="note"] > strong {
+  color: var(--admin-warning-ui-copy);
+}
+
+/* Editable copy is the primary component. */
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-sky-edition-fields {
+  background: var(--admin-ui-surface-1);
+  border: var(--border-width-thin) solid var(--admin-primary-border-soft);
+  border-radius: var(--admin-ui-radius-xl);
+  display: grid;
+  gap: var(--admin-space-4xl);
+  padding: var(--admin-space-5xl);
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-sky-edition-fields > header {
+  border-bottom: var(--border-width-thin) solid var(--admin-ui-border);
+  display: grid;
+  gap: var(--admin-space-sm);
+  padding-bottom: var(--admin-space-3xl);
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-sky-edition-fields > header > :where(.admin-eyebrow, h3, p) {
+  margin: 0;
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-sky-edition-fields .admin-review-copy-editor {
+  background: transparent;
+  border: 0;
+  display: grid;
+  gap: var(--admin-space-md);
+  padding: 0;
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-sky-edition-fields .admin-review-copy-editor + .admin-review-copy-editor {
+  border-top: var(--border-width-thin) solid var(--admin-ui-border);
+  padding-top: var(--admin-space-4xl);
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-sky-edition-fields textarea {
+  background: var(--admin-ui-bg);
+  border: var(--border-width-thin) solid var(--admin-ui-border-strong);
+  border-radius: var(--admin-ui-radius-lg);
+  color: var(--admin-ui-text);
+  font-size: var(--admin-ui-type-body);
+  line-height: var(--leading-body);
+  min-height: 170px;
+  padding: var(--admin-space-3xl) var(--admin-space-4xl);
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > .admin-sky-edition-fields textarea:focus {
+  border-color: var(--admin-ui-primary);
+  box-shadow: var(--admin-ui-focus);
+  outline: none;
+}
+
+/* Preview and diff sit together when there is room; technical verification follows. */
+@media (min-width: 1180px) {
+  #root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > :where(.admin-fallback-diagnostic-heading, .admin-editor-guidance[role="note"], .admin-sky-edition-fields, [aria-label="Calculated facts"], [aria-label="Production-parity SKY V4 preview"], [aria-label="SKY V4 source provenance"], [aria-label="SKY V4 continuous placement grouped editor"]) {
+    grid-column: 1 / -1;
+  }
+
+  #root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > [aria-label="Rendered fallback preview"] {
+    grid-column: 1;
+  }
+
+  #root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > [aria-label="Review fallback changes"] {
+    grid-column: 2;
+  }
+}
+
+#root .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) > :where([aria-label="Production-parity SKY V4 preview"], [aria-label="SKY V4 source provenance"], [aria-label="Calculated facts"]) {
+  background: transparent;
+  border-color: var(--admin-ui-border);
+  color: var(--admin-ui-muted);
+}
+
+/* Desktop Calendar Aspect action bar: Archive left; normal save actions grouped right.
+   Narrow non-aspect editors keep the existing wrapping contract. */
+@media (min-width: 861px) {
+  #root .admin-dashboard .admin-editor-panel:has(.admin-editor-context-line code[title^="sky.aspect."]) > .admin-editor-savebar {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--admin-space-lg);
+    padding: var(--admin-space-2xl) var(--admin-space-7xl) !important;
+  }
+
+  #root .admin-dashboard .admin-editor-panel:has(.admin-editor-context-line code[title^="sky.aspect."]) > .admin-editor-savebar .admin-danger-button {
+    margin: 0 auto 0 0;
+    order: -2;
+  }
+
+  #root .admin-dashboard .admin-editor-panel:has(.admin-editor-context-line code[title^="sky.aspect."]) > .admin-editor-savebar .admin-editor-save-state {
+    flex: 0 1 auto;
+    margin: 0;
+    min-width: 0;
+    order: -1;
+    white-space: normal;
+  }
+
+  #root .admin-dashboard .admin-editor-panel:has(.admin-editor-context-line code[title^="sky.aspect."]) > .admin-editor-savebar button {
+    flex: 0 0 auto;
+    min-height: 40px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 980px) {
+  #root .admin-dashboard .admin-editor-panel > .admin-editor-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #root .admin-dashboard .admin-editor-toolbar-actions {
+    justify-content: flex-start;
+    max-width: none;
+  }
+}
+
+@media (max-width: 620px) {
+  #root .admin-dashboard .admin-editor-panel > :where(.admin-editor-toolbar, .admin-post-editor) {
+    padding-left: var(--admin-space-3xl);
+    padding-right: var(--admin-space-3xl);
+  }
+}

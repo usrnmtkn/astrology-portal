@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "./auth";
+import { dispatchReportReady } from "./reportLibrary";
 import type { GeneratedContentMode, LiveGeneratedContent } from "./generatedContent";
 
 export type UserGeneratedSubjectType =
@@ -109,6 +110,29 @@ function fromRow(row: UserGeneratedContentRow): LiveGeneratedContent {
   };
 }
 
+function friendNameFromRequest(request: GenerateUserContentRequest) {
+  const brief = request.facts?.friendTransitsBrief;
+  if (!brief || typeof brief !== "object" || Array.isArray(brief)) return "";
+  const name = (brief as Record<string, unknown>).friendName;
+  return typeof name === "string" ? name.trim() : "";
+}
+
+function reportReadyTitle(friendName: string) {
+  if (!friendName) return "Your Friends reading is ready";
+  const possessive = /s$/iu.test(friendName) ? `${friendName}'` : `${friendName}'s`;
+  return `${possessive} reading is ready`;
+}
+
+function notifyFriendReadingReady(request: GenerateUserContentRequest, result: LiveGeneratedContent | null) {
+  if (request.subjectType !== "friend_transit_reading" || !result?.id) return;
+  dispatchReportReady({
+    sourceKind: "generated_interpretation",
+    sourceId: result.id,
+    title: reportReadyTitle(friendNameFromRequest(request)),
+    route: `/reports/generated/${result.id}`
+  });
+}
+
 export async function loadUserGeneratedInterpretation({
   subjectType,
   subjectId,
@@ -142,11 +166,12 @@ export async function loadUserGeneratedInterpretation({
     .eq("user_id", userId)
     .eq("subject_type", subjectType)
     .eq("subject_id", subjectId)
-    .eq("content_key", contentKey)
-    .eq("status", "LIVE")
-    .order("updated_at", { ascending: false })
-    .limit(1);
+    .eq("content_key", contentKey);
 
+  query = subjectType === "friend_transit_reading"
+    ? query.in("status", ["DRAFT", "REVIEWED", "LIVE"])
+    : query.eq("status", "LIVE");
+  query = query.order("updated_at", { ascending: false }).limit(1);
   query = targetDate ? query.eq("target_date", targetDate) : query.is("target_date", null);
 
   const { data, error } = await query.returns<UserGeneratedContentRow[]>();
@@ -172,7 +197,10 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
     throw new Error(error?.message ?? "Sign in before generating personalized content.");
   }
 
-  const response = await fetch("/api/generate-user-content", {
+  const endpoint = request.subjectType === "friend_transit_reading"
+    ? "/api/generate-friend-transit-reading"
+    : "/api/generate-user-content";
+  const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -195,10 +223,18 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
 
   if (saved) {
     if (request.subjectType === "friend_transit_reading" && saved.status === "DRAFT") {
+      notifyFriendReadingReady(request, fromRow(saved));
       return fromRow(saved);
     }
-    return saved.status === "LIVE" ? fromRow(saved) : null;
+    if (saved.status === "LIVE") {
+      const result = fromRow(saved);
+      notifyFriendReadingReady(request, result);
+      return result;
+    }
+    return null;
   }
 
-  return payload?.generated ?? null;
+  const generated = payload?.generated ?? null;
+  notifyFriendReadingReady(request, generated);
+  return generated;
 }

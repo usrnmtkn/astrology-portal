@@ -1,0 +1,18 @@
+{
+  "id": "mercury-conjunction-south-node",
+  "transiting": "mercury",
+  "aspect": "conjunction",
+  "other": "south-node",
+  "base": "The conversation can sound new while everyone is still using the same old script.",
+  "business": "The two concerns arrive in the same decision; work with the point they now share.",
+  "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
+  "arcApplying": "The two concerns become harder to separate as exactness approaches.",
+  "arcSeparating": "The fused emphasis begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The conversation can sound new while everyone is still using the same old script.",
+    "body": "The conversation can sound new while everyone is still using the same old script. Mercury conjunct the South Node can bring back a familiar argument, question, contact, idea, or way of explaining yourself. You may know exactly what the other person is going to say because you have already had some version of this exchange. Repetition can be useful if it lets you catch what was missed before. It becomes a trap when another round of explaining replaces the different decision the conversation keeps pointing toward.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}

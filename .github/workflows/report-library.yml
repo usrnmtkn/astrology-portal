@@ -1,0 +1,113 @@
+name: Report library
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/src/components/reports/**"
+      - "apps/web/src/features/reports/**"
+      - "apps/web/src/routes/ReportRoute.tsx"
+      - "apps/web/src/services/reportLibrary.ts"
+      - "apps/web/src/services/userGeneratedContent.ts"
+      - "apps/web/src/styles/report-library.css"
+      - "apps/web/src/styles/report-notifications.css"
+      - "apps/web/src/main.tsx"
+      - "apps/web/supabase/migrations/*report_library*.sql"
+      - "scripts/test-report-library-notifications.mjs"
+      - "tests/visual/report-library-ui.spec.ts"
+      - ".github/workflows/report-library.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/src/components/reports/**"
+      - "apps/web/src/features/reports/**"
+      - "apps/web/src/routes/ReportRoute.tsx"
+      - "apps/web/src/services/reportLibrary.ts"
+      - "apps/web/src/services/userGeneratedContent.ts"
+      - "apps/web/src/styles/report-library.css"
+      - "apps/web/src/styles/report-notifications.css"
+      - "apps/web/src/main.tsx"
+      - "apps/web/supabase/migrations/*report_library*.sql"
+      - "scripts/test-report-library-notifications.mjs"
+      - "tests/visual/report-library-ui.spec.ts"
+      - ".github/workflows/report-library.yml"
+
+jobs:
+  report-library-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node scripts/test-report-library-notifications.mjs
+      - run: npm run test:report-foundation
+      - run: npm run qa:css-audit
+      - run: npm run typecheck
+      - run: npm run build:knowledge
+      - run: npm run build:web
+
+  report-library-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VITE_SUPABASE_URL: https://report-library.supabase.test
+      VITE_SUPABASE_ANON_KEY: report-library-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build knowledge dependency
+        run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Verify standalone Reports UI
+        run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts
+
+  report-library-database:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.113.0
+      - name: Start ephemeral Supabase database
+        run: supabase db start --workdir apps/web
+      - name: Apply migrations to a clean database
+        run: supabase db reset --local --workdir apps/web
+      - name: Verify report library state schema
+        run: |
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 <<'SQL'
+          do $$
+          begin
+            if to_regclass('public.user_report_library_state') is null then
+              raise exception 'user_report_library_state is missing';
+            end if;
+            if not exists (
+              select 1 from pg_policies
+              where schemaname = 'public'
+                and tablename = 'user_report_library_state'
+                and cmd = 'SELECT'
+            ) then
+              raise exception 'report library SELECT RLS policy is missing';
+            end if;
+            if not exists (
+              select 1 from pg_policies
+              where schemaname = 'public'
+                and tablename = 'user_report_library_state'
+                and cmd = 'UPDATE'
+            ) then
+              raise exception 'report library UPDATE RLS policy is missing';
+            end if;
+          end
+          $$;
+          SQL
+      - name: Stop ephemeral Supabase database
+        if: always()
+        run: supabase stop --workdir apps/web --no-backup

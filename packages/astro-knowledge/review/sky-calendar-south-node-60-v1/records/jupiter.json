@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "jupiter",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.jupiter.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "A big opportunity can still belong to an old chapter.",
+      "body": "A big opportunity can still belong to an old chapter. Jupiter conjunct the South Node can enlarge a familiar role, belief, audience, market, or path you already know how to navigate. The offer may be generous, the praise may be sincere, and the scale may make returning feel like obvious progress. Bigger is not automatically newer. Look at what the opportunity expands in practice. It can be worth taking if it turns old experience into leverage, but not if it simply gives the old pattern more room.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "Something you learned or built before can open a useful door now.",
+      "body": "Something you learned or built before can open a useful door now. Jupiter sextile the South Node can bring help through previous experience, an old teacher, former network, established expertise, or a belief that has already carried you through difficult territory. The past may have resources you can use without moving back into it. Take the introduction, apply the lesson, or use the credibility. The value is in what the old chapter can contribute now, not in recreating the chapter itself.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "More of the familiar thing is not necessarily growth.",
+      "body": "More of the familiar thing is not necessarily growth. Jupiter square the South Node can make an old belief, opportunity, role, or success pattern expand until its limits become impossible to miss. You may be offered more work in the area everyone already associates with you, or feel certain that the answer must be the one that worked before. The scale can hide the repetition for a while. Ask what is actually getting larger: your options, or your commitment to a pattern you already meant to leave.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "The old path may be generous with you precisely because you already know how to walk it.",
+      "body": "The old path may be generous with you precisely because you already know how to walk it. Jupiter trine the South Node can make established knowledge, former connections, proven opportunities, and familiar beliefs work in your favor. Something from the past may pay off with surprisingly little effort. Enjoy the advantage. Just remember that being rewarded for prior experience does not obligate you to build your entire future around the place where you are already fluent.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "A promising future can make you see which old success story still defines what counts as progress.",
+      "body": "A promising future can make you see which old success story still defines what counts as progress. When Jupiter opposes the South Node, a new opportunity, belief, trip, course, or expansion can stand directly across from a path that once made sense. You may be tempted to measure the new option using an older definition of success. Keep the experience that taught you something. Let the definition change if your life has changed.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}

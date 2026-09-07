@@ -1,0 +1,91 @@
+name: Sky Calendar South Node serving 60
+
+on:
+  pull_request:
+    paths:
+      - "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/**"
+      - "packages/astro-knowledge/data/transits/*-south-node.json"
+      - "scripts/release-calendar-south-node-60.mjs"
+      - "scripts/test-calendar-south-node-serving.mjs"
+      - "scripts/test-calendar-south-node-axis-mirror.mjs"
+      - "scripts/test-calendar-exact-sky-aspect-routing.mjs"
+      - "scripts/test-calendar-major-exact-routing-complete.mjs"
+      - "scripts/seed-published-calendar-aspect-content-studio.mjs"
+      - "apps/web/src/services/skyAspectRouting.ts"
+      - "apps/web/src/services/skyAspectContent.ts"
+      - ".github/workflows/sky-calendar-south-node-serving-60.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Materialize bounded South Node serving release
+        run: node scripts/release-calendar-south-node-60.mjs
+      - name: Build astro-knowledge workspace from released source
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Regenerate governed bundles and writing evidence
+        run: |
+          node scripts/generate-fallback-package-manifest.mjs
+          node scripts/build-knowledge-index.mjs --write
+          node scripts/build-phrase-index.mjs --write
+          node scripts/build-production-sky-kernel-comparison.mjs --write
+      - name: Verify immutable South Node editorial approval
+        run: node scripts/test-calendar-south-node-editorial-queue.mjs
+      - name: Verify South Node serving and Content Studio contract
+        run: node scripts/test-calendar-south-node-serving.mjs
+      - name: Verify one-event node-axis geometry
+        run: node scripts/test-calendar-south-node-axis-mirror.mjs
+      - name: Verify canonical exact Sky aspect routing remains 379 events
+        env:
+          SKY_CALENDAR_OWNER_PAYLOADS_PATH: packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/current-owner-payloads.json
+        run: |
+          node scripts/test-calendar-exact-sky-aspect-routing.mjs
+          node scripts/test-calendar-major-exact-routing-complete.mjs
+      - name: Verify published exact-aspect Content Studio contract
+        run: node scripts/test-published-calendar-aspect-content-studio.mjs
+      - name: Verify generated fallback manifest
+        run: node scripts/generate-fallback-package-manifest.mjs --check
+      - name: Verify generated knowledge index
+        run: node scripts/build-knowledge-index.mjs --check
+      - name: Verify generated phrase index
+        run: node scripts/build-phrase-index.mjs --check
+      - name: Verify production Sky kernel comparison
+        run: node scripts/build-production-sky-kernel-comparison.mjs
+      - name: Verify TypeScript
+        run: npm run typecheck
+      - name: Verify production web build
+        run: npm run build:web
+      - name: Verify whitespace integrity
+        run: git diff --check
+      - name: Commit controlled South Node serving outputs
+        shell: bash
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No release changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/astro-knowledge/data/transits \
+            packages/astro-knowledge/review/sky-calendar-south-node-60-v1/shipping-manifest.json \
+            apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json \
+            apps/web/src/content/fallbackArchitectureV3/bundled-*.json \
+            apps/web/src/content/fallbackArchitectureV3/approved-serving-*.json \
+            packages/astro-knowledge/generated/knowledge-index.json \
+            packages/astro-knowledge/generated/phrase-index.json \
+            packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json
+          git commit -m "release(calendar): serve 60 approved South Node interpretations"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}

@@ -1,0 +1,554 @@
+{
+  "schemaVersion": 1,
+  "name": "Sky Calendar South Node pole-specific serving release",
+  "batchId": "sky-calendar-south-node-60-v1",
+  "editorialAuthorizationPath": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json",
+  "servingAuthorizationPath": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json",
+  "rowCount": 60,
+  "geometryPolicy": "single-node-axis-event",
+  "editorialPolicy": "distinct-north-and-south-pole-copy",
+  "contentStudioEditable": true,
+  "runtimeStatus": "LIVE",
+  "rows": [
+    {
+      "contentKey": "sky.aspect.sun.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/sun-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/sun.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "6bf8191281a9828544103c9ea6825c20b62d14593bef72d012192e9d15a2ce19",
+      "bodySha256": "c277fcc3044f1eaf1128b26184774a8e5842c31f3a77c4edde15fb75bfea79dd",
+      "readerCopySha256": "f676b1c5b89d8c8ca2896fbe915469a6b4305f495861d71871b0bcd78e6d642a"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/sun-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/sun.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "a522f70339072dee38a97b5a32d511b58e498e78c158356a865c0335505581e1",
+      "bodySha256": "eb5248ac0b4e8375e1f292e851446a89cfe389a2b4b9d4c1f67e55f57bbc500d",
+      "readerCopySha256": "d0311c74be566f0ac11e5dc30d3963e0f86d4ccb5a8c09bcad6f26b0277eade5"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/sun-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/sun.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "7af5e338011ffd29d31cae7d3b220b53d336b44ed4ff417a670e7f40a11017d6",
+      "bodySha256": "e9774c556ac8ae53ac01ae6e6d80e366bcfb527ecc248035be9c918eeb39bfc4",
+      "readerCopySha256": "e021f683f67f62fa844ed967371db2f0cebda19b55a65e0bcff55e5ba9f1e20b"
+    },
+    {
+      "contentKey": "sky.aspect.sun.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/sun-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/sun.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "38cac09ae4c5a93dd656d0c23e3f26ed25008d739298cbaffa693d277dad96e3",
+      "bodySha256": "7726be80449b0bad08688d54d7c98fc4dc2eaa9127bf53eb8688b5e798b6bbae",
+      "readerCopySha256": "b6e2c2856681cdbd98c3965928b58aa1c14be4540689cb1eb34e0671d1f40d35"
+    },
+    {
+      "contentKey": "sky.aspect.sun.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/sun-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/sun.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "9143bf8428bb896f012ee4db53b4a8f499f5637de2ca022fa4451d6bd7a64ac6",
+      "bodySha256": "a81379742b46cea16e6d38266859b7d951a2b2a2f87cba10e02512aedb850c33",
+      "readerCopySha256": "17b6f612d2d4b8223fb7641c53c36ca5deb578d915d24bd25254c4e4299ef433"
+    },
+    {
+      "contentKey": "sky.aspect.moon.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/moon-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/moon.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "0760d740f28d12a597df7302902078bffe8aa3cc01daef02736852389032b165",
+      "bodySha256": "59c3f3d05cd1c72d8a707aff65e5f1e8fe25b298c2ffa2a6e2e72c362c799682",
+      "readerCopySha256": "ae3d03ce8e8ccdb0ad9c7d8a57f404b31df18da7ec05050725c6ecad425cc76f"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/moon-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/moon.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "a324b482a53d8470dbe47e676ef99fc28e495cd14f7c31417e625afe22d19c81",
+      "bodySha256": "cc23437f8872b958de8cff14307c7482f0e6a38fb9b8964161dc09a262dc261f",
+      "readerCopySha256": "da94e0487985a396f69d40a7e014e5eb9132e9e4a68d5a7f401821bd7bb6b329"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/moon-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/moon.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "56c05ed17b42fcc508fd725fd547d6d1baed5ed6d8ed7da4154faedfffa52ac3",
+      "bodySha256": "d6d9af99334ee505fe7e2f167e3cd22296023af20a36bb1a422dc61c1881af63",
+      "readerCopySha256": "dccaab9c0e310b72ffe99644474742d1e8700da5326ff615bba7b9626007be27"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/moon-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/moon.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "acaf69e866033277bfe5a2ebe53640fe5b5c21a5783c3511b99b8ffc18da0732",
+      "bodySha256": "76833a90015089b89ea99e6401f5dedd68f78c07451da28dbdccb7f56b2661e9",
+      "readerCopySha256": "451e37745a9fb183dde2e8315e7307d7e1acfc6bd8caf48f0e3fd0efb748ef71"
+    },
+    {
+      "contentKey": "sky.aspect.moon.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/moon-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/moon.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "31c3adb398866b98196980414f11d65ee87a64df4b9fb35772bfa0324e80100c",
+      "bodySha256": "964b960156ecb29a01b2d2942e866b5a5134bbfff99a914c79be599691003fb8",
+      "readerCopySha256": "8fe77701bfc4a25f61693e799e27308244d112e7e79b614347a796cb2d319c5b"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mercury-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mercury.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "0f892341926cdaf9240c8d9787d16613841e2e25ffc95097f673cc43832cfeb3",
+      "bodySha256": "071c6e7006b4942f53cb00376549556c462ca188ede0192e5f6775ac6e348021",
+      "readerCopySha256": "632b031df8c59448c032a51727ec60e7a235aa51630b0edc7df6ec3e9b987daa"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mercury-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mercury.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "cfed0283aafe0b80c2066d3ed5ff7cee03f25ff89d05e2e3a826a04e4575fd5d",
+      "bodySha256": "19ae31c68a29be6940433fecc5cd0eb6c3584f1d05c77dd8bde38e7de70ed06f",
+      "readerCopySha256": "332a49cf5c99584b5ab6b212c9f991ca91c70edfc8dec3f70fdae3aabc0fd340"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mercury-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mercury.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "dc7f8e46965f6feee82695d17bcd84e57e50e39c81b2ec1b1ebaf2530e65ed44",
+      "bodySha256": "5c42dd2132dd24613b5a32e49c97e46caf4df0714b4153c24d28dfa7562ee6d1",
+      "readerCopySha256": "27d24ea1b64dc79c6fb611ba0351c313af8fe634f83705e6776955c274eed960"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mercury-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mercury.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "5fd5d33f165fe244b80f50a5faaf81f0be9b5b390fcb726a07408a4fa33c5970",
+      "bodySha256": "66562433e7bc33d4e1dc5b1ca07d35bc39bc82d339e96de3fc5863fc9d304171",
+      "readerCopySha256": "06ff90c320436ba402990bc86e8be6ee2521bd757dde5c7b2a6a3fc1b9e5e07a"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mercury-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mercury.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "429c94799df2fb66a09c32b9702aef30fe24b846dbcda29ede59e7960a06a39f",
+      "bodySha256": "e01254783c14ccf442123c1294b7d99d295b094043cdd7e2616d8b9d5d021c59",
+      "readerCopySha256": "eeafa259b7eadf46b78201c8cb5ee35f81ee81c9ea0eae0cd1fa28f267a3be6f"
+    },
+    {
+      "contentKey": "sky.aspect.venus.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/venus-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/venus.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "409ad57f55e2f689ddd29c6bf0b3017dc2c5e755d52d184f4c7432997493605a",
+      "bodySha256": "ad3dc30bb9b1ae840cc58414bf2e2b442d6e66dca16acccb76bf230cde8c9d0f",
+      "readerCopySha256": "176c0e1f595d3629637a523f67773e8c5bbb1b1560b161613b9d47dbda0edf3b"
+    },
+    {
+      "contentKey": "sky.aspect.venus.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/venus-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/venus.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "0a64834986d4f486f16f9d1a00317ffff81fa4f8276d8ff8cac710ae19b74ea4",
+      "bodySha256": "a35efc9721aa79ea22f13f5611b62e0c6ca6494fad2750b7029422ee934541b2",
+      "readerCopySha256": "4a694ef91032500ef2b7936fdfe19f64238a5c4a4760719b651d2e95c91c11e2"
+    },
+    {
+      "contentKey": "sky.aspect.venus.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/venus-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/venus.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "0ae17f53df0ea17c92e26ed4768f8b469b45ebfb6a5dea3ec0298fb9296d3791",
+      "bodySha256": "c70d3ea3b51fc7ed4aecfc311681ebd57394ac6027bdd60bb3be4b44695cac7d",
+      "readerCopySha256": "f883b4d59111862132b04791644cfb3810e1b49b38f5cb557c5c21e135d6a819"
+    },
+    {
+      "contentKey": "sky.aspect.venus.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/venus-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/venus.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "85f2b0507be99d1ba8d1fc0c8e1a623f0e8a1ebf1aff484c5153c55a0820a0d6",
+      "bodySha256": "6316503ac5d321ff85bde651ef84603818286496f76d13b4379841251a16c344",
+      "readerCopySha256": "1528d99dda38f066b5558920de759b9867b1553426e839927dc0b7ef643e7589"
+    },
+    {
+      "contentKey": "sky.aspect.venus.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/venus-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/venus.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "ae2c7e96b2ae0adb5da45558e07b1f1af175c8f76deeb752e01f2abe8e506920",
+      "bodySha256": "578b6621a2ac197a630ae7854083782f5bd55919288a84b7b99109511c778bd5",
+      "readerCopySha256": "deb9c30f13c574f95b12ececa24f967d4b6b54733f4db161b564934c5cce26a7"
+    },
+    {
+      "contentKey": "sky.aspect.mars.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mars.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "3afc0235823791a672041db0abeeeb586ca0377deaaf9d22296e55f89f58de7f",
+      "bodySha256": "453ab72226fbf817b02d0587b902fb8a1f8724b4a7180b472c3fe931bc90cde3",
+      "readerCopySha256": "c0ab6ab2d49d9d1c953c3f80dfda5aad7af38f9a6303521ca2d4f5a4d447574c"
+    },
+    {
+      "contentKey": "sky.aspect.mars.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mars.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "9df344aa54330737060919ed0d5260fc7cf210dacf4078ec61afe06c3a95ea63",
+      "bodySha256": "027d094a226fe8187a5df429f2997c1b8fe04598c23650ad05520f3601c5185f",
+      "readerCopySha256": "bc40b09d37a0851f46bdd9f85813dcd7691fb4f1ab700ccddd6699ab06b2bf3d"
+    },
+    {
+      "contentKey": "sky.aspect.mars.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mars.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "8823e1db8e792e63344be668825218f67d551f1687f4fed92badb68b6827b83b",
+      "bodySha256": "707aaa2bde851363cead0e0f82a0b78905b726996985e8f85122e621c2c9e0ae",
+      "readerCopySha256": "536322d290d3a28c129eea6d0fad4216f5ff93c847f11ef1647392b7cca4e51b"
+    },
+    {
+      "contentKey": "sky.aspect.mars.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mars.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "6fd66024d256310d61ead44f4c960ac25466658e6a52edeb90a758e84d40f540",
+      "bodySha256": "dbeca60ea86f44dfc510496b3a888f648afa0b0d625f3334c2af592fb3e280d7",
+      "readerCopySha256": "9b8b1c695e6f2dd0b6e60800c64601a49e22ed328dead13eb58c3c981c5a05da"
+    },
+    {
+      "contentKey": "sky.aspect.mars.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/mars-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/mars.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "d08283013e6f4036debe0068e65f3e46f178f94c92c2cfe0cbd01734bd87896c",
+      "bodySha256": "1f3033b7cc5096bef881abdbb4e7259e2cedc192e6ce06a8a14d0a5bf2822059",
+      "readerCopySha256": "53c79415adba16e396d275afe85ff262cb30dbf5e4ee4b0eada31159f2b33d56"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/jupiter-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/jupiter.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "791c875ee0e13daa4fe94328bf52c4e09661c914edadaaacc825431920505237",
+      "bodySha256": "3e1bc73563269e2423acf395b562efd29c3cd27a8412af1f8ecb0ed3939654e8",
+      "readerCopySha256": "b8a09cc7574588e5682cbec13ba4d9519e90406339f5a4ea7cb54a7790237717"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/jupiter-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/jupiter.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "6e7f814f661b17740c10edacf9ccc7c4cb9af5f2ed409a5519140439da12550e",
+      "bodySha256": "45020c8a7b4d2a96c4c2214a2426261d99187794aa3170dd48335ffb35d8c69d",
+      "readerCopySha256": "d3d02498046a1c5026e3671245aeeb9d31e10b639dce77efe2b5fe1d5b928f8a"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/jupiter-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/jupiter.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "a1f1bfffb4951924751b53cbeb180ec72ab1e97180f869300076f2b27eb875ae",
+      "bodySha256": "549f356f7ababfd9c31ade5732442cfaef25bfb3d02d5b88e43c894b4333a3cc",
+      "readerCopySha256": "848d7055324c5ad170b9abf869884903ee83551d1d309c5cf4c067f6567298a4"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/jupiter-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/jupiter.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "3f4b5835490ae48b106775610f993f7752f038dc1cc0b1a48a1b1152a4fc4310",
+      "bodySha256": "2de531d75d607d955ca27143d69fb5b58c4e5dbbdfceb82317db1f19b5410b05",
+      "readerCopySha256": "32c19737052bfaf5dfd00ee368185e4945101773120832d79cbc1ab87ec0fad1"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/jupiter-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/jupiter.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "509e6723c9c7219eff78df3f0d6774bcf9d256c23fad85f950d4756fa7e0585f",
+      "bodySha256": "750df4e08c38133b13116161acacaf51fd61d8a41be3273d62ddf3a86dc33c61",
+      "readerCopySha256": "002a76399a9910b54a2df9cf0c160ffdb9b5b432b670c5704fa5ce63a791dd24"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/saturn.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "68c26e2d7ef09e148a6a0138202a0ff7cff874c36af7e1b038dd7230dd07709b",
+      "bodySha256": "e38e9481678fdcb23adc0c23427680ea7c12f64fec24406029411b8637e311ec",
+      "readerCopySha256": "ac9b9cc78bc771321ec5f2f1bd05e5e871a21cc74c841cdbccf91de7334d5b60"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/saturn.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "c8fea46b92769ba42c7d063756b81bc0a490528049f023ff74d89aa2fbcf3df7",
+      "bodySha256": "c72247aac5153adda1ed0b7ac04cbbc0a8711da29a4085d9c9c1327459e74f4f",
+      "readerCopySha256": "65ceb26802583b40841a000a35af0156946a0b9e02f9c519ecee33522983691d"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/saturn.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "1e7e90468deac6b946e57f1982d14a627e47a4a6668fa4cb6ac5395b48fe827a",
+      "bodySha256": "e24d785ecbe44fccb9a3fb2418a76faee488442b349afce1d92803b77dccbcfc",
+      "readerCopySha256": "4512177f8d9d79136bc455d83609e999dcb8fc088a41213a706f176f082f7bb0"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/saturn.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "d9a4df902d0d6058aca7d362eafb5e776cd511a4d4e830767688ffcb1e834722",
+      "bodySha256": "3074cd95bb056ebd5b6a3d6b1997625e5ec8e0beb10a5b5da10329313a252566",
+      "readerCopySha256": "2c5a0cad67881089defdcf11ec5f7a7f566728b7edfc8002b45bc3260e3ddad2"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/saturn-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/saturn.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "934a796e9e9398439ed6f03cd012483bc3b43312db9cd56f55c41f1bad0ea154",
+      "bodySha256": "5cf889fb492f21581f358f3d351bca9af9f5cce86f2538717a28b65864bba35d",
+      "readerCopySha256": "a97cb5434b4077d9652c5e68148dee6e532d86d781f37df98fc18841358e5a70"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/uranus-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/uranus.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "431c94a0bed7f685068a437c015a966141bf9f380e356ab480100903bc7cdd0b",
+      "bodySha256": "6093b35add27d5f44b9ba26e5a024a7ed82ccbca99adcb8cf291335e5463cab6",
+      "readerCopySha256": "d3a0b09f8d97aa943964cf848fd8858cb24da80397305121f779f382c686c925"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/uranus-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/uranus.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "da5aca311272e91236471e091feaac5306dc66bdbb595eeff8e85744489d1ea0",
+      "bodySha256": "9e97921a5dd721aa507b7fd7a3013a73eec7515d36702f8cf8a0dd041d845058",
+      "readerCopySha256": "250414bbdc1397aac53b8a9c35605c3ae411dcf26a272a066ba1bd4d22b8ed41"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/uranus-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/uranus.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "0a2bc40da7ac7e04b3a84390971c9b1bc30aee2aef8458702f333ff94f514021",
+      "bodySha256": "249394cd3f40ffb1cc2d0dabca61702d216a929c17901fb96c7561019c4d93c6",
+      "readerCopySha256": "014d244a18a97b63571c4c1115f94e94db2507594e2f92b1fd5ac5b2f0cafd78"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/uranus-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/uranus.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "8b2edb0bb3df19a9a9e33b38b7137f5b16763a8cac7a0b9b1b11155be54ba421",
+      "bodySha256": "dd548016c30067f131760812ab4c179f50e0a2f9460d2e180ce7f24de12db941",
+      "readerCopySha256": "5e7e4de68d62d75de69771d5efccc61d034e274238aec6ed9b4ea1e7669f9875"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/uranus-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/uranus.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "86400550df8b72c5eceb158ccfa40740b3c8e5f8d67fe0c8eb06ea029ecce0c5",
+      "bodySha256": "55ddff75dff61a5836f08abb8d775efe657c7aa3fe80de22e6f084645e81ac57",
+      "readerCopySha256": "ecf5c0fbc6d2670202bce69373ddf7c5e657ec559501a7236ca17c426ea8f2aa"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/neptune-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/neptune.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "00bb2c27f66cb947b109e2a89faaa5a81f8649afe6345548e8379e609ad17ef5",
+      "bodySha256": "5466565976f565d9dae5254f5939f9131804783f5cb426def348131f55f00913",
+      "readerCopySha256": "69cf249dd1dbea0f1a15ea26d01a9380bc110f7ffdc0f7d90f70ed4590f6c532"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/neptune-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/neptune.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "93da8bf8ccbf668612ce0587b6e298456a8bf97e804a99b9dab0004e32e1f512",
+      "bodySha256": "43ea9f853e29a42bc709cfa00833e7c3c85304f0899bb8ad43396f8bbc11ef7f",
+      "readerCopySha256": "084ab8d8c7271a047bb1916c0ae13a052130663d999538f8a76b44a574b4ae0a"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/neptune-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/neptune.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "b13ac63584ef74984ba34d66492eeb2af52b00fc9b3d8b11ea211b178d608fe8",
+      "bodySha256": "cdd1f57ce56d58478dcf30e2df8cdc69ebe046b09bc6cf4bdf6eda0c6b27fa66",
+      "readerCopySha256": "4e28e69292b4fc79960b86caae5155cfb66a1dba229965dda734f286bd7cbbdf"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/neptune-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/neptune.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "e83a28676f77c6a0e57d9db184c26aa493f59cb11c4ef1d4139c56d2c9735eda",
+      "bodySha256": "a7065c555db2f1efb352bb15efa9db54c8ead874468ed75440805ab207355600",
+      "readerCopySha256": "642f98e5d4e1d4c8f818493ed902d273eabbafa6ba3a7ccf1ae253b93f2edb51"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/neptune-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/neptune.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "ee79d67e76765eb938d15240f9a773b4dc75703cd45bacc5bed99e3504302411",
+      "bodySha256": "9a11ad2d3415d0ab0d26b1d10d6e82786c0083448b025a86bdb75bce887d04d7",
+      "readerCopySha256": "a05b287fc43e4c87e174b1d1b3c7ed1d0d73d626cb35d751f13baac5185a678c"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/pluto-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/pluto.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "345d3efbf2dd13bff5441cc3b8ec08d873f5e5ad636f3e4cb81b4cd2847d4cc2",
+      "bodySha256": "feb3e59009d5231c260aa420836906a4d0e37ad2e202eacc75dc6c57f81540b9",
+      "readerCopySha256": "ca957c1871492924affdcea0b1cffceea70841447670014476995478597fa4f7"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/pluto-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/pluto.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "d629382e9831b0e4b721133d01220001034fcbbf35c28b8c1775464844789880",
+      "bodySha256": "149670ed2711df788c8049319e5aad38e45e56cd662007aa6e94adb5504ec688",
+      "readerCopySha256": "4cc94e685fc5988e357d84496e790b5ac39cf027ef05ab9efc745b7218f6b030"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/pluto-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/pluto.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "6323a2fe5128f99aa8f3a658a6aefbb24493cd14faf43b21801052a2f29b47ed",
+      "bodySha256": "a74db03970c7cc533ecb883eb2bd4f04b71de7f1e95ed018b586552ec52373d0",
+      "readerCopySha256": "996b285822cb255b3c5ce9c12c6bb77f49a534abb0128c82d46706b2649ed889"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/pluto-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/pluto.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "34854c3a6141f5ea8ec8c04d7b7865671629658cb1acfe0c69e175aeb38e2886",
+      "bodySha256": "7a8d7fff2cf6f9a949f37c22f49c6e3107e457c63a17bcdafba0f80d38097497",
+      "readerCopySha256": "ee2fbb2d17fca5436a472b96cf384401b651d90e2d6536fdb0c7cac1118ec3cb"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/pluto-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/pluto.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "f00f045306e8801d68ba5233bb49d3bfc47a65cc130e7cfc843d80e0aa01f1a1",
+      "bodySha256": "7549352cb191a637bc8ba2c5707df864f80f3f15033d0712d5537745efce7df7",
+      "readerCopySha256": "d7349e976a382037b8520a2603bead6791af9a32367500f2159c33014f1dfa62"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/chiron-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/chiron.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "be41e5912354c404cf27508acbc8bcf28a3a3ce4f24574ed3f9f9afca62e5f25",
+      "bodySha256": "c6851a20c05e33d81821adf8068e43d7b368ccdedee2a622c3fe03fc0144084e",
+      "readerCopySha256": "11cdde9781889c9aca0a42f5e1de5bf15940fd77f7b477aeb1f259a0c3261264"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/chiron-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/chiron.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "c47d5439d90f15703878fcde3614bdda2b83284a8cd9af6c60d6068a29629588",
+      "bodySha256": "f5d7b58e38d79d2c3cae5eb5d4992a9d0d271ec298cd187d9552e25b679ec7bf",
+      "readerCopySha256": "0e1983287532a8f84be4a67b25e8eda27c22f020bd67463f5d88622e1e3d2736"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/chiron-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/chiron.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "516a6420e9c59c9d5a8fe112e7b359a05b8f02972e1db9bf97a10ffb62570a37",
+      "bodySha256": "8a50625be3e2d4bc0d91c2d285128c70ecf7eeaf17a9cb293b679b5692433069",
+      "readerCopySha256": "04e0408394b0dc6a680bc5b90eafe4ee50b8439769078d3a530229760b2158e3"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/chiron-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/chiron.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "342abc1aa5b9048e4b779a126a73ca8c6c2a4c7ce800e8934b79748dde8bcade",
+      "bodySha256": "5224ed42386e69bc08f29cf5c949f6f49ecae9ec4d6c561139acbd59df80cb33",
+      "readerCopySha256": "a899b02af0cf0946d17f8fac21f357fbdd507abfdb1742ac26b76c35c0e032da"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/chiron-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/chiron.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "deac978c61573bf33417716fad3ae119c5995be11756b251ad69e30074861568",
+      "bodySha256": "aad1a059ca9f48b9ef710da2451006e2ea1774bf4a98f09073458a4f4d6a3ee1",
+      "readerCopySha256": "945b091a4571b44a93ffd3f9178755d89aadc209b909c74a11476d42bb1555a5"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.conjunction.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/lilith-conjunction-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/lilith.json",
+      "mirroredNorthNodeAspect": "opposition",
+      "summarySha256": "ac7f3544eb585009e7091074215d3c57e01977be80464087c3632904be3156fa",
+      "bodySha256": "4d8d994d5752b995b722b2ef2aa72e3df92a884088373d40631fb49c39493679",
+      "readerCopySha256": "225ef50ecb38cf95844976eea2a2a46e0ad34364100f180ac0a92deefa221578"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.sextile.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/lilith-sextile-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/lilith.json",
+      "mirroredNorthNodeAspect": "trine",
+      "summarySha256": "7c94f9e935f96600d0f97812eb9f3a35b6c93f34d454b4594016c7935ed06dde",
+      "bodySha256": "d77ff259f63df0a0b429c5a0f5c4ecc17cbd8bb6c59582631bb1b1c30a237f26",
+      "readerCopySha256": "cf0cfa1f7c0fec2935f3b843ab36f110e18b2c9ed1206f2eb9e20bcf587371af"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.square.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/lilith-square-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/lilith.json",
+      "mirroredNorthNodeAspect": "square",
+      "summarySha256": "d206e19119a55c6fe158a9b472541fa84283f4596011fe8777c266ec5d8885f0",
+      "bodySha256": "64d999258547391419067285d68eefde0aa73f80f6a762a7bef00a280228b357",
+      "readerCopySha256": "5c7e6d57752fe6fa6138fdeb6636aaa0bc8c86143db54da3e278c79d563912b8"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.trine.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/lilith-trine-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/lilith.json",
+      "mirroredNorthNodeAspect": "sextile",
+      "summarySha256": "9dbe4367e4e04c01b5b927bc92871c6c977b3e7b605501bd52883d2855be241c",
+      "bodySha256": "76fc113384db7cb241ced3c44f0121b0013aa15d100d9564d7457a70ffd1a4b3",
+      "readerCopySha256": "c721324f9dd78e74a0698f9b39ab931a04b8e64b936edd6d5a0dd64303053bf9"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.opposition.south-node",
+      "runtimeFile": "packages/astro-knowledge/data/transits/lilith-opposition-south-node.json",
+      "sourcePacket": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/records/lilith.json",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summarySha256": "6c8c63e0dd30eb9ce46f079f0ea259853093f332485dbfaad5e39ae7aecc5840",
+      "bodySha256": "45cb9a42cacfa46db55e7bdb7bdd0d46df37aeefdb88af03b18d85e3bdf9925d",
+      "readerCopySha256": "59d998cd6fdeb95645402a4154bba71d9071df01972ec43667166e2f5d76465d"
+    }
+  ]
+}

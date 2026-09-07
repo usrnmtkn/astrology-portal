@@ -36,6 +36,9 @@ jobs:
       - name: Verify Content Studio link routing
         run: node --experimental-strip-types scripts/test-content-studio-link-routing.mjs
 
+      - name: Verify Content Studio editor UX
+        run: node scripts/test-admin-content-studio-usability.mjs
+
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
@@ -64,7 +67,7 @@ jobs:
         run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts
 
       - name: Run client-facing user flows
-        run: npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts
+        run: npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts tests/visual/report-library-ui.spec.ts
 
       - name: Run Friends loading performance matrix
         run: npm run qa:friends-loading-matrix

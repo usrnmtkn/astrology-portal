@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "mercury",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "The conversation can sound new while everyone is still using the same old script.",
+      "body": "The conversation can sound new while everyone is still using the same old script. Mercury conjunct the South Node can bring back a familiar argument, question, contact, idea, or way of explaining yourself. You may know exactly what the other person is going to say because you have already had some version of this exchange. Repetition can be useful if it lets you catch what was missed before. It becomes a trap when another round of explaining replaces the different decision the conversation keeps pointing toward.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "Old information or an earlier conversation may finally become useful.",
+      "body": "Old information or an earlier conversation may finally become useful. Mercury sextile the South Node can bring a saved note, former contact, half-finished idea, or piece of knowledge back at the right moment. Something you learned before may help you answer the email, solve the problem, or explain the situation with less effort now. Use what you already know. You do not have to reopen every old conversation just because one piece of it still has value.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "You can keep explaining the same thing and still avoid changing what the conversation is about.",
+      "body": "You can keep explaining the same thing and still avoid changing what the conversation is about. Mercury square the South Node can turn an old argument, assumption, or communication habit into the obvious source of friction. You may over-explain, repeat the history, answer the point nobody made, or keep checking for a response that will not settle the issue. The problem may not need better wording. It may need you to stop using the same mental route every time you reach the same uncomfortable conclusion.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.mercury.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "The old way of thinking may work so smoothly that you never test the assumption underneath it.",
+      "body": "The old way of thinking may work so smoothly that you never test the assumption underneath it. Mercury trine the South Node can make familiar language, expertise, contacts, and mental shortcuts especially easy to use. You may know the answer before the meeting starts or finish the task from memory. That fluency is valuable. It is also a good moment to notice which conclusion keeps surviving because it is correct and which one survives because you stopped questioning it years ago.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "A new piece of information can force an old story to defend itself.",
+      "body": "A new piece of information can force an old story to defend itself. When Mercury opposes the South Node, something you hear, read, or discuss may put a familiar belief or explanation directly across from the facts in front of you. You may feel the urge to return to the version you can explain most easily. Stay with the contradiction long enough to learn from it. You are allowed to know the history without letting the history write the answer.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}

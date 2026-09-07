@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "moon",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.moon.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "Stress can pull you straight back into the comfort strategy you know by heart.",
+      "body": "Stress can pull you straight back into the comfort strategy you know by heart. When the Moon conjuncts the South Node, an old mood, family pattern, coping habit, or need for reassurance can feel unusually automatic. You may cancel the plan, call the same person, retreat into the same routine, or reach for the thing that has soothed you before. Comfort is not the problem. The question is what the habit costs when it becomes your only answer. Give yourself what actually helps now, not only what used to calm you down.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "A familiar source of comfort can help, especially if you do not confuse relief with a solution.",
+      "body": "A familiar source of comfort can help, especially if you do not confuse relief with a solution. The Moon sextile the South Node can make an old routine, family connection, home ritual, or emotional skill easier to reach. Returning to something known may give you enough steadiness to deal with what is happening instead of reacting from the middle of it. Take the support. Just notice if the comforting choice also helps you avoid the conversation, change, or decision that still needs to happen.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "The old coping mechanism may work quickly and still leave you in the same emotional place.",
+      "body": "The old coping mechanism may work quickly and still leave you in the same emotional place. The Moon square the South Node can make a familiar response collide with what the day actually requires. You may withdraw, over-accommodate, seek reassurance, or fall into a family role before you have decided that is what you want. The feeling itself deserves attention, but the first reaction may be history moving faster than judgment. Give the present situation a chance to be different before repeating the old answer.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "The comfort zone can feel especially convincing when nothing is forcing you out of it.",
+      "body": "The comfort zone can feel especially convincing when nothing is forcing you out of it. The Moon trine the South Node can make old routines, emotional roles, and familiar people feel easy to return to. There may be genuine nourishment in the meal you know, the place you trust, or the person who understands the backstory without an explanation. Enjoy what still restores you. The catch is noticing when comfort quietly becomes a reason to keep living inside a pattern you have already outgrown.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.moon.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "What you need now may be different from what has always made you feel safe.",
+      "body": "What you need now may be different from what has always made you feel safe. When the Moon opposes the South Node, a current emotional need can expose the limits of an old family pattern, coping strategy, or source of reassurance. You may realize that keeping everyone calm, going home, staying quiet, or reaching for the usual person no longer gives you what it used to. The old comfort may still be real. It just does not get to define the only way you can care for yourself.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}

@@ -6,6 +6,10 @@ import {
   prepareFriendProfileRoute
 } from "./features/friends/friendsRouting";
 
+const ReportsGlobalLayer = React.lazy(() =>
+  import("./features/reports/ReportsGlobalLayer").then((module) => ({ default: module.ReportsGlobalLayer }))
+);
+
 const localAdminOrigin = "http://127.0.0.1:5174";
 const blankRestoreReloadKey = "tldrastro:blankRestoreReloadAt";
 const blankRestoreResetKey = "tldrastro:blankRestoreResetAt";
@@ -33,6 +37,10 @@ function isAdminContentPath() {
     window.location.pathname === "/content/admin" ||
     isContentCoveragePath()
   );
+}
+
+function isReportPath() {
+  return /^\/reports(?:\/|$)/u.test(window.location.pathname);
 }
 
 async function setupAdminReaderLinks() {
@@ -106,22 +114,28 @@ async function startApp() {
   }
 
   const { App } = await appModulePromise;
+  const reportPath = isReportPath();
 
   createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
       <App />
+      {!isAdminContentPath() && !reportPath ? (
+        <React.Suspense fallback={null}>
+          <ReportsGlobalLayer />
+        </React.Suspense>
+      ) : null}
     </React.StrictMode>
   );
 
   if (isAdminContentPath()) {
     await setupAdminReaderLinks();
-  } else {
+  } else if (!reportPath) {
     setupBlankRestoreRecovery();
   }
 }
 
 function setupBlankRestoreRecovery() {
-  if (isAdminContentPath()) {
+  if (isAdminContentPath() || isReportPath()) {
     return;
   }
 

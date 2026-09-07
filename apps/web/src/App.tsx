@@ -93,6 +93,7 @@ import {
   lunarNodeTransitRangeLabel
 } from "./services/astrologyDisplay";
 import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "./services/chartTime";
+import { natalSnapshotWithBirthTimeReliability } from "./services/birthTimeReliability";
 import { lunationEventOccursOnLocalDate } from "./services/lunationEventDay";
 import {
   formatSignupBirthDate,
@@ -272,6 +273,7 @@ import {
 } from "./services/generatedContentKeys";
 import {
   listLocalManualChartUserIds,
+  manualChartHasReliableBirthTime,
   migrateLocalManualChartsToRemote
 } from "./services/manualCharts";
 import type { ManualChart } from "./services/manualCharts";
@@ -321,6 +323,7 @@ import {
   apiSettingsFromChartSettings,
   apiSubjectFromUserChart,
   natalBigThreeFromSky,
+  chartBirthTimeIsKnown,
   validChartBirthDate,
   validChartBirthTime,
   zodiacFromBirthDate
@@ -7118,14 +7121,28 @@ function timingContextForChart({
   birthDate,
   currentDate,
   ascendant,
-  natalPositions
+  natalPositions,
+  birthTimeKnown = false
 }: {
   birthDate: string;
   currentDate: string;
   ascendant: string;
   natalPositions: PlanetPosition[];
+  birthTimeKnown?: boolean;
 }): FriendTimingContext {
   const age = completedAgeOnDate(birthDate, currentDate);
+
+  if (!birthTimeKnown) {
+    return {
+      age,
+      profectedHouse: null,
+      profectedSign: "",
+      lordOfYear: "",
+      chartRuler: undefined,
+      activeNatalPlanetsInProfectedSign: []
+    };
+  }
+
   const fallbackHouse = age === null ? null : (age % 12) + 1;
   const fallbackSign = fallbackHouse ? signAtWholeSignHouse(ascendant, fallbackHouse) : "";
   const fallbackLord = traditionalSignRulers[fallbackSign] ?? "";
@@ -7173,11 +7190,14 @@ function timingContextForChart({
 }
 
 function friendTimingContext(chart: ManualChart, currentSky: SkySnapshot): FriendTimingContext {
+  const birthTimeKnown = manualChartHasReliableBirthTime(chart);
+
   return timingContextForChart({
     birthDate: chart.birthDate,
     currentDate: currentSky.generatedAt,
-    ascendant: chart.natalChart?.ascendant ?? "",
-    natalPositions: chart.natalChart?.positions ?? []
+    ascendant: birthTimeKnown ? chart.natalChart?.ascendant ?? "" : "",
+    natalPositions: chart.natalChart?.positions ?? [],
+    birthTimeKnown
   });
 }
 
@@ -7255,9 +7275,9 @@ function rankedTransitItems(transits: TransitItem[], timing: FriendTimingContext
   });
 }
 
-function natalTransitTargets(natalSky: SkySnapshot) {
-  if (typeof natalSky.ascendantLongitude !== "number") {
-    return natalSky.positions;
+function natalTransitTargets(natalSky: SkySnapshot, birthTimeKnown = false) {
+  if (!birthTimeKnown || typeof natalSky.ascendantLongitude !== "number") {
+    return natalSky.positions.filter((position) => !["Ascendant", "Descendant", "Midheaven", "Imum Coeli"].includes(position.planet));
   }
 
   return [
@@ -7275,21 +7295,23 @@ function natalTransitTargets(natalSky: SkySnapshot) {
   ];
 }
 
-function rankedProfileTransits(currentSky: SkySnapshot, natalSky: SkySnapshot, birthDate: string, sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
-  const natalPositions = natalTransitTargets(natalSky);
+function rankedProfileTransits(currentSky: SkySnapshot, natalSky: SkySnapshot, birthDate: string, birthTimeKnown: boolean, sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
+  const natalPositions = natalTransitTargets(natalSky, birthTimeKnown);
   const timing = timingContextForChart({
     birthDate,
     currentDate: currentSky.generatedAt,
-    ascendant: natalSky.ascendant,
-    natalPositions
+    ascendant: birthTimeKnown ? natalSky.ascendant : "",
+    natalPositions,
+    birthTimeKnown
   });
 
   return rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalPositions, sunriseOrb), timing);
 }
 
 function rankedFriendTransits(currentSky: SkySnapshot, chart: ManualChart, sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
+  const birthTimeKnown = manualChartHasReliableBirthTime(chart);
   const timing = friendTimingContext(chart, currentSky);
-  const natalPositions = chart.natalChart ? natalTransitTargets(chart.natalChart) : [];
+  const natalPositions = chart.natalChart ? natalTransitTargets(chart.natalChart, birthTimeKnown) : [];
 
   return dedupeTransitAxisContacts(rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalPositions, sunriseOrb), timing));
 }
@@ -8758,13 +8780,13 @@ function compatibilityHighlights(profileNatalSky: SkySnapshot | null, chart: Man
   return highlights.slice(0, 3);
 }
 
-function transitWheelAspectLines(currentSky: SkySnapshot, natalSky: SkySnapshot | null, transits: TransitItem[]): InterChartAspectLine[] {
+function transitWheelAspectLines(currentSky: SkySnapshot, natalSky: SkySnapshot | null, transits: TransitItem[], birthTimeKnown = false): InterChartAspectLine[] {
   if (!natalSky) {
     return [];
   }
 
   const transitPositionsByPlanet = new Map(currentSky.positions.map((position) => [position.planet, position]));
-  const natalTargetsByPoint = new Map(natalTransitTargets(natalSky).map((position) => [position.planet, position]));
+  const natalTargetsByPoint = new Map(natalTransitTargets(natalSky, birthTimeKnown).map((position) => [position.planet, position]));
 
   return transits.flatMap((transit) => {
     const transitPosition = transitPositionsByPlanet.get(transit.transitPlanet);
@@ -10943,6 +10965,7 @@ export function App() {
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
   const primaryProfileChart = userProfile?.charts[0];
   const primaryProfileBirthDate = validChartBirthDate(primaryProfileChart);
+  const primaryProfileBirthTimeKnown = chartBirthTimeIsKnown(primaryProfileChart);
   const skyPlacementPersonalizationTransits = useMemo(() => {
     if (!sky || !profileNatalSky || !primaryProfileBirthDate) {
       return profileTransits;
@@ -10954,11 +10977,13 @@ export function App() {
       sky,
       profileNatalSky,
       primaryProfileBirthDate,
+      primaryProfileBirthTimeKnown,
       activeSunriseOrbDegrees
     ).map((transit) => enrichedById.get(transit.id) ?? transit);
   }, [
     activeSunriseOrbDegrees,
     primaryProfileBirthDate,
+    primaryProfileBirthTimeKnown,
     profileNatalSky,
     profileTransits,
     sky
@@ -12599,7 +12624,8 @@ export function App() {
     syncOwnSocialProfile({
       displayName: userProfile.name,
       avatarUrl: userProfile.avatarUrl,
-      natalChart: profileNatalSky
+      natalChart: profileNatalSky,
+      birthTimeKnown: chartBirthTimeIsKnown(userProfile.charts[0])
     })
       .then((socialProfile) => {
         if (!cancelled) {
@@ -12671,12 +12697,13 @@ export function App() {
       maxAgeMs: VERIFIED_NATAL_SKY_CACHE_MAX_AGE_MS
     });
     const applyNatalSky = (natalSky: SkySnapshot) => {
-      const natalBigThree = natalBigThreeFromSky(natalSky, unknownBirthTime);
+      const reliableNatalSky = natalSnapshotWithBirthTimeReliability(natalSky, !unknownBirthTime) ?? natalSky;
+      const natalBigThree = natalBigThreeFromSky(reliableNatalSky, unknownBirthTime);
       const nextTransits = sky
-        ? rankedProfileTransits(sky, natalSky, birthDate, activeSunriseOrbDegrees)
+        ? rankedProfileTransits(sky, reliableNatalSky, birthDate, !unknownBirthTime, activeSunriseOrbDegrees)
         : [];
 
-      setProfileNatalSky(natalSky);
+      setProfileNatalSky(reliableNatalSky);
       setProfileNatalCalculationStatus("ready");
       setProfileNatalCalculationError("");
       setProfileNatalAspectPatternStatus(
@@ -12724,7 +12751,9 @@ export function App() {
     };
 
     if (cachedNatalSky) {
-      applyNatalSky(cachedNatalSky);
+      const reliableCachedNatalSky = natalSnapshotWithBirthTimeReliability(cachedNatalSky, !unknownBirthTime) ?? cachedNatalSky;
+      applyNatalSky(reliableCachedNatalSky);
+      writeCachedSkySnapshot(natalCacheKey, reliableCachedNatalSky);
     } else {
       setProfileNatalCalculationStatus("loading");
       setProfileNatalCalculationError("");
@@ -12746,8 +12775,9 @@ export function App() {
           ? { ...calculatedNatalSky, aspectPatterns: cachedNatalSky.aspectPatterns }
           : calculatedNatalSky;
 
-        applyNatalSky(natalSky);
-        writeCachedSkySnapshot(natalCacheKey, natalSky);
+        const reliableNatalSky = natalSnapshotWithBirthTimeReliability(natalSky, !unknownBirthTime) ?? natalSky;
+        applyNatalSky(reliableNatalSky);
+        writeCachedSkySnapshot(natalCacheKey, reliableNatalSky);
 
         if (showNatalAspectPatterns) {
           fetchNatalAspectPatternsWithCopy(birthLocation, birthDateTime, { includeActivationCopy: showNatalAspectPatternActivation, timeKnown: !unknownBirthTime })
@@ -12756,7 +12786,7 @@ export function App() {
                 return;
               }
 
-              const enrichedNatalSky = skyWithNatalAspectPatternCopy(natalSky, aspectPatterns);
+              const enrichedNatalSky = skyWithNatalAspectPatternCopy(reliableNatalSky, aspectPatterns);
               writeCachedSkySnapshot(natalCacheKey, enrichedNatalSky);
               setProfileNatalSky((currentSky) => (
                 currentSky?.generatedAt === calculatedNatalSky.generatedAt
@@ -13056,7 +13086,8 @@ export function App() {
         const socialProfile = existingSocialProfile ?? await syncOwnSocialProfile({
           displayName: profile.name,
           avatarUrl: profile.avatarUrl,
-          natalChart: null
+          natalChart: null,
+          birthTimeKnown: false
         });
 
         if (!isCancelled()) {
@@ -13528,10 +13559,11 @@ export function App() {
             transitForm.unknownBirthTime ? "12:00 PM" : nextBirthTime,
             resolvedBirthLocation.timeZone
           );
-          const natalSky = await getAstrodienstSky(resolvedBirthLocation, birthDateTime);
+          const calculatedNatalSky = await getAstrodienstSky(resolvedBirthLocation, birthDateTime);
+          const natalSky = natalSnapshotWithBirthTimeReliability(calculatedNatalSky, !transitForm.unknownBirthTime) ?? calculatedNatalSky;
           const natalBigThree = natalBigThreeFromSky(natalSky, transitForm.unknownBirthTime);
           const nextTransits = sky
-            ? rankedProfileTransits(sky, natalSky, nextBirthDate, activeSunriseOrbDegrees)
+            ? rankedProfileTransits(sky, natalSky, nextBirthDate, !transitForm.unknownBirthTime, activeSunriseOrbDegrees)
             : [];
 
           nextSun = natalBigThree.sun;
@@ -16773,15 +16805,16 @@ function ProfileView({
         birthDate: savedBirthDate,
         currentDate: skyGeneratedAt,
         ascendant: natalSky.ascendant,
-        natalPositions: natalTransitTargets(natalSky)
+        natalPositions: natalTransitTargets(natalSky, true),
+        birthTimeKnown: true
       })
     : null;
   const natalSun = natalPositions.find((position) => position.planet === "Sun");
   const natalMoon = natalPositions.find((position) => position.planet === "Moon");
-  const natalAscendantPosition = typeof natalSky?.ascendantLongitude === "number"
+  const natalAscendantPosition = !unknownBirthTime && typeof natalSky?.ascendantLongitude === "number"
     ? { ...positionFromLongitude({ planet: "Ascendant", glyph: "↑", longitude: natalSky.ascendantLongitude }), house: 0 }
     : null;
-  const natalMidheavenBasePosition = typeof natalSky?.midheavenLongitude === "number"
+  const natalMidheavenBasePosition = !unknownBirthTime && typeof natalSky?.midheavenLongitude === "number"
     ? positionFromLongitude({ planet: "Midheaven", glyph: "MC", longitude: natalSky.midheavenLongitude })
     : null;
   const natalMidheavenPosition = natalMidheavenBasePosition
@@ -16836,7 +16869,7 @@ function ProfileView({
   const aspectRows = qualifyingDailyTransits.slice(0, dailyIsHeadliner ? 3 : 4);
   const natalAspectPatternTimingOverrides = activationTimingOverridesForTransits(natalAspectPatternItems, aspectRows, targetDate);
   const updateTransitAspectLines = currentSky && natalSky
-    ? transitWheelAspectLines(currentSky, natalSky, aspectRows)
+    ? transitWheelAspectLines(currentSky, natalSky, aspectRows, !unknownBirthTime)
     : [];
   const elementalBalance = natalElementBalance(natalPositions);
   const elementalSummary = elementalBalanceSummary(elementalBalance);
