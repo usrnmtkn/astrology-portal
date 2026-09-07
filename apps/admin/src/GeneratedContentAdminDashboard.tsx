@@ -590,6 +590,7 @@ type AdminNavItem = {
   icon: typeof Check;
   key?: string;
   category?: AdminContentCategoryFilter;
+  section?: AdminFallbackHookSectionFilter;
   group?: "Publish" | "Write" | "Compose";
 };
 
@@ -609,6 +610,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "content", label: "Natal Chart", icon: Orbit, key: "natal-chart", category: "Natal Chart", group: "Write" },
   { page: "content", label: "Natal Aspects", icon: ArrowLeftRight, key: "natal-aspects", category: "Natal Aspects", group: "Write" },
   { page: "skyWriteups", label: "Sky Write-ups", icon: Moon, group: "Write" },
+  { page: "knowledge", label: "Calendar Write-ups", icon: Moon, key: "calendar-writeups", section: "lunar-calendar", group: "Write" },
   { page: "content", label: "Calendar Aspects", icon: CalendarDays, key: "calendar-aspects", category: "Calendar Aspects", group: "Write" },
   { page: "articles", label: "Articles", icon: FileText, group: "Write" },
   { page: "compatibility", label: "Compatibility", icon: Users, group: "Write" },
@@ -2358,7 +2360,7 @@ function housePassageAvailabilityLabel(availability: "Reader-ready" | "Source ca
 
 function fallbackSectionForKey(key: string, surface?: string): Exclude<AdminFallbackHookSectionFilter, "all"> {
   if (key.startsWith("fallback-hook/daily-headline/") || key.startsWith("fallback-hook/daily-body/") || key.startsWith("fallback-hook/pair-daily/")) return "daily";
-  if (key.includes("lunar") || key.startsWith("lunation/") || key.startsWith("season/") || key.startsWith("season-arc/") || key.startsWith("transit-fallback/")) return "lunar-calendar";
+  if (key.startsWith("authored/calendar-weekly-moon/") || key.includes("lunar") || key.startsWith("lunation/") || key.startsWith("season/") || key.startsWith("season-arc/") || key.startsWith("transit-fallback/")) return "lunar-calendar";
   if (key.includes("settings") || surface === "settings") return "settings";
   if (key.includes("friends") || key.includes("synastry") || key.includes("relationship") || key.includes("bond-effect") || surface === "friends" || surface === "relationship" || surface === "synastry" || surface === "composite") return "friends";
   if (key.includes("natal") || key.includes("you") || surface === "you" || surface === "natal") return "you";
@@ -2885,7 +2887,7 @@ export function GeneratedContentAdminDashboard() {
     && (showRetiredRows || !isRetiredAdminRow(row))
   )), [rows, activePage, categoryFilter, showReferenceRows, showRetiredRows]);
   const savedFallbackRows = useMemo(
-    () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook"),
+    () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook" || row.content_key.startsWith("authored/calendar-weekly-moon/")),
     [visibleRows]
   );
   const dailyGlanceWriteups = useMemo(
@@ -3750,7 +3752,8 @@ export function GeneratedContentAdminDashboard() {
     }
     navigateAdminPage(
       item.page,
-      item.category ? new URLSearchParams({ category: item.category }) : undefined
+      item.category ? new URLSearchParams({ category: item.category })
+        : item.section ? new URLSearchParams({ section: item.section }) : undefined
     );
   }
 
@@ -4557,8 +4560,8 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function deleteSelectedDrafts() {
-    const deletable = selectedSavedRows.filter((row) => row.status !== "LIVE");
+  async function deleteSelectedDrafts(targetRows = selectedSavedRows) {
+    const deletable = targetRows.filter((row) => row.status !== "LIVE");
     if (deletable.length === 0) {
       setMessage("Published rows are protected. Demote before deleting.");
       return;
@@ -4570,6 +4573,10 @@ export function GeneratedContentAdminDashboard() {
       })));
       setRows((current) => current.filter((row) => !deletable.some((deleted) => deleted.id === row.id)));
       setSelectedIds(new Set());
+      if (deletable.some((row) => row.id === selectedRowId)) {
+        setDraft(null);
+        setSelectedRowId(null);
+      }
       setMessage(`Deleted ${deletable.length} non-published rows.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not delete selected rows.");
@@ -4857,14 +4864,14 @@ export function GeneratedContentAdminDashboard() {
     try {
       const saved = savedFallbackRows.find((row) => row.content_key === contentKey || hookKeyFromSavedRow(row) === item.key);
       if (saved) {
-        navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
+        navigateAdminPage("knowledge", new URLSearchParams({ section: item.section, q: query }), { keepEditorOpen: true });
         openRow(saved);
         setMessage(`Opened ${item.label}.`);
         return;
       }
 
       const body = await hookBodyFor(item);
-      navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
+      navigateAdminPage("knowledge", new URLSearchParams({ section: item.section, q: query }), { keepEditorOpen: true });
       setSelectedRowId(null);
       setDraft(emptyDraftForHook({
         ...item,
@@ -4880,7 +4887,8 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function handleCreateAction(page: AdminDashboardPage, nextMessage: string) {
-    navigateAdminPage(page, undefined, { keepEditorOpen: true });
+    const isCalendarWriteup = page === "knowledge" && activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar";
+    navigateAdminPage(page, isCalendarWriteup ? new URLSearchParams({ section: "lunar-calendar" }) : undefined, { keepEditorOpen: true });
     setIsCreateMenuOpen(false);
     setSelectedRowId(null);
     setMessage(nextMessage);
@@ -4996,9 +5004,9 @@ export function GeneratedContentAdminDashboard() {
     if (page === "knowledge") {
       setDraft({
         id: null,
-        contentKey: "fallback-hook/manual/new-hook",
+        contentKey: isCalendarWriteup ? "authored/calendar-weekly-moon/new-entry" : "fallback-hook/manual/new-hook",
         surface: "sky",
-        mode: "feed",
+        mode: isCalendarWriteup ? "in_depth" : "feed",
         status: "DRAFT",
         headline: "",
         summary: "",
@@ -5007,12 +5015,13 @@ export function GeneratedContentAdminDashboard() {
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
         blockType: "fallback_hook",
         promptVersion: "fallback-hook-template-v1",
-        sections: null,
+        sections: isCalendarWriteup ? { packageRecord: { contentKey: "authored/calendar-weekly-moon/new-entry", content_role: "full_copy", body: "", focus: "", strategy: "", review_status: "needs_review" } } : null,
         facts: null,
         reviewerNotes: "",
         sourceSnapshot: {
           contentType: "fallback-system",
-          content_role: "fallback_hook",
+          content_role: isCalendarWriteup ? "full_copy" : "fallback_hook",
+          ...(isCalendarWriteup ? { sourcePackage: "tldrastro-fallback-architecture-v3" } : {}),
           review_status: "needs_review",
           hook: "manual/new-hook",
           contentSystem: "fallback",
@@ -5366,12 +5375,14 @@ export function GeneratedContentAdminDashboard() {
           <p className="admin-eyebrow">{group}</p>
           {primaryAdminNavItems.filter((item) => item.group === group).map((item) => {
             const Icon = item.icon;
-            const isActive = item.category
+            const isActive = item.section
+              ? activePage === item.page && fallbackSectionFilter === item.section
+              : item.category
               ? activePage === item.page && categoryFilter === item.category
               : item.page === "content"
                 ? activePage === "content" && categoryFilter !== "Natal Chart" && categoryFilter !== "Natal Aspects" && categoryFilter !== "Calendar Aspects"
                 : item.page === "compositionMap"
-                  ? isCompositionPage(activePage)
+                  ? isCompositionPage(activePage) && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar")
                   : item.page === "skyWriteups"
                     ? activePage === item.page && skyWriteupWorkspaceView === "catalog"
                   : activePage === item.page;
@@ -5538,7 +5549,7 @@ export function GeneratedContentAdminDashboard() {
             },
             {
               key: "fallback",
-              label: "Create fallback hook",
+              label: activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" ? "Create Calendar write-up" : "Create fallback hook",
               description: "Saved route fallback",
               icon: Flag,
               onSelect: () => handleCreateAction("knowledge", "Create fallback hook opened.")
@@ -6107,7 +6118,7 @@ export function GeneratedContentAdminDashboard() {
                     : renderContentTable(filteredFallbackRows, false, true)
                 )}
                 {filteredHookCatalog.length > 0
-                  && (Boolean(query.trim()) || fallbackSectionFilter === "friends")
+                  && (Boolean(query.trim()) || fallbackSectionFilter === "friends" || fallbackSectionFilter === "lunar-calendar")
                   && !(fallbackSectionFilter === "daily" && !query.includes("pair-daily")) && (
                   <Suspense fallback={<p className="admin-empty">Loading packaged source phrases…</p>}>
                     <PackagedHookCatalogResults
@@ -6118,7 +6129,7 @@ export function GeneratedContentAdminDashboard() {
                     />
                   </Suspense>
                 )}
-                {filteredFallbackRows.length === 0 && (filteredHookCatalog.length === 0 || (!query.trim() && fallbackSectionFilter !== "friends")) && <p className="admin-empty">No rows match these filters.</p>}
+                {filteredFallbackRows.length === 0 && (filteredHookCatalog.length === 0 || (!query.trim() && fallbackSectionFilter !== "friends" && fallbackSectionFilter !== "lunar-calendar")) && <p className="admin-empty">No rows match these filters.</p>}
               </aside>
             </section>
           </section>
@@ -7246,7 +7257,7 @@ export function GeneratedContentAdminDashboard() {
     return (
       <div className="admin-template-tabs" role="tablist" aria-label="Fallback hook sections">
         {fallbackSections.map((section) => (
-          <button key={section.key} type="button" role="tab" aria-selected={fallbackSectionFilter === section.key} className={fallbackSectionFilter === section.key ? "active" : ""} onClick={() => activePage === "hooks" ? navigateSurfaceMapFilters({ section: section.key }) : setFallbackSectionFilter(section.key)}>
+          <button key={section.key} type="button" role="tab" aria-selected={fallbackSectionFilter === section.key} className={fallbackSectionFilter === section.key ? "active" : ""} onClick={() => activePage === "hooks" ? navigateSurfaceMapFilters({ section: section.key }) : navigateAdminPage("knowledge", new URLSearchParams({ section: section.key, q: query }))}>
             {section.label}
           </button>
         ))}
@@ -9738,7 +9749,7 @@ export function GeneratedContentAdminDashboard() {
               <summary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
               <label className="admin-title-field">
                 <span>{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
-                <input aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || isPackageDraft} />
+                <input aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value, ...(isPackageDraft ? { sections: { ...currentDraft.sections, packageRecord: { ...draftPackageRecord(currentDraft), contentKey: event.target.value }, ...(draftPackageProposal(currentDraft) ? { packageDraft: { ...draftPackageProposal(currentDraft), contentKey: event.target.value } } : {}) } } : {}) })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || (isPackageDraft && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar"))} />
                 {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
               </label>
               {isVocabularyDraft && isPackageDraft && <p className="admin-field-hint">Package role: <code>{packageRole || "vocabulary"}</code></p>}
@@ -9841,6 +9852,11 @@ export function GeneratedContentAdminDashboard() {
               title={draftHasUnsavedChanges ? "Save or revert your changes before changing this source's lifecycle." : undefined}
             >
               {sourceIsArchived ? "Restore as draft" : "Archive source"}
+            </button>
+          )}
+          {selectedRow && selectedRow.status !== "LIVE" && activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" && (
+            <button type="button" className="admin-danger-button" disabled={isLoading || draftHasUnsavedChanges} onClick={() => void deleteSelectedDrafts([selectedRow])}>
+              Delete draft
             </button>
           )}
           {!isPackageDraft && isNewDraft && (
