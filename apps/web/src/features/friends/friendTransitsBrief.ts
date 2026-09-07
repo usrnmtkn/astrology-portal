@@ -92,6 +92,20 @@ function reliableHouseNumber(value: unknown) {
     : undefined;
 }
 
+function nonEmptyString(value: unknown) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+export function personalTransitHasGenerationEvidence(transit: FriendPersonalTransitView) {
+  const evidence = transit.evidence;
+  return transit.detailAvailable
+    && nonEmptyString(evidence.transitPlanet)
+    && nonEmptyString(evidence.aspect)
+    && nonEmptyString(evidence.natalPoint)
+    && nonEmptyString(evidence.natalSign)
+    && evidence.contentKeys.some((contentKey) => nonEmptyString(contentKey));
+}
+
 function personalTransitWithReliableHouse(transit: FriendPersonalTransitView): FriendPersonalTransitView {
   const natalHouse = reliableHouseNumber(transit.evidence.natalHouse);
 
@@ -146,11 +160,11 @@ export function buildFriendTransitsBrief({
 }): FriendTransitsBrief {
   const primaryThemes = personalTransitGroups
     .find((group) => group.key === "short")
-    ?.transits.filter((transit) => transit.detailAvailable)
+    ?.transits.filter(personalTransitHasGenerationEvidence)
     .map(personalTransitWithReliableHouse) ?? [];
   const longerCycles = personalTransitGroups
     .find((group) => group.key === "long")
-    ?.transits.filter((transit) => transit.detailAvailable)
+    ?.transits.filter(personalTransitHasGenerationEvidence)
     .map(personalTransitWithReliableHouse) ?? [];
   const inferredReliableNatalHouse = houseTransits.some((transit) => (
     transit.detailAvailable && reliableHouseNumber(transit.house) !== undefined
