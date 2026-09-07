@@ -99,10 +99,12 @@ function nonEmptyString(value: unknown) {
 export function personalTransitHasGenerationEvidence(transit: FriendPersonalTransitView) {
   const evidence = transit.evidence;
   return transit.detailAvailable
+    && nonEmptyString(transit.id)
+    && nonEmptyString(transit.title)
+    && nonEmptyString(transit.summary)
     && nonEmptyString(evidence.transitPlanet)
     && nonEmptyString(evidence.aspect)
     && nonEmptyString(evidence.natalPoint)
-    && nonEmptyString(evidence.natalSign)
     && evidence.contentKeys.some((contentKey) => nonEmptyString(contentKey));
 }
 
