@@ -6,6 +6,8 @@ import { isPublishedButUnwired, type ContentWiringRow } from "./contentWiringSta
 import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./ownerSession";
 import "./admin.css";
 import "./admin-components.css";
+import "./admin-form-density.css";
+import "./admin-content-studio-layout.css";
 
 type CoverageRow = {
   id: string;
@@ -147,6 +149,9 @@ export default function NeedsAttentionDashboard() {
   const [credential, setCredential] = useState("");
   const [emergencySecret, setEmergencySecret] = useState(() => normalizeAdminSecret(window.localStorage.getItem(adminSecretStorageKey) ?? ""));
   const [loading, setLoading] = useState(false);
+  // True until the owner-session check has decided whether there is a credential
+  // to load with, so the sign-in gate never flashes while data is on its way.
+  const [bootstrapping, setBootstrapping] = useState(true);
   const [error, setError] = useState("");
 
   async function loadAttention(nextCredential: string) {
@@ -187,6 +192,7 @@ export default function NeedsAttentionDashboard() {
       if (cancelled) return;
       const nextCredential = token || saved;
       if (nextCredential) void loadAttention(nextCredential);
+      setBootstrapping(false);
     });
     const stopWatching = watchOwnerSessionAccessToken((token) => {
       if (!cancelled && token) void loadAttention(token);
@@ -232,15 +238,26 @@ export default function NeedsAttentionDashboard() {
             <p>Only work that can change required reader coverage or fix a broken content state appears here. Optional enrichment and historical records stay out of this queue.</p>
           </div>
           <div className="admin-toolbar-actions">
-            <a className="admin-create-button" href="/admin/content/coverage">Content coverage</a>
-            <button type="button" className="admin-create-button" onClick={() => credential && void loadAttention(credential)} disabled={!credential || loading}>
+            <a className="admin-create-button admin-secondary-button" href="/admin/content/coverage">Content coverage</a>
+            <button type="button" className="admin-create-button admin-secondary-button" onClick={() => credential && void loadAttention(credential)} disabled={!credential || loading}>
               <RefreshCw size={16} aria-hidden="true" />
               {loading ? "Refreshing…" : "Refresh"}
             </button>
           </div>
         </header>
 
-        {!coverage && (
+        {!coverage && (loading || bootstrapping) && (
+          <section className="admin-content-toolbar admin-initial-loading" aria-label="Loading" aria-live="polite">
+            <div>
+              <p className="admin-eyebrow">Connecting to Content Studio</p>
+              <h2>Loading…</h2>
+              <p>Checking access and loading coverage.</p>
+            </div>
+            <RefreshCw size={22} aria-hidden="true" />
+          </section>
+        )}
+
+        {!coverage && !loading && !bootstrapping && (
           <>
             <AdminAccessGate disabled={!normalizeAdminSecret(emergencySecret) || loading} onChange={setEmergencySecret} onSubmit={submitEmergencyAccess} value={emergencySecret} />
             {error && <p role="alert">{error}</p>}
@@ -299,7 +316,7 @@ export default function NeedsAttentionDashboard() {
                   <h2>Enrichment is separate from required work</h2>
                   <p>{coverage.summary.unresolvedOptionalIssues} optional decisions can add rotation or depth later. They are not counted in Needs attention because current reader coverage does not depend on them.</p>
                 </div>
-                <a className="admin-create-button" href="/admin/content#unresolved-content">Review optional enrichment</a>
+                <a className="admin-create-button admin-secondary-button" href="/admin/content#unresolved-content">Review optional enrichment</a>
               </section>
             )}
 

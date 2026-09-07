@@ -113,7 +113,7 @@ export function AdminPageHeader({
           Needs attention
         </a>
         <a
-          className="admin-create-button"
+          className="admin-create-button admin-secondary-button"
           href="/admin/content/coverage"
           style={coverageActionStyle}
           title="See content coverage: complete and missing content corpora"
@@ -175,6 +175,13 @@ type AdminAccessGateProps = {
   value: string;
 };
 
+/** Vercel preview hosts carry the branch or deployment id in the hostname. */
+function isPreviewDeployment() {
+  if (typeof window === "undefined") return false;
+  const host = window.location.hostname;
+  return host.includes("-git-") || /-[a-z0-9]{6,}-[a-z0-9-]+\.vercel\.app$/u.test(host) || host === "localhost" || host === "127.0.0.1";
+}
+
 export function AdminAccessGate({ disabled, onChange, onSubmit, value }: AdminAccessGateProps) {
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") onSubmit();
@@ -186,8 +193,8 @@ export function AdminAccessGate({ disabled, onChange, onSubmit, value }: AdminAc
         <p className="admin-eyebrow">Owner access required</p>
         <h2>Sign in to Content Studio</h2>
         <p>
-          This preview uses a separate site address, so your regular TLDR Astro sign-in may not carry over.
-          Sign in as the owner here, or use the emergency admin secret for this deployment.
+          Content Studio needs the owner account. Sign in here, or use the emergency admin secret for this deployment.
+          {isPreviewDeployment() && " This preview uses a separate site address, so a production sign-in does not carry over."}
         </p>
       </div>
       <div className="admin-access-gate-actions">
