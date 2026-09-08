@@ -56,8 +56,7 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
     await page.goto("/?date=2026-09-07#sky");
     const aspectCard = page.getByRole("button", { name: "Read more about Neptune Rx sextile Pluto Rx", exact: true });
-    await expect(aspectCard).toBeVisible({ timeout: 60_000 });
-    await expect(aspectCard.locator(".aspect-row-glyphs")).toHaveText(/℞.*℞/);
+    await expect(aspectCard).toHaveCount(0);
     const card = page.getByRole("button", { name: "Read more about Neptune Rx in Aries", exact: true });
     await expect(card).toContainText(normalize(modifier("Neptune")), { timeout: 60_000 });
     await card.click();
@@ -69,8 +68,8 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     // Preserve both the opening and final sentence of the owner-authored base unit.
     await expect(page.locator(".sky-detail-article")).toContainText("Neptune in Aries makes a new dream feel urgent before its shape is fully clear.");
     await expect(page.locator(".sky-detail-article")).toContainText("Let imagination lead without asking it to prove that every impulse is destiny.");
-    await expect(page.locator(".article-related-aspects__copy-heading h4").filter({ hasText: /Neptune Rx/ }).first()).toBeVisible();
-    const glyphs = page.locator(".article-related-aspects__copy-heading").filter({ hasText: /Neptune Rx/ }).first().locator(".aspect-row-glyphs");
+    await expect(page.locator(".article-related-aspect-row h4").filter({ hasText: /Neptune Rx/ }).first()).toBeVisible();
+    const glyphs = page.locator(".article-related-aspect-row").filter({ hasText: /Neptune Rx/ }).first().locator(".aspect-row-glyphs");
     await expect(glyphs).toContainText("℞");
     await expectSeparateHoroscopesAfterAspects(page);
     const heading = await page.locator("#sky-detail-title").evaluate(el => {
