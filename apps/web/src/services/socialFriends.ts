@@ -838,7 +838,7 @@ export function subscribeToSocialChanges(onChange: () => void) {
 
 export async function listSocialFriends(): Promise<ConnectedSocialFriend[]> {
   const { client } = await authenticatedClient();
-  const { data, error } = await client.rpc("list_social_friends");
+  const { data, error } = await client.rpc("list_social_friends").abortSignal(AbortSignal.timeout(8000));
 
   if (error) {
     throw socialError(error, "Could not load friends.");

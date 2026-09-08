@@ -124,7 +124,7 @@ function calendarRouteStateFromUrl(fallbackDate: string) {
 
     const params = new URLSearchParams(query);
     const rawView = params.get("view");
-    const rawDate = params.get("date");
+    const rawDate = params.get("date") ?? new URLSearchParams(window.location.search).get("date");
     const view: LunarCalendarViewMode = rawView === "day" || rawView === "daily" || rawView === "week"
       ? "week"
       : rawView === "weekly" || rawView === "month"
@@ -147,8 +147,11 @@ function updateCalendarRouteUrl(view: LunarCalendarViewMode, date: string, mode:
 
     params.set("view", view === "week" ? "day" : view);
     params.set("date", date);
+    const sharedDateChanged = url.searchParams.get("date") !== date;
+    url.searchParams.set("date", date);
     url.hash = `calendar?${params.toString()}`;
     window.history[mode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+    if (sharedDateChanged) window.dispatchEvent(new PopStateEvent("popstate"));
   } catch {
     // URL state is an enhancement; Calendar remains usable without history.
   }

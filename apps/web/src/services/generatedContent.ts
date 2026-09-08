@@ -15,7 +15,7 @@ export async function loadContentStudioLastKnownGoodRows(): Promise<GeneratedCon
     contentStudioLastKnownGoodLoadedAt = Date.now();
     contentStudioLastKnownGoodRowsPromise = (async () => {
       try {
-        const response = await fetch("/content-studio-last-known-good.json", { cache: "no-cache" });
+        const response = await fetch("/content-studio-last-known-good.json", { cache: "no-cache", signal: AbortSignal.timeout(8000) });
         if (!response.ok) return [];
         const snapshot = await response.json() as { schema?: unknown; rowCount?: unknown; rows?: unknown; publications?: unknown };
         if (snapshot.schema !== "content-studio-last-known-good-v1" || !Array.isArray(snapshot.rows)
@@ -1804,6 +1804,7 @@ export async function loadLiveGeneratedContentForSurfaces(
   targetDate?: string,
   previewMode: GeneratedContentPreviewMode = readGeneratedContentPreviewMode()
 ) {
+  const requestSignal = AbortSignal.timeout(8000);
   await refreshContentPublications();
   const supabase = await getSupabaseClient();
 
@@ -1837,7 +1838,7 @@ export async function loadLiveGeneratedContentForSurfaces(
       query = query.or(`target_date.is.null,target_date.eq.${targetDate}`);
     }
 
-    const { data, error } = await query.returns<GeneratedContentRow[]>();
+    const { data, error } = await query.abortSignal(requestSignal).returns<GeneratedContentRow[]>();
 
     if (error) {
       console.warn("Live generated content failed to load; using the nightly reader-safe snapshot.", error);
@@ -1854,6 +1855,7 @@ export async function loadLiveGeneratedContentForSurfaces(
 }
 
 export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
+  const requestSignal = AbortSignal.timeout(8000);
   await refreshContentPublications();
   const keys = Array.from(new Set(contentKeys.map((key) => key.trim()).filter(Boolean)));
 
@@ -1880,6 +1882,7 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
       .eq("lane", "serving")
       .is("review_state", null)
       .order("updated_at", { ascending: false })
+      .abortSignal(requestSignal)
       .returns<GeneratedContentRow[]>();
 
     if (error) {

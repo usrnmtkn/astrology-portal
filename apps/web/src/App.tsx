@@ -17146,19 +17146,17 @@ function ProfileView({
       />
     );
   }) : [];
-  const readerAspectRows = aspectRows.flatMap((transit) => {
+  const readerAspectRows = aspectRows.map((transit) => {
     const personalizedContentKey = personalTransitGeneratedContentKey(transit, targetDate);
     const normalizedTransit = normalizePersonalTransitSurface(transit, targetDate);
     const savedGeneratedContent = personalTransitGeneratedContent.get(personalizedContentKey) ?? null;
-
-    // A transit identity is not a reader detail by itself. Keep the row hidden
-    // until either exact directional authored copy or matching saved copy is
-    // available; otherwise the button opens a heading-only article.
-    return normalizedSurfaceHasReaderDetail(normalizedTransit) || hasReaderFacingGeneratedCopy(savedGeneratedContent)
-      ? [{ normalizedTransit, personalizedContentKey, savedGeneratedContent, transit }]
-      : [];
+    const detailAvailable = normalizedSurfaceHasReaderDetail(normalizedTransit)
+      || hasReaderFacingGeneratedCopy(savedGeneratedContent);
+    // Missing prose must not erase a calculated transit or imply a quiet day.
+    return { normalizedTransit, personalizedContentKey, savedGeneratedContent, transit, detailAvailable };
   });
   const updateAspectRows = readerAspectRows.map(({
+    detailAvailable,
     normalizedTransit,
     personalizedContentKey,
     savedGeneratedContent,
@@ -17207,12 +17205,13 @@ function ProfileView({
       });
     };
 
+    const Row = detailAvailable ? "button" : "article";
     return (
-      <button
-        type="button"
+      <Row
+        type={detailAvailable ? "button" : undefined}
         className={`updates-aspect-row${isBackgroundUpdate ? " updates-aspect-row--background" : ""}`}
         key={transit.id}
-        onClick={openArticle}
+        onClick={detailAvailable ? openArticle : undefined}
       >
         <span className="updates-aspect-row__glyphs">
           <AspectGlyphs from={transit.transitPlanet} aspect={transit.aspect} to={transit.natalPoint} />
@@ -17253,7 +17252,7 @@ function ProfileView({
           <span className="updates-aspect-row__dot" aria-hidden="true" />
           <span className="updates-aspect-row__orb">{wholeDegreeOrb(transitOrbValue(transit))}</span>
         </span>
-      </button>
+      </Row>
     );
   });
   const dailyMoon = currentSky?.positions.find((position) => position.planet === "Moon") ?? null;
@@ -17425,7 +17424,7 @@ function ProfileView({
     return groups;
   }, []);
   const standaloneHouseTransitRows = currentSky && natalSky
-    ? currentSkyHouseActivations(currentSky, natalSky).slice(0, 4).flatMap((activation) => {
+    ? currentSkyHouseActivations(currentSky, natalSky).flatMap((activation) => {
       const { house, position } = activation;
       const transit = {
         id: activation.id,
@@ -17449,9 +17448,7 @@ function ProfileView({
         generatedContent
       );
 
-      if (!normalizedSurfaceHasReaderDetail(normalizedHouseTransit)) {
-        return [];
-      }
+      const detailAvailable = normalizedSurfaceHasReaderDetail(normalizedHouseTransit);
 
       const renderedWindow = normalizedHouseTransit.sections[0]?.window ?? timingRange;
       const rowSummary = transitCardPreview(
@@ -17487,12 +17484,13 @@ function ProfileView({
         });
       };
 
+      const Row = detailAvailable ? "button" : "article";
       return [(
-        <button
-          type="button"
+        <Row
+          type={detailAvailable ? "button" : undefined}
           className="updates-aspect-row updates-aspect-row--house"
           key={contentKey}
-          onClick={openArticle}
+          onClick={detailAvailable ? openArticle : undefined}
         >
           <span className="updates-aspect-row__glyphs" aria-hidden="true">
             <span className="planet-glyph">{pointGlyph(transit.transitPlanet)}</span>
@@ -17523,12 +17521,12 @@ function ProfileView({
             <span className="updates-aspect-row__dot" aria-hidden="true" />
             <span className="updates-aspect-row__orb">{house}</span>
           </span>
-        </button>
+        </Row>
       )];
     })
     : [];
   const activeTransitAspectIdentities = new Set(
-    readerAspectRows.map(({ transit }) => transitAspectIdentity(
+    readerAspectRows.filter(({ detailAvailable }) => detailAvailable).map(({ transit }) => transitAspectIdentity(
       transit.transitPlanet,
       transit.aspect,
       transit.natalPoint
