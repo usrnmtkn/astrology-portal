@@ -16800,6 +16800,7 @@ function ProfileView({
     natalSky?.generatedAt,
     currentSky?.generatedAt,
     displayRising,
+    fallbackArchitectureV3Version,
     generatedContent,
     unknownBirthTime,
     targetDate
