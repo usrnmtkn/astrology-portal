@@ -1,3 +1,4 @@
+import { isContentRetired } from "./content/contentPublicationState";
 import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
 import { calendarDayDistance } from "./services/calendarDayDistance";
@@ -10127,13 +10128,29 @@ function compositeRelationshipTypeParagraphs(
 
 function sourceGroundedCompositeSection({
   contentKeys,
-  heading
+  heading,
+  generatedContent
 }: {
   contentKeys: string[];
   heading: string;
+  generatedContent?: GeneratedContentMap;
 }): NormalizedCompositeSection | null {
-  const fallback = relationshipKnowledgeFallbackByKeys(contentKeys);
-  const body = contentFallbackParagraphs(fallback).join("\n\n");
+  if (contentKeys.some(isContentRetired)) return null;
+  for (const key of contentKeys) {
+    const generated = generatedContent ? liveGeneratedContent(generatedContent, key) : null;
+    const paragraphs = generatedContentParagraphs(generated);
+    const body = paragraphs.length ? paragraphs.join("\n\n") : generated?.summary;
+    if (body) return {
+      slot: "composite-meaning", required: true, layer: "generated",
+      tier: "generated", sourceKeys: [key], heading, body
+    };
+  }
+  const fallback = relationshipKnowledgeFallbackByKeys(contentKeys, { allowKnowledgeOnly: true });
+  // A reviewed composite translation can serve without a separate voice row.
+  // Knowledge policy metadata is not part of the interpretation.
+  const body = fallback && hasApprovedVoiceContent(fallback)
+    ? contentFallbackParagraphs(fallback).join("\n\n")
+    : fallback?.body ?? "";
 
   if (!body) {
     return null;
@@ -10150,11 +10167,13 @@ function sourceGroundedCompositeSection({
   };
 }
 
-function normalizeCompositeAspectSurface(aspect: { from: string; to: string; type: string; orb?: number | null }): NormalizedCompositeArticle {
-  const contentKeys = relationshipAspectContentKeys(aspect.from, aspect.type, aspect.to, "composite");
+function normalizeCompositeAspectSurface(aspect: { from: string; to: string; type: string; orb?: number | null }, generatedContent?: GeneratedContentMap): NormalizedCompositeArticle {
+  const contentKeys = relationshipAspectContentKeys(aspect.from, aspect.type, aspect.to, "composite")
+    .filter((key) => key.startsWith("composite"));
   const sourceGroundedSection = sourceGroundedCompositeSection({
     contentKeys,
-    heading: `Composite ${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`
+    heading: `Composite ${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`,
+    generatedContent
   });
   const sections = sourceGroundedSection ? [sourceGroundedSection] : [];
 
@@ -10165,11 +10184,12 @@ function normalizeCompositeAspectSurface(aspect: { from: string; to: string; typ
   };
 }
 
-function normalizeCompositePlacementSurface(position: { planet: string; sign: string; house?: number | null }): NormalizedCompositeArticle {
+function normalizeCompositePlacementSurface(position: { planet: string; sign: string; house?: number | null }, generatedContent?: GeneratedContentMap): NormalizedCompositeArticle {
   const contentKeys = compositePlacementContentKeys(position.planet, position.sign, position.house);
   const sourceGroundedSection = sourceGroundedCompositeSection({
     contentKeys,
-    heading: `Composite ${position.planet} in ${position.sign}`
+    heading: `Composite ${position.planet} in ${position.sign}`,
+    generatedContent
   });
   const sections = sourceGroundedSection ? [sourceGroundedSection] : [];
 
@@ -14260,7 +14280,7 @@ export function App() {
             <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
           </Suspense>
         </>
-      ) : skyDetailRoutePath ? (
+      ) : skyDetailRoutePath?.startsWith("sky/") ? (
         <FeatureLoadingFallback />
       ) : (
         <>
@@ -17917,6 +17937,7 @@ export const friendsViewModelDependencies = {
   natalGeneratedCopyForOwner,
   natalPlacementDetailArticle,
   normalizeChartSettings,
+  useContentRegistryRevision,
   normalizeCompositeAspectSurface,
   normalizeCompositePlacementSurface,
   normalizeContentIdPart,

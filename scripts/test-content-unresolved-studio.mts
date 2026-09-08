@@ -10,7 +10,8 @@ import {
 } from "../apps/admin/src/UnresolvedContentReview";
 import {
   loadContentUnresolvedReport,
-  unresolvedContentSurface
+  unresolvedContentSurface,
+  unresolvedContentIssues
 } from "../api/admin/content-unresolved";
 import {
   assertCurrentResolutionIssue,
@@ -33,7 +34,12 @@ const sourceDecisionMigration = fs.readFileSync(new URL("../apps/web/supabase/mi
 const report = loadContentUnresolvedReport() as UnresolvedContentReport;
 
 assert.equal(report.count, report.items.length, "The Studio inventory count must match the governed queue items.");
-assert.ok(report.count > 0, "The governed unresolved queue must populate the Studio inventory.");
+const sourceReport = JSON.parse(fs.readFileSync(new URL(
+  "../packages/astro-knowledge/generated/content-unresolved-queue-v1.json", import.meta.url
+), "utf8"));
+assert.equal(report.count, sourceReport.count, "The loader must preserve the required queue, including an empty queue.");
+assert.deepEqual(report.items.map((item) => item.contentKey), sourceReport.items.map((item: { contentKey: string }) => item.contentKey));
+assert.deepEqual(report.issues, unresolvedContentIssues(report.items));
 assert.equal(
   Object.values(report.reasonCounts).reduce((sum, count) => sum + count, 0),
   report.count,
@@ -50,11 +56,26 @@ assert.equal(
 );
 
 const groupedIssues = report.issues;
-assert.ok(groupedIssues.length < report.items.length, "Duplicate source records must be grouped into one owner-facing issue.");
+// Workflow behavior must not depend on a particular owner decision remaining
+// unresolved in the installed inventory. Exercise duplicate records explicitly.
+const fixtureKey = "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aquarius/house-2";
+const fixtureItems = ["first", "duplicate"].map((id) => ({
+  id,
+  contentKey: fixtureKey,
+  reviewStatus: "needs_review",
+  reason: "unresolved-review-status",
+  sourcePath: "test-fixture.json",
+  objectPath: `.${id}`,
+  surface: "Lunations"
+}));
+const fixtureIssues = unresolvedContentIssues(fixtureItems);
+assert.equal(fixtureIssues.length, 1, "Duplicate source records must be grouped into one owner-facing issue.");
+assert.equal(fixtureIssues[0].records.length, 2);
+assert.deepEqual(unresolvedContentIssues([]), [], "An empty required queue has no issues.");
 const sunVirgoIssue = groupedIssues.find((issue) => issue.contentKey === "fallback-hook/sky-sign-copy/sun/virgo");
 assert.equal(sunVirgoIssue, undefined, "The repaired Sun in Virgo source lineage must leave the unresolved inventory.");
 assert.equal(groupedIssues.filter((issue) => issue.kind === "source-repair").length, 0);
-const editorialIssue = groupedIssues.find((issue) => issue.kind === "editorial-review");
+const editorialIssue = fixtureIssues.find((issue) => issue.kind === "editorial-review");
 assert.ok(editorialIssue);
 const sunVirgoRepairPlan = contentSourceRepairPlan("fallback-hook/sky-sign-copy/sun/virgo");
 assert.ok(sunVirgoRepairPlan, "The completed repair must retain its hash-bound replacement plan as provenance.");
@@ -150,7 +171,18 @@ const normalizedResolution = normalizeContentStudioResolution({
   ownerDecisionRequired: true
 });
 assert.equal(normalizedResolution.issueId, editorialIssue.issueId);
-assert.doesNotThrow(() => assertCurrentResolutionIssue(normalizedResolution));
+assert.throws(() => assertCurrentResolutionIssue(normalizedResolution), /does not match/u,
+  "A fixture or stale issue cannot be recorded against the installed queue.");
+// The loader caches this in-memory report. Temporarily install the fixture to
+// exercise current-issue validation without changing a governed source file.
+const installedIssues = report.issues;
+try {
+  report.issues = fixtureIssues;
+  assert.doesNotThrow(() => assertCurrentResolutionIssue(normalizedResolution));
+  assert.throws(() => assertCurrentResolutionIssue({ ...normalizedResolution, contentKey: "wrong/key" }), /does not match/u);
+} finally {
+  report.issues = installedIssues;
+}
 assert.throws(() => normalizeContentStudioResolution({ ...normalizedResolution, issueId: "wrong" }), /issueId is invalid/u);
 assert.throws(() => assertCurrentResolutionIssue({ ...normalizedResolution, contentKey: "wrong/key" }), /does not match/u);
 
@@ -185,6 +217,17 @@ const loadedReport = await loadUnresolvedContentReport(
   }
 );
 assert.equal(loadedReport.count, report.count, "The authenticated Studio loader must return the governed queue.");
+for (const fixtureReport of [
+  { ...report, count: 0, items: [], issues: [], reasonCounts: {}, surfaceCounts: {} },
+  { ...report, count: 2, items: fixtureItems, issues: fixtureIssues,
+    reasonCounts: { "unresolved-review-status": 2 }, surfaceCounts: { Lunations: 2 } }
+]) {
+  const loaded = await loadUnresolvedContentReport("fixture-credential", async () =>
+    new Response(JSON.stringify({ ok: true, report: fixtureReport }), {
+      status: 200, headers: { "content-type": "application/json" }
+    }));
+  assert.deepEqual(loaded, fixtureReport, "The Studio loader preserves both empty and populated inventories.");
+}
 
 assert.match(reviewSource, /Resolve content holds/u);
 assert.match(reviewSource, /Review exact replacements and authorize source repairs here/u);
