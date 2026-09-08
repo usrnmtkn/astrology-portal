@@ -226,6 +226,7 @@ import {
   resolveCmsSurfaceOverride
 } from "./content/cmsSurfaceOverrides";
 import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
+import { loadSkyDetailContent } from "./services/skyDetailContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   selectSkyAspectCopyByPrecedence
@@ -5756,7 +5757,7 @@ function relatedAspectRowsForPlacement({
       if (mode === "sky") return {
         key, aspectType: aspect.type, group: rowGroup,
         node: <a className="article-related-aspect-row aspect-row aspect-row-button"
-          aria-label={`Read more about ${title}`} href={`#${skyAspectRoutePath(aspect)}`}>{rowContent}</a>
+          aria-label={`Read more about ${title}`} href={`#${skyAspectRoutePath(aspect)}${generatedAt ? `/${aspect.exactAt ? "at" : "on"}/${encodeURIComponent(aspect.exactAt ?? generatedAt)}` : ""}`}>{rowContent}</a>
       };
 
       return {
@@ -11410,17 +11411,18 @@ export function App() {
   function calendarTransitDetailWithContent(
     event: LunarCalendarEvent,
     generatedContent: GeneratedContentMap,
-    description?: string
+    description?: string,
+    detailSky: SkySnapshot | null = sky
   ): SkyDetail | null {
-    if (!sky) {
+    if (!detailSky) {
       return null;
     }
 
     if (event.type === "lunation") {
-      return currentSkyV4LunationDetailArticle({ event, sky, generatedContent });
+      return currentSkyV4LunationDetailArticle({ event, sky: detailSky, generatedContent });
     }
 
-    const generatedAt = event.startsAt || sky.generatedAt;
+    const generatedAt = event.startsAt || detailSky.generatedAt;
 
     if (event.type === "aspect" && event.planets && event.aspect) {
       const [planetA, planetB] = event.planets;
@@ -11438,7 +11440,7 @@ export function App() {
 
       const detail = datedSkyAspectDetail(
         currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent),
-        event.startsAt, sky.location.timeZone || "UTC"
+        event.startsAt, detailSky.location.timeZone || "UTC"
       );
       const eventBody = calendarEventDetailBody(event, generatedContent, description);
       const hasAspectBody = skyDetailHasReaderFacingMainBody(detail);
@@ -11456,7 +11458,7 @@ export function App() {
       return null;
     }
 
-    const position = sky.positions.find((candidate) => candidate.planet === event.planet);
+    const position = detailSky.positions.find((candidate) => candidate.planet === event.planet);
 
     if (!position) {
       return null;
@@ -11481,14 +11483,14 @@ export function App() {
     };
 
     const detail = currentSkyPlacementDetailArticle({
-      aspects: sky.aspects,
+      aspects: detailSky.aspects,
       generatedAt,
       generatedContent,
-      locationLatitude: sky.location.latitude,
-      moonEvent: sky.moonEvent,
+      locationLatitude: detailSky.location.latitude,
+      moonEvent: detailSky.moonEvent,
       onOpenDetail: openSkyDetail,
       position: eventPosition,
-      positions: sky.positions
+      positions: detailSky.positions
     });
     const eventBody = calendarEventDetailBody(event, generatedContent, description);
     const hasPlacementBody = skyDetailHasReaderFacingMainBody(detail);
@@ -11908,7 +11910,7 @@ export function App() {
       && storedCalendarEvent.event.planets && storedCalendarEvent.event.aspect
       && skyDetailRoutePath !== `${skyAspectRoutePath({ from: storedCalendarEvent.event.planets[0], to: storedCalendarEvent.event.planets[1], type: storedCalendarEvent.event.aspect })}/at/${encodeURIComponent(storedCalendarEvent.event.startsAt)}`
       ? null : storedCalendarEvent;
-    const [baseRoute, encodedExactAt] = skyDetailRoutePath.split("/at/");
+    const [baseRoute, encodedExactAt] = skyDetailRoutePath.split(/\/(?:at|on)\//u);
     const [routeSurface, routeType, routePlanet, routeSign] = decodeSkyRouteParts(baseRoute);
     const routePosition = routePlanet && skyNodeDisplayPositions(sky.positions).find(position => skyRoutePartMatches(position.planet, routePlanet));
     if (!calendarEvent && routeSurface === "sky" && routeType === "placement" && routeSign
@@ -11918,14 +11920,18 @@ export function App() {
       setSelectedSkyDetail(null);
       void import("./services/skyCalculationClient").then(({ getSkyPlacementSnapshotOffMainThread }) => (
         getSkyPlacementSnapshotOffMainThread(sky.location, routePlanet, routeSign, new Date(sky.generatedAt))
-      )).then(placementSky => {
-        if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
-        const detail = skyDetailFromRoutePath(baseRoute, placementSky, skyGeneratedContent, openSkyDetail);
-        selectedSkyDetailRefreshKeyRef.current = refreshKey;
-        selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
-        selectedSkyDetailRefreshSkyRef.current = sky;
-        setSelectedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
-          skyPlacementPersonalizationTransits, placementSky.generatedAt, skyGeneratedContent));
+      )).then(async placementSky => {
+        const renderPlacement = (detailContent: GeneratedContentMap) => {
+          if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
+          const detail = skyDetailFromRoutePath(baseRoute, placementSky, detailContent, openSkyDetail);
+          selectedSkyDetailRefreshKeyRef.current = refreshKey;
+          selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
+          selectedSkyDetailRefreshSkyRef.current = sky;
+          setSelectedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
+            skyPlacementPersonalizationTransits, placementSky.generatedAt, detailContent));
+        };
+        renderPlacement(skyGeneratedContent);
+        renderPlacement(await loadSkyDetailContent(placementSky, skyGeneratedContent, [], loadLiveGeneratedContentForKeys));
       }).catch(error => { if (!cancelled) console.warn("Requested placement calculation failed.", error); });
       return () => { cancelled = true; };
     }
@@ -11935,35 +11941,51 @@ export function App() {
       let cancelled = false;
       setSelectedSkyDetail(null);
       // Recompute the dated event on reload; never borrow today's motion or signs.
-      void getAstrodienstSky(sky.location, new Date(exactAt)).then(eventSky => {
-        if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
-        const detail = skyDetailFromRoutePath(baseRoute, eventSky, skyGeneratedContent, openSkyDetail);
-        selectedSkyDetailRefreshKeyRef.current = refreshKey;
-        selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
-        selectedSkyDetailRefreshSkyRef.current = sky;
-        setSelectedSkyDetail(detail ? datedSkyAspectDetail(detail, exactAt, sky.location.timeZone || "UTC") : null);
+      void getAstrodienstSky(sky.location, new Date(exactAt)).then(async eventSky => {
+        const renderAspect = (detailContent: GeneratedContentMap) => {
+          if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
+          const detail = skyDetailFromRoutePath(baseRoute, eventSky, detailContent, openSkyDetail);
+          selectedSkyDetailRefreshKeyRef.current = refreshKey;
+          selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
+          selectedSkyDetailRefreshSkyRef.current = sky;
+          setSelectedSkyDetail(detail
+            ? skyDetailRoutePath.includes("/at/")
+              ? datedSkyAspectDetail(detail, exactAt, sky.location.timeZone || "UTC")
+              : { ...detail, routePath: skyDetailRoutePath }
+            : null);
+        };
+        renderAspect(skyGeneratedContent);
+        renderAspect(await loadSkyDetailContent(eventSky, skyGeneratedContent, [], loadLiveGeneratedContentForKeys));
       }).catch(error => { if (!cancelled) console.warn("Dated aspect calculation failed.", error); });
       return () => { cancelled = true; };
     }
-    const detail = calendarEvent
-      ? calendarTransitDetailWithContent(
-          calendarEvent.event,
-          skyGeneratedContent,
-          calendarEvent.description
-        )
-      : skyDetailFromRoutePath(skyDetailRoutePath, sky, skyGeneratedContent, openSkyDetail);
-
-    selectedSkyDetailRefreshKeyRef.current = refreshKey;
-    selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
-    selectedSkyDetailRefreshSkyRef.current = sky;
-    setSelectedSkyDetail(personalizedSkyPlacementDetail(
-      detail,
-      profileNatalSky?.ascendant ?? userProfile?.rising,
-      skyPlacementPersonalizationTransits,
-      sky.generatedAt,
-      skyGeneratedContent
-    ));
-  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);
+    let cancelled = false;
+    const renderDetail = (detailSky: SkySnapshot, detailContent: GeneratedContentMap) => {
+      if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
+      const detail = calendarEvent
+        ? calendarTransitDetailWithContent(calendarEvent.event, detailContent, calendarEvent.description, detailSky)
+        : skyDetailFromRoutePath(skyDetailRoutePath, detailSky, detailContent, openSkyDetail);
+      selectedSkyDetailRefreshKeyRef.current = refreshKey;
+      selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
+      selectedSkyDetailRefreshSkyRef.current = sky;
+      setSelectedSkyDetail(personalizedSkyPlacementDetail(
+        detail, profileNatalSky?.ascendant ?? userProfile?.rising,
+        skyPlacementPersonalizationTransits, detailSky.generatedAt, detailContent
+      ));
+    };
+    // Keep immediately available copy visible while the matching published rows load.
+    if (!calendarEvent) renderDetail(sky, skyGeneratedContent);
+    const detailSnapshot = calendarEvent
+      ? getAstrodienstSky(sky.location, new Date(calendarEvent.event.startsAt), { includeTransitWindows: true })
+      : Promise.resolve(sky);
+    void detailSnapshot.then(async detailSky => {
+      if (calendarEvent) renderDetail(detailSky, skyGeneratedContent);
+      const content = await loadSkyDetailContent(detailSky, skyGeneratedContent,
+        calendarEvent ? calendarTransitDetailContentKeys(calendarEvent.event) : [], loadLiveGeneratedContentForKeys);
+      renderDetail(detailSky, content);
+    }).catch(error => { if (!cancelled) console.warn("Sky detail interpretation failed to load.", error); });
+    return () => { cancelled = true; };
+  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);
 
   useEffect(() => {
     const routePath = selectedSkyDetail?.routePath;
