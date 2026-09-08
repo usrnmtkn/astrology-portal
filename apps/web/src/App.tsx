@@ -11848,7 +11848,9 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    if (!skyDetailRoutePath?.startsWith("sky/") || !sky) {
+    // A calculation/content update can queue this effect just before a hash
+    // navigation. Do not reopen the old article after the reader has left it.
+    if (!skyDetailRoutePath?.startsWith("sky/") || !sky || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) {
       return;
     }
 
@@ -11881,7 +11883,7 @@ export function App() {
       setSelectedSkyDetail(null);
       // Recompute the dated event on reload; never borrow today's motion or signs.
       void getAstrodienstSky(sky.location, new Date(exactAt)).then(eventSky => {
-        if (cancelled) return;
+        if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
         const detail = skyDetailFromRoutePath(baseRoute, eventSky, skyGeneratedContent, openSkyDetail);
         selectedSkyDetailRefreshKeyRef.current = refreshKey;
         selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
