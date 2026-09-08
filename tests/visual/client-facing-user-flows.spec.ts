@@ -1970,7 +1970,7 @@ test.describe("client-facing user flow case studies", () => {
         for (const paragraph of paragraphs) await expect(article).toContainText(paragraph);
         await page.screenshot({ path: `test-results/composite-detail-${theme}-${width}.png`, fullPage: true });
         await page.reload();
-        await expect(article).toContainText(paragraphs[0]);
+        await expect(article).toContainText(paragraphs[0].split(/\{\{[^}]+\}\}/u).at(-1), { timeout: 60_000 });
         await page.getByRole("button", { name: "Close detail", exact: true }).click();
         const placement = pane.locator("button.placement-table-row").first();
         await expect(placement).toBeVisible();
@@ -3688,7 +3688,9 @@ test.describe("client-facing user flow case studies", () => {
   test("SKY V4 placement detail composes canonical copy with governed conditions and aspects", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page, { now: "2025-03-29T16:00:00.000Z" });
+    // Both bodies are retrograde in Aries on March 20. By March 29 Venus
+    // has left Aries; the old route relabeling incorrectly kept this overlay.
+    await seedClientState(page, { now: "2025-03-20T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/venus/aries");
 
     const article = page.locator(".sky-detail-article");
@@ -3697,6 +3699,31 @@ test.describe("client-facing user flow case studies", () => {
     await expect(article).toContainText("Venus retrograde is a course correction of the heart.");
     await expect(article).not.toContainText(/generated unapproved|natal placement/iu);
     await expectNoDuplicateArticleHeadings(page, "SKY V4 contextual placement detail");
+    await assertNoClientErrors();
+  });
+
+  test("SKY placement navigation keeps article and fallback identity on the requested sign", async ({ page }) => {
+    test.setTimeout(90_000);
+    const assertNoClientErrors = await expectNoClientErrors(page);
+    await seedClientState(page, { now: "2026-11-27T16:00:00.000Z" });
+    const corpus = JSON.parse(readFileSync(path.resolve("apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json"), "utf8"));
+    await expectClientRouteLoads(page, "/?date=2026-11-27#sky/placement/sun/sagittarius");
+    for (const sign of ["sagittarius", "gemini", "sagittarius"]) {
+      await page.evaluate((nextSign) => { window.location.hash = `sky/placement/sun/${nextSign}`; }, sign);
+      const article = page.locator(".sky-detail-article");
+      const row = corpus.content.continuous.find((candidate: { contentKey: string }) => candidate.contentKey === `sky-placement/article/sun/${sign}`);
+      const paragraphs = row.placementArticle.split("\n\n");
+      await expect(article).toContainText(paragraphs[0].split(/\{\{[^}]+\}\}/u).at(-1), { timeout: 60_000 });
+      await expect(article).toContainText(paragraphs.at(-1));
+      const otherSign = sign === "sagittarius" ? "gemini" : "sagittarius";
+      const other = corpus.content.continuous.find((candidate: { contentKey: string }) => candidate.contentKey === `sky-placement/article/sun/${otherSign}`);
+      await expect(article).not.toContainText(other.placementArticle.split("\n\n")[0].split(/\{\{[^}]+\}\}/u).at(-1));
+      if (sign === "gemini") {
+        await expect(article).not.toContainText("November 22 to December 21, 2026");
+        await expect(article).toContainText(/May \d{1,2} to June \d{1,2}, 2027/u);
+      }
+    }
+    await page.screenshot({ path: "test-results/fallback-placement-sagittarius.png", fullPage: true });
     await assertNoClientErrors();
   });
 

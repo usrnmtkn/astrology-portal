@@ -1,6 +1,7 @@
 import type { LocationInput } from "../types.js";
 import {
   getAstrodienstSky,
+  getSkyPlacementSnapshot,
   getLunarCalendarMonth,
   getLunarCalendarRangeEvents,
   getLunarCalendarWeek,
@@ -22,6 +23,7 @@ type SkyCalculationRequest =
   | { id: number; kind: "lunar-calendar-week"; args: Parameters<typeof getLunarCalendarWeek> }
   | { id: number; kind: "matching-new-moon"; args: Parameters<typeof getMatchingNewMoonForFullMoon> }
   | { id: number; kind: "natal-transit-timing"; args: Parameters<typeof natalTransitTimingFor> }
+  | { id: number; kind: "placement-sky"; location: LocationInput; planet: string; sign: string; date: string }
   | { id: number; kind: "preload" };
 
 type SkyCalculationResponse =
@@ -34,6 +36,8 @@ async function calculate(request: SkyCalculationRequest) {
   switch (request.kind) {
     case "sky":
       return getAstrodienstSky(request.location, new Date(request.date), request.options);
+    case "placement-sky":
+      return getSkyPlacementSnapshot(request.location, request.planet, request.sign, new Date(request.date));
     case "lunar-calendar-range":
       return getLunarCalendarRangeEvents(...request.args);
     case "lunar-calendar-month":

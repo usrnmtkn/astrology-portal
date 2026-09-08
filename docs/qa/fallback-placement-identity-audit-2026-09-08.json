@@ -1,0 +1,334 @@
+{
+  "date": "2026-09-08",
+  "base_commit": "90248249d782efd648dd42964fb1342673cc1e77",
+  "scope": "All source-rows fallback-hook records; focused Sky placement identity and cross-sign review",
+  "hook_records": 5098,
+  "unique_keys": 4841,
+  "families": {
+    "angle-intro": 4,
+    "angle-sign": 48,
+    "aspect-lived": 2,
+    "aspect-pair": 250,
+    "aspect-pattern": 6,
+    "aspect-pattern-activation": 6,
+    "aspect-pattern-apex": 3,
+    "aspect-type": 5,
+    "bond-effect-conjunction": 22,
+    "bond-effect-hard": 84,
+    "bond-effect-opposition": 22,
+    "bond-effect-sextile": 22,
+    "bond-effect-soft": 84,
+    "bond-effect-square": 22,
+    "bond-effect-trine": 22,
+    "career-hemisphere": 4,
+    "career-node-mode": 3,
+    "career-planet-tenth": 7,
+    "career-sign-essence": 12,
+    "circle-cycle-retro": 1,
+    "circle-cycle-return": 3,
+    "circle-lunation": 2,
+    "circle-profection": 12,
+    "circle-synastry": 3,
+    "compat-domain": 7,
+    "daily-body": 68,
+    "daily-headline": 68,
+    "dignity-line": 1,
+    "element-pattern": 16,
+    "empty-house": 541,
+    "empty-house-bridge": 12,
+    "empty-house-close": 1,
+    "empty-house-explainer": 1,
+    "empty-house-placement": 1,
+    "empty-house-ruler": 1,
+    "empty-house-ruler-v3": 6,
+    "fog-note": 4,
+    "house-cusp": 12,
+    "house-glossary": 12,
+    "house-lived": 6,
+    "house-meaning": 12,
+    "lunation-cycle-anchor": 1,
+    "lunation-higher-path": 12,
+    "lunation-horoscope": 3,
+    "lunation-intention": 12,
+    "lunation-matching-new-moon-anchor": 1,
+    "lunation-moment": 24,
+    "lunation-opening-situation": 12,
+    "lunation-release": 12,
+    "lunation-ruler-house": 24,
+    "lunation-ruler-retro": 1,
+    "lunation-shows": 12,
+    "lunation-sign-compact": 24,
+    "lunation-uranus-layer": 13,
+    "lunation-week-layer": 1,
+    "moon-phase": 8,
+    "moon-void": 1,
+    "natal-aspect-lived": 291,
+    "natal-core": 18,
+    "natal-moon-phase-lived": 1,
+    "natal-you-placement-complete-final": 39,
+    "natal-you-placement-house-final": 14,
+    "natal-you-placement-sign-final": 13,
+    "node-journey": 2,
+    "pair-daily": 140,
+    "placement-house-lived": 56,
+    "placement-house-sentence": 168,
+    "placement-sentence": 192,
+    "placement-sign-lived": 56,
+    "planet-best": 14,
+    "planet-grates": 18,
+    "planet-intro": 14,
+    "planet-lived": 7,
+    "planet-mode": 18,
+    "profection-explainer": 1,
+    "profection-ruler": 8,
+    "profection-ruler-luminary": 1,
+    "profection-year": 12,
+    "ruler-method": 84,
+    "season-marker": 4,
+    "sign-lived": 11,
+    "sky-aspect-exact": 4,
+    "sky-aspect-pair": 30,
+    "sky-aspect-sign": 78,
+    "sky-axis": 6,
+    "sky-eclipse-close": 1,
+    "sky-eclipse-node": 1,
+    "sky-eclipse-opener": 2,
+    "sky-element-close": 4,
+    "sky-event": 17,
+    "sky-fullmoon-sign": 12,
+    "sky-horoscope": 7,
+    "sky-lunation-close": 2,
+    "sky-lunation-opener": 2,
+    "sky-newmoon-sign": 12,
+    "sky-placement": 42,
+    "sky-placement-aspect": 2,
+    "sky-placement-confrontation": 2,
+    "sky-placement-frame": 28,
+    "sky-placement-hook": 168,
+    "sky-placement-lived": 168,
+    "sky-placement-lore": 12,
+    "sky-placement-meaning": 2,
+    "sky-placement-opening": 2,
+    "sky-placement-practice": 28,
+    "sky-placement-retro-frame": 18,
+    "sky-placement-sign": 36,
+    "sky-placement-tagline": 168,
+    "sky-placement-turn": 168,
+    "sky-placement-you": 28,
+    "sky-planet-education": 1,
+    "sky-season-close": 12,
+    "sky-season-lore": 12,
+    "sky-season-opener": 12,
+    "sky-season-ritual": 12,
+    "sky-season-shadow": 12,
+    "sky-sign-copy": 83,
+    "sky-sign-trap": 12,
+    "synastry-aspect-type": 5,
+    "synastry-pair": 483,
+    "transit-aspect-type": 6,
+    "transit-effect-hard": 202,
+    "transit-effect-house": 13,
+    "transit-effect-soft": 202,
+    "transit-house-event-frame": 7,
+    "transit-house-event-natal": 18,
+    "transit-house-event-scenes": 2,
+    "transit-house-event-wants": 169,
+    "transit-house-retro-overlay": 5,
+    "transit-retro": 9,
+    "transit-retro-article": 9,
+    "transit-retro-aspect": 1
+  },
+  "review_states": {
+    "needs_review": 145,
+    "reviewed": 559,
+    "approved": 4354,
+    "approved_reuse": 25,
+    "superseded": 15
+  },
+  "cross_sign_candidates": [
+    {
+      "file": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "key": "fallback-hook/sky-fullmoon-sign/taurus",
+      "status": "approved",
+      "field": "body_you",
+      "expected": [
+        "taurus"
+      ],
+      "foreign": [
+        "scorpio"
+      ],
+      "text": "A Taurus Full Moon brings grounding to the most intense season of the year. It lights the hidden parts of yourself and sets opposing perspectives and relationships on the table, asking for balance and compromise. The axis runs between your inner sense of security and the outer one: love versus obsession, debt versus abundance, the known ground versus the unknown deep. Expect a few shocking truths and some breakdowns in things that were already cracked, because this Moon breaks things down to break through, moving stuck energy toward change and liberation. Your emotions are powerful guides right now, even the uncomfortable ones. Let the solid Taurus ground hold you while you look at what Scorpio season digs up.",
+      "disposition": "valid_full_moon_axis"
+    },
+    {
+      "file": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "key": "fallback-hook/sky-fullmoon-sign/gemini",
+      "status": "approved",
+      "field": "body_you",
+      "expected": [
+        "gemini"
+      ],
+      "foreign": [
+        "sagittarius"
+      ],
+      "text": "A Gemini Full Moon forms the axis of the mind: the Gemini Moon watches the details, the grains of sand, while the Sagittarius Sun holds the big picture, the whole sandbox. Both are after the same thing, the truth. This Moon asks you to pay attention to the small distinctions while staying open-minded about what they add up to, blending reason with intuition instead of choosing one. The lower roads of this axis are overthinking, scattering yourself, leaning only on logic, or floating off into idealism. The higher road gives you a clearer view of your purpose. Watch what you say and how you name things this week, because language is where this Moon does its work.",
+      "disposition": "valid_full_moon_axis"
+    },
+    {
+      "file": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "key": "fallback-hook/sky-fullmoon-sign/cancer",
+      "status": "approved",
+      "field": "body_you",
+      "expected": [
+        "cancer"
+      ],
+      "foreign": [
+        "capricorn"
+      ],
+      "text": "A Cancer Full Moon lands in the middle of Capricorn season and asks you to soften. It is a time to nurture and nourish your emotional self, to find comfort in the stillness and darkness, and to tend the seeds you planted at the New Moon like a delicate plant in the dead of winter. The axis is foundation and structure: Cancer is the emotional foundation, Capricorn the outer structure, and both are after the same thing, security. Take stock of home, family, and career, and where something is not feeding you, nurture it first. If it cannot be healed, Capricorn's lesson applies: recognize that its time has passed, and let it go with discipline instead of blame. Self-care needs no excuses. Stop waiting for someone else to provide the comfort, and nurture yourself and the people who nurture you.",
+      "disposition": "valid_full_moon_axis"
+    },
+    {
+      "file": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "key": "fallback-hook/sky-fullmoon-sign/leo",
+      "status": "approved",
+      "field": "body_you",
+      "expected": [
+        "leo"
+      ],
+      "foreign": [
+        "aquarius"
+      ],
+      "text": "A Leo Full Moon is a call to live from the heart. Leo rules the heart and spine, the center of your body and the source of your warmth, and this Moon reminds you to find your passion and follow it with the generosity of a big open heart, the kind that gives like the Sun. The axis runs between rebellion and validation, the individual and the community: Aquarius asks how your gifts can serve something bigger, and Leo answers that you get to shine while doing it. The needs of the individual and the group are not mutually exclusive. Take a risk, step out of the comfort zone, and let yourself be childlike and expressive without judgment. Validation is not always necessary. Where has your heart been waiting for permission?",
+      "disposition": "valid_full_moon_axis"
+    },
+    {
+      "file": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "key": "fallback-hook/sky-fullmoon-sign/scorpio",
+      "status": "approved",
+      "field": "body_you",
+      "expected": [
+        "scorpio"
+      ],
+      "foreign": [
+        "taurus"
+      ],
+      "text": "A Scorpio Full Moon takes you into the deep end: loss, the unknown, other people's money, obsession, and the transformative power hiding in all of them. The axis runs between the tangible and the intangible: Taurus holds the ground, the body, and the bank account, while Scorpio digs at what is underneath them. Themes come in pairs now: love versus obsession, debt versus abundance, groundedness versus the unknown, trauma versus nurturance. Confront the shadow this Moon shows you and let it transform what it touches, then use the Taurus ground to stabilize what remains. Notice your own power and how you use it with others. What you release under this Moon tends to release all the way.",
+      "disposition": "valid_full_moon_axis"
+    },
+    {
+      "file": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "key": "fallback-hook/sky-sign-copy/sun/pisces",
+      "status": "needs_review",
+      "field": "body_you",
+      "expected": [
+        "pisces"
+      ],
+      "foreign": [
+        "aries"
+      ],
+      "text": "The Sun in Pisces closes the zodiac's year, and the month runs on dissolve. This can look like: the daydream interrupting the meeting, the film that opens grief filed as finished, the charity ask answered without deliberation, the nap that turns into an afternoon.\n\nThe useful version is mercy and imagination in working order: rest taken seriously, art made or absorbed, forgiveness extended where the account was never going to balance anyway.\n\nThe distortion is exit. The fantasy replaces the plan, the substance replaces the feeling, and compassion for everyone else becomes the reason nothing at home gets decided.\n\nLet one ending finish: the project, the grudge, the year itself. Pisces clears the table so Aries can set it.",
+      "disposition": "valid_adjacent_season_reference"
+    },
+    {
+      "file": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+      "key": "fallback-hook/sky-sign-copy/sun/leo",
+      "status": "approved",
+      "field": "body_you",
+      "expected": [
+        "leo"
+      ],
+      "foreign": [
+        "virgo"
+      ],
+      "text": "The work may be ready to be seen before we feel ready to show it. The Sun enters Leo on {{entryDate}} after moving through {{priorSign}} since {{priorSignEntryDate}}. The Sun governs identity, vitality, and who we are beneath the roles. Leo is the sign of visibility, creative pride, and being seen. A creative project gets shared before every detail is finished. Someone asks for the title, credit, invitation, or opportunity that matches work they have already been doing. The work can be unfinished and still ready to have a name on it.\n\nWanting to be seen is not the problem. Recognition can bring confidence back, especially when the work reaches the audience it was made for. The problem begins when the response starts deciding what gets made next. We check the numbers, reread the comments, and compare our reception with someone else's. A quiet response feels like proof the work failed. Someone else's success feels like lost ground. Soon the work is no longer becoming more honest or more interesting. It is becoming easier to approve.\n\nBeing visible and being known are not the same thing. A title may still look impressive and no longer describe the life we want. An online persona may attract attention while leaving important parts of us out. A creative identity may become another role we feel required to maintain. The version that gets rewarded can still be the wrong version to keep feeding.\n\nPraise can give the work momentum. It cannot tell us what the work means. Before {{exitDate}}, the response may change, the audience may move on, or the role may stop feeling convincing. What we name during Leo season is what Virgo season will ask us to build. The work worth carrying forward is the work we still mean when the spotlight is off.",
+      "disposition": "valid_adjacent_season_reference"
+    },
+    {
+      "file": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+      "key": "fallback-hook/sky-sign-copy/sun/leo",
+      "status": "approved",
+      "field": "close",
+      "expected": [
+        "leo"
+      ],
+      "foreign": [
+        "virgo"
+      ],
+      "text": "Praise can give the work momentum. It cannot tell us what the work means. Before {{exitDate}}, the response may change, the audience may move on, or the role may stop feeling convincing. What we name during Leo season is what Virgo season will ask us to build. The work worth carrying forward is the work we still mean when the spotlight is off.",
+      "disposition": "valid_adjacent_season_reference"
+    },
+    {
+      "file": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json",
+      "key": "fallback-hook/sky-sign-copy/sun/pisces",
+      "status": "superseded",
+      "field": "body_you",
+      "expected": [
+        "pisces"
+      ],
+      "foreign": [
+        "aries"
+      ],
+      "text": "The Sun in Pisces closes the zodiac's year, and the month runs on dissolve. This can look like: the daydream interrupting the meeting, the film that opens grief filed as finished, the charity ask answered without deliberation, the nap that turns into an afternoon.\n\nThe useful version is mercy and imagination in working order: rest taken seriously, art made or absorbed, forgiveness extended where the account was never going to balance anyway.\n\nThe distortion is exit. The fantasy replaces the plan, the substance replaces the feeling, and compassion for everyone else becomes the reason nothing at home gets decided.\n\nLet one ending finish: the project, the grudge, the year itself. Pisces clears the table so Aries can set it.",
+      "disposition": "valid_adjacent_season_reference"
+    }
+  ],
+  "named_placement_candidates": [],
+  "corrected_continuous_review": {
+    "records": 120,
+    "fields_per_record": [
+      "hook",
+      "lived",
+      "turn"
+    ],
+    "fields_reviewed": 360,
+    "duplicate_hooks": 0,
+    "duplicate_lived": 0,
+    "duplicate_turns": 0,
+    "confirmed_wrong_placement_prose": 0
+  },
+  "findings": [
+    {
+      "id": "F01",
+      "severity": "high",
+      "problem": "Placement URL sign overwrote calculated position.sign while keeping current residency, motion and aspects.",
+      "fix": "Resolve a complete ephemeris snapshot for the requested placement in the calculation worker; reject mismatched position at article adapter."
+    },
+    {
+      "id": "F02",
+      "severity": "high",
+      "problem": "Explicit canonical contentKey could disagree with requested planet/sign.",
+      "fix": "Reject mismatched reader key or continuous article override."
+    },
+    {
+      "id": "F03",
+      "severity": "medium",
+      "problem": "Contextual full-page/fallback/lunar overlays could belong to another placement subject.",
+      "fix": "Filter contexts to exact subject body/sign before composition."
+    },
+    {
+      "id": "F04",
+      "severity": "medium",
+      "problem": "Legacy placement aspect composer accepted events not involving the placement body.",
+      "fix": "Ignore unrelated events in Node and browser resolvers."
+    }
+  ],
+  "screenshot": {
+    "route": "/?date=2026-11-27#sky/placement/sun/sagittarius",
+    "content_key": "sky-placement/article/sun/sagittarius",
+    "field": "placementArticle",
+    "disposition": "intentional Gemini/Sagittarius comparison in the Sagittarius article; not a Gemini fallback hook",
+    "action": "flagged for optional editorial clarification; preserved pending any instruction to remove valid comparisons"
+  },
+  "validation": {
+    "resolver_identity": "pass: 720 continuous checks plus node/Lilith and overlays",
+    "calculated_route_facts": "pass: six cases with direct ephemeris parity",
+    "browser": "pass: four cases",
+    "typecheck": "pass",
+    "css": "pass",
+    "build": "pass",
+    "bundle_budgets": "pass",
+    "content_suite": "known pre-existing Friends signoff hash failure at scripts/test-friends-owner-signoff-ruling.mjs:161",
+    "production_deployed": false
+  }
+}

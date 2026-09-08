@@ -114,6 +114,17 @@ export function getLunarCalendarRangeEventsOffMainThread(
   return requestCalculation({ kind: "lunar-calendar-range", args });
 }
 
+export function getSkyPlacementSnapshotOffMainThread(
+  location: LocationInput, planet: string, sign: string, referenceDate: Date
+): Promise<SkySnapshot> {
+  if (typeof Worker === "undefined") {
+    return loadEphemerisForNonBrowserRuntime().then(({ getSkyPlacementSnapshot }) => (
+      getSkyPlacementSnapshot(location, planet, sign, referenceDate)
+    ));
+  }
+  return requestCalculation({ kind: "placement-sky", location, planet, sign, date: referenceDate.toISOString() });
+}
+
 export function getLunarCalendarMonthOffMainThread(
   ...args: Parameters<typeof import("./ephemeris.js").getLunarCalendarMonth>
 ): Promise<LunarCalendarMonth> {

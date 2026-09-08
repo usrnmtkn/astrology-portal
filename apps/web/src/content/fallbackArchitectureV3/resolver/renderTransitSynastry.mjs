@@ -1450,6 +1450,7 @@ function capitalizeSentence(value) {
 
 function skyPlacementAspectParagraph(placementPlanet, ev) {
   if (!ev.a || !ev.b || !ev.aspect) throw new SourceGapError("SOURCE_GAP: sky placement aspect facts");
+  if (![ev.a, ev.b].includes(placementPlanet)) return null;
   const otherPlanet = ev.a === placementPlanet ? ev.b : ev.a;
   const isFullMoon = ev.aspect === "opposition" && new Set([ev.a, ev.b]).size === 2
     && [ev.a, ev.b].includes("sun") && [ev.a, ev.b].includes("moon");
