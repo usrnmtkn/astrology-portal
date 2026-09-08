@@ -1,9 +1,10 @@
 {
-  "entryJavaScriptRawBytes": 616000,
+  "entryJavaScriptRawBytes": 618500,
   "entryJavaScriptGzipBytes": 175500,
-  "largestJavaScriptRawBytes": 616000,
+  "largestJavaScriptRawBytes": 618500,
   "totalJavaScriptGzipBytes": 309000,
   "_rationale": {
-    "entryJavaScriptGzipBytes": "Loading feedback and validated reader snapshot reuse measure 175,146 bytes gzip with the CI fixture environment (615,882 bytes raw). Allow 500 additional gzip bytes over the prior 175 kB ceiling. The 616 kB raw entry cap, deferred-tool boundaries and 309 kB aggregate cap remain unchanged. See docs/qa/app-loading-performance-2026-09-08.md."
+    "entryJavaScriptGzipBytes": "Loading feedback and validated reader snapshot reuse measure 175,146 bytes gzip with the CI fixture environment (615,882 bytes raw). Allow 500 additional gzip bytes over the prior 175 kB ceiling. The 616 kB raw entry cap, deferred-tool boundaries and 309 kB aggregate cap remain unchanged. See docs/qa/app-loading-performance-2026-09-08.md.",
+    "entryJavaScriptRawBytes": "All 24 supplied Sun/Moon clauses are now shared with the reader. With audit provenance excluded from runtime, the admin entry measures 617.6 kB raw and 175.2 kB gzip. Allow 2,500 additional raw bytes for the requested copy; gzip budgets remain unchanged. See docs/qa/sky-summary-copy-budget-2026-09-08.md."
   }
 }

@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { skyDailySummaryParts, skySummaryParagraphs } from "../apps/web/src/content/skyDailySummary.ts";
 
 const clauses = JSON.parse(readFileSync(new URL("../apps/web/src/content/skyDailySummaryClauses.json", import.meta.url), "utf8"));
+const suppliedRevisions = JSON.parse(readFileSync(new URL("../docs/content-review/sky-summary-supplied-copy-2026-09-08.json", import.meta.url), "utf8")).revisions;
 const virgoRevision = clauses.provenance.revisions.find((row: { key: string }) => row.key === "cms/sky-daily-summary/sun/virgo");
 assert.equal(clauses.sun.virgo, virgoRevision.body);
 assert.equal(createHash("sha256").update(clauses.sun.virgo).digest("hex"), virgoRevision.sha256);
@@ -16,7 +17,7 @@ for (const body of ["sun", "moon"]) {
   for (const sign of signs) {
     const clause = clauses[body][sign.toLowerCase()];
     assert.match(clause, /^(puts|slows|makes|brings|softens|turns) /);
-    const revision = clauses.provenance.revisions.find((row: { key: string }) => row.key === `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`);
+    const revision = [...clauses.provenance.revisions, ...suppliedRevisions].find((row: { key: string }) => row.key === `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`);
     assert.equal(createHash("sha256").update(clause).digest("hex"), revision.sha256);
   }
 }
