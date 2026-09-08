@@ -17,7 +17,8 @@ The reported production screen combined an authenticated storage timeout (HTTP 5
 - Admin authentication and safe-return unit checks passed.
 - Content Studio link-routing and editor-usability checks passed.
 - TypeScript and CSS/token audits passed.
-- Performance contracts passed.
+- Performance contracts and unchanged reader/Studio bundle budgets passed.
+- Reviewed mobile and desktop sign-in screenshots from the Linux CI build, including the current Studio navigation. Updated only those three expected images for the shorter sign-in instructions and finished form. Screenshot checks now wait for the sign-in action; pixel tolerances and load-time budgets remain unchanged.
 - A fresh production build with synthetic authentication passed all three browser regressions: owner-session timeout/Retry, emergency-code timeout/Retry, and owner sign-in returning to the selected Studio page. The suite lives outside the general visual-test directory because it requires its dedicated synthetic-authentication build configuration; CI runs that configuration explicitly.
 
 ## Separate database incident
