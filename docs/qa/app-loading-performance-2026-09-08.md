@@ -47,6 +47,7 @@ All browser tests used fresh builds and owned local preview processes; no reused
 
 - 41-test browser run: loading feedback, Friends performance, You loading, full Sky retrograde regression suite, and publication refresh. Passed.
 - Final reader run: 11 loading/error/recovery checks plus two publication refresh tests. **13 passed.** Includes a blocked entry bundle, blocked fonts, held Calendar chunk, failed lazy route, worker retry, signed-out Friends, and report/Studio document feedback.
+- Release visual CI initially captured the faster core Sky frame before timing enrichment. The light Sky baseline now explicitly requires its Sun duration and exact-aspect link within the existing 15-second readiness budget. Expected screenshots and pixel tolerance are unchanged. The fresh local desktop/Calendar/mobile flow passed in 4.0 seconds with platform-specific screenshots disabled; Linux CI remains the screenshot authority.
 - Fresh standalone Studio browser run: **11 passed.** Source discovery, editor behavior at 390/1440 widths and both theme contexts, inventory arriving during dirty edits, repeated retrograde saves, and evergreen add/reorder/empty/publish-twice workflows.
 - Browser Swiss trimmed/full-package parity passed. Four loading screenshots inspected at 390/1440 widths and light/dark themes; typography, reduced motion, and no-horizontal-overflow assertions pass.
 - `npm run typecheck`: passed.
