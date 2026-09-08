@@ -312,8 +312,8 @@ assert.match(
 );
 assert.match(
   socialCoreRefreshMatch.groups.body,
-  /publishFriends\(nextFriends\);\s*setLoadError\(""\);\s*void profileRequest;\s*void listSocialFriendRequests\(\)/,
-  "Pending requests must start only after the visible Friends list is published."
+  /publishFriends\(nextFriends\);\s*setLoadError\(""\);\s*setAvailable\(true\);\s*void profileRequest;\s*void listSocialFriendRequests\(\)/,
+  "Pending requests must start only after the visible Friends list is published and a successful refresh clears the unavailable state."
 );
 assert.doesNotMatch(
   socialCoreRefreshMatch.groups.body,

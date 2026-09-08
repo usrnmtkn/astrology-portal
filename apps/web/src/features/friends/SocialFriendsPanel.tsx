@@ -320,6 +320,7 @@ export function SocialFriendsPanel({
 
     publishFriends(nextFriends);
     setLoadError("");
+    setAvailable(true);
     void profileRequest;
     void listSocialFriendRequests()
       .then((nextRequests) => {
@@ -384,10 +385,12 @@ export function SocialFriendsPanel({
     });
 
     window.addEventListener("focus", refreshOnFocus);
+    window.addEventListener("online", refreshOnFocus);
 
     return () => {
       window.clearTimeout(refreshTimer);
       window.removeEventListener("focus", refreshOnFocus);
+      window.removeEventListener("online", refreshOnFocus);
       unsubscribe();
     };
   }, [refreshSocialActivity, refreshSocialData]);
