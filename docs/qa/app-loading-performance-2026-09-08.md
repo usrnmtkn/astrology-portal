@@ -75,6 +75,6 @@ Standalone Admin entry measures 175,146 bytes gzip / 615,882 bytes raw; aggregat
 
 ## Release follow-up
 
-The branch contains both the prior evergreen section change and this performance work. Prior automatic approval review rejected exporting the earlier commit to the public GitHub remote; explicit consent for that export remains pending. After publication is authorized, required CI must be assessed, the approved branch merged through main, and the Git-triggered production deployment verified before calling these fixes live.
+The branch contains both the prior evergreen section change and this performance work. Following the prepared public-export request, the owner authorized review, merge, and production publication on 2026-09-08 in task `01a07b0b-8090-7f11-81de-cfeefbe5644c`. Required CI must be assessed, the approved branch merged through main, and the Git-triggered production deployment verified before calling these fixes live. The eleven loading/error/recovery browser regressions are included in the Visual smoke workflow.
 
 Production verification should confirm the HTML loading shell on a cold load, navigation during a delayed Calendar download, Sky summary before publication hydration, Saturn dates during refresh, worker recovery, and two consecutive Studio saves. The cold astronomy download remains the largest measured network cost and is a separate candidate for further asset-level optimization.
