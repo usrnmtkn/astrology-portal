@@ -40,6 +40,13 @@ content records are changed by this patch.
 - Sky placement composition: 11 cases passed, including retrograde sources,
   section editing/reordering/skipping, repeated publication, narrow screens,
   both themes, and editing during inventory loading.
+- Broader Studio CRUD pass: 75 cases passed, including scoped inventory loading,
+  creation/editing, conflict recovery, publication, retirement, Natal Empty
+  Houses, exact planet/sign/motion filters, and reader destination links.
+- Friends sign-in notices retain the existing connection-error heading style:
+  computed typography, margins, casing, and alignment match at 1440 and 390 px
+  in light/dark themes. Heading order, overflow, and rendered screenshots were
+  checked; all four sign-in variants passed again after adding these checks.
 - Typecheck, CSS/token audit, web bundle budget, startup/performance contracts,
   Friends database/loading contracts, publication lifecycle/offline retirement,
   content wiring, and full-detail copy integrity checks passed.
