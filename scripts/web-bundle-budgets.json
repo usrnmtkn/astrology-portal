@@ -2,7 +2,7 @@
   "appBootGzipBytes": 420000,
   "appChunkGzipBytes": 180000,
   "readerBootGzipBytes": 467000,
-  "readerInitialCssGzipBytes": 47000,
+  "readerInitialCssGzipBytes": 48000,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 5400,
@@ -21,6 +21,7 @@
     "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
     "transitFallbackChunkGzipBytes": "Owner-authorized increase from 330 kB to 390 kB for the 351 exact, hash-bound Friends transit body_they passages. The transit corpus remains on-demand and outside the static App boot graph; all startup and route-local budgets remain unchanged.",
     "totalJavaScriptGzipBytes": "Raised narrowly from 2,925,000 to 2,927,000 bytes for the owner-authorized reader source-reference removal release. On rebased main 73d95f14, the measured complete build is 2,925,815 bytes gzip across all routes: 815 bytes over the old aggregate limit. Exact source-version corrections preserve immutable import history. App (177.5 kB), reader boot (456.0 kB), CSS and every individual deferred-chunk limit remain unchanged. Commit/merge/live release authorized in task 01a07f51-c67a-7553-b2fa-46e1c2fff842 on 2026-09-08. Sky Placement editor UX (#694): raised from 2,927,000 to 2,930,000 bytes for the deferred section editor and source navigation. A fresh production build with the CI environment measures 2,928,390 bytes across 111 files. Reader startup and individual chunk limits are unchanged; details are in docs/qa/admin-sky-editor-budget-note-2026-09-08.md. Evergreen section editing: raised from 2,930,000 to 2,933,000 bytes; fresh CI-environment build measures 2,930,973 bytes. Reader boot and individual chunk limits remain unchanged. See docs/qa/sky-evergreen-sections-2026-09-08.md.",
-    "authorization": "Owner authorized the 60 South Node Calendar serving release, Content Studio editing, production launch, and the peer South Node Sky Placement subtitle on 2026-09-06."
+    "authorization": "Owner authorized the 60 South Node Calendar serving release, Content Studio editing, production launch, and the peer South Node Sky Placement subtitle on 2026-09-06.",
+    "readerInitialCssGzipBytes": "The budget now counts every stylesheet in the initial HTML and App graph, including the pre-JavaScript loading shell, rather than only the deferred styles.css entry. Cap adjusted from 47 kB to 48 kB; measured total 47.4 kB. Shared theme duplication was removed: combined reader boot is 458.5 kB and remains under its unchanged 467 kB cap. See docs/qa/app-loading-performance-2026-09-08.md."
   }
 }

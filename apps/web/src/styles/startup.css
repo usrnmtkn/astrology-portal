@@ -1,0 +1,9 @@
+@import "./theme.css";
+@import "./loading.css";
+
+/* The document can paint this shell before any application JavaScript arrives. */
+body:has(#app-startup) {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+}

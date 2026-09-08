@@ -1,7 +1,7 @@
 import { contentPublicationRecords, publicationAllowsContent } from "./contentPublicationState";
 import { isCanonicalSkyReaderRecord } from "./fallbackArchitectureV3/dashboardExtensions";
 // @ts-ignore The canonical renderer and its editable-field contract are shared ESM.
-import { renderSkyV4ReaderRoute, skyV4ContentStudioRecords } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
+import { createSkyV4ReaderRoute, skyV4ContentStudioRecords } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 // @ts-ignore Shared evergreen structure is validated at the publication boundary.
 import { skyEvergreenEditableFields, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "./fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 
@@ -22,7 +22,7 @@ function set(value: RecordValue, path: string, copy: unknown) {
 export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unknown, sources: () => unknown[]) {
   const baselines = new Map<string, RecordValue>(skyV4ContentStudioRecords(corpus).map((row: RecordValue) => [row.contentKey, row]));
   let fingerprint = "";
-  let effective = corpus;
+  let render: ((input: Record<string, unknown>) => any) | null = null;
   let blocked = new Set<string>();
   return (input: Record<string, unknown>) => {
     const published = sources().map(object).filter(row => isCanonicalSkyReaderRecord(row as any)
@@ -32,9 +32,8 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
       && publicationAllowsContent(row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt));
     const nextFingerprint = JSON.stringify([published.map(row => [row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt]), contentPublicationRecords()]);
     if (nextFingerprint !== fingerprint) {
-      fingerprint = nextFingerprint;
       const byKey = new Map(published.map(row => [row.contentKey, row]));
-      blocked = new Set([...baselines.keys()].filter(key => !byKey.has(key) && !publicationAllowsContent(key)));
+      const nextBlocked = new Set([...baselines.keys()].filter(key => !byKey.has(key) && !publicationAllowsContent(key)));
       // Copy only touched branches and whitelisted prose. Structural identity,
       // ephemeris configuration, release gates, and baseline hashes stay fixed.
       function visit(value: unknown): unknown {
@@ -43,12 +42,12 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
         const source = object(value);
         const key = source.contentKey ?? source.ContentKey ?? source.OverlayKey;
         const baseline = baselines.get(key);
-        if (baseline && (byKey.has(key) || blocked.has(key))) {
+        if (baseline && (byKey.has(key) || nextBlocked.has(key))) {
           const next = { ...source };
           for (const field of skyEvergreenEditableFields(baseline)) {
-            const copy = blocked.has(key) ? "" : at(byKey.get(key)!, field.path);
+            const copy = nextBlocked.has(key) ? "" : at(byKey.get(key)!, field.path);
             if (field.path === SKY_EVERGREEN_SECTIONS_PATH) {
-              const layout = blocked.has(key) ? [] : copy;
+              const layout = nextBlocked.has(key) ? [] : copy;
               validateSkyEvergreenSections(layout);
               if (layout !== undefined) set(next, field.path, structuredClone(layout));
             } else if (typeof copy === "string") set(next, field.path, copy);
@@ -57,9 +56,14 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
         }
         return Object.fromEntries(Object.entries(source).map(([key, child]) => [key, visit(child)]));
       }
-      effective = { ...corpus, content: visit(corpus.content) };
+      const effective = { ...corpus, content: visit(corpus.content) };
+      render = createSkyV4ReaderRoute(effective, lunarSource);
+      // Advance the cache only after the complete revision validates. A bad
+      // revision must fail again, never reuse an older published renderer.
+      blocked = nextBlocked;
+      fingerprint = nextFingerprint;
     }
-    const rendered = renderSkyV4ReaderRoute(effective, input, lunarSource);
+    const rendered = render!(input);
     if (blocked.has(rendered.contentKey)) throw new Error(`SKY_V4_SOURCE_GAP: ${rendered.contentKey} has no current published copy.`);
     if (input.route === "placement" && input.isRetrograde === true && blocked.has(`sky-placement/retrograde/${input.planet}`)) {
       throw new Error("SKY_V4_SOURCE_GAP: the retrograde paragraph has no current published copy.");

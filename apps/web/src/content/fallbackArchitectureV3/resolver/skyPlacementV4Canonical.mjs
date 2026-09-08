@@ -708,7 +708,13 @@ function templateStudioRecords(corpus) {
   return [...templates, overlaySettings];
 }
 
+// Only factory-owned snapshots are cached. Mutable Studio drafts still pass
+// every validation and hash calculation on each call.
+const preparedReaderRecords = new WeakMap();
+
 export function skyV4ContentStudioRecords(corpus) {
+  const prepared = preparedReaderRecords.get(corpus);
+  if (prepared) return prepared;
   assertSkyV4CanonicalPackage(corpus);
   assertSkyV4ReaderCopyServingRelease(corpus);
   const records = [
@@ -1266,6 +1272,15 @@ function nodePlacementKey(body, sign) {
  * calculated facts and governed aspect records, but never a Content Studio
  * draft. Selection remains conditional and configuration rows cannot resolve.
  */
+export function createSkyV4ReaderRoute(corpus, lunarContextSource) {
+  const snapshot = structuredClone(corpus);
+  const lunarSnapshot = lunarContextSource ? structuredClone(lunarContextSource) : lunarContextSource;
+  // Materializing every Studio row hashes the entire corpus. Do that once per
+  // publication snapshot, not twice for every card on every React render.
+  preparedReaderRecords.set(snapshot, skyV4ContentStudioRecords(snapshot));
+  return (input) => renderSkyV4ReaderRoute(snapshot, input, lunarSnapshot);
+}
+
 export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   if (input.draftFields && Object.keys(input.draftFields).length) {
     throw new Error("SKY_V4_READER_BOUNDARY: drafts cannot render on reader routes.");

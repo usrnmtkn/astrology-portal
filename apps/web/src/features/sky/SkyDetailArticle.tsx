@@ -118,23 +118,7 @@ export type SkyDetail = {
 };
 
 function inferredSectionQaSourceTag(section: { body?: ReactNode; sourceTag?: string }) {
-  const sourceTag = typeof section.sourceTag === "string" ? section.sourceTag.trim() : "";
-
-  if (sourceTag) {
-    return sourceTag;
-  }
-
-  if (typeof section.body !== "string") {
-    return "";
-  }
-
-  const trimmedBody = section.body.trim();
-
-  if (/^\[(?:AUTHORED|FALLBACK)\s*·/u.test(trimmedBody)) {
-    return "";
-  }
-
-  return "";
+  return typeof section.sourceTag === "string" ? section.sourceTag.trim() : "";
 }
 
 function detailMetaRows(meta: string) {

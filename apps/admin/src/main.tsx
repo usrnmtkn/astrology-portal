@@ -1,6 +1,5 @@
 import React, { lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
-import "../../web/src/styles/theme.css";
 import "../../web/src/styles/pill.css";
 import { GeneratedContentAdminDashboard } from "./GeneratedContentAdminDashboard";
 import { setupAdminReaderLinkTargets } from "./adminReaderLinks";
@@ -13,7 +12,7 @@ const root = document.getElementById("root")!;
 createRoot(root).render(
   <React.StrictMode>
     {isCoverageRoute ? (
-      <Suspense fallback={<div style={{ padding: 24 }}>Loading content coverage…</div>}>
+      <Suspense fallback={<div className="app-loading" role="status" aria-busy="true">Loading content coverage…</div>}>
         <ContentCoverageDashboard />
       </Suspense>
     ) : (

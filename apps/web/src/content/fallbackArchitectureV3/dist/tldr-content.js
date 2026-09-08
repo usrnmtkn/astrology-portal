@@ -4570,7 +4570,10 @@ function templateStudioRecords(corpus) {
   });
   return [...templates, overlaySettings];
 }
+var preparedReaderRecords = /* @__PURE__ */ new WeakMap();
 function skyV4ContentStudioRecords(corpus) {
+  const prepared = preparedReaderRecords.get(corpus);
+  if (prepared) return prepared;
   assertSkyV4CanonicalPackage(corpus);
   assertSkyV4ReaderCopyServingRelease(corpus);
   const records = [
@@ -5114,6 +5117,12 @@ function nodePlacementKey(body, sign) {
   if (normalized === "south-node" || normalized === "south node") return `sky-nodes/south-node/${lower(sign)}`;
   return null;
 }
+function createSkyV4ReaderRoute(corpus, lunarContextSource) {
+  const snapshot = structuredClone(corpus);
+  const lunarSnapshot = lunarContextSource ? structuredClone(lunarContextSource) : lunarContextSource;
+  preparedReaderRecords.set(snapshot, skyV4ContentStudioRecords(snapshot));
+  return (input) => renderSkyV4ReaderRoute(snapshot, input, lunarSnapshot);
+}
 function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   if (input.draftFields && Object.keys(input.draftFields).length) {
     throw new Error("SKY_V4_READER_BOUNDARY: drafts cannot render on reader routes.");
@@ -5256,7 +5265,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-08b";
+var PACKAGE_VERSION = "v3-2026-09-08c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -5336,6 +5345,7 @@ export {
   createKnowledgeMatrixV13Resolver,
   createKnowledgeMatrixV9Resolver,
   createPackageManifest,
+  createSkyV4ReaderRoute,
   createTransitSynastryRenderer,
   friendVoiceFromReaderCopy,
   natalPlacementMotionExactKey,

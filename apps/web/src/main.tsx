@@ -1,5 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { PageLoading, PageLoadBoundary } from "./components/PageLoading";
 import { shouldPreloadInitialFriendCalculationRuntime } from "./features/friends/friendCalculationReadiness";
 import {
   initialFriendProfileContentRequest,
@@ -83,20 +84,34 @@ async function startApp() {
     return;
   }
 
-  if (isContentCoveragePath()) {
-    await loadAdminPresentationStyles();
-    const { default: ContentCoverageDashboard } = await import("../../admin/src/ContentCoverageDashboard");
+  if (isAdminContentPath()) {
+    const dashboard = isContentCoveragePath()
+      ? React.lazy(() => import("../../admin/src/ContentCoverageDashboard"))
+      : React.lazy(() => import("../../admin/src/GeneratedContentAdminDashboard").then(module => ({ default: module.GeneratedContentAdminDashboard })));
+    const Dashboard = dashboard;
     createRoot(document.getElementById("root")!).render(
       <React.StrictMode>
-        <ContentCoverageDashboard />
+        <PageLoadBoundary><React.Suspense fallback={<PageLoading message="Loading Content Studio…" />}>
+          <Dashboard />
+        </React.Suspense></PageLoadBoundary>
       </React.StrictMode>
     );
+    await loadAdminPresentationStyles();
     await setupAdminReaderLinks();
     return;
   }
 
-  await prepareFriendProfileRoute(window.location.href);
   const appModulePromise = import("./App");
+  const friendRoutePromise = prepareFriendProfileRoute(window.location.href);
+  const readerStylesPromise = import("./styles.css");
+  // These routes all need astronomy. Fetch/initialize it alongside the app
+  // download rather than starting the worker waterfall after React mounts.
+  if (/^#\/?(?:sky|calendar)(?:[/?]|$)/u.test(window.location.hash)) {
+    void import("./services/skyCalculationClient").then(({ preloadSwissEphemerisOffMainThread }) => (
+      preloadSwissEphemerisOffMainThread()
+    )).catch(() => { /* The active route owns its error and retry state. */ });
+  }
+  await friendRoutePromise;
   const initialFriendProfileTab = initialFriendProfileContentRequest(window.location.href);
 
   if (shouldPreloadInitialFriendCalculationRuntime(initialFriendProfileTab)) {
@@ -110,7 +125,7 @@ async function startApp() {
   if (isAdminContentPath()) {
     await loadAdminPresentationStyles();
   } else {
-    await import("./styles.css");
+    await readerStylesPromise;
   }
 
   const { App } = await appModulePromise;
@@ -127,7 +142,7 @@ async function startApp() {
 
   createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
-      <App />
+      <PageLoadBoundary><React.Suspense fallback={<PageLoading />}><App /></React.Suspense></PageLoadBoundary>
       {!isAdminContentPath() && !reportPath ? (
         <React.Suspense fallback={null}>
           <ReportsGlobalLayer />
@@ -151,6 +166,10 @@ function setupBlankRestoreRecovery() {
   const shouldReload = () => {
     const root = document.getElementById("root");
     const appShell = root?.querySelector(".app-shell");
+
+    // Loading and recoverable errors are rendered pages, not a blank restore.
+    // Never auto-reload them or clear state while their requests are pending.
+    if (root?.querySelector(".app-loading")) return false;
 
     if (!root || !root.firstElementChild || !appShell) {
       return true;
@@ -247,4 +266,4 @@ function setupBlankRestoreRecovery() {
   }
 }
 
-void startApp();
+void startApp().catch(() => window.dispatchEvent(new Event("tldrastro:startup-error")));

@@ -151,31 +151,15 @@ const deferredSkyPlacementSource = fs.readFileSync(
   "utf8"
 );
 const appImportIndex = mainSource.indexOf('const appModulePromise = import("./App")');
-const styleWaitIndex = mainSource.indexOf('await import("./styles.css")');
-
-assert.ok(appImportIndex >= 0, "Startup must create an App import promise.");
-assert.ok(styleWaitIndex >= 0, "Startup must await its reader stylesheet entry.");
-assert.ok(appImportIndex < styleWaitIndex, "The App download must start before startup waits for CSS.");
-assert.match(
-  indexSource,
-  /addEventListener\("vite:preloadError"/u,
-  "The document bootstrap must recover when a stale deployment preload fails."
-);
-assert.match(
-  indexSource,
-  /The calendar needs a fresh load/u,
-  "A repeated startup failure must render a visible reload action instead of a blank page."
-);
-assert.match(
-  indexSource,
-  /addEventListener\("unhandledrejection"[\s\S]*root"\)\?\.firstElementChild\) recover\(\)/u,
-  "The document bootstrap must recover from startup imports that reject before React mounts."
-);
-assert.match(
-  indexSource,
-  /sessionStorage\.setItem\(recoveryKey[\s\S]*location\.reload\(\)/u,
-  "Startup recovery must retry once before showing its manual reload action."
-);
+const styleStartIndex = mainSource.indexOf('const readerStylesPromise = import("./styles.css")');
+assert.ok(appImportIndex >= 0 && styleStartIndex > appImportIndex, "The App and reader stylesheet downloads must start together.");
+assert.match(indexSource, /id="app-startup"[\s\S]*role="status"[\s\S]*Loading TLDR Astro/u, "The HTML document must show loading feedback before React downloads.");
+const startupSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/startup.js"), "utf8");
+assert.match(startupSource, /vite:preloadError/u, "Startup import failures must have a visible recovery path.");
+assert.match(startupSource, /addEventListener\("unhandledrejection"/u, "Rejected startup imports must show an error.");
+assert.match(startupSource, /The page could not load/u, "Startup failures must explain the problem.");
+assert.match(startupSource, /querySelector\("button"\)\?\.addEventListener\("click", \(\) => location\.reload\(\)\)/u, "Reloading must remain an explicit user action.");
+assert.doesNotMatch(startupSource, /sessionStorage|document\.body\.innerHTML/u, "Recovery must preserve form state and avoid destructive automatic reloads.");
 assert.doesNotMatch(mainSource, /setInterval\s*\(/u, "Blank-restore recovery must not keep a lifetime polling interval.");
 assert.match(mainSource, /for \(const delay of \[1000, 5000, 15000\]\)/u, "Startup must keep bounded blank-mount checks.");
 assert.match(viteSource, /fallback-content-core/u, "Core fallback content must have a stable cache chunk.");

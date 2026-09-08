@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
+import { appStartupHtmlPlugin } from "../../scripts/app-startup-html-plugin.mjs";
 import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -77,7 +78,7 @@ export default defineConfig(({ command, mode }) => {
     : "";
 
   return {
-    plugins: [localApiRoutePlugin(), react()],
+    plugins: [appStartupHtmlPlugin(), localApiRoutePlugin(), react()],
     assetsInclude: ["**/*.wasm"],
     define: {
       __LOCAL_CONTENT_GENERATION_SECRET__: JSON.stringify(localContentSecret)

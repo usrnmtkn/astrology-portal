@@ -47,6 +47,11 @@ const revision = { ...base, placementArticle: "", fallback: article.fallback, st
 installContentPublications([{ content_key: key, state: "live", revision: 1, row_id: "evergreen-test", row_updated_at: time, updated_at: time }]);
 const reader = createPublishedSkyReader(corpus, undefined, () => [revision]);
 assert.equal(reader({ ...input, articleAvailable: true }).mainBody, expected);
+revision.publicationRowUpdatedAt = "2026-09-08T10:00:00.000Z";
+installContentPublications([{ content_key: key, state: "live", revision: 2, row_id: "evergreen-test", row_updated_at: revision.publicationRowUpdatedAt, updated_at: revision.publicationRowUpdatedAt }]);
+revision.fallback = { ...revision.fallback, sections: [{ id: "invalid", source: "planetFrame" }] };
+assert.throws(() => reader(input), /evergreen/i);
+assert.throws(() => reader(input), /evergreen/i, "a rejected revision must never reuse the previous renderer on its next read");
 assert.equal(JSON.stringify(corpus), original, "approved corpus must remain byte-identical");
 installContentPublications([]);
 article.fallback.sections = [];
