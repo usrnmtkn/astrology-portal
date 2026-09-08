@@ -14,7 +14,7 @@ test('Today refreshes across the Moon ingress without reloading', async ({ page 
   await expect(summary).toContainText('Moon in Cancer', { timeout: 60_000 });
   await expect(summary).toContainText('another 1 minute');
   await page.clock.fastForward(45_000);
-  await expect(summary).toContainText('Moon moves through Leo', { timeout: 60_000 });
+  await expect(summary).toContainText('Moon in Leo', { timeout: 60_000 });
   await expect(summary).not.toContainText('void of course');
   expect(errors).toEqual([]);
   await page.screenshot({ path: 'test-results/sky-live-ingress.png' });
@@ -24,7 +24,7 @@ test('current evening and historical noon remain distinct', async ({ page }) => 
   await page.clock.setFixedTime(new Date('2026-09-07T21:51:00Z'));
   await page.goto('/#sky');
   const summary = page.getByLabel('Daily sky summary');
-  await expect(summary).toContainText('Moon moves through Leo at 2°', { timeout: 60_000 });
+  await expect(summary).toContainText('Moon in Leo at 2°', { timeout: 60_000 });
   await expect(summary).not.toContainText('void of course');
   await page.clock.setFixedTime(new Date('2026-09-08T21:51:00Z'));
   await page.goto('/?date=2026-09-07#sky');
@@ -43,6 +43,6 @@ test('countdowns advance together and focus catches up after inactivity', async 
   await expect(page.getByText('0H 49MIN left', { exact: true }).first()).toBeVisible();
   await page.clock.setSystemTime(new Date('2026-09-07T21:51:00Z'));
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await expect(summary).toContainText('Moon moves through Leo at 2°');
+  await expect(summary).toContainText('Moon in Leo at 2°');
   await expect(summary).not.toContainText('void of course');
 });

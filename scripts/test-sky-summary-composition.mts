@@ -10,7 +10,7 @@ import { publishedIngressTldr } from "../apps/admin/src/skyIngressTldrSources.ts
 for (const sun of skySummarySigns) for (const moon of skySummarySigns) {
   const preview = buildSkySummaryComposition(sun, moon, [], false);
   assert.deepEqual(preview.parts, skyDailySummaryParts({ sun: { sign: sun }, moon: { sign: moon }, moonIsVoid: false }));
-  assert.equal(preview.joined, sun === "Virgo" && moon === "Cancer");
+  assert.equal(preview.joined, true);
   const working = buildSkySummaryComposition(sun, moon, [], true);
   assert.equal(working.joined, true);
   const text = working.parts.map(part => part.text).join("");

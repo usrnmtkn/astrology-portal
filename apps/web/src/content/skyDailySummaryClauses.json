@@ -3,7 +3,7 @@
     "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
     "date": "2026-09-07",
     "ownerRequest": "is this the article, can you add this in. It reads better.",
-    "scope": "The fuller Sun-in-Virgo and Moon-in-Cancer summary sentence selected in this task. Signs and degrees remain calculated slots; full articles are unchanged.",
+    "scope": "All 24 supplied Sun and Moon summary clauses. Opening verbs use the requested finite-verb template; the separately approved Virgo Sun and Cancer Moon revisions are preserved. Signs and degrees remain calculated slots; full articles are unchanged.",
     "revisions": [
       {
         "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
@@ -22,6 +22,248 @@
         "body": "brings more attention to home, family, and whether the care we give is coming back to us",
         "sha256": "b9d39e570f4c2bc11c9a403bc9672620e4cb0151d0d09f7cddbedb825fa138da",
         "wordCount": 17
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/aries",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "19beb30ecaf5caf4d8f3aa98b60ab6e6647ef16619be810eb26f39e750454141",
+        "body": "puts more emphasis on starting, acting, and finding out what works by doing it",
+        "sha256": "6b68f677ef2e5040f792e6a90ab93881d667f25e3f7435840a91dc85abf94e64",
+        "wordCount": 14
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/taurus",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "4b3cd08829bbfb6d6e8618553a68f0df1dafe8a3490105bdfbe8cbc02813ace8",
+        "body": "slows the pace enough to notice what is worth keeping, building, or spending on",
+        "sha256": "f9b64965737a92fa4629737df172faff4f0873f6e01ed7326cfcfb083dfb8810",
+        "wordCount": 14
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/gemini",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "041549d3f8d09f948bb8fbd8394d72b8c80a4fd1f0ed61d14b614039b893fb08",
+        "body": "makes questions, conversation, and new information harder to ignore",
+        "sha256": "d23015d245af2329af550b83ef66d5e61b461dad53af716d2308f6b1ba2db104",
+        "wordCount": 9
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/cancer",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "4419912332f98e70d7f2a0ff3fe9e73ec9eb4c008bb3ecc3b71a581a298bcbfe",
+        "body": "brings more attention to home, care, family, and what you want to protect",
+        "sha256": "f0a1cb4cd9d438f9feb153643cd4a5ecafaf3d2ba242b774d951c4ea24200228",
+        "wordCount": 13
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/leo",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "5614684f916db1b4e39eae6590ddbc455997052c60f4a0cd903e4ae169015a3b",
+        "body": "makes it easier to put your name on the work and let yourself be seen doing it",
+        "sha256": "7833f5967797d01c4baadce7cf90e4dba50323f4f92d603f34dfb005c4a91f95",
+        "wordCount": 17
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/libra",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "dfdc16a9b4e082dc1d01ccd9b5929a2d1ead2b8e46181ee5c20b9b5f003db87e",
+        "body": "puts more attention on agreements, tradeoffs, and decisions that affect more than one person",
+        "sha256": "1793554aecf092074c5f057af33f8b43c13e93bead0599a877f4d89f4ccc60bd",
+        "wordCount": 14
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/scorpio",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "a240a97bde3bc29ccb82e268783920c47a17796310b06318a6b0bc48243abe8a",
+        "body": "makes it harder to ignore what has been avoided, hidden, or left unresolved",
+        "sha256": "db17027951664848203c86be0294ab3cdc975ab3423a13fa471144d2aaf4e6e8",
+        "wordCount": 13
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/sagittarius",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "35f1e19f63c863ab332d1329754067cff95fea0f0e49a2c926eefde69cfba319",
+        "body": "makes the bigger question, the farther trip, or the next thing to learn more compelling",
+        "sha256": "3d778fa59a30185a9e528aeb574c560abcf84fcc54fa64bd737e3049bafad109",
+        "wordCount": 15
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/capricorn",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "dd1123d11dbcf3036071fb9582ad8a10ed503971551b747a5ea0f72902b0f3a7",
+        "body": "puts the focus on responsibility, deadlines, and what you are willing to build over time",
+        "sha256": "915132772b614320d5391535d53a6290b11557c4e94db04c52d7ac259e750c9a",
+        "wordCount": 15
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/aquarius",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "73cb9d159ac4392435eb4dc0bbddf158f79485af2a02c2d9db8719eb586c46b6",
+        "body": "makes it easier to see the system behind the problem and question rules that no longer help",
+        "sha256": "66319aa1e0a578647ab3d8c2746301b5aad758ca7a91758792967917f4919404",
+        "wordCount": 17
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/sun/pisces",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "d73c57b0f7788a6a05aa6c2f0f7129c6eab3ceb0eabea8c8b0c35688e64c6285",
+        "body": "softens the pace enough for imagination, compassion, and unfinished feelings to have more room",
+        "sha256": "a731784b2e76ee694a2eab3b95981e9d0463aeda04aefd92f083851a229c8f98",
+        "wordCount": 14
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/aries",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "0bb6edbceac491fd2ec5b2fcd983beb5b0e8bba173e4f9dcf57f6a05130864c3",
+        "body": "makes reactions faster and harder to hide than usual",
+        "sha256": "2bd3efc734d44f1d9d0650953a06dfaa0b747d5d7e5af61da2dbc0dc7bb3f4dc",
+        "wordCount": 9
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/taurus",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "49af13d7318061904ed41aa32600a71a718e3024a060e3befd8ba24405184418",
+        "body": "makes comfort, familiar routines, and a slower pace more appealing",
+        "sha256": "9adb0466043613a253dbbb9ddbe5ec25621787adbae4a9d5c7ea2f3139878e8c",
+        "wordCount": 10
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/gemini",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "b73349777fd5f1406238464160da6f3b12c907a09d759ddbe1060a2bfd204618",
+        "body": "makes it easier to talk through a feeling, ask another question, or change your mind",
+        "sha256": "01653f65da20231ea945c893c82bed4383ed2dd47f7949828a7fecaeaf4bd014",
+        "wordCount": 15
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/leo",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "6e620e2a15d5ee1e2659b158c46b6ae95b138fdc87610a1de5f50f5d6841954a",
+        "body": "makes appreciation land harder and being overlooked harder to shrug off",
+        "sha256": "b2d99a07dcfa264874cede9946a1af4816f6b1b55d999dd08d207d47a1154cec",
+        "wordCount": 11
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/virgo",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "f41434bc5abc84925dd78c5c4dc38a19763ce8d377294f3826279f2258337e5a",
+        "body": "turns vague unease into a task, a list, or something concrete to fix",
+        "sha256": "0ceec3e2068a0f781fc4779cb6386baab8031fa1010d49c2ba32f6f2dccbd930",
+        "wordCount": 13
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/libra",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "5c234c7717496ae5879faddfaae1c76641ece25a8408860310a374d1fd0ad758",
+        "body": "makes fairness, tone, and the give-and-take between people easier to notice",
+        "sha256": "41c2a7de7b4d90e755915714fb7749f63fbe91a30f0f97da55a1e774594bb070",
+        "wordCount": 11
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/scorpio",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "296b7219a173f00cd117488e587b6eca1891b2637babb37f581a58edf44a7434",
+        "body": "makes trust, privacy, and what is not being said harder to ignore",
+        "sha256": "db24660cba586b041db3979c99d2f6752344beedfb584a599f5e382a918194ff",
+        "wordCount": 12
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/sagittarius",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "dbc659b06838efdbf8e4d07026418420d2dcb0820c92eed20add1e79f9c51da7",
+        "body": "makes space, movement, and a bigger perspective feel more necessary",
+        "sha256": "5aa5c9f5287c514455895023bdd20556554f8494a2813c0f92328fdaf95a3631",
+        "wordCount": 10
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/capricorn",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "a31a3a0ad273a47a3cd270393ef278bd61e8f3f46e1f7a9a37d0a7391d468dac",
+        "body": "makes it easier to handle what has to be done before talking about how it feels",
+        "sha256": "8f8cafd1fff10e52701b31bf7290d9de41d07379787dded62a76c1d3af963819",
+        "wordCount": 16
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/aquarius",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "ee8662a4cdc25e370f63d81ebd5d47f40fa9645a65021531b7859025a6872315",
+        "body": "makes a little distance useful for seeing the pattern behind the mood",
+        "sha256": "c4072c784ae74d17b348bc84ac377c2add483dff54a359868a8e7b061a31379b",
+        "wordCount": 12
+      },
+      {
+        "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
+        "date": "2026-09-08",
+        "key": "cms/sky-daily-summary/moon/pisces",
+        "ownerRequest": "please continue with fix (after identifying the 22 supplied summaries missing from the live template); use finite verbs as previously requested",
+        "sourceAttachment": "9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt",
+        "sourceSha256": "3eb1a44ef59fe5613eea64566f455f7eddd5a3a9cc7791697288dd3f748f3ab3",
+        "body": "softens focus and making rest, imagination, and the atmosphere around you harder to tune out",
+        "sha256": "236e08629e6e6d3563d5b3af1ec5503c9a9eab9cd3b9f4f834827fad945c645b",
+        "wordCount": 15
       }
     ],
     "previousClauses": {
@@ -30,9 +272,31 @@
     }
   },
   "sun": {
-    "virgo": "turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing"
+    "virgo": "turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing",
+    "aries": "puts more emphasis on starting, acting, and finding out what works by doing it",
+    "taurus": "slows the pace enough to notice what is worth keeping, building, or spending on",
+    "gemini": "makes questions, conversation, and new information harder to ignore",
+    "cancer": "brings more attention to home, care, family, and what you want to protect",
+    "leo": "makes it easier to put your name on the work and let yourself be seen doing it",
+    "libra": "puts more attention on agreements, tradeoffs, and decisions that affect more than one person",
+    "scorpio": "makes it harder to ignore what has been avoided, hidden, or left unresolved",
+    "sagittarius": "makes the bigger question, the farther trip, or the next thing to learn more compelling",
+    "capricorn": "puts the focus on responsibility, deadlines, and what you are willing to build over time",
+    "aquarius": "makes it easier to see the system behind the problem and question rules that no longer help",
+    "pisces": "softens the pace enough for imagination, compassion, and unfinished feelings to have more room"
   },
   "moon": {
-    "cancer": "brings more attention to home, family, and whether the care we give is coming back to us"
+    "cancer": "brings more attention to home, family, and whether the care we give is coming back to us",
+    "aries": "makes reactions faster and harder to hide than usual",
+    "taurus": "makes comfort, familiar routines, and a slower pace more appealing",
+    "gemini": "makes it easier to talk through a feeling, ask another question, or change your mind",
+    "leo": "makes appreciation land harder and being overlooked harder to shrug off",
+    "virgo": "turns vague unease into a task, a list, or something concrete to fix",
+    "libra": "makes fairness, tone, and the give-and-take between people easier to notice",
+    "scorpio": "makes trust, privacy, and what is not being said harder to ignore",
+    "sagittarius": "makes space, movement, and a bigger perspective feel more necessary",
+    "capricorn": "makes it easier to handle what has to be done before talking about how it feels",
+    "aquarius": "makes a little distance useful for seeing the pattern behind the mood",
+    "pisces": "softens focus and making rest, imagination, and the atmosphere around you harder to tune out"
   }
 }
