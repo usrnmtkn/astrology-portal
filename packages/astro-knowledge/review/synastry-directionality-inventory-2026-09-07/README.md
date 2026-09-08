@@ -1,41 +1,24 @@
 # Synastry Directionality Inventory
 
-Date: 2026-09-07
-Status: read-only inventory infrastructure
+Date started: 2026-09-07  
+Human review completed: 2026-09-08  
+Status: **483-row directionality classification complete**  
 Serving changes authorized: **no**
 
 ## Purpose
 
-Inventory the 483 governed serving synastry rows before any large-scale reverse-direction authoring begins.
-
-The audit answers a narrower question than the existing `body_you` / `body_they` fields do. Those fields handle reader/holder grammar. They do **not** prove that both semantic planetary directions have been authored.
-
-The editorial product question for the new Friends direction is:
+Determine which existing Friends synastry rows need a genuinely new semantic reverse so the primary card can answer:
 
 > **What does {{Name}} bring out in me?**
 
-This inventory preserves every currently governed serving row and records which rows are ready for a missing reverse candidate versus which rows still need a human direction decision.
+The existing `body_you` / `body_they` fields remain grammatical holder variants. They are not treated as opposite astrological meanings.
 
-## Run
+## Corpus reviewed
 
-```bash
-node scripts/build-synastry-directionality-inventory.mjs
-node scripts/test-synastry-directionality-inventory.mjs
-```
+The governed serving baseline remains:
 
-The builder writes:
-
-- `packages/astro-knowledge/review/synastry-directionality-inventory-2026-09-07/inventory.json`
-- `packages/astro-knowledge/review/synastry-directionality-inventory-2026-09-07/SUMMARY.md`
-
-The source corpus is never modified by the builder.
-
-## Expected governed corpus
-
-The current locked baseline is:
-
-- 483 governed serving synastry rows
-- 161 canonical unordered body pairs
+- 483 synastry rows
+- 161 canonical body pairs
 - 161 `conjunction` rows
 - 161 `hard` rows
 - 161 `soft` rows
@@ -43,60 +26,76 @@ The current locked baseline is:
 - 110 `owner-approved-grouped`
 - 318 `legacy-reviewed`
 
-Count drift fails the default build so a corpus change cannot silently alter the scope of the editorial project.
+No serving row, approval record, renderer, Content Studio surface, or canonical source copy is changed by this review.
 
-## What the inventory may infer automatically
+## Human directionality result
 
-Only structural facts:
+After line-by-line semantic review:
 
-- current content key
-- canonical body pair
-- aspect family
-- current reader tier / review status
-- current `body_you` and `body_they` hashes
-- whether the two body fields are byte-identical
-- whether a distinct reversed canonical key happens to exist
+- **397 `AUTHOR_REVERSE`**: the current passage has a directional mechanism and the opposite body-to-body direction would tell the reader something materially different.
+- **76 `RECIPROCAL_NO_REVERSE`**: the current relationship mechanism is genuinely shared enough that a second direction would manufacture a distinction.
+- **10 `NEEDS_DIRECTION_REVIEW`**: the existing passage mixes the two roles in a way that should not be forced into either category yet.
 
-These are evidence for review, not semantic conclusions.
+This reduces the bounded reverse-writing project from the previously unclassified 478 rows to **397 new reverse-direction passages**, plus a separate editorial decision on 10 mixed-role rows.
 
-## What the inventory may NOT infer automatically
+## Special-review queue
 
-It may not decide that:
+The remaining 10 rows are:
 
-- `body_you` means one planetary direction and `body_they` means the other
-- byte-identical body fields mean the aspect is reciprocal
-- a missing reversed canonical key is missing content
-- every pair needs a second directional paragraph
+- `fallback-hook/synastry-pair/venus/mars/hard`
+- `fallback-hook/synastry-pair/chiron/south-node/conjunction`
+- `fallback-hook/synastry-pair/chiron/south-node/hard`
+- `fallback-hook/synastry-pair/chiron/south-node/soft`
+- `fallback-hook/synastry-pair/chiron/lilith/conjunction`
+- `fallback-hook/synastry-pair/chiron/lilith/hard`
+- `fallback-hook/synastry-pair/chiron/lilith/soft`
+- `fallback-hook/synastry-pair/south-node/lilith/conjunction`
+- `fallback-hook/synastry-pair/south-node/lilith/hard`
+- `fallback-hook/synastry-pair/south-node/lilith/soft`
 
-Semantic direction is human-reviewed.
+These are held because the existing prose describes both roles or a shared mechanism strongly enough that simply assigning one arrow would misrepresent what was written.
 
-## Initial seeded decisions
+## Reciprocal control ruling
 
-The owner-positive Batch 1 packet supplies only five decisions:
+`fallback-hook/synastry-pair/moon/south-node/soft` is now explicitly classified `RECIPROCAL_NO_REVERSE`.
 
-| Content key | Existing semantic direction | Missing direction | Inventory action |
-| --- | --- | --- | --- |
-| `fallback-hook/synastry-pair/sun/mars/hard` | Mars → Sun | Sun → Mars | `AUTHOR_REVERSE` |
-| `fallback-hook/synastry-pair/sun/mercury/hard` | Mercury → Sun | Sun → Mercury | `AUTHOR_REVERSE` |
-| `fallback-hook/synastry-pair/venus/ascendant/soft` | Venus → Ascendant | Ascendant → Venus | `AUTHOR_REVERSE` |
-| `fallback-hook/synastry-pair/neptune/midheaven/soft` | Neptune → Midheaven | Midheaven → Neptune | `AUTHOR_REVERSE` |
-| `fallback-hook/synastry-pair/moon/south-node/soft` | unresolved shared/reciprocal candidate | none presumed | `NEEDS_DIRECTION_REVIEW` |
+Its existing meaning is shared familiarity and emotional ease between the two people. A second directional passage is not required merely because the future schema can hold one.
 
-The Moon / South Node row intentionally remains unresolved. It is a control against inventing a reverse merely because the schema can hold one.
+## Missing-key correction during audit
 
-## Review states
+The complete source check also caught two rows that were omitted from the working classification map during the manual pass:
 
-During this inventory stage there are only two machine-emitted actions:
+- `fallback-hook/synastry-pair/mars/descendant/soft`
+- `fallback-hook/synastry-pair/chiron/descendant/conjunction`
 
-- `AUTHOR_REVERSE`: an owner-reviewed semantic arrow is known and a complementary direction is justified.
-- `NEEDS_DIRECTION_REVIEW`: no semantic conclusion has been authorized yet.
+Both exist in the serving corpus and are now classified `AUTHOR_REVERSE`, bringing the review to the full 483 rows.
 
-`RECIPROCAL_NO_REVERSE` is reserved for a later human decision. The builder is prohibited from assigning it automatically.
+## Review implementation
 
-## Authoring gate after classification
+Human decisions are recorded in:
 
-A row should move to `AUTHOR_REVERSE` only when the existing passage has a clear one-way mechanism and the opposite body-to-body direction would tell the reader something materially different.
+- `scripts/synastry-directionality-human-review.mjs`
 
-A row should move to `RECIPROCAL_NO_REVERSE` only after human review concludes that a shared relationship description is more accurate and useful than manufacturing two directional versions.
+The read-only human-review inventory builder is:
 
-Existing serving prose remains locked during both decisions. Reverse authoring is additive review work until a later, explicit serving authorization changes the application contract.
+- `scripts/build-synastry-directionality-human-review.mjs`
+
+The regression contract is:
+
+- `scripts/test-synastry-directionality-human-review.mjs`
+
+Run:
+
+```bash
+node scripts/test-synastry-directionality-inventory.mjs
+node scripts/test-synastry-directionality-human-review.mjs
+node scripts/build-synastry-directionality-human-review.mjs
+```
+
+The human-review builder writes review artifacts only under this directory. It does not mutate the serving source.
+
+## Authoring gate
+
+Existing serving prose remains locked.
+
+The next stage is additive reverse-direction authoring for the 397 `AUTHOR_REVERSE` rows in small Project Author-calibrated batches. The 76 reciprocal rows receive no manufactured reverse. The 10 special-review rows remain outside mass authoring until their editorial mechanism is resolved.
