@@ -2181,7 +2181,7 @@ const emptyHouseSignRulersBySystem: Record<EmptyHouseRulerSystem, Record<string,
 };
 
 function getInitialAccountIntent(): AuthMode {
-  rememberStudioReturnPath();
+  if (rememberStudioReturnPath()) return "login";
   try {
     const url = new URL(window.location.href);
 
@@ -10953,6 +10953,7 @@ export function App() {
   }
 
   const initialLocationState = useMemo(getInitialLocation, []);
+  const studioReturnPath = useMemo(rememberStudioReturnPath, []);
   const restoredPortalModeRef = useRef<PortalMode | null>(getStoredPortalMode());
   const [theme, setTheme] = useState<UiTheme>(getInitialTheme);
   const [sunriseOrbEnabled, setSunriseOrbEnabled] = useState(getInitialSunriseOrb);
@@ -10964,7 +10965,7 @@ export function App() {
   const [skyDate, setSkyDate] = useState(getInitialTransitDate);
   const skyDateRef = useRef(skyDate);
   const followsCurrentTransitDateRef = useRef(skyDate === currentLocalDate);
-  const [mode, setMode] = useState<PortalMode>(getInitialPortalMode);
+  const [mode, setMode] = useState<PortalMode>(() => studioReturnPath ? "profile" : getInitialPortalMode());
   const transitionPage = usePageTransition();
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
   const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
@@ -14527,7 +14528,7 @@ export function App() {
                 <YouRoute>
                   {isAuthConfigured && !authAccountChecked ? (
                     <FeatureLoadingFallback message="Loading your profile" />
-                  ) : userProfile ? (
+                  ) : userProfile && !studioReturnPath ? (
                     <ProfileView
                       transitionPage={transitionPage}
                       profile={userProfile}

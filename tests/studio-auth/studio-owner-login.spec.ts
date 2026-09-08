@@ -11,7 +11,7 @@ async function prepare(page: Page, signedIn: boolean) {
     localStorage.removeItem("tldrastro:contentAdminSecret");
     if (signedIn) localStorage.setItem("sb-studio-auth-auth-token", JSON.stringify(session));
   }, { signedIn, session });
-  await page.route("https://studio-auth.supabase.test/**", route => route.fulfill({ json: route.request().url().includes("/auth/v1/user") ? user : [] }));
+  await page.route("https://studio-auth.supabase.test/**", route => route.fulfill({ json: route.request().url().includes("/auth/v1/user") ? user : route.request().url().includes("/auth/v1/token") ? session : [] }));
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, json: {} }));
   const state = { status: 200, credentials: [] as string[] };
   await page.route("**/api/**", async route => {
@@ -72,3 +72,27 @@ test("owner sign-in returns to the selected Studio page instead of You", async (
   await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
   await expect(page.getByRole("heading", { name: "Sky Write-ups", exact: true })).toBeVisible();
 });
+
+for (const cachedProfile of [false, true]) {
+  test(`owner sign-in opens the login form from saved Sky navigation${cachedProfile ? " with a cached profile" : ""}`, async ({ page }) => {
+    await prepare(page, false);
+    await page.addInitScript(({ cachedProfile }) => {
+      localStorage.setItem("tldrastro:portalMode", "guest");
+      if (cachedProfile) localStorage.setItem("tldrastro:userProfile", JSON.stringify({
+        id: "studio-qa-owner", name: "QA Owner", email: "owner@example.test", charts: []
+      }));
+    }, { cachedProfile });
+    await page.goto(destination);
+    await page.getByRole("link", { name: "Sign in as owner" }).click();
+    await expect(page.getByRole("region", { name: "Log in", exact: true })).toBeVisible();
+    await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
+    expect(new URL(page.url()).searchParams.get("returnTo")).toBe(destination);
+    if (cachedProfile) expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).id)).toBe("studio-qa-owner");
+    await page.getByLabel("Email", { exact: true }).fill("owner@example.test");
+    await page.getByLabel("Password", { exact: true }).fill("fixture-password");
+    await page.getByRole("button", { name: "Log in →", exact: true }).click();
+    await expect(page).toHaveURL(`http://127.0.0.1:4296${destination}`);
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+  });
+}
