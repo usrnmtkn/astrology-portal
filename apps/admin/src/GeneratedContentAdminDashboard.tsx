@@ -3448,14 +3448,12 @@ export function GeneratedContentAdminDashboard() {
       unsubscribe = watchOwnerSessionAccessToken((nextToken) => {
         if (cancelled || nextToken === activeSessionToken) return;
         activeSessionToken = nextToken;
-        setTransientCredential(nextToken);
         void loadDashboardData(nextToken, false, "session");
       });
       const accessToken = await loadOwnerSessionAccessToken();
 
       if (!cancelled && accessToken) {
         activeSessionToken = accessToken;
-        setTransientCredential(accessToken);
         const result = await loadDashboardData(accessToken, false, "session");
         // A storage/network failure must keep its error and retry credential.
         // Try emergency access only when the server actually rejected the account.
@@ -3463,7 +3461,6 @@ export function GeneratedContentAdminDashboard() {
       }
 
       if (!cancelled && emergencySecret.trim()) {
-        setTransientCredential(emergencySecret);
         await loadDashboardData(emergencySecret, false, "secret");
       } else if (!cancelled) {
         setLoadState("idle");
@@ -3895,6 +3892,7 @@ export function GeneratedContentAdminDashboard() {
     dashboardLoadControllerRef.current = loadController;
     const normalizedSecret = normalizeAdminSecret(secretOverride ?? secret);
     const requestCredentialKind = credentialKind ?? (adminCredentialHeaders(normalizedSecret)["x-content-admin-session"] ? "session" : "secret");
+    setTransientCredential(normalizedSecret);
     if (!normalizedSecret) {
       setLoadState("idle");
       setLoadError("Admin access is required before content can load.");
@@ -3903,7 +3901,6 @@ export function GeneratedContentAdminDashboard() {
       return "idle" as const;
     }
 
-    setTransientCredential(normalizedSecret);
     setLoadState("loading");
     setLoadError(null);
     setLoadDiagnostics(null);

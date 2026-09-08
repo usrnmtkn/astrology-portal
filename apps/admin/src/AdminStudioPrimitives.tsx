@@ -1,6 +1,5 @@
-import { studioSignInHref } from "../../web/src/services/studioAuthReturn";
-import { AlertTriangle, BarChart3, LogIn, Plus, RefreshCw, type LucideIcon } from "lucide-react";
-import { useEffect, useRef, type KeyboardEvent } from "react";
+import { AlertTriangle, BarChart3, Plus, type LucideIcon } from "lucide-react";
+import { lazy, Suspense, useEffect, useRef, type ComponentProps, type KeyboardEvent } from "react";
 import "./admin-content-studio-ux-compat.css";
 import "./admin-content-studio-editor-redesign.css";
 import "./admin-access-feedback.css";
@@ -169,68 +168,12 @@ export function AdminPageHeader({
   );
 }
 
-type AdminAccessGateProps = {
-  disabled: boolean;
-  onChange: (value: string) => void;
-  onSubmit: () => void;
-  value: string;
-};
+const DeferredAccessGate = lazy(() => import("./AdminAccessGate"));
 
-/** Vercel preview hosts carry the branch or deployment id in the hostname. */
-function isPreviewDeployment() {
-  if (typeof window === "undefined") return false;
-  const host = window.location.hostname;
-  return host.includes("-git-") || /-[a-z0-9]{6,}-[a-z0-9-]+\.vercel\.app$/u.test(host) || host === "localhost" || host === "127.0.0.1";
-}
-
-export function AdminAccessGate({ disabled, onChange, onSubmit, value }: AdminAccessGateProps) {
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key === "Enter") onSubmit();
-  }
-
+export function AdminAccessGate(props: ComponentProps<typeof DeferredAccessGate>) {
   return (
-    <section className="admin-content-toolbar admin-access-gate" aria-label="Admin access required">
-      <div>
-        <p className="admin-eyebrow">Owner access required</p>
-        <h2>Sign in to Content Studio</h2>
-        <p>
-          Content Studio needs the owner account. Sign in here, or use the emergency admin secret for this deployment.
-          {isPreviewDeployment() && " This preview uses a separate site address, so a production sign-in does not carry over."}
-        </p>
-      </div>
-      <div className="admin-access-gate-actions">
-        <a
-          className="admin-access-owner-signin"
-          href={studioSignInHref(`${window.location.pathname}${window.location.search}${window.location.hash}`)}
-        >
-          <LogIn size={16} aria-hidden="true" />
-          Sign in as owner
-        </a>
-        <p className="admin-access-gate-note">
-          After you sign in, you’ll return to this Content Studio page automatically.
-        </p>
-        <div className="admin-access-divider" aria-hidden="true">
-          <span>Or use emergency access</span>
-        </div>
-        <label className="admin-access-inline-field">
-          <span>Emergency admin secret</span>
-          <input
-            aria-label="Emergency admin secret"
-            type="password"
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Paste emergency admin secret"
-          />
-        </label>
-        <p className="admin-access-secret-note">
-          Use the <code>CONTENT_GENERATION_SECRET</code> configured for this deployment. This is not a content key.
-        </p>
-        <button type="button" onClick={onSubmit} disabled={disabled}>
-          <RefreshCw size={16} aria-hidden="true" />
-          Verify emergency access
-        </button>
-      </div>
-    </section>
+    <Suspense fallback={<section className="admin-content-toolbar" role="status">Loading sign-in…</section>}>
+      <DeferredAccessGate {...props} />
+    </Suspense>
   );
 }
