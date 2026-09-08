@@ -108,7 +108,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Verify Studio publication lifecycle and actual reader hydration
-        run: npm run test:content-studio-api
+        run: npm run test:content-studio-api && npm run test:sky-evergreen-sections
       - run: npx playwright install --with-deps chromium
       - name: Verify placement composition editing and reader refresh stability
         run: |

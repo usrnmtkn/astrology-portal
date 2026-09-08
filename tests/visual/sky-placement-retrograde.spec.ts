@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { skyPlacementSourceRecords } from "../../api/_lib/sky-placement-sources";
 import { execFileSync } from "node:child_process";
 import { expect, test, type Page } from "@playwright/test";
 const corpus = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json", "utf8"));
@@ -293,3 +294,28 @@ for (const width of [390, 1440]) test(`Saturn date windows stay visible through 
   await expect(page.locator("#sky-detail-title")).toHaveText("Saturn in Aries", { timeout: 60_000 });
   await expect(dates).not.toContainText(["Jul 26, 2026 - Dec 10, 2026"]);
 });
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+ test(`canonical evergreen placement renders the Studio hooks ${width} ${theme}`, async ({ page }) => {
+  test.setTimeout(90_000);
+  const row = skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!;
+  const rx = skyPlacementSourceRecords.get("sky-placement/retrograde/saturn")!;
+  await page.setViewportSize({ width, height: 1000 });
+  await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
+  await page.goto("/?date=2026-09-07&skyPlacementPreview=fallback#sky/placement/saturn/aries");
+  await expect(page.locator("#sky-detail-title")).toHaveText("Saturn Rx in Aries", { timeout: 60_000 });
+  const body = page.locator(".sky-detail-article .article-body-inner").first();
+  const parts = body.locator("p");
+  await expect(parts).toHaveText([rx.Body, row.tldrWhat, row.tldrTakeaway, row.fallback.hook, row.fallback.lived, row.fallback.turn]);
+  await expect(body).not.toContainText(row.placementArticle);
+  const dates = page.locator(".sky-detail-id .article-duration").first();
+  await expect(dates).toHaveText("Jul 26, 2026 - Dec 10, 2026", { timeout: 60_000 });
+  await page.screenshot({ path: `test-results/evergreen-reader-${width}-${theme}.png`, fullPage: true });
+  await page.reload();
+  await expect(parts).toHaveText([rx.Body, row.tldrWhat, row.tldrTakeaway, row.fallback.hook, row.fallback.lived, row.fallback.turn], { timeout: 60_000 });
+  await page.goto("/?date=2026-09-07#sky/placement/saturn/aries");
+  await expect(body).toContainText(row.placementArticle.split("\n\n")[0], { timeout: 60_000 });
+  await expect(body).toContainText("The beginning matters more when it can survive the part nobody claps for.");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+ });
+}

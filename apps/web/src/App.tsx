@@ -4977,9 +4977,6 @@ function skyPlacementWritingSection(
     if (isArchiveArticle) return null;
   }
   try {
-    if (isFallbackOnlySkyPlacementPreview()) {
-      throw new Error("SKY_V4_NOT_SERVABLE: fallback-only preview requested.");
-    }
     let seasonalContext = "";
     if (planet === "sun") {
       try {
@@ -4999,6 +4996,7 @@ function skyPlacementWritingSection(
     const nodeAxis = skyV4NodeAxis(displayPositions);
     const skyV4 = skyV4ReaderRenderer.renderRoute({
       route: "placement",
+      articleAvailable: !isFallbackOnlySkyPlacementPreview(),
       planet,
       sign,
       dateLine: canonicalDateLine,
@@ -5028,7 +5026,8 @@ function skyPlacementWritingSection(
       servingEnabled?: boolean;
       versionStatus?: string;
     };
-    if (skyV4.servingEnabled === true && skyV4.versionStatus === "approved-serving-baseline" && skyV4.readerParts?.length) {
+    if (skyV4.servingEnabled === true && skyV4.versionStatus === "approved-serving-baseline") {
+      if (!skyV4.readerParts?.length) return null;
       rendered = {
         ...rendered,
         headline: rendered?.headline ?? skyPlacementDisplayTitle(position),
@@ -5306,7 +5305,7 @@ function currentSkyPlacementDetailArticle({
     && comparableText(paragraph) !== comparableText(placementSection?.articleWindow ?? "")
     && comparableText(paragraph) !== comparableText(transitRangeLabel ?? "")
   ));
-  const displayBody = isCanonicalSkyV4Article && !isFallbackOnlyPreview
+  const displayBody = isCanonicalSkyV4Article
     ? body
     : composeSkyPlacementFallbackParagraphs(fallbackBody);
   const relatedAspectRows = relatedAspectRowsForPlacement({

@@ -1,4 +1,6 @@
 import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
+// @ts-ignore Shared canonical section schema; no database metadata can expand it.
+import { isSkyEvergreenSource, skyEvergreenFields, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createHash } from "node:crypto";
@@ -393,6 +395,7 @@ function setPackageValueAt(record: Record<string, unknown>, path: string, value:
 }
 
 function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, unknown>) {
+  if (path === SKY_EVERGREEN_SECTIONS_PATH) return isSkyEvergreenSource(packageRecord);
   const studioPaths = Array.isArray(packageRecord?.studio_editable_fields)
     ? packageRecord.studio_editable_fields
       .filter(isRecord)
@@ -411,7 +414,9 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
   const fields = Array.isArray(record.studio_editable_fields)
     ? record.studio_editable_fields.filter(isRecord).map((field) => stringFrom(field.path)).filter(Boolean)
     : [];
-  const copy = fields.map((path) => packageValueAt(effective, path)).filter((value) => typeof value === "string").join("\n\n");
+  const sections = isRecord(effective.fallback) && Array.isArray(effective.fallback.sections) ? effective.fallback.sections : [];
+  const copy = [...fields.map((path) => packageValueAt(effective, path)), ...sections.filter(isRecord).map(section => section.body)]
+    .filter((value) => typeof value === "string").join("\n\n");
   const hardFailures: string[] = [];
   if (/\byou have (?:a|an) (?:gift|talent|natural ability|instinct)\b/iu.test(copy)) {
     hardFailures.push("STP-02 natal-trait framing");
@@ -420,7 +425,9 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
     hardFailures.push("STP-01 planet-in-sign identity language");
   }
   if (/\bright now,? you are\b/iu.test(copy)) hardFailures.push("STP-10 time-adverb trait sentence");
-  if (record.studio_content_type === "continuous-placement" && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
+  const hasPlacementBody = !isSkyEvergreenSource(effective) || stringFrom(effective.placementArticle).trim()
+    || skyEvergreenFields(effective).some((section: { value: string }) => section.value.trim());
+  if (record.studio_content_type === "continuous-placement" && hasPlacementBody && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
     hardFailures.push("STP-03 missing current-sky anchor");
   }
   return { passed: hardFailures.length === 0, hardFailures };
@@ -443,6 +450,14 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
   editableFields.push(["body_you", sections.body_you, record.body_you]);
   editableFields.push(["body_they", sections.body_they, record.body_they]);
   const packageDraft = isRecord(sections.packageDraft) ? sections.packageDraft : null;
+  const proposedRecord = packageDraft ?? (isRecord(sections.packageRecord) ? sections.packageRecord : record);
+  if (isSkyEvergreenSource(record)) {
+    const layout = packageValueAt(proposedRecord, SKY_EVERGREEN_SECTIONS_PATH);
+    validateSkyEvergreenSections(layout);
+    if (Array.isArray(layout)) for (const section of layout.filter(isRecord)) {
+      if (typeof section.body === "string") editableFields.push([`evergreen section ${section.id}`, section.body, ""]);
+    }
+  }
   if (packageDraft) {
     const changedPaths = packageLeafFields(packageDraft)
       .filter(([field, value]) => JSON.stringify(value) !== JSON.stringify(packageValueAt(record, field)))
@@ -1956,6 +1971,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
       const bodyPaths = ["placementArticle", "NewMoonArticle", "FullMoonArticle", "EventArticle", "FallbackArticle", "ModifierArticle", "NodeAxisArticle", "ExactIngressCopy", "Article", "LilithArticle", "Body", "OverlayBody", "Copy", "Template"];
       const field = bodyPaths.find(path => typeof promotedRecord[path] === "string");
       if (field) promotedRecord.body_you = promotedRecord[field];
+      if (isSkyEvergreenSource(promotedRecord) && !stringFrom(promotedRecord.placementArticle).trim()) {
+        promotedRecord.body_you = skyEvergreenFields(promotedRecord).map((section: { value: string }) => section.value).filter((value: string) => value.trim()).join("\n\n");
+      }
       promotedRecord.summary = promotedRecord.tldrTakeaway ?? promotedRecord.TLDR_Takeaway ?? promotedRecord.CanonicalShort ?? promotedRecord.summary;
     }
     const now = new Date().toISOString();

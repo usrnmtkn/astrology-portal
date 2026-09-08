@@ -2,11 +2,13 @@ import { contentPublicationRecords, publicationAllowsContent } from "./contentPu
 import { isCanonicalSkyReaderRecord } from "./fallbackArchitectureV3/dashboardExtensions";
 // @ts-ignore The canonical renderer and its editable-field contract are shared ESM.
 import { renderSkyV4ReaderRoute, skyV4ContentStudioRecords } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
+// @ts-ignore Shared evergreen structure is validated at the publication boundary.
+import { skyEvergreenEditableFields, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "./fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 
 type RecordValue = Record<string, any>;
 const object = (value: unknown): RecordValue => value && typeof value === "object" && !Array.isArray(value) ? value as RecordValue : {};
 const at = (value: RecordValue, path: string): unknown => path.split(".").reduce((current, part) => object(current)[part], value);
-function set(value: RecordValue, path: string, copy: string) {
+function set(value: RecordValue, path: string, copy: unknown) {
   const parts = path.split(".");
   const leaf = parts.pop()!;
   let target = value;
@@ -43,9 +45,13 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
         const baseline = baselines.get(key);
         if (baseline && (byKey.has(key) || blocked.has(key))) {
           const next = { ...source };
-          for (const field of baseline.studio_editable_fields ?? []) {
+          for (const field of skyEvergreenEditableFields(baseline)) {
             const copy = blocked.has(key) ? "" : at(byKey.get(key)!, field.path);
-            if (typeof copy === "string") set(next, field.path, copy);
+            if (field.path === SKY_EVERGREEN_SECTIONS_PATH) {
+              const layout = blocked.has(key) ? [] : copy;
+              validateSkyEvergreenSections(layout);
+              if (layout !== undefined) set(next, field.path, structuredClone(layout));
+            } else if (typeof copy === "string") set(next, field.path, copy);
           }
           return next;
         }

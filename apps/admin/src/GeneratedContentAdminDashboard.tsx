@@ -9088,6 +9088,7 @@ export function GeneratedContentAdminDashboard() {
               <Suspense fallback={<p role="status">Loading writing editor…</p>}>
                 <SkyFallbackFieldsEditor key={currentDraft.contentKey} contentKey={currentDraft.contentKey}
                   kind={skyFallbackEditor.kind} fields={skyFallbackEditor.fields} initialField={skyWritingContext.fieldPath} selection={skyWritingContext.selection}
+                  source={effectiveSkyFallback}
                   disabled={isLoading} onChange={updateSkyFallbackField}
                   onOpenSource={(key, path) => openRow(
                     rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow,

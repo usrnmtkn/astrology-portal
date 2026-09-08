@@ -42,13 +42,13 @@ assert.equal(
 const appSource = readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
 assert.match(
   appSource,
-  /if \(isFallbackOnlySkyPlacementPreview\(\)\) \{[\s\S]*?SKY_V4_NOT_SERVABLE[\s\S]*?skyV4ReaderRenderer\.renderRoute\(\{/u,
-  "The fallback-only preview must bypass only the canonical SKY V4 placement override."
+  /skyV4ReaderRenderer\.renderRoute\(\{\s*route: "placement",\s*articleAvailable: !isFallbackOnlySkyPlacementPreview\(\)/u,
+  "The evergreen preview must select the same canonical hooks that Studio edits."
 );
 assert.match(
   appSource,
-  /isCanonicalSkyV4Article[\s\S]*?isFallbackOnlyPreview[\s\S]*?isCanonicalSkyV4Article && !isFallbackOnlyPreview[\s\S]*?composeSkyPlacementFallbackParagraphs\(fallbackBody/u,
-  "Explicit fallback previews and non-V4 fallback bodies must pass through the one-or-two paragraph composer."
+  /displayBody = isCanonicalSkyV4Article\s*\? body\s*: composeSkyPlacementFallbackParagraphs\(fallbackBody/u,
+  "Canonical evergreen sections retain their order and paragraph boundaries. Only legacy fallback bodies use the older paragraph composer."
 );
 assert.match(
   appSource,

@@ -9975,6 +9975,42 @@ body,
   line-height: var(--leading-meta);
   color: var(--admin-ui-muted);
 }
+.admin-dashboard .admin-evergreen-sections > :not(summary) {
+  margin-top: var(--admin-space-lg);
+}
+.admin-dashboard .admin-evergreen-sections ol {
+  display: grid;
+  gap: var(--admin-space-md);
+  padding: 0;
+  list-style: none;
+}
+.admin-dashboard .admin-evergreen-sections li {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+  padding: var(--admin-space-md);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+}
+.admin-dashboard .admin-evergreen-section-name {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.admin-dashboard .admin-evergreen-section-name small {
+  font-family: var(--font-label);
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-meta);
+  color: var(--admin-ui-muted);
+}
+.admin-dashboard .admin-evergreen-sections [role="group"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-sm);
+}
 .admin-dashboard details.admin-sky-related-editor {
   display: block;
   border: var(--border-width-thin) solid var(--admin-ui-border);
