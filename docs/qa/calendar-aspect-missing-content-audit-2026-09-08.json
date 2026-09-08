@@ -1,0 +1,3109 @@
+{
+  "baselineCount": 439,
+  "ledgerCount": 3620,
+  "coverage": [
+    {
+      "id": "chiron-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "chiron-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-conjunction-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-conjunction-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-conjunction-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-conjunction-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-conjunction-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-opposition-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-opposition-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-opposition-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-opposition-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-opposition-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-sextile-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-sextile-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-sextile-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-sextile-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-sextile-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-square-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-square-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-square-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-square-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-square-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-trine-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-trine-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-trine-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-trine-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "jupiter-trine-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "lilith-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "lilith-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "lilith-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "lilith-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "lilith-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "lilith-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "lilith-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "lilith-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "lilith-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "lilith-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-conjunction-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-conjunction-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-conjunction-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-conjunction-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-conjunction-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-conjunction-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-opposition-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-opposition-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-opposition-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-opposition-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-opposition-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-opposition-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-sextile-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-sextile-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-sextile-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-sextile-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-sextile-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-sextile-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-square-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-square-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-square-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-square-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-square-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-square-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-trine-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-trine-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-trine-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-trine-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-trine-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mars-trine-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-conjunction-venus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-opposition-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-opposition-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-opposition-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-opposition-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-opposition-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-opposition-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-opposition-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-sextile-venus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-square-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-square-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-square-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-square-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-square-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-square-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-square-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-trine-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-trine-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-trine-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-trine-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-trine-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-trine-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "mercury-trine-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-mercury",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-conjunction-venus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-mercury",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-opposition-venus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-mercury",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-sextile-venus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-mercury",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-square-venus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-mercury",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "moon-trine-venus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-conjunction-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-conjunction-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-opposition-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-opposition-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-sextile-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-sextile-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-square-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-square-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-trine-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-trine-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "neptune-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-conjunction-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-opposition-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-sextile-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-square-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-trine-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "pluto-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-conjunction-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-conjunction-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-conjunction-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-conjunction-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-opposition-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-opposition-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-opposition-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-opposition-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-sextile-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-sextile-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-sextile-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-sextile-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-square-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-square-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-square-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-square-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-trine-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-trine-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-trine-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-trine-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-mercury",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-moon",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-conjunction-venus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-moon",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-opposition-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-moon",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-sextile-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-moon",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-square-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-moon",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "sun-trine-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-conjunction-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-conjunction-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-conjunction-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-opposition-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-opposition-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-opposition-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-sextile-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-sextile-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-sextile-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-square-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-square-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-square-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-trine-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-trine-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-trine-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "uranus-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-conjunction-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-conjunction-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-conjunction-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-conjunction-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-conjunction-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-conjunction-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-conjunction-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-conjunction-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-conjunction-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-opposition-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-opposition-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-opposition-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-opposition-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-opposition-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-opposition-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-opposition-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-opposition-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-opposition-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-opposition-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-sextile-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-sextile-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-sextile-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-sextile-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-sextile-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-sextile-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-sextile-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-sextile-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-sextile-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-sextile-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-square-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-square-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-square-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-square-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-square-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-square-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-square-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-square-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-square-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-square-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-trine-chiron",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-trine-jupiter",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-trine-mars",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-trine-neptune",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-trine-north-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-trine-pluto",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-trine-saturn",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-trine-south-node",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "venus-trine-uranus",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    }
+  ],
+  "unavailable": [],
+  "bundledSuppressed": 439,
+  "studioResolved": 439,
+  "screenshotChecks": [
+    {
+      "id": "sun-conjunction-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    },
+    {
+      "id": "saturn-trine-lilith",
+      "source": "LIVE",
+      "bundleAllowed": false,
+      "studio": true,
+      "reversed": true
+    }
+  ],
+  "ingressRequestedKeys": [
+    "sky.ingress.lilith.capricorn.2026-09-08",
+    "sky.ingress.lilith.capricorn",
+    "sky-ingress-lilith-capricorn-2026-09-08",
+    "sky-ingress-lilith-capricorn",
+    "sky-lilith-enters-capricorn",
+    "sky-lilith-in-capricorn",
+    "ms/ingress/lilith",
+    "fallback-hook/sky.ingress.lilith",
+    "fallback-hook/sky.ingress/lilith"
+  ]
+}
