@@ -1,0 +1,54 @@
+/* Page snapshots preserve component state and keep data loading independent of motion. */
+html[data-page-transition] .topbar {
+  view-transition-name: tldr-navigation;
+}
+
+html[data-page-transition]::view-transition {
+  pointer-events: none;
+}
+
+html[data-page-transition]::view-transition-group(*) {
+  animation-duration: var(--motion-page-duration);
+}
+
+html[data-page-transition]::view-transition-old(root) {
+  animation: page-fade-out var(--motion-page-duration) var(--motion-page-ease) both;
+}
+
+html[data-page-transition]::view-transition-new(root) {
+  animation: page-fade-in var(--motion-page-duration) var(--motion-page-ease) both;
+  animation-delay: var(--motion-page-enter-delay);
+}
+
+html[data-page-transition]::view-transition-old(tldr-navigation) {
+  animation: page-nav-out var(--motion-nav-exit-duration) var(--motion-nav-exit-ease) both;
+}
+
+html[data-page-transition]::view-transition-new(tldr-navigation) {
+  animation: page-nav-in var(--motion-nav-enter-duration) var(--motion-nav-enter-ease) both;
+  animation-delay: var(--motion-page-enter-delay);
+}
+
+@keyframes page-fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes page-fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes page-nav-out {
+  to { opacity: 0; transform: translateY(-100%); }
+}
+
+@keyframes page-nav-in {
+  from { opacity: 0; transform: translateY(-100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-page-transition]::view-transition-group(*),
+  html[data-page-transition]::view-transition-old(*),
+  html[data-page-transition]::view-transition-new(*) {
+    animation: none;
+  }
+}

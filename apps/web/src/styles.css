@@ -17,6 +17,7 @@ intentional display clamp() values.
 @import url("./styles/row-primitives.css");
 @import url("./styles/controls.css");
 @import url("./styles/navigation.css");
+@import url("./styles/page-transitions.css");
 @import url("./styles/charts.css");
 @import url("./styles/friends.css");
 @import url("./styles/settings.css");
