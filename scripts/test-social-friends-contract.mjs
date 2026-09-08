@@ -378,7 +378,7 @@ assert.match(
 );
 assert.match(
   app,
-  /isAuthConfigured && !authAccountChecked \? \(\s*<FeatureLoadingFallback message="Loading your profile" \/>[\s\S]*?: userProfile && !studioReturnPath \? \(\s*<ProfileView/,
+  /isAuthConfigured && !authAccountChecked \? \(\s*<FeatureLoadingFallback message="Loading your profile" \/>[\s\S]*?: userProfile && !studioReturnPath && !signInRequested \? \(\s*<ProfileView/,
   "The You page must identify profile verification while withholding account data until authentication completes."
 );
 assert.match(
@@ -793,7 +793,7 @@ assert.doesNotMatch(
 );
 assert.match(
   socialFriendsPanel,
-  /Friends could not load\. Your connections are still saved\.[\s\S]*Try again/,
+  /Friends could not load\.[\s\S]*Your connections are still saved\.[\s\S]*Try again/,
   "A failed Circle load must explain that connections remain saved and expose an explicit retry."
 );
 assert.match(

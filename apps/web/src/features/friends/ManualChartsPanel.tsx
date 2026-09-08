@@ -255,6 +255,7 @@ export function ManualChartsPanel({
   onCalculationReadinessChange,
   onFriendProfileContentRequest,
   onOpenDetail,
+  onSignIn,
   viewModel
 }: {
   profile: UserProfile;
@@ -278,6 +279,7 @@ export function ManualChartsPanel({
   onCalculationReadinessChange: (readiness: FriendCalculationReadiness) => void;
   onFriendProfileContentRequest: (tab: FriendProfileTab) => void;
   onOpenDetail: (detail: SkyDetail) => void;
+  onSignIn: () => void;
   viewModel: typeof friendsViewModelDependencies;
 }) {
   const {
@@ -2589,6 +2591,7 @@ export function ManualChartsPanel({
           onOpenFriend: (friend) => openFriendProfile(socialFriendToChart(friend)),
           onPendingRequestCountChange,
           onSelectView: (view, historyMode) => selectFriendsTab(view, historyMode),
+          onSignIn,
           showPatternPills: showFriendNatalAspectPatterns
         }}
       >

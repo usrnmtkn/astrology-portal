@@ -17,20 +17,28 @@ test.beforeAll(async () => {
   ];
 });
 
-async function prepare(page: Page, options: { circleFailure?: boolean; slowContent?: boolean } = {}) {
+async function prepare(page: Page, options: { circleFailure?: boolean; slowContent?: boolean; session?: "missing" | "rejected" | "unavailable" } = {}) {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  const state = { circleFailure: options.circleFailure ?? false, circleRequests: 0, contentRequests: 0 };
-  await page.addInitScript(({ location, user, profile, cacheRecords }) => {
+  const state = { circleFailure: options.circleFailure ?? false, circleRequests: 0, contentRequests: 0, session: options.session };
+  await page.addInitScript(({ location, user, profile, cacheRecords, session }) => {
     localStorage.setItem("tldrastro:theme", "light");
     localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
     localStorage.setItem("tldrastro:userProfile", JSON.stringify(profile));
-    localStorage.setItem("sb-reader-qa-auth-token", JSON.stringify({ access_token: "fixture.reader.session", refresh_token: "fixture-refresh", expires_at: Math.floor(Date.now()/1000)+3600, token_type: "bearer", user }));
+    if (session !== "missing") localStorage.setItem("sb-reader-qa-auth-token", JSON.stringify({ access_token: "fixture.reader.session", refresh_token: "fixture-refresh", expires_at: Math.floor(Date.now()/1000)+3600, token_type: "bearer", user }));
     for (const record of cacheRecords as any[]) localStorage.setItem(record.cacheKey, JSON.stringify({ ...record, verifiedAt: new Date().toISOString() }));
-  }, { location, user, profile, cacheRecords });
+  }, { location, user, profile, cacheRecords, session: options.session });
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, json: {} }));
   await page.route("https://reader-qa.supabase.test/**", async route => {
     const path = new URL(route.request().url()).pathname;
-    if (path === "/auth/v1/user") return route.fulfill({ json: user });
+    if (path === "/auth/v1/token") {
+      state.session = undefined;
+      return route.fulfill({ json: { access_token: "fixture.reader.new-session", refresh_token: "fixture-new-refresh", expires_at: Math.floor(Date.now()/1000)+3600, expires_in: 3600, token_type: "bearer", user } });
+    }
+    if (path === "/auth/v1/user") return route.fulfill(state.session === "rejected"
+      ? { status: 401, headers: { "x-supabase-api-version": "2024-01-01" }, json: { code: "session_not_found", message: "Session no longer exists" } }
+      : state.session === "unavailable"
+        ? { status: 503, json: { code: "unexpected_failure", message: "Auth temporarily unavailable" } }
+        : { json: user });
     if (path === "/rest/v1/user_profiles") return route.fulfill({ json: { data: { version: 1, profile } } });
     if (path === "/rest/v1/social_profiles") return route.fulfill({ json: { user_id: user.id, display_name: "Reader QA", handle: "reader", discoverable: true } });
     if (path === "/rest/v1/rpc/list_social_friends") {
@@ -45,6 +53,68 @@ async function prepare(page: Page, options: { circleFailure?: boolean; slowConte
   });
   return state;
 }
+
+for (const session of ["missing", "rejected"] as const) for (const theme of ["light", "dark"]) {
+  test(`Friends offers sign-in with a ${session} session and cached profile (${theme})`, async ({ page }) => {
+    await prepare(page, { session });
+    await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
+    await page.goto("/?date=2026-11-27#friends?tab=circle");
+    const notice = page.getByRole("alert");
+    await expect(notice.getByRole("heading", { name: "Sign in to see your friends" })).toBeVisible();
+    await expect(notice.getByRole("button", { name: "Try again" })).toHaveCount(0);
+    await expect(page.locator("h1, h2")).toHaveText(["friends.", "Sign in to see your friends"]);
+    // Compare the new notice with the established connection-error treatment.
+    const referenceContext = session === "missing"
+      ? await page.context().browser()!.newContext({ baseURL: new URL(page.url()).origin })
+      : null;
+    const reference = await referenceContext?.newPage();
+    if (reference) {
+      await prepare(reference, { circleFailure: true });
+      await reference.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
+      await reference.goto("/?date=2026-11-27#friends?tab=circle");
+      await expect(reference.getByRole("alert").getByRole("heading", { name: "Friends could not load." })).toBeVisible();
+    }
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expect(notice.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      if (reference) {
+        await reference.setViewportSize({ width, height: 900 });
+        const headingStyle = async (target: Page) => {
+          await target.evaluate(() => document.fonts.ready.then(() => undefined));
+          return target.getByRole("alert").getByRole("heading").evaluate(element => {
+            const style = getComputedStyle(element);
+            return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.margin, style.textTransform, style.textAlign];
+          });
+        };
+        expect(await headingStyle(page)).toEqual(await headingStyle(reference));
+      }
+      await page.screenshot({ path: `test-results/reader-recovery/friends-sign-in-${session}-${theme}-${width}.png` });
+    }
+    await referenceContext?.close();
+    await page.getByRole("tab", { name: /Charts/ }).click();
+    await expect(page.getByRole("button", { name: "Add a chart", exact: true }).first()).toBeVisible();
+    await page.getByRole("tab", { name: /Circle/ }).click();
+    await notice.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Log in", exact: true })).toBeVisible();
+    await expect(page.getByLabel("Email", { exact: true })).toBeVisible();
+    // Opening sign-in must not destroy the saved natal chart or local profile.
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).charts[0].id)).toBe("reader-chart");
+    await page.getByLabel("Email", { exact: true }).fill(user.email);
+    await page.getByLabel("Password", { exact: true }).fill("qa-only-password");
+    await page.getByRole("button", { name: "Log in →", exact: true }).click();
+    await expect(page.getByText("QA Friend", { exact: true })).toBeVisible();
+    expect(new URL(page.url()).hash).toContain("friends");
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).charts[0].id)).toBe("reader-chart");
+  });
+}
+
+test("an Auth outage remains retryable and is not presented as a missing session", async ({ page }) => {
+  await prepare(page, { session: "unavailable" });
+  await page.goto("/?date=2026-11-27#friends?tab=circle");
+  await expect(page.getByRole("alert").getByRole("button", { name: "Try again" })).toBeVisible({ timeout: 25_000 });
+  await expect(page.getByRole("heading", { name: "Sign in to see your friends" })).toHaveCount(0);
+});
 
 for (const recoveryEvent of ["focus", "online"]) {
   test(`Friends recovers on ${recoveryEvent} after the database returns`, async ({ page }) => {

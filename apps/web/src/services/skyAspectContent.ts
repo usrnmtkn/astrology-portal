@@ -157,9 +157,8 @@ function normalizedContentStudioExactSkyAspectFacts({
     (firstIsNode && secondIsNode)
     || (!firstIsNode && firstIndex < 0)
     || (!secondIsNode && secondIndex < 0)
+    || normalizedFirst === normalizedSecond
     || !["conjunction", "sextile", "square", "trine", "quincunx", "opposition"].includes(normalizedAspect)
-    || !normalizedFirstSign
-    || !normalizedSecondSign
   ) {
     return null;
   }
@@ -269,6 +268,8 @@ export function contentStudioExactRow(
 }
 
 export function resolveSkyAspectContentStudioExact(options: ResolveSkyAspectContentOptions) {
+  // Exact Studio passages describe the planet pair and aspect, independently
+  // of signs. Sign-specific generated cards still require both verified signs.
   const expected = normalizedContentStudioExactSkyAspectFacts(options);
   if (!expected) return null;
 

@@ -13,8 +13,6 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
     event.type === "aspect"
     && event.planets
     && event.aspect
-    && event.fromSign
-    && event.toSign
   ) {
     const [first, second] = event.planets;
 
@@ -22,8 +20,8 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
       first,
       second,
       aspect: event.aspect,
-      firstSign: event.fromSign,
-      secondSign: event.toSign,
+      firstSign: event.fromSign ?? "",
+      secondSign: event.toSign ?? "",
       targetDate: dateKey
     });
   }
