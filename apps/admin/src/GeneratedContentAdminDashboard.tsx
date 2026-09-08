@@ -4763,11 +4763,11 @@ export function GeneratedContentAdminDashboard() {
     return hydrated;
   }
 
-  function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null) {
+  function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string) {
     if (row.inventory_only) {
       setIsLoading(true);
       void hydrateGeneratedContentRow(row)
-        .then((hydrated) => openRow(hydrated, compositionContext))
+        .then((hydrated) => openRow(hydrated, compositionContext, fieldPath))
         .catch((error) => setMessage(dashboardErrorMessage(error)))
         .finally(() => setIsLoading(false));
       return;
@@ -4822,6 +4822,7 @@ export function GeneratedContentAdminDashboard() {
       saveState: "idle",
       workspaceId: null
     } : null);
+    if (fieldPath) scrollEditorToTop(fieldPath);
   }
 
   async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false) {
@@ -4993,11 +4994,15 @@ export function GeneratedContentAdminDashboard() {
     scrollEditorToTop();
   }
 
-  function scrollEditorToTop() {
+  function scrollEditorToTop(fieldPath?: string) {
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
         const editorScroller = editorRef.current?.querySelector<HTMLElement>(".admin-post-editor") ?? editorRef.current;
-        editorScroller?.scrollTo({ top: 0, behavior: "auto" });
+        const field = fieldPath && Array.from(editorRef.current?.querySelectorAll<HTMLTextAreaElement>("textarea[data-sky-field]") ?? []).find(element => element.dataset.skyField === fieldPath);
+        if (field) {
+          field.focus({ preventScroll: true });
+          field.scrollIntoView({ block: "center", behavior: "auto" });
+        } else editorScroller?.scrollTo({ top: 0, behavior: "auto" });
       });
     });
   }
@@ -6225,7 +6230,7 @@ export function GeneratedContentAdminDashboard() {
                 </section>
                 {skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
                   <Suspense fallback={<p className="admin-empty" role="status">Loading Composition Map…</p>}>
-                    <SkyPlacementComposition rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
+                    <SkyPlacementComposition onEditField={(row, path) => openRow(row as AdminGeneratedContentRow, null, path)} rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
                   </Suspense>
                 )}
                 {publishedButUnwiredSkyRows.length > 0 && (
@@ -6626,6 +6631,7 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "compositionMap" && (
           <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
             <CompositionMapWorkspace
+              onEditField={(row, path) => openRow(row as AdminGeneratedContentRow, null, path)}
               key={new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("surface") ?? "all"}
               initialSurfaceId={new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("surface") ?? undefined}
               rows={compositionRows}
@@ -9125,6 +9131,7 @@ export function GeneratedContentAdminDashboard() {
                     <small className="admin-field-hint">Internal source field: <code>{field.key}</code></small>
                     <textarea
                       aria-label={`Fallback field ${field.label}`}
+                      data-sky-field={field.key}
                       value={field.value}
                       onChange={(event) => updateSkyFallbackField(field.key, event.target.value)}
                     />

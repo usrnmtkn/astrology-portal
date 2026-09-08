@@ -9892,3 +9892,45 @@ body,
 .admin-dashboard .admin-sky-summary-composition .admin-composition-variable::after {
   content: none;
 }
+
+/* Sky Placement uses the same prose and attribution contract as Daily Sky. */
+.admin-dashboard .admin-sky-placement-composition .admin-template-reader-copy .admin-composition-preview-field p,
+.admin-dashboard .admin-sky-placement-template p,
+.admin-dashboard .admin-sky-placement-sources p {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+.admin-dashboard .admin-sky-placement-composition .admin-composition-variable {
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  white-space: pre-wrap;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.admin-dashboard .admin-sky-placement-composition .admin-composition-variable::after {
+  content: none;
+}
+.admin-dashboard .admin-sky-placement-composition span.variable-fact {
+  cursor: default;
+}
+.admin-dashboard .admin-sky-placement-sources,
+.admin-dashboard .admin-sky-placement-writing,
+.admin-dashboard .admin-sky-placement-template,
+.admin-dashboard .admin-sky-placement-template ol {
+  display: grid;
+  gap: var(--admin-space-md);
+  min-width: 0;
+}
+.admin-dashboard .admin-sky-placement-sources > div {
+  border-inline-start: var(--border-width-thin) solid var(--admin-ui-border);
+  padding-inline-start: var(--admin-space-md);
+}
+.admin-dashboard .admin-sky-placement-sources strong {
+  margin-inline-end: var(--admin-space-sm);
+}
+.admin-dashboard .admin-sky-placement-composition .admin-composition-view-tabs {
+  flex-wrap: wrap;
+}

@@ -21,6 +21,7 @@ import {
 type Props = {
   editor: ReactNode;
   onEditRow: (row: CompositionMapRow, context?: CompositionEditorContext) => void;
+  onEditField?: (row: CompositionMapRow, path: string) => void;
   onStartCmsRow?: (surface: WritingSurfaceMapItem, starter: WritingSurfaceCmsStarter) => void;
   rows: CompositionMapRow[];
   templateKeys?: string[];
@@ -56,12 +57,13 @@ function sourceKindLabel(source: CompositionMapSource) {
 }
 
 function ReaderSurfaceWorkspace({
-  onStartCmsRow, rows, templates, onEditRow, onSelectTemplate, onLoadRow, initialSurfaceId
+  onStartCmsRow, rows, templates, onEditRow, onEditField, onSelectTemplate, onLoadRow, initialSurfaceId
 }: {
   initialSurfaceId?: string;
   rows: CompositionMapRow[];
   templates: ReturnType<typeof buildCompositionMap>;
   onEditRow: Props["onEditRow"];
+  onEditField?: Props["onEditField"];
   onSelectTemplate: (key: string) => void;
   onLoadRow?: Props["onLoadRow"];
   onStartCmsRow?: (surface: WritingSurfaceMapItem, starter: WritingSurfaceCmsStarter) => void;
@@ -157,7 +159,7 @@ function ReaderSurfaceWorkspace({
               <span className={`ui-pill admin-status ${access.editability === "editable" ? "status-live" : access.editability === "missing" ? "status-error" : "status-draft"}`}>{editorialStatus}</span>
             </header>
 
-            <CompositionSurfaceSources key={selected.id} surfaceId={selected.id} rows={rows} templates={templates} onEditRow={onEditRow} onSelectTemplate={onSelectTemplate} onLoadRow={onLoadRow} />
+            <CompositionSurfaceSources onEditField={onEditField} key={selected.id} surfaceId={selected.id} rows={rows} templates={templates} onEditRow={onEditRow} onSelectTemplate={onSelectTemplate} onLoadRow={onLoadRow} />
             <section className="admin-composition-surface-summary" aria-label="Writing surface contract">
               <div>
                 <p className="admin-eyebrow">Surface content</p>
@@ -236,7 +238,7 @@ function ReaderSurfaceWorkspace({
   );
 }
 
-export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsRow, rows, templateKeys, initialKey, onLoadRow, initialSurfaceId }: Props) {
+export default function CompositionMapWorkspace({ editor, onEditRow, onEditField, onStartCmsRow, rows, templateKeys, initialKey, onLoadRow, initialSurfaceId }: Props) {
   const [scope, setScope] = useState<CompositionScope>(templateKeys ? "templates" : "surfaces");
   const [destinationFilter, setDestinationFilter] = useState("all");
   const [issuesOnly, setIssuesOnly] = useState(false);
@@ -367,7 +369,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
           </button>
         </div>
       </div>}
-      {scope === "surfaces" ? <ReaderSurfaceWorkspace initialSurfaceId={initialSurfaceId} onStartCmsRow={onStartCmsRow} onLoadRow={onLoadRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
+      {scope === "surfaces" ? <ReaderSurfaceWorkspace onEditField={onEditField} initialSurfaceId={initialSurfaceId} onStartCmsRow={onStartCmsRow} onLoadRow={onLoadRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
         <aside className="admin-composition-template-list" aria-label="Composition templates">
           <header>
             <div><p className="admin-eyebrow">{templateKeys ? "Choose a passage or template" : "Choose a template"}</p><strong>{filtered.length} of {map.length}</strong></div>
