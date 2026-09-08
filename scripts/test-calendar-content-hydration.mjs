@@ -93,6 +93,21 @@ const ingressEvent = {
   longitude: 120,
   direction: "direct"
 };
+assert.deepEqual(
+  calendarEventGeneratedContentKeys({ ...aspectEvent, fromSign: undefined, toSign: undefined }),
+  ["sky.aspect.venus.square.mars"],
+  "An event without signs must request its exact Studio passage, never a sign-specific generated card."
+);
+assert.deepEqual(
+  calendarEventGeneratedContentKeys({ ...aspectEvent, planets: ["Mars", "Venus"], fromSign: undefined }),
+  ["sky.aspect.venus.square.mars"],
+  "The same exact passage must be discoverable with reversed bodies and one missing sign."
+);
+assert.deepEqual(
+  calendarEventGeneratedContentKeys({ ...aspectEvent, planets: ["Mars", "Mars"], fromSign: undefined }),
+  [],
+  "Invalid planet pairs must not request prose."
+);
 const retrogradeEvent = {
   id: "uranus-retrograde",
   type: "station",

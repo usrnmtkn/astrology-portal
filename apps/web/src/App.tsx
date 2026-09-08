@@ -3761,23 +3761,8 @@ function placementTransitRangeLabel(position: PlanetPosition, generatedAt: strin
 }
 
 function placementTransitDurationLabel(position: PlanetPosition, generatedAt: string) {
-  if (position.transitStart && position.transitEnd) {
-    return formatApproximateDurationCompact(position.transitStart, position.transitEnd);
-  }
-
-  const speed = averageDailyMotion[position.planet] ?? 1;
-  const isRetrograde = isDisplayRetrograde(position);
-  const entryOffset = isRetrograde
-    ? 30 - position.degree
-    : position.degree;
-  const exitOffset = isRetrograde
-    ? position.degree
-    : 30 - position.degree;
-
-  return formatApproximateDurationCompact(
-    daysFrom(generatedAt, -(entryOffset / speed)),
-    daysFrom(generatedAt, exitOffset / speed)
-  );
+  const { start, end } = placementTransitEndpoints(position, generatedAt);
+  return formatApproximateDurationCompact(start, end);
 }
 
 function compactTransitDurationLabel(position: PlanetPosition, generatedAt: string) {
@@ -11003,9 +10988,14 @@ export function App() {
   const authBootstrapGenerationRef = useRef(0);
   const remoteProfileReadyRef = useRef(false);
   const [accountIntent, setAccountIntentState] = useState<AuthMode>(getInitialAccountIntent);
+  const [signInRequested, setSignInRequested] = useState(() =>
+    new URL(window.location.href).searchParams.get("auth") === "login"
+  );
+  const signInDestinationRef = useRef<PortalMode | null>(null);
   const setAccountIntent = useCallback((intent: AuthMode) => {
     storeAccountIntent(intent);
     setAccountIntentState(intent);
+    setSignInRequested(intent === "login");
   }, []);
   const pendingInvitationCapturedRef = useRef(false);
   const [pendingInvitationForSignup, setPendingInvitationForSignup] = useState(false);
@@ -13330,6 +13320,7 @@ export function App() {
     appliedAuthAccountIdRef.current = account.id;
     remoteProfileReadyRef.current = false;
     setRemoteAccountId(account.id);
+    setSignInRequested(false);
     setRemoteProfileReady(false);
     setOwnSocialProfile(null);
 
@@ -14528,7 +14519,7 @@ export function App() {
                 <YouRoute>
                   {isAuthConfigured && !authAccountChecked ? (
                     <FeatureLoadingFallback message="Loading your profile" />
-                  ) : userProfile && !studioReturnPath ? (
+                  ) : userProfile && !studioReturnPath && !signInRequested ? (
                     <ProfileView
                       transitionPage={transitionPage}
                       profile={userProfile}
@@ -14566,7 +14557,10 @@ export function App() {
                         initialForm={defaultSignupForm}
                         initialMode={accountIntent}
                         onAuthenticated={({ account, form, isNewAccount, provider }) => {
-                          setUserProfile(createUserProfile(form, provider, account));
+                          setAccountIntent("create");
+                          setUserProfile((current) => !isNewAccount && current?.id === account.id
+                            ? profileForAuthAccount(current, account)
+                            : createUserProfile(form, provider, account));
                           if (
                             isNewAccount
                             && provider === "phone"
@@ -14574,10 +14568,12 @@ export function App() {
                           ) {
                             setLaunchChartSetupAfterAuth(true);
                           }
-                          navigateToPortalMode("profile");
+                          navigateToPortalMode(signInDestinationRef.current ?? "profile");
+                          signInDestinationRef.current = null;
                         }}
                         onClearPendingForm={clearPendingSignupForm}
                         onClose={() => {
+                          signInDestinationRef.current = null;
                           setAccountIntent("create");
                           navigateToPortalMode(userProfile ? "profile" : "guest");
                         }}
@@ -14624,6 +14620,11 @@ export function App() {
                     onCalculationReadinessChange={requestFriendCalculations}
                     onFriendProfileContentRequest={requestFriendProfileContent}
                     onOpenDetail={openSkyDetail}
+                    onSignIn={() => {
+                      signInDestinationRef.current = "friends";
+                      setAccountIntent("login");
+                      navigateToPortalMode("profile");
+                    }}
                     viewModel={friendsViewModelDependencies}
                   />
                 </FriendsRoute>

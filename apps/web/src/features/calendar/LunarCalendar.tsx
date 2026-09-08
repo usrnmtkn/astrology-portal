@@ -944,8 +944,6 @@ function liveCalendarEventContent(
     event.type === "aspect"
     && event.planets
     && event.aspect
-    && event.fromSign
-    && event.toSign
   ) {
     if (!generatedContent) {
       return null;
@@ -958,8 +956,8 @@ function liveCalendarEventContent(
       first,
       second,
       aspect: event.aspect,
-      firstSign: event.fromSign,
-      secondSign: event.toSign,
+      firstSign: event.fromSign ?? "",
+      secondSign: event.toSign ?? "",
       targetDate: event.dateKey || event.startsAt.slice(0, 10)
     });
 
@@ -972,8 +970,8 @@ function liveCalendarEventContent(
       first,
       second,
       aspect: event.aspect,
-      firstSign: event.fromSign,
-      secondSign: event.toSign,
+      firstSign: event.fromSign ?? "",
+      secondSign: event.toSign ?? "",
       targetDate: event.dateKey || event.startsAt.slice(0, 10)
     })?.content ?? null;
   }
@@ -1306,14 +1304,14 @@ export function normalizeCalendarEventSurface(
           tier: "generated-sky-aspect-lint-v1"
         }
       : null;
-    const studioExactResolved = content && event.fromSign && event.toSign
+    const studioExactResolved = content
       ? resolveSkyAspectContentStudioExact({
           generatedContent: generatedContent ?? new Map([[content.contentKey, content]]),
           first,
           second,
           aspect: event.aspect,
-          firstSign: event.fromSign,
-          secondSign: event.toSign,
+          firstSign: event.fromSign ?? "",
+          secondSign: event.toSign ?? "",
           targetDate: event.dateKey || event.startsAt.slice(0, 10)
         })
       : null;

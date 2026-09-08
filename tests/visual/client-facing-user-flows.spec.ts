@@ -1932,7 +1932,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Friends Circle stays selectable and retryable when social loading fails", async ({ page }) => {
+  test("Friends Circle stays selectable and offers sign-in when only a cached profile remains", async ({ page }) => {
     await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#friends?tab=circle");
 
@@ -1940,9 +1940,9 @@ test.describe("client-facing user flow case studies", () => {
     const chartsTab = page.getByRole("tab", { name: "Charts · 0" });
     await expect(circleTab).toHaveAttribute("aria-selected", "true");
     await expect(page.getByRole("alert")).toContainText(
-      "Friends could not load. Your connections are still saved."
+      "Sign in to see your friends"
     );
-    await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+    await expect(page.getByRole("alert").getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
 
     await chartsTab.click();
     await expect(chartsTab).toHaveAttribute("aria-selected", "true");

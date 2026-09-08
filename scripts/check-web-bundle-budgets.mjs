@@ -132,7 +132,7 @@ const measurements = {
 const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
   const actual = measurements[metric];
   return typeof actual === "number" && actual > limit
-    ? [`${metric}: ${formatBytes(actual)} exceeds ${formatBytes(limit)}`]
+    ? [`${metric}: ${actual.toLocaleString("en-US")} bytes exceeds ${limit.toLocaleString("en-US")} bytes by ${(actual - limit).toLocaleString("en-US")} bytes`]
     : [];
 });
 

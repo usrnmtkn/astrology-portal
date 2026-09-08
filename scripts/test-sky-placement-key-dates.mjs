@@ -85,6 +85,11 @@ try {
   assert.equal(headerPass.start.toISOString().slice(0, 10), "2026-07-31");
   assert.equal(headerPass.end.toISOString().slice(0, 10), "2026-08-17");
   assert.equal(
+    app.friendsViewModelDependencies.placementTransitDurationLabel(lilithPosition, "2026-08-09T12:00:00Z"),
+    "17D",
+    "You and Friends house-card durations must match the displayed pass, not the year-long multi-pass residency."
+  );
+  assert.equal(
     app.placementFinalResidencyExit(lilithPosition, headerPass.end).toISOString().slice(0, 10),
     "2027-08-13",
     "Article exitDate must resolve to the final verified exit rather than the header pass exit."
