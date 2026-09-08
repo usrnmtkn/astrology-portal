@@ -19,6 +19,7 @@ No astrology prose, source rows, review states, retirement records, or resolver 
 - `node --experimental-strip-types scripts/test-sky-aspect-date-range.mjs`: five date cases passed.
 - `node scripts/test-you-transit-live-content-wiring.mjs`, `node scripts/test-social-friends-contract.mjs`, `node scripts/test-content-studio-last-known-good.mjs`: passed.
 - Typecheck, CSS consistency/token audits and production bundle budgets passed. Reader boot remained below its existing 465 kB gzip cap.
+- `npm run test:performance-contracts`: all startup, Friends, package, and deferred-runtime checks passed. The Friends ordering assertion also requires recovery of the visible list after a successful refresh.
 - The new browser/date regressions run in the existing Sky summary CI job.
 
 ## Production database limitation

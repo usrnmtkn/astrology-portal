@@ -71,11 +71,11 @@ test("You keeps calculated planet and house transits visible while saved content
   const staticRows = page.locator("article.updates-aspect-row");
   expect(await staticRows.count()).toBeGreaterThan(0);
   await expect(staticRows.first()).not.toHaveAttribute("role", "button");
-  await page.screenshot({ path: "outputs/reader-recovery/you-transits-desktop.png", fullPage: true });
+  await page.screenshot({ path: "test-results/reader-recovery/you-transits-desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await houses.scrollIntoViewIfNeeded();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: "outputs/reader-recovery/you-transits-mobile.png" });
+  await page.screenshot({ path: "test-results/reader-recovery/you-transits-mobile.png" });
 });
 
 test("Calendar honors the shared date and finishes skeletons on a stalled content request", async ({ page }) => {
@@ -95,7 +95,7 @@ test("Calendar honors the shared date and finishes skeletons on a stalled conten
   await expect(card).toHaveAttribute("aria-busy", "false", { timeout: 20_000 });
   await expect(card.getByLabel("Loading interpretation")).toHaveCount(0);
   await expect(card).toContainText("Nov 27");
-  await page.screenshot({ path: "outputs/reader-recovery/calendar-finished.png", fullPage: true });
+  await page.screenshot({ path: "test-results/reader-recovery/calendar-finished.png", fullPage: true });
   await page.getByRole("button", { name: /Saturday.*November 28/ }).click();
   expect(new URL(page.url()).searchParams.get("date")).toBe("2026-11-28");
   await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true }).click();
