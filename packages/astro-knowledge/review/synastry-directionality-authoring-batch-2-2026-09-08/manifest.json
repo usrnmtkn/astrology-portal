@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_reverse_authoring_batch",
+  "batchId": "synastry-directionality-authoring-batch-2-2026-09-08",
+  "servingChangesAuthorized": false,
+  "purpose": "Author the first post-classification semantic reverse passages for Friends synastry without changing serving copy.",
+  "readerQuestion": "What does {{Name}} bring out in me?",
+  "voice": "Project Author calibrated: lived experience first, mechanism translated into behavior, no astrology jargon in the reader body, no manufactured event claims, no forced reciprocity.",
+  "scope": {
+    "family": "Sun with Moon, Mercury, Venus, Mars, and Jupiter",
+    "newCandidateCount": 13,
+    "existingBatch1CandidatesExcluded": [
+      "fallback-hook/synastry-pair/sun/mars/hard",
+      "fallback-hook/synastry-pair/sun/mercury/hard"
+    ]
+  },
+  "records": [
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/moon/conjunction",
+      "existingSemanticDirection": "sun_to_moon",
+      "missingSemanticDirection": "moon_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s Moon",
+      "candidateNameToYou": "{{Name}}'s feelings are hard for you to ignore, and their ease or discomfort can quickly change how confident you feel about a choice. When they seem comfortable with what you are doing, you may move forward with less second-guessing; when they pull back, you may start revisiting a decision that made sense five minutes earlier. Their response matters, but it should not become the only measure of what you want.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/moon/hard",
+      "existingSemanticDirection": "sun_to_moon",
+      "missingSemanticDirection": "moon_to_sun",
+      "friendsUseCase": "Your Sun hard-aspect {{Name}}'s Moon",
+      "candidateNameToYou": "{{Name}}'s needs can make a choice that felt simple to you suddenly feel selfish, badly timed, or harder to defend. You may start explaining why the plan matters, then resent how much permission you seem to need before acting on your own priorities. The tension gets worse when caring about each other turns into an argument over whose need gets to set the terms.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/moon/soft",
+      "existingSemanticDirection": "sun_to_moon",
+      "missingSemanticDirection": "moon_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s Moon",
+      "candidateNameToYou": "{{Name}} tends to respond to you in a way that makes it easier to stay yourself. You do not have to spend as much energy wondering if your enthusiasm is too much, your plan is inconvenient, or your confidence needs softening before it can be received. Their emotional ease gives your confidence somewhere comfortable to land, which is easy to overlook precisely because nothing has to be managed.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/mercury/conjunction",
+      "existingSemanticDirection": "mercury_to_sun",
+      "missingSemanticDirection": "sun_to_mercury",
+      "friendsUseCase": "Your Mercury conjunct {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} gives your mind something to organize around. You may find the words for what they are trying to do before they have fully explained it, help sharpen an idea they are still forming, or become the person who can translate their direction into language other people understand. The risk is spending so much time articulating their point that you stop checking what you think about it.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/mercury/soft",
+      "existingSemanticDirection": "mercury_to_sun",
+      "missingSemanticDirection": "sun_to_mercury",
+      "friendsUseCase": "Your Mercury soft-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} makes it easier for you to think clearly about what matters to them without getting lost in translation. Their direction gives the conversation a center, and you can ask questions, add detail, or help name the next step without turning every difference into a debate. You may leave these conversations with your own thoughts clearer too, simply because you did not have to fight to be understood.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/venus/conjunction",
+      "existingSemanticDirection": "venus_to_sun",
+      "missingSemanticDirection": "sun_to_venus",
+      "friendsUseCase": "Your Venus conjunct {{Name}}'s Sun",
+      "candidateNameToYou": "Something about {{Name}} makes your affection more obvious. You may want to remember what matters to them, make a plan more enjoyable, or say the compliment out loud without having to think very hard about it first. That warmth feels good to give, but their response can start carrying too much weight if you begin adjusting what you offer just to keep feeling close to them.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/venus/hard",
+      "existingSemanticDirection": "venus_to_sun",
+      "missingSemanticDirection": "sun_to_venus",
+      "friendsUseCase": "Your Venus hard-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} can bring out a strange mix of liking and resistance in you. Part of you wants to support what they are doing, while another part keeps noticing the tone, choice, style, or value you do not quite agree with. If you keep smoothing that difference over to stay pleasant, your warmth can turn cooler before either of you understands why.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/venus/soft",
+      "existingSemanticDirection": "venus_to_sun",
+      "missingSemanticDirection": "sun_to_venus",
+      "friendsUseCase": "Your Venus soft-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "Liking {{Name}} tends to feel uncomplicated. Their way of being gives you plenty to appreciate, so affection, praise, and generosity come out without much self-consciousness or calculation. The ease is useful, but it can also make both of you assume the goodwill will keep taking care of itself; saying what you value about them still matters.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/mars/conjunction",
+      "existingSemanticDirection": "sun_to_mars",
+      "missingSemanticDirection": "mars_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s Mars",
+      "candidateNameToYou": "{{Name}} gets you moving. Their decisiveness can pull a choice out of you faster, make a plan feel more immediate, or give you enough momentum to stop circling something you already know you want. That can be energizing, but the pace can also make you commit before you have checked if the decision is actually yours or simply the easiest way to keep up.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/mars/soft",
+      "existingSemanticDirection": "sun_to_mars",
+      "missingSemanticDirection": "mars_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s Mars",
+      "candidateNameToYou": "{{Name}} makes action feel easier once you know what you want. They are often ready to move when you are ready to choose, so your ideas do not have to sit around waiting for momentum. Around them, confidence can turn into follow-through quickly; the only thing worth watching is the tendency to let a good pace become the default pace for every decision.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/conjunction",
+      "existingSemanticDirection": "jupiter_to_sun",
+      "missingSemanticDirection": "sun_to_jupiter",
+      "friendsUseCase": "Your Jupiter conjunct {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} brings out your instinct to believe in the larger version of things. Around them, you may see more possibility, become more generous with encouragement, or start imagining where an idea, role, or relationship could go next. That optimism can be a gift to both of you, but it is easy to start expanding the plan before {{Name}} has actually said they want more.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/hard",
+      "existingSemanticDirection": "jupiter_to_sun",
+      "missingSemanticDirection": "sun_to_jupiter",
+      "friendsUseCase": "Your Jupiter hard-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} can make your sense of possibility run ahead of the situation. Their confidence may tempt you to add another idea, raise the goal, or argue that they are capable of more when they are trying to tell you what already works. You may mean encouragement; they may hear pressure. The useful distinction is between seeing potential in someone and treating potential like an assignment.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/soft",
+      "existingSemanticDirection": "jupiter_to_sun",
+      "missingSemanticDirection": "sun_to_jupiter",
+      "friendsUseCase": "Your Jupiter soft-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} gives your optimism somewhere useful to go. Their direction is easy for you to believe in, so encouragement may come with practical help, a helpful introduction, or the reminder that one setback does not erase the larger possibility. Because the support flows easily, you may not notice how much confidence you help create until {{Name}} starts taking themselves more seriously.",
+      "candidateStatus": "drafted_2026-09-08_awaiting_owner_review"
+    }
+  ],
+  "reviewGate": "Owner review required before any candidate is promoted, mapped into Content Studio, or used by the serving resolver."
+}
