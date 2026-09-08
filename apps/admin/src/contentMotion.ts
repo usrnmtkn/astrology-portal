@@ -44,6 +44,7 @@ function motionFromRecord(value: unknown): ContentMotion | null {
 }
 
 export function contentMotion(row: MotionInspectableRow): ContentMotion {
+  if (/^sky-placement\/article\//u.test(row.content_key)) return "unspecified"; // Shared by direct and retrograde readers.
   const structured = motionFromRecord(row.facts)
     ?? motionFromRecord(row.source_snapshot)
     ?? motionFromRecord(row.sections);

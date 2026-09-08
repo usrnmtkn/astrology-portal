@@ -145,3 +145,39 @@ test("dated aspect reload uses post-station motion even with an Rx Sky date", as
   await expect(page.locator(".sky-detail-id .article-duration")).toContainText("December");
   await expect(page.locator(".article-eyebrow__glyphs")).not.toContainText("℞");
 });
+
+test("Saturn detail survives background refresh without feed flash or scroll reset", async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.goto("/?date=2026-09-07#sky/placement/saturn/aries");
+  const article = page.locator(".sky-detail-article");
+  await expect(page.locator("#sky-detail-title")).toHaveText("Saturn Rx in Aries", { timeout: 60_000 });
+  await expect(article).toContainText(modifier("Saturn"));
+  await expect(article).toContainText("The beginning matters more when it can survive the part nobody claps for.");
+  await page.evaluate(() => document.fonts.ready);
+  const before = await page.evaluate(() => {
+    window.scrollTo(0, 700);
+    const article = document.querySelector(".sky-detail-article");
+    (window as any).__saturnRefresh = { article, replaced: false, feedSeen: false };
+    const observer = new MutationObserver(() => {
+      const state = (window as any).__saturnRefresh;
+      state.replaced ||= document.querySelector(".sky-detail-article") !== article;
+      state.feedSeen ||= Boolean(document.querySelector('.placement-section[aria-label="Transits"]'));
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    (window as any).__saturnRefresh.observer = observer;
+    return { scroll: window.scrollY, top: document.querySelector(".article-body-inner p")!.getBoundingClientRect().top };
+  });
+  expect(before.scroll).toBeGreaterThan(300);
+  await page.evaluate(() => window.dispatchEvent(new CustomEvent("tldrastro:content-update", { detail: { contentKey: "sky-placement/article/saturn/aries", published: true, updatedAt: new Date().toISOString() } })));
+  await page.waitForTimeout(1500); // Observe the asynchronous revalidation and both package completions.
+  const after = await page.evaluate(() => {
+    const state = (window as any).__saturnRefresh;
+    state.observer.disconnect();
+    return { scroll: window.scrollY, top: document.querySelector(".article-body-inner p")!.getBoundingClientRect().top, replaced: state.replaced, feedSeen: state.feedSeen };
+  });
+  expect(after.replaced).toBe(false);
+  expect(after.feedSeen).toBe(false);
+  expect(after.scroll).toBeGreaterThan(300);
+  expect(Math.abs(after.top - before.top)).toBeLessThan(5);
+  await expect(article).toContainText(modifier("Saturn"));
+});

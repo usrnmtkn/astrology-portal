@@ -11684,13 +11684,10 @@ export function App() {
     return () => { cancelled = true; fallbackDashboardHydrationRequestedRef.current = false; };
   }, [contentRefreshVersion, friendNatalContentRequested, friendRelationshipContentRequests, mode]);
 
+  const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath });
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadPlacementContent = shouldLoadSkyPlacementContent({
-      mode,
-      hasSky: Boolean(sky),
-      detailRoutePath: skyDetailRoutePath
-    });
+    const shouldLoadPlacementContent = placementContentNeeded;
 
     if (!shouldLoadPlacementContent) {
       setSkyPlacementFallbackStatus("idle");
@@ -11734,7 +11731,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [contentRefreshVersion, mode, sky, skyDetailRoutePath, skyPlacementFallbackRetryKey]);
+  }, [contentRefreshVersion, placementContentNeeded, skyPlacementFallbackRetryKey]);
 
   useEffect(() => {
     function handlePortalUrlChange() {
@@ -11934,7 +11931,7 @@ export function App() {
     setCityPickerOpenedFromMobileControls(false);
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [selectedSkyDetail]);
+  }, [selectedSkyDetail?.routePath]);
 
   useEffect(() => {
     const syncPreviewMode = () => {
@@ -14243,22 +14240,18 @@ export function App() {
 
       {selectedSkyDetail ? (
         <>
-          {skyPlacementFallbackStatus === "loading" ? (
-            <div className="feature-loading-fallback" role="status">Loading the full placement reading…</div>
-          ) : (
-            <>
-              {skyPlacementFallbackStatus === "error" ? (
-                <div className="feature-loading-fallback" role="status">
-                  <span>The full placement reading could not load. Approved available copy remains below.</span>
-                  <button type="button" onClick={() => setSkyPlacementFallbackRetryKey((key) => key + 1)}>Retry</button>
-                </div>
-              ) : null}
-              <Suspense fallback={<FeatureLoadingFallback />}>
-                <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
-              </Suspense>
-            </>
-          )}
+          {skyPlacementFallbackStatus === "error" ? (
+            <div className="feature-loading-fallback" role="status">
+              <span>The full placement reading could not load. Approved available copy remains below.</span>
+              <button type="button" onClick={() => setSkyPlacementFallbackRetryKey((key) => key + 1)}>Retry</button>
+            </div>
+          ) : null}
+          <Suspense fallback={<FeatureLoadingFallback />}>
+            <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
+          </Suspense>
         </>
+      ) : skyDetailRoutePath ? (
+        <FeatureLoadingFallback />
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
