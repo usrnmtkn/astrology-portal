@@ -1,9 +1,39 @@
 import fs from "node:fs";
 import { execFileSync } from "node:child_process";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 const corpus = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json", "utf8"));
 const modifier = (planet: string) => corpus.content.retrogradeGeneric.find((row: { Planet: string }) => row.Planet === planet).Body;
 const normalize = (value: string) => value.replace(/\s+/gu, " ").trim();
+
+async function expectSeparateHoroscopesAfterAspects(page: Page) {
+  const card = page.locator(".sky-detail-rising-horoscopes-card");
+  await expect(card).toBeVisible();
+  await expect(card.locator("#sky-rising-horoscopes")).toHaveCount(1);
+  await expect(page.locator(".sky-detail-card #sky-rising-horoscopes")).toHaveCount(0);
+  await expect(page.locator(".article-related-aspects-card").first()).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator("#sky-detail-key-dates-title")).toBeVisible({ timeout: 60_000 });
+  const layout = await card.evaluate(element => {
+    const aspects = [...document.querySelectorAll(".article-related-aspects-card")];
+    const typography = (heading: Element) => {
+      const style = getComputedStyle(heading);
+      return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight,
+        style.letterSpacing, style.margin, style.textTransform, style.textAlign];
+    };
+    return {
+      separate: element.parentElement?.classList.contains("article-shell"),
+      belowAspects: aspects.every(aspect => aspect.getBoundingClientRect().bottom < element.getBoundingClientRect().top),
+      heading: typography(element.querySelector("h2")!),
+      establishedHeading: typography(document.querySelector("#sky-detail-key-dates-title")!),
+    };
+  });
+  expect(layout.separate).toBe(true);
+  expect(layout.belowAspects).toBe(true);
+  expect(layout.heading).toEqual(layout.establishedHeading);
+  await card.evaluate(element => window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - 240));
+  const title = (await page.locator("#sky-detail-title").innerText()).replace(/\s+/gu, "-").toLowerCase();
+  const theme = (await page.locator(".app-shell").getAttribute("class"))?.includes("theme-dark") ? "dark" : "light";
+  await page.screenshot({ path: `test-results/horoscope-layout-${title}-${theme}-${page.viewportSize()!.width}.png` });
+}
 
 test.beforeAll(() => {
   if (!fs.existsSync("test-results/sky-retrograde/calendar-motion-fixture.json") || !fs.existsSync("test-results/sky-retrograde/direct-neptune-event.json")) {
@@ -42,6 +72,7 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     await expect(page.locator(".article-related-aspects__copy-heading h4").filter({ hasText: /Neptune Rx/ }).first()).toBeVisible();
     const glyphs = page.locator(".article-related-aspects__copy-heading").filter({ hasText: /Neptune Rx/ }).first().locator(".aspect-row-glyphs");
     await expect(glyphs).toContainText("℞");
+    await expectSeparateHoroscopesAfterAspects(page);
     const heading = await page.locator("#sky-detail-title").evaluate(el => {
       const style = getComputedStyle(el), root = getComputedStyle(document.documentElement);
       return { font: style.fontFamily, expectedFont: root.getPropertyValue("--font-display").trim(), weight: style.fontWeight,
@@ -89,6 +120,7 @@ test("both retrograde endpoints survive standalone aspect rendering", async ({ p
   await expect(page.locator("#sky-detail-title")).toHaveText("Neptune Rx Sextile Pluto Rx", { timeout: 60_000 });
   await expect(page.locator(".article-eyebrow")).toHaveAttribute("aria-label", /Aspect: Neptune Neptune Retrograde sextile Pluto Pluto Retrograde/);
   await expect(page.locator(".article-eyebrow__glyphs")).toHaveText(/℞.*℞/);
+  await expect(page.locator(".sky-detail-rising-horoscopes-card")).toHaveCount(0);
 });
 
 test("missing canonical Rx content never exposes direct-only placement prose", async ({ page }) => {
@@ -155,6 +187,7 @@ test("Saturn detail survives background refresh without feed flash or scroll res
   await expect(page.locator("#sky-detail-title")).toHaveText("Saturn Rx in Aries", { timeout: 60_000 });
   await expect(article).toContainText(modifier("Saturn"));
   await expect(article).toContainText("The beginning matters more when it can survive the part nobody claps for.");
+  await expectSeparateHoroscopesAfterAspects(page);
   await page.evaluate(() => document.fonts.ready);
   const before = await page.evaluate(() => {
     window.scrollTo(0, 700);

@@ -3745,6 +3745,8 @@ test.describe("client-facing user flow case studies", () => {
       Number.parseFloat(window.getComputedStyle(element).rowGap)
     ))).toBeGreaterThan(0);
     await expectSemanticArticleHeadingOrder(page, "Sky placement rising-sign article");
+    await expect(page.locator(".sky-detail-rising-horoscopes-card #sky-rising-horoscopes")).toHaveCount(1);
+    await expect(page.locator(".sky-detail-card #sky-rising-horoscopes")).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).toHaveText("July 22 to August 22, 2026");
     await expect(page.getByText("July 22 to August 22, 2026", { exact: true })).toHaveCount(1);
@@ -3772,6 +3774,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(horoscopeSection.getByRole("heading", { name: "Taurus & Taurus Rising" })).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { name: "Pisces & Pisces Rising" })).toBeVisible();
     await expectSemanticArticleHeadingOrder(page, "Personalized Sky placement article");
+    await expect(page.locator(".sky-detail-rising-horoscopes-card #sky-rising-horoscopes")).toHaveCount(1);
     await expect(page.locator("#sky-rising-horoscopes")).toHaveCount(1);
     await expect(page.locator("#sky-personalized-placement")).toHaveCount(1);
     await expect.poll(async () => page.locator("#sky-personalized-placement, #sky-rising-horoscopes").evaluateAll((elements) => (
