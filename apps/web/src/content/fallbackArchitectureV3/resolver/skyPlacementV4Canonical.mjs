@@ -1,3 +1,4 @@
+import { correctedReaderSource } from "./readerSourceReferenceCorrections.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
 import continuousOwnerApproval from "../authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
 import readerCopyOwnerApproval from "../authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
@@ -563,7 +564,14 @@ function nodeStudioRecords(corpus) {
     readOnlyFields: ["Node", "Sign", "OpposingSouthSign", "OpposingNorthSign", "ContentKey", "Mechanism", "OwnerApprovedForSourceRole"],
     sourceUrls: [row.Source]
   }));
-  const education = corpus.content.nodeEducation.map((row) => studioRecord({
+  const education = corpus.content.nodeEducation.map((source) => {
+    const Article = correctedReaderSource(source.ContentKey, "Article", source.Article);
+    return Article === source.Article ? source : {
+      ...source, Article,
+      reader_source_correction: "authored-inputs/reader-source-reference-removals-v1.json",
+      original_source_baseline_sha256: sha256(JSON.stringify(source))
+    };
+  }).map((row) => studioRecord({
     source: row,
     contentKey: row.ContentKey,
     contentType: "node-education",

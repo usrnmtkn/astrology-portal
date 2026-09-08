@@ -3100,6 +3100,37 @@ ${passHook}`;
   return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
+// apps/web/src/content/fallbackArchitectureV3/authored-inputs/reader-source-reference-removals-v1.json
+var reader_source_reference_removals_v1_default = {
+  records: [
+    {
+      contentKey: "sky-nodes/education",
+      field: "Article",
+      previous_sha256: "b996840b1aeb0fb7540f6285bf21f0f92bc6c20a54913ad6a2e75f88a6198698",
+      text: "The lunar nodes are not planets. They are two points that always travel as an axis, so the North Node only makes sense in relationship to the South Node.\n\nFamiliar is not automatically wrong, and unfamiliar is not automatically wise. The South Node can hold useful skills, experience, and responses that once solved a problem. The issue is when that familiarity gets the first move every time. The North Node becomes useful as practice: another way to respond, choose, relate, work, or move through uncertainty. The axis is the story. Eclipses make that story louder by showing what is increasing, what is being released, and where the old reflex and the next direction are no longer producing the same result."
+    },
+    {
+      contentKey: "knowledge-matrix-v9/transit/uranus|aries|retrograde",
+      field: "Copy",
+      previous_sha256: "0907a6f3255e5cc2b046a89a1894b112df4db7741ad136ee02d47cb5c875086d",
+      text: "Uranus turns retrograde in Aries, and a recent insight or experiment may need more time before its meaning is clear."
+    },
+    {
+      contentKey: "knowledge-matrix-v9/transit/uranus|any|direct",
+      field: "Copy",
+      previous_sha256: "27616a08b98846bc856e3a68f5f88ce08bf71822422677f8ea2d7a74916d2cf8",
+      text: "Uranus turns direct, adding another layer of unpredictability to an already eventful moment. Expect the shift to add volatility rather than a guaranteed kind of outcome."
+    }
+  ]
+};
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/readerSourceReferenceCorrections.mjs
+function correctedReaderSource(contentKey, field, original) {
+  const correction = reader_source_reference_removals_v1_default.records.find((entry) => entry.contentKey === contentKey && entry.field === field);
+  if (!correction || typeof original !== "string" || sha256Text(original) !== correction.previous_sha256) return original;
+  return correction.text;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV9.browser.ts
 var EXCLUDED_PREFIX = "[EXCLUDE FROM FALLBACK]";
 var OWNER_APPROVED = "owner-approved";
@@ -3139,7 +3170,10 @@ function createKnowledgeMatrixV9Resolver(manifest, rowsFile, buildReport) {
     if (row.Copy.startsWith(EXCLUDED_PREFIX)) continue;
     transitEligibleRows += 1;
     const key = transitRuntimeKey(row);
-    if (!transitIndex.has(key)) transitIndex.set(key, row);
+    if (!transitIndex.has(key)) transitIndex.set(key, {
+      ...row,
+      Copy: correctedReaderSource(`knowledge-matrix-v9/transit/${key}`, "Copy", row.Copy)
+    });
   }
   const housePrimaryKeys = /* @__PURE__ */ new Set();
   const houseIndex = /* @__PURE__ */ new Map();
@@ -4339,7 +4373,15 @@ function nodeStudioRecords(corpus) {
     readOnlyFields: ["Node", "Sign", "OpposingSouthSign", "OpposingNorthSign", "ContentKey", "Mechanism", "OwnerApprovedForSourceRole"],
     sourceUrls: [row.Source]
   }));
-  const education = corpus.content.nodeEducation.map((row) => studioRecord({
+  const education = corpus.content.nodeEducation.map((source) => {
+    const Article = correctedReaderSource(source.ContentKey, "Article", source.Article);
+    return Article === source.Article ? source : {
+      ...source,
+      Article,
+      reader_source_correction: "authored-inputs/reader-source-reference-removals-v1.json",
+      original_source_baseline_sha256: sha256(JSON.stringify(source))
+    };
+  }).map((row) => studioRecord({
     source: row,
     contentKey: row.ContentKey,
     contentType: "node-education",
@@ -5151,7 +5193,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-07d";
+var PACKAGE_VERSION = "v3-2026-09-08a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
