@@ -1,4 +1,5 @@
 import SkyPlacementComposition from "./SkyPlacementComposition";
+import type { SkyPlacementSelection } from "./skyPlacementAssembly";
 import { useEffect, useMemo, useState } from "react";
 import type { CompositionMapRow, CompositionMapTemplate } from "./compositionMap";
 import { compositionSourceFamily, compositionSourcesForSurface } from "./compositionSurfaceSources";
@@ -10,7 +11,7 @@ type Props = {
   rows: CompositionMapRow[];
   templates: CompositionMapTemplate[];
   onEditRow: (row: CompositionMapRow) => void;
-  onEditField?: (row: CompositionMapRow, path: string) => void;
+  onEditField?: (row: CompositionMapRow, path: string, selection: SkyPlacementSelection) => void;
   onSelectTemplate: (key: string) => void;
   onLoadRow?: (row: CompositionMapRow) => Promise<unknown>;
 };

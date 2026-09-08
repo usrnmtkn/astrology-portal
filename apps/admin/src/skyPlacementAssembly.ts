@@ -3,6 +3,8 @@ import { effectivePackageRecord, packageValueAt } from "./skyFallbackWorkspace";
 import { skyV4StudioDefinition } from "./skyV4ContentStudio";
 
 export type SkyPlacementWriting = "article" | "fallback";
+export type SkyPlacementSelection = { planet: string; sign: string; motion: string };
+export const skyRetrogradeBodies = new Set(["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"]);
 export type SkyPlacementAssemblyField = {
   row: CompositionMapRow;
   path: string;

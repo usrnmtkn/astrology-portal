@@ -164,6 +164,7 @@ import type {
   WritingSurfaceSource
 } from "./writingSurfaceSourceMap";
 import type { CompositionEditorContext } from "./CompositionMapWorkspace";
+import type { SkyPlacementSelection } from "./skyPlacementAssembly";
 import { memoByObject, naturalCollator } from "./derivedCache";
 import "./admin.css";
 import "./admin-components.css";
@@ -178,6 +179,7 @@ import "./admin-content-studio-layout.css";
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const SkyPlacementComposition = lazy(() => import("./SkyPlacementComposition"));
+const SkyFallbackFieldsEditor = lazy(() => import("./SkyFallbackFieldsEditor"));
 const AspectPatternDiagnostics = lazy(async () => {
   const module = await import("./AspectPatternDiagnostics");
   return { default: module.AspectPatternDiagnostics };
@@ -2826,6 +2828,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyRelatedAspectQuery, setSkyRelatedAspectQuery] = useState("");
   const [skyFallbackPreviewFacts, setSkyFallbackPreviewFacts] = useState<Record<string, string>>({});
   const [skyFallbackVariableTarget, setSkyFallbackVariableTarget] = useState("");
+  const [skyWritingContext, setSkyWritingContext] = useState<{ fieldPath?: string; selection?: SkyPlacementSelection }>({});
   const [templateVariableReferenceOpen, setTemplateVariableReferenceOpen] = useState(false);
   const [templateVariableQuery, setTemplateVariableQuery] = useState("");
   const [selectedTemplateVariableName, setSelectedTemplateVariableName] = useState<string | null>(null);
@@ -4763,12 +4766,12 @@ export function GeneratedContentAdminDashboard() {
     return hydrated;
   }
 
-  function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string) {
+  function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection) {
     if (row.inventory_only) {
       setIsLoading(true);
       void hydrateGeneratedContentRow(row)
-        .then((hydrated) => openRow(hydrated, compositionContext, fieldPath))
-        .catch((error) => setMessage(dashboardErrorMessage(error)))
+        .then((hydrated) => openRow(hydrated, compositionContext, fieldPath, placementSelection))
+        .catch((error) => { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); })
         .finally(() => setIsLoading(false));
       return;
     }
@@ -4791,6 +4794,7 @@ export function GeneratedContentAdminDashboard() {
     setSelectedRowId(row.id);
     setDraft(nextDraft);
     setCompositionEditorContext(compositionContext);
+    setSkyWritingContext({ fieldPath, selection: placementSelection ?? (activePage === "skyWriteups" ? { planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter } : undefined) });
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyFallbackPreviewFacts({});
@@ -4822,7 +4826,7 @@ export function GeneratedContentAdminDashboard() {
       saveState: "idle",
       workspaceId: null
     } : null);
-    if (fieldPath) scrollEditorToTop(fieldPath);
+    scrollEditorToTop(fieldPath);
   }
 
   async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false) {
@@ -5007,6 +5011,11 @@ export function GeneratedContentAdminDashboard() {
     });
   }
 
+  function confirmSkyEditorNavigation() {
+    const unsaved = draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current;
+    return !(unsaved || hasPendingArticleChanges()) || window.confirm("Discard the unsaved changes in this editor?");
+  }
+
   function openRelatedSkyRow(parentId: string, row: AdminGeneratedContentRow) {
     if (row.inventory_only) {
       setIsLoading(true);
@@ -5016,6 +5025,7 @@ export function GeneratedContentAdminDashboard() {
         .finally(() => setIsLoading(false));
       return;
     }
+    if (!confirmSkyEditorNavigation()) return;
     const nextDraft = draftFromRow(row);
     setSkyWriteupParentId(parentId);
     setEditorSourceRow(row);
@@ -5027,6 +5037,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function returnToSkyWriteup() {
+    if (!confirmSkyEditorNavigation()) return;
     const parent = rows.find((row) => row.id === skyWriteupParentId);
     if (!parent) {
       setMessage("The parent Sky write-up is no longer available in the loaded rows.");
@@ -5323,6 +5334,7 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
 
+    if (!confirmSkyEditorNavigation()) return;
     openCmsStarter(surfaceItem, {
       label: "Edit house-aware reader override",
       contentKey: starter.contentKey,
@@ -6230,7 +6242,7 @@ export function GeneratedContentAdminDashboard() {
                 </section>
                 {skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
                   <Suspense fallback={<p className="admin-empty" role="status">Loading Composition Map…</p>}>
-                    <SkyPlacementComposition onEditField={(row, path) => openRow(row as AdminGeneratedContentRow, null, path)} rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
+                    <SkyPlacementComposition onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)} rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
                   </Suspense>
                 )}
                 {publishedButUnwiredSkyRows.length > 0 && (
@@ -6631,7 +6643,7 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "compositionMap" && (
           <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
             <CompositionMapWorkspace
-              onEditField={(row, path) => openRow(row as AdminGeneratedContentRow, null, path)}
+              onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)}
               key={new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("surface") ?? "all"}
               initialSurfaceId={new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("surface") ?? undefined}
               rows={compositionRows}
@@ -8107,6 +8119,9 @@ export function GeneratedContentAdminDashboard() {
     const skyPlacementTemplateOptions = skyPlacementCompositionOptions(effectivePackageRecord(currentDraft.sections));
     const skyFallbackEditor = skyFallbackWorkspace(currentDraft.contentKey, currentDraft.sections);
     const skyFallbackContentIdentity = skyFallbackIdentity(currentDraft.contentKey);
+    const isSkyPlacementSource = /^sky-placement\/(?:article|retrograde)\//u.test(currentDraft.contentKey);
+    const SkyRelatedContainer = isSkyPlacementSource ? "details" : "section";
+    const SkyChangesContainer = isSkyPlacementSource ? "details" : "section";
     const effectiveSkyFallbackVariableTarget = skyFallbackEditor?.fields.some((field) => field.key === skyFallbackVariableTarget)
       ? skyFallbackVariableTarget
       : skyFallbackEditor?.fields.find((field) => field.key === "fact_line")?.key ?? skyFallbackEditor?.fields[0]?.key ?? "";
@@ -8693,6 +8708,7 @@ export function GeneratedContentAdminDashboard() {
       const wordCount = value.trim() ? value.trim().split(/\s+/u).length : 0;
       return `${wordCount} ${wordCount === 1 ? "word" : "words"} · ${value.length} ${value.length === 1 ? "character" : "characters"}`;
     };
+    const unchangedSkySource = isSkyPlacementSource && selectedRow?.id.startsWith("package:") && !draftHasUnsavedChanges && !packageHasProposal;
     const editorHeading = isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
@@ -8720,7 +8736,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
                 : "Create saved row";
-    const editorUseLabel = lunarContentIdentity(currentDraft.contentKey)?.destination ?? aspectContext?.label
+    const editorUseLabel = isSkyPlacementSource ? (currentDraft.contentKey.includes("/retrograde/") ? "Retrograde writing" : "Shared placement writing") : lunarContentIdentity(currentDraft.contentKey)?.destination ?? aspectContext?.label
       ?? (selectedRow
         ? contentCategoryForRow(selectedRow)
         : isArticleDraft
@@ -9050,13 +9066,13 @@ export function GeneratedContentAdminDashboard() {
             </section>
           )}
           {skyFallbackEditor && (
-            <section className="admin-fallback-diagnostic-panel" aria-label={skyFallbackEditor.title}>
+            <section className={`admin-fallback-diagnostic-panel${isSkyPlacementSource ? " admin-sky-placement-source-workspace" : ""}`} aria-label={skyFallbackEditor.title}>
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
-                <div>
+                {!isSkyPlacementSource && <div>
                   <p className="admin-eyebrow">Reader source workspace</p>
                   <h3>{skyFallbackContentIdentity?.title ?? skyFallbackEditor.title}</h3>
                   <p><strong>{skyFallbackContentIdentity?.typeLabel ?? skyFallbackEditor.title}.</strong> Save & publish makes this exact revision live. Save draft keeps unfinished changes for later.</p>
-                </div>
+                </div>}
                 <details className="admin-workspace-details">
                   <summary>Source details</summary>
                   <dl className="admin-hook-pattern-list">
@@ -9069,7 +9085,19 @@ export function GeneratedContentAdminDashboard() {
                 </details>
               </header>
 
+              <Suspense fallback={<p role="status">Loading writing editor…</p>}>
+                <SkyFallbackFieldsEditor key={currentDraft.contentKey} contentKey={currentDraft.contentKey}
+                  kind={skyFallbackEditor.kind} fields={skyFallbackEditor.fields} initialField={skyWritingContext.fieldPath} selection={skyWritingContext.selection}
+                  disabled={isLoading} onChange={updateSkyFallbackField}
+                  onOpenSource={(key, path) => openRow(
+                    rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow,
+                    null, path, skyWritingContext.selection
+                  )} />
+              </Suspense>
+
               {isSkyV4StudioRecord && (
+                <SkyChangesContainer>
+                  {isSkyPlacementSource && <summary>Source history and validation</summary>}
                 <Suspense fallback={null}>
                   <SkyV4StudioReviewPanel
                     secret={secret}
@@ -9079,9 +9107,10 @@ export function GeneratedContentAdminDashboard() {
                     disabled={isLoading}
                   />
                 </Suspense>
+                </SkyChangesContainer>
               )}
 
-              <section className="admin-hook-detail-section admin-copy-preview" aria-label="Rendered fallback preview">
+              {!isSkyPlacementSource && <section className="admin-hook-detail-section admin-copy-preview" aria-label="Rendered fallback preview">
                 <p className="admin-eyebrow">Reader preview</p>
                 <h3>{skyFallbackContentIdentity?.title || currentDraft.headline || titleFromKey(currentDraft.contentKey)}</h3>
                 {skyFallbackEditor.fields.find((field) => field.key === "fact_line") ? (
@@ -9094,7 +9123,7 @@ export function GeneratedContentAdminDashboard() {
                 {skyFallbackEditor.variables.some((variable) => !skyFallbackPreviewFacts[variable]) && (
                   <small className="admin-field-hint">Unfilled tokens remain visible until this workspace is opened from a calculated Sky occurrence.</small>
                 )}
-              </section>
+              </section>}
 
               {skyFallbackEditor.variables.length > 0 && (
                 <section className="admin-hook-detail-section admin-calculated-facts" aria-label="Calculated facts">
@@ -9117,30 +9146,10 @@ export function GeneratedContentAdminDashboard() {
                 </section>
               )}
 
-              <section className="admin-sky-edition-fields" aria-label="Editable fallback fields">
-                <header>
-                  <p className="admin-eyebrow">Editable copy</p>
-                  <h3>{skyFallbackEditor.kind === "article" ? "Article paragraphs" : "Aspect audience versions"}</h3>
-                  <p>{skyFallbackEditor.kind === "article"
-                    ? "Each field is a section of the complete article, not a reusable variable."
-                    : "Each field is the complete aspect passage for its named reader surface."}</p>
-                </header>
-                {skyFallbackEditor.fields.map((field) => (
-                  <label className="admin-review-copy-editor" key={field.key}>
-                    <span>{field.label}</span>
-                    <small className="admin-field-hint">Internal source field: <code>{field.key}</code></small>
-                    <textarea
-                      aria-label={`Fallback field ${field.label}`}
-                      data-sky-field={field.key}
-                      value={field.value}
-                      onChange={(event) => updateSkyFallbackField(field.key, event.target.value)}
-                    />
-                  </label>
-                ))}
-              </section>
 
               {skyFallbackChanges.length > 0 && (
-                <section className="admin-hook-detail-section" aria-label="Review fallback changes">
+                <SkyChangesContainer className="admin-hook-detail-section" aria-label="Review fallback changes">
+                  {isSkyPlacementSource && <summary>Review changes ({skyFallbackChanges.length})</summary>}
                   <div className="admin-fallback-diagnostic-heading">
                     <div>
                       <p className="admin-eyebrow">Review diff</p>
@@ -9157,7 +9166,7 @@ export function GeneratedContentAdminDashboard() {
                       <div><strong>{change.label} · proposal</strong><p>{change.after}</p></div>
                     </article>
                   ))}
-                </section>
+                </SkyChangesContainer>
               )}
             </section>
           )}
@@ -9643,7 +9652,8 @@ export function GeneratedContentAdminDashboard() {
             </div>
           )}
           {skyWriteupContext && selectedRow && (
-            <section className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
+            <SkyRelatedContainer className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
+              {isSkyPlacementSource && <summary>Aspects and horoscopes</summary>}
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
                 <div>
                   <p className="admin-eyebrow">{skyLunationContext ? "Lunation workspace" : "Reader horoscope passages"}</p>
@@ -9671,14 +9681,14 @@ export function GeneratedContentAdminDashboard() {
                 </dl>
               </header>
 
-              <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor)}>
+              <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                 <summary>
                   <span>Aspect passages</span>
                   {" "}
                   <strong>{skyAspectPassages.length} rows</strong>
                 </summary>
                 <p className="admin-sky-related-help">
-                  These passages can appear beneath the horoscope when the transiting Moon or placement aspects something in the reader’s natal chart.
+                  These passages describe aspects between this transiting planet or point and the reader’s natal chart.
                 </p>
                 <label className="admin-sky-related-search">
                   <span>Find an aspect passage</span>
@@ -9719,7 +9729,7 @@ export function GeneratedContentAdminDashboard() {
               </details>
 
               {skyLunationContext ? (
-                <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor)}>
+                <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                   <summary>
                     <span>Rising-sign horoscopes</span>
                     {" "}
@@ -9758,7 +9768,7 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </details>
               ) : (
-                <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor)}>
+                <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                   <summary>
                     <span>House horoscopes</span>
                     {" "}
@@ -9795,7 +9805,7 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </details>
               )}
-            </section>
+            </SkyRelatedContainer>
           )}
           <details className="admin-editor-details" aria-label="Details">
             <summary>
@@ -10114,7 +10124,7 @@ export function GeneratedContentAdminDashboard() {
         </section>
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
-          <span className={`admin-editor-save-state ${isLoading ? "is-saving" : draftHasUnsavedChanges || isNewDraft || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
+          <span className={`admin-editor-save-state ${isLoading ? "is-saving" : draftHasUnsavedChanges || isNewDraft && !unchangedSkySource || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
             {isLoading
               ? "Saving…"
               : packageHasProposal
@@ -10123,7 +10133,9 @@ export function GeneratedContentAdminDashboard() {
                   : "Draft saved · Not live"
                 : packageWillPublishOnSave
                   ? natalAspectMissingCopy ? "Write the passage before publishing" : "Ready to publish"
-                  : isNewDraft
+                  : unchangedSkySource
+                    ? "No changes"
+                    : isNewDraft
                     ? "New draft"
                     : draftHasUnsavedChanges
                       ? "Unsaved changes"
@@ -10140,13 +10152,13 @@ export function GeneratedContentAdminDashboard() {
                 await saveDraft(isCmsSurfaceDraft ? "LIVE" : undefined);
               }
             })()}
-            disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !(isCmsSurfaceDraft && currentDraft.status !== "LIVE"))}
+            disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !(isCmsSurfaceDraft && currentDraft.status !== "LIVE"))}
             title={packageWillPublishOnSave && natalAspectMissingCopy ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
             {isGuidedHeldReview
               ? "Save held draft"
-              : isCmsSurfaceDraft || packageCanApproveRevision
+              : isCmsSurfaceDraft || packageCanApproveRevision || unchangedSkySource
                 ? "Save & publish"
                 : packageHasProposal
                 ? "Save draft"
@@ -10154,12 +10166,12 @@ export function GeneratedContentAdminDashboard() {
                   ? "Save & publish"
                   : "Save"}
           </button>
-          {(isCmsSurfaceDraft || isPackageDraft && packageCanApproveRevision) && (
+          {(isCmsSurfaceDraft || isPackageDraft && packageCanApproveRevision || unchangedSkySource) && (
             <button
               className="admin-secondary-button"
               type="button"
               onClick={() => void saveDraft(isCmsSurfaceDraft ? "DRAFT" : undefined)}
-              disabled={isLoading || (!isNewDraft && !draftHasUnsavedChanges)}
+              disabled={isLoading || unchangedSkySource || (!isNewDraft && !draftHasUnsavedChanges)}
               title="Keep this revision Not live."
             >
               <Save size={16} aria-hidden="true" />

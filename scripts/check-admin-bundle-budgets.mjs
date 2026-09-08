@@ -85,6 +85,7 @@ for (const marker of forbiddenEntryMarkers) {
 const expectedDynamicEntries = [
   "src/CompositionMapWorkspace.tsx",
   "src/SkyPlacementComposition.tsx",
+  "src/SkyFallbackFieldsEditor.tsx",
 ];
 for (const key of expectedDynamicEntries) {
   if (!manifest[key]?.isDynamicEntry) failures.push(`Expected lazy Admin entry is missing: ${key}`);

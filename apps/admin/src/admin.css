@@ -9934,3 +9934,88 @@ body,
 .admin-dashboard .admin-sky-placement-composition .admin-composition-view-tabs {
   flex-wrap: wrap;
 }
+
+/* Placement editing keeps the selected source and its writing together. */
+.admin-dashboard .admin-sky-writing-editor,
+.admin-dashboard .admin-sky-writing-context {
+  display: grid;
+  gap: var(--admin-space-lg);
+  min-width: 0;
+}
+.admin-dashboard .admin-sky-writing-context {
+  padding: var(--admin-space-lg);
+  background: var(--admin-ui-surface-2);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+}
+.admin-dashboard .admin-sky-writing-source-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+}
+.admin-dashboard .admin-sky-writing-editor p:not(.admin-sky-writing-count),
+#root .admin-dashboard .admin-editor-panel .admin-sky-writing-editor textarea,
+.admin-dashboard details.admin-sky-related-editor p {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+.admin-dashboard .admin-sky-writing-preview {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding-block: var(--admin-space-md);
+}
+.admin-dashboard .admin-sky-writing-count {
+  text-align: end;
+  font-family: var(--font-label);
+  font-size: var(--text-meta-size);
+  line-height: var(--leading-meta);
+  color: var(--admin-ui-muted);
+}
+.admin-dashboard details.admin-sky-related-editor {
+  display: block;
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  padding: var(--admin-space-lg);
+}
+.admin-dashboard details.admin-sky-related-editor > summary,
+.admin-dashboard .admin-sky-writing-editor summary {
+  cursor: pointer;
+  font-family: var(--font-label);
+  font-weight: var(--weight-semibold);
+}
+.admin-dashboard details.admin-sky-related-editor > :not(summary) {
+  margin-top: var(--admin-space-lg);
+}
+.admin-dashboard details.admin-sky-related-editor .admin-hook-pattern-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--admin-space-md);
+  width: 100%;
+}
+.admin-dashboard details.admin-sky-related-editor .admin-sky-related-heading,
+.admin-dashboard details.admin-sky-related-editor .admin-sky-related-row,
+.admin-dashboard details.admin-sky-related-editor .admin-sky-related-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--admin-space-md);
+  min-width: 0;
+}
+.admin-dashboard details.admin-sky-related-editor .admin-search-input-shell {
+  display: flex;
+  align-items: center;
+  gap: var(--admin-space-sm);
+}
+.admin-dashboard details.admin-sky-related-editor .admin-search-input-shell input {
+  min-width: 0;
+  width: 100%;
+}
+.admin-dashboard details.admin-sky-related-editor .admin-surface-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: var(--admin-space-sm);
+}
