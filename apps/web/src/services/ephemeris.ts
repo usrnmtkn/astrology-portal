@@ -3220,6 +3220,29 @@ function rankPlacementEvents(events: LunarCalendarEvent[], planet: string) {
     }));
 }
 
+/** Calculate a coherent snapshot for the requested placement, using its next
+ * residency when the reference date is in another sign. Never relabel a live
+ * position while retaining that other sign's dates, motion, or aspects.
+ */
+export async function getSkyPlacementSnapshot(
+  location: LocationInput,
+  requestedPlanet: string,
+  requestedSign: string,
+  referenceDate: Date
+): Promise<SkySnapshot> {
+  if (Number.isNaN(referenceDate.getTime())) throw new Error("Sky Placement referenceDate must be valid.");
+  const swe = await getSwissEph();
+  // Moon placement pages share this route boundary but have a much shorter
+  // residency than the continuous-placement article families.
+  const requested = requestedPlanet.trim().toLowerCase();
+  const { planet, planetId, longitudeOffset } = requested === "moon"
+    ? { planet: "Moon", planetId: swe.SE_MOON, longitudeOffset: 0 }
+    : placementPlanet(swe, requested === "true-node" ? "north-node" : requested);
+  const sign = placementSign(requestedSign);
+  const sample = findNextPlacementSample(swe, planet, planetId, sign, referenceDate, longitudeOffset);
+  return getAstrodienstSky(location, sample, { includeTransitWindows: true });
+}
+
 export async function getSkyPlacementTransitFacts({
   planet: requestedPlanet,
   sign: requestedSign,

@@ -856,6 +856,12 @@ function renderAspect(aspect) {
 
 export function renderSkyV4ContinuousPreview(corpus, input) {
   const article = input.articleOverride ?? continuousArticleFor(corpus, input.planet, input.sign);
+  const expectedKey = `sky-placement/article/${lower(input.planet)}/${lower(input.sign)}`;
+  if (article && (article.contentKey !== expectedKey
+    || lower(article.planet) !== lower(input.planet) || lower(article.sign) !== lower(input.sign))) {
+    throw new Error(`SKY_V4_PLACEMENT_IDENTITY: expected ${expectedKey}.`);
+  }
+  input = { ...input, contexts: matchingPlacementContexts(input) };
   const facts = input.facts ?? {};
   const fullArticle = article && input.articleAvailable !== false
     ? withoutUnresolvedSlots(fillFacts(article.placementArticle, facts))
@@ -1267,6 +1273,22 @@ function nodePlacementKey(body, sign) {
   return null;
 }
 
+function placementContentKey(body, sign) {
+  return ["lilith", "black-moon-lilith"].includes(lower(body))
+    ? `sky-lilith/article/${lower(sign)}`
+    : nodePlacementKey(body, sign) ?? `sky-placement/article/${lower(body)}/${lower(sign)}`;
+}
+
+// Contexts describe other bodies/events, but their subject must remain the
+// placement whose article is being rendered. Never carry a previous route's
+// overlay into a new placement after navigation or hydration.
+function matchingPlacementContexts(input) {
+  return (input.contexts ?? []).filter((context) => (
+    slug(context.subjectBody) === slug(input.planet)
+    && lower(context.subjectSign) === lower(input.sign)
+  ));
+}
+
 /**
  * Production reader boundary for the hash-bound SKY V4 release. It accepts
  * calculated facts and governed aspect records, but never a Content Studio
@@ -1288,12 +1310,15 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   let contentKey = text(input.contentKey).trim();
   let resolution = "exact-canonical-key";
   const route = lower(input.route);
+  if (route === "placement") {
+    const expectedKey = placementContentKey(input.planet, input.sign);
+    if (contentKey && contentKey !== expectedKey) {
+      throw new Error(`SKY_V4_PLACEMENT_IDENTITY: expected ${expectedKey}, received ${contentKey}.`);
+    }
+    input = { ...input, contexts: matchingPlacementContexts(input) };
+  }
   if (!contentKey && route === "placement") {
-    const body = lower(input.planet);
-    contentKey = body === "lilith" || body === "black-moon-lilith"
-      ? `sky-lilith/article/${lower(input.sign)}`
-      : nodePlacementKey(body, input.sign)
-        ?? `sky-placement/article/${body}/${lower(input.sign)}`;
+    contentKey = placementContentKey(input.planet, input.sign);
   } else if (!contentKey && route === "new-moon") {
     contentKey = `sky-lunation/new-moon/${lower(input.sign)}`;
   } else if (!contentKey && route === "full-moon") {
