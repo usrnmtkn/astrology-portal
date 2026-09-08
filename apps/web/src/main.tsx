@@ -116,7 +116,12 @@ async function startApp() {
   const { App } = await appModulePromise;
   if (!isAdminContentPath()) {
     const { refreshContentPublications } = await import("./services/contentPublications");
-    await refreshContentPublications();
+    // Publication state restores its verified cache synchronously. Revalidate
+    // in the background: an unavailable content service must not block the
+    // entire reader or delay starting the live ephemeris calculation.
+    // Content loaders still await this shared request before selecting rows;
+    // installed revisions notify mounted readers through contentUpdateSignal.
+    void refreshContentPublications();
   }
   const reportPath = isReportPath();
 
