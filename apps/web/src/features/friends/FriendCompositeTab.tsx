@@ -24,12 +24,16 @@ export function FriendCompositeTab({
   aspectGroups,
   compositeAvailable,
   placementRows,
+  onPlacementClick,
+  onAspectClick,
   relationshipCompare,
   relationshipCompareStatus
 }: {
   aspectGroups: FriendCompositeAspectGroup[];
   compositeAvailable: boolean;
   placementRows: SocialPlacementRow[];
+  onPlacementClick?: (row: SocialPlacementRow) => void;
+  onAspectClick?: (aspect: FriendCompositeAspectGroup["aspects"][number]) => void;
   relationshipCompare: RelationshipCompareResponse | null;
   relationshipCompareStatus: RelationshipCompareStatus;
 }) {
@@ -61,6 +65,7 @@ export function FriendCompositeTab({
               compact
               generatedContext="composite"
               showTitle={false}
+              onPlacementClick={onPlacementClick}
             />
           </section>
         )}
@@ -75,17 +80,21 @@ export function FriendCompositeTab({
                 listClassName="friend-aspect-list"
               >
                 {group.aspects.map((aspect) => (
-                  <div className="aspect-row aspect-row-static friend-aspect-row" key={`${aspect.from}-${aspect.type}-${aspect.to}`}>
+                  <button type="button" className="aspect-row aspect-row-button friend-aspect-row" key={`${aspect.from}-${aspect.type}-${aspect.to}`}
+                    disabled={!aspect.summary || !onAspectClick}
+                    aria-label={`Open full entry for ${aspect.from} ${aspect.type} ${aspect.to}`}
+                    onClick={() => onAspectClick?.(aspect)}
+                  >
                     <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
                     <span className="aspect-row-copy">
                       <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-                      <p>{aspect.summary}</p>
+                      {aspect.summary ? aspect.summary.split(/\n{2,}/).map((paragraph, index) => <p key={index}>{paragraph}</p>) : null}
                     </span>
                     <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                       <span className="aspect-row-dot" aria-hidden="true" />
                       <span>{wholeDegreeOrb(aspect.orb)}</span>
                     </span>
-                  </div>
+                  </button>
                 ))}
               </AspectGiftLessonGroup>
             ))

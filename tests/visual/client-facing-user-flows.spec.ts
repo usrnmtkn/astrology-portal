@@ -1908,6 +1908,39 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page).toHaveURL(/#friends\?tab=circle$/u);
   });
 
+  for (const theme of ["light", "dark"] as const) {
+    for (const width of [1440, 390]) {
+      test(`composite write-ups open complete details ${theme} ${width}`, async ({ page }) => {
+        const assertNoClientErrors = await expectNoClientErrors(page);
+        await page.setViewportSize({ width, height: 1000 });
+        await seedClientState(page, { profile: true, friends: true, theme });
+        await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=composite");
+        const pane = page.locator('.friend-tab-pane[aria-label="Composite"]');
+        const card = pane.locator('.friend-aspect-row:not(:disabled)').first();
+        await expect(card).toBeVisible();
+        const title = await card.locator("h3").innerText();
+        const paragraphs = await card.locator(".aspect-row-copy p").allTextContents();
+        expect(paragraphs.join("").trim().length).toBeGreaterThan(0);
+        await card.focus();
+        await page.keyboard.press("Enter");
+        const article = page.locator(".sky-detail-article");
+        await expect(article).toBeVisible();
+        await expect(article).toContainText(title);
+        for (const paragraph of paragraphs) await expect(article).toContainText(paragraph);
+        await page.screenshot({ path: `test-results/composite-detail-${theme}-${width}.png`, fullPage: true });
+        await page.reload();
+        await expect(article).toContainText(paragraphs[0]);
+        await page.getByRole("button", { name: "Close detail", exact: true }).click();
+        const placement = pane.locator("button.placement-table-row").first();
+        await expect(placement).toBeVisible();
+        const description = await placement.locator(".placement-table-row__description").innerText();
+        await placement.click();
+        await expect(article).toContainText(description);
+        await assertNoClientErrors();
+      });
+    }
+  }
+
   test("friend chart section pills and overflow menu fit a narrow viewport", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 

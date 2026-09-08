@@ -308,6 +308,7 @@ export function ManualChartsPanel({
     natalGeneratedCopyForOwner,
     natalPlacementDetailArticle,
     normalizeChartSettings,
+    useContentRegistryRevision,
     normalizeCompositeAspectSurface,
     normalizeCompositePlacementSurface,
     normalizeContentIdPart,
@@ -831,43 +832,20 @@ export function ManualChartsPanel({
   }
 
   function compositeAspectSummary(
-    aspect: { from: string; to: string; type: string; orb: number } | null,
-    chartName: string,
-    comparisonName: string,
-    comparisonIsSelf: boolean,
-    generatedContent?: GeneratedContentMap,
-    relationshipType?: string | null
+    aspect: { from: string; to: string; type: string; orb: number },
+    generatedContent?: GeneratedContentMap
   ) {
-    if (!aspect) {
-      return "No single aspect is dominating the relationship chart. The placements matter more here: they show the bond's tone, needs, and recurring sensitivities.";
-    }
-
-    void generatedContent;
-    void relationshipType;
-    const normalized = normalizeCompositeAspectSurface(aspect);
-    const body = normalized.sections[0]?.body ?? "";
-
-    return repairRelationshipFallbackGrammar(
-      relationshipGeneratedCopyForPerspective(body, chartName, comparisonName, comparisonIsSelf)
-    );
+    return normalizeCompositeAspectSurface(aspect, generatedContent).sections
+      .map((section) => section.body).join("\n\n");
   }
 
   function compositePlacementRows(sky: SkySnapshot, generatedContent?: GeneratedContentMap): SocialPlacementRow[] {
-    void generatedContent;
     return socialPlacementRows(sky).map((row) => {
       const normalized = normalizeCompositePlacementSurface({
-        planet: row.label,
-        sign: row.sign,
-        house: row.house
-      });
-      const description = repairRelationshipFallbackGrammar(relationshipGeneratedCopyForPerspective(
-        normalized.sections[0]?.body ?? row.description ?? "",
-        "the relationship",
-        "you",
-        true
-      ));
-
-      return description ? { ...row, description } : row;
+        planet: row.label, sign: row.sign, house: row.house
+      }, generatedContent);
+      const description = normalized.sections.map((section) => section.body).join("\n\n");
+      return { ...row, description, detailAvailable: Boolean(description) };
     });
   }
 
@@ -1224,11 +1202,12 @@ export function ManualChartsPanel({
         )
       : []
   ), [friendProfileWork.composite, selectedCompositeSky]);
+  const compositeContentRegistryVersion = useContentRegistryRevision();
   const selectedCompositePlacementRows = useMemo(() => (
     selectedCompositeSky
       ? compositePlacementRows(selectedCompositeSky, relationshipGeneratedContent)
       : []
-  ), [relationshipGeneratedContent, selectedCompositeSky]);
+  ), [compositeContentRegistryVersion, relationshipGeneratedContent, selectedCompositeSky]);
   const selectedCompositeViewGroups = useMemo<FriendCompositeAspectGroup[]>(() => (
     selectedCompositeAspectGroups.map((group) => ({
       key: group.key,
@@ -1238,14 +1217,7 @@ export function ManualChartsPanel({
         type: aspect.type,
         to: aspect.to,
         orb: aspect.orb,
-        summary: compositeAspectSummary(
-          aspect,
-          selectedChart?.displayName ?? "Friend",
-          relationshipComparisonName,
-          relationshipComparisonIsSelf,
-          relationshipGeneratedContent,
-          selectedChart?.relationshipType
-        )
+        summary: compositeAspectSummary(aspect, relationshipGeneratedContent)
       }))
     }))
   ), [
@@ -1254,7 +1226,8 @@ export function ManualChartsPanel({
     relationshipGeneratedContent,
     selectedChart?.displayName,
     selectedChart?.relationshipType,
-    selectedCompositeAspectGroups
+    selectedCompositeAspectGroups,
+    compositeContentRegistryVersion
   ]);
   const selectedFriendHasChartRail = friendProfileTab === "natal"
     ? Boolean(selectedFriendReadyNatalChart)
@@ -1904,6 +1877,42 @@ export function ManualChartsPanel({
     onOpenDetail(detail);
     return true;
   };
+  const openCompositePlacementDetail = (row: SocialPlacementRow) => {
+    if (!selectedChart) return;
+    openFriendDetail({
+      routePath: friendDetailRoutePath(selectedChart.id, "composite", `placement-${row.id}`),
+      glyph: row.glyph,
+      kicker: "Composite",
+      title: `${row.label} in ${row.sign}`,
+      meta: typeof row.house === "number" ? `House ${row.house}` : "",
+      plainBody: true,
+      suppressTldr: true,
+      body: (row.description ?? "").split(/\n{2,}/)
+    });
+  };
+  const openCompositeAspectDetail = (aspect: FriendCompositeAspectGroup["aspects"][number]) => {
+    if (!selectedChart) return;
+    openFriendDetail({
+      routePath: friendDetailRoutePath(selectedChart.id, "composite", `aspect-${aspect.from}-${aspect.type}-${aspect.to}`),
+      glyph: aspectGlyph(aspect.type),
+      kicker: "Composite",
+      title: `${aspect.from} ${aspect.type} ${aspect.to}`,
+      meta: wholeDegreeOrb(aspect.orb),
+      plainBody: true,
+      suppressTldr: true,
+      body: aspect.summary.split(/\n{2,}/)
+    });
+  };
+  useEffect(() => {
+    const route = friendsRouteStateFromUrl();
+    if (!route?.detail || route.view !== "composite" || route.chartId !== selectedChart?.id) return;
+    const placement = selectedCompositePlacementRows.find((row) => `placement-${row.id}` === route.detail);
+    if (placement) openCompositePlacementDetail(placement);
+    const aspect = selectedCompositeViewGroups.flatMap((group) => group.aspects)
+      .find((row) => `aspect-${row.from}-${row.type}-${row.to}` === route.detail);
+    if (aspect) openCompositeAspectDetail(aspect);
+  }, [selectedChart?.id, selectedCompositePlacementRows, selectedCompositeViewGroups]);
+
   const openFriendCompatibilityCardDetail = (card: CompatibilityPlanetCard, paragraphs: string[]) => {
     if (!selectedChart) {
       return;
@@ -2837,6 +2846,8 @@ export function ManualChartsPanel({
               aspectGroups={selectedCompositeViewGroups}
               compositeAvailable={Boolean(selectedCompositeSky)}
               placementRows={selectedCompositePlacementRows}
+              onPlacementClick={openCompositePlacementDetail}
+              onAspectClick={openCompositeAspectDetail}
               relationshipCompare={relationshipCompare}
               relationshipCompareStatus={relationshipCompareStatus}
             />
