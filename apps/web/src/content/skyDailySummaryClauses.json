@@ -3,7 +3,7 @@
     "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
     "date": "2026-09-07",
     "ownerRequest": "is this the article, can you add this in. It reads better.",
-    "scope": "The fuller Sun-in-Virgo and Moon-in-Cancer summary sentence selected in this task. Signs and degrees remain calculated slots; full articles are unchanged.",
+    "scope": "All 24 supplied Sun and Moon summary clauses. Opening verbs use the requested finite-verb template; the separately approved Virgo Sun and Cancer Moon revisions are preserved. Signs and degrees remain calculated slots; full articles are unchanged.",
     "revisions": [
       {
         "sourceTaskId": "01a07c99-175b-7ee3-85c5-53c69ef1948a",
@@ -27,12 +27,35 @@
     "previousClauses": {
       "sun/virgo": "turning our attention to the daily rituals and systems we rely on and showing us which support us and which have become too rigid, demanding, or punishing",
       "moon/cancer": "bringing more attention to home, family, and whether the care we give is coming back to us"
-    }
+    },
+    "suppliedCopyRevisions": "docs/content-review/sky-summary-supplied-copy-2026-09-08.json"
   },
   "sun": {
-    "virgo": "turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing"
+    "virgo": "turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing",
+    "aries": "puts more emphasis on starting, acting, and finding out what works by doing it",
+    "taurus": "slows the pace enough to notice what is worth keeping, building, or spending on",
+    "gemini": "makes questions, conversation, and new information harder to ignore",
+    "cancer": "brings more attention to home, care, family, and what you want to protect",
+    "leo": "makes it easier to put your name on the work and let yourself be seen doing it",
+    "libra": "puts more attention on agreements, tradeoffs, and decisions that affect more than one person",
+    "scorpio": "makes it harder to ignore what has been avoided, hidden, or left unresolved",
+    "sagittarius": "makes the bigger question, the farther trip, or the next thing to learn more compelling",
+    "capricorn": "puts the focus on responsibility, deadlines, and what you are willing to build over time",
+    "aquarius": "makes it easier to see the system behind the problem and question rules that no longer help",
+    "pisces": "softens the pace enough for imagination, compassion, and unfinished feelings to have more room"
   },
   "moon": {
-    "cancer": "brings more attention to home, family, and whether the care we give is coming back to us"
+    "cancer": "brings more attention to home, family, and whether the care we give is coming back to us",
+    "aries": "makes reactions faster and harder to hide than usual",
+    "taurus": "makes comfort, familiar routines, and a slower pace more appealing",
+    "gemini": "makes it easier to talk through a feeling, ask another question, or change your mind",
+    "leo": "makes appreciation land harder and being overlooked harder to shrug off",
+    "virgo": "turns vague unease into a task, a list, or something concrete to fix",
+    "libra": "makes fairness, tone, and the give-and-take between people easier to notice",
+    "scorpio": "makes trust, privacy, and what is not being said harder to ignore",
+    "sagittarius": "makes space, movement, and a bigger perspective feel more necessary",
+    "capricorn": "makes it easier to handle what has to be done before talking about how it feels",
+    "aquarius": "makes a little distance useful for seeing the pattern behind the mood",
+    "pisces": "softens focus and making rest, imagination, and the atmosphere around you harder to tune out"
   }
 }

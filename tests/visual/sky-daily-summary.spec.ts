@@ -9,8 +9,8 @@ test("September 8 uses the revised Virgo clause and links planet names", async (
   await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
   await page.goto("/?date=2026-09-08#sky");
   const summary = page.getByLabel("Daily sky summary");
-  await expect(summary).toContainText("The Sun in Virgo at 16° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon moves through Leo at 13°", { timeout: 60_000 });
-  await expect(summary.getByRole("link")).toHaveText(["Sun in Virgo at 16°", "Moon moves through Leo at 13°", "Saturn Rx in Aries at 13°", "Neptune Rx in Aries at 3°", "Pluto Rx in Aquarius at 3°", "Chiron Rx in Taurus at 0°", "New Moon in Virgo"]);
+  await expect(summary).toContainText("The Sun in Virgo at 16° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Leo at 13°", { timeout: 60_000 });
+  await expect(summary.getByRole("link")).toHaveText(["Sun in Virgo at 16°", "Moon in Leo at 13°", "Saturn Rx in Aries at 13°", "Neptune Rx in Aries at 3°", "Pluto Rx in Aquarius at 3°", "Chiron Rx in Taurus at 0°", "New Moon in Virgo"]);
   await expect(summary).not.toContainText("making it easier to notice what needs fixing");
   await page.screenshot({ path: "test-results/sky-summary-september-8.png" });
 });
@@ -142,13 +142,13 @@ for (const [date, label] of [["2026-08-10T16:00:00Z", "Solar Eclipse"], ["2026-0
 }
 
 for (const width of [390, 1440]) {
-  test(`placements without fuller summaries underline linked facts without bold at ${width}px`, async ({ page }) => {
+  test(`supplied summaries underline linked facts without bold at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 });
     await page.clock.setFixedTime(new Date("2026-10-10T16:00:00Z"));
     await page.goto("/#sky");
     const summary = page.getByLabel("Daily sky summary");
     await expect(summary).toBeVisible({ timeout: 60_000 });
-    await expect(summary).toContainText(/^The Sun is in Libra at \d+°, while the Moon moves through \w+ at \d+°\./);
+    await expect(summary).toContainText(/^The Sun in Libra at \d+° puts more attention on agreements, tradeoffs, and decisions that affect more than one person, while the Moon in \w+ at \d+°/);
     await expect(summary.locator("strong")).toHaveCount(0);
     expect(await summary.locator("span").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
     expect(await summary.getByRole("link").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
