@@ -1,4 +1,5 @@
 import CompositionSurfaceSources from "./CompositionSourceManager";
+import type { SkyPlacementSelection } from "./skyPlacementAssembly";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   buildCompositionMap,
@@ -21,7 +22,7 @@ import {
 type Props = {
   editor: ReactNode;
   onEditRow: (row: CompositionMapRow, context?: CompositionEditorContext) => void;
-  onEditField?: (row: CompositionMapRow, path: string) => void;
+  onEditField?: (row: CompositionMapRow, path: string, selection: SkyPlacementSelection) => void;
   onStartCmsRow?: (surface: WritingSurfaceMapItem, starter: WritingSurfaceCmsStarter) => void;
   rows: CompositionMapRow[];
   templateKeys?: string[];

@@ -2,19 +2,17 @@ import { useEffect, useMemo, useState, useRef, useId } from "react";
 import type { CompositionMapRow } from "./compositionMap";
 import { skyPlacementBodies, skyPlacementSigns } from "./skyWriteupRelations";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
-import { skyPlacementAssembly, skyPlacementAssemblyFields, type SkyPlacementAssemblyField, type SkyPlacementWriting } from "./skyPlacementAssembly";
+import { skyPlacementAssembly, skyPlacementAssemblyFields, skyRetrogradeBodies as retrogradeBodies, type SkyPlacementAssemblyField, type SkyPlacementWriting, type SkyPlacementSelection as Selection } from "./skyPlacementAssembly";
 import { openContextualReaderHref } from "./adminReaderDestinations";
 
-type Selection = { planet: string; sign: string; motion: string };
 type Props = {
   rows: CompositionMapRow[];
   selection?: Selection;
   onEditRow: (row: CompositionMapRow) => void;
-  onEditField?: (row: CompositionMapRow, path: string) => void;
+  onEditField?: (row: CompositionMapRow, path: string, selection: Selection) => void;
   onLoadRow?: (row: CompositionMapRow) => Promise<unknown>;
 };
 const title = (value: string) => value.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ");
-const retrogradeBodies = new Set(["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"]);
 
 export function skyPlacementCompositionKeys({ planet, sign, motion }: Selection) {
   const base = planet === "lilith" ? `sky-lilith/article/${sign}`
@@ -51,7 +49,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const assembly = skyPlacementAssembly(availableRows, writing);
   const selectedWriting = assembly.hasFallback ? writing : "article";
   const parts = selectedWriting === writing ? assembly.parts : skyPlacementAssembly(availableRows, selectedWriting).parts;
-  const edit = (field: SkyPlacementAssemblyField) => onEditField ? onEditField(field.row, field.path) : onEditRow(field.row);
+  const edit = (field: SkyPlacementAssemblyField) => onEditField ? onEditField(field.row, field.path, current) : onEditRow(field.row);
   const scope = (row: CompositionMapRow) => row.content_key.includes("/retrograde/")
     ? `Shared by ${title(current.planet)} retrograde in every sign.`
     : `Shared by ${title(current.planet)} in ${title(current.sign)}, direct and retrograde.`;
