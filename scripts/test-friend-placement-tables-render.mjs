@@ -34,6 +34,16 @@ try {
   const { FriendTransitsTab } = await server.ssrLoadModule(
     "/src/features/friends/FriendTransitsTab.tsx"
   );
+  const { buildFriendTransitsBrief } = await server.ssrLoadModule(
+    "/src/features/friends/friendTransitsBrief.ts"
+  );
+  const FriendTransitsFixture = (props) => React.createElement(FriendTransitsTab, {
+    brief: buildFriendTransitsBrief({ dailyForecast: null, dailyDoItems: [], dailyDontItems: [], ...props }),
+    onOpenBondTransit: props.onOpenBondTransit,
+    onOpenHouseTransit: props.onOpenHouseTransit,
+    onOpenPersonalTransit: props.onOpenPersonalTransit,
+    patternTimingOverrides: props.patternTimingOverrides
+  });
   const { FriendProfileChartRail } = await server.ssrLoadModule(
     "/src/features/friends/FriendProfileChartRail.tsx"
   );
@@ -235,19 +245,6 @@ try {
   assert.doesNotMatch(populatedSynastryHtml, /Add both charts/);
 
   const natalTabHtml = renderToStaticMarkup(React.createElement(FriendNatalTab, {
-    aspectGroups: [{
-      key: "gifts",
-      label: "Gifts",
-      aspects: [{
-        id: "Sun-trine-Moon",
-        from: "Sun",
-        type: "trine",
-        to: "Moon",
-        orb: 1.2,
-        title: "Alex's Sun trine Moon",
-        summary: "Feeling and purpose cooperate naturally."
-      }]
-    }],
     bigThreeRows: [{
       id: "Sun",
       glyph: "☉",
@@ -269,7 +266,6 @@ try {
     hasNatalChart: true,
     isEventChart: false,
     isNatalChartRepairing: false,
-    onOpenAspect() {},
     onOpenEmptyHouse() {},
     onOpenPattern() {},
     onOpenPlacement() {},
@@ -291,11 +287,12 @@ try {
   assert.match(natalTabHtml, /Alex&#x27;s natal placements/);
   assert.match(natalTabHtml, /Empty houses/);
   assert.match(natalTabHtml, /Empty 2nd House in Taurus/);
-  assert.match(natalTabHtml, /Alex&#x27;s Sun trine Moon/);
-  assert.match(natalTabHtml, /Feeling and purpose cooperate naturally/);
+  assert.doesNotMatch(natalTabHtml, /aspect-row-button|aspect-row-static/,
+    "The natal placement surface must not reintroduce the removed top-level aspect list.");
+  assert.match(natalTabHtml, /Alex thinks deliberately/,
+    "The natal placement surface retains its placement interpretation.");
 
   const repairingNatalTabHtml = renderToStaticMarkup(React.createElement(FriendNatalTab, {
-    aspectGroups: [],
     bigThreeRows: [],
     birthTimeUnknown: false,
     emptyHouseRows: [],
@@ -303,7 +300,6 @@ try {
     hasNatalChart: false,
     isEventChart: false,
     isNatalChartRepairing: true,
-    onOpenAspect() {},
     onOpenEmptyHouse() {},
     onOpenPattern() {},
     onOpenPlacement() {},
@@ -316,7 +312,7 @@ try {
   assert.match(repairingNatalTabHtml, /aria-busy="true"/);
   assert.doesNotMatch(repairingNatalTabHtml, /Big three|Alex&#x27;s natal placements|Empty houses/);
 
-  const emptyTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
+  const emptyTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsFixture, {
     bondTransits: [],
     dateLabel: "Today",
     friendName: "Alex",
@@ -330,7 +326,7 @@ try {
   }));
   assert.match(emptyTransitsHtml, /No prioritized transits are active/);
 
-  const populatedTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
+  const populatedTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsFixture, {
     bondTransits: [{
       id: "bond-1",
       headline: "A shared pressure point is active",
@@ -379,7 +375,12 @@ try {
         timingLabel: "Active now",
         summary: "Emotional momentum is easier to use.",
         orb: "1°",
-        detailAvailable: true
+        detailAvailable: true,
+        evidence: {
+          transitPlanet: "Mars", aspect: "trine", natalPoint: "Moon",
+          natalSign: "Aries", timingBonuses: [],
+          contentKeys: ["transit-natal-mars-trine-moon"]
+        }
       }]
     }]
   }));
@@ -387,10 +388,8 @@ try {
   assert.match(populatedTransitsHtml, /Daily forecast for Alex/);
   assert.match(populatedTransitsHtml, /An opening just appeared/);
   assert.match(populatedTransitsHtml, /Alex gets an answer sooner than expected/);
-  assert.match(populatedTransitsHtml, />Moon in Sagittarius<\/span>/);
-  assert.match(populatedTransitsHtml, />7th house<\/span>/);
-  assert.match(populatedTransitsHtml, />Partnership<\/span>/);
-  assert.match(populatedTransitsHtml, />One-to-one relationships<\/span>/);
+  assert.doesNotMatch(populatedTransitsHtml, /daily-horoscope-summary__moon-tags/,
+    "Daily Moon context tags remain hidden under the current reader contract.");
   assert.doesNotMatch(populatedTransitsHtml, /most relevant transit|friend-transit-focus/);
   assert.doesNotMatch(populatedTransitsHtml, /current weather|Start here|near-term theme|shared theme/);
   assert.match(populatedTransitsHtml, /Between you two/);
@@ -408,7 +407,7 @@ try {
     "The chart-specific daily write-up should lead the friend's daily guidance."
   );
 
-  const unknownBirthTimeTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
+  const unknownBirthTimeTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsFixture, {
     bondTransits: [],
     dailyForecast: {
       headline: "Keep the pace simple.",
@@ -429,7 +428,7 @@ try {
     patternTimingOverrides: {},
     personalTransitGroups: []
   }));
-  assert.match(unknownBirthTimeTransitsHtml, />Moon in Sagittarius<\/span>/);
+  assert.doesNotMatch(unknownBirthTimeTransitsHtml, /daily-horoscope-summary__moon-tags/);
   assert.doesNotMatch(unknownBirthTimeTransitsHtml, /7th house|Partnership|One-to-one relationships/);
 
   assert.ok(
