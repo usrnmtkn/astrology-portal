@@ -12489,7 +12489,7 @@ export function App() {
     const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member"));
     const live = (mode === "guest" || mode === "member") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
     const selectionKey = skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`);
-    const refreshing = skyCalculationSelectionRef.current === selectionKey;
+    const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky);
     skyCalculationSelectionRef.current = selectionKey;
     // A noon snapshot or earlier live calculation must never stand in for now.
     const cacheKey = skySnapshotCacheKey(skyLocation, live ? `live-${selectedDateTime.toISOString()}` : skyDate);
@@ -12498,7 +12498,7 @@ export function App() {
     // background astronomy. Sky itself still starts immediately.
     const coreSkyDelayMs = mode === "profile" ? 500 : 0;
 
-    if (cachedSky) {
+    if (cachedSky && !refreshing) {
       setSky(cachedSky);
       setSkyStatus("cached");
     } else if (!refreshing) {
@@ -12518,8 +12518,8 @@ export function App() {
 
       if (!validation.ok) {
         logSkyFactDiagnostic("fresh-calculation", nextSky, validation.diagnostics);
-        setSky(cachedSky);
-        setSkyStatus(cachedSky ? "stale" : "error");
+        if (!refreshing) setSky(cachedSky);
+        setSkyStatus(refreshing || cachedSky ? "stale" : "error");
         return false;
       }
 
@@ -12541,9 +12541,12 @@ export function App() {
 
     coreSkyFrame = window.requestAnimationFrame(() => {
       coreSkyTimer = window.setTimeout(() => {
-        void getAstrodienstSky(skyLocation, selectedDateTime)
+        // Initial navigation paints core positions quickly. A refresh replaces
+        // the displayed snapshot atomically with its new timing windows, so
+        // station/residency dates never vanish between worker responses.
+        void getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: refreshing })
           .then((nextSky) => {
-            if (!publishFreshSky(nextSky, { preserveCachedDetails: true })) {
+            if (!publishFreshSky(nextSky, { preserveCachedDetails: !refreshing }) || refreshing) {
               return;
             }
 
@@ -12560,10 +12563,10 @@ export function App() {
             });
           })
           .catch((error) => {
-            console.warn("Swiss Ephemeris sky calculation failed; using only an exact-key verified cache entry when available.", error);
+            console.warn("Swiss Ephemeris sky calculation failed; retaining the verified selection or its exact-key cache when available.", error);
             if (!cancelled) {
-              setSky(cachedSky);
-              setSkyStatus(cachedSky ? "stale" : "error");
+              if (!refreshing) setSky(cachedSky);
+              setSkyStatus(refreshing || cachedSky ? "stale" : "error");
             }
           });
       }, coreSkyDelayMs);

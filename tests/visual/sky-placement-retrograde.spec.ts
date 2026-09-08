@@ -216,3 +216,81 @@ test("Saturn detail survives background refresh without feed flash or scroll res
   expect(Math.abs(after.top - before.top)).toBeLessThan(5);
   await expect(article).toContainText(modifier("Saturn"));
 });
+
+for (const width of [390, 1440]) test(`Saturn date windows stay visible through live calculation refreshes ${width}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width, height: 1000 });
+  // Hold the real worker's enriched result to expose the interval between core
+  // positions and timing windows. Content-update events do not exercise it.
+  await page.addInitScript(() => {
+    const NativeWorker = window.Worker;
+    const state = (window as any).__dateRefresh = { hold: false, held: [] as ((fail?: boolean) => void)[] };
+    window.Worker = class extends NativeWorker {
+      constructor(url: string | URL, options?: WorkerOptions) {
+        super(url, options);
+        if (options?.name !== "tldrastro-sky-calculation") return;
+        const requests = new Map<number, any>();
+        const nativePost = this.postMessage.bind(this);
+        this.postMessage = (request: any) => { requests.set(request.id, request); nativePost(request); };
+        this.addEventListener("message", event => {
+          const request = requests.get(event.data.id);
+          if (request?.kind !== "sky" || !request.options?.includeTransitWindows) return;
+          requests.delete(event.data.id);
+          if (state.hold) {
+            event.stopImmediatePropagation();
+            state.held.push((fail = false) => this.dispatchEvent(new MessageEvent("message", {
+              data: fail ? { id: event.data.id, ok: false, error: "Test-only calculation failure" } : event.data
+            })));
+          }
+        });
+      }
+    };
+  });
+  await page.goto("/?date=2026-09-07#sky/placement/saturn/aries");
+  const dates = page.locator(".sky-detail-id .article-duration");
+  await expect(dates).toHaveText([
+    "Jul 26, 2026 - Dec 10, 2026",
+    "In Aries: February 13, 2026 to April 12, 2028"
+  ], { timeout: 60_000 });
+  await page.evaluate(() => document.fonts.ready);
+  const before = await page.evaluate(() => {
+    window.scrollTo(0, 500);
+    const state = (window as any).__dateRefresh;
+    state.hold = true;
+    state.dates = [...document.querySelectorAll(".sky-detail-id .article-duration")].map(el => el.textContent);
+    state.changed = false;
+    state.observer = new MutationObserver(() => {
+      const dates = [...document.querySelectorAll(".sky-detail-id .article-duration")].map(el => el.textContent);
+      state.changed ||= JSON.stringify(dates) !== JSON.stringify(state.dates);
+    });
+    state.observer.observe(document.querySelector(".sky-detail-id"), { childList: true, subtree: true, characterData: true });
+    return document.querySelector(".article-body-inner p")!.getBoundingClientRect().top;
+  });
+  for (const minute of [1, 2, 3]) {
+    await page.clock.setFixedTime(new Date(`2026-09-07T16:0${minute}:00Z`));
+    await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+    await expect.poll(() => page.evaluate(() => (window as any).__dateRefresh.held.length), { timeout: 60_000 }).toBeGreaterThan(0);
+    await expect(dates).toHaveCount(2);
+    expect(await page.evaluate(() => (window as any).__dateRefresh.changed)).toBe(false);
+    // A failed refresh must retain the verified date lines, and the next one
+    // must install genuinely fresh facts rather than freezing the old snapshot.
+    await page.evaluate(fail => (window as any).__dateRefresh.held.splice(0).forEach((release: (fail: boolean) => void) => release(fail)), minute === 2);
+    await page.waitForTimeout(150); // Allow React to paint the completed calculation.
+    expect(await page.evaluate(() => (window as any).__dateRefresh.changed)).toBe(false);
+    expect(Math.abs(await page.locator(".article-body-inner p").first().evaluate(el => el.getBoundingClientRect().top) - before)).toBeLessThan(2);
+    expect(await page.evaluate(minute => Object.keys(localStorage).some(key => {
+      if (!key.startsWith("tldrastro:verifiedSky:v2:live-")) return false;
+      return JSON.parse(localStorage.getItem(key)!).snapshot.generatedAt === `2026-09-07T16:0${minute}:00.000Z`;
+    }), minute)).toBe(minute !== 2);
+  }
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: `test-results/saturn-stable-dates-${width}.png` });
+  await page.evaluate(() => {
+    (window as any).__dateRefresh.observer.disconnect();
+    (window as any).__dateRefresh.hold = false;
+    history.pushState(null, "", "/?date=2026-04-01#sky/placement/saturn/aries");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  });
+  await expect(page.locator("#sky-detail-title")).toHaveText("Saturn in Aries", { timeout: 60_000 });
+  await expect(dates).not.toContainText(["Jul 26, 2026 - Dec 10, 2026"]);
+});
