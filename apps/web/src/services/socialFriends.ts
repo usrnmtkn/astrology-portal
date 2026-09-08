@@ -238,7 +238,27 @@ export function socialHandleIsValid(value: string) {
   return /^[a-z][a-z0-9_]{2,23}$/.test(normalizeSocialHandle(value));
 }
 
+export class SocialSignInRequiredError extends Error {
+  constructor() {
+    super("Sign in to load your saved connections.");
+    this.name = "SocialSignInRequiredError";
+  }
+}
+
+export function isSocialSignInRequired(error: unknown) {
+  if (error instanceof SocialSignInRequiredError) return true;
+  if (!error || typeof error !== "object") return false;
+  const candidate = error as { name?: unknown; code?: unknown; status?: unknown };
+  return candidate.name === "AuthSessionMissingError"
+    || (candidate.name === "AuthApiError" && candidate.status === 401)
+    || [
+      "session_not_found", "session_expired", "refresh_token_not_found",
+      "refresh_token_already_used", "bad_jwt", "PGRST301", "PGRST302", "PGRST303"
+    ].includes(String(candidate.code));
+}
+
 function socialError(error: unknown, fallback: string) {
+  if (isSocialSignInRequired(error)) return new SocialSignInRequiredError();
   if (error && typeof error === "object") {
     const candidate = error as { code?: unknown; message?: unknown };
     const message = typeof candidate.message === "string" ? candidate.message : "";
@@ -284,7 +304,7 @@ async function authenticatedClient() {
   const user = await getVerifiedAuthUser(client);
 
   if (!user) {
-    throw new Error("Sign in to use social friends.");
+    throw new SocialSignInRequiredError();
   }
 
   return { client, user };

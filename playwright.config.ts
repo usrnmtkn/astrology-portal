@@ -16,7 +16,14 @@ export function browserTestWebServer(targetURL: string) {
     command: `npm run build:web && npm run preview -w @tldr/web -- --port ${previewPort}`,
     reuseExistingServer: false,
     timeout: 120_000,
-    url: targetURL
+    url: targetURL,
+    // Exercise the same reader hydration paths locally as CI. Individual tests
+    // intercept this synthetic service; no production credentials are needed.
+    env: {
+      VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test",
+      VITE_SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY ?? "visual-smoke-placeholder",
+      VITE_SUPABASE_PUBLISHABLE_KEY: process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? ""
+    }
   };
 }
 

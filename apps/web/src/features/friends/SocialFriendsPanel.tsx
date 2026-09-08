@@ -25,6 +25,7 @@ import {
   listSocialInvitations,
   listSocialNotifications,
   loadOwnSocialProfile,
+  isSocialSignInRequired,
   removeSocialFriend,
   respondToSocialFriendRequest,
   searchSocialProfiles,
@@ -50,6 +51,7 @@ export type SocialFriendsPanelProps = {
   onOpenFriend: (friend: ConnectedSocialFriend) => void;
   onPendingRequestCountChange?: (count: number) => void;
   onSelectView: (view: FriendsTopLevelView, historyMode?: "push" | "replace") => void;
+  onSignIn: () => void;
   showPatternPills: boolean;
 };
 
@@ -224,6 +226,7 @@ export function SocialFriendsPanel({
   onOpenFriend,
   onPendingRequestCountChange,
   onSelectView,
+  onSignIn,
   showPatternPills
 }: SocialFriendsPanelProps) {
   const [profile, setProfile] = useState<SocialProfile | null>(null);
@@ -239,7 +242,7 @@ export function SocialFriendsPanel({
   const [removedToastFriend, setRemovedToastFriend] = useState<ConnectedSocialFriend | null>(null);
   const [openFriendMenuId, setOpenFriendMenuId] = useState<string | null>(null);
   const [available, setAvailable] = useState<boolean | null>(null);
-  const [loadError, setLoadError] = useState("");
+  const [loadError, setLoadError] = useState<"sign-in" | "unavailable" | null>(null);
   const [actionPending, setActionPending] = useState(false);
   const [sharingPending, setSharingPending] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -319,7 +322,7 @@ export function SocialFriendsPanel({
       : loadedFriends;
 
     publishFriends(nextFriends);
-    setLoadError("");
+    setLoadError(null);
     setAvailable(true);
     void profileRequest;
     void listSocialFriendRequests()
@@ -353,10 +356,10 @@ export function SocialFriendsPanel({
           setAvailable(true);
         }
       })
-      .catch(() => {
+      .catch((error) => {
         if (!cancelled) {
           setAvailable(false);
-          setLoadError("Friends could not load. Your connections are still saved.");
+          setLoadError(isSocialSignInRequired(error) ? "sign-in" : "unavailable");
           onPendingRequestCountChange?.(0);
         }
       });
@@ -1136,22 +1139,28 @@ export function SocialFriendsPanel({
         >
           {activeView === "charts" && chartContent ? chartContent : (
             <div className="friends-unified-empty" role="alert">
-              <h2>Friends could not load.</h2>
-              <p>{loadError || "Your connections are still saved. Try loading them again."}</p>
+              <h2>{loadError === "sign-in" ? "Sign in to see your friends" : "Friends could not load."}</h2>
+              <p>{loadError === "sign-in"
+                ? "Your connections are still saved. Sign in to load them."
+                : "Your connections are still saved. Try loading them again."}</p>
               <button
                 className="social-secondary-button"
                 type="button"
                 onClick={() => {
+                  if (loadError === "sign-in") {
+                    onSignIn();
+                    return;
+                  }
                   setAvailable(null);
                   void refreshSocialData()
                     .then(() => setAvailable(true))
-                    .catch(() => {
+                    .catch((error) => {
                       setAvailable(false);
-                      setLoadError("Friends could not load. Your connections are still saved.");
+                      setLoadError(isSocialSignInRequired(error) ? "sign-in" : "unavailable");
                     });
                 }}
               >
-                Try again
+                {loadError === "sign-in" ? "Sign in" : "Try again"}
               </button>
             </div>
           )}

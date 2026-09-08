@@ -307,12 +307,12 @@ assert.doesNotMatch(
 );
 assert.match(
   socialFriendsPanelSource,
-  /Friends could not load\. Your connections are still saved\.[\s\S]*Try again/,
+  /Friends could not load\.[\s\S]*Your connections are still saved\.[\s\S]*Try again/,
   "Transient Friends failures must preserve the selected view and offer a retry."
 );
 assert.match(
   socialCoreRefreshMatch.groups.body,
-  /publishFriends\(nextFriends\);\s*setLoadError\(""\);\s*setAvailable\(true\);\s*void profileRequest;\s*void listSocialFriendRequests\(\)/,
+  /publishFriends\(nextFriends\);\s*setLoadError\(null\);\s*setAvailable\(true\);\s*void profileRequest;\s*void listSocialFriendRequests\(\)/,
   "Pending requests must start only after the visible Friends list is published and a successful refresh clears the unavailable state."
 );
 assert.doesNotMatch(
