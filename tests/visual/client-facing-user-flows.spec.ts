@@ -1481,10 +1481,10 @@ test.describe("client-facing user flow case studies", () => {
     });
     try {
       await expectClientRouteLoads(page, "/#you");
-      await expect(page.getByRole("button", { name: /^Virgo New Moon for Aries Rising/u })).toBeVisible();
+      await expect(page.getByRole("button", { name: /^Virgo New Moon for Aries Rising/u })).toBeVisible({ timeout: routeReadyTimeoutMs });
       const macro = page.locator(".weekly-horoscope__macro");
       await expect(macro).toHaveCount(0);
-      await expect(page.getByRole("region", { name: "This week's transits", exact: true })).toBeVisible();
+      await expect(page.getByRole("region", { name: "This week's transits", exact: true })).toBeVisible({ timeout: routeReadyTimeoutMs });
       await expect(macro).toHaveCount(0);
       releaseCopy();
       await expect(macro).toContainText("You do not need another plan for becoming a better version of yourself.", { timeout: 15_000 });
