@@ -36,3 +36,5 @@ The screenshot highlights `placementArticle` under `sky-placement/article/sun/sa
 No database mirror synchronization or production deployment was performed by this audit.
 
 Full `npm run test:content` reached the known existing failure at `scripts/test-friends-owner-signoff-ruling.mjs:161`: actual hash `84bcb9343e221991b2efe9f363d75aeaf926212319896c82a7c8878484acf4ee`, expected `9ae494a7998e4441a03799c477e8e0819028e0822908a7a3ca4aeafb1e1415f5`. This is the same baseline failure documented in `natal-placement-inventory-audit-2026-09-08.md`; that test was not changed. The full suite is not green.
+
+Release integration: rebased onto main a85d2ca4, regenerated artifacts as v3-2026-09-08d, and passed all four browser cases again. The CI-environment aggregate JS build is 2,933,164 bytes (164 over the prior cap); documented a 1 KB aggregate allowance to 2,934,000 bytes. Startup and per-chunk limits are unchanged. The retired-source regex now matches the exact retired skyWriting symbol rather than the new skyWritingContext state from main.
