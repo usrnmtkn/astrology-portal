@@ -1,3 +1,5 @@
+// @ts-ignore Shared exact source-version selection.
+import { correctedReaderSource } from "./readerSourceReferenceCorrections.mjs";
 export type KnowledgeMatrixGovernance = "owner-approved";
 
 export type KnowledgeMatrixTransitRow = {
@@ -232,7 +234,9 @@ export function createKnowledgeMatrixV9Resolver(
     if (row.Copy.startsWith(EXCLUDED_PREFIX)) continue;
     transitEligibleRows += 1;
     const key = transitRuntimeKey(row);
-    if (!transitIndex.has(key)) transitIndex.set(key, row);
+    if (!transitIndex.has(key)) transitIndex.set(key, {
+      ...row, Copy: correctedReaderSource(`knowledge-matrix-v9/transit/${key}`, "Copy", row.Copy)
+    });
   }
 
   const housePrimaryKeys = new Set<string>();

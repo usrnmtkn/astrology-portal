@@ -1,0 +1,333 @@
+{
+  "task_id": "01a07f51-c67a-7553-b2fa-46e1c2fff842",
+  "request": "do a deep audit of the reader facing content, it's using my name Marie  - from Project Author. Find anywhere a sentence is referrencing the author or source material, and flag and remove it.",
+  "files_scanned": 3471,
+  "prose_fields_scanned": 65263,
+  "broad_unique_candidates_reviewed": 210,
+  "changes": [
+    {
+      "contentKey": "sky-nodes/education",
+      "removed_sentence": "Marie’s longer-form writing calls the North Node “a ravenous dragon’s head” and the South Node “the dragon’s tail,” but the newer owner-approved transit language gives the app a cleaner behavioral distinction: the North Node describes a less familiar direction, while the South Node shows the reflex that is easier to repeat because you already know how to do it.",
+      "action": "New exact source version; immutable import retained as historical baseline."
+    },
+    {
+      "contentKey": "knowledge-matrix-v9/transit/uranus|aries|retrograde",
+      "removed_sentence": "This source offers little beyond the shift itself, so the useful claim is modest: the outward pace of change slows while recent changes move into review.",
+      "action": "New exact source version; immutable import retained as historical baseline."
+    },
+    {
+      "contentKey": "knowledge-matrix-v9/transit/uranus|any|direct",
+      "removed_sentence": "This source does not support a more specific reusable claim than that.",
+      "action": "New exact source version; immutable import retained as historical baseline."
+    },
+    {
+      "file": "packages/astro-knowledge/data/points/transits/house/lilith-house-3.json",
+      "removed_sentence": "The source also links this placement to a significant early event or focus involving a sibling, which can leave a lasting imprint and calls for honest self-exploration.",
+      "occurrences": 1,
+      "action": "Deleted exact sentence; retained surrounding copy."
+    },
+    {
+      "file": "packages/astro-knowledge/data/points/placements/house/lilith-3.json",
+      "removed_sentence": "The source also links this placement to a significant early event or focus involving a sibling, which can leave a lasting imprint and calls for honest self-exploration.",
+      "occurrences": 1,
+      "action": "Deleted exact sentence; retained surrounding copy."
+    },
+    {
+      "file": "packages/astro-knowledge/sources/tldr-astrology-rewrite-csvs/tldr_natal_chart_rewrites.csv",
+      "removed_sentence": "The source also links this placement to a significant early event or focus involving a sibling, which can leave a lasting imprint and calls for honest self-exploration.",
+      "occurrences": 2,
+      "action": "Deleted exact sentence; retained surrounding copy."
+    },
+    {
+      "file": "packages/astro-knowledge/sources/tldr-astrology-rewrite-csvs/tldr_sky_transit_aspect_rewrites.csv",
+      "removed_sentence": "The source also links this placement to a significant early event or focus involving a sibling, which can leave a lasting imprint and calls for honest self-exploration.",
+      "occurrences": 1,
+      "action": "Deleted exact sentence; retained surrounding copy."
+    },
+    {
+      "file": "packages/astro-knowledge/generated/tldr-astro/rewrite-corpora/tldr-rewrite-csvs/tldr-rewrite-natal-chart-rewrites.json",
+      "removed_sentence": "The source also links this placement to a significant early event or focus involving a sibling, which can leave a lasting imprint and calls for honest self-exploration.",
+      "occurrences": 4,
+      "action": "Deleted exact sentence; retained surrounding copy."
+    },
+    {
+      "file": "packages/astro-knowledge/generated/tldr-astro/rewrite-corpora/tldr-rewrite-csvs/tldr-rewrite-sky-rewrites.json",
+      "removed_sentence": "The source also links this placement to a significant early event or focus involving a sibling, which can leave a lasting imprint and calls for honest self-exploration.",
+      "occurrences": 2,
+      "action": "Deleted exact sentence; retained surrounding copy."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/aquarius",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/aquarius/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/aquarius/variant-3",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/aries",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/aries/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/aries/variant-3",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/cancer",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/cancer/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/capricorn",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/capricorn/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/gemini",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/gemini/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/gemini/variant-3",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/gemini/variant-4",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/leo",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/leo/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/libra",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/libra/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/pisces",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/pisces/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/pisces/variant-3",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/pisces/variant-4",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/sagittarius",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/sagittarius/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/sagittarius/variant-3",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/sagittarius/variant-4",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/scorpio",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/scorpio/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/taurus",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/taurus/variant-2",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/taurus/variant-3",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/taurus/variant-4",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/virgo",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/virgo/variant-3",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "authored/calendar-weekly-moon/virgo/variant-4",
+      "field": "summary",
+      "removed_sentence": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "sky.ingress.jupiter.leo",
+      "field": "summary",
+      "removed_sentence": "Owner-approved exact wording. Dates and event facts remain ephemeris-owned.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "sky.retrograde.venus.scorpio.retrograde_passage",
+      "field": "summary",
+      "removed_sentence": "Owner-approved exact wording. Dates and event facts remain ephemeris-owned.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "sky.station.chiron.taurus.retrograde",
+      "field": "summary",
+      "removed_sentence": "Owner-approved exact wording. Dates and event facts remain ephemeris-owned.",
+      "action": "Cleared editorial-only summary; body retained."
+    },
+    {
+      "file": "apps/web/public/content-studio-last-known-good.json",
+      "contentKey": "sky.station.mercury.pisces.retrograde",
+      "field": "summary",
+      "removed_sentence": "Owner-approved exact wording. Dates and event facts remain ephemeris-owned.",
+      "action": "Cleared editorial-only summary; body retained."
+    }
+  ]
+}
