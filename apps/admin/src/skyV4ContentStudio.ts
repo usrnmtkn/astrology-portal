@@ -1,3 +1,6 @@
+// @ts-ignore Shared reader/editor contract for the optional evergreen layout.
+import { skyEvergreenEditableFields, skyEvergreenFields } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
+
 export type SkyV4EditableField = {
   path: string;
   label: string;
@@ -57,7 +60,8 @@ export function validateSkyV4TransitPov(
   contentType: string,
   readerFields: Record<string, unknown>
 ): SkyV4ValidationResult {
-  const copy = Object.values(readerFields).filter((value) => typeof value === "string").join("\n\n");
+  const copy = Object.values(readerFields).flatMap(value => typeof value === "string" ? [value]
+    : Array.isArray(value) ? value.flatMap(section => typeof section?.body === "string" ? [section.body] : []) : []).join("\n\n");
   const hardFailures: string[] = [];
   if (/\byou have (?:a|an) (?:gift|talent|natural ability|instinct)\b/iu.test(copy)) {
     hardFailures.push("STP-02: natal-trait framing is not allowed on a sky surface.");
@@ -68,7 +72,10 @@ export function validateSkyV4TransitPov(
   if (/\bright now,? you are\b/iu.test(copy)) {
     hardFailures.push("STP-10: a time adverb cannot convert a trait sentence into current-sky prose.");
   }
-  if (contentType === "continuous-placement" && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
+  const hasPlacementBody = typeof readerFields.placementArticle !== "string" || readerFields.placementArticle.trim()
+    || skyEvergreenFields({ fallback: { hook: readerFields["fallback.hook"], lived: readerFields["fallback.lived"], turn: readerFields["fallback.turn"], sections: readerFields["fallback.sections"] } })
+      .some((section: { value: string }) => section.value.trim());
+  if (contentType === "continuous-placement" && hasPlacementBody && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
     hardFailures.push("STP-03: continuous placement copy needs an explicit current-sky or time anchor.");
   }
   return { hardFailures, warnings: [], passed: hardFailures.length === 0 };
@@ -76,11 +83,11 @@ export function validateSkyV4TransitPov(
 
 export function skyV4StudioDefinition(packageRecord: unknown) {
   const source = record(packageRecord);
-  const fields = Array.isArray(source.studio_editable_fields)
-    ? source.studio_editable_fields
-      .map((field) => record(field))
-      .filter((field) => typeof field.path === "string" && typeof field.label === "string")
-      .map((field) => ({ path: String(field.path), label: String(field.label) }))
+  const fields: SkyV4EditableField[] = Array.isArray(source.studio_editable_fields)
+    ? skyEvergreenEditableFields(source)
+      .map((field: unknown) => record(field))
+      .filter((field: Record<string, unknown>) => typeof field.path === "string" && typeof field.label === "string")
+      .map((field: Record<string, unknown>) => ({ path: String(field.path), label: String(field.label) }))
     : [];
   const readOnlyFields = Array.isArray(source.studio_read_only_fields)
     ? source.studio_read_only_fields.map(String)

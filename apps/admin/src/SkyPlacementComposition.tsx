@@ -56,7 +56,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const views = [{ id: "preview", label: "Reader preview" }, { id: "template", label: "Main template" }, { id: "assembly", label: "Assembly" }] as const;
   return <section className="admin-composition-surface-actions admin-sky-placement-composition" aria-label="Sky placement composition map">
     <header><div><p className="admin-eyebrow">Composition Map</p><h3>{title(current.planet)}{current.motion === "retrograde" && retrogradeBodies.has(current.planet) ? " Rx" : ""} in {title(current.sign)}</h3></div>
-      <button type="button" onClick={() => openContextualReaderHref(`/#sky/placement/${current.planet}/${current.sign}`)}>View in app</button>
+      <button type="button" onClick={() => openContextualReaderHref(`/${writing === "fallback" ? "?skyPlacementPreview=fallback" : ""}#sky/placement/${current.planet}/${current.sign}`)}>{writing === "fallback" ? "View evergreen in app" : "View in app"}</button>
     </header>
     {!selection && <div className="admin-natal-placement-selectors">
       <label>Planet or point<select aria-label="Composition planet or point" value={context.planet} onChange={event => setContext({ ...context, planet: event.target.value })}>
@@ -85,7 +85,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           <option value="fallback" disabled={!assembly.hasFallback}>Fallback hooks</option>
         </select>
       </label>
-      <p>{selectedWriting === "fallback" ? "The fallback replaces the placement passage when the full article is unavailable. It keeps the TLDR and any retrograde opening." : "The full placement article takes priority when it is available."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
+      <p>{selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. They replace the placement passage when the full article is unavailable, keeping the TLDR and any retrograde opening. Open a section to add writing or change the section order." : "The full placement article takes priority when it is available."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
       <div className="admin-composition-view-tabs" role="tablist" aria-label="Sky placement composition views">
         {views.map((item, index) => <button key={item.id} id={`${viewId}-${item.id}`} type="button" role="tab"
           aria-selected={view === item.id} aria-controls={`${viewId}-panel`} tabIndex={view === item.id ? 0 : -1}
@@ -127,7 +127,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
               <p>{scope(field.row)}</p>
             </li>)}
           </ol>
-          <p>The app owns this order. Edit the linked fields to change the wording. The short retrograde copy is managed under Assembly and is not part of this article.</p>
+          <p>{selectedWriting === "fallback" ? "You can add and reorder evergreen sections in the linked editor. Empty sections are skipped." : "The app owns the article order. Edit the linked fields to change the wording."} The short retrograde copy is managed under Assembly and is not part of this article.</p>
         </div>}
         {view === "assembly" && availableRows.map(row => {
           const fields = skyPlacementAssemblyFields(row);

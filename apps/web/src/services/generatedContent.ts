@@ -40,7 +40,7 @@ import {
 import { generatedContentAliases } from "./generatedContentKeys";
 import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging";
 import { selectLatestLiveServingDashboardRows } from "./fallbackArchitectureV3DashboardOverlay";
-import { isFallbackDashboardRecordAllowed } from "../content/fallbackArchitectureV3/dashboardExtensions";
+import { isCanonicalSkyReaderRecord, isFallbackDashboardRecordAllowed } from "../content/fallbackArchitectureV3/dashboardExtensions";
 import { isReaderFacingCopy } from "../content/readerSafety";
 import {
   hasExactSkyArticleOwnerApproval,
@@ -1294,7 +1294,10 @@ function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | nu
   const recordBodyYou = stringFrom(record.body_you);
   const recordBodyThey = stringFrom(record.body_they);
 
-  if (!recordBody && !recordBodyYou && !recordBodyThey) {
+  const canonicalRevision = record.studio_content_type === "continuous-placement"
+    && isCanonicalSkyReaderRecord({ ...record, contentKey: row.content_key })
+    && record.studio_version_status === "approved-serving-revision";
+  if (!recordBody && !recordBodyYou && !recordBodyThey && !canonicalRevision) {
     return null;
   }
 
@@ -1318,7 +1321,12 @@ function packageHookRowFromRow(row: GeneratedContentRow): HookRow | null {
   const recordBodyYou = stringFrom(record.body_you);
   const recordBodyThey = stringFrom(record.body_they);
 
-  if (!recordBody && !recordBodyYou && !recordBodyThey) {
+  // An explicitly empty canonical revision carries the current publication
+  // identity. Dropping it would make the bundled article eligible again.
+  const canonicalRevision = record.studio_content_type === "continuous-placement"
+    && isCanonicalSkyReaderRecord({ ...record, contentKey: row.content_key })
+    && record.studio_version_status === "approved-serving-revision";
+  if (!recordBody && !recordBodyYou && !recordBodyThey && !canonicalRevision) {
     return null;
   }
 

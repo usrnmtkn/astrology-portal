@@ -2180,9 +2180,7 @@ export function createTransitSynastryRenderer(
       const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
       if (
         windowFrame
-        && (!shouldIncludePlanetLore || planetFrame)
-        && (!shouldIncludeSignLore || signLore)
-        && signStyle
+            && signStyle
         && entryDate
         && exitDate
         && signParts.length > 0

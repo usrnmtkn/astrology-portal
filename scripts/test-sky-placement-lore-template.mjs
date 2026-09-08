@@ -75,3 +75,25 @@ verifyRenderer(browserSourceRenderer.renderSkyPlacement, "browser source rendere
 verifyRenderer(shippedRenderer.renderSkyPlacement, "shipped renderer");
 
 console.log("Sky Placement lore template verification passed: 12/12 copied rows; independent planet/sign lore controls work in Node source, browser source, and shipped renderers.");
+
+// Missing optional lore must not blank an otherwise eligible placement.
+const optionalKeys = new Set(["fallback-hook/sky-placement-frame/north-node", "fallback-hook/sky-placement-lore/aries"]);
+const withoutLore = value => ({ ...value, hookRows: value.hookRows.filter(row => !optionalKeys.has(row.contentKey)) });
+const readFileSync = fs.readFileSync;
+let nodeWithoutLore;
+try {
+  fs.readFileSync = function (file, ...args) {
+    if (String(file).endsWith("/source-rows/fallback-source-rows-v3.json")) return JSON.stringify(withoutLore(source));
+    return readFileSync.call(this, file, ...args);
+  };
+  nodeWithoutLore = await import("../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs?optional-lore-fixture");
+} finally { fs.readFileSync = readFileSync; }
+const expected = renderSourceSkyPlacement({ ...facts, includePlanetLore: false, includeSignLore: false });
+for (const [label, render] of [
+  ["Node", nodeWithoutLore.renderSkyPlacement],
+  ["browser", createBrowserSourceRenderer(transit, templates, withoutLore(rendererData)).renderSkyPlacement],
+  ["dist", createTransitSynastryRenderer(transit, templates, withoutLore(rendererData)).renderSkyPlacement]
+]) {
+  assert.equal(render(facts).body, expected.body, `${label}: missing optional lore preserves available prose`);
+}
+console.log("PASS: missing optional lore skips cleanly with identical Node/browser/dist prose.");

@@ -232,6 +232,14 @@ test.describe("visual regression baseline", () => {
       await expect(page.getByText("Houses: Whole Sign", { exact: true })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
+      // The faster first paint contains core positions before the worker adds
+      // timing. This baseline includes those details; wait for their rendered
+      // values within the existing route budget instead of capturing a stable
+      // intermediate frame. Keep the expected image and pixel tolerance intact.
+      await expect(page.getByRole("button", { name: "Read more about Sun in Cancer", exact: true }))
+        .toContainText("6D left", { timeout: routeReadyTimeoutMs });
+      await expect(page.getByRole("link", { name: "Moon trines Lilith Rx", exact: true }))
+        .toBeVisible({ timeout: routeReadyTimeoutMs });
     });
     await expect(page).toHaveScreenshot("client-sky-desktop-light.png", screenshotOptions);
 

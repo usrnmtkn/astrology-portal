@@ -25,7 +25,7 @@ globalThis.fetch = async (input, init = {}) => {
  const url = new URL(String(input));
  assert.equal(url.origin, "https://sky-studio-test.invalid");
  if (url.pathname === "/rest/v1/rpc/content_runtime_revision") return Response.json(new Date().toISOString());
- if (url.pathname === "/rest/v1/content_publications") return Response.json(stored.filter(row => row.status === "LIVE").map(row => ({ content_key: row.content_key, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at, state: "live", revision: 1 })));
+ if (url.pathname === "/rest/v1/content_publications") return Response.json(stored.filter(row => row.status === "LIVE").map(row => ({ content_key: row.content_key, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at, state: "live", revision: Date.parse(row.updated_at) })));
  assert.equal(url.pathname, "/rest/v1/generated_interpretations");
  const found = stored.filter(row => matches(row, url.searchParams));
  const body = init.body ? JSON.parse(String(init.body)) : null;
@@ -71,7 +71,8 @@ const bundlePath = join(tmpdir(), "sky-studio-reader-roundtrip.mjs");
 await build({ bundle: true, format: "esm", platform: "node", outfile: bundlePath, logLevel: "silent",
  define: { "import.meta.env": JSON.stringify({ VITE_SUPABASE_URL: "https://sky-studio-test.invalid", VITE_SUPABASE_PUBLISHABLE_KEY: "sky-studio-test" }) },
  stdin: { loader: "ts", resolveDir: process.cwd(), contents: `
- export { loadFallbackArchitectureV3DashboardBundle } from "./apps/web/src/services/generatedContent.ts";
+ export { refreshContentPublications } from "./apps/web/src/services/contentPublications.ts";
+ export { loadFallbackArchitectureV3DashboardBundle, clearCachedFallbackArchitectureV3Bundle } from "./apps/web/src/services/generatedContent.ts";
  export { loadSkyPlacementFallbackArchitectureV3Bundle, installFallbackArchitectureV3Bundle, skyV4ReaderRenderer } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
  ` }
 });
@@ -83,3 +84,43 @@ await runtime.loadSkyPlacementFallbackArchitectureV3Bundle();
 const actual = runtime.skyV4ReaderRenderer.renderRoute({ route: "placement", planet: "saturn", sign: "aries", isRetrograde: true });
 assert(actual.readerParts.filter((part: string) => part === "Fixture approved editorial revision 2.").length === 2, JSON.stringify(actual.readerParts));
 console.log("PASS: API publication → actual dashboard loader → installed reader → full Saturn Rx payload.");
+
+// Structured evergreen sections use the same publish transaction and survive a
+// second edit. All API/database state here is an isolated fixture.
+const articleKey = "sky-placement/article/saturn/aries";
+let evergreenRow = stored.find(row => row.content_key === articleKey && row.status === "LIVE");
+for (let version = 1; version <= 2; version++) {
+ const base = evergreenRow.sections.packageRecord;
+ const layout = [
+  { id: "extra", label: "Optional section", body: `During this transit, fixture evergreen paragraph ${version}.` },
+  { id: "turn", source: "turn" }, { id: "empty", label: "Empty", body: "" }, { id: "hook", source: "hook" }, { id: "lived", source: "lived" }
+ ];
+ const copy = { ...base, placementArticle: "", fallback: { ...base.fallback, lived: "", sections: layout } };
+ const draft = (await request("PATCH", { id: evergreenRow.id, expectedUpdatedAt: evergreenRow.updated_at, reviewStatus: "needs_review", sections: { ...evergreenRow.sections, packageDraft: copy } })).rows[0];
+ evergreenRow = (await request("PATCH", { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: "approve-package-revision" })).rows[0];
+ assert.deepEqual(evergreenRow.sections.packageRecord.fallback.sections, layout);
+ assert.equal(evergreenRow.sections.packageRecord.placementArticle, "");
+ assert.equal(evergreenRow.sections.packageRecord.fallback.lived, "");
+ assert.equal(evergreenRow.status, "LIVE");
+ assert(evergreenRow.body.includes(`During this transit, fixture evergreen paragraph ${version}.`));
+}
+await runtime.refreshContentPublications(true);
+runtime.clearCachedFallbackArchitectureV3Bundle();
+const currentDashboard = await runtime.loadFallbackArchitectureV3DashboardBundle();
+runtime.installFallbackArchitectureV3Bundle(currentDashboard);
+const evergreen = runtime.skyV4ReaderRenderer.renderRoute({ route: "placement", planet: "saturn", sign: "aries", isRetrograde: true });
+assert.equal(evergreen.resolution, "exact-fallback");
+assert(evergreen.readerParts.join("\n\n").includes("During this transit, fixture evergreen paragraph 2."));
+assert(!evergreen.readerParts.join("\n\n").includes("During this transit, fixture evergreen paragraph 1."));
+console.log("PASS: evergreen section API save/publish twice → real loader → reader, with empty article and optional section omission.");
+
+// A deliberate empty layout is still a current publication. Keep that identity
+// through the loader instead of exposing an older packaged article underneath.
+const clearedCopy = { ...evergreenRow.sections.packageRecord, placementArticle: "", fallback: { ...evergreenRow.sections.packageRecord.fallback, sections: [] } };
+const clearedDraft = (await request("PATCH", { id: evergreenRow.id, expectedUpdatedAt: evergreenRow.updated_at, reviewStatus: "needs_review", sections: { ...evergreenRow.sections, packageDraft: clearedCopy } })).rows[0];
+await request("PATCH", { id: clearedDraft.id, expectedUpdatedAt: clearedDraft.updated_at, ownerAction: "approve-package-revision" });
+await runtime.refreshContentPublications(true);
+runtime.clearCachedFallbackArchitectureV3Bundle();
+runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
+assert.deepEqual(runtime.skyV4ReaderRenderer.renderRoute({ route: "placement", planet: "saturn", sign: "aries" }).readerParts, []);
+console.log("PASS: an empty published evergreen layout survives reload without resurrecting the package article.");

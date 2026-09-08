@@ -1454,6 +1454,47 @@ test.describe("client-facing user flow case studies", () => {
     await expect(macro).not.toContainText("A Virgo New Moon begins with the checklist");
   });
 
+  test("You restores the complete Virgo macro when its publication overlay finishes loading", async ({ page }) => {
+    const snapshot = JSON.parse(readFileSync("apps/web/public/content-studio-last-known-good.json", "utf8"));
+    const contentKey = "authored/sky-lunation-macro/new-moon/virgo";
+    const source = snapshot.rows.find((row: { content_key: string }) => row.content_key === contentKey);
+    expect(source).toBeTruthy();
+    // Reuse the complete approved body. Only the test publication identity changes.
+    const row = { ...source, id: "qa-delayed-virgo-publication", updated_at: "2026-09-10T12:00:00.000Z" };
+    const publication = { content_key: contentKey, state: "live", revision: 100_000,
+      row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at };
+    await seedClientState(page, { profile: true, preloadProfileNatalSky: true, now: "2026-09-10T12:00:00.000Z" });
+    await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [publication] }));
+    await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: row.updated_at }));
+    await page.route("**/content-studio-last-known-good.json", route => route.fulfill({
+      json: { schema: "content-studio-last-known-good-v1", rowCount: 0, rows: [] }
+    }));
+    let releaseCopy!: () => void;
+    const contentReady = new Promise<void>(resolve => { releaseCopy = resolve; });
+    await page.route("**/rest/v1/generated_interpretations*", async route => {
+      if (new URL(route.request().url()).searchParams.get("provider") === "eq.tldrastro-fallback-architecture-v3") {
+        await contentReady;
+        await route.fulfill({ json: [row] });
+      } else {
+        await route.fulfill({ status: 503, json: { message: "Explicit offline reader fixture" } });
+      }
+    });
+    try {
+      await expectClientRouteLoads(page, "/#you");
+      await expect(page.getByRole("button", { name: /^Virgo New Moon for Aries Rising/u })).toBeVisible({ timeout: routeReadyTimeoutMs });
+      const macro = page.locator(".weekly-horoscope__macro");
+      await expect(macro).toHaveCount(0);
+      await expect(page.getByRole("region", { name: "This week's transits", exact: true })).toBeVisible({ timeout: routeReadyTimeoutMs });
+      await expect(macro).toHaveCount(0);
+      releaseCopy();
+      await expect(macro).toContainText("You do not need another plan for becoming a better version of yourself.", { timeout: 15_000 });
+      await expect(macro).toContainText("They need a life that does not require you to keep treating yourself as the problem.");
+      await expect(macro).not.toContainText("A Virgo New Moon begins with the checklist");
+    } finally {
+      releaseCopy();
+    }
+  });
+
   test("You serves the protected book card on an exact lunation day", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
@@ -1481,21 +1522,21 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("You serves the shared lunar-eclipse layer from the sign-neutral namespace", async ({ page }) => {
-    const assertNoClientErrors = await expectNoClientErrors(page);
+  for (const viewport of [
+    { name: "desktop", width: 1440, height: 1000 },
+    { name: "mobile", width: 390, height: 844 }
+  ] as const) {
+    test(`You serves the shared lunar-eclipse layer from the sign-neutral namespace on ${viewport.name}`, async ({ page }) => {
+      const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page, {
-      profile: true,
-      preloadProfileNatalSky: true,
-      now: "2026-08-28T16:00:00.000Z"
-    });
-    await expectClientRouteLoads(page, "/#you");
+      await seedClientState(page, {
+        profile: true,
+        preloadProfileNatalSky: true,
+        now: "2026-08-28T16:00:00.000Z"
+      });
+      await expectClientRouteLoads(page, "/#you");
 
-    const titleTypography = new Map<string, Array<Record<string, string>>>();
-    for (const viewport of [
-      { name: "desktop", width: 1440, height: 1000 },
-      { name: "mobile", width: 390, height: 844 }
-    ] as const) {
+      const titleTypography = new Map<string, Array<Record<string, string>>>();
       await page.setViewportSize({ width: viewport.width, height: viewport.height });
 
       for (const theme of ["light", "dark"] as const) {
@@ -1581,16 +1622,16 @@ test.describe("client-facing user flow case studies", () => {
         titleTypography.set(viewport.name, viewportTypography);
         await expectNoHorizontalOverflow(page, `${viewport.name} ${theme} eclipse horoscope title`);
       }
-    }
 
-    for (const [viewport, typography] of titleTypography) {
-      expect(
-        typography,
-        `${viewport}: the established eclipse-card title typography remains identical in light and dark themes.`
-      ).toEqual(Array.from({ length: typography.length }, () => typography[0]));
-    }
-    await assertNoClientErrors();
-  });
+      for (const [viewport, typography] of titleTypography) {
+        expect(
+          typography,
+          `${viewport}: the established eclipse-card title typography remains identical in light and dark themes.`
+        ).toEqual(Array.from({ length: typography.length }, () => typography[0]));
+      }
+      await assertNoClientErrors();
+    });
+  }
 
   test("You and Friends share a date picker for past and future transits", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);

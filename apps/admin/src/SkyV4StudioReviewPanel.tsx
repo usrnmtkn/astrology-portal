@@ -221,6 +221,8 @@ export default function SkyV4StudioReviewPanel(props: Props) {
   const draftFields: Record<string, unknown> = {};
   if (isContinuousPlacement) {
     for (const field of allContinuousFields) draftFields[field.path] = currentFields[field.path];
+    const sections = record(props.effectiveRecord.fallback).sections;
+    if (Array.isArray(sections)) draftFields["fallback.sections"] = sections;
   } else {
     for (const item of Array.isArray(props.effectiveRecord.studio_editable_fields) ? props.effectiveRecord.studio_editable_fields : []) {
       const field = record(item);

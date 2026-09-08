@@ -13,6 +13,7 @@ type SkyCalculationResponse =
 type PendingCalculation = {
   resolve: (value: unknown) => void;
   reject: (error: Error) => void;
+  timeout: ReturnType<typeof setTimeout>;
 };
 
 let skyWorker: Worker | null = null;
@@ -25,7 +26,10 @@ function loadEphemerisForNonBrowserRuntime() {
 }
 
 function rejectPendingCalculations(error: Error) {
-  for (const { reject } of pendingCalculations.values()) reject(error);
+  for (const { reject, timeout } of pendingCalculations.values()) {
+    clearTimeout(timeout);
+    reject(error);
+  }
   pendingCalculations.clear();
 }
 
@@ -43,11 +47,13 @@ function workerForSkyCalculations() {
     if (!pending) return;
 
     pendingCalculations.delete(response.id);
+    clearTimeout(pending.timeout);
     if (response.ok) pending.resolve(response.value);
     else pending.reject(new Error(response.error));
   });
 
   worker.addEventListener("error", (event) => {
+    if (skyWorker !== worker) return;
     rejectPendingCalculations(new Error(event.message || "The sky calculation worker stopped unexpectedly."));
     worker.terminate();
     if (skyWorker === worker) skyWorker = null;
@@ -66,8 +72,21 @@ function requestCalculation<T>(message: Record<string, unknown>): Promise<T> {
   nextRequestId += 1;
 
   return new Promise<T>((resolve, reject) => {
-    pendingCalculations.set(id, { resolve: (value) => resolve(value as T), reject });
-    workerForSkyCalculations().postMessage({ id, ...message });
+    const timeout = setTimeout(() => {
+      // A hung worker or missing asset must not leave every later route queued
+      // forever. A retry creates a new worker with the original ephemeris inputs.
+      skyWorker?.terminate();
+      skyWorker = null;
+      rejectPendingCalculations(new Error("Astronomy calculation timed out. Please retry."));
+    }, 120_000);
+    pendingCalculations.set(id, { resolve: (value) => resolve(value as T), reject, timeout });
+    try {
+      workerForSkyCalculations().postMessage({ id, ...message });
+    } catch (error) {
+      clearTimeout(timeout);
+      pendingCalculations.delete(id);
+      reject(error);
+    }
   });
 }
 

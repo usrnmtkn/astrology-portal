@@ -4,9 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TLDR Astro Admin</title>
+    <link rel="stylesheet" href="../web/src/styles/startup.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;family=Geist+Mono:wght@400;500;600;700&amp;family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;family=Noto+Sans+Symbols:wght@400;500&amp;display=swap" media="print" onload="this.media='all'" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main id="app-startup" class="app-loading" role="status" aria-live="polite" aria-busy="true">
+        <span data-startup-message>Loading Content Studio…</span>
+        <div class="app-loading__lines" aria-hidden="true"><span></span><span></span><span></span></div>
+        <button type="button" class="app-loading__action" hidden>Reload page</button>
+        <noscript>Enable JavaScript to use TLDR Astro.</noscript>
+      </main>
+    </div>
+    <!-- app-startup-script -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
