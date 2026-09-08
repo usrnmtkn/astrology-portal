@@ -3,8 +3,11 @@ import clauses from "../../web/src/content/skyDailySummaryClauses.json";
 
 // Keep the supplied sentences intact in the import; the composer owns terminal punctuation.
 export function importedSkySummary(key: string): string | undefined {
-  if (key === "cms/sky-daily-summary/sun/virgo") return clauses.sun.virgo;
-  if (key === "cms/sky-daily-summary/moon/cancer") return clauses.moon.cancer;
+  const [body, sign] = key.replace("cms/sky-daily-summary/", "").split("/");
+  if (body === "sun" || body === "moon") {
+    const current = (clauses[body] as Record<string, string>)[sign];
+    if (current) return current;
+  }
   return supplied.rows.find(row => row.key === key)?.body.replace(/\.$/u, "");
 }
 export const skySummaryImportProvenance = supplied.provenance;

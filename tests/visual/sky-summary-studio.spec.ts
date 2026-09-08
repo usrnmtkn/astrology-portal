@@ -29,7 +29,7 @@ async function mockStudio(page: Page, stored: any[]) {
 }
 for (const width of [390, 1440]) {
   for (const theme of ["light", "dark"]) {
-    test(`summary studio navigation, populated and empty fields ${width} ${theme}`, async ({ page }) => {
+    test(`summary studio navigation, populated summary fields ${width} ${theme}`, async ({ page }) => {
       await mockStudio(page, []);
       await page.setViewportSize({ width, height: 1000 });
       await page.goto("/#sky-writeups?view=daily-summary");
@@ -52,7 +52,7 @@ for (const width of [390, 1440]) {
       await expect(nav.locator("button")).toHaveText(["Daily Sky Summary", "Transit to Natal Charts", "House Transits"]);
       await expect(nav.getByRole("button", { name: "Daily Sky Summary", includeHidden: true })).toHaveAttribute("aria-current", "page");
       await expect(studio.getByRole("article", { name: "Sun in Virgo", exact: true })).toContainText("turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing");
-      await expect(studio.getByRole("article", { name: "Sun in Aries", exact: true })).toContainText("putting more emphasis on starting");
+      await expect(studio.getByRole("article", { name: "Sun in Aries", exact: true })).toContainText("puts more emphasis on starting");
       const map = studio.getByRole("region", { name: "Sun and Moon composition map" });
       const preview = map.getByLabel("Combined Sun and Moon preview");
       await expect(map.getByRole("heading", { name: "Sun and Moon together", level: 4 })).toBeVisible();
@@ -66,11 +66,11 @@ for (const width of [390, 1440]) {
       expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
       await expect(preview).toHaveText("The Sun in Virgo turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Cancer brings more attention to home, family, and whether the care we give is coming back to us.");
       await map.getByLabel("Composition Moon sign").selectOption("Leo");
-      await expect(preview).toContainText("punishing, while the Moon moves through Leo.");
+      await expect(preview).toContainText("punishing, while the Moon in Leo makes appreciation land harder and being overlooked harder to shrug off.");
       await map.getByLabel("Composition Sun sign").selectOption("Aries");
-      await expect(preview).toContainText("The Sun is in Aries, while the Moon moves through Leo.");
+      await expect(preview).toContainText("The Sun in Aries puts more emphasis on starting, acting, and finding out what works by doing it, while the Moon in Leo makes appreciation land harder and being overlooked harder to shrug off.");
       await expect(map.getByLabel("Composition copy view")).toHaveCount(0);
-      await expect(preview).toHaveText("The Sun is in Aries, while the Moon moves through Leo.");
+      await expect(preview).toHaveText("The Sun in Aries puts more emphasis on starting, acting, and finding out what works by doing it, while the Moon in Leo makes appreciation land harder and being overlooked harder to shrug off.");
       await page.screenshot({ path: `test-results/sky-composition-empty-${width}-${theme}.png`, fullPage: true });
       await map.getByLabel("Composition Sun sign").selectOption("Virgo");
       await map.getByLabel("Composition Moon sign").selectOption("Cancer");
@@ -205,15 +205,15 @@ test("supplied wording opens intact as an editable unsaved draft", async ({ page
   await mockStudio(page, stored);
   await page.goto("/#sky-writeups?view=daily-summary");
   const field = page.getByRole("article", { name: "Moon in Leo", exact: true });
-  await expect(field).toContainText("Not live");
+  await expect(field).toContainText("makes appreciation land harder");
   await field.getByRole("button", { name: "Edit wording" }).click();
-  await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("making appreciation land harder and being overlooked harder to shrug off");
+  await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("makes appreciation land harder and being overlooked harder to shrug off");
   expect(stored).toHaveLength(0);
   await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   expect(stored[0].source_snapshot.suppliedCopy.sourceAttachment).toBe("9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt");
   await page.reload();
-  await expect(field).toContainText("Not live");
+  await expect(field).toContainText("makes appreciation land harder");
 });
 
 test('live bundled summary stays Live when opened, then publishes twice without another approval', async ({ page }) => {

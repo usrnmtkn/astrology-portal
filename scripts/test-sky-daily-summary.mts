@@ -5,12 +5,22 @@ import { readFileSync } from "node:fs";
 import { skyDailySummaryParts, skySummaryParagraphs } from "../apps/web/src/content/skyDailySummary.ts";
 
 const clauses = JSON.parse(readFileSync(new URL("../apps/web/src/content/skyDailySummaryClauses.json", import.meta.url), "utf8"));
+const suppliedRevisions = JSON.parse(readFileSync(new URL("../docs/content-review/sky-summary-supplied-copy-2026-09-08.json", import.meta.url), "utf8")).revisions;
 const virgoRevision = clauses.provenance.revisions.find((row: { key: string }) => row.key === "cms/sky-daily-summary/sun/virgo");
 assert.equal(clauses.sun.virgo, virgoRevision.body);
 assert.equal(createHash("sha256").update(clauses.sun.virgo).digest("hex"), virgoRevision.sha256);
 assert.equal(clauses.sun.virgo.split(/\s+/u).length, virgoRevision.wordCount);
 const text = (facts: Parameters<typeof skyDailySummaryParts>[0]) => skyDailySummaryParts(facts).map(p => p.text).join("");
 const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+for (const body of ["sun", "moon"]) {
+  assert.equal(Object.keys(clauses[body]).length, 12);
+  for (const sign of signs) {
+    const clause = clauses[body][sign.toLowerCase()];
+    assert.match(clause, /^(puts|slows|makes|brings|softens|turns) /);
+    const revision = [...clauses.provenance.revisions, ...suppliedRevisions].find((row: { key: string }) => row.key === `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`);
+    assert.equal(createHash("sha256").update(clause).digest("hex"), revision.sha256);
+  }
+}
 for (const sunSign of signs) {
   for (const moonSign of signs) {
     const result = text({ sun: { sign: sunSign, degree: 29.99 }, moon: { sign: moonSign, degree: 0 }, moonIsVoid: false });
@@ -21,7 +31,7 @@ for (const sunSign of signs) {
   }
 }
 const facts = { sun: { sign: "Gemini", degree: 9 }, moon: { sign: "Sagittarius", degree: 2 }, moonIsVoid: true, voidRemainingLabel: "49 min", event: { name: "Full Moon", sign: "Sagittarius", countdown: "in 3 days" } };
-assert.ok(text(facts).startsWith("The Sun is in Gemini at 9°,"));
+assert.ok(text(facts).startsWith("The Sun in Gemini at 9° makes questions"));
 assert.ok(text(facts).includes("Sagittarius at 2°"));
 assert.ok(text(facts).includes("The Moon is void of course for another 49 minutes."));
 assert.ok(text(facts).includes("The next Full Moon in Sagittarius is in 3 days."));
@@ -66,6 +76,8 @@ for (const [name, eclipseType, label] of [["New Moon", "solar", "Solar Eclipse"]
   assert.ok(!result.map(part => part.text).join("").includes(`The next ${name}`));
 }
 
+const { installContentPublications } = await import("../apps/web/src/content/contentPublicationState.ts");
+installContentPublications(["sun/libra", "moon/aries"].map(key => ({ content_key: `cms/sky-daily-summary/${key}`, state: "retired", revision: 100, row_id: null, row_updated_at: null, updated_at: "2026-09-08T00:00:00Z" })));
 const fallback = skyDailySummaryParts({ sun: { sign: "Libra", degree: 15 }, moon: { sign: "Aries", degree: 29 }, moonIsVoid: false });
 assert.equal(fallback.map(part => part.text).join(""), "The Sun is in Libra at 15°, while the Moon moves through Aries at 29°.");
 assert.ok(fallback.filter(part => part.emphasis).every(part => part.action));
@@ -106,7 +118,7 @@ assert.equal(calendarDayDistance(new Date("2026-09-07T16:00:00Z"), new Date("202
 assert.equal(calendarDayDistance(new Date("2026-09-07T16:00:00Z"), new Date("2026-09-11T03:27:00Z"), "UTC"), 4);
 assert.equal(calendarDayDistance(new Date("2026-03-07T17:00:00Z"), new Date("2026-03-09T16:00:00Z"), "America/New_York"), 2);
 
-assert.deepEqual(skyDailySummaryParts(facts).filter(part => part.action === "sun" || part.action === "moon").map(part => part.text), ["Sun is in Gemini at 9°", "Moon moves through Sagittarius at 2°"]);
+assert.deepEqual(skyDailySummaryParts(facts).filter(part => part.action === "sun" || part.action === "moon").map(part => part.text), ["Sun in Gemini at 9°", "Moon in Sagittarius at 2°"]);
 
 const example = skyDailySummaryParts({ sun: { sign: "Virgo", degree: 15 }, moon: { sign: "Cancer", degree: 29 }, moonIsVoid: true, voidRemainingLabel: "49 min",
   retrogradePlacements: [{ planet: "Saturn", sign: "Aries", degree: 13 }, { planet: "Neptune", sign: "Aries", degree: 1 }, { planet: "Pluto", sign: "Aquarius", degree: 3 }, { planet: "Chiron", sign: "Taurus", degree: 0 }],
