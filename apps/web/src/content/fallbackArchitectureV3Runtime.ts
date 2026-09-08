@@ -918,7 +918,9 @@ export async function loadSkyPlacementFallbackArchitectureV3Bundle() {
 
   skyPlacementFallbackBundlePromise ??= import("./fallbackArchitectureV3SkyPlacementBundle")
     .then(async ({ skyPlacementFallbackArchitectureV3Bundle, loadCanonicalSkyV4ReaderRoute }) => {
-      loadedSkyV4ReaderRoute = await loadCanonicalSkyV4ReaderRoute();
+      loadedSkyV4ReaderRoute = await loadCanonicalSkyV4ReaderRoute(() => [
+        ...hookRowsByKey.values(), ...transitAuthoredCardsByKey.values()
+      ]);
       if (localSkyPlacementReaderBundle) {
         return false;
       }

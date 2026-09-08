@@ -14,7 +14,8 @@ import lunarChunk2Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-plac
 // @ts-ignore Shared ESM helper enforces all-or-nothing owner-authored 12-house sets at the deferred bundle boundary.
 import { filterMixedDepthSkyPlacementHouseRows } from "./fallbackArchitectureV3/skyPlacementHouseSetGuard.mjs";
 // @ts-ignore The governed resolver is shared ESM; its reader input is narrowed at this bundle boundary.
-import { applySkyV4ContinuousCorpusCorrection, renderSkyV4ReaderRoute } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
+import { applySkyV4ContinuousCorpusCorrection } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
+import { createPublishedSkyReader } from "./skyPlacementPublishedSources";
 import type {
   FallbackArchitectureV3Bundle,
   FallbackArchitectureV3PackageManifest,
@@ -42,7 +43,7 @@ export const skyPlacementFallbackArchitectureV3Bundle: FallbackArchitectureV3Bun
 export const skyPlacementFallbackArchitectureV3Manifest =
   bundledSkyPlacementManifestV3 as FallbackArchitectureV3PackageManifest;
 
-export async function loadCanonicalSkyV4ReaderRoute() {
+export async function loadCanonicalSkyV4ReaderRoute(publishedSources: () => unknown[] = () => []) {
   // Vite resolves `?url` to an on-demand asset URL in the reader build. The
   // Node/esbuild parity harness resolves the same import to the parsed JSON
   // module. Support both representations so verification exercises the same
@@ -78,5 +79,5 @@ export async function loadCanonicalSkyV4ReaderRoute() {
     chunks: lunarChunks,
     records: lunarChunks.flatMap((chunk) => chunk.records)
   };
-  return (input: Record<string, unknown>) => renderSkyV4ReaderRoute(correctedCorpus, input, lunarSource);
+  return createPublishedSkyReader(correctedCorpus, lunarSource, publishedSources);
 }

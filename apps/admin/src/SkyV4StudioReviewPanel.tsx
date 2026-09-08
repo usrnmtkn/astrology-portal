@@ -36,6 +36,7 @@ interface Props {
   contentKey: string;
   effectiveRecord: Record<string, unknown>;
   disabled: boolean;
+  showGroupedEditor?: boolean;
 }
 
 const mainReaderFields: FieldDefinition[] = [
@@ -394,7 +395,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
     : fallbackFields.filter((field) => field.path === fallbackPath(fieldFilter));
 
   return <>
-    {isContinuousPlacement && <section className="admin-hook-detail-section" aria-label="SKY V4 continuous placement grouped editor">
+    {isContinuousPlacement && props.showGroupedEditor !== false && <section className="admin-hook-detail-section" aria-label="SKY V4 continuous placement grouped editor">
       <div>
         <p className="admin-eyebrow">Continuous placement editor</p>
         <h3>{identity ? `${titlePart(identity.planet)} in ${titlePart(identity.sign)}` : props.contentKey}</h3>

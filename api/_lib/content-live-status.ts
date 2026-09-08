@@ -1,3 +1,4 @@
+import { skyPlacementSourceRecords } from "./sky-placement-sources.js";
 import { createDomainRegistry } from "../../apps/web/src/content/domainRegistry.js";
 import { contentStudioExactRow } from "../../apps/web/src/services/skyAspectContent.js";
 // @ts-ignore Generated reader artifact has no declarations.
@@ -42,6 +43,7 @@ for (const partition of readerPartitions as Record<string, any>[]) {
     for (const record of partition[bucket] ?? []) servingPackageRecords.set(record.contentKey, record);
   }
 }
+for (const [key, record] of skyPlacementSourceRecords) servingPackageRecords.set(key, record);
 // Calendar and Sky share this approved exact-aspect registry, outside the V3 partitions.
 const { approvedExactSkyAspectCopy } = createDomainRegistry(require("../../packages/astro-knowledge/dist/sky-runtime-web.json"));
 function exactAspectStatus(row: LiveStatusRow, candidates: LiveStatusRow[]): ContentLiveStatus | null {
@@ -101,6 +103,7 @@ function skyOverlays(candidates: LiveStatusRow[]) {
 }
 function packageEligible(row: LiveStatusRow) {
   const source = record(row);
+  if (skyPlacementSourceRecords.has(row.content_key) && source.studio_version_status !== "approved-serving-revision") return false;
   const { role, reviewStatus } = generatedRowPackageRole(row);
   const destination = fallbackArchitectureV3DashboardPackageDestination({ contentKey: row.content_key, role, contentType: row.source_snapshot?.contentType ?? row.source_snapshot?.content_type ?? row.facts?.contentType ?? row.facts?.content_type ?? "" });
   return row.provider === "tldrastro-fallback-architecture-v3" && !isSkyPartitionKey(row.content_key)

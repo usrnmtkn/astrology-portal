@@ -45,7 +45,7 @@ assert.equal(contentMotion(rows[0]), "retrograde");
 assert.equal(contentMotion(rows[1]), "direct");
 assert.equal(contentMotion(rows[2]), "retrograde");
 assert.equal(contentMotion(rows[3]), "direct");
-assert.equal(contentMotion(rows[4]), "direct");
+assert.equal(contentMotion(rows[4]), "unspecified", "Canonical articles are shared by direct and retrograde readers.");
 assert.equal(contentMotion(rows[5]), "unspecified");
 assert.deepEqual([...contentDestinations(rows[0])], ["sky"]);
 assert.deepEqual([...contentDestinations(rows[2])], ["sky", "calendar"]);
@@ -61,4 +61,4 @@ assert.deepEqual(sortPlacementRows(rows, "title-asc").map((row) => row.headline)
 ]);
 assert.equal(sortPlacementRows(rows, "updated-desc")[0].headline, "Venus in Libra");
 
-console.log("Content Studio classifies canonical placement articles as direct baseline copy while preserving explicit retrograde and motion-unspecified rows.");
+console.log("Content Studio keeps canonical placement articles shared across motion while preserving explicit retrograde rows.");

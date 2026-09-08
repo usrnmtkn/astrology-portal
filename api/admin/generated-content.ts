@@ -1380,12 +1380,12 @@ async function listGeneratedContent(req: IncomingMessage) {
         const { servingPackageRecords, isSkyPartitionKey } = await import("../_lib/content-live-status.js");
         const savedKeys = new Set(payload.map((row) => row.content_key));
         const starters = contentKeys.filter((key) => !savedKeys.has(key)).flatMap((key) => servingPackageRecords.has(key) ? [servingPackageRecords.get(key)!] : []).map((record) => ({
-          id: `package:${record.contentKey}`, content_key: record.contentKey, surface: "you", mode: "in_depth",
+          id: `package:${record.contentKey}`, content_key: record.contentKey, surface: record.surface ?? "you", mode: "in_depth",
           status: "DRAFT", lane: "reference", review_state: "needs-review", provider: isSkyPartitionKey(record.contentKey) ? "tldrastro-fallback-architecture-v3-sky-placement" : fallbackArchitectureV3Provider,
           headline: record.headline ?? record.contentKey, summary: record.summary ?? "",
           body: record.body_you ?? record.body ?? record.text ?? "",
           sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true },
-          source_snapshot: { sourcePackage: fallbackArchitectureV3Provider, content_role: record.content_role, review_status: record.review_status },
+          source_snapshot: { sourcePackage: record.source_package ?? fallbackArchitectureV3Provider, content_role: record.content_role, review_status: record.review_status },
           block_type: record.content_role === "template" ? "fallback_template" : record.content_role === "vocabulary" ? "vocabulary_phrase" : "fallback_hook",
           event_type: record.content_role === "template" ? "fallback-template" : "fallback-hook",
           updated_at: null, package_starter: true
@@ -1912,14 +1912,18 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error(`Approve & publish revision cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
     }
 
-    const isGovernedAspectDraft = existing.event_type === "sky-v4-governed-aspect-draft";
-    const targetRowId = isGovernedAspectDraft ? stringFrom(existing.source_snapshot?.targetRowId) : existing.id;
+    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft"].includes(existing.event_type ?? "");
+    const targetRowId = isVersionedReaderDraft ? stringFrom(existing.source_snapshot?.targetRowId) : existing.id;
     if (!targetRowId) throw new Error("This governed revision is missing its live target row.");
     const target = targetRowId === existing.id ? existing : await fetchExistingRowById(targetRowId);
     if (!target || !isFallbackArchitectureV3Row(target)) {
       throw new Error("The fallback package row targeted by this revision no longer exists.");
     }
 
+    const targetVersion = stringFrom(existing.source_snapshot?.targetRowUpdatedAt);
+    if (target.id !== existing.id && targetVersion && target.updated_at !== targetVersion) {
+      throw new GeneratedContentRequestError("The live source changed after this revision was started. Reload it before publishing so newer writing is not overwritten.", 409);
+    }
     const proposalSections = isRecord(existing.sections) ? existing.sections : {};
     const packageDraft = isRecord(proposalSections.packageDraft) ? proposalSections.packageDraft : null;
     if (!packageDraft) {
@@ -1928,11 +1932,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     const targetSections = isRecord(target.sections) ? target.sections : {};
     const targetRecord = v3PackageRecord(target);
     const targetSnapshot = isRecord(target.source_snapshot) ? target.source_snapshot : {};
-    if (
-      stringFrom(targetRecord.source_package) === skyV4CanonicalStagePackage
-      || stringFrom(targetSnapshot.sourcePackage) === skyV4CanonicalStagePackage
-    ) {
-      throw new Error("SKY V4 reader copy must use its hash-bound owner approval workflow.");
+    const canonicalRevision = stringFrom(targetRecord.source_package) === skyV4CanonicalStagePackage;
+    if (canonicalRevision && !skyV4ServingReleasedReaderCopyKeys.has(target.content_key)) {
+      throw new Error("This SKY V4 source has not been released for readers.");
     }
     const contentRole = stringFrom(targetRecord.content_role)
       || stringFrom(targetSnapshot.content_role)
@@ -1949,6 +1951,12 @@ async function updateGeneratedContent(req: IncomingMessage) {
       if (isEditablePackageCopyPath(field, targetRecord)) {
         setPackageValueAt(promotedRecord, field, value);
       }
+    }
+    if (canonicalRevision) {
+      const bodyPaths = ["placementArticle", "NewMoonArticle", "FullMoonArticle", "EventArticle", "FallbackArticle", "ModifierArticle", "NodeAxisArticle", "ExactIngressCopy", "Article", "LilithArticle", "Body", "OverlayBody", "Copy", "Template"];
+      const field = bodyPaths.find(path => typeof promotedRecord[path] === "string");
+      if (field) promotedRecord.body_you = promotedRecord[field];
+      promotedRecord.summary = promotedRecord.tldrTakeaway ?? promotedRecord.TLDR_Takeaway ?? promotedRecord.CanonicalShort ?? promotedRecord.summary;
     }
     const now = new Date().toISOString();
     const promotionPatch: Record<string, unknown> = { updated_at: now };
@@ -1982,6 +1990,23 @@ async function updateGeneratedContent(req: IncomingMessage) {
       };
     }
     finalSections.dashboardEditHistory = history;
+    if (canonicalRevision) {
+      const validation = validateSkyV4TransitPovCopy(promotedRecord, null);
+      if (!validation.passed) throw new Error(`SKY V4 POV validation failed: ${validation.hardFailures.join(", ")}.`);
+      const approvedRecord = isRecord(finalSections.packageRecord) ? finalSections.packageRecord : {};
+      approvedRecord.owner_approved = true;
+      approvedRecord.serving_enabled = true;
+      approvedRecord.review_status = "approved";
+      approvedRecord.studio_version_status = "approved-serving-revision";
+      finalSections.contentStudioPublication = {
+        schema: "content-studio-publication/v1", approvedAt: now,
+        sourceBaselineSha256: targetRecord.source_baseline_sha256,
+        copySha256: createHash("sha256").update(JSON.stringify(approvedRecord)).digest("hex")
+      };
+      promotionPatch.status = "LIVE";
+      promotionPatch.lane = "serving";
+      promotionPatch.review_state = null;
+    }
     promotionPatch.sections = finalSections;
     promotionPatch.reviewed_at = now;
     promotionPatch.published_at = now;
@@ -2400,6 +2425,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       source_snapshot: {
         ...(isRecord(patch.source_snapshot) ? patch.source_snapshot : {}),
         targetRowId: existing.id,
+        targetRowUpdatedAt: existing.updated_at,
         targetContentKey: existing.content_key
       },
       status: "DRAFT",
