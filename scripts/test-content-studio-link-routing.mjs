@@ -36,6 +36,7 @@ assert.equal(isReaderAppHref("/#/you/placement/sun-aquarius-9h"), true, "root re
 assert.equal(isReaderAppHref("/reports/example-report"), true, "public app paths open outside Content Studio");
 assert.equal(isReaderAppHref("/admin/content/coverage"), false, "Content coverage stays inside Content Studio");
 assert.equal(isReaderAppHref("/admin/content"), false, "Content Studio stays in the current tab");
+assert.equal(isReaderAppHref("/?auth=login&returnTo=%2Fadmin%2Fcontent%23sky-writeups"), false, "Owner sign-in keeps the Studio return flow in the same tab");
 assert.equal(isReaderAppHref("#slots"), false, "Content Studio hash navigation stays in the current tab");
 assert.equal(isReaderAppHref("https://example.com"), false, "unrelated external links are not reclassified as app links");
 

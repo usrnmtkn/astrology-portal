@@ -3209,7 +3209,7 @@ export function GeneratedContentAdminDashboard() {
     () => rows.filter((row) => selectedIds.has(row.id) && !row.id.startsWith("package:")),
     [rows, selectedIds]
   );
-  const hasAccessIssue = loadState === "accessDenied" || (!secret.trim() && loadState !== "loaded" && loadState !== "loading");
+  const hasAccessIssue = loadState === "accessDenied" || loadState === "idle";
   const hasLoadFailure = loadState === "error";
   const isInitialDashboardLoad = loadState === "loading" && rows.length === 0;
 
@@ -3456,7 +3456,10 @@ export function GeneratedContentAdminDashboard() {
       if (!cancelled && accessToken) {
         activeSessionToken = accessToken;
         setTransientCredential(accessToken);
-        if (await loadDashboardData(accessToken, false, "session")) return;
+        const result = await loadDashboardData(accessToken, false, "session");
+        // A storage/network failure must keep its error and retry credential.
+        // Try emergency access only when the server actually rejected the account.
+        if (result !== "accessDenied" || !emergencySecret.trim()) return;
       }
 
       if (!cancelled && emergencySecret.trim()) {
@@ -3885,20 +3888,22 @@ export function GeneratedContentAdminDashboard() {
     navigateAdminPage("vocabulary", params, { keepEditorOpen: true });
   }
 
-  async function loadDashboardData(secretOverride?: string, persistOnSuccess = false, credentialKind: "session" | "secret" = "secret") {
+  async function loadDashboardData(secretOverride?: string, persistOnSuccess = false, credentialKind?: "session" | "secret") {
     const loadSequence = ++dashboardLoadSequenceRef.current;
     dashboardLoadControllerRef.current?.abort();
     const loadController = new AbortController();
     dashboardLoadControllerRef.current = loadController;
     const normalizedSecret = normalizeAdminSecret(secretOverride ?? secret);
+    const requestCredentialKind = credentialKind ?? (adminCredentialHeaders(normalizedSecret)["x-content-admin-session"] ? "session" : "secret");
     if (!normalizedSecret) {
       setLoadState("idle");
       setLoadError("Admin access is required before content can load.");
       setLoadDiagnostics(null);
       setMessage("Sign in with the owner account or use the emergency access key.");
-      return false;
+      return "idle" as const;
     }
 
+    setTransientCredential(normalizedSecret);
     setLoadState("loading");
     setLoadError(null);
     setLoadDiagnostics(null);
@@ -3934,7 +3939,7 @@ export function GeneratedContentAdminDashboard() {
         adminJsonRequest<{ ok: boolean; rows: AdminContentReviewEventRow[] }>("/api/admin/content-review-events?limit=250", normalizedSecret, { signal: loadController.signal })
       ]);
 
-      if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return false;
+      if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return "cancelled" as const;
       if (generatedResult.status === "rejected") {
         throw generatedResult.reason;
       }
@@ -3989,21 +3994,21 @@ export function GeneratedContentAdminDashboard() {
             // Compatibility is already usable. Other workspaces can retry their inventory on navigation or reload.
           });
       }
-      return true;
+      return "loaded" as const;
     } catch (error) {
-      if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return false;
+      if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return "cancelled" as const;
       const accessDenied = error instanceof AdminRequestError && error.status === 401;
       const nextMessage = accessDenied
-        ? credentialKind === "session"
+        ? requestCredentialKind === "session"
           ? "This signed-in account does not have Content Studio access. Sign in with the owner account or use the emergency access key."
           : "Admin access was denied. Sign in with the owner account or paste the current emergency access key."
         : dashboardErrorMessage(error);
-      if (accessDenied && credentialKind === "secret" && normalizedSecret === normalizeAdminSecret(secret)) setSecret("");
+      if (accessDenied && requestCredentialKind === "secret" && normalizedSecret === normalizeAdminSecret(secret)) setSecret("");
       setLoadState(accessDenied ? "accessDenied" : "error");
       setLoadError(nextMessage);
       setLoadDiagnostics(error instanceof AdminRequestError ? `${error.method} ${error.path} -> HTTP ${error.status}${error.details ? ` (${error.details})` : ""}` : null);
       setMessage(nextMessage);
-      return false;
+      return accessDenied ? "accessDenied" as const : "error" as const;
     }
   }
 

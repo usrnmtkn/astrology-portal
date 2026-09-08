@@ -1,3 +1,4 @@
+import { studioSignInHref } from "../../web/src/services/studioAuthReturn";
 import { AlertTriangle, BarChart3, LogIn, Plus, RefreshCw, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import "./admin-content-studio-ux-compat.css";
@@ -200,15 +201,13 @@ export function AdminAccessGate({ disabled, onChange, onSubmit, value }: AdminAc
       <div className="admin-access-gate-actions">
         <a
           className="admin-access-owner-signin"
-          href="/?auth=login"
-          target="_blank"
-          rel="noreferrer"
+          href={studioSignInHref(`${window.location.pathname}${window.location.search}${window.location.hash}`)}
         >
           <LogIn size={16} aria-hidden="true" />
           Sign in as owner
         </a>
         <p className="admin-access-gate-note">
-          After you sign in, return to this tab. Content Studio should reconnect automatically.
+          After you sign in, you’ll return to this Content Studio page automatically.
         </p>
         <div className="admin-access-divider" aria-hidden="true">
           <span>Or use emergency access</span>
