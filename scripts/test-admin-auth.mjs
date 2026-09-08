@@ -2,6 +2,33 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { isContentAdminAuthorized } from "../api/_lib/admin-auth.ts";
 import { adminCredentialHeaders, normalizeAdminSecret } from "../apps/admin/src/adminSecret.ts";
+import { validStudioReturnPath, studioSignInHref, rememberStudioReturnPath, returnToStudioAfterSignIn } from "../apps/web/src/services/studioAuthReturn.ts";
+
+const studioPath = "/admin/content#sky-writeups?planet=saturn&sign=aries&motion=retrograde";
+assert.equal(validStudioReturnPath(studioPath), studioPath);
+for (const unsafePath of [null, "https://evil.test/admin/content", "//evil.test/admin/content", "/admin/content/../../account", "/admin/content-evil", "/admin/content/../../../evil", "javascript:alert(1)"]) {
+  assert.equal(validStudioReturnPath(unsafePath), null);
+}
+assert.equal(new URL(studioSignInHref(studioPath), "https://app.test").searchParams.get("returnTo"), studioPath);
+const originalWindow = globalThis.window;
+const returnStorage = new Map();
+let returnedTo = null;
+globalThis.window = {
+  location: { search: `?returnTo=${encodeURIComponent(studioPath)}`, replace: (path) => { returnedTo = path; } },
+  sessionStorage: { getItem: (key) => returnStorage.get(key) ?? null, setItem: (key, value) => returnStorage.set(key, value), removeItem: (key) => returnStorage.delete(key) }
+};
+try {
+  assert.equal(rememberStudioReturnPath(), studioPath);
+  window.location.search = ""; // OAuth callback may return to the configured root URL.
+  assert.equal(returnToStudioAfterSignIn(), true);
+  assert.equal(returnedTo, studioPath);
+  assert.equal(returnToStudioAfterSignIn(), false, "Successful return consumes the saved destination.");
+  window.location.search = "?returnTo=https://evil.test";
+  assert.equal(returnToStudioAfterSignIn(), false);
+} finally {
+  if (originalWindow === undefined) delete globalThis.window;
+  else globalThis.window = originalWindow;
+}
 
 function request(headers = {}) {
   return { headers };
