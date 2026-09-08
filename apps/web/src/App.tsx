@@ -155,8 +155,6 @@ import { assertLunationBodyMatchesEventSky, lunationBlendFacts } from "./service
 import { reportLiveOmittedSections } from "./services/conditionalSectionReviewReporter";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
-  SkyAspectGroup,
-  SkyAspectsSection,
   SkyPlacementList,
   SkyPlacementListItem,
   SkyTodayView
@@ -5311,15 +5309,9 @@ function currentSkyPlacementDetailArticle({
   const displayBody = isCanonicalSkyV4Article && !isFallbackOnlyPreview
     ? body
     : composeSkyPlacementFallbackParagraphs(fallbackBody);
-  const relatedAspectSections = isRegistryArticle
-    ? []
-    : relatedSkyAspectSectionsForPlacement({
-        aspects,
-        generatedAt,
-        generatedContent,
-        pointName: position.planet,
-        positions
-      });
+  const relatedAspectRows = relatedAspectRowsForPlacement({
+    aspects, generatedAt, generatedContent, mode: "sky", pointName: position.planet, positions
+  });
   const articleSections = (placementSection?.articleSections ?? []).map((section) => ({
     heading: section.heading,
     body: section.body,
@@ -5367,9 +5359,8 @@ function currentSkyPlacementDetailArticle({
       && normalized.sections.some((section) => section.layer === "authored"),
     suppressTldr: !placementSection?.tldr && authoredBody.length > 0 && !isRetrograde,
     body: displayArticleSections.length > 0 ? [] : displayBody,
-    sections: displayArticleSections.length > 0
-      ? [...displayArticleSections, ...relatedAspectSections]
-      : relatedAspectSections,
+    sections: displayArticleSections,
+    relatedAspects: { heading: "Aspects", rows: relatedAspectRows.filter((row): row is SkyDetailRelatedAspectRow => row !== null) },
     astrologyDrilldown: null
   };
 }
@@ -5694,25 +5685,37 @@ function relatedAspectRowsForPlacement({
         : null;
 
       const otherPoint = aspectOtherPoint(aspect, pointName);
-      const title = `${pointName} ${titleCase(aspect.type)} ${otherPoint}`;
+      const title = mode === "sky"
+        ? `${skyAspectMotionName(pointName, positions)} ${titleCase(aspect.type)} ${skyAspectMotionName(otherPoint, positions)}`
+        : `${pointName} ${titleCase(aspect.type)} ${otherPoint}`;
+      const timing = mode === "sky" && generatedAt ? skyAspectTimingDisplay(aspect, generatedAt) : null;
+      const narrativeTiming = mode === "sky" && generatedAt ? skyAspectNarrativeTimingLines(aspect, generatedAt) : [];
       const rowSummary = normalizedSkySurface
-        ? normalizedSurfacePreview(normalizedSkySurface)
+        ? normalizedSkySurface.sections.map(section => section.body).filter(Boolean).join("\n\n")
         : normalizedSurfacePreview(normalizeNatalAspectSurface(aspect, ownerContext));
       const displaySummary = rowSummary;
       const key = `${mode}-${pointName}-${aspect.from}-${aspect.type}-${aspect.to}`;
       const rowGroup = mode === "natal"
         ? natalAspectCounterpartGroup(aspect, pointName) ?? "points"
         : normalizedAspectToneBucket(aspect.type);
+      const exact = mode === "sky" && wholeDegreeOrb(aspect.orb) === "0°";
       const rowContent = (
         <>
-          <AspectGlyphs from={pointName} aspect={aspect.type} to={otherPoint} />
+          <AspectGlyphs from={mode === "sky" ? skyAspectMotionName(pointName, positions) : pointName} aspect={aspect.type} to={mode === "sky" ? skyAspectMotionName(otherPoint, positions) : otherPoint} />
           <span className="aspect-row-copy">
             <h4>{title}</h4>
-            {displaySummary ? <p>{displaySummary}</p> : null}
+            {timing ? <span className="aspect-row-timing" aria-label={timing.label}>
+              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration"><DurationLabelText label={timing.durationLabel} /></span>
+              <span>{timing.rangeLabel}</span>
+            </span> : null}
+            {narrativeTiming.length ? <span className="aspect-row-narrative-timing">
+              {narrativeTiming.map(line => <span key={line}>{line}</span>)}
+            </span> : null}
+            {displaySummary ? displaySummary.split(/\n\s*\n/u).map((paragraph, index) => <p key={index}>{paragraph}</p>) : null}
           </span>
-          <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
+          <span className="aspect-row-meta" aria-label={exact ? "exact aspect" : `${wholeDegreeOrb(aspect.orb)} orb`}>
             <span className="aspect-row-dot" aria-hidden="true" />
-            <span>{wholeDegreeOrb(aspect.orb)}</span>
+            <span>{exact ? "exact" : wholeDegreeOrb(aspect.orb)}</span>
           </span>
         </>
       );
@@ -5753,6 +5756,12 @@ function relatedAspectRowsForPlacement({
         };
       }
 
+      if (mode === "sky") return {
+        key, aspectType: aspect.type, group: rowGroup,
+        node: <a className="article-related-aspect-row aspect-row aspect-row-button"
+          aria-label={`Read more about ${title}`} href={`#${skyAspectRoutePath(aspect)}`}>{rowContent}</a>
+      };
+
       return {
         key,
         aspectType: aspect.type,
@@ -5768,7 +5777,7 @@ function relatedAspectRowsForPlacement({
     })
     .filter(Boolean);
 
-  return mode === "sky" ? rows.slice(0, 2) : rows;
+  return rows;
 }
 
 function isElevatedSlowTransit(transitPlanet: string, natalPoint: string, orbValue: number) {
@@ -16006,15 +16015,7 @@ function TodayView({
           onOpenDetail={onOpenDetail}
         />
       )}
-      aspects={(
-        <ActiveAspects
-          aspects={aspects}
-          positions={positions}
-          generatedAt={generatedAt}
-          generatedContent={generatedContent}
-          onOpenDetail={onOpenDetail}
-        />
-      )}
+      aspects={null}
     />
   );
 }
@@ -16028,89 +16029,6 @@ function placementDetailTitle(position: PlanetPosition, _activeAspects: SkySnaps
   }
 
   return `${skyDisplayPlanetName(position.planet)} in ${position.sign}`;
-}
-
-function ActiveAspects({
-  aspects,
-  positions,
-  generatedAt,
-  generatedContent,
-  onOpenDetail
-}: {
-  aspects: SkySnapshot["aspects"];
-  positions: PlanetPosition[];
-  generatedAt: string;
-  generatedContent: GeneratedContentMap;
-  onOpenDetail: (detail: SkyDetail) => void;
-}) {
-  const aspectGroups = useMemo(
-    () => groupAspectsByGiftLesson(aspects, (aspect) => aspect.type, (aspect) => aspect.orb),
-    [aspects]
-  );
-
-  const visibleAspectGroups = aspectGroups
-    .map((group) => ({
-      ...group,
-      aspects: group.aspects
-        .map((aspect) => ({
-          aspect,
-          normalized: normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)
-        }))
-    }))
-    .filter((group) => group.aspects.length > 0);
-
-  return (
-    <SkyAspectsSection>
-      {visibleAspectGroups.map((group) => (
-        <SkyAspectGroup id={group.key} key={group.key} label={group.label}>
-          {group.aspects.map(({ aspect, normalized }) => {
-            const fromLabel = skyAspectMotionName(aspect.from, positions);
-            const toLabel = skyAspectMotionName(aspect.to, positions);
-            const title = `${fromLabel} ${aspect.type} ${toLabel}`;
-            const timing = skyAspectTimingDisplay(aspect, generatedAt);
-            const narrativeTiming = skyAspectNarrativeTimingLines(aspect, generatedAt);
-            const exactChip = wholeDegreeOrb(aspect.orb) === "0°";
-
-            const displaySummary = stripSkyAspectTimingPrefix(
-              normalizedSurfacePreview(normalized),
-              timing
-            );
-
-            return (
-              <button
-                type="button"
-                className="sky-card aspect-row aspect-row-button"
-                key={`${aspect.from}-${aspect.to}`}
-                aria-label={`Read more about ${title}`}
-                onClick={() => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))}
-              >
-                <AspectGlyphs from={fromLabel} aspect={aspect.type} to={toLabel} />
-                <div className="aspect-row-copy">
-                  <h3>{title}</h3>
-                  <span className="aspect-row-timing" aria-label={timing.label}>
-                    <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                      <DurationLabelText label={timing.durationLabel} />
-                    </span>
-                    <span>{timing.rangeLabel}</span>
-                  </span>
-                  {narrativeTiming.length > 0 ? (
-                    <span className="aspect-row-narrative-timing">
-                      {narrativeTiming.map((line) => <span key={line}>{line}</span>)}
-                    </span>
-                  ) : null}
-                  {displaySummary ? <p>{displaySummary}</p> : null}
-                </div>
-                <span className="aspect-row-meta" aria-label={exactChip ? "exact aspect" : `${wholeDegreeOrb(aspect.orb)} orb`}>
-                  <span className="aspect-row-dot" aria-hidden="true" />
-                  <span>{exactChip ? "exact" : wholeDegreeOrb(aspect.orb)}</span>
-                </span>
-              </button>
-            );
-          })}
-        </SkyAspectGroup>
-      ))}
-    </SkyAspectsSection>
-  );
 }
 
 function PlacementTable({

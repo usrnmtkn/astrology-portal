@@ -3627,7 +3627,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Sky placement renders approved related aspects as full write-ups without source-gap rows", async ({ page }) => {
+  test("Sky placement cards preserve full approved aspect write-ups", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-09-02T16:00:00.000Z" });
@@ -3635,12 +3635,12 @@ test.describe("client-facing user flow case studies", () => {
 
     const article = page.locator(".sky-detail-article");
     await expect(article).toBeVisible();
-    const sunLilith = article.locator(".article-related-aspects__copy").filter({ hasText: "Sun Trine Lilith" });
+    const sunLilith = article.locator(".article-related-aspect-row").filter({ hasText: "Sun Trine Lilith" });
     await expect(sunLilith).toBeVisible();
     const lilithCopy = JSON.parse(readFileSync(path.resolve("packages/astro-knowledge/data/transits/sun-trine-lilith.json"), "utf8"));
     expect(lilithCopy.status).toBe("LIVE");
     await expect(sunLilith).toContainText(lilithCopy.readerCopy.body);
-    await expect(article.locator(".aspect-row-list")).toHaveCount(0);
+    await expect(sunLilith).toHaveAttribute("href", /#sky\/aspect\/sun\/trine\/lilith/);
     await assertNoClientErrors();
   });
 

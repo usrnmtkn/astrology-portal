@@ -461,6 +461,10 @@
   border-bottom: 0;
 }
 
+.article-related-aspect-row[href] {
+  text-decoration: none;
+}
+
 .article-related-aspect-row .aspect-row-copy :is(h3, h4) {
   color: var(--card-title-color);
   font-family: var(--font-display);
