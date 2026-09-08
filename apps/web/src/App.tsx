@@ -1,4 +1,5 @@
 import { isContentRetired } from "./content/contentPublicationState";
+import { usePageTransition } from "./hooks/usePageTransition";
 import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
 import { calendarDayDistance } from "./services/calendarDayDistance";
@@ -10961,6 +10962,7 @@ export function App() {
   const skyDateRef = useRef(skyDate);
   const followsCurrentTransitDateRef = useRef(skyDate === currentLocalDate);
   const [mode, setMode] = useState<PortalMode>(getInitialPortalMode);
+  const transitionPage = usePageTransition();
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
   const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
   const [hasLocationPreference, setHasLocationPreference] = useState(initialLocationState.hasSavedLocation);
@@ -11524,21 +11526,25 @@ export function App() {
   function navigateToFriends() {
     const nextTab = initialFriendsTab();
 
-    setSelectedSkyDetail(null);
-    setSkyDetailRoutePath(null);
-    updateFriendsTabUrl(nextTab, "push");
-    storeFriendsTab(nextTab);
-    storePortalMode("friends");
-    setFriendsLandingKey((currentKey) => currentKey + 1);
-    setMode("friends");
+    transitionPage(() => {
+      setSelectedSkyDetail(null);
+      setSkyDetailRoutePath(null);
+      updateFriendsTabUrl(nextTab, "push");
+      storeFriendsTab(nextTab);
+      storePortalMode("friends");
+      setFriendsLandingKey((currentKey) => currentKey + 1);
+      setMode("friends");
+    }, mode !== "friends" && !isSignupMode);
   }
 
-  function navigateToPortalMode(nextMode: PortalMode) {
-    setSelectedSkyDetail(null);
-    setSkyDetailRoutePath(null);
-    updatePortalModeUrl(nextMode, "push");
-    storePortalMode(nextMode);
-    setMode(nextMode);
+  function navigateToPortalMode(nextMode: PortalMode, animate = true) {
+    transitionPage(() => {
+      setSelectedSkyDetail(null);
+      setSkyDetailRoutePath(null);
+      updatePortalModeUrl(nextMode, "push");
+      storePortalMode(nextMode);
+      setMode(nextMode);
+    }, animate && nextMode !== mode && !isSignupMode && !(nextMode === "profile" && !userProfile));
   }
 
   useEffect(() => {
@@ -11762,6 +11768,7 @@ export function App() {
 
   useEffect(() => {
     function handlePortalUrlChange() {
+      transitionPage(() => {}, false);
       const urlMode = portalModeFromUrl();
       const nextCurrentLocalDate = dateInputValue();
       const fixedTransitDate = transitDateFromUrl();
@@ -11803,7 +11810,7 @@ export function App() {
       window.removeEventListener("popstate", handlePortalUrlChange);
       window.removeEventListener("hashchange", handlePortalUrlChange);
     };
-  }, [userProfile]);
+  }, [userProfile, transitionPage]);
 
   useEffect(() => {
     if (followsCurrentTransitDateRef.current) {
@@ -14237,7 +14244,7 @@ export function App() {
                       setSelectedSkyDetail(null);
                       setUserProfile(null);
                       setOwnSocialProfile(null);
-                      navigateToPortalMode("profile");
+                      navigateToPortalMode("profile", false);
                       setMenuOpen(false);
                     });
                     await signOutAuth();

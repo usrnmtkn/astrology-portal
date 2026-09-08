@@ -1,4 +1,12 @@
 :root {
+  /* Shared timing for main-page fades and navigation movement. */
+  --motion-page-duration: 600ms;
+  --motion-page-enter-delay: 600ms;
+  --motion-page-ease: cubic-bezier(0.39, 0.575, 0.565, 1);
+  --motion-nav-exit-duration: 700ms;
+  --motion-nav-enter-duration: 800ms;
+  --motion-nav-exit-ease: cubic-bezier(0.87, 0, 0.13, 1);
+  --motion-nav-enter-ease: cubic-bezier(0.16, 1, 0.3, 1);
   /*
   DESIGN SYSTEM NOTE
   Swap fonts, colors, size, spacing, and radius here.
