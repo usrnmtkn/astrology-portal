@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import { PageLoading } from "../components/PageLoading";
 import type { ReportTheme } from "../components/reports/ReportTopNavigation";
 import "../styles/report-article.css";
 import "../styles/report-library.css";
@@ -29,7 +30,7 @@ const ReportCheckoutResultView = lazy(() =>
 );
 
 function LibraryFallback() {
-  return <main className="report-delivery-state" role="status" />;
+  return <PageLoading message="Loading report…" />;
 }
 
 function deferred(node: ReactNode) {

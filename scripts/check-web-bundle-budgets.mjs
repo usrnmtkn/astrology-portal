@@ -112,10 +112,10 @@ const deferredSkyDetailItem = javaScriptFiles.find((item) => item.file.includes(
 const deferredReportRouteItem = javaScriptFiles.find((item) => item.file.includes("ReportRoute-"));
 const largestJavaScript = [...javaScriptFiles].sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
 const measurements = {
-  appBootGzipBytes: sum(bootItems, "gzipBytes"),
+  appBootGzipBytes: sum(bootItems.filter((item) => item.file.endsWith(".js")), "gzipBytes"),
   appChunkGzipBytes: appItem?.gzipBytes ?? 0,
   readerBootGzipBytes: sum(readerBootItems, "gzipBytes"),
-  readerInitialCssGzipBytes: sum(readerStyleItems, "gzipBytes"),
+  readerInitialCssGzipBytes: sum(readerBootItems.filter((item) => item.file.endsWith(".css")), "gzipBytes"),
   largestJavaScriptGzipBytes: largestJavaScript?.gzipBytes ?? 0,
   friendsWorkspaceChunkGzipBytes: deferredFriendsWorkspaceItem?.gzipBytes ?? 0,
   skyDetailChunkGzipBytes: deferredSkyDetailItem?.gzipBytes ?? 0,

@@ -2350,7 +2350,7 @@ ${passHook}`;
       const planetFrame = isRetrograde || isShadowPhase ? retrogradePlanetFrame ?? directPlanetFrame : directPlanetFrame;
       const signLore = hooks.get(`fallback-hook/sky-placement-lore/${sign}`)?.body_you;
       const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
-      if (windowFrame && (!shouldIncludePlanetLore || planetFrame) && (!shouldIncludeSignLore || signLore) && signStyle && entryDate && exitDate && signParts.length > 0) {
+      if (windowFrame && signStyle && entryDate && exitDate && signParts.length > 0) {
         const ctx = {
           signTitle: title2(sign),
           signStyle,
@@ -3325,6 +3325,56 @@ function createKnowledgeMatrixV13Resolver(file) {
       pointRows: file.rows.filter((row) => row.sheet === "NodesPhasesFortune").length
     })
   });
+}
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs
+var SKY_EVERGREEN_SECTIONS_PATH = "fallback.sections";
+var SKY_EVERGREEN_DEFAULT_SECTIONS = [
+  { id: "hook", source: "hook" },
+  { id: "lived", source: "lived" },
+  { id: "turn", source: "turn" }
+];
+var labels = { hook: "Fallback opening", lived: "Fallback: how it shows up", turn: "Fallback: challenge and response" };
+function isSkyEvergreenSource(source) {
+  return source?.studio_content_type === "continuous-placement" && /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(source.contentKey ?? "");
+}
+function validateSkyEvergreenSections(value) {
+  if (value === void 0) return;
+  if (!Array.isArray(value) || value.length > 24) throw new Error("Evergreen sections must be a list of at most 24 sections.");
+  const ids = /* @__PURE__ */ new Set();
+  const sources = /* @__PURE__ */ new Set();
+  for (const section of value) {
+    if (!section || typeof section !== "object" || Array.isArray(section) || typeof section.id !== "string" || !/^[a-z][a-z0-9-]{0,63}$/u.test(section.id) || ids.has(section.id)) {
+      throw new Error("Each evergreen section needs a unique, valid identifier.");
+    }
+    ids.add(section.id);
+    if (Object.hasOwn(section, "source")) {
+      if (typeof section.source !== "string" || !Object.hasOwn(labels, section.source) || sources.has(section.source) || Object.keys(section).some((key) => !["id", "source"].includes(key))) {
+        throw new Error("An evergreen section may reference each existing hook only once.");
+      }
+      sources.add(section.source);
+    } else if (typeof section.label !== "string" || section.label.length > 120 || typeof section.body !== "string" || section.body.length > 2e4 || Object.keys(section).some((key) => !["id", "label", "body"].includes(key))) {
+      throw new Error("An added evergreen section needs an editor label and a text body.");
+    }
+  }
+}
+function skyEvergreenLayout(source) {
+  const value = source?.fallback?.sections;
+  validateSkyEvergreenSections(value);
+  return value === void 0 ? SKY_EVERGREEN_DEFAULT_SECTIONS.map((section) => ({ ...section })) : value;
+}
+function skyEvergreenFields(source) {
+  return skyEvergreenLayout(source).map((section) => ({
+    id: section.id,
+    path: section.source ? `fallback.${section.source}` : `${SKY_EVERGREEN_SECTIONS_PATH}.${section.id}`,
+    label: section.source ? labels[section.source] : section.label.trim() || "Untitled section",
+    value: section.source ? source?.fallback?.[section.source] ?? "" : section.body,
+    custom: !section.source
+  }));
+}
+function skyEvergreenEditableFields(source) {
+  const fields = source?.studio_editable_fields ?? [];
+  return isSkyEvergreenSource(source) ? [...fields.filter((field) => field.path !== SKY_EVERGREEN_SECTIONS_PATH), { path: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order" }] : fields;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-120-owner-approval-v1.json
@@ -4520,7 +4570,10 @@ function templateStudioRecords(corpus) {
   });
   return [...templates, overlaySettings];
 }
+var preparedReaderRecords = /* @__PURE__ */ new WeakMap();
 function skyV4ContentStudioRecords(corpus) {
+  const prepared = preparedReaderRecords.get(corpus);
+  if (prepared) return prepared;
   assertSkyV4CanonicalPackage(corpus);
   assertSkyV4ReaderCopyServingRelease(corpus);
   const records = [
@@ -4643,7 +4696,8 @@ function renderSkyV4ContinuousPreview(corpus, input) {
     "fallback"
   );
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook ? fallbackOverlays[0]?.FallbackHookOverlay ?? "" : "";
-  const fallback = article && input.fallbackAvailable !== false ? [article.fallback?.hook, input.lunarFallbackBody, fallbackOverlay, article.fallback?.lived, article.fallback?.turn].filter(Boolean).map((part) => withoutUnresolvedSlots(fillFacts(part, facts))).join("\n\n") : "";
+  const evergreen = article ? skyEvergreenFields(article).map((section) => section.value) : [];
+  const fallback = article && input.fallbackAvailable !== false ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)].filter(Boolean).map((part) => withoutUnresolvedSlots(fillFacts(part, facts))).filter((part) => part.trim()).join("\n\n") : "";
   const mainBody = fullArticle || fallback;
   const resolution = fullArticle ? "canonical-article" : fallback ? "exact-fallback" : "facts-only";
   const aspects = selectSkyV4Aspects(input.aspects, { subjectBody: input.planet });
@@ -4673,6 +4727,7 @@ ${aspects.map(renderAspect).join("\n\n")}`);
   return {
     contentKey: article?.contentKey ?? `sky-placement/article/${lower(input.planet)}/${lower(input.sign)}`,
     resolution,
+    mainBody,
     selectedOverlayKeys: overlays.map((overlay) => overlay.OverlayKey),
     selectedFallbackOverlayKeys: fallbackOverlays.map((overlay) => overlay.OverlayKey),
     selectedAspectIds: aspects.map((aspect) => aspect.id),
@@ -4938,7 +4993,7 @@ ${renderAspect(aspect)}`
 function renderSkyV4StudioPreview(corpus, input) {
   const source = skyV4ContentStudioRecords(corpus).find((row) => row.contentKey === input.contentKey) ?? input.placementLunarContextSource ?? (input.governedAspectSource ? skyV4GovernedAspectStudioRecord(input.governedAspectSource) : null);
   if (!source) throw new Error(`SKY_V4_SOURCE_GAP: ${input.contentKey}`);
-  const allowed = new Set(source.studio_editable_fields.map((field) => field.path));
+  const allowed = new Set(skyEvergreenEditableFields(source).map((field) => field.path));
   const draftFields = record(input.draftFields);
   const blocked = Object.keys(draftFields).filter((path) => !allowed.has(path));
   if (blocked.length) throw new Error(`SKY_V4_STRUCTURE_LOCK: ${blocked.join(", ")}`);
@@ -4946,6 +5001,7 @@ function renderSkyV4StudioPreview(corpus, input) {
     (current, [path, nextValue]) => setValueAt(current, path, nextValue),
     structuredClone(source)
   );
+  if (effective.studio_content_type === "continuous-placement") validateSkyEvergreenSections(effective.fallback?.sections);
   if (effective.studio_content_type === "aspect") {
     const result = renderGovernedAspectStudioPreview(effective, input);
     return {
@@ -5061,6 +5117,12 @@ function nodePlacementKey(body, sign) {
   if (normalized === "south-node" || normalized === "south node") return `sky-nodes/south-node/${lower(sign)}`;
   return null;
 }
+function createSkyV4ReaderRoute(corpus, lunarContextSource) {
+  const snapshot = structuredClone(corpus);
+  const lunarSnapshot = lunarContextSource ? structuredClone(lunarContextSource) : lunarContextSource;
+  preparedReaderRecords.set(snapshot, skyV4ContentStudioRecords(snapshot));
+  return (input) => renderSkyV4ReaderRoute(snapshot, input, lunarSnapshot);
+}
 function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   if (input.draftFields && Object.keys(input.draftFields).length) {
     throw new Error("SKY_V4_READER_BOUNDARY: drafts cannot render on reader routes.");
@@ -5116,8 +5178,18 @@ ${lunarFullPageBody}` : "";
     lunarFullPageBody: lunarFullPageSection,
     lunarFallbackBody
   });
-  const baseBody = studioReaderBody(source);
+  const continuous = source.studio_content_type === "continuous-placement";
+  const baseBody = continuous ? preview.mainBody : studioReaderBody(source);
   const readerParts = [];
+  if (continuous && !baseBody) return {
+    ...preview,
+    route,
+    contentKey,
+    servingEnabled: true,
+    versionStatus: "approved-serving-baseline",
+    sourceBaselineSha256: source.source_baseline_sha256,
+    readerParts
+  };
   const pushReaderBody = (value, prepend = false) => {
     const body = withoutUnresolvedSlots(fillFacts(text(value), record(input.facts))).trim();
     if (body) {
@@ -5141,8 +5213,8 @@ ${lunarFullPageBody}` : "";
     }
   }
   if (baseBody) pushReaderBody(baseBody);
-  if (lunarFullPageBody) readerParts.push(lunarFullPageBody);
-  for (const overlayKey of preview.selectedOverlayKeys ?? []) {
+  if (lunarFullPageBody && (!continuous || preview.resolution === "canonical-article")) readerParts.push(lunarFullPageBody);
+  for (const overlayKey of continuous && preview.resolution !== "canonical-article" ? [] : preview.selectedOverlayKeys ?? []) {
     const overlay = releasedReaderRecord(corpus, overlayKey);
     pushReaderBody(overlay.OverlayBody);
   }
@@ -5193,7 +5265,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-08a";
+var PACKAGE_VERSION = "v3-2026-09-08c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -5273,6 +5345,7 @@ export {
   createKnowledgeMatrixV13Resolver,
   createKnowledgeMatrixV9Resolver,
   createPackageManifest,
+  createSkyV4ReaderRoute,
   createTransitSynastryRenderer,
   friendVoiceFromReaderCopy,
   natalPlacementMotionExactKey,

@@ -1,6 +1,8 @@
 import type { CompositionMapRow } from "./compositionMap";
 import { effectivePackageRecord, packageValueAt } from "./skyFallbackWorkspace";
 import { skyV4StudioDefinition } from "./skyV4ContentStudio";
+// @ts-ignore Shared canonical evergreen layout used by the reader.
+import { isSkyEvergreenSource, skyEvergreenFields, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 
 export type SkyPlacementWriting = "article" | "fallback";
 export type SkyPlacementSelection = { planet: string; sign: string; motion: string };
@@ -15,13 +17,19 @@ export type SkyPlacementAssemblyField = {
 
 export function skyPlacementAssemblyFields(row: CompositionMapRow): SkyPlacementAssemblyField[] {
   const source = effectivePackageRecord(row.sections);
-  return skyV4StudioDefinition(source).editableFields.map(field => ({
+  const fields: SkyPlacementAssemblyField[] = skyV4StudioDefinition(source).editableFields
+    .filter(field => field.path !== SKY_EVERGREEN_SECTIONS_PATH && (!isSkyEvergreenSource(source) || !field.path.startsWith("fallback.")))
+    .map(field => ({
     row,
     path: field.path,
     label: field.label.replace(/ draft$/u, ""),
     value: packageValueAt(source, field.path),
     kind: row.content_key.includes("/retrograde/") || field.path.startsWith("fallback.") ? "hook" : "copy"
   }));
+  if (isSkyEvergreenSource(source)) fields.push(...skyEvergreenFields(source).map((field: { path: string; label: string; value: string }) => ({
+    row, path: field.path, label: field.label, value: field.value, kind: "hook" as const
+  })));
+  return fields;
 }
 
 export function skyPlacementAssembly(rows: CompositionMapRow[], writing: SkyPlacementWriting) {

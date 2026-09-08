@@ -1,5 +1,6 @@
 import { correctedReaderSource } from "./readerSourceReferenceCorrections.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
+import { skyEvergreenFields, skyEvergreenEditableFields, validateSkyEvergreenSections } from "./skyEvergreenSections.mjs";
 import continuousOwnerApproval from "../authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
 import readerCopyOwnerApproval from "../authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 import readerCopyServingRelease from "../authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
@@ -707,7 +708,13 @@ function templateStudioRecords(corpus) {
   return [...templates, overlaySettings];
 }
 
+// Only factory-owned snapshots are cached. Mutable Studio drafts still pass
+// every validation and hash calculation on each call.
+const preparedReaderRecords = new WeakMap();
+
 export function skyV4ContentStudioRecords(corpus) {
+  const prepared = preparedReaderRecords.get(corpus);
+  if (prepared) return prepared;
   assertSkyV4CanonicalPackage(corpus);
   assertSkyV4ReaderCopyServingRelease(corpus);
   const records = [
@@ -860,10 +867,12 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook
     ? fallbackOverlays[0]?.FallbackHookOverlay ?? ""
     : "";
+  const evergreen = article ? skyEvergreenFields(article).map(section => section.value) : [];
   const fallback = article && input.fallbackAvailable !== false
-    ? [article.fallback?.hook, input.lunarFallbackBody, fallbackOverlay, article.fallback?.lived, article.fallback?.turn]
+    ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)]
       .filter(Boolean)
       .map((part) => withoutUnresolvedSlots(fillFacts(part, facts)))
+      .filter(part => part.trim())
       .join("\n\n")
     : "";
   const mainBody = fullArticle || fallback;
@@ -887,6 +896,7 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
   return {
     contentKey: article?.contentKey ?? `sky-placement/article/${lower(input.planet)}/${lower(input.sign)}`,
     resolution,
+    mainBody,
     selectedOverlayKeys: overlays.map((overlay) => overlay.OverlayKey),
     selectedFallbackOverlayKeys: fallbackOverlays.map((overlay) => overlay.OverlayKey),
     selectedAspectIds: aspects.map((aspect) => aspect.id),
@@ -1131,7 +1141,7 @@ export function renderSkyV4StudioPreview(corpus, input) {
     ?? input.placementLunarContextSource
     ?? (input.governedAspectSource ? skyV4GovernedAspectStudioRecord(input.governedAspectSource) : null);
   if (!source) throw new Error(`SKY_V4_SOURCE_GAP: ${input.contentKey}`);
-  const allowed = new Set(source.studio_editable_fields.map((field) => field.path));
+  const allowed = new Set(skyEvergreenEditableFields(source).map((field) => field.path));
   const draftFields = record(input.draftFields);
   const blocked = Object.keys(draftFields).filter((path) => !allowed.has(path));
   if (blocked.length) throw new Error(`SKY_V4_STRUCTURE_LOCK: ${blocked.join(", ")}`);
@@ -1139,6 +1149,7 @@ export function renderSkyV4StudioPreview(corpus, input) {
     (current, [path, nextValue]) => setValueAt(current, path, nextValue),
     structuredClone(source)
   );
+  if (effective.studio_content_type === "continuous-placement") validateSkyEvergreenSections(effective.fallback?.sections);
   if (effective.studio_content_type === "aspect") {
     const result = renderGovernedAspectStudioPreview(effective, input);
     return {
@@ -1261,6 +1272,15 @@ function nodePlacementKey(body, sign) {
  * calculated facts and governed aspect records, but never a Content Studio
  * draft. Selection remains conditional and configuration rows cannot resolve.
  */
+export function createSkyV4ReaderRoute(corpus, lunarContextSource) {
+  const snapshot = structuredClone(corpus);
+  const lunarSnapshot = lunarContextSource ? structuredClone(lunarContextSource) : lunarContextSource;
+  // Materializing every Studio row hashes the entire corpus. Do that once per
+  // publication snapshot, not twice for every card on every React render.
+  preparedReaderRecords.set(snapshot, skyV4ContentStudioRecords(snapshot));
+  return (input) => renderSkyV4ReaderRoute(snapshot, input, lunarSnapshot);
+}
+
 export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   if (input.draftFields && Object.keys(input.draftFields).length) {
     throw new Error("SKY_V4_READER_BOUNDARY: drafts cannot render on reader routes.");
@@ -1321,8 +1341,16 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
     lunarFullPageBody: lunarFullPageSection,
     lunarFallbackBody
   });
-  const baseBody = studioReaderBody(source);
+  // The reader and Studio must select the same full article or evergreen tier.
+  // Do not revive body_you when a published article has deliberately been cleared.
+  const continuous = source.studio_content_type === "continuous-placement";
+  const baseBody = continuous ? preview.mainBody : studioReaderBody(source);
   const readerParts = [];
+  if (continuous && !baseBody) return {
+    ...preview, route, contentKey, servingEnabled: true,
+    versionStatus: "approved-serving-baseline", sourceBaselineSha256: source.source_baseline_sha256,
+    readerParts
+  };
   const pushReaderBody = (value, prepend = false) => {
     const body = withoutUnresolvedSlots(fillFacts(text(value), record(input.facts))).trim();
     if (body) {
@@ -1346,8 +1374,8 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
     }
   }
   if (baseBody) pushReaderBody(baseBody);
-  if (lunarFullPageBody) readerParts.push(lunarFullPageBody);
-  for (const overlayKey of preview.selectedOverlayKeys ?? []) {
+  if (lunarFullPageBody && (!continuous || preview.resolution === "canonical-article")) readerParts.push(lunarFullPageBody);
+  for (const overlayKey of continuous && preview.resolution !== "canonical-article" ? [] : preview.selectedOverlayKeys ?? []) {
     const overlay = releasedReaderRecord(corpus, overlayKey);
     pushReaderBody(overlay.OverlayBody);
   }

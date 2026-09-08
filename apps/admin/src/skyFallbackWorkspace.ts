@@ -1,4 +1,6 @@
 import { memoByString } from "./derivedCache";
+// @ts-ignore Shared canonical layout validation and ordered section fields.
+import { isSkyEvergreenSource, skyEvergreenFields, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 export type SkyFallbackField = {
   key: string;
   label: string;
@@ -372,9 +374,13 @@ export function skyFallbackWorkspace(contentKey: string, sections: unknown): Sky
   const configuredFields = studioFields.length
     ? studioFields
     : isArticle ? articleFieldOrder : isAspect ? aspectFieldOrder : [];
-  const fields = configuredFields
+  let fields = configuredFields
     .filter(([key]) => studioFields.length > 0 || packageValueAt(source, key) !== "")
     .map(([key, label]) => ({ key, label, value: packageValueAt(source, key) }));
+  if (isSkyEvergreenSource(source)) fields = [
+    ...fields.filter(field => !field.key.startsWith("fallback.")),
+    ...skyEvergreenFields(source).map((field: { path: string; label: string; value: string }) => ({ key: field.path, label: field.label, value: field.value }))
+  ];
 
   if (!fields.length) return null;
 
@@ -413,7 +419,10 @@ export function packageDraftChanges(sections: unknown) {
         after: skyPlacementCompositionOptions(draft)[key] ? "Included" : "Excluded"
       })).filter((change) => change.before !== change.after)
     : [];
-  return [...compositionChanges, ...fieldChanges];
+  const sectionChanges = isSkyEvergreenSource(original) && JSON.stringify(record(original.fallback).sections) !== JSON.stringify(record(draft.fallback).sections)
+    ? [{ key: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order", before: JSON.stringify(record(original.fallback).sections ?? null), after: JSON.stringify(record(draft.fallback).sections ?? null) }]
+    : [];
+  return [...compositionChanges, ...fieldChanges, ...sectionChanges];
 }
 
 export function renderWorkspacePreview(fields: SkyFallbackField[], values: Record<string, string> = {}) {

@@ -9,7 +9,6 @@ Text sizes snap to 11 / 12 / 13 / 14 / 15 / 16 / 18 / 20 / 24px, plus
 intentional display clamp() values.
 */
 
-@import url("./styles/theme.css");
 @import url("./styles/base.css");
 @import url("./styles/layout.css");
 @import url("./styles/cards.css");

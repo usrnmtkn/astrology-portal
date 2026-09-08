@@ -254,3 +254,78 @@ test("retrograde editor saves two revisions to its own source and preserves the 
  await editor.getByRole("button", { name: "Edit retrograde writing", exact: true }).click();
  await expect(body).toHaveValue("Second saved test revision.");
 });
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+ test(`evergreen sections add arrange skip and publish twice ${width} ${theme}`, async ({ page }) => {
+  const key = "sky-placement/article/saturn/aries";
+  let saved: any = null;
+  let version = 0;
+  await page.setViewportSize({ width, height: 1000 });
+  await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "evergreen-fixture"));
+  await page.route("**/api/admin/**", async route => {
+   const url = new URL(route.request().url());
+   const data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
+   if (url.pathname.endsWith("/generated-content")) {
+    if (route.request().method() === "GET") data.rows = (url.searchParams.get("contentKeys") ?? "").split(",").map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
+    else {
+     const input = route.request().postDataJSON(); version++;
+     saved = input.ownerAction
+      ? { ...saved, status: "LIVE", lane: "serving", sections: { packageRecord: saved.sections.packageDraft } }
+      : { ...virtual(key), id: "saved-evergreen", package_starter: false, sections: input.sections };
+     saved.updated_at = new Date(Date.UTC(2026, 8, 8, 10, 0, version)).toISOString();
+     data.rows = [saved];
+    }
+   }
+   await route.fulfill({ json: data });
+  });
+  await page.goto("/#sky-writeups");
+  await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
+  await page.getByLabel("Sky placement planet or point").selectOption("saturn");
+  await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  const map = page.getByRole("region", { name: "Sky placement composition map" });
+  await map.getByLabel("Placement writing path").selectOption("fallback");
+  await expect(map.getByRole("button", { name: "View evergreen in app" })).toBeVisible();
+  await map.getByRole("button", { name: "Edit fallback opening", exact: true }).click();
+  const editor = page.getByRole("dialog");
+  const order = editor.getByRole("list", { name: "Evergreen section order" });
+  await expect(order.locator("li")).toHaveCount(3);
+  await editor.getByRole("button", { name: "Add section", exact: true }).click();
+  await expect(order.locator("li")).toHaveCount(4);
+  await editor.getByLabel("Section name", { exact: true }).fill("Additional passage");
+  const body = editor.getByRole("textbox", { name: "Fallback field Additional passage", exact: true });
+  await expect(body).toHaveValue("");
+  await expect(order.locator("li").last()).toContainText("Empty · skipped");
+  await body.fill("During this transit, fixture additional paragraph one.");
+  for (let index = 0; index < 3; index++) await editor.getByRole("button", { name: "Move Additional passage up", exact: true }).click();
+  await expect(order.locator("li").first()).toContainText("Additional passage");
+  await expect(editor.getByRole("button", { name: "Move Additional passage up", exact: true })).toBeDisabled();
+  await editor.getByRole("button", { name: "Move Additional passage down", exact: true }).click();
+  await expect(order.locator("li").nth(1)).toContainText("Additional passage");
+  await editor.getByRole("button", { name: "Move Additional passage up", exact: true }).click();
+  page.once("dialog", dialog => dialog.dismiss());
+  await editor.getByRole("button", { name: "Remove Additional passage", exact: true }).click();
+  await expect(order.locator("li")).toHaveCount(4);
+  await editor.getByLabel("Writing section", { exact: true }).selectOption("fallback.lived");
+  await editor.getByRole("textbox", { name: "Fallback field Fallback: how it shows up", exact: true }).fill("");
+  await expect(order.locator("li").filter({ hasText: "Fallback: how it shows up" })).toContainText("Empty · skipped");
+  await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await expect.poll(() => saved?.sections.packageRecord?.fallback?.sections?.[0]?.label).toBe("Additional passage");
+  expect(saved.sections.packageRecord.fallback.lived).toBe("");
+  await editor.getByRole("button", { name: "Additional passage Has writing", exact: true }).click();
+  await body.fill("During this transit, fixture additional paragraph two.");
+  await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await expect.poll(() => saved?.sections.packageRecord?.fallback?.sections?.[0]?.body).toBe("During this transit, fixture additional paragraph two.");
+  const typography = (el: Element) => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; };
+  expect(await editor.locator(".admin-evergreen-sections > p").evaluate(typography)).toEqual(await editor.locator(".admin-sky-writing-context p").evaluate(typography));
+  expect(await editor.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+  await editor.locator(".admin-evergreen-sections").scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `test-results/evergreen-sections-${width}-${theme}.png` });
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
+  await map.getByRole("button", { name: "Edit additional passage", exact: true }).click();
+  await expect(body).toHaveValue("During this transit, fixture additional paragraph two.");
+  await expect(order.locator("li").first()).toContainText("Additional passage");
+  await editor.getByRole("button", { name: "Add section", exact: true }).click();
+  await editor.getByRole("button", { name: "Remove New section", exact: true }).click();
+  await expect(order.locator("li")).toHaveCount(4);
+ });
+}

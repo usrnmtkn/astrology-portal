@@ -24,6 +24,7 @@ import {
   X,
 } from "lucide-react";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { PageLoading, PageLoadBoundary, PageLoadError } from "./components/PageLoading";
 import type { FormEvent, ReactNode, Ref } from "react";
 import { flushSync } from "react-dom";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
@@ -4977,9 +4978,6 @@ function skyPlacementWritingSection(
     if (isArchiveArticle) return null;
   }
   try {
-    if (isFallbackOnlySkyPlacementPreview()) {
-      throw new Error("SKY_V4_NOT_SERVABLE: fallback-only preview requested.");
-    }
     let seasonalContext = "";
     if (planet === "sun") {
       try {
@@ -4999,6 +4997,7 @@ function skyPlacementWritingSection(
     const nodeAxis = skyV4NodeAxis(displayPositions);
     const skyV4 = skyV4ReaderRenderer.renderRoute({
       route: "placement",
+      articleAvailable: !isFallbackOnlySkyPlacementPreview(),
       planet,
       sign,
       dateLine: canonicalDateLine,
@@ -5028,7 +5027,8 @@ function skyPlacementWritingSection(
       servingEnabled?: boolean;
       versionStatus?: string;
     };
-    if (skyV4.servingEnabled === true && skyV4.versionStatus === "approved-serving-baseline" && skyV4.readerParts?.length) {
+    if (skyV4.servingEnabled === true && skyV4.versionStatus === "approved-serving-baseline") {
+      if (!skyV4.readerParts?.length) return null;
       rendered = {
         ...rendered,
         headline: rendered?.headline ?? skyPlacementDisplayTitle(position),
@@ -5306,7 +5306,7 @@ function currentSkyPlacementDetailArticle({
     && comparableText(paragraph) !== comparableText(placementSection?.articleWindow ?? "")
     && comparableText(paragraph) !== comparableText(transitRangeLabel ?? "")
   ));
-  const displayBody = isCanonicalSkyV4Article && !isFallbackOnlyPreview
+  const displayBody = isCanonicalSkyV4Article
     ? body
     : composeSkyPlacementFallbackParagraphs(fallbackBody);
   const relatedAspectRows = relatedAspectRowsForPlacement({
@@ -10847,7 +10847,7 @@ function withNatalChartCalculationTimeout(request: Promise<SkySnapshot>) {
   });
 }
 
-function FeatureLoadingFallback({ message }: { message?: string }) {
+function FeatureLoadingFallback({ message = "Loading reading…" }: { message?: string }) {
   return (
     <div className="feature-loading-fallback" role="status" aria-label="Loading page" aria-live="polite">
       {message ? (
@@ -10932,6 +10932,7 @@ function SkyLoadingCard({ compact = false }: { compact?: boolean }) {
 function SkyLoadingCards({ compact = false }: { compact?: boolean }) {
   return (
     <div className={`sky-loading-cards${compact ? " sky-loading-cards--compact" : ""}`} role="status" aria-label="Loading current sky">
+      {compact && <span className="loading-milestone">Calculating current sky…</span>}
       <SkyLoadingCard compact={compact} />
       <SkyLoadingCard compact={compact} />
     </div>
@@ -10948,7 +10949,7 @@ export function App() {
   }
 
   if (isReportPath()) {
-    return <Suspense fallback={<main className="report-delivery-state" />}><ReportRoute /></Suspense>;
+    return <Suspense fallback={<PageLoading message="Loading report…" />}><ReportRoute /></Suspense>;
   }
 
   const initialLocationState = useMemo(getInitialLocation, []);
@@ -14277,6 +14278,8 @@ export function App() {
         />
       )}
 
+      <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
+      <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {selectedSkyDetail ? (
         <>
           {skyPlacementFallbackStatus === "error" ? (
@@ -14290,7 +14293,7 @@ export function App() {
           </Suspense>
         </>
       ) : skyDetailRoutePath?.startsWith("sky/") ? (
-        <FeatureLoadingFallback />
+        skyStatus === "error" ? <PageLoadError message="The sky calculation could not load. Check your connection and try again." onRetry={() => setSkyRefreshKey(value => value + 1)} /> : <FeatureLoadingFallback />
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
@@ -14389,6 +14392,7 @@ export function App() {
                     </div>
                   )}
                   <section className="today-summary-cards" aria-label="Sky summary">
+                    {skyStatus === "error" && <PageLoadError message="The current sky could not load. Check your connection and try again." onRetry={() => setSkyRefreshKey(value => value + 1)} />}
                     {isSkyLoading ? (
                       <SkyLoadingCards compact />
                     ) : sky ? (
@@ -14528,6 +14532,17 @@ export function App() {
                     </Suspense>
                   )}
                 </YouRoute>
+              )}
+              {mode === "friends" && !userProfile && (
+                isAuthConfigured && !authAccountChecked ? <FeatureLoadingFallback message="Loading your profile…" /> : (
+                  <div className="app-loading">
+                    <span>Sign in to view your Friends.</span>
+                    <button type="button" className="app-loading__action" onClick={() => {
+                      setAccountIntent("login");
+                      navigateToPortalMode("profile");
+                    }}>Sign in</button>
+                  </div>
+                )
               )}
               {mode === "friends" && userProfile && (
                 <FriendsRoute>
@@ -14817,6 +14832,8 @@ export function App() {
         </>
       )}
 
+      </Suspense>
+      </PageLoadBoundary>
     </main>
   );
 }
@@ -16783,6 +16800,7 @@ function ProfileView({
     natalSky?.generatedAt,
     currentSky?.generatedAt,
     displayRising,
+    fallbackArchitectureV3Version,
     generatedContent,
     unknownBirthTime,
     targetDate

@@ -72,6 +72,9 @@ jobs:
       - name: Verify startup performance contracts
         run: npm run test:performance-contracts
 
+      - name: Verify visible loading and recovery on slow or failed downloads
+        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts
+
       - name: Run visual regression and smoke screens
         run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
 
@@ -108,7 +111,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Verify Studio publication lifecycle and actual reader hydration
-        run: npm run test:content-studio-api
+        run: npm run test:content-studio-api && npm run test:sky-evergreen-sections
       - run: npx playwright install --with-deps chromium
       - name: Verify placement composition editing and reader refresh stability
         run: |
