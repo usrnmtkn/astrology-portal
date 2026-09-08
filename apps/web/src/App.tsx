@@ -11040,6 +11040,7 @@ export function App() {
   const contentRegistryVersion = useContentRegistryRevision();
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
+  const selectedSkyDetailRefreshSkyRef = useRef<SkySnapshot | null>(null);
   const fallbackDashboardHydrationRequestedRef = useRef(false);
   const friendDetailOverlayRefreshKeyRef = useRef("");
   const compatibilityDashboardHydrationVersionRef = useRef<number | null>(null);
@@ -11861,6 +11862,8 @@ export function App() {
       selectedSkyDetail?.routePath === skyDetailRoutePath
       && selectedSkyDetailRefreshKeyRef.current === refreshKey
       && selectedSkyDetailRefreshContentRef.current === skyGeneratedContent
+      // Residency dates and stations can arrive after the first snapshot.
+      && selectedSkyDetailRefreshSkyRef.current === sky
     ) {
       return;
     }
@@ -11882,6 +11885,7 @@ export function App() {
         const detail = skyDetailFromRoutePath(baseRoute, eventSky, skyGeneratedContent, openSkyDetail);
         selectedSkyDetailRefreshKeyRef.current = refreshKey;
         selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
+        selectedSkyDetailRefreshSkyRef.current = sky;
         setSelectedSkyDetail(detail ? datedSkyAspectDetail(detail, exactAt, sky.location.timeZone || "UTC") : null);
       }).catch(error => { if (!cancelled) console.warn("Dated aspect calculation failed.", error); });
       return () => { cancelled = true; };
@@ -11896,6 +11900,7 @@ export function App() {
 
     selectedSkyDetailRefreshKeyRef.current = refreshKey;
     selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
+    selectedSkyDetailRefreshSkyRef.current = sky;
     setSelectedSkyDetail(personalizedSkyPlacementDetail(
       detail,
       profileNatalSky?.ascendant ?? userProfile?.rising,

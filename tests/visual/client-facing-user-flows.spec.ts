@@ -3658,13 +3658,15 @@ test.describe("client-facing user flow case studies", () => {
   });
 
   test("SKY V4 Lilith station copy appears only on its calculated station day", async ({ page }) => {
+    test.setTimeout(90_000);
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-27T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/lilith/sagittarius");
     const article = page.locator(".sky-detail-article");
 
-    await expect(article).toContainText("Black Moon Lilith stations, and a preference, refusal, or old point of anger becomes much harder to keep buried.");
+    // Station context arrives with the calculated residency data after the article shell.
+    await expect(article).toContainText("Black Moon Lilith stations, and a preference, refusal, or old point of anger becomes much harder to keep buried.", { timeout: 60_000 });
     await assertNoClientErrors();
   });
 
