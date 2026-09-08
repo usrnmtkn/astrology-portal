@@ -24,6 +24,7 @@ type SeedOptions = {
   theme?: "light" | "dark";
   now?: string;
   generatedInterpretations?: Array<Record<string, unknown>>;
+  contentPublications?: Array<Record<string, unknown>>;
 };
 
 const fixtureLocation = {
@@ -130,7 +131,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       body: "QA flow tests use local fallback content instead of the deployed API."
     });
   });
-  await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
+  await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: options.contentPublications ?? [] }));
   await page.route("**/rest/v1/generated_interpretations*", async (route) => {
     if (options.generatedInterpretations) {
       await route.fulfill({
@@ -180,6 +181,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
     if (shouldSeedClientState) {
       window.localStorage.clear();
       window.localStorage.setItem("tldrastro:qaFlowSeeded", "true");
+      if (options.contentPublications) window.localStorage.setItem("tldrastro:content-publications:v1", JSON.stringify(options.contentPublications));
       window.localStorage.setItem("tldrastro:theme", options.theme ?? "light");
       window.localStorage.setItem("tldrastro:sunriseOrb", "true");
       window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
@@ -4126,4 +4128,55 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
   await expect(detail).toContainText("You do not have to make an opportunity harder on yourself to feel like you earned it.");
   await expect(detail).toContainText("you can step fully into this expansion without letting insecurity push you into a massive obligation you will just have to back out of later.");
   await expect(detail).not.toContainText(/\{\{(?:Name|aspectWord|untilDate)\}\}/);
+});
+
+
+test("Sky detail hydrates published aspects for its displayed snapshot and dated links", async ({ page }) => {
+  test.setTimeout(120_000);
+  const snapshot = JSON.parse(readFileSync("apps/web/public/content-studio-last-known-good.json", "utf8"));
+  const publications = snapshot.publications.filter((row: any) => row.content_key.startsWith("sky.aspect."));
+  await seedClientState(page, { now: "2026-09-08T14:03:00.000Z", contentPublications: publications });
+  const requested = new Set<string>();
+  await page.route("**/rest/v1/generated_interpretations*", async route => {
+    const query = new URL(route.request().url()).searchParams.get("content_key");
+    const keys = query?.startsWith("in.(") ? query.slice(4, -1).split(",").map(key => key.replaceAll('"', '')) : [];
+    keys.forEach(key => requested.add(key));
+    // A broad fixture response would conceal the missing-key bug.
+    await route.fulfill({ json: snapshot.rows.filter((row: any) => keys.includes(row.content_key)) });
+  });
+  await expectClientRouteLoads(page, "/?date=2026-09-08#sky/placement/lilith/sagittarius");
+  const ids = ["chiron-trine-lilith", "neptune-square-lilith", "sun-square-lilith"];
+  for (const id of ids) {
+    const row = JSON.parse(readFileSync(`packages/astro-knowledge/data/transits/${id}.json`, "utf8"));
+    const article = page.locator(".sky-detail-article");
+    await expect(article).toContainText(row.readerCopy.body, { timeout: 60_000 });
+    expect(requested.has(`sky.aspect.${row.transiting}.${row.aspect}.${row.other}`)).toBe(true);
+  }
+  const datedLink = page.locator('.article-related-aspect-row').filter({ hasText: "Lilith Rx Square Sun" });
+  const datedHref = await datedLink.getAttribute("href");
+  expect(datedHref).toContain("/at/");
+  const sampledLink = page.locator('.article-related-aspect-row').filter({ hasText: "Lilith Rx Square Neptune" });
+  expect(await sampledLink.getAttribute("href")).toContain("/on/");
+  await sampledLink.click();
+  const neptune = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/neptune-square-lilith.json", "utf8"));
+  await expect(page.locator('.sky-detail-article')).toContainText(neptune.readerCopy.body, { timeout: 60_000 });
+  await page.reload();
+  await expect(page.locator('.sky-detail-article')).toContainText(neptune.readerCopy.body, { timeout: 60_000 });
+  await page.evaluate(href => { window.location.hash = href!; }, datedHref);
+  const sun = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/sun-square-lilith.json", "utf8"));
+  await expect(page.locator('.sky-detail-article')).toContainText(sun.readerCopy.body);
+  await page.reload();
+  await expect(page.locator('.sky-detail-article')).toContainText(sun.readerCopy.body, { timeout: 60_000 });
+  // Returning to the original date must not leave the alternate snapshot's copy behind.
+  await page.evaluate(() => { window.location.hash = "sky/placement/lilith/capricorn"; });
+  const mars = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/mars-opposition-lilith.json", "utf8"));
+  await expect(page.locator('.sky-detail-article')).toContainText(mars.readerCopy.body, { timeout: 60_000 });
+  await expect(page.locator('.sky-detail-article')).not.toContainText(sun.readerCopy.body);
+  await page.screenshot({ path: "test-results/calendar-aspect-hydration-fixed.png", fullPage: true });
+  await page.evaluate(() => { window.location.hash = "calendar"; });
+  await page.getByRole("button", { name: /^Thursday, September 10\./ }).click();
+  await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
+  const venus = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-pluto.json", "utf8"));
+  await expect(page.locator('.sky-detail-article')).toContainText(venus.readerCopy.body, { timeout: 60_000 });
+  await expect(page.locator('.sky-detail-article h1')).toContainText("Venus in Scorpio");
 });

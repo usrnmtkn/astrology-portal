@@ -450,8 +450,13 @@ assert.match(
 );
 assert.match(
   appSource,
-  /selectedCalendarTransitEventRef\.current[\s\S]*?calendarTransitDetailWithContent\([\s\S]*?calendarEvent\.event,[\s\S]*?skyGeneratedContent,[\s\S]*?calendarEvent\.description/u,
+  /selectedCalendarTransitEventRef\.current[\s\S]*?calendarTransitDetailWithContent\([\s\S]*?calendarEvent\.event,[\s\S]*?detailContent,[\s\S]*?calendarEvent\.description, detailSky\)/u,
   "An open Calendar detail must retain event context while exact content hydrates."
+);
+assert.match(
+  appSource,
+  /loadSkyDetailContent\(detailSky, skyGeneratedContent,[\s\S]*?calendarTransitDetailContentKeys\(calendarEvent\.event\)[\s\S]*?renderDetail\(detailSky, content\)/u,
+  "Calendar detail must hydrate and render the same event snapshot."
 );
 assert.match(
   appSource,
