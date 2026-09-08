@@ -100,6 +100,7 @@ export type YouTransitArticle = {
 };
 
 export type YouPageProps = {
+  onArticleNavigate?: (update: () => void) => void;
   aspectRows: ReactNode[];
   bigThreeRows: ReactNode[];
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
@@ -1153,6 +1154,7 @@ export function YouPage({
   updateTransitAspectLines,
   onCreateChart,
   onCloseTransitArticle,
+  onArticleNavigate = (update) => update(),
   personalTimingSummary,
   planetRows,
   profileAvatarUrl,
@@ -1244,7 +1246,7 @@ export function YouPage({
       <YouTransitArticlePage
         article={natalAspectPatternDetailArticle(natalAspectPatternDetail)}
         backAriaLabel="Back to natal chart"
-        onClose={() => setNatalAspectPatternDetail(null)}
+        onClose={() => onArticleNavigate(() => setNatalAspectPatternDetail(null))}
       />
     );
   }
@@ -1300,7 +1302,7 @@ export function YouPage({
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternStatus={natalAspectPatternStatus}
               onOpenNatalAspectPatternDetail={(item, nestedItems) => {
-                setNatalAspectPatternDetail({ item, nestedItems });
+                onArticleNavigate(() => setNatalAspectPatternDetail({ item, nestedItems }));
               }}
               planetRows={planetRows}
               showNatalSignatures={showNatalSignatures}

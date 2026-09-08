@@ -11327,18 +11327,20 @@ export function App() {
       // subsequent overlay revision should invalidate it, not its first render.
       friendDetailOverlayRefreshKeyRef.current = `${detail.routePath}:${fallbackDashboardOverlayVersion}`;
     }
-    setSelectedSkyDetail(personalizedSkyPlacementDetail(
-      detail,
-      profileNatalSky?.ascendant ?? userProfile?.rising,
-      skyPlacementPersonalizationTransits,
-      sky?.generatedAt ?? new Date().toISOString(),
-      skyGeneratedContent
-    ));
+    transitionPage(() => {
+      setSelectedSkyDetail(personalizedSkyPlacementDetail(
+        detail,
+        profileNatalSky?.ascendant ?? userProfile?.rising,
+        skyPlacementPersonalizationTransits,
+        sky?.generatedAt ?? new Date().toISOString(),
+        skyGeneratedContent
+      ));
 
-    if (detail.routePath) {
-      setSkyDetailRoutePath(detail.routePath);
-      updateSkyDetailRouteUrl(detail.routePath);
-    }
+      if (detail.routePath) {
+        setSkyDetailRoutePath(detail.routePath);
+        updateSkyDetailRouteUrl(detail.routePath);
+      }
+    });
   }
 
   function openCalendarTransitDetail(event: LunarCalendarEvent, description?: string) {
@@ -11505,24 +11507,26 @@ export function App() {
   }
 
   function closeSkyDetail() {
-    const routePath = selectedSkyDetail?.routePath;
+    transitionPage(() => {
+      const routePath = selectedSkyDetail?.routePath;
 
-    selectedCalendarTransitEventRef.current = null;
-    setSelectedSkyDetail(null);
-    setSkyDetailRoutePath(null);
-    if (routePath?.startsWith("friends?")) {
-      const { params } = friendsHashParts(`#${routePath}`);
-      const chartId = params.get("chart");
+      selectedCalendarTransitEventRef.current = null;
+      setSelectedSkyDetail(null);
+      setSkyDetailRoutePath(null);
+      if (routePath?.startsWith("friends?")) {
+        const { params } = friendsHashParts(`#${routePath}`);
+        const chartId = params.get("chart");
 
-      if (chartId) {
-        updateFriendProfileUrl(chartId, parseFriendProfileTab(params.get("view")), "push");
-        storePortalMode("friends");
-        setMode("friends");
-        return;
+        if (chartId) {
+          updateFriendProfileUrl(chartId, parseFriendProfileTab(params.get("view")), "push");
+          storePortalMode("friends");
+          setMode("friends");
+          return;
+        }
       }
-    }
 
-    updatePortalModeUrl(userProfile ? "member" : "guest", "push");
+      updatePortalModeUrl(userProfile ? "member" : "guest", "push");
+    });
   }
 
   function navigateToFriends() {
@@ -11536,7 +11540,7 @@ export function App() {
       storePortalMode("friends");
       setFriendsLandingKey((currentKey) => currentKey + 1);
       setMode("friends");
-    }, mode !== "friends" && !isSignupMode);
+    }, (mode !== "friends" || Boolean(selectedSkyDetail)) && !isSignupMode);
   }
 
   function navigateToPortalMode(nextMode: PortalMode, animate = true) {
@@ -11546,7 +11550,7 @@ export function App() {
       updatePortalModeUrl(nextMode, "push");
       storePortalMode(nextMode);
       setMode(nextMode);
-    }, animate && nextMode !== mode && !isSignupMode && !(nextMode === "profile" && !userProfile));
+    }, animate && (nextMode !== mode || Boolean(selectedSkyDetail)) && !isSignupMode && !(nextMode === "profile" && !userProfile));
   }
 
   useEffect(() => {
@@ -14503,6 +14507,7 @@ export function App() {
                     <FeatureLoadingFallback message="Loading your profile" />
                   ) : userProfile ? (
                     <ProfileView
+                      transitionPage={transitionPage}
                       profile={userProfile}
                       profileHandle={ownSocialProfile?.handle}
                       targetDate={skyDate}
@@ -16658,6 +16663,7 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
 
 
 function ProfileView({
+  transitionPage,
   profile,
   profileHandle,
   targetDate,
@@ -16682,6 +16688,7 @@ function ProfileView({
   onCreateChart,
   generatedContent
 }: {
+  transitionPage: ReturnType<typeof usePageTransition>;
   profile: UserProfile;
   profileHandle?: string | null;
   targetDate: string;
@@ -16983,18 +16990,22 @@ function ProfileView({
     placementId ? routeableNatalPositions.find((position) => natalPlacementRouteId(position) === placementId) ?? null : null
   );
   const openNatalAspectArticle = (aspect: SkySnapshot["aspects"][number]) => {
-    setActivePlacementRouteId(null);
-    setTransitArticle(natalAspectDetailArticle(aspect, generatedContent));
-    if (window.location.hash.startsWith("#you/placement/")) {
-      window.history.pushState(null, "", "#you");
-    }
+    transitionPage(() => {
+      setActivePlacementRouteId(null);
+      setTransitArticle(natalAspectDetailArticle(aspect, generatedContent));
+      if (window.location.hash.startsWith("#you/placement/")) {
+        window.history.pushState(null, "", "#you");
+      }
+    });
   };
   const openPlacementArticle = (position: PlanetPosition, historyMode: "push" | "replace" = "push") => {
-    const placementId = natalPlacementRouteId(position);
+    transitionPage(() => {
+      const placementId = natalPlacementRouteId(position);
 
-    setActivePlacementRouteId(placementId);
-    setTransitArticle(natalPlacementDetailArticle(position, natalSky, null, generatedContent, openNatalAspectArticle));
-    updatePlacementRouteUrl(placementId, historyMode);
+      setActivePlacementRouteId(placementId);
+      setTransitArticle(natalPlacementDetailArticle(position, natalSky, null, generatedContent, openNatalAspectArticle));
+      updatePlacementRouteUrl(placementId, historyMode);
+    });
   };
   useEffect(() => {
     function syncPlacementRoute() {
@@ -17101,9 +17112,11 @@ function ProfileView({
         house={house}
         key={`empty-house-${house}`}
         onClick={() => {
-          setActivePlacementRouteId(null);
-          setTransitArticle(emptyHouseDetailArticle(house, natalSky, "self", undefined, undefined, emptyNatalHouses, generatedContent));
-          updatePortalModeUrl("profile", "push");
+          transitionPage(() => {
+            setActivePlacementRouteId(null);
+            setTransitArticle(emptyHouseDetailArticle(house, natalSky, "self", undefined, undefined, emptyNatalHouses, generatedContent));
+            updatePortalModeUrl("profile", "push");
+          });
         }}
         title={emptyHouseTitle(house, natalSky)}
         variant="natal"
@@ -17148,24 +17161,26 @@ function ProfileView({
       body: taggedSectionBody(section)
     }));
     const openArticle = () => {
-      setSelectedTransitId(transit.id);
-      setActivePlacementRouteId(null);
-      setTransitArticle({
-        id: personalizedContentKey,
-        title,
-        glyph: pointGlyph(transit.transitPlanet),
-        // The authored aspect package declares headline + body, not TLDR.
-        // The collapsed-row preview must not be promoted into another slot.
-        subtitle: "",
-        summary: "",
-        sections: articleSections,
-        generatedContent: savedGeneratedContent,
-        meta: [
-          ...passDateMeta,
-          { label: "Duration", value: timing.rangeLabel },
-          { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) },
-          { label: "Natal point", value: transit.natalPoint }
-        ]
+      transitionPage(() => {
+        setSelectedTransitId(transit.id);
+        setActivePlacementRouteId(null);
+        setTransitArticle({
+          id: personalizedContentKey,
+          title,
+          glyph: pointGlyph(transit.transitPlanet),
+          // The authored aspect package declares headline + body, not TLDR.
+          // The collapsed-row preview must not be promoted into another slot.
+          subtitle: "",
+          summary: "",
+          sections: articleSections,
+          generatedContent: savedGeneratedContent,
+          meta: [
+            ...passDateMeta,
+            { label: "Duration", value: timing.rangeLabel },
+            { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) },
+            { label: "Natal point", value: transit.natalPoint }
+          ]
+        });
       });
     };
 
@@ -17334,24 +17349,26 @@ function ProfileView({
               className="daily-forecast-label"
               key={`daily-label-${transit.id}`}
               onClick={() => {
-                setSelectedTransitId(transit.id);
-                setActivePlacementRouteId(null);
-                setTransitArticle({
-                  id: personalizedContentKey,
-                  title: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
-                  glyph: pointGlyph(transit.transitPlanet),
-                  subtitle: "",
-                  summary: "",
-                  generatedContent: savedGeneratedContent,
-                  sections: normalized.sections.map((section) => ({
-                    heading: section.heading,
-                    tldr: "",
-                    body: taggedSectionBody(section)
-                  })),
-                  meta: [
-                    { label: "Duration", value: transitItemTimingDisplay(transit, targetDate).rangeLabel },
-                    { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) }
-                  ]
+                transitionPage(() => {
+                  setSelectedTransitId(transit.id);
+                  setActivePlacementRouteId(null);
+                  setTransitArticle({
+                    id: personalizedContentKey,
+                    title: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
+                    glyph: pointGlyph(transit.transitPlanet),
+                    subtitle: "",
+                    summary: "",
+                    generatedContent: savedGeneratedContent,
+                    sections: normalized.sections.map((section) => ({
+                      heading: section.heading,
+                      tldr: "",
+                      body: taggedSectionBody(section)
+                    })),
+                    meta: [
+                      { label: "Duration", value: transitItemTimingDisplay(transit, targetDate).rangeLabel },
+                      { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) }
+                    ]
+                  });
                 });
               }}
               type="button"
@@ -17424,24 +17441,26 @@ function ProfileView({
         body: taggedSectionBody(section)
       }));
       const openArticle = () => {
-        setSelectedTransitId(transit.id);
-        setActivePlacementRouteId(null);
-        setTransitArticle({
-          id: contentKey,
-          title,
-          glyph: pointGlyph(transit.transitPlanet),
-          // House cards do not currently author a TLDR slot. Keep their preview
-          // copy on the updates row, but render the article from the authored
-          // headline + body fields without promoting body copy into TLDR.
-          subtitle: "",
-          summary: "",
-          sections: articleSections,
-          meta: [
-            ...(renderedWindow ? [{ label: "Date range", value: renderedWindow }] : []),
-            { label: "House", value: `${ordinalHouse(house)} House` },
-            { label: "Area", value: houseLifeAreas[house] ?? "" },
-            { label: "Transit planet", value: transit.transitPlanet }
-          ]
+        transitionPage(() => {
+          setSelectedTransitId(transit.id);
+          setActivePlacementRouteId(null);
+          setTransitArticle({
+            id: contentKey,
+            title,
+            glyph: pointGlyph(transit.transitPlanet),
+            // House cards do not currently author a TLDR slot. Keep their preview
+            // copy on the updates row, but render the article from the authored
+            // headline + body fields without promoting body copy into TLDR.
+            subtitle: "",
+            summary: "",
+            sections: articleSections,
+            meta: [
+              ...(renderedWindow ? [{ label: "Date range", value: renderedWindow }] : []),
+              { label: "House", value: `${ordinalHouse(house)} House` },
+              { label: "Area", value: houseLifeAreas[house] ?? "" },
+              { label: "Transit planet", value: transit.transitPlanet }
+            ]
+          });
         });
       };
 
@@ -17513,22 +17532,24 @@ function ProfileView({
         const timingLabel = reading.timing ?? reading.dayLabel;
         const articleId = `weekly-transit-${reading.sourceUnits.join("-") || normalizeContentIdPart(reading.headline)}`;
         const openArticle = () => {
-          setActivePlacementRouteId(null);
-          setTransitArticle({
-            id: articleId,
-            title: displayTitle,
-            glyph: planet ? pointGlyph(planet) : "",
-            subtitle: "",
-            summary: "",
-            sections: [{
-              heading: displayTitle,
-              tldr: "",
-              body: reading.body
-            }],
-            meta: [
-              ...(timingLabel ? [{ label: reading.timing ? "Date range" : "Timing", value: timingLabel }] : []),
-              { label: "Based on", value: reading.driverLabel }
-            ]
+          transitionPage(() => {
+            setActivePlacementRouteId(null);
+            setTransitArticle({
+              id: articleId,
+              title: displayTitle,
+              glyph: planet ? pointGlyph(planet) : "",
+              subtitle: "",
+              summary: "",
+              sections: [{
+                heading: displayTitle,
+                tldr: "",
+                body: reading.body
+              }],
+              meta: [
+                ...(timingLabel ? [{ label: reading.timing ? "Date range" : "Timing", value: timingLabel }] : []),
+                { label: "Based on", value: reading.driverLabel }
+              ]
+            });
           });
         };
 
@@ -17819,6 +17840,7 @@ function ProfileView({
   return (
     <Suspense fallback={<FeatureLoadingFallback />}>
       <YouPage
+        onArticleNavigate={transitionPage}
         bigThreeRows={bigThreeRows}
         dailyHoroscopeAssembly={dailyHoroscopeAssembly}
         dailyUpdateSummary={dailyUpdateSummary}
@@ -17843,9 +17865,11 @@ function ProfileView({
         updateTransitAspectLines={updateTransitAspectLines}
         onCreateChart={onCreateChart}
         onCloseTransitArticle={() => {
-          setActivePlacementRouteId(null);
-          setTransitArticle(null);
-          updatePortalModeUrl("profile", "push");
+          transitionPage(() => {
+            setActivePlacementRouteId(null);
+            setTransitArticle(null);
+            updatePortalModeUrl("profile", "push");
+          });
         }}
         personalTimingSummary={personalTimingSummary}
         planetRows={planetPlacementRows}
