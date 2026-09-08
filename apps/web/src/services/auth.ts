@@ -1,5 +1,6 @@
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { normalizeBirthTime } from "./chartTime";
+import { rememberStudioReturnPath } from "./studioAuthReturn";
 
 export type AuthProvider = "google";
 
@@ -118,7 +119,12 @@ export async function getVerifiedAuthUser(client?: SupabaseClient | null) {
 }
 
 function redirectTo() {
-  return authRedirectUrl || window.location.origin;
+  const url = new URL(authRedirectUrl || window.location.origin);
+  const studioPath = rememberStudioReturnPath();
+  if (studioPath && url.origin === window.location.origin) {
+    url.searchParams.set("returnTo", studioPath);
+  }
+  return url.href;
 }
 
 function authAccountFromUser(user: User): AuthAccount {

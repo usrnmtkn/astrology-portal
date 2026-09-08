@@ -294,16 +294,18 @@ test.describe("visual regression baseline", () => {
       await expect(page.getByRole("heading", { name: "Review Queue" })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
+      await expect(page.getByRole("link", { name: "Sign in as owner" })).toBeVisible({ timeout: routeReadyTimeoutMs });
     });
-    await expect(page).toHaveScreenshot("admin-home-mobile.png", screenshotOptions);
+    await expect.soft(page).toHaveScreenshot("admin-home-mobile.png", screenshotOptions);
 
     await page.setViewportSize({ width: 1440, height: 1000 });
     await expectRouteLoadsWithin(page, "/admin/content", "admin home desktop", async () => {
       await expect(page.getByRole("heading", { name: "Review Queue" })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
+      await expect(page.getByRole("link", { name: "Sign in as owner" })).toBeVisible({ timeout: routeReadyTimeoutMs });
     });
-    await expect(page).toHaveScreenshot("admin-home-desktop.png", screenshotOptions);
+    await expect.soft(page).toHaveScreenshot("admin-home-desktop.png", screenshotOptions);
 
     await expectInteractionLoadsWithin(
       "admin content library desktop",
@@ -319,7 +321,7 @@ test.describe("visual regression baseline", () => {
         });
       }
     );
-    await expect(page).toHaveScreenshot("admin-content-library-desktop.png", screenshotOptions);
+    await expect.soft(page).toHaveScreenshot("admin-content-library-desktop.png", screenshotOptions);
     assertNoBrowserErrors();
   });
 });

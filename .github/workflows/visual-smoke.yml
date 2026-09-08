@@ -148,6 +148,8 @@ jobs:
           npx playwright test -c playwright.sky-studio.config.ts
       - name: Enforce Content Studio bundle size and deferred editor boundaries
         run: node scripts/check-admin-bundle-budgets.mjs
+      - name: Verify owner sign-in return and storage-timeout recovery
+        run: npx playwright test -c playwright.studio-auth.config.ts
       - name: Upload Sky summary artifacts
         if: always()
         uses: actions/upload-artifact@v6

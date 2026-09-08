@@ -210,6 +210,11 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
+            // Keep the shared Studio return path with its authentication callers.
+            // A separate shared chunk adds a preload import to every auth consumer.
+            if (id.endsWith("/services/auth.ts") || id.endsWith("/services/studioAuthReturn.ts")) {
+              return "auth";
+            }
             if (id.includes("vite/preload-helper")) {
               return "vendor";
             }

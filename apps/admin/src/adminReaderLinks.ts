@@ -2,6 +2,8 @@ export function isReaderAppHref(href: string | null) {
   if (!href) return false;
   if (href.startsWith("#/") || href.startsWith("/#/")) return true;
   if (!href.startsWith("/")) return false;
+  // Sign-in is a round trip back to Studio, not a reader preview.
+  if (href.startsWith("/?") && new URLSearchParams(href.slice(2).split("#", 1)[0]).has("auth")) return false;
   return !(
     href === "/admin/content" ||
     href === "/content/admin" ||

@@ -200,6 +200,7 @@ import {
   upsertPersistedProfile
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
+import { rememberStudioReturnPath, returnToStudioAfterSignIn } from "./services/studioAuthReturn";
 import {
   generatedContentSections,
   generatedContentParagraphs,
@@ -2179,6 +2180,7 @@ const emptyHouseSignRulersBySystem: Record<EmptyHouseRulerSystem, Record<string,
 };
 
 function getInitialAccountIntent(): AuthMode {
+  rememberStudioReturnPath();
   try {
     const url = new URL(window.location.href);
 
@@ -13265,6 +13267,8 @@ export function App() {
     if (isCancelled()) {
       return;
     }
+
+    if (account && returnToStudioAfterSignIn()) return;
 
     if (account) {
       const bootstrapAction = accountProfileBootstrapAction({
