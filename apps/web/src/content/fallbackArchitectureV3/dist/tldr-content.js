@@ -3100,6 +3100,276 @@ ${passHook}`;
   return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
+// apps/web/src/content/fallbackArchitectureV3/authored-inputs/reader-source-reference-removals-v1.json
+var reader_source_reference_removals_v1_default = {
+  schema: "tldrastro-reader-source-reference-removals/v1",
+  date: "2026-09-08",
+  task_id: "01a07f51-c67a-7553-b2fa-46e1c2fff842",
+  owner_request: "do a deep audit of the reader facing content, it's using my name Marie  - from Project Author. Find anywhere a sentence is referrencing the author or source material, and flag and remove it.",
+  scope: "Deletion of author/source commentary only; no new interpretation; no new content keys released.",
+  records: [
+    {
+      contentKey: "sky-nodes/education",
+      field: "Article",
+      previous_sha256: "b996840b1aeb0fb7540f6285bf21f0f92bc6c20a54913ad6a2e75f88a6198698",
+      text: "The lunar nodes are not planets. They are two points that always travel as an axis, so the North Node only makes sense in relationship to the South Node.\n\nFamiliar is not automatically wrong, and unfamiliar is not automatically wise. The South Node can hold useful skills, experience, and responses that once solved a problem. The issue is when that familiarity gets the first move every time. The North Node becomes useful as practice: another way to respond, choose, relate, work, or move through uncertainty. The axis is the story. Eclipses make that story louder by showing what is increasing, what is being released, and where the old reflex and the next direction are no longer producing the same result."
+    },
+    {
+      contentKey: "knowledge-matrix-v9/transit/uranus|aries|retrograde",
+      field: "Copy",
+      previous_sha256: "0907a6f3255e5cc2b046a89a1894b112df4db7741ad136ee02d47cb5c875086d",
+      text: "Uranus turns retrograde in Aries, and a recent insight or experiment may need more time before its meaning is clear."
+    },
+    {
+      contentKey: "knowledge-matrix-v9/transit/uranus|any|direct",
+      field: "Copy",
+      previous_sha256: "27616a08b98846bc856e3a68f5f88ce08bf71822422677f8ea2d7a74916d2cf8",
+      text: "Uranus turns direct, adding another layer of unpredictability to an already eventful moment. Expect the shift to add volatility rather than a guaranteed kind of outcome."
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/aquarius",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/aquarius/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/aquarius/variant-3",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/aries",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/aries/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/aries/variant-3",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/cancer",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/cancer/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/capricorn",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/capricorn/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/gemini",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/gemini/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/gemini/variant-3",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/gemini/variant-4",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/leo",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/leo/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/libra",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/libra/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/pisces",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/pisces/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/pisces/variant-3",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/pisces/variant-4",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/sagittarius",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/sagittarius/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/sagittarius/variant-3",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/sagittarius/variant-4",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/scorpio",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/scorpio/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/taurus",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/taurus/variant-2",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/taurus/variant-3",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/taurus/variant-4",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/virgo",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/virgo/variant-3",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "authored/calendar-weekly-moon/virgo/variant-4",
+      field: "summary",
+      previous_sha256: "e1c731b7464732759d40344c5917e8b1ebef7eb805f55447ca8b6696033fcf17",
+      text: ""
+    },
+    {
+      contentKey: "sky.ingress.jupiter.leo",
+      field: "summary",
+      previous_sha256: "12fd3d0ffc4813693993905219911b2fcccdebd7f30b50c6894f70bcf040fdd5",
+      text: ""
+    },
+    {
+      contentKey: "sky.retrograde.venus.scorpio.retrograde_passage",
+      field: "summary",
+      previous_sha256: "12fd3d0ffc4813693993905219911b2fcccdebd7f30b50c6894f70bcf040fdd5",
+      text: ""
+    },
+    {
+      contentKey: "sky.station.chiron.taurus.retrograde",
+      field: "summary",
+      previous_sha256: "12fd3d0ffc4813693993905219911b2fcccdebd7f30b50c6894f70bcf040fdd5",
+      text: ""
+    },
+    {
+      contentKey: "sky.station.mercury.pisces.retrograde",
+      field: "summary",
+      previous_sha256: "12fd3d0ffc4813693993905219911b2fcccdebd7f30b50c6894f70bcf040fdd5",
+      text: ""
+    }
+  ]
+};
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/readerSourceReferenceCorrections.mjs
+function correctedReaderSource(contentKey, field, original) {
+  const correction = reader_source_reference_removals_v1_default.records.find((entry) => entry.contentKey === contentKey && entry.field === field);
+  if (!correction || typeof original !== "string" || sha256Text(original) !== correction.previous_sha256) return original;
+  return correction.text;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV9.browser.ts
 var EXCLUDED_PREFIX = "[EXCLUDE FROM FALLBACK]";
 var OWNER_APPROVED = "owner-approved";
@@ -3139,7 +3409,10 @@ function createKnowledgeMatrixV9Resolver(manifest, rowsFile, buildReport) {
     if (row.Copy.startsWith(EXCLUDED_PREFIX)) continue;
     transitEligibleRows += 1;
     const key = transitRuntimeKey(row);
-    if (!transitIndex.has(key)) transitIndex.set(key, row);
+    if (!transitIndex.has(key)) transitIndex.set(key, {
+      ...row,
+      Copy: correctedReaderSource(`knowledge-matrix-v9/transit/${key}`, "Copy", row.Copy)
+    });
   }
   const housePrimaryKeys = /* @__PURE__ */ new Set();
   const houseIndex = /* @__PURE__ */ new Map();
@@ -4339,7 +4612,15 @@ function nodeStudioRecords(corpus) {
     readOnlyFields: ["Node", "Sign", "OpposingSouthSign", "OpposingNorthSign", "ContentKey", "Mechanism", "OwnerApprovedForSourceRole"],
     sourceUrls: [row.Source]
   }));
-  const education = corpus.content.nodeEducation.map((row) => studioRecord({
+  const education = corpus.content.nodeEducation.map((source) => {
+    const Article = correctedReaderSource(source.ContentKey, "Article", source.Article);
+    return Article === source.Article ? source : {
+      ...source,
+      Article,
+      reader_source_correction: "authored-inputs/reader-source-reference-removals-v1.json",
+      original_source_baseline_sha256: sha256(JSON.stringify(source))
+    };
+  }).map((row) => studioRecord({
     source: row,
     contentKey: row.ContentKey,
     contentType: "node-education",
@@ -5151,7 +5432,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-07d";
+var PACKAGE_VERSION = "v3-2026-09-08a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

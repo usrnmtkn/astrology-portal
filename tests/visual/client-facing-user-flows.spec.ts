@@ -3666,10 +3666,15 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#sky/placement/north-node");
     await expect(page.locator(".sky-detail-article")).toContainText("The North Node moves into Aquarius, making a less familiar response more important than the one that comes automatically.");
     await expect(page.locator(".sky-detail-article")).toContainText("During this Aquarius–Leo node cycle, recognition and personal visibility stop being the only measure");
+    await expect(page.locator(".sky-detail-article")).toContainText("The lunar nodes are not planets.");
+    await expect(page.locator(".sky-detail-article")).toContainText("where the old reflex and the next direction are no longer producing the same result.");
+    await expect(page.locator(".sky-detail-article")).not.toContainText(/Marie|Satori|owner-approved|longer-form writing/iu);
     await expectNoDuplicateArticleHeadings(page, "SKY V4 North Node detail");
+    await page.screenshot({ path: "test-results/reader-source-reference-north-node.png", fullPage: true });
 
     await expectClientRouteLoads(page, "/#sky/placement/south-node");
     await expect(page.locator(".sky-detail-article")).toContainText("The South Node moves into Leo, making an old reflex easier to repeat and easier to see.");
+    await expect(page.locator(".sky-detail-article")).not.toContainText(/Marie|Satori|owner-approved|longer-form writing/iu);
     await expectNoDuplicateArticleHeadings(page, "SKY V4 South Node detail");
 
     await expectClientRouteLoads(page, "/#sky/placement/lilith/sagittarius");
