@@ -20,6 +20,10 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(loading).toBeVisible();
     await expect(loading).toHaveAttribute("aria-busy", "true");
     await expect(page.getByText("Loading TLDR Astro…", { exact: true })).toBeVisible();
+    // Document commit exposes the DOM before the render-blocking stylesheet
+    // arrives over a real network. Assert its computed style with a web-first
+    // expectation before measuring typography and reduced-motion behavior.
+    await expect(loading).toHaveCSS("font-family", /system-ui/);
     expect(await page.locator(".app-loading__lines span").first().evaluate(el => getComputedStyle(el).animationName)).toBe("none");
     const typography = await loading.evaluate(el => { const s = getComputedStyle(el); return { font: s.fontFamily, size: s.fontSize, weight: s.fontWeight, line: s.lineHeight, tracking: s.letterSpacing }; });
     expect(typography.font).toContain("system-ui");
