@@ -63,3 +63,51 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   expect(errors).toEqual([]);
  });
 }
+
+test("an open Saturn editor survives initial and extended inventory loading", async ({ page }) => {
+ let releaseInitial!: () => void;
+ let releaseExtended!: () => void;
+ let extendedStarted!: () => void;
+ const initial = new Promise<void>(resolve => { releaseInitial = resolve; });
+ const extended = new Promise<void>(resolve => { releaseExtended = resolve; });
+ const started = new Promise<void>(resolve => { extendedStarted = resolve; });
+ await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "sky-composition-test"));
+ await page.route("**/api/admin/**", async route => {
+  const url = new URL(route.request().url());
+  const data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
+  if (url.pathname.endsWith("/content-live-status")) {
+   const input = route.request().postDataJSON();
+   data.statuses = contentLiveStatuses((input.ids ?? []).map((id: string) => virtual(id.replace(/^package:/, ""))).filter(Boolean));
+  }
+  if (url.pathname.endsWith("/generated-content")) {
+   if (url.searchParams.has("contentKeys")) data.rows = url.searchParams.get("contentKeys")!.split(",").map(virtual).filter(Boolean);
+   else if (url.searchParams.get("visibility") === "editorial") {
+    if (url.searchParams.has("cursor")) await initial;
+    else { data.rows = [{ ...virtual("sky-placement/article/saturn/aries"), id: "inventory-fixture", content_key: "fixture/other", headline: "Other inventory row" }]; data.nextCursor = "pending-inventory"; }
+   }
+   else { extendedStarted(); await extended; }
+  }
+  await route.fulfill({ json: data });
+ });
+ try {
+  await page.goto("/#sky-writeups");
+  await page.getByLabel("Sky placement planet or point").selectOption("saturn");
+  await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await page.getByLabel("Sky write-up motion").selectOption("retrograde");
+  await page.getByRole("button", { name: "Edit placement article", exact: true }).click();
+  const editor = page.getByRole("dialog");
+  await expect(editor.getByRole("heading", { name: "Edit Saturn in Aries", exact: true })).toBeVisible();
+  await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
+  await editor.getByRole("textbox", { name: "Fallback field Placement article", exact: true }).fill("Unsaved writing stays in this editor.");
+  await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
+  await expect(editor.getByRole("button", { name: "Close", exact: true })).toBeEnabled();
+  releaseInitial();
+  await started;
+  await expect(editor.getByRole("heading", { name: "Edit Saturn in Aries", exact: true })).toBeVisible();
+  await expect(editor.getByRole("textbox", { name: "Fallback field Placement article", exact: true })).toHaveValue("Unsaved writing stays in this editor.");
+  await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
+  releaseExtended();
+  await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+  await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
+ } finally { releaseInitial(); releaseExtended(); }
+});
