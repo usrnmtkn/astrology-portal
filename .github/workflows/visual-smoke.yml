@@ -141,7 +141,7 @@ jobs:
         run: npm run test:sky-daily-summary && node scripts/test-sky-placement-aspect-matrix.mjs
       - name: Verify daily Sky summary reader and Studio
         run: |
-          npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts
+          npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts
           npx playwright test -c playwright.sky-studio.config.ts
       - name: Enforce Content Studio bundle size and deferred editor boundaries
         run: node scripts/check-admin-bundle-budgets.mjs
