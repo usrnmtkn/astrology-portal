@@ -1859,6 +1859,7 @@ ${passHook}`;
   }
   function skyPlacementAspectParagraph(placementPlanet, ev) {
     if (!ev.a || !ev.b || !ev.aspect) throw new SourceGapError("SOURCE_GAP: sky placement aspect facts");
+    if (![ev.a, ev.b].includes(placementPlanet)) return null;
     const otherPlanet = ev.a === placementPlanet ? ev.b : ev.a;
     const isFullMoon = ev.aspect === "opposition" && (/* @__PURE__ */ new Set([ev.a, ev.b])).size === 2 && [ev.a, ev.b].includes("sun") && [ev.a, ev.b].includes("moon");
     const moonSign = ev.a === "moon" ? ev.aSign : ev.b === "moon" ? ev.bSign : null;
@@ -4685,6 +4686,11 @@ ${required(aspect.body, "aspect body")}`;
 }
 function renderSkyV4ContinuousPreview(corpus, input) {
   const article = input.articleOverride ?? continuousArticleFor(corpus, input.planet, input.sign);
+  const expectedKey = `sky-placement/article/${lower(input.planet)}/${lower(input.sign)}`;
+  if (article && (article.contentKey !== expectedKey || lower(article.planet) !== lower(input.planet) || lower(article.sign) !== lower(input.sign))) {
+    throw new Error(`SKY_V4_PLACEMENT_IDENTITY: expected ${expectedKey}.`);
+  }
+  input = { ...input, contexts: matchingPlacementContexts(input) };
   const facts = input.facts ?? {};
   const fullArticle = article && input.articleAvailable !== false ? withoutUnresolvedSlots(fillFacts(article.placementArticle, facts)) : "";
   const overlays = resolveSkyV4ContextualOverlays(corpus, input.contexts, input.overlaySettings, input.overlaySuppressions);
@@ -5117,6 +5123,12 @@ function nodePlacementKey(body, sign) {
   if (normalized === "south-node" || normalized === "south node") return `sky-nodes/south-node/${lower(sign)}`;
   return null;
 }
+function placementContentKey(body, sign) {
+  return ["lilith", "black-moon-lilith"].includes(lower(body)) ? `sky-lilith/article/${lower(sign)}` : nodePlacementKey(body, sign) ?? `sky-placement/article/${lower(body)}/${lower(sign)}`;
+}
+function matchingPlacementContexts(input) {
+  return (input.contexts ?? []).filter((context) => slug(context.subjectBody) === slug(input.planet) && lower(context.subjectSign) === lower(input.sign));
+}
 function createSkyV4ReaderRoute(corpus, lunarContextSource) {
   const snapshot = structuredClone(corpus);
   const lunarSnapshot = lunarContextSource ? structuredClone(lunarContextSource) : lunarContextSource;
@@ -5130,9 +5142,15 @@ function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   let contentKey = text(input.contentKey).trim();
   let resolution = "exact-canonical-key";
   const route = lower(input.route);
+  if (route === "placement") {
+    const expectedKey = placementContentKey(input.planet, input.sign);
+    if (contentKey && contentKey !== expectedKey) {
+      throw new Error(`SKY_V4_PLACEMENT_IDENTITY: expected ${expectedKey}, received ${contentKey}.`);
+    }
+    input = { ...input, contexts: matchingPlacementContexts(input) };
+  }
   if (!contentKey && route === "placement") {
-    const body = lower(input.planet);
-    contentKey = body === "lilith" || body === "black-moon-lilith" ? `sky-lilith/article/${lower(input.sign)}` : nodePlacementKey(body, input.sign) ?? `sky-placement/article/${body}/${lower(input.sign)}`;
+    contentKey = placementContentKey(input.planet, input.sign);
   } else if (!contentKey && route === "new-moon") {
     contentKey = `sky-lunation/new-moon/${lower(input.sign)}`;
   } else if (!contentKey && route === "full-moon") {
@@ -5265,7 +5283,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-08c";
+var PACKAGE_VERSION = "v3-2026-09-08d";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
