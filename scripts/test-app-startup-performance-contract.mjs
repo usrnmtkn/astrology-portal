@@ -532,8 +532,8 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /getAstrodienstSky\(skyLocation, selectedDateTime\)[\s\S]*requestAnimationFrame[\s\S]*getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: true \}\)/u,
-  "Core sky data must paint before expensive transit-window enrichment starts."
+  /getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: refreshing \}\)[\s\S]*\|\| refreshing[\s\S]*requestAnimationFrame[\s\S]*getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: true \}\)/u,
+  "Initial core sky data must paint before transit-window enrichment; refreshes publish one complete calculation."
 );
 assert.doesNotMatch(
   appSource,
