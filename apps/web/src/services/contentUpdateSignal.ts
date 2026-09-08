@@ -41,20 +41,30 @@ export function announceContentUpdate(notice: ContentUpdateNotice) {
 
 export function subscribeToContentUpdates(listener: (notice: ContentUpdateNotice) => void) {
   if (typeof window === "undefined") return () => undefined;
+  // A Studio save reaches other tabs through both storage and BroadcastChannel.
+  // Process the notice once so one publication does not reload every inventory twice.
+  const delivered = new Set<string>();
+  const deliver = (notice: ContentUpdateNotice) => {
+    const key = JSON.stringify([notice.contentKey, notice.updatedAt, notice.published]);
+    if (delivered.has(key)) return;
+    delivered.add(key);
+    if (delivered.size > 64) delivered.delete(delivered.values().next().value!);
+    listener(notice);
+  };
   const handleCustom = (event: Event) => {
     const notice = (event as CustomEvent<ContentUpdateNotice>).detail;
-    if (notice) listener(notice);
+    if (notice) deliver(notice);
   };
   const handleStorage = (event: StorageEvent) => {
     if (event.key !== contentUpdateStorageKey) return;
     const notice = readNotice(event.newValue);
-    if (notice) listener(notice);
+    if (notice) deliver(notice);
   };
   const channel = typeof BroadcastChannel !== "undefined"
     ? new BroadcastChannel(contentUpdateChannelName)
     : null;
   const handleChannel = (event: MessageEvent<ContentUpdateNotice>) => {
-    if (event.data) listener(event.data);
+    if (event.data) deliver(event.data);
   };
 
   window.addEventListener(contentUpdateEvent, handleCustom);
@@ -77,8 +87,9 @@ export function subscribeToContentRevalidation(listener: () => void, intervalMs 
   const revalidate = (force = false) => {
     if (document.visibilityState === "hidden" || window.navigator.onLine === false) return;
     const now = Date.now();
-    // Focus and visibility commonly fire together; coalesce them.
-    if (now - lastCheck < (force ? 1000 : intervalMs)) return;
+    // Focus/visibility bursts must not repeatedly reload the entire inventory.
+    // Actual Studio publication notices use the separate immediate subscription.
+    if (now - lastCheck < (force ? Math.min(30_000, intervalMs) : intervalMs)) return;
     lastCheck = now;
     listener();
   };
