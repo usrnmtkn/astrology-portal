@@ -282,7 +282,20 @@ const governedPlacementRows = rows.hookRows.filter((row) =>
 );
 const multiParagraphPlacementRows = governedPlacementRows.filter((row) => /\n{2,}/u.test(row.body ?? ""));
 
-assert.equal(governedPlacementRows.length, 194, "governed natal placement inventory changed; audit new rows before updating the gate");
+// PR #655 added the exact owner-approved Uranus in Scorpio sign passage.
+// Audit: docs/qa/natal-placement-inventory-audit-2026-09-08.md.
+const uranusScorpioReceipt = readJson("docs/content-management/owner-copy/uranus-in-scorpio-2026-09-07.json");
+const uranusScorpioRows = governedPlacementRows.filter((row) => row.contentKey === uranusScorpioReceipt.contentKey);
+assert.equal(uranusScorpioRows.length, 1, "the audited Uranus in Scorpio passage must appear exactly once");
+const uranusScorpioRow = uranusScorpioRows[0];
+const uranusScorpioBody = fs.readFileSync(path.join(repoRoot, uranusScorpioReceipt.source), "utf8").trimEnd();
+assert.equal(uranusScorpioRow.body, uranusScorpioBody);
+assert.equal(uranusScorpioRow.review_status, "approved");
+assert.equal(uranusScorpioRow.owner_approved, true);
+assert.equal(uranusScorpioRow.approval.payloadSha256, uranusScorpioReceipt.bodySha256);
+assert.equal(crypto.createHash("sha256").update(uranusScorpioRow.body).digest("hex"), uranusScorpioReceipt.bodySha256);
+assert.equal(uranusScorpioRow.body.trim().split(/\s+/u).length, uranusScorpioReceipt.wordCount);
+assert.equal(governedPlacementRows.length, 195, "governed natal placement inventory changed; audit new rows before updating the gate");
 assert.equal(multiParagraphPlacementRows.length, 183, "multi-paragraph natal placement inventory changed; audit truncation exposure before updating the gate");
 for (const row of governedPlacementRows) {
   assert.equal(
