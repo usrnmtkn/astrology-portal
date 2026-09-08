@@ -304,7 +304,7 @@ const runtimeJudge = await judgeReportUnit({
     runtimePrompt = input.prompt;
     return {
       value: {
-        scores: runtimeScores,
+        scores: { ...runtimeScores, natural_language: 4, syntax_variety: 3 },
         applicability: { interpretive_movement: "not_applicable", reason: "MODEL_REPORTED_VALUE_IS_NOT_AUTHORITY" },
         overall: 0,
         verdict: "below_threshold",
@@ -320,6 +320,36 @@ assert.match(runtimePrompt, /COMPLETE_UNIT[\s\S]*UNIT_FACTS[\s\S]*OWNER_COMPARIS
 assert.equal(runtimeJudge.result.applicability.interpretive_movement, "applicable");
 assert.equal(runtimeJudge.result.overall, 35 / 36);
 assert.equal(runtimeJudge.result.verdict, "pass", "Runtime recomputation must override model-reported overall and verdict.");
+for (const category of ["owner_voice", "natural_language"]) {
+  const belowReleaseFloorScores = {
+    ...Object.fromEntries(REPORT_JUDGE_CATEGORIES.map((key) => [key, 4])),
+    [category]: 3
+  };
+  assert.equal(reportJudgeVerdict(belowReleaseFloorScores, 0.85, true), "pass",
+    "Archived calibration semantics must remain separate from the production release floor.");
+  const releaseJudge = await judgeReportUnit({
+    payload: runtimePayload,
+    draft: { headline: "FIXTURE_ONLY", body: "FIRST SUBSTANTIVE PARAGRAPH.\n\nSECOND SUBSTANTIVE PARAGRAPH.", sections: [] },
+    validatorResults: [],
+    threshold: 0.85,
+    callModel: async () => ({
+      value: {
+        scores: belowReleaseFloorScores,
+        applicability: { interpretive_movement: "applicable", reason: "FIXTURE_ONLY" },
+        overall: 1,
+        verdict: "pass",
+        findings: []
+      },
+      model: "FIXTURE_ONLY_MODEL",
+      provider: "FIXTURE_ONLY_PROVIDER",
+      usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
+    })
+  });
+  assert.equal(releaseJudge.result.overall, 35 / 36);
+  assert.equal(releaseJudge.result.verdict, "below_threshold",
+    `Production must reject ${category}=3 despite a high overall score and model-reported pass.`);
+}
+
 const candidateRuntimePayload = assembleReportGenerationPayload({
   reportId: "00000000-0000-0000-0000-000000000086",
   reportDomain: "general",
