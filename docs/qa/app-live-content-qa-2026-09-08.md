@@ -54,6 +54,14 @@ content records are changed by this patch.
   regression checks the complete published owner revision before and after a
   reload and rejects the superseded opening.
 
+CI's authenticated configuration initially exceeded the aggregate JavaScript
+budget. A fresh matching local build measured 2,936,372 bytes, 372 bytes above
+the prior cap; the offline Studio test build had passed with a smaller Auth
+configuration. The aggregate allowance is now 2,938,000 bytes for the recovery
+behavior. Reader boot (about 461.6 kB including CSS), startup CSS, and all
+individual chunk limits remain unchanged. Budget failures now print exact
+bytes so two values rounded to the same megabyte figure cannot hide the excess.
+
 ## Limits
 
 Browser write operations use synthetic accounts and isolated fixtures. Actual
