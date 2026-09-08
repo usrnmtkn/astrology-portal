@@ -2736,7 +2736,8 @@ export function GeneratedContentAdminDashboard() {
   const [loadState, setLoadState] = useState<AdminLoadState>("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loadDiagnostics, setLoadDiagnostics] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Inventory reads have their own loadState; only an editor/action request blocks writing.
+  const [isLoading, setIsLoading] = useState(false);
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   // A plain "Loaded …" confirmation is useful once; warnings and errors stay until dismissed.
@@ -2816,6 +2817,7 @@ export function GeneratedContentAdminDashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [bulkStatus, setBulkStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [editorSourceRow, setEditorSourceRow] = useState<AdminGeneratedContentRow | null>(null);
   const [dailyGlanceContext, setDailyGlanceContext] = useState<DailyGlanceContext | null>(null);
   const [dailyGlanceContextError, setDailyGlanceContextError] = useState<string | null>(null);
   const [dailyGlanceContextLoading, setDailyGlanceContextLoading] = useState(false);
@@ -3044,8 +3046,10 @@ export function GeneratedContentAdminDashboard() {
   // Keep an open editor attached to its canonical saved row even when a save
   // changes status/lane metadata and the row no longer matches the current
   // visible filters. Otherwise a successful save can make `selectedRow`
-  // disappear, leaving the editor permanently marked as unsaved.
-  const selectedRow = rows.find((row) => row.id === selectedRowId) ?? null;
+  // disappear, leaving the editor permanently marked as unsaved. Keep a source snapshot
+  // too: a package source is absent from the database inventory by design.
+  const selectedRow = rows.find((row) => row.id === selectedRowId)
+    ?? (editorSourceRow?.id === selectedRowId ? editorSourceRow : null);
   const calendarAspectFilterScopeActive = activePage === "content" && categoryFilter === "Calendar Aspects";
   const reviewQueueRows = useMemo(() => {
     const rowsByKey = new Map<string, AdminReviewRecord>();
@@ -3303,7 +3307,6 @@ export function GeneratedContentAdminDashboard() {
     if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
     let cancelled = false;
     const controller = new AbortController();
-    setIsLoading(true);
     void loadAllGeneratedContentRows(
       secret,
       "all",
@@ -3326,14 +3329,10 @@ export function GeneratedContentAdminDashboard() {
       .catch((error) => {
         if (cancelled) return;
         setMessage(dashboardErrorMessage(error));
-      })
-      .finally(() => {
-        if (!cancelled) setIsLoading(false);
       });
     return () => {
       cancelled = true;
       controller.abort();
-      setIsLoading(false);
     };
   }, [activePage, categoryFilter, showReferenceRows, showRetiredRows, allRowsLoaded, loadState, secret]);
 
@@ -3509,6 +3508,7 @@ export function GeneratedContentAdminDashboard() {
           if (editorSession !== editorSessionRef.current) return;
           articleAutosaveRowRef.current = saved;
           if (sequence !== skyArticleAutosaveSequenceRef.current) return;
+          setEditorSourceRow(saved);
           setSelectedRowId(saved.id);
           const savedDraft = draftFromRow(saved);
           setDraft(savedDraft);
@@ -3902,7 +3902,6 @@ export function GeneratedContentAdminDashboard() {
     setMessage("Loading saved content…");
     setSourceDraftLoadState("loading");
     setSourceDraftError(null);
-    setIsLoading(true);
     try {
       const needsExtendedInventory = activePage === "unresolvedContent"
         || isCompositionPage(activePage)
@@ -4002,8 +4001,6 @@ export function GeneratedContentAdminDashboard() {
       setLoadDiagnostics(error instanceof AdminRequestError ? `${error.method} ${error.path} -> HTTP ${error.status}${error.details ? ` (${error.details})` : ""}` : null);
       setMessage(nextMessage);
       return false;
-    } finally {
-      if (loadSequence === dashboardLoadSequenceRef.current) setIsLoading(false);
     }
   }
 
@@ -4414,6 +4411,7 @@ export function GeneratedContentAdminDashboard() {
         return [saved, ...without];
       });
       if (updateEditor) {
+        setEditorSourceRow(saved);
         setSelectedRowId(saved.id);
         setDraft(savedDraft);
         editorBaselineRef.current = JSON.stringify(savedDraft);
@@ -4623,6 +4621,7 @@ export function GeneratedContentAdminDashboard() {
       }
       setRows((current) => [published, ...current.filter((item) => item.id !== published.id && item.id !== row.id)]);
       if (updateEditor) {
+        setEditorSourceRow(published);
         setSelectedRowId(published.id);
         setDraft(publishedDraft);
         editorBaselineRef.current = JSON.stringify(publishedDraft);
@@ -4788,6 +4787,7 @@ export function GeneratedContentAdminDashboard() {
     const edition = compiledSkyArticleEditionForDraft(nextDraft);
     const baseEdition = skyArticleRevisionBaseForDraft(nextDraft);
     setDailyGlancePairSelector(null);
+    setEditorSourceRow(row);
     setSelectedRowId(row.id);
     setDraft(nextDraft);
     setCompositionEditorContext(compositionContext);
@@ -5013,6 +5013,7 @@ export function GeneratedContentAdminDashboard() {
     }
     const nextDraft = draftFromRow(row);
     setSkyWriteupParentId(parentId);
+    setEditorSourceRow(row);
     setSelectedRowId(row.id);
     setDraft(nextDraft);
     editorBaselineRef.current = JSON.stringify(nextDraft);
@@ -5028,6 +5029,7 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
     const nextDraft = draftFromRow(parent);
+    setEditorSourceRow(parent);
     setSelectedRowId(parent.id);
     setDraft(nextDraft);
     editorBaselineRef.current = JSON.stringify(nextDraft);
