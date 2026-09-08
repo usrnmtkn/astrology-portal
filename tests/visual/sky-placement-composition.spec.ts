@@ -1,6 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { skyPlacementSourceRecords } from "../../api/_lib/sky-placement-sources";
+import { skyPlacementSourceRecords, skyPlacementSourceCorpus } from "../../api/_lib/sky-placement-sources";
 import { contentLiveStatuses } from "../../api/_lib/content-live-status";
+import { skyPlacementAssembly, skyPlacementAssemblyFields } from "../../apps/admin/src/skyPlacementAssembly";
+import { skyFallbackWorkspace } from "../../apps/admin/src/skyFallbackWorkspace";
+import { renderSkyV4ReaderRoute, renderSkyV4ContinuousPreview } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 const virtual = (key: string) => {
  const source = skyPlacementSourceRecords.get(key);
  return source ? { id: `package:${key}`, content_key: key, surface: "sky", mode: "in_depth", status: "DRAFT", lane: "reference", provider: "tldrastro-fallback-architecture-v3", headline: source.headline, summary: source.summary, body: source.body_you, sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: "fallback_hook", event_type: "fallback-hook", package_starter: true } : null;
@@ -29,6 +32,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.getByLabel("Sky write-up motion").selectOption("retrograde");
   const map = page.getByRole("region", { name: "Sky placement composition map" });
   await expect(map.getByRole("heading", { name: "Saturn Rx in Aries", level: 3 })).toBeVisible();
+  await expect(map.getByRole("tab", { name: "Reader preview" })).toHaveAttribute("aria-selected", "true");
+  await expect(map.getByRole("button", { name: "Edit placement article", exact: true })).toContainText(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.placementArticle);
+  await map.getByRole("tab", { name: "Assembly", exact: true }).click();
   await expect(map.getByRole("article", { name: "Retrograde source" })).toContainText(skyPlacementSourceRecords.get("sky-placement/retrograde/saturn")!.Body);
   await expect(map.getByRole("article", { name: "Planet-in-sign source" })).toContainText("The beginning matters more when it can survive the part nobody claps for.");
   await expect(map.getByRole("button", { name: "Edit fallback opening", exact: true })).toBeVisible();
@@ -37,12 +43,28 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    const style = getComputedStyle(el);
    return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.margin, style.textTransform, style.textAlign];
   });
-  await page.screenshot({ path: `test-results/saturn-map-${width}-${theme}.png`, fullPage: true });
+  await map.getByRole("tab", { name: "Main template", exact: true }).click();
+  await expect(map.getByRole("list", { name: "Placement template order" }).locator("code")).toHaveText(["{{Body}}", "{{tldrWhat}}", "{{tldrTakeaway}}", "{{placementArticle}}"]);
+  await map.getByLabel("Placement writing path").selectOption("fallback");
+  await expect(map.getByRole("list", { name: "Placement template order" }).locator("code")).toHaveText(["{{Body}}", "{{tldrWhat}}", "{{tldrTakeaway}}", "{{fallback.hook}}", "{{fallback.lived}}", "{{fallback.turn}}"]);
+  await map.getByRole("tab", { name: "Reader preview", exact: true }).click();
+  const opening = map.getByRole("button", { name: "Edit fallback opening", exact: true });
+  await expect(opening).toContainText(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.fallback.hook);
+  await expect(map.getByRole("button", { name: "Edit placement article", exact: true })).toHaveCount(0);
+  const colors = await map.locator(".admin-template-reader-copy .admin-composition-variable").evaluateAll(elements => Object.fromEntries(elements.map(el => [el.className, getComputedStyle(el).color])));
+  expect(new Set(Object.values(colors)).size).toBe(3);
+  await map.screenshot({ path: `test-results/saturn-fallback-${width}-${theme}.png` });
+  await opening.click();
+  await expect(page.getByRole("textbox", { name: "Fallback field Fallback opening", exact: true })).toBeFocused();
+  await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
+  await map.getByLabel("Placement writing path").selectOption("article");
+  await map.screenshot({ path: `test-results/saturn-map-${width}-${theme}.png` });
   await map.getByRole("button", { name: "Edit placement article", exact: true }).click();
   const editor = page.getByRole("dialog");
   await expect(editor.getByRole("heading", { name: "Edit Saturn in Aries" })).toBeVisible();
   await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
   await expect(editor.getByRole("textbox", { name: "Fallback field Placement article", exact: true })).toHaveValue(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.placementArticle);
+  await expect(editor.getByRole("textbox", { name: "Fallback field Placement article", exact: true })).toBeFocused();
   await editor.getByRole("textbox", { name: "Fallback field Placement article", exact: true }).fill("Browser test revision.");
   await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
   await page.screenshot({ path: `test-results/saturn-editor-${width}-${theme}.png`, fullPage: true });
@@ -55,7 +77,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   expect(await analogous.evaluate(el => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing, s.margin, s.textTransform, s.textAlign]; })).toEqual(headingStyle);
   await map.getByLabel("Composition motion").selectOption("direct");
   await expect(map.getByRole("article", { name: "Retrograde source" })).toHaveCount(0);
-  await expect(map.getByRole("article", { name: "Planet-in-sign source" })).toBeVisible();
+  await expect(map.getByRole("button", { name: "Edit retrograde body", exact: true })).toHaveCount(0);
+  await expect(map.getByRole("button", { name: "Edit placement article", exact: true })).toBeVisible();
   await map.getByLabel("Composition planet or point").selectOption("moon");
   await expect(map.getByRole("alert")).toBeVisible();
   await expect(map.getByRole("status")).toContainText("Source unavailable");
@@ -110,4 +133,28 @@ test("an open Saturn editor survives initial and extended inventory loading", as
   await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
   await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
  } finally { releaseInitial(); releaseExtended(); }
+});
+
+
+test("placement assembly preserves canonical article and fallback order, saved edits, and empty fields", () => {
+ const row = virtual("sky-placement/article/saturn/aries")!;
+ const retrograde = virtual("sky-placement/retrograde/saturn")!;
+ const direct = skyPlacementAssembly([row], "article");
+ const reader = renderSkyV4ReaderRoute(skyPlacementSourceCorpus, { route: "placement", planet: "saturn", sign: "aries" });
+ expect(direct.parts.map(part => part.value)).toEqual(reader.readerParts);
+ const rx = renderSkyV4ReaderRoute(skyPlacementSourceCorpus, { route: "placement", planet: "saturn", sign: "aries", isRetrograde: true });
+ expect(skyPlacementAssembly([retrograde, row], "article").parts.map(part => part.value)).toEqual(rx.readerParts);
+ const fallback = renderSkyV4ContinuousPreview(skyPlacementSourceCorpus, { planet: "saturn", sign: "aries", articleAvailable: false });
+ let previous = -1;
+ for (const part of skyPlacementAssembly([row], "fallback").parts) {
+  const position = fallback.page.indexOf(part.value);
+  expect(position).toBeGreaterThan(previous); previous = position;
+ }
+ const revised = { ...row, sections: { ...row.sections, packageDraft: { fallback: { hook: "Saved opening revision", lived: "" } } } };
+ const fields = skyPlacementAssemblyFields(revised);
+ expect(fields.find(field => field.path === "fallback.hook")?.value).toBe("Saved opening revision");
+ expect(fields.find(field => field.path === "fallback.turn")?.value).toBe(row.sections.packageRecord.fallback.turn);
+ expect(fields.find(field => field.path === "fallback.lived")?.value).toBe("");
+ expect(skyFallbackWorkspace(revised.content_key, revised.sections)?.fields.find(field => field.key === "fallback.turn")?.value).toBe(row.sections.packageRecord.fallback.turn);
+ expect(skyFallbackWorkspace(revised.content_key, revised.sections)?.fields.some(field => field.key === "fallback.lived")).toBe(true);
 });

@@ -328,12 +328,20 @@ export function packageDraftForSections(sections: unknown) {
   return record(sectionRecord.packageDraft);
 }
 
+// Drafts can contain a single nested field. An edit to fallback.hook must not
+// hide fallback.lived or fallback.turn in the editor and composition preview.
+function mergePackageDraft(base: Record<string, unknown>, draft: Record<string, unknown>): Record<string, unknown> {
+  const result = { ...base };
+  for (const [key, value] of Object.entries(draft)) {
+    result[key] = value && typeof value === "object" && !Array.isArray(value)
+      ? mergePackageDraft(record(base[key]), record(value)) : value;
+  }
+  return result;
+}
+
 export function effectivePackageRecord(sections: unknown) {
   const sectionRecord = record(sections);
-  return {
-    ...record(sectionRecord.packageRecord),
-    ...record(sectionRecord.packageDraft)
-  };
+  return mergePackageDraft(record(sectionRecord.packageRecord), record(sectionRecord.packageDraft));
 }
 
 export function placeholdersInPackage(source: Record<string, unknown>) {
@@ -365,7 +373,7 @@ export function skyFallbackWorkspace(contentKey: string, sections: unknown): Sky
     ? studioFields
     : isArticle ? articleFieldOrder : isAspect ? aspectFieldOrder : [];
   const fields = configuredFields
-    .filter(([key]) => packageValueAt(source, key) !== "")
+    .filter(([key]) => studioFields.length > 0 || packageValueAt(source, key) !== "")
     .map(([key, label]) => ({ key, label, value: packageValueAt(source, key) }));
 
   if (!fields.length) return null;
