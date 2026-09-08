@@ -697,7 +697,6 @@ export function SkyDetailArticle({
                   <p>{detail.closingCharge}</p>
                 </section>
               ) : null}
-              {!detail.personalizedPlacement ? risingHoroscopesSection : null}
               {detail.seriesLine ? (
                 <aside className="article-section sky-detail-section sky-aspect-series" aria-label="Aspect series">
                   <p>{detail.seriesLine}</p>
@@ -854,7 +853,7 @@ export function SkyDetailArticle({
           </>
         ) : null}
 
-        {detail.personalizedPlacement && risingHoroscopesSection ? (
+        {risingHoroscopesSection ? (
           <div className="article-card sky-detail-rising-horoscopes-card">
             <div className="article-body-card sky-detail-body">
               <div className="article-body-inner">
