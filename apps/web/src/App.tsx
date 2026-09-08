@@ -11040,6 +11040,7 @@ export function App() {
   const contentRegistryVersion = useContentRegistryRevision();
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
+  const selectedSkyDetailRefreshSkyRef = useRef<SkySnapshot | null>(null);
   const fallbackDashboardHydrationRequestedRef = useRef(false);
   const friendDetailOverlayRefreshKeyRef = useRef("");
   const compatibilityDashboardHydrationVersionRef = useRef<number | null>(null);
@@ -11684,13 +11685,10 @@ export function App() {
     return () => { cancelled = true; fallbackDashboardHydrationRequestedRef.current = false; };
   }, [contentRefreshVersion, friendNatalContentRequested, friendRelationshipContentRequests, mode]);
 
+  const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath });
   useEffect(() => {
     let cancelled = false;
-    const shouldLoadPlacementContent = shouldLoadSkyPlacementContent({
-      mode,
-      hasSky: Boolean(sky),
-      detailRoutePath: skyDetailRoutePath
-    });
+    const shouldLoadPlacementContent = placementContentNeeded;
 
     if (!shouldLoadPlacementContent) {
       setSkyPlacementFallbackStatus("idle");
@@ -11734,7 +11732,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [contentRefreshVersion, mode, sky, skyDetailRoutePath, skyPlacementFallbackRetryKey]);
+  }, [contentRefreshVersion, placementContentNeeded, skyPlacementFallbackRetryKey]);
 
   useEffect(() => {
     function handlePortalUrlChange() {
@@ -11864,6 +11862,8 @@ export function App() {
       selectedSkyDetail?.routePath === skyDetailRoutePath
       && selectedSkyDetailRefreshKeyRef.current === refreshKey
       && selectedSkyDetailRefreshContentRef.current === skyGeneratedContent
+      // Residency dates and stations can arrive after the first snapshot.
+      && selectedSkyDetailRefreshSkyRef.current === sky
     ) {
       return;
     }
@@ -11885,6 +11885,7 @@ export function App() {
         const detail = skyDetailFromRoutePath(baseRoute, eventSky, skyGeneratedContent, openSkyDetail);
         selectedSkyDetailRefreshKeyRef.current = refreshKey;
         selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
+        selectedSkyDetailRefreshSkyRef.current = sky;
         setSelectedSkyDetail(detail ? datedSkyAspectDetail(detail, exactAt, sky.location.timeZone || "UTC") : null);
       }).catch(error => { if (!cancelled) console.warn("Dated aspect calculation failed.", error); });
       return () => { cancelled = true; };
@@ -11899,6 +11900,7 @@ export function App() {
 
     selectedSkyDetailRefreshKeyRef.current = refreshKey;
     selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
+    selectedSkyDetailRefreshSkyRef.current = sky;
     setSelectedSkyDetail(personalizedSkyPlacementDetail(
       detail,
       profileNatalSky?.ascendant ?? userProfile?.rising,
@@ -11934,7 +11936,7 @@ export function App() {
     setCityPickerOpenedFromMobileControls(false);
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [selectedSkyDetail]);
+  }, [selectedSkyDetail?.routePath]);
 
   useEffect(() => {
     const syncPreviewMode = () => {
@@ -14243,22 +14245,18 @@ export function App() {
 
       {selectedSkyDetail ? (
         <>
-          {skyPlacementFallbackStatus === "loading" ? (
-            <div className="feature-loading-fallback" role="status">Loading the full placement reading…</div>
-          ) : (
-            <>
-              {skyPlacementFallbackStatus === "error" ? (
-                <div className="feature-loading-fallback" role="status">
-                  <span>The full placement reading could not load. Approved available copy remains below.</span>
-                  <button type="button" onClick={() => setSkyPlacementFallbackRetryKey((key) => key + 1)}>Retry</button>
-                </div>
-              ) : null}
-              <Suspense fallback={<FeatureLoadingFallback />}>
-                <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
-              </Suspense>
-            </>
-          )}
+          {skyPlacementFallbackStatus === "error" ? (
+            <div className="feature-loading-fallback" role="status">
+              <span>The full placement reading could not load. Approved available copy remains below.</span>
+              <button type="button" onClick={() => setSkyPlacementFallbackRetryKey((key) => key + 1)}>Retry</button>
+            </div>
+          ) : null}
+          <Suspense fallback={<FeatureLoadingFallback />}>
+            <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
+          </Suspense>
         </>
+      ) : skyDetailRoutePath ? (
+        <FeatureLoadingFallback />
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>

@@ -11,7 +11,7 @@ export const compositionSurfaceFamilies: Record<string, RegExp> = {
   "natal-placement-detail": /^(?:natal\/placement|fallback-template\/natal[.](?:planet|node|angle)|fallback-hook\/(?:natal-you-placement|planet-intro|planet-best|planet-lived|sign-lived|placement-|house-lived|house-meaning|node-journey|angle-|dignity-line|natal-moon-phase-lived))/,
   "natal-aspect-detail": /^(?:natal\/aspect|fallback-template\/natal[.]aspect|fallback-hook\/(?:aspect-type|aspect-pair|aspect-lived|natal-aspect-lived))/,
   "natal-aspect-patterns": /^(?:authored\/(?:natal-pattern|aspect-pattern)|fallback-hook\/aspect-pattern)/,
-  "sky-placement-detail": /^(?:authored\/sky-placement|sky-placement\/|fallback-template\/sky-placement|fallback-hook\/(?:sky-placement|sky-sign-copy|sky-sign-trap|sky-element-close|sky-planet-education|fog-note))/,
+  "sky-placement-detail": /^(?:authored\/sky-placement|sky-placement\/|sky[.]placement[.]|sky\/article-|sky-context\/|sky-nodes\/|sky-lilith\/|fallback-template\/sky-placement|fallback-hook\/(?:sky-placement|sky-sign-copy|sky-sign-trap|sky-element-close|sky-planet-education|fog-note))/,
   "sky-aspect-detail": /^(?:authored\/sky-aspect|sky[.]|fallback-template\/sky[.]aspect|fallback-hook\/sky-aspect)/,
   "sky-retrograde-summary": /^(?:cms\/sky-retrograde-summary|fallback-template\/transit[.]retro|fallback-hook\/transit-retro)/,
   "personal-transit-detail": /^(?:cms\/personal-transit-aspect|transit\/|fallback-template\/transit[.]aspect|fallback-hook\/(?:transit-aspect-type|transit-effect|transit-retro-aspect))/,

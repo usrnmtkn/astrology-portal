@@ -177,6 +177,7 @@ import "./admin-content-studio-layout.css";
 
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
+const SkyPlacementComposition = lazy(() => import("./SkyPlacementComposition"));
 const AspectPatternDiagnostics = lazy(async () => {
   const module = await import("./AspectPatternDiagnostics");
   return { default: module.AspectPatternDiagnostics };
@@ -2899,7 +2900,7 @@ export function GeneratedContentAdminDashboard() {
   const editableRowsByContentKey = useMemo(() => new Map(rows.map((row) => [row.content_key, row])), [rows]);
   const [compositionCatalog, setCompositionCatalog] = useState<AdminGeneratedContentRow[]>([]);
   useEffect(() => {
-    if (activePage !== "compositionMap" || !secret.trim()) return;
+    if (!["compositionMap", "skyWriteups"].includes(activePage) || !secret.trim()) return;
     let cancelled = false;
     void adminJsonRequest<{ ok: boolean; rows?: Array<{ content_key: string; headline: string | null; role: string }> }>("/api/admin/content-live-status", secret, {
       method: "POST", body: JSON.stringify({ action: "composition-catalog" })
@@ -2970,9 +2971,9 @@ export function GeneratedContentAdminDashboard() {
   );
   const filteredSkyWriteupRows = useMemo(() => sortPlacementRows(skyWriteupRows.filter((row) => (
     (skyPlacementBody === "all" || skyWriteupContextForRow(row)?.planet === skyPlacementBody)
-    && (skyPlacementSign === "all" || skyWriteupContextForRow(row)?.sign === skyPlacementSign)
+    && (skyPlacementSign === "all" || skyWriteupContextForRow(row)?.sign === skyPlacementSign || /^sky-placement\/retrograde\/[^/]+$/.test(row.content_key))
     && (skyWriteupSubjectFilter === "all" || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
-    && (skyWriteupMotionFilter === "all" || contentMotion(row) === skyWriteupMotionFilter)
+    && (skyWriteupMotionFilter === "all" || /^sky-placement\/article\//u.test(row.content_key) || contentMotion(row) === skyWriteupMotionFilter)
     && (skyWriteupDestinationFilter === "all" || contentDestinations(row).has(skyWriteupDestinationFilter))
     && matchesAdminSearch(skyWriteupSearchText(row), skyWriteupQuery)
   )), skyWriteupSort), [skyPlacementBody, skyPlacementSign, skyWriteupDestinationFilter, skyWriteupMotionFilter, skyWriteupQuery, skyWriteupRows, skyWriteupSort, skyWriteupSubjectFilter]);
@@ -6214,10 +6215,17 @@ export function GeneratedContentAdminDashboard() {
                       Clear filters
                     </button>
                     <p className="admin-filter-result-count" aria-live="polite">
-                      <strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown
+                      {skyPlacementBody !== "all" && skyPlacementSign !== "all"
+                        ? <>Composition sources below · <strong>{filteredSkyWriteupRows.length}</strong> matching library rows</>
+                        : <><strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown</>}
                     </p>
                   </div>
                 </section>
+                {skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
+                  <Suspense fallback={<p className="admin-empty" role="status">Loading Composition Map…</p>}>
+                    <SkyPlacementComposition rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
+                  </Suspense>
+                )}
                 {publishedButUnwiredSkyRows.length > 0 && (
                   <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
                     <div>
@@ -6237,7 +6245,9 @@ export function GeneratedContentAdminDashboard() {
                         <p className="admin-empty">
                           {skyWriteupQuery.trim()
                             ? `No Sky write-ups match “${skyWriteupQuery.trim()}”. Try another keyword or clear the filters.`
-                            : "No Sky write-ups match these filters. Try another filter or clear the filters."}
+                            : skyPlacementBody !== "all" && skyPlacementSign !== "all"
+                              ? "Use the Composition Map above to edit the sources for this placement. There are no additional matching library rows."
+                              : "No Sky write-ups match these filters. Try another filter or clear the filters."}
                         </p>
                       )}
                   </aside>
@@ -8110,7 +8120,6 @@ export function GeneratedContentAdminDashboard() {
     const packageCanApproveRevision = isPackageDraft
       && packageHasProposal
       && !isGuidedHeldReview
-      && !packageIsSkyV4Governed
       && packageRoleCanServeExactCopy;
     const packageApprovalPublishes = isPackageDraft
       && !packageHasProposal
@@ -8255,7 +8264,7 @@ export function GeneratedContentAdminDashboard() {
     const isSkySummaryDraft = currentDraft.contentKey.startsWith("cms/sky-daily-summary/");
     const summaryBuiltin = skyDailySummaryFields.find(field => field.key === currentDraft.contentKey);
     const matchesBuiltinSummary = Boolean(summaryBuiltin?.body && currentDraft.body.trim() === summaryBuiltin.body.trim());
-    const editorStatusRow = { id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : null), updated_at: currentDraft.updatedAt };
+    const editorStatusRow = { id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : selectedRow?.id.startsWith("package:") ? selectedRow.id : null), updated_at: currentDraft.updatedAt };
     const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override" || currentDraft.contentKey.startsWith("cms/");
     const cmsAllowedSlots = Array.isArray(currentDraft.sourceSnapshot?.allowedSlots)
       ? currentDraft.sourceSnapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
@@ -8676,7 +8685,7 @@ export function GeneratedContentAdminDashboard() {
       const wordCount = value.trim() ? value.trim().split(/\s+/u).length : 0;
       return `${wordCount} ${wordCount === 1 ? "word" : "words"} · ${value.length} ${value.length === 1 ? "character" : "characters"}`;
     };
-    const editorHeading = isSkySummaryDraft ? `Edit ${currentDraft.headline}` : currentDraft.id
+    const editorHeading = isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
         : compatibilityIdentity
@@ -9038,7 +9047,7 @@ export function GeneratedContentAdminDashboard() {
                 <div>
                   <p className="admin-eyebrow">Reader source workspace</p>
                   <h3>{skyFallbackContentIdentity?.title ?? skyFallbackEditor.title}</h3>
-                  <p><strong>{skyFallbackContentIdentity?.typeLabel ?? skyFallbackEditor.title}.</strong> Saving creates a non-serving proposal for owner review; the package original stays unchanged.</p>
+                  <p><strong>{skyFallbackContentIdentity?.typeLabel ?? skyFallbackEditor.title}.</strong> Save & publish makes this exact revision live. Save draft keeps unfinished changes for later.</p>
                 </div>
                 <details className="admin-workspace-details">
                   <summary>Source details</summary>
@@ -9048,7 +9057,7 @@ export function GeneratedContentAdminDashboard() {
                     <div><dt>Current approval</dt><dd>{String(packageRecord.review_status ?? packageReviewStatus)}</dd></div>
                     <div><dt>Proposal</dt><dd>{skyFallbackChanges.length ? `${skyFallbackChanges.length} changed field${skyFallbackChanges.length === 1 ? "" : "s"}` : "No changes"}</dd></div>
                   </dl>
-                  <p className="admin-field-hint" role="note"><strong>Safe editing boundary:</strong> saving here creates a proposal with <code>needs_review</code> status. It does not change the app until the exact diff is owner-approved, landed in source, regenerated, and deployed.</p>
+                  <p className="admin-field-hint" role="note"><strong>Safe editing boundary:</strong> Save draft keeps your changes Not live. Save &amp; publish approves and publishes the current revision; the original approved source remains in version history.</p>
                 </details>
               </header>
 
@@ -9058,6 +9067,7 @@ export function GeneratedContentAdminDashboard() {
                     secret={secret}
                     contentKey={currentDraft.contentKey}
                     effectiveRecord={effectiveSkyFallback}
+                    showGroupedEditor={false}
                     disabled={isLoading}
                   />
                 </Suspense>
@@ -9897,7 +9907,7 @@ export function GeneratedContentAdminDashboard() {
                   {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">This row is source material. Approval makes it available to the resolver as an ingredient; it cannot publish as exact reader copy.</small>}
                   {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Save &amp; publish makes your exact edits live in one step. Save draft keeps the revision Not live.</small>}
                   {packageHasProposal && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Save this source-material revision for review. Source ingredients cannot publish as exact reader copy.</small>}
-                  {packageIsSkyV4Governed && <small className="admin-field-hint">This Sky V4 row uses its hash-bound owner-approval workflow; its status cannot be changed here.</small>}
+                  {packageIsSkyV4Governed && <small className="admin-field-hint">Save & publish approves this exact revision and makes it live. The original approved source remains in version history.</small>}
                   {isGuidedHeldReview && <small className="admin-field-hint">Locked at needs_review in this review flow. Use “Record owner copy review” above when the exact copy is correct; publication remains a separate governed step.</small>}
                 </label>
                 <label className="admin-package-notes-field">

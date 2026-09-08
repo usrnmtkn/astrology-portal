@@ -1,3 +1,13 @@
+import skyReaderRelease from "./authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
+import skyReaderApproval from "./authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
+
+const canonicalKeys = new Set<string>(skyReaderRelease.serving_enabled ? skyReaderApproval.approved_keys : []);
+export function isCanonicalSkyReaderRecord(record: { contentKey: string; source_package?: unknown; serving_enabled?: unknown; owner_approved?: unknown }) {
+  return canonicalKeys.has(record.contentKey)
+    && record.source_package === "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30"
+    && record.serving_enabled === true && record.owner_approved === true;
+}
+
 const retrogradeCapableNatalBodies = new Set([
   "mercury",
   "venus",
@@ -41,6 +51,7 @@ export type FallbackDashboardExtensionRecord = {
   content_role?: unknown;
   reader_only?: unknown;
   render_policy?: unknown;
+  studio_version_status?: unknown;
 };
 
 export function isDynamicNatalPlacementExactKey(contentKey: string) {
@@ -76,5 +87,6 @@ export function isFallbackDashboardRecordAllowed(
 ) {
   return currentPackageKeys.has(record.contentKey)
     || isDynamicNatalPlacementExactRecord(record)
-    || isDynamicNatalAspectExactRecord(record);
+    || isDynamicNatalAspectExactRecord(record)
+    || (isCanonicalSkyReaderRecord(record) && record.studio_version_status === "approved-serving-revision");
 }

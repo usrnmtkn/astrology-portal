@@ -136,6 +136,7 @@ function nestedString(record: Record<string, unknown> | null | undefined, paths:
 function keyPlacementParts(contentKey: string) {
   const normalizedKey = contentKey.toLowerCase();
   const matches = [
+    normalizedKey.match(/^sky-placement\/article\/([a-z_-]+)\/([a-z_-]+)/u),
     normalizedKey.match(/^sky\/station\/([a-z_-]+)\/(?:retrograde|direct)\/([a-z_-]+)/u),
     normalizedKey.match(/^sky\/article-(?:edition|template)\/([a-z_-]+)\/([a-z_-]+)/u),
     normalizedKey.match(/^authored\/sky-placement\/([a-z_-]+)\/([a-z_-]+)/u),
@@ -205,7 +206,7 @@ function skyWriteupContextForRowUncached(row: SkyWriteupRelationRow): SkyWriteup
   const lunationKeyParts = row.content_key.toLowerCase().match(/^authored\/sky-lunation-macro\/(?:new-moon|full-moon)\/([^/]+)$/u);
   const isLunationLike = /(?:^|[./-])lunation(?:[./-]|$)/iu.test(row.content_key)
     || /\b(?:new|full) moon\b|\b(?:solar|lunar) eclipse\b/iu.test(row.headline ?? "");
-  const keyPlanetOnly = row.content_key.toLowerCase().match(/^fallback-hook\/sky-placement\/([a-z_-]+)$/u)?.[1] ?? "";
+  const keyPlanetOnly = row.content_key.toLowerCase().match(/^(?:fallback-hook\/sky-placement|sky-placement\/retrograde)\/([a-z_-]+)$/u)?.[1] ?? "";
   const planet = normalizedToken(
     keyParts?.planet
       || (lunationKeyParts ? "moon" : "")

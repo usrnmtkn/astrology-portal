@@ -94,6 +94,34 @@ jobs:
             playwright-report/
           if-no-files-found: ignore
 
+  sky-placement-studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify Studio publication lifecycle and actual reader hydration
+        run: npm run test:content-studio-api
+      - run: npx playwright install --with-deps chromium
+      - name: Verify placement composition editing and reader refresh stability
+        run: |
+          npx playwright test -c playwright.sky-composition.config.ts
+          npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-placement-retrograde.spec.ts
+      - name: Upload Sky placement artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: sky-placement-studio-results
+          path: test-results/
+          if-no-files-found: ignore
+
   sky-summary:
     runs-on: ubuntu-latest
     timeout-minutes: 15

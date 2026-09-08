@@ -1,3 +1,4 @@
+import SkyPlacementComposition from "./SkyPlacementComposition";
 import { useEffect, useMemo, useState } from "react";
 import type { CompositionMapRow, CompositionMapTemplate } from "./compositionMap";
 import { compositionSourceFamily, compositionSourcesForSurface } from "./compositionSurfaceSources";
@@ -45,6 +46,7 @@ export default function CompositionSurfaceSources({ surfaceId, rows, templates, 
   const record = sections?.packageDraft ?? sections?.packageRecord;
   const copy = [record?.body_you ?? sections?.body_you ?? record?.body ?? record?.text ?? selected?.body, record?.body_they ?? sections?.body_they]
     .filter((value, index, values): value is string => typeof value === "string" && Boolean(value) && values.indexOf(value) === index);
+  if (surfaceId === "sky-placement-detail") return <SkyPlacementComposition rows={rows} onEditRow={onEditRow} onLoadRow={onLoadRow} />;
   return <section className="admin-composition-surface-actions" aria-label="Manage composition sources">
     <header><div><p className="admin-eyebrow">Composition Map</p><h3>Select and manage sources</h3></div><strong>{filtered.length} source{filtered.length === 1 ? "" : "s"}</strong></header>
     {surfaceId === "natal-empty-house" && <div className="admin-natal-placement-selectors" aria-label="Empty house source context">

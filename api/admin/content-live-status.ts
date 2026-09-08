@@ -13,7 +13,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const body = await readAdminJsonBody<{ ids?: string[]; action?: string }>(req);
     if (body.action === "composition-catalog") {
       const rows = [...servingPackageRecords.values()]
-        .filter((record) => /^(?:fallback-hook|fallback-template|fallback-vocab|vocab|slot-template)\//.test(record.contentKey))
+        .filter((record) => /^(?:fallback-hook|fallback-template|fallback-vocab|vocab|slot-template|sky-placement|sky-context|sky-nodes|sky-lilith)\//.test(record.contentKey))
         .map((record) => ({ content_key: record.contentKey, headline: record.headline ?? null, role: record.content_role }));
       return sendAdminJson(res, 200, { ok: true, rows });
     }

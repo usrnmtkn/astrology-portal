@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { contentLiveStatuses, servingPackageRecords } from "../api/_lib/content-live-status";
 const macros = [...servingPackageRecords.values()].filter((row) => row.contentKey.startsWith("authored/sky-lunation-macro/"));
 assert(macros.length > 0, "The installed reader package must contain lunation macros.");
@@ -18,7 +20,7 @@ const parked = { id: "parked", content_key: "sky.planetary.moon.house_10", statu
 assert.equal(contentLiveStatuses([parked])[0].live, false);
 assert.equal(contentLiveStatuses([{ ...parked, content_key: "article/manual/unknown", mode: "article" }])[0].live, false);
 const key = "authored/sky-lunation-macro/new-moon/virgo";
-const out = `/private/tmp/studio-live-materialization-${process.pid}.json`;
+const out = join(tmpdir(), `studio-live-materialization-${process.pid}.json`);
 execFileSync(process.execPath, ["scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs", `--content-key=${key}`, `--out=${out}`], { stdio: "pipe" });
 const materialized = JSON.parse(readFileSync(out, "utf8")).rows.find((row: any) => row.content_key === key);
 assert.equal(materialized.status, "LIVE");
