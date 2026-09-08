@@ -13,20 +13,15 @@ assert.match(page, /generatedContentParagraphs\(/u);
 assert.match(page, /generatedContentSections\(generated\)/u);
 assert.match(app, /generatedContent: savedGeneratedContent/u);
 assert.match(app, /if \(nextContent\.has\(contentKey\)\) \{\s+continue;/u);
-assert.match(
-  app,
-  /const readerAspectRows = aspectRows\.flatMap[\s\S]*?normalizedSurfaceHasReaderDetail\(normalizedTransit\) \|\| hasReaderFacingGeneratedCopy\(savedGeneratedContent\)[\s\S]*?\? \[\{ normalizedTransit, personalizedContentKey, savedGeneratedContent, transit \}\][\s\S]*?: \[\]/u,
-  "The You updates list must omit a transit whose detail has neither approved authored sections nor saved generated copy."
-);
+assert.match(app, /const readerAspectRows = aspectRows\.map/u,
+  "Calculated transit rows remain visible when prose is unavailable.");
+assert.equal((app.match(/const Row = detailAvailable \? "button" : "article"/gu) ?? []).length, 2,
+  "Both aspect and house transit rows without detail are static facts, never empty article links.");
+assert.equal((app.match(/onClick=\{detailAvailable \? openArticle : undefined\}/gu) ?? []).length, 2);
 assert.match(
   app,
   /if \(!detailAvailable\) \{[\s\S]*?<article className="daily-forecast-label daily-forecast-label--static"/u,
   "A behind-the-forecast label without detail copy must be static instead of opening a heading-only article."
-);
-assert.match(
-  app,
-  /if \(!normalizedSurfaceHasReaderDetail\(normalizedHouseTransit\)\) \{\s*return \[\];\s*\}/u,
-  "A house-transit row without reader detail must not open an empty article."
 );
 assert.match(
   app,

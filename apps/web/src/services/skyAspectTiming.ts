@@ -136,11 +136,17 @@ export function skyAspectDateRange(aspect: SkyAspect, start: Date, end: Date) {
     ...(!sameYear ? { year: "numeric" as const } : {}),
     timeZone: safeTimeZone(timeZone)
   }).format(start);
-  const endLabel = new Intl.DateTimeFormat(undefined, {
-    month: sameMonth ? undefined : "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: safeTimeZone(timeZone)
-  }).format(end);
+  // Intl's day + year combination without a month can produce ICU fallback
+  // output such as "2026 (day: 8)". Format complete dates or explicit parts.
+  if (sameLocalDate(start, end, timeZone)) {
+    return new Intl.DateTimeFormat(undefined, {
+      month: "short", day: "numeric", year: "numeric", timeZone: safeTimeZone(timeZone)
+    }).format(start);
+  }
+  const endLabel = sameMonth
+    ? `${endParts.day}, ${endParts.year}`
+    : new Intl.DateTimeFormat(undefined, {
+      month: "short", day: "numeric", year: "numeric", timeZone: safeTimeZone(timeZone)
+    }).format(end);
   return `${startLabel} - ${endLabel}`;
 }

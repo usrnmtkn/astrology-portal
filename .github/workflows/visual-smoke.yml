@@ -150,6 +150,11 @@ jobs:
         run: node scripts/check-admin-bundle-budgets.mjs
       - name: Verify owner sign-in return and storage-timeout recovery
         run: npx playwright test -c playwright.studio-auth.config.ts
+      - name: Verify Friends recovery, transit visibility, and Calendar dates
+        run: |
+          node --experimental-strip-types scripts/test-sky-aspect-date-range.mjs
+          node scripts/test-you-transit-live-content-wiring.mjs
+          npx playwright test -c playwright.reader-recovery.config.ts
       - name: Upload Sky summary artifacts
         if: always()
         uses: actions/upload-artifact@v6
