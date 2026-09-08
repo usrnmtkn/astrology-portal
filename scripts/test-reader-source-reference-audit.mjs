@@ -1,3 +1,4 @@
+import { correctedReaderSummary } from "../apps/web/src/content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -30,9 +31,12 @@ for (const correction of corrections.records.filter(row => row.field !== 'summar
   assert.equal(correctedReaderSource(correction.contentKey, correction.field, 'Newer owner wording.'), 'Newer owner wording.');
   assert.equal(correctedReaderSource('unrelated', correction.field, original), original);
 }
-for (const correction of corrections.records.filter(row => row.field === 'summary')) {
-  const original = read('docs/qa/reader-source-reference-audit-2026-09-08.json').changes.find(row => row.contentKey === correction.contentKey && row.field === 'summary').removed_sentence;
-  assert.equal(correctedReaderSource(correction.contentKey, 'summary', original), '');
+for (const correction of read(base + 'authored-inputs/reader-summary-reference-removals-v1.json').records) {
+  for (const key of correction.content_keys) {
+    assert.equal(correctedReaderSummary(key, correction.previous_text), '');
+    assert.equal(correctedReaderSummary(key, 'Newer owner wording.'), 'Newer owner wording.');
+  }
+  assert.equal(correctedReaderSummary('unrelated', correction.previous_text), correction.previous_text);
 }
 const node = corrections.records.find(row => row.contentKey === 'sky-nodes/education');
 const signs = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];

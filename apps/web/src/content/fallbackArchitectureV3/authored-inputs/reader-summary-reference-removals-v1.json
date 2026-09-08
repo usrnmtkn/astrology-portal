@@ -1,0 +1,58 @@
+{
+  "schema": "tldrastro-reader-summary-reference-removals/v1",
+  "task_id": "01a07f51-c67a-7553-b2fa-46e1c2fff842",
+  "date": "2026-09-08",
+  "records": [
+    {
+      "previous_text": "Owner-authored weekly Moon-sign tone (2025 Weekly Emotional Moon ics, Project Author). Em dashes converted; occurrence boilerplate stripped. Rotate variants by ISO week.",
+      "content_keys": [
+        "authored/calendar-weekly-moon/aquarius",
+        "authored/calendar-weekly-moon/aquarius/variant-2",
+        "authored/calendar-weekly-moon/aquarius/variant-3",
+        "authored/calendar-weekly-moon/aries",
+        "authored/calendar-weekly-moon/aries/variant-2",
+        "authored/calendar-weekly-moon/aries/variant-3",
+        "authored/calendar-weekly-moon/cancer",
+        "authored/calendar-weekly-moon/cancer/variant-2",
+        "authored/calendar-weekly-moon/capricorn",
+        "authored/calendar-weekly-moon/capricorn/variant-2",
+        "authored/calendar-weekly-moon/gemini",
+        "authored/calendar-weekly-moon/gemini/variant-2",
+        "authored/calendar-weekly-moon/gemini/variant-3",
+        "authored/calendar-weekly-moon/gemini/variant-4",
+        "authored/calendar-weekly-moon/leo",
+        "authored/calendar-weekly-moon/leo/variant-2",
+        "authored/calendar-weekly-moon/libra",
+        "authored/calendar-weekly-moon/libra/variant-2",
+        "authored/calendar-weekly-moon/pisces",
+        "authored/calendar-weekly-moon/pisces/variant-2",
+        "authored/calendar-weekly-moon/pisces/variant-3",
+        "authored/calendar-weekly-moon/pisces/variant-4",
+        "authored/calendar-weekly-moon/sagittarius",
+        "authored/calendar-weekly-moon/sagittarius/variant-2",
+        "authored/calendar-weekly-moon/sagittarius/variant-3",
+        "authored/calendar-weekly-moon/sagittarius/variant-4",
+        "authored/calendar-weekly-moon/scorpio",
+        "authored/calendar-weekly-moon/scorpio/variant-2",
+        "authored/calendar-weekly-moon/taurus",
+        "authored/calendar-weekly-moon/taurus/variant-2",
+        "authored/calendar-weekly-moon/taurus/variant-3",
+        "authored/calendar-weekly-moon/taurus/variant-4",
+        "authored/calendar-weekly-moon/virgo",
+        "authored/calendar-weekly-moon/virgo/variant-3",
+        "authored/calendar-weekly-moon/virgo/variant-4"
+      ],
+      "text": ""
+    },
+    {
+      "previous_text": "Owner-approved exact wording. Dates and event facts remain ephemeris-owned.",
+      "content_keys": [
+        "sky.ingress.jupiter.leo",
+        "sky.retrograde.venus.scorpio.retrograde_passage",
+        "sky.station.chiron.taurus.retrograde",
+        "sky.station.mercury.pisces.retrograde"
+      ],
+      "text": ""
+    }
+  ]
+}

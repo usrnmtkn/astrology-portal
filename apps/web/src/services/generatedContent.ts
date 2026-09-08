@@ -1,5 +1,5 @@
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
-import { correctedReaderSource } from "../content/fallbackArchitectureV3/resolver/readerSourceReferenceCorrections.mjs";
+import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
 import { publicationLedgerReady, isContentRetired, installContentPublications, publicationAllowsContent, contentPublication, contentPublicationRecords } from "../content/contentPublicationState";
 import { refreshContentPublications } from "./contentPublications";
 import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey, generatedRowPackageRole } from "../content/generatedContentEligibility";
@@ -606,7 +606,7 @@ function fromRow(
     eventType: row.event_type,
     targetDate: row.target_date,
     headline: row.headline,
-    summary: correctedReaderSource(row.content_key, "summary", row.summary),
+    summary: correctedReaderSummary(row.content_key, row.summary),
     body: row.body,
     sections: row.sections ?? {},
     blockType: row.block_type ?? null,

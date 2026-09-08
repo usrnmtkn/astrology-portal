@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { correctedReaderSource } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerSourceReferenceCorrections.mjs";
+import { correctedReaderSummary } from "../apps/web/src/content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -156,7 +156,7 @@ const candidates = rows.filter(durableRow).filter(isCurrentPublication).sort((a,
 const newest = new Map();
 for (const row of candidates) if (!newest.has(row.content_key)) newest.set(row.content_key, row);
 const snapshotRows = [...newest.values()].map((source) => {
-  const row = { ...source, summary: correctedReaderSource(source.content_key, "summary", source.summary) };
+  const row = { ...source, summary: correctedReaderSummary(source.content_key, source.summary) };
   if (!isRecord(row.sections) || !("calendarReleaseHistory" in row.sections)) return row;
   const { calendarReleaseHistory: _adminRecoveryHistory, ...sections } = row.sections;
   return { ...row, sections };
