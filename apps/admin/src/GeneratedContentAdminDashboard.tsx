@@ -1,4 +1,3 @@
-import SkyPlacementComposition from "./SkyPlacementComposition";
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
 import { SkyDailySummaryStudio } from "./SkyDailySummaryStudio";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
@@ -178,6 +177,7 @@ import "./admin-content-studio-layout.css";
 
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
+const SkyPlacementComposition = lazy(() => import("./SkyPlacementComposition"));
 const AspectPatternDiagnostics = lazy(async () => {
   const module = await import("./AspectPatternDiagnostics");
   return { default: module.AspectPatternDiagnostics };
@@ -6222,7 +6222,9 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </section>
                 {skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
-                  <SkyPlacementComposition rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
+                  <Suspense fallback={<p className="admin-empty" role="status">Loading Composition Map…</p>}>
+                    <SkyPlacementComposition rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
+                  </Suspense>
                 )}
                 {publishedButUnwiredSkyRows.length > 0 && (
                   <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
