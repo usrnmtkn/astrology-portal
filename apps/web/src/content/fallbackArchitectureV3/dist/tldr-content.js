@@ -3102,11 +3102,6 @@ ${passHook}`;
 
 // apps/web/src/content/fallbackArchitectureV3/authored-inputs/reader-source-reference-removals-v1.json
 var reader_source_reference_removals_v1_default = {
-  schema: "tldrastro-reader-source-reference-removals/v1",
-  date: "2026-09-08",
-  task_id: "01a07f51-c67a-7553-b2fa-46e1c2fff842",
-  owner_request: "do a deep audit of the reader facing content, it's using my name Marie  - from Project Author. Find anywhere a sentence is referrencing the author or source material, and flag and remove it.",
-  scope: "Deletion of author/source commentary only; no new interpretation; no new content keys released.",
   records: [
     {
       contentKey: "sky-nodes/education",

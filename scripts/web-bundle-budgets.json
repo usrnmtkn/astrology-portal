@@ -13,14 +13,14 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 115000,
-  "totalJavaScriptGzipBytes": 2925000,
+  "totalJavaScriptGzipBytes": 2927000,
   "_rationale": {
     "totalCssGzipBytes": "Raised narrowly from 113 kB to 115 kB for the production Content Studio editor redesign. The measured aggregate is 114.0 kB gzip; the added stylesheet is admin/editor-only. Reader startup CSS remains separately capped at 47 kB and still measures 46.9 kB, so reader startup weight is unchanged.",
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
     "skyDetailChunkGzipBytes": "Raised from 5.2 kB to 5.4 kB during the 2026-09-07 daily Sky release. A clean build of current main (39a6a47b) already measures 5.3 kB; the feature measures 5.2 kB. This remains a deferred article chunk, outside reader boot.",
     "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
     "transitFallbackChunkGzipBytes": "Owner-authorized increase from 330 kB to 390 kB for the 351 exact, hash-bound Friends transit body_they passages. The transit corpus remains on-demand and outside the static App boot graph; all startup and route-local budgets remain unchanged.",
-    "totalJavaScriptGzipBytes": "Raised from 2,920,000 to 2,925,000 bytes for the requested Sky placement Composition Map and versioned publication adapter. The 2026-09-07 feature build measures 2,920,155 bytes gzip across all routes (155 bytes over the previous aggregate cap). Reader startup, App, CSS, and individual deferred-chunk limits remain unchanged; no content corpus was added.",
+    "totalJavaScriptGzipBytes": "Raised narrowly from 2,925,000 to 2,927,000 bytes for the owner-authorized reader source-reference removal release. On rebased main 73d95f14, the measured complete build is 2,925,815 bytes gzip across all routes: 815 bytes over the old aggregate limit. Exact source-version corrections preserve immutable import history. App (177.5 kB), reader boot (456.0 kB), CSS and every individual deferred-chunk limit remain unchanged. Commit/merge/live release authorized in task 01a07f51-c67a-7553-b2fa-46e1c2fff842 on 2026-09-08.",
     "authorization": "Owner authorized the 60 South Node Calendar serving release, Content Studio editing, production launch, and the peer South Node Sky Placement subtitle on 2026-09-06."
   }
 }

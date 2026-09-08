@@ -41,3 +41,7 @@ The browser screenshot is `test-results/reader-source-reference-north-node.png`.
 ## Release status
 
 The owner authorized commit, merge, push, and production release in this task on September 8, 2026: “please proceed with merge, commit nad push live”. Release verification will be recorded in the task after the main-branch deployment. No remote database mutation is included. Local corrections protect the identified node article and exact old summary values after deployment. This audit covers checked-in content and the checked-in published snapshot; it is not a claim that every current private/live CMS row was inspected. Production verification and any remote synchronization remain a release step.
+
+## Release bundle validation
+
+After rebasing onto `73d95f14`, the CI-shaped web build measures 2,925,815 bytes gzip across all routes. The aggregate cap receives a 2,000-byte allowance (2,925,000 → 2,927,000) for the exact source-version cleanup, retaining every startup and per-chunk cap. The initial App chunk is 177.5 kB and reader boot is 456.0 kB, below their existing limits. Summary corrections use a separate lightweight import so full article records and hashing do not enter reader startup. Audit-only metadata remains in this ledger. The generated production request comparison was regenerated after the knowledge-index update; no live writer calls or approval-state changes occurred.
