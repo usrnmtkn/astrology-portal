@@ -6,6 +6,17 @@ This document protects the reader-facing contract for the aspect section on
 the Sky page. Read it before changing aspect content selection, hydration,
 visibility, grouping, card interaction, or fallback behavior.
 
+## Owner layout update: September 8, 2026
+
+The owner requested removal of standalone aspect cards from the main Sky view.
+The exact-aspects sentence remains in the daily summary. Calculated aspect cards
+now live inside their relevant planet-in-sign articles, preserving Gifts/Lessons
+grouping, clickable detail links, approved-copy precedence, and facts-only cards
+when no approved interpretation exists. These cards also show the calculated
+window, building/separating timing, pass count, and historical comparison when
+available. This explicit layout approval supersedes the main-page visibility
+requirements below; content eligibility is unchanged.
+
 ## Product contract
 
 The Sky aspect section is an editorial reading surface, not a calculation

@@ -78,9 +78,9 @@ export function SkyTodayView({
           {placements}
         </DeferredRender>
       </SkyPlacementSection>
-      <DeferredRender fallback={<div className="deferred-render-placeholder deferred-render-placeholder--aspects" aria-hidden="true" />}>
+      {aspects ? <DeferredRender fallback={<div className="deferred-render-placeholder deferred-render-placeholder--aspects" aria-hidden="true" />}>
         {aspects}
-      </DeferredRender>
+      </DeferredRender> : null}
     </>
   );
 }
