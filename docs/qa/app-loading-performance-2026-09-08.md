@@ -36,6 +36,7 @@ Authenticated Friends fixtures passed repeated cold/warm, direct-link, mobile, i
 
 - The canonical resolver exposes a factory-owned immutable reading snapshot. New tests compare Node, bundled browser source, and shipped distribution across six routes, mutation attempts, and draft/release boundaries.
 - Generated package version is `v3-2026-09-08c`. The distribution, package manifests/projections/lineage, lunation partitions, knowledge index, and pinned cache tests were regenerated or updated.
+- Release CI also detected a stale deterministic production Sky comparison. The existing workflow regenerated its packet/index hashes in `d1663def`; an independent local regeneration matched byte-for-byte. No evidence prose, approval, or serving state changed. The comparison freshness check then passed locally.
 - Approved authored inputs and knowledge source prose have no changes in this performance diff. Existing protected-content and hook packaging checks pass; 3,296 packaged hook bodies remain byte-identical.
 - The app consumer caches by exact publication revision and retirement state. Invalid revision retries, installed publication refresh, and the mounted reader are covered independently from the factory tests.
 - Actual browser Swiss Ephemeris calculations match the full reference package for two fixed dates. Saturn retrograde date/scroll stability and aspect/horoscope ordering pass through background refreshes.
