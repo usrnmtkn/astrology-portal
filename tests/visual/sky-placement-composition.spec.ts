@@ -1,11 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { skyPlacementSourceRecords, skyPlacementSourceCorpus } from "../../api/_lib/sky-placement-sources";
-import { contentLiveStatuses } from "../../api/_lib/content-live-status";
+import { contentLiveStatuses, servingPackageRecords } from "../../api/_lib/content-live-status";
 import { skyPlacementAssembly, skyPlacementAssemblyFields } from "../../apps/admin/src/skyPlacementAssembly";
 import { skyFallbackWorkspace } from "../../apps/admin/src/skyFallbackWorkspace";
 import { renderSkyV4ReaderRoute, renderSkyV4ContinuousPreview } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 const virtual = (key: string) => {
- const source = skyPlacementSourceRecords.get(key);
+ const source = skyPlacementSourceRecords.get(key) ?? servingPackageRecords.get(key);
  return source ? { id: `package:${key}`, content_key: key, surface: "sky", mode: "in_depth", status: "DRAFT", lane: "reference", provider: "tldrastro-fallback-architecture-v3", headline: source.headline, summary: source.summary, body: source.body_you, sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: "fallback_hook", event_type: "fallback-hook", package_starter: true } : null;
 };
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
@@ -21,7 +21,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     data.statuses = contentLiveStatuses((input.ids ?? []).map((id: string) => virtual(id.replace(/^package:/, ""))).filter(Boolean));
    }
    if (url.pathname.endsWith("/generated-content")) {
-    data.rows = (url.searchParams.get("contentKeys") ?? "").split(",").map(virtual).filter(Boolean);
+    data.rows = (url.searchParams.get("contentKeys") ?? "authored/transit-aspect/saturn/ascendant/hard,authored/transit-aspect/saturn/ascendant/soft").split(",").map(virtual).filter(Boolean);
    }
    await route.fulfill({ json: data });
   });
@@ -56,6 +56,55 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await map.screenshot({ path: `test-results/saturn-fallback-${width}-${theme}.png` });
   await opening.click();
   await expect(page.getByRole("textbox", { name: "Fallback field Fallback opening", exact: true })).toBeFocused();
+  const sourceEditor = page.getByRole("dialog");
+  await expect(sourceEditor.getByLabel("Placement writing context")).toContainText("Saturn Rx in Aries");
+  await expect(sourceEditor.getByLabel("Writing section", { exact: true })).toHaveValue("fallback.hook");
+  await expect(sourceEditor.locator("details.admin-sky-related-editor")).not.toHaveAttribute("open");
+  await expect(sourceEditor.locator(".admin-sky-writing-editor textarea")).toHaveCount(1);
+  await sourceEditor.getByLabel("Writing section", { exact: true }).selectOption("fallback.lived");
+  await expect(sourceEditor.getByRole("textbox", { name: "Fallback field Fallback: how it shows up", exact: true })).toHaveValue(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.fallback.lived);
+  await sourceEditor.getByRole("button", { name: "Edit retrograde writing", exact: true }).click();
+  const retrogradeBody = sourceEditor.getByRole("textbox", { name: "Fallback field Retrograde body", exact: true });
+  await expect(retrogradeBody).toHaveValue(skyPlacementSourceRecords.get("sky-placement/retrograde/saturn")!.Body);
+  await expect(retrogradeBody).toBeFocused();
+  await expect(sourceEditor.getByLabel("Placement writing context")).toContainText("Saturn Rx in Aries");
+  await expect(sourceEditor.getByLabel("Writing section", { exact: true })).toHaveValue("Body");
+  await expect(sourceEditor.getByRole("heading", { level: 2 })).toHaveText(`Edit ${skyPlacementSourceRecords.get("sky-placement/retrograde/saturn")!.headline}`);
+  const proseStyles = (el: Element) => { const style = getComputedStyle(el); return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing]; };
+  expect(await retrogradeBody.evaluate(proseStyles)).toEqual(await map.locator(".admin-template-reader-copy .admin-composition-preview-field p").first().evaluate(proseStyles));
+  await page.screenshot({ path: `test-results/saturn-rx-writing-${width}-${theme}.png` });
+  await retrogradeBody.fill("Unsaved retrograde revision.");
+  await sourceEditor.getByLabel("Writing section", { exact: true }).selectOption("CanonicalShort");
+  await expect(sourceEditor.getByRole("textbox", { name: "Fallback field Short retrograde copy", exact: true })).toHaveValue(skyPlacementSourceRecords.get("sky-placement/retrograde/saturn")!.CanonicalShort);
+  await sourceEditor.getByLabel("Writing section", { exact: true }).selectOption("Body");
+  await expect(retrogradeBody).toHaveValue("Unsaved retrograde revision.");
+  page.once("dialog", dialog => dialog.dismiss());
+  await sourceEditor.getByRole("button", { name: "Edit shared placement writing", exact: true }).click();
+  await expect(retrogradeBody).toHaveValue("Unsaved retrograde revision.");
+  page.once("dialog", dialog => dialog.accept());
+  await sourceEditor.getByRole("button", { name: "Edit shared placement writing", exact: true }).click();
+  await expect(sourceEditor.getByRole("textbox", { name: "Fallback field Placement article", exact: true })).toHaveValue(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.placementArticle);
+  const related = sourceEditor.locator("details.admin-sky-related-editor");
+  await related.locator(":scope > summary").click();
+  await expect(related).toHaveAttribute("open");
+  await related.locator(".admin-sky-related-group > summary").first().click();
+  await expect(related.getByLabel("Find an aspect passage", { exact: true })).toBeVisible();
+  await expect(related.locator(".admin-sky-related-row")).toHaveCount(2);
+  await expect(related.locator(".admin-sky-related-row").first()).toContainText(servingPackageRecords.get("authored/transit-aspect/saturn/ascendant/hard")!.body_you);
+  await related.locator(".admin-sky-related-row").first().scrollIntoViewIfNeeded();
+  expect(await related.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+  await page.screenshot({ path: `test-results/saturn-related-form-${width}-${theme}.png` });
+  const articleField = sourceEditor.getByRole("textbox", { name: "Fallback field Placement article", exact: true });
+  await articleField.fill("Keep my article edits while reviewing related passages.");
+  for (const action of ["Edit reusable source", "Edit house-aware reader override"]) {
+   page.once("dialog", dialog => dialog.dismiss());
+   await related.getByRole("button", { name: action, exact: true }).first().click();
+   await expect(articleField).toHaveValue("Keep my article edits while reviewing related passages.");
+  }
+  await articleField.fill(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.placementArticle);
+  await related.getByLabel("Find an aspect passage", { exact: true }).fill("no matching passage");
+  await expect(related.getByText("No aspect passages match this search.", { exact: true })).toBeVisible();
+  page.once("dialog", dialog => dialog.accept());
   await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
   await map.getByLabel("Placement writing path").selectOption("article");
   await map.screenshot({ path: `test-results/saturn-map-${width}-${theme}.png` });
@@ -157,4 +206,51 @@ test("placement assembly preserves canonical article and fallback order, saved e
  expect(fields.find(field => field.path === "fallback.lived")?.value).toBe("");
  expect(skyFallbackWorkspace(revised.content_key, revised.sections)?.fields.find(field => field.key === "fallback.turn")?.value).toBe(row.sections.packageRecord.fallback.turn);
  expect(skyFallbackWorkspace(revised.content_key, revised.sections)?.fields.some(field => field.key === "fallback.lived")).toBe(true);
+});
+
+test("retrograde editor saves two revisions to its own source and preserves the short copy", async ({ page }) => {
+ const key = "sky-placement/retrograde/saturn";
+ let saved: any = null;
+ const writes: any[] = [];
+ await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "sky-editor-save-test"));
+ await page.route("**/api/admin/**", async route => {
+  const url = new URL(route.request().url());
+  let data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
+  if (url.pathname.endsWith("/generated-content")) {
+   if (route.request().method() === "GET") data.rows = (url.searchParams.get("contentKeys") ?? "").split(",").map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
+   else {
+    const input = route.request().postDataJSON(); writes.push(input);
+    if (input.ownerAction) {
+     expect(input.id).toBe("saved-saturn-retrograde");
+     saved = { ...saved, status: "LIVE", lane: "serving", sections: { packageRecord: saved.sections.packageDraft }, updated_at: `2026-09-08T06:00:0${writes.length}Z` };
+    } else {
+     expect(input.contentKey ?? saved?.content_key).toBe(key);
+     saved = { ...virtual(key), id: "saved-saturn-retrograde", package_starter: false, sections: input.sections, updated_at: `2026-09-08T06:00:0${writes.length}Z` };
+    }
+    data.rows = [saved];
+   }
+  }
+  await route.fulfill({ json: data });
+ });
+ await page.goto("/#sky-writeups");
+ await page.getByLabel("Sky placement planet or point").selectOption("saturn");
+ await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+ await page.getByLabel("Sky write-up motion").selectOption("retrograde");
+ await page.getByRole("button", { name: "Edit placement article", exact: true }).click();
+ const editor = page.getByRole("dialog");
+ await editor.getByRole("button", { name: "Edit retrograde writing", exact: true }).click();
+ const body = editor.getByRole("textbox", { name: "Fallback field Retrograde body", exact: true });
+ for (const revision of ["First saved test revision.", "Second saved test revision."]) {
+  await body.fill(revision);
+  await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await expect.poll(() => saved?.sections.packageRecord.Body).toBe(revision);
+  await expect(body).toHaveValue(revision);
+  expect(saved.sections.packageRecord.CanonicalShort).toBe(skyPlacementSourceRecords.get(key)!.CanonicalShort);
+  await expect(editor.getByLabel("Placement writing context")).toContainText("Saturn Rx in Aries");
+ }
+ expect(writes.filter(write => write.ownerAction)).toHaveLength(2);
+ await editor.getByRole("button", { name: "Edit shared placement writing", exact: true }).click();
+ await expect(editor.getByRole("textbox", { name: "Fallback field Placement article", exact: true })).toHaveValue(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.placementArticle);
+ await editor.getByRole("button", { name: "Edit retrograde writing", exact: true }).click();
+ await expect(body).toHaveValue("Second saved test revision.");
 });
