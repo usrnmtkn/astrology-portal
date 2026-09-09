@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import "../../web/src/styles/pill.css";
 import { GeneratedContentAdminDashboard } from "./GeneratedContentAdminDashboard";
 import { setupAdminReaderLinkTargets } from "./adminReaderLinks";
+import { PageLoadBoundary } from "../../web/src/components/PageLoading";
 
 const ContentCoverageDashboard = lazy(() => import("./ContentCoverageDashboard"));
 
@@ -11,6 +12,7 @@ const root = document.getElementById("root")!;
 
 createRoot(root).render(
   <React.StrictMode>
+    <PageLoadBoundary recoveryHref={isCoverageRoute ? "/admin/content#review-queue" : "#review-queue"} recoveryLabel="Open Review Queue">
     {isCoverageRoute ? (
       <Suspense fallback={<div className="app-loading" role="status" aria-busy="true">Loading content coverage…</div>}>
         <ContentCoverageDashboard />
@@ -18,6 +20,7 @@ createRoot(root).render(
     ) : (
       <GeneratedContentAdminDashboard />
     )}
+    </PageLoadBoundary>
   </React.StrictMode>
 );
 

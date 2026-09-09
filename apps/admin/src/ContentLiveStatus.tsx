@@ -5,6 +5,16 @@ export type LiveStatus = { id: string; live: boolean; label: "Live" | "Not live"
 type StatusRow = { id?: string | null; updated_at?: string | null };
 type Load = (row: StatusRow) => Promise<LiveStatus>;
 const Context = createContext<Load | null>(null);
+function validLiveStatus(value: unknown): value is LiveStatus {
+  if (!value || typeof value !== "object") return false;
+  const status = value as Record<string, unknown>;
+  return typeof status.id === "string"
+    && typeof status.live === "boolean"
+    && status.label === (status.live ? "Live" : "Not live")
+    && typeof status.detail === "string"
+    && (status.updatedAt === null || typeof status.updatedAt === "string")
+    && (status.source === null || typeof status.source === "string");
+}
 export function useContentLiveStatusLoader(request: (ids: string[]) => Promise<LiveStatus[]>, identity: string) {
   const requestRef = useRef(request);
   requestRef.current = request;
@@ -27,7 +37,7 @@ export function useContentLiveStatusLoader(request: (ids: string[]) => Promise<L
             try {
               const statuses = await requestRef.current([...new Set(group.map((item) => item.id))]);
               for (const item of group) {
-                const status = statuses.find((value) => value.id === item.id);
+                const status = statuses.find((value) => validLiveStatus(value) && value.id === item.id);
                 if (status) item.resolve(status); else item.reject(new Error("Status could not be verified."));
               }
             } catch (error) { group.forEach((item) => item.reject(error)); }

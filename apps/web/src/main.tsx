@@ -91,7 +91,7 @@ async function startApp() {
     const Dashboard = dashboard;
     createRoot(document.getElementById("root")!).render(
       <React.StrictMode>
-        <PageLoadBoundary><React.Suspense fallback={<PageLoading message="Loading Content Studio…" />}>
+        <PageLoadBoundary recoveryHref="/admin/content#review-queue" recoveryLabel="Open Review Queue"><React.Suspense fallback={<PageLoading message="Loading Content Studio…" />}>
           <Dashboard />
         </React.Suspense></PageLoadBoundary>
       </React.StrictMode>
