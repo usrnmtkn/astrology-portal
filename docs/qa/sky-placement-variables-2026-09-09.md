@@ -76,86 +76,64 @@ aggregate JavaScript gzip. Its aggregate allowance increases from 2,938,000 to
 2,942,000 bytes. Reader boot (462.2 kB), startup CSS (47.4 kB), and all individual
 chunk limits remain within their existing caps.
 
-## Initial run and release status
+## Release verification
 
-The implementation is committed locally on `codex/sky-placement-variable-editor`,
-based on main `01544a34a117065e43f29cebb71c373269e1e481`. It has not been
-pushed, merged, or verified on production. No PR has been created for this branch.
+PR #716 publishes the Sky variable changes from `codex/sky-placement-variable-editor`
+on main `7c10524316bd9754a3d30da599a66d78b5dbab41` (PR #714). The owner
+approved publication to `usrnmtkn/astrology-portal` on September 9. PRs #666,
+#669, and #712 were already merged. No production CMS rows are modified.
 
-Passed: Admin/Web typechecks; the new resolver source/browser/shipped parity
-tests; the real Studio API save/publish/readback regression; evergreen section
-regressions; fresh Admin and Web builds; both bundle-budget checks; CSS token
-audit; regenerated knowledge-index and phrase-index checks. The rebuilt product
-route test, `canonical evergreen placement renders the Studio hooks 1440 light`,
-also passed, including the Saturn retrograde window and article/fallback paths.
+Local checks passed: Admin/Web typechecks; resolver source/browser/shipped
+parity; the full Content Studio API suite; evergreen section regressions;
+fresh Admin/Web builds; bundle budgets; CSS audit; generated manifest and
+knowledge/phrase-index checks; and the rebuilt Saturn reader route with the
+retrograde window and article/fallback paths.
 
-The initial 15-test Studio browser run finished with five passing tests:
-390 px dark source discovery, inventory-loading editor preservation, canonical
-assembly order, two retrograde revisions, and 1440 px dark variable insertion.
-The remaining ten tests timed out on the overloaded local host, including the
-second evergreen save checks. They remain unverified; passing unit/API checks
-do not substitute for that browser coverage. The captured 1440 px dark template
-and variable-key screenshots were visually inspected. A rerun with longer
-timeouts and the native ARM Node runtime could not start its fresh preview
-listener in the sandbox (`EPERM`); the request for local-server access did not
-complete. Assertions and repository test limits were not relaxed.
+All 15 Studio browser scenarios have successful local results across 390/1440
+pixels and light/dark themes. Twelve passed in the full rerun, then three
+interrupted cases passed separately. Trace evidence identified a network-change
+chunk failure, browser-context startup timeout, and mocked API read timeout.
+The local host had load averages above 700. A temporary configuration allowed
+240 seconds per test; repository limits and assertions were unchanged. GitHub's
+clean runner subsequently passed the complete Sky placement Studio job using
+the repository configuration, including publication, variable editing,
+retrograde refresh, and Studio crash recovery.
 
-The full content lifecycle is incomplete. Its earlier engine/governance
-prechecks passed; stale generated-index hashes were corrected and checked.
-The resumed prechecks passed friend/calendar routing and report generation,
-assembly, coverage, and runtime-asset checks. The production-report smoke test
-then hit the sandbox's local-listener restriction, before the main content and
-posttest commands ran. A native Node runtime resolved the initial Rosetta/esbuild
-platform mismatch; the tsx loader avoided the CLI's blocked IPC socket.
+The broad content lifecycle is not reported as green. Its resumed report
+fulfillment, judge, and calibration prechecks passed, as did the 878 published
+detail identity checks. The historical Friends owner-signoff test was run
+separately and reproduced the documented main failure at
+`scripts/test-friends-owner-signoff-ruling.mjs:161`: actual hash
+`84bcb9343e221991b2efe9f363d75aeaf926212319896c82a7c8878484acf4ee`, expected
+`9ae494a7998e4441a03799c477e8e0819028e0822908a7a3ca4aeafb1e1415f5`.
+The script, transit-synastry source rows, and every approval input it reads are
+unchanged from main. After reproducing it directly, the long-running broad
+local attempt was stopped; its unrun remainder is not counted as passing.
+This is the same baseline failure recorded in
+`docs/qa/natal-placement-inventory-audit-2026-09-08.md`. No approval hash or
+assertion was changed.
 
-Release remains gated on completing those checks and restoring GitHub access.
-Git push failed because the CLI's stored login is invalid. The connected GitHub
-blob upload did not return, and a subsequent read did not find the expected
-blob. No remote commit or branch was created. After reconnecting, refresh main,
-review the source diff, complete checks, push the local branch, and use the PR
-and Vercel Git deployment flow. At that point, the separate PR #714 was not included.
+The first PR CI run passed grammar and knowledge-index freshness but caught a
+stale production Sky request-comparison artifact. Regeneration from the
+current knowledge index changed only fingerprint fields. All other values,
+including serving and approval state, stayed identical; no provider calls were
+made. The corrected artifact is committed for CI to verify before merge.
 
-## Release continuation
+The first complete Visual smoke workflow passed all three jobs: generic app
+and client flows, Friends loading matrix, Sky summary/auth/recovery, and Sky
+placement Studio/reader/crash recovery. The generated-artifact correction does
+not change the product bundle. CI must pass again on the final commit.
 
-PR #714 was merged as `7c10524316bd9754a3d30da599a66d78b5dbab41`, and
-Vercel reported a successful deployment for that main commit. The Sky variable
-branch was rebased cleanly onto it. PRs #666, #669, and #712 were already merged.
+## Production verification boundary
 
-All 15 Studio browser scenarios now have successful results. The fresh-listener
-run with native ARM Node and a 240-second per-test limit passed 12 scenarios;
-the three interrupted cases then passed in a targeted rerun. Trace evidence
-identified `ERR_NETWORK_CHANGED` while importing a Studio chunk in one case;
-another timed out creating its browser context; the last encountered a timed-out
-mock API read during the second evergreen save. The targeted rerun passed both
-desktop evergreen save/reopen cases and mobile-light variable insertion. No
-assertions were removed or weakened. Repository test limits remain unchanged;
-the longer local limit is recorded in the temporary run configuration only.
-
-The full `npm run test:content-studio-api` suite passed on the rebased branch,
-including its prerequisite knowledge build, both the Sky variable publication
-checks and PR #714's malformed-response/deadline/index-parity checks, repeated
-saves, immutable version protection, copy recovery, status parity, editor
-hydration, and exact owner-copy preservation.
-
-GitHub CLI authentication has been renewed successfully. The Sky variable
-branch is still local: automatic approval review rejected uploading the new
-`apps/admin/src/SkyPlacementVariableKey.tsx` source file to
-`usrnmtkn/astrology-portal` without destination-specific disclosure approval.
-The exact 35-file release scope has been submitted to the owner for approval.
-No alternate upload route was used. The Vercel connector still returns no
-accessible teams and denies the `usrnmtkns-projects` scope; the main deployment
-status above was read through GitHub's Vercel status integration.
-
-The live main deployment passed a read-only browser check with no API mocks:
+Main after PR #714 passed a read-only browser check with no API mocks:
 Saturn's exact copy and retrograde duration were visible, and the duration kept
 the same vertical position through 30 one-second samples at 1440 px. The 390 px
 Saturn layout and Studio sign-in screen were visually inspected. Studio's owner
 sign-in link retained the encoded return path to Sky Write-ups. No page errors
-were recorded. Authenticated production inventory is not yet verified; the
-public Studio sign-in screen cannot establish that coverage.
+were recorded. Authenticated production inventory was not verified; the public
+Studio sign-in screen cannot establish that coverage.
 
-The remaining content lifecycle is still running. The previously blocked local
-production-report smoke check passed after listener access was available. The
-resume harness initially lacked the npm executable path; adding the repository
-`node_modules/.bin` path allowed the remaining report checks to begin. This is
-not yet a full content-lifecycle pass.
+The Sky variable feature still requires its own successful main deployment and
+post-deployment reader check. Deployment status is available through GitHub's
+Vercel integration; direct Vercel connector access is unavailable.
