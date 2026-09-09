@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { usePageTransition } from "../apps/web/src/hooks/usePageTransition.ts";
+import { usePageTransition, readAnimationPreference } from "../apps/web/src/hooks/usePageTransition.ts";
 
 function setup({ reduced = false, supported = true, motion = "system" } = {}) {
   const snapshots = [];
@@ -92,6 +92,13 @@ for (const reduced of [true, false]) {
     assert.equal(updated, true);
   }
 }
+
+for (const [saved, expected] of [[null, "on"], ["invalid", "on"], ["system", "system"], ["off", "off"], ["on", "on"]]) {
+  globalThis.window = { localStorage: { getItem: () => saved } };
+  assert.equal(readAnimationPreference(), expected, `saved preference: ${saved}`);
+}
+globalThis.window = { localStorage: { getItem: () => { throw new Error("Storage unavailable"); } } };
+assert.equal(readAnimationPreference(), "on");
 
 delete globalThis.window;
 delete globalThis.document;
