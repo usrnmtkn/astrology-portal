@@ -34,6 +34,9 @@ try {
   const passage = resolve({ ...event, phase: "retrograde-passage" });
   assert.ok(passage.sections.every(section => !section.sourceKeys.includes("sky-lilith/station")),
     "A retrograde passage is not a calculated station.");
+  const legacyPassage = resolve({ ...event, title: "Lilith retrograde in Capricorn" });
+  assert.ok(legacyPassage.sections.every(section => !section.sourceKeys.includes("sky-lilith/station")),
+    "An older ongoing event without a phase field must not borrow station writing.");
   runtime.installContentPublications([{ content_key: "sky-lilith/station", state: "retired", revision: 1,
     row_id: null, row_updated_at: null, updated_at: "2026-09-09T00:00:00Z" }]);
   assert.deepEqual(resolve().sections, [], "Retirement must not expose another fallback.");

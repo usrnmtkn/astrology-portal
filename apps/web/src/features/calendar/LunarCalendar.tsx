@@ -1078,7 +1078,7 @@ function calendarIngressPackageDescription(event: LunarCalendarEvent, dateLine: 
 
 function isLilithStationEvent(event: LunarCalendarEvent) {
   return event.type === "station" && slugContentPart(event.planet ?? "") === "lilith"
-    && event.phase !== "retrograde-passage";
+    && event.phase !== "retrograde-passage" && !isActiveRetrogradeEvent(event);
 }
 
 function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "Today") {
