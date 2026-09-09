@@ -33,6 +33,53 @@ async function openStudioPage(page: Page, name: string) {
   await page.getByRole("button", { name, exact: true }).click();
 }
 
+test("invalid secondary responses do not block saved Studio content", async ({ page }) => {
+  await mockStudio(page);
+  await page.route(/\/api\/admin\/(review-records|user-generated-content|content-review-events)\?/, route => route.fulfill({ json: null }));
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto(`${studioPath}#sky-writeups`);
+  await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first()).toBeVisible();
+  await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+  await expect(page.getByRole("heading", { name: "The dashboard could not load saved CMS rows" })).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test("invalid inventory pages retry automatically before completing", async ({ page }) => {
+  await mockStudio(page);
+  let attempts = 0;
+  await page.route("**/api/admin/generated-content?**", async route => {
+    const url = new URL(route.request().url());
+    if (url.searchParams.get("view") === "inventory" && !url.searchParams.has("cursor") && ++attempts <= 2) {
+      await route.fulfill({ json: attempts === 1 ? null : { rows: null } });
+    } else await route.fallback();
+  });
+  await page.goto(`${studioPath}#review-queue`);
+  await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+  expect(attempts).toBe(3);
+  await openStudioPage(page, "Sky Write-ups");
+  await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first()).toBeVisible();
+});
+
+test("persistent invalid inventory stops retrying and can recover manually", async ({ page }) => {
+  await mockStudio(page);
+  let invalid = true;
+  let attempts = 0;
+  await page.route("**/api/admin/generated-content?**", async route => {
+    if (invalid && new URL(route.request().url()).searchParams.get("view") === "inventory") {
+      attempts += 1;
+      await route.fulfill({ json: null });
+    } else await route.fallback();
+  });
+  await page.goto(`${studioPath}#review-queue`);
+  await expect(page.getByRole("heading", { name: "The dashboard could not load saved CMS rows" })).toBeVisible();
+  await expect(page.getByText(/Expected a JSON object\. The response was empty or invalid/).first()).toBeVisible();
+  expect(attempts).toBe(3);
+  invalid = false;
+  await page.getByRole("button", { name: "Retry", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+});
+
 test("Sky Write-ups navigation remains usable with a malformed status response", async ({ page }) => {
   await mockStudio(page, true);
   const errors: string[] = [];

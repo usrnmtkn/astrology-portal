@@ -2517,6 +2517,12 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
     });
   }
 
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    throw new AdminRequestError("Invalid response schema.", {
+      status: response.status, path, method,
+      details: "Expected a JSON object. The response was empty or invalid."
+    });
+  }
   return payload as T;
 }
 
@@ -2524,14 +2530,16 @@ const generatedContentPageRetryDelaysMs = [350, 1_000];
 
 function isRetryableAdminReadError(error: unknown) {
   if (!(error instanceof AdminRequestError)) return true;
-  return error.status === 408 || error.status === 429 || error.status >= 500;
+  return error.status === 200 || error.status === 408 || error.status === 429 || error.status >= 500;
 }
 
 async function loadGeneratedContentPage(path: string, secret: string, signal?: AbortSignal) {
   for (let attempt = 0; ; attempt += 1) {
     if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
     try {
-      return await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; nextCursor?: string | null }>(path, secret, { signal });
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; nextCursor?: string | null }>(path, secret, { signal });
+      assertRowsPayload(payload, path);
+      return payload;
     } catch (error) {
       if (signal?.aborted) throw signal.reason ?? error;
       const retryDelay = generatedContentPageRetryDelaysMs[attempt];
