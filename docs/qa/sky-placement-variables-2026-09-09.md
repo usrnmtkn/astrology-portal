@@ -69,3 +69,9 @@ the aggregate allowance increases from 309,500 to 312,000 bytes (2.5 kB) for
 the new reference and raw/resolved template comparison. The bundle check also
 rejects this reference anywhere in the initial static import graph, including
 shared chunks, so this allowance cannot move it into startup.
+
+The complete website build includes these Admin assets and the reader variable
+contract. With synthetic CI service configuration it measures 2,940,574 bytes
+aggregate JavaScript gzip. Its aggregate allowance increases from 2,938,000 to
+2,942,000 bytes. Reader boot (462.2 kB), startup CSS (47.4 kB), and all individual
+chunk limits remain within their existing caps.

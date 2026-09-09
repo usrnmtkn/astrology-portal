@@ -13,8 +13,9 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 115000,
-  "totalJavaScriptGzipBytes": 2938000,
+  "totalJavaScriptGzipBytes": 2942000,
   "_rationale": {
+    "skyPlacementVariables": "The shared Sky variable contract and deferred Studio variable key/template comparison measure 2,940,574 aggregate JavaScript gzip bytes in the fresh CI-environment build. Allow 4,000 aggregate bytes for this feature. Reader boot, startup CSS, and every individual chunk limit are unchanged. See docs/qa/sky-placement-variables-2026-09-09.md.",
     "totalCssGzipBytes": "Raised narrowly from 113 kB to 115 kB for the production Content Studio editor redesign. The measured aggregate is 114.0 kB gzip; the added stylesheet is admin/editor-only. Reader startup CSS remains separately capped at 47 kB and still measures 46.9 kB, so reader startup weight is unchanged.",
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
     "skyDetailChunkGzipBytes": "Raised from 5.2 kB to 5.4 kB during the 2026-09-07 daily Sky release. A clean build of current main (39a6a47b) already measures 5.3 kB; the feature measures 5.2 kB. This remains a deferred article chunk, outside reader boot.",
