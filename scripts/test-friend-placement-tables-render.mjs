@@ -397,6 +397,22 @@ try {
   assert.match(populatedTransitsHtml, /Where it lands/);
   assert.match(populatedTransitsHtml, /Mars trine Moon/);
   assert.match(populatedTransitsHtml, /Emotional momentum is easier to use/);
+  assert.match(populatedTransitsHtml, /Aug 1–3/, "Verified date ranges remain visible beside durations.");
+  const durationOnlyHtml = renderToStaticMarkup(React.createElement(FriendTransitsFixture, {
+    personalTransitGroups: [{ key: "long", label: "Long-term themes", transits: [{
+      id: "stationary-transit", title: "Uranus trine Mars", durationLabel: "3Y3M",
+      rangeLabel: "3Y3M", timingLabel: "3Y3M", summary: "Saved interpretation.",
+      orb: "1°", detailAvailable: true,
+      evidence: { transitPlanet: "Uranus", aspect: "trine", natalPoint: "Mars",
+        natalSign: "Aries", timingBonuses: [], contentKeys: ["transit-natal-uranus-trine-mars"] }
+    }] }],
+    houseTransits: [], patternItems: [], bondTransits: [],
+    onOpenPersonalTransit() {}
+  }));
+  const visibleTiming = durationOnlyHtml.match(/updates-aspect-row__meta-line[^>]*>(.*?)<\/span><p/s)?.[1];
+  assert.ok(visibleTiming, "Stationary timing is rendered.");
+  assert.doesNotMatch(visibleTiming, /<span>3Y3M<\/span>/,
+    "A duration-only estimate must not be repeated as a date range.");
   assert.doesNotMatch(populatedTransitsHtml, /Read what this means/);
   assert.doesNotMatch(populatedTransitsHtml, /friend-transit-focus-card/);
   assert.doesNotMatch(populatedTransitsHtml, /Today for Alex/);

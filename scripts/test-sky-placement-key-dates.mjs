@@ -101,6 +101,18 @@ try {
     residencyPasses: facts.residencyPasses,
     residencyStations: facts.residencyStations
   });
+
+  for (const referenceDate of ["2026-09-08T12:00:00Z", "2026-11-27T12:00:00Z"]) {
+    const facts = await ephemeris.getSkyPlacementTransitFacts({
+      planet: "venus", sign: "libra", referenceDate: new Date(referenceDate), timeZone: "UTC"
+    });
+    const pass = facts.residencyPasses.find(pass => referenceDate >= pass.entryDate && referenceDate <= pass.exitDate);
+    assert.ok(pass, "The direct ephemeris must supply the current Venus visit.");
+    const position = { planet: "Venus", sign: "Libra", degree: 0, motion: "direct", ...facts };
+    const days = Math.floor((Date.parse(pass.exitDate.slice(0, 10)) - Date.parse(referenceDate.slice(0, 10))) / 86_400_000);
+    assert.equal(app.primaryPlacementDurationLabel(position, referenceDate), `${days}D left`,
+      "The remaining-time pill must count to the verified current pass, matching its displayed range.");
+  }
   for (const facts of Object.values(fixtures)) {
     const expected = nodeKeyDates(keyDateFacts(facts));
     assert.deepEqual(

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import calendarHandler from "../api/calendar.ts";
 import { getLunarCalendarFromApi } from "../apps/web/src/services/calendarApi.ts";
+import { getAstrodienstSky } from "../apps/web/src/services/ephemeris.ts";
 
 function responseRecorder() {
   return {
@@ -34,6 +35,55 @@ assert.equal(
   requestedDate,
   "Monday must remain Monday instead of shifting to the prior local Sunday on the server."
 );
+
+for (const scenario of [
+  { date: "2026-11-01", zone: "America/New_York", noon: "2026-11-01T17:00:00Z", lat: 40.7128, lon: -74.006, hours: 25 },
+  { date: "2026-03-08", zone: "America/New_York", noon: "2026-03-08T16:00:00Z", lat: 40.7128, lon: -74.006, hours: 23 },
+  { date: "2026-04-05", zone: "Australia/Sydney", noon: "2026-04-05T02:00:00Z", lat: -33.8688, lon: 151.2093, hours: 25 },
+  { date: "2026-10-04", zone: "Australia/Sydney", noon: "2026-10-04T01:00:00Z", lat: -33.8688, lon: 151.2093, hours: 23 }
+]) {
+  const location = { label: scenario.zone, latitude: scenario.lat, longitude: scenario.lon, timeZone: scenario.zone };
+  // The direct Sky calculation uses independently specified local-noon UTC
+  // instants, so a shifted Calendar sample cannot validate itself.
+  const sky = await getAstrodienstSky(location, new Date(scenario.noon));
+  for (const mode of ["month", "week"]) {
+    const calendarResponse = responseRecorder();
+    const query = new URLSearchParams({ mode, detail: "basic", date: scenario.date,
+      lat: String(scenario.lat), lon: String(scenario.lon), timeZone: scenario.zone });
+    await calendarHandler({ method: "GET", url: `/api/calendar?${query}` }, calendarResponse);
+    assert.equal(calendarResponse.statusCode, 200);
+    const { days } = JSON.parse(calendarResponse.body).calendar;
+    assert.equal(days.length, mode === "month" ? 42 : 7);
+    assert.equal(new Set(days.map((day) => day.dateKey)).size, days.length,
+      `${scenario.zone} ${scenario.date}: ${mode} must not repeat a civil date.`);
+    for (let index = 1; index < days.length; index += 1) {
+      assert.equal(Date.parse(days[index].dateKey) - Date.parse(days[index - 1].dateKey), 86_400_000,
+        "Civil date keys must advance exactly one date, including at DST boundaries.");
+    }
+    const day = days.find((candidate) => candidate.dateKey === scenario.date);
+    assert.equal(day.moonSign, sky.positions.find((position) => position.planet === "Moon").sign);
+    assert.equal(day.moonPhase, sky.moonPhase, "Calendar phase must match direct ephemeris at local noon.");
+    const moon = sky.positions.find((position) => position.planet === "Moon").longitude;
+    const sun = sky.positions.find((position) => position.planet === "Sun").longitude;
+    assert.equal(day.illumination, Math.round((1 - Math.cos((moon - sun) * Math.PI / 180)) * 50));
+    if (mode === "month") {
+      const nextDay = days[days.indexOf(day) + 1];
+      assert.equal((Date.parse(nextDay.date) - Date.parse(day.date)) / 3_600_000, scenario.hours,
+        "Adjacent local midnights must respect the actual length of the transition day.");
+    }
+  }
+}
+
+const fullResponse = responseRecorder();
+await calendarHandler({ method: "GET", url: "/api/calendar?mode=week&detail=full&date=2026-11-01&lat=40.7128&lon=-74.006&timeZone=America%2FNew_York" }, fullResponse);
+assert.equal(fullResponse.statusCode, 200);
+const fullCalendar = JSON.parse(fullResponse.body).calendar;
+assert.deepEqual(fullCalendar.days.map((day) => day.dateKey),
+  ["2026-10-26", "2026-10-27", "2026-10-28", "2026-10-29", "2026-10-30", "2026-10-31", "2026-11-01"]);
+const passages = fullCalendar.events.filter((event) => event.phase === "retrograde-passage");
+assert.ok(passages.length > 0, "Full-calendar regression must exercise active retrograde sampling.");
+assert.equal(new Set(passages.map((event) => `${event.planet}/${event.dateKey}`)).size, passages.length,
+  "A 25-hour day must not produce an extra retrograde passage in the full event feed.");
 
 const originalFetch = globalThis.fetch;
 
@@ -98,4 +148,4 @@ try {
   globalThis.fetch = originalFetch;
 }
 
-console.log("Calendar API timezone anchor and wrong-week fallback contracts passed.");
+console.log("Calendar API timezone, DST date continuity, direct-ephemeris noon parity, and wrong-week contracts passed.");
