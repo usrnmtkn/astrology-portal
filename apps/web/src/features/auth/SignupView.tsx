@@ -310,12 +310,24 @@ export function SignupView({
       return;
     }
 
-    const submittedForm = normalizedFormForAccountCreation();
-    if (!submittedForm) return;
     setAuthStatus("loading");
     setAuthMessage("");
     if (authMode === "create") {
-      onSavePendingForm(submittedForm);
+      // OAuth also signs in existing accounts from Create profile. Birth data
+      // is optional here; an incomplete chart must never prevent authentication.
+      // Only carry a parseable draft into profile bootstrap, and never persist
+      // the unrelated email-password field across a provider redirect.
+      try {
+        onSavePendingForm({
+          ...form,
+          password: "",
+          birthTime: form.unknownBirthTime || !form.birthTime.trim()
+            ? ""
+            : normalizeBirthTime(form.birthTime)
+        });
+      } catch {
+        onClearPendingForm();
+      }
     } else {
       onClearPendingForm();
     }
