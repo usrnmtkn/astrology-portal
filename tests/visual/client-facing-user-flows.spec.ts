@@ -3807,6 +3807,8 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#you");
     await selectYouNatalTab(page);
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Sun in Aquarius in the 11th house" }).getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.locator("html")).not.toHaveAttribute("data-page-transition", "active");
     await expectNoDuplicateArticleHeadings(page, "Hydrated You placement detail");
     await expectSemanticArticleHeadingOrder(page, "Hydrated You placement detail");
     await expectHydrationKeepsReaderCopyStable(
@@ -4059,18 +4061,19 @@ test.describe("client-facing user flow case studies", () => {
     await expect(authoredContact, "seeded synastry fixture exposes Ascendant square Mercury").toBeVisible();
     await authoredContact.click();
 
-    const authoredHeading = page.getByRole("heading", { name: /Ascendant square .*Mercury|Mercury square .*Ascendant/i });
+    const authoredHeading = page.locator(".app-shell.mode-detail article").getByRole("heading", { level: 1, name: /Ascendant square .*Mercury|Mercury square .*Ascendant/i });
     await expect(authoredHeading).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Authored synastry detail");
     const detail = page.locator(".app-shell.mode-detail");
-    const text = ((await detail.textContent()) ?? "").replace(/\s+/g, " ").trim();
+    await expect(page.locator("html")).not.toHaveAttribute("data-page-transition", "active");
 
     expect(mercuryAscendantHardSource, "V3 contains the approved Mercury-Ascendant hard-aspect source row").toBeTruthy();
     const headingText = (await authoredHeading.innerText()).trim();
     const expectedOpening = /^Your Ascendant square Alisa's Mercury$/i.test(headingText)
       ? ascendantMercuryHardOpening
       : mercuryAscendantHardOpening;
-    expect(text, "synastry detail uses the approved V3 package wording in the selected direction").toContain(expectedOpening);
+    await expect(detail, "synastry detail uses the approved V3 package wording in the selected direction").toContainText(expectedOpening);
+    const text = ((await detail.textContent()) ?? "").replace(/\s+/g, " ").trim();
     expect(text, "synastry detail does not show emergency stitched boilerplate").not.toMatch(/puts first impressions|Recurring friction that asks for an adjustment|how information gets processed/i);
     await assertNoClientErrors();
   });
