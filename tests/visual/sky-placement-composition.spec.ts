@@ -44,9 +44,10 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.margin, style.textTransform, style.textAlign];
   });
   await map.getByRole("tab", { name: "Main template", exact: true }).click();
-  await expect(map.getByRole("list", { name: "Placement template order" }).locator("code")).toHaveText(["{{Body}}", "{{tldrWhat}}", "{{tldrTakeaway}}", "{{placementArticle}}"]);
+  await expect(map.getByRole("list", { name: "Placement template order" }).locator(".admin-sky-section-reference")).toHaveText(["sky-placement/retrograde/saturn#Body", ...["tldrWhat", "tldrTakeaway", "placementArticle"].map(path => `sky-placement/article/saturn/aries#${path}`)]);
   await map.getByLabel("Placement writing path").selectOption("fallback");
-  await expect(map.getByRole("list", { name: "Placement template order" }).locator("code")).toHaveText(["{{Body}}", "{{tldrWhat}}", "{{tldrTakeaway}}", "{{fallback.hook}}", "{{fallback.lived}}", "{{fallback.turn}}"]);
+  await expect(map.getByRole("list", { name: "Placement template order" }).locator(".admin-sky-section-reference")).toHaveText(["sky-placement/retrograde/saturn#Body", ...["tldrWhat", "tldrTakeaway", "fallback.hook", "fallback.lived", "fallback.turn"].map(path => `sky-placement/article/saturn/aries#${path}`)]);
+  await expect(map.getByRole("button", { name: "Edit fallback opening", exact: true })).toHaveText("Saturn in Aries · Fallback opening");
   await map.getByRole("tab", { name: "Reader preview", exact: true }).click();
   const opening = map.getByRole("button", { name: "Edit fallback opening", exact: true });
   await expect(opening).toContainText(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.fallback.hook);

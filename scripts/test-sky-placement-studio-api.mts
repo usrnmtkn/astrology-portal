@@ -33,12 +33,12 @@ globalThis.fetch = async (input, init = {}) => {
  if (init.method === "POST") { const row = { id: `test-${stored.length}`, updated_at: new Date().toISOString(), ...body }; stored.push(row); return Response.json([row]); }
  return Response.json(found);
 };
-async function request(method: string, body?: any, query = "") {
+async function request(method: string, body?: any, query = "", expectedStatus = 200) {
  const req = Readable.from(body ? [JSON.stringify(body)] : []) as any;
  req.method = method; req.url = `/api/admin/generated-content${query}`; req.headers = { authorization: "Bearer sky-studio-test" };
  let output: any;
  const res = { statusCode: 0, setHeader() {}, end(value: string) { output = { status: this.statusCode, ...JSON.parse(value) }; } } as any;
- await handler(req, res); assert.equal(output.status, 200, JSON.stringify(output)); return output;
+ await handler(req, res); assert.equal(output.status, expectedStatus, JSON.stringify(output)); return output;
 }
 for (const [key, path] of [["sky-placement/article/saturn/aries", "placementArticle"], ["sky-placement/retrograde/saturn", "Body"]]) {
  const baseline = skyPlacementSourceRecords.get(key)!;
@@ -113,6 +113,24 @@ assert.equal(evergreen.resolution, "exact-fallback");
 assert(evergreen.readerParts.join("\n\n").includes("During this transit, fixture evergreen paragraph 2."));
 assert(!evergreen.readerParts.join("\n\n").includes("During this transit, fixture evergreen paragraph 1."));
 console.log("PASS: evergreen section API save/publish twice → real loader → reader, with empty article and optional section omission.");
+
+// Inline variables survive the same publication and reader-loading path.
+const variableCopy = "During this transit, {{planetTitle}} in {{signTitle}} is {{motion}} from {{entryDate}} to {{exitDate}}.";
+for (const articleAvailable of [true, false]) {
+ const base = evergreenRow.sections.packageRecord;
+ const copy = { ...base, placementArticle: articleAvailable ? variableCopy : "", fallback: { ...base.fallback, sections: [{ id: "variables", label: "Variable fixture", body: variableCopy }] } };
+ const draft = (await request("PATCH", { id: evergreenRow.id, expectedUpdatedAt: evergreenRow.updated_at, reviewStatus: "needs_review", sections: { ...evergreenRow.sections, packageDraft: copy } })).rows[0];
+ evergreenRow = (await request("PATCH", { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: "approve-package-revision" })).rows[0];
+ await runtime.refreshContentPublications(true);
+ runtime.clearCachedFallbackArchitectureV3Bundle();
+ runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
+ const rendered = runtime.skyV4ReaderRenderer.renderRoute({ route: "placement", planet: "saturn", sign: "aries", isRetrograde: true, facts: { entryDate: "Fixture entry", exitDate: "Fixture exit" } });
+ assert.equal(rendered.mainBody, "During this transit, Saturn in Aries is retrograde from Fixture entry to Fixture exit.");
+ assert.equal(rendered.resolution, articleAvailable ? "canonical-article" : "exact-fallback");
+}
+for (const token of ["{{fallback.hook}}", "{{unknown}}", "{{signTitle", "{{constructor}}"])
+ await request("PATCH", { id: evergreenRow.id, expectedUpdatedAt: evergreenRow.updated_at, reviewStatus: "needs_review", sections: { ...evergreenRow.sections, packageDraft: { ...evergreenRow.sections.packageRecord, placementArticle: token } } }, "", 400);
+console.log("PASS: new Sky variables save/publish in article and custom fallback → actual reader loader; invalid variables cannot save.");
 
 // A deliberate empty layout is still a current publication. Keep that identity
 // through the loader instead of exposing an older packaged article underneath.
