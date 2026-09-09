@@ -1,21 +1,44 @@
 import { useCallback, useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
 
+export type AnimationPreference = "system" | "on" | "off";
+export const animationPreferenceKey = "tldrastro:pageAnimations";
+
+export function readAnimationPreference(): AnimationPreference {
+  try {
+    const value = window.localStorage.getItem(animationPreferenceKey);
+    return value === "on" || value === "off" ? value : "system";
+  } catch {
+    return "system";
+  }
+}
+
 /** Snapshot the old page without mounting a second copy of its live content. */
-export function usePageTransition() {
+export function usePageTransition(motion: AnimationPreference = "system") {
   const active = useRef<ViewTransition | null>(null);
   const generation = useRef(0);
+
+  const motionRef = useRef(motion);
+
+  useEffect(() => {
+    motionRef.current = motion;
+    document.documentElement.dataset.pageMotion = motion;
+    if (motion === "off" || (motion === "system" && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+      active.current?.skipTransition();
+    }
+  }, [motion]);
 
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
     const reduceMotion = () => {
-      if (preference.matches) active.current?.skipTransition();
+      if (preference.matches && motionRef.current === "system") active.current?.skipTransition();
     };
     preference.addEventListener("change", reduceMotion);
     return () => {
       generation.current += 1;
       active.current?.skipTransition();
       delete document.documentElement.dataset.pageTransition;
+      delete document.documentElement.dataset.pageMotion;
       preference.removeEventListener("change", reduceMotion);
     };
   }, []);
@@ -26,7 +49,8 @@ export function usePageTransition() {
     active.current = null;
 
     if (!animate || !document.startViewTransition
-      || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      || motion === "off"
+      || (motion === "system" && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) {
       delete document.documentElement.dataset.pageTransition;
       update();
       return;
@@ -46,5 +70,5 @@ export function usePageTransition() {
       delete document.documentElement.dataset.pageTransition;
     };
     void transition.finished.then(finish, finish);
-  }, []);
+  }, [motion]);
 }

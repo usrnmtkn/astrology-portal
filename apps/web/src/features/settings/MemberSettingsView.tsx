@@ -1,8 +1,10 @@
+import type { AnimationPreference } from "../../hooks/usePageTransition";
 import { ChevronRight } from "lucide-react";
 import { lazy, useEffect, useState } from "react";
 import { CitySearchField } from "../../components/CitySearchField";
 import {
   AppearanceToggle,
+  AnimationSettingsRow,
   CalculationMethodSettingsGroup,
   HouseSignLabelToggle,
   SwitchControl,
@@ -37,6 +39,8 @@ export function MemberSettingsView({
   theme,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
+  animationPreference = "system",
+  onAnimationPreferenceChange = () => {},
   onCurrentLocationChange,
   onSocialProfileChange,
   onThemeChange,
@@ -54,6 +58,8 @@ export function MemberSettingsView({
   theme: UiThemeOption;
   sunriseOrbEnabled: boolean;
   dyslexiaFriendlyFont: boolean;
+  animationPreference?: AnimationPreference;
+  onAnimationPreferenceChange?: (value: AnimationPreference) => void;
   onCurrentLocationChange: (location: LocationInput) => void;
   onSocialProfileChange: (socialProfile: SocialProfile) => void;
   onThemeChange: (theme: UiThemeOption) => void;
@@ -249,6 +255,7 @@ export function MemberSettingsView({
                 <span className="settings-row__label">Theme</span>
                 <AppearanceToggle theme={theme} onThemeChange={onThemeChange} />
               </div>
+              <AnimationSettingsRow value={animationPreference} onChange={onAnimationPreferenceChange} />
               <div className="settings-row settings-row-control">
                 <div className="settings-row-copy">
                   <span className="settings-row-title">Gradient</span>

@@ -46,9 +46,9 @@ html[data-page-transition]::view-transition-new(tldr-navigation) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html[data-page-transition]::view-transition-group(*),
-  html[data-page-transition]::view-transition-old(*),
-  html[data-page-transition]::view-transition-new(*) {
+  html[data-page-transition]:not([data-page-motion="on"])::view-transition-group(*),
+  html[data-page-transition]:not([data-page-motion="on"])::view-transition-old(*),
+  html[data-page-transition]:not([data-page-motion="on"])::view-transition-new(*) {
     animation: none;
   }
 }

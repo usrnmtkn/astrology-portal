@@ -678,3 +678,20 @@ button.settings-signout-row {
 .settings-switch.is-on span {
   background: var(--control-thumb-active-bg);
 }
+
+@media (max-width: 760px) {
+  .settings-row.settings-animation-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .settings-animation-row .settings-theme-control {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .settings-animation-row .settings-theme-control button {
+    flex: 1;
+    min-width: 0;
+    padding-inline: var(--space-4);
+  }
+}

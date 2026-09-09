@@ -1,5 +1,5 @@
 import { isContentRetired } from "./content/contentPublicationState";
-import { usePageTransition } from "./hooks/usePageTransition";
+import { usePageTransition, readAnimationPreference, animationPreferenceKey } from "./hooks/usePageTransition";
 import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
 import { calendarDayDistance } from "./services/calendarDayDistance";
@@ -10951,7 +10951,11 @@ export function App() {
   const skyDateRef = useRef(skyDate);
   const followsCurrentTransitDateRef = useRef(skyDate === currentLocalDate);
   const [mode, setMode] = useState<PortalMode>(() => studioReturnPath ? "profile" : getInitialPortalMode());
-  const transitionPage = usePageTransition();
+  const [animationPreference, setAnimationPreference] = useState(readAnimationPreference);
+  const transitionPage = usePageTransition(animationPreference);
+  useEffect(() => {
+    try { window.localStorage.setItem(animationPreferenceKey, animationPreference); } catch { /* Keep the choice for this session when storage is unavailable. */ }
+  }, [animationPreference]);
   const [location, setLocation] = useState<LocationInput>(initialLocationState.location);
   const [manualLocation, setManualLocation] = useState(initialLocationState.location.label);
   const [hasLocationPreference, setHasLocationPreference] = useState(initialLocationState.hasSavedLocation);
@@ -14699,6 +14703,8 @@ export function App() {
                       sunriseOrbEnabled={sunriseOrbEnabled}
                       onThemeChange={setTheme}
                       onSunriseOrbChange={setSunriseOrbEnabled}
+                      animationPreference={animationPreference}
+                      onAnimationPreferenceChange={setAnimationPreference}
                       dyslexiaFriendlyFont={dyslexiaFriendlyFont}
                       onDyslexiaFontChange={setDyslexiaFriendlyFont}
                       onCurrentLocationChange={(nextLocation) => {
@@ -14727,6 +14733,8 @@ export function App() {
                       sunriseOrbEnabled={sunriseOrbEnabled}
                       onThemeChange={setTheme}
                       onSunriseOrbChange={setSunriseOrbEnabled}
+                      animationPreference={animationPreference}
+                      onAnimationPreferenceChange={setAnimationPreference}
                       dyslexiaFriendlyFont={dyslexiaFriendlyFont}
                       onDyslexiaFontChange={setDyslexiaFriendlyFont}
                       houseSignLabelStyle={guestHouseSignLabelStyle}

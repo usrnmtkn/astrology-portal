@@ -1,5 +1,7 @@
+import type { AnimationPreference } from "../../hooks/usePageTransition";
 import {
   AppearanceToggle,
+  AnimationSettingsRow,
   CalculationMethodSettingsGroup,
   HouseSignLabelToggle,
   SwitchControl,
@@ -12,6 +14,8 @@ export function GuestSettingsView({
   locationLabel,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
+  animationPreference = "system",
+  onAnimationPreferenceChange = () => {},
   onThemeChange,
   onSunriseOrbChange,
   onDyslexiaFontChange,
@@ -22,6 +26,8 @@ export function GuestSettingsView({
   locationLabel: string;
   sunriseOrbEnabled: boolean;
   dyslexiaFriendlyFont: boolean;
+  animationPreference?: AnimationPreference;
+  onAnimationPreferenceChange?: (value: AnimationPreference) => void;
   onThemeChange: (theme: UiThemeOption) => void;
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
@@ -55,6 +61,7 @@ export function GuestSettingsView({
                 <span className="settings-row__label">Theme</span>
                 <AppearanceToggle theme={theme} onThemeChange={onThemeChange} />
               </div>
+              <AnimationSettingsRow value={animationPreference} onChange={onAnimationPreferenceChange} />
               <div className="settings-row settings-row-control">
                 <div className="settings-row-copy">
                   <span className="settings-row-title">Gradient</span>
