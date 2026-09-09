@@ -14,7 +14,7 @@ export function GuestSettingsView({
   locationLabel,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
-  animationPreference = "system",
+  animationPreference = "on",
   onAnimationPreferenceChange = () => {},
   onThemeChange,
   onSunriseOrbChange,
