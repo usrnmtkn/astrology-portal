@@ -1364,8 +1364,8 @@ test.describe("client-facing user flow case studies", () => {
       ).toHaveCSS("border-top-width", "0px");
       await expect(houseTransitKeywords.first()).toBeVisible();
       await expect(
-        houseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
-        "House transit keyword tags follow the card description"
+        houseTransitCard.locator(".updates-aspect-row__description + .card-read-more + .house-transit-keywords"),
+        "House transit keyword tags follow the description and Read More action"
       ).toBeVisible();
       const houseTransitRange = (
         await houseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
@@ -1854,8 +1854,8 @@ test.describe("client-facing user flow case studies", () => {
       "Friend term classification tag has no outline"
     ).toHaveCSS("border-top-width", "0px");
     await expect(
-      friendHouseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
-      "Friend house transit keyword tags follow the card description"
+      friendHouseTransitCard.locator(".updates-aspect-row__description + .card-read-more + .house-transit-keywords"),
+      "Friend house transit keyword tags follow the description and Read More action"
     ).toBeVisible();
     const friendHouseTransitRange = (
       await friendHouseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
