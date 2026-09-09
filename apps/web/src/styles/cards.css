@@ -43,46 +43,35 @@
 }
 
 .natal-pattern-card {
-  border: var(--border-width-thin) solid var(--card-border);
   display: grid;
   gap: 0;
   overflow: hidden;
 }
 
-.natal-pattern-card--primary {
-  border-color: color-mix(in srgb, var(--card-border) 70%, var(--card-title-color) 30%);
-}
-
 .natal-pattern-card__header span {
   color: var(--card-meta-color);
-  font-size: var(--type-xs);
+  font-family: var(--label-eyebrow-font-family);
+  font-size: var(--label-eyebrow-font-size);
   font-style: normal;
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--snap-eyebrow-tracking);
-  line-height: var(--leading-meta);
+  font-weight: var(--label-eyebrow-font-weight);
+  letter-spacing: var(--label-eyebrow-tracking);
+  line-height: var(--label-eyebrow-line-height);
   text-transform: uppercase;
 }
 
 .natal-pattern-card__header {
   display: grid;
-  gap: var(--space-2);
-  padding: var(--space-5) var(--card-padding);
+  gap: var(--card-header-gap);
+  padding: var(--card-padding);
 }
 
 .natal-pattern-card__header h3 {
-  color: var(--card-title-color);
-  font-size: var(--type-xl);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-meta);
   margin: 0;
   overflow-wrap: anywhere;
 }
 
 .natal-pattern-card__header p,
 .natal-pattern-card__section p {
-  color: var(--card-body-color);
-  font-size: var(--type-md);
-  line-height: var(--leading-description);
   margin: 0;
 }
 
@@ -100,8 +89,9 @@
   color: var(--card-title-color);
   cursor: pointer;
   display: inline-flex;
-  font: inherit;
-  font-size: var(--type-sm);
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-size);
+  letter-spacing: var(--tracking-normal);
   font-weight: var(--weight-semibold);
   gap: var(--space-1);
   line-height: var(--leading-meta);
@@ -610,16 +600,16 @@
 
 .daily-forecast-label {
   align-items: center;
-  background: var(--aspect-card-bg);
-  border: var(--border-width-thin) solid var(--aspect-card-border);
-  border-radius: var(--aspect-card-radius);
-  box-shadow: var(--aspect-card-shadow);
+  background: var(--card-bg);
+  border: var(--border-width-thin) solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
   color: inherit;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   column-gap: var(--space-4);
   row-gap: var(--space-1);
-  min-height: var(--aspect-card-min-height);
+  min-height: var(--card-row-min-height);
   padding: var(--surface-card-padding-compact);
   text-align: left;
   width: 100%;

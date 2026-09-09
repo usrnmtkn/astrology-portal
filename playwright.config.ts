@@ -20,6 +20,7 @@ export function browserTestWebServer(targetURL: string) {
     // Exercise the same reader hydration paths locally as CI. Individual tests
     // intercept this synthetic service; no production credentials are needed.
     env: {
+      VITE_ENABLE_NATAL_ASPECT_PATTERNS: "true",
       VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test",
       VITE_SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY ?? "visual-smoke-placeholder",
       VITE_SUPABASE_PUBLISHABLE_KEY: process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? ""

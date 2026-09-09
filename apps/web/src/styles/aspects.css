@@ -111,15 +111,6 @@
   text-transform: uppercase;
 }
 
-.aspect-row-copy .aspect-row-subtitle.ui-pill.ui-pill--muted {
-  color: var(--card-meta-color);
-  font-family: var(--font-body);
-  font-size: var(--aspect-card-meta-size);
-  font-weight: var(--aspect-card-meta-weight);
-  letter-spacing: var(--tracking-number);
-  line-height: var(--aspect-card-meta-line);
-}
-
 .aspect-row-timing {
   display: inline-flex;
   align-items: center;
@@ -386,8 +377,6 @@
 }
 
 .updates-aspect-list {
-  --updates-aspect-row-padding: var(--ds-aspects-updates-aspect-row-padding);
-
   display: grid;
   gap: var(--card-list-gap);
   overflow: visible;
@@ -402,9 +391,6 @@
   grid-template-columns: var(--updates-aspect-glyph-width) minmax(0, 1fr) var(--updates-aspect-meta-width);
   align-items: start;
   width: 100%;
-  gap: var(--updates-aspect-row-gap);
-  padding: var(--updates-aspect-row-padding);
-  background: var(--card-bg);
   cursor: default;
   text-align: left;
 }
@@ -433,7 +419,7 @@
 .updates-aspect-row__content {
   display: grid;
   align-content: start;
-  gap: var(--updates-aspect-copy-gap);
+  gap: var(--card-header-gap);
   min-width: 0;
   text-align: left;
 }
@@ -472,12 +458,6 @@
 .updates-aspect-row__title {
   display: block;
   min-height: 22px;
-  color: var(--card-title-color);
-  font-family: var(--font-display);
-  font-size: var(--aspect-card-title-size);
-  font-weight: var(--aspect-card-title-weight);
-  letter-spacing: var(--tracking-title);
-  line-height: var(--aspect-card-title-line);
   overflow-wrap: anywhere;
 }
 
@@ -514,11 +494,6 @@
 
 .updates-aspect-row__description {
   display: block;
-  color: var(--card-body-color);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-body);
   text-wrap: pretty;
 }
 
@@ -546,6 +521,7 @@
   font-size: var(--text-body);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
   text-wrap: pretty;
 }
 

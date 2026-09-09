@@ -1,3 +1,4 @@
+import { CardReadMore } from "../../components/CardReadMore";
 import type { AspectGiftLessonLabel } from "../../services/aspectGiftLesson";
 import type { SkySnapshot } from "../../types";
 import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
@@ -91,6 +92,7 @@ export function FriendSynastryTab({
                 <span className="aspect-row-copy">
                   <h3>{contact.title}</h3>
                   {contact.description ? <p className="synastry-contact-description">{contact.description}</p> : null}
+                  <CardReadMore />
                   <span className="aspect-row-subtitle ui-pill ui-pill--muted">{contact.subtitle}</span>
                 </span>
                 <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>

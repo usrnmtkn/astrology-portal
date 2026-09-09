@@ -23,6 +23,7 @@ type SeedOptions = {
   friends?: boolean;
   theme?: "light" | "dark";
   now?: string;
+  aspectPatterns?: Record<string, unknown>;
   generatedInterpretations?: Array<Record<string, unknown>>;
   contentPublications?: Array<Record<string, unknown>>;
 };
@@ -185,6 +186,8 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       window.localStorage.setItem("tldrastro:theme", options.theme ?? "light");
       window.localStorage.setItem("tldrastro:sunriseOrb", "true");
       window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
+      // Layout checks opt out explicitly; the app default can override reduced motion.
+      window.localStorage.setItem("tldrastro:pageAnimations", "off");
       window.localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(fixtureLocation));
       if (preloadedNatalCache) {
         window.localStorage.setItem(preloadedNatalCache.cacheKey, JSON.stringify(preloadedNatalCache));
@@ -222,6 +225,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       });
 
       return {
+        aspectPatterns: options.aspectPatterns,
         location: fixtureLocation,
         generatedAt: "2026-06-16T16:00:00.000Z",
         ascendant: signs[(11 + signOffset) % signs.length][0],
@@ -1360,8 +1364,8 @@ test.describe("client-facing user flow case studies", () => {
       ).toHaveCSS("border-top-width", "0px");
       await expect(houseTransitKeywords.first()).toBeVisible();
       await expect(
-        houseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
-        "House transit keyword tags follow the card description"
+        houseTransitCard.locator(".updates-aspect-row__description + .card-read-more + .house-transit-keywords"),
+        "House transit keyword tags follow the description and Read More action"
       ).toBeVisible();
       const houseTransitRange = (
         await houseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
@@ -1850,8 +1854,8 @@ test.describe("client-facing user flow case studies", () => {
       "Friend term classification tag has no outline"
     ).toHaveCSS("border-top-width", "0px");
     await expect(
-      friendHouseTransitCard.locator(".updates-aspect-row__description + .house-transit-keywords"),
-      "Friend house transit keyword tags follow the card description"
+      friendHouseTransitCard.locator(".updates-aspect-row__description + .card-read-more + .house-transit-keywords"),
+      "Friend house transit keyword tags follow the description and Read More action"
     ).toBeVisible();
     const friendHouseTransitRange = (
       await friendHouseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
@@ -4183,3 +4187,106 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   await expect(page.locator('.sky-detail-article')).toContainText(venus.readerCopy.body, { timeout: 60_000 });
   await expect(page.locator('.sky-detail-article h1')).toContainText("Venus in Scorpio");
 });
+
+for (const theme of ["light", "dark"] as const) {
+  for (const width of [390, 1440]) {
+    test(`shared reading cards use one visual contract ${theme} ${width}`, async ({ page }) => {
+      test.setTimeout(300_000);
+      await page.setViewportSize({ width, height: 1000 });
+      // Hydrate the real pattern component through the cached chart fixture.
+      const aspectPatterns = {
+        patterns: [], relationships: [],
+        interpretationContexts: [{ patternId: "qa-yod", patternType: "yod", display: {
+          rank: 1, isContained: false, parentPatternIds: [], childPatternIds: []
+        } }],
+        resolvedCopy: [{ patternId: "qa-yod", content: {
+          eyebrow: "Yod", headline: "A shared plan needs room to change",
+          overview: "A longer reading tests the same comfortable measure and spacing as the placement and transit cards, including wrapping on a narrow screen.",
+          sections: [], tags: []
+        } }]
+      };
+      await seedClientState(page, { profile: true, friends: true, theme, aspectPatterns });
+      await page.route("**/api/astrology-facts?*", route => {
+        if (!new URL(route.request().url()).searchParams.has("includeAspectPatternCopy")) return route.fallback();
+        return route.fulfill({ json: { ok: true, sky: { aspectPatterns } } });
+      });
+      const check = async (selector: string, role: "title" | "body" | "pill" | "label" | "action") => {
+        const elements = page.locator(selector);
+        await expect(elements.first()).toBeVisible();
+        const mismatches = await elements.evaluateAll((nodes, role) => {
+          const probe = document.createElement("span");
+          const roles = {
+            action: ["--font-ui", "--type-ui-size", "--weight-semibold", "--leading-label", "--tracking-normal"],
+            title: ["--font-display", "--text-card-title", "--weight-medium", "--leading-title", "--tracking-title"],
+            body: ["--font-body", "--text-body", "--weight-regular", "--leading-body", "--tracking-body"],
+            pill: ["--pill-font-family", "--pill-font-size", "--pill-font-weight", "--pill-line-height", "--pill-tracking"],
+            label: ["--label-eyebrow-font-family", "--label-eyebrow-font-size", "--label-eyebrow-font-weight", "--label-eyebrow-line-height", "--label-eyebrow-tracking"]
+          };
+          const properties = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;
+          properties.forEach((property, i) => { probe.style[property] = `var(${roles[role][i]})`; });
+          document.body.append(probe);
+          const expected = getComputedStyle(probe);
+          const errors = nodes.filter(node => node.getBoundingClientRect().width).flatMap(node => {
+            const actual = getComputedStyle(node);
+            return properties.filter(key => actual[key] !== expected[key]).map(key => ({
+              text: node.textContent?.slice(0, 40), key, actual: actual[key], expected: expected[key]
+            }));
+          });
+          probe.remove();
+          return errors;
+        }, role);
+        expect(mismatches, selector).toEqual([]);
+      };
+      await expectClientRouteLoads(page, "/#friends?tab=charts");
+      await page.getByRole("button", { name: "Open Nikki" }).click();
+      await selectFriendDetailTab(page, "Natal");
+      await check(".natal-pattern-card__header h3", "title");
+      await check(".natal-pattern-card__header p", "body");
+      await check(".natal-pattern-card__header > span", "label");
+      await check(".placement-table-row__title", "title");
+      await check(".placement-table-row__description", "body");
+      await check(".placement-table-row .ui-pill", "pill");
+      const surface = async (selector: string) => page.locator(selector).first().evaluate(node => {
+        const style = getComputedStyle(node);
+        return { border: style.border, radius: style.borderRadius, background: style.backgroundColor, shadow: style.boxShadow };
+      });
+      const padding = async (selector: string) => page.locator(selector).first().evaluate(node => getComputedStyle(node).padding);
+      const pattern = page.locator(".natal-pattern-card").first();
+      const expectedSurface = await surface(".natal-pattern-card");
+      const expectedPadding = await padding(".natal-pattern-card__header");
+      expect(await surface(".placement-table-row")).toEqual(expectedSurface);
+      expect(await padding(".placement-table-row")).toEqual(expectedPadding);
+      expect(await pattern.locator("header > *").evaluateAll(nodes => nodes.map(node => node.tagName))).toEqual(["SPAN", "H3", "P"]);
+      await expect(pattern.getByRole("button", { name: "Read More" })).toBeVisible();
+      await mkdir(responsiveScreenshotDir, { recursive: true });
+      await pattern.screenshot({ path: path.join(responsiveScreenshotDir, `card-pattern-${theme}-${width}.png`) });
+      await page.locator(".placement-table-row").first().screenshot({ path: path.join(responsiveScreenshotDir, `card-placement-${theme}-${width}.png`) });
+      await expectNoHorizontalOverflow(page, "shared natal cards");
+      await check(".card-read-more", "action");
+      const placementCard = page.locator(".placement-table-row").first();
+      const previewBox = await placementCard.locator(".placement-table-row__description").boundingBox();
+      const actionBox = await placementCard.locator(".card-read-more").boundingBox();
+      expect(actionBox!.y).toBeGreaterThanOrEqual(previewBox!.y + previewBox!.height);
+      const natalRoute = page.url();
+      await page.locator(".placement-table-row .card-read-more").first().click();
+      await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+      await page.goto(natalRoute);
+      await selectFriendDetailTab(page, "Transits");
+      await check(".updates-aspect-row__title", "title");
+      await check(".updates-aspect-row__description", "body");
+      expect(await surface(".updates-aspect-row")).toEqual(expectedSurface);
+      expect(await padding(".updates-aspect-row")).toEqual(expectedPadding);
+      await page.locator(".updates-aspect-row").first().screenshot({ path: path.join(responsiveScreenshotDir, `card-transit-${theme}-${width}.png`) });
+      await expectNoHorizontalOverflow(page, "shared transit cards");
+      await check(".card-read-more", "action");
+      await page.locator(".updates-aspect-row .card-read-more").first().click();
+      await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+      await expectClientRouteLoads(page, "/#sky");
+      const skyCard = page.locator(".planet-placement-row:has(.card-read-more)").first();
+      await expect(skyCard.locator(".card-read-more")).toBeVisible();
+      await skyCard.focus();
+      await page.keyboard.press("Enter");
+      await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+    });
+  }
+}

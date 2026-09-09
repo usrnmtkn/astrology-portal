@@ -468,9 +468,9 @@
 .article-related-aspect-row .aspect-row-copy :is(h3, h4) {
   color: var(--card-title-color);
   font-family: var(--font-display);
-  font-size: var(--aspect-card-title-size);
-  font-weight: var(--aspect-card-title-weight);
-  line-height: var(--aspect-card-title-line);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-title);
   letter-spacing: var(--tracking-title);
 }
 
@@ -569,7 +569,7 @@
   }
 
   .article-related-aspect-row .aspect-row-copy :is(h3, h4) {
-    font-size: var(--aspect-card-title-size);
+    font-size: var(--text-card-title);
   }
 
   .article-related-aspects__copy-heading {

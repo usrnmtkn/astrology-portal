@@ -1,3 +1,4 @@
+import { CardReadMore } from "../../components/CardReadMore";
 import type { RelationshipCompareResponse } from "../../services/tldrastroApi";
 import type { AspectGiftLessonLabel } from "../../services/aspectGiftLesson";
 import type { SocialPlacementRow } from "../../components/charts/PlacementRows";
@@ -89,6 +90,7 @@ export function FriendCompositeTab({
                     <span className="aspect-row-copy">
                       <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
                       {aspect.summary ? aspect.summary.split(/\n{2,}/).map((paragraph, index) => <p key={index}>{paragraph}</p>) : null}
+                      {aspect.summary && onAspectClick ? <CardReadMore /> : null}
                     </span>
                     <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
                       <span className="aspect-row-dot" aria-hidden="true" />
