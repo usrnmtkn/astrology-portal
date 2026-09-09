@@ -76,7 +76,7 @@ aggregate JavaScript gzip. Its aggregate allowance increases from 2,938,000 to
 2,942,000 bytes. Reader boot (462.2 kB), startup CSS (47.4 kB), and all individual
 chunk limits remain within their existing caps.
 
-## Recorded run and release status
+## Initial run and release status
 
 The implementation is committed locally on `codex/sky-placement-variable-editor`,
 based on main `01544a34a117065e43f29cebb71c373269e1e481`. It has not been
@@ -113,4 +113,49 @@ Git push failed because the CLI's stored login is invalid. The connected GitHub
 blob upload did not return, and a subsequent read did not find the expected
 blob. No remote commit or branch was created. After reconnecting, refresh main,
 review the source diff, complete checks, push the local branch, and use the PR
-and Vercel Git deployment flow. The separate PR #714 was not included.
+and Vercel Git deployment flow. At that point, the separate PR #714 was not included.
+
+## Release continuation
+
+PR #714 was merged as `7c10524316bd9754a3d30da599a66d78b5dbab41`, and
+Vercel reported a successful deployment for that main commit. The Sky variable
+branch was rebased cleanly onto it. PRs #666, #669, and #712 were already merged.
+
+All 15 Studio browser scenarios now have successful results. The fresh-listener
+run with native ARM Node and a 240-second per-test limit passed 12 scenarios;
+the three interrupted cases then passed in a targeted rerun. Trace evidence
+identified `ERR_NETWORK_CHANGED` while importing a Studio chunk in one case;
+another timed out creating its browser context; the last encountered a timed-out
+mock API read during the second evergreen save. The targeted rerun passed both
+desktop evergreen save/reopen cases and mobile-light variable insertion. No
+assertions were removed or weakened. Repository test limits remain unchanged;
+the longer local limit is recorded in the temporary run configuration only.
+
+The full `npm run test:content-studio-api` suite passed on the rebased branch,
+including its prerequisite knowledge build, both the Sky variable publication
+checks and PR #714's malformed-response/deadline/index-parity checks, repeated
+saves, immutable version protection, copy recovery, status parity, editor
+hydration, and exact owner-copy preservation.
+
+GitHub CLI authentication has been renewed successfully. The Sky variable
+branch is still local: automatic approval review rejected uploading the new
+`apps/admin/src/SkyPlacementVariableKey.tsx` source file to
+`usrnmtkn/astrology-portal` without destination-specific disclosure approval.
+The exact 35-file release scope has been submitted to the owner for approval.
+No alternate upload route was used. The Vercel connector still returns no
+accessible teams and denies the `usrnmtkns-projects` scope; the main deployment
+status above was read through GitHub's Vercel status integration.
+
+The live main deployment passed a read-only browser check with no API mocks:
+Saturn's exact copy and retrograde duration were visible, and the duration kept
+the same vertical position through 30 one-second samples at 1440 px. The 390 px
+Saturn layout and Studio sign-in screen were visually inspected. Studio's owner
+sign-in link retained the encoded return path to Sky Write-ups. No page errors
+were recorded. Authenticated production inventory is not yet verified; the
+public Studio sign-in screen cannot establish that coverage.
+
+The remaining content lifecycle is still running. The previously blocked local
+production-report smoke check passed after listener access was available. The
+resume harness initially lacked the npm executable path; adding the repository
+`node_modules/.bin` path allowed the remaining report checks to begin. This is
+not yet a full content-lifecycle pass.
