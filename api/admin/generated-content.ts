@@ -41,7 +41,15 @@ async function adminStorageFetch(input: string, init: RequestInit = {}) {
   }, adminStorageTimeoutMs);
 
   try {
-    return await fetch(input, { ...init, signal: controller.signal });
+    const response = await fetch(input, { ...init, signal: controller.signal });
+    // fetch resolves at the headers. Keep the deadline active until the JSON
+    // body has arrived too, including large inventory and saved-row responses.
+    const payload = await response.json().catch((error) => {
+      if (timedOut) throw error;
+      if (response.ok) throw new GeneratedContentRequestError("Content storage returned invalid JSON. Reload the row before retrying.", 502);
+      return null;
+    });
+    return { ok: response.ok, status: response.status, headers: response.headers, payload };
   } catch (error) {
     if (timedOut) throw new AdminStorageTimeoutError();
     throw error;
@@ -1357,6 +1365,10 @@ async function listGeneratedContent(req: IncomingMessage) {
 
   if (!id && supportsUpdatedCursor && cursor) {
     const decodedCursor = decodeGeneratedContentCursor(cursor);
+    // The OR predicate alone scans all newer rows before reaching this page.
+    // This redundant bound starts the existing index at the cursor timestamp;
+    // the original predicate still handles ties and preserves exact ordering.
+    params.set("updated_at", `lte.${decodedCursor.updatedAt}`);
     params.set("or", `(updated_at.lt.${decodedCursor.updatedAt},and(updated_at.eq.${decodedCursor.updatedAt},id.lt.${decodedCursor.id}))`);
   }
 
@@ -1388,9 +1400,12 @@ async function listGeneratedContent(req: IncomingMessage) {
     const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
       headers: adminHeaders()
     });
-    const payload = await response.json().catch(() => null);
+    const payload = response.payload;
 
     if (response.ok) {
+      if (!Array.isArray(payload)) {
+        throw new GeneratedContentRequestError("Content storage returned an invalid row list. Please retry.", 502);
+      }
       if (contentKeys.length && Array.isArray(payload)) {
         const { servingPackageRecords, isSkyPartitionKey } = await import("../_lib/content-live-status.js");
         const savedKeys = new Set(payload.map((row) => row.content_key));
@@ -1449,7 +1464,7 @@ async function countGeneratedContent(status: ReviewStatus, surface: GeneratedCon
       range: "0-0"
     }
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
 
   if (!response.ok) {
     throw new Error(`Supabase count failed with ${response.status}: ${JSON.stringify(payload)}`);
@@ -1553,7 +1568,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     },
     body: JSON.stringify(row)
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
 
   if (!response.ok) {
     if (response.status === 409) {
@@ -1654,7 +1669,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
     const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
       headers: adminHeaders()
     });
-    const payload = await response.json().catch(() => null);
+    const payload = response.payload;
 
     if (!response.ok) {
       throw new Error(`Supabase existing row lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
@@ -1674,7 +1689,7 @@ async function fetchExistingRowById(id: string) {
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
     headers: adminHeaders()
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
 
   if (!response.ok) {
     throw new Error(`Supabase row lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
@@ -1700,7 +1715,7 @@ async function patchGeneratedContentRow(
     },
     body: JSON.stringify(patch)
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
   if (!response.ok) {
     throw new Error(`Supabase review update failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
@@ -1723,7 +1738,7 @@ async function upsertGeneratedContentRow(row: Record<string, unknown>) {
     limit: "1"
   });
   const lookup = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, { headers: adminHeaders() });
-  const found = await lookup.json().catch(() => null);
+  const found = lookup.payload;
   if (!lookup.ok) throw new Error(`Could not check existing revisions: ${lookup.status}.`);
   const previous = Array.isArray(found) ? found[0] : null;
   const conflict = () => new GeneratedContentRequestError("A saved revision already exists for this content. Open that revision to continue editing; its copy has not been overwritten.", 409);
@@ -1742,7 +1757,7 @@ async function upsertGeneratedContentRow(row: Record<string, unknown>) {
     },
     body: JSON.stringify(row)
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
   if (!response.ok) {
     if (response.status === 409) throw conflict();
     throw new Error(`Supabase revision create failed with ${response.status}: ${JSON.stringify(payload)}`);
@@ -1872,7 +1887,7 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
       },
       body: JSON.stringify(batch)
     });
-    const payload = await response.json().catch(() => null);
+    const payload = response.payload;
 
     if (!response.ok) {
       throw new Error(`Supabase bulk upsert failed with ${response.status}: ${JSON.stringify(payload)}`);
@@ -2465,7 +2480,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     },
     body: JSON.stringify(patch)
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
 
   if (!response.ok) {
     throw new Error(`Supabase review update failed with ${response.status}: ${JSON.stringify(payload)}`);
@@ -2512,7 +2527,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
       prefer: "return=representation"
     }
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
 
   if (!response.ok) {
     throw new Error(`Supabase delete failed with ${response.status}: ${JSON.stringify(payload)}`);
