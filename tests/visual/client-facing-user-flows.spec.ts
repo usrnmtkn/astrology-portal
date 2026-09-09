@@ -186,6 +186,8 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       window.localStorage.setItem("tldrastro:theme", options.theme ?? "light");
       window.localStorage.setItem("tldrastro:sunriseOrb", "true");
       window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
+      // Layout checks opt out explicitly; the app default can override reduced motion.
+      window.localStorage.setItem("tldrastro:pageAnimations", "off");
       window.localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(fixtureLocation));
       if (preloadedNatalCache) {
         window.localStorage.setItem(preloadedNatalCache.cacheKey, JSON.stringify(preloadedNatalCache));
