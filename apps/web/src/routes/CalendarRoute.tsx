@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { LocationInput } from "../types";
 import type { LunarCalendarEvent } from "../services/ephemeris";
 import type { LiveGeneratedContent } from "../services/generatedContent";
+import type { SkyPlacementContentStatus } from "../features/sky/skyPlacementContentState";
 import "../styles/lunar-calendar.css";
 
 const LunarCalendar = lazy(() =>
@@ -15,6 +16,8 @@ type CalendarRouteProps = {
   fallback: ReactNode;
   generatedContent: Map<string, LiveGeneratedContent>;
   generatedContentStatus?: "idle" | "loading" | "ready";
+  skyPlacementContentStatus?: SkyPlacementContentStatus;
+  contentVersion?: number;
   location: LocationInput;
   onLocationChange: (location: LocationInput) => void;
   onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
@@ -26,6 +29,8 @@ export function CalendarRoute({
   fallback,
   generatedContent,
   generatedContentStatus,
+  skyPlacementContentStatus,
+  contentVersion,
   location,
   onLocationChange,
   onGeneratedContentRequest,
@@ -37,6 +42,8 @@ export function CalendarRoute({
       <LunarCalendar
         generatedContent={generatedContent}
         generatedContentStatus={generatedContentStatus}
+        skyPlacementContentStatus={skyPlacementContentStatus}
+        contentVersion={contentVersion}
         location={location}
         onLocationChange={onLocationChange}
         onGeneratedContentRequest={onGeneratedContentRequest}

@@ -2227,7 +2227,7 @@ export function ManualChartsPanel({
       glyph: `${pointGlyph(transit.transitPlanet)} ${aspectGlyph(transit.aspect)} ${pointGlyph(transit.natalPoint)}`,
       kicker: "Transit",
       title,
-      duration: `${timing.durationLabel} · ${timing.rangeLabel}`,
+      duration: timing.label,
       meta: [
         timing.rangeLabel,
         `${orbLabel} orb`,

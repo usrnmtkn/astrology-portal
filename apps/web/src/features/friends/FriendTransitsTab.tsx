@@ -32,7 +32,7 @@ function FriendPersonalTransitCard({
           <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
             <DurationLabelText label={transit.durationLabel} />
           </span>
-          <span>{transit.rangeLabel}</span>
+          {transit.rangeLabel !== transit.durationLabel && <span>{transit.rangeLabel}</span>}
         </span>
         <p className="updates-aspect-row__description transit-card-preview">{transit.summary}</p>
       </span>

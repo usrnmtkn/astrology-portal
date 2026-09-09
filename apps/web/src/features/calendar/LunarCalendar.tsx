@@ -28,6 +28,7 @@ import {
   fallbackV3VocabularyBody,
   KNOWLEDGE_MATRIX_V9_VERSION,
   loadKnowledgeMatrixV9Runtime,
+  skyV4ReaderRenderer,
   SourceGapError as FallbackV3SourceGapError,
   transitSynastryFallbackRendererV3 as calendarFallbackRendererV3
 } from "../../content/fallbackArchitectureV3Runtime";
@@ -50,6 +51,7 @@ import { hasMapboxToken, searchCities, type CitySuggestion } from "../../service
 import { timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "../../services/timezones";
 import type { LocationInput } from "../../types";
 import { calendarEventGeneratedContentKeys } from "./calendarContentKeys";
+import type { SkyPlacementContentStatus } from "../sky/skyPlacementContentState";
 import {
   resolveCalendarV9Transit,
   type CalendarV9TransitResolver
@@ -90,6 +92,8 @@ type LunarCalendarProps = {
   onLocationChange: (location: LocationInput) => void;
   generatedContent?: Map<string, LiveGeneratedContent>;
   generatedContentStatus?: "idle" | "loading" | "ready";
+  skyPlacementContentStatus?: SkyPlacementContentStatus;
+  contentVersion?: number;
   onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
   onOpenTransit?: (event: LunarCalendarEvent, description?: string) => void;
   showJournalPrompts?: boolean;
@@ -520,19 +524,11 @@ function weeklyWriteupEvents(day: LunarCalendarDay) {
 }
 
 function monthTransitCardEvents(days: LunarCalendarDay[]) {
-  return days
-    .filter((day) => day.inMonth)
-    .flatMap((day) => {
-      const sortedEvents = dayEventPreview(day.events);
-      const surfacedTransit = sortedEvents.find(isTransitCardEvent);
-
-      return surfacedTransit ? [surfacedTransit] : [];
-    })
-    .sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
+  return weekTransitCardEvents(days.filter((day) => day.inMonth));
 }
 
 function isTransitCardEvent(event: LunarCalendarEvent) {
-  return event.primary && (event.type === "ingress" || event.type === "station");
+  return event.primary && (event.type === "ingress" || event.type === "station") && !isActiveRetrogradeEvent(event);
 }
 
 function isActiveRetrogradeEvent(event: LunarCalendarEvent) {
@@ -606,13 +602,16 @@ function selectedDayTransitEvents(
 }
 
 function weekTransitCardEvents(days: LunarCalendarDay[]) {
-  return days
-    .flatMap((day) => {
-      const sortedEvents = dayEventPreview(day.events);
-      const surfacedTransit = sortedEvents.find(isTransitCardEvent);
-
-      return surfacedTransit ? [surfacedTransit] : [];
-    })
+  // A day can contain several ingresses/stations. Range responses can also
+  // repeat a boundary event on adjacent days; its physical identity wins.
+  const dates = new Set(days.map((day) => day.dateKey));
+  const events = new Map<string, LunarCalendarEvent>();
+  for (const day of days) for (const event of day.events) {
+    if (!isTransitCardEvent(event) || !dates.has(event.dateKey)) continue;
+    const identity = [event.type, event.planet, event.sign, event.toSign, event.direction, event.startsAt].join("|");
+    if (!events.has(identity)) events.set(identity, event);
+  }
+  return [...events.values()]
     .sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
 }
 
@@ -1077,6 +1076,11 @@ function calendarIngressPackageDescription(event: LunarCalendarEvent, dateLine: 
   return isReaderFacingCopy(body) ? body : "";
 }
 
+function isLilithStationEvent(event: LunarCalendarEvent) {
+  return event.type === "station" && slugContentPart(event.planet ?? "") === "lilith"
+    && event.phase !== "retrograde-passage";
+}
+
 function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "Today") {
   if (event.type === "lunation" && event.sign) {
     try {
@@ -1382,6 +1386,27 @@ export function normalizeCalendarEventSurface(
         body: generatedDescription
       }]
     };
+  }
+
+  if (isLilithStationEvent(event)) {
+    // Use the same approved station unit and publication ledger as Sky detail.
+    // A retired/unavailable station must not reveal older retrograde prose.
+    try {
+      const rendered = skyV4ReaderRenderer.renderRoute({
+        route: "lilith-station", stationSupported: true
+      }) as { contentKey?: string; readerParts?: string[] };
+      const body = fullDetailReaderFacingCopy(rendered.readerParts ?? []);
+      if (body && rendered.contentKey) {
+        return {
+          surface: "calendar-event", status: "servable",
+          sections: [{ slot: "description", required: false, layer: "authored",
+            tier: "sky-v4-canonical", sourceKeys: [rendered.contentKey], body }]
+        };
+      }
+    } catch (error) {
+      if (!(error instanceof Error) || !/^SKY_V4_(?:NOT_RELEASED|NOT_SERVABLE|SOURCE_GAP)/u.test(error.message)) throw error;
+    }
+    return { surface: "calendar-event", status: "not-servable", sections: [] };
   }
 
   const matrixResult = resolveCalendarV9Transit(event, knowledgeMatrixV9);
@@ -1834,6 +1859,8 @@ export function LunarCalendar({
   onLocationChange,
   generatedContent,
   generatedContentStatus = "idle",
+  skyPlacementContentStatus = "idle",
+  contentVersion = 0,
   onGeneratedContentRequest,
   onOpenTransit
 }: LunarCalendarProps) {
@@ -2394,9 +2421,8 @@ export function LunarCalendar({
         showGuidance
       };
     });
-  }, [approvedExactSkyAspectLookup, calendar, generatedContent, knowledgeMatrixV9, selectedWeekDays, zone]);
+  }, [approvedExactSkyAspectLookup, calendar, contentVersion, generatedContent, knowledgeMatrixV9, selectedWeekDays, zone]);
   const weeklyRangeLabel = formatWeeklyRange(selectedWeekDays, calendar?.timeZone ?? location.timeZone ?? "UTC");
-  const selectedDate = selectedDay ? new Date(selectedDay.date) : new Date();
   const arcEvents = useMemo(() => {
     const eventsById = new Map<string, LunarCalendarEvent>();
 
@@ -2584,11 +2610,11 @@ export function LunarCalendar({
   }, [arcEvents, selectedDay, selectedSeasonArc]);
   const monthTransitEvents = calendar ? monthTransitCardEvents(calendar.days) : [];
   const visibleWeekTransitEvents = weekTransitCardEvents(selectedWeekDays);
-  const milestoneReferenceDate = visibleWeekAnchor ? new Date(visibleWeekAnchor.date) : selectedDate;
   const milestones = calendar
     ? calendar.events
         .filter((event) => event.type === "lunation")
-        .filter((event) => new Date(event.startsAt).getTime() >= milestoneReferenceDate.getTime() - 6 * 60 * 60_000)
+        .filter((event) => event.dateKey >= selectedDateKey)
+        .sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime())
         .slice(0, 2)
     : [];
   const milestonePills = milestones.length > 0 && (
@@ -2607,7 +2633,7 @@ export function LunarCalendar({
             <span className="lunar-milestones__separator" aria-hidden="true">·</span>
             <span className="lunar-milestones__date">{new Intl.DateTimeFormat("en-US", { timeZone: zone, month: "short", day: "numeric" }).format(new Date(event.startsAt))}</span>
             <span className="lunar-milestones__separator" aria-hidden="true">·</span>
-            <span className="lunar-milestones__relative">{relativeDayLabel(currentDateKey, event.dateKey)}</span>
+            <span className="lunar-milestones__relative">{relativeDayLabel(selectedDateKey, event.dateKey)}</span>
           </button>
         );
       })}
@@ -3132,7 +3158,7 @@ export function LunarCalendar({
                   <TransitCard
                     approvedExactSkyAspectLookup={approvedExactSkyAspectLookup}
                     composedSkyCalendarCardLookup={composedSkyCalendarCardLookup}
-                    contentStatus={generatedContentStatus}
+                    contentStatus={isLilithStationEvent(event) && skyPlacementContentStatus === "loading" ? "loading" : generatedContentStatus}
                     event={event}
                     generatedContent={generatedContent}
                     key={event.id}
@@ -3369,7 +3395,7 @@ export function LunarCalendar({
                   <TransitCard
                     approvedExactSkyAspectLookup={approvedExactSkyAspectLookup}
                     composedSkyCalendarCardLookup={composedSkyCalendarCardLookup}
-                    contentStatus={generatedContentStatus}
+                    contentStatus={isLilithStationEvent(event) && skyPlacementContentStatus === "loading" ? "loading" : generatedContentStatus}
                     event={event}
                     generatedContent={generatedContent}
                     key={event.id}
