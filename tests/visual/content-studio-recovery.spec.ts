@@ -28,6 +28,7 @@ async function mockStudio(page: Page, malformedStatus = false) {
 }
 
 async function openStudioPage(page: Page, name: string) {
+  await expect(page.locator("#admin-content-navigation")).toBeAttached();
   const navigation = page.getByRole("button", { name: "Open Content Studio navigation", exact: true });
   if (await navigation.isVisible()) await navigation.click();
   await page.getByRole("button", { name, exact: true }).click();
