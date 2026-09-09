@@ -1,6 +1,7 @@
 import { correctedReaderSource } from "./readerSourceReferenceCorrections.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
 import { skyEvergreenFields, skyEvergreenEditableFields, validateSkyEvergreenSections } from "./skyEvergreenSections.mjs";
+import { skyPlacementVariableFacts, fillSkyPlacementVariables } from "./skyPlacementVariables.mjs";
 import continuousOwnerApproval from "../authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
 import readerCopyOwnerApproval from "../authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 import readerCopyServingRelease from "../authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
@@ -862,9 +863,9 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
     throw new Error(`SKY_V4_PLACEMENT_IDENTITY: expected ${expectedKey}.`);
   }
   input = { ...input, contexts: matchingPlacementContexts(input) };
-  const facts = input.facts ?? {};
+  const facts = skyPlacementVariableFacts(input);
   const fullArticle = article && input.articleAvailable !== false
-    ? withoutUnresolvedSlots(fillFacts(article.placementArticle, facts))
+    ? fillSkyPlacementVariables(article.placementArticle, facts).trim()
     : "";
   const overlays = resolveSkyV4ContextualOverlays(corpus, input.contexts, input.overlaySettings, input.overlaySuppressions);
   const fallbackOverlays = resolveSkyV4ContextualOverlays(
@@ -873,8 +874,9 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook
     ? fallbackOverlays[0]?.FallbackHookOverlay ?? ""
     : "";
-  const evergreen = article ? skyEvergreenFields(article).map(section => section.value) : [];
-  const fallback = article && input.fallbackAvailable !== false
+  const evergreen = article && !fullArticle && input.fallbackAvailable !== false
+    ? skyEvergreenFields(article).map(section => fillSkyPlacementVariables(section.value, facts)) : [];
+  const fallback = article && !fullArticle && input.fallbackAvailable !== false
     ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)]
       .filter(Boolean)
       .map((part) => withoutUnresolvedSlots(fillFacts(part, facts)))

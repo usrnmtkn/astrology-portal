@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementAssembly";
+import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
+// @ts-ignore Shared inline-variable contract used by the reader and save API.
+import { isSkyPlacementVariableField, skyPlacementVariableFacts, skyPlacementVariableIssues } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 // @ts-ignore Shared reader/editor schema; editor labels are never rendered as prose.
 import { skyEvergreenLayout, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 
@@ -31,6 +34,9 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const rxContext = Boolean(retrograde || skyRetrogradeBodies.has(planet) && selection?.planet === planet && selection.motion === "retrograde");
   const fallbackField = fields.find(field => field.key === (retrograde ? "Body" : "placementArticle")) ?? fields[0];
   const field = fields.find(item => item.key === selectedField) ?? fallbackField;
+  const supportsVariables = field && isSkyPlacementVariableField(contentKey, field.key);
+  const variableFacts = skyPlacementVariableFacts({ planet, sign, isRetrograde: rxContext });
+  const variableIssues: string[] = supportsVariables ? skyPlacementVariableIssues(field.value) : [];
   const evergreen: EvergreenSection[] = placement ? skyEvergreenLayout(source) : [];
   const move = (index: number, offset: number) => {
     const next = [...evergreen];
@@ -40,6 +46,18 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const selectedSection = evergreen.find(section => `${SKY_EVERGREEN_SECTIONS_PATH}.${section.id}` === field?.key && !section.source);
   const changeSection = (patch: Partial<EvergreenSection>) => onChange(SKY_EVERGREEN_SECTIONS_PATH,
     evergreen.map(section => section.id === selectedSection?.id ? { ...section, ...patch } : section));
+  const changeWriting = (value: string) => selectedSection ? changeSection({ body: value }) : field && onChange(field.key, value);
+  const insertVariable = (token: string) => {
+    const input = textarea.current;
+    if (!input || !field || disabled) return;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    changeWriting(field.value.slice(0, start) + token + field.value.slice(end));
+    requestAnimationFrame(() => {
+      input.focus({ preventScroll: true });
+      input.setSelectionRange(start + token.length, start + token.length);
+    });
+  };
 
   // This component is deferred. Focus after it mounts, rather than racing the
   // dashboard's scroll request against a lazy-loaded editor.
@@ -119,12 +137,14 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
         {retrograde && <small className="admin-field-hint">{field.key === "Body" ? "The full opening paragraph on the retrograde detail page." : "The short version used by retrograde cards. It does not replace the detail-page opening."}</small>}
         {field.key.startsWith("fallback.") && <small className="admin-field-hint">Used when the full placement article is unavailable.{skyRetrogradeBodies.has(planet) && " Shared by direct and retrograde pages."}</small>}
         <textarea ref={textarea} className="admin-copy-field-body" aria-label={`Fallback field ${field.label}`} data-sky-field={field.key}
-          value={field.value} disabled={disabled} onChange={event => selectedSection ? changeSection({ body: event.target.value }) : onChange(field.key, event.target.value)} />
+          value={field.value} disabled={disabled} aria-invalid={variableIssues.length > 0 || undefined} onChange={event => changeWriting(event.target.value)} />
       </label>
       <p className="admin-sky-writing-count">{field.value.trim() ? field.value.trim().split(/\s+/u).length : 0} words · {field.value.length} characters</p>
+      {supportsVariables && <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />}
+      {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}
       <details className="admin-workspace-details">
         <summary>Preview this section</summary>
-        <p className="admin-sky-writing-preview">{field.value || "No writing saved for this section."}</p>
+        <p className="admin-sky-writing-preview">{field.value ? supportsVariables ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value : "No writing saved for this section."}</p>
       </details>
     </> : <p>No editable writing fields are available for this source.</p>}
   </section>;

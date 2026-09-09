@@ -1,4 +1,6 @@
 import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
+// @ts-ignore Shared inline-variable contract for continuous Sky placement prose.
+import { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 // @ts-ignore Shared canonical section schema; no database metadata can expand it.
 import { isSkyEvergreenSource, skyEvergreenFields, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
@@ -426,6 +428,14 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
   const copy = [...fields.map((path) => packageValueAt(effective, path)), ...sections.filter(isRecord).map(section => section.body)]
     .filter((value) => typeof value === "string").join("\n\n");
   const hardFailures: string[] = [];
+  if (isSkyEvergreenSource(record)) {
+    for (const path of ["placementArticle", "fallback.hook", "fallback.lived", "fallback.turn"]) {
+      hardFailures.push(...skyPlacementVariableIssues(packageValueAt(effective, path)).map((issue: string) => `${path}: ${issue}`));
+    }
+    for (const section of sections.filter(isRecord)) {
+      hardFailures.push(...skyPlacementVariableIssues(section.body).map((issue: string) => `Evergreen section ${section.id}: ${issue}`));
+    }
+  }
   if (/\byou have (?:a|an) (?:gift|talent|natural ability|instinct)\b/iu.test(copy)) {
     hardFailures.push("STP-02 natal-trait framing");
   }
@@ -463,7 +473,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     const layout = packageValueAt(proposedRecord, SKY_EVERGREEN_SECTIONS_PATH);
     validateSkyEvergreenSections(layout);
     if (Array.isArray(layout)) for (const section of layout.filter(isRecord)) {
-      if (typeof section.body === "string") editableFields.push([`evergreen section ${section.id}`, section.body, ""]);
+      if (typeof section.body === "string") editableFields.push([`fallback.sections.${section.id}`, section.body, ""]);
     }
   }
   if (packageDraft) {
@@ -486,6 +496,15 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
 
   for (const [field, value, original] of editableFields) {
     if (typeof value !== "string") continue;
+    const skyVariableField = record.source_package === skyV4CanonicalStagePackage
+      && (isSkyPlacementVariableField(row.content_key, field.replace(/^packageDraft\./u, ""))
+        // Publication mirrors the selected canonical body into these envelope
+        // fields. They must accept the same tokens as their source passage.
+        || isSkyEvergreenSource(record) && ["body", "body_you"].includes(field));
+    if (skyVariableField) {
+      const issues = skyPlacementVariableIssues(value);
+      if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
+    }
     if (value.includes("—")) {
       throw new Error(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);
     }
@@ -508,6 +527,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       ? packagePlaceholders(record.body_you)
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
+      if (skyVariableField) continue;
       const isAllowedFriendName = (
         row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
         || row.content_key.startsWith("authored/transit-aspect/")
