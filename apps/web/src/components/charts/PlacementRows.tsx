@@ -1,3 +1,4 @@
+import { CardReadMore } from "../CardReadMore";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
@@ -636,6 +637,7 @@ export function PlacementTableRow({
           </span>
         ) : null}
         {description ? <span className="placement-table-row__description">{description}</span> : null}
+        {onClick ? <CardReadMore /> : null}
         {hasDignity ? (
           <span className="placement-table-row__status" aria-label={`${title} status`}>
             <DignityBadge dignity={dignityItems} />
@@ -799,6 +801,7 @@ export function PlanetPlacementRow({
             <span />
           </span>
         ) : null}
+        {onClick && !descriptionLoading ? <CardReadMore /> : null}
         {hasFooterTags ? (
           <span className="planet-placement-row__tags">
             {statuses.map((status) => (

@@ -1,3 +1,4 @@
+import { CardReadMore } from "../../components/CardReadMore";
 import { ChevronRight } from "lucide-react";
 import { DurationLabelText } from "../../components/charts/PlacementRows";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
@@ -104,7 +105,7 @@ function PatternPreviewCard({
           className="natal-pattern-card__details-button"
           onClick={() => onOpenDetail?.(item, nestedItems)}
         >
-          <span>Details</span>
+          <CardReadMore />
           <ChevronRight size={17} aria-hidden="true" />
         </button>
       </div>

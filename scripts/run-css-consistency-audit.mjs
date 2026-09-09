@@ -41,15 +41,15 @@ const canonicalBodySelectors = [
   ".placement-table-row__description",
   ".planet-placement-row__description",
   ".sky-pl-copy",
-  ".tx-body"
+  ".tx-body",
+  ".natal-pattern-card__header p",
+  ".natal-pattern-card__section p"
 ];
 
 const validBodyFontSizes = new Set([
   canonicalBodyContract.fontSize,
   "var(--type-body-size)",
   "var(--article-body-size)",
-  "var(--aspect-card-body-size)",
-  "var(--natal-card-body-size)",
   "var(--text-row-body-size)"
 ]);
 
@@ -66,8 +66,6 @@ const requiredTypographyTokenValues = new Map([
   ["--text-row-body-size", "var(--text-body)"],
   ["--text-table-body-size", "var(--text-body)"],
   ["--article-body-size", "var(--text-body)"],
-  ["--natal-card-body-size", "var(--text-body)"],
-  ["--aspect-card-body-size", "var(--text-body)"],
   ["--label-eyebrow-font-family", "var(--font-label)"]
 ]);
 

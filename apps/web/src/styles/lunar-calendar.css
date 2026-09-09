@@ -956,7 +956,7 @@ body:has(.app-shell.mode-calendar),
   --tx-glyph-column: var(--sky-card-glyph-column-size);
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  column-gap: var(--aspect-card-gap);
+  column-gap: var(--card-row-gap);
   align-items: start;
   color: inherit;
   text-align: left;
@@ -978,8 +978,8 @@ a.tx-card.has-article:hover {
 .lunar-month-transit-card--button {
   appearance: none;
   width: 100%;
-  border: var(--border-width-thin) solid var(--aspect-card-border);
-  background: var(--aspect-card-bg);
+  border: var(--border-width-thin) solid var(--card-border);
+  background: var(--card-bg);
   color: inherit;
   font: inherit;
   cursor: pointer;
@@ -1042,7 +1042,7 @@ a.tx-card.has-article:hover {
 
 .tx-body--loading {
   display: block;
-  min-height: calc(3 * var(--aspect-card-body-line) * 1em);
+  min-height: calc(3 * var(--leading-body) * 1em);
   border-radius: var(--radius-sm);
   background: linear-gradient(
     90deg,

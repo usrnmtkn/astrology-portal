@@ -171,8 +171,13 @@
       "title"
       "meta"
       "status"
-      "description";
+      "description"
+      "read-more";
     gap: var(--space-2);
+  }
+
+  .placement-table-row__body > .card-read-more {
+    grid-area: read-more;
   }
 
   .placement-table-row__topline {
@@ -1232,18 +1237,18 @@
 
   .mode-guest .aspect-section :where(.aspect-row-copy strong, .aspect-row-copy h3, .aspect-row-copy h4),
   .mode-member .aspect-section :where(.aspect-row-copy strong, .aspect-row-copy h3, .aspect-row-copy h4) {
-    font-size: var(--aspect-card-title-size);
-    line-height: var(--aspect-card-title-line);
+    font-size: var(--text-card-title);
+    line-height: var(--leading-title);
   }
 
-  .mode-guest .aspect-section :where(.aspect-row-copy > span:not(.ui-pill), .aspect-row-copy p),
-  .mode-member .aspect-section :where(.aspect-row-copy > span:not(.ui-pill), .aspect-row-copy p) {
+  .mode-guest .aspect-section :where(.aspect-row-copy > span:not(.ui-pill):not(.card-read-more), .aspect-row-copy p),
+  .mode-member .aspect-section :where(.aspect-row-copy > span:not(.ui-pill):not(.card-read-more), .aspect-row-copy p) {
     font-size: var(--text-body);
     line-height: var(--leading-body);
   }
 
-  .mode-guest .aspect-section :where(.aspect-row-copy .aspect-row-subtitle, .aspect-row-meta),
-  .mode-member .aspect-section :where(.aspect-row-copy .aspect-row-subtitle, .aspect-row-meta) {
+  .mode-guest .aspect-section :where(.aspect-row-copy .aspect-row-subtitle:not(.ui-pill), .aspect-row-meta),
+  .mode-member .aspect-section :where(.aspect-row-copy .aspect-row-subtitle:not(.ui-pill), .aspect-row-meta) {
     font-size: var(--sky-mobile-meta);
     line-height: var(--leading-meta);
   }

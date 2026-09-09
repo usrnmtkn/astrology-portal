@@ -1,8 +1,5 @@
-/*
-  Two shared card systems:
-  - Natal cards: placement-style rows across Sky, You, and Friends.
-  - Aspect cards: aspect-style rows and calendar transit cards.
-*/
+/* Shared reading-card contract for placement, aspect, transit, and pattern cards.
+   Layout selectors stay with their components; visual roles are owned here. */
 
 .placement-table-row,
 .planet-placement-row,
@@ -16,32 +13,88 @@
 .synastry-placement-column-inner .synastry-placement-row,
 .friend-chart-page .friend-placement-row-compact .placement-table-row,
 .friend-chart-page .friend-placement-row-compact .planet-placement-row,
-.friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
-  min-height: var(--natal-card-min-height);
-  padding: var(--natal-card-padding);
-  border: var(--border-width-thin) solid var(--natal-card-border);
-  border-radius: var(--natal-card-radius);
-  background: var(--natal-card-bg);
-  box-shadow: var(--natal-card-shadow);
-  gap: var(--natal-card-gap);
+.friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row,
+.aspect-row,
+.aspect-row-button,
+.aspect-row-static,
+.aspect-card,
+.tx-card,
+.aspect-section .aspect-row,
+.aspect-section .aspect-row-button,
+.aspect-section .aspect-row-static,
+.friend-chart-page .aspect-row,
+.friend-chart-page .aspect-row-button,
+.friend-chart-page .aspect-row-static,
+.updates-aspect-row,
+.natal-pattern-card {
+  border: var(--border-width-thin) solid var(--card-border);
+  border-radius: var(--card-radius);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+}
+
+.placement-table-row,
+.planet-placement-row,
+.sky-pl,
+.synastry-placement-row,
+.ro-screen .sky-pl,
+.placement-section .planet-placement-row,
+.friend-placement-row .placement-table-row,
+.friend-placement-row .planet-placement-row,
+.synastry-placement-table .planet-placement-row,
+.synastry-placement-column-inner .synastry-placement-row,
+.friend-chart-page .friend-placement-row-compact .placement-table-row,
+.friend-chart-page .friend-placement-row-compact .planet-placement-row,
+.friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row,
+.aspect-row,
+.aspect-row-button,
+.aspect-row-static,
+.aspect-card,
+.tx-card,
+.aspect-section .aspect-row,
+.aspect-section .aspect-row-button,
+.aspect-section .aspect-row-static,
+.friend-chart-page .aspect-row,
+.friend-chart-page .aspect-row-button,
+.friend-chart-page .aspect-row-static,
+.updates-aspect-row {
+  min-height: var(--card-row-min-height);
+  padding: var(--card-padding);
+  gap: var(--card-row-gap);
 }
 
 .placement-table-row__title,
 .planet-placement-row__title,
 .sky-pl-title,
 .ro-screen .sky-pl-title,
-.placement-section .planet-placement-row__title {
+.placement-section .planet-placement-row__title,
+.aspect-row-copy strong,
+.aspect-row-copy :is(h3, h4),
+.tx-title,
+.aspect-section .aspect-row-copy strong,
+.aspect-section .aspect-row-copy :is(h3, h4),
+.friend-chart-page .aspect-row-copy strong,
+.friend-chart-page .aspect-row-copy :is(h3, h4),
+.updates-aspect-row__title,
+.natal-pattern-card__header h3 {
   color: var(--card-title-color);
   font-family: var(--font-display);
-  font-size: var(--natal-card-title-size);
-  font-weight: var(--natal-card-title-weight);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-title);
-  line-height: var(--natal-card-title-line);
+  line-height: var(--leading-title);
 }
 
 .placement-table-row__description,
 .planet-placement-row__description,
-.sky-pl-copy {
+.sky-pl-copy,
+.aspect-row-copy p,
+.tx-body,
+.aspect-section .aspect-row-copy p,
+.friend-chart-page .aspect-row-copy p,
+.updates-aspect-row__description,
+.natal-pattern-card__header p,
+.natal-pattern-card__section p {
   color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -64,33 +117,20 @@
 .placement-section .planet-placement-row__meta,
 .synastry-placement-column-inner .synastry-placement-meta,
 .synastry-placement-column-inner .synastry-placement-degree,
-.synastry-placement-column-inner .synastry-placement-house {
+.synastry-placement-column-inner .synastry-placement-house,
+.aspect-row-timing,
+.aspect-row-meta,
+.tx-date,
+.aspect-section .aspect-row-timing,
+.aspect-section .aspect-row-meta,
+.friend-chart-page .aspect-row-timing,
+.friend-chart-page .aspect-row-meta {
   color: var(--card-meta-color);
   font-family: var(--font-body);
-  font-size: var(--natal-card-meta-size);
-  font-weight: var(--natal-card-meta-weight);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-number);
-  line-height: var(--natal-card-meta-line);
-}
-
-.aspect-row,
-.aspect-row-button,
-.aspect-row-static,
-.aspect-card,
-.tx-card,
-.aspect-section .aspect-row,
-.aspect-section .aspect-row-button,
-.aspect-section .aspect-row-static,
-.friend-chart-page .aspect-row,
-.friend-chart-page .aspect-row-button,
-.friend-chart-page .aspect-row-static {
-  min-height: var(--aspect-card-min-height);
-  padding: var(--aspect-card-padding);
-  border: var(--border-width-thin) solid var(--aspect-card-border);
-  border-radius: var(--aspect-card-radius);
-  background: var(--aspect-card-bg);
-  box-shadow: var(--aspect-card-shadow);
-  gap: var(--aspect-card-gap);
+  line-height: var(--leading-meta);
 }
 
 .tx-card {
@@ -106,53 +146,11 @@
 .friend-chart-page .aspect-row,
 .friend-chart-page .aspect-row-button,
 .friend-chart-page .aspect-row-static {
-  --aspect-row-padding: var(--aspect-card-padding);
-  --aspect-row-gap: var(--aspect-card-gap);
-  --aspect-row-copy-size: var(--aspect-card-body-size);
-  --aspect-row-copy-line: var(--aspect-card-body-line);
-  --aspect-row-meta-size: var(--aspect-card-meta-size);
-}
-
-.aspect-row-copy strong,
-.aspect-row-copy :is(h3, h4),
-.tx-title,
-.aspect-section .aspect-row-copy strong,
-.aspect-section .aspect-row-copy :is(h3, h4),
-.friend-chart-page .aspect-row-copy strong,
-.friend-chart-page .aspect-row-copy :is(h3, h4) {
-  color: var(--card-title-color);
-  font-family: var(--font-display);
-  font-size: var(--aspect-card-title-size);
-  font-weight: var(--aspect-card-title-weight);
-  letter-spacing: var(--tracking-title);
-  line-height: var(--aspect-card-title-line);
-}
-
-.aspect-row-copy p,
-.tx-body,
-.aspect-section .aspect-row-copy p,
-.friend-chart-page .aspect-row-copy p {
-  color: var(--card-body-color);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-body);
-  line-height: var(--leading-body);
-}
-
-.aspect-row-timing,
-.aspect-row-meta,
-.tx-date,
-.aspect-section .aspect-row-timing,
-.aspect-section .aspect-row-meta,
-.friend-chart-page .aspect-row-timing,
-.friend-chart-page .aspect-row-meta {
-  color: var(--card-meta-color);
-  font-family: var(--font-body);
-  font-size: var(--aspect-card-meta-size);
-  font-weight: var(--aspect-card-meta-weight);
-  letter-spacing: var(--tracking-number);
-  line-height: var(--aspect-card-meta-line);
+  --aspect-row-padding: var(--card-padding);
+  --aspect-row-gap: var(--card-row-gap);
+  --aspect-row-copy-size: var(--text-body);
+  --aspect-row-copy-line: var(--leading-body);
+  --aspect-row-meta-size: var(--type-meta-size);
 }
 
 .tx-tag {
@@ -167,15 +165,16 @@
   line-height: var(--pill-line-height);
 }
 
-@media (max-width: 720px) {
-  .app-shell.mode-guest,
-  .app-shell.mode-member,
-  .app-shell.mode-calendar {
-    --natal-card-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-4);
-    --natal-card-gap: var(--card-row-gap);
-    --natal-card-min-height: var(--card-row-min-height);
-    --aspect-card-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-4);
-    --aspect-card-gap: var(--card-row-gap);
-    --aspect-card-min-height: var(--card-row-min-height);
-  }
+/* One action label for every reading destination. The parent remains the control. */
+.card-read-more {
+  display: inline-block;
+  justify-self: start;
+  color: var(--card-title-color);
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-normal);
+  text-decoration: underline;
+  text-underline-offset: var(--space-1);
 }

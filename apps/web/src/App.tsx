@@ -1,3 +1,4 @@
+import { CardReadMore } from "./components/CardReadMore";
 import { isContentRetired } from "./content/contentPublicationState";
 import { usePageTransition, readAnimationPreference, animationPreferenceKey } from "./hooks/usePageTransition";
 import { skyBodyLabel } from "./content/skyMotionLabels";
@@ -5705,6 +5706,7 @@ function relatedAspectRowsForPlacement({
               {narrativeTiming.map(line => <span key={line}>{line}</span>)}
             </span> : null}
             {displaySummary ? displaySummary.split(/\n\s*\n/u).map((paragraph, index) => <p key={index}>{paragraph}</p>) : null}
+            {mode === "sky" || onOpenNatalAspect ? <CardReadMore /> : null}
           </span>
           <span className="aspect-row-meta" aria-label={exact ? "exact aspect" : `${wholeDegreeOrb(aspect.orb)} orb`}>
             <span className="aspect-row-dot" aria-hidden="true" />
@@ -17257,6 +17259,7 @@ function ProfileView({
             <span>{timing.rangeLabel}</span>
           </span>
           {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
+              <CardReadMore />
           {lifeAreaTags.length ? (
             <span className="updates-aspect-row__life-areas" aria-label="Duration and areas of your life">
               <span className="ui-pill house-transit-term-tag">
@@ -17531,6 +17534,7 @@ function ProfileView({
               {renderedWindow ? <span>{renderedWindow}</span> : null}
             </span>
             {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
+              <CardReadMore />
             <span className="house-transit-keywords" aria-label="House keywords">
               <span className="ui-pill house-transit-term-tag">
                 {longTransitPlanets.has(transit.transitPlanet) ? "Long-term" : "Short-term"}
@@ -17626,6 +17630,7 @@ function ProfileView({
                 {timingLabel ? <span>{timingLabel}</span> : null}
               </span>
               {preview ? <span className="updates-aspect-row__description transit-card-preview">{preview}</span> : null}
+              <CardReadMore />
               {house ? (
                 <span className="house-transit-keywords" aria-label="House keywords">
                   <span className="ui-pill house-transit-term-tag">
