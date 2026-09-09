@@ -96,7 +96,7 @@ assert.match(component, /topLevel\.slice\(1\)/, "Additional independent items sh
 assert.match(component, /childPatternIds/, "Contained patterns must be nested under parents.");
 assert.match(component, /parentPatternIds/, "Parent links must be respected for nesting.");
 assert.match(component, /onOpenDetail\?\.\(item, nestedItems\)/, "Contained patterns must travel with their parent into the detail reader.");
-assert.match(component, />Details</, "Every pattern preview must provide an explicit Details action.");
+assert.match(component, /<CardReadMore \/>/, "Every pattern preview must provide the shared Read More action.");
 assert.doesNotMatch(component, /<details className="natal-pattern-card/, "Permanent natal pattern copy must not expand inline.");
 assert.match(component, /Active chart patterns/, "Activation contacts must be labeled as a transit/update section, not natal copy.");
 assert.match(component, /item\.activationCopy\?\.content/, "Activation rendering must read resolved activation copy content only.");
