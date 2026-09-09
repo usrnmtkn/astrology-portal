@@ -117,6 +117,8 @@ jobs:
         run: |
           npx playwright test -c playwright.sky-composition.config.ts
           npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-placement-retrograde.spec.ts
+      - name: Verify Studio crash recovery through the production web entry
+        run: STUDIO_PRODUCTION_ENTRY=1 npx playwright test -c playwright.studio-recovery.config.ts
       - name: Upload Sky placement artifacts
         if: always()
         uses: actions/upload-artifact@v6
