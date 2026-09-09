@@ -2625,6 +2625,14 @@ function shouldBootstrapAuth(currentMode: PortalMode) {
     return false;
   }
 
+  // OAuth returns to the site root before a session exists in storage.
+  // Load the SDK there so it can validate and consume the callback, even
+  // when the landing page would otherwise keep authentication deferred.
+  const callbackUrl = new URL(window.location.href);
+  if (callbackUrl.searchParams.has("code") || new URLSearchParams(callbackUrl.hash.slice(1)).has("access_token")) {
+    return true;
+  }
+
   if (hasStoredSupabaseSession()) {
     return true;
   }
@@ -7867,7 +7875,11 @@ function personalTransitPackageSection(
     });
     const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
-    if (!rendered.templateKey.startsWith("authored/") || !body || !isReaderFacingCopy(body)) {
+    // The governed resolver already selects approved rows and enforces
+    // publication retirement. Its personal-transit composition is a valid
+    // reading when no exact authored unit exists (for example Lilith–Pluto).
+    const approvedComposition = rendered.templateKey === "fallback-template/transit.aspect";
+    if ((!rendered.templateKey.startsWith("authored/") && !approvedComposition) || !body || !isReaderFacingCopy(body)) {
       return null;
     }
 
@@ -7875,10 +7887,12 @@ function personalTransitPackageSection(
     return {
       slot: "meaning",
       required: true,
-      layer: legacyContinuity ? "fallback" : "authored",
-      tier: legacyContinuity
-        ? "legacy-reviewed-transit-continuity-v1"
-        : "exact-owner-approved-transit-v1",
+      layer: legacyContinuity || approvedComposition ? "fallback" : "authored",
+      tier: approvedComposition
+        ? "approved-transit-composition-v1"
+        : legacyContinuity
+          ? "legacy-reviewed-transit-continuity-v1"
+          : "exact-owner-approved-transit-v1",
       sourceKeys: [
         "tldrastro-fallback-architecture-v3",
         rendered.contentKey ?? "",
