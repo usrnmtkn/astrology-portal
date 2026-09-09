@@ -1,3 +1,5 @@
+import type { AnimationPreference } from "../hooks/usePageTransition";
+
 export type UiThemeOption = "light" | "dark";
 export type HouseSignLabelOption = "text" | "glyph";
 
@@ -91,5 +93,29 @@ export function CalculationMethodSettingsGroup() {
         </div>
       </div>
     </section>
+  );
+}
+
+export function AnimationSettingsRow({ value, onChange }: {
+  value: AnimationPreference;
+  onChange: (value: AnimationPreference) => void;
+}) {
+  return (
+    <div className="settings-row settings-row-control settings-animation-row">
+      <div className="settings-row-copy">
+        <span className="settings-row-title">Page animations</span>
+        <small className="settings-row-description">
+          System follows Reduce Motion. On always animates page changes. Saved in this browser.
+        </small>
+      </div>
+      <div className="settings-theme-control" role="group" aria-label="Page animations">
+        {(["system", "on", "off"] as const).map((option) => (
+          <button key={option} type="button" className={value === option ? "active" : ""}
+            aria-pressed={value === option} onClick={() => onChange(option)}>
+            {option === "system" ? "System" : option === "on" ? "On" : "Off"}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

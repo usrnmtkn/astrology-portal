@@ -3,7 +3,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { usePageTransition } from "../apps/web/src/hooks/usePageTransition.ts";
 
-function setup({ reduced = false, supported = true } = {}) {
+function setup({ reduced = false, supported = true, motion = "system" } = {}) {
   const snapshots = [];
   const dataset = {};
   globalThis.window = { matchMedia: () => ({ matches: reduced }) };
@@ -25,7 +25,7 @@ function setup({ reduced = false, supported = true } = {}) {
   };
   let navigate;
   function Harness() {
-    navigate = usePageTransition();
+    navigate = usePageTransition(motion);
     return null;
   }
   renderToStaticMarkup(createElement(Harness));
@@ -79,6 +79,18 @@ for (const options of [{ reduced: true }, { supported: false }]) {
   snapshots[0].update();
   assert.equal(page, "Sky", "Back or sign-out must supersede a pending navigation");
   assert.equal(snapshots[0].skipped, true);
+}
+
+for (const reduced of [true, false]) {
+  for (const motion of ["system", "on", "off"]) {
+    const { navigate, snapshots } = setup({ reduced, motion });
+    let updated = false;
+    navigate(() => { updated = true; });
+    const animate = motion === "on" || (motion === "system" && !reduced);
+    assert.equal(snapshots.length, animate ? 1 : 0, `${motion}, reduced=${reduced}`);
+    if (animate) snapshots[0].update();
+    assert.equal(updated, true);
+  }
 }
 
 delete globalThis.window;
