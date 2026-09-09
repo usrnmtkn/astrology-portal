@@ -1,3 +1,4 @@
+import { CardReadMore } from "../../components/CardReadMore";
 import { useEffect, useState } from "react";
 import type { NatalAspectPatternActivationTimingWindow } from "../../services/natalAspectPatterns";
 import { loadUserGeneratedInterpretation } from "../../services/userGeneratedContent";
@@ -35,6 +36,7 @@ function FriendPersonalTransitCard({
           {transit.rangeLabel !== transit.durationLabel && <span>{transit.rangeLabel}</span>}
         </span>
         <p className="updates-aspect-row__description transit-card-preview">{transit.summary}</p>
+        <CardReadMore />
       </span>
       <span className="updates-aspect-row__meta" aria-label={`${transit.timingLabel}, ${transit.orb} orb`}>
         <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -266,6 +268,7 @@ export function FriendTransitsTab({
                         {card.activationBody}
                       </p>
                     ) : null}
+                    <CardReadMore />
                   </span>
                 </button>
               ))}
@@ -314,6 +317,7 @@ export function FriendTransitsTab({
                     {card.rowSummary ? (
                       <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
                     ) : null}
+                    <CardReadMore />
                     <span className="house-transit-keywords" aria-label="House keywords">
                       <span className="ui-pill house-transit-term-tag">{card.termLabel}</span>
                       {card.keywords.map((keyword) => (

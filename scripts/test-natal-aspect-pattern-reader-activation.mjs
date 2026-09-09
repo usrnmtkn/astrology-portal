@@ -376,7 +376,7 @@ try {
 
   const html = renderToStaticMarkup(React.createElement(NatalAspectPatternsSection, { items, status: "ready" }));
   assert.match(html, /Grand Cross across Sun, Moon, Mars, and Saturn/, "The primary pattern quote must remain visible.");
-  assert.match(html, />Details</, "The compact pattern preview must expose its detail reader.");
+  assert.match(html, />Read More</, "The compact pattern preview must expose its detail reader.");
   assert.doesNotMatch(html, /T-Square with Mars at the action point/, "Contained pattern copy must move with its parent into the detail reader.");
   assert.doesNotMatch(html, /Reading note/, "Long-form pattern sections must not render on the natal overview.");
   assert.doesNotMatch(html, /This pattern is wide, so read it as a loose tendency/, "Confidence notes must move into the detail reader.");

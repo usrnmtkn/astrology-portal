@@ -1,3 +1,4 @@
+import { CardReadMore } from "../../components/CardReadMore";
 import { calendarMotionTitle } from "../../content/skyMotionLabels";
 import { CalendarDays, ChevronLeft, ChevronRight, Loader2, MapPin, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -3461,6 +3462,7 @@ function TransitCard({
       {isContentLoading ? (
         <span className="tx-body tx-body--loading" aria-label="Loading interpretation" role="status" />
       ) : description ? <p className="tx-body">{description}</p> : null}
+      {onOpenTransit && !isContentLoading ? <CardReadMore /> : null}
     </>
   );
 
