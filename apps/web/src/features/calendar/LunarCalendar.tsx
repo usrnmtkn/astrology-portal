@@ -108,7 +108,7 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
 ];
 
 // v9 drops week responses cached before the API's civil-date timezone fix.
-const calendarStorageVersion = "v9";
+const calendarStorageVersion = "v10";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD

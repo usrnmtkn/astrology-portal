@@ -734,6 +734,14 @@ function localNoon(date: Date, timeZone?: string) {
   return zonedDateTimeToUtc(zone, year, month, day, 12);
 }
 
+function shiftLocalCalendarDay(date: Date, days: number, timeZone: string) {
+  const { year, month, day } = localDateParts(date, timeZone);
+
+  // Civil days can last 23 or 25 hours. Preserve local midnight when stepping
+  // through a calendar instead of adding a fixed duration to the instant.
+  return zonedDateTimeToUtc(timeZone, year, month, day + days);
+}
+
 function degreesToRadians(degrees: number) {
   return degrees * Math.PI / 180;
 }
@@ -1303,7 +1311,7 @@ function monthGridRange(month: Date, timeZone: string) {
   }).format(monthStart);
   const weekdayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(firstWeekday);
   const gridStart = zonedDateTimeToUtc(timeZone, month.getFullYear(), month.getMonth() + 1, 1 - Math.max(0, weekdayIndex));
-  const gridEnd = new Date(gridStart.getTime() + 42 * 86_400_000);
+  const gridEnd = shiftLocalCalendarDay(gridStart, 42, timeZone);
 
   return { gridStart, gridEnd };
 }
@@ -1714,10 +1722,9 @@ function findActiveRetrogrades(
     return directStation;
   }
 
-  for (let time = displayStart.getTime(); time < displayEnd.getTime(); time += 86_400_000) {
-    const dayStart = new Date(time);
+  for (let dayStart = displayStart; dayStart < displayEnd; dayStart = shiftLocalCalendarDay(dayStart, 1, timeZone)) {
     const dateKey = localDateKey(dayStart, timeZone);
-    const sampleTime = addDays(dayStart, 0.5);
+    const sampleTime = localNoon(dayStart, timeZone);
 
     retrogradeBodies.forEach(([planet, glyph, planetId]) => {
       const speed = exactPlanetSpeed(swe, planetId, sampleTime);
@@ -2722,7 +2729,7 @@ function weekGridRange(anchor: Date, timeZone: string) {
   const weekdayIndex = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(weekday);
   const daysSinceMonday = weekdayIndex === 0 ? 6 : Math.max(0, weekdayIndex - 1);
   const gridStart = zonedDateTimeToUtc(timeZone, localParts.year, localParts.month, localParts.day - daysSinceMonday);
-  const gridEnd = new Date(gridStart.getTime() + 7 * 86_400_000);
+  const gridEnd = shiftLocalCalendarDay(gridStart, 7, timeZone);
 
   return { gridStart, gridEnd };
 }
@@ -2767,9 +2774,9 @@ function buildLunarCalendarRange(
   }, new Map<string, LunarCalendarEvent[]>());
   const voidAspectCache = detail === "full" ? new Map<string, Date | null>() : undefined;
   const days = Array.from({ length: dayCount }, (_, index) => {
-    const dayStart = new Date(gridStart.getTime() + index * 86_400_000);
+    const dayStart = shiftLocalCalendarDay(gridStart, index, timeZone);
     const dateKey = localDateKey(dayStart, timeZone);
-    const noon = new Date(dayStart.getTime() + 12 * 60 * 60_000);
+    const noon = localNoon(dayStart, timeZone);
     const moonLongitude = exactPlanetLongitude(swe, swe.SE_MOON, noon);
     const moonSign = signForLongitude(moonLongitude);
     const sunLongitude = exactPlanetLongitude(swe, swe.SE_SUN, noon);
