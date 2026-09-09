@@ -4,6 +4,9 @@ import { skyPlacementBodies, skyPlacementSigns } from "./skyWriteupRelations";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { skyPlacementAssembly, skyPlacementAssemblyFields, skyRetrogradeBodies as retrogradeBodies, type SkyPlacementAssemblyField, type SkyPlacementWriting, type SkyPlacementSelection as Selection } from "./skyPlacementAssembly";
 import { openContextualReaderHref } from "./adminReaderDestinations";
+import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
+// @ts-ignore Shared inline-variable contract, separate from composition section slots.
+import { isSkyPlacementVariableField, skyPlacementVariableFacts } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 
 type Props = {
   rows: CompositionMapRow[];
@@ -28,6 +31,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   loadRowRef.current = onLoadRow;
   const [context, setContext] = useState<Selection>({ planet: "saturn", sign: "aries", motion: "retrograde" });
   const current = selection ?? context;
+  const variableFacts = skyPlacementVariableFacts({ ...current, isRetrograde: current.motion === "retrograde" && retrogradeBodies.has(current.planet) });
   const [loaded, setLoaded] = useState<Record<string, CompositionMapRow>>({});
   const [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
@@ -50,6 +54,9 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const selectedWriting = assembly.hasFallback ? writing : "article";
   const parts = selectedWriting === writing ? assembly.parts : skyPlacementAssembly(availableRows, selectedWriting).parts;
   const edit = (field: SkyPlacementAssemblyField) => onEditField ? onEditField(field.row, field.path, current) : onEditRow(field.row);
+  const sectionIdentity = (field: SkyPlacementAssemblyField) => field.row.content_key.includes("/retrograde/")
+    ? `${title(current.planet)} retrograde · ${field.path === "Body" ? "Opening" : field.label}`
+    : `${title(current.planet)} in ${title(current.sign)} · ${field.label}`;
   const scope = (row: CompositionMapRow) => row.content_key.includes("/retrograde/")
     ? `Shared by ${title(current.planet)} retrograde in every sign.`
     : `Shared by ${title(current.planet)} in ${title(current.sign)}, direct and retrograde.`;
@@ -85,7 +92,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           <option value="fallback" disabled={!assembly.hasFallback}>Fallback hooks</option>
         </select>
       </label>
-      <p>{selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. They replace the placement passage when the full article is unavailable, keeping the TLDR and any retrograde opening. Open a section to add writing or change the section order." : "The full placement article takes priority when it is available."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
+      <p>{selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. They replace the placement passage when the full article is unavailable, keeping the TLDR and any retrograde opening. Open a section to add writing or change the section order." : "This is the saved main passage for this planet and sign. It is evergreen writing and takes priority over the shorter fallback sections. It is not a dated article edition."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
       <div className="admin-composition-view-tabs" role="tablist" aria-label="Sky placement composition views">
         {views.map((item, index) => <button key={item.id} id={`${viewId}-${item.id}`} type="button" role="tab"
           aria-selected={view === item.id} aria-controls={`${viewId}-panel`} tabIndex={view === item.id ? 0 : -1}
@@ -110,23 +117,31 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
             {parts.map(field => <div className="admin-composition-preview-field field-body" key={`${field.row.content_key}/${field.path}`}>
               <span className="admin-eyebrow">{field.label}</span>
               <p><button type="button" className={`admin-composition-variable variable-${field.kind}`} aria-label={`Edit ${field.label.toLowerCase()}`} onClick={() => edit(field)}>
-                {field.value ? field.value.split(/(\{\{[^{}]+\}\})/u).map((part, index) => part.startsWith("{{")
-                  ? <span key={index} className="variable-fact" title="Calculated on the reader page">{part}</span> : part)
+                {field.value ? isSkyPlacementVariableField(field.row.content_key, field.path)
+                  ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value
                   : "No writing saved. Select to write this section."}
               </button></p>
             </div>)}
           </div>
         </div>}
         {view === "template" && <div className="admin-sky-placement-template">
-          <p>Read from top to bottom. Each slot below links to the field that supplies its wording. Empty fields are omitted by the reader.</p>
+          <p>The template joins the sections below in order. Each section slot supplies a whole passage; inline Sky variables substitute calculated facts within that passage. Empty sections are skipped.</p>
           <ol aria-label="Placement template order">
             {parts.map(field => <li key={`${field.row.content_key}/${field.path}`}>
               <button type="button" className={`admin-composition-variable variable-${field.kind}`} onClick={() => edit(field)} aria-label={`Edit ${field.label.toLowerCase()}`}>
-                <code>{`{{${field.path}}}`}</code> · {field.label}
+                {sectionIdentity(field)}
               </button>
+              <code className="admin-sky-section-reference">{`${field.row.content_key}#${field.path}`}</code>
               <p>{scope(field.row)}</p>
+              <div className="admin-sky-template-comparison">
+                <div><span className="admin-eyebrow">Saved section text</span><p className="admin-composition-source-copy">{field.value || "Empty · skipped"}</p></div>
+                <div><span className="admin-eyebrow">With selected variables</span><p className="admin-composition-source-copy">{field.value
+                  ? isSkyPlacementVariableField(field.row.content_key, field.path) ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value
+                  : "Empty · skipped"}</p></div>
+              </div>
             </li>)}
           </ol>
+          <SkyPlacementVariableKey facts={variableFacts} />
           <p>{selectedWriting === "fallback" ? "You can add and reorder evergreen sections in the linked editor. Empty sections are skipped." : "The app owns the article order. Edit the linked fields to change the wording."} The short retrograde copy is managed under Assembly and is not part of this article.</p>
         </div>}
         {view === "assembly" && availableRows.map(row => {

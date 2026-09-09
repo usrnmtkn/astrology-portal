@@ -2394,8 +2394,8 @@ ${passHook}`;
     }
     return rendered;
   }
-  function formatCircleNames(names = [], includesReader = true) {
-    const clean = names.map((n) => {
+  function formatCircleNames(names2 = [], includesReader = true) {
+    const clean = names2.map((n) => {
       const s = (n ?? "").toString().trim();
       return s.length >= 2 ? s : "a friend";
     });
@@ -2406,10 +2406,10 @@ ${passHook}`;
     return `${list[0]}, ${list[1]}, and ${list.length - 2} more`;
   }
   function renderCircleStory(f) {
-    const { trigger, names = [], includesReader = true, members = [] } = f;
-    const namesLine = formatCircleNames(names, includesReader);
+    const { trigger, names: names2 = [], includesReader = true, members = [] } = f;
+    const namesLine = formatCircleNames(names2, includesReader);
     const namesMid = includesReader ? "you" + namesLine.slice(3) : namesLine;
-    const total = names.length + (includesReader ? 1 : 0);
+    const total = names2.length + (includesReader ? 1 : 0);
     const row = (k) => hooks.get(`fallback-hook/${k}`);
     const ctx = { names: namesLine, namesMid, allWord: total >= 3 ? "all" : "both" };
     let r, subtitle = null, headline = null;
@@ -3378,6 +3378,58 @@ function skyEvergreenEditableFields(source) {
   return isSkyEvergreenSource(source) ? [...fields.filter((field) => field.path !== SKY_EVERGREEN_SECTIONS_PATH), { path: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order" }] : fields;
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs
+var SKY_PLACEMENT_VARIABLES = Object.freeze([
+  { name: "planetTitle", description: "Planet name, without \u2018the\u2019 or Rx.", availability: "Selected placement" },
+  { name: "signTitle", description: "Zodiac sign name.", availability: "Selected placement" },
+  { name: "motion", description: "The word direct or retrograde.", availability: "Calculated motion" },
+  { name: "entryDate", description: "Start of the placement\u2019s sign residency, including year.", availability: "Calculated residency dates; not the retrograde window" },
+  { name: "exitDate", description: "Final exit from the sign residency, including year.", availability: "Calculated residency dates; not the retrograde window" }
+]);
+var names = new Set(SKY_PLACEMENT_VARIABLES.map((variable) => variable.name));
+var title3 = (value) => String(value ?? "").trim().toLowerCase().split(/[ -]+/u).filter(Boolean).map((word) => word[0].toUpperCase() + word.slice(1)).join(" ");
+var tokenPattern = () => /\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu;
+function skyPlacementVariableIssues(value) {
+  const copy = String(value ?? "");
+  const issues = [];
+  const remaining = copy.replace(tokenPattern(), (token, name) => {
+    if (!names.has(name)) issues.push(`Unknown Sky variable ${token}. Use a variable from the Sky variable key.`);
+    return "";
+  });
+  if (/\{\{|\}\}/u.test(remaining)) issues.push("Use a complete {{variableName}} token. Conditional blocks and section references are not inline Sky variables.");
+  return [...new Set(issues)];
+}
+function skyPlacementVariableFacts(input) {
+  return {
+    ...input.facts ?? {},
+    planetTitle: title3(input.planet),
+    signTitle: title3(input.sign),
+    motion: input.isRetrograde === true ? "retrograde" : "direct"
+  };
+}
+function skyPlacementVariableSegments(value, facts = {}) {
+  const copy = String(value ?? "");
+  const segments = [];
+  let from = 0;
+  for (const match of copy.matchAll(tokenPattern())) {
+    if (match.index > from) segments.push({ text: copy.slice(from, match.index) });
+    const [token, name] = match;
+    const available = names.has(name) && Object.hasOwn(facts, name) && typeof facts[name] === "string" && facts[name].trim().length > 0;
+    segments.push({ text: available ? facts[name] : token, token, name, available });
+    from = match.index + token.length;
+  }
+  if (from < copy.length) segments.push({ text: copy.slice(from) });
+  return segments;
+}
+function fillSkyPlacementVariables(value, facts) {
+  const issues = skyPlacementVariableIssues(value);
+  if (issues.length) throw new Error(`SKY_V4_SOURCE_GAP: ${issues.join(" ")}`);
+  const segments = skyPlacementVariableSegments(value, facts);
+  const missing = segments.filter((segment) => segment.token && !segment.available);
+  if (missing.length) throw new Error(`SKY_V4_SOURCE_GAP: missing calculated facts ${missing.map((segment) => segment.token).join(", ")}`);
+  return segments.map((segment) => segment.text).join("");
+}
+
 // apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-120-owner-approval-v1.json
 var sky_v4_continuous_120_owner_approval_v1_default = {
   schema: "tldrastro.sky-v4-owner-approval.v1",
@@ -3998,7 +4050,7 @@ function lower(value) {
 function slug(value) {
   return lower(value).replace(/[\s_]+/gu, "-");
 }
-function title3(value) {
+function title4(value) {
   return text(value).trim().replace(/[-_]+/gu, " ").replace(/\b\w/gu, (match) => match.toUpperCase());
 }
 function record(value) {
@@ -4112,8 +4164,8 @@ function placementLunarContext(source, input) {
     module,
     facts: {
       ...record(input.facts),
-      eventSign: title3(eventSign),
-      oppositeSign: title3(SIGNS[(SIGNS.indexOf(eventSign) + 6) % 12])
+      eventSign: title4(eventSign),
+      oppositeSign: title4(SIGNS[(SIGNS.indexOf(eventSign) + 6) % 12])
     }
   };
 }
@@ -4691,8 +4743,8 @@ function renderSkyV4ContinuousPreview(corpus, input) {
     throw new Error(`SKY_V4_PLACEMENT_IDENTITY: expected ${expectedKey}.`);
   }
   input = { ...input, contexts: matchingPlacementContexts(input) };
-  const facts = input.facts ?? {};
-  const fullArticle = article && input.articleAvailable !== false ? withoutUnresolvedSlots(fillFacts(article.placementArticle, facts)) : "";
+  const facts = skyPlacementVariableFacts(input);
+  const fullArticle = article && input.articleAvailable !== false ? fillSkyPlacementVariables(article.placementArticle, facts).trim() : "";
   const overlays = resolveSkyV4ContextualOverlays(corpus, input.contexts, input.overlaySettings, input.overlaySuppressions);
   const fallbackOverlays = resolveSkyV4ContextualOverlays(
     corpus,
@@ -4702,12 +4754,12 @@ function renderSkyV4ContinuousPreview(corpus, input) {
     "fallback"
   );
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook ? fallbackOverlays[0]?.FallbackHookOverlay ?? "" : "";
-  const evergreen = article ? skyEvergreenFields(article).map((section) => section.value) : [];
-  const fallback = article && input.fallbackAvailable !== false ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)].filter(Boolean).map((part) => withoutUnresolvedSlots(fillFacts(part, facts))).filter((part) => part.trim()).join("\n\n") : "";
+  const evergreen = article && !fullArticle && input.fallbackAvailable !== false ? skyEvergreenFields(article).map((section) => fillSkyPlacementVariables(section.value, facts)) : [];
+  const fallback = article && !fullArticle && input.fallbackAvailable !== false ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)].filter(Boolean).map((part) => withoutUnresolvedSlots(fillFacts(part, facts))).filter((part) => part.trim()).join("\n\n") : "";
   const mainBody = fullArticle || fallback;
   const resolution = fullArticle ? "canonical-article" : fallback ? "exact-fallback" : "facts-only";
   const aspects = selectSkyV4Aspects(input.aspects, { subjectBody: input.planet });
-  const blocks = [`# ${title3(input.planet)} in ${title3(input.sign)}`];
+  const blocks = [`# ${title4(input.planet)} in ${title4(input.sign)}`];
   if (text(input.dateLine).trim()) blocks.push(input.dateLine);
   if (mainBody) {
     blocks.push(`## TLDR
@@ -4908,7 +4960,7 @@ function skyV4GovernedAspectStudioRecord(sourceRow) {
   const parts = text(sourceRow.contentKey).split("/");
   if (parts.length !== 7 || parts[0] !== "fallback-hook" || parts[1] !== "sky-aspect-sign") return null;
   const [, , bodyA, signA, aspectType, bodyB, signB] = parts;
-  const headline = `${title3(bodyA)} in ${title3(signA)} ${lower(aspectType)} ${title3(bodyB)} in ${title3(signB)}`;
+  const headline = `${title4(bodyA)} in ${title4(signA)} ${lower(aspectType)} ${title4(bodyB)} in ${title4(signB)}`;
   const baseline = {
     ...structuredClone(sourceRow),
     Headline: headline,
@@ -5081,7 +5133,7 @@ function renderSkyV4StudioPreview(corpus, input) {
   }
   const facts = record(input.facts);
   const body = withoutUnresolvedSlots(fillFacts(studioReaderBody(effective), facts));
-  const blocks = [`# ${text(effective.headline) || title3(input.contentKey)}`, body];
+  const blocks = [`# ${text(effective.headline) || title4(input.contentKey)}`, body];
   const motionConditions = input.motionConditions ?? [];
   if (motionConditions.length) {
     blocks.push(`## What is shaping this transit now
@@ -5283,7 +5335,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-08d";
+var PACKAGE_VERSION = "v3-2026-09-09a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

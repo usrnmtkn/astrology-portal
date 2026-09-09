@@ -82,6 +82,22 @@ for (const marker of forbiddenEntryMarkers) {
   if (entrySource.includes(marker)) failures.push(`Admin entry contains deferred content marker: ${marker}`);
 }
 
+// The variable reference is shared by two lazy editors. Check the complete
+// static entry graph so moving it to an eagerly imported shared chunk fails.
+const initialChunks = new Set();
+function visitInitial(key) {
+  if (initialChunks.has(key) || !manifest[key]) return;
+  initialChunks.add(key);
+  for (const dependency of manifest[key].imports ?? []) visitInitial(dependency);
+}
+visitInitial(Object.entries(manifest).find(([, item]) => item === entry)?.[0]);
+for (const key of initialChunks) {
+  const file = manifest[key].file;
+  if (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("Sky variable key")) {
+    failures.push(`Sky variable reference must remain deferred: ${file}`);
+  }
+}
+
 const expectedDynamicEntries = [
   "src/CompositionMapWorkspace.tsx",
   "src/SkyPlacementComposition.tsx",
