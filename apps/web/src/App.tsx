@@ -3778,7 +3778,7 @@ function compactTransitDurationLabel(position: PlanetPosition, generatedAt: stri
     return null;
   }
 
-  return formatRemainingClockCompact(generatedAt, position.transitEnd);
+  return formatRemainingClockCompact(generatedAt, placementTransitEndpoints(position, generatedAt).end);
 }
 
 function currentSkyAspectTransitWindow(
@@ -14522,6 +14522,8 @@ export function App() {
                   fallback={<FeatureLoadingFallback />}
                   generatedContent={skyGeneratedContent}
                   generatedContentStatus={calendarContentStatus}
+                  skyPlacementContentStatus={skyPlacementFallbackStatus}
+                  contentVersion={fallbackArchitectureV3Version}
                   location={location}
                   onLocationChange={(nextLocation) => {
                     setLocation(nextLocation);
@@ -15725,7 +15727,7 @@ function retrogradeRemainingCountLabel(generatedAt: string, position: PlanetPosi
   return count ? `${count} left` : null;
 }
 
-function primaryPlacementDurationLabel(position: PlanetPosition, generatedAt: string) {
+export function primaryPlacementDurationLabel(position: PlanetPosition, generatedAt: string) {
   if (isDisplayRetrograde(position) && position.retrogradeEnd) {
     return formatCountdown(generatedAt, position.retrogradeEnd);
   }
