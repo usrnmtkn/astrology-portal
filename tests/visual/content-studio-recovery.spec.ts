@@ -1,0 +1,95 @@
+import { expect, test, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
+
+// Exercise the real saved inventory, rather than an empty dashboard fixture.
+const inventory = JSON.parse(readFileSync(new URL("../../apps/web/public/content-studio-last-known-good.json", import.meta.url), "utf8")).rows as Array<{ id: string; content_key: string }>;
+const studioPath = process.env.STUDIO_PRODUCTION_ENTRY === "1" ? "/admin/content" : "/";
+
+async function mockStudio(page: Page, malformedStatus = false) {
+  await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "studio-recovery-fixture"));
+  await page.route("**/api/**", async route => {
+    const url = new URL(route.request().url());
+    const data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
+    if (url.pathname.endsWith("/generated-content")) {
+      const cursor = Number(url.searchParams.get("cursor") ?? 0);
+      const key = url.searchParams.get("contentKeys");
+      data.rows = key ? inventory.filter(row => key.split(",").includes(row.content_key)) : inventory.slice(cursor, cursor + 400);
+      if (!key && cursor + 400 < inventory.length) data.nextCursor = String(cursor + 400);
+    }
+    if (url.pathname.endsWith("/content-live-status")) {
+      const input = route.request().postDataJSON();
+      data.statuses = (input.ids ?? []).map((id: string) => ({
+        id, live: true, label: malformedStatus ? { invalid: true } : "Live", detail: "Fixture status",
+        source: "fixture", updatedAt: null
+      }));
+    }
+    await route.fulfill({ json: data });
+  });
+}
+
+async function openStudioPage(page: Page, name: string) {
+  const navigation = page.getByRole("button", { name: "Open Content Studio navigation", exact: true });
+  if (await navigation.isVisible()) await navigation.click();
+  await page.getByRole("button", { name, exact: true }).click();
+}
+
+test("Sky Write-ups navigation remains usable with a malformed status response", async ({ page }) => {
+  await mockStudio(page, true);
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto(`${studioPath}#review-queue`);
+  await openStudioPage(page, "Sky Write-ups");
+  await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
+  await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first().locator(".admin-col-visibility")).toHaveText("Status unavailable");
+  await openStudioPage(page, "Content Library");
+  await openStudioPage(page, "Sky Write-ups");
+  await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first()).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
+  test(`Studio recovers from a page crash ${width} ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await mockStudio(page);
+    // Fault injection is confined to the test browser's module response.
+    await page.route("**/SkyPlacementComposition-*.js", route => route.fulfill({
+      contentType: "text/javascript",
+      body: 'export default function(){if(!document.documentElement.hasAttribute("data-qa-recovered"))throw new Error("Studio recovery fixture");return null;}'
+    }));
+    await page.goto(`${studioPath}#review-queue`);
+    await page.evaluate(value => document.documentElement.setAttribute("data-theme", value), theme);
+    await openStudioPage(page, "Sky Write-ups");
+    await page.getByLabel("Sky placement planet or point").selectOption("saturn");
+    await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+    await expect(page.getByText("This page could not load. Try another page or reload to try again.")).toBeVisible();
+    await page.getByText("Error details", { exact: true }).click();
+    await expect(page.getByText("Error: Studio recovery fixture", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Reload page", exact: true })).toBeVisible();
+    await page.screenshot({ path: `test-results/studio-recovery-${width}-${theme}.png` });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+
+    // Retry remounts the dashboard and reloads its inventory without clearing authentication.
+    await page.evaluate(() => document.documentElement.setAttribute("data-qa-recovered", ""));
+    await page.getByRole("button", { name: "Retry page", exact: true }).click();
+    await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
+    expect(await page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("studio-recovery-fixture");
+
+    // A repeated crash can be escaped through a separate Studio destination.
+    await page.evaluate(() => document.documentElement.removeAttribute("data-qa-recovered"));
+    await page.getByLabel("Sky placement planet or point").selectOption("saturn");
+    await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+    await page.getByRole("link", { name: "Open Review Queue", exact: true }).click();
+    await expect(page).toHaveURL(/#review-queue$/);
+    await expect(page.getByRole("heading", { name: "Review Queue", exact: true })).toBeVisible();
+    await openStudioPage(page, "Sky Write-ups");
+    await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
+    await page.getByLabel("Sky placement planet or point").selectOption("saturn");
+    await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+    await Promise.all([
+      page.waitForEvent("load"),
+      page.getByRole("button", { name: "Reload page", exact: true }).click()
+    ]);
+    await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
+    expect(await page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("studio-recovery-fixture");
+  });
+}
