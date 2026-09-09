@@ -7,14 +7,14 @@ export const animationPreferenceKey = "tldrastro:pageAnimations";
 export function readAnimationPreference(): AnimationPreference {
   try {
     const value = window.localStorage.getItem(animationPreferenceKey);
-    return value === "on" || value === "off" ? value : "system";
+    return value === "on" || value === "off" || value === "system" ? value : "on";
   } catch {
-    return "system";
+    return "on";
   }
 }
 
 /** Snapshot the old page without mounting a second copy of its live content. */
-export function usePageTransition(motion: AnimationPreference = "system") {
+export function usePageTransition(motion: AnimationPreference = "on") {
   const active = useRef<ViewTransition | null>(null);
   const generation = useRef(0);
 

@@ -39,7 +39,7 @@ export function MemberSettingsView({
   theme,
   sunriseOrbEnabled,
   dyslexiaFriendlyFont,
-  animationPreference = "system",
+  animationPreference = "on",
   onAnimationPreferenceChange = () => {},
   onCurrentLocationChange,
   onSocialProfileChange,
