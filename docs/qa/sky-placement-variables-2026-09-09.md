@@ -58,3 +58,14 @@ reported inline in the editor. Publication revalidates the contract.
 
 No production CMS rows or database settings are changed by this work. Runtime
 package version: `v3-2026-09-09a`.
+
+## Deferred editor cost
+
+The fresh Admin build measures 175.4 kB entry gzip / 618.1 kB raw and
+311.1 kB aggregate JavaScript gzip. The shared variable reference is a separate
+2.3 kB gzip chunk imported by the two deferred Sky editors. No source corpus is
+embedded in this component. Entry and largest-chunk budgets remain unchanged;
+the aggregate allowance increases from 309,500 to 312,000 bytes (2.5 kB) for
+the new reference and raw/resolved template comparison. The bundle check also
+rejects this reference anywhere in the initial static import graph, including
+shared chunks, so this allowance cannot move it into startup.
