@@ -11,24 +11,35 @@ let cacheRecords: unknown[];
 test.beforeAll(async () => {
   const natal = await getAstrodienstSky(location, birth);
   const sky = await getAstrodienstSky(location, new Date("2026-11-27T12:00:00Z"));
+  const geminiBirth = new Date("1990-01-01T19:00:00Z");
+  const geminiNatal = await getAstrodienstSky(location, geminiBirth);
+  const septemberSky = await getAstrodienstSky(location, new Date("2026-09-08T12:00:00Z"));
   cacheRecords = [
     { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: natalSkySnapshotCacheKey(location, birth), snapshot: natal },
-    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2026-11-27"), snapshot: sky }
+    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2026-11-27"), snapshot: sky },
+    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2026-09-08"), snapshot: septemberSky },
+    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: natalSkySnapshotCacheKey(location, geminiBirth), snapshot: geminiNatal }
   ];
 });
 
-async function prepare(page: Page, options: { circleFailure?: boolean; slowContent?: boolean; session?: "missing" | "rejected" | "unavailable" } = {}) {
+async function prepare(page: Page, options: { geminiRising?: boolean; circleFailure?: boolean; slowContent?: boolean; session?: "missing" | "rejected" | "unavailable" } = {}) {
+  const readerProfile = options.geminiRising
+    ? { ...profile, charts: [{ ...profile.charts[0], birthTime: "2:00 PM" }] }
+    : profile;
   await page.emulateMedia({ reducedMotion: "reduce" });
   const state = { circleFailure: options.circleFailure ?? false, circleRequests: 0, contentRequests: 0, session: options.session };
   await page.addInitScript(({ location, user, profile, cacheRecords, session }) => {
     localStorage.setItem("tldrastro:theme", "light");
     localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
     localStorage.setItem("tldrastro:userProfile", JSON.stringify(profile));
-    if (session !== "missing") localStorage.setItem("sb-reader-qa-auth-token", JSON.stringify({ access_token: "fixture.reader.session", refresh_token: "fixture-refresh", expires_at: Math.floor(Date.now()/1000)+3600, token_type: "bearer", user }));
+    if (session !== "missing") for (const key of ["sb-reader-qa-auth-token", "sb-hdmdufozrgrajkfhydit-auth-token"]) {
+      localStorage.setItem(key, JSON.stringify({ access_token: "fixture.reader.session", refresh_token: "fixture-refresh", expires_at: Math.floor(Date.now()/1000)+3600, token_type: "bearer", user }));
+    }
     for (const record of cacheRecords as any[]) localStorage.setItem(record.cacheKey, JSON.stringify({ ...record, verifiedAt: new Date().toISOString() }));
-  }, { location, user, profile, cacheRecords, session: options.session });
+  }, { location, user, profile: readerProfile, cacheRecords, session: options.session });
+  await page.route("**/api/**", route => route.request().method() === "GET" ? route.continue() : route.fulfill({ status: 503, json: {} }));
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, json: {} }));
-  await page.route("https://reader-qa.supabase.test/**", async route => {
+  await page.route(/^https:\/\/[^/]+\.supabase\.(?:test|co)\//, async route => {
     const path = new URL(route.request().url()).pathname;
     if (path === "/auth/v1/token") {
       state.session = undefined;
@@ -39,7 +50,7 @@ async function prepare(page: Page, options: { circleFailure?: boolean; slowConte
       : state.session === "unavailable"
         ? { status: 503, json: { code: "unexpected_failure", message: "Auth temporarily unavailable" } }
         : { json: user });
-    if (path === "/rest/v1/user_profiles") return route.fulfill({ json: { data: { version: 1, profile } } });
+    if (path === "/rest/v1/user_profiles") return route.fulfill({ json: { data: { version: 1, profile: readerProfile } } });
     if (path === "/rest/v1/social_profiles") return route.fulfill({ json: { user_id: user.id, display_name: "Reader QA", handle: "reader", discoverable: true } });
     if (path === "/rest/v1/rpc/list_social_friends") {
       state.circleRequests++;
@@ -138,9 +149,13 @@ test("You keeps calculated planet and house transits visible while saved content
   await expect(houses.getByText(/Jupiter through your/)).toBeVisible();
   await expect(houses.locator(".updates-aspect-row")).toHaveCount(14);
   await expect(page.getByText(/No major updates are active/)).toHaveCount(0);
+  // Approved offline writing can now make every transit actionable. Any
+  // remaining facts-only row must still be a non-interactive article.
   const staticRows = page.locator("article.updates-aspect-row");
-  expect(await staticRows.count()).toBeGreaterThan(0);
-  await expect(staticRows.first()).not.toHaveAttribute("role", "button");
+  for (const row of await staticRows.all()) {
+    await expect(row).not.toHaveAttribute("role", "button");
+  }
+  await expect(page.locator("button.updates-aspect-row .updates-aspect-row__description").first()).toBeVisible();
   await page.screenshot({ path: "test-results/reader-recovery/you-transits-desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await houses.scrollIntoViewIfNeeded();
@@ -170,4 +185,59 @@ test("Calendar honors the shared date and finishes skeletons on a stalled conten
   expect(new URL(page.url()).searchParams.get("date")).toBe("2026-11-28");
   await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true }).click();
   await expect(page.getByRole("button", { name: /Nov 28/ })).toBeVisible();
+});
+
+
+for (const mode of ["create", "login", "incomplete-birth-time"] as const) test(`Google authentication starts without birth details (${mode})`, async ({ page }) => {
+  await prepare(page, { session: "missing" });
+  await page.addInitScript(() => localStorage.removeItem("tldrastro:userProfile"));
+  await page.route("**/auth/v1/authorize?**", route => route.fulfill({ contentType: "text/html", body: "<p>OAuth provider reached</p>" }));
+  await page.goto(mode === "login" ? "/?auth=login#you" : "/#you");
+  await expect(page.getByRole("region", { name: mode === "login" ? "Log in" : "Create account", exact: true })).toBeVisible();
+  if (mode === "incomplete-birth-time") await page.getByRole("textbox", { name: "Birth hour", exact: true }).fill("25");
+  await page.getByRole("button", { name: "Continue with Google" }).click();
+  await expect(page.getByText("OAuth provider reached")).toBeVisible({ timeout: 10_000 });
+  expect(new URL(page.url()).searchParams.get("provider")).toBe("google");
+});
+
+test("Lilith Pluto writing survives the reader adapter and opens its complete interpretation", async ({ page }) => {
+  await prepare(page, { geminiRising: true });
+  await page.goto("/?date=2026-09-08#you");
+  const row = page.locator(".updates-aspect-row").filter({ has: page.getByText("Lilith square your Pluto", { exact: true }) });
+  await expect(row).toBeVisible({ timeout: 45_000 });
+  await expect(row).toContainText("Power, depth, and slow transformation hit the limit");
+  await expect(row).toHaveJSProperty("tagName", "BUTTON");
+  await expect(page.getByRole("button").filter({ has: page.getByText("Lilith challenging power", { exact: true }) })).toBeVisible();
+  await page.screenshot({ path: "test-results/reader-recovery/lilith-pluto-card.png", fullPage: true });
+  await row.click();
+  await expect(page.locator(".sky-detail-page")).toContainText("Power, depth, and slow transformation hit the limit");
+  await expect(page.locator(".sky-detail-page")).toContainText(/Lilith in Capricorn is squaring your natal Pluto through/);
+  await page.screenshot({ path: "test-results/reader-recovery/lilith-pluto-detail.png", fullPage: true });
+  await page.getByRole("button", { name: "Back to updates", exact: true }).click();
+  await page.reload();
+  await expect(row).toContainText("Power, depth, and slow transformation hit the limit");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await row.scrollIntoViewIfNeeded();
+  await expect(row).toContainText("Power, depth, and slow transformation hit the limit");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "test-results/reader-recovery/lilith-pluto-mobile.png" });
+});
+
+
+test("Google from Create profile restores an existing account and its Friends", async ({ page }) => {
+  await prepare(page, { session: "missing" });
+  await page.addInitScript(() => localStorage.removeItem("tldrastro:userProfile"));
+  await page.route("**/auth/v1/authorize?**", route => {
+    const redirect = new URL(new URL(route.request().url()).searchParams.get("redirect_to")!);
+    const encoded = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
+    const token = `${encoded({ alg: "HS256", typ: "JWT" })}.${encoded({ sub: user.id, exp: Math.floor(Date.now()/1000)+3600, iat: Math.floor(Date.now()/1000) })}.fixture`;
+    redirect.hash = new URLSearchParams({ access_token: token, refresh_token: "fixture-refresh", expires_in: "3600", token_type: "bearer" }).toString();
+    return route.fulfill({ status: 302, headers: { location: redirect.href }, body: "" });
+  });
+  await page.goto("/#you");
+  await page.getByRole("button", { name: "Continue with Google" }).click();
+  await expect(page.getByRole("heading", { name: "Reader QA", exact: true })).toBeVisible({ timeout: 20_000 });
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).charts[0].id)).toBe("reader-chart");
+  await page.getByRole("button", { name: "Friends", exact: true }).click();
+  await expect(page.getByText("QA Friend", { exact: true })).toBeVisible();
 });
