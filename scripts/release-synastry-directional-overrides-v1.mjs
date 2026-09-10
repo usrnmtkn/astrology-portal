@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -13,7 +14,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const readJson = (relative) => JSON.parse(fs.readFileSync(path.join(root, relative), "utf8"));
 const sourcePath = "apps/web/src/content/fallbackArchitectureV3/source-rows/synastry-directional-overrides-v1.json";
 const basePath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
+const hashPath = "packages/astro-knowledge/review/synastry-directionality-authoring-batch-4-2026-09-09/serving-payload-hashes.json";
 const approvalPath = "packages/astro-knowledge/review/synastry-directionality-authoring-batch-4-2026-09-09/OWNER-APPROVAL.md";
+const contentApprovedAt = "2026-09-09";
+const servingAuthorizedAt = "2026-09-10";
 const apply = process.argv.includes("--apply");
 
 function requireEnv(name) {
@@ -26,10 +30,29 @@ function compileFriendsName(body) {
   return body.replaceAll("{{Name}}", "{{holder2}}");
 }
 
-function validateRows(overrides, baseRows) {
+function servingHash(bodyYou, bodyThey) {
+  return crypto.createHash("sha256").update(`${bodyYou}\n---\n${bodyThey}`).digest("hex");
+}
+
+function approvalFor(row, servingHashes) {
+  const runtimeBodyYou = compileFriendsName(row.body_you);
+  const payloadSha256 = servingHashes.rows[row.contentKey];
+  assert.match(payloadSha256 ?? "", /^[a-f0-9]{64}$/u, `${row.contentKey}: exact serving hash missing.`);
+  assert.equal(payloadSha256, servingHash(runtimeBodyYou, row.body_they), `${row.contentKey}: serving hash does not match the compiled payload.`);
+  return {
+    approvalLevel: "exact_owner_approved",
+    approvedAt: contentApprovedAt,
+    recordPath: approvalPath,
+    payloadSha256,
+    payloadHashAlgorithm: servingHashes.hashAlgorithm
+  };
+}
+
+function validateRows(overrides, baseRows, servingHashes) {
   assert.equal(overrides.schema, "synastry-directional-overrides/v1");
   assert.equal(overrides.rows.length, 24, "Release v1 is bounded to the 24 owner-approved Batch 4 rows.");
   assert.equal(new Set(overrides.rows.map((row) => row.contentKey)).size, 24, "Release keys must be unique.");
+  assert.equal(Object.keys(servingHashes.rows).length, 24, "Release hash ledger must contain exactly 24 rows.");
   const baseByKey = new Map(baseRows.hookRows.map((row) => [row.contentKey, row]));
 
   for (const row of overrides.rows) {
@@ -42,6 +65,7 @@ function validateRows(overrides, baseRows) {
     assert.equal(row.approval?.recordPath, approvalPath);
     assert.ok(row.body_you.includes("{{Name}}"), `${row.contentKey}: canonical authoring copy must retain {{Name}}.`);
     assert.ok(!compileFriendsName(row.body_you).includes("{{Name}}"), `${row.contentKey}: runtime compilation must resolve {{Name}}.`);
+    approvalFor(row, servingHashes);
 
     const base = baseByKey.get(row.contentKey);
     assert.ok(base, `${row.contentKey}: canonical pre-release source row is missing.`);
@@ -51,7 +75,8 @@ function validateRows(overrides, baseRows) {
 
 const overrides = readJson(sourcePath);
 const baseRows = readJson(basePath);
-validateRows(overrides, baseRows);
+const servingHashes = readJson(hashPath);
+validateRows(overrides, baseRows, servingHashes);
 
 if (!apply) {
   console.log(`Verified ${overrides.rows.length} directional synastry overrides. Re-run with --apply only after explicit owner serving authorization.`);
@@ -93,7 +118,8 @@ for (const row of overrides.rows) {
     body_you_semantic_direction: row.body_you_semantic_direction,
     body_they_semantic_direction: row.body_they_semantic_direction,
     authoring_name_variable: "{{Name}}",
-    approval: row.approval
+    servingAuthorizedAt,
+    approval: approvalFor(row, servingHashes)
   };
   const nextSections = {
     ...sections,
@@ -103,6 +129,7 @@ for (const row of overrides.rows) {
     packageDraft: null
   };
 
+  const now = new Date().toISOString();
   const patchResponse = await fetch(query, {
     method: "PATCH",
     headers,
@@ -113,8 +140,8 @@ for (const row of overrides.rows) {
       target_date: null,
       sections: nextSections,
       reviewer_notes: "Owner-approved viewer-centered synastry directionality release v1. Canonical authoring uses {{Name}}; runtime projection compiles it to {{holder2}}.",
-      reviewed_at: new Date().toISOString(),
-      published_at: new Date().toISOString()
+      reviewed_at: now,
+      published_at: now
     })
   });
   if (!patchResponse.ok) throw new Error(`${row.contentKey}: release PATCH failed (${patchResponse.status}) ${await patchResponse.text()}`);
