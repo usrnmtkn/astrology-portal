@@ -94,18 +94,18 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
   }
 
   if (!composition) return <div className="admin-sky-writing-context">
-    <strong>V5 sentence composition</strong>
+    <strong>Placement composition</strong>
     <p>Build this evergreen article from named sentence sources. The map will show each source, calculated value, and omitted section. Existing complete articles keep priority.</p>
-    {onChange ? <button type="button" disabled={disabled} onClick={() => onChange(makeSkyIngressComposition())}>Add V5 composition</button>
-      : <button type="button" onClick={() => onOpenSource(source.contentKey, "ingress")}>Set up V5 composition</button>}
+    {onChange ? <button type="button" disabled={disabled} onClick={() => onChange(makeSkyIngressComposition())}>Add placement composition</button>
+      : <button type="button" onClick={() => onOpenSource(source.contentKey, "ingress")}>Set up placement composition</button>}
   </div>;
 
-  return <section className="admin-sky-ingress-composer admin-sky-writing-editor" aria-label="V5 sentence composition">
+  return <section className="admin-sky-ingress-composer admin-sky-writing-editor" aria-label="Placement composition">
     <div className="admin-sky-writing-context">
-      <strong>{words(identity[0])} in {words(identity[1])} · V5 sentence composition</strong>
-      <p>This is the assembled evergreen writing path. Complete motion-specific or shared articles still take priority. Sentence sources and their order publish together with this placement.</p>
-      {onChange && <label><input type="checkbox" checked={composition.enabled} disabled={disabled} onChange={event => update({ enabled: event.target.checked })} /> Use V5 when the complete article is empty</label>}
-      <p role="status">{composition.enabled ? "Enabled in this saved revision" : "Composition is not enabled"} · {result.status === "ready" ? "Preview assembled" : "Some modules need writing or occurrence facts"}</p>
+      <strong>{words(identity[0])} in {words(identity[1])} · Placement composition</strong>
+      <p>This is the assembled evergreen writing path. Complete motion-specific or shared articles still take priority. Sentence sources and their order publish together with this placement. Enabling a draft does not publish it.</p>
+      {onChange && <label><input type="checkbox" checked={composition.enabled} disabled={disabled} onChange={event => update({ enabled: event.target.checked })} /> Use composition when the complete article is empty</label>}
+      <p role="status">{composition.enabled ? onChange ? "Enabled in this draft" : "Enabled in this saved source" : "Composition is not enabled"} · {result.status === "ready" ? "Preview assembled" : "Some modules need writing or occurrence facts"}</p>
     </div>
     {issues.length > 0 && <div role="alert">{issues.map(issue => <p key={issue}>{issue}</p>)}</div>}
     {error && <p role="alert">{error}</p>}
@@ -188,14 +188,14 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
         <label>Timezone<input aria-label="Ingress preview timezone" value={timeZone} onChange={event => { generation.current++; setCalculating(false); setCalculated(null); setTimeZone(event.target.value); }} /></label>
       </div>
       <button type="button" disabled={calculating || !date} onClick={() => void calculatePreview()}>{calculating ? "Calculating occurrence…" : "Calculate occurrence preview"}</button>
-      <p>This preview includes unsaved writing. If the selected date is outside this sign, the next calculated pass is used. Open the published reader to check the actual live selection for that date; it uses the reader’s location and timezone.</p>
+      <p>{onChange ? "This preview includes unsaved writing." : "This preview uses saved sources, which may include drafts."} If the selected date is outside this sign, the next calculated pass is used. Open the published reader to check the actual live selection for that date; it uses the reader’s location and timezone.</p>
       {calculated && <a href={`/?date=${calculated.ingressOccurrence.asOfDate.slice(0, 10)}#sky/placement/${identity[0]}/${identity[1]}`} target="_blank" rel="noreferrer">Open published reader for this occurrence ↗</a>}
       {calculated && <p>Calculated context: {calculated.ingressOccurrence.asOfDate} · {calculated.isRetrograde ? "retrograde" : "direct"} · {timeZone}</p>}
     </div>
     <>
-      <label>Composition view<select aria-label="Ingress composition view" value={view} onChange={event => setView(event.target.value)}><option value="preview">Reader preview</option><option value="template">Main template</option><option value="assembly">Assembly and omissions</option></select></label>
+      <label>Composition view<select aria-label="Ingress composition view" value={view} onChange={event => setView(event.target.value)}><option value="preview">{onChange ? "Draft preview" : "Saved preview"}</option><option value="template">Main template</option><option value="assembly">Assembly and omissions</option></select></label>
       <div className="admin-composition-variable-legend"><span className="variable-fact">Calculated fact</span><span className="variable-phrase">Reusable sentence</span><span className="variable-hook">Authored section</span></div>
-      <div className="admin-template-reader-surface"><div className="admin-composition-preview-chrome"><span>V5 composition</span><span>Draft source preview</span></div><div className="admin-template-reader-copy">
+      <div className="admin-template-reader-surface"><div className="admin-composition-preview-chrome"><span>Placement composition</span><span>{onChange ? "Draft preview" : "Saved preview"}</span></div><div className="admin-template-reader-copy">
         {result.status === "incomplete" && <p role="status">This composition is incomplete. Readers continue through the existing eligible writing path.</p>}
         {result.trace.filter((part: RecordValue) => view !== "preview" || part.status === "included").map((part: RecordValue) => <div key={`${part.id}/${part.eventId ?? ""}`} className="admin-composition-preview-field">
           <strong>{part.label}</strong>

@@ -3,6 +3,7 @@ import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementA
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
 import SkyPhraseCompositionEditor from "./SkyPhraseCompositionEditor";
 import SkyIngressComposer from "./SkyIngressComposer";
+import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
 import SkySectionPacketEditor from "./SkySectionPacketEditor";
 import { makeSkyArticleOutline, SKY_ARTICLE_OUTLINES, type SkyEditorialSection } from "./skyArticleOutlines";
 // @ts-ignore Shared inline-variable contract used by the reader and save API.
@@ -98,14 +99,15 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
           : <><span className="ui-pill">Editing placement writing</span>{skyRetrogradeBodies.has(planet) && <button type="button" disabled={disabled} onClick={() => onOpenSource(`sky-placement/retrograde/${planet}`, "Body")}>Edit retrograde writing</button>}</>}
       </div>
     </div>}
+    {placement && <SkyWritingSystemDetails system="placement" />}
     {placement && <details className="admin-workspace-details" open={initialField?.startsWith("ingress") || undefined}>
-      <summary>V5 sentence composition</summary>
+      <summary>Placement composition</summary>
       <SkyIngressComposer source={{ ...source, contentKey }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
         initialField={initialField} onChange={value => onChange("ingress", value)} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />
     </details>}
     {placement && <details className="admin-workspace-details admin-evergreen-sections" open={field?.key.startsWith("fallback.") || undefined}>
       <summary>Evergreen sections</summary>
-      <p>Reusable writing for any occurrence of this placement. The full placement article takes priority. When it is unavailable, the blocks matching the selected motion appear in this order. Empty blocks are skipped.</p>
+      <p>Reusable writing for any occurrence of this placement. Complete placement articles and eligible placement composition take priority. Otherwise, the blocks matching the selected motion appear in this order. Empty blocks are skipped.</p>
       <ol aria-label="Evergreen section order">
         {evergreen.map((section, index) => {
           const path = section.source ? `fallback.${section.source}` : `${SKY_EVERGREEN_SECTIONS_PATH}.${section.id}`;

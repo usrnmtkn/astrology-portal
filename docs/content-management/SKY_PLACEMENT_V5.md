@@ -1,4 +1,7 @@
-# Sky Placement V5 sentence composition
+# Placement composition
+
+Current stored format: **5**. See the [Sky writing systems index](./SKY_WRITING_SYSTEMS.md)
+for source history and the separate Daily Sky summary track.
 
 V5 implements the September 10, 2026 02:43 EDT writing proposal as an opt-in
 composition on the existing `sky-placement/article/{planet}/{sign}` source.
@@ -9,8 +12,8 @@ and node routes retain their specialized structures.
 ## Editing and preview
 
 In Content Studio, open Sky Write-ups, select a planet and sign, and choose
-**V5 sentence composition** under **Writing path**. “Set up V5 composition”
-opens its source editor. “Add V5 composition” creates blank named sentences
+**Placement composition** under **Writing path**. “Set up placement composition”
+opens its source editor. “Add placement composition” creates blank named sentences
 and the proposed module structure. Enabling it makes it eligible after publication.
 
 Each sentence shows its exact reference, such as
@@ -21,7 +24,7 @@ of another order. Required sentences stay together: an incomplete optional
 module is omitted as a unit; an incomplete required module prevents this
 composition from supplying the body.
 
-Reader preview, Main template, and Assembly and omissions use the same pure
+Saved preview (Draft preview in the editor), Main template, and Assembly and omissions use the same pure
 assembler as the reader. The map links sentences to exact editor fields and
 explains every skipped section. Blue means calculated facts, purple means
 reusable planet/sign sentences, amber means other authored writing.

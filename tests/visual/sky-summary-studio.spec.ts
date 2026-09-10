@@ -42,6 +42,17 @@ for (const width of [390, 1440]) {
         return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "marginTop", "marginBottom", "textTransform", "textAlign"].map(key => [key, style[key as any]]));
       };
       const summaryHeadingStyle = await heading.evaluate(typeStyle);
+      const systemDetails = studio.getByLabel("Daily Sky summary system details", { exact: true });
+      await systemDetails.getByText("Writing system & versions", { exact: true }).click();
+      await expect(systemDetails).toContainText("Daily summary assembly");
+      await expect(systemDetails).toContainText("Moon source variants · V6");
+      await expect(systemDetails).toContainText("35 supplied passages and 25 empty entries");
+      await expect(systemDetails).toContainText("empty entries do not reuse the older V5 copy");
+      await expect(systemDetails.locator("strong")).toHaveText(["Daily summary assembly", "Summary templates and wording", "Moon source variants · V6", "Moon writing proposal · V5"]);
+      expect(await systemDetails.locator("p").first().evaluate(typeStyle)).toEqual(await studio.locator(".admin-template-reader-copy p").first().evaluate(typeStyle));
+      expect(await systemDetails.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+      await systemDetails.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `test-results/sky-summary-system-${width}-${theme}.png` });
       await page.goto("/#fallback-hooks?section=daily");
       const analogousHeading = page.getByRole("heading", { name: "Edit the complete write-up", exact: true });
       await expect(analogousHeading).toBeVisible();

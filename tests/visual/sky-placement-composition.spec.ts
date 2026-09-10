@@ -32,7 +32,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.getByLabel("Sky write-up motion").selectOption("retrograde");
   const map = page.getByRole("region", { name: "Sky placement composition map" });
   await expect(map.getByRole("heading", { name: "Saturn Rx in Aries", level: 3 })).toBeVisible();
-  await expect(map.getByRole("tab", { name: "Reader preview" })).toHaveAttribute("aria-selected", "true");
+  await expect(map.getByRole("tab", { name: "Saved preview" })).toHaveAttribute("aria-selected", "true");
   await expect(map.getByRole("button", { name: "Edit placement article", exact: true })).toContainText(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.placementArticle);
   await map.getByRole("tab", { name: "Assembly", exact: true }).click();
   await expect(map.getByRole("article", { name: "Retrograde source" })).toContainText(skyPlacementSourceRecords.get("sky-placement/retrograde/saturn")!.Body);
@@ -48,7 +48,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await map.getByLabel("Placement writing path").selectOption("fallback");
   await expect(map.getByRole("list", { name: "Placement template order" }).locator(".admin-sky-section-reference")).toHaveText(["sky-placement/retrograde/saturn#Body", ...["tldrWhat", "tldrTakeaway", "fallback.hook", "fallback.lived", "fallback.turn"].map(path => `sky-placement/article/saturn/aries#${path}`)]);
   await expect(map.getByRole("button", { name: "Edit fallback opening", exact: true })).toHaveText("Saturn in Aries · Fallback opening");
-  await map.getByRole("tab", { name: "Reader preview", exact: true }).click();
+  await map.getByRole("tab", { name: "Saved preview", exact: true }).click();
   const opening = map.getByRole("button", { name: "Edit fallback opening", exact: true });
   await expect(opening).toContainText(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.fallback.hook);
   await expect(map.getByRole("button", { name: "Edit placement article", exact: true })).toHaveCount(0);
@@ -287,7 +287,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
   const map = page.getByRole("region", { name: "Sky placement composition map" });
   await map.getByLabel("Placement writing path").selectOption("fallback");
-  await expect(map.getByRole("button", { name: "View evergreen in app" })).toBeVisible();
+  await expect(map.getByRole("button", { name: "Preview evergreen in app" })).toBeVisible();
   await map.getByRole("button", { name: "Edit fallback opening", exact: true }).click();
   const editor = page.getByRole("dialog");
   const order = editor.getByRole("list", { name: "Evergreen section order" });
