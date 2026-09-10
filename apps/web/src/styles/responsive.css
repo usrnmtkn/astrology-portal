@@ -1154,8 +1154,8 @@
   html[data-scrolled] .mode-member .today-summary-cards .sky-today-ledger__foot {
     position: fixed;
     top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + var(--sp-1));
-    right: var(--mobile-page-gutter);
-    left: var(--mobile-page-gutter);
+    right: var(--mobile-control-inset);
+    left: var(--mobile-control-inset);
     z-index: calc(var(--z-topbar) - 1);
     width: auto;
     border: var(--border-width-thin) solid var(--card-border);
