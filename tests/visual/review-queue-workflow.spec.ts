@@ -81,7 +81,11 @@ for (const width of [390, 1440])
                 await expect(editor.getByText('Version history (1)', { exact: true })).toBeVisible();
                 await editor.getByRole('button', { name: 'Close', exact: true }).click();
                 await page.getByRole('button', { name: 'Source library', exact: true }).click();
-                await page.locator('.admin-review-queue-row').filter({ hasText: 'Sun-Chiron' }).getByRole('button', { name: 'Edit', exact: true }).click();
+                await page.locator('.admin-review-queue-row').filter({hasText:'ms/composite/planet/saturn'}).getByRole('button',{name:'Edit',exact:true}).click();
+            await expect(editor.getByRole('textbox',{name:'Source text',exact:true})).toBeVisible();
+            await expect(editor.getByRole('button',{name:'Publish to app',exact:true})).toHaveCount(0);
+            await editor.getByRole('button',{name:'Close',exact:true}).click();
+            await page.locator('.admin-review-queue-row').filter({ hasText: 'Sun-Chiron' }).getByRole('button', { name: 'Edit', exact: true }).click();
                 await expect(editor.getByRole('textbox', { name: 'Source text', exact: true })).toBeVisible();
                 await expect(editor.getByRole('button', { name: 'Publish to app', exact: true })).toHaveCount(0);
                 await expect(editor).toContainText('Save edits, then Mark reviewed');

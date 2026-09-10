@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createWorkflowStore, baseline, source, original } from '../tests/helpers/sky-review-workflow-api.mjs';
+import { createWorkflowStore, baseline, source, original, importedComposite } from '../tests/helpers/sky-review-workflow-api.mjs';
 import { skyWritingIssues, reviewWorkBucket } from '../apps/web/src/content/contentReviewReadiness.ts';
 const store = await createWorkflowStore();
 let row = store.rows.get(baseline.id);
@@ -111,3 +111,7 @@ assert.equal(store.rows.size, countBeforeInvalidIdentity);
 
 // Historical auto-publish scores do not enable the current owner-action endpoint.
 assert.ok(skyWritingIssues({...baseline, judge_gate:'auto-publish', judge_score:3, source_snapshot:{skyAspectVoiceLint:{score:3,fails:0}}}).length);
+
+// Imported Composite authoring notes are not a publishable reader article.
+assert.equal(reviewWorkBucket(importedComposite), 'source');
+assert.equal((await store.invoke('PATCH', {id: importedComposite.id, expectedUpdatedAt: importedComposite.updated_at, status:'LIVE'})).status, 409);

@@ -35,6 +35,10 @@ canonical v3 card/aspect structures are still missing. Evidence: Codex task
 does not approve generated wording, change the article pipeline, or authorize
 rewriting owner-authored You Transits. The Studio writer uses no model prose judge.
 
+The imported `ms/composite/*`, `cc/fallback*`, and `fallback-source/*` families
+are source material even when older rows lack role metadata. They remain
+reviewable in Source library and cannot be directly published as finished copy.
+
 ## API and source contracts
 
 `POST /api/admin/sky-draft-writing` accepts only one `contentKey`, an `action`

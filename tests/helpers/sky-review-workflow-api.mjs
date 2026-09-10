@@ -6,7 +6,8 @@ import { createApiStore } from './calendar-review-api.mjs';
 export const original = 'Fixture complete opening. Fixture complete final sentence.';
 export const baseline = { id: 'sky-fixture', content_key: 'sky.aspect.chiron.sextile.nodes.taurus.aquarius', status: 'DRAFT', lane: 'serving', review_state: 'sky-voice-needs-review', block_type: 'sky_aspect', body: original, summary: '', headline: 'Chiron sextile North Node', surface: 'sky', mode: 'feed', target_date: null, provider: 'owner-resource-review', source_snapshot: { sourceType: 'owner-resource-review' }, updated_at: '2026-09-10T12:00:00Z' };
 export const source = { ...baseline, id: 'source-fixture', content_key: 'source/sky-aspect-pair/sun-chiron', block_type: 'fallback_hook', status: 'REVIEWED', lane: 'reference', review_state: null, headline: 'Sun-Chiron', body: 'Fixture source original.', source_snapshot: { sourceType: 'owner-resource-review', pairKey: 'sun-chiron', content_role: 'fallback_source' } };
-export async function createWorkflowStore(initial = [baseline, source]) {
+export const importedComposite = { ...source, id: 'composite-reference', content_key: 'ms/composite/planet/saturn', headline: 'Ms / Composite / Planet / Saturn', status: 'DRAFT', lane: 'serving', block_type: 'relationship', provider: 'manual', source_snapshot: {sourceFile:'authored-library.generated.json'} };
+export async function createWorkflowStore(initial = [baseline, source, importedComposite]) {
     const store = await createApiStore(initial);
     let beforeFinish = null, failWriter = false, calls = 0;
     // The real service is swapped only in this test build; runtime has no injection switch.
