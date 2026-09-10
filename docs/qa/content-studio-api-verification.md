@@ -24,6 +24,11 @@ reader, content package and dependency changes.
 - Invalid JSON, non-object bodies, wrong field types, unknown actions, empty
   updates and duplicate batch identities fail before writes.
 - Publication cannot retain a reference lane or review hold.
+- New summary sources must be tested through POST, not only by PATCHing an
+  existing fixture. Studio's legacy `card` mode is normalized to database mode
+  `feed` before any create, bulk create, or update. The roundtrip storage double
+  rejects `card`, matching the production constraint that exposed this bug on
+  2026-09-10 during the approved Sky summary import.
 - Bulk updates compare the stored version and exclude LIVE rows at write time.
   New inserts ignore conflicts instead of merging over competing inserts.
 - Legacy update/delete requests without a client timestamp still compare the
