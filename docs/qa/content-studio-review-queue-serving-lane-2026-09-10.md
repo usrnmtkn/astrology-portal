@@ -106,3 +106,15 @@ two tests stopped injecting their faults. They now target inventory scope and
 exercise both Review Queue (extended) and Articles (editorial), excluding the
 independent source-draft catalog. All four cases pass, including exactly three
 automatic attempts, visible persistent errors and successful manual retry.
+
+## Integration with current main
+
+The complete CI run on `ce00681a` passed, including visual-smoke, Sky placement
+Studio and Sky summary. The fix was then rebased onto `1dafaf27` (PRs #732 and
+#733). The newer main splits the summary editor into a deferred chunk and has
+updated bundle ceilings. Those main ceilings are preserved without any budget
+change in this PR; the historical budget adjustments above are superseded.
+
+After rebasing, Admin build/typecheck, the CI-environment bundle check, CSS audit
+and 18 targeted inventory, review, publication-confirmation and recovery browser
+tests passed. The unrelated Sky Placement V5 release in PR #734 is excluded.
