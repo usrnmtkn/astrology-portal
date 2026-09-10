@@ -53,6 +53,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       const item = page.locator(".admin-review-queue-row").filter({ hasText: key }).first();
       await expect(item).toBeVisible();
+      await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
       await item.getByRole("button", { name: "Edit", exact: true }).click();
       const editor = page.getByRole("dialog");
       await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeVisible();
@@ -75,6 +76,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
       await page.locator(".admin-review-queue-row").filter({ hasText: key }).first().getByRole("button", { name: "Edit", exact: true }).click();
       await expect(field).toHaveValue(revised);
+      await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
       await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
       await expect.poll(async () => (await call({ method: "rows" })).find((row: any) => row.id === fixture.id)?.body).toBe(revised);
       await expect(editor.getByRole("alert")).toHaveCount(0);
@@ -82,6 +84,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       await expect(editor.getByRole("region", { name: "SKY V4 source provenance" })).toContainText("content-studio-calendar-publication/v1");
       expect(writes.every(entry => entry.result.status === 200)).toBe(true);
       expect(errors).toEqual([]);
+      await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       await page.screenshot({ path: `test-results/calendar-review-${width}-${theme}.png`, fullPage: true });
     } finally { child.kill(); }
   });
