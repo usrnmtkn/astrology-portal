@@ -11358,7 +11358,7 @@ export function App() {
     const placementPosition = detailType === "placement" && skyNodeDisplayPositions(sky?.positions ?? [])
       .find(position => skyRoutePartMatches(position.planet, detailPlanet) && skyRoutePartMatches(position.sign, detailSign));
     const awaitPlacementTiming = detailType === "placement"
-      && (!placementPosition || !placementPosition.transitStart || !placementPosition.transitEnd);
+      && (skyPlacementFallbackStatus !== "ready" || !placementPosition || !placementPosition.transitStart || !placementPosition.transitEnd);
     transitionPage(() => {
       setSelectedSkyDetail(personalizedSkyPlacementDetail(
         awaitPlacementTiming ? null : detail,
@@ -11783,9 +11783,11 @@ export function App() {
         return true;
       });
     const dashboardLoad = loadFallbackArchitectureV3SkyPlacementDashboardBundle()
-      .then((dashboardBundle) => {
+      .then(async (dashboardBundle) => {
         if (cancelled) return false;
         installSkyPlacementFallbackArchitectureV3Bundle(dashboardBundle);
+        // Published rows cannot serve the reader until its canonical module is ready.
+        await localLoad;
         markAvailable();
         return true;
       });
@@ -11949,6 +11951,8 @@ export function App() {
       ? null : storedCalendarEvent;
     const [baseRoute, encodedExactAt] = skyDetailRoutePath.split(/\/(?:at|on)\//u);
     const [routeSurface, routeType, routePlanet, routeSign] = decodeSkyRouteParts(baseRoute);
+    if (routeSurface === "sky" && ["placement", "retrograde"].includes(routeType)
+      && skyPlacementFallbackStatus !== "ready") return;
     const routePosition = routePlanet && skyNodeDisplayPositions(sky.positions).find(position => skyRoutePartMatches(position.planet, routePlanet));
     const placementSign = routeType === "retrograde" ? (routePosition ? routePosition.sign : undefined) : routeSign;
     let needsAspectFacts = false;
@@ -12033,7 +12037,7 @@ export function App() {
       renderDetail(detailSky, content);
     }).catch(error => { if (!cancelled) console.warn("Sky detail interpretation failed to load.", error); });
     return () => { cancelled = true; };
-  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);
+  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising]);
 
   useEffect(() => {
     const routePath = selectedSkyDetail?.routePath;
@@ -14389,7 +14393,10 @@ export function App() {
           </Suspense>
         </>
       ) : skyDetailRoutePath?.startsWith("sky/") ? (
-        skyStatus === "error" ? <PageLoadError message="The sky calculation could not load. Check your connection and try again." onRetry={() => setSkyRefreshKey(value => value + 1)} /> : <FeatureLoadingFallback />
+        skyStatus === "error" ? <PageLoadError message="The sky calculation could not load. Check your connection and try again." onRetry={() => setSkyRefreshKey(value => value + 1)} />
+          : skyPlacementFallbackStatus === "error" && /^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)
+            ? <PageLoadError message="The placement reading could not load. Please try again." onRetry={() => setSkyPlacementFallbackRetryKey(value => value + 1)} />
+            : <FeatureLoadingFallback />
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
