@@ -446,7 +446,7 @@ function dignityPillClassName(tone: PlacementDignity["tone"]) {
   ].join(" ");
 }
 
-function statusPillClassName(tone: PlacementRowStatus["tone"]) {
+export function statusPillClassName(tone: PlacementRowStatus["tone"]) {
   const variantClass =
     tone === "retrograde"
       ? "ui-pill--retrograde"
@@ -606,8 +606,6 @@ export function PlacementTableRow({
   variant?: "natal" | "friend" | "composite";
 }) {
   const meta = placementTableMeta(house, degree, pointName);
-  const dignityItems = Array.isArray(dignity) ? dignity : dignity ? [dignity] : [];
-  const hasDignity = dignityItems.length > 0;
   const className = [
     "placement-table-row",
     `placement-table-row--${variant}`,
@@ -625,11 +623,6 @@ export function PlacementTableRow({
       <span className="placement-table-row__body">
         <span className="placement-table-row__topline">
           <span className="placement-table-row__title">{title}</span>
-          {retrograde ? (
-            <span className="ui-pill ui-pill--retrograde spl-status-item spl-status-retrograde placement-table-row__retrograde">
-              RETROGRADE
-            </span>
-          ) : null}
         </span>
         {meta ? (
           <span className="placement-table-row__meta placement-row__house placement-row__degree">
@@ -638,11 +631,6 @@ export function PlacementTableRow({
         ) : null}
         {description ? <span className="placement-table-row__description">{description}</span> : null}
         {onClick ? <CardReadMore /> : null}
-        {hasDignity ? (
-          <span className="placement-table-row__status" aria-label={`${title} status`}>
-            <DignityBadge dignity={dignityItems} />
-          </span>
-        ) : null}
       </span>
     </>
   );
@@ -747,9 +735,7 @@ export function PlanetPlacementRow({
     );
   }
 
-  const hasTiming = Boolean(durationLabel || retrogradeDurationLabel || rangeLabel);
-  const dignityItems = Array.isArray(dignity) ? dignity : dignity ? [dignity] : [];
-  const hasFooterTags = statuses.length > 0 || dignityItems.length > 0;
+  const hasTiming = Boolean(rangeLabel);
   const displayHouse = displayHouseForPoint(house, pointName);
   const houseLabel = displayHouse ? `${ordinalHouse(displayHouse)} House` : "House pending";
   const rowClassName = [
@@ -776,16 +762,6 @@ export function PlanetPlacementRow({
         </span>
         {hasTiming ? (
           <span className="planet-placement-row__meta planet-placement-row__meta--timing">
-            {durationLabel ? (
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                <DurationLabelText label={durationLabel} />
-              </span>
-            ) : null}
-            {retrogradeDurationLabel ? (
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                <DurationLabelText label={retrogradeDurationLabel} />
-              </span>
-            ) : null}
             {rangeLabel ? <span>{rangeLabel}</span> : null}
           </span>
         ) : (
@@ -802,16 +778,6 @@ export function PlanetPlacementRow({
           </span>
         ) : null}
         {onClick && !descriptionLoading ? <CardReadMore /> : null}
-        {hasFooterTags ? (
-          <span className="planet-placement-row__tags">
-            {statuses.map((status) => (
-              <span className={statusPillClassName(status.tone)} key={status.label}>
-                {status.label}
-              </span>
-            ))}
-            <DignityBadge dignity={dignityItems} uppercase={variant === "sky"} />
-          </span>
-        ) : null}
       </span>
     </>
   );

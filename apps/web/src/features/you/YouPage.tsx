@@ -1,3 +1,4 @@
+import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { TransitFacts } from "../../components/ArticleFacts";
 import { Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
@@ -66,6 +67,7 @@ export type DailyHoroscopeAssembly = {
 };
 
 export type YouTransitArticle = {
+  pills?: ArticlePillData;
   transitDescription?: string;
   id: string;
   title: string;
@@ -1001,6 +1003,7 @@ function YouTransitArticlePage({
             </div>
             <h1 className="article-title" id="you-transit-article-title">{displayArticle.title}</h1>
             {headerDateRange ? <p className="article-duration">{headerDateRange}</p> : null}
+            <ArticlePills pills={displayArticle.pills} />
             {articleTldr ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>

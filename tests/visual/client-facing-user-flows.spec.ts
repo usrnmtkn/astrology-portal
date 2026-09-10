@@ -4510,3 +4510,61 @@ for (const body of ["Ascendant", "Midheaven", "Descendant", "Imum Coeli", "Chiro
     }
   }
 }
+
+for (const theme of ["light", "dark"] as const) {
+  for (const width of [390, 1440]) {
+    test(`card pills move to article headers ${theme} ${width}`, async ({ page }) => {
+      test.setTimeout(120_000);
+      await page.setViewportSize({ width, height: 1000 });
+      await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme, now: "2026-09-10T16:00:00.000Z" });
+      const errors: string[] = [];
+      page.on("pageerror", error => errors.push(error.message));
+      await expectClientRouteLoads(page, "/#sky");
+      const moon = page.getByRole("button", { name: "Read more about Moon in Virgo", exact: true });
+      await expect(moon).toBeVisible();
+      await expect(page.locator(".planet-placement-row .ui-pill")).toHaveCount(0);
+      await moon.click();
+      const header = page.locator(".article-id");
+      const pills = header.locator(".article-pills");
+      await expect(pills).toContainText(/COMBUST/i);
+      await expect(pills).toContainText(/left/);
+      const date = await header.locator(".article-duration").first().boundingBox();
+      const pillBox = await pills.boundingBox();
+      expect(pillBox!.y).toBeGreaterThanOrEqual(date!.y + date!.height);
+      await expectNoHorizontalOverflow(page, `article pills ${theme} ${width}`);
+      await page.screenshot({ path: `test-results/article-pills-sky-${theme}-${width}.png` });
+      const labels = await pills.innerText();
+      await page.reload();
+      await expect.poll(() => pills.innerText()).toEqual(labels);
+      await expectClientRouteLoads(page, "/#you");
+      const houseCard = page.locator("button.updates-aspect-row--house").first();
+      await expect(houseCard).toBeVisible();
+      await expect(page.locator("button.updates-aspect-row .ui-pill")).toHaveCount(0);
+      await houseCard.click();
+      await expect(pills).toContainText(/Long-term|Short-term/);
+      await expect(header.locator(".article-duration")).toBeVisible();
+      expect(await pills.locator(".ui-pill").count()).toBeGreaterThan(2);
+      await page.locator(".sky-detail-back").click();
+      await selectYouNatalTab(page);
+      await expect(page.locator(".placement-table-row .ui-pill")).toHaveCount(0);
+      await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
+      await expect(pills).toContainText("Constrained");
+      await expect(pills).toContainText("Detriment");
+      await page.screenshot({ path: `test-results/article-pills-natal-${theme}-${width}.png` });
+      await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      const friendCard = page.locator("button.placement-table-row").first();
+      await expect(friendCard).toBeVisible();
+      await expect(page.locator(".placement-table-row .ui-pill")).toHaveCount(0);
+      await friendCard.click();
+      await expect(page.locator(".article-id h1")).toBeVisible();
+      await expectNoHorizontalOverflow(page, `friend article pills ${theme} ${width}`);
+      await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
+      const contact = page.locator("button.friend-aspect-row").filter({ has: page.locator(".synastry-contact-description") }).first();
+      await expect(contact).toBeVisible();
+      await expect(contact.locator(".ui-pill")).toHaveCount(0);
+      await contact.click();
+      await expect(pills.locator(".ui-pill--muted")).toBeVisible();
+      expect(errors).toEqual([]);
+    });
+  }
+}
