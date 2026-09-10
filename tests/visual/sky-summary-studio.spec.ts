@@ -318,7 +318,7 @@ test("full template controls preview order, publish, and reload", async ({ page,
   const preview = assembly.getByLabel("Full summary preview", { exact: true });
   await expect(preview.locator("p")).toHaveCount(2);
   await expect(preview).toContainText("Today brings one exact aspect: Saturn squares Lilith. Also today, Mercury stations retrograde in Scorpio.");
-  await expect(preview).toContainText("New Moon there calls us to clear the clutter");
+  await expect(preview).toContainText("New Moon in Virgo calls us to clear the clutter");
   await assembly.getByText("Paragraphs and event order", { exact: true }).click();
   await assembly.getByRole("button", { name: "Move Stations earlier", exact: true }).click();
   await expect(preview).toContainText("Mercury stations retrograde in Scorpio today. One aspect is also exact today: Saturn squares Lilith.");
@@ -352,7 +352,7 @@ test("full template controls preview order, publish, and reload", async ({ page,
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
   await expect(summary).toContainText("Mercury stations retrograde in Scorpio today.");
   await expect(summary).not.toContainText("Saturn stations");
-  await expect(summary).toContainText("New Moon there at 18° calls us to clear the clutter");
+  await expect(summary).toContainText("New Moon in Virgo at 18° calls us to clear the clutter");
   await expect(summary).not.toContainText("The next New Moon");
   await expect(summary.getByRole("link", { name: "Mercury stations retrograde in Scorpio" })).toHaveAttribute("href", "#sky/placement/mercury/scorpio");
 });
@@ -394,7 +394,7 @@ test("V6 Moon event sources stay separate and missing copy stays blank", async (
   await map.getByLabel("Composition Moon sign").selectOption("Virgo");
   await map.getByLabel("Composition Moon event").selectOption("newMoon");
   const preview = map.getByLabel("Combined Sun and Moon preview");
-  await expect(preview).toContainText("New Moon there calls us to clear the clutter, refine our routines, and prioritize the details that nourish our well-being");
+  await expect(preview).toContainText("New Moon in Virgo calls us to clear the clutter, refine our routines, and prioritize the details that nourish our well-being");
   await expect(preview.getByRole("link", { name: "Edit New Moon in Virgo summary" })).toHaveAttribute("href", /moon%2Fvirgo%2FnewMoon/);
   await map.getByLabel("Composition Moon event").selectOption("fullMoon");
   await expect(map.getByLabel("Composition sources")).toContainText("NEEDS OWNER COPY");
@@ -411,10 +411,10 @@ test("V6 Moon event sources stay separate and missing copy stays blank", async (
   ] }] } } }));
   await reader.goto("http://127.0.0.1:4294/?date=2026-09-10#sky");
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
-  await expect(summary).toContainText("Solar Eclipse there at 18° reminds us that striving for perfection can hinder growth");
+  await expect(summary).toContainText("Solar Eclipse in Virgo at 18° reminds us that striving for perfection can hinder growth");
   await expect(summary).not.toContainText("Moon in Cancer");
   await expect(summary).not.toContainText("New Moon in Virgo");
-  await expect(summary.getByRole("link", { name: "Solar Eclipse there at 18°" })).toHaveAttribute("href", "#sky/lunation/2026-09-11/virgo");
+  await expect(summary.getByRole("link", { name: "Solar Eclipse in Virgo at 18°" })).toHaveAttribute("href", "#sky/lunation/2026-09-11/virgo");
 });
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {

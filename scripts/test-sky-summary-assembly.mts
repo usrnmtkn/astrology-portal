@@ -13,7 +13,7 @@ const row = (name: string, body: string, status = "LIVE") => ({ id: name, conten
 const render = (f = facts, rows: any[] = []) => skySummaryParagraphs(skyDailySummaryParts(f, new Map(rows.map(r => [r.contentKey, r])))).map(p => p.map(x => x.text).join(""));
 assert.equal(render()[1], "Today brings one exact aspect: Saturn squares Lilith. Also today, Mercury stations retrograde in Scorpio. There is also one ingress: Venus enters Scorpio. Full supplied TLDR.");
 assert.equal(render().length, 2);
-assert.ok(render()[0].includes("New Moon there calls us to clear the clutter"));
+assert.ok(render()[0].includes("New Moon in Virgo calls us to clear the clutter"));
 const reordered = row("layout", "{openingSentence}\n\n{stationsSentence} {ingressesSentence} {exactAspectsSentence}\n\n{lunationSentence}");
 assert.equal(render(facts, [reordered])[1], "Mercury stations retrograde in Scorpio today. There is also one ingress: Venus enters Scorpio. Full supplied TLDR. One aspect is also exact today: Saturn squares Lilith.");
 const hidden = row("layout", "{openingSentence}\n\n{ingressesSentence}\n\n{lunationSentence}");
@@ -43,3 +43,11 @@ const inlineParts = skyDailySummaryParts(facts, new Map([[inlineOpening.contentK
 assert.ok(inlineParts.some(part => part.action === "sun" && part.text === "Sun moving through Virgo at 15°"));
 assert.ok(inlineParts.some(part => part.action === "lunation" && part.text === "New Moon in Virgo"));
 assert.ok(skySummaryTemplateErrors(inlineOpening.contentKey, inlineOpening.body.replace("{sunSign}", "Virgo")).length, "A calculated variable cannot be replaced by a fixed sign");
+
+// Older published templates receive the exact owner correction in both preview and reader.
+const priorSameSign = row("openingSameSign", "The {sunName} in {sunSign}{sunDegree} {sunSummary}, while the {moonName} there{moonDegree} {moonSummary}.");
+assert.deepEqual(skySummaryTemplateErrors(priorSameSign.contentKey, priorSameSign.body), []);
+assert.deepEqual(render(facts, [priorSameSign]), render(facts));
+const priorComposition = buildSkySummaryComposition("Virgo", "Virgo", [{ content_key: priorSameSign.contentKey, id: "same", body: priorSameSign.body, status: "LIVE", lane: "serving" }], false);
+assert.ok(priorComposition.parts.map(part => part.text).join("").includes("Moon in Virgo"));
+assert.ok(skySummaryTemplateErrors(priorSameSign.contentKey, "The {sunName} in {sunSign}{sunDegree} {sunSummary}; the {moonName} there{moonDegree} {moonSummary}.").length, "New templates must include the Moon sign");
