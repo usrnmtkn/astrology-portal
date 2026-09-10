@@ -475,3 +475,21 @@ test("source bank loading can retry without blocking current summary editing", a
   await expect(aries.getByText("Review supplied wording", { exact: true })).toBeVisible();
   expect(attempts).toBe(2);
 });
+
+test("reader omits an impossible calendar lunation without losing the current sky", async ({ context }) => {
+  const reader = await context.newPage();
+  await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
+  await reader.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
+  const warnings: string[] = [];
+  reader.on("console", message => { if (message.type() === "warning") warnings.push(message.text()); });
+  await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [
+    { id: "impossible", type: "lunation", title: "New Moon", sign: "Virgo", startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" }
+  ] }] } } }));
+  await reader.goto("http://127.0.0.1:4294/?date=2026-09-07#sky");
+  await expect.poll(() => warnings.some(message => message.includes("IMPOSSIBLE_SKY"))).toBe(true);
+  const summary = reader.getByLabel("Daily sky summary");
+  await expect(summary).toContainText("Sun in Virgo");
+  await expect(summary).toContainText("Moon in Cancer");
+  await expect(summary).not.toContainText("New Moon");
+  await expect(summary.getByRole("link", { name: /New Moon/ })).toHaveCount(0);
+});

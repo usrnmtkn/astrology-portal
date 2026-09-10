@@ -15868,14 +15868,13 @@ function SkyCards({
     retrogradePlacements: activeRetrogradePositions(sky.positions).map(position => ({ ...position, planet: skyDisplayPlanetName(position.planet) })),
     ...skySummaryEventFacts(events, summaryContent),
     voidRemainingLabel: sky.moonStatus?.remainingLabel,
-    event: validEvent ? {
+    event: validEvent && (!eventIsToday || verifiedEventSky) ? {
       name: event.name,
       sun: verifiedEventSky?.sun,
       degree: verifiedEventSky?.moon.degree,
       eclipseType: event.eclipseType,
       sign: event.sign,
       isToday: eventIsToday,
-      placementsPending: eventIsToday && !verifiedEventSky,
       countdown: lunationCountdownLabel(selectedDate, eventDate, sky.location.timeZone).toLowerCase()
     } : undefined
   }, summaryContent);

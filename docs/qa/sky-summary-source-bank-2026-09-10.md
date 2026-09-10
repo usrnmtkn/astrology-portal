@@ -46,8 +46,9 @@ On an actual event day, the reader requests a Swiss Ephemeris snapshot at the
 calendar event's exact UTC time. Both Sun and Moon placements are checked
 against the event, including sign geometry and finite degrees. The Sun article
 link uses that same event-time sign. While calculation is pending or fails,
-the current placement summary and a separate factual event sentence remain;
-no special-Moon prose is assembled from mismatched timestamps. Invalid event
+the current placement summary remains and the unverified lunation unit is
+omitted; no event claim or special-Moon prose is assembled from mismatched
+timestamps. Invalid event
 geometry is logged as `IMPOSSIBLE_SKY`, not classified as a missing prose row.
 
 The same-sign opening names the sign once and preserves each body's degree and
@@ -96,7 +97,8 @@ No production content is published as part of verification.
 
 ## Local verification record
 
-The isolated Studio flow passed 20 cases, including candidate-asset retry.
+The isolated Studio flow passed 21 cases under UTC, including candidate-asset
+retry and omission of an impossible calendar lunation.
 The dedicated Content Studio API gate, typecheck, CSS audit, and Admin bundle
 budget passed. Candidate bodies match the preserved original attachment;
 existing approved source files are unchanged.
