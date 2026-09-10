@@ -1019,7 +1019,8 @@ function generatedRowNeedsReviewQueue(row: AdminGeneratedContentRow) {
     || (skyV4ReviewCategory === "owner-approved-reader-copy" && packageRecord.owner_approved === true);
 
   return !outsideSkyV4WritingReview && (
-    sourceType === "owner-resource-review"
+    isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {})
+    || sourceType === "owner-resource-review"
     || (["DRAFT", "REVIEWED"].includes(row.status) && Boolean(row.review_state))
   );
 }
@@ -2949,6 +2950,7 @@ export function GeneratedContentAdminDashboard() {
   }, [rows, compositionCatalog]);
   const visibleRows = useMemo(() => rows.filter((row) => (
     (showReferenceRows
+      || (activePage === "reviewQueue" && isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {}))
       || (activePage === "content" && categoryFilter === "Calendar Aspects")
       || (showRetiredRows && isRetiredAdminRow(row))
       || isCompositionPage(activePage)
