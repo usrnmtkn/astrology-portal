@@ -44,7 +44,11 @@ await loadSkyDetailContent(facts, stale, [], async keys => {
   assert.ok(keys.includes(key), "A stale row must be requested again.");
   return new Map([[key, content.get(key)!]]);
 });
+const offline = await loadSkyDetailContent(facts, content, ["unavailable-row"], async () => { throw new Error("offline fixture"); });
+assert.equal(offline.get(key), content.get(key), "An offline refresh keeps the eligible approved row.");
+const staleOffline = await loadSkyDetailContent(facts, stale, [], async () => { throw new Error("offline fixture"); });
+assert.equal(staleOffline.has(key), false, "An offline refresh cannot retain a superseded row.");
 installContentPublications([{content_key:key,state:"retired",revision:999999,row_id:null,row_updated_at:null,updated_at:"2026-09-08T15:00:00Z"}]);
-const retired = await loadSkyDetailContent(facts, content, [], async () => new Map());
+const retired = await loadSkyDetailContent(facts, content, [], async () => { throw new Error("offline fixture"); });
 assert.equal(retired.has(key), false, "A missing response must not restore a retired row.");
 console.log(`PASS: ${checked} published detail identities in both orders; event signs, stale revisions and retirement remain guarded.`);

@@ -1,0 +1,52 @@
+import { expect, test } from '@playwright/test';
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+ test(`Lilith nested articles and refresh remain stable ${width} ${theme}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({width, height:1000});
+  await page.clock.setFixedTime(new Date('2026-09-10T13:00:00Z'));
+  await page.addInitScript(theme => {
+   localStorage.setItem('tldrastro:theme', theme);
+   localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({label:'New York',latitude:40.7,longitude:-74,timeZone:'America/New_York'}));
+  }, theme);
+  await page.route('**/api/calendar?**', route => route.fulfill({json:{ok:true,calendar:{days:[]}}}));
+  const errors: string[]=[];
+  page.on('pageerror', error=>errors.push(error.message));
+  await page.goto('/#sky');
+  await page.getByRole('link', {name:'Read about Lilith in Capricorn',exact:true}).click();
+  await expect(page.locator('#sky-detail-title')).toHaveText(/Lilith.*Capricorn/i, {timeout:60_000});
+  const parentUrl=page.url();
+  for (const aspect of ['Trine Sun','Opposition Mars']) {
+   const link=page.getByRole('link',{name:new RegExp(`Read more about Lilith.*${aspect}`)});
+   await expect(link).toBeVisible({timeout:60_000});
+   const target=await link.getAttribute('href');
+   // Click the actual Read More text, not the center of a large card.
+   await link.getByText('Read More', {exact:true}).click();
+   await expect(page).toHaveURL(new RegExp(target!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
+   await expect(page.locator('#sky-detail-title')).toHaveText(aspect==='Trine Sun' ? /Sun.*Trine.*Lilith/i : /Mars.*Opposition.*Lilith/i);
+   await expect(page.locator('.article-related-aspect-row')).toHaveCount(0);
+   await page.getByRole('button',{name:'Close detail',exact:true}).click();
+   await expect(page).toHaveURL(parentUrl);
+   await expect(page.locator('#sky-detail-title')).toHaveText(/Lilith.*Capricorn/i);
+  }
+  await page.waitForTimeout(1500);
+  await page.evaluate(() => {
+   const read=()=>({title:document.querySelector('#sky-detail-title')?.textContent??null,body:document.querySelector('.article-body-inner')?.textContent??null});
+   (window as any).__articleStates=[read()];
+   new MutationObserver(()=>{
+    const next=read(), states=(window as any).__articleStates;
+    if (JSON.stringify(next)!==JSON.stringify(states.at(-1))) states.push(next);
+   }).observe(document,{subtree:true,childList:true,characterData:true});
+   window.dispatchEvent(new Event('focus'));
+   window.dispatchEvent(new CustomEvent('tldrastro:content-update',{detail:{contentKey:'sky-placement/article/lilith/capricorn',published:true,updatedAt:new Date().toISOString()}}));
+  });
+  await page.waitForTimeout(5000);
+  const states=await page.evaluate(()=>(window as any).__articleStates);
+  expect(states[0].body).toBeTruthy();
+  expect(states.every((state:any)=>state.title===states[0].title && state.body===states[0].body)).toBe(true);
+  await page.screenshot({path:`test-results/article-navigation-${width}-${theme}.png`});
+  await page.getByRole('button',{name:'Close detail',exact:true}).click();
+  await expect(page).toHaveURL(/#sky$/);
+  expect(errors).toEqual([]);
+ });
+}
