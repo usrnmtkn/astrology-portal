@@ -1055,6 +1055,9 @@ function validateWriteBody(body: Record<string, unknown>) {
   for (const field of ["id", "contentKey", "surface", "mode", "eventType"]) {
     if (typeof body[field] === "string" && !(body[field] as string).trim()) throw new GeneratedContentRequestError(`${field} must not be empty.`);
   }
+  // Older Studio starters call a feed-sized entry a "card". Keep that UI
+  // alias out of storage: the production mode constraint accepts "feed".
+  if (body.mode === "card") body.mode = "feed";
   if (body.sourceLifecycleAction !== undefined && !["archive", "restore"].includes(body.sourceLifecycleAction as string)) throw new GeneratedContentRequestError("sourceLifecycleAction must be archive or restore.");
   if (body.ownerAction !== undefined && !generatedContentOwnerActions.has(body.ownerAction as string)) {
     throw new GeneratedContentRequestError("ownerAction is not supported. Reload Content Studio before retrying.");

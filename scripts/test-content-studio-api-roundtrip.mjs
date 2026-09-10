@@ -136,6 +136,7 @@ globalThis.fetch = async (input, init = {}) => {
     assert.equal(url.searchParams.get("id"), `eq.${row.id}`);
     if (!matchesFilter(url.searchParams, "updated_at", row.updated_at)) return Response.json([]);
     const patch = JSON.parse(String(init.body));
+    assert.notEqual(patch.mode, "card", "The production mode constraint rejects the Studio card alias.");
     row = { ...row, ...patch };
     return Response.json([row]);
   }
@@ -149,6 +150,7 @@ globalThis.fetch = async (input, init = {}) => {
 
   if (method === "POST") {
     const created = JSON.parse(String(init.body));
+    assert.notEqual(created.mode, "card", "The production mode constraint rejects the Studio card alias.");
     row = {
       id: "content-studio-created-row",
       target_date: null,
@@ -311,6 +313,24 @@ for (const key of ["cms/sky-daily-summary/sun/aries", "cms/sky-daily-summary/moo
   assert.equal((await loadLiveGeneratedContentForKeys([key])).get(key)?.body, candidate.body);
   assert.equal(row.source_snapshot.suppliedBank.bodySha256, candidate.sha256);
 }
+row = beforeBank;
+
+// An unsaved Studio summary starts with the legacy UI mode "card". Exercise
+// creation as well as editing; patching a pre-existing fixture missed this.
+const createdSummary = await invokeApi("POST", "/api/admin/generated-content", {
+  contentKey: "cms/sky-daily-summary/sun/aries", surface: "sky", mode: "card",
+  eventType: "sky-daily-summary", status: "DRAFT", lane: "serving",
+  reviewState: "EDITORIAL_REVIEW_REQUIRED", body: suppliedBank.rows[0].body,
+  sourceSnapshot: { contentSystem: "cms-surface-override", contentType: "mustache-template", allowedSlots: [] }
+});
+assert.equal(createdSummary.status, 200, JSON.stringify(createdSummary.payload));
+assert.equal(createdSummary.payload.rows[0].mode, "feed");
+const publishedSummary = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id, expectedUpdatedAt: row.updated_at, mode: "card", status: "LIVE", lane: "serving", reviewState: null
+});
+assert.equal(publishedSummary.status, 200, JSON.stringify(publishedSummary.payload));
+assert.equal(publishedSummary.payload.rows[0].mode, "feed");
+assert.equal((await loadLiveGeneratedContentForKeys([row.content_key])).get(row.content_key)?.body, suppliedBank.rows[0].body);
 row = beforeBank;
 
 const natalAspectContentKey = "fallback-hook/natal-aspect-lived/lilith/square/ascendant";
