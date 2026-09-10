@@ -81,7 +81,7 @@ function concreteAspects(group) {
 }
 
 for (const patch of overlay.rows) {
-  const [, , , first, second, family] = patch.contentKey.split("/");
+  const [, , first, second, family] = patch.contentKey.split("/");
   assert.equal(first, "sun", `${patch.contentKey}: Batch 4 canonical first body must be Sun`);
 
   for (const aspect of concreteAspects(family)) {
