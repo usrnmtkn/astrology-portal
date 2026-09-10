@@ -1,7 +1,24 @@
+/* Nested You articles and full-page Sky/Friends articles share one outer rail. */
+.app-shell:has(.sky-detail-page),
+.portal-grid.page-shell:has(.sky-detail-page) {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin-inline: 0;
+}
+
+.sky-detail-page .sky-detail-card {
+  padding: var(--article-sheet-padding);
+}
+
+.sky-detail-page .sky-detail-article {
+  width: 100%;
+}
+
 .sky-detail-page {
   width: 100%;
   min-height: 100svh;
-  padding: var(--sky-page-padding);
+  padding: var(--article-page-padding);
   background: transparent;
   color: var(--ink);
   font-family: var(--font-body);
@@ -492,11 +509,14 @@
   height: 20px;
 }
 
-@media (max-width: 700px) {
-  .sky-detail-page {
-    padding: var(--sky-mobile-page-padding);
+@media (max-width: 800px) {
+  .sky-detail-page .sky-detail-back {
+    top: var(--article-back-top);
+    left: var(--mobile-page-gutter);
   }
+}
 
+@media (max-width: 700px) {
   .article-card,
   .sky-detail-card {
     padding: calc(var(--space-7) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2) calc(var(--space-8) + var(--space-1) / 2);
