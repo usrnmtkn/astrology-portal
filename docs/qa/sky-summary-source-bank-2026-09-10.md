@@ -93,3 +93,21 @@ approved paragraphs into one.
 Browser write fixtures use isolated storage. They prove UI wiring; the separate
 actual-handler suite is required and must not be replaced with mocked success.
 No production content is published as part of verification.
+
+## Local verification record
+
+The isolated Studio flow passed 20 cases, including candidate-asset retry.
+The dedicated Content Studio API gate, typecheck, CSS audit, and Admin bundle
+budget passed. Candidate bodies match the preserved original attachment;
+existing approved source files are unchanged.
+
+The repository-wide `npm run test:content` reached an unrelated existing
+Friends historical approval checksum failure in
+`scripts/test-friends-owner-signoff-ruling.mjs:161`. The same script and all of
+its source inputs were extracted directly from `origin/main` at `cf4f03b1` and
+reproduced the identical mismatch: actual
+`84bcb9343e221991b2efe9f363d75aeaf926212319896c82a7c8878484acf4ee`, expected
+`9ae494a7998e4441a03799c477e8e0819028e0822908a7a3ca4aeafb1e1415f5`.
+This is not a passing full-content gate. No approval-history or reader-content
+changes were made to suppress it. The release requires the exact-head CI
+checks and the directly affected suites described above.
