@@ -43,28 +43,6 @@ export type WritingSurfaceAdminAccess = {
   cmsStarters?: WritingSurfaceCmsStarter[];
 };
 
-export const personalTransitAspectAllowedSlots = [
-  "transitPlanet",
-  "transitPlanetTopic",
-  "transitSign",
-  "transitHouse",
-  "transitHouseOrdinal",
-  "transitHouseTopic",
-  "aspect",
-  "aspectAdj",
-  "aspectVerb",
-  "aspectTone",
-  "natalPoint",
-  "natalPointTopic",
-  "natalSign",
-  "natalHouse",
-  "natalHouseOrdinal",
-  "natalHouseTopic",
-  "window",
-  "owner",
-  "ownerPossessive"
-] as const;
-
 export const writingLayerLabels: Record<WritingLayer, string> = {
   "source-grounded": "Source-grounded",
   generated: "Generated",
@@ -581,14 +559,7 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
   "personal-transit-detail": {
     readerLocation: "Sky > placement detail > Aspects to the natal chart; You or Friends > personal transit detail",
     editability: "editable",
-    routes: [{ label: "Edit personalized aspect overrides", hash: "#exact-content?q=cms%2Fpersonal-transit-aspect", purpose: "reader-copy", note: "Opens house-aware LIVE-first overrides for transits to natal placements." }],
-    cmsStarters: [{
-      label: "Start personalized aspect template",
-      contentKey: "cms/personal-transit-aspect/you/template",
-      surface: "you",
-      headline: "{{transitPlanet}} {{aspect}} your {{natalPoint}}",
-      allowedSlots: [...personalTransitAspectAllowedSlots]
-    }]
+    routes: [{ label: "Edit Personal Transits", hash: "#sky-writeups?view=transits-to-natal", purpose: "reader-copy", note: "Opens the canonical transit reader preview and its approved source." }]
   },
   "sky-daily-timing": {
     readerLocation: "Today or You > daily timing writeup",

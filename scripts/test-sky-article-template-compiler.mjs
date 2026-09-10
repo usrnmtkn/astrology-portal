@@ -7,7 +7,6 @@ import {
   hasExactSkyArticleOwnerApproval,
   reviseSkyArticleEdition,
   selectActiveSkyArticleEdition,
-  skyArticleAspectPassageForTransit,
   skyArticleEditableFields,
   skyArticleEditionFieldChanges,
   skyArticleTemplatePlaceholders
@@ -115,17 +114,6 @@ await assert.rejects(
   reviseSkyArticleEdition(compiled, { ...skyArticleEditableFields(compiled), housePassages: compiled.housePassages.slice(0, 11) }),
   /cannot add or remove house passages/u
 );
-assert.equal(
-  skyArticleAspectPassageForTransit([{
-    contentKey: "authored/transit-aspect/pluto/sun/hard",
-    natalPoint: "sun",
-    aspect: "hard",
-    body: "Owner hard-aspect passage."
-  }], { aspect: "square", natalPoint: "sun", transitingPlanet: "pluto" })?.body,
-  "Owner hard-aspect passage.",
-  "Exact natal squares must resolve to an approved hard-aspect passage."
-);
-
 const ownerApproval = {
   approved: true,
   action: "approve-sky-article-edition",

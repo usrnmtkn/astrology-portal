@@ -1,4 +1,5 @@
 import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
+import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 // @ts-ignore Shared inline-variable contract for continuous Sky placement prose.
 import { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
@@ -897,6 +898,9 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
   eventType?: string | null;
   event_type?: string | null;
 }) {
+  if (isRetiredCompositionKey(row.contentKey ?? row.content_key)) {
+    throw new GeneratedContentRequestError("This composition has been retired. Edit the canonical Personal Transit source instead.", 409);
+  }
   const snapshot = row.sourceSnapshot ?? row.source_snapshot;
   if (isContentStudioReferenceSource(row.contentKey ?? row.content_key ?? "", isRecord(snapshot) ? snapshot : {})) {
     throw new GeneratedContentRequestError("Source notes can be reviewed but cannot be published as reader copy. Publish a finished card instead.", 409);
@@ -2033,6 +2037,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
   const effectiveContentKey = body.contentKey ?? existing.content_key;
   const effectiveSurface = (body.surface ?? existing.surface) as GeneratedContentSurface | undefined;
+  if (isRetiredCompositionKey(effectiveContentKey) && (body.status === "LIVE" || body.ownerAction?.startsWith("approve-") || body.ownerAction?.startsWith("publish-"))) {
+    throw new GeneratedContentRequestError("This composition has been retired. Edit the canonical Personal Transit source instead.", 409);
+  }
 
   const patch: Record<string, unknown> = {
     updated_at: new Date().toISOString()
@@ -2055,6 +2062,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     const target = targetRowId === existing.id ? existing : await fetchExistingRowById(targetRowId);
     if (!target || !isFallbackArchitectureV3Row(target)) {
       throw new Error("The fallback package row targeted by this revision no longer exists.");
+    }
+
+    if (isRetiredCompositionKey(target.content_key)) {
+      throw new GeneratedContentRequestError("The revision targets a retired composition.", 409);
     }
 
     const targetVersion = stringFrom(existing.source_snapshot?.targetRowUpdatedAt);

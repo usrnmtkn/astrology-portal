@@ -1,3 +1,4 @@
+import { isRetiredCompositionKey } from "./fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { announceContentUpdate } from "../services/contentUpdateSignal.js";
 /** Shared lifecycle identity. A retirement survives deletion of its editable row. */
 export type ContentPublication = {
@@ -61,16 +62,17 @@ export function installContentPublications(incoming: readonly unknown[]) {
   announceContentUpdate({ contentKey: "*", published: false, updatedAt: new Date().toISOString() });
 }
 export function contentPublication(contentKey: string) { return publications.get(contentKey); }
-export function isContentRetired(contentKey: string) { return publications.get(contentKey)?.state === "retired"; }
+export function isContentRetired(contentKey: string) { return isRetiredCompositionKey(contentKey) || publications.get(contentKey)?.state === "retired"; }
 export function subscribeToContentPublications(listener: () => void) {
   listeners.add(listener);
   return () => { listeners.delete(listener); };
 }
 
 /** Once a key has a publication, an older row or unversioned bundle is not a substitute. */
-export function publicationAllowsContent(contentKey: string, rowId?: string | null, rowUpdatedAt?: string | null, targetDate?: string | null) {
-  const publication = publications.get(contentKey);
-  if (!publication) return !rowId || Boolean(targetDate) || !publicationLedgerReady();
+export function publicationAllowsContent(contentKey: string, rowId?: string | null, rowUpdatedAt?: string | null, targetDate?: string | null, records: ReadonlyMap<string, ContentPublication> = publications) {
+  if (isRetiredCompositionKey(contentKey)) return false;
+  const publication = records.get(contentKey);
+  if (!publication) return !rowId || Boolean(targetDate) || !records.has(publicationLedgerKey);
   if (publication.state === "retired") return false;
   if (targetDate || !publication.row_id) return true;
   return rowId === publication.row_id && Boolean(rowUpdatedAt) && Boolean(publication.row_updated_at)

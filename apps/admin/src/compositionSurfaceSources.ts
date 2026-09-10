@@ -1,3 +1,4 @@
+import { isRetiredCompositionKey } from "../../web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import type { CompositionMapRow, CompositionMapTemplate } from "./compositionMap";
 
 // Key contracts, not the imported row's surface label (many natal hooks are labelled Sky).
@@ -14,7 +15,7 @@ export const compositionSurfaceFamilies: Record<string, RegExp> = {
   "sky-placement-detail": /^(?:authored\/sky-placement|sky-placement\/|sky[.]placement[.]|sky\/article-|sky-context\/|sky-nodes\/|sky-lilith\/|fallback-template\/sky-placement|fallback-hook\/(?:sky-placement|sky-sign-copy|sky-sign-trap|sky-element-close|sky-planet-education|fog-note))/,
   "sky-aspect-detail": /^(?:authored\/sky-aspect|sky[.]|fallback-template\/sky[.]aspect|fallback-hook\/sky-aspect)/,
   "sky-retrograde-summary": /^(?:cms\/sky-retrograde-summary|fallback-template\/transit[.]retro|fallback-hook\/transit-retro)/,
-  "personal-transit-detail": /^(?:cms\/personal-transit-aspect|transit\/|fallback-template\/transit[.]aspect|fallback-hook\/(?:transit-aspect-type|transit-effect|transit-retro-aspect))/,
+  "personal-transit-detail": /^(?:authored\/transit-(?:aspect|return)\/|transit\/|fallback-template\/transit[.]aspect|fallback-hook\/(?:transit-aspect-type|transit-effect|transit-retro-aspect|transit-house-event-(?:wants|natal|scenes)))/,
   "sky-daily-timing": /^(?:daily-timing\/|fallback-template\/daily|fallback-hook\/daily-)/,
   "daily-at-a-glance": /^fallback-(?:hook|template)\/daily(?:[./-]|$)/,
   "sky-calendar-event-cards": /^(?:authored\/(?:sky-lunation|calendar)|lunation\/|season(?:-arc)?\/|transit-fallback\/|fallback-template\/(?:sky[.]|lunation)|fallback-hook\/(?:sky-event|sky-season|sky-lunation|sky-axis|sky-fullmoon|sky-newmoon|sky-eclipse|season-marker))/,
@@ -23,7 +24,7 @@ export const compositionSurfaceFamilies: Record<string, RegExp> = {
   "sky-horoscopes": /^(?:cms\/weekly-horoscope|fallback-template\/(?:lunation|sky[.]horoscope)|fallback-hook\/(?:sky-horoscope|lunation-))/,
   "chart-placement-row-microcopy": /^(?:cms\/chart-placement-row|fallback-hook\/(?:planet-intro|placement-sentence|dignity-line))/,
   "natal-empty-house": /^(?:cms\/natal-empty-house|fallback-template\/(?:empty-house|natal[.]empty-house)|fallback-vocab\/empty-house-|fallback-hook\/(?:empty-house|house-cusp|house-glossary|ruler-method))/,
-  "personal-transit-house": /^(?:cms\/personal-transit-house|fallback-template\/transit[.]house|fallback-hook\/(?:transit-house|transit-effect-house|house-meaning))/,
+  "personal-transit-house": /^(?:authored\/transit-house(?:\/|-intro\/|-sign\/)|cms\/personal-transit-house|fallback-template\/transit[.]house|fallback-hook\/(?:transit-house|transit-effect-house|house-meaning))/,
   "generated-reports": /^(?:report\/|fallback-template\/(?:career|profection|circle)|fallback-hook\/(?:career-|profection-|circle-))/,
   "surface-specs-builders": /^(?:fallback-vocab\/|vocab\/|slot-template\/)/
 };
@@ -37,7 +38,7 @@ export function compositionSourcesForSurface(surfaceId: string, rows: Compositio
     if (!keys.has(template.row.content_key)) continue;
     for (const slot of template.slots) for (const source of slot.sources) keys.add(source.row.content_key);
   }
-  return rows.filter((row) => keys.has(row.content_key));
+  return rows.filter((row) => !isRetiredCompositionKey(row.content_key) && keys.has(row.content_key));
 }
 
 export function compositionSourceFamily(key: string) {

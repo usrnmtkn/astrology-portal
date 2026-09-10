@@ -1,3 +1,4 @@
+import { isRetiredCompositionKey } from "./retiredCompositions.mjs";
 import {
   passesReaderContentBoundary,
   readerContentBoundaryReason,
@@ -96,6 +97,7 @@ export function isGovernedReaderEligible(
   row: GovernedReaderRow,
   { allowUnreviewed = false }: { allowUnreviewed?: boolean } = {}
 ): boolean {
+  if (isRetiredCompositionKey(row.contentKey)) return false;
   if (allowUnreviewed) return true;
   if (QUARANTINED_CONTENT_KEYS.has(row.contentKey)) return false;
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
@@ -115,6 +117,7 @@ export function isGovernedReaderEligible(
 }
 
 export function readerEligibilityReason(row: GovernedReaderRow): string | null {
+  if (isRetiredCompositionKey(row.contentKey)) return "superseded-composition";
   if (QUARANTINED_CONTENT_KEYS.has(row.contentKey)) return "known-current-contract-failure";
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return "review-status";

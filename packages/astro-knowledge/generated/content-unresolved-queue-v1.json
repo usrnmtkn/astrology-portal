@@ -1940,10 +1940,11 @@
       ]
     }
   ],
-  "retiredCount": 85,
+  "retiredCount": 92,
   "retiredReasonCounts": {
     "governed-reader-layer-retirement": 11,
     "owner-retired-family": 56,
+    "superseded-by-canonical-personal-transit": 7,
     "superseded-by-owner-approved-v14": 6,
     "superseded-by-protected-evergreen-eclipse-assembly": 12
   },
@@ -3306,6 +3307,118 @@
         "reason": "owner-retired-family",
         "evidence": "packages/astro-knowledge/review/sky-placement-emergency-row-retirement-2026-08-08.md",
         "replacement": "complete per-sign Sky Placement copy; renderer fails closed instead of substituting this family"
+      }
+    },
+    {
+      "id": "unresolved-ddc7730b19ec5d9c",
+      "contentKey": "fallback-hook/transit-house-event-frame/generic",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "approved_reuse",
+      "reason": "superseded-composition",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/2434",
+      "sourceSha256": "8589391ccbc85b3a738477008f89002ab65305a026ba8a6f2b724327984322fb",
+      "retirement": {
+        "id": "superseded-transit-house-event-frame",
+        "reason": "superseded-by-canonical-personal-transit",
+        "evidence": "docs/qa/composition-lifecycle-audit-2026-09-10.md; owner task 01a08cdf-ebab-7761-8d18-4e57a820487a, 2026-09-10",
+        "replacement": "Complete approved transit-aspect or return passage selected by the canonical reader resolver."
+      }
+    },
+    {
+      "id": "unresolved-603d1b1d60773a28",
+      "contentKey": "fallback-hook/transit-house-event-frame/jupiter",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "approved",
+      "reason": "superseded-composition",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/2432",
+      "sourceSha256": "064b5c102dd0d8b643633f548494d92e41f094d35cb53857319788741bb33b92",
+      "retirement": {
+        "id": "superseded-transit-house-event-frame",
+        "reason": "superseded-by-canonical-personal-transit",
+        "evidence": "docs/qa/composition-lifecycle-audit-2026-09-10.md; owner task 01a08cdf-ebab-7761-8d18-4e57a820487a, 2026-09-10",
+        "replacement": "Complete approved transit-aspect or return passage selected by the canonical reader resolver."
+      }
+    },
+    {
+      "id": "unresolved-a185a27fa988106e",
+      "contentKey": "fallback-hook/transit-house-event-frame/mars",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "approved",
+      "reason": "superseded-composition",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/2428",
+      "sourceSha256": "90a7c455b0bbb35865e3e19e91635bd06dca51813c8b38f057a86d4e3bcf6a7f",
+      "retirement": {
+        "id": "superseded-transit-house-event-frame",
+        "reason": "superseded-by-canonical-personal-transit",
+        "evidence": "docs/qa/composition-lifecycle-audit-2026-09-10.md; owner task 01a08cdf-ebab-7761-8d18-4e57a820487a, 2026-09-10",
+        "replacement": "Complete approved transit-aspect or return passage selected by the canonical reader resolver."
+      }
+    },
+    {
+      "id": "unresolved-5805b93560853aec",
+      "contentKey": "fallback-hook/transit-house-event-frame/mercury",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "approved",
+      "reason": "superseded-composition",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/2431",
+      "sourceSha256": "d8d3c45c53372b9fdbf26d856acc08face16ef4022e0fbdf6e70b3a27f0b5485",
+      "retirement": {
+        "id": "superseded-transit-house-event-frame",
+        "reason": "superseded-by-canonical-personal-transit",
+        "evidence": "docs/qa/composition-lifecycle-audit-2026-09-10.md; owner task 01a08cdf-ebab-7761-8d18-4e57a820487a, 2026-09-10",
+        "replacement": "Complete approved transit-aspect or return passage selected by the canonical reader resolver."
+      }
+    },
+    {
+      "id": "unresolved-51525e6872277f0d",
+      "contentKey": "fallback-hook/transit-house-event-frame/saturn",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "approved",
+      "reason": "superseded-composition",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/2433",
+      "sourceSha256": "fa8466a069c14e11bfa1c967e8becdf7f48f5971411fa70706fb675cfe7ae2ae",
+      "retirement": {
+        "id": "superseded-transit-house-event-frame",
+        "reason": "superseded-by-canonical-personal-transit",
+        "evidence": "docs/qa/composition-lifecycle-audit-2026-09-10.md; owner task 01a08cdf-ebab-7761-8d18-4e57a820487a, 2026-09-10",
+        "replacement": "Complete approved transit-aspect or return passage selected by the canonical reader resolver."
+      }
+    },
+    {
+      "id": "unresolved-ebb6d75734d33493",
+      "contentKey": "fallback-hook/transit-house-event-frame/sun",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "approved",
+      "reason": "superseded-composition",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/2430",
+      "sourceSha256": "cd4cc1abd656865c84bc5c1609893189682e193c59de5f12fb51e6cbb77c391e",
+      "retirement": {
+        "id": "superseded-transit-house-event-frame",
+        "reason": "superseded-by-canonical-personal-transit",
+        "evidence": "docs/qa/composition-lifecycle-audit-2026-09-10.md; owner task 01a08cdf-ebab-7761-8d18-4e57a820487a, 2026-09-10",
+        "replacement": "Complete approved transit-aspect or return passage selected by the canonical reader resolver."
+      }
+    },
+    {
+      "id": "unresolved-0aafe97041a55340",
+      "contentKey": "fallback-hook/transit-house-event-frame/venus",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "approved",
+      "reason": "superseded-composition",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/2429",
+      "sourceSha256": "bb666421af4ca7042c97bd3d47a4cb083ff76f9e3c2b3b177189632b1319524c",
+      "retirement": {
+        "id": "superseded-transit-house-event-frame",
+        "reason": "superseded-by-canonical-personal-transit",
+        "evidence": "docs/qa/composition-lifecycle-audit-2026-09-10.md; owner task 01a08cdf-ebab-7761-8d18-4e57a820487a, 2026-09-10",
+        "replacement": "Complete approved transit-aspect or return passage selected by the canonical reader resolver."
       }
     }
   ],

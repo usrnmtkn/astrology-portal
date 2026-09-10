@@ -41,11 +41,7 @@ export type RelatedLunationHoroscope<Row extends SkyWriteupRelationRow = SkyWrit
   }>;
 };
 
-export type PersonalTransitAspectCmsStarter = {
-  contentKey: string;
-  headline: string;
-  sourceContentKey: string;
-};
+
 
 export const skyPlacementBodies = [
   "sun",
@@ -393,28 +389,6 @@ export function relatedAspectPassages<Row extends SkyWriteupRelationRow>(rows: R
   return rows
     .filter((row) => row.content_key.toLowerCase().startsWith(prefix))
     .sort((left, right) => left.content_key.localeCompare(right.content_key));
-}
-
-export function personalTransitAspectCmsStarter(
-  row: SkyWriteupRelationRow,
-  context: SkyWriteupContext
-): PersonalTransitAspectCmsStarter | null {
-  const planet = normalizedToken(context.planet);
-  const sign = normalizedToken(context.sign);
-  const match = row.content_key.toLowerCase().match(
-    new RegExp(`^authored/transit-aspect/${planet}/([^/]+)/([^/]+)(?:/variant-[^/]+)?$`, "u")
-  );
-
-  if (!match) return null;
-
-  const [, natalPoint, aspect] = match;
-  const signPath = sign ? `/${sign}` : "";
-
-  return {
-    contentKey: `cms/personal-transit-aspect/you/${planet}${signPath}/${natalPoint}/${aspect}`,
-    headline: "{{transitPlanet}} {{aspect}} your {{natalPoint}}",
-    sourceContentKey: row.content_key
-  };
 }
 
 export const skyWriteupContextForRow = memoByObject(skyWriteupContextForRowUncached);

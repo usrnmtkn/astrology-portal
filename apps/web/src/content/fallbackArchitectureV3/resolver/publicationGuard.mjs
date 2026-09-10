@@ -1,3 +1,4 @@
+import { isRetiredCompositionKey } from "./retiredCompositions.mjs";
 const nodeBlockedKeys = new Set();
 export function setNodeBlockedContentKeys(keys) {
   nodeBlockedKeys.clear();
@@ -7,7 +8,7 @@ export function assertNodePublicationKey(key, SourceGapError) {
   return assertPublicationKey(key, nodeBlockedKeys, SourceGapError);
 }
 export function assertPublicationKey(key, blockedKeys, SourceGapError) {
-  if (!blockedKeys.has(key)) return;
+  if (!isRetiredCompositionKey(key) && !blockedKeys.has(key)) return;
   const error = new SourceGapError(`SOURCE_GAP: Publication unavailable for ${key}.`);
   error.publicationBlocked = true;
   throw error;

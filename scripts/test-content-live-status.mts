@@ -4,6 +4,10 @@ import { readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { contentLiveStatuses, servingPackageRecords } from "../api/_lib/content-live-status";
+for (const key of ["cms/personal-transit-aspect/you/template", "fallback-hook/transit-house-event-frame/sun", "fallback-template/transit.house-event"]) {
+  const staleLive = { id: key, content_key: key, status: "LIVE", lane: "serving", body: "Historical approved copy.", provider: "tldrastro-fallback-architecture-v3", sections: { packageRecord: { contentKey: key, review_status: "approved", body: "Historical approved copy." } } };
+  assert.equal(contentLiveStatuses([staleLive], [staleLive], () => true, () => true)[0].live, false, "Retirement wins even over a stale explicit publication.");
+}
 const macros = [...servingPackageRecords.values()].filter((row) => row.contentKey.startsWith("authored/sky-lunation-macro/"));
 assert(macros.length > 0, "The installed reader package must contain lunation macros.");
 for (const record of macros) {

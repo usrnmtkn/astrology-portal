@@ -1,3 +1,4 @@
+import { packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
 import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
 import { publicationLedgerReady, isContentRetired, installContentPublications, publicationAllowsContent, contentPublication, contentPublicationRecords } from "../content/contentPublicationState";
@@ -110,7 +111,7 @@ export type LiveGeneratedContent = {
   status?: "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR" | string;
 };
 
-type GeneratedContentRow = {
+export type GeneratedContentRow = {
   id: string;
   content_key: string;
   surface: string;
@@ -1285,152 +1286,6 @@ function cacheFallbackArchitectureV3SkyPlacementBundle(
     partition: "skyPlacement",
     versionKey: fallbackArchitectureV3SkyPlacementBundleVersionKey
   });
-}
-
-function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | null {
-  const record = packageRecord(row);
-  const { role, reviewStatus } = generatedRowPackageRole(row);
-  const recordBody = stringFrom(row.body, record.body);
-  const recordBodyYou = stringFrom(record.body_you);
-  const recordBodyThey = stringFrom(record.body_they);
-
-  const canonicalRevision = record.studio_content_type === "continuous-placement"
-    && isCanonicalSkyReaderRecord({ ...record, contentKey: row.content_key })
-    && record.studio_version_status === "approved-serving-revision";
-  if (!recordBody && !recordBodyYou && !recordBodyThey && !canonicalRevision) {
-    return null;
-  }
-
-  return {
-    ...record,
-    publicationRowId: row.id,
-    publicationRowUpdatedAt: row.updated_at,
-    contentKey: row.content_key,
-    content_role: role || stringFrom(record.content_role) || "full_copy",
-    ...(recordBody ? { body: recordBody } : {}),
-    ...(recordBodyYou ? { body_you: recordBodyYou } : {}),
-    ...(recordBodyThey ? { body_they: recordBodyThey } : {}),
-    review_status: reviewStatus || stringFrom(record.review_status) || "approved"
-  };
-}
-
-function packageHookRowFromRow(row: GeneratedContentRow): HookRow | null {
-  const record = packageRecord(row);
-  const { role, reviewStatus } = generatedRowPackageRole(row);
-  const recordBody = stringFrom(record.body);
-  const recordBodyYou = stringFrom(record.body_you);
-  const recordBodyThey = stringFrom(record.body_they);
-
-  // An explicitly empty canonical revision carries the current publication
-  // identity. Dropping it would make the bundled article eligible again.
-  const canonicalRevision = record.studio_content_type === "continuous-placement"
-    && isCanonicalSkyReaderRecord({ ...record, contentKey: row.content_key })
-    && record.studio_version_status === "approved-serving-revision";
-  if (!recordBody && !recordBodyYou && !recordBodyThey && !canonicalRevision) {
-    return null;
-  }
-
-  return {
-    ...record,
-    publicationRowId: row.id,
-    publicationRowUpdatedAt: row.updated_at,
-    contentKey: row.content_key,
-    content_role: role || stringFrom(record.content_role) || "fallback_hook",
-    ...(recordBody ? { body: recordBody } : {}),
-    ...(recordBodyYou ? { body_you: recordBodyYou } : {}),
-    ...(recordBodyThey ? { body_they: recordBodyThey } : {}),
-    review_status: reviewStatus || stringFrom(record.review_status) || "approved"
-  };
-}
-
-function packageVocabRowFromRow(row: GeneratedContentRow): VocabRow | null {
-  const record = packageRecord(row);
-  const { role, reviewStatus } = generatedRowPackageRole(row);
-  const body = stringFrom(record.body);
-  const grammarFrame = stringFrom(record.grammar_frame);
-
-  if (!body) {
-    return null;
-  }
-
-  return {
-    ...record,
-    publicationRowId: row.id,
-    publicationRowUpdatedAt: row.updated_at,
-    contentKey: row.content_key,
-    content_role: role || stringFrom(record.content_role) || "vocabulary",
-    ...(grammarFrame ? { grammar_frame: grammarFrame } : {}),
-    body,
-    review_status: reviewStatus || stringFrom(record.review_status) || "approved"
-  };
-}
-
-function packageTemplateRowFromRow(row: GeneratedContentRow): TemplateRow | null {
-  const record = packageRecord(row);
-  const { role, reviewStatus } = generatedRowPackageRole(row);
-  const body = stringFrom(record.body);
-
-  if (!body) {
-    return null;
-  }
-
-  return {
-    ...record,
-    publicationRowId: row.id,
-    publicationRowUpdatedAt: row.updated_at,
-    contentKey: row.content_key,
-    content_role: role || stringFrom(record.content_role) || "template",
-    body,
-    ...(stringFrom(record.body_you) ? { body_you: stringFrom(record.body_you) } : {}),
-    ...(stringFrom(record.body_they) ? { body_they: stringFrom(record.body_they) } : {}),
-    ...(stringArrayFrom(record.requiredSlots).length ? { requiredSlots: stringArrayFrom(record.requiredSlots) } : {}),
-    ...(stringArrayFrom(record.optionalSlots).length ? { optionalSlots: stringArrayFrom(record.optionalSlots) } : {}),
-    review_status: reviewStatus || stringFrom(record.review_status) || "approved_reuse"
-  };
-}
-
-function packageFallbackArchitectureV3CoreRows(
-  rows: GeneratedContentRow[],
-  currentCoreManifest: FallbackArchitectureV3PackageManifest
-): FallbackArchitectureV3Bundle | null {
-  rows = rows.filter((row) => publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date));
-  const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {
-    const separatorIndex = manifestKey.indexOf(":");
-    return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
-  }));
-  for (const row of rows) {
-    const extensionRecord = { ...packageRecord(row), contentKey: row.content_key };
-    if (isFallbackDashboardRecordAllowed(extensionRecord, currentCoreKeys)) currentCoreKeys.add(row.content_key);
-  }
-  const overlayRows = selectLatestLiveServingDashboardRows(
-    rows,
-    currentCoreKeys,
-    (row) => isApprovedFallbackArchitectureV3Row(row),
-    (row) => isSkyPlacementFallbackPartitionKey(row.content_key)
-  );
-  const authoredCards: AuthoredCard[] = [];
-  const hookRows: HookRow[] = [];
-  const vocabularyRows: VocabRow[] = [];
-  const templates: TemplateRow[] = [];
-  for (const row of overlayRows) {
-    const { contentType, role } = fallbackSystemBucket(row);
-    const destination = fallbackArchitectureV3DashboardPackageDestination({ contentKey: row.content_key, contentType, role });
-    if (destination === "authored") {
-      const value = packageAuthoredCardFromRow(row);
-      if (value) authoredCards.push(value);
-    } else if (destination === "hook") {
-      const value = packageHookRowFromRow(row);
-      if (value) hookRows.push(value);
-    } else if (destination === "vocabulary") {
-      const value = packageVocabRowFromRow(row);
-      if (value) vocabularyRows.push(value);
-    } else if (destination === "template") {
-      const value = packageTemplateRowFromRow(row);
-      if (value) templates.push(value);
-    }
-  }
-  if (!authoredCards.length && !hookRows.length && !vocabularyRows.length && !templates.length) return null;
-  return { transitLib: { authoredCards }, rowsFile: { hookRows, vocabularyRows }, templatesFile: { templates } };
 }
 
 async function loadContentStudioLastKnownGoodCoreBundle() {

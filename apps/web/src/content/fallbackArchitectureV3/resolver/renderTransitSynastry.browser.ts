@@ -1,3 +1,4 @@
+import { isEligibleTransitReturn } from "./transitReturns.mjs";
 import { assertPublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 // TLDR Astro transit + synastry resolver — browser/TypeScript build (v1)
 // Same logic as renderTransitSynastry.mjs, with NO Node APIs. The app passes the data in
@@ -88,7 +89,6 @@ export interface AuthoredCard {
 export interface TransitLibFile { authoredCards: AuthoredCard[] }
 export interface TransitRendererOpts { allowUnreviewed?: boolean; blockedContentKeys?: readonly string[] }
 
-export interface TransitHouseEventFacts { planet: string; house: number; sign?: string | null; natal: string; natalHouse?: number | null; aspect: string; window?: string | null; voice?: string; variant?: number | string | null }
 export interface TransitHouseFacts { planet: string; house: number; sign?: string | null; window?: string | null; voice?: string; variant?: number | null; events?: { natal: string; natalHouse?: number | null; aspect: string; window?: string | null }[]; isRetrograde?: boolean }
 export interface TransitAspectFacts { transiting: string; natal: string; aspect: string; variant?: string | number | null; pass?: 1 | 2 | 3 | number | null; sign?: string | null; isRetrograde?: boolean; window?: string | null; voice?: string }
 export interface TransitRetroFacts { planet: string; sign?: string | null; window?: string | null; format?: "card" | "article" }
@@ -933,84 +933,6 @@ export function createTransitSynastryRenderer(
 
   const fillKeep = (body: string, ctx: Ctx): string => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => (ctx[k] != null ? String(ctx[k]) : `{{${k}}}`)).trim();
 
-  const EVENT_QUALITY: Record<string, string> = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
-  const EVENT_VERB: Record<string, string> = { conjunction: "sitting right on", square: "squaring", opposition: "opposing", trine: "trining", sextile: "sextiling" };
-  const CONJ_SOFT = new Set(["venus", "sun", "mercury", "jupiter"]);
-
-  function renderTransitHouseEvent({ planet, house, sign, natal, natalHouse, aspect, window: win, voice = "you", variant }: TransitHouseEventFacts): TransitRenderResult {
-    const v = voice === "you" ? "you" : "they";
-    const quality = EVENT_QUALITY[aspect];
-    if (!quality) throw new SourceGapError(`SOURCE_GAP: transit-house event ${planet}/${natal}/${aspect}`);
-    const cls = quality === "conjunction" ? (CONJ_SOFT.has(planet) ? "soft" : "hard") : quality;
-    const specificFrameKey = `fallback-hook/transit-house-event-frame/${planet}`;
-    const frameKey = hookVoice(specificFrameKey, v)
-      ? specificFrameKey
-      : "fallback-hook/transit-house-event-frame/generic";
-    const frameRaw = hookVoice(frameKey, v);
-    const windowClause = win
-      ? (/^(until|through|till|before|by)\b/i.test(win) ? ` ${win.charAt(0).toLowerCase()}${win.slice(1)}` : ` until ${win}`)
-      : "";
-    const natalHouseSuffix = natalHouse
-      ? (v === "you" ? ` in your ${ordinal(natalHouse)} house` : ` in the ${ordinal(natalHouse)} house`)
-      : "";
-    const natalTitle = `${title(natal)}${natalHouseSuffix}`;
-    const frame = frameRaw ? fillKeep(frameRaw, {
-      Name: v === "they" ? voice : "",
-      aspectVerb: EVENT_VERB[aspect],
-      houseOrdinal: ordinal(house),
-      natalTitle,
-      transitTitle: title(planet),
-      windowClause
-    } as Ctx) : null;
-    const wantsKey = `fallback-hook/transit-house-event-wants/${planet}/${sign}`;
-    const holdsKey = `fallback-hook/transit-house-event-natal/${natal}`;
-    const sceneKeys = [
-      `fallback-hook/transit-house-event-scenes/${planet}/${natal}/${cls}`,
-      `fallback-hook/transit-effect-${cls}/${planet}/${natal}`
-    ];
-    const wants = sign ? hookVoice(wantsKey, v) : null;
-    const holds = hookVoice(holdsKey, v);
-    const sceneKey = sceneKeys.find((key) => Boolean(hookVoice(key, v))) ?? null;
-    const scenes = sceneKey ? hookVoice(sceneKey, v) : null;
-
-    if (frame && wants && holds && scenes && sceneKey) {
-      const body = `${frame} ${wants}; ${holds}. ${scenes}`.trim();
-      const sourceKeys = [frameKey, wantsKey, holdsKey, sceneKey];
-      return {
-        headline: `${title(planet)} ${aspect} ${v === "you" ? "your" : `${voice}'s`} ${title(natal)}`,
-        body,
-        parts: [body],
-        partSourceKeys: [sourceKeys],
-        sourceKeys,
-        templateKey: "fallback-template/transit.house-event"
-      };
-    }
-
-    const renderedAspect = renderTransitAspect({
-      transiting: planet,
-      natal,
-      aspect,
-      voice,
-      variant,
-      window: win ?? null
-    });
-    const body = frame ? `${frame} ${renderedAspect.body}` : renderedAspect.body;
-    const sourceKeys = [
-      ...(frame ? [frameKey] : []),
-      ...(renderedAspect.contentKey ? [renderedAspect.contentKey] : []),
-      renderedAspect.templateKey
-    ];
-    return {
-      headline: renderedAspect.headline || `${title(planet)} ${aspect} ${v === "you" ? "your" : `${voice}'s`} ${title(natal)}`,
-      body,
-      parts: [body],
-      partSourceKeys: [sourceKeys],
-      sourceKeys,
-      templateKey: "fallback-template/transit.house-event",
-      contentKey: renderedAspect.contentKey
-    };
-  }
-
   function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant, events, isRetrograde }: TransitHouseFacts): TransitRenderResult {
     const v = voice === "you" ? "you" : "they";
     // Two-layer authored lane (Mars pilot): house intro + house-sign synthesis, dual voice.
@@ -1037,19 +959,14 @@ export function createTransitSynastryRenderer(
         }
         for (const e of events ?? []) {
           try {
-            const renderedEvent = renderTransitHouseEvent({
-              aspect: e.aspect,
-              house,
-              natal: e.natal,
-              natalHouse: e.natalHouse,
-              planet,
-              sign,
-              variant,
-              voice,
-              window: e.window ?? null
-            });
+            const renderedEvent = isEligibleTransitReturn(planet, e.natal, e.aspect)
+              ? renderTransitReturn({ planet })
+              : renderTransitAspect({
+                aspect: e.aspect, natal: e.natal, transiting: planet, sign,
+                variant, voice, isRetrograde, window: e.window ?? null
+              });
             parts.push(renderedEvent.body);
-            partSourceKeys.push(renderedEvent.sourceKeys ?? []);
+            partSourceKeys.push(renderedEvent.sourceKeys ?? [renderedEvent.contentKey ?? renderedEvent.templateKey]);
           } catch { /* SOURCE_GAP on an event never blocks the house card */ }
         }
         return {
@@ -3116,5 +3033,5 @@ export function createTransitSynastryRenderer(
     };
   }
 
-  return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }

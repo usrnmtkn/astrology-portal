@@ -1,3 +1,4 @@
+import { isRetiredCompositionKey } from "../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
@@ -14,8 +15,11 @@ try {
   const maps = buildCompositionMap(rows);
   const coverage = new Set(writingSurfaceSourceMap.flatMap((surface) => compositionSourcesForSurface(surface.id, rows, maps).map((row) => row.content_key)));
   const hooks = rows.filter((row) => row.content_key.startsWith("fallback-hook/"));
-  for (const row of hooks) assert.ok(coverage.has(row.content_key), `${row.content_key} needs a surface Composition Map contract`);
+  for (const row of hooks.filter((row) => !isRetiredCompositionKey(row.content_key))) assert.ok(coverage.has(row.content_key), `${row.content_key} needs a surface Composition Map contract`);
+  for (const row of hooks.filter((row) => isRetiredCompositionKey(row.content_key))) assert.equal(coverage.has(row.content_key), false);
   for (const [surface, key] of [
+    ["personal-transit-house", "authored/transit-house-intro/mars/1"],
+    ["personal-transit-detail", "authored/transit-aspect/sun/north-node/conjunction"],
     ["friends-pair-daily", "fallback-hook/pair-daily/opener"],
     ["natal-placement-detail", "fallback-hook/natal-you-placement-sign-final/uranus/scorpio"],
     ["natal-empty-house", "fallback-hook/empty-house-explainer/base"],
