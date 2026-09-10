@@ -6,6 +6,7 @@ import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
 import { mergeContentInventory } from "./contentStudioState";
+import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
 import {
   ArrowLeft,
   ArrowLeftRight,
@@ -2284,6 +2285,14 @@ function draftSourceSnapshot(draft: AdminDraft) {
     return draft.sourceSnapshot ?? {};
   }
 
+  if (isContentStudioReferenceSource(draft.contentKey, draft.sourceSnapshot ?? {})) {
+    return {
+      ...draft.sourceSnapshot,
+      content_role: draft.contentKey.startsWith("source/") ? "fallback_source" : draft.sourceSnapshot?.content_role,
+      review_status: fallbackHookReviewStatusForDraft(draft)
+    };
+  }
+
   if (draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/")) {
     return fallbackHookSourceSnapshot(draft);
   }
@@ -3068,10 +3077,13 @@ export function GeneratedContentAdminDashboard() {
     visibleRows
       .filter(generatedRowNeedsReviewQueue)
       .forEach((row) => rowsByKey.set(row.content_key, reviewRecordFromGeneratedRow(row)));
-    reviewRows.forEach((row) => rowsByKey.set(row.contentKey || row.id, row));
+    reviewRows.forEach((row) => {
+      const saved = rows.find((candidate) => candidate.id === row.id || candidate.content_key === row.contentKey);
+      rowsByKey.set(row.contentKey || row.id, saved ? reviewRecordFromGeneratedRow(saved) : row);
+    });
 
     return [...rowsByKey.values()];
-  }, [reviewRows, visibleRows]);
+  }, [reviewRows, visibleRows, rows]);
   const [statusFiltersOpen, setStatusFiltersOpen] = useState(false);
   const loadLiveStatus = useContentLiveStatusLoader(async (ids) => {
     const result = await adminJsonRequest<{ ok: boolean; statuses: LiveStatus[] }>("/api/admin/content-live-status", secret, { method: "POST", body: JSON.stringify({ ids }) });
@@ -3309,6 +3321,7 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     const needsExtendedInventory = activePage === "skyWriteups"
+      || activePage === "reviewQueue"
       || activePage === "unresolvedContent"
       || isCompositionPage(activePage)
       || (activePage === "content" && categoryFilter === "Natal Aspects")
@@ -3915,6 +3928,7 @@ export function GeneratedContentAdminDashboard() {
     setSourceDraftError(null);
     try {
       const needsExtendedInventory = activePage === "unresolvedContent"
+        || activePage === "reviewQueue"
         || isCompositionPage(activePage)
         || (activePage === "content" && categoryFilter === "Natal Aspects")
         || (activePage === "content" && categoryFilter === "Calendar Aspects")
@@ -4400,11 +4414,11 @@ export function GeneratedContentAdminDashboard() {
             headline: draftForSave.headline,
             summary: draftForSave.summary,
             body: draftForSave.body,
-            lane: draftForSave.lane,
+            lane: status === "LIVE" ? "serving" : draftForSave.lane,
             reviewState: status === "LIVE" || status === "REVIEWED" ? null : draftForSave.reviewState || null,
             blockType: draftForSave.blockType || null,
             promptVersion: draftForSave.promptVersion || "manual-admin",
-            eventType: draftEventType(draftForSave),
+            eventType: persistedRow?.event_type ?? draftEventType(draftForSave),
             sections: draftForSave.sections ?? {},
             facts: draftForSave.facts ?? {},
             reviewerNotes: draftForSave.reviewerNotes,
@@ -4417,12 +4431,14 @@ export function GeneratedContentAdminDashboard() {
         body: JSON.stringify(versionedBody)
       });
       const saved = payload.ok && Array.isArray(payload.rows) ? payload.rows[0] : null;
-      if (!saved || saved.content_key !== draftForSave.contentKey) {
-        throw new Error(`${method} ${draftForSave.contentKey} did not return the saved row. The edit remains unsaved; reload before trying again.`);
-      }
-      const savedDraft = draftFromRow(saved);
-      if (isPackageDraft && draftHasPackageProposal(draftForSave) && !draftHasPackageProposal(savedDraft)) {
-        throw new Error(`${draftForSave.contentKey} did not persist the revision. The edit remains unsaved; reload before trying again.`);
+      const savedDraft = saved ? draftFromRow(saved) : null;
+      if (!saved || !savedDraft || saved.content_key !== draftForSave.contentKey || (!isPackageDraft && (
+        (draftForSave.id && saved.id !== draftForSave.id)
+        || (status === "LIVE" && saved.lane !== "serving")
+        || (["LIVE", "REVIEWED"].includes(status) && saved.review_state)
+        || (["status", "headline", "summary", "body"] as const).some((field) => saved[field] !== draftForSave[field])
+      )) || (isPackageDraft && draftHasPackageProposal(draftForSave) && !draftHasPackageProposal(savedDraft))) {
+        throw new Error("Save did not return the saved row.");
       }
       setRows((current) => {
         const without = current.filter((row) => row.id !== saved.id && !(row.id.startsWith("package:") && row.content_key === saved.content_key));
@@ -8702,6 +8718,7 @@ export function GeneratedContentAdminDashboard() {
             ? "Write the complete directional compatibility reading."
             : undefined;
     const publishReady = Boolean(currentDraft.body.trim()) && (!isNewDraft || isCmsSurfaceDraft);
+    const reviewComplete = currentDraft.status === "REVIEWED" && !draftHasUnsavedChanges;
     const compatibilityNewDraftReady = !isNewDraft || !isCompatibilityWorkspaceDraft || Boolean(
       currentDraft.headline.trim()
       && currentDraft.body.trim()
@@ -9934,7 +9951,7 @@ export function GeneratedContentAdminDashboard() {
                     {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{packageReviewStatusLabel(reviewStatus)}</option>)}
                   </select>
                   {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Approved copy becomes live when Save &amp; publish completes.</small>}
-                  {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">This row is source material. Approval makes it available to the resolver as an ingredient; it cannot publish as exact reader copy.</small>}
+                  {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Source material cannot be published.</small>}
                   {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Save &amp; publish makes your exact edits live in one step. Save draft keeps the revision Not live.</small>}
                   {packageHasProposal && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Save this source-material revision for review. Source ingredients cannot publish as exact reader copy.</small>}
                   {packageIsSkyV4Governed && <small className="admin-field-hint">Save & publish approves this exact revision and makes it live. The original approved source remains in version history.</small>}
@@ -10225,15 +10242,17 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!isPackageDraft && !isCmsSurfaceDraft && !isNewDraft && (
             <>
-              <button className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady} title={!publishReady ? "Add the required main copy before review." : "Mark this saved copy as editorially reviewed."}>
+              <button className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
                 <Check size={16} aria-hidden="true" />
-                Mark reviewed
+                {reviewComplete ? "Reviewed" : "Mark reviewed"}
               </button>
               {isGovernedSkyDraft && selectedRow ? (
                 <button className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
                   <Check size={16} aria-hidden="true" />
                   {currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}
                 </button>
+              ) : isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {}) ? (
+                <small className="admin-field-hint">Source material cannot be published.</small>
               ) : (
                 <button className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? "Add the required main copy before publishing." : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />
