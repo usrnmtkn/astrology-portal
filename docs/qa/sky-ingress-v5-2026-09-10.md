@@ -3,14 +3,16 @@
 The September 10 V5 proposal is implemented as an opt-in sentence composition.
 No proposed astrology passages or existing approval records are changed.
 
-Studio's production build measures 622.0 kB raw / 176.5 kB gzip at entry,
+After rebasing onto main `1dafaf27` (including releases #732 and #733), Studio's
+production build under the CI authentication settings measures
+609.9 kB raw / 172.7 kB gzip at entry,
 within the existing 622.5 kB / 177.0 kB limits. Its largest chunk remains the
-entry. Total JavaScript is 364.1 kB gzip versus the prior 316.8 kB measurement.
-The total allowance is 366 kB; startup and largest-chunk allowances are unchanged.
+entry. Total JavaScript is 368,194 bytes gzip versus main's 320.7 kB measurement.
+The total allowance is 371 kB; startup and largest-chunk allowances are unchanged.
 
-The web build measures 2,966,819 aggregate JavaScript gzip bytes, with a
-2,969,000 allowance (12 kB above the prior aggregate cap). Reader boot is
-464.1 kB against the unchanged 467 kB limit; all startup, CSS, and individual
+The web build measures 2,973,676 aggregate JavaScript gzip bytes, with a
+2,976,000 allowance (12 kB above main's aggregate cap). Reader boot is
+466.8 kB against the unchanged 467 kB limit; all startup, CSS, and individual
 chunk limits remain unchanged.
 
 The added aggregate includes the deferred Swiss loader (20.1 kB gzip),
@@ -20,6 +22,12 @@ tests assert there are no worker/data requests while merely editing sentences.
 The published-reader control opens the exact dated app route; it does not import
 the reader's large content libraries into Studio.
 
+The first CI build exposed duplicated structured-draft change tracking at the
+entry limit. Sharing that tracking for section layouts and V5 compositions keeps
+the build within the existing entry limits. The production Sky comparison was
+also regenerated for the new package evidence hashes; its source text, serving
+state, and approval records are unchanged.
+
 Verification includes Node/browser-source/shipped resolver parity, API draft and
 publish/reopen/removal round trips, the actual published-content loader, a real
 reader route with V5 source fixtures, full-article precedence, and independent
@@ -27,6 +35,8 @@ Swiss Ephemeris checks for Mercury (July 10) and Venus (October 30, 2026).
 Studio tests cover mobile/desktop, both theme settings, reordered sections,
 source references, variable insertion, and occurrence calculation. Existing
 recovery and editor tests remain in the same browser gate.
+The final combined build passes all 27 Studio browser checks, both V5 reader
+regressions, both bundle budget checks, and the CSS/token audit.
 
 The repository-wide content suite was attempted. Its historical Friends owner
 signoff checksum test fails on unchanged inputs from main; those source/approval

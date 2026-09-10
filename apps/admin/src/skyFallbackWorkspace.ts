@@ -420,12 +420,12 @@ export function packageDraftChanges(sections: unknown) {
         after: skyPlacementCompositionOptions(draft)[key] ? "Included" : "Excluded"
       })).filter((change) => change.before !== change.after)
     : [];
-  const sectionChanges = isSkyEvergreenSource(original) && JSON.stringify(record(original.fallback).sections) !== JSON.stringify(record(draft.fallback).sections)
-    ? [{ key: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order", before: JSON.stringify(record(original.fallback).sections ?? null), after: JSON.stringify(record(draft.fallback).sections ?? null) }]
-    : [];
-  const ingressChanges = isSkyEvergreenSource(original) && JSON.stringify(original.ingress) !== JSON.stringify(draft.ingress)
-    ? [{ key: "ingress", label: "V5 sentence composition", before: JSON.stringify(original.ingress ?? null), after: JSON.stringify(draft.ingress ?? null) }] : [];
-  return [...compositionChanges, ...fieldChanges, ...sectionChanges, ...ingressChanges];
+  const structuredChanges = isSkyEvergreenSource(original) ? [
+    { key: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order", before: record(original.fallback).sections, after: record(draft.fallback).sections },
+    { key: "ingress", label: "V5 sentence composition", before: original.ingress, after: draft.ingress }
+  ].filter(change => JSON.stringify(change.before) !== JSON.stringify(change.after))
+    .map(change => ({ ...change, before: JSON.stringify(change.before ?? null), after: JSON.stringify(change.after ?? null) })) : [];
+  return [...compositionChanges, ...fieldChanges, ...structuredChanges];
 }
 
 export function renderWorkspacePreview(fields: SkyFallbackField[], values: Record<string, string> = {}) {
