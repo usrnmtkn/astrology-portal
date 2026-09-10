@@ -136,9 +136,41 @@ console.log("PASS: new Sky variables save/publish in article and custom fallback
 // through the loader instead of exposing an older packaged article underneath.
 const clearedCopy = { ...evergreenRow.sections.packageRecord, placementArticle: "", fallback: { ...evergreenRow.sections.packageRecord.fallback, sections: [] } };
 const clearedDraft = (await request("PATCH", { id: evergreenRow.id, expectedUpdatedAt: evergreenRow.updated_at, reviewStatus: "needs_review", sections: { ...evergreenRow.sections, packageDraft: clearedCopy } })).rows[0];
-await request("PATCH", { id: clearedDraft.id, expectedUpdatedAt: clearedDraft.updated_at, ownerAction: "approve-package-revision" });
+evergreenRow = (await request("PATCH", { id: clearedDraft.id, expectedUpdatedAt: clearedDraft.updated_at, ownerAction: "approve-package-revision" })).rows[0];
 await runtime.refreshContentPublications(true);
 runtime.clearCachedFallbackArchitectureV3Bundle();
 runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
 assert.deepEqual(runtime.skyV4ReaderRenderer.renderRoute({ route: "placement", planet: "saturn", sign: "aries" }).readerParts, []);
 console.log("PASS: an empty published evergreen layout survives reload without resurrecting the package article.");
+
+// Motion selection and new aspect variables survive the same real handler,
+// publication projection, dashboard loader, and installed reader boundary.
+{
+ const base = evergreenRow.sections.packageRecord;
+ const layout = [
+  { id: "shared", label: "Shared", role: "main", depth: "standard", paragraphs: [{ id: "main", job: "Event and interpretation", phrases: [
+   { id: "opening", text: "During this transit", joinBefore: "", source: "fixture-corpus#opening" },
+   { id: "ending", text: "fixture shared section.", joinBefore: ", ", source: "fixture-corpus#ending" }
+  ] }] },
+  { id: "direct", label: "Direct", motion: "direct", body: "Fixture direct block: {{aspectsInSignCount}}." },
+  { id: "rx", label: "Retrograde", motion: "retrograde", body: "Fixture retrograde block: {{aspectsWhileRetrogradeCount}}." }
+ ];
+ const copy = { ...base, placementArticle: "", placementArticleDirect: "During this transit, fixture direct article.", placementArticleRetrograde: "During this transit, fixture retrograde article.", fallback: { ...base.fallback, sections: layout } };
+ const draft = (await request("PATCH", { id: evergreenRow.id, expectedUpdatedAt: evergreenRow.updated_at, reviewStatus: "needs_review", sections: { ...evergreenRow.sections, packageDraft: copy } })).rows[0];
+ evergreenRow = (await request("PATCH", { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: "approve-package-revision" })).rows[0];
+ assert.deepEqual(evergreenRow.sections.packageRecord.fallback.sections, layout);
+ for (const invalidText of ["{{unknown}}", "{{planetTitle"]) {
+  const invalid = structuredClone(evergreenRow.sections.packageRecord);
+  invalid.fallback.sections[0].paragraphs[0].phrases[0].text = invalidText;
+  await request("PATCH", { id: evergreenRow.id, expectedUpdatedAt: evergreenRow.updated_at, reviewStatus: "needs_review", sections: { ...evergreenRow.sections, packageDraft: invalid } }, "", 400);
+ }
+ await runtime.refreshContentPublications(true);
+ runtime.clearCachedFallbackArchitectureV3Bundle();
+ runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
+ for (const isRetrograde of [false, true]) {
+  const input = { route: "placement", planet: "saturn", sign: "aries", isRetrograde, facts: { aspectsInSignCount: "3", aspectsWhileRetrogradeCount: "2" } };
+  assert.equal(runtime.skyV4ReaderRenderer.renderRoute(input).mainBody, `During this transit, fixture ${isRetrograde ? "retrograde" : "direct"} article.`);
+  assert.equal(runtime.skyV4ReaderRenderer.renderRoute({ ...input, articleAvailable: false }).mainBody, `During this transit, fixture shared section.\n\nFixture ${isRetrograde ? "retrograde block: 2" : "direct block: 3"}.`);
+ }
+ console.log("PASS: motion-specific articles, scoped blocks and aspect variables save/publish → real loader → installed reader.");
+}

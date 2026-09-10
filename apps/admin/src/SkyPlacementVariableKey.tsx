@@ -17,8 +17,8 @@ export default function SkyPlacementVariableKey({ facts, onInsert, disabled = fa
 }) {
   return <details className="admin-workspace-details admin-sky-variable-key">
     <summary>Sky variable key</summary>
-    <p>Use these variables inside the placement article or any evergreen fallback section. {onInsert ? "Select a variable to insert it at the cursor in the writing field." : "Open a section’s editor to insert a variable at the cursor."}</p>
-    <p>Planet, sign, and motion below use the selected preview context. Dates require a calculated occurrence and remain marked until those facts are available. Missing facts never become invented dates or empty text on the reader page.</p>
+    <p>Use these variables inside a placement article, retrograde opening, or any evergreen fallback section. {onInsert ? "Select a variable to insert it at the cursor in the writing field." : "Open a section’s editor to insert a variable at the cursor."}</p>
+    <p>Planet, sign, and motion below use the selected preview context. Dates and aspect lists require a calculated occurrence and remain marked until those facts are available. Missing facts never become invented dates, aspects, or empty text on the reader page.</p>
     <dl>
       {SKY_PLACEMENT_VARIABLES.map((variable: { name: string; description: string; availability: string }) => <div key={variable.name}>
         <dt>{onInsert ? <button type="button" disabled={disabled} aria-label={`Insert {{${variable.name}}}`} onClick={() => onInsert(`{{${variable.name}}}`)}>

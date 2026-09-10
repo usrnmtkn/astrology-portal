@@ -183,7 +183,7 @@
     "test:sky-calendar-composed-routing": "node scripts/test-sky-calendar-composed-card-routing.mjs",
     "test:content-publications": "node --import tsx scripts/test-content-publication-database.mjs && node --import tsx scripts/test-content-publication-reader.mts && node --import tsx scripts/test-content-publication-api.mts && node --import tsx scripts/test-virgo-new-moon-owner.mts && node --import tsx scripts/test-admin-empty-house-sources.mts",
     "qa:friends-authenticated-loading": "VITE_SUPABASE_URL=https://friends-qa.supabase.co VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_qa playwright test -c playwright.config.ts tests/visual/friends-authenticated-loading-diagnostic.spec.ts --workers=1",
-    "test:sky-evergreen-sections": "node --import tsx scripts/test-sky-placement-variables.mts && node --import tsx scripts/test-sky-evergreen-sections.mts && node --import tsx scripts/test-sky-placement-studio-api.mts && node --import tsx scripts/test-sky-placement-fallback-preview.mts"
+    "test:sky-evergreen-sections": "node --import tsx scripts/test-sky-composable-blocks.mts && node --import tsx scripts/test-sky-placement-aspect-variables.mts && node --import tsx scripts/test-sky-placement-variables.mts && node --import tsx scripts/test-sky-evergreen-sections.mts && node --import tsx scripts/test-sky-placement-studio-api.mts && node --import tsx scripts/test-sky-placement-fallback-preview.mts"
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "^0.27.7",

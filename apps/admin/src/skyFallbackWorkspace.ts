@@ -1,6 +1,6 @@
 import { memoByString } from "./derivedCache";
 // @ts-ignore Shared canonical layout validation and ordered section fields.
-import { isSkyEvergreenSource, skyEvergreenFields, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
+import { isSkyEvergreenSource, skyEvergreenEditableFields, skyEvergreenFields, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 export type SkyFallbackField = {
   key: string;
   label: string;
@@ -378,7 +378,7 @@ export function skyFallbackWorkspace(contentKey: string, sections: unknown): Sky
     .filter(([key]) => studioFields.length > 0 || packageValueAt(source, key) !== "")
     .map(([key, label]) => ({ key, label, value: packageValueAt(source, key) }));
   if (isSkyEvergreenSource(source)) fields = [
-    ...fields.filter(field => !field.key.startsWith("fallback.")),
+    ...skyEvergreenEditableFields(source).filter((field: { path: string }) => !field.path.startsWith("fallback.")).map((field: { path: string; label: string }) => ({ key: field.path, label: field.label, value: packageValueAt(source, field.path) })),
     ...skyEvergreenFields(source).map((field: { path: string; label: string; value: string }) => ({ key: field.path, label: field.label, value: field.value }))
   ];
 

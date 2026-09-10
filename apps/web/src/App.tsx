@@ -4894,6 +4894,7 @@ function skyPlacementWritingSection(
     locationTimeZone?: string | null;
     moonEvent?: SkySnapshot["moonEvent"] | null;
     positions?: PlanetPosition[];
+    aspectFacts?: SkySnapshot["placementAspectFacts"];
   }
 ): NormalizedSkyPlacementSection | null {
   const planet = normalizeContentIdPart(position.planet);
@@ -4999,6 +5000,7 @@ function skyPlacementWritingSection(
       planet,
       sign,
       dateLine: canonicalDateLine,
+      aspectFacts: articleOptions?.aspectFacts,
       facts: {
         entryDate: canonicalEntryDate,
         exitDate: canonicalExitDate
@@ -5175,6 +5177,7 @@ function normalizeSkyPlacementSurface(
     locationTimeZone?: string | null;
     moonEvent?: SkySnapshot["moonEvent"] | null;
     positions?: PlanetPosition[];
+    aspectFacts?: SkySnapshot["placementAspectFacts"];
   }
 ): NormalizedSkyPlacementArticle {
   const fallbackSection = skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions);
@@ -5225,6 +5228,7 @@ function normalizeSkyPlacementSurface(
 }
 
 function currentSkyPlacementDetailArticle({
+  aspectFacts,
   aspects,
   articleKey,
   articleMode = "current",
@@ -5237,6 +5241,7 @@ function currentSkyPlacementDetailArticle({
   position,
   positions
 }: {
+  aspectFacts?: SkySnapshot["placementAspectFacts"];
   aspects: SkySnapshot["aspects"];
   articleKey?: string | null;
   articleMode?: "current" | "archive";
@@ -5269,6 +5274,7 @@ function currentSkyPlacementDetailArticle({
     generatedAt,
     { aspects, positions },
     {
+      aspectFacts,
       articleKey,
       articleMode,
       hasPriorIngress: articleMode === "archive",
@@ -5455,6 +5461,7 @@ function skyDetailFromRoutePath(
 
     return position ? currentSkyPlacementDetailArticle({
       aspects: sky.aspects,
+      aspectFacts: sky.placementAspectFacts,
       generatedAt: sky.generatedAt,
       generatedContent,
       locationLatitude: sky.location.latitude,
@@ -5478,6 +5485,7 @@ function skyDetailFromRoutePath(
 
     return routedPosition ? currentSkyPlacementDetailArticle({
       aspects: sky.aspects,
+      aspectFacts: sky.placementAspectFacts,
       generatedAt: sky.generatedAt,
       generatedContent,
       locationLatitude: sky.location.latitude,
@@ -11930,13 +11938,23 @@ export function App() {
     const [baseRoute, encodedExactAt] = skyDetailRoutePath.split(/\/(?:at|on)\//u);
     const [routeSurface, routeType, routePlanet, routeSign] = decodeSkyRouteParts(baseRoute);
     const routePosition = routePlanet && skyNodeDisplayPositions(sky.positions).find(position => skyRoutePartMatches(position.planet, routePlanet));
-    if (!calendarEvent && routeSurface === "sky" && routeType === "placement" && routeSign
-      && routePosition && zodiacSigns.some(sign => skyRoutePartMatches(sign, routeSign))
-      && !skyRoutePartMatches(routePosition.sign, routeSign)) {
+    const placementSign = routeType === "retrograde" ? (routePosition ? routePosition.sign : undefined) : routeSign;
+    let needsAspectFacts = false;
+    if (routeSurface === "sky" && ["placement", "retrograde"].includes(routeType) && placementSign) {
+      try {
+        needsAspectFacts = (skyV4ReaderRenderer.renderRoute({ route: "placement", planet: routePlanet,
+          sign: placementSign.toLowerCase(), inspectVariables: true }) as { requiresAspectFacts?: boolean }).requiresAspectFacts === true;
+      } catch (error) {
+        if (!(error instanceof Error) || !/^SKY_V4_(?:NOT_RELEASED|NOT_SERVABLE|SOURCE_GAP)/u.test(error.message)) throw error;
+      }
+    }
+    if (!calendarEvent && routeSurface === "sky" && ["placement", "retrograde"].includes(routeType) && placementSign
+      && routePosition && zodiacSigns.some(sign => skyRoutePartMatches(sign, placementSign))
+      && (needsAspectFacts || !skyRoutePartMatches(routePosition.sign, placementSign))) {
       let cancelled = false;
-      setSelectedSkyDetail(null);
+      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) setSelectedSkyDetail(null);
       void import("./services/skyCalculationClient").then(({ getSkyPlacementSnapshotOffMainThread }) => (
-        getSkyPlacementSnapshotOffMainThread(sky.location, routePlanet, routeSign, new Date(sky.generatedAt))
+        getSkyPlacementSnapshotOffMainThread(sky.location, routePlanet, placementSign, new Date(sky.generatedAt), needsAspectFacts)
       )).then(async placementSky => {
         const renderPlacement = (detailContent: GeneratedContentMap) => {
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;

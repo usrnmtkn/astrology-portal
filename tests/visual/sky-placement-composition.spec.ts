@@ -130,8 +130,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(map.getByRole("button", { name: "Edit retrograde body", exact: true })).toHaveCount(0);
   await expect(map.getByRole("button", { name: "Edit placement article", exact: true })).toBeVisible();
   await map.getByLabel("Composition planet or point").selectOption("moon");
-  await expect(map.getByRole("alert")).toBeVisible();
-  await expect(map.getByRole("status")).toContainText("Source unavailable");
+  await expect(map.getByRole("button", { name: "Edit placement passage", exact: true })).toContainText("The Moon moves into Aries");
+  await expect(map.getByRole("alert")).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   expect(errors).toEqual([]);
  });
@@ -312,12 +312,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
   await expect.poll(() => saved?.sections.packageRecord?.fallback?.sections?.[0]?.label).toBe("Additional passage");
   expect(saved.sections.packageRecord.fallback.lived).toBe("");
-  await editor.getByRole("button", { name: "Additional passage Has writing", exact: true }).click();
+  await editor.getByRole("button", { name: "Additional passage Has writing · retrograde", exact: true }).click();
   await body.fill("During this transit, fixture additional paragraph two.");
   await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
   await expect.poll(() => saved?.sections.packageRecord?.fallback?.sections?.[0]?.body).toBe("During this transit, fixture additional paragraph two.");
   const typography = (el: Element) => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; };
-  expect(await editor.locator(".admin-evergreen-sections > p").evaluate(typography)).toEqual(await editor.locator(".admin-sky-writing-context p").evaluate(typography));
+  for (const paragraph of await editor.locator(".admin-evergreen-sections > p").all()) expect(await paragraph.evaluate(typography)).toEqual(await editor.locator(".admin-sky-writing-context p").evaluate(typography));
   expect(await editor.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
   await editor.locator(".admin-evergreen-sections").scrollIntoViewIfNeeded();
   await page.screenshot({ path: `test-results/evergreen-sections-${width}-${theme}.png` });
