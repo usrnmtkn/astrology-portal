@@ -108,3 +108,6 @@ assert.equal(store.calls - callsBefore, 1);
 const countBeforeInvalidIdentity = store.rows.size;
 assert.equal((await store.write({action: 'generate', contentKey: 'sky.aspect.pluto.trine.mercury.aquarius.virgo'})).status, 400);
 assert.equal(store.rows.size, countBeforeInvalidIdentity);
+
+// Historical auto-publish scores do not enable the current owner-action endpoint.
+assert.ok(skyWritingIssues({...baseline, judge_gate:'auto-publish', judge_score:3, source_snapshot:{skyAspectVoiceLint:{score:3,fails:0}}}).length);

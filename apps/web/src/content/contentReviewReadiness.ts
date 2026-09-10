@@ -27,8 +27,7 @@ export function skyWritingIssues(row: ReviewableContent): string[] {
     }
     const ownerFinal = row.judge_gate === "human-review" && snapshot.studioWritingCheck?.reviewPolicy === "owner-final-v1" && snapshot.studioWritingCheck?.contentKey === row.content_key;
     const eligible = row.judge_gate === "human-review" && judge?.recommendation === "approve" && judge?.approvalSource === "llm-advisory";
-    const legacy = !placement && row.judge_gate === "auto-publish";
-    if (!ownerFinal && (row.judge_score !== 3 || (!eligible && !legacy)))
+    if (!ownerFinal && (row.judge_score !== 3 || !eligible))
         issues.push("Run writing checks on this saved version before approving it. Your review is the final editorial decision.");
     return [...new Set(issues)];
 }
