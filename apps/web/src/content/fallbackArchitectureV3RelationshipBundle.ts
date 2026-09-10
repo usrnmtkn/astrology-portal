@@ -49,7 +49,9 @@ const runtimeSynastryDirectionalOverrides = approvedSynastryDirectionalOverrides
   body_you: row.body_you?.replaceAll("{{Name}}", "{{holder2}}") ?? row.body_you,
   approval: {
     ...row.approval,
-    payloadSha256: synastryDirectionalServingHashesV1.rows[row.contentKey as keyof typeof synastryDirectionalServingHashesV1.rows]
+    approvedAt: "2026-09-09",
+    payloadSha256: synastryDirectionalServingHashesV1.rows[row.contentKey as keyof typeof synastryDirectionalServingHashesV1.rows],
+    payloadHashAlgorithm: synastryDirectionalServingHashesV1.hashAlgorithm
   }
 }));
 
