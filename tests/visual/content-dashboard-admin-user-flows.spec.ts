@@ -804,7 +804,7 @@ async function seedAdminApi(
         });
         return;
       }
-      const servedRows = url.searchParams.get("scope") === "compatibility"
+      let servedRows = url.searchParams.get("scope") === "compatibility"
         ? apiGeneratedContentRows.filter((row) => {
             const key = String(row.content_key ?? "");
             return key.startsWith("compatibility.")
@@ -820,6 +820,10 @@ async function seedAdminApi(
               || row.block_type === "compatibility_planet_card";
           })
         : apiGeneratedContentRows;
+      const requestedId = url.searchParams.get("id");
+      const requestedKeys = url.searchParams.get("contentKeys")?.split(",");
+      if (requestedId) servedRows = servedRows.filter((row) => row.id === requestedId);
+      if (requestedKeys) servedRows = servedRows.filter((row) => requestedKeys.includes(row.content_key));
       const limit = Math.max(1, Number(url.searchParams.get("limit") ?? servedRows.length));
       const cursor = url.searchParams.get("cursor");
       const cursorIndex = cursor ? servedRows.findIndex((row) => row.id === cursor) : -1;
