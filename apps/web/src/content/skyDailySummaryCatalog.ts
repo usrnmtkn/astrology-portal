@@ -1,3 +1,4 @@
+import { moonEventNames, moonSummaryKey, moonSummaryBody, type MoonSummaryKind } from "./skyMoonSummary.js";
 import assembly from "./skyDailySummaryAssembly.json" with { type: "json" };
 import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
 import timing from "./skyDailySummaryTiming.json" with { type: "json" };
@@ -7,6 +8,9 @@ export type SkySummaryField = { key: string; label: string; group: string; body:
 // Exact owner-approved replacements only. Other editorial wording remains untouched.
 export function currentSkySummaryWording(key: string, body: string): string {
   const part = key.replace("cms/sky-daily-summary/", "");
+  if (["assembly/opening", "assembly/sunOnly", "assembly/moonOnly"].includes(part)) {
+    return body.replaceAll("{sunPlacementLink}", "{sunName} in {sunSign}{sunDegree}").replaceAll("{moonPlacementLink}", "{moonName} in {moonSign}{moonDegree}");
+  }
   const previous = clauses.provenance.previousClauses[part as keyof typeof clauses.provenance.previousClauses];
   if (previous && body.trim() === previous) {
     return part === "sun/virgo" ? clauses.sun.virgo : clauses.moon.cancer;
@@ -31,12 +35,16 @@ export const skyAssemblyFields: SkySummaryField[] = Object.entries(assembly).map
   allowedSlots: [...new Set(Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]))],
   optionalSlots: name === "layout"
 }));
+export const skyMoonSummaryFields: SkySummaryField[] = skySummarySigns.flatMap(sign => (Object.keys(moonEventNames) as MoonSummaryKind[]).map(kind => ({
+  key: moonSummaryKey(sign, kind), label: `${moonEventNames[kind]} in ${sign}`, group: "Moon summaries", body: moonSummaryBody(sign, kind), allowedSlots: []
+})));
 export const skyDailySummaryFields: SkySummaryField[] = [
+  ...skyMoonSummaryFields,
   ...skyAssemblyFields,
-  ...(["sun", "moon"] as const).flatMap(body => skySummarySigns.map(sign => ({
+  ...(["sun"] as const).flatMap(body => skySummarySigns.map(sign => ({
     key: `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`,
     label: `${body === "sun" ? "Sun" : "Moon"} in ${sign}`,
-    group: body === "sun" ? "Sun summaries" : "Moon summaries",
+    group: "Sun summaries",
     body: (clauses[body] as Record<string, string>)[sign.toLowerCase()] ?? "",
     allowedSlots: []
   }))),
@@ -55,6 +63,9 @@ export function skySummaryTemplateErrors(key: string, body: string): string[] {
   if (!field) return key.startsWith("cms/sky-daily-summary/") ? ["Unknown daily sky summary field."] : [];
   const slots = Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]);
   const errors: string[] = [];
+  for (const planet of ["sun", "moon"]) {
+    if (slots.includes(`${planet}Name`) && !new RegExp(`\\{${planet}Name\\}[^{}]*\\{${planet}Sign\\}[^{}]*\\{${planet}Degree\\}`).test(body)) errors.push("Keep each planet, sign, and degree together in that order so the complete placement links to its article.");
+  }
   if (/[{}]/u.test(body.replace(/\{[^{}]+\}/gu, ""))) errors.push("Close every slot with matching single braces.");
   if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
   if (body.includes("{{") || body.includes("}}")) errors.push("Use single-brace calculated slots, for example {name}.");

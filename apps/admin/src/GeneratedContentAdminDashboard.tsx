@@ -5273,6 +5273,8 @@ export function GeneratedContentAdminDashboard() {
       const result = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
         `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(field.key)}&limit=1`, secret);
       if (!Array.isArray(result.rows)) throw new Error("Could not load the saved summary wording. Please try again.");
+      const moonSource = /^cms\/sky-daily-summary\/moon\/[^/]+\/[^/]+$/u.test(field.key)
+        ? (await import("./skyMoonSummarySources.json")).default.rows.find(row => row.key === field.key) : undefined;
       let existing = result.rows.find(row => row.content_key === field.key);
       if (!existing && field.key.startsWith("cms/sky-daily-summary/ingress/")) {
         const { ingressTldrSourceKeys, publishedIngressTldr } = await import("./skyIngressTldrSources");
@@ -5299,6 +5301,7 @@ export function GeneratedContentAdminDashboard() {
             contentType: "mustache-template", contentSystem: "cms-surface-override", contentLevel: "owner-authored",
             authoringSource: "admin-dashboard", cmsSurfaceId: "sky-daily-summary", readerLocation: "Sky → Daily Sky Summary",
             allowedSlots: field.allowedSlots,
+            ...(moonSource ? { moonSource, sourceAttachment: "daily-sky-summary-moon-system-v6-owner-phrases-audited.md" } : {}),
             ...(importedSkySummary(field.key) !== undefined ? { suppliedCopy: skySummaryImportProvenance } : {})
           }
         };

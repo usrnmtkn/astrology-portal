@@ -1,3 +1,4 @@
+import { moonSummaryBody } from "../apps/web/src/content/skyMoonSummary.ts";
 import { calendarDayDistance } from "../apps/web/src/services/calendarDayDistance.ts";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
@@ -25,7 +26,7 @@ for (const sunSign of signs) {
   for (const moonSign of signs) {
     const result = text({ sun: { sign: sunSign, degree: 29.99 }, moon: { sign: moonSign, degree: 0 }, moonIsVoid: false });
     assert.ok(result.includes(clauses.sun[sunSign.toLowerCase()] ?? `The Sun is in ${sunSign} at 29°,`));
-    assert.ok(result.includes(clauses.moon[moonSign.toLowerCase()] ?? `while the Moon moves through ${moonSign} at 0°.`));
+    assert.ok(result.includes(moonSummaryBody(moonSign) ?? `while the Moon moves through ${moonSign} at 0°.`));
     assert.ok(result.includes("29°") && result.includes("0°") && !result.includes("30°"));
     assert.ok(!/—|undefined|null|\{\{|void of course/u.test(result));
   }
@@ -51,7 +52,7 @@ for (const [planets, expected] of [
 }
 assert.ok(text({ ...facts, retrogradePlanets: ["Saturn", "Saturn", ""] }).includes("One planet is retrograde right now: Saturn Rx."));
 assert.equal(text({ sun: { sign: "Virgo", degree: 15 }, moon: { sign: "Cancer", degree: 29 }, moonIsVoid: false }),
-  "The Sun in Virgo at 15° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Cancer at 29° brings more attention to home, family, and whether the care we give is coming back to us.");
+  "The Sun in Virgo at 15° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Cancer at 29° pulls us home to the places, people, and memories that nurture us.");
 assert.ok(!text(facts).includes("care we give"), "Cancer meaning must never serve for another Moon sign");
 
 
@@ -77,7 +78,7 @@ for (const [name, eclipseType, label] of [["New Moon", "solar", "Solar Eclipse"]
 }
 
 const { installContentPublications } = await import("../apps/web/src/content/contentPublicationState.ts");
-installContentPublications(["sun/libra", "moon/aries"].map(key => ({ content_key: `cms/sky-daily-summary/${key}`, state: "retired", revision: 100, row_id: null, row_updated_at: null, updated_at: "2026-09-08T00:00:00Z" })));
+installContentPublications(["sun/libra", "moon/aries/regular"].map(key => ({ content_key: `cms/sky-daily-summary/${key}`, state: "retired", revision: 100, row_id: null, row_updated_at: null, updated_at: "2026-09-08T00:00:00Z" })));
 const fallback = skyDailySummaryParts({ sun: { sign: "Libra", degree: 15 }, moon: { sign: "Aries", degree: 29 }, moonIsVoid: false });
 assert.equal(fallback.map(part => part.text).join(""), "The Sun is in Libra at 15°, while the Moon moves through Aries at 29°.");
 assert.ok(fallback.filter(part => part.emphasis).every(part => part.action));
@@ -91,7 +92,7 @@ assert.ok(skyDailySummaryParts(facts).filter(part => part.emphasis).every(part =
 
 // Studio templates preserve required calculated slots and reader link segmentation.
 const { skyDailySummaryFields, skySummaryTemplateErrors } = await import("../apps/web/src/content/skyDailySummaryCatalog.ts");
-assert.equal(skyDailySummaryFields.filter(field => field.group !== "Assembly templates").length, 31);
+assert.equal(skyDailySummaryFields.filter(field => field.group !== "Assembly templates").length, 79);
 for (const field of skyDailySummaryFields) assert.deepEqual(skySummaryTemplateErrors(field.key, field.body), []);
 assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/lunation", "The next {name} arrives.").length);
 assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/lunation", "{name} {name} {sign} {countdown}").length);
