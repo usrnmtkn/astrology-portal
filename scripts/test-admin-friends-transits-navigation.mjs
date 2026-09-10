@@ -21,7 +21,7 @@ assert.ok(skyNav >= 0 && friendsNav > skyNav && calendarNav >= 0, "Friends Trans
 assert.match(dashboard, /aria-label="Friends Transits sections"/u);
 assert.match(dashboard, /<span>Between you two<\/span>/u);
 assert.match(dashboard, /Active for \{"\{\{Name\}\}"\}/u, "The admin label must communicate the dynamic selected-friend name rather than hard-code one person.");
-assert.match(dashboard, /<span>Where it lands \(house transit\)<\/span>/u);
+assert.match(dashboard, /<span>House transit<\/span>/u);
 
 assert.match(
   dashboard,
@@ -54,12 +54,10 @@ assert.match(dashboard, /audienceKey = audience === "friends" \? "body_they" : "
 assert.match(dashboard, /if \(audience === "friends" && hasAudienceField\) continue;/u, "An explicitly blank Friends field must not fall back to the You body in the Studio preview.");
 assert.ok((dashboard.match(/if \(friendsTransitAudience\) params\.set\("audience", "friends"\);/gu) ?? []).length >= 4, "Friends context must survive selector and transit-tab changes.");
 
-assert.match(app, /renderTransitHouseEvent\(\{/u, "Personal Transit reader must still prefer the house-resolved event composition when available.");
-assert.match(app, /renderTransitHouse\(\{/u, "Friends Where it lands reader must still resolve through the House Transit renderer.");
-assert.match(transitSources, /fallback-hook\/transit-house-event-frame/u);
-assert.match(transitSources, /fallback-hook\/transit-house-event-wants/u);
-assert.match(transitSources, /fallback-hook\/transit-house-event-natal/u);
-assert.match(transitSources, /authored\/transit-aspect/u);
+assert.doesNotMatch(app, /renderTransitHouseEvent/u, "The retired house composition must not return.");
+assert.match(app, /renderTransitHouse\(\{/u);
+assert.match(transitSources, /renderer.renderTransitAspect/u);
+assert.match(transitSources, /renderer.renderTransitReturn/u);
 assert.match(houseSources, /authored\/transit-house-intro/u);
 assert.match(houseSources, /authored\/transit-house-sign/u);
 

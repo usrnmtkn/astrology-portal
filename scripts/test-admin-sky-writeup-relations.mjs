@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import {
-  personalTransitAspectCmsStarter,
   relatedAspectPassages,
   relatedHousePassages,
   relatedLunationHoroscopes,
@@ -81,24 +80,6 @@ assert.deepEqual(
   relatedAspectPassages(rows, context).map((row) => row.id),
   ["aspect", "aspect-variant"]
 );
-assert.deepEqual(
-  personalTransitAspectCmsStarter(rows.find((row) => row.id === "aspect"), context),
-  {
-    contentKey: "cms/personal-transit-aspect/you/sun/leo/saturn/hard",
-    headline: "{{transitPlanet}} {{aspect}} your {{natalPoint}}",
-    sourceContentKey: "authored/transit-aspect/sun/saturn/hard"
-  },
-  "The Sky write-up editor must open a sign-specific, house-aware CMS override without fixing a reader house in metadata."
-);
-assert.deepEqual(
-  personalTransitAspectCmsStarter(rows.find((row) => row.id === "aspect-variant"), context),
-  {
-    contentKey: "cms/personal-transit-aspect/you/sun/leo/saturn/hard",
-    headline: "{{transitPlanet}} {{aspect}} your {{natalPoint}}",
-    sourceContentKey: "authored/transit-aspect/sun/saturn/hard/variant-B"
-  }
-);
-
 assert.deepEqual(
   skyWriteupContextForRow({
     id: "eclipse",
@@ -219,11 +200,9 @@ assert.doesNotMatch(readerApp, /selectActiveSkyArticleEdition/u, "Sky reader art
 assert.match(readerApp, /const sections = fallbackSection \? \[fallbackSection\] : \[\];/u, "Sky reader articles must select the governed package output.");
 assert.match(readerApp, /section\?\.tldr\s*\?\s*textPreview\(section\.tldr\)/u, "The Transits list must prefer explicit TL;DR copy over the full article body.");
 assert.match(readerApp, /compiledHousePassage/u, "Reader personalization must use the compiled house passage.");
-assert.match(readerApp, /compiledAspect/u, "Reader personalization must append the compiled natal-aspect passage.");
-assert.match(readerApp, /renderTransitHouseEvent/u, "Sky-placement natal aspects must use the house-aware approved composer.");
-assert.match(readerApp, /body: packageSection\?\.body \?\? compiledAspect\?\.body/u, "House-aware composition and CMS overrides must outrank the old generic compiled passage.");
-assert.match(dashboard, /Edit house-aware reader override/u, "Sky article aspect rows must expose the reader-facing CMS override directly.");
-assert.match(dashboard, /calculatedHouseContext: true/u, "Dynamic-house CMS drafts must record that houses are calculated, not fixed authored metadata.");
+assert.doesNotMatch(readerApp, /compiledAspect|renderTransitHouseEvent/u);
+assert.match(readerApp, /body: packageSection\?\.body \?\? null/u);
+assert.doesNotMatch(dashboard, /Edit house-aware reader override|calculatedHouseContext: true/u);
 assert.match(dashboard, /aria-label="Sky write-up type"/u, "Sky Write-ups must expose a planet, angle, or point filter.");
 assert.match(dashboard, /filteredSkyWriteupRows/u, "The Sky write-up list must render the selected subject type instead of the unfiltered inventory.");
 

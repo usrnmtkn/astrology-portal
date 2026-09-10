@@ -97,11 +97,10 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.screenshot({ path: `test-results/saturn-related-form-${width}-${theme}.png` });
   const articleField = sourceEditor.getByRole("textbox", { name: "Fallback field Placement article", exact: true });
   await articleField.fill("Keep my article edits while reviewing related passages.");
-  for (const action of ["Edit reusable source", "Edit house-aware reader override"]) {
-   page.once("dialog", dialog => dialog.dismiss());
-   await related.getByRole("button", { name: action, exact: true }).first().click();
-   await expect(articleField).toHaveValue("Keep my article edits while reviewing related passages.");
-  }
+  await expect(related.getByRole("button", { name: "Edit house-aware reader override", exact: true })).toHaveCount(0);
+  page.once("dialog", dialog => dialog.dismiss());
+  await related.getByRole("button", { name: "Edit reusable source", exact: true }).first().click();
+  await expect(articleField).toHaveValue("Keep my article edits while reviewing related passages.");
   await articleField.fill(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.placementArticle);
   await related.getByLabel("Find an aspect passage", { exact: true }).fill("no matching passage");
   await expect(related.getByText("No aspect passages match this search.", { exact: true })).toBeVisible();

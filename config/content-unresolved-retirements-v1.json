@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-content-unresolved-retirements/v1",
-  "version": "2026-09-05",
+  "version": "2026-09-10",
   "purpose": "Exclude source records from the actionable editorial queue only when current architecture has a governed retirement/supersession decision. This does not delete source evidence or grant approval.",
   "families": [
     {
@@ -37,6 +37,20 @@
       "reason": "superseded-by-protected-evergreen-eclipse-assembly",
       "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
       "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+    },
+    {
+      "id": "superseded-personal-transit-cms-override",
+      "contentKeyPrefix": "cms/personal-transit-aspect/",
+      "reason": "superseded-by-canonical-personal-transit",
+      "evidence": "docs/qa/composition-lifecycle-audit-2026-09-10.md; owner task 01a08cdf-ebab-7761-8d18-4e57a820487a, 2026-09-10",
+      "replacement": "Complete approved transit-aspect or return passage selected by the canonical reader resolver."
+    },
+    {
+      "id": "superseded-transit-house-event-frame",
+      "contentKeyPrefix": "fallback-hook/transit-house-event-frame/",
+      "reason": "superseded-by-canonical-personal-transit",
+      "evidence": "docs/qa/composition-lifecycle-audit-2026-09-10.md; owner task 01a08cdf-ebab-7761-8d18-4e57a820487a, 2026-09-10",
+      "replacement": "Complete approved transit-aspect or return passage selected by the canonical reader resolver."
     }
   ]
 }

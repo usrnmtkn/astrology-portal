@@ -1,160 +1,56 @@
-#!/usr/bin/env node
-
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { pathToFileURL } from "node:url";
 import { build } from "esbuild";
-import { renderTransitHouseEvent } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
+import * as nodeRenderer from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
 import { createTransitSynastryRenderer } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import { isRetiredCompositionKey } from "../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
+import { isGovernedReaderEligible } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs";
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
-const cmsBundleFile = path.join(os.tmpdir(), "tldrastro-personal-transit-cms.bundle.mjs");
-await build({
-  bundle: true,
-  define: { "import.meta.env": "{}" },
-  entryPoints: [path.join(repoRoot, "apps/web/src/content/cmsSurfaceOverrides.ts")],
-  format: "esm",
-  logLevel: "silent",
-  outfile: cmsBundleFile,
-  platform: "node"
-});
-const { cmsSurfaceKeys, resolveCmsSurfaceOverride } = await import(`${pathToFileURL(cmsBundleFile).href}?t=${Date.now()}`);
 const require = createRequire(import.meta.url);
-const shippedRenderer = createTransitSynastryRenderer(
-  require("../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json"),
-  require("../apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json"),
-  require("../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json")
-);
-
-const moon = renderTransitHouseEvent({
-  planet: "jupiter",
-  sign: "leo",
-  house: 3,
-  natal: "moon",
-  natalHouse: 6,
-  aspect: "square",
-  window: "Until September 5"
-});
-assert.match(
-  moon.body,
-  /^While Jupiter is in your 3rd house, it is also squaring your natal Moon in your 6th house until September 5\./u,
-  "The visible aspect must name both the transiting house and the natal placement's house."
-);
-assert.deepEqual(moon.sourceKeys, [
-  "fallback-hook/transit-house-event-frame/jupiter",
-  "fallback-hook/transit-house-event-wants/jupiter/leo",
-  "fallback-hook/transit-house-event-natal/moon",
-  "fallback-hook/transit-effect-hard/jupiter/moon"
-]);
-
-const descendant = renderTransitHouseEvent({
-  planet: "jupiter",
-  sign: "leo",
-  house: 3,
-  natal: "descendant",
-  natalHouse: 7,
-  aspect: "trine",
-  window: "Until September 7"
-});
-assert.match(descendant.body, /your natal Descendant in your 7th house until September 7/u);
-
-const outerPlanet = renderTransitHouseEvent({
-  planet: "uranus",
-  sign: "gemini",
-  house: 1,
-  natal: "sun",
-  natalHouse: 9,
-  aspect: "square",
-  window: "Until October 1"
-});
-assert.match(outerPlanet.body, /^While Uranus is in your 1st house, it is also squaring your natal Sun in your 9th house/u);
-assert.ok(outerPlanet.sourceKeys.includes("fallback-hook/transit-house-event-frame/generic"));
-
-const transitPlanets = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node"];
-const natalPoints = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node", "south-node", "lilith", "ascendant", "midheaven", "descendant", "imum-coeli"];
-const aspects = ["conjunction", "square", "opposition", "trine", "sextile"];
-let coverageCount = 0;
-for (const planet of transitPlanets) {
-  for (const natal of natalPoints) {
-    for (const aspect of aspects) {
-      if (natal === "lilith" && !["conjunction", "opposition"].includes(aspect)) continue;
-      const rendered = renderTransitHouseEvent({
-        planet,
-        sign: "aries",
-        house: 1,
-        natal,
-        natalHouse: 2,
-        aspect
-      });
-      assert.match(rendered.body, /your 1st house/u);
-      assert.match(rendered.body, /your natal .+ in your 2nd house/u);
-      coverageCount += 1;
-    }
+const pkg = "../apps/web/src/content/fallbackArchitectureV3/";
+const bundle = [require(pkg + "source-rows/transit-synastry-rows-v1.json"), require(pkg + "templates/fallback-templates-v3.json"), require(pkg + "source-rows/fallback-source-rows-v3.json")];
+const dir = fs.mkdtempSync(path.join(os.tmpdir(), "transit-retirement-"));
+try {
+  await build({ entryPoints: ["apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts"], bundle: true, platform: "node", format: "esm", outfile: path.join(dir, "browser.mjs"), logLevel: "silent" });
+  const browser = await import(pathToFileURL(path.join(dir, "browser.mjs")));
+  await build({ entryPoints: ["apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts"], bundle: true, platform: "node", format: "esm", outfile: path.join(dir, "eligibility.mjs"), logLevel: "silent" });
+  const browserEligibility = await import(pathToFileURL(path.join(dir, "eligibility.mjs")));
+  const renderers = [nodeRenderer, browser.createTransitSynastryRenderer(...bundle), createTransitSynastryRenderer(...bundle)];
+  renderers.forEach((renderer) => assert.equal(renderer.renderTransitHouseEvent, undefined));
+  let checked = 0;
+  for (const voice of ["you", "Alex"]) for (const house of [1, 4, 10]) for (const aspect of ["conjunction", "square", "opposition", "trine", "sextile"]) for (const natal of ["moon", "north-node", "neptune", "uranus"]) {
+    const fact = { planet: "mars", sign: "virgo", house, voice, events: [{ natal, natalHouse: 7, aspect, window: "Until September 13" }] };
+    const outputs = renderers.map((renderer) => {
+      const expected = renderer.renderTransitAspect({ transiting: fact.planet, sign: fact.sign, natal, aspect, voice, window: fact.events[0].window });
+      const actual = renderer.renderTransitHouse(fact);
+      assert.equal(actual.parts.at(-1), expected.body, "House reading must retain the complete canonical aspect passage.");
+      assert.ok(!actual.sourceKeys.some(isRetiredCompositionKey));
+      return actual;
+    });
+    assert.deepEqual(outputs[1], outputs[0]);
+    assert.deepEqual(outputs[2], outputs[0]);
+    checked++;
   }
-}
-assert.equal(coverageCount, 1044, "Every calculated personal transit pair allowed by the current aspect policy must have a house-aware fallback.");
-
-const shippedMoon = shippedRenderer.renderTransitHouseEvent({
-  planet: "jupiter",
-  sign: "leo",
-  house: 3,
-  natal: "moon",
-  natalHouse: 6,
-  aspect: "square",
-  window: "Until September 5"
-});
-assert.equal(shippedMoon.body, moon.body, "The shipped browser package must match the tested source resolver.");
-
-const personalAspectKeys = cmsSurfaceKeys.transitAspect("you", "Jupiter", "Leo", "Moon", "square");
-assert.deepEqual(personalAspectKeys, [
-  "cms/personal-transit-aspect/you/jupiter/leo/moon/square",
-  "cms/personal-transit-aspect/you/jupiter/leo/moon/hard",
-  "cms/personal-transit-aspect/you/jupiter/moon/square",
-  "cms/personal-transit-aspect/you/jupiter/moon/hard",
-  "cms/personal-transit-aspect/you/template"
-]);
-const personalAspectOverride = resolveCmsSurfaceOverride(new Map([[
-  personalAspectKeys[1],
-  {
-    id: "cms-test",
-    contentKey: personalAspectKeys[1],
-    surface: "you",
-    mode: "card",
-    eventType: null,
-    targetDate: null,
-    headline: "{{transitPlanet}} {{aspect}} your {{natalPoint}}",
-    summary: null,
-    body: "{{transitPlanet}} in your {{transitHouseOrdinal}} house is {{aspectVerb}} your natal {{natalPoint}} in your {{natalHouseOrdinal}} house {{window}}.",
-    sections: {},
-    blockType: "essay",
-    sourceSnapshot: { contentType: "mustache-template" },
-    judgeScore: null,
-    judgeGate: null,
-    provider: null,
-    model: null,
-    updatedAt: null
+  for (const renderer of renderers) {
+    const expected = renderer.renderTransitReturn({ planet: "mars" });
+    const actual = renderer.renderTransitHouse({ planet: "mars", sign: "virgo", house: 4, events: [{ natal: "mars", aspect: "conjunction" }] });
+    assert.equal(actual.parts.at(-1), expected.body);
   }
-]]), personalAspectKeys, {
-  transitPlanet: "Jupiter",
-  transitHouseOrdinal: "3rd",
-  aspect: "square",
-  aspectVerb: "squaring",
-  natalPoint: "Moon",
-  natalHouseOrdinal: "6th",
-  window: "until September 5"
-});
-assert.equal(
-  personalAspectOverride?.body,
-  "Jupiter in your 3rd house is squaring your natal Moon in your 6th house until September 5."
-);
-
-assert.match(appSource, /personalTransitPackageSection\(transit, generatedAt, "you", \{[\s\S]*?generatedContent,[\s\S]*?transitHouse: house/u);
-assert.match(appSource, /body: packageSection\?\.body \?\? compiledAspect\?\.body \?\? null/u);
-assert.match(appSource, /personalTransitAspectContentKeys = skyPlacementPersonalizationTransits\.flatMap/u);
-assert.match(appSource, /natalHouse: transit\.natalHouse/u);
-
-console.log("Sky personalized transit composition checks passed.");
+  for (const key of ["cms/personal-transit-aspect/you/template", "fallback-hook/transit-house-event-frame/sun", "fallback-template/transit.house-event"]) {
+    assert.ok(isRetiredCompositionKey(key));
+    assert.equal(browserEligibility.isGovernedReaderEligible({ contentKey: key, body: "Historical test copy.", review_status: "approved" }, { allowUnreviewed: true }), false);
+    assert.equal(isGovernedReaderEligible({ contentKey: key, body: "Historical test copy.", review_status: "approved" }, { allowUnreviewed: true }), false);
+  }
+  for (const key of ["fallback-hook/transit-house-event-wants/sun/virgo", "fallback-hook/transit-house-event-natal/moon", "fallback-hook/transit-house-event-scenes/sun/moon/soft"]) assert.equal(isRetiredCompositionKey(key), false);
+  const appSource = fs.readFileSync("apps/web/src/App.tsx", "utf8");
+  assert.match(appSource, /personalTransitPackageSection\(transit, generatedAt\.slice\(0, 10\)\)/u);
+  assert.match(appSource, /body: packageSection\?\.body \?\? null/u);
+  assert.doesNotMatch(appSource, /renderTransitHouseEvent|compiledAspect\?\.body/u);
+  assert.match(appSource, /profileTransitsGeneratedAt === profileTransitSky\.generatedAt \? profileTransits : \[\]/u);
+  assert.match(appSource, /JSON\.stringify\(skyPlacementPersonalizationTransits\)/u);
+  console.log(`Transit composition retirement passed: ${checked} house/aspect/voice fixtures agree in Node, browser source, and shipped artifact; returns and immutable retirement verified.`);
+} finally { fs.rmSync(dir, { recursive: true, force: true }); }

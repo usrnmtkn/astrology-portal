@@ -1,3 +1,5 @@
+import { isEligibleTransitReturn } from "../../web/src/services/transitReturns.js";
+import { fullDetailReaderFacingCopy, isReaderFacingCopy } from "../../web/src/content/readerSafety.js";
 export const transitNatalPlanets = [
   "sun",
   "moon",
@@ -70,176 +72,29 @@ export type TransitNatalSelection = {
   natalHouse: TransitNatalHouse;
 };
 
-export type TransitNatalSource = {
-  id: "frame" | "transiting-sign" | "natal-point" | "lived-effect" | "standalone" | "template";
-  label: string;
-  scope: string;
-  candidateKeys: string[];
+type TransitPreviewRenderer = {
+  renderTransitAspect: (facts: { transiting: string; natal: string; aspect: string; sign: string; voice: string }) => TransitPreviewResult;
+  renderTransitReturn: (facts: { planet: string }) => TransitPreviewResult;
 };
+type TransitPreviewResult = { headline: string; parts: string[]; templateKey: string; contentKey?: string; sourceKeys?: string[] };
 
-export type TransitNatalSourceGroup = {
-  key: "composition" | "fallback";
-  label: string;
-  description: string;
-  sources: TransitNatalSource[];
-};
-
-export type TransitNatalResolvedSource = {
-  key: string;
-  text: string;
-};
-
-export type TransitNatalPreview = {
-  headline: string;
-  body: string;
-  complete: boolean;
-  sourceKeys: string[];
-  missing: string[];
-};
-
-const conjunctionSoftPlanets = new Set<TransitNatalPlanet>(["venus", "sun", "mercury", "jupiter"]);
-
-function titleCase(value: string) {
-  return value
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
+export function transitNatalLabel(selection: Pick<TransitNatalSelection, "planet" | "aspect" | "natalPoint">) {
+  const title = (value: string) => value.split("-").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
+  return `${title(selection.planet)} ${selection.aspect} your ${title(selection.natalPoint)}`;
 }
 
-export function transitNatalOrdinal(house: TransitNatalHouse) {
-  if (house === "1") return "1st";
-  if (house === "2") return "2nd";
-  if (house === "3") return "3rd";
-  return `${house}th`;
-}
-
-export function transitNatalAspectFamily(planet: TransitNatalPlanet, aspect: TransitNatalAspect): "hard" | "soft" {
-  if (aspect === "trine" || aspect === "sextile") return "soft";
-  if (aspect === "conjunction" && conjunctionSoftPlanets.has(planet)) return "soft";
-  return "hard";
-}
-
-export function transitNatalLabel(selection: TransitNatalSelection) {
-  return `${titleCase(selection.planet)} ${selection.aspect} your ${titleCase(selection.natalPoint)}`;
-}
-
-export function transitNatalSourceGroups(selection: TransitNatalSelection): TransitNatalSourceGroup[] {
-  const planet = titleCase(selection.planet);
-  const sign = titleCase(selection.sign);
-  const natalPoint = titleCase(selection.natalPoint);
-  const family = transitNatalAspectFamily(selection.planet, selection.aspect);
-
-  return [
-    {
-      key: "composition",
-      label: "Editable passages in this Personal Transit",
-      description: "Readers see one paragraph. Content Studio combines these four saved passages after the chart engine supplies the two houses, aspect, and timing.",
-      sources: [
-        {
-          id: "frame",
-          label: "Transit fact frame",
-          scope: `Controls how ${planet} in a reader's transit house is connected to the natal point and calculated end date.`,
-          candidateKeys: [
-            `fallback-hook/transit-house-event-frame/${selection.planet}`,
-            "fallback-hook/transit-house-event-frame/generic"
-          ]
-        },
-        {
-          id: "transiting-sign",
-          label: `${planet} in ${sign} action`,
-          scope: `Used whenever transiting ${planet} is in ${sign}, regardless of the natal point.`,
-          candidateKeys: [`fallback-hook/transit-house-event-wants/${selection.planet}/${selection.sign}`]
-        },
-        {
-          id: "natal-point",
-          label: `Natal ${natalPoint} response`,
-          scope: `Used whenever a transit activates natal ${natalPoint}.`,
-          candidateKeys: [`fallback-hook/transit-house-event-natal/${selection.natalPoint}`]
-        },
-        {
-          id: "lived-effect",
-          label: `${planet} to ${natalPoint} ${family}-aspect effect`,
-          scope: `Used for the lived consequence of ${selection.aspect} and other ${family} contacts between ${planet} and natal ${natalPoint}.`,
-          candidateKeys: [
-            `fallback-hook/transit-house-event-scenes/${selection.planet}/${selection.natalPoint}/${family}`,
-            `fallback-hook/transit-effect-${family}/${selection.planet}/${selection.natalPoint}`
-          ]
-        }
-      ]
-    },
-    {
-      key: "fallback",
-      label: "Complete Personal Transit write-up (shared across signs & houses)",
-      description: "The authored passage below is the primary reader-facing transit-to-natal write-up when an eligible authored row exists. It is shared across all signs and houses; Current sign, Transit house, and Natal house update the reader preview above but do not change this source. Change the Transiting planet, Natal planet or point, or hard/soft aspect family to open a different authored row. The template beside it is fallback-only and is used when no eligible authored passage can render.",
-      sources: [
-        {
-          id: "standalone",
-          label: `Primary ${planet} ${selection.aspect} ${natalPoint} passage`,
-          scope: "Primary authored transit-to-natal passage when an eligible authored row exists. It is shared across all signs and houses. Current sign, Transit house, and Natal house affect the preview above, not this row. The row is keyed by transiting planet, natal point, and hard/soft aspect family, so changing the exact aspect can keep the same source when it stays in the same family. The editor exposes separate You and Friends passages so each reader voice can be authored directly.",
-          candidateKeys: [
-            `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${selection.aspect}`,
-            `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${family}`
-          ]
-        },
-        {
-          id: "template",
-          label: "Fallback transit-aspect template",
-          scope: "Controls the fallback sentence order for transit-to-natal pages without a complete eligible authored passage.",
-          candidateKeys: ["fallback-template/transit.aspect"]
-        }
-      ]
-    }
-  ];
-}
-
-const aspectVerb: Record<TransitNatalAspect, string> = {
-  conjunction: "sitting right on",
-  opposition: "opposing",
-  square: "squaring",
-  trine: "trining",
-  sextile: "sextiling"
-};
-
-function fillTemplate(template: string, values: Record<string, string>) {
-  return template.replace(/\{\{([\w.]+)\}\}/gu, (token, key: string) => values[key] ?? token).trim();
-}
-
-export function renderTransitNatalPreview(
-  selection: TransitNatalSelection,
-  resolve: (candidateKeys: string[]) => TransitNatalResolvedSource | null
-): TransitNatalPreview {
-  const sources = transitNatalSourceGroups(selection)[0].sources;
-  const resolved = new Map(sources.map((source) => [source.id, resolve(source.candidateKeys)]));
-  const missing = sources.filter((source) => !resolved.get(source.id)).map((source) => source.label);
-  const frame = resolved.get("frame");
-  const wants = resolved.get("transiting-sign");
-  const natal = resolved.get("natal-point");
-  const effect = resolved.get("lived-effect");
-
-  if (!frame || !wants || !natal || !effect) {
-    return {
-      headline: transitNatalLabel(selection),
-      body: "This Personal Transit is incomplete. Add or repair the missing passages below. The reader app can still use the complete authored passage when an eligible one is available.",
-      complete: false,
-      sourceKeys: [frame, wants, natal, effect].filter((source): source is TransitNatalResolvedSource => Boolean(source)).map((source) => source.key),
-      missing
-    };
-  }
-
-  const natalTitle = `${titleCase(selection.natalPoint)} in your ${transitNatalOrdinal(selection.natalHouse)} house`;
-  const renderedFrame = fillTemplate(frame.text, {
-    aspectVerb: aspectVerb[selection.aspect],
-    houseOrdinal: transitNatalOrdinal(selection.transitHouse),
-    natalTitle,
-    transitTitle: titleCase(selection.planet),
-    windowClause: " until the calculated end date"
-  });
-
+/** Preview selection is delegated to the shipped reader resolver, never assembled in Studio. */
+export function renderTransitNatalPreview(selection: Pick<TransitNatalSelection, "planet" | "sign" | "aspect" | "natalPoint">, renderer: TransitPreviewRenderer, voice = "you") {
+  const rendered = isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect)
+    ? renderer.renderTransitReturn({ planet: selection.planet })
+    : renderer.renderTransitAspect({ transiting: selection.planet, natal: selection.natalPoint, aspect: selection.aspect, sign: selection.sign, voice });
+  const body = fullDetailReaderFacingCopy(rendered.parts);
+  if (!body || !isReaderFacingCopy(body)) throw new Error("No reader-eligible passage is available for this selection.");
   return {
-    headline: transitNatalLabel(selection),
-    body: `${renderedFrame} ${wants.text}; ${natal.text}. ${effect.text}`,
-    complete: true,
-    sourceKeys: [frame.key, wants.key, natal.key, effect.key],
-    missing: []
+    headline: rendered.headline || transitNatalLabel(selection),
+    body,
+    sourceKeys: [...new Set([rendered.contentKey ?? rendered.templateKey, ...(rendered.sourceKeys ?? [])])]
   };
 }
+
+export type TransitNatalResolvedSource = { key: string; text: string };

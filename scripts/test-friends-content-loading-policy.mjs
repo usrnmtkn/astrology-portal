@@ -204,7 +204,7 @@ assert.match(
   "Compatibility packaging must retain package approval checks for each row's actual provider."
 );
 assert.match(
-  generatedContentSource,
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/services/fallbackArchitectureV3CorePackaging.ts"), "utf8"),
   /const recordBody = stringFrom\(row\.body, record\.body\);/,
   "A saved top-level body must override the stale packaged body when reader cards are hydrated."
 );

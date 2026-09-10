@@ -1,3 +1,4 @@
+import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skyPlacementSourceRecords } from "./sky-placement-sources.js";
 import { createDomainRegistry } from "../../apps/web/src/content/domainRegistry.js";
 import { resolveCalendarAspectPublication } from "../../apps/web/src/features/calendar/calendarAspectPublication.js";
@@ -116,7 +117,7 @@ function packageEligible(row: LiveStatusRow) {
 function rawCopy(row: LiveStatusRow) { return { headline: row.headline, summary: row.summary, body: row.body }; }
 export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatusRow[] = rows, allowsPublication: (row: LiveStatusRow) => boolean = () => true, isPublishedSkyRow: (row: LiveStatusRow) => boolean = () => false): ContentLiveStatus[] {
   const partitionCandidates = candidates;
-  candidates = candidates.filter(allowsPublication);
+  candidates = candidates.filter((row) => !isRetiredCompositionKey(row.content_key) && allowsPublication(row));
   const overlays = new Map(selectLatestLiveServingDashboardRows(candidates, new Set([...currentKeys, ...candidates.filter(packageEligible).map((row) => row.content_key)]), packageEligible, () => false).map((row) => [row.content_key, row]));
   for (const row of skyOverlays(partitionCandidates).filter(allowsPublication)) overlays.set(row.content_key, row);
   // An explicit publication is an independent reviewed source, not an old bulk mirror.
@@ -135,6 +136,7 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
     if (row.provider && approved.has(reviewStatus) && isReaderServableGeneratedContentRow(row) && isGovernedReaderEligible({ ...source, contentKey: row.content_key, review_status: reviewStatus })) overlays.set(row.content_key, row);
   }
   return rows.map((row) => {
+    if (isRetiredCompositionKey(row.content_key)) return { id: row.id, live: false, label: "Not live", source: null, detail: "Superseded composition. Use the canonical Personal Transit source.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
     const builtin = builtinContentRecords.get(row.content_key);
     if (builtin) {
       if (builtin.readerEnabled === false) return { id: row.id, live: false, label: "Not live", source: null,

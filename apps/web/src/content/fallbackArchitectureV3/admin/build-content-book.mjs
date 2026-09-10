@@ -1,3 +1,4 @@
+import { isRetiredCompositionKey } from "../resolver/retiredCompositions.mjs";
 // Builds content-book.html: every row of reader copy, readable and editable in a browser.
 // Rebuild any time with: node admin/build-content-book.mjs
 import fs from "node:fs"; import path from "node:path"; import url from "node:url";
@@ -74,7 +75,7 @@ const EXAMPLES = {
 const esc = s => (s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const nice = k => k.replace(/^fallback-(hook|vocab)\//, "").replace(/^authored\//, "").replace(/\//g, " › ").replace(/-/g, " ");
 const buckets = SECTIONS.map(() => []);
-const place = (item) => { for (let i = 0; i < SECTIONS.length; i++) if (SECTIONS[i][1](item.key)) { buckets[i].push(item); return; } };
+const place = (item) => { if (isRetiredCompositionKey(item.key)) return; for (let i = 0; i < SECTIONS.length; i++) if (SECTIONS[i][1](item.key)) { buckets[i].push(item); return; } };
 const named = (obj, fields) => fields.map((f) => [f, obj[f]]).filter(([, v]) => v);
 for (const r of rows.hookRows) place({ key: r.contentKey, you: r.body_you, they: r.body_they !== r.body_you ? r.body_they : null, extra: named(r, ["title", "question", "headline"]) });
 for (const r of bondLanguagePass2.rows) place({ key: r.contentKey, you: r.body_you, they: null, extra: named(r, ["review_status"]) });

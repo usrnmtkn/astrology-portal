@@ -92,7 +92,6 @@ export type SkyDetail = {
   keyDatesIntro?: string | null;
   closingCharge?: string | null;
   risingHoroscopes?: { risingSign?: string | null; house?: number; body: string; contentKey?: string }[];
-  articleAspectPassages?: { natalPoint: string; aspect: string; body: string; contentKey: string }[];
   placementResidencyContext?: {
     planet: string;
     sign: string;
@@ -828,7 +827,9 @@ export function SkyDetailArticle({
                         {detail.personalizedPlacement.natalAspects.map((aspect) => (
                           <section className="sky-detail-personalized-aspect" key={aspect.key}>
                             <h4>{aspect.heading}</h4>
-                            {aspect.body ? <p>{aspect.body}</p> : null}
+                            {aspect.body ? fullDetailReaderFacingParagraphs([aspect.body]).map((paragraph, index) => (
+                              <p key={`${aspect.key}-${index}`}>{paragraph}</p>
+                            )) : null}
                           </section>
                         ))}
                       </>
