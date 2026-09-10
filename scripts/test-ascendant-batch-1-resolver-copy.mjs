@@ -12,6 +12,7 @@ const transitLib = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArch
 const rows = new Map(source.hookRows.map(row => [row.contentKey, row]));
 const bundledRows = new Map(bundled.hookRows.map(row => [row.contentKey, row]));
 const browserRenderer = createTransitSynastryRenderer(transitLib, templates, source);
+const directionRelease = JSON.parse(fs.readFileSync("apps/web/src/content/fallbackArchitectureV3/authored-inputs/synastry-directionality-live-v1.json", "utf8"));
 const reviewRoot = "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1";
 const approvedHashes = {
   "sun/conjunction": "3311f61b851f147f4726e9406f175687c3cd94f73c161e595d41e022102151af",
@@ -47,12 +48,16 @@ for (const [target, expectedHash] of Object.entries(approvedHashes)) {
   assert.ok(row, `missing ${key}`);
   assert.deepEqual(bundledRows.get(key), row, `stale bundled row ${key}`);
   assert.equal(row.review_status, "approved");
-  assert.equal(row.body_you, approval.payload.body_you);
+  const supersession = directionRelease.rows.find(patch => patch.contentKey === key);
+  if (supersession) {
+    assert.equal(crypto.createHash("sha256").update(approval.payload.body_you).digest("hex"), supersession.expected_before_sha256.body_you);
+    assert.equal(row.body_you, supersession.body_you);
+  } else assert.equal(row.body_you, approval.payload.body_you);
   assert.equal(row.body_they, approval.payload.body_they);
   assert.equal(calculatedHash, expectedHash);
   assert.equal(approval.payloadSha256, expectedHash);
   assert.equal(approval.contentKey, key);
-  assert.deepEqual(row.approval, {
+  assert.deepEqual(supersession ? row.body_they_prior_row_approval : row.approval, {
     approvalLevel: "exact_owner_approved",
     recordPath: approvalPath,
     payloadSha256: expectedHash,
@@ -63,7 +68,7 @@ for (const [target, expectedHash] of Object.entries(approvedHashes)) {
   const renders = [
     {
       input: { planetA: planet, planetB: "ascendant", aspect: forwardAspect, otherName: "Sofia" },
-      expected: approval.payload.body_you.replaceAll("{{holder2}}", "Sofia")
+      expected: (supersession?.body_you ?? approval.payload.body_you).replaceAll("{{holder2}}", "Sofia")
     },
     {
       input: { planetA: "ascendant", planetB: planet, aspect: reverseAspect, otherName: "Sofia" },
