@@ -1,4 +1,4 @@
-import { pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
+import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
 import { isContentRetired } from "./content/contentPublicationState";
 import { usePageTransition, readAnimationPreference, animationPreferenceKey } from "./hooks/usePageTransition";
@@ -11827,8 +11827,21 @@ export function App() {
   }, [contentRefreshVersion, placementContentNeeded, skyPlacementFallbackRetryKey]);
 
   useEffect(() => {
-    function handlePortalUrlChange() {
-      transitionPage(() => {}, false);
+    let pendingHashChangeUrl: string | null = null;
+    function handlePortalUrlChange(event: Event) {
+      // Browser traversal emits popstate and then hashchange for the same URL.
+      // Keep one snapshot: the second event must not cancel its animation.
+      if (event.type === "hashchange" && pendingHashChangeUrl === window.location.href) {
+        pendingHashChangeUrl = null;
+        return;
+      }
+      pendingHashChangeUrl = event.type === "popstate" ? window.location.href : null;
+      transitionPage(syncPortalUrl);
+    }
+
+    function syncPortalUrl() {
+      // Nested natal state must change inside the same snapshot as the portal.
+      window.dispatchEvent(new Event(articleHistoryChangeEvent));
       const urlMode = portalModeFromUrl();
       const nextCurrentLocalDate = dateInputValue();
       const fixedTransitDate = transitDateFromUrl();
@@ -17153,12 +17166,10 @@ function ProfileView({
     }
 
     syncPlacementRoute();
-    window.addEventListener("popstate", syncPlacementRoute);
-    window.addEventListener("hashchange", syncPlacementRoute);
+    window.addEventListener(articleHistoryChangeEvent, syncPlacementRoute);
 
     return () => {
-      window.removeEventListener("popstate", syncPlacementRoute);
-      window.removeEventListener("hashchange", syncPlacementRoute);
+      window.removeEventListener(articleHistoryChangeEvent, syncPlacementRoute);
     };
   }, [
     activePlacementRouteId,

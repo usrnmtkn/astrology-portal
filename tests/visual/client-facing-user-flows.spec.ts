@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { observeArticleTransitions, expectAnimatedArticleNavigation } from "./qaArticleTransitions";
 import { readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -16,6 +17,7 @@ import {
 } from "../../apps/web/src/services/verifiedSkyCache";
 
 type SeedOptions = {
+  pageAnimations?: "on" | "off";
   synastryFixture?: { body: string; aspect: string; inverse: boolean };
   profile?: boolean;
   profileBirthDate?: string;
@@ -188,7 +190,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       window.localStorage.setItem("tldrastro:sunriseOrb", "true");
       window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
       // Layout checks opt out explicitly; the app default can override reduced motion.
-      window.localStorage.setItem("tldrastro:pageAnimations", "off");
+      window.localStorage.setItem("tldrastro:pageAnimations", options.pageAnimations ?? "off");
       window.localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(fixtureLocation));
       if (preloadedNatalCache) {
         window.localStorage.setItem(preloadedNatalCache.cacheKey, JSON.stringify(preloadedNatalCache));
@@ -3652,11 +3654,14 @@ test.describe("client-facing user flow case studies", () => {
   });
 
   test("nested natal aspect returns to its placement one level at a time", async ({ page }) => {
-    await seedClientState(page, { profile: true });
+    await observeArticleTransitions(page);
+    await seedClientState(page, { profile: true, pageAnimations: "on" });
     await expectClientRouteLoads(page, "/#you");
     await selectYouNatalTab(page);
     const rootUrl = page.url();
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
+    await expect(page).toHaveURL(/#you\/placement\//);
+    await expect(page.locator("#you-transit-article-title")).toBeVisible();
     const parentUrl = page.url();
     const parentTitle = await page.locator("#you-transit-article-title").innerText();
     const aspect = page.getByRole("button", { name: /Read more about Sun/ }).first();
@@ -3664,10 +3669,10 @@ test.describe("client-facing user flow case studies", () => {
     await aspect.click();
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
     await expect(page).toHaveURL(/\/aspect\//);
-    await page.getByRole("button", { name: "Back to updates" }).click();
+    await expectAnimatedArticleNavigation(page, () => page.getByRole("button", { name: "Back to updates" }).click(), aspectName);
     await expect(page).toHaveURL(parentUrl);
     await expect(page.locator("#you-transit-article-title")).toHaveText(parentTitle);
-    await page.goForward();
+    await expectAnimatedArticleNavigation(page, () => page.goForward(), parentTitle);
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
     await page.reload();
     await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
