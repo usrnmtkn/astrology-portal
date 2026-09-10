@@ -2654,7 +2654,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   const updateParams = new URLSearchParams();
   updateParams.set("id", `eq.${body.id}`);
-  if (body.expectedUpdatedAt) updateParams.set("updated_at", `eq.${body.expectedUpdatedAt}`);
+  const expectedUpdatedAt = body.expectedUpdatedAt ?? existing.updated_at;
+  if (expectedUpdatedAt) updateParams.set("updated_at", `eq.${expectedUpdatedAt}`);
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${updateParams.toString()}`, {
     method: "PATCH",
     headers: {
@@ -2671,7 +2672,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
   const updatedRows = Array.isArray(payload) ? payload : [];
   if (updatedRows.length === 0) {
-    if (body.expectedUpdatedAt) {
+    if (expectedUpdatedAt) {
       throw new GeneratedContentRequestError("This content changed before the update completed. Reload the row before saving so a newer edit is not overwritten.", 409);
     }
     throw new GeneratedContentRequestError("Content row was not found.", 404);
@@ -2703,7 +2704,8 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   const deleteParams = new URLSearchParams();
   deleteParams.set("id", `eq.${id}`);
   deleteParams.set("status", "neq.LIVE");
-  if (expectedUpdatedAt) deleteParams.set("updated_at", `eq.${expectedUpdatedAt}`);
+  const deleteVersion = expectedUpdatedAt || existing.updated_at;
+  if (deleteVersion) deleteParams.set("updated_at", `eq.${deleteVersion}`);
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${deleteParams.toString()}`, {
     method: "DELETE",
     headers: {

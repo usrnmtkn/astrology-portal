@@ -26,6 +26,8 @@ reader, content package and dependency changes.
 - Publication cannot retain a reference lane or review hold.
 - Bulk updates compare the stored version and exclude LIVE rows at write time.
   New inserts ignore conflicts instead of merging over competing inserts.
+- Legacy update/delete requests without a client timestamp still compare the
+  API-read version, protecting changes made during the request.
 - Calendar partial proposals, all 24 materialized shapes, exact saved copy,
   separate revisions and actual reader hydration/selection.
 - Existing Sky placement publication, copy recovery, reader revalidation,
@@ -59,8 +61,8 @@ and reject unexpected storage origins. Do not point these fixtures at production
   never demoted by a compile/import operation.
 - Editor callers must send `expectedUpdatedAt` from the opened or last-saved
   row. Legacy generic callers may omit it; that compatibility is not
-  proof of stale-editor protection. Bulk writes always compare the server-read
-  version, and also reject a supplied stale client version.
+  proof of stale-editor protection. Update/delete and bulk writes compare the
+  server-read version when present, and reject a supplied stale client version.
 
 ## Changes to editor or publication behavior
 
@@ -106,8 +108,8 @@ lookup/write races overwriting newer publications. The dedicated CRUD contract
 regression covers each failure and the ordinary lifecycle. No authored copy or
 production database content is part of these code changes.
 
-Local repair evidence: all eight new contract groups pass. Running the same
-regression against the unchanged handler from main `d45a0275` fails six groups;
+Local repair evidence: all nine new contract groups pass. Running the same
+regression against the unchanged handler from main `d45a0275` fails seven groups;
 the ordinary lifecycle and authorization groups still pass. The complete
 `test:content-studio-api` suite and admin/web typechecks pass on the repair.
 CI and deployment results belong to the release PR and its exact commit.

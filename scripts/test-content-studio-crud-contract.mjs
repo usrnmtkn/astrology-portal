@@ -150,6 +150,16 @@ await test('bulk insert race preserves a newly created row', async () => {
   assert.equal(rows.get(baseline.id).body, 'QA competing insert');
 });
 
+await test('legacy update/delete still guard changes made after the API lookup', async () => {
+  for (const method of ['PATCH', 'DELETE']) {
+    reset(); afterLookup = () => rows.set(baseline.id, { ...baseline, body: 'QA newer concurrent draft', updated_at: '2026-09-10T12:01:00Z' });
+    const result = method === 'PATCH'
+      ? await invoke(method, { id: baseline.id, body: 'QA outdated write' })
+      : await invoke(method, undefined, { query: `?id=${baseline.id}` });
+    assert.equal(result.status, 409); assert.equal(rows.get(baseline.id).body, 'QA newer concurrent draft');
+  }
+});
+
 await test('bulk saves preserve live rows, validate before writing, and report partial completion', async () => {
   reset([{ ...baseline, status: 'LIVE' }]);
   const skipped = await invoke('POST', { rows: [writeBody()] });
