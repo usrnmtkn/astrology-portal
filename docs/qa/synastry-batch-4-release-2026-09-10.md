@@ -23,7 +23,8 @@ and Content Studio hashes agree for every released field.
 Friends previously omitted North Node and the opposite chart angles. The
 comparison now retains the calculated True Node once and derives Descendant
 and IC at 180 degrees from the measured Ascendant/MC. Unknown axes stay absent.
-The existing 16-card ranking cap remains intact.
+The newly enabled endpoints are limited to the approved Sun families; unrelated
+comparisons and the existing 16-card ranking cap remain intact.
 
 ## Validation
 
@@ -34,10 +35,10 @@ The existing 16-card ranking cap remains intact.
   exercised; changed approved copy and changed opposite direction rejected.
 - Production Content Studio read: all 24 LIVE + serving, clear review state;
   editor and packageRecord hashes match both canonical fields. Ledger: 24 live.
-- Actual Friends cards and full detail entries: 79/80 passed in the full fresh
-  preview run; the remaining IC sextile fixture was crowded out by the existing
-  ranking cap. A corrected test-only chart passed the remaining scenario.
-  CMS hydration is disabled in these tests to prove the canonical package.
+- Actual Friends cards and full detail entries: the final fresh preview run
+  passes all 80 aspect/ownership scenarios plus existing light/dark Synastry
+  checks (82/82). The latter also verify desktop, 390 px and 320 px layouts.
+  CMS hydration is disabled in release tests to prove the canonical package.
 - Typecheck, web build, CSS audit, bundle budget, manifest freshness, inventory
   parity, synastry grammar, prior Ascendant approval, no-stock-closer, provenance,
   and relationship-calculation regressions pass.

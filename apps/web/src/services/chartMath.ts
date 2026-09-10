@@ -736,6 +736,14 @@ export function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoin
   return points;
 }
 
+// Batch 4 enables these previously omitted endpoints for the approved Sun
+// families. Broader endpoint rollout must not change this release's card list.
+const newlyEnabledSynastryEndpoints = new Set(["North Node", "Descendant", "Imum Coeli"]);
+function synastryPairEnabled(first: string, second: string) {
+  return (!newlyEnabledSynastryEndpoints.has(first) || second === "Sun")
+    && (!newlyEnabledSynastryEndpoints.has(second) || first === "Sun");
+}
+
 export function calculatedSynastryContacts(
   profileNatalSky: SkySnapshot | null,
   chart: Pick<ManualChart, "id" | "natalChart">
@@ -743,6 +751,7 @@ export function calculatedSynastryContacts(
   const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
   const yourPoints = comparisonPointsFromSky(profileNatalSky);
   const contacts = friendPoints.flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
+    if (!synastryPairEnabled(friendPoint.name, yourPoint.name)) return [];
     const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
     const aspect = transitAspectDefinitions
       .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
@@ -843,6 +852,7 @@ export function synastryWheelAspectLines(
 
   return friendPoints
     .flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
+      if (!synastryPairEnabled(friendPoint.name, yourPoint.name)) return [];
       const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
       const aspect = transitAspectDefinitions
         .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))

@@ -212,3 +212,10 @@ for (const [ascendantLongitude, midheavenLongitude] of [[351, 264], [15, 280]]) 
   assert.equal(points.find(p => p.name === 'Imum Coeli').longitude, (midheavenLongitude + 180) % 360);
 }
 assert.deepEqual(comparisonPointsFromSky(sky({ positions: [] })), []);
+const scopedProfile = sky({ positions: [position('Sun', 0, '☉'), position('Moon', 0, '☽')] });
+const scopedFriend = { id: 'scope-check', natalChart: sky({ ascendantLongitude: 180, midheavenLongitude: 180, positions: [position('North Node', 0, '☊')] }) };
+const scopedContacts = calculatedSynastryContacts(scopedProfile, scopedFriend);
+for (const point of ['North Node', 'Descendant', 'Imum Coeli']) {
+  assert.ok(scopedContacts.some(c => c.friendPoint.name === point && c.yourPoint.name === 'Sun'));
+  assert.ok(!scopedContacts.some(c => c.friendPoint.name === point && c.yourPoint.name === 'Moon'));
+}
