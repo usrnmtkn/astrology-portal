@@ -127,11 +127,10 @@ test("missing canonical Rx content never exposes direct-only placement prose", a
   test.setTimeout(90_000);
   await page.route("**/sky-v4-canonical-content-studio-stage-v1*.json", route => route.abort());
   await page.goto("/?date=2026-09-07#sky/placement/neptune/aries");
-  await expect(page.locator("#sky-detail-title")).toHaveText("Neptune Rx in Aries", { timeout: 60_000 });
-  await expect(page.locator(".sky-detail-article")).not.toContainText("Neptune in Aries makes a new dream feel urgent");
-  await expect(page.locator(".sky-detail-article")).not.toContainText(modifier("Neptune"));
-  // The stable article shell is now visible before asynchronous residency dates finish.
-  await expect(page.locator(".sky-detail-id .article-duration").first()).toHaveText(/Jul 7, 2026 - Dec 12, 2026/, { timeout: 60_000 });
+  await expect(page.getByText("The placement reading could not load. Please try again.")).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator("#sky-detail-title")).toHaveCount(0);
+  await expect(page.locator("body")).not.toContainText("Neptune in Aries makes a new dream feel urgent");
+  await expect(page.locator("body")).not.toContainText(modifier("Neptune"));
 });
 
 for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) {

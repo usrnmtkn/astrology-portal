@@ -21,3 +21,9 @@ Verification:
 - Registered the new regression in the existing Sky placement Studio CI job.
 
 This is local verification; production deployment has not been performed for this fix.
+
+## Production reload follow-up
+
+Production verification of merge `f36b697e` passed initial rendering and content refresh but caught a transient `Aug 23 - Sep 23` header on cached reload. Published dashboard rows could mark the placement package ready before the canonical reader module loaded. The route now waits for canonical reader readiness as well as calculated timing; dashboard availability alone cannot release a provisional article. A failed reader load offers retry.
+
+The stability regression now delays the canonical corpus fetch and checks every observed reload state, including title, date range, lunar paragraph, and full body. Package-failure coverage checks that no provisional article appears and that retry recovers.
