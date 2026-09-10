@@ -27,7 +27,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await page.screenshot({path:`test-results/sky-placement-aspects-${width}-${theme}.png`});
     await card.click();
     await expect(page).toHaveURL(/#sky\/aspect\/neptune\/sextile\/pluto/);
-    await expect(page.getByRole('heading',{name:/Neptune.*sextile.*Pluto/i}).first()).toBeVisible();
+    await expect(page.locator('#sky-detail-title')).toHaveText(/Neptune.*sextile.*Pluto/i);
+    await expect(page.locator('.article-related-aspect-row')).toHaveCount(0);
+    await page.getByRole('button', {name:'Close detail', exact:true}).click();
+    await expect(page).toHaveURL(/#sky\/placement\/neptune\/aries$/);
+    await expect(page.locator('#sky-detail-title')).toHaveText(/Neptune.*Aries/i);
+    await page.getByRole('button', {name:'Close detail', exact:true}).click();
+    await expect(page).toHaveURL(/#sky$/);
     expect(errors).toEqual([]);
   });
 }
