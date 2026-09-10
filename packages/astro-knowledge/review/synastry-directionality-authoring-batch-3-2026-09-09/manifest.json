@@ -3,9 +3,9 @@
   "recordType": "synastry_reverse_authoring_batch",
   "batchId": "synastry-directionality-authoring-batch-3-2026-09-09",
   "servingChangesAuthorized": false,
-  "purpose": "Continue additive reverse-direction authoring for Friends synastry after the casual-language voice correction.",
+  "purpose": "Continue additive reverse-direction authoring for Friends synastry after the owner voice correction.",
   "readerQuestion": "What does {{Name}} bring out in me?",
-  "voice": "Project Author casual-language calibration: easy to understand on the first read; ordinary relationship behavior; direct consequences; no clever or abstract phrasing; no astrology jargon in the reader body; no unsupported event claims.",
+  "voice": "Project Author calibration: preserve the psychological and astrological message; simplify only the wording; keep clear, memorable metaphors such as cage, rose-colored glasses, taking the wheel, and battlefield; avoid abstract language that makes the reader decode the sentence.",
   "scope": {
     "family": "Sun with Saturn, Uranus, Neptune, and Pluto",
     "newCandidateCount": 12
@@ -16,96 +16,96 @@
       "existingSemanticDirection": "saturn_to_sun",
       "missingSemanticDirection": "sun_to_saturn",
       "friendsUseCase": "Your Saturn conjunct {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can bring out your serious side. When they talk about what they want to do, you may immediately start thinking about the timing, cost, risks, or what would have to happen to make it work. That can help them make the plan more workable, but it can also turn you into the person who always has another concern. Help with the plan without making them earn your approval first.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "{{Name}} brings your inner parent to the surface: the part of you that wants to guide, protect, and help make things more solid. When they share a dream with you, your first instinct may be to help give it shape. You want to make their dreams real by giving them structure, but you have to be careful not to build a cage. Notice if your desire to keep them safe starts turning into an expectation that they do everything right. You can offer them your wisdom without making them earn your approval.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/saturn/hard",
       "existingSemanticDirection": "saturn_to_sun",
       "missingSemanticDirection": "sun_to_saturn",
       "friendsUseCase": "Your Saturn hard-aspect {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can make you feel responsible for stopping them from making a mistake. You may point out the problem, question the plan, or keep asking for more proof when they are trying to move forward. The more certain they sound, the more you may feel like someone has to be careful. You can warn them without taking over the decision.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "{{Name}} can bring up your complicated relationship with responsibility. When they are excited about a plan, you may feel an immediate need to manage the outcome or be the reality check. You can offer your practical magic without carrying the weight of their choices. Let them make their own mistakes. Your job is not to fix them.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/saturn/soft",
       "existingSemanticDirection": "saturn_to_sun",
       "missingSemanticDirection": "sun_to_saturn",
       "friendsUseCase": "Your Saturn soft-aspect {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can make your practical side feel useful instead of heavy. When they know what they want, you may naturally help with the plan, the timing, or the part that needs patience. You do not have to talk them out of the idea to make it safer; you can help them build it.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "You are a grounding force for {{Name}}. Your boundaries can feel like a safe harbor instead of a restriction. When they share a vision, you naturally offer the scaffolding that helps it grow. You do not have to dim their light to keep them safe. You get to be the sturdy foundation that helps them build their dreams.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/uranus/conjunction",
       "existingSemanticDirection": "uranus_to_sun",
       "missingSemanticDirection": "sun_to_uranus",
       "friendsUseCase": "Your Uranus conjunct {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can bring out the part of you that wants to do things differently. Around them, you may come up with a new plan, question a routine or rule you usually go along with, or feel more willing to say what no longer works for you. That can be exciting, but not every new idea needs to become an immediate change.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "{{Name}} can wake up the part of you that wants more freedom. Around them, you may suddenly question rules you have lived by, routines you have outgrown, or parts of your life that no longer fit. That realization can be exciting. Just remember that you do not have to burn down the entire house to let a little fresh air in.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/uranus/hard",
       "existingSemanticDirection": "uranus_to_sun",
       "missingSemanticDirection": "sun_to_uranus",
       "friendsUseCase": "Your Uranus hard-aspect {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can make you want to push back just because they sound certain. If they decide how something should go, you may argue for another option, change the plan, or need more space because you do not want to feel told what to do. Before you change everything, check if you actually dislike the plan or just dislike feeling boxed in.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "{{Name}} can bring out your rebellious side fast. When they stand firmly in who they are or how they want something to go, you may want to push back just to prove that no one gets to box you in. Before you disrupt the connection, figure out if you truly want something different or if you just hate feeling contained.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/uranus/soft",
       "existingSemanticDirection": "uranus_to_sun",
       "missingSemanticDirection": "sun_to_uranus",
       "friendsUseCase": "Your Uranus soft-aspect {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can make it easier for you to try something different without feeling like you have to rebel first. Their confidence gives you room to bring in a new idea, change the routine, or suggest another way without turning it into a fight. You get to do things differently without making the whole relationship feel shaky.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "{{Name}} makes it easier for you to trust the part of yourself that does things differently. Around them, you can experiment, be weird, change your mind, and rewrite rules that no longer fit without turning the relationship into a rebellion. Their confidence gives your freedom more room. You can change without making the connection unstable.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/neptune/conjunction",
       "existingSemanticDirection": "neptune_to_sun",
       "missingSemanticDirection": "sun_to_neptune",
       "friendsUseCase": "Your Neptune conjunct {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can be easy for you to idealize. You may see the best in them, imagine what they could become, or feel inspired by something about the way they live. That can bring out a softer, more creative side of you. Just keep paying attention to who they are now, not only who you hope they will become.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "It is easy to see something almost magical in {{Name}}. They can bring out your compassion, your imagination, and the part of you that wants to believe in the best of people. You may see their potential so clearly that it becomes hard to separate who they are from who you know they could be. Love the human being in front of you, not just the magnificent potential you see inside them.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/neptune/hard",
       "existingSemanticDirection": "neptune_to_sun",
       "missingSemanticDirection": "sun_to_neptune",
       "friendsUseCase": "Your Neptune hard-aspect {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can make you fill in the blanks with a version of them that is easier to believe in. You may excuse something that bothered you, assume you know what they meant, or keep hoping their actions will match the person you see in them. Pay attention to what they actually do, especially when it does not match the story in your head.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "{{Name}} can make it very tempting to put on rose-colored glasses. You may explain away something that hurt you because you understand their pain, or let a boundary slide because you know where their behavior comes from. Compassion does not require you to ignore what is happening. Love them as they are, but do not ignore the red flags just to keep the peace.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/neptune/soft",
       "existingSemanticDirection": "neptune_to_sun",
       "missingSemanticDirection": "sun_to_neptune",
       "friendsUseCase": "Your Neptune soft-aspect {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can bring out a softer, more imaginative side of you. You may feel more creative around them, more willing to believe in what they are trying to do, or more able to see the good in them when they are having a hard time. The warmth is useful as long as you do not have to ignore the facts to keep it.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "{{Name}} softens your edges. Around them, empathy comes more easily and your creative side has more room to breathe. You may find it easier to dream, imagine, or say what you feel without forcing it. This can be a deeply healing connection, as long as you both keep your feet on the ground while your heads are in the stars.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/pluto/conjunction",
       "existingSemanticDirection": "pluto_to_sun",
       "missingSemanticDirection": "sun_to_pluto",
       "friendsUseCase": "Your Pluto conjunct {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can get your full attention without trying very hard. You may notice what drives them, what they are avoiding, or what seems to matter more than they admit. You can care a lot about what happens to them, but that can also make you push for answers or changes they did not ask for. Caring does not give you the right to manage them.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "{{Name}} draws out your most investigative side. You tend to notice what is underneath the surface with them, including what they are not saying yet. Being seen that deeply can be powerful, but it comes with responsibility. Notice when wanting to understand them turns into wanting to manage their transformation. You are here to witness their depth, not orchestrate their healing.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/pluto/hard",
       "existingSemanticDirection": "pluto_to_sun",
       "missingSemanticDirection": "sun_to_pluto",
       "friendsUseCase": "Your Pluto hard-aspect {{Name}}'s Sun",
-      "candidateNameToYou": "{{Name}} can bring out your need to know what is really going on. If they hold something back, change their mind, or refuse your advice, you may push harder because uncertainty makes you want more information or more control. That pressure can turn a normal disagreement into a fight over who gets the final say. Ask the question once and let their answer belong to them.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "This connection can become a masterclass in power and surrender. When {{Name}} digs in or makes a choice you cannot control, your own survival instincts may flare up. You might feel a strong need to control the story, get the full truth, or uncover what you think they are hiding. When that urge hits, loosen your grip. You can honor how intense this bond feels without turning it into a battlefield.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     },
     {
       "contentKey": "fallback-hook/synastry-pair/sun/pluto/soft",
       "existingSemanticDirection": "pluto_to_sun",
       "missingSemanticDirection": "sun_to_pluto",
       "friendsUseCase": "Your Pluto soft-aspect {{Name}}'s Sun",
-      "candidateNameToYou": "You can care a lot about what happens to {{Name}} without feeling like you have to decide it for them. You may be able to talk about difficult subjects, support them through a hard change, or take their goals seriously without trying to take over. The depth is there, but it does not have to become pressure.",
-      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+      "candidateNameToYou": "You create a safe place for {{Name}} to go deep. The two of you can travel into the underworld together and talk about the things that actually matter without either person needing to take control. There is a deep trust here. You can support {{Name}} through big changes without taking the wheel. This is intimacy that makes both of you stronger.",
+      "candidateStatus": "revised_2026-09-09_from_owner_semantic_source_awaiting_owner_review"
     }
   ],
   "reviewGate": "Owner review required before any candidate is promoted, mapped into Content Studio, or used by the serving resolver."
