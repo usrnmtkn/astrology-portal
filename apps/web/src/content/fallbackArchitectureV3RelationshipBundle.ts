@@ -2,6 +2,7 @@ import bundledRelationshipAuthoredCardsV3 from "./fallbackArchitectureV3/bundled
 import bundledRelationshipHookRowsV3 from "./fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json";
 import bundledSharedPlacementRowsV3 from "./fallbackArchitectureV3/bundled-shared-placement-rows-v3.json";
 import synastryDirectionalOverridesV1 from "./fallbackArchitectureV3/source-rows/synastry-directional-overrides-v1.json";
+import synastryDirectionalServingHashesV1 from "../../packages/astro-knowledge/review/synastry-directionality-authoring-batch-4-2026-09-09/serving-payload-hashes.json";
 import type {
   AuthoredCard,
   FallbackArchitectureV3Bundle,
@@ -31,19 +32,25 @@ if (
     || row.directionality_mode !== "viewer-centered-synastry-v1"
     || !row.body_you?.trim()
     || !row.body_they?.trim()
+    || !synastryDirectionalServingHashesV1.rows[row.contentKey as keyof typeof synastryDirectionalServingHashesV1.rows]
   ))
 ) {
-  throw new Error("Relationship bundle must serve all 24 owner-approved synastry directionality overrides.");
+  throw new Error("Relationship bundle must serve all 24 owner-approved synastry directionality overrides with exact serving hashes.");
 }
 
 // Content Studio authoring uses the product-level {{Name}} variable. The legacy
 // synastry resolver still resolves chart ownership through holder1/holder2.
 // For a forward canonical pair, the friend is holder2, so compile {{Name}} to
 // that runtime slot at the relationship-bundle boundary instead of changing
-// the owner-authored source text.
+// the owner-authored source text. The exact approval hash is for this compiled
+// serving payload, not for the authoring placeholder form.
 const runtimeSynastryDirectionalOverrides = approvedSynastryDirectionalOverrides.map((row) => ({
   ...row,
-  body_you: row.body_you?.replaceAll("{{Name}}", "{{holder2}}") ?? row.body_you
+  body_you: row.body_you?.replaceAll("{{Name}}", "{{holder2}}") ?? row.body_you,
+  approval: {
+    ...row.approval,
+    payloadSha256: synastryDirectionalServingHashesV1.rows[row.contentKey as keyof typeof synastryDirectionalServingHashesV1.rows]
+  }
 }));
 
 export const relationshipFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle = {
