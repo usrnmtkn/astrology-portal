@@ -4,6 +4,8 @@ import { isCanonicalSkyReaderRecord } from "./fallbackArchitectureV3/dashboardEx
 import { createSkyV4ReaderRoute, skyV4ContentStudioRecords } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 // @ts-ignore Shared evergreen structure is validated at the publication boundary.
 import { skyEvergreenEditableFields, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "./fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
+// @ts-ignore Versioned composition is validated before it enters the reader snapshot.
+import { validateSkyIngressComposition } from "./fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
 
 type RecordValue = Record<string, any>;
 const object = (value: unknown): RecordValue => value && typeof value === "object" && !Array.isArray(value) ? value as RecordValue : {};
@@ -46,7 +48,11 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
           const next = { ...source };
           for (const field of skyEvergreenEditableFields(baseline)) {
             const copy = nextBlocked.has(key) ? "" : at(byKey.get(key)!, field.path);
-            if (field.path === SKY_EVERGREEN_SECTIONS_PATH) {
+            if (field.path === "ingress") {
+              const composition = nextBlocked.has(key) ? null : copy;
+              validateSkyIngressComposition(composition);
+              if (composition !== undefined) set(next, field.path, structuredClone(composition));
+            } else if (field.path === SKY_EVERGREEN_SECTIONS_PATH) {
               const layout = nextBlocked.has(key) ? [] : copy;
               validateSkyEvergreenSections(layout);
               if (layout !== undefined) set(next, field.path, structuredClone(layout));

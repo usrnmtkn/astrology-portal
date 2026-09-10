@@ -335,6 +335,7 @@ export function packageDraftForSections(sections: unknown) {
 function mergePackageDraft(base: Record<string, unknown>, draft: Record<string, unknown>): Record<string, unknown> {
   const result = { ...base };
   for (const [key, value] of Object.entries(draft)) {
+    if (key === "ingress") { result[key] = structuredClone(value); continue; }
     result[key] = value && typeof value === "object" && !Array.isArray(value)
       ? mergePackageDraft(record(base[key]), record(value)) : value;
   }
@@ -378,7 +379,7 @@ export function skyFallbackWorkspace(contentKey: string, sections: unknown): Sky
     .filter(([key]) => studioFields.length > 0 || packageValueAt(source, key) !== "")
     .map(([key, label]) => ({ key, label, value: packageValueAt(source, key) }));
   if (isSkyEvergreenSource(source)) fields = [
-    ...skyEvergreenEditableFields(source).filter((field: { path: string }) => !field.path.startsWith("fallback.")).map((field: { path: string; label: string }) => ({ key: field.path, label: field.label, value: packageValueAt(source, field.path) })),
+    ...skyEvergreenEditableFields(source).filter((field: { path: string }) => field.path !== "ingress" && !field.path.startsWith("fallback.")).map((field: { path: string; label: string }) => ({ key: field.path, label: field.label, value: packageValueAt(source, field.path) })),
     ...skyEvergreenFields(source).map((field: { path: string; label: string; value: string }) => ({ key: field.path, label: field.label, value: field.value }))
   ];
 
@@ -422,7 +423,9 @@ export function packageDraftChanges(sections: unknown) {
   const sectionChanges = isSkyEvergreenSource(original) && JSON.stringify(record(original.fallback).sections) !== JSON.stringify(record(draft.fallback).sections)
     ? [{ key: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order", before: JSON.stringify(record(original.fallback).sections ?? null), after: JSON.stringify(record(draft.fallback).sections ?? null) }]
     : [];
-  return [...compositionChanges, ...fieldChanges, ...sectionChanges];
+  const ingressChanges = isSkyEvergreenSource(original) && JSON.stringify(original.ingress) !== JSON.stringify(draft.ingress)
+    ? [{ key: "ingress", label: "V5 sentence composition", before: JSON.stringify(original.ingress ?? null), after: JSON.stringify(draft.ingress ?? null) }] : [];
+  return [...compositionChanges, ...fieldChanges, ...sectionChanges, ...ingressChanges];
 }
 
 export function renderWorkspacePreview(fields: SkyFallbackField[], values: Record<string, string> = {}) {

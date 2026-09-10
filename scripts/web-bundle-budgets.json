@@ -13,7 +13,7 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 115000,
-  "totalJavaScriptGzipBytes": 2964000,
+  "totalJavaScriptGzipBytes": 2976000,
   "_rationale": {
     "transitArticleFacts": "Allow 1,000 aggregate gzip bytes for the requested calculated transit/natal placement footer across You and Friends articles. After rebasing onto f36b697e, the fresh build with CI's Supabase environment measures 2,949,088 bytes across 116 JavaScript files, 88 bytes above the previous aggregate cap. Shared article fact components keep SkyDetailArticle within its existing 5.4 kB limit. Startup, CSS, and every individual chunk limit remain unchanged; reader boot measures 463.5 kB against 467 kB. No dependencies or authored content changed.",
     "skyPlacementVariables": "The shared Sky variable contract and deferred Studio variable key/template comparison measure 2,940,574 aggregate JavaScript gzip bytes in the fresh CI-environment build. Allow 4,000 aggregate bytes for this feature. Reader boot, startup CSS, and every individual chunk limit are unchanged. See docs/qa/sky-placement-variables-2026-09-09.md.",
@@ -27,6 +27,7 @@
     "readerInitialCssGzipBytes": "The budget now counts every stylesheet in the initial HTML and App graph, including the pre-JavaScript loading shell, rather than only the deferred styles.css entry. Cap adjusted from 47 kB to 48 kB; measured total 47.4 kB. Shared theme duplication was removed: combined reader boot is 458.5 kB and remains under its unchanged 467 kB cap. See docs/qa/app-loading-performance-2026-09-08.md.",
     "skyComposableBlocks": "CI production build measures 2,948,142 aggregate JavaScript gzip bytes with composable Sky paragraphs, practical items, motion-specific articles and on-demand aspect variables. Raise only the aggregate cap from 2,942,000 to 2,949,000 bytes; startup, CSS and individual chunk caps remain unchanged. No dependencies added. See docs/qa/sky-composable-blocks-2026-09-10.md.",
     "synastryBatch4": "Owner requested the 24 approved reverse passages in the canonical offline package on 2026-09-10. This adds exact copy and direction-level approval metadata to the deferred Friends bundle; measured aggregate 2,954,015 bytes before the small endpoint fix. Allocate 7 kB for this content release; all startup, CSS, and individual chunk caps remain unchanged. See docs/qa/synastry-batch-4-release-2026-09-10.md.",
-    "dailySkyAssembly": "Daily Sky editable assembly and station grammar: full build measures 2,962,269 bytes aggregate gzip. Allow 1,731 bytes headroom. Reader startup limits remain unchanged. See docs/qa/daily-sky-assembly-editor-2026-09-10.md. Deferred Sky detail measures 5,450 bytes after shared-graph minifier changes; allow 5,500 bytes, with startup limits unchanged."
+    "dailySkyAssembly": "Daily Sky editable assembly and station grammar: full build measures 2,962,269 bytes aggregate gzip. Allow 1,731 bytes headroom. Reader startup limits remain unchanged. See docs/qa/daily-sky-assembly-editor-2026-09-10.md. Deferred Sky detail measures 5,450 bytes after shared-graph minifier changes; allow 5,500 bytes, with startup limits unchanged.",
+    "skyIngressV5": "The opt-in V5 composer, validated source references and deferred occurrence preview measure 2,966,819 total JavaScript gzip bytes. Allow 12 kB above the prior aggregate cap; all startup, CSS and per-chunk limits remain unchanged. Reader boot measures 464.1 kB against 467 kB. See docs/qa/sky-ingress-v5-2026-09-10.md."
   }
 }

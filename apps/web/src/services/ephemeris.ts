@@ -488,6 +488,8 @@ function signTransitWindowFor(
 type SignResidencyPass = {
   entryDate: string;
   exitDate: string;
+  entryMotion?: "direct" | "retrograde";
+  previousSign?: string;
 };
 
 type SignResidencyStation = {
@@ -564,7 +566,10 @@ function multiPassSignResidencyFor(
     transitRemainingLabel: compactDurationLabelFromDays(
       (new Date(transitEnd).getTime() - date.getTime()) / 86_400_000
     ),
-    residencyPasses: passes
+    residencyPasses: passes.map(pass => ({ ...pass,
+      entryMotion: exactPlanetSpeed(swe, planetId, new Date(pass.entryDate)) < 0 ? "retrograde" : "direct",
+      previousSign: exactPlanetSign(swe, planetId, new Date(Date.parse(pass.entryDate) - 300000), longitudeOffset)
+    }))
   };
 }
 
@@ -579,7 +584,10 @@ function signResidencyWindowFor(
   if (["Sun", "Moon"].includes(planet)) {
     const pass = signTransitWindowFor(swe, planet, planetId, date, currentSign, longitudeOffset);
     return pass.transitStart && pass.transitEnd
-      ? { ...pass, residencyPasses: [{ entryDate: pass.transitStart, exitDate: pass.transitEnd }] }
+      ? { ...pass, residencyPasses: [{ entryDate: pass.transitStart, exitDate: pass.transitEnd,
+        entryMotion: exactPlanetSpeed(swe, planetId, new Date(pass.transitStart)) < 0 ? "retrograde" : "direct",
+        previousSign: exactPlanetSign(swe, planetId, new Date(Date.parse(pass.transitStart) - 300000), longitudeOffset)
+      }] }
       : pass;
   }
   return multiPassSignResidencyFor(swe, planet, planetId, date, currentSign, longitudeOffset);

@@ -11,6 +11,12 @@ for (const [planet, sign, date] of [['Mercury', 'Cancer', '2026-07-10'], ['Venus
  assert.equal(position.motion, 'retrograde');
  assert(facts.inSign.length); assert(facts.retrograde?.length);
  const passes = position.residencyPasses ?? [{ entryDate: position.transitStart!, exitDate: position.transitEnd! }];
+ for (const pass of passes) {
+  const crossing = await getAstrodienstSky(location, new Date(pass.entryDate), { includeTransitWindows: false });
+  const before = await getAstrodienstSky(location, new Date(Date.parse(pass.entryDate) - 300_000), { includeTransitWindows: false });
+  assert.equal(pass.entryMotion, crossing.positions.find(p => p.planet === planet)!.motion, `${date}: ingress crossing motion`);
+  assert.equal(pass.previousSign, before.positions.find(p => p.planet === planet)!.sign, `${date}: previous ingress sign`);
+ }
  assert(facts.inSign.every(event => passes.some(pass => event.occursAt >= pass.entryDate && event.occursAt < pass.exitDate)), 'exclude gaps between sign passes');
  assert(facts.retrograde!.every(event => event.occursAt >= facts.retrogradeStart! && event.occursAt < facts.retrogradeEnd!));
  for (const [events, scope] of [[facts.inSign, 'sign'], [facts.retrograde!, 'retrograde']] as const) {

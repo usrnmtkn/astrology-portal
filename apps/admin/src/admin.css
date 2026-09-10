@@ -10124,3 +10124,35 @@ body,
   display: grid;
   gap: var(--admin-space-xl);
 }
+
+/* V5 uses the existing editorial spacing, narrative, and source-color roles. */
+.admin-dashboard .admin-ingress-module-list,
+.admin-dashboard .admin-ingress-key {
+  display: grid;
+  gap: var(--admin-space-md);
+  min-width: 0;
+}
+.admin-dashboard .admin-ingress-module-list > li {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+}
+.admin-dashboard .admin-ingress-module-list [role="group"] {
+  display: flex;
+  gap: var(--admin-space-sm);
+}
+.admin-dashboard .admin-sky-ingress-composer input:not([type="checkbox"]),
+.admin-dashboard .admin-sky-ingress-composer select,
+.admin-dashboard .admin-sky-ingress-composer textarea {
+  max-width: 100%;
+  min-width: 0;
+}
+.admin-dashboard .admin-sky-ingress-composer .admin-composition-variable {
+  white-space: pre-wrap;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.admin-dashboard .admin-sky-ingress-composer .admin-composition-variable::after {
+  content: none;
+}

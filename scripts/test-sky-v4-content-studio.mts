@@ -47,7 +47,10 @@ const editOne = (contentKey: string, path: string, replacement: unknown, testId:
 const venus = sourceFor("sky-placement/article/venus/virgo");
 const definition = skyV4StudioDefinition(venus);
 assert.equal(definition.contentType, "continuous-placement");
-assert.equal(definition.editableFields.length, 7);
+assert.deepEqual(definition.editableFields.map(field => field.path).sort(), [
+  'tldrWhat', 'tldrTakeaway', 'placementArticle', 'placementArticleDirect', 'placementArticleRetrograde',
+  'fallback.hook', 'fallback.lived', 'fallback.turn', 'fallback.sections', 'ingress'
+].sort());
 assert.ok(definition.editableFields.some(field => field.path === "fallback.sections"));
 assert.ok(definition.readOnlyFields.includes("contentKey"));
 assert.ok(definition.sourceBaselineSha256);

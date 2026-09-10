@@ -5006,6 +5006,7 @@ function skyPlacementWritingSection(
       sign,
       dateLine: canonicalDateLine,
       aspectFacts: articleOptions?.aspectFacts,
+      ingressOccurrence: { passes: position.residencyPasses ?? [], asOfDate: generatedAt, timeZone: articleOptions?.locationTimeZone ?? position.transitTimeZone ?? "UTC" },
       facts: {
         entryDate: canonicalEntryDate,
         exitDate: canonicalExitDate

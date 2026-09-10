@@ -34,6 +34,8 @@ export type PlanetPosition = {
   residencyPasses?: Array<{
     entryDate: string;
     exitDate: string;
+    entryMotion?: "direct" | "retrograde";
+    previousSign?: string;
   }> | null;
   residencyStations?: Array<{
     occursAt: string;
