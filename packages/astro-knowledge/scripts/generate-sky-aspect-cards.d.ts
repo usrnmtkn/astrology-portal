@@ -147,6 +147,9 @@ export type SkyAspectCardResult = {
     pairKey?: string;
     pairSource?: string;
     exactAspectSource?: string | null;
+    pairSourceRevision?: { id: string; updatedAt: string; bodyHash: string } | null;
+    planet?: string;
+    sign?: string;
   };
 };
 
@@ -157,6 +160,10 @@ export function generateCard(
     withJudge?: boolean;
     judgeFeedback?: string;
     allowReviewSources?: boolean;
+    pairSourceOverride?: unknown;
+    generationMetadata?: Record<string, unknown>;
+    judgeBeforeProviderCall?: (...args: any[]) => void;
+    judgeGovernedPrompt?: string;
     generateFn?: (prompt: string, options?: { temperature?: number }) => Promise<string>;
     repairFn?: (text: string, reason: string) => Promise<string>;
     judgeFn?: (prompt: string) => Promise<string>;
@@ -177,7 +184,7 @@ export function generatePlacementTopper(
 
 export function normalizeCardArgs(
   args: SkyAspectCardArgs,
-  options?: { allowReviewSources?: boolean }
+  options?: { allowReviewSources?: boolean; pairSourceOverride?: unknown }
 ): {
   a: string;
   b: string;
@@ -186,6 +193,7 @@ export function normalizeCardArgs(
   signB: string;
   pairKey: string;
   pairSource: string;
+  pairSourceRevision?: { id: string; updatedAt: string; bodyHash: string } | null;
   exactAspectSource: string | null;
   reversed: boolean;
 };
@@ -219,7 +227,20 @@ export function repairPlacementTopper(
   }
 ): Promise<string>;
 
+export type SkyWriterConfiguration = {
+  provider: string;
+  model: string;
+  temperature: number | null;
+  reasoningEffort: "none" | "low" | "medium" | "high" | "xhigh" | "max" | null;
+};
+export function generationConfig(surface?: string): SkyWriterConfiguration;
+export function generate(prompt: string, options?: { temperature?: number; beforeProviderCall?: () => unknown; [key: string]: unknown }): Promise<string>;
+export function generatePlacementCard(args: { planet: string; sign: string }, options?: Parameters<typeof generateCard>[1]): Promise<SkyAspectCardResult>;
+
 declare const generator: {
+  generationConfig: typeof generationConfig;
+  generate: typeof generate;
+  generatePlacementCard: typeof generatePlacementCard;
   aspectWarmthHarvest: typeof aspectWarmthHarvest;
   closeBank: typeof closeBank;
   generateCard: typeof generateCard;

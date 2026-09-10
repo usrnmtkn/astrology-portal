@@ -1,4 +1,5 @@
 // Real API handler with a strict, isolated PostgREST store. Never contacts a service.
+import { fileURLToPath } from "node:url";
 import { Readable } from "node:stream";
 import { readFileSync } from "node:fs";
 import { calendarAspectStudioRecord } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/calendarAspectContentStudio.mjs";
@@ -67,7 +68,7 @@ export async function createApiStore(initial = fixtures) {
   return { rows, invoke };
 }
 
-if (process.argv.includes("--ipc")) {
+if (process.argv.includes("--ipc") && process.argv[1] === fileURLToPath(import.meta.url)) {
   const store = await createApiStore();
   const { contentLiveStatuses } = await import("../../api/_lib/content-live-status.ts");
   process.on("message", async ({ id, method, body, url, key }) => {

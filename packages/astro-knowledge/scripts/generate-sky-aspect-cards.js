@@ -174,7 +174,8 @@ function reviewPairSources() {
   return reviewPairSourceCache;
 }
 
-function loadPair(pairKey, { allowReviewSources = false } = {}) {
+function loadPair(pairKey, { allowReviewSources = false, pairSourceOverride = null } = {}) {
+  if (pairSourceOverride?.value?.id === pairKey) return pairSourceOverride;
   if (allowReviewSources) {
     const reviewPair = reviewPairSources().get(pairKey);
 
@@ -290,7 +291,7 @@ function normalizeToken(value) {
   return String(value ?? "").trim().toLowerCase().replace(/[\s_]+/g, "-");
 }
 
-function normalizeCardArgs({ a, b, aspect, signA, signB }, { allowReviewSources = false } = {}) {
+function normalizeCardArgs({ a, b, aspect, signA, signB }, { allowReviewSources = false, pairSourceOverride = null } = {}) {
   const first = canonicalPairPoint(a);
   const second = canonicalPairPoint(b);
   const normalizedAspect = normalizeToken(aspect);
@@ -317,7 +318,7 @@ function normalizeCardArgs({ a, b, aspect, signA, signB }, { allowReviewSources 
     ? { a: second, b: first, aspect: normalizedAspect, signA: secondSign, signB: firstSign }
     : { a: first, b: second, aspect: normalizedAspect, signA: firstSign, signB: secondSign };
   const pairKey = `${normalized.a}-${normalized.b}`;
-  const pair = loadPair(pairKey, { allowReviewSources });
+  const pair = loadPair(pairKey, { allowReviewSources, pairSourceOverride });
   const exactAspect = loadExactAspectSource(normalized);
 
   if (!pair) {
@@ -342,7 +343,8 @@ function normalizeCardArgs({ a, b, aspect, signA, signB }, { allowReviewSources 
     ...normalized,
     pairKey,
     pair: pair.value,
-    pairSource: path.relative(root, pair.path).replaceAll(path.sep, "/"),
+    pairSource: pair.path.startsWith("content-studio/") ? pair.path : path.relative(root, pair.path).replaceAll(path.sep, "/"),
+    pairSourceRevision: pair.value.studioRevision ?? null,
     exactAspect: exactAspect?.value ?? null,
     exactAspectSource: exactAspect ? path.relative(root, exactAspect.path).replaceAll(path.sep, "/") : null,
     reversed
@@ -636,10 +638,10 @@ function buildPlacementPrompt({ planet, body, sign }, { avoidTerms = [] } = {}) 
   ].join("\n");
 }
 
-function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [], allowReviewSources = false } = {}) {
+function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [], allowReviewSources = false, pairSourceOverride = null } = {}) {
   const normalized = normalizeCardArgs(
     { a, b, aspect, signA, signB },
-    { allowReviewSources }
+    { allowReviewSources, pairSourceOverride }
   );
   const warmthHarvest = aspectWarmthHarvest(normalized);
   if (!warmthHarvest.generationAllowed) {
@@ -1268,7 +1270,8 @@ async function generateCard(args, options = {}) {
 
   try {
     normalized = normalizeCardArgs(args, {
-      allowReviewSources: options.allowReviewSources === true
+      allowReviewSources: options.allowReviewSources === true,
+      pairSourceOverride: options.pairSourceOverride ?? null
     });
   } catch (error) {
     if (error instanceof SourceGapError) {
@@ -1303,7 +1306,8 @@ async function generateCard(args, options = {}) {
   return runCardPipeline({
     buildPromptFor: (avoidTerms) => buildPrompt(normalized, {
       avoidTerms,
-      allowReviewSources: options.allowReviewSources === true
+      allowReviewSources: options.allowReviewSources === true,
+      pairSourceOverride: options.pairSourceOverride ?? null
     }),
     facts: {
       a: normalized.a,
@@ -1313,6 +1317,7 @@ async function generateCard(args, options = {}) {
       signB: normalized.signB,
       pairKey: normalized.pairKey,
       pairSource: normalized.pairSource,
+      pairSourceRevision: normalized.pairSourceRevision ?? null,
       exactAspectSource: normalized.exactAspectSource,
       pairStatus: normalized.pair.status ?? null
     },

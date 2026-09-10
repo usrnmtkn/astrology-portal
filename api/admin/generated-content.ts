@@ -1,3 +1,4 @@
+import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
 import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 // @ts-ignore Shared inline-variable contract for continuous Sky placement prose.
 import { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
@@ -920,28 +921,16 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
   }
   if (skyBlockType === "sky_aspect" || skyBlockType === "sky_placement") {
     const sourceSnapshot = (row.sourceSnapshot ?? row.source_snapshot) as Record<string, unknown> | null | undefined;
-    const lint = (skyBlockType === "sky_placement"
-      ? sourceSnapshot?.skyPlacementVoiceLint ?? sourceSnapshot?.skyPlacementTopperVoiceLint
-      : sourceSnapshot?.skyAspectVoiceLint) as { score?: number; fails?: number; findings?: Array<{ severity?: string; reason?: string }> } | undefined;
-    const judge = (skyBlockType === "sky_placement"
-      ? sourceSnapshot?.skyPlacementJudge ?? sourceSnapshot?.skyPlacementTopperJudge
-      : sourceSnapshot?.skyAspectJudge) as { recommendation?: string; approvalSource?: string } | undefined;
     const judgeScore = row.judgeScore ?? row.judge_score;
     const judgeGate = row.judgeGate ?? row.judge_gate;
-    const humanApprovalEligible = judgeGate === "human-review"
-      && judge?.recommendation === "approve"
-      && judge.approvalSource === "llm-advisory";
-    const legacyAutoPublishEligible = skyBlockType === "sky_aspect" && judgeGate === "auto-publish";
-
-    if (lint?.score !== 3 || lint.fails !== 0 || judgeScore !== 3 || (!legacyAutoPublishEligible && !humanApprovalEligible)) {
-      const reasons = Array.isArray(lint?.findings)
-        ? [...new Set(lint.findings.filter((finding) => finding?.severity === "fail" && typeof finding.reason === "string").map((finding) => finding.reason))]
-        : [];
-      if (judgeScore !== 3 || (!legacyAutoPublishEligible && !humanApprovalEligible)) {
-        reasons.push("A passing editorial judge review is still required.");
-      }
-      throw new Error(`Sky cards can be published only after lint 3/0, judge score 3, and an explicit human-review recommendation. ${reasons.join(" ")} Mark reviewed saves your review status; it does not clear these checks.`);
+    const check = isRecord(sourceSnapshot?.studioWritingCheck) ? sourceSnapshot.studioWritingCheck : null;
+    if (check && (check.contentKey !== (row.contentKey ?? row.content_key)
+      || check.bodyHash !== createHash("sha256").update(typeof row.body === "string" ? row.body : "").digest("hex"))) {
+      throw new GeneratedContentRequestError("The writing changed after its checks. Save and run writing checks again.", 409);
     }
+    const issues = skyWritingIssues({ content_key: row.contentKey ?? row.content_key ?? "", block_type: skyBlockType,
+      body: "saved", source_snapshot: sourceSnapshot, judge_score: judgeScore, judge_gate: judgeGate });
+    if (issues.length) throw new GeneratedContentRequestError(issues.join(" "), 409);
   }
 }
 
@@ -2373,21 +2362,21 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (body.ownerAction === "approve-and-schedule") {
     if (!existing || !["sky_aspect", "sky_placement"].includes(existing.block_type ?? "")) {
-      throw new Error("Approve and schedule is available only for generated Sky aspect and placement rows.");
+      throw new GeneratedContentRequestError("Approve and schedule is available only for generated Sky aspect and placement rows.", 409);
     }
     const includesCopyEdit = [body.headline, body.summary, body.body, body.sections]
       .some((value) => value !== undefined);
     if (includesCopyEdit) {
-      throw new Error("Save and revalidate copy edits before approving and scheduling the row.");
+      throw new GeneratedContentRequestError("Save and revalidate copy edits before approving and scheduling the row.", 409);
     }
     const unexpectedFields = Object.entries(body)
       .filter(([key, value]) => !["id", "ownerAction", "expectedUpdatedAt"].includes(key) && value !== undefined)
       .map(([key]) => key);
     if (unexpectedFields.length > 0) {
-      throw new Error(`Approve and schedule cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
+      throw new GeneratedContentRequestError(`Approve and schedule cannot be combined with other changes: ${unexpectedFields.join(", ")}.`, 409);
     }
     if (existing.judge_gate !== "human-review") {
-      throw new Error("Approve and schedule requires the human-review judge gate.");
+      throw new GeneratedContentRequestError("Approve and schedule requires the human-review judge gate.", 409);
     }
     assertCanPublishGeneratedContent({
       ...existing,
@@ -2581,6 +2570,15 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.evergreen_by = body.evergreen ? body.evergreenBy ?? "admin" : null;
   }
 
+  const editsReferenceCopy = existing && isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {}) && (
+    (body.body !== undefined && body.body !== existing.body) || (body.headline !== undefined && body.headline !== existing.headline)
+    || (body.summary !== undefined && body.summary !== existing.summary));
+  if (editsReferenceCopy) {
+    patch.status = "DRAFT";
+    patch.lane = "reference";
+    patch.review_state = "owner-review-required";
+    patch.reviewed_at = null;
+  }
   const editsSkyCopy = ["sky_aspect", "sky_placement"].includes(existing?.block_type ?? "") && (
     (body.headline !== undefined && body.headline !== existing.headline)
     || (body.summary !== undefined && body.summary !== existing.summary)
@@ -2588,13 +2586,22 @@ async function updateGeneratedContent(req: IncomingMessage) {
     || (body.sections !== undefined && JSON.stringify(body.sections) !== JSON.stringify(existing.sections))
   );
 
+  if ((editsSkyCopy || editsReferenceCopy) && existing) {
+    const snapshot = { ...(existing.source_snapshot ?? {}), ...((patch.source_snapshot ?? {}) as Record<string, unknown>) };
+    const history = Array.isArray(snapshot.studioRevisionHistory) ? snapshot.studioRevisionHistory : [];
+    snapshot.studioRevisionHistory = [...history, { updatedAt: existing.updated_at, status: existing.status,
+      headline: existing.headline, summary: existing.summary, body: existing.body,
+      bodyHash: createHash("sha256").update(existing.body ?? "").digest("hex") }];
+    patch.source_snapshot = snapshot;
+  }
   if (editsSkyCopy) {
     patch.status = "DRAFT";
     patch.review_state = "sky-voice-needs-review";
     patch.judge_score = null;
     patch.judge_verdict = null;
     patch.judge_gate = null;
-    patch.judge_why = "Card copy changed after judging and must be generated or judged again.";
+    patch.judge_why = "Saved writing changed. Run writing checks on this version before approving it.";
+    patch.source_snapshot = { ...(patch.source_snapshot as Record<string, unknown> ?? {}), studioWritingCheck: null };
     patch.published_at = null;
   }
 

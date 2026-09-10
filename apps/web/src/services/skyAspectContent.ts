@@ -206,10 +206,18 @@ function generatedSkyAspectCardPassesBoundary(
     && !containsInternalMetadata
     && lint?.score === 3
     && lint?.fails === 0
-    && content.judgeScore === 3
+    && (content.judgeScore === 3 || (recordField(source.studioWritingCheck)?.reviewPolicy === "owner-final-v1"
+      && recordField(source.studioWritingCheck)?.contentKey === content.contentKey))
     && content.status === "LIVE"
     && content.judgeGate === "human-review"
-    && source.pairSource === expected.pairSource
+    && (source.pairSource === expected.pairSource
+      || (source.pairSource === `content-studio/source/sky-aspect-pair/${expected.pairKey}`
+        && typeof recordField(source.studioPairSourceRevision)?.bodyHash === "string"
+        && typeof recordField(source.studioPairSourceRevision)?.id === "string") || (
+      recordField(source.studioWritingCheck)?.contentKey === content.contentKey
+      && typeof recordField(source.studioWritingCheck)?.bodyHash === "string"
+      && (source.pairSource === "content-studio/manual" || (typeof source.pairSource === "string" && source.pairSource.startsWith("content-studio/source/sky-aspect-pair/")))
+    ))
     && source.pairKey === expected.pairKey
     && facts?.a === expected.a
     && facts?.b === expected.b
