@@ -178,3 +178,13 @@
   text-decoration: underline;
   text-underline-offset: var(--space-1);
 }
+
+.card-read-more + :is(
+  .updates-aspect-row__life-areas,
+  .house-transit-keywords,
+  .planet-placement-row__tags,
+  .placement-table-row__status,
+  .aspect-row-subtitle.ui-pill
+) {
+  margin-block-start: var(--space-4);
+}
