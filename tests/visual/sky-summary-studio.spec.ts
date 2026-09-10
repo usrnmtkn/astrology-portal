@@ -348,7 +348,7 @@ test("full template controls preview order, publish, and reload", async ({ page,
     { id: "ongoing", type: "station", phase: "retrograde-passage", direction: "retrograde", planet: "Saturn", sign: "Aries", startsAt: "2026-09-11T00:00:00Z", dateKey: "2026-09-10" },
     { id: "moon", type: "lunation", title: "New Moon", sign: "Virgo", startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" }
   ] }] } } }));
-  await reader.goto("http://127.0.0.1:4294/#sky");
+  await reader.goto("http://127.0.0.1:4294/?date=2026-09-10#sky");
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
   await expect(summary).toContainText("Mercury stations retrograde in Scorpio today.");
   await expect(summary).not.toContainText("Saturn stations");
@@ -409,7 +409,7 @@ test("V6 Moon event sources stay separate and missing copy stays blank", async (
     { id: "ordinary", type: "lunation", title: "New Moon", sign: "Virgo", longitude: 165, startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" },
     { id: "eclipse", type: "lunation", title: "New Moon", eclipseType: "solar", sign: "Virgo", longitude: 165, startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" }
   ] }] } } }));
-  await reader.goto("http://127.0.0.1:4294/#sky");
+  await reader.goto("http://127.0.0.1:4294/?date=2026-09-10#sky");
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
   await expect(summary).toContainText("Solar Eclipse there at 18° reminds us that striving for perfection can hinder growth");
   await expect(summary).not.toContainText("Moon in Cancer");
