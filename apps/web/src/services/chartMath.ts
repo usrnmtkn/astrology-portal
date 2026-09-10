@@ -90,7 +90,7 @@ const comparisonPointRoles: Record<string, string> = {
 };
 
 const synastryPersonalPoints = new Set(["sun", "moon", "mercury", "venus", "mars"]);
-const synastryAngles = new Set(["ascendant", "midheaven"]);
+const synastryAngles = new Set(["ascendant", "midheaven", "descendant", "imum coeli"]);
 const synastrySocialOuterPoints = new Set(["jupiter", "saturn", "uranus", "neptune", "pluto"]);
 const compatibilityHighlightPoints = new Set(["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"]);
 
@@ -696,9 +696,9 @@ export function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoin
   }
 
   const points = sky.positions
-    .filter((position) => position.planet !== "North Node" && position.planet !== "True Node")
+    .filter((position) => position.planet !== "True Node" || !sky.positions.some((candidate) => candidate.planet === "North Node"))
     .map((position) => ({
-      name: position.planet,
+      name: position.planet === "True Node" ? "North Node" : position.planet,
       glyph: position.glyph,
       longitude: zodiacLongitude(position),
       role: comparisonPointRole(position.planet)
@@ -722,7 +722,26 @@ export function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoin
     });
   }
 
+  // The opposite angles are computed from the same chart's measured axes.
+  // Preserve unknown-time behavior: no axis means no derived angle.
+  for (const [name, glyph, longitude] of [
+    ["Descendant", "Dsc", sky.ascendantLongitude],
+    ["Imum Coeli", "IC", sky.midheavenLongitude]
+  ] as const) {
+    if (typeof longitude === "number" && Number.isFinite(longitude)) {
+      points.push({ name, glyph, longitude: normalizedAngle(longitude + 180), role: comparisonPointRole(name) });
+    }
+  }
+
   return points;
+}
+
+// Batch 4 enables these previously omitted endpoints for the approved Sun
+// families. Broader endpoint rollout must not change this release's card list.
+const newlyEnabledSynastryEndpoints = new Set(["North Node", "Descendant", "Imum Coeli"]);
+function synastryPairEnabled(first: string, second: string) {
+  return (!newlyEnabledSynastryEndpoints.has(first) || second === "Sun")
+    && (!newlyEnabledSynastryEndpoints.has(second) || first === "Sun");
 }
 
 export function calculatedSynastryContacts(
@@ -732,6 +751,7 @@ export function calculatedSynastryContacts(
   const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
   const yourPoints = comparisonPointsFromSky(profileNatalSky);
   const contacts = friendPoints.flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
+    if (!synastryPairEnabled(friendPoint.name, yourPoint.name)) return [];
     const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
     const aspect = transitAspectDefinitions
       .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))
@@ -832,6 +852,7 @@ export function synastryWheelAspectLines(
 
   return friendPoints
     .flatMap((friendPoint) => yourPoints.flatMap((yourPoint) => {
+      if (!synastryPairEnabled(friendPoint.name, yourPoint.name)) return [];
       const separation = angularDistance(friendPoint.longitude, yourPoint.longitude);
       const aspect = transitAspectDefinitions
         .map((definition) => ({ ...definition, orbValue: Math.abs(separation - definition.exact) }))

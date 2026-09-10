@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { historicalSynastryRow } from "./lib/synastry-directionality-history.mjs";
 
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
@@ -206,7 +207,7 @@ const postV13GovernedReleases = new Set([
 const postV13GovernedContentKeys = new Set([
   "fallback-hook/natal-you-placement-complete-final/lilith/sagittarius/3",
 ]);
-const priorApprovedRows = sourceRows.hookRows.filter((row) => (
+const priorApprovedRows = sourceRows.hookRows.map(historicalSynastryRow).filter((row) => (
   row.source_release !== "ll-matrix-v13-owner-approved-runtime"
   && !postV13GovernedReleases.has(row.source_release)
   && !postV13GovernedContentKeys.has(row.contentKey)

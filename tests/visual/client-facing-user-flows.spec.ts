@@ -16,6 +16,7 @@ import {
 } from "../../apps/web/src/services/verifiedSkyCache";
 
 type SeedOptions = {
+  synastryFixture?: { body: string; aspect: string; inverse: boolean };
   profile?: boolean;
   profileBirthDate?: string;
   profileBirthTime?: string;
@@ -341,6 +342,50 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
     preloadedNatalCache
   });
 
+  if (options.synastryFixture && preloadedNatalSnapshot) {
+    await page.addInitScript(({ sky, fixture, fixtureLocation, fixtureUserId }) => {
+      const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+      const normalize = (v: number) => (v % 360 + 360) % 360;
+      const pointLongitude = (name: string) => name === "Ascendant" ? sky.ascendantLongitude!
+        : name === "Descendant" ? normalize(sky.ascendantLongitude! + 180)
+        : name === "Midheaven" ? sky.midheavenLongitude!
+        : name === "Imum Coeli" ? normalize(sky.midheavenLongitude! + 180)
+        : sky.positions.find(p => p.planet === name)!.longitude!;
+      const degrees = ({ conjunction: 0, square: 90, opposition: 180, trine: 120, sextile: 60 } as Record<string, number>)[fixture.aspect];
+      const targetName = fixture.inverse ? "Sun" : fixture.body;
+      const longitude = normalize(pointLongitude(fixture.inverse ? fixture.body : "Sun") + degrees);
+      const friendSky = structuredClone(sky);
+      // Avoid filling the 16-card ranking cap with same-chart conjunctions.
+      const fixtureOffset = fixture.body === "Imum Coeli" && fixture.aspect === "sextile" && !fixture.inverse ? 31 : 17;
+      for (const position of friendSky.positions) {
+        position.longitude = normalize(position.longitude! + fixtureOffset);
+        position.degree = position.longitude % 30;
+        position.sign = signs[Math.floor(position.longitude / 30)];
+      }
+      friendSky.ascendantLongitude = normalize(friendSky.ascendantLongitude! + fixtureOffset);
+      friendSky.midheavenLongitude = normalize(friendSky.midheavenLongitude! + fixtureOffset);
+      if (["Ascendant", "Descendant"].includes(targetName)) {
+        friendSky.ascendantLongitude = normalize(longitude - (targetName === "Descendant" ? 180 : 0));
+        friendSky.ascendant = signs[Math.floor(friendSky.ascendantLongitude / 30)];
+      } else if (["Midheaven", "Imum Coeli"].includes(targetName)) {
+        friendSky.midheavenLongitude = normalize(longitude - (targetName === "Imum Coeli" ? 180 : 0));
+        friendSky.midheaven = signs[Math.floor(friendSky.midheavenLongitude / 30)];
+      } else {
+        const position = friendSky.positions.find(p => p.planet === targetName)!;
+        position.longitude = longitude;
+        position.degree = longitude % 30;
+        position.sign = signs[Math.floor(longitude / 30)];
+      }
+      // Deliberate test-only chart facts exercise the real Friends calculation,
+      // selection, card and detail path. They never enter production sources.
+      window.localStorage.setItem(`tldrastro:manualCharts:${fixtureUserId}`, JSON.stringify([{
+        id: "friend-batch4", ownerUserId: fixtureUserId, chartType: "person", displayName: "Sofia", firstName: "Sofia", lastName: null,
+        relationshipType: "partner", birthDate: "1990-01-01", birthTime: "12:00 PM", birthTimeUnknown: false,
+        birthPlace: fixtureLocation.label, birthLocation: fixtureLocation, natalChart: friendSky, notes: null,
+        createdAt: "2026-07-16T16:00:00.000Z", updatedAt: "2026-07-16T16:00:00.000Z"
+      }]));
+    }, { sky: preloadedNatalSnapshot, fixture: options.synastryFixture, fixtureLocation, fixtureUserId });
+  }
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
 
@@ -4377,5 +4422,37 @@ for (const theme of ["light", "dark"] as const) {
       await page.keyboard.press("Enter");
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     });
+  }
+}
+
+// Run this same release regression against local preview and PLAYWRIGHT_BASE_URL.
+// CMS endpoints fail in seedClientState, proving the shipped canonical package.
+for (const body of ["Ascendant", "Midheaven", "Descendant", "Imum Coeli", "Chiron", "North Node", "South Node", "Lilith"]) {
+  for (const aspect of ["conjunction", "square", "opposition", "trine", "sextile"]) {
+    for (const inverse of [false, true]) {
+      test(`Batch 4 canonical Friends ${body} ${aspect} ${inverse ? "opposite" : "new"}`, async ({ page }) => {
+        test.setTimeout(60_000);
+        await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, synastryFixture: { body, aspect, inverse } });
+        await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=synastry");
+        const readerBody = inverse ? body : "Sun";
+        const friendBody = inverse ? "Sun" : body;
+        const aspectWord = aspect === "conjunction" ? "conjunct" : aspect === "opposition" ? "opposite" : aspect;
+        const card = page.getByRole("button", { name: `Open full entry for Your ${readerBody} ${aspectWord} Sofia's ${friendBody}`, exact: true });
+        const family = ["square", "opposition"].includes(aspect) ? "hard" : ["trine", "sextile"].includes(aspect) ? "soft" : aspect;
+        const row = fallbackSourceRowsV3.hookRows.find(r => r.contentKey === `fallback-hook/synastry-pair/sun/${body.toLowerCase().replaceAll(" ", "-")}/${family}`)!;
+        const copy = String(inverse ? row.body_they : row.body_you)
+          .replaceAll("{{holder1PossCap}}", inverse ? "Sofia's" : "Your")
+          .replaceAll("{{holder2PossCap}}", inverse ? "Your" : "Sofia's")
+          .replaceAll("{{holder1Poss}}", inverse ? "Sofia's" : "your")
+          .replaceAll("{{holder2Poss}}", inverse ? "your" : "Sofia's")
+          .replaceAll("{{holder1}}", inverse ? "Sofia" : "you")
+          .replaceAll("{{holder2}}", inverse ? "you" : "Sofia");
+        await expect(card.locator(".synastry-contact-description")).toHaveText(copy, { timeout: 20_000 });
+        await card.click();
+        const detail = page.locator(".app-shell.mode-detail");
+        await expect(detail).toContainText(copy);
+        await expect(detail).not.toContainText(/\{\{(?:holder[12]|Name)/);
+      });
+    }
   }
 }

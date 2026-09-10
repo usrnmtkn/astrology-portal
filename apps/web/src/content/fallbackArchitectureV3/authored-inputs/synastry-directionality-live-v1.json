@@ -1,0 +1,277 @@
+{
+  "schema": "synastry-directionality-live/v1",
+  "release_id": "synastry-directionality-batch-4-live-v1",
+  "directionality_mode": "viewer-centered-synastry-v1",
+  "approved_at": "2026-09-09",
+  "serving_authorized_at": "2026-09-10",
+  "approval_record": "packages/astro-knowledge/review/synastry-directionality-batch-4-live-2026-09-10/OWNER-APPROVAL.md",
+  "note": "Additive semantic-direction supersessions. Each patch replaces only body_you on its existing canonical synastry-pair row. The historical body_they is inherited unchanged from the canonical base row.",
+  "rows": [
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/ascendant/conjunction",
+      "existingSemanticDirection": "sun_to_ascendant",
+      "missingSemanticDirection": "ascendant_to_sun",
+      "body_you": "The way {{holder2}} naturally shows up can make you feel more like yourself. Something about their manner, their confidence, or the way they move through a situation may bring your own personality forward without much effort. You may feel seen by them before either of you has said very much. That can be affirming, but it can also make their reaction matter too much. Enjoy how easy it is to be yourself without needing their attention to tell you that you are getting it right.",
+      "expected_before_sha256": {
+        "body_you": "493e07edbc4998f6fd5f57e0e76d503a3b9599ec5f29ea784e4f9f1519fc1a9c",
+        "body_they": "c72525f26d8563216a2ea48a07f6cb6ccb4d7562806822f35573006ccdd00307"
+      },
+      "approved_body_sha256": "fd684f9e986f31061eceb4f135dfcd917635fa8c69a3eeebb8fac0212ceaaaa4"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/ascendant/hard",
+      "existingSemanticDirection": "sun_to_ascendant",
+      "missingSemanticDirection": "ascendant_to_sun",
+      "body_you": "The way {{holder2}} naturally reacts can rub against the way you see yourself. A look, a tone, or the way they handle a situation may make you feel misunderstood before they have actually criticized you. You may respond by explaining yourself more forcefully or trying to prove who you are. The connection gets harder when every difference in style starts feeling like a judgment of your character.",
+      "expected_before_sha256": {
+        "body_you": "aa0d136e6f782c961f8dad0a29873b9926bed68dd1495416aefc2fbb6e49ef34",
+        "body_they": "74dea9c5554eba9c184d87ee1a75c4b714c4463ce6931a9d83fafbf7d35d2011"
+      },
+      "approved_body_sha256": "0792afdfafa2199bc4dc4dc8f83c2a0a2adc1346733e2365ea10786921d0c253"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/ascendant/soft",
+      "existingSemanticDirection": "sun_to_ascendant",
+      "missingSemanticDirection": "ascendant_to_sun",
+      "body_you": "{{holder2}}’s natural way of being tends to make your own confidence easier to access. You do not have to work very hard to feel understood around them, and their reactions usually leave you more comfortable saying what you want or showing more of who you are. Their presence does not make you feel like you need to polish yourself first. You can relax and let more of your personality come through.",
+      "expected_before_sha256": {
+        "body_you": "5ebfa0281d73a4e2e0ffb24d3b2d2ab500a932adfd75caf24ce9a980b6bdadbd",
+        "body_they": "848a4bbd450e74a211d29721a494576642a1f3b3f22a20be95fb0529eb8e577b"
+      },
+      "approved_body_sha256": "2a3a7a8157dbefe0593b8fa5db043c046d9b025bdc491392567f039a2178090d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/midheaven/conjunction",
+      "existingSemanticDirection": "sun_to_midheaven",
+      "missingSemanticDirection": "midheaven_to_sun",
+      "body_you": "{{holder2}}’s ambition can wake up your own. Seeing what they are building, what they want to be known for, or how seriously they take their direction may make you think more clearly about the person you want to become. Their public life can pull more confidence and purpose out of you. Just be careful not to measure your own worth by how useful you are to their climb or how closely your life matches the path they are on.",
+      "expected_before_sha256": {
+        "body_you": "57b40267529d7693deaa9af7497711cd078be5a4dd99ad4b83bfc71c9ed68f89",
+        "body_they": "57b40267529d7693deaa9af7497711cd078be5a4dd99ad4b83bfc71c9ed68f89"
+      },
+      "approved_body_sha256": "0162d265e5e23ffe1b4427f504b739c66ae976f45f1ad3299e8ff39ecfbe5987"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/midheaven/hard",
+      "existingSemanticDirection": "sun_to_midheaven",
+      "missingSemanticDirection": "midheaven_to_sun",
+      "body_you": "{{holder2}}’s goals can make you look harder at your own direction. Their work, recognition, or plans for the future may stir up comparison, especially when they seem certain about where they are going and you are still figuring something out. You may want to prove that your path matters too, or start treating their success like a verdict on your own. Their climb is not a scorecard. Let it show you what you want without turning it into proof that you are behind.",
+      "expected_before_sha256": {
+        "body_you": "8720fcc7479c9b8e4abcaae2b8ab92954323a26c40fd51b99cc1de0cefc2645d",
+        "body_they": "8720fcc7479c9b8e4abcaae2b8ab92954323a26c40fd51b99cc1de0cefc2645d"
+      },
+      "approved_body_sha256": "edacb3282a63543607f486f60e05ae2c631b76382acd6909a23f1cd90d4499fe"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/midheaven/soft",
+      "existingSemanticDirection": "sun_to_midheaven",
+      "missingSemanticDirection": "midheaven_to_sun",
+      "body_you": "{{holder2}}’s direction can make your own ambition easier to admit. Seeing them take their work seriously may remind you to put your name on what you are good at, ask for the opportunity, or stop pretending a goal does not matter to you. Their progress does not have to compete with yours. Sometimes watching someone build something they care about makes your own future feel more possible.",
+      "expected_before_sha256": {
+        "body_you": "f8b5b049dad78dd9e38b62a2d2bcf99fb089574dd7d4e8e95bee161bbfeeb36b",
+        "body_they": "f8b5b049dad78dd9e38b62a2d2bcf99fb089574dd7d4e8e95bee161bbfeeb36b"
+      },
+      "approved_body_sha256": "f13611f06661c6c7385c89405fce09929220c32a1f95d1bcf2be4618ead69cbc"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/descendant/conjunction",
+      "existingSemanticDirection": "sun_to_descendant",
+      "missingSemanticDirection": "descendant_to_sun",
+      "body_you": "{{holder2}} may treat you like the kind of person they naturally want beside them. Their way of partnering can make your strengths feel especially visible, and being chosen that clearly can bring out more confidence in you. The risk is that the fit feels so good that you start becoming the role they respond to best. You can be important to {{holder2}} without turning yourself into their idea of the perfect partner, friend, or collaborator.",
+      "expected_before_sha256": {
+        "body_you": "5c802ae0ad823959ea5474990901f2e1d0dd53a627df04c414fa6525a19c1cc6",
+        "body_they": "5c802ae0ad823959ea5474990901f2e1d0dd53a627df04c414fa6525a19c1cc6"
+      },
+      "approved_body_sha256": "3c839e424fc511a1f4e21c83b38fe16428aaf8bc92e294a76f6b7fef95ce1c6c"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/descendant/hard",
+      "existingSemanticDirection": "sun_to_descendant",
+      "missingSemanticDirection": "descendant_to_sun",
+      "body_you": "What {{holder2}} expects from a close relationship may not always fit the way you naturally operate. They may want more compromise, more availability, or a different kind of partnership than you instinctively offer. That can make you feel like being yourself is somehow the problem, so you either defend yourself harder or start changing to keep the connection working. A relationship can have expectations without requiring one person to disappear inside them.",
+      "expected_before_sha256": {
+        "body_you": "5a94039bf0627a678afb3d4dd6f017d67694e109fc2fd68e80dead3bc30c4b6c",
+        "body_they": "5a94039bf0627a678afb3d4dd6f017d67694e109fc2fd68e80dead3bc30c4b6c"
+      },
+      "approved_body_sha256": "dc47c5e643197d382d768e0df483858b84f9e18d1e1f5bf7d5db86549d0a2ddc"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/descendant/soft",
+      "existingSemanticDirection": "sun_to_descendant",
+      "missingSemanticDirection": "descendant_to_sun",
+      "body_you": "The way {{holder2}} partners with people tends to work well with who you already are. You may feel wanted without feeling managed, and included without having to become easier, quieter, or more agreeable first. Their idea of cooperation fits your personality well enough that working together does not cost you your voice. Partnership does not require an audition here.",
+      "expected_before_sha256": {
+        "body_you": "c7c14a8a3381907a485239449f2651f255fb81f540ce6d9f6057c256e03214d1",
+        "body_they": "c7c14a8a3381907a485239449f2651f255fb81f540ce6d9f6057c256e03214d1"
+      },
+      "approved_body_sha256": "4ec6be733e3713ed7698df1d7e10d7e3576601ef2f193e2efbdcbc1462a6a112"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/imum-coeli/conjunction",
+      "existingSemanticDirection": "sun_to_imum-coeli",
+      "missingSemanticDirection": "imum-coeli_to_sun",
+      "body_you": "Being close to {{holder2}}’s private world can bring out a version of you that does not need an audience. Their home, family stories, or the way they are when nobody is watching may make you feel trusted enough to drop some of your own armor. You can feel more like yourself in the quiet parts of this connection. Just remember that being welcomed inside does not make their private life yours to manage or explain for them.",
+      "expected_before_sha256": {
+        "body_you": "b7b39e73b7dfbd3a8a5558726c7196a63dbad3c06440eaf032b065a08f8d2342",
+        "body_they": "b7b39e73b7dfbd3a8a5558726c7196a63dbad3c06440eaf032b065a08f8d2342"
+      },
+      "approved_body_sha256": "bf625a1295967463e9843552b683ca15e8c7805d52908897901c368ca9fdc535"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/imum-coeli/hard",
+      "existingSemanticDirection": "sun_to_imum-coeli",
+      "missingSemanticDirection": "imum-coeli_to_sun",
+      "body_you": "{{holder2}}’s need for privacy, quiet, or familiar routines can sometimes make your natural way of showing up feel like too much. You may want more conversation, movement, or openness just when they want to pull back into what feels familiar. That difference can make you feel rejected when they are actually trying to recover. You do not have to dim yourself, but you may have to learn when their closed door is about rest and not about you.",
+      "expected_before_sha256": {
+        "body_you": "8707c04b155ba5273903ac59845070d720f3af6cfe97a5c9c8d3c8aa3270cd15",
+        "body_they": "8707c04b155ba5273903ac59845070d720f3af6cfe97a5c9c8d3c8aa3270cd15"
+      },
+      "approved_body_sha256": "67c5a33d5d32cdf6df3e02e6add252b6cbe9939fb7bb79070ea31f1fc0712eb9"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/imum-coeli/soft",
+      "existingSemanticDirection": "sun_to_imum-coeli",
+      "missingSemanticDirection": "imum-coeli_to_sun",
+      "body_you": "{{holder2}}’s private world can make it easier for you to put down the version of yourself that is always doing, proving, or being seen. Around them, ordinary things can feel good: a quiet meal, a long conversation, sitting together without needing to make the time impressive. Their sense of home gives your confidence somewhere to rest. You do not always have to shine to know you still belong.",
+      "expected_before_sha256": {
+        "body_you": "bf16bcdb4fb546dd5e4ced878453e70dc190b121c0e7cf7df1109a39ffcc2572",
+        "body_they": "bf16bcdb4fb546dd5e4ced878453e70dc190b121c0e7cf7df1109a39ffcc2572"
+      },
+      "approved_body_sha256": "8a7fc0a9923657080086476780e0d92e984df80f12521b9f5ebcf98d1051563c"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/chiron/conjunction",
+      "existingSemanticDirection": "sun_to_chiron",
+      "missingSemanticDirection": "chiron_to_sun",
+      "body_you": "{{holder2}}’s vulnerable places can make you much more aware of the effect you have on them. You may notice that your confidence, success, or even a casual comment lands more deeply than you expected, and that can make you want to protect them. The danger is starting to dim yourself so they never have to feel uncomfortable. Their pain deserves care, but your light is not the injury. You can be gentle without becoming smaller.",
+      "expected_before_sha256": {
+        "body_you": "9a28028e8ff4e8923d500b9a4cfba9295a36fbf23cb15f59dd22e6b2a65e0f29",
+        "body_they": "9a28028e8ff4e8923d500b9a4cfba9295a36fbf23cb15f59dd22e6b2a65e0f29"
+      },
+      "approved_body_sha256": "18a994e016f3b5128831f591fb100153d1a1f0141929b5ba935b36b5464dee2a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/chiron/hard",
+      "existingSemanticDirection": "sun_to_chiron",
+      "missingSemanticDirection": "chiron_to_sun",
+      "body_you": "{{holder2}}’s pain can make you question parts of yourself that normally feel simple. If your confidence, choices, or success touches an old wound for them, you may feel guilty for shining or defensive because you never meant to hurt them. That can turn their sensitivity into something you feel responsible for fixing. Be kind with the sore spot, but do not confuse being considerate with having to apologize for who you are.",
+      "expected_before_sha256": {
+        "body_you": "b91a2a5a7e8353729a1d3c661cee741257147ecf397100f09496861340881367",
+        "body_they": "b91a2a5a7e8353729a1d3c661cee741257147ecf397100f09496861340881367"
+      },
+      "approved_body_sha256": "4add7a53910cb6ef88717e4e9e759b2c9abf700a768a7ad9b064e10b8fd52e3e"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/chiron/soft",
+      "existingSemanticDirection": "sun_to_chiron",
+      "missingSemanticDirection": "chiron_to_sun",
+      "body_you": "{{holder2}}’s vulnerability can make your confidence gentler without making it weaker. You may become more thoughtful about how you encourage them, more aware of what a certain subject costs them, and better at knowing when to stand beside them instead of trying to cheer them out of the feeling. Their softer places teach you that strength does not have to enter every situation at full volume.",
+      "expected_before_sha256": {
+        "body_you": "55e57d1e32de68debdb80e10a624c0f0b97bc32219626de0cc45c78afdee2b7d",
+        "body_they": "55e57d1e32de68debdb80e10a624c0f0b97bc32219626de0cc45c78afdee2b7d"
+      },
+      "approved_body_sha256": "62474a3f55c00fbbd1989198de7bd76212fedb0e4d18d9acdeba59562d9abbed"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/north-node/conjunction",
+      "existingSemanticDirection": "sun_to_north-node",
+      "missingSemanticDirection": "north-node_to_sun",
+      "body_you": "Watching {{holder2}} grow can make you more aware of the person you are becoming too. Their next steps may pull qualities out of you that were already there but easier to ignore: more courage, more visibility, or a stronger willingness to choose your own direction. You may feel important in their growth, but do not turn their future into your assignment. You can inspire each other without becoming responsible for where the other person ends up.",
+      "expected_before_sha256": {
+        "body_you": "739d91f9425c9e718bead65b827d3a28a269a1f106387e4d1bdba26af906d3b6",
+        "body_they": "739d91f9425c9e718bead65b827d3a28a269a1f106387e4d1bdba26af906d3b6"
+      },
+      "approved_body_sha256": "23b4a6768c2ee3aa43ff49cb2ef0d9871c482ac4c604a3b703e7095befc39181"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/north-node/hard",
+      "existingSemanticDirection": "sun_to_north-node",
+      "missingSemanticDirection": "north-node_to_sun",
+      "body_you": "The direction {{holder2}} is growing toward may challenge the version of yourself you are used to being around them. As they take new risks, change priorities, or move away from an old dynamic, you may have to figure out who you are without the familiar role you had in their life. Their growth is not a rejection of you. It may simply be showing you that you are changing too.",
+      "expected_before_sha256": {
+        "body_you": "421578c0c828f4edfa4da97c09c6d55bcc720b3d216f413360272266b6c9f53f",
+        "body_they": "421578c0c828f4edfa4da97c09c6d55bcc720b3d216f413360272266b6c9f53f"
+      },
+      "approved_body_sha256": "8fa22cd0531c974bdbcd29474f69d6abacdac57b8b8f794441599bba93b28a1d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/north-node/soft",
+      "existingSemanticDirection": "sun_to_north-node",
+      "missingSemanticDirection": "north-node_to_sun",
+      "body_you": "{{holder2}}’s growth tends to bring out a good kind of confidence in you. When they try something new, take themselves more seriously, or move toward a bigger life, you may feel more willing to do the same in your own way. Their becoming does not make you feel left behind. It reminds you that you are allowed to keep becoming too.",
+      "expected_before_sha256": {
+        "body_you": "942cc7c7a6b81617ce0190b826c13109e2d001934f98c842a42fd68fb4f057b0",
+        "body_they": "942cc7c7a6b81617ce0190b826c13109e2d001934f98c842a42fd68fb4f057b0"
+      },
+      "approved_body_sha256": "d7c4587497b92d79b39761357ae8c7a8f9d7c6d3a2975616d00324fc0c04661e"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/south-node/conjunction",
+      "existingSemanticDirection": "sun_to_south-node",
+      "missingSemanticDirection": "south-node_to_sun",
+      "body_you": "{{holder2}} can make you feel known very quickly. Something about their history, habits, or the way they respond to you may bring out a version of yourself that already knows how to behave here. That familiarity can feel warm and effortless, but it can also pull you back into an old role before you notice. Enjoy being known without assuming you have to keep being the person they first recognized.",
+      "expected_before_sha256": {
+        "body_you": "6db64b8b6c98523abf46c55b627a7398fbcbb24b2f7b3a82abfb47798c6b7447",
+        "body_they": "6db64b8b6c98523abf46c55b627a7398fbcbb24b2f7b3a82abfb47798c6b7447"
+      },
+      "approved_body_sha256": "6033c1b0791b4d1cb86a3caa2427f479646fc6ba398011af21bf200312f8c133"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/south-node/hard",
+      "existingSemanticDirection": "sun_to_south-node",
+      "missingSemanticDirection": "south-node_to_sun",
+      "body_you": "{{holder2}} may bring out an older version of you that you thought you had already left behind. Their habits, expectations, or the way they remember you can make it easy to slip back into being the fixer, the responsible one, the easygoing one, or whatever role once kept things working. Familiar does not always mean current. You are allowed to show them who you are now, even if the old version was easier for both of you.",
+      "expected_before_sha256": {
+        "body_you": "a21c8f5369742f8ff5ef084417b6535d89b0403738e4ceb1a641b2222da7c052",
+        "body_they": "a21c8f5369742f8ff5ef084417b6535d89b0403738e4ceb1a641b2222da7c052"
+      },
+      "approved_body_sha256": "253dee215a2685351f6ecaf31c429786e38ed47510c16e0c98c3d48c0c45165d"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/south-node/soft",
+      "existingSemanticDirection": "sun_to_south-node",
+      "missingSemanticDirection": "south-node_to_sun",
+      "body_you": "{{holder2}}’s familiarity can make it easy to relax into yourself. You may not need to explain your humor, your habits, or the version of you that comes out when you are tired and nobody is trying to impress anyone. There is comfort in being known without a long introduction. Just keep making new memories too, so the relationship stays connected to who you are now and not only who you have already been.",
+      "expected_before_sha256": {
+        "body_you": "457840324d343a261a62870577dbea784dd1b2113feaae48e63c914334be8597",
+        "body_they": "457840324d343a261a62870577dbea784dd1b2113feaae48e63c914334be8597"
+      },
+      "approved_body_sha256": "26e3808f53a6e05e7ade781a254b7b85eae2aa3d995598803ac8dde11f760aae"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/lilith/conjunction",
+      "existingSemanticDirection": "sun_to_lilith",
+      "missingSemanticDirection": "lilith_to_sun",
+      "body_you": "{{holder2}}’s refusal to pretend can bring out a more honest version of you. Around them, you may feel less willing to smile through something you dislike, play a role that does not fit, or make yourself easier for everyone else to handle. Their rawness can make it easier for you to say what you actually mean. Just make sure honesty is helping you become more yourself, not turning every difference into a test of who is braver.",
+      "expected_before_sha256": {
+        "body_you": "5ef1cf03d096a56f44d5ce4341d35f85b7889fa0a91969813b74d65949f2c2bc",
+        "body_they": "5ef1cf03d096a56f44d5ce4341d35f85b7889fa0a91969813b74d65949f2c2bc"
+      },
+      "approved_body_sha256": "cb90c8cf2b971c7d80a9234de754738b7ec08ea389b2a7a3dca07aea56abf104"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/lilith/hard",
+      "existingSemanticDirection": "sun_to_lilith",
+      "missingSemanticDirection": "lilith_to_sun",
+      "body_you": "{{holder2}}’s bluntness can hit the part of you that wants to be respected and understood. When they reject a rule, call something out, or refuse to soften their opinion, you may hear more of a challenge to you than they actually meant. That can make you defend your position or try to prove that your way is legitimate. Their refusal does not automatically make your identity the target. Let them say no without turning the no into a verdict on you.",
+      "expected_before_sha256": {
+        "body_you": "399699ec389ef8efa9a695109226fd75d5e9f88b89988f0a18aa2fbda62d30db",
+        "body_they": "399699ec389ef8efa9a695109226fd75d5e9f88b89988f0a18aa2fbda62d30db"
+      },
+      "approved_body_sha256": "eb01431fd992292d4c17ec62d9a7dccb08a121d25a72c27bed34bde754d3e57a"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/lilith/soft",
+      "existingSemanticDirection": "sun_to_lilith",
+      "missingSemanticDirection": "lilith_to_sun",
+      "body_you": "{{holder2}}’s honesty can make it easier for you to stop polishing yourself for approval. Their willingness to be direct about what they want, dislike, or will not accept may make you more comfortable doing the same. You do not have to become louder or more rebellious to benefit from it. Sometimes freedom is simply realizing you can be fully yourself and the connection does not fall apart.",
+      "expected_before_sha256": {
+        "body_you": "1c15b510fce65efd74f4fe8a44317de4225ca0159df1c46a1453e56254bcadfc",
+        "body_they": "1c15b510fce65efd74f4fe8a44317de4225ca0159df1c46a1453e56254bcadfc"
+      },
+      "approved_body_sha256": "7788ad577e23f09d24ff1afd288376e53a7aeb947d8cdf53fe068ea63d73b5dc"
+    }
+  ],
+  "approval_source": "chatgpt:6a9efc20-93ac-83e9-aca8-ef437fa03cb7/ef52bac4-f070-4498-984d-fcc96165efc1",
+  "serving_authorization_source": "chatgpt:6a9efc20-93ac-83e9-aca8-ef437fa03cb7/29a7b74b-3413-4181-a1fc-593264f17744"
+}

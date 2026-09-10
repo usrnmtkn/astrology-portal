@@ -47,11 +47,14 @@ const dailyRows = fallback.hookRows.filter((row) => row.contentKey.startsWith("f
 assert.equal(dailyRows.length, 136);
 assert.ok(dailyRows.every((row) => isGovernedReaderEligible(row)));
 
+// Three Sun/Ascendant whole-row approvals are now preserved as historical
+// opposite-direction evidence. Current approvals are direction-level; do not
+// claim an obsolete whole-row exact hash still covers both current fields.
 const synastryRows = fallback.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/synastry-pair/"));
 assert.equal(synastryRows.filter((row) => isGovernedReaderEligible(row)).length, 483);
-assert.equal(synastryRows.filter((row) => synastryReaderTier(row) === "exact-owner-approved").length, 55);
-assert.equal(synastryRows.filter((row) => synastryReaderTier(row) === "owner-approved-grouped").length, 110);
-assert.equal(synastryRows.filter((row) => synastryReaderTier(row) === "legacy-reviewed").length, 318);
+assert.equal(synastryRows.filter((row) => synastryReaderTier(row) === "exact-owner-approved").length, 54);
+assert.equal(synastryRows.filter((row) => synastryReaderTier(row) === "owner-approved-grouped").length, 108);
+assert.equal(synastryRows.filter((row) => synastryReaderTier(row) === "legacy-reviewed").length, 321);
 assert.equal(
   manifest.keys.filter((key) => /synastry-pair\/.+\/(?:hard|soft)$/u.test(key)).length,
   322

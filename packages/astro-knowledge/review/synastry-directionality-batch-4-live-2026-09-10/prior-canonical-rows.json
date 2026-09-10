@@ -1,0 +1,369 @@
+{
+  "source_commit": "f7268d538d2278ec98d6019cebdc569eb6fe93d2",
+  "note": "Historical source evidence for pre-release invariant tests only. Never import into reader runtime.",
+  "rows": [
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/ascendant/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You tend to notice {{holder2}} when they enter a situation, and your response to how they present themselves can make them feel seen enough to speak more directly about what they want. Because your confidence carries so much weight with them, they may start checking your reaction before making their own decision. Their body knows the difference between speaking for themselves and waiting for your response, and it shows in how they hold themselves.",
+      "body_they": "{{holder1}} tends to notice you when you enter a situation, and their response to how you present yourself can make you feel seen enough to speak more directly about what you want. Because their confidence carries so much weight with you, you may start checking their reaction before making your own decision. Your body knows the difference between speaking for yourself and waiting for their response, and you can feel it in how you hold yourself.",
+      "review_status": "approved",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Exact owner-approved Ascendant batch 1 resolver copy; source candidate and approval provenance are stored in the referenced review record.",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/conjunction/exact-approval.json",
+        "payloadSha256": "3311f61b851f147f4726e9406f175687c3cd94f73c161e595d41e022102151af",
+        "approvedAt": "2026-08-04"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/ascendant/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "You often set the tone or direction before {{holder2}} has had room to show how they want to come across. They may explain their choices more firmly or push back, which can lead you to press your point again. Repeating that pattern can leave them feeling crowded out and you feeling challenged.",
+      "body_they": "{{holder1}} often sets the tone or direction before you have had room to show how you want to come across. You may explain your choices more firmly or push back, which can lead them to press their point again. Repeating that pattern can leave you feeling crowded out and them feeling challenged.",
+      "review_status": "approved",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Exact owner-approved Ascendant batch 1 resolver copy; source candidate and approval provenance are stored in the referenced review record.",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/hard/exact-approval.json",
+        "payloadSha256": "6d34067efce400fd9d22ea6000e338a2f94c9fd108ac5dcf5b15eee16cd885d0",
+        "approvedAt": "2026-08-04"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/ascendant/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "When you are clear about who you are and what you want, {{holder2}} feels more comfortable being themselves while meeting people or entering a new situation. As they relax and respond more naturally, it becomes easier for you to keep expressing yourself clearly.",
+      "body_they": "When {{holder1}} is clear about who they are and what they want, you feel more comfortable being yourself while meeting people or entering a new situation. As you relax and respond more naturally, it becomes easier for {{holder1}} to keep expressing themselves clearly.",
+      "review_status": "approved",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Exact owner-approved Ascendant batch 1 resolver copy; source candidate and approval provenance are stored in the referenced review record.",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/sun-ascendant/soft/exact-approval.json",
+        "payloadSha256": "8eb7ffc64ca8adef7c4362d880d2c491ebce07c3317512af66cd78d6271a1776",
+        "approvedAt": "2026-08-04"
+      }
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/midheaven/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun lands on {{holder2Poss}} Midheaven, and one person's whole way of being points at the other's finish line. Mentorship happens here without anyone applying for it: visibility rubs off, direction rubs back. The risk is fusion, where one career quietly becomes both people's project. Admire, assist, and keep separate nameplates.",
+      "body_they": "{{holder1PossCap}} Sun lands on {{holder2Poss}} Midheaven, and one person's whole way of being points at the other's finish line. Mentorship happens here without anyone applying for it: visibility rubs off, direction rubs back. The risk is fusion, where one career quietly becomes both people's project. Admire, assist, and keep separate nameplates.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: planet to Midheaven (both directions via holder slots). Named-holder register per owner feedback 2026-07-23.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/midheaven/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} Midheaven, and it plays out as identity versus trajectory. What one is keeps questioning where the other is headed, so career advice arrives sounding like a verdict on the whole person. Underneath, both want the same thing: to matter on their own terms. Keep the lanes labeled: one life, one climb, two owners.",
+      "body_they": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} Midheaven, and it plays out as identity versus trajectory. What one is keeps questioning where the other is headed, so career advice arrives sounding like a verdict on the whole person. Underneath, both want the same thing: to matter on their own terms. Keep the lanes labeled: one life, one climb, two owners.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: planet to Midheaven (both directions via holder slots). Named-holder register per owner feedback 2026-07-23.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/midheaven/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun backs {{holder2Poss}} Midheaven without either trying: confidence feeding the climb, alliance without paperwork. Introductions, references, honest reads: all of it flows and lands. Professional goodwill this frictionless is rare; spend it in both directions.",
+      "body_they": "{{holder1PossCap}} Sun backs {{holder2Poss}} Midheaven without either trying: confidence feeding the climb, alliance without paperwork. Introductions, references, honest reads: all of it flows and lands. Professional goodwill this frictionless is rare; spend it in both directions.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: planet to Midheaven (both directions via holder slots). Named-holder register per owner feedback 2026-07-23.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/descendant/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun lands on {{holder2Poss}} Descendant, the spot where {{holder2Poss}} chart describes an ideal other. One walks in already shaped like what the other tends to seek, so the alliance feels cast rather than chosen. That fit is real and it carries expectations with it: nobody can be a role and a person at once for long. Enjoy the casting, then keep meeting the actual human.",
+      "body_they": "{{holder1PossCap}} Sun lands on {{holder2Poss}} Descendant, the spot where {{holder2Poss}} chart describes an ideal other. One walks in already shaped like what the other tends to seek, so the alliance feels cast rather than chosen. That fit is real and it carries expectations with it: nobody can be a role and a person at once for long. Enjoy the casting, then keep meeting the actual human.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: planet to Descendant, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/descendant/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} Descendant, so one person's way of being crosses the other's picture of a good partner. Cooperation keeps requiring translation: leading feels like dominating, independence feels like distance. Nobody is auditioning for the partner seat, which is exactly the friction. Stop comparing the friendship to the template and it improves overnight.",
+      "body_they": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} Descendant, so one person's way of being crosses the other's picture of a good partner. Cooperation keeps requiring translation: leading feels like dominating, independence feels like distance. Nobody is auditioning for the partner seat, which is exactly the friction. Stop comparing the friendship to the template and it improves overnight.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: planet to Descendant, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/descendant/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun supports {{holder2Poss}} Descendant: presence and partnership on friendly terms. Cooperation feels dignified here: help without hierarchy, alliance without auditions. Team up often; the results flatter both.",
+      "body_they": "{{holder1PossCap}} Sun supports {{holder2Poss}} Descendant: presence and partnership on friendly terms. Cooperation feels dignified here: help without hierarchy, alliance without auditions. Team up often; the results flatter both.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: planet to Descendant, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/imum-coeli/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun lands on {{holder2Poss}} IC, so one person gets waved past the lobby. Home privileges arrive early here: the couch, the family stories, the version with no company manners. Being let that far in is trust, not convenience. Treat the inside information like the valuables they are.",
+      "body_they": "{{holder1PossCap}} Sun lands on {{holder2Poss}} IC, so one person gets waved past the lobby. Home privileges arrive early here: the couch, the family stories, the version with no company manners. Being let that far in is trust, not convenience. Treat the inside information like the valuables they are.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: planet to IC, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/imum-coeli/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} IC, so one person's shine disturbs the other's quiet. Visibility and privacy want different rooms: one livens the house, the other guards its stillness, and both feel judged for it. Neither mode is a flaw; they are different recoveries. Match the energy to the evening, not to the habit.",
+      "body_they": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} IC, so one person's shine disturbs the other's quiet. Visibility and privacy want different rooms: one livens the house, the other guards its stillness, and both feel judged for it. Neither mode is a flaw; they are different recoveries. Match the energy to the evening, not to the habit.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: planet to IC, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/imum-coeli/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun supports {{holder2Poss}} IC: presence that makes the private world brighter without crowding it. Visits lift the house instead of costing it. Rare guest physics. Use liberally.",
+      "body_they": "{{holder1PossCap}} Sun supports {{holder2Poss}} IC: presence that makes the private world brighter without crowding it. Visits lift the house instead of costing it. Rare guest physics. Use liberally.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry/planets-on-angles",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: planet to IC, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/chiron/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits right on {{holder2Poss}} Chiron, so one person's shine lands on the other's oldest bruise. Simply being confident can ache to watch when the watcher's wound is about worth. Nobody is doing anything wrong; proximity is the whole mechanism. Handled gently, this heals: the wounded side borrows courage, the bright side learns what light costs.",
+      "body_they": "{{holder1PossCap}} Sun sits right on {{holder2Poss}} Chiron, so one person's shine lands on the other's oldest bruise. Simply being confident can ache to watch when the watcher's wound is about worth. Nobody is doing anything wrong; proximity is the whole mechanism. Handled gently, this heals: the wounded side borrows courage, the bright side learns what light costs.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/chiron/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} Chiron, and confidence keeps scraping an old ache. Wins land wrong: one celebrates and the other hears an echo of every time they came second. The flinch is history, not envy, and calling it envy wounds twice. Celebrate carefully, flinch honestly, and say both quiet parts out loud.",
+      "body_they": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} Chiron, and confidence keeps scraping an old ache. Wins land wrong: one celebrates and the other hears an echo of every time they came second. The flinch is history, not envy, and calling it envy wounds twice. Celebrate carefully, flinch honestly, and say both quiet parts out loud.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/chiron/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun warms {{holder2Poss}} Chiron without pressing on it. Confidence rubs off gently here; the wounded place gets sunlight instead of spotlight. Healing happens as a side effect of company. Keep showing up; that is the whole treatment.",
+      "body_they": "{{holder1PossCap}} Sun warms {{holder2Poss}} Chiron without pressing on it. Confidence rubs off gently here; the wounded place gets sunlight instead of spotlight. Healing happens as a side effect of company. Keep showing up; that is the whole treatment.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/north-node/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits right on {{holder2Poss}} North Node, so one person is a walking preview of where the other is headed. The admiration has direction built into it: what one is, the other is becoming. Mentorship happens by osmosis, invited or not. Make it explicit and it accelerates.",
+      "body_they": "{{holder1PossCap}} Sun sits right on {{holder2Poss}} North Node, so one person is a walking preview of where the other is headed. The admiration has direction built into it: what one is, the other is becoming. Mentorship happens by osmosis, invited or not. Make it explicit and it accelerates.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/north-node/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} North Node, and one person's way of being complicates the other's becoming. The example is magnetic and slightly off-course: following it means drifting from the assignment. Admire without copying. Two different futures can share one friendship.",
+      "body_they": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} North Node, and one person's way of being complicates the other's becoming. The example is magnetic and slightly off-course: following it means drifting from the assignment. Admire without copying. Two different futures can share one friendship.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/north-node/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun backs {{holder2Poss}} North Node: presence that makes the other's growth feel possible. Encouragement lands here without pressure, example without homework. Growth-friendly company is rare. Keep it close during the big stretches.",
+      "body_they": "{{holder1PossCap}} Sun backs {{holder2Poss}} North Node: presence that makes the other's growth feel possible. Encouragement lands here without pressure, example without homework. Growth-friendly company is rare. Keep it close during the big stretches.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/south-node/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits right on {{holder2Poss}} South Node, and the recognition was instant: this person again, somehow, finally. Comfort and familiarity arrive before biography does. The sweetness is real; the risk is nostalgia running the friendship. Enjoy the old warmth and point it at new things.",
+      "body_they": "{{holder1PossCap}} Sun sits right on {{holder2Poss}} South Node, and the recognition was instant: this person again, somehow, finally. Comfort and familiarity arrive before biography does. The sweetness is real; the risk is nostalgia running the friendship. Enjoy the old warmth and point it at new things.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/south-node/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} South Node, so one person's presence keeps tugging the other backward. Around this brightness, old habits feel rewarded: the easy role, the retired self, the outgrown script. The affection is real; the regression is optional. Enjoy the history, then act your current age.",
+      "body_they": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} South Node, so one person's presence keeps tugging the other backward. Around this brightness, old habits feel rewarded: the easy role, the retired self, the outgrown script. The affection is real; the regression is optional. Enjoy the history, then act your current age.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/south-node/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun eases {{holder2Poss}} South Node: comfortable brightness, no demands attached. Being known this thoroughly and liked anyway is the gift here. It restores rather than stretches, and that is a legitimate job. Rest in it.",
+      "body_they": "{{holder1PossCap}} Sun eases {{holder2Poss}} South Node: comfortable brightness, no demands attached. Being known this thoroughly and liked anyway is the gift here. It restores rather than stretches, and that is a legitimate job. Rest in it.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/lilith/conjunction",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits right on {{holder2Poss}} Lilith, so one person's daylight lands on the other's wild territory. The unedited side gets seen, plainly and without flinching, which reads as either liberation or exposure depending on the day. Respect makes the difference. Witness without taming and this becomes fiercely loyal.",
+      "body_they": "{{holder1PossCap}} Sun sits right on {{holder2Poss}} Lilith, so one person's daylight lands on the other's wild territory. The unedited side gets seen, plainly and without flinching, which reads as either liberation or exposure depending on the day. Respect makes the difference. Witness without taming and this becomes fiercely loyal.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/lilith/hard",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} Lilith, and the respectable keeps provoking the raw. One's polish reads as pretense, one's bluntness reads as sabotage, and both verdicts overreach. Each holds a piece the other rations: legitimacy and honesty. Trade instead of prosecuting.",
+      "body_they": "{{holder1PossCap}} Sun sits at a hard angle to {{holder2Poss}} Lilith, and the respectable keeps provoking the raw. One's polish reads as pretense, one's bluntness reads as sabotage, and both verdicts overreach. Each holds a piece the other rations: legitimacy and honesty. Trade instead of prosecuting.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/lilith/soft",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "{{holder1PossCap}} Sun accepts {{holder2Poss}} Lilith without a struggle: the raw side is simply welcome in this light. No taming attempted, none needed. That acceptance is rarer than either realizes. Name it once so it is never accidental.",
+      "body_they": "{{holder1PossCap}} Sun accepts {{holder2Poss}} Lilith without a struggle: the raw side is simply welcome in this light. No taming attempted, none needed. That acceptance is rarer than either realizes. Name it once so it is never accidental.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "haydens-synastry",
+        "rudhyar/lunar-nodes",
+        "package natal-aspect register"
+      ],
+      "notes": "Synastry pair copy: personal planet to Chiron/Nodes/Lilith, natal-depth register with signature closing. Both directions via holder slots.",
+      "approved_via": "owner-approved stock-closer removal, chat 2026-08-04"
+    }
+  ]
+}

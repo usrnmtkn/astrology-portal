@@ -1,0 +1,246 @@
+{
+  "verified_at": "2026-09-10",
+  "project": "hdmdufozrgrajkfhydit",
+  "rows": [
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/ascendant/conjunction",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "fd684f9e986f31061eceb4f135dfcd917635fa8c69a3eeebb8fac0212ceaaaa4",
+      "body_they_sha256": "c72525f26d8563216a2ea48a07f6cb6ccb4d7562806822f35573006ccdd00307",
+      "package_body_you_sha256": "fd684f9e986f31061eceb4f135dfcd917635fa8c69a3eeebb8fac0212ceaaaa4",
+      "package_body_they_sha256": "c72525f26d8563216a2ea48a07f6cb6ccb4d7562806822f35573006ccdd00307"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/ascendant/hard",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "0792afdfafa2199bc4dc4dc8f83c2a0a2adc1346733e2365ea10786921d0c253",
+      "body_they_sha256": "74dea9c5554eba9c184d87ee1a75c4b714c4463ce6931a9d83fafbf7d35d2011",
+      "package_body_you_sha256": "0792afdfafa2199bc4dc4dc8f83c2a0a2adc1346733e2365ea10786921d0c253",
+      "package_body_they_sha256": "74dea9c5554eba9c184d87ee1a75c4b714c4463ce6931a9d83fafbf7d35d2011"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/ascendant/soft",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "2a3a7a8157dbefe0593b8fa5db043c046d9b025bdc491392567f039a2178090d",
+      "body_they_sha256": "848a4bbd450e74a211d29721a494576642a1f3b3f22a20be95fb0529eb8e577b",
+      "package_body_you_sha256": "2a3a7a8157dbefe0593b8fa5db043c046d9b025bdc491392567f039a2178090d",
+      "package_body_they_sha256": "848a4bbd450e74a211d29721a494576642a1f3b3f22a20be95fb0529eb8e577b"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/chiron/conjunction",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "18a994e016f3b5128831f591fb100153d1a1f0141929b5ba935b36b5464dee2a",
+      "body_they_sha256": "9a28028e8ff4e8923d500b9a4cfba9295a36fbf23cb15f59dd22e6b2a65e0f29",
+      "package_body_you_sha256": "18a994e016f3b5128831f591fb100153d1a1f0141929b5ba935b36b5464dee2a",
+      "package_body_they_sha256": "9a28028e8ff4e8923d500b9a4cfba9295a36fbf23cb15f59dd22e6b2a65e0f29"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/chiron/hard",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "4add7a53910cb6ef88717e4e9e759b2c9abf700a768a7ad9b064e10b8fd52e3e",
+      "body_they_sha256": "b91a2a5a7e8353729a1d3c661cee741257147ecf397100f09496861340881367",
+      "package_body_you_sha256": "4add7a53910cb6ef88717e4e9e759b2c9abf700a768a7ad9b064e10b8fd52e3e",
+      "package_body_they_sha256": "b91a2a5a7e8353729a1d3c661cee741257147ecf397100f09496861340881367"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/chiron/soft",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "62474a3f55c00fbbd1989198de7bd76212fedb0e4d18d9acdeba59562d9abbed",
+      "body_they_sha256": "55e57d1e32de68debdb80e10a624c0f0b97bc32219626de0cc45c78afdee2b7d",
+      "package_body_you_sha256": "62474a3f55c00fbbd1989198de7bd76212fedb0e4d18d9acdeba59562d9abbed",
+      "package_body_they_sha256": "55e57d1e32de68debdb80e10a624c0f0b97bc32219626de0cc45c78afdee2b7d"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/descendant/conjunction",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "3c839e424fc511a1f4e21c83b38fe16428aaf8bc92e294a76f6b7fef95ce1c6c",
+      "body_they_sha256": "5c802ae0ad823959ea5474990901f2e1d0dd53a627df04c414fa6525a19c1cc6",
+      "package_body_you_sha256": "3c839e424fc511a1f4e21c83b38fe16428aaf8bc92e294a76f6b7fef95ce1c6c",
+      "package_body_they_sha256": "5c802ae0ad823959ea5474990901f2e1d0dd53a627df04c414fa6525a19c1cc6"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/descendant/hard",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "dc47c5e643197d382d768e0df483858b84f9e18d1e1f5bf7d5db86549d0a2ddc",
+      "body_they_sha256": "5a94039bf0627a678afb3d4dd6f017d67694e109fc2fd68e80dead3bc30c4b6c",
+      "package_body_you_sha256": "dc47c5e643197d382d768e0df483858b84f9e18d1e1f5bf7d5db86549d0a2ddc",
+      "package_body_they_sha256": "5a94039bf0627a678afb3d4dd6f017d67694e109fc2fd68e80dead3bc30c4b6c"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/descendant/soft",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "4ec6be733e3713ed7698df1d7e10d7e3576601ef2f193e2efbdcbc1462a6a112",
+      "body_they_sha256": "c7c14a8a3381907a485239449f2651f255fb81f540ce6d9f6057c256e03214d1",
+      "package_body_you_sha256": "4ec6be733e3713ed7698df1d7e10d7e3576601ef2f193e2efbdcbc1462a6a112",
+      "package_body_they_sha256": "c7c14a8a3381907a485239449f2651f255fb81f540ce6d9f6057c256e03214d1"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/imum-coeli/conjunction",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "bf625a1295967463e9843552b683ca15e8c7805d52908897901c368ca9fdc535",
+      "body_they_sha256": "b7b39e73b7dfbd3a8a5558726c7196a63dbad3c06440eaf032b065a08f8d2342",
+      "package_body_you_sha256": "bf625a1295967463e9843552b683ca15e8c7805d52908897901c368ca9fdc535",
+      "package_body_they_sha256": "b7b39e73b7dfbd3a8a5558726c7196a63dbad3c06440eaf032b065a08f8d2342"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/imum-coeli/hard",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "67c5a33d5d32cdf6df3e02e6add252b6cbe9939fb7bb79070ea31f1fc0712eb9",
+      "body_they_sha256": "8707c04b155ba5273903ac59845070d720f3af6cfe97a5c9c8d3c8aa3270cd15",
+      "package_body_you_sha256": "67c5a33d5d32cdf6df3e02e6add252b6cbe9939fb7bb79070ea31f1fc0712eb9",
+      "package_body_they_sha256": "8707c04b155ba5273903ac59845070d720f3af6cfe97a5c9c8d3c8aa3270cd15"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/imum-coeli/soft",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "8a7fc0a9923657080086476780e0d92e984df80f12521b9f5ebcf98d1051563c",
+      "body_they_sha256": "bf16bcdb4fb546dd5e4ced878453e70dc190b121c0e7cf7df1109a39ffcc2572",
+      "package_body_you_sha256": "8a7fc0a9923657080086476780e0d92e984df80f12521b9f5ebcf98d1051563c",
+      "package_body_they_sha256": "bf16bcdb4fb546dd5e4ced878453e70dc190b121c0e7cf7df1109a39ffcc2572"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/lilith/conjunction",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "cb90c8cf2b971c7d80a9234de754738b7ec08ea389b2a7a3dca07aea56abf104",
+      "body_they_sha256": "5ef1cf03d096a56f44d5ce4341d35f85b7889fa0a91969813b74d65949f2c2bc",
+      "package_body_you_sha256": "cb90c8cf2b971c7d80a9234de754738b7ec08ea389b2a7a3dca07aea56abf104",
+      "package_body_they_sha256": "5ef1cf03d096a56f44d5ce4341d35f85b7889fa0a91969813b74d65949f2c2bc"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/lilith/hard",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "eb01431fd992292d4c17ec62d9a7dccb08a121d25a72c27bed34bde754d3e57a",
+      "body_they_sha256": "399699ec389ef8efa9a695109226fd75d5e9f88b89988f0a18aa2fbda62d30db",
+      "package_body_you_sha256": "eb01431fd992292d4c17ec62d9a7dccb08a121d25a72c27bed34bde754d3e57a",
+      "package_body_they_sha256": "399699ec389ef8efa9a695109226fd75d5e9f88b89988f0a18aa2fbda62d30db"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/lilith/soft",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "7788ad577e23f09d24ff1afd288376e53a7aeb947d8cdf53fe068ea63d73b5dc",
+      "body_they_sha256": "1c15b510fce65efd74f4fe8a44317de4225ca0159df1c46a1453e56254bcadfc",
+      "package_body_you_sha256": "7788ad577e23f09d24ff1afd288376e53a7aeb947d8cdf53fe068ea63d73b5dc",
+      "package_body_they_sha256": "1c15b510fce65efd74f4fe8a44317de4225ca0159df1c46a1453e56254bcadfc"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/midheaven/conjunction",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "0162d265e5e23ffe1b4427f504b739c66ae976f45f1ad3299e8ff39ecfbe5987",
+      "body_they_sha256": "57b40267529d7693deaa9af7497711cd078be5a4dd99ad4b83bfc71c9ed68f89",
+      "package_body_you_sha256": "0162d265e5e23ffe1b4427f504b739c66ae976f45f1ad3299e8ff39ecfbe5987",
+      "package_body_they_sha256": "57b40267529d7693deaa9af7497711cd078be5a4dd99ad4b83bfc71c9ed68f89"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/midheaven/hard",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "edacb3282a63543607f486f60e05ae2c631b76382acd6909a23f1cd90d4499fe",
+      "body_they_sha256": "8720fcc7479c9b8e4abcaae2b8ab92954323a26c40fd51b99cc1de0cefc2645d",
+      "package_body_you_sha256": "edacb3282a63543607f486f60e05ae2c631b76382acd6909a23f1cd90d4499fe",
+      "package_body_they_sha256": "8720fcc7479c9b8e4abcaae2b8ab92954323a26c40fd51b99cc1de0cefc2645d"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/midheaven/soft",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "f13611f06661c6c7385c89405fce09929220c32a1f95d1bcf2be4618ead69cbc",
+      "body_they_sha256": "f8b5b049dad78dd9e38b62a2d2bcf99fb089574dd7d4e8e95bee161bbfeeb36b",
+      "package_body_you_sha256": "f13611f06661c6c7385c89405fce09929220c32a1f95d1bcf2be4618ead69cbc",
+      "package_body_they_sha256": "f8b5b049dad78dd9e38b62a2d2bcf99fb089574dd7d4e8e95bee161bbfeeb36b"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/north-node/conjunction",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "23b4a6768c2ee3aa43ff49cb2ef0d9871c482ac4c604a3b703e7095befc39181",
+      "body_they_sha256": "739d91f9425c9e718bead65b827d3a28a269a1f106387e4d1bdba26af906d3b6",
+      "package_body_you_sha256": "23b4a6768c2ee3aa43ff49cb2ef0d9871c482ac4c604a3b703e7095befc39181",
+      "package_body_they_sha256": "739d91f9425c9e718bead65b827d3a28a269a1f106387e4d1bdba26af906d3b6"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/north-node/hard",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "8fa22cd0531c974bdbcd29474f69d6abacdac57b8b8f794441599bba93b28a1d",
+      "body_they_sha256": "421578c0c828f4edfa4da97c09c6d55bcc720b3d216f413360272266b6c9f53f",
+      "package_body_you_sha256": "8fa22cd0531c974bdbcd29474f69d6abacdac57b8b8f794441599bba93b28a1d",
+      "package_body_they_sha256": "421578c0c828f4edfa4da97c09c6d55bcc720b3d216f413360272266b6c9f53f"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/north-node/soft",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "d7c4587497b92d79b39761357ae8c7a8f9d7c6d3a2975616d00324fc0c04661e",
+      "body_they_sha256": "942cc7c7a6b81617ce0190b826c13109e2d001934f98c842a42fd68fb4f057b0",
+      "package_body_you_sha256": "d7c4587497b92d79b39761357ae8c7a8f9d7c6d3a2975616d00324fc0c04661e",
+      "package_body_they_sha256": "942cc7c7a6b81617ce0190b826c13109e2d001934f98c842a42fd68fb4f057b0"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/south-node/conjunction",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "6033c1b0791b4d1cb86a3caa2427f479646fc6ba398011af21bf200312f8c133",
+      "body_they_sha256": "6db64b8b6c98523abf46c55b627a7398fbcbb24b2f7b3a82abfb47798c6b7447",
+      "package_body_you_sha256": "6033c1b0791b4d1cb86a3caa2427f479646fc6ba398011af21bf200312f8c133",
+      "package_body_they_sha256": "6db64b8b6c98523abf46c55b627a7398fbcbb24b2f7b3a82abfb47798c6b7447"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/south-node/hard",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "253dee215a2685351f6ecaf31c429786e38ed47510c16e0c98c3d48c0c45165d",
+      "body_they_sha256": "a21c8f5369742f8ff5ef084417b6535d89b0403738e4ceb1a641b2222da7c052",
+      "package_body_you_sha256": "253dee215a2685351f6ecaf31c429786e38ed47510c16e0c98c3d48c0c45165d",
+      "package_body_they_sha256": "a21c8f5369742f8ff5ef084417b6535d89b0403738e4ceb1a641b2222da7c052"
+    },
+    {
+      "content_key": "fallback-hook/synastry-pair/sun/south-node/soft",
+      "status": "LIVE",
+      "lane": "serving",
+      "review_state": null,
+      "body_you_sha256": "26e3808f53a6e05e7ade781a254b7b85eae2aa3d995598803ac8dde11f760aae",
+      "body_they_sha256": "457840324d343a261a62870577dbea784dd1b2113feaae48e63c914334be8597",
+      "package_body_you_sha256": "26e3808f53a6e05e7ade781a254b7b85eae2aa3d995598803ac8dde11f760aae",
+      "package_body_they_sha256": "457840324d343a261a62870577dbea784dd1b2113feaae48e63c914334be8597"
+    }
+  ]
+}

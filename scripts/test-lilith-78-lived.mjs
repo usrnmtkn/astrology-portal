@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { historicalSynastryRow } from "./lib/synastry-directionality-history.mjs";
 
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
@@ -74,7 +75,7 @@ const manifestByWorkbookKey = new Map(manifest.rows.map((row) => [row.workbookKe
 const lilithRows = source.hookRows.filter((row) => row.contentKey?.startsWith(destinationPrefix));
 assert.equal(lilithRows.length, 78, "Expected exactly 78 Lilith lived rows");
 
-const existingApprovedRows = source.hookRows.filter((row) => (
+const existingApprovedRows = source.hookRows.map(historicalSynastryRow).filter((row) => (
   row.review_status === "approved"
   && !row.contentKey?.startsWith(destinationPrefix)
   && row.source_release !== llMatrixV13Release
