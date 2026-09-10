@@ -4780,7 +4780,7 @@ function skyPlacementKeyDates(position: PlanetPosition): SkyDetailKeyDate[] {
     month: "long",
     day: "numeric",
     year: "numeric",
-    timeZone: "UTC"
+    timeZone: position.transitTimeZone || "UTC"
   });
   const seen = new Set<string>();
 
@@ -5018,7 +5018,8 @@ function skyPlacementWritingSection(
         position,
         positions: displayPositions,
         moonEvent: articleOptions?.moonEvent,
-        generatedAt
+        generatedAt,
+        timeZone: articleOptions?.locationTimeZone ?? position.transitTimeZone ?? "UTC"
       }),
       aspects: []
     }) as {
@@ -5031,7 +5032,11 @@ function skyPlacementWritingSection(
       if (!skyV4.readerParts?.length) return null;
       rendered = {
         ...rendered,
-        headline: rendered?.headline ?? skyPlacementDisplayTitle(position),
+        // Canonical copy must not inherit an older article's identity or dates.
+        headline: skyPlacementDisplayTitle(position),
+        articleWindow: canonicalDateLine,
+        keyDates: [],
+        keyDatesIntro: null,
         tagline: null,
         closingCharge: null,
         body: skyV4.readerParts.join("\n\n"),
@@ -5113,7 +5118,7 @@ function skyPlacementWritingSection(
     heading: rendered.headline || skyPlacementDisplayTitle(position),
     tagline: rendered.tagline,
     closingCharge: rendered.closingCharge,
-    keyDates,
+    keyDates: rendered.templateKey === "sky-v4-canonical-reader-v1" ? skyPlacementKeyDates(position) : keyDates,
     keyDatesIntro: rendered.keyDatesIntro ?? null,
     articleWindow: rendered.articleWindow,
     residencyWindow: canonicalDateLine,
@@ -11347,9 +11352,14 @@ export function App() {
       // subsequent overlay revision should invalidate it, not its first render.
       friendDetailOverlayRefreshKeyRef.current = `${detail.routePath}:${fallbackDashboardOverlayVersion}`;
     }
+    const [, detailType, detailPlanet, detailSign] = decodeSkyRouteParts(detail.routePath ?? "");
+    const placementPosition = detailType === "placement" && skyNodeDisplayPositions(sky?.positions ?? [])
+      .find(position => skyRoutePartMatches(position.planet, detailPlanet) && skyRoutePartMatches(position.sign, detailSign));
+    const awaitPlacementTiming = detailType === "placement"
+      && (!placementPosition || !placementPosition.transitStart || !placementPosition.transitEnd);
     transitionPage(() => {
       setSelectedSkyDetail(personalizedSkyPlacementDetail(
-        detail,
+        awaitPlacementTiming ? null : detail,
         profileNatalSky?.ascendant ?? userProfile?.rising,
         skyPlacementPersonalizationTransits,
         sky?.generatedAt ?? new Date().toISOString(),
@@ -11950,7 +11960,8 @@ export function App() {
     }
     if (!calendarEvent && routeSurface === "sky" && ["placement", "retrograde"].includes(routeType) && placementSign
       && routePosition && zodiacSigns.some(sign => skyRoutePartMatches(sign, placementSign))
-      && (needsAspectFacts || !skyRoutePartMatches(routePosition.sign, placementSign))) {
+      && (needsAspectFacts || !routePosition.transitStart || !routePosition.transitEnd
+        || !skyRoutePartMatches(routePosition.sign, placementSign))) {
       let cancelled = false;
       if (selectedSkyDetail?.routePath !== skyDetailRoutePath) setSelectedSkyDetail(null);
       void import("./services/skyCalculationClient").then(({ getSkyPlacementSnapshotOffMainThread }) => (

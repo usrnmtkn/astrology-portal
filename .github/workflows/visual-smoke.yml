@@ -116,7 +116,7 @@ jobs:
       - name: Verify placement composition editing and reader refresh stability
         run: |
           npx playwright test -c playwright.sky-composition.config.ts
-          npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts
+          npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts
       - name: Verify Studio crash recovery through the production web entry
         run: STUDIO_PRODUCTION_ENTRY=1 npx playwright test -c playwright.studio-recovery.config.ts
       - name: Upload Sky placement artifacts

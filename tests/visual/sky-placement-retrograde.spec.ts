@@ -253,6 +253,14 @@ for (const width of [390, 1440]) test(`Saturn date windows stay visible through 
     "In Aries: February 13, 2026 to April 12, 2028"
   ], { timeout: 60_000 });
   await page.evaluate(() => document.fonts.ready);
+  // The article can finish its own exact placement calculation before the
+  // background Sky snapshot does. Hold only subsequent refreshes.
+  await expect.poll(() => page.evaluate(() => Object.keys(localStorage).some(key => {
+    if (!key.startsWith("tldrastro:verifiedSky:v2:live-")) return false;
+    const snapshot = JSON.parse(localStorage.getItem(key)!).snapshot;
+    return snapshot.generatedAt === "2026-09-07T16:00:00.000Z"
+      && snapshot.positions.some((position: any) => position.planet === "Saturn" && position.transitStart && position.transitEnd);
+  })), { timeout: 60_000 }).toBe(true);
   const before = await page.evaluate(() => {
     window.scrollTo(0, 500);
     const state = (window as any).__dateRefresh;
