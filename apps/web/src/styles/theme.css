@@ -966,6 +966,9 @@
   --report-callout-padding: var(--space-8);
   --mobile-action-panel-shadow: 0 18px 38px color-mix(in srgb, var(--ink) 14%, transparent), 0 2px 8px color-mix(in srgb, var(--ink) 8%, transparent);
   --mobile-top-safe-padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
+  /* Article navigation shares the top row; reserve one Back button beside the brand. */
+  --mobile-article-back-top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top));
+  --mobile-article-brand-offset: calc(var(--top-icon-button-size) + var(--top-control-gap));
   --mobile-chart-top-padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + 85px);
   --mobile-route-padding: 104px var(--mobile-page-gutter) calc(var(--mobile-page-gutter) + 88px + env(safe-area-inset-bottom, 0px));
   --settings-panel-padding: clamp(var(--space-6), 5vw, 36px);

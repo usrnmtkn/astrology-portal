@@ -629,7 +629,7 @@
 
   .nav-pill {
     gap: var(--space-2);
-    width: 100%;
+    width: max-content;
     min-width: 0;
     min-height: var(--top-control-height);
     max-width: 100%;
@@ -684,6 +684,26 @@
   }
 
   .theme-toggle {
+    display: none;
+  }
+
+  .app-shell:has(.sky-detail-page) .nav-pill {
+    margin-left: var(--mobile-article-brand-offset);
+  }
+
+  .app-shell:has(.sky-detail-page) :is(.sky-header-date-button, .mobile-sky-controls, .date-picker) {
+    display: none;
+  }
+
+  .app-shell .sky-detail-page .sky-detail-back {
+    top: var(--mobile-article-back-top);
+    left: var(--mobile-control-inset);
+    width: var(--top-icon-button-size);
+    height: var(--top-icon-button-size);
+    padding: 0;
+  }
+
+  .app-shell .sky-detail-page .sky-detail-back span {
     display: none;
   }
 
