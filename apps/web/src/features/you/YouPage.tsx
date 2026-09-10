@@ -1,4 +1,4 @@
-import { ArticleTransitDescription } from "../../components/ArticleTransitDescription";
+import { TransitFacts } from "../../components/ArticleFacts";
 import { Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
@@ -1080,7 +1080,7 @@ function YouTransitArticlePage({
                   ))}
                 </section>
               ) : null}
-              <ArticleTransitDescription description={displayArticle.transitDescription} />
+              <TransitFacts description={displayArticle.transitDescription} />
               <div className="sky-detail-end" aria-hidden="true">✦</div>
             </div>
           </div>
