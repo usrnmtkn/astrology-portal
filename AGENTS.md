@@ -267,6 +267,26 @@ or alternate aspect-card classes without explicit product approval.
 
 ## Production deployments
 
+### Content Studio API verification on every repository update
+
+Before merging any repository update, run `npm run test:content-studio-api`
+from the current isolated checkout with its own `npm ci` dependencies. Its npm
+prerequisite builds the local knowledge package. The unfiltered
+`Content Studio API contract` workflow must pass on the exact PR head; do not
+skip it because a change appears unrelated to the API. Reader, package and
+dependency changes can also break CRUD.
+
+For changes to API/editor/publication behavior, add a regression against the
+actual handler and run the affected browser flow from a fresh build. Preserve
+owner copy and use isolated storage for write tests. A mocked success response,
+typecheck, or health endpoint alone does not verify CRUD. A conflict must not
+overwrite newer content, and a successful publication must be reader-eligible.
+
+Follow [the API verification runbook](docs/qa/content-studio-api-verification.md)
+for test commands, coverage, response contracts, and deployment verification.
+Record the tested commit and results in the PR. Report a failing gate accurately;
+do not label the API verified based on another branch or an earlier run.
+
 Vercel production has one source of truth: the `main` branch.
 
 - Work on feature branches and use their Vercel preview deployments for QA.

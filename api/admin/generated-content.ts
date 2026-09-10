@@ -111,6 +111,7 @@ type GeneratedContentRequestBody = GeneratedContentWriteBody & {
 
 class GeneratedContentRequestError extends Error {
   readonly statusCode: number;
+  savedRows?: unknown[];
 
   constructor(message: string, statusCode = 400) {
     super(message);
@@ -1014,26 +1015,66 @@ export function listHeldSkyAspectSourceDrafts(): HeldSkyAspectSourceDraft[] {
 
 async function readJsonBody(req: IncomingMessage) {
   const preParsedBody = (req as IncomingMessage & { body?: unknown }).body;
-
-  if (typeof preParsedBody === "string") {
-    return JSON.parse(preParsedBody) as GeneratedContentRequestBody;
+  let value: unknown = preParsedBody;
+  if (value === undefined) {
+    const chunks: Buffer[] = [];
+    for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    value = Buffer.concat(chunks).toString("utf8");
   }
-
-  if (preParsedBody && typeof preParsedBody === "object") {
-    return preParsedBody as GeneratedContentRequestBody;
+  if (typeof value === "string") {
+    if (!value.trim()) throw new GeneratedContentRequestError("Request JSON body is required.");
+    try { value = JSON.parse(value); }
+    catch { throw new GeneratedContentRequestError("Request body must be valid JSON."); }
   }
-
-  const chunks: Buffer[] = [];
-
-  for await (const chunk of req) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  if (!isRecord(value)) throw new GeneratedContentRequestError("Request body must be a JSON object.");
+  validateWriteBody(value);
+  if (Object.hasOwn(value, "rows")) {
+    if (req.method !== "POST" || !Array.isArray(value.rows) || !value.rows.length) {
+      throw new GeneratedContentRequestError("rows must be a non-empty array on a POST request.");
+    }
+    for (const row of value.rows) {
+      if (!isRecord(row)) throw new GeneratedContentRequestError("Every row must be a JSON object.");
+      validateWriteBody(row);
+      if (row.ownerAction !== undefined) throw new GeneratedContentRequestError("Owner actions require a PATCH request for a saved row.");
+    }
   }
-
-  if (chunks.length === 0) {
-    throw new Error("Request JSON body is required.");
+  if (req.method !== "PATCH" && value.ownerAction !== undefined) {
+    throw new GeneratedContentRequestError("Owner actions require a PATCH request for a saved row.");
   }
+  return value as GeneratedContentRequestBody;
+}
 
-  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as GeneratedContentRequestBody;
+const generatedContentOwnerActions = new Set([
+  "approve-and-schedule", "approve-package-revision", "approve-sky-article-edition",
+  "save-sky-article-edition-revision", "publish-sky-article-edition-revision"
+]);
+
+function validateWriteBody(body: Record<string, unknown>) {
+  for (const field of ["id", "contentKey", "surface", "mode", "eventType", "status", "headline", "summary", "body", "reviewStatus", "sourceLifecycleAction", "editorialNotes", "promptVersion", "provider", "model", "reviewerNotes", "expectedUpdatedAt", "ownerAction"]) {
+    if (body[field] !== undefined && typeof body[field] !== "string") throw new GeneratedContentRequestError(`${field} must be a string.`);
+  }
+  for (const field of ["lane", "reviewState", "targetDate", "blockType", "evergreenAt", "evergreenBy"]) {
+    if (body[field] !== undefined && body[field] !== null && typeof body[field] !== "string") throw new GeneratedContentRequestError(`${field} must be a string or null.`);
+  }
+  for (const field of ["evergreen", "revertToPackageOriginal"]) {
+    if (body[field] !== undefined && typeof body[field] !== "boolean") throw new GeneratedContentRequestError(`${field} must be a boolean.`);
+  }
+  for (const field of ["id", "contentKey", "surface", "mode", "eventType"]) {
+    if (typeof body[field] === "string" && !(body[field] as string).trim()) throw new GeneratedContentRequestError(`${field} must not be empty.`);
+  }
+  if (body.sourceLifecycleAction !== undefined && !["archive", "restore"].includes(body.sourceLifecycleAction as string)) throw new GeneratedContentRequestError("sourceLifecycleAction must be archive or restore.");
+  if (body.ownerAction !== undefined && !generatedContentOwnerActions.has(body.ownerAction as string)) {
+    throw new GeneratedContentRequestError("ownerAction is not supported. Reload Content Studio before retrying.");
+  }
+  if (body.status !== undefined && !allowedStatuses.has(body.status as ReviewStatus)) throw new GeneratedContentRequestError("status must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.");
+  if (body.expectedUpdatedAt !== undefined && !Number.isFinite(Date.parse(body.expectedUpdatedAt as string))) throw new GeneratedContentRequestError("expectedUpdatedAt must be a valid saved timestamp.");
+  if (body.status === "LIVE" && body.reviewState) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
+}
+
+function assertReaderEligiblePublication(row: { status?: unknown; lane?: unknown; review_state?: unknown }) {
+  if (row.status !== "LIVE") return;
+  if ((row.lane ?? "serving") !== "serving") throw new GeneratedContentRequestError("Published content must use the serving lane.", 409);
+  if (row.review_state) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
 }
 
 function adminHeaders() {
@@ -1540,19 +1581,19 @@ async function generatedContentStats(req: IncomingMessage) {
 
 async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   if (!body.contentKey?.trim()) {
-    throw new Error("contentKey is required.");
+    throw new GeneratedContentRequestError("contentKey is required.");
   }
 
   if (!body.surface) {
-    throw new Error("surface is required.");
+    throw new GeneratedContentRequestError("surface is required.");
   }
 
   if (!body.mode) {
-    throw new Error("mode is required.");
+    throw new GeneratedContentRequestError("mode is required.");
   }
 
   if (!body.eventType?.trim()) {
-    throw new Error("eventType is required.");
+    throw new GeneratedContentRequestError("eventType is required.");
   }
 
   if (body.status && !allowedStatuses.has(body.status)) {
@@ -1632,23 +1673,23 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
 
 function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
   if (!body.contentKey?.trim()) {
-    throw new Error("contentKey is required for every row.");
+    throw new GeneratedContentRequestError("contentKey is required for every row.");
   }
 
   if (!body.surface) {
-    throw new Error(`surface is required for ${body.contentKey}.`);
+    throw new GeneratedContentRequestError(`surface is required for ${body.contentKey}.`);
   }
 
   if (!body.mode) {
-    throw new Error(`mode is required for ${body.contentKey}.`);
+    throw new GeneratedContentRequestError(`mode is required for ${body.contentKey}.`);
   }
 
   if (!body.eventType?.trim()) {
-    throw new Error(`eventType is required for ${body.contentKey}.`);
+    throw new GeneratedContentRequestError(`eventType is required for ${body.contentKey}.`);
   }
 
   if (body.status && !allowedStatuses.has(body.status)) {
-    throw new Error(`status for ${body.contentKey} must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.`);
+    throw new GeneratedContentRequestError(`status for ${body.contentKey} must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.`);
   }
 
   if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
@@ -1714,7 +1755,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
   for (let index = 0; index < uniqueKeys.length; index += 80) {
     const batch = uniqueKeys.slice(index, index + 80);
     const params = new URLSearchParams();
-    params.set("select", "id,content_key,target_date,mode,status,provider,prompt_version,source_snapshot,block_type,judge_score,judge_gate");
+    params.set("select", "id,content_key,target_date,mode,status,provider,prompt_version,source_snapshot,block_type,judge_score,judge_gate,updated_at,lane,review_state");
     params.set("content_key", `in.(${batch.map((key) => `"${key}"`).join(",")})`);
     const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
       headers: adminHeaders()
@@ -1919,49 +1960,50 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
   const rows = body.rows;
 
   if (!Array.isArray(rows) || rows.length === 0) {
-    throw new Error("rows must be a non-empty array.");
+    throw new GeneratedContentRequestError("rows must be a non-empty array.");
   }
 
-  const contentKeys = rows.map((row) => row.contentKey ?? "");
-  const existingRows = await fetchExistingRowsByContentKey(contentKeys);
-  const existingByTarget = new Map(existingRows.map((row) => [existingGeneratedContentTargetKey(row), row]));
+  // Validate the complete batch before the first storage write.
+  const prepared = rows.map(generatedContentRowFromWriteBody);
+  const targets = rows.map(generatedContentTargetKey);
+  if (new Set(targets).size !== targets.length) throw new GeneratedContentRequestError("Each content key, target date, and mode may appear only once per batch.");
+  const existingRows = await fetchExistingRowsByContentKey(rows.map(row => row.contentKey ?? ""));
+  const existingByTarget = new Map(existingRows.map(row => [existingGeneratedContentTargetKey(row), row]));
   const skippedLiveRows: SkippedLiveGeneratedContentRow[] = [];
-  const upsertRows = rows
-    .filter((row) => {
-      const contentKey = row.contentKey?.trim() ?? "";
-      const existingRow = existingByTarget.get(generatedContentTargetKey(row));
+  const allRows: unknown[] = [];
 
-      if (existingRow?.status === "LIVE") {
-        skippedLiveRows.push({
-          contentKey,
-          id: existingRow.id,
-          status: "LIVE"
-        });
-        return false;
-      }
-
-      return true;
-    })
-    .map(generatedContentRowFromWriteBody);
-  const allRows = [];
-
-  for (let index = 0; index < upsertRows.length; index += 100) {
-    const batch = upsertRows.slice(index, index + 100);
-    const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
-      method: "POST",
-      headers: {
-        ...adminHeaders(),
-        prefer: "resolution=merge-duplicates,return=representation"
-      },
-      body: JSON.stringify(batch)
-    });
-    const payload = response.payload;
-
-    if (!response.ok) {
-      throw new Error(`Supabase bulk upsert failed with ${response.status}: ${JSON.stringify(payload)}`);
+  for (let index = 0; index < prepared.length; index += 1) {
+    const row = prepared[index];
+    const existing = existingByTarget.get(targets[index]);
+    if (existing?.status === "LIVE") {
+      skippedLiveRows.push({ contentKey: row.content_key, id: existing.id, status: "LIVE" });
+      continue;
     }
-
-    allRows.push(...payload);
+    try {
+      const conflict = () => new GeneratedContentRequestError(`Content ${row.content_key} changed while the batch was saving. Reload it before retrying; the newer version was not overwritten.`, 409);
+      if (existing && (!existing.updated_at || (rows[index].expectedUpdatedAt && rows[index].expectedUpdatedAt !== existing.updated_at))) throw conflict();
+      assertReaderEligiblePublication({ ...existing, ...row });
+      const params = existing
+        ? new URLSearchParams({ id: `eq.${existing.id}`, updated_at: `eq.${existing.updated_at}`, status: "neq.LIVE" })
+        : new URLSearchParams({ on_conflict: "content_key,target_date,mode" });
+      const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+        method: existing ? "PATCH" : "POST",
+        headers: { ...adminHeaders(), prefer: existing ? "return=representation" : "resolution=ignore-duplicates,return=representation" },
+        body: JSON.stringify(row)
+      });
+      if (response.status === 409) throw conflict();
+      if (!response.ok) throw new Error(`Supabase bulk save failed with ${response.status}: ${JSON.stringify(response.payload)}`);
+      if (!Array.isArray(response.payload)) throw new GeneratedContentRequestError("Content storage returned an invalid batch save result.", 502);
+      if (!response.payload.length) throw conflict();
+      allRows.push(...response.payload);
+    } catch (error) {
+      // A batch is not a transaction. Report completed writes even when a later
+      // item fails, so callers can reconcile them instead of retrying blindly.
+      const failure = error instanceof GeneratedContentRequestError ? error
+        : new GeneratedContentRequestError(error instanceof Error ? error.message : "Batch save failed.", error instanceof AdminStorageTimeoutError ? 504 : 500);
+      failure.savedRows = allRows;
+      throw failure;
+    }
   }
 
   return {
@@ -1974,14 +2016,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
   const body = await readJsonBody(req);
 
   if (!body.id) {
-    throw new Error("id is required.");
+    throw new GeneratedContentRequestError("id is required.");
   }
 
   if (body.status && !allowedStatuses.has(body.status)) {
-    throw new Error("status must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.");
+    throw new GeneratedContentRequestError("status must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.");
   }
   if (body.sourceLifecycleAction && !["archive", "restore"].includes(body.sourceLifecycleAction)) {
-    throw new Error("sourceLifecycleAction must be archive or restore.");
+    throw new GeneratedContentRequestError("sourceLifecycleAction must be archive or restore.");
   }
 
   const existing = await fetchExistingRowById(body.id);
@@ -1994,6 +2036,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
   const isPackageRow = isFallbackArchitectureV3Row(existing);
   if (body.status === "LIVE" && isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {})) {
     throw new GeneratedContentRequestError("Source notes can be reviewed but cannot be published as reader copy. Publish a finished card instead.", 409);
+  }
+  const editableFields = ["status", "contentKey", "surface", "mode", "eventType", "targetDate", "headline", "summary", "body", "sections", "facts", "knowledgeIds", "sourceSnapshot", "lane", "reviewState", "promptVersion", "blockType", "reviewerNotes", "evergreen"];
+  const packageFields = ["reviewStatus", "sourceLifecycleAction", "editorialNotes", "revertToPackageOriginal"];
+  if (!body.ownerAction && ![...editableFields, ...(isPackageRow ? packageFields : [])].some(field => (body as Record<string, unknown>)[field] !== undefined)) {
+    throw new GeneratedContentRequestError("At least one supported editable field is required.");
   }
   const effectiveContentKey = body.contentKey ?? existing.content_key;
   const effectiveSurface = (body.surface ?? existing.surface) as GeneratedContentSurface | undefined;
@@ -2551,10 +2598,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.published_at = null;
   }
 
-  if (Object.keys(patch).length === 0) {
-    throw new Error("No review fields were provided.");
+  if (Object.keys(patch).length === 1 && !(isPackageRow && packageFields.some(field => (body as Record<string, unknown>)[field] !== undefined))) {
+    throw new GeneratedContentRequestError("At least one supported editable field is required.");
   }
-
   if (isPackageRow && existing) {
     applyFallbackArchitectureV3ReviewPatch(existing, body, patch);
   }
@@ -2603,6 +2649,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
       published_at: null
     });
   }
+
+  assertReaderEligiblePublication({ ...existing, ...patch });
 
   const updateParams = new URLSearchParams();
   updateParams.set("id", `eq.${body.id}`);
@@ -2748,6 +2796,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
           : 500,
       {
         ok: false,
+        ...(error instanceof GeneratedContentRequestError && error.savedRows ? { savedRows: error.savedRows } : {}),
         error: error instanceof Error ? error.message : "Unknown generated content admin error."
       }
     );
