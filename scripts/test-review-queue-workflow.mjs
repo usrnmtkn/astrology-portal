@@ -103,3 +103,8 @@ const callsBefore = store.calls;
 const concurrent = await Promise.all([1, 2].map(() => store.write({action: 'recheck', contentKey: baseline.content_key, expectedUpdatedAt: baseline.updated_at})));
 assert.deepEqual(concurrent.map(value => value.status).sort(), [200, 409]);
 assert.equal(store.calls - callsBefore, 1);
+
+// Reject a reversed identity before creating an unreachable duplicate reader key.
+const countBeforeInvalidIdentity = store.rows.size;
+assert.equal((await store.write({action: 'generate', contentKey: 'sky.aspect.pluto.trine.mercury.aquarius.virgo'})).status, 400);
+assert.equal(store.rows.size, countBeforeInvalidIdentity);
