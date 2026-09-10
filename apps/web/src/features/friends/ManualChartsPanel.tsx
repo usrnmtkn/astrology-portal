@@ -2156,8 +2156,8 @@ export function ManualChartsPanel({
         fallbackV3ApprovalLevelForContentKey
       ),
       sections: activatedConnectionSections.map((connection, index) => ({
-        heading: index === 0 ? "What this activates" : "",
-        sourceTag: connection.headline,
+        eyebrow: index === 0 ? "What this activates" : undefined,
+        heading: connection.headline,
         body: connection.body
       }))
     });

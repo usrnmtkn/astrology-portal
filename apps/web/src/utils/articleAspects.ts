@@ -35,9 +35,11 @@ export function articleAspectGlyphPartsFromHeading(heading: string) {
     return null;
   }
 
+  // Ownership belongs in the displayed title, not in the point glyph lookup.
+  const point = (label: string) => label.trim().replace(/^(?:your|their)\s+|^.+?['’]s\s+/iu, "");
   return {
-    from: match[1].trim(),
+    from: point(match[1]),
     aspect: articleAspectGlyphTypeFromText(match[2]),
-    to: match[3].trim()
+    to: point(match[3])
   };
 }
