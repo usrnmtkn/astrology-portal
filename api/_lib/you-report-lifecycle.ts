@@ -297,7 +297,8 @@ export async function runYouReportJobs(input: {
       results.push({ jobId: job.id, status: "complete", ...(resultId ? { resultId } : {}) });
     } catch (error) {
       const judgeBlocked = isTransitReadingJudgeBlockedError(error);
-      const failed = judgeBlocked || job.attempt >= attemptCap;
+      // Reject this draft, but give the existing entitlement its remaining retries.
+      const failed = job.attempt >= attemptCap;
       const delayMinutes = Math.min(30, Math.max(1, job.attempt * 2));
       const errorMessage = judgeBlocked
         ? "Writing quality gate did not pass after one corrective rewrite and re-judge."
