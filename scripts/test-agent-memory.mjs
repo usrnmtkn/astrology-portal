@@ -91,7 +91,8 @@ test('real repository search finds the documented replacement and excludes empty
   assert.equal(index.skipped.length, 1);
   assert(index.records.every(r => r.body.length > 0));
   const spec = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
-  const packaging = spec.functions['api/**/*.ts'].includeFiles;
+  const packaging = spec.functions['api/admin/memory-graph.ts'].includeFiles;
+  for (const config of Object.values(spec.functions)) assert(config.includeFiles.length <= 256, 'Vercel includeFiles exceeds its 256-character limit');
   const packaged = new Set(fs.globSync(packaging));
   assert.deepEqual(index.sources.filter(source => !packaged.has(source.path)).map(source => source.path), []);
 });

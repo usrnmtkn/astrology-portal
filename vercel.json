@@ -5,8 +5,11 @@
   "outputDirectory": "apps/web/dist",
   "framework": "vite",
   "functions": {
+    "api/admin/memory-graph.ts": {
+      "includeFiles": "{AGENTS.md,config/agent-memory-sources-v1.json,{docs/{writing,content-management},data/{writing,agent-memory},skills/tldr-astro-writer,.agents/skills/satori-writer,tldr-astro-phrasebank,packages/astro-knowledge/review}/**/*.{jsonl,md}}"
+    },
     "api/**/*.ts": {
-      "includeFiles": "{AGENTS.md,packages/astro-knowledge/review/{tldr-astro-lilith-fact-boundary.md,lilith-true-apogee-migration-2026-08-09.md,lilith-placements-v5/lilith-placements-v5-owner-package.md},{api/_lib,artifacts,config,docs/writing,docs/content-management,data/writing,data/agent-memory,skills/tldr-astro-writer,.agents/skills/satori-writer,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,jsonl,md,mjs,ts}}"
+      "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,md,mjs,ts}"
     }
   },
   "rewrites": [
