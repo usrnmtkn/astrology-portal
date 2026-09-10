@@ -96,3 +96,10 @@ result = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.update
 assert.equal(result.status, 200, JSON.stringify(result));
 assert.equal(result.payload.rows[0].status, 'REVIEWED');
 assert.equal(result.payload.rows[0].lane, 'reference');
+
+// Competing requests for one saved version may start only one writer operation.
+store.rows.set(baseline.id, structuredClone(baseline));
+const callsBefore = store.calls;
+const concurrent = await Promise.all([1, 2].map(() => store.write({action: 'recheck', contentKey: baseline.content_key, expectedUpdatedAt: baseline.updated_at})));
+assert.deepEqual(concurrent.map(value => value.status).sort(), [200, 409]);
+assert.equal(store.calls - callsBefore, 1);

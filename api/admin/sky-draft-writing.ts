@@ -8,6 +8,9 @@ import { runStudioSkyWriting, studioSkyIdentity } from "../_lib/sky-studio-writi
 import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
 loadLocalWebEnv();
 export const maxDuration = 300;
+function nextVersion(previous?: string) {
+    return new Date(Math.max(Date.now(), (Date.parse(previous ?? "") || 0) + 1)).toISOString();
+}
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
     if (req.method !== "POST")
         return sendAdminMethodNotAllowed(res, ["POST"]);
@@ -37,7 +40,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         if (input.action === "generate" && row?.body?.trim())
             throw new AdminHttpError(409, "This draft already contains writing. Generation cannot replace it; edit the draft or run writing checks.");
         // Reserve the identity/version before paid work. Concurrent requests cannot duplicate or overwrite it.
-        const now = new Date().toISOString();
+        const now = nextVersion(row?.updated_at);
         const operation = { id: randomUUID(), action: input.action, startedAt: now };
         const snapshot = { ...(row?.source_snapshot ?? {}), studioWritingOperation: operation };
         if (snapshot.studioWritingOperation && row?.source_snapshot?.studioWritingOperation?.startedAt
@@ -58,7 +61,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             throw new AdminHttpError(409, "Another editor changed or created this draft. Refresh to see it.");
         row = claimedRows[0];
         const finish = async (patch: Record<string, unknown>) => {
-            const result = await adminFetch(`${url}?${new URLSearchParams({ id: `eq.${row.id}`, updated_at: `eq.${row.updated_at}` })}`, { method: "PATCH", headers: { ...headers, prefer: "return=representation" }, body: JSON.stringify({ ...patch, updated_at: new Date().toISOString() }) });
+            const result = await adminFetch(`${url}?${new URLSearchParams({ id: `eq.${row.id}`, updated_at: `eq.${row.updated_at}` })}`, { method: "PATCH", headers: { ...headers, prefer: "return=representation" }, body: JSON.stringify({ ...patch, updated_at: nextVersion(row.updated_at) }) });
             if (!result.ok)
                 throw new AdminHttpError(502, "Could not save writing results. Refresh the draft before retrying.");
             const saved = await result.json();
