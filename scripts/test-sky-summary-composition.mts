@@ -15,7 +15,7 @@ for (const sun of skySummarySigns) for (const moon of skySummarySigns) {
   assert.equal(working.joined, true);
   const text = working.parts.map(part => part.text).join("");
   for (const [planet, sign] of [["sun", sun], ["moon", moon]]) {
-    const key = `cms/sky-daily-summary/${planet}/${sign.toLowerCase()}`;
+    const key = `cms/sky-daily-summary/${planet}/${sign.toLowerCase()}${planet === "moon" ? "/regular" : ""}`;
     assert.ok(text.includes(skyDailySummaryFields.find(field => field.key === key)!.body || importedSkySummary(key)!));
   }
   assert.ok(!text.includes("..") && !text.includes(".,") && !text.includes("—"));

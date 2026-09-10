@@ -68,13 +68,13 @@ for (const width of [390, 1440]) {
       // Chromium can round the ink extent of cloned inline highlights one pixel beyond clientWidth.
       expect(previewWidth.scroll, JSON.stringify(previewWidth)).toBeLessThanOrEqual(previewWidth.client + 1);
       expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
-      await expect(preview).toHaveText("The Sun in Virgo turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Cancer brings more attention to home, family, and whether the care we give is coming back to us.");
+      await expect(preview).toHaveText("The Sun in Virgo turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Cancer pulls us home to the places, people, and memories that nurture us.");
       await map.getByLabel("Composition Moon sign").selectOption("Leo");
-      await expect(preview).toContainText("punishing, while the Moon in Leo makes appreciation land harder and being overlooked harder to shrug off.");
+      await expect(preview).toContainText("punishing, while the Moon in Leo helps us access that inner fire more easily.");
       await map.getByLabel("Composition Sun sign").selectOption("Aries");
-      await expect(preview).toContainText("The Sun in Aries puts more emphasis on starting, acting, and finding out what works by doing it, while the Moon in Leo makes appreciation land harder and being overlooked harder to shrug off.");
+      await expect(preview).toContainText("The Sun in Aries puts more emphasis on starting, acting, and finding out what works by doing it, while the Moon in Leo helps us access that inner fire more easily.");
       await expect(map.getByLabel("Composition copy view")).toHaveCount(0);
-      await expect(preview).toHaveText("The Sun in Aries puts more emphasis on starting, acting, and finding out what works by doing it, while the Moon in Leo makes appreciation land harder and being overlooked harder to shrug off.");
+      await expect(preview).toHaveText("The Sun in Aries puts more emphasis on starting, acting, and finding out what works by doing it, while the Moon in Leo helps us access that inner fire more easily.");
       await page.screenshot({ path: `test-results/sky-composition-empty-${width}-${theme}.png`, fullPage: true });
       await map.getByLabel("Composition Sun sign").selectOption("Virgo");
       await map.getByLabel("Composition Moon sign").selectOption("Cancer");
@@ -210,15 +210,15 @@ test("supplied wording opens intact as an editable unsaved draft", async ({ page
   await mockStudio(page, stored);
   await page.goto("/#sky-writeups?view=daily-summary");
   const field = page.getByRole("article", { name: "Moon in Leo", exact: true });
-  await expect(field).toContainText("makes appreciation land harder");
+  await expect(field).toContainText("helps us access that inner fire more easily");
   await field.getByRole("button", { name: "Edit wording" }).click();
-  await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("makes appreciation land harder and being overlooked harder to shrug off");
+  await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("helps us access that inner fire more easily");
   expect(stored).toHaveLength(0);
   await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
-  expect(stored[0].source_snapshot.suppliedCopy.sourceAttachment).toBe("9509f3ee-68a1-4888-b9fa-c7cff47de573/pasted-text.txt");
+  expect(stored[0].source_snapshot.moonSource.body).toBe("helps us access that inner fire more easily");
   await page.reload();
-  await expect(field).toContainText("makes appreciation land harder");
+  await expect(field).toContainText("helps us access that inner fire more easily");
 });
 
 test('live bundled summary stays Live when opened, then publishes twice without another approval', async ({ page }) => {
@@ -305,9 +305,10 @@ test("full template controls preview order, publish, and reload", async ({ page,
   await assembly.getByLabel("Ingress examples", { exact: true }).fill("Venus enters Scorpio");
   await assembly.getByLabel("Lunation example", { exact: true }).selectOption("today");
   const preview = assembly.getByLabel("Full summary preview", { exact: true });
-  await expect(preview.locator("p")).toHaveCount(3);
+  await expect(preview.locator("p")).toHaveCount(2);
   await expect(preview).toContainText("Today brings one exact aspect: Saturn squares Lilith. Also today, Mercury stations retrograde in Scorpio.");
-  await expect(preview).toContainText("The New Moon in Virgo is also exact today.");
+  await expect(preview).toContainText("New Moon in Virgo calls us to clear the clutter");
+  await assembly.getByText("Paragraphs and event order", { exact: true }).click();
   await assembly.getByRole("button", { name: "Move Stations earlier", exact: true }).click();
   await expect(preview).toContainText("Mercury stations retrograde in Scorpio today. One aspect is also exact today: Saturn squares Lilith.");
   const layout = "{openingSentence}\n\n{stationsSentence}\n\n{lunationSentence}";
@@ -320,6 +321,7 @@ test("full template controls preview order, publish, and reload", async ({ page,
   await expect.poll(() => stored[0]?.status).toBe("LIVE");
   expect(stored[0].body).toBe(layout);
   await page.reload();
+  await assembly.getByText("Paragraphs and event order", { exact: true }).click();
   await expect(assembly.getByLabel("Assembly layout", { exact: true })).toHaveValue(layout);
   // Reopening an existing row with a local edit must not replace it with the saved body.
   const revised = "{openingSentence}\n\n{lunationSentence}";
@@ -338,7 +340,66 @@ test("full template controls preview order, publish, and reload", async ({ page,
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
   await expect(summary).toContainText("Mercury stations retrograde in Scorpio today.");
   await expect(summary).not.toContainText("Saturn stations");
-  await expect(summary).toContainText("The New Moon in Virgo is also exact today.");
+  await expect(summary).toContainText("New Moon in Virgo calls us to clear the clutter");
   await expect(summary).not.toContainText("The next New Moon");
   await expect(summary.getByRole("link", { name: "Mercury stations retrograde in Scorpio" })).toHaveAttribute("href", "#sky/placement/mercury/scorpio");
+});
+
+test("inline connecting words preserve variables, publish and reach the reader", async ({ page, context }) => {
+  const stored: any[] = [];
+  await mockStudio(page, stored);
+  await page.goto("/#sky-writeups?view=daily-summary");
+  const map = page.getByRole("region", { name: "Sun and Moon composition map" });
+  const preview = map.getByLabel("Combined Sun and Moon preview");
+  await map.getByRole("textbox", { name: "Opening connecting words 1", exact: true }).fill("Today, the ");
+  await map.getByRole("textbox", { name: "Opening connecting words 2", exact: true }).fill(" moving through ");
+  await expect(preview).toContainText("Today, the Sun moving through Virgo turns our attention");
+  await expect(preview.locator('[contenteditable="plaintext-only"]')).toHaveCount(9);
+  await expect(preview.getByRole("link", { name: "Edit Sun in Virgo summary" })).toHaveAttribute("href", /sun%2Fvirgo/);
+  await expect(preview.getByRole("link").locator('[contenteditable]')).toHaveCount(0);
+  await map.getByRole("button", { name: "Review and save wording" }).click();
+  const body = page.getByRole("textbox", { name: "Summary wording", exact: true });
+  await expect(body).toHaveValue(/^Today, the \{sunName\} moving through \{sunSign\}\{sunDegree\}/);
+  await page.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await expect.poll(() => stored[0]?.status).toBe("LIVE");
+  await page.reload();
+  await expect(preview).toContainText("Today, the Sun moving through Virgo turns our attention");
+  const reader = await context.newPage();
+  await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
+  await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: stored.length, rows: stored } }));
+  await reader.goto("http://127.0.0.1:4294/#sky");
+  const summary = reader.getByLabel("Daily sky summary", { exact: true });
+  await expect(summary).toContainText("Today, the Sun moving through Virgo at 15° turns our attention");
+  await expect(summary).toContainText("the places, people, and memories that nurture us.");
+  await expect(summary.locator('a[href="#sky/placement/sun/virgo"]')).toHaveText("Sun moving through Virgo at 15°");
+});
+
+test("V6 Moon event sources stay separate and missing copy stays blank", async ({ page, context }) => {
+  const stored: any[] = [];
+  await mockStudio(page, stored);
+  await page.goto("/#sky-writeups?view=daily-summary");
+  const map = page.getByRole("region", { name: "Sun and Moon composition map" });
+  await map.getByLabel("Composition Moon sign").selectOption("Virgo");
+  await map.getByLabel("Composition Moon event").selectOption("newMoon");
+  const preview = map.getByLabel("Combined Sun and Moon preview");
+  await expect(preview).toContainText("New Moon in Virgo calls us to clear the clutter, refine our routines, and prioritize the details that nourish our well-being");
+  await expect(preview.getByRole("link", { name: "Edit New Moon in Virgo summary" })).toHaveAttribute("href", /moon%2Fvirgo%2FnewMoon/);
+  await map.getByLabel("Composition Moon event").selectOption("fullMoon");
+  await expect(map.getByLabel("Composition sources")).toContainText("NEEDS OWNER COPY");
+  await expect(preview).toContainText("while the Full Moon is in Virgo.");
+  await map.getByRole("button", { name: "Edit Moon source" }).click();
+  await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("");
+  expect(stored).toHaveLength(0);
+  const reader = await context.newPage();
+  await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
+  await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [
+    { id: "ordinary", type: "lunation", title: "New Moon", sign: "Virgo", longitude: 165, startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" },
+    { id: "eclipse", type: "lunation", title: "New Moon", eclipseType: "solar", sign: "Virgo", longitude: 165, startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" }
+  ] }] } } }));
+  await reader.goto("http://127.0.0.1:4294/#sky");
+  const summary = reader.getByLabel("Daily sky summary", { exact: true });
+  await expect(summary).toContainText("Solar Eclipse in Virgo at 15° reminds us that striving for perfection can hinder growth");
+  await expect(summary).not.toContainText("Moon in Cancer");
+  await expect(summary).not.toContainText("New Moon in Virgo");
+  await expect(summary.getByRole("link", { name: "Solar Eclipse in Virgo at 15°" })).toHaveAttribute("href", "#sky/lunation/2026-09-07/virgo");
 });

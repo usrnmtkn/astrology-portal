@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { moonEventNames, type MoonSummaryKind } from "../../web/src/content/skyMoonSummary";
+import { SkyInlineTemplate } from "./SkyInlineTemplate";
+import { useState, type ReactNode } from "react";
 import { skyAssemblyFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { skyDailySummaryParts, skySummaryParagraphs } from "../../web/src/content/skyDailySummary";
 import { publishedSkySummaryContent, type SummaryCompositionRow } from "./skySummaryComposition";
@@ -7,9 +9,9 @@ const layoutField = skyAssemblyFields.find(field => field.key.endsWith("/layout"
 const categories = ["exactAspectsSentence", "stationsSentence", "ingressesSentence"] as const;
 const labels = { exactAspectsSentence: "Exact aspects", stationsSentence: "Stations", ingressesSentence: "Ingresses" };
 
-export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign }: {
+export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign, openingSlots, moonKind }: {
   rows: SummaryCompositionRow[]; onEdit: (field: SkySummaryField, initialBody?: string) => void;
-  busy: boolean; sunSign: string; moonSign: string;
+  busy: boolean; sunSign: string; moonSign: string; openingSlots: Record<string, ReactNode>; moonKind: MoonSummaryKind;
 }) {
   const content = publishedSkySummaryContent(rows);
   const publishedLayout = content.get(layoutField.key)?.body ?? layoutField.body;
@@ -35,7 +37,7 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
     retrogradePlanets: retrogrades.split(";").map(name => name.trim()).filter(Boolean),
     exactAspects: examples(aspectExamples, "aspect"), stations: examples(stationExamples, "station").map(event => ({ ...event, direction: stationDirection })),
     ingresses: examples(ingressExamples, "ingress"),
-    event: lunation === "none" ? undefined : { name: "New Moon", sign: sunSign, countdown: "in 3 days", isToday: lunation === "today" }
+    event: moonKind !== "regular" ? { name: moonEventNames[moonKind], sign: moonSign, countdown: "today", isToday: true, eclipseType: moonKind === "solarEclipse" ? "solar" : moonKind === "lunarEclipse" ? "lunar" : undefined } : lunation === "none" ? undefined : { name: "New Moon", sign: sunSign, countdown: "in 3 days", isToday: lunation === "today" }
   }, previewContent, { editorialPreview: true });
   const order = [...layout.matchAll(/\{(exactAspectsSentence|stationsSentence|ingressesSentence)\}/gu)].map(match => match[1]);
   function move(slot: string, offset: number) {
@@ -46,8 +48,9 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
   return <section className="admin-template-reader-drilldown admin-sky-summary-composition" aria-label="Full summary assembly">
     <header className="admin-section-heading-row"><div>
       <h4>Full summary template</h4>
-      <p>Edit the wording, paragraph breaks, and event order. Empty sections disappear automatically. Changes here are a local preview until you save and publish them in the editor.</p>
+      <p>Click the white words to edit a sentence around its protected variables. Edit the opening with the Sun and Moon examples below. Paragraph and event controls are available here too.</p>
     </div></header>
+    <details><summary>Paragraphs and event order</summary>
     <label><span>Assembly layout</span><textarea aria-label="Assembly layout" rows={6} value={layout} onChange={event => setEditedLayout(event.target.value)} /></label>
     <div className="admin-editor-guidance">
       <p>Use single braces for slots. Blank lines start new paragraphs. The opening is required; other sections can be removed. Event wording uses the first or additional variant according to this order.</p>
@@ -59,10 +62,14 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
       <button type="button" disabled={busy || errors.length > 0} onClick={() => onEdit(layoutField, layout)}>Edit and publish full template</button>
       {editedLayout !== null && <button type="button" onClick={() => setEditedLayout(null)}>Use published layout</button>}
     </div>
+    </details>
     <label><span>Sentence template</span><select aria-label="Sentence template" value={selected} onChange={event => setSelected(event.target.value)}>
       {skyAssemblyFields.filter(field => field !== layoutField).map(field => <option key={field.key} value={field.key}>{field.label}</option>)}
     </select></label>
-    <p>{content.get(selected)?.body ?? selectedField.body}</p>
+    <div className="admin-template-reader-surface"><div className="admin-template-reader-copy"><section className="admin-composition-preview-field field-body">
+      <SkyInlineTemplate key={`${selected}:${content.get(selected)?.body ?? selectedField.body}`} field={selectedField} body={content.get(selected)?.body ?? selectedField.body}
+        slots={openingSlots} busy={busy} onEdit={onEdit} label="Sentence wording editor" />
+    </section></div></div>
     <button type="button" disabled={busy} onClick={() => onEdit(selectedField)}>Edit sentence template</button>
     <details><summary>Preview event examples</summary>
       <p>These are examples for checking grammar, not today’s calculated sky. Separate multiple event labels with semicolons. Placement examples use the Sun and Moon selectors below.</p>

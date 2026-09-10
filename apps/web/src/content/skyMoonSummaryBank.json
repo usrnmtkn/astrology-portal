@@ -1,0 +1,86 @@
+{
+  "aries": {
+    "regular": "makes the difference between being considerate and consistently putting ourselves last easier to notice",
+    "newMoon": "",
+    "fullMoon": "illuminates the Aries-Libra axis between honoring our individual needs and nurturing our relationships",
+    "solarEclipse": "pulls our cravings, passions, and instincts into sharp focus; Aries doesn’t wait for permission",
+    "lunarEclipse": ""
+  },
+  "taurus": {
+    "regular": "encourages us to stay grounded, breathe deeper, and listen to our bodies",
+    "newMoon": "invites us to reconnect with what sustains us: our bodies, the earth, and the simple pleasures that ground us in the here and now",
+    "fullMoon": "illuminates the tension between what we hold and what we must release",
+    "solarEclipse": "",
+    "lunarEclipse": ""
+  },
+  "gemini": {
+    "regular": "invites a shift toward movement, conversation, learning, and conscious curiosity",
+    "newMoon": "awakens our curiosity and sparks our intellect",
+    "fullMoon": "calls us to bridge the gap between the information we gather and the wisdom we share",
+    "solarEclipse": "",
+    "lunarEclipse": ""
+  },
+  "cancer": {
+    "regular": "pulls us home to the places, people, and memories that nurture us",
+    "newMoon": "calls us home, not just to the place where we live, but to the emotional center that grounds and nourishes us",
+    "fullMoon": "can bring a heightened focus on domestic issues such as housing, food security, childcare, or healthcare",
+    "solarEclipse": "",
+    "lunarEclipse": ""
+  },
+  "leo": {
+    "regular": "helps us access that inner fire more easily",
+    "newMoon": "marks a powerful moment of self-renewal, a return to who we are beneath the roles, the expectations, and the noise",
+    "fullMoon": "brings what has been hidden into view; the cycle peaks, and this is the moment of truth",
+    "solarEclipse": "",
+    "lunarEclipse": ""
+  },
+  "virgo": {
+    "regular": "separates signal from noise",
+    "newMoon": "calls us to clear the clutter, refine our routines, and prioritize the details that nourish our well-being",
+    "fullMoon": "",
+    "solarEclipse": "reminds us that striving for perfection can hinder growth",
+    "lunarEclipse": "separates signal from noise, illuminating the cracks in our systems"
+  },
+  "libra": {
+    "regular": "brings our attention to relationships and how we show up in them",
+    "newMoon": "offers a doorway to begin again",
+    "fullMoon": "reflects back the dynamics that shape our connections",
+    "solarEclipse": "",
+    "lunarEclipse": ""
+  },
+  "scorpio": {
+    "regular": "holds space for what’s unspoken",
+    "newMoon": "pulls us into the depths of our inner world, inviting us to confront, transform, and release what no longer serves our growth",
+    "fullMoon": "pulls focus to what nourishes us and what consumes us, what we own and what we owe",
+    "solarEclipse": "",
+    "lunarEclipse": ""
+  },
+  "sagittarius": {
+    "regular": "favors honesty, though it can get lost in the big picture",
+    "newMoon": "",
+    "fullMoon": "illuminates the tension between what we know and what we seek to understand",
+    "solarEclipse": "",
+    "lunarEclipse": ""
+  },
+  "capricorn": {
+    "regular": "brings emotional fatigue as the pressure to keep it all together catches up",
+    "newMoon": "",
+    "fullMoon": "shines a spotlight on the delicate balance between our private lives and public ambitions",
+    "solarEclipse": "",
+    "lunarEclipse": ""
+  },
+  "aquarius": {
+    "regular": "reminds us that truth is not always comfortable, but it is necessary",
+    "newMoon": "invites us to envision the world we want to live in and take bold steps toward it, both as individuals and as part of something larger",
+    "fullMoon": "highlights the tension between the person we’ve learned to perform and the person we actually are",
+    "solarEclipse": "",
+    "lunarEclipse": ""
+  },
+  "pisces": {
+    "regular": "pulls us toward the unseen and the space between endings and beginnings",
+    "newMoon": "pulls us into the unseen and the space between endings and beginnings",
+    "fullMoon": "",
+    "solarEclipse": "",
+    "lunarEclipse": "brings release and revelation, revealing truths we’ve long avoided"
+  }
+}

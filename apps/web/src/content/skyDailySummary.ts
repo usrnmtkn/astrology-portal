@@ -1,3 +1,4 @@
+import { selectedMoonKind, moonEventNames, moonSummaryKey, moonSummaryBody } from "./skyMoonSummary";
 import defaultAssembly from "./skyDailySummaryAssembly.json" with { type: "json" };
 import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
 import defaultTiming from "./skyDailySummaryTiming.json" with { type: "json" };
@@ -28,11 +29,11 @@ export type SkyDailySummaryFacts = {
   stations?: Array<{ id: string; label: string; direction: "direct" | "retrograde" }>;
   ingresses?: Array<{ id: string; label: string; tldr?: string }>;
   voidRemainingLabel?: string;
-  event?: { name: string; sign: string; countdown: string; isToday?: boolean; eclipseType?: "solar" | "lunar" };
+  event?: { name: string; degree?: number; sign: string; countdown: string; isToday?: boolean; eclipseType?: "solar" | "lunar" };
 };
 
 function fullerClause(body: "sun" | "moon", sign?: string, content?: CmsGeneratedContentMap, editorialPreview = false) {
-  return sign ? savedCopy(content, `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`, (clauses[body] as Record<string, string>)[sign.toLowerCase()] ?? "", editorialPreview) : "";
+  return sign ? savedCopy(content, `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`, (clauses.sun as Record<string, string>)[sign.toLowerCase()] ?? "", editorialPreview) : "";
 }
 
 // Templates contain text and named slots only. Slot values remain structured parts,
@@ -56,15 +57,32 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
   }
   const assembly = Object.fromEntries(Object.entries(defaultAssembly).map(([key, value]) => [key, copy(`assembly/${key}`, value)])) as typeof defaultAssembly;
   const values: Record<string, SummaryPart[]> = {};
+  const moonKind = selectedMoonKind(facts.event);
+  const specialMoon = moonKind !== "regular";
+  const moonPlacement = specialMoon ? { sign: facts.event!.sign, degree: facts.event!.degree } : facts.moon;
   for (const body of ["sun", "moon"] as const) {
-    const placement = facts[body];
+    const placement = body === "moon" ? moonPlacement : facts.sun;
     if (!placement?.sign) continue;
-    const clause = fullerClause(body, placement.sign, content, editorialPreview);
-    values[`${body}PlacementLink`] = [{ text: `${body === "sun" ? "Sun" : "Moon"}${clause ? " in " : body === "sun" ? " is in " : " moves through "}${placement.sign}${degreeText(placement.degree)}`, action: body, emphasis: true }];
-    values[`${body}Summary`] = clause ? [{ text: clause, sourceKey: `cms/sky-daily-summary/${body}/${placement.sign.toLowerCase()}` }] : [];
+    const sourceKey = body === "moon" ? moonSummaryKey(placement.sign, moonKind) : `cms/sky-daily-summary/sun/${placement.sign.toLowerCase()}`;
+    const clause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview) : fullerClause(body, placement.sign, content, editorialPreview);
+    values[`${body}Name`] = plain(body === "sun" ? "Sun" : moonEventNames[moonKind]);
+    values[`${body}Sign`] = plain(placement.sign);
+    values[`${body}Degree`] = plain(degreeText(placement.degree));
+    values[`${body}Summary`] = clause ? [{ text: clause, sourceKey }] : [];
   }
-  const hasSun = Boolean(values.sunPlacementLink), hasMoon = Boolean(values.moonPlacementLink);
-  values.openingSentence = hasSun || hasMoon ? fillSkyTemplate(hasSun && hasMoon ? assembly.opening : hasSun ? assembly.sunOnly : assembly.moonOnly, values) : [];
+  const hasSun = Boolean(values.sunName), hasMoon = Boolean(values.moonName);
+  let opening = hasSun && hasMoon ? assembly.opening : hasSun ? assembly.sunOnly : assembly.moonOnly;
+  // Preserve the existing factual fallback when a summary is unavailable.
+  if (!values.sunSummary?.length) opening = opening.replace("{sunName} in {sunSign}", "{sunName} is in {sunSign}");
+  if (!values.moonSummary?.length) opening = opening.replace("{moonName} in {moonSign}", specialMoon ? "{moonName} is in {moonSign}" : "{moonName} moves through {moonSign}");
+  // The editor separates facts; readers still get one complete placement link.
+  for (const body of ["sun", "moon"] as const) {
+    opening = opening.replace(new RegExp(`\\{${body}Name\\}[^{}]*\\{${body}Sign\\}[^{}]*\\{${body}Degree\\}`), placement => {
+      values[`${body}PlacementLink`] = [{ text: fillSkyTemplate(placement, values).map(part => part.text).join(""), action: body === "moon" && specialMoon ? "lunation" : body, emphasis: true }];
+      return `{${body}PlacementLink}`;
+    });
+  }
+  values.openingSentence = hasSun || hasMoon ? fillSkyTemplate(opening, values) : [];
   const planets = [...new Set((facts.retrogradePlacements?.map(p => p.planet) ?? facts.retrogradePlanets ?? []).map(name => name.trim()).filter(Boolean))];
   if (planets.length) {
     const intro = planets.length === 1 ? timing.singleRetrograde : timing.retrograde.replace("{count}", words[planets.length] ?? String(planets.length));
@@ -87,7 +105,7 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
   for (const match of assembly.layout.matchAll(/\{(exactAspectsSentence|stationsSentence|ingressesSentence|lunationSentence)\}/gu)) {
     const slot = match[1];
     if (slot === "lunationSentence") {
-      if (!facts.event) continue;
+      if (!facts.event || specialMoon) continue;
       const event = facts.event;
       const name = event.eclipseType === "solar" ? "Solar Eclipse" : event.eclipseType === "lunar" ? "Lunar Eclipse" : event.name;
       const link: SummaryPart[] = [{ text: `${name} in ${event.sign}`, action: "lunation", emphasis: true }];

@@ -12,7 +12,8 @@ const facts = { sun: { sign: "Virgo", degree: 15 }, moon: { sign: "Cancer", degr
 const row = (name: string, body: string, status = "LIVE") => ({ id: name, contentKey: `cms/sky-daily-summary/assembly/${name}`, body, status, updatedAt: "" } as any);
 const render = (f = facts, rows: any[] = []) => skySummaryParagraphs(skyDailySummaryParts(f, new Map(rows.map(r => [r.contentKey, r])))).map(p => p.map(x => x.text).join(""));
 assert.equal(render()[1], "Today brings one exact aspect: Saturn squares Lilith. Also today, Mercury stations retrograde in Scorpio. There is also one ingress: Venus enters Scorpio. Full supplied TLDR.");
-assert.equal(render()[2], "The New Moon in Virgo is also exact today.");
+assert.equal(render().length, 2);
+assert.ok(render()[0].includes("New Moon in Virgo calls us to clear the clutter"));
 const reordered = row("layout", "{openingSentence}\n\n{stationsSentence} {ingressesSentence} {exactAspectsSentence}\n\n{lunationSentence}");
 assert.equal(render(facts, [reordered])[1], "Mercury stations retrograde in Scorpio today. There is also one ingress: Venus enters Scorpio. Full supplied TLDR. One aspect is also exact today: Saturn squares Lilith.");
 const hidden = row("layout", "{openingSentence}\n\n{ingressesSentence}\n\n{lunationSentence}");
@@ -20,7 +21,7 @@ assert.equal(render(facts, [hidden])[1], "One ingress happens today: Venus enter
 assert.ok(!render(facts, [hidden]).join(" ").includes("stations"));
 assert.deepEqual(render(facts, [{ ...hidden, status: "DRAFT" }]), render());
 assert.deepEqual(render(facts, [row("layout", "{bogus}")]), render());
-assert.equal(render({ ...facts, exactAspects: [], stations: [], ingresses: [] })[1], "The New Moon in Virgo is exact today.");
+assert.equal(render({ ...facts, exactAspects: [], stations: [], ingresses: [] }).length, 1);
 assert.equal(render({ ...facts, stations: [facts.stations[0], { id: "s2", label: "Saturn stations direct in Aries", direction: "direct" as any }] })[1], "Today brings one exact aspect: Saturn squares Lilith. Two planets also station today: Mercury stations retrograde in Scorpio and Saturn stations direct in Aries. There is also one ingress: Venus enters Scorpio. Full supplied TLDR.");
 for (const field of skyAssemblyFields) assert.deepEqual(skySummaryTemplateErrors(field.key, field.body), []);
 assert.ok(skySummaryTemplateErrors(hidden.contentKey, "{openingSentence} {stationsSentence} {stationsSentence}").length);
@@ -35,3 +36,10 @@ assert.equal(skySummaryEventFacts([{ ...station, direction: undefined }], new Ma
 console.log("Assembly: reorder, omission, singular/plural, station fact links, today lunation, published parity, and draft/invalid gates passed.");
 
 assert.equal(skySummaryEventFacts([{ ...station, phase: "retrograde-passage" }], new Map()).stations.length, 0, "An ongoing retrograde is not a station today");
+
+const inlineOpening = row("opening", "Today, the {sunName} moving through {sunSign}{sunDegree} {sunSummary}, while the {moonName} in {moonSign}{moonDegree} {moonSummary}.");
+assert.deepEqual(skySummaryTemplateErrors(inlineOpening.contentKey, inlineOpening.body), []);
+const inlineParts = skyDailySummaryParts(facts, new Map([[inlineOpening.contentKey, inlineOpening]]));
+assert.ok(inlineParts.some(part => part.action === "sun" && part.text === "Sun moving through Virgo at 15°"));
+assert.ok(inlineParts.some(part => part.action === "lunation" && part.text === "New Moon in Virgo"));
+assert.ok(skySummaryTemplateErrors(inlineOpening.contentKey, inlineOpening.body.replace("{sunSign}", "Virgo")).length, "A calculated variable cannot be replaced by a fixed sign");

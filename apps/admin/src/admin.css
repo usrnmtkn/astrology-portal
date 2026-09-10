@@ -10156,3 +10156,30 @@ body,
 .admin-dashboard .admin-sky-ingress-composer .admin-composition-variable::after {
   content: none;
 }
+
+/* Literal template words stay narrative text; protected variables are siblings. */
+.admin-dashboard .admin-summary-template-words {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  cursor: text;
+  border-radius: var(--admin-radius-2xs);
+}
+.admin-dashboard .admin-summary-template-words:focus-visible {
+  outline: var(--border-width-thin) solid currentColor;
+  box-shadow: var(--admin-shadow-variable-focus);
+}
+.admin-dashboard .admin-summary-template-words:empty {
+  display: inline-block;
+  min-width: var(--admin-space-xs);
+}
+.admin-dashboard .admin-summary-template-words:empty:focus::before {
+  content: attr(data-placeholder);
+  color: var(--admin-ui-muted);
+}
+
+.admin-dashboard .admin-sky-summary-composition .admin-composition-variable {
+  padding-inline: 0;
+}
