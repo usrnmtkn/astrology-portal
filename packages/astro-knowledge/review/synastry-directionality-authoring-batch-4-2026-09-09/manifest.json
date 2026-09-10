@@ -17,6 +17,16 @@
     "family": "Sun with Ascendant, Midheaven, Descendant, Imum Coeli, Chiron, North Node, South Node, and Lilith",
     "liveCandidateCount": 24
   },
+  "releaseInvariants": [
+    "All 24 keys are classified AUTHOR_REVERSE by the human-reviewed directionality map.",
+    "body_you is the newly approved complementary semantic direction for the viewer holding canonical Sun.",
+    "body_they preserves the previously approved opposite semantic direction byte-for-byte.",
+    "No reciprocal or NEEDS_DIRECTION_REVIEW row may enter this release family.",
+    "Canonical authoring keeps {{Name}}; the relationship runtime compiles it to {{holder2}} only at the serving boundary.",
+    "The exact serving hash binds the compiled body_you and preserved body_they together.",
+    "Conjunction rows resolve as exact-owner-approved; hard and soft family rows resolve as owner-approved-grouped.",
+    "Content Studio must remain LIVE + serving + review_state null with a current live publication ledger row."
+  ],
   "statusPolicy": {
     "candidateStatus": "OWNER_APPROVED_LIVE",
     "directionalityMode": "viewer-centered-synastry-v1",
