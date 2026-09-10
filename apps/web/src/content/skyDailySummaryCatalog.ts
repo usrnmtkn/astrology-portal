@@ -1,8 +1,9 @@
+import assembly from "./skyDailySummaryAssembly.json" with { type: "json" };
 import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
 import timing from "./skyDailySummaryTiming.json" with { type: "json" };
 
 export const skySummarySigns = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
-export type SkySummaryField = { key: string; label: string; group: string; body: string; allowedSlots: string[]; readerEnabled?: boolean };
+export type SkySummaryField = { key: string; label: string; group: string; body: string; allowedSlots: string[]; readerEnabled?: boolean; optionalSlots?: boolean };
 // Exact owner-approved replacements only. Other editorial wording remains untouched.
 export function currentSkySummaryWording(key: string, body: string): string {
   const part = key.replace("cms/sky-daily-summary/", "");
@@ -23,7 +24,15 @@ const timingLabels: Record<string, string> = {
   voidRemaining: "Void of course with remaining time", voidWithoutTiming: "Void of course without remaining time",
   lunation: "Next New Moon, Full Moon, or eclipse", fullMoonMeaning: "Full Moon explanation"
 };
+export const skyAssemblyFields: SkySummaryField[] = Object.entries(assembly).map(([name, body]) => ({
+  key: `cms/sky-daily-summary/assembly/${name}`,
+  label: name === "layout" ? "Full summary template" : name.replace(/([A-Z])/gu, " $1").replace(/^./u, c => c.toUpperCase()),
+  group: "Assembly templates", body,
+  allowedSlots: [...new Set(Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]))],
+  optionalSlots: name === "layout"
+}));
 export const skyDailySummaryFields: SkySummaryField[] = [
+  ...skyAssemblyFields,
   ...(["sun", "moon"] as const).flatMap(body => skySummarySigns.map(sign => ({
     key: `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`,
     label: `${body === "sun" ? "Sun" : "Moon"} in ${sign}`,
@@ -46,12 +55,14 @@ export function skySummaryTemplateErrors(key: string, body: string): string[] {
   if (!field) return key.startsWith("cms/sky-daily-summary/") ? ["Unknown daily sky summary field."] : [];
   const slots = Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]);
   const errors: string[] = [];
+  if (/[{}]/u.test(body.replace(/\{[^{}]+\}/gu, ""))) errors.push("Close every slot with matching single braces.");
   if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
   if (body.includes("{{") || body.includes("}}")) errors.push("Use single-brace calculated slots, for example {name}.");
   if (slots.some(slot => !field.allowedSlots.includes(slot))) errors.push("This field contains an unsupported calculated slot.");
   if (key === "cms/sky-daily-summary/lunation" && !body.includes("{name} in {sign}")) errors.push("Keep {name} in {sign} together so the complete event name links to its article.");
   for (const slot of field.allowedSlots) {
-    if (slots.filter(value => value === slot).length !== 1) errors.push(`Keep exactly one {${slot}} slot.`);
+    if (field.optionalSlots ? slots.filter(value => value === slot).length > 1 : slots.filter(value => value === slot).length !== 1) errors.push(`Keep exactly one {${slot}} slot.`);
   }
+  if (field.optionalSlots && !slots.includes("openingSentence")) errors.push("Keep {openingSentence} in the full template.");
   return errors;
 }

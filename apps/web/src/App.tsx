@@ -15826,7 +15826,7 @@ function SkyCards({
     void import("./services/calendarApi").then(({ getLunarCalendarFromApi }) => getLunarCalendarFromApi(sky.location, "week", anchor, "full"))
       .catch(() => import("./services/skyCalculationClient").then(({ getLunarCalendarWeekOffMainThread }) => getLunarCalendarWeekOffMainThread(sky.location, anchor, { detail: "full" })))
       .then(async calendar => {
-        const events = calendar.days.find(day => day.dateKey === dayKey)?.events.filter(event => event.type === "aspect" || event.type === "ingress") ?? [];
+        const events = calendar.days.find(day => day.dateKey === dayKey)?.events.filter(event => event.type === "aspect" || event.type === "ingress" || event.type === "station" || event.type === "lunation") ?? [];
         if (!active) return;
         setDailyEvents({ key: requestKey, events });
         const keys = events.flatMap(ingressSummaryKeys);
@@ -15843,11 +15843,12 @@ function SkyCards({
   const moon = sky.positions.find((position) => position.planet === "Moon");
   // Use the event-time ephemeris event supplied by the snapshot. Do not infer
   // a future event sign from the Moon's mean motion for this narrative.
-  const event = sky.moonEvent;
+  const todayLunation = events.find(event => event.type === "lunation" && event.sign);
+  const event = todayLunation ? { name: todayLunation.title.includes("Full") ? "Full Moon" : "New Moon", sign: todayLunation.sign!, occursAt: todayLunation.startsAt, eclipseType: todayLunation.eclipseType } : sky.moonEvent;
   const selectedDate = new Date(sky.generatedAt);
   const eventDate = event ? new Date(event.occursAt) : null;
   const validEvent = event && eventDate && Number.isFinite(eventDate.getTime())
-    && Number.isFinite(selectedDate.getTime()) && eventDate >= selectedDate;
+    && Number.isFinite(selectedDate.getTime()) && (Boolean(todayLunation) || eventDate >= selectedDate);
   const summaryParts = skyDailySummaryParts({
     sun,
     moon,
@@ -15859,6 +15860,7 @@ function SkyCards({
       name: event.name,
       eclipseType: event.eclipseType,
       sign: event.sign,
+      isToday: new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(eventDate) === dayKey,
       countdown: lunationCountdownLabel(selectedDate, eventDate, sky.location.timeZone).toLowerCase()
     } : undefined
   }, summaryContent);

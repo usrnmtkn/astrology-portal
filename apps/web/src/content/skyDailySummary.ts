@@ -1,5 +1,6 @@
-import clauses from "./skyDailySummaryClauses.json";
-import defaultTiming from "./skyDailySummaryTiming.json";
+import defaultAssembly from "./skyDailySummaryAssembly.json" with { type: "json" };
+import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
+import defaultTiming from "./skyDailySummaryTiming.json" with { type: "json" };
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "./skyDailySummaryCatalog";
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
 import { contentPublication, publicationAllowsContent } from "./contentPublicationState";
@@ -24,98 +25,123 @@ export type SkyDailySummaryFacts = {
   retrogradePlanets?: string[];
   retrogradePlacements?: Array<SummaryPlacement & { planet: string }>;
   exactAspects?: Array<{ id: string; label: string }>;
+  stations?: Array<{ id: string; label: string; direction: "direct" | "retrograde" }>;
   ingresses?: Array<{ id: string; label: string; tldr?: string }>;
   voidRemainingLabel?: string;
-  event?: { name: string; sign: string; countdown: string; eclipseType?: "solar" | "lunar" };
+  event?: { name: string; sign: string; countdown: string; isToday?: boolean; eclipseType?: "solar" | "lunar" };
 };
 
 function fullerClause(body: "sun" | "moon", sign?: string, content?: CmsGeneratedContentMap, editorialPreview = false) {
   return sign ? savedCopy(content, `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`, (clauses[body] as Record<string, string>)[sign.toLowerCase()] ?? "", editorialPreview) : "";
 }
 
-function placementParts(body: "sun" | "moon", placement?: SummaryPlacement, continuation = false, content?: CmsGeneratedContentMap, editorialPreview = false): SummaryPart[] {
-  if (!placement?.sign) return [];
-  const degree = placement.degree;
-  const degreeLabel = typeof degree === "number" && Number.isFinite(degree) && degree >= 0 && degree < 30
-    ? ` at ${Math.floor(degree)}°`
-    : "";
-  const clause = fullerClause(body, placement.sign, content, editorialPreview);
-  return [
-    { text: continuation ? "while the " : "The " },
-    { text: `${body === "sun" ? "Sun" : "Moon"}${clause ? " in " : body === "sun" ? " is in " : " moves through "}${placement.sign}${degreeLabel}`, emphasis: true, action: body },
-    { text: clause ? ` ${clause}.` : ".", sourceKey: clause ? `cms/sky-daily-summary/${body}/${placement.sign.toLowerCase()}` : undefined }
-  ];
+// Templates contain text and named slots only. Slot values remain structured parts,
+// so edited wording cannot change a calculated fact, article target, or introduce HTML.
+export function fillSkyTemplate(template: string, slots: Record<string, SummaryPart[]>): SummaryPart[] {
+  return template.split(/(\{[^{}]+\})/gu).flatMap(text => text.startsWith("{")
+    ? (slots[text.slice(1, -1)] ?? []).map(part => ({ ...part })) : text ? [{ text }] : []);
 }
+function listParts(items: SummaryPart[]): SummaryPart[] {
+  return items.flatMap((item, index) => index ? [{ text: index === items.length - 1 ? items.length === 2 ? " and " : ", and " : ", " }, item] : [item]);
+}
+const words = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
+const plain = (text: string): SummaryPart[] => [{ text }];
+const degreeText = (degree?: number) => typeof degree === "number" && Number.isFinite(degree) && degree >= 0 && degree < 30 ? ` at ${Math.floor(degree)}°` : "";
 
 export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false } = {}): SummaryPart[] {
+  const copy = (key: string, fallback: string) => savedCopy(content, `cms/sky-daily-summary/${key}`, fallback, editorialPreview);
   const timing = { ...defaultTiming };
   for (const field of skyDailySummaryFields.filter(field => field.group === "Timing and retrogrades")) {
-    const key = field.key.split("/").at(-1) as Exclude<keyof typeof timing, "provenance">;
-    timing[key] = savedCopy(content, field.key, field.body, editorialPreview);
+    timing[field.key.split("/").at(-1) as Exclude<keyof typeof timing, "provenance">] = copy(field.key.replace("cms/sky-daily-summary/", ""), field.body);
   }
-  const parts = placementParts("sun", facts.sun, false, content, editorialPreview);
-  const joined = Boolean(facts.sun?.sign && facts.moon?.sign);
-  const moon = placementParts("moon", facts.moon, joined, content, editorialPreview);
-  if (parts.length && moon.length) {
-    if (joined) parts[parts.length - 1].text = parts[parts.length - 1].text.replace(/\.$/u, ",");
-    parts.push({ text: " " });
+  const assembly = Object.fromEntries(Object.entries(defaultAssembly).map(([key, value]) => [key, copy(`assembly/${key}`, value)])) as typeof defaultAssembly;
+  const values: Record<string, SummaryPart[]> = {};
+  for (const body of ["sun", "moon"] as const) {
+    const placement = facts[body];
+    if (!placement?.sign) continue;
+    const clause = fullerClause(body, placement.sign, content, editorialPreview);
+    values[`${body}PlacementLink`] = [{ text: `${body === "sun" ? "Sun" : "Moon"}${clause ? " in " : body === "sun" ? " is in " : " moves through "}${placement.sign}${degreeText(placement.degree)}`, action: body, emphasis: true }];
+    values[`${body}Summary`] = clause ? [{ text: clause, sourceKey: `cms/sky-daily-summary/${body}/${placement.sign.toLowerCase()}` }] : [];
   }
-  parts.push(...moon);
+  const hasSun = Boolean(values.sunPlacementLink), hasMoon = Boolean(values.moonPlacementLink);
+  values.openingSentence = hasSun || hasMoon ? fillSkyTemplate(hasSun && hasMoon ? assembly.opening : hasSun ? assembly.sunOnly : assembly.moonOnly, values) : [];
   const planets = [...new Set((facts.retrogradePlacements?.map(p => p.planet) ?? facts.retrogradePlanets ?? []).map(name => name.trim()).filter(Boolean))];
-  if (planets.length && (planets.length === 1 ? timing.singleRetrograde : timing.retrograde)) {
-    if (parts.length) parts.push({ text: " " });
-    const count = planets.length;
-    const countWords = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
-    parts.push({ text: count === 0 ? timing.noRetrogrades : count === 1 ? timing.singleRetrograde
-      : timing.retrograde.replace("{count}", countWords[count] ?? String(count)) });
-    const retrogradeIntro = parts.pop()!;
-    const highlightedIntro = retrogradeIntro.text.match(/^.*?\bretrograde\b/iu)?.[0];
-    if (highlightedIntro) {
-      parts.push({ text: highlightedIntro, highlight: true }, { text: retrogradeIntro.text.slice(highlightedIntro.length) });
-    } else {
-      parts.push(retrogradeIntro);
-    }
-    if (count) {
-      parts[parts.length - 1].text = parts[parts.length - 1].text.trimEnd() + " ";
-      planets.forEach((planet, index) => {
-        if (index) parts.push({ text: index === count - 1 ? count === 2 ? " and " : ", and " : ", " });
-        const placement = facts.retrogradePlacements?.find(p => p.planet === planet);
-        const degree = placement?.degree;
-        parts.push({ text: `${planet} Rx${placement ? ` in ${placement.sign}${typeof degree === "number" && Number.isFinite(degree) && degree >= 0 && degree < 30 ? ` at ${Math.floor(degree)}°` : ""}` : ""}`, planet, action: "retrograde", emphasis: true });
-      });
-      parts.push({ text: "." });
-    }
+  if (planets.length) {
+    const intro = planets.length === 1 ? timing.singleRetrograde : timing.retrograde.replace("{count}", words[planets.length] ?? String(planets.length));
+    const highlighted = intro.match(/^.*?\bretrograde\b/iu)?.[0];
+    values.retrogradeIntro = highlighted ? [{ text: highlighted, highlight: true }, { text: intro.slice(highlighted.length).trimEnd() }] : plain(intro.trimEnd());
+    values.retrogradeList = listParts(planets.map(planet => {
+      const p = facts.retrogradePlacements?.find(p => p.planet === planet);
+      return { text: `${planet} Rx${p ? ` in ${p.sign}${degreeText(p.degree)}` : ""}`, planet, action: "retrograde", emphasis: true };
+    }));
+    values.currentRetrogradesSentence = intro ? fillSkyTemplate(assembly.retrogrades, values) : [];
   }
-  if (facts.moon && facts.moonIsVoid && (facts.voidRemainingLabel ? timing.voidRemaining : timing.voidWithoutTiming)) {
-    if (parts.length) parts.push({ text: " " });
-    const remaining = facts.voidRemainingLabel?.replace(/(\d+)\s*(?:min|m)\b/giu, (_, count) => `${count} ${count === "1" ? "minute" : "minutes"}`)
-      .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, count) => `${count} ${count === "1" ? "hour" : "hours"}`);
-    parts.push({ text: remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming, highlight: true });
+  if (facts.moon && facts.moonIsVoid) {
+    const remaining = facts.voidRemainingLabel?.replace(/(\d+)\s*(?:min|m)\b/giu, (_, n) => `${n} ${n === "1" ? "minute" : "minutes"}`)
+      .replace(/(\d+)\s*(?:hrs?|h)\b/giu, (_, n) => `${n} ${n === "1" ? "hour" : "hours"}`);
+    values.voidSentence = [{ text: remaining ? timing.voidRemaining.replace("{remaining}", remaining) : timing.voidWithoutTiming, highlight: true }];
   }
-  if (facts.exactAspects?.length) {
-    parts.push({ text: facts.exactAspects.length === 1 ? "Today’s exact aspect is " : "Today’s exact aspects are ", paragraphStart: true });
-    facts.exactAspects.forEach((aspect, index, all) => {
-      if (index) parts.push({ text: index === all.length - 1 ? all.length === 2 ? " and " : ", and " : ", " });
-      parts.push({ text: aspect.label, action: "event", eventId: aspect.id, emphasis: true });
+  // Resolve transitions in the order chosen in the full layout. Hidden or empty
+  // categories never cause a later sentence to begin with "also".
+  let previousEvent = false;
+  for (const match of assembly.layout.matchAll(/\{(exactAspectsSentence|stationsSentence|ingressesSentence|lunationSentence)\}/gu)) {
+    const slot = match[1];
+    if (slot === "lunationSentence") {
+      if (!facts.event) continue;
+      const event = facts.event;
+      const name = event.eclipseType === "solar" ? "Solar Eclipse" : event.eclipseType === "lunar" ? "Lunar Eclipse" : event.name;
+      const link: SummaryPart[] = [{ text: `${name} in ${event.sign}`, action: "lunation", emphasis: true }];
+      values[slot] = event.isToday ? fillSkyTemplate(previousEvent ? assembly.lunationAlsoToday : assembly.lunationToday, { lunationLink: link })
+        : fillSkyTemplate(timing.lunation.replace("{name} in {sign}", "{lunationLink}"), { lunationLink: link, countdown: plain(event.countdown) });
+      if (event.isToday && values[slot].some(p => p.text)) previousEvent = true;
+      continue;
+    }
+    const items = slot === "exactAspectsSentence" ? facts.exactAspects : slot === "stationsSentence" ? facts.stations : facts.ingresses;
+    if (!items?.length) continue;
+    const many = items.length > 1;
+    const position = previousEvent ? "Also" : "First";
+    let key: keyof typeof assembly;
+    let listSlot: string;
+    if (slot === "exactAspectsSentence") { key = `aspects${position}${many ? "Many" : "One"}`; listSlot = "aspectList"; }
+    else if (slot === "ingressesSentence") { key = `ingresses${position}${many ? "Many" : "One"}`; listSlot = "ingressList"; }
+    else {
+      key = many ? `stations${position}Many` : `station${facts.stations![0].direction === "retrograde" ? "Retrograde" : "Direct"}${position}`;
+      listSlot = "stationList";
+    }
+    const count = words[items.length] ?? String(items.length);
+    values[slot] = fillSkyTemplate(assembly[key], {
+      Count: plain(count), count: plain(count.toLowerCase()),
+      [listSlot]: listParts(items.map(item => ({ text: item.label, action: "event", eventId: item.id, emphasis: true })))
     });
-    parts.push({ text: "." });
+    if (slot === "ingressesSentence" && values[slot].length) {
+      for (const item of facts.ingresses ?? []) if (item.tldr) values[slot].push({ text: ` ${item.tldr}` });
+    }
+    if (values[slot].some(p => p.text)) previousEvent = true;
   }
-  for (const ingress of facts.ingresses ?? []) {
-    if (parts.length) parts.push({ text: " " });
-    parts.push({ text: ingress.label, action: "event", eventId: ingress.id, emphasis: true }, { text: " today." });
-    if (ingress.tldr) parts.push({ text: ` ${ingress.tldr}` });
-  }
-  if (facts.event && timing.lunation) {
-    const event = {
-      ...facts.event,
-      name: facts.event.eclipseType === "solar" ? "Solar Eclipse"
-        : facts.event.eclipseType === "lunar" ? "Lunar Eclipse" : facts.event.name
-    };
-    const template = timing.lunation.includes("{name} in {sign}") ? timing.lunation : defaultTiming.lunation;
-    const [prefix, suffix] = template.split("{name} in {sign}");
-    parts.push({ text: prefix.replace("{countdown}", event.countdown), paragraphStart: true }, { text: `${event.name} in ${event.sign}`, emphasis: true, action: "lunation" }, { text: suffix.replace("{countdown}", event.countdown) });
-  }
-  return parts;
+  // Blank lines in the editable template are actual paragraph boundaries.
+  return assembly.layout.split(/\n\s*\n/gu).flatMap(paragraph => {
+    const parts = fillSkyTemplate(paragraph, values);
+    // Normalize assembly whitespace only. Authored summaries stay byte-for-byte.
+    for (let i = 0; i < parts.length; i++) {
+      if (parts[i].sourceKey || parts[i].action) continue;
+      parts[i].text = parts[i].text.replace(/\s+/gu, " ");
+      if (/^\s*[,.]/u.test(parts[i].text)) {
+        parts[i].text = parts[i].text.trimStart();
+        for (let j = i - 1; j >= 0 && !parts[j].sourceKey && !parts[j].action; j--) {
+          parts[j].text = parts[j].text.trimEnd();
+          if (parts[j].text) break;
+        }
+      }
+      if (i && /\s$/u.test(parts[i - 1].text)) parts[i].text = parts[i].text.trimStart();
+    }
+    while (parts.length && !parts[0].text.trim()) parts.shift();
+    while (parts.length && !parts.at(-1)!.text.trim()) parts.pop();
+    if (!parts.length) return [];
+    parts[0].text = parts[0].text.trimStart();
+    parts.at(-1)!.text = parts.at(-1)!.text.trimEnd();
+    parts[0].paragraphStart = true;
+    return parts;
+  });
 }
 
 export function skySummaryParagraphs(parts: SummaryPart[]): SummaryPart[][] {
