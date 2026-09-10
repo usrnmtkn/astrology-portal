@@ -1,0 +1,23 @@
+{
+  "layout": "{openingSentence} {currentRetrogradesSentence} {voidSentence}\n\n{exactAspectsSentence} {stationsSentence} {ingressesSentence}\n\n{lunationSentence}",
+  "opening": "The {sunPlacementLink} {sunSummary}, while the {moonPlacementLink} {moonSummary}.",
+  "sunOnly": "The {sunPlacementLink} {sunSummary}.",
+  "moonOnly": "The {moonPlacementLink} {moonSummary}.",
+  "retrogrades": "{retrogradeIntro} {retrogradeList}.",
+  "aspectsFirstOne": "Today brings one exact aspect: {aspectList}.",
+  "aspectsFirstMany": "Today brings {count} exact aspects: {aspectList}.",
+  "aspectsAlsoOne": "One aspect is also exact today: {aspectList}.",
+  "aspectsAlsoMany": "{Count} aspects are also exact today: {aspectList}.",
+  "stationRetrogradeFirst": "{stationList} today.",
+  "stationDirectFirst": "{stationList} today.",
+  "stationRetrogradeAlso": "Also today, {stationList}.",
+  "stationDirectAlso": "Also today, {stationList}.",
+  "stationsFirstMany": "{Count} planets station today: {stationList}.",
+  "stationsAlsoMany": "{Count} planets also station today: {stationList}.",
+  "ingressesFirstOne": "One ingress happens today: {ingressList}.",
+  "ingressesFirstMany": "{Count} ingresses happen today: {ingressList}.",
+  "ingressesAlsoOne": "There is also one ingress: {ingressList}.",
+  "ingressesAlsoMany": "There are also {count} ingresses: {ingressList}.",
+  "lunationToday": "The {lunationLink} is exact today.",
+  "lunationAlsoToday": "The {lunationLink} is also exact today."
+}
