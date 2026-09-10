@@ -29,19 +29,25 @@ The permanent repository source for this release is:
 
 The relationship bundle appends those exact approved overrides after the older bundled synastry rows so the same canonical content key resolves to the newer directional record. The source keeps the Content Studio authoring variable `{{Name}}`; the relationship-bundle boundary compiles that authoring variable to the existing forward-pair runtime slot `{{holder2}}`. This preserves the owner-facing variable convention without leaking an unresolved variable into reader copy.
 
+Exact serving-payload hashes are stored in:
+
+`packages/astro-knowledge/review/synastry-directionality-authoring-batch-4-2026-09-09/serving-payload-hashes.json`
+
+The hash binds the compiled `body_you` and preserved `body_they` together using the documented newline delimiter. Content approval remains dated 2026-09-09; serving authorization is separately recorded as 2026-09-10.
+
 The guarded release command is implemented in:
 
 `scripts/release-synastry-directional-overrides-v1.mjs`
 
-It refuses rows classified as reciprocal or held for review, checks the new semantic arrow against the human-reviewed directionality map, preserves the existing `body_they` byte-for-byte, and only publishes when explicitly run with `--apply` after owner authorization.
+It refuses rows classified as reciprocal or held for review, checks the new semantic arrow against the human-reviewed directionality map, preserves the existing `body_they` byte-for-byte, verifies the exact serving hash, compiles `{{Name}}` to `{{holder2}}` only at the serving boundary, and only publishes when explicitly run with `--apply` after owner authorization.
 
 Regression coverage lives in:
 
 `scripts/test-synastry-directional-overrides-v1.mjs`
 
-The test checks all 24 canonical rows, both reader orientations, square/opposition and trine/sextile family routing, exact owner-approved tier, preservation of the old opposite-direction copy, and zero unresolved `{{Name}}` / holder variables in rendered output.
+The test checks all 24 canonical rows, both reader orientations, square/opposition and trine/sextile family routing, the correct owner-approved tier, preservation of the old opposite-direction copy, exact payload hashes, and zero unresolved `{{Name}}` / holder variables in rendered output. It is chained from the existing `test-synastry-reader-variant-grammar.mjs` test so it runs with the normal content suite.
 
-Each released Content Studio row carries `directionality_mode: viewer-centered-synastry-v1`, semantic-direction markers, an owner-approval marker for the new `body_you` passage, `status: LIVE`, `lane: serving`, `review_state: null`, and a live content-publication ledger entry.
+Each released Content Studio row carries `directionality_mode: viewer-centered-synastry-v1`, semantic-direction markers, exact owner-approval metadata, `status: LIVE`, `lane: serving`, `review_state: null`, and a live content-publication ledger entry.
 
 ## Live content keys
 
