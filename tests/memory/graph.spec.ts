@@ -20,6 +20,8 @@ for (const viewport of [{ width: 1167, height: 815 }, { width: 390, height: 844 
       await expect(page.getByRole('button', { name: 'Fit', exact: true })).toBeVisible();
       await expect(page.getByRole('button', { name: 'Latest', exact: true })).toBeHidden();
       await expect(page.locator('.memory-reference-root canvas')).toBeVisible();
+      await expect(page.locator('.memory-reference-root')).toHaveCSS('opacity', '1');
+      await expect(page.locator('.memory-search-container')).toHaveCSS('opacity', '1');
       await page.evaluate(() => document.fonts.load('13px "Geist Mono Graph"'));
       const searchMetrics = await page.getByRole('textbox', { name: 'Search memories' }).evaluate(el => {
         const s = getComputedStyle(el), r = el.getBoundingClientRect();
