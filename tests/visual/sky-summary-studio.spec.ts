@@ -117,7 +117,8 @@ test("ingress lookup finds a published TLDR outside the loaded inventory and pre
   const source = { id: "existing-ingress", content_key: "sky.ingress.mercury.libra", surface: "sky", mode: "card", status: "LIVE", lane: "serving", review_state: null,
     headline: "Mercury enters Libra", summary: "Existing short wording remains intact.", body: "The complete article remains separate and intact.", block_type: "essay", source_snapshot: {}, sections: {}, facts: {} };
   await page.route("**/api/admin/generated-content?**", async route => {
-    if (new URL(route.request().url()).searchParams.get("contentKey") === source.content_key) {
+    const params = new URL(route.request().url()).searchParams;
+    if (params.get("contentKey") === source.content_key || params.get("id") === source.id) {
       await route.fulfill({ json: { ok: true, rows: [source] } });
     } else await route.fallback();
   });

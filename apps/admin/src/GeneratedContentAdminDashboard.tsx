@@ -3522,9 +3522,7 @@ export function GeneratedContentAdminDashboard() {
           setEditorSourceRow(saved);
           setSelectedRowId(saved.id);
           const savedDraft = draftFromRow(saved);
-          setDraft(savedDraft);
-          editorBaselineRef.current = JSON.stringify(savedDraft);
-          editorSavedInputRef.current = JSON.stringify(savedDraft);
+          rememberSavedDraft(savedDraft);
           setSkyArticleEditor((current) => current ? {
             ...current,
             rowId: saved.id,
@@ -4053,7 +4051,15 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  function rememberSavedDraft(saved: AdminDraft) {
+    setDraft(saved);
+    const serialized = JSON.stringify(saved);
+    editorBaselineRef.current = serialized;
+    editorSavedInputRef.current = serialized;
+  }
+
   async function approveAndScheduleSkyRow(row: AdminGeneratedContentRow) {
+    setEditorSaveError("");
     setIsLoading(true);
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
@@ -4061,27 +4067,28 @@ export function GeneratedContentAdminDashboard() {
         body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-and-schedule" })
       });
       const saved = payload.rows?.[0];
-      if (saved) {
-        setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
-        if (selectedRowId === saved.id) {
-          const savedDraft = draftFromRow(saved);
-          setDraft(savedDraft);
-          editorBaselineRef.current = JSON.stringify(savedDraft);
-          editorSavedInputRef.current = JSON.stringify(savedDraft);
-        }
-        announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
-        setSkyReviewHorizon((current) => current ? {
-          ...current,
-          occurrences: current.occurrences.map((occurrence) => occurrence.row?.id === saved.id
-            ? { ...occurrence, row: saved, reviewStatus: "approved_scheduled" }
-            : occurrence)
-        } : current);
+      if (!payload.ok || !saved || saved.id !== row.id || saved.content_key !== row.content_key
+        || saved.status !== (row.block_type === "sky_placement" ? "REVIEWED" : "LIVE")) {
+        throw new Error("Approval was not confirmed. Try again.");
       }
-      setMessage(row.block_type === "sky_placement"
-        ? `${row.content_key} approved for package import. It is not serving until the governed package is regenerated, reviewed, merged, and deployed.`
-        : `${row.content_key} approved. It is eligible only when current calculated Sky facts select this reusable configuration.`);
+      setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
+      if (selectedRowId === saved.id) {
+        setEditorSourceRow(saved);
+        const savedDraft = draftFromRow(saved);
+        rememberSavedDraft(savedDraft);
+      }
+      announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
+      setSkyReviewHorizon((current) => current ? {
+        ...current,
+        occurrences: current.occurrences.map((occurrence) => occurrence.row?.id === saved.id
+          ? { ...occurrence, row: saved, reviewStatus: "approved_scheduled" }
+          : occurrence)
+      } : current);
+      setMessage(`${row.content_key} approved. ${row.block_type === "sky_placement" ? "Package release required." : "Eligible for matching Sky configurations."}`);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not approve and schedule the Sky row.");
+      const feedback = dashboardErrorMessage(error);
+      setEditorSaveError(feedback);
+      setMessage(feedback);
     } finally {
       setIsLoading(false);
     }
@@ -4281,9 +4288,7 @@ export function GeneratedContentAdminDashboard() {
       if (!saved) throw new Error("The approved edition was not returned by the content API.");
       setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
       const savedDraft = draftFromRow(saved);
-      setDraft(savedDraft);
-      editorBaselineRef.current = JSON.stringify(savedDraft);
-      editorSavedInputRef.current = JSON.stringify(savedDraft);
+      rememberSavedDraft(savedDraft);
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setMessage(`${saved.content_key} is approved and reader-eligible for its calculated validity window.`);
     } catch (error) {
@@ -4426,9 +4431,7 @@ export function GeneratedContentAdminDashboard() {
       if (updateEditor) {
         setEditorSourceRow(saved);
         setSelectedRowId(saved.id);
-        setDraft(savedDraft);
-        editorBaselineRef.current = JSON.stringify(savedDraft);
-        editorSavedInputRef.current = JSON.stringify(savedDraft);
+        rememberSavedDraft(savedDraft);
       }
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setMessage(sourceLifecycleAction === "archive"
@@ -4636,9 +4639,7 @@ export function GeneratedContentAdminDashboard() {
       if (updateEditor) {
         setEditorSourceRow(published);
         setSelectedRowId(published.id);
-        setDraft(publishedDraft);
-        editorBaselineRef.current = JSON.stringify(publishedDraft);
-        editorSavedInputRef.current = JSON.stringify(publishedDraft);
+        rememberSavedDraft(publishedDraft);
       }
       announceContentUpdate({
         contentKey: published.content_key,
@@ -4661,7 +4662,7 @@ export function GeneratedContentAdminDashboard() {
     // action applies, otherwise a saved revision can be mistaken for a status-only change.
     let actionRows: AdminGeneratedContentRow[];
     setIsLoading(true);
-    try { actionRows = await Promise.all(selectedSavedRows.map(hydrateGeneratedContentRow)); }
+    try { actionRows = await Promise.all(selectedSavedRows.map((row) => hydrateGeneratedContentRow(row))); }
     catch (error) { setMessage(dashboardErrorMessage(error)); return; }
     finally { setIsLoading(false); }
     const packageRows = actionRows.filter(rowIsFallbackArchitectureV3);
@@ -4761,14 +4762,21 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow) {
-    if (!row.inventory_only) return row;
+  async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false) {
+    if (!row.inventory_only && !refresh) return row;
     const selector = row.id.startsWith("package:") ? `contentKeys=${encodeURIComponent(row.content_key)}` : `id=${encodeURIComponent(row.id)}`;
     const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
       `/api/admin/generated-content?${selector}&status=all&visibility=all&limit=1`,
       secret
     );
-    const hydrated = payload.rows?.find((candidate) => candidate.id === row.id || row.id.startsWith("package:") && candidate.content_key === row.content_key);
+    let hydrated = payload.rows?.find((candidate) => candidate.id === row.id || row.id.startsWith("package:") && candidate.content_key === row.content_key);
+    const publishedTarget = hydrated?.source_snapshot?.targetRowId;
+    if (refresh && row.status !== "ARCHIVED" && hydrated?.status === "ARCHIVED"
+      && hydrated.review_state === "published-revision" && typeof publishedTarget === "string") {
+      const target = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?id=${encodeURIComponent(publishedTarget)}&status=all&visibility=all&limit=1`, secret);
+      hydrated = target.rows?.find((candidate) => candidate.id === publishedTarget);
+    }
     if (!hydrated || hydrated.inventory_only) {
       throw new Error(`Could not load the full content document for ${row.content_key}.`);
     }
@@ -4776,33 +4784,34 @@ export function GeneratedContentAdminDashboard() {
     return hydrated;
   }
 
-  function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection) {
-    if (row.inventory_only) {
-      setIsLoading(true);
-      void hydrateGeneratedContentRow(row)
-        .then((hydrated) => openRow(hydrated, compositionContext, fieldPath, placementSelection))
-        .catch((error) => { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); })
-        .finally(() => setIsLoading(false));
-      return;
-    }
+  async function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection): Promise<boolean> {
     const replacingUnsavedEditor = draft && row.id !== draft.id && (
       JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
       || hasPendingArticleChanges()
     );
-    if (replacingUnsavedEditor && !window.confirm("Discard the unsaved changes in this editor?")) return;
+    if (replacingUnsavedEditor && !window.confirm("Discard the unsaved changes in this editor?")) return false;
+    // Capture focus and the owner's decision before loading disables controls.
     if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
       editorReturnFocusRef.current = document.activeElement;
     }
+    if (row.inventory_only || !row.id.startsWith("package:")) {
+      setIsLoading(true);
+      try {
+        row = await hydrateGeneratedContentRow(row, true);
+      } catch (error) {
+        setEditorSaveError(dashboardErrorMessage(error));
+        setMessage(dashboardErrorMessage(error));
+        return false;
+      } finally { setIsLoading(false); }
+    }
     const nextDraft = draftFromRow(row);
     setEditorSaveError("");
-    editorBaselineRef.current = JSON.stringify(nextDraft);
-    editorSavedInputRef.current = JSON.stringify(nextDraft);
+    rememberSavedDraft(nextDraft);
     const edition = compiledSkyArticleEditionForDraft(nextDraft);
     const baseEdition = skyArticleRevisionBaseForDraft(nextDraft);
     setDailyGlancePairSelector(null);
     setEditorSourceRow(row);
     setSelectedRowId(row.id);
-    setDraft(nextDraft);
     setCompositionEditorContext(compositionContext);
     setSkyWritingContext({ fieldPath, selection: placementSelection ?? (activePage === "skyWriteups" ? { planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter } : undefined) });
     setSkyWriteupParentId(null);
@@ -4837,6 +4846,7 @@ export function GeneratedContentAdminDashboard() {
       workspaceId: null
     } : null);
     scrollEditorToTop(fieldPath);
+    return true;
   }
 
   async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false) {
@@ -4849,7 +4859,7 @@ export function GeneratedContentAdminDashboard() {
       )).rows?.find((candidate) => candidate.content_key === contentKey);
       if (!row) throw new Error(`${label} is not materialized in Content Studio (${contentKey}).`);
       if (!existing) setRows((current) => [row, ...current]);
-      openRow(row);
+      if (!await openRow(row)) return;
       if (openTemplatePreview) setTemplateVariableReferenceOpen(true);
       setMessage(openTemplatePreview
         ? `Opened the assembled reader preview for ${label}. Colored sections link to their atomic sources.`
@@ -4888,7 +4898,7 @@ export function GeneratedContentAdminDashboard() {
       )).rows?.find((candidate) => candidate.content_key === contentKey);
       if (!row) throw new Error(`The serving source ${contentKey} is not materialized in Content Studio.`);
       if (!existing) setRows((current) => [row, ...current]);
-      openRow(row);
+      if (!await openRow(row)) return;
       setSkyFallbackPreviewFacts({
         ...occurrence.facts,
         entryDate: occurrence.windows[0]?.startDate ?? "",
@@ -5040,9 +5050,7 @@ export function GeneratedContentAdminDashboard() {
     setSkyWriteupParentId(parentId);
     setEditorSourceRow(row);
     setSelectedRowId(row.id);
-    setDraft(nextDraft);
-    editorBaselineRef.current = JSON.stringify(nextDraft);
-    editorSavedInputRef.current = JSON.stringify(nextDraft);
+    rememberSavedDraft(nextDraft);
     scrollEditorToTop();
   }
 
@@ -5057,9 +5065,7 @@ export function GeneratedContentAdminDashboard() {
     const nextDraft = draftFromRow(parent);
     setEditorSourceRow(parent);
     setSelectedRowId(parent.id);
-    setDraft(nextDraft);
-    editorBaselineRef.current = JSON.stringify(nextDraft);
-    editorSavedInputRef.current = JSON.stringify(nextDraft);
+    rememberSavedDraft(nextDraft);
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     scrollEditorToTop();
@@ -5279,15 +5285,13 @@ export function GeneratedContentAdminDashboard() {
             ...(importedSkySummary(field.key) !== undefined ? { suppliedCopy: skySummaryImportProvenance } : {})
           }
         };
-        editorBaselineRef.current = JSON.stringify(nextDraft);
-        editorSavedInputRef.current = JSON.stringify(nextDraft);
+        rememberSavedDraft(nextDraft);
         setSelectedRowId(null);
         setCompositionEditorContext(null);
         setSkyArticleEditor(null);
         setSkyArticleEditionForm(null);
         setDailyGlancePairSelector(null);
         setEditorSaveError("");
-        setDraft(nextDraft);
       }
       setMessage(`Opened ${field.label}. Save & publish makes your edits live in one step.`);
       scrollEditorToTop();
@@ -5377,14 +5381,9 @@ export function GeneratedContentAdminDashboard() {
       : kind === "fallback-hook" ? "New compatibility fallback hook started."
       : "New compatibility template started."
     );
-    const openCompatibilityDraft = (nextDraft: AdminDraft) => {
-      editorBaselineRef.current = JSON.stringify(nextDraft);
-      editorSavedInputRef.current = JSON.stringify(nextDraft);
-      setDraft(nextDraft);
-    };
 
     if (kind === "content") {
-      openCompatibilityDraft({
+      rememberSavedDraft({
         id: null,
         contentKey: "authored/compat-pair/draft",
         surface: "relationship",
@@ -5428,7 +5427,7 @@ export function GeneratedContentAdminDashboard() {
     }
 
     if (kind === "vocabulary") {
-      openCompatibilityDraft({
+      rememberSavedDraft({
         id: null,
         contentKey: "vocab/relationship/draft",
         surface: "relationship",
@@ -5457,7 +5456,7 @@ export function GeneratedContentAdminDashboard() {
     }
 
     if (kind === "fallback-hook") {
-      openCompatibilityDraft({
+      rememberSavedDraft({
         id: null,
         contentKey: "fallback-hook/friends.compatibility.planet-card",
         surface: "friends",
@@ -5487,7 +5486,7 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
 
-    openCompatibilityDraft({
+    rememberSavedDraft({
       id: null,
       contentKey: "slot-template/compatibility/planet-card",
       surface: "relationship",
@@ -8104,9 +8103,7 @@ export function GeneratedContentAdminDashboard() {
         ? serializedCurrentDraft !== JSON.stringify(persistedDraft)
         : Boolean(currentDraft.headline.trim() || currentDraft.summary.trim() || currentDraft.body.trim());
     const skyDraftHasUnsavedCopy = Boolean(selectedRow && isGovernedSkyDraft && (
-      currentDraft.headline !== (selectedRow.headline ?? "")
-      || currentDraft.summary !== (selectedRow.summary ?? "")
-      || currentDraft.body !== (selectedRow.body ?? "")
+      (["headline", "summary", "body"] as const).some((field) => currentDraft[field] !== (selectedRow[field] ?? ""))
       || JSON.stringify(currentDraft.sections ?? {}) !== JSON.stringify(selectedRow.sections ?? {})
     ));
     const isNewDraft = !currentDraft.id;

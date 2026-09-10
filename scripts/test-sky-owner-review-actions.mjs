@@ -97,6 +97,21 @@ assert.equal(blocked.status, 500);
 assert.equal(blocked.patches.length, 0);
 assert.match(blocked.payload.error, /Sky cards can be published only/u);
 
+const voiceBlocked = await invoke(
+  { id: "sky-row", ownerAction: "approve-and-schedule" },
+  existingRow({ status: "REVIEWED", judge_score: null, source_snapshot: {
+    skyAspectVoiceLint: { score: 1, fails: 2, findings: [
+      { severity: "fail", reason: "Collective sky cards must use first-person plural (we/our/us)." },
+      { severity: "fail", reason: "No second person on the collective Sky surface." }
+    ] }
+  } })
+);
+assert.equal(voiceBlocked.patches.length, 0);
+assert.match(voiceBlocked.payload.error, /first-person plural/);
+assert.match(voiceBlocked.payload.error, /No second person/);
+assert.match(voiceBlocked.payload.error, /passing editorial judge review is still required/);
+assert.match(voiceBlocked.payload.error, /Mark reviewed saves your review status/);
+
 const mixed = await invoke(
   { id: "sky-row", ownerAction: "approve-and-schedule", body: "Changed at approval time" },
   existingRow()
@@ -422,7 +437,9 @@ const liveEditionRow = {
   source_snapshot: approvedEdition.patches[0].source_snapshot
 };
 
-async function invokeRevision(body, rowsById) {
+async function invokeRevision(body, rowsById, databaseTriggers = false, competingRevision = false) {
+  rowsById = structuredClone(rowsById);
+  let revisionClock = 0;
   const writes = [];
   globalThis.fetch = async (url, options = {}) => {
     if (!options.method) {
@@ -436,7 +453,24 @@ async function invokeRevision(body, rowsById) {
     }
     if (options.method === "PATCH") {
       const id = new URL(url).searchParams.get("id")?.replace(/^eq\./u, "");
-      return new Response(JSON.stringify([{ ...(rowsById[id] ?? {}), ...write }]), { status: 200 });
+      const expected = new URL(url).searchParams.get("updated_at")?.replace(/^eq\./u, "");
+      if (databaseTriggers && expected && rowsById[id]?.updated_at !== expected) {
+        return new Response("[]", { status: 200 });
+      }
+      const saved = { ...(rowsById[id] ?? {}), ...write };
+      if (databaseTriggers) saved.updated_at = `2026-09-10T07:06:57.${String(++revisionClock).padStart(6, "0")}+00:00`;
+      rowsById[id] = saved;
+      if (databaseTriggers && saved.status === "LIVE") {
+        for (const revision of Object.values(rowsById)) {
+          if (revision.source_snapshot?.targetRowId !== id || revision.status !== "DRAFT") continue;
+          revision.status = "ARCHIVED";
+          revision.lane = "reference";
+          revision.review_state = "published-revision";
+          revision.updated_at = saved.updated_at;
+          if (competingRevision) revision.sections = { ...revision.sections, competingEdit: true };
+        }
+      }
+      return new Response(JSON.stringify([saved]), { status: 200 });
     }
     throw new Error(`Unexpected fetch method ${options.method}`);
   };
@@ -505,3 +539,28 @@ assert.equal(staleRevision.writes.length, 0);
 assert.match(staleRevision.payload.error, /changed after this draft began/u);
 
 console.log("Sky owner review action checks passed: cards, complete editions, and field revisions use separate atomic approval gates.");
+
+// Production triggers replace client timestamps and archive the matching draft
+// during the target publication. Both behaviors must be reflected by the API.
+for (const kind of ["article", "package"]) {
+  const version = "2026-09-10T07:00:00.123456+00:00";
+  const target = kind === "article" ? { ...liveEditionRow, updated_at: version } : { ...packageRow, updated_at: version };
+  const revision = kind === "article" ? { ...revisionRow, updated_at: version } : {
+    ...target, id: "revision-row", status: "DRAFT", lane: "reference", review_state: "owner-review-required",
+    event_type: "sky-v4-governed-aspect-draft",
+    source_snapshot: { ...target.source_snapshot, targetRowId: target.id, targetRowUpdatedAt: version },
+    sections: { ...target.sections, packageDraft: { ...target.sections.packageRecord, body_you: "Exact revised reader copy." } }
+  };
+  const action = kind === "article" ? "publish-sky-article-edition-revision" : "approve-package-revision";
+  const input = { id: revision.id, ownerAction: action, expectedUpdatedAt: version };
+  const rows = { [target.id]: target, [revision.id]: revision };
+  const result = await invokeRevision(input, rows, true);
+  assert.equal(result.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.rows[0].id, target.id);
+  assert.equal(result.payload.rows[0].status, "LIVE");
+  const archiveWrite = result.writes.find(write => write.body.status === "ARCHIVED");
+  assert.match(archiveWrite.url, /000001/, "Cleanup must use the timestamp returned by the database claim.");
+  const conflict = await invokeRevision(input, rows, true, true);
+  assert.equal(conflict.status, 409, "A different archived proposal is not successful completion.");
+}
+console.log("Database timestamp and revision-completion trigger regressions passed.");
