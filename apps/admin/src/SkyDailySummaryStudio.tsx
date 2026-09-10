@@ -1,3 +1,6 @@
+import { skySummaryOpeningKey } from "../../web/src/content/skyDailySummary";
+import { suppliedSkySummaryCandidate, loadSkySummarySourceBank, type SkySummarySourceBank } from "./skySummarySourceBank";
+import { pairedSummarySign } from "../../web/src/content/skySummaryGeometry";
 import moonSources from "./skyMoonSummarySources.json";
 import { moonEventNames, type MoonSummaryKind } from "../../web/src/content/skyMoonSummary";
 import { SkyInlineTemplate } from "./SkyInlineTemplate";
@@ -5,7 +8,7 @@ import { SkySummaryAssemblyStudio } from "./SkySummaryAssemblyStudio";
 import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
 import { importedSkySummary } from "./skySummaryImportedCopy";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { currentSkySummaryWording, skyDailySummaryFields, skyIngressBodies, skyIngressSummaryFields, skySummarySigns, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { publishedIngressTldr } from "./skyIngressTldrSources";
 
@@ -15,11 +18,22 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
   onEdit: (field: SkySummaryField, initialBody?: string) => void;
   busy: boolean;
 }) {
+  const [sourceBank, setSourceBank] = useState<SkySummarySourceBank>();
+  const [bankError, setBankError] = useState("");
+  const [bankAttempt, setBankAttempt] = useState(0);
+  useEffect(() => {
+    let active = true;
+    setBankError("");
+    void loadSkySummarySourceBank().then(bank => { if (active) setSourceBank(bank); })
+      .catch(() => { if (active) setBankError("Supplied summary wording could not load."); });
+    return () => { active = false; };
+  }, [bankAttempt]);
   const [sunSign, setSunSign] = useState("Virgo");
   const [moonSign, setMoonSign] = useState("Cancer");
   const [moonKind, setMoonKind] = useState<MoonSummaryKind>("regular");
   const composition = useMemo(() => buildSkySummaryComposition(sunSign, moonSign, rows, false, null, moonKind), [sunSign, moonSign, rows, moonKind]);
-  const openingField = skyDailySummaryFields.find(field => field.key.endsWith("/assembly/opening"))!;
+  const openingKey = skySummaryOpeningKey(sunSign, moonSign, publishedSkySummaryContent(rows));
+  const openingField = skyDailySummaryFields.find(field => field.key.endsWith(`/assembly/${openingKey}`))!;
   const openingBody = publishedSkySummaryContent(rows).get(openingField.key)?.body ?? openingField.body;
   const slots = Object.fromEntries(composition.sources.map(source => [`${source.body}Summary`,
     <a href={`#exact-content?q=${encodeURIComponent(source.field.key)}`} aria-disabled={busy} className="admin-composition-variable admin-template-reader-variable variable-copy"
@@ -57,16 +71,17 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
         </div>
       </header>
       <div className="admin-daily-glance-context-form">
-        <label><span>Sun sign</span><select aria-label="Composition Sun sign" value={sunSign} onChange={event => setSunSign(event.target.value)}>
+        <label><span>Sun sign</span><select aria-label="Composition Sun sign" value={sunSign} onChange={event => { setSunSign(event.target.value); if (moonKind !== "regular") setMoonSign(pairedSummarySign(event.target.value, moonKind)); }}>
           {skySummarySigns.map(sign => <option key={sign}>{sign}</option>)}
         </select></label>
-        <label><span>Moon sign</span><select aria-label="Composition Moon sign" value={moonSign} onChange={event => setMoonSign(event.target.value)}>
+        <label><span>Moon sign</span><select aria-label="Composition Moon sign" value={moonSign} onChange={event => { setMoonSign(event.target.value); if (moonKind !== "regular") setSunSign(pairedSummarySign(event.target.value, moonKind)); }}>
           {skySummarySigns.map(sign => <option key={sign}>{sign}</option>)}
         </select></label>
-        <label><span>Moon event</span><select aria-label="Composition Moon event" value={moonKind} onChange={event => setMoonKind(event.target.value as MoonSummaryKind)}>
+        <label><span>Moon event</span><select aria-label="Composition Moon event" value={moonKind} onChange={event => { const kind = event.target.value as MoonSummaryKind; setMoonKind(kind); if (kind !== "regular") setMoonSign(pairedSummarySign(sunSign, kind)); }}>
           {Object.entries(moonEventNames).map(([kind, name]) => <option key={kind} value={kind}>{name}</option>)}
         </select></label>
       </div>
+      {moonKind !== "regular" && <p role="status">{moonKind === "newMoon" || moonKind === "solarEclipse" ? "The Sun and Moon share a sign at this event." : "The Sun and Moon occupy opposite signs at this event."} Changing either sign updates the other.</p>}
       <div className="admin-composition-variable-legend" aria-label="Composition color key">
         <span className="variable-fact">Example placement</span><span className="variable-copy">Editable summary</span><span>White words: click to edit</span>
       </div>
@@ -105,16 +120,25 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
       </>}
       <label><span>Search summary wording</span><input aria-label="Search summary wording" value={query} onChange={event => setQuery(event.target.value)} /></label>
     </div>
+    {bankError && <p role="alert">{bankError} <button type="button" onClick={() => setBankAttempt(value => value + 1)}>Retry supplied wording</button></p>}
     <div className="admin-daily-glance-pair-list" aria-label="Daily Sky Summary fields">
       {visible.map(field => {
         const saved = rows.find(row => row.content_key === field.key);
         const source = moonSources.rows.find(row => row.key === field.key);
+        const candidate = suppliedSkySummaryCandidate(field.key, sourceBank);
+        const currentBody = saved?.body ?? field.body;
         return <article key={field.key} aria-label={field.label}>
           <div>
             <strong>{field.label}</strong>
             <p>{(saved?.body ? currentSkySummaryWording(field.key, saved.body) : undefined) ?? ingressSource?.summary ?? (field.body || importedSkySummary(field.key) || (isIngress ? "No ingress TLDR added here. Add your wording, or open an existing ingress write-up to edit its TLDR." : "No summary added. Sky shows the calculated placement."))}</p>
             {source && <p><span>Source status: {saved?.body && saved.body !== source.body ? "Owner edit" : source.status}</span>{source.sources.map(url => <span key={url}> · <a href={url} target="_blank" rel="noreferrer">Source URL</a></span>)}</p>}
             <ContentLiveStatusBadge row={saved ?? ingressSource ?? (isIngress ? {} : { id: `builtin:${field.key}` })} />
+            {candidate && candidate.body !== currentBody && <details>
+              <summary>Review supplied wording</summary>
+              <p>{candidate.body}</p>
+              <p>This supplied version is not published. Open it to review the complete wording, then Save draft or Save &amp; publish.</p>
+              <button type="button" disabled={busy || saved?.inventory_only} onClick={() => onEdit(field, candidate.body)}>Open supplied wording</button>
+            </details>}
             {field.allowedSlots.length > 0 && <small> · Calculated fields: {field.allowedSlots.map(slot => `{${slot}}`).join(", ")}</small>}
           </div>
           <button type="button" disabled={busy} onClick={() => onEdit(!saved && ingressSource ? { ...field, key: ingressSource.content_key } : field)}>{!saved && ingressSource ? "Edit existing write-up" : "Edit wording"}</button>

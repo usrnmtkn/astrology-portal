@@ -287,6 +287,32 @@ assert.equal(demoted.payload.rows[0].status, "DRAFT");
 const hiddenFromReader = await loadLiveGeneratedContentForKeys([contentKey]);
 assert.equal(hiddenFromReader.size, 0, "Draft Content Studio rows must not reach the reader API.");
 
+// Exact source-bank candidate: draft/reopen/publication goes through the real
+// handler and serving loader. The attachment's claims grant no approval.
+const beforeBank = structuredClone(row);
+const { suppliedSkySummaryCandidate, skySummaryCandidateReceipt } = await import("../apps/admin/src/skySummarySourceBank.ts");
+const suppliedBank = JSON.parse(readFileSync("apps/admin/src/skySummarySourceBank.json", "utf8"));
+for (const key of ["cms/sky-daily-summary/sun/aries", "cms/sky-daily-summary/moon/aries/newMoon"]) {
+  const candidate = suppliedSkySummaryCandidate(key, suppliedBank);
+  row = { ...beforeBank, content_key: key, sections: null, facts: {}, status: "DRAFT", lane: "serving", review_state: "EDITORIAL_REVIEW_REQUIRED",
+    source_snapshot: { contentSystem: "cms-surface-override", contentType: "mustache-template", allowedSlots: [] } };
+  const saved = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at, body: candidate.body, status: "DRAFT", lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED",
+    sourceSnapshot: { ...row.source_snapshot, suppliedBank: skySummaryCandidateReceipt(key, candidate.body, suppliedBank) }
+  });
+  assert.equal(saved.status, 200, JSON.stringify(saved.payload));
+  assert.equal((await loadLiveGeneratedContentForKeys([key])).size, 0);
+  const reopened = await invokeApi("GET", `/api/admin/generated-content?contentKey=${encodeURIComponent(key)}&status=all`);
+  assert.equal(reopened.payload.rows[0].body, candidate.body);
+  const published = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: row.updated_at, status: "LIVE", lane: "serving", reviewState: null
+  });
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  assert.equal((await loadLiveGeneratedContentForKeys([key])).get(key)?.body, candidate.body);
+  assert.equal(row.source_snapshot.suppliedBank.bodySha256, candidate.sha256);
+}
+row = beforeBank;
+
 const natalAspectContentKey = "fallback-hook/natal-aspect-lived/lilith/square/ascendant";
 const createdApprovedNatalAspect = await invokeApi("POST", "/api/admin/generated-content", {
   contentKey: natalAspectContentKey,
