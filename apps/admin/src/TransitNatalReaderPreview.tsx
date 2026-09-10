@@ -1,12 +1,14 @@
+import { adminCredentialHeaders } from "./adminSecret";
 import { useEffect, useState } from "react";
 import { renderTransitNatalPreview, type TransitNatalSelection } from "./transitNatalSources";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 
 type Preview = ReturnType<typeof renderTransitNatalPreview>;
 
-export default function TransitNatalReaderPreview({ selection, voice, onOpenSource }: {
+export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource }: {
   selection: TransitNatalSelection;
   voice: string;
+  secret: string;
   onOpenSource: (contentKey: string, label: string) => void;
 }) {
   const [revision, setRevision] = useState(0);
@@ -17,20 +19,20 @@ export default function TransitNatalReaderPreview({ selection, voice, onOpenSour
     let cancelled = false;
     setState({ preview: null, error: null, loading: true });
     void (async () => {
-      const runtime = await import("../../web/src/content/fallbackArchitectureV3Runtime");
-      const content = await import("../../web/src/services/generatedContent");
-      await runtime.loadDeferredFallbackArchitectureV3Bundle();
-      const bundle = await content.loadFallbackArchitectureV3DashboardBundle();
+      const response = await fetch("/api/admin/transit-natal-preview", {
+        method: "POST", headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
+        body: JSON.stringify({ planet, sign, aspect, natalPoint, voice })
+      });
+      const result = await response.json();
       if (cancelled) return;
-      if (bundle) runtime.installFallbackArchitectureV3Bundle(bundle);
-      // Houses describe calculated chart context; they do not select an older composition.
-      const preview = renderTransitNatalPreview({ planet, sign, aspect, natalPoint }, runtime.transitSynastryFallbackRendererV3, voice);
+      if (!response.ok || !result.rendered) throw new Error(result.error || "Reader preview unavailable.");
+      const preview = result.rendered as Preview;
       setState({ preview, error: null, loading: false });
     })().catch((error) => {
       if (!cancelled) setState({ preview: null, error: error instanceof Error ? error.message : "Reader preview unavailable.", loading: false });
     });
     return () => { cancelled = true; };
-  }, [planet, sign, aspect, natalPoint, voice, revision]);
+  }, [planet, sign, aspect, natalPoint, voice, secret, revision]);
 
   return (
     <section className="admin-natal-source-group" aria-label="Effective transit to natal reader preview">

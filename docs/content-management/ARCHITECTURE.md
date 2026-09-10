@@ -661,7 +661,9 @@ See [publication retirement verification and rollout](../qa/content-publication-
 Sky placement natal aspects, You transit details, and embedded house-transit
 aspects use canonical transit-aspect or return readings. Personal Transit
 Studio previews call the shipped reader resolver and hydrate through the same
-eligible dashboard loader. Studio drafts cannot substitute for a reader passage.
+eligible row-packaging function through the authenticated transit preview API.
+Publication state is request-scoped; the standalone editor does not download the
+reader content package. Studio drafts cannot substitute for a reader passage.
 Chart houses remain calculated context; they do not route to a different composer.
 
 `resolver/retiredCompositions.mjs` permanently blocks the superseded

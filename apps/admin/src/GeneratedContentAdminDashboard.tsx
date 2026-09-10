@@ -7249,7 +7249,7 @@ export function GeneratedContentAdminDashboard() {
         </div>
 
         {!selection && <p className="admin-natal-placement-prompt">Choose all six values to preview the write-up and open its exact source rows.</p>}
-        {selection && <TransitNatalReaderPreview selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"))} />}
+        {selection && <TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"))} />}
 
       </section>
     );

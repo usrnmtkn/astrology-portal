@@ -20,7 +20,7 @@ mirror synchronization has been performed by this audit.
 | --- | --- | --- |
 | Sky personal natal aspects | House-first helper displaced the exact You article; separate time anchors produced different end dates. | Shared personal transit selector, local-noon calculation snapshot, full paragraph rendering, and matching timestamp guards. |
 | House-transit embedded aspects | The same obsolete house-event helper was still called by the package. | Removed the helper/export from both resolvers; embedded events select complete canonical aspect/return units. |
-| Personal Transit Studio preview | Studio reconstructed four old source fragments independently and could preview a draft as effective reader copy. | Calls the shipped reader resolver, approved dashboard loader, shared return policy, and reader copy boundary. Refreshes after content updates; links to the actual selected source. |
+| Personal Transit Studio preview | Studio reconstructed four old source fragments independently and could preview a draft as effective reader copy. | Uses an authenticated server preview with the shipped reader resolver, shared published-row packaging, return policy, and reader copy boundary. Refreshes after content updates; links to the actual selected source. |
 | Personal-aspect CMS overrides | Studio still offered a separate house-aware override starter after the reader no longer needed it. | Removed key builder, starter, editor action and surface-map route. Historic searches still lead to Personal Transits. |
 | Compiled Sky natal-aspect fallback | A separate selector could revive old prose after the canonical source was unavailable. | Removed selector and dead reader fields. Historical immutable article edition schemas and content are retained. |
 | Seven transit-house-event frame rows | Original approved text remained in source files. | Immutable source records retained; retirement guard excludes them from serving, reader partitions, active composition maps, hook catalogs and the content book. Materialized rows are reference-only. |
@@ -96,3 +96,10 @@ This audit does not certify that every possible reading is error-free. It
 removes the demonstrated competing paths and adds checks against their return.
 A production claim requires a main-branch deployment and the same browser
 regressions against its URL; no production data was changed in this audit.
+
+Release hardening: the standalone Studio bundle check caught the initial preview
+importing the complete reader package. The preview now runs in an authenticated
+API using the same extracted row-packaging function as the reader, with
+request-scoped publication state. Handler regressions cover published updates,
+draft exclusion, retirement, stale revisions and unavailable storage. The
+standalone Admin bundle passes its unchanged budgets.

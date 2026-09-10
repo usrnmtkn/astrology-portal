@@ -69,10 +69,10 @@ export function subscribeToContentPublications(listener: () => void) {
 }
 
 /** Once a key has a publication, an older row or unversioned bundle is not a substitute. */
-export function publicationAllowsContent(contentKey: string, rowId?: string | null, rowUpdatedAt?: string | null, targetDate?: string | null) {
+export function publicationAllowsContent(contentKey: string, rowId?: string | null, rowUpdatedAt?: string | null, targetDate?: string | null, records: ReadonlyMap<string, ContentPublication> = publications) {
   if (isRetiredCompositionKey(contentKey)) return false;
-  const publication = publications.get(contentKey);
-  if (!publication) return !rowId || Boolean(targetDate) || !publicationLedgerReady();
+  const publication = records.get(contentKey);
+  if (!publication) return !rowId || Boolean(targetDate) || !records.has(publicationLedgerKey);
   if (publication.state === "retired") return false;
   if (targetDate || !publication.row_id) return true;
   return rowId === publication.row_id && Boolean(rowUpdatedAt) && Boolean(publication.row_updated_at)

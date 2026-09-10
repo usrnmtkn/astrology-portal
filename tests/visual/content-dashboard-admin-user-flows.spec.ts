@@ -1,3 +1,4 @@
+import { normalizeTransitNatalPreviewInput, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
 import { approveNatalAspectStudioCopy } from "../../api/_lib/content-studio-approval";
 import { contentLiveStatuses, servingPackageRecords, type LiveStatusRow } from "../../api/_lib/content-live-status";
 import { expect, test, type Locator, type Page } from "@playwright/test";
@@ -2191,6 +2192,10 @@ test.describe("content dashboard admin user flow case studies", () => {
       facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now
     }] });
     await page.route("**/rest/v1/generated_interpretations*", (route) => route.fulfill({ json: [] }));
+    await page.route("**/api/admin/transit-natal-preview", async (route) => {
+      try { await route.fulfill({ json: { rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } }); }
+      catch (error) { await route.fulfill({ json: { error: String(error) } }); }
+    });
     await page.addInitScript((theme) => localStorage.setItem("tldrastro:theme", theme), theme);
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal");
     await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);

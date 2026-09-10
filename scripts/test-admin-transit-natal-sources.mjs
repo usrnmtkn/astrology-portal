@@ -28,7 +28,7 @@ try {
   runtime.installContentPublications([{ content_key: key, state: "retired", revision: 1, row_id: null, row_updated_at: null, updated_at: "2026-09-10T00:00:00Z" }]);
   assert.throws(() => runtime.renderTransitNatalPreview(selection, runtime.transitSynastryFallbackRendererV3), /SOURCE_GAP/u);
   const source = fs.readFileSync("apps/admin/src/TransitNatalReaderPreview.tsx", "utf8");
-  assert.match(source, /loadFallbackArchitectureV3DashboardBundle/u);
+  assert.match(source, /api\/admin\/transit-natal-preview/u);
   assert.match(source, /subscribeToContentUpdates/u);
   assert.doesNotMatch(source, /skySourceForCandidates|packageDraft/u);
   console.log("Studio transit preview passed: shared shipped resolver, You/Friends copy, house independence, returns, and retirement.");

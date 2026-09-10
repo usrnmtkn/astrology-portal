@@ -15,7 +15,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
 const readJson = (relativePath) => JSON.parse(read(relativePath));
 const runtimeSource = read("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
-const generatedContentSource = read("apps/web/src/services/generatedContent.ts");
+const generatedContentSource = read("apps/web/src/services/generatedContent.ts") + read("apps/web/src/services/fallbackArchitectureV3CorePackaging.ts");
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
