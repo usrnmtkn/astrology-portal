@@ -159,3 +159,14 @@ console.log('Report checkpoints: bounded calls, exact replay, validation, drift,
   }
 }
 console.log('Checkpoint transport: both providers receive cancellation; fallback is suppressed.');
+
+// Slow checkpoint storage must not start a provider call after the deadline.
+{
+  const { admin } = storage();
+  const insert = admin.insert;
+  mock.timers.enable({ apis: ['setTimeout', 'Date'], now: Date.now() });
+  admin.insert = async (...args) => { const row = await insert(...args); mock.timers.tick(240_001); return row; };
+  try {
+    await assert.rejects(resume({ admin, family: 'you', jobId: 'job', attempt: 1 }, () => step(request('writer'), async () => { assert.fail('deadline expired before billing'); })), TransitReadingCheckpointStopped);
+  } finally { mock.timers.reset(); }
+}

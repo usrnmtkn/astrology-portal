@@ -81,6 +81,7 @@ export async function checkpointTransitReadingModel<T>(
     `Report model step ${step + 1} exceeded the worker time budget.`
   )), Math.max(1, scope.deadline - Date.now()));
   try {
+    if (Date.now() >= scope.deadline) throw new TransitReadingCheckpointStopped("Report checkpoint reservation exhausted the worker time budget.");
     const result = await call({ ...input, signal: controller.signal, disableFallback: true });
     const rows = await scope.admin.update<Checkpoint<T>>("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "complete", response: result, completed_at: new Date().toISOString()
