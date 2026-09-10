@@ -36,6 +36,16 @@ if (
   throw new Error("Relationship bundle must serve all 24 owner-approved synastry directionality overrides.");
 }
 
+// Content Studio authoring uses the product-level {{Name}} variable. The legacy
+// synastry resolver still resolves chart ownership through holder1/holder2.
+// For a forward canonical pair, the friend is holder2, so compile {{Name}} to
+// that runtime slot at the relationship-bundle boundary instead of changing
+// the owner-authored source text.
+const runtimeSynastryDirectionalOverrides = approvedSynastryDirectionalOverrides.map((row) => ({
+  ...row,
+  body_you: row.body_you?.replaceAll("{{Name}}", "{{holder2}}") ?? row.body_you
+}));
+
 export const relationshipFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle = {
   transitLib: {
     authoredCards: bundledRelationshipAuthoredCardsV3.authoredCards as AuthoredCard[]
@@ -47,7 +57,7 @@ export const relationshipFallbackArchitectureV3Bundle: FallbackArchitectureV3Bun
     hookRows: [
       ...(bundledRelationshipHookRowsV3.hookRows as HookRow[]),
       ...(bundledSharedPlacementRowsV3.hookRows as HookRow[]),
-      ...approvedSynastryDirectionalOverrides
+      ...runtimeSynastryDirectionalOverrides
     ],
     vocabularyRows: []
   }
