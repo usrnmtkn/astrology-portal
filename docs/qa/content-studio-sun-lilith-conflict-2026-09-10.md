@@ -20,5 +20,5 @@ This is a Content Studio copy repair; repository prose and bundled content are u
 
 - API regressions simulate database timestamp rewriting and automatic revision completion for package and article publication; competing revision changes remain rejected.
 - API CRUD/lifecycle, atomic concurrency, special mutation concurrency and revision completion tests pass.
-- Fresh-preview browser tests cover visible approval errors, unconfirmed responses, retry, reopening with current copy/version, and redirecting a completed revision to its published target.
+- All 79 Content Studio browser tests pass from a fresh preview, including visible approval errors, unconfirmed responses, retry, current-version reopen, completed-revision routing, keyboard focus restoration, unsaved-edit protection and template previews.
 - Typecheck, Admin build, unchanged bundle budgets and CSS/token audit pass.

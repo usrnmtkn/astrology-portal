@@ -4064,28 +4064,26 @@ export function GeneratedContentAdminDashboard() {
       const saved = payload.rows?.[0];
       if (!payload.ok || !saved || saved.id !== row.id || saved.content_key !== row.content_key
         || saved.status !== (row.block_type === "sky_placement" ? "REVIEWED" : "LIVE")) {
-        throw new Error("Approval was not confirmed. Your saved copy is still available; try again.");
+        throw new Error("Approval was not confirmed. Try again.");
       }
-      if (saved) {
-        setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
-        if (selectedRowId === saved.id) {
-          setEditorSourceRow(saved);
-          const savedDraft = draftFromRow(saved);
-          setDraft(savedDraft);
-          editorBaselineRef.current = JSON.stringify(savedDraft);
-          editorSavedInputRef.current = JSON.stringify(savedDraft);
-        }
-        announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
-        setSkyReviewHorizon((current) => current ? {
-          ...current,
-          occurrences: current.occurrences.map((occurrence) => occurrence.row?.id === saved.id
-            ? { ...occurrence, row: saved, reviewStatus: "approved_scheduled" }
-            : occurrence)
-        } : current);
+      setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
+      if (selectedRowId === saved.id) {
+        setEditorSourceRow(saved);
+        const savedDraft = draftFromRow(saved);
+        setDraft(savedDraft);
+        editorBaselineRef.current = JSON.stringify(savedDraft);
+        editorSavedInputRef.current = JSON.stringify(savedDraft);
       }
+      announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
+      setSkyReviewHorizon((current) => current ? {
+        ...current,
+        occurrences: current.occurrences.map((occurrence) => occurrence.row?.id === saved.id
+          ? { ...occurrence, row: saved, reviewStatus: "approved_scheduled" }
+          : occurrence)
+      } : current);
       setMessage(row.block_type === "sky_placement"
-        ? `${row.content_key} approved for package import. It is not serving until the governed package is regenerated, reviewed, merged, and deployed.`
-        : `${row.content_key} approved. It is eligible only when current calculated Sky facts select this reusable configuration.`);
+        ? `${row.content_key} approved for package import. Serving requires the governed package release.`
+        : `${row.content_key} approved for matching calculated Sky configurations.`);
     } catch (error) {
       const feedback = dashboardErrorMessage(error);
       setEditorSaveError(feedback);
@@ -4791,22 +4789,25 @@ export function GeneratedContentAdminDashboard() {
     return hydrated;
   }
 
-  function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection, refreshed = false) {
-    if (row.inventory_only || !refreshed && !row.id.startsWith("package:")) {
-      setIsLoading(true);
-      void hydrateGeneratedContentRow(row, true)
-        .then((hydrated) => openRow(hydrated, compositionContext, fieldPath, placementSelection, true))
-        .catch((error) => { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); })
-        .finally(() => setIsLoading(false));
-      return;
-    }
+  async function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection): Promise<boolean> {
     const replacingUnsavedEditor = draft && row.id !== draft.id && (
       JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
       || hasPendingArticleChanges()
     );
-    if (replacingUnsavedEditor && !window.confirm("Discard the unsaved changes in this editor?")) return;
+    if (replacingUnsavedEditor && !window.confirm("Discard the unsaved changes in this editor?")) return false;
+    // Capture focus and the owner's decision before loading disables controls.
     if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
       editorReturnFocusRef.current = document.activeElement;
+    }
+    if (row.inventory_only || !row.id.startsWith("package:")) {
+      setIsLoading(true);
+      try {
+        row = await hydrateGeneratedContentRow(row, true);
+      } catch (error) {
+        setEditorSaveError(dashboardErrorMessage(error));
+        setMessage(dashboardErrorMessage(error));
+        return false;
+      } finally { setIsLoading(false); }
     }
     const nextDraft = draftFromRow(row);
     setEditorSaveError("");
@@ -4852,6 +4853,7 @@ export function GeneratedContentAdminDashboard() {
       workspaceId: null
     } : null);
     scrollEditorToTop(fieldPath);
+    return true;
   }
 
   async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false) {
@@ -4864,7 +4866,7 @@ export function GeneratedContentAdminDashboard() {
       )).rows?.find((candidate) => candidate.content_key === contentKey);
       if (!row) throw new Error(`${label} is not materialized in Content Studio (${contentKey}).`);
       if (!existing) setRows((current) => [row, ...current]);
-      openRow(row);
+      if (!await openRow(row)) return;
       if (openTemplatePreview) setTemplateVariableReferenceOpen(true);
       setMessage(openTemplatePreview
         ? `Opened the assembled reader preview for ${label}. Colored sections link to their atomic sources.`
@@ -4903,7 +4905,7 @@ export function GeneratedContentAdminDashboard() {
       )).rows?.find((candidate) => candidate.content_key === contentKey);
       if (!row) throw new Error(`The serving source ${contentKey} is not materialized in Content Studio.`);
       if (!existing) setRows((current) => [row, ...current]);
-      openRow(row);
+      if (!await openRow(row)) return;
       setSkyFallbackPreviewFacts({
         ...occurrence.facts,
         entryDate: occurrence.windows[0]?.startDate ?? "",
