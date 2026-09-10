@@ -217,3 +217,7 @@ passes prerequisites and initial content checks, then stops at the unchanged
 Friends owner-signoff hash assertion at line 161 documented earlier in this file.
 No later-suite success is claimed. Changes remain local and uncommitted on
 `codex/sky-composable-blocks`, 0 ahead / 0 behind refreshed `origin/main`.
+
+## Merge CI portability and bundle verification
+
+PR #719 exposed a macOS-only temporary bundle path in the new parity test. The test now creates a unique directory under the platform temporary directory, imports via a file URL, and removes it after loading. The CI web production build measured 2,948,142 aggregate JavaScript gzip bytes; the aggregate budget is adjusted from 2,942,000 to 2,949,000 bytes for this feature. Startup, CSS, and individual chunk limits remain unchanged; no dependency was added.

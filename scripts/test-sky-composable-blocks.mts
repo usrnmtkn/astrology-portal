@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { skyPlacementSourceCorpus as corpus, skyPlacementSourceRecords as records } from '../api/_lib/sky-placement-sources';
 import { servingPackageRecords } from '../api/_lib/content-live-status';
 import { renderSkyV4ReaderRoute as source } from '../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs';
@@ -10,8 +14,11 @@ import { skyPlacementAssembly } from '../apps/admin/src/skyPlacementAssembly';
 import { skyPlacementBodies, skyPlacementSigns } from '../apps/admin/src/skyWriteupRelations';
 import { skyPlacementCompositionKeys } from '../apps/admin/src/SkyPlacementComposition';
 import { makeSkyArticleOutline, SKY_ARTICLE_OUTLINES } from '../apps/admin/src/skyArticleOutlines';
-await build({ entryPoints: ['apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts'], outfile: '/private/tmp/sky-blocks-browser.mjs', bundle: true, platform: 'browser', format: 'esm', logLevel: 'silent' });
-const { renderSkyV4ReaderRoute: browser } = await import('/private/tmp/sky-blocks-browser.mjs');
+const browserTemp = await mkdtemp(join(tmpdir(), 'sky-blocks-'));
+const browserBundle = join(browserTemp, 'browser.mjs');
+await build({ entryPoints: ['apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts'], outfile: browserBundle, bundle: true, platform: 'browser', format: 'esm', logLevel: 'silent' });
+const { renderSkyV4ReaderRoute: browser } = await import(pathToFileURL(browserBundle).href);
+await rm(browserTemp, { recursive: true, force: true });
 const before = JSON.stringify(corpus);
 for (const planet of skyPlacementBodies) for (const sign of skyPlacementSigns) {
  const keys = skyPlacementCompositionKeys({ planet, sign, motion: 'direct' });
