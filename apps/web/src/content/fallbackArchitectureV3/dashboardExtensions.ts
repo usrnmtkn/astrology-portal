@@ -1,5 +1,7 @@
 import skyReaderRelease from "./authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
 import skyReaderApproval from "./authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
+import { isDynamicTransitNatalExactKey } from "../transitNatalIdentity.js";
+export { isDynamicTransitNatalExactKey } from "../transitNatalIdentity.js";
 
 const canonicalKeys = new Set<string>(skyReaderRelease.serving_enabled ? skyReaderApproval.approved_keys : []);
 export function isCanonicalSkyReaderRecord(record: { contentKey: string; source_package?: unknown; serving_enabled?: unknown; owner_approved?: unknown }) {
@@ -81,6 +83,13 @@ export function isDynamicNatalAspectExactRecord(record: FallbackDashboardExtensi
     && parts[0] !== parts[2] && record.content_role === "full_copy" && record.reader_only === true && record.render_policy === "reader-only-exact-lived-v1";
 }
 
+export function isDynamicTransitNatalExactRecord(record: FallbackDashboardExtensionRecord) {
+  return isDynamicTransitNatalExactKey(record.contentKey)
+    && record.content_role === "full_copy"
+    && record.reader_only === true
+    && record.render_policy === "personal-transit-exact-v1";
+}
+
 export function isFallbackDashboardRecordAllowed(
   record: FallbackDashboardExtensionRecord,
   currentPackageKeys: ReadonlySet<string>
@@ -88,5 +97,6 @@ export function isFallbackDashboardRecordAllowed(
   return currentPackageKeys.has(record.contentKey)
     || isDynamicNatalPlacementExactRecord(record)
     || isDynamicNatalAspectExactRecord(record)
+    || isDynamicTransitNatalExactRecord(record)
     || (isCanonicalSkyReaderRecord(record) && record.studio_version_status === "approved-serving-revision");
 }

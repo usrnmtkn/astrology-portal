@@ -41,3 +41,31 @@ try {
  failStorage=true;assert.equal((await request()).code,503);
  console.log('PASS transit preview actual handler: authorization, input validation, shared full copy, published edits, draft exclusion, retirement, stale publication, scoped state, and storage failure.');
 } finally {globalThis.fetch=original;}
+
+// Newly authored identities must enter the same reader without a bundled-key release.
+const { transitNatalExactContentKey, transitNatalExactSourceDraft } = await import('../apps/admin/src/transitNatalSources.ts');
+const { isDynamicTransitNatalExactKey } = await import('../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.ts');
+for (const selection of [
+ {planet:'sun',natalPoint:'south-node',aspect:'opposition'},
+ {planet:'sun',natalPoint:'sun',aspect:'conjunction'},
+ {planet:'uranus',natalPoint:'uranus',aspect:'conjunction'}
+] as const) {
+ const draft=transitNatalExactSourceDraft(selection), key=draft.contentKey;
+ assert.equal(draft.status,'DRAFT');assert.equal(draft.lane,'reference');assert.equal(draft.body,'');
+ assert.equal(draft.sections.packageRecord.review_status,'needs_review');
+ const content='A complete synthetic exact transit opening.\n\nA complete synthetic exact transit ending.';
+ const record={...draft.sections.packageRecord,body:content,body_you:content,review_status:'approved'};
+ const row:any={id,content_key:key,provider:'tldrastro-fallback-architecture-v3',status:'LIVE',lane:'serving',updated_at:stamp,body:content,sections:{packageRecord:record},facts:{fallbackArchitectureV3:true,review_status:'approved'},source_snapshot:{...draft.sourceSnapshot,review_status:'approved'}};
+ const input=normalizeTransitNatalPreviewInput({...selection,sign:'virgo',voice:'you'});
+ const publication:any={content_key:key,state:'live',revision:1,row_id:id,row_updated_at:stamp,updated_at:stamp};
+ const exact=renderTransitNatalPreviewState(input,[row],[publication]);
+ assert.equal(exact.body,content);assert.equal(exact.sourceKeys[0],key);
+ for(const change of [{status:'DRAFT'},{lane:'reference'},{sections:{packageRecord:{...record,review_status:'needs_review'}},facts:{review_status:'needs_review'},source_snapshot:{...draft.sourceSnapshot,review_status:'needs_review'}}]) {
+  let result;try{result=renderTransitNatalPreviewState(input,[{...row,...change}],[]);}catch{}
+  assert.notEqual(result?.body,content,'Unpublished/unreviewed exact source cannot serve');
+ }
+ assert.throws(()=>renderTransitNatalPreviewState(input,[row],[{...publication,state:'retired'}]),/SOURCE_GAP|No reader-eligible/);
+}
+assert.equal(transitNatalExactContentKey({planet:'sun',natalPoint:'lilith',aspect:'square'}),null);
+for(const key of ['authored/transit-return/pluto','authored/transit-return/sun/extra','authored/transit-aspect/sun/sun/conjunction','authored/transit-aspect/sun/fake/square','authored/transit-aspect/sun/moon/hard','cms/personal-transit-aspect/sun/south-node/opposition'])assert.equal(isDynamicTransitNatalExactKey(key),false,key);
+console.log('PASS new exact personal-transit and return sources, draft exclusion, retirement, and valid identities.');

@@ -166,6 +166,31 @@ async function seedClientFixtureSky(page: Page) {
   }, { fixture: fixtureSky(0) });
 }
 
+async function holdInitialSkyCalculation(page: Page) {
+  // This baseline is intentionally the loading screen. Control its lifecycle
+  // instead of racing a real worker against the screenshot's stability window.
+  await page.addInitScript(() => {
+    const RealWorker = window.Worker;
+    const pending: Array<() => void> = [];
+    let released = false;
+    window.Worker = class extends RealWorker {
+      constructor(url: string | URL, options?: WorkerOptions) {
+        super(url, options);
+        if (options?.name !== "tldrastro-sky-calculation") return;
+        const send = this.postMessage.bind(this);
+        this.postMessage = ((message: any, transfer: any) => {
+          if (!released && message?.kind === "sky") pending.push(() => send(message, transfer));
+          else send(message, transfer);
+        }) as Worker["postMessage"];
+      }
+    };
+    (window as any).__releaseVisualSkyLoading = () => {
+      released = true;
+      pending.splice(0).forEach(send => send());
+    };
+  });
+}
+
 async function seedAdminApi(page: Page) {
   await freezeTime(page);
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
@@ -267,6 +292,7 @@ test.describe("visual regression baseline", () => {
     const assertNoBrowserErrors = watchBrowserErrors(page);
     await seedClientFixtureSky(page);
     await seedClientState(page, "dark");
+    await holdInitialSkyCalculation(page);
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.setViewportSize({ width: 1440, height: 1000 });
 
@@ -275,7 +301,11 @@ test.describe("visual regression baseline", () => {
         timeout: routeReadyTimeoutMs
       });
     });
+    await expect(page.getByRole("status", { name: "Loading current sky" }).first()).toBeVisible();
     await expect(page).toHaveScreenshot("client-sky-desktop-dark.png", screenshotOptions);
+    await page.evaluate(() => (window as any).__releaseVisualSkyLoading());
+    await expect(page.getByRole("button", { name: "Read more about Sun in Cancer", exact: true })).toBeVisible({ timeout: routeReadyTimeoutMs });
+    await expect(page.getByRole("status", { name: "Loading current sky" })).toHaveCount(0);
 
     await expectRouteLoadsWithin(page, "/#calendar", "client calendar desktop dark", async () => {
       await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: routeReadyTimeoutMs });
