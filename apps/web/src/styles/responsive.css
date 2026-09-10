@@ -1161,7 +1161,7 @@
     border: var(--border-width-thin) solid var(--card-border);
     border-radius: var(--radius);
     background: var(--card-bg);
-    box-shadow: var(--row-card-shadow, var(--card-shadow));
+    box-shadow: var(--nav-rest-shadow);
   }
 
   .mode-guest .today-summary-cards .sky-lunar-brief,
