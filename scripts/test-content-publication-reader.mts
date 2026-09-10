@@ -94,7 +94,7 @@ const summaryKeys = ['cms/sky-daily-summary/sun/virgo', 'cms/sky-daily-summary/r
 for (const content_key of summaryKeys) installContentPublications([{ ...retired, content_key, revision: 20 }]);
 assert.doesNotMatch(summaryText(), /daily rituals|retrograde|void of course|New Moon/);
 assert.match(summaryText(), /Sun is in Virgo/);
-assert.match(summaryText(), /brings more attention to home/);
+assert.match(summaryText(), /pulls us home to the places, people, and memories that nurture us/);
 const summaryKey = summaryKeys[0];
 installContentPublications([{ ...record, content_key: summaryKey, revision: 21 }]);
 assert.doesNotMatch(summaryText(), /daily rituals/, 'An unavailable publication cannot reveal older local summary prose');
