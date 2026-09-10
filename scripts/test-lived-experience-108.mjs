@@ -1,3 +1,4 @@
+import { historicalSynastryRow } from "./lib/synastry-directionality-history.mjs";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -115,7 +116,7 @@ assert.deepEqual(manifest.familyCounts, {
   "placement-sign-lived": 2,
 });
 
-const existingApprovedRows = source.hookRows.filter((row) => (
+const existingApprovedRows = source.hookRows.map(historicalSynastryRow).filter((row) => (
   row.review_status === "approved"
   && !livedPrefixes.some((prefix) => row.contentKey.startsWith(prefix))
   && row.source_release !== llMatrixV13Release

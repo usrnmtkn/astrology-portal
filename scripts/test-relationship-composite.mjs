@@ -201,3 +201,14 @@ assert.ok(
 );
 
 console.log("Relationship composite calculation tests passed.");
+
+// Both measured axes expose their opposite points; the measured True Node is
+// retained once even when its legacy alias is present. Unknown-time charts
+// never manufacture angles.
+for (const [ascendantLongitude, midheavenLongitude] of [[351, 264], [15, 280]]) {
+  const points = comparisonPointsFromSky(sky({ ascendantLongitude, midheavenLongitude, positions: [position('North Node', 73, '☊'), position('True Node', 73, '☊')] }));
+  assert.equal(points.filter(p => p.name === 'North Node').length, 1);
+  assert.equal(points.find(p => p.name === 'Descendant').longitude, (ascendantLongitude + 180) % 360);
+  assert.equal(points.find(p => p.name === 'Imum Coeli').longitude, (midheavenLongitude + 180) % 360);
+}
+assert.deepEqual(comparisonPointsFromSky(sky({ positions: [] })), []);

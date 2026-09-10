@@ -135,7 +135,22 @@ let exactApprovalRecordsResolved = 0;
 
 assert.equal(rows.length, 483, "Expected 483 synastry serving rows");
 
-for (const row of rows) {
+const directionRelease = JSON.parse(fs.readFileSync(path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/authored-inputs/synastry-directionality-live-v1.json"), "utf8"));
+// Validate historical whole-row records against their historical payload, while
+// the release regression independently locks the new direction and its approval.
+for (const currentRow of rows) {
+  const supersession = directionRelease.rows.find(patch => patch.contentKey === currentRow.contentKey);
+  let row = currentRow;
+  if (supersession) {
+    assert.equal(currentRow.body_you, supersession.body_you);
+    assert.equal(sha256(currentRow.body_they), supersession.expected_before_sha256.body_they);
+    row = { ...currentRow, review_status: currentRow.body_they_review_status, approval: currentRow.body_they_prior_row_approval };
+    if (row.approval?.recordPath?.endsWith('.json')) {
+      const prior = JSON.parse(fs.readFileSync(path.join(repoRoot, row.approval.recordPath), 'utf8'));
+      assert.equal(sha256(prior.payload.body_you), supersession.expected_before_sha256.body_you);
+      row.body_you = prior.payload.body_you;
+    }
+  }
   statusCounts[row.review_status] = (statusCounts[row.review_status] ?? 0) + 1;
   const approval = row.approval;
 

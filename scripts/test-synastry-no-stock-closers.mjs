@@ -1,3 +1,4 @@
+import { historicalSynastryRow } from "./lib/synastry-directionality-history.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -83,7 +84,7 @@ function hasStockCloser(value) {
 
 const source = JSON.parse(fs.readFileSync(sourcePath, "utf8"));
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-const rows = source.hookRows.filter((row) => row.contentKey?.startsWith(synastryPrefix));
+const rows = source.hookRows.map(historicalSynastryRow).filter((row) => row.contentKey?.startsWith(synastryPrefix));
 const rowsByKey = new Map(rows.map((row) => [row.contentKey, row]));
 
 assert.equal(rows.length, 483, "The stock-closer pass must not add or remove synastry rows");

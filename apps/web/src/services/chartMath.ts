@@ -90,7 +90,7 @@ const comparisonPointRoles: Record<string, string> = {
 };
 
 const synastryPersonalPoints = new Set(["sun", "moon", "mercury", "venus", "mars"]);
-const synastryAngles = new Set(["ascendant", "midheaven"]);
+const synastryAngles = new Set(["ascendant", "midheaven", "descendant", "imum coeli"]);
 const synastrySocialOuterPoints = new Set(["jupiter", "saturn", "uranus", "neptune", "pluto"]);
 const compatibilityHighlightPoints = new Set(["Sun", "Moon", "Venus", "Mars", "Mercury", "Saturn"]);
 
@@ -696,9 +696,9 @@ export function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoin
   }
 
   const points = sky.positions
-    .filter((position) => position.planet !== "North Node" && position.planet !== "True Node")
+    .filter((position) => position.planet !== "True Node" || !sky.positions.some((candidate) => candidate.planet === "North Node"))
     .map((position) => ({
-      name: position.planet,
+      name: position.planet === "True Node" ? "North Node" : position.planet,
       glyph: position.glyph,
       longitude: zodiacLongitude(position),
       role: comparisonPointRole(position.planet)
@@ -720,6 +720,17 @@ export function comparisonPointsFromSky(sky: SkySnapshot | null): ComparisonPoin
       longitude: normalizedAngle(sky.midheavenLongitude),
       role: comparisonPointRole("Midheaven")
     });
+  }
+
+  // The opposite angles are computed from the same chart's measured axes.
+  // Preserve unknown-time behavior: no axis means no derived angle.
+  for (const [name, glyph, longitude] of [
+    ["Descendant", "Dsc", sky.ascendantLongitude],
+    ["Imum Coeli", "IC", sky.midheavenLongitude]
+  ] as const) {
+    if (typeof longitude === "number" && Number.isFinite(longitude)) {
+      points.push({ name, glyph, longitude: normalizedAngle(longitude + 180), role: comparisonPointRole(name) });
+    }
   }
 
   return points;

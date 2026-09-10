@@ -1,121 +1,90 @@
-import assert from "node:assert/strict";
-import fs from "node:fs";
-
-import { createTransitSynastryRenderer } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
-import {
-  applySynastryDirectionalityLiveV1,
-  SYNASTRY_DIRECTIONALITY_MODE
-} from "../apps/web/src/content/fallbackArchitectureV3/resolver/synastryDirectionalityLive.mjs";
-
-const packageRoot = "apps/web/src/content/fallbackArchitectureV3";
-const source = JSON.parse(fs.readFileSync(`${packageRoot}/source-rows/fallback-source-rows-v3.json`, "utf8"));
-const overlay = JSON.parse(fs.readFileSync(`${packageRoot}/authored-inputs/synastry-directionality-live-v1.json`, "utf8"));
-const templates = JSON.parse(fs.readFileSync(`${packageRoot}/templates/fallback-templates-v3.json`, "utf8"));
-const transitLib = JSON.parse(fs.readFileSync(`${packageRoot}/source-rows/transit-synastry-rows-v1.json`, "utf8"));
-const relationshipBundleSource = fs.readFileSync(
-  "apps/web/src/content/fallbackArchitectureV3RelationshipBundle.ts",
-  "utf8"
-);
-
-assert.equal(overlay.schema, "synastry-directionality-live/v1");
-assert.equal(overlay.directionality_mode, SYNASTRY_DIRECTIONALITY_MODE);
-assert.equal(overlay.release_id, "synastry-directionality-batch-4-live-v1");
-assert.equal(overlay.rows.length, 24, "Batch 4 must contain exactly 24 released semantic reverses");
-assert.match(relationshipBundleSource, /authored-inputs\/synastry-directionality-live-v1\.json/u);
-assert.match(relationshipBundleSource, /applySynastryDirectionalityLiveV1/u);
-
-const overlayKeys = new Set(overlay.rows.map((row) => row.contentKey));
-assert.equal(overlayKeys.size, 24, "Batch 4 overlay keys must be unique");
-
-const baseSynastryRows = source.hookRows.filter((row) => row.contentKey?.startsWith("fallback-hook/synastry-pair/"));
-assert.equal(baseSynastryRows.length, 483, "Canonical base must retain the 483-row synastry corpus");
-assert.equal(new Set(baseSynastryRows.map((row) => row.contentKey)).size, 483, "Canonical base synastry keys must remain unique");
-
-const patchedHookRows = applySynastryDirectionalityLiveV1(source.hookRows, overlay);
-const patchedSource = { ...source, hookRows: patchedHookRows };
-const patchedSynastryRows = patchedHookRows.filter((row) => row.contentKey?.startsWith("fallback-hook/synastry-pair/"));
-assert.equal(patchedSynastryRows.length, 483, "Directionality release must not add duplicate canonical pair rows");
-assert.equal(new Set(patchedSynastryRows.map((row) => row.contentKey)).size, 483, "Directionality release must preserve one row per canonical key");
-
-const baseByKey = new Map(baseSynastryRows.map((row) => [row.contentKey, row]));
-const patchedByKey = new Map(patchedSynastryRows.map((row) => [row.contentKey, row]));
-
-for (const patch of overlay.rows) {
-  const base = baseByKey.get(patch.contentKey);
-  const live = patchedByKey.get(patch.contentKey);
-  assert.ok(base, `${patch.contentKey}: missing canonical base row`);
-  assert.ok(live, `${patch.contentKey}: missing released row`);
-  assert.equal(live.body_you, patch.body_you, `${patch.contentKey}: released body_you drifted`);
-  assert.equal(live.body_they, base.body_they, `${patch.contentKey}: historical opposite direction changed`);
-  assert.equal(live.directionality_mode, SYNASTRY_DIRECTIONALITY_MODE);
-  assert.equal(live.body_you_semantic_direction, patch.missingSemanticDirection);
-  assert.equal(live.body_they_semantic_direction, patch.existingSemanticDirection);
-  assert.equal(live.review_status, "approved");
-  assert.equal(live.approval?.approvalLevel, "owner_signoff_untraced");
-  assert.equal(live.body_you_approval?.approvalLevel, "exact_owner_approved");
-  assert.equal(live.body_you_approval?.recordPath, overlay.approval_record);
-  assert.equal(live.body_they_review_status, base.review_status ?? null);
-  assert.doesNotMatch(live.body_you, /\{\{Name\}\}/u, `${patch.contentKey}: authoring variable leaked into runtime source`);
-  if (base.approval) {
-    assert.deepEqual(live.body_they_prior_row_approval, base.approval, `${patch.contentKey}: prior whole-row approval provenance was not preserved`);
-    assert.notDeepEqual(live.approval, base.approval, `${patch.contentKey}: stale whole-row exact approval survived a body change`);
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { build } from 'esbuild';
+import { releaseSynastryDirections, sha256 } from './release-synastry-directionality.mjs';
+import { classifySynastryDirectionality } from './synastry-directionality-human-review.mjs';
+import { createTransitSynastryRenderer } from '../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js';
+import { renderSynastryAspect } from '../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs';
+const root = 'apps/web/src/content/fallbackArchitectureV3';
+const read = path => JSON.parse(fs.readFileSync(`${root}/${path}`, 'utf8'));
+const source = read('source-rows/fallback-source-rows-v3.json');
+const release = read('authored-inputs/synastry-directionality-live-v1.json');
+const bundled = read('bundled-relationship-hook-rows-v3.json');
+const templates = read('templates/fallback-templates-v3.json');
+const lib = read('source-rows/transit-synastry-rows-v1.json');
+const compiled = await build({ entryPoints: [`${root}/resolver/renderTransitSynastry.browser.ts`], bundle: true, format: 'esm', platform: 'browser', write: false });
+const browser = await import(`data:text/javascript;base64,${Buffer.from(compiled.outputFiles[0].text).toString('base64')}`);
+const renderers = [
+  { renderSynastryAspect },
+  browser.createTransitSynastryRenderer(lib, templates, source),
+  createTransitSynastryRenderer(lib, templates, { hookRows: bundled.hookRows, vocabularyRows: source.vocabularyRows })
+];
+const synastry = source.hookRows.filter(r => r.contentKey.startsWith('fallback-hook/synastry-pair/'));
+assert.equal(synastry.length, 483);
+assert.equal(new Set(synastry.map(r => r.contentKey)).size, 483);
+const counts = {};
+for (const row of synastry) { const action = classifySynastryDirectionality(row.contentKey).action; counts[action] = (counts[action] ?? 0) + 1; }
+assert.deepEqual(counts, { AUTHOR_REVERSE: 397, RECIPROCAL_NO_REVERSE: 76, NEEDS_DIRECTION_REVIEW: 10 });
+assert.equal(release.rows.length, 24);
+assert.deepEqual(releaseSynastryDirections(source.hookRows, release), source.hookRows);
+for (const patch of release.rows) {
+  const row = synastry.find(r => r.contentKey === patch.contentKey);
+  assert.equal(row.body_you, patch.body_you);
+  assert.equal(sha256(row.body_you), patch.approved_body_sha256);
+  assert.equal(sha256(row.body_they), patch.expected_before_sha256.body_they);
+  const shipped = bundled.hookRows.find(r => r.contentKey === row.contentKey);
+  assert.equal(shipped.body_you, row.body_you);
+  assert.equal(shipped.body_they, row.body_they);
+  const [, , first, second, group] = patch.contentKey.split('/');
+  for (const aspect of group === 'hard' ? ['square', 'opposition'] : group === 'soft' ? ['trine', 'sextile'] : ['conjunction']) {
+    for (const inverse of [false, true]) {
+      for (const name of ['Sofia', '{{Name}}']) {
+        const facts = { planetA: inverse ? second : first, planetB: inverse ? first : second, aspect, otherName: name };
+        const results = renderers.map(r => r.renderSynastryAspect(facts));
+        for (const result of results) {
+          assert.equal(result.contentKey, patch.contentKey);
+          assert.equal(result.body, results[0].body, `${patch.contentKey}: Node/browser/dist drift`);
+          assert.doesNotMatch(result.body, /\{\{holder[12]/);
+          if (!inverse) assert.equal(result.body, patch.body_you.replaceAll('{{holder2}}', name));
+          if (name !== '{{Name}}') assert.doesNotMatch(result.body, /\{\{/);
+        }
+      }
+    }
   }
 }
-
-assert.deepEqual(
-  applySynastryDirectionalityLiveV1(patchedHookRows, overlay),
-  patchedHookRows,
-  "Directionality overlay must be idempotent"
-);
-
-const baselineRenderer = createTransitSynastryRenderer(transitLib, templates, source);
-const liveRenderer = createTransitSynastryRenderer(transitLib, templates, patchedSource);
-
-function concreteAspects(group) {
-  if (group === "conjunction") return ["conjunction"];
-  if (group === "hard") return ["square", "opposition"];
-  if (group === "soft") return ["trine", "sextile"];
-  throw new Error(`Unsupported Batch 4 aspect family: ${group}`);
+// The release guard must refuse unapproved changes even on an idempotent rerun.
+for (const field of ['body_you', 'body_they']) {
+  const changed = structuredClone(source.hookRows);
+  changed.find(r => r.contentKey === release.rows[0].contentKey)[field] += ' Unexpected edit.';
+  assert.throws(() => releaseSynastryDirections(changed, release), /changed|conflicting/);
 }
-
-for (const patch of overlay.rows) {
-  const [, , first, second, family] = patch.contentKey.split("/");
-  assert.equal(first, "sun", `${patch.contentKey}: Batch 4 canonical first body must be Sun`);
-
-  for (const aspect of concreteAspects(family)) {
-    const oldForward = baselineRenderer.renderSynastryAspect({
-      planetA: "sun",
-      planetB: second,
-      aspect,
-      otherName: "Sofia"
-    });
-    const newForward = liveRenderer.renderSynastryAspect({
-      planetA: "sun",
-      planetB: second,
-      aspect,
-      otherName: "Sofia"
-    });
-    const oldReverse = baselineRenderer.renderSynastryAspect({
-      planetA: second,
-      planetB: "sun",
-      aspect,
-      otherName: "Sofia"
-    });
-    const newReverse = liveRenderer.renderSynastryAspect({
-      planetA: second,
-      planetB: "sun",
-      aspect,
-      otherName: "Sofia"
-    });
-
-    assert.equal(newForward.contentKey, patch.contentKey, `${patch.contentKey}: forward resolver selected the wrong row`);
-    assert.equal(newReverse.contentKey, patch.contentKey, `${patch.contentKey}: reverse resolver selected the wrong row`);
-    assert.notEqual(newForward.body, oldForward.body, `${patch.contentKey}: viewer-centered direction did not change`);
-    assert.equal(newReverse.body, oldReverse.body, `${patch.contentKey}: opposite reader direction changed`);
-    assert.match(newForward.body, /Sofia/u, `${patch.contentKey}: friend name did not render`);
-    assert.doesNotMatch(newForward.body, /\{\{(?:holder|Name)/u, `${patch.contentKey}: unresolved runtime variable leaked`);
-    assert.doesNotMatch(newReverse.body, /\{\{(?:holder|Name)/u, `${patch.contentKey}: unresolved reverse variable leaked`);
+for (const action of ['RECIPROCAL_NO_REVERSE', 'NEEDS_DIRECTION_REVIEW']) {
+  for (const row of synastry.filter(r => classifySynastryDirectionality(r.contentKey).action === action)) {
+    const invalid = { ...release, rows: [{ ...release.rows[0], contentKey: row.contentKey }] };
+    assert.throws(() => releaseSynastryDirections(source.hookRows, invalid), new RegExp(action));
   }
 }
+// Synthetic approved fixture exercises the opposite storage orientation without publishing it.
+const key = 'fallback-hook/synastry-pair/sun/saturn/conjunction';
+const base = source.hookRows.find(r => r.contentKey === key);
+const body = '{{holder1}} test-only reverse fixture.';
+const patch = { contentKey: key, ...classifySynastryDirectionality(key), body_they: body, expected_before_sha256: { body_you: sha256(base.body_you), body_they: sha256(base.body_they) }, approved_body_sha256: sha256(body) };
+const result = releaseSynastryDirections([base], { ...release, rows: [patch] })[0];
+assert.equal(result.body_you, base.body_you);
+assert.equal(result.body_they, body);
+assert.throws(() => releaseSynastryDirections([base], { ...release, rows: [{ ...patch, body_you: 'overwrite' }] }), /must preserve/);
+assert.throws(() => releaseSynastryDirections([base], { ...release, rows: [{ ...patch, missingSemanticDirection: 'saturn_to_sun' }] }), /map mismatch/);
+assert.throws(() => releaseSynastryDirections([base], { ...release, rows: [{ ...patch, body_they: 'unapproved' }] }), /hash mismatch/);
+console.log('PASS: 24 canonical releases, Node/browser/dist, 80 aspect orientations, placeholders, preserved hashes, 76 reciprocal + 10 unresolved refusals, both target fields.');
 
-console.log("Synastry directionality Batch 4: 24 canonical viewer-centered reverses + inverse-direction preservation PASS.");
+const studio = JSON.parse(fs.readFileSync('packages/astro-knowledge/review/synastry-directionality-batch-4-live-2026-09-10/content-studio-parity.json', 'utf8'));
+assert.equal(studio.rows.length, 24);
+for (const patch of release.rows) {
+ const live = studio.rows.find(r => r.content_key === patch.contentKey);
+ assert.equal(live.status, 'LIVE'); assert.equal(live.lane, 'serving'); assert.equal(live.review_state, null);
+ assert.equal(live.body_you_sha256, patch.approved_body_sha256);
+ assert.equal(live.body_they_sha256, patch.expected_before_sha256.body_they);
+ assert.equal(live.package_body_you_sha256, live.body_you_sha256);
+ assert.equal(live.package_body_they_sha256, live.body_they_sha256);
+}
+console.log('PASS: live Content Studio field + packageRecord hashes match all 24 canonical rows in both directions.');

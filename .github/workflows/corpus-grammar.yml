@@ -46,8 +46,8 @@ on:
       - "api/admin/review-records.ts"
       - "apps/web/src/content/domainRegistry.ts"
       - "apps/web/src/content/fallbackArchitectureV3RelationshipBundle.ts"
-      - "apps/web/src/content/fallbackArchitectureV3/resolver/synastryDirectionalityLive.mjs"
-      - "apps/web/src/content/fallbackArchitectureV3/resolver/synastryDirectionalityLive.d.mts"
+      - "scripts/release-synastry-directionality.mjs"
+      - "scripts/synastry-directionality-human-review.mjs"
       - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/synastry-directionality-live-v1.json"
       - "package.json"
       - ".github/workflows/corpus-grammar.yml"
@@ -98,8 +98,8 @@ on:
       - "api/admin/review-records.ts"
       - "apps/web/src/content/domainRegistry.ts"
       - "apps/web/src/content/fallbackArchitectureV3RelationshipBundle.ts"
-      - "apps/web/src/content/fallbackArchitectureV3/resolver/synastryDirectionalityLive.mjs"
-      - "apps/web/src/content/fallbackArchitectureV3/resolver/synastryDirectionalityLive.d.mts"
+      - "scripts/release-synastry-directionality.mjs"
+      - "scripts/synastry-directionality-human-review.mjs"
       - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/synastry-directionality-live-v1.json"
       - "package.json"
       - ".github/workflows/corpus-grammar.yml"
@@ -120,6 +120,8 @@ jobs:
           node-version: 22
       - name: Reject owner-reported grammar defects
         run: node scripts/lint-corpus-grammar.mjs
+      - name: Install release-test dependencies
+        run: npm ci --ignore-scripts
       - name: Verify live synastry directionality release
         run: node scripts/test-synastry-directionality-batch-4-live.mjs
       - name: Require current writing-evidence indexes

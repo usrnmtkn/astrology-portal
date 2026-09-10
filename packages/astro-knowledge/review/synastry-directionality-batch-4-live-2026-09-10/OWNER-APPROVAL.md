@@ -50,3 +50,26 @@ The overlay is intentionally additive. It supersedes only `body_you`; the merger
 - `fallback-hook/synastry-pair/sun/lilith/soft`
 
 This authorization applies only to these 24 rows. Other reverse-direction drafts remain held until separately approved and released.
+
+## Canonical release completion
+
+Serving authorization is also recorded in task `6a9efc20-93ac-83e9-aca8-ef437fa03cb7`,
+user turn `29a7b74b-3413-4181-a1fc-593264f17744`, dated 2026-09-10:
+“please add these to the content studio and wire them up, mark these as live”.
+Exact wording approval is user turn `ef52bac4-f070-4498-984d-fcc96165efc1`:
+“this is good and approved”. The current task `01a089dd-57dc-7882-951e-69b0888197e5`
+explicitly requests canonicalization, direction-aware release tooling, regression
+coverage, actual Friends verification, and pushing the release live.
+
+The source of truth is now the existing canonical rows in
+`source-rows/fallback-source-rows-v3.json`, materialized by
+`scripts/release-synastry-directionality.mjs --write`. The authored release input
+holds approved hashes and expected hashes for both pre-release fields. The
+runtime-only additive overlay has been removed. All 24 change `body_you`;
+all 24 `body_they` values retain their exact pre-release hashes.
+
+`content-studio-parity.json` records the read-only 2026-09-10 production comparison:
+24 LIVE + serving rows, clear review state, and identical editor/packageRecord
+hashes in both directions. The publication ledger independently returned 24 live
+entries. Neither this release nor this verification changes the earlier 29 drafts,
+76 reciprocal rows, 10 unresolved rows, or remaining 344 unwritten reverses.
