@@ -2702,7 +2702,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.locator(".admin-editor-panel");
     await expect(editor.getByRole("heading", { name: "Create saved row" })).toBeVisible();
     await expect(editor.getByLabel("Content key")).toHaveValue("sky.sun.trine.chiron");
-    await expect(editor.getByLabel("Full passage / body")).toHaveValue(heldSkyAspectDrafts[0].body);
+    await expect(editor.getByLabel("Source text")).toHaveValue(heldSkyAspectDrafts[0].body);
     await expect(editor.getByLabel("Lane")).toHaveValue("reference");
     await expect(editor.getByLabel("Review state")).toHaveValue("NEEDS_OWNER_DECISION");
 
@@ -3163,7 +3163,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("review queue Edit opens the saved-row editor", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
-    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+    await expectAdminRouteLoads(page, "/admin/content#review-queue?view=all");
 
     const reviewRow = page.locator(".admin-review-queue-row", { hasText: "sky.placement.sun.cancer" });
     await expect(reviewRow).toHaveCount(1);
@@ -3237,8 +3237,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     ];
 
     await seedAdminApi(page, { generatedRows: aspectRows });
-    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+    await expectAdminRouteLoads(page, "/admin/content#review-queue?view=all");
 
+    await page.getByRole("button", { name: "All review", exact: true }).click();
     const currentSkyRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[0].content_key });
     const transitToNatalRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[1].content_key });
     const natalRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[2].content_key });
@@ -3506,12 +3507,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page, { onGeneratedContentWrite: (write) => writes.push(write) });
-    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+    await expectAdminRouteLoads(page, "/admin/content#review-queue?view=all");
 
-    await page.getByRole("button", { name: /Upcoming 90 days/ }).click();
+    await page.getByRole("button", { name: /Missing writing \/ upcoming/ }).click();
     const missingCard = page.locator(".admin-sky-voice-card", { hasText: "Sun trine Chiron" });
-    await expect(missingCard.getByRole("button", { name: "Create draft" })).toBeVisible();
-    await missingCard.getByRole("button", { name: "Create draft" }).click();
+    await expect(missingCard.getByRole("button", { name: "Write manually" })).toBeVisible();
+    await missingCard.getByRole("button", { name: "Write manually" }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Create saved row" })).toBeVisible();
@@ -3565,9 +3566,9 @@ test.describe("content dashboard admin user flow case studies", () => {
       generatedRows: [servingArticle, ...generatedContentRows.slice(1)],
       onGeneratedContentWrite: (write) => writes.push(write)
     });
-    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+    await expectAdminRouteLoads(page, "/admin/content#review-queue?view=all");
 
-    await page.getByRole("button", { name: /Upcoming 90 days/ }).click();
+    await page.getByRole("button", { name: /Missing writing \/ upcoming/ }).click();
     const candidate = page.locator(".admin-sky-voice-card", { hasText: "Jupiter in Leo" });
 
     await expect(candidate.getByText("Not serving — replaced by owner-approved article", { exact: true })).toBeVisible();
@@ -5355,8 +5356,8 @@ for (const theme of ["light", "dark"]) for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
     const row = { ...generatedContentRows[0], id: "qa-sky-approval", content_key: "sky.aspect.chiron.sextile.nodes.taurus.aquarius",
       headline: "Chiron sextile North Node", body: "Saved Sky approval fixture.", surface: "sky", mode: "feed",
-      status: "DRAFT", event_type: "collective-aspect-card", block_type: "sky_aspect", review_state: "needs-review",
-      source_snapshot: {}, sections: {}, facts: {}, updated_at: now };
+      status: "DRAFT", event_type: "collective-aspect-card", block_type: "sky_aspect", review_state: "needs-review", judge_gate: "human-review",
+      source_snapshot: { skyAspectVoiceLint: { score: 3, fails: 0 }, studioWritingCheck: { reviewPolicy: "owner-final-v1", contentKey: "sky.aspect.chiron.sextile.nodes.taurus.aquarius" } }, sections: {}, facts: {}, updated_at: now };
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     await seedAdminApi(page, { generatedRows: [row], onGeneratedContentWrite: write => writes.push(write) });
     let outcome = "blocked";
@@ -5413,7 +5414,7 @@ test("reopening a saved aspect fetches the current copy and version before anoth
     }
     return route.fallback();
   });
-  await expectAdminRouteLoads(page, "/admin/content#review-queue");
+  await expectAdminRouteLoads(page, "/admin/content#review-queue?view=all");
   const open = page.locator(".admin-review-queue-row", { hasText: saved.content_key }).getByRole("button", { name: "Edit", exact: true });
   await open.click();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
@@ -5445,7 +5446,7 @@ for (const pair of ["sun-chiron", "moon-chiron"]) for (const width of [390, 1440
   // review-records still lists them. A fresh queue must load their saved rows.
   await page.route("**/api/admin/generated-content?**", route => new URL(route.request().url()).searchParams.get("visibility") === "editorial"
     ? route.fulfill({ json: { ok: true, rows: [] } }) : route.fallback());
-  await expectAdminRouteLoads(page, "/admin/content#review-queue");
+  await expectAdminRouteLoads(page, "/admin/content#review-queue?view=sources");
   await page.evaluate(value => document.documentElement.dataset.theme = value, theme);
   const queueRow = page.locator(".admin-review-queue-row", { hasText: row.content_key });
   await queueRow.getByRole("button", { name: "Edit", exact: true }).click();
@@ -5462,12 +5463,12 @@ for (const pair of ["sun-chiron", "moon-chiron"]) for (const width of [390, 1440
   await expect(queueRow).toHaveCount(1);
   await queueRow.getByRole("button", { name: "Edit", exact: true }).click();
   await expect(editor.getByRole("button", { name: "Publish to app", exact: true })).toHaveCount(0);
-  await expect(editor.getByLabel("Reader copy", { exact: true })).toHaveValue(row.body);
+  await expect(editor.getByLabel("Source text", { exact: true })).toHaveValue(row.body);
   await expect(editor.getByRole("button", { name: "Reviewed", exact: true })).toBeDisabled();
   await page.reload();
   await queueRow.getByRole("button", { name: "Edit", exact: true }).click();
   await expect(editor.getByRole("button", { name: "Reviewed", exact: true })).toBeDisabled();
-  await expect(editor.getByLabel("Reader copy", { exact: true })).toHaveValue(row.body);
+  await expect(editor.getByLabel("Source text", { exact: true })).toHaveValue(row.body);
   await expectNoHorizontalOverflow(page, "Source review editor");
   await page.screenshot({ path: `test-results/review-queue-${pair}-${theme}-${width}.png` });
   assertNoBrowserErrors();
@@ -5525,18 +5526,18 @@ test("review queue retains exact edits after a conflict or unconfirmed review an
     if (outcome === "conflict") return route.fulfill({ status: 409, json: { error: "This content changed after the editor was opened." } });
     return route.fulfill({ json: { ok: true, rows: [{ ...row, status: "REVIEWED" }] } });
   });
-  await expectAdminRouteLoads(page, "/admin/content#review-queue");
+  await expectAdminRouteLoads(page, "/admin/content#review-queue?view=sources");
   await page.locator(".admin-review-queue-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   const exactEdit = "The complete replacement source passage, with its final sentence preserved.";
-  await editor.getByLabel("Reader copy", { exact: true }).fill(exactEdit);
+  await editor.getByLabel("Source text", { exact: true }).fill(exactEdit);
   await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
   await expect(editor.getByRole("alert")).toContainText("changed after the editor was opened");
-  await expect(editor.getByLabel("Reader copy", { exact: true })).toHaveValue(exactEdit);
+  await expect(editor.getByLabel("Source text", { exact: true })).toHaveValue(exactEdit);
   outcome = "unconfirmed";
   await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
   await expect(editor.getByRole("alert")).toContainText("did not return the saved row");
-  await expect(editor.getByLabel("Reader copy", { exact: true })).toHaveValue(exactEdit);
+  await expect(editor.getByLabel("Source text", { exact: true })).toHaveValue(exactEdit);
   outcome = "saved";
   await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
   await expect.poll(() => writes.length).toBe(1);
@@ -5561,7 +5562,7 @@ test("reopening a completed revision follows its published target", async ({ pag
       id, status: "LIVE", lane: "serving", review_state: null, body: "Current published passage." }] } });
     return route.fallback();
   });
-  await expectAdminRouteLoads(page, "/admin/content#review-queue");
+  await expectAdminRouteLoads(page, "/admin/content#review-queue?view=all");
   await page.locator(".admin-review-queue-row", { hasText: revision.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue("Current published passage.");

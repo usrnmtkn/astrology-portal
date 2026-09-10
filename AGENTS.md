@@ -284,6 +284,8 @@ overwrite newer content, and a successful publication must be reader-eligible.
 
 Follow [the API verification runbook](docs/qa/content-studio-api-verification.md)
 for test commands, coverage, response contracts, and deployment verification.
+For Review Queue changes, also follow [the owner workflow verification](docs/qa/review-queue-workflow.md), including generated and manual drafts, deterministic rechecks, source revisions, and exact reader selection. A model verdict never substitutes for the owner prose decision.
+
 Record the tested commit and results in the PR. Report a failing gate accurately;
 do not label the API verified based on another branch or an earlier run.
 

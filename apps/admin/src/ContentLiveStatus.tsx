@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState } from 
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { publicationTimestamp } from "../../web/src/content/contentPublicationState";
 export type LiveStatus = { id: string; live: boolean; label: "Live" | "Not live"; detail: string; source: string | null; updatedAt: string | null };
-type StatusRow = { id?: string | null; updated_at?: string | null };
+type StatusRow = { id?: string | null; updated_at?: string | null; requestRevision?: number };
 type Load = (row: StatusRow) => Promise<LiveStatus>;
 const Context = createContext<Load | null>(null);
 function validLiveStatus(value: unknown): value is LiveStatus {
@@ -25,7 +25,7 @@ export function useContentLiveStatusLoader(request: (ids: string[]) => Promise<L
     let pending: Array<{ id: string; resolve: (status: LiveStatus) => void; reject: (error: unknown) => void }> = [];
     let scheduled = false;
     return (row) => {
-      const key = `${row.id}/${row.updated_at ?? ""}`;
+      const key = `${row.id}/${row.updated_at ?? ""}/${row.requestRevision ?? 0}`;
       if (!cache.has(key)) cache.set(key, new Promise((resolve, reject) => {
         pending.push({ id: row.id!, resolve, reject });
         if (scheduled) return;
@@ -87,7 +87,7 @@ export default function ContentLiveStatusBadge({ row, unsaved = false, label }: 
     void load(row).then((value) => { if (!cancelled) setStatus(value); })
       .catch(() => { if (!cancelled) setStatus("unavailable"); });
     return () => { cancelled = true; };
-  }, [load, row.id, row.updated_at, unsaved]);
+  }, [load, row.id, row.updated_at, row.requestRevision, unsaved]);
   if (unsaved || !row.id) return <span aria-label={label} className="ui-pill admin-status status-draft" title="These edits have not been saved and published.">Not live</span>;
   if (!status || status === "unavailable") return <span aria-label={label} className="admin-field-hint" title={status === "unavailable" ? "Status unavailable. Refresh rows to retry." : undefined}>{status === "unavailable" ? "Status unavailable" : "Checking status…"}</span>;
   return <span aria-label={label} className={`ui-pill admin-status admin-table-tag ${status.live ? "status-live" : "status-draft"}`} title={status.detail}>{status.label}</span>;

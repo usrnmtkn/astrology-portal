@@ -1,3 +1,4 @@
+import { approvedStudioPairSources } from "../_lib/sky-studio-sources.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import skyAspectGenerator from "../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js";
 import editorialJudgeRuntime from "../../packages/astro-knowledge/scripts/editorial-judge-runtime.js";
@@ -13,7 +14,7 @@ import {
 
 loadLocalWebEnv();
 
-const { generate, generateCard, generationConfig, normalizeCardArgs, reviewPairSources } = skyAspectGenerator;
+const { generate, generateCard, generationConfig, normalizeCardArgs } = skyAspectGenerator;
 const { assertLiveJudgeAuthorized } = editorialJudgeRuntime as unknown as {
   assertLiveJudgeAuthorized: () => void;
 };
@@ -128,13 +129,8 @@ async function existingCard(contentKey: string) {
   }>;
   const row = rows[0];
 
-  if (!row || row.status === "ERROR") return null;
-
-  if (row.judge_gate === "human-review") {
-    return row;
-  }
-
-  return null;
+  // Any saved identity belongs to the editor. Do not spend a writer call replacing it.
+  return row ?? null;
 }
 
 async function hasPendingOwnerAuthoredCard(contentKey: string) {
@@ -159,33 +155,6 @@ async function hasPendingOwnerAuthoredCard(contentKey: string) {
   return rows.some((row) => row.source_snapshot?.contentType === "owner-authored-sky-aspect");
 }
 
-async function approvedReviewPairKeys() {
-  const stagedPairKeys = [...reviewPairSources().keys()] as string[];
-
-  if (stagedPairKeys.length === 0) return new Set<string>();
-
-  const params = new URLSearchParams({
-    event_type: "eq.sky-aspect-pair-source",
-    status: "in.(LIVE,REVIEWED)",
-    lane: "eq.reference",
-    review_state: "is.null",
-    select: "source_snapshot",
-    limit: "100"
-  });
-  const key = serviceRoleKey();
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
-    headers: { apikey: key, authorization: `Bearer ${key}` }
-  });
-
-  if (!response.ok) {
-    throw new Error(`Approved sky-aspect pair-source lookup failed with ${response.status}.`);
-  }
-
-  const rows = await response.json() as Array<{ source_snapshot?: Record<string, unknown> }>;
-  return new Set(rows
-    .map((row) => row.source_snapshot?.pairKey)
-    .filter((pairKey): pairKey is string => typeof pairKey === "string" && stagedPairKeys.includes(pairKey)));
-}
 
 async function persistedCardId(contentKey: string) {
   const params = new URLSearchParams({
@@ -215,7 +184,7 @@ function firstParagraph(text: string) {
   return text.split(/\n{2,}/).map((paragraph) => paragraph.trim()).find(Boolean) ?? "";
 }
 
-function skyAspectKernel(args: {
+export function skyAspectKernel(args: {
   a: string;
   b: string;
   aspect: string;
@@ -274,7 +243,7 @@ async function generateWithJudgeRouting(args: {
   aspect: string;
   signA: string;
   signB: string;
-}, options: { allowReviewSources?: boolean } = {}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; repair: RepairStats; lintRetryAvoidTerms: string[][] }> {
+}, options: { allowReviewSources?: boolean; pairSourceOverride?: unknown } = {}): Promise<RoutedGeneration | { result: GeneratedCardResult; gate: null; judgePasses: number; totalAttempts: number; cappedRegeneration: false; repair: RepairStats; lintRetryAvoidTerms: string[][] }> {
   const kernel = skyAspectKernel(args);
   let result: GeneratedCardResult | null = null;
   let feedback = "";
@@ -294,6 +263,7 @@ async function generateWithJudgeRouting(args: {
     result = await generateCard(args, {
       withJudge: true,
       allowReviewSources: options.allowReviewSources === true,
+      pairSourceOverride: options.pairSourceOverride,
       generateFn: kernel.generateFn,
       generationMetadata: kernel.generationMetadata,
       judgeBeforeProviderCall: kernel.judgeBeforeProviderCall,
@@ -421,17 +391,16 @@ async function saveRoutedCard({
     series: aspect.series ?? null
   };
   const persistedId = await persistedCardId(contentKey);
+  if (persistedId) throw new Error("A saved draft already exists. Scheduled generation cannot overwrite editorial work.");
   const response = await fetch(
-    persistedId
-      ? `${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(persistedId)}`
-      : `${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`,
+    `${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`,
     {
-      method: persistedId ? "PATCH" : "POST",
+      method: "POST",
       headers: {
         apikey: key,
         authorization: `Bearer ${key}`,
         "content-type": "application/json",
-        prefer: persistedId ? "return=representation" : "resolution=merge-duplicates,return=representation"
+        prefer: "resolution=ignore-duplicates,return=representation"
       },
       body: JSON.stringify({
         content_key: contentKey,
@@ -449,6 +418,7 @@ async function saveRoutedCard({
           contentType: "sky-aspect-card",
           pairKey: result.facts.pairKey,
           pairSource,
+          studioPairSourceRevision: result.facts.pairSourceRevision ?? null,
           exactAspectSource: result.facts.exactAspectSource ?? null,
           cardFacts,
           skyAspectVoiceLint: result.lint,
@@ -492,12 +462,14 @@ async function saveRoutedCard({
     throw new Error(`Sky-aspect review save failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
 
+  if (!Array.isArray(payload) || payload.length === 0) throw new Error("Another writer created this draft. Existing writing was preserved.");
   return { clean, contentKey, gate, canAutoPublish: false, judgeEligibleForApproval, saved: payload };
 }
 
 async function generateCurrentMatrix() {
   const sky = await currentSkyFacts(new Date());
-  const approvedReviewPairs = await approvedReviewPairKeys();
+  const approvedPairSources = await approvedStudioPairSources();
+  const approvedReviewPairs = new Set(approvedPairSources.keys());
   const report = {
     generated: 0,
     cached: 0,
@@ -584,7 +556,7 @@ async function generateCurrentMatrix() {
       continue;
     }
 
-    const routed = await generateWithJudgeRouting(args, { allowReviewSources });
+    const routed = await generateWithJudgeRouting(args, { allowReviewSources, pairSourceOverride: approvedPairSources.get(normalized.pairKey) });
     const { result } = routed;
 
     if (result.status === "skipped") {

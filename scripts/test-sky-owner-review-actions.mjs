@@ -94,9 +94,9 @@ const blocked = await invoke(
   { id: "sky-row", ownerAction: "approve-and-schedule" },
   existingRow({ judge_score: 2 })
 );
-assert.equal(blocked.status, 500);
+assert.equal(blocked.status, 409);
 assert.equal(blocked.patches.length, 0);
-assert.match(blocked.payload.error, /Sky cards can be published only/u);
+assert.match(blocked.payload.error, /Run writing checks|editorial check/u);
 
 const voiceBlocked = await invoke(
   { id: "sky-row", ownerAction: "approve-and-schedule" },
@@ -110,14 +110,14 @@ const voiceBlocked = await invoke(
 assert.equal(voiceBlocked.patches.length, 0);
 assert.match(voiceBlocked.payload.error, /first-person plural/);
 assert.match(voiceBlocked.payload.error, /No second person/);
-assert.match(voiceBlocked.payload.error, /passing editorial judge review is still required/);
-assert.match(voiceBlocked.payload.error, /Mark reviewed saves your review status/);
+assert.match(voiceBlocked.payload.error, /Run writing checks/);
+assert.match(voiceBlocked.payload.error, /Run writing checks/);
 
 const mixed = await invoke(
   { id: "sky-row", ownerAction: "approve-and-schedule", body: "Changed at approval time" },
   existingRow()
 );
-assert.equal(mixed.status, 500);
+assert.equal(mixed.status, 409);
 assert.equal(mixed.patches.length, 0);
 assert.match(mixed.payload.error, /Save and revalidate copy edits/u);
 

@@ -113,3 +113,10 @@ regression against the unchanged handler from main `d45a0275` fails seven groups
 the ordinary lifecycle and authorization groups still pass. The complete
 `test:content-studio-api` suite and admin/web typechecks pass on the repair.
 CI and deployment results belong to the release PR and its exact commit.
+
+## Review Queue owner workflow
+
+See [the full workflow contract](review-queue-workflow.md). The required API gate
+also covers writing actions, source revisions, version history, owner-final
+checks and actual reader selection. Visual smoke includes the corresponding
+desktop/mobile and light/dark browser matrix.

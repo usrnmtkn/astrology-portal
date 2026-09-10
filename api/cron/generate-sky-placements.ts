@@ -292,7 +292,7 @@ function placementKnowledgeId({ planet, sign }: PlacementArgs) {
   return `sky-placement-${planet}-${sign}`;
 }
 
-function placementKernel(
+export function placementKernel(
   args: PlacementArgs,
   options: {
     eventType?: "collective-placement-card" | "collective-placement-topper";

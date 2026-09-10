@@ -142,7 +142,11 @@ function reviewStatusForHorizonRow(row) {
   if (!row) return "missing_draft";
   if (row.status === "ARCHIVED") return "rejected";
   if (row.status === "LIVE" && row.lane === "serving" && !row.review_state) return "approved_scheduled";
-  if (["DRAFT", "REVIEWED"].includes(row.status) && row.judge_score === 3 && row.judge_gate === "human-review") return "ready_for_owner";
+  const snapshot = row.source_snapshot ?? {};
+  const lint = row.block_type === "sky_placement" ? snapshot.skyPlacementVoiceLint : snapshot.skyAspectVoiceLint;
+  const ownerCheck = snapshot.studioWritingCheck?.reviewPolicy === "owner-final-v1"
+    && snapshot.studioWritingCheck.contentKey === row.content_key && lint?.score === 3 && lint?.fails === 0;
+  if (["DRAFT", "REVIEWED"].includes(row.status) && (ownerCheck || row.judge_score === 3) && row.judge_gate === "human-review") return "ready_for_owner";
   if (row.status === "ERROR") return "generation_error";
   return "draft_needs_work";
 }
