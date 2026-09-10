@@ -17,6 +17,10 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) test(`Su
   }).observe(document, { subtree:true, childList:true, characterData:true });
  });
  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+ await page.route('**/sky-v4-canonical-content-studio-stage-v1*.json', async route => {
+  await new Promise(resolve => setTimeout(resolve, 2500));
+  await route.continue();
+ });
  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok:true, calendar:{ days:[] } } }));
  await page.goto('/?date=2026-09-10#sky/placement/sun/virgo');
  await expect(page.locator('.article-body-inner').first()).toContainText('The Sun in Virgo makes the systems', { timeout:60_000 });
@@ -35,6 +39,27 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) test(`Su
  await page.reload();
  await expect(page.locator('.article-body-inner').first()).toContainText('Today’s New Moon', { timeout:60_000 });
  await expect(page.locator('.sky-detail-id .article-duration').first()).toHaveText('August 22 to September 22, 2026');
+ const reloadStates = await page.evaluate(() => (window as any).__placementStates);
+ expect(reloadStates.length).toBeGreaterThan(0);
+ expect([...new Set(reloadStates.map((state: any) => state.title))]).toEqual(['Sun in Virgo']);
+ expect([...new Set(reloadStates.map((state: any) => state.dates))]).toEqual(['August 22 to September 22, 2026']);
+ expect([...new Set(reloadStates.map((state: any) => state.lunar))]).toEqual([true]);
+ expect([...new Set(reloadStates.map((state: any) => state.body))]).toHaveLength(1);
  expect(await page.locator('#sky-detail-title').evaluate(el => { const s=getComputedStyle(el); return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform]; })).toEqual(typography);
  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
+test('Placement reader offers retry when its canonical package fails', async ({ page }) => {
+ await page.clock.setFixedTime(new Date('2026-09-10T04:20:00Z'));
+ await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+ await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok:true, calendar:{ days:[] } } }));
+ let failPackage = true;
+ await page.route('**/sky-v4-canonical-content-studio-stage-v1*.json', route => failPackage
+  ? route.fulfill({ status:503, body:'Unavailable' }) : route.continue());
+ await page.goto('/?date=2026-09-10#sky/placement/sun/virgo');
+ await expect(page.getByText('The placement reading could not load. Please try again.')).toBeVisible({ timeout:60_000 });
+ await expect(page.locator('#sky-detail-title')).toHaveCount(0);
+ failPackage = false;
+ await page.getByRole('button', { name:/retry|try again/i }).click();
+ await expect(page.locator('.article-body-inner').first()).toContainText('The Sun in Virgo makes the systems', { timeout:60_000 });
 });
