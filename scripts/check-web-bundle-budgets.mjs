@@ -111,7 +111,11 @@ const deferredFriendsWorkspaceItem = javaScriptFiles.find((item) => item.file.in
 const deferredSkyDetailItem = javaScriptFiles.find((item) => item.file.includes("SkyDetailArticle-"));
 const deferredReportRouteItem = javaScriptFiles.find((item) => item.file.includes("ReportRoute-"));
 const largestJavaScript = [...javaScriptFiles].sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
+const memoryGraphItems = javaScriptFiles.filter(item => /\/(?:MemoryGraphDashboard|memory-graph-renderer)-/u.test(item.file));
+const memoryGraphCssItems = cssFiles.filter(item => /\/MemoryGraphDashboard-/u.test(item.file));
 const measurements = {
+  memoryGraphJavaScriptGzipBytes: sum(memoryGraphItems, "gzipBytes"),
+  memoryGraphCssGzipBytes: sum(memoryGraphCssItems, "gzipBytes"),
   appBootGzipBytes: sum(bootItems.filter((item) => item.file.endsWith(".js")), "gzipBytes"),
   appChunkGzipBytes: appItem?.gzipBytes ?? 0,
   readerBootGzipBytes: sum(readerBootItems, "gzipBytes"),
@@ -135,6 +139,12 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
     ? [`${metric}: ${actual.toLocaleString("en-US")} bytes exceeds ${limit.toLocaleString("en-US")} bytes by ${(actual - limit).toLocaleString("en-US")} bytes`]
     : [];
 });
+
+if (memoryGraphItems.length !== 2 || memoryGraphCssItems.length !== 1) {
+  failures.push("The deferred memory graph route, renderer or stylesheet is missing.");
+} else if ([...memoryGraphItems, ...memoryGraphCssItems].some(item => bootFiles.has(item.file) || readerStyleFiles.has(item.file))) {
+  failures.push("The private memory graph re-entered reader startup.");
+}
 
 if (!deferredTransitFallbackItem) {
   failures.push("The on-demand transit fallback chunk is missing.");
@@ -181,6 +191,7 @@ if (!deferredReportRouteItem) {
 }
 
 console.log("# Web bundle budget");
+console.log(`Deferred memory graph: ${formatBytes(measurements.memoryGraphJavaScriptGzipBytes)} JS + ${formatBytes(measurements.memoryGraphCssGzipBytes)} CSS gzip`);
 console.log(`App JavaScript boot graph: ${formatBytes(measurements.appBootGzipBytes)} gzip across ${bootItems.length} files`);
 console.log(`Reader boot including awaited CSS: ${formatBytes(measurements.readerBootGzipBytes)} gzip across ${readerBootItems.length} files`);
 console.log(`Reader startup CSS: ${formatBytes(measurements.readerInitialCssGzipBytes)} gzip across ${readerStyleItems.length} files`);

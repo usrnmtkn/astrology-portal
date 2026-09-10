@@ -188,6 +188,10 @@ export default function MemoryTerminal() {
     try { renderer = new Renderer({ dpr: Math.min(devicePixelRatio, 2), alpha: true }); }
     catch { return; } // The decorative effect is optional on devices without WebGL.
     const gl = renderer.gl;
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    const softwareRenderer = debugInfo && /swiftshader|llvmpipe|softpipe|software/i.test(String(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)));
+    // A decorative fullscreen shader must not monopolize software-rendered devices.
+    const staticEffect = () => motion.matches || softwareRenderer;
     gl.clearColor(0, 0, 0, 0);
     const canvas = gl.canvas as HTMLCanvasElement;
     container.current.appendChild(canvas);
@@ -210,11 +214,11 @@ export default function MemoryTerminal() {
     let frame = 0;
     const start = performance.now(), offset = Math.random() * 100;
     const render = () => {
-      uniforms.iTime.value = motion.matches ? 0 : ((performance.now() - start) * .001 + offset) * .3;
+      uniforms.iTime.value = staticEffect() ? 0 : ((performance.now() - start) * .001 + offset) * .3;
       uniforms.uMouse.value[0] += (target.x - uniforms.uMouse.value[0]) * .08;
       uniforms.uMouse.value[1] += (target.y - uniforms.uMouse.value[1]) * .08;
       renderer.render({ scene: mesh });
-      if (!motion.matches) frame = requestAnimationFrame(render);
+      if (!staticEffect()) frame = requestAnimationFrame(render);
     };
     const restart = () => { cancelAnimationFrame(frame); render(); };
     resize(); render();

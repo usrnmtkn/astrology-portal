@@ -596,6 +596,7 @@
   --graph-pulse-low: 0 0 20px rgba(255,255,255,.08), 0 0 40px rgba(255,255,255,.04);
   --graph-pulse-high: 0 0 30px rgba(255,255,255,.15), 0 0 60px rgba(255,255,255,.08);
   --graph-control-height: 38px;
+  --graph-back-width: 85.6px;
   --graph-legend-max-height: calc(100dvh - 40px);
   --graph-legend-header-height: 49px;
   --graph-icon-gap: 2px;
