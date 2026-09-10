@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { mock } from 'node:test';
+import { callReportCalibrationModel } from '../api/_lib/report-model-client.js';
 import {
   checkpointTransitReadingModel as step,
   withTransitReadingCheckpoints as resume,
@@ -126,3 +127,35 @@ for (const family of ['you', 'friend'] as const) {
   await assert.rejects(resume({ admin, family: 'you', jobId: 'job', attempt: 1 }, () => step(request('writer'), async () => result('writer'))), TransitReadingCheckpointStopped);
 }
 console.log('Report checkpoints: bounded calls, exact replay, validation, drift, crash, concurrency, deadline, and storage failure passed.');
+
+// Verify the actual shared transport forwards cancellation to both provider
+// fetches and does not start a fallback after a checkpointed call fails.
+{
+  const originalFetch = globalThis.fetch;
+  const keys = ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'REPORT_FALLBACK_PROVIDER', 'REPORT_FALLBACK_MODEL'];
+  const prior = keys.map(key => process.env[key]);
+  process.env.OPENAI_API_KEY = 'offline-fixture';
+  process.env.ANTHROPIC_API_KEY = 'offline-fixture';
+  process.env.REPORT_FALLBACK_PROVIDER = 'openai';
+  process.env.REPORT_FALLBACK_MODEL = 'fallback-fixture';
+  try {
+    for (const provider of ['openai', 'claude']) {
+      const controller = new AbortController();
+      let sent = 0;
+      globalThis.fetch = async (_url, init) => {
+        sent++;
+        assert.equal(init!.signal, controller.signal);
+        throw new Error('offline provider failure');
+      };
+      await assert.rejects(callReportCalibrationModel({
+        ...request('writer'), provider, signal: controller.signal, disableFallback: true,
+        schema: { type: 'object', properties: {}, required: [], additionalProperties: false }
+      }), /offline provider failure/);
+      assert.equal(sent, 1);
+    }
+  } finally {
+    globalThis.fetch = originalFetch;
+    keys.forEach((key, index) => { if (prior[index] === undefined) delete process.env[key]; else process.env[key] = prior[index]; });
+  }
+}
+console.log('Checkpoint transport: both providers receive cancellation; fallback is suppressed.');
