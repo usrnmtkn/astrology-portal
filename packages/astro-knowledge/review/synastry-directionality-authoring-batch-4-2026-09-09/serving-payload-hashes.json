@@ -1,0 +1,31 @@
+{
+  "schema": "synastry-directionality-serving-hashes/v1",
+  "hashAlgorithm": "sha256(body_you_runtime + \\"\\n---\\n\\" + body_they_runtime)",
+  "runtimeNameCompilation": "{{Name}} -> {{holder2}} in body_you",
+  "rows": {
+    "fallback-hook/synastry-pair/sun/ascendant/conjunction": "201bc5dbea2b678566c08bf8f027d9c77d79bbc97d0d51240c9ae47cbc7348ce",
+    "fallback-hook/synastry-pair/sun/ascendant/hard": "44e65f10c04af94c4e903789935928fba46293f8a2cf1277df4d967f44742cf0",
+    "fallback-hook/synastry-pair/sun/ascendant/soft": "1c99701263e5d90caa42e8d4adf56f47011895d74339f67c54b74eb81d599eb3",
+    "fallback-hook/synastry-pair/sun/chiron/conjunction": "36f0abdc5b0d2d34eab56fb88e1f800984bcc554d2519d93eaef6e1e4e3f4e86",
+    "fallback-hook/synastry-pair/sun/chiron/hard": "bbd4c85cef4c18e79cf96b73be0d75081af946e4259972a23dbc9a231f36150d",
+    "fallback-hook/synastry-pair/sun/chiron/soft": "de5771d26bc2938d50725d929f033338b7903cc189532adb3adc7589e5d01edc",
+    "fallback-hook/synastry-pair/sun/descendant/conjunction": "713122ae95956c2a50296efeab20a584eff9f7fdba7df60a6da29d1cce0340eb",
+    "fallback-hook/synastry-pair/sun/descendant/hard": "81224fff18a04a12705c5ebd604a8ab5fe6064a5ec8819b6d7f3e5c4046b7e8c",
+    "fallback-hook/synastry-pair/sun/descendant/soft": "31419ed42353edd7f4b1a401d4d6c4e9893774b59659aa4571bbb2f1db083404",
+    "fallback-hook/synastry-pair/sun/imum-coeli/conjunction": "6a11056aa7e0b1ec7ff31df6780e3779699ce457e74e784f5fe80879ab476f58",
+    "fallback-hook/synastry-pair/sun/imum-coeli/hard": "fc9eef7fe73acf19442e16a2536e2b92ece153f2b0bd5550b406f737f09a5ae3",
+    "fallback-hook/synastry-pair/sun/imum-coeli/soft": "5f29ee09b2c101b6b25a90026f83ec7a99d208c651c71390a0f2f7be256f37f6",
+    "fallback-hook/synastry-pair/sun/lilith/conjunction": "ddc7653ed2989d105ba06639aa6ba82dfd553bd23e18c194c8f3ecd4bbe49684",
+    "fallback-hook/synastry-pair/sun/lilith/hard": "384adf92eea8027250fd42986fa0ea49886a84b902dea96fd031e068eed35b29",
+    "fallback-hook/synastry-pair/sun/lilith/soft": "8a04544b59d136501ef3ba1674067167edbb805c42946ae865cf064aad36ba29",
+    "fallback-hook/synastry-pair/sun/midheaven/conjunction": "1c6147c26d76ad056e70d011ce80c0d28b04f684aac7249c3e02e3c02b797e47",
+    "fallback-hook/synastry-pair/sun/midheaven/hard": "fc559f25ce4dc683a20e5353cfc444d9ed757ce8b3db34ae238a81cb94aa5ae0",
+    "fallback-hook/synastry-pair/sun/midheaven/soft": "12d7ba944b7ccf6b74092bbeb76a2f59ec8dd9e66f4f9a2dc8f0687bda6952b1",
+    "fallback-hook/synastry-pair/sun/north-node/conjunction": "5154c9640e2389e589e8d3d1541dfde11f2705aaac2a5beab299e9290289a69a",
+    "fallback-hook/synastry-pair/sun/north-node/hard": "d6d29646509e175c1006f2fba67fb4e25b395174f4ef35e60f9c3c8dd6f5aa35",
+    "fallback-hook/synastry-pair/sun/north-node/soft": "6d2ffce3592c6a108bc1d4b108c439b1b2f682932f71f0fa46590f22e18f9ad2",
+    "fallback-hook/synastry-pair/sun/south-node/conjunction": "10041ad975ea0b34dcb0d89db5620861afdab8223a64ea9e66e5c4b4758bbeb7",
+    "fallback-hook/synastry-pair/sun/south-node/hard": "a4ec97537a114eb9d8f8bd24e529bfc86caafc2c27c5e8318870c18c537551dd",
+    "fallback-hook/synastry-pair/sun/south-node/soft": "7b7c8fc5500381f4bff5b60d00f5dc2ebcafaac137373309256a0a499f8f642a"
+  }
+}
