@@ -1412,10 +1412,14 @@ test.describe("client-facing user flow case studies", () => {
     await expect(natalTab).toHaveAttribute("aria-selected", "true");
     await expect(page).toHaveURL(/#you\?tab=chart$/u);
 
+    // Wait for the chart download before exercising navigation; reloading during
+    // WebAssembly compilation aborts the request and emits unrelated errors.
+    await expect(page.locator(".chart-layout__visual")).toHaveAttribute("data-chart-calculation-status", "ready", { timeout: 15_000 });
     await page.reload();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await expect(natalTab).toHaveAttribute("aria-selected", "true");
 
+    await expect(page.locator(".chart-layout__visual")).toHaveAttribute("data-chart-calculation-status", "ready", { timeout: 15_000 });
     await transitsTab.click();
     await expect(transitsTab).toHaveAttribute("aria-selected", "true");
     await expect(page).toHaveURL(/#you$/u);
@@ -2704,7 +2708,12 @@ test.describe("client-facing user flow case studies", () => {
         await expect(logo).toBeVisible();
         const atTop = await surface();
         expect(atTop.background).not.toBe("rgba(0, 0, 0, 0)");
-        await page.evaluate(() => window.scrollTo(0, 600));
+        // The desktop loading shell can fit in the viewport. Exercise real
+        // scrolling once reader content has given the document room to scroll.
+        await expect.poll(() => page.evaluate(() => {
+          window.scrollTo(0, 600);
+          return window.scrollY;
+        }), { timeout: 15_000 }).toBeGreaterThan(8);
         await expect(page.locator("html")).toHaveAttribute("data-scrolled", "");
         await expect.poll(surface).toEqual(atTop);
         await expect(logo.getByRole("button", { name: "TLDR Astro home" })).toBeVisible();
