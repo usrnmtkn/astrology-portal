@@ -1,5 +1,4 @@
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
-import { SkyDailySummaryStudio } from "./SkyDailySummaryStudio";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
@@ -176,6 +175,7 @@ import "./admin-form-density.css";
 import "./admin-content-studio-ux-compat.css";
 import "./admin-content-studio-layout.css";
 
+const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const SkyPlacementComposition = lazy(() => import("./SkyPlacementComposition"));
@@ -5249,7 +5249,7 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function openSkySummaryField(field: SkySummaryField) {
+  async function openSkySummaryField(field: SkySummaryField, initialBody?: string) {
     if (draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
       && !window.confirm("Discard the unsaved changes in this editor?")) return;
     setIsLoading(true);
@@ -5272,11 +5272,12 @@ export function GeneratedContentAdminDashboard() {
       if (existing) {
         const current = { ...existing, body: currentSkySummaryWording(existing.content_key, existing.body ?? "") };
         setRows(rows => [current, ...rows.filter(row => row.id !== current.id)]);
-        openRow(current);
+        const opened = await openRow(current);
+        if (opened && initialBody !== undefined) setDraft(previous => previous ? { ...previous, body: initialBody } : previous);
       } else {
         const nextDraft: AdminDraft = {
           id: null, contentKey: field.key, surface: "sky", mode: "card", status: "DRAFT",
-          headline: field.label, summary: "", body: field.body || importedSkySummary(field.key) || "", lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED",
+          headline: field.label, summary: "", body: initialBody ?? (field.body || importedSkySummary(field.key) || ""), lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED",
           blockType: "essay", promptVersion: "cms-surface-template-v1", sections: null, facts: null, reviewerNotes: "",
           sourceSnapshot: {
             contentType: "mustache-template", contentSystem: "cms-surface-override", contentLevel: "owner-authored",
@@ -6150,7 +6151,9 @@ export function GeneratedContentAdminDashboard() {
             </section>
             {skyWriteupWorkspaceView === "daily-summary" ? (
               <>
-                <SkyDailySummaryStudio rows={rows} onEdit={field => void openSkySummaryField(field)} busy={isLoading} />
+                <Suspense fallback={<p>Loading Daily Sky Summary editor…</p>}>
+                  <SkyDailySummaryStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} />
+                </Suspense>
                 {renderEditor()}
               </>
             ) : skyWriteupWorkspaceView === "transits-to-natal" ? (

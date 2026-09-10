@@ -57,6 +57,10 @@ for (const width of [390, 1440]) {
       const preview = map.getByLabel("Combined Sun and Moon preview");
       await expect(map.getByRole("heading", { name: "Sun and Moon together", level: 4 })).toBeVisible();
       expect(await map.getByRole("heading", { name: "Sun and Moon together" }).evaluate(typeStyle)).toEqual(summaryHeadingStyle);
+      const assemblyHeading = studio.getByRole("heading", { name: "Full summary template", level: 4 });
+      expect(await assemblyHeading.evaluate(typeStyle)).toEqual(summaryHeadingStyle);
+      await expect(studio.locator("h4")).toHaveText(["Full summary template", "Sun and Moon together"]);
+      await studio.getByRole("region", { name: "Full summary assembly", exact: true }).screenshot({ path: `test-results/assembly-${width}-${theme}.png` });
       const sourceLink = map.getByRole("link", { name: "Edit Sun in Virgo summary", exact: true });
       expect(await sourceLink.evaluate(el => getComputedStyle(el).display)).toBe("inline");
       await page.evaluate(() => document.fonts.ready);
@@ -281,10 +285,60 @@ test("reader composes selected-day events with a dedicated ingress TLDR", async 
   await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: 1, rows: [row] } }));
   await reader.goto("http://127.0.0.1:4294/#sky");
   const summary = reader.getByLabel("Daily sky summary");
-  await expect(summary).toContainText("Today’s exact aspects are Saturn squares Lilith and Mercury opposes Neptune.");
-  await expect(summary).toContainText("Mercury enters Libra today. Complete supplied short wording for this fixture.");
+  await expect(summary).toContainText("Today brings two exact aspects: Saturn squares Lilith and Mercury opposes Neptune.");
+  await expect(summary).toContainText("There is also one ingress: Mercury enters Libra. Complete supplied short wording for this fixture.");
   await expect(summary).not.toContainText("Venus enters");
   await expect(summary.getByRole("link", { name: "Saturn squares Lilith", exact: true })).toHaveAttribute("href", `#sky/aspect/saturn/square/lilith/at/${encodeURIComponent(event.startsAt)}`);
   await summary.getByRole("link", { name: "Mercury enters Libra", exact: true }).click();
   await expect(reader).toHaveURL(/#sky\/placement\/mercury\/libra/);
+});
+
+
+test("full template controls preview order, publish, and reload", async ({ page, context }) => {
+  const stored: any[] = [];
+  await mockStudio(page, stored);
+  await page.goto("/#sky-writeups?view=daily-summary");
+  const assembly = page.getByRole("region", { name: "Full summary assembly", exact: true });
+  await assembly.getByText("Preview event examples", { exact: true }).click();
+  await assembly.getByLabel("Exact aspect examples").fill("Saturn squares Lilith");
+  await assembly.getByLabel("Station examples", { exact: true }).fill("Mercury stations retrograde in Scorpio");
+  await assembly.getByLabel("Ingress examples", { exact: true }).fill("Venus enters Scorpio");
+  await assembly.getByLabel("Lunation example", { exact: true }).selectOption("today");
+  const preview = assembly.getByLabel("Full summary preview", { exact: true });
+  await expect(preview.locator("p")).toHaveCount(3);
+  await expect(preview).toContainText("Today brings one exact aspect: Saturn squares Lilith. Also today, Mercury stations retrograde in Scorpio.");
+  await expect(preview).toContainText("The New Moon in Virgo is also exact today.");
+  await assembly.getByRole("button", { name: "Move Stations earlier", exact: true }).click();
+  await expect(preview).toContainText("Mercury stations retrograde in Scorpio today. One aspect is also exact today: Saturn squares Lilith.");
+  const layout = "{openingSentence}\n\n{stationsSentence}\n\n{lunationSentence}";
+  await assembly.getByLabel("Assembly layout", { exact: true }).fill(layout);
+  await expect(preview).not.toContainText("Saturn squares");
+  await assembly.getByRole("button", { name: "Edit and publish full template", exact: true }).click();
+  const body = page.getByRole("textbox", { name: "Summary wording", exact: true });
+  await expect(body).toHaveValue(layout);
+  await page.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await expect.poll(() => stored[0]?.status).toBe("LIVE");
+  expect(stored[0].body).toBe(layout);
+  await page.reload();
+  await expect(assembly.getByLabel("Assembly layout", { exact: true })).toHaveValue(layout);
+  // Reopening an existing row with a local edit must not replace it with the saved body.
+  const revised = "{openingSentence}\n\n{lunationSentence}";
+  await assembly.getByLabel("Assembly layout", { exact: true }).fill(revised);
+  await assembly.getByRole("button", { name: "Edit and publish full template", exact: true }).click();
+  await expect(body).toHaveValue(revised);
+  const reader = await context.newPage();
+  await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
+  await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: stored.length, rows: stored } }));
+  await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [
+    { id: "station", type: "station", phase: "station-retrograde", direction: "retrograde", planet: "Mercury", sign: "Scorpio", startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" },
+    { id: "ongoing", type: "station", phase: "retrograde-passage", direction: "retrograde", planet: "Saturn", sign: "Aries", startsAt: "2026-09-07T04:00:00Z", dateKey: "2026-09-07" },
+    { id: "moon", type: "lunation", title: "New Moon", sign: "Virgo", startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" }
+  ] }] } } }));
+  await reader.goto("http://127.0.0.1:4294/#sky");
+  const summary = reader.getByLabel("Daily sky summary", { exact: true });
+  await expect(summary).toContainText("Mercury stations retrograde in Scorpio today.");
+  await expect(summary).not.toContainText("Saturn stations");
+  await expect(summary).toContainText("The New Moon in Virgo is also exact today.");
+  await expect(summary).not.toContainText("The next New Moon");
+  await expect(summary.getByRole("link", { name: "Mercury stations retrograde in Scorpio" })).toHaveAttribute("href", "#sky/placement/mercury/scorpio");
 });

@@ -12,8 +12,18 @@ export type SummaryCompositionRow = {
 };
 export type SummaryCompositionDraft = { contentKey: string; body: string };
 
+export function publishedSkySummaryContent(rows: SummaryCompositionRow[]) {
+  return new Map<string, LiveGeneratedContent>(rows.filter(row => !row.inventory_only && row.status === "LIVE" && row.lane === "serving" && !row.review_state
+    && isGeneratedContentReaderBoundaryAllowed(row) && isReaderServableGeneratedContentRow(row)
+    && !skySummaryTemplateErrors(row.content_key, row.body ?? "").length).map(row => [row.content_key, {
+      id: row.id ?? row.content_key, contentKey: row.content_key, surface: "sky", mode: "feed", eventType: null,
+      targetDate: null, headline: null, summary: row.summary ?? null, body: row.body ?? "", sections: null, model: null,
+      updatedAt: row.updated_at ?? "", status: "LIVE"
+    }]));
+}
+
 export function buildSkySummaryComposition(sun: string, moon: string, rows: SummaryCompositionRow[], working: boolean, draft?: SummaryCompositionDraft | null) {
-  const content = new Map<string, LiveGeneratedContent>();
+  const content = publishedSkySummaryContent(rows);
   const errors: string[] = [];
   const sources = (["sun", "moon"] as const).map((body, index) => {
     const sign = index === 0 ? sun : moon;

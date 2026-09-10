@@ -41,7 +41,7 @@ assert.equal(supplied.provenance.promotionAuthorized, false);
 
 const revised = importedSkySummary("cms/sky-daily-summary/sun/virgo")!;
 const revisedPreview = buildSkySummaryComposition("Virgo", "Cancer", [], true);
-assert.ok(revisedPreview.parts.some(part => part.text === ` ${revised},`));
+assert.ok(revisedPreview.parts.some(part => part.text === revised));
 assert.ok(revisedPreview.parts.map(part => part.text).join("").startsWith(`The Sun in Virgo ${revised}, while the Moon in Cancer`));
 
 assert.equal(skyIngressSummaryFields.length, skyIngressBodies.length * 12);

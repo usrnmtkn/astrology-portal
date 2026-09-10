@@ -10118,3 +10118,9 @@ body,
   justify-content: flex-start;
   gap: var(--admin-space-sm);
 }
+
+/* Match reader paragraph separation using the shared Studio spacing scale. */
+.admin-summary-assembly-preview {
+  display: grid;
+  gap: var(--admin-space-xl);
+}

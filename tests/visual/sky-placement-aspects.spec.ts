@@ -42,6 +42,6 @@ test('main summary still includes exact aspects', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-09-08T04:06:00Z'));
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: '2026-09-08', events: [{ id: 'test-exact', type: 'aspect', planets: ['Moon', 'Mercury'], aspect: 'sextile', startsAt: '2026-09-08T10:00:00Z', dateKey: '2026-09-08' }] }] } } }));
   await page.goto('/#sky');
-  await expect(page.getByLabel('Daily sky summary')).toContainText('Today’s exact aspect is Moon sextiles Mercury.', {timeout:60000});
+  await expect(page.getByLabel('Daily sky summary')).toContainText('Today brings one exact aspect: Moon sextiles Mercury.', {timeout:60000});
   await expect(page.locator('.aspect-section')).toHaveCount(0);
 });
