@@ -46,3 +46,6 @@ tldr-astro-phrasebank/_raw-lofthus-delineations.txt
 tldrastro-fallback-*.zip
 tldrastro-fallback-source-package-*.zip
 tldrastro-fallback-architecture-v3-*.zip
+
+# Isolated memory browser-test build
+apps/web/.memory-test-dist/

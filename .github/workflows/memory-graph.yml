@@ -1,0 +1,43 @@
+name: Memory graph browser contract
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/memory-graph.yml'
+      - 'api/**'
+      - 'apps/admin/**'
+      - 'apps/web/**'
+      - 'config/agent-memory-sources-v1.json'
+      - 'data/agent-memory/**'
+      - 'scripts/*memory*'
+      - 'tests/memory/**'
+      - 'playwright.memory.config.ts'
+      - 'package*.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: memory-graph-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  memory-graph:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build:knowledge
+      - run: npm run test:agent-memory-browser
+      - uses: actions/upload-artifact@v6
+        if: failure()
+        with:
+          name: memory-graph-browser-results
+          path: test-results/

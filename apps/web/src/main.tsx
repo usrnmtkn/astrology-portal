@@ -31,12 +31,16 @@ function isContentCoveragePath() {
   return window.location.pathname.replace(/\/$/u, "") === "/admin/content/coverage";
 }
 
+function isMemoryGraphPath() {
+  return window.location.pathname.replace(/\/$/u, "") === "/admin/content/memory";
+}
+
 function isAdminContentPath() {
   return (
     window.location.pathname === "/admin/content" ||
     window.location.pathname === "/admin/generated-content" ||
     window.location.pathname === "/content/admin" ||
-    isContentCoveragePath()
+    isContentCoveragePath() || isMemoryGraphPath()
   );
 }
 
@@ -62,7 +66,7 @@ function redirectLocalAdminPath() {
     return false;
   }
 
-  const adminPath = isContentCoveragePath()
+  const adminPath = isMemoryGraphPath() ? "/admin/content/memory" : isContentCoveragePath()
     ? "/admin/content/coverage"
     : window.location.pathname === "/admin/generated-content"
       ? "/admin/generated-content"
@@ -85,7 +89,9 @@ async function startApp() {
   }
 
   if (isAdminContentPath()) {
-    const dashboard = isContentCoveragePath()
+    const dashboard = isMemoryGraphPath()
+      ? React.lazy(() => import("../../admin/src/MemoryGraphDashboard"))
+      : isContentCoveragePath()
       ? React.lazy(() => import("../../admin/src/ContentCoverageDashboard"))
       : React.lazy(() => import("../../admin/src/GeneratedContentAdminDashboard").then(module => ({ default: module.GeneratedContentAdminDashboard })));
     const Dashboard = dashboard;

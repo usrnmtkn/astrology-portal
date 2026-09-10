@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
+    "@supermemory/memory-graph": "0.1.8",
     "@tldr/astro-knowledge": "0.1.0",
     "@vitejs/plugin-react": "^5.0.0",
     "lucide-react": "^0.468.0",
+    "ogl": "1.0.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "swisseph-wasm": "^0.0.5",
