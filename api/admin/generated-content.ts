@@ -2160,6 +2160,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
         review_status: "approved", owner_approved: true, serving_enabled: true,
         studio_version_status: "approved-serving-revision"
       });
+      approvedRecord.studio_provenance = {
+        ...(isRecord(approvedRecord.studio_provenance) ? approvedRecord.studio_provenance : {}),
+        reviewStatus: "approved", approvedVia: "content-studio-calendar-publication/v1", approvedAt: now
+      };
       finalSections.packageRecord = approvedRecord;
       finalSections.body_you = promotedRecord.Body;
       finalSections.body_they = promotedRecord.Body;

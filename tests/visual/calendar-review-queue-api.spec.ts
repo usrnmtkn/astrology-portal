@@ -25,7 +25,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       const fixture = await call({ method: "fixture", key });
       await page.setViewportSize({ width, height: 1000 });
       await page.emulateMedia({ colorScheme: theme });
-      await page.addInitScript(({ theme }) => { localStorage.setItem("tldrastro:contentAdminSecret", "calendar-api-fixture"); localStorage.setItem("tldrastro:theme", theme); }, { theme });
+      await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "calendar-api-fixture"));
       const errors: string[] = [];
       const writes: any[] = [];
       page.on("pageerror", error => errors.push(error.message));
@@ -49,6 +49,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
         return route.fulfill({ json: { ok: true, rows: [], records: [], nextCursor: null } });
       });
       await page.goto(`${studioPath}#review-queue`);
+      await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
+      await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
       const item = page.locator(".admin-review-queue-row").filter({ hasText: key }).first();
       await expect(item).toBeVisible();
       await item.getByRole("button", { name: "Edit", exact: true }).click();
@@ -70,11 +72,14 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       expect(rows.find((row: any) => row.id === fixture.id).body).toBe(fixture.body);
       await editor.getByRole("button", { name: "Close", exact: true }).click();
       await page.reload();
+      await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
       await page.locator(".admin-review-queue-row").filter({ hasText: key }).first().getByRole("button", { name: "Edit", exact: true }).click();
       await expect(field).toHaveValue(revised);
       await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
       await expect.poll(async () => (await call({ method: "rows" })).find((row: any) => row.id === fixture.id)?.body).toBe(revised);
       await expect(editor.getByRole("alert")).toHaveCount(0);
+      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
+      await expect(editor.getByRole("region", { name: "SKY V4 source provenance" })).toContainText("content-studio-calendar-publication/v1");
       expect(writes.every(entry => entry.result.status === 200)).toBe(true);
       expect(errors).toEqual([]);
       await page.screenshot({ path: `test-results/calendar-review-${width}-${theme}.png`, fullPage: true });

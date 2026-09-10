@@ -42,3 +42,13 @@ same reader selection. Other staged Calendar families retain their separate rele
 No authored source rows, approval ledgers, calculation facts, generated content package
 or production database records were changed by this repair. Deployment enables the
 owner's future explicit publication actions; it does not approve the 24 drafts.
+
+## Broader baseline limitation
+
+`npm run test:content` reaches an existing failure in
+`scripts/test-friends-owner-signoff-ruling.mjs:161`: the historical reader hash is
+`84bcb934…` while its ledger expects `9ae494a7…`. Running the unchanged script and
+all eight source/approval inputs extracted directly from main `207d4872` reproduces
+the same failure. This repair changes none of those files or approved passages.
+The targeted API, Calendar hydration/routing, and Content Studio browser gates
+are independent of this historical Friends ledger mismatch.
