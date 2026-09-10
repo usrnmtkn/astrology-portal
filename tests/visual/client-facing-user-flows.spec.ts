@@ -1920,7 +1920,7 @@ test.describe("client-facing user flow case studies", () => {
     expect(transitCardText.split(orbLabel).length - 1, "Transit orb appears once").toBe(1);
     await transitCard.click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-    await expect(page.getByLabel("What this looks like in space")).toBeVisible();
+    await expect(page.getByLabel("Transit details", { exact: true })).toBeVisible();
     await expect(
       page.locator(".sky-detail-section:not(.sky-aspect-mechanics)"),
       "Owner-signoff-untraced personal-transit explanation remains eligible under the owner ruling"
