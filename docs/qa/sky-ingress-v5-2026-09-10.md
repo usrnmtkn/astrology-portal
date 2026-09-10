@@ -38,6 +38,13 @@ recovery and editor tests remain in the same browser gate.
 The final combined build passes all 27 Studio browser checks, both V5 reader
 regressions, both bundle budget checks, and the CSS/token audit.
 
+The full CI reader run exposed a separate You refresh race: transit timing
+enrichment imported the ephemeris directly after the natal chart was ready,
+starting a second WebAssembly engine in the document. Reload aborted that late
+download. The lookup now uses the existing calculation worker. Its regression
+waits for a real timing response, rejects main-document Swiss downloads, and
+retains the browser-error assertions. Three repeated fresh-build runs pass.
+
 The repository-wide content suite was attempted. Its historical Friends owner
 signoff checksum test fails on unchanged inputs from main; those source/approval
 files are not rewritten or re-approved by this release. Focused V5 and existing

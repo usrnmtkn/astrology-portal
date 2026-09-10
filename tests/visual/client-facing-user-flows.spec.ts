@@ -1483,6 +1483,26 @@ test.describe("client-facing user flow case studies", () => {
   test("You restores the selected subtab after refresh and browser navigation", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
+    await page.addInitScript(() => {
+      const BaseWorker = window.Worker;
+      (window as any).__completedNatalTiming = 0;
+      window.Worker = class extends BaseWorker {
+        private timingRequests = new Set<number>();
+        constructor(url: string | URL, options?: WorkerOptions) {
+          super(url, options);
+          this.addEventListener("message", event => {
+            if (this.timingRequests.delete(event.data.id) && event.data.ok) {
+              (window as any).__completedNatalTiming++;
+            }
+          });
+        }
+        postMessage(message: any, options?: any) {
+          if (message.kind === "natal-transit-timing") this.timingRequests.add(message.id);
+          super.postMessage(message, options);
+        }
+      };
+    });
+
     await seedClientState(page, { profile: true });
     await expectClientRouteLoads(page, "/#you");
 
@@ -1493,9 +1513,11 @@ test.describe("client-facing user flow case studies", () => {
     await expect(natalTab).toHaveAttribute("aria-selected", "true");
     await expect(page).toHaveURL(/#you\?tab=chart$/u);
 
-    // Wait for the chart download before exercising navigation; reloading during
-    // WebAssembly compilation aborts the request and emits unrelated errors.
+    // Timing enrichment must reuse the ready worker, not start a second engine
+    // in the document just as navigation begins.
     await expect(page.locator(".chart-layout__visual")).toHaveAttribute("data-chart-calculation-status", "ready", { timeout: 15_000 });
+    await expect.poll(() => page.evaluate(() => (window as any).__completedNatalTiming), { timeout: routeReadyTimeoutMs }).toBeGreaterThan(0);
+    expect(await page.evaluate(() => performance.getEntriesByType("resource").filter(entry => /\/wasm\/swisseph\.(wasm|data)/u.test(entry.name)).length)).toBe(0);
     await page.reload();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await expect(natalTab).toHaveAttribute("aria-selected", "true");
