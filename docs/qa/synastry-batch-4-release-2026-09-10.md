@@ -55,7 +55,7 @@ comparisons and the existing 16-card ranking cap remain intact.
 ## Bundle impact
 
 The approved copy and direction-level provenance add approximately 5 kB to total
-compressed JavaScript. Aggregate allowance increases from 2,949,000 to 2,956,000
+compressed JavaScript. Aggregate allowance increases from 2,950,000 to 2,957,000
 bytes for this release. App boot is 415.3 kB gzip, reader boot 462.9 kB, startup
 CSS 47.6 kB; all startup and individual chunk limits remain unchanged. No new
 runtime dependency or duplicate runtime overlay is shipped.
@@ -65,8 +65,8 @@ runtime dependency or duplicate runtime overlay is shipped.
 The first complete client-flow CI run passed all 80 Batch 4 scenarios and 197
 client tests overall. Three existing article-spacing cases checked for the title
 while the lazy reading chunk was still loading. They now use the established
-route-ready timeout; all layout assertions remain unchanged. The expanded
-browser job has a 30-minute budget (previously 20) to include the release matrix
+route-ready timeout; all layout assertions remain unchanged. Main e8147a93 independently contains the same readiness fix and 30-minute
+browser budget (previously 20) to include the release matrix
 and final performance checks.
 
 ## Deployment
