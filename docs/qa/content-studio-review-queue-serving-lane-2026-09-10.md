@@ -99,3 +99,10 @@ The final complete Content Studio suite passes all 89 tests (1.8 minutes),
 including the source inventory/reload regressions. Admin build/typecheck,
 CI-environment bundle checks, CSS/token audit, CRUD/hydration and queue contract
 checks also pass after the inventory change.
+
+CI's recovery tests originally injected failures only into `view=inventory`
+requests. The extended queue request no longer uses that projection, so those
+two tests stopped injecting their faults. They now target inventory scope and
+exercise both Review Queue (extended) and Articles (editorial), excluding the
+independent source-draft catalog. All four cases pass, including exactly three
+automatic attempts, visible persistent errors and successful manual retry.
