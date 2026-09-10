@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { observeArticleTransitions, expectAnimatedArticleNavigation } from './qaArticleTransitions';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
  test(`Lilith nested articles and refresh remain stable ${width} ${theme}`, async ({ page }) => {
   test.setTimeout(120_000);
+  await observeArticleTransitions(page);
   await page.setViewportSize({width, height:1000});
   await page.clock.setFixedTime(new Date('2026-09-10T13:00:00Z'));
   await page.addInitScript(theme => {
@@ -25,7 +27,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
    await expect(page).toHaveURL(new RegExp(target!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
    await expect(page.locator('#sky-detail-title')).toHaveText(aspect==='Trine Sun' ? /Sun.*Trine.*Lilith/i : /Mars.*Opposition.*Lilith/i);
    await expect(page.locator('.article-related-aspect-row')).toHaveCount(0);
-   await page.getByRole('button',{name:'Close detail',exact:true}).click();
+   const aspectTitle = await page.locator('#sky-detail-title').textContent();
+   await expectAnimatedArticleNavigation(page, () => page.getByRole('button',{name:'Close detail',exact:true}).click(), aspectTitle!);
    await expect(page).toHaveURL(parentUrl);
    await expect(page.locator('#sky-detail-title')).toHaveText(/Lilith.*Capricorn/i);
   }
