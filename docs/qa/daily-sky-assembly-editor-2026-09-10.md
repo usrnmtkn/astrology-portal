@@ -55,6 +55,11 @@ the deferred Sky detail chunk after shared-graph minifier changes receives a
   identical to the failing feature-worktree result. No governed Friends rows
   or approval records were changed or waived.
 
-No commit, merge, production deployment, or remote content synchronization was
-performed for this change. The final remote refresh still places the branch at
+At the initial implementation handoff, no commit, merge, production deployment,
+or remote content synchronization had been performed. The final remote refresh still places the branch at
 0 commits ahead / 0 behind `origin/main`, with this implementation uncommitted.
+
+Release follow-up: the owner requested merge and production deployment. The
+branch was rebased onto `856c5ef2`; PR #733 preserves the baseline hash finding.
+CI identified two older browser fixtures still asserting the superseded exact-
+aspect wording. Their expected sentences now match the supplied assembly copy.
