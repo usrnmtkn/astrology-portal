@@ -2,7 +2,7 @@ import bundledRelationshipAuthoredCardsV3 from "./fallbackArchitectureV3/bundled
 import bundledRelationshipHookRowsV3 from "./fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json";
 import bundledSharedPlacementRowsV3 from "./fallbackArchitectureV3/bundled-shared-placement-rows-v3.json";
 import synastryDirectionalOverridesV1 from "./fallbackArchitectureV3/source-rows/synastry-directional-overrides-v1.json";
-import synastryDirectionalServingHashesV1 from "../../packages/astro-knowledge/review/synastry-directionality-authoring-batch-4-2026-09-09/serving-payload-hashes.json";
+import synastryDirectionalServingHashesV1 from "../../../../packages/astro-knowledge/review/synastry-directionality-authoring-batch-4-2026-09-09/serving-payload-hashes.json";
 import type {
   AuthoredCard,
   FallbackArchitectureV3Bundle,
