@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_reverse_authoring_batch",
+  "batchId": "synastry-directionality-authoring-batch-4-2026-09-09",
+  "servingChangesAuthorized": false,
+  "purpose": "Continue additive reverse-direction authoring for Friends synastry using the owner-approved connection-explanation structure.",
+  "readerQuestion": "What does {{Name}} bring out in me?",
+  "voice": "Explain the connection first: what {{Name}} naturally brings, what it touches in the reader, and what that creates between them. Keep the language casual, emotionally specific, and easy to understand while preserving useful imagery.",
+  "scope": {
+    "family": "Sun with Ascendant, Midheaven, Descendant, Imum Coeli, Chiron, North Node, South Node, and Lilith",
+    "newCandidateCount": 24
+  },
+  "records": [
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/ascendant/conjunction",
+      "existingSemanticDirection": "sun_to_ascendant",
+      "missingSemanticDirection": "ascendant_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s Ascendant",
+      "candidateNameToYou": "The way {{Name}} naturally shows up can make you feel more like yourself. Something about their manner, their confidence, or the way they move through a situation may bring your own personality forward without much effort. You may feel more seen around them before either of you has said very much. That can be affirming, but it can also make their reaction matter too much. Enjoy how easy it is to be yourself without turning their attention into proof that you are doing yourself correctly.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/ascendant/hard",
+      "existingSemanticDirection": "sun_to_ascendant",
+      "missingSemanticDirection": "ascendant_to_sun",
+      "friendsUseCase": "Your Sun hard-aspect {{Name}}'s Ascendant",
+      "candidateNameToYou": "The way {{Name}} naturally reacts can rub against the way you see yourself. A look, a tone, or the way they handle a situation may make you feel misunderstood before they have actually criticized you. You may respond by explaining yourself harder, becoming more definite, or trying to prove who you are. The connection gets easier when you stop treating every difference in style like a judgment of your character.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/ascendant/soft",
+      "existingSemanticDirection": "sun_to_ascendant",
+      "missingSemanticDirection": "ascendant_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s Ascendant",
+      "candidateNameToYou": "{{Name}}'s natural way of being tends to make your own confidence easier to access. You do not have to work very hard to feel understood around them, and their reactions usually leave you more comfortable saying what you want or showing more of who you are. Their presence does not make you feel like you need to polish yourself first. That ease can be simple enough to miss, but it gives your personality room to breathe.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/midheaven/conjunction",
+      "existingSemanticDirection": "sun_to_midheaven",
+      "missingSemanticDirection": "midheaven_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s Midheaven",
+      "candidateNameToYou": "{{Name}}'s ambition can wake up your own. Seeing what they are building, what they want to be known for, or how seriously they take their direction may make you think more clearly about the person you want to become. Their public life can pull more confidence and purpose out of you. Just be careful not to measure your own worth by how useful you are to their climb or how closely your life matches the path they are on.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/midheaven/hard",
+      "existingSemanticDirection": "sun_to_midheaven",
+      "missingSemanticDirection": "midheaven_to_sun",
+      "friendsUseCase": "Your Sun hard-aspect {{Name}}'s Midheaven",
+      "candidateNameToYou": "{{Name}}'s goals can make you look harder at your own direction. Their work, recognition, or plans for the future may stir up comparison, especially when they seem certain about where they are going and you are still figuring something out. You may want to prove that your path matters too, or start treating their success like a verdict on your own. Their climb is not a scorecard. Let it show you what you want without making it evidence that you are behind.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/midheaven/soft",
+      "existingSemanticDirection": "sun_to_midheaven",
+      "missingSemanticDirection": "midheaven_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s Midheaven",
+      "candidateNameToYou": "{{Name}}'s direction can make your own confidence feel more useful. Seeing them take their work seriously may remind you to put your name on what you are good at, ask for the opportunity, or stop pretending an ambition does not matter to you. Their progress does not have to compete with yours. It can make success feel more possible because you are close enough to see how it is actually built.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/descendant/conjunction",
+      "existingSemanticDirection": "sun_to_descendant",
+      "missingSemanticDirection": "descendant_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s Descendant",
+      "candidateNameToYou": "{{Name}} may treat you like the kind of person they naturally want beside them. Their way of partnering can make your strengths feel especially visible, and being chosen that clearly can bring out more confidence in you. The risk is that the fit feels so good that you start becoming the role they respond to best. You can be important to {{Name}} without turning yourself into their idea of the perfect partner, friend, or collaborator.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/descendant/hard",
+      "existingSemanticDirection": "sun_to_descendant",
+      "missingSemanticDirection": "descendant_to_sun",
+      "friendsUseCase": "Your Sun hard-aspect {{Name}}'s Descendant",
+      "candidateNameToYou": "What {{Name}} expects from a close relationship may not always fit the way you naturally operate. They may want more compromise, more availability, or a different kind of partnership than you instinctively offer. That can make you feel like being yourself is somehow the problem, so you either defend yourself harder or start changing to keep the connection working. A relationship should have terms, but it should not require one person to disappear inside them.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/descendant/soft",
+      "existingSemanticDirection": "sun_to_descendant",
+      "missingSemanticDirection": "descendant_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s Descendant",
+      "candidateNameToYou": "The way {{Name}} partners with people tends to make room for who you already are. You may feel wanted without feeling managed, and included without having to become easier, quieter, or more agreeable first. Their idea of cooperation fits your personality well enough that working together does not cost you your voice. That is part of why the connection can feel so natural: partnership does not require an audition here.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/imum-coeli/conjunction",
+      "existingSemanticDirection": "sun_to_imum-coeli",
+      "missingSemanticDirection": "imum-coeli_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s Imum Coeli",
+      "candidateNameToYou": "Being close to {{Name}}'s private world can bring out a version of you that does not need an audience. Their home, family stories, or the way they are when nobody is watching may make you feel trusted enough to drop some of your own armor. You can feel more like yourself in the quiet parts of this connection. Just remember that being welcomed inside does not make their private life yours to manage or explain for them.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/imum-coeli/hard",
+      "existingSemanticDirection": "sun_to_imum-coeli",
+      "missingSemanticDirection": "imum-coeli_to_sun",
+      "friendsUseCase": "Your Sun hard-aspect {{Name}}'s Imum Coeli",
+      "candidateNameToYou": "{{Name}}'s need for privacy, quiet, or familiar routines can sometimes make your natural way of showing up feel like too much. You may want more conversation, movement, or openness just when they want to retreat into what feels safe. That difference can make you feel rejected when they are actually trying to recover. You do not have to dim yourself, but you may have to learn when their closed door is about rest and not about you.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/imum-coeli/soft",
+      "existingSemanticDirection": "sun_to_imum-coeli",
+      "missingSemanticDirection": "imum-coeli_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s Imum Coeli",
+      "candidateNameToYou": "{{Name}}'s private world can make it easier for you to put down the version of yourself that is always doing, proving, or being seen. Around them, ordinary things can feel good: a quiet meal, a long conversation, sitting around without needing to make the time impressive. Their sense of home gives your confidence somewhere to rest. You do not always have to shine to know you still belong.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/chiron/conjunction",
+      "existingSemanticDirection": "sun_to_chiron",
+      "missingSemanticDirection": "chiron_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s Chiron",
+      "candidateNameToYou": "{{Name}}'s vulnerable places can make you much more aware of the effect you have on them. You may notice that your confidence, success, or even a casual comment lands more deeply than you expected, and that can make you want to protect them. The danger is starting to dim yourself so they never have to feel uncomfortable. Their pain deserves care, but your light is not the injury. You can be gentle without becoming smaller.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/chiron/hard",
+      "existingSemanticDirection": "sun_to_chiron",
+      "missingSemanticDirection": "chiron_to_sun",
+      "friendsUseCase": "Your Sun hard-aspect {{Name}}'s Chiron",
+      "candidateNameToYou": "{{Name}}'s pain can make you question parts of yourself that normally feel simple. If your confidence, choices, or success touches an old wound for them, you may feel guilty for shining or defensive because you never meant to hurt them. That can turn their sensitivity into something you feel responsible for fixing. Be kind with the sore spot, but do not confuse being considerate with having to apologize for who you are.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/chiron/soft",
+      "existingSemanticDirection": "sun_to_chiron",
+      "missingSemanticDirection": "chiron_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s Chiron",
+      "candidateNameToYou": "{{Name}}'s vulnerability can make your confidence gentler without making it weaker. You may become more thoughtful about how you encourage them, more aware of what a certain subject costs them, and better at knowing when to stand beside them instead of trying to cheer them out of the feeling. Their softer places teach you that strength does not have to enter every situation at full volume.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/north-node/conjunction",
+      "existingSemanticDirection": "sun_to_north-node",
+      "missingSemanticDirection": "north-node_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s North Node",
+      "candidateNameToYou": "Watching {{Name}} grow can make you more aware of the person you are becoming too. Their next steps may pull qualities out of you that were already there but easier to ignore: more courage, more visibility, or a stronger willingness to choose your own direction. You may feel important in their growth, but do not turn their future into your assignment. You can inspire each other without becoming responsible for where the other person ends up.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/north-node/hard",
+      "existingSemanticDirection": "sun_to_north-node",
+      "missingSemanticDirection": "north-node_to_sun",
+      "friendsUseCase": "Your Sun hard-aspect {{Name}}'s North Node",
+      "candidateNameToYou": "The direction {{Name}} is growing toward may challenge the version of yourself you are used to being around them. As they take new risks, change priorities, or become less available for an old dynamic, you may feel pushed to define who you are without the familiar role you had in their life. Their growth is not a rejection of you. Let it show you where your own identity needs more room to grow too.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/north-node/soft",
+      "existingSemanticDirection": "sun_to_north-node",
+      "missingSemanticDirection": "north-node_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s North Node",
+      "candidateNameToYou": "{{Name}}'s growth tends to bring out a good kind of confidence in you. When they try something new, take themselves more seriously, or move toward a bigger life, you may feel more willing to do the same in your own way. Their becoming does not make you feel left behind. It reminds you that you are allowed to keep becoming too.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/south-node/conjunction",
+      "existingSemanticDirection": "sun_to_south-node",
+      "missingSemanticDirection": "south-node_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s South Node",
+      "candidateNameToYou": "{{Name}} can make you feel known very quickly. Something about their history, habits, or the way they respond to you may bring out a version of yourself that already knows how to behave here. That familiarity can feel warm and effortless, but it can also pull you back into an old role before you notice. Enjoy being known without assuming you have to keep being the person they first recognized.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/south-node/hard",
+      "existingSemanticDirection": "sun_to_south-node",
+      "missingSemanticDirection": "south-node_to_sun",
+      "friendsUseCase": "Your Sun hard-aspect {{Name}}'s South Node",
+      "candidateNameToYou": "{{Name}} may bring out an older version of you that you thought you had already left behind. Their habits, expectations, or the way they remember you can make it easy to slip back into being the fixer, the responsible one, the easygoing one, or whatever role once kept things working. Familiar does not always mean current. You are allowed to show them who you are now, even if the old version was easier for both of you.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/south-node/soft",
+      "existingSemanticDirection": "sun_to_south-node",
+      "missingSemanticDirection": "south-node_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s South Node",
+      "candidateNameToYou": "{{Name}}'s familiarity can make it easy to relax into yourself. You may not need to explain your humor, your habits, or the version of you that comes out when you are tired and nobody is trying to impress anyone. There is comfort in being known without a long introduction. Just keep making new memories too, so the relationship stays connected to who you are now and not only who you have already been.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/lilith/conjunction",
+      "existingSemanticDirection": "sun_to_lilith",
+      "missingSemanticDirection": "lilith_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s Lilith",
+      "candidateNameToYou": "{{Name}}'s refusal to pretend can bring out a more honest version of you. Around them, you may feel less willing to smile through something you dislike, play a role that does not fit, or make yourself easier for everyone else to handle. Their rawness can give you permission to take up more of your own space. Just make sure honesty is helping you become more yourself, not turning every difference into a test of who is braver.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/lilith/hard",
+      "existingSemanticDirection": "sun_to_lilith",
+      "missingSemanticDirection": "lilith_to_sun",
+      "friendsUseCase": "Your Sun hard-aspect {{Name}}'s Lilith",
+      "candidateNameToYou": "{{Name}}'s bluntness can hit the part of you that wants to be respected and understood. When they reject a rule, call something out, or refuse to soften their opinion, you may hear more of a challenge to you than they actually meant. That can make you defend your position or try to prove that your way is legitimate. Their refusal does not automatically make your identity the target. Let them say no without turning the no into a verdict on you.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/lilith/soft",
+      "existingSemanticDirection": "sun_to_lilith",
+      "missingSemanticDirection": "lilith_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s Lilith",
+      "candidateNameToYou": "{{Name}}'s honesty can make it easier for you to stop polishing yourself for approval. Their willingness to be direct about what they want, dislike, or will not accept may make you more comfortable doing the same. You do not have to become louder or more rebellious to benefit from it. Sometimes freedom is simply realizing you can be fully yourself and the connection does not fall apart.",
+      "candidateStatus": "drafted_2026-09-09_awaiting_owner_review"
+    }
+  ],
+  "reviewGate": "Owner review required before any candidate is promoted, mapped into Content Studio, or used by the serving resolver."
+}
