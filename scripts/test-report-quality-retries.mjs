@@ -9,6 +9,7 @@ const bundle = await build({
       export { runYouReportJobs } from "./api/_lib/you-report-lifecycle.ts";
       export { runFriendReportJobs } from "./api/_lib/friend-report-lifecycle.ts";
       export { createSupabaseReportAdmin } from "./api/_lib/supabase-report-admin.ts";
+      export { TransitReadingCheckpointYield, TransitReadingCheckpointStopped } from "./api/_lib/transit-reading-checkpoints.ts";
       export { TransitReadingJudgeBlockedError } from "./api/_lib/transit-reading-generation.ts";
     `,
     resolveDir: process.cwd(),
@@ -33,7 +34,7 @@ const bundle = await build({
     }
   }]
 });
-const { runYouReportJobs, runFriendReportJobs, createSupabaseReportAdmin, TransitReadingJudgeBlockedError } = await import(
+const { runYouReportJobs, runFriendReportJobs, createSupabaseReportAdmin, TransitReadingJudgeBlockedError, TransitReadingCheckpointYield, TransitReadingCheckpointStopped } = await import(
   `data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString("base64")}`
 );
 const previousFixture = globalThis.reportRetryFixture;
@@ -47,7 +48,7 @@ try {
     const family = window === "friend" ? "friend" : "you";
     const run = window === "friend" ? runFriendReportJobs : runYouReportJobs;
     for (const source of ["stripe", "free_test", "comp"]) {
-      for (const scenario of ["recovery", "exhaustion", "refunded", "revoked", "missing-entitlement"]) {
+      for (const scenario of ["recovery", "exhaustion", "refunded", "revoked", "missing-entitlement", "checkpoint-progress", "checkpoint-stopped"]) {
         let now = previousNow();
         Date.now = () => now;
         const facts = { brief: { schema: "locked-test-brief", targetDate: "2026-09-09", window } };
@@ -87,7 +88,9 @@ try {
               assert.equal(init.method, "PATCH");
               assert.equal(new URL(url).searchParams.get("id"), `eq.${job.id}`);
               const patch = JSON.parse(init.body);
-              assert.equal("attempt" in patch, false, "Automatic retries must never reset their budget.");
+              if (scenario === "checkpoint-progress") {
+                if ('attempt' in patch) assert.equal(patch.attempt, job.attempt - 1, 'A continuation refunds only its scheduler claim.');
+              } else assert.equal("attempt" in patch, false, "Automatic retries must never reset their budget.");
               assert.equal("facts" in patch, false, "The saved factual brief must remain locked.");
               Object.assign(job, patch);
               rows = [job];
@@ -110,6 +113,11 @@ try {
             assert.equal(input.subjectId, job.subject_id);
             assert.equal(input.targetDate, job.target_date);
           }
+          if (scenario === "checkpoint-stopped") throw new TransitReadingCheckpointStopped('Unconfirmed provider call');
+          if (scenario === "checkpoint-progress") {
+            if (generationCalls < 4) throw new TransitReadingCheckpointYield();
+            return { saved: [{ id: "checkpoint-complete" }] };
+          }
           if (scenario === "recovery" && generationCalls === 2) return { saved: [{ id: "approved-report-fixture" }] };
           throw new TransitReadingJudgeBlockedError({ stage: "second_judgment", judgment: { result: { scores: { owner_voice: 3 }, findings: [{ category: "owner_voice", location: "body", finding: "Diagnostic fixture" }], overall: 0.8, verdict: "below_threshold" }, provider: "fixture", model: "fixture", version: "fixture", threshold: 0.85 } });
         };
@@ -119,6 +127,24 @@ try {
           assert.equal(job.state, "cancelled");
           assert.equal(generationCalls, 0);
           assert.equal(placeholder.status, "ERROR");
+        } else if (scenario === "checkpoint-stopped") {
+          assert.equal(job.state, 'failed');
+          assert.equal(job.attempt, 1);
+          assert.equal(placeholder.status, 'ERROR');
+          assert.equal((await execute()).claimed, 0);
+        } else if (scenario === "checkpoint-progress") {
+          for (let i = 0; i < 3; i++) {
+            assert.equal(job.state, 'retry');
+            assert.equal(job.attempt, 0);
+            assert.equal(job.checkpoint_attempt ?? 1, 1);
+            assert.equal(job.last_error, null);
+            assert.equal(placeholder.status, 'DRAFT');
+            now = Date.parse(job.run_after);
+            await execute();
+          }
+          assert.equal(job.state, 'complete');
+          assert.equal(job.attempt, 1);
+          assert.equal(generationCalls, 4);
         } else {
           assert.equal(job.state, "retry", "First quality rejection must schedule another attempt.");
           assert.equal(placeholder.status, "DRAFT", "The library must keep showing generating between attempts.");

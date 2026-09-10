@@ -60,6 +60,8 @@ on:
       - "scripts/test-generated-report-judge-governance.mts"
       - "scripts/test-generated-report-correction.mjs"
       - "scripts/test-report-quality-retries.mjs"
+      - "scripts/test-transit-reading-checkpoints.mts"
+      - "api/_lib/transit-reading-checkpoints.ts"
       - "scripts/test-generated-report-breadth.mjs"
       - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md"
       - "scripts/test-generated-report-owner-feedback-authorization.sql"
@@ -128,6 +130,8 @@ on:
       - "scripts/test-generated-report-judge-governance.mts"
       - "scripts/test-generated-report-correction.mjs"
       - "scripts/test-report-quality-retries.mjs"
+      - "scripts/test-transit-reading-checkpoints.mts"
+      - "api/_lib/transit-reading-checkpoints.ts"
       - "scripts/test-generated-report-breadth.mjs"
       - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md"
       - "scripts/test-generated-report-owner-feedback-authorization.sql"
@@ -155,6 +159,7 @@ jobs:
       - run: node --experimental-strip-types scripts/test-generated-report-judge-governance.mts
       - run: node scripts/test-generated-report-correction.mjs
       - run: node scripts/test-report-quality-retries.mjs
+      - run: node --import tsx scripts/test-transit-reading-checkpoints.mts
       - run: node scripts/test-generated-report-owner-corpus.mjs
       - run: node scripts/test-generated-report-breadth.mjs
       - run: node scripts/test-friend-transit-reading-request-render.mjs
@@ -184,6 +189,8 @@ jobs:
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/you_report_production_hardening.sql
       - name: Run generated report owner feedback authorization test
         run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f scripts/test-generated-report-owner-feedback-authorization.sql
+      - name: Run report checkpoint storage authorization test
+        run: psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f apps/web/supabase/tests/transit_report_model_checkpoints.sql
       - name: Stop ephemeral Supabase database
         if: always()
         run: supabase stop --workdir apps/web --no-backup
