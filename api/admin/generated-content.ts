@@ -23,6 +23,7 @@ import {
   skyArticleEditionRecord
 } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
 import { validateCmsTemplate } from "../../apps/web/src/content/cmsTemplateValidation.js";
+import calendarAspectDraftCatalog from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json" with { type: "json" };
 import skyV4ReaderCopyOwnerApproval from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 import skyV4ReaderCopyServingRelease from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
 
@@ -494,14 +495,15 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       .map(([field]) => field);
     const structuralChanges = changedPaths.filter((field) => !isEditablePackageCopyPath(field, record));
     if (structuralChanges.length) {
-      throw new Error(`Package proposals cannot change read-only fields: ${structuralChanges.join(", ")}.`);
+      throw new GeneratedContentRequestError(`Package proposals cannot change read-only fields: ${structuralChanges.join(", ")}.`);
     }
     for (const [field, value] of packageStringFields(packageDraft).filter(([field]) => isEditablePackageCopyPath(field, record))) {
       editableFields.push([`packageDraft.${field}`, value, packageValueAt(record, field)]);
     }
     for (const field of ["contentKey", "content_role", "grammar_frame", "render_policy"]) {
-      if (packageDraft[field] !== record[field]) {
-        throw new Error(`Package proposals cannot change ${field}.`);
+      // Proposals are patches: omitted identity fields inherit the saved record.
+      if (Object.hasOwn(packageDraft, field) && packageDraft[field] !== record[field]) {
+        throw new GeneratedContentRequestError(`Package proposals cannot change ${field}.`);
       }
     }
   }
@@ -572,7 +574,7 @@ function assertFallbackArchitectureV3StructureLocked(row: ExistingGeneratedConte
   for (const [field, next, existing] of structuralChecks) {
     if (next === undefined || next === null) continue;
     if (String(next).trim() !== String(existing ?? "").trim()) {
-      throw new Error(`Package rows cannot change ${field}. Structural changes must come from a package drop.`);
+      throw new GeneratedContentRequestError(`Package rows cannot change ${field}. Structural changes must come from a package drop.`);
     }
   }
 
@@ -2031,7 +2033,18 @@ async function updateGeneratedContent(req: IncomingMessage) {
     const targetSections = isRecord(target.sections) ? target.sections : {};
     const targetRecord = v3PackageRecord(target);
     const targetSnapshot = isRecord(target.source_snapshot) ? target.source_snapshot : {};
+    if (target.content_key !== existing.content_key
+      || (typeof targetRecord.contentKey === "string" && targetRecord.contentKey !== target.content_key)) {
+      throw new GeneratedContentRequestError("The saved revision and publication target have different content keys. Reload the correct source before publishing.", 409);
+    }
     const canonicalRevision = stringFrom(targetRecord.source_package) === skyV4CanonicalStagePackage;
+    const calendarRevision = stringFrom(targetRecord.source_package) === calendarAspectContentStudioStagePackage
+      && targetRecord.CalendarSourceKind === "composed-card"
+      && targetRecord.contentKey === target.content_key
+      && calendarAspectDraftCatalog.drafts.some(item => item.contentKey === target.content_key);
+    if (governedStageKind(targetRecord, targetSnapshot, target.facts ?? {}) === "calendar-aspect" && !calendarRevision) {
+      throw new GeneratedContentRequestError("This Calendar source requires its separate owner approval and serving release.", 409);
+    }
     if (canonicalRevision && !skyV4ServingReleasedReaderCopyKeys.has(target.content_key)) {
       throw new Error("This SKY V4 source has not been released for readers.");
     }
@@ -2086,6 +2099,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
       }
       promotedRecord.summary = promotedRecord.tldrTakeaway ?? promotedRecord.TLDR_Takeaway ?? promotedRecord.CanonicalShort ?? promotedRecord.summary;
     }
+    if (calendarRevision && (typeof promotedRecord.Body !== "string" || !promotedRecord.Body.trim())) {
+      throw new GeneratedContentRequestError("Write the Calendar passage before publishing.");
+    }
     const now = new Date().toISOString();
     const promotionPatch: Record<string, unknown> = { updated_at: now };
     applyFallbackArchitectureV3ReviewPatch(target, {
@@ -2102,7 +2118,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       },
       facts: { ...(target.facts ?? {}), review_status: "approved" },
       sourceSnapshot: { ...targetSnapshot, review_status: "approved" },
-      reviewStatus: "approved"
+      reviewStatus: calendarRevision ? "needs_review" : "approved"
     }, promotionPatch);
     const finalSections = isRecord(promotionPatch.sections) ? { ...promotionPatch.sections } : {};
     delete finalSections.packageDraft;
@@ -2134,6 +2150,39 @@ async function updateGeneratedContent(req: IncomingMessage) {
       promotionPatch.status = "LIVE";
       promotionPatch.lane = "serving";
       promotionPatch.review_state = null;
+    }
+    if (calendarRevision) {
+      // This authenticated, version-checked owner action is the approval and
+      // release. Ordinary draft/status saves still cannot clear the stage gate.
+      const approvedRecord = isRecord(finalSections.packageRecord) ? finalSections.packageRecord : {};
+      Object.assign(approvedRecord, {
+        Body: promotedRecord.Body, body_you: promotedRecord.Body, body_they: promotedRecord.Body,
+        review_status: "approved", owner_approved: true, serving_enabled: true,
+        studio_version_status: "approved-serving-revision"
+      });
+      approvedRecord.studio_provenance = {
+        ...(isRecord(approvedRecord.studio_provenance) ? approvedRecord.studio_provenance : {}),
+        reviewStatus: "approved", approvedVia: "content-studio-calendar-publication/v1", approvedAt: now
+      };
+      finalSections.packageRecord = approvedRecord;
+      finalSections.body_you = promotedRecord.Body;
+      finalSections.body_they = promotedRecord.Body;
+      finalSections.contentStudioPublication = {
+        schema: "content-studio-calendar-publication/v1", approvedAt: now,
+        action: "approve-package-revision", contentKey: target.content_key,
+        sourceBaselineSha256: targetRecord.source_baseline_sha256,
+        copySha256: createHash("sha256").update(String(promotedRecord.Body), "utf8").digest("hex")
+      };
+      Object.assign(promotionPatch, {
+        mode: "feed", event_type: "calendar-aspect-owner-approved-revision",
+        headline: targetRecord.Headline, summary: "", body: promotedRecord.Body,
+        status: "LIVE", lane: "serving", review_state: null,
+        facts: { ...target.facts, review_status: "approved", readerServing: true, stageOnly: false },
+        source_snapshot: {
+          ...targetSnapshot, review_status: "approved", owner_approved: true, serving_enabled: true,
+          calendarAspectPublication: finalSections.contentStudioPublication
+        }
+      });
     }
     promotionPatch.sections = finalSections;
     promotionPatch.reviewed_at = now;
@@ -2515,7 +2564,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     isPackageRow
     && existing
     && existing.status === "LIVE"
-    && stringFrom(existingPackageRecord.studio_content_type) === "aspect"
+    && (["aspect", "calendar-aspect"].includes(stringFrom(existingPackageRecord.studio_content_type)))
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft)
   );
   const forksSkyV4ServingDraft = Boolean(

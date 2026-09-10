@@ -1,0 +1,88 @@
+import assert from "node:assert/strict";
+import { build } from "esbuild";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
+import { fixtures, createApiStore } from "../tests/helpers/calendar-review-api.mjs";
+const { rows, invoke } = await createApiStore();
+const { contentLiveStatuses } = await import("../api/_lib/content-live-status.ts");
+const bundle = join(tmpdir(), `calendar-review-reader-${process.pid}.mjs`);
+await build({ stdin: { contents: `export { loadLiveGeneratedContentForKeys } from './apps/web/src/services/generatedContent.ts'; export { normalizeCalendarEventSurface } from './apps/web/src/features/calendar/LunarCalendar.tsx'; export { calendarEventGeneratedContentKeys } from './apps/web/src/features/calendar/calendarContentKeys.ts'; export { isReaderServableGeneratedContentRow } from './apps/web/src/content/generatedContentEligibility.ts';`, resolveDir: process.cwd(), loader: "ts" }, bundle: true, outfile: bundle, platform: "node", format: "esm", define: { "import.meta.env": JSON.stringify({ VITE_SUPABASE_URL: "https://calendar-api.invalid", VITE_SUPABASE_ANON_KEY: "calendar-api-fixture-key" }) }, loader: { ".css": "empty" }, logLevel: "silent" });
+const reader = await import(pathToFileURL(bundle).href);
+for (const fixture of fixtures) {
+  let row = structuredClone(fixture);
+  const original = structuredClone(row.sections.packageOriginalRecord);
+  const saved = await invoke("PATCH", { id: row.id, expectedUpdatedAt: row.updated_at, sections: { ...row.sections, packageDraft: { Body: fixture.body } }, reviewStatus: "needs_review" });
+  assert.equal(saved.status, 200, `${row.content_key}: ${JSON.stringify(saved.payload)}`);
+  row = saved.payload.rows[0];
+  assert.equal(row.status, "DRAFT");
+  assert.deepEqual(row.sections.packageOriginalRecord, original);
+  assert.equal(row.sections.packageDraft.Body, fixture.body);
+  const readBack = await invoke("GET", undefined, `/api/admin/generated-content?id=${row.id}`);
+  assert.equal(readBack.status, 200);
+  assert.equal(readBack.payload.rows[0].sections.packageDraft.Body, fixture.body);
+  const published = await invoke("PATCH", { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: "approve-package-revision" });
+  assert.equal(published.status, 200, `${row.content_key}: ${JSON.stringify(published.payload)}`);
+  row = published.payload.rows[0];
+  assert.equal(row.status, "LIVE");
+  assert.equal(row.lane, "serving");
+  assert.equal(row.review_state, null);
+  assert.equal(row.body, fixture.body);
+  assert.equal(contentLiveStatuses([row], [row])[0].live, true, "The Studio badge must agree with the reader.");
+  assert.equal(row.sections.packageRecord.Body, fixture.body);
+  assert.equal(row.sections.packageDraft, undefined);
+  assert.equal(reader.isReaderServableGeneratedContentRow(row), true);
+  const record = row.sections.packageRecord;
+  const content = { id: row.id, contentKey: row.content_key, eventType: row.event_type, headline: row.headline, summary: row.summary, body: row.body, sourceSnapshot: row.source_snapshot, sections: row.sections };
+  const generatedContent = await reader.loadLiveGeneratedContentForKeys([row.content_key]);
+  assert.equal(generatedContent.get(row.content_key)?.body, fixture.body, "The actual reader loader must receive the publication.");
+  for (const reverse of [false, true]) {
+    const event = { type: "aspect", title: record.Headline, planets: reverse ? [record.BodyB, record.BodyA] : [record.BodyA, record.BodyB], aspect: record.AspectType, fromSign: reverse ? record.SignB : record.SignA, toSign: reverse ? record.SignA : record.SignB, startsAt: "2026-09-10T12:00:00Z", dateKey: "2026-09-10" };
+    assert.ok(reader.calendarEventGeneratedContentKeys(event).includes(row.content_key));
+    const rendered = reader.normalizeCalendarEventSurface(event, null, "Today", null, null, null, generatedContent);
+    assert.equal(rendered.sections[0]?.body, row.body, "Calendar must render the complete exact publication in either planet order.");
+    const wrongSigns = reader.normalizeCalendarEventSurface({ ...event, fromSign: "not-the-matching-sign" }, null, "Today", null, null, null, generatedContent);
+    assert.notEqual(wrongSigns.sections[0]?.body, row.body);
+  }
+  const stale = await invoke("PATCH", { id: row.id, expectedUpdatedAt: fixture.updated_at, sections: { packageDraft: { Body: "Stale edit." } } });
+  assert.equal(stale.status, 409);
+  const secondBody = `${fixture.body}\n\nQA second revision.`;
+  const revision = await invoke("PATCH", { id: row.id, expectedUpdatedAt: row.updated_at, sections: { ...row.sections, packageDraft: { Body: secondBody } }, reviewStatus: "needs_review" });
+  assert.equal(revision.status, 200, JSON.stringify(revision.payload));
+  const draft = revision.payload.rows[0];
+  assert.notEqual(draft.id, row.id);
+  assert.equal(rows.get(row.id).body, fixture.body, "Draft edits must not replace published copy.");
+  assert.equal(rows.get(row.id).status, "LIVE");
+  assert.equal((await reader.loadLiveGeneratedContentForKeys([row.content_key])).get(row.content_key)?.body, fixture.body);
+  const republished = await invoke("PATCH", { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: "approve-package-revision" });
+  assert.equal(republished.status, 200, JSON.stringify(republished.payload));
+  assert.equal(republished.payload.rows[0].id, row.id);
+  assert.equal(republished.payload.rows[0].body, secondBody);
+  assert.equal(rows.get(draft.id).status, "ARCHIVED");
+}
+for (const changes of [{ contentKey: "another-key" }, { content_role: "vocabulary" }, { BodyA: "another-planet" }, { render_policy: null }]) {
+  const fixture = fixtures[0]; rows.set(fixture.id, structuredClone(fixture));
+  const result = await invoke("PATCH", { id: fixture.id, sections: { ...fixture.sections, packageDraft: { ...fixture.sections.packageDraft, ...changes } } });
+  assert.equal(result.status, 400, JSON.stringify(result.payload));
+  assert.deepEqual(rows.get(fixture.id), fixture);
+}
+// A partial proposal must not weaken target identity or the separate stage gate.
+const fixture = fixtures[0];
+rows.set(fixture.id, structuredClone(fixture));
+const empty = await invoke("PATCH", { id: fixture.id, sections: { ...fixture.sections, packageDraft: { Body: "" } }, reviewStatus: "needs_review" });
+assert.equal(empty.status, 200);
+const emptyPublish = await invoke("PATCH", { id: fixture.id, ownerAction: "approve-package-revision" });
+assert.equal(emptyPublish.status, 400);
+rows.set(fixture.id, structuredClone(fixture));
+const other = { ...structuredClone(fixture), id: "other-target", content_key: "different-key" };
+rows.set(other.id, other);
+rows.set(fixture.id, { ...structuredClone(fixture), event_type: "sky-v4-governed-aspect-draft", source_snapshot: { ...fixture.source_snapshot, targetRowId: other.id } });
+const crossed = await invoke("PATCH", { id: fixture.id, ownerAction: "approve-package-revision" });
+assert.equal(crossed.status, 409);
+assert.deepEqual(rows.get(other.id), other);
+rows.set(fixture.id, structuredClone(fixture));
+const ordinary = await invoke("PATCH", { id: fixture.id, status: "LIVE", reviewStatus: "approved" });
+assert.equal(ordinary.payload.rows?.[0]?.status === "LIVE", false, "An ordinary status edit cannot approve a Calendar proposal.");
+const unauthorized = await invoke("PATCH", { id: fixtures[0].id, ownerAction: "approve-package-revision" }, undefined, "invalid");
+assert.equal(unauthorized.status, 401);
+console.log(`PASS: ${fixtures.length} Calendar proposals save, reopen, publish, render in both planet orders, reject wrong signs, preserve live copy during edits, republish, and reject structural/stale/unauthorized writes.`);

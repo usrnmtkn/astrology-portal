@@ -40,7 +40,9 @@ import {
 } from "../../content/readerSafety";
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
-import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
+import { isContentRetired } from "../../content/contentPublicationState";
+import { resolveCalendarAspectPublication } from "./calendarAspectPublication";
+import { calendarAspectPublicationKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   resolveComposedSkyCalendarCard,
@@ -951,6 +953,12 @@ function liveCalendarEventContent(
 
     const [first, second] = event.planets;
 
+    const calendarPublication = resolveCalendarAspectPublication({
+      generatedContent, first, second, aspect: event.aspect,
+      firstSign: event.fromSign ?? "", secondSign: event.toSign ?? ""
+    });
+    if (calendarPublication) return calendarPublication.content;
+
     const exactStudio = resolveSkyAspectContentStudioExact({
       generatedContent,
       first,
@@ -1267,6 +1275,10 @@ export function normalizeCalendarEventSurface(
 
   if (event.type === "aspect" && event.planets && event.aspect) {
     const [first, second] = event.planets;
+    if (calendarAspectPublicationKeys({ first, second, aspect: event.aspect,
+      firstSign: event.fromSign ?? "", secondSign: event.toSign ?? "" }).some(isContentRetired)) {
+      return { surface: "calendar-event", status: "not-servable", sections: [] };
+    }
     const packageCandidates = calendarSkyAspectPackageCandidates(event, dateLine);
     const composedSlots = {
       aspect: slugContentPart(event.aspect),
@@ -1276,7 +1288,12 @@ export function normalizeCalendarEventSurface(
       signA: event.fromSign,
       signB: event.toSign
     };
-    const composed = resolveComposedSkyCalendarCard({
+    const calendarPublication = resolveCalendarAspectPublication({
+      generatedContent: generatedContent ?? (content ? new Map([[content.contentKey, content]]) : new Map()),
+      first, second, aspect: event.aspect,
+      firstSign: event.fromSign ?? "", secondSign: event.toSign ?? ""
+    });
+    const bundledComposed = resolveComposedSkyCalendarCard({
       aspect: event.aspect,
       first,
       heading: event.title,
@@ -1284,6 +1301,13 @@ export function normalizeCalendarEventSurface(
       second,
       slots: composedSlots
     });
+    const composed = calendarPublication ? {
+      body: calendarPublication.body,
+      details: bundledComposed?.details,
+      layer: "authored" as const,
+      sourceKeys: [calendarPublication.content.contentKey],
+      tier: "content-studio-calendar-publication-v1"
+    } : bundledComposed;
     const exact = resolveApprovedExactSkyAspectCopy({
       aspect: event.aspect,
       first,

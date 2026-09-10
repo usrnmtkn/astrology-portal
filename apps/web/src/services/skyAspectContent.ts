@@ -300,6 +300,14 @@ export function resolveSkyAspectContentStudioExact(options: ResolveSkyAspectCont
   return primary;
 }
 
+// Calendar proposals retain the composed card's exact sign identity. These
+// keys are deliberately separate from the sign-independent exact-aspect keys.
+export function calendarAspectPublicationKeys(options: SkyAspectContentKeyOptions) {
+  const [a, b, aspect, signA, signB] = [options.first, options.second, options.aspect, options.firstSign, options.secondSign].map(slugContentPart);
+  if (!a || !b || !aspect || !signA || !signB) return [];
+  return [`sky-card/${a}/${signA}/${aspect}/${b}/${signB}`, `sky-card/${b}/${signB}/${aspect}/${a}/${signA}`];
+}
+
 export function skyAspectGeneratedContentKeys(options: SkyAspectContentKeyOptions) {
   const expected = normalizedCollectiveSkyAspectFacts(options);
   const studioExpected = normalizedContentStudioExactSkyAspectFacts(options);

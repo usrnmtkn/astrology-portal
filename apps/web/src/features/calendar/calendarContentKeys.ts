@@ -4,7 +4,7 @@ import {
   skyIngressInstanceContentKey,
   slugContentPart
 } from "../../services/generatedContentKeys";
-import { skyAspectGeneratedContentKeys } from "../../services/skyAspectContent";
+import { calendarAspectPublicationKeys, skyAspectGeneratedContentKeys } from "../../services/skyAspectContent";
 
 export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
   const dateKey = event.dateKey || event.startsAt.slice(0, 10);
@@ -16,14 +16,15 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
   ) {
     const [first, second] = event.planets;
 
-    return skyAspectGeneratedContentKeys({
+    const identity = {
       first,
       second,
       aspect: event.aspect,
       firstSign: event.fromSign ?? "",
       secondSign: event.toSign ?? "",
       targetDate: dateKey
-    });
+    };
+    return [...calendarAspectPublicationKeys(identity), ...skyAspectGeneratedContentKeys(identity)];
   }
 
   if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {
