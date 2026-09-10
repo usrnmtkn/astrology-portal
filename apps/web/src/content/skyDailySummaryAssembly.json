@@ -1,8 +1,8 @@
 {
   "layout": "{openingSentence} {currentRetrogradesSentence} {voidSentence}\n\n{exactAspectsSentence} {stationsSentence} {ingressesSentence}\n\n{lunationSentence}",
-  "opening": "The {sunPlacementLink} {sunSummary}, while the {moonPlacementLink} {moonSummary}.",
-  "sunOnly": "The {sunPlacementLink} {sunSummary}.",
-  "moonOnly": "The {moonPlacementLink} {moonSummary}.",
+  "opening": "The {sunName} in {sunSign}{sunDegree} {sunSummary}, while the {moonName} in {moonSign}{moonDegree} {moonSummary}.",
+  "sunOnly": "The {sunName} in {sunSign}{sunDegree} {sunSummary}.",
+  "moonOnly": "The {moonName} in {moonSign}{moonDegree} {moonSummary}.",
   "retrogrades": "{retrogradeIntro} {retrogradeList}.",
   "aspectsFirstOne": "Today brings one exact aspect: {aspectList}.",
   "aspectsFirstMany": "Today brings {count} exact aspects: {aspectList}.",

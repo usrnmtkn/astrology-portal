@@ -2216,9 +2216,9 @@ test.describe("client-facing user flow case studies", () => {
     for (const eventCase of cases) {
       await expectClientRouteLoads(page, `/#calendar?view=week&date=${eventCase.date}`);
       const selectedDay = page.getByLabel("Selected lunar day");
-      const eventButton = selectedDay
-        .locator(`.lunar-selected-card__daily-event.event-${eventCase.eventType}`)
-        .filter({ hasText: eventCase.title });
+      const eventButton = selectedDay.getByRole("button", {
+        name: new RegExp(`^${eventCase.title}(?: in [A-Za-z]+)?$`, "u")
+      });
 
       await expect(eventButton, `${eventCase.title} has one Calendar detail trigger`).toHaveCount(1);
       if (eventCase.usesV9) {

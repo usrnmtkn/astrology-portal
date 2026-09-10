@@ -3,6 +3,7 @@ import clauses from "../../web/src/content/skyDailySummaryClauses.json";
 
 // Keep the supplied sentences intact in the import; the composer owns terminal punctuation.
 export function importedSkySummary(key: string): string | undefined {
+  if (!/^cms\/sky-daily-summary\/(sun|moon)\/[^/]+$/u.test(key)) return undefined;
   const [body, sign] = key.replace("cms/sky-daily-summary/", "").split("/");
   if (body === "sun" || body === "moon") {
     const current = (clauses[body] as Record<string, string>)[sign];

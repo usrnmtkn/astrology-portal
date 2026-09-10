@@ -1,0 +1,676 @@
+{
+  "sourceFile": "daily-sky-summary-moon-system-v6-owner-phrases-audited.md",
+  "sourceSha256": "06a5fc3332bccb9d86c3964beb95cbba4563b477ae51ba252f18140ccd2e9ee3",
+  "rows": [
+    {
+      "key": "cms/sky-daily-summary/moon/aries/regular",
+      "label": "Moon in Aries",
+      "body": "makes the difference between being considerate and consistently putting ourselves last easier to notice",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/full-moon-in-aries"
+      ],
+      "sourceBasis": "“the difference between being considerate and consistently putting yourself last”",
+      "sha256": "e29b56be108cae2a0af24f23a60cdafb67ef626b0903f7890b01a3ee968e4600",
+      "wordCount": 14
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aries/newMoon",
+      "label": "New Moon in Aries",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aries/fullMoon",
+      "label": "Full Moon in Aries",
+      "body": "illuminates the Aries-Libra axis between honoring our individual needs and nurturing our relationships",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/full-moon-in-aries"
+      ],
+      "sourceBasis": "“This lunar event illuminates the Aries-Libra axis: between honoring your individual needs and nurturing your relationships.”",
+      "sha256": "07b5320545cfa69df32a12d7a0beaaf68cdb5e17ea2408b71e8c7fa95c2dc59a",
+      "wordCount": 13
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aries/solarEclipse",
+      "label": "Solar Eclipse in Aries",
+      "body": "pulls our cravings, passions, and instincts into sharp focus; Aries doesn’t wait for permission",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-overview"
+      ],
+      "sourceBasis": "“This solar eclipse pulls our cravings, passions, and instincts into sharp focus. Aries doesn’t wait for permission.”",
+      "sha256": "bbb4db7c4e9fb00bd54e29cc9cc63ba9811d05aa47502ed5efab13f3cddb1139",
+      "wordCount": 14
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aries/lunarEclipse",
+      "label": "Lunar Eclipse in Aries",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/taurus/regular",
+      "label": "Moon in Taurus",
+      "body": "encourages us to stay grounded, breathe deeper, and listen to our bodies",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/summer-solstice"
+      ],
+      "sourceBasis": "“The Moon moves into Taurus today too, encouraging us to stay grounded. Eat some good food, breathe deeper, and listen to your body.”",
+      "sha256": "ea239312b237477702e30da5d87677ac1f9ba6a8bd75e3bd7a8c1ca67d4c5ac8",
+      "wordCount": 12
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/taurus/newMoon",
+      "label": "New Moon in Taurus",
+      "body": "invites us to reconnect with what sustains us: our bodies, the earth, and the simple pleasures that ground us in the here and now",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons"
+      ],
+      "sourceBasis": "“This New Moon in Taurus invites us to reconnect with what sustains us — our bodies, the earth, and the simple pleasures that ground us in the here and now.”",
+      "sha256": "178b516398b5b2098608273534d16138bcc9bd510ab8eb97d1b0ad30a2ccb828",
+      "wordCount": 24
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/taurus/fullMoon",
+      "label": "Full Moon in Taurus",
+      "body": "illuminates the tension between what we hold and what we must release",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/full-moon-in-taurus"
+      ],
+      "sourceBasis": "“The Sun in Scorpio opposes the Moon in Taurus, illuminating the tension between what we hold and what we must release.”",
+      "sha256": "ac4290d0bca4a9e0ca1620dd71611d1e214d4dc78162a9efc4eafabe2ec005a2",
+      "wordCount": 12
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/taurus/solarEclipse",
+      "label": "Solar Eclipse in Taurus",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/taurus/lunarEclipse",
+      "label": "Lunar Eclipse in Taurus",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/gemini/regular",
+      "label": "Moon in Gemini",
+      "body": "invites a shift toward movement, conversation, learning, and conscious curiosity",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/gemini-season-2025"
+      ],
+      "sourceBasis": "“Gemini Season begins on May 20, inviting a shift toward movement, conversation, learning, and conscious curiosity.”",
+      "sha256": "3bde93f2b466b34643d48561f50a42f63c2d2b235cafa5479b61bf68eebbba33",
+      "wordCount": 10
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/gemini/newMoon",
+      "label": "New Moon in Gemini",
+      "body": "awakens our curiosity and sparks our intellect",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons"
+      ],
+      "sourceBasis": "“The New Moon in Gemini arrives like a fresh breeze, awakening our curiosity and sparking our intellect.”",
+      "sha256": "e10ce122dbcbbff8992284219edf55d49c2a990f02ea8dfb9595b0a1c57cac8d",
+      "wordCount": 7
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/gemini/fullMoon",
+      "label": "Full Moon in Gemini",
+      "body": "calls us to bridge the gap between the information we gather and the wisdom we share",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons"
+      ],
+      "sourceBasis": "“This Full Moon calls us to bridge the gap between the information we gather and the wisdom we share...”",
+      "sha256": "142f4706a38c59c60fb962ca66f03d5c08e947f68c34be152c92be118a0f19c8",
+      "wordCount": 16
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/gemini/solarEclipse",
+      "label": "Solar Eclipse in Gemini",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/gemini/lunarEclipse",
+      "label": "Lunar Eclipse in Gemini",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/cancer/regular",
+      "label": "Moon in Cancer",
+      "body": "pulls us home to the places, people, and memories that nurture us",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/cancer-full-moon-horoscopes-january-2025"
+      ],
+      "sourceBasis": "“This Full Moon pulls you home — to the places, people, and memories that nurture your soul.”",
+      "sha256": "148b7a81700cae20a0793db1f5115adb4f1e8428c7f65c43c1ce135cf1ad4602",
+      "wordCount": 12
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/cancer/newMoon",
+      "label": "New Moon in Cancer",
+      "body": "calls us home, not just to the place where we live, but to the emotional center that grounds and nourishes us",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons"
+      ],
+      "sourceBasis": "“This New Moon in Cancer calls us home — not just to the place where we live, but to the emotional center that grounds and nourishes us.”",
+      "sha256": "8a9ee0b896e7bb5c790986afd0a13a3b8a36f298a06d82fee41a75488019d923",
+      "wordCount": 21
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/cancer/fullMoon",
+      "label": "Full Moon in Cancer",
+      "body": "can bring a heightened focus on domestic issues such as housing, food security, childcare, or healthcare",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/cancer-full-moon-horoscopes-january-2025"
+      ],
+      "sourceBasis": "“The Full Moon could bring a heightened focus on domestic issues, such as housing, protecting our home/border, food security, childcare, or healthcare.”",
+      "sha256": "f98a53c6a9b5391d991e62d4f20fe6ed6dd34aa2ccfe3c3641c2b451cd225ab8",
+      "wordCount": 16
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/cancer/solarEclipse",
+      "label": "Solar Eclipse in Cancer",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/cancer/lunarEclipse",
+      "label": "Lunar Eclipse in Cancer",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/leo/regular",
+      "label": "Moon in Leo",
+      "body": "helps us access that inner fire more easily",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/leo-new-moon-2025"
+      ],
+      "sourceBasis": "“This lunation helps us access that inner fire more easily...”",
+      "sha256": "3419ef5a0a83d8c7281ec3ccaba82b2271f25c5793f542adaf613a1110c94873",
+      "wordCount": 8
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/leo/newMoon",
+      "label": "New Moon in Leo",
+      "body": "marks a powerful moment of self-renewal, a return to who we are beneath the roles, the expectations, and the noise",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/leo-new-moon-2025"
+      ],
+      "sourceBasis": "“...it marks a powerful moment of self-renewal. A return to who you are beneath the roles, the expectations, and the noise.”",
+      "sha256": "65d84cf6cb8e06966bc89d848ed7c446f33f5bca70f81abb333629689c075081",
+      "wordCount": 20
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/leo/fullMoon",
+      "label": "Full Moon in Leo",
+      "body": "brings what has been hidden into view; the cycle peaks, and this is the moment of truth",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/leo-full-moon-2025"
+      ],
+      "sourceBasis": "“The cycle peaks. What has been hidden comes into view. This is the moment of truth.”",
+      "sha256": "5d2b15510275cb160ec14bed8721ccd3a6d77e04c7f67990bff2a8c1dd4f2506",
+      "wordCount": 17
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/leo/solarEclipse",
+      "label": "Solar Eclipse in Leo",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/leo/lunarEclipse",
+      "label": "Lunar Eclipse in Leo",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/virgo/regular",
+      "label": "Moon in Virgo",
+      "body": "separates signal from noise",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/total-lunar-eclipse-in-virgo"
+      ],
+      "sourceBasis": "“Virgo separates signal from noise.”",
+      "sha256": "8ed4910b88f25dd531b070a7298189b52c3e3f6ec81ddb5c508bf15961f52319",
+      "wordCount": 4
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/virgo/newMoon",
+      "label": "New Moon in Virgo",
+      "body": "calls us to clear the clutter, refine our routines, and prioritize the details that nourish our well-being",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons"
+      ],
+      "sourceBasis": "“The New Moon in Virgo calls us to clear the clutter, refine our routines, and prioritize the details that nourish our well-being.”",
+      "sha256": "bc64476956f8a04aab44eb11d29e8c200b977175e54269d752b9a4f1f59d2f32",
+      "wordCount": 17
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/virgo/fullMoon",
+      "label": "Full Moon in Virgo",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/virgo/solarEclipse",
+      "label": "Solar Eclipse in Virgo",
+      "body": "reminds us that striving for perfection can hinder growth",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons"
+      ],
+      "sourceBasis": "“But this eclipse reminds us that striving for perfection can hinder growth.”",
+      "sha256": "6839ffe00236549a835261c826954baf8ce53fbfa08b33a44c6e62b8e1ff3bc7",
+      "wordCount": 9
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/virgo/lunarEclipse",
+      "label": "Lunar Eclipse in Virgo",
+      "body": "separates signal from noise, illuminating the cracks in our systems",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-overview"
+      ],
+      "sourceBasis": "“Virgo’s energy is ... focused on what works and what doesn’t. Under this total lunar eclipse, the cracks in our systems are illuminated.”",
+      "sha256": "9bd09671843d82657636776e817ca073eab4c8672a8b3ca9bd31f2283f489dd9",
+      "wordCount": 10
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/libra/regular",
+      "label": "Moon in Libra",
+      "body": "brings our attention to relationships and how we show up in them",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/libra-season-autumn-equinox"
+      ],
+      "sourceBasis": "“...bringing our attention to relationships and how we show up in them.”",
+      "sha256": "e91a7430c87fdb80e4118e5f40d30ad571d88a82cecd390c94ac9f2dec0976a9",
+      "wordCount": 12
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/libra/newMoon",
+      "label": "New Moon in Libra",
+      "body": "offers a doorway to begin again",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/libra-new-moon"
+      ],
+      "sourceBasis": "“Each New Moon offers a doorway to begin again.”",
+      "sha256": "1b19d42bd348a0f06a61972b5220fbad0a4ee9882a36adca298dad4e0322a80b",
+      "wordCount": 6
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/libra/fullMoon",
+      "label": "Full Moon in Libra",
+      "body": "reflects back the dynamics that shape our connections",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons"
+      ],
+      "sourceBasis": "“This Full Moon is a mirror, reflecting back the dynamics that shape our connections.”",
+      "sha256": "e0d139881c3aa7bdc1314ccb6e14002b2e75f4808267b6a4ae196a61cb1a8aa3",
+      "wordCount": 8
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/libra/solarEclipse",
+      "label": "Solar Eclipse in Libra",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/libra/lunarEclipse",
+      "label": "Lunar Eclipse in Libra",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/scorpio/regular",
+      "label": "Moon in Scorpio",
+      "body": "holds space for what’s unspoken",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/scorpio-full-moon-2025"
+      ],
+      "sourceBasis": "“Scorpio holds space for what’s unspoken.”",
+      "sha256": "7e2f0cdab9f13bd31b50fc62b3693b17ab053e6fbfdd6f7512c4e0a2b7c49440",
+      "wordCount": 5
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/scorpio/newMoon",
+      "label": "New Moon in Scorpio",
+      "body": "pulls us into the depths of our inner world, inviting us to confront, transform, and release what no longer serves our growth",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons"
+      ],
+      "sourceBasis": "“The New Moon in Scorpio pulls us into the depths of our inner world, inviting us to confront, transform, and release what no longer serves our growth.”",
+      "sha256": "ae373a2d117406dadaf4f61f200b8acde9c4ea73c201c0511dae932bc5035929",
+      "wordCount": 22
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/scorpio/fullMoon",
+      "label": "Full Moon in Scorpio",
+      "body": "pulls focus to what nourishes us and what consumes us, what we own and what we owe",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/scorpio-full-moon-2025"
+      ],
+      "sourceBasis": "“This lunation pulls focus to the polarity ... between what nourishes us and what consumes us. Between what we own and what we owe.”",
+      "sha256": "8dc617be4274edb14e432c49de3ee6fd7b4a8cba75531ff895fa76c6996df8c0",
+      "wordCount": 17
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/scorpio/solarEclipse",
+      "label": "Solar Eclipse in Scorpio",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/scorpio/lunarEclipse",
+      "label": "Lunar Eclipse in Scorpio",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/sagittarius/regular",
+      "label": "Moon in Sagittarius",
+      "body": "favors honesty, though it can get lost in the big picture",
+      "status": "OWNER PHRASE — GRAMMAR FIX ONLY",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/august-3rd-9th-2025"
+      ],
+      "sourceBasis": "“The Moon in Sagittarius favors honesty, and often it gets lost in the big picture.”",
+      "sha256": "f9bd8893499940b424a3966e4c15218794ceae1e381c36c0d6ba6ad05003d92e",
+      "wordCount": 11
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/sagittarius/newMoon",
+      "label": "New Moon in Sagittarius",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/sagittarius/fullMoon",
+      "label": "Full Moon in Sagittarius",
+      "body": "illuminates the tension between what we know and what we seek to understand",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons"
+      ],
+      "sourceBasis": "“The Full Moon in Sagittarius illuminates the tension between what we know and what we seek to understand.”",
+      "sha256": "21a7ad8eba97d224df928d1bebab705f0f4f0f1eaa8caef452d620d5b0cbd3ef",
+      "wordCount": 13
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/sagittarius/solarEclipse",
+      "label": "Solar Eclipse in Sagittarius",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/sagittarius/lunarEclipse",
+      "label": "Lunar Eclipse in Sagittarius",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/capricorn/regular",
+      "label": "Moon in Capricorn",
+      "body": "brings emotional fatigue as the pressure to keep it all together catches up",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/august-3rd-9th-2025"
+      ],
+      "sourceBasis": "“When the Moon enters Capricorn, emotional fatigue sets in. The pressure to keep it all together catches up.”",
+      "sha256": "8ba5a76281227b8b18e25bead63b6c301a2dddbf8be48ce95df9edb16d3271df",
+      "wordCount": 13
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/capricorn/newMoon",
+      "label": "New Moon in Capricorn",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/capricorn/fullMoon",
+      "label": "Full Moon in Capricorn",
+      "body": "shines a spotlight on the delicate balance between our private lives and public ambitions",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons"
+      ],
+      "sourceBasis": "“The Full Moon in Capricorn shines a spotlight on the delicate balance between our private lives and public ambitions.”",
+      "sha256": "11038fec77abdb25d931791d252263911b7cad4b10323237fc77de670366a271",
+      "wordCount": 14
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/capricorn/solarEclipse",
+      "label": "Solar Eclipse in Capricorn",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/capricorn/lunarEclipse",
+      "label": "Lunar Eclipse in Capricorn",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aquarius/regular",
+      "label": "Moon in Aquarius",
+      "body": "reminds us that truth is not always comfortable, but it is necessary",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/aquarius-full-moon-2025"
+      ],
+      "sourceBasis": "“Aquarius reminds us that truth is not always comfortable, but it is necessary.”",
+      "sha256": "4c68ce23ae4ce7d97e5aa41f543be319cb9a21436db0fe971f2eb311c5a66bae",
+      "wordCount": 12
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aquarius/newMoon",
+      "label": "New Moon in Aquarius",
+      "body": "invites us to envision the world we want to live in and take bold steps toward it, both as individuals and as part of something larger",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/first-new-moon-of-2025-aquarius-new-moon"
+      ],
+      "sourceBasis": "“...a powerful invitation to envision the world you want to live in and take bold steps to align with it — both as an individual and as part of something larger.”",
+      "sha256": "0b2565080730b4b02893b9a2a7f14c8e262b7ad06cc28e7d96a4a4aca1c065ef",
+      "wordCount": 26
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aquarius/fullMoon",
+      "label": "Full Moon in Aquarius",
+      "body": "highlights the tension between the person we’ve learned to perform and the person we actually are",
+      "status": "OWNER PHRASE — DIRECT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/aquarius-full-moon-2025"
+      ],
+      "sourceBasis": "“This is a Moon that highlights the tension between the person you’ve learned to perform and the person you actually are.”",
+      "sha256": "6456158e8dda34712ec9e515f6dfaa42a3c2fc082988ad0ae65bd85088c86bbc",
+      "wordCount": 16
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aquarius/solarEclipse",
+      "label": "Solar Eclipse in Aquarius",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/aquarius/lunarEclipse",
+      "label": "Lunar Eclipse in Aquarius",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/pisces/regular",
+      "label": "Moon in Pisces",
+      "body": "pulls us toward the unseen and the space between endings and beginnings",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/pisces-new-moon-2025"
+      ],
+      "sourceBasis": "“...a deep pull into the abyss. A lunar doorway into the unseen... the space between endings and beginnings.”",
+      "sha256": "a61f0328759062b9c73babba2ef2ec3a8ba68f44cdf30a1e28ce0e729bf1889f",
+      "wordCount": 12
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/pisces/newMoon",
+      "label": "New Moon in Pisces",
+      "body": "pulls us into the unseen and the space between endings and beginnings",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/pisces-new-moon-2025"
+      ],
+      "sourceBasis": "“...a deep pull into the abyss. A lunar doorway into the unseen... the space between endings and beginnings.”",
+      "sha256": "b2ecedc669f904f7c6995d42c2f99c7e50fe627c8d733bca115f853daa8deb1f",
+      "wordCount": 12
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/pisces/fullMoon",
+      "label": "Full Moon in Pisces",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/pisces/solarEclipse",
+      "label": "Solar Eclipse in Pisces",
+      "body": "",
+      "status": "NEEDS OWNER COPY",
+      "sources": [],
+      "sourceBasis": "",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "wordCount": 0
+    },
+    {
+      "key": "cms/sky-daily-summary/moon/pisces/lunarEclipse",
+      "label": "Lunar Eclipse in Pisces",
+      "body": "brings release and revelation, revealing truths we’ve long avoided",
+      "status": "OWNER PHRASE — LIGHT GRAMMAR EDIT",
+      "sources": [
+        "https://private-author-source.invalid/blogs/astrology/pisces-total-lunar-eclipse"
+      ],
+      "sourceBasis": "“Total Lunar Eclipse in Pisces — Release and revelation” + “reveals truths we’ve long avoided.”",
+      "sha256": "cf6d7bfed00534a640c622271089822fe0cd42acaf01af2d44f3d1fec01bbc02",
+      "wordCount": 9
+    }
+  ]
+}

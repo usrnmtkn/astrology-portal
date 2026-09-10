@@ -32,7 +32,7 @@ for (const theme of ["light", "dark"] as const) {
       const summary = page.getByLabel("Daily sky summary");
       await expect(summary).toBeVisible({ timeout: 60_000 });
       await expect(summary).toContainText("The Sun in Virgo");
-      await expect(summary).toContainText("The Sun in Virgo at 15° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Cancer at 29° brings more attention to home, family, and whether the care we give is coming back to us.");
+      await expect(summary).toContainText("The Sun in Virgo at 15° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Cancer at 29° pulls us home to the places, people, and memories that nurture us.");
       await expect(summary).not.toContainText("Fix what matters");
       await expect(summary).not.toContainText("Tend what feels like home");
       await expect(summary).toContainText("the Moon in Cancer");
