@@ -2690,6 +2690,33 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  for (const theme of ["light", "dark"] as const) {
+    for (const width of [390, 768, 1440]) {
+      test(`logo keeps its surface while scrolling ${theme} ${width}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 844 });
+        await seedClientState(page, { profile: true, theme });
+        await expectClientRouteLoads(page, "/#you");
+        const logo = page.locator(".nav-pill");
+        const surface = () => logo.evaluate(node => {
+          const style = getComputedStyle(node);
+          return { background: style.backgroundColor, border: style.border, shadow: style.boxShadow };
+        });
+        await expect(logo).toBeVisible();
+        const atTop = await surface();
+        expect(atTop.background).not.toBe("rgba(0, 0, 0, 0)");
+        await page.evaluate(() => window.scrollTo(0, 600));
+        await expect(page.locator("html")).toHaveAttribute("data-scrolled", "");
+        await expect.poll(surface).toEqual(atTop);
+        await expect(logo.getByRole("button", { name: "TLDR Astro home" })).toBeVisible();
+        await mkdir(responsiveScreenshotDir, { recursive: true });
+        await page.screenshot({ path: path.join(responsiveScreenshotDir, `logo-scrolled-${theme}-${width}.png`) });
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await expect(page.locator("html")).not.toHaveAttribute("data-scrolled", "");
+        await expect.poll(surface).toEqual(atTop);
+      });
+    }
+  }
+
   test("narrow mobile sky cards and header stay inside their rails", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
