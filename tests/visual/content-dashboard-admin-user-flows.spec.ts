@@ -5345,3 +5345,42 @@ test("Sky placement filters select exact planet sign and motion independently of
   await expect(page.getByLabel("Sky placement zodiac sign")).toHaveValue("all");
   await expect(page.locator(".admin-content-row")).toHaveCount(3);
 });
+
+for (const theme of ["light", "dark"]) for (const width of [1440, 390]) {
+  test(`Sky approval failures stay visible in the editor ${theme} ${width}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    const row = { ...generatedContentRows[0], id: "qa-sky-approval", content_key: "sky.aspect.chiron.sextile.nodes.taurus.aquarius",
+      headline: "Chiron sextile North Node", body: "Saved Sky approval fixture.", surface: "sky", mode: "feed",
+      status: "DRAFT", event_type: "collective-aspect-card", block_type: "sky_aspect", review_state: "needs-review",
+      source_snapshot: {}, sections: {}, facts: {}, updated_at: now };
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    await seedAdminApi(page, { generatedRows: [row], onGeneratedContentWrite: write => writes.push(write) });
+    let outcome = "blocked";
+    await page.route("**/api/admin/generated-content**", async route => {
+      if (route.request().method() !== "PATCH" || route.request().postDataJSON().ownerAction !== "approve-and-schedule") return route.fallback();
+      if (outcome === "blocked") return route.fulfill({ status: 500, json: { error: "Collective sky cards must use first-person plural (we/our/us). A passing editorial judge review is still required." } });
+      return route.fulfill({ json: { ok: true, rows: [{ ...row, status: outcome === "approved" ? "LIVE" : "REVIEWED" }] } });
+    });
+    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+    await page.evaluate(value => document.documentElement.setAttribute("data-theme", value), theme);
+    await page.locator(".admin-review-queue-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].payload.status).toBe("REVIEWED");
+    const approve = editor.getByRole("button", { name: "Approve & schedule", exact: true });
+    await approve.click();
+    await expect(editor.getByRole("alert")).toContainText("first-person plural");
+    await editor.getByRole("alert").scrollIntoViewIfNeeded();
+    await expect(editor.getByRole("alert")).toBeVisible();
+    await page.screenshot({ path: `test-results/sky-approval-error-${theme}-${width}.png` });
+    await expectNoHorizontalOverflow(page, "Sky approval error");
+    outcome = "unconfirmed";
+    await approve.click();
+    await expect(editor.getByRole("alert")).toContainText("Approval was not confirmed");
+    outcome = "approved";
+    await approve.click();
+    await expect(editor.getByRole("alert")).toHaveCount(0);
+    await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(row.body);
+  });
+}

@@ -903,7 +903,7 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
     const sourceSnapshot = (row.sourceSnapshot ?? row.source_snapshot) as Record<string, unknown> | null | undefined;
     const lint = (skyBlockType === "sky_placement"
       ? sourceSnapshot?.skyPlacementVoiceLint ?? sourceSnapshot?.skyPlacementTopperVoiceLint
-      : sourceSnapshot?.skyAspectVoiceLint) as { score?: number; fails?: number } | undefined;
+      : sourceSnapshot?.skyAspectVoiceLint) as { score?: number; fails?: number; findings?: Array<{ severity?: string; reason?: string }> } | undefined;
     const judge = (skyBlockType === "sky_placement"
       ? sourceSnapshot?.skyPlacementJudge ?? sourceSnapshot?.skyPlacementTopperJudge
       : sourceSnapshot?.skyAspectJudge) as { recommendation?: string; approvalSource?: string } | undefined;
@@ -915,7 +915,13 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
     const legacyAutoPublishEligible = skyBlockType === "sky_aspect" && judgeGate === "auto-publish";
 
     if (lint?.score !== 3 || lint.fails !== 0 || judgeScore !== 3 || (!legacyAutoPublishEligible && !humanApprovalEligible)) {
-      throw new Error("Sky cards can be published only after lint 3/0, judge score 3, and an explicit human-review recommendation.");
+      const reasons = Array.isArray(lint?.findings)
+        ? [...new Set(lint.findings.filter((finding) => finding?.severity === "fail" && typeof finding.reason === "string").map((finding) => finding.reason))]
+        : [];
+      if (judgeScore !== 3 || (!legacyAutoPublishEligible && !humanApprovalEligible)) {
+        reasons.push("A passing editorial judge review is still required.");
+      }
+      throw new Error(`Sky cards can be published only after lint 3/0, judge score 3, and an explicit human-review recommendation. ${reasons.join(" ")} Mark reviewed saves your review status; it does not clear these checks.`);
     }
   }
 }

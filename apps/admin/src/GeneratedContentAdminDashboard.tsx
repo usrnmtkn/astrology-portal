@@ -4054,6 +4054,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function approveAndScheduleSkyRow(row: AdminGeneratedContentRow) {
+    setEditorSaveError("");
     setIsLoading(true);
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
@@ -4061,9 +4062,14 @@ export function GeneratedContentAdminDashboard() {
         body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-and-schedule" })
       });
       const saved = payload.rows?.[0];
+      if (!payload.ok || !saved || saved.id !== row.id || saved.content_key !== row.content_key
+        || saved.status !== (row.block_type === "sky_placement" ? "REVIEWED" : "LIVE")) {
+        throw new Error("Approval was not confirmed. Your saved copy is still available; try again.");
+      }
       if (saved) {
         setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
         if (selectedRowId === saved.id) {
+          setEditorSourceRow(saved);
           const savedDraft = draftFromRow(saved);
           setDraft(savedDraft);
           editorBaselineRef.current = JSON.stringify(savedDraft);
@@ -4081,7 +4087,9 @@ export function GeneratedContentAdminDashboard() {
         ? `${row.content_key} approved for package import. It is not serving until the governed package is regenerated, reviewed, merged, and deployed.`
         : `${row.content_key} approved. It is eligible only when current calculated Sky facts select this reusable configuration.`);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not approve and schedule the Sky row.");
+      const feedback = dashboardErrorMessage(error);
+      setEditorSaveError(feedback);
+      setMessage(feedback);
     } finally {
       setIsLoading(false);
     }

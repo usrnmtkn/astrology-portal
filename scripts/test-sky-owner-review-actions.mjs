@@ -97,6 +97,21 @@ assert.equal(blocked.status, 500);
 assert.equal(blocked.patches.length, 0);
 assert.match(blocked.payload.error, /Sky cards can be published only/u);
 
+const voiceBlocked = await invoke(
+  { id: "sky-row", ownerAction: "approve-and-schedule" },
+  existingRow({ status: "REVIEWED", judge_score: null, source_snapshot: {
+    skyAspectVoiceLint: { score: 1, fails: 2, findings: [
+      { severity: "fail", reason: "Collective sky cards must use first-person plural (we/our/us)." },
+      { severity: "fail", reason: "No second person on the collective Sky surface." }
+    ] }
+  } })
+);
+assert.equal(voiceBlocked.patches.length, 0);
+assert.match(voiceBlocked.payload.error, /first-person plural/);
+assert.match(voiceBlocked.payload.error, /No second person/);
+assert.match(voiceBlocked.payload.error, /passing editorial judge review is still required/);
+assert.match(voiceBlocked.payload.error, /Mark reviewed saves your review status/);
+
 const mixed = await invoke(
   { id: "sky-row", ownerAction: "approve-and-schedule", body: "Changed at approval time" },
   existingRow()

@@ -304,6 +304,18 @@
 
 /* ---------- Editor drawer ---------- */
 
+.admin-dashboard .admin-editor-panel > .admin-inline-warning {
+  border-top: var(--border-width-thin) solid var(--admin-ui-error-border);
+  color: var(--admin-text-default);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  padding: var(--admin-space-lg) var(--admin-space-3xl);
+  overflow-wrap: anywhere;
+}
+
 .admin-dashboard .admin-editor-panel .admin-editor-toolbar {
   align-items: start;
   column-gap: var(--admin-space-5xl);
