@@ -1,5 +1,6 @@
 import { isEligibleTransitReturn } from "../../web/src/services/transitReturns.js";
 import { fullDetailReaderFacingCopy, isReaderFacingCopy } from "../../web/src/content/readerSafety.js";
+import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity.js";
 export const transitNatalPlanets = [
   "sun",
   "moon",
@@ -98,3 +99,39 @@ export function renderTransitNatalPreview(selection: Pick<TransitNatalSelection,
 }
 
 export type TransitNatalResolvedSource = { key: string; text: string };
+
+export function transitNatalExactContentKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">) {
+  const key = isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect)
+    ? `authored/transit-return/${selection.planet}`
+    : `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${selection.aspect}`;
+  return isDynamicTransitNatalExactKey(key) ? key : null;
+}
+
+/** An empty authoring draft, never copied from or labeled as the fallback it will replace. */
+export function transitNatalExactSourceDraft(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">) {
+  const contentKey = transitNatalExactContentKey(selection);
+  if (!contentKey) throw new Error("This transit aspect is not supported by the reader.");
+  const isReturn = contentKey.startsWith("authored/transit-return/");
+  return {
+    id: null,
+    contentKey,
+    surface: "you" as const,
+    mode: "in_depth" as const,
+    status: "DRAFT" as const,
+    headline: isReturn ? `${selection.planet.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")} return` : transitNatalLabel(selection),
+    summary: "",
+    body: "",
+    lane: "reference" as const,
+    reviewState: "needs-review" as const,
+    blockType: "fallback_hook" as const,
+    promptVersion: "manual-admin",
+    sections: { packageRecord: {
+      contentKey, content_role: "full_copy", grammar_frame: "complete_sentence", surface: isReturn ? "transit-return" : "transit-aspect",
+      body: "", ...(!isReturn ? { body_you: "", body_they: "" } : {}),
+      reader_only: true, render_policy: "personal-transit-exact-v1", review_status: "needs_review"
+    } },
+    facts: { fallbackArchitectureV3: true, transiting: selection.planet, natal: selection.natalPoint, aspect: selection.aspect },
+    reviewerNotes: "Exact personal-transit source shared by Sky Placement and You Transit. Review the complete passage before publishing.",
+    sourceSnapshot: { contentType: "authored-content", contentSystem: "fallback", content_role: "full_copy", review_status: "needs_review", sourcePackage: "tldrastro-fallback-architecture-v3" }
+  };
+}

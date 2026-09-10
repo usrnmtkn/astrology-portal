@@ -900,3 +900,27 @@ runtime.installFallbackArchitectureV3Bundle(natalBundle);
 assert.equal(runtime.fallbackRendererV3.renderNatalAspect({ planetA: "lilith", aspect: "square", planetB: "ascendant", voice: "you" }).body, row.body, "The shipped reader must render the exact saved passage, including its ending.");
 globalThis.fetch = normalFetch;
 console.log("PASS: new natal aspect explicit approval receipt, actual reader loader, and shipped resolver render");
+
+const { transitNatalExactSourceDraft } = await import('../apps/admin/src/transitNatalSources.ts');
+for (const selection of [
+  { planet: 'sun', natalPoint: 'south-node', aspect: 'opposition' },
+  { planet: 'sun', natalPoint: 'sun', aspect: 'conjunction' },
+  { planet: 'uranus', natalPoint: 'uranus', aspect: 'conjunction' }
+]) {
+  const draft = transitNatalExactSourceDraft(selection);
+  const copy = `QA exact ${selection.planet} transit opening.\n\nQA exact ${selection.natalPoint} transit ending.`;
+  const record = { ...draft.sections.packageRecord, body: copy, ...(!draft.contentKey.startsWith('authored/transit-return/') ? { body_you: copy, body_they: '{{Name}} receives a complete QA exact transit passage.' } : {}) };
+  row = { ...row, id: `qa-transit-${selection.planet}-${selection.natalPoint}`, content_key: draft.contentKey, provider: 'tldrastro-fallback-architecture-v3', status: 'DRAFT', lane: 'reference', review_state: 'needs-review', mode: 'in_depth', surface: 'you', event_type: 'fallback-hook', block_type: 'fallback_hook', body: copy, sections: { packageRecord: record }, facts: { ...draft.facts, review_status: 'needs_review' }, source_snapshot: draft.sourceSnapshot };
+  const approved = await invokeApi('PATCH', '/api/admin/generated-content', { id: row.id, expectedUpdatedAt: row.updated_at, reviewStatus: 'approved' });
+  assert.equal(approved.status, 200, JSON.stringify(approved.payload));
+  globalThis.fetch = async (input, init) => String(input).includes('/rpc/content_runtime_revision') ? Response.json(row.updated_at) : normalFetch(input, init);
+  const bundle = await runtime.loadFallbackArchitectureV3DashboardBundle();
+  assert.ok(bundle?.transitLib.authoredCards.some(item => item.contentKey === draft.contentKey), `New exact source reaches real reader loader: ${draft.contentKey}`);
+  runtime.installFallbackArchitectureV3Bundle(bundle);
+  const rendered = draft.contentKey.startsWith('authored/transit-return/')
+    ? runtime.transitSynastryFallbackRendererV3.renderTransitReturn({ planet: selection.planet })
+    : runtime.transitSynastryFallbackRendererV3.renderTransitAspect({ transiting: selection.planet, natal: selection.natalPoint, aspect: selection.aspect, voice: 'you', sign: 'virgo' });
+  assert.equal(rendered.body, copy);
+  globalThis.fetch = normalFetch;
+}
+console.log('PASS: new exact transit and return publication through actual API, reader loader, and shipped resolver.');

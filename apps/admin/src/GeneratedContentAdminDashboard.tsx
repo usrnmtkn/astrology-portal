@@ -1,6 +1,7 @@
 import ReviewWorkflowPanel from "./ReviewWorkflowPanel";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import TransitNatalReaderPreview from "./TransitNatalReaderPreview";
+import { transitNatalExactContentKey, transitNatalExactSourceDraft } from "./transitNatalSources";
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
@@ -1167,7 +1168,7 @@ function packageFieldString(draft: AdminDraft, key: string) {
 
 function setPackageSectionField(draft: AdminDraft, key: string, value: string): AdminDraft {
   draft = invalidateContentStudioReview(draft);
-  const copySection = !draft.id && draft.contentKey.startsWith(natalAspectContentKeyPrefix) ? "packageRecord" : "packageDraft";
+  const copySection = !draft.id && (draft.contentKey.startsWith(natalAspectContentKeyPrefix) || draftPackageRecord(draft).render_policy === "personal-transit-exact-v1") ? "packageRecord" : "packageDraft";
   const proposal = draftPackageProposal(draft) ?? structuredClone(draftPackageRecord(draft));
   return {
     ...draft,
@@ -1184,7 +1185,7 @@ function setPackageSectionField(draft: AdminDraft, key: string, value: string): 
 
 function setPackageRecordField(draft: AdminDraft, key: string, value: string): AdminDraft {
   draft = invalidateContentStudioReview(draft);
-  const copySection = !draft.id && draft.contentKey.startsWith(natalAspectContentKeyPrefix) ? "packageRecord" : "packageDraft";
+  const copySection = !draft.id && (draft.contentKey.startsWith(natalAspectContentKeyPrefix) || draftPackageRecord(draft).render_policy === "personal-transit-exact-v1") ? "packageRecord" : "packageDraft";
   const proposal = draftPackageProposal(draft) ?? structuredClone(draftPackageRecord(draft));
   return {
     ...draft,
@@ -7178,6 +7179,27 @@ export function GeneratedContentAdminDashboard() {
     setMessage(`Opened ${label}. Saving creates the editable Content Studio row; it does not publish unreviewed wording.`);
   }
 
+  async function openExactTransitNatalSource(selection: TransitNatalSelection) {
+    const key = transitNatalExactContentKey(selection);
+    if (!key) return;
+    setIsLoading(true);
+    try {
+      // Fetch before creating: a saved draft or publication must never be replaced by a blank starter.
+      const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1`, secret);
+      const row = payload.rows?.find(candidate => candidate.content_key === key);
+      if (row) { await openRow(row); return; }
+      if (!confirmSkyEditorNavigation()) return;
+      setSelectedRowId(null);
+      setCompositionEditorContext(null);
+      setDraft(transitNatalExactSourceDraft(selection));
+      setMessage("Opened an empty exact passage. It will reach Sky Placement and You Transit only after review and publication.");
+      scrollEditorToTop();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not open the exact transit passage.");
+    } finally { setIsLoading(false); }
+  }
+
   function renderTransitNatalSourceFinder() {
     const selectionComplete = Boolean(
       transitNatalPlanet
@@ -7257,7 +7279,7 @@ export function GeneratedContentAdminDashboard() {
 
         {!selection && <p className="admin-natal-placement-prompt">Choose all six values to preview the write-up and open its exact source rows.</p>}
         {selection && <TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"))} />}
-
+        {selection && transitNatalExactContentKey(selection) && <button type="button" disabled={isLoading} onClick={() => void openExactTransitNatalSource(selection)}>Open exact passage</button>}
       </section>
     );
   }

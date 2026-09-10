@@ -822,7 +822,7 @@ async function seedAdminApi(
           })
         : apiGeneratedContentRows;
       const requestedId = url.searchParams.get("id");
-      const requestedKeys = url.searchParams.get("contentKeys")?.split(",");
+      const requestedKeys = url.searchParams.get("contentKeys")?.split(",") ?? (url.searchParams.get("contentKey") ? [url.searchParams.get("contentKey")!] : undefined);
       if (requestedId) servedRows = servedRows.filter((row) => row.id === requestedId);
       if (requestedKeys) servedRows = servedRows.filter((row) => requestedKeys.includes(row.content_key));
       const limit = Math.max(1, Number(url.searchParams.get("limit") ?? servedRows.length));
@@ -2180,11 +2180,12 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) test(`canonical Personal Transit Studio preview ${width} ${theme}`, async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     const key = "authored/transit-aspect/sun/north-node/conjunction";
     const source = servingPackageRecords.get(key)!;
     expect(source).toBeTruthy();
     await page.setViewportSize({ width, height: 1000 });
-    await seedAdminApi(page, { generatedRows: [{
+    await seedAdminApi(page, { onGeneratedContentWrite: write => writes.push(write), generatedRows: [{
       id: "qa-canonical-transit", content_key: key, surface: "you", mode: "feed",
       event_type: "transit_aspect", block_type: "transit_aspect", status: "DRAFT", lane: "serving",
       headline: "Sun Conjunction North Node", summary: "", body: "Unsaved Studio draft must never replace the reader passage.",
@@ -2238,6 +2239,25 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("sun");
     await expect(preview.getByRole("alert")).toBeVisible();
     await expect(preview).not.toContainText("You may be offered a role");
+    await finder.getByRole("button", { name: "Open exact passage", exact: true }).click();
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-return/sun");
+    page.once("dialog", dialog => dialog.accept());
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByLabel("Natal planet or point", { exact: true }).selectOption("south-node");
+    await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("opposition");
+    await finder.getByRole("button", { name: "Open exact passage", exact: true }).click();
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/south-node/opposition");
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
+    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("");
+    const candidate = "A synthetic complete opening for the exact transit.\n\nA synthetic complete ending for the exact transit.";
+    await editor.getByLabel("Reader phrase · You", { exact: true }).fill(candidate);
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].payload).toMatchObject({ contentKey: "authored/transit-aspect/sun/south-node/opposition", status: "DRAFT", lane: "reference", body: candidate });
+    expect((writes[0].payload.sections as any).packageRecord.body_you).toBe(candidate);
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await finder.getByRole("button", { name: "Open exact passage", exact: true }).click();
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(candidate);
     await assertNoBrowserErrors();
   });
 
