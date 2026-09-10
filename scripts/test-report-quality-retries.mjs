@@ -111,7 +111,7 @@ try {
             assert.equal(input.targetDate, job.target_date);
           }
           if (scenario === "recovery" && generationCalls === 2) return { saved: [{ id: "approved-report-fixture" }] };
-          throw new TransitReadingJudgeBlockedError();
+          throw new TransitReadingJudgeBlockedError({ stage: "second_judgment", judgment: { result: { scores: { owner_voice: 3 }, findings: [{ category: "owner_voice", location: "body", finding: "Diagnostic fixture" }], overall: 0.8, verdict: "below_threshold" }, provider: "fixture", model: "fixture", version: "fixture", threshold: 0.85 } });
         };
         const execute = () => run({ workerId: "retry-regression", jobId: job.id, admin });
         await execute();
@@ -126,6 +126,8 @@ try {
           assert.equal(job.locked_at, null);
           assert.equal(job.locked_by, null);
           assert.match(job.last_error, /Writing quality gate did not pass/);
+          assert.match(job.last_error, /Diagnostic fixture/);
+          assert.ok(!String(placeholder.error).includes("Diagnostic fixture"), "Private diagnostics must not reach the reader placeholder.");
           assert.equal((await execute()).claimed, 0, "The backoff must prevent immediate retry churn.");
           while (job.state === "retry") {
             assert.ok(job.attempt < 4, "Retries must stop at the attempt cap.");

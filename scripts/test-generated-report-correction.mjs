@@ -86,7 +86,14 @@ try {
       }
     });
     if (["second-block", "invalid-correction"].includes(scenario)) {
-      await assert.rejects(run, isTransitReadingJudgeBlockedError);
+      await assert.rejects(run, (error) => {
+        assert.ok(isTransitReadingJudgeBlockedError(error));
+        assert.equal(error.diagnostic.stage, scenario === "second-block" ? "second_judgment" : "corrected_validation");
+        assert.equal(error.diagnostic.judgment.result.scores.owner_voice, 3);
+        assert.equal(error.diagnostic.judgment.result.findings[0].finding, "Fixture diagnostic");
+        assert.ok(!JSON.stringify(error.diagnostic).includes(original.body));
+        return true;
+      });
     } else if (scenario === "invalid-initial") {
       await assert.rejects(run);
       assert.equal(judgeCalls, 0, "Invalid drafts must never reach a judge.");

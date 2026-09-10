@@ -100,7 +100,11 @@ class TransitReadingQualityError extends Error {
 export class TransitReadingJudgeBlockedError extends Error {
   readonly code = "TRANSIT_READING_JUDGE_BLOCKED";
 
-  constructor() {
+  constructor(readonly diagnostic?: {
+    stage: "corrected_validation" | "second_judgment";
+    judgment: TransitReadingJudgeOutcome;
+    validationError?: string;
+  }) {
     super("The generated report did not pass its writing quality gate after one corrective rewrite and re-judge.");
     this.name = "TransitReadingJudgeBlockedError";
   }
@@ -304,7 +308,9 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
     );
     validateShape(corrected, options, initial.brief);
   } catch (error) {
-    if (error instanceof TransitReadingQualityError) throw new TransitReadingJudgeBlockedError();
+    if (error instanceof TransitReadingQualityError) throw new TransitReadingJudgeBlockedError({
+      stage: "corrected_validation", judgment: firstJudgment, validationError: error.message
+    });
     throw error;
   }
 
@@ -313,7 +319,9 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
     brief: initial.brief,
     ownerEvidence: options.ownerEvidence ?? []
   });
-  if (secondJudgment.result.verdict !== "pass") throw new TransitReadingJudgeBlockedError();
+  if (secondJudgment.result.verdict !== "pass") throw new TransitReadingJudgeBlockedError({
+    stage: "second_judgment", judgment: secondJudgment
+  });
 
   return { draft: corrected, provider, judgeAudit: judgeAudit(secondJudgment, 2) };
 }
