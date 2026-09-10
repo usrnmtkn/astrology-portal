@@ -1,3 +1,5 @@
+import ReviewWorkflowPanel from "./ReviewWorkflowPanel";
+import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
@@ -285,7 +287,7 @@ type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal"
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
-type SkyVoiceQueueView = "all" | "composite" | "upcoming" | "needs-review" | "audit" | "live-omissions";
+type SkyVoiceQueueView = "ready" | "changes" | "sources" | "all" | "composite" | "upcoming" | "needs-review" | "audit" | "live-omissions";
 type ContentLibraryView = "all" | "compatibility";
 type SkyReviewHorizonOccurrence = {
   kind: "aspect" | "placement";
@@ -1074,7 +1076,7 @@ function reviewRecordFromGeneratedRow(row: AdminGeneratedContentRow): AdminRevie
     targetDate: row.target_date,
     contentKey: row.content_key,
     eventType: row.event_type,
-    summary: normalizeText(row.summary),
+    summary: row.provider === "manual" && /^(REVIEWED|CONFIRMED|DRAFT) · /.test(row.summary ?? "") ? normalizeText(row.body) : normalizeText(row.summary),
     body: normalizeText(row.body),
     sections: row.sections,
     blockType: row.block_type,
@@ -2171,6 +2173,8 @@ function contentClassForRowUncached(row: AdminGeneratedContentRow | AdminReviewR
   const sourceRole = normalizedSourceRole(sourceSnapshot);
   const eventType = "content_key" in row ? row.event_type : row.eventType;
 
+  if (isContentStudioReferenceSource(contentKey, sourceSnapshot ?? {})) return "reference";
+  if (provider === "manual" && sourceSnapshotString(sourceSnapshot, "sourceFile").includes("authored-library")) return "phrasebank";
   if (rowIsFallbackArchitectureV3(row)) {
     const packageRole = sourceRole || String(rowPackageRecord(row).content_role ?? "").toLowerCase().replace(/_/g, "-");
     if (packageRole === "fallback-hook" || packageRole === "template") return "fallback-hook";
@@ -2463,6 +2467,7 @@ function dashboardErrorMessage(error: unknown) {
       return `${error.path} rejected ${error.method}. The dashboard called an endpoint with the wrong HTTP method.`;
     }
 
+    if ([400, 409, 422].includes(error.status) && error.details) return error.details;
     return `${error.path} failed with HTTP ${error.status}${error.details ? `: ${error.details}` : "."}`;
   }
 
@@ -2481,7 +2486,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
   const timeout = window.setTimeout(() => {
     timedOut = true;
     controller.abort();
-  }, 10_000);
+  }, path === "/api/admin/sky-draft-writing" ? 305_000 : 10_000);
   let response: Response;
   let payload: unknown;
 
@@ -2502,7 +2507,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
         status: 408,
         path,
         method,
-        details: "The API did not respond within 10 seconds. Reload before retrying so you do not overwrite a late response."
+        details: "The request timed out. Reload before retrying so you do not overwrite a late response."
       });
     }
     throw error;
@@ -2629,7 +2634,8 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
     || row.content_key.startsWith("fallback-vocab/")
     || packageRecord.content_role === "vocabulary";
   const canonicalHeadline = typeof editablePackageRecord.headline === "string" ? editablePackageRecord.headline : normalizeText(row.headline);
-  const canonicalSummary = typeof editablePackageRecord.summary === "string" ? editablePackageRecord.summary : normalizeText(row.summary);
+  const importedSummary = row.provider === "manual" && /^(REVIEWED|CONFIRMED|DRAFT) · /.test(row.summary ?? "") ? row.summary : null;
+  const canonicalSummary = importedSummary ? "" : typeof editablePackageRecord.summary === "string" ? editablePackageRecord.summary : normalizeText(row.summary);
   const canonicalBody = typeof editablePackageRecord.body === "string"
     ? editablePackageRecord.body
     : typeof editablePackageRecord.body_you === "string"
@@ -2656,7 +2662,7 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
     sections: objectRecord(row.sections),
     facts: row.facts ?? null,
     reviewerNotes: row.reviewer_notes ?? "",
-    sourceSnapshot: row.source_snapshot ?? null
+    sourceSnapshot: importedSummary ? { ...row.source_snapshot, importSummary: importedSummary } : row.source_snapshot ?? null
   };
 }
 
@@ -2776,7 +2782,7 @@ export function GeneratedContentAdminDashboard() {
   const [contentStatusFilter, setContentStatusFilter] = useState<"LIVE" | "NOT_LIVE" | "all">("all");
   const [contentLibraryView, setContentLibraryView] = useState<ContentLibraryView>("all");
   const [reviewStatusFilter, setReviewStatusFilter] = useState<GeneratedContentStatus | "all">("all");
-  const [skyVoiceQueueView, setSkyVoiceQueueView] = useState<SkyVoiceQueueView>("all");
+  const [skyVoiceQueueView, setSkyVoiceQueueView] = useState<SkyVoiceQueueView>("ready");
   const [liveOmittedSections, setLiveOmittedSections] = useState<LiveOmittedSectionReviewItem[]>(() => readLiveOmittedSectionQueue());
   const [sharedLiveOmittedSections, setSharedLiveOmittedSections] = useState<LiveOmittedSectionReviewItem[]>([]);
   const [sharedLiveOmittedSectionsLoaded, setSharedLiveOmittedSectionsLoaded] = useState(false);
@@ -3130,8 +3136,19 @@ export function GeneratedContentAdminDashboard() {
     }
     return 0;
   }), [reviewQueueRows, reviewStatusFilter, contentClassFilter, tierFilter, query]);
+  function workflowBucket(row: AdminReviewRecord) {
+    return reviewWorkBucket(row.rawGlobalRow ?? { content_key: row.contentKey, status: row.status, body: row.body,
+      block_type: row.blockType, source_snapshot: row.sourceSnapshot });
+  }
+  const workflowReviewRows = filteredReviewRows.filter(row => {
+    const bucket = workflowBucket(row);
+    if (skyVoiceQueueView === "sources") return bucket === "source";
+    if (skyVoiceQueueView === "ready") return bucket === "ready";
+    if (skyVoiceQueueView === "changes") return bucket === "changes";
+    return bucket !== "source";
+  });
   const filteredCompositeReviewRows = useMemo(
-    () => filteredReviewRows.filter(isCompositeRelationshipRow),
+    () => filteredReviewRows.filter(row => isCompositeRelationshipRow(row) && workflowBucket(row) !== "source"),
     [filteredReviewRows]
   );
   const skyVoiceNeedsReviewRows = useMemo(
@@ -3683,9 +3700,9 @@ export function GeneratedContentAdminDashboard() {
     setShowReferenceRows(page === "content" && category === "Calendar Aspects");
     setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
     setSkyVoiceQueueView(
-      page === "reviewQueue" && ["composite", "upcoming", "needs-review", "audit", "live-omissions"].includes(view ?? "")
+      page === "reviewQueue" && ["ready", "changes", "sources", "all", "composite", "upcoming", "needs-review", "audit", "live-omissions"].includes(view ?? "")
         ? view as SkyVoiceQueueView
-        : "all"
+        : "ready"
     );
     setContentClassFilter(source && contentClassFilters.some((filter) => filter.key === source) ? source : "all");
     if (openedFromUnresolved) revealUnresolvedContentRow();
@@ -4070,6 +4087,42 @@ export function GeneratedContentAdminDashboard() {
     const serialized = JSON.stringify(saved);
     editorBaselineRef.current = serialized;
     editorSavedInputRef.current = serialized;
+  }
+
+  async function runSkyDraftWriting(contentKey: string, action: "generate" | "recheck", row?: AdminGeneratedContentRow | null) {
+    setIsLoading(true);
+    setEditorSaveError("");
+    const writingSession = editorSessionRef.current;
+    setMessage(action === "generate" ? "Generating one draft and checking its writing…" : "Checking saved writing. Your text will not be rewritten…");
+    try {
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; issues: string[] }>("/api/admin/sky-draft-writing", secret, {
+        method: "POST", body: JSON.stringify({ contentKey, action, ...(row?.updated_at ? { expectedUpdatedAt: row.updated_at } : {}) })
+      });
+      const saved = payload.rows?.[0];
+      if (!payload.ok || !saved || saved.content_key !== contentKey) throw new Error("Writing result was not confirmed. Refresh this draft.");
+      setRows(current => dedupeGeneratedContentRows([...current.filter(candidate => candidate.id !== saved.id), saved]));
+      if (writingSession === editorSessionRef.current) {
+        setEditorSourceRow(saved);
+        setSelectedRowId(saved.id);
+        rememberSavedDraft(draftFromRow(saved));
+      }
+      setSkyReviewHorizon(current => current ? { ...current, occurrences: current.occurrences.map(occurrence => occurrence.contentKey === contentKey
+        ? { ...occurrence, row: saved, reviewStatus: payload.issues.length ? "draft_needs_work" : "ready_for_owner" } : occurrence) } : current);
+      setMessage(payload.issues.length ? "Draft saved. Review the writing issues below, edit, and run checks again." : "Writing checks passed. Read the complete draft, then approve it when ready.");
+    } catch (error) {
+      setEditorSaveError(dashboardErrorMessage(error));
+      setMessage("Writing work did not complete. Your saved writing is preserved.");
+      try {
+        const latest = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1`, secret);
+        const saved = latest.rows?.[0];
+        if (saved) {
+          setRows(current => dedupeGeneratedContentRows([...current.filter(candidate => candidate.id !== saved.id), saved]));
+          if (writingSession === editorSessionRef.current) {
+            setEditorSourceRow(saved); setSelectedRowId(saved.id); rememberSavedDraft(draftFromRow(saved));
+          }
+        }
+      } catch { /* Keep the original error and saved text; Refresh is available. */ }
+    } finally { setIsLoading(false); }
   }
 
   async function approveAndScheduleSkyRow(row: AdminGeneratedContentRow) {
@@ -4687,6 +4740,9 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
     if (bulkStatus === "LIVE") {
+      const blocked = actionRows.filter(row => isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {})
+        || row.block_type === "sky_placement" || skyWritingIssues(row).length > 0);
+      if (blocked.length) { setMessage("Some selected rows need writing checks or a separate source/package review. Open those rows and complete their next action before publishing."); return; }
       const nonServingSourceRows = packageRows.filter((row) => {
         const snapshot = sourceSnapshotForRow(row);
         const facts = objectRecord("facts" in row ? row.facts : null);
@@ -5907,7 +5963,7 @@ export function GeneratedContentAdminDashboard() {
               <div className="admin-review-queue-commandbar-copy">
                 <p className="admin-eyebrow">Editorial workflow</p>
                 <h2>Review, sign off, publish</h2>
-                <span>Held copy stays out of reader routes.</span>
+                <span>Create writing, run checks, review, and publish. Source material has its own library.</span>
               </div>
               <div className="admin-new-actions">
                 <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
@@ -5921,6 +5977,9 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
             <nav className="admin-sky-voice-tabs admin-review-view-tabs" aria-label="Review queue views">
+              {([['ready', 'Ready for review'], ['changes', 'Needs changes'], ['sources', 'Source library']] as const).map(([view, label]) => (
+                <button key={view} type="button" className={skyVoiceQueueView === view ? "active" : ""} onClick={() => setSkyVoiceQueueView(view)}>{label}</button>
+              ))}
               <button type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setSkyVoiceQueueView("all")}>
                 All review
               </button>
@@ -5933,7 +5992,7 @@ export function GeneratedContentAdminDashboard() {
                 <strong>{filteredCompositeReviewRows.length}</strong>
               </button>
               <button type="button" className={skyVoiceQueueView === "upcoming" ? "active" : ""} onClick={() => { setSkyVoiceQueueView("upcoming"); if (!skyReviewHorizon) void loadSkyReviewHorizon(); }}>
-                Upcoming 90 days
+                Missing writing / upcoming
                 {skyReviewHorizon ? <strong>{skyReviewHorizon.counts.occurrences}</strong> : null}
               </button>
               <button type="button" className={skyVoiceQueueView === "needs-review" ? "active" : ""} onClick={() => setSkyVoiceQueueView("needs-review")}>
@@ -5945,7 +6004,7 @@ export function GeneratedContentAdminDashboard() {
                 <strong>{skyVoiceAuditRows.length}</strong>
               </button>
             </nav>
-            {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && (
+            {(["ready", "changes", "sources", "all", "composite"].includes(skyVoiceQueueView)) && (
               <AdminFilterDisclosure summary="Status, class, tier, and search">
                 <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
                   <div className="admin-review-filter-grid">
@@ -5987,8 +6046,8 @@ export function GeneratedContentAdminDashboard() {
                 </section>
               </AdminFilterDisclosure>
             )}
-            {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && renderBulkBar()}
-            {skyVoiceQueueView === "all" && renderReviewTable(filteredReviewRows)}
+            {(["ready", "changes", "sources", "all", "composite"].includes(skyVoiceQueueView)) && renderBulkBar()}
+            {["ready", "changes", "sources", "all"].includes(skyVoiceQueueView) && renderReviewTable(workflowReviewRows)}
             {skyVoiceQueueView === "live-omissions" && renderLiveOmittedSectionsQueue()}
             {skyVoiceQueueView === "composite" && renderReviewTable(filteredCompositeReviewRows)}
             {skyVoiceQueueView === "upcoming" && renderSkyReviewHorizon()}
@@ -7850,7 +7909,7 @@ export function GeneratedContentAdminDashboard() {
           {contentStatuses.map((status) => (
             <button key={status} type="button" className={reviewStatusFilter === status ? "active" : ""} onClick={() => setReviewStatusFilter(status)}>
               <span>{contentStatusLabel(status)}</span>
-              <strong>{reviewQueueRows.filter((row) => row.status === status).length}</strong>
+              <strong>{tableRows.filter((row) => row.status === status).length}</strong>
             </button>
           ))}
         </aside>
@@ -7988,7 +8047,7 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <div className="admin-review-queue-actions">
                   <button type="button" onClick={() => openRow(row)}>Edit</button>
-                  {row.judge_score === 3 && row.judge_gate === "human-review" && row.status !== "LIVE"
+                  {skyWritingIssues(row).length === 0 && ["DRAFT", "REVIEWED"].includes(row.status)
                     ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</button>
                     : null}
                 </div>
@@ -8028,7 +8087,7 @@ export function GeneratedContentAdminDashboard() {
             <p className="admin-eyebrow">Calculated occurrence inventory</p>
             <h3>{skyReviewHorizon.startDate} through {skyReviewHorizon.endDate}</h3>
             <p>{skyReviewHorizon.counts.aspectCandidates} aspect cards and {skyReviewHorizon.counts.placementCandidates} placement cards are reused across {skyReviewHorizon.counts.activeWindows} active windows. Dates come from calculated daily Sky snapshots; copy is never duplicated per day.</p>
-            <p><strong>{skyReviewHorizon.generationPlan.reusableCandidatesMissingDrafts} generated sign-specific drafts are missing.</strong> This is not the same as a reader-facing source gap because approved exact-aspect and phrasebook fallbacks may still cover the event. A complete first-pass generation run would require at least {skyReviewHorizon.generationPlan.writerCalls} writer and {skyReviewHorizon.generationPlan.reviewerCalls} reviewer calls. This screen does not start them.</p>
+            <p><strong>{skyReviewHorizon.generationPlan.reusableCandidatesMissingDrafts} generated sign-specific drafts are missing.</strong> This is not the same as a reader-facing source gap because approved exact-aspect and phrasebook fallbacks may still cover the event. Generate only the drafts you need. Approved existing writing may already cover these configurations. Generate one missing draft below, or write it manually. Each generation uses the configured writer. Writing checks are automatic; editorial approval is yours.</p>
           </div>
           <button type="button" onClick={() => void loadSkyReviewHorizon()} disabled={isLoading}>
             <RefreshCw size={16} aria-hidden="true" /> Recalculate
@@ -8038,7 +8097,7 @@ export function GeneratedContentAdminDashboard() {
         <div className="admin-sky-voice-cards">
           {skyReviewHorizon.occurrences.map((occurrence) => {
             const row = occurrence.row;
-            const canApprove = row?.judge_score === 3 && row.judge_gate === "human-review" && row.status !== "LIVE";
+            const canApprove = row && skyWritingIssues(row).length === 0 && ["DRAFT", "REVIEWED"].includes(row.status);
             const ownerApprovedArticleKey = ownerApprovedSkyPlacementArticleKey(occurrence.contentKey);
             const statusLabel = ownerApprovedArticleKey
               ? ownerApprovedReplacementLabel
@@ -8064,7 +8123,7 @@ export function GeneratedContentAdminDashboard() {
                     ? <div><dt>Reader source</dt><dd><code>{ownerApprovedArticleKey}</code></dd></div>
                     : null}
                 </dl>
-                <div className="admin-sky-voice-body">{row?.body || "No saved draft exists yet. Create a manual draft to write this card, or run the separately authorized generation job."}</div>
+                <div className="admin-sky-voice-body">{row?.body || "No writing is saved for this configuration. Generate a draft or write it manually, then review it before publication."}</div>
                 <div className="admin-review-queue-actions">
                   {ownerApprovedArticleKey ? (
                     <button type="button" onClick={() => void openServingFallbackRow(ownerApprovedArticleKey, occurrence)} disabled={isLoading}>
@@ -8072,7 +8131,7 @@ export function GeneratedContentAdminDashboard() {
                     </button>
                   ) : null}
                   {row ? <button type="button" onClick={() => openRow(row)}>Edit</button> : null}
-                  {!row ? <button type="button" onClick={() => openMissingSkyDraft(occurrence)}>Create draft</button> : null}
+                  {!row ? <><button type="button" disabled={isLoading} onClick={() => void runSkyDraftWriting(occurrence.contentKey, "generate")}>Generate draft</button><button type="button" onClick={() => openMissingSkyDraft(occurrence)}>Write manually</button></> : null}
                   {canApprove ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</button> : null}
                 </div>
               </article>
@@ -8114,6 +8173,7 @@ export function GeneratedContentAdminDashboard() {
     const isPackageDraft = draftIsFallbackArchitectureV3(currentDraft);
     const isGuidedHeldReview = isPackageDraft && guidedReviewKey === currentDraft.contentKey;
     const guidedReviewDecision = objectRecord(objectRecord(currentDraft.sections)?.contentStudioReview);
+    const isReferenceDraft = isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {});
     const isGovernedSkyDraft = ["sky_aspect", "sky_placement"].includes(currentDraft.blockType);
     const persistedDraft = selectedRow ? draftFromRow(selectedRow) : null;
     const serializedCurrentDraft = JSON.stringify(currentDraft);
@@ -8695,7 +8755,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = isSkySummaryDraft ? "Summary wording" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
+    const bodyFieldLabel = isReferenceDraft ? "Source text" : isSkySummaryDraft ? "Summary wording" : lunarIdentity ? "Full lunar passage" : isYouOnlyNatalExactDraft
       ? "You view exact copy"
       : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
@@ -9609,6 +9669,9 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
+          {selectedRow && !isPackageDraft && <ReviewWorkflowPanel row={selectedRow} unsaved={draftHasUnsavedChanges} busy={isLoading}
+            onCheck={() => void runSkyDraftWriting(selectedRow.content_key, "recheck", selectedRow)}
+            onGenerate={() => void runSkyDraftWriting(selectedRow.content_key, "generate", selectedRow)} />}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
@@ -9620,8 +9683,8 @@ export function GeneratedContentAdminDashboard() {
                 placeholder={bodyFieldPlaceholder}
               />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.body)}</small>
-              {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyHint}</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft ? "The assembly pattern the app renders. Keep variable names inside double braces." : "The complete reader-facing write-up. Stored internally as Body."}</small>}
+              {isReferenceDraft ? <small className="admin-field-hint">Background for writing finished cards. This text is never published directly.</small> : fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyHint}</small>}
+              {!isReferenceDraft && !fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft ? "The assembly pattern the app renders. Keep variable names inside double braces." : "The complete reader-facing write-up. Stored internally as Body."}</small>}
               {isYouOnlyNatalExactDraft && <small className="admin-field-hint">This exact override is used only in You. The Friends version is composed from separate Friend source writing below.</small>}
               {isVocabularyDraft && isPackageDraft && <small className="admin-field-hint">{vocabularyHasTheyVersion
                 ? "Used when the app speaks directly to the person reading their own chart."
@@ -10254,7 +10317,7 @@ export function GeneratedContentAdminDashboard() {
                 {reviewComplete ? "Reviewed" : "Mark reviewed"}
               </button>
               {isGovernedSkyDraft && selectedRow ? (
-                <button className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
+                <button className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy || skyWritingIssues(selectedRow).length > 0} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
                   <Check size={16} aria-hidden="true" />
                   {currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}
                 </button>

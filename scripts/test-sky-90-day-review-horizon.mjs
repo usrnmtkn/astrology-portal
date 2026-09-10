@@ -86,13 +86,13 @@ assert.match(adminApi, /owner-approved-package-import-required/u);
 assert.match(adminApi, /\["sky_aspect", "sky_placement"\]\.includes\(existing\?\.block_type/u);
 
 const dashboard = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
-assert.match(dashboard, /Upcoming 90 days/u);
+assert.match(dashboard, /Missing writing \/ upcoming/u);
 assert.match(dashboard, /Approve for package/u);
 assert.match(dashboard, /Approve & schedule/u);
 assert.match(dashboard, /\["DRAFT", "REVIEWED"\]\.includes\(row\.status\)/u);
 assert.match(dashboard, /This view is inventory and review status only/u);
 assert.match(dashboard, /ownerApprovedSkyPlacementArticleKey\(occurrence\.contentKey\)/u);
-assert.match(dashboard, /Create draft/u);
+assert.match(dashboard, /Write manually/u);
 assert.match(dashboard, /openMissingSkyDraft\(occurrence\)/u);
 assert.match(dashboard, /facts:\s*draftForSave\.facts \?\? \{\}/u);
 assert.match(dashboard, /sections:\s*draftForSave\.sections \?\? \{\}/u);
