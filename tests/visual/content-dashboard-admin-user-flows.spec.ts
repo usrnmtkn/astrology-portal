@@ -5441,6 +5441,10 @@ for (const pair of ["sun-chiron", "moon-chiron"]) for (const width of [390, 1440
   const assertNoBrowserErrors = watchBrowserErrors(page);
   await seedAdminApi(page, { generatedRows: [row], reviewRows: [{ ...reviewRecordRows[0], id: row.id, contentKey: row.content_key, status: "DRAFT" }],
     onGeneratedContentWrite: write => writes.push(write) });
+  // Production's editorial inventory excludes reference sources, even though
+  // review-records still lists them. A fresh queue must load their saved rows.
+  await page.route("**/api/admin/generated-content?**", route => new URL(route.request().url()).searchParams.get("visibility") === "editorial"
+    ? route.fulfill({ json: { ok: true, rows: [] } }) : route.fallback());
   await expectAdminRouteLoads(page, "/admin/content#review-queue");
   await page.evaluate(value => document.documentElement.dataset.theme = value, theme);
   const queueRow = page.locator(".admin-review-queue-row", { hasText: row.content_key });
@@ -5460,6 +5464,10 @@ for (const pair of ["sun-chiron", "moon-chiron"]) for (const width of [390, 1440
   await expect(editor.getByRole("button", { name: "Publish to app", exact: true })).toHaveCount(0);
   await expect(editor.getByLabel("Reader copy", { exact: true })).toHaveValue(row.body);
   await expect(editor.getByRole("button", { name: "Reviewed", exact: true })).toBeDisabled();
+  await page.reload();
+  await queueRow.getByRole("button", { name: "Edit", exact: true }).click();
+  await expect(editor.getByRole("button", { name: "Reviewed", exact: true })).toBeDisabled();
+  await expect(editor.getByLabel("Reader copy", { exact: true })).toHaveValue(row.body);
   await expectNoHorizontalOverflow(page, "Source review editor");
   await page.screenshot({ path: `test-results/review-queue-${pair}-${theme}-${width}.png` });
   assertNoBrowserErrors();

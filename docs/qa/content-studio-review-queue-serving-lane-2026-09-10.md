@@ -69,7 +69,33 @@ API owner-review, CRUD/hydration, atomic concurrency, special-mutation concurren
 revision completion, typecheck and CSS/token checks pass. All browser storage
 responses remain fixtures; production verification still requires deployment.
 
-The stricter confirmation checks measure 317,027 bytes of aggregate Admin
+The initial stricter confirmation checks measured 317,027 bytes of aggregate Admin
 JavaScript gzip, 27 bytes above the previous limit. The aggregate ceiling is
-increased by 100 bytes to 317,100; entry and largest-chunk limits, dependency
+initially increased by 100 bytes to 317,100; entry and largest-chunk limits, dependency
 boundaries, and reader budgets are unchanged. No new runtime dependency was added.
+
+## Pre-merge production inspection
+
+A read-only check in the owner's signed-in production browser found that the
+Sun–Chiron and Moon–Chiron queue entries had no Edit action after a fresh load.
+The review-record endpoint included them, but the initial editorial inventory
+excluded reference sources. The Review Queue now requests the extended inventory
+both on initial load and when navigating from another workspace.
+
+The source tests now model the production inventory filter and reload the page
+after review. Before the loading fix, the Sun–Chiron regression failed waiting
+for Edit, reproducing production; all 12 focused queue/save cases pass with the
+fix. No editorial state or prose was changed during production inspection.
+
+CI exposed a size difference from the local build: it includes its configured
+Supabase public URL and key. Rebuilding with those same fixture environment
+variables on Node 22 measures 622,503 bytes of entry JavaScript, 176,794 bytes of
+entry gzip, and 317,238 bytes of total gzip. Final ceilings increase by 500 bytes
+from main to 623,000 raw for entry/largest chunks and 317,500 total gzip. The
+177,000 entry gzip limit, deferred dependency boundaries and reader budgets stay
+unchanged. This replaces the initial 100-byte aggregate adjustment.
+
+The final complete Content Studio suite passes all 89 tests (1.8 minutes),
+including the source inventory/reload regressions. Admin build/typecheck,
+CI-environment bundle checks, CSS/token audit, CRUD/hydration and queue contract
+checks also pass after the inventory change.

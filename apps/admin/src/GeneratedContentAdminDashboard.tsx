@@ -3321,6 +3321,7 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     const needsExtendedInventory = activePage === "skyWriteups"
+      || activePage === "reviewQueue"
       || activePage === "unresolvedContent"
       || isCompositionPage(activePage)
       || (activePage === "content" && categoryFilter === "Natal Aspects")
@@ -3927,6 +3928,7 @@ export function GeneratedContentAdminDashboard() {
     setSourceDraftError(null);
     try {
       const needsExtendedInventory = activePage === "unresolvedContent"
+        || activePage === "reviewQueue"
         || isCompositionPage(activePage)
         || (activePage === "content" && categoryFilter === "Natal Aspects")
         || (activePage === "content" && categoryFilter === "Calendar Aspects")
