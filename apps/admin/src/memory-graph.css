@@ -64,7 +64,7 @@
 @media (prefers-reduced-motion: reduce) { .memory-reference-root, .memory-search-container, .memory-match-panel, .memory-match-header svg { animation: none; } }
 
 /* The upstream console stylesheet hides the entire legend below 768 px. */
-.memory-reference-root #memory-reference-legend { display: block; overflow-y: auto; }
+.memory-reference-root #memory-reference-legend { display: block; width: var(--graph-legend-width); overflow-y: auto; }
 .memory-reference-root #memory-reference-legend ._1y3huhxc { height: var(--graph-legend-header-height); }
 @media (max-width: 767px) {
   .memory-reference-root #memory-reference-legend { top: var(--space-5); bottom: auto; max-height: var(--graph-legend-max-height); }
