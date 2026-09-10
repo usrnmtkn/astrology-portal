@@ -57,7 +57,18 @@ export type SolarDaylight = {
   sunsetSettingSign?: string | null;
 };
 
+export type SkyPlacementAspectFacts = {
+  planet: string;
+  sign: string;
+  timeZone: string;
+  inSign: Array<{ id: string; occursAt: string; planet: string; aspect: string; otherPlanet: string }>;
+  retrograde?: Array<{ id: string; occursAt: string; planet: string; aspect: string; otherPlanet: string }>;
+  retrogradeStart?: string;
+  retrogradeEnd?: string;
+};
+
 export type SkySnapshot = {
+  placementAspectFacts?: SkyPlacementAspectFacts;
   location: LocationInput;
   generatedAt: string;
   cacheState?: {

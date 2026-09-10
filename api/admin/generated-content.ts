@@ -2,7 +2,7 @@ import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySum
 // @ts-ignore Shared inline-variable contract for continuous Sky placement prose.
 import { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 // @ts-ignore Shared canonical section schema; no database metadata can expand it.
-import { isSkyEvergreenSource, skyEvergreenFields, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
+import { isSkyEvergreenSource, skyEvergreenEditableFields, skyEvergreenFields, skyEvergreenSectionText, skyEvergreenSectionFragments, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createHash } from "node:crypto";
@@ -405,7 +405,7 @@ function setPackageValueAt(record: Record<string, unknown>, path: string, value:
 }
 
 function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, unknown>) {
-  if (path === SKY_EVERGREEN_SECTIONS_PATH) return isSkyEvergreenSource(packageRecord);
+  if (isSkyEvergreenSource(packageRecord) && skyEvergreenEditableFields(packageRecord).some((field: { path: string }) => field.path === path)) return true;
   const studioPaths = Array.isArray(packageRecord?.studio_editable_fields)
     ? packageRecord.studio_editable_fields
       .filter(isRecord)
@@ -425,15 +425,15 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
     ? record.studio_editable_fields.filter(isRecord).map((field) => stringFrom(field.path)).filter(Boolean)
     : [];
   const sections = isRecord(effective.fallback) && Array.isArray(effective.fallback.sections) ? effective.fallback.sections : [];
-  const copy = [...fields.map((path) => packageValueAt(effective, path)), ...sections.filter(isRecord).map(section => section.body)]
+  const copy = [...fields.map((path) => packageValueAt(effective, path)), ...sections.filter(isRecord).map(section => skyEvergreenSectionText(section))]
     .filter((value) => typeof value === "string").join("\n\n");
   const hardFailures: string[] = [];
   if (isSkyEvergreenSource(record)) {
-    for (const path of ["placementArticle", "fallback.hook", "fallback.lived", "fallback.turn"]) {
+    for (const path of ["placementArticle", "placementArticleDirect", "placementArticleRetrograde", "fallback.hook", "fallback.lived", "fallback.turn"]) {
       hardFailures.push(...skyPlacementVariableIssues(packageValueAt(effective, path)).map((issue: string) => `${path}: ${issue}`));
     }
     for (const section of sections.filter(isRecord)) {
-      hardFailures.push(...skyPlacementVariableIssues(section.body).map((issue: string) => `Evergreen section ${section.id}: ${issue}`));
+      hardFailures.push(...skyPlacementVariableIssues(skyEvergreenSectionText(section)).map((issue: string) => `Evergreen section ${section.id}: ${issue}`));
     }
   }
   if (/\byou have (?:a|an) (?:gift|talent|natural ability|instinct)\b/iu.test(copy)) {
@@ -473,7 +473,13 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     const layout = packageValueAt(proposedRecord, SKY_EVERGREEN_SECTIONS_PATH);
     validateSkyEvergreenSections(layout);
     if (Array.isArray(layout)) for (const section of layout.filter(isRecord)) {
-      if (typeof section.body === "string") editableFields.push([`fallback.sections.${section.id}`, section.body, ""]);
+      if (!section.source) {
+        editableFields.push([`fallback.sections.${section.id}`, skyEvergreenSectionText(section), ""]);
+        // Validate every authored fragment even while the combination is incomplete.
+        for (const fragment of skyEvergreenSectionFragments(section)) {
+          editableFields.push([`fallback.sections.${section.id}`, fragment, ""]);
+        }
+      }
     }
   }
   if (packageDraft) {
@@ -500,7 +506,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       && (isSkyPlacementVariableField(row.content_key, field.replace(/^packageDraft\./u, ""))
         // Publication mirrors the selected canonical body into these envelope
         // fields. They must accept the same tokens as their source passage.
-        || isSkyEvergreenSource(record) && ["body", "body_you"].includes(field));
+        || (isSkyEvergreenSource(record) || /^sky-placement\/retrograde\/[^/]+$/u.test(row.content_key)) && ["body", "body_you"].includes(field));
     if (skyVariableField) {
       const issues = skyPlacementVariableIssues(value);
       if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);

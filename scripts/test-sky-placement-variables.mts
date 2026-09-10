@@ -47,6 +47,6 @@ for (const bad of ["{{fallback.hook}}", "{{ascendant}}", "{{#planetTitle}}", "{{
 assert.deepEqual(skyPlacementVariableIssues("{{ planetTitle }} in {{signTitle}}"), []);
 assert(isSkyPlacementVariableField(key, "fallback.sections.custom"));
 assert(!isSkyPlacementVariableField(key, "tldrWhat"));
-assert(!isSkyPlacementVariableField("sky-placement/retrograde/saturn", "Body"));
+assert(isSkyPlacementVariableField("sky-placement/retrograde/saturn", "Body"));
 assert.equal(JSON.stringify(corpus), before);
 console.log("PASS: Sky inline variables in article/custom fallback, direct/Rx, missing facts, unused-path isolation, editor/Node/browser/shipped parity, unchanged corpus.");

@@ -3336,6 +3336,47 @@ var SKY_EVERGREEN_DEFAULT_SECTIONS = [
   { id: "turn", source: "turn" }
 ];
 var labels = { hook: "Fallback opening", lived: "Fallback: how it shows up", turn: "Fallback: challenge and response" };
+var SKY_SECTION_ROLES = ["main", "complication", "history", "return", "phase", "theme", "response", "education", "orientation", "axis", "key-event", "practical"];
+var SKY_INGREDIENT_ROLES = ["meaning", "mechanism", "context", "example", "collective-example", "tension", "question", "response", "closing-point"];
+function skyEvergreenSectionText(section) {
+  if (section.paragraphs) return section.paragraphs.map((paragraph) => skyEvergreenSectionText(paragraph)).filter(Boolean).join("\n\n");
+  if (section.items) return section.items.map((item) => {
+    if (!item.action.trim() || item.phrases.some((phrase) => !phrase.text.trim())) return "";
+    return item.action + skyEvergreenSectionText(item);
+  }).filter(Boolean).join("\n\n");
+  if (!section.phrases) return section.body;
+  if (!section.phrases.length || section.phrases.some((phrase) => !phrase.text.trim())) return "";
+  return section.phrases.map((phrase) => phrase.joinBefore + phrase.text).join("");
+}
+function skyEvergreenSectionFragments(section) {
+  if (section.paragraphs) return section.paragraphs.flatMap(skyEvergreenSectionFragments);
+  if (section.items) return section.items.flatMap((item) => [item.action, ...skyEvergreenSectionFragments(item)]);
+  return section.phrases ? section.phrases.flatMap((phrase) => [phrase.joinBefore, phrase.text]) : [section.body ?? ""];
+}
+function validatePhrases(phrases) {
+  if (!Array.isArray(phrases) || phrases.length > 24) throw new Error("A phrase composition supports at most 24 phrases.");
+  const ids = /* @__PURE__ */ new Set();
+  let length = 0;
+  for (const phrase of phrases) {
+    if (!phrase || typeof phrase !== "object" || Array.isArray(phrase) || typeof phrase.id !== "string" || !/^[a-z][a-z0-9-]{0,63}$/u.test(phrase.id) || ids.has(phrase.id) || typeof phrase.text !== "string" || typeof phrase.joinBefore !== "string" || phrase.joinBefore.length > 2e3 || phrase.source !== void 0 && (typeof phrase.source !== "string" || phrase.source.length > 1e3) || phrase.role !== void 0 && !SKY_INGREDIENT_ROLES.includes(phrase.role) || Object.keys(phrase).some((key) => !["id", "text", "joinBefore", "source", "role"].includes(key))) {
+      throw new Error("Each phrase needs a unique identifier, exact text, and authored joining text; source notes are optional.");
+    }
+    ids.add(phrase.id);
+    length += phrase.text.length + phrase.joinBefore.length;
+  }
+  if (length > 2e4) throw new Error("A composed section must be at most 20000 characters.");
+}
+function validatePacket(section, kind) {
+  const units = section[kind];
+  if (!Array.isArray(units) || units.length > 24) throw new Error("A section supports at most 24 paragraphs or practical items.");
+  const ids = /* @__PURE__ */ new Set();
+  for (const unit of units) {
+    if (!unit || typeof unit !== "object" || Array.isArray(unit) || typeof unit.id !== "string" || !/^[a-z][a-z0-9-]{0,63}$/u.test(unit.id) || ids.has(unit.id) || kind === "paragraphs" && (typeof unit.job !== "string" || unit.job.length > 120) || kind === "items" && typeof unit.action !== "string" || Object.keys(unit).some((key) => !["id", "phrases", kind === "items" ? "action" : "job"].includes(key))) throw new Error("Each paragraph or practical item needs a unique identifier and its authored fields.");
+    ids.add(unit.id);
+    validatePhrases(unit.phrases);
+  }
+  if (skyEvergreenSectionFragments(section).join("").length > 2e4) throw new Error("A composed section must be at most 20000 characters.");
+}
 function isSkyEvergreenSource(source) {
   return source?.studio_content_type === "continuous-placement" && /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(source.contentKey ?? "");
 }
@@ -3349,13 +3390,31 @@ function validateSkyEvergreenSections(value) {
       throw new Error("Each evergreen section needs a unique, valid identifier.");
     }
     ids.add(section.id);
+    if (section.motion !== void 0 && !["all", "direct", "retrograde"].includes(section.motion)) {
+      throw new Error("Section motion must be all, direct, or retrograde.");
+    }
     if (Object.hasOwn(section, "source")) {
-      if (typeof section.source !== "string" || !Object.hasOwn(labels, section.source) || sources.has(section.source) || Object.keys(section).some((key) => !["id", "source"].includes(key))) {
+      if (typeof section.source !== "string" || !Object.hasOwn(labels, section.source) || sources.has(section.source) || Object.keys(section).some((key) => !["id", "source", "motion"].includes(key))) {
         throw new Error("An evergreen section may reference each existing hook only once.");
       }
       sources.add(section.source);
-    } else if (typeof section.label !== "string" || section.label.length > 120 || typeof section.body !== "string" || section.body.length > 2e4 || Object.keys(section).some((key) => !["id", "label", "body"].includes(key))) {
-      throw new Error("An added evergreen section needs an editor label and a text body.");
+    } else {
+      if (typeof section.label !== "string" || section.label.length > 120 || Object.keys(section).some((key) => !["id", "label", "body", "phrases", "paragraphs", "items", "role", "depth", "motion"].includes(key))) {
+        throw new Error("An added evergreen section needs an editor label and writing.");
+      }
+      if (section.role !== void 0 && !SKY_SECTION_ROLES.includes(section.role)) throw new Error("Unknown section role.");
+      if (section.depth !== void 0 && !["short", "standard", "deep"].includes(section.depth)) throw new Error("Unknown section depth.");
+      if (section.role === "practical" && !Object.hasOwn(section, "items")) throw new Error("A practical section requires action items.");
+      if (["body", "phrases", "paragraphs", "items"].filter((key) => Object.hasOwn(section, key)).length !== 1) throw new Error("Choose one writing format per section.");
+      if (Object.hasOwn(section, "paragraphs")) validatePacket(section, "paragraphs");
+      else if (Object.hasOwn(section, "items")) {
+        if (section.role !== "practical") throw new Error("Practical items require a practical section role.");
+        validatePacket(section, "items");
+      } else if (Object.hasOwn(section, "phrases")) {
+        validatePhrases(section.phrases);
+      } else if (typeof section.body !== "string" || section.body.length > 2e4) {
+        throw new Error("An added evergreen section needs a text body.");
+      }
     }
   }
 }
@@ -3364,18 +3423,28 @@ function skyEvergreenLayout(source) {
   validateSkyEvergreenSections(value);
   return value === void 0 ? SKY_EVERGREEN_DEFAULT_SECTIONS.map((section) => ({ ...section })) : value;
 }
-function skyEvergreenFields(source) {
-  return skyEvergreenLayout(source).map((section) => ({
+function skyEvergreenFields(source, motion) {
+  return skyEvergreenLayout(source).filter((section) => !motion || !section.motion || section.motion === "all" || section.motion === motion).map((section) => ({
+    motion: section.motion ?? "all",
     id: section.id,
     path: section.source ? `fallback.${section.source}` : `${SKY_EVERGREEN_SECTIONS_PATH}.${section.id}`,
     label: section.source ? labels[section.source] : section.label.trim() || "Untitled section",
-    value: section.source ? source?.fallback?.[section.source] ?? "" : section.body,
+    value: section.source ? source?.fallback?.[section.source] ?? "" : skyEvergreenSectionText(section),
     custom: !section.source
   }));
 }
 function skyEvergreenEditableFields(source) {
   const fields = source?.studio_editable_fields ?? [];
-  return isSkyEvergreenSource(source) ? [...fields.filter((field) => field.path !== SKY_EVERGREEN_SECTIONS_PATH), { path: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order" }] : fields;
+  return isSkyEvergreenSource(source) ? [
+    ...fields.filter((field) => field.path !== SKY_EVERGREEN_SECTIONS_PATH && !["placementArticleDirect", "placementArticleRetrograde"].includes(field.path)),
+    { path: "placementArticleDirect", label: "Direct placement article" },
+    { path: "placementArticleRetrograde", label: "Retrograde placement article" },
+    { path: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order" }
+  ] : fields;
+}
+function skyPlacementArticlePath(source, motion) {
+  const path = motion === "retrograde" ? "placementArticleRetrograde" : "placementArticleDirect";
+  return typeof source?.[path] === "string" && source[path].trim() ? path : "placementArticle";
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs
@@ -3384,6 +3453,12 @@ var SKY_PLACEMENT_VARIABLES = Object.freeze([
   { name: "signTitle", description: "Zodiac sign name.", availability: "Selected placement" },
   { name: "motion", description: "The word direct or retrograde.", availability: "Calculated motion" },
   { name: "entryDate", description: "Start of the placement\u2019s sign residency, including year.", availability: "Calculated residency dates; not the retrograde window" },
+  { name: "retrogradeStartDate", description: "Start of the calculated retrograde cycle, including year.", availability: "Calculated station-retrograde date" },
+  { name: "retrogradeEndDate", description: "End of the calculated retrograde cycle, including year.", availability: "Calculated station-direct date" },
+  { name: "aspectsInSign", description: "Dated list of exact major aspects to this body during its actual passes through this sign.", availability: "Calculated residency; excludes gaps. Major aspects to Sun, Mercury through Pluto, and Lilith; Moon excluded." },
+  { name: "aspectsWhileRetrograde", description: "Dated list of exact major aspects during this retrograde cycle, including any sign changes.", availability: "Calculated full retrograde cycle. Same aspect coverage as aspectsInSign." },
+  { name: "aspectsInSignCount", description: "Number of calculated exact aspects in the sign residency.", availability: "Calculated residency aspect list" },
+  { name: "aspectsWhileRetrogradeCount", description: "Number of calculated exact aspects in the retrograde cycle.", availability: "Calculated full retrograde cycle" },
   { name: "exitDate", description: "Final exit from the sign residency, including year.", availability: "Calculated residency dates; not the retrograde window" }
 ]);
 var names = new Set(SKY_PLACEMENT_VARIABLES.map((variable) => variable.name));
@@ -3402,6 +3477,7 @@ function skyPlacementVariableIssues(value) {
 function skyPlacementVariableFacts(input) {
   return {
     ...input.facts ?? {},
+    ...skyPlacementAspectVariables(input),
     planetTitle: title3(input.planet),
     signTitle: title3(input.sign),
     motion: input.isRetrograde === true ? "retrograde" : "direct"
@@ -3428,6 +3504,25 @@ function fillSkyPlacementVariables(value, facts) {
   const missing = segments.filter((segment) => segment.token && !segment.available);
   if (missing.length) throw new Error(`SKY_V4_SOURCE_GAP: missing calculated facts ${missing.map((segment) => segment.token).join(", ")}`);
   return segments.map((segment) => segment.text).join("");
+}
+function skyPlacementAspectVariables(input) {
+  const data = input.aspectFacts;
+  if (!data || title3(data.planet) !== title3(input.planet) || title3(data.sign) !== title3(input.sign)) return {};
+  const formatDate = (value) => new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: data.timeZone }).format(new Date(value));
+  const result = {};
+  const add = (name, events) => {
+    if (!Array.isArray(events)) return;
+    const unique = [...new Map(events.filter((event) => title3(event.planet) === title3(input.planet)).map((event) => [event.id, event])).values()].sort((a, b) => a.occursAt.localeCompare(b.occursAt));
+    result[`${name}Count`] = String(unique.length);
+    result[name] = unique.length ? unique.map((event) => `- ${formatDate(event.occursAt)}: ${title3(event.planet)} ${event.aspect} ${title3(event.otherPlanet)}`).join("\n") : "No exact major aspects in this calculated window.";
+  };
+  add("aspectsInSign", data.inSign);
+  if (data.retrogradeStart && data.retrogradeEnd) {
+    result.retrogradeStartDate = formatDate(data.retrogradeStart);
+    result.retrogradeEndDate = formatDate(data.retrogradeEnd);
+    add("aspectsWhileRetrograde", data.retrograde);
+  }
+  return result;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-120-owner-approval-v1.json
@@ -4744,7 +4839,7 @@ function renderSkyV4ContinuousPreview(corpus, input) {
   }
   input = { ...input, contexts: matchingPlacementContexts(input) };
   const facts = skyPlacementVariableFacts(input);
-  const fullArticle = article && input.articleAvailable !== false ? fillSkyPlacementVariables(article.placementArticle, facts).trim() : "";
+  const fullArticle = article && input.articleAvailable !== false ? fillSkyPlacementVariables(article[skyPlacementArticlePath(article, facts.motion)], facts).trim() : "";
   const overlays = resolveSkyV4ContextualOverlays(corpus, input.contexts, input.overlaySettings, input.overlaySuppressions);
   const fallbackOverlays = resolveSkyV4ContextualOverlays(
     corpus,
@@ -4754,7 +4849,7 @@ function renderSkyV4ContinuousPreview(corpus, input) {
     "fallback"
   );
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook ? fallbackOverlays[0]?.FallbackHookOverlay ?? "" : "";
-  const evergreen = article && !fullArticle && input.fallbackAvailable !== false ? skyEvergreenFields(article).map((section) => fillSkyPlacementVariables(section.value, facts)) : [];
+  const evergreen = article && !fullArticle && input.fallbackAvailable !== false ? skyEvergreenFields(article, facts.motion).map((section) => fillSkyPlacementVariables(section.value, facts)) : [];
   const fallback = article && !fullArticle && input.fallbackAvailable !== false ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)].filter(Boolean).map((part) => withoutUnresolvedSlots(fillFacts(part, facts))).filter((part) => part.trim()).join("\n\n") : "";
   const mainBody = fullArticle || fallback;
   const resolution = fullArticle ? "canonical-article" : fallback ? "exact-fallback" : "facts-only";
@@ -5233,6 +5328,17 @@ function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
     contentKey = `sky-placement/seasonal-context/${lower(input.sign)}/${lower(input.hemisphere)}`;
   }
   const source = releasedReaderRecord(corpus, contentKey);
+  if (input.inspectVariables === true) {
+    const retrograde = corpus.content.retrogradeGeneric.find((row) => lower(row.Planet) === lower(input.planet));
+    const copy = [
+      source.placementArticle,
+      source.placementArticleDirect,
+      source.placementArticleRetrograde,
+      ...skyEvergreenFields(source).map((field) => field.value),
+      retrograde?.Body
+    ].join("\n");
+    return { contentKey, requiresAspectFacts: /\{\{\s*(?:aspectsInSign(?:Count)?|aspectsWhileRetrograde(?:Count)?|retrogradeStartDate|retrogradeEndDate)\s*\}\}/u.test(copy) };
+  }
   const lunarContext = placementLunarContext(lunarContextSource, input);
   const lunarFacts = lunarContext?.facts ?? record(input.facts);
   const lunarFullPageBody = lunarContext ? withoutUnresolvedSlots(fillFacts(lunarContext.module.FullPageBody, lunarFacts)) : "";
@@ -5298,7 +5404,7 @@ ${lunarFullPageBody}` : "";
   if (route === "placement" && (input.isRetrograde === true || input.stationSupported === true)) {
     const retrograde = resolveSkyV4Retrograde(corpus, { body: input.planet, sign: input.sign, stationSupported: input.stationSupported });
     if (retrograde.body && retrograde.lookupKey && READER_COPY_SERVING_KEYS.has(retrograde.lookupKey)) {
-      pushReaderBody(retrograde.body, true);
+      pushReaderBody(fillSkyPlacementVariables(retrograde.body, skyPlacementVariableFacts(input)), true);
     }
   }
   return {
@@ -5335,7 +5441,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-09a";
+var PACKAGE_VERSION = "v3-2026-09-10c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

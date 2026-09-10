@@ -3140,8 +3140,8 @@ function findSkyPlacementResidencyAspects(
   timeZone: string,
   planet: string
 ): LunarCalendarEvent[] {
-  const planetId = skyPointPlanetId(swe, planet);
-  if (planetId === null || planet === "South Node") return [];
+  const planetId = planet === "South Node" ? swe.SE_TRUE_NODE : skyPointPlanetId(swe, planet);
+  if (planetId === null) throw new Error(`Unsupported aspect subject: ${planet}`);
 
   const otherPlanets = [
     "Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
@@ -3159,14 +3159,14 @@ function findSkyPlacementResidencyAspects(
         swe,
         planetId,
         otherPlanetId,
-        degrees,
+        planet === "South Node" ? 180 - degrees : degrees,
         start,
         end,
         0.25
       );
 
       for (const occursAt of passes) {
-        if (occursAt < start || occursAt > end) continue;
+        if (occursAt < start || occursAt >= end) continue;
         const id = `aspect-${planet}-${aspect}-${otherPlanet}-${occursAt.toISOString()}`
           .toLowerCase()
           .replace(/\s+/g, "-");
@@ -3182,7 +3182,7 @@ function findSkyPlacementResidencyAspects(
           primary: true,
           planets: [planet, otherPlanet],
           aspect,
-          fromSign: exactPlanetSign(swe, planetId, occursAt),
+          fromSign: exactPlanetSign(swe, planetId, occursAt, planet === "South Node" ? 180 : 0),
           toSign: exactPlanetSign(swe, otherPlanetId, occursAt),
           fromMotion: exactPlanetSpeed(swe, planetId, occursAt) < 0 ? "retrograde" : "direct",
           toMotion: exactPlanetSpeed(swe, otherPlanetId, occursAt) < 0 ? "retrograde" : "direct"
@@ -3235,7 +3235,8 @@ export async function getSkyPlacementSnapshot(
   location: LocationInput,
   requestedPlanet: string,
   requestedSign: string,
-  referenceDate: Date
+  referenceDate: Date,
+  includeAspectLists = false
 ): Promise<SkySnapshot> {
   if (Number.isNaN(referenceDate.getTime())) throw new Error("Sky Placement referenceDate must be valid.");
   const swe = await getSwissEph();
@@ -3247,7 +3248,26 @@ export async function getSkyPlacementSnapshot(
     : placementPlanet(swe, requested === "true-node" ? "north-node" : requested);
   const sign = placementSign(requestedSign);
   const sample = findNextPlacementSample(swe, planet, planetId, sign, referenceDate, longitudeOffset);
-  return getAstrodienstSky(location, sample, { includeTransitWindows: true });
+  const snapshot = await getAstrodienstSky(location, sample, { includeTransitWindows: true });
+  if (!includeAspectLists) return snapshot;
+  const window = signResidencyWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
+  if (!window.transitStart || !window.transitEnd) throw new Error("Missing placement aspect boundaries.");
+  const timeZone = location.timeZone || "UTC";
+  const eventsIn = (start: string, end: string) => rankPlacementEvents(
+    findSkyPlacementResidencyAspects(swe, new Date(start), new Date(end), timeZone, planet), planet
+  );
+  const passes = window.residencyPasses ?? [{ entryDate: window.transitStart, exitDate: window.transitEnd }];
+  const inSign = passes.flatMap(pass => eventsIn(pass.entryDate, pass.exitDate));
+  const retrograde = ["Sun", "Moon", "North Node", "South Node", "Lilith"].includes(planet) ? {} : retrogradeCycleFactsFor(
+    swe, planet, planetId, sample, exactPlanetSpeed(swe, planetId, sample) < 0 ? "retrograde" : "direct"
+  );
+  return { ...snapshot, placementAspectFacts: {
+    planet, sign, timeZone, inSign,
+    ...(retrograde.retrogradeStart && retrograde.retrogradeEnd ? {
+      retrogradeStart: retrograde.retrogradeStart, retrogradeEnd: retrograde.retrogradeEnd,
+      retrograde: eventsIn(retrograde.retrogradeStart, retrograde.retrogradeEnd)
+    } : {})
+  } };
 }
 
 export async function getSkyPlacementTransitFacts({
