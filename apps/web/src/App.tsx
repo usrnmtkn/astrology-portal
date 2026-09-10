@@ -234,6 +234,7 @@ import {
   selectSkyAspectCopyByPrecedence
 } from "./services/skyAspectRouting";
 import { skyAspectDateRange, skyAspectNarrativeTimingLines, timingGroupLabel } from "./services/skyAspectTiming";
+import { transitArticleDescription } from "./services/transitArticleDescription";
 import { natalTransitGeometry, natalTransitWindowDays } from "./services/natalTransitGeometry";
 import { isEligibleTransitReturn } from "./services/transitReturns";
 import { validateAstrologyFacts } from "./services/astrologyFacts";
@@ -688,6 +689,7 @@ type CalendarContentCacheEntry = {
 };
 
 export type YouTransitArticle = {
+  transitDescription?: string;
   id: string;
   title: string;
   glyph?: string;
@@ -16807,10 +16809,12 @@ function ProfileView({
         body: taggedSectionBody(section)
       }));
       const generated = personalTransitGeneratedContent.get(current.id) ?? null;
-      if (JSON.stringify(sections) === JSON.stringify(current.sections) && generated === current.generatedContent) return current;
-      return { ...current, sections, generatedContent: generated };
+      const description = transitArticleDescription(transit, natalSky, transitAspectTechnicalVerb(transit.aspect));
+      if (JSON.stringify(sections) === JSON.stringify(current.sections)
+        && generated === current.generatedContent && description === current.transitDescription) return current;
+      return { ...current, sections, generatedContent: generated, transitDescription: description };
     });
-  }, [fallbackArchitectureV3Version, personalTransitGeneratedContent, targetDate, transitItems]);
+  }, [fallbackArchitectureV3Version, natalSky, personalTransitGeneratedContent, targetDate, transitItems]);
 
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
   const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);
@@ -17251,6 +17255,7 @@ function ProfileView({
           summary: "",
           sections: articleSections,
           generatedContent: savedGeneratedContent,
+          transitDescription: transitArticleDescription(transit, natalSky, transitAspectTechnicalVerb(transit.aspect)),
           meta: [
             ...passDateMeta,
             { label: "Duration", value: timing.rangeLabel },
@@ -17438,6 +17443,7 @@ function ProfileView({
                     subtitle: "",
                     summary: "",
                     generatedContent: savedGeneratedContent,
+                    transitDescription: transitArticleDescription(transit, natalSky, transitAspectTechnicalVerb(transit.aspect)),
                     sections: normalized.sections.map((section) => ({
                       heading: section.heading,
                       tldr: "",

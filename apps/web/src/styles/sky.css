@@ -1503,3 +1503,15 @@
     display: none;
   }
 }
+
+/* Calculated context closes transit articles, matching the divided bond-card facts. */
+.article-section.article-transit-description {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: var(--border-width-thin) solid var(--card-border);
+}
+
+.article-transit-description p {
+  color: var(--card-meta-color);
+  letter-spacing: var(--tracking-body);
+}

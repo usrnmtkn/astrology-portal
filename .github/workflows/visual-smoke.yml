@@ -156,6 +156,7 @@ jobs:
         run: |
           node --experimental-strip-types scripts/test-sky-aspect-date-range.mjs
           node scripts/test-you-transit-live-content-wiring.mjs
+          node --import tsx scripts/test-transit-article-description.mts
           npx playwright test -c playwright.reader-recovery.config.ts
       - name: Upload Sky summary artifacts
         if: always()

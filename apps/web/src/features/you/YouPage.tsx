@@ -1,3 +1,4 @@
+import { ArticleTransitDescription } from "../../components/ArticleTransitDescription";
 import { Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
@@ -65,6 +66,7 @@ export type DailyHoroscopeAssembly = {
 };
 
 export type YouTransitArticle = {
+  transitDescription?: string;
   id: string;
   title: string;
   glyph?: string;
@@ -1078,6 +1080,7 @@ function YouTransitArticlePage({
                   ))}
                 </section>
               ) : null}
+              <ArticleTransitDescription description={displayArticle.transitDescription} />
               <div className="sky-detail-end" aria-hidden="true">✦</div>
             </div>
           </div>
