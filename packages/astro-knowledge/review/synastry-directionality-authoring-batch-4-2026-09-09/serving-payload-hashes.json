@@ -1,6 +1,7 @@
 {
   "schema": "synastry-directionality-serving-hashes/v1",
-  "hashAlgorithm": "sha256(body_you_runtime + \\"\\n---\\n\\" + body_they_runtime)",
+  "hashAlgorithm": "sha256(body_you_runtime + newline-delimiter + body_they_runtime)",
+  "delimiter": "\n---\n",
   "runtimeNameCompilation": "{{Name}} -> {{holder2}} in body_you",
   "rows": {
     "fallback-hook/synastry-pair/sun/ascendant/conjunction": "201bc5dbea2b678566c08bf8f027d9c77d79bbc97d0d51240c9ae47cbc7348ce",
