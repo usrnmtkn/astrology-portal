@@ -1196,7 +1196,8 @@ test.describe("client-facing user flow case studies", () => {
         ]) {
           await expectClientRouteLoads(page, route);
           const card = page.locator(".sky-detail-card").first();
-          await expect(card.locator("h1")).toBeVisible();
+          // The shell can be ready before the calculated placement article.
+          await expect(card.locator("h1")).toBeVisible({ timeout: routeReadyTimeoutMs });
           const box = await card.boundingBox();
           expect(box!.x).toBeCloseTo(width * 0.025, 0);
           expect(box!.width).toBeCloseTo(width * 0.95, 0);
