@@ -120,7 +120,7 @@ export function applySynastryDirectionalityLiveV1(baseRows, overlay) {
       source_keys: unique([
         ...(Array.isArray(base.source_keys) ? base.source_keys : []),
         overlay.approval_record,
-        "apps/web/src/content/fallbackArchitectureV3/source-rows/synastry-directionality-live-v1.json"
+        "apps/web/src/content/fallbackArchitectureV3/authored-inputs/synastry-directionality-live-v1.json"
       ])
     };
   }
