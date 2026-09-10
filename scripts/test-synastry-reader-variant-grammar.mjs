@@ -138,3 +138,7 @@ if (failures.length > 0) {
 }
 
 console.log(`Synastry reader-variant grammar gate passed (${rows.length} synastry rows; ${bondRows.length} bond-effect rows).`);
+
+// Keep the new viewer-centered semantic-direction release in the permanent
+// content test path without changing the large package.json test command.
+await import("./test-synastry-directional-overrides-v1.mjs");
