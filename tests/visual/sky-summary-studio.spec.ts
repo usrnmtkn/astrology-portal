@@ -341,6 +341,7 @@ test("full template controls preview order, publish, and reload", async ({ page,
   await expect(body).toHaveValue(revised);
   const reader = await context.newPage();
   await reader.clock.setFixedTime(new Date("2026-09-11T02:00:00Z"));
+  await reader.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
   await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: stored.length, rows: stored } }));
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-10", events: [
     { id: "station", type: "station", phase: "station-retrograde", direction: "retrograde", planet: "Mercury", sign: "Scorpio", startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" },
@@ -403,6 +404,7 @@ test("V6 Moon event sources stay separate and missing copy stays blank", async (
   expect(stored).toHaveLength(0);
   const reader = await context.newPage();
   await reader.clock.setFixedTime(new Date("2026-09-11T02:00:00Z"));
+  await reader.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-10", events: [
     { id: "ordinary", type: "lunation", title: "New Moon", sign: "Virgo", longitude: 165, startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" },
     { id: "eclipse", type: "lunation", title: "New Moon", eclipseType: "solar", sign: "Virgo", longitude: 165, startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" }
