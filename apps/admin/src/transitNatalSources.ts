@@ -1,5 +1,5 @@
-import { isEligibleTransitReturn } from "../../web/src/services/transitReturns";
-import { fullDetailReaderFacingCopy, isReaderFacingCopy } from "../../web/src/content/readerSafety";
+import { isEligibleTransitReturn } from "../../web/src/services/transitReturns.js";
+import { fullDetailReaderFacingCopy, isReaderFacingCopy } from "../../web/src/content/readerSafety.js";
 export const transitNatalPlanets = [
   "sun",
   "moon",
