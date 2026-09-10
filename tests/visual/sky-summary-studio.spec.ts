@@ -318,7 +318,7 @@ test("full template controls preview order, publish, and reload", async ({ page,
   const preview = assembly.getByLabel("Full summary preview", { exact: true });
   await expect(preview.locator("p")).toHaveCount(2);
   await expect(preview).toContainText("Today brings one exact aspect: Saturn squares Lilith. Also today, Mercury stations retrograde in Scorpio.");
-  await expect(preview).toContainText("New Moon in Virgo calls us to clear the clutter");
+  await expect(preview).toContainText("New Moon there calls us to clear the clutter");
   await assembly.getByText("Paragraphs and event order", { exact: true }).click();
   await assembly.getByRole("button", { name: "Move Stations earlier", exact: true }).click();
   await expect(preview).toContainText("Mercury stations retrograde in Scorpio today. One aspect is also exact today: Saturn squares Lilith.");
@@ -340,18 +340,19 @@ test("full template controls preview order, publish, and reload", async ({ page,
   await assembly.getByRole("button", { name: "Edit and publish full template", exact: true }).click();
   await expect(body).toHaveValue(revised);
   const reader = await context.newPage();
-  await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
+  await reader.clock.setFixedTime(new Date("2026-09-11T02:00:00Z"));
+  await reader.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
   await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: stored.length, rows: stored } }));
-  await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [
-    { id: "station", type: "station", phase: "station-retrograde", direction: "retrograde", planet: "Mercury", sign: "Scorpio", startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" },
-    { id: "ongoing", type: "station", phase: "retrograde-passage", direction: "retrograde", planet: "Saturn", sign: "Aries", startsAt: "2026-09-07T04:00:00Z", dateKey: "2026-09-07" },
-    { id: "moon", type: "lunation", title: "New Moon", sign: "Virgo", startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" }
+  await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-10", events: [
+    { id: "station", type: "station", phase: "station-retrograde", direction: "retrograde", planet: "Mercury", sign: "Scorpio", startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" },
+    { id: "ongoing", type: "station", phase: "retrograde-passage", direction: "retrograde", planet: "Saturn", sign: "Aries", startsAt: "2026-09-11T00:00:00Z", dateKey: "2026-09-10" },
+    { id: "moon", type: "lunation", title: "New Moon", sign: "Virgo", startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" }
   ] }] } } }));
-  await reader.goto("http://127.0.0.1:4294/#sky");
+  await reader.goto("http://127.0.0.1:4294/?date=2026-09-10#sky");
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
   await expect(summary).toContainText("Mercury stations retrograde in Scorpio today.");
   await expect(summary).not.toContainText("Saturn stations");
-  await expect(summary).toContainText("New Moon in Virgo calls us to clear the clutter");
+  await expect(summary).toContainText("New Moon there at 18° calls us to clear the clutter");
   await expect(summary).not.toContainText("The next New Moon");
   await expect(summary.getByRole("link", { name: "Mercury stations retrograde in Scorpio" })).toHaveAttribute("href", "#sky/placement/mercury/scorpio");
 });
@@ -393,24 +394,102 @@ test("V6 Moon event sources stay separate and missing copy stays blank", async (
   await map.getByLabel("Composition Moon sign").selectOption("Virgo");
   await map.getByLabel("Composition Moon event").selectOption("newMoon");
   const preview = map.getByLabel("Combined Sun and Moon preview");
-  await expect(preview).toContainText("New Moon in Virgo calls us to clear the clutter, refine our routines, and prioritize the details that nourish our well-being");
+  await expect(preview).toContainText("New Moon there calls us to clear the clutter, refine our routines, and prioritize the details that nourish our well-being");
   await expect(preview.getByRole("link", { name: "Edit New Moon in Virgo summary" })).toHaveAttribute("href", /moon%2Fvirgo%2FnewMoon/);
   await map.getByLabel("Composition Moon event").selectOption("fullMoon");
   await expect(map.getByLabel("Composition sources")).toContainText("NEEDS OWNER COPY");
-  await expect(preview).toContainText("while the Full Moon is in Virgo.");
+  await expect(preview).toContainText("while the Full Moon is in Pisces.");
   await map.getByRole("button", { name: "Edit Moon source" }).click();
   await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("");
   expect(stored).toHaveLength(0);
   const reader = await context.newPage();
-  await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
-  await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [
-    { id: "ordinary", type: "lunation", title: "New Moon", sign: "Virgo", longitude: 165, startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" },
-    { id: "eclipse", type: "lunation", title: "New Moon", eclipseType: "solar", sign: "Virgo", longitude: 165, startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" }
+  await reader.clock.setFixedTime(new Date("2026-09-11T02:00:00Z"));
+  await reader.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
+  await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-10", events: [
+    { id: "ordinary", type: "lunation", title: "New Moon", sign: "Virgo", longitude: 165, startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" },
+    { id: "eclipse", type: "lunation", title: "New Moon", eclipseType: "solar", sign: "Virgo", longitude: 165, startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" }
   ] }] } } }));
-  await reader.goto("http://127.0.0.1:4294/#sky");
+  await reader.goto("http://127.0.0.1:4294/?date=2026-09-10#sky");
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
-  await expect(summary).toContainText("Solar Eclipse in Virgo at 15° reminds us that striving for perfection can hinder growth");
+  await expect(summary).toContainText("Solar Eclipse there at 18° reminds us that striving for perfection can hinder growth");
   await expect(summary).not.toContainText("Moon in Cancer");
   await expect(summary).not.toContainText("New Moon in Virgo");
-  await expect(summary.getByRole("link", { name: "Solar Eclipse in Virgo at 15°" })).toHaveAttribute("href", "#sky/lunation/2026-09-07/virgo");
+  await expect(summary.getByRole("link", { name: "Solar Eclipse there at 18°" })).toHaveAttribute("href", "#sky/lunation/2026-09-11/virgo");
+});
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+  test(`source bank review and event geometry ${width} ${theme}`, async ({ page }) => {
+    const stored: any[] = [];
+    await mockStudio(page, stored);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/#sky-writeups?view=daily-summary");
+    await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
+    const studio = page.getByRole("region", { name: "Daily Sky Summary editor" });
+    const map = studio.getByRole("region", { name: "Sun and Moon composition map" });
+    await map.getByLabel("Composition Moon event").selectOption("newMoon");
+    await expect(map.getByLabel("Composition Moon sign")).toHaveValue("Virgo");
+    await map.getByLabel("Composition Moon sign").selectOption("Aries");
+    await expect(map.getByLabel("Composition Sun sign")).toHaveValue("Aries");
+    await map.getByLabel("Composition Moon event").selectOption("lunarEclipse");
+    await expect(map.getByLabel("Composition Moon sign")).toHaveValue("Libra");
+    await map.getByLabel("Composition Sun sign").selectOption("Gemini");
+    await expect(map.getByLabel("Composition Moon sign")).toHaveValue("Sagittarius");
+    await map.getByLabel("Composition Moon event").selectOption("regular");
+    await map.getByLabel("Composition Moon sign").selectOption("Cancer");
+    await expect(map.getByLabel("Composition Sun sign")).toHaveValue("Gemini");
+    const virgo = studio.getByRole("article", { name: "Sun in Virgo", exact: true });
+    await expect(virgo.getByText("Review supplied wording", { exact: true })).toHaveCount(0);
+    const aries = studio.getByRole("article", { name: "Sun in Aries", exact: true });
+    await aries.getByText("Review supplied wording", { exact: true }).click();
+    await expect(aries).toContainText("acts as a cosmic reset button that ignites our personal and collective fire");
+    await expect(aries).toContainText("puts more emphasis on starting");
+    await aries.scrollIntoViewIfNeeded();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+    await page.screenshot({ path: `test-results/sky-bank-${width}-${theme}.png` });
+    await aries.getByRole("button", { name: "Open supplied wording", exact: true }).click();
+    await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("acts as a cosmic reset button that ignites our personal and collective fire");
+    expect(stored).toHaveLength(0);
+    await page.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect.poll(() => stored[0]?.status).toBe("DRAFT");
+    expect(stored[0].content_key).toBe("cms/sky-daily-summary/sun/aries");
+    expect(stored[0].source_snapshot.suppliedBank.sourceKey).toBe("ms/sky-summary/sun/aries");
+    expect(stored[0].source_snapshot.suppliedBank.promotionAuthorized).toBe(false);
+    await page.reload();
+    await expect(aries).toContainText("acts as a cosmic reset button");
+  });
+}
+
+test("source bank loading can retry without blocking current summary editing", async ({ page }) => {
+  await mockStudio(page, []);
+  let attempts = 0;
+  await page.route("**/skySummarySourceBank-*.json", async route => {
+    attempts++;
+    if (attempts === 1) await route.fulfill({ status: 503, body: "Unavailable" });
+    else await route.continue();
+  });
+  await page.goto("/#sky-writeups?view=daily-summary");
+  await expect(page.getByRole("alert").filter({ hasText: "Supplied summary wording could not load" })).toBeVisible();
+  const aries = page.getByRole("article", { name: "Sun in Aries", exact: true });
+  await expect(aries).toContainText("puts more emphasis on starting");
+  await page.getByRole("button", { name: "Retry supplied wording" }).click();
+  await expect(aries.getByText("Review supplied wording", { exact: true })).toBeVisible();
+  expect(attempts).toBe(2);
+});
+
+test("reader omits an impossible calendar lunation without losing the current sky", async ({ context }) => {
+  const reader = await context.newPage();
+  await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
+  await reader.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
+  const warnings: string[] = [];
+  reader.on("console", message => { if (message.type() === "warning") warnings.push(message.text()); });
+  await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [
+    { id: "impossible", type: "lunation", title: "New Moon", sign: "Virgo", startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" }
+  ] }] } } }));
+  await reader.goto("http://127.0.0.1:4294/?date=2026-09-07#sky");
+  await expect.poll(() => warnings.some(message => message.includes("IMPOSSIBLE_SKY"))).toBe(true);
+  const summary = reader.getByLabel("Daily sky summary");
+  await expect(summary).toContainText("Sun in Virgo");
+  await expect(summary).toContainText("Moon in Cancer");
+  await expect(summary).not.toContainText("New Moon");
+  await expect(summary.getByRole("link", { name: /New Moon/ })).toHaveCount(0);
 });

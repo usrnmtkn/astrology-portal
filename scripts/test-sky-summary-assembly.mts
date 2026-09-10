@@ -13,7 +13,7 @@ const row = (name: string, body: string, status = "LIVE") => ({ id: name, conten
 const render = (f = facts, rows: any[] = []) => skySummaryParagraphs(skyDailySummaryParts(f, new Map(rows.map(r => [r.contentKey, r])))).map(p => p.map(x => x.text).join(""));
 assert.equal(render()[1], "Today brings one exact aspect: Saturn squares Lilith. Also today, Mercury stations retrograde in Scorpio. There is also one ingress: Venus enters Scorpio. Full supplied TLDR.");
 assert.equal(render().length, 2);
-assert.ok(render()[0].includes("New Moon in Virgo calls us to clear the clutter"));
+assert.ok(render()[0].includes("New Moon there calls us to clear the clutter"));
 const reordered = row("layout", "{openingSentence}\n\n{stationsSentence} {ingressesSentence} {exactAspectsSentence}\n\n{lunationSentence}");
 assert.equal(render(facts, [reordered])[1], "Mercury stations retrograde in Scorpio today. There is also one ingress: Venus enters Scorpio. Full supplied TLDR. One aspect is also exact today: Saturn squares Lilith.");
 const hidden = row("layout", "{openingSentence}\n\n{ingressesSentence}\n\n{lunationSentence}");

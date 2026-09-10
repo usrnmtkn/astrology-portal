@@ -1,3 +1,4 @@
+import { validSummaryGeometry } from "./skySummaryGeometry";
 import { selectedMoonKind, moonEventNames, moonSummaryKey, moonSummaryBody } from "./skyMoonSummary";
 import defaultAssembly from "./skyDailySummaryAssembly.json" with { type: "json" };
 import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
@@ -29,7 +30,7 @@ export type SkyDailySummaryFacts = {
   stations?: Array<{ id: string; label: string; direction: "direct" | "retrograde" }>;
   ingresses?: Array<{ id: string; label: string; tldr?: string }>;
   voidRemainingLabel?: string;
-  event?: { name: string; degree?: number; sign: string; countdown: string; isToday?: boolean; eclipseType?: "solar" | "lunar" };
+  event?: { placementsPending?: boolean; sun?: SummaryPlacement; name: string; degree?: number; sign: string; countdown: string; isToday?: boolean; eclipseType?: "solar" | "lunar" };
 };
 
 function fullerClause(body: "sun" | "moon", sign?: string, content?: CmsGeneratedContentMap, editorialPreview = false) {
@@ -49,6 +50,16 @@ const words = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "E
 const plain = (text: string): SummaryPart[] => [{ text }];
 const degreeText = (degree?: number) => typeof degree === "number" && Number.isFinite(degree) && degree >= 0 && degree < 30 ? ` at ${Math.floor(degree)}°` : "";
 
+export function skySummaryOpeningKey(sun?: string, moon?: string, content?: CmsGeneratedContentMap): "opening" | "openingSameSign" {
+  // An existing customized general template retains its behavior unless the owner
+  // has explicitly supplied the more specific same-sign template.
+  const custom = content?.get("cms/sky-daily-summary/assembly/opening")?.body;
+  const specific = content?.get("cms/sky-daily-summary/assembly/openingSameSign");
+  return sun && moon && sun.toLowerCase() === moon.toLowerCase()
+    && (!custom || currentSkySummaryWording("cms/sky-daily-summary/assembly/opening", custom) === defaultAssembly.opening || specific)
+    ? "openingSameSign" : "opening";
+}
+
 export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false } = {}): SummaryPart[] {
   const copy = (key: string, fallback: string) => savedCopy(content, `cms/sky-daily-summary/${key}`, fallback, editorialPreview);
   const timing = { ...defaultTiming };
@@ -59,9 +70,13 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
   const values: Record<string, SummaryPart[]> = {};
   const moonKind = selectedMoonKind(facts.event);
   const specialMoon = moonKind !== "regular";
+  const sunPlacement = specialMoon ? facts.event?.sun ?? facts.sun : facts.sun;
+  if (specialMoon && facts.event?.sun && !validSummaryGeometry(facts.event.sun.sign, facts.event.sign, moonKind)) {
+    throw new Error("IMPOSSIBLE_SKY: event-time Sun and Moon do not match the selected lunation.");
+  }
   const moonPlacement = specialMoon ? { sign: facts.event!.sign, degree: facts.event!.degree } : facts.moon;
   for (const body of ["sun", "moon"] as const) {
-    const placement = body === "moon" ? moonPlacement : facts.sun;
+    const placement = body === "moon" ? moonPlacement : sunPlacement;
     if (!placement?.sign) continue;
     const sourceKey = body === "moon" ? moonSummaryKey(placement.sign, moonKind) : `cms/sky-daily-summary/sun/${placement.sign.toLowerCase()}`;
     const clause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview) : fullerClause(body, placement.sign, content, editorialPreview);
@@ -71,13 +86,15 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     values[`${body}Summary`] = clause ? [{ text: clause, sourceKey }] : [];
   }
   const hasSun = Boolean(values.sunName), hasMoon = Boolean(values.moonName);
-  let opening = hasSun && hasMoon ? assembly.opening : hasSun ? assembly.sunOnly : assembly.moonOnly;
+  const openingKey = skySummaryOpeningKey(sunPlacement?.sign, moonPlacement?.sign, content);
+  let opening = hasSun && hasMoon ? assembly[openingKey] : hasSun ? assembly.sunOnly : assembly.moonOnly;
   // Preserve the existing factual fallback when a summary is unavailable.
   if (!values.sunSummary?.length) opening = opening.replace("{sunName} in {sunSign}", "{sunName} is in {sunSign}");
   if (!values.moonSummary?.length) opening = opening.replace("{moonName} in {moonSign}", specialMoon ? "{moonName} is in {moonSign}" : "{moonName} moves through {moonSign}");
+  if (!values.moonSummary?.length) opening = opening.replace("{moonName} there", "{moonName} is there");
   // The editor separates facts; readers still get one complete placement link.
   for (const body of ["sun", "moon"] as const) {
-    opening = opening.replace(new RegExp(`\\{${body}Name\\}[^{}]*\\{${body}Sign\\}[^{}]*\\{${body}Degree\\}`), placement => {
+    opening = opening.replace(new RegExp(`\\{${body}Name\\}[^{}]*(?:\\{${body}Sign\\}[^{}]*)?\\{${body}Degree\\}`), placement => {
       values[`${body}PlacementLink`] = [{ text: fillSkyTemplate(placement, values).map(part => part.text).join(""), action: body === "moon" && specialMoon ? "lunation" : body, emphasis: true }];
       return `{${body}PlacementLink}`;
     });
