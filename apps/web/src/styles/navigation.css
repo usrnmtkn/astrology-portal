@@ -390,10 +390,10 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   gap: var(--sp-half);
   width: var(--mobile-menu-width);
   padding: var(--sp-1);
-  border: var(--border-width-thin) solid var(--card-border);
+  border: var(--border-width-thin) solid var(--nav-border);
   border-radius: var(--card-radius-sm);
-  background: var(--card-bg);
-  box-shadow: var(--card-shadow);
+  background: var(--nav-surface);
+  box-shadow: var(--nav-rest-shadow);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }

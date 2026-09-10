@@ -156,10 +156,10 @@ html[data-scrolled] .sky-header-date-button {
   display: grid;
   gap: var(--space-4);
   width: min(480px, calc(100vw - 64px));
-  border: var(--border-width-thin) solid var(--overlay-border);
+  border: var(--border-width-thin) solid var(--nav-border);
   border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: var(--shadow-mobile-panel);
+  box-shadow: var(--nav-rest-shadow);
   padding: var(--space-4);
 }
 
@@ -420,10 +420,10 @@ html[data-scrolled] .sky-header-date-button {
   gap: var(--space-3);
   width: min(var(--container-picker), calc(100vw - 48px));
   margin-top: 0;
-  border: var(--border-width-thin) solid var(--overlay-border);
+  border: var(--border-width-thin) solid var(--nav-border);
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
-  box-shadow: var(--overlay-shadow);
+  box-shadow: var(--nav-rest-shadow);
   padding: var(--space-4);
 }
 

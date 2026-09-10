@@ -2708,6 +2708,14 @@ test.describe("client-facing user flow case studies", () => {
         await expect(logo).toBeVisible();
         const atTop = await surface();
         expect(atTop.background).not.toBe("rgba(0, 0, 0, 0)");
+        expect(atTop.shadow).not.toBe("none");
+        const expectSharedElevation = async () => {
+          for (const selector of [".sky-header-date-button", ".menu-toggle", ".theme-toggle"]) {
+            const control = page.locator(selector);
+            if (await control.isVisible()) await expect(control).toHaveCSS("box-shadow", atTop.shadow);
+          }
+        };
+        await expectSharedElevation();
         // The desktop loading shell can fit in the viewport. Exercise real
         // scrolling once reader content has given the document room to scroll.
         await expect.poll(() => page.evaluate(() => {
@@ -2716,9 +2724,20 @@ test.describe("client-facing user flow case studies", () => {
         }), { timeout: 15_000 }).toBeGreaterThan(8);
         await expect(page.locator("html")).toHaveAttribute("data-scrolled", "");
         await expect.poll(surface).toEqual(atTop);
+        await expectSharedElevation();
         await expect(logo.getByRole("button", { name: "TLDR Astro home" })).toBeVisible();
         await mkdir(responsiveScreenshotDir, { recursive: true });
         await page.screenshot({ path: path.join(responsiveScreenshotDir, `logo-scrolled-${theme}-${width}.png`) });
+        await page.getByRole("button", { name: "Open menu" }).click();
+        await expect(page.locator(".site-menu")).toBeVisible();
+        await expect(page.locator(".site-menu")).toHaveCSS("box-shadow", atTop.shadow);
+        await page.screenshot({ path: path.join(responsiveScreenshotDir, `navigation-menu-${theme}-${width}.png`) });
+        await page.keyboard.press("Escape");
+        await expect(page.locator(".site-menu")).toBeHidden();
+        await page.locator(".sky-header-date-button").click();
+        await expect(page.locator(".date-picker")).toBeVisible();
+        await expect(page.locator(".date-picker")).toHaveCSS("box-shadow", atTop.shadow);
+        await page.keyboard.press("Escape");
         await page.evaluate(() => window.scrollTo(0, 0));
         await expect(page.locator("html")).not.toHaveAttribute("data-scrolled", "");
         await expect.poll(surface).toEqual(atTop);
