@@ -18,7 +18,7 @@ These rows keep one canonical synastry pair key. For each released `sun/<other>/
 
 The exact approved new copy is stored in:
 
-`apps/web/src/content/fallbackArchitectureV3/source-rows/synastry-directionality-live-v1.json`
+`apps/web/src/content/fallbackArchitectureV3/authored-inputs/synastry-directionality-live-v1.json`
 
 The overlay is intentionally additive. It supersedes only `body_you`; the merger inherits `body_they` byte-for-byte from the canonical base row and removes any stale whole-row exact-approval hash before applying the new release metadata.
 
