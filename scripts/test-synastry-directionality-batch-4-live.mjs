@@ -4,7 +4,7 @@ import fs from "node:fs";
 import { createTransitSynastryRenderer } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import {
   applySynastryDirectionalityLiveV1,
-  SYNNASTRY_DIRECTIONALITY_MODE
+  SYNASTRY_DIRECTIONALITY_MODE
 } from "../apps/web/src/content/fallbackArchitectureV3/resolver/synastryDirectionalityLive.mjs";
 
 const packageRoot = "apps/web/src/content/fallbackArchitectureV3";
@@ -18,7 +18,7 @@ const relationshipBundleSource = fs.readFileSync(
 );
 
 assert.equal(overlay.schema, "synastry-directionality-live/v1");
-assert.equal(overlay.directionality_mode, SYNNASTRY_DIRECTIONALITY_MODE);
+assert.equal(overlay.directionality_mode, SYNASTRY_DIRECTIONALITY_MODE);
 assert.equal(overlay.release_id, "synastry-directionality-batch-4-live-v1");
 assert.equal(overlay.rows.length, 24, "Batch 4 must contain exactly 24 released semantic reverses");
 assert.match(relationshipBundleSource, /synastry-directionality-live-v1\.json/u);
@@ -47,7 +47,7 @@ for (const patch of overlay.rows) {
   assert.ok(live, `${patch.contentKey}: missing released row`);
   assert.equal(live.body_you, patch.body_you, `${patch.contentKey}: released body_you drifted`);
   assert.equal(live.body_they, base.body_they, `${patch.contentKey}: historical opposite direction changed`);
-  assert.equal(live.directionality_mode, SYNNASTRY_DIRECTIONALITY_MODE);
+  assert.equal(live.directionality_mode, SYNASTRY_DIRECTIONALITY_MODE);
   assert.equal(live.body_you_semantic_direction, patch.missingSemanticDirection);
   assert.equal(live.body_they_semantic_direction, patch.existingSemanticDirection);
   assert.equal(live.review_status, "approved");
