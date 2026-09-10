@@ -1,7 +1,7 @@
 import bundledRelationshipAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-relationship-authored-cards-v3.json";
 import bundledRelationshipHookRowsV3 from "./fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json";
 import bundledSharedPlacementRowsV3 from "./fallbackArchitectureV3/bundled-shared-placement-rows-v3.json";
-import synastryDirectionalityLiveV1 from "./fallbackArchitectureV3/source-rows/synastry-directionality-live-v1.json";
+import synastryDirectionalityLiveV1 from "./fallbackArchitectureV3/authored-inputs/synastry-directionality-live-v1.json";
 import { applySynastryDirectionalityLiveV1 } from "./fallbackArchitectureV3/resolver/synastryDirectionalityLive.mjs";
 import type {
   AuthoredCard,
