@@ -1,3 +1,4 @@
+import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
 import { isContentRetired } from "./content/contentPublicationState";
@@ -37,7 +38,7 @@ import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
 import { CitySearchField, CitySuggestions } from "./components/CitySearchField";
 import {
   AspectGlyphs,
-  DurationLabelText,
+  dignitiesFor,
   PlanetPlacementRow,
   PlacementGlyphIcon,
   PlacementTableRow,
@@ -690,6 +691,7 @@ type CalendarContentCacheEntry = {
 };
 
 export type YouTransitArticle = {
+  pills?: ArticlePillData;
   transitDescription?: string;
   id: string;
   title: string;
@@ -4545,6 +4547,7 @@ function currentSkyAspectDetailArticle(
   const historicalLookback = null;
 
   return {
+    pills: { durationLabel: skyAspectTimingDisplay(aspect, generatedAt).durationLabel },
     routePath: skyAspectRoutePath(aspect),
     glyph: `${pointGlyph(aspect.from)}${fromLabel.endsWith(" Rx") ? " ℞" : ""} ${aspectGlyph(aspect.type)} ${pointGlyph(aspect.to)}${toLabel.endsWith(" Rx") ? " ℞" : ""}`,
     kicker: "",
@@ -5339,6 +5342,12 @@ function currentSkyPlacementDetailArticle({
     routePath: articleMode === "archive" && articleKey
       ? skyArticleArchiveRoutePath(articleKey)
       : skyPlacementRoutePath(position),
+    pills: articleMode === "current" ? {
+      durationLabel: primaryPlacementDurationLabel(position, generatedAt),
+      dignity: placementDignity(position, "sky"),
+      uppercaseDignity: true,
+      statuses: [...placementStatuses(position), ...[solarPhaseStatusFor(position, positions)].filter((status): status is NonNullable<typeof status> => Boolean(status))]
+    } : undefined,
     glyph: detailGlyphForPlacement(position),
     kicker: placementDetailKicker(position, activeAspects),
     title: isRetrograde ? fallbackTitle : placementSection?.heading || fallbackTitle,
@@ -5718,7 +5727,6 @@ function relatedAspectRowsForPlacement({
           <span className="aspect-row-copy">
             <h4>{title}</h4>
             {timing ? <span className="aspect-row-timing" aria-label={timing.label}>
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration"><DurationLabelText label={timing.durationLabel} /></span>
               <span>{timing.rangeLabel}</span>
             </span> : null}
             {narrativeTiming.length ? <span className="aspect-row-narrative-timing">
@@ -15628,6 +15636,10 @@ function natalPlacementDetailArticle(
 
   return {
     id: natalPlacementRouteId(position),
+    pills: {
+      dignity: ownerContext ? dignitiesFor(position.planet, position.sign, "they") : placementDignity(position),
+      statuses: isDisplayRetrograde(position) ? [{ label: "RETROGRADE", tone: "retrograde" }] : []
+    },
     title: natalPlacementDetailTitle(position),
     glyph: position.glyph || pointGlyph(position.planet),
     subtitle: natalPlacementDetailSubtitle(position),
@@ -17305,6 +17317,13 @@ function ProfileView({
         setActivePlacementRouteId(null);
         setTransitArticle({
           id: personalizedContentKey,
+          pills: { durationLabel: timing.durationLabel, labels: [
+            ...(transitSeries ? [{ label: `Pass ${transitSeries.index} of ${transitSeries.count}` }] : []),
+            ...(lifeAreaTags.length ? [
+              { label: transit.term === "long" ? "Long-term" : "Short-term", tone: "term" as const },
+              ...lifeAreaTags.map((label) => ({ label, tone: "muted" as const }))
+            ] : [])
+          ] },
           title,
           glyph: pointGlyph(transit.transitPlanet),
           // The authored aspect package declares headline + body, not TLDR.
@@ -17340,33 +17359,10 @@ function ProfileView({
             {title}
           </span>
           <span className="updates-aspect-row__meta-line" aria-label={timing.label}>
-            {transitSeries ? (
-              <span className="ui-pill ui-pill--neutral ui-pill--mixed">
-                Pass {transitSeries.index} of {transitSeries.count}
-              </span>
-            ) : null}
-            <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-              <DurationLabelText label={timing.durationLabel} />
-            </span>
             <span>{timing.rangeLabel}</span>
           </span>
           {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
               <CardReadMore />
-          {lifeAreaTags.length ? (
-            <span className="updates-aspect-row__life-areas" aria-label="Duration and areas of your life">
-              <span className="ui-pill house-transit-term-tag">
-                {transit.term === "long" ? "Long-term" : "Short-term"}
-              </span>
-              {lifeAreaTags.map((lifeArea) => (
-                <span
-                  className="ui-pill ui-pill--muted house-transit-keyword"
-                  key={`${transit.id}-${lifeArea}`}
-                >
-                  {lifeArea}
-                </span>
-              ))}
-            </span>
-          ) : null}
         </span>
         <span className="updates-aspect-row__meta" aria-label={`${timing.label}, ${transit.orb} orb`}>
           <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -17587,6 +17583,10 @@ function ProfileView({
           setActivePlacementRouteId(null);
           setTransitArticle({
             id: contentKey,
+            pills: { durationLabel, labels: [
+              { label: longTransitPlanets.has(transit.transitPlanet) ? "Long-term" : "Short-term", tone: "term" as const },
+              ...houseLifeAreaKeywords(house).map((label) => ({ label, tone: "muted" as const }))
+            ] },
             title,
             glyph: pointGlyph(transit.transitPlanet),
             // House cards do not currently author a TLDR slot. Keep their preview
@@ -17619,25 +17619,10 @@ function ProfileView({
           <span className="updates-aspect-row__content">
             <span className="updates-aspect-row__title">{title}</span>
             <span className="updates-aspect-row__meta-line">
-              {durationLabel ? (
-                <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                  <DurationLabelText label={durationLabel} />
-                </span>
-              ) : null}
               {renderedWindow ? <span>{renderedWindow}</span> : null}
             </span>
             {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
               <CardReadMore />
-            <span className="house-transit-keywords" aria-label="House keywords">
-              <span className="ui-pill house-transit-term-tag">
-                {longTransitPlanets.has(transit.transitPlanet) ? "Long-term" : "Short-term"}
-              </span>
-              {houseLifeAreaKeywords(house).map((keyword) => (
-                <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${contentKey}-${keyword}`}>
-                  {keyword}
-                </span>
-              ))}
-            </span>
           </span>
           <span className="updates-aspect-row__meta" aria-label={`${ordinalHouse(house)} house`}>
             <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -17679,6 +17664,10 @@ function ProfileView({
             setActivePlacementRouteId(null);
             setTransitArticle({
               id: articleId,
+              pills: { durationLabel, labels: house ? [
+                { label: longTransitPlanets.has(planet) ? "Long-term" : "Short-term", tone: "term" as const },
+                ...houseLifeAreaKeywords(house).map((label) => ({ label, tone: "muted" as const }))
+              ] : reading.tag ? [{ label: reading.tag, tone: "term" }] : [] },
               title: displayTitle,
               glyph: planet ? pointGlyph(planet) : "",
               subtitle: "",
@@ -17717,29 +17706,10 @@ function ProfileView({
             <span className="updates-aspect-row__content">
               <span className="updates-aspect-row__title">{displayTitle}</span>
               <span className="updates-aspect-row__meta-line">
-                <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                  <DurationLabelText label={durationLabel} />
-                </span>
                 {timingLabel ? <span>{timingLabel}</span> : null}
               </span>
               {preview ? <span className="updates-aspect-row__description transit-card-preview">{preview}</span> : null}
               <CardReadMore />
-              {house ? (
-                <span className="house-transit-keywords" aria-label="House keywords">
-                  <span className="ui-pill house-transit-term-tag">
-                    {longTransitPlanets.has(planet) ? "Long-term" : "Short-term"}
-                  </span>
-                  {houseLifeAreaKeywords(house).map((keyword) => (
-                    <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${articleId}-${keyword}`}>
-                      {keyword}
-                    </span>
-                  ))}
-                </span>
-              ) : reading.tag ? (
-                <span className="updates-aspect-row__life-areas">
-                  <span className="ui-pill house-transit-term-tag">{reading.tag}</span>
-                </span>
-              ) : null}
             </span>
             {house || typeof reading.orb === "number" ? (
               <span

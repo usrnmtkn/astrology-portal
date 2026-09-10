@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import type { NatalAspectPatternActivationTimingWindow } from "../../services/natalAspectPatterns";
 import { loadUserGeneratedInterpretation } from "../../services/userGeneratedContent";
 import { DailyMoonContextTags } from "../../components/DailyMoonContextTags";
-import { DurationLabelText } from "../../components/charts/PlacementRows";
 import { pointGlyph } from "../../components/charts/chartAssets";
 import { NatalAspectPatternActivationsSection } from "../you/NatalAspectPatternsSection";
 import type {
@@ -30,10 +29,7 @@ function FriendPersonalTransitCard({
       <span className="updates-aspect-row__content">
         <h3 className="updates-aspect-row__title">{transit.title}</h3>
         <span className="updates-aspect-row__meta-line" aria-label={transit.timingLabel}>
-          <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-            <DurationLabelText label={transit.durationLabel} />
-          </span>
-          {transit.rangeLabel !== transit.durationLabel && <span>{transit.rangeLabel}</span>}
+          <span>{transit.rangeLabel}</span>
         </span>
         <p className="updates-aspect-row__description transit-card-preview">{transit.summary}</p>
         <CardReadMore />
@@ -307,25 +303,12 @@ export function FriendTransitsTab({
                   <span className="updates-aspect-row__content">
                     <span className="updates-aspect-row__title">{card.title}</span>
                     <span className="updates-aspect-row__meta-line">
-                      {card.durationLabel ? (
-                        <span className="ui-pill ui-pill--neutral ui-pill--mixed planet-placement-row__duration">
-                          <DurationLabelText label={card.durationLabel} />
-                        </span>
-                      ) : null}
                       {card.timingRange ? <span>{card.timingRange}</span> : null}
                     </span>
                     {card.rowSummary ? (
                       <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
                     ) : null}
                     <CardReadMore />
-                    <span className="house-transit-keywords" aria-label="House keywords">
-                      <span className="ui-pill house-transit-term-tag">{card.termLabel}</span>
-                      {card.keywords.map((keyword) => (
-                        <span className="ui-pill ui-pill--muted house-transit-keyword" key={`${card.id}-${keyword}`}>
-                          {keyword}
-                        </span>
-                      ))}
-                    </span>
                   </span>
                   <span className="updates-aspect-row__meta" aria-label={card.houseLabel}>
                     <span className="updates-aspect-row__dot" aria-hidden="true" />

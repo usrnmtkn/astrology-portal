@@ -93,7 +93,6 @@ export function FriendSynastryTab({
                   <h3>{contact.title}</h3>
                   {contact.description ? <p className="synastry-contact-description">{contact.description}</p> : null}
                   <CardReadMore />
-                  <span className="aspect-row-subtitle ui-pill ui-pill--muted">{contact.subtitle}</span>
                 </span>
                 <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
                   <span className="aspect-row-dot" aria-hidden="true" />

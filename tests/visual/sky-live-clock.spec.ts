@@ -37,10 +37,13 @@ test('countdowns advance together and focus catches up after inactivity', async 
   await page.goto('/#sky');
   const summary = page.getByLabel('Daily sky summary');
   await expect(summary).toContainText('another 50 minutes', { timeout: 60_000 });
-  await expect(page.getByText('0H 50MIN left', { exact: true }).first()).toBeVisible({ timeout: 60_000 });
+  await page.getByRole('button', { name: 'Read more about Moon in Cancer', exact: true }).click();
+  const countdown = page.locator('.article-pills .planet-placement-row__duration');
+  await expect(countdown).toHaveText('0H 50MIN left', { timeout: 60_000 });
   await page.clock.fastForward(60_000);
+  await expect(countdown).toHaveText('0H 49MIN left');
+  await page.getByRole('button', { name: 'Close detail', exact: true }).click();
   await expect(summary).toContainText('another 49 minutes');
-  await expect(page.getByText('0H 49MIN left', { exact: true }).first()).toBeVisible();
   await page.clock.setSystemTime(new Date('2026-09-07T21:51:00Z'));
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
   await expect(summary).toContainText('Moon in Leo at 2°');

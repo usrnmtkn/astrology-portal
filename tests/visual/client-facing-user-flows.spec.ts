@@ -16,6 +16,19 @@ import {
   VERIFIED_SKY_CACHE_SCHEMA
 } from "../../apps/web/src/services/verifiedSkyCache";
 
+async function expectHousePillsInArticle(page: Page) {
+  const pills = page.locator(".article-id .article-pills");
+  await expect(pills.locator(".planet-placement-row__duration")).toHaveText(/^(?:TODAY|\d+D|\d+M|\d+Y(?: \d+M)?)(?:\s+left)?$/);
+  await expect(pills.locator(".house-transit-term-tag")).toHaveText(/^(?:Short-term|Long-term)$/);
+  await expect(pills.locator(".house-transit-term-tag")).toHaveCSS("border-top-width", "0px");
+  const keywords = pills.locator(".ui-pill--muted");
+  await expect(keywords.first()).toBeVisible();
+  expect(await keywords.count()).toBeGreaterThan(1);
+  for (const keyword of await keywords.allTextContents()) expect(keyword).not.toContain(",");
+  const date = await page.locator(".article-id .article-duration").first().boundingBox();
+  expect((await pills.boundingBox())!.y).toBeGreaterThanOrEqual(date!.y + date!.height);
+}
+
 type SeedOptions = {
   pageAnimations?: "on" | "off";
   synastryFixture?: { body: string; aspect: string; inverse: boolean };
@@ -1428,26 +1441,7 @@ test.describe("client-facing user flow case studies", () => {
         .getByLabel("House transits")
         .locator(".updates-aspect-row--house")
         .first();
-      const houseTransitKeywords = houseTransitCard
-        .getByLabel("House keywords")
-        .locator(".house-transit-keyword");
-      await expect(
-        houseTransitCard.locator(".planet-placement-row__duration"),
-        "House transit timing uses the compact duration format"
-      ).toHaveText(/^(?:TODAY|\d+D|\d+M|\d+Y(?: \d+M)?)$/);
-      await expect(
-        houseTransitCard.locator(".house-transit-term-tag"),
-        "The term classification moves into the footer tags"
-      ).toHaveText(/^(?:Short-term|Long-term)$/);
-      await expect(
-        houseTransitCard.locator(".house-transit-term-tag"),
-        "The term classification tag has no outline"
-      ).toHaveCSS("border-top-width", "0px");
-      await expect(houseTransitKeywords.first()).toBeVisible();
-      await expect(
-        houseTransitCard.locator(".updates-aspect-row__description + .card-read-more + .house-transit-keywords"),
-        "House transit keyword tags follow the description and Read More action"
-      ).toBeVisible();
+      await expect(houseTransitCard.locator(".ui-pill")).toHaveCount(0);
       const houseTransitRange = (
         await houseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
       ).trim();
@@ -1458,14 +1452,10 @@ test.describe("client-facing user flow case studies", () => {
         houseTransitDescription.startsWith(`${houseTransitRange},`),
         "House transit body does not repeat its visible date range"
       ).toBe(false);
-      expect(await houseTransitKeywords.count(), "House transit keywords render as separate tags").toBeGreaterThan(1);
-      for (const keyword of await houseTransitKeywords.allTextContents()) {
-        expect(keyword, "House transit keyword tags do not include comma separators").not.toContain(",");
-      }
-
       await houseTransitCard.click();
       await expect(page.getByRole("heading", { name: /through your \d+(?:st|nd|rd|th) house/i })).toBeVisible();
       await expectNoDuplicateArticleHeadings(page, "You house-transit detail");
+      await expectHousePillsInArticle(page);
       await page.getByRole("button", { name: "Back" }).click();
       await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     }
@@ -1948,22 +1938,7 @@ test.describe("client-facing user flow case studies", () => {
       .first();
     await expect(friendHouseTransitCard).toHaveCSS("cursor", "pointer");
     await expect(friendHouseTransitCard).toHaveJSProperty("tagName", "BUTTON");
-    await expect(
-      friendHouseTransitCard.locator(".planet-placement-row__duration"),
-      "Friend house transit timing uses the compact duration format"
-    ).toHaveText(/^(?:TODAY|\d+D|\d+M|\d+Y(?: \d+M)?)$/);
-    await expect(
-      friendHouseTransitCard.locator(".house-transit-term-tag"),
-      "Friend term classification moves into the footer tags"
-    ).toHaveText(/^(?:Short-term|Long-term)$/);
-    await expect(
-      friendHouseTransitCard.locator(".house-transit-term-tag"),
-      "Friend term classification tag has no outline"
-    ).toHaveCSS("border-top-width", "0px");
-    await expect(
-      friendHouseTransitCard.locator(".updates-aspect-row__description + .card-read-more + .house-transit-keywords"),
-      "Friend house transit keyword tags follow the description and Read More action"
-    ).toBeVisible();
+    await expect(friendHouseTransitCard.locator(".ui-pill")).toHaveCount(0);
     const friendHouseTransitRange = (
       await friendHouseTransitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()
     ).trim();
@@ -1982,6 +1957,10 @@ test.describe("client-facing user flow case studies", () => {
       friendHouseTransitCard,
       "Every visible Friend house transit has an eligible full entry"
     ).toBeEnabled();
+
+    await friendHouseTransitCard.click();
+    await expectHousePillsInArticle(page);
+    await page.getByRole("button", { name: "Close detail" }).click();
 
     const transitCardText = ((await transitCard.innerText()) ?? "").replace(/\s+/g, " ").trim();
     const rangeLabel = ((await transitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()) ?? "").trim();
@@ -2018,17 +1997,11 @@ test.describe("client-facing user flow case studies", () => {
       .locator(".friend-aspect-row:has(.synastry-contact-description)")
       .first();
     const synastryContactDescription = synastryContactCard.locator(".synastry-contact-description");
-    const synastryContactTag = synastryContactCard.locator(".aspect-row-subtitle");
     await expect(synastryContactDescription).toBeVisible();
-    await expect(synastryContactTag).toBeVisible();
-    const descriptionBox = await synastryContactDescription.boundingBox();
-    const tagBox = await synastryContactTag.boundingBox();
-    expect(descriptionBox, "Synastry contact description has layout geometry").not.toBeNull();
-    expect(tagBox, "Synastry contact tag has layout geometry").not.toBeNull();
-    expect(
-      tagBox!.y,
-      "Synastry contact tags render underneath the description"
-    ).toBeGreaterThanOrEqual(descriptionBox!.y + descriptionBox!.height);
+    await expect(synastryContactCard.locator(".ui-pill")).toHaveCount(0);
+    await synastryContactCard.click();
+    await expect(page.locator(".article-id .article-pills .ui-pill--muted")).toBeVisible();
+    await page.getByRole("button", { name: "Close detail" }).click();
 
     await selectFriendDetailTab(page, "Composite");
     await expect(page.getByText("What a composite chart is")).toBeVisible();
@@ -4433,7 +4406,7 @@ for (const theme of ["light", "dark"] as const) {
       await check(".natal-pattern-card__header > span", "label");
       await check(".placement-table-row__title", "title");
       await check(".placement-table-row__description", "body");
-      await check(".placement-table-row .ui-pill", "pill");
+      await expect(page.locator(".placement-table-row .ui-pill")).toHaveCount(0);
       const surface = async (selector: string) => page.locator(selector).first().evaluate(node => {
         const style = getComputedStyle(node);
         return { border: style.border, radius: style.borderRadius, background: style.backgroundColor, shadow: style.boxShadow };
@@ -4475,6 +4448,7 @@ for (const theme of ["light", "dark"] as const) {
       await skyCard.focus();
       await page.keyboard.press("Enter");
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
+      await check(".article-pills .ui-pill", "pill");
     });
   }
 }
@@ -4508,5 +4482,63 @@ for (const body of ["Ascendant", "Midheaven", "Descendant", "Imum Coeli", "Chiro
         await expect(detail).not.toContainText(/\{\{(?:holder[12]|Name)/);
       });
     }
+  }
+}
+
+for (const theme of ["light", "dark"] as const) {
+  for (const width of [390, 1440]) {
+    test(`card pills move to article headers ${theme} ${width}`, async ({ page }) => {
+      test.setTimeout(120_000);
+      await page.setViewportSize({ width, height: 1000 });
+      await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme, now: "2026-09-10T16:00:00.000Z" });
+      const errors: string[] = [];
+      page.on("pageerror", error => errors.push(error.message));
+      await expectClientRouteLoads(page, "/#sky");
+      const moon = page.getByRole("button", { name: "Read more about Moon in Virgo", exact: true });
+      await expect(moon).toBeVisible();
+      await expect(page.locator(".planet-placement-row .ui-pill")).toHaveCount(0);
+      await moon.click();
+      const header = page.locator(".article-id");
+      const pills = header.locator(".article-pills");
+      await expect(pills).toContainText(/COMBUST/i);
+      await expect(pills).toContainText(/left/);
+      const date = await header.locator(".article-duration").first().boundingBox();
+      const pillBox = await pills.boundingBox();
+      expect(pillBox!.y).toBeGreaterThanOrEqual(date!.y + date!.height);
+      await expectNoHorizontalOverflow(page, `article pills ${theme} ${width}`);
+      await page.screenshot({ path: `test-results/article-pills-sky-${theme}-${width}.png` });
+      const labels = await pills.innerText();
+      await page.reload();
+      await expect.poll(() => pills.innerText()).toEqual(labels);
+      await expectClientRouteLoads(page, "/#you");
+      const houseCard = page.locator("button.updates-aspect-row--house").first();
+      await expect(houseCard).toBeVisible();
+      await expect(page.locator("button.updates-aspect-row .ui-pill")).toHaveCount(0);
+      await houseCard.click();
+      await expect(pills).toContainText(/Long-term|Short-term/);
+      await expect(header.locator(".article-duration")).toBeVisible();
+      expect(await pills.locator(".ui-pill").count()).toBeGreaterThan(2);
+      await page.locator(".sky-detail-back").click();
+      await selectYouNatalTab(page);
+      await expect(page.locator(".placement-table-row .ui-pill")).toHaveCount(0);
+      await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
+      await expect(pills).toContainText("Constrained");
+      await expect(pills).toContainText("Detriment");
+      await page.screenshot({ path: `test-results/article-pills-natal-${theme}-${width}.png` });
+      await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      const friendCard = page.locator("button.placement-table-row").first();
+      await expect(friendCard).toBeVisible();
+      await expect(page.locator(".placement-table-row .ui-pill")).toHaveCount(0);
+      await friendCard.click();
+      await expect(page.locator(".article-id h1")).toBeVisible();
+      await expectNoHorizontalOverflow(page, `friend article pills ${theme} ${width}`);
+      await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
+      const contact = page.locator("button.friend-aspect-row").filter({ has: page.locator(".synastry-contact-description") }).first();
+      await expect(contact).toBeVisible();
+      await expect(contact.locator(".ui-pill")).toHaveCount(0);
+      await contact.click();
+      await expect(pills.locator(".ui-pill--muted")).toBeVisible();
+      expect(errors).toEqual([]);
+    });
   }
 }
