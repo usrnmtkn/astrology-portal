@@ -60,6 +60,15 @@ bytes for this release. App boot is 415.3 kB gzip, reader boot 462.9 kB, startup
 CSS 47.6 kB; all startup and individual chunk limits remain unchanged. No new
 runtime dependency or duplicate runtime overlay is shipped.
 
+## CI release matrix
+
+The first complete client-flow CI run passed all 80 Batch 4 scenarios and 197
+client tests overall. Three existing article-spacing cases checked for the title
+while the lazy reading chunk was still loading. They now use the established
+route-ready timeout; all layout assertions remain unchanged. The expanded
+browser job has a 30-minute budget (previously 20) to include the release matrix
+and final performance checks.
+
 ## Deployment
 
 Production must follow the PR merge to `main`. A preview is not production.
