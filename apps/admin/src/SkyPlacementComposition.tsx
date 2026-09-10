@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useRef, useId } from "react";
 import type { CompositionMapRow } from "./compositionMap";
 import { skyPlacementBodies, skyPlacementSigns } from "./skyWriteupRelations";
 import SkyIngressComposer from "./SkyIngressComposer";
+import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
 import { effectivePackageRecord } from "./skyFallbackWorkspace";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { skyPlacementAssembly, skyPlacementAssemblyFields, skyRetrogradeBodies as retrogradeBodies, type SkyPlacementAssemblyField, type SkyPlacementWriting, type SkyPlacementSelection as Selection } from "./skyPlacementAssembly";
@@ -71,10 +72,10 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const scope = (row: CompositionMapRow) => row.content_key.includes("/retrograde/")
     ? `Shared by ${title(current.planet)} retrograde in every sign.`
     : row.content_key === "sky-nodes/education" ? "Shared node education." : row.content_key.startsWith("sky-nodes/axis/") ? "Shared by both ends of this node axis." : `Writing for ${title(current.planet)} in ${title(current.sign)}. Each section can be shared or specific to one motion.`;
-  const views = [{ id: "preview", label: "Reader preview" }, { id: "template", label: "Main template" }, { id: "assembly", label: "Assembly" }] as const;
+  const views = [{ id: "preview", label: "Saved preview" }, { id: "template", label: "Main template" }, { id: "assembly", label: "Assembly" }] as const;
   return <section className="admin-composition-surface-actions admin-sky-placement-composition" aria-label="Sky placement composition map">
     <header><div><p className="admin-eyebrow">Composition Map</p><h3>{title(current.planet)}{current.motion === "retrograde" && retrogradeBodies.has(current.planet) ? " Rx" : ""} in {title(current.sign)}</h3></div>
-      <button type="button" onClick={() => openContextualReaderHref(`/${writing === "fallback" ? "?skyPlacementPreview=fallback" : ""}#sky/placement/${current.planet}/${current.sign}`)}>{writing === "fallback" ? "View evergreen in app" : "View in app"}</button>
+      <button type="button" onClick={() => openContextualReaderHref(`/#sky/placement/${current.planet}/${current.sign}`)}>Open published reader</button>
     </header>
     {!selection && <div className="admin-natal-placement-selectors">
       <label>Planet or point<select aria-label="Composition planet or point" value={context.planet} onChange={event => setContext({ ...context, planet: event.target.value })}>
@@ -87,7 +88,21 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
         <option value="direct">Direct</option>{retrogradeBodies.has(current.planet) && <option value="retrograde">Retrograde</option>}
       </select></label>
     </div>}
-    <p>Choose a writing path to see its ordered blocks. Motion-specific articles take priority over the shared article. Fallback sections can be shared, direct-only, or retrograde-only. Select a colored passage to edit its source.</p>
+    <p>Choose a writing path to inspect its saved sources and ordered blocks. This choice changes the preview, not what is published. Select a colored passage to edit its exact source.</p>
+    {ingressRow && <>
+      <details className="admin-workspace-details admin-writing-system-details" aria-label="Placement reader selection">
+        <summary>How the reader chooses writing</summary>
+        <p>The reader uses the first available, eligible published body for the calculated motion and occurrence:</p>
+        <ol aria-label="Published placement selection order">
+          <li>Complete article for the current motion.</li>
+          <li>Shared complete placement article.</li>
+          <li>Enabled placement composition with all required modules resolved.</li>
+          <li>Evergreen fallback sections matching the motion, in their saved order. Empty sections are skipped.</li>
+        </ol>
+        <p>TLDR, retrograde opening, dates, and other occurrence additions keep their own sources. Live badges report source eligibility; they do not prove that every field below is selected. Saved previews can include drafts. Open the published reader to check what readers receive.</p>
+      </details>
+      <SkyWritingSystemDetails system="placement" />
+    </>}
     {selection?.motion === "all" && retrogradeBodies.has(current.planet) && <label>Preview motion<select aria-label="Composition motion" value={current.motion} onChange={event => setContext({ ...context, motion: event.target.value })}><option value="direct">Direct</option><option value="retrograde">Retrograde</option></select></label>}
     {error && <p role="alert">{error} <button type="button" onClick={() => setRetry(value => value + 1)}>Retry sources</button></p>}
     {keys.map((key, index) => !selectedRows[index] && <p role="status" key={key}>{error || finished[key] ? "Source unavailable: " : "Loading "}{key.includes("/retrograde/") ? "retrograde paragraph" : "planet-in-sign source"}{!error && !finished[key] && "…"}</p>)}
@@ -102,7 +117,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
         <select aria-label="Placement writing path" value={selectedWriting} onChange={event => setWriting(event.target.value as SkyPlacementWriting | "ingress")}>
           <option value="article">Placement article</option>
           <option value="fallback" disabled={!assembly.hasFallback}>Fallback hooks</option>
-          {ingressRow && <option value="ingress">V5 sentence composition</option>}
+          {ingressRow && <option value="ingress">Placement composition</option>}
         </select>
       </label>
       {selectedWriting === "ingress" && ingressRow ? <SkyIngressComposer key={ingressRow.content_key} source={effectivePackageRecord(ingressRow.sections)} motion={current.motion}
@@ -114,7 +129,8 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           const row = await loadRowRef.current?.({ id: `package:${key}`, content_key: key, inventory_only: true } as CompositionMapRow) as CompositionMapRow | undefined;
           return row ? effectivePackageRecord(row.sections) : undefined;
         }} /> : <>
-      <p>{selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. They replace the placement passage when the full article is unavailable, keeping the TLDR and any retrograde opening. Only blocks matching the selected motion are included. Open a section to add writing or change the section order." : "This is the selected motion’s article, or the shared article when no motion-specific article is saved. It is evergreen writing and takes priority over the reusable fallback sections. It is not a dated article edition."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
+      <p>{selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. On canonical placement pages, they supply the body when neither a complete article nor an eligible placement composition is available. Only blocks matching the selected motion are included. Open a section to add writing or change the section order." : "This is the complete authored passage for the selected motion, or the shared passage when no motion-specific article is saved. It can be evergreen writing; it is not necessarily a dated article edition. Complete articles take priority over sentence composition and fallback sections."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
+      {selectedWriting === "fallback" && <button type="button" onClick={() => openContextualReaderHref(`/?skyPlacementPreview=fallback#sky/placement/${current.planet}/${current.sign}`)}>Preview evergreen in app</button>}
       <div className="admin-composition-view-tabs" role="tablist" aria-label="Sky placement composition views">
         {views.map((item, index) => <button key={item.id} id={`${viewId}-${item.id}`} type="button" role="tab"
           aria-selected={view === item.id} aria-controls={`${viewId}-panel`} tabIndex={view === item.id ? 0 : -1}

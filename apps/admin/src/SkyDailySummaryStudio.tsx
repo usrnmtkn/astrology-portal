@@ -2,6 +2,7 @@ import moonSources from "./skyMoonSummarySources.json";
 import { moonEventNames, type MoonSummaryKind } from "../../web/src/content/skyMoonSummary";
 import { SkyInlineTemplate } from "./SkyInlineTemplate";
 import { SkySummaryAssemblyStudio } from "./SkySummaryAssemblyStudio";
+import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
 import { importedSkySummary } from "./skySummaryImportedCopy";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { useMemo, useState } from "react";
@@ -46,6 +47,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
         <p>Start Sun and Moon summaries with a finite verb, such as “turns” or “brings”, without a final period. If no summary is published or included in the app, Sky shows the placement alone. Save & publish makes your edits live. Save draft keeps your changes for later.</p>
       </div>
     </header>
+    <SkyWritingSystemDetails system="summary" />
     <SkySummaryAssemblyStudio rows={rows} onEdit={onEdit} busy={busy} sunSign={sunSign} moonSign={moonSign} openingSlots={slots} moonKind={moonKind} />
     <section className="admin-template-reader-drilldown admin-sky-summary-composition" aria-label="Sun and Moon composition map">
       <header className="admin-section-heading-row">

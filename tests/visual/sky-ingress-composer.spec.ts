@@ -6,7 +6,7 @@ const virtual = (contentKey: string) => {
  return source ? { id: `package:${contentKey}`, content_key: contentKey, surface: 'sky', mode: 'in_depth', status: 'DRAFT', lane: 'reference', provider: 'tldrastro-fallback-architecture-v3', headline: source.headline, summary: source.summary, body: source.body_you, sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: 'fallback_hook', event_type: 'fallback-hook', package_starter: true } : null;
 };
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
- test(`V5 source editing and map ${width} ${theme}`, async ({ page }) => {
+ test(`Placement composition source editing and map ${width} ${theme}`, async ({ page }) => {
   await page.setViewportSize({ width, height: 1000 });
   await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'ingress-test'));
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
@@ -22,14 +22,43 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await page.getByLabel('Sky placement planet or point').selectOption('saturn');
   await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
   const map = page.getByRole('region', { name: 'Sky placement composition map' });
+  await expect(map.getByRole('heading')).toHaveText('Saturn Rx in Aries');
+  const systemDetails = map.getByLabel('Placement writing system details', { exact: true });
+  await systemDetails.getByText('Writing system & versions', { exact: true }).click();
+  await expect(systemDetails).toContainText('Placement composition · format 5');
+  await expect(systemDetails).toContainText('Historical review');
+  await expect(systemDetails).toContainText('Superseded proposals');
+  const labelStyle = (el: Element) => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing, s.marginTop, s.marginBottom, s.textTransform, s.textAlign]; };
+  expect(await systemDetails.locator('strong').first().evaluate(labelStyle)).toEqual(await map.getByLabel('Selected sources').locator('strong').first().evaluate(labelStyle));
+  const selectionRules = map.getByLabel('Placement reader selection', { exact: true });
+  await selectionRules.getByText('How the reader chooses writing', { exact: true }).click();
+  await expect(selectionRules.getByRole('listitem')).toHaveText([
+   'Complete article for the current motion.', 'Shared complete placement article.',
+   'Enabled placement composition with all required modules resolved.',
+   'Evergreen fallback sections matching the motion, in their saved order. Empty sections are skipped.',
+  ]);
+  await expect(map.getByRole('button', { name: 'Open published reader', exact: true })).toBeVisible();
+  await expect(map.getByRole('tab', { name: 'Saved preview', exact: true })).toBeVisible();
+  await expect(map.getByLabel('Placement writing path').locator('option')).toHaveText(['Placement article', 'Fallback hooks', 'Placement composition']);
+  expect(await map.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+  await systemDetails.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: `test-results/sky-writing-systems-${width}-${theme}.png` });
   await map.getByLabel('Placement writing path').selectOption('ingress');
-  await expect(map.getByRole('button', { name: 'Set up V5 composition' })).toBeVisible();
-  await map.getByRole('button', { name: 'Set up V5 composition' }).click();
+  await expect(map.getByRole('button', { name: 'Set up placement composition' })).toBeVisible();
+  await map.getByRole('button', { name: 'Set up placement composition' }).click();
   const editor = page.getByRole('dialog');
   await expect(editor).toBeVisible();
-  await editor.getByRole('button', { name: 'Add V5 composition' }).click();
-  const composer = editor.getByRole('region', { name: 'V5 sentence composition' });
+  await editor.getByRole('button', { name: 'Add placement composition' }).click();
+  const composer = editor.getByRole('region', { name: 'Placement composition' });
   await expect(composer.getByLabel('Ingress sentence source')).toHaveValue('planetFunctionSentence');
+  await expect(composer.getByLabel('Ingress composition view').locator('option')).toHaveText(['Draft preview', 'Main template', 'Assembly and omissions']);
+  const enabled = composer.getByLabel('Use composition when the complete article is empty');
+  await enabled.check();
+  await expect(composer.getByText('Enabled in this draft', { exact: false })).toBeVisible();
+  await expect(composer.getByText('Enabled in this saved revision', { exact: false })).toHaveCount(0);
+  await enabled.uncheck();
+  await expect(composer.getByText('Composition is not enabled', { exact: false })).toBeVisible();
+  await expect(editor.getByLabel('Placement writing system details', { exact: true })).toHaveCount(1);
   await composer.getByLabel('Ingress source planetFunctionSentence').fill('Fixture {{planetTitle}} meaning.');
   await expect(composer.locator('.admin-sky-section-reference').first()).toHaveText(`${key}#ingress.sources.planetFunctionSentence`);
   await composer.getByText('Add a named sentence source', { exact: true }).click();

@@ -9840,6 +9840,28 @@ body,
 .admin-dashboard .admin-composition-source-card code {
   overflow-wrap: anywhere;
 }
+/* Writing-system references use the same prose role as composition previews. */
+.admin-dashboard .admin-writing-system-details {
+  margin-block: var(--admin-space-lg);
+}
+.admin-dashboard .admin-writing-system-details > summary {
+  cursor: pointer;
+}
+.admin-dashboard .admin-writing-system-details p,
+.admin-dashboard .admin-writing-system-details li {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
+.admin-dashboard .admin-writing-system-details p {
+  margin: var(--admin-space-0);
+}
+.admin-dashboard .admin-writing-system-details a {
+  color: var(--admin-ui-text);
+  text-underline-offset: var(--space-1);
+}
 .admin-dashboard .admin-composition-source-copy {
   font-family: var(--font-body);
   font-size: var(--text-body);

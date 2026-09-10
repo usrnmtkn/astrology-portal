@@ -422,7 +422,7 @@ export function packageDraftChanges(sections: unknown) {
     : [];
   const structuredChanges = isSkyEvergreenSource(original) ? [
     { key: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order", before: record(original.fallback).sections, after: record(draft.fallback).sections },
-    { key: "ingress", label: "V5 sentence composition", before: original.ingress, after: draft.ingress }
+    { key: "ingress", label: "Placement composition", before: original.ingress, after: draft.ingress }
   ].filter(change => JSON.stringify(change.before) !== JSON.stringify(change.after))
     .map(change => ({ ...change, before: JSON.stringify(change.before ?? null), after: JSON.stringify(change.after ?? null) })) : [];
   return [...compositionChanges, ...fieldChanges, ...structuredChanges];
