@@ -2,7 +2,10 @@ import bundledRelationshipAuthoredCardsV3 from "./fallbackArchitectureV3/bundled
 import bundledRelationshipHookRowsV3 from "./fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json";
 import bundledSharedPlacementRowsV3 from "./fallbackArchitectureV3/bundled-shared-placement-rows-v3.json";
 import synastryDirectionalityLiveV1 from "./fallbackArchitectureV3/authored-inputs/synastry-directionality-live-v1.json";
-import { applySynastryDirectionalityLiveV1 } from "./fallbackArchitectureV3/resolver/synastryDirectionalityLive.mjs";
+import {
+  applySynastryDirectionalityLiveV1,
+  type SynastryDirectionalityLiveOverlay
+} from "./fallbackArchitectureV3/resolver/synastryDirectionalityLive.mjs";
 import type {
   AuthoredCard,
   FallbackArchitectureV3Bundle,
@@ -10,12 +13,7 @@ import type {
 } from "./fallbackArchitectureV3Runtime";
 import { isFriendsAcceptedApprovalLevel } from "./fallbackApproval";
 
-const relationshipHookRows = applySynastryDirectionalityLiveV1(
-  bundledRelationshipHookRowsV3.hookRows as HookRow[],
-  synastryDirectionalityLiveV1
-) as HookRow[];
-
-const approvedBondEffectRows = relationshipHookRows.filter((row) => (
+const approvedBondEffectRows = bundledRelationshipHookRowsV3.hookRows.filter((row) => (
   row.contentKey.startsWith("fallback-hook/bond-effect-")
 ));
 
@@ -28,6 +26,11 @@ if (
 ) {
   throw new Error("Relationship bundle must serve all 139 owner-approved directional bond rows.");
 }
+
+const relationshipHookRows = applySynastryDirectionalityLiveV1(
+  bundledRelationshipHookRowsV3.hookRows as HookRow[],
+  synastryDirectionalityLiveV1 as SynastryDirectionalityLiveOverlay
+) as HookRow[];
 
 export const relationshipFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle = {
   transitLib: {
