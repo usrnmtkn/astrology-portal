@@ -1,3 +1,6 @@
+/** Emitted inside the portal view-transition callback for nested article state. */
+export const articleHistoryChangeEvent = "tldrastro:article-history-change";
+
 /** Keep the immediate reader parent on the browser entry, including across reloads. */
 export function pushArticleUrl(url: URL) {
   const parent = window.location.href;
