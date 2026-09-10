@@ -7,6 +7,7 @@ process.env.SUPABASE_URL = "https://example.invalid";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role";
 
 const { default: handler } = await import("../api/admin/generated-content.ts");
+const { isReaderServableGeneratedContentRow } = await import("../apps/web/src/content/generatedContentEligibility.ts");
 const { compileSkyArticleEdition, reviseSkyArticleEdition, skyArticleEditableFields } = await import("../apps/web/src/content/skyArticleTemplateCompiler.ts");
 // The handler loads local development configuration during import. Reassert
 // the fixture secret afterward so a developer's .env.local cannot change this
@@ -564,3 +565,37 @@ for (const kind of ["article", "package"]) {
   assert.equal(conflict.status, 409, "A different archived proposal is not successful completion.");
 }
 console.log("Database timestamp and revision-completion trigger regressions passed.");
+
+for (const pair of ["sun-chiron", "moon-chiron"]) {
+  const source = existingRow({
+    content_key: `source/sky-aspect-pair/${pair}`, event_type: "sky-aspect-pair-source",
+    block_type: "fallback_hook", provider: "owner-resource-review", lane: "reference",
+    source_snapshot: { sourceType: "owner-resource-review", content_role: "fallback_source", review_status: "needs_review" }
+  });
+  const reviewed = await invoke({ id: source.id, status: "REVIEWED", lane: "reference", reviewState: null,
+    sourceSnapshot: { ...source.source_snapshot, review_status: "reviewed" } }, source);
+  assert.equal(reviewed.status, 200);
+  assert.equal(reviewed.payload.rows[0].status, "REVIEWED");
+  assert.equal(reviewed.payload.rows[0].lane, "reference");
+  assert.equal(reviewed.payload.rows[0].source_snapshot.content_role, "fallback_source");
+  assert.equal(reviewed.payload.rows[0].body, source.body);
+  assert.equal(isReaderServableGeneratedContentRow(reviewed.payload.rows[0]), false);
+  for (const lane of ["reference", "serving"]) {
+    const published = await invoke({ id: source.id, status: "LIVE", lane,
+      sourceSnapshot: { ...source.source_snapshot, content_role: "fallback_hook" } }, source);
+    assert.equal(published.status, 409);
+    assert.match(published.payload.error, /Source notes can be reviewed/);
+    assert.equal(published.patches.length, 0);
+  }
+}
+const readerHook = existingRow({ content_key: "fallback-hook/sky-sign-copy/sun/virgo", event_type: "fallback-hook",
+  block_type: "fallback_hook", provider: "owner-resource-review", lane: "reference",
+  source_snapshot: { content_role: "fallback_hook", review_status: "reviewed" } });
+const publishedHook = await invoke({ id: readerHook.id, status: "LIVE", lane: "serving", reviewState: null,
+  sourceSnapshot: { ...readerHook.source_snapshot, review_status: "approved" } }, readerHook);
+assert.equal(publishedHook.status, 200);
+assert.equal(publishedHook.payload.rows[0].lane, "serving");
+assert.equal(publishedHook.payload.rows[0].status, "LIVE");
+assert.equal(publishedHook.payload.rows[0].body, readerHook.body);
+assert.equal(isReaderServableGeneratedContentRow(publishedHook.payload.rows[0]), true);
+console.log("Reference-source review and reader-hook publication regressions passed.");

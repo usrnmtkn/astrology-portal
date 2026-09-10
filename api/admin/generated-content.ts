@@ -4,6 +4,7 @@ import { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../a
 // @ts-ignore Shared canonical section schema; no database metadata can expand it.
 import { isSkyEvergreenSource, skyEvergreenEditableFields, skyEvergreenFields, skyEvergreenSectionText, skyEvergreenSectionFragments, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
+import { isContentStudioReferenceSource } from "../../apps/web/src/content/contentStudioSourceRole.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -881,6 +882,10 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
   eventType?: string | null;
   event_type?: string | null;
 }) {
+  const snapshot = row.sourceSnapshot ?? row.source_snapshot;
+  if (isContentStudioReferenceSource(row.contentKey ?? row.content_key ?? "", isRecord(snapshot) ? snapshot : {})) {
+    throw new GeneratedContentRequestError("Source notes can be reviewed but cannot be published as reader copy. Publish a finished card instead.", 409);
+  }
   if (isLegacyLiveWritingCandidate(row)) {
     throw new Error("Legacy local/source-grounded generated rows cannot be published LIVE. Use fallback-hook, slot-template, vocab, or newly authored rows instead.");
   }
@@ -1974,6 +1979,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
   }
   const isPackageRow = isFallbackArchitectureV3Row(existing);
+  if (body.status === "LIVE" && isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {})) {
+    throw new GeneratedContentRequestError("Source notes can be reviewed but cannot be published as reader copy. Publish a finished card instead.", 409);
+  }
   const effectiveContentKey = body.contentKey ?? existing.content_key;
   const effectiveSurface = (body.surface ?? existing.surface) as GeneratedContentSurface | undefined;
 

@@ -5408,7 +5408,7 @@ test("reopening a saved aspect fetches the current copy and version before anoth
       const input = req.postDataJSON();
       writtenVersion = input.expectedUpdatedAt;
       if (writtenVersion !== saved.updated_at) return route.fulfill({ status: 409, json: { error: "Stale version" } });
-      saved = { ...saved, body: input.body, status: input.status, updated_at: "2026-09-10T07:08:00.000003+00:00" };
+      saved = { ...saved, body: input.body, status: input.status, review_state: input.reviewState, updated_at: "2026-09-10T07:08:00.000003+00:00" };
       return route.fulfill({ json: { ok: true, rows: [saved] } });
     }
     return route.fallback();
@@ -5428,6 +5428,115 @@ test("reopening a saved aspect fetches the current copy and version before anoth
   await expect.poll(() => saved.body).toBe("Owner's next exact revision.");
   expect(writtenVersion).toBe("2026-09-10T07:06:57.684208+00:00");
   await expect(editor.getByRole("alert")).toHaveCount(0);
+});
+
+for (const pair of ["sun-chiron", "moon-chiron"]) for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`review queue preserves ${pair} source identity and saved review status ${theme} ${width}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 });
+  const row = { ...generatedContentRows[0], id: `qa-source-${pair}`, content_key: `source/sky-aspect-pair/${pair}`,
+    headline: pair, body: "Exact source passage retained during editorial review.", surface: "sky", mode: "feed",
+    status: "DRAFT", event_type: "sky-aspect-pair-source", block_type: "fallback_hook", lane: "reference",
+    provider: "owner-resource-review", review_state: "owner-review-required", facts: {}, sections: {},
+    source_snapshot: { sourceType: "owner-resource-review", content_role: "fallback_source", review_status: "needs_review" }, updated_at: now };
+  const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+  const assertNoBrowserErrors = watchBrowserErrors(page);
+  await seedAdminApi(page, { generatedRows: [row], reviewRows: [{ ...reviewRecordRows[0], id: row.id, contentKey: row.content_key, status: "DRAFT" }],
+    onGeneratedContentWrite: write => writes.push(write) });
+  await expectAdminRouteLoads(page, "/admin/content#review-queue");
+  await page.evaluate(value => document.documentElement.dataset.theme = value, theme);
+  const queueRow = page.locator(".admin-review-queue-row", { hasText: row.content_key });
+  await queueRow.getByRole("button", { name: "Edit", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  await expect(editor.getByRole("button", { name: "Publish to app", exact: true })).toHaveCount(0);
+  await expect(editor.getByText("Source material cannot be published.")).toBeVisible();
+  await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
+  await expect.poll(() => writes.length).toBe(1);
+  expect(writes[0].payload).toMatchObject({ status: "REVIEWED", lane: "reference", body: row.body, eventType: row.event_type,
+    sourceSnapshot: { content_role: "fallback_source", review_status: "reviewed", sourceType: "owner-resource-review" } });
+  await expect(editor.getByRole("alert")).toHaveCount(0);
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
+  await page.locator(".admin-review-queue-groups").getByRole("button", { name: /Reviewed/ }).click();
+  await expect(queueRow).toHaveCount(1);
+  await queueRow.getByRole("button", { name: "Edit", exact: true }).click();
+  await expect(editor.getByRole("button", { name: "Publish to app", exact: true })).toHaveCount(0);
+  await expect(editor.getByLabel("Reader copy", { exact: true })).toHaveValue(row.body);
+  await expect(editor.getByRole("button", { name: "Reviewed", exact: true })).toBeDisabled();
+  await expectNoHorizontalOverflow(page, "Source review editor");
+  await page.screenshot({ path: `test-results/review-queue-${pair}-${theme}-${width}.png` });
+  assertNoBrowserErrors();
+});
+
+test("review queue publishes reader-ready hooks from the reference lane and confirms the response", async ({ page }) => {
+  const row = { ...generatedContentRows[0], id: "qa-reader-hook", content_key: "fallback-hook/sky-sign-copy/sun/virgo",
+    headline: "Reader-ready hook", body: "Exact reader passage.", surface: "sky", mode: "feed", status: "REVIEWED",
+    event_type: "fallback-hook", block_type: "fallback_hook", lane: "reference", provider: "owner-resource-review",
+    review_state: null, facts: {}, sections: {}, source_snapshot: { sourceType: "owner-resource-review", content_role: "fallback_hook", review_status: "reviewed" }, updated_at: now };
+  const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+  const assertNoBrowserErrors = watchBrowserErrors(page);
+  await seedAdminApi(page, { generatedRows: [row], reviewRows: [], onGeneratedContentWrite: write => writes.push(write) });
+  let responseOverride: Record<string, unknown> | null = row;
+  await page.route("**/api/admin/generated-content**", async route => {
+    if (route.request().method() !== "PATCH" || !responseOverride) return route.fallback();
+    return route.fulfill({ json: { ok: true, rows: [responseOverride] } });
+  });
+  await expectAdminRouteLoads(page, "/admin/content#review-queue");
+  await page.locator(".admin-review-queue-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  await editor.getByRole("button", { name: "Publish to app", exact: true }).click();
+  await expect(editor.getByRole("alert")).toContainText("did not return the saved row");
+  for (const invalid of [
+    { ...row, status: "LIVE", lane: "serving", id: "wrong-row" },
+    { ...row, status: "LIVE", lane: "reference" },
+    { ...row, status: "LIVE", lane: "serving", review_state: "owner-review-required" },
+    { ...row, status: "LIVE", lane: "serving", body: "Wrong saved passage." }
+  ]) {
+    responseOverride = invalid;
+    await editor.getByRole("button", { name: "Publish to app", exact: true }).click();
+    await expect(editor.getByRole("alert")).toContainText("did not return the saved row");
+  }
+  responseOverride = null;
+  await editor.getByRole("button", { name: "Publish to app", exact: true }).click();
+  await expect.poll(() => writes.length).toBe(1);
+  expect(writes[0].payload).toMatchObject({ status: "LIVE", lane: "serving", reviewState: null, body: row.body,
+    sourceSnapshot: { content_role: "fallback_hook", review_status: "approved" } });
+  await expect(editor.getByRole("alert")).toHaveCount(0);
+  assertNoBrowserErrors();
+});
+
+test("review queue retains exact edits after a conflict or unconfirmed review and supports retry", async ({ page }) => {
+  const row = { ...generatedContentRows[0], id: "qa-source-retry", content_key: "source/sky-aspect-pair/sun-chiron",
+    headline: "Sun–Chiron", body: "Initial source passage.", surface: "sky", mode: "feed", status: "DRAFT",
+    event_type: "sky-aspect-pair-source", block_type: "fallback_hook", lane: "reference", provider: "owner-resource-review",
+    review_state: "owner-review-required", facts: {}, sections: {},
+    source_snapshot: { sourceType: "owner-resource-review", content_role: "fallback_hook", review_status: "needs_review" }, updated_at: now };
+  const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+  const assertNoBrowserErrors = watchBrowserErrors(page);
+  await seedAdminApi(page, { generatedRows: [row], reviewRows: [], onGeneratedContentWrite: write => writes.push(write) });
+  let outcome = "conflict";
+  await page.route("**/api/admin/generated-content**", async route => {
+    if (route.request().method() !== "PATCH" || outcome === "saved") return route.fallback();
+    if (outcome === "conflict") return route.fulfill({ status: 409, json: { error: "This content changed after the editor was opened." } });
+    return route.fulfill({ json: { ok: true, rows: [{ ...row, status: "REVIEWED" }] } });
+  });
+  await expectAdminRouteLoads(page, "/admin/content#review-queue");
+  await page.locator(".admin-review-queue-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  const exactEdit = "The complete replacement source passage, with its final sentence preserved.";
+  await editor.getByLabel("Reader copy", { exact: true }).fill(exactEdit);
+  await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
+  await expect(editor.getByRole("alert")).toContainText("changed after the editor was opened");
+  await expect(editor.getByLabel("Reader copy", { exact: true })).toHaveValue(exactEdit);
+  outcome = "unconfirmed";
+  await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
+  await expect(editor.getByRole("alert")).toContainText("did not return the saved row");
+  await expect(editor.getByLabel("Reader copy", { exact: true })).toHaveValue(exactEdit);
+  outcome = "saved";
+  await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
+  await expect.poll(() => writes.length).toBe(1);
+  expect(writes[0].payload).toMatchObject({ status: "REVIEWED", body: exactEdit, lane: "reference",
+    sourceSnapshot: { content_role: "fallback_source", review_status: "reviewed" } });
+  await expect(editor.getByRole("button", { name: "Reviewed", exact: true })).toBeDisabled();
+  await expect(editor.getByRole("alert")).toHaveCount(0);
+  assertNoBrowserErrors();
 });
 
 test("reopening a completed revision follows its published target", async ({ page }) => {
