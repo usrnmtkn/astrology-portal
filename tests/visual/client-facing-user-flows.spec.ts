@@ -1196,7 +1196,8 @@ test.describe("client-facing user flow case studies", () => {
         ]) {
           await expectClientRouteLoads(page, route);
           const card = page.locator(".sky-detail-card").first();
-          await expect(card.locator("h1")).toBeVisible();
+          // The shell can be ready before the calculated placement article.
+          await expect(card.locator("h1")).toBeVisible({ timeout: routeReadyTimeoutMs });
           const box = await card.boundingBox();
           expect(box!.x).toBeCloseTo(width * 0.025, 0);
           expect(box!.width).toBeCloseTo(width * 0.95, 0);
@@ -1920,7 +1921,7 @@ test.describe("client-facing user flow case studies", () => {
     expect(transitCardText.split(orbLabel).length - 1, "Transit orb appears once").toBe(1);
     await transitCard.click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
-    await expect(page.getByLabel("What this looks like in space")).toBeVisible();
+    await expect(page.getByLabel("Transit details", { exact: true })).toBeVisible();
     await expect(
       page.locator(".sky-detail-section:not(.sky-aspect-mechanics)"),
       "Owner-signoff-untraced personal-transit explanation remains eligible under the owner ruling"

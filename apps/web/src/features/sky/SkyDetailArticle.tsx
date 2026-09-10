@@ -1,3 +1,4 @@
+import { SkyMechanics, TransitFacts } from "../../components/ArticleFacts";
 import { ChevronLeft } from "lucide-react";
 import { Fragment, isValidElement, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 import type { ContentBundle } from "../../content/types";
@@ -75,6 +76,7 @@ export type SkyPersonalizedPlacement = {
 };
 
 export type SkyDetail = {
+  transitDescription?: string;
   routePath?: string;
   glyph: string;
   kicker: string;
@@ -686,12 +688,7 @@ export function SkyDetailArticle({
                   <p>{detail.seriesLine}</p>
                 </aside>
               ) : null}
-              {detail.mechanicsCaption ? (
-                <aside className="article-section sky-detail-section sky-aspect-mechanics" aria-labelledby="sky-aspect-mechanics-title">
-                  <h2 id="sky-aspect-mechanics-title">What this looks like in space</h2>
-                  <p>{detail.mechanicsCaption}</p>
-                </aside>
-              ) : null}
+              <SkyMechanics caption={detail.mechanicsCaption} />
               {drilldown ? (
                 <details className="sky-detail-drilldown">
                   <summary>{drilldown.title || "Why this?"}</summary>
@@ -724,6 +721,7 @@ export function SkyDetailArticle({
                   ))}
                 </section>
               ) : null}
+              <TransitFacts description={detail.transitDescription} />
               <div className="sky-detail-end" aria-hidden="true">✦</div>
             </div>
           </div>

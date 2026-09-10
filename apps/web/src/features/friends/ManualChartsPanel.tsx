@@ -1,3 +1,4 @@
+import { transitArticleDescription } from "../../services/transitArticleDescription";
 import { FriendDetail } from "./FriendDetail";
 import { X } from "lucide-react";
 import {
@@ -657,6 +658,8 @@ export function ManualChartsPanel({
         });
 
         return [{
+          activation: group.activation,
+          endpointOwner: group.endpointOwner,
           activatedContacts: contactsForBondTransitGroup(group, contacts),
           id: `${group.key}-${group.activationId}`,
           effectFamily: bondEffectFamily(group.transiting, group.aspect) as "soft" | "hard",
@@ -2139,6 +2142,12 @@ export function ManualChartsPanel({
       glyph: pointGlyph(card.transitPlanet),
       kicker: "Between you two right now",
       title: card.headline,
+      transitDescription: transitArticleDescription(
+        card.activation,
+        card.endpointOwner === "reader" ? profileNatalSky : selectedFriendReadyNatalChart,
+        transitAspectTechnicalVerb(card.activation.aspect),
+        card.endpointOwner === "reader" ? "you" : selectedChart.displayName
+      ),
       meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
       bodyBeforeSections: activatedConnectionSections.length > 0,
       body: acceptedOwnerApprovedTransitBody(
@@ -2198,14 +2207,6 @@ export function ManualChartsPanel({
     );
     const title = `${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`;
     const orbLabel = wholeDegreeOrb(transitOrbValue(transit));
-    const transitPosition = transit.transitSign
-      ? `${transit.transitPlanet} in ${transit.transitSign}`
-      : transit.transitPlanet;
-    const natalPosition = [
-      `${possessiveLabel(selectedChart.displayName)} natal ${transit.natalPoint}`,
-      transit.natalSign ? `in ${transit.natalSign}` : "",
-      transit.natalHouse ? `in the ${ordinalHouse(transit.natalHouse)} house` : ""
-    ].filter(Boolean).join(" ");
     const directionSentence = transit.direction
       ? ` The aspect is ${transit.direction}.`
       : "";
@@ -2239,7 +2240,12 @@ export function ManualChartsPanel({
         body: section.body,
         sourceKeys: section.sourceKeys
       })),
-      mechanicsCaption: `${transitPosition} is ${transitAspectTechnicalVerb(transit.aspect)} ${natalPosition} at a ${orbLabel} orb.${directionSentence}`
+      transitDescription: `${transitArticleDescription(
+        transit,
+        selectedFriendReadyNatalChart,
+        transitAspectTechnicalVerb(transit.aspect),
+        selectedChart.displayName
+      )} Orb: ${orbLabel}.${directionSentence}`
     });
   };
   const openFriendTransitById = (transitId: string) => {
