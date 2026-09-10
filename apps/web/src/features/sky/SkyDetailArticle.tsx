@@ -1,3 +1,4 @@
+import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { SkyMechanics, TransitFacts } from "../../components/ArticleFacts";
 import { ChevronLeft } from "lucide-react";
 import { Fragment, isValidElement, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
@@ -77,6 +78,7 @@ export type SkyPersonalizedPlacement = {
 };
 
 export type SkyDetail = {
+  pills?: ArticlePillData;
   transitDescription?: string;
   routePath?: string;
   glyph: string;
@@ -595,6 +597,7 @@ export function SkyDetailArticle({
               <p className="article-duration">{headerDate}</p>
             ) : null}
             {detail.residencyDuration ? <p className="article-duration">{detail.residencyDuration}</p> : null}
+            <ArticlePills pills={detail.pills} />
             {articleSub ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>

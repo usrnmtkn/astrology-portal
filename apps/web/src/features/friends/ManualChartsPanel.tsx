@@ -875,6 +875,7 @@ export function ManualChartsPanel({
     };
 
     return {
+      pills: article.pills,
       glyph: article.glyph || pointGlyph(position.planet),
       kicker: "",
       title: article.title,
@@ -2095,6 +2096,11 @@ export function ManualChartsPanel({
       glyph: pointGlyph(card.transit.transitPlanet),
       kicker: "House transit",
       title: card.title,
+      duration: card.timingRange,
+      pills: { durationLabel: card.durationLabel, labels: [
+        { label: longTransitPlanets.has(card.transit.transitPlanet) ? "Long-term" : "Short-term", tone: "term" as const },
+        ...houseLifeAreaKeywords(card.activation.house).map((label) => ({ label, tone: "muted" as const }))
+      ] },
       meta: [
         card.timingRange,
         `${ordinalHouse(card.activation.house)} House`,
@@ -2190,6 +2196,7 @@ export function ManualChartsPanel({
       kicker: "Synastry",
       title,
       meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
+      pills: { labels: [{ label: subtitle, tone: "muted" }] },
       body: rendered?.body ? [rendered.body] : [],
       content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
     });
@@ -2228,7 +2235,8 @@ export function ManualChartsPanel({
       glyph: `${pointGlyph(transit.transitPlanet)} ${aspectGlyph(transit.aspect)} ${pointGlyph(transit.natalPoint)}`,
       kicker: "Transit",
       title,
-      duration: timing.label,
+      duration: timing.rangeLabel,
+      pills: { durationLabel: timing.durationLabel },
       meta: [
         timing.rangeLabel,
         `${orbLabel} orb`,
