@@ -124,8 +124,11 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     expect(await page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("studio-recovery-fixture");
 
     // A repeated crash can be escaped through a separate Studio destination.
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+    await openStudioPage(page, "Review Queue");
     await page.evaluate(() => document.documentElement.removeAttribute("data-qa-recovered"));
-    await page.getByLabel("Sky placement planet or point").selectOption("saturn");
+    await openStudioPage(page, "Sky Write-ups");
+    await expect(page.getByText("This page could not load. Try another page or reload to try again.")).toBeVisible();
     await page.getByRole("link", { name: "Open Review Queue", exact: true }).click();
     await expect(page).toHaveURL(/#review-queue$/);
     await expect(page.getByRole("heading", { name: "Review Queue", exact: true })).toBeVisible();

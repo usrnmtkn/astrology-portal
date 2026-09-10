@@ -221,3 +221,5 @@ No later-suite success is claimed. Changes remain local and uncommitted on
 ## Merge CI portability and bundle verification
 
 PR #719 exposed a macOS-only temporary bundle path in the new parity test. The test now creates a unique directory under the platform temporary directory, imports via a file URL, and removes it after loading. The CI web production build measured 2,948,142 aggregate JavaScript gzip bytes; the aggregate budget is adjusted from 2,942,000 to 2,949,000 bytes for this feature. Startup, CSS, and individual chunk limits remain unchanged; no dependency was added.
+
+CI also exposed source requests before the owner credential was available. Composition maps now wait for a nonempty credential and no access denial, while remaining available during background inventory loading. The existing login/retry suite passes all 5 cases; the full standalone Studio suite passes all 23 cases. Repeated crash injection now navigates away before rearming the fault, avoiding an asynchronous inventory render racing the test selection. Production-entry recovery passed all 8 cases.

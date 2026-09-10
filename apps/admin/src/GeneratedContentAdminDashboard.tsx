@@ -6250,7 +6250,7 @@ export function GeneratedContentAdminDashboard() {
                     </p>
                   </div>
                 </section>
-                {(
+                {secret.trim() && !hasAccessIssue && (
                   <Suspense fallback={<p className="admin-empty" role="status">Loading Composition Map…</p>}>
                     <SkyPlacementComposition onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)} rows={compositionRows} selection={skyPlacementBody !== "all" && skyPlacementSign !== "all" ? { planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter } : undefined} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
                   </Suspense>
