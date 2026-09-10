@@ -183,3 +183,8 @@ export function preloadSwissEphemerisOffMainThread(): Promise<void> {
   }
   return requestCalculation({ kind: "preload" });
 }
+
+export function getSkyPlacementTransitFactsOffMainThread(planet: string, sign: string, referenceDate: Date, timeZone: string): Promise<import("./ephemeris.js").SkyPlacementTransitFacts> {
+  if (typeof Worker === "undefined") return loadEphemerisForNonBrowserRuntime().then(({ getSkyPlacementTransitFacts }) => getSkyPlacementTransitFacts({ planet, sign, referenceDate, timeZone }));
+  return requestCalculation({ kind: "placement-transit-facts", planet, sign, date: referenceDate.toISOString(), timeZone });
+}

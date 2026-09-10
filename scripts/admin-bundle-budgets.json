@@ -2,11 +2,12 @@
   "entryJavaScriptRawBytes": 622500,
   "entryJavaScriptGzipBytes": 177000,
   "largestJavaScriptRawBytes": 622500,
-  "totalJavaScriptGzipBytes": 322000,
+  "totalJavaScriptGzipBytes": 371000,
   "_rationale": {
     "entryJavaScriptGzipBytes": "Shared paragraph and practical-item validation measures 176.3 kB entry gzip; allow 0.7 kB headroom. No new runtime dependencies. See docs/qa/sky-composable-blocks-2026-09-10.md.",
     "totalJavaScriptGzipBytes": "Paragraph editor, eight structural outlines, and repeatable practical items measure 316.8 kB aggregate gzip. Allow 0.2 kB headroom. See docs/qa/sky-composable-blocks-2026-09-10.md.",
     "entryJavaScriptRawBytes": "Paragraph packets and practical-item schema validation add 1.9 kB raw to the shared entry. Measured 621.8 kB raw. See docs/qa/sky-composable-blocks-2026-09-10.md.",
-    "dailySkyAssembly": "Daily Sky assembly editor: 320.7 kB aggregate gzip after moving the workspace out of the initial entry. Allow 1.3 kB headroom; initial-entry limits stay unchanged. See docs/qa/daily-sky-assembly-editor-2026-09-10.md."
+    "dailySkyAssembly": "Daily Sky assembly editor: 320.7 kB aggregate gzip after moving the workspace out of the initial entry. Allow 1.3 kB headroom; initial-entry limits stay unchanged. See docs/qa/daily-sky-assembly-editor-2026-09-10.md.",
+    "skyIngressV5": "After rebasing onto main d8b17bf7, V5 composition and explicitly requested ephemeris previews measure 368,329 aggregate gzip bytes, including the deferred calculation worker and Swiss loader. Allow 49 kB above main's aggregate cap; entry and largest-chunk limits are unchanged. Entry measures 610.3 kB raw / 172.9 kB gzip. See docs/qa/sky-ingress-v5-2026-09-10.md."
   }
 }

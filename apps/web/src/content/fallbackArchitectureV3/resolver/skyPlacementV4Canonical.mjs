@@ -2,6 +2,7 @@ import { correctedReaderSource } from "./readerSourceReferenceCorrections.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
 import { skyPlacementArticlePath, skyEvergreenFields, skyEvergreenEditableFields, validateSkyEvergreenSections } from "./skyEvergreenSections.mjs";
 import { skyPlacementVariableFacts, fillSkyPlacementVariables } from "./skyPlacementVariables.mjs";
+import { renderSkyIngressComposition, validateSkyIngressComposition } from "./skyIngressComposition.mjs";
 import continuousOwnerApproval from "../authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
 import readerCopyOwnerApproval from "../authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 import readerCopyServingRelease from "../authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
@@ -874,17 +875,20 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook
     ? fallbackOverlays[0]?.FallbackHookOverlay ?? ""
     : "";
-  const evergreen = article && !fullArticle && input.fallbackAvailable !== false
+  const ingressAssembly = renderSkyIngressComposition(article, input, article?.ingress ? [article, ...corpus.content.continuous.filter(row => row.contentKey !== article.contentKey)] : []);
+  const assembled = input.fallbackAvailable !== false && ingressAssembly.status === "ready"
+    ? [ingressAssembly.body, input.lunarFallbackBody, fallbackOverlay].filter(Boolean).join("\n\n") : "";
+  const evergreen = article && !fullArticle && !assembled && input.fallbackAvailable !== false
     ? skyEvergreenFields(article, facts.motion).map(section => fillSkyPlacementVariables(section.value, facts)) : [];
-  const fallback = article && !fullArticle && input.fallbackAvailable !== false
+  const fallback = article && !fullArticle && !assembled && input.fallbackAvailable !== false
     ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)]
       .filter(Boolean)
       .map((part) => withoutUnresolvedSlots(fillFacts(part, facts)))
       .filter(part => part.trim())
       .join("\n\n")
     : "";
-  const mainBody = fullArticle || fallback;
-  const resolution = fullArticle ? "canonical-article" : fallback ? "exact-fallback" : "facts-only";
+  const mainBody = fullArticle || assembled || fallback;
+  const resolution = fullArticle ? "canonical-article" : assembled ? "ingress-composition" : fallback ? "exact-fallback" : "facts-only";
   const aspects = selectSkyV4Aspects(input.aspects, { subjectBody: input.planet });
   const blocks = [`# ${title(input.planet)} in ${title(input.sign)}`];
   if (text(input.dateLine).trim()) blocks.push(input.dateLine);
@@ -905,6 +909,7 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
     contentKey: article?.contentKey ?? `sky-placement/article/${lower(input.planet)}/${lower(input.sign)}`,
     resolution,
     mainBody,
+    ingressAssembly,
     selectedOverlayKeys: overlays.map((overlay) => overlay.OverlayKey),
     selectedFallbackOverlayKeys: fallbackOverlays.map((overlay) => overlay.OverlayKey),
     selectedAspectIds: aspects.map((aspect) => aspect.id),
@@ -1157,7 +1162,10 @@ export function renderSkyV4StudioPreview(corpus, input) {
     (current, [path, nextValue]) => setValueAt(current, path, nextValue),
     structuredClone(source)
   );
-  if (effective.studio_content_type === "continuous-placement") validateSkyEvergreenSections(effective.fallback?.sections);
+  if (effective.studio_content_type === "continuous-placement") {
+    validateSkyEvergreenSections(effective.fallback?.sections);
+    validateSkyIngressComposition(effective.ingress);
+  }
   if (effective.studio_content_type === "aspect") {
     const result = renderGovernedAspectStudioPreview(effective, input);
     return {
@@ -1354,8 +1362,8 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   if (input.inspectVariables === true) {
     const retrograde = corpus.content.retrogradeGeneric.find(row => lower(row.Planet) === lower(input.planet));
     const copy = [source.placementArticle, source.placementArticleDirect, source.placementArticleRetrograde,
-      ...skyEvergreenFields(source).map(field => field.value), retrograde?.Body].join("\n");
-    return { contentKey, requiresAspectFacts: /\{\{\s*(?:aspectsInSign(?:Count)?|aspectsWhileRetrograde(?:Count)?|retrogradeStartDate|retrogradeEndDate)\s*\}\}/u.test(copy) };
+      ...skyEvergreenFields(source).map(field => field.value), retrograde?.Body, source.ingress?.enabled ? JSON.stringify(source.ingress) : ""].join("\n");
+    return { contentKey, requiresAspectFacts: Boolean(source.ingress?.enabled && source.ingress.modules.some(module => module.enabled && module.aspect)) || /\{\{\s*(?:aspectsInSign(?:Count)?|aspectsWhileRetrograde(?:Count)?|retrogradeStartDate|retrogradeEndDate)\s*\}\}/u.test(copy) };
   }
   const lunarContext = placementLunarContext(lunarContextSource, input);
   const lunarFacts = lunarContext?.facts ?? record(input.facts);
