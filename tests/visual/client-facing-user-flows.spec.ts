@@ -1412,10 +1412,14 @@ test.describe("client-facing user flow case studies", () => {
     await expect(natalTab).toHaveAttribute("aria-selected", "true");
     await expect(page).toHaveURL(/#you\?tab=chart$/u);
 
+    // Wait for the chart download before exercising navigation; reloading during
+    // WebAssembly compilation aborts the request and emits unrelated errors.
+    await expect(page.locator(".chart-layout__visual")).toHaveAttribute("data-chart-calculation-status", "ready", { timeout: 15_000 });
     await page.reload();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await expect(natalTab).toHaveAttribute("aria-selected", "true");
 
+    await expect(page.locator(".chart-layout__visual")).toHaveAttribute("data-chart-calculation-status", "ready", { timeout: 15_000 });
     await transitsTab.click();
     await expect(transitsTab).toHaveAttribute("aria-selected", "true");
     await expect(page).toHaveURL(/#you$/u);
@@ -2689,6 +2693,38 @@ test.describe("client-facing user flow case studies", () => {
     await expect(header.getByRole("button", { name: "Open menu" })).toBeVisible();
     await assertNoClientErrors();
   });
+
+  for (const theme of ["light", "dark"] as const) {
+    for (const width of [390, 768, 1440]) {
+      test(`logo keeps its surface while scrolling ${theme} ${width}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 844 });
+        await seedClientState(page, { profile: true, theme });
+        await expectClientRouteLoads(page, "/#you");
+        const logo = page.locator(".nav-pill");
+        const surface = () => logo.evaluate(node => {
+          const style = getComputedStyle(node);
+          return { background: style.backgroundColor, border: style.border, shadow: style.boxShadow };
+        });
+        await expect(logo).toBeVisible();
+        const atTop = await surface();
+        expect(atTop.background).not.toBe("rgba(0, 0, 0, 0)");
+        // The desktop loading shell can fit in the viewport. Exercise real
+        // scrolling once reader content has given the document room to scroll.
+        await expect.poll(() => page.evaluate(() => {
+          window.scrollTo(0, 600);
+          return window.scrollY;
+        }), { timeout: 15_000 }).toBeGreaterThan(8);
+        await expect(page.locator("html")).toHaveAttribute("data-scrolled", "");
+        await expect.poll(surface).toEqual(atTop);
+        await expect(logo.getByRole("button", { name: "TLDR Astro home" })).toBeVisible();
+        await mkdir(responsiveScreenshotDir, { recursive: true });
+        await page.screenshot({ path: path.join(responsiveScreenshotDir, `logo-scrolled-${theme}-${width}.png`) });
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await expect(page.locator("html")).not.toHaveAttribute("data-scrolled", "");
+        await expect.poll(surface).toEqual(atTop);
+      });
+    }
+  }
 
   test("narrow mobile sky cards and header stay inside their rails", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
