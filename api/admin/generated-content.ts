@@ -1761,6 +1761,24 @@ async function patchGeneratedContentRow(
   return rows;
 }
 
+async function completePublishedRevision(existing: ExistingGeneratedContentRow, expectedUpdatedAt: string | null, now: string) {
+  try {
+    await patchGeneratedContentRow(existing.id, {
+      status: "ARCHIVED", lane: "reference", review_state: "published-revision", updated_at: now
+    }, expectedUpdatedAt);
+  } catch (error) {
+    // Publishing the target can archive this exact proposal in a database
+    // trigger. A completed transition is success, not a stale-edit failure.
+    if (error instanceof GeneratedContentRequestError && error.statusCode === 409) {
+      const latest = await fetchExistingRowById(existing.id);
+      if (latest?.status === "ARCHIVED" && latest.lane === "reference" && latest.review_state === "published-revision"
+        && latest.source_snapshot?.targetRowId === existing.source_snapshot?.targetRowId
+        && JSON.stringify(latest.sections) === JSON.stringify(existing.sections)) return;
+    }
+    throw error;
+  }
+}
+
 async function upsertGeneratedContentRow(row: Record<string, unknown>) {
   const params = new URLSearchParams({
     select: "id,status,updated_at",
@@ -2078,17 +2096,13 @@ async function updateGeneratedContent(req: IncomingMessage) {
     let revisionExpectedUpdatedAt = body.expectedUpdatedAt ?? existing.updated_at ?? null;
     if (target.id !== existing.id && body.expectedUpdatedAt) {
       const claimedAt = new Date().toISOString();
-      await patchGeneratedContentRow(existing.id, { updated_at: claimedAt }, body.expectedUpdatedAt);
-      revisionExpectedUpdatedAt = claimedAt;
+      const [claimed] = await patchGeneratedContentRow(existing.id, { updated_at: claimedAt }, body.expectedUpdatedAt);
+      if (!claimed.updated_at) throw new Error("The saved revision version was not returned.");
+      revisionExpectedUpdatedAt = claimed.updated_at;
     }
     const published = await patchGeneratedContentRow(target.id, promotionPatch, target.updated_at);
     if (target.id !== existing.id) {
-      await patchGeneratedContentRow(existing.id, {
-        status: "ARCHIVED",
-        lane: "reference",
-        review_state: "published-revision",
-        updated_at: now
-      }, revisionExpectedUpdatedAt);
+      await completePublishedRevision(existing, revisionExpectedUpdatedAt, now);
     }
     return published;
   }
@@ -2170,8 +2184,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     let revisionExpectedUpdatedAt = body.expectedUpdatedAt ?? existing.updated_at ?? null;
     if (body.expectedUpdatedAt) {
       const claimedAt = new Date().toISOString();
-      await patchGeneratedContentRow(existing.id, { updated_at: claimedAt }, body.expectedUpdatedAt);
-      revisionExpectedUpdatedAt = claimedAt;
+      const [claimed] = await patchGeneratedContentRow(existing.id, { updated_at: claimedAt }, body.expectedUpdatedAt);
+      if (!claimed.updated_at) throw new Error("The saved revision version was not returned.");
+      revisionExpectedUpdatedAt = claimed.updated_at;
     }
     const target = await fetchExistingRowById(targetRowId);
     if (!target || target.event_type !== "sky-article-edition") {
@@ -2211,12 +2226,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       published_at: now,
       updated_at: now
     }, target.updated_at);
-    await patchGeneratedContentRow(existing.id, {
-      status: "ARCHIVED",
-      lane: "reference",
-      review_state: "published-revision",
-      updated_at: now
-    }, revisionExpectedUpdatedAt);
+    await completePublishedRevision(existing, revisionExpectedUpdatedAt, now);
     return published;
   }
 

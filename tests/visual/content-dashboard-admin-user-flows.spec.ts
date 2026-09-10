@@ -5384,3 +5384,65 @@ for (const theme of ["light", "dark"]) for (const width of [1440, 390]) {
     await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(row.body);
   });
 }
+
+test("reopening a saved aspect fetches the current copy and version before another edit", async ({ page }) => {
+  let saved = { ...generatedContentRows[0], id: "qa-reopen-aspect", content_key: "sky.aspect.sun.trine.lilith",
+    headline: "Sun Trine Lilith", body: "First saved passage.", surface: "sky", mode: "feed", status: "DRAFT",
+    event_type: "collective-aspect-card", block_type: "sky_aspect", review_state: "needs-review",
+    source_snapshot: {}, sections: {}, facts: {}, updated_at: "2026-09-10T07:06:54.000001+00:00" };
+  await seedAdminApi(page, { generatedRows: [saved] });
+  let reads = 0;
+  let writtenVersion: string | undefined;
+  await page.route("**/api/admin/generated-content**", async route => {
+    const req = route.request();
+    const url = new URL(req.url());
+    if (req.method() === "GET" && url.searchParams.get("id") === saved.id) {
+      reads += 1;
+      return route.fulfill({ json: { ok: true, rows: [saved] } });
+    }
+    if (req.method() === "PATCH") {
+      const input = req.postDataJSON();
+      writtenVersion = input.expectedUpdatedAt;
+      if (writtenVersion !== saved.updated_at) return route.fulfill({ status: 409, json: { error: "Stale version" } });
+      saved = { ...saved, body: input.body, status: input.status, updated_at: "2026-09-10T07:08:00.000003+00:00" };
+      return route.fulfill({ json: { ok: true, rows: [saved] } });
+    }
+    return route.fallback();
+  });
+  await expectAdminRouteLoads(page, "/admin/content#review-queue");
+  const open = page.locator(".admin-review-queue-row", { hasText: saved.content_key }).getByRole("button", { name: "Edit", exact: true });
+  await open.click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue("First saved passage.");
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
+  saved = { ...saved, body: "Published in another tab.", updated_at: "2026-09-10T07:06:57.684208+00:00" };
+  await open.click();
+  await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(saved.body);
+  expect(reads).toBe(2);
+  await editor.getByLabel("Full passage / body", { exact: true }).fill("Owner's next exact revision.");
+  await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
+  await expect.poll(() => saved.body).toBe("Owner's next exact revision.");
+  expect(writtenVersion).toBe("2026-09-10T07:06:57.684208+00:00");
+  await expect(editor.getByRole("alert")).toHaveCount(0);
+});
+
+test("reopening a completed revision follows its published target", async ({ page }) => {
+  const revision = { ...generatedContentRows[0], id: "qa-completed-revision", content_key: "sky.aspect.sun.trine.lilith",
+    headline: "Sun Trine Lilith", body: "Cached draft copy.", status: "DRAFT", lane: "reference",
+    event_type: "collective-aspect-card", block_type: "sky_aspect",
+    review_state: "owner-review-required", source_snapshot: {}, sections: {}, updated_at: now };
+  await seedAdminApi(page, { generatedRows: [revision] });
+  await page.route("**/api/admin/generated-content?**", async route => {
+    const id = new URL(route.request().url()).searchParams.get("id");
+    if (id === revision.id) return route.fulfill({ json: { ok: true, rows: [{ ...revision, status: "ARCHIVED",
+      review_state: "published-revision", source_snapshot: { targetRowId: "qa-published-target" } }] } });
+    if (id === "qa-published-target") return route.fulfill({ json: { ok: true, rows: [{ ...revision,
+      id, status: "LIVE", lane: "serving", review_state: null, body: "Current published passage." }] } });
+    return route.fallback();
+  });
+  await expectAdminRouteLoads(page, "/admin/content#review-queue");
+  await page.locator(".admin-review-queue-row", { hasText: revision.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue("Current published passage.");
+  await expect(editor.getByRole("button", { name: "Restore as draft", exact: true })).toHaveCount(0);
+});

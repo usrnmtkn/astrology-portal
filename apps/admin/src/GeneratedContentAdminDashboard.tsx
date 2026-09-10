@@ -4669,7 +4669,7 @@ export function GeneratedContentAdminDashboard() {
     // action applies, otherwise a saved revision can be mistaken for a status-only change.
     let actionRows: AdminGeneratedContentRow[];
     setIsLoading(true);
-    try { actionRows = await Promise.all(selectedSavedRows.map(hydrateGeneratedContentRow)); }
+    try { actionRows = await Promise.all(selectedSavedRows.map((row) => hydrateGeneratedContentRow(row))); }
     catch (error) { setMessage(dashboardErrorMessage(error)); return; }
     finally { setIsLoading(false); }
     const packageRows = actionRows.filter(rowIsFallbackArchitectureV3);
@@ -4769,14 +4769,21 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow) {
-    if (!row.inventory_only) return row;
+  async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false) {
+    if (!row.inventory_only && !refresh) return row;
     const selector = row.id.startsWith("package:") ? `contentKeys=${encodeURIComponent(row.content_key)}` : `id=${encodeURIComponent(row.id)}`;
     const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
       `/api/admin/generated-content?${selector}&status=all&visibility=all&limit=1`,
       secret
     );
-    const hydrated = payload.rows?.find((candidate) => candidate.id === row.id || row.id.startsWith("package:") && candidate.content_key === row.content_key);
+    let hydrated = payload.rows?.find((candidate) => candidate.id === row.id || row.id.startsWith("package:") && candidate.content_key === row.content_key);
+    const publishedTarget = hydrated?.source_snapshot?.targetRowId;
+    if (refresh && row.status !== "ARCHIVED" && hydrated?.status === "ARCHIVED"
+      && hydrated.review_state === "published-revision" && typeof publishedTarget === "string") {
+      const target = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?id=${encodeURIComponent(publishedTarget)}&status=all&visibility=all&limit=1`, secret);
+      hydrated = target.rows?.find((candidate) => candidate.id === publishedTarget);
+    }
     if (!hydrated || hydrated.inventory_only) {
       throw new Error(`Could not load the full content document for ${row.content_key}.`);
     }
@@ -4784,11 +4791,11 @@ export function GeneratedContentAdminDashboard() {
     return hydrated;
   }
 
-  function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection) {
-    if (row.inventory_only) {
+  function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection, refreshed = false) {
+    if (row.inventory_only || !refreshed && !row.id.startsWith("package:")) {
       setIsLoading(true);
-      void hydrateGeneratedContentRow(row)
-        .then((hydrated) => openRow(hydrated, compositionContext, fieldPath, placementSelection))
+      void hydrateGeneratedContentRow(row, true)
+        .then((hydrated) => openRow(hydrated, compositionContext, fieldPath, placementSelection, true))
         .catch((error) => { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); })
         .finally(() => setIsLoading(false));
       return;
