@@ -234,7 +234,7 @@
 }
 
 .saved-generated-report__card.article-card {
-  padding: var(--sky-hero-padding);
+  padding: var(--article-sheet-padding);
 }
 
 .saved-generated-report__body {
