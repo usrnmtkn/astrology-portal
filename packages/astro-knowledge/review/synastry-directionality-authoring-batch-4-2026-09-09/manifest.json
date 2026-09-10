@@ -6,6 +6,15 @@
   "servingAuthorizedAt": "2026-09-10",
   "contentApprovedAt": "2026-09-09",
   "contentStudioStatus": "LIVE",
+  "contentStudioVerification": {
+    "verifiedAt": "2026-09-10",
+    "rowCount": 24,
+    "liveServingCount": 24,
+    "publicationLedgerCurrentCount": 24,
+    "runtimeNameCompiledCount": 24,
+    "unresolvedNameCount": 0,
+    "exactApprovalHashCount": 24
+  },
   "canonicalSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/synastry-directional-overrides-v1.json",
   "servingHashManifest": "packages/astro-knowledge/review/synastry-directionality-authoring-batch-4-2026-09-09/serving-payload-hashes.json",
   "releaseScript": "scripts/release-synastry-directional-overrides-v1.mjs",
