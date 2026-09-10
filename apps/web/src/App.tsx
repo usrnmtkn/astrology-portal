@@ -1,3 +1,4 @@
+import { skySummaryEventPlacements } from "./content/skySummaryEventPlacements";
 import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
@@ -15845,6 +15846,21 @@ function SkyCards({
   const eventDate = event ? new Date(event.occursAt) : null;
   const validEvent = event && eventDate && Number.isFinite(eventDate.getTime())
     && Number.isFinite(selectedDate.getTime()) && (Boolean(todayLunation) || eventDate >= selectedDate);
+  const eventIsToday = Boolean(validEvent && eventDate && new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(eventDate) === dayKey);
+  const exactEventKey = eventIsToday && event ? `${requestKey}:${event.occursAt}:${event.name}:${event.eclipseType ?? ""}` : "";
+  const [summaryEventSky, setSummaryEventSky] = useState<{ key: string; sun: PlanetPosition; moon: PlanetPosition } | null>(null);
+  useEffect(() => {
+    if (!exactEventKey || !event) return;
+    let active = true;
+    void import("./services/skyCalculationClient").then(({ getAstrodienstSkyOffMainThread }) =>
+      getAstrodienstSkyOffMainThread(sky.location, new Date(event.occursAt), { includeTransitWindows: false }))
+      .then(exactSky => {
+        const placements = skySummaryEventPlacements(event, exactSky.positions);
+        if (active) setSummaryEventSky({ key: exactEventKey, ...placements });
+      }).catch(error => console.warn("Daily sky lunation placements could not be verified.", error));
+    return () => { active = false; };
+  }, [exactEventKey]);
+  const verifiedEventSky = summaryEventSky?.key === exactEventKey ? summaryEventSky : null;
   const summaryParts = skyDailySummaryParts({
     sun,
     moon,
@@ -15854,10 +15870,12 @@ function SkyCards({
     voidRemainingLabel: sky.moonStatus?.remainingLabel,
     event: validEvent ? {
       name: event.name,
-      degree: typeof todayLunation?.longitude === "number" ? ((todayLunation.longitude % 30) + 30) % 30 : undefined,
+      sun: verifiedEventSky?.sun,
+      degree: verifiedEventSky?.moon.degree,
       eclipseType: event.eclipseType,
       sign: event.sign,
-      isToday: new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(eventDate) === dayKey,
+      isToday: eventIsToday,
+      placementsPending: eventIsToday && !verifiedEventSky,
       countdown: lunationCountdownLabel(selectedDate, eventDate, sky.location.timeZone).toLowerCase()
     } : undefined
   }, summaryContent);
@@ -15891,7 +15909,7 @@ function SkyCards({
                 click.preventDefault(); onOpenEvent(item);
               }}>{part.text}</a>;
             }
-            const placement = part.action === "sun" ? sun : part.action === "moon" ? moon
+            const placement = part.action === "sun" ? verifiedEventSky?.sun ?? sun : part.action === "moon" ? moon
               : part.action === "retrograde" ? sky.positions.find(position => skyDisplayPlanetName(position.planet) === part.planet) : undefined;
             if (placement) {
               return (

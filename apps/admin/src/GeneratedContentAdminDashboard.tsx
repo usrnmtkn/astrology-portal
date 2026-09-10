@@ -5326,6 +5326,10 @@ export function GeneratedContentAdminDashboard() {
       && !window.confirm("Discard the unsaved changes in this editor?")) return;
     setIsLoading(true);
     try {
+      const { skySummaryCandidateReceipt, loadSkySummarySourceBank } = await import("./skySummarySourceBank");
+      const suppliedBank = initialBody !== undefined && /^cms\/sky-daily-summary\/(sun|moon)\//u.test(field.key)
+        ? await loadSkySummarySourceBank() : undefined;
+      const candidateReceipt = suppliedBank && initialBody !== undefined ? skySummaryCandidateReceipt(field.key, initialBody, suppliedBank) : undefined;
       const result = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
         `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(field.key)}&limit=1`, secret);
       if (!Array.isArray(result.rows)) throw new Error("Could not load the saved summary wording. Please try again.");
@@ -5347,7 +5351,9 @@ export function GeneratedContentAdminDashboard() {
         const current = { ...existing, body: currentSkySummaryWording(existing.content_key, existing.body ?? "") };
         setRows(rows => [current, ...rows.filter(row => row.id !== current.id)]);
         const opened = await openRow(current);
-        if (opened && initialBody !== undefined) setDraft(previous => previous ? { ...previous, body: initialBody } : previous);
+        if (opened && initialBody !== undefined) setDraft(previous => previous ? { ...previous, body: initialBody,
+          sourceSnapshot: { ...previous.sourceSnapshot, ...(candidateReceipt ? { suppliedBank: candidateReceipt } : {}) }
+        } : previous);
       } else {
         const nextDraft: AdminDraft = {
           id: null, contentKey: field.key, surface: "sky", mode: "card", status: "DRAFT",
@@ -5357,6 +5363,7 @@ export function GeneratedContentAdminDashboard() {
             contentType: "mustache-template", contentSystem: "cms-surface-override", contentLevel: "owner-authored",
             authoringSource: "admin-dashboard", cmsSurfaceId: "sky-daily-summary", readerLocation: "Sky → Daily Sky Summary",
             allowedSlots: field.allowedSlots,
+            ...(initialBody !== undefined && candidateReceipt ? { suppliedBank: candidateReceipt } : {}),
             ...(moonSource ? { moonSource, sourceAttachment: "daily-sky-summary-moon-system-v6-owner-phrases-audited.md" } : {}),
             ...(importedSkySummary(field.key) !== undefined ? { suppliedCopy: skySummaryImportProvenance } : {})
           }

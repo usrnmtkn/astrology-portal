@@ -19,5 +19,6 @@
   "ingressesAlsoOne": "There is also one ingress: {ingressList}.",
   "ingressesAlsoMany": "There are also {count} ingresses: {ingressList}.",
   "lunationToday": "The {lunationLink} is exact today.",
-  "lunationAlsoToday": "The {lunationLink} is also exact today."
+  "lunationAlsoToday": "The {lunationLink} is also exact today.",
+  "openingSameSign": "The {sunName} in {sunSign}{sunDegree} {sunSummary}, while the {moonName} there{moonDegree} {moonSummary}."
 }

@@ -64,7 +64,10 @@ export function skySummaryTemplateErrors(key: string, body: string): string[] {
   const slots = Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]);
   const errors: string[] = [];
   for (const planet of ["sun", "moon"]) {
-    if (slots.includes(`${planet}Name`) && !new RegExp(`\\{${planet}Name\\}[^{}]*\\{${planet}Sign\\}[^{}]*\\{${planet}Degree\\}`).test(body)) errors.push("Keep each planet, sign, and degree together in that order so the complete placement links to its article.");
+    const sameSignMoon = key === "cms/sky-daily-summary/assembly/openingSameSign" && planet === "moon";
+    const placementPattern = sameSignMoon ? /\{moonName\}[^{}]*\{moonDegree\}/u
+      : new RegExp(`\\{${planet}Name\\}[^{}]*\\{${planet}Sign\\}[^{}]*\\{${planet}Degree\\}`);
+    if (slots.includes(`${planet}Name`) && !placementPattern.test(body)) errors.push("Keep each planet, sign, and degree together in that order so the complete placement links to its article.");
   }
   if (/[{}]/u.test(body.replace(/\{[^{}]+\}/gu, ""))) errors.push("Close every slot with matching single braces.");
   if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
