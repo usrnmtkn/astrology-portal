@@ -117,13 +117,50 @@ for (const theme of ["light", "dark"]) {
     await page.reload();
     await expect(footer).toContainText(expected);
     await page.getByRole("button", { name: "Close detail", exact: true }).click();
-    const bond = page.locator("button.friend-transit-row").filter({ has: page.locator(".friend-bond-transit-activation") }).first();
+    const bond = page.locator("button.friend-transit-row").filter({ has: page.locator(".friend-bond-transit-activation") }).filter({ hasText: "Chiron square your Jupiter" }).first();
     await expect(bond).toBeVisible();
     const bondTitle = await bond.locator(".updates-aspect-row__title").innerText();
     const isReader = bondTitle.includes(" your ");
     await bond.click();
     await expect(footer).toHaveText(expectedIdentity(bondTitle, skies[0], isReader ? natal : friendNatal, isReader ? "your" : "Alisa P's"));
     await verifyFooter(page, footer, theme, "bond");
+    const reading = page.locator('.sky-detail-page:has(.article-section__eyebrow)');
+    await expect(reading).toBeVisible();
+    await expect(reading.locator(".article-section__eyebrow")).toHaveText("What this activates");
+    const section = reading.locator(".article-section").filter({ has: page.locator(".article-section__eyebrow") });
+    await expect(section.locator("h2")).toContainText(/^Your /);
+    await expect(section.locator("p").first()).not.toHaveText(await section.locator("h2").innerText());
+    const glyphLabel = await reading.locator(".article-eyebrow").getAttribute("aria-label");
+    expect(glyphLabel).toBe("Aspect: Chiron square Jupiter");
+    await expect(reading.locator(".article-eyebrow__glyphs")).toHaveText("⚷□♃");
+    for (const width of [1440, 390, 320]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.evaluate(() => window.scrollTo(0, 0));
+      const card = reading.locator(".sky-detail-card");
+      const column = reading.locator(".article-body-inner").first();
+      const token = await page.evaluate(() => {
+        const s = getComputedStyle(document.documentElement);
+        return { padding: s.getPropertyValue("--space-9").trim(), width: parseFloat(s.getPropertyValue("--container-prose")) };
+      });
+      if (width > 720) await expect(card).toHaveCSS("padding-top", token.padding);
+      expect((await column.boundingBox())!.width).toBeLessThanOrEqual(token.width);
+      const title = await reading.locator("h1").boundingBox();
+      const nav = await page.locator(".topbar").boundingBox();
+      const back = await reading.locator(".sky-detail-back").boundingBox();
+      const eyebrow = await reading.locator(".article-eyebrow").boundingBox();
+      expect(eyebrow!.y).toBeGreaterThan(Math.max(nav!.y + nav!.height, back!.y + back!.height));
+      expect(title!.y).toBeGreaterThan(eyebrow!.y + eyebrow!.height);
+      await expect(reading.locator(".sky-detail-intro-section")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      await expect(reading.locator(".sky-detail-intro-section")).toHaveCSS("box-shadow", "none");
+      const typography = await section.evaluate(element => {
+        const pick = (e: Element) => { const s = getComputedStyle(e); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; };
+        return { heading: pick(element.querySelector("h2")!), body: pick(element.querySelector("p")!), reference: pick(element.parentElement!.querySelector(".sky-detail-intro-section p")!) };
+      });
+      expect(typography.body).toEqual(typography.reference);
+      expect(typography.heading[0]).toMatch(/Newsreader/);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await page.screenshot({ path: `test-results/friends-article-formatting/${theme}-${width}.png`, fullPage: true });
+    }
   });
 }
 

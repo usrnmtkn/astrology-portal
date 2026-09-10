@@ -43,6 +43,7 @@ export type SkyDetailRelatedAspectRow = {
 };
 
 export type SkyDetailSection = {
+  eyebrow?: string;
   heading: string;
   body: ReactNode;
   dateLine?: string;
@@ -637,6 +638,7 @@ export function SkyDetailArticle({
 
                     return (
                       <section className="article-section sky-detail-section" key={`${section.heading || "section"}-${index}`}>
+                        {section.eyebrow && <div className="article-section__eyebrow">{section.eyebrow}</div>}
                         {sectionHeading ? <h2>{sectionHeading}</h2> : null}
                         {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
                         {bodyParagraphs.length > 0

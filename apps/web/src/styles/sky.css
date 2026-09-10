@@ -11,6 +11,20 @@
   padding: var(--article-sheet-padding);
 }
 
+/* Activation readings use the section eyebrow to identify their compact,
+   readable interior while retaining the shared article sheet rail. */
+.sky-detail-page:has(.article-section__eyebrow) .sky-detail-card {
+  padding-block: var(--space-9);
+}
+
+.sky-detail-page:has(.article-section__eyebrow) .article-body-inner {
+  max-width: var(--container-prose);
+}
+
+.sky-detail-page:has(.article-section__eyebrow) .article-rule {
+  margin-block: var(--space-7);
+}
+
 .sky-detail-page .sky-detail-article {
   width: 100%;
 }
@@ -1514,4 +1528,16 @@
 .article-transit-description p {
   color: var(--card-meta-color);
   letter-spacing: var(--tracking-body);
+}
+
+.sky-detail-page:has(.article-section__eyebrow) .sky-detail-intro-section {
+  background: transparent;
+  box-shadow: var(--shadow-flat);
+}
+
+@media (max-width: 720px) {
+  .sky-detail-page:has(.article-section__eyebrow) .sky-detail-card {
+    /* Retain the shared mobile clearance for the floating Back control. */
+    padding: var(--article-sheet-padding);
+  }
 }

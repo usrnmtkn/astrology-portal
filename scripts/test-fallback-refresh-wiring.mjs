@@ -789,7 +789,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const openBondTransitDetail[\s\S]*?body: acceptedOwnerApprovedTransitBody\([\s\S]*?card\.effectBody,[\s\S]*?card\.effectContentKey,[\s\S]*?\)[\s\S]*?heading: index === 0 \? "What this activates"/u,
+  /const openBondTransitDetail[\s\S]*?body: acceptedOwnerApprovedTransitBody\([\s\S]*?card\.effectBody,[\s\S]*?card\.effectContentKey,[\s\S]*?\)[\s\S]*?eyebrow: index === 0 \? "What this activates"[\s\S]*?heading: connection\.headline/u,
   "Connection-transit detail views must show the effect once and expand the activated synastry connections."
 );
 assert.ok(
