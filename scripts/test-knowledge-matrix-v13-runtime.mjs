@@ -1,5 +1,5 @@
-import { historicalSynastryRow } from "./lib/synastry-directionality-history.mjs";
 #!/usr/bin/env node
+import { historicalSynastryRow } from "./lib/synastry-directionality-history.mjs";
 
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
