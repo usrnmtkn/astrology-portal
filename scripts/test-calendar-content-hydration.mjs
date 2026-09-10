@@ -470,8 +470,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /loadSkyDetailContent\(detailSky, skyGeneratedContent,[\s\S]*?calendarTransitDetailContentKeys\(calendarEvent\.event\)[\s\S]*?renderDetail\(detailSky, content\)/u,
-  "Calendar detail must hydrate and render the same event snapshot."
+  /loadSkyDetailContent\(detailSky, availableDetailContent,[\s\S]*?calendarTransitDetailContentKeys\(calendarEvent\.event\)[\s\S]*?renderDetail\(detailSky, content, true\)/u,
+  "Calendar detail must hydrate the same event snapshot before marking its render complete."
 );
 assert.match(
   appSource,

@@ -16,6 +16,11 @@ export function skySnapshotAspectContentKeys(snapshot: SkySnapshot) {
   })));
 }
 
+export function eligibleSkyDetailContent(existing: Map<string, LiveGeneratedContent>) {
+  return new Map([...existing].filter(([, row]) =>
+    publicationAllowsContent(row.contentKey, row.id, row.updatedAt, row.targetDate)));
+}
+
 export async function loadSkyDetailContent(
   snapshot: SkySnapshot,
   existing: Map<string, LiveGeneratedContent>,
@@ -23,10 +28,16 @@ export async function loadSkyDetailContent(
   load: (keys: string[]) => Promise<Map<string, LiveGeneratedContent>>
 ) {
   const keys = Array.from(new Set([...skySnapshotAspectContentKeys(snapshot), ...extraKeys]));
-  const retained = new Map([...existing].filter(([, row]) =>
-    publicationAllowsContent(row.contentKey, row.id, row.updatedAt, row.targetDate)));
+  const retained = eligibleSkyDetailContent(existing);
   const missing = keys.filter(key => !retained.has(key));
   if (!missing.length) return retained.size === existing.size ? existing : retained;
-  const incoming = await load(missing);
-  return new Map([...retained, ...incoming]);
+  try {
+    const incoming = await load(missing);
+    return new Map([...retained, ...incoming]);
+  } catch (error) {
+    // Local approved sources may have finished loading during this request.
+    // Let the reader recompose them with only still-eligible cached rows.
+    console.warn("Sky detail content refresh failed; retaining eligible cached content.", error);
+    return retained;
+  }
 }

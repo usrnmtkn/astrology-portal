@@ -3651,6 +3651,33 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("nested natal aspect returns to its placement one level at a time", async ({ page }) => {
+    await seedClientState(page, { profile: true });
+    await expectClientRouteLoads(page, "/#you");
+    await selectYouNatalTab(page);
+    const rootUrl = page.url();
+    await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
+    const parentUrl = page.url();
+    const parentTitle = await page.locator("#you-transit-article-title").innerText();
+    const aspect = page.getByRole("button", { name: /Read more about Sun/ }).first();
+    const aspectName = (await aspect.getAttribute("aria-label"))!.replace("Read more about ", "");
+    await aspect.click();
+    await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
+    await expect(page).toHaveURL(/\/aspect\//);
+    await page.getByRole("button", { name: "Back to updates" }).click();
+    await expect(page).toHaveURL(parentUrl);
+    await expect(page.locator("#you-transit-article-title")).toHaveText(parentTitle);
+    await page.goForward();
+    await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
+    await page.reload();
+    await expect(page.locator("#you-transit-article-title")).toHaveText(aspectName);
+    await page.getByRole("button", { name: "Back to updates" }).click();
+    await expect(page.locator("#you-transit-article-title")).toHaveText(parentTitle);
+    await page.getByRole("button", { name: "Back to updates" }).click();
+    await expect(page).toHaveURL(rootUrl);
+    await expect(page.locator("#you-transit-article-title")).toHaveCount(0);
+  });
+
   test("You natal placement detail preserves the complete approved house passage", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
