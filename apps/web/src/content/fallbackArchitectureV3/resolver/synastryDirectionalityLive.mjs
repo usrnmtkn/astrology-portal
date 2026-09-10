@@ -1,6 +1,6 @@
-export const SYNNASTRY_DIRECTIONALITY_LIVE_SCHEMA = "synastry-directionality-live/v1";
-export const SYNNASTRY_DIRECTIONALITY_MODE = "viewer-centered-synastry-v1";
-const SYNNASTRY_PAIR_PREFIX = "fallback-hook/synastry-pair/";
+export const SYNASTRY_DIRECTIONALITY_LIVE_SCHEMA = "synastry-directionality-live/v1";
+export const SYNASTRY_DIRECTIONALITY_MODE = "viewer-centered-synastry-v1";
+const SYNASTRY_PAIR_PREFIX = "fallback-hook/synastry-pair/";
 
 function nonEmptyString(value) {
   return typeof value === "string" && value.trim().length > 0;
@@ -16,11 +16,11 @@ function fail(message) {
 
 export function applySynastryDirectionalityLiveV1(baseRows, overlay) {
   if (!Array.isArray(baseRows)) fail("base rows must be an array");
-  if (!overlay || overlay.schema !== SYNNASTRY_DIRECTIONALITY_LIVE_SCHEMA) {
-    fail(`expected schema ${SYNNASTRY_DIRECTIONALITY_LIVE_SCHEMA}`);
+  if (!overlay || overlay.schema !== SYNASTRY_DIRECTIONALITY_LIVE_SCHEMA) {
+    fail(`expected schema ${SYNASTRY_DIRECTIONALITY_LIVE_SCHEMA}`);
   }
-  if (overlay.directionality_mode !== SYNNASTRY_DIRECTIONALITY_MODE) {
-    fail(`expected directionality mode ${SYNNASTRY_DIRECTIONALITY_MODE}`);
+  if (overlay.directionality_mode !== SYNASTRY_DIRECTIONALITY_MODE) {
+    fail(`expected directionality mode ${SYNASTRY_DIRECTIONALITY_MODE}`);
   }
   if (!nonEmptyString(overlay.approval_record)) fail("approval_record is required");
   if (!nonEmptyString(overlay.serving_authorized_at)) fail("serving_authorized_at is required");
@@ -30,7 +30,7 @@ export function applySynastryDirectionalityLiveV1(baseRows, overlay) {
 
   const patchKeys = new Set();
   for (const patch of patches) {
-    if (!nonEmptyString(patch?.contentKey) || !patch.contentKey.startsWith(SYNNASTRY_PAIR_PREFIX)) {
+    if (!nonEmptyString(patch?.contentKey) || !patch.contentKey.startsWith(SYNASTRY_PAIR_PREFIX)) {
       fail(`invalid contentKey ${String(patch?.contentKey ?? "")}`);
     }
     if (patchKeys.has(patch.contentKey)) fail(`duplicate patch ${patch.contentKey}`);
@@ -71,7 +71,7 @@ export function applySynastryDirectionalityLiveV1(baseRows, overlay) {
     // A generated relationship partition may already contain this release. Keep
     // the merger idempotent so the checked-in overlay can remain the authority
     // after the generated bundle is refreshed.
-    if (base.directionality_mode === SYNNASTRY_DIRECTIONALITY_MODE) {
+    if (base.directionality_mode === SYNASTRY_DIRECTIONALITY_MODE) {
       if (
         base.body_you !== patch.body_you
         || base.body_you_semantic_direction !== patch.missingSemanticDirection
@@ -104,7 +104,7 @@ export function applySynastryDirectionalityLiveV1(baseRows, overlay) {
         approvedAt: overlay.serving_authorized_at
       },
       approved_via: `owner-approved viewer-centered reverse; ${overlay.approval_record}`,
-      directionality_mode: SYNNASTRY_DIRECTIONALITY_MODE,
+      directionality_mode: SYNASTRY_DIRECTIONALITY_MODE,
       directionality_release_id: overlay.release_id,
       body_you_semantic_direction: patch.missingSemanticDirection,
       body_they_semantic_direction: patch.existingSemanticDirection,
