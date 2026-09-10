@@ -225,7 +225,11 @@ assert.equal(
 );
 
 const aspectKeys = calendarEventGeneratedContentKeys(aspectEvent);
-assert.equal(aspectKeys.length, 3, "Calendar aspects must request sign-specific evergreen, dated, and exact published Studio keys.");
+assert.equal(aspectKeys.length, 5, "Calendar aspects must request composed publications in both orders plus evergreen, dated, and exact Studio keys.");
+assert.deepEqual(aspectKeys.filter(key => key.startsWith("sky-card/")), [
+  "sky-card/venus/virgo/square/mars/gemini",
+  "sky-card/mars/gemini/square/venus/virgo"
+]);
 assert.ok(aspectKeys.some((key) => key.includes("2026-07-31")), "Calendar aspects must include the exact event date.");
 assert.ok(aspectKeys.includes("sky.aspect.venus.square.mars"), "Calendar aspects must request the editable exact published baseline.");
 

@@ -1,5 +1,6 @@
 import { skyPlacementSourceRecords } from "./sky-placement-sources.js";
 import { createDomainRegistry } from "../../apps/web/src/content/domainRegistry.js";
+import { resolveCalendarAspectPublication } from "../../apps/web/src/features/calendar/calendarAspectPublication.js";
 import { contentStudioExactRow } from "../../apps/web/src/services/skyAspectContent.js";
 // @ts-ignore Generated reader artifact has no declarations.
 import { createPackageManifest } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
@@ -148,6 +149,21 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
       return { id: row.id, live, label: live ? "Live" : "Not live",
         source: live ? current ? "studio" : "package" : null,
         detail: live ? "Readers can currently receive this exact summary wording." : "Readers cannot currently receive this summary wording.",
+        updatedAt: row.updated_at ?? null, servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
+    }
+    if (row.content_key.startsWith("sky-card/")) {
+      const [, first, firstSign, aspect, second, secondSign] = row.content_key.split("/");
+      const current = [...candidates].sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))
+        .find(candidate => candidate.content_key === row.content_key && allowsPublication(candidate)
+          && candidate.status === "LIVE" && candidate.lane === "serving" && !candidate.review_state
+          && isReaderServableGeneratedContentRow(candidate) && isGeneratedContentReaderBoundaryAllowed(candidate));
+      const resolved = current ? resolveCalendarAspectPublication({ first, firstSign, aspect, second, secondSign,
+        generatedContent: new Map([[current.content_key, { contentKey: current.content_key, eventType: current.event_type,
+          body: current.body ?? "", sourceSnapshot: current.source_snapshot ?? {} } as any]]) }) : null;
+      const body = row.sections?.packageDraft?.Body ?? row.sections?.packageRecord?.Body ?? row.body;
+      const live = Boolean(resolved && body === resolved.body);
+      return { id: row.id, live, label: live ? "Live" : "Not live", source: live ? "studio" : null,
+        detail: live ? "Readers can receive this exact Calendar passage." : "This Calendar revision has not been published.",
         updatedAt: row.updated_at ?? null, servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
     }
     const exact = exactAspectStatus(row, candidates);

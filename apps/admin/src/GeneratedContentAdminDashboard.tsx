@@ -1104,7 +1104,7 @@ function draftPackageProposal(draft: AdminDraft) {
 }
 
 function draftEditablePackageRecord(draft: AdminDraft) {
-  return draftPackageProposal(draft) ?? draftPackageRecord(draft);
+  return effectivePackageRecord(draft.sections);
 }
 
 function draftPackageOriginalRecord(draft: AdminDraft) {
