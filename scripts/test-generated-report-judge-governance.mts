@@ -138,7 +138,8 @@ const friendLifecycle = read("api/_lib/friend-report-lifecycle.ts");
 const youLifecycle = read("api/_lib/you-report-lifecycle.ts");
 for (const source of [friendLifecycle, youLifecycle]) {
   assert.match(source, /isTransitReadingJudgeBlockedError/u);
-  assert.match(source, /const failed = judgeBlocked \|\| job\.attempt >= attemptCap/u);
+  assert.match(source, /const failed = job\.attempt >= attemptCap/u);
+  assert.doesNotMatch(source, /const failed = judgeBlocked \|\|/u, "A rejected draft must not consume the whole job retry budget.");
   assert.match(source, /Writing quality gate did not pass after one corrective rewrite and re-judge\./u);
   assert.match(source, /attempt: 0/u, "A later explicit retry must receive a fresh bounded job budget.");
   assert.match(source, /result_id: null/u);

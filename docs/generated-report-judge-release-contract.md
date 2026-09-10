@@ -9,7 +9,11 @@ New Friends readings and You Day/Week reports follow this release path:
 5. If the first judge blocks, perform exactly one corrective rewrite using those run-local findings and the same governed brief.
 6. Re-run deterministic validation.
 7. Re-judge once.
-8. Persist only if that second judgment passes. Otherwise keep the report blocked / Needs attention.
+8. Persist only if that second judgment passes. Otherwise reject that draft and retry the existing job while its attempt budget remains. Show Needs attention only when the job exhausts that budget.
+
+Quality rejection follows the same bounded retry policy as other generation failures for You Day/Week and Friends reports. Each job gets four attempts by default, controlled by `YOU_REPORT_JOB_ATTEMPT_CAP` and `FRIEND_REPORT_JOB_ATTEMPT_CAP`. A retry becomes eligible after two minutes per attempt (capped at 30 minutes); the five-minute cron workers pick it up. The report remains generating between attempts, with no rejected body saved or exposed.
+
+Retries reuse the same job, active entitlement, target date, and locked factual brief. They do not create another purchase or charge. Every attempt runs the complete governed generation and validation path, including at most one corrective rewrite and two judgments. Findings from a rejected attempt do not become evidence for the next attempt. Revoked or refunded entitlements cancel the job before generation. Completed reports are reused rather than regenerated.
 
 Judge findings are not persisted as reusable writing evidence. They exist only to repair the draft that produced them.
 

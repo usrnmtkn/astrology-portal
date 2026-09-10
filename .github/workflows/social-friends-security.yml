@@ -59,6 +59,7 @@ on:
       - "scripts/test-you-report-paid-lifecycle.mts"
       - "scripts/test-generated-report-judge-governance.mts"
       - "scripts/test-generated-report-correction.mjs"
+      - "scripts/test-report-quality-retries.mjs"
       - "scripts/test-generated-report-breadth.mjs"
       - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md"
       - "scripts/test-generated-report-owner-feedback-authorization.sql"
@@ -126,6 +127,7 @@ on:
       - "scripts/test-you-report-paid-lifecycle.mts"
       - "scripts/test-generated-report-judge-governance.mts"
       - "scripts/test-generated-report-correction.mjs"
+      - "scripts/test-report-quality-retries.mjs"
       - "scripts/test-generated-report-breadth.mjs"
       - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md"
       - "scripts/test-generated-report-owner-feedback-authorization.sql"
@@ -152,6 +154,7 @@ jobs:
       - run: node --experimental-strip-types scripts/test-you-report-paid-lifecycle.mts
       - run: node --experimental-strip-types scripts/test-generated-report-judge-governance.mts
       - run: node scripts/test-generated-report-correction.mjs
+      - run: node scripts/test-report-quality-retries.mjs
       - run: node scripts/test-generated-report-owner-corpus.mjs
       - run: node scripts/test-generated-report-breadth.mjs
       - run: node scripts/test-friend-transit-reading-request-render.mjs
