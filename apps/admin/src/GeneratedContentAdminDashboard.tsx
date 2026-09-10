@@ -1,5 +1,6 @@
 import ReviewWorkflowPanel from "./ReviewWorkflowPanel";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
+import TransitNatalReaderPreview from "./TransitNatalReaderPreview";
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
@@ -60,7 +61,6 @@ import {
   type SkyArticleHousePassage
 } from "../../web/src/content/skyArticleTemplateCompiler";
 import {
-  personalTransitAspectCmsStarter,
   relatedAspectPassages,
   relatedHousePassages,
   relatedLunationHoroscopes,
@@ -134,14 +134,12 @@ import {
   type ContentPlacementSort
 } from "./contentMotion";
 import {
-  renderTransitNatalPreview,
   transitNatalAspects,
   transitNatalHouses,
   transitNatalLabel,
   transitNatalPlanets,
   transitNatalPoints,
   transitNatalSigns,
-  transitNatalSourceGroups,
   type TransitNatalAspect,
   type TransitNatalHouse,
   type TransitNatalPlanet,
@@ -5416,34 +5414,6 @@ export function GeneratedContentAdminDashboard() {
     scrollEditorToTop();
   }
 
-  function openSkyAspectCmsStarter(row: AdminGeneratedContentRow, context: NonNullable<ReturnType<typeof skyWriteupContextForRow>>) {
-    const starter = personalTransitAspectCmsStarter(row, context);
-    const surfaceItem = writingSurfaces.find((item) => item.id === "personal-transit-detail");
-    const baseStarter = writingSurfaceAccess["personal-transit-detail"]?.cmsStarters?.[0];
-
-    if (!starter || !surfaceItem || !baseStarter) {
-      setMessage("This source row does not map to a personalized transit-aspect CMS override.");
-      return;
-    }
-
-    if (!confirmSkyEditorNavigation()) return;
-    openCmsStarter(surfaceItem, {
-      label: "Edit house-aware reader override",
-      contentKey: starter.contentKey,
-      surface: "you",
-      headline: starter.headline,
-      allowedSlots: [...baseStarter.allowedSlots]
-    });
-    setDraft((current) => current ? {
-      ...current,
-      sourceSnapshot: {
-        ...(current.sourceSnapshot ?? {}),
-        transitAspectSourceKey: starter.sourceContentKey,
-        calculatedHouseContext: true
-      }
-    } : current);
-  }
-
   function handleCompatibilityCreateAction(kind: AdminCompatibilityCreateKind) {
     if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
       editorReturnFocusRef.current = document.activeElement;
@@ -7218,11 +7188,6 @@ export function GeneratedContentAdminDashboard() {
       natalPoint: transitNatalPoint,
       natalHouse: transitNatalNatalHouse
     } as TransitNatalSelection : null;
-    const groups = selection ? transitNatalSourceGroups(selection) : [];
-    const preview = selection ? renderTransitNatalPreview(selection, (candidateKeys) => {
-      const source = skySourceForCandidates(candidateKeys);
-      return source ? { key: source.contentKey, text: source.text } : null;
-    }) : null;
 
     return (
       <section className="admin-natal-placement-finder" aria-label="Personal Transits source finder">
@@ -7231,8 +7196,8 @@ export function GeneratedContentAdminDashboard() {
             <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Active for {{Name}}" : "Personal Transits workspace"}</p>
             <h3>{selection ? transitNatalLabel(selection) : "Find a Personal Transit write-up"}</h3>
             <p>{friendsTransitAudience
-              ? "This is the editor for Friends > Transits > Active for {{Name}}. The assembled preview prefers Friend View Copy wherever the saved source has a separate Friends passage. Open the standalone passage below when you want to edit its Friend View Copy directly."
-              : "Choose the current placement and the natal point it contacts. The reader sees one paragraph; Content Studio shows that paragraph first, followed by the four reusable passages inside it. You do not need to search Fallback Hooks."}</p>
+              ? "This is the editor for Friends > Transits > Active for {{Name}}. The preview uses the Friends reader resolver and its approved Friend View Copy. Open the selected source to edit that passage."
+              : "Choose the current placement and the natal point it contacts. The preview uses the same approved transit writing as Sky and You. Open the selected source to edit the complete passage."}</p>
             <p><strong>Editable lifecycle:</strong> open a passage to read it, Save to create or update it, Archive to remove it from active use, and Restore to reopen it as a non-serving draft.</p>
           </div>
           {selection && <code>transit/{selection.planet}-{selection.sign}-{selection.transitHouse}h/{selection.aspect}/{selection.natalPoint}-{selection.natalHouse}h</code>}
@@ -7284,40 +7249,8 @@ export function GeneratedContentAdminDashboard() {
         </div>
 
         {!selection && <p className="admin-natal-placement-prompt">Choose all six values to preview the write-up and open its exact source rows.</p>}
-        {selection && preview && (
-          <section className="admin-natal-source-group" aria-label="Effective transit to natal reader preview">
-            <header>
-              <p className="admin-eyebrow">Effective reader preview</p>
-              <h3>What you see</h3>
-              <p>The houses and end date are calculated facts. The highlighted language comes from the editable rows listed below.</p>
-            </header>
-            <article className="admin-natal-source-card">
-              <div className="admin-natal-source-card-copy">
-                <div className="admin-natal-source-card-heading">
-                  <h4>{preview.headline}</h4>
-                  <span className={`ui-pill admin-status ${preview.complete ? "status-live" : "status-draft"}`}>{preview.complete ? "Complete composition" : "Fallback required"}</span>
-                </div>
-                <blockquote>{preview.body}</blockquote>
-                <code>{preview.sourceKeys.join(" · ")}</code>
-                {!preview.complete && <p>Missing: {preview.missing.join(", ")}</p>}
-              </div>
-            </article>
-          </section>
-        )}
+        {selection && <TransitNatalReaderPreview selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"))} />}
 
-        {groups.filter((group) => group.key === "composition").map((group) => (
-          <section className="admin-natal-source-group" key={group.key}>
-            <header><h3>{group.label}</h3><p>{group.description}</p></header>
-            <div className="admin-natal-source-grid">{group.sources.map(renderSkyAssemblySource)}</div>
-          </section>
-        ))}
-        {groups.filter((group) => group.key === "fallback").map((group) => (
-          <details className="admin-natal-source-group admin-natal-source-advanced" key={group.key}>
-            <summary>{group.label}</summary>
-            <p>{group.description}</p>
-            <div className="admin-natal-source-grid">{group.sources.map(renderSkyAssemblySource)}</div>
-          </details>
-        ))}
       </section>
     );
   }
@@ -9814,9 +9747,7 @@ export function GeneratedContentAdminDashboard() {
                         <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, row)}>
                           Edit reusable source
                         </button>
-                        <button type="button" onClick={() => openSkyAspectCmsStarter(row, skyWriteupContext)}>
-                          Edit house-aware reader override
-                        </button>
+
                       </div>
                     </article>
                   ))}

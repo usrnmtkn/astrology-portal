@@ -1,3 +1,4 @@
+import { isRetiredCompositionKey } from "./fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { announceContentUpdate } from "../services/contentUpdateSignal.js";
 /** Shared lifecycle identity. A retirement survives deletion of its editable row. */
 export type ContentPublication = {
@@ -61,7 +62,7 @@ export function installContentPublications(incoming: readonly unknown[]) {
   announceContentUpdate({ contentKey: "*", published: false, updatedAt: new Date().toISOString() });
 }
 export function contentPublication(contentKey: string) { return publications.get(contentKey); }
-export function isContentRetired(contentKey: string) { return publications.get(contentKey)?.state === "retired"; }
+export function isContentRetired(contentKey: string) { return isRetiredCompositionKey(contentKey) || publications.get(contentKey)?.state === "retired"; }
 export function subscribeToContentPublications(listener: () => void) {
   listeners.add(listener);
   return () => { listeners.delete(listener); };
@@ -69,6 +70,7 @@ export function subscribeToContentPublications(listener: () => void) {
 
 /** Once a key has a publication, an older row or unversioned bundle is not a substitute. */
 export function publicationAllowsContent(contentKey: string, rowId?: string | null, rowUpdatedAt?: string | null, targetDate?: string | null) {
+  if (isRetiredCompositionKey(contentKey)) return false;
   const publication = publications.get(contentKey);
   if (!publication) return !rowId || Boolean(targetDate) || !publicationLedgerReady();
   if (publication.state === "retired") return false;

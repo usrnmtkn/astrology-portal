@@ -25,6 +25,10 @@ async function request(action:string,secret='publication-test',extra={}) {
 try {
  assert.equal((await request('retire','wrong')).code,401);assert.equal(calls,0);
  assert.equal((await request('retire','publication-test',{id:'bad'})).code,400);assert.equal(calls,0);
+ for (const key of ['cms/personal-transit-aspect/you/template', 'fallback-hook/transit-house-event-frame/sun', 'fallback-template/transit.house-event']) {
+   assert.equal((await request('publish', 'publication-test', {contentKey:key})).code,422);
+   assert.equal(calls,0,'Retired compositions must be rejected before storage access');
+ }
  assert.equal((await request('retire')).publication.state,'retired');
  conflict=true;assert.equal((await request('retire')).code,409);conflict=false;
  assert.equal((await request('publish')).publication.state,'live');

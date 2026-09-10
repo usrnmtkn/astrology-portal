@@ -95,9 +95,6 @@ import {
   isReaderFacingCopy,
   readerFacingParagraphs
 } from "./content/readerSafety";
-import {
-  skyArticleAspectPassageForTransit
-} from "./content/skyArticleTemplateCompiler";
 import type { ContentBundle } from "./content/types";
 import {
   astrologyDateRangeLabel,
@@ -605,7 +602,6 @@ type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> 
   residencyWindow?: string;
   articleMode?: "current" | "archive" | null;
   risingHoroscopes?: { risingSign?: string | null; house?: number; body: string; contentKey?: string }[];
-  articleAspectPassages?: { natalPoint: string; aspect: string; body: string; contentKey: string }[];
   articleSections?: { kind: string; heading: string; body: string }[];
 };
 type NormalizedSkyPlacementArticle = {
@@ -5369,7 +5365,6 @@ function currentSkyPlacementDetailArticle({
     closingCharge: placementSection?.closingCharge,
     tldr: placementSection?.tldr,
     risingHoroscopes: placementSection?.risingHoroscopes,
-    articleAspectPassages: placementSection?.articleAspectPassages,
     placementResidencyContext: articleMode === "current" && normalizeContentIdPart(position.planet) === "sun"
       ? {
           planet: position.planet,
@@ -5584,12 +5579,11 @@ function skyDetailFromRoutePath(
   return null;
 }
 
-function personalizedSkyPlacementDetail(
+export function personalizedSkyPlacementDetail(
   detail: SkyDetail | null,
   risingSign: string | null | undefined,
   transits: TransitItem[],
-  generatedAt: string,
-  generatedContent?: GeneratedContentMap
+  generatedAt: string
 ): SkyDetail | null {
   if (!detail) {
     return null;
@@ -5633,23 +5627,13 @@ function personalizedSkyPlacementDetail(
         && normalizeContentIdPart(transit.transitSign ?? "") === sign
       ))
       .map((transit) => {
-        const natalPoint = normalizeContentIdPart(transit.natalPoint);
-        const aspect = normalizeContentIdPart(transit.aspect);
-        const compiledAspect = detail.articleAspectPassages
-          ? skyArticleAspectPassageForTransit(detail.articleAspectPassages, {
-              aspect,
-              natalPoint,
-              transitingPlanet: planet
-            })
-          : null;
-        const packageSection = personalTransitPackageSection(transit, generatedAt, "you", {
-          generatedContent,
-          transitHouse: house
-        });
+        // Use the same complete aspect unit and selected-day anchor as You.
+        // House context belongs to the placement horoscope, not prose selection.
+        const packageSection = personalTransitPackageSection(transit, generatedAt.slice(0, 10));
         return {
           key: transit.id,
-          heading: packageSection?.heading || personalTransitDisplayTitle(transit),
-          body: packageSection?.body ?? compiledAspect?.body ?? null
+          heading: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
+          body: packageSection?.body ?? null
         };
       });
 
@@ -7770,11 +7754,7 @@ function dailyCalendarPhaseKey(phase: string) {
 function personalTransitPackageSection(
   transit: TransitItem,
   generatedAt: string,
-  voice: "you" | string = "you",
-  context: {
-    generatedContent?: GeneratedContentMap;
-    transitHouse?: number | null;
-  } = {}
+  voice: "you" | string = "you"
 ): NormalizedPersonalTransitSection | null {
   const normalizedAspect = normalizeFallbackV3Aspect(transit.aspect);
 
@@ -7820,74 +7800,6 @@ function personalTransitPackageSection(
   }
 
   const windowLabel = personalTransitPackageWindow(transit, generatedAt);
-  const voiceKind = voice === "you" ? "you" : "they";
-  const cmsOverride = resolveCmsSurfaceOverride(
-    context.generatedContent,
-    cmsSurfaceKeys.transitAspect(
-      voiceKind,
-      transit.transitPlanet,
-      transit.transitSign ?? "",
-      transit.natalPoint,
-      transit.aspect
-    ),
-    {
-      ...transitToNatalTemplateSlots(transit, voice === "you" ? "natal" : "friend", context.transitHouse),
-      owner: voice,
-      ownerPossessive: voice === "you" ? "your" : possessiveLabel(voice),
-      window: windowLabel
-    }
-  );
-
-  if (cmsOverride?.unavailable) return null;
-  if (cmsOverride) {
-    return {
-      slot: "meaning",
-      required: true,
-      layer: "authored",
-      tier: "cms-live-serving",
-      sourceKeys: cmsOverride.sourceKeys,
-      heading: cmsOverride.headline || personalTransitDisplayTitle(transit),
-      body: cmsOverride.body
-    };
-  }
-
-  if (context.transitHouse) {
-    try {
-      const renderedEvent = transitSynastryFallbackRendererV3.renderTransitHouseEvent({
-        aspect: normalizedAspect,
-        house: context.transitHouse,
-        natal: normalizeContentIdPart(transit.natalPoint),
-        natalHouse: transit.natalHouse,
-        planet: normalizeContentIdPart(transit.transitPlanet),
-        sign: transit.transitSign ? normalizeContentIdPart(transit.transitSign) : undefined,
-        variant: stableTransitCopyVariant(voice, transit.id),
-        voice,
-        window: windowLabel
-      });
-      const body = fullDetailReaderFacingCopy(renderedEvent.parts) ?? "";
-
-      if (body && isReaderFacingCopy(body)) {
-        return {
-          slot: "meaning",
-          required: true,
-          layer: "fallback",
-          tier: "approved-house-aware-transit-composition-v1",
-          sourceKeys: [
-            "tldrastro-fallback-architecture-v3",
-            ...(renderedEvent.sourceKeys ?? []),
-            renderedEvent.templateKey
-          ].filter(Boolean),
-          heading: renderedEvent.headline || personalTransitDisplayTitle(transit),
-          body
-        };
-      }
-    } catch (error) {
-      if (!(error instanceof FallbackV3SourceGapError)) {
-        throw error;
-      }
-    }
-  }
-
   try {
     const rendered = transitSynastryFallbackRendererV3.renderTransitAspect({
       aspect: normalizedAspect,
@@ -11054,6 +10966,7 @@ export function App() {
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
   const [profileTransitsTargetDate, setProfileTransitsTargetDate] = useState<string | null>(null);
+  const [profileTransitsGeneratedAt, setProfileTransitsGeneratedAt] = useState<string | null>(null);
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
   const [profileNatalCalculationStatus, setProfileNatalCalculationStatus] = useState<NatalChartCalculationStatus>("idle");
   const [profileNatalCalculationError, setProfileNatalCalculationError] = useState("");
@@ -11139,15 +11052,49 @@ export function App() {
   const primaryProfileChart = userProfile?.charts[0];
   const primaryProfileBirthDate = validChartBirthDate(primaryProfileChart);
   const primaryProfileBirthTimeKnown = chartBirthTimeIsKnown(primaryProfileChart);
+  const skyPlacementPersonalizationActive = (mode === "member" || mode === "guest")
+    && Boolean(userProfile && skyDetailRoutePath?.startsWith("sky/placement/"));
+  const [skyPlacementPersonalizationSky, setSkyPlacementPersonalizationSky] = useState<{
+    key: string;
+    snapshot: SkySnapshot;
+  } | null>(null);
+  const personalTransitSnapshotKey = skySnapshotCacheKey(withTimeZone(location), skyDate);
+  const profileTransitSky = skyPlacementPersonalizationActive
+    ? (skyPlacementPersonalizationSky?.key === personalTransitSnapshotKey ? skyPlacementPersonalizationSky.snapshot : null)
+    : sky;
+
+  useEffect(() => {
+    if (!skyPlacementPersonalizationActive) return;
+    let cancelled = false;
+    const cached = readCachedSkySnapshot(personalTransitSnapshotKey);
+    if (cached) {
+      setSkyPlacementPersonalizationSky({ key: personalTransitSnapshotKey, snapshot: cached });
+      return;
+    }
+    // The personal horoscope shares You's local-noon facts. The collective
+    // placement article and sky wheel keep their separate live snapshot.
+    void getAstrodienstSky(withTimeZone(location), skyDateTimeFromInput(skyDate, location), { includeTransitWindows: false })
+      .then((snapshot) => {
+        if (cancelled || !skyFactValidation(snapshot).ok) return;
+        writeCachedSkySnapshot(personalTransitSnapshotKey, snapshot);
+        setSkyPlacementPersonalizationSky({ key: personalTransitSnapshotKey, snapshot });
+      })
+      .catch((error) => console.warn("Personal placement transit calculation failed; awaiting the shared daily snapshot.", error));
+    return () => { cancelled = true; };
+  }, [skyPlacementPersonalizationActive, personalTransitSnapshotKey, location, skyDate]);
+
   const skyPlacementPersonalizationTransits = useMemo(() => {
-    if (!sky || !profileNatalSky || !primaryProfileBirthDate) {
-      return profileTransits;
+    if (!profileTransitSky || !profileNatalSky || !primaryProfileBirthDate) {
+      return [];
     }
 
-    const enrichedById = new Map(profileTransits.map((transit) => [transit.id, transit]));
+    const enrichedById = new Map(
+      (profileTransitsGeneratedAt === profileTransitSky.generatedAt ? profileTransits : [])
+        .map((transit) => [transit.id, transit])
+    );
 
     return rankedProfileTransits(
-      sky,
+      profileTransitSky,
       profileNatalSky,
       primaryProfileBirthDate,
       primaryProfileBirthTimeKnown,
@@ -11159,7 +11106,8 @@ export function App() {
     primaryProfileBirthTimeKnown,
     profileNatalSky,
     profileTransits,
-    sky
+    profileTransitsGeneratedAt,
+    profileTransitSky
   ]);
   const personalTimingSettings = useMemo(
     () => apiSettingsFromChartSettings(userProfile?.settings),
@@ -11205,6 +11153,7 @@ export function App() {
     targetLocation: personalTimingLocation
   });
 
+  const personalTransitTimingActive = isProfileMode || Boolean(skyDetailRoutePath?.startsWith("sky/placement/"));
   useEffect(() => {
     const birthDate = primaryProfileChart ? validChartBirthDate(primaryProfileChart) : "";
     const candidates = profileTransits
@@ -11217,7 +11166,8 @@ export function App() {
         && typeof transit.aspectDegrees === "number"
         && transit.timing === undefined
       ));
-    if (!isProfileMode || !sky || !profileNatalSky || !birthDate || candidates.length === 0) return;
+    if (!personalTransitTimingActive || !profileTransitSky || profileTransitsGeneratedAt !== profileTransitSky.generatedAt
+      || !profileNatalSky || !birthDate || candidates.length === 0) return;
 
     let cancelled = false;
     void import("./services/skyCalculationClient").then(async ({ natalTransitTimingForOffMainThread: natalTransitTimingFor }) => {
@@ -11225,11 +11175,11 @@ export function App() {
         const timing = await natalTransitTimingFor(
           transit.transitPlanet,
           transit.natalLongitude!,
-          sky.generatedAt,
+          profileTransitSky.generatedAt,
           {
             aspectDegrees: transit.aspectDegrees,
             presentationDegrees: transitToNatalOrbLimit(transit.transitPlanet) || 1.5,
-            timeZone: sky.location.timeZone
+            timeZone: profileTransitSky.location.timeZone
           }
         );
         return [transit.id, timing] as const;
@@ -11238,7 +11188,7 @@ export function App() {
       const timings = new Map(enrichedEntries);
       const timingContext = timingContextForChart({
         birthDate,
-        currentDate: sky.generatedAt,
+        currentDate: profileTransitSky.generatedAt,
         ascendant: profileNatalSky.ascendant,
         natalPositions: natalTransitTargets(profileNatalSky)
       });
@@ -11262,7 +11212,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [isProfileMode, primaryProfileChart, profileNatalSky, profileTransits, sky]);
+  }, [personalTransitTimingActive, primaryProfileChart, profileNatalSky, profileTransits, profileTransitsGeneratedAt, profileTransitSky]);
 
   const requestCalendarContent = useCallback((request: CalendarContentRequest) => {
     setCalendarContentRequest((current) => (
@@ -11377,8 +11327,7 @@ export function App() {
         awaitPlacementTiming ? null : detail,
         profileNatalSky?.ascendant ?? userProfile?.rising,
         skyPlacementPersonalizationTransits,
-        sky?.generatedAt ?? new Date().toISOString(),
-        skyGeneratedContent
+        skyDate
       ));
 
       if (detail.routePath) {
@@ -11973,7 +11922,7 @@ export function App() {
     const availableDetailContent = eligibleSkyDetailContent(mergeGeneratedContentMaps(skyGeneratedContent, selectedSkyDetailContentRef.current));
     const personalizationKey = [
       profileNatalSky?.ascendant ?? userProfile?.rising ?? "",
-      skyPlacementPersonalizationTransits.map((transit) => transit.id).join(",")
+      JSON.stringify(skyPlacementPersonalizationTransits)
     ].join(":");
     const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;
 
@@ -12026,7 +11975,7 @@ export function App() {
             selectedSkyDetailRefreshSkyRef.current = sky;
           }
           setSelectedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
-            skyPlacementPersonalizationTransits, placementSky.generatedAt, detailContent));
+            skyPlacementPersonalizationTransits, skyDate));
         };
         renderPlacement(availableDetailContent);
         renderPlacement(await loadSkyDetailContent(placementSky, availableDetailContent, [], loadLiveGeneratedContentForKeys), true);
@@ -12074,7 +12023,7 @@ export function App() {
       }
       setSelectedSkyDetail(personalizedSkyPlacementDetail(
         detail, profileNatalSky?.ascendant ?? userProfile?.rising,
-        skyPlacementPersonalizationTransits, detailSky.generatedAt, detailContent
+        skyPlacementPersonalizationTransits, skyDate
       ));
     };
     // Keep immediately available copy visible while the matching published rows load.
@@ -12089,7 +12038,7 @@ export function App() {
       renderDetail(detailSky, content, true);
     }).catch(error => { if (!cancelled) console.warn("Sky detail interpretation failed to load.", error); });
     return () => { cancelled = true; };
-  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising]);
+  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising]);
 
   useEffect(() => {
     const routePath = selectedSkyDetail?.routePath;
@@ -12279,21 +12228,11 @@ export function App() {
         targetDate: sky.generatedAt.slice(0, 10)
       });
     });
-    const personalTransitAspectContentKeys = skyPlacementPersonalizationTransits.flatMap((transit) => (
-      cmsSurfaceKeys.transitAspect(
-        "you",
-        transit.transitPlanet,
-        transit.transitSign ?? "",
-        transit.natalPoint,
-        transit.aspect
-      )
-    ));
     const currentSkyContentKeys = [
       ...new Set([
         ...cmsSurfaceKeys.retrogradeSummary(),
         ...skyDailySummaryFields.map(field => field.key),
-        ...aspectContentKeys,
-        ...personalTransitAspectContentKeys
+        ...aspectContentKeys
       ])
     ];
 
@@ -12310,7 +12249,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [calendarContentRequest, contentRefreshVersion, generatedContentPreviewMode, mode, sky, skyDate, skyPlacementPersonalizationTransits]);
+  }, [calendarContentRequest, contentRefreshVersion, generatedContentPreviewMode, mode, sky, skyDate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -13002,9 +12941,6 @@ export function App() {
 
   useEffect(() => {
     const socialNatalCacheMissing = ownSocialProfile?.hasNatalChart === false;
-    const skyPlacementPersonalizationActive = mode === "member"
-      && Boolean(skyDetailRoutePath?.startsWith("sky/placement/"));
-
     if (
       !userProfile
       || (
@@ -13025,6 +12961,7 @@ export function App() {
       profileNatalSkyRequestRef.current = null;
       setProfileNatalSky(null);
       setProfileTransitsTargetDate(null);
+      setProfileTransitsGeneratedAt(null);
       setProfileNatalCalculationStatus("idle");
       setProfileNatalCalculationError("");
       setProfileNatalAspectPatternStatus("idle");
@@ -13049,8 +12986,8 @@ export function App() {
     const applyNatalSky = (natalSky: SkySnapshot) => {
       const reliableNatalSky = natalSnapshotWithBirthTimeReliability(natalSky, !unknownBirthTime) ?? natalSky;
       const natalBigThree = natalBigThreeFromSky(reliableNatalSky, unknownBirthTime);
-      const nextTransits = sky
-        ? rankedProfileTransits(sky, reliableNatalSky, birthDate, !unknownBirthTime, activeSunriseOrbDegrees)
+      const nextTransits = profileTransitSky
+        ? rankedProfileTransits(profileTransitSky, reliableNatalSky, birthDate, !unknownBirthTime, activeSunriseOrbDegrees)
         : [];
 
       setProfileNatalSky(reliableNatalSky);
@@ -13062,7 +12999,8 @@ export function App() {
           : "idle"
       );
       setProfileTransits(nextTransits);
-      setProfileTransitsTargetDate(sky?.generatedAt.slice(0, 10) ?? null);
+      setProfileTransitsTargetDate(profileTransitSky?.generatedAt.slice(0, 10) ?? null);
+      setProfileTransitsGeneratedAt(profileTransitSky?.generatedAt ?? null);
       setTransitsDrawn(true);
       setSelectedTransitId((currentId) => (
         nextTransits.some((transit) => transit.id === currentId)
@@ -13166,6 +13104,7 @@ export function App() {
         setProfileNatalSky(null);
         setProfileTransits([]);
         setProfileTransitsTargetDate(null);
+        setProfileTransitsGeneratedAt(null);
         setTransitsDrawn(false);
         setProfileNatalCalculationStatus("error");
         setProfileNatalCalculationError(errorMessage);
@@ -13183,7 +13122,7 @@ export function App() {
     userProfile?.charts[0]?.birthLocation?.latitude,
     userProfile?.charts[0]?.birthLocation?.longitude,
     userProfile?.charts[0]?.birthLocation?.timeZone,
-    sky?.generatedAt,
+    profileTransitSky?.generatedAt,
     activeSunriseOrbDegrees,
     friendCalculationNeeds,
     isProfileMode,
@@ -13927,6 +13866,7 @@ export function App() {
           nextChart = { ...nextChart, birthLocation: resolvedBirthLocation };
           setProfileTransits(nextTransits);
           setProfileTransitsTargetDate(sky?.generatedAt.slice(0, 10) ?? null);
+          setProfileTransitsGeneratedAt(sky?.generatedAt ?? null);
           setSelectedTransitId(nextTransits[0]?.id ?? sampleTransits[0].id);
         } catch {
           chartCalculationFailed = true;

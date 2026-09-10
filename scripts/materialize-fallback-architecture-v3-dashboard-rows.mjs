@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isRetiredCompositionKey } from "../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -334,6 +335,10 @@ function mapPackageRecord(record, bucket) {
 
   if (!contentKey) {
     throw new Error(`V3 ${bucket} row is missing contentKey.`);
+  }
+
+  if (isRetiredCompositionKey(contentKey)) {
+    record = { ...record, review_status: "superseded", render_eligible: false, serving_enabled: false, superseded_by: "canonical-personal-transit-resolver" };
   }
 
   if (isRetiredPlanetInSignModule(contentKey)) {

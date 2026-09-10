@@ -231,6 +231,8 @@ exact LIVE CMS row
   -> existing reviewed local/package fallback
 ```
 
+Personal transit aspects are an exception to the CMS override pattern. Sky, You, and the Personal Transit Studio preview select the same complete approved aspect or return unit. The old `cms/personal-transit-aspect/` override family and house-event frame composition are permanently retired; edit the canonical source linked from the Personal Transits workspace.
+
 CMS templates receive only their declared calculated slots. A published row
 can replace prose, but it cannot replace a sign, house, aspect, date, motion,
 or timing fact. Draft, Reviewed, reference-lane, and review-held rows remain

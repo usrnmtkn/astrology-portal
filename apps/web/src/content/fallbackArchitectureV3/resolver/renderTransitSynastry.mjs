@@ -1,3 +1,4 @@
+import { isEligibleTransitReturn } from "./transitReturns.mjs";
 import { assertNodePublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 export { setNodeBlockedContentKeys } from "./publicationGuard.mjs";
 // TLDR Astro transit + synastry resolver (v1) — Node reference.
@@ -599,84 +600,6 @@ const result = (c, templateKey) => ({
 
 const fillKeep = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).trim();
 
-const EVENT_QUALITY = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
-const EVENT_VERB = { conjunction: "sitting right on", square: "squaring", opposition: "opposing", trine: "trining", sextile: "sextiling" };
-const CONJ_SOFT = new Set(["venus", "sun", "mercury", "jupiter"]);
-
-export function renderTransitHouseEvent({ planet, house, sign, natal, natalHouse, aspect, window: win, voice = "you", variant }) {
-  const v = voice === "you" ? "you" : "they";
-  const quality = EVENT_QUALITY[aspect];
-  if (!quality) throw new SourceGapError(`SOURCE_GAP: transit-house event ${planet}/${natal}/${aspect}`);
-  const cls = quality === "conjunction" ? (CONJ_SOFT.has(planet) ? "soft" : "hard") : quality;
-  const specificFrameKey = `fallback-hook/transit-house-event-frame/${planet}`;
-  const frameKey = hookVoice(specificFrameKey, v)
-    ? specificFrameKey
-    : "fallback-hook/transit-house-event-frame/generic";
-  const frameRaw = hookVoice(frameKey, v);
-  const windowClause = win
-    ? (/^(until|through|till|before|by)\b/i.test(win) ? ` ${win.charAt(0).toLowerCase()}${win.slice(1)}` : ` until ${win}`)
-    : "";
-  const natalHouseSuffix = natalHouse
-    ? (v === "you" ? ` in your ${ordinal(natalHouse)} house` : ` in the ${ordinal(natalHouse)} house`)
-    : "";
-  const natalTitle = `${title(natal)}${natalHouseSuffix}`;
-  const frame = frameRaw ? fillKeep(frameRaw, {
-    Name: v === "they" ? voice : "",
-    aspectVerb: EVENT_VERB[aspect],
-    houseOrdinal: ordinal(house),
-    natalTitle,
-    transitTitle: title(planet),
-    windowClause
-  }) : null;
-  const wantsKey = `fallback-hook/transit-house-event-wants/${planet}/${sign}`;
-  const holdsKey = `fallback-hook/transit-house-event-natal/${natal}`;
-  const sceneKeys = [
-    `fallback-hook/transit-house-event-scenes/${planet}/${natal}/${cls}`,
-    `fallback-hook/transit-effect-${cls}/${planet}/${natal}`
-  ];
-  const wants = sign ? hookVoice(wantsKey, v) : null;
-  const holds = hookVoice(holdsKey, v);
-  const sceneKey = sceneKeys.find((key) => Boolean(hookVoice(key, v))) ?? null;
-  const scenes = sceneKey ? hookVoice(sceneKey, v) : null;
-
-  if (frame && wants && holds && scenes && sceneKey) {
-    const body = `${frame} ${wants}; ${holds}. ${scenes}`.trim();
-    const sourceKeys = [frameKey, wantsKey, holdsKey, sceneKey];
-    return {
-      headline: `${title(planet)} ${aspect} ${v === "you" ? "your" : `${voice}'s`} ${title(natal)}`,
-      body,
-      parts: [body],
-      partSourceKeys: [sourceKeys],
-      sourceKeys,
-      templateKey: "fallback-template/transit.house-event"
-    };
-  }
-
-  const renderedAspect = renderTransitAspect({
-    transiting: planet,
-    natal,
-    aspect,
-    voice,
-    variant,
-    window: win ?? null
-  });
-  const body = frame ? `${frame} ${renderedAspect.body}` : renderedAspect.body;
-  const sourceKeys = [
-    ...(frame ? [frameKey] : []),
-    ...(renderedAspect.contentKey ? [renderedAspect.contentKey] : []),
-    renderedAspect.templateKey
-  ];
-  return {
-    headline: renderedAspect.headline || `${title(planet)} ${aspect} ${v === "you" ? "your" : `${voice}'s`} ${title(natal)}`,
-    body,
-    parts: [body],
-    partSourceKeys: [sourceKeys],
-    sourceKeys,
-    templateKey: "fallback-template/transit.house-event",
-    contentKey: renderedAspect.contentKey
-  };
-}
-
 export function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant, events, isRetrograde }) {
   const v = voice === "you" ? "you" : "they";
   // Two-layer authored lane (Mars pilot): house intro + house-sign synthesis, dual voice.
@@ -702,24 +625,17 @@ export function renderTransitHouse({ planet, house, sign, window: win, voice = "
           partSourceKeys.push([retroKey]);
         }
       }
-      // Aspect events layer (sky-register composer, owner-calibrated 2026-07-27):
-      // frame(+window) -> wants-pair sentence -> pair scenes (override row first, else the pair effect line).
-      // Falls back to the legacy frame+aspect-body stitch when composer rows are missing for a planet.
+      // Embedded events use the same complete aspect/return unit as personal transit details.
       for (const e of events ?? []) {
         try {
-          const renderedEvent = renderTransitHouseEvent({
-            aspect: e.aspect,
-            house,
-            natal: e.natal,
-            natalHouse: e.natalHouse,
-            planet,
-            sign,
-            variant,
-            voice,
-            window: e.window ?? null
-          });
+          const renderedEvent = isEligibleTransitReturn(planet, e.natal, e.aspect)
+            ? renderTransitReturn({ planet })
+            : renderTransitAspect({
+              aspect: e.aspect, natal: e.natal, transiting: planet, sign,
+              variant, voice, isRetrograde, window: e.window ?? null
+            });
           parts.push(renderedEvent.body);
-          partSourceKeys.push(renderedEvent.sourceKeys);
+          partSourceKeys.push(renderedEvent.sourceKeys ?? [renderedEvent.contentKey ?? renderedEvent.templateKey]);
         } catch { /* SOURCE_GAP on an event never blocks the house card */ }
       }
       return {

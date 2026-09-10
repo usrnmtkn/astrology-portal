@@ -2177,90 +2177,62 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("transits to natal charts expose the assembled reading before its editable source rows", async ({ page }) => {
+  for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) test(`canonical Personal Transit Studio preview ${width} ${theme}`, async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
-    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
-    await page.setViewportSize({ width: 1308, height: 900 });
-    await seedAdminApi(page, { onGeneratedContentWrite: (write) => writes.push(write) });
-    await expectAdminRouteLoads(page, "/admin/content#sky-writeups");
-
-    await page.getByRole("tab", { name: "Personal Transits" }).click();
-    await page.getByLabel("Transiting planet").selectOption("uranus");
-    await page.getByLabel("Transit zodiac sign").selectOption("gemini");
-    await page.getByLabel("Transit house").selectOption("1");
-    await page.getByLabel("Transit to natal aspect").selectOption("square");
-    await page.getByLabel("Natal planet or point").selectOption("mercury");
-    await page.getByLabel("Natal point house").selectOption("10");
-
+    const key = "authored/transit-aspect/sun/north-node/conjunction";
+    const source = servingPackageRecords.get(key)!;
+    expect(source).toBeTruthy();
+    await page.setViewportSize({ width, height: 1000 });
+    await seedAdminApi(page, { generatedRows: [{
+      id: "qa-canonical-transit", content_key: key, surface: "you", mode: "feed",
+      event_type: "transit_aspect", block_type: "transit_aspect", status: "DRAFT", lane: "serving",
+      headline: "Sun Conjunction North Node", summary: "", body: "Unsaved Studio draft must never replace the reader passage.",
+      sections: { packageRecord: source, body_you: "Unsaved Studio draft must never replace the reader passage." },
+      facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now
+    }] });
+    await page.route("**/rest/v1/generated_interpretations*", (route) => route.fulfill({ json: [] }));
+    await page.addInitScript((theme) => localStorage.setItem("tldrastro:theme", theme), theme);
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal");
+    await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
     const finder = page.getByRole("region", { name: "Personal Transits source finder" });
-    await expect(finder.getByRole("heading", { name: "Uranus square your Mercury", level: 3 })).toBeVisible();
+    await expect(finder).toContainText("Choose all six values");
+    await page.getByLabel("Transiting planet", { exact: true }).selectOption("sun");
+    await page.getByLabel("Transit zodiac sign").selectOption("virgo");
+    await page.getByLabel("Transit house", { exact: true }).selectOption("4");
+    await page.getByLabel("Transit to natal aspect").selectOption("conjunction");
+    await page.getByLabel("Natal planet or point", { exact: true }).selectOption("north-node");
+    await page.getByLabel("Natal point house").selectOption("4");
     const preview = finder.getByRole("region", { name: "Effective transit to natal reader preview" });
-    await expect(preview).toContainText("Complete composition");
-    await expect(preview).toContainText("While Uranus is in your 1st house");
-    await expect(preview).toContainText("Capture the lightning in notes and pick one idea to land.");
-    await expect(finder.getByRole("button", { name: "Edit source row" })).toHaveCount(4);
-
-    const selectorLabels = await finder.locator(".admin-natal-placement-selectors label > span").allTextContents();
-    expect(selectorLabels).toEqual([
-      "1. Transiting planet",
-      "2. Current sign",
-      "3. Transit house",
-      "4. Aspect",
-      "5. Natal planet or point",
-      "6. Natal house"
-    ]);
-    const headingLevels = await page.getByRole("main").getByRole("heading").evaluateAll((headings) => headings.map((heading) => ({
-      level: Number(heading.tagName.slice(1)),
-      text: heading.textContent?.trim() ?? ""
-    })));
-    expect(headingLevels.slice(0, 3)).toEqual([
-      { level: 1, text: "Sky Write-ups" },
-      { level: 2, text: "Placements, lunations, and transits" },
-      { level: 3, text: "Uranus square your Mercury" }
-    ]);
-    const contentOrder = await finder.evaluate((region) => {
-      const readerPreview = region.querySelector('[aria-label="Effective transit to natal reader preview"]');
-      const sourceHeading = Array.from(region.querySelectorAll("h3")).find((heading) => heading.textContent?.trim() === "Editable passages in this Personal Transit");
-      return Boolean(readerPreview && sourceHeading && readerPreview.compareDocumentPosition(sourceHeading) & Node.DOCUMENT_POSITION_FOLLOWING);
+    await expect(preview).toContainText("You may be offered a role that feels slightly ahead");
+    await expect(preview).toContainText("accept the first assignment and learn from what happens next.");
+    await expect(preview).not.toContainText("Unsaved Studio draft");
+    await expect(preview).not.toContainText("While the Sun is in your");
+    await expect(preview.getByRole("heading", { level: 3 })).toHaveText("What you see");
+    await expect(preview.getByRole("heading", { level: 4 })).toHaveText("Sun conjunction your North Node");
+    await expect(preview.getByRole("button", { name: /Edit selected source/ })).toContainText(key);
+    const body = await preview.locator(".admin-natal-source-card-copy > p").allTextContents();
+    await page.getByLabel("Transit house", { exact: true }).selectOption("10");
+    expect(await preview.locator(".admin-natal-source-card-copy > p").allTextContents()).toEqual(body);
+    const headingStyles = await preview.getByRole("heading", { level: 3 }).evaluate((heading) => {
+      const style = getComputedStyle(heading);
+      const reference = getComputedStyle(document.querySelector(".admin-natal-placement-finder-heading h3")!);
+      const properties = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "textTransform", "marginTop", "marginBottom"] as const;
+      return properties.map((property) => [property, style[property], reference[property]]);
     });
-    expect(contentOrder, "reader preview precedes the editable source rows").toBe(true);
-
-    const livedEffect = finder.locator(".admin-natal-source-card", { hasText: "Uranus to Mercury hard-aspect effect" });
-    await livedEffect.getByRole("button", { name: "Edit source row" }).click();
+    // The existing finder title and preview subheading have separate size rules.
+    // Preserve that hierarchy and retain their computed comparison as QA evidence.
+    await test.info().attach("Studio heading style comparison", { body: JSON.stringify(headingStyles, null, 2), contentType: "application/json" });
+    await expectNoHorizontalOverflow(page, "Canonical Personal Transit Studio preview");
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await preview.screenshot({ path: path.join(adminScreenshotDir, `canonical-transit-${width}-${theme}.png`) });
+    await preview.getByRole("button", { name: /Edit selected source/ }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await expect(editor.getByRole("heading", { name: "Create fallback passage" })).toBeVisible();
-    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("fallback-hook/transit-effect-hard/uranus/mercury");
-    await expect(editor.getByLabel("Reader copy")).toHaveValue(/Conversations jump lanes and ideas arrive mid-sentence/);
-    await editor.getByLabel("Reader copy").fill("Conversations jump lanes. Capture the lightning in notes and choose one idea to land.");
-    await editor.getByRole("button", { name: "Save", exact: true }).click();
-    await expect.poll(() => writes.length).toBe(1);
-    expect(writes[0].method).toBe("POST");
-    expect(writes[0].payload).toMatchObject({
-      contentKey: "fallback-hook/transit-effect-hard/uranus/mercury",
-      surface: "sky",
-      mode: "feed",
-      status: "DRAFT"
-    });
-    await expect(editor.getByRole("button", { name: "Archive source" })).toBeVisible();
-    await editor.getByRole("button", { name: "Archive source" }).click();
-    await expect.poll(() => writes.length).toBe(2);
-    expect(writes[1]).toMatchObject({
-      method: "PATCH",
-      payload: { status: "ARCHIVED" }
-    });
-    await expect(editor.getByRole("button", { name: "Restore as draft" })).toBeVisible();
-    await editor.getByRole("button", { name: "Restore as draft" }).click();
-    await expect.poll(() => writes.length).toBe(3);
-    expect(writes[2]).toMatchObject({
-      method: "PATCH",
-      payload: { status: "DRAFT" }
-    });
-    await expect(editor.getByRole("button", { name: "Archive source" })).toBeVisible();
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
-
-    await page.setViewportSize({ width: 390, height: 844 });
-    await expect(finder.getByRole("heading", { name: "Uranus square your Mercury", level: 3 })).toBeVisible();
-    await expectNoHorizontalOverflow(page, "Transit-to-natal Sky write-up workspace");
+    await page.getByLabel("Natal planet or point", { exact: true }).selectOption("sun");
+    await expect(preview.getByRole("alert")).toBeVisible();
+    await expect(preview).not.toContainText("You may be offered a role");
     await assertNoBrowserErrors();
   });
 

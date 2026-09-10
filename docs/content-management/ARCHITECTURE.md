@@ -655,3 +655,28 @@ owner. Do not fill uncertainty with plausible astrology or plausible prose.
 Content Studio, reader overrides, and offline snapshots use `content_publications` to identify the published version of a shared content key. A retirement is durable even when its editable source is removed. Reader fallback lookup stops at a retired key rather than exposing bundled copy underneath it. Only an explicit authorized publication can undo retirement. Offline clients retain lifecycle revisions separately from cached writing and learn new retirements when they reconnect.
 
 See [publication retirement verification and rollout](../qa/content-publication-retirement-2026-09-07.md) for the migration, identity checks, compatibility behavior, and release sequence.
+
+## Personal transit composition retirement (2026-09-10)
+
+Sky placement natal aspects, You transit details, and embedded house-transit
+aspects use canonical transit-aspect or return readings. Personal Transit
+Studio previews call the shipped reader resolver and hydrate through the same
+eligible dashboard loader. Studio drafts cannot substitute for a reader passage.
+Chart houses remain calculated context; they do not route to a different composer.
+
+`resolver/retiredCompositions.mjs` permanently blocks the superseded
+`cms/personal-transit-aspect/`, `fallback-hook/transit-house-event-frame/`, and
+`fallback-template/transit.house-event` identities. The reader, publication APIs,
+Studio live-status calculation, generated reader projection, and materializer
+share that policy. Original source text and historical article editions remain
+unchanged; materialized retired rows are reference-only. The old house-event
+method, compiled natal-aspect selector, and override starter have been removed.
+
+The wants, natal-response, and scene hooks remain dependencies of canonical
+aspect fallback readings when no eligible exact passage exists. Their old names
+alone are not evidence that their prose is obsolete. The governed generation
+pipeline also remains active; its `legacyPrompt` variable participates in the
+current meaning-plan and role-gated generation process.
+
+Run `node --import tsx scripts/audit-composition-lifecycle.mts` for the current
+24-surface inventory and checks against shipped partitions and retired sources.

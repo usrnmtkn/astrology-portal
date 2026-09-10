@@ -95,14 +95,6 @@ export type SkyArticleEditionCandidate = {
 
 const datePattern = /^\d{4}-\d{2}-\d{2}$/u;
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
-const aspectGroups: Record<string, string> = {
-  conjunction: "conjunction",
-  square: "hard",
-  opposition: "hard",
-  trine: "soft",
-  sextile: "soft"
-};
-const heavyAspectBodies = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
 
 function normalizeNewlines(value: string) {
   return value.replace(/\r\n?/gu, "\n");
@@ -539,31 +531,4 @@ export function selectActiveSkyArticleEdition(
       ? [{ content, edition }]
       : [];
   }).sort((left, right) => right.edition.validFrom.localeCompare(left.edition.validFrom))[0] ?? null;
-}
-
-export function skyArticleAspectPassageForTransit(
-  passages: SkyArticleAspectPassage[],
-  context: { aspect: string; natalPoint: string; transitingPlanet: string }
-) {
-  const normalize = (value: string) => value.trim().toLowerCase().replace(/[_\s]+/gu, "-");
-  const aspect = normalize(context.aspect);
-  const natalPoint = normalize(context.natalPoint);
-  const transitingPlanet = normalize(context.transitingPlanet);
-  const group = aspectGroups[aspect] ?? aspect;
-  const aspectOrder = [aspect];
-  if (group !== aspect) aspectOrder.push(group);
-  if (aspect === "conjunction") {
-    const heavy = heavyAspectBodies.has(transitingPlanet) || heavyAspectBodies.has(natalPoint);
-    aspectOrder.push(...(heavy ? ["hard", "soft"] : ["soft", "hard"]));
-  }
-  aspectOrder.push("any");
-
-  for (const candidateAspect of [...new Set(aspectOrder)]) {
-    const passage = passages.find((candidate) => (
-      [natalPoint, "any"].includes(normalize(candidate.natalPoint))
-      && normalize(candidate.aspect) === candidateAspect
-    ));
-    if (passage) return passage;
-  }
-  return null;
 }

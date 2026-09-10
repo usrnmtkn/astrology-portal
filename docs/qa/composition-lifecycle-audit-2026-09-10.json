@@ -1,0 +1,316 @@
+{
+  "date": "2026-09-10",
+  "packageVersion": "v3-2026-09-10f",
+  "scope": "24 surface source maps, materialized Studio mirror, shipped row partitions, resolver consumers; no production database writes",
+  "superseded": [
+    "house-first transit composition",
+    "Studio four-source reconstruction",
+    "personal-aspect CMS overrides",
+    "compiled Sky natal-aspect fallback selector"
+  ],
+  "retiredSourceKeys": [
+    "fallback-hook/transit-house-event-frame/mars",
+    "fallback-hook/transit-house-event-frame/venus",
+    "fallback-hook/transit-house-event-frame/sun",
+    "fallback-hook/transit-house-event-frame/mercury",
+    "fallback-hook/transit-house-event-frame/jupiter",
+    "fallback-hook/transit-house-event-frame/saturn",
+    "fallback-hook/transit-house-event-frame/generic"
+  ],
+  "retained": [
+    "Approved exact transit and return units",
+    "Reviewed fallback wants/natal/scenes/effects used after exact lookup",
+    "House introductory and sign writing",
+    "Immutable historical Sky article editions",
+    "Governed generation pipeline and its meaning-plan prompt",
+    "Other active surface composers; missing direct calls alone do not prove a public package export is safe to delete"
+  ],
+  "surfaces": [
+    {
+      "id": "friends-compatibility-planet-cards",
+      "sourceCount": 720,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "friends-compatibility-exact-dynamics",
+      "sourceCount": 1658,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "friends-synastry-contact",
+      "sourceCount": 633,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "friends-house-overlays",
+      "sourceCount": 24,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "friends-composite",
+      "sourceCount": 209,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "friends-pair-daily",
+      "sourceCount": 140,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "natal-placement-detail",
+      "sourceCount": 803,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "natal-aspect-detail",
+      "sourceCount": 1060,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "natal-aspect-patterns",
+      "sourceCount": 15,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "sky-placement-detail",
+      "sourceCount": 1196,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "sky-aspect-detail",
+      "sourceCount": 116,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "sky-retrograde-summary",
+      "sourceCount": 21,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "personal-transit-detail",
+      "sourceCount": 1066,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "sky-daily-timing",
+      "sourceCount": 136,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "daily-at-a-glance",
+      "sourceCount": 136,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "sky-calendar-event-cards",
+      "sourceCount": 191,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "sky-lunar-day-editorial",
+      "sourceCount": 184,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "sky-calendar-day-cards",
+      "sourceCount": 42,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "sky-horoscopes",
+      "sourceCount": 146,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "chart-placement-row-microcopy",
+      "sourceCount": 207,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "natal-empty-house",
+      "sourceCount": 710,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "personal-transit-house",
+      "sourceCount": 1432,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "generated-reports",
+      "sourceCount": 69,
+      "retiredSourceCount": 0
+    },
+    {
+      "id": "surface-specs-builders",
+      "sourceCount": 720,
+      "retiredSourceCount": 0
+    }
+  ],
+  "capabilities": [
+    {
+      "method": "renderSkyPlacementHouseCore",
+      "consumers": [
+        "apps/web/src/App.tsx"
+      ]
+    },
+    {
+      "method": "renderTransitHouse",
+      "consumers": [
+        "apps/web/src/App.tsx",
+        "apps/web/src/services/weeklyHoroscope.ts"
+      ]
+    },
+    {
+      "method": "renderTransitAspect",
+      "consumers": [
+        "apps/web/src/App.tsx",
+        "apps/web/src/services/weeklyHoroscope.ts",
+        "apps/admin/src/transitNatalSources.ts"
+      ]
+    },
+    {
+      "method": "renderTransitRetro",
+      "consumers": [
+        "apps/web/src/features/calendar/LunarCalendar.tsx",
+        "apps/web/src/services/weeklyHoroscope.ts"
+      ]
+    },
+    {
+      "method": "renderTransitLabel",
+      "consumers": [
+        "apps/web/src/App.tsx"
+      ]
+    },
+    {
+      "method": "renderTransitReturn",
+      "consumers": [
+        "apps/web/src/App.tsx",
+        "apps/web/src/services/weeklyHoroscope.ts",
+        "apps/admin/src/transitNatalSources.ts"
+      ]
+    },
+    {
+      "method": "renderCompat",
+      "consumers": [
+        "apps/web/src/features/friends/ManualChartsPanel.tsx"
+      ]
+    },
+    {
+      "method": "renderSynastryAspect",
+      "consumers": [
+        "apps/web/src/App.tsx"
+      ]
+    },
+    {
+      "method": "renderSkySeason",
+      "consumers": []
+    },
+    {
+      "method": "renderSkyLunation",
+      "consumers": []
+    },
+    {
+      "method": "renderSkyHoroscope",
+      "consumers": []
+    },
+    {
+      "method": "renderContinuousSkyPlacement",
+      "consumers": []
+    },
+    {
+      "method": "renderMoonSignEntry",
+      "consumers": []
+    },
+    {
+      "method": "renderSkyPlacementCopy",
+      "consumers": []
+    },
+    {
+      "method": "renderSkyPlacement",
+      "consumers": [
+        "apps/web/src/App.tsx",
+        "apps/web/src/features/calendar/LunarCalendar.tsx"
+      ]
+    },
+    {
+      "method": "renderCircleStory",
+      "consumers": []
+    },
+    {
+      "method": "renderPairDaily",
+      "consumers": [
+        "apps/web/src/features/friends/ManualChartsPanel.tsx"
+      ]
+    },
+    {
+      "method": "renderCalendarPhase",
+      "consumers": [
+        "apps/web/src/features/calendar/LunarCalendar.tsx"
+      ]
+    },
+    {
+      "method": "renderVoidOfCourse",
+      "consumers": [
+        "apps/web/src/features/calendar/LunarCalendar.tsx"
+      ]
+    },
+    {
+      "method": "renderSeasonMarker",
+      "consumers": []
+    },
+    {
+      "method": "renderWeeklyMoon",
+      "consumers": [
+        "apps/web/src/features/calendar/LunarCalendar.tsx",
+        "apps/web/src/services/weeklyHoroscope.ts"
+      ]
+    },
+    {
+      "method": "renderSkyAspectCard",
+      "consumers": [
+        "apps/web/src/App.tsx",
+        "apps/web/src/features/calendar/LunarCalendar.tsx"
+      ]
+    },
+    {
+      "method": "renderBondTransit",
+      "consumers": [
+        "apps/web/src/features/friends/ManualChartsPanel.tsx"
+      ]
+    },
+    {
+      "method": "renderLunationMacro",
+      "consumers": [
+        "apps/web/src/features/calendar/LunarCalendar.tsx",
+        "apps/web/src/services/weeklyHoroscope.ts"
+      ]
+    },
+    {
+      "method": "renderLunationHoroscope",
+      "consumers": [
+        "apps/web/src/services/weeklyHoroscope.ts"
+      ]
+    },
+    {
+      "method": "renderLunationEventCard",
+      "consumers": [
+        "apps/web/src/App.tsx"
+      ]
+    },
+    {
+      "method": "renderDailyGlance",
+      "consumers": [
+        "apps/web/src/App.tsx",
+        "apps/web/src/features/friends/ManualChartsPanel.tsx"
+      ]
+    },
+    {
+      "method": "renderDoDont",
+      "consumers": [
+        "apps/web/src/App.tsx",
+        "apps/web/src/features/friends/ManualChartsPanel.tsx"
+      ]
+    }
+  ]
+}

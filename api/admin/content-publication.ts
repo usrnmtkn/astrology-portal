@@ -1,3 +1,4 @@
+import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { validContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import { contentLiveStatuses } from "../_lib/content-live-status.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
@@ -13,6 +14,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const body = await readAdminJsonBody<{ action?: string; contentKey?: string; id?: string; expectedUpdatedAt?: string }>(req);
     if (!["retire", "publish"].includes(body.action ?? "") || !body.contentKey || !/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(body.id ?? "") || !Number.isFinite(Date.parse(body.expectedUpdatedAt ?? ""))) {
       return sendAdminJson(res, 400, { ok: false, error: "Select a saved source and its current version before changing publication." });
+    }
+    if (body.action === "publish" && isRetiredCompositionKey(body.contentKey)) {
+      return sendAdminJson(res, 422, { ok: false, error: "This composition has been retired. Edit the canonical Personal Transit source instead." });
     }
     const base = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;

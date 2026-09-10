@@ -179,3 +179,22 @@ await test('unauthorized requests never reach storage', async () => {
     reset(); assert.equal((await invoke(method, writeBody(), { secret: 'incorrect' })).status, 401); assert.deepEqual(writes, []);
   }
 });
+
+await test('superseded compositions cannot publish through create, bulk upsert, or update', async () => {
+  for (const key of ['cms/personal-transit-aspect/you/template', 'fallback-hook/transit-house-event-frame/sun', 'fallback-template/transit.house-event']) {
+    for (const method of ['POST', 'PATCH']) {
+      reset([{ ...baseline, content_key: key }]);
+      const body = method === 'POST' ? { ...writeBody(key), status: 'LIVE' } : { id: baseline.id, status: 'LIVE' };
+      const result = await invoke(method, body);
+      assert.equal(result.status, 409, JSON.stringify(result)); assert.deepEqual(writes, []);
+    }
+    for (const ownerAction of ['approve-package-revision', 'approve-and-schedule', 'publish-sky-article-edition-revision']) {
+      reset([{ ...baseline, content_key: key }]);
+      assert.equal((await invoke('PATCH', { id: baseline.id, ownerAction })).status, 409);
+      assert.deepEqual(writes, []);
+    }
+    reset();
+    assert.equal((await invoke('POST', { rows: [{ ...writeBody(key), status: 'LIVE' }] })).status, 409);
+    assert.deepEqual(writes, []);
+  }
+});
