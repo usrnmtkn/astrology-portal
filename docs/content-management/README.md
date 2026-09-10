@@ -18,6 +18,8 @@ The short version:
   rules for complete fields, author-final copy, and refusal behavior.
 - [Content architecture](./ARCHITECTURE.md): ownership, runtime flow, surface
   wiring, dashboard hydration, and worked examples.
+- [Sky Placement V5 composition](./SKY_PLACEMENT_V5.md): editable sentence sources,
+  named variables, ordered sections, calculated previews, and publication checks.
 - [Governed approvals](./GOVERNED-APPROVALS.md): atomic owner decisions,
   unresolved queues, and the generated approved-only serving projection.
 - [Sky aspect surface contract](./SKY-ASPECT-SURFACE-CONTRACT.md): required

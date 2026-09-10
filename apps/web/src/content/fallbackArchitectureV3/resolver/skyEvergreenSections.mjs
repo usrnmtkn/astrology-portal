@@ -136,9 +136,10 @@ export function skyEvergreenFields(source, motion) {
 export function skyEvergreenEditableFields(source) {
   const fields = source?.studio_editable_fields ?? [];
   return isSkyEvergreenSource(source)
-    ? [...fields.filter(field => field.path !== SKY_EVERGREEN_SECTIONS_PATH && !["placementArticleDirect", "placementArticleRetrograde"].includes(field.path)),
+    ? [...fields.filter(field => field.path !== SKY_EVERGREEN_SECTIONS_PATH && !["placementArticleDirect", "placementArticleRetrograde", "ingress"].includes(field.path)),
       { path: "placementArticleDirect", label: "Direct placement article" },
-      { path: "placementArticleRetrograde", label: "Retrograde placement article" }, { path: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order" }]
+      { path: "placementArticleRetrograde", label: "Retrograde placement article" }, { path: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order" },
+      { path: "ingress", label: "V5 sentence composition" }]
     : fields;
 }
 

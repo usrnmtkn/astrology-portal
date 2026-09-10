@@ -13,7 +13,7 @@ const swissEphFullDataPath = resolve(repoRoot, "node_modules/swisseph-wasm/wasm/
 const swissEphFullDataManifest = 'files:[{filename:"/sweph/seas_18.se1",start:0,end:223002},{filename:"/sweph/seasnam.txt",start:223002,end:10153224},{filename:"/sweph/sefstars.txt",start:10153224,end:10286461},{filename:"/sweph/seleapsec.txt",start:10286461,end:10286743},{filename:"/sweph/semo_18.se1",start:10286743,end:11591514},{filename:"/sweph/seorbel.txt",start:11591514,end:11597371},{filename:"/sweph/sepl_18.se1",start:11597371,end:12081426}],remote_package_size:12081426';
 const swissEphWebDataManifest = 'files:[{filename:"/sweph/seas_18.se1",start:0,end:223002},{filename:"/sweph/seleapsec.txt",start:223002,end:223284},{filename:"/sweph/semo_18.se1",start:223284,end:1528055},{filename:"/sweph/seorbel.txt",start:1528055,end:1533912},{filename:"/sweph/sepl_18.se1",start:1533912,end:2017967}],remote_package_size:2017967';
 
-function trimSwissEphemerisWebDataPlugin() {
+export function trimSwissEphemerisWebDataPlugin() {
   return {
     name: "tldr-trim-swiss-ephemeris-web-data",
     apply: "build" as const,
@@ -32,7 +32,7 @@ function trimSwissEphemerisWebDataPlugin() {
   };
 }
 
-function browserOnlySwissEphemerisPlugin() {
+export function browserOnlySwissEphemerisPlugin() {
   const wasmNodeBootstrap = 'if(ENVIRONMENT_IS_NODE){const{createRequire}=await import("module");var require=createRequire(import.meta.url)}';
   const sourceNodeBranch = /    \/\/ In Node\.js environment, we need to help locate the WASM and data files\n    if \(typeof process[^]*?    \} else \{\n      \/\/ Browser environment\n([^]*?)\n    \}\n\n    this\.SweModule/u;
 
@@ -67,27 +67,29 @@ function browserOnlySwissEphemerisPlugin() {
   };
 }
 
-function serveFullSwissEphemerisDataInDevPlugin() {
+export function serveFullSwissEphemerisDataInDevPlugin() {
   return {
     name: "tldr-serve-full-swiss-ephemeris-data-in-dev",
     apply: "serve" as const,
     enforce: "pre" as const,
     configureServer(server) {
       const fullData = readFileSync(swissEphFullDataPath);
+      const wasm = readFileSync(resolve(repoRoot, "apps/web/public/wasm/swisseph.wasm"));
 
       server.middlewares.use((req, res, next) => {
         const requestPath = new URL(req.url ?? "/", "http://localhost").pathname;
 
-        if (requestPath !== "/wasm/swisseph.data" || !["GET", "HEAD"].includes(req.method ?? "GET")) {
+        const bytes = requestPath === "/wasm/swisseph.data" ? fullData : requestPath === "/wasm/swisseph.wasm" ? wasm : null;
+        if (!bytes || !["GET", "HEAD"].includes(req.method ?? "GET")) {
           next();
           return;
         }
 
         res.statusCode = 200;
-        res.setHeader("content-type", "application/octet-stream");
-        res.setHeader("content-length", String(fullData.byteLength));
+        res.setHeader("content-type", requestPath.endsWith(".wasm") ? "application/wasm" : "application/octet-stream");
+        res.setHeader("content-length", String(bytes.byteLength));
         res.setHeader("cache-control", "no-cache");
-        res.end(req.method === "HEAD" ? undefined : fullData);
+        res.end(req.method === "HEAD" ? undefined : bytes);
       });
     }
   };

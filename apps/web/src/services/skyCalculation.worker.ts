@@ -2,6 +2,7 @@ import type { LocationInput } from "../types.js";
 import {
   getAstrodienstSky,
   getSkyPlacementSnapshot,
+  getSkyPlacementTransitFacts,
   getLunarCalendarMonth,
   getLunarCalendarRangeEvents,
   getLunarCalendarWeek,
@@ -24,6 +25,7 @@ type SkyCalculationRequest =
   | { id: number; kind: "matching-new-moon"; args: Parameters<typeof getMatchingNewMoonForFullMoon> }
   | { id: number; kind: "natal-transit-timing"; args: Parameters<typeof natalTransitTimingFor> }
   | { id: number; kind: "placement-sky"; includeAspectLists?: boolean; location: LocationInput; planet: string; sign: string; date: string }
+  | { id: number; kind: "placement-transit-facts"; planet: string; sign: string; date: string; timeZone: string }
   | { id: number; kind: "preload" };
 
 type SkyCalculationResponse =
@@ -36,6 +38,8 @@ async function calculate(request: SkyCalculationRequest) {
   switch (request.kind) {
     case "sky":
       return getAstrodienstSky(request.location, new Date(request.date), request.options);
+    case "placement-transit-facts":
+      return getSkyPlacementTransitFacts({ planet: request.planet, sign: request.sign, referenceDate: new Date(request.date), timeZone: request.timeZone });
     case "placement-sky":
       return getSkyPlacementSnapshot(request.location, request.planet, request.sign, new Date(request.date), request.includeAspectLists);
     case "lunar-calendar-range":

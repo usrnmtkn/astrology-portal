@@ -9116,6 +9116,10 @@ export function GeneratedContentAdminDashboard() {
                 <SkyFallbackFieldsEditor key={currentDraft.contentKey} contentKey={currentDraft.contentKey}
                   kind={skyFallbackEditor.kind} fields={skyFallbackEditor.fields} initialField={skyWritingContext.fieldPath} selection={skyWritingContext.selection}
                   source={effectiveSkyFallback}
+                  onLoadSource={async key => {
+                    const row = await hydrateGeneratedContentRow({ id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow);
+                    return row ? effectivePackageRecord(row.sections) : undefined;
+                  }}
                   disabled={isLoading} onChange={updateSkyFallbackField}
                   onOpenSource={(key, path) => openRow(
                     rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow,

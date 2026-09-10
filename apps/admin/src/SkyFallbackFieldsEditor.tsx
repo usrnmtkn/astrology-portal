@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementAssembly";
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
 import SkyPhraseCompositionEditor from "./SkyPhraseCompositionEditor";
+import SkyIngressComposer from "./SkyIngressComposer";
 import SkySectionPacketEditor from "./SkySectionPacketEditor";
 import { makeSkyArticleOutline, SKY_ARTICLE_OUTLINES, type SkyEditorialSection } from "./skyArticleOutlines";
 // @ts-ignore Shared inline-variable contract used by the reader and save API.
@@ -19,13 +20,14 @@ type Props = {
   selection?: SkyPlacementSelection;
   disabled: boolean;
   onChange: (path: string, value: unknown) => void;
+  onLoadSource?: (key: string) => Promise<Record<string, any> | undefined>;
   onOpenSource: (key: string, path: string) => void;
 };
 const title = (value: string) => value.split("-").map(word => word[0]?.toUpperCase() + word.slice(1)).join(" ");
 
 type EvergreenSection = SkyEditorialSection;
 
-export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sourceFields, source, initialField, selection, disabled, onChange, onOpenSource }: Props) {
+export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sourceFields, source, initialField, selection, disabled, onChange, onOpenSource, onLoadSource }: Props) {
   const [selectedField, setSelectedField] = useState(initialField ?? "");
   const [outline, setOutline] = useState("ingress");
   const textarea = useRef<HTMLTextAreaElement>(null);
@@ -96,6 +98,11 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
           : <><span className="ui-pill">Editing placement writing</span>{skyRetrogradeBodies.has(planet) && <button type="button" disabled={disabled} onClick={() => onOpenSource(`sky-placement/retrograde/${planet}`, "Body")}>Edit retrograde writing</button>}</>}
       </div>
     </div>}
+    {placement && <details className="admin-workspace-details" open={initialField?.startsWith("ingress") || undefined}>
+      <summary>V5 sentence composition</summary>
+      <SkyIngressComposer source={{ ...source, contentKey }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
+        initialField={initialField} onChange={value => onChange("ingress", value)} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />
+    </details>}
     {placement && <details className="admin-workspace-details admin-evergreen-sections" open={field?.key.startsWith("fallback.") || undefined}>
       <summary>Evergreen sections</summary>
       <p>Reusable writing for any occurrence of this placement. The full placement article takes priority. When it is unavailable, the blocks matching the selected motion appear in this order. Empty blocks are skipped.</p>

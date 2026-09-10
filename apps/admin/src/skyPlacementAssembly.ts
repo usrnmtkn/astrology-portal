@@ -24,7 +24,7 @@ export function skyPlacementAssemblyFields(row: CompositionMapRow): SkyPlacement
   const editable = definition.length ? definition : (skyFallbackWorkspace(row.content_key, row.sections)?.fields ?? []).map(field => ({ path: field.key, label: field.label }));
   if (!editable.length && typeof source.body_you === "string") editable.push({ path: "body_you", label: "Placement passage" });
   const fields: SkyPlacementAssemblyField[] = editable
-    .filter(field => field.path !== SKY_EVERGREEN_SECTIONS_PATH && (!isSkyEvergreenSource(source) || !field.path.startsWith("fallback.")))
+    .filter(field => field.path !== "ingress" && field.path !== SKY_EVERGREEN_SECTIONS_PATH && (!isSkyEvergreenSource(source) || !field.path.startsWith("fallback.")))
     .map(field => ({
     row,
     path: field.path,

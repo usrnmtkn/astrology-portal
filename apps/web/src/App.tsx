@@ -5006,6 +5006,7 @@ function skyPlacementWritingSection(
       sign,
       dateLine: canonicalDateLine,
       aspectFacts: articleOptions?.aspectFacts,
+      ingressOccurrence: { passes: position.residencyPasses ?? [], asOfDate: generatedAt, timeZone: articleOptions?.locationTimeZone ?? position.transitTimeZone ?? "UTC" },
       facts: {
         entryDate: canonicalEntryDate,
         exitDate: canonicalExitDate
@@ -11211,7 +11212,7 @@ export function App() {
     if (!isProfileMode || !sky || !profileNatalSky || !birthDate || candidates.length === 0) return;
 
     let cancelled = false;
-    void import("./services/ephemeris").then(async ({ natalTransitTimingFor }) => {
+    void import("./services/skyCalculationClient").then(async ({ natalTransitTimingForOffMainThread: natalTransitTimingFor }) => {
       const enrichedEntries = await Promise.all(candidates.map(async (transit) => {
         const timing = await natalTransitTimingFor(
           transit.transitPlanet,

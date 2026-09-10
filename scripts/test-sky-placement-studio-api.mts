@@ -174,3 +174,29 @@ console.log("PASS: an empty published evergreen layout survives reload without r
  }
  console.log("PASS: motion-specific articles, scoped blocks and aspect variables save/publish → real loader → installed reader.");
 }
+
+// V5 is saved and published atomically; drafting never activates incomplete copy.
+{
+ const { makeSkyIngressComposition } = await import('../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs');
+ const composition = makeSkyIngressComposition();
+ composition.enabled = true;
+ const base = structuredClone(evergreenRow.sections.packageRecord);
+ const incomplete = (await request('PATCH', { id: evergreenRow.id, expectedUpdatedAt: evergreenRow.updated_at, reviewStatus: 'needs_review', sections: { ...evergreenRow.sections, packageDraft: { ...base, ingress: composition } } })).rows[0];
+ await request('PATCH', { id: incomplete.id, expectedUpdatedAt: incomplete.updated_at, ownerAction: 'approve-package-revision' }, '', 400);
+ for (const module of composition.modules.filter((item: any) => item.required)) for (const match of module.template.matchAll(/\{\{(\w+)\}\}/gu)) composition.sources[match[1]].text = `During this transit, fixture ${match[1]} for {{planetTitle}}.`;
+ for (let revision = 0; revision < 2; revision++) {
+  if (revision === 1) { composition.modules.reverse(); delete composition.sources.openingHook; composition.modules = composition.modules.filter((item: any) => item.id !== 'opening'); }
+  const copy = { ...incomplete.sections.packageRecord, placementArticleDirect: '', placementArticleRetrograde: '', ingress: composition };
+  const draft = (await request('PATCH', { id: incomplete.id, expectedUpdatedAt: incomplete.updated_at, reviewStatus: 'needs_review', sections: { ...incomplete.sections, packageDraft: copy } })).rows[0];
+  const published = (await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' })).rows[0];
+  assert.deepEqual(published.sections.packageRecord.ingress, composition);
+  Object.assign(incomplete, published);
+  await runtime.refreshContentPublications(true); runtime.clearCachedFallbackArchitectureV3Bundle();
+  runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
+  const rendered = runtime.skyV4ReaderRenderer.renderRoute({ route: 'placement', planet: 'saturn', sign: 'aries' });
+  assert.equal(rendered.resolution, 'ingress-composition');
+  assert(rendered.mainBody.includes('fixture responseSentence for Saturn.'));
+  assert(!rendered.mainBody.includes('{{'));
+ }
+ console.log('PASS: V5 incomplete draft retained and publish rejected; complete revisions and removed sources round-trip through API, publication, actual loader and reader.');
+}

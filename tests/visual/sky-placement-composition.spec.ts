@@ -319,7 +319,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
   await expect.poll(() => saved?.sections.packageRecord?.fallback?.sections?.[0]?.body).toBe("During this transit, fixture additional paragraph two.");
   const typography = (el: Element) => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; };
-  for (const paragraph of await editor.locator(".admin-evergreen-sections > p").all()) expect(await paragraph.evaluate(typography)).toEqual(await editor.locator(".admin-sky-writing-context p").evaluate(typography));
+  for (const paragraph of await editor.locator(".admin-evergreen-sections > p").all()) expect(await paragraph.evaluate(typography)).toEqual(await editor.getByLabel("Placement writing context").locator("p").evaluate(typography));
   expect(await editor.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
   await editor.locator(".admin-evergreen-sections").scrollIntoViewIfNeeded();
   await page.screenshot({ path: `test-results/evergreen-sections-${width}-${theme}.png` });

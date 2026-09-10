@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, useRef, useId } from "react";
 import type { CompositionMapRow } from "./compositionMap";
 import { skyPlacementBodies, skyPlacementSigns } from "./skyWriteupRelations";
+import SkyIngressComposer from "./SkyIngressComposer";
+import { effectivePackageRecord } from "./skyFallbackWorkspace";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { skyPlacementAssembly, skyPlacementAssemblyFields, skyRetrogradeBodies as retrogradeBodies, type SkyPlacementAssemblyField, type SkyPlacementWriting, type SkyPlacementSelection as Selection } from "./skyPlacementAssembly";
 import { openContextualReaderHref } from "./adminReaderDestinations";
@@ -30,7 +32,7 @@ export function skyPlacementCompositionKeys({ planet, sign, motion }: Selection)
 
 export default function SkyPlacementComposition({ rows, selection, onEditRow, onEditField, onLoadRow }: Props) {
   const [view, setView] = useState<"preview" | "template" | "assembly">("preview");
-  const [writing, setWriting] = useState<SkyPlacementWriting>("article");
+  const [writing, setWriting] = useState<SkyPlacementWriting | "ingress">("article");
   const viewId = useId();
   const loadRowRef = useRef(onLoadRow);
   loadRowRef.current = onLoadRow;
@@ -58,9 +60,10 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const selectedRows = keys.map(key => rows.find(row => row.content_key === key && !row.inventory_only && !row.id.startsWith("package:"))
     ?? loaded[key] ?? rows.find(row => row.content_key === key && !row.inventory_only));
   const availableRows = selectedRows.filter((row): row is CompositionMapRow => Boolean(row));
-  const assembly = skyPlacementAssembly(availableRows, writing, current.motion);
-  const selectedWriting = assembly.hasFallback ? writing : "article";
-  const parts = selectedWriting === writing ? assembly.parts : skyPlacementAssembly(availableRows, selectedWriting, current.motion).parts;
+  const assembly = skyPlacementAssembly(availableRows, writing === "ingress" ? "fallback" : writing, current.motion);
+  const ingressRow = availableRows.find(row => /^sky-placement\/article\//u.test(row.content_key));
+  const selectedWriting = writing === "ingress" && ingressRow ? writing : assembly.hasFallback ? writing === "ingress" ? "article" : writing : "article";
+  const parts = selectedWriting === writing ? assembly.parts : skyPlacementAssembly(availableRows, selectedWriting === "ingress" ? "fallback" : selectedWriting, current.motion).parts;
   const edit = (field: SkyPlacementAssemblyField) => onEditField && !field.row.content_key.startsWith("fallback-hook/") ? onEditField(field.row, field.path, current) : onEditRow(field.row);
   const sectionIdentity = (field: SkyPlacementAssemblyField) => field.row.content_key.includes("/retrograde/")
     ? `${title(current.planet)} retrograde · ${field.path === "Body" ? "Opening" : field.label}`
@@ -96,11 +99,21 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
         </div>)}
       </div>
       <label className="admin-sky-placement-writing">Writing path
-        <select aria-label="Placement writing path" value={selectedWriting} onChange={event => setWriting(event.target.value as SkyPlacementWriting)}>
+        <select aria-label="Placement writing path" value={selectedWriting} onChange={event => setWriting(event.target.value as SkyPlacementWriting | "ingress")}>
           <option value="article">Placement article</option>
           <option value="fallback" disabled={!assembly.hasFallback}>Fallback hooks</option>
+          {ingressRow && <option value="ingress">V5 sentence composition</option>}
         </select>
       </label>
+      {selectedWriting === "ingress" && ingressRow ? <SkyIngressComposer key={ingressRow.content_key} source={effectivePackageRecord(ingressRow.sections)} motion={current.motion}
+        onOpenSource={(key, path) => {
+          const row = availableRows.find(item => item.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as CompositionMapRow;
+          if (onEditField) onEditField(row, path, current); else onEditRow(row);
+        }}
+        onLoadSource={async key => {
+          const row = await loadRowRef.current?.({ id: `package:${key}`, content_key: key, inventory_only: true } as CompositionMapRow) as CompositionMapRow | undefined;
+          return row ? effectivePackageRecord(row.sections) : undefined;
+        }} /> : <>
       <p>{selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. They replace the placement passage when the full article is unavailable, keeping the TLDR and any retrograde opening. Only blocks matching the selected motion are included. Open a section to add writing or change the section order." : "This is the selected motion’s article, or the shared article when no motion-specific article is saved. It is evergreen writing and takes priority over the reusable fallback sections. It is not a dated article edition."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
       <div className="admin-composition-view-tabs" role="tablist" aria-label="Sky placement composition views">
         {views.map((item, index) => <button key={item.id} id={`${viewId}-${item.id}`} type="button" role="tab"
@@ -177,6 +190,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           </article>;
         })}
       </div>
+      </>}
     </>}
   </section>;
 }

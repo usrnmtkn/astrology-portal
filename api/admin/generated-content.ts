@@ -3,6 +3,8 @@ import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySum
 import { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 // @ts-ignore Shared canonical section schema; no database metadata can expand it.
 import { isSkyEvergreenSource, skyEvergreenEditableFields, skyEvergreenFields, skyEvergreenSectionText, skyEvergreenSectionFragments, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
+// @ts-ignore Shared V5 structure and publication checks.
+import { validateSkyIngressComposition, skyIngressPublicationIssues, ingressTextIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
 import { isContentStudioReferenceSource } from "../../apps/web/src/content/contentStudioSourceRole.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -406,6 +408,7 @@ function setPackageValueAt(record: Record<string, unknown>, path: string, value:
 }
 
 function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, unknown>) {
+  if (isSkyEvergreenSource(packageRecord) && (path === "ingress" || path.startsWith("ingress."))) return true;
   if (isSkyEvergreenSource(packageRecord) && skyEvergreenEditableFields(packageRecord).some((field: { path: string }) => field.path === path)) return true;
   const studioPaths = Array.isArray(packageRecord?.studio_editable_fields)
     ? packageRecord.studio_editable_fields
@@ -430,6 +433,7 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
     .filter((value) => typeof value === "string").join("\n\n");
   const hardFailures: string[] = [];
   if (isSkyEvergreenSource(record)) {
+    validateSkyIngressComposition(effective.ingress);
     for (const path of ["placementArticle", "placementArticleDirect", "placementArticleRetrograde", "fallback.hook", "fallback.lived", "fallback.turn"]) {
       hardFailures.push(...skyPlacementVariableIssues(packageValueAt(effective, path)).map((issue: string) => `${path}: ${issue}`));
     }
@@ -471,6 +475,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
   const packageDraft = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   const proposedRecord = packageDraft ?? (isRecord(sections.packageRecord) ? sections.packageRecord : record);
   if (isSkyEvergreenSource(record)) {
+    validateSkyIngressComposition(proposedRecord.ingress);
     const layout = packageValueAt(proposedRecord, SKY_EVERGREEN_SECTIONS_PATH);
     validateSkyEvergreenSections(layout);
     if (Array.isArray(layout)) for (const section of layout.filter(isRecord)) {
@@ -503,6 +508,11 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
 
   for (const [field, value, original] of editableFields) {
     if (typeof value !== "string") continue;
+    const ingressVariableField = isSkyEvergreenSource(record) && /^packageDraft\.ingress\.sources\.[A-Za-z][A-Za-z0-9]*\.text$/u.test(field);
+    if (ingressVariableField) {
+      const issues = ingressTextIssues(value);
+      if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
+    }
     const skyVariableField = record.source_package === skyV4CanonicalStagePackage
       && (isSkyPlacementVariableField(row.content_key, field.replace(/^packageDraft\./u, ""))
         // Publication mirrors the selected canonical body into these envelope
@@ -534,7 +544,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       ? packagePlaceholders(record.body_you)
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
-      if (skyVariableField) continue;
+      if (skyVariableField || ingressVariableField) continue;
       const isAllowedFriendName = (
         row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
         || row.content_key.startsWith("authored/transit-aspect/")
@@ -634,10 +644,11 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   // era_layer.* rather than only the older top-level prose fields.
   if (!body.revertToPackageOriginal && !hasPackageDraft) {
     for (const [field, value] of packageLeafFields(incomingRecord)) {
-      if (isEditablePackageCopyPath(field, record)) {
+      if (isEditablePackageCopyPath(field, record) && !field.startsWith("ingress.")) {
         setPackageValueAt(record, field, value);
       }
     }
+    if (isSkyEvergreenSource(record) && Object.hasOwn(incomingRecord, "ingress")) record.ingress = structuredClone(incomingRecord.ingress);
   }
 
   // Package rows are rendered from sections.packageRecord, not from the
@@ -2031,14 +2042,40 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new GeneratedContentRequestError("Source-material package rows cannot be published as exact reader copy.");
     }
 
+    // Governance flags are server-owned and differ between a reopened draft and
+    // its live target. The save boundary already checks them; publication only
+    // promotes editable copy, so compare these flags at the target's state.
+    const publicationDraft = { ...packageDraft };
+    for (const flag of ["owner_approved", "serving_enabled"]) {
+      if (Object.hasOwn(publicationDraft, flag)) publicationDraft[flag] = targetRecord[flag];
+    }
     validateFallbackArchitectureV3Copy(target, {
-      sections: { ...targetSections, packageDraft }
+      sections: { ...targetSections, packageDraft: publicationDraft }
     });
     const promotedRecord = structuredClone(targetRecord);
     for (const [field, value] of packageLeafFields(packageDraft)) {
-      if (isEditablePackageCopyPath(field, targetRecord)) {
+      if (isEditablePackageCopyPath(field, targetRecord) && !field.startsWith("ingress.")) {
         setPackageValueAt(promotedRecord, field, value);
       }
+    }
+    // A composition is one revision: replacing it also removes old references and modules.
+    if (isSkyEvergreenSource(promotedRecord) && Object.hasOwn(packageDraft, "ingress")) {
+      promotedRecord.ingress = structuredClone(packageDraft.ingress);
+    }
+    if (isSkyEvergreenSource(promotedRecord) && isRecord(promotedRecord.ingress)) {
+      const composition = promotedRecord.ingress;
+      const references = Object.values(isRecord(composition.sources) ? composition.sources : {}).filter(isRecord)
+        .map(source => isRecord(source.reference) ? stringFrom(source.reference.contentKey) : "").filter(Boolean);
+      const keys = [...new Set(references)].filter(key => key !== promotedRecord.contentKey);
+      const referencedRecords: Record<string, unknown>[] = [promotedRecord];
+      if (keys.length) {
+        const params = new URLSearchParams({ select: "content_key,sections,status,lane", content_key: `in.(${keys.join(",")})`, status: "eq.LIVE", lane: "eq.serving", limit: "80" });
+        const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, { headers: adminHeaders() });
+        if (!response.ok || !Array.isArray(response.payload)) throw new Error("Referenced writing could not be verified. The current publication has not changed.");
+        referencedRecords.push(...response.payload.map((row: ExistingGeneratedContentRow) => v3PackageRecord(row)));
+      }
+      const issues = skyIngressPublicationIssues(promotedRecord, referencedRecords);
+      if (issues.length) throw new GeneratedContentRequestError(issues.join("\n"));
     }
     if (canonicalRevision) {
       const bodyPaths = ["placementArticle", "NewMoonArticle", "FullMoonArticle", "EventArticle", "FallbackArticle", "ModifierArticle", "NodeAxisArticle", "ExactIngressCopy", "Article", "LilithArticle", "Body", "OverlayBody", "Copy", "Template"];
