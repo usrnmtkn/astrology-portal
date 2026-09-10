@@ -1,5 +1,5 @@
-export const SYNNASTRY_DIRECTIONALITY_LIVE_SCHEMA: "synastry-directionality-live/v1";
-export const SYNNASTRY_DIRECTIONALITY_MODE: "viewer-centered-synastry-v1";
+export const SYNASTRY_DIRECTIONALITY_LIVE_SCHEMA: "synastry-directionality-live/v1";
+export const SYNASTRY_DIRECTIONALITY_MODE: "viewer-centered-synastry-v1";
 
 export type SynastryDirectionalityLivePatch = {
   contentKey: string;
