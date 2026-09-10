@@ -191,7 +191,12 @@ console.log('PASS bounded current-Sky status lookup without bulk partition loadi
 const { default: summaryClauses } = await import('../apps/web/src/content/skyDailySummaryClauses.json', { with: { type: 'json' } });
 for (const [part, body] of Object.entries(summaryClauses.provenance.previousClauses)) {
   const key = `cms/sky-daily-summary/${part}`;
+  if (part.startsWith('moon/')) {
+    assert.equal(builtinContentRecords.has(key), false, 'Legacy Moon clauses are replaced by explicit V6 event variants');
+    continue;
+  }
   const builtin = builtinContentRecords.get(key)!;
+  assert.ok(builtin, 'Approved Sun migration retains its source record');
   const previousRow = { ...builtin, id: `qa-previous-${part}`, body, status: 'LIVE', lane: 'serving', review_state: null };
   assert.equal(contentLiveStatuses([previousRow, builtin], [previousRow]).every(status => status.live), true,
     'Studio compares the same approved wording migration as the reader');
