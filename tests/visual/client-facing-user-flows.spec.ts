@@ -1185,6 +1185,39 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  for (const theme of ["light", "dark"] as const) {
+    for (const width of [430, 768, 1440]) {
+      test(`article sheets share the reference spacing ${theme} ${width}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 1000 });
+        await seedClientState(page, { profile: true, profileBirthTime: "2:00 PM", preloadProfileNatalSky: true, theme, now: "2026-07-29T16:00:00.000Z" });
+        for (const [name, route] of [
+          ["you", "/#you/placement/sun-aquarius-9h"],
+          ["sky", "/#sky/placement/sun/leo"]
+        ]) {
+          await expectClientRouteLoads(page, route);
+          const card = page.locator(".sky-detail-card").first();
+          await expect(card.locator("h1")).toBeVisible();
+          const box = await card.boundingBox();
+          expect(box!.x).toBeCloseTo(width * 0.025, 0);
+          expect(box!.width).toBeCloseTo(width * 0.95, 0);
+          expect(box!.y).toBeCloseTo(width <= 720 ? 50 : 108, 0);
+          await expect(card).toHaveCSS("padding-left", width <= 720 ? "20px" : `${Math.min(width / 10, 144)}px`);
+          const title = await card.locator("h1").boundingBox();
+          await page.locator(".sky-detail-back").click({ trial: true });
+          const back = await page.locator(".sky-detail-back").boundingBox();
+          const nav = await page.locator(".topbar").boundingBox();
+          expect(title!.y).toBeGreaterThan(Math.max(back!.y + back!.height, nav!.y + nav!.height));
+          await expectSemanticArticleHeadingOrder(page, `${name} article ${width} ${theme}`);
+          await expectNoHorizontalOverflow(page, `${name} article ${width} ${theme}`);
+          await mkdir(responsiveScreenshotDir, { recursive: true });
+          await page.screenshot({ path: path.join(responsiveScreenshotDir, `article-sheet-${name}-${theme}-${width}.png`) });
+          await page.locator(".sky-detail-back").click();
+          await expect(page.locator(".sky-detail-page")).toHaveCount(0);
+        }
+      });
+    }
+  }
+
   test("Sky placement aspect cards show one visible hierarchy label per card", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 

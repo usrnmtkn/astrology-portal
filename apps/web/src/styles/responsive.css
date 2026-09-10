@@ -1707,17 +1707,6 @@
   }
 }
 @media (max-width: 640px) {
-  .article-page {
-    width: 100%;
-    padding: var(--mobile-page-padding);
-  }
-
-  .sky-detail-page {
-    width: 100%;
-    padding:
-      var(--mobile-route-padding);
-  }
-
   .article-shell,
   .sky-detail-article {
     width: min(100%, var(--container-dialog));

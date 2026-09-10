@@ -970,8 +970,13 @@
   --mobile-route-padding: 104px var(--mobile-page-gutter) calc(var(--mobile-page-gutter) + 88px + env(safe-area-inset-bottom, 0px));
   --settings-panel-padding: clamp(var(--space-6), 5vw, 36px);
   --settings-dialog-padding: clamp(calc(var(--space-6) + var(--space-1) / 2), 5vw, 40px);
+  /* Article sheets use a 95vw outer rail, independent of chart/page gutters. */
+  --article-page-gutter: 2.5vw;
+  --article-back-top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + var(--space-3));
+  --article-page-padding: calc(var(--top-control-top) + var(--top-control-height) + var(--space-7)) var(--article-page-gutter) 120px;
   --sky-page-padding: clamp(116px, 15vh, 168px) clamp(calc(var(--space-4) + var(--space-1) / 2), 5vw, 48px) 120px;
   --sky-hero-padding: clamp(40px, 5.4vw, 80px) clamp(calc(var(--space-6) + var(--space-1) / 2), 6vw, 92px) clamp(52px, 6vw, 84px);
+  --article-sheet-padding: calc(var(--space-10) * 2 + var(--space-7)) clamp(var(--space-5), 10vw, calc(var(--space-10) * 2 + var(--space-4))) clamp(52px, 6vw, 84px);
   --sky-header-margin: clamp(var(--space-3), 1.5vw, var(--space-4)) 0 0;
   --sky-section-margin: 0 0 clamp(calc(var(--space-7) - var(--space-1)), 3vw, 38px);
   --sky-grid-gap: clamp(calc(var(--space-5) + var(--space-1) / 2), 2.4vw, calc(var(--space-7) - var(--space-1) / 2));
@@ -1084,6 +1089,8 @@
 
 @media (max-width: 720px) {
   :root {
+    --article-page-padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) / 2) var(--article-page-gutter) calc(var(--mobile-page-bottom) + env(safe-area-inset-bottom, 0px));
+    --article-sheet-padding: calc(var(--space-7) * 3 + var(--space-5)) var(--space-5) var(--space-9);
     --top-control-top: 24px;
     --top-control-height: 52px;
     --top-icon-button-size: 52px;
