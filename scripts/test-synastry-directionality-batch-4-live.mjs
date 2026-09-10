@@ -9,7 +9,7 @@ import {
 
 const packageRoot = "apps/web/src/content/fallbackArchitectureV3";
 const source = JSON.parse(fs.readFileSync(`${packageRoot}/source-rows/fallback-source-rows-v3.json`, "utf8"));
-const overlay = JSON.parse(fs.readFileSync(`${packageRoot}/source-rows/synastry-directionality-live-v1.json`, "utf8"));
+const overlay = JSON.parse(fs.readFileSync(`${packageRoot}/authored-inputs/synastry-directionality-live-v1.json`, "utf8"));
 const templates = JSON.parse(fs.readFileSync(`${packageRoot}/templates/fallback-templates-v3.json`, "utf8"));
 const transitLib = JSON.parse(fs.readFileSync(`${packageRoot}/source-rows/transit-synastry-rows-v1.json`, "utf8"));
 const relationshipBundleSource = fs.readFileSync(
@@ -21,7 +21,7 @@ assert.equal(overlay.schema, "synastry-directionality-live/v1");
 assert.equal(overlay.directionality_mode, SYNASTRY_DIRECTIONALITY_MODE);
 assert.equal(overlay.release_id, "synastry-directionality-batch-4-live-v1");
 assert.equal(overlay.rows.length, 24, "Batch 4 must contain exactly 24 released semantic reverses");
-assert.match(relationshipBundleSource, /synastry-directionality-live-v1\.json/u);
+assert.match(relationshipBundleSource, /authored-inputs\/synastry-directionality-live-v1\.json/u);
 assert.match(relationshipBundleSource, /applySynastryDirectionalityLiveV1/u);
 
 const overlayKeys = new Set(overlay.rows.map((row) => row.contentKey));
@@ -62,8 +62,6 @@ for (const patch of overlay.rows) {
   }
 }
 
-// Applying the overlay twice must be a no-op. This keeps the direct relationship
-// runtime safe after generated relationship artifacts eventually absorb the same release.
 assert.deepEqual(
   applySynastryDirectionalityLiveV1(patchedHookRows, overlay),
   patchedHookRows,
