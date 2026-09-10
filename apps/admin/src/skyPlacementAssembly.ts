@@ -1,8 +1,9 @@
 import type { CompositionMapRow } from "./compositionMap";
-import { effectivePackageRecord, packageValueAt } from "./skyFallbackWorkspace";
+import { effectivePackageRecord, packageValueAt, skyFallbackWorkspace } from "./skyFallbackWorkspace";
 import { skyV4StudioDefinition } from "./skyV4ContentStudio";
+import type { SkyEditorialSection } from "./skyArticleOutlines";
 // @ts-ignore Shared canonical evergreen layout used by the reader.
-import { isSkyEvergreenSource, skyEvergreenFields, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
+import { isSkyEvergreenSource, skyPlacementArticlePath, skyEvergreenFields, skyEvergreenLayout, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 
 export type SkyPlacementWriting = "article" | "fallback";
 export type SkyPlacementSelection = { planet: string; sign: string; motion: string };
@@ -13,11 +14,16 @@ export type SkyPlacementAssemblyField = {
   label: string;
   value: string;
   kind: "copy" | "hook";
+  motion?: string;
+  editorial?: SkyEditorialSection;
 };
 
 export function skyPlacementAssemblyFields(row: CompositionMapRow): SkyPlacementAssemblyField[] {
   const source = effectivePackageRecord(row.sections);
-  const fields: SkyPlacementAssemblyField[] = skyV4StudioDefinition(source).editableFields
+  const definition = skyV4StudioDefinition(source).editableFields;
+  const editable = definition.length ? definition : (skyFallbackWorkspace(row.content_key, row.sections)?.fields ?? []).map(field => ({ path: field.key, label: field.label }));
+  if (!editable.length && typeof source.body_you === "string") editable.push({ path: "body_you", label: "Placement passage" });
+  const fields: SkyPlacementAssemblyField[] = editable
     .filter(field => field.path !== SKY_EVERGREEN_SECTIONS_PATH && (!isSkyEvergreenSource(source) || !field.path.startsWith("fallback.")))
     .map(field => ({
     row,
@@ -26,21 +32,22 @@ export function skyPlacementAssemblyFields(row: CompositionMapRow): SkyPlacement
     value: packageValueAt(source, field.path),
     kind: row.content_key.includes("/retrograde/") || field.path.startsWith("fallback.") ? "hook" : "copy"
   }));
-  if (isSkyEvergreenSource(source)) fields.push(...skyEvergreenFields(source).map((field: { path: string; label: string; value: string }) => ({
-    row, path: field.path, label: field.label, value: field.value, kind: "hook" as const
+  if (isSkyEvergreenSource(source)) fields.push(...skyEvergreenFields(source).map((field: { id: string; path: string; label: string; value: string; motion: string }) => ({
+    row, path: field.path, label: field.label, value: field.value, motion: field.motion, kind: "hook" as const,
+    editorial: skyEvergreenLayout(source).find((section: SkyEditorialSection) => section.id === field.id)
   })));
   return fields;
 }
 
-export function skyPlacementAssembly(rows: CompositionMapRow[], writing: SkyPlacementWriting) {
+export function skyPlacementAssembly(rows: CompositionMapRow[], writing: SkyPlacementWriting, motion = rows.some(row => row.content_key.includes("/retrograde/")) ? "retrograde" : "direct") {
   const fields = rows.flatMap(skyPlacementAssemblyFields);
-  const retrograde = fields.filter(field => field.row.content_key.includes("/retrograde/") && field.path === "Body");
+  const retrograde = fields.filter(field => field.row.content_key.includes("/retrograde/") && field.path === "Body" && motion === "retrograde");
   const placement = fields.filter(field => !field.row.content_key.includes("/retrograde/"));
-  const fallback = placement.filter(field => field.path.startsWith("fallback."));
-  const article = placement.filter(field => !field.path.startsWith("fallback."));
+  const fallback = placement.filter(field => field.path.startsWith("fallback.") && (!field.motion || field.motion === "all" || field.motion === motion));
+  const article = placement.filter(field => (!field.row.content_key.startsWith("sky-nodes/axis/") || field.path === "NodeAxisArticle") && !field.path.startsWith("fallback.") && (!/^placementArticle/u.test(field.path) || field.path === skyPlacementArticlePath(effectivePackageRecord(field.row.sections), motion)));
   const tldr = article.filter(field => /^(?:tldrWhat|tldrTakeaway|TLDR_What|TLDR_Takeaway)$/u.test(field.path));
   // This is the field order of renderSkyV4ReaderRoute / the canonical fallback
   // preview. Dynamic event overlays, dates, aspects and horoscopes need chart
   // facts, so this editor explicitly previews the base placement writing only.
-  return { fields, parts: writing === "fallback" ? [...retrograde, ...tldr, ...fallback] : [...retrograde, ...article], hasFallback: fallback.length > 0 };
+  return { fields, parts: writing === "fallback" ? [...retrograde, ...tldr, ...fallback] : [...retrograde, ...article], hasFallback: fields.some(field => field.path.startsWith("fallback.")) };
 }

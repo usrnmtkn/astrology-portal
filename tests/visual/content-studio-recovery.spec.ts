@@ -100,15 +100,16 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await mockStudio(page);
     // Fault injection is confined to the test browser's module response.
+    let recoverOnReload = false;
     await page.route("**/SkyPlacementComposition-*.js", route => route.fulfill({
       contentType: "text/javascript",
-      body: 'export default function(){if(!document.documentElement.hasAttribute("data-qa-recovered"))throw new Error("Studio recovery fixture");return null;}'
+      body: recoverOnReload ? 'export default function(){return null;}' : 'export default function(){if(!document.documentElement.hasAttribute("data-qa-recovered"))throw new Error("Studio recovery fixture");return null;}'
     }));
     await page.goto(`${studioPath}#review-queue`);
     await page.evaluate(value => document.documentElement.setAttribute("data-theme", value), theme);
     await openStudioPage(page, "Sky Write-ups");
-    await page.getByLabel("Sky placement planet or point").selectOption("saturn");
-    await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+    // The map now mounts before filters are selected, so the injected crash
+    // happens on navigation rather than after a planet/sign selection.
     await expect(page.getByText("This page could not load. Try another page or reload to try again.")).toBeVisible();
     await page.getByText("Error details", { exact: true }).click();
     await expect(page.getByText("Error: Studio recovery fixture", { exact: true })).toBeVisible();
@@ -123,16 +124,16 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     expect(await page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("studio-recovery-fixture");
 
     // A repeated crash can be escaped through a separate Studio destination.
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+    await openStudioPage(page, "Review Queue");
     await page.evaluate(() => document.documentElement.removeAttribute("data-qa-recovered"));
-    await page.getByLabel("Sky placement planet or point").selectOption("saturn");
-    await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+    await openStudioPage(page, "Sky Write-ups");
+    await expect(page.getByText("This page could not load. Try another page or reload to try again.")).toBeVisible();
     await page.getByRole("link", { name: "Open Review Queue", exact: true }).click();
     await expect(page).toHaveURL(/#review-queue$/);
     await expect(page.getByRole("heading", { name: "Review Queue", exact: true })).toBeVisible();
     await openStudioPage(page, "Sky Write-ups");
-    await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
-    await page.getByLabel("Sky placement planet or point").selectOption("saturn");
-    await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+    recoverOnReload = true;
     await Promise.all([
       page.waitForEvent("load"),
       page.getByRole("button", { name: "Reload page", exact: true }).click()

@@ -1,11 +1,11 @@
 {
-  "entryJavaScriptRawBytes": 619000,
-  "entryJavaScriptGzipBytes": 176000,
-  "largestJavaScriptRawBytes": 619000,
-  "totalJavaScriptGzipBytes": 312000,
+  "entryJavaScriptRawBytes": 622500,
+  "entryJavaScriptGzipBytes": 177000,
+  "largestJavaScriptRawBytes": 622500,
+  "totalJavaScriptGzipBytes": 317000,
   "_rationale": {
-    "entryJavaScriptGzipBytes": "Studio crash recovery and invalid-response validation measure 175.6 kB gzip / 618.6 kB raw in CI. Allow 500 additional gzip bytes for these recovery controls. See docs/qa/studio-recovery-budget-2026-09-09.md.",
-    "totalJavaScriptGzipBytes": "The Sky variable key and named-source template comparison measure 311.1 kB aggregate gzip locally. Allow 2.5 kB for this deferred editor feature; startup and individual chunk limits are unchanged. See docs/qa/sky-placement-variables-2026-09-09.md.",
-    "entryJavaScriptRawBytes": "The null-response guard and bounded inventory retries bring the entry to 618.6 kB raw in CI. Allow 500 additional raw bytes at entry and for the largest chunk. See docs/qa/studio-recovery-budget-2026-09-09.md."
+    "entryJavaScriptGzipBytes": "Shared paragraph and practical-item validation measures 176.3 kB entry gzip; allow 0.7 kB headroom. No new runtime dependencies. See docs/qa/sky-composable-blocks-2026-09-10.md.",
+    "totalJavaScriptGzipBytes": "Paragraph editor, eight structural outlines, and repeatable practical items measure 316.8 kB aggregate gzip. Allow 0.2 kB headroom. See docs/qa/sky-composable-blocks-2026-09-10.md.",
+    "entryJavaScriptRawBytes": "Paragraph packets and practical-item schema validation add 1.9 kB raw to the shared entry. Measured 621.8 kB raw. See docs/qa/sky-composable-blocks-2026-09-10.md."
   }
 }

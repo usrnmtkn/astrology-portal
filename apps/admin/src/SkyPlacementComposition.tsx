@@ -18,8 +18,13 @@ type Props = {
 const title = (value: string) => value.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ");
 
 export function skyPlacementCompositionKeys({ planet, sign, motion }: Selection) {
-  const base = planet === "lilith" ? `sky-lilith/article/${sign}`
+  const base = planet === "moon" ? `fallback-hook/sky-placement-hook/moon/${sign}` : planet === "lilith" ? `sky-lilith/article/${sign}`
     : planet.endsWith("-node") ? `sky-nodes/${planet}/${sign}` : `sky-placement/article/${planet}/${sign}`;
+  if (planet.endsWith("-node")) {
+    const opposite = skyPlacementSigns[(skyPlacementSigns.indexOf(sign as typeof skyPlacementSigns[number]) + 6) % 12];
+    const axis = planet === "north-node" ? `${sign}-${opposite}` : `${opposite}-${sign}`;
+    return ["sky-nodes/education", `sky-nodes/axis/${axis}`, base];
+  }
   return [...(motion === "retrograde" && retrogradeBodies.has(planet) ? [`sky-placement/retrograde/${planet}`] : []), base];
 }
 
@@ -30,9 +35,11 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const loadRowRef = useRef(onLoadRow);
   loadRowRef.current = onLoadRow;
   const [context, setContext] = useState<Selection>({ planet: "saturn", sign: "aries", motion: "retrograde" });
-  const current = selection ?? context;
+  const current = selection ? { ...selection, motion: selection.motion === "all" ? context.motion : selection.motion } : { ...context };
+  if (!retrogradeBodies.has(current.planet)) current.motion = "direct";
   const variableFacts = skyPlacementVariableFacts({ ...current, isRetrograde: current.motion === "retrograde" && retrogradeBodies.has(current.planet) });
   const [loaded, setLoaded] = useState<Record<string, CompositionMapRow>>({});
+  const [finished, setFinished] = useState<Record<string, boolean>>({});
   const [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
   const keys = useMemo(() => skyPlacementCompositionKeys(current), [current.planet, current.sign, current.motion]);
@@ -43,6 +50,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
     setError("");
     void Promise.all(keys.map(async key => {
       const row = await loadRow({ id: `package:${key}`, content_key: key, inventory_only: true } as CompositionMapRow);
+      if (active) setFinished(existing => ({ ...existing, [key]: true }));
       if (active && row) setLoaded(existing => ({ ...existing, [key]: row as CompositionMapRow }));
     })).catch(error => { if (active) setError(error instanceof Error ? error.message : "Could not load these sources."); });
     return () => { active = false; };
@@ -50,16 +58,16 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const selectedRows = keys.map(key => rows.find(row => row.content_key === key && !row.inventory_only && !row.id.startsWith("package:"))
     ?? loaded[key] ?? rows.find(row => row.content_key === key && !row.inventory_only));
   const availableRows = selectedRows.filter((row): row is CompositionMapRow => Boolean(row));
-  const assembly = skyPlacementAssembly(availableRows, writing);
+  const assembly = skyPlacementAssembly(availableRows, writing, current.motion);
   const selectedWriting = assembly.hasFallback ? writing : "article";
-  const parts = selectedWriting === writing ? assembly.parts : skyPlacementAssembly(availableRows, selectedWriting).parts;
-  const edit = (field: SkyPlacementAssemblyField) => onEditField ? onEditField(field.row, field.path, current) : onEditRow(field.row);
+  const parts = selectedWriting === writing ? assembly.parts : skyPlacementAssembly(availableRows, selectedWriting, current.motion).parts;
+  const edit = (field: SkyPlacementAssemblyField) => onEditField && !field.row.content_key.startsWith("fallback-hook/") ? onEditField(field.row, field.path, current) : onEditRow(field.row);
   const sectionIdentity = (field: SkyPlacementAssemblyField) => field.row.content_key.includes("/retrograde/")
     ? `${title(current.planet)} retrograde · ${field.path === "Body" ? "Opening" : field.label}`
-    : `${title(current.planet)} in ${title(current.sign)} · ${field.label}`;
+    : `${field.row.headline || `${title(current.planet)} in ${title(current.sign)}`} · ${field.label}`;
   const scope = (row: CompositionMapRow) => row.content_key.includes("/retrograde/")
     ? `Shared by ${title(current.planet)} retrograde in every sign.`
-    : `Shared by ${title(current.planet)} in ${title(current.sign)}, direct and retrograde.`;
+    : row.content_key === "sky-nodes/education" ? "Shared node education." : row.content_key.startsWith("sky-nodes/axis/") ? "Shared by both ends of this node axis." : `Writing for ${title(current.planet)} in ${title(current.sign)}. Each section can be shared or specific to one motion.`;
   const views = [{ id: "preview", label: "Reader preview" }, { id: "template", label: "Main template" }, { id: "assembly", label: "Assembly" }] as const;
   return <section className="admin-composition-surface-actions admin-sky-placement-composition" aria-label="Sky placement composition map">
     <header><div><p className="admin-eyebrow">Composition Map</p><h3>{title(current.planet)}{current.motion === "retrograde" && retrogradeBodies.has(current.planet) ? " Rx" : ""} in {title(current.sign)}</h3></div>
@@ -73,12 +81,13 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
         {skyPlacementSigns.map(sign => <option key={sign} value={sign}>{title(sign)}</option>)}
       </select></label>
       <label>Motion<select aria-label="Composition motion" value={context.motion} onChange={event => setContext({ ...context, motion: event.target.value })}>
-        <option value="direct">Direct</option><option value="retrograde">Retrograde</option>
+        <option value="direct">Direct</option>{retrogradeBodies.has(current.planet) && <option value="retrograde">Retrograde</option>}
       </select></label>
     </div>}
-    <p>The placement article is shared by direct and retrograde motion. Retrograde adds its own opening paragraph. Choose a writing path, then select a colored passage to edit its source.</p>
+    <p>Choose a writing path to see its ordered blocks. Motion-specific articles take priority over the shared article. Fallback sections can be shared, direct-only, or retrograde-only. Select a colored passage to edit its source.</p>
+    {selection?.motion === "all" && retrogradeBodies.has(current.planet) && <label>Preview motion<select aria-label="Composition motion" value={current.motion} onChange={event => setContext({ ...context, motion: event.target.value })}><option value="direct">Direct</option><option value="retrograde">Retrograde</option></select></label>}
     {error && <p role="alert">{error} <button type="button" onClick={() => setRetry(value => value + 1)}>Retry sources</button></p>}
-    {keys.map((key, index) => !selectedRows[index] && <p role="status" key={key}>{error ? "Source unavailable: " : "Loading "}{key.includes("/retrograde/") ? "retrograde paragraph" : "planet-in-sign source"}{!error && "…"}</p>)}
+    {keys.map((key, index) => !selectedRows[index] && <p role="status" key={key}>{error || finished[key] ? "Source unavailable: " : "Loading "}{key.includes("/retrograde/") ? "retrograde paragraph" : "planet-in-sign source"}{!error && !finished[key] && "…"}</p>)}
     {availableRows.length > 0 && <>
       <div className="admin-sky-placement-sources" aria-label="Selected sources">
         {availableRows.map(row => <div key={row.content_key}>
@@ -92,7 +101,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           <option value="fallback" disabled={!assembly.hasFallback}>Fallback hooks</option>
         </select>
       </label>
-      <p>{selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. They replace the placement passage when the full article is unavailable, keeping the TLDR and any retrograde opening. Open a section to add writing or change the section order." : "This is the saved main passage for this planet and sign. It is evergreen writing and takes priority over the shorter fallback sections. It is not a dated article edition."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
+      <p>{selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. They replace the placement passage when the full article is unavailable, keeping the TLDR and any retrograde opening. Only blocks matching the selected motion are included. Open a section to add writing or change the section order." : "This is the selected motion’s article, or the shared article when no motion-specific article is saved. It is evergreen writing and takes priority over the reusable fallback sections. It is not a dated article edition."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
       <div className="admin-composition-view-tabs" role="tablist" aria-label="Sky placement composition views">
         {views.map((item, index) => <button key={item.id} id={`${viewId}-${item.id}`} type="button" role="tab"
           aria-selected={view === item.id} aria-controls={`${viewId}-panel`} tabIndex={view === item.id ? 0 : -1}
@@ -132,7 +141,17 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
                 {sectionIdentity(field)}
               </button>
               <code className="admin-sky-section-reference">{`${field.row.content_key}#${field.path}`}</code>
-              <p>{scope(field.row)}</p>
+              <p>{field.motion && field.motion !== "all" ? `Used only while ${field.motion}.` : /^placementArticle(?:Direct|Retrograde)$/u.test(field.path) ? `Used only while ${field.path.endsWith("Retrograde") ? "retrograde" : "direct"}.` : scope(field.row)}</p>
+              {(field.editorial?.paragraphs || field.editorial?.items) && <details className="admin-workspace-details">
+                <summary>Section structure</summary>
+                <p>Role: {field.editorial.role ?? "main"} · Target depth: {field.editorial.depth ?? "standard"}. Editorial labels are not reader copy.</p>
+                <ol aria-label={`${field.label} paragraph plan`}>
+                  {(field.editorial.paragraphs ?? field.editorial.items ?? []).map((unit, index) => <li key={unit.id}>
+                    <p>{"job" in unit ? unit.job || `Paragraph ${index + 1}` : `Practical item ${index + 1}: action`}</p>
+                    <p>{unit.phrases.length ? unit.phrases.map(phrase => phrase.role?.replaceAll("-", " ") || "authored phrase").join(" → ") : "No ingredients saved."}</p>
+                  </li>)}
+                </ol>
+              </details>}
               <div className="admin-sky-template-comparison">
                 <div><span className="admin-eyebrow">Saved section text</span><p className="admin-composition-source-copy">{field.value || "Empty · skipped"}</p></div>
                 <div><span className="admin-eyebrow">With selected variables</span><p className="admin-composition-source-copy">{field.value

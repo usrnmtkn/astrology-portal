@@ -1,6 +1,6 @@
 import { correctedReaderSource } from "./readerSourceReferenceCorrections.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
-import { skyEvergreenFields, skyEvergreenEditableFields, validateSkyEvergreenSections } from "./skyEvergreenSections.mjs";
+import { skyPlacementArticlePath, skyEvergreenFields, skyEvergreenEditableFields, validateSkyEvergreenSections } from "./skyEvergreenSections.mjs";
 import { skyPlacementVariableFacts, fillSkyPlacementVariables } from "./skyPlacementVariables.mjs";
 import continuousOwnerApproval from "../authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
 import readerCopyOwnerApproval from "../authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
@@ -865,7 +865,7 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
   input = { ...input, contexts: matchingPlacementContexts(input) };
   const facts = skyPlacementVariableFacts(input);
   const fullArticle = article && input.articleAvailable !== false
-    ? fillSkyPlacementVariables(article.placementArticle, facts).trim()
+    ? fillSkyPlacementVariables(article[skyPlacementArticlePath(article, facts.motion)], facts).trim()
     : "";
   const overlays = resolveSkyV4ContextualOverlays(corpus, input.contexts, input.overlaySettings, input.overlaySuppressions);
   const fallbackOverlays = resolveSkyV4ContextualOverlays(
@@ -875,7 +875,7 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
     ? fallbackOverlays[0]?.FallbackHookOverlay ?? ""
     : "";
   const evergreen = article && !fullArticle && input.fallbackAvailable !== false
-    ? skyEvergreenFields(article).map(section => fillSkyPlacementVariables(section.value, facts)) : [];
+    ? skyEvergreenFields(article, facts.motion).map(section => fillSkyPlacementVariables(section.value, facts)) : [];
   const fallback = article && !fullArticle && input.fallbackAvailable !== false
     ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)]
       .filter(Boolean)
@@ -1351,6 +1351,12 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
     contentKey = `sky-placement/seasonal-context/${lower(input.sign)}/${lower(input.hemisphere)}`;
   }
   const source = releasedReaderRecord(corpus, contentKey);
+  if (input.inspectVariables === true) {
+    const retrograde = corpus.content.retrogradeGeneric.find(row => lower(row.Planet) === lower(input.planet));
+    const copy = [source.placementArticle, source.placementArticleDirect, source.placementArticleRetrograde,
+      ...skyEvergreenFields(source).map(field => field.value), retrograde?.Body].join("\n");
+    return { contentKey, requiresAspectFacts: /\{\{\s*(?:aspectsInSign(?:Count)?|aspectsWhileRetrograde(?:Count)?|retrogradeStartDate|retrogradeEndDate)\s*\}\}/u.test(copy) };
+  }
   const lunarContext = placementLunarContext(lunarContextSource, input);
   const lunarFacts = lunarContext?.facts ?? record(input.facts);
   const lunarFullPageBody = lunarContext
@@ -1416,7 +1422,7 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   if (route === "placement" && (input.isRetrograde === true || input.stationSupported === true)) {
     const retrograde = resolveSkyV4Retrograde(corpus, { body: input.planet, sign: input.sign, stationSupported: input.stationSupported });
     if (retrograde.body && retrograde.lookupKey && READER_COPY_SERVING_KEYS.has(retrograde.lookupKey)) {
-      pushReaderBody(retrograde.body, true);
+      pushReaderBody(fillSkyPlacementVariables(retrograde.body, skyPlacementVariableFacts(input)), true);
     }
   }
   return {

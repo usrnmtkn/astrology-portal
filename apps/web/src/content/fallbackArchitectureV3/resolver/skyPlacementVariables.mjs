@@ -6,6 +6,12 @@ export const SKY_PLACEMENT_VARIABLES = Object.freeze([
   { name: "signTitle", description: "Zodiac sign name.", availability: "Selected placement" },
   { name: "motion", description: "The word direct or retrograde.", availability: "Calculated motion" },
   { name: "entryDate", description: "Start of the placement’s sign residency, including year.", availability: "Calculated residency dates; not the retrograde window" },
+  { name: "retrogradeStartDate", description: "Start of the calculated retrograde cycle, including year.", availability: "Calculated station-retrograde date" },
+  { name: "retrogradeEndDate", description: "End of the calculated retrograde cycle, including year.", availability: "Calculated station-direct date" },
+  { name: "aspectsInSign", description: "Dated list of exact major aspects to this body during its actual passes through this sign.", availability: "Calculated residency; excludes gaps. Major aspects to Sun, Mercury through Pluto, and Lilith; Moon excluded." },
+  { name: "aspectsWhileRetrograde", description: "Dated list of exact major aspects during this retrograde cycle, including any sign changes.", availability: "Calculated full retrograde cycle. Same aspect coverage as aspectsInSign." },
+  { name: "aspectsInSignCount", description: "Number of calculated exact aspects in the sign residency.", availability: "Calculated residency aspect list" },
+  { name: "aspectsWhileRetrogradeCount", description: "Number of calculated exact aspects in the retrograde cycle.", availability: "Calculated full retrograde cycle" },
   { name: "exitDate", description: "Final exit from the sign residency, including year.", availability: "Calculated residency dates; not the retrograde window" }
 ]);
 const names = new Set(SKY_PLACEMENT_VARIABLES.map(variable => variable.name));
@@ -13,8 +19,9 @@ const title = value => String(value ?? "").trim().toLowerCase().split(/[ -]+/u).
 const tokenPattern = () => /\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu;
 
 export function isSkyPlacementVariableField(contentKey, path) {
+  if (/^sky-placement\/retrograde\/[^/]+$/u.test(contentKey)) return path === "Body";
   return /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(contentKey)
-    && (path === "placementArticle" || /^fallback\.(?:hook|lived|turn)$/u.test(path)
+    && (/^placementArticle(?:Direct|Retrograde)?$/u.test(path) || /^fallback\.(?:hook|lived|turn)$/u.test(path)
       || /^fallback\.sections\.[^.]+$/u.test(path));
 }
 
@@ -34,6 +41,7 @@ export function skyPlacementVariableIssues(value) {
 export function skyPlacementVariableFacts(input) {
   return {
     ...(input.facts ?? {}),
+    ...skyPlacementAspectVariables(input),
     planetTitle: title(input.planet),
     signTitle: title(input.sign),
     motion: input.isRetrograde === true ? "retrograde" : "direct"
@@ -63,4 +71,28 @@ export function fillSkyPlacementVariables(value, facts) {
   const missing = segments.filter(segment => segment.token && !segment.available);
   if (missing.length) throw new Error(`SKY_V4_SOURCE_GAP: missing calculated facts ${missing.map(segment => segment.token).join(", ")}`);
   return segments.map(segment => segment.text).join("");
+}
+
+// Lists are calculated facts, never approved aspect interpretation rows or a
+// current-sky sample. Unknown coverage stays unavailable; a known empty list
+// has a count of zero and an explicit factual label.
+export function skyPlacementAspectVariables(input) {
+  const data = input.aspectFacts;
+  if (!data || title(data.planet) !== title(input.planet) || title(data.sign) !== title(input.sign)) return {};
+  const formatDate = value => new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: data.timeZone }).format(new Date(value));
+  const result = {};
+  const add = (name, events) => {
+    if (!Array.isArray(events)) return;
+    const unique = [...new Map(events.filter(event => title(event.planet) === title(input.planet)).map(event => [event.id, event])).values()]
+      .sort((a, b) => a.occursAt.localeCompare(b.occursAt));
+    result[`${name}Count`] = String(unique.length);
+    result[name] = unique.length ? unique.map(event => `- ${formatDate(event.occursAt)}: ${title(event.planet)} ${event.aspect} ${title(event.otherPlanet)}`).join("\n") : "No exact major aspects in this calculated window.";
+  };
+  add("aspectsInSign", data.inSign);
+  if (data.retrogradeStart && data.retrogradeEnd) {
+    result.retrogradeStartDate = formatDate(data.retrogradeStart);
+    result.retrogradeEndDate = formatDate(data.retrogradeEnd);
+    add("aspectsWhileRetrograde", data.retrograde);
+  }
+  return result;
 }

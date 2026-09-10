@@ -10049,10 +10049,19 @@ body,
 }
 .admin-dashboard .admin-evergreen-section-name {
   display: grid;
-  flex: 1;
+  flex: 1 0 100%;
   min-width: 0;
   text-align: start;
   overflow-wrap: anywhere;
+}
+.admin-dashboard .admin-evergreen-sections li > label {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: var(--admin-space-sm);
+}
+.admin-dashboard .admin-evergreen-sections li > label select {
+  width: 100%;
 }
 .admin-dashboard .admin-evergreen-section-name small {
   font-family: var(--font-label);
