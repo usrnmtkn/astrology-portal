@@ -596,7 +596,9 @@ export async function runFriendReportJobs(input: {
         run_after: failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),
         locked_at: null,
         locked_by: null,
-        last_error: errorMessage
+        last_error: judgeBlocked && error.diagnostic
+          ? `${errorMessage} ${JSON.stringify(error.diagnostic)}`.slice(0, 12000)
+          : errorMessage
       });
       if (failed) await markPlaceholderFailed(admin, job, errorMessage);
       results.push({ jobId: job.id, status: failed ? "failed" : "retry" });
