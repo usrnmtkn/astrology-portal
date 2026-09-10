@@ -30,6 +30,8 @@ export type ReportModelCallInput<T> = {
   prompt: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  signal?: AbortSignal;
+  disableFallback?: boolean;
   productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
@@ -59,6 +61,8 @@ async function callOpenAi<T>(input: {
   prompt: string;
   schemaName: string;
   schema: Record<string, unknown>;
+  signal?: AbortSignal;
+  disableFallback?: boolean;
   productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
@@ -74,6 +78,7 @@ async function callOpenAi<T>(input: {
     if (!key) throw new Error("OPENAI_API_KEY is not configured.");
     const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
+    signal: input.signal,
     headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
     body: JSON.stringify({
       model: input.model,
@@ -127,6 +132,8 @@ async function callOpenAi<T>(input: {
 
 async function callClaude<T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  signal?: AbortSignal;
+  disableFallback?: boolean;
   productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
@@ -141,6 +148,7 @@ async function callClaude<T>(input: {
     if (!key) throw new Error("ANTHROPIC_API_KEY is not configured.");
     const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
+    signal: input.signal,
     headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({
       model: input.model,
@@ -180,6 +188,8 @@ async function callClaude<T>(input: {
 
 async function directReportModelCall<T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  signal?: AbortSignal;
+  disableFallback?: boolean;
   productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
@@ -193,6 +203,8 @@ async function directReportModelCall<T>(input: {
 
 const callReportModel: ReportModelCall = async <T>(input: {
   provider: string; model: string; prompt: string; schemaName: string; schema: Record<string, unknown>;
+  signal?: AbortSignal;
+  disableFallback?: boolean;
   productionKernel?: ReportProductionKernel;
   validateResponse?: (value: T) => void;
   beforeProviderCall?: (attempt: ReportProviderAttempt) => Promise<void>;
@@ -202,6 +214,7 @@ const callReportModel: ReportModelCall = async <T>(input: {
   try {
     return await directReportModelCall<T>(input);
   } catch (error) {
+    if (input.disableFallback || input.signal?.aborted) throw error;
     if (error instanceof ReportModelLifecycleError
       || error instanceof ReportModelResponseRejectedError
       || error instanceof ReportProviderSchemaError) throw error;

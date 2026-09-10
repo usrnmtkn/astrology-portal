@@ -1,3 +1,4 @@
+import { withTransitReadingCheckpoints, TransitReadingCheckpointYield, TransitReadingCheckpointStopped } from "./transit-reading-checkpoints.js";
 import { youTransitReadingRequestLock, type YouTransitReadingWindow } from "./you-transit-reading.js";
 import { generateYouTransitReadingForUser, type YouTransitReadingRow } from "./you-transit-reading-generation.js";
 import { isTransitReadingJudgeBlockedError } from "./transit-reading-generation.js";
@@ -31,6 +32,7 @@ export type YouReportJob = {
   source_snapshot: Record<string, unknown>;
   state: YouReportJobState;
   attempt: number;
+  checkpoint_attempt?: number;
   run_after: string;
   locked_at: string | null;
   locked_by: string | null;
@@ -137,6 +139,7 @@ async function ensureJob(input: {
       const rows = await input.admin.update<YouReportJob>("you_report_jobs", `id=eq.${existing.id}`, {
         state: "queued",
         attempt: 0,
+        checkpoint_attempt: (existing.checkpoint_attempt ?? 1) + 1,
         run_after: new Date().toISOString(),
         locked_at: null,
         locked_by: null,
@@ -281,11 +284,11 @@ export async function runYouReportJobs(input: {
       continue;
     }
     try {
-      const generated = await generateYouTransitReadingForUser({
+      const generated = await withTransitReadingCheckpoints({ admin, family: "you", jobId: job.id, attempt: job.checkpoint_attempt ?? 1 }, () => generateYouTransitReadingForUser({
         userId: job.user_id,
         facts: job.facts,
         entitlementId: job.entitlement_id
-      });
+      }));
       const resultId = generated.saved[0]?.id;
       await admin.update("you_report_jobs", `id=eq.${job.id}`, {
         state: "complete",
@@ -296,9 +299,17 @@ export async function runYouReportJobs(input: {
       });
       results.push({ jobId: job.id, status: "complete", ...(resultId ? { resultId } : {}) });
     } catch (error) {
+      if (error instanceof TransitReadingCheckpointYield) {
+        await admin.update("you_report_jobs", `id=eq.${job.id}&state=eq.running&locked_by=eq.${encodeURIComponent(input.workerId)}`, {
+          state: "retry", attempt: Math.max(0, job.attempt - 1), run_after: new Date().toISOString(),
+          locked_at: null, locked_by: null, last_error: null
+        });
+        results.push({ jobId: job.id, status: "retry" });
+        continue;
+      }
       const judgeBlocked = isTransitReadingJudgeBlockedError(error);
       // Reject this draft, but give the existing entitlement its remaining retries.
-      const failed = job.attempt >= attemptCap;
+      const failed = job.attempt >= attemptCap || error instanceof TransitReadingCheckpointStopped;
       const delayMinutes = Math.min(30, Math.max(1, job.attempt * 2));
       const errorMessage = judgeBlocked
         ? "Writing quality gate did not pass after one corrective rewrite and re-judge."
@@ -307,6 +318,7 @@ export async function runYouReportJobs(input: {
           : "You report generation failed.";
       await admin.update("you_report_jobs", `id=eq.${job.id}`, {
         state: failed ? "failed" : "retry",
+        ...(!failed ? { checkpoint_attempt: (job.checkpoint_attempt ?? 1) + 1 } : {}),
         run_after: failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),
         locked_at: null,
         locked_by: null,
@@ -314,7 +326,8 @@ export async function runYouReportJobs(input: {
           ? `${errorMessage} ${JSON.stringify(error.diagnostic)}`.slice(0, 12000)
           : errorMessage
       });
-      if (failed) await markPlaceholderFailed(admin, job, errorMessage);
+      if (failed) await markPlaceholderFailed(admin, job, error instanceof TransitReadingCheckpointStopped
+        ? "This report could not finish generating. Please try again." : errorMessage);
       results.push({ jobId: job.id, status: failed ? "failed" : "retry" });
     }
   }
