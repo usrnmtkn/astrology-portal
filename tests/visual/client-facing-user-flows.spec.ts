@@ -1168,7 +1168,7 @@ test.describe("client-facing user flow case studies", () => {
       await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
       await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
 
-      const title = page.getByRole("heading", { level: 1, name: "The Sun in Leo" });
+      const title = page.getByRole("heading", { level: 1, name: "Sun in Leo", exact: true });
       const titleBox = await title.boundingBox();
       const topbarBox = await page.locator(".topbar").boundingBox();
 
