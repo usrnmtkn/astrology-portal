@@ -218,7 +218,8 @@ test("retrograde editor saves two revisions to its own source and preserves the 
   const url = new URL(route.request().url());
   let data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
   if (url.pathname.endsWith("/generated-content")) {
-   if (route.request().method() === "GET") data.rows = (url.searchParams.get("contentKeys") ?? "").split(",").map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
+   if (route.request().method() === "GET") data.rows = saved && url.searchParams.get("id") === saved.id
+     ? [saved] : (url.searchParams.get("contentKeys") ?? "").split(",").map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
    else {
     const input = route.request().postDataJSON(); writes.push(input);
     if (input.ownerAction) {
@@ -267,7 +268,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    const url = new URL(route.request().url());
    const data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
    if (url.pathname.endsWith("/generated-content")) {
-    if (route.request().method() === "GET") data.rows = (url.searchParams.get("contentKeys") ?? "").split(",").map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
+    if (route.request().method() === "GET") data.rows = saved && url.searchParams.get("id") === saved.id
+     ? [saved] : (url.searchParams.get("contentKeys") ?? "").split(",").map(k => k === key && saved ? saved : virtual(k)).filter(Boolean);
     else {
      const input = route.request().postDataJSON(); version++;
      saved = input.ownerAction
