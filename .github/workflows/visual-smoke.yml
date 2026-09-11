@@ -101,7 +101,8 @@ jobs:
 
   sky-placement-studio:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Includes the expanded full API lifecycle gate before fresh reader builds.
+    timeout-minutes: 30
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
