@@ -72,6 +72,7 @@ export type CompositionPreview = {
 };
 
 export type CompositionPreviewOptions = {
+  initialAudience?: "you" | "they";
   destination?: string;
   exampleValues?: Record<string, string>;
   includeOptionalSources?: boolean;

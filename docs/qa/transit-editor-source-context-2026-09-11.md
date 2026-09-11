@@ -81,3 +81,42 @@ regenerate artifacts, and follow the privacy history-rewrite instructions if
 applicable. Then merge PR #759, verify the main commit's Vercel deployment, and
 repeat the live Lilith editor and full Daily Sky paragraph/link checks. Do not
 publish a feature branch directly to production.
+
+
+## Follow-up audit: Friends audience and broader editor coverage
+
+The Friends workspace used the correct reader voice but its Variables rail
+initialized to You. The rail now starts with the originating workspace audience
+and resets when the edited source or workspace audience changes. The owner can
+still switch You/They explicitly. Transit and natal identity remain selected;
+no reader prose, approval or publication state changes.
+
+The shared transit catalog audit is now part of `test:content-studio-api` on
+every repository update. It covers 14 transit bodies × 18 natal points × five
+aspects × two audiences at the representative Capricorn sign: 2,432 renderable
+selections resolve to existing catalog keys and 88 return explicit source gaps.
+This is source-routing coverage, not a claim that every combination has approved
+copy or that every date/sign is tested. Node/browser/shipped parity, authored
+Sun/Node copy, Lilith hook identity and retirement checks remain intact.
+
+Fresh local follow-up checks passed: the full 96-case Content Studio browser
+suite, the full API suite including the expanded source audit, CSS/token audit,
+admin typecheck and the original bundle limits (621.6 kB raw / 176.7 kB gzip).
+Four additional Friends viewport/theme cases check exact You/They wording,
+source identity, Lilith/Capricorn/North Node/house context, audience toggles and
+reopening. Natal Placement, 291 exact Natal Aspect and House Transit source
+contracts also pass. Logs are `/private/tmp/transit-context-*.log`.
+
+The broader admin command exposed an outdated atomic-provenance test assumption:
+`buildCompositionMap` now also returns slot-bearing hooks/articles. The test
+compared all 267 map entries with the 39 packaged-template count. It now selects
+those exact 39 template identities and retains every nested provenance assertion
+(396 variables, zero gaps). The separate full-catalog audit is unchanged: 453
+entries, 400 traceable previews and 53 explicitly flagged incomplete previews.
+Do not describe those 53 as fully traced or erase their disclosures.
+
+Release remains blocked by GitHub Actions billing and prerequisite PR #756.
+The refreshed head `2e24cbe2` API check annotation (run `34568777728`) confirms
+that no test steps started. The old `/private/tmp/sky-event-ci.log` is not
+current-head release evidence. Follow the release handoff above; these local
+results do not replace required hosted checks or prove production deployment.

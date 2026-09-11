@@ -2293,6 +2293,57 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) test(`Friends transit source preserves selected context ${width} ${theme}`, async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await page.setViewportSize({ width, height: 1000 });
+    const keys = ["fallback-hook/transit-effect-soft/lilith", "fallback-vocab/planet-topic/north-node"];
+    await seedAdminApi(page, { generatedRows: keys.map(content_key => {
+      const record = servingPackageRecords.get(content_key)!;
+      return { id: `qa-friends-${content_key}`, content_key, headline: content_key, body: String(record.body_you ?? record.body), summary: "", surface: "you", mode: "feed", status: "LIVE", lane: "serving", block_type: "fallback_hook", sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now };
+    }) });
+    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.route("**/api/admin/transit-natal-preview", async route => {
+      const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
+      expect(input.voice).toBe("{{Name}}");
+      await route.fulfill({ json: { rendered: renderTransitNatalPreviewState(input) } });
+    });
+    await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=lilith&sign=capricorn&transitHouse=8&aspect=trine&natal=north-node&natalHouse=4&audience=friends");
+    await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, theme);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+    const preview = page.getByRole("region", { name: "Effective transit to natal reader preview" });
+    await expect(preview).toContainText("Lilith in Capricorn");
+    const button = preview.getByRole("button", { name: /Edit selected source fallback-hook\/transit-effect-soft\/lilith/ });
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const rail = page.getByRole("complementary", { name: "Template variable reference" });
+    for (let reopen = 0; reopen < 2; reopen++) {
+      await button.click();
+      await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(keys[0]);
+      await expect(editor.getByLabel("Selected transit context")).toContainText("Lilith in Capricorn, 8th house, trine natal North Node, 4th house");
+      await editor.getByRole("button", { name: /Variables/ }).click();
+      await expect(rail.getByRole("button", { name: "They", exact: true })).toHaveAttribute("aria-pressed", "true");
+      await expect(rail.locator(".admin-composition-preview-chrome")).toContainText("Friends Transits");
+      await expect(rail).toContainText(/the growth edge and the unfamiliar appetite/i);
+      await expect(rail).not.toContainText("Saturn");
+      await expect(rail).not.toContainText("Venus");
+      const copy = rail.locator(".admin-template-reader-copy");
+      await expect(copy).toContainText("Things they say plainly in this window tend to land clean");
+      await expect(copy).not.toContainText("Say the true thing while it comes out clean.");
+      if (reopen === 0) {
+        await mkdir(adminScreenshotDir, { recursive: true });
+        await rail.screenshot({ path: path.join(adminScreenshotDir, `friends-transit-context-${width}-${theme}.png`) });
+      }
+      await rail.getByRole("button", { name: "You", exact: true }).click();
+      await expect(rail.getByRole("button", { name: "You", exact: true })).toHaveAttribute("aria-pressed", "true");
+      await expect(copy).toContainText("Say the true thing while it comes out clean.");
+      await expect(copy).not.toContainText("Things they say plainly in this window tend to land clean");
+      await rail.getByRole("button", { name: "Close variables", exact: true }).click();
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+    }
+    await expectNoHorizontalOverflow(page, "Friends selected transit source");
+    await assertNoBrowserErrors();
+  });
+
   test("house transits expose the complete card before its evergreen and sign-specific passages", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];

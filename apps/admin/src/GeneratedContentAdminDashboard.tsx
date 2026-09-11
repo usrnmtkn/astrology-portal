@@ -10336,7 +10336,8 @@ export function GeneratedContentAdminDashboard() {
               source_snapshot: currentDraft.sourceSnapshot
             }}
             previewOptions={hasTransitTemplatePreviewContext ? {
-              destination: "Personal Transits",
+              destination: friendsTransitAudience ? "Friends Transits" : "Personal Transits",
+              initialAudience: friendsTransitAudience ? "they" : "you",
               exampleValues: {
                 transitTitle: titleFromKey(transitNatalPlanet), natalTitle: titleFromKey(transitNatalPoint),
                 transitRef: `${titleFromKey(transitNatalPlanet)} in ${titleFromKey(transitNatalSign)}`,

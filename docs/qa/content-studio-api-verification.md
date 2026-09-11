@@ -47,6 +47,11 @@ reader, content package and dependency changes.
   API-read version, protecting changes made during the request.
 - Calendar partial proposals, all 24 materialized shapes, exact saved copy,
   separate revisions and actual reader hydration/selection.
+- Personal Transit source routing across every selectable transiting body, natal
+  point, aspect and both audiences at a representative sign. Each successful
+  preview must link to an existing source; missing approved content must report
+  a source gap. The actual-handler check separately verifies publication edits,
+  retirement and request-scoped reader state.
 - Existing Sky placement publication, copy recovery, reader revalidation,
   storage protocol/timeouts, composition sources, live status, editor state
   and protected Uranus copy parity.

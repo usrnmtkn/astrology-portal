@@ -40,10 +40,20 @@ const rows = [...new Map([
   ...skyArticlePackage.vocabularyRows,
   ...skyArticlePackage.hookRows
 ].map((row) => [row.contentKey, normalize(row)])).values()];
-const map = buildCompositionMap(rows);
+// This contract audits the packaged templates and all their nested dependencies.
+// The full map separately audits slot-bearing hooks/articles, including sources
+// intentionally flagged as not traceable (test-admin-composition-map-catalog).
+const templateKeys = new Set(templatePackage.templates.map(row => row.contentKey));
+const map = buildCompositionMap(rows).filter(template => templateKeys.has(template.row.content_key));
 const slots = map.flatMap((template) => template.slots.map((slot) => ({ template, slot })));
 
-assert.equal(map.length, templatePackage.templates.length, "Every packaged template should be included in the atomic provenance audit.");
+// Check exact identity coverage, not a count that could hide a missing template.
+const mappedKeys = new Set(map.map(template => template.row.content_key));
+assert.deepEqual(
+  templatePackage.templates.map(row => row.contentKey).filter(key => !mappedKeys.has(key)),
+  [],
+  "Every packaged template should be included in the atomic provenance audit."
+);
 assert.deepEqual(
   slots.filter(({ slot }) => slot.sourceKind === "saved-copy" && slot.sources.length === 0).map(({ template, slot }) => `${template.row.content_key}:${slot.name}`),
   [],
