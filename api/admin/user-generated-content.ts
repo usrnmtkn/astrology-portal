@@ -6,7 +6,7 @@ import { loadLocalWebEnv } from "../_lib/local-env.js";
 
 loadLocalWebEnv();
 
-type UserGeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
+type UserGeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "friends" | "year_ahead";
 type UserGeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 
 type UserGeneratedContentPatch = {
@@ -18,7 +18,7 @@ type UserGeneratedContentPatch = {
   body?: string;
 };
 
-const surfaces = new Set<UserGeneratedContentSurface>(["sky", "you", "natal", "synastry", "composite", "relationship"]);
+const surfaces = new Set<UserGeneratedContentSurface>(["sky", "you", "natal", "synastry", "composite", "relationship", "friends", "year_ahead"]);
 const statuses = new Set<UserGeneratedContentStatus>(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
 const selectColumns = "id,user_id,subject_type,subject_id,content_key,surface,mode,status,event_type,target_date,provider,model,headline,summary,body,error,updated_at,created_at";
 

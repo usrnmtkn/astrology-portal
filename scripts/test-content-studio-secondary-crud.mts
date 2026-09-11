@@ -18,8 +18,8 @@ globalThis.fetch = async (input, init = {}) => {
   const url = new URL(String(input)); assert.equal(url.origin, env.SUPABASE_URL);
   calls.push({ url, init }); return storage(url, init);
 };
-async function invoke(handler: any, method: string, body?: unknown, raw = false, secret = env.CONTENT_GENERATION_SECRET) {
-  const req = Object.assign(Readable.from(body === undefined ? [] : [raw ? String(body) : JSON.stringify(body)]), { method, url: '/api/admin/test', headers: { 'x-content-generation-secret': secret } });
+async function invoke(handler: any, method: string, body?: unknown, raw = false, secret = env.CONTENT_GENERATION_SECRET, query = '') {
+  const req = Object.assign(Readable.from(body === undefined ? [] : [raw ? String(body) : JSON.stringify(body)]), { method, url: `/api/admin/test${query}`,  headers: { 'x-content-generation-secret': secret } });
   const res = { statusCode: 0, result: {} as any, setHeader() {}, end(body: string) { this.result = JSON.parse(body); } };
   await handler(req, res); return { status: res.statusCode, ...res.result };
 }
@@ -46,6 +46,20 @@ try {
     assert.equal((await invoke(personalized, 'PATCH', input)).status, 502);
     storage = async () => Response.json({ message: 'unavailable' }, { status: 503 });
     assert.equal((await invoke(personalized, 'GET')).status, 502);
+  });
+  await test('personalized inventory filters support the current database surfaces', async () => {
+    for (const surface of ['friends', 'year_ahead']) {
+      calls = [];
+      storage = async (url) => {
+        assert.equal(url.searchParams.get('surface'), `eq.${surface}`);
+        return Response.json([{ id, updated_at: version, surface }]);
+      };
+      const result = await invoke(personalized, 'GET', undefined, false, env.CONTENT_GENERATION_SECRET, `?surface=${surface}`);
+      assert.equal(result.status, 200, surface); assert.equal(result.rows[0].surface, surface); assert.equal(calls.length, 1);
+    }
+    calls = [];
+    assert.equal((await invoke(personalized, 'GET', undefined, false, env.CONTENT_GENERATION_SECRET, '?surface=unknown')).status, 400);
+    assert.equal(calls.length, 0);
   });
   await test('personalized repeated edits preserve complete strings and reject stale or missing rows', async () => {
     let row: any = { id, updated_at: version, status: 'DRAFT', body: 'QA original.' };

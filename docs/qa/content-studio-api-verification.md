@@ -155,3 +155,9 @@ retry because a write may already have committed. No automatic write retry is
 introduced. The isolated actual-handler secondary CRUD regression and the
 existing publication/preview lifecycle regression run in the mandatory API gate.
 These checks do not approve prose or exercise mutations in production storage.
+
+The same audit found the personalized list filter still omitted `friends` and
+`year_ahead`, although both are supported by the September 6 database constraint
+and the current generation client. Both filters now reach storage; unsupported
+surface names still return 400 before lookup. This is an API filter correction,
+not a new content surface or a database migration.
