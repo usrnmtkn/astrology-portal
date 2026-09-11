@@ -77,6 +77,32 @@ export async function adminFetch(
   }
 }
 
+/** Keep the storage deadline active through the response body, not only headers. */
+export async function adminFetchJson(
+  input: string | URL,
+  init: RequestInit = {},
+  timeoutMs = defaultAdminUpstreamTimeoutMs
+) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(input, { ...init, signal: controller.signal });
+    const payload: unknown = await response.json().catch((error) => {
+      if (controller.signal.aborted || error?.name === "AbortError") throw error;
+      throw new AdminHttpError(502, "Storage returned invalid JSON. Reload to verify the saved state before retrying.");
+    });
+    return { ok: response.ok, status: response.status, payload };
+  } catch (error) {
+    if (controller.signal.aborted || error instanceof Error && error.name === "AbortError") {
+      throw new AdminHttpError(504, "Upstream storage request timed out. Reload to verify the saved state before retrying.");
+    }
+    if (error instanceof AdminHttpError) throw error;
+    throw new AdminHttpError(502, "Storage request failed. Reload to verify the saved state before retrying.");
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export function adminErrorStatus(error: unknown) {
   return error instanceof AdminHttpError ? error.statusCode : 500;
 }
