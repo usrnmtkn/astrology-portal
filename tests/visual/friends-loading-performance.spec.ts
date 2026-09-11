@@ -242,6 +242,13 @@ async function waitForMeasuredVisibility(locator: Locator) {
   await expect.poll(() => locator.isVisible(), { intervals: [16] }).toBe(true);
 }
 
+async function hasCompletedChartSignatures(locator: Locator) {
+  // textContent matches toContainText's default semantics. innerText applies
+  // CSS text-transform, turning "pending" into "PENDING" on some layouts.
+  const text = await locator.textContent();
+  return await locator.isVisible() && Boolean(text?.trim()) && !/pending/i.test(text!);
+}
+
 async function timed(label: string, action: () => Promise<void>): Promise<TimedSample> {
   const startedAt = performance.now();
   await action();
@@ -396,9 +403,7 @@ test.describe("Friends loading performance matrix", () => {
         const listElapsedMs = Math.round(performance.now() - startedAt);
         listSamples.push({ label: "incomplete Friends list", elapsedMs: listElapsedMs });
 
-        await expect.poll(async () => (
-          await chartButton.isVisible() && !(await chartButton.innerText()).includes("pending")
-        ), {
+        await expect.poll(() => hasCompletedChartSignatures(chartButton), {
           intervals: [16],
           timeout: friendsLoadingPerformanceBudgets.incompleteChartRepairReadyMs
         }).toBe(true);
@@ -548,6 +553,15 @@ test.describe("Friends loading performance matrix", () => {
     assertSamples(relationshipSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs);
     assertSamples(relationshipEnhancedSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs);
   });
+});
+
+test("chart repair readiness retains pending state under uppercase styling", async ({ page }) => {
+  await page.setContent('<button style="text-transform: uppercase">Casey Moon pending</button>');
+  const chart = page.getByRole("button");
+  expect(await chart.innerText()).toContain("PENDING");
+  expect(await hasCompletedChartSignatures(chart)).toBe(false);
+  await chart.evaluate(element => { element.textContent = "Casey Moon in Virgo"; });
+  expect(await hasCompletedChartSignatures(chart)).toBe(true);
 });
 
 
