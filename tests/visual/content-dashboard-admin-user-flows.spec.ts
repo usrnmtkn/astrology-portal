@@ -5781,9 +5781,9 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
       event_type:'sky-article-template',block_type:'sky_article',mode:'article',sections:{},facts:{},
       source_snapshot:{sourceType:'owner-resource-review',contentType:'sky-article-template',importSummary:notes},target_date:null,provider:'owner-resource-review'};
     await seedAdminApi(page,{generatedRows:[row],reviewRows:[]});
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
     await expectAdminRouteLoads(page,'/admin/content#review-queue?view=all');
-    await page.evaluate(value=>document.documentElement.setAttribute('data-theme',value),theme);
-    await page.locator('.admin-review-queue-row',{hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+    await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
     const editor=page.getByRole('dialog',{name:'Generated content editor'});
     await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
     await expect(editor.getByRole('heading',{name:'Edit Sun Enters Aries',exact:true})).toBeVisible();
