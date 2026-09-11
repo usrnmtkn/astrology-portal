@@ -100,3 +100,6 @@ function containsSubmittedFields(saved: unknown, submitted: unknown): boolean {
     && Object.entries(submitted).every(([key, value]) => containsSubmittedFields(saved[key], value));
   return saved === submitted;
 }
+
+// Shared JSON/timeout contract for secondary Studio reads and previews.
+export { request as requestStudioJson };

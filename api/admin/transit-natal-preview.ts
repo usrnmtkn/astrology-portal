@@ -8,7 +8,7 @@ import { packageFallbackArchitectureV3CoreRows } from "../../apps/web/src/servic
 import { publicationAllowsContent, validContentPublication, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import type { GeneratedContentRow } from "../../apps/web/src/services/generatedContent.js";
 // @ts-ignore Generated production reader artifact.
-import { createTransitSynastryRenderer } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import { createTransitSynastryRenderer, PACKAGE_VERSION } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
 loadLocalWebEnv();
 const require = createRequire(import.meta.url);
@@ -27,7 +27,17 @@ export function normalizeTransitNatalPreviewInput(value: unknown) {
     || input.voice !== undefined && (typeof input.voice !== "string" || input.voice.length > 60)) {
     throw new AdminHttpError(400, "Choose a valid transit and natal point.");
   }
-  return { planet: input.planet, sign: input.sign, aspect: input.aspect, natalPoint: input.natalPoint, voice: input.voice || "you" };
+  for (const field of ["pass", "variant"]) {
+    if (input[field] !== undefined && (!Number.isInteger(input[field]) || input[field] < 1 || input[field] > 100)) throw new AdminHttpError(400, `Invalid ${field}.`);
+  }
+  if (input.isRetrograde !== undefined && typeof input.isRetrograde !== "boolean") throw new AdminHttpError(400, "Invalid motion.");
+  if (input.window !== undefined && (typeof input.window !== "string" || !input.window.trim() || input.window.length > 160 || /[<>{}]/u.test(input.window))) throw new AdminHttpError(400, "Invalid timing label.");
+  return { planet: input.planet, sign: input.sign, aspect: input.aspect, natalPoint: input.natalPoint, voice: input.voice || "you",
+    ...(input.pass !== undefined ? { pass: input.pass as number } : {}),
+    ...(input.variant !== undefined ? { variant: input.variant as number } : {}),
+    ...(input.isRetrograde !== undefined ? { isRetrograde: input.isRetrograde as boolean } : {}),
+    ...(input.window !== undefined ? { window: input.window as string } : {}) };
+
 }
 
 /** Request-scoped state: simultaneous Studio previews never mutate the reader's publication cache. */
@@ -43,7 +53,17 @@ export function renderTransitNatalPreviewState(input: ReturnType<typeof normaliz
   const available = new Set([...cards, ...hooks, ...vocabulary, ...templates].map(row => row.contentKey));
   const blockedContentKeys = publications.filter(row => !available.has(row.content_key)).map(row => row.content_key);
   const renderer = createTransitSynastryRenderer({ authoredCards: cards }, { templates }, { hookRows: hooks, vocabularyRows: vocabulary }, { blockedContentKeys });
-  return renderTransitNatalPreview(input, renderer, input.voice);
+  const preview = renderTransitNatalPreview(input, renderer, input.voice);
+  const sources = new Map([...cards, ...hooks, ...vocabulary, ...templates].map(row => [row.contentKey, row]));
+  for (const paragraph of preview.paragraphs) for (const source of paragraph.sources) {
+    const row = sources.get(source.contentKey);
+    if (typeof row?.[source.field] !== "string") throw new AdminHttpError(503, "The reading's editable source could not be verified.");
+    const publication = records.get(source.contentKey);
+    source.publication = row.publicationRowId
+      ? { origin: "published", packageVersion: PACKAGE_VERSION, revision: publication?.revision, rowId: row.publicationRowId, rowUpdatedAt: row.publicationRowUpdatedAt }
+      : { origin: "package", packageVersion: PACKAGE_VERSION };
+  }
+  return preview;
 }
 
 async function readRows(base: string, headers: Record<string, string>, table: string, filters: Record<string, string>) {

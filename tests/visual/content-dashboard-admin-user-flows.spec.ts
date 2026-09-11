@@ -839,7 +839,8 @@ async function seedAdminApi(
         body: JSON.stringify({
           ok: true,
           rows: pageRows,
-          nextCursor
+          nextCursor,
+          ...(url.searchParams.get("includePackageSource") === "true" ? { packageSource: servingPackageRecords.get(url.searchParams.get("contentKey")!) ?? null } : {})
         })
       });
       return;
@@ -2197,7 +2198,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     })] });
     await page.route("**/rest/v1/generated_interpretations*", (route) => route.fulfill({ json: [] }));
     await page.route("**/api/admin/transit-natal-preview", async (route) => {
-      try { await route.fulfill({ json: { rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } }); }
+      try { await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } }); }
       catch (error) { await route.fulfill({ json: { error: String(error) } }); }
     });
     await page.addInitScript((theme) => localStorage.setItem("tldrastro:theme", theme), theme);
@@ -2305,7 +2306,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.route("**/api/admin/transit-natal-preview", async route => {
       const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
       expect(input.voice).toBe("{{Name}}");
-      await route.fulfill({ json: { rendered: renderTransitNatalPreviewState(input) } });
+      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(input) } });
     });
     await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=lilith&sign=capricorn&transitHouse=8&aspect=trine&natal=north-node&natalHouse=4&audience=friends");
@@ -2342,6 +2343,108 @@ test.describe("content dashboard admin user flow case studies", () => {
     }
     await expectNoHorizontalOverflow(page, "Friends selected transit source");
     await assertNoBrowserErrors();
+  });
+
+  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) test(`transit paragraph sources and packaged exact editor ${width} ${theme}`, async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await page.setViewportSize({ width, height: 1000 });
+    const reads: URL[] = [];
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    await seedAdminApi(page, { generatedRows: [], onGeneratedContentRead: url => reads.push(url), onGeneratedContentWrite: write => writes.push(write) });
+    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    const inputs: any[] = [];
+    await page.route("**/api/admin/transit-natal-preview", async route => {
+      const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
+      inputs.push(input);
+      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(input) } });
+    });
+    await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=neptune&sign=aries&transitHouse=8&aspect=opposition&natal=sun&natalHouse=4&audience=friends&variant=1&pass=2&retrograde=true&window=until+October+4");
+    const preview = page.getByRole("region", { name: "Effective transit to natal reader preview" });
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const facts = { planet: "neptune", sign: "aries", aspect: "opposition", natalPoint: "sun", voice: "{{Name}}", variant: 1, pass: 2, isRetrograde: true, window: "until October 4" };
+    const expected = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(facts));
+    await expect(preview.locator(".admin-natal-source-card-copy > p")).toHaveText(expected.paragraphs.map(p => p.text));
+    const fog = expected.paragraphs.flatMap(p => p.sources).find(source => source.contentKey.includes("fog-note"))!;
+    await preview.getByRole("button", { name: new RegExp(`Edit selected source ${fog.contentKey}`) }).click();
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(fog.contentKey);
+    await expect(editor.locator(`[data-sky-field="${fog.field}"]`)).toHaveValue(String(servingPackageRecords.get(fog.contentKey)![fog.field]));
+    await expect(editor.locator(`[data-sky-field="${fog.field}"]`)).toBeFocused();
+    await expect(editor.getByLabel("Selected transit context")).toContainText("Neptune in Aries, 8th house, opposition natal Sun, 4th house");
+    page.once("dialog", dialog => dialog.accept());
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.reload();
+    await expect(preview.locator(".admin-natal-source-card-copy > p")).toHaveText(expected.paragraphs.map(p => p.text));
+    expect(inputs.at(-1)).toEqual(facts);
+    await page.getByText("Reading preview options", { exact: true }).click();
+    await expect(page.getByLabel("Transit copy variant")).toHaveValue("1");
+    await expect(page.getByLabel("Transit repeat pass")).toHaveValue("2");
+    await expect(page.getByLabel("Transit preview motion")).toHaveValue("true");
+    await expect(page.getByLabel("Transit preview timing")).toHaveValue("until October 4");
+    await page.getByLabel("Transit copy variant").selectOption("4");
+    await expect.poll(() => inputs.at(-1)?.variant).toBe(4);
+    await page.getByLabel("Transiting planet", { exact: true }).selectOption("sun");
+    await page.getByLabel("Natal planet or point", { exact: true }).selectOption("midheaven");
+    const insertKey = "authored/transit-aspect-insert/sun/midheaven/opposition";
+    await preview.getByRole("button", { name: new RegExp(`Edit selected source ${insertKey}`) }).click();
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(insertKey);
+    const insertSource = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(inputs.at(-1))).paragraphs.flatMap(p => p.sources).find(source => source.contentKey === insertKey)!;
+    await expect(editor.locator(`[data-sky-field="${insertSource.field}"]`)).toHaveValue(String(servingPackageRecords.get(insertKey)![insertSource.field]));
+    page.once("dialog", dialog => dialog.accept());
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByLabel("Natal planet or point", { exact: true }).selectOption("north-node");
+    await page.getByLabel("Transit to natal aspect").selectOption("conjunction");
+    await page.getByRole("button", { name: "Edit exact passage", exact: true }).click();
+    const key = "authored/transit-aspect/sun/north-node/conjunction";
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key);
+    await expect(editor.getByRole("heading", { level: 2 })).not.toHaveText("Write a new exact passage");
+    await expect(editor).not.toContainText("This is a new blank draft");
+    await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(servingPackageRecords.get(key)!.body_you));
+    expect(reads.some(url => url.searchParams.get("contentKey") === key && url.searchParams.get("includePackageSource") === "true")).toBe(true);
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].payload).toMatchObject({ status: "DRAFT", lane: "reference", sections: { packageOriginalRecord: servingPackageRecords.get(key) } });
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("button", { name: "Edit exact passage", exact: true }).click();
+    await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(servingPackageRecords.get(key)!.body_you));
+    await expectNoHorizontalOverflow(page, "Packaged exact transit editor");
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await editor.screenshot({ path: path.join(adminScreenshotDir, `transit-package-${width}-${theme}.png`) });
+    await assertNoBrowserErrors();
+  });
+
+  test("transit preview rejects stale and malformed source responses", async ({ page }) => {
+    await seedAdminApi(page, { generatedRows: [] });
+    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    let release: (() => Promise<void>) | undefined;
+    await page.route("**/api/admin/transit-natal-preview", async route => {
+      const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
+      const rendered = renderTransitNatalPreviewState(input);
+      if (input.variant === 4) { release = () => route.fulfill({ json: { ok: true, rendered } }).catch(() => {}); return; }
+      await route.fulfill({ json: input.variant === 2 ? { ok: true, rendered: { body: rendered.body, paragraphs: [] } } : { ok: true, rendered } });
+    });
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=neptune&sign=aries&transitHouse=8&aspect=opposition&natal=sun&natalHouse=4");
+    const preview = page.getByRole("region", { name: "Effective transit to natal reader preview" });
+    await expect(preview.getByRole("button", { name: /Edit selected source/ }).first()).toBeVisible();
+    await page.getByText("Reading preview options", { exact: true }).click();
+    await page.getByLabel("Transit copy variant").selectOption("4");
+    await expect.poll(() => Boolean(release)).toBe(true);
+    await expect(preview.getByRole("button")).toHaveCount(0);
+    await page.getByLabel("Transit copy variant").selectOption("3");
+    const expected = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput({ planet: "neptune", sign: "aries", aspect: "opposition", natalPoint: "sun", variant: 3 }));
+    await expect(preview.locator(".admin-natal-source-card-copy > p")).toHaveText(expected.paragraphs.map(p => p.text));
+    await release!();
+    await expect(preview.locator(".admin-natal-source-card-copy > p")).toHaveText(expected.paragraphs.map(p => p.text));
+    await page.getByLabel("Transit copy variant").selectOption("2");
+    await expect(preview.getByRole("alert")).toContainText("source links could not be verified");
+    await expect(preview.getByRole("button")).toHaveCount(0);
+    await page.route("**/api/admin/generated-content?**", async route => {
+      if (new URL(route.request().url()).searchParams.get("includePackageSource") === "true") await route.fulfill({ json: { ok: true, rows: null } });
+      else await route.fallback();
+    });
+    await page.reload();
+    await expect(page.getByRole("button", { name: "Retry exact passage lookup" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Write a new exact passage", exact: true })).toHaveCount(0);
   });
 
   test("house transits expose the complete card before its evergreen and sign-specific passages", async ({ page }) => {
