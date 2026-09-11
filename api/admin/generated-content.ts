@@ -2812,7 +2812,16 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             ? null
             : encodeGeneratedContentCursor(rows.at(-1))
         : null;
-      sendJson(res, 200, { ok: true, rows, nextCursor });
+      let packageSource: Record<string, unknown> | null = null;
+      if (requestUrl.searchParams.get("includePackageSource") === "true") {
+        const key = requestUrl.searchParams.get("contentKey");
+        if (!key || requestUrl.searchParams.getAll("contentKey").length !== 1 || requestUrl.searchParams.has("contentKeys")) throw new GeneratedContentRequestError("A single contentKey is required for package source lookup.", 400);
+        if (!isRetiredCompositionKey(key)) {
+          const { servingPackageRecords } = await import("../_lib/content-live-status.js");
+          packageSource = servingPackageRecords.get(key) ?? null;
+        }
+      }
+      sendJson(res, 200, { ok: true, rows, nextCursor, ...(requestUrl.searchParams.get("includePackageSource") === "true" ? { packageSource } : {}) });
       return;
     }
 
