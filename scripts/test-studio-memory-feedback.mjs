@@ -15,7 +15,7 @@ const t1 = '2026-09-11T12:00:00.000Z', t2 = '2026-09-11T12:00:01.000Z';
 const row = { id, content_key:key, surface:'sky', mode:'feed', target_date:null, body:before,
   status:'DRAFT', updated_at:t1, lane:'serving', block_type:'sky_placement', source_snapshot:{}, sections:{}, headline:'Fixture' };
 const store = await createApiStore([row]);
-await db.query('insert into generated_interpretations values ($1,$2,$3,$4,$5,$6,$7,$8)', [id,key,'sky','feed',null,before,'DRAFT',t1]);
+await db.query('insert into generated_interpretations (id,content_key,surface,mode,target_date,body,status,updated_at) values ($1,$2,$3,$4,$5,$6,$7,$8)', [id,key,'sky','feed',null,before,'DRAFT',t1]);
 Object.assign(process.env, { STUDIO_MEMORY_FEEDBACK_ENABLED:'true', SUPABASE_URL:'https://studio-memory.invalid', SUPABASE_SERVICE_ROLE_KEY:'synthetic-service-key', CONTENT_GENERATION_SECRET:'calendar-api-fixture' });
 const { default: handler } = await import('../api/admin/studio-memory-feedback.ts');
 const fetchFeedback = databaseFetch(db);

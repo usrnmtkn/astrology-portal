@@ -5,7 +5,7 @@ import { createStudioMemoryDb, databaseFetch } from './studio-memory-db.mjs';
 const fixture = {...baseline,id:'11111111-1111-4111-8111-111111111111'};
 const store = await createWorkflowStore([fixture]);
 const db = await createStudioMemoryDb();
-await db.query('insert into generated_interpretations values ($1,$2,$3,$4,$5,$6,$7,$8)',
+await db.query('insert into generated_interpretations (id,content_key,surface,mode,target_date,body,status,updated_at) values ($1,$2,$3,$4,$5,$6,$7,$8)',
   [fixture.id,fixture.content_key,'sky','feed',null,fixture.body,fixture.status,fixture.updated_at]);
 process.env.STUDIO_MEMORY_FEEDBACK_ENABLED = 'true';
 const {default:feedbackHandler} = await import('../../api/admin/studio-memory-feedback.ts');
