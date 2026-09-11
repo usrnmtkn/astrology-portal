@@ -83,6 +83,7 @@ type ReportLibraryStateRow = {
   source_kind: ReportLibrarySourceKind;
   source_id: string;
   archived_at: string | null;
+  deleted_at: string | null;
   seen_at: string | null;
 };
 
@@ -202,7 +203,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       .returns<PremiumReportRow[]>(),
     client
       .from("user_report_library_state")
-      .select("source_kind, source_id, archived_at, seen_at")
+      .select("source_kind, source_id, archived_at, seen_at, deleted_at")
       .eq("user_id", userId)
       .returns<ReportLibraryStateRow[]>(),
     client
@@ -231,6 +232,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
     const lifecyclePlaceholder = Boolean(row.friend_report_entitlement_id || row.you_report_entitlement_id);
     if (!hasBody && !lifecyclePlaceholder) return [];
     const state = states.get(stateKey("generated_interpretation", row.id));
+    if (state?.deleted_at) return [];
     const title = row.headline?.trim() || (row.subject_type === "friend_transit_reading" ? "Friends reading" : "Your transit report");
     const subjectLabel = generatedSubjectLabel(row);
     const status = generatedReportStatus(row);
@@ -262,6 +264,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
   const premium = (premiumResult.data ?? []).flatMap<ReportLibraryItem>((row) => {
     if (!customerPremiumFulfillmentStates.has(row.fulfillment_status) || row.revoked_at) return [];
     const state = states.get(stateKey("premium_report", row.id));
+    if (state?.deleted_at) return [];
     const title = premiumReportTitle(row);
     const subjectLabel = title;
     const vanitySlug = reportVanitySlug({ targetDate: row.period_start, createdAt: row.created_at, subjectLabel, title });
@@ -301,6 +304,11 @@ export async function loadGeneratedReportById(reportId: string): Promise<Generat
   const context = await authenticatedContext();
   if (!context) return null;
   const { client, userId } = context;
+  const deletion = await client.from("user_report_library_state")
+    .select("deleted_at").eq("user_id", userId)
+    .eq("source_kind", "generated_interpretation").eq("source_id", reportId).maybeSingle();
+  if (deletion.error) throw deletion.error;
+  if (deletion.data?.deleted_at) return null;
   const { data, error } = await client
     .from("user_generated_interpretations")
     .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, you_report_entitlement_id, created_at, updated_at")
@@ -348,7 +356,7 @@ export function generatedReportVanityPath(report: Pick<GeneratedReportRecord, "s
 async function upsertLibraryState(
   sourceKind: ReportLibrarySourceKind,
   sourceId: string,
-  patch: { archived_at?: string | null; seen_at?: string | null }
+  patch: { archived_at?: string | null; seen_at?: string | null; deleted_at?: string }
 ) {
   const context = await authenticatedContext();
   if (!context) throw new Error("Sign in to manage reports.");
@@ -380,4 +388,9 @@ export async function markReportArchived(
 
 export function unreadReadyReports(items: ReportLibraryItem[]) {
   return items.filter((item) => item.status === "ready" && !item.seenAt && !item.archivedAt);
+}
+
+// A library deletion retains fulfillment and payment history, but has no Restore action.
+export async function deleteReport(item: Pick<ReportLibraryItem, "sourceKind" | "sourceId">) {
+  await upsertLibraryState(item.sourceKind, item.sourceId, { deleted_at: new Date().toISOString() });
 }

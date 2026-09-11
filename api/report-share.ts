@@ -1,3 +1,4 @@
+import { isReportDeleted } from "./_lib/report-library-deletion.js";
 import { randomBytes } from "node:crypto";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { jsonRequestBody, reportUrl, requireReportUser, sendJson } from "./_lib/report-http.js";
@@ -99,6 +100,7 @@ async function assertOwnerCanShare(
   sourceKind: SourceKind,
   sourceId: string
 ) {
+  if (await isReportDeleted(admin, userId, sourceKind, sourceId)) throw new Error("This report has been deleted.");
   if (sourceKind === "generated_interpretation") {
     const row = await admin.selectOne<Pick<GeneratedRow, "id" | "status" | "body">>(
       "user_generated_interpretations",
@@ -310,7 +312,7 @@ async function loadShare(req: IncomingMessage, res: ServerResponse) {
       select: "id,user_id,source_kind,source_id,share_key,revoked_at"
     })
   );
-  if (!share) return sendJson(res, 404, { error: "This shared report is unavailable." });
+  if (!share || await isReportDeleted(admin, share.user_id, share.source_kind, share.source_id)) return sendJson(res, 404, { error: "This shared report is unavailable." });
 
   const payload = share.source_kind === "generated_interpretation"
     ? await loadSharedGenerated(admin, share)
