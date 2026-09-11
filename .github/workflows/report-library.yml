@@ -9,6 +9,9 @@ on:
       - "scripts/test-report-library-delete*.mjs"
       - "tests/visual/report-library-delete.spec.ts"
       - "tests/visual/you-report-auth.spec.ts"
+      - "tests/visual/friend-report-state.spec.ts"
+      - "apps/web/src/features/friends/FriendTransitsTab.tsx"
+      - "apps/web/src/features/friends/ManualChartsPanel.tsx"
       - "scripts/test-you-report-session.mjs"
       - "apps/web/src/features/you/YouReportActions.tsx"
       - "apps/web/src/features/you/youTransitReports.ts"
@@ -36,6 +39,9 @@ on:
       - "scripts/test-report-library-delete*.mjs"
       - "tests/visual/report-library-delete.spec.ts"
       - "tests/visual/you-report-auth.spec.ts"
+      - "tests/visual/friend-report-state.spec.ts"
+      - "apps/web/src/features/friends/FriendTransitsTab.tsx"
+      - "apps/web/src/features/friends/ManualChartsPanel.tsx"
       - "scripts/test-you-report-session.mjs"
       - "apps/web/src/features/you/YouReportActions.tsx"
       - "apps/web/src/features/you/youTransitReports.ts"
@@ -91,7 +97,7 @@ jobs:
         run: npm run build:knowledge
       - run: npx playwright install --with-deps chromium
       - name: Verify standalone Reports UI
-        run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts tests/visual/report-library-delete.spec.ts tests/visual/you-report-auth.spec.ts
+        run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts tests/visual/report-library-delete.spec.ts tests/visual/you-report-auth.spec.ts tests/visual/friend-report-state.spec.ts
 
   report-library-database:
     runs-on: ubuntu-latest
