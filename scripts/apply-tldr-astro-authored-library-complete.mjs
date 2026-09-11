@@ -141,8 +141,8 @@ function slotResolutionRows(bundle) {
       status: "DRAFT",
       event_type: "slot-resolution",
       headline: `Slot resolution / ${slot}`,
-      summary: `${kind}${sourceLabel}`,
-      body: `${slot} resolves as ${kind}${sourceLabel}${selectLabel}${hintLabel}${fallbackLabel}${ultimateFallbackLabel}.`,
+      summary: "",
+      body: "",
       sections: {
         slot,
         kind,
@@ -162,6 +162,9 @@ function slotResolutionRows(bundle) {
       knowledge_ids: [`slot-resolution/${slot}`],
       source_snapshot: {
         contentType: "slot-resolution",
+        content_role: "source_material",
+        serving: false,
+        importSummary: `${slot} resolves as ${kind}${sourceLabel}${selectLabel}${hintLabel}${fallbackLabel}${ultimateFallbackLabel}.`,
         category: kind,
         slot,
         templateIds,

@@ -2,6 +2,7 @@
 export const READER_FIELDS = /^(?:headline|title|heading|subtitle|summary|body(?:_?(?:you|they|sky))?|copy|article|tldr|text|markdown|compiledMarkdown|passage|paragraphs|bullets|opening|tension|development|close|try_this|fact_line|hook|lived|turn|guidance|advice|reading|experience|archetype_meaning|workplace_translation|role_examples|growth_edge|best_use|stress_behavior|unfinished_lesson)$/iu;
 const EDITOR_FIELDS = /^(?:source.*|.*notes|provenance|.*history|baseline|review.*|approval.*|.*policy|facts|metadata|flags|prompt.*|model|provider|editorial.*|import.*|audit.*)$/iu;
 const RULES = [
+  ['resolver specification', /^\s*(?:[a-z][a-z0-9_]* resolves as (?:interpretive|fact|gap|calculated|structural)\b|SOURCE_GAP:\s*[a-z0-9_]+ has no authored source)/u],
   ['engine instruction', /\(Engine note:/iu],
   ['drafting label', /\b(?:layer two evergreen|needs_review)\b|^\s*#*\s*(?:Templated article|Bespoke edition)\s*[—–-]/imu],
   ['workflow summary', /^\s*(?:REVIEWED|DRAFT|APPROVED|CONFIRMED|SOURCE_ONLY)\s*[·|]/u],

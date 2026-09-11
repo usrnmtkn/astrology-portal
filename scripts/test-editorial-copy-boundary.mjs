@@ -52,3 +52,9 @@ console.log('PASS import separation, exact prose preservation, balanced slots, n
 const materializer = fs.readFileSync('scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs','utf8');
 assert.doesNotMatch(materializer.match(/function rowSummary[\s\S]*?\n\}/u)[0], /record\.notes?/u);
 assert.match(materializer,/importSummary: String\(record\.note/u);
+
+for (const mode of ['feed', 'in_depth']) {
+  for (const status of ['REVIEWED', 'CONFIRMED']) {
+    assert.throws(() => assertCleanReaderCopy({sections:{byMode:{[mode]:{summary:`${status} · internal-batch`}}}}), /workflow summary/);
+  }
+}
