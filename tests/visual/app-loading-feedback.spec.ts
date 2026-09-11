@@ -1,9 +1,40 @@
 import { expect, test } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-09-08T04:06:00Z"));
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+});
+
+for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored Moon content before choosing copy`, async ({ page }) => {
+  test.setTimeout(60_000);
+  const key = "authored/calendar-weekly-moon/aries/variant-2";
+  const source = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json", "utf8"))
+    .authoredCards.find((row: { contentKey: string }) => row.contentKey === key);
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.route(/\/assets\/fallbackArchitectureV3DeferredBundle-.*\.js$/, async route => {
+    await held;
+    await route.continue().catch(() => {});
+  });
+  await page.route("**/api/calendar?**", route => route.fulfill({ status: 503, json: {} }));
+  await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({
+    label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York"
+  })));
+  try {
+    await page.goto(`/#calendar?view=${view}&date=2026-08-04`, { waitUntil: "domcontentloaded" });
+    // Calculation has completed independently of the deliberately held prose bundle.
+    await expect.poll(() => page.evaluate(() => Object.keys(localStorage).some(key => key.startsWith("tldr-lunar-calendar|"))), { timeout: 25_000 }).toBe(true);
+    await expect(page.locator(".lunar-calendar-loading")).toBeVisible();
+    await expect(page.locator(".lunar-calendar-body")).toHaveCount(0);
+  } finally { release(); }
+  const guidance = view === "weekly"
+    ? page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__guidance")
+    : page.getByRole("region", { name: "Moon guidance" });
+  await expect(guidance).toHaveAttribute("data-guidance-key", key, { timeout: 25_000 });
+  await expect(view === "weekly" ? guidance : guidance.locator("p")).toHaveText(source.body);
+  await expect(page.locator(".lunar-calendar-loading")).toHaveCount(0);
 });
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {

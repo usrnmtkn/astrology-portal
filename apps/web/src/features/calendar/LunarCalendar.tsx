@@ -28,6 +28,8 @@ import {
   fallbackV3PlanetTopic,
   fallbackV3VocabularyBody,
   KNOWLEDGE_MATRIX_V9_VERSION,
+  isDeferredFallbackArchitectureV3BundleLoaded,
+  loadDeferredFallbackArchitectureV3Bundle,
   loadKnowledgeMatrixV9Runtime,
   skyV4ReaderRenderer,
   SourceGapError as FallbackV3SourceGapError,
@@ -1904,6 +1906,7 @@ export function LunarCalendar({
   const [selectedCalendar, setSelectedCalendar] = useState<LunarCalendarMonthData | null>(null);
   const [seasonEvents, setSeasonEvents] = useState<LunarCalendarEvent[]>([]);
   const [status, setStatus] = useState<LunarCalendarStatus>("loading");
+  const [moonContentReady, setMoonContentReady] = useState(isDeferredFallbackArchitectureV3BundleLoaded);
   const [selectedDateKey, setSelectedDateKey] = useState(initialDateKey);
   const [retryNonce, setRetryNonce] = useState(0);
   const [locationPickerOpen, setLocationPickerOpen] = useState(false);
@@ -1915,6 +1918,16 @@ export function LunarCalendar({
   const [approvedExactSkyAspectLookup, setApprovedExactSkyAspectLookup] = useState<ApprovedExactSkyAspectLookup | null>(null);
   const [composedSkyCalendarCardLookup, setComposedSkyCalendarCardLookup] = useState<SkyCalendarComposedCardLookup | null>(null);
   const monthDetailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let active = true;
+    // Calculated days and the authored Moon bundle load concurrently. An absent
+    // row while its bundle is loading is not a genuine content gap.
+    void loadDeferredFallbackArchitectureV3Bundle()
+      .catch(error => console.warn("Calendar Moon content could not load; keeping available fallback content.", error))
+      .finally(() => { if (active) setMoonContentReady(true); });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -3074,7 +3087,7 @@ export function LunarCalendar({
         </div>
       </header>
 
-      {status === "loading" && (
+      {(status === "loading" || !moonContentReady) && (
         <div className="lunar-calendar-loading" role="status">
           <Loader2 size={18} aria-hidden="true" />
           <span>Calculating calendar</span>
@@ -3089,7 +3102,7 @@ export function LunarCalendar({
         </div>
       )}
 
-      {calendar && status === "ready" && (
+      {calendar && status === "ready" && moonContentReady && (
         <div
           className={`lunar-calendar-body is-${viewMode}`}
           id="lunar-calendar-view-panel"
