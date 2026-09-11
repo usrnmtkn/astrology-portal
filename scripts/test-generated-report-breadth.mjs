@@ -8,6 +8,8 @@ assert.match(fs.readFileSync("api/_lib/content-generation.ts", "utf8"), /friendT
 // Test the real judge schema, prompt assembly, and release decision. Replace
 // only provider transport/config and global instructions; no billed calls.
 const bundle = await build({
+  // Bundled CommonJS dependencies need Node's require even inside a data URL.
+  banner: { js: `import { createRequire } from "node:module"; const require = createRequire(${JSON.stringify(import.meta.url)});` },
   entryPoints: ["api/_lib/transit-reading-judge.ts"],
   bundle: true, write: false, platform: "node", format: "esm",
   plugins: [{ name: "breadth-fixture", setup(builder) {
