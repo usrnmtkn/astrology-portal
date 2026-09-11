@@ -32,6 +32,9 @@ export default defineConfig({
   testDir: "./tests/visual",
   outputDir: "./test-results/playwright",
   timeout: 30_000,
+  // Calculated reader content can hydrate after the shell on CI. Performance
+  // contracts retain their explicit measured budgets and assertion timeouts.
+  expect: { timeout: 15_000 },
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 1 : undefined,
   fullyParallel: false,
