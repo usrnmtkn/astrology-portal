@@ -10,10 +10,11 @@ for (const theme of ['light', 'dark'] as const) {
     const rows=[{id:'00000000-0000-4000-8000-000000000002',subject_type:'you_day_reading',status:'DRAFT',body:'Saved test reading.',headline:'Daily test report',target_date:'2026-09-11',created_at:'2026-09-11T12:00:00Z',updated_at:'2026-09-11T12:00:00Z'},
     {id:'00000000-0000-4000-8000-000000000003',subject_type:'friend_transit_reading',status:'ERROR',body:'',friend_report_entitlement_id:'fixture-entitlement',headline:'Failed test report',target_date:'2026-09-10',created_at:'2026-09-10T12:00:00Z',updated_at:'2026-09-10T12:00:00Z'}];
     state.push({user_id:user.id,source_kind:'generated_interpretation',source_id:rows[1].id,archived_at:'2026-09-11T12:00:00Z'});
-    await page.addInitScript(({user,theme})=>{
+    const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
+    await page.addInitScript(({user,theme,storageKey})=>{
       localStorage.setItem('tldrastro:theme',theme);
-      localStorage.setItem('sb-visual-smoke-auth-token',JSON.stringify({access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:Math.floor(Date.now()/1000)+3600,token_type:'bearer',user}));
-    },{user,theme});
+      localStorage.setItem(storageKey,JSON.stringify({access_token:'fixture-token',refresh_token:'fixture-refresh',expires_at:Math.floor(Date.now()/1000)+3600,token_type:'bearer',user}));
+    },{user,theme,storageKey});
     await page.route('**/auth/v1/**',route=>route.fulfill({json:user}));
     await page.route('**/rest/v1/**',async route=>{
       const table=new URL(route.request().url()).pathname.split('/').pop();
