@@ -138,3 +138,20 @@ See [the full workflow contract](review-queue-workflow.md). The required API gat
 also covers writing actions, source revisions, version history, owner-final
 checks and actual reader selection. Visual smoke includes the corresponding
 desktop/mobile and light/dark browser matrix.
+
+## Secondary CRUD audit (September 10, 2026)
+
+The separate publication and personalized-content endpoints now reject invalid
+request shapes/types before storage. Personalized reads and writes require
+confirmed row arrays and matching mutation identities; malformed upstream data
+returns 502 instead of successful empty data or a misleading 404. Publication
+retains 400/413/504 errors and verifies the exact live restoration receipt,
+including microsecond timestamps. Retirement intentionally permits the ledger's
+previous row identity, matching its existing database function.
+
+Both endpoints consume storage JSON within the request deadline, including a
+stalled body after headers. Transport/protocol failures request a reload before
+retry because a write may already have committed. No automatic write retry is
+introduced. The isolated actual-handler secondary CRUD regression and the
+existing publication/preview lifecycle regression run in the mandatory API gate.
+These checks do not approve prose or exercise mutations in production storage.

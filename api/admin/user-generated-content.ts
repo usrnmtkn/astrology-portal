@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetch, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
 loadLocalWebEnv();
@@ -64,6 +64,12 @@ function listLimit(value: string | null) {
   return parsed;
 }
 
+function assertStoredRows(payload: unknown): asserts payload is Array<{ id: string; updated_at: string }> {
+  if (!Array.isArray(payload) || payload.some((row) => !row || typeof row !== "object" || typeof row.id !== "string" || !row.id || typeof row.updated_at !== "string" || !Number.isFinite(Date.parse(row.updated_at)))) {
+    throw new AdminHttpError(502, "Storage did not return valid personalized rows. Reload to verify the saved state before retrying.");
+  }
+}
+
 async function listUserGeneratedContent(req: IncomingMessage) {
   const requestUrl = new URL(req.url ?? "/api/admin/user-generated-content", "http://localhost");
   const requestedStatus = requestUrl.searchParams.get("status");
@@ -90,27 +96,34 @@ async function listUserGeneratedContent(req: IncomingMessage) {
   if (startDate) params.set("target_date", `gte.${startDate}`);
   if (endDate) params.append("target_date", `lte.${endDate}`);
 
-  const response = await adminFetch(`${supabaseUrl()}/rest/v1/user_generated_interpretations?${params}`, {
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/user_generated_interpretations?${params}`, {
     headers: adminHeaders()
   });
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(`Supabase personalized content list failed with ${response.status}: ${JSON.stringify(payload)}`);
+  const payload = response.payload;
+  if (!response.ok) throw new AdminHttpError(502, `Supabase personalized content list failed with ${response.status}: ${JSON.stringify(payload)}`);
+  assertStoredRows(payload);
   return payload;
 }
 
 async function rowExists(id: string) {
   const params = new URLSearchParams({ select: "id,updated_at", id: `eq.${id}`, limit: "1" });
-  const response = await adminFetch(`${supabaseUrl()}/rest/v1/user_generated_interpretations?${params}`, { headers: adminHeaders() });
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(`Supabase personalized content lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
-  return Array.isArray(payload) && payload.length > 0;
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/user_generated_interpretations?${params}`, { headers: adminHeaders() });
+  const payload = response.payload;
+  if (!response.ok) throw new AdminHttpError(502, `Supabase personalized content lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
+  assertStoredRows(payload);
+  if (payload.length > 1 || payload.some((row) => row.id.toLowerCase() !== id.toLowerCase())) throw new AdminHttpError(502, "Storage returned an unexpected personalized row.");
+  return payload.length > 0;
 }
 
 async function updateUserGeneratedContent(req: IncomingMessage) {
   const body = await readAdminJsonBody<UserGeneratedContentPatch>(req);
-  if (!body.id?.trim()) throw new AdminHttpError(400, "id is required.");
-  if (!body.expectedUpdatedAt?.trim()) throw new AdminHttpError(400, "expectedUpdatedAt is required. Refresh the row before editing.");
-  if (body.status && !statuses.has(body.status)) throw new AdminHttpError(400, "status is not supported.");
+  if (!body || typeof body !== "object" || Array.isArray(body)) throw new AdminHttpError(400, "Request body must be an object.");
+  if (typeof body.id !== "string" || !body.id.trim()) throw new AdminHttpError(400, "id is required.");
+  if (typeof body.expectedUpdatedAt !== "string" || !Number.isFinite(Date.parse(body.expectedUpdatedAt))) throw new AdminHttpError(400, "expectedUpdatedAt must be a valid saved timestamp. Refresh the row before editing.");
+  if (body.status !== undefined && !statuses.has(body.status)) throw new AdminHttpError(400, "status is not supported.");
+  for (const field of ["headline", "summary", "body"] as const) {
+    if (body[field] !== undefined && typeof body[field] !== "string") throw new AdminHttpError(400, `${field} must be a string.`);
+  }
 
   const row: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (body.status) row.status = body.status;
@@ -124,14 +137,16 @@ async function updateUserGeneratedContent(req: IncomingMessage) {
     updated_at: `eq.${body.expectedUpdatedAt}`,
     select: selectColumns
   });
-  const response = await adminFetch(`${supabaseUrl()}/rest/v1/user_generated_interpretations?${params}`, {
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/user_generated_interpretations?${params}`, {
     method: "PATCH",
     headers: { ...adminHeaders(), prefer: "return=representation" },
     body: JSON.stringify(row)
   });
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(`Supabase personalized content update failed with ${response.status}: ${JSON.stringify(payload)}`);
-  if (Array.isArray(payload) && payload.length > 0) return payload;
+  const payload = response.payload;
+  if (!response.ok) throw new AdminHttpError(502, `Supabase personalized content update failed with ${response.status}: ${JSON.stringify(payload)}`);
+  assertStoredRows(payload);
+  if (payload.length > 1 || payload.some((row) => row.id.toLowerCase() !== body.id!.toLowerCase())) throw new AdminHttpError(502, "Storage returned an unexpected personalized row. Reload before retrying.");
+  if (payload.length > 0) return payload;
 
   if (await rowExists(body.id)) {
     throw new AdminHttpError(409, "This personalized row changed in another editor. Refresh before saving again.");
