@@ -57,3 +57,8 @@ packets and checkpoint replay from repeatedly reading the full corpus for each
 nested target while preserving source-drift and packet-integrity failures.
 Regression: `node scripts/test-source-verification.mjs` (also included in the
 production pre-call gate suite).
+
+Deterministic feedback stays local to the current generation attempt and is
+carried through initial recovery and the judge's corrective rewrite. This
+prevents later rewrites from forgetting earlier diagnosed defects. It does not
+add model calls, weaken validation, or turn diagnostics into owner evidence.

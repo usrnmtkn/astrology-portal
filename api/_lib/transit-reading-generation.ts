@@ -228,31 +228,33 @@ async function initialValidatedDraft<TBrief>(
 ) {
   let feedback = "";
   let lastQualityError: TransitReadingQualityError | null = null;
+  const validationFeedback: string[] = [];
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
       const draft = await providerDraft(provider, options.brief, feedback, attempt, options);
       validateShape(draft, options, options.brief);
-      return { draft, brief: options.brief };
+      return { draft, brief: options.brief, validationFeedback };
     } catch (error) {
       if (!(error instanceof TransitReadingQualityError)) throw error;
       lastQualityError = error;
-      feedback = `${error.message}\nRewrite the reading from the same governed brief. Do not add new facts, examples, sections, or technical claims.`;
+      validationFeedback.push(error.message);
+      feedback = `${validationFeedback.join("\n")}\nRewrite the reading from the same governed brief. Do not add new facts, examples, sections, or technical claims.`;
     }
   }
 
   const recoveryBrief = options.compactBriefForRecovery(options.brief);
   const recoveryFeedback = [
-    lastQualityError?.message ?? `The earlier ${options.recoveryLabel} draft did not pass the quality lock.`,
+    validationFeedback.join("\n") || lastQualityError?.message || `The earlier ${options.recoveryLabel} draft did not pass the quality lock.`,
     "Final recovery attempt: use only the strongest evidence in this reduced governed brief.",
     "Keep the synthesis plain and concise. Do not add facts, examples, sections, dates, houses, signs, or technical claims that are not explicitly supplied."
   ].join("\n");
   const draft = await providerDraft(provider, recoveryBrief, recoveryFeedback, 2, options);
   validateShape(draft, options, recoveryBrief);
-  return { draft, brief: recoveryBrief };
+  return { draft, brief: recoveryBrief, validationFeedback };
 }
 
-function judgeCorrectionFeedback(judged: TransitReadingJudgeOutcome, draft: GeneratedTransitReadingDraft) {
+function judgeCorrectionFeedback(judged: TransitReadingJudgeOutcome, draft: GeneratedTransitReadingDraft, validationFeedback: string[]) {
   const findings = judged.result.findings.length
     ? judged.result.findings.map((finding, index) => `${index + 1}. ${finding.category} at ${finding.location}: ${finding.finding}`).join("\n")
     : Object.entries(judged.result.scores)
@@ -266,6 +268,11 @@ function judgeCorrectionFeedback(judged: TransitReadingJudgeOutcome, draft: Gene
     JSON.stringify({ headline: draft.headline, tldr: draft.tldr, summary: draft.summary, body: draft.body }),
     "JUDGE FINDINGS FOR THIS DRAFT",
     findings || "The judge score did not meet the release threshold.",
+    ...(validationFeedback.length ? [
+      "EARLIER DETERMINISTIC CORRECTIONS FROM THIS RUN",
+      "Preserve these corrections while addressing the judge findings. Do not reintroduce a defect fixed by an earlier attempt.",
+      ...validationFeedback
+    ] : []),
     "Correct only these diagnosed defects. Use the same governed brief and the same owner-approved evidence. Do not add new facts, examples, astrology, dates, houses, signs, or life circumstances."
   ].join("\n");
 }
@@ -302,7 +309,7 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
     corrected = await providerDraft(
       provider,
       initial.brief,
-      judgeCorrectionFeedback(firstJudgment, initial.draft),
+      judgeCorrectionFeedback(firstJudgment, initial.draft, initial.validationFeedback),
       3,
       options
     );

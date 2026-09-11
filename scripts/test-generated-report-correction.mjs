@@ -114,6 +114,34 @@ try {
       }
     }
   }
+  // Corrections discovered before judging must survive both recovery and the
+  // judge rewrite. Otherwise the final writer can repeat an already-fixed defect.
+  const carriedPrompts = [];
+  let carriedJudges = 0;
+  globalThis.reportCorrectionFixture = async ({ prompt }) => {
+    carriedPrompts.push(prompt);
+    assert.ok(carriedPrompts.length <= 4);
+    return { value: { ...original, body: `Fixture draft ${carriedPrompts.length}` }, model: "fixture" };
+  };
+  const carried = await generateGovernedTransitReading({
+    brief, headline: original.headline, contentType: "friend_transit_reading",
+    surface: "friends", family: "fixture", schemaName: "fixture", toolDescription: "fixture",
+    productionInput: { surface: "friends", contentKey: "fixture", eventType: "transit", facts: { friendTransitsBrief: brief }, knowledgeIds: ["fixture"], sourceSnapshot: {} },
+    promptForAttempt: (source, headline, feedback) => JSON.stringify(source) + feedback,
+    validate: draft => ({ passed: !["Fixture draft 1", "Fixture draft 2"].includes(draft.body), message: draft.body === "Fixture draft 1" ? "First deterministic defect" : "Second deterministic defect" }),
+    compactBriefForRecovery: source => source,
+    minSummaryLength: 1, minBodyLength: 1, recoveryLabel: "Fixture",
+    judge: async () => ({ result: { verdict: ++carriedJudges === 1 ? "below_threshold" : "pass", overall: 0.9, scores: { owner_voice: 3 }, findings: [{ category: "owner_voice", location: "body", finding: "Current judge finding" }] }, version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85 })
+  });
+  assert.equal(carriedPrompts.length, 4);
+  assert.equal(carriedJudges, 2);
+  for (const prompt of carriedPrompts.slice(2)) {
+    assert.ok(prompt.includes("First deterministic defect"));
+    assert.ok(prompt.includes("Second deterministic defect"));
+  }
+  assert.ok(carriedPrompts[3].includes("Current judge finding"));
+  assert.ok(carriedPrompts[3].includes("Fixture draft 3"));
+  assert.ok(!JSON.stringify(carried).includes("deterministic defect"), "Run-local corrections must not enter report prose or approval evidence");
 } finally {
   if (priorFixture === undefined) delete globalThis.reportCorrectionFixture;
   else globalThis.reportCorrectionFixture = priorFixture;
