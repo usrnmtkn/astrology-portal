@@ -2287,6 +2287,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByRole("heading", { level: 2 })).toHaveText("Write a new exact passage");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
     await expect(editor.getByText(/No exact passage is saved for this combination/)).toBeVisible();
+    await expect(editor.getByRole("button", { name: "Revert to package original", exact: true })).toHaveCount(0);
     await expectNoHorizontalOverflow(page, "Lilith exact draft");
     await editor.screenshot({ path: path.join(adminScreenshotDir, `lilith-new-draft-${width}-${theme}.png`) });
     await assertNoBrowserErrors();

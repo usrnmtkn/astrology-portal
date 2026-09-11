@@ -10257,7 +10257,7 @@ export function GeneratedContentAdminDashboard() {
           {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (
             <span className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</span>
           )}
-          {isPackageDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
+          {isPackageDraft && !isNewDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
             <button type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
               Revert to package original
             </button>
