@@ -84,6 +84,44 @@ try {
   fs.writeFileSync(path.join(deletionRepo,'Example Person.txt'),'Newly introduced private path');
   deletionGit(['add','.']); deletionGit(['commit','-qm','Synthetic reintroduction']);
   result=checkDeletion(); assert.notEqual(result.status,0); assert.match(result.stderr,/Private path/);
+  // An already-advertised main ancestor is not uploaded again when a clean
+  // feature integrates it. The merge's own blobs must still be inspected.
+  const integrationRepo = path.join(temporary, 'integration-fixture');
+  const remoteRepo = path.join(temporary, 'receiving.git');
+  fs.mkdirSync(integrationRepo);
+  const integrationGit = args => {
+    const result = spawnSync('git', args, {cwd:integrationRepo,env,encoding:'utf8'});
+    assert.equal(result.status,0,result.stderr); return result.stdout.trim();
+  };
+  integrationGit(['init','-q','-b','main']);
+  integrationGit(['config','user.name','Synthetic Tester']);
+  integrationGit(['config','user.email','test@example.invalid']);
+  fs.writeFileSync(path.join(integrationRepo,'case.txt'),'clean');
+  integrationGit(['add','.']); integrationGit(['commit','-qm','Clean base']);
+  const baseTip=integrationGit(['rev-parse','HEAD']);
+  integrationGit(['branch','feature']);
+  fs.writeFileSync(path.join(integrationRepo,'case.txt'),'Example Person');
+  integrationGit(['add','.']); integrationGit(['commit','-qm','Existing remote ancestor']);
+  integrationGit(['init','--bare','-q',remoteRepo]);
+  integrationGit(['remote','add','origin',remoteRepo]);
+  integrationGit(['push','-q','origin','main','feature']);
+  integrationGit(['switch','-q','feature']);
+  fs.writeFileSync(path.join(integrationRepo,'feature.txt'),'Feature work');
+  integrationGit(['add','.']); integrationGit(['commit','-qm','Feature work']);
+  integrationGit(['merge','--no-commit','--no-ff','main']);
+  fs.writeFileSync(path.join(integrationRepo,'case.txt'),'clean integrated fixture');
+  integrationGit(['add','.']); integrationGit(['commit','-qm','Keep the merged fixture synthetic']);
+  const checkIntegration=()=>spawnSync(process.execPath,[fileURLToPath(new URL('./check-project-privacy-push.mjs',import.meta.url)),'origin'],{
+    cwd:integrationRepo,env,encoding:'utf8',input:`refs/heads/feature ${integrationGit(['rev-parse','HEAD'])} refs/heads/feature ${baseTip}\n`
+  });
+  result=checkIntegration(); assert.equal(result.status,0,result.stderr);
+  fs.writeFileSync(path.join(integrationRepo,'new.txt'),'Example Person');
+  integrationGit(['add','.']); integrationGit(['commit','-qm','New unsafe intermediate fixture']);
+  fs.writeFileSync(path.join(integrationRepo,'new.txt'),'clean again');
+  integrationGit(['add','.']); integrationGit(['commit','-qm','Clean tip']);
+  integrationGit(['update-ref','refs/remotes/origin/fabricated',integrationGit(['rev-parse','HEAD'])]);
+  result=checkIntegration(); assert.notEqual(result.status,0);
+  assert.match(result.stderr,/Private information in outgoing history/);
   fs.mkdirSync(path.join(temporary, 'public')); fs.writeFileSync(path.join(temporary, 'public', 'download.json'), '{"author":"Example Person"}');
   assert.equal(run(process.execPath, [scanner, '--directory', 'public']).status, 1);
   fs.writeFileSync(path.join(temporary, 'workbook.xlsx'), archive.stdout);

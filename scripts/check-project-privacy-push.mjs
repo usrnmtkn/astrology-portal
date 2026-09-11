@@ -10,6 +10,14 @@ const policy = loadPrivacyPolicy();
 const zero = '0'.repeat(40);
 const refs = fs.readFileSync(0, 'utf8').trim().split('\n').filter(Boolean);
 const commits = new Set();
+// Only the receiving remote can establish that an ancestor is already there.
+// Local tracking refs can be stale or fabricated and must not suppress scans.
+const remoteName = process.argv[2] || 'origin';
+const advertised = spawnSync('git', ['ls-remote', '--heads', remoteName], { encoding: 'utf8', timeout: 20_000 });
+const existingRemoteHeads = advertised.status === 0
+  ? advertised.stdout.trim().split('\n').map(line => line.split(/\s+/u)[0]).filter(oid =>
+    /^[a-f0-9]{40}$/u.test(oid) && spawnSync('git', ['cat-file', '-e', `${oid}^{commit}`], { stdio: 'ignore' }).status === 0)
+  : [];
 // A stale worktree may still have pre-cleanup remote-tracking refs. Check the
 // entire ancestry against the privately stored retired commit IDs before using
 // remote refs to narrow the ordinary content scan.
@@ -21,7 +29,8 @@ for (const line of refs) {
   if (retired.size && git(['rev-list', local]).split('\n').some(commit => retired.has(commit))) throw new Error('This branch contains retired private history. Move your changes to a fresh clone of the cleaned repository before pushing.');
   if (privacyMatches(`${localRef} ${remoteRef}`, policy).length) throw new Error('Private identifier in a branch name.');
   const knownRemote = remote !== zero && spawnSync('git', ['cat-file', '-e', `${remote}^{commit}`], { stdio: 'ignore' }).status === 0;
-  const args = knownRemote ? ['rev-list', `${remote}..${local}`] : ['rev-list', local, '--not', '--remotes=origin'];
+  const args = ['rev-list', knownRemote ? `${remote}..${local}` : local];
+  if (existingRemoteHeads.length) args.push('--not', ...existingRemoteHeads);
   for (const commit of git(args).trim().split('\n').filter(Boolean)) commits.add(commit);
 }
 for (const commit of commits) {
