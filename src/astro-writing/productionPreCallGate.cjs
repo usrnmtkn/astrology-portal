@@ -1,3 +1,4 @@
+const { readPrivateReportDocument } = require('../../api/_lib/private-report-documents.mjs');
 "use strict";
 
 const crypto = require("node:crypto");
@@ -168,10 +169,10 @@ function reportEvidenceContract(input) {
   const sourceRecords = governedTextSources.map((source) => {
     const relative = String(source.sourcePath ?? "");
     const absolute = path.resolve(repoRoot, relative);
-    if (!relative || (!absolute.startsWith(`${repoRoot}${path.sep}`) && absolute !== repoRoot) || !fs.existsSync(absolute)) {
+    if (!relative.startsWith("private:report/") && (!relative || (!absolute.startsWith(`${repoRoot}${path.sep}`) && absolute !== repoRoot) || !fs.existsSync(absolute))) {
       throw new Error(`PRODUCTION_REPORT_SOURCE_MISSING: ${relative || "undefined"}. No provider call is allowed.`);
     }
-    const bytes = fs.readFileSync(absolute);
+    const bytes = relative.startsWith("private:report/") ? Buffer.from(readPrivateReportDocument(relative)) : fs.readFileSync(absolute);
     const text = bytes.toString("utf8");
     if (text !== String(source.text ?? "")) {
       throw new Error(`PRODUCTION_REPORT_SOURCE_STALE: ${relative}. No provider call is allowed.`);

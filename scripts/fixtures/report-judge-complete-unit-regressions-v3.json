@@ -10,7 +10,7 @@
     "description": "One judge call for each positive and negative in four score-level pairs, plus one critique call for the single-sentence finding-level fixture. No retries without new authorization."
   },
   "purpose": "Calibration-only complete-unit pairs for proposed report judge v3. Positive units are extracted verbatim from owner-authored reference reports. Negative units are unapproved mechanical degradations and must never become positive voice evidence or reader-facing copy.",
-  "factsSourcePath": "scripts/fixtures/marie-report-frozen-facts.json",
+  "factsSourcePath": "scripts/fixtures/synthetic-report-frozen-facts.json",
   "completeUnitParagraphIndexing": {
     "convention": "zero_based_supplied_indices",
     "marker": "[PARAGRAPH_INDEX={index}]",
@@ -20,9 +20,9 @@
     "date": "2026-08-09",
     "verbatim": "WORK & MONEY: final / owner-authored-final reference\nLOVE & CONNECTION: final / owner-authored-final reference\nPERSONAL & HEALTH: final / owner-authored-final reference",
     "references": {
-      "work_money": { "sourcePath": "artifacts/owner-author-work-money-2026-owner-v1.md", "sourceType": "owner_authored_final", "sha256": "d436634a25a122dc765a5e4167cdf2b99b6e0d4480e1000ba839be91ced24896" },
-      "love_connection": { "sourcePath": "artifacts/owner-author-love-connection-2026-owner-v1.md", "sourceType": "owner_authored_final", "sha256": "fd376233984157814190985b7dbe449e014ac8a47e6a140fe11ce169e3e8b534" },
-      "personal_health": { "sourcePath": "artifacts/owner-author-personal-health-2026-owner-v1.md", "sourceType": "owner_authored_final", "sha256": "e59f752512bd8f1ca01e8786e26d687344319b4eaac4edd5d479262e85bfa745" }
+      "work_money": { "sourcePath": "private:report/work-money-2026", "sourceType": "owner_authored_final", "sha256": "d436634a25a122dc765a5e4167cdf2b99b6e0d4480e1000ba839be91ced24896" },
+      "love_connection": { "sourcePath": "private:report/love-connection-2026", "sourceType": "owner_authored_final", "sha256": "fd376233984157814190985b7dbe449e014ac8a47e6a140fe11ce169e3e8b534" },
+      "personal_health": { "sourcePath": "private:report/personal-health-2026", "sourceType": "owner_authored_final", "sha256": "e59f752512bd8f1ca01e8786e26d687344319b4eaac4edd5d479262e85bfa745" }
     }
   },
   "functionVocabulary": [
@@ -42,7 +42,7 @@
     {
       "id": "general_autumn_opening",
       "sourceUnitKey": "general_autumn",
-      "sourcePath": "artifacts/owner-author-year-ahead-2026-FINAL.md",
+      "sourcePath": "private:report/general-2026",
       "startMarker": "## AUTUMN 2026:",
       "endMarker": "## 2026 IN REVIEW",
       "paragraphIndex": 1,
@@ -53,7 +53,7 @@
     {
       "id": "general_summer_complication",
       "sourceUnitKey": "general_summer",
-      "sourcePath": "artifacts/owner-author-year-ahead-2026-FINAL.md",
+      "sourcePath": "private:report/general-2026",
       "startMarker": "## SUMMER 2026:",
       "endMarker": "## AUTUMN 2026:",
       "paragraphIndex": 7,
@@ -64,7 +64,7 @@
     {
       "id": "work_spring_development",
       "sourceUnitKey": "work_spring",
-      "sourcePath": "artifacts/owner-author-work-money-2026-owner-v1.md",
+      "sourcePath": "private:report/work-money-2026",
       "startMarker": "## SPRING 2026:",
       "endMarker": "## SUMMER 2026:",
       "paragraphIndex": 3,
@@ -75,7 +75,7 @@
     {
       "id": "work_summer_complication",
       "sourceUnitKey": "work_summer",
-      "sourcePath": "artifacts/owner-author-work-money-2026-owner-v1.md",
+      "sourcePath": "private:report/work-money-2026",
       "startMarker": "## SUMMER 2026:",
       "endMarker": "## AUTUMN 2026:",
       "paragraphIndex": 6,
@@ -86,7 +86,7 @@
     {
       "id": "love_spring_turn",
       "sourceUnitKey": "love_spring",
-      "sourcePath": "artifacts/owner-author-love-connection-2026-owner-v1.md",
+      "sourcePath": "private:report/love-connection-2026",
       "startMarker": "## SPRING 2026:",
       "endMarker": "## SUMMER 2026:",
       "paragraphIndex": 5,
@@ -97,7 +97,7 @@
     {
       "id": "love_winter_close",
       "sourceUnitKey": "love_winter",
-      "sourcePath": "artifacts/owner-author-love-connection-2026-owner-v1.md",
+      "sourcePath": "private:report/love-connection-2026",
       "startMarker": "## WINTER 2026",
       "endMarker": "## SPRING 2026:",
       "paragraphIndex": 7,
@@ -108,7 +108,7 @@
     {
       "id": "personal_spring_development",
       "sourceUnitKey": "personal_spring",
-      "sourcePath": "artifacts/owner-author-personal-health-2026-owner-v1.md",
+      "sourcePath": "private:report/personal-health-2026",
       "startMarker": "## SPRING 2026:",
       "endMarker": "## SUMMER 2026:",
       "paragraphIndex": 4,
@@ -119,7 +119,7 @@
     {
       "id": "personal_spring_close",
       "sourceUnitKey": "personal_spring",
-      "sourcePath": "artifacts/owner-author-personal-health-2026-owner-v1.md",
+      "sourcePath": "private:report/personal-health-2026",
       "startMarker": "## SPRING 2026:",
       "endMarker": "## SUMMER 2026:",
       "paragraphIndex": 9,
@@ -130,7 +130,7 @@
     {
       "id": "personal_autumn_complication",
       "sourceUnitKey": "personal_autumn",
-      "sourcePath": "artifacts/owner-author-personal-health-2026-owner-v1.md",
+      "sourcePath": "private:report/personal-health-2026",
       "startMarker": "## AUTUMN 2026:",
       "endMarker": "## Health and capacity",
       "paragraphIndex": 3,
@@ -146,7 +146,7 @@
       "reportDomain": "general",
       "reportHorizon": "12_months",
       "unitId": "spring",
-      "sourcePath": "artifacts/owner-author-year-ahead-2026-FINAL.md",
+      "sourcePath": "private:report/general-2026",
       "sourceType": "owner_authored_final",
       "startMarker": "## SPRING 2026: The old role may stop fitting",
       "endMarker": "## SUMMER 2026:",
@@ -248,7 +248,7 @@
       "reportDomain": "work_money",
       "reportHorizon": "12_months",
       "unitId": "summer",
-      "sourcePath": "artifacts/owner-author-work-money-2026-owner-v1.md",
+      "sourcePath": "private:report/work-money-2026",
       "sourceType": "owner_authored_final",
       "startMarker": "## SUMMER 2026:",
       "endMarker": "## AUTUMN 2026:",
@@ -343,7 +343,7 @@
       "reportDomain": "love_connection",
       "reportHorizon": "12_months",
       "unitId": "autumn",
-      "sourcePath": "artifacts/owner-author-love-connection-2026-owner-v1.md",
+      "sourcePath": "private:report/love-connection-2026",
       "sourceType": "owner_authored_final",
       "startMarker": "## AUTUMN 2026: Desire and logistics meet each other",
       "endMarker": "## Sex and intimacy",
@@ -457,7 +457,7 @@
       "reportDomain": "personal_health",
       "reportHorizon": "12_months",
       "unitId": "summer",
-      "sourcePath": "artifacts/owner-author-personal-health-2026-owner-v1.md",
+      "sourcePath": "private:report/personal-health-2026",
       "sourceType": "owner_authored_final",
       "startMarker": "## SUMMER 2026: The week fills faster than you expect",
       "endMarker": "## AUTUMN 2026:",
@@ -541,7 +541,7 @@
       "reportDomain": "work_money",
       "reportHorizon": "12_months",
       "unitId": "winter-current",
-      "sourcePath": "artifacts/owner-author-work-money-2026-owner-v1.md",
+      "sourcePath": "private:report/work-money-2026",
       "sourceType": "owner_authored_final",
       "startMarker": "## WINTER 2026",
       "endMarker": "## SPRING 2026:",

@@ -41,3 +41,6 @@ jobs:
         with:
           name: memory-graph-browser-results
           path: test-results/
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

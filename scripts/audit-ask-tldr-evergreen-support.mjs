@@ -8,7 +8,7 @@ import { bindAskTldrQuestionRelevance } from "../api/_lib/ask-tldr-relevance-bou
 
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(new URL(relativePath, import.meta.url), "utf8"));
 const model = readJson("../config/ask-tldr/answer-model-v1.json");
-const reportWindow = readJson("./fixtures/marie-report-frozen-facts.json");
+const reportWindow = readJson("./fixtures/synthetic-report-frozen-facts.json");
 const now = new Date("2026-09-05T12:00:00Z");
 const pillarFiles = [
   "self", "love", "career", "money", "education", "home_family", "daily_life_health", "social", "spirituality"

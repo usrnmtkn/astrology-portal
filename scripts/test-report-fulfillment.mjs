@@ -33,7 +33,7 @@ import { validateAssembledReport, validateReportKeyDateFormat } from "../api/_li
 import { prepareReportProductionKernel, reportProductionValidation } from "../api/_lib/report-production-gate.ts";
 
 process.env.REPORT_AUTO_PUBLISH = "false";
-const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
+const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/synthetic-report-frozen-facts.json", import.meta.url), "utf8"));
 const spliceReplay = JSON.parse(fs.readFileSync(new URL("./fixtures/report-run1-overview-splice-replay.json", import.meta.url), "utf8"));
 const skuCatalog = JSON.parse(fs.readFileSync(new URL("../config/report-sku-catalog-v1.json", import.meta.url), "utf8"));
 const ruling = fs.readFileSync(REPORT_AUTOMATION_RULING_PATH, "utf8");
@@ -53,12 +53,12 @@ assert.deepEqual(skuCatalog.skus.map((sku) => sku.sku).sort(), REPORT_SKUS.map((
 assert.ok(skuCatalog.skus.every((sku) => sku.price_cents === 0 && sku.stripe_product_id.startsWith("PLACEHOLDER_") && sku.stripe_price_id.startsWith("PLACEHOLDER_")));
 assert.equal(reportSku("general_1_month").key, "general_1m", "Legacy entitlement keys must resolve to the compact catalog key.");
 assert.equal(birthProfileFromPersistedData({ profile: { charts: [{
-  birthDate: "1990-01-01", birthTime: "11:20 aM",
+  birthDate: "1990-01-01", birthTime: "12:00 pM",
   birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" },
   natalChart: { ascendantLongitude: 71.15, midheavenLongitude: 316.6 }
-}] } }).birthTime, "11:20", "Fulfillment must normalize legacy human birth times before any calculation payload.");
+}] } }).birthTime, "12:00", "Fulfillment must normalize legacy human birth times before any calculation payload.");
 assert.deepEqual(birthProfileFromPersistedData({ profile: { charts: [{
-  birthDate: "1990-01-01", birthTime: "11:20",
+  birthDate: "1990-01-01", birthTime: "12:00",
   birthLocation: { label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" },
   natalChart: { ascendantLongitude: 71.15, midheavenLongitude: 316.6 }
 }] } }).natalPointLongitudes, { Ascendant: 71.15, Midheaven: 316.6 },
@@ -730,7 +730,7 @@ await assert.rejects(
 );
 assert.equal(exhaustedResponseAttempts, 4,
   "Response-contract exhaustion must escalate only after the initial call plus three retries.");
-assert.equal(verifyReportFactLock({ ...draft, body: "March 3 is traceable." }, frozen).passed, true);
+assert.equal(verifyReportFactLock({ ...draft, body: "March 5 is traceable." }, frozen).passed, true);
 assert.equal(verifyReportFactLock({ ...draft, body: "March 31 is not traceable." }, frozen).passed, false);
 assert.equal(verifyReportFactLock({ ...draft, timing: "Mar 20 - Jun 21" }, frozen, {
   trustedTiming: "Mar 20 - Jun 21"
@@ -738,8 +738,8 @@ assert.equal(verifyReportFactLock({ ...draft, timing: "Mar 20 - Jun 21" }, froze
 assert.equal(verifyReportFactLock({ ...draft, timing: "Mar 20 - Jun 22" }, frozen, {
   trustedTiming: "Mar 20 - Jun 21"
 }).passed, false, "Only the exact governed structural range may bypass event-date traceability.");
-assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *A lunar eclipse falls on your natal Saturn.*" }, frozen).passed, true);
-assert.equal(verifyReportFactLock({ ...draft, body: "MAR 3 · FIXTURE_ONLY · FIXTURE_ONLY. · *Pluto squares your natal Venus.*" }, frozen).passed, false);
+assert.equal(verifyReportFactLock({ ...draft, body: "MAR 5 · FIXTURE_ONLY · FIXTURE_ONLY. · *A lunar eclipse falls on your natal Saturn.*" }, frozen).passed, true);
+assert.equal(verifyReportFactLock({ ...draft, body: "MAR 5 · FIXTURE_ONLY · FIXTURE_ONLY. · *Pluto squares your natal Venus.*" }, frozen).passed, false);
 
 const refundCalls = [];
 await revokeEntitlement({
@@ -1259,7 +1259,7 @@ malformedBirthStore.claimJobs = async () => [authorizedJob({
   state: "running", step: "calculating", attempt: 1
 })];
 const malformedBirthCalculation = Object.assign(async () => { throw new Error("must not calculate"); }, {
-  async preflight() { throw new ReportBirthDataError("BIRTH_DATA_INVALID", "Enter a valid birth time, such as 11:20 AM or 23:20."); }
+  async preflight() { throw new ReportBirthDataError("BIRTH_DATA_INVALID", "Enter a valid birth time, such as 12:00 PM or 23:20."); }
 });
 const malformedBirthBatch = await runReportFulfillmentBatch({
   workerId: "malformed-birth-worker", store: malformedBirthStore, calculateFacts: malformedBirthCalculation,
