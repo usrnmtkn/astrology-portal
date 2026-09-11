@@ -1,6 +1,7 @@
 import { AlertTriangle, ArrowLeft, CheckCircle2, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
+import { readGeneratedContentRows } from "./generatedContentClient";
 import { AdminAccessGate } from "./AdminStudioPrimitives";
 import { isPublishedButUnwired, type ContentWiringRow } from "./contentWiringStatus";
 import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./ownerSession";
@@ -36,12 +37,6 @@ type InventoryRow = ContentWiringRow & {
   headline?: string | null;
   surface?: string | null;
   updated_at?: string | null;
-};
-
-type InventoryPayload = {
-  ok: true;
-  rows: InventoryRow[];
-  nextCursor: string | null;
 };
 
 type AttentionItem = {
@@ -116,30 +111,9 @@ function buildAttentionItems(coverage: CoveragePayload, liveRows: InventoryRow[]
 }
 
 async function loadInventory(credential: string, status: "ERROR" | "LIVE") {
-  const rows: InventoryRow[] = [];
-  let cursor = "";
+  const params = new URLSearchParams({ status, visibility: "all", view: "inventory", limit: "1000" });
+  return readGeneratedContentRows(`/api/admin/generated-content?${params}`, credential);
 
-  do {
-    const params = new URLSearchParams({
-      status,
-      visibility: "all",
-      view: "inventory",
-      limit: "1000"
-    });
-    if (cursor) params.set("cursor", cursor);
-
-    const response = await fetch(`/api/admin/generated-content?${params.toString()}`, {
-      headers: adminCredentialHeaders(credential)
-    });
-    const body = await response.json().catch(() => null) as InventoryPayload | { error?: string } | null;
-    if (!response.ok || !body || !("ok" in body) || body.ok !== true) {
-      throw new Error(body && "error" in body && body.error ? body.error : `Content inventory request failed (${response.status}).`);
-    }
-    rows.push(...body.rows);
-    cursor = body.nextCursor ?? "";
-  } while (cursor);
-
-  return rows;
 }
 
 export default function NeedsAttentionDashboard() {
