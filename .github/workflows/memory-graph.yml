@@ -39,6 +39,11 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build:knowledge
+      - name: Verify Studio entry bundle budget before browser tests
+        run: npm run build:admin && node scripts/check-admin-bundle-budgets.mjs
+        env:
+          VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+          VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
       - run: npm run test:agent-memory-browser
       - name: Verify Studio correction capture and review in desktop and mobile editors
         run: npx playwright test tests/visual/studio-article-memory.spec.ts tests/visual/studio-memory-feedback.spec.ts tests/visual/review-queue-workflow.spec.ts --workers=1
