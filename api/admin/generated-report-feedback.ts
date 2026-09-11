@@ -109,7 +109,7 @@ async function action(body: FeedbackActionBody) {
       status: "candidate"
     });
     const confirmed = adminStorageRows<GeneratedReportOwnerFeedbackRow>(rows);
-    if (confirmed.length !== 1 || !confirmed[0].id) throw new AdminHttpError(502, "Storage did not confirm the feedback. Reload before retrying.");
+    if (confirmed.length !== 1 || typeof confirmed[0].id !== "string" || !confirmed[0].id || confirmed[0].status !== "candidate" || confirmed[0].source_generated_interpretation_id !== report.id || confirmed[0].feedback_text !== feedbackText) throw new AdminHttpError(502, "Storage did not confirm the feedback. Reload before retrying.");
     return { ok: true, feedback: confirmed[0] };
   }
 
@@ -152,8 +152,10 @@ async function action(body: FeedbackActionBody) {
       `id=eq.${body.feedbackId}&status=eq.candidate`,
       { status: "rejected", updated_at: new Date().toISOString() }
     );
-    if (!rows[0]) throw new Error("Only candidate feedback can be rejected.");
-    return { ok: true, feedback: rows[0] };
+    const confirmed = adminStorageRows<GeneratedReportOwnerFeedbackRow>(rows);
+    if (!confirmed.length) throw new AdminHttpError(409, "Only candidate feedback can be rejected. Reload before reviewing.");
+    if (confirmed.length !== 1 || confirmed[0].id !== body.feedbackId || confirmed[0].status !== "rejected") throw new AdminHttpError(502, "Storage did not confirm the rejected feedback. Reload before retrying.");
+    return { ok: true, feedback: confirmed[0] };
   }
 
   throw new Error("Unsupported generated-report feedback action.");

@@ -47,6 +47,19 @@ try {
   storage = async (url, init) => init.method === 'POST' ? Response.json([]) : Response.json([{ id: 'qa-report', subject_type: 'you_day_reading' }]);
   assert.equal((await invoke(feedback, { action: 'save_candidate', reportId: 'qa-report', feedbackText: 'QA fixture only.' })).status, 502);
  });
+ await test('feedback receipts match the requested create and reject operations', async () => {
+  const candidate = { action: 'save_candidate', reportId: 'qa-report', feedbackText: 'QA fixture only.' };
+  storage = async (_url, init) => init.method === 'POST' ? Response.json([{ ...JSON.parse(String(init.body)), id: 'qa-feedback' }]) : Response.json([{ id: 'qa-report', subject_type: 'you_day_reading' }]);
+  assert.equal((await invoke(feedback, candidate)).status, 200);
+  storage = async (_url, init) => init.method === 'POST' ? Response.json([{ id: 'qa-feedback', status: 'candidate', feedback_text: 'wrong', source_generated_interpretation_id: 'wrong' }]) : Response.json([{ id: 'qa-report', subject_type: 'you_day_reading' }]);
+  assert.equal((await invoke(feedback, candidate)).status, 502);
+  for (const payload of [null, {}, [null], [{ id: 'wrong', status: 'rejected' }]]) {
+   storage = async () => Response.json(payload);
+   assert.equal((await invoke(feedback, { action: 'reject', feedbackId: 'qa-feedback' })).status, 502);
+  }
+  storage = async () => Response.json([{ id: 'qa-feedback', status: 'rejected' }]);
+  assert.equal((await invoke(feedback, { action: 'reject', feedbackId: 'qa-feedback' })).status, 200);
+ });
  await test('report editors reject malformed and unauthorized writes before persistence', async () => {
   writes = 0;
   for (const handler of [reports, feedback]) {
