@@ -348,6 +348,8 @@ const createdApprovedNatalAspect = await invokeApi("POST", "/api/admin/generated
     packageRecord: {
       contentKey: natalAspectContentKey,
       content_role: "full_copy",
+      reader_only: true,
+      render_policy: "reader-only-exact-lived-v1",
       body_you: "Exact reader copy.",
       body_they: "{Name} receives exact friend-view copy.",
       review_status: "approved"
@@ -704,7 +706,7 @@ row = { ...row, content_key: exactRecord.contentKey, status: "LIVE", lane: "serv
   summary: exactRecord.Summary, body: exactRecord.Body,
   sections: { packageRecord: exactRecord, packageOriginalRecord: structuredClone(exactRecord), body_you: exactRecord.Body, body_they: exactRecord.Body },
   facts: { fallbackArchitectureV3: true, content_role: "full_copy", review_status: "approved" },
-  source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", contentStudioExactAspect: true, content_role: "full_copy", review_status: "approved" }
+  source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", contentStudioExactAspect: true, exactSkyAspectIdentity: { a: "mercury", aspect: "sextile", b: "mars" }, content_role: "full_copy", review_status: "approved" }
 };
 for (const revision of [1, 2]) {
   const summary = `Calendar QA summary ${revision}.`;
@@ -924,3 +926,70 @@ for (const selection of [
   globalThis.fetch = normalFetch;
 }
 console.log('PASS: new exact transit and return publication through actual API, reader loader, and shipped resolver.');
+
+// New canonical families must publish through the same admission used by readers.
+const admissionCases = [
+ ['house-intro', 'authored/transit-house-intro/moon/1'],
+ ['house-sign', 'authored/transit-house-sign/moon/1/aries'],
+ ['synastry-exact', 'fallback-hook/synastry-pair/sun/venus/square']
+];
+const houseRecords = [];
+for (const [label,key] of admissionCases) {
+ const copy = `QA ${label} opening.\n\nQA ${label} ending.`;
+ const reverseCopy = `QA reverse ${label} opening.\n\nQA reverse ${label} ending.`;
+ row = { ...row, id: 'qa-'+label, content_key:key, provider:'tldrastro-fallback-architecture-v3', status:'DRAFT', lane:'reference', review_state:'needs-review', mode:'in_depth', surface:label==='synastry-exact'?'synastry':'you', event_type:'fallback-hook', block_type:'fallback_hook', body:copy, sections:{packageRecord:{contentKey:key,content_role:'full_copy',grammar_frame:'complete_sentence',body:copy,body_you:copy,body_they:reverseCopy,review_status:'needs_review'}},facts:{fallbackArchitectureV3:true,review_status:'needs_review'},source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',contentType:'authored-content',content_role:'full_copy',review_status:'needs_review'} };
+ const pending = structuredClone(row);
+ if (label==='synastry-exact') {
+   row.sections.packageRecord.body_they='';
+   const incomplete=structuredClone(row);
+   const refused=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,expectedUpdatedAt:row.updated_at,reviewStatus:'approved'});
+   assert.equal(refused.status,400,JSON.stringify(refused.payload));
+   assert.deepEqual(row,incomplete,'An incomplete direction remains an unsigned draft.');
+   row=structuredClone(pending);
+ }
+ const approved=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,expectedUpdatedAt:row.updated_at,reviewStatus:'approved'});
+ assert.equal(approved.status,200,JSON.stringify(approved.payload));
+ globalThis.fetch=async(input,init)=>String(input).includes('/rpc/content_runtime_revision')?Response.json(row.updated_at):normalFetch(input,init);
+ const bundle=await runtime.loadFallbackArchitectureV3DashboardBundle();
+ assert.ok([...(bundle?.transitLib?.authoredCards??[]),...(bundle?.rowsFile?.hookRows??[])].some(r=>r.contentKey===key),key);
+ runtime.installFallbackArchitectureV3Bundle(bundle);
+ if (label.startsWith('house')) houseRecords.push(...bundle.transitLib.authoredCards);
+ else {
+   for (const [a,b,expected] of [['sun','venus',copy],['venus','sun',reverseCopy]]) {
+     const rendered=runtime.transitSynastryFallbackRendererV3.renderSynastryAspect({planetA:a,planetB:b,aspect:'square',otherName:'QA Friend'});
+     assert.equal(bundle.rowsFile.hookRows.find(r=>r.contentKey===key)[a==='sun'?'body_you':'body_they'],expected,'Publication retains every source byte.');
+     assert.equal(rendered.body,expected.replace(/\s+/gu,' '),'The token renderer retains the complete passage.');
+     assert.equal(rendered.contentKey,key);
+     assert.equal(rendered.synastryTier,'exact-owner-approved');
+   }
+ }
+ globalThis.fetch=normalFetch;
+ // Rejected publications must not change the saved draft or any storage row.
+ row={...pending,content_key:'authored/unsupported/qa-source',sections:{packageRecord:{...pending.sections.packageRecord,contentKey:'authored/unsupported/qa-source'}}};
+ const before=structuredClone(row);
+ const refused=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,expectedUpdatedAt:row.updated_at,reviewStatus:'approved'});
+ assert.equal(refused.status,409,JSON.stringify(refused.payload));
+ assert.match(refused.payload.error,/supported reader route/);
+ assert.deepEqual(row,before);
+ row.sections.packageDraft={...row.sections.packageRecord,body:'QA unsupported revision opening. QA unsupported revision ending.'};
+ const beforeRevision=structuredClone(row);
+ const refusedRevision=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'approve-package-revision'});
+ assert.equal(refusedRevision.status,409,JSON.stringify(refusedRevision.payload));
+ assert.match(refusedRevision.payload.error,/supported reader route/);
+ assert.deepEqual(row,beforeRevision,'A refused revision must remain available without a timestamp claim or publication write.');
+}
+runtime.installFallbackArchitectureV3Bundle({transitLib:{authoredCards:houseRecords},rowsFile:{hookRows:[],vocabularyRows:[]},templatesFile:{templates:[]}});
+for (const voice of ['you','QA Friend']) {
+ const rendered=runtime.transitSynastryFallbackRendererV3.renderTransitHouse({planet:'moon',house:1,sign:'aries',voice});
+ assert.equal(rendered.body,houseRecords.map(r=>voice==='you'?r.body_you:r.body_they).join('\n\n'));
+ assert.deepEqual(rendered.sourceKeys,houseRecords.map(r=>r.contentKey));
+}
+// Create and batch validation refuse unsupported package keys before writes.
+const unsupportedWrite={contentKey:'fallback-hook/unsupported/qa-new',surface:'you',mode:'in_depth',eventType:'fallback-hook',reviewStatus:'approved',provider:'tldrastro-fallback-architecture-v3',sections:{packageRecord:{contentKey:'fallback-hook/unsupported/qa-new',content_role:'full_copy',review_status:'approved',body:'QA full passage.'}},sourceSnapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',review_status:'approved'}};
+let before=structuredClone(row);
+assert.equal((await invokeApi('POST','/api/admin/generated-content',unsupportedWrite)).status,409);
+assert.deepEqual(row,before);
+const batch=await invokeApi('POST','/api/admin/generated-content',{rows:[{...unsupportedWrite,surface:'sky',status:'LIVE',lane:'serving',reviewState:null}]});
+assert.equal(batch.status,409,JSON.stringify(batch.payload));
+assert.deepEqual(row,before);
+console.log('PASS: new House Transit and exact synastry publication, shipped full-copy/direction selection, and unsupported-key refusal.');

@@ -90,6 +90,23 @@ export function isDynamicTransitNatalExactRecord(record: FallbackDashboardExtens
     && record.render_policy === "personal-transit-exact-v1";
 }
 
+/** Families already addressed by renderTransitHouse and renderSynastryAspect. */
+export function isDynamicHouseTransitRecord(record: FallbackDashboardExtensionRecord) {
+  if (record.content_role !== "full_copy") return false;
+  const [prefix, family, planet, house, sign, extra] = record.contentKey.split("/");
+  if (prefix !== "authored" || !natalBodies.has(planet) || !/^(?:[1-9]|1[0-2])$/u.test(house)) return false;
+  if (family === "transit-house-intro" || family === "transit-house") return sign === undefined;
+  return family === "transit-house-sign" && zodiacSigns.has(sign) && extra === undefined;
+}
+
+export function isDynamicSynastryExactRecord(record: FallbackDashboardExtensionRecord) {
+  if (record.content_role !== "full_copy") return false;
+  const [prefix, family, first, second, aspect, extra] = record.contentKey.split("/");
+  const endpoint = (point: string) => natalBodies.has(point) || ["ascendant", "descendant", "midheaven", "imum-coeli"].includes(point);
+  return prefix === "fallback-hook" && family === "synastry-pair" && endpoint(first) && endpoint(second)
+    && ["conjunction", "opposition", "square", "trine", "sextile"].includes(aspect) && extra === undefined;
+}
+
 export function isFallbackDashboardRecordAllowed(
   record: FallbackDashboardExtensionRecord,
   currentPackageKeys: ReadonlySet<string>
@@ -98,5 +115,7 @@ export function isFallbackDashboardRecordAllowed(
     || isDynamicNatalPlacementExactRecord(record)
     || isDynamicNatalAspectExactRecord(record)
     || isDynamicTransitNatalExactRecord(record)
+    || isDynamicHouseTransitRecord(record)
+    || isDynamicSynastryExactRecord(record)
     || (isCanonicalSkyReaderRecord(record) && record.studio_version_status === "approved-serving-revision");
 }
