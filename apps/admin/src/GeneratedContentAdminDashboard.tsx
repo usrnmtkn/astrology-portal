@@ -9649,7 +9649,7 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
-          {selectedRow && !isPackageDraft && <Suspense fallback={<p role="status">Loading publication checks…</p>}><ReviewWorkflowPanel row={selectedRow} unsaved={draftHasUnsavedChanges} busy={isLoading}
+          {selectedRow && !isPackageDraft && <Suspense fallback={<p role="status">Loading publication checks…</p>}><ReviewWorkflowPanel row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
             onCheck={() => void runSkyDraftWriting(selectedRow.content_key, "recheck", selectedRow)}
             onGenerate={() => void runSkyDraftWriting(selectedRow.content_key, "generate", selectedRow)} /></Suspense>}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
