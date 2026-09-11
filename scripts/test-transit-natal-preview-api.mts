@@ -53,6 +53,44 @@ try {
  const retired=await request(lilithInput);
  assert.ok(!retired.rendered || !retired.rendered.body.includes('Synthetic edited Lilith hook'));
  rows=[];publications=[];
+
+ for (const extra of [{pass:0},{pass:1.5},{variant:101},{isRetrograde:'true'},{window:'<script>'},{window:''}]) assert.equal((await request({...input,...extra})).code,400);
+ const context={...lilithInput,pass:2,variant:3,isRetrograde:true,window:'until October 4'};
+ assert.deepEqual((await request(context)).rendered,renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(context)));
+ assert.match((await request(context)).rendered.body,/until October 4/);
+ for (const selection of [
+   {planet:'neptune',sign:'aries',natalPoint:'sun',aspect:'opposition',variant:1},
+   {planet:'neptune',sign:'aries',natalPoint:'moon',aspect:'opposition',variant:1},
+   {planet:'neptune',sign:'aries',natalPoint:'mercury',aspect:'opposition',variant:1},
+   {planet:'neptune',sign:'aries',natalPoint:'venus',aspect:'opposition',variant:1},
+   {planet:'sun',sign:'virgo',natalPoint:'midheaven',aspect:'opposition'},
+   lilithInput
+ ]) for (const voice of ['you','QA Friend']) {
+   rows=[];publications=[];
+   const facts={...selection,voice};
+   const before=(await request(facts)).rendered;
+   assert.ok(before);
+   const dependency=before.paragraphs.flatMap((p:any)=>p.sources).find((ref:any)=>/fog-note|transit-aspect-insert|fallback-vocab/.test(ref.contentKey));
+   assert.ok(dependency,JSON.stringify(facts));
+   assert.equal(dependency.publication.origin,'package');
+   const key=dependency.contentKey, original=servingPackageRecords.get(key)!;
+   const updated={...original,[dependency.field]:'Synthetic published supporting passage.'};
+   rows=[{id,content_key:key,status:'LIVE',lane:'serving',provider:'tldrastro-fallback-architecture-v3',updated_at:stamp,body:'Synthetic published supporting passage.',sections:{packageRecord:updated}}];
+   publications=[{content_key:key,state:'live',revision:5,row_id:id,row_updated_at:stamp,updated_at:stamp}];
+   const after=(await request(facts)).rendered;
+   assert.match(after.body,/Synthetic published supporting passage/);
+   const receipt=after.paragraphs.flatMap((p:any)=>p.sources).find((ref:any)=>ref.contentKey===key);
+   assert.equal(receipt.field,dependency.field);
+   assert.deepEqual(receipt.publication,{origin:'published',packageVersion:dependency.publication.packageVersion,revision:5,rowId:id,rowUpdatedAt:stamp});
+   for(const paragraph of before.paragraphs.filter((p:any)=>!p.sources.some((ref:any)=>ref.contentKey===key))) assert.ok(after.paragraphs.some((p:any)=>p.text===paragraph.text));
+   publications[0].state='retired';
+   const retired=await request(facts);
+   assert.ok(!retired.rendered || !retired.rendered.sourceKeys.includes(key));
+   rows[0].status='DRAFT';
+   const restored=await request(facts);
+   assert.ok(!restored.rendered || !restored.rendered.body.includes('Synthetic published supporting passage'));
+ }
+ rows=[];publications=[];
  failStorage=true;assert.equal((await request()).code,503);
  console.log('PASS transit preview actual handler: authorization, input validation, shared full copy, published edits, draft exclusion, retirement, stale publication, scoped state, and storage failure.');
 } finally {globalThis.fetch=original;}

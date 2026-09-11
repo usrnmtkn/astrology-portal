@@ -928,6 +928,60 @@ for (const selection of [
 }
 console.log('PASS: new exact transit and return publication through actual API, reader loader, and shipped resolver.');
 
+// Exact lookup must distinguish a missing record from a complete bundled original.
+const { servingPackageRecords: receiptCatalog } = await import('../api/_lib/content-live-status.ts');
+const { transitNatalPackagedSourceDraft } = await import('../apps/admin/src/transitNatalPackagedSource.ts');
+const { renderTransitNatalPreviewState, normalizeTransitNatalPreviewInput } = await import('../api/admin/transit-natal-preview.ts');
+const packageKey='authored/transit-aspect/sun/north-node/conjunction';
+const lookup=await invokeApi('GET',`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(packageKey)}&includePackageSource=true`);
+assert.equal(lookup.status,200,JSON.stringify(lookup.payload));
+assert.equal(lookup.payload.rows.length,0);
+assert.deepEqual(lookup.payload.packageSource,receiptCatalog.get(packageKey));
+assert.equal((await invokeApi('GET','/api/admin/generated-content?includePackageSource=true')).status,400);
+assert.equal((await invokeApi('GET','/api/admin/generated-content?includePackageSource=true&contentKey=a&contentKey=b')).status,400);
+assert.equal((await invokeApi('GET','/api/admin/generated-content?includePackageSource=true&contentKey=a&contentKeys=b')).status,400);
+assert.equal((await invokeApi('GET','/api/admin/generated-content?includePackageSource=true&contentKey=fallback-template/transit.house-event')).payload.packageSource,null);
+assert.equal((await invokeApi('GET','/api/admin/generated-content?contentKey=authored/transit-aspect/lilith/north-node/trine&includePackageSource=true')).payload.packageSource,null);
+for(const [key,selection] of [
+ [packageKey,{planet:'sun',sign:'virgo',natalPoint:'north-node',aspect:'conjunction'}],
+ ['fallback-hook/transit-effect-soft/lilith',{planet:'lilith',sign:'capricorn',natalPoint:'north-node',aspect:'trine'}],
+ ['fallback-vocab/planet-topic/north-node',{planet:'lilith',sign:'capricorn',natalPoint:'north-node',aspect:'trine'}],
+ ['fallback-hook/fog-note/variant-2',{planet:'neptune',sign:'aries',natalPoint:'sun',aspect:'opposition',variant:1}],
+ ['authored/transit-aspect-insert/sun/midheaven/opposition',{planet:'sun',sign:'virgo',natalPoint:'midheaven',aspect:'opposition'}]
+]) {
+ const original=receiptCatalog.get(key);assert.ok(original,key);
+ const draft=transitNatalPackagedSourceDraft(original,key);
+ const created=await invokeApi('POST','/api/admin/generated-content',{...draft,id:undefined,eventType:'fallback-hook',reviewStatus:'needs_review'});
+ assert.equal(created.status,200,JSON.stringify(created.payload));
+ assert.equal(row.status,'DRAFT');assert.equal(row.lane,'reference');
+ assert.deepEqual(row.sections.packageOriginalRecord,original,'Original package text is retained byte-for-byte');
+ const reopened=await invokeApi('GET',`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&includePackageSource=true`);
+ assert.deepEqual(reopened.payload.rows[0].sections.packageRecord,draft.sections.packageRecord);
+ const field=typeof original.body_you==='string'?'body_you':'body';
+ const content='Synthetic revised source passage.';
+ const saved=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,expectedUpdatedAt:row.updated_at,sections:{...row.sections,packageDraft:{...row.sections.packageRecord,[field]:content}},reviewStatus:'needs_review'});
+ assert.equal(saved.status,200,JSON.stringify(saved.payload));
+ const preserved=structuredClone(row);
+ const conflict=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,expectedUpdatedAt:'2000-01-01T00:00:00Z',body:'Stale overwrite'});
+ assert.equal(conflict.status,409);assert.deepEqual(row,preserved);
+ const published=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'approve-package-revision'});
+ assert.equal(published.status,200,JSON.stringify(published.payload));
+ assert.equal(row.sections.packageRecord[field],content);assert.equal(row.status,'LIVE');
+ const publication={content_key:key,state:'live',revision:1,row_id:row.id,row_updated_at:row.updated_at,updated_at:row.updated_at};
+ const facts=normalizeTransitNatalPreviewInput(selection);
+ const rendered=renderTransitNatalPreviewState(facts,[row],[publication]);
+ assert.match(rendered.body,/Synthetic revised source passage/);
+ assert.ok(rendered.paragraphs.some(p=>p.sources.some(ref=>ref.contentKey===key && ref.field===field)));
+ for(const action of ['archive','restore']) {
+  const changed=await invokeApi('PATCH','/api/admin/generated-content',{id:row.id,expectedUpdatedAt:row.updated_at,sourceLifecycleAction:action});
+  assert.equal(changed.status,200,JSON.stringify(changed.payload));
+  assert.equal(row.status,action==='archive'?'ARCHIVED':'DRAFT');
+  let visible;try{visible=renderTransitNatalPreviewState(facts,[row],[{...publication,state:'retired'}]);}catch{}
+  assert.ok(!visible || !visible.body.includes(content));
+ }
+}
+console.log('PASS: targeted package lookup and exact/hook/vocabulary/append create-reopen-update-publish-archive-restore with actual handlers, source fields and stale-write protection.');
+
 // New canonical families must publish through the same admission used by readers.
 const admissionCases = [
  ['house-intro', 'authored/transit-house-intro/moon/1'],
