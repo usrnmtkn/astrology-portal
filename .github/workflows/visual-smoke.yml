@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     # The reader matrix takes ~12 minutes after ~8 minutes of builds/admin QA.
     # Leave room for Friends performance checks; per-test budgets stay unchanged.
-    timeout-minutes: 30
+    # Runs 213 reader cases after the admin suite, then the performance matrix.
+    timeout-minutes: 45
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
