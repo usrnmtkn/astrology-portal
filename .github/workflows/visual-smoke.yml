@@ -8,10 +8,37 @@ on:
   workflow_dispatch:
 
 jobs:
-  visual-smoke:
+  friends-loading-performance:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Run Friends loading performance matrix on a fresh runner
+        run: npm run qa:friends-loading-matrix
+      - name: Upload Friends performance artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: friends-loading-performance-results
+          path: test-results/
+          if-no-files-found: ignore
+
+  visual-smoke:
+    # Preserve the speed gate without measuring it after hundreds of browser cases.
+    needs: friends-loading-performance
+    runs-on: ubuntu-latest
+    # The expanded reader matrix takes ~22 minutes after builds/admin QA.
     # Leave room for Friends performance checks; per-test budgets stay unchanged.
-    # Runs 213 reader cases after the admin suite, then the performance matrix.
     timeout-minutes: 45
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
@@ -80,9 +107,6 @@ jobs:
       - name: Verify startup performance contracts
         run: npm run test:performance-contracts
 
-      - name: Run Friends loading performance matrix
-        run: npm run qa:friends-loading-matrix
-
       - name: Verify visible loading and recovery on slow or failed downloads
         run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts
 
@@ -107,7 +131,7 @@ jobs:
 
   sky-placement-studio:
     runs-on: ubuntu-latest
-    # Includes API contracts, two browser builds, and production-entry recovery.
+    # Includes the expanded full API lifecycle gate before fresh reader builds.
     timeout-minutes: 30
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
@@ -124,6 +148,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Verify placement composition editing and reader refresh stability
         run: |
+          npx playwright test -c playwright.studio-secondary.config.ts
           npx playwright test -c playwright.sky-composition.config.ts
           npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts
       - name: Verify Studio crash recovery through the production web entry

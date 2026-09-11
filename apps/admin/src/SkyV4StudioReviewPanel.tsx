@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
+import { readGeneratedContentRows, saveGeneratedContentDraft } from "./generatedContentClient";
 import { adminCredentialHeaders } from "./adminSecret";
 import SkyFallbackVariantFamilyEditor from "./SkyFallbackVariantFamilyEditor";
 
@@ -188,6 +189,8 @@ function fallbackPath(filter: Exclude<BatchFieldFilter, "all">): EditablePath {
 }
 
 export default function SkyV4StudioReviewPanel(props: Props) {
+  const [openedRow, setOpenedRow] = useState<AdminRow | null>(null);
+  const context = useRef(0);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [currentFields, setCurrentFields] = useState<Record<EditablePath, string>>(() => editableValues(props.effectiveRecord));
@@ -202,6 +205,8 @@ export default function SkyV4StudioReviewPanel(props: Props) {
   const [fieldFilter, setFieldFilter] = useState<BatchFieldFilter>("all");
   const [search, setSearch] = useState("");
   const [batchEdits, setBatchEdits] = useState<Record<string, Partial<Record<EditablePath, string>>>>({});
+  const batchEditsRef = useRef(batchEdits);
+  batchEditsRef.current = batchEdits;
   const [savingBatchKey, setSavingBatchKey] = useState<string | null>(null);
   const [batchSaveMessage, setBatchSaveMessage] = useState<Record<string, string>>({});
 
@@ -214,9 +219,23 @@ export default function SkyV4StudioReviewPanel(props: Props) {
   const baselineFields = useMemo(() => editableValues(props.effectiveRecord), [props.contentKey, props.effectiveRecord]);
 
   useEffect(() => {
+    const generation = ++context.current;
+    setOpenedRow(null);
+    setSavingCurrent(false);
     setCurrentFields(editableValues(props.effectiveRecord));
     setCurrentSaveMessage(null);
-  }, [props.contentKey, props.effectiveRecord]);
+    if (isContinuousPlacement && props.showGroupedEditor !== false) {
+      void fetchCurrentStoredRow().then(row => {
+        if (generation !== context.current) return;
+        setOpenedRow(row);
+        setCurrentFields(editableValues(rowEffectiveRecord(row)));
+      }).catch(reason => {
+        if (generation === context.current) setError(reason instanceof Error ? reason.message : "The saved draft could not be opened.");
+      });
+    }
+    return () => { context.current += 1; };
+  }, [props.contentKey, props.effectiveRecord, props.secret, props.showGroupedEditor]);
+
 
   const draftFields: Record<string, unknown> = {};
   if (isContinuousPlacement) {
@@ -245,11 +264,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
   }), [continuousRows, planetFilter, signFilter, search]);
 
   async function generatedContentRows(url: string) {
-    const response = await fetch(url, { headers: adminCredentialHeaders(props.secret) });
-    const payload = await response.json() as unknown;
-    if (!response.ok) throw new Error(record(payload).error as string || `Content Studio request failed (${response.status}).`);
-    if (!Array.isArray(payload)) throw new Error("Content Studio returned an unexpected row payload.");
-    return payload as AdminRow[];
+    return readGeneratedContentRows(url, props.secret);
   }
 
   async function fetchCurrentStoredRow() {
@@ -268,38 +283,30 @@ export default function SkyV4StudioReviewPanel(props: Props) {
       nextDraft = setValueAt(nextDraft, path, value);
     }
     const sections = { ...rowSections(row), packageDraft: nextDraft };
-    const response = await fetch("/api/admin/generated-content", {
-      method: "PATCH",
-      headers: { "content-type": "application/json", ...adminCredentialHeaders(props.secret) },
-      body: JSON.stringify({
-        id: row.id,
-        sections,
-        reviewStatus: "needs_review"
-      })
-    });
-    const payload = await response.json() as unknown;
-    if (!response.ok) throw new Error(record(payload).error as string || `Draft save failed (${response.status}).`);
+    const saved = await saveGeneratedContentDraft(row, sections, props.secret);
     announceContentUpdate({
       contentKey: row.content_key,
       published: false,
       updatedAt: new Date().toISOString()
     });
-    return payload;
+    return saved;
   }
 
   async function saveCurrentGroupedDraft() {
-    if (!isContinuousPlacement || !currentDirty) return;
+    if (!isContinuousPlacement || !currentDirty || !openedRow || openedRow.content_key !== props.contentKey) return;
+    const generation = context.current;
     setSavingCurrent(true);
     setError(null);
     setCurrentSaveMessage(null);
     try {
-      const row = await fetchCurrentStoredRow();
-      await saveDraft(row, currentFields);
+      const saved = await saveDraft(openedRow, currentFields);
+      if (generation !== context.current) return;
+      setOpenedRow(saved);
       setCurrentSaveMessage("Draft saved. The approved serving baseline remains live until this version is separately reviewed and released.");
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "The grouped SKY V4 draft could not be saved.");
+      if (generation === context.current) setError(reason instanceof Error ? reason.message : "The grouped SKY V4 draft could not be saved.");
     } finally {
-      setSavingCurrent(false);
+      if (generation === context.current) setSavingCurrent(false);
     }
   }
 
@@ -309,7 +316,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
     try {
       const rows = await generatedContentRows("/api/admin/generated-content?status=all&visibility=all&surface=sky&limit=1000");
       const continuous = uniqueContinuousRows(rows);
-      setBatchRows(continuous);
+      setBatchRows(current => continuous.map(row => Object.keys(batchEditsRef.current[row.id] ?? {}).length ? current.find(opened => opened.id === row.id) ?? row : row));
       if (planetFilter === "all" && identity?.planet) setPlanetFilter(identity.planet);
       if (continuous.length !== 120) {
         setBatchError(`Loaded ${continuous.length}/120 continuous placement records. Filters still work, but the batch review is incomplete.`);
@@ -347,7 +354,8 @@ export default function SkyV4StudioReviewPanel(props: Props) {
     setSavingBatchKey(row.content_key);
     setBatchError(null);
     try {
-      await saveDraft(row, changes);
+      const saved = await saveDraft(row, changes);
+      setBatchRows(current => current.map(item => item.id === row.id ? saved : item));
       setBatchSaveMessage((current) => ({
         ...current,
         [row.content_key]: "Draft saved · serving baseline unchanged"
@@ -357,7 +365,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
         delete next[row.id];
         return next;
       });
-      await loadContinuousFallbacks();
+
     } catch (reason) {
       setBatchSaveMessage((current) => ({
         ...current,
@@ -413,7 +421,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
           <textarea
             rows={field.rows}
             value={currentFields[field.path]}
-            disabled={props.disabled || savingCurrent}
+            disabled={props.disabled || savingCurrent || !openedRow}
             onChange={(event) => setCurrentFields((current) => ({ ...current, [field.path]: event.target.value }))}
           />
         </label>)}
@@ -429,7 +437,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
           <textarea
             rows={field.rows}
             value={currentFields[field.path]}
-            disabled={props.disabled || savingCurrent}
+            disabled={props.disabled || savingCurrent || !openedRow}
             onChange={(event) => setCurrentFields((current) => ({ ...current, [field.path]: event.target.value }))}
           />
         </label>)}
@@ -443,7 +451,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
       />
 
       <div className="admin-fallback-row-actions">
-        <button type="button" disabled={props.disabled || savingCurrent || !currentDirty} onClick={() => void saveCurrentGroupedDraft()}>
+        <button type="button" disabled={props.disabled || savingCurrent || !openedRow || !currentDirty} onClick={() => void saveCurrentGroupedDraft()}>
           {savingCurrent ? "Saving draft…" : "Save grouped draft"}
         </button>
         <button type="button" disabled={props.disabled || batchLoading} onClick={() => void toggleBatchReview()}>
@@ -517,7 +525,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
               <div className="admin-fallback-row-actions">
                 <button
                   type="button"
-                  disabled={props.disabled || savingBatchKey === row.content_key || !hasUnsavedEdit}
+                  disabled={props.disabled || Boolean(savingBatchKey) || !hasUnsavedEdit}
                   onClick={() => void saveBatchFallbackDraft(row)}
                 >
                   {savingBatchKey === row.content_key ? "Saving draft…" : "Save fallback draft"}

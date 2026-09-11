@@ -1805,11 +1805,17 @@ async function fetchExistingRowById(id: string) {
   return Array.isArray(payload) ? payload[0] as ExistingGeneratedContentRow | undefined : undefined;
 }
 
+function nextGeneratedContentVersion(previous?: string | null) {
+  const previousTime = previous ? Date.parse(previous) : NaN;
+  return new Date(Math.max(Date.now(), Number.isFinite(previousTime) ? previousTime + 1 : 0)).toISOString();
+}
+
 async function patchGeneratedContentRow(
   id: string,
   patch: Record<string, unknown>,
   expectedUpdatedAt?: string | null
 ) {
+  patch = { ...patch, updated_at: nextGeneratedContentVersion(expectedUpdatedAt) };
   if (patch.status === "LIVE") {
     const existing = await fetchExistingRowById(id);
     if (!existing) throw new GeneratedContentRequestError("The source no longer exists. Reload before publishing.", 404);
@@ -2001,6 +2007,7 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
       skippedLiveRows.push({ contentKey: row.content_key, id: existing.id, status: "LIVE" });
       continue;
     }
+    if (existing) row.updated_at = nextGeneratedContentVersion(existing.updated_at);
     try {
       const conflict = () => new GeneratedContentRequestError(`Content ${row.content_key} changed while the batch was saving. Reload it before retrying; the newer version was not overwritten.`, 409);
       if (existing && (!existing.updated_at || (rows[index].expectedUpdatedAt && rows[index].expectedUpdatedAt !== existing.updated_at))) throw conflict();
@@ -2071,7 +2078,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   const patch: Record<string, unknown> = {
-    updated_at: new Date().toISOString()
+    updated_at: nextGeneratedContentVersion(existing.updated_at)
   };
 
   if (body.ownerAction === "approve-package-revision") {
@@ -2321,7 +2328,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     };
 
     if (existing.status !== "LIVE") {
-      return patchGeneratedContentRow(existing.id, revisionPatch, body.expectedUpdatedAt);
+      return patchGeneratedContentRow(existing.id, revisionPatch, body.expectedUpdatedAt ?? existing.updated_at);
     }
 
     return upsertGeneratedContentRow({

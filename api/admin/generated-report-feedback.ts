@@ -1,5 +1,6 @@
+import { AdminHttpError, adminErrorStatus, readAdminJsonBody as jsonRequestBody, sendAdminJson as sendJson, adminStorageRows } from "../_lib/admin-http.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { jsonRequestBody, requireReportAdmin, sendJson } from "../_lib/report-http.js";
+import { requireReportAdmin } from "../_lib/report-http.js";
 import { createSupabaseReportAdmin } from "../_lib/supabase-report-admin.js";
 import type {
   GeneratedReportOwnerFeedbackRow,
@@ -91,6 +92,7 @@ async function dashboard() {
 }
 
 async function action(body: FeedbackActionBody) {
+  for (const value of [body.reportId, body.feedbackId, body.feedbackText, body.governedEvidenceText]) if (value !== undefined && typeof value !== "string") throw new AdminHttpError(400, "Feedback fields must contain text.");
   const admin = createSupabaseReportAdmin();
   if (body.action === "save_candidate") {
     const feedbackText = body.feedbackText?.trim() ?? "";
@@ -106,7 +108,9 @@ async function action(body: FeedbackActionBody) {
       evidence_scope: "report_kind",
       status: "candidate"
     });
-    return { ok: true, feedback: rows[0] ?? null };
+    const confirmed = adminStorageRows<GeneratedReportOwnerFeedbackRow>(rows);
+    if (confirmed.length !== 1 || typeof confirmed[0].id !== "string" || !confirmed[0].id || confirmed[0].status !== "candidate" || confirmed[0].source_generated_interpretation_id !== report.id || confirmed[0].feedback_text !== feedbackText) throw new AdminHttpError(502, "Storage did not confirm the feedback. Reload before retrying.");
+    return { ok: true, feedback: confirmed[0] };
   }
 
   if (body.action === "approve") {
@@ -135,7 +139,10 @@ async function action(body: FeedbackActionBody) {
         updated_at: now
       }
     );
-    return { ok: true, feedback: rows[0] ?? null };
+    const confirmed = adminStorageRows<GeneratedReportOwnerFeedbackRow>(rows);
+    if (!confirmed.length) throw new AdminHttpError(409, "This feedback is no longer a candidate. Reload before reviewing.");
+    if (confirmed.length !== 1 || confirmed[0].id !== existing.id || confirmed[0].status !== "approved" || confirmed[0].governed_evidence_text !== governedEvidenceText) throw new AdminHttpError(502, "Storage did not confirm the approved feedback. Reload before retrying.");
+    return { ok: true, feedback: confirmed[0] };
   }
 
   if (body.action === "reject") {
@@ -145,8 +152,10 @@ async function action(body: FeedbackActionBody) {
       `id=eq.${body.feedbackId}&status=eq.candidate`,
       { status: "rejected", updated_at: new Date().toISOString() }
     );
-    if (!rows[0]) throw new Error("Only candidate feedback can be rejected.");
-    return { ok: true, feedback: rows[0] };
+    const confirmed = adminStorageRows<GeneratedReportOwnerFeedbackRow>(rows);
+    if (!confirmed.length) throw new AdminHttpError(409, "Only candidate feedback can be rejected. Reload before reviewing.");
+    if (confirmed.length !== 1 || confirmed[0].id !== body.feedbackId || confirmed[0].status !== "rejected") throw new AdminHttpError(502, "Storage did not confirm the rejected feedback. Reload before retrying.");
+    return { ok: true, feedback: confirmed[0] };
   }
 
   throw new Error("Unsupported generated-report feedback action.");
@@ -168,6 +177,6 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     sendJson(res, 405, { error: "Method not allowed." });
   } catch (error) {
-    sendJson(res, 400, { error: error instanceof Error ? error.message : "Generated report feedback request failed." });
+    sendJson(res, error instanceof AdminHttpError ? adminErrorStatus(error) : 400, { error: error instanceof Error ? error.message : "Generated report feedback request failed." });
   }
 }

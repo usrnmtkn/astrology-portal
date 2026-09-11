@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { adminErrorMessage, adminErrorStatus, adminFetch, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { contentSourceRepairPlan } from "./content-source-repair-plans.js";
 
@@ -26,12 +26,12 @@ async function recordedResolutions() {
     order: "updated_at.desc,issue_id.asc",
     limit: "1000"
   });
-  const response = await adminFetch(`${url}/rest/v1/content_studio_issue_resolutions?${params}`, {
+  const response = await adminFetchJson(`${url}/rest/v1/content_studio_issue_resolutions?${params}`, {
     headers: { apikey: key, authorization: `Bearer ${key}` }
   });
-  const rows = await response.json().catch(() => null);
+  const rows = response.payload;
   if (!response.ok) return { ready: false, rows: [] as Array<Record<string, unknown>> };
-  return { ready: true, rows: Array.isArray(rows) ? rows as Array<Record<string, unknown>> : [] };
+  return { ready: true, rows: adminStorageRows(rows) };
 }
 
 async function recordedSourceDecisions() {
@@ -43,12 +43,12 @@ async function recordedSourceDecisions() {
     order: "approved_at.desc,decision_id.asc",
     limit: "1000"
   });
-  const response = await adminFetch(`${url}/rest/v1/content_studio_source_decisions?${params}`, {
+  const response = await adminFetchJson(`${url}/rest/v1/content_studio_source_decisions?${params}`, {
     headers: { apikey: key, authorization: `Bearer ${key}` }
   });
-  const rows = await response.json().catch(() => null);
+  const rows = response.payload;
   if (!response.ok) return { ready: false, rows: [] as Array<Record<string, unknown>> };
-  return { ready: true, rows: Array.isArray(rows) ? rows as Array<Record<string, unknown>> : [] };
+  return { ready: true, rows: adminStorageRows(rows) };
 }
 
 export function unresolvedContentSurface(contentKey: string) {

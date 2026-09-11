@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { currentSkyFacts } from "../_lib/current-sky.js";
 import { generateSkyArticleTemplateSlots } from "../_lib/content-generation.js";
@@ -32,28 +33,10 @@ type RequestBody = {
   voiceNotes?: string;
 };
 
-function sendJson(res: ServerResponse, status: number, body: unknown) {
-  res.statusCode = status;
-  res.setHeader("content-type", "application/json");
-  res.end(JSON.stringify(body));
-}
-
 function requireEnv(name: string) {
   const value = process.env[name];
   if (!value) throw new Error(`${name} is not configured.`);
   return value;
-}
-
-async function readJsonBody(req: IncomingMessage) {
-  const chunks: Buffer[] = [];
-  let size = 0;
-  for await (const chunk of req) {
-    const bytes = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-    size += bytes.length;
-    if (size > 256_000) throw new Error("Request body is too large.");
-    chunks.push(bytes);
-  }
-  return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}") as RequestBody;
 }
 
 function adminHeaders() {
@@ -71,15 +54,15 @@ async function loadApprovedTemplate(templateId: string) {
     select: "id,content_key,headline,body,status,lane,review_state,event_type,source_snapshot",
     limit: "1"
   });
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
     headers: adminHeaders()
   });
-  const payload = await response.json().catch(() => null) as TemplateRow[] | { message?: string } | null;
+  const payload = response.payload;
   if (!response.ok) {
-    throw new Error(`Could not load the canonical template: ${JSON.stringify(payload)}`);
+    throw new AdminHttpError(502, `Could not load the canonical template: ${JSON.stringify(payload)}`);
   }
-  const row = Array.isArray(payload) ? payload[0] : null;
-  if (!row) throw new Error("The selected Sky article template no longer exists.");
+  const row = adminStorageRows<TemplateRow>(payload)[0];
+  if (!row) throw new AdminHttpError(404, "The selected Sky article template no longer exists.");
 
   const reviewStatus = typeof row.source_snapshot?.review_status === "string"
     ? row.source_snapshot.review_status.trim().toLowerCase()
@@ -89,9 +72,9 @@ async function loadApprovedTemplate(templateId: string) {
     && !row.review_state
     && ["approved", "approved_reuse", "reviewed"].includes(reviewStatus);
   if (row.event_type !== "sky-article-template" || !approved) {
-    throw new Error("AI fields can be generated only from an approved, non-serving Sky article template.");
+    throw new AdminHttpError(422, "AI fields can be generated only from an approved, non-serving Sky article template.");
   }
-  if (!row.body?.trim()) throw new Error("The selected Sky article template has no body.");
+  if (!row.body?.trim()) throw new AdminHttpError(422, "The selected Sky article template has no body.");
   return row;
 }
 
@@ -108,19 +91,23 @@ function existingStringValues(value: Record<string, unknown> | undefined) {
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "POST") {
-    sendJson(res, 405, { error: "Use POST." });
+    sendAdminMethodNotAllowed(res, ["POST"]);
     return;
   }
   if (!await isContentAdminAuthorized(req)) {
-    sendJson(res, 401, { error: "Unauthorized." });
+    sendAdminJson(res, 401, { error: "Unauthorized." });
     return;
   }
 
   try {
-    const body = await readJsonBody(req);
-    if (!body.templateId?.trim()) throw new Error("templateId is required.");
+    const body = await readAdminJsonBody<RequestBody>(req, 256_000);
+    if (typeof body.templateId !== "string" || !body.templateId.trim()) throw new AdminHttpError(400, "templateId is required.");
+    if (body.provider !== undefined && !["openai", "claude", "anthropic"].includes(body.provider)) throw new AdminHttpError(400, "Invalid provider.");
+    if (body.voiceNotes !== undefined && typeof body.voiceNotes !== "string") throw new AdminHttpError(400, "voiceNotes must be text.");
+    if (body.existingSlotValues !== undefined && (!body.existingSlotValues || typeof body.existingSlotValues !== "object" || Array.isArray(body.existingSlotValues) || Object.values(body.existingSlotValues).some((value) => typeof value !== "string"))) throw new AdminHttpError(400, "existingSlotValues must contain text fields.");
     const referenceDate = body.referenceDate ?? new Date().toISOString().slice(0, 10);
-    if (!/^\d{4}-\d{2}-\d{2}$/u.test(referenceDate)) throw new Error("referenceDate must be YYYY-MM-DD.");
+    const instant = new Date(`${referenceDate}T12:00:00.000Z`);
+    if (typeof referenceDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/u.test(referenceDate) || !Number.isFinite(instant.getTime()) || instant.toISOString().slice(0, 10) !== referenceDate) throw new AdminHttpError(400, "referenceDate must be a valid YYYY-MM-DD date.");
 
     const template = await loadApprovedTemplate(body.templateId.trim());
     const planet = templatePlanet(template);
@@ -144,7 +131,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const blockedSlots = unfinished.filter(skyArticleTemplateSlotNeedsAdditionalFacts);
     const requestedSlots = unfinished.filter((slot) => !skyArticleTemplateSlotNeedsAdditionalFacts(slot));
     if (!requestedSlots.length) {
-      sendJson(res, 200, {
+      sendAdminJson(res, 200, {
         ok: true,
         slotValues: {},
         blockedSlots,
@@ -167,7 +154,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       provider: body.provider,
       voiceNotes: body.voiceNotes
     });
-    sendJson(res, 200, {
+    sendAdminJson(res, 200, {
       ok: true,
       slotValues: generation.slotValues,
       blockedSlots,
@@ -182,7 +169,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     });
   } catch (error) {
-    sendJson(res, 500, {
+    sendAdminJson(res, adminErrorStatus(error), {
       ok: false,
       error: error instanceof Error ? error.message : "Unknown Sky article template slot error."
     });

@@ -3237,7 +3237,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       else await dialog.dismiss();
     });
     await page.getByRole("button", { name: "Record an existing response" }).click();
-    await expect.poll(() => recorded).toEqual(response);
+    await expect.poll(() => recorded).toEqual({ ...response, expectedUpdatedAt: null });
   });
 
   test("review queue Edit opens the saved-row editor", async ({ page }) => {
@@ -4447,6 +4447,7 @@ test.describe("content dashboard admin user flow case studies", () => {
             report: { id: reportId, report_domain: "general", report_horizon: "12_months", fulfillment_status: "live" },
             units: [{
               id: unitId,
+              updated_at: "2026-09-10T12:00:00.123456Z",
               content_key: `report:${reportId}:overview`,
               headline: "Your Year Ahead",
               timing: "January through December",
@@ -4485,7 +4486,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       body: "A reviewed correction for the delivered reader passage."
     });
     await editor.getByRole("button", { name: "Publish correction" }).click();
-    expect(actions.at(-1)).toMatchObject({ action: "publish_report_unit_correction", reportId, unitId });
+    expect(actions.at(-1)).toMatchObject({ action: "publish_report_unit_correction", reportId, unitId, expectedUpdatedAt: "2026-09-10T12:00:00.123456Z" });
     await assertNoBrowserErrors();
   });
 
@@ -5673,3 +5674,70 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     await expectNoHorizontalOverflow(page,`Separated article ${theme} ${width}`);
   });
 }
+
+test('Aspect Patterns authenticates reads and previews and preserves newer drafts through the actual handler', async ({ page, baseURL }) => {
+  test.setTimeout(90_000);
+  test.skip(!baseURL || !['localhost', '127.0.0.1'].includes(new URL(baseURL).hostname), 'Isolated local storage only.');
+  const { Readable } = await import('node:stream');
+  const { default: handler } = await import('../../api/admin/aspect-pattern-writeups');
+  const env = { CONTENT_GENERATION_SECRET: 'qa-secret', SUPABASE_URL: 'https://aspect-browser.invalid', SUPABASE_SERVICE_ROLE_KEY: 'fixture' };
+  const previous = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
+  Object.assign(process.env, env);
+  const originalFetch = globalThis.fetch;
+  let row: Record<string, any> | null = null;
+  let saves = 0;
+  const id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(String(input));
+    expect(url.origin).toBe(env.SUPABASE_URL);
+    if (init.method === 'POST') {
+      if (row) return Response.json({ code: '23505' }, { status: 409 });
+      row = { ...JSON.parse(String(init.body)), id }; saves++; return Response.json([row]);
+    }
+    if (init.method === 'PATCH') {
+      if (!row || url.searchParams.get('updated_at') !== `eq.${row.updated_at}`) return Response.json([]);
+      row = { ...row, ...JSON.parse(String(init.body)) }; saves++; return Response.json([row]);
+    }
+    return Response.json(row ? [row] : []);
+  };
+  try {
+    await seedAdminApi(page, { expectedSecret: 'qa-secret' });
+    await page.route('**/api/admin/aspect-pattern-writeups**', async route => {
+      const request = route.request();
+      const req = Object.assign(Readable.from(request.postData() ? [request.postData()!] : []), {
+        method: request.method(), url: request.url(), headers: request.headers()
+      });
+      const res = { statusCode: 0, headers: {} as Record<string, string>, body: '', setHeader(key: string, value: string) { this.headers[key] = value; }, end(value: string) { this.body = value; } };
+      await handler(req as any, res as any);
+      await route.fulfill({ status: res.statusCode, headers: res.headers, body: res.body });
+    });
+    await page.goto('/admin/content#content/aspect-patterns');
+    const editor = page.getByRole('region', { name: 'Aspect pattern write-up editor', exact: true });
+    await expect(editor).toBeVisible();
+    const overview = editor.getByRole('textbox', { name: 'Overview', exact: true });
+    const copy = 'QA complete first paragraph.\n\nQA final sentence. ';
+    await overview.fill(copy);
+    await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect.poll(() => saves).toBe(1);
+    await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
+    await overview.fill(`${copy}Second edit.`);
+    await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect.poll(() => saves).toBe(2);
+    await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
+    expect(row!.source_snapshot.record.content.overview).toBe(`${copy}Second edit.`);
+    row!.updated_at = '2099-01-01T00:00:00.123456Z';
+    row!.source_snapshot.record.content.overview = 'QA newer draft from another editor.';
+    await overview.fill('QA stale browser edit.');
+    await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect(page.getByRole('alert')).toContainText('changed after it was opened');
+    expect(saves).toBe(2);
+    expect(row!.source_snapshot.record.content.overview).toBe('QA newer draft from another editor.');
+    await expect(overview).toHaveValue('QA stale browser edit.');
+    await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+    await expect(overview).toHaveValue('QA newer draft from another editor.');
+  } finally {
+    await page.unroute('**/api/admin/aspect-pattern-writeups**').catch(() => {});
+    globalThis.fetch = originalFetch;
+    for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
+  }
+});

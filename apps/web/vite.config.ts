@@ -202,6 +202,9 @@ export default defineConfig(({ mode }) => {
       dedupe: ["react", "react-dom"]
     },
     build: {
+      // Match the standalone Studio's compression without changing lazy boundaries.
+      minify: "terser",
+      terserOptions: { compress: { passes: 2 }, format: { comments: false } },
       manifest: true,
       // Large data registries are route-split and governed by gzip budgets.
       // Use a raw-size advisory that reflects the largest intentional registry.

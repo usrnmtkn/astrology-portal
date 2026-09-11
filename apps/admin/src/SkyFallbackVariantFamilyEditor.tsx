@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
+import { readGeneratedContentRows, saveGeneratedContentDraft } from "./generatedContentClient";
 import { adminCredentialHeaders } from "./adminSecret";
 
 type AdminRow = {
@@ -168,6 +169,8 @@ function laneComplete(lane: Lane) {
 }
 
 export default function SkyFallbackVariantFamilyEditor(props: Props) {
+  const [openedRow, setOpenedRow] = useState<AdminRow | null>(null);
+  const context = useRef(0);
   const [family, setFamily] = useState<VariantFamily>(() => defaultFamily(props.contentKey));
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -179,38 +182,39 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
   const completeLaneCount = useMemo(() => family.lanes.filter(laneComplete).length, [family]);
 
   async function generatedContentRows() {
-    const response = await fetch(`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(props.contentKey)}&limit=20`, {
-      headers: adminCredentialHeaders(props.secret)
-    });
-    const payload = await response.json() as unknown;
-    if (!response.ok) throw new Error(String(record(payload).error || `Content Studio request failed (${response.status}).`));
-    if (!Array.isArray(payload)) throw new Error("Content Studio returned an unexpected row payload.");
-    const rows = (payload as AdminRow[]).filter((row) => row.content_key === props.contentKey);
+    const payload = await readGeneratedContentRows(`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(props.contentKey)}&limit=20`, props.secret);
+    const rows = payload.filter((row) => row.content_key === props.contentKey);
     if (!rows.length) throw new Error(`Could not load the stored Content Studio row for ${props.contentKey}.`);
     return rows.reduce(preferredRow);
   }
 
   async function loadFamily() {
+    const generation = ++context.current;
+    setOpenedRow(null);
     setLoading(true);
     setError(null);
     try {
       const row = await generatedContentRows();
+      if (generation !== context.current) return;
+      setOpenedRow(row);
       setFamily(familyFromRow(row, props.contentKey));
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Fallback variant family could not be loaded.");
+      if (generation === context.current) setError(reason instanceof Error ? reason.message : "Fallback variant family could not be loaded.");
     } finally {
-      setLoading(false);
+      if (generation === context.current) setLoading(false);
     }
   }
 
   useEffect(() => {
+    setSaving(false);
     setFamily(defaultFamily(props.contentKey));
     setEventInstanceId(`${props.contentKey}:preview-event-1`);
     setPreview(null);
     setMessage(null);
     void loadFamily();
+    return () => { context.current += 1; };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.contentKey]);
+  }, [props.contentKey, props.secret]);
 
   function updateLane(index: number, patch: Partial<Lane>) {
     setFamily((current) => ({
@@ -262,34 +266,28 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
   }
 
   async function saveFamily() {
+    const generation = context.current;
+    const row = openedRow;
+    if (!row || row.content_key !== props.contentKey) return;
     setSaving(true);
     setError(null);
     setMessage(null);
     try {
-      const row = await generatedContentRows();
       const sections = rowSections(row);
-      const response = await fetch("/api/admin/generated-content", {
-        method: "PATCH",
-        headers: { "content-type": "application/json", ...adminCredentialHeaders(props.secret) },
-        body: JSON.stringify({
-          id: row.id,
-          sections: {
-            ...sections,
-            packageDraft: rowEffectiveRecord(row),
-            skyFallbackVariantFamilyDraft: family
-          },
-          reviewStatus: "needs_review"
-        })
-      });
-      const payload = await response.json() as unknown;
-      if (!response.ok) throw new Error(String(record(payload).error || `Variant family save failed (${response.status}).`));
+      const saved = await saveGeneratedContentDraft(row, {
+        ...sections,
+        packageDraft: rowEffectiveRecord(row),
+        skyFallbackVariantFamilyDraft: family
+      }, props.secret);
+      if (generation !== context.current) return;
+      setOpenedRow(saved);
       announceContentUpdate({ contentKey: props.contentKey, published: false, updatedAt: new Date().toISOString() });
       setMessage("Variant family draft saved. The approved serving baseline and legacy fallback remain unchanged.");
-      await loadFamily();
+
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Fallback variant family could not be saved.");
+      if (generation === context.current) setError(reason instanceof Error ? reason.message : "Fallback variant family could not be saved.");
     } finally {
-      setSaving(false);
+      if (generation === context.current) setSaving(false);
     }
   }
 
@@ -328,7 +326,7 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
         <span>Family version</span>
         <input
           value={family.familyVersion}
-          disabled={props.disabled || saving}
+          disabled={props.disabled || saving || loading || !openedRow}
           onChange={(event) => {
             setFamily((current) => ({ ...current, familyVersion: event.target.value }));
             setPreview(null);
@@ -338,7 +336,7 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
       </label>
       <label>
         <span>Event instance ID for preview</span>
-        <input value={eventInstanceId} disabled={props.disabled || saving} onChange={(event) => setEventInstanceId(event.target.value)} />
+        <input value={eventInstanceId} disabled={props.disabled || saving || loading || !openedRow} onChange={(event) => setEventInstanceId(event.target.value)} />
         <small>Use the same value twice to verify refresh/day-to-day stability. Production will supply an immutable ephemeris event ID.</small>
       </label>
     </div>
@@ -348,11 +346,11 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
         <div className="admin-review-filter-grid">
           <label>
             <span>Lane ID</span>
-            <input value={lane.id} disabled={props.disabled || saving} onChange={(event) => updateLane(laneIndex, { id: event.target.value })} />
+            <input value={lane.id} disabled={props.disabled || saving || loading || !openedRow} onChange={(event) => updateLane(laneIndex, { id: event.target.value })} />
           </label>
           <label>
             <span>Lane label</span>
-            <input value={lane.label} disabled={props.disabled || saving} onChange={(event) => updateLane(laneIndex, { label: event.target.value })} />
+            <input value={lane.label} disabled={props.disabled || saving || loading || !openedRow} onChange={(event) => updateLane(laneIndex, { label: event.target.value })} />
           </label>
         </div>
         <p><strong>{laneComplete(lane) ? "Complete lane" : "Incomplete lane"}</strong> · selection never mixes sections across lanes.</p>
@@ -365,27 +363,27 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
             <input
               aria-label={`${section.label} variant ID`}
               value={variant.id}
-              disabled={props.disabled || saving}
+              disabled={props.disabled || saving || loading || !openedRow}
               onChange={(event) => updateVariant(laneIndex, section.key, variantIndex, { id: event.target.value })}
             />
             <textarea
               rows={section.key === "closes" ? 4 : 7}
               value={variant.text}
-              disabled={props.disabled || saving}
+              disabled={props.disabled || saving || loading || !openedRow}
               onChange={(event) => updateVariant(laneIndex, section.key, variantIndex, { text: event.target.value })}
             />
-            <button type="button" disabled={props.disabled || saving} onClick={() => removeVariant(laneIndex, section.key, variantIndex)}>Remove variant</button>
+            <button type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={() => removeVariant(laneIndex, section.key, variantIndex)}>Remove variant</button>
           </label>)}
-          <button type="button" disabled={props.disabled || saving} onClick={() => addVariant(laneIndex, section.key)}>Add {section.label.toLowerCase()} variant</button>
+          <button type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={() => addVariant(laneIndex, section.key)}>Add {section.label.toLowerCase()} variant</button>
         </div>)}
 
-        <button type="button" disabled={props.disabled || saving || family.lanes.length === 1} onClick={() => removeLane(laneIndex)}>Remove lane</button>
+        <button type="button" disabled={props.disabled || saving || loading || !openedRow || family.lanes.length === 1} onClick={() => removeLane(laneIndex)}>Remove lane</button>
       </article>)}
     </div>
 
     <div className="admin-fallback-row-actions">
-      <button type="button" disabled={props.disabled || saving || loading} onClick={addLane}>Add lane</button>
-      <button type="button" disabled={props.disabled || saving || loading} onClick={() => void saveFamily()}>{saving ? "Saving family…" : "Save variant family draft"}</button>
+      <button type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={addLane}>Add lane</button>
+      <button type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={() => void saveFamily()}>{saving ? "Saving family…" : "Save variant family draft"}</button>
       <button type="button" disabled={props.disabled || loading || completeLaneCount === 0 || !eventInstanceId.trim()} onClick={() => void renderPreview()}>Preview event-locked fallback</button>
       <button type="button" disabled={props.disabled || loading} onClick={() => void loadFamily()}>{loading ? "Loading…" : "Reload family"}</button>
     </div>

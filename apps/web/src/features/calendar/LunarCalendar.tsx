@@ -28,6 +28,8 @@ import {
   fallbackV3PlanetTopic,
   fallbackV3VocabularyBody,
   KNOWLEDGE_MATRIX_V9_VERSION,
+  isDeferredFallbackArchitectureV3BundleLoaded,
+  loadDeferredFallbackArchitectureV3Bundle,
   loadKnowledgeMatrixV9Runtime,
   skyV4ReaderRenderer,
   SourceGapError as FallbackV3SourceGapError,
@@ -110,8 +112,9 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
   { value: "month", label: "Month" }
 ];
 
-// v9 drops week responses cached before the API's civil-date timezone fix.
-const calendarStorageVersion = "v10";
+// v11 drops partial Day caches that could select a different Moon passage
+// before the full event facts used by Week finished loading.
+const calendarStorageVersion = "v11";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD
@@ -234,9 +237,8 @@ function calendarStorageKey(
   mode: LunarCalendarViewMode,
   anchor: Date
 ) {
-  // The editorial Week view requires fully hydrated event prose. Keep it
-  // separate from the lighter Day cache so partial data can never flash before
-  // the final weekly write-up replaces it.
+  // Keep view-specific caches; Day and editorial Week both store full facts
+  // so passage selection never runs against a partial event list.
   const normalizedMode = mode === "weekly" ? "weekly" : mode;
   const normalizedAnchor = isWeekBasedView(mode) ? startOfWeekDate(anchor) : monthStart(anchor);
 
@@ -1904,6 +1906,7 @@ export function LunarCalendar({
   const [selectedCalendar, setSelectedCalendar] = useState<LunarCalendarMonthData | null>(null);
   const [seasonEvents, setSeasonEvents] = useState<LunarCalendarEvent[]>([]);
   const [status, setStatus] = useState<LunarCalendarStatus>("loading");
+  const [moonContentReady, setMoonContentReady] = useState(isDeferredFallbackArchitectureV3BundleLoaded);
   const [selectedDateKey, setSelectedDateKey] = useState(initialDateKey);
   const [retryNonce, setRetryNonce] = useState(0);
   const [locationPickerOpen, setLocationPickerOpen] = useState(false);
@@ -1915,6 +1918,16 @@ export function LunarCalendar({
   const [approvedExactSkyAspectLookup, setApprovedExactSkyAspectLookup] = useState<ApprovedExactSkyAspectLookup | null>(null);
   const [composedSkyCalendarCardLookup, setComposedSkyCalendarCardLookup] = useState<SkyCalendarComposedCardLookup | null>(null);
   const monthDetailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let active = true;
+    // Calculated days and the authored Moon bundle load concurrently. An absent
+    // row while its bundle is loading is not a genuine content gap.
+    void loadDeferredFallbackArchitectureV3Bundle()
+      .catch(error => console.warn("Calendar Moon content could not load; keeping available fallback content.", error))
+      .finally(() => { if (active) setMoonContentReady(true); });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -1958,7 +1971,9 @@ export function LunarCalendar({
       : visibleMonth;
     const storedCalendarKey = calendarStorageKey(location, viewMode, visibleAnchor);
     const storedCalendar = readStoredCalendar(storedCalendarKey);
-    const initialDetail = viewMode === "weekly" ? "full" : "basic";
+    // Day selects its Moon guidance from the same event-dependent weekly
+    // sequence as Week. Basic facts omit those events and select different copy.
+    const initialDetail = isWeekBasedView(viewMode) ? "full" : "basic";
 
     if (storedCalendar) {
       setCalendar(storedCalendar);
@@ -3074,7 +3089,7 @@ export function LunarCalendar({
         </div>
       </header>
 
-      {status === "loading" && (
+      {(status === "loading" || !moonContentReady) && (
         <div className="lunar-calendar-loading" role="status">
           <Loader2 size={18} aria-hidden="true" />
           <span>Calculating calendar</span>
@@ -3089,7 +3104,7 @@ export function LunarCalendar({
         </div>
       )}
 
-      {calendar && status === "ready" && (
+      {calendar && status === "ready" && moonContentReady && (
         <div
           className={`lunar-calendar-body is-${viewMode}`}
           id="lunar-calendar-view-panel"
