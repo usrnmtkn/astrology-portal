@@ -141,12 +141,12 @@ export function buildYouWeekReportBrief(input: {
   };
 }
 
-export async function requestYouTransitReport(brief: YouTransitReportBrief) {
+export async function requestYouTransitReport(brief: YouTransitReportBrief, expectedUserId?: string) {
   const supabase = await getSupabaseClient();
-  if (!supabase) throw new Error("Sign in before creating a report.");
+  if (!supabase) throw new Error("Report sign-in is unavailable. Please reload and try again.");
   const { data, error } = await supabase.auth.getSession();
-  if (error || !data.session?.access_token) {
-    throw new Error(error?.message ?? "Sign in before creating a report.");
+  if (error || !data.session?.access_token || (expectedUserId && data.session.user.id !== expectedUserId)) {
+    throw new Error("Your session could not be confirmed. Please try again.");
   }
 
   const response = await fetch("/api/you-report-request", {
