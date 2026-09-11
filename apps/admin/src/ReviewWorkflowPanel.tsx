@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
 import { skyWritingIssues, type ReviewableContent } from "../../web/src/content/contentReviewReadiness";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
-import StudioMemoryFeedback from "./StudioMemoryFeedback";
+const StudioMemoryFeedback = lazy(() => import("./StudioMemoryFeedback"));
 type Row = ReviewableContent & {
     id: string;
     updated_at?: string | null;
@@ -44,7 +44,9 @@ export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGen
           {busy ? "Working…" : row.body?.trim() ? "Run writing checks" : "Generate draft"}
         </button>}
         <p>Writing checks inspect your saved text without rewriting it. Your approval remains a separate action.</p>
-        <StudioMemoryFeedback key={row.content_key} contentKey={row.content_key} credential={credential} revision={row.updated_at} unsaved={unsaved} />
+        <Suspense fallback={null}>
+          <StudioMemoryFeedback key={row.content_key} contentKey={row.content_key} credential={credential} revision={row.updated_at} unsaved={unsaved} />
+        </Suspense>
       </>}
       {row.status === "LIVE" && <>
         <button type="button" onClick={() => setVerification(value => value + 1)}>Verify publication status</button>
