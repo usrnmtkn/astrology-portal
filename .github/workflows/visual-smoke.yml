@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   visual-smoke:
@@ -84,17 +85,6 @@ jobs:
 
       - name: Run visual regression and smoke screens
         run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
-
-      - name: Capture synthetic profile baseline candidates for review
-        if: failure() && github.head_ref == 'codex/privacy-remediation'
-        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts --update-snapshots
-
-      - name: Upload baseline candidates for review
-        if: always() && github.head_ref == 'codex/privacy-remediation'
-        uses: actions/upload-artifact@v6
-        with:
-          name: synthetic-profile-baseline-candidates
-          path: tests/visual/visual-regression-baseline.spec.ts-snapshots/*linux.png
 
       - name: Run Content Studio admin user flows
         run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts
