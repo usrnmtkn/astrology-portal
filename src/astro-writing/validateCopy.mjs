@@ -423,9 +423,9 @@ export function validateCopy(copy, {
     && /\b(?:in this article|this article will|as an ai|here(?:'s| is) what (?:you need to know|we will cover))\b/iu.test(text)) {
     violations.push({ category: "article_meta_scaffolding", detail: "Article copy exposed generic composition scaffolding." });
   }
-  if (profile.surfaceRules.includes("temporary-transit-register")
-    && /\b(?:you tend to|you always|you usually|usually|generally|this is who you are)\b/iu.test(text)) {
-    violations.push({ category: "temporary_transit_register", detail: "Friends transit copy used standing-pattern language." });
+  const standingPattern = text.match(/\b(?:you tend to|you always|you usually|usually|generally|this is who you are)\b/iu);
+  if (profile.surfaceRules.includes("temporary-transit-register") && standingPattern) {
+    violations.push({ category: "temporary_transit_register", detail: `Friends transit copy used standing-pattern language: "${standingPattern[0]}". Rewrite that wording within the supplied transit window without claiming a habitual pattern.` });
   }
   if (profile.surfaceRules.includes("disconnected-stock-coaching")
     && /\b(?:give yourself permission|you are allowed|let yourself|allow yourself|take the win|protect your energy|honor your needs)\b/iu.test(text)) {
