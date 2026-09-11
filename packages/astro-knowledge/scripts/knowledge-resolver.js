@@ -10,6 +10,7 @@
  */
 
 const crypto = require("node:crypto");
+const { sourceSha256 } = require("./source-verification.js");
 const fs = require("node:fs");
 const path = require("node:path");
 
@@ -108,7 +109,7 @@ function verifyAllSourceHashes(index) {
   for (const [relative, hash] of expected) {
     const absolute = path.join(repoRoot, relative);
     if (!fs.existsSync(absolute)) throw new Error(`KNOWLEDGE_SOURCE_MISSING: ${relative}. No provider call is allowed.`);
-    if (sha256(fs.readFileSync(absolute)) !== hash) {
+    if (sourceSha256(absolute) !== hash) {
       throw new Error(`KNOWLEDGE_INDEX_STALE: ${relative} changed after the index was built. No provider call is allowed.`);
     }
   }
@@ -117,7 +118,7 @@ function verifyAllSourceHashes(index) {
 
 function assertIndexCurrent() {
   const index = loadIndex();
-  if (sha256(fs.readFileSync(indexPath)) !== index.indexSha256) {
+  if (sourceSha256(indexPath) !== index.indexSha256) {
     throw new Error("KNOWLEDGE_INDEX_STALE: the canonical index changed after it was loaded. No provider call is allowed.");
   }
   verifyAllSourceHashes(index.meta);
@@ -423,7 +424,7 @@ function buildMultiTargetPacket(canonicalIds, {
 
 function assertPacket(packet, { canonicalId = packet?.canonicalId, surface = packet?.surface, register = packet?.register } = {}) {
   const index = loadIndex();
-  if (sha256(fs.readFileSync(indexPath)) !== index.indexSha256) {
+  if (sourceSha256(indexPath) !== index.indexSha256) {
     throw new Error("KNOWLEDGE_PACKET_STALE: the canonical index changed after packet construction. No provider call is allowed.");
   }
   // Recheck source bytes at the actual provider boundary. Packet creation may
