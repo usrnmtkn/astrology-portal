@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { readPrivateReportDocument } from '../api/_lib/private-report-documents.mjs';
 
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
@@ -67,7 +67,7 @@ function paragraphs(value) {
 }
 
 function extractRange(locator) {
-  const source = fs.readFileSync(locator.sourcePath, "utf8");
+  const source = (locator.sourcePath.startsWith("private:report/") ? readPrivateReportDocument(locator.sourcePath) : fs.readFileSync(locator.sourcePath, "utf8"));
   const start = source.indexOf(locator.startMarker);
   const end = source.indexOf(locator.endMarker, start + locator.startMarker.length);
   assert.ok(start >= 0, `${locator.id} start marker is missing.`);
@@ -427,7 +427,7 @@ assert.equal(manifest.ownerFinalityRuling.verbatim, [
 ].join("\n"));
 for (const [domain, reference] of Object.entries(manifest.ownerFinalityRuling.references)) {
   assert.equal(reference.sourceType, "owner_authored_final");
-  assert.equal(sha256(fs.readFileSync(reference.sourcePath)), reference.sha256, `${domain} final owner reference drifted.`);
+  assert.equal(sha256(readPrivateReportDocument(reference.sourcePath)), reference.sha256, `${domain} final owner reference drifted.`);
 }
 for (const [domain, prefix] of [["work_money", "work_"], ["love_connection", "love_"], ["personal_health", "personal_"]]) {
   const finalReference = manifest.ownerFinalityRuling.references[domain].sourcePath;

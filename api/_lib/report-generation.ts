@@ -1,3 +1,4 @@
+import { readPrivateReportDocument } from "./private-report-documents.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -290,7 +291,7 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
   general: {
     canonicalPromptPath: "tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-V2-OWNER.md",
     canonicalPromptOwnerApproved: true,
-    voiceEvidencePath: "artifacts/owner-author-year-ahead-2026-FINAL.md",
+    voiceEvidencePath: "private:report/general-2026",
     generationStandardPath: GENERATION_STANDARD_PATH,
     tiers: [],
     excludedProjectionTerms: [],
@@ -299,7 +300,7 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
   work_money: {
     canonicalPromptPath: "tldr-astro-phrasebank/TLDR-WORK-MONEY-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
     canonicalPromptOwnerApproved: true,
-    voiceEvidencePath: "artifacts/owner-author-work-money-2026-owner-v1.md",
+    voiceEvidencePath: "private:report/work-money-2026",
     generationStandardPath: null,
     tiers: [
       {
@@ -384,7 +385,7 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
   love_connection: {
     canonicalPromptPath: "tldr-astro-phrasebank/TLDR-LOVE-CONNECTION-DEEPDIVE-GENERATION-PROMPT-OWNER.md",
     canonicalPromptOwnerApproved: true,
-    voiceEvidencePath: "artifacts/owner-author-love-connection-2026-owner-v1.md",
+    voiceEvidencePath: "private:report/love-connection-2026",
     generationStandardPath: null,
     tiers: [
       {
@@ -570,8 +571,8 @@ const REPORT_DOMAIN_CONFIG: Record<ReportDomain, ReportDomainConfiguration> = {
     canonicalPromptPath: PERSONAL_HEALTH_PROMPT_PATH,
     canonicalPromptOwnerApproved: true,
     canonicalPromptVersion: "personal-health-deepdive-generation-prompt-v1",
-    canonicalPromptSha256: "c43cf5a05272af7355543a5ccbd7ed50a81e1ad3bf307eb64d2bcbf984c10bee",
-    voiceEvidencePath: "artifacts/owner-author-personal-health-2026-owner-v1.md",
+    canonicalPromptSha256: "5dbefc8c900dd435de7e7f7deaba8924db5d54fbdd4eb617e6e1239c74e3517c",
+    voiceEvidencePath: "private:report/personal-health-2026",
     generationStandardPath: GENERATION_STANDARD_PATH,
     tiers: [
       {
@@ -744,6 +745,7 @@ const RETURN_ELIGIBLE = new Set([
 ]);
 
 function readRepoText(relativePath: string) {
+  if (relativePath.startsWith("private:report/")) return readPrivateReportDocument(relativePath);
   return fs.readFileSync(path.join(process.cwd(), relativePath), "utf8");
 }
 

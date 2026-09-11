@@ -13,7 +13,6 @@ playwright-report/
 artifacts/
 !artifacts/
 artifacts/*
-!artifacts/owner-author-personal-health-2026-owner-v1.md
 api/_lib/local-env.js
 
 # Local/generated review artifacts
@@ -49,3 +48,9 @@ tldrastro-fallback-architecture-v3-*.zip
 
 # Isolated memory browser-test build
 apps/web/.memory-test-dist/
+# Private source evidence and local privacy policy must never enter Git.
+.private-documents/
+.privacy-policy.json
+
+# Isolated Python dependencies
+.venv/

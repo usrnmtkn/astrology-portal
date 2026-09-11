@@ -56,6 +56,11 @@ jobs:
       - name: Build app
         run: npm run build
 
+      - name: Check public downloads for personal identifiers
+        env:
+          PROJECT_PRIVACY_POLICY: ${{ secrets.PROJECT_PRIVACY_POLICY }}
+        run: node scripts/check-project-privacy.mjs --directory apps/web/dist
+
       - name: Verify production health endpoint imports
         run: npm run test:production-health
 
@@ -167,3 +172,6 @@ jobs:
           name: sky-summary-results
           path: test-results/
           if-no-files-found: ignore
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

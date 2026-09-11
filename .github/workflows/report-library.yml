@@ -136,3 +136,6 @@ jobs:
       - name: Stop ephemeral Supabase database
         if: always()
         run: supabase stop --workdir apps/web --no-backup
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

@@ -44,3 +44,6 @@ jobs:
         run: node scripts/test-friend-vocabulary-inflection-candidates.mjs
       - name: Typecheck web app
         run: npm run typecheck
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

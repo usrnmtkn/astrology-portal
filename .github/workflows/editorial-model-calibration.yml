@@ -55,3 +55,6 @@ jobs:
             packages/astro-knowledge/out/editorial-judge-audit/verdicts.jsonl
           if-no-files-found: warn
           retention-days: 30
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

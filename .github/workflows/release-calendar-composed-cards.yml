@@ -64,3 +64,6 @@ jobs:
             packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json
           git commit -m "release(calendar): refresh composed-card evidence"
           git push origin HEAD
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

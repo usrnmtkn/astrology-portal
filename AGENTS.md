@@ -303,3 +303,11 @@ Vercel production has one source of truth: the `main` branch.
 
 The production build runs `scripts/assert-vercel-production-source.mjs` and
 rejects non-`main` or source-less production builds. Do not bypass that guard.
+
+## Privacy boundary
+
+Follow `docs/security/project-privacy.md` before committing, changing source storage,
+or publishing downloads. Personal documents and the identifying scan policy stay
+in protected storage. Use synthetic test profiles and neutral commit identities.
+Run the staged privacy guard and scan the built public assets before release.
+After a history cleanup, never merge or push pre-cleanup history from old clones.

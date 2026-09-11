@@ -1,3 +1,4 @@
+import { readPrivateReportDocument } from '../api/_lib/private-report-documents.mjs';
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -33,7 +34,7 @@ try {
     assert.equal(receipt.sources.length, 3);
     assert.equal(receipt.packetSha256, hash(JSON.stringify(expected)));
     for (const passage of expected) {
-      const source = fs.readFileSync(passage.provenance.sourcePath, "utf8");
+      const source = readPrivateReportDocument(passage.provenance.sourcePath);
       assert.ok(source.includes(passage.text), "Whole selected paragraph must be verbatim.");
       assert.equal(hash(source), passage.provenance.sourceSha256);
       assert.equal(hash(passage.text), passage.provenance.passageSha256);
