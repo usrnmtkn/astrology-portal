@@ -412,7 +412,9 @@ test("V6 Moon event sources stay separate and missing copy stays blank", async (
   ] }] } } }));
   await reader.goto("http://127.0.0.1:4294/?date=2026-09-10#sky");
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
-  await expect(summary).toContainText("Solar Eclipse in Virgo at 18° reminds us that striving for perfection can hinder growth");
+  // The calendar load is followed by a separate event-time ephemeris request.
+  // Use the existing 15-second reader readiness budget, not the 5-second DOM default.
+  await expect(summary).toContainText("Solar Eclipse in Virgo at 18° reminds us that striving for perfection can hinder growth", { timeout: 15_000 });
   await expect(summary).not.toContainText("Moon in Cancer");
   await expect(summary).not.toContainText("New Moon in Virgo");
   await expect(summary.getByRole("link", { name: "Solar Eclipse in Virgo at 18°" })).toHaveAttribute("href", "#sky/lunation/2026-09-11/virgo");

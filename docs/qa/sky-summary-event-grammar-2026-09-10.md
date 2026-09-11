@@ -55,3 +55,10 @@ The Linux desktop Sky baseline was reviewed and refreshed from CI run
 navigation are unchanged; the taller summary moves the following cards down.
 The dark Sky baseline is a controlled loading state and stays unchanged. No
 screenshot tolerance or assertion was relaxed.
+
+CI's eclipse regression reached the initial Moon before its event-time
+calculation completed within the default five-second DOM assertion window.
+The same test passed three fresh local repetitions. Its initial reader-copy
+assertion now uses the existing 15-second reader readiness budget, retaining
+all exact eclipse wording, exclusion, and link assertions. No application
+selection or calculation logic was changed for this test timing correction.
