@@ -197,7 +197,7 @@ export function memoryDetail(index, id) {
   if (!record) return null;
   if (sha256(record.body) !== record.bodySha256) throw new Error('Memory integrity mismatch');
   const source = index.sources.find(item => item.id === record.sourceId);
-  const sourceUrl = index.revision && /^[a-f0-9]{40}$/u.test(index.revision)
+  const sourceUrl = record.metadata?.storage !== 'private-studio' && index.revision && /^[a-f0-9]{40}$/u.test(index.revision)
     ? `https://github.com/usrnmtkn/astrology-portal/blob/${index.revision}/${encodeURI(record.path)}#L${record.line}` : null;
   const linkedIds = new Set(index.edges.filter(edge => edge.source === id || edge.target === id).flatMap(edge => [edge.source, edge.target]));
   return { ...record, sourceSha256: source.sha256, sourceUrl, revision: index.revision,

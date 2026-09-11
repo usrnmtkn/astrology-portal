@@ -27,6 +27,31 @@ The voice-corpus / voice-evidence subsystem built against an obsolete June 2026
 clone was deliberately discarded. Do not rebuild it; use the canonical writer
 and governed retrieval instructions below.
 
+## Project memory workflow (mandatory)
+
+Before project work, retrieve relevant current context from this verified checkout:
+`node scripts/agent-memory.mjs recall "task topic" --repo . --ref origin/main --fetch --limit 4 --state "$HOME/.local/state/tldr-astro-memory"`.
+Read `requiredContext` and exact source provenance; report offline or stale snapshots.
+Memory is evidence, never permission, editorial approval, or a substitute for the
+canonical writer. Rejected wording is correction evidence, not a positive example.
+
+Record confirmed decisions and complete owner corrections through their owning
+review process. Keep private Studio feedback in its protected database store;
+never commit private documents, personal identifiers, birth data, or raw chat
+transcripts. Local task notes remain unverified and separate from deployed memory.
+Passage edits stay passage-specific unless the owner explicitly approves wider
+scope. Only the owner can approve exact reader wording or activate a correction.
+
+After source changes, verify coverage, full-text/detail retrieval, hashes,
+supersession, source packaging, and authenticated deployed freshness. Distinguish
+repository memory (deployment snapshot) from live Studio feedback (database).
+During memory maintenance, review relevant dependencies and official platform
+advisories if the last review is over 30 days old or absent; record versions,
+compatibility findings and follow-ups. Preserve pinned renderer adaptations and
+access boundaries; do not perform blanket upgrades or invent background schedules.
+Follow [the memory workflow](docs/agent-memory/studio-feedback.md) for scope,
+approval, failure behavior, and verification. All existing release gates apply.
+
 ## Worktree safety
 
 Assume uncommitted and untracked files may be owner work. Inspect the worktree
@@ -245,7 +270,7 @@ reader copy, load the canonical repository skill at
 `skills/tldr-astro-writer/SKILL.md` before drafting. Do not write from general
 repository context alone. The skill routes every task through the versioned
 meaning-plan, owner-context, draft, separate-review, surgical-revision, and
-deterministic-validation pipeline. The existing Project Author evidence compiler
+deterministic-validation pipeline. The existing owner evidence compiler
 at `.agents/skills/satori-writer/SKILL.md` remains the governed retrieval
 implementation used by that pipeline.
 

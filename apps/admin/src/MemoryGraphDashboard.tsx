@@ -46,6 +46,7 @@ export default function MemoryGraphDashboard() {
   const [selectedId, setSelectedId] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [checkedAt, setCheckedAt] = useState('');
   const matchesRef = useRef<HTMLElement>(null);
   const detailRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -82,6 +83,7 @@ export default function MemoryGraphDashboard() {
     setError('');
     void readMemory('mode=visual', controller.signal).then(body => {
       setDocuments(body.documents);
+      setCheckedAt(body.freshness?.checkedAt ?? '');
       if (emergencyCredential.current === credential) {
         try { window.localStorage.setItem(adminSecretStorageKey, credential); } catch { /* Keep access usable when storage is unavailable. */ }
       }
@@ -102,7 +104,7 @@ export default function MemoryGraphDashboard() {
       .then(body => setPayload(body)).catch(error => { if (!controller.signal.aborted) setError(error.message); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [credential, search, offset]);
+  }, [credential, search, offset, refresh]);
   useEffect(() => {
     setDetail(null);
     if (!selectedId || !credential) return;
@@ -111,6 +113,11 @@ export default function MemoryGraphDashboard() {
       .then(body => setDetail(body.record)).catch(error => { if (!controller.signal.aborted) setError(error.message); });
     return () => controller.abort();
   }, [credential, selectedId]);
+  useEffect(() => {
+    const update = () => setRefresh(value => value + 1);
+    window.addEventListener('focus', update);
+    return () => window.removeEventListener('focus', update);
+  }, []);
   useEffect(() => {
     const select = (event: Event) => { const id = (event as CustomEvent<string>).detail; if (typeof id === 'string') setSelectedId(id); };
     window.addEventListener('tldr-memory-select', select);
@@ -157,7 +164,7 @@ export default function MemoryGraphDashboard() {
           </div>)}
         </details>}
         <div className="memory-detail-content">{detail.body}</div>
-        <details className="memory-provenance"><summary>Source and provenance</summary><p>{detail.role} · {detail.status.replaceAll('_', ' ')}</p><p>{detail.path}:{detail.line}</p>{detail.sourceUrl && <a href={detail.sourceUrl} target="_blank" rel="noreferrer">Open source</a>}<p>Exact text SHA-256</p><code>{detail.bodySha256}</code>
+        <details className="memory-provenance"><summary>Source and provenance</summary><p>{detail.role} · {detail.status.replaceAll('_', ' ')}</p>{checkedAt && <p>Memory checked {new Date(checkedAt).toLocaleString()}</p>}<p>{detail.path}{detail.line ? `:${detail.line}` : ''}</p>{detail.sourceUrl && <a href={detail.sourceUrl} target="_blank" rel="noreferrer">Open source</a>}<p>Exact text SHA-256</p><code>{detail.bodySha256}</code>
           {detail.requiredContext.map(record => <details key={record.id}><summary>{record.title}</summary><div className="memory-detail-content">{record.body}</div></details>)}
         </details></> : <p role="status">Opening memory…</p>}
     </aside>}
