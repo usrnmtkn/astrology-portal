@@ -51,6 +51,13 @@ try {
   assert.equal(run(process.execPath, [scanner, '--ref', git(['rev-parse', 'HEAD'])]).status, 0);
   result = run(process.execPath, [fileURLToPath(new URL('./check-project-privacy-push.mjs', import.meta.url))], `refs/heads/test ${git(['rev-parse', 'HEAD'])} refs/heads/test ${'0'.repeat(40)}\n`);
   assert.notEqual(result.status, 0, 'A clean tip must not hide private data in intermediate history.');
+  const retiredFile = path.join(temporary, 'retired-commits.txt');
+  fs.writeFileSync(retiredFile, git(['rev-parse', 'HEAD~1']) + '\n');
+  git(['config', 'projectPrivacy.retiredCommitsFile', retiredFile]);
+  git(['update-ref', 'refs/remotes/origin/stale', git(['rev-parse', 'HEAD'])]);
+  result = run(process.execPath, [fileURLToPath(new URL('./check-project-privacy-push.mjs', import.meta.url))], `refs/heads/test ${git(['rev-parse', 'HEAD'])} refs/heads/test ${'0'.repeat(40)}\n`);
+  assert.notEqual(result.status, 0, 'Stale remote refs must not hide retired private ancestry.');
+  assert.match(result.stderr, /retired private history/);
   fs.mkdirSync(path.join(temporary, 'public')); fs.writeFileSync(path.join(temporary, 'public', 'download.json'), '{"author":"Example Person"}');
   assert.equal(run(process.execPath, [scanner, '--directory', 'public']).status, 1);
   console.log('Privacy staged, historical push, and public-download regressions passed.');
