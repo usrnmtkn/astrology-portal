@@ -7,7 +7,7 @@ import { buildQuestionBoundAskTldrWriterRequest } from "../api/_lib/ask-tldr-que
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(new URL(relativePath, import.meta.url), "utf8"));
 const model = readJson("../config/ask-tldr/answer-model-v1.json");
 const career = readJson("../config/ask-tldr/pillars/career.json");
-const reportWindow = readJson("./fixtures/marie-report-frozen-facts.json");
+const reportWindow = readJson("./fixtures/synthetic-report-frozen-facts.json");
 const recognition = career.questions.find((question) => question.id === "career.recognition");
 assert.ok(recognition);
 

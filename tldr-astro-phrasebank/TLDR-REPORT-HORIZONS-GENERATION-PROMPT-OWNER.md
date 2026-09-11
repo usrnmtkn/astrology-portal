@@ -1,6 +1,6 @@
 # Multi-horizon report generation prompt (owner ruling, canonical, verbatim)
 
-**Status: owner ruling, 2026-08-09. One canonical report-generation prompt with a required `REPORT_HORIZON` parameter (1_month, 4_months, 6_months, 12_months); not four templates. Extends the Year Ahead GENERATION STANDARD (`TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md`) to the report family: the doctrine is shared, the horizon changes camera distance, factor threshold, chronology grouping, synthesis, and how far future claims may go. New material relative to the standard: the four REPORT HORIZON CONTRACTS and the TIME-DISTANCE RULE. Reference implementation for 12_months: `artifacts/owner-author-year-ahead-2026-FINAL.md`. Owner text verbatim below.**
+**Status: owner ruling, 2026-08-09. One canonical report-generation prompt with a required `REPORT_HORIZON` parameter (1_month, 4_months, 6_months, 12_months); not four templates. Extends the Year Ahead GENERATION STANDARD (`TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md`) to the report family: the doctrine is shared, the horizon changes camera distance, factor threshold, chronology grouping, synthesis, and how far future claims may go. New material relative to the standard: the four REPORT HORIZON CONTRACTS and the TIME-DISTANCE RULE. Reference implementation for 12_months: `private:report/general-2026`. Owner text verbatim below.**
 
 ```text
 You are building the Project Author / TLDR Astro personalized report system.

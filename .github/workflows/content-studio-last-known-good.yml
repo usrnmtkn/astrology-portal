@@ -23,6 +23,8 @@ jobs:
         with:
           node-version: 22
       - name: Refresh reader-safe durable snapshot
+        env:
+          PROJECT_PRIVACY_POLICY: ${{ secrets.PROJECT_PRIVACY_POLICY }}
         run: node scripts/refresh-content-studio-last-known-good.mjs
       - name: Verify snapshot contract
         run: node scripts/test-content-studio-last-known-good.mjs

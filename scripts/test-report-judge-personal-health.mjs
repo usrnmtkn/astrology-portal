@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { readPrivateReportDocument } from '../api/_lib/private-report-documents.mjs';
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -15,7 +15,7 @@ import {
 import { REPORT_DEFECT_CATEGORIES } from "../api/_lib/report-writer-chain.ts";
 
 const fixturePath = new URL("./fixtures/report-judge-personal-health-regressions.json", import.meta.url);
-const factsPath = new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url);
+const factsPath = new URL("./fixtures/synthetic-report-frozen-facts.json", import.meta.url);
 const fixture = JSON.parse(fs.readFileSync(fixturePath, "utf8"));
 const live = process.argv.includes("--live");
 const judgeCategories = new Set(REPORT_JUDGE_CATEGORIES);
@@ -61,7 +61,7 @@ const governanceDocuments = [
   "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V3-OWNER.md"
 ];
 for (const sourcePath of governanceDocuments) {
-  const text = fs.readFileSync(sourcePath, "utf8");
+  const text = (sourcePath.startsWith("private:report/") ? readPrivateReportDocument(sourcePath) : fs.readFileSync(sourcePath, "utf8"));
   if (!/^\*\*Status:\*\* `owner_approved`$/mu.test(text)) {
     throw new Error(`Live calibration requires explicit owner approval recorded in ${sourcePath}.`);
   }

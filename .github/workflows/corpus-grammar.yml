@@ -141,3 +141,6 @@ jobs:
           node scripts/test-production-surface-permissions.mjs
           node scripts/build-production-sky-kernel-comparison.mjs
           node scripts/test-sky-aspect-owner-gate-source.mjs
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

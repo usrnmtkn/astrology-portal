@@ -1,3 +1,4 @@
+import { readPrivateReportDocument } from "./private-report-documents.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -30,7 +31,7 @@ const definitions: Record<ReportDomain, PassageDefinition[]> = {
   general: [
     {
       evidenceId: "general_autumn_opening",
-      sourcePath: "artifacts/owner-author-year-ahead-2026-FINAL.md",
+      sourcePath: "private:report/general-2026",
       startMarker: "## AUTUMN 2026:",
       endMarker: "## 2026 IN REVIEW",
       paragraphIndex: 1,
@@ -39,7 +40,7 @@ const definitions: Record<ReportDomain, PassageDefinition[]> = {
     },
     {
       evidenceId: "general_summer_complication",
-      sourcePath: "artifacts/owner-author-year-ahead-2026-FINAL.md",
+      sourcePath: "private:report/general-2026",
       startMarker: "## SUMMER 2026:",
       endMarker: "## AUTUMN 2026:",
       paragraphIndex: 7,
@@ -50,7 +51,7 @@ const definitions: Record<ReportDomain, PassageDefinition[]> = {
   work_money: [
     {
       evidenceId: "work_spring_development",
-      sourcePath: "artifacts/owner-author-work-money-2026-owner-v1.md",
+      sourcePath: "private:report/work-money-2026",
       startMarker: "## SPRING 2026:",
       endMarker: "## SUMMER 2026:",
       paragraphIndex: 3,
@@ -59,7 +60,7 @@ const definitions: Record<ReportDomain, PassageDefinition[]> = {
     },
     {
       evidenceId: "work_summer_complication",
-      sourcePath: "artifacts/owner-author-work-money-2026-owner-v1.md",
+      sourcePath: "private:report/work-money-2026",
       startMarker: "## SUMMER 2026:",
       endMarker: "## AUTUMN 2026:",
       paragraphIndex: 6,
@@ -70,7 +71,7 @@ const definitions: Record<ReportDomain, PassageDefinition[]> = {
   love_connection: [
     {
       evidenceId: "love_spring_turn",
-      sourcePath: "artifacts/owner-author-love-connection-2026-owner-v1.md",
+      sourcePath: "private:report/love-connection-2026",
       startMarker: "## SPRING 2026:",
       endMarker: "## SUMMER 2026:",
       paragraphIndex: 5,
@@ -79,7 +80,7 @@ const definitions: Record<ReportDomain, PassageDefinition[]> = {
     },
     {
       evidenceId: "love_winter_close",
-      sourcePath: "artifacts/owner-author-love-connection-2026-owner-v1.md",
+      sourcePath: "private:report/love-connection-2026",
       startMarker: "## WINTER 2026",
       endMarker: "## SPRING 2026:",
       paragraphIndex: 7,
@@ -90,7 +91,7 @@ const definitions: Record<ReportDomain, PassageDefinition[]> = {
   personal_health: [
     {
       evidenceId: "personal_spring_development",
-      sourcePath: "artifacts/owner-author-personal-health-2026-owner-v1.md",
+      sourcePath: "private:report/personal-health-2026",
       startMarker: "## SPRING 2026:",
       endMarker: "## SUMMER 2026:",
       paragraphIndex: 4,
@@ -99,7 +100,7 @@ const definitions: Record<ReportDomain, PassageDefinition[]> = {
     },
     {
       evidenceId: "personal_spring_close",
-      sourcePath: "artifacts/owner-author-personal-health-2026-owner-v1.md",
+      sourcePath: "private:report/personal-health-2026",
       startMarker: "## SPRING 2026:",
       endMarker: "## SUMMER 2026:",
       paragraphIndex: 9,
@@ -108,7 +109,7 @@ const definitions: Record<ReportDomain, PassageDefinition[]> = {
     },
     {
       evidenceId: "personal_autumn_complication",
-      sourcePath: "artifacts/owner-author-personal-health-2026-owner-v1.md",
+      sourcePath: "private:report/personal-health-2026",
       startMarker: "## AUTUMN 2026:",
       endMarker: "## Health and capacity",
       paragraphIndex: 3,
@@ -123,7 +124,7 @@ function sha256(value: string) {
 }
 
 function extractPassage(definition: PassageDefinition) {
-  const source = fs.readFileSync(path.join(process.cwd(), definition.sourcePath), "utf8");
+  const source = readPrivateReportDocument(definition.sourcePath);
   const start = source.indexOf(definition.startMarker);
   const end = source.indexOf(definition.endMarker, start + definition.startMarker.length);
   if (start < 0 || end <= start) throw new Error(`Owner comparison range is missing for ${definition.evidenceId}.`);

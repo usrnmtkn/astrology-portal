@@ -2,7 +2,7 @@
 
 The repository is the canonical content system. `content-inventory-v1.json` resolves every serving runtime address to its source, governance, provenance, approval record, exact-wording hash, and astrology dimensions.
 
-`content-export-v1.jsonl` is the deterministic artifact of record. Its fingerprint is SHA-256 over sorted content keys, exact wording objects, and governance statuses. `content-export-v1.xlsx` is generated from that JSONL for human review; it is never an authoring source and is never imported into production.
+`content-export-v1.jsonl` is the deterministic artifact of record. Its fingerprint is SHA-256 over sorted content keys, exact wording objects, and governance statuses. The review workbook is generated under ignored `.private-documents/content-export-v1.xlsx`; it is never an authoring source and is never imported into production. Historical workbook originals are retained in protected storage.
 
 Build and verify the text artifacts:
 

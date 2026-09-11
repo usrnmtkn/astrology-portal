@@ -376,7 +376,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       const longitude = normalize(pointLongitude(fixture.inverse ? fixture.body : "Sun") + degrees);
       const friendSky = structuredClone(sky);
       // Avoid filling the 16-card ranking cap with same-chart conjunctions.
-      const fixtureOffset = fixture.body === "Imum Coeli" && fixture.aspect === "sextile" && !fixture.inverse ? 31 : 17;
+      const fixtureOffset = fixture.body === "Imum Coeli" && fixture.aspect === "sextile" ? 47 : 17;
       for (const position of friendSky.positions) {
         position.longitude = normalize(position.longitude! + fixtureOffset);
         position.degree = position.longitude % 30;
@@ -1254,7 +1254,7 @@ test.describe("client-facing user flow case studies", () => {
     for (const width of [430, 768, 1440]) {
       test(`article sheets share the reference spacing ${theme} ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 1000 });
-        await seedClientState(page, { profile: true, profileBirthTime: "2:00 PM", preloadProfileNatalSky: true, theme, now: "2026-07-29T16:00:00.000Z" });
+        await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "12:00 PM", preloadProfileNatalSky: true, theme, now: "2026-07-29T16:00:00.000Z" });
         for (const [name, route] of [
           ["you", "/#you/placement/sun-aquarius-9h"],
           ["sky", "/#sky/placement/sun/leo"]
@@ -3188,7 +3188,7 @@ test.describe("client-facing user flow case studies", () => {
   for (const theme of ["light", "dark"] as const) {
     test(`synastry write-ups appear on first visit and open in full in ${theme} theme`, async ({ page }) => {
       const assertNoClientErrors = await expectNoClientErrors(page);
-      await seedClientState(page, { profile: true, friends: true, theme });
+      await seedClientState(page, { profile: true, profileBirthDate: "1990-02-25", friends: true, theme });
       await expectClientRouteLoads(page, "/#friends?tab=charts");
       await page.getByRole("button", { name: "Open Nikki" }).click();
       await selectFriendDetailTab(page, "Synastry");
@@ -3637,7 +3637,7 @@ test.describe("client-facing user flow case studies", () => {
   test("signed-in user can open and close You natal placement detail", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page, { profile: true });
+    await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "10:00 AM" });
     await expectClientRouteLoads(page, "/#you");
     await selectYouNatalTab(page);
 
@@ -3655,7 +3655,7 @@ test.describe("client-facing user flow case studies", () => {
 
   test("nested natal aspect returns to its placement one level at a time", async ({ page }) => {
     await observeArticleTransitions(page);
-    await seedClientState(page, { profile: true, pageAnimations: "on" });
+    await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "10:00 AM", pageAnimations: "on" });
     await expectClientRouteLoads(page, "/#you");
     await selectYouNatalTab(page);
     const rootUrl = page.url();
@@ -3686,7 +3686,7 @@ test.describe("client-facing user flow case studies", () => {
   test("You natal placement detail preserves the complete approved house passage", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page, { profile: true, profileBirthTime: "2:00 PM" });
+    await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "12:00 PM" });
     await expectClientRouteLoads(page, "/#you/placement/sun-aquarius-9h");
 
     const article = page.getByRole("region", { name: "Sun in Aquarius in the 9th house" });
@@ -3953,7 +3953,7 @@ test.describe("client-facing user flow case studies", () => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, {
-      profile: true,
+      profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "10:00 AM",
       friends: true,
       now: "2026-07-29T16:00:00.000Z"
     });
@@ -4180,7 +4180,7 @@ test.describe("client-facing user flow case studies", () => {
   test("content fallback copy is reader-facing in You natal placement detail", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page, { profile: true });
+    await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "10:00 AM" });
     await expectClientRouteLoads(page, "/#you");
     await selectYouNatalTab(page);
 
@@ -4261,7 +4261,7 @@ test.describe("client-facing user flow case studies", () => {
 });
 
 test("published Uranus Scorpio reader retains the complete owner passage after hydration", async ({ page }) => {
-  await seedClientState(page, { profile: true, profileBirthTime: "2:00 PM", preloadProfileNatalSky: true });
+  await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "12:00 PM", preloadProfileNatalSky: true });
   await expectClientRouteLoads(page, "/#you/placement/uranus-scorpio-6h");
   const article = page.getByRole("region", { name: "Uranus in Scorpio in the 6th house" });
   const ownerCopy = readFileSync(path.join(process.cwd(), "docs/content-management/owner-copy/uranus-in-scorpio-2026-09-07.txt"), "utf8").trim().replace(/\s+/g, " ");
@@ -4277,7 +4277,7 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
     facts: { content_role: "full_copy", review_status: "approved" },
     source_snapshot: { content_role: "full_copy", review_status: "approved", sourcePackage: "tldrastro-fallback-architecture-v3" },
     sections: { packageRecord: { contentKey: copy.contentKey, content_role: "full_copy", review_status: "approved", body_you: copy.body_you, body_they: copy.body_they } } };
-  await seedClientState(page, { profile: true, preloadProfileNatalSky: true, now: "2026-09-07T14:27:30.000Z", generatedInterpretations: [row] });
+  await seedClientState(page, { profile: true, profileBirthDate: "1978-09-01", preloadProfileNatalSky: true, now: "2026-09-07T14:27:30.000Z", generatedInterpretations: [row] });
   await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: row.updated_at }));
   let releaseCopy!: () => void;
   const contentReady = new Promise<void>(resolve => { releaseCopy = resolve; });
@@ -4495,7 +4495,7 @@ for (const theme of ["light", "dark"] as const) {
     test(`card pills move to article headers ${theme} ${width}`, async ({ page }) => {
       test.setTimeout(120_000);
       await page.setViewportSize({ width, height: 1000 });
-      await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme, now: "2026-09-10T16:00:00.000Z" });
+      await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", friends: true, preloadProfileNatalSky: true, theme, now: "2026-09-10T16:00:00.000Z" });
       const errors: string[] = [];
       page.on("pageerror", error => errors.push(error.message));
       await expectClientRouteLoads(page, "/#sky");

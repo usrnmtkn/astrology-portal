@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "1a22ca3444dae5379d3b192e5a2f99bd6d8456c0",
+  "sourceCommit": "845f16da866e64cd2d82b2eb66132f731172814f",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "e63f21564bdca2cb1ed5b821de4e31201ccee4c0e17da235f273020a2bbfca62",
-  "recordCount": 10942,
+  "contentFingerprint": "2458b6bce4f5f73b18733def0bce058c98992001d489cf4b36695ffb2307ea43",
+  "recordCount": 10935,
   "statusCounts": {
-    "owner-approved": 10942
+    "owner-approved": 10935
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -94,7 +94,6 @@
     "fallback-hook/transit-effect-hard": 202,
     "fallback-hook/transit-effect-house": 13,
     "fallback-hook/transit-effect-soft": 202,
-    "fallback-hook/transit-house-event-frame": 7,
     "fallback-hook/transit-house-event-scenes": 2,
     "fallback-hook/transit-house-event-wants": 169,
     "fallback-hook/transit-house-retro-overlay": 5,
@@ -214968,186 +214967,6 @@
       "wording": {
         "body_you": "Love and what feels good run at full signal: taste sharpens, small pleasures land bigger, wanting stops feeling like a liability. Something lovely, unjustified, is exactly the point right now.",
         "body_they": "Their taste sharpens and small pleasures land bigger. Something lovely and unjustified is exactly the point for them right now."
-      },
-      "astrology": {
-        "objects": [
-          "venus"
-        ],
-        "signs": [],
-        "aspects": [],
-        "events": [],
-        "houses": []
-      }
-    },
-    {
-      "contentKey": "fallback-hook/transit-house-event-frame/generic",
-      "contentFamily": "fallback-hook/transit-house-event-frame",
-      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "runtimeBucket": "hook",
-      "status": "owner-approved",
-      "sourceStatus": "approved_reuse",
-      "provenance": "source-archive",
-      "sourceAuthor": "composed",
-      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "approved-reuse of owner-approved transit-house event frame construction (2026-07-27)",
-      "contentHash": "80ed72deb6cc6265b49451ab8bb9636637d89e4e1fed49fa2eab550fb912e90d",
-      "wording": {
-        "body_you": "While {{transitTitle}} is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
-        "body_they": "While {{transitTitle}} is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}."
-      },
-      "astrology": {
-        "objects": [],
-        "signs": [],
-        "aspects": [],
-        "events": [],
-        "houses": []
-      }
-    },
-    {
-      "contentKey": "fallback-hook/transit-house-event-frame/jupiter",
-      "contentFamily": "fallback-hook/transit-house-event-frame",
-      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "runtimeBucket": "hook",
-      "status": "owner-approved",
-      "sourceStatus": "approved",
-      "provenance": "source-archive",
-      "sourceAuthor": "composed",
-      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "Jupiter+Saturn wiring (2026-07-27)",
-      "contentHash": "b5ecf8ca6cb39244a1b1a724ae76921bddeb87d5bf2ada49c692c8871904ec2b",
-      "wording": {
-        "body_you": "While Jupiter is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
-        "body_they": "While Jupiter is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}."
-      },
-      "astrology": {
-        "objects": [
-          "jupiter"
-        ],
-        "signs": [],
-        "aspects": [],
-        "events": [],
-        "houses": []
-      }
-    },
-    {
-      "contentKey": "fallback-hook/transit-house-event-frame/mars",
-      "contentFamily": "fallback-hook/transit-house-event-frame",
-      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "runtimeBucket": "hook",
-      "status": "owner-approved",
-      "sourceStatus": "approved",
-      "provenance": "source-archive",
-      "sourceAuthor": "composed",
-      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "owner ruling (2026-07-27)",
-      "contentHash": "46320ef843ee41560f16f5da914c51c192c0e4d1eca727816fcf59cd1a017bdb",
-      "wording": {
-        "body_you": "While Mars is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
-        "body_they": "While Mars is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}."
-      },
-      "astrology": {
-        "objects": [
-          "mars"
-        ],
-        "signs": [],
-        "aspects": [],
-        "events": [],
-        "houses": []
-      }
-    },
-    {
-      "contentKey": "fallback-hook/transit-house-event-frame/mercury",
-      "contentFamily": "fallback-hook/transit-house-event-frame",
-      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "runtimeBucket": "hook",
-      "status": "owner-approved",
-      "sourceStatus": "approved",
-      "provenance": "source-archive",
-      "sourceAuthor": "composed",
-      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "owner ruling (2026-07-27)",
-      "contentHash": "50f526bfcd12b7d903bc1049b1db11589e5dc141275e76018cfd37034b01a6a6",
-      "wording": {
-        "body_you": "While Mercury is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
-        "body_they": "While Mercury is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}."
-      },
-      "astrology": {
-        "objects": [
-          "mercury"
-        ],
-        "signs": [],
-        "aspects": [],
-        "events": [],
-        "houses": []
-      }
-    },
-    {
-      "contentKey": "fallback-hook/transit-house-event-frame/saturn",
-      "contentFamily": "fallback-hook/transit-house-event-frame",
-      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "runtimeBucket": "hook",
-      "status": "owner-approved",
-      "sourceStatus": "approved",
-      "provenance": "source-archive",
-      "sourceAuthor": "composed",
-      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "Jupiter+Saturn wiring (2026-07-27)",
-      "contentHash": "88b9d1a268200179c9f5c6b13053b975660292de25c3cb03cb9595d278a77d3f",
-      "wording": {
-        "body_you": "While Saturn is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
-        "body_they": "While Saturn is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}."
-      },
-      "astrology": {
-        "objects": [
-          "saturn"
-        ],
-        "signs": [],
-        "aspects": [],
-        "events": [],
-        "houses": []
-      }
-    },
-    {
-      "contentKey": "fallback-hook/transit-house-event-frame/sun",
-      "contentFamily": "fallback-hook/transit-house-event-frame",
-      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "runtimeBucket": "hook",
-      "status": "owner-approved",
-      "sourceStatus": "approved",
-      "provenance": "source-archive",
-      "sourceAuthor": "composed",
-      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "owner ruling (2026-07-27)",
-      "contentHash": "72d5a469e17432e32329ebc1910c13237d7b3ac741704a931be74bbafe3b7d36",
-      "wording": {
-        "body_you": "While the Sun is in your {{houseOrdinal}} house, it is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
-        "body_they": "While the Sun is in {{Name}}'s {{houseOrdinal}} house, it is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}."
-      },
-      "astrology": {
-        "objects": [
-          "sun"
-        ],
-        "signs": [],
-        "aspects": [],
-        "events": [],
-        "houses": []
-      }
-    },
-    {
-      "contentKey": "fallback-hook/transit-house-event-frame/venus",
-      "contentFamily": "fallback-hook/transit-house-event-frame",
-      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "runtimeBucket": "hook",
-      "status": "owner-approved",
-      "sourceStatus": "approved",
-      "provenance": "source-archive",
-      "sourceAuthor": "composed",
-      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "owner ruling (2026-07-27)",
-      "contentHash": "b1144fee311c748a9fdd987481f4242472e3e5f37a570aaaff084b2f9dc2381c",
-      "wording": {
-        "body_you": "While Venus is in your {{houseOrdinal}} house, she is also {{aspectVerb}} your natal {{natalTitle}}{{windowClause}}.",
-        "body_they": "While Venus is in {{Name}}'s {{houseOrdinal}} house, she is also {{aspectVerb}} their natal {{natalTitle}}{{windowClause}}."
       },
       "astrology": {
         "objects": [

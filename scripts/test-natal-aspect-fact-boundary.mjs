@@ -260,7 +260,7 @@ const directBodies = [
 
 for (const date of [
   new Date("1978-11-15T14:30:00.000Z"),
-  new Date("1990-01-01T16:20:00.000Z"),
+  new Date("1990-01-01T17:00:00.000Z"),
   new Date("1990-01-01T12:00:00.000Z")
 ]) {
   const julianDay = swe.julday(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(), utcHour(date));

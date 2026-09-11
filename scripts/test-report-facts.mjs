@@ -71,7 +71,7 @@ class MemoryStore {
 
 const natalSubject = {
   name: "FIXTURE_ONLY_SUBJECT",
-  datetime: { date: "1990-01-01", time: "11:20", timeKnown: true, timeZone: "America/New_York" },
+  datetime: { date: "1990-01-01", time: "12:00", timeKnown: true, timeZone: "America/New_York" },
   location: { label: "FIXTURE_ONLY_LOCATION", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" }
 };
 const input = {

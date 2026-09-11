@@ -2,7 +2,7 @@
 
 **Status: OWNER APPROVED, 2026-08-09. `owner_approved`. Version `personal-health-deepdive-generation-prompt-v1`. Active for `personal_health` fulfillment by owner instruction to implement this prompt. Any later change requires a new version and fresh owner approval.**
 
-**Product name locked: PERSONAL & HEALTH. Reference implementation: `artifacts/owner-author-personal-health-2026-owner-v1.md` (owner-authored final, 2026-08-09; owner_authored_final voice evidence for this surface). Companion rulings that govern this prompt: `TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md` (27-point GENERATION STANDARD), `TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md` (lived-prose standard, loaded verbatim into every draft call).**
+**Product name locked: PERSONAL & HEALTH. Reference implementation: `private:report/personal-health-2026` (owner-authored final, 2026-08-09; owner_authored_final voice evidence for this surface). Companion rulings that govern this prompt: `TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md` (27-point GENERATION STANDARD), `TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md` (lived-prose standard, loaded verbatim into every draft call).**
 
 ---
 

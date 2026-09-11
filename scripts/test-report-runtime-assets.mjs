@@ -1,3 +1,4 @@
+import { readPrivateReportDocument } from "../api/_lib/private-report-documents.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
@@ -14,10 +15,10 @@ assert.equal(functionConfig.includeFiles, expectedIncludeGlob, "Vercel report an
 const exactRuntimeAssets = [
   "api/_lib/content-generation.ts",
   "api/_lib/supabase-report-admin.ts",
-  "artifacts/owner-author-love-connection-2026-owner-v1.md",
-  "artifacts/owner-author-personal-health-2026-owner-v1.md",
-  "artifacts/owner-author-work-money-2026-owner-v1.md",
-  "artifacts/owner-author-year-ahead-2026-FINAL.md",
+  "private:report/love-connection-2026",
+  "private:report/personal-health-2026",
+  "private:report/work-money-2026",
+  "private:report/general-2026",
   "config/report-model-pricing-v1.json",
   "packages/astro-knowledge/data/manifestation-sets/owner-reference-gaps-v1.json",
   "packages/astro-knowledge/data/manifestation-sets/sr-overlays-v1.json",
@@ -46,7 +47,8 @@ const exactRuntimeAssets = [
 ];
 
 for (const relativePath of exactRuntimeAssets) {
-  assert.ok(fs.existsSync(path.join(repoRoot, relativePath)), `Missing report runtime asset: ${relativePath}`);
+  if (relativePath.startsWith("private:report/")) assert.ok(readPrivateReportDocument(relativePath).length > 100);
+  else assert.ok(fs.existsSync(path.join(repoRoot, relativePath)), `Missing report runtime asset: ${relativePath}`);
 }
 
 const reportHelpers = fs.readdirSync(path.join(repoRoot, "api/_lib"))
