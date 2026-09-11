@@ -114,7 +114,7 @@
     "qa:database-friends": "node scripts/test-friends-chart-database-loading-contract.mjs && node scripts/test-friends-chart-data-retention-contract.mjs && node scripts/test-manual-chart-pronouns-contract.mjs && node scripts/test-friends-chart-performance-contract.mjs && node --import tsx scripts/test-friend-natal-chart-completeness.mjs && node scripts/test-friends-orchestration-boundary.mjs && node scripts/test-social-friends-contract.mjs && npm run test:friend-chart-model && npm run test:phone-auth",
     "qa:friends-orchestration": "node scripts/test-friends-orchestration-boundary.mjs",
     "qa:friends-performance": "node scripts/test-friends-chart-performance-contract.mjs && node --experimental-strip-types scripts/test-friends-content-loading-policy.mjs && node --experimental-strip-types scripts/test-social-friends-loading-timeout.mjs && node scripts/test-friends-partial-publication-loading.mjs",
-    "qa:friends-loading-matrix": "playwright test -c playwright.config.ts tests/visual/friends-loading-performance.spec.ts",
+    "qa:friends-loading-matrix": "playwright test -c playwright.config.ts tests/visual/friends-loading-performance.spec.ts --trace off",
     "qa:you-loading-matrix": "playwright test -c playwright.config.ts tests/visual/you-loading-performance.spec.ts",
     "qa:friends-data-retention": "node scripts/test-friends-chart-data-retention-contract.mjs",
     "qa:visual-baseline": "playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts",
