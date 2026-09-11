@@ -116,7 +116,9 @@ containing only a specification is source material, not a publishable article.
 
 Preserve the original source and its hash plus all separated notes in
 `source_snapshot.editorialImport`. Keep variable instructions in
-`slotDescriptions`; reader templates contain only named variables. Do not infer
+`slotDescriptions`; reader templates contain only named variables. Audit both
+colon annotations and plain-language instructions inside variable braces, and
+inspect italicized production notes between article sections. Do not infer
 approval from labels inside a source. Never summarize owner prose to fill a
 missing summary: leave the optional field empty. Unknown mixed formats must
 fail for editorial review rather than be silently stripped or imported.

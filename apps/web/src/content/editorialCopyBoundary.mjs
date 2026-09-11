@@ -6,8 +6,9 @@ const RULES = [
   ['engine instruction', /\(Engine note:/iu],
   ['drafting label', /\b(?:layer two evergreen|needs_review)\b|^\s*#*\s*(?:Templated article|Bespoke edition)\s*[—–-]/imu],
   ['workflow summary', /^\s*(?:REVIEWED|DRAFT|APPROVED|CONFIRMED|SOURCE_ONLY)\s*[·|]/u],
-  ['editorial instruction', /(?:Block architecture per|No axis paragraph on this surface, per the ruling|On approval:\s*imports|pending engine confirmation|^#{1,6}\s+(?:Status|Assembly rules for|Serving rules)\b|^\s*(?:Editor(?:ial)?|Drafting|Import|Batch) notes?:)/imu],
+  ['editorial instruction', /(?:Block architecture per|No axis paragraph on this surface, per the ruling|Your published blocks, aspect threads moved to slots|Twelve rising blocks, authored per edition|On approval:\s*imports|pending engine confirmation|^#{1,6}\s+(?:Status|Assembly rules for|Serving rules)\b|^\s*(?:Editor(?:ial)?|Drafting|Import|Batch) notes?:)/imu],
   ['annotated template slot', /\{\{\s*[A-Za-z][A-Za-z0-9]*\s*:/u],
+  ['instruction inside template variable', /\{\{\s*[A-Za-z][A-Za-z0-9_]*\s+\S[^{}]*\}\}/u],
   ['AI response wrapper', /^\s*(?:Here is|Here's) (?:your|the) (?:revised |updated |requested )?(?:draft|article|copy|passage)\b|^\s*As an AI\b/iu],
 ];
 export function editorialTextIssues(text) {
@@ -46,7 +47,7 @@ export function separateOwnerArticle(text, {editorOnly = false} = {}) {
   }
   const end = body.search(/^## (?:PART [23]\b|Status\s*$)/mu);
   if (end >= 0) {notes.push(body.slice(end)); body=body.slice(0,end).replace(/\n---\s*$/u,'');}
-  body=body.replace(/^\*\((?:Block architecture per|No axis paragraph on this surface, per the ruling)[^\n]*\)\*\s*\n/gmu, note => {notes.push(note); return '';});
+  body=body.replace(/^\*\((?:Block architecture per|No axis paragraph on this surface, per the ruling|Your published blocks, aspect threads moved to slots|Twelve rising blocks, authored per edition)[^\n]*\)\*\s*\n/gmu, note => {notes.push(note); return '';});
   body=body.replace(/ \(dates pending engine confirmation\)/gu, note => {notes.push(note); return '';});
   // Balanced scanner: a slot description may itself contain {{nestedSlots}}.
   let output='', cursor=0;
@@ -61,7 +62,9 @@ export function separateOwnerArticle(text, {editorOnly = false} = {}) {
       else end++;
     }
     if(depth) throw new Error('Unclosed article variable; import stopped.');
-    const token=body.slice(start,end), match=token.match(/^\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*:([\s\S]*)\}\}$/u);
+    const token=body.slice(start,end), match=token.match(/^\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*:([\s\S]*)\}\}$/u)
+      // Known owner-edition annotation; unknown prose inside a variable fails below.
+      ?? token.match(/^\{\{(aspectHits) (placed per house)\}\}$/u);
     if(match){notes.push(token); (slotDescriptions[match[1]] ??= []).push(match[2].trim());output+=`{{${match[1]}}}`;}
     else output+=token;
     cursor=end;

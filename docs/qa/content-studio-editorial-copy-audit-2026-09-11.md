@@ -21,6 +21,9 @@ Saved corrections:
 
 - 60 article/template documents now contain only the reader article, starting
   with its actual heading. All complete prose paragraphs are retained.
+- Live browser follow-through found 48 `aspectHits placed per house` annotations
+  across four of those editions, plus two remaining italicized production notes.
+  All were moved to editor metadata, preserving named variables and full prose.
 - Four specification/fill-plan documents now retain their complete original
   content in editor metadata, with an empty reader body and source-material role.
 - 4,005 fabricated top-level REVIEWED workflow summaries were cleared.
@@ -37,7 +40,8 @@ These categories overlap: the three lunation rows also had package-note summarie
 The original documents, removed notes, slot descriptions and original field values
 are preserved in `source_snapshot.editorialImport`, `editorialSummaryRepair`,
 `editorialPackageSummaryRepair`, `editorialNestedSummaryRepair`,
-`editorialSpecificationRepair` or `editorialEngineNoteRepair`. Studio's existing
+`editorialSpecificationRepair`, `editorialEngineNoteRepair`,
+`editorialSlotAnnotationRepair` or `editorialBlockNoteRepair`. Studio's existing
 **Original import notes** disclosure exposes the separated import notes.
 No draft was promoted and no review/lane state changed. Exact updated-at checks
 protected article repairs; summary updates locked exact matching values and
