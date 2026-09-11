@@ -51,7 +51,8 @@ JavaScript, and per-route caps stay unchanged; no dependencies or source banks
 were added to the reader. `npm run qa:bundle` must still pass.
 
 The Linux desktop Sky baseline was reviewed and refreshed from CI run
-34560224392 after the intentional sentence/paragraph changes. The wheel and
+34565031251 on the privacy-cleaned synthetic fixture after the intentional
+sentence/paragraph changes. Both CI attempts produced the same result. The wheel and
 navigation are unchanged; the taller summary moves the following cards down.
 The dark Sky baseline is a controlled loading state and stays unchanged. No
 screenshot tolerance or assertion was relaxed.
@@ -63,11 +64,11 @@ assertion now uses the existing 15-second reader readiness budget, retaining
 all exact eclipse wording, exclusion, and link assertions. No application
 selection or calculation logic was changed for this test timing correction.
 
-The standalone admin build must also use CI's Supabase environment for its
-budget measurement: the configured build is 625.4 kB raw / 178.2 kB gzip for
-the entry, whereas the unconfigured build is 624.9 / 177.9 kB. Allocate 1 kB raw
-and 0.5 kB gzip for the shared template changes; aggregate and deferred caps
-remain unchanged. The configured admin bundle check passes.
+The combined transit editor repair defers its reader preview component. The
+configured standalone admin entry measures 624.5 kB raw / 177.9 kB gzip, so the
+original admin caps remain unchanged. The combined reader boot measures
+422.8 kB JavaScript / 471.0 kB with CSS and passes the documented reader caps.
+Both built bundles and the public-download privacy scan pass.
 
 The inventory recovery regression also used a five-second DOM wait while
 injecting two invalid responses, real retry backoff, and paginated loading of
@@ -75,3 +76,22 @@ the saved inventory. Both starting destinations passed three fresh repetitions
 (six total) with the existing 15-second readiness budget. Recovery waits now
 use that budget; three-attempt limits, content visibility, persistent-failure
 handling, manual retry, and browser-error assertions remain unchanged.
+
+## Combined release verification
+
+The combined release is PR #759, stacked on privacy remediation #756. Exact
+code revision `009110d8363ba988786e80c96adad048cf17bcba` passes the full API
+suite, 24 standalone summary Studio cases, the summary source/grammar matrix,
+Node/browser/shipped transit parity, CSS audit, and typecheck. The four Lilith
+editor variants passed twice on fresh builds. CI's deterministic comparison
+receipt refresh is retained in commit `9461f81e`. No source prose was changed.
+
+The full content suite is not green on privacy base `845f16da`: the historical
+natal-aspect metadata projection in `test-natal-exact-copy-routing.mjs:49`
+does not match its pinned hash. Neither that test nor its source/review inputs
+is changed here. Main before privacy cleanup also fails the historical Friends
+signoff checksum. These failures are recorded, not waived or re-approved.
+
+After a bot-generated commit, rerun the required API workflow on the new exact
+head. Production verification and the approved Moon source publication remain
+required before this release can be described as live.
