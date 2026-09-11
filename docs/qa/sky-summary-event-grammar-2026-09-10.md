@@ -49,3 +49,9 @@ default migration exceed the previous caps by 509/456 bytes locally. Allocate
 1,000 bytes to each startup cap for this requested behavior. All CSS, total
 JavaScript, and per-route caps stay unchanged; no dependencies or source banks
 were added to the reader. `npm run qa:bundle` must still pass.
+
+The Linux desktop Sky baseline was reviewed and refreshed from CI run
+34560224392 after the intentional sentence/paragraph changes. The wheel and
+navigation are unchanged; the taller summary moves the following cards down.
+The dark Sky baseline is a controlled loading state and stays unchanged. No
+screenshot tolerance or assertion was relaxed.
