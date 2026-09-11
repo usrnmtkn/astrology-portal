@@ -51,8 +51,12 @@ omitted; no event claim or special-Moon prose is assembled from mismatched
 timestamps. Invalid event
 geometry is logged as `IMPOSSIBLE_SKY`, not classified as a missing prose row.
 
-The same-sign opening names the sign once and preserves each body's degree and
-article link. Existing customized general openings continue to apply unless
+The owner correction on 2026-09-10 requires the Moon's sign in its own link,
+even when it matches the Sun: “make sure the moon has the sign with it.”
+The same-sign opening names both signs and preserves each body's degree and
+article link. The exact former built-in template is normalized when loaded from
+saved Studio rows; newly edited templates must include the Moon sign slot.
+The 192-combination regression checks each complete Sun and Moon link label. Existing customized general openings continue to apply unless
 the owner supplies the specific same-sign opening. The new template is editable
 through the existing sentence-template workspace.
 

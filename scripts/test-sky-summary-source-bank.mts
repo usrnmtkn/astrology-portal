@@ -37,7 +37,8 @@ for (const kind of Object.keys(moonEventNames) as MoonSummaryKind[]) for (const 
     assert.ok(!/[{}]|undefined/u.test(text));
     assert.equal(parts.filter(part => part.sourceKey?.includes("/moon/")).length, 1);
     for (const part of parts.filter(part => part.sourceKey)) assert.equal(part.text, bank.rows.find(row => row.key === part.sourceKey)!.body);
-    if (sun === moon) assert.equal(text.split(sun).length - 1, 1, text);
+    assert.equal(parts.find(part => part.action === "sun")?.text, `Sun in ${sun} at 12°`);
+    assert.equal(parts.find(part => part.action === (kind === "regular" ? "moon" : "lunation"))?.text, `${moonEventNames[kind]} in ${moon} at 12°`);
     assert.equal(parts.filter(part => part.action === (kind === "regular" ? "moon" : "lunation")).length, 1);
     count++;
   }
