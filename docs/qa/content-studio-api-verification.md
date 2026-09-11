@@ -24,6 +24,18 @@ reader, content package and dependency changes.
 - Invalid JSON, non-object bodies, wrong field types, unknown actions, empty
   updates and duplicate batch identities fail before writes.
 - Publication cannot retain a reference lane or review hold.
+- Package publication uses the reader's key admission rules. A new unsupported
+  key returns 409 before create, batch publication, or revision sign-off writes;
+  its draft remains editable. Registered sources and the separate Calendar and
+  compatibility reader paths retain their existing publication rules.
+- New canonical House Transit intros/sign passages and exact synastry pairs
+  reach the actual dashboard loader and shipped resolver without requiring a
+  bundled catalog entry. Synastry publication requires both chart directions.
+  The roundtrip test checks the complete source bytes, rendered wording, and
+  the owner-action receipt; synthetic fixtures never change production copy.
+- Browser upgrade fixtures seed an old overlay cache at the same database
+  revision. The new cache schema must refetch sources the previous admission
+  rules omitted, without requiring the owner to edit or publish them again.
 - New summary sources must be tested through POST, not only by PATCHing an
   existing fixture. Studio's legacy `card` mode is normalized to database mode
   `feed` before any create, bulk create, or update. The roundtrip storage double
@@ -81,6 +93,7 @@ Run the relevant fresh-build browser suite, for example:
 ```sh
 npx playwright test tests/visual/calendar-review-queue-api.spec.ts --project=chromium-desktop
 npx playwright test tests/visual/content-dashboard-admin-user-flows.spec.ts --project=chromium-desktop
+npx playwright test tests/visual/client-facing-user-flows.spec.ts --grep 'new Studio .* publication' --workers=1
 ```
 
 Use a fresh preview from this checkout; do not reuse another task's server.
