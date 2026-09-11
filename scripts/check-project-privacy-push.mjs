@@ -35,8 +35,11 @@ if (commits.size) {
     for (const entry of git(['diff-tree', '--root', '-m', '--no-commit-id', '-r', '--raw', '--no-abbrev', commit]).trim().split('\n').filter(Boolean)) {
       const [header, file] = entry.split('\t');
       const oid = header.split(' ')[3];
+      // A deletion contributes no new path or blob. Earlier additions remain
+      // scanned in their own commits, and retired ancestry is checked above.
+      if (oid === zero) continue;
       if (privacyMatches(file || '', policy).length || /(^|\/)\.private-documents\//u.test(file || '') || file === '.privacy-policy.json') throw new Error('Private path in outgoing history.');
-      if (oid !== zero) objects.set(oid, true);
+      objects.set(oid, true);
     }
   }
   for (const oid of objects.keys()) {
