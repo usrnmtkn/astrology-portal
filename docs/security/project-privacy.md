@@ -23,6 +23,10 @@ CI obtains the policy from an Actions secret. Local work uses the ignored
 `.privacy-policy.json`, or `PROJECT_PRIVACY_POLICY_FILE` pointing outside Git.
 Never document the protected values in the rule itself or in a failing test.
 Missing policy fails closed. Tests use fictional identifiers.
+ZIP and Office archives are inspected recursively with bounded decompression,
+including XML text runs. This check requires Python 3 and fails closed if an
+archive cannot be inspected. Original source workbooks remain in protected
+storage; their exact hashes and extracted canonical rows preserve provenance.
 
 For a fresh clone, provision the private policy through the owner's protected
 storage, then run `git config --local core.hooksPath .githooks`.

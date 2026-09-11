@@ -8,7 +8,7 @@ payload is bound to SHA-256
 
 ## Canonical source
 
-- Workbook: `source/TLDR-AR-EMPTY-HOUSES-MATRIX-V14-OWNER-APPROVED.xlsx`
+- Workbook: `private:workbook/empty-houses-v14` (original retained in protected storage; excluded from Git)
 - Workbook SHA-256: `bbfdc02f6a5684d75dd7ec348e1f62d2e38f7e0487e495e50f9fa626660e4334`
 - Governance: `owner_approved_exact_full_workbook_2026-08-10`
 - Rows: 550 total; 541 reader rows and 9 reference principles
