@@ -112,7 +112,8 @@ These failures are not waived.
 Release trace `34613622490` shows Friends route/profile downloads starting only
 after App is evaluated (roughly 600 ms into a representative cached-list load),
 followed by another component download. Initial Friends routes now begin these
-same imports alongside App. Only the selected profile tab is preloaded; a bare
+same imports as soon as App is evaluated, before publication setup and the
+first React render. The existing App loader is reused to preserve chunk boundaries. Only the selected profile tab is preloaded; a bare
 list still does not fetch relationship or natal/transit content. Vanity routes
 receive the same preload after their route resolves. Import errors remain owned
 by the mounted route's recovery boundary. The existing seven-scenario, three-

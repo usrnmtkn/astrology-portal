@@ -10687,9 +10687,7 @@ const loadFriendsExperience = () => Promise.all([
 
   return [routeModule, manualChartsModule] as const;
 });
-const preloadFriendsExperience = () => {
-  void loadFriendsExperience();
-};
+export const preloadFriendsExperience = () => loadFriendsExperience();
 
 const FriendsRoute = lazy(() =>
   loadFriendsExperience().then(([module]) => ({ default: module.FriendsRoute }))
