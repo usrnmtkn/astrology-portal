@@ -5,25 +5,25 @@ import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEM
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 const user = { id: "reader-qa", email: "reader@example.test", app_metadata: { provider: "email" }, user_metadata: {} };
 const profile = { ...user, name: "Reader QA", provider: "email", sun: "Aquarius", moon: "Scorpio", rising: "Gemini", currentLocation: location.label, currentLocationData: location,
-  charts: [{ id: "reader-chart", name: "Reader QA", type: "Birth chart", birthDate: "1990-01-01", birthTime: "12:00 PM", birthCity: location.label, birthLocation: location }] };
-const birth = new Date("1990-01-01T17:00:00Z");
+  charts: [{ id: "reader-chart", name: "Reader QA", type: "Birth chart", birthDate: "1978-12-01", birthTime: "12:00 PM", birthCity: location.label, birthLocation: location }] };
+const birth = new Date("1978-12-01T13:24:00Z");
 let cacheRecords: unknown[];
 test.beforeAll(async () => {
   const natal = await getAstrodienstSky(location, birth);
   const sky = await getAstrodienstSky(location, new Date("2026-11-27T12:00:00Z"));
-  const geminiBirth = new Date("1990-01-01T19:00:00Z");
-  const geminiNatal = await getAstrodienstSky(location, geminiBirth);
+  const laterBirth = new Date("1978-12-01T15:24:00Z");
+  const laterNatal = await getAstrodienstSky(location, laterBirth);
   const septemberSky = await getAstrodienstSky(location, new Date("2026-09-08T12:00:00Z"));
   cacheRecords = [
     { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: natalSkySnapshotCacheKey(location, birth), snapshot: natal },
     { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2026-11-27"), snapshot: sky },
     { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2026-09-08"), snapshot: septemberSky },
-    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: natalSkySnapshotCacheKey(location, geminiBirth), snapshot: geminiNatal }
+    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: natalSkySnapshotCacheKey(location, laterBirth), snapshot: laterNatal }
   ];
 });
 
-async function prepare(page: Page, options: { geminiRising?: boolean; circleFailure?: boolean; slowContent?: boolean; session?: "missing" | "rejected" | "unavailable" } = {}) {
-  const readerProfile = options.geminiRising
+async function prepare(page: Page, options: { laterBirthTime?: boolean; circleFailure?: boolean; slowContent?: boolean; session?: "missing" | "rejected" | "unavailable" } = {}) {
+  const readerProfile = options.laterBirthTime
     ? { ...profile, charts: [{ ...profile.charts[0], birthTime: "2:00 PM" }] }
     : profile;
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -213,7 +213,7 @@ for (const mode of ["create", "login", "incomplete-birth-time"] as const) test(`
 });
 
 test("Lilith Pluto writing survives the reader adapter and opens its complete interpretation", async ({ page }) => {
-  await prepare(page, { geminiRising: true });
+  await prepare(page, { laterBirthTime: true });
   await page.goto("/?date=2026-09-08#you");
   const row = page.locator(".updates-aspect-row").filter({ has: page.getByText("Lilith square your Pluto", { exact: true }) });
   await expect(row).toBeVisible({ timeout: 45_000 });
@@ -227,6 +227,8 @@ test("Lilith Pluto writing survives the reader adapter and opens its complete in
   await page.screenshot({ path: "test-results/reader-recovery/lilith-pluto-detail.png", fullPage: true });
   await page.getByRole("button", { name: "Back to updates", exact: true }).click();
   await page.reload();
+  // Reload recalculates the transit list; use the same readiness budget as entry.
+  await expect(row).toBeVisible({ timeout: 45_000 });
   await expect(row).toContainText("Power, depth, and slow transformation hit the limit");
   await page.setViewportSize({ width: 390, height: 844 });
   await row.scrollIntoViewIfNeeded();
