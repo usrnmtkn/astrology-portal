@@ -135,6 +135,7 @@ try {
     minSummaryLength: 1, minBodyLength: 1, recoveryLabel: "Fixture",
     judge: async () => ({ result: { verdict: ++carriedJudges === 1 ? "below_threshold" : "pass", overall: 0.9, scores: { owner_voice: 3 }, findings: [{ category: "owner_voice", location: "body", finding: "Current judge finding" }] }, version: "fixture", provider: "fixture", model: "fixture", threshold: 0.85 })
   });
+  assert.ok(carriedPrompts[1].includes("Fixture draft 1"), "Deterministic correction must receive the failed draft, not just error messages.");
   assert.equal(carriedPrompts.length, 4);
   assert.equal(carriedJudges, 2);
   for (const prompt of carriedPrompts.slice(2)) {

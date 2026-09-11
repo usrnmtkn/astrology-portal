@@ -63,25 +63,32 @@ export function ReportVanityDeliveryView({ slug }: { slug: string }) {
       return () => { cancelled = true; };
     }
 
-    void resolveReportLibraryItemByVanitySlug(slug).then(async (resolved) => {
-      if (cancelled) return;
-      if (!resolved) {
-        setStatus("error");
-        return;
-      }
-      setItem(resolved);
-      setStatus("ready");
-      if (resolved.status === "ready") {
-        try {
-          await markReportSeen(resolved);
-        } catch {
-          // Reading access is independent of notification state.
+    let timer: ReturnType<typeof setTimeout>;
+    let hasLoaded = false;
+    setItem(null);
+    setStatus("loading");
+    async function refresh() {
+      try {
+        const resolved = await resolveReportLibraryItemByVanitySlug(slug);
+        if (cancelled) return;
+        if (!resolved) { setStatus("error"); return; }
+        hasLoaded = true;
+        setItem(resolved);
+        setStatus("ready");
+        if (resolved.status === "ready") {
+          await markReportSeen(resolved).catch(() => undefined);
+        } else if (resolved.status === "generating") {
+          timer = setTimeout(refresh, 3_000);
+        }
+      } catch {
+        if (!cancelled) {
+          if (!hasLoaded) setStatus("error");
+          timer = setTimeout(refresh, 3_000);
         }
       }
-    }).catch(() => {
-      if (!cancelled) setStatus("error");
-    });
-    return () => { cancelled = true; };
+    }
+    void refresh();
+    return () => { cancelled = true; clearTimeout(timer); };
   }, [shareKey, slug]);
 
   if (status === "loading") return <DeliveryState message="Loading report…" />;
@@ -89,10 +96,10 @@ export function ReportVanityDeliveryView({ slug }: { slug: string }) {
   if (shared) return <SharedReportView payload={shared} />;
   if (!item) return <DeliveryState message="This report is unavailable." />;
   if (item.status === "generating") {
-    return <DeliveryState message="This report is being prepared. You can leave this page and come back later." />;
+    return <DeliveryState message={`${item.progressLabel ?? "Preparing"}. This page updates automatically when your report is ready.`} />;
   }
   if (item.status === "needs_attention") {
-    return <DeliveryState message="This report could not be prepared. Return to the page where you started it to try again." />;
+    return <DeliveryState message={`${item.statusMessage ?? "This report could not be prepared."} Return to the page where you started it to try again.`} />;
   }
   if (item.sourceKind === "generated_interpretation") {
     return <GeneratedReportDeliveryView reportId={item.sourceId} />;

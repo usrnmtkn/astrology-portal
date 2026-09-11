@@ -108,6 +108,7 @@ function reportSubtitle(item: ReportLibraryItem) {
 
 function statusLabel(item: ReportLibraryItem) {
   if (item.status === "ready") return item.seenAt ? null : "New";
+  if (item.progressLabel) return item.progressLabel;
   if (item.status === "needs_attention") return "Needs attention";
   return "Preparing";
 }
