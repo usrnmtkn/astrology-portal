@@ -42,6 +42,7 @@ type SeedOptions = {
   aspectPatterns?: Record<string, unknown>;
   generatedInterpretations?: Array<Record<string, unknown>>;
   contentPublications?: Array<Record<string, unknown>>;
+  cachedDashboardOverlay?: Record<string, unknown>;
 };
 
 const fixtureLocation = {
@@ -197,6 +198,10 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
 
     if (shouldSeedClientState) {
       window.localStorage.clear();
+      if (options.cachedDashboardOverlay) {
+        window.localStorage.setItem("tldrastro:fallbackArchitectureV3:dashboardBundle", JSON.stringify(options.cachedDashboardOverlay));
+        window.localStorage.setItem("tldrastro:fallbackArchitectureV3:dashboardBundleVersion", String(options.cachedDashboardOverlay.dashboardVersion));
+      }
       window.localStorage.setItem("tldrastro:qaFlowSeeded", "true");
       if (options.contentPublications) window.localStorage.setItem("tldrastro:content-publications:v1", JSON.stringify(options.contentPublications));
       window.localStorage.setItem("tldrastro:theme", options.theme ?? "light");
@@ -4547,6 +4552,7 @@ for (const theme of ["light", "dark"] as const) {
 // these same tests against production; every content request remains isolated.
 async function seedCrossSurfacePublications(page: Page, records: Array<Record<string, any>>, options: SeedOptions) {
   const updatedAt = "2026-09-10T20:00:00.000Z";
+  const manifest = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-manifest-summary-v3.json", "utf8"));
   const rows = records.map((record, index) => ({
     id: `qa-cross-surface-${index}`, content_key: record.contentKey,
     surface: record.contentKey.includes("synastry-pair") ? "synastry" : "you",
@@ -4556,7 +4562,14 @@ async function seedCrossSurfacePublications(page: Page, records: Array<Record<st
     source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", content_role: "full_copy", review_status: "approved" },
     sections: { packageRecord: record }
   }));
-  await seedClientState(page, { ...options, contentPublications: rows.map(row => ({
+  await seedClientState(page, { ...options, cachedDashboardOverlay: {
+    // The old reader already cached this unchanged database revision while
+    // dropping the new keys. Upgrading must fetch them without another edit.
+    schema: "fallback-architecture-v3-dashboard-overlay-cache-v6",
+    runtimeCapability: manifest.runtimeCapability, bundledPackageVersion: manifest.packageVersion,
+    dashboardVersion: Date.parse(updatedAt),
+    bundle: { transitLib: { authoredCards: [{ contentKey: "authored/transit-house-intro/sun/1", content_role: "full_copy", review_status: "approved", body: "QA previously cached source." }] }, rowsFile: { hookRows: [], vocabularyRows: [] }, templatesFile: { templates: [] } }
+  }, contentPublications: rows.map(row => ({
     content_key: row.content_key, state: "live", revision: 100_000,
     row_id: row.id, row_updated_at: updatedAt, updated_at: updatedAt
   })) });

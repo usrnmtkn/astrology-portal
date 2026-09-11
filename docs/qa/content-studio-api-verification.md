@@ -33,6 +33,9 @@ reader, content package and dependency changes.
   bundled catalog entry. Synastry publication requires both chart directions.
   The roundtrip test checks the complete source bytes, rendered wording, and
   the owner-action receipt; synthetic fixtures never change production copy.
+- Browser upgrade fixtures seed an old overlay cache at the same database
+  revision. The new cache schema must refetch sources the previous admission
+  rules omitted, without requiring the owner to edit or publish them again.
 - New summary sources must be tested through POST, not only by PATCHing an
   existing fixture. Studio's legacy `card` mode is normalized to database mode
   `feed` before any create, bulk create, or update. The roundtrip storage double
