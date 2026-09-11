@@ -109,21 +109,16 @@ async function startApp() {
   }
 
   const appModulePromise = import("./App");
-  const preloadFriendsRoute = () => {
-    if (!isFriendsHref(window.location.href)) return;
-    // Start the selected route alongside App, rather than waiting for App's
-    // first render to discover the route and profile-component downloads.
-    void Promise.all([
-      import("./routes/FriendsRoute"),
-      import("./features/friends/ManualChartsPanel")
-    ]).then(([, manualCharts]) => {
-      const tab = initialFriendProfileContentRequest(window.location.href);
-      if (tab) manualCharts.preloadFriendProfileComponents(tab);
-    }).catch(() => { /* The mounted route owns import errors and recovery. */ });
-  };
-  const initialFriendsRoute = isFriendsHref(window.location.href);
-  if (initialFriendsRoute) preloadFriendsRoute();
   const friendRoutePromise = prepareFriendProfileRoute(window.location.href);
+  void friendRoutePromise.then(() => {
+    if (!isFriendsHref(window.location.href)) return;
+    // Reuse App's loader as soon as its module is ready, before publication
+    // setup and React's first render. Keeping one import boundary also avoids
+    // splitting App's shared helpers into extra startup chunks.
+    return appModulePromise.then(({ preloadFriendsExperience }) => (
+      preloadFriendsExperience()
+    ));
+  }).catch(() => { /* The mounted route owns import errors and recovery. */ });
   const readerStylesPromise = import("./styles.css");
   // These routes all need astronomy. Fetch/initialize it alongside the app
   // download rather than starting the worker waterfall after React mounts.
@@ -133,7 +128,6 @@ async function startApp() {
     )).catch(() => { /* The active route owns its error and retry state. */ });
   }
   await friendRoutePromise;
-  if (!initialFriendsRoute) preloadFriendsRoute();
   const initialFriendProfileTab = initialFriendProfileContentRequest(window.location.href);
 
   if (shouldPreloadInitialFriendCalculationRuntime(initialFriendProfileTab)) {
