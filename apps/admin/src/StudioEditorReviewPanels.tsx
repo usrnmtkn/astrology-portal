@@ -5,16 +5,18 @@ import ReviewWorkflowPanel from './ReviewWorkflowPanel';
 const StudioMemoryFeedback = lazy(() => import('./StudioMemoryFeedback'));
 
 /** Load review and memory setup only when a saved row's editor is opened. */
-export default function StudioEditorReviewPanels({ isPackageDraft, articleUnsaved, ...review }: ComponentProps<typeof ReviewWorkflowPanel> & {
+export default function StudioEditorReviewPanels({ isPackageDraft, articleSaveState, onWritingAction, ...review }: Omit<ComponentProps<typeof ReviewWorkflowPanel>, 'onCheck' | 'onGenerate'> & {
   isPackageDraft: boolean;
-  articleUnsaved: boolean;
+  articleSaveState?: string;
+  onWritingAction: (action: 'generate' | 'recheck') => void;
 }) {
   const { row, credential = '', unsaved } = review;
   return <>
     {studioArticleMemoryKey(row.content_key) && <Suspense fallback={null}>
       <StudioMemoryFeedback key={row.content_key} contentKey={row.content_key} credential={credential}
-        revision={row.updated_at} unsaved={unsaved || articleUnsaved} />
+        revision={row.updated_at} unsaved={unsaved || Boolean(articleSaveState && articleSaveState !== 'saved')} />
     </Suspense>}
-    {!isPackageDraft && <ReviewWorkflowPanel {...review} />}
+    {!isPackageDraft && <ReviewWorkflowPanel {...review}
+      onCheck={() => onWritingAction('recheck')} onGenerate={() => onWritingAction('generate')} />}
   </>;
 }

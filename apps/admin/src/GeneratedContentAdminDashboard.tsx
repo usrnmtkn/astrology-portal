@@ -9711,9 +9711,8 @@ export function GeneratedContentAdminDashboard() {
             </label>
           )}
           {selectedRow && <Suspense fallback={<p role="status">Loading publication checks…</p>}><StudioEditorReviewPanels row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
-            isPackageDraft={isPackageDraft} articleUnsaved={Boolean(skyArticleEditor && skyArticleEditor.saveState !== 'saved')}
-            onCheck={() => void runSkyDraftWriting(selectedRow.content_key, "recheck", selectedRow)}
-            onGenerate={() => void runSkyDraftWriting(selectedRow.content_key, "generate", selectedRow)} /></Suspense>}
+            isPackageDraft={isPackageDraft} articleSaveState={skyArticleEditor?.saveState}
+            onWritingAction={(action) => void runSkyDraftWriting(selectedRow.content_key, action, selectedRow)} /></Suspense>}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
