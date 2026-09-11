@@ -174,3 +174,9 @@ The API gate also runs `test:reader-copy-boundary` and the actual handler tests 
 instructions and source notes outside reader fields, including nested package
 revisions. See [the saved-row audit](content-studio-editorial-copy-audit-2026-09-11.md)
 for the repair journal, full-inventory checks and agent requirements.
+
+### Secondary editors and shared transport
+
+The [2026-09-10 route audit](content-studio-api-audit-2026-09-10.md) records scope, defects, and the distinction between source review and actual-handler verification. The required API gate now also covers Aspect Patterns, issue resolutions/source decisions, queue prepopulation, and report correction/feedback handlers. Test stores use `.invalid` hosts; never run these write scenarios against production.
+
+Existing Aspect Pattern and report-unit edits must submit `expectedUpdatedAt` from the opened record. Issue resolutions submit their opened version or null for first creation. Conflicts require reload; clients must preserve unsaved input. Prepopulation reports `skippedExistingRows`; on a failed batch, `savedRows` contains confirmed writes and `failedContentKey` identifies the uncertain/failed operation. Reload before retrying an uncertain write.

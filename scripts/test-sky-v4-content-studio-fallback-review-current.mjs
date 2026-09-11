@@ -15,7 +15,7 @@ assert.match(panel, /Review all 120 legacy continuous fallbacks/u);
 assert.match(panel, /fallback\.hook/u);
 assert.match(panel, /fallback\.lived/u);
 assert.match(panel, /fallback\.turn/u);
-assert.match(panel, /reviewStatus:\s*"needs_review"/u);
+assert.match(panel, /saveGeneratedContentDraft/u);
 assert.match(panel, /announceContentUpdate/u);
 
 const saveDraftStart = panel.indexOf("async function saveDraft");
@@ -28,7 +28,7 @@ assert.match(variantEditor, /Evergreen fallback variant family/u);
 assert.match(variantEditor, /selection never mixes sections across lanes/u);
 assert.match(variantEditor, /skyFallbackVariantFamilyDraft/u);
 assert.match(variantEditor, /packageDraft:\s*rowEffectiveRecord\(row\)/u);
-assert.match(variantEditor, /reviewStatus:\s*"needs_review"/u);
+assert.match(variantEditor, /saveGeneratedContentDraft/u);
 assert.match(variantEditor, /Stage preview · serving OFF/u);
 assert.match(variantEditor, /selectionLockKey/u);
 assert.doesNotMatch(variantEditor, /serving_enabled\s*:/u, "Evergreen variant-family drafts must not mutate serving state.");

@@ -60,6 +60,7 @@ for (const initialPage of ["review-queue", "articles"]) {
       } else await route.fallback();
     });
     await page.goto(`${studioPath}#${initialPage}`);
+    await expect.poll(() => attempts, recoveryReadiness).toBe(3);
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
     expect(attempts).toBe(3);
     await openStudioPage(page, "Sky Write-ups");

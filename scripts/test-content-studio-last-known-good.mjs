@@ -7,6 +7,7 @@ assert.ok(fs.existsSync(snapshotPath), "The last-known-good snapshot must exist 
 const snapshot = JSON.parse(fs.readFileSync(snapshotPath, "utf8"));
 const workflow = fs.readFileSync(".github/workflows/content-studio-last-known-good.yml", "utf8");
 const generated = fs.readFileSync("apps/web/src/services/generatedContent.ts", "utf8");
+const snapshotLoader = generated + fs.readFileSync("apps/web/src/services/offlineContentSnapshot.ts", "utf8");
 const vocabulary = fs.readFileSync("apps/web/src/services/planetTopicVocabulary.ts", "utf8");
 const taglines = fs.readFileSync("apps/web/src/services/natalPlacementTaglines.ts", "utf8");
 const exporter = fs.readFileSync("scripts/refresh-content-studio-last-known-good.mjs", "utf8");
@@ -53,8 +54,8 @@ assert.match(exporter, /sb_publishable_/u, "Nightly fallback must use the public
 assert.match(exporter, /const pageSize = 20/u, "Wide source rows need small pages to stay within the database deadline.");
 assert.match(exporter, /const maxPages = 1000/u, "Smaller pages must retain the 20,000-row export capacity.");
 assert.match(exporter, /page === maxPages - 1/u, "Export must still refuse a truncated inventory.");
-assert.match(generated, /fetch\("\/content-studio-last-known-good\.json"/u, "The LKG snapshot must be fetched as a static asset, not bundled into application JS.");
-assert.doesNotMatch(generated, /import\([^)]*content-studio-last-known-good\.json/u);
+assert.match(snapshotLoader, /fetch\("\/content-studio-last-known-good\.json"/u, "The LKG snapshot must be fetched as a static asset, not bundled into application JS.");
+assert.doesNotMatch(snapshotLoader, /import\([^)]*content-studio-last-known-good\.json/u);
 assert.ok(!fs.existsSync("apps/web/src/services/contentStudioLastKnownGood.ts"), "LKG must not create a standalone JavaScript chunk.");
 assert.match(generated, /loadContentStudioLastKnownGoodCoreBundle/u);
 assert.match(generated, /loadContentStudioLastKnownGoodRows/u);

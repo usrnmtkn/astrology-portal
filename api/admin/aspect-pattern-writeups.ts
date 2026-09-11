@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
 loadLocalWebEnv();
@@ -72,6 +73,7 @@ type WriteupSaveBody = {
   kind?: PatternWriteupKind;
   action?: "preview" | "save";
   generatedContentId?: string | null;
+  expectedUpdatedAt?: string | null;
   record?: AuthoredNatalRecord | AuthoredActivationRecord;
   reviewer?: string;
   reviewerNotes?: string;
@@ -167,16 +169,6 @@ function adminHeaders() {
   };
 }
 
-async function readJsonBody(req: IncomingMessage) {
-  const preParsedBody = (req as IncomingMessage & { body?: unknown }).body;
-  if (typeof preParsedBody === "string") return JSON.parse(preParsedBody) as WriteupSaveBody;
-  if (preParsedBody && typeof preParsedBody === "object") return preParsedBody as WriteupSaveBody;
-  const chunks: Buffer[] = [];
-  for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  if (chunks.length === 0) throw new Error("Request JSON body is required.");
-  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as WriteupSaveBody;
-}
-
 function contentKeyFor(kind: PatternWriteupKind, record: AuthoredNatalRecord | AuthoredActivationRecord) {
   if (kind === "activation") {
     const role = (record as AuthoredActivationRecord).eligibility.targetRoles[0] ?? "member";
@@ -224,18 +216,18 @@ async function fetchPersistedRows(kind: PatternWriteupKind) {
     order: "updated_at.desc",
     limit: "200"
   });
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
     headers: adminHeaders()
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
   if (!response.ok) {
-    throw new Error(`Supabase aspect-pattern write-up list failed with ${response.status}: ${JSON.stringify(payload)}`);
+    throw new AdminHttpError(502, `Supabase aspect-pattern write-up list failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
-  return Array.isArray(payload) ? payload as GeneratedContentRow[] : [];
+  return storedRows(payload);
 }
 
 async function savePersistedRecord(kind: PatternWriteupKind, body: WriteupSaveBody) {
-  if (!body.record) throw new Error("record is required.");
+  if (!body.record) throw new AdminHttpError(400, "record is required.");
   const record = normalizeRecordForSave(kind, body.record);
   const status = generatedStatusFromAuthored(record.status);
   const contentKey = contentKeyFor(kind, record);
@@ -283,48 +275,74 @@ async function savePersistedRecord(kind: PatternWriteupKind, body: WriteupSaveBo
 
   const validationRows = previewForRecord(kind, record);
   if (status === "LIVE" && validationRows.some((preview) => !preview.validation.ok)) {
-    throw new Error(`Cannot approve ${record.id}: ${validationRows.flatMap((preview) => preview.validation.errors).join(", ")}`);
+    throw new AdminHttpError(422, `Cannot approve ${record.id}: ${validationRows.flatMap((preview) => preview.validation.errors).join(", ")}`);
   }
 
   if (body.generatedContentId) {
     const existingParams = new URLSearchParams({
-      select: "id,content_key",
+      select: "id,content_key,source_snapshot",
       id: `eq.${body.generatedContentId}`,
       limit: "1"
     });
-    const existingResponse = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${existingParams.toString()}`, {
+    const existingResponse = await adminFetchJson(`${supabaseUrl()}/rest/v1/generated_interpretations?${existingParams.toString()}`, {
       headers: adminHeaders()
     });
-    const existingPayload = await existingResponse.json().catch(() => null);
-    const existingRow = Array.isArray(existingPayload) ? existingPayload[0] : null;
-    if (existingResponse.ok && typeof existingRow?.content_key === "string" && existingRow.content_key.startsWith(contentKeyPrefix(kind))) {
-      row.content_key = existingRow.content_key;
+    const existingPayload = existingResponse.payload;
+    if (!existingResponse.ok) throw new AdminHttpError(502, "Saved write-up lookup failed.");
+    const existingRow = adminStorageRows<GeneratedContentRow>(existingPayload)[0];
+    if (!existingRow) throw new AdminHttpError(404, "The saved write-up no longer exists.");
+    if (existingRow.id !== body.generatedContentId || !existingRow.content_key?.startsWith(contentKeyPrefix(kind)) || (existingRow.source_snapshot?.record as { id?: string } | undefined)?.id !== record.id) {
+      throw new AdminHttpError(409, "The saved write-up does not match this editor. Reload before saving.");
     }
+    row.content_key = existingRow.content_key;
   }
 
   const url = body.generatedContentId
-    ? `${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(body.generatedContentId)}`
-    : `${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`;
-  const response = await fetch(url, {
+    ? `${supabaseUrl()}/rest/v1/generated_interpretations?${new URLSearchParams({ id: `eq.${body.generatedContentId}`, updated_at: `eq.${body.expectedUpdatedAt}`, content_key: `eq.${row.content_key}` })}`
+    : `${supabaseUrl()}/rest/v1/generated_interpretations`;
+  const response = await adminFetchJson(url, {
     method: body.generatedContentId ? "PATCH" : "POST",
     headers: {
       ...adminHeaders(),
-      prefer: body.generatedContentId ? "return=representation" : "resolution=merge-duplicates,return=representation"
+      prefer: "return=representation"
     },
     body: JSON.stringify(row)
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
+  if (response.status === 409) throw new AdminHttpError(409, "A saved write-up already exists. Reload before saving.");
   if (!response.ok) {
-    throw new Error(`Supabase aspect-pattern write-up save failed with ${response.status}: ${JSON.stringify(payload)}`);
+    throw new AdminHttpError(502, `Supabase aspect-pattern write-up save failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
-  return Array.isArray(payload) ? payload[0] as GeneratedContentRow : payload as GeneratedContentRow;
+  const rows = storedRows(payload);
+  if (body.generatedContentId && rows.length === 0) throw new AdminHttpError(409, "This write-up changed after it was opened. Reload before saving.");
+  if (rows.length !== 1 || rows[0].content_key !== row.content_key || (body.generatedContentId && rows[0].id !== body.generatedContentId)) {
+    throw new AdminHttpError(502, "Storage did not confirm the saved write-up. Reload before retrying.");
+  }
+  return rows[0];
+}
+
+function storedRows(payload: unknown) {
+  const rows = adminStorageRows<GeneratedContentRow>(payload);
+  if (rows.some((row) => typeof row.id !== "string" || !row.id || typeof row.content_key !== "string" || !row.content_key || typeof row.updated_at !== "string" || !Number.isFinite(Date.parse(row.updated_at)))) {
+    throw new AdminHttpError(502, "Storage returned an invalid write-up identity or version.");
+  }
+  return rows;
 }
 
 function normalizeRecordForSave(kind: PatternWriteupKind, input: AuthoredNatalRecord | AuthoredActivationRecord) {
+  if (!input || typeof input !== "object" || typeof input.id !== "string" || !["draft", "reviewed", "approved", "deprecated"].includes(input.status)
+    || !input.content || typeof input.content !== "object"
+    || [input.content.headline, input.content.overview].some((value) => typeof value !== "string")
+    || (input.content.eyebrow !== undefined && typeof input.content.eyebrow !== "string")
+    || !Array.isArray(input.content.sections)
+    || input.content.sections.some((section) => !section || typeof section.id !== "string" || typeof section.template !== "string" || typeof section.required !== "boolean" || (section.conditions !== undefined && !Array.isArray(section.conditions)))
+    || !input.provenance || !Array.isArray(input.provenance.sourceIds) || input.provenance.sourceIds.some((id) => typeof id !== "string")) {
+    throw new AdminHttpError(400, "record must contain a valid status, text fields, sections, and source IDs.");
+  }
   const base = kind === "activation"
     ? engine.AUTHORED_ASPECT_PATTERN_ACTIVATION_RECORDS.find((record) => record.id === input.id)
     : engine.AUTHORED_ASPECT_PATTERN_RECORDS.find((record) => record.id === input.id);
-  if (!base) throw new Error(`Unknown aspect-pattern ${kind} record: ${input.id}.`);
+  if (!base) throw new AdminHttpError(400, `Unknown aspect-pattern ${kind} record: ${input.id}.`);
   const allowedSections = new Set(kind === "activation" ? activationFieldOrder : natalFieldOrder);
   const next = {
     ...base,
@@ -543,8 +561,13 @@ async function buildResponse(kind: PatternWriteupKind) {
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   try {
+    if (!await isContentAdminAuthorized(req)) {
+      sendJson(res, 401, { ok: false, error: "Unauthorized." });
+      return;
+    }
     const requestUrl = new URL(req.url ?? "/api/admin/aspect-pattern-writeups", "http://localhost");
-    const kind = requestUrl.searchParams.get("kind") === "activation" ? "activation" : "natal";
+    const kind = requestUrl.searchParams.get("kind") ?? "natal";
+    if (kind !== "natal" && kind !== "activation") throw new AdminHttpError(400, "Invalid write-up kind.");
 
     if (req.method === "GET") {
       sendJson(res, 200, await buildResponse(kind));
@@ -552,26 +575,30 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
 
     if (req.method === "POST" || req.method === "PATCH") {
-      const body = await readJsonBody(req);
-      const saveKind = body.kind === "activation" ? "activation" : "natal";
+      const body = await readAdminJsonBody<WriteupSaveBody>(req);
+      const saveKind = body.kind ?? "natal";
+      if (saveKind !== "natal" && saveKind !== "activation") throw new AdminHttpError(400, "Invalid write-up kind.");
+      if (body.action !== undefined && body.action !== "preview" && body.action !== "save") throw new AdminHttpError(400, "Invalid write-up action.");
+      for (const field of ["reviewer", "reviewerNotes"] as const) {
+        if (body[field] !== undefined && typeof body[field] !== "string") throw new AdminHttpError(400, `${field} must be text.`);
+      }
       if (body.action === "preview") {
-        if (!body.record) throw new Error("record is required.");
+        if (!body.record) throw new AdminHttpError(400, "record is required.");
         const record = normalizeRecordForSave(saveKind, body.record);
         sendJson(res, 200, { ok: true, previews: previewForRecord(saveKind, record) });
         return;
       }
-      if (!await isContentAdminAuthorized(req)) {
-        sendJson(res, 401, { ok: false, error: "Unauthorized." });
-        return;
-      }
+      if (body.generatedContentId != null && (typeof body.generatedContentId !== "string" || !/^[a-f0-9-]{36}$/iu.test(body.generatedContentId))) throw new AdminHttpError(400, "Invalid saved write-up ID.");
+      if (req.method === "PATCH" && !body.generatedContentId) throw new AdminHttpError(400, "A saved write-up ID is required.");
+      if (body.generatedContentId && (typeof body.expectedUpdatedAt !== "string" || !Number.isFinite(Date.parse(body.expectedUpdatedAt)))) throw new AdminHttpError(400, "The saved write-up version is required. Reload before saving.");
       const saved = await savePersistedRecord(saveKind, body);
       sendJson(res, 200, { ok: true, row: saved, dashboard: await buildResponse(saveKind) });
       return;
     }
 
-    sendJson(res, 405, { ok: false, error: "Use GET, POST, or PATCH." });
+    sendAdminMethodNotAllowed(res, ["GET", "POST", "PATCH"]);
   } catch (error) {
-    sendJson(res, 500, {
+    sendJson(res, adminErrorStatus(error), {
       ok: false,
       error: error instanceof Error ? error.message : "Unknown aspect-pattern write-up admin error."
     });

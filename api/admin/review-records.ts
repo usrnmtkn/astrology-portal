@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetch, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { transitToNatalOrbLimit } from "../_lib/astrology-config.js";
 import { canonicalSkyAspectProfile } from "../../apps/web/src/services/canonicalSkyAspectProfile.js";
@@ -235,13 +235,13 @@ function missingGeneratedInterpretationsColumn(payload: unknown) {
 
 async function fetchGeneratedInterpretationsRows(params: URLSearchParams, selectColumns: string[], errorLabel: string) {
   for (let attempt = 0; attempt < 8; attempt += 1) {
-    const response = await adminFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
       headers: adminHeaders()
     });
-    const payload = await response.json().catch(() => null);
+    const payload = response.payload;
 
     if (response.ok) {
-      return (payload ?? []) as SavedContentRow[];
+      return adminStorageRows<SavedContentRow>(payload);
     }
 
     const missingColumn = response.status === 400 ? missingGeneratedInterpretationsColumn(payload) : null;
@@ -435,14 +435,14 @@ function calculatedAspectsForPositions(positions: PlanetPosition[]): CalculatedA
 }
 
 async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TResponse> {
-  const response = await adminFetch(`${tldrAstroApiUrl()}${path}`, {
+  const response = await adminFetchJson(`${tldrAstroApiUrl()}${path}`, {
     method: "POST",
     headers: {
       "content-type": "application/json"
     },
     body: JSON.stringify(body)
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
 
   if (!response.ok) {
     throw new Error(`TLDR Astro API ${response.status}: ${JSON.stringify(payload)}`);
@@ -835,10 +835,10 @@ function manualChartSearchParams(query: string, select: string) {
 
 async function fetchManualCharts(query: string, select: string) {
   const params = manualChartSearchParams(query, select);
-  const response = await adminFetch(`${supabaseUrl()}/rest/v1/manual_charts?${params}`, {
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/manual_charts?${params}`, {
     headers: adminHeaders()
   });
-  const payload = await response.json().catch(() => null);
+  const payload = response.payload;
 
   return { response, payload };
 }
@@ -853,14 +853,14 @@ async function findManualCharts(query: string) {
   const firstAttempt = await fetchManualCharts(trimmed, manualChartSelectWithPronouns);
 
   if (firstAttempt.response.ok) {
-    return (firstAttempt.payload ?? []) as ManualChartRow[];
+    return adminStorageRows<ManualChartRow>(firstAttempt.payload);
   }
 
   if (firstAttempt.response.status === 400 && isMissingManualChartPronounsColumn(firstAttempt.payload)) {
     const fallbackAttempt = await fetchManualCharts(trimmed, manualChartSelectLegacy);
 
     if (fallbackAttempt.response.ok) {
-      return ((fallbackAttempt.payload ?? []) as ManualChartRow[]).map((row) => ({
+      return adminStorageRows<ManualChartRow>(fallbackAttempt.payload).map((row) => ({
         ...row,
         pronouns: "name_only"
       }));

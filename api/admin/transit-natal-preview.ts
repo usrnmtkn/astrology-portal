@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { AdminHttpError, adminFetch, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminFetchJson, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { renderTransitNatalPreview, transitNatalPlanets, transitNatalSigns, transitNatalAspects, transitNatalPoints } from "../../apps/admin/src/transitNatalSources.js";
 import { packageFallbackArchitectureV3CoreRows } from "../../apps/web/src/services/fallbackArchitectureV3CorePackaging.js";
@@ -49,8 +49,8 @@ export function renderTransitNatalPreviewState(input: ReturnType<typeof normaliz
 async function readRows(base: string, headers: Record<string, string>, table: string, filters: Record<string, string>) {
   const rows: any[] = [];
   for (let offset = 0; offset < 20000; offset += 1000) {
-    const response = await adminFetch(`${base}/rest/v1/${table}?${new URLSearchParams({ ...filters, limit: "1000", offset: String(offset) })}`, { headers });
-    const page = await response.json();
+    const response = await adminFetchJson(`${base}/rest/v1/${table}?${new URLSearchParams({ ...filters, limit: "1000", offset: String(offset) })}`, { headers });
+    const page = response.payload;
     if (!response.ok || !Array.isArray(page)) throw new AdminHttpError(503, "Published reader sources could not be verified.");
     rows.push(...page);
     if (page.length < 1000) return rows;

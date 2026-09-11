@@ -14,6 +14,17 @@ function localApiRoutePlugin() {
   return {
     name: "tldr-admin-local-api-routes",
     enforce: "pre" as const,
+    configurePreviewServer(server) {
+      // Vite preview serves static files; it cannot execute the admin handlers.
+      // Never let an API request fall through to index.html with HTTP 200.
+      server.middlewares.use((req, res, next) => {
+        if (!new URL(req.url ?? "/", "http://localhost").pathname.startsWith("/api/")) return next();
+        res.statusCode = 503;
+        res.setHeader("content-type", "application/json");
+        res.setHeader("cache-control", "no-store");
+        res.end(JSON.stringify({ ok: false, error: "This static Studio preview has no API server. Start the Content Studio development server or open a deployed Studio to edit saved content." }));
+      });
+    },
     configureServer(server) {
       const localApiMiddleware = async (req, res, next) => {
         const requestPath = new URL(req.url ?? "/", "http://localhost").pathname;
@@ -32,7 +43,10 @@ function localApiRoutePlugin() {
         const routeFile = resolve(apiRoot, `${routePath}.ts`);
 
         if (!routeFile.startsWith(`${apiRoot}/`) || !existsSync(routeFile)) {
-          next();
+          res.statusCode = 404;
+          res.setHeader("content-type", "application/json");
+          res.setHeader("cache-control", "no-store");
+          res.end(JSON.stringify({ ok: false, error: "API route not found." }));
           return;
         }
 

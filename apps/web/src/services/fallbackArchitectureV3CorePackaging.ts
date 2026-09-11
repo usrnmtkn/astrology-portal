@@ -180,7 +180,8 @@ export function packageTemplateRowFromRow(row: GeneratedContentRow): TemplateRow
 export function packageFallbackArchitectureV3CoreRows(
   rows: GeneratedContentRow[],
   currentCoreManifest: FallbackArchitectureV3PackageManifest,
-  allowsPublication: typeof publicationAllowsContent = publicationAllowsContent
+  allowsPublication: typeof publicationAllowsContent = publicationAllowsContent,
+  options: { includeSkyPlacement?: boolean } = {}
 ): FallbackArchitectureV3Bundle | null {
   rows = rows.filter((row) => allowsPublication(row.content_key, row.id, row.updated_at, row.target_date));
   const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {
@@ -195,7 +196,7 @@ export function packageFallbackArchitectureV3CoreRows(
     rows,
     currentCoreKeys,
     (row) => isApprovedFallbackArchitectureV3Row(row),
-    (row) => isSkyPlacementFallbackPartitionKey(row.content_key)
+    (row) => !options.includeSkyPlacement && isSkyPlacementFallbackPartitionKey(row.content_key)
   );
   const authoredCards: AuthoredCard[] = [];
   const hookRows: HookRow[] = [];
@@ -221,4 +222,3 @@ export function packageFallbackArchitectureV3CoreRows(
   if (!authoredCards.length && !hookRows.length && !vocabularyRows.length && !templates.length) return null;
   return { transitLib: { authoredCards }, rowsFile: { hookRows, vocabularyRows }, templatesFile: { templates } };
 }
-
