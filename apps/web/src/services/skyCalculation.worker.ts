@@ -1,3 +1,4 @@
+import type { SkyCalculationOptions } from "./ephemeris.js";
 import type { LocationInput } from "../types.js";
 import {
   getAstrodienstSky,
@@ -17,7 +18,7 @@ type SkyCalculationRequest =
       kind: "sky";
       location: LocationInput;
       date: string;
-      options?: { includeTransitWindows?: boolean };
+      options?: SkyCalculationOptions;
     }
   | { id: number; kind: "lunar-calendar-range"; args: Parameters<typeof getLunarCalendarRangeEvents> }
   | { id: number; kind: "lunar-calendar-month"; args: Parameters<typeof getLunarCalendarMonth> }

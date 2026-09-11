@@ -1,7 +1,7 @@
 import { skySummaryOpeningKey } from "../../web/src/content/skyDailySummary";
 import { suppliedSkySummaryCandidate, loadSkySummarySourceBank, type SkySummarySourceBank } from "./skySummarySourceBank";
 import { pairedSummarySign } from "../../web/src/content/skySummaryGeometry";
-import moonSources from "./skyMoonSummarySources.json";
+import { loadSkyMoonSummarySources, type SkyMoonSummarySources } from "./skyMoonSummarySources";
 import { moonEventNames, type MoonSummaryKind } from "../../web/src/content/skyMoonSummary";
 import { SkyInlineTemplate } from "./SkyInlineTemplate";
 import { SkySummaryAssemblyStudio } from "./SkySummaryAssemblyStudio";
@@ -18,13 +18,16 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
   onEdit: (field: SkySummaryField, initialBody?: string) => void;
   busy: boolean;
 }) {
+  const [moonSources, setMoonSources] = useState<SkyMoonSummarySources>();
   const [sourceBank, setSourceBank] = useState<SkySummarySourceBank>();
   const [bankError, setBankError] = useState("");
   const [bankAttempt, setBankAttempt] = useState(0);
   useEffect(() => {
     let active = true;
     setBankError("");
-    void loadSkySummarySourceBank().then(bank => { if (active) setSourceBank(bank); })
+    void Promise.all([loadSkySummarySourceBank(), loadSkyMoonSummarySources()]).then(([bank, moon]) => {
+      if (active) { setSourceBank(bank); setMoonSources(moon); }
+    })
       .catch(() => { if (active) setBankError("Supplied summary wording could not load."); });
     return () => { active = false; };
   }, [bankAttempt]);
@@ -98,7 +101,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
       )}
       <div className="admin-editor-guidance" aria-label="Composition sources">
         {composition.sources.map(source => <div key={source.body}>
-          <strong>{source.field.label}</strong>{moonSources.rows.filter(row => row.key === source.field.key).map(row => <p key={row.key}>Source status: {source.copy !== row.body ? "Owner edit" : row.status}{row.sources.map(url => <span key={url}> · <a href={url} target="_blank" rel="noreferrer">Source URL</a></span>)}</p>)}<p><ContentLiveStatusBadge row={source.statusRow} unsaved={source.unsaved} />{source.emptyWorkingCopy ? " · Empty working copy; the preview uses the app fallback." : ""}</p>
+          <strong>{source.field.label}</strong>{moonSources?.rows.filter(row => row.key === source.field.key).map(row => <p key={row.key}>Source status: {source.copy !== row.body ? "Owner edit" : row.status}{row.sources.map(url => <span key={url}> · <a href={url} target="_blank" rel="noreferrer">Source URL</a></span>)}</p>)}<p><ContentLiveStatusBadge row={source.statusRow} unsaved={source.unsaved} />{source.emptyWorkingCopy ? " · Empty working copy; the preview uses the app fallback." : ""}</p>
           <button type="button" disabled={busy} onClick={() => onEdit(source.field)}>Edit {source.body === "sun" ? "Sun" : "Moon"} source</button>
         </div>)}
         <p>The opening uses the published assembly template and the summaries selected above.</p>
@@ -124,7 +127,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
     <div className="admin-daily-glance-pair-list" aria-label="Daily Sky Summary fields">
       {visible.map(field => {
         const saved = rows.find(row => row.content_key === field.key);
-        const source = moonSources.rows.find(row => row.key === field.key);
+        const source = moonSources?.rows.find(row => row.key === field.key);
         const candidate = suppliedSkySummaryCandidate(field.key, sourceBank);
         const currentBody = saved?.body ?? field.body;
         return <article key={field.key} aria-label={field.label}>

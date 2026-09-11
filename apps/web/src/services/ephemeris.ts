@@ -69,7 +69,9 @@ type CalculatedPlanet = PlanetPosition & {
 };
 
 type MoonEvent = NonNullable<SkySnapshot["moonEvent"]>;
-type SkyCalculationOptions = {
+export type SkyCalculationOptions = {
+  /** Natal charts need positions and aspects, not searches for daily events. */
+  includeDailyEvents?: boolean;
   includeTransitWindows?: boolean;
 };
 
@@ -3464,14 +3466,14 @@ export async function getAstrodienstSky(
     midheavenLongitude,
     houseCusps,
     moonPhase: moonPhaseName(sun.longitude, moon.longitude),
-    moonStatus: moonStatusFor(swe, date),
-    moonSignTransition: moonSignTransitionForDay(swe, date, location.timeZone),
-    moonEvent: moonEventForLocalDayOrNext(
+    moonStatus: options.includeDailyEvents === false ? undefined : moonStatusFor(swe, date),
+    moonSignTransition: options.includeDailyEvents === false ? undefined : moonSignTransitionForDay(swe, date, location.timeZone),
+    moonEvent: options.includeDailyEvents === false ? undefined : moonEventForLocalDayOrNext(
       swe,
       date,
       location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
     ),
-    solarDaylight: solarDaylightForDay(swe, location, date),
+    solarDaylight: options.includeDailyEvents === false ? undefined : solarDaylightForDay(swe, location, date),
     dominantElement: elementForSign(sun.sign),
     positions: displayPositions.map((position) => ({ ...position })),
     aspects: timedAspects

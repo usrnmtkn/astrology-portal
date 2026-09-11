@@ -114,7 +114,7 @@
     "qa:database-friends": "node scripts/test-friends-chart-database-loading-contract.mjs && node scripts/test-friends-chart-data-retention-contract.mjs && node scripts/test-manual-chart-pronouns-contract.mjs && node scripts/test-friends-chart-performance-contract.mjs && node --import tsx scripts/test-friend-natal-chart-completeness.mjs && node scripts/test-friends-orchestration-boundary.mjs && node scripts/test-social-friends-contract.mjs && npm run test:friend-chart-model && npm run test:phone-auth",
     "qa:friends-orchestration": "node scripts/test-friends-orchestration-boundary.mjs",
     "qa:friends-performance": "node scripts/test-friends-chart-performance-contract.mjs && node --experimental-strip-types scripts/test-friends-content-loading-policy.mjs && node --experimental-strip-types scripts/test-social-friends-loading-timeout.mjs && node scripts/test-friends-partial-publication-loading.mjs",
-    "qa:friends-loading-matrix": "playwright test -c playwright.friends-performance.config.ts --trace off",
+    "qa:friends-loading-matrix": "npm run test:natal-calculation-scope && playwright test -c playwright.friends-performance.config.ts --trace off",
     "qa:you-loading-matrix": "playwright test -c playwright.config.ts tests/visual/you-loading-performance.spec.ts",
     "qa:friends-data-retention": "node scripts/test-friends-chart-data-retention-contract.mjs",
     "qa:visual-baseline": "playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts",
@@ -191,7 +191,8 @@
     "preview:agent-memory": "node --import tsx scripts/preview-agent-memory.mjs",
     "privacy:check": "node scripts/check-project-privacy.mjs",
     "test:privacy": "node scripts/test-project-privacy.mjs",
-    "test:reader-copy-boundary": "node scripts/test-editorial-copy-boundary.mjs && node scripts/audit-reader-drafting-notes.mjs"
+    "test:reader-copy-boundary": "node scripts/test-editorial-copy-boundary.mjs && node scripts/audit-reader-drafting-notes.mjs",
+    "test:natal-calculation-scope": "node --import tsx scripts/test-natal-calculation-scope.mjs"
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "^0.27.7",

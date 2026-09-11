@@ -465,10 +465,11 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   });
 }
 
-test("source bank loading can retry without blocking current summary editing", async ({ page }) => {
+for (const asset of ["skySummarySourceBank", "skyMoonSummarySources"]) {
+test(`${asset} loading can retry without blocking current summary editing`, async ({ page }) => {
   await mockStudio(page, []);
   let attempts = 0;
-  await page.route("**/skySummarySourceBank-*.json", async route => {
+  await page.route(`**/${asset}-*.json`, async route => {
     attempts++;
     if (attempts === 1) await route.fulfill({ status: 503, body: "Unavailable" });
     else await route.continue();
@@ -480,7 +481,9 @@ test("source bank loading can retry without blocking current summary editing", a
   await page.getByRole("button", { name: "Retry supplied wording" }).click();
   await expect(aries.getByText("Review supplied wording", { exact: true })).toBeVisible();
   expect(attempts).toBe(2);
+  await expect(page.getByText(/Source status: OWNER PHRASE/).first()).toBeVisible();
 });
+}
 
 test("reader omits an impossible calendar lunation without losing the current sky", async ({ context }) => {
   const reader = await context.newPage();
