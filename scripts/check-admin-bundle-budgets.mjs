@@ -102,6 +102,9 @@ for (const key of initialChunks) {
   if (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("Sky variable key")) {
     failures.push(`Sky variable reference must remain deferred: ${file}`);
   }
+  if (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("Compare original and replacement")) {
+    failures.push(`Studio memory review must remain deferred: ${file}`);
+  }
 }
 
 const expectedDynamicEntries = [
@@ -109,6 +112,7 @@ const expectedDynamicEntries = [
   "src/SkyPlacementComposition.tsx",
   "src/SkyFallbackFieldsEditor.tsx",
   "src/MemoryGraphDashboard.tsx",
+  "src/StudioMemoryFeedback.tsx",
 ];
 for (const key of expectedDynamicEntries) {
   if (!manifest[key]?.isDynamicEntry) failures.push(`Expected lazy Admin entry is missing: ${key}`);
