@@ -20,7 +20,7 @@ node scripts/agent-memory.mjs show MEMORY_ID --repo /path/to/verified/tldrastro
 
 The CLI validates the Git remote, reads pinned Git objects, and records source snapshots and provenance. `--fetch` refreshes remote refs. Without it, the output identifies the remote-tracking snapshot as potentially stale. The implementation’s source configuration is used while this feature is unmerged; no working-tree rules or examples are substituted for pinned source data.
 
-`remember --file note.json` saves a local note with required `title`, `body`, `source_uri`, and `source_date`. The default local state directory is `/Users/mprez/Code/tldr-astro-memory/state`; override it with `--state`. Local notes are returned separately in `localNotes` and do not appear on the website. Website decisions belong in `data/agent-memory/decisions.jsonl` through the repository review workflow. Website memory updates with deployment.
+`remember --file note.json` saves a local note with required `title`, `body`, `source_uri`, and `source_date`. The default local state directory is `/Users/mprez/Code/tldr-astro-memory/state`; override it with `--state`. Local notes are returned separately in `localNotes` and do not appear on the website. Website decisions belong in `data/agent-memory/decisions.jsonl` through the repository review workflow. Repository memory updates with deployment. When Studio feedback is enabled, explicitly activated corrections are read from private database storage without a code deployment; see [the Studio feedback workflow](studio-feedback.md).
 
 The personal `tldr-astro-memory` skill discovers the CLI for future tasks. Its installed path references the implementation checkout; update that path if the checkout moves.
 
