@@ -1,4 +1,4 @@
-const { readPrivateReportDocument } = require('../../api/_lib/private-report-documents.mjs');
+const { readPrivateReportDocument } = require('../../api/_lib/private-report-documents.cjs');
 "use strict";
 
 const crypto = require("node:crypto");

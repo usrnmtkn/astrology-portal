@@ -31,6 +31,14 @@ try {
   const encode = () => gzipSync(JSON.stringify(bundle)).toString('base64');
   process.env.PRIVATE_REPORT_DOCUMENTS = encode();
   assert.equal(readPrivateReportDocument('private:report/general-2026'), body);
+  const commonJsRuntime = spawnSync(process.execPath, ['--no-experimental-require-module', '-e', `
+    const assert = require('node:assert/strict');
+    const { readPrivateReportDocument } = require('./api/_lib/private-report-documents.cjs');
+    require('./src/astro-writing/productionPreCallGate.cjs');
+    assert.equal(readPrivateReportDocument('private:report/general-2026'), ${JSON.stringify(body)});
+  `], { cwd: fileURLToPath(new URL('../', import.meta.url)), env: process.env, encoding: 'utf8' });
+  assert.equal(commonJsRuntime.status, 0, commonJsRuntime.stderr);
+
   record.body += 'tampered'; process.env.PRIVATE_REPORT_DOCUMENTS = encode();
   assert.throws(() => readPrivateReportDocument('private:report/general-2026'), /integrity/);
   assert.throws(() => readPrivateReportDocument('../../arbitrary-file'), /Unknown/);
