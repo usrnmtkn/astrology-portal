@@ -9,7 +9,7 @@ test("September 8 uses the revised Virgo clause and links planet names", async (
   await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
   await page.goto("/?date=2026-09-08#sky");
   const summary = page.getByLabel("Daily sky summary");
-  await expect(summary).toContainText("The Sun in Virgo at 16° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Leo at 13°", { timeout: 60_000 });
+  await expect(summary).toContainText("The Sun in Virgo at 16° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing. The Moon in Leo at 13°", { timeout: 60_000 });
   await expect(summary.getByRole("link")).toHaveText(["Sun in Virgo at 16°", "Moon in Leo at 13°", "Saturn Rx in Aries at 13°", "Neptune Rx in Aries at 3°", "Pluto Rx in Aquarius at 3°", "Chiron Rx in Taurus at 0°", "New Moon in Virgo"]);
   await expect(summary).not.toContainText("making it easier to notice what needs fixing");
   await page.screenshot({ path: "test-results/sky-summary-september-8.png" });
@@ -32,13 +32,14 @@ for (const theme of ["light", "dark"] as const) {
       const summary = page.getByLabel("Daily sky summary");
       await expect(summary).toBeVisible({ timeout: 60_000 });
       await expect(summary).toContainText("The Sun in Virgo");
-      await expect(summary).toContainText("The Sun in Virgo at 15° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Cancer at 29° pulls us home to the places, people, and memories that nurture us.");
+      await expect(summary).toContainText("The Sun in Virgo at 15° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing. The Moon in Cancer at 29° pulls us home to the places, people, and memories that nurture us.");
       await expect(summary).not.toContainText("Fix what matters");
       await expect(summary).not.toContainText("Tend what feels like home");
-      await expect(summary).toContainText("the Moon in Cancer");
+      await expect(summary).toContainText("The Moon in Cancer");
       await expect(summary).toContainText("The next New Moon in Virgo is in 3 days.");
       await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx in Aries at 13°, Neptune Rx in Aries at 3°, Pluto Rx in Aquarius at 3°, and Chiron Rx in Taurus at 0°.");
-      await expect(summary).toContainText("Four planets are retrograde right now: Saturn Rx in Aries at 13°, Neptune Rx in Aries at 3°, Pluto Rx in Aquarius at 3°, and Chiron Rx in Taurus at 0°. The Moon is void of course for another 50 minutes.");
+      await expect(summary.locator(":scope > p").first()).toContainText("The Moon is void of course for another 50 minutes.");
+      expect((await summary.innerText()).indexOf("Four planets are retrograde")).toBeGreaterThan((await summary.innerText()).indexOf("The Moon is void"));
       await expect(summary).not.toContainText("Full Moons mark a culmination");
       await expect(summary.locator("mark.content-highlight").filter({ hasText: "Four planets are retrograde" })).toHaveText("Four planets are retrograde");
       await expect(summary.locator("strong")).toHaveCount(0);
@@ -148,7 +149,7 @@ for (const width of [390, 1440]) {
     await page.goto("/#sky");
     const summary = page.getByLabel("Daily sky summary");
     await expect(summary).toBeVisible({ timeout: 60_000 });
-    await expect(summary).toContainText(/^The Sun in Libra at \d+° puts more attention on agreements, tradeoffs, and decisions that affect more than one person, while the Moon in Libra at \d+°/);
+    await expect(summary).toContainText(/^The Sun in Libra at \d+° puts more attention on agreements, tradeoffs, and decisions that affect more than one person. The Moon in Libra at \d+°/);
     await expect(summary.locator("strong")).toHaveCount(0);
     expect(await summary.locator("span").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
     expect(await summary.getByRole("link").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
