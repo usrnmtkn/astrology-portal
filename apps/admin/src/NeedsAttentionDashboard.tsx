@@ -1,7 +1,6 @@
 import { AlertTriangle, ArrowLeft, CheckCircle2, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
-import { readGeneratedContentRows } from "./generatedContentClient";
 import { AdminAccessGate } from "./AdminStudioPrimitives";
 import { isPublishedButUnwired, type ContentWiringRow } from "./contentWiringStatus";
 import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./ownerSession";
@@ -111,9 +110,9 @@ function buildAttentionItems(coverage: CoveragePayload, liveRows: InventoryRow[]
 }
 
 async function loadInventory(credential: string, status: "ERROR" | "LIVE") {
+  const { readGeneratedContentRows } = await import("./generatedContentClient");
   const params = new URLSearchParams({ status, visibility: "all", view: "inventory", limit: "1000" });
   return readGeneratedContentRows(`/api/admin/generated-content?${params}`, credential);
-
 }
 
 export default function NeedsAttentionDashboard() {
