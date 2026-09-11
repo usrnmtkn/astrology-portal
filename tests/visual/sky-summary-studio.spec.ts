@@ -485,7 +485,10 @@ test("reader omits an impossible calendar lunation without losing the current sk
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [
     { id: "impossible", type: "lunation", title: "New Moon", sign: "Virgo", startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" }
   ] }] } } }));
+  const calendarResponse = reader.waitForResponse(response => response.url().includes("/api/calendar?") && response.status() === 200);
   await reader.goto("http://127.0.0.1:4294/?date=2026-09-07#sky");
+  // The rejection can only occur after the synthetic calendar data arrives.
+  await calendarResponse;
   await expect.poll(() => warnings.some(message => message.includes("IMPOSSIBLE_SKY"))).toBe(true);
   const summary = reader.getByLabel("Daily sky summary");
   await expect(summary).toContainText("Sun in Virgo");
