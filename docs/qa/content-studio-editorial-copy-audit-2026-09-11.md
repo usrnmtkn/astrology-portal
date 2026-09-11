@@ -82,3 +82,8 @@ Release status is separate from saved-data correction: this work belongs to
 PR #759, based on prerequisite privacy PR #756. Production must follow the main
 Git integration after the required exact-head checks pass; never waive them or
 promote the feature preview to bypass the release gate.
+
+The first hosted run caught stale knowledge-index source hashes after the macro
+cleanup. The index was regenerated; the knowledge/phrase freshness checks and
+generated-report judge-governance regression pass. This updates source hashes,
+not approval/signoff records or assertions.
