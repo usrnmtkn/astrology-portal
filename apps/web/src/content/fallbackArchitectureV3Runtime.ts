@@ -777,19 +777,10 @@ export function transitV3SameBeatKeyForContentKey(contentKey: string | null | un
   return null;
 }
 
-export function installLastKnownGoodFallbackArchitectureV3Bundle(bundle: FallbackArchitectureV3Bundle) {
-  // Incoming rows were checked against the prospective ledger. Preserve a
-  // previously verified row when an older snapshot no longer supplies it.
-  // Publication filtering happens during recomposition, including retirements.
-  const previous = lastKnownGoodReaderBundle;
-  lastKnownGoodReaderBundle = readerEligibleBundle({
-    transitLib: { authoredCards: [...(previous?.transitLib.authoredCards ?? []), ...bundle.transitLib.authoredCards] },
-    templatesFile: { templates: [...(previous?.templatesFile.templates ?? []), ...bundle.templatesFile.templates] },
-    rowsFile: {
-      hookRows: [...(previous?.rowsFile.hookRows ?? []), ...(bundle.rowsFile.hookRows ?? [])],
-      vocabularyRows: [...(previous?.rowsFile.vocabularyRows ?? []), ...(bundle.rowsFile.vocabularyRows ?? [])]
-    }
-  });
+export function updateLastKnownGoodFallbackArchitectureV3Bundle(
+  update: (previous: FallbackArchitectureV3Bundle | null) => FallbackArchitectureV3Bundle
+) {
+  lastKnownGoodReaderBundle = readerEligibleBundle(update(lastKnownGoodReaderBundle));
   recomposeReaderBundle();
 }
 

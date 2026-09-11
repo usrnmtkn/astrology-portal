@@ -1,50 +1,17 @@
 import { packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
 import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
-import { publicationLedgerReady, isContentRetired, installContentPublications, mergeContentPublications, publicationAllowsContent, contentPublication, contentPublicationRecords } from "../content/contentPublicationState";
+import { publicationLedgerReady, publicationAllowsContent, contentPublication, contentPublicationRecords } from "../content/contentPublicationState";
 import { refreshContentPublications } from "./contentPublications";
 import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey, generatedRowPackageRole } from "../content/generatedContentEligibility";
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
 import { getSupabaseClient } from "./auth";
 
-let contentStudioLastKnownGoodLoadedAt = 0;
-let contentStudioLastKnownGoodRowsPromise: Promise<GeneratedContentRow[]> | null = null;
-
 export async function loadContentStudioLastKnownGoodRows(): Promise<GeneratedContentRow[]> {
-  if (Date.now() - contentStudioLastKnownGoodLoadedAt > 5 * 60 * 1000) contentStudioLastKnownGoodRowsPromise = null;
-  if (!contentStudioLastKnownGoodRowsPromise) {
-    contentStudioLastKnownGoodLoadedAt = Date.now();
-    contentStudioLastKnownGoodRowsPromise = (async () => {
-      try {
-        const response = await fetch("/content-studio-last-known-good.json", { cache: "no-cache", signal: AbortSignal.timeout(8000) });
-        if (!response.ok) return [];
-        const snapshot = await response.json() as { schema?: unknown; rowCount?: unknown; rows?: unknown; publications?: unknown };
-        if (snapshot.schema !== "content-studio-last-known-good-v1" || !Array.isArray(snapshot.rows)
-          || snapshot.rowCount !== snapshot.rows.length) return [];
-        if (Array.isArray(snapshot.publications)) {
-          // Installing the ledger first hides unversioned bundled passages and
-          // notifies readers before their matching snapshot rows are available.
-          // Prepare against the prospective ledger, then stage the offline layer
-          // synchronously before announcing the publication change.
-          const prospective = new Map(contentPublicationRecords().map(record => [record.content_key, record]));
-          mergeContentPublications(prospective, snapshot.publications);
-          const manifest = await loadFallbackArchitectureV3BundledManifest();
-          const bundle = packageFallbackArchitectureV3CoreRows(snapshot.rows, manifest,
-            (key, id, version, date) => publicationAllowsContent(key, id, version, date, prospective),
-            { includeSkyPlacement: true });
-          if (bundle) installLastKnownGoodFallbackArchitectureV3Bundle(bundle);
-          installContentPublications(snapshot.publications);
-        }
-        return snapshot.rows as GeneratedContentRow[];
-      } catch {
-        return [];
-      }
-    })();
-  }
-  const rows = await contentStudioLastKnownGoodRowsPromise;
-  if (!rows.length) contentStudioLastKnownGoodRowsPromise = null;
-  return rows.filter((row) => !isContentRetired(row.content_key));
+  const { loadOfflineContentRows } = await import("./offlineContentSnapshot");
+  return loadOfflineContentRows();
 }
+
 import {
   hasMissingTemplateSlots,
   hasTemplateSlots,
@@ -72,9 +39,7 @@ import {
   fallbackArchitectureV3BundledManifestSummary,
   fallbackArchitectureV3ManifestForBundle,
   loadFallbackArchitectureV3BundledCoreManifest,
-  loadFallbackArchitectureV3BundledManifest,
   loadFallbackArchitectureV3BundledSkyPlacementManifest,
-  installLastKnownGoodFallbackArchitectureV3Bundle,
   transitV3AuthoredCardForContentKey,
   type FallbackArchitectureV3Bundle,
   type FallbackArchitectureV3PackageManifest,

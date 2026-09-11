@@ -5,6 +5,11 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { build } from "esbuild";
 
+// The existing partitions cover the full admission index without shipping it twice.
+const manifest = (name: string) => JSON.parse(readFileSync(`apps/web/src/content/fallbackArchitectureV3/${name}.json`, "utf8"));
+assert.deepEqual(new Set([...manifest("bundled-core-manifest-v3").keys, ...manifest("bundled-sky-placement-manifest-v3").keys]),
+  new Set(manifest("bundled-manifest-v3").keys));
+
 const snapshot = JSON.parse(readFileSync("apps/web/public/content-studio-last-known-good.json", "utf8"));
 const key = "authored/calendar-weekly-moon/taurus/variant-4";
 const row = snapshot.rows.find((candidate: any) => candidate.content_key === key);
