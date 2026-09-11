@@ -1662,6 +1662,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     method: "POST",
     headers: {
       ...adminHeaders(),
+      ...(row.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "return=representation"
     },
     body: JSON.stringify(row)

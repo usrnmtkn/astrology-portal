@@ -34,6 +34,7 @@ await build({
   },
   stdin: { loader: "ts", resolveDir: process.cwd(), contents: `
     export * from "./apps/web/src/services/generatedContent.ts";
+    export { installContentPublications } from "./apps/web/src/content/contentPublicationState.ts";
     export { installFallbackArchitectureV3Bundle, fallbackRendererV3, loadDeferredFallbackArchitectureV3Bundle, transitSynastryFallbackRendererV3 } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
   ` },
   format: "esm",
@@ -993,3 +994,53 @@ const batch=await invokeApi('POST','/api/admin/generated-content',{rows:[{...uns
 assert.equal(batch.status,409,JSON.stringify(batch.payload));
 assert.deepEqual(row,before);
 console.log('PASS: new House Transit and exact synastry publication, shipped full-copy/direction selection, and unsupported-key refusal.');
+
+// Exercise the production SQL trigger with the real handler's HTTP headers.
+// A LIVE row alone is insufficient once the publication ledger is enabled.
+const { PGlite } = await import('@electric-sql/pglite');
+const { contentLiveStatuses } = await import('../api/_lib/content-live-status.ts');
+const { publicationAllowsContent, publicationLedgerKey } = await import('../apps/web/src/content/contentPublicationState.ts');
+const publicationDb = new PGlite();
+await publicationDb.exec(`create role anon; create role authenticated; create role service_role bypassrls;
+  create table generated_interpretations(id uuid primary key,content_key text,status text,lane text,review_state text,updated_at timestamptz,sections jsonb,target_date date);`);
+await publicationDb.exec(readFileSync('apps/web/supabase/migrations/20260907180000_content_publications.sql', 'utf8'));
+const storedFetch = globalThis.fetch;
+let createdIndex = 0;
+globalThis.fetch = async (input, init = {}) => {
+  if (init.method !== 'POST') return storedFetch(input, init);
+  const saved = await storedFetch(input, init);
+  row.id = `aaaaaaaa-aaaa-aaaa-aaaa-${String(++createdIndex).padStart(12, '0')}`;
+  const headers = new Headers(init.headers);
+  await publicationDb.query("select set_config('request.headers', $1, false), set_config('request.jwt.claims', $2, false)",
+    [JSON.stringify(Object.fromEntries(headers)), JSON.stringify({ role: 'service_role' })]);
+  await publicationDb.query('insert into generated_interpretations(id,content_key,status,lane,review_state,updated_at,sections,target_date) values ($1,$2,$3,$4,$5,$6,$7,$8)',
+    [row.id, row.content_key, row.status, row.lane, row.review_state ?? null, row.updated_at, row.sections, row.target_date]);
+  return Response.json([row], { status: saved.status });
+};
+try {
+  const newMoonBody = 'brings that same Virgo focus to what can be cleared, refined, or handled differently now, especially where trying to get everything right has made a practical change harder to begin';
+  for (const status of ['DRAFT', 'LIVE']) {
+    const key = status === 'LIVE' ? 'cms/sky-daily-summary/moon/virgo/newMoon' : 'cms/sky-daily-summary/moon/virgo/moon';
+    const created = await invokeApi('POST', '/api/admin/generated-content', {
+      contentKey: key, surface: 'sky', mode: 'card', eventType: 'sky-daily-summary',
+      status, lane: 'serving', reviewState: null, body: newMoonBody,
+      sourceSnapshot: { contentSystem: 'cms-surface-override', contentType: 'mustache-template', allowedSlots: [] }
+    });
+    assert.equal(created.status, 200, JSON.stringify(created.payload));
+    const publications = JSON.parse(JSON.stringify((await publicationDb.query('select * from content_publications')).rows));
+    const records = new Map(publications.map(p => [p.content_key, p]));
+    records.set(publicationLedgerKey, { content_key: publicationLedgerKey, state: 'live', revision: 1, row_id: null, row_updated_at: null, updated_at: row.updated_at });
+    const allows = candidate => publicationAllowsContent(candidate.content_key, candidate.id, candidate.updated_at, candidate.target_date, records);
+    assert.equal(records.has(key), status === 'LIVE', 'First Save & publish must create a publication; Save draft must not.');
+    assert.equal(allows(row), status === 'LIVE', 'The saved revision must pass the reader publication identity gate.');
+    assert.equal(contentLiveStatuses([row], [row], allows)[0].live, status === 'LIVE', 'Reader status must match the first-save result.');
+    runtime.installContentPublications([...records.values()]);
+    const served = await loadLiveGeneratedContentForKeys([key]);
+    assert.equal(served.has(key), status === 'LIVE');
+    if (status === 'LIVE') assert.equal(served.get(key).body, newMoonBody);
+  }
+  console.log('PASS: first-save CMS publication through real handler, SQL trigger, reader status, and serving loader; drafts stay unpublished.');
+} finally {
+  globalThis.fetch = storedFetch;
+  await publicationDb.close();
+}
