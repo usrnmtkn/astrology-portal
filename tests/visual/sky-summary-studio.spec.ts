@@ -412,7 +412,9 @@ test("V6 Moon event sources stay separate and missing copy stays blank", async (
     { id: "ordinary", type: "lunation", title: "New Moon", sign: "Virgo", longitude: 165, startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" },
     { id: "eclipse", type: "lunation", title: "New Moon", eclipseType: "solar", sign: "Virgo", longitude: 165, startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" }
   ] }] } } }));
+  const calendarResponse = reader.waitForResponse(response => response.url().includes("/api/calendar?") && response.status() === 200);
   await reader.goto(`${readerBaseURL}/?date=2026-09-10#sky`);
+  await calendarResponse;
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
   // The calendar load is followed by a separate event-time ephemeris request.
   // Use the existing 15-second reader readiness budget, not the 5-second DOM default.

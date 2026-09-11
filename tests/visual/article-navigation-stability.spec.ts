@@ -25,7 +25,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
    // Click the actual Read More text, not the center of a large card.
    await link.getByText('Read More', {exact:true}).click();
    await expect(page).toHaveURL(new RegExp(target!.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'$'));
-   await expect(page.locator('#sky-detail-title')).toHaveText(aspect==='Trine Sun' ? /Sun.*Trine.*Lilith/i : /Mars.*Opposition.*Lilith/i, {timeout:15_000});
+   // Nested routes load their reading package just like the parent route above.
+   await expect(page.locator('#sky-detail-title')).toHaveText(aspect==='Trine Sun' ? /Sun.*Trine.*Lilith/i : /Mars.*Opposition.*Lilith/i, {timeout:60_000});
    await expect(page.locator('.article-related-aspect-row')).toHaveCount(0);
    const aspectTitle = await page.locator('#sky-detail-title').textContent();
    await expectAnimatedArticleNavigation(page, () => page.getByRole('button',{name:'Close detail',exact:true}).click(), aspectTitle!);

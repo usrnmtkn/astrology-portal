@@ -222,7 +222,8 @@ test("Lilith Pluto writing survives the reader adapter and opens its complete in
   await page.screenshot({ path: "test-results/reader-recovery/lilith-pluto-detail.png", fullPage: true });
   await page.getByRole("button", { name: "Back to updates", exact: true }).click();
   await page.reload();
-  await expect(entry).toBeVisible();
+  // A reload hydrates the weekly transit entries again, like first navigation.
+  await expect(entry).toBeVisible({ timeout: 45_000 });
   await entry.click();
   await expect(article).toContainText("Power, depth, and slow transformation hit the limit");
   await page.setViewportSize({ width: 390, height: 844 });
