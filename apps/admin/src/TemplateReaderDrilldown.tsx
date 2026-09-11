@@ -44,7 +44,7 @@ function segmentButton(
 }
 
 export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVariable, previewOptions, compact = false }: Props) {
-  const [audience, setAudience] = useState<"you" | "they">("you");
+  const [audience, setAudience] = useState<"you" | "they">(previewOptions?.initialAudience ?? "you");
   // The parent rebuilds `templateRow` on every render, so key the memo on its
   // content rather than its identity; otherwise every keystroke in the editor
   // rebuilds the whole composition against all rows.

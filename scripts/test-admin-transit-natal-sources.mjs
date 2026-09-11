@@ -9,7 +9,7 @@ const dir = fs.mkdtempSync(path.join(os.tmpdir(), "studio-transit-preview-"));
 try {
   await build({ bundle: true, platform: "node", format: "esm", outfile: path.join(dir, "preview.mjs"), logLevel: "silent", define: { "import.meta.env": "{}" }, stdin: { resolveDir: process.cwd(), contents: `
     export { createTransitSynastryRenderer } from './apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts';
-    export { renderTransitNatalPreview, transitNatalLabel } from './apps/admin/src/transitNatalSources.ts';
+    export { renderTransitNatalPreview, transitNatalLabel, transitNatalPlanets, transitNatalPoints, transitNatalAspects } from './apps/admin/src/transitNatalSources.ts';
     export { loadDeferredFallbackArchitectureV3Bundle, transitSynastryFallbackRendererV3 } from './apps/web/src/content/fallbackArchitectureV3Runtime.ts';
     export { installContentPublications } from './apps/web/src/content/contentPublicationState.ts';
   ` } });
@@ -36,6 +36,25 @@ try {
     assert.deepEqual(actual.sourceKeys, shipped.sourceKeys);
   }
   assert.deepEqual(shipped.sourceKeys, ["fallback-hook/transit-effect-soft/lilith", "fallback-vocab/planet-topic/north-node"]);
+  // Audit every selectable aspect in both audiences; a source gap is valid, a
+  // successful preview pointing at an unrelated template or absent key is not.
+  const sourceKeys = new Set(parts.flatMap(part => [...(part.hookRows ?? []), ...(part.vocabularyRows ?? []), ...(part.templates ?? [])]).map(row => row.contentKey));
+  read("bundled-transit-core-authored-cards-v3.json").authoredCards.forEach(row => sourceKeys.add(row.contentKey));
+  let renderedCount = 0, gapCount = 0;
+  for (const planet of runtime.transitNatalPlanets) for (const natalPoint of runtime.transitNatalPoints) for (const aspect of runtime.transitNatalAspects) for (const voice of ["you", "Alex"]) {
+    const selected = { planet, natalPoint, aspect, sign: "capricorn" };
+    let preview;
+    try { preview = runtime.renderTransitNatalPreview(selected, runtime.transitSynastryFallbackRendererV3, voice); }
+    catch (error) { assert.match(String(error), /SOURCE_GAP|No reader-eligible/); gapCount++; continue; }
+    renderedCount++;
+    assert.ok(preview.sourceKeys.length, JSON.stringify(selected));
+    for (const key of preview.sourceKeys) assert.ok(sourceKeys.has(key), `Uneditable preview source ${key} for ${JSON.stringify(selected)}`);
+    if (preview.sourceKeys.some(key => key.startsWith("fallback-hook/transit-effect-"))) {
+      assert.ok(!preview.sourceKeys.includes("fallback-template/transit.aspect"), `Effect-first preview claims unused template: ${JSON.stringify(selected)}`);
+    }
+  }
+  assert.ok(renderedCount > 500, "The audit must exercise the populated catalog, not only source gaps");
+  console.log(`Transit source catalog: ${renderedCount} renderable selections, ${gapCount} explicit source gaps, both audiences.`);
   const mars = { ...selection, planet: "mars", natalPoint: "mars" };
   assert.equal(runtime.renderTransitNatalPreview(mars, runtime.transitSynastryFallbackRendererV3).body, runtime.transitSynastryFallbackRendererV3.renderTransitReturn({ planet: "mars" }).parts.join("\n\n"));
   const key = "authored/transit-aspect/sun/north-node/conjunction";
