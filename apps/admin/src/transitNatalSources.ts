@@ -94,7 +94,7 @@ export function renderTransitNatalPreview(selection: Pick<TransitNatalSelection,
   return {
     headline: rendered.headline || transitNatalLabel(selection),
     body,
-    sourceKeys: [...new Set([rendered.contentKey ?? rendered.templateKey, ...(rendered.sourceKeys ?? [])])]
+    sourceKeys: [...new Set((rendered.sourceKeys?.length ? rendered.sourceKeys : [rendered.contentKey ?? rendered.templateKey]))]
   };
 }
 

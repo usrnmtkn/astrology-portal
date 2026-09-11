@@ -1,7 +1,7 @@
 import { moonSummaryKey, moonEventNames, type MoonSummaryKind } from "../../web/src/content/skyMoonSummary";
 import { importedSkySummary } from "./skySummaryImportedCopy";
 import { skyDailySummaryParts } from "../../web/src/content/skyDailySummary";
-import { skyDailySummaryFields, skySummaryTemplateErrors } from "../../web/src/content/skyDailySummaryCatalog";
+import { skyDailySummaryFields, skySummaryTemplateErrors, currentSkySummaryWording } from "../../web/src/content/skyDailySummaryCatalog";
 import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../../web/src/content/generatedContentEligibility";
 import type { LiveGeneratedContent } from "../../web/src/services/generatedContent";
 
@@ -18,7 +18,7 @@ export function publishedSkySummaryContent(rows: SummaryCompositionRow[]) {
     && isGeneratedContentReaderBoundaryAllowed(row) && isReaderServableGeneratedContentRow(row)
     && !skySummaryTemplateErrors(row.content_key, row.body ?? "").length).map(row => [row.content_key, {
       id: row.id ?? row.content_key, contentKey: row.content_key, surface: "sky", mode: "feed", eventType: null,
-      targetDate: null, headline: null, summary: row.summary ?? null, body: row.body ?? "", sections: null, model: null,
+      targetDate: null, headline: null, summary: row.summary ?? null, body: currentSkySummaryWording(row.content_key, row.body ?? ""), sections: null, model: null,
       updatedAt: row.updated_at ?? "", status: "LIVE"
     }]));
 }

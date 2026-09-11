@@ -12,9 +12,9 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) {
     page.on('pageerror', e => errors.push(e.message));
     await page.goto('/#sky');
     const summary = page.getByLabel('Daily sky summary');
-    await expect(summary.locator(':scope > p')).toHaveCount(3, { timeout: 60_000 });
-    await expect(summary.locator(':scope > p').nth(1)).toHaveText('Today brings one exact aspect: Moon sextiles Mercury.');
-    await expect(summary.locator(':scope > p').nth(2)).toHaveText('The next New Moon in Virgo is in 3 days.');
+    await expect(summary.locator(':scope > p')).toHaveCount(4, { timeout: 60_000 });
+    await expect(summary.locator(':scope > p').nth(1)).toHaveText('Moon sextiles Mercury is exact today.');
+    await expect(summary.locator(':scope > p').nth(3)).toHaveText('The next New Moon in Virgo is in 3 days.');
     const link = summary.getByRole('link', { name: 'Moon sextiles Mercury', exact: true });
     await expect(link).toHaveAttribute('href', '#sky/aspect/moon/sextile/mercury/at/2026-09-07T20%3A00%3A00Z');
     const styles = await summary.locator(':scope > p').evaluateAll(ps => ps.map(p => {

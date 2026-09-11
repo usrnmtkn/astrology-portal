@@ -38,6 +38,21 @@ try {
  publications[0].state='retired';assert.equal((await request()).rendered,undefined);
  publications[0].state='live';publications[0].row_updated_at='2026-09-10T12:00:01Z';assert.equal((await request()).rendered,undefined);
  publications=[];rows=[];assert.deepEqual((await request()).rendered,baseline,'Requests cannot leak publication state');
+ const lilithInput={planet:'lilith',sign:'capricorn',aspect:'trine',natalPoint:'north-node',voice:'you'};
+ const lilith=(await request(lilithInput)).rendered;
+ assert.deepEqual(lilith.sourceKeys,['fallback-hook/transit-effect-soft/lilith','fallback-vocab/planet-topic/north-node']);
+ assert.match(lilith.body,/Lilith in Capricorn is trining your natal North Node/);
+ const hookKey=lilith.sourceKeys[0];
+ const {servingPackageRecords}=await import('../api/_lib/content-live-status.ts');
+ const hook=servingPackageRecords.get(hookKey);
+ assert.ok(hook);
+ rows=[{id,content_key:hookKey,status:'LIVE',lane:'serving',provider:'tldrastro-fallback-architecture-v3',updated_at:stamp,body:'Synthetic edited Lilith hook.',sections:{packageRecord:{...hook,body_you:'Synthetic edited Lilith hook.'}}}];
+ publications=[{content_key:hookKey,state:'live',revision:1,row_id:id,row_updated_at:stamp,updated_at:stamp}];
+ assert.match((await request(lilithInput)).rendered.body,/Synthetic edited Lilith hook/);
+ publications[0].state='retired';
+ const retired=await request(lilithInput);
+ assert.ok(!retired.rendered || !retired.rendered.body.includes('Synthetic edited Lilith hook'));
+ rows=[];publications=[];
  failStorage=true;assert.equal((await request()).code,503);
  console.log('PASS transit preview actual handler: authorization, input validation, shared full copy, published edits, draft exclusion, retirement, stale publication, scoped state, and storage failure.');
 } finally {globalThis.fetch=original;}
