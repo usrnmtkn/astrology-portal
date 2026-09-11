@@ -11,6 +11,9 @@ export function currentSkySummaryWording(key: string, body: string): string {
   if (["assembly/opening", "assembly/sunOnly", "assembly/moonOnly"].includes(part)) {
     return body.replaceAll("{sunPlacementLink}", "{sunName} in {sunSign}{sunDegree}").replaceAll("{moonPlacementLink}", "{moonName} in {moonSign}{moonDegree}");
   }
+  // Owner correction (2026-09-10): name the Moon's sign even when it matches
+  // the Sun. Upgrade only the former built-in template saved by older editors.
+  if (part === "assembly/openingSameSign" && body.trim() === "The {sunName} in {sunSign}{sunDegree} {sunSummary}, while the {moonName} there{moonDegree} {moonSummary}.") return assembly.openingSameSign;
   const previous = clauses.provenance.previousClauses[part as keyof typeof clauses.provenance.previousClauses];
   if (previous && body.trim() === previous) {
     return part === "sun/virgo" ? clauses.sun.virgo : clauses.moon.cancer;
@@ -64,9 +67,7 @@ export function skySummaryTemplateErrors(key: string, body: string): string[] {
   const slots = Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]);
   const errors: string[] = [];
   for (const planet of ["sun", "moon"]) {
-    const sameSignMoon = key === "cms/sky-daily-summary/assembly/openingSameSign" && planet === "moon";
-    const placementPattern = sameSignMoon ? /\{moonName\}[^{}]*\{moonDegree\}/u
-      : new RegExp(`\\{${planet}Name\\}[^{}]*\\{${planet}Sign\\}[^{}]*\\{${planet}Degree\\}`);
+    const placementPattern = new RegExp(`\\{${planet}Name\\}[^{}]*\\{${planet}Sign\\}[^{}]*\\{${planet}Degree\\}`);
     if (slots.includes(`${planet}Name`) && !placementPattern.test(body)) errors.push("Keep each planet, sign, and degree together in that order so the complete placement links to its article.");
   }
   if (/[{}]/u.test(body.replace(/\{[^{}]+\}/gu, ""))) errors.push("Close every slot with matching single braces.");

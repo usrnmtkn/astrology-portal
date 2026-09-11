@@ -91,7 +91,6 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
   // Preserve the existing factual fallback when a summary is unavailable.
   if (!values.sunSummary?.length) opening = opening.replace("{sunName} in {sunSign}", "{sunName} is in {sunSign}");
   if (!values.moonSummary?.length) opening = opening.replace("{moonName} in {moonSign}", specialMoon ? "{moonName} is in {moonSign}" : "{moonName} moves through {moonSign}");
-  if (!values.moonSummary?.length) opening = opening.replace("{moonName} there", "{moonName} is there");
   // The editor separates facts; readers still get one complete placement link.
   for (const body of ["sun", "moon"] as const) {
     opening = opening.replace(new RegExp(`\\{${body}Name\\}[^{}]*(?:\\{${body}Sign\\}[^{}]*)?\\{${body}Degree\\}`), placement => {

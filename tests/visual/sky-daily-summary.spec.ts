@@ -148,7 +148,7 @@ for (const width of [390, 1440]) {
     await page.goto("/#sky");
     const summary = page.getByLabel("Daily sky summary");
     await expect(summary).toBeVisible({ timeout: 60_000 });
-    await expect(summary).toContainText(/^The Sun in Libra at \d+° puts more attention on agreements, tradeoffs, and decisions that affect more than one person, while the Moon there at \d+°/);
+    await expect(summary).toContainText(/^The Sun in Libra at \d+° puts more attention on agreements, tradeoffs, and decisions that affect more than one person, while the Moon in Libra at \d+°/);
     await expect(summary.locator("strong")).toHaveCount(0);
     expect(await summary.locator("span").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
     expect(await summary.getByRole("link").first().evaluate(el => getComputedStyle(el).fontWeight)).toBe("400");
