@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetch, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { loadContentUnresolvedReport } from "./content-unresolved.js";
 
@@ -8,6 +8,7 @@ loadLocalWebEnv();
 
 export type ContentStudioResolutionInput = {
   schema: "content-studio-resolution/v1";
+  expectedUpdatedAt?: string | null;
   issueId: string;
   contentKey: string;
   status: "diagnosis-only" | "implemented";
@@ -56,7 +57,9 @@ export function normalizeContentStudioResolution(value: unknown): ContentStudioR
     invalid("prUrl must be a GitHub pull-request URL or null.");
   }
   if (typeof input.ownerDecisionRequired !== "boolean") invalid("ownerDecisionRequired is invalid.");
+  if (input.expectedUpdatedAt != null && (typeof input.expectedUpdatedAt !== "string" || !Number.isFinite(Date.parse(input.expectedUpdatedAt)))) invalid("expectedUpdatedAt is invalid.");
   return {
+    expectedUpdatedAt: input.expectedUpdatedAt as string | null | undefined,
     schema: input.schema,
     issueId,
     contentKey,
@@ -64,7 +67,7 @@ export function normalizeContentStudioResolution(value: unknown): ContentStudioR
     diagnosis: boundedString(input.diagnosis, "diagnosis"),
     proposedAction: boundedString(input.proposedAction, "proposedAction"),
     filesInvolved: input.filesInvolved.map((file) => file.trim()),
-    prUrl: input.prUrl,
+    prUrl: input.prUrl as string | null,
     ownerDecisionRequired: input.ownerDecisionRequired
   };
 }
@@ -77,13 +80,18 @@ export function assertCurrentResolutionIssue(input: ContentStudioResolutionInput
 
 async function saveResolution(input: ContentStudioResolutionInput) {
   const key = serviceRoleKey();
-  const response = await adminFetch(`${supabaseUrl()}/rest/v1/content_studio_issue_resolutions?on_conflict=issue_id`, {
-    method: "POST",
+  const params = new URLSearchParams();
+  if (input.expectedUpdatedAt) {
+    params.set("issue_id", `eq.${input.issueId}`);
+    params.set("updated_at", `eq.${input.expectedUpdatedAt}`);
+  }
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/content_studio_issue_resolutions?${params}`, {
+    method: input.expectedUpdatedAt ? "PATCH" : "POST",
     headers: {
       apikey: key,
       authorization: `Bearer ${key}`,
       "content-type": "application/json",
-      prefer: "resolution=merge-duplicates,return=representation"
+      prefer: "return=representation"
     },
     body: JSON.stringify({
       issue_id: input.issueId,
@@ -97,9 +105,16 @@ async function saveResolution(input: ContentStudioResolutionInput) {
       updated_at: new Date().toISOString()
     })
   });
-  const rows = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(`Resolution record save failed with ${response.status}: ${JSON.stringify(rows)}`);
-  return Array.isArray(rows) ? rows[0] : rows;
+  const rows = response.payload;
+  if (response.status === 409) throw new AdminHttpError(409, "A resolution already exists. Reload before saving.");
+  if (!response.ok) throw new AdminHttpError(502, `Resolution record save failed with ${response.status}: ${JSON.stringify(rows)}`);
+  const confirmed = adminStorageRows(rows);
+  if (input.expectedUpdatedAt && confirmed.length === 0) throw new AdminHttpError(409, "This resolution changed after it was opened. Reload before saving.");
+  const row = confirmed[0];
+  if (confirmed.length !== 1 || row.issue_id !== input.issueId || row.content_key !== input.contentKey || row.result_status !== input.status || row.diagnosis !== input.diagnosis || row.proposed_action !== input.proposedAction) {
+    throw new AdminHttpError(502, "Storage did not confirm the resolution. Reload before retrying.");
+  }
+  return row;
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {

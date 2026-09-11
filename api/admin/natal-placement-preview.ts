@@ -6,7 +6,7 @@ import { createRequire } from "node:module";
 // @ts-ignore The generated JavaScript bundle intentionally has no declaration file.
 import { createFallbackRenderer } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { AdminHttpError, adminFetch, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminFetchJson, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
 
@@ -93,7 +93,7 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
   const sign = typeof input.sign === "string" ? input.sign : "";
   const house = typeof input.house === "string" ? input.house : "";
   const audience = input.audience === "they" ? "they" : "you";
-  const motion = input.motion === "retrograde" || input.isRetrograde === true ? "retrograde" : "direct";
+  const motion: "direct" | "retrograde" = input.motion === "retrograde" || input.isRetrograde === true ? "retrograde" : "direct";
   if (!planets.has(planet) || !signs.has(sign) || (house && !/^(?:[1-9]|1[0-2])$/u.test(house))) {
     throw new Error("Choose a valid planet and sign. If provided, the house must be between 1 and 12.");
   }
@@ -245,14 +245,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       input.house as Parameters<typeof natalPlacementResolverDependencyKeys>[2], input.motion
     );
     const headers = { apikey: key, authorization: `Bearer ${key}` };
-    const response = await adminFetch(`${base}/rest/v1/content_publications?${new URLSearchParams({ select: "content_key,state,revision,row_id,row_updated_at,updated_at", content_key: `in.(${[...dependencyKeys, publicationLedgerKey].map((key) => `"${key}"`).join(",")})` })}`, { headers });
-    const publications: unknown = await response.json();
+    const response = await adminFetchJson(`${base}/rest/v1/content_publications?${new URLSearchParams({ select: "content_key,state,revision,row_id,row_updated_at,updated_at", content_key: `in.(${[...dependencyKeys, publicationLedgerKey].map((key) => `"${key}"`).join(",")})` })}`, { headers });
+    const publications: unknown = response.payload;
     if (!response.ok || !Array.isArray(publications) || !publications.every(validContentPublication)) throw new AdminHttpError(503, "Publication status could not be verified.");
     if (publications.some((publication) => publication.content_key === publicationLedgerKey)) input.overrides = [];
     const publishedIds = publications.filter((publication) => publication.state === "live" && publication.row_id).map((publication) => publication.row_id);
     if (publishedIds.length) {
-      const sourceResponse = await adminFetch(`${base}/rest/v1/generated_interpretations?${new URLSearchParams({ select: "id,content_key,status,lane,review_state,provider,updated_at,headline,body,sections", id: `in.(${publishedIds.join(",")})` })}`, { headers });
-      const sources = await sourceResponse.json();
+      const sourceResponse = await adminFetchJson(`${base}/rest/v1/generated_interpretations?${new URLSearchParams({ select: "id,content_key,status,lane,review_state,provider,updated_at,headline,body,sections", id: `in.(${publishedIds.join(",")})` })}`, { headers });
+      const sources = sourceResponse.payload;
       if (!sourceResponse.ok || !Array.isArray(sources)) throw new AdminHttpError(503, "The current published sources could not be loaded.");
       const canonicalKeys = new Set(publications.map((publication) => publication.content_key));
       input.overrides = input.overrides.filter((candidate) => !canonicalKeys.has(candidate.packageRow.contentKey));

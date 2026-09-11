@@ -23,9 +23,8 @@ globalThis.fetch = async (input, init = {}) => {
     assert.equal(url.searchParams.has("on_conflict"), false, "Queue prepopulation must not use merge-upsert semantics.");
     return Response.json({ code: "23505", message: "duplicate key" }, { status: 409 });
   }
-  if (method === "PATCH") {
-    assert.equal(url.searchParams.get("status"), "neq.LIVE", "Queue refresh must atomically exclude LIVE rows.");
-    return Response.json([]);
+  if (method === "GET") {
+    return Response.json([{ id: "fixture", content_key: url.searchParams.get("content_key").slice(3), status: "LIVE" }]);
   }
   throw new Error(`Unexpected ${method} ${url}`);
 };
@@ -54,7 +53,7 @@ const result = await done;
 assert.equal(result.status, 200);
 assert.equal(result.payload.inserted, 0);
 assert.ok(result.payload.skippedLiveRows.length > 0, "Protected duplicate rows should be reported as skipped.");
-assert.ok(requests.some((item) => item.method === "PATCH"));
-assert.equal(requests.filter((item) => item.method === "POST").length, requests.filter((item) => item.method === "PATCH").length);
+assert.ok(requests.some((item) => item.method === "GET"));
+assert.equal(requests.filter((item) => item.method === "POST").length, requests.filter((item) => item.method === "GET").length);
 
 console.log("Content Studio prepopulation LIVE race guard passed.");

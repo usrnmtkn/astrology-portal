@@ -37,6 +37,13 @@ export async function readAdminJsonBody<T>(
     throw new AdminHttpError(413, `Request body exceeds ${maxBytes} bytes.`);
   }
 
+  const parsedBody = (req as IncomingMessage & { body?: unknown }).body;
+  if (parsedBody !== undefined) {
+    const raw = typeof parsedBody === "string" ? parsedBody : JSON.stringify(parsedBody);
+    if (Buffer.byteLength(raw, "utf8") > maxBytes) throw new AdminHttpError(413, `Request body exceeds ${maxBytes} bytes.`);
+    return parseAdminObject<T>(raw);
+  }
+
   const chunks: Buffer[] = [];
   let totalBytes = 0;
   for await (const chunk of req) {
@@ -51,11 +58,26 @@ export async function readAdminJsonBody<T>(
   const raw = Buffer.concat(chunks).toString("utf8").trim();
   if (!raw) throw new AdminHttpError(400, "A JSON request body is required.");
 
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
+  return parseAdminObject<T>(raw);
+}
+
+function parseAdminObject<T>(raw: string): T {
+  let value: unknown;
+  try { value = JSON.parse(raw); } catch {
     throw new AdminHttpError(400, "Request body must be valid JSON.");
   }
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new AdminHttpError(400, "Request body must be a JSON object.");
+  }
+  return value as T;
+}
+
+/** PostgREST table reads and representation writes always return row arrays. */
+export function adminStorageRows<T extends object = Record<string, unknown>>(payload: unknown): T[] {
+  if (!Array.isArray(payload) || payload.some((row) => !row || typeof row !== "object" || Array.isArray(row))) {
+    throw new AdminHttpError(502, "Storage returned invalid rows. Reload to verify the saved state before retrying.");
+  }
+  return payload as T[];
 }
 
 export async function adminFetch(
@@ -81,13 +103,14 @@ export async function adminFetch(
 export async function adminFetchJson(
   input: string | URL,
   init: RequestInit = {},
-  timeoutMs = defaultAdminUpstreamTimeoutMs
+  timeoutMs = defaultAdminUpstreamTimeoutMs,
+  fetchImpl: typeof fetch = fetch
 ) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(input, { ...init, signal: controller.signal });
-    const payload: unknown = await response.json().catch((error) => {
+    const response = await fetchImpl(input, { ...init, signal: controller.signal });
+    const payload: unknown = response.status === 204 ? null : await response.json().catch((error) => {
       if (controller.signal.aborted || error?.name === "AbortError") throw error;
       throw new AdminHttpError(502, "Storage returned invalid JSON. Reload to verify the saved state before retrying.");
     });

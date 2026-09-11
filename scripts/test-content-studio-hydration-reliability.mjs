@@ -26,7 +26,7 @@ assert.match(app, /subscribeToContentUpdates\(\(\) => \{[\s\S]{0,300}clearShared
 assert.match(app, /clearPlanetTopicVocabularyCache\(\)/u);
 assert.match(app, /clearNatalCardTaglineCache\(\)/u);
 assert.match(prepopulate, /skippedLiveRows/u);
-assert.match(prepopulate, /params\.set\("status", "neq\.LIVE"\)/u);
+assert.doesNotMatch(prepopulate, /method: "PATCH"/u);
 assert.doesNotMatch(prepopulate, /resolution=merge-duplicates/u);
 assert.match(migration, /generated_interpretations_provider_updated_idx/u);
 assert.match(migration, /generated_interpretations_active_serving_updated_idx/u);

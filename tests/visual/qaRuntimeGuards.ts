@@ -40,6 +40,11 @@ export async function expectRouteLoadsWithin(
   const startedAt = Date.now();
   await page.goto(route);
   await assertReady();
+  // The shell can precede the calculated calendar. Keep readiness inside the
+  // existing route budget before tests inspect events and approved passages.
+  if (new URL(route, page.url()).hash.startsWith("#calendar")) {
+    await expect(page.locator(".lunar-calendar-body")).toBeVisible({ timeout: budgetMs });
+  }
   const elapsedMs = Date.now() - startedAt;
   expect(elapsedMs, `${label} should become QA-ready within ${budgetMs}ms`).toBeLessThanOrEqual(budgetMs);
 }

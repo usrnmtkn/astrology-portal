@@ -48,6 +48,7 @@ export type UnresolvedContentIssue = {
   repairPlan?: ContentSourceRepairPlan | null;
   sourceDecision?: ContentSourceDecision | null;
   resolution?: {
+    updated_at?: string;
     result_status: "diagnosis-only" | "implemented";
     diagnosis: string;
     proposed_action: string;
@@ -325,11 +326,21 @@ type ContentSourceDecision = {
   approved_at: string;
 };
 
-async function recordResolution(credential: string) {
-  const body = prompt("Paste the JSON returned by Codex.");
-  if (!body) return;
-  const response = await fetch("/api/admin/content-unresolved-resolutions", { method: "POST", headers: { "content-type": "application/json", ...adminCredentialHeaders(credential) }, body });
-  response.ok ? location.reload() : alert("Could not record response.");
+async function recordResolution(credential: string, issue: UnresolvedContentIssue) {
+  const pasted = prompt("Paste the JSON returned by Codex.");
+  if (!pasted) return;
+  try {
+    const input = JSON.parse(pasted);
+    if (!input || input.issueId !== issue.issueId || input.contentKey !== issue.contentKey) throw new Error("The response must match the selected issue.");
+    if (issue.resolution && !issue.resolution.updated_at) throw new Error("Reload the issue to obtain its saved version before recording another response.");
+    const body = JSON.stringify({ ...input, expectedUpdatedAt: issue.resolution?.updated_at ?? null });
+    const response = await fetch("/api/admin/content-unresolved-resolutions", { method: "POST", headers: { "content-type": "application/json", ...adminCredentialHeaders(credential) }, body });
+    const result = await response.json();
+    if (!response.ok || result.ok === false) throw new Error(result.error || "Could not record response.");
+    location.reload();
+  } catch (error) {
+    alert(error instanceof Error ? error.message : "Could not record response.");
+  }
 }
 
 function sourceImplementationRequest(issue: UnresolvedContentIssue) {
@@ -528,7 +539,7 @@ export function UnresolvedContentReview({
                 </td>
                 <td data-label="Source records"><details><summary>{issue.records.length} record(s)</summary>{issue.records.map((record) => <code key={record.id}>{record.reviewStatus}: {record.sourcePath}{record.objectPath}</code>)}</details></td>
                 <td data-label="Next step">{sourceRepair && issue.repairPlan
-                  ? <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${!sourceApproved ? "is-primary" : ""}`} type="button" onClick={() => openRepairReview(issue)}>{sourceApproved ? "View approved replacement" : "Review replacement now"}</button>{sourceApproved && issue.resolution?.result_status !== "implemented" && <button className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, "implementation", sourceImplementationRequest(issue))}>{requestCopied ? "Copy implementation request again" : "Copy implementation request"}</button>}<button className="admin-edit-row-button" type="button" onClick={() => void copyRequest(issue, "investigation", issue.aiRequest)}>Copy investigation</button>{requestCopied && <button className="admin-edit-row-button is-primary" type="button" onClick={() => void recordResolution(credential)}>Record Codex response</button>}</div></div>
+                  ? <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${!sourceApproved ? "is-primary" : ""}`} type="button" onClick={() => openRepairReview(issue)}>{sourceApproved ? "View approved replacement" : "Review replacement now"}</button>{sourceApproved && issue.resolution?.result_status !== "implemented" && <button className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, "implementation", sourceImplementationRequest(issue))}>{requestCopied ? "Copy implementation request again" : "Copy implementation request"}</button>}<button className="admin-edit-row-button" type="button" onClick={() => void copyRequest(issue, "investigation", issue.aiRequest)}>Copy investigation</button>{requestCopied && <button className="admin-edit-row-button is-primary" type="button" onClick={() => void recordResolution(credential, issue)}>Record Codex response</button>}</div></div>
                   : !contentLibraryReady && !sourceRepair
                   ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting</span><button className="admin-edit-row-button" type="button" disabled>Checking Content Library…</button></div>
                   : canOpen && editorialDecision
@@ -548,7 +559,7 @@ export function UnresolvedContentReview({
                       </div>
                     : issue.resolution?.result_status === "implemented"
                       ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting for import</span><button className="admin-edit-row-button" type="button" onClick={() => setRefreshToken((current) => current + 1)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh status"}</button></div>
-                      : <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${requestCopied ? "" : "is-primary"}`} type="button" onClick={() => void copyRequest(issue, issue.resolution ? "implementation" : "investigation", issue.resolution ? editorialImplementationRequest(issue) : issue.aiRequest)}>{requestCopied ? "Copy repair request again" : issue.resolution ? "Repair Content Library import" : "Copy investigation request"}</button><button className={`admin-edit-row-button ${requestCopied ? "is-primary" : ""}`} type="button" onClick={() => void recordResolution(credential)}>{requestCopied ? "Record Codex response" : "Record an existing response"}</button></div></div>}</td>
+                      : <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${requestCopied ? "" : "is-primary"}`} type="button" onClick={() => void copyRequest(issue, issue.resolution ? "implementation" : "investigation", issue.resolution ? editorialImplementationRequest(issue) : issue.aiRequest)}>{requestCopied ? "Copy repair request again" : issue.resolution ? "Repair Content Library import" : "Copy investigation request"}</button><button className={`admin-edit-row-button ${requestCopied ? "is-primary" : ""}`} type="button" onClick={() => void recordResolution(credential, issue)}>{requestCopied ? "Record Codex response" : "Record an existing response"}</button></div></div>}</td>
               </tr>;
             })}</tbody>
             </table>}
