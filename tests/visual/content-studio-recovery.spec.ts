@@ -3,6 +3,9 @@ import { readFileSync } from "node:fs";
 
 // Exercise the real saved inventory, rather than an empty dashboard fixture.
 const inventory = JSON.parse(readFileSync(new URL("../../apps/web/public/content-studio-last-known-good.json", import.meta.url), "utf8")).rows as Array<{ id: string; content_key: string }>;
+// Recovery includes two deliberate failures, backoff, and the complete paged inventory.
+// Keep it within the existing 15-second reader/Studio readiness budget.
+const recoveryReadiness = { timeout: 15_000 };
 const studioPath = process.env.STUDIO_PRODUCTION_ENTRY === "1" ? "/admin/content" : "/";
 
 async function mockStudio(page: Page, malformedStatus = false) {
@@ -41,7 +44,7 @@ test("invalid secondary responses do not block saved Studio content", async ({ p
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(`${studioPath}#sky-writeups`);
   await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first()).toBeVisible();
-  await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+  await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
   await expect(page.getByRole("heading", { name: "The dashboard could not load saved CMS rows" })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
@@ -57,7 +60,7 @@ for (const initialPage of ["review-queue", "articles"]) {
       } else await route.fallback();
     });
     await page.goto(`${studioPath}#${initialPage}`);
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
     expect(attempts).toBe(3);
     await openStudioPage(page, "Sky Write-ups");
     await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first()).toBeVisible();
@@ -74,12 +77,12 @@ for (const initialPage of ["review-queue", "articles"]) {
       } else await route.fallback();
     });
     await page.goto(`${studioPath}#${initialPage}`);
-    await expect(page.getByRole("heading", { name: "The dashboard could not load saved CMS rows" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "The dashboard could not load saved CMS rows" })).toBeVisible(recoveryReadiness);
     await expect(page.getByText(/Expected a JSON object\. The response was empty or invalid/).first()).toBeVisible();
     expect(attempts).toBe(3);
     invalid = false;
     await page.getByRole("button", { name: "Retry", exact: true }).click();
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
   });
 }
 
@@ -126,7 +129,7 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     expect(await page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("studio-recovery-fixture");
 
     // A repeated crash can be escaped through a separate Studio destination.
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
     await openStudioPage(page, "Review Queue");
     await page.evaluate(() => document.documentElement.removeAttribute("data-qa-recovered"));
     await openStudioPage(page, "Sky Write-ups");

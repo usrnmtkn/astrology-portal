@@ -62,3 +62,16 @@ The same test passed three fresh local repetitions. Its initial reader-copy
 assertion now uses the existing 15-second reader readiness budget, retaining
 all exact eclipse wording, exclusion, and link assertions. No application
 selection or calculation logic was changed for this test timing correction.
+
+The standalone admin build must also use CI's Supabase environment for its
+budget measurement: the configured build is 625.4 kB raw / 178.2 kB gzip for
+the entry, whereas the unconfigured build is 624.9 / 177.9 kB. Allocate 1 kB raw
+and 0.5 kB gzip for the shared template changes; aggregate and deferred caps
+remain unchanged. The configured admin bundle check passes.
+
+The inventory recovery regression also used a five-second DOM wait while
+injecting two invalid responses, real retry backoff, and paginated loading of
+the saved inventory. Both starting destinations passed three fresh repetitions
+(six total) with the existing 15-second readiness budget. Recovery waits now
+use that budget; three-attempt limits, content visibility, persistent-failure
+handling, manual retry, and browser-error assertions remain unchanged.
