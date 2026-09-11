@@ -4,6 +4,10 @@ on:
   pull_request:
     paths:
       - "api/report-share.ts"
+      - "api/report-delivery.ts"
+      - "api/_lib/report-library-deletion.ts"
+      - "scripts/test-report-library-delete*.mjs"
+      - "tests/visual/report-library-delete.spec.ts"
       - "apps/web/src/components/reports/**"
       - "apps/web/src/features/reports/**"
       - "apps/web/src/routes/ReportRoute.tsx"
@@ -23,6 +27,10 @@ on:
       - main
     paths:
       - "api/report-share.ts"
+      - "api/report-delivery.ts"
+      - "api/_lib/report-library-deletion.ts"
+      - "scripts/test-report-library-delete*.mjs"
+      - "tests/visual/report-library-delete.spec.ts"
       - "apps/web/src/components/reports/**"
       - "apps/web/src/features/reports/**"
       - "apps/web/src/routes/ReportRoute.tsx"
@@ -50,6 +58,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node scripts/test-report-library-notifications.mjs
+      - run: node scripts/test-report-library-delete.mjs
       - run: npm run test:report-foundation
       - run: npm run qa:css-audit
       - run: npm run typecheck
@@ -73,7 +82,7 @@ jobs:
         run: npm run build:knowledge
       - run: npx playwright install --with-deps chromium
       - name: Verify standalone Reports UI
-        run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts
+        run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts tests/visual/report-library-delete.spec.ts
 
   report-library-database:
     runs-on: ubuntu-latest

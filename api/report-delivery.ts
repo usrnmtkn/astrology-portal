@@ -1,3 +1,4 @@
+import { isReportDeleted } from "./_lib/report-library-deletion.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { requireReportUser, sendJson } from "./_lib/report-http.js";
 import { createSupabaseReportAdmin } from "./_lib/supabase-report-admin.js";
@@ -14,7 +15,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       status: string; fulfillment_status: string; facts_engine: string; facts_hash: string; entitlement_id: string;
       delivered_at: string | null;
     }>("user_reports", new URLSearchParams({ id: `eq.${reportId}`, user_id: `eq.${user.id}`, select: "*" }));
-    if (!report) return sendJson(res, 404, { error: "Report not found." });
+    if (!report || await isReportDeleted(admin, user.id, "premium_report", reportId)) return sendJson(res, 404, { error: "Report not found." });
     const entitlement = await admin.selectOne<{ status: string }>("report_entitlements", new URLSearchParams({ id: `eq.${report.entitlement_id}`, user_id: `eq.${user.id}`, select: "status" }));
     if (!entitlement || entitlement.status === "revoked" || entitlement.status === "refunded") {
       return sendJson(res, 403, { error: "Report access is not active.", status: "revoked" });
