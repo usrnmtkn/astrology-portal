@@ -29,7 +29,7 @@ const snapshot = {
   ]
 } as SkySnapshot;
 
-assert.equal(chartBirthTimeIsKnown({ birthTime: "8:24 AM" }), true);
+assert.equal(chartBirthTimeIsKnown({ birthTime: "12:00 PM" }), true);
 assert.equal(chartBirthTimeIsKnown({ birthTime: "Time unknown" }), false);
 assert.equal(chartBirthTimeIsKnown({ birthTime: "12:00", birthTimeUnknown: true }), false);
 assert.equal(chartBirthTimeIsKnown({ birthTime: "" }), false);

@@ -32,7 +32,7 @@
         "text": "An announcement, application, or piece of writing may need a clear answer from someone else.",
         "review_status": "approved"
       },
-      "provenance": "artifacts/owner-author-year-ahead-2026-FINAL.md; owner-authored final, exact sentences",
+      "provenance": "private:report/general-2026; owner-authored final, exact sentences",
       "review_status": "approved"
     },
     "eclipse-house-placement/4": {
@@ -59,7 +59,7 @@
         "text": "A move, repair, living arrangement, family duty, or household obligation may need a decision.",
         "review_status": "approved"
       },
-      "provenance": "artifacts/owner-author-year-ahead-2026-FINAL.md; owner-authored final, exact sentences",
+      "provenance": "private:report/general-2026; owner-authored final, exact sentences",
       "review_status": "approved"
     },
     "eclipse-house-placement/9": {
@@ -91,7 +91,7 @@
         "text": "An application may turn into an offer or rejection. A title may change. A project may finally carry your name.",
         "review_status": "approved"
       },
-      "provenance": "artifacts/owner-author-year-ahead-2026-FINAL.md; owner-authored final, exact sentences",
+      "provenance": "private:report/general-2026; owner-authored final, exact sentences",
       "review_status": "approved"
     },
     "eclipse-house-placement/10": {
@@ -122,7 +122,7 @@
         "text": "Review what you wrote for yourself before it becomes something other people need to understand.",
         "review_status": "approved"
       },
-      "provenance": "artifacts/owner-author-year-ahead-2026-FINAL.md; owner-authored final, exact sentences",
+      "provenance": "private:report/general-2026; owner-authored final, exact sentences",
       "review_status": "approved"
     },
     "slow-transit-to-natal/jupiter/opposition/midheaven": {
@@ -155,14 +155,14 @@
         "text": "A professional opportunity or responsibility may require more time than home and private life can comfortably give it.",
         "review_status": "approved"
       },
-      "provenance": "TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md and artifacts/owner-author-work-money-2026-owner-v1.md; exact owner-approved wording",
+      "provenance": "TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md and private:report/work-money-2026; exact owner-approved wording",
       "review_status": "approved"
     }
   },
   "approval": {
     "status": "owner_approved",
     "approvedOn": "2026-08-10",
-    "sourcePath": "artifacts/owner-author-year-ahead-2026-FINAL.md"
+    "sourcePath": "private:report/general-2026"
   },
   "review_status": "approved"
 }

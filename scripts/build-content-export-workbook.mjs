@@ -16,7 +16,8 @@ const lines = (await fs.readFile(path.join(repoRoot, "data/content-inventory/con
 const metadata = lines[0];
 const records = lines.slice(1);
 const report = JSON.parse(await fs.readFile(path.join(repoRoot, "data/content-inventory/content-export-build-report.json"), "utf8"));
-const outputPath = path.join(repoRoot, "data/content-inventory/content-export-v1.xlsx");
+const outputPath = path.join(repoRoot, ".private-documents/content-export-v1.xlsx");
+await fs.mkdir(path.dirname(outputPath), { recursive: true, mode: 0o700 });
 const workbook = Workbook.create();
 const navy = "#172033";
 const blue = "#2F5D8C";
@@ -82,6 +83,7 @@ parity.getRange("B:B").format.columnWidth = 28;
 
 const output = await SpreadsheetFile.exportXlsx(workbook);
 await output.save(outputPath);
+await fs.chmod(outputPath, 0o600);
 const verificationDir = path.join("/private/tmp", "tldrastro-content-inventory-preview");
 await fs.mkdir(verificationDir, { recursive: true });
 for (const [sheetName, range, fileName] of [

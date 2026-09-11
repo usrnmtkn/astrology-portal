@@ -21,7 +21,7 @@ import {
 import { assembleDeterministicReportKeyDates, filterReportKeyDateAssemblyEligibility, reportKeyDateEventManifest } from "../api/_lib/report-key-dates.ts";
 
 const reviewFixture = JSON.parse(fs.readFileSync(new URL("./fixtures/report-assembly-review-74951c07.json", import.meta.url), "utf8"));
-const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
+const frozen = JSON.parse(fs.readFileSync(new URL("./fixtures/synthetic-report-frozen-facts.json", import.meta.url), "utf8"));
 const issues = validateAssembledReport(reviewFixture.units);
 const has = (code, unitId) => issues.some((entry) => entry.code === code && (!unitId || entry.unitId === unitId));
 

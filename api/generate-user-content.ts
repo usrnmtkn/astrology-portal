@@ -352,7 +352,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         ok: true,
         dryRun: true,
         contentKey: input.contentKey,
-        payload: reportPayload
+        // A reader's preview must never download private author documents,
+        // comparison passages, prompts, or the complete generation context.
+        payload: {
+          reportDomain: reportPayload?.reportDomain,
+          reportHorizon: reportPayload?.reportHorizon,
+          unit: reportPayload?.unit,
+          outputGovernance: reportPayload?.outputGovernance
+        }
       });
       return;
     }

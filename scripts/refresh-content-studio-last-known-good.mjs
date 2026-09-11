@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { correctedReaderSummary } from "../apps/web/src/content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
+import { loadPrivacyPolicy, privateSafeExport } from "./lib/privacy-policy.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -185,6 +186,6 @@ const snapshot = {
 };
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
 const tmpPath = `${outPath}.tmp`;
-fs.writeFileSync(tmpPath, `${JSON.stringify(snapshot)}\n`);
+fs.writeFileSync(tmpPath, `${JSON.stringify(privateSafeExport(snapshot, loadPrivacyPolicy(repoRoot)))}\n`);
 fs.renameSync(tmpPath, outPath);
 console.log(JSON.stringify({ rowCount: snapshot.rowCount, sourceRevision: snapshot.sourceRevision }));

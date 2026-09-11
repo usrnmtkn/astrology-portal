@@ -12,7 +12,7 @@ import { ASK_TLDR_JUDGE_CATEGORIES } from "../api/_lib/ask-tldr-judge.ts";
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(new URL(relativePath, import.meta.url), "utf8"));
 const model = readJson("../config/ask-tldr/answer-model-v1.json");
 const career = readJson("../config/ask-tldr/pillars/career.json");
-const reportWindow = readJson("./fixtures/marie-report-frozen-facts.json");
+const reportWindow = readJson("./fixtures/synthetic-report-frozen-facts.json");
 const now = new Date("2026-09-05T12:00:00Z");
 const recognition = career.questions.find((question) => question.id === "career.recognition");
 assert.ok(recognition);
@@ -69,7 +69,7 @@ assert.ok(prepared.writerRequest);
 const answerScope = askTldrAnswerCalibrationScope(prepared);
 const primaryId = prepared.writerRequest.primaryEvidenceId;
 const goodWriterValue = {
-  answer: "Recognition is more available when you put the work where people can see and respond to it. Jupiter opposing your Midheaven around September 15 can make public opportunity and visibility feel larger, but it can also make other people's reaction seem more important than the result itself.\n\nUse the opening to show the concrete work, ask for the credit or role attached to it, and let the response give you information. You may get more from a visible result and a specific request than from trying to manage how everyone feels about what you are doing.",
+  answer: "Recognition is more available when you put the work where people can see and respond to it. Jupiter opposing your Midheaven around September 18 can make public opportunity and visibility feel larger, but it can also make other people's reaction seem more important than the result itself.\n\nUse the opening to show the concrete work, ask for the credit or role attached to it, and let the response give you information. You may get more from a visible result and a specific request than from trying to manage how everyone feels about what you are doing.",
   evidenceIdsUsed: [primaryId],
   primaryEvidenceId: primaryId,
   whyNowEvidenceId: primaryId,
@@ -140,7 +140,7 @@ const badFactResult = await runPreparedAskTldrAnswerCalibration({
     return {
       value: {
         ...goodWriterValue,
-        answer: goodWriterValue.answer.replace("September 15", "September 16")
+        answer: goodWriterValue.answer.replace("September 18", "September 16")
       }
     };
   }

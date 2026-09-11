@@ -7,7 +7,7 @@ from tldrastro_api.main import app
 from tldrastro_api.services.report_window import _is_return
 
 client = TestClient(app)
-FIXTURE = json.loads((Path(__file__).parent / "fixtures" / "marie_report_2026.json").read_text())
+FIXTURE = json.loads((Path(__file__).parent / "fixtures" / "synthetic_report_2026.json").read_text())
 
 
 def test_report_window_reproduces_production_transit_and_eclipse_contract():
@@ -27,23 +27,11 @@ def test_report_window_reproduces_production_transit_and_eclipse_contract():
         for arc in body["slowTransitArcs"]
     }
     expected = {
-        ("Saturn", "Jupiter", "trine"): ["2026-02-22"],
-        ("Neptune", "Jupiter", "trine"): ["2026-02-26"],
-        ("Uranus", "Sun", "square"): ["2026-04-14"],
-        ("Jupiter", "Pluto", "square"): ["2026-05-01"],
-        ("Jupiter", "Uranus", "trine"): ["2026-05-14"],
-        ("Saturn", "Ascendant", "sextile"): [
-            "2026-05-18",
-            "2026-10-07",
-            "2027-02-09",
-        ],
-        ("Jupiter", "Jupiter", "conjunction"): ["2026-07-04"],
-        ("Jupiter", "Moon", "square"): ["2026-08-27"],
-        ("Jupiter", "Midheaven", "opposition"): ["2026-09-15"],
-        ("Jupiter", "Pluto", "sextile"): ["2026-09-27"],
-        ("Jupiter", "Neptune", "trine"): ["2026-10-04"],
-        ("Jupiter", "Uranus", "square"): ["2026-10-09"],
-        ("Jupiter", "Mars", "opposition"): ["2026-10-20", "2027-02-05"],
+        ("Saturn", "Sun", "square"): ["2026-05-18", "2026-10-08", "2027-02-09"],
+        ("Saturn", "Midheaven", "square"): ["2026-05-19", "2026-10-06", "2027-02-10"],
+        ("Jupiter", "Saturn", "opposition"): ["2026-02-20", "2026-03-30"],
+        ("Jupiter", "Venus", "opposition"): ["2026-07-28"],
+        ("Jupiter", "North Node", "opposition"): ["2026-09-16"],
     }
     for key, dates in expected.items():
         assert key in arcs
@@ -53,17 +41,17 @@ def test_report_window_reproduces_production_transit_and_eclipse_contract():
         assert all(report_pass["exactAt"] for report_pass in arc["passes"])
         assert [report_pass["exactAt"][:10] for report_pass in arc["passes"]] == dates
 
-    assert arcs[("Jupiter", "Jupiter", "conjunction")]["isReturn"] is True
-    saturn_passes = arcs[("Saturn", "Ascendant", "sextile")]["passes"]
+    assert all(arc["isReturn"] is False for arc in arcs.values())
+    saturn_passes = arcs[("Saturn", "Sun", "square")]["passes"]
     assert [report_pass["motion"] for report_pass in saturn_passes] == [
         "direct",
         "retrograde",
         "direct",
     ]
-    jupiter_mars_passes = arcs[("Jupiter", "Mars", "opposition")]["passes"]
-    assert [report_pass["motion"] for report_pass in jupiter_mars_passes] == [
-        "direct",
+    jupiter_saturn_passes = arcs[("Jupiter", "Saturn", "opposition")]["passes"]
+    assert [report_pass["motion"] for report_pass in jupiter_saturn_passes] == [
         "retrograde",
+        "direct",
     ]
 
     eclipses = {
@@ -75,28 +63,28 @@ def test_report_window_reproduces_production_transit_and_eclipse_contract():
         contact["natalPoint"] == "Saturn" for contact in eclipses["2026-03-03"]["natalContacts"]
     )
     assert any(
-        contact["natalPoint"] == "Uranus" for contact in eclipses["2026-08-12"]["natalContacts"]
+        contact["natalPoint"] == "Pluto" for contact in eclipses["2026-08-12"]["natalContacts"]
     )
     assert any(
-        contact["natalPoint"] == "Mercury" for contact in eclipses["2026-08-28"]["natalContacts"]
+        contact["natalPoint"] == "Moon" for contact in eclipses["2026-08-28"]["natalContacts"]
     )
     assert any(
-        contact["natalPoint"] == "Midheaven" for contact in eclipses["2027-02-06"]["natalContacts"]
+        contact["natalPoint"] == "Ascendant" for contact in eclipses["2027-02-06"]["natalContacts"]
     )
     assert {
         event_date: (event["subtype"], event["natalHouse"])
         for event_date, event in eclipses.items()
         if event_date in {"2026-03-03", "2026-08-12", "2026-08-28", "2027-02-06"}
     } == {
-        "2026-03-03": ("total", 4),
-        "2026-08-12": ("total", 3),
-        "2026-08-28": ("partial", 10),
-        "2027-02-06": ("annular", 9),
+        "2026-03-03": ("total", 6),
+        "2026-08-12": ("total", 5),
+        "2026-08-28": ("partial", 12),
+        "2027-02-06": ("annular", 11),
     }
     assert next(
         contact for contact in eclipses["2026-03-03"]["natalContacts"]
         if contact["natalPoint"] == "Saturn"
-    )["natalHouse"] == 4
+    )["natalHouse"] == 10
 
 
 def test_neptune_and_pluto_self_conjunctions_are_not_returns():

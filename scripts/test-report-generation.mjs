@@ -1,3 +1,4 @@
+import { readPrivateReportDocument } from '../api/_lib/private-report-documents.mjs';
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -19,7 +20,7 @@ import {
   loadActiveReportJudgePrompt
 } from "../api/_lib/report-prompt-versions.ts";
 
-const facts = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
+const facts = JSON.parse(fs.readFileSync(new URL("./fixtures/synthetic-report-frozen-facts.json", import.meta.url), "utf8"));
 const snapshots = JSON.parse(fs.readFileSync(new URL("./fixtures/report-generation-dry-run-snapshots.json", import.meta.url), "utf8"));
 const canonicalPrompt = fs.readFileSync(
   new URL("../tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-V2-OWNER.md", import.meta.url),
@@ -29,26 +30,17 @@ const workMoneyPrompt = fs.readFileSync(
   new URL("../tldr-astro-phrasebank/TLDR-WORK-MONEY-DEEPDIVE-GENERATION-PROMPT-OWNER.md", import.meta.url),
   "utf8"
 );
-const workMoneyReference = fs.readFileSync(
-  new URL("../artifacts/owner-author-work-money-2026-owner-v1.md", import.meta.url),
-  "utf8"
-);
+const workMoneyReference = readPrivateReportDocument("private:report/work-money-2026");
 const loveConnectionPrompt = fs.readFileSync(
   new URL("../tldr-astro-phrasebank/TLDR-LOVE-CONNECTION-DEEPDIVE-GENERATION-PROMPT-OWNER.md", import.meta.url),
   "utf8"
 );
-const loveConnectionReference = fs.readFileSync(
-  new URL("../artifacts/owner-author-love-connection-2026-owner-v1.md", import.meta.url),
-  "utf8"
-);
+const loveConnectionReference = readPrivateReportDocument("private:report/love-connection-2026");
 const livedProseStandard = fs.readFileSync(
   new URL("../tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md", import.meta.url),
   "utf8"
 );
-const personalHealthReference = fs.readFileSync(
-  new URL("../artifacts/owner-author-personal-health-2026-owner-v1.md", import.meta.url),
-  "utf8"
-);
+const personalHealthReference = readPrivateReportDocument("private:report/personal-health-2026");
 const personalHealthPrompt = fs.readFileSync(
   new URL("../tldr-astro-phrasebank/TLDR-PERSONAL-HEALTH-DEEPDIVE-GENERATION-PROMPT-OWNER.md", import.meta.url),
   "utf8"
@@ -135,7 +127,7 @@ for (const [reportHorizon, unitId] of cases) {
 
 assert.ok(!payloads.get("1_month").unit.allowedUnitIds.some((id) => id.includes("winter") || id === "spring"));
 assert.ok(payloads.get("12_months").unit.allowedUnitIds.includes("summer"));
-assert.equal(payloads.get("12_months").sourceGaps.length, 0, "The Marie 12-month calculation contract must resolve before fulfillment.");
+assert.equal(payloads.get("12_months").sourceGaps.length, 0, "The synthetic 12-month composition contract must resolve before fulfillment.");
 assert.equal(
   payloads.get("12_months").manifestationSets.find((item) => item.factor.id === "jupiter-opposition-midheaven")?.record.id,
   "slow-transit-to-natal/jupiter/opposition/midheaven",
@@ -268,7 +260,7 @@ assert.match(personalHealthPrompt, /`owner_approved`/u);
 assert.match(personalHealthPrompt, /Version `personal-health-deepdive-generation-prompt-v1`/u);
 assert.equal(
   crypto.createHash("sha256").update(personalHealthPrompt).digest("hex"),
-  "c43cf5a05272af7355543a5ccbd7ed50a81e1ad3bf307eb64d2bcbf984c10bee"
+  "5dbefc8c900dd435de7e7f7deaba8924db5d54fbdd4eb617e6e1239c74e3517c"
 );
 assert.deepEqual(personalHealthReadiness, {
   reportDomain: "personal_health",
@@ -382,7 +374,7 @@ for (const factorId of [
   assert.ok(factors.some((factor) => factor.id === factorId), `${factorId} must remain eligible.`);
 }
 // Raw Production-shaped fact captured from report 74951c07 on 2026-08-10.
-// This deliberately does not use the checked-in Marie fixture: the Production
+// This deliberately does not use the synthetic composition fixture: the Production
 // calculator reports the conjunction contact in quadrant house 9 even though
 // the contacted point is the Midheaven, whose canonical report house is 10.
 const rawProductionAngleFact = {
@@ -655,10 +647,10 @@ assert.ok(validateReportDraft({
 
 const voiceCorpusV2 = reportOwnerVoiceCorpusV2();
 const requiredOwnerFinals = [
-  "artifacts/owner-author-year-ahead-2026-FINAL.md",
-  "artifacts/owner-author-work-money-2026-owner-v1.md",
-  "artifacts/owner-author-love-connection-2026-owner-v1.md",
-  "artifacts/owner-author-personal-health-2026-owner-v1.md"
+  "private:report/general-2026",
+  "private:report/work-money-2026",
+  "private:report/love-connection-2026",
+  "private:report/personal-health-2026"
 ];
 for (const sourcePath of requiredOwnerFinals) {
   assert.ok(voiceCorpusV2.some((passage) => passage.provenance.sourcePath === sourcePath),

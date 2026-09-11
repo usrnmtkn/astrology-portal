@@ -37,7 +37,7 @@ proving the reported chart.
 ## Verified Marie Moon geometry
 
 Direct Swiss Ephemeris calculation for the repository's saved Project Author
-birth fixture (1990-01-01, 11:20 America/New_York, Manhattan, tropical zodiac)
+birth fixture (1990-01-01, 12:00 America/New_York, Manhattan, tropical zodiac)
 produces these relevant Moon contacts:
 
 | Contact | Orb | Result after repair |

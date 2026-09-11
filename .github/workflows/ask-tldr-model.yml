@@ -69,3 +69,6 @@ jobs:
 
       - name: Audit all Ask TLDR evergreen questions on frozen facts
         run: npx tsx scripts/audit-ask-tldr-evergreen-support.mjs
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
