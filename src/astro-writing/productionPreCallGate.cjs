@@ -3,6 +3,7 @@
 const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
+const { withSourceVerification } = require("../../packages/astro-knowledge/scripts/source-verification.js");
 const productionAdapter = require("./productionEvidenceAdapter.cjs");
 const knowledgeResolver = require("../../packages/astro-knowledge/scripts/knowledge-resolver.js");
 const phraseResolver = require("../../packages/astro-knowledge/scripts/phrase-resolver.js");
@@ -273,7 +274,7 @@ function prepareProductionPreCallGateUnchecked(input, env = process.env) {
 
 function prepareProductionPreCallGate(input, env = process.env) {
   try {
-    return prepareProductionPreCallGateUnchecked(input, env);
+    return withSourceVerification(() => prepareProductionPreCallGateUnchecked(input, env));
   } catch (error) {
     telemetry("blocked", input, {
       stage: "prepare",
@@ -329,7 +330,7 @@ function assertProductionPreCallGateUnchecked(gate, {
 
 function assertProductionPreCallGate(gate, options) {
   try {
-    const result = assertProductionPreCallGateUnchecked(gate, options);
+    const result = withSourceVerification(() => assertProductionPreCallGateUnchecked(gate, options));
     if (gate?.telemetryEnabled) {
       telemetry("provider-call-cleared", options?.input, {
         role: options?.role ?? null,
