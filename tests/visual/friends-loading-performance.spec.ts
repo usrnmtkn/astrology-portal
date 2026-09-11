@@ -1,4 +1,4 @@
-import { expect, test, type Browser, type BrowserContext, type Page } from "@playwright/test";
+import { expect, test, type Browser, type BrowserContext, type Locator, type Page } from "@playwright/test";
 import {
   FRIENDS_INCOMPLETE_CHART_CALCULATION_DELAY_MS,
   FRIENDS_LOADING_SAMPLE_COUNT,
@@ -235,6 +235,20 @@ async function withContext<T>(
   }
 }
 
+// Standard locator assertions back off to 500 ms between observations. That
+// latency is useful for functional tests but distorts an 800 ms paint budget.
+// Keep the exact visibility/text conditions, sampled without that backoff.
+async function waitForMeasuredVisibility(locator: Locator) {
+  await expect.poll(() => locator.isVisible(), { intervals: [16] }).toBe(true);
+}
+
+async function hasCompletedChartSignatures(locator: Locator) {
+  // textContent matches toContainText's default semantics. innerText applies
+  // CSS text-transform, turning "pending" into "PENDING" on some layouts.
+  const text = await locator.textContent();
+  return await locator.isVisible() && Boolean(text?.trim()) && !/pending/i.test(text!);
+}
+
 async function timed(label: string, action: () => Promise<void>): Promise<TimedSample> {
   const startedAt = performance.now();
   await action();
@@ -280,7 +294,7 @@ test.describe("Friends loading performance matrix", () => {
         const prepared = await preparePage(page);
         const result = await timed("cold Friends list", async () => {
           await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
-          await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
+          await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
         });
         await page.waitForTimeout(250);
         expect(prepared.dashboardMirrorRequests(), "A bare Friends list must not hydrate the complete dashboard mirror.").toBe(0);
@@ -314,7 +328,7 @@ test.describe("Friends loading performance matrix", () => {
         await chartButton.click();
         await expect(page.locator(".compatibility-card").first()).toBeVisible();
         await page.locator(".friends-back-button").click();
-        await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
+        await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
 
         return timed("warm Friends detail", async () => {
           await page.getByRole("button", { name: `Open ${fixtureFriendName}` }).click();
@@ -385,7 +399,7 @@ test.describe("Friends loading performance matrix", () => {
         return timed("mobile Friends navigation", async () => {
           await friendsMenuItem.click();
           await expect(page.getByRole("heading", { name: "friends.", exact: true })).toBeVisible();
-          await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
+          await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
         });
       }));
     }
@@ -407,7 +421,7 @@ test.describe("Friends loading performance matrix", () => {
           const check = () => {
             const button = document.querySelector<HTMLElement>('button[aria-label="Open Casey"]');
             if (button?.textContent?.includes("Moon pending")) sawPending = true;
-            if (sawPending && button && !button.textContent?.includes("pending")) {
+            if (sawPending && button?.textContent?.trim() && !/pending/i.test(button.textContent)) {
               const rect = button.getBoundingClientRect();
               const visibility = getComputedStyle(button).visibility;
               if (rect.width > 0 && rect.height > 0 && visibility !== "hidden" && visibility !== "collapse") {
@@ -423,14 +437,15 @@ test.describe("Friends loading performance matrix", () => {
         const startedAt = performance.now();
         await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
         const chartButton = page.getByRole("button", { name: "Open Casey" });
-        await expect(chartButton).toBeVisible();
+        await waitForMeasuredVisibility(chartButton);
         await expect(chartButton).toContainText("Moon pending");
         const listElapsedMs = Math.round(performance.now() - startedAt);
         listSamples.push({ label: "incomplete Friends list", elapsedMs: listElapsedMs });
 
-        await expect(chartButton).not.toContainText("pending", {
+        await expect.poll(() => hasCompletedChartSignatures(chartButton), {
+          intervals: [16],
           timeout: friendsLoadingPerformanceBudgets.incompleteChartRepairReadyMs
-        });
+        }).toBe(true);
         await page.waitForFunction(() => Number.isFinite((window as any).__friendsRepairReadyAt));
         const repairedAt = await page.evaluate(() => (window as any).__friendsRepairReadyAt as number);
         expect(repairedAt).toBeGreaterThanOrEqual(wallStartedAt);
@@ -459,7 +474,7 @@ test.describe("Friends loading performance matrix", () => {
       await withContext(browser, {}, async (context, page) => {
         await preparePage(page, { slowCalculation: true });
         await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
-        await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
+        await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
 
         const networkSession = await context.newCDPSession(page);
         await networkSession.send("Network.enable");
@@ -513,7 +528,7 @@ test.describe("Friends loading performance matrix", () => {
         const prepared = await preparePage(page, { slowRelationshipContent: true });
         listSamples.push(await timed("slow-network Friends list", async () => {
           await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
-          await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
+          await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
         }));
         expect(
           prepared.delayedRelationshipRequests(),
@@ -580,4 +595,47 @@ test.describe("Friends loading performance matrix", () => {
     assertSamples(relationshipSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipReadyMs);
     assertSamples(relationshipEnhancedSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs);
   });
+});
+
+test("chart repair readiness retains pending state under uppercase styling", async ({ page }) => {
+  await page.setContent('<button style="text-transform: uppercase">Casey Moon pending</button>');
+  const chart = page.getByRole("button");
+  expect(await chart.innerText()).toContain("PENDING");
+  expect(await hasCompletedChartSignatures(chart)).toBe(false);
+  await chart.evaluate(element => { element.textContent = "Casey Moon in Virgo"; });
+  expect(await hasCompletedChartSignatures(chart)).toBe(true);
+});
+
+
+test("direct Friends navigation fetches the list shell while App is still downloading", async ({ page }) => {
+  await preparePage(page);
+  let releaseApp!: () => void;
+  const appGate = new Promise<void>(resolve => { releaseApp = resolve; });
+  await page.route("**/assets/App-*.js", async route => {
+    await appGate;
+    await route.continue();
+  });
+  const manualRequest = page.waitForRequest(/\/assets\/ManualChartsPanel-[^/]+\.js/u);
+  const shellRequest = page.waitForRequest(/\/assets\/FriendsWorkspaceShell-[^/]+\.js/u);
+  try {
+    await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
+    await Promise.all([manualRequest, shellRequest]);
+  } finally {
+    releaseApp();
+  }
+  await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
+});
+
+
+test("performance readiness sampling does not add a long assertion backoff", async ({ page }) => {
+  await page.setContent('<button style="display:none">Ready</button>');
+  await page.evaluate(() => {
+    setTimeout(() => {
+      document.querySelector("button")!.style.display = "block";
+      (window as any).__readyAt = performance.now();
+    }, 350);
+  });
+  await waitForMeasuredVisibility(page.getByRole("button", { name: "Ready", exact: true }));
+  const observationLag = await page.evaluate(() => performance.now() - (window as any).__readyAt);
+  expect(observationLag, "Readiness measurements must observe paint promptly, not wait through a 500 ms backoff.").toBeLessThan(150);
 });

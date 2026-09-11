@@ -4,6 +4,8 @@ import { build } from "esbuild";
 // Execute both real workers and the real Supabase HTTP adapter. Only the
 // generation boundary and database transport are fixtures; no paid calls run.
 const bundle = await build({
+  // Bundled CommonJS dependencies need Node's require even inside a data URL.
+  banner: { js: `import { createRequire } from "node:module"; const require = createRequire(${JSON.stringify(import.meta.url)});` },
   stdin: {
     contents: `
       export { runYouReportJobs } from "./api/_lib/you-report-lifecycle.ts";

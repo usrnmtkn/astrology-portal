@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { assertCleanReaderCopy } from "../apps/web/src/content/editorialCopyBoundary.mjs";
 import { isRetiredCompositionKey } from "../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import fs from "node:fs";
 import path from "node:path";
@@ -287,7 +288,7 @@ function rowBody(record) {
 }
 
 function rowSummary(record) {
-  return String(record.summary ?? record.intention ?? record.energy ?? record.note ?? record.notes ?? "").trim();
+  return String(record.summary ?? record.intention ?? record.energy ?? "").trim();
 }
 
 function requiresPlacementPositiveTest(record, contentKey, reviewStatus) {
@@ -437,6 +438,7 @@ function mapPackageRecord(record, bucket) {
     knowledge_ids: [],
     source_snapshot: {
       contentType: bucket,
+      importSummary: String(record.note ?? record.notes ?? ""),
       ...(contentKey.startsWith("authored/sky-lunation-macro/") ? { contentSystem: "authored", authoringSource: "owner-approved-lunation-macro" } : {}),
       content_role: contentRole,
       review_status: reviewStatus,
@@ -997,6 +999,7 @@ const rows = contentKeyFilter
 if (contentKeyFilter && rows.length !== 1) {
   throw new Error(`Expected one materialized row for ${contentKeyFilter}, found ${rows.length}.`);
 }
+rows.forEach(assertCleanReaderCopy);
 const counts = {
   authoredCards: countBy(rows, (row) => row.source_snapshot.contentType === "authored-content"),
   fallbackHooks: countBy(rows, (row) => row.source_snapshot.contentType === "fallback-system" && row.source_snapshot.content_role === "fallback_hook"),

@@ -2191,7 +2191,10 @@ test.describe("content dashboard admin user flow case studies", () => {
       headline: "Sun Conjunction North Node", summary: "", body: "Unsaved Studio draft must never replace the reader passage.",
       sections: { packageRecord: source, body_you: "Unsaved Studio draft must never replace the reader passage." },
       facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now
-    }] });
+    }, ...["fallback-hook/transit-effect-soft/lilith", "fallback-vocab/planet-topic/north-node"].map(content_key => {
+      const record = servingPackageRecords.get(content_key)!;
+      return { id: `qa-${content_key}`, content_key, headline: content_key, body: String(record.body_you ?? record.body), summary: "", surface: "you", mode: "feed", status: "LIVE", lane: "serving", block_type: "fallback_hook", sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now };
+    })] });
     await page.route("**/rest/v1/generated_interpretations*", (route) => route.fulfill({ json: [] }));
     await page.route("**/api/admin/transit-natal-preview", async (route) => {
       try { await route.fulfill({ json: { rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } }); }
@@ -2239,13 +2242,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("sun");
     await expect(preview.getByRole("alert")).toBeVisible();
     await expect(preview).not.toContainText("You may be offered a role");
-    await finder.getByRole("button", { name: "Open exact passage", exact: true }).click();
+    await finder.getByRole("button", { name: /^(Edit exact passage|Write a new exact passage)$/ }).click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-return/sun");
     page.once("dialog", dialog => dialog.accept());
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("south-node");
     await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("opposition");
-    await finder.getByRole("button", { name: "Open exact passage", exact: true }).click();
+    await finder.getByRole("button", { name: /^(Edit exact passage|Write a new exact passage)$/ }).click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/south-node/opposition");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("");
@@ -2256,8 +2259,88 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(writes[0].payload).toMatchObject({ contentKey: "authored/transit-aspect/sun/south-node/opposition", status: "DRAFT", lane: "reference", body: candidate });
     expect((writes[0].payload.sections as any).packageRecord.body_you).toBe(candidate);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
-    await finder.getByRole("button", { name: "Open exact passage", exact: true }).click();
+    await finder.getByRole("button", { name: /^(Edit exact passage|Write a new exact passage)$/ }).click();
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(candidate);
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByLabel("Transiting planet", { exact: true }).selectOption("lilith");
+    await page.getByLabel("Transit zodiac sign").selectOption("capricorn");
+    await page.getByLabel("Transit house", { exact: true }).selectOption("8");
+    await page.getByLabel("Natal planet or point", { exact: true }).selectOption("north-node");
+    await page.getByLabel("Transit to natal aspect").selectOption("trine");
+    await expect(preview).toContainText("Lilith in Capricorn is trining your natal North Node");
+    await expect(preview).not.toContainText("fallback-template/transit.aspect");
+    const sourceButton = preview.getByRole("button", { name: /Edit selected source fallback-hook\/transit-effect-soft\/lilith/ });
+    await sourceButton.click();
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("fallback-hook/transit-effect-soft/lilith");
+    const hook = servingPackageRecords.get("fallback-hook/transit-effect-soft/lilith")!;
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(String(hook.body_you));
+    await expect(editor).not.toContainText("Saturn trine");
+    await editor.getByRole("button", { name: /Variables/ }).click();
+    const rail = page.getByRole("complementary", { name: "Template variable reference" });
+    await expect(rail).toContainText(/the growth edge and the unfamiliar appetite/i);
+    await expect(rail).not.toContainText("Saturn");
+    await expect(rail.locator(".admin-composition-preview-chrome")).toContainText("Personal Transits");
+    await rail.getByRole("button", { name: "Close variables", exact: true }).click();
+    await editor.screenshot({ path: path.join(adminScreenshotDir, `lilith-source-${width}-${theme}.png`) });
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await finder.getByRole("button", { name: "Write a new exact passage", exact: true }).click();
+    await expect(editor.getByRole("heading", { level: 2 })).toHaveText("Write a new exact passage");
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
+    await expect(editor.getByText(/No exact passage is saved for this combination/)).toBeVisible();
+    await expect(editor.getByRole("button", { name: "Revert to package original", exact: true })).toHaveCount(0);
+    await expectNoHorizontalOverflow(page, "Lilith exact draft");
+    await editor.screenshot({ path: path.join(adminScreenshotDir, `lilith-new-draft-${width}-${theme}.png`) });
+    await assertNoBrowserErrors();
+  });
+
+  for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) test(`Friends transit source preserves selected context ${width} ${theme}`, async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await page.setViewportSize({ width, height: 1000 });
+    const keys = ["fallback-hook/transit-effect-soft/lilith", "fallback-vocab/planet-topic/north-node"];
+    await seedAdminApi(page, { generatedRows: keys.map(content_key => {
+      const record = servingPackageRecords.get(content_key)!;
+      return { id: `qa-friends-${content_key}`, content_key, headline: content_key, body: String(record.body_you ?? record.body), summary: "", surface: "you", mode: "feed", status: "LIVE", lane: "serving", block_type: "fallback_hook", sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now };
+    }) });
+    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.route("**/api/admin/transit-natal-preview", async route => {
+      const input = normalizeTransitNatalPreviewInput(route.request().postDataJSON());
+      expect(input.voice).toBe("{{Name}}");
+      await route.fulfill({ json: { rendered: renderTransitNatalPreviewState(input) } });
+    });
+    await page.addInitScript(theme => localStorage.setItem("tldrastro:theme", theme), theme);
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=lilith&sign=capricorn&transitHouse=8&aspect=trine&natal=north-node&natalHouse=4&audience=friends");
+    await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, theme);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+    const preview = page.getByRole("region", { name: "Effective transit to natal reader preview" });
+    await expect(preview).toContainText("Lilith in Capricorn");
+    const button = preview.getByRole("button", { name: /Edit selected source fallback-hook\/transit-effect-soft\/lilith/ });
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const rail = page.getByRole("complementary", { name: "Template variable reference" });
+    for (let reopen = 0; reopen < 2; reopen++) {
+      await button.click();
+      await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(keys[0]);
+      await expect(editor.getByLabel("Selected transit context")).toContainText("Lilith in Capricorn, 8th house, trine natal North Node, 4th house");
+      await editor.getByRole("button", { name: /Variables/ }).click();
+      await expect(rail.getByRole("button", { name: "They", exact: true })).toHaveAttribute("aria-pressed", "true");
+      await expect(rail.locator(".admin-composition-preview-chrome")).toContainText("Friends Transits");
+      await expect(rail).toContainText(/the growth edge and the unfamiliar appetite/i);
+      await expect(rail).not.toContainText("Saturn");
+      await expect(rail).not.toContainText("Venus");
+      const copy = rail.locator(".admin-template-reader-copy");
+      await expect(copy).toContainText("Things they say plainly in this window tend to land clean");
+      await expect(copy).not.toContainText("Say the true thing while it comes out clean.");
+      if (reopen === 0) {
+        await mkdir(adminScreenshotDir, { recursive: true });
+        await rail.screenshot({ path: path.join(adminScreenshotDir, `friends-transit-context-${width}-${theme}.png`) });
+      }
+      await rail.getByRole("button", { name: "You", exact: true }).click();
+      await expect(rail.getByRole("button", { name: "You", exact: true })).toHaveAttribute("aria-pressed", "true");
+      await expect(copy).toContainText("Say the true thing while it comes out clean.");
+      await expect(copy).not.toContainText("Things they say plainly in this window tend to land clean");
+      await rail.getByRole("button", { name: "Close variables", exact: true }).click();
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+    }
+    await expectNoHorizontalOverflow(page, "Friends selected transit source");
     await assertNoBrowserErrors();
   });
 
@@ -5566,6 +5649,31 @@ test("reopening a completed revision follows its published target", async ({ pag
   await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue("Current published passage.");
   await expect(editor.getByRole("button", { name: "Restore as draft", exact: true })).toHaveCount(0);
 });
+
+for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
+  test(`Imported article keeps drafting notes outside reader copy ${theme} ${width}`, async ({page}) => {
+    await page.setViewportSize({width,height:1000});
+    const body='# Sun Enters Aries\n\nThe complete opening remains here.\n\nThe complete final paragraph remains here.';
+    const notes='Drafting notes: synthetic batch context.\nneeds_review was the old document label.';
+    const row={...generatedContentRows[0],id:'qa-separated-article',content_key:'sky/article-template/sun/aries',
+      headline:'Sun Enters Aries',body,summary:'',status:'REVIEWED',lane:'reference',review_state:null,
+      event_type:'sky-article-template',block_type:'sky_article',mode:'article',sections:{},facts:{},
+      source_snapshot:{sourceType:'owner-resource-review',contentType:'sky-article-template',importSummary:notes},target_date:null,provider:'owner-resource-review'};
+    await seedAdminApi(page,{generatedRows:[row],reviewRows:[]});
+    await expectAdminRouteLoads(page,'/admin/content#review-queue?view=all');
+    await page.evaluate(value=>document.documentElement.setAttribute('data-theme',value),theme);
+    await page.locator('.admin-review-queue-row',{hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+    const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
+    await expect(editor.getByRole('heading',{name:'Edit Sun Enters Aries',exact:true})).toBeVisible();
+    const detail=editor.locator('details').filter({has:page.getByText('Original import notes',{exact:true})});
+    await expect(detail).not.toHaveAttribute('open');
+    await detail.locator('summary').click();
+    await expect(detail).toContainText(notes);
+    await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
+    await expectNoHorizontalOverflow(page,`Separated article ${theme} ${width}`);
+  });
+}
 
 test('Aspect Patterns authenticates reads and previews and preserves newer drafts through the actual handler', async ({ page, baseURL }) => {
   test.setTimeout(90_000);

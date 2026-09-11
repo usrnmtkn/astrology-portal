@@ -7,7 +7,7 @@ for (const width of [390, 1440]) {
     const summary = page.getByLabel('Daily sky summary');
     await expect(summary).toContainText('makes the bigger question, the farther trip, or the next thing to learn more compelling', { timeout: 60000 });
     await expect(summary).toContainText('separates signal from noise');
-    await expect(summary).toContainText(', while the Moon in Virgo');
+    await expect(summary).toContainText('. The Moon in Virgo');
     const links = summary.locator('a');
     expect(await links.evaluateAll(elements => elements.every(element => {
       const style = getComputedStyle(element);

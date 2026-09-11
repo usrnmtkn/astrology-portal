@@ -118,7 +118,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     );
     const facts = skyArticleEditionFactsFromSnapshot(snapshot, planet);
     const placeholders = skyArticleTemplatePlaceholders(template.body ?? "")
-      .filter((placeholder) => placeholder.name !== "risingBlocks");
+      .filter((placeholder) => placeholder.name !== "risingBlocks")
+      .map((placeholder) => ({ ...placeholder,
+        description: (template.source_snapshot?.editorialImport as {slotDescriptions?: Record<string, string[]>} | undefined)?.slotDescriptions?.[placeholder.name]?.join("\n") || placeholder.description
+      }));
     const existingSlotValues = existingStringValues(body.existingSlotValues);
     const unfinished = unfinishedSkyArticleTemplateSlots({
       placeholders,

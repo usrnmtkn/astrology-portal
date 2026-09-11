@@ -47,6 +47,11 @@ reader, content package and dependency changes.
   API-read version, protecting changes made during the request.
 - Calendar partial proposals, all 24 materialized shapes, exact saved copy,
   separate revisions and actual reader hydration/selection.
+- Personal Transit source routing across every selectable transiting body, natal
+  point, aspect and both audiences at a representative sign. Each successful
+  preview must link to an existing source; missing approved content must report
+  a source gap. The actual-handler check separately verifies publication edits,
+  retirement and request-scoped reader state.
 - Existing Sky placement publication, copy recovery, reader revalidation,
   storage protocol/timeouts, composition sources, live status, editor state
   and protected Uranus copy parity.
@@ -161,6 +166,14 @@ The same audit found the personalized list filter still omitted `friends` and
 and the current generation client. Both filters now reach storage; unsupported
 surface names still return 400 before lookup. This is an API filter correction,
 not a new content surface or a database migration.
+
+### Reader-copy import boundary
+
+The API gate also runs `test:reader-copy-boundary` and the actual handler tests in
+`test-editorial-copy-api.mts`. Imports must keep workflow labels, drafting
+instructions and source notes outside reader fields, including nested package
+revisions. See [the saved-row audit](content-studio-editorial-copy-audit-2026-09-11.md)
+for the repair journal, full-inventory checks and agent requirements.
 
 ### Secondary editors and shared transport
 

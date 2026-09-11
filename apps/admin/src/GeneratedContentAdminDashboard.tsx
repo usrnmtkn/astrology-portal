@@ -1,6 +1,4 @@
-import ReviewWorkflowPanel from "./ReviewWorkflowPanel";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
-import TransitNatalReaderPreview from "./TransitNatalReaderPreview";
 import { transitNatalExactContentKey, transitNatalExactSourceDraft } from "./transitNatalSources";
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
@@ -177,6 +175,8 @@ import "./admin-form-density.css";
 import "./admin-content-studio-ux-compat.css";
 import "./admin-content-studio-layout.css";
 
+const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
+const ReviewWorkflowPanel = lazy(() => import("./ReviewWorkflowPanel"));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
@@ -5335,7 +5335,7 @@ export function GeneratedContentAdminDashboard() {
         `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(field.key)}&limit=1`, secret);
       if (!Array.isArray(result.rows)) throw new Error("Could not load the saved summary wording. Please try again.");
       const moonSource = /^cms\/sky-daily-summary\/moon\/[^/]+\/[^/]+$/u.test(field.key)
-        ? (await import("./skyMoonSummarySources.json")).default.rows.find(row => row.key === field.key) : undefined;
+        ? (await (await import("./skyMoonSummarySources")).loadSkyMoonSummarySources()).rows.find(row => row.key === field.key) : undefined;
       let existing = result.rows.find(row => row.content_key === field.key);
       if (!existing && field.key.startsWith("cms/sky-daily-summary/ingress/")) {
         const { ingressTldrSourceKeys, publishedIngressTldr } = await import("./skyIngressTldrSources");
@@ -7197,7 +7197,7 @@ export function GeneratedContentAdminDashboard() {
       setSelectedRowId(null);
       setCompositionEditorContext(null);
       setDraft(transitNatalExactSourceDraft(selection));
-      setMessage("Opened an empty exact passage. It will reach Sky Placement and You Transit only after review and publication.");
+      setMessage("No exact passage is saved for this combination. This is a new blank draft. To change the current reading, close this draft and use Edit selected source beneath the reader preview.");
       scrollEditorToTop();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not open the exact transit passage.");
@@ -7282,8 +7282,9 @@ export function GeneratedContentAdminDashboard() {
         </div>
 
         {!selection && <p className="admin-natal-placement-prompt">Choose all six values to preview the write-up and open its exact source rows.</p>}
-        {selection && <TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"))} />}
-        {selection && transitNatalExactContentKey(selection) && <button type="button" disabled={isLoading} onClick={() => void openExactTransitNatalSource(selection)}>Open exact passage</button>}
+        {selection && <Suspense fallback={<p role="status">Loading reader preview…</p>}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"))} /></Suspense>}
+        {selection && <p className="admin-field-hint">Edit selected source changes the writing shown above. A new exact passage replaces fallback writing only after you write, review, and publish it. Signs and houses are calculated separately.</p>}
+        {selection && transitNatalExactContentKey(selection) && <button type="button" disabled={isLoading} onClick={() => void openExactTransitNatalSource(selection)}>{rows.some(row => row.content_key === transitNatalExactContentKey(selection)) ? "Edit exact passage" : "Write a new exact passage"}</button>}
       </section>
     );
   }
@@ -8244,7 +8245,10 @@ export function GeneratedContentAdminDashboard() {
           body_they: packageFieldString(currentDraft, "body_they")
         }
       : null;
-    const templatePreviewRow = selectedRow && isTemplateDraft ? {
+    const hasTransitTemplatePreviewContext = activePage === "skyWriteups"
+      && skyWriteupWorkspaceView === "transits-to-natal"
+      && Boolean(transitNatalPlanet && transitNatalSign && transitNatalPoint && transitNatalAspect);
+    const templatePreviewRow = selectedRow && (isTemplateDraft || hasTransitTemplatePreviewContext && variableReferences.length > 0) ? {
       ...selectedRow,
       headline: currentDraft.headline,
       summary: currentDraft.summary,
@@ -8790,7 +8794,7 @@ export function GeneratedContentAdminDashboard() {
           : isCompatibilityCardDraft
             ? "Create compatibility card"
             : isFallbackHookDraft
-              ? isCompatibilityWorkspaceDraft ? "Create compatibility fallback" : "Create fallback passage"
+              ? isAuthoredTransitAspectDraft ? "Write a new exact passage" : isCompatibilityWorkspaceDraft ? "Create compatibility fallback" : "Create fallback passage"
               : isTemplateDraft
                 ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
                 : "Create saved row";
@@ -8961,6 +8965,14 @@ export function GeneratedContentAdminDashboard() {
                 </button>
               </div>
             </section>
+          )}
+          {hasTransitTemplatePreviewContext && (
+            <div className="admin-editor-guidance" aria-label="Selected transit context">
+              <p>Selected transit: {titleFromKey(transitNatalPlanet)} in {titleFromKey(transitNatalSign)}{transitNatalTransitHouse ? `, ${ordinalHouse(transitNatalTransitHouse)} house` : ""}, {transitNatalAspect} natal {titleFromKey(transitNatalPoint)}{transitNatalNatalHouse ? `, ${ordinalHouse(transitNatalNatalHouse)} house` : ""}.</p>
+              <p>{isNewDraft && isAuthoredTransitAspectDraft
+                ? "No exact passage is saved for this combination. This is a new blank draft. To edit the current reading, close this draft and choose Edit selected source under the preview."
+                : "This source is shared by matching readings. Edit its words here; signs, houses, and dates come from the calculated chart. Variables opens a preview using the transit selected above."}</p>
+            </div>
           )}
           {isNewDraft && isCompatibilityCardDraft && (
             <fieldset className="admin-metadata-fields admin-compatibility-identity-fields" aria-label="Compatibility card identity">
@@ -9637,9 +9649,9 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
-          {selectedRow && !isPackageDraft && <ReviewWorkflowPanel row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
+          {selectedRow && !isPackageDraft && <Suspense fallback={<p role="status">Loading publication checks…</p>}><ReviewWorkflowPanel row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
             onCheck={() => void runSkyDraftWriting(selectedRow.content_key, "recheck", selectedRow)}
-            onGenerate={() => void runSkyDraftWriting(selectedRow.content_key, "generate", selectedRow)} />}
+            onGenerate={() => void runSkyDraftWriting(selectedRow.content_key, "generate", selectedRow)} /></Suspense>}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
@@ -10245,7 +10257,7 @@ export function GeneratedContentAdminDashboard() {
           {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (
             <span className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</span>
           )}
-          {isPackageDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
+          {isPackageDraft && !isNewDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
             <button type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
               Revert to package original
             </button>
@@ -10323,7 +10335,16 @@ export function GeneratedContentAdminDashboard() {
               sections: currentDraft.sections,
               source_snapshot: currentDraft.sourceSnapshot
             }}
-            previewOptions={natalTemplatePreviewOptions}
+            previewOptions={hasTransitTemplatePreviewContext ? {
+              destination: friendsTransitAudience ? "Friends Transits" : "Personal Transits",
+              initialAudience: friendsTransitAudience ? "they" : "you",
+              exampleValues: {
+                transitTitle: titleFromKey(transitNatalPlanet), natalTitle: titleFromKey(transitNatalPoint),
+                transitRef: `${titleFromKey(transitNatalPlanet)} in ${titleFromKey(transitNatalSign)}`,
+                aspectName: transitNatalAspect, signTitle: titleFromKey(transitNatalSign),
+                timeOpen: "Currently", timeInline: "currently", otherPoss: "{{Name}}'s"
+              }
+            } : natalTemplatePreviewOptions}
             selectedVariableName={selectedTemplateVariableName}
             selectedSourceId={selectedTemplateVariableSourceId}
             onSelectVariable={setSelectedTemplateVariableName}
