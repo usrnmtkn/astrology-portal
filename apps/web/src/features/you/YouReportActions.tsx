@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getSupabaseClient } from "../../services/auth";
 import { listReportLibrary, type ReportLibraryItem } from "../../services/reportLibrary";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import "../../styles/you-reports.css";
@@ -15,6 +16,7 @@ type ActionState = "checking" | "idle" | "loading" | "queued" | "ready" | "error
 type ReportAction = {
   state: ActionState;
   route: string | null;
+  observedUpdate?: string;
 };
 
 const idleAction: ReportAction = { state: "idle", route: null };
@@ -40,12 +42,14 @@ function findPersistedReport(
 }
 
 function reconcileAction(current: ReportAction, item: ReportLibraryItem | null): ReportAction {
+  if (current.state === "loading") return current;
   if (!item) {
-    return current.state === "loading" || current.state === "queued" ? current : idleAction;
+    return current.state === "queued" ? current : idleAction;
   }
-  if (item.status === "ready") return { state: "ready", route: item.route };
+  if (item.status === "ready") return { state: "ready", route: item.route, observedUpdate: item.updatedAt };
   if (item.status === "generating") return { state: "queued", route: null };
-  return { state: "error", route: null };
+  if (current.state === "queued" && current.observedUpdate === item.updatedAt) return current;
+  return { state: "error", route: null, observedUpdate: item.updatedAt };
 }
 
 export function YouReportActions({
@@ -62,6 +66,38 @@ export function YouReportActions({
   const [dayAction, setDayAction] = useState<ReportAction>(checkingAction);
   const [weekAction, setWeekAction] = useState<ReportAction>(checkingAction);
   const [message, setMessage] = useState("");
+  const [session, setSession] = useState<{ status: "checking" | "ready" | "signed_out" | "error"; userId: string | null }>({ status: "checking", userId: null });
+  const scope = `${session.userId ?? session.status}:${transitDateLabel}`;
+  const scopeRef = useRef(scope);
+  scopeRef.current = scope;
+  const requestVersion = useRef(0);
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    mounted.current = true;
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+    void getSupabaseClient().then((client) => {
+      if (cancelled) return;
+      if (!client) {
+        setSession({ status: "error", userId: null });
+        return;
+      }
+      // INITIAL_SESSION waits for persisted-session recovery. The callback must
+      // stay synchronous: Supabase holds its auth lock while delivering it.
+      const { data } = client.auth.onAuthStateChange((_event, value) => {
+        if (cancelled) return;
+        const userId = value?.user.id ?? null;
+        setSession((current) => current.userId === userId && current.status !== "checking"
+          ? current
+          : { status: userId ? "ready" : "signed_out", userId });
+      });
+      unsubscribe = () => data.subscription.unsubscribe();
+    }).catch(() => {
+      if (!cancelled) setSession({ status: "error", userId: null });
+    });
+    return () => { cancelled = true; mounted.current = false; unsubscribe?.(); ++requestVersion.current; };
+  }, []);
   const dayBrief = useMemo(() => buildYouDayReportBrief({
     dateLabel: transitDateLabel,
     dailySummary: dailyUpdateSummary,
@@ -77,51 +113,66 @@ export function YouReportActions({
   const weekPeriodEnd = weekBrief?.periodEnd ?? null;
 
   const reconcilePersistedReports = useCallback(async () => {
-    const items = await listReportLibrary();
-    const dayItem = findPersistedReport(items, "day", dayTargetDate, dayTargetDate);
-    const weekItem = findPersistedReport(items, "week", weekTargetDate, weekPeriodEnd);
-    setDayAction((current) => reconcileAction(current, dayItem));
-    setWeekAction((current) => reconcileAction(current, weekItem));
-  }, [dayTargetDate, weekPeriodEnd, weekTargetDate]);
+    if (session.status !== "ready" || !session.userId) return;
+    const version = ++requestVersion.current;
+    const items = await listReportLibrary({ expectedUserId: session.userId });
+    if (version !== requestVersion.current || scopeRef.current !== scope) return;
+    // A temporarily rebuilding brief is not an empty report library.
+    if (dayTargetDate) setDayAction((current) => reconcileAction(current, findPersistedReport(items, "day", dayTargetDate, dayTargetDate)));
+    if (weekTargetDate) setWeekAction((current) => reconcileAction(current, findPersistedReport(items, "week", weekTargetDate, weekPeriodEnd)));
+  }, [dayTargetDate, weekPeriodEnd, weekTargetDate, session.status, session.userId, scope]);
 
   useEffect(() => {
-    setDayAction(dayTargetDate ? checkingAction : idleAction);
-    setWeekAction(weekTargetDate ? checkingAction : idleAction);
+    ++requestVersion.current;
+    setDayAction(checkingAction);
+    setWeekAction(checkingAction);
     setMessage("");
-    void reconcilePersistedReports().catch(() => undefined);
-  }, [dayTargetDate, reconcilePersistedReports, weekTargetDate]);
+  }, [scope]);
 
   const shouldPoll = isPending(dayAction.state) || isPending(weekAction.state);
   useEffect(() => {
-    if (!shouldPoll) return undefined;
-    const interval = window.setInterval(() => {
-      void reconcilePersistedReports().catch(() => undefined);
-    }, 2_000);
-    return () => window.clearInterval(interval);
-  }, [reconcilePersistedReports, shouldPoll]);
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    async function check() {
+      try {
+        await reconcilePersistedReports();
+      } catch {
+        // Preserve the last known buttons during temporary network/auth errors.
+      }
+      if (!cancelled && shouldPoll) timer = setTimeout(check, 2_000);
+    }
+    if (session.status === "ready") void check();
+    return () => { cancelled = true; clearTimeout(timer); ++requestVersion.current; };
+  }, [reconcilePersistedReports, session.status, shouldPoll]);
 
   async function createReport(reportWindow: YouTransitReportWindow) {
     const brief = reportWindow === "day" ? dayBrief : weekBrief;
-    if (!brief) return;
+    if (!brief || session.status !== "ready" || !session.userId) return;
+    const requestScope = scope;
+    ++requestVersion.current;
     const setAction = reportWindow === "day" ? setDayAction : setWeekAction;
-    setAction({ state: "loading", route: null });
+    setAction((current) => ({ ...current, state: "loading", route: null }));
     setMessage("");
     try {
-      const result = await requestYouTransitReport(brief);
-      setAction({ state: result.status === "ready" ? "checking" : "queued", route: null });
+      const result = await requestYouTransitReport(brief, session.userId);
+      if (!mounted.current || scopeRef.current !== requestScope) return;
+      ++requestVersion.current;
+      setAction((current) => ({ ...current, state: result.status === "ready" ? "checking" : "queued", route: null }));
       setMessage(result.status === "ready"
         ? `Your ${reportWindow} report is ready.`
         : `Your ${reportWindow} report is being prepared. You can leave this page.`);
-      await reconcilePersistedReports();
+      await reconcilePersistedReports().catch(() => undefined);
     } catch (error) {
+      if (!mounted.current || scopeRef.current !== requestScope) return;
+      ++requestVersion.current;
       setAction({ state: "error", route: null });
       setMessage(error instanceof Error ? error.message : `Your ${reportWindow} report could not be started.`);
     }
   }
 
   function reportButton(reportWindow: YouTransitReportWindow, action: ReportAction, available: boolean) {
-    const pending = available && isPending(action.state);
-    const ready = available && action.state === "ready" && Boolean(action.route);
+    const pending = session.status === "checking" || (session.status === "ready" && isPending(action.state));
+    const ready = session.status === "ready" && action.state === "ready" && Boolean(action.route);
     const label = reportWindow === "day" ? "day" : "week";
     const buttonLabel = ready
       ? `Read ${label} report`
@@ -133,7 +184,7 @@ export function YouReportActions({
       <button
         type="button"
         className={`you-report-actions__button${ready ? " is-ready" : ""}${pending ? " is-loading" : ""}${!available ? " is-unavailable" : ""}`}
-        disabled={!available || pending}
+        disabled={session.status !== "ready" || (!available && !ready) || pending}
         aria-label={pending ? `${label === "day" ? "Day" : "Week"} report is loading` : undefined}
         onClick={() => {
           if (ready && action.route) {
@@ -154,8 +205,6 @@ export function YouReportActions({
     );
   }
 
-  if (!dayBrief && !weekBrief) return null;
-
   return (
     <section className="you-empty-card you-report-actions" aria-label="In-depth transit reports">
       <span>Reports</span>
@@ -165,7 +214,9 @@ export function YouReportActions({
         {reportButton("day", dayAction, Boolean(dayBrief))}
         {reportButton("week", weekAction, Boolean(weekBrief))}
       </div>
-      {message ? <p role="status">{message}</p> : null}
+      {session.status === "signed_out" ? <p role="status">Sign in to create or read your reports.</p>
+        : session.status === "error" ? <p role="status">Your session could not be checked. Please reload and try again.</p>
+        : message ? <p role="status">{message}</p> : null}
     </section>
   );
 }
