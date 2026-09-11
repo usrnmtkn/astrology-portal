@@ -1857,7 +1857,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         }
       }
     });
-    await expect(page.getByRole("status")).toContainText("sky.placement.sun.cancer saved as Live");
+    await expect(page.getByRole("status").filter({ hasText: "sky.placement.sun.cancer saved as Live" })).toBeVisible();
     await assertNoBrowserErrors();
   });
 
@@ -3523,7 +3523,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(writes[0]?.payload).toMatchObject({ reviewStatus: "approved" });
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
-    await expect(page.getByRole("status")).toContainText("fallback-hook/natal-aspect-lived/lilith/square/ascendant saved as Live");
+    await expect(page.getByRole("status").filter({ hasText: "fallback-hook/natal-aspect-lived/lilith/square/ascendant saved as Live" })).toBeVisible();
     await editor.getByText("Structured fields", { exact: true }).click();
     const editorBodyBox = await editor.locator(":scope > .admin-post-editor").boundingBox();
     const savebarBox = await editor.locator(":scope > .admin-editor-savebar").boundingBox();
@@ -3591,7 +3591,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(writes[0]?.method).toBe("PATCH");
     expect(writes[0]?.payload).toMatchObject({ id: stuckDraft.id, reviewStatus: "approved" });
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
-    await expect(page.getByRole("status")).toContainText(`${contentKey} saved as Live`);
+    await expect(page.getByRole("status").filter({ hasText: `${contentKey} saved as Live` })).toBeVisible();
     await assertNoBrowserErrors();
   });
 
