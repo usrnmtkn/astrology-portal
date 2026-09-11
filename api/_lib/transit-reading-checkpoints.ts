@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import type { SupabaseReportAdmin } from "./supabase-report-admin.js";
 import type { ReportModelCallInput, ReportModelResult } from "./report-model-client.js";
 
-// Each cron invocation may perform one new provider call. Replaying saved
+// Continue checkpointed steps while the invocation has time. Replaying saved
 // responses runs the existing fact/voice/review gates again, without billing.
 const MAX_STEPS = 6;
 const INVOCATION_BUDGET_MS = 240_000;
@@ -15,6 +15,7 @@ type Context = {
   step: number;
   called: boolean;
   deadline: number;
+  onProgress?: (stage: "writing" | "checking" | "revising" | "waiting") => Promise<void>;
 };
 type Checkpoint<T> = {
   id: string;
@@ -32,7 +33,7 @@ export class TransitReadingCheckpointStopped extends Error {
 }
 
 export function withTransitReadingCheckpoints<T>(
-  input: Pick<Context, "admin" | "family" | "jobId" | "attempt">,
+  input: Pick<Context, "admin" | "family" | "jobId" | "attempt" | "onProgress">,
   run: () => Promise<T>
 ): Promise<T> {
   return context.run({ ...input, step: 0, called: false, deadline: Date.now() + INVOCATION_BUDGET_MS }, run);
@@ -64,9 +65,15 @@ export async function checkpointTransitReadingModel<T>(
     input.validateResponse?.(saved.response.value);
     return saved.response;
   }
-  if (scope.called) throw new TransitReadingCheckpointYield();
   const remaining = scope.deadline - Date.now();
-  if (remaining < 30_000) throw new TransitReadingCheckpointStopped("Report preparation exhausted the worker time budget.");
+  if (remaining < 60_000) {
+    if (scope.called) {
+      await scope.onProgress?.("waiting");
+      throw new TransitReadingCheckpointYield();
+    }
+    throw new TransitReadingCheckpointStopped("Report preparation exhausted the worker time budget.");
+  }
+  await scope.onProgress?.(input.schemaName.includes("judge") ? "checking" : step === 0 ? "writing" : "revising");
   scope.called = true;
   // A unique row is reserved BEFORE billing. After a crash, a started row is
   // ambiguous and must be inspected, never silently sent to the provider again.

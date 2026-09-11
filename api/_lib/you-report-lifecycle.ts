@@ -284,7 +284,14 @@ export async function runYouReportJobs(input: {
       continue;
     }
     try {
-      const generated = await withTransitReadingCheckpoints({ admin, family: "you", jobId: job.id, attempt: job.checkpoint_attempt ?? 1 }, () => generateYouTransitReadingForUser({
+      const generated = await withTransitReadingCheckpoints({ admin, family: "you", jobId: job.id, attempt: job.checkpoint_attempt ?? 1,
+        onProgress: async (stage) => {
+          await admin.update("user_generated_interpretations",
+            `user_id=eq.${job.user_id}&you_report_entitlement_id=eq.${job.entitlement_id}&status=eq.DRAFT&body=eq.`,
+            { source_snapshot: { ...job.source_snapshot, reportProgress: { stage, updatedAt: new Date().toISOString() } } }
+          ).catch(() => { console.warn("Report progress could not be saved", { jobId: job.id, stage }); });
+        }
+      }, () => generateYouTransitReadingForUser({
         userId: job.user_id,
         facts: job.facts,
         entitlementId: job.entitlement_id
