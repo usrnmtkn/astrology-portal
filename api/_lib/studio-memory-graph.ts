@@ -11,7 +11,7 @@ export function withStudioFeedback(index: any, rows: StudioFeedback[]) {
     return { id: feedbackMemoryId(row), kind: 'correction', status: 'current',
       role: 'Owner-reviewed Studio correction', title: `Studio correction · ${row.content_key}`,
       body, sourceId, path, line: 0, endLine: 0, bodySha256: hash(body), family: row.family,
-      register: 'sky-card', contentKey: row.content_key, writerPacketEligible: false,
+      register: row.family === 'sky-article' ? 'sky-article' : 'sky-card', contentKey: row.content_key, writerPacketEligible: false,
       metadata: { storage: 'private-studio', feedbackId: row.id, feedbackVersion: row.version,
         scope: row.scope, evidenceSha256: feedbackHash(row), sourceRowId: row.source_row_id,
         beforeVersion: row.before_version, afterVersion: row.after_version, updatedAt: row.updated_at } };
