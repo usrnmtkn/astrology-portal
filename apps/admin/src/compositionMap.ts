@@ -72,6 +72,7 @@ export type CompositionPreview = {
 };
 
 export type CompositionPreviewOptions = {
+  destination?: string;
   exampleValues?: Record<string, string>;
   includeOptionalSources?: boolean;
 };
@@ -306,6 +307,8 @@ function representativeSource(
     houseMeaning: ["houseOrdinal"],
     houseTopic: ["houseOrdinal"],
     natalCore: ["natalTitle"],
+    natalArea: ["natalTitle"],
+    transitTopic: ["transitTitle"],
     nodeJourney: ["planetTitle"],
     oppositeDirection: ["oppositeSignTitle"],
     planetACore: ["planetATitle"],
@@ -638,7 +641,7 @@ function buildCompositionTemplateWithCache(
     }
     const preview = buildCompositionPreview(row, slots, previewOptions);
     return {
-      destination: compositionDestination(row),
+      destination: previewOptions.destination ?? compositionDestination(row),
       description: lunarContentIdentity(row.content_key)?.selection || text(row.summary) || "No editor-facing template description has been saved.",
       issues,
       label: compositionTemplateLabel(row),

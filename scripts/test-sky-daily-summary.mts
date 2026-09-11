@@ -52,7 +52,7 @@ for (const [planets, expected] of [
 }
 assert.ok(text({ ...facts, retrogradePlanets: ["Saturn", "Saturn", ""] }).includes("One planet is retrograde right now: Saturn Rx."));
 assert.equal(text({ sun: { sign: "Virgo", degree: 15 }, moon: { sign: "Cancer", degree: 29 }, moonIsVoid: false }),
-  "The Sun in Virgo at 15° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing, while the Moon in Cancer at 29° pulls us home to the places, people, and memories that nurture us.");
+  "The Sun in Virgo at 15° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing. The Moon in Cancer at 29° pulls us home to the places, people, and memories that nurture us.");
 assert.ok(!text(facts).includes("care we give"), "Cancer meaning must never serve for another Moon sign");
 
 
@@ -64,7 +64,7 @@ for (const countdown of ["today", "tomorrow", "in 1 day", "in 3 days"]) {
   assert.ok(!text(newMoon).includes(fullMoonMeaning));
 }
 const ordered = text({ ...facts, retrogradePlanets: ["Saturn", "Neptune", "Pluto", "Chiron"] });
-assert.ok(ordered.indexOf("Four planets") < ordered.indexOf("The Moon is void"));
+assert.ok(ordered.indexOf("Four planets") > ordered.indexOf("The Moon is void"));
 assert.ok(ordered.indexOf("The Moon is void") < ordered.indexOf("The next Full Moon"));
 assert.ok(!/—|undefined|\{\{/u.test(ordered));
 assert.ok(text({ ...facts, voidRemainingLabel: "1min" }).includes("for another 1 minute."));
@@ -80,7 +80,7 @@ for (const [name, eclipseType, label] of [["New Moon", "solar", "Solar Eclipse"]
 const { installContentPublications } = await import("../apps/web/src/content/contentPublicationState.ts");
 installContentPublications(["sun/libra", "moon/aries/regular"].map(key => ({ content_key: `cms/sky-daily-summary/${key}`, state: "retired", revision: 100, row_id: null, row_updated_at: null, updated_at: "2026-09-08T00:00:00Z" })));
 const fallback = skyDailySummaryParts({ sun: { sign: "Libra", degree: 15 }, moon: { sign: "Aries", degree: 29 }, moonIsVoid: false });
-assert.equal(fallback.map(part => part.text).join(""), "The Sun is in Libra at 15°, while the Moon moves through Aries at 29°.");
+assert.equal(fallback.map(part => part.text).join(""), "The Sun is in Libra at 15°. The Moon moves through Aries at 29°.");
 assert.ok(fallback.filter(part => part.emphasis).every(part => part.action));
 assert.ok(!text(facts).includes("Talk your way") && !text(facts).includes("Give the feeling"));
 console.log("Sky summary: 144 sign pairs, full-clause and facts-only states, article links, timing, retrogrades, and eclipse labels passed.");
@@ -125,12 +125,12 @@ const example = skyDailySummaryParts({ sun: { sign: "Virgo", degree: 15 }, moon:
   retrogradePlacements: [{ planet: "Saturn", sign: "Aries", degree: 13 }, { planet: "Neptune", sign: "Aries", degree: 1 }, { planet: "Pluto", sign: "Aquarius", degree: 3 }, { planet: "Chiron", sign: "Taurus", degree: 0 }],
   exactAspects: [{ id: "a", label: "Saturn squares Lilith" }, { id: "b", label: "Mercury opposes Neptune" }], event: { name: "New Moon", sign: "Virgo", countdown: "in 3 days" }
 });
-assert.deepEqual(example.filter(p => p.action).map(p => p.text), ["Sun in Virgo at 15°", "Moon in Cancer at 29°", "Saturn Rx in Aries at 13°", "Neptune Rx in Aries at 1°", "Pluto Rx in Aquarius at 3°", "Chiron Rx in Taurus at 0°", "Saturn squares Lilith", "Mercury opposes Neptune", "New Moon in Virgo"]);
-assert.ok(example.map(p => p.text).join("").includes("Today brings two exact aspects: Saturn squares Lilith and Mercury opposes Neptune."));
+assert.deepEqual(example.filter(p => p.action).map(p => p.text), ["Sun in Virgo at 15°", "Moon in Cancer at 29°", "Saturn squares Lilith", "Mercury opposes Neptune", "Saturn Rx in Aries at 13°", "Neptune Rx in Aries at 1°", "Pluto Rx in Aquarius at 3°", "Chiron Rx in Taurus at 0°", "New Moon in Virgo"]);
+assert.ok(example.map(p => p.text).join("").includes("Saturn squares Lilith and Mercury opposes Neptune are exact today."));
 for (const count of [0, 1, 2, 3]) {
   const labels = ["Saturn squares Lilith", "Mercury opposes Neptune", "Venus trines Jupiter"].slice(0, count);
   const rendered = text({ moonIsVoid: false, exactAspects: labels.map((label, i) => ({ id: String(i), label })) });
-  assert.equal(rendered, count === 0 ? "" : count === 1 ? `Today brings one exact aspect: ${labels[0]}.` : count === 2 ? `Today brings two exact aspects: ${labels[0]} and ${labels[1]}.` : `Today brings three exact aspects: ${labels[0]}, ${labels[1]}, and ${labels[2]}.`);
+  assert.equal(rendered, count === 0 ? "" : count === 1 ? `${labels[0]} is exact today.` : count === 2 ? `${labels[0]} and ${labels[1]} are exact today.` : `Three aspects are exact today: ${labels[0]}, ${labels[1]}, and ${labels[2]}.`);
 }
 assert.equal(text({ moonIsVoid: false, retrogradePlacements: [{ planet: "Saturn", sign: "Aries", degree: 13 }] }), "One planet is retrograde right now: Saturn Rx in Aries at 13°.");
 const { skySummaryEventFacts, ingressSummaryKeys } = await import("../apps/web/src/content/skySummaryEvents.ts");
@@ -140,13 +140,13 @@ const article = { body: "Full article remains separate.", summary: "Complete sup
 assert.equal(skySummaryEventFacts([ingressEvent], new Map([[ingressKeys[2], article]])).ingresses[0].tldr, article.summary);
 assert.equal(skySummaryEventFacts([ingressEvent], new Map([[ingressKeys[2], { ...article, summary: null }]])).ingresses[0].tldr, undefined);
 assert.equal(skySummaryEventFacts([ingressEvent], new Map([[ingressKeys[0], { ...article, body: "Saved short copy.", status: "DRAFT" }]])).ingresses[0].tldr, undefined);
-assert.equal(text({ moonIsVoid: false, ...skySummaryEventFacts([ingressEvent], new Map([[ingressKeys[2], article]])) }), "One ingress happens today: Mercury enters Libra. Complete supplied TLDR.");
+assert.equal(text({ moonIsVoid: false, ...skySummaryEventFacts([ingressEvent], new Map([[ingressKeys[2], article]])) }), "Mercury enters Libra today. Complete supplied TLDR.");
 console.log("Finite-verb template: full placement links, exact-aspect agreement, optional sections and ingress TLDR source selection passed.");
 const currentFacts = { sun: { sign: "Virgo", degree: 15 }, moon: { sign: "Cancer", degree: 29 }, moonIsVoid: false };
 const prior = new Map(Object.entries(clauses.provenance.previousClauses).map(([part, body]) => [`cms/sky-daily-summary/${part}`, { body, status: "LIVE" } as any]));
 assert.deepEqual(skyDailySummaryParts(currentFacts, prior), skyDailySummaryParts(currentFacts));
 
 const paragraphs = skySummaryParagraphs(example).map(parts => parts.map(p => p.text).join(""));
-assert.equal(paragraphs.length, 3);
-assert.ok(paragraphs[1].startsWith("Today brings two exact aspects: "));
-assert.ok(paragraphs[2].startsWith("The next New Moon"));
+assert.equal(paragraphs.length, 4);
+assert.ok(paragraphs[1].endsWith("are exact today."));
+assert.ok(paragraphs[3].startsWith("The next New Moon"));

@@ -24,10 +24,11 @@ export type SkyDailySummaryFacts = {
   sun?: SummaryPlacement;
   moon?: SummaryPlacement;
   moonIsVoid: boolean;
+  asOf?: string;
   retrogradePlanets?: string[];
   retrogradePlacements?: Array<SummaryPlacement & { planet: string }>;
   exactAspects?: Array<{ id: string; label: string }>;
-  stations?: Array<{ id: string; label: string; direction: "direct" | "retrograde" }>;
+  stations?: Array<{ id: string; label: string; direction: "direct" | "retrograde"; planet?: string; startsAt?: string }>;
   ingresses?: Array<{ id: string; label: string; tldr?: string }>;
   voidRemainingLabel?: string;
   event?: { placementsPending?: boolean; sun?: SummaryPlacement; name: string; degree?: number; sign: string; countdown: string; isToday?: boolean; eclipseType?: "solar" | "lunar" };
@@ -108,6 +109,7 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       const p = facts.retrogradePlacements?.find(p => p.planet === planet);
       return { text: `${planet} Rx${p ? ` in ${p.sign}${degreeText(p.degree)}` : ""}`, planet, action: "retrograde", emphasis: true };
     }));
+    values.retrogradeCount = plain((words[planets.length] ?? String(planets.length)).toLowerCase());
     values.currentRetrogradesSentence = intro ? fillSkyTemplate(assembly.retrogrades, values) : [];
   }
   if (facts.moon && facts.moonIsVoid) {
@@ -136,7 +138,7 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     const position = previousEvent ? "Also" : "First";
     let key: keyof typeof assembly;
     let listSlot: string;
-    if (slot === "exactAspectsSentence") { key = `aspects${position}${many ? "Many" : "One"}`; listSlot = "aspectList"; }
+    if (slot === "exactAspectsSentence") { key = `aspects${position}${items.length === 2 ? "Two" : many ? "Many" : "One"}`; listSlot = "aspectList"; }
     else if (slot === "ingressesSentence") { key = `ingresses${position}${many ? "Many" : "One"}`; listSlot = "ingressList"; }
     else {
       key = many ? `stations${position}Many` : `station${facts.stations![0].direction === "retrograde" ? "Retrograde" : "Direct"}${position}`;
@@ -147,6 +149,22 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       Count: plain(count), count: plain(count.toLowerCase()),
       [listSlot]: listParts(items.map(item => ({ text: item.label, action: "event", eventId: item.id, emphasis: true })))
     });
+    // A station changes the current Rx count only after its timestamp and when
+    // the same calculated snapshot contains that planet as retrograde. Avoid
+    // claiming a new count for future, direct, multiple, or unmatched stations.
+    const station = facts.stations?.[0];
+    const stationAt = Date.parse(station?.startsAt ?? "");
+    const asOf = Date.parse(facts.asOf ?? "");
+    const stationIsCurrentRx = station?.planet && planets.some(planet => planet.toLowerCase() === station.planet!.toLowerCase());
+    if (slot === "stationsSentence" && facts.stations?.length === 1 && station?.direction === "retrograde"
+      && Number.isFinite(stationAt) && Number.isFinite(asOf) && stationAt <= asOf && stationIsCurrentRx
+      && values.currentRetrogradesSentence?.length && assembly.layout.includes("{currentRetrogradesSentence}") && assembly.stationRetrogradeCount) {
+      values[slot] = fillSkyTemplate(assembly.stationRetrogradeCount, {
+        stationList: [{ text: station.label, action: "event", eventId: station.id, emphasis: true }],
+        count: values.retrogradeCount, retrogradeList: values.retrogradeList
+      });
+      values.currentRetrogradesSentence = [];
+    }
     if (slot === "ingressesSentence" && values[slot].length) {
       for (const item of facts.ingresses ?? []) if (item.tldr) values[slot].push({ text: ` ${item.tldr}` });
     }

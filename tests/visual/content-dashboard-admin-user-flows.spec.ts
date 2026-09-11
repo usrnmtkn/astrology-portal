@@ -2191,7 +2191,10 @@ test.describe("content dashboard admin user flow case studies", () => {
       headline: "Sun Conjunction North Node", summary: "", body: "Unsaved Studio draft must never replace the reader passage.",
       sections: { packageRecord: source, body_you: "Unsaved Studio draft must never replace the reader passage." },
       facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now
-    }] });
+    }, ...["fallback-hook/transit-effect-soft/lilith", "fallback-vocab/planet-topic/north-node"].map(content_key => {
+      const record = servingPackageRecords.get(content_key)!;
+      return { id: `qa-${content_key}`, content_key, headline: content_key, body: String(record.body_you ?? record.body), summary: "", surface: "you", mode: "feed", status: "LIVE", lane: "serving", block_type: "fallback_hook", sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true }, provider: "tldrastro-fallback-architecture-v3", updated_at: now };
+    })] });
     await page.route("**/rest/v1/generated_interpretations*", (route) => route.fulfill({ json: [] }));
     await page.route("**/api/admin/transit-natal-preview", async (route) => {
       try { await route.fulfill({ json: { rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } }); }
@@ -2239,13 +2242,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("sun");
     await expect(preview.getByRole("alert")).toBeVisible();
     await expect(preview).not.toContainText("You may be offered a role");
-    await finder.getByRole("button", { name: "Open exact passage", exact: true }).click();
+    await finder.getByRole("button", { name: /^(Edit exact passage|Write a new exact passage)$/ }).click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-return/sun");
     page.once("dialog", dialog => dialog.accept());
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("south-node");
     await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("opposition");
-    await finder.getByRole("button", { name: "Open exact passage", exact: true }).click();
+    await finder.getByRole("button", { name: /^(Edit exact passage|Write a new exact passage)$/ }).click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/south-node/opposition");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("");
@@ -2256,8 +2259,36 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(writes[0].payload).toMatchObject({ contentKey: "authored/transit-aspect/sun/south-node/opposition", status: "DRAFT", lane: "reference", body: candidate });
     expect((writes[0].payload.sections as any).packageRecord.body_you).toBe(candidate);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
-    await finder.getByRole("button", { name: "Open exact passage", exact: true }).click();
+    await finder.getByRole("button", { name: /^(Edit exact passage|Write a new exact passage)$/ }).click();
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(candidate);
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByLabel("Transiting planet", { exact: true }).selectOption("lilith");
+    await page.getByLabel("Transit zodiac sign").selectOption("capricorn");
+    await page.getByLabel("Transit house", { exact: true }).selectOption("8");
+    await page.getByLabel("Natal planet or point", { exact: true }).selectOption("north-node");
+    await page.getByLabel("Transit to natal aspect").selectOption("trine");
+    await expect(preview).toContainText("Lilith in Capricorn is trining your natal North Node");
+    await expect(preview).not.toContainText("fallback-template/transit.aspect");
+    const sourceButton = preview.getByRole("button", { name: /Edit selected source fallback-hook\/transit-effect-soft\/lilith/ });
+    await sourceButton.click();
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("fallback-hook/transit-effect-soft/lilith");
+    const hook = servingPackageRecords.get("fallback-hook/transit-effect-soft/lilith")!;
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(String(hook.body_you));
+    await expect(editor).not.toContainText("Saturn trine");
+    await editor.getByRole("button", { name: /Variables/ }).click();
+    const rail = page.getByRole("complementary", { name: "Template variable reference" });
+    await expect(rail).toContainText(/the growth edge and the unfamiliar appetite/i);
+    await expect(rail).not.toContainText("Saturn");
+    await expect(rail.locator(".admin-composition-preview-chrome")).toContainText("Personal Transits");
+    await rail.getByRole("button", { name: "Close variables", exact: true }).click();
+    await editor.screenshot({ path: path.join(adminScreenshotDir, `lilith-source-${width}-${theme}.png`) });
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await finder.getByRole("button", { name: "Write a new exact passage", exact: true }).click();
+    await expect(editor.getByRole("heading", { level: 2 })).toHaveText("Write a new exact passage");
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
+    await expect(editor.getByText(/No exact passage is saved for this combination/)).toBeVisible();
+    await expectNoHorizontalOverflow(page, "Lilith exact draft");
+    await editor.screenshot({ path: path.join(adminScreenshotDir, `lilith-new-draft-${width}-${theme}.png`) });
     await assertNoBrowserErrors();
   });
 

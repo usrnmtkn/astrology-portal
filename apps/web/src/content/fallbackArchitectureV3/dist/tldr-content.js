@@ -1820,28 +1820,51 @@ ${passHook2}`;
     const cHolds = hookVoice(`fallback-hook/transit-house-event-natal/${natal}`, v);
     const cScenes = hookVoice(`fallback-hook/transit-house-event-scenes/${transiting}/${natal}/${effectFamily}`, v) ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v);
     const cScenesFinal = cScenes ? fillKeep(cScenes, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" }) : ctx.transitTypeLine ?? null;
+    const firstHookKey = (keys) => keys.find((key) => hookVoice(key, v) != null);
+    const effectKey = firstHookKey([
+      `fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`,
+      ...variant ? [`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`] : [],
+      `fallback-hook/transit-effect-${effectFamily}/${transiting}`
+    ]);
+    const natalAreaKey = vocab.get(`fallback-vocab/planet-topic/${natal}`)?.body != null ? `fallback-vocab/planet-topic/${natal}` : `fallback-vocab/angle-area/${natal}`;
+    const areaKey = ANGLES.has(natal) ? firstHookKey([`fallback-hook/natal-core/${natal}`]) ?? `fallback-vocab/planet-core/${natal}` : natalAreaKey;
+    const effectSources = [effectKey, ...effectRaw?.includes("{{natalArea}}") ? [areaKey] : []];
+    let sourceKeys = [];
     let body;
     if (AVERB[aspect] && cWants && cHolds && cScenesFinal) {
       const opener = v === "you" ? `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} your natal ${ctx.natalTitle}.` : `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} ${otherPoss} natal ${ctx.natalTitle}.`;
       body = `${opener} ${cWants}; ${cHolds}. ${cScenesFinal}`;
+      sourceKeys = [
+        firstHookKey([...sign ? [`fallback-hook/transit-house-event-wants/${transiting}/${sign}`] : [], `fallback-hook/transit-house-event-wants/${transiting}`]),
+        firstHookKey([`fallback-hook/transit-house-event-natal/${natal}`]),
+        ...cScenes ? [firstHookKey([`fallback-hook/transit-house-event-scenes/${transiting}/${natal}/${effectFamily}`, `fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`]), ...cScenes.includes("{{natalArea}}") ? [areaKey] : []] : [firstHookKey([...ANGLES.has(natal) ? [`fallback-hook/transit-aspect-type/${aspect}/angle`] : [], `fallback-hook/transit-aspect-type/${aspect}`]), ...typeLineRaw?.includes("{{transitEffect}}") ? effectSources : [], ...typeLineRaw?.includes("{{natalArea}}") ? [natalAreaKey] : []]
+      ];
     } else if (AVERB[aspect] && ctx.transitEffectLine) {
       const target = v === "you" ? `your natal ${ctx.natalTitle}` : `${otherPoss} natal ${ctx.natalTitle}`;
       const timing = ctx.timeInline ? ` ${ctx.timeInline}` : "";
       const mechanics = `${String(ctx.transitRef).replace(/^./, (char) => char.toUpperCase())} is ${AVERB[aspect]} ${target}${timing}.`;
       body = `${ctx.transitEffectLine} ${mechanics}`;
+      sourceKeys = effectSources;
     } else {
       body = fill(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
+      sourceKeys = [T.contentKey];
     }
     body = body.charAt(0).toUpperCase() + body.slice(1);
     if (isRetrograde && v === "you") {
       const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
-      if (retroLine) body = `${body} ${fill(retroLine, ctx)}`;
+      if (retroLine) {
+        body = `${body} ${fill(retroLine, ctx)}`;
+        sourceKeys.push("fallback-hook/transit-retro-aspect");
+      }
     }
     const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
-    if (passHook) body = `${body}
+    if (passHook) {
+      body = `${body}
 
 ${passHook}`;
-    return { headline: fill((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
+      sourceKeys.push(`fallback-hook/transit-pass/${pass}`);
+    }
+    return { headline: fill((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey, sourceKeys: [...new Set(sourceKeys.filter((key) => Boolean(key)))] };
   }
   function renderTransitRetro({ planet, sign, window: win, format }) {
     if (format === "article") {
@@ -5619,7 +5642,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-10f";
+var PACKAGE_VERSION = "v3-2026-09-11a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

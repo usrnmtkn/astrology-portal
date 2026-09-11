@@ -1,4 +1,5 @@
 import { moonEventNames, moonSummaryKey, moonSummaryBody, type MoonSummaryKind } from "./skyMoonSummary.js";
+import legacyAssembly from "./skyDailySummaryLegacyAssembly.json" with { type: "json" };
 import assembly from "./skyDailySummaryAssembly.json" with { type: "json" };
 import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
 import timing from "./skyDailySummaryTiming.json" with { type: "json" };
@@ -9,11 +10,13 @@ export type SkySummaryField = { key: string; label: string; group: string; body:
 export function currentSkySummaryWording(key: string, body: string): string {
   const part = key.replace("cms/sky-daily-summary/", "");
   if (["assembly/opening", "assembly/sunOnly", "assembly/moonOnly"].includes(part)) {
-    return body.replaceAll("{sunPlacementLink}", "{sunName} in {sunSign}{sunDegree}").replaceAll("{moonPlacementLink}", "{moonName} in {moonSign}{moonDegree}");
+    body = body.replaceAll("{sunPlacementLink}", "{sunName} in {sunSign}{sunDegree}").replaceAll("{moonPlacementLink}", "{moonName} in {moonSign}{moonDegree}");
   }
   // Owner correction (2026-09-10): name the Moon's sign even when it matches
   // the Sun. Upgrade only the former built-in template saved by older editors.
   if (part === "assembly/openingSameSign" && body.trim() === "The {sunName} in {sunSign}{sunDegree} {sunSummary}, while the {moonName} there{moonDegree} {moonSummary}.") return assembly.openingSameSign;
+  const assemblyName = part.replace(/^assembly\//u, "") as keyof typeof legacyAssembly;
+  if (part.startsWith("assembly/") && body.trim() === legacyAssembly[assemblyName]) return assembly[assemblyName];
   const previous = clauses.provenance.previousClauses[part as keyof typeof clauses.provenance.previousClauses];
   if (previous && body.trim() === previous) {
     return part === "sun/virgo" ? clauses.sun.virgo : clauses.moon.cancer;
@@ -71,6 +74,7 @@ export function skySummaryTemplateErrors(key: string, body: string): string[] {
     if (slots.includes(`${planet}Name`) && !placementPattern.test(body)) errors.push("Keep each planet, sign, and degree together in that order so the complete placement links to its article.");
   }
   if (/[{}]/u.test(body.replace(/\{[^{}]+\}/gu, ""))) errors.push("Close every slot with matching single braces.");
+  if (key.includes("/assembly/") && /\b(?:also today|there (?:is|are)(?: also)?|today brings)\b/iu.test(body)) errors.push("Use direct event sentences without Also today, There are, or Today brings.");
   if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
   if (body.includes("{{") || body.includes("}}")) errors.push("Use single-brace calculated slots, for example {name}.");
   if (slots.some(slot => !field.allowedSlots.includes(slot))) errors.push("This field contains an unsupported calculated slot.");
