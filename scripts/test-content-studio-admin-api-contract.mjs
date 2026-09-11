@@ -30,6 +30,14 @@ await assert.rejects(
   (error) => error instanceof AdminHttpError && error.statusCode === 413
 );
 
+for (const value of [null, [], true, 12, "invalid"]) {
+  await assert.rejects(() => readAdminJsonBody(requestFrom([JSON.stringify(value)])), error => error.statusCode === 400);
+  await assert.rejects(() => readAdminJsonBody(Object.assign(requestFrom([]), { body: value })), error => error.statusCode === 400);
+}
+assert.deepEqual(await readAdminJsonBody(Object.assign(requestFrom([]), { body: { ok: true } })), { ok: true });
+assert.deepEqual(await readAdminJsonBody(Object.assign(requestFrom([]), { body: '{"ok":true}' })), { ok: true });
+await assert.rejects(() => readAdminJsonBody(Object.assign(requestFrom([]), { body: { text: "a".repeat(100) } }), 32), error => error.statusCode === 413);
+
 const response = {
   statusCode: 0,
   headers: new Map(),
@@ -105,7 +113,7 @@ for (const path of [
 }
 
 const prepopulate = source("api/admin/prepopulate-content.ts");
-assert.match(prepopulate, /params\.set\("status", "neq\.LIVE"\)/u, "Prepopulation must retain the atomic LIVE guard.");
+assert.doesNotMatch(prepopulate, /method: "PATCH"/u, "Prepopulation must preserve every saved row.");
 assert.match(prepopulate, /readAdminJsonBody/u);
 assert.match(prepopulate, /adminFetch/u);
 assert.doesNotMatch(prepopulate, /async function readJsonBody/u);

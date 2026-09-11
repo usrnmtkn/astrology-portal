@@ -46,6 +46,7 @@ type Dashboard = {
 type ReportUnitSection = { heading?: string; body?: string };
 type ReportUnitDraft = { headline: string; timing: string; summary: string; body: string; sections: ReportUnitSection[] };
 type ReportUnit = ReportUnitDraft & {
+  updated_at?: string;
   id: string;
   content_key: string;
   source_snapshot: ({ adminCorrectionDraft?: ReportUnitDraft & { savedAt?: string } } & Record<string, unknown>) | null;
@@ -164,7 +165,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
 
   async function saveUnitDraft() {
     if (!inspection || !selectedUnitId || !unitDraft) return;
-    if (!await action("save_report_unit_draft", String(inspection.report.id), undefined, { unitId: selectedUnitId, ...unitDraft })) return;
+    if (!await action("save_report_unit_draft", String(inspection.report.id), undefined, { unitId: selectedUnitId, expectedUpdatedAt: inspection.units.find(unit => unit.id === selectedUnitId)?.updated_at, ...unitDraft })) return;
     await inspectReport(String(inspection.report.id), selectedUnitId);
     setMessageTone("success");
     setMessage("Correction draft saved. Readers still see the currently published copy.");
@@ -172,7 +173,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
 
   async function publishUnitCorrection() {
     if (!inspection || !selectedUnitId) return;
-    if (!await action("publish_report_unit_correction", String(inspection.report.id), undefined, { unitId: selectedUnitId })) return;
+    if (!await action("publish_report_unit_correction", String(inspection.report.id), undefined, { unitId: selectedUnitId, expectedUpdatedAt: inspection.units.find(unit => unit.id === selectedUnitId)?.updated_at })) return;
     await inspectReport(String(inspection.report.id), selectedUnitId);
     setMessageTone("success");
     setMessage("The reviewed correction is now the report copy readers see.");
@@ -180,7 +181,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
 
   async function discardUnitDraft() {
     if (!inspection || !selectedUnitId) return;
-    if (!await action("discard_report_unit_draft", String(inspection.report.id), undefined, { unitId: selectedUnitId })) return;
+    if (!await action("discard_report_unit_draft", String(inspection.report.id), undefined, { unitId: selectedUnitId, expectedUpdatedAt: inspection.units.find(unit => unit.id === selectedUnitId)?.updated_at })) return;
     await inspectReport(String(inspection.report.id), selectedUnitId);
     setMessageTone("success");
     setMessage("Correction draft discarded. Published report copy was not changed.");

@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { readFile } from "node:fs/promises";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetch, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadSkySourceSnapshot } from "../_lib/content-generation.js";
@@ -67,7 +67,8 @@ function adminHeaders() {
 }
 
 function dateFromInput(value?: string) {
-  if (!value) return new Date();
+  if (value === undefined) return new Date();
+  if (typeof value !== "string") throw new AdminHttpError(400, "targetDate must be YYYY-MM-DD.");
   if (!/^\d{4}-\d{2}-\d{2}$/u.test(value)) throw new AdminHttpError(400, "targetDate must be YYYY-MM-DD.");
   const date = new Date(`${value}T12:00:00.000Z`);
   if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) {
@@ -655,52 +656,40 @@ function queueTargetParams(row: QueueRow) {
 }
 
 async function saveQueueRow(row: QueueRow) {
-  const createResponse = await adminFetch(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
-    method: "POST",
-    headers: {
-      ...adminHeaders(),
-      prefer: "return=representation"
-    },
-    body: JSON.stringify(row)
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
+    method: "POST", headers: { ...adminHeaders(), prefer: "return=representation" }, body: JSON.stringify(row)
   });
-  const createPayload = await createResponse.json().catch(() => null);
-  if (createResponse.ok) {
-    return { row: Array.isArray(createPayload) ? createPayload[0] ?? null : null, skippedLive: false };
+  if (response.status === 409) {
+    // Queue scaffolding must never replace writing, regardless of review state.
+    const lookup = await adminFetchJson(`${supabaseUrl()}/rest/v1/generated_interpretations?${queueTargetParams(row)}`, { headers: adminHeaders() });
+    if (!lookup.ok) throw new AdminHttpError(502, "Could not verify the existing queue row.");
+    const existing = adminStorageRows<Record<string, unknown>>(lookup.payload);
+    if (existing.length !== 1 || existing[0].content_key !== row.content_key) throw new AdminHttpError(502, "The duplicate queue row could not be verified. Reload before retrying.");
+    return { row: null, skippedExisting: true, skippedLive: existing[0].status === "LIVE" };
   }
-  if (createResponse.status !== 409) {
-    throw new Error(`Supabase queue create failed with ${createResponse.status}: ${JSON.stringify(createPayload)}`);
+  if (!response.ok) throw new AdminHttpError(502, `Queue create failed with ${response.status}. Reload before retrying.`);
+  const saved = adminStorageRows<Record<string, unknown>>(response.payload);
+  if (saved.length !== 1 || typeof saved[0].id !== "string" || saved[0].content_key !== row.content_key || saved[0].mode !== row.mode || saved[0].target_date !== row.target_date) {
+    throw new AdminHttpError(502, "Storage did not confirm the created queue row. Reload before retrying.");
   }
-
-  // A duplicate may be a reusable draft or protected LIVE content. Patch only
-  // while the persisted row is still non-LIVE so a publish racing this request
-  // cannot be overwritten by queue prepopulation.
-  const params = queueTargetParams(row);
-  params.set("status", "neq.LIVE");
-  const patchResponse = await adminFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
-    method: "PATCH",
-    headers: {
-      ...adminHeaders(),
-      prefer: "return=representation"
-    },
-    body: JSON.stringify(row)
-  });
-  const patchPayload = await patchResponse.json().catch(() => null);
-  if (!patchResponse.ok) {
-    throw new Error(`Supabase queue refresh failed with ${patchResponse.status}: ${JSON.stringify(patchPayload)}`);
-  }
-  const updated = Array.isArray(patchPayload) ? patchPayload[0] ?? null : null;
-  return { row: updated, skippedLive: !updated };
+  return { row: saved[0], skippedExisting: false, skippedLive: false };
 }
 
 async function saveRows(rows: QueueRow[]) {
   const savedRows: unknown[] = [];
   const skippedLiveRows: string[] = [];
+  const skippedExistingRows: string[] = [];
   for (const row of rows) {
-    const saved = await saveQueueRow(row);
-    if (saved.row) savedRows.push(saved.row);
-    if (saved.skippedLive) skippedLiveRows.push(row.content_key);
+    try {
+      const saved = await saveQueueRow(row);
+      if (saved.row) savedRows.push(saved.row);
+      if (saved.skippedLive) skippedLiveRows.push(row.content_key);
+      if (saved.skippedExisting) skippedExistingRows.push(row.content_key);
+    } catch (error) {
+      throw Object.assign(error instanceof Error ? error : new Error("Queue save failed."), { savedRows, skippedLiveRows, skippedExistingRows, failedContentKey: row.content_key });
+    }
   }
-  return { rows: savedRows, skippedLiveRows };
+  return { rows: savedRows, skippedLiveRows, skippedExistingRows };
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
@@ -749,12 +738,16 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       targetDate,
       inserted: saved.rows.length,
       skippedLiveRows: saved.skippedLiveRows,
+      skippedExistingRows: saved.skippedExistingRows,
       rows: saved.rows
     });
   } catch (error) {
     sendAdminJson(res, adminErrorStatus(error), {
       ok: false,
-      error: adminErrorMessage(error, "Unknown queue pre-population error.")
+      error: adminErrorMessage(error, "Unknown queue pre-population error."),
+      savedRows: (error as { savedRows?: unknown[] })?.savedRows ?? [],
+      skippedExistingRows: (error as { skippedExistingRows?: string[] })?.skippedExistingRows ?? [],
+      failedContentKey: (error as { failedContentKey?: string })?.failedContentKey ?? null
     });
   }
 }

@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetch, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { loadContentUnresolvedReport } from "./content-unresolved.js";
 import { contentSourceRepairPlan } from "./content-source-repair-plans.js";
@@ -88,12 +88,21 @@ function decisionId(input: ContentStudioSourceDecisionInput) {
 async function existingDecision(id: string) {
   const key = serviceRoleKey();
   const params = new URLSearchParams({ select: "*", decision_id: `eq.${id}`, limit: "1" });
-  const response = await adminFetch(`${supabaseUrl()}/rest/v1/content_studio_source_decisions?${params}`, {
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/content_studio_source_decisions?${params}`, {
     headers: { apikey: key, authorization: `Bearer ${key}` }
   });
-  const rows = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(`Source decision lookup failed with ${response.status}: ${JSON.stringify(rows)}`);
-  return Array.isArray(rows) ? rows[0] ?? null : null;
+  const rows = response.payload;
+  if (!response.ok) throw new AdminHttpError(502, `Source decision lookup failed with ${response.status}: ${JSON.stringify(rows)}`);
+  return adminStorageRows(rows);
+}
+
+function confirmedDecision(payload: unknown, input: ContentStudioSourceDecisionInput, id: string) {
+  const rows = adminStorageRows(payload);
+  const row = rows[0];
+  if (rows.length !== 1 || row.decision_id !== id || row.content_key !== input.contentKey || row.candidate_sha256 !== input.candidateSha256 || row.action !== input.action || row.decision_status !== "approved-for-implementation" || row.owner_statement !== input.approvalStatement) {
+    throw new AdminHttpError(502, "Storage did not confirm the exact source decision. Reload before retrying.");
+  }
+  return row;
 }
 
 async function saveDecision(input: ContentStudioSourceDecisionInput, plan: ReturnType<typeof contentSourceRepairPlan>) {
@@ -101,7 +110,7 @@ async function saveDecision(input: ContentStudioSourceDecisionInput, plan: Retur
   const id = decisionId(input);
   const key = serviceRoleKey();
   const approvedAt = new Date().toISOString();
-  const response = await adminFetch(`${supabaseUrl()}/rest/v1/content_studio_source_decisions`, {
+  const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/content_studio_source_decisions`, {
     method: "POST",
     headers: {
       apikey: key,
@@ -122,10 +131,10 @@ async function saveDecision(input: ContentStudioSourceDecisionInput, plan: Retur
       approved_at: approvedAt
     })
   });
-  const rows = await response.json().catch(() => null);
-  if (response.status === 409) return existingDecision(id);
-  if (!response.ok) throw new Error(`Source decision save failed with ${response.status}: ${JSON.stringify(rows)}`);
-  return Array.isArray(rows) ? rows[0] : rows;
+  const rows = response.payload;
+  if (response.status === 409) return confirmedDecision(await existingDecision(id), input, id);
+  if (!response.ok) throw new AdminHttpError(502, `Source decision save failed with ${response.status}: ${JSON.stringify(rows)}`);
+  return confirmedDecision(rows, input, id);
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {

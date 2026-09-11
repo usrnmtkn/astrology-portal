@@ -1,10 +1,11 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { waitUntil } from "@vercel/functions";
 import { reportBillingMode, reportCallEstimate, reportSku } from "../_lib/report-fulfillment-config.js";
-import { jsonRequestBody, reportUrl, requireReportAdmin, sendJson } from "../_lib/report-http.js";
+import { reportUrl, requireReportAdmin } from "../_lib/report-http.js";
 import { authorizeReportGeneration, createFreshReportGeneration, grantCompEntitlement, revokeEntitlement } from "../_lib/report-entitlements.js";
 import { releaseReviewedReport } from "../_lib/report-release.js";
 import { createSupabaseReportAdmin } from "../_lib/supabase-report-admin.js";
+import { AdminHttpError, readAdminJsonBody as jsonRequestBody, sendAdminJson as sendJson, adminStorageRows } from "../_lib/admin-http.js";
 import type { ReportHorizon } from "../_lib/report-types.js";
 
 type ReportUnitSection = { heading?: string; body?: string };
@@ -17,6 +18,7 @@ type ReportUnitDraft = {
 };
 
 type ReportUnitRow = ReportUnitDraft & {
+  updated_at: string;
   id: string;
   content_key: string;
   source_snapshot: Record<string, unknown> | null;
@@ -43,7 +45,7 @@ async function reportInspection(reportId: string) {
     select: "id,user_id,report_domain,report_horizon,period_start,period_end,status,fulfillment_status,delivered_at,facts_engine,facts_hash"
   }));
   if (!report) throw new Error("Report not found.");
-  const units = await admin.request<ReportUnitRow[]>(`user_generated_interpretations?subject_id=eq.${encodeURIComponent(reportId)}&subject_type=eq.report_unit&select=id,content_key,headline,summary,body,sections,source_snapshot&order=content_key.asc`);
+  const units = await admin.request<ReportUnitRow[]>(`user_generated_interpretations?subject_id=eq.${encodeURIComponent(reportId)}&subject_type=eq.report_unit&select=id,content_key,headline,summary,body,sections,source_snapshot,updated_at&order=content_key.asc`);
   return {
     report,
     units: units.map((unit) => ({
@@ -114,11 +116,25 @@ async function dashboard(reportId = "") {
   };
 }
 
+async function saveReportUnit(admin: ReturnType<typeof createSupabaseReportAdmin>, unit: ReportUnitRow, expectedUpdatedAt: string, patch: Record<string, unknown>) {
+  if (unit.updated_at !== expectedUpdatedAt) throw new AdminHttpError(409, "This report unit changed after it was opened. Reload before saving.");
+  const updatedAt = new Date(Math.max(Date.now(), Date.parse(unit.updated_at) + 1)).toISOString();
+  const params = new URLSearchParams({ id: `eq.${unit.id}`, updated_at: `eq.${expectedUpdatedAt}` });
+  const rows = adminStorageRows<ReportUnitRow>(await admin.update("user_generated_interpretations", params.toString(), { ...patch, updated_at: updatedAt }));
+  if (!rows.length) throw new AdminHttpError(409, "This report unit changed while saving. Reload before retrying.");
+  if (rows.length !== 1 || rows[0].id !== unit.id || typeof rows[0].updated_at !== "string") throw new AdminHttpError(502, "Storage did not confirm the report correction. Reload before retrying.");
+  return rows[0];
+}
+
 async function action(body: {
   action?: string; reportId?: string; entitlementId?: string; userId?: string;
   reportDomain?: string; reportHorizon?: string; windowStart?: string; callBudget?: number; tokenBudget?: number; lifetimeTokenBudget?: number;
-  unitId?: string; headline?: string; timing?: string; summary?: string; body?: string; sections?: ReportUnitSection[];
+  expectedUpdatedAt?: string; unitId?: string; headline?: string; timing?: string; summary?: string; body?: string; sections?: ReportUnitSection[];
 }, req: IncomingMessage) {
+  if (["save_report_unit_draft", "discard_report_unit_draft", "publish_report_unit_correction"].includes(body.action ?? "")) {
+    if (typeof body.unitId !== "string" || !body.unitId || typeof body.expectedUpdatedAt !== "string" || !Number.isFinite(Date.parse(body.expectedUpdatedAt))) throw new AdminHttpError(400, "The report unit and its saved version are required. Reload before saving.");
+    if ([body.headline, body.timing, body.summary, body.body].some((value) => value !== undefined && typeof value !== "string") || (body.sections !== undefined && (!Array.isArray(body.sections) || body.sections.some((section) => !section || [section.heading, section.body].some((value) => value !== undefined && typeof value !== "string"))))) throw new AdminHttpError(400, "Correction fields must contain text.");
+  }
   const admin = createSupabaseReportAdmin();
   if (body.action === "pause_worker" || body.action === "resume_worker") {
     await admin.update("report_fulfillment_controls", "id=eq.true", { worker_paused: body.action === "pause_worker" });
@@ -157,7 +173,7 @@ async function action(body: {
       id: `eq.${body.unitId}`,
       subject_id: `eq.${report.id}`,
       subject_type: "eq.report_unit",
-      select: "id,content_key,headline,summary,body,sections,source_snapshot"
+      select: "id,content_key,headline,summary,body,sections,source_snapshot,updated_at"
     }));
     if (!unit) throw new Error("Report unit not found.");
     const correctionDraft: ReportUnitDraft = {
@@ -170,7 +186,7 @@ async function action(body: {
         : []
     };
     const snapshot = unit.source_snapshot && typeof unit.source_snapshot === "object" ? unit.source_snapshot : {};
-    await admin.update("user_generated_interpretations", `id=eq.${encodeURIComponent(unit.id)}`, {
+    await saveReportUnit(admin, unit, body.expectedUpdatedAt!, {
       source_snapshot: {
         ...snapshot,
         adminCorrectionDraft: {
@@ -187,12 +203,12 @@ async function action(body: {
       id: `eq.${body.unitId}`,
       subject_id: `eq.${report.id}`,
       subject_type: "eq.report_unit",
-      select: "id,content_key,headline,summary,body,sections,source_snapshot"
+      select: "id,content_key,headline,summary,body,sections,source_snapshot,updated_at"
     }));
     if (!unit) throw new Error("Report unit not found.");
     const snapshot = unit.source_snapshot && typeof unit.source_snapshot === "object" ? { ...unit.source_snapshot } : {};
     delete snapshot.adminCorrectionDraft;
-    await admin.update("user_generated_interpretations", `id=eq.${encodeURIComponent(unit.id)}`, { source_snapshot: snapshot });
+    await saveReportUnit(admin, unit, body.expectedUpdatedAt!, { source_snapshot: snapshot });
     return { ok: true };
   }
   if (body.action === "publish_report_unit_correction") {
@@ -201,7 +217,7 @@ async function action(body: {
       id: `eq.${body.unitId}`,
       subject_id: `eq.${report.id}`,
       subject_type: "eq.report_unit",
-      select: "id,content_key,headline,summary,body,sections,source_snapshot"
+      select: "id,content_key,headline,summary,body,sections,source_snapshot,updated_at"
     }));
     if (!unit) throw new Error("Report unit not found.");
     const snapshot = unit.source_snapshot && typeof unit.source_snapshot === "object" ? { ...unit.source_snapshot } : {};
@@ -212,7 +228,7 @@ async function action(body: {
     const renderMetadata = snapshot.renderMetadata && typeof snapshot.renderMetadata === "object"
       ? snapshot.renderMetadata as Record<string, unknown>
       : {};
-    await admin.update("user_generated_interpretations", `id=eq.${encodeURIComponent(unit.id)}`, {
+    await saveReportUnit(admin, unit, body.expectedUpdatedAt!, {
       headline: String(correction.headline ?? ""),
       summary: String(correction.summary ?? ""),
       body: String(correction.body ?? ""),
@@ -295,6 +311,7 @@ async function action(body: {
 }
 
 function adminFailure(error: unknown) {
+  if (error instanceof AdminHttpError) return { status: error.statusCode, body: { error: error.message } };
   const message = error instanceof Error ? error.message : "Report fulfillment admin request failed.";
   if (/report_entitlements_active_comp|duplicate key|23505/iu.test(message)) {
     return {

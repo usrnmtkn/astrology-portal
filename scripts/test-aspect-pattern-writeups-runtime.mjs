@@ -69,7 +69,7 @@ function installMockSupabase() {
 
     if (method === "POST") {
       const row = JSON.parse(String(options.body ?? "{}"));
-      const id = `runtime-e2e-row-${++mockSequence}`;
+      const id = `00000000-0000-4000-8000-${String(++mockSequence).padStart(12, "0")}`;
       const now = new Date(Date.now() + mockSequence).toISOString();
       const saved = { ...row, id, created_at: now, updated_at: row.updated_at ?? now };
       mockRows.set(id, saved);
@@ -79,7 +79,8 @@ function installMockSupabase() {
     if (method === "PATCH") {
       const id = parseFilter(url, "id");
       const existing = id ? mockRows.get(id) : null;
-      if (!id || !existing) return jsonResponse([], 404);
+      if (!id || !existing) return jsonResponse([]);
+      if (url.searchParams.has("updated_at") && parseFilter(url, "updated_at") !== existing.updated_at) return jsonResponse([]);
       const patch = JSON.parse(String(options.body ?? "{}"));
       const now = new Date(Date.now() + ++mockSequence).toISOString();
       const saved = { ...existing, ...patch, id, updated_at: patch.updated_at ?? now };
@@ -103,7 +104,7 @@ function cloned(value) {
   return JSON.parse(JSON.stringify(value));
 }
 
-function invokeHandler(handler, method, url, body, headers = {}) {
+function invokeHandler(handler, method, url, body, headers = process.env.CONTENT_GENERATION_SECRET ? { authorization: `Bearer ${process.env.CONTENT_GENERATION_SECRET}` } : {}) {
   return new Promise((resolve) => {
     const chunks = [];
     const req = {
@@ -265,7 +266,9 @@ async function updateRow(id, kind, contentKey, record) {
 }
 
 async function saveViaAdmin(handler, kind, generatedContentId, record) {
+  const current = await restJson(`generated_interpretations?id=eq.${encodeURIComponent(generatedContentId)}`);
   const response = await invokeHandler(handler, "POST", "/api/admin/aspect-pattern-writeups", {
+    expectedUpdatedAt: current[0].updated_at,
     kind,
     action: "save",
     generatedContentId,
@@ -451,10 +454,11 @@ async function main() {
       kind: "natal",
       action: "save",
       generatedContentId: natalRow.id,
+      expectedUpdatedAt: (await restJson(`generated_interpretations?id=eq.${natalRow.id}`))[0].updated_at,
       record: invalid,
       reviewer: "runtime-e2e"
     }, process.env.CONTENT_GENERATION_SECRET ? { authorization: `Bearer ${process.env.CONTENT_GENERATION_SECRET}` } : {});
-    assert.equal(invalidResponse.statusCode, 500);
+    assert.equal(invalidResponse.statusCode, 422);
     assert.match(JSON.parse(invalidResponse.body).error, /Cannot approve|unknown_required_slot|unknown_slot/i);
 
     await deleteTempRows();

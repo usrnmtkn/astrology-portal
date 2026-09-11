@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { adminErrorMessage, adminErrorStatus, adminFetch, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
 loadLocalWebEnv();
@@ -41,12 +41,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       order: "last_seen_at.desc,fingerprint.asc",
       limit: String(limit)
     });
-    const response = await adminFetch(`${supabaseUrl()}/rest/v1/content_runtime_review_events?${params}`, {
+    const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/content_runtime_review_events?${params}`, {
       headers: { apikey: key, authorization: `Bearer ${key}` }
     });
-    const rows = await response.json().catch(() => null);
-    if (!response.ok) throw new Error(`Content review queue load failed with ${response.status}: ${JSON.stringify(rows)}`);
-    sendAdminJson(res, 200, { ok: true, rows });
+    const rows = response.payload;
+    if (!response.ok) throw new AdminHttpError(502, `Content review queue load failed with ${response.status}: ${JSON.stringify(rows)}`);
+    sendAdminJson(res, 200, { ok: true, rows: adminStorageRows(rows) });
   } catch (error) {
     sendAdminJson(res, adminErrorStatus(error), {
       ok: false,

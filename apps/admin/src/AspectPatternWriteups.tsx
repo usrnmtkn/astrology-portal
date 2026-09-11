@@ -214,11 +214,11 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
     setIsLoading(true);
     setError("");
     try {
-      const result = await fetch(`/api/admin/aspect-pattern-writeups?kind=${nextKind}`, { method: "GET" });
+      const result = await fetch(`/api/admin/aspect-pattern-writeups?kind=${nextKind}`, { method: "GET", headers: adminCredentialHeaders(secret) });
       const json = await result.json() as AspectPatternWriteupResponse;
       if (!result.ok || json.ok === false) throw new Error(json.error || `Aspect-pattern write-ups failed with ${result.status}.`);
       setResponse(json);
-      const firstRow = json.rows?.[0] ?? null;
+      const firstRow = json.rows?.find((row) => row.key === selectedKey) ?? json.rows?.[0] ?? null;
       setSelectedKey((current) => json.rows?.some((row) => row.key === current) ? current : firstRow?.key ?? "");
       setDraft(firstRow ? cloneRecord(firstRow.record) : null);
       setDraftPreviews(firstRow?.previews ?? []);
@@ -294,6 +294,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
         body: JSON.stringify({
           kind,
           generatedContentId: selectedRow.generatedContentId,
+          expectedUpdatedAt: selectedRow.generatedContentId ? selectedRow.lastUpdated : null,
           record,
           reviewer: "admin"
         })
@@ -301,7 +302,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
       const json = await result.json() as { ok?: boolean; error?: string; dashboard?: AspectPatternWriteupResponse };
       if (!result.ok || json.ok === false) throw new Error(json.error || `Save failed with ${result.status}.`);
       if (json.dashboard) setResponse(json.dashboard);
-      setDraft(record);
+      setDraft((current) => current?.id === record.id ? record : current);
       setMessage(`${record.id} saved as ${titlePart(record.status)}.`);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not save aspect-pattern write-up.");
@@ -314,7 +315,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
     try {
       const result = await fetch("/api/admin/aspect-pattern-writeups", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
         body: JSON.stringify({ kind, action: "preview", record })
       });
       const json = await result.json() as { ok?: boolean; error?: string; previews?: AspectPatternPreview[] };
