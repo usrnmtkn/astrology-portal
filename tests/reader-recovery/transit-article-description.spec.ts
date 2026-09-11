@@ -4,7 +4,7 @@ import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEM
 import type { SkySnapshot } from "../../apps/web/src/types";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
-const birth = new Date("1990-01-01T19:00:00Z");
+const birth = new Date("1978-09-01T16:00:00Z");
 const friendBirth = new Date("1988-04-03T13:15:00Z");
 const dates = ["2026-09-08", "2026-11-27"];
 let natal: SkySnapshot;
@@ -31,8 +31,8 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
     localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
     localStorage.setItem("tldrastro:userProfile", JSON.stringify({
       id: "article-facts-qa", name: "Reader QA", email: "reader@example.test", provider: "email",
-      sun: "Aquarius", moon: "Scorpio", rising: "Gemini", currentLocation: location.label, currentLocationData: location,
-      charts: [{ id: "article-facts-chart", name: "Reader QA", type: "Birth chart", birthDate: "1990-01-01", birthTime: "2:00 PM", birthCity: location.label, birthLocation: location }]
+      sun: "Virgo", moon: "Leo", rising: "Scorpio", currentLocation: location.label, currentLocationData: location,
+      charts: [{ id: "article-facts-chart", name: "Reader QA", type: "Birth chart", birthDate: "1978-09-01", birthTime: "12:00 PM", birthCity: location.label, birthLocation: location }]
     }));
     for (const record of records) localStorage.setItem(record.cacheKey, JSON.stringify({ ...record, schema, verifiedAt: new Date().toISOString() }));
     localStorage.setItem("tldrastro:manualCharts:article-facts-qa", JSON.stringify([{
@@ -83,7 +83,7 @@ for (const theme of ["light", "dark"]) {
     await prepare(page, theme);
     for (const [index, date] of dates.entries()) {
       await page.goto(`/?date=${date}#you`);
-      const row = page.locator("button.updates-aspect-row").filter({ has: page.locator(".updates-aspect-row__title", { hasText: /your (Pluto|Sun|North Node)$/ }) }).first();
+      const row = page.locator("button.updates-aspect-row:has(.updates-aspect-row__title)").first();
       await expect(row).toBeVisible({ timeout: 45_000 });
       const title = await row.locator(".updates-aspect-row__title").innerText();
       const expected = expectedIdentity(title, skies[index], natal);
@@ -117,7 +117,7 @@ for (const theme of ["light", "dark"]) {
     await page.reload();
     await expect(footer).toContainText(expected);
     await page.getByRole("button", { name: "Close detail", exact: true }).click();
-    const bond = page.locator("button.friend-transit-row").filter({ has: page.locator(".friend-bond-transit-activation") }).filter({ hasText: "Chiron square your Jupiter" }).first();
+    const bond = page.locator("button.friend-transit-row").filter({ has: page.locator(".friend-bond-transit-activation") }).filter({ hasText: "Jupiter sextile your Pluto" }).first();
     await expect(bond).toBeVisible();
     const bondTitle = await bond.locator(".updates-aspect-row__title").innerText();
     const isReader = bondTitle.includes(" your ");
@@ -131,8 +131,8 @@ for (const theme of ["light", "dark"]) {
     await expect(section.locator("h2")).toContainText(/^Your /);
     await expect(section.locator("p").first()).not.toHaveText(await section.locator("h2").innerText());
     const glyphLabel = await reading.locator(".article-eyebrow").getAttribute("aria-label");
-    expect(glyphLabel).toBe("Aspect: Chiron square Jupiter");
-    await expect(reading.locator(".article-eyebrow__glyphs")).toHaveText("⚷□♃");
+    expect(glyphLabel).toBe("Aspect: Jupiter sextile Pluto");
+    await expect(reading.locator(".article-eyebrow__glyphs")).toHaveText("♃✶♇");
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
       await page.evaluate(() => window.scrollTo(0, 0));

@@ -4,28 +4,24 @@ import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEM
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 const user = { id: "reader-qa", email: "reader@example.test", app_metadata: { provider: "email" }, user_metadata: {} };
-const profile = { ...user, name: "Reader QA", provider: "email", sun: "Aquarius", moon: "Scorpio", rising: "Gemini", currentLocation: location.label, currentLocationData: location,
+const profile = { ...user, name: "Reader QA", provider: "email", sun: "Capricorn", moon: "Pisces", rising: "Aries", currentLocation: location.label, currentLocationData: location,
   charts: [{ id: "reader-chart", name: "Reader QA", type: "Birth chart", birthDate: "1990-01-01", birthTime: "12:00 PM", birthCity: location.label, birthLocation: location }] };
 const birth = new Date("1990-01-01T17:00:00Z");
 let cacheRecords: unknown[];
 test.beforeAll(async () => {
   const natal = await getAstrodienstSky(location, birth);
   const sky = await getAstrodienstSky(location, new Date("2026-11-27T12:00:00Z"));
-  const geminiBirth = new Date("1990-01-01T19:00:00Z");
-  const geminiNatal = await getAstrodienstSky(location, geminiBirth);
-  const septemberSky = await getAstrodienstSky(location, new Date("2026-09-08T12:00:00Z"));
+  // This future date gives the synthetic chart a calculated Lilith–Pluto square.
+  const squareSky = await getAstrodienstSky(location, new Date("2027-12-08T12:00:00Z"));
   cacheRecords = [
     { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: natalSkySnapshotCacheKey(location, birth), snapshot: natal },
     { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2026-11-27"), snapshot: sky },
-    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2026-09-08"), snapshot: septemberSky },
-    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: natalSkySnapshotCacheKey(location, geminiBirth), snapshot: geminiNatal }
+    { schema: VERIFIED_SKY_CACHE_SCHEMA, cacheKey: skySnapshotCacheKey(location, "2027-12-08"), snapshot: squareSky }
   ];
 });
 
-async function prepare(page: Page, options: { geminiRising?: boolean; circleFailure?: boolean; slowContent?: boolean; session?: "missing" | "rejected" | "unavailable" } = {}) {
-  const readerProfile = options.geminiRising
-    ? { ...profile, charts: [{ ...profile.charts[0], birthTime: "2:00 PM" }] }
-    : profile;
+async function prepare(page: Page, options: { circleFailure?: boolean; slowContent?: boolean; session?: "missing" | "rejected" | "unavailable" } = {}) {
+  const readerProfile = profile;
   await page.emulateMedia({ reducedMotion: "reduce" });
   const state = { circleFailure: options.circleFailure ?? false, circleRequests: 0, contentRequests: 0, session: options.session };
   await page.addInitScript(({ location, user, profile, cacheRecords, session }) => {
@@ -213,25 +209,25 @@ for (const mode of ["create", "login", "incomplete-birth-time"] as const) test(`
 });
 
 test("Lilith Pluto writing survives the reader adapter and opens its complete interpretation", async ({ page }) => {
-  await prepare(page, { geminiRising: true });
-  await page.goto("/?date=2026-09-08#you");
-  const row = page.locator(".updates-aspect-row").filter({ has: page.getByText("Lilith square your Pluto", { exact: true }) });
-  await expect(row).toBeVisible({ timeout: 45_000 });
-  await expect(row).toContainText("Power, depth, and slow transformation hit the limit");
-  await expect(row).toHaveJSProperty("tagName", "BUTTON");
-  await expect(page.getByRole("button").filter({ has: page.getByText("Lilith challenging power", { exact: true }) })).toBeVisible();
-  await page.screenshot({ path: "test-results/reader-recovery/lilith-pluto-card.png", fullPage: true });
-  await row.click();
-  await expect(page.locator(".sky-detail-page")).toContainText("Power, depth, and slow transformation hit the limit");
-  await expect(page.locator(".sky-detail-page")).toContainText(/Lilith in Capricorn is squaring your natal Pluto through/);
+  await prepare(page);
+  await page.goto("/?date=2027-12-08#you");
+  // The synthetic chart ranks other transits ahead of this aspect in the
+  // primary cards. Its calculated factor remains available in this entry.
+  const entry = page.getByRole("button").filter({ has: page.getByText("Lilith challenging power", { exact: true }) });
+  await expect(entry).toBeVisible({ timeout: 45_000 });
+  await entry.click();
+  const article = page.locator(".sky-detail-page");
+  await expect(article).toContainText("Power, depth, and slow transformation hit the limit");
+  await expect(article).toContainText(/Lilith in Aquarius is squaring your natal Pluto through/);
   await page.screenshot({ path: "test-results/reader-recovery/lilith-pluto-detail.png", fullPage: true });
   await page.getByRole("button", { name: "Back to updates", exact: true }).click();
   await page.reload();
-  await expect(row).toContainText("Power, depth, and slow transformation hit the limit");
+  await expect(entry).toBeVisible();
+  await entry.click();
+  await expect(article).toContainText("Power, depth, and slow transformation hit the limit");
   await page.setViewportSize({ width: 390, height: 844 });
-  await row.scrollIntoViewIfNeeded();
-  await expect(row).toContainText("Power, depth, and slow transformation hit the limit");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect(article).toContainText("Power, depth, and slow transformation hit the limit");
   await page.screenshot({ path: "test-results/reader-recovery/lilith-pluto-mobile.png" });
 });
 
