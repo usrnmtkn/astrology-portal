@@ -1,3 +1,5 @@
+import { StudioButton } from "./StudioControls";
+import { AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import {
   natalAspectDisplayTitle,
@@ -66,39 +68,28 @@ export default function NatalAspectSourceFinder({
 
   return (
     <section className="admin-natal-placement-finder" aria-label="Find natal aspect source writing">
-      <div className="admin-natal-placement-finder-heading">
-        <div>
-          <p className="admin-eyebrow">Natal aspect source finder</p>
-          <h3>{selectedTitle}</h3>
-          <p>Choose two natal planets or points and their aspect. This page shows the exact pair-specific writing used on natal chart pages.</p>
-        </div>
-        <p className="admin-natal-placement-key">
-          <span>Exact saved passages</span>
-          <code>{isLoading && exactRows.length === 0 ? "Loading…" : exactRows.length}</code>
-        </p>
-      </div>
-
+      <h2 className="sr-only">Natal aspect</h2>
       <div className="admin-natal-placement-selectors">
         <label>
-          <span>1. Planet or point</span><small>Either natal body</small>
-          <select aria-label="Natal aspect planet or point" value={first} onChange={(event) => onSelectionChange({ first: event.target.value })}>
+          <span>Planet or point</span>
+          <AdminSelect aria-label="Natal aspect planet or point" value={first} onChange={(event) => onSelectionChange({ first: event.target.value })}>
             <option value="">Choose planet or point</option>
             {options.first.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}
-          </select>
+          </AdminSelect>
         </label>
         <label>
-          <span>2. Aspect</span><small>How the two placements interact</small>
-          <select aria-label="Natal aspect type" value={aspect} onChange={(event) => onSelectionChange({ aspect: event.target.value })}>
+          <span>Aspect</span>
+          <AdminSelect aria-label="Natal aspect type" value={aspect} onChange={(event) => onSelectionChange({ aspect: event.target.value })}>
             <option value="">Choose aspect</option>
             {options.aspects.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}
-          </select>
+          </AdminSelect>
         </label>
         <label>
-          <span>3. Other planet or point</span><small>Key order does not matter</small>
-          <select aria-label="Other natal aspect planet or point" value={second} onChange={(event) => onSelectionChange({ second: event.target.value })}>
+          <span>Other planet or point</span>
+          <AdminSelect aria-label="Other natal aspect planet or point" value={second} onChange={(event) => onSelectionChange({ second: event.target.value })}>
             <option value="">Choose planet or point</option>
             {options.second.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}
-          </select>
+          </AdminSelect>
         </label>
       </div>
 
@@ -106,21 +97,17 @@ export default function NatalAspectSourceFinder({
         <div className="admin-empty-state" role="status"><strong>Loading exact natal aspect passages…</strong></div>
       )}
 
-      {!isLoading && !hasSelection && (
-        <p className="admin-natal-placement-prompt">Select any value to narrow the {exactRows.length} exact natal aspect passages. Select all three values to open one exact reader passage.</p>
-      )}
-
       {!isLoading && fullSelection && matches.length === 0 && (
         <div className="admin-empty-state">
           <strong>No exact passage exists for {selectedTitle}.</strong>
           <p>The reader requires pair-specific writing. Create the exact You and Friend passages for this selection.</p>
-          <button
+          <StudioButton
             type="button"
             className="primary"
             onClick={() => onCreateSource(natalAspectSourceDraft({ first, aspect, second }))}
           >
             Write {selectedTitle}
-          </button>
+          </StudioButton>
         </div>
       )}
 
@@ -135,7 +122,6 @@ export default function NatalAspectSourceFinder({
         <section className="admin-natal-source-group" aria-label="Matching natal aspect passages">
           <header>
             <h3>{matches.length === 1 ? "Exact reader passage" : `${matches.length} matching passages`}</h3>
-            <p>Each result opens the saved source row in the standard Content Studio editor.</p>
           </header>
           <div className="admin-natal-source-grid">
             {matches.map((row) => {
@@ -153,7 +139,7 @@ export default function NatalAspectSourceFinder({
                     <p className="admin-natal-source-key"><span>Source key</span><code>{row.content_key}</code></p>
                     {preview && <blockquote>{preview}</blockquote>}
                   </div>
-                  <button type="button" onClick={() => onOpenSource(row.content_key, title)} disabled={isLoading}>Edit source</button>
+                  <StudioButton type="button" onClick={() => onOpenSource(row.content_key, title)} disabled={isLoading}>Edit source</StudioButton>
                 </article>
               );
             })}

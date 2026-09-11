@@ -1,3 +1,5 @@
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useRef, useState } from "react";
 import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementAssembly";
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
@@ -83,7 +85,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
     {fields.map(item => <label className="admin-review-copy-editor" key={item.key}>
       <span>{item.label}</span>
       <small className="admin-field-hint">Internal source field: <code>{item.key}</code></small>
-      <textarea aria-label={`Fallback field ${item.label}`} data-sky-field={item.key} value={item.value} onChange={event => onChange(item.key, event.target.value)} />
+      <StudioTextarea aria-label={`Fallback field ${item.label}`} data-sky-field={item.key} value={item.value} onChange={event => onChange(item.key, event.target.value)} />
     </label>)}
   </section>;
 
@@ -95,98 +97,98 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
         : skyRetrogradeBodies.has(planet) ? `Choose a shared article or a motion-specific article for ${title(planet)} in ${title(sign)}. Each fallback block can also target direct or retrograde motion.` : `The placement article and fallback hooks describe ${title(planet)} in ${title(sign)}.`}</p>
       <div className="admin-sky-writing-source-actions" role="group" aria-label="Choose writing source">
         {retrograde
-          ? <><span className="ui-pill">Editing retrograde writing</span>{hasSign && <button type="button" disabled={disabled} onClick={() => onOpenSource(`sky-placement/article/${planet}/${sign}`, "placementArticle")}>Edit shared placement writing</button>}</>
-          : <><span className="ui-pill">Editing placement writing</span>{skyRetrogradeBodies.has(planet) && <button type="button" disabled={disabled} onClick={() => onOpenSource(`sky-placement/retrograde/${planet}`, "Body")}>Edit retrograde writing</button>}</>}
+          ? <><span className="ui-pill">Editing retrograde writing</span>{hasSign && <StudioButton type="button" disabled={disabled} onClick={() => onOpenSource(`sky-placement/article/${planet}/${sign}`, "placementArticle")}>Edit shared placement writing</StudioButton>}</>
+          : <><span className="ui-pill">Editing placement writing</span>{skyRetrogradeBodies.has(planet) && <StudioButton type="button" disabled={disabled} onClick={() => onOpenSource(`sky-placement/retrograde/${planet}`, "Body")}>Edit retrograde writing</StudioButton>}</>}
       </div>
     </div>}
     {placement && <SkyWritingSystemDetails system="placement" />}
     {placement && <details className="admin-workspace-details" open={initialField?.startsWith("ingress") || undefined}>
-      <summary>Placement composition</summary>
+      <AdminDisclosureSummary>Placement composition</AdminDisclosureSummary>
       <SkyIngressComposer source={{ ...source, contentKey }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
         initialField={initialField} onChange={value => onChange("ingress", value)} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />
     </details>}
     {placement && <details className="admin-workspace-details admin-evergreen-sections" open={field?.key.startsWith("fallback.") || undefined}>
-      <summary>Evergreen sections</summary>
+      <AdminDisclosureSummary>Evergreen sections</AdminDisclosureSummary>
       <p>Reusable writing for any occurrence of this placement. Complete placement articles and eligible placement composition take priority. Otherwise, the blocks matching the selected motion appear in this order. Empty blocks are skipped.</p>
       <ol aria-label="Evergreen section order">
         {evergreen.map((section, index) => {
           const path = section.source ? `fallback.${section.source}` : `${SKY_EVERGREEN_SECTIONS_PATH}.${section.id}`;
           const item = fields.find(item => item.key === path);
           return <li key={section.id}>
-            <button type="button" className="admin-evergreen-section-name" aria-pressed={field?.key === path} onClick={() => { setSelectedField(path); textarea.current?.focus({ preventScroll: true }); }}>
+            <StudioButton type="button" className="admin-evergreen-section-name" aria-pressed={field?.key === path} onClick={() => { setSelectedField(path); textarea.current?.focus({ preventScroll: true }); }}>
               {item?.label || "Untitled section"}<small>{item?.value.trim() ? "Has writing" : "Empty · skipped"} · {section.motion && section.motion !== "all" ? section.motion : "shared"}</small>
-            </button>
-            <label>Motion<select aria-label={`Motion for ${item?.label || "section"}`} disabled={disabled} value={section.motion ?? "all"} onChange={event => onChange(SKY_EVERGREEN_SECTIONS_PATH, evergreen.map(block => block.id === section.id ? { ...block, motion: event.target.value } : block))}>
+            </StudioButton>
+            <label>Motion<AdminSelect aria-label={`Motion for ${item?.label || "section"}`} disabled={disabled} value={section.motion ?? "all"} onChange={event => onChange(SKY_EVERGREEN_SECTIONS_PATH, evergreen.map(block => block.id === section.id ? { ...block, motion: event.target.value } : block))}>
               <option value="all">Shared</option><option value="direct">Direct</option>{skyRetrogradeBodies.has(planet) && <option value="retrograde">Retrograde</option>}
-            </select></label>
+            </AdminSelect></label>
             <div role="group" aria-label={`Arrange ${item?.label || "section"}`}>
-              <button type="button" disabled={disabled || index === 0} aria-label={`Move ${item?.label || "section"} up`} onClick={() => move(index, -1)}>↑</button>
-              <button type="button" disabled={disabled || index === evergreen.length - 1} aria-label={`Move ${item?.label || "section"} down`} onClick={() => move(index, 1)}>↓</button>
-              {!section.source && <button type="button" disabled={disabled} aria-label={`Remove ${item?.label || "section"}`} onClick={() => {
+              <StudioButton type="button" disabled={disabled || index === 0} aria-label={`Move ${item?.label || "section"} up`} onClick={() => move(index, -1)}>↑</StudioButton>
+              <StudioButton type="button" disabled={disabled || index === evergreen.length - 1} aria-label={`Move ${item?.label || "section"} down`} onClick={() => move(index, 1)}>↓</StudioButton>
+              {!section.source && <StudioButton type="button" disabled={disabled} aria-label={`Remove ${item?.label || "section"}`} onClick={() => {
                 if ((item?.value.trim() || section.paragraphs || section.items || section.phrases?.some(phrase => phrase.text.trim())) && !window.confirm("Remove this section from the evergreen passage? Save & publish applies the removal.")) return;
                 onChange(SKY_EVERGREEN_SECTIONS_PATH, evergreen.filter(item => item.id !== section.id));
                 if (selectedSection?.id === section.id) setSelectedField("fallback.hook");
-              }}>Remove</button>}
+              }}>Remove</StudioButton>}
             </div>
           </li>;
         })}
       </ol>
-      <button type="button" disabled={disabled || evergreen.length >= 24} onClick={() => {
+      <StudioButton type="button" disabled={disabled || evergreen.length >= 24} onClick={() => {
         const id = `section-${crypto.randomUUID()}`;
         onChange(SKY_EVERGREEN_SECTIONS_PATH, [...evergreen, { id, label: "New section", body: "", motion: rxContext ? "retrograde" : "direct" }]);
         setSelectedField(`${SKY_EVERGREEN_SECTIONS_PATH}.${id}`);
         textarea.current?.focus({ preventScroll: true });
-      }}>Add section</button>
+      }}>Add section</StudioButton>
       <label className="admin-field-wide"><span>Article structure</span>
-        <select aria-label="Article structure" value={outline} disabled={disabled} onChange={event => setOutline(event.target.value)}>
+        <AdminSelect aria-label="Article structure" value={outline} disabled={disabled} onChange={event => setOutline(event.target.value)}>
           {SKY_ARTICLE_OUTLINES.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
-        </select>
+        </AdminSelect>
       </label>
       <p>Add an empty editorial outline after your existing sections. Choose a structure appropriate to this source. It supplies paragraph jobs, not writing or additional calculated facts. The existing article, date, and personal-horoscope sections keep their current behavior.</p>
-      <button type="button" disabled={disabled || evergreen.length + (SKY_ARTICLE_OUTLINES.find(item => item.id === outline)?.sections.length ?? 0) > 24} onClick={() => {
+      <StudioButton type="button" disabled={disabled || evergreen.length + (SKY_ARTICLE_OUTLINES.find(item => item.id === outline)?.sections.length ?? 0) > 24} onClick={() => {
         const additions = makeSkyArticleOutline(outline, rxContext ? "retrograde" : "direct");
         onChange(SKY_EVERGREEN_SECTIONS_PATH, [...evergreen, ...additions]);
         if (additions[0]) setSelectedField(`${SKY_EVERGREEN_SECTIONS_PATH}.${additions[0].id}`);
-      }}>Add article outline</button>
+      }}>Add article outline</StudioButton>
     </details>}
     {field ? <>
       <label className="admin-field-wide">
         <span>Writing section</span>
-        <select aria-label="Writing section" value={field.key} onChange={event => setSelectedField(event.target.value)}>
+        <AdminSelect aria-label="Writing section" value={field.key} onChange={event => setSelectedField(event.target.value)}>
           {fields.map(item => <option key={item.key} value={item.key}>{item.label}</option>)}
-        </select>
+        </AdminSelect>
       </label>
       {selectedSection && <label className="admin-field-wide"><span>Section name</span>
-        <input aria-label="Section name" value={selectedSection.label ?? ""} maxLength={120} disabled={disabled} onChange={event => changeSection({ label: event.target.value })} />
+        <StudioInput aria-label="Section name" value={selectedSection.label ?? ""} maxLength={120} disabled={disabled} onChange={event => changeSection({ label: event.target.value })} />
         <small className="admin-field-hint">For organizing your writing in Studio. Readers see the passage only.</small>
       </label>}
-      {selectedBlock && !selectedSection?.paragraphs && !selectedSection?.items && <button type="button" disabled={disabled} onClick={() => {
+      {selectedBlock && !selectedSection?.paragraphs && !selectedSection?.items && <StudioButton type="button" disabled={disabled} onClick={() => {
         const { source: _source, body: _body, phrases, ...block } = selectedBlock;
         onChange(SKY_EVERGREEN_SECTIONS_PATH, evergreen.map(section => section.id === block.id ? {
           ...block, label: field.label, role: block.role ?? "main", depth: block.depth ?? "standard",
           paragraphs: [{ id: `paragraph-${crypto.randomUUID()}`, job: "Existing passage", phrases: phrases ?? [{ id: `phrase-${crypto.randomUUID()}`, text: field.value, joinBefore: "", source: `${contentKey}#${field.key}` }] }]
         } : section));
         setSelectedField(`${SKY_EVERGREEN_SECTIONS_PATH}.${block.id}`);
-      }}>Organize into paragraphs</button>}
-      {selectedBlock && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && <button type="button" disabled={disabled} onClick={() => {
+      }}>Organize into paragraphs</StudioButton>}
+      {selectedBlock && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && <StudioButton type="button" disabled={disabled} onClick={() => {
         const { source: originalSource, body: _body, ...block } = selectedBlock;
         onChange(SKY_EVERGREEN_SECTIONS_PATH, evergreen.map(section => section.id === block.id ? {
           ...block, label: field.label, phrases: [{ id: `phrase-${crypto.randomUUID()}`, text: field.value, joinBefore: "", source: `${contentKey}#${field.key}` }]
         } : section));
         setSelectedField(`${SKY_EVERGREEN_SECTIONS_PATH}.${block.id}`);
-      }}>Compose from phrases</button>}
+      }}>Compose from phrases</StudioButton>}
       {selectedSection && (selectedSection.paragraphs || selectedSection.items) ? <SkySectionPacketEditor section={selectedSection} disabled={disabled} facts={variableFacts} onChange={changeSection} /> : selectedSection?.phrases ? <SkyPhraseCompositionEditor phrases={selectedSection.phrases} disabled={disabled} facts={variableFacts} onChange={phrases => changeSection({ phrases })} /> : <label className="admin-review-copy-editor">
         <span>{field.label}</span>
         {retrograde && <small className="admin-field-hint">{field.key === "Body" ? "The full opening paragraph on the retrograde detail page." : "The short version used by retrograde cards. It does not replace the detail-page opening."}</small>}
         {field.key.startsWith("fallback.") && <small className="admin-field-hint">Used when the full placement article is unavailable.{skyRetrogradeBodies.has(planet) && " Its motion setting controls which page includes it."}</small>}
-        <textarea ref={textarea} className="admin-copy-field-body" aria-label={`Fallback field ${field.label}`} data-sky-field={field.key}
+        <StudioTextarea ref={textarea} className="admin-copy-field-body" aria-label={`Fallback field ${field.label}`} data-sky-field={field.key}
           value={field.value} disabled={disabled} aria-invalid={variableIssues.length > 0 || undefined} onChange={event => changeWriting(event.target.value)} />
       </label>}
       <p className="admin-sky-writing-count">{field.value.trim() ? field.value.trim().split(/\s+/u).length : 0} words · {field.value.length} characters</p>
       {supportsVariables && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />}
       {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}
       <details className="admin-workspace-details">
-        <summary>Preview this section</summary>
+        <AdminDisclosureSummary>Preview this section</AdminDisclosureSummary>
         <p className="admin-sky-writing-preview">{field.value ? supportsVariables ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value : "No writing saved for this section."}</p>
       </details>
     </> : <p>No editable writing fields are available for this source.</p>}

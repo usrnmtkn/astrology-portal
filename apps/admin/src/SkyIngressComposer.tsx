@@ -1,3 +1,5 @@
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useRef, useState } from "react";
 // @ts-ignore Shared deterministic implementation used by the actual reader.
 import { SKY_INGRESS_VARIABLES, makeSkyIngressComposition, renderSkyIngressComposition, skyIngressPublicationIssues, ingressTextIssues, skyIngressOccurrence, resolveIngressSource } from "../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
@@ -96,104 +98,104 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
   if (!composition) return <div className="admin-sky-writing-context">
     <strong>Placement composition</strong>
     <p>Build this evergreen article from named sentence sources. The map will show each source, calculated value, and omitted section. Existing complete articles keep priority.</p>
-    {onChange ? <button type="button" disabled={disabled} onClick={() => onChange(makeSkyIngressComposition())}>Add placement composition</button>
-      : <button type="button" onClick={() => onOpenSource(source.contentKey, "ingress")}>Set up placement composition</button>}
+    {onChange ? <StudioButton type="button" disabled={disabled} onClick={() => onChange(makeSkyIngressComposition())}>Add placement composition</StudioButton>
+      : <StudioButton type="button" onClick={() => onOpenSource(source.contentKey, "ingress")}>Set up placement composition</StudioButton>}
   </div>;
 
   return <section className="admin-sky-ingress-composer admin-sky-writing-editor" aria-label="Placement composition">
     <div className="admin-sky-writing-context">
       <strong>{words(identity[0])} in {words(identity[1])} · Placement composition</strong>
       <p>This is the assembled evergreen writing path. Complete motion-specific or shared articles still take priority. Sentence sources and their order publish together with this placement. Enabling a draft does not publish it.</p>
-      {onChange && <label><input type="checkbox" checked={composition.enabled} disabled={disabled} onChange={event => update({ enabled: event.target.checked })} /> Use composition when the complete article is empty</label>}
+      {onChange && <label><StudioInput type="checkbox" checked={composition.enabled} disabled={disabled} onChange={event => update({ enabled: event.target.checked })} /> Use composition when the complete article is empty</label>}
       <p role="status">{composition.enabled ? onChange ? "Enabled in this draft" : "Enabled in this saved source" : "Composition is not enabled"} · {result.status === "ready" ? "Preview assembled" : "Some modules need writing or occurrence facts"}</p>
     </div>
     {issues.length > 0 && <div role="alert">{issues.map(issue => <p key={issue}>{issue}</p>)}</div>}
     {error && <p role="alert">{error}</p>}
     {onChange && <>
       <details className="admin-workspace-details" open>
-        <summary>Sentence sources</summary>
-        <label className="admin-field-wide">Source to edit<select aria-label="Ingress sentence source" value={selectedSource} onChange={event => setSelectedSource(event.target.value)}>
+        <AdminDisclosureSummary>Sentence sources</AdminDisclosureSummary>
+        <label className="admin-field-wide">Source to edit<AdminSelect aria-label="Ingress sentence source" value={selectedSource} onChange={event => setSelectedSource(event.target.value)}>
           {Object.entries(composition.sources).map(([id, item]) => <option key={id} value={id}>{words(id)} · {item.kind}</option>)}
-        </select></label>
+        </AdminSelect></label>
         <code className="admin-sky-section-reference">{`${source.contentKey}#ingress.sources.${selectedSource}`}</code>
         {selected?.reference ? <div><p>Linked exact revision: {selected.reference.contentKey}#{selected.reference.field}</p>
-          <button type="button" onClick={() => onOpenSource(selected.reference!.contentKey, selected.reference!.field)}>Edit linked source</button>
-          <button type="button" disabled={disabled} onClick={() => updateSource({ kind: selected.kind, text: "" })}>Use local writing</button></div>
+          <StudioButton type="button" onClick={() => onOpenSource(selected.reference!.contentKey, selected.reference!.field)}>Edit linked source</StudioButton>
+          <StudioButton type="button" disabled={disabled} onClick={() => updateSource({ kind: selected.kind, text: "" })}>Use local writing</StudioButton></div>
           : selected && <label className="admin-review-copy-editor"><span>{words(selectedSource)}</span>
-            <textarea ref={writing} className="admin-copy-field-body" aria-label={`Ingress source ${selectedSource}`} disabled={disabled} value={selected.text ?? ""} onChange={event => updateSource({ ...selected, text: event.target.value })} />
+            <StudioTextarea ref={writing} className="admin-copy-field-body" aria-label={`Ingress source ${selectedSource}`} disabled={disabled} value={selected.text ?? ""} onChange={event => updateSource({ ...selected, text: event.target.value })} />
           </label>}
         {selected && !selected.reference && ingressTextIssues(selected.text ?? "").map((issue: string) => <p role="alert" key={issue}>{issue}</p>)}
-        <details className="admin-workspace-details"><summary>Add a named sentence source</summary>
-          <label>Unique name<input aria-label="New ingress source name" value={newSource} disabled={disabled} onChange={event => setNewSource(event.target.value)} placeholder="additionalMeaningSentence" /></label>
-          <label>Reuse scope<select aria-label="New ingress source scope" value={newKind} disabled={disabled} onChange={event => setNewKind(event.target.value)}>{["placement", "planet", "sign", "timing", "aspect"].map(kind => <option key={kind}>{kind}</option>)}</select></label>
-          <button type="button" disabled={disabled || Object.keys(composition.sources).length >= 80} onClick={() => {
+        <details className="admin-workspace-details"><AdminDisclosureSummary>Add a named sentence source</AdminDisclosureSummary>
+          <label>Unique name<StudioInput aria-label="New ingress source name" value={newSource} disabled={disabled} onChange={event => setNewSource(event.target.value)} placeholder="additionalMeaningSentence" /></label>
+          <label>Reuse scope<AdminSelect aria-label="New ingress source scope" value={newKind} disabled={disabled} onChange={event => setNewKind(event.target.value)}>{["placement", "planet", "sign", "timing", "aspect"].map(kind => <option key={kind}>{kind}</option>)}</AdminSelect></label>
+          <StudioButton type="button" disabled={disabled || Object.keys(composition.sources).length >= 80} onClick={() => {
             if (!/^[A-Za-z][A-Za-z0-9]{0,63}$/u.test(newSource) || ["constructor", "prototype"].includes(newSource) || Object.hasOwn(composition.sources, newSource) || [...SKY_PLACEMENT_VARIABLES, ...SKY_INGRESS_VARIABLES].some(item => item.name === newSource)) { setError("Choose a unique sentence name using letters and numbers, starting with a letter."); return; }
             update({ sources: { ...composition.sources, [newSource]: { kind: newKind, text: "" } } }); setSelectedSource(newSource); setNewSource(""); setError("");
-          }}>Add sentence source</button>
+          }}>Add sentence source</StudioButton>
         </details>
-        <details className="admin-workspace-details"><summary>Reuse an exact sentence source</summary>
+        <details className="admin-workspace-details"><AdminDisclosureSummary>Reuse an exact sentence source</AdminDisclosureSummary>
           <p>Planet sentences can be reused across that planet’s signs; sign sentences across that sign’s planets. Linking pins the exact text hash. Changed or retired sources require review before reuse.</p>
-          <label>Source content key<input aria-label="Ingress reference content key" value={referenceKey} disabled={disabled} onChange={event => setReferenceKey(event.target.value)} /></label>
-          <label>Exact sentence name<input aria-label="Ingress reference field" value={referenceField} disabled={disabled} onChange={event => setReferenceField(event.target.value)} placeholder="planetFunctionSentence" /></label>
-          <button type="button" disabled={disabled || !onLoadSource} onClick={() => void linkSource()}>Link exact source revision</button>
+          <label>Source content key<StudioInput aria-label="Ingress reference content key" value={referenceKey} disabled={disabled} onChange={event => setReferenceKey(event.target.value)} /></label>
+          <label>Exact sentence name<StudioInput aria-label="Ingress reference field" value={referenceField} disabled={disabled} onChange={event => setReferenceField(event.target.value)} placeholder="planetFunctionSentence" /></label>
+          <StudioButton type="button" disabled={disabled || !onLoadSource} onClick={() => void linkSource()}>Link exact source revision</StudioButton>
         </details>
       </details>
-      <details className="admin-workspace-details" open><summary>Modules and order</summary>
+      <details className="admin-workspace-details" open><AdminDisclosureSummary>Modules and order</AdminDisclosureSummary>
         <ol className="admin-ingress-module-list" aria-label="Ingress module order">
-          {composition.modules.map((item, index) => <li key={item.id}><button type="button" aria-pressed={module?.id === item.id} onClick={() => setSelectedModule(item.id)}>{item.label}</button>
+          {composition.modules.map((item, index) => <li key={item.id}><StudioButton type="button" aria-pressed={module?.id === item.id} onClick={() => setSelectedModule(item.id)}>{item.label}</StudioButton>
             <span>{item.enabled ? item.required ? "Required" : "Optional" : "Disabled"}</span>
             <div role="group" aria-label={`Arrange ${item.label}`}>
-              {[-1, 1].map(offset => <button type="button" key={offset} disabled={disabled || index + offset < 0 || index + offset >= composition.modules.length} aria-label={`Move ${item.label} ${offset < 0 ? "up" : "down"}`} onClick={() => { const next = [...composition.modules]; [next[index], next[index + offset]] = [next[index + offset], next[index]]; update({ modules: next }); }}>{offset < 0 ? "↑" : "↓"}</button>)}
+              {[-1, 1].map(offset => <StudioButton type="button" key={offset} disabled={disabled || index + offset < 0 || index + offset >= composition.modules.length} aria-label={`Move ${item.label} ${offset < 0 ? "up" : "down"}`} onClick={() => { const next = [...composition.modules]; [next[index], next[index + offset]] = [next[index + offset], next[index]]; update({ modules: next }); }}>{offset < 0 ? "↑" : "↓"}</StudioButton>)}
             </div></li>)}
         </ol>
-        <button type="button" disabled={disabled || composition.modules.length >= 32} onClick={() => { const id = `module-${crypto.randomUUID()}`; update({ modules: [...composition.modules, { id, label: "New section", template: "", enabled: true, required: false, motion: "all", duration: "all", timing: "all" }] }); setSelectedModule(id); }}>Add composition section</button>
+        <StudioButton type="button" disabled={disabled || composition.modules.length >= 32} onClick={() => { const id = `module-${crypto.randomUUID()}`; update({ modules: [...composition.modules, { id, label: "New section", template: "", enabled: true, required: false, motion: "all", duration: "all", timing: "all" }] }); setSelectedModule(id); }}>Add composition section</StudioButton>
         {module && <div className="admin-sky-writing-context">
-          <label>Section name<input aria-label="Ingress section name" value={module.label} disabled={disabled} onChange={event => updateModule({ label: event.target.value })} /></label>
+          <label>Section name<StudioInput aria-label="Ingress section name" value={module.label} disabled={disabled} onChange={event => updateModule({ label: event.target.value })} /></label>
           <div className="admin-sky-writing-source-actions">
-            <label><input type="checkbox" checked={module.enabled} disabled={disabled} onChange={event => updateModule({ enabled: event.target.checked })} /> Include section</label>
-            <label><input type="checkbox" checked={module.required} disabled={disabled} onChange={event => updateModule({ required: event.target.checked })} /> Required writing</label>
+            <label><StudioInput type="checkbox" checked={module.enabled} disabled={disabled} onChange={event => updateModule({ enabled: event.target.checked })} /> Include section</label>
+            <label><StudioInput type="checkbox" checked={module.required} disabled={disabled} onChange={event => updateModule({ required: event.target.checked })} /> Required writing</label>
           </div>
           <div className="admin-natal-placement-selectors">
-            <label>Motion<select aria-label="Ingress module motion" value={module.motion} disabled={disabled} onChange={event => updateModule({ motion: event.target.value })}>{["all", "direct", "retrograde"].map(value => <option key={value}>{value}</option>)}</select></label>
-            <label>Duration<select aria-label="Ingress module duration" value={module.duration} disabled={disabled} onChange={event => updateModule({ duration: event.target.value })}>{["all", "short", "long"].map(value => <option key={value}>{value}</option>)}</select></label>
-            <label>Pass<select aria-label="Ingress module pass" value={module.timing} disabled={disabled} onChange={event => updateModule({ timing: event.target.value })}>{["all", "single_pass", "first_pass", "return_pass", "final_pass"].map(value => <option key={value} value={value}>{words(value.replaceAll("_", " "))}</option>)}</select></label>
+            <label>Motion<AdminSelect aria-label="Ingress module motion" value={module.motion} disabled={disabled} onChange={event => updateModule({ motion: event.target.value })}>{["all", "direct", "retrograde"].map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
+            <label>Duration<AdminSelect aria-label="Ingress module duration" value={module.duration} disabled={disabled} onChange={event => updateModule({ duration: event.target.value })}>{["all", "short", "long"].map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
+            <label>Pass<AdminSelect aria-label="Ingress module pass" value={module.timing} disabled={disabled} onChange={event => updateModule({ timing: event.target.value })}>{["all", "single_pass", "first_pass", "return_pass", "final_pass"].map(value => <option key={value} value={value}>{words(value.replaceAll("_", " "))}</option>)}</AdminSelect></label>
           </div>
           <p>Long means at least 90 days from the first entry to final exit, including gaps. Final pass takes priority over return pass. Sentence order within the template is preserved.</p>
-          <label className="admin-review-copy-editor"><span>Section template</span><textarea className="admin-copy-field-body" aria-label="Ingress section template" value={module.template} disabled={disabled} onChange={event => updateModule({ template: event.target.value })} /></label>
-          <label>Insert sentence source<select aria-label="Insert ingress source slot" value="" disabled={disabled} onChange={event => { updateModule({ template: module.template + (module.template ? " " : "") + `{{${event.target.value}}}` }); }}><option value="">Choose an exact named sentence</option>{Object.keys(composition.sources).map(id => <option key={id} value={id}>{words(id)} · {identity.join(" in ")}</option>)}</select></label>
+          <label className="admin-review-copy-editor"><span>Section template</span><StudioTextarea className="admin-copy-field-body" aria-label="Ingress section template" value={module.template} disabled={disabled} onChange={event => updateModule({ template: event.target.value })} /></label>
+          <label>Insert sentence source<AdminSelect aria-label="Insert ingress source slot" value="" disabled={disabled} onChange={event => { updateModule({ template: module.template + (module.template ? " " : "") + `{{${event.target.value}}}` }); }}><option value="">Choose an exact named sentence</option>{Object.keys(composition.sources).map(id => <option key={id} value={id}>{words(id)} · {identity.join(" in ")}</option>)}</AdminSelect></label>
           {ingressTextIssues(module.template, Object.keys(composition.sources)).map((issue: string) => <p role="alert" key={issue}>{issue}</p>)}
-          <details className="admin-workspace-details"><summary>Aspect selection</summary>
-            <label><input type="checkbox" checked={Boolean(module.aspect)} disabled={disabled} onChange={event => updateModule({ aspect: event.target.checked ? { otherPlanet: "sun", type: "conjunction", weight: "defining" } : undefined })} /> Repeat for a calculated aspect</label>
+          <details className="admin-workspace-details"><AdminDisclosureSummary>Aspect selection</AdminDisclosureSummary>
+            <label><StudioInput type="checkbox" checked={Boolean(module.aspect)} disabled={disabled} onChange={event => updateModule({ aspect: event.target.checked ? { otherPlanet: "sun", type: "conjunction", weight: "defining" } : undefined })} /> Repeat for a calculated aspect</label>
             {module.aspect && <div className="admin-natal-placement-selectors">
-              <label>Other planet<select value={module.aspect.otherPlanet} disabled={disabled} onChange={event => updateModule({ aspect: { ...module.aspect!, otherPlanet: event.target.value } })}>{["sun", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "lilith"].map(value => <option key={value}>{value}</option>)}</select></label>
-              <label>Aspect<select value={module.aspect.type} disabled={disabled} onChange={event => updateModule({ aspect: { ...module.aspect!, type: event.target.value } })}>{["conjunction", "sextile", "square", "trine", "opposition"].map(value => <option key={value}>{value}</option>)}</select></label>
-              <label>Editorial importance<select value={module.aspect.weight} disabled={disabled} onChange={event => updateModule({ aspect: { ...module.aspect!, weight: event.target.value } })}>{["defining", "supporting", "minor"].map(value => <option key={value}>{value}</option>)}</select></label>
+              <label>Other planet<AdminSelect value={module.aspect.otherPlanet} disabled={disabled} onChange={event => updateModule({ aspect: { ...module.aspect!, otherPlanet: event.target.value } })}>{["sun", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "lilith"].map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
+              <label>Aspect<AdminSelect value={module.aspect.type} disabled={disabled} onChange={event => updateModule({ aspect: { ...module.aspect!, type: event.target.value } })}>{["conjunction", "sextile", "square", "trine", "opposition"].map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
+              <label>Editorial importance<AdminSelect value={module.aspect.weight} disabled={disabled} onChange={event => updateModule({ aspect: { ...module.aspect!, weight: event.target.value } })}>{["defining", "supporting", "minor"].map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
             </div>}
             <p>Only defining aspects receive this prose. Exact events are ordered chronologically, then by event ID and section order; at most two receive full modules. Dates come from the calculated occurrence.</p>
           </details>
         </div>}
       </details>
     </>}
-    <details className="admin-workspace-details"><summary>Sky variables and sentence key</summary>
+    <details className="admin-workspace-details"><AdminDisclosureSummary>Sky variables and sentence key</AdminDisclosureSummary>
       <p>Blue variables are calculated values. Named sentence slots resolve to the full source references below; they are available in section templates. Sentence writing accepts calculated variables only.</p>
       <div className="admin-ingress-key">{[...SKY_PLACEMENT_VARIABLES, ...SKY_INGRESS_VARIABLES].map((variable: { name: string; description: string }) => <div key={variable.name}>
-        <button type="button" disabled={!onChange || disabled || Boolean(selected?.reference)} onClick={() => { const node = writing.current; if (!selected || !node) return; const start = node.selectionStart; const token = `{{${variable.name}}}`; updateSource({ ...selected, text: (selected.text ?? "").slice(0, start) + token + (selected.text ?? "").slice(node.selectionEnd) }); requestAnimationFrame(() => { node.focus(); node.setSelectionRange(start + token.length, start + token.length); }); }}><code>{`{{${variable.name}}}`}</code></button>
+        <StudioButton type="button" disabled={!onChange || disabled || Boolean(selected?.reference)} onClick={() => { const node = writing.current; if (!selected || !node) return; const start = node.selectionStart; const token = `{{${variable.name}}}`; updateSource({ ...selected, text: (selected.text ?? "").slice(0, start) + token + (selected.text ?? "").slice(node.selectionEnd) }); requestAnimationFrame(() => { node.focus(); node.setSelectionRange(start + token.length, start + token.length); }); }}><code>{`{{${variable.name}}}`}</code></StudioButton>
         <p>{variable.description}</p><span className="variable-fact">{facts[variable.name] ?? "Needs calculated occurrence"}</span>
       </div>)}</div>
     </details>
     <div className="admin-sky-writing-context">
       <strong>Occurrence preview</strong>
       <div className="admin-natal-placement-selectors">
-        <label>Reference date<input type="date" aria-label="Ingress preview date" value={date} onChange={event => { generation.current++; setCalculating(false); setCalculated(null); setDate(event.target.value); }} /></label>
-        <label>Timezone<input aria-label="Ingress preview timezone" value={timeZone} onChange={event => { generation.current++; setCalculating(false); setCalculated(null); setTimeZone(event.target.value); }} /></label>
+        <label>Reference date<StudioInput type="date" aria-label="Ingress preview date" value={date} onChange={event => { generation.current++; setCalculating(false); setCalculated(null); setDate(event.target.value); }} /></label>
+        <label>Timezone<StudioInput aria-label="Ingress preview timezone" value={timeZone} onChange={event => { generation.current++; setCalculating(false); setCalculated(null); setTimeZone(event.target.value); }} /></label>
       </div>
-      <button type="button" disabled={calculating || !date} onClick={() => void calculatePreview()}>{calculating ? "Calculating occurrence…" : "Calculate occurrence preview"}</button>
+      <StudioButton type="button" disabled={calculating || !date} onClick={() => void calculatePreview()}>{calculating ? "Calculating occurrence…" : "Calculate occurrence preview"}</StudioButton>
       <p>{onChange ? "This preview includes unsaved writing." : "This preview uses saved sources, which may include drafts."} If the selected date is outside this sign, the next calculated pass is used. Open the published reader to check the actual live selection for that date; it uses the reader’s location and timezone.</p>
       {calculated && <a href={`/?date=${calculated.ingressOccurrence.asOfDate.slice(0, 10)}#sky/placement/${identity[0]}/${identity[1]}`} target="_blank" rel="noreferrer">Open published reader for this occurrence ↗</a>}
       {calculated && <p>Calculated context: {calculated.ingressOccurrence.asOfDate} · {calculated.isRetrograde ? "retrograde" : "direct"} · {timeZone}</p>}
     </div>
     <>
-      <label>Composition view<select aria-label="Ingress composition view" value={view} onChange={event => setView(event.target.value)}><option value="preview">{onChange ? "Draft preview" : "Saved preview"}</option><option value="template">Main template</option><option value="assembly">Assembly and omissions</option></select></label>
+      <label>Composition view<AdminSelect aria-label="Ingress composition view" value={view} onChange={event => setView(event.target.value)}><option value="preview">{onChange ? "Draft preview" : "Saved preview"}</option><option value="template">Main template</option><option value="assembly">Assembly and omissions</option></AdminSelect></label>
       <div className="admin-composition-variable-legend"><span className="variable-fact">Calculated fact</span><span className="variable-phrase">Reusable sentence</span><span className="variable-hook">Authored section</span></div>
       <div className="admin-template-reader-surface"><div className="admin-composition-preview-chrome"><span>Placement composition</span><span>{onChange ? "Draft preview" : "Saved preview"}</span></div><div className="admin-template-reader-copy">
         {result.status === "incomplete" && <p role="status">This composition is incomplete. Readers continue through the existing eligible writing path.</p>}
@@ -201,7 +203,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
           <strong>{part.label}</strong>
           {view === "preview" ? <p>{part.template.split(/(\{\{\s*[A-Za-z][A-Za-z0-9]*\s*\}\})/gu).map((fragment: string, index: number) => {
             const name = fragment.match(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/u)?.[1]; const slot = part.slots.find((item: RecordValue) => item.name === name);
-            return slot ? slot.kind === "fact" ? <span key={index} className="admin-composition-variable variable-fact">{slot.text}</span> : <button key={index} type="button" className={`admin-composition-variable variable-${color(slot.kind)}`} onClick={() => { const [key, field] = slot.reference.split("#"); onOpenSource(key, field); }}>{slot.text}</button> : <span key={index}>{fragment}</span>;
+            return slot ? slot.kind === "fact" ? <span key={index} className="admin-composition-variable variable-fact">{slot.text}</span> : <StudioButton key={index} type="button" className={`admin-composition-variable variable-${color(slot.kind)}`} onClick={() => { const [key, field] = slot.reference.split("#"); onOpenSource(key, field); }}>{slot.text}</StudioButton> : <span key={index}>{fragment}</span>;
           })}</p> : <><p>{part.reason}</p><code className="admin-sky-section-reference">{part.template}</code>
             {part.slots.map((slot: RecordValue) => <div className="admin-composition-source-card" key={slot.name}><strong className={`variable-${color(slot.kind)}`}>{words(slot.name)}</strong><code className="admin-sky-section-reference">{slot.reference}</code><p>{slot.reason || slot.text}</p>{view === "template" && slot.raw && <p className="admin-composition-source-copy">{slot.raw}</p>}</div>)}</>}
         </div>)}

@@ -1,3 +1,5 @@
+import { StudioButton, StudioInput } from "./StudioControls";
+import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { ChevronRight, CircleHelp, Search, X } from "lucide-react";
 import { Suspense, lazy } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
@@ -77,9 +79,9 @@ export default function TemplateVariablesRail({
         </div>
         <div className="admin-variables-rail-actions">
           <details className="admin-help-popover">
-            <summary aria-label="Template syntax help" title="Template syntax help">
+            <AdminDisclosureSummary showChevron={false} className="admin-disclosure-icon" aria-label="Template syntax help" title="Template syntax help">
               <CircleHelp size={16} aria-hidden="true" />
-            </summary>
+            </AdminDisclosureSummary>
             <div role="region" aria-label="Template syntax guide">
               <p className="admin-eyebrow">Template syntax</p>
               <dl className="admin-hook-pattern-list">
@@ -98,9 +100,9 @@ export default function TemplateVariablesRail({
               </dl>
             </div>
           </details>
-          <button type="button" className="admin-secondary-button admin-variables-rail-close" onClick={onClose} aria-label="Close variables" title="Close variables">
+          <StudioButton type="button" className="admin-secondary-button admin-variables-rail-close" onClick={onClose} aria-label="Close variables" title="Close variables">
             <X size={16} aria-hidden="true" />
-          </button>
+          </StudioButton>
         </div>
       </header>
 
@@ -143,7 +145,7 @@ export default function TemplateVariablesRail({
               <span>Find a variable</span>
               <div className="admin-search-input-shell">
                 <Search size={15} aria-hidden="true" />
-                <input
+                <StudioInput
                   type="search"
                   value={query}
                   onChange={(event) => onQueryChange(event.target.value)}
@@ -158,7 +160,7 @@ export default function TemplateVariablesRail({
                 const kind = variableKind(reference, templateContentKey);
                 return (
                   <li key={reference.name}>
-                    <button
+                    <StudioButton
                       type="button"
                       className="admin-variables-rail-row"
                       onClick={() => {
@@ -173,7 +175,7 @@ export default function TemplateVariablesRail({
                         {reference.requirement !== "Runtime" && <>{reference.requirement} · </>}
                         {reference.source}
                       </span>
-                    </button>
+                    </StudioButton>
                   </li>
                 );
               })}

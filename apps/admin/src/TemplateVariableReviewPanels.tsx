@@ -1,3 +1,4 @@
+import { StudioButton } from "./StudioControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { useMemo } from "react";
 import type { TemplateVariableReference } from "./templateVariableReference";
@@ -66,7 +67,7 @@ function sourceCopyParts(value: string, references: TemplateVariableReference[],
     const reference = references.find((candidate) => candidate.name === token[2]);
     if (!reference) return <code key={`${part}-${index}`}>{part}</code>;
     return (
-      <button
+      <StudioButton
         type="button"
         className={`admin-variable-source-token variable-${variableKind(reference)}`}
         key={`${part}-${index}`}
@@ -74,7 +75,7 @@ function sourceCopyParts(value: string, references: TemplateVariableReference[],
         title={`Inspect ${reference.label}`}
       >
         {part}
-      </button>
+      </StudioButton>
     );
   });
 }
@@ -122,10 +123,10 @@ export function TemplateVariableReviewPanels({
                 <p>Open a nested value to see whether it is calculated or backed by another editable source.</p>
               </div>
               {directDependencies.map((dependency) => (
-                <button type="button" key={dependency.name} onClick={() => onSelectVariable(dependency.name)}>
+                <StudioButton type="button" key={dependency.name} onClick={() => onSelectVariable(dependency.name)}>
                   <span><code>{`{{${dependency.name}}}`}</code><strong>{dependency.label}</strong></span>
                   <span>{dependency.sourceKind === "runtime" ? dependency.example : "Open source →"}</span>
-                </button>
+                </StudioButton>
               ))}
             </section>
           )}
@@ -144,7 +145,7 @@ export function TemplateVariableReviewPanels({
             <section className="admin-variable-source-list" aria-label={`Source rows for ${variable.label}`}>
               {sourceSelectionNote && <p>{sourceSelectionNote}</p>}
               <p>{sources.length === 1 ? "1 source row" : `${sources.length} source rows`} can fill this variable.</p>
-              {sources.map((row) => <button type="button" className="admin-variable-source-row" key={row.id} onClick={() => onSelectSource(row.id)}><span><strong>{title(row)}</strong><code>{row.content_key}</code></span><span>{status(row)}</span></button>)}
+              {sources.map((row) => <StudioButton type="button" className="admin-variable-source-row" key={row.id} onClick={() => onSelectSource(row.id)}><span><strong>{title(row)}</strong><code>{row.content_key}</code></span><span>{status(row)}</span></StudioButton>)}
               {sources.length === 0 && <p>No matching rows. Expected <code>{templateVariableSourceKeyPrefixes(variable, templateContentKey).join(" or ")}</code></p>}
             </section>
           )}
@@ -156,11 +157,11 @@ export function TemplateVariableReviewPanels({
   return (
     <section className="admin-variables-rail-detail" role="region" aria-label={`${variable.label} variable details`}>
       <nav className="admin-variables-rail-breadcrumb" aria-label="Variable path">
-        <button type="button" onClick={onBackToVariables}>All variables</button>
+        <StudioButton type="button" onClick={onBackToVariables}>All variables</StudioButton>
         <span aria-hidden="true">›</span>
         {source ? (
           <>
-            <button type="button" onClick={() => onSelectSource(null)}>Sources</button>
+            <StudioButton type="button" onClick={() => onSelectSource(null)}>Sources</StudioButton>
             <span aria-hidden="true">›</span>
             <strong>{title(source)}</strong>
           </>
@@ -171,7 +172,7 @@ export function TemplateVariableReviewPanels({
       {source && (
         <div className="admin-variables-rail-source-head">
           <code>{source.content_key}</code>
-          <button type="button" className="admin-secondary-button" onClick={() => onEditSource(source)}>Edit source</button>
+          <StudioButton type="button" className="admin-secondary-button" onClick={() => onEditSource(source)}>Edit source</StudioButton>
         </div>
       )}
       <div className="admin-variables-rail-detail-body">{body}</div>

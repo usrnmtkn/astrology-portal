@@ -1,3 +1,4 @@
+import { StudioButton, StudioTextarea } from "./StudioControls";
 import { useEffect, useState } from "react";
 import { effectivePackageRecord } from "./skyFallbackWorkspace";
 
@@ -47,7 +48,7 @@ export default function NatalPlacementSourceEditor({ row, label, disabled, onDir
       {Object.entries(fields).map(([field, value]) => (
         <label key={field}>
           <span>{field === "body_they" ? "Friend view copy" : "You view copy"}</span>
-          <textarea aria-label={`${label}: ${field === "body_they" ? "Friend" : "You"} copy`} rows={row.content_key.includes("placement-sign-final/") ? 14 : 4} value={value} disabled={disabled || saving}
+          <StudioTextarea aria-label={`${label}: ${field === "body_they" ? "Friend" : "You"} copy`} rows={row.content_key.includes("placement-sign-final/") ? 14 : 4} value={value} disabled={disabled || saving}
             onChange={(event) => {
               if (!edits) setBaseline(row);
               setEdits({ ...fields, [field]: event.target.value });
@@ -56,9 +57,9 @@ export default function NatalPlacementSourceEditor({ row, label, disabled, onDir
         </label>
       ))}
       <div className="admin-natal-source-actions">
-        <button type="button" disabled={disabled || saving || (!dirty && !(row.sections as { packageDraft?: unknown })?.packageDraft)} onClick={() => void save(true)}>Save &amp; publish</button>
-        <button type="button" disabled={disabled || saving || !dirty} onClick={() => void save(false)}>Save draft</button>
-        {dirty && <button type="button" disabled={saving} onClick={() => { setEdits(null); setFeedback(""); }}>Cancel edits</button>}
+        <StudioButton type="button" disabled={disabled || saving || (!dirty && !(row.sections as { packageDraft?: unknown })?.packageDraft)} onClick={() => void save(true)}>Save &amp; publish</StudioButton>
+        <StudioButton type="button" disabled={disabled || saving || !dirty} onClick={() => void save(false)}>Save draft</StudioButton>
+        {dirty && <StudioButton type="button" disabled={saving} onClick={() => { setEdits(null); setFeedback(""); }}>Cancel edits</StudioButton>}
       </div>
       <p className="admin-field-hint" role="status">{saving ? "Saving…" : feedback || (dirty ? "Unsaved changes" : "")}</p>
     </div>

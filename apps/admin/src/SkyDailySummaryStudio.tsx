@@ -1,3 +1,5 @@
+import { StudioButton, StudioInput } from "./StudioControls";
+import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { skySummaryOpeningKey } from "../../web/src/content/skyDailySummary";
 import { suppliedSkySummaryCandidate, loadSkySummarySourceBank, type SkySummarySourceBank } from "./skySummarySourceBank";
 import { pairedSummarySign } from "../../web/src/content/skySummaryGeometry";
@@ -66,7 +68,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
     </header>
     <SkyWritingSystemDetails system="summary" />
     <SkySummaryAssemblyStudio rows={rows} onEdit={onEdit} busy={busy} sunSign={sunSign} moonSign={moonSign} openingSlots={slots} moonKind={moonKind} />
-    <section className="admin-template-reader-drilldown admin-sky-summary-composition" aria-label="Sun and Moon composition map">
+    <section className="admin-template-reader-drilldown admin-sky-summary-composition studio-surface" aria-label="Sun and Moon composition map">
       <header className="admin-section-heading-row">
         <div>
           <h4>Sun and Moon together</h4>
@@ -74,15 +76,15 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
         </div>
       </header>
       <div className="admin-daily-glance-context-form">
-        <label><span>Sun sign</span><select aria-label="Composition Sun sign" value={sunSign} onChange={event => { setSunSign(event.target.value); if (moonKind !== "regular") setMoonSign(pairedSummarySign(event.target.value, moonKind)); }}>
+        <label><span>Sun sign</span><AdminSelect aria-label="Composition Sun sign" value={sunSign} onChange={event => { setSunSign(event.target.value); if (moonKind !== "regular") setMoonSign(pairedSummarySign(event.target.value, moonKind)); }}>
           {skySummarySigns.map(sign => <option key={sign}>{sign}</option>)}
-        </select></label>
-        <label><span>Moon sign</span><select aria-label="Composition Moon sign" value={moonSign} onChange={event => { setMoonSign(event.target.value); if (moonKind !== "regular") setSunSign(pairedSummarySign(event.target.value, moonKind)); }}>
+        </AdminSelect></label>
+        <label><span>Moon sign</span><AdminSelect aria-label="Composition Moon sign" value={moonSign} onChange={event => { setMoonSign(event.target.value); if (moonKind !== "regular") setSunSign(pairedSummarySign(event.target.value, moonKind)); }}>
           {skySummarySigns.map(sign => <option key={sign}>{sign}</option>)}
-        </select></label>
-        <label><span>Moon event</span><select aria-label="Composition Moon event" value={moonKind} onChange={event => { const kind = event.target.value as MoonSummaryKind; setMoonKind(kind); if (kind !== "regular") setMoonSign(pairedSummarySign(sunSign, kind)); }}>
+        </AdminSelect></label>
+        <label><span>Moon event</span><AdminSelect aria-label="Composition Moon event" value={moonKind} onChange={event => { const kind = event.target.value as MoonSummaryKind; setMoonKind(kind); if (kind !== "regular") setMoonSign(pairedSummarySign(sunSign, kind)); }}>
           {Object.entries(moonEventNames).map(([kind, name]) => <option key={kind} value={kind}>{name}</option>)}
-        </select></label>
+        </AdminSelect></label>
       </div>
       {moonKind !== "regular" && <p role="status">{moonKind === "newMoon" || moonKind === "solarEclipse" ? "The Sun and Moon share a sign at this event." : "The Sun and Moon occupy opposite signs at this event."} Changing either sign updates the other.</p>}
       <div className="admin-composition-variable-legend" aria-label="Composition color key">
@@ -102,28 +104,28 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
       <div className="admin-editor-guidance" aria-label="Composition sources">
         {composition.sources.map(source => <div key={source.body}>
           <strong>{source.field.label}</strong>{moonSources?.rows.filter(row => row.key === source.field.key).map(row => <p key={row.key}>Source status: {source.copy !== row.body ? "Owner edit" : row.status}{row.sources.map(url => <span key={url}> · <a href={url} target="_blank" rel="noreferrer">Source URL</a></span>)}</p>)}<p><ContentLiveStatusBadge row={source.statusRow} unsaved={source.unsaved} />{source.emptyWorkingCopy ? " · Empty working copy; the preview uses the app fallback." : ""}</p>
-          <button type="button" disabled={busy} onClick={() => onEdit(source.field)}>Edit {source.body === "sun" ? "Sun" : "Moon"} source</button>
+          <StudioButton type="button" disabled={busy} onClick={() => onEdit(source.field)}>Edit {source.body === "sun" ? "Sun" : "Moon"} source</StudioButton>
         </div>)}
         <p>The opening uses the published assembly template and the summaries selected above.</p>
         <p>Click the white words or punctuation to edit the template. Click a green summary to edit its source. Changes reach the app only after Save & publish.</p>
       </div>
     </section>
     <div className="admin-content-filters">
-      <label><span>Summary section</span><select aria-label="Summary section" value={group} onChange={event => setGroup(event.target.value)}>
+      <label><span>Summary section</span><AdminSelect aria-label="Summary section" value={group} onChange={event => setGroup(event.target.value)}>
         <option value="all">Sun, Moon, and timing</option>
         {["Sun summaries", "Moon summaries", "Timing and retrogrades", "Ingress TLDRs"].map(value => <option key={value}>{value}</option>)}
-      </select></label>
+      </AdminSelect></label>
       {isIngress && <>
-        <label><span>Ingress planet or point</span><select aria-label="Ingress planet or point" value={ingressPlanet} onChange={event => setIngressPlanet(event.target.value)}>
+        <label><span>Ingress planet or point</span><AdminSelect aria-label="Ingress planet or point" value={ingressPlanet} onChange={event => setIngressPlanet(event.target.value)}>
           {skyIngressBodies.map(planet => <option key={planet}>{planet}</option>)}
-        </select></label>
-        <label><span>Ingress sign</span><select aria-label="Ingress sign" value={ingressSign} onChange={event => setIngressSign(event.target.value)}>
+        </AdminSelect></label>
+        <label><span>Ingress sign</span><AdminSelect aria-label="Ingress sign" value={ingressSign} onChange={event => setIngressSign(event.target.value)}>
           {skySummarySigns.map(sign => <option key={sign}>{sign}</option>)}
-        </select></label>
+        </AdminSelect></label>
       </>}
-      <label><span>Search summary wording</span><input aria-label="Search summary wording" value={query} onChange={event => setQuery(event.target.value)} /></label>
+      <label><span>Search summary wording</span><StudioInput aria-label="Search summary wording" value={query} onChange={event => setQuery(event.target.value)} /></label>
     </div>
-    {bankError && <p role="alert">{bankError} <button type="button" onClick={() => setBankAttempt(value => value + 1)}>Retry supplied wording</button></p>}
+    {bankError && <p role="alert">{bankError} <StudioButton type="button" onClick={() => setBankAttempt(value => value + 1)}>Retry supplied wording</StudioButton></p>}
     <div className="admin-daily-glance-pair-list" aria-label="Daily Sky Summary fields">
       {visible.map(field => {
         const saved = rows.find(row => row.content_key === field.key);
@@ -137,14 +139,14 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
             {source && <p><span>Source status: {saved?.body && saved.body !== source.body ? "Owner edit" : source.status}</span>{source.sources.map(url => <span key={url}> · <a href={url} target="_blank" rel="noreferrer">Source URL</a></span>)}</p>}
             <ContentLiveStatusBadge row={saved ?? ingressSource ?? (isIngress ? {} : { id: `builtin:${field.key}` })} />
             {candidate && candidate.body !== currentBody && <details>
-              <summary>Review supplied wording</summary>
+              <AdminDisclosureSummary>Review supplied wording</AdminDisclosureSummary>
               <p>{candidate.body}</p>
               <p>This supplied version is not published. Open it to review the complete wording, then Save draft or Save &amp; publish.</p>
-              <button type="button" disabled={busy || saved?.inventory_only} onClick={() => onEdit(field, candidate.body)}>Open supplied wording</button>
+              <StudioButton type="button" disabled={busy || saved?.inventory_only} onClick={() => onEdit(field, candidate.body)}>Open supplied wording</StudioButton>
             </details>}
             {field.allowedSlots.length > 0 && <small> · Calculated fields: {field.allowedSlots.map(slot => `{${slot}}`).join(", ")}</small>}
           </div>
-          <button type="button" disabled={busy} onClick={() => onEdit(!saved && ingressSource ? { ...field, key: ingressSource.content_key } : field)}>{!saved && ingressSource ? "Edit existing write-up" : "Edit wording"}</button>
+          <StudioButton type="button" disabled={busy} onClick={() => onEdit(!saved && ingressSource ? { ...field, key: ingressSource.content_key } : field)}>{!saved && ingressSource ? "Edit existing write-up" : "Edit wording"}</StudioButton>
         </article>;
       })}
       {visible.length === 0 && <p className="admin-empty">No summary fields match this search.</p>}

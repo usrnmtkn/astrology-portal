@@ -1,3 +1,5 @@
+import { AdminSelect, AdminDisclosureSummary } from "./AdminNativeControls";
+import { StudioButton, StudioInput } from "./StudioControls";
 import { Fragment, useEffect, useState } from "react";
 import { renderTransitNatalPreview, type TransitNatalSelection, type TransitNatalReadingContext } from "./transitNatalSources";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
@@ -26,8 +28,8 @@ export function TransitNatalExactSourceAction({ contentKey, secret, disabled, on
     return () => { cancelled = true; controller.abort(); };
   }, [contentKey, secret, revision]);
   if (state.key !== contentKey || state.exists === undefined && !state.error) return <p role="status">Checking the exact passage…</p>;
-  if (state.error) return <p role="alert">{state.error} <button type="button" onClick={() => setRevision(value => value + 1)}>Retry exact passage lookup</button></p>;
-  return <button type="button" disabled={disabled} onClick={onOpen}>{state.exists ? "Edit exact passage" : "Write a new exact passage"}</button>;
+  if (state.error) return <p role="alert">{state.error} <StudioButton type="button" onClick={() => setRevision(value => value + 1)}>Retry exact passage lookup</StudioButton></p>;
+  return <StudioButton type="button" disabled={disabled} onClick={onOpen}>{state.exists ? "Edit exact passage" : "Write a new exact passage"}</StudioButton>;
 }
 
 export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource }: {
@@ -86,10 +88,10 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
             <div className="admin-natal-source-card-heading"><h4>{state.preview.headline}</h4></div>
             {groups.map((group, index) => <Fragment key={index}>
               {group.texts.map((text, paragraphIndex) => <p key={paragraphIndex}>{text}</p>)}
-              {group.sources.map(source => <button type="button" key={`${source.contentKey}:${source.field}`}
+              {group.sources.map(source => <StudioButton type="button" key={`${source.contentKey}:${source.field}`}
                 onClick={() => onOpenSource(source.contentKey, state.preview!.headline, source.field)}>
                 Edit selected source <code>{source.contentKey}</code> · {source.field === "body_they" ? "They" : source.field === "body_you" ? "You" : "Text"}
-              </button>)}
+              </StudioButton>)}
             </Fragment>)}
           </div>
         </article>
@@ -104,17 +106,17 @@ export function TransitNatalPreviewOptions({ context, onChange }: {
 }) {
   return (
         <details>
-          <summary>Reading preview options</summary>
+          <AdminDisclosureSummary>Reading preview options</AdminDisclosureSummary>
           <p className="admin-field-hint">These are example inputs. Match the calculated reading when comparing its exact passage.</p>
           <div className="admin-natal-placement-selectors">
-            <label><span>Copy variant</span><select aria-label="Transit copy variant" value={context.variant ?? ""} onChange={event => onChange({ variant: event.target.value ? Number(event.target.value) : undefined })}>
+            <label><span>Copy variant</span><AdminSelect aria-label="Transit copy variant" value={context.variant ?? ""} onChange={event => onChange({ variant: event.target.value ? Number(event.target.value) : undefined })}>
               <option value="">Default</option>{[1, 2, 3, 4].map(value => <option key={value} value={value}>{value}</option>)}
-            </select></label>
-            <label><span>Repeat pass</span><input aria-label="Transit repeat pass" type="number" min="1" max="100" value={context.pass ?? ""} onChange={event => onChange({ pass: event.target.value ? Number(event.target.value) : undefined })} /></label>
-            <label><span>Motion</span><select aria-label="Transit preview motion" value={context.isRetrograde === undefined ? "" : String(context.isRetrograde)} onChange={event => onChange({ isRetrograde: event.target.value === "" ? undefined : event.target.value === "true" })}>
+            </AdminSelect></label>
+            <label><span>Repeat pass</span><StudioInput aria-label="Transit repeat pass" type="number" min="1" max="100" value={context.pass ?? ""} onChange={event => onChange({ pass: event.target.value ? Number(event.target.value) : undefined })} /></label>
+            <label><span>Motion</span><AdminSelect aria-label="Transit preview motion" value={context.isRetrograde === undefined ? "" : String(context.isRetrograde)} onChange={event => onChange({ isRetrograde: event.target.value === "" ? undefined : event.target.value === "true" })}>
               <option value="">Unspecified</option><option value="false">Direct</option><option value="true">Retrograde</option>
-            </select></label>
-            <label><span>Timing label</span><input aria-label="Transit preview timing" maxLength={160} value={context.window ?? ""} onChange={event => onChange({ window: event.target.value || undefined })} /></label>
+            </AdminSelect></label>
+            <label><span>Timing label</span><StudioInput aria-label="Transit preview timing" maxLength={160} value={context.window ?? ""} onChange={event => onChange({ window: event.target.value || undefined })} /></label>
           </div>
         </details>
   );

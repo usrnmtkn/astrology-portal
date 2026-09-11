@@ -1,3 +1,5 @@
+import { StudioButton, StudioTextarea } from "./StudioControls";
+import { AdminSelect, AdminDisclosureSummary } from "./AdminNativeControls";
 import { useEffect, useState } from 'react';
 import { adminCredentialHeaders } from './adminSecret';
 
@@ -29,24 +31,24 @@ function Decision({ row, disabled, decide, credential }: { row: Feedback; disabl
   }
   return <article className="admin-editor-guidance">
     <p><strong>{row.status === 'active' ? 'Used for future drafts' : row.status === 'retired' ? 'Excluded from future drafts' : 'Pending your decision'}</strong> · {new Date(row.created_at).toLocaleString()}</p>
-    <details><summary>Compare original and replacement</summary>
+    <details><AdminDisclosureSummary>Compare original and replacement</AdminDisclosureSummary>
       <p><strong>Original</strong></p><p className="admin-composition-source-copy">{readableCorrection(row.before_text, row.family)}</p>
       <p><strong>Replacement</strong></p><p className="admin-composition-source-copy">{readableCorrection(row.after_text, row.family)}</p>
     </details>
     <label>Apply this correction to
-      <select value={scope} onChange={event => setScope(event.target.value as Feedback['scope'])} disabled={disabled}>
+      <AdminSelect value={scope} onChange={event => setScope(event.target.value as Feedback['scope'])} disabled={disabled}>
         <option value="passage">This passage only</option><option value="family">{row.family === 'sky-article' ? 'Long-form Sky articles' : 'This Sky writing family'}</option>{row.family !== 'sky-article' && <option value="sky">All Sky placements and aspects</option>}
-      </select>
+      </AdminSelect>
     </label>
     <label>Reason {scope === 'passage' ? '(optional)' : '(required for broader guidance)'}
-      <textarea value={reason} maxLength={4000} onChange={event => setReason(event.target.value)} disabled={disabled} />
+      <StudioTextarea value={reason} maxLength={4000} onChange={event => setReason(event.target.value)} disabled={disabled} />
     </label>
-    <button type="button" disabled={disabled || scope !== 'passage' && !reason.trim()} onClick={() => decide(row, 'active', scope, reason)}>
+    <StudioButton type="button" disabled={disabled || scope !== 'passage' && !reason.trim()} onClick={() => decide(row, 'active', scope, reason)}>
       {row.status === 'active' ? 'Save memory decision' : 'Use for future drafts'}
-    </button>
-    {row.status !== 'retired' && <button type="button" disabled={disabled} onClick={() => decide(row, 'retired', row.scope, row.reason)}>Exclude from future drafts</button>}
+    </StudioButton>
+    {row.status !== 'retired' && <StudioButton type="button" disabled={disabled} onClick={() => decide(row, 'retired', row.scope, row.reason)}>Exclude from future drafts</StudioButton>}
     <details onToggle={event => { if (event.currentTarget.open && !history) void loadHistory(); }}>
-      <summary>Memory decision history</summary>
+      <AdminDisclosureSummary>Memory decision history</AdminDisclosureSummary>
       {historyError && <p role="alert">{historyError}</p>}
       {history?.length === 0 && <p>No memory decisions yet.</p>}
       {history?.map(decision => <p key={decision.version}>Version {decision.version} · {decision.status} · {decision.scope} · {new Date(decision.decided_at).toLocaleString()}<br />{decision.reason || 'No reason recorded.'}</p>)}
@@ -94,17 +96,17 @@ export default function StudioMemoryFeedback({ contentKey, credential, revision,
   }
   if (!enabled && !error) return null;
   return <details className="admin-workspace-details" aria-label="Studio memory corrections">
-    <summary>Memory corrections ({rows.length}{hasMore ? '+' : ''})</summary>
+    <AdminDisclosureSummary>Memory corrections ({rows.length}{hasMore ? '+' : ''})</AdminDisclosureSummary>
     <p>Saved edits are pending evidence. Review the replacement passage before using its correction for future drafts. Broader scope requires your explicit choice.</p>
     {checkedAt && <p>Memory checked {new Date(checkedAt).toLocaleTimeString()}</p>}
     {unsaved && <p>Save your passage changes before deciding how its correction should be used.</p>}
     {error && <p role="alert">{error}</p>}
-    <button type="button" disabled={busy} onClick={() => setRefresh(value => value + 1)}>Refresh memory</button>
+    <StudioButton type="button" disabled={busy} onClick={() => setRefresh(value => value + 1)}>Refresh memory</StudioButton>
     {!busy && !rows.length && <p>No captured corrections for this passage.</p>}
     {rows.map(row => <Decision key={`${row.id}:${row.version}`} row={row} credential={credential} disabled={busy || unsaved} decide={decide} />)}
-    <nav aria-label="Memory correction pages">
-      <button type="button" disabled={busy || offset === 0} onClick={() => setOffset(value => value - 50)}>Previous</button>
-      <button type="button" disabled={busy || !hasMore} onClick={() => setOffset(value => value + 50)}>Next</button>
+    <nav className="admin-toolbar-actions" aria-label="Memory correction pages">
+      <StudioButton type="button" disabled={busy || offset === 0} onClick={() => setOffset(value => value - 50)}>Previous</StudioButton>
+      <StudioButton type="button" disabled={busy || !hasMore} onClick={() => setOffset(value => value + 50)}>Next</StudioButton>
     </nav>
   </details>;
 }

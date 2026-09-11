@@ -1,3 +1,4 @@
+import { StudioButton } from "./StudioControls";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 type AdminPaginatedCollectionProps<T> = {
@@ -39,11 +40,11 @@ export function AdminPaginatedCollection<T>({
             Showing {start + 1}–{end} of {items.length}
           </span>
           <div>
-            <button type="button" onClick={() => setRequestedPage(0)} disabled={page === 0}>First</button>
-            <button type="button" onClick={() => setRequestedPage((current) => Math.max(0, current - 1))} disabled={page === 0}>Previous</button>
+            <StudioButton type="button" onClick={() => setRequestedPage(0)} disabled={page === 0}>First</StudioButton>
+            <StudioButton type="button" onClick={() => setRequestedPage((current) => Math.max(0, current - 1))} disabled={page === 0}>Previous</StudioButton>
             <span>Page {page + 1} of {pageCount}</span>
-            <button type="button" onClick={() => setRequestedPage((current) => Math.min(pageCount - 1, current + 1))} disabled={page >= pageCount - 1}>Next</button>
-            <button type="button" onClick={() => setRequestedPage(pageCount - 1)} disabled={page >= pageCount - 1}>Last</button>
+            <StudioButton type="button" onClick={() => setRequestedPage((current) => Math.min(pageCount - 1, current + 1))} disabled={page >= pageCount - 1}>Next</StudioButton>
+            <StudioButton type="button" onClick={() => setRequestedPage(pageCount - 1)} disabled={page >= pageCount - 1}>Last</StudioButton>
           </div>
         </nav>
       )}

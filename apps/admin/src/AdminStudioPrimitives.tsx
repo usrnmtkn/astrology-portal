@@ -1,8 +1,6 @@
+import { StudioButton } from "./StudioControls";
 import { AlertTriangle, BarChart3, Plus, type LucideIcon } from "lucide-react";
 import { lazy, Suspense, useEffect, useRef, type ComponentProps, type KeyboardEvent } from "react";
-import "./admin-content-studio-ux-compat.css";
-import "./admin-content-studio-editor-redesign.css";
-import "./admin-access-feedback.css";
 
 export type AdminBreadcrumb = {
   current?: boolean;
@@ -31,29 +29,11 @@ type AdminPageHeaderProps = {
   title: string;
 };
 
-const coverageActionStyle = {
-  alignItems: "center",
-  borderRadius: "var(--admin-radius-md)",
-  borderStyle: "solid",
-  borderWidth: "var(--border-width-thin)",
-  cursor: "pointer",
-  display: "inline-flex",
-  fontWeight: "var(--weight-semibold)",
-  gap: "var(--admin-space-sm)",
-  justifyContent: "center",
-  maxWidth: "100%",
-  minHeight: "var(--admin-control-height-md)",
-  padding: "var(--admin-space-sm) var(--admin-space-lg)",
-  textDecoration: "none",
-  whiteSpace: "nowrap"
-} as const;
-
 export function AdminPageHeader({
   breadcrumbs,
   createActions,
   createDisabled = false,
   createMenuOpen,
-  description,
   onCloseCreateMenu,
   onToggleCreateMenu,
   title
@@ -67,15 +47,29 @@ export function AdminPageHeader({
   }, [createMenuOpen]);
 
   function handleCreateMenuKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    if (event.key !== "Escape") return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      createButtonRef.current?.focus();
+      onCloseCreateMenu();
+      return;
+    }
+    if (event.key === "Tab") {
+      createButtonRef.current?.focus();
+      onCloseCreateMenu();
+      return;
+    }
+    const items = Array.from(createMenuRef.current?.querySelectorAll<HTMLButtonElement>("[role='menuitem']") ?? []);
+    if (!items.length || !["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
-    createButtonRef.current?.focus();
-    onCloseCreateMenu();
+    const current = items.indexOf(document.activeElement as HTMLButtonElement);
+    const next = event.key === "Home" ? 0 : event.key === "End" ? items.length - 1
+      : (current + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+    items[next]?.focus();
   }
 
   return (
     <header className="admin-dashboard-header">
-      <div>
+      <div className="admin-page-heading">
         <nav className="admin-breadcrumb" aria-label="Breadcrumb">
           <ol>
             {breadcrumbs.map((item, index) => (
@@ -100,29 +94,10 @@ export function AdminPageHeader({
           </ol>
         </nav>
         <h1>{title}</h1>
-        <p>{description}</p>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
-        <a
-          className="admin-create-button admin-attention-button"
-          href="/admin/content/coverage?view=attention"
-          style={coverageActionStyle}
-          title="Open the short queue of content work that can affect required reader coverage"
-        >
-          <AlertTriangle size={16} aria-hidden="true" />
-          Needs attention
-        </a>
-        <a
-          className="admin-create-button admin-secondary-button"
-          href="/admin/content/coverage"
-          style={coverageActionStyle}
-          title="See content coverage: complete and missing content corpora"
-        >
-          <BarChart3 size={16} aria-hidden="true" />
-          Content coverage
-        </a>
+      <div className="admin-page-actions">
         <div className="admin-create-menu">
-          <button
+          <StudioButton
             ref={createButtonRef}
             className="admin-create-button"
             type="button"
@@ -134,10 +109,10 @@ export function AdminPageHeader({
           >
             <Plus size={16} aria-hidden="true" />
             Create
-          </button>
+          </StudioButton>
           {createMenuOpen && (
             <>
-              <button
+              <StudioButton
                 className="admin-create-menu-backdrop"
                 type="button"
                 aria-label="Close create menu"
@@ -152,11 +127,11 @@ export function AdminPageHeader({
                 {createActions.map((item) => {
                   const Icon = item.icon;
                   return (
-                    <button key={item.key} type="button" role="menuitem" onClick={item.onSelect}>
+                    <StudioButton key={item.key} type="button" role="menuitem" onClick={item.onSelect}>
                       <Icon size={16} aria-hidden="true" />
                       <span>{item.label}</span>
                       <small>{item.description}</small>
-                    </button>
+                    </StudioButton>
                   );
                 })}
               </div>
@@ -164,6 +139,24 @@ export function AdminPageHeader({
           )}
         </div>
       </div>
+      <nav className="admin-page-utilities" aria-label="Content health">
+        <a
+          className="admin-page-link"
+          href="/admin/content/coverage?view=attention"
+          title="Open the short queue of content work that can affect required reader coverage"
+        >
+          <AlertTriangle size={16} aria-hidden="true" />
+          Needs attention
+        </a>
+        <a
+          className="admin-page-link"
+          href="/admin/content/coverage"
+          title="See content coverage: complete and missing content corpora"
+        >
+          <BarChart3 size={16} aria-hidden="true" />
+          Content coverage
+        </a>
+      </nav>
     </header>
   );
 }

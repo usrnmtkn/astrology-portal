@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState, useRef, useId } from "react";
+import { StudioTabs, StudioButton } from "./StudioControls";
+import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
+import { useEffect, useMemo, useState, useRef } from "react";
 import type { CompositionMapRow } from "./compositionMap";
 import { skyPlacementBodies, skyPlacementSigns } from "./skyWriteupRelations";
 import SkyIngressComposer from "./SkyIngressComposer";
@@ -34,7 +36,6 @@ export function skyPlacementCompositionKeys({ planet, sign, motion }: Selection)
 export default function SkyPlacementComposition({ rows, selection, onEditRow, onEditField, onLoadRow }: Props) {
   const [view, setView] = useState<"preview" | "template" | "assembly">("preview");
   const [writing, setWriting] = useState<SkyPlacementWriting | "ingress">("article");
-  const viewId = useId();
   const loadRowRef = useRef(onLoadRow);
   loadRowRef.current = onLoadRow;
   const [context, setContext] = useState<Selection>({ planet: "saturn", sign: "aries", motion: "retrograde" });
@@ -75,23 +76,23 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const views = [{ id: "preview", label: "Saved preview" }, { id: "template", label: "Main template" }, { id: "assembly", label: "Assembly" }] as const;
   return <section className="admin-composition-surface-actions admin-sky-placement-composition" aria-label="Sky placement composition map">
     <header><div><p className="admin-eyebrow">Composition Map</p><h3>{title(current.planet)}{current.motion === "retrograde" && retrogradeBodies.has(current.planet) ? " Rx" : ""} in {title(current.sign)}</h3></div>
-      <button type="button" onClick={() => openContextualReaderHref(`/#sky/placement/${current.planet}/${current.sign}`)}>Open published reader</button>
+      <StudioButton type="button" onClick={() => openContextualReaderHref(`/#sky/placement/${current.planet}/${current.sign}`)}>Open published reader</StudioButton>
     </header>
     {!selection && <div className="admin-natal-placement-selectors">
-      <label>Planet or point<select aria-label="Composition planet or point" value={context.planet} onChange={event => setContext({ ...context, planet: event.target.value })}>
+      <label>Planet or point<AdminSelect aria-label="Composition planet or point" value={context.planet} onChange={event => setContext({ ...context, planet: event.target.value })}>
         {skyPlacementBodies.map(planet => <option key={planet} value={planet}>{title(planet)}</option>)}
-      </select></label>
-      <label>Zodiac sign<select aria-label="Composition zodiac sign" value={context.sign} onChange={event => setContext({ ...context, sign: event.target.value })}>
+      </AdminSelect></label>
+      <label>Zodiac sign<AdminSelect aria-label="Composition zodiac sign" value={context.sign} onChange={event => setContext({ ...context, sign: event.target.value })}>
         {skyPlacementSigns.map(sign => <option key={sign} value={sign}>{title(sign)}</option>)}
-      </select></label>
-      <label>Motion<select aria-label="Composition motion" value={context.motion} onChange={event => setContext({ ...context, motion: event.target.value })}>
+      </AdminSelect></label>
+      <label>Motion<AdminSelect aria-label="Composition motion" value={context.motion} onChange={event => setContext({ ...context, motion: event.target.value })}>
         <option value="direct">Direct</option>{retrogradeBodies.has(current.planet) && <option value="retrograde">Retrograde</option>}
-      </select></label>
+      </AdminSelect></label>
     </div>}
     <p>Choose a writing path to inspect its saved sources and ordered blocks. This choice changes the preview, not what is published. Select a colored passage to edit its exact source.</p>
     {ingressRow && <>
       <details className="admin-workspace-details admin-writing-system-details" aria-label="Placement reader selection">
-        <summary>How the reader chooses writing</summary>
+        <AdminDisclosureSummary>How the reader chooses writing</AdminDisclosureSummary>
         <p>The reader uses the first available, eligible published body for the calculated motion and occurrence:</p>
         <ol aria-label="Published placement selection order">
           <li>Complete article for the current motion.</li>
@@ -103,8 +104,8 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
       </details>
       <SkyWritingSystemDetails system="placement" />
     </>}
-    {selection?.motion === "all" && retrogradeBodies.has(current.planet) && <label>Preview motion<select aria-label="Composition motion" value={current.motion} onChange={event => setContext({ ...context, motion: event.target.value })}><option value="direct">Direct</option><option value="retrograde">Retrograde</option></select></label>}
-    {error && <p role="alert">{error} <button type="button" onClick={() => setRetry(value => value + 1)}>Retry sources</button></p>}
+    {selection?.motion === "all" && retrogradeBodies.has(current.planet) && <label>Preview motion<AdminSelect aria-label="Composition motion" value={current.motion} onChange={event => setContext({ ...context, motion: event.target.value })}><option value="direct">Direct</option><option value="retrograde">Retrograde</option></AdminSelect></label>}
+    {error && <p role="alert">{error} <StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry sources</StudioButton></p>}
     {keys.map((key, index) => !selectedRows[index] && <p role="status" key={key}>{error || finished[key] ? "Source unavailable: " : "Loading "}{key.includes("/retrograde/") ? "retrograde paragraph" : "planet-in-sign source"}{!error && !finished[key] && "…"}</p>)}
     {availableRows.length > 0 && <>
       <div className="admin-sky-placement-sources" aria-label="Selected sources">
@@ -114,11 +115,11 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
         </div>)}
       </div>
       <label className="admin-sky-placement-writing">Writing path
-        <select aria-label="Placement writing path" value={selectedWriting} onChange={event => setWriting(event.target.value as SkyPlacementWriting | "ingress")}>
+        <AdminSelect aria-label="Placement writing path" value={selectedWriting} onChange={event => setWriting(event.target.value as SkyPlacementWriting | "ingress")}>
           <option value="article">Placement article</option>
           <option value="fallback" disabled={!assembly.hasFallback}>Fallback hooks</option>
           {ingressRow && <option value="ingress">Placement composition</option>}
-        </select>
+        </AdminSelect>
       </label>
       {selectedWriting === "ingress" && ingressRow ? <SkyIngressComposer key={ingressRow.content_key} source={effectivePackageRecord(ingressRow.sections)} motion={current.motion}
         onOpenSource={(key, path) => {
@@ -130,22 +131,12 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           return row ? effectivePackageRecord(row.sections) : undefined;
         }} /> : <>
       <p>{selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. On canonical placement pages, they supply the body when neither a complete article nor an eligible placement composition is available. Only blocks matching the selected motion are included. Open a section to add writing or change the section order." : "This is the complete authored passage for the selected motion, or the shared passage when no motion-specific article is saved. It can be evergreen writing; it is not necessarily a dated article edition. Complete articles take priority over sentence composition and fallback sections."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
-      {selectedWriting === "fallback" && <button type="button" onClick={() => openContextualReaderHref(`/?skyPlacementPreview=fallback#sky/placement/${current.planet}/${current.sign}`)}>Preview evergreen in app</button>}
-      <div className="admin-composition-view-tabs" role="tablist" aria-label="Sky placement composition views">
-        {views.map((item, index) => <button key={item.id} id={`${viewId}-${item.id}`} type="button" role="tab"
-          aria-selected={view === item.id} aria-controls={`${viewId}-panel`} tabIndex={view === item.id ? 0 : -1}
-          className={view === item.id ? "active" : ""} onClick={() => setView(item.id)}
-          onKeyDown={event => {
-            const next = event.key === "ArrowRight" ? (index + 1) % views.length : event.key === "ArrowLeft" ? (index + views.length - 1) % views.length : event.key === "Home" ? 0 : event.key === "End" ? views.length - 1 : -1;
-            if (next < 0) return;
-            event.preventDefault(); setView(views[next].id);
-            document.getElementById(`${viewId}-${views[next].id}`)?.focus();
-          }}>{item.label}</button>)}
-      </div>
+      {selectedWriting === "fallback" && <StudioButton type="button" onClick={() => openContextualReaderHref(`/?skyPlacementPreview=fallback#sky/placement/${current.planet}/${current.sign}`)}>Preview evergreen in app</StudioButton>}
+      <StudioTabs label="Sky placement composition views" value={view} onValueChange={setView}
+        tabs={views.map(item => ({ value: item.id, label: item.label }))}>
       <div className="admin-composition-variable-legend" aria-label="Composition color key">
         <span className="variable-fact">Calculated fact</span><span className="variable-hook">Authored hook</span><span className="variable-copy">Saved copy</span>
       </div>
-      <div id={`${viewId}-panel`} role="tabpanel" aria-labelledby={`${viewId}-${view}`}>
         {view === "preview" && <div className="admin-template-reader-surface">
           <div className="admin-composition-preview-chrome"><span>Sky placement</span><span>Saved source preview</span></div>
           <div className="admin-template-reader-copy">
@@ -154,11 +145,11 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
             </div>
             {parts.map(field => <div className="admin-composition-preview-field field-body" key={`${field.row.content_key}/${field.path}`}>
               <span className="admin-eyebrow">{field.label}</span>
-              <p><button type="button" className={`admin-composition-variable variable-${field.kind}`} aria-label={`Edit ${field.label.toLowerCase()}`} onClick={() => edit(field)}>
+              <p><StudioButton type="button" className={`admin-composition-variable variable-${field.kind}`} aria-label={`Edit ${field.label.toLowerCase()}`} onClick={() => edit(field)}>
                 {field.value ? isSkyPlacementVariableField(field.row.content_key, field.path)
                   ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value
                   : "No writing saved. Select to write this section."}
-              </button></p>
+              </StudioButton></p>
             </div>)}
           </div>
         </div>}
@@ -166,13 +157,13 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           <p>The template joins the sections below in order. Each section slot supplies a whole passage; inline Sky variables substitute calculated facts within that passage. Empty sections are skipped.</p>
           <ol aria-label="Placement template order">
             {parts.map(field => <li key={`${field.row.content_key}/${field.path}`}>
-              <button type="button" className={`admin-composition-variable variable-${field.kind}`} onClick={() => edit(field)} aria-label={`Edit ${field.label.toLowerCase()}`}>
+              <StudioButton type="button" className={`admin-composition-variable variable-${field.kind}`} onClick={() => edit(field)} aria-label={`Edit ${field.label.toLowerCase()}`}>
                 {sectionIdentity(field)}
-              </button>
+              </StudioButton>
               <code className="admin-sky-section-reference">{`${field.row.content_key}#${field.path}`}</code>
               <p>{field.motion && field.motion !== "all" ? `Used only while ${field.motion}.` : /^placementArticle(?:Direct|Retrograde)$/u.test(field.path) ? `Used only while ${field.path.endsWith("Retrograde") ? "retrograde" : "direct"}.` : scope(field.row)}</p>
               {(field.editorial?.paragraphs || field.editorial?.items) && <details className="admin-workspace-details">
-                <summary>Section structure</summary>
+                <AdminDisclosureSummary>Section structure</AdminDisclosureSummary>
                 <p>Role: {field.editorial.role ?? "main"} · Target depth: {field.editorial.depth ?? "standard"}. Editorial labels are not reader copy.</p>
                 <ol aria-label={`${field.label} paragraph plan`}>
                   {(field.editorial.paragraphs ?? field.editorial.items ?? []).map((unit, index) => <li key={unit.id}>
@@ -200,12 +191,12 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
               <strong className={`variable-${field.kind}`}>{field.label}</strong>
               <small>{parts.some(part => part.row.content_key === row.content_key && part.path === field.path) ? "Included in this writing path" : "Used in another writing path"}</small>
               <p className="admin-composition-source-copy">{field.value || "No writing saved for this section."}</p>
-              <button type="button" onClick={() => edit(field)}>Edit {field.label.toLowerCase()}</button>
-            </div>) : <><p className="admin-composition-source-copy">{row.body}</p><button type="button" onClick={() => onEditRow(row)}>Edit source</button></>}
-            <details><summary>Source details</summary><code>{row.content_key}</code></details>
+              <StudioButton type="button" onClick={() => edit(field)}>Edit {field.label.toLowerCase()}</StudioButton>
+            </div>) : <><p className="admin-composition-source-copy">{row.body}</p><StudioButton type="button" onClick={() => onEditRow(row)}>Edit source</StudioButton></>}
+            <details><AdminDisclosureSummary>Source details</AdminDisclosureSummary><code>{row.content_key}</code></details>
           </article>;
         })}
-      </div>
+      </StudioTabs>
       </>}
     </>}
   </section>;
