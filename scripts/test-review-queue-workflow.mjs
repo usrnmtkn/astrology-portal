@@ -46,6 +46,11 @@ const missing = 'sky.aspect.mercury.trine.pluto.virgo.aquarius';
 result = await store.write({ action: 'generate', contentKey: missing });
 assert.equal(result.status, 200, JSON.stringify(result));
 assert.equal(result.payload.rows[0].body, original);
+assert.equal(result.payload.rows[0].source_snapshot.studioWritingMemory.schema, 'tldr-sky-writing-memory/v1');
+const generated = result.payload.rows[0];
+const recheckedMemory = await store.write({ action: 'recheck', contentKey: generated.content_key, expectedUpdatedAt: generated.updated_at });
+assert.equal(recheckedMemory.status, 200);
+assert.deepEqual(recheckedMemory.payload.rows[0].source_snapshot.studioWritingMemory, generated.source_snapshot.studioWritingMemory);
 assert.equal((await store.write({ action: 'generate', contentKey: missing })).status, 409);
 // Source edits retain history and remove approval until the new revision is explicitly reviewed.
 result = await store.invoke('PATCH', { id: source.id, expectedUpdatedAt: source.updated_at, body: 'Fixture source revised.' });

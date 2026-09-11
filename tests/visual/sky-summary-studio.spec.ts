@@ -409,7 +409,9 @@ test("V6 Moon event sources stay separate and missing copy stays blank", async (
     { id: "ordinary", type: "lunation", title: "New Moon", sign: "Virgo", longitude: 165, startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" },
     { id: "eclipse", type: "lunation", title: "New Moon", eclipseType: "solar", sign: "Virgo", longitude: 165, startsAt: "2026-09-11T03:27:00.999Z", dateKey: "2026-09-10" }
   ] }] } } }));
+  const calendarResponse = reader.waitForResponse(response => response.url().includes("/api/calendar?") && response.status() === 200);
   await reader.goto("http://127.0.0.1:4294/?date=2026-09-10#sky");
+  await calendarResponse;
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
   // Exact-event placements are calculated asynchronously after the initial sky.
   await expect(summary).toContainText("Solar Eclipse in Virgo at 18° reminds us that striving for perfection can hinder growth", { timeout: 30_000 });
@@ -486,7 +488,9 @@ test("reader omits an impossible calendar lunation without losing the current sk
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [
     { id: "impossible", type: "lunation", title: "New Moon", sign: "Virgo", startsAt: "2026-09-07T10:00:00Z", dateKey: "2026-09-07" }
   ] }] } } }));
+  const calendarResponse = reader.waitForResponse(response => response.url().includes("/api/calendar?") && response.status() === 200);
   await reader.goto("http://127.0.0.1:4294/?date=2026-09-07#sky");
+  await calendarResponse;
   await expect.poll(() => warnings.some(message => message.includes("IMPOSSIBLE_SKY"))).toBe(true);
   const summary = reader.getByLabel("Daily sky summary");
   await expect(summary).toContainText("Sun in Virgo");
