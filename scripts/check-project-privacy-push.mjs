@@ -9,9 +9,15 @@ const policy = loadPrivacyPolicy();
 const zero = '0'.repeat(40);
 const refs = fs.readFileSync(0, 'utf8').trim().split('\n').filter(Boolean);
 const commits = new Set();
+// A stale worktree may still have pre-cleanup remote-tracking refs. Check the
+// entire ancestry against the privately stored retired commit IDs before using
+// remote refs to narrow the ordinary content scan.
+const retiredFile = process.env.PROJECT_PRIVACY_RETIRED_COMMITS_FILE || spawnSync('git', ['config', '--get', 'projectPrivacy.retiredCommitsFile'], { encoding: 'utf8' }).stdout?.trim();
+const retired = new Set(retiredFile ? fs.readFileSync(retiredFile, 'utf8').trim().split(/\s+/u) : []);
 for (const line of refs) {
   const [localRef, local, remoteRef, remote] = line.split(/\s+/u);
   if (local === zero) continue;
+  if (retired.size && git(['rev-list', local]).split('\n').some(commit => retired.has(commit))) throw new Error('This branch contains retired private history. Move your changes to a fresh clone of the cleaned repository before pushing.');
   if (privacyMatches(`${localRef} ${remoteRef}`, policy).length) throw new Error('Private identifier in a branch name.');
   const knownRemote = remote !== zero && spawnSync('git', ['cat-file', '-e', `${remote}^{commit}`], { stdio: 'ignore' }).status === 0;
   const args = knownRemote ? ['rev-list', `${remote}..${local}`] : ['rev-list', local, '--not', '--remotes=origin'];

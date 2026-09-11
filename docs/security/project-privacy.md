@@ -37,6 +37,10 @@ After a privacy history rewrite, clone the cleaned repository afresh. Preserve
 uncommitted work outside Git, inspect it with the private policy, then reapply
 only the needed patch. Never merge or push an old clone's history into the
 cleaned repository. Old local backups remain private recovery material.
+Provision the privately archived retired commit list with
+`git config --local projectPrivacy.retiredCommitsFile /protected/path/retired-commits.txt`.
+The push guard checks the full ancestry against that list, even when an old
+worktree still has stale remote-tracking refs. Keep this setting in fresh clones.
 
 Agents must check memory source paths after source moves, regenerate affected
 indexes, verify complete text and provenance, and check that deployed memory
