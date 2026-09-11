@@ -1,7 +1,7 @@
 import { packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
 import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
-import { publicationLedgerReady, isContentRetired, installContentPublications, publicationAllowsContent, contentPublication, contentPublicationRecords } from "../content/contentPublicationState";
+import { publicationLedgerReady, isContentRetired, installContentPublications, mergeContentPublications, publicationAllowsContent, contentPublication, contentPublicationRecords } from "../content/contentPublicationState";
 import { refreshContentPublications } from "./contentPublications";
 import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey, generatedRowPackageRole } from "../content/generatedContentEligibility";
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
@@ -21,7 +21,20 @@ export async function loadContentStudioLastKnownGoodRows(): Promise<GeneratedCon
         const snapshot = await response.json() as { schema?: unknown; rowCount?: unknown; rows?: unknown; publications?: unknown };
         if (snapshot.schema !== "content-studio-last-known-good-v1" || !Array.isArray(snapshot.rows)
           || snapshot.rowCount !== snapshot.rows.length) return [];
-        if (Array.isArray(snapshot.publications)) installContentPublications(snapshot.publications);
+        if (Array.isArray(snapshot.publications)) {
+          // Installing the ledger first hides unversioned bundled passages and
+          // notifies readers before their matching snapshot rows are available.
+          // Prepare against the prospective ledger, then stage the offline layer
+          // synchronously before announcing the publication change.
+          const prospective = new Map(contentPublicationRecords().map(record => [record.content_key, record]));
+          mergeContentPublications(prospective, snapshot.publications);
+          const manifest = await loadFallbackArchitectureV3BundledManifest();
+          const bundle = packageFallbackArchitectureV3CoreRows(snapshot.rows, manifest,
+            (key, id, version, date) => publicationAllowsContent(key, id, version, date, prospective),
+            { includeSkyPlacement: true });
+          if (bundle) installLastKnownGoodFallbackArchitectureV3Bundle(bundle);
+          installContentPublications(snapshot.publications);
+        }
         return snapshot.rows as GeneratedContentRow[];
       } catch {
         return [];
@@ -59,7 +72,9 @@ import {
   fallbackArchitectureV3BundledManifestSummary,
   fallbackArchitectureV3ManifestForBundle,
   loadFallbackArchitectureV3BundledCoreManifest,
+  loadFallbackArchitectureV3BundledManifest,
   loadFallbackArchitectureV3BundledSkyPlacementManifest,
+  installLastKnownGoodFallbackArchitectureV3Bundle,
   transitV3AuthoredCardForContentKey,
   type FallbackArchitectureV3Bundle,
   type FallbackArchitectureV3PackageManifest,

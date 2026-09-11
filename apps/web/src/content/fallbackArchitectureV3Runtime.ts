@@ -535,6 +535,7 @@ let localEmptyHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localLunationBookReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let lastKnownGoodReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCompatibilityReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
@@ -592,7 +593,10 @@ function mergeReaderBundles(
 }
 
 function recomposeReaderBundle() {
-  const localCoreWithDeferred = mergeReaderBundles(initialReaderBundle, localDeferredReaderBundle);
+  // Offline rows carry publication identities. Keep them underneath every live
+  // overlay; mergeReaderBundles excludes rows superseded by the current ledger.
+  const localCoreWithOffline = mergeReaderBundles(initialReaderBundle, lastKnownGoodReaderBundle);
+  const localCoreWithDeferred = mergeReaderBundles(localCoreWithOffline, localDeferredReaderBundle);
   const localCoreWithEmptyHouses = mergeReaderBundles(localCoreWithDeferred, localEmptyHouseReaderBundle);
   const localCoreWithRelationships = mergeReaderBundles(localCoreWithEmptyHouses, localRelationshipReaderBundle);
   const localCoreWithLunationBook = mergeReaderBundles(localCoreWithRelationships, localLunationBookReaderBundle);
@@ -771,6 +775,22 @@ export function transitV3SameBeatKeyForContentKey(contentKey: string | null | un
   }
 
   return null;
+}
+
+export function installLastKnownGoodFallbackArchitectureV3Bundle(bundle: FallbackArchitectureV3Bundle) {
+  // Incoming rows were checked against the prospective ledger. Preserve a
+  // previously verified row when an older snapshot no longer supplies it.
+  // Publication filtering happens during recomposition, including retirements.
+  const previous = lastKnownGoodReaderBundle;
+  lastKnownGoodReaderBundle = readerEligibleBundle({
+    transitLib: { authoredCards: [...(previous?.transitLib.authoredCards ?? []), ...bundle.transitLib.authoredCards] },
+    templatesFile: { templates: [...(previous?.templatesFile.templates ?? []), ...bundle.templatesFile.templates] },
+    rowsFile: {
+      hookRows: [...(previous?.rowsFile.hookRows ?? []), ...(bundle.rowsFile.hookRows ?? [])],
+      vocabularyRows: [...(previous?.rowsFile.vocabularyRows ?? []), ...(bundle.rowsFile.vocabularyRows ?? [])]
+    }
+  });
+  recomposeReaderBundle();
 }
 
 export function installFallbackArchitectureV3Bundle(
