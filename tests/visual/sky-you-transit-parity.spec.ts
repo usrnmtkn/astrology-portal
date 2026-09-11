@@ -6,6 +6,7 @@ import { natalSkySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 // Synthetic chart selected for a calculated Virgo North Node near September's Sun.
 const birthDate = "1997-11-01";
+
 const birthTime = "12:00 PM";
 
 async function seed(page: Page, now: string, theme: string) {
