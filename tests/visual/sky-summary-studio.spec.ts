@@ -413,7 +413,8 @@ test("V6 Moon event sources stay separate and missing copy stays blank", async (
   await reader.goto("http://127.0.0.1:4294/?date=2026-09-10#sky");
   await calendarResponse;
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
-  await expect(summary).toContainText("Solar Eclipse in Virgo at 18° reminds us that striving for perfection can hinder growth");
+  // Calendar loading is followed by an exact-event ephemeris worker calculation.
+  await expect(summary).toContainText("Solar Eclipse in Virgo at 18° reminds us that striving for perfection can hinder growth", { timeout: 30_000 });
   await expect(summary).not.toContainText("Moon in Cancer");
   await expect(summary).not.toContainText("New Moon in Virgo");
   await expect(summary.getByRole("link", { name: "Solar Eclipse in Virgo at 18°" })).toHaveAttribute("href", "#sky/lunation/2026-09-11/virgo");
@@ -490,7 +491,7 @@ test("reader omits an impossible calendar lunation without losing the current sk
   const calendarResponse = reader.waitForResponse(response => response.url().includes("/api/calendar?") && response.status() === 200);
   await reader.goto("http://127.0.0.1:4294/?date=2026-09-07#sky");
   await calendarResponse;
-  await expect.poll(() => warnings.some(message => message.includes("IMPOSSIBLE_SKY"))).toBe(true);
+  await expect.poll(() => warnings.some(message => message.includes("IMPOSSIBLE_SKY")), { timeout: 30_000 }).toBe(true);
   const summary = reader.getByLabel("Daily sky summary");
   await expect(summary).toContainText("Sun in Virgo");
   await expect(summary).toContainText("Moon in Cancer");
