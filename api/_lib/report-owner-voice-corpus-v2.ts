@@ -1,3 +1,4 @@
+import { readPrivateReportDocument } from "./private-report-documents.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -22,10 +23,10 @@ export type ReportOwnerVoiceCorpusPassage = {
 };
 
 const OWNER_FINALS: Array<{ reportDomain: ReportDomain; sourcePath: string }> = [
-  { reportDomain: "general", sourcePath: "artifacts/owner-author-year-ahead-2026-FINAL.md" },
-  { reportDomain: "work_money", sourcePath: "artifacts/owner-author-work-money-2026-owner-v1.md" },
-  { reportDomain: "love_connection", sourcePath: "artifacts/owner-author-love-connection-2026-owner-v1.md" },
-  { reportDomain: "personal_health", sourcePath: "artifacts/owner-author-personal-health-2026-owner-v1.md" }
+  { reportDomain: "general", sourcePath: "private:report/general-2026" },
+  { reportDomain: "work_money", sourcePath: "private:report/work-money-2026" },
+  { reportDomain: "love_connection", sourcePath: "private:report/love-connection-2026" },
+  { reportDomain: "personal_health", sourcePath: "private:report/personal-health-2026" }
 ];
 
 function sha256(value: string) {
@@ -69,7 +70,7 @@ function eligibleParagraphs(section: string) {
 }
 
 function corpusForSource(source: { reportDomain: ReportDomain; sourcePath: string }) {
-  const text = fs.readFileSync(path.join(process.cwd(), source.sourcePath), "utf8");
+  const text = readPrivateReportDocument(source.sourcePath);
   const sourceSha256 = sha256(text);
   const sections = text.split(/(?=^## )/gmu).filter((section) => /^## /u.test(section));
   return sections.flatMap((section, sectionIndex) => {

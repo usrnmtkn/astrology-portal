@@ -1,0 +1,21 @@
+name: Project privacy
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  project-privacy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Check tracked files without logging personal values
+        env:
+          PROJECT_PRIVACY_POLICY: ${{ secrets.PROJECT_PRIVACY_POLICY }}
+        run: node scripts/check-project-privacy.mjs
+      - run: node scripts/test-project-privacy.mjs

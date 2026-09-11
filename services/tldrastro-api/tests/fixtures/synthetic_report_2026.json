@@ -1,0 +1,33 @@
+{
+  "natalSubject": {
+    "name": "Synthetic Test Subject",
+    "datetime": {
+      "date": "1990-01-01",
+      "time": "12:00",
+      "timeKnown": true,
+      "timeZone": "America/New_York"
+    },
+    "location": {
+      "label": "New York, New York",
+      "latitude": 40.712749,
+      "longitude": -74.005994,
+      "timeZone": "America/New_York"
+    },
+    "settings": {
+      "houseSystem": "whole_sign",
+      "zodiac": "tropical",
+      "aspectProfile": "standard"
+    }
+  },
+  "returnLocation": {
+    "label": "New York, New York",
+    "latitude": 40.712749,
+    "longitude": -74.005994,
+    "timeZone": "America/New_York"
+  },
+  "window": {
+    "start": "2026-02-18",
+    "end": "2027-02-17",
+    "reportHorizon": "12_months"
+  }
+}

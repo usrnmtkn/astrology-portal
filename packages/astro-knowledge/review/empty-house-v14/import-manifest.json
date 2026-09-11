@@ -1,7 +1,7 @@
 {
   "schema": "tldrastro.empty-house.import.v14",
   "version": "v14-owner-approved-full-workbook-2026-08-10",
-  "source_of_truth": "source/TLDR-AR-EMPTY-HOUSES-MATRIX-V14-OWNER-APPROVED.xlsx",
+  "source_of_truth": "private:workbook/empty-houses-v14",
   "serving_projection_contract": "serving-projection-v14-projection-5.json",
   "source_sha256": "bbfdc02f6a5684d75dd7ec348e1f62d2e38f7e0487e495e50f9fa626660e4334",
   "canonical_rows": {

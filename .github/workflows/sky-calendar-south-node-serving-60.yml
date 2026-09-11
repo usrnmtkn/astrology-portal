@@ -42,3 +42,6 @@ jobs:
           node scripts/test-calendar-south-node-serving.mjs
           node scripts/test-calendar-south-node-axis-mirror.mjs
       - run: git diff --check
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
