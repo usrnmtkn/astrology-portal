@@ -5,7 +5,6 @@ import { getStudioTheme, saveStudioTheme } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalExactContentKey, transitNatalExactSourceDraft } from "./transitNatalSources";
-import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
@@ -5394,6 +5393,7 @@ export function GeneratedContentAdminDashboard() {
           sourceSnapshot: { ...previous.sourceSnapshot, ...(candidateReceipt ? { suppliedBank: candidateReceipt } : {}) }
         } : previous);
       } else {
+        const { importedSkySummary, skySummaryImportProvenance } = await import("./skySummaryImportedCopy");
         const nextDraft: AdminDraft = {
           id: null, contentKey: field.key, surface: "sky", mode: "card", status: "DRAFT",
           headline: field.label, summary: "", body: initialBody ?? (field.body || importedSkySummary(field.key) || ""), lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED",
