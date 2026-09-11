@@ -1,3 +1,8 @@
+import {
+  loadManualChartsPanel,
+  loadFriendsExperience,
+  preloadFriendsExperience
+} from "./features/friends/friendsExperienceLoader";
 import { skySummaryEventPlacements } from "./content/skySummaryEventPlacements";
 import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
@@ -10674,20 +10679,6 @@ const CalendarRoute = lazy(() =>
   }))
 );
 
-const loadManualChartsPanel = () => import("./features/friends/ManualChartsPanel");
-const loadFriendsExperience = () => Promise.all([
-  import("./routes/FriendsRoute"),
-  loadManualChartsPanel()
-]).then(([routeModule, manualChartsModule]) => {
-  const initialProfileTab = initialFriendProfileContentRequest(window.location.href);
-
-  if (initialProfileTab) {
-    manualChartsModule.preloadFriendProfileComponents(initialProfileTab);
-  }
-
-  return [routeModule, manualChartsModule] as const;
-});
-export const preloadFriendsExperience = () => loadFriendsExperience();
 
 const FriendsRoute = lazy(() =>
   loadFriendsExperience().then(([module]) => ({ default: module.FriendsRoute }))

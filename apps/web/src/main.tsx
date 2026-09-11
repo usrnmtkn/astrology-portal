@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { PageLoading, PageLoadBoundary } from "./components/PageLoading";
 import { shouldPreloadInitialFriendCalculationRuntime } from "./features/friends/friendCalculationReadiness";
+import { preloadFriendsExperience } from "./features/friends/friendsExperienceLoader";
 import {
   initialFriendProfileContentRequest,
   isFriendsHref,
@@ -112,12 +113,7 @@ async function startApp() {
   const friendRoutePromise = prepareFriendProfileRoute(window.location.href);
   void friendRoutePromise.then(() => {
     if (!isFriendsHref(window.location.href)) return;
-    // Reuse App's loader as soon as its module is ready, before publication
-    // setup and React's first render. Keeping one import boundary also avoids
-    // splitting App's shared helpers into extra startup chunks.
-    return appModulePromise.then(({ preloadFriendsExperience }) => (
-      preloadFriendsExperience()
-    ));
+    return preloadFriendsExperience();
   }).catch(() => { /* The mounted route owns import errors and recovery. */ });
   const readerStylesPromise = import("./styles.css");
   // These routes all need astronomy. Fetch/initialize it alongside the app

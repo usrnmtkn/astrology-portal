@@ -19,6 +19,7 @@ const profileViewSource = appSource.slice(appSource.indexOf("function ProfileVie
 const natalSkyEffectStart = appSource.indexOf("    const natalSkyRequestKey = [");
 const natalSkyEffectEnd = appSource.indexOf("\n\n  useEffect(() => {", natalSkyEffectStart);
 const natalSkyEffectSource = appSource.slice(natalSkyEffectStart, natalSkyEffectEnd);
+const friendsLoaderSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/friendsExperienceLoader.ts"), "utf8");
 const mainSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/main.tsx"), "utf8");
 const indexSource = fs.readFileSync(path.join(repoRoot, "apps/web/index.html"), "utf8");
 const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"), "utf8");
@@ -330,7 +331,7 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /const loadManualChartsPanel = \(\) => import\("\.\/features\/friends\/ManualChartsPanel"\)[\s\S]*const ManualChartsPanel = lazy\(\(\) =>/u,
+  /import \{[\s\S]*loadManualChartsPanel[\s\S]*from "\.\/features\/friends\/friendsExperienceLoader";[\s\S]*const ManualChartsPanel = lazy\(\(\) =>/u,
   "Friends orchestration must load only when its route renders."
 );
 assert.match(
@@ -853,10 +854,16 @@ assert.match(
   "The lazy signup module must retain email and provider authentication behavior."
 );
 assert.match(
-  appSource,
-  /const loadFriendsExperience = \(\) => Promise\.all\(\[\s*import\("\.\/routes\/FriendsRoute"\),\s*loadManualChartsPanel\(\)[\s\S]*const FriendsRoute = lazy\(\(\) =>\s*loadFriendsExperience\(\)/u,
-  "The Friends route and orchestration module must load in parallel instead of forming a lazy-module waterfall."
+  friendsLoaderSource,
+  /loadFriendsExperience = \(\) => Promise\.all\(\[\s*import\("\.\.\/\.\.\/routes\/FriendsRoute"\),\s*loadManualChartsPanel\(\),\s*import\("\.\/FriendsWorkspaceShell"\)/u,
+  "Friends route, controller and list shell must download in parallel behind Friends intent."
 );
+assert.match(
+  mainSource,
+  /friendRoutePromise\.then\(\(\) => \{\s*if \(!isFriendsHref\(window.location.href\)\) return;\s*return preloadFriendsExperience\(\);/u,
+  "Direct Friends navigation must preload without waiting for App evaluation."
+);
+assert.match(appSource, /loadFriendsExperience\(\)\.then\(\(\[module\]\) =>/, "React must reuse the entry point's lazy loader.");
 assert.equal(
   appSource.match(/onPointerEnter=\{preloadFriendsExperience\}/gu)?.length,
   2,

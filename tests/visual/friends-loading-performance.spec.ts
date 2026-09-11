@@ -539,3 +539,23 @@ test.describe("Friends loading performance matrix", () => {
     assertSamples(relationshipEnhancedSamples, friendsLoadingPerformanceBudgets.slowNetworkRelationshipEnhancedMs);
   });
 });
+
+
+test("direct Friends navigation fetches the list shell while App is still downloading", async ({ page }) => {
+  await preparePage(page);
+  let releaseApp!: () => void;
+  const appGate = new Promise<void>(resolve => { releaseApp = resolve; });
+  await page.route("**/assets/App-*.js", async route => {
+    await appGate;
+    await route.continue();
+  });
+  const manualRequest = page.waitForRequest(/\/assets\/ManualChartsPanel-[^/]+\.js/u);
+  const shellRequest = page.waitForRequest(/\/assets\/FriendsWorkspaceShell-[^/]+\.js/u);
+  try {
+    await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
+    await Promise.all([manualRequest, shellRequest]);
+  } finally {
+    releaseApp();
+  }
+  await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
+});
