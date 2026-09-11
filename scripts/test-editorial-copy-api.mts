@@ -20,6 +20,8 @@ try{
   {headline:'Templated article — Example (needs_review)'},
   {body:'# Example\nComplete opening.\n## Status\nneeds_review'},
   {summary:'REVIEWED · authored-content · composite'},
+  {body:'activation_condition resolves as interpretive from transit/planet-through-house.'},
+  {sections:{byMode:{feed:{summary:'CONFIRMED · internal-batch'},in_depth:{summary:'REVIEWED · internal-batch'}}}},
   {sections:{packageDraft:{body_you:'Paragraph. (Engine note: skip ruler.)'}}},
   {sections:{packageRecord:{body_they:'{{risingBlocks: generate twelve sections}}'}}}
  ]){

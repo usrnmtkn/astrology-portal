@@ -23,7 +23,11 @@ Saved corrections:
   with its actual heading. All complete prose paragraphs are retained.
 - Four specification/fill-plan documents now retain their complete original
   content in editor metadata, with an empty reader body and source-material role.
-- 4,005 fabricated workflow summaries were cleared.
+- 4,005 fabricated top-level REVIEWED workflow summaries were cleared.
+- The final expanded scan found and cleared 2,520 nested feed/in-depth workflow
+  summaries plus 54 additional top-level CONFIRMED summaries, across 1,338 rows.
+- 235 technical slot-resolution specifications now keep their instructions in
+  editor-only notes, with empty reader bodies/summaries and a source-material role.
 - 4,613 exact mirrors of package editorial notes were removed from Summary;
   their package notes remain intact.
 - Three lunation passages lost only their explicit `(Engine note: ...)`
@@ -32,7 +36,8 @@ Saved corrections:
 These categories overlap: the three lunation rows also had package-note summaries.
 The original documents, removed notes, slot descriptions and original field values
 are preserved in `source_snapshot.editorialImport`, `editorialSummaryRepair`,
-`editorialPackageSummaryRepair` or `editorialEngineNoteRepair`. Studio's existing
+`editorialPackageSummaryRepair`, `editorialNestedSummaryRepair`,
+`editorialSpecificationRepair` or `editorialEngineNoteRepair`. Studio's existing
 **Original import notes** disclosure exposes the separated import notes.
 No draft was promoted and no review/lane state changed. Exact updated-at checks
 protected article repairs; summary updates locked exact matching values and
@@ -53,7 +58,8 @@ regex detection is not a guarantee of semantic perfection.
 The owner-review importer separates the known Markdown format and keeps balanced
 slot descriptions in editor metadata. The slot-generation API reads those
 preserved descriptions. Other importers no longer invent summaries from workflow
-metadata. The package materializer preserves notes separately. Studio's single,
+metadata. The package materializer preserves notes separately. Technical slot-resolution
+imports now create source material with notes outside reader fields. Studio's single,
 bulk, nested package and personalized writes reject contaminated supplied copy;
 publishing a saved shared row checks the stored copy as well.
 

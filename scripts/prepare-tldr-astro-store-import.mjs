@@ -851,10 +851,8 @@ function slotResolutionRows(bundle) {
       status: "DRAFT",
       event_type: "slot-resolution",
       headline: `Slot resolution / ${slot}`,
-      summary: `${kind}${sourceLabel}`,
-      body: kind === "gap"
-        ? `SOURCE_GAP: ${slot} has no authored source yet.`
-        : `${slot} resolves as ${kind}${sourceLabel}${selectLabel}${hintLabel}${fallbackLabel}.`,
+      summary: "",
+      body: "",
       sections: {
         slot,
         kind,
@@ -873,6 +871,11 @@ function slotResolutionRows(bundle) {
       knowledge_ids: [`slot-resolution/${slot}`],
       source_snapshot: {
         contentType: "slot-resolution",
+        content_role: "source_material",
+        serving: false,
+        importSummary: kind === "gap"
+        ? `SOURCE_GAP: ${slot} has no authored source yet.`
+        : `${slot} resolves as ${kind}${sourceLabel}${selectLabel}${hintLabel}${fallbackLabel}.`,
         category: kind,
         slot,
         templateIds,
