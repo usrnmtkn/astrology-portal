@@ -86,6 +86,35 @@ test("Calendar Day waits for full event facts before selecting the Week's Moon p
   await expect(day.locator("p")).toHaveText(expectedBody);
 });
 
+for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${leaveCalendar ? "does not reopen after leaving" : "opens after the Sky calculation loads"}`, async ({ page }) => {
+  test.setTimeout(60_000);
+  const { getLunarCalendarWeek } = await import("../../apps/web/src/services/ephemeris");
+  const location = { label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
+  const calendar = await getLunarCalendarWeek(location, new Date("2026-09-10T12:00:00Z"), { detail: "full" });
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.addInitScript(location => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location)), location);
+  await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar } }));
+  await page.route(/\/assets\/skyCalculation\.worker-.*\.js$/, async route => {
+    await held;
+    await route.continue().catch(() => {});
+  });
+  try {
+    await page.goto("/#calendar?view=day&date=2026-09-10");
+    await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
+    await expect(page.locator(".sky-detail-article")).toHaveCount(0);
+    if (leaveCalendar) await page.getByRole("button", { name: "Sky", exact: true }).first().click();
+  } finally { release(); }
+  if (leaveCalendar) {
+    await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator(".sky-detail-article")).toHaveCount(0);
+    return;
+  }
+  await expect(page.locator(".sky-detail-article h1")).toContainText("Venus in Scorpio", { timeout: 30_000 });
+  const venus = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-pluto.json", "utf8"));
+  await expect(page.locator(".sky-detail-article")).toContainText(venus.readerCopy.body);
+});
+
 for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored Moon content before choosing copy`, async ({ page }) => {
   test.setTimeout(60_000);
   const key = "authored/calendar-weekly-moon/aries/variant-2";
