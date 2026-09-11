@@ -1,3 +1,4 @@
+import { passageSources, passageSource } from "./passageSources.mjs";
 import { isEligibleTransitReturn } from "./transitReturns.mjs";
 import { assertPublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 // TLDR Astro transit + synastry resolver — browser/TypeScript build (v1)
@@ -305,6 +306,8 @@ export interface TransitRenderResult {
   templateKey: string;
   contentKey?: string;
   sourceKeys?: string[];
+  paragraphSources?: { text: string; sources: { contentKey: string; field: string; audience: string }[] }[];
+  headlineSources?: { contentKey: string; field: string; audience: string }[];
   phaseSignSpecificity?: "exact-reviewed" | "sign-derived";
   window?: string | null;
   tagline?: string | null;
@@ -1052,6 +1055,7 @@ export function createTransitSynastryRenderer(
         : fillKeep(c.body_they ?? friendVoiceFromReaderCopy(readerBody, voice), { Name: voice });
       aBody = aBody.replace(/\{\{aspectWord\}\}/g, AW[aspect] ?? aspect);
       aBody = untilDate ? aBody.replace(/\{\{untilDate\}\}/g, untilDate) : aBody.replace(/ until \{\{untilDate\}\}/g, "");
+      const contributions = [{ text: aBody, keys: [c.contentKey], start: 0 }];
       // Aspect-gated inserts (owner 2026-07-28): exact-aspect-only paragraphs appended to
       // the matching card (e.g. the solar-return note on the Sun-Sun conjunction).
       const gatedInsert = card(`authored/transit-aspect-insert/${transiting}/${natal}/${aspect}`);
@@ -1060,7 +1064,7 @@ export function createTransitSynastryRenderer(
         const insBody = v === "you"
           ? readerInsert
           : gatedInsert.body_they ?? (readerInsert ? friendVoiceFromReaderCopy(readerInsert, voice) : null);
-        if (insBody) aBody = `${aBody}\n\n${insBody}`;
+        if (insBody) { contributions.push({ text: insBody, keys: [gatedInsert.contentKey], start: aBody.length }); aBody = `${aBody}\n\n${insBody}`; }
       }
       // Fog-decision note (owner 2026-07-28): rotates one of four variants under Neptune pressure cards.
       if (transiting === "neptune" && (g === "hard" || g === "conjunction")) {
@@ -1070,14 +1074,14 @@ export function createTransitSynastryRenderer(
         const fogNote = v === "you"
           ? fogRow?.body_you
           : fogRow?.body_they ?? (fogRow?.body_you ? friendVoiceFromReaderCopy(fogRow.body_you, voice) : null);
-        if (fogNote) aBody = `${aBody}\n\n${fogNote}`;
+        if (fogNote) { contributions.push({ text: fogNote, keys: [fogRow.contentKey], start: aBody.length }); aBody = `${aBody}\n\n${fogNote}`; }
       }
       const authoredHeadline = v === "you"
         ? (c.headline || "")
         : `${title(transiting)} ${aspect} ${voice}'s ${title(natal)}`;
       const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
-      if (passHook) aBody = `${aBody}\n\n${passHook}`;
-      return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier(c) ?? undefined };
+      if (passHook) { contributions.push({ text: passHook, keys: [`fallback-hook/transit-pass/${pass}`], start: aBody.length }); aBody = `${aBody}\n\n${passHook}`; }
+      return { ...passageSources(aBody, contributions, (key: string) => passageSource(card(key) ?? hooks.get(key), v), v === "you" && c.headline ? [passageSource(c, v, "headline")] : []), headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier(c) ?? undefined };
     }
   }
     // fallback template
@@ -1156,17 +1160,34 @@ export function createTransitSynastryRenderer(
       sourceKeys = effectSources;
     } else {
       body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
-      sourceKeys = [T.contentKey];
+      const templateBody = v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body);
+      const natalCoreKey = firstHookKey([`fallback-hook/natal-core/${natal}`]) ?? `fallback-vocab/planet-core/${natal}`;
+      const typeSources = [firstHookKey([...(ANGLES.has(natal) ? [`fallback-hook/transit-aspect-type/${aspect}/angle`] : []), `fallback-hook/transit-aspect-type/${aspect}`]),
+        ...(typeLineRaw?.includes("{{transitEffect}}") ? effectSources : []), ...(typeLineRaw?.includes("{{natalArea}}") ? [natalAreaKey] : [])];
+      const slotSources = {
+        aspectAdj: [`fallback-vocab/aspect-adj/${aspect}`],
+        transitTopic: [`fallback-vocab/planet-topic/${transiting}`],
+        natalCore: [natalCoreKey],
+        aspectVerb: [`fallback-vocab/aspect-verb/${aspect}`, `fallback-vocab/planet-topic/${transiting}`, natalCoreKey],
+        transitTypeLine: typeSources,
+        transitEffectLine: effectSources
+      };
+      sourceKeys = [T.contentKey, ...Object.entries(slotSources).filter(([slot]) => templateBody?.includes(`{{${slot}}}`)).flatMap(([, keys]) => keys)];
     }
     body = body.charAt(0).toUpperCase() + body.slice(1);
+    const sourceFor = (key: string) => {
+      const row = hooks.get(key) ?? vocab.get(key) ?? (key === T.contentKey ? T : null);
+      return passageSource(row, v, vocab.has(key) ? "body" : key === T.contentKey ? (v === "you" && T.body_you != null ? "body_you" : v === "they" && T.body_they != null ? "body_they" : "body") : undefined);
+    };
+    const contributions = [{ text: body, keys: sourceKeys.filter((key) => Boolean(key)), start: 0 }];
     // retrograde contacts repeat; say so (fallback path only, authored cards stay verbatim)
     if (isRetrograde && v === "you") {
       const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
-      if (retroLine) { body = `${body} ${fill(retroLine, ctx)}`; sourceKeys.push("fallback-hook/transit-retro-aspect"); }
+      if (retroLine) { const text = fill(retroLine, ctx); contributions.push({ text, keys: ["fallback-hook/transit-retro-aspect"], start: body.length }); body = `${body} ${text}`; }
     }
     const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
-    if (passHook) { body = `${body}\n\n${passHook}`; sourceKeys.push(`fallback-hook/transit-pass/${pass}`); }
-    return { headline: fill(((v === "you" ? T.headline : ((T as { headline_they?: string }).headline_they ?? T.headline))) ?? "", ctx), body, parts: [body], templateKey: T.contentKey, sourceKeys: [...new Set(sourceKeys.filter((key): key is string => Boolean(key)))] };
+    if (passHook) { contributions.push({ text: passHook, keys: [`fallback-hook/transit-pass/${pass}`], start: body.length }); body = `${body}\n\n${passHook}`; }
+    return { headline: fill(((v === "you" ? T.headline : ((T as { headline_they?: string }).headline_they ?? T.headline))) ?? "", ctx), body, parts: [body], templateKey: T.contentKey, ...passageSources(body, contributions, sourceFor, [passageSource(T, v, v === "they" && T.headline_they != null ? "headline_they" : "headline")]) };
   }
 
   // Retrograde season card: what this planet's retrograde means and what to do with it.
@@ -1212,7 +1233,7 @@ export function createTransitSynastryRenderer(
   function renderTransitReturn({ planet }: { planet: string }): TransitRenderResult {
     const c = card(`authored/transit-return/${planet}`);
     if (!c) throw new SourceGapError(`SOURCE_GAP: no return card for ${planet}`);
-    return result(c, "authored/transit-return");
+    return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, "you", "body")) };
   }
 
   function renderCompat({ planet, signA, signB, otherName }: CompatFacts): TransitRenderResult {

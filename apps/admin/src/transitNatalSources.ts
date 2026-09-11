@@ -64,7 +64,14 @@ export type TransitNatalHouse = typeof transitNatalHouses[number];
 export type TransitNatalAspect = typeof transitNatalAspects[number];
 export type TransitNatalPoint = typeof transitNatalPoints[number];
 
-export type TransitNatalSelection = {
+export type TransitNatalReadingContext = {
+  pass?: number;
+  variant?: number;
+  isRetrograde?: boolean;
+  window?: string;
+};
+
+export type TransitNatalSelection = TransitNatalReadingContext & {
   planet: TransitNatalPlanet;
   sign: TransitNatalSign;
   transitHouse: TransitNatalHouse;
@@ -73,11 +80,17 @@ export type TransitNatalSelection = {
   natalHouse: TransitNatalHouse;
 };
 
+export type TransitPassageSource = {
+  contentKey: string; field: string; audience: string;
+  publication?: { origin: "package" | "published"; packageVersion: string; revision?: number; rowId?: string; rowUpdatedAt?: string };
+};
+export type TransitPassageParagraph = { text: string; sources: TransitPassageSource[] };
+
 type TransitPreviewRenderer = {
-  renderTransitAspect: (facts: { transiting: string; natal: string; aspect: string; sign: string; voice: string }) => TransitPreviewResult;
+  renderTransitAspect: (facts: TransitNatalReadingContext & { transiting: string; natal: string; aspect: string; sign: string; voice: string }) => TransitPreviewResult;
   renderTransitReturn: (facts: { planet: string }) => TransitPreviewResult;
 };
-type TransitPreviewResult = { headline: string; parts: string[]; templateKey: string; contentKey?: string; sourceKeys?: string[] };
+type TransitPreviewResult = { headline: string; parts: string[]; templateKey: string; contentKey?: string; sourceKeys?: string[]; paragraphSources?: TransitPassageParagraph[]; headlineSources?: TransitPassageSource[] };
 
 export function transitNatalLabel(selection: Pick<TransitNatalSelection, "planet" | "aspect" | "natalPoint">) {
   const title = (value: string) => value.split("-").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
@@ -85,13 +98,18 @@ export function transitNatalLabel(selection: Pick<TransitNatalSelection, "planet
 }
 
 /** Preview selection is delegated to the shipped reader resolver, never assembled in Studio. */
-export function renderTransitNatalPreview(selection: Pick<TransitNatalSelection, "planet" | "sign" | "aspect" | "natalPoint">, renderer: TransitPreviewRenderer, voice = "you") {
+export function renderTransitNatalPreview(selection: TransitNatalReadingContext & Pick<TransitNatalSelection, "planet" | "sign" | "aspect" | "natalPoint">, renderer: TransitPreviewRenderer, voice = "you") {
   const rendered = isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect)
     ? renderer.renderTransitReturn({ planet: selection.planet })
-    : renderer.renderTransitAspect({ transiting: selection.planet, natal: selection.natalPoint, aspect: selection.aspect, sign: selection.sign, voice });
+    : renderer.renderTransitAspect({ transiting: selection.planet, natal: selection.natalPoint, aspect: selection.aspect, sign: selection.sign, voice, pass: selection.pass, variant: selection.variant, isRetrograde: selection.isRetrograde, window: selection.window });
   const body = fullDetailReaderFacingCopy(rendered.parts);
   if (!body || !isReaderFacingCopy(body)) throw new Error("No reader-eligible passage is available for this selection.");
+  const paragraphs = rendered.paragraphSources;
+  if (!paragraphs?.length || paragraphs.map(part => part.text).join("\n\n") !== body
+    || paragraphs.some(part => !part.sources.length)) throw new Error("The reading's source links could not be verified.");
   return {
+    paragraphs,
+    headlineSources: rendered.headlineSources ?? [],
     headline: rendered.headline || transitNatalLabel(selection),
     body,
     sourceKeys: [...new Set((rendered.sourceKeys?.length ? rendered.sourceKeys : [rendered.contentKey ?? rendered.templateKey]))]

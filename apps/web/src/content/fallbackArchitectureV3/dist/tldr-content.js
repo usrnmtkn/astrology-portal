@@ -872,6 +872,33 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/passageSources.mjs
+function passageSources(body, contributions, sourceFor, headlineSources = []) {
+  const ranges = contributions.map(({ text: text2, keys, start = 0 }) => {
+    const from = body.indexOf(text2, start);
+    if (from < 0) throw new Error("Passage source receipt does not match the rendered text.");
+    return { from, to: from + text2.length, sources: keys.filter(Boolean).map(sourceFor) };
+  });
+  const unique = (sources) => [...new Map(sources.map((source) => [`${source.contentKey}:${source.field}`, source])).values()];
+  let offset = 0;
+  const paragraphs = body.split(/\n\n+/u).map((text2) => {
+    const start = body.indexOf(text2, offset);
+    const end = start + text2.length;
+    offset = end;
+    return { text: text2, sources: unique(ranges.filter((range) => range.from < end && range.to > start).flatMap((range) => range.sources)) };
+  });
+  return {
+    paragraphSources: paragraphs,
+    sourceKeys: [...new Set(paragraphs.flatMap((paragraph) => paragraph.sources.map((source) => source.contentKey)))],
+    headlineSources
+  };
+}
+function passageSource(row, audience = "you", field) {
+  if (!row) throw new Error("Passage source receipt refers to an unavailable source.");
+  const selected = field ?? (audience === "they" && row.body_they != null ? "body_they" : row.body_you != null ? "body_you" : "body");
+  return { contentKey: row.contentKey, field: selected, audience };
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/transitReturns.mjs
 var eligibleTransitReturnBodies = /* @__PURE__ */ new Set([
   "sun",
@@ -1761,29 +1788,39 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
         let aBody = v === "you" ? readerBody : fillKeep(c.body_they ?? friendVoiceFromReaderCopy(readerBody, voice), { Name: voice });
         aBody = aBody.replace(/\{\{aspectWord\}\}/g, AW[aspect] ?? aspect);
         aBody = untilDate ? aBody.replace(/\{\{untilDate\}\}/g, untilDate) : aBody.replace(/ until \{\{untilDate\}\}/g, "");
+        const contributions2 = [{ text: aBody, keys: [c.contentKey], start: 0 }];
         const gatedInsert = card(`authored/transit-aspect-insert/${transiting}/${natal}/${aspect}`);
         if (gatedInsert) {
           const readerInsert = gatedInsert.body_you ?? gatedInsert.body;
           const insBody = v === "you" ? readerInsert : gatedInsert.body_they ?? (readerInsert ? friendVoiceFromReaderCopy(readerInsert, voice) : null);
-          if (insBody) aBody = `${aBody}
+          if (insBody) {
+            contributions2.push({ text: insBody, keys: [gatedInsert.contentKey], start: aBody.length });
+            aBody = `${aBody}
 
 ${insBody}`;
+          }
         }
         if (transiting === "neptune" && (g === "hard" || g === "conjunction")) {
           const NAT = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "midheaven", "ascendant"];
           const fnIdx = ((NAT.indexOf(natal) + (variant ?? 0)) % 4 + 4) % 4 + 1;
           const fogRow = hooks.get(`fallback-hook/fog-note/variant-${fnIdx}`);
           const fogNote = v === "you" ? fogRow?.body_you : fogRow?.body_they ?? (fogRow?.body_you ? friendVoiceFromReaderCopy(fogRow.body_you, voice) : null);
-          if (fogNote) aBody = `${aBody}
+          if (fogNote) {
+            contributions2.push({ text: fogNote, keys: [fogRow.contentKey], start: aBody.length });
+            aBody = `${aBody}
 
 ${fogNote}`;
+          }
         }
         const authoredHeadline = v === "you" ? c.headline || "" : `${title4(transiting)} ${aspect} ${voice}'s ${title4(natal)}`;
         const passHook2 = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
-        if (passHook2) aBody = `${aBody}
+        if (passHook2) {
+          contributions2.push({ text: passHook2, keys: [`fallback-hook/transit-pass/${pass}`], start: aBody.length });
+          aBody = `${aBody}
 
 ${passHook2}`;
-        return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier(c) ?? void 0 };
+        }
+        return { ...passageSources(aBody, contributions2, (key) => passageSource(card(key) ?? hooks.get(key), v), v === "you" && c.headline ? [passageSource(c, v, "headline")] : []), headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier(c) ?? void 0 };
       }
     }
     const T = tpl("fallback-template/transit.aspect");
@@ -1847,24 +1884,45 @@ ${passHook2}`;
       sourceKeys = effectSources;
     } else {
       body = fill(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
-      sourceKeys = [T.contentKey];
+      const templateBody = v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body;
+      const natalCoreKey = firstHookKey([`fallback-hook/natal-core/${natal}`]) ?? `fallback-vocab/planet-core/${natal}`;
+      const typeSources = [
+        firstHookKey([...ANGLES.has(natal) ? [`fallback-hook/transit-aspect-type/${aspect}/angle`] : [], `fallback-hook/transit-aspect-type/${aspect}`]),
+        ...typeLineRaw?.includes("{{transitEffect}}") ? effectSources : [],
+        ...typeLineRaw?.includes("{{natalArea}}") ? [natalAreaKey] : []
+      ];
+      const slotSources = {
+        aspectAdj: [`fallback-vocab/aspect-adj/${aspect}`],
+        transitTopic: [`fallback-vocab/planet-topic/${transiting}`],
+        natalCore: [natalCoreKey],
+        aspectVerb: [`fallback-vocab/aspect-verb/${aspect}`, `fallback-vocab/planet-topic/${transiting}`, natalCoreKey],
+        transitTypeLine: typeSources,
+        transitEffectLine: effectSources
+      };
+      sourceKeys = [T.contentKey, ...Object.entries(slotSources).filter(([slot]) => templateBody?.includes(`{{${slot}}}`)).flatMap(([, keys]) => keys)];
     }
     body = body.charAt(0).toUpperCase() + body.slice(1);
+    const sourceFor = (key) => {
+      const row = hooks.get(key) ?? vocab.get(key) ?? (key === T.contentKey ? T : null);
+      return passageSource(row, v, vocab.has(key) ? "body" : key === T.contentKey ? v === "you" && T.body_you != null ? "body_you" : v === "they" && T.body_they != null ? "body_they" : "body" : void 0);
+    };
+    const contributions = [{ text: body, keys: sourceKeys.filter((key) => Boolean(key)), start: 0 }];
     if (isRetrograde && v === "you") {
       const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
       if (retroLine) {
-        body = `${body} ${fill(retroLine, ctx)}`;
-        sourceKeys.push("fallback-hook/transit-retro-aspect");
+        const text2 = fill(retroLine, ctx);
+        contributions.push({ text: text2, keys: ["fallback-hook/transit-retro-aspect"], start: body.length });
+        body = `${body} ${text2}`;
       }
     }
     const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
     if (passHook) {
+      contributions.push({ text: passHook, keys: [`fallback-hook/transit-pass/${pass}`], start: body.length });
       body = `${body}
 
 ${passHook}`;
-      sourceKeys.push(`fallback-hook/transit-pass/${pass}`);
     }
-    return { headline: fill((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey, sourceKeys: [...new Set(sourceKeys.filter((key) => Boolean(key)))] };
+    return { headline: fill((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey, ...passageSources(body, contributions, sourceFor, [passageSource(T, v, v === "they" && T.headline_they != null ? "headline_they" : "headline")]) };
   }
   function renderTransitRetro({ planet, sign, window: win, format }) {
     if (format === "article") {
@@ -1903,7 +1961,7 @@ ${passHook}`;
   function renderTransitReturn({ planet }) {
     const c = card(`authored/transit-return/${planet}`);
     if (!c) throw new SourceGapError(`SOURCE_GAP: no return card for ${planet}`);
-    return result(c, "authored/transit-return");
+    return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, "you", "body")) };
   }
   function renderCompat({ planet, signA, signB, otherName }) {
     const sub = (s) => s.replace(/\{\{other_name\}\}/g, otherName);
@@ -5642,7 +5700,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-11a";
+var PACKAGE_VERSION = "v3-2026-09-11b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

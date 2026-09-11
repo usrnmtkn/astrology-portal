@@ -176,6 +176,8 @@ import "./admin-content-studio-ux-compat.css";
 import "./admin-content-studio-layout.css";
 
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
+const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
+const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
 const ReviewWorkflowPanel = lazy(() => import("./ReviewWorkflowPanel"));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
@@ -2821,6 +2823,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyWriteupDestinationFilter, setSkyWriteupDestinationFilter] = useState<ContentDestinationFilter>("all");
   const [skyWriteupSort, setSkyWriteupSort] = useState<ContentPlacementSort>("updated-desc");
   const [skyWriteupWorkspaceView, setSkyWriteupWorkspaceView] = useState<SkyWriteupWorkspaceView>("catalog");
+  const [transitReadingContext, setTransitReadingContext] = useState<import("./transitNatalSources").TransitNatalReadingContext>({});
   const [transitNatalPlanet, setTransitNatalPlanet] = useState<TransitNatalPlanet | "">("");
   const [transitNatalSign, setTransitNatalSign] = useState<TransitNatalSign | "">("");
   const [transitNatalTransitHouse, setTransitNatalTransitHouse] = useState<TransitNatalHouse | "">("");
@@ -2875,6 +2878,7 @@ export function GeneratedContentAdminDashboard() {
   const acceptedHashRef = useRef(window.location.hash || "#review-queue");
   const routeNavigationGuardRef = useRef<() => boolean>(() => true);
   const guidedReviewOpenedRef = useRef("");
+  const sourceOpenRequestRef = useRef(0);
   const editorRef = useRef<HTMLElement | null>(null);
   const editorReturnFocusRef = useRef<HTMLElement | null>(null);
   const [editorSaveError, setEditorSaveError] = useState("");
@@ -3725,6 +3729,12 @@ export function GeneratedContentAdminDashboard() {
           ? "house-transits"
           : "catalog"
     );
+    setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
+      ...(params.get("pass") ? { pass: Number(params.get("pass")) } : {}),
+      ...(params.get("variant") ? { variant: Number(params.get("variant")) } : {}),
+      ...(params.has("retrograde") ? { isRetrograde: params.get("retrograde") === "true" } : {}),
+      ...(params.get("window") ? { window: params.get("window")! } : {})
+    } : {});
     setTransitNatalPlanet(page === "skyWriteups" && transitPlanet && transitNatalPlanets.includes(transitPlanet) ? transitPlanet : "");
     setTransitNatalSign(page === "skyWriteups" && transitSign && transitNatalSigns.includes(transitSign) ? transitSign : "");
     setTransitNatalTransitHouse(page === "skyWriteups" && transitHouse && transitNatalHouses.includes(transitHouse) ? transitHouse : "");
@@ -4922,25 +4932,31 @@ export function GeneratedContentAdminDashboard() {
     return true;
   }
 
-  async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false) {
+  async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false, fieldPath?: string) {
+    const originatingHash = window.location.hash;
+    const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
     try {
-      const existing = rows.find((row) => row.content_key === contentKey);
-      const row = existing ?? (await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1`,
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
+        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1${fieldPath ? "&includePackageSource=true" : ""}`,
         secret
-      )).rows?.find((candidate) => candidate.content_key === contentKey);
+      );
+      if (!Array.isArray(payload.rows) || payload.rows.some(candidate => candidate.content_key !== contentKey)) throw new Error("The selected source could not be verified.");
+      const row = payload.rows.find(candidate => candidate.content_key === contentKey);
+      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+      if (!row && payload.packageSource) { await openPackagedTransitSource(payload.packageSource, contentKey, fieldPath); return; }
       if (!row) throw new Error(`${label} is not materialized in Content Studio (${contentKey}).`);
-      if (!existing) setRows((current) => [row, ...current]);
-      if (!await openRow(row)) return;
+      setRows((current) => [row, ...current.filter(candidate => candidate.id !== row.id)]);
+      if (!await openRow(row, null, fieldPath)) return;
       if (openTemplatePreview) setTemplateVariableReferenceOpen(true);
       setMessage(openTemplatePreview
         ? `Opened the assembled reader preview for ${label}. Colored sections link to their atomic sources.`
         : `Opened ${label}. The source card explains which other reader pages use this writing.`);
     } catch (error) {
+      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       setMessage(error instanceof Error ? error.message : `Could not open ${label}.`);
     } finally {
-      setIsLoading(false);
+      if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
     }
   }
 
@@ -7151,6 +7167,10 @@ export function GeneratedContentAdminDashboard() {
     if (natalPoint) params.set("natal", natalPoint);
     if (natalHouse) params.set("natalHouse", natalHouse);
     if (friendsTransitAudience) params.set("audience", "friends");
+    if (transitReadingContext.pass !== undefined) params.set("pass", String(transitReadingContext.pass));
+    if (transitReadingContext.variant !== undefined) params.set("variant", String(transitReadingContext.variant));
+    if (transitReadingContext.isRetrograde !== undefined) params.set("retrograde", String(transitReadingContext.isRetrograde));
+    if (transitReadingContext.window) params.set("window", transitReadingContext.window);
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
   }
 
@@ -7183,16 +7203,35 @@ export function GeneratedContentAdminDashboard() {
     setMessage(`Opened ${label}. Saving creates the editable Content Studio row; it does not publish unreviewed wording.`);
   }
 
+  async function openPackagedTransitSource(source: Record<string, unknown>, contentKey: string, fieldPath?: string) {
+    const originatingHash = window.location.hash;
+    const requestId = sourceOpenRequestRef.current;
+    const { transitNatalPackagedSourceDraft } = await import("./transitNatalPackagedSource");
+    if (requestId !== sourceOpenRequestRef.current || originatingHash !== window.location.hash) return;
+    const packagedDraft = transitNatalPackagedSourceDraft(source, contentKey);
+    if (!confirmSkyEditorNavigation()) return;
+    setSelectedRowId(null);
+    setCompositionEditorContext(null);
+    setDraft(packagedDraft);
+    setMessage("Opened the complete packaged source as a draft. Saving does not publish changes.");
+    scrollEditorToTop(fieldPath);
+  }
+
   async function openExactTransitNatalSource(selection: TransitNatalSelection) {
     const key = transitNatalExactContentKey(selection);
     if (!key) return;
+    const originatingHash = window.location.hash;
+    const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
     try {
       // Fetch before creating: a saved draft or publication must never be replaced by a blank starter.
-      const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1`, secret);
-      const row = payload.rows?.find(candidate => candidate.content_key === key);
+      const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
+        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1&includePackageSource=true`, secret);
+      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+      if (!Array.isArray(payload.rows) || payload.rows.some(candidate => candidate.content_key !== key)) throw new Error("The exact passage could not be verified.");
+      const row = payload.rows.find(candidate => candidate.content_key === key);
       if (row) { await openRow(row); return; }
+      if (payload.packageSource) { await openPackagedTransitSource(payload.packageSource, key); return; }
       if (!confirmSkyEditorNavigation()) return;
       setSelectedRowId(null);
       setCompositionEditorContext(null);
@@ -7200,8 +7239,19 @@ export function GeneratedContentAdminDashboard() {
       setMessage("No exact passage is saved for this combination. This is a new blank draft. To change the current reading, close this draft and use Edit selected source beneath the reader preview.");
       scrollEditorToTop();
     } catch (error) {
+      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       setMessage(error instanceof Error ? error.message : "Could not open the exact transit passage.");
-    } finally { setIsLoading(false); }
+    } finally { if (requestId === sourceOpenRequestRef.current) setIsLoading(false); }
+  }
+
+  function updateTransitReadingContext(next: Partial<import("./transitNatalSources").TransitNatalReadingContext>) {
+    const context = { ...transitReadingContext, ...next };
+    setTransitReadingContext(context);
+    const params = new URLSearchParams(window.location.hash.split("?")[1] ?? "");
+    for (const [field, param] of [["pass", "pass"], ["variant", "variant"], ["isRetrograde", "retrograde"], ["window", "window"]] as const) {
+      if (context[field] === undefined) params.delete(param); else params.set(param, String(context[field]));
+    }
+    setAdminHash(adminHashForPage("skyWriteups", params), "replace");
   }
 
   function renderTransitNatalSourceFinder() {
@@ -7214,6 +7264,7 @@ export function GeneratedContentAdminDashboard() {
       && transitNatalNatalHouse
     );
     const selection = selectionComplete ? {
+      ...transitReadingContext,
       planet: transitNatalPlanet,
       sign: transitNatalSign,
       transitHouse: transitNatalTransitHouse,
@@ -7281,10 +7332,13 @@ export function GeneratedContentAdminDashboard() {
           </label>
         </div>
 
+        <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
+
         {!selection && <p className="admin-natal-placement-prompt">Choose all six values to preview the write-up and open its exact source rows.</p>}
-        {selection && <Suspense fallback={<p role="status">Loading reader preview…</p>}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"))} /></Suspense>}
+        {selection && <Suspense fallback={<p role="status">Loading reader preview…</p>}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
         {selection && <p className="admin-field-hint">Edit selected source changes the writing shown above. A new exact passage replaces fallback writing only after you write, review, and publish it. Signs and houses are calculated separately.</p>}
-        {selection && transitNatalExactContentKey(selection) && <button type="button" disabled={isLoading} onClick={() => void openExactTransitNatalSource(selection)}>{rows.some(row => row.content_key === transitNatalExactContentKey(selection)) ? "Edit exact passage" : "Write a new exact passage"}</button>}
+        {selection && transitNatalExactContentKey(selection) && <Suspense fallback={<p role="status">Checking the exact passage…</p>}><TransitNatalExactSourceAction
+          contentKey={transitNatalExactContentKey(selection)!} secret={secret} disabled={isLoading} onOpen={() => void openExactTransitNatalSource(selection)} /></Suspense>}
       </section>
     );
   }
@@ -8787,6 +8841,8 @@ export function GeneratedContentAdminDashboard() {
               : currentDraft.headline.trim()
                 ? `Edit ${currentDraft.headline.trim()}`
                 : `Edit ${titleFromKey(currentDraft.contentKey)}`
+      : currentDraft.sections?.packageOriginalRecord
+        ? `Edit ${currentDraft.headline || "packaged source"}`
       : isVocabularyDraft
         ? "Create reusable phrase"
         : isArticleDraft
@@ -8969,7 +9025,7 @@ export function GeneratedContentAdminDashboard() {
           {hasTransitTemplatePreviewContext && (
             <div className="admin-editor-guidance" aria-label="Selected transit context">
               <p>Selected transit: {titleFromKey(transitNatalPlanet)} in {titleFromKey(transitNatalSign)}{transitNatalTransitHouse ? `, ${ordinalHouse(transitNatalTransitHouse)} house` : ""}, {transitNatalAspect} natal {titleFromKey(transitNatalPoint)}{transitNatalNatalHouse ? `, ${ordinalHouse(transitNatalNatalHouse)} house` : ""}.</p>
-              <p>{isNewDraft && isAuthoredTransitAspectDraft
+              <p>{isNewDraft && isAuthoredTransitAspectDraft && !currentDraft.sections?.packageOriginalRecord
                 ? "No exact passage is saved for this combination. This is a new blank draft. To edit the current reading, close this draft and choose Edit selected source under the preview."
                 : "This source is shared by matching readings. Edit its words here; signs, houses, and dates come from the calculated chart. Variables opens a preview using the transit selected above."}</p>
             </div>
@@ -9603,7 +9659,7 @@ export function GeneratedContentAdminDashboard() {
           {showPackageBodyYou && !skyFallbackEditor && (
             <label className="admin-review-copy-editor" data-reader-audience="you">
               <span>{fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"}</span>
-              <textarea aria-label={fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"} value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
+              <textarea data-sky-field="body_you" aria-label={fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"} value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyYouHint}</small>}
               {!fallbackEditorGuidance && <small className="admin-field-hint">Used when someone reads their own natal chart in You.</small>}
             </label>
@@ -9637,6 +9693,7 @@ export function GeneratedContentAdminDashboard() {
                 </small>
               )}
               <textarea
+                data-sky-field="body_they"
                 aria-describedby={isExactNatalAspectDraft
                   ? "natal-aspect-they-name-hint"
                   : isAuthoredTransitAspectDraft ? "transit-aspect-they-name-hint" : undefined}
@@ -9657,6 +9714,7 @@ export function GeneratedContentAdminDashboard() {
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
               <textarea
                 className="admin-copy-field-body"
+                data-sky-field="body"
                 aria-label={bodyFieldLabel}
                 value={currentDraft.body}
                 onChange={(event) => isVocabularyDraft ? updateVocabularyBody(event.target.value) : updateGenericBody(event.target.value)}
@@ -10342,7 +10400,7 @@ export function GeneratedContentAdminDashboard() {
                 transitTitle: titleFromKey(transitNatalPlanet), natalTitle: titleFromKey(transitNatalPoint),
                 transitRef: `${titleFromKey(transitNatalPlanet)} in ${titleFromKey(transitNatalSign)}`,
                 aspectName: transitNatalAspect, signTitle: titleFromKey(transitNatalSign),
-                timeOpen: "Currently", timeInline: "currently", otherPoss: "{{Name}}'s"
+                timeOpen: transitReadingContext.window ?? "Currently", timeInline: transitReadingContext.window ?? "currently", otherPoss: "{{Name}}'s"
               }
             } : natalTemplatePreviewOptions}
             selectedVariableName={selectedTemplateVariableName}
