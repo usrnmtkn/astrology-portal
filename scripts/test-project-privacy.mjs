@@ -64,6 +64,26 @@ try {
   result = run(process.execPath, [fileURLToPath(new URL('./check-project-privacy-push.mjs', import.meta.url))], `refs/heads/test ${git(['rev-parse', 'HEAD'])} refs/heads/test ${'0'.repeat(40)}\n`);
   assert.notEqual(result.status, 0, 'Stale remote refs must not hide retired private ancestry.');
   assert.match(result.stderr, /retired private history/);
+  // Existing remote private paths must be removable without admitting a new
+  // private path or suppressing scans of earlier unsafe additions.
+  const deletionRepo = path.join(temporary, 'deletion-fixture');
+  fs.mkdirSync(deletionRepo);
+  const deletionGit = args => {
+    const result = spawnSync('git', args, {cwd:deletionRepo,env,encoding:'utf8'});
+    assert.equal(result.status,0,result.stderr); return result.stdout.trim();
+  };
+  deletionGit(['init','-q']); deletionGit(['config','user.name','Synthetic Tester']); deletionGit(['config','user.email','test@example.invalid']);
+  fs.writeFileSync(path.join(deletionRepo,'Example Person.txt'),'Synthetic old remote document');
+  deletionGit(['add','.']); deletionGit(['commit','-qm','Existing remote fixture']);
+  const remoteTip = deletionGit(['rev-parse','HEAD']);
+  deletionGit(['rm','Example Person.txt']); deletionGit(['commit','-qm','Remove old private path']);
+  const checkDeletion = () => spawnSync(process.execPath,[fileURLToPath(new URL('./check-project-privacy-push.mjs',import.meta.url))],{
+    cwd:deletionRepo,env,encoding:'utf8',input:`refs/heads/test ${deletionGit(['rev-parse','HEAD'])} refs/heads/test ${remoteTip}\n`
+  });
+  result=checkDeletion(); assert.equal(result.status,0,result.stderr);
+  fs.writeFileSync(path.join(deletionRepo,'Example Person.txt'),'Newly introduced private path');
+  deletionGit(['add','.']); deletionGit(['commit','-qm','Synthetic reintroduction']);
+  result=checkDeletion(); assert.notEqual(result.status,0); assert.match(result.stderr,/Private path/);
   fs.mkdirSync(path.join(temporary, 'public')); fs.writeFileSync(path.join(temporary, 'public', 'download.json'), '{"author":"Example Person"}');
   assert.equal(run(process.execPath, [scanner, '--directory', 'public']).status, 1);
   fs.writeFileSync(path.join(temporary, 'workbook.xlsx'), archive.stdout);
