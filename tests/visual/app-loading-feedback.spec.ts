@@ -7,6 +7,44 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
 });
 
+test("Calendar Day waits for full event facts before selecting the Week's Moon passage", async ({ page }) => {
+  const { getLunarCalendarWeek } = await import("../../apps/web/src/services/ephemeris");
+  const location = { label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
+  const anchor = new Date("2026-08-04T12:00:00Z");
+  const full = await getLunarCalendarWeek(location, anchor, { detail: "full" });
+  const basic = await getLunarCalendarWeek(location, anchor, { detail: "basic" });
+  let holdFull = false;
+  let waiting = false;
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.addInitScript(({ location, basic }) => {
+    localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
+    // A pre-fix Day cache must not bypass the full-facts loading requirement.
+    localStorage.setItem("tldr-lunar-calendar|v10|week|2026-08-03|40.7128|-74.0060|America/New_York",
+      JSON.stringify({ savedAt: Date.now(), calendar: basic }));
+  }, { location, basic });
+  await page.route("**/api/calendar?**", async route => {
+    const detailed = new URL(route.request().url()).searchParams.get("detail") === "full";
+    if (detailed && holdFull) { waiting = true; await held; }
+    await route.fulfill({ json: { ok: true, calendar: detailed ? full : basic } });
+  });
+  await page.goto("/#calendar?view=weekly&date=2026-08-04");
+  const weekly = page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__guidance");
+  await expect(weekly).toBeVisible({ timeout: 15_000 });
+  const expectedBody = (await weekly.innerText()).trim();
+  const expectedKey = await weekly.getAttribute("data-guidance-key");
+  holdFull = true;
+  try {
+    await page.goto("/#calendar?view=day&date=2026-08-04");
+    await expect.poll(() => waiting).toBe(true);
+    await expect(page.locator(".lunar-calendar-loading")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Moon guidance" })).toHaveCount(0);
+  } finally { release(); }
+  const day = page.getByRole("region", { name: "Moon guidance" });
+  await expect(day).toHaveAttribute("data-guidance-key", expectedKey!);
+  await expect(day.locator("p")).toHaveText(expectedBody);
+});
+
 for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored Moon content before choosing copy`, async ({ page }) => {
   test.setTimeout(60_000);
   const key = "authored/calendar-weekly-moon/aries/variant-2";
