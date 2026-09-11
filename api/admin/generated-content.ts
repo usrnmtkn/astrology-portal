@@ -1,4 +1,5 @@
 import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
+import { packagePublicationAdmissionIssue } from "../_lib/content-studio-package-admission.js";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 // @ts-ignore Shared inline-variable contract for continuous Sky placement prose.
@@ -371,6 +372,13 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
 }
 
 function validateAndApproveNatalAspectCopy(record: Record<string, unknown>, contentKey: string) {
+  if (contentKey.startsWith("fallback-hook/synastry-pair/")) {
+    if (![record.body_you, record.body_they].every(value => typeof value === "string" && value.trim())) {
+      throw new GeneratedContentRequestError("Write both directions of the synastry passage before publishing. You can save an unfinished draft for later.", 400);
+    }
+    approveNatalAspectStudioCopy(record, contentKey);
+    return;
+  }
   if (!contentKey.startsWith("fallback-hook/natal-aspect-lived/")) return;
   if (![record.body, record.body_you, record.body_they].some((value) => typeof value === "string" && value.trim())) {
     throw new GeneratedContentRequestError("Write the natal aspect passage before publishing. You can save an empty draft for later.", 400);
@@ -1067,10 +1075,12 @@ function validateWriteBody(body: Record<string, unknown>) {
   if (body.status === "LIVE" && body.reviewState) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
 }
 
-function assertReaderEligiblePublication(row: { status?: unknown; lane?: unknown; review_state?: unknown }) {
+function assertReaderEligiblePublication(row: Record<string, any>) {
   if (row.status !== "LIVE") return;
   if ((row.lane ?? "serving") !== "serving") throw new GeneratedContentRequestError("Published content must use the serving lane.", 409);
   if (row.review_state) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
+  const admissionIssue = packagePublicationAdmissionIssue(row);
+  if (admissionIssue) throw new GeneratedContentRequestError(admissionIssue, 409);
 }
 
 function adminHeaders() {
@@ -1647,6 +1657,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     ...(packageState?.readerServing ? { reviewed_at: now, published_at: now } : {})
   };
 
+  assertReaderEligiblePublication(row);
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
     method: "POST",
     headers: {
@@ -1790,6 +1801,11 @@ async function patchGeneratedContentRow(
   patch: Record<string, unknown>,
   expectedUpdatedAt?: string | null
 ) {
+  if (patch.status === "LIVE") {
+    const existing = await fetchExistingRowById(id);
+    if (!existing) throw new GeneratedContentRequestError("The source no longer exists. Reload before publishing.", 404);
+    assertReaderEligiblePublication({ ...existing, ...patch });
+  }
   const params = new URLSearchParams();
   params.set("id", `eq.${id}`);
   if (expectedUpdatedAt) params.set("updated_at", `eq.${expectedUpdatedAt}`);
@@ -1961,6 +1977,7 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
 
   // Validate the complete batch before the first storage write.
   const prepared = rows.map(generatedContentRowFromWriteBody);
+  prepared.forEach(assertReaderEligiblePublication);
   const targets = rows.map(generatedContentTargetKey);
   if (new Set(targets).size !== targets.length) throw new GeneratedContentRequestError("Each content key, target date, and mode may appear only once per batch.");
   const existingRows = await fetchExistingRowsByContentKey(rows.map(row => row.contentKey ?? ""));
@@ -2237,6 +2254,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     promotionPatch.sections = finalSections;
     promotionPatch.reviewed_at = now;
     promotionPatch.published_at = now;
+    assertReaderEligiblePublication({ ...target, ...promotionPatch });
     let revisionExpectedUpdatedAt = body.expectedUpdatedAt ?? existing.updated_at ?? null;
     if (target.id !== existing.id && body.expectedUpdatedAt) {
       const claimedAt = new Date().toISOString();

@@ -42,6 +42,7 @@ type SeedOptions = {
   aspectPatterns?: Record<string, unknown>;
   generatedInterpretations?: Array<Record<string, unknown>>;
   contentPublications?: Array<Record<string, unknown>>;
+  cachedDashboardOverlay?: Record<string, unknown>;
 };
 
 const fixtureLocation = {
@@ -197,6 +198,10 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
 
     if (shouldSeedClientState) {
       window.localStorage.clear();
+      if (options.cachedDashboardOverlay) {
+        window.localStorage.setItem("tldrastro:fallbackArchitectureV3:dashboardBundle", JSON.stringify(options.cachedDashboardOverlay));
+        window.localStorage.setItem("tldrastro:fallbackArchitectureV3:dashboardBundleVersion", String(options.cachedDashboardOverlay.dashboardVersion));
+      }
       window.localStorage.setItem("tldrastro:qaFlowSeeded", "true");
       if (options.contentPublications) window.localStorage.setItem("tldrastro:content-publications:v1", JSON.stringify(options.contentPublications));
       window.localStorage.setItem("tldrastro:theme", options.theme ?? "light");
@@ -4539,6 +4544,105 @@ for (const theme of ["light", "dark"] as const) {
       await contact.click();
       await expect(pills.locator(".ui-pill--muted")).toBeVisible();
       expect(errors).toEqual([]);
+    });
+  }
+}
+
+// Synthetic publications exercise keys absent from the shipped catalog. Run
+// these same tests against production; every content request remains isolated.
+async function seedCrossSurfacePublications(page: Page, records: Array<Record<string, any>>, options: SeedOptions) {
+  const updatedAt = "2026-09-10T20:00:00.000Z";
+  const manifest = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-manifest-summary-v3.json", "utf8"));
+  const rows = records.map((record, index) => ({
+    id: `qa-cross-surface-${index}`, content_key: record.contentKey,
+    surface: record.contentKey.includes("synastry-pair") ? "synastry" : "you",
+    mode: "in_depth", status: "LIVE", lane: "serving", review_state: null,
+    provider: "tldrastro-fallback-architecture-v3", updated_at: updatedAt,
+    body: record.body_you, facts: { content_role: "full_copy", review_status: "approved" },
+    source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", content_role: "full_copy", review_status: "approved" },
+    sections: { packageRecord: record }
+  }));
+  await seedClientState(page, { ...options, cachedDashboardOverlay: {
+    // The old reader already cached this unchanged database revision while
+    // dropping the new keys. Upgrading must fetch them without another edit.
+    schema: "fallback-architecture-v3-dashboard-overlay-cache-v6",
+    runtimeCapability: manifest.runtimeCapability, bundledPackageVersion: manifest.packageVersion,
+    dashboardVersion: Date.parse(updatedAt),
+    bundle: { transitLib: { authoredCards: [{ contentKey: "authored/transit-house-intro/sun/1", content_role: "full_copy", review_status: "approved", body: "QA previously cached source." }] }, rowsFile: { hookRows: [], vocabularyRows: [] }, templatesFile: { templates: [] } }
+  }, contentPublications: rows.map(row => ({
+    content_key: row.content_key, state: "live", revision: 100_000,
+    row_id: row.id, row_updated_at: updatedAt, updated_at: updatedAt
+  })) });
+  await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: updatedAt }));
+  await page.route("**/content-studio-last-known-good.json", route => route.fulfill({
+    json: { schema: "content-studio-last-known-good-v1", rowCount: 0, rows: [] }
+  }));
+  await page.route("**/rest/v1/generated_interpretations*", route => {
+    const params = new URL(route.request().url()).searchParams;
+    const keys = params.get("content_key");
+    const selected = params.get("provider") === "eq.tldrastro-fallback-architecture-v3"
+      ? rows : rows.filter(row => keys?.includes(row.content_key));
+    return route.fulfill({ json: selected });
+  });
+}
+
+for (const theme of ["light", "dark"] as const) {
+  for (const width of [390, 1440]) {
+    test(`new Studio exact synastry publication reaches reader ${theme} ${width}`, async ({ page }) => {
+      test.setTimeout(90_000);
+      await page.setViewportSize({ width, height: 1000 });
+      const inverse = width === 390;
+      const contentKey = "fallback-hook/synastry-pair/sun/chiron/square";
+      expect(fallbackSourceRowsV3.hookRows.some(row => row.contentKey === contentKey)).toBe(false);
+      const record = {
+        contentKey, content_role: "full_copy", review_status: "approved",
+        body_you: "QA new exact synastry opening.\n\nQA new exact synastry final sentence.",
+        body_they: "QA opposite chart holder opening.\n\nQA opposite chart holder final sentence.",
+        approval: { approvalLevel: "exact_owner_approved", recordPath: "qa://isolated-publication", payloadSha256: "a".repeat(64) }
+      };
+      await seedCrossSurfacePublications(page, [record], { profile: true, friends: true, theme,
+        preloadProfileNatalSky: true, synastryFixture: { body: "Chiron", aspect: "square", inverse } });
+      const errors = watchBrowserErrors(page);
+      await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=synastry");
+      const card = page.getByRole("button", { name: `Open full entry for Your ${inverse ? "Chiron" : "Sun"} square Sofia's ${inverse ? "Sun" : "Chiron"}`, exact: true });
+      const copy = inverse ? record.body_they : record.body_you;
+      await expect(card.locator(".synastry-contact-description")).toHaveText(copy, { timeout: 30_000 });
+      await card.click();
+      await expect(page.locator(".app-shell.mode-detail")).toContainText(copy);
+      await expectNoHorizontalOverflow(page, "new synastry publication");
+      await page.screenshot({ path: `test-results/studio-synastry-admission-${theme}-${width}.png`, fullPage: true });
+      errors();
+    });
+
+    test(`new Studio House Transit publications reach reader ${theme} ${width}`, async ({ page }) => {
+      test.setTimeout(90_000);
+      await page.setViewportSize({ width, height: 1000 });
+      const records = Array.from({ length: 12 }, (_, index) => index + 1).flatMap(house => [
+        { contentKey: `authored/transit-house-intro/uranus/${house}`, content_role: "full_copy", review_status: "approved",
+          body_you: `QA house ${house} introduction opening.\n\nQA house ${house} introduction final sentence.`,
+          body_they: `QA friend house ${house} introduction opening. QA friend introduction final sentence.` },
+        { contentKey: `authored/transit-house-sign/uranus/${house}/gemini`, content_role: "full_copy", review_status: "approved",
+          body_you: `QA house ${house} sign passage opening.\n\nQA house ${house} sign passage final sentence.`,
+          body_they: `QA friend house ${house} sign passage opening. QA friend sign passage final sentence.` }
+      ]);
+      await seedCrossSurfacePublications(page, records, { profile: true, preloadProfileNatalSky: true, theme, now: "2026-09-10T16:00:00.000Z" });
+      const errors = watchBrowserErrors(page);
+      await expectClientRouteLoads(page, "/#you");
+      const card = page.locator("button.updates-aspect-row--house").filter({ hasText: "Uranus" }).first();
+      await expect(card).toBeVisible({ timeout: 30_000 });
+      await card.click();
+      const detail = page.getByRole("region", { name: /^Uranus through your \d+(?:st|nd|rd|th) house$/ });
+      await expect(detail).toContainText(/QA house \d+ introduction opening\./, { timeout: 30_000 });
+      const text = await detail.innerText();
+      const house = text.match(/QA house (\d+) introduction opening\./)![1];
+      for (const record of records.filter(record => record.contentKey === `authored/transit-house-intro/uranus/${house}` || record.contentKey === `authored/transit-house-sign/uranus/${house}/gemini`)) {
+        for (const paragraph of record.body_you.split("\n\n")) {
+          await expect(detail.getByText(paragraph, { exact: true })).toBeVisible();
+        }
+      }
+      await expectNoHorizontalOverflow(page, "new House Transit publication");
+      await page.screenshot({ path: `test-results/studio-house-admission-${theme}-${width}.png`, fullPage: true });
+      errors();
     });
   }
 }

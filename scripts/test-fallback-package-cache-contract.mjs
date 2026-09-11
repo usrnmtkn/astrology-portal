@@ -37,7 +37,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v6"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v7"/u,
   "Core browser cache envelopes must identify the live editorial-overlay schema."
 );
 assert.match(
