@@ -7,6 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { privateSafeExport, privacyMatches } from './lib/privacy-policy.mjs';
+import { privacyBlobMatches } from './lib/privacy-blob.mjs';
 import { readPrivateReportDocument } from '../api/_lib/private-report-documents.mjs';
 
 const policy = [{ id: 'synthetic-identifier', pattern: /example\s+person/giu }];
@@ -16,6 +17,11 @@ assert.equal(safe.body, row.body);
 assert.deepEqual(privacyMatches(JSON.stringify(safe), policy), []);
 assert.equal(row.source_snapshot.author, 'Example Person');
 assert.deepEqual(privacyMatches('EXAMPLE PERSON', policy), ['synthetic-identifier']);
+const archive = spawnSync('python3', ['-c', 'import io,sys,zipfile; b=io.BytesIO(); z=zipfile.ZipFile(b,"w",zipfile.ZIP_DEFLATED); z.writestr("xl/sharedStrings.xml","<si><t>Example</t><t>Person</t></si>"); z.close(); sys.stdout.buffer.write(b.getvalue())']);
+assert.equal(archive.status, 0);
+assert.deepEqual(privacyBlobMatches(archive.stdout, policy), ['synthetic-identifier'], 'Compressed Office text, including split XML runs, must be inspected.');
+assert.deepEqual(privacyBlobMatches(Buffer.from('A synthetic clean document'), policy), []);
+assert.throws(() => privacyBlobMatches(Buffer.from('PK\x03\x04malformed'), policy), /Archive privacy inspection/);
 
 const prior = process.env.PRIVATE_REPORT_DOCUMENTS;
 try {
@@ -60,5 +66,10 @@ try {
   assert.match(result.stderr, /retired private history/);
   fs.mkdirSync(path.join(temporary, 'public')); fs.writeFileSync(path.join(temporary, 'public', 'download.json'), '{"author":"Example Person"}');
   assert.equal(run(process.execPath, [scanner, '--directory', 'public']).status, 1);
+  fs.writeFileSync(path.join(temporary, 'workbook.xlsx'), archive.stdout);
+  git(['add', 'workbook.xlsx']);
+  result = run(process.execPath, [scanner, '--staged']);
+  assert.equal(result.status, 1, 'The staged scanner must inspect compressed workbook content.');
+  assert.ok(!`${result.stdout}${result.stderr}`.includes('Example Person'));
   console.log('Privacy staged, historical push, and public-download regressions passed.');
 } finally { fs.rmSync(temporary, { recursive: true, force: true }); }

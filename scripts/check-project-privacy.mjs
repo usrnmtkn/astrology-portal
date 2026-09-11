@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { loadPrivacyPolicy, privacyMatches } from './lib/privacy-policy.mjs';
+import { privacyBlobMatches } from './lib/privacy-blob.mjs';
 
 const staged = process.argv.includes('--staged');
 const refFlag = process.argv.indexOf('--ref');
@@ -25,7 +26,7 @@ const findings = [];
 for (const file of paths) {
   if (!staged && !ref && !fs.existsSync(file)) continue;
   const body = ref ? git(['show', `${ref}:${file}`]) : staged ? git(['show', `:${file}`]) : fs.readFileSync(file);
-  const matches = [...new Set([...privacyMatches(file, policy), ...privacyMatches(body.toString('utf8'), policy)])];
+  const matches = [...new Set([...privacyMatches(file, policy), ...privacyBlobMatches(body, policy)])];
   if (/(^|\/)\.private-documents\//u.test(file) || /(^|\/)\.privacy-policy\.json$/u.test(file)) matches.push('private-storage');
   if (matches.length) {
     // Paths can themselves identify a person. Report only a stable opaque index.

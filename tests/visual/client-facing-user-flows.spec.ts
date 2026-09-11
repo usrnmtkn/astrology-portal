@@ -1254,7 +1254,7 @@ test.describe("client-facing user flow case studies", () => {
     for (const width of [430, 768, 1440]) {
       test(`article sheets share the reference spacing ${theme} ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 1000 });
-        await seedClientState(page, { profile: true, profileBirthTime: "2:00 PM", preloadProfileNatalSky: true, theme, now: "2026-07-29T16:00:00.000Z" });
+        await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "12:00 PM", preloadProfileNatalSky: true, theme, now: "2026-07-29T16:00:00.000Z" });
         for (const [name, route] of [
           ["you", "/#you/placement/sun-aquarius-9h"],
           ["sky", "/#sky/placement/sun/leo"]
@@ -3686,7 +3686,7 @@ test.describe("client-facing user flow case studies", () => {
   test("You natal placement detail preserves the complete approved house passage", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
-    await seedClientState(page, { profile: true, profileBirthTime: "2:00 PM" });
+    await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "12:00 PM" });
     await expectClientRouteLoads(page, "/#you/placement/sun-aquarius-9h");
 
     const article = page.getByRole("region", { name: "Sun in Aquarius in the 9th house" });
@@ -4261,7 +4261,7 @@ test.describe("client-facing user flow case studies", () => {
 });
 
 test("published Uranus Scorpio reader retains the complete owner passage after hydration", async ({ page }) => {
-  await seedClientState(page, { profile: true, profileBirthTime: "2:00 PM", preloadProfileNatalSky: true });
+  await seedClientState(page, { profile: true, profileBirthDate: "1980-02-01", profileBirthTime: "12:00 PM", preloadProfileNatalSky: true });
   await expectClientRouteLoads(page, "/#you/placement/uranus-scorpio-6h");
   const article = page.getByRole("region", { name: "Uranus in Scorpio in the 6th house" });
   const ownerCopy = readFileSync(path.join(process.cwd(), "docs/content-management/owner-copy/uranus-in-scorpio-2026-09-07.txt"), "utf8").trim().replace(/\s+/g, " ");

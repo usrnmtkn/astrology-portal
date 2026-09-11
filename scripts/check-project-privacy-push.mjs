@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { loadPrivacyPolicy, privacyMatches } from './lib/privacy-policy.mjs';
+import { privacyBlobMatches } from './lib/privacy-blob.mjs';
 
 // pre-push receives exact local/remote refs on stdin. Inspect every outgoing
 // commit, including an identifier added and deleted before the branch tip.
@@ -39,7 +40,8 @@ if (commits.size) {
     }
   }
   for (const oid of objects.keys()) {
-    if (privacyMatches(git(['cat-file', 'blob', oid]), policy).length) throw new Error('Private information in outgoing history.');
+    const body = execFileSync('git', ['cat-file', 'blob', oid], { maxBuffer: 128 * 1024 * 1024 });
+    if (privacyBlobMatches(body, policy).length) throw new Error('Private information in outgoing history.');
   }
 }
 console.log(`Privacy push check passed (${commits.size} outgoing commits).`);
