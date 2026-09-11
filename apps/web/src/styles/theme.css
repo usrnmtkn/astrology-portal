@@ -1443,6 +1443,7 @@
   --studio-menu-width: 320px;
   --studio-memory-panel-top: 104px;
   --studio-overlay-max-width: calc(100vw - 32px);
+  --studio-overlay-panel-height: calc(100% - 32px);
   --studio-dialog-height: calc(100dvh - 48px);
   --studio-textarea-height: 160px;
   --studio-body-field-height: 240px;

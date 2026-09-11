@@ -21,3 +21,11 @@ The first full regression run passed 224 of 228 cases. Two historical fixed-pixe
 CSS consistency, token integrity, Studio stylesheet architecture, admin TypeScript, and whitespace checks pass. The architecture audit reports 462 selectors with no duplicate rules/properties, legacy imports, inline visual styles, local tokens, or styling `!important` declarations. Historical inactive stylesheet aliases remain outside the active Studio import graph.
 
 Screenshots are in `outputs/studio-style/containers-*.png`, `access-error-*.png`, and `grid-memory-*.png`. Results use synthetic data and do not certify production content or deployed behavior.
+
+## Release integration
+
+Rebased the redesign onto main `6f8258e9`. The integrated checkout passed the full Content Studio API suite, admin/web typechecks, CSS and form typography audits, the 26-case shared-control/tab/color/container matrix, and eight actual-handler Calendar/Review Queue browser workflows. Current-main Memory feedback, transit source receipts, stale-write recovery, station controls, and deferred review panels were retained.
+
+Release checks now inspect the canonical stylesheet, accessible table rows, the selected-surface control, and top-of-page recovery banner. Retired stylesheet imports and fixed graph-overlay dimensions are no longer the expected presentation. The Sky placement composition preview uses the same three categorical color tokens in its legend and source passages.
+
+The Studio entry remains within its existing 625,000-byte raw and 178,000-byte gzip limits after deferring imported summary provenance until a new summary editor needs it (621,290 raw / 177,690 gzip). Reader startup CSS includes the new canonical theme tokens: measured 49,586 gzip bytes, with a 49,750 cap (1,500 bytes above the former cap). Memory now loads the shared deferred Studio sheet instead of its retired dedicated sheet: measured 22,595 gzip bytes, with a 22,800 cap. JavaScript, aggregate CSS, and combined reader startup caps are unchanged; the manifest check still rejects private Memory code or styles in the reader startup graph.

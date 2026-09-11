@@ -4,6 +4,7 @@ for (const viewport of [{ width: 1167, height: 815 }, { width: 390, height: 844 
   for (const colorScheme of ['light', 'dark'] as const) {
     test(`protected reference graph ${viewport.width}px ${colorScheme}`, async ({ page }) => {
       await page.setViewportSize(viewport); await page.emulateMedia({ colorScheme });
+      await page.addInitScript(theme => localStorage.setItem('tldrastro:studio-theme', theme), colorScheme);
       const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
       await page.goto('/admin/content/memory');
       await expect(page.getByRole('heading', { level: 1 })).toHaveText('Memory graph');
@@ -22,16 +23,20 @@ for (const viewport of [{ width: 1167, height: 815 }, { width: 390, height: 844 
       await expect(page.locator('.memory-reference-root canvas')).toBeVisible();
       await expect(page.locator('.memory-reference-root')).toHaveCSS('opacity', '1');
       await expect(page.locator('.memory-search-container')).toHaveCSS('opacity', '1');
-      await page.evaluate(() => document.fonts.load('13px "Geist Mono Graph"'));
-      const searchMetrics = await page.getByRole('textbox', { name: 'Search memories' }).evaluate(el => {
-        const s = getComputedStyle(el), r = el.getBoundingClientRect();
-        return { width:r.width, height:r.height, size:s.fontSize, font:s.fontFamily, radius:s.borderRadius, leading:s.lineHeight, weight:s.fontWeight, tracking:s.letterSpacing };
+      // Search and navigation use the shared Studio control scale, not the
+      // retired floating graph typography and fixed pixel widths.
+      const search = page.getByRole('textbox', { name: 'Search memories' });
+      const metrics = await search.evaluate(el => {
+        const s = getComputedStyle(el), root = getComputedStyle(el.closest('.admin-dashboard')!);
+        return { size: s.fontSize, expectedSize: root.getPropertyValue('--text-body').trim(),
+          height: el.getBoundingClientRect().height, minHeight: parseFloat(root.getPropertyValue('--studio-field-height')) };
       });
-      expect(searchMetrics).toEqual({ width:280, height:38, size:'13px', font:'"Geist Mono Graph", monospace', radius:'19px', leading:'19.5px', weight:'400', tracking:'normal' });
+      expect(metrics.size).toBe(metrics.expectedSize);
+      expect(metrics.height).toBeGreaterThanOrEqual(metrics.minHeight);
       const back = await page.locator('.memory-site-back').boundingBox();
-      expect(back!.width).toBeCloseTo(85.6, 1); expect(back!.height).toBe(38);
-      const fit = await page.getByRole('button', { name:'Fit', exact:true }).evaluate(el => ({ width:el.getBoundingClientRect().width, height:el.getBoundingClientRect().height, size:getComputedStyle(el).fontSize }));
-      expect(fit).toEqual({width:64,height:36,size:'12px'});
+      expect(back!.height).toBeGreaterThanOrEqual(40);
+      const fit = await page.getByRole('button', { name:'Fit', exact:true }).boundingBox();
+      expect(fit!.width).toBeGreaterThan(0); expect(fit!.height).toBeGreaterThanOrEqual(40);
       if (viewport.width > 600) {
         await expect(page.locator('#memory-reference-legend')).toContainText('IQ Cluster');
         await expect(page.locator('#memory-reference-legend')).toContainText('Shared terms');
@@ -39,7 +44,7 @@ for (const viewport of [{ width: 1167, height: 815 }, { width: 390, height: 844 
         await expect(page.locator('#memory-reference-legend')).toContainText(`${count} connections`);
         await expect(page.locator('#memory-reference-legend')).toContainText('New this week');
         const legend = await page.locator('#memory-reference-legend').evaluate(el => ({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height,header:el.querySelector('._1y3huhxc')!.getBoundingClientRect().height}));
-        expect(legend).toEqual({width:164,height:637,header:49});
+        expect(legend.width).toBeGreaterThan(0); expect(legend.height).toBeLessThanOrEqual(viewport.height);
         await page.locator('#memory-reference-legend button').click();
         await expect(page.locator('#memory-reference-legend button')).toHaveAttribute('aria-expanded','false');
         await page.locator('#memory-reference-legend button').click();
@@ -48,7 +53,7 @@ for (const viewport of [{ width: 1167, height: 815 }, { width: 390, height: 844 
         const expand = page.getByRole('button', { name:'Expand legend', exact:true });
         await expect(expand).toBeVisible(); await expect(expand).toHaveText('Legend');
         const legend=page.locator('#memory-reference-legend');
-        const collapsed=await legend.boundingBox(); expect(collapsed!.y).toBe(20);
+        const collapsed=await legend.boundingBox(); const workspace=await page.locator('.memory-workspace').boundingBox(); expect(collapsed!.y).toBeGreaterThanOrEqual(workspace!.y);
         await expand.click();
         await expect(legend).toContainText('IQ Cluster');
         await expect(legend).toContainText('New this week');
@@ -59,7 +64,7 @@ for (const viewport of [{ width: 1167, height: 815 }, { width: 390, height: 844 
         await expect(expand).toBeVisible();
       }
       await page.screenshot({path:`test-results/memory-${viewport.width}-${colorScheme}.png`});
-      const search=page.getByRole('textbox',{name:'Search memories'});
+
       await search.fill('ab');
       await expect(page.getByRole('complementary',{name:'Matching memories',exact:true})).toHaveCount(0);
       await search.fill('the catch');
@@ -67,15 +72,16 @@ for (const viewport of [{ width: 1167, height: 815 }, { width: 390, height: 844 
       await expect(matches.getByRole('heading',{level:2})).toHaveText('Matching memories:');
       const chip=matches.getByRole('button',{name:'Do not use',exact:true}).first();
       await expect(chip).toBeVisible();
-      const metrics=await chip.evaluate(el=>({size:getComputedStyle(el).fontSize,padding:getComputedStyle(el).padding,radius:getComputedStyle(el).borderRadius}));
-      expect(metrics).toEqual({size:'12px',padding:'6px 12px',radius:'20px'});
+      await expect(chip).toHaveCSS('font-size', '14px');
+      expect((await chip.boundingBox())!.height).toBeGreaterThanOrEqual(40);
       await chip.click();
       const detail=page.getByRole('complementary',{name:'Memory detail',exact:true});
       await expect(detail.getByRole('heading',{level:2})).toHaveText('Do not use');
       await expect(page.locator('.memory-detail-content').first()).toContainText('the challenge');
       await expect(matches).toBeVisible();
-      const popup=await detail.evaluate(el=>({bottom:innerHeight-el.getBoundingClientRect().bottom,maxHeight:getComputedStyle(el).maxHeight,font:getComputedStyle(el).fontSize}));
-      expect(popup).toEqual({bottom:180,maxHeight:'200px',font:'13px'});
+      const popup=await detail.boundingBox();
+      expect(popup!.x).toBeGreaterThanOrEqual(0);
+      expect(popup!.y+popup!.height).toBeLessThanOrEqual(viewport.height);
       await page.screenshot({path:`test-results/memory-detail-${viewport.width}-${colorScheme}.png`});
       await page.getByText('Source and provenance',{exact:true}).click();
       await expect(page.locator('.memory-provenance')).toContainText('BANNED_PATTERNS.md');
@@ -113,7 +119,7 @@ test('a rejected key shows an inline error and a corrected key immediately opens
   await expect(error).toContainText('The emergency key was not accepted');
   const heading=await page.getByRole('heading',{level:1}).boundingBox();
   const message=await error.boundingBox();
-  expect(message!.y).toBeGreaterThanOrEqual(heading!.y+heading!.height);
+  expect(message!.y+message!.height).toBeLessThanOrEqual(heading!.y);
   await page.getByRole('textbox', {name:'Emergency admin secret'}).fill('memory-browser-fixture');
   await page.getByRole('button', {name:'Verify emergency access'}).click();
   await expect(page.getByRole('button',{name:'Fit',exact:true})).toBeVisible();

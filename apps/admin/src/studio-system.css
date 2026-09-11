@@ -420,7 +420,10 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard.memory-is-open { display: grid; grid-template-columns: minmax(0,1fr); grid-template-rows: auto minmax(0,1fr); gap: var(--workspace-block-gap); padding: var(--workspace-gutter); height: 100dvh; min-height: 0; overflow: hidden; }
 #root .admin-dashboard .memory-toolbar { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,var(--studio-rail-width)); align-items: center; gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .memory-workspace { position: relative; min-height: 0; border-radius: var(--workspace-radius); overflow: hidden; background: var(--workspace-surface); }
-#root .admin-dashboard .memory-reference-root { position: absolute; inset: 0; color-scheme: dark; }
+#root .admin-dashboard .memory-reference-root { position: absolute; inset: 0; isolation: isolate; z-index: 0; color-scheme: dark; }
+/* The pinned graph renderer exposes an unused timeline/space picker. */
+#root .admin-dashboard .memory-reference-root ._14db5cp4 { display: none; }
+#root .admin-dashboard #memory-reference-legend { display: block; top: var(--workspace-panel-inset); bottom: auto; right: var(--workspace-panel-inset); max-height: var(--studio-overlay-panel-height); width: var(--graph-legend-width); overflow-y: auto; }
 #root .admin-dashboard .memory-site-back { display: inline-flex; align-items: center; justify-self: start; gap: var(--workspace-field-gap); min-height: var(--studio-button-height); padding: var(--space-2) var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line-strong); border-radius: var(--radius-pill); color: var(--workspace-primary); text-decoration: none; font-size: var(--type-ui-size); }
 #root .admin-dashboard .memory-site-back svg, #root .admin-dashboard .memory-search-icon { width: var(--studio-selection-size); height: var(--studio-selection-size); flex-shrink: 0; }
 #root .admin-dashboard .memory-search-container { display: flex; align-items: center; gap: var(--workspace-field-gap); min-height: var(--studio-field-height); padding-inline: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line-strong); border-radius: var(--studio-field-radius); background: var(--workspace-canvas); }
