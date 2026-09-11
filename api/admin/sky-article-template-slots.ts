@@ -165,7 +165,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         responseId: generation.responseId ?? null,
         generatedAt: generation.generatedAt,
         requestedSlots: generation.requestedSlots,
-        generationMetadata: generation.generation_metadata ?? null
+        generationMetadata: generation.generation_metadata ?? null,
+        memoryReceipt: generation.memoryReceipt ?? null
       }
     });
   } catch (error) {
