@@ -93,5 +93,33 @@ is changed here. Main before privacy cleanup also fails the historical Friends
 signoff checksum. These failures are recorded, not waived or re-approved.
 
 After a bot-generated commit, rerun the required API workflow on the new exact
-head. Production verification and the approved Moon source publication remain
-required before this release can be described as live.
+head. Production verification of the merged code remains required before this release can be described as live.
+
+
+## First-save publication regression
+
+Live UI verification found that creating the approved Virgo New Moon summary
+saved a `LIVE` serving row without a publication ledger identity. The create
+handler omitted `x-content-publication-action: publish`; update and revision
+publication already sent it. The existing database trigger intentionally refuses
+to create or replace publication identities without this explicit instruction.
+The fix adds it only after the normal publication validation passes, and only
+for a created LIVE row. No database gate is weakened or migration changed.
+
+The API roundtrip suite now sends the actual create handler's headers through
+the production SQL trigger in isolated PGlite, then verifies ledger identity,
+Content Studio reader status, and the browser serving loader. It covers both
+Save draft and first Save & publish. Before the fix, it fails because no
+publication exists; after the fix, all three reader checks must agree. Keep this
+case in `npm run test:content-studio-api` for future repository updates.
+
+The exact owner-approved New Moon body was saved to
+`cms/sky-daily-summary/moon/virgo/newMoon` through authenticated Studio. A normal
+republish of the saved revision repaired its missing publication identity;
+the reader-status check now confirms this exact wording is available to readers.
+The Sun body and transit hooks were not edited.
+
+CI's first combined summary job passed its 30 reader and 24 Studio browser
+cases, then failed the entry bundle cap. Deferring the publication readiness
+panel until an editor opens reduces the configured entry to 622.0 kB raw /
+176.8 kB gzip. The original admin budgets remain unchanged.

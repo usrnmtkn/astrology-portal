@@ -1,4 +1,3 @@
-import ReviewWorkflowPanel from "./ReviewWorkflowPanel";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalExactContentKey, transitNatalExactSourceDraft } from "./transitNatalSources";
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
@@ -177,6 +176,7 @@ import "./admin-content-studio-ux-compat.css";
 import "./admin-content-studio-layout.css";
 
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
+const ReviewWorkflowPanel = lazy(() => import("./ReviewWorkflowPanel"));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
@@ -9649,9 +9649,9 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
-          {selectedRow && !isPackageDraft && <ReviewWorkflowPanel row={selectedRow} unsaved={draftHasUnsavedChanges} busy={isLoading}
+          {selectedRow && !isPackageDraft && <Suspense fallback={<p role="status">Loading publication checks…</p>}><ReviewWorkflowPanel row={selectedRow} unsaved={draftHasUnsavedChanges} busy={isLoading}
             onCheck={() => void runSkyDraftWriting(selectedRow.content_key, "recheck", selectedRow)}
-            onGenerate={() => void runSkyDraftWriting(selectedRow.content_key, "generate", selectedRow)} />}
+            onGenerate={() => void runSkyDraftWriting(selectedRow.content_key, "generate", selectedRow)} /></Suspense>}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
