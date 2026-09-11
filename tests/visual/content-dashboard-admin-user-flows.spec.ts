@@ -5648,3 +5648,28 @@ test("reopening a completed revision follows its published target", async ({ pag
   await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue("Current published passage.");
   await expect(editor.getByRole("button", { name: "Restore as draft", exact: true })).toHaveCount(0);
 });
+
+for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
+  test(`Imported article keeps drafting notes outside reader copy ${theme} ${width}`, async ({page}) => {
+    await page.setViewportSize({width,height:1000});
+    const body='# Sun Enters Aries\n\nThe complete opening remains here.\n\nThe complete final paragraph remains here.';
+    const notes='Drafting notes: synthetic batch context.\nneeds_review was the old document label.';
+    const row={...generatedContentRows[0],id:'qa-separated-article',content_key:'sky/article-template/sun/aries',
+      headline:'Sun Enters Aries',body,summary:'',status:'REVIEWED',lane:'reference',review_state:null,
+      event_type:'sky-article-template',block_type:'sky_article',mode:'article',sections:{},facts:{},
+      source_snapshot:{sourceType:'owner-resource-review',contentType:'sky-article-template',importSummary:notes},target_date:null,provider:'owner-resource-review'};
+    await seedAdminApi(page,{generatedRows:[row],reviewRows:[]});
+    await expectAdminRouteLoads(page,'/admin/content#review-queue?view=all');
+    await page.evaluate(value=>document.documentElement.setAttribute('data-theme',value),theme);
+    await page.locator('.admin-review-queue-row',{hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+    const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
+    await expect(editor.getByRole('heading',{name:'Edit Sun Enters Aries',exact:true})).toBeVisible();
+    const detail=editor.locator('details').filter({has:page.getByText('Original import notes',{exact:true})});
+    await expect(detail).not.toHaveAttribute('open');
+    await detail.locator('summary').click();
+    await expect(detail).toContainText(notes);
+    await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
+    await expectNoHorizontalOverflow(page,`Separated article ${theme} ${width}`);
+  });
+}

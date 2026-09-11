@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { assertCleanReaderCopy } from "../apps/web/src/content/editorialCopyBoundary.mjs";
 import crypto from "node:crypto";
 import os from "node:os";
 import fs from "node:fs";
@@ -1905,12 +1906,7 @@ function phrasebankMapping(fileName, bundle, row, index, batchId) {
     existing_text_hash: null,
     existing_provenance: null,
     generated_headline: nonEmptyString(row.headline) ?? phrasebankTitle(row),
-    generated_summary: nonEmptyString(row.summary) ?? nonEmptyString(row.meaning) ?? [
-      tier,
-      fileName.replace(/\.json$/, ""),
-      row.event_type,
-      row.source_snapshot?.category
-    ].filter(Boolean).join(" · "),
+    generated_summary: nonEmptyString(row.summary) ?? "",
     generated_body: text,
     generated_feed_body: phrasebankFeedBody(fileName, row),
     generated_sections: phrasebankSections(fileName, row),
@@ -2456,7 +2452,7 @@ export function generatedRowForMapping(mapping) {
     provider: mapping.generated_provider ?? "manual",
     model: mapping.generated_model ?? (mapping.import_source.startsWith("tldr-astro-phrasebank") ? "compiled-phrasebank-import" : "compiled-store-import"),
     headline: mapping.generated_headline ?? titleFromKey(mapping.incoming_key),
-    summary: mapping.generated_summary ?? [mapping.incoming_type, mapping.incoming_category, mapping.lane, mapping.incoming_status].filter(Boolean).join(" · "),
+    summary: mapping.generated_summary ?? "",
     body: mapping.generated_body ?? mapping.text,
     sections: mapping.generated_sections ?? [],
     block_type: mapping.generated_block_type ?? null,
@@ -2465,6 +2461,7 @@ export function generatedRowForMapping(mapping) {
 }
 
 function insertValue(row) {
+  assertCleanReaderCopy(row);
   return `  (
     ${sqlString(row.content_key)},
     ${sqlString(row.surface)},

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from "node:fs";
+import { assertCleanReaderCopy } from "../apps/web/src/content/editorialCopyBoundary.mjs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -313,7 +314,7 @@ function rowForPackageRow(row, bundle, batchId) {
     headline: typeof row.headline === "string" && row.headline.trim() ? row.headline : titleFromKey(contentKey),
     summary: typeof row.summary === "string" && row.summary.trim()
       ? row.summary
-      : [tier, row._bucket, row.event_type, sourceSnapshot.category].filter(Boolean).join(" · "),
+      : "",
     body: row.body ?? "",
     sections: row.sections && typeof row.sections === "object" ? row.sections : {},
     block_type: row.block_type ?? null,
@@ -383,6 +384,7 @@ async function main() {
 
   const bundle = JSON.parse(fs.readFileSync(packagePath, "utf8"));
   const finalRows = buildFinalRows(bundle, batchId);
+  finalRows.forEach(assertCleanReaderCopy);
   const finalKeys = new Set(finalRows.map((row) => row.content_key));
   const existingRows = await fetchAllGeneratedRows(env);
   const staleRows = existingRows.filter((row) => isAuthoredLibraryKey(row.content_key));

@@ -1,3 +1,5 @@
+// @ts-ignore Shared reader-copy validation.
+import { readerCopyIssues } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { validContentPublication, publicationTimestamp } from "../../apps/web/src/content/contentPublicationState.js";
 import { contentLiveStatuses } from "../_lib/content-live-status.js";
@@ -28,6 +30,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const sources = sourceResponse.payload;
       if (!sourceResponse.ok || !Array.isArray(sources)) throw new AdminHttpError(502, "Could not verify the saved version.");
       const source = sources[0];
+      if (source && readerCopyIssues(source).length) return sendAdminJson(res, 422, {
+        ok: false, error: "Internal drafting notes remain in reader copy. Move them to editor-only notes before publishing."
+      });
       const candidates = [...sources];
       if (!source || source.content_key !== body.contentKey || source.sections?.packageDraft
         || contentLiveStatuses([source], candidates, () => true, (row) => row.id === source.id)[0]?.source !== "studio") {

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { assertCleanReaderCopy, separateOwnerArticle } from "../apps/web/src/content/editorialCopyBoundary.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { createRequire } from "node:module";
@@ -69,6 +70,17 @@ function row({
   facts = {},
   metadata = {}
 }) {
+  const editorialOnly = eventType === "editorial-spec"
+    || contentKey === "sky/article-template/slow-mover/structure"
+    || contentKey === "sky/article-edition/nodes/aquarius-leo";
+  if (eventType.startsWith("sky-article") || editorialOnly) {
+    const separated = separateOwnerArticle(body, { editorOnly: editorialOnly });
+    body = separated.body;
+    headline = separated.headline || (editorialOnly ? contentKey : headline);
+    metadata = { ...metadata, editorialImport: separated, importSummary: separated.notes.join("\n\n"),
+      ...(editorialOnly ? { content_role: "source_material", serving: false } : {}) };
+  }
+  assertCleanReaderCopy({ headline: editorialOnly ? "" : headline, body });
   reviewSequence += 1;
   return {
     content_key: contentKey,
@@ -367,6 +379,7 @@ async function importRows() {
         }
       : candidate;
     const endpoint = current ? `generated_interpretations?id=eq.${encodeURIComponent(current.id)}` : "generated_interpretations";
+    assertCleanReaderCopy(payload);
     await request(endpoint, { method: current ? "PATCH" : "POST", headers: { "content-type": "application/json", prefer: "return=minimal" }, body: JSON.stringify(payload) });
     report[current ? "updated" : "inserted"] += 1;
   }
