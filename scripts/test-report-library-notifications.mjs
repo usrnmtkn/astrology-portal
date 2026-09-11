@@ -91,7 +91,7 @@ const shareLabelIndex = libraryView.indexOf("<span>Share</span>");
 const stopSharingLabelIndex = libraryView.indexOf("<span>Stop sharing</span>");
 const archiveLabelIndex = libraryView.indexOf('<span>{archived ? "Restore" : "Archive"}</span>');
 assert.ok(shareLabelIndex >= 0 && stopSharingLabelIndex > shareLabelIndex, "Active share revocation must follow Share in the overflow menu.");
-assert.ok(archiveLabelIndex > stopSharingLabelIndex, "Archive/Restore must remain the final overflow action.");
+assert.ok(archiveLabelIndex > stopSharingLabelIndex, "Archive/Restore must follow sharing actions.");
 assert.match(libraryView, /item\.status === "ready" && item\.isShared/u, "Stop sharing must only appear for an actively shared completed report.");
 assert.match(libraryView, /createReportShareLink/u);
 assert.match(libraryView, /stopReportSharing/u);

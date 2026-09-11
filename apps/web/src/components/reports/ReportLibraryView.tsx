@@ -1,7 +1,8 @@
-import { Archive, ChevronLeft, FileText, Link2Off, MoreHorizontal, RotateCcw, Share2 } from "lucide-react";
+import { Archive, ChevronLeft, FileText, Link2Off, MoreHorizontal, RotateCcw, Share2, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SegmentedControl } from "../SegmentedControl";
 import {
+  deleteReport,
   listReportLibrary,
   loadGeneratedReportById,
   markReportArchived,
@@ -151,11 +152,15 @@ async function shareLink(item: ReportLibraryItem) {
 function ReportLibraryRow({
   item,
   onArchiveChange,
+  onDelete,
+  deleting,
   onShare,
   onStopSharing
 }: {
   item: ReportLibraryItem;
   onArchiveChange: (item: ReportLibraryItem, archived: boolean) => Promise<void>;
+  deleting: boolean;
+  onDelete: (item: ReportLibraryItem) => Promise<void>;
   onShare: (item: ReportLibraryItem) => Promise<void>;
   onStopSharing: (item: ReportLibraryItem) => Promise<void>;
 }) {
@@ -204,6 +209,7 @@ function ReportLibraryRow({
           className="report-library-row__menu-trigger"
           type="button"
           aria-label={`More options for ${item.title}`}
+          disabled={deleting}
           aria-haspopup="menu"
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((current) => !current)}
@@ -252,6 +258,18 @@ function ReportLibraryRow({
               {archived ? <RotateCcw size={17} aria-hidden="true" /> : <Archive size={17} aria-hidden="true" />}
               <span>{archived ? "Restore" : "Archive"}</span>
             </button>
+            <button
+              className="report-library-row__menu-item"
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setMenuOpen(false);
+                void onDelete(item);
+              }}
+            >
+              <Trash2 size={17} aria-hidden="true" />
+              <span>Delete</span>
+            </button>
           </div>
         ) : null}
       </div>
@@ -287,13 +305,18 @@ export function ReportLibraryView() {
   const [view, setView] = useState<"active" | "archived">("active");
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [shareNotice, setShareNotice] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const refreshVersion = useRef(0);
 
   async function refresh() {
+    const version = ++refreshVersion.current;
     try {
-      setItems(await listReportLibrary());
+      const nextItems = await listReportLibrary();
+      if (version !== refreshVersion.current) return;
+      setItems(nextItems);
       setStatus("ready");
     } catch {
-      setStatus("error");
+      if (version === refreshVersion.current) setStatus("error");
     }
   }
 
@@ -317,6 +340,21 @@ export function ReportLibraryView() {
       await refresh();
     } catch {
       setStatus("error");
+    }
+  }
+
+  async function removeReport(item: ReportLibraryItem) {
+    if (deletingId || !window.confirm(`Delete “${item.title}”?\n\nThis removes it from your reports and archive. Shared links will stop working. You cannot restore it from the library.`)) return;
+    setDeletingId(item.id);
+    try {
+      await deleteReport(item);
+      ++refreshVersion.current;
+      setItems((current) => current.filter((report) => report.id !== item.id));
+      setShareNotice("Report deleted.");
+    } catch {
+      setShareNotice("This report could not be deleted. Please try again.");
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -382,6 +420,8 @@ export function ReportLibraryView() {
               key={item.id}
               item={item}
               onArchiveChange={changeArchive}
+              onDelete={removeReport}
+              deleting={deletingId !== null}
               onShare={shareReport}
               onStopSharing={stopSharingReport}
             />
