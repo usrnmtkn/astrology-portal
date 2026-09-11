@@ -168,11 +168,18 @@ function stateKey(sourceKind: ReportLibrarySourceKind, sourceId: string) {
   return `${sourceKind}:${sourceId}`;
 }
 
-async function authenticatedContext() {
+async function authenticatedContext(expectedUserId?: string) {
   const client = await getSupabaseClient();
-  if (!client) return null;
+  if (!client) {
+    if (expectedUserId) throw new Error("Your session could not be confirmed. Please try again.");
+    return null;
+  }
   const { data, error } = await client.auth.getSession();
-  if (error || !data.session?.user.id) return null;
+  if (error) throw error;
+  if (expectedUserId && data.session?.user.id !== expectedUserId) {
+    throw new Error("Your session could not be confirmed. Please try again.");
+  }
+  if (!data.session?.user.id) return null;
   return { client, userId: data.session.user.id };
 }
 
@@ -181,8 +188,8 @@ export function dispatchReportReady(detail: ReportReadyEventDetail) {
   window.dispatchEvent(new CustomEvent<ReportReadyEventDetail>(reportReadyEvent, { detail }));
 }
 
-export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
-  const context = await authenticatedContext();
+export async function listReportLibrary(options: { expectedUserId?: string } = {}): Promise<ReportLibraryItem[]> {
+  const context = await authenticatedContext(options.expectedUserId);
   if (!context) return [];
   const { client, userId } = context;
 
