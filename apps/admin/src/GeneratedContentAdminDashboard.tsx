@@ -5798,6 +5798,10 @@ export function GeneratedContentAdminDashboard() {
         >
           <summary className="admin-eyebrow">Operations</summary>
           <section className="admin-nav-section" aria-label="Operations and advanced tools">
+            <button type="button" onClick={() => { window.location.href = "/admin/content/memory"; }}>
+              <Orbit size={16} aria-hidden="true" />
+              <span>Memory graph</span>
+            </button>
             {advancedAdminNavItems.map((item) => {
               const Icon = item.icon;
               return (

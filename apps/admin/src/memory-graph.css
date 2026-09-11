@@ -1,0 +1,71 @@
+@import "../../web/src/styles/theme.css";
+@font-face { font-family: "Geist Mono Graph"; font-style: normal; font-weight: 400; font-display: swap; src: url("./assets/geist-mono-latin.woff2") format("woff2"); }
+
+.memory-access { display: block; }
+.memory-access .admin-main { max-width: var(--container-app-wide); margin: 0 auto; padding: var(--space-7); }
+.memory-access .memory-access-error { position: static; display: block; margin: 0 0 var(--space-5); font: var(--weight-regular) var(--type-meta-size)/var(--leading-description) var(--font-graph); color: var(--graph-ink); }
+.memory-access h1 { font-family: var(--font-display); font-size: var(--text-page-title-size); font-weight: var(--weight-regular); line-height: var(--leading-title); margin: var(--space-5) 0; }
+.memory-is-open { position: fixed; inset: 0; overflow: hidden; background: var(--graph-canvas-background); color: var(--graph-ink); font: var(--weight-regular) var(--type-nav-size)/var(--leading-description) var(--font-graph); letter-spacing: var(--tracking-normal); }
+.memory-is-open :where(*) { margin: 0; padding: 0; box-sizing: border-box; }
+.memory-is-open :where(button,input,h2,h3,p,span,a,code) { font-family: inherit; font-size: inherit; line-height: inherit; letter-spacing: inherit; text-transform: none; }
+.memory-is-open :where(button,input) { min-height: 0; font-weight: inherit; }
+.memory-is-open :where(button) { cursor: pointer; }
+.memory-is-open :where(h2,h3) { font-weight: inherit; }
+.memory-is-open :where(button,a):focus-visible { outline: var(--border-width-medium) solid var(--graph-muted); outline-offset: var(--space-1); }
+.memory-is-open .memory-sr-only { position: absolute; width: var(--border-width-thin); height: var(--border-width-thin); padding: 0; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.memory-site-back { display: flex; align-items: center; justify-content: center; gap: var(--graph-icon-gap); width: var(--graph-back-width); height: var(--graph-control-height); padding: 0 var(--graph-back-inset); border: var(--border-width-thin) solid var(--graph-control-border); border-radius: var(--graph-control-radius); background: var(--graph-back-background); color: var(--graph-ink); text-decoration: none; font: var(--weight-medium) var(--graph-control-label-size)/var(--leading-description) var(--font-graph); backdrop-filter: blur(var(--graph-control-blur)); transition: all .3s ease; }
+.memory-is-open .memory-site-back { position: fixed; top: var(--space-5); left: var(--space-5); z-index: 5; }
+.memory-site-back svg { width: var(--space-5); height: var(--space-5); }
+.memory-site-back:hover { background: var(--graph-control-hover); }
+.memory-reference-root { width: 100%; height: 100dvh; overflow: hidden; background: transparent; filter: saturate(.7); animation: memory-graph-reveal .6s ease .65s both; }
+.memory-reference-root canvas, .memory-reference-root svg { transform: none !important; transition: none !important; }
+/* Exact library 0.1.8: the reference hides its unused space selector. */
+.memory-reference-root ._14db5cp4 { display: none; }
+.memory-terminal { position: fixed; inset: 0; z-index: 99; pointer-events: none; opacity: .15; }
+.memory-terminal canvas { width: 100%; height: 100%; display: block; }
+.memory-search-container { position: fixed; bottom: var(--space-6); left: 0; right: 0; margin: 0 auto; width: fit-content; min-width: var(--graph-search-width); z-index: 100; animation: memory-slide-up .6s ease .8s both; }
+.memory-is-open .memory-search-input { display: block; width: var(--graph-search-width); height: var(--graph-control-height); padding: 0 var(--size-5); background: var(--graph-control-background); border: var(--border-width-thin) solid var(--graph-search-border); border-radius: var(--graph-control-radius); color: var(--graph-ink); font-size: var(--type-meta-size); font-weight: var(--weight-regular); line-height: var(--leading-description); box-shadow: none; backdrop-filter: blur(var(--graph-control-blur)); transition: all .3s ease; }
+.memory-search-input::placeholder { color: var(--graph-faint); }
+.memory-is-open .memory-search-input:focus { outline: none; background: var(--graph-search-focus-background); border-color: var(--graph-search-focus-border); }
+.memory-search-icon, .memory-search-clear { position: absolute; top: 50%; transform: translateY(-50%); color: var(--graph-faint); width: var(--space-5); height: var(--space-5); }
+.memory-search-icon { left: var(--graph-back-inset); pointer-events: none; z-index: 1; }
+.memory-search-clear { right: var(--graph-back-inset); border: 0; background: transparent; transition: all .2s ease; }
+.memory-search-clear svg { width: 100%; height: 100%; display: block; }
+.memory-search-clear:hover { color: var(--graph-chip-ink); }
+.memory-match-panel { position: fixed; bottom: var(--graph-results-bottom); left: 0; right: 0; margin: 0 auto; z-index: 100; background: var(--graph-control-background); border: var(--border-width-thin) solid var(--graph-control-border); border-radius: var(--space-4); padding: var(--space-4) var(--space-6); backdrop-filter: blur(var(--space-3)); width: fit-content; min-width: var(--graph-search-width); max-width: var(--graph-results-width); max-height: var(--graph-results-max-height); overflow-y: auto; text-align: center; animation: memory-panel-pulse 2s ease-in-out infinite; }
+.memory-match-header { display: flex; align-items: center; justify-content: center; gap: var(--space-2); margin-bottom: var(--space-3); color: var(--graph-muted); }
+.memory-is-open .memory-match-header h2 { color: inherit; font-size: var(--graph-control-label-size); font-weight: var(--weight-medium); line-height: var(--leading-description); }
+.memory-match-header svg { width: var(--graph-match-icon-size); height: var(--graph-match-icon-size); animation: memory-icon-pulse 1.5s ease-in-out infinite; }
+.memory-match-list { display: flex; flex-wrap: wrap; gap: var(--space-2); justify-content: center; }
+.memory-is-open .memory-match-chip { width: auto; background: var(--graph-back-background); border: var(--border-width-thin) solid var(--graph-chip-border); border-radius: var(--space-5); padding: var(--graph-chip-inset) var(--space-3); font-size: var(--type-hint-size); font-weight: var(--weight-regular); line-height: var(--leading-description); color: var(--graph-chip-ink); transition: all .2s ease; overflow-wrap: anywhere; }
+.memory-match-chip:hover { background: var(--graph-control-hover); border-color: var(--graph-chip-hover-border); }
+.memory-match-chip.expanded { background: var(--graph-chip-active-background); border-color: var(--graph-faint); }
+.memory-detail { position: fixed; bottom: var(--graph-detail-bottom); left: 0; right: 0; margin: 0 auto; z-index: 101; background: var(--graph-detail-background); border: var(--border-width-thin) solid var(--graph-control-border); border-radius: var(--space-3); padding: var(--space-4) var(--space-5); width: fit-content; min-width: var(--graph-search-width); max-width: var(--graph-detail-width); max-height: var(--graph-detail-height); overflow-y: auto; backdrop-filter: blur(var(--space-3)); font-size: var(--type-meta-size); line-height: var(--leading-description); color: var(--graph-ink); }
+.memory-is-open .memory-detail-title { color: var(--graph-title-ink); font-size: inherit; font-weight: var(--weight-semibold); margin-bottom: var(--space-2); }
+.memory-detail-content { color: var(--graph-detail-ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+.memory-provenance { margin-top: var(--space-3); color: var(--graph-detail-ink); font-size: var(--type-hint-size); overflow-wrap: anywhere; }
+.memory-provenance a { color: inherit; }
+.memory-provenance summary { cursor: pointer; }
+.memory-connections { margin-bottom: var(--space-3); color: var(--graph-muted); font-size: var(--type-hint-size); }
+.memory-connections summary { cursor: pointer; }
+.memory-connection { margin-top: var(--space-2); overflow-wrap: anywhere; }
+.memory-connection p { margin-bottom: var(--space-1); }
+.memory-pagination { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); margin-top: var(--space-3); font-size: var(--type-hint-size); color: var(--graph-muted); }
+.memory-pagination button { color: inherit; background: transparent; border: 0; }
+.memory-pagination button:disabled { opacity: .4; cursor: default; }
+.memory-loading, .memory-error { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: var(--space-4); color: var(--graph-muted); text-align: center; }
+.memory-error { z-index: 102; background: var(--graph-detail-background); }
+.memory-error button { padding: var(--space-3); color: inherit; background: transparent; border: var(--border-width-thin) solid var(--graph-control-border); border-radius: var(--space-3); }
+@keyframes memory-graph-reveal { from { opacity: 0; } to { opacity: 1; } }
+@keyframes memory-slide-up { from { opacity: 0; transform: translateY(var(--graph-control-blur)); } to { opacity: 1; transform: translateY(0); } }
+@keyframes memory-icon-pulse { 0%,100% { opacity: .7; transform: scale(1); } 50% { opacity: .5; transform: scale(1.05); } }
+@keyframes memory-panel-pulse { 0%,100% { box-shadow: var(--graph-pulse-low); } 50% { box-shadow: var(--graph-pulse-high); } }
+@media (max-width: 600px) { .memory-detail, .memory-match-panel { max-width: var(--graph-mobile-panel-width); } }
+@media (prefers-reduced-motion: reduce) { .memory-reference-root, .memory-search-container, .memory-match-panel, .memory-match-header svg { animation: none; } }
+
+/* The upstream console stylesheet hides the entire legend below 768 px. */
+.memory-reference-root #memory-reference-legend { display: block; width: var(--graph-legend-width); overflow-y: auto; }
+.memory-reference-root #memory-reference-legend ._1y3huhxc { height: var(--graph-legend-header-height); }
+@media (max-width: 767px) {
+  .memory-reference-root #memory-reference-legend { top: var(--space-5); bottom: auto; max-height: var(--graph-legend-max-height); }
+}

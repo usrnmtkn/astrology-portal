@@ -48,11 +48,13 @@ const javaScriptFiles = fs.readdirSync(path.join(distRoot, "assets"))
   });
 const entryItem = javaScriptFiles.find((item) => item.file === entry.file);
 const largestItem = [...javaScriptFiles].sort((first, second) => second.rawBytes - first.rawBytes)[0];
+const memoryGraphFiles = javaScriptFiles.filter((item) => /\/MemoryGraphDashboard-/.test(item.file));
 const measurements = {
   entryJavaScriptRawBytes: entryItem?.rawBytes ?? 0,
   entryJavaScriptGzipBytes: entryItem?.gzipBytes ?? 0,
   largestJavaScriptRawBytes: largestItem?.rawBytes ?? 0,
-  totalJavaScriptGzipBytes: javaScriptFiles.reduce((sum, item) => sum + item.gzipBytes, 0)
+  totalJavaScriptGzipBytes: javaScriptFiles.reduce((sum, item) => sum + item.gzipBytes, 0),
+  memoryGraphJavaScriptGzipBytes: memoryGraphFiles.reduce((sum, item) => sum + item.gzipBytes, 0)
 };
 const failures = Object.entries(budgets).flatMap(([metric, limit]) => (
   measurements[metric] > limit
@@ -91,8 +93,12 @@ function visitInitial(key) {
   for (const dependency of manifest[key].imports ?? []) visitInitial(dependency);
 }
 visitInitial(Object.entries(manifest).find(([, item]) => item === entry)?.[0]);
+if (memoryGraphFiles.length !== 1) failures.push('Expected one deferred memory graph route with its renderer.');
 for (const key of initialChunks) {
   const file = manifest[key].file;
+  if (memoryGraphFiles.some((item) => item.file === file)) {
+    failures.push(`Memory graph must remain deferred from Content Studio startup: ${file}`);
+  }
   if (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("Sky variable key")) {
     failures.push(`Sky variable reference must remain deferred: ${file}`);
   }
@@ -102,6 +108,7 @@ const expectedDynamicEntries = [
   "src/CompositionMapWorkspace.tsx",
   "src/SkyPlacementComposition.tsx",
   "src/SkyFallbackFieldsEditor.tsx",
+  "src/MemoryGraphDashboard.tsx",
 ];
 for (const key of expectedDynamicEntries) {
   if (!manifest[key]?.isDynamicEntry) failures.push(`Expected lazy Admin entry is missing: ${key}`);
@@ -129,6 +136,7 @@ console.log("# Admin bundle budget");
 console.log(`Entry JavaScript: ${formatBytes(measurements.entryJavaScriptGzipBytes)} gzip (${formatBytes(measurements.entryJavaScriptRawBytes)} raw)`);
 console.log(`Largest JavaScript: ${largestItem?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptRawBytes)} raw)`);
 console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip across ${javaScriptFiles.length} files`);
+console.log(`Deferred memory graph: ${formatBytes(measurements.memoryGraphJavaScriptGzipBytes)} gzip`);
 console.log("\nJavaScript chunks:");
 for (const item of [...javaScriptFiles].sort((first, second) => second.rawBytes - first.rawBytes)) {
   console.log(`- ${item.file}: ${formatBytes(item.gzipBytes)} gzip (${formatBytes(item.rawBytes)} raw)`);
