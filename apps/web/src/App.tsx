@@ -1,3 +1,8 @@
+import {
+  loadManualChartsPanel,
+  loadFriendsExperience,
+  preloadFriendsExperience
+} from "./features/friends/friendsExperienceLoader";
 import { skySummaryEventPlacements } from "./content/skySummaryEventPlacements";
 import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
@@ -10674,22 +10679,6 @@ const CalendarRoute = lazy(() =>
   }))
 );
 
-const loadManualChartsPanel = () => import("./features/friends/ManualChartsPanel");
-const loadFriendsExperience = () => Promise.all([
-  import("./routes/FriendsRoute"),
-  loadManualChartsPanel()
-]).then(([routeModule, manualChartsModule]) => {
-  const initialProfileTab = initialFriendProfileContentRequest(window.location.href);
-
-  if (initialProfileTab) {
-    manualChartsModule.preloadFriendProfileComponents(initialProfileTab);
-  }
-
-  return [routeModule, manualChartsModule] as const;
-});
-const preloadFriendsExperience = () => {
-  void loadFriendsExperience();
-};
 
 const FriendsRoute = lazy(() =>
   loadFriendsExperience().then(([module]) => ({ default: module.FriendsRoute }))
@@ -13065,7 +13054,7 @@ export function App() {
 
     const natalSkyRequest = profileNatalSkyRequestRef.current?.key === natalSkyRequestKey
       ? profileNatalSkyRequestRef.current.request
-      : withNatalChartCalculationTimeout(getAstrodienstSky(birthLocation, birthDateTime));
+      : withNatalChartCalculationTimeout(getAstrodienstSky(birthLocation, birthDateTime, { includeDailyEvents: false }));
 
     profileNatalSkyRequestRef.current = { key: natalSkyRequestKey, request: natalSkyRequest };
 
@@ -15882,6 +15871,7 @@ function SkyCards({
     moonIsVoid: sky.moonStatus?.kind === "void",
     retrogradePlacements: activeRetrogradePositions(sky.positions).map(position => ({ ...position, planet: skyDisplayPlanetName(position.planet) })),
     ...skySummaryEventFacts(events, summaryContent),
+    asOf: sky.generatedAt,
     voidRemainingLabel: sky.moonStatus?.remainingLabel,
     event: validEvent && (!eventIsToday || verifiedEventSky) ? {
       name: event.name,

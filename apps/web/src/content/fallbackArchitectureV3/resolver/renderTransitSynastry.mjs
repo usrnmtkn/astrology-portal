@@ -794,29 +794,51 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, pass, 
   const cScenesFinal = cScenes
     ? fillKeep(cScenes, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" })
     : ctx.transitTypeLine ?? null;
-  let body;
+  // Report the sources used by this branch, not the unused generic template.
+    const firstHookKey = (keys) => keys.find(key => hookVoice(key, v) != null);
+    const effectKey = firstHookKey([
+      `fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`,
+      ...(variant ? [`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`] : []),
+      `fallback-hook/transit-effect-${effectFamily}/${transiting}`
+    ]);
+    const natalAreaKey = vocab.get(`fallback-vocab/planet-topic/${natal}`)?.body != null
+      ? `fallback-vocab/planet-topic/${natal}` : `fallback-vocab/angle-area/${natal}`;
+    const areaKey = ANGLES.has(natal)
+      ? firstHookKey([`fallback-hook/natal-core/${natal}`]) ?? `fallback-vocab/planet-core/${natal}`
+      : natalAreaKey;
+    const effectSources = [effectKey, ...(effectRaw?.includes("{{natalArea}}") ? [areaKey] : [])];
+    let sourceKeys = [];
+    let body;
   if (AVERB[aspect] && cWants && cHolds && cScenesFinal) {
     const opener = v === "you"
       ? `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} your natal ${ctx.natalTitle}.`
       : `${ctx.timeOpen}, ${ctx.transitRef} is ${AVERB[aspect]} ${otherPoss} natal ${ctx.natalTitle}.`;
     body = `${opener} ${cWants}; ${cHolds}. ${cScenesFinal}`;
+      sourceKeys = [
+        firstHookKey([...(sign ? [`fallback-hook/transit-house-event-wants/${transiting}/${sign}`] : []), `fallback-hook/transit-house-event-wants/${transiting}`]),
+        firstHookKey([`fallback-hook/transit-house-event-natal/${natal}`]),
+        ...(cScenes ? [firstHookKey([`fallback-hook/transit-house-event-scenes/${transiting}/${natal}/${effectFamily}`, `fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`]), ...(cScenes.includes("{{natalArea}}") ? [areaKey] : [])]
+          : [firstHookKey([...(ANGLES.has(natal) ? [`fallback-hook/transit-aspect-type/${aspect}/angle`] : []), `fallback-hook/transit-aspect-type/${aspect}`]), ...(typeLineRaw?.includes("{{transitEffect}}") ? effectSources : []), ...(typeLineRaw?.includes("{{natalArea}}") ? [natalAreaKey] : [])])
+      ];
   } else if (AVERB[aspect] && ctx.transitEffectLine) {
     const target = v === "you" ? `your natal ${ctx.natalTitle}` : `${otherPoss} natal ${ctx.natalTitle}`;
     const timing = ctx.timeInline ? ` ${ctx.timeInline}` : "";
     const mechanics = `${String(ctx.transitRef).replace(/^./, (char) => char.toUpperCase())} is ${AVERB[aspect]} ${target}${timing}.`;
     body = `${ctx.transitEffectLine} ${mechanics}`;
+      sourceKeys = effectSources;
   } else {
     body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
+      sourceKeys = [T.contentKey];
   }
   body = body.charAt(0).toUpperCase() + body.slice(1);
   // retrograde contacts repeat; say so (fallback path only, authored cards stay verbatim)
   if (isRetrograde && v === "you") {
     const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
-    if (retroLine) body = `${body} ${fill(retroLine, ctx)}`;
+    if (retroLine) { body = `${body} ${fill(retroLine, ctx)}`; sourceKeys.push("fallback-hook/transit-retro-aspect"); }
   }
   const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
-  if (passHook) body = `${body}\n\n${passHook}`;
-  return { headline: fill(v === "you" ? T.headline : (T.headline_they ?? T.headline), ctx), body, parts: [body], templateKey: T.contentKey };
+  if (passHook) { body = `${body}\n\n${passHook}`; sourceKeys.push(`fallback-hook/transit-pass/${pass}`); }
+  return { headline: fill(v === "you" ? T.headline : (T.headline_they ?? T.headline), ctx), body, parts: [body], templateKey: T.contentKey, sourceKeys: [...new Set(sourceKeys.filter(Boolean))] };
 }
 
 // Retrograde season card: what this planet's retrograde means and what to do with it.

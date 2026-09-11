@@ -21,6 +21,7 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
   const [aspectExamples, setAspectExamples] = useState("");
   const [stationExamples, setStationExamples] = useState("");
   const [stationDirection, setStationDirection] = useState<"direct" | "retrograde">("retrograde");
+  const [stationOccurred, setStationOccurred] = useState(true);
   const [ingressExamples, setIngressExamples] = useState("");
   const [retrogrades, setRetrogrades] = useState("");
   const [voidRemaining, setVoidRemaining] = useState("");
@@ -33,9 +34,13 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
   previewContent.set(layoutField.key, { id: layoutField.key, contentKey: layoutField.key, body: layout,
     surface: "sky", mode: "feed", eventType: null, targetDate: null, headline: null, summary: null,
     sections: null, model: null, updatedAt: "", status: "LIVE" });
+  const exampleTime = Date.now();
   const parts = skyDailySummaryParts({ sun: { sign: sunSign }, moon: { sign: moonSign }, moonIsVoid: Boolean(voidRemaining.trim()), voidRemainingLabel: voidRemaining.trim() || undefined,
+    asOf: new Date(exampleTime).toISOString(),
     retrogradePlanets: retrogrades.split(";").map(name => name.trim()).filter(Boolean),
-    exactAspects: examples(aspectExamples, "aspect"), stations: examples(stationExamples, "station").map(event => ({ ...event, direction: stationDirection })),
+    exactAspects: examples(aspectExamples, "aspect"), stations: examples(stationExamples, "station").map(event => ({ ...event, direction: stationDirection,
+      planet: event.label.match(new RegExp(`^(.+?) stations ${stationDirection} in `, "u"))?.[1],
+      startsAt: new Date(exampleTime + (stationOccurred ? -60_000 : 60_000)).toISOString() })),
     ingresses: examples(ingressExamples, "ingress"),
     event: moonKind !== "regular" ? { name: moonEventNames[moonKind], sign: moonSign, countdown: "today", isToday: true, eclipseType: moonKind === "solarEclipse" ? "solar" : moonKind === "lunarEclipse" ? "lunar" : undefined } : lunation === "none" ? undefined : { name: "New Moon", sign: sunSign, countdown: "in 3 days", isToday: lunation === "today" }
   }, previewContent, { editorialPreview: true });
@@ -78,6 +83,7 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
       <label><span>Exact aspect examples</span><input aria-label="Exact aspect examples" value={aspectExamples} onChange={event => setAspectExamples(event.target.value)} /></label>
       <label><span>Station examples</span><input aria-label="Station examples" value={stationExamples} onChange={event => setStationExamples(event.target.value)} /></label>
       <label><span>Single station motion</span><select value={stationDirection} onChange={event => setStationDirection(event.target.value as "direct" | "retrograde")}><option value="retrograde">Retrograde</option><option value="direct">Direct</option></select></label>
+      <label><input type="checkbox" checked={stationOccurred} onChange={event => setStationOccurred(event.target.checked)} />Station has occurred in this example</label>
       <label><span>Ingress examples</span><input aria-label="Ingress examples" value={ingressExamples} onChange={event => setIngressExamples(event.target.value)} /></label>
       <label><span>Lunation example</span><select aria-label="Lunation example" value={lunation} onChange={event => setLunation(event.target.value)}><option value="none">None</option><option value="today">New Moon today</option><option value="future">New Moon in 3 days</option></select></label>
     </details>

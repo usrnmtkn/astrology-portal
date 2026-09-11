@@ -1,12 +1,12 @@
 import type { LocationInput, SkySnapshot } from "../types.js";
 import type {
+  SkyCalculationOptions,
   LunarCalendarEvent,
   LunarCalendarMonth,
   MatchingNewMoonFact,
   natalTransitTimingFor as NatalTransitTimingFunction
 } from "./ephemeris.js";
 
-type SkyCalculationOptions = { includeTransitWindows?: boolean };
 type SkyCalculationResponse =
   | { id: number; ok: true; value: unknown }
   | { id: number; ok: false; error: string };

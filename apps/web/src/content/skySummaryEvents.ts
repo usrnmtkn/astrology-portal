@@ -19,7 +19,7 @@ export function skySummaryEventFacts(events: LunarCalendarEvent[], content: CmsG
   const unique = [...new Map(events.map(event => [event.id, event])).values()];
   return {
     stations: unique.flatMap(event => event.type === "station" && (!event.phase || event.phase === "station-retrograde" || event.phase === "station-direct") && event.planet && event.sign && (event.direction === "direct" || event.direction === "retrograde")
-      ? [{ id: event.id, label: `${event.planet} stations ${event.direction} in ${event.sign}`, direction: event.direction }] : []),
+      ? [{ id: event.id, label: `${event.planet} stations ${event.direction} in ${event.sign}`, direction: event.direction, planet: event.planet, startsAt: event.startsAt }] : []),
     exactAspects: unique.flatMap(event => event.type === "aspect" && event.planets && event.aspect && skyAspectVerbs[event.aspect.toLowerCase()]
       ? [{ id: event.id, label: calendarMotionTitle(event) }] : []),
     ingresses: unique.flatMap(event => {

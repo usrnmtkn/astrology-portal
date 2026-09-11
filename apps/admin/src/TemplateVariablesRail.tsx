@@ -126,6 +126,7 @@ export default function TemplateVariablesRail({
             {templatePreviewRow && (
               <Suspense fallback={<div className="admin-empty-state"><strong>Building reader preview…</strong></div>}>
                 <TemplateReaderDrilldown
+                  key={`${templateContentKey}:${previewOptions?.initialAudience ?? "you"}`}
                   compact
                   rows={rows}
                   templateRow={templatePreviewRow}

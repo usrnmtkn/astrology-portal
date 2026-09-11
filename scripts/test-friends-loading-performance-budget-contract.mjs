@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   FRIENDS_INCOMPLETE_CHART_CALCULATION_DELAY_MS,
   FRIENDS_LOADING_SAMPLE_COUNT,
@@ -99,3 +100,7 @@ console.log(JSON.stringify({
   samplesPerScenario: FRIENDS_LOADING_SAMPLE_COUNT,
   budgets: friendsLoadingPerformanceBudgets
 }, null, 2));
+
+const scripts = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).scripts;
+assert.match(scripts["qa:friends-loading-matrix"], /--trace off(?:\s|$)/u,
+  "The timing gate must not include screenshot/DOM trace recording overhead; use --trace on separately for diagnosis.");

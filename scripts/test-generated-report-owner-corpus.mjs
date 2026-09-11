@@ -7,6 +7,8 @@ import { build } from "esbuild";
 // Keep real production transport and corpus retrieval. Only the provider and
 // unrelated catalog gate are offline fixtures; no billed model calls.
 const bundle = await build({
+  // Bundled CommonJS dependencies need Node's require even inside a data URL.
+  banner: { js: `import { createRequire } from "node:module"; const require = createRequire(${JSON.stringify(import.meta.url)});` },
   stdin: { contents: `export * from './api/_lib/transit-reading-production.ts';
     export * from './api/_lib/transit-reading-owner-voice.ts';
     export * from './api/_lib/report-owner-voice-corpus-v2.ts';`, resolveDir: process.cwd() },

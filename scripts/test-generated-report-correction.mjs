@@ -4,6 +4,8 @@ import { build } from "esbuild";
 // Exercise the real orchestration with a deterministic provider at its transport
 // boundary. No live model calls or production data are used by this regression.
 const bundle = await build({
+  // Bundled CommonJS dependencies need Node's require even inside a data URL.
+  banner: { js: `import { createRequire } from "node:module"; const require = createRequire(${JSON.stringify(import.meta.url)});` },
   entryPoints: ["api/_lib/transit-reading-generation.ts"],
   bundle: true,
   write: false,

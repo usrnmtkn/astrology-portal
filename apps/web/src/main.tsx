@@ -2,8 +2,10 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { PageLoading, PageLoadBoundary } from "./components/PageLoading";
 import { shouldPreloadInitialFriendCalculationRuntime } from "./features/friends/friendCalculationReadiness";
+import { preloadFriendsExperience } from "./features/friends/friendsExperienceLoader";
 import {
   initialFriendProfileContentRequest,
+  isFriendsHref,
   prepareFriendProfileRoute
 } from "./features/friends/friendsRouting";
 
@@ -109,6 +111,10 @@ async function startApp() {
 
   const appModulePromise = import("./App");
   const friendRoutePromise = prepareFriendProfileRoute(window.location.href);
+  void friendRoutePromise.then(() => {
+    if (!isFriendsHref(window.location.href)) return;
+    return preloadFriendsExperience();
+  }).catch(() => { /* The mounted route owns import errors and recovery. */ });
   const readerStylesPromise = import("./styles.css");
   // These routes all need astronomy. Fetch/initialize it alongside the app
   // download rather than starting the worker waterfall after React mounts.

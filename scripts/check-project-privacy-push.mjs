@@ -10,6 +10,14 @@ const policy = loadPrivacyPolicy();
 const zero = '0'.repeat(40);
 const refs = fs.readFileSync(0, 'utf8').trim().split('\n').filter(Boolean);
 const commits = new Set();
+// Only the receiving remote can establish that an ancestor is already there.
+// Local tracking refs can be stale or fabricated and must not suppress scans.
+const remoteName = process.argv[2] || 'origin';
+const advertised = spawnSync('git', ['ls-remote', '--heads', remoteName], { encoding: 'utf8', timeout: 20_000 });
+const existingRemoteHeads = advertised.status === 0
+  ? advertised.stdout.trim().split('\n').map(line => line.split(/\s+/u)[0]).filter(oid =>
+    /^[a-f0-9]{40}$/u.test(oid) && spawnSync('git', ['cat-file', '-e', `${oid}^{commit}`], { stdio: 'ignore' }).status === 0)
+  : [];
 // A stale worktree may still have pre-cleanup remote-tracking refs. Check the
 // entire ancestry against the privately stored retired commit IDs before using
 // remote refs to narrow the ordinary content scan.
@@ -21,10 +29,8 @@ for (const line of refs) {
   if (retired.size && git(['rev-list', local]).split('\n').some(commit => retired.has(commit))) throw new Error('This branch contains retired private history. Move your changes to a fresh clone of the cleaned repository before pushing.');
   if (privacyMatches(`${localRef} ${remoteRef}`, policy).length) throw new Error('Private identifier in a branch name.');
   const knownRemote = remote !== zero && spawnSync('git', ['cat-file', '-e', `${remote}^{commit}`], { stdio: 'ignore' }).status === 0;
-  // A rebase may include commits already published on another remote branch.
-  // Inspect newly introduced commits; the full retired-ancestry check above
-  // still applies independently of remote-tracking state.
-  const args = ['rev-list', knownRemote ? `${remote}..${local}` : local, '--not', '--remotes=origin'];
+  const args = ['rev-list', knownRemote ? `${remote}..${local}` : local];
+  if (existingRemoteHeads.length) args.push('--not', ...existingRemoteHeads);
   for (const commit of git(args).trim().split('\n').filter(Boolean)) commits.add(commit);
 }
 for (const commit of commits) {
@@ -38,8 +44,8 @@ if (commits.size) {
     for (const entry of git(['diff-tree', '--root', '-m', '--no-commit-id', '-r', '--raw', '--no-abbrev', commit]).trim().split('\n').filter(Boolean)) {
       const [header, file] = entry.split('\t');
       const oid = header.split(' ')[3];
-      // Removing an existing private path introduces no new bytes. Additions
-      // remain checked in every outgoing commit, even if later deleted.
+      // A deletion contributes no new path or blob. Earlier additions remain
+      // scanned in their own commits, and retired ancestry is checked above.
       if (oid === zero) continue;
       if (privacyMatches(file || '', policy).length || /(^|\/)\.private-documents\//u.test(file || '') || file === '.privacy-policy.json') throw new Error('Private path in outgoing history.');
       objects.set(oid, true);

@@ -74,10 +74,11 @@ for (const endpoint of ["sky-article-facts.ts", "sky-article-template-slots.ts"]
 }
 
 const readerSource = fs.readFileSync(new URL("../apps/web/src/features/sky/SkyDetailArticle.tsx", import.meta.url), "utf8");
-assert.match(readerSource, /detail\.personalizedPlacement && risingHoroscopesSection/u);
+assert.match(readerSource, /\{risingHoroscopesSection \? \(/u);
+assert.doesNotMatch(readerSource, /detail\.personalizedPlacement && risingHoroscopesSection/u, "All-sign horoscopes remain available without a personal chart (PR #686).");
 assert.ok(
   readerSource.indexOf("{detail.personalizedPlacement ? (")
-    < readerSource.indexOf("{detail.personalizedPlacement && risingHoroscopesSection ? ("),
+    < readerSource.indexOf("{risingHoroscopesSection ? ("),
   "The personalized passage must render before the complete rising-sign horoscope list."
 );
 

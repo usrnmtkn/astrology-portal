@@ -11,6 +11,7 @@ import {
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const loaderSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/friendsExperienceLoader.ts"), "utf8");
 const panelSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/ManualChartsPanel.tsx"),
   "utf8"
@@ -22,10 +23,12 @@ assert.equal(
   "App.tsx must not own the Friends chart workspace implementation."
 );
 assert.match(
-  appSource,
-  /import\("\.\/features\/friends\/ManualChartsPanel"\)/,
-  "App.tsx must load the extracted Friends workspace through a dynamic import."
+  loaderSource,
+  /import\("\.\/ManualChartsPanel"\)/,
+  "The shared entry/App loader must load the extracted workspace through a dynamic import."
 );
+assert.doesNotMatch(loaderSource, /from ["'][^"']*(?:ManualChartsPanel|FriendsWorkspaceShell|FriendsRoute)["']/,
+  "The entry loader must not statically import Friends renderers into other routes.");
 assert.equal(
   appSource.includes('from "./features/friends/useManualChartsController"'),
   false,
