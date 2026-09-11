@@ -2618,7 +2618,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     || (body.sections !== undefined && JSON.stringify(body.sections) !== JSON.stringify(existing.sections))
   );
 
-  if ((editsSkyCopy || editsReferenceCopy) && existing) {
+  // New Sky correction bodies live in the private feedback table, not metadata
+  // that can accompany reader-serving rows. Existing reference history is unchanged.
+  if ((editsReferenceCopy || editsSkyCopy && process.env.STUDIO_MEMORY_FEEDBACK_ENABLED !== 'true') && existing) {
     const snapshot = { ...(existing.source_snapshot ?? {}), ...((patch.source_snapshot ?? {}) as Record<string, unknown>) };
     const history = Array.isArray(snapshot.studioRevisionHistory) ? snapshot.studioRevisionHistory : [];
     snapshot.studioRevisionHistory = [...history, { updatedAt: existing.updated_at, status: existing.status,

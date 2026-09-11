@@ -11,6 +11,8 @@ on:
       - 'data/agent-memory/**'
       - 'scripts/*memory*'
       - 'tests/memory/**'
+      - 'tests/helpers/studio-memory*'
+      - 'tests/visual/studio-memory-feedback.spec.ts'
       - 'playwright.memory.config.ts'
       - 'package*.json'
   workflow_dispatch:
@@ -36,6 +38,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run build:knowledge
       - run: npm run test:agent-memory-browser
+      - name: Verify Studio correction capture and review in desktop and mobile editors
+        run: npx playwright test tests/visual/studio-memory-feedback.spec.ts tests/visual/review-queue-workflow.spec.ts --workers=1
       - uses: actions/upload-artifact@v6
         if: failure()
         with:
