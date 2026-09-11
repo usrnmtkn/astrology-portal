@@ -55,13 +55,7 @@ type PersistedFriendTransitReadingIdentity = {
   contentKey: string;
 };
 
-function persistedFriendTransitReadingIdentity(): PersistedFriendTransitReadingIdentity | null {
-  if (typeof window === "undefined") return null;
-
-  const targetDate = new URLSearchParams(window.location.search).get("date")?.trim() ?? "";
-  const hashQuery = window.location.hash.split("?", 2)[1] ?? "";
-  const subjectId = new URLSearchParams(hashQuery).get("chart")?.trim() ?? "";
-
+function persistedFriendTransitReadingIdentity(subjectId: string, targetDate: string): PersistedFriendTransitReadingIdentity | null {
   if (!subjectId || !/^\d{4}-\d{2}-\d{2}$/u.test(targetDate)) {
     return null;
   }
@@ -83,6 +77,8 @@ export function FriendTransitsTab({
   reading,
   readingStatus = "idle",
   readingAvailable = false,
+  readingSubjectId = "",
+  readingTargetDate = "",
   patternTimingOverrides
 }: {
   brief: FriendTransitsBrief;
@@ -94,6 +90,8 @@ export function FriendTransitsTab({
   reading?: FriendTransitReadingView | null;
   readingStatus?: "idle" | "loading" | "ready" | "locked";
   readingAvailable?: boolean;
+  readingSubjectId?: string;
+  readingTargetDate?: string;
   patternTimingOverrides: Record<string, NatalAspectPatternActivationTimingWindow>;
 }) {
   const {
@@ -106,7 +104,7 @@ export function FriendTransitsTab({
     activePatterns,
     hasAnyTransit
   } = brief;
-  const persistedIdentity = persistedFriendTransitReadingIdentity();
+  const persistedIdentity = persistedFriendTransitReadingIdentity(readingSubjectId, readingTargetDate);
   const persistedIdentityKey = persistedIdentity
     ? `${persistedIdentity.subjectId}|${persistedIdentity.targetDate}`
     : "";
