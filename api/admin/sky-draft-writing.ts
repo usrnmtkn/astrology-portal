@@ -76,6 +76,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             const prefix = identity.kind === "aspect" ? "skyAspect" : "skyPlacement";
             const text = input.action === "recheck" ? row.body : result.text;
             const sourceSnapshot = { ...row.source_snapshot, studioWritingOperation: null, studioWritingError: null,
+                ...(input.action === "generate" ? { studioWritingMemory: result.memoryReceipt ?? null } : {}),
                 [`${prefix}VoiceLint`]: result.lint, [`${prefix}Judge`]: result.judge,
                 ...(identity.kind === "aspect" ? { cardFacts: identity.args, pairKey: pair, pairSource: input.action === "generate" ? result.facts?.pairSource ?? source?.path ?? "content-studio/manual" : row.source_snapshot?.pairSource ?? "content-studio/manual" } : {}),
                 studioWritingCheck: { reviewPolicy: "owner-final-v1", contentKey: input.contentKey, checkedAt: new Date().toISOString(), bodyHash: createHash("sha256").update(text).digest("hex"), action: input.action },

@@ -6,6 +6,7 @@ export const VISUAL_MEMORIES_PER_SOURCE = 24;
 const visualCache = new WeakMap();
 export const MEMORY_SCHEMA = 'tldr-agent-memory/v1';
 export const sha256 = value => createHash('sha256').update(value).digest('hex');
+export const memoryRecordId = (sourcePath, line) => 'm-' + sha256(`${sourcePath}:${line}`).slice(0, 20);
 const stopWords = new Set('a an and are as at be by can could do does for from how i in is it me my of on or our should that the their this to use was we what when which with would you your please find remember'.split(' '));
 const tokens = value => [...new Set((value.toLowerCase().match(/[\p{L}\p{N}]+/gu) ?? []).filter(word => !stopWords.has(word)))];
 const shortTitle = value => value.replace(/^TLDR-|\.md$/gu, '').replace(/[-_]/gu, ' ').replace(/\s+/gu, ' ').trim();
@@ -44,7 +45,7 @@ export function buildMemoryIndex({ root, readSource = name => fs.readFileSync(pa
   }
   const records = [], sources = [], edges = [], skipped = [];
   function add(spec, part, metadata = {}) {
-    const id = 'm-' + sha256(`${spec.path}:${part.line}`).slice(0, 20);
+    const id = memoryRecordId(spec.path, part.line);
     const record = {
       id, kind: spec.kind, status: spec.status ?? 'current', role: spec.role ?? spec.kind,
       title: part.title, body: part.body, sourceId: 's-' + sha256(spec.path).slice(0, 16),
