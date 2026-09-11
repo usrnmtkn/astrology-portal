@@ -11,6 +11,13 @@ uses the ignored `.private-documents/reports.json`. These original documents
 must never be copied into Git, browser assets, logs, test attachments, or PRs.
 Source integrity hashes remain those of the complete original documents.
 
+Original database content records are archived in the restricted
+`project_privacy.content_archive` table before identifier removal. The schema
+and table deny access to `anon` and `authenticated`, and the table has RLS with
+no client policies. Privacy maintenance preserves all other fields and checks
+that publication triggers do not introduce unrelated changes. Public content
+must be checked independently of the repository and static snapshot.
+
 The identifying values in `PROJECT_PRIVACY_POLICY` are maintained privately.
 CI obtains the policy from an Actions secret. Local work uses the ignored
 `.privacy-policy.json`, or `PROJECT_PRIVACY_POLICY_FILE` pointing outside Git.

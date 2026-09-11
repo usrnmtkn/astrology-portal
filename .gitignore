@@ -54,3 +54,4 @@ apps/web/.memory-test-dist/
 
 # Isolated Python dependencies
 .venv/
+apps/web/supabase/.temp/
