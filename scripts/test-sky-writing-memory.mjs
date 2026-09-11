@@ -83,5 +83,26 @@ try {
   assert.equal(rechecked.text, 'Fixture original text.');
   assert.equal(globalThis.__skyMemoryPrompts.length, 1, 'Recheck must never generate.');
   assert.equal(rechecked.memoryReceipt, undefined);
-} finally { fs.rmSync(outfile, { force: true }); delete globalThis.__skyMemoryPrompts; }
+  // Live Studio corrections reach the real service; only model output is synthetic.
+  const live = { id: '11111111-1111-4111-8111-111111111111', source_row_id: '22222222-2222-4222-8222-222222222222',
+    content_key: 'sky.placement.base.sun.leo', family: 'sky-placement', before_text: 'Synthetic former Studio text.',
+    after_text: 'Synthetic approved Studio replacement.', before_version: '2026-09-10T12:00:00Z', after_version: '2026-09-10T12:01:00Z',
+    status: 'active', scope: 'passage', reason: 'Synthetic passage-specific correction.', version: 2,
+    created_at: '2026-09-10T12:01:00Z', updated_at: '2026-09-10T12:02:00Z' };
+  Object.assign(process.env, { STUDIO_MEMORY_FEEDBACK_ENABLED: 'true', SUPABASE_URL: 'https://studio-memory.invalid', SUPABASE_SERVICE_ROLE_KEY: 'synthetic' });
+  globalThis.fetch = async input => {
+    assert.equal(String(input), 'https://studio-memory.invalid/rest/v1/rpc/studio_memory_active_snapshot');
+    return Response.json([{ snapshot: { rows: [live] } }]);
+  };
+  const withFeedback = await runStudioSkyWriting(live.content_key, 'generate', '');
+  assert.match(globalThis.__skyMemoryPrompts.at(-1), /Synthetic approved Studio replacement/);
+  assert.equal(withFeedback.memoryReceipt.studioFeedback.selected[0].version, 2);
+  assert.equal(withFeedback.memoryReceipt.selected.filter(row => row.memoryId.startsWith('studio-')).length, 1);
+  assert(!JSON.stringify(withFeedback.memoryReceipt).includes(live.after_text));
+  const count = globalThis.__skyMemoryPrompts.length;
+  globalThis.fetch = async () => { throw new Error('Synthetic outage'); };
+  await assert.rejects(runStudioSkyWriting(live.content_key, 'generate', ''), /Storage request failed/);
+  await runStudioSkyWriting(live.content_key, 'recheck', 'Synthetic saved text.');
+  assert.equal(globalThis.__skyMemoryPrompts.length, count, 'Outage and recheck must not call a model');
+} finally { fs.rmSync(outfile, { force: true }); delete globalThis.__skyMemoryPrompts; delete process.env.STUDIO_MEMORY_FEEDBACK_ENABLED; }
 console.log('Sky writing memory passed: scoped corrections, graph provenance, conflict exclusions, freshness, real service prompt delivery, and model-free recheck.');
