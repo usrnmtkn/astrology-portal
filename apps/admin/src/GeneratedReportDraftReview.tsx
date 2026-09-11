@@ -1,3 +1,5 @@
+import { StudioButton, StudioTextarea } from "./StudioControls";
+import { AdminSelect } from "./AdminNativeControls";
 import { useEffect, useMemo, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { adminCredentialHeaders } from "./adminSecret";
@@ -145,14 +147,14 @@ export function GeneratedReportDraftReview({ secret }: { secret: string }) {
         <p><strong>Judge findings are never promoted here automatically.</strong> They can repair only the report that produced them.</p>
 
         <label>Generated report
-          <select value={selectedReportId} onChange={(event) => setSelectedReportId(event.target.value)}>
+          <AdminSelect value={selectedReportId} onChange={(event) => setSelectedReportId(event.target.value)}>
             {dashboard.reports.length === 0 && <option value="">No generated reports yet</option>}
             {dashboard.reports.map((report) => (
               <option key={report.id} value={report.id}>
                 {reportKindLabel(report.reportKind)} · {report.targetDate ?? "no date"} · {report.headline ?? "Untitled"}
               </option>
             ))}
-          </select>
+          </AdminSelect>
         </label>
 
         {selected && (
@@ -170,14 +172,14 @@ export function GeneratedReportDraftReview({ secret }: { secret: string }) {
             </div>
 
             <label>Draft Review feedback
-              <textarea
+              <StudioTextarea
                 value={feedbackText}
                 onChange={(event) => setFeedbackText(event.target.value)}
                 placeholder="What should change about this writing? This note will remain a candidate until you explicitly approve governed evidence."
               />
             </label>
             <div className="admin-toolbar-actions">
-              <button type="button" disabled={loading || !feedbackText.trim()} onClick={() => void saveCandidate()}>Save feedback candidate</button>
+              <StudioButton type="button" disabled={loading || !feedbackText.trim()} onClick={() => void saveCandidate()}>Save feedback candidate</StudioButton>
             </div>
 
             {selectedFeedback.length > 0 && (
@@ -190,23 +192,23 @@ export function GeneratedReportDraftReview({ secret }: { secret: string }) {
                     {entry.status === "candidate" && (
                       <>
                         <label>Governed owner-evidence wording
-                          <textarea
+                          <StudioTextarea
                             value={evidenceDrafts[entry.id] ?? entry.feedback_text}
                             onChange={(event) => setEvidenceDrafts((current) => ({ ...current, [entry.id]: event.target.value }))}
                           />
                         </label>
                         <label>Apply this approved evidence to
-                          <select
+                          <AdminSelect
                             value={scopeDrafts[entry.id] ?? entry.evidence_scope}
                             onChange={(event) => setScopeDrafts((current) => ({ ...current, [entry.id]: event.target.value as EvidenceScope }))}
                           >
                             <option value="report_kind">This report type only</option>
                             <option value="surface">This surface ({entry.source_surface})</option>
                             <option value="all_generated_reports">All Friends + You generated reports</option>
-                          </select>
+                          </AdminSelect>
                         </label>
                         <div className="admin-toolbar-actions">
-                          <button
+                          <StudioButton
                             type="button"
                             disabled={loading || !(evidenceDrafts[entry.id] ?? entry.feedback_text).trim()}
                             onClick={() => void action({
@@ -215,12 +217,12 @@ export function GeneratedReportDraftReview({ secret }: { secret: string }) {
                               governedEvidenceText: (evidenceDrafts[entry.id] ?? entry.feedback_text).trim(),
                               evidenceScope: scopeDrafts[entry.id] ?? entry.evidence_scope
                             }, "Owner feedback explicitly approved. It can now enter future generated-report writer and judge packets within the selected scope.")}
-                          >Approve as owner evidence</button>
-                          <button
+                          >Approve as owner evidence</StudioButton>
+                          <StudioButton
                             type="button"
                             disabled={loading}
                             onClick={() => void action({ action: "reject", feedbackId: entry.id }, "Feedback rejected. It will remain excluded from writer and judge packets.")}
-                          >Reject</button>
+                          >Reject</StudioButton>
                         </div>
                       </>
                     )}
@@ -235,7 +237,7 @@ export function GeneratedReportDraftReview({ secret }: { secret: string }) {
         )}
       </div>
       <div className="admin-toolbar-actions">
-        <button type="button" disabled={loading} onClick={() => void load()}><RefreshCw size={16} aria-hidden="true" />Refresh Draft Review</button>
+        <StudioButton type="button" disabled={loading} onClick={() => void load()}><RefreshCw size={16} aria-hidden="true" />Refresh Draft Review</StudioButton>
         {message && <span className="ui-pill admin-status">{message}</span>}
         {error && <span className="ui-pill admin-status" role="alert">{error}</span>}
       </div>

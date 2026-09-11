@@ -1,3 +1,4 @@
+import { StudioButton } from "./StudioControls";
 import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { currentSkySummaryWording, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 
@@ -30,8 +31,8 @@ export function SkyInlineTemplate({ field, body, slots, onEdit, busy, label }: {
         onChange={value => { const next = [...chunks]; next[index] = value.replace(/[{}]/gu, ""); setDraft(next.join("")); }} />)}</p>
     {errors.length > 0 && <div role="alert">{errors.join(" ")}</div>}
     {draft !== initial && <div className="admin-editor-guidance">
-      <button type="button" disabled={busy || errors.length > 0} onClick={() => onEdit(field, draft)}>Review and save wording</button>
-      <button type="button" disabled={busy} onClick={() => setDraft(initial)}>Discard wording changes</button>
+      <StudioButton type="button" disabled={busy || errors.length > 0} onClick={() => onEdit(field, draft)}>Review and save wording</StudioButton>
+      <StudioButton type="button" disabled={busy} onClick={() => setDraft(initial)}>Discard wording changes</StudioButton>
       <p>Unsaved wording. Review and save opens the existing Save draft and Save & publish controls.</p>
     </div>}
   </>;

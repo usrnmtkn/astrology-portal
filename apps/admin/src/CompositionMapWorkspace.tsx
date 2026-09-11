@@ -1,3 +1,6 @@
+import { CompositionVariableKey, compositionVariableColors } from "./CompositionVariableKey";
+import { StudioTabs, StudioButton, StudioInput } from "./StudioControls";
+import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import CompositionSurfaceSources from "./CompositionSourceManager";
 import type { SkyPlacementSelection } from "./skyPlacementAssembly";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
@@ -72,6 +75,7 @@ function ReaderSurfaceWorkspace({
   const [area, setArea] = useState<WritingSurfaceMapItem["area"] | "All">("All");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(initialSurfaceId ?? null);
+  const [browseOpen, setBrowseOpen] = useState(false);
   const areas = useMemo(
     () => ["All", ...new Set(writingSurfaceSourceMap.map((surface) => surface.area))] as Array<WritingSurfaceMapItem["area"] | "All">,
     []
@@ -104,28 +108,28 @@ function ReaderSurfaceWorkspace({
       <aside className="admin-composition-template-list" aria-label="App surfaces and systems">
         <header>
           <div><p className="admin-eyebrow">Choose a surface or system</p><strong>{filtered.length} of {writingSurfaceSourceMap.length}</strong></div>
-          <small>Start where writing appears—or with a supporting system—then follow its editorial and runtime paths.</small>
           <div className="admin-composition-template-tools">
             <span className="admin-composition-search-shell">
-              <input aria-label="Search surfaces and systems" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Article, calendar, report…" />
-              {query && <button type="button" aria-label="Clear surface search" onClick={() => setQuery("")}>×</button>}
+              <StudioInput aria-label="Search surfaces and systems" value={query} onChange={(event) => { setQuery(event.target.value); setBrowseOpen(true); }} placeholder="Article, calendar, report…" />
+              {query && <StudioButton type="button" aria-label="Clear surface search" onClick={() => setQuery("")}>×</StudioButton>}
             </span>
-            <select aria-label="Surface or system area" value={area} onChange={(event) => setArea(event.target.value as WritingSurfaceMapItem["area"] | "All")}>
+            <AdminSelect aria-label="Surface or system area" value={area} onChange={(event) => { setArea(event.target.value as WritingSurfaceMapItem["area"] | "All"); setBrowseOpen(true); }}>
               {areas.map((itemArea) => <option key={itemArea} value={itemArea}>{itemArea === "All" ? "All app areas" : itemArea}</option>)}
-            </select>
+            </AdminSelect>
           </div>
           <label className="admin-composition-template-mobile-picker">
             <span>Selected surface</span>
-            <select value={selected?.id ?? ""} onChange={(event) => setSelectedId(event.target.value)}>
+            <AdminSelect value={selected?.id ?? ""} onChange={(event) => setSelectedId(event.target.value)}>
               {filtered.map((surface) => <option key={surface.id} value={surface.id}>{surface.surface}</option>)}
-            </select>
+            </AdminSelect>
           </label>
         </header>
+        <details className="admin-composition-browse" open={browseOpen} onToggle={(event) => setBrowseOpen(event.currentTarget.open)}><AdminDisclosureSummary>Browse surfaces ({filtered.length})</AdminDisclosureSummary>
         <div className="admin-composition-template-items">
           {filtered.map((surface) => {
             const surfaceAccess = writingSurfaceAdminAccess[surface.id];
             return (
-              <button
+              <StudioButton
                 type="button"
                 key={surface.id}
                 className={selected?.id === surface.id ? "active" : ""}
@@ -135,17 +139,18 @@ function ReaderSurfaceWorkspace({
                 <span>{surface.area}</span>
                 <strong>{surface.surface}</strong>
                 <small>{surface.requiredSlots.length} content part{surface.requiredSlots.length === 1 ? "" : "s"} · {surfaceAccess?.editability === "editable" ? "editable" : surfaceAccess?.editability === "partial" ? "inspection only" : "editor not wired"}</small>
-              </button>
+              </StudioButton>
             );
           })}
           {!filtered.length && (
             <div className="admin-composition-empty">
               <strong>No surfaces match</strong>
               <p>Clear the search or choose another app area.</p>
-              <button type="button" onClick={() => { setArea("All"); setQuery(""); }}>Clear filters</button>
+              <StudioButton type="button" onClick={() => { setArea("All"); setQuery(""); }}>Clear filters</StudioButton>
             </div>
           )}
         </div>
+        </details>
       </aside>
 
       <section className="admin-composition-detail" aria-label="Selected app surface or system">
@@ -153,14 +158,43 @@ function ReaderSurfaceWorkspace({
           <>
             <header className="admin-composition-detail-header">
               <div>
-                <p className="admin-eyebrow">{selected.area} / {selected.area === "System" ? "writing system" : "reader surface"}</p>
-                <h2>{selected.surface}</h2>
-                <p>{access.readerLocation}</p>
+                <h2 className="sr-only">{selected.surface}</h2>
               </div>
               <span className={`ui-pill admin-status ${access.editability === "editable" ? "status-live" : access.editability === "missing" ? "status-error" : "status-draft"}`}>{editorialStatus}</span>
             </header>
 
             <CompositionSurfaceSources onEditField={onEditField} key={selected.id} surfaceId={selected.id} rows={rows} templates={templates} onEditRow={onEditRow} onSelectTemplate={onSelectTemplate} onLoadRow={onLoadRow} />
+            <section className="admin-composition-surface-actions" aria-label="Editing destinations">
+              <header>
+                <div><h3>Editing destinations</h3></div>
+              </header>
+              <div className="admin-composition-surface-route-list">
+                {access.routes.map((route) => (
+                  <a key={`${selected.id}-${route.hash}`} href={route.hash} className={route.purpose === "reader-copy" ? "primary" : ""}>
+                    <span><strong>{route.label}</strong><small>{route.note}</small></span>
+                    <span aria-hidden="true">→</span>
+                  </a>
+                ))}
+                {access.routes.length === 0 && (
+                  <div className="admin-composition-missing-source" role="note">
+                    <span><strong>No atomic editor yet</strong><small>This surface is mapped so the gap is visible; its code-composed prose still needs governed source rows.</small></span>
+                  </div>
+                )}
+              </div>
+              {access.cmsStarters?.length ? (
+                <div className="admin-composition-cms-starters">
+                  <p className="admin-eyebrow">Create a governed surface override</p>
+                  {access.cmsStarters.map((starter) => (
+                    <article key={starter.contentKey}>
+                      <div><strong>{starter.label}</strong><code>{starter.contentKey}</code><small>Calculated slots: {starter.allowedSlots.join(", ") || "none"}</small></div>
+                      {onStartCmsRow && <StudioButton type="button" onClick={() => onStartCmsRow(selected, starter)}>Start draft</StudioButton>}
+                    </article>
+                  ))}
+                </div>
+              ) : null}
+            </section>
+
+            <details className="admin-composition-technical"><AdminDisclosureSummary>Technical details</AdminDisclosureSummary>
             <section className="admin-composition-surface-summary" aria-label="Writing surface contract">
               <div>
                 <p className="admin-eyebrow">Surface content</p>
@@ -185,36 +219,6 @@ function ReaderSurfaceWorkspace({
               <span className="ui-pill admin-status">{writingSurfaceStatusLabels[selected.status]}</span>
             </section>
 
-            <section className="admin-composition-surface-actions" aria-label="Editing destinations">
-              <header>
-                <div><p className="admin-eyebrow">Edit or inspect</p><h3>Open the workspace that owns this writing</h3></div>
-              </header>
-              <div className="admin-composition-surface-route-list">
-                {access.routes.map((route) => (
-                  <a key={`${selected.id}-${route.hash}`} href={route.hash} className={route.purpose === "reader-copy" ? "primary" : ""}>
-                    <span><strong>{route.label}</strong><small>{route.note}</small></span>
-                    <span aria-hidden="true">→</span>
-                  </a>
-                ))}
-                {access.routes.length === 0 && (
-                  <div className="admin-composition-missing-source" role="note">
-                    <span><strong>No atomic editor yet</strong><small>This surface is mapped so the gap is visible; its code-composed prose still needs governed source rows.</small></span>
-                  </div>
-                )}
-              </div>
-              {access.cmsStarters?.length ? (
-                <div className="admin-composition-cms-starters">
-                  <p className="admin-eyebrow">Create a governed surface override</p>
-                  {access.cmsStarters.map((starter) => (
-                    <article key={starter.contentKey}>
-                      <div><strong>{starter.label}</strong><code>{starter.contentKey}</code><small>Calculated slots: {starter.allowedSlots.join(", ") || "none"}</small></div>
-                      {onStartCmsRow && <button type="button" onClick={() => onStartCmsRow(selected, starter)}>Start draft</button>}
-                    </article>
-                  ))}
-                </div>
-              ) : null}
-            </section>
-
             <section className="admin-composition-surface-provenance" aria-label="Surface provenance">
               <header><div><p className="admin-eyebrow">Provenance</p><h3>Code and content sources</h3></div><strong>{selected.sources.length}</strong></header>
               <div>
@@ -231,7 +235,8 @@ function ReaderSurfaceWorkspace({
             <section className="admin-composition-surface-limit" aria-label="Known limits">
               <div><p className="admin-eyebrow">Known limit</p><p>{selected.risk}</p></div>
               <div><p className="admin-eyebrow">Next QA action</p><p>{selected.nextAction}</p></div>
-            </section>
+            </section>            </details>
+
           </>
         ) : <div className="admin-empty">Choose a reader surface to inspect its composition.</div>}
       </section>
@@ -303,6 +308,8 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
     setPreviewAudience("you");
   }
 
+  const variableColors = compositionVariableColors(selected?.slots ?? []);
+
   function sourceForVariable(name: string) {
     return selected?.preview.fields.flatMap((field) => field.paragraphs.flat())
       .find((segment) => segment.name === name && segment.source)?.source;
@@ -342,34 +349,29 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
       templateLabel: selected.label
     } satisfies CompositionEditorContext : undefined;
     return (
-      <button
+      <StudioButton
         type="button"
         key={key}
         className={`admin-composition-variable variable-${segment.kind}`}
+        data-variable-name={segment.name}
+        data-variable-color={variableColors.get(segment.name)}
         data-variable-action={`${action} →`}
         aria-label={`${segment.text}. ${action}`}
         title={action}
         onClick={() => openVariable(segment.name!, segment.source, context)}
       >
         {segment.text}
-      </button>
+      </StudioButton>
     );
   }
 
   return (
     <section className="admin-template-page admin-composition-map-page">
-      {loadError && <div role="alert"><p>{loadError}</p><button type="button" onClick={() => setRetryLoad(value => value + 1)}>Retry sources</button></div>}
+      {loadError && <div role="alert"><p>{loadError}</p><StudioButton type="button" onClick={() => setRetryLoad(value => value + 1)}>Retry sources</StudioButton></div>}
       {pendingRows.length > 0 && !loadError && <p role="status">Loading full composition sources…</p>}
-      {!templateKeys && <div className="admin-composition-scope-header">
-        <div className="admin-composition-scope-tabs" role="tablist" aria-label="Composition Map scope">
-          <button type="button" role="tab" aria-selected={scope === "surfaces"} className={scope === "surfaces" ? "active" : ""} onClick={() => setScope("surfaces")}>
-            Surfaces &amp; systems <span>{writingSurfaceSourceMap.length}</span>
-          </button>
-          <button type="button" role="tab" aria-selected={scope === "templates"} className={scope === "templates" ? "active" : ""} onClick={() => setScope("templates")}>
-            Template internals <span>{map.length}</span>
-          </button>
-        </div>
-      </div>}
+      <StudioTabs label="Composition Map scope" value={scope} onValueChange={setScope} hidden={Boolean(templateKeys)}
+        tabs={[{ value: "surfaces", label: <>Surfaces &amp; systems <span>{writingSurfaceSourceMap.length}</span></> },
+          { value: "templates", label: <>Template internals <span>{map.length}</span></> }]}>
       {scope === "surfaces" ? <ReaderSurfaceWorkspace onEditField={onEditField} initialSurfaceId={initialSurfaceId} onStartCmsRow={onStartCmsRow} onLoadRow={onLoadRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
         <aside className="admin-composition-template-list" aria-label="Composition templates">
           <header>
@@ -377,15 +379,15 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
             <small>Choose one to read its surface.</small>
             <div className="admin-composition-template-tools">
               <span className="admin-composition-search-shell">
-                <input aria-label="Search the composition map" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a template or source" />
-                {query && <button type="button" aria-label="Clear composition search" onClick={() => setQuery("")}>×</button>}
+                <StudioInput aria-label="Search the composition map" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a template or source" />
+                {query && <StudioButton type="button" aria-label="Clear composition search" onClick={() => setQuery("")}>×</StudioButton>}
               </span>
               <div className="admin-composition-template-filters">
-                <select aria-label="Reader destination" value={destinationFilter} onChange={(event) => setDestinationFilter(event.target.value)}>
+                <AdminSelect aria-label="Reader destination" value={destinationFilter} onChange={(event) => setDestinationFilter(event.target.value)}>
                   <option value="all">All destinations</option>
                   {destinations.map((destination) => <option key={destination} value={destination}>{destination}</option>)}
-                </select>
-                <button
+                </AdminSelect>
+                <StudioButton
                   type="button"
                   className={`admin-composition-issues-filter ${issuesOnly ? "active" : ""}`}
                   aria-label="Show only templates that need IA review"
@@ -393,19 +395,19 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                   onClick={() => setIssuesOnly((current) => !current)}
                 >
                   Review
-                </button>
+                </StudioButton>
               </div>
             </div>
             <label className="admin-composition-template-mobile-picker">
               <span>Selected template</span>
-              <select value={selected?.row.content_key ?? ""} onChange={(event) => selectTemplate(event.target.value)}>
+              <AdminSelect value={selected?.row.content_key ?? ""} onChange={(event) => selectTemplate(event.target.value)}>
                 {filtered.map((template) => <option key={template.row.content_key} value={template.row.content_key}>{template.label}</option>)}
-              </select>
+              </AdminSelect>
             </label>
           </header>
           <div className="admin-composition-template-items">
             {filtered.map((template) => (
-              <button
+              <StudioButton
                 type="button"
                 key={template.row.content_key}
                 className={selected?.row.content_key === template.row.content_key ? "active" : ""}
@@ -415,13 +417,13 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                 <span>{template.destination}</span>
                 <strong>{template.label.replace(`${template.destination} · `, "")}</strong>
                 <small>{template.slots.length} slot{template.slots.length === 1 ? "" : "s"} · {template.issues.length ? `${template.issues.length} IA flag${template.issues.length === 1 ? "" : "s"}` : "no IA flags"}</small>
-              </button>
+              </StudioButton>
             ))}
             {!filtered.length && (
               <div className="admin-composition-empty">
                 <strong>No templates match</strong>
                 <p>Try a broader destination or clear the current review filters.</p>
-                {hasFilters && <button type="button" onClick={clearFilters}>Clear filters</button>}
+                {hasFilters && <StudioButton type="button" onClick={clearFilters}>Clear filters</StudioButton>}
               </div>
             )}
           </div>
@@ -436,29 +438,21 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                   <h2>{selected.label.replace(`${selected.destination} · `, "")}</h2>
                   <p>{selected.description}</p>
                 </div>
-                <button type="button" className="admin-primary-button" onClick={() => onEditRow(selected.row)}>
+                <StudioButton type="button" className="admin-primary-button" onClick={() => onEditRow(selected.row)}>
                   {selected.preview.lineage === "saved-passage" ? "Edit passage" : "Edit main template"}
-                </button>
+                </StudioButton>
               </header>
 
-              <div className="admin-composition-view-tabs" role="tablist" aria-label="Composition views">
-                <button type="button" role="tab" aria-selected={view === "preview"} className={view === "preview" ? "active" : ""} onClick={() => setView("preview")}>
-                  Reader preview
-                </button>
-                <button type="button" role="tab" aria-selected={view === "template"} className={view === "template" ? "active" : ""} onClick={() => setView("template")}>
-                  Main template
-                </button>
-                <button type="button" role="tab" aria-selected={view === "assembly"} className={view === "assembly" ? "active" : ""} onClick={() => setView("assembly")}>
-                  Assembly
-                </button>
-              </div>
-
+              <StudioTabs label="Composition views" value={view} onValueChange={setView}
+                tabs={[{ value: "preview", label: "Reader preview" }, { value: "template", label: "Main template" }, { value: "assembly", label: "Assembly" }]}>
               {selected.issues.length > 0 && (
                 <section className="admin-composition-issues" aria-label="Naming and information architecture issues">
                   <div><strong>Naming &amp; IA review</strong></div>
                   <ul>{selected.issues.map((issue) => <li key={issue}>{issue}</li>)}</ul>
                 </section>
               )}
+
+              <CompositionVariableKey slots={selected.slots} colors={variableColors} />
 
               {view === "preview" && (
                 <section className="admin-composition-reader-preview" aria-label="Reader surface preview">
@@ -480,20 +474,13 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                     </div>
                   )}
 
-                  <div className="admin-composition-variable-legend" aria-label="Variable color key">
-                    <span className="variable-fact">Calculated fact</span>
-                    <span className="variable-phrase">Reusable phrase</span>
-                    <span className="variable-hook">Authored hook</span>
-                    <span className="variable-copy">Saved copy</span>
-                  </div>
-
                   <div className="admin-composition-preview-surface">
                     <div className="admin-composition-preview-chrome">
                       <span>{selected.destination}</span>
                       {selectedHasAudienceVariants ? (
                         <div className="admin-composition-preview-audience" role="group" aria-label="Preview audience">
-                          <button type="button" aria-pressed={previewAudience === "you"} className={previewAudience === "you" ? "active" : ""} onClick={() => setPreviewAudience("you")}>You</button>
-                          <button type="button" aria-pressed={previewAudience === "they"} className={previewAudience === "they" ? "active" : ""} onClick={() => setPreviewAudience("they")}>They</button>
+                          <StudioButton type="button" aria-pressed={previewAudience === "you"} className={previewAudience === "you" ? "active" : ""} onClick={() => setPreviewAudience("you")}>You</StudioButton>
+                          <StudioButton type="button" aria-pressed={previewAudience === "they"} className={previewAudience === "they" ? "active" : ""} onClick={() => setPreviewAudience("they")}>They</StudioButton>
                         </div>
                       ) : <span>Reader surface</span>}
                     </div>
@@ -531,10 +518,10 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                       <header><div><p className="admin-eyebrow">Exact sources in this preview</p><h3>Open the wording behind the preview</h3></div><strong>{selected.preview.sources.length}</strong></header>
                       <div className="admin-composition-preview-sources">
                         {selected.preview.sources.map((source) => (
-                          <button type="button" key={source.row.id} onClick={() => onEditRow(source.row)}>
+                          <StudioButton type="button" key={source.row.id} onClick={() => onEditRow(source.row)}>
                             <span><small>{sourceKindLabel(source)}</small><strong>{source.label}</strong><code>{source.row.content_key}</code></span>
                             <span>Edit source</span>
-                          </button>
+                          </StudioButton>
                         ))}
                         {!selected.preview.sources.length && <p className="admin-field-hint">This template chooses among multiple saved sources at runtime. Open Assembly to inspect and edit the available source families.</p>}
                       </div>
@@ -544,7 +531,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                       <header><div><p className="admin-eyebrow">Example facts</p><h3>Values supplied by the app</h3></div><strong>{selected.preview.facts.length}</strong></header>
                       <p className="admin-field-hint">Change sample facts to find the wording for a planet, sign, house, or aspect. These inputs do not change anyone’s calculated chart.</p>
                       <dl>
-                        {selected.preview.facts.map((fact) => <div key={fact.name}><dt><label htmlFor={`composition-fact-${fact.name}`}>{fact.label}</label></dt><dd><input id={`composition-fact-${fact.name}`} value={fact.value} onChange={(event) => setExampleValues((current) => ({ ...current, [fact.name]: event.target.value }))} /></dd></div>)}
+                        {selected.preview.facts.map((fact) => <div key={fact.name}><dt><label htmlFor={`composition-fact-${fact.name}`}>{fact.label}</label></dt><dd><StudioInput id={`composition-fact-${fact.name}`} value={fact.value} onChange={(event) => setExampleValues((current) => ({ ...current, [fact.name]: event.target.value }))} /></dd></div>)}
                       </dl>
                       {!selected.preview.facts.length && <p className="admin-field-hint">No calculated facts are required by this template.</p>}
                     </section>
@@ -556,7 +543,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                 <section className="admin-composition-template-workbench" aria-label="Main template">
                   <header>
                     <div><p className="admin-eyebrow">Main template</p><h3>Structure and fixed wording</h3><p>This is the template the resolver fills. Tokens in braces are supplied by saved sources or calculated facts.</p><code>{selected.row.content_key}</code></div>
-                    <button type="button" onClick={() => onEditRow(selected.row)}>Edit template</button>
+                    <StudioButton type="button" onClick={() => onEditRow(selected.row)}>Edit template</StudioButton>
                   </header>
                   <div className="admin-composition-template-fields">
                     {selected.preview.fields.map((field) => (
@@ -570,14 +557,14 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                           const source = sourceForVariable(name);
                           const kind: CompositionPreviewVariableKind = source?.kind ?? (slot.sourceKind === "runtime" ? "fact" : "copy");
                           const action = source ? `Edit ${slot.label}` : `Inspect ${slot.label}`;
-                          return <button type="button" key={`${name}-${index}`} className={`admin-composition-variable-token variable-${kind}`} data-variable-action={`${action} →`} aria-label={`${part}. ${action}`} onClick={() => openVariable(name, source)}>{part}</button>;
+                          return <StudioButton type="button" key={`${name}-${index}`} className={`admin-composition-variable-token variable-${kind}`} data-variable-name={name} data-variable-color={variableColors.get(name)} data-variable-action={`${action} →`} aria-label={`${part}. ${action}`} onClick={() => openVariable(name, source)}>{part}</StudioButton>;
                         })}</pre>
                       </article>
                     ))}
                   </div>
                   <section className="admin-composition-template-tokens" aria-label="Template tokens">
                     <p className="admin-eyebrow">Tokens used</p>
-                    <div>{selected.slots.map((slot) => <button type="button" key={slot.name} onClick={() => setView("assembly")}>{`{{${slot.name}}}`}<small>{slot.sourceKind === "runtime" ? "Calculated" : slot.sourceKind === "unmapped" ? "Not wired" : "Saved copy"}</small></button>)}</div>
+                    <div>{selected.slots.map((slot) => <StudioButton type="button" key={slot.name} data-variable-name={slot.name} data-variable-color={variableColors.get(slot.name)} onClick={() => openVariable(slot.name)}>{`{{${slot.name}}}`}<small>{slot.sourceKind === "runtime" ? "Calculated" : slot.sourceKind === "unmapped" ? "Not wired" : "Saved copy"}</small></StudioButton>)}</div>
                   </section>
                 </section>
               )}
@@ -595,7 +582,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                 {selected.slots.map((slot) => (
                   <article id={`composition-slot-${slot.name}`} tabIndex={-1} className={`admin-composition-slot ${slot.issue ? "has-issue" : ""}`} key={slot.name}>
                     <header>
-                      <div><span className="admin-composition-connector" aria-hidden="true" /><div><strong>{slot.label}</strong><code>{`{{${slot.name}}}`}</code></div></div>
+                      <div><span className="admin-composition-connector" aria-hidden="true" /><div><strong>{slot.label}</strong><code data-variable-name={slot.name} data-variable-color={variableColors.get(slot.name)}>{`{{${slot.name}}}`}</code></div></div>
                       <div className="admin-composition-slot-badges">
                         <span className="ui-pill admin-status">{slot.requirement === "Runtime" ? (slot.sourceKind === "runtime" ? "Dynamic" : "In template") : slot.requirement}</span>
                         <span className={`ui-pill admin-status ${slot.sourceKind === "runtime" ? "status-reviewed" : "status-draft"}`}>
@@ -619,7 +606,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                     {slot.sourceKind === "unmapped" && !slot.sources.length ? (
                       <div className="admin-composition-missing-source" role="note">
                         <span><strong>Not wired to the reader</strong><small>{slot.source}</small></span>
-                        <button type="button" onClick={() => onEditRow(selected.row)}>Review template declaration</button>
+                        <StudioButton type="button" onClick={() => onEditRow(selected.row)}>Review template declaration</StudioButton>
                       </div>
                     ) : slot.sourceKind === "runtime" ? (
                       <div className="admin-composition-runtime-source">
@@ -628,25 +615,27 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
                     ) : slot.sources.length > 0 ? (
                       <div className="admin-composition-sources" aria-label={`Saved sources for ${slot.label}`}>
                         {slot.sources.map((source) => (
-                          <button type="button" key={source.row.id} onClick={() => onEditRow(source.row)}>
+                          <StudioButton type="button" key={source.row.id} onClick={() => onEditRow(source.row)}>
                             <span><small>{sourceKindLabel(source)}</small><strong>{source.label}</strong><code>{source.row.content_key}</code></span>
                             <span>Open editor</span>
-                          </button>
+                          </StudioButton>
                         ))}
                       </div>
                     ) : (
                       <div className="admin-composition-missing-source" role="note">
                         <span><strong>Saved source not mapped</strong><small>{slot.source}</small></span>
-                        <button type="button" onClick={() => onEditRow(selected.row)}>Edit slot in template</button>
+                        <StudioButton type="button" onClick={() => onEditRow(selected.row)}>Edit slot in template</StudioButton>
                       </div>
                     )}
                   </article>
                 ))}
               </section>}
+              </StudioTabs>
             </>
           ) : <div className="admin-empty">Choose a template to inspect its composition.</div>}
         </section>
       </div>}
+      </StudioTabs>
       {editor}
     </section>
   );

@@ -1,3 +1,4 @@
+import { StudioButton } from "./StudioControls";
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 
 export type PackagedHookCatalogItem = {
@@ -42,7 +43,7 @@ export function PackagedHookCatalogResults({ items, savedKeys, resetKey, onOpen 
                   </div>
                   <div className="admin-fallback-row-actions">
                     <span className="admin-field-hint">{saved ? "Saved source" : "Source only"}</span>
-                    <button type="button" onClick={() => onOpen(item)}>{saved ? "Edit source" : "View source"}</button>
+                    <StudioButton type="button" onClick={() => onOpen(item)}>{saved ? "Edit source" : "View source"}</StudioButton>
                   </div>
                 </article>
               );

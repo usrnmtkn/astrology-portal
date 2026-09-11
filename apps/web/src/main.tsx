@@ -78,11 +78,7 @@ function redirectLocalAdminPath() {
 }
 
 async function loadAdminPresentationStyles() {
-  await Promise.all([
-    import("../../admin/src/admin-row-selection.css"),
-    import("../../admin/src/admin-form-density.css"),
-    import("../../admin/src/admin-content-studio-ux-compat.css")
-  ]);
+  await import("../../admin/src/studio-system.css");
 }
 
 async function startApp() {
@@ -91,6 +87,8 @@ async function startApp() {
   }
 
   if (isAdminContentPath()) {
+    await loadAdminPresentationStyles();
+    const { AdminPageError, AdminPageLoading } = await import("../../admin/src/AdminPageError");
     const dashboard = isMemoryGraphPath()
       ? React.lazy(() => import("../../admin/src/MemoryGraphDashboard"))
       : isContentCoveragePath()
@@ -99,12 +97,11 @@ async function startApp() {
     const Dashboard = dashboard;
     createRoot(document.getElementById("root")!).render(
       <React.StrictMode>
-        <PageLoadBoundary recoveryHref="/admin/content#review-queue" recoveryLabel="Open Review Queue"><React.Suspense fallback={<PageLoading message="Loading Content Studio…" />}>
+        <PageLoadBoundary recoveryHref="/admin/content#review-queue" renderFallback={(detail, onRetry) => <AdminPageError detail={detail} onRetry={onRetry} recoveryHref="/admin/content#review-queue" />}><React.Suspense fallback={<AdminPageLoading label="Loading Content Studio…" />}>
           <Dashboard />
         </React.Suspense></PageLoadBoundary>
       </React.StrictMode>
     );
-    await loadAdminPresentationStyles();
     await setupAdminReaderLinks();
     return;
   }

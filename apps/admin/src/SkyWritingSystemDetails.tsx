@@ -1,9 +1,10 @@
+import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { skyWritingSystems, type SkyWritingSystem } from "./skyWritingSystems";
 
 export default function SkyWritingSystemDetails({ system }: { system: SkyWritingSystem }) {
   const entry = skyWritingSystems[system];
   return <details className="admin-workspace-details admin-writing-system-details" aria-label={`${entry.name} system details`}>
-    <summary>Writing system & versions</summary>
+    <AdminDisclosureSummary>Writing system & versions</AdminDisclosureSummary>
     <div className="admin-composition-source-card">
       <strong>{entry.contract}</strong>
       <p>{entry.purpose}</p>

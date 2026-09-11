@@ -1,3 +1,8 @@
+import "./studio-system.css";
+import { StudioTabs, StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
+import { getStudioTheme, saveStudioTheme } from "./studioTheme";
+import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalExactContentKey, transitNatalExactSourceDraft } from "./transitNatalSources";
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
@@ -17,6 +22,7 @@ import {
   Braces,
   CalendarDays,
   Check,
+  Copy,
   Database,
   FileText,
   Flag,
@@ -29,6 +35,7 @@ import {
   Search,
   Server,
   Sparkles,
+  Sun,
   Trash2,
   Users,
   X
@@ -165,15 +172,9 @@ import type {
 import type { CompositionEditorContext } from "./CompositionMapWorkspace";
 import type { SkyPlacementSelection } from "./skyPlacementAssembly";
 import { memoByObject, naturalCollator } from "./derivedCache";
-import "./admin.css";
-import "./admin-components.css";
 // Presentation layers that must ship with the dashboard itself. The production
 // route is served by @tldr/web, which lazy-loads this component and never ran
 // apps/admin/src/main.tsx, so anything imported only there was missing in prod.
-import "./admin-row-selection.css";
-import "./admin-form-density.css";
-import "./admin-content-studio-ux-compat.css";
-import "./admin-content-studio-layout.css";
 
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
@@ -2748,6 +2749,12 @@ const fallbackHookVisibleSearchText = memoByObject(fallbackHookVisibleSearchText
 const aspectContextForRow = memoByObject(aspectContextForRowUncached);
 
 export function GeneratedContentAdminDashboard() {
+  const [studioTheme, setStudioTheme] = useState(getStudioTheme);
+  function toggleStudioTheme() {
+    const next = studioTheme === "dark" ? "light" : "dark";
+    setStudioTheme(next);
+    saveStudioTheme(next);
+  }
   const [secret, setSecret, setTransientCredential] = useSavedSecret();
   const [secretInput, setSecretInput] = useState(secret);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
@@ -4423,6 +4430,8 @@ export function GeneratedContentAdminDashboard() {
   ) {
     setEditorSaveError("");
     const activeDraft = draftOverride ?? draft;
+    const editorDraftAtSave = draft;
+    const editorSessionAtSave = editorSessionRef.current;
     const recoveryBaseline = editorBaselineRef.current;
     if (!activeDraft) return null;
     const isNewCompatibilityCard = !activeDraft.id && activeDraft.blockType === "compatibility_planet_card";
@@ -4512,10 +4521,19 @@ export function GeneratedContentAdminDashboard() {
         const without = current.filter((row) => row.id !== saved.id && !(row.id.startsWith("package:") && row.content_key === saved.content_key));
         return [saved, ...without];
       });
-      if (updateEditor) {
+      if (updateEditor && editorSessionAtSave === editorSessionRef.current) {
         setEditorSourceRow(saved);
         setSelectedRowId(saved.id);
-        rememberSavedDraft(savedDraft);
+        const serializedSaved = JSON.stringify(savedDraft);
+        editorBaselineRef.current = serializedSaved;
+        editorSavedInputRef.current = serializedSaved;
+        setDraft((current) => {
+          // A response acknowledges the submitted version, not newer typing.
+          if (current && current !== editorDraftAtSave && current.contentKey === activeDraft.contentKey) {
+            return { ...current, id: savedDraft.id, updatedAt: savedDraft.updatedAt };
+          }
+          return savedDraft;
+        });
       }
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setMessage(sourceLifecycleAction === "archive"
@@ -5604,7 +5622,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function onCatalogKeyDown(event: ReactKeyboardEvent<HTMLElement>, item: HookCatalogItem) {
-    if (event.key !== "Enter" && event.key !== " ") return;
+    if (event.target !== event.currentTarget || (event.key !== "Enter" && event.key !== " ")) return;
     event.preventDefault();
     void openHookDraft(item);
   }
@@ -5699,7 +5717,7 @@ export function GeneratedContentAdminDashboard() {
           <small>Phrasebank admin</small>
         </span>
       </a>
-      <button
+      <StudioButton
         className="admin-mobile-nav-toggle"
         type="button"
         aria-controls="admin-content-navigation"
@@ -5711,7 +5729,11 @@ export function GeneratedContentAdminDashboard() {
         {isMobileNavOpen
           ? <X size={18} aria-hidden="true" />
           : <span className="admin-mobile-nav-icon" aria-hidden="true"><i /><i /><i /></span>}
-      </button>
+      </StudioButton>
+      <StudioButton type="button" className="admin-theme-toggle" onClick={toggleStudioTheme} aria-label={`Switch to ${studioTheme === "dark" ? "light" : "dark"} theme`}>
+        {studioTheme === "dark" ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
+        <span>{studioTheme === "dark" ? "Light theme" : "Dark theme"}</span>
+      </StudioButton>
       <nav id="admin-content-navigation" className="admin-nav" aria-label="Content operations">
         {primaryAdminNavGroups.map((group) => (
         <section className="admin-nav-section" aria-label={group} key={group}>
@@ -5731,7 +5753,7 @@ export function GeneratedContentAdminDashboard() {
                   : activePage === item.page;
             return (
               <Fragment key={item.key ?? item.page}>
-                <button
+                <StudioButton
                   type="button"
                   title={item.category === "Natal Chart"
                     ? "Planets and points in signs and houses"
@@ -5743,33 +5765,33 @@ export function GeneratedContentAdminDashboard() {
                 >
                   <Icon size={16} aria-hidden="true" />
                   <span>{item.label}</span>
-                </button>
+                </StudioButton>
                 {item.page === "skyWriteups" && (
-                  <div className="admin-nav-workspace-group" aria-label="Sky Write-ups sections">
-                    <button type="button"
+                  <div className="admin-nav-workspace-group" hidden={activePage !== "skyWriteups"} aria-label="Sky Write-ups sections">
+                    <StudioButton type="button"
                       onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "daily-summary" }))}
                       aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "daily-summary" ? "page" : undefined}>
                       <span>Daily Sky Summary</span>
-                    </button>
-                    <button
+                    </StudioButton>
+                    <StudioButton
                       type="button"
                       onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal" }))}
                       aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "transits-to-natal" ? "page" : undefined}
                     >
                       <span>Transit to Natal Charts</span>
-                    </button>
-                    <button
+                    </StudioButton>
+                    <StudioButton
                       type="button"
                       onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "house-transits" }))}
                       aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits" ? "page" : undefined}
                     >
                       <span>House Transits</span>
-                    </button>
+                    </StudioButton>
                   </div>
                 )}
                 {item.page === "skyWriteups" && (
                   <>
-                    <button
+                    <StudioButton
                       type="button"
                       title="Friends > Transits reader-facing copy"
                       onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal", audience: "friends" }))}
@@ -5777,32 +5799,32 @@ export function GeneratedContentAdminDashboard() {
                     >
                       <Users size={16} aria-hidden="true" />
                       <span>Friends Transits</span>
-                    </button>
-                    <div className="admin-nav-workspace-group" aria-label="Friends Transits sections">
-                      <button
+                    </StudioButton>
+                    <div className="admin-nav-workspace-group" hidden={activePage !== "skyWriteups"} aria-label="Friends Transits sections">
+                      <StudioButton
                         type="button"
                         title="Edit the bond-effect passages shown under Friends > Transits > Between you two"
                         onClick={() => navigateAdminPage("knowledge", new URLSearchParams({ section: "friends", q: "bond-effect", audience: "friends" }))}
                         aria-current={window.location.hash.includes("audience=friends") && activePage === "knowledge" && window.location.hash.includes("bond-effect") ? "page" : undefined}
                       >
                         <span>Between you two</span>
-                      </button>
-                      <button
+                      </StudioButton>
+                      <StudioButton
                         type="button"
                         title="Edit Friend View Copy for the personal transits shown as Active for the selected friend"
                         onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal", audience: "friends" }))}
                         aria-current={window.location.hash.includes("audience=friends") && activePage === "skyWriteups" && skyWriteupWorkspaceView === "transits-to-natal" ? "page" : undefined}
                       >
                         <span>Active for {"{{Name}}"}</span>
-                      </button>
-                      <button
+                      </StudioButton>
+                      <StudioButton
                         type="button"
                         title="Edit the house-transit passages shown under Friends > Transits > Where it lands"
                         onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "house-transits", audience: "friends" }))}
                         aria-current={window.location.hash.includes("audience=friends") && activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits" ? "page" : undefined}
                       >
                         <span>House transit</span>
-                      </button>
+                      </StudioButton>
                     </div>
                   </>
                 )}
@@ -5816,19 +5838,19 @@ export function GeneratedContentAdminDashboard() {
           open={operationsNavOpen ?? (isDesktopNav || advancedAdminNavItems.some((item) => item.page === activePage))}
           onToggle={(event) => setOperationsNavOpen(event.currentTarget.open)}
         >
-          <summary className="admin-eyebrow">Operations</summary>
+          <AdminDisclosureSummary className="admin-eyebrow">Operations</AdminDisclosureSummary>
           <section className="admin-nav-section" aria-label="Operations and advanced tools">
-            <button type="button" onClick={() => { window.location.href = "/admin/content/memory"; }}>
+            <StudioButton type="button" onClick={() => { window.location.href = "/admin/content/memory"; }}>
               <Orbit size={16} aria-hidden="true" />
               <span>Memory graph</span>
-            </button>
+            </StudioButton>
             {advancedAdminNavItems.map((item) => {
               const Icon = item.icon;
               return (
-                <button key={item.page} type="button" onClick={() => navigateAdminPage(item.page)} aria-current={activePage === item.page ? "page" : undefined}>
+                <StudioButton key={item.page} type="button" onClick={() => navigateAdminPage(item.page)} aria-current={activePage === item.page ? "page" : undefined}>
                   <Icon size={16} aria-hidden="true" />
                   <span>{item.label}</span>
-                </button>
+                </StudioButton>
               );
             })}
           </section>
@@ -5853,16 +5875,27 @@ export function GeneratedContentAdminDashboard() {
                     ? "Access saved"
                     : "Not connected"}
         </span>
-        <button type="button" className="admin-sidebar-status-link" onClick={() => navigateAdminPage("connection")}>Connection</button>
+        <StudioButton type="button" className="admin-sidebar-status-link" onClick={() => navigateAdminPage("connection")}>Connection</StudioButton>
       </section>
     </aside>
   );
 
   return (
     <ContentLiveStatusProvider value={loadLiveStatus}>
-    <main className="admin-dashboard">
+    <main className="admin-dashboard" data-studio-theme={studioTheme}>
       {nav}
       <section className={`admin-main${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
+        {message && (
+          <div
+            className={loadState === "error" || loadState === "accessDenied" ? "admin-page-notice" : `admin-save-toast ${message.includes("Partial load:") || loadState === "idle" ? "is-warning" : ""}`}
+            role={loadState === "error" || loadState === "accessDenied" ? "alert" : "status"}
+          >
+            <span>{message}</span>
+            <StudioButton type="button" onClick={() => setMessage("")} aria-label="Dismiss notification">
+              <X size={16} aria-hidden="true" />
+            </StudioButton>
+          </div>
+        )}
         <AdminPageHeader
           breadcrumbs={currentPageBreadcrumbs.map((item, index) => ({
             key: `${item.label}-${index}`,
@@ -5916,17 +5949,6 @@ export function GeneratedContentAdminDashboard() {
           title={currentPageTitle}
         />
 
-        {message && (
-          <div
-            className={`admin-save-toast ${loadState === "error" || loadState === "accessDenied" ? "is-error" : message.includes("Partial load:") || loadState === "idle" ? "is-warning" : ""}`}
-            role={loadState === "error" || loadState === "accessDenied" ? "alert" : "status"}
-          >
-            <span>{message}</span>
-            <button type="button" onClick={() => setMessage("")} aria-label="Dismiss notification">
-              <X size={16} aria-hidden="true" />
-            </button>
-          </div>
-        )}
         {hasAccessIssue && activePage !== "connection" && (
           <AdminAccessGate
             disabled={isLoading || !normalizeAdminSecret(secretInput)}
@@ -5954,9 +5976,9 @@ export function GeneratedContentAdminDashboard() {
         {isCompositionPage(activePage) && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar") && (
           <nav className="admin-template-tabs admin-composition-tabs" aria-label="Composition workspace">
             {compositionTabs.map((item) => (
-              <button key={item.page} type="button" className={activePage === item.page ? "active" : ""} aria-current={activePage === item.page ? "page" : undefined} onClick={() => navigateAdminPage(item.page)}>
+              <StudioButton key={item.page} type="button" className={activePage === item.page ? "active" : ""} aria-current={activePage === item.page ? "page" : undefined} onClick={() => navigateAdminPage(item.page)}>
                 {item.label}
-              </button>
+              </StudioButton>
             ))}
           </nav>
         )}
@@ -5970,43 +5992,43 @@ export function GeneratedContentAdminDashboard() {
                 <span>Create writing, run checks, review, and publish. Source material has its own library.</span>
               </div>
               <div className="admin-new-actions">
-                <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
+                <StudioButton type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
                   <RefreshCw size={16} aria-hidden="true" />
                   Refresh
-                </button>
-                <button type="button" onClick={() => void applyBulkStatus()} disabled={selectedSavedRows.length === 0 || isLoading}>
+                </StudioButton>
+                <StudioButton type="button" onClick={() => void applyBulkStatus()} disabled={selectedSavedRows.length === 0 || isLoading}>
                   <Check size={16} aria-hidden="true" />
                   Apply bulk
-                </button>
+                </StudioButton>
               </div>
             </section>
             <nav className="admin-sky-voice-tabs admin-review-view-tabs" aria-label="Review queue views">
               {([['ready', 'Ready for review'], ['changes', 'Needs changes'], ['sources', 'Source library']] as const).map(([view, label]) => (
-                <button key={view} type="button" className={skyVoiceQueueView === view ? "active" : ""} onClick={() => setSkyVoiceQueueView(view)}>{label}</button>
+                <StudioButton key={view} type="button" className={skyVoiceQueueView === view ? "active" : ""} onClick={() => setSkyVoiceQueueView(view)}>{label}</StudioButton>
               ))}
-              <button type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setSkyVoiceQueueView("all")}>
+              <StudioButton type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setSkyVoiceQueueView("all")}>
                 All review
-              </button>
-              <button type="button" className={skyVoiceQueueView === "live-omissions" ? "active" : ""} onClick={() => setSkyVoiceQueueView("live-omissions")}>
+              </StudioButton>
+              <StudioButton type="button" className={skyVoiceQueueView === "live-omissions" ? "active" : ""} onClick={() => setSkyVoiceQueueView("live-omissions")}>
                 Live with omitted sections
                 <strong>{visibleLiveOmittedSections.length}</strong>
-              </button>
-              <button type="button" className={skyVoiceQueueView === "composite" ? "active" : ""} onClick={() => setSkyVoiceQueueView("composite")}>
+              </StudioButton>
+              <StudioButton type="button" className={skyVoiceQueueView === "composite" ? "active" : ""} onClick={() => setSkyVoiceQueueView("composite")}>
                 Composite
                 <strong>{filteredCompositeReviewRows.length}</strong>
-              </button>
-              <button type="button" className={skyVoiceQueueView === "upcoming" ? "active" : ""} onClick={() => { setSkyVoiceQueueView("upcoming"); if (!skyReviewHorizon) void loadSkyReviewHorizon(); }}>
+              </StudioButton>
+              <StudioButton type="button" className={skyVoiceQueueView === "upcoming" ? "active" : ""} onClick={() => { setSkyVoiceQueueView("upcoming"); if (!skyReviewHorizon) void loadSkyReviewHorizon(); }}>
                 Missing writing / upcoming
                 {skyReviewHorizon ? <strong>{skyReviewHorizon.counts.occurrences}</strong> : null}
-              </button>
-              <button type="button" className={skyVoiceQueueView === "needs-review" ? "active" : ""} onClick={() => setSkyVoiceQueueView("needs-review")}>
+              </StudioButton>
+              <StudioButton type="button" className={skyVoiceQueueView === "needs-review" ? "active" : ""} onClick={() => setSkyVoiceQueueView("needs-review")}>
                 Sky voice: needs review
                 <strong>{skyVoiceNeedsReviewRows.length}</strong>
-              </button>
-              <button type="button" className={skyVoiceQueueView === "audit" ? "active" : ""} onClick={() => setSkyVoiceQueueView("audit")}>
+              </StudioButton>
+              <StudioButton type="button" className={skyVoiceQueueView === "audit" ? "active" : ""} onClick={() => setSkyVoiceQueueView("audit")}>
                 Sky voice: audit sample
                 <strong>{skyVoiceAuditRows.length}</strong>
-              </button>
+              </StudioButton>
             </nav>
             {(["ready", "changes", "sources", "all", "composite"].includes(skyVoiceQueueView)) && (
               <AdminFilterDisclosure summary="Status, class, tier, and search">
@@ -6014,36 +6036,36 @@ export function GeneratedContentAdminDashboard() {
                   <div className="admin-review-filter-grid">
                     <label>
                       <span>Status</span>
-                      <select aria-label="Review status" value={reviewStatusFilter} onChange={(event) => setReviewStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
+                      <AdminSelect aria-label="Review status" value={reviewStatusFilter} onChange={(event) => setReviewStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
                         <option value="all">All statuses</option>
                         {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
-                      </select>
+                      </AdminSelect>
                     </label>
                     <label>
                       <span>Evergreen</span>
-                      <select aria-label="Evergreen">
+                      <AdminSelect aria-label="Evergreen">
                         <option>All rows</option>
                         <option>Evergreen only</option>
                         <option>Hide evergreen</option>
-                      </select>
+                      </AdminSelect>
                     </label>
                     <label>
                       <span>Content class</span>
-                      <select aria-label="Review content class" value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
+                      <AdminSelect aria-label="Review content class" value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
                         {contentClassFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                      </select>
+                      </AdminSelect>
                     </label>
                     <label>
                       <span>Tier</span>
-                      <select aria-label="Review tier" value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
+                      <AdminSelect aria-label="Review tier" value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
                         {tierFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                      </select>
+                      </AdminSelect>
                     </label>
                     <label className="admin-review-queue-search">
                       <span>Search</span>
                       <div className="admin-search-input-shell">
                         <Search size={15} aria-hidden="true" />
-                        <input aria-label="Search review queue" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Key, title, body, surface" />
+                        <StudioInput aria-label="Search review queue" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Key, title, body, surface" />
                       </div>
                     </label>
                   </div>
@@ -6079,53 +6101,38 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         {activePage === "content" && (
-          <section className="admin-template-page">
-            <section className="admin-content-toolbar admin-content-library-toolbar" aria-label="Content controls">
-              <div className="admin-content-toolbar-copy">
-                <p className="admin-eyebrow">{natalChartWorkspaceActive
-                  ? "Natal chart workspace"
-                  : natalAspectWorkspaceActive
-                    ? "Natal aspect workspace"
-                    : calendarAspectWorkspaceActive
-                      ? "Calendar aspect workspace"
-                    : "Full content library"}</p>
-                <h2>{natalChartWorkspaceActive
-                  ? "Find a planet, sign, and house write-up"
-                  : natalAspectWorkspaceActive
-                    ? "Find an exact natal aspect write-up"
-                    : calendarAspectWorkspaceActive
-                      ? "Edit Calendar aspect cards"
-                    : "All editable content rows"}</h2>
-                <p>{natalChartWorkspaceActive
-                  ? "Choose a planet or point, its zodiac sign, and its house. You will see the reader-facing write-up first, followed by the saved passages that build it."
-                  : natalAspectWorkspaceActive
-                    ? "Choose the first planet or point, the aspect, and the second planet or point. Open any matching passage in the standard editor."
-                    : calendarAspectWorkspaceActive
-                      ? "Live means readers can currently receive this copy. Not live means readers cannot currently receive this copy. Astrology details stay read-only; prose is editable."
-                    : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. The Status column shows whether readers can currently receive each copy.`}</p>
-              </div>
-              {!natalChartWorkspaceActive && !natalAspectWorkspaceActive && !calendarAspectWorkspaceActive && <div className="admin-new-actions" aria-label="Content admin shortcuts">
-                <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
+          <section className={`admin-template-page${!natalChartWorkspaceActive && !natalAspectWorkspaceActive && !calendarAspectWorkspaceActive ? " admin-library-workspace" : ""}`}>
+            {!natalChartWorkspaceActive && !natalAspectWorkspaceActive && (
+              <section className="admin-content-toolbar admin-content-library-toolbar" aria-label="Content controls">
+                {calendarAspectWorkspaceActive ? <span className="admin-field-hint">{filteredRows.length} aspect cards</span> : <>
+                <details className="admin-library-guide">
+                  <AdminDisclosureSummary>{filteredRows.length} content rows · About this library</AdminDisclosureSummary>
+                  <p>Browse articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. The Status column shows whether readers can currently receive each copy.</p>
+                </details>
+<details className="admin-library-tools"><AdminDisclosureSummary>Library tools</AdminDisclosureSummary><div className="admin-new-actions" aria-label="Content admin shortcuts">
+                <StudioButton type="button" onClick={() => navigateAdminPage("reviewQueue")}>
                   <Check size={16} aria-hidden="true" />
                   Review Queue
-                </button>
-                <button type="button" onClick={() => handleCreateAction("content", "New content row started.")}>
+                </StudioButton>
+                <StudioButton type="button" onClick={() => handleCreateAction("content", "New content row started.")}>
                   <Plus size={16} aria-hidden="true" />
                   New content row
-                </button>
-                <button type="button" onClick={() => navigateAdminPage("knowledge")}>
+                </StudioButton>
+                <StudioButton type="button" onClick={() => navigateAdminPage("knowledge")}>
                   <FileText size={16} aria-hidden="true" />
                   Fallback hooks
-                </button>
-                <button type="button" onClick={exportEditedFallbackArchitectureRows}>
+                </StudioButton>
+                <StudioButton type="button" onClick={exportEditedFallbackArchitectureRows}>
                   Export edited rows
-                </button>
-              </div>}
-            </section>
+                </StudioButton>
+              </div></details>
+                </>}
+              </section>
+            )}
             {natalChartWorkspaceActive
               ? (
                 <>
-                  <div className="admin-new-actions"><button type="button" onClick={() => navigateAdminPage("compositionMap", new URLSearchParams({ surface: "natal-empty-house" }))}>Empty houses</button></div>
+                  <div className="admin-new-actions studio-surface"><StudioButton type="button" onClick={() => navigateAdminPage("compositionMap", new URLSearchParams({ surface: "natal-empty-house" }))}>Empty houses</StudioButton></div>
                   {renderNatalPlacementSourceFinder()}
                   {renderEditor()}
                 </>
@@ -6147,20 +6154,17 @@ export function GeneratedContentAdminDashboard() {
                         <p>These reader cards are assembled from several reusable rows. Open the dedicated workspace to preview the complete card and edit every passage inside it.</p>
                       </div>
                       <div className="admin-new-actions">
-                        <button type="button" onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: contentLibraryTransitShortcut }))}>
+                        <StudioButton type="button" onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: contentLibraryTransitShortcut }))}>
                           Open {contentLibraryTransitShortcut === "transits-to-natal" ? "Transit to Natal Charts" : "House Transits"}
-                        </button>
+                        </StudioButton>
                       </div>
                     </section>
                   )}
                   {renderContentFilters()}
-                  <section className="admin-reader-safety-panel" aria-label="Content status definitions">
-                    <div>
-                      <p className="admin-eyebrow">Status</p>
-                      <h3>What readers can see</h3>
-                      <p><strong>Live</strong> means readers can currently receive this copy. <strong>Not live</strong> means readers cannot currently receive this copy.</p>
-                    </div>
-                  </section>
+                  <details className="admin-library-guide admin-status-guide" role="region" aria-label="Content status definitions">
+                    <AdminDisclosureSummary>What readers can see</AdminDisclosureSummary>
+                    <p><strong>Live</strong> means readers can currently receive this copy. <strong>Not live</strong> means readers cannot currently receive this copy.</p>
+                  </details>
                   {renderBulkBar()}
                   <section className="admin-workbench admin-review-workspace">
                     {renderEditor()}
@@ -6175,62 +6179,26 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "skyWriteups" && (
           <section className="admin-template-page">
-            <section className="admin-content-toolbar">
-              <div>
-                <p className="admin-eyebrow">Sky editorial workspace</p>
-                <h2>Placements, lunations, and transits</h2>
-                <p>
-                  Review collective Sky writing, Personal Transits to natal points, and planets moving through the reader's houses.
-                </p>
-              </div>
-            </section>
-            <section className="admin-template-tabs" role="tablist" aria-label="Sky Write-ups workspaces">
-              <button type="button" role="tab" aria-selected={skyWriteupWorkspaceView === "daily-summary"}
-                className={skyWriteupWorkspaceView === "daily-summary" ? "active" : ""}
-                onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "daily-summary" }))}>
-                Daily Sky Summary
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={skyWriteupWorkspaceView === "catalog"}
-                className={skyWriteupWorkspaceView === "catalog" ? "active" : ""}
-                onClick={() => {
-                  setSkyWriteupWorkspaceView("catalog");
-                  setAdminHash(adminHashForPage("skyWriteups"));
-                }}
-              >
-                Placements &amp; lunations
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={skyWriteupWorkspaceView === "transits-to-natal"}
-                className={skyWriteupWorkspaceView === "transits-to-natal" ? "active" : ""}
-                onClick={() => {
-                  setSkyWriteupWorkspaceView("transits-to-natal");
-                  const params = new URLSearchParams({ view: "transits-to-natal" });
+            <h2 className="sr-only">Placements, lunations, and transits</h2>
+            <StudioTabs label="Sky Write-ups workspaces" value={skyWriteupWorkspaceView}
+              tabs={[
+                { value: "daily-summary", label: "Daily Sky Summary" },
+                { value: "catalog", label: "Placements & lunations" },
+                { value: "transits-to-natal", label: "Personal Transits" },
+                { value: "house-transits", label: "House Transits" }
+              ]} onValueChange={view => {
+                if (view === "daily-summary") {
+                  navigateAdminPage("skyWriteups", new URLSearchParams({ view }));
+                  return;
+                }
+                setSkyWriteupWorkspaceView(view);
+                const params = new URLSearchParams();
+                if (view !== "catalog") {
+                  params.set("view", view);
                   if (friendsTransitAudience) params.set("audience", "friends");
-                  setAdminHash(adminHashForPage("skyWriteups", params));
-                }}
-              >
-                Personal Transits
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={skyWriteupWorkspaceView === "house-transits"}
-                className={skyWriteupWorkspaceView === "house-transits" ? "active" : ""}
-                onClick={() => {
-                  setSkyWriteupWorkspaceView("house-transits");
-                  const params = new URLSearchParams({ view: "house-transits" });
-                  if (friendsTransitAudience) params.set("audience", "friends");
-                  setAdminHash(adminHashForPage("skyWriteups", params));
-                }}
-              >
-                House Transits
-              </button>
-            </section>
+                }
+                setAdminHash(adminHashForPage("skyWriteups", params));
+              }}>
             {skyWriteupWorkspaceView === "daily-summary" ? (
               <>
                 <Suspense fallback={<p>Loading Daily Sky Summary editor…</p>}>
@@ -6254,27 +6222,27 @@ export function GeneratedContentAdminDashboard() {
                   <div className="admin-review-filter-grid">
                     <label>
                       <span>Planet or point</span>
-                      <select aria-label="Sky placement planet or point" value={skyPlacementBody} onChange={(event) => setSkyPlacementBody(event.target.value)}>
+                      <AdminSelect aria-label="Sky placement planet or point" value={skyPlacementBody} onChange={(event) => setSkyPlacementBody(event.target.value)}>
                         <option value="all">All planets and points</option>
                         {skyPlacementBodies.map((body) => <option key={body} value={body}>{titleFromKey(body)}</option>)}
-                      </select>
+                      </AdminSelect>
                     </label>
                     <label>
                       <span>Zodiac sign</span>
-                      <select aria-label="Sky placement zodiac sign" value={skyPlacementSign} onChange={(event) => setSkyPlacementSign(event.target.value)}>
+                      <AdminSelect aria-label="Sky placement zodiac sign" value={skyPlacementSign} onChange={(event) => setSkyPlacementSign(event.target.value)}>
                         <option value="all">All signs</option>
                         {skyPlacementSigns.map((sign) => <option key={sign} value={sign}>{titleFromKey(sign)}</option>)}
-                      </select>
+                      </AdminSelect>
                     </label>
                     <label>
                       <span>Motion</span>
-                      <select aria-label="Sky write-up motion" value={skyWriteupMotionFilter} onChange={(event) => setSkyWriteupMotionFilter(event.target.value as ContentMotionFilter)}>
+                      <AdminSelect aria-label="Sky write-up motion" value={skyWriteupMotionFilter} onChange={(event) => setSkyWriteupMotionFilter(event.target.value as ContentMotionFilter)}>
                         {skyWriteupMotionFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                      </select>
+                      </AdminSelect>
                     </label>
                     <label>
                       <span>Content group</span>
-                      <select
+                      <AdminSelect
                         aria-label="Sky write-up type"
                         value={skyWriteupSubjectFilter}
                         onChange={(event) => setSkyWriteupSubjectFilter(event.target.value as AdminSkyWriteupSubjectFilter)}
@@ -6282,11 +6250,11 @@ export function GeneratedContentAdminDashboard() {
                         {skyWriteupSubjectFilters.map((filter) => (
                           <option key={filter.key} value={filter.key}>{filter.label}</option>
                         ))}
-                      </select>
+                      </AdminSelect>
                     </label>
                     <label>
                       <span>Search by keyword</span>
-                      <input
+                      <StudioInput
                         aria-label="Search Sky write-ups"
                         type="search"
                         value={skyWriteupQuery}
@@ -6296,17 +6264,17 @@ export function GeneratedContentAdminDashboard() {
                     </label>
                     <label>
                       <span>Reader use</span>
-                      <select aria-label="Sky write-up reader use" value={skyWriteupDestinationFilter} onChange={(event) => setSkyWriteupDestinationFilter(event.target.value as ContentDestinationFilter)}>
+                      <AdminSelect aria-label="Sky write-up reader use" value={skyWriteupDestinationFilter} onChange={(event) => setSkyWriteupDestinationFilter(event.target.value as ContentDestinationFilter)}>
                         {skyWriteupDestinationFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                      </select>
+                      </AdminSelect>
                     </label>
                     <label>
                       <span>Sort</span>
-                      <select aria-label="Sort Sky write-ups" value={skyWriteupSort} onChange={(event) => setSkyWriteupSort(event.target.value as ContentPlacementSort)}>
+                      <AdminSelect aria-label="Sort Sky write-ups" value={skyWriteupSort} onChange={(event) => setSkyWriteupSort(event.target.value as ContentPlacementSort)}>
                         {skyWriteupSortOptions.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
-                      </select>
+                      </AdminSelect>
                     </label>
-                    <button
+                    <StudioButton
                       type="button"
                       onClick={() => {
                         setSkyPlacementBody("all");
@@ -6326,7 +6294,7 @@ export function GeneratedContentAdminDashboard() {
                       }
                     >
                       Clear filters
-                    </button>
+                    </StudioButton>
                     <p className="admin-filter-result-count" aria-live="polite">
                       {skyPlacementBody !== "all" && skyPlacementSign !== "all"
                         ? <>Composition sources below · <strong>{filteredSkyWriteupRows.length}</strong> matching library rows</>
@@ -6367,21 +6335,20 @@ export function GeneratedContentAdminDashboard() {
                 </section>
               </>
             )}
+            </StudioTabs>
           </section>
         )}
 
         {activePage === "articles" && (
           <section className="admin-template-page">
-            <section className="admin-content-toolbar">
+            <section className="admin-content-toolbar admin-collection-toolbar">
               <div>
-                <p className="admin-eyebrow">Article writing</p>
-                <h2>Articles</h2>
-                <p>{filteredArticleRows.length} of {articleRows.length} standalone article rows shown. Sky placements and lunations stay in Sky Write-ups.</p>
+                <span className="admin-field-hint">{filteredArticleRows.length} of {articleRows.length} articles</span>
               </div>
-              <button type="button" onClick={() => handleCreateAction("articles", "New article draft started.")}>
+              <StudioButton type="button" onClick={() => handleCreateAction("articles", "New article draft started.")}>
                 <Plus size={16} aria-hidden="true" />
                 New Article
-              </button>
+              </StudioButton>
             </section>
             {renderArticleFilters()}
             <section className="admin-workbench admin-review-workspace">
@@ -6395,33 +6362,31 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "compatibility" && (
           <section className="admin-template-page">
-            <section className="admin-content-toolbar">
+            <section className="admin-content-toolbar admin-collection-toolbar">
               <div>
-                <p className="admin-eyebrow">Compatibility workspace</p>
-                <h2>Compatibility</h2>
-                <p>{filteredCompatibilityRows.length} of {compatibilityRows.length} compatibility rows shown across content, fallback hooks, vocabulary, slots, and templates.</p>
+                <span className="admin-field-hint">{filteredCompatibilityRows.length} of {compatibilityRows.length} rows</span>
               </div>
               <div className="admin-new-actions" aria-label="Compatibility shortcuts">
-                <button type="button" onClick={() => navigateAdminPage("knowledge", new URLSearchParams({ section: "friends", q: "pair-daily" }))}>
+                <StudioButton type="button" onClick={() => navigateAdminPage("knowledge", new URLSearchParams({ section: "friends", q: "pair-daily" }))}>
                   <Users size={16} aria-hidden="true" />
                   Daily between you two
-                </button>
-                <button type="button" onClick={() => handleCompatibilityCreateAction("content")}>
+                </StudioButton>
+                <StudioButton type="button" onClick={() => handleCompatibilityCreateAction("content")}>
                   <Plus size={16} aria-hidden="true" />
                   Card copy
-                </button>
-                <button type="button" onClick={() => handleCompatibilityCreateAction("vocabulary")}>
+                </StudioButton>
+                <StudioButton type="button" onClick={() => handleCompatibilityCreateAction("vocabulary")}>
                   <Sparkles size={16} aria-hidden="true" />
                   Phrase
-                </button>
-                <button type="button" onClick={() => handleCompatibilityCreateAction("fallback-hook")}>
+                </StudioButton>
+                <StudioButton type="button" onClick={() => handleCompatibilityCreateAction("fallback-hook")}>
                   <FileText size={16} aria-hidden="true" />
                   Fallback
-                </button>
-                <button type="button" onClick={() => handleCompatibilityCreateAction("template")}>
+                </StudioButton>
+                <StudioButton type="button" onClick={() => handleCompatibilityCreateAction("template")}>
                   <KeyRound size={16} aria-hidden="true" />
                   Template
-                </button>
+                </StudioButton>
               </div>
             </section>
             {renderCompatibilityFilters()}
@@ -6439,14 +6404,14 @@ export function GeneratedContentAdminDashboard() {
                           : `Current filters: ${compatibilitySections.find((section) => section.key === compatibilitySectionFilter)?.label ?? "All compatibility"}, ${compatibilityStatusFilter === "all" ? "all statuses" : contentStatusLabel(compatibilityStatusFilter)}, ${compatibilityPlanetFilter === "all" ? "all planets" : titleFromKey(compatibilityPlanetFilter)}${compatibilityQuery.trim() ? `, search “${compatibilityQuery.trim()}”` : ""}.`}
                       </p>
                       <div className="admin-toolbar-actions">
-                        <button type="button" onClick={clearCompatibilityFilters}>
+                        <StudioButton type="button" onClick={clearCompatibilityFilters}>
                           Clear Compatibility filters
-                        </button>
+                        </StudioButton>
                         {compatibilityRows.length === 0 && (
-                          <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
+                          <StudioButton type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
                             <RefreshCw size={16} aria-hidden="true" />
                             Retry inventory
-                          </button>
+                          </StudioButton>
                         )}
                       </div>
                     </section>
@@ -6460,44 +6425,46 @@ export function GeneratedContentAdminDashboard() {
           <Suspense fallback={<p>Loading Lunar Calendar…</p>}><LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow)} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} onCreate={sign => handleCreateAction("knowledge", "New Moon-sign passage opened.", sign)} /></Suspense>
         )}
         {activePage === "knowledge" && fallbackSectionFilter !== "lunar-calendar" && (
-          <section className="admin-template-page">
-            <section className="admin-content-toolbar">
-              <div>
-                <p className="admin-eyebrow">Reader fallback library</p>
-                <h2>Fallback Articles &amp; Passages</h2>
-                <p>Find complete articles, house horoscopes, aspects, and supporting fallback rows by their reader-facing astrology title.</p>
-              </div>
-              <button type="button" onClick={() => navigateAdminPage("hooks")}>
-                <KeyRound size={16} aria-hidden="true" />
-                Open Surface Map
-              </button>
-            </section>
-            {friendsTransitAudience && fallbackSectionFilter === "friends" && query.includes("bond-effect") && (
-              <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Friends Transits Between you two context">
-                <p className="admin-eyebrow">Friends Transits · Between you two</p>
-                <strong>These passages feed the live “Between you two” transit cards.</strong>
-                <p>Exact aspect rows are preferred for the first matching card. Family and variant rows are shared fallback/rotation sources, so editing one of those can affect more than one friend pair.</p>
+          <section className="admin-template-page admin-fallback-library">
+            <section className="studio-surface studio-section admin-fallback-library-controls" aria-label="Fallback library controls">
+              <header className="studio-section-header">
+                <div>
+                  <p className="admin-eyebrow">Reader fallback library</p>
+                  <h2 className="sr-only">Fallback Articles &amp; Passages</h2>
+                  <p>Find complete articles, house horoscopes, aspects, and supporting fallback rows by their reader-facing astrology title.</p>
+                </div>
+                <StudioButton type="button" onClick={() => navigateAdminPage("hooks")}>
+                  <KeyRound size={16} aria-hidden="true" />
+                  Open Surface Map
+                </StudioButton>
+              </header>
+              {friendsTransitAudience && fallbackSectionFilter === "friends" && query.includes("bond-effect") && (
+                <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Friends Transits Between you two context">
+                  <p className="admin-eyebrow">Friends Transits · Between you two</p>
+                  <strong>These passages feed the live “Between you two” transit cards.</strong>
+                  <p>Exact aspect rows are preferred for the first matching card. Family and variant rows are shared fallback/rotation sources, so editing one of those can affect more than one friend pair.</p>
+                </section>
+              )}
+              {renderFallbackTabs()}
+              {fallbackSectionFilter === "daily" && (
+                <Suspense fallback={null}>
+                  <DailyFallbackWorkspaceGuide onShowFamily={showDailyHookFamily} />
+                </Suspense>
+              )}
+              <section className="admin-content-filters" aria-label="Fallback row controls">
+                <div className="admin-fallback-library-filter-grid">
+                  <label>
+                    <span>Search fallback articles and passages</span>
+                    <StudioInput aria-label="Search fallback articles and passages" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Planet, sign, aspect, house, or content key" />
+                  </label>
+                  <label>
+                    <span>Sort rows</span>
+                    <AdminSelect aria-label="Sort fallback rows" value={fallbackRowSort} onChange={(event) => setFallbackRowSort(event.target.value as AdminFallbackRowSort)}>
+                      {fallbackRowSortOptions.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
+                    </AdminSelect>
+                  </label>
+                </div>
               </section>
-            )}
-            {renderFallbackTabs()}
-            {fallbackSectionFilter === "daily" && (
-              <Suspense fallback={null}>
-                <DailyFallbackWorkspaceGuide onShowFamily={showDailyHookFamily} />
-              </Suspense>
-            )}
-            <section className="admin-content-filters" aria-label="Fallback row controls">
-              <div className="admin-review-filter-grid">
-                <label className="admin-field-wide">
-                  <span>Search fallback articles and passages</span>
-                  <input aria-label="Search fallback articles and passages" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Planet, sign, aspect, house, or content key" />
-                </label>
-                <label className="admin-field-wide">
-                  <span>Sort rows</span>
-                  <select aria-label="Sort fallback rows" value={fallbackRowSort} onChange={(event) => setFallbackRowSort(event.target.value as AdminFallbackRowSort)}>
-                    {fallbackRowSortOptions.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
-                  </select>
-                </label>
-              </div>
             </section>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
@@ -6527,45 +6494,40 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "hooks" && (
           <section className="admin-template-page">
-            <section className="admin-content-toolbar">
-              <div>
-                <p className="admin-eyebrow">Reader surface directory</p>
-                <h2>Surface Map</h2>
-                <p>Start with the place a reader sees the writing, then open the exact dashboard workspace that edits it. Surfaces with local reviewed fallbacks include a CMS starter for a LIVE-first prose override.</p>
+            <section className="studio-section studio-surface" aria-label="Surface directory filters">
+              <span className="admin-field-hint">{writingSurfaces.length} mapped surfaces</span>
+              <label className="admin-field-wide">
+                <span>Find a reader surface or content source</span>
+                <StudioInput aria-label="Search reader surfaces" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Sky aspect, weekly horoscope, calendar, synastry…" />
+              </label>
+              <div className="admin-status-pills" role="group" aria-label="Filter surfaces by area">
+                {[
+                  ["all", "All"],
+                  ["sky", "Sky"],
+                  ["you", "You"],
+                  ["friends", "Friends"],
+                  ["calendar", "Calendar"],
+                  ["reports", "Reports"],
+                  ["settings", "Settings"]
+                ].map(([key, label]) => (
+                  <StudioButton key={key} type="button" aria-pressed={surfaceAreaFilter === key} className={surfaceAreaFilter === key ? "active" : ""} onClick={() => navigateSurfaceMapFilters({ area: key as WritingSurfaceAreaFilter })}>
+                    <span>{label}</span>
+                  </StudioButton>
+                ))}
               </div>
-              <span className="ui-pill admin-status">{writingSurfaces.length} mapped surfaces</span>
+              <div className="admin-status-pills" role="group" aria-label="Filter surfaces by admin editability">
+                {[
+                  ["all", "All"],
+                  ["complete", "Editable"],
+                  ["partial", "Runtime gaps"],
+                  ["missing", "Unmapped"]
+                ].map(([key, label]) => (
+                  <StudioButton key={key} type="button" aria-pressed={surfaceStatusFilter === key} className={surfaceStatusFilter === key ? "active" : ""} onClick={() => navigateSurfaceMapFilters({ status: key as WritingSurfaceStatusFilter })}>
+                    <span>{label}</span>
+                  </StudioButton>
+                ))}
+              </div>
             </section>
-            <label className="admin-field-wide">
-              <span>Find a reader surface or content source</span>
-              <input aria-label="Search reader surfaces" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Sky aspect, weekly horoscope, calendar, synastry…" />
-            </label>
-            <div className="admin-status-pills" role="group" aria-label="Filter surfaces by area">
-              {[
-                ["all", "All"],
-                ["sky", "Sky"],
-                ["you", "You"],
-                ["friends", "Friends"],
-                ["calendar", "Calendar"],
-                ["reports", "Reports"],
-                ["settings", "Settings"]
-              ].map(([key, label]) => (
-                <button key={key} type="button" aria-pressed={surfaceAreaFilter === key} className={surfaceAreaFilter === key ? "active" : ""} onClick={() => navigateSurfaceMapFilters({ area: key as WritingSurfaceAreaFilter })}>
-                  <span>{label}</span>
-                </button>
-              ))}
-            </div>
-            <div className="admin-status-pills" role="group" aria-label="Filter surfaces by admin editability">
-              {[
-                ["all", "All"],
-                ["complete", "Editable"],
-                ["partial", "Runtime gaps"],
-                ["missing", "Unmapped"]
-              ].map(([key, label]) => (
-                <button key={key} type="button" aria-pressed={surfaceStatusFilter === key} className={surfaceStatusFilter === key ? "active" : ""} onClick={() => navigateSurfaceMapFilters({ status: key as WritingSurfaceStatusFilter })}>
-                  <span>{label}</span>
-                </button>
-              ))}
-            </div>
             <section className="admin-surface-directory" aria-label="Reader surface content directory">
               {filteredWritingSurfaces.length === 0 && (
                 <div className="admin-empty-state"><p>No mapped reader surfaces match these filters.</p></div>
@@ -6585,7 +6547,6 @@ export function GeneratedContentAdminDashboard() {
                         {editability === "complete" ? "Dashboard editable" : editability === "partial" ? "Runtime gap" : "No admin route"}
                       </span>
                     </div>
-                    <p>{item.currentRenderPath}</p>
                     {access?.editability !== "editable" && <p className="admin-surface-warning"><strong>Still to wire:</strong> {item.nextAction}</p>}
                     <div className="admin-surface-actions" aria-label={`${item.surface} editing destinations`}>
                       {access?.routes.map((route) => (
@@ -6594,7 +6555,7 @@ export function GeneratedContentAdminDashboard() {
                         </a>
                       ))}
                       {access?.cmsStarters?.map((starter) => (
-                        <button
+                        <StudioButton
                           key={`${item.id}-${starter.contentKey}`}
                           type="button"
                           className="admin-source-action"
@@ -6602,11 +6563,12 @@ export function GeneratedContentAdminDashboard() {
                         >
                           <Plus size={15} aria-hidden="true" />
                           {starter.label}
-                        </button>
+                        </StudioButton>
                       ))}
                     </div>
                     <details className="admin-surface-sources">
-                      <summary>Content sources ({item.sources.length})</summary>
+                      <AdminDisclosureSummary>Content sources ({item.sources.length})</AdminDisclosureSummary>
+                      <p>{item.currentRenderPath}</p>
                       <ul>
                         {item.sources.map((source) => (
                           <li key={`${item.id}-${source.role}-${source.path}`}>
@@ -6622,18 +6584,18 @@ export function GeneratedContentAdminDashboard() {
               })}
             </section>
             <details className="admin-surface-supporting-catalog">
-              <summary>Supporting fallback-hook catalog ({savedHookCatalogCount}/{hookCatalogItems.length} saved)</summary>
+              <AdminDisclosureSummary>Supporting fallback-hook catalog ({savedHookCatalogCount}/{hookCatalogItems.length} saved)</AdminDisclosureSummary>
               {renderFallbackTabs()}
               <section className="admin-fallback-row-list" aria-label="Hook catalog">
                 {hookCatalogLoadState === "loading" && <div className="admin-empty-state" role="status"><p>Loading hook catalog…</p></div>}
-                {hookCatalogLoadState === "error" && <div className="admin-empty-state" role="alert"><p>{hookCatalogError ?? "Could not load the hook catalog."}</p><button type="button" onClick={() => void refreshHookCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry catalog</button></div>}
+                {hookCatalogLoadState === "error" && <div className="admin-empty-state" role="alert"><p>{hookCatalogError ?? "Could not load the hook catalog."}</p><StudioButton type="button" onClick={() => void refreshHookCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry catalog</StudioButton></div>}
                 {filteredHookCatalog.map((item) => {
                   const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
                   const itemKey = canonicalFallbackContentKey(item.key);
                   return (
                     <article key={`${item.type}-${item.key}`} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => void openHookDraft(item)} onKeyDown={(event) => onCatalogKeyDown(event, item)}>
                       <div className="admin-fallback-row-main"><p className="admin-eyebrow">{item.section} / {item.type}</p><h3>{item.label}</h3><code>{itemKey}</code></div>
-                      <div className="admin-fallback-row-actions"><span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span><button type="button" onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}><Plus size={15} aria-hidden="true" />Author</button></div>
+                      <div className="admin-fallback-row-actions"><span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span><StudioButton type="button" onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}><Plus size={15} aria-hidden="true" />Author</StudioButton></div>
                     </article>
                   );
                 })}
@@ -6650,15 +6612,15 @@ export function GeneratedContentAdminDashboard() {
                 <h2>Sky Aspect Drafts</h2>
                 <p>{filteredSourceDrafts.length} of {sourceDrafts.length} passages shown. These drafts are searchable and editable here, but saving one does not approve it or make it visible to readers.</p>
               </div>
-              <button type="button" onClick={() => navigateAdminPage("hooks", new URLSearchParams({ area: "sky" }))}><Flag size={16} aria-hidden="true" />Back to Sky surfaces</button>
+              <StudioButton type="button" onClick={() => navigateAdminPage("hooks", new URLSearchParams({ area: "sky" }))}><Flag size={16} aria-hidden="true" />Back to Sky surfaces</StudioButton>
             </section>
-            <label className="admin-field-wide">
+            <label className="admin-field-wide studio-surface">
               <span>Search by planet, point, aspect, phrase, or source key</span>
-              <input aria-label="Search Sky aspect drafts" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Sun trine Chiron" />
+              <StudioInput aria-label="Search Sky aspect drafts" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Sun trine Chiron" />
             </label>
             {sourceDraftLoadState === "loading" && <div className="admin-empty-state" role="status"><p>Loading held source drafts…</p></div>}
             {sourceDraftLoadState === "error" && (
-              <div className="admin-empty-state" role="alert"><p>{sourceDraftError ?? "Could not load source drafts."}</p><button type="button" onClick={() => void refreshSourceDraftCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry</button></div>
+              <div className="admin-empty-state" role="alert"><p>{sourceDraftError ?? "Could not load source drafts."}</p><StudioButton type="button" onClick={() => void refreshSourceDraftCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry</StudioButton></div>
             )}
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
@@ -6667,7 +6629,7 @@ export function GeneratedContentAdminDashboard() {
                   {filteredSourceDrafts.map((item) => {
                     const saved = savedContentKeys.has(item.id) || savedContentKeys.has(item.canonicalId);
                     return (
-                      <article key={item.id} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => openSourceDraft(item)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openSourceDraft(item); } }}>
+                      <article key={item.id} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => openSourceDraft(item)} onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); openSourceDraft(item); } }}>
                         <div className="admin-fallback-row-main">
                           <p className="admin-eyebrow">{item.bodyB} / {item.aspect} / {item.bodyA}</p>
                           <h3>{titleFromKey(item.bodyB)} {titleFromKey(item.aspect)} {titleFromKey(item.bodyA)}</h3>
@@ -6678,7 +6640,7 @@ export function GeneratedContentAdminDashboard() {
                         <div className="admin-fallback-row-actions">
                           <span className="admin-field-hint">{saved ? "Saved draft" : "Source only"}</span>
                           <span className="ui-pill admin-status status-draft">Not live</span>
-                          <button type="button" onClick={(event) => { event.stopPropagation(); openSourceDraft(item); }}>{saved ? "Edit" : "Open draft"}</button>
+                          <StudioButton type="button" onClick={(event) => { event.stopPropagation(); openSourceDraft(item); }}>{saved ? "Edit" : "Open draft"}</StudioButton>
                         </div>
                       </article>
                     );
@@ -6699,13 +6661,12 @@ export function GeneratedContentAdminDashboard() {
               </div>
               <span className="ui-pill admin-status">{vocabRows.length} vocab rows</span>
             </section>
-            <div className="admin-template-tabs" role="tablist" aria-label="Vocabulary categories">
+            <nav className="admin-category-nav" aria-label="Vocabulary categories">
               {vocabularySections.map(({ key, label }) => (
                 <a
                   key={key}
                   href={adminHashForPage("vocabulary", vocabularyCategoryParams(key))}
-                  role="tab"
-                  aria-selected={vocabularyCategory === key}
+                  aria-current={vocabularyCategory === key ? "page" : undefined}
                   className={vocabularyCategory === key ? "active" : ""}
                   onClick={(event) => {
                     event.preventDefault();
@@ -6720,10 +6681,10 @@ export function GeneratedContentAdminDashboard() {
                   {label}
                 </a>
               ))}
-            </div>
-            <label className="admin-field-wide">
+            </nav>
+            <label className="admin-field-wide studio-surface">
               <span>Search vocabulary</span>
-              <input aria-label="Search vocabulary" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Namespace, phrase, key" />
+              <StudioInput aria-label="Search vocabulary" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Namespace, phrase, key" />
             </label>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
@@ -6761,9 +6722,9 @@ export function GeneratedContentAdminDashboard() {
                 <span className="ui-pill admin-status">{templateRows.length} saved</span>
               </div>
             </section>
-            <label className="admin-field-wide">
+            <label className="admin-field-wide studio-surface">
               <span>Search templates</span>
-              <input aria-label="Search templates" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Destination, template name, or key" />
+              <StudioInput aria-label="Search templates" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Destination, template name, or key" />
             </label>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
@@ -6783,23 +6744,25 @@ export function GeneratedContentAdminDashboard() {
                 <p>Calculated slots, vocab-backed slots, and fallback slots are grouped by source and readiness.</p>
               </div>
             </section>
-            <div className="admin-status-pills">
-              <button type="button" className="active"><span>Editable slot rows</span><strong>{slotEditableRows.length}</strong></button>
-              <button type="button"><span>Needs rows</span><strong>{Math.max(0, hookCatalogItems.length - savedHookCatalogCount)}</strong></button>
-            </div>
-            <label className="admin-field-wide">
-              <span>Search slot-backed rows</span>
-              <input aria-label="Search slot-backed rows" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Slot, vocab, fallback, or template key" />
-            </label>
-            <div className="admin-studio-map">
-              {["Calculated facts", "Vocabulary rows", "Fallback rows", "Template slots"].map((label) => (
-                <article key={label}>
-                  <Database size={18} aria-hidden="true" />
-                  <span>{label}</span>
-                  <small>Source and readiness are visible before a row can be promoted.</small>
-                </article>
-              ))}
-            </div>
+            <section className="studio-section studio-surface" aria-label="Slot filters and source types">
+              <div className="admin-status-pills">
+                <StudioButton type="button" className="active"><span>Editable slot rows</span><strong>{slotEditableRows.length}</strong></StudioButton>
+                <StudioButton type="button"><span>Needs rows</span><strong>{Math.max(0, hookCatalogItems.length - savedHookCatalogCount)}</strong></StudioButton>
+              </div>
+              <label className="admin-field-wide">
+                <span>Search slot-backed rows</span>
+                <StudioInput aria-label="Search slot-backed rows" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Slot, vocab, fallback, or template key" />
+              </label>
+              <div className="admin-studio-map">
+                {["Calculated facts", "Vocabulary rows", "Fallback rows", "Template slots"].map((label) => (
+                  <article key={label}>
+                    <Database size={18} aria-hidden="true" />
+                    <span>{label}</span>
+                    <small>Source and readiness are visible before a row can be promoted.</small>
+                  </article>
+                ))}
+              </div>
+            </section>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Editable slot-backed rows">
@@ -6820,7 +6783,7 @@ export function GeneratedContentAdminDashboard() {
               <span className="ui-pill admin-status">{compositeRows.length} composite rows</span>
             </section>
             <div className="admin-template-card-list">
-              {compositeRows.length === 0 && <p className="admin-empty">No composite rows with relationship-type sections are loaded yet.</p>}
+              {compositeRows.length === 0 && <p className="admin-empty studio-surface">No composite rows with relationship-type sections are loaded yet.</p>}
               {renderEditor()}
               <AdminPaginatedCollection
                 items={compositeRows}
@@ -6836,7 +6799,7 @@ export function GeneratedContentAdminDashboard() {
                       <h3>{rowTitle(row)}</h3>
                       <code>{row.content_key}</code>
                     </div>
-                    <button type="button" onClick={() => openRow(row)}>Edit</button>
+                    <StudioButton type="button" onClick={() => openRow(row)}>Edit</StudioButton>
                   </div>
                   <section className="admin-template-rendered-preview" aria-label="Single voice fallback">
                     <p>{row.body || row.summary || "No shared meaning is saved yet."}</p>
@@ -6868,14 +6831,14 @@ export function GeneratedContentAdminDashboard() {
                 <h2>Connection</h2>
                 <p>Save the content generation secret for local admin API calls.</p>
               </div>
-              <button type="button" onClick={submitAdminSecret} disabled={isLoading || !normalizeAdminSecret(secretInput)}>
+              <StudioButton type="button" onClick={submitAdminSecret} disabled={isLoading || !normalizeAdminSecret(secretInput)}>
                 <RefreshCw size={16} aria-hidden="true" />
                 Check Access
-              </button>
+              </StudioButton>
             </section>
-            <label className="admin-field-wide">
+            <label className="admin-field-wide studio-surface">
               <span>CONTENT_GENERATION_SECRET</span>
-              <input
+              <StudioInput
                 type="password"
                 value={secretInput}
                 onChange={(event) => setSecretInput(event.target.value)}
@@ -6914,33 +6877,23 @@ export function GeneratedContentAdminDashboard() {
               <span className="ui-pill admin-status">{userRows.length} user rows</span>
             </section>
             <div className="admin-content-table-scroll">
-              <table className="admin-content-table admin-user-content-table">
-                <thead className="admin-content-table-head">
-                  <tr>
-                    <th scope="col">Content</th>
-                    <th scope="col">User</th>
-                    <th scope="col">Subject</th>
-                    <th scope="col">Surface</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Updated</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <AdminDataTable label="User content" columns={["Content", "User", "Subject", "Surface", "Status", "Updated"]} className="admin-user-content-table">
+
                   {userRows.map((row) => (
                     <tr key={row.id} className="admin-content-row">
-                      <td className="admin-content-title-cell">
+                      <td className="admin-content-title-cell" data-label="Content">
                         <strong className="admin-content-row-title">{rowTitle(row)}</strong>
                         <code className="admin-content-row-key">{row.content_key}</code>
                       </td>
-                      <td><code>{row.user_id}</code></td>
-                      <td className="admin-content-location"><strong>{row.subject_type}</strong><small>{row.subject_id}</small></td>
-                      <td className="admin-content-location"><strong>{row.surface}</strong><small>{row.mode}</small></td>
-                      <td><ContentLiveStatusBadge row={{ id: `user:${row.id}`, updated_at: row.updated_at }} /></td>
-                      <td>{row.updated_at?.slice(0, 10) ?? row.created_at?.slice(0, 10) ?? "Local"}</td>
+                      <td data-label="User"><code>{row.user_id}</code></td>
+                      <td className="admin-content-location" data-label="Subject"><strong>{row.subject_type}</strong><small>{row.subject_id}</small></td>
+                      <td className="admin-content-location" data-label="Surface"><strong>{row.surface}</strong><small>{row.mode}</small></td>
+                      <td data-label="Status"><ContentLiveStatusBadge row={{ id: `user:${row.id}`, updated_at: row.updated_at }} /></td>
+                      <td data-label="Updated">{row.updated_at?.slice(0, 10) ?? row.created_at?.slice(0, 10) ?? "Local"}</td>
                     </tr>
                   ))}
-                </tbody>
-              </table>
+
+</AdminDataTable>
               {userRows.length === 0 && <p className="admin-empty">No user-generated rows are loaded.</p>}
             </div>
           </section>
@@ -7018,7 +6971,6 @@ export function GeneratedContentAdminDashboard() {
     return (
       <Suspense fallback={<div className="admin-empty-state" role="status"><strong>Loading natal placement finder…</strong></div>}>
         <NatalPlacementSourceFinder
-          key={`${natalPlacementPlanet}/${natalPlacementSign}/${natalPlacementHouse}/${natalPlacementMotion}`}
           house={natalPlacementHouse}
           isLoading={isLoading || natalSourcesLoading}
           motion={natalPlacementMotion}
@@ -7130,13 +7082,13 @@ export function GeneratedContentAdminDashboard() {
           <code>{resolved?.contentKey ?? source.candidateKeys.join(" → ")}</code>
           <blockquote className={!resolved ? "missing" : ""}>{resolved?.text ?? (source.optional ? "No optional passage is saved for this selection." : "No saved passage is available for this source path.")}</blockquote>
         </div>
-        <button
+        <StudioButton
           type="button"
           onClick={() => resolved && void openSkySourceRow(resolved.contentKey, source.label)}
           disabled={!resolved || isLoading}
         >
           {resolved ? "Edit source row" : source.optional ? "Optional row unavailable" : "Source row unavailable"}
-        </button>
+        </StudioButton>
       </article>
     );
   }
@@ -7294,45 +7246,45 @@ export function GeneratedContentAdminDashboard() {
         <div className="admin-natal-placement-selectors">
           <label>
             <span>1. Transiting planet</span>
-            <select aria-label="Transiting planet" value={transitNatalPlanet} onChange={(event) => updateTransitNatalSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
+            <AdminSelect aria-label="Transiting planet" value={transitNatalPlanet} onChange={(event) => updateTransitNatalSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
               <option value="">Choose transiting planet</option>
               {transitNatalPlanets.map((planet) => <option value={planet} key={planet}>{titleFromKey(planet)}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>2. Current sign</span>
-            <select aria-label="Transit zodiac sign" value={transitNatalSign} onChange={(event) => updateTransitNatalSelection({ sign: event.target.value as TransitNatalSign | "" })}>
+            <AdminSelect aria-label="Transit zodiac sign" value={transitNatalSign} onChange={(event) => updateTransitNatalSelection({ sign: event.target.value as TransitNatalSign | "" })}>
               <option value="">Choose current sign</option>
               {transitNatalSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>3. Transit house</span>
-            <select aria-label="Transit house" value={transitNatalTransitHouse} onChange={(event) => updateTransitNatalSelection({ transitHouse: event.target.value as TransitNatalHouse | "" })}>
+            <AdminSelect aria-label="Transit house" value={transitNatalTransitHouse} onChange={(event) => updateTransitNatalSelection({ transitHouse: event.target.value as TransitNatalHouse | "" })}>
               <option value="">Choose transit house</option>
               {transitNatalHouses.map((house) => <option value={house} key={house}>{house}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>4. Aspect</span>
-            <select aria-label="Transit to natal aspect" value={transitNatalAspect} onChange={(event) => updateTransitNatalSelection({ aspect: event.target.value as TransitNatalAspect | "" })}>
+            <AdminSelect aria-label="Transit to natal aspect" value={transitNatalAspect} onChange={(event) => updateTransitNatalSelection({ aspect: event.target.value as TransitNatalAspect | "" })}>
               <option value="">Choose aspect</option>
               {transitNatalAspects.map((aspect) => <option value={aspect} key={aspect}>{titleFromKey(aspect)}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>5. Natal planet or point</span>
-            <select aria-label="Natal planet or point" value={transitNatalPoint} onChange={(event) => updateTransitNatalSelection({ natalPoint: event.target.value as TransitNatalPoint | "" })}>
+            <AdminSelect aria-label="Natal planet or point" value={transitNatalPoint} onChange={(event) => updateTransitNatalSelection({ natalPoint: event.target.value as TransitNatalPoint | "" })}>
               <option value="">Choose natal planet or point</option>
               {transitNatalPoints.map((point) => <option value={point} key={point}>{titleFromKey(point)}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>6. Natal house</span>
-            <select aria-label="Natal point house" value={transitNatalNatalHouse} onChange={(event) => updateTransitNatalSelection({ natalHouse: event.target.value as TransitNatalHouse | "" })}>
+            <AdminSelect aria-label="Natal point house" value={transitNatalNatalHouse} onChange={(event) => updateTransitNatalSelection({ natalHouse: event.target.value as TransitNatalHouse | "" })}>
               <option value="">Choose natal house</option>
               {transitNatalHouses.map((house) => <option value={house} key={house}>{house}</option>)}
-            </select>
+            </AdminSelect>
           </label>
         </div>
 
@@ -7408,31 +7360,31 @@ export function GeneratedContentAdminDashboard() {
         <div className="admin-natal-placement-selectors">
           <label>
             <span>1. Transiting planet</span>
-            <select aria-label="House Transit planet" value={houseTransitPlanet} onChange={(event) => updateHouseTransitSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
+            <AdminSelect aria-label="House Transit planet" value={houseTransitPlanet} onChange={(event) => updateHouseTransitSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
               <option value="">Choose transiting planet</option>
               {houseTransitPlanets.map((planet) => <option value={planet} key={planet}>{titleFromKey(planet)}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>2. Current sign</span>
-            <select aria-label="House Transit zodiac sign" value={houseTransitSign} onChange={(event) => updateHouseTransitSelection({ sign: event.target.value as TransitNatalSign | "" })}>
+            <AdminSelect aria-label="House Transit zodiac sign" value={houseTransitSign} onChange={(event) => updateHouseTransitSelection({ sign: event.target.value as TransitNatalSign | "" })}>
               <option value="">Choose current sign</option>
               {houseTransitSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>3. Reader's house</span>
-            <select aria-label="House Transit house" value={houseTransitHouse} onChange={(event) => updateHouseTransitSelection({ house: event.target.value as TransitNatalHouse | "" })}>
+            <AdminSelect aria-label="House Transit house" value={houseTransitHouse} onChange={(event) => updateHouseTransitSelection({ house: event.target.value as TransitNatalHouse | "" })}>
               <option value="">Choose reader's house</option>
               {houseTransitHouses.map((house) => <option value={house} key={house}>{house}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>4. Current motion</span>
-            <select aria-label="House Transit motion" value={houseTransitMotion} onChange={(event) => updateHouseTransitSelection({ motion: event.target.value as HouseTransitMotion })}>
+            <AdminSelect aria-label="House Transit motion" value={houseTransitMotion} onChange={(event) => updateHouseTransitSelection({ motion: event.target.value as HouseTransitMotion })}>
               <option value="direct">Direct</option>
               <option value="retrograde">Retrograde</option>
-            </select>
+            </AdminSelect>
           </label>
         </div>
 
@@ -7470,7 +7422,7 @@ export function GeneratedContentAdminDashboard() {
         )}
         {alternateGroup && advancedSources.length > 0 && (
           <details className="admin-natal-source-group admin-natal-source-advanced">
-            <summary>{alternateGroup.label}</summary>
+            <AdminDisclosureSummary>{alternateGroup.label}</AdminDisclosureSummary>
             <p>{alternateGroup.description}</p>
             <div className="admin-natal-source-grid">{advancedSources.map(renderSkyAssemblySource)}</div>
           </details>
@@ -7481,76 +7433,57 @@ export function GeneratedContentAdminDashboard() {
 
   function renderContentFilters() {
     return (
-      <section className="admin-content-filters" aria-label="Content list filters">
+      <AdminFilterBar
+        activeFilterCount={[contentStatusFilter !== "all", categoryFilter !== "all" && !calendarAspectWorkspaceActive, contentClassFilter !== "all", tierFilter !== "all", showReferenceRows && !calendarAspectWorkspaceActive, showRetiredRows].filter(Boolean).length}
+        label="Content list filters"
+        searchLabel={calendarAspectWorkspaceActive ? "Find an aspect" : "Search content"}
+        query={query}
+        onQueryChange={handleContentSearchChange}
+        placeholder={calendarAspectWorkspaceActive ? "Mercury sextile Mars" : "Search by title, surface, kind, or content key"}
+        tabs={<>
         {!calendarAspectWorkspaceActive && (
-        <div className="admin-template-tabs" role="tablist" aria-label="Content Library saved views">
-          <button type="button" role="tab" aria-selected={contentLibraryView === "all"} className={contentLibraryView === "all" ? "active" : ""} onClick={() => setContentLibraryView("all")}>
+        <div className="admin-filter-choices" role="group" aria-label="Content Library saved views">
+          <StudioButton type="button" aria-pressed={contentLibraryView === "all"} className={contentLibraryView === "all" ? "active" : ""} onClick={() => setContentLibraryView("all")}>
             Editorial content
-          </button>
-          <button type="button" role="tab" aria-selected={contentLibraryView === "compatibility"} className={contentLibraryView === "compatibility" ? "active" : ""} onClick={() => setContentLibraryView("compatibility")}>
+          </StudioButton>
+          <StudioButton type="button" aria-pressed={contentLibraryView === "compatibility"} className={contentLibraryView === "compatibility" ? "active" : ""} onClick={() => setContentLibraryView("compatibility")}>
             Compatibility
-          </button>
+          </StudioButton>
         </div>
         )}
-        <details className="admin-advanced" onToggle={(event) => setStatusFiltersOpen(event.currentTarget.open)}><summary>Editorial filters</summary>
-        <div className="admin-status-pills" role="tablist" aria-label="Reader status">
-          {(["all", "LIVE", "NOT_LIVE"] as const).map((status) => (
-            <button key={status} type="button" role="tab" aria-selected={contentStatusFilter === status} className={contentStatusFilter === status ? "active" : ""} onClick={() => setContentStatusFilter(status)}>
-              <span>{status === "all" ? "All" : status === "LIVE" ? "Live" : "Not live"}</span>
-              <strong>{status === "all" ? statusCountRows.length : statusChecking ? "…" : status === "LIVE" ? liveCount : liveStatusResults.statuses.size - liveCount}</strong>
-            </button>
-          ))}
-        </div>
-        {statusFiltersOpen && statusChecking && <p role="status" className="admin-field-hint">Checking reader status…</p>}
-        {Boolean(liveStatusResults?.failed) && <p role="status" className="admin-field-hint">Status unavailable for {liveStatusResults?.failed} entries. Refresh rows to retry.</p>}
-        </details>
-        <div className="admin-review-filter-grid">
+        </>}
+        filters={<>
           {!calendarAspectWorkspaceActive && (
           <label>
             <span>Category</span>
-            <select aria-label="Category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AdminContentCategoryFilter)}>
+            <AdminSelect aria-label="Category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AdminContentCategoryFilter)}>
               {categoryFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           )}
           {!calendarAspectWorkspaceActive && (
           <label>
             <span>Content class</span>
-            <select aria-label="Content class" value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
+            <AdminSelect aria-label="Content class" value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
               {contentClassFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           )}
           {!calendarAspectWorkspaceActive && (
           <label>
             <span>Tier</span>
-            <select aria-label="Tier" value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
+            <AdminSelect aria-label="Tier" value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
               {tierFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           )}
-          <label>
-            <span>{calendarAspectWorkspaceActive ? "Find an aspect" : "Search content"}</span>
-            <input
-              aria-label={calendarAspectWorkspaceActive ? "Find an aspect" : "Search content"}
-              value={query}
-              onChange={(event) => handleContentSearchChange(event.target.value)}
-              placeholder={calendarAspectWorkspaceActive ? "Mercury sextile Mars" : "Title, surface, kind, content key"}
-            />
-          </label>
-          <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
+        </>}
+        actions={<>
+          <StudioButton type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
             <RefreshCw size={16} aria-hidden="true" />
             Refresh rows
-          </button>
-          {!calendarAspectWorkspaceActive && (
-          <button type="button" aria-pressed={showReferenceRows} className={showReferenceRows ? "active" : ""} onClick={() => setShowReferenceRows((current) => !current)}>
-            {showReferenceRows ? "Hide reference" : "Show reference"}
-          </button>
-          )}
-          <button type="button" aria-pressed={showRetiredRows} className={showRetiredRows ? "active" : ""} onClick={() => setShowRetiredRows((current) => !current)}>
-            Show retired
-          </button>
-          <button
+          </StudioButton>
+          <StudioButton
             type="button"
             onClick={() => {
               setContentStatusFilter("all");
@@ -7567,40 +7500,63 @@ export function GeneratedContentAdminDashboard() {
             }}
           >
             Clear filters
-          </button>
+          </StudioButton>
+        </>}
+        secondary={<>
+        <details className="admin-advanced" onToggle={(event) => setStatusFiltersOpen(event.currentTarget.open)}><AdminDisclosureSummary>Editorial filters</AdminDisclosureSummary>
+        <div className="admin-status-pills" role="group" aria-label="Reader status">
+          {(["all", "LIVE", "NOT_LIVE"] as const).map((status) => (
+            <StudioButton key={status} type="button" aria-pressed={contentStatusFilter === status} className={contentStatusFilter === status ? "active" : ""} onClick={() => setContentStatusFilter(status)}>
+              <span>{status === "all" ? "All" : status === "LIVE" ? "Live" : "Not live"}</span>
+              <strong>{status === "all" ? statusCountRows.length : statusChecking ? "…" : status === "LIVE" ? liveCount : liveStatusResults.statuses.size - liveCount}</strong>
+            </StudioButton>
+          ))}
         </div>
-      </section>
+        {statusFiltersOpen && statusChecking && <p role="status" className="admin-field-hint">Checking reader status…</p>}
+        {Boolean(liveStatusResults?.failed) && <p role="status" className="admin-field-hint">Status unavailable for {liveStatusResults?.failed} entries. Refresh rows to retry.</p>}
+        </details>
+          {!calendarAspectWorkspaceActive && (
+          <StudioButton type="button" aria-pressed={showReferenceRows} className={showReferenceRows ? "active" : ""} onClick={() => setShowReferenceRows((current) => !current)}>
+            {showReferenceRows ? "Hide reference" : "Show reference"}
+          </StudioButton>
+          )}
+          <StudioButton type="button" aria-pressed={showRetiredRows} className={showRetiredRows ? "active" : ""} onClick={() => setShowRetiredRows((current) => !current)}>
+            Show retired
+          </StudioButton>
+        </>}
+      />
     );
   }
 
   function renderArticleFilters() {
     return (
-      <section className="admin-content-filters" aria-label="Article filters">
-        <div className="admin-review-filter-grid">
+      <AdminFilterBar
+        activeFilterCount={[articleStatusFilter !== "all", articlePointFilter !== "all", articleContentSystemFilter !== "all"].filter(Boolean).length}
+        label="Article filters" searchLabel="Search articles" query={articleQuery}
+        onQueryChange={setArticleQuery} placeholder="Search by title, surface, kind, or content key"
+        filters={<>
           <label>
             <span>Status</span>
-            <select aria-label="Article status" value={articleStatusFilter} onChange={(event) => setArticleStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
+            <AdminSelect aria-label="Article status" value={articleStatusFilter} onChange={(event) => setArticleStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
               <option value="all">All statuses</option>
               {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>Planet or point</span>
-            <select aria-label="Article planet or point" value={articlePointFilter} onChange={(event) => setArticlePointFilter(event.target.value as AdminArticlePointFilter)}>
+            <AdminSelect aria-label="Article planet or point" value={articlePointFilter} onChange={(event) => setArticlePointFilter(event.target.value as AdminArticlePointFilter)}>
               {articlePointFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>Content system</span>
-            <select aria-label="Article content system" value={articleContentSystemFilter} onChange={(event) => setArticleContentSystemFilter(event.target.value as AdminContentSystemFilter)}>
+            <AdminSelect aria-label="Article content system" value={articleContentSystemFilter} onChange={(event) => setArticleContentSystemFilter(event.target.value as AdminContentSystemFilter)}>
               {contentSystemFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-            </select>
+            </AdminSelect>
           </label>
-          <label>
-            <span>Search articles</span>
-            <input aria-label="Search articles" value={articleQuery} onChange={(event) => setArticleQuery(event.target.value)} placeholder="Title, surface, kind, content key" />
-          </label>
-          <button
+        </>}
+        actions={<>
+          <StudioButton
             type="button"
             onClick={() => {
               setArticleStatusFilter("LIVE");
@@ -7610,9 +7566,9 @@ export function GeneratedContentAdminDashboard() {
             }}
           >
             Clear filters
-          </button>
-        </div>
-      </section>
+          </StudioButton>
+        </>}
+      />
     );
   }
 
@@ -7626,55 +7582,57 @@ export function GeneratedContentAdminDashboard() {
 
   function renderCompatibilityFilters() {
     return (
-      <section className="admin-content-filters" aria-label="Compatibility filters">
-        <div className="admin-template-tabs" role="tablist" aria-label="Compatibility sections">
+      <AdminFilterBar
+        activeFilterCount={[compatibilityStatusFilter !== "all", compatibilityPlanetFilter !== "all", compatibilitySort !== "updated-desc"].filter(Boolean).length}
+        label="Compatibility filters" searchLabel="Search compatibility" query={compatibilityQuery}
+        onQueryChange={setCompatibilityQuery} placeholder="Search by sign pair, planet, hook, or key"
+        tabs={<>
+        <div className="admin-filter-choices" role="group" aria-label="Compatibility sections">
           {compatibilitySections.map((section) => (
-            <button
+            <StudioButton
               key={section.key}
               type="button"
-              role="tab"
-              aria-selected={compatibilitySectionFilter === section.key}
+                            aria-pressed={compatibilitySectionFilter === section.key}
               className={compatibilitySectionFilter === section.key ? "active" : ""}
               title={section.description}
               onClick={() => setCompatibilitySectionFilter(section.key)}
             >
               <span>{section.label}</span>
               <strong>{compatibilityCounts[section.key]}</strong>
-            </button>
+            </StudioButton>
           ))}
         </div>
-        <div className="admin-review-filter-grid">
+        </>}
+        filters={<>
           <label>
             <span>Status</span>
-            <select aria-label="Compatibility status" value={compatibilityStatusFilter} onChange={(event) => setCompatibilityStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
+            <AdminSelect aria-label="Compatibility status" value={compatibilityStatusFilter} onChange={(event) => setCompatibilityStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
               <option value="all">All statuses</option>
               {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>Planet or point</span>
-            <select aria-label="Compatibility planet or point" value={compatibilityPlanetFilter} onChange={(event) => setCompatibilityPlanetFilter(event.target.value as AdminArticlePointFilter)}>
+            <AdminSelect aria-label="Compatibility planet or point" value={compatibilityPlanetFilter} onChange={(event) => setCompatibilityPlanetFilter(event.target.value as AdminArticlePointFilter)}>
               {articlePointFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>Sort</span>
-            <select aria-label="Compatibility sort" value={compatibilitySort} onChange={(event) => setCompatibilitySort(event.target.value as AdminCompatibilitySort)}>
+            <AdminSelect aria-label="Compatibility sort" value={compatibilitySort} onChange={(event) => setCompatibilitySort(event.target.value as AdminCompatibilitySort)}>
               {compatibilitySortOptions.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-            </select>
+            </AdminSelect>
           </label>
-          <label>
-            <span>Search compatibility</span>
-            <input aria-label="Search compatibility" value={compatibilityQuery} onChange={(event) => setCompatibilityQuery(event.target.value)} placeholder="Sign pair, planet, hook, vocab, slot, or key" />
-          </label>
-          <button
+        </>}
+        actions={<>
+          <StudioButton
             type="button"
             onClick={clearCompatibilityFilters}
           >
             Clear filters
-          </button>
-        </div>
-      </section>
+          </StudioButton>
+        </>}
+      />
     );
   }
 
@@ -7687,26 +7645,26 @@ export function GeneratedContentAdminDashboard() {
           <p>{loadError ?? "Check the admin API response and retry."}</p>
           {loadDiagnostics && (
             <details className="admin-advanced admin-review-json">
-              <summary>Developer diagnostics</summary>
+              <AdminDisclosureSummary>Developer diagnostics</AdminDisclosureSummary>
               <pre>{loadDiagnostics}</pre>
             </details>
           )}
         </div>
-        <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
+        <StudioButton type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
           <RefreshCw size={16} aria-hidden="true" />
           Retry
-        </button>
+        </StudioButton>
       </section>
     );
   }
 
   function renderFallbackTabs() {
     return (
-      <div className="admin-template-tabs" role="tablist" aria-label="Fallback hook sections">
+      <div className="admin-filter-choices" role="group" aria-label="Fallback hook sections">
         {fallbackSections.map((section) => (
-          <button key={section.key} type="button" role="tab" aria-selected={fallbackSectionFilter === section.key} className={fallbackSectionFilter === section.key ? "active" : ""} onClick={() => activePage === "hooks" ? navigateSurfaceMapFilters({ section: section.key }) : navigateAdminPage("knowledge", new URLSearchParams({ section: section.key, q: query }))}>
+          <StudioButton key={section.key} type="button" aria-pressed={fallbackSectionFilter === section.key} className={fallbackSectionFilter === section.key ? "active" : ""} onClick={() => activePage === "hooks" ? navigateSurfaceMapFilters({ section: section.key }) : navigateAdminPage("knowledge", new URLSearchParams({ section: section.key, q: query }))}>
             {section.label}
-          </button>
+          </StudioButton>
         ))}
       </div>
     );
@@ -7731,21 +7689,21 @@ export function GeneratedContentAdminDashboard() {
         </div>
         <label>
           <span>Status</span>
-          <select value={bulkStatus} onChange={(event) => setBulkStatus(event.target.value as GeneratedContentStatus)} disabled={isLoading}>
+          <AdminSelect value={bulkStatus} onChange={(event) => setBulkStatus(event.target.value as GeneratedContentStatus)} disabled={isLoading}>
             {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
-          </select>
+          </AdminSelect>
         </label>
-        <button type="button" onClick={() => void applyBulkStatus()} disabled={selectedSavedRows.length === 0 || isLoading}>
+        <StudioButton type="button" onClick={() => void applyBulkStatus()} disabled={selectedSavedRows.length === 0 || isLoading}>
           <Save size={15} aria-hidden="true" />
           Apply
-        </button>
-        <button type="button" onClick={() => setSelectedIds(new Set())} disabled={selectedIds.size === 0 || isLoading}>
+        </StudioButton>
+        <StudioButton type="button" onClick={() => setSelectedIds(new Set())} disabled={selectedIds.size === 0 || isLoading}>
           Clear
-        </button>
-        <button type="button" className="admin-danger-button" onClick={() => void deleteSelectedDrafts()} disabled={selectedSavedRows.length === 0 || isLoading}>
+        </StudioButton>
+        <StudioButton type="button" className="admin-danger-button" onClick={() => void deleteSelectedDrafts()} disabled={selectedSavedRows.length === 0 || isLoading}>
           <Trash2 size={15} aria-hidden="true" />
           Delete drafts
-        </button>
+        </StudioButton>
       </div>
     );
   }
@@ -7799,7 +7757,7 @@ export function GeneratedContentAdminDashboard() {
                   <h3>{group.label}</h3>
                   <p>{group.description}</p>
                 </div>
-                <p>{rows.length} rows</p>
+                <p>{rows.length} {rows.length === 1 ? "row" : "rows"}</p>
               </div>
               {renderContentTable(rows, false, true)}
             </section>
@@ -7837,20 +7795,10 @@ export function GeneratedContentAdminDashboard() {
 
     return (
       <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
-        {(visibleTableRows) => <div className="admin-content-table-scroll">
-          <table className="admin-content-table admin-content-table--browse">
-          <thead className="admin-content-table-head">
-            <tr>
-              <th className="admin-col-select" scope="col">Select</th>
-              <th className="admin-col-content" scope="col">Content</th>
-              <th className="admin-col-visibility" scope="col">Status</th>
-              {showArticleDestination && <th className="admin-col-destination" scope="col">App destination</th>}
-              <th className="admin-col-source" scope="col">Details</th>
-              <th className="admin-col-edit" scope="col">Edit</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleTableRows.map((row) => {
+        {(visibleTableRows) => <AdminContentTable
+          showDestination={showArticleDestination}
+          emptyMessage={activePage === "content" && contentStatusFilter !== "all" && statusChecking ? "Checking reader status…" : "No rows match these filters."}
+          rows={visibleTableRows.map((row) => {
               const rowClass = contentClassForRow(row);
               const rowRole = contentRoleDetails(contentRoleForRecord(row));
               const destination = showArticleDestination ? articleAppDestination(row) : null;
@@ -7866,65 +7814,25 @@ export function GeneratedContentAdminDashboard() {
               const placementKind = placement ? row.content_key.startsWith("sky/article-template/") ? "Placement template"
                 : row.content_key.startsWith("sky/article-edition/") ? "Saved placement edition"
                   : lunation ? "Lunation macro" : "Sky placement" : null;
-              return (
-                <tr
-                  key={row.id}
-                  className={`admin-content-row ${selectedRowId === row.id ? "selected" : ""}`}
-                  onClick={() => openRow(row)}
-                  onKeyDown={(event) => {
-                    if (event.target !== event.currentTarget) return;
-                    if (event.key !== "Enter" && event.key !== " ") return;
-                    event.preventDefault();
-                    openRow(row);
-                  }}
-                  tabIndex={0}
-                >
-                  <td className="admin-col-select" onClick={(event) => event.stopPropagation()}>
-                    <label className="admin-content-row-check">
-                      <input type="checkbox" checked={selectedIds.has(row.id)} onChange={() => toggleRowSelection(row.id)} aria-label={`Select ${displayTitle}`} />
-                    </label>
-                  </td>
-                  <td className="admin-content-title-cell admin-col-content">
-                    <strong className="admin-content-row-title" title={rowTitle(row)}>{displayTitle}</strong>
-                    <small className="admin-content-type-label admin-field-hint">
-                      {placementKind ?? (compatibilityIdentity ? `${compatibilityIdentity.detail} · ${rowTypeLabel(row)}` : rowTypeLabel(row))}
-                    </small>
-                    <code className="admin-content-row-key">{row.content_key}</code>
-                    <span className="admin-content-mobile-status"><ContentLiveStatusBadge row={row} /></span>
-                  </td>
-                  <td className="admin-col-visibility"><ContentLiveStatusBadge row={row} /></td>
-                  {destination && (
-                    <td className="admin-content-location admin-col-destination">
-                      <strong>{destination.label}</strong>
-                      <small>{destination.detail}</small>
-                    </td>
-                  )}
-                  <td className="admin-col-source" onClick={(event) => event.stopPropagation()}>
-                    <details><summary>Details</summary>
-                      <p className="admin-field-hint">Editorial stage: {contentStatusLabel(row.status)}</p>
-                      <p className="admin-field-hint">{rowRole.label} · {contentClassLabel(rowClass)} · {tierForRow(row)}</p>
-                      {wiring && <p className="admin-field-hint">{wiring.detail}</p>}
-                    </details>
-                  </td>
-                  <td className="admin-col-edit">
-                    <button
-                      className="admin-edit-row-button"
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        openRow(row);
-                      }}
-                    >
-                      Edit
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-          {tableRows.length === 0 && <p className="admin-empty">{activePage === "content" && contentStatusFilter !== "all" && statusChecking ? "Checking reader status…" : "No rows match these filters."}</p>}
-        </div>}
+              return {
+                id: row.id,
+                title: displayTitle,
+                kind: placementKind ?? (compatibilityIdentity ? `${compatibilityIdentity.detail} · ${rowTypeLabel(row)}` : rowTypeLabel(row)),
+                contentKey: row.content_key,
+                status: <ContentLiveStatusBadge row={row} />,
+                destination,
+                selected: selectedRowId === row.id,
+                checked: selectedIds.has(row.id),
+                onSelect: () => toggleRowSelection(row.id),
+                onOpen: () => openRow(row),
+                details: <>
+                  <p className="admin-field-hint">Editorial stage: {contentStatusLabel(row.status)}</p>
+                  <p className="admin-field-hint">{rowRole.label} · {contentClassLabel(rowClass)} · {tierForRow(row)}</p>
+                  {wiring && <p className="admin-field-hint">{wiring.detail}</p>}
+                </>
+              };
+          })}
+        />}
       </AdminPaginatedCollection>
     );
   }
@@ -7934,10 +7842,10 @@ export function GeneratedContentAdminDashboard() {
       <section className="admin-review-queue-layout" aria-label="Review queue">
         <aside className="admin-review-queue-groups" aria-label="Queue families">
           {contentStatuses.map((status) => (
-            <button key={status} type="button" className={reviewStatusFilter === status ? "active" : ""} onClick={() => setReviewStatusFilter(status)}>
+            <StudioButton key={status} type="button" className={reviewStatusFilter === status ? "active" : ""} aria-pressed={reviewStatusFilter === status} onClick={() => setReviewStatusFilter(status)}>
               <span>{contentStatusLabel(status)}</span>
               <strong>{tableRows.filter((row) => row.status === status).length}</strong>
-            </button>
+            </StudioButton>
           ))}
         </aside>
         <AdminPaginatedCollection
@@ -7947,34 +7855,24 @@ export function GeneratedContentAdminDashboard() {
           resetKey={`${reviewStatusFilter}:${contentClassFilter}:${tierFilter}:${query}:${tableRows.length}`}
         >
           {(visibleTableRows) => <div className="admin-review-queue-rows" aria-label="Review rows">
-          {visibleTableRows.map((row) => {
-            const saved = row.rawGlobalRow;
-            const aspectContext = aspectContextForRow(row);
-            const readerUse = aspectContext?.label ?? contentCategoryForRow(row);
-            return (
-              <article key={row.id} className="admin-review-queue-row" onClick={() => saved && openRow(saved)}>
-                <div className="admin-review-queue-row-head">
-                  <label className="admin-content-row-check" onClick={(event) => event.stopPropagation()}>
-                    <input type="checkbox" checked={selectedIds.has(saved?.id ?? row.id)} disabled={!saved} onChange={() => saved && toggleRowSelection(saved.id)} />
-                  </label>
-                  <div className="admin-review-queue-copy">
-                    <h3 title={rowTitle(row)}>{rowTitle(row)}</h3>
-                    <span className="admin-review-queue-use admin-aspect-context-pill">{readerUse}</span>
-                    <code title={row.contentKey}>{row.contentKey}</code>
-                  </div>
-                  <div className="admin-review-queue-meta-strip">
-                    <ContentLiveStatusBadge row={saved ?? { id: null }} />
-                  </div>
-                </div>
-                <p>{row.summary || row.body || "No preview copy saved."}</p>
-                <div className="admin-review-queue-actions">
-                  {saved && <button type="button" onClick={(event) => { event.stopPropagation(); openRow(saved); }}>Edit</button>}
-                </div>
-              </article>
-            );
-          })}
-          {tableRows.length === 0 && <p className="admin-empty">No review rows match these filters.</p>}
+            <AdminContentTable showDestination={false} emptyMessage="No review rows match these filters." rows={visibleTableRows.map((row) => {
+              const saved = row.rawGlobalRow;
+              const aspectContext = aspectContextForRow(row);
+              return {
+                id: row.id,
+                title: rowTitle(row),
+                kind: aspectContext?.label ?? contentCategoryForRow(row),
+                contentKey: row.contentKey,
+                status: <ContentLiveStatusBadge row={saved ?? { id: null }} />,
+                selected: Boolean(saved && selectedRowId === saved.id),
+                checked: selectedIds.has(saved?.id ?? row.id),
+                onSelect: () => saved && toggleRowSelection(saved.id),
+                onOpen: saved ? () => openRow(saved) : undefined,
+                details: <p className="admin-review-preview">{row.summary || row.body || "No preview copy saved."}</p>
+              };
+            })} />
           </div>}
+
         </AdminPaginatedCollection>
       </section>
     );
@@ -8073,9 +7971,9 @@ export function GeneratedContentAdminDashboard() {
                   <p><strong>Weakest</strong>{weakest || "No weakest beat recorded."}</p>
                 </div>
                 <div className="admin-review-queue-actions">
-                  <button type="button" onClick={() => openRow(row)}>Edit</button>
+                  <StudioButton type="button" onClick={() => openRow(row)}>Edit</StudioButton>
                   {skyWritingIssues(row).length === 0 && ["DRAFT", "REVIEWED"].includes(row.status)
-                    ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</button>
+                    ? <StudioButton type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</StudioButton>
                     : null}
                 </div>
               </article>
@@ -8092,7 +7990,7 @@ export function GeneratedContentAdminDashboard() {
       return (
         <section className="admin-sky-voice-queue">
           <p className="admin-empty">{skyReviewHorizonError}</p>
-          <button type="button" onClick={() => void loadSkyReviewHorizon()} disabled={isLoading}>Try again</button>
+          <StudioButton type="button" onClick={() => void loadSkyReviewHorizon()} disabled={isLoading}>Try again</StudioButton>
         </section>
       );
     }
@@ -8116,9 +8014,9 @@ export function GeneratedContentAdminDashboard() {
             <p>{skyReviewHorizon.counts.aspectCandidates} aspect cards and {skyReviewHorizon.counts.placementCandidates} placement cards are reused across {skyReviewHorizon.counts.activeWindows} active windows. Dates come from calculated daily Sky snapshots; copy is never duplicated per day.</p>
             <p><strong>{skyReviewHorizon.generationPlan.reusableCandidatesMissingDrafts} generated sign-specific drafts are missing.</strong> This is not the same as a reader-facing source gap because approved exact-aspect and phrasebook fallbacks may still cover the event. Generate only the drafts you need. Approved existing writing may already cover these configurations. Generate one missing draft below, or write it manually. Each generation uses the configured writer. Writing checks are automatic; editorial approval is yours.</p>
           </div>
-          <button type="button" onClick={() => void loadSkyReviewHorizon()} disabled={isLoading}>
+          <StudioButton type="button" onClick={() => void loadSkyReviewHorizon()} disabled={isLoading}>
             <RefreshCw size={16} aria-hidden="true" /> Recalculate
-          </button>
+          </StudioButton>
         </div>
         <p className="admin-sky-voice-description">This view is inventory and review status only. Loading it makes zero writer or reviewer calls and changes no approval or serving state.</p>
         <div className="admin-sky-voice-cards">
@@ -8153,13 +8051,13 @@ export function GeneratedContentAdminDashboard() {
                 <div className="admin-sky-voice-body">{row?.body || "No writing is saved for this configuration. Generate a draft or write it manually, then review it before publication."}</div>
                 <div className="admin-review-queue-actions">
                   {ownerApprovedArticleKey ? (
-                    <button type="button" onClick={() => void openServingFallbackRow(ownerApprovedArticleKey, occurrence)} disabled={isLoading}>
+                    <StudioButton type="button" onClick={() => void openServingFallbackRow(ownerApprovedArticleKey, occurrence)} disabled={isLoading}>
                       Edit serving article
-                    </button>
+                    </StudioButton>
                   ) : null}
-                  {row ? <button type="button" onClick={() => openRow(row)}>Edit</button> : null}
-                  {!row ? <><button type="button" disabled={isLoading} onClick={() => void runSkyDraftWriting(occurrence.contentKey, "generate")}>Generate draft</button><button type="button" onClick={() => openMissingSkyDraft(occurrence)}>Write manually</button></> : null}
-                  {canApprove ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</button> : null}
+                  {row ? <StudioButton type="button" onClick={() => openRow(row)}>Edit</StudioButton> : null}
+                  {!row ? <><StudioButton type="button" disabled={isLoading} onClick={() => void runSkyDraftWriting(occurrence.contentKey, "generate")}>Generate draft</StudioButton><StudioButton type="button" onClick={() => openMissingSkyDraft(occurrence)}>Write manually</StudioButton></> : null}
+                  {canApprove ? <StudioButton type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</StudioButton> : null}
                 </div>
               </article>
             );
@@ -8937,60 +8835,39 @@ export function GeneratedContentAdminDashboard() {
 
     return (
       <>
-      <button type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={closeEditor} disabled={isLoading} />
+      <StudioButton type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={closeEditor} disabled={isLoading} />
       <aside ref={editorRef} className={`admin-editor-panel admin-review-detail${templateVariableReferenceOpen ? " has-variables-rail" : ""}`} role="dialog" aria-modal="true" aria-label="Generated content editor" aria-busy={isLoading} onKeyDown={handleEditorKeyDown}>
         {skyWriteupParent && (
-          <button type="button" className="admin-sky-writeup-back" onClick={returnToSkyWriteup} disabled={isLoading}>
+          <StudioButton type="button" className="admin-sky-writeup-back" onClick={returnToSkyWriteup} disabled={isLoading}>
             <ArrowLeft size={16} aria-hidden="true" />
             Back to {rowTitle(skyWriteupParent)}
-          </button>
+          </StudioButton>
         )}
-        <div className="admin-editor-toolbar">
-          <div>
-            <p className="admin-eyebrow">{isVocabularyDraft ? "Phrase editor" : isArticleDraft ? "Article editor" : "Content editor"}</p>
-            <h2>{editorHeading}</h2>
-            <p className="admin-editor-context-line">
-              <span><strong>Use:</strong> {editorUseLabel}</span>
-              {editorReaderDestination && (
-                <span className="admin-editor-reader-destination"><strong>Where readers see this:</strong> {editorReaderDestination}</span>
-              )}
-              <button
-                type="button"
-                className="admin-editor-key-copy"
-                onClick={() => void copyContentKey(currentDraft.contentKey)}
-                aria-label={`Copy key ${currentDraft.contentKey}`}
-                title="Click to copy the key"
-              >
-                <code title={currentDraft.contentKey}>{currentDraft.contentKey}</code>
-              </button>
-            </p>
-          </div>
-          <div className="admin-editor-toolbar-actions">
-            {aspectContext && (
-              <span className="ui-pill admin-status admin-aspect-context-pill" title={aspectContext.detail}>
-                {aspectContext.label}
-              </span>
-            )}
-            <ContentLiveStatusBadge label="Reader status" row={editorStatusRow} unsaved={draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} />
-            {variableReferences.length > 0 && (
-              <button
-                type="button"
-                onClick={() => {
+        <header className="admin-editor-toolbar admin-editor-header">
+          <h2>{editorHeading}</h2>
+          <StudioButton className="admin-editor-close" type="button" onClick={closeEditor} disabled={isLoading} autoFocus aria-label="Close" title="Close editor">
+            <X size={18} aria-hidden="true" />
+          </StudioButton>
+          <div className="admin-editor-meta">
+            <div className="admin-editor-context-line">
+              <ContentLiveStatusBadge label="Reader status" row={editorStatusRow} unsaved={draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} />
+              <span className={aspectContext ? "admin-aspect-context-pill" : undefined} title={aspectContext?.detail}>{editorUseLabel}</span>
+              {editorReaderDestination && editorReaderDestination !== editorUseLabel && <span className="admin-editor-reader-destination">{editorReaderDestination}</span>}
+            </div>
+            <div className="admin-editor-toolbar-actions">
+              {variableReferences.length > 0 && (
+                <StudioButton type="button" onClick={() => {
                   setSelectedTemplateVariableName(null);
                   setSelectedTemplateVariableSourceId(null);
                   setTemplateVariableReferenceOpen(true);
-                }}
-              >
-                <Braces size={16} aria-hidden="true" />
-                {isTemplateDraft ? "Reader preview & variables" : "Variables"} ({variableReferences.length})
-              </button>
-            )}
-            <button type="button" onClick={closeEditor} disabled={isLoading} autoFocus>
-              <X size={16} aria-hidden="true" />
-              Close
-            </button>
+                }}>
+                  <Braces size={16} aria-hidden="true" />
+                  {isTemplateDraft ? "Reader preview & variables" : "Variables"} ({variableReferences.length})
+                </StudioButton>
+              )}
+            </div>
           </div>
-        </div>
+        </header>
         <section className="admin-post-editor">
           {guidedReviewKey === currentDraft.contentKey && (
             <section className="admin-guided-content-review" aria-label="Guided unresolved-content review">
@@ -9015,14 +8892,14 @@ export function GeneratedContentAdminDashboard() {
               </div>
               <code>{currentDraft.contentKey}</code>
               <div className="admin-toolbar-actions">
-                {!guidedReviewDecision && <button className="admin-primary-button" type="button" onClick={() => void completeGuidedContentReview()} disabled={isLoading || draftHasUnsavedChanges || !currentDraft.body.trim()}>
+                {!guidedReviewDecision && <StudioButton className="admin-primary-button" type="button" onClick={() => void completeGuidedContentReview()} disabled={isLoading || draftHasUnsavedChanges || !currentDraft.body.trim()}>
                   <Check size={16} aria-hidden="true" />
                   Record owner copy review
-                </button>}
-                <button type="button" onClick={() => navigateAdminPage("unresolvedContent")}>
+                </StudioButton>}
+                <StudioButton type="button" onClick={() => navigateAdminPage("unresolvedContent")}>
                   <ArrowLeft size={16} aria-hidden="true" />
                   Back to Unresolved Content
-                </button>
+                </StudioButton>
               </div>
             </section>
           )}
@@ -9041,10 +8918,10 @@ export function GeneratedContentAdminDashboard() {
               {compatibilityDraftIdentityFields.map(({ field, label, value, options }) => (
                 <label className="admin-metadata-field" key={field}>
                   <span>{label}</span>
-                  <select aria-label={`Compatibility card ${label.toLowerCase()}`} value={value} onChange={(event) => updateCompatibilityDraftIdentity(field, event.target.value)}>
+                  <AdminSelect aria-label={`Compatibility card ${label.toLowerCase()}`} value={value} onChange={(event) => updateCompatibilityDraftIdentity(field, event.target.value)}>
                     <option value="">Choose {label.toLowerCase()}</option>
                     {options.map((option) => <option key={option} value={option}>{titleFromKey(option)}</option>)}
-                  </select>
+                  </AdminSelect>
                 </label>
               ))}
               {compatibilityIdentity && (
@@ -9056,7 +8933,7 @@ export function GeneratedContentAdminDashboard() {
               {compatibilityDraftCollision && (
                 <div className="admin-inline-warning" role="alert">
                   <strong>This card already exists.</strong>
-                  <button type="button" onClick={() => openRow(compatibilityDraftCollision)}>Open saved record</button>
+                  <StudioButton type="button" onClick={() => openRow(compatibilityDraftCollision)}>Open saved record</StudioButton>
                 </div>
               )}
             </fieldset>
@@ -9067,13 +8944,13 @@ export function GeneratedContentAdminDashboard() {
               <p>
                 Readers receive <code>{ownerApprovedArticleKey}</code>, not this generated candidate.
               </p>
-              <button
+              <StudioButton
                 type="button"
                 onClick={() => void openOwnerApprovedSkyPlacementArticle(ownerApprovedArticleKey, currentDraft.headline || titleFromKey(currentDraft.contentKey))}
                 disabled={isLoading}
               >
                 Open owner-approved source
-              </button>
+              </StudioButton>
             </section>
           )}
           {compatibilityIdentity && !isNewDraft && (
@@ -9083,7 +8960,7 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>You:</strong> {compatibilityIdentity.readerSign} · <strong>Friend:</strong> {compatibilityIdentity.friendSign}</p>
               <p>The arrow shows the direction of the saved copy. Reversing the two signs opens a different record because the reader and friend wording changes.</p>
               <div className="admin-toolbar-actions admin-compatibility-reverse-actions">
-                <button
+                <StudioButton
                   type="button"
                   onClick={() => {
                     if (!reverseCompatibility) return;
@@ -9101,19 +8978,17 @@ export function GeneratedContentAdminDashboard() {
                   {reverseCompatibilityIdentity
                     ? `Open reverse · ${reverseCompatibilityIdentity.readerSign} → ${reverseCompatibilityIdentity.friendSign}`
                     : "Reverse record unavailable"}
-                </button>
+                </StudioButton>
               </div>
             </section>
           )}
           {hasEditorBrief && (
             <details className="admin-editor-brief" aria-label="Editing guidance">
-              <summary>
+              <AdminDisclosureSummary>
                 <span className="admin-editor-brief-line">
                   <strong>{editorBrief.title}</strong>
-                  {editorBrief.hint && <span>{editorBrief.hint}</span>}
                 </span>
-                <span className="admin-editor-brief-more" aria-hidden="true">More</span>
-              </summary>
+              </AdminDisclosureSummary>
               <div className="admin-editor-brief-body">
               {authoringBrief && (
                 <section className="admin-editor-guidance admin-authoring-brief" aria-label="What you are creating">
@@ -9204,7 +9079,7 @@ export function GeneratedContentAdminDashboard() {
                   <p><strong>{skyFallbackContentIdentity?.typeLabel ?? skyFallbackEditor.title}.</strong> Save & publish makes this exact revision live. Save draft keeps unfinished changes for later.</p>
                 </div>}
                 <details className="admin-workspace-details">
-                  <summary>Source details</summary>
+                  <AdminDisclosureSummary>Source details</AdminDisclosureSummary>
                   <dl className="admin-hook-pattern-list">
                     <div><dt>Serving key</dt><dd><code>{currentDraft.contentKey}</code></dd></div>
                     <div><dt>Render policy</dt><dd>{String(effectiveSkyFallback.render_policy ?? "Package renderer")}</dd></div>
@@ -9232,7 +9107,7 @@ export function GeneratedContentAdminDashboard() {
 
               {isSkyV4StudioRecord && (
                 <SkyChangesContainer>
-                  {isSkyPlacementSource && <summary>Source history and validation</summary>}
+                  {isSkyPlacementSource && <AdminDisclosureSummary>Source history and validation</AdminDisclosureSummary>}
                 <Suspense fallback={null}>
                   <SkyV4StudioReviewPanel
                     secret={secret}
@@ -9269,13 +9144,13 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                   <label className="admin-field-wide">
                     <span>Insert into article field</span>
-                    <select aria-label="Calculated fact target field" value={effectiveSkyFallbackVariableTarget} onChange={(event) => setSkyFallbackVariableTarget(event.target.value)}>
+                    <AdminSelect aria-label="Calculated fact target field" value={effectiveSkyFallbackVariableTarget} onChange={(event) => setSkyFallbackVariableTarget(event.target.value)}>
                       {skyFallbackEditor.fields.map((field) => <option key={field.key} value={field.key}>{field.label}</option>)}
-                    </select>
+                    </AdminSelect>
                   </label>
                   <div className="admin-token-list" role="group" aria-label="Available calculated facts">
                     {skyFallbackEditor.variables.map((variable) => (
-                      <button type="button" key={variable} onClick={() => insertSkyFallbackVariable(variable)}>{`{{${variable}}}`}</button>
+                      <StudioButton type="button" key={variable} onClick={() => insertSkyFallbackVariable(variable)}>{`{{${variable}}}`}</StudioButton>
                     ))}
                   </div>
                 </section>
@@ -9284,15 +9159,15 @@ export function GeneratedContentAdminDashboard() {
 
               {skyFallbackChanges.length > 0 && (
                 <SkyChangesContainer className="admin-hook-detail-section" aria-label="Review fallback changes">
-                  {isSkyPlacementSource && <summary>Review changes ({skyFallbackChanges.length})</summary>}
+                  {isSkyPlacementSource && <AdminDisclosureSummary>Review changes ({skyFallbackChanges.length})</AdminDisclosureSummary>}
                   <div className="admin-fallback-diagnostic-heading">
                     <div>
                       <p className="admin-eyebrow">Review diff</p>
                       <h3>{skyFallbackChanges.length === 1 ? "1 proposed change" : `${skyFallbackChanges.length} proposed changes`}</h3>
                     </div>
                     <div className="admin-toolbar-actions">
-                      <button type="button" className="admin-secondary-button" onClick={exportSkyFallbackProposal}>Export proposal</button>
-                      <button type="button" className="admin-secondary-button" onClick={discardSkyFallbackProposal}>Discard proposal</button>
+                      <StudioButton type="button" className="admin-secondary-button" onClick={exportSkyFallbackProposal}>Export proposal</StudioButton>
+                      <StudioButton type="button" className="admin-secondary-button" onClick={discardSkyFallbackProposal}>Discard proposal</StudioButton>
                     </div>
                   </div>
                   {skyFallbackChanges.map((change) => (
@@ -9329,7 +9204,7 @@ export function GeneratedContentAdminDashboard() {
               <div className="admin-sky-edition-facts-row">
                 <label className="admin-title-field">
                   <span>Reference date</span>
-                  <input
+                  <StudioInput
                     aria-label="Sky article reference date"
                     type="date"
                     value={skyArticleEditionForm.referenceDate}
@@ -9353,10 +9228,10 @@ export function GeneratedContentAdminDashboard() {
                   />
                   <small className="admin-field-hint">The ephemeris uses this date to identify the active sign and complete residency window.</small>
                 </label>
-                <button type="button" onClick={() => void loadSkyArticleEditionFacts(selectedRow)} disabled={isLoading}>
+                <StudioButton type="button" onClick={() => void loadSkyArticleEditionFacts(selectedRow)} disabled={isLoading}>
                   <RefreshCw size={16} aria-hidden="true" />
                   Load calculated facts
-                </button>
+                </StudioButton>
               </div>
               {skyArticleEditionFacts && (
                 <>
@@ -9376,14 +9251,14 @@ export function GeneratedContentAdminDashboard() {
                     </ul>
                   </section>
                   <div className="admin-toolbar-actions">
-                    <button
+                    <StudioButton
                       type="button"
                       onClick={() => void generateSkyArticleEditionSlots(selectedRow)}
                       disabled={isLoading}
                     >
                       <Sparkles size={16} aria-hidden="true" />
                       Generate unfinished fields
-                    </button>
+                    </StudioButton>
                     <small className="admin-field-hint">
                       Explicit action only. Sends this approved template, calculated facts, and unfinished field names to the configured writing provider. Fixed owner prose is never rewritten.
                     </small>
@@ -9400,7 +9275,7 @@ export function GeneratedContentAdminDashboard() {
                   )}
                   <label className="admin-review-copy-editor">
                     <span>TL;DR · explicit edition copy</span>
-                    <textarea
+                    <StudioTextarea
                       aria-label="Sky article edition TL;DR"
                       value={skyArticleEditionForm.tldr}
                       onChange={(event) => setSkyArticleEditionForm({
@@ -9421,7 +9296,7 @@ export function GeneratedContentAdminDashboard() {
                       return (
                         <label className="admin-review-copy-editor" key={placeholder.name}>
                           <span>{placeholder.name}{engineOwned ? " · calculated" : generated ? " · AI draft" : ""}</span>
-                          <textarea
+                          <StudioTextarea
                             aria-label={`Template field ${placeholder.name}`}
                             value={skyArticleEditionForm.slotValues[placeholder.name] ?? ""}
                             disabled={engineOwned}
@@ -9434,20 +9309,20 @@ export function GeneratedContentAdminDashboard() {
                           />
                           {placeholder.description && <small className="admin-field-hint">{placeholder.description}</small>}
                           {!engineOwned && skyArticleEditionForm.slotValues[placeholder.name] === undefined && (
-                            <button type="button" onClick={() => setSkyArticleEditionForm({
+                            <StudioButton type="button" onClick={() => setSkyArticleEditionForm({
                               ...skyArticleEditionForm,
                               slotValues: { ...skyArticleEditionForm.slotValues, [placeholder.name]: "" },
                               saveState: "unsaved"
                             })}>
                               Deliberately leave this block blank
-                            </button>
+                            </StudioButton>
                           )}
                         </label>
                       );
                     })}
                   </div>
                   <div className="admin-toolbar-actions">
-                    <button
+                    <StudioButton
                       className="admin-primary-button"
                       type="button"
                       onClick={() => void createSkyArticleEdition(selectedRow)}
@@ -9462,7 +9337,7 @@ export function GeneratedContentAdminDashboard() {
                     >
                       <Plus size={16} aria-hidden="true" />
                       Compile edition draft
-                    </button>
+                    </StudioButton>
                   </div>
                 </>
               )}
@@ -9506,12 +9381,12 @@ export function GeneratedContentAdminDashboard() {
                   </header>
                   {skyArticleEditor.error && <div>
                     <p className="admin-inline-error">{skyArticleEditor.error}</p>
-                    <button type="button" onClick={() => updateSkyArticleFields({})}>Retry save</button>
+                    <StudioButton type="button" onClick={() => updateSkyArticleFields({})}>Retry save</StudioButton>
                   </div>}
 
                   <label className="admin-title-field">
                     <span>Headline</span>
-                    <input
+                    <StudioInput
                       aria-label="Sky article headline"
                       value={skyArticleEditor.fields.headline}
                       onChange={(event) => updateSkyArticleFields({ headline: event.target.value })}
@@ -9519,7 +9394,7 @@ export function GeneratedContentAdminDashboard() {
                   </label>
                   <label className="admin-review-copy-editor">
                     <span>TL;DR</span>
-                    <textarea
+                    <StudioTextarea
                       aria-label="Sky article TL;DR"
                       value={skyArticleEditor.fields.tldr}
                       onChange={(event) => updateSkyArticleFields({ tldr: event.target.value })}
@@ -9528,7 +9403,7 @@ export function GeneratedContentAdminDashboard() {
                   </label>
                   <label className="admin-review-copy-editor">
                     <span>General article</span>
-                    <textarea
+                    <StudioTextarea
                       aria-label="Sky article general copy"
                       value={skyArticleEditor.fields.body}
                       onChange={(event) => updateSkyArticleFields({ body: event.target.value })}
@@ -9536,15 +9411,15 @@ export function GeneratedContentAdminDashboard() {
                   </label>
 
                   <details className="admin-sky-related-group admin-diagnostics-details">
-                    <summary>
+                    <AdminDisclosureSummary>
                       <span>House passages</span>
                       <strong>{skyArticleEditor.fields.housePassages.length}/12 complete</strong>
-                    </summary>
+                    </AdminDisclosureSummary>
                     <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
                       {skyArticleEditor.fields.housePassages.map((passage) => (
                         <label className="admin-review-copy-editor" key={passage.contentKey}>
                           <span>{ordinalLabel(passage.house)} House{passage.risingSign ? ` · ${titleFromKey(passage.risingSign)} Rising` : ""}</span>
-                          <textarea
+                          <StudioTextarea
                             aria-label={`Sky article House ${passage.house}`}
                             value={passage.body}
                             onChange={(event) => updateSkyArticleHouse(passage.contentKey, event.target.value)}
@@ -9556,15 +9431,15 @@ export function GeneratedContentAdminDashboard() {
 
                   {skyArticleEditor.fields.aspectPassages.length > 0 && (
                     <details className="admin-sky-related-group admin-diagnostics-details">
-                      <summary>
+                      <AdminDisclosureSummary>
                         <span>Natal-aspect passages</span>
                         <strong>{skyArticleEditor.fields.aspectPassages.length}</strong>
-                      </summary>
+                      </AdminDisclosureSummary>
                       <div className="admin-sky-aspect-list admin-lunar-coverage-row-list">
                         {skyArticleEditor.fields.aspectPassages.map((passage) => (
                           <label className="admin-review-copy-editor" key={passage.contentKey}>
                             <span>{titleFromKey(passage.natalPoint)} · {titleFromKey(passage.aspect)}</span>
-                            <textarea
+                            <StudioTextarea
                               aria-label={`Sky article ${passage.natalPoint} ${passage.aspect}`}
                               value={passage.body}
                               onChange={(event) => updateSkyArticleAspect(passage.contentKey, event.target.value)}
@@ -9585,17 +9460,17 @@ export function GeneratedContentAdminDashboard() {
                   <div className="admin-toolbar-actions admin-sky-article-actions">
                     <span>{skyArticleChanges.length} changed field{skyArticleChanges.length === 1 ? "" : "s"}</span>
                     {skyArticleChanges.length > 0 ? (
-                      <button
+                      <StudioButton
                         type="button"
                         onClick={() => setSkyArticleEditor((current) => current ? { ...current, reviewOpen: !current.reviewOpen } : current)}
                       >
                         Review {skyArticleChanges.length} change{skyArticleChanges.length === 1 ? "" : "s"}
-                      </button>
+                      </StudioButton>
                     ) : selectedRow && currentDraft.status !== "LIVE" ? (
-                      <button type="button" onClick={() => void approveSkyArticleEdition(selectedRow)} disabled={isLoading}>
+                      <StudioButton type="button" onClick={() => void approveSkyArticleEdition(selectedRow)} disabled={isLoading}>
                         <Check size={16} aria-hidden="true" />
                         Approve &amp; publish complete edition
-                      </button>
+                      </StudioButton>
                     ) : (
                       <span>Published copy is unchanged.</span>
                     )}
@@ -9616,7 +9491,7 @@ export function GeneratedContentAdminDashboard() {
                           </div>
                         </article>
                       ))}
-                      <button
+                      <StudioButton
                         className="admin-primary-button"
                         type="button"
                         onClick={() => void publishSkyArticleChanges()}
@@ -9625,7 +9500,7 @@ export function GeneratedContentAdminDashboard() {
                       >
                         <Check size={16} aria-hidden="true" />
                         Publish changes
-                      </button>
+                      </StudioButton>
                     </section>
                   )}
                 </div>
@@ -9635,35 +9510,37 @@ export function GeneratedContentAdminDashboard() {
           {isVocabularyDraft && (
             <label className="admin-title-field">
               <span>Phrase section</span>
-              <select aria-label="Phrase section" value={vocabularySection} onChange={(event) => updateVocabularySection(event.target.value as AdminVocabularySection)} disabled={!isNewDraft}>
+              <AdminSelect aria-label="Phrase section" value={vocabularySection} onChange={(event) => updateVocabularySection(event.target.value as AdminVocabularySection)} disabled={!isNewDraft}>
                 {vocabularySections.map((section) => <option key={section.key} value={section.key}>{section.label}</option>)}
-              </select>
+              </AdminSelect>
               <small className="admin-field-hint">{vocabularySections.find((section) => section.key === vocabularySection)?.description}</small>
             </label>
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && (
-            <label className="admin-title-field">
-              <span>{headlineFieldLabel}</span>
-              <input aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
-              {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
-              {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Reader-facing title shown at the top of this card or write-up. Stored internally as Headline."}</small>}
-            </label>
-          )}
-          {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && showSummaryField && !isSkySummaryDraft && (
-            <label className="admin-review-copy-editor">
-              <span>{summaryFieldLabel}</span>
-              <textarea className="admin-copy-field-summary" aria-label={summaryFieldLabel} value={currentDraft.summary} onChange={(event) => updateSummary(event.target.value)} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
-              <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
-              {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
-              {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Short reader-facing takeaway. Leave empty when this surface does not show a TL;DR. Stored internally as Summary."}</small>}
-            </label>
+            <section className="studio-surface studio-section admin-editor-copy-section" aria-label="Content name and summary">
+              <label className="admin-title-field">
+                <span>{headlineFieldLabel}</span>
+                <StudioInput aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
+                {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
+                {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
+                {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Title shown to readers."}</small>}
+              </label>
+              {!(isVocabularyDraft && isPackageDraft) && showSummaryField && !isSkySummaryDraft && (
+                <label className="admin-review-copy-editor">
+                  <span>{summaryFieldLabel}</span>
+                  <StudioTextarea className="admin-copy-field-summary" aria-label={summaryFieldLabel} value={currentDraft.summary} onChange={(event) => updateSummary(event.target.value)} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
+                  <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
+                  {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
+                  {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
+                  {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Optional short takeaway."}</small>}
+                </label>
+              )}
+            </section>
           )}
           {showPackageBodyYou && !skyFallbackEditor && (
             <label className="admin-review-copy-editor" data-reader-audience="you">
               <span>{fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"}</span>
-              <textarea data-sky-field="body_you" aria-label={fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"} value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
+              <StudioTextarea data-sky-field="body_you" aria-label={fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"} value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyYouHint}</small>}
               {!fallbackEditorGuidance && <small className="admin-field-hint">Used when someone reads their own natal chart in You.</small>}
             </label>
@@ -9676,7 +9553,7 @@ export function GeneratedContentAdminDashboard() {
           ] as const).map(([field, label]) => (
             <label className="admin-review-copy-editor" key={field}>
               <span>{label}</span>
-              <textarea
+              <StudioTextarea
                 aria-label={`Continuous Sky ${label}`}
                 value={typeof editablePackageRecord[field] === "string" ? editablePackageRecord[field] as string : ""}
                 onChange={(event) => setDraft(setPackageRecordField(currentDraft, field, event.target.value))}
@@ -9696,7 +9573,7 @@ export function GeneratedContentAdminDashboard() {
                   Friends uses this complete third-person passage. Use <code>{"{{Name}}"}</code> where the person&apos;s name belongs. If this field is blank, the reader falls back to the legacy automatic conversion of the You passage.
                 </small>
               )}
-              <textarea
+              <StudioTextarea
                 data-sky-field="body_they"
                 aria-describedby={isExactNatalAspectDraft
                   ? "natal-aspect-they-name-hint"
@@ -9714,9 +9591,9 @@ export function GeneratedContentAdminDashboard() {
             isPackageDraft={isPackageDraft} articleSaveState={skyArticleEditor?.saveState}
             onWritingAction={(action) => void runSkyDraftWriting(selectedRow.content_key, action, selectedRow)} /></Suspense>}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
-            <label className="admin-review-copy-editor">
+            <label className="admin-review-copy-editor studio-surface">
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
-              <textarea
+              <StudioTextarea
                 className="admin-copy-field-body"
                 data-sky-field="body"
                 aria-label={bodyFieldLabel}
@@ -9726,7 +9603,7 @@ export function GeneratedContentAdminDashboard() {
               />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.body)}</small>
               {isReferenceDraft ? <small className="admin-field-hint">Background for writing finished cards. This text is never published directly.</small> : fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyHint}</small>}
-              {!isReferenceDraft && !fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft ? "The assembly pattern the app renders. Keep variable names inside double braces." : "The complete reader-facing write-up. Stored internally as Body."}</small>}
+              {!isReferenceDraft && !fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft ? "The assembly pattern the app renders. Keep variable names inside double braces." : "Full write-up shown to readers."}</small>}
               {isYouOnlyNatalExactDraft && <small className="admin-field-hint">This exact override is used only in You. The Friends version is composed from separate Friend source writing below.</small>}
               {isVocabularyDraft && isPackageDraft && <small className="admin-field-hint">{vocabularyHasTheyVersion
                 ? "Used when the app speaks directly to the person reading their own chart."
@@ -9759,7 +9636,7 @@ export function GeneratedContentAdminDashboard() {
           {isVocabularyDraft && isPackageDraft && vocabularyHasTheyVersion && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
               <span>They version</span>
-              <textarea
+              <StudioTextarea
                 aria-label="They version"
                 value={vocabularyTheyValue}
                 onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))}
@@ -9793,16 +9670,10 @@ export function GeneratedContentAdminDashboard() {
           )}
           {skyWriteupContext && selectedRow && (
             <SkyRelatedContainer className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
-              {isSkyPlacementSource && <summary>Aspects and horoscopes</summary>}
+              {isSkyPlacementSource && <AdminDisclosureSummary>Aspects and horoscopes</AdminDisclosureSummary>}
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
                 <div>
-                  <p className="admin-eyebrow">{skyLunationContext ? "Lunation workspace" : "Reader horoscope passages"}</p>
-                  <h3>{skyLunationContext ? "Review the write-up, aspects, and rising-sign horoscopes" : "Review the personalized copy from this Sky write-up"}</h3>
-                  <p>
-                    {skyLunationContext
-                      ? "The macro write-up stays first. Moon-to-natal aspect passages follow it, and the twelve rising-sign horoscope compositions stay at the bottom. Editing a source opens the canonical row the app actually uses."
-                      : "These rows are selected after the app knows which house this placement activates and whether it aspects a natal placement. Editing a passage here opens its canonical saved row."}
-                  </p>
+                  <h3 className={isSkyPlacementSource ? "sr-only" : undefined}>{skyLunationContext ? "Lunation passages" : "Reader horoscopes"}</h3>
                 </div>
                 <dl className="admin-hook-pattern-list">
                   <div><dt>{skyLunationContext ? "Lunation" : "Placement"}</dt><dd>{skyLunationContext ? `${titleFromKey(skyLunationContext.sign)} ${titleFromKey(skyLunationContext.kind)}` : `${titleFromKey(skyWriteupContext.planet)}${skyWriteupContext.sign ? ` in ${titleFromKey(skyWriteupContext.sign)}` : ""}`}</dd></div>
@@ -9822,19 +9693,16 @@ export function GeneratedContentAdminDashboard() {
               </header>
 
               <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
-                <summary>
+                <AdminDisclosureSummary>
                   <span>Aspect passages</span>
                   {" "}
                   <strong>{skyAspectPassages.length} rows</strong>
-                </summary>
-                <p className="admin-sky-related-help">
-                  These passages describe aspects between this transiting planet or point and the reader’s natal chart.
-                </p>
+                </AdminDisclosureSummary>
                 <label className="admin-sky-related-search">
                   <span>Find an aspect passage</span>
                   <div className="admin-search-input-shell">
                     <Search size={15} aria-hidden="true" />
-                    <input
+                    <StudioInput
                       aria-label="Find an aspect passage"
                       value={skyRelatedAspectQuery}
                       onChange={(event) => setSkyRelatedAspectQuery(event.target.value)}
@@ -9851,9 +9719,9 @@ export function GeneratedContentAdminDashboard() {
                         <p>{row.body || "No aspect passage body saved."}</p>
                       </div>
                       <div className="admin-surface-actions">
-                        <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, row)}>
+                        <StudioButton type="button" onClick={() => openRelatedSkyRow(selectedRow.id, row)}>
                           Edit reusable source
-                        </button>
+                        </StudioButton>
 
                       </div>
                     </article>
@@ -9868,11 +9736,11 @@ export function GeneratedContentAdminDashboard() {
 
               {skyLunationContext ? (
                 <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
-                  <summary>
+                  <AdminDisclosureSummary>
                     <span>Rising-sign horoscopes</span>
                     {" "}
                     <strong>{sourceReadyLunationHoroscopes}/12 source-ready</strong>
-                  </summary>
+                  </AdminDisclosureSummary>
                   <p className="admin-sky-related-help">
                     The app assembles these twelve horoscopes from the saved frame, house opening, house jurisdiction, and lunation-sign focus below. Exact-date ruler and retrograde layers are calculated later, so the dashboard does not store twelve duplicate final articles.
                   </p>
@@ -9895,9 +9763,9 @@ export function GeneratedContentAdminDashboard() {
                                 <span>{source.role}</span>
                                 <code>{source.row.content_key}</code>
                               </div>
-                              <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, source.row)}>
+                              <StudioButton type="button" onClick={() => openRelatedSkyRow(selectedRow.id, source.row)}>
                                 Edit source
-                              </button>
+                              </StudioButton>
                             </div>
                           ))}
                         </div>
@@ -9907,13 +9775,13 @@ export function GeneratedContentAdminDashboard() {
                 </details>
               ) : (
                 <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
-                  <summary>
+                  <AdminDisclosureSummary>
                     <span>House horoscopes</span>
                     {" "}
                     <strong>{populatedSkyHouses}/12 complete</strong>
-                  </summary>
+                  </AdminDisclosureSummary>
                   <p className="admin-sky-related-help">
-                    Only a complete, approved Sky house horoscope can appear on this placement page. House introductions, generic house passages, and older sign-specific transit passages are shown as supporting writing only; the app will not use them as finished horoscopes.
+                    Only complete, approved house horoscopes appear in the app.
                   </p>
                   <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
                     {Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
@@ -9931,12 +9799,11 @@ export function GeneratedContentAdminDashboard() {
                                 <code>{passage.row.content_key}</code>
                                 <p>{passage.row.body || "No passage body saved."}</p>
                               </div>
-                              <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, passage.row)}>
+                              <StudioButton type="button" onClick={() => openRelatedSkyRow(selectedRow.id, passage.row)}>
                                 Edit passage
-                              </button>
+                              </StudioButton>
                             </div>
                           ))}
-                          {!passages.length && <p>No house-horoscope row matches this placement and sign.</p>}
                         </article>
                       );
                     })}
@@ -9946,10 +9813,10 @@ export function GeneratedContentAdminDashboard() {
             </SkyRelatedContainer>
           )}
           <details className="admin-editor-details" aria-label="Details">
-            <summary>
+            <AdminDisclosureSummary>
               <span>Details</span>
               <span className="admin-editor-details-summary">{editorDetailsSummary}</span>
-            </summary>
+            </AdminDisclosureSummary>
             <div className="admin-editor-details-body">
             {!fallbackEditorGuidance && !(isNewDraft && isCompatibilityWorkspaceDraft) && <section className="admin-content-role-panel" aria-label="Content role">
               <div>
@@ -10026,18 +9893,18 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <label>
                   <span>Approval</span>
-                  <select aria-label="Variable approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)}>
+                  <AdminSelect aria-label="Variable approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)}>
                     {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => (
                       <option key={reviewStatus} value={reviewStatus}>
                         {reviewStatus === "needs_review" ? "Needs review" : reviewStatus === "approved_reuse" ? "Approved for reuse" : reviewStatus === "deprecated" ? "Retired (not for reuse)" : "Approved for use"}
                       </option>
                     ))}
-                  </select>
+                  </AdminSelect>
                   <small className="admin-field-hint">Approval allows the resolver to use this phrase as an ingredient. It does not turn it into a standalone article.</small>
                 </label>
                 <label className="admin-package-notes-field">
                   <span>Editor notes (optional)</span>
-                  <textarea aria-label="Editor notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} placeholder="Add context for another editor; readers never see these notes." />
+                  <StudioTextarea aria-label="Editor notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} placeholder="Add context for another editor; readers never see these notes." />
                 </label>
               </section>
             ) : (
@@ -10057,9 +9924,9 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <label>
                   <span>Approval</span>
-                  <select aria-label="Approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={packageHasProposal || isGuidedHeldReview || packageIsSkyV4Governed}>
+                  <AdminSelect aria-label="Approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={packageHasProposal || isGuidedHeldReview || packageIsSkyV4Governed}>
                     {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{packageReviewStatusLabel(reviewStatus)}</option>)}
-                  </select>
+                  </AdminSelect>
                   {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Approved copy becomes live when Save &amp; publish completes.</small>}
                   {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Source material cannot be published.</small>}
                   {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Save &amp; publish makes your exact edits live in one step. Save draft keeps the revision Not live.</small>}
@@ -10069,7 +9936,7 @@ export function GeneratedContentAdminDashboard() {
                 </label>
                 <label className="admin-package-notes-field">
                   <span>Editorial notes</span>
-                  <textarea aria-label="Editorial notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} />
+                  <StudioTextarea aria-label="Editorial notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} />
                 </label>
               </section>
             ))}
@@ -10081,7 +9948,7 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <p>These switches set the global defaults for every canonical Sky Placement fallback page. Individual articles do not override them here.</p>
                 <label className="admin-composition-option">
-                  <input
+                  <StudioInput
                     type="checkbox"
                     checked={skyPlacementTemplateOptions.includePlanetLore}
                     onChange={(event) => updateSkyFallbackField("compositionOptions.includePlanetLore", event.target.checked)}
@@ -10092,7 +9959,7 @@ export function GeneratedContentAdminDashboard() {
                   </span>
                 </label>
                 <label className="admin-composition-option">
-                  <input
+                  <StudioInput
                     type="checkbox"
                     checked={skyPlacementTemplateOptions.includeSignLore}
                     onChange={(event) => updateSkyFallbackField("compositionOptions.includeSignLore", event.target.checked)}
@@ -10113,7 +9980,7 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <p>These independent switches affect the canonical stage preview only. They do not change stored Hook copy and cannot enable serving.</p>
                 <label className="admin-composition-option">
-                  <input
+                  <StudioInput
                     type="checkbox"
                     checked={skyV4OverlaysEnabled}
                     onChange={(event) => updateSkyFallbackField("contextualTransitOverlaysEnabled", event.target.checked)}
@@ -10124,7 +9991,7 @@ export function GeneratedContentAdminDashboard() {
                   </span>
                 </label>
                 <label className="admin-composition-option">
-                  <input
+                  <StudioInput
                     type="checkbox"
                     checked={skyV4FallbackOverlayEnabled}
                     disabled={!skyV4OverlaysEnabled}
@@ -10148,7 +10015,7 @@ export function GeneratedContentAdminDashboard() {
                   {currentDraft.reviewState && <div><dt>Review state</dt><dd>{currentDraft.reviewState}</dd></div>}
                 </dl>
                 <details className="admin-advanced admin-editor-settings">
-                  <summary>{isPackageDraft ? "Publishing settings" : "Edit metadata"}</summary>
+                  <AdminDisclosureSummary>{isPackageDraft ? "Publishing settings" : "Edit metadata"}</AdminDisclosureSummary>
                   <fieldset className="admin-metadata-fields">
                   <label className="admin-metadata-field">
                     <span>{isPackageDraft ? "Reader status after save" : "Status"}</span>
@@ -10160,9 +10027,9 @@ export function GeneratedContentAdminDashboard() {
                         {packageStatusAfterSave === "LIVE" ? "Live" : "Not live"}
                       </span>
                     ) : (
-                      <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
+                      <AdminSelect aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
                         {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
-                      </select>
+                      </AdminSelect>
                     )}
                     <small className="admin-field-hint">
                       {isPackageDraft
@@ -10180,51 +10047,56 @@ export function GeneratedContentAdminDashboard() {
                   </label>
                   <label className="admin-metadata-field">
                     <span>Surface</span>
-                    <select aria-label="Surface" value={currentDraft.surface} onChange={(event) => setDraft({ ...currentDraft, surface: event.target.value as GeneratedContentSurface })} disabled={isPackageDraft}>
+                    <AdminSelect aria-label="Surface" value={currentDraft.surface} onChange={(event) => setDraft({ ...currentDraft, surface: event.target.value as GeneratedContentSurface })} disabled={isPackageDraft}>
                       {["sky", "you", "natal", "synastry", "composite", "relationship", "modifier"].map((surface) => <option key={surface} value={surface}>{surface}</option>)}
-                    </select>
+                    </AdminSelect>
                   </label>
                   <label className="admin-metadata-field">
                     <span>Mode</span>
-                    <select aria-label="Mode" value={currentDraft.mode} onChange={(event) => setDraft({ ...currentDraft, mode: event.target.value })} disabled={isPackageDraft}>
+                    <AdminSelect aria-label="Mode" value={currentDraft.mode} onChange={(event) => setDraft({ ...currentDraft, mode: event.target.value })} disabled={isPackageDraft}>
                       {["feed", "in_depth", "article", "card"].map((mode) => <option key={mode} value={mode}>{mode}</option>)}
-                    </select>
+                    </AdminSelect>
                   </label>
                   <label className="admin-metadata-field">
                     <span>Lane</span>
-                    <select aria-label="Lane" value={currentDraft.lane} onChange={(event) => setDraft({ ...currentDraft, lane: event.target.value })} disabled={isPackageDraft}>
+                    <AdminSelect aria-label="Lane" value={currentDraft.lane} onChange={(event) => setDraft({ ...currentDraft, lane: event.target.value })} disabled={isPackageDraft}>
                       <option value="serving">serving</option>
                       <option value="reference">reference</option>
-                    </select>
+                    </AdminSelect>
                   </label>
                   <label className="admin-metadata-field">
                     <span>Review state</span>
-                    <input aria-label="Review state" value={currentDraft.reviewState} onChange={(event) => setDraft({ ...currentDraft, reviewState: event.target.value })} disabled={isPackageDraft} />
+                    <StudioInput aria-label="Review state" value={currentDraft.reviewState} onChange={(event) => setDraft({ ...currentDraft, reviewState: event.target.value })} disabled={isPackageDraft} />
                   </label>
                   {isFallbackHookDraft && !isPackageDraft && (
                     <label className="admin-metadata-field">
                       <span>Fallback review status</span>
-                      <select aria-label="Fallback review status" value={fallbackReviewStatus} onChange={(event) => updateFallbackReviewStatus(event.target.value)}>
+                      <AdminSelect aria-label="Fallback review status" value={fallbackReviewStatus} onChange={(event) => updateFallbackReviewStatus(event.target.value)}>
                         {fallbackHookReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{reviewStatus}</option>)}
-                      </select>
+                      </AdminSelect>
                     </label>
                   )}
                   <label className="admin-metadata-field">
                     <span>Block type</span>
-                    <input aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} disabled={isPackageDraft} />
+                    <StudioInput aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} disabled={isPackageDraft} />
                   </label>
                   </fieldset>
                 </details>
               </div>
             )}
             <details className="admin-advanced admin-editor-key-details">
-              <summary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
+              <AdminDisclosureSummary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</AdminDisclosureSummary>
+              <div className="admin-disclosure-content">
               <label className="admin-title-field">
-                <span>{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
-                <input aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value, ...(isPackageDraft ? { sections: { ...currentDraft.sections, packageRecord: { ...draftPackageRecord(currentDraft), contentKey: event.target.value }, ...(draftPackageProposal(currentDraft) ? { packageDraft: { ...draftPackageProposal(currentDraft), contentKey: event.target.value } } : {}) } } : {}) })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || (isPackageDraft && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar"))} />
+                <span className="sr-only">{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
+                <StudioInput aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value, ...(isPackageDraft ? { sections: { ...currentDraft.sections, packageRecord: { ...draftPackageRecord(currentDraft), contentKey: event.target.value }, ...(draftPackageProposal(currentDraft) ? { packageDraft: { ...draftPackageProposal(currentDraft), contentKey: event.target.value } } : {}) } } : {}) })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || (isPackageDraft && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar"))} />
                 {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
               </label>
+              <StudioButton type="button" className="admin-editor-key-copy" onClick={() => void copyContentKey(currentDraft.contentKey)} aria-label={`Copy key ${currentDraft.contentKey}`} title={currentDraft.contentKey}>
+                <Copy size={14} aria-hidden="true" />Copy key
+              </StudioButton>
               {isVocabularyDraft && isPackageDraft && <p className="admin-field-hint">Package role: <code>{packageRole || "vocabulary"}</code></p>}
+                          </div>
             </details>
             {isArticleDraft && (
               <section className="admin-display-source-panel" aria-label="Article content system">
@@ -10247,7 +10119,7 @@ export function GeneratedContentAdminDashboard() {
 
             {selectedRow && (
               <details className="admin-advanced admin-review-json">
-                <summary>Structured fields</summary>
+                <AdminDisclosureSummary>Structured fields</AdminDisclosureSummary>
                 <pre>{sectionsText({
                   id: selectedRow.id,
                   contentKey: selectedRow.content_key,
@@ -10279,7 +10151,7 @@ export function GeneratedContentAdminDashboard() {
                       ? "Unsaved changes"
                       : isContentRetired(currentDraft.contentKey) ? "Retired everywhere" : "All changes saved"}
           </span>
-          <button
+          <StudioButton
             className={packageCanApproveRevision ? "admin-publish-button" : "admin-primary-button"}
             type="button"
             onClick={() => void (async () => {
@@ -10303,9 +10175,9 @@ export function GeneratedContentAdminDashboard() {
                 : packageWillPublishOnSave
                   ? "Save & publish"
                   : "Save"}
-          </button>
+          </StudioButton>
           {(isCmsSurfaceDraft || isPackageDraft && packageCanApproveRevision || unchangedSkySource) && (
-            <button
+            <StudioButton
               className="admin-secondary-button"
               type="button"
               onClick={() => void saveDraft(isCmsSurfaceDraft ? "DRAFT" : undefined)}
@@ -10314,25 +10186,25 @@ export function GeneratedContentAdminDashboard() {
             >
               <Save size={16} aria-hidden="true" />
               Save draft
-            </button>
+            </StudioButton>
           )}
           {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (
             <span className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</span>
           )}
           {isPackageDraft && !isNewDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
-            <button type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
+            <StudioButton type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
               Revert to package original
-            </button>
+            </StudioButton>
           )}
           {currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
-            <button type="button" className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges}
+            <StudioButton type="button" className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges}
               onClick={() => void retireContentEverywhere(isContentRetired(currentDraft.contentKey) ? "publish" : "retire")}
               title={isContentRetired(currentDraft.contentKey) ? "Restore this saved version for readers." : "Retire this content key across Studio, bundled writing, and synced offline copies."}>
               {isContentRetired(currentDraft.contentKey) ? "Publish again" : "Retire everywhere"}
-            </button>
+            </StudioButton>
           )}
           {currentDraft.id && (
-            <button
+            <StudioButton
               className={sourceIsArchived ? undefined : "admin-danger-button"}
               type="button"
               onClick={() => void updateSourceLifecycle()}
@@ -10340,34 +10212,34 @@ export function GeneratedContentAdminDashboard() {
               title={draftHasUnsavedChanges ? "Save or revert your changes before changing this source's lifecycle." : undefined}
             >
               {sourceIsArchived ? "Restore as draft" : "Archive source"}
-            </button>
+            </StudioButton>
           )}
           {selectedRow && selectedRow.status !== "LIVE" && activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" && (
-            <button type="button" className="admin-danger-button" disabled={isLoading || draftHasUnsavedChanges} onClick={() => void deleteSelectedDrafts([selectedRow])}>
+            <StudioButton type="button" className="admin-danger-button" disabled={isLoading || draftHasUnsavedChanges} onClick={() => void deleteSelectedDrafts([selectedRow])}>
               Delete draft
-            </button>
+            </StudioButton>
           )}
           {!isPackageDraft && !isCmsSurfaceDraft && isNewDraft && (
             <span className="admin-savebar-next-step">Save this draft before review or publication.</span>
           )}
           {!isPackageDraft && !isCmsSurfaceDraft && !isNewDraft && (
             <>
-              <button className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
+              <StudioButton className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
                 <Check size={16} aria-hidden="true" />
                 {reviewComplete ? "Reviewed" : "Mark reviewed"}
-              </button>
+              </StudioButton>
               {isGovernedSkyDraft && selectedRow ? (
-                <button className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy || skyWritingIssues(selectedRow).length > 0} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
+                <StudioButton className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy || skyWritingIssues(selectedRow).length > 0} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
                   <Check size={16} aria-hidden="true" />
                   {currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}
-                </button>
+                </StudioButton>
               ) : isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {}) ? (
                 <small className="admin-field-hint">Source material cannot be published.</small>
               ) : (
-                <button className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? "Add the required main copy before publishing." : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
+                <StudioButton className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? "Add the required main copy before publishing." : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />
                   Publish to app
-                </button>
+                </StudioButton>
               )}
             </>
           )}
