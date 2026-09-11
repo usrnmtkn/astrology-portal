@@ -64,6 +64,9 @@ assert.match(
   /contentKey:\s*`friend-transit-reading\/\$\{subjectId\}\/\$\{targetDate\}`/u,
   "Refresh hydration must use the same friend/date content key as generation."
 );
+assert.match(panelSource, /readingSubjectId=\{selectedChart.id\}/u, "Saved report lookup must follow the selected chart on vanity and legacy routes.");
+assert.match(panelSource, /readingTargetDate=\{selectedFriendTransitReadingDate\}/u, "Lookup and generation must use the same selected date.");
+assert.doesNotMatch(transitsSource, /window.location/u, "Saved report identity must not depend on a legacy URL format.");
 assert.match(transitsSource, /queuedReadingPollMs/u, "A queued reading must be polled until its saved row is complete.");
 assert.match(transitsSource, /savedReading\?\.status === "ERROR"/u, "Terminal background failure must become the safe retry state.");
 assert.match(transitsSource, /You can leave this page and come back later/u);

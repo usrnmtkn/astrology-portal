@@ -150,3 +150,11 @@ try {
   else globalThis.reportCorrectionFixture = priorFixture;
 }
 console.log("Generated report correction: first pass, correction pass, terminal block, and deterministic rejection passed.");
+
+// Correction feedback must identify the actual standing-pattern marker.
+const { validateCopy } = await import('../src/astro-writing/validateCopy.mjs');
+for (const marker of ['usually', 'generally', 'you tend to']) {
+  const validation = validateCopy(`Today ${marker} respond.`, {validationProfile:'friends-transit', family:'friend-transit-reading', register:'third_person'});
+  const finding = validation.violations.find(item => item.category === 'temporary_transit_register');
+  assert.ok(finding?.detail.includes(`"${marker}"`));
+}

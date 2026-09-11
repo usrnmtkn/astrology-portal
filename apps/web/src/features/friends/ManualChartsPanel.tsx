@@ -2842,6 +2842,8 @@ export function ManualChartsPanel({
               reading={friendTransitReading}
               readingAvailable={selectedFriendTransitReadingAvailable}
               readingStatus={friendTransitReadingStatus}
+              readingSubjectId={selectedChart.id}
+              readingTargetDate={selectedFriendTransitReadingDate}
             />
           )}
 
