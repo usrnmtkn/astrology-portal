@@ -41,3 +41,13 @@ Before a live claim, confirm the merged main deployment, reopen the same Lilith
 selection, and open its hook in Content Studio. Verify existing You/They text
 and the selected Variables preview. Never publish synthetic regression prose
 or turn fallback hooks into author-final passages to make this check pass.
+
+
+The broader Sky/You parity regression requires a calculated Sun/North Node
+conjunction. Its generic 1990 synthetic chart has an Aquarius Node and cannot
+exercise the September Virgo assertion. The fixture now uses the unrelated
+synthetic date 1997-11-01 and asserts a calculated Virgo Node at 17–20 degrees
+before opening the reader. Profile Sun and Moon labels also come from that
+calculation. All four viewport/theme cases pass with unchanged complete-passage,
+reload, cache update, cross-surface equality, and overflow assertions. Never
+restore a person's chart data to repair this test.

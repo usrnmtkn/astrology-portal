@@ -4,12 +4,17 @@ import { zonedDateTimeToUtc } from "../../apps/web/src/services/timezones";
 import { natalSkySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
-const birthDate = "1990-01-01";
+// Synthetic chart selected for a calculated Virgo North Node near September's Sun.
+const birthDate = "1997-11-01";
 const birthTime = "12:00 PM";
 
 async function seed(page: Page, now: string, theme: string) {
   const birth = zonedDateTimeToUtc(birthDate, birthTime, location.timeZone);
   const natalSky = await getAstrodienstSky(location, birth);
+  const node = natalSky.positions.find(position => position.planet === "North Node");
+  expect(node?.sign, "The synthetic chart must exercise the asserted Sun/Node conjunction").toBe("Virgo");
+  expect(node?.degree).toBeGreaterThan(17);
+  expect(node?.degree).toBeLessThan(20);
   const cacheKey = natalSkySnapshotCacheKey(location, birth);
   await page.clock.setFixedTime(new Date(now));
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
@@ -20,7 +25,9 @@ async function seed(page: Page, now: string, theme: string) {
     localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
     localStorage.setItem("tldrastro:userProfile", JSON.stringify({
       id: "qa-sky-you-parity", name: "Transit QA", email: "transit-qa@example.com", provider: "email",
-      sun: "Aquarius", moon: "Scorpio", rising: natalSky.ascendant,
+      sun: natalSky.positions.find(position => position.planet === "Sun")?.sign,
+      moon: natalSky.positions.find(position => position.planet === "Moon")?.sign,
+      rising: natalSky.ascendant,
       currentLocation: location.label, currentLocationData: location,
       charts: [{ id: "qa-chart", name: "Transit QA", type: "Birth chart", birthDate, birthTime, birthCity: location.label, birthLocation: location }]
     }));
