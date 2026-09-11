@@ -42,6 +42,13 @@ assert.doesNotThrow(()=>assertCleanReaderCopy({body:'Review your plans. Draw on 
 assert.deepEqual(readerCopyIssues({sections:{paragraphs:[{text:'Internal note.\n## Status\nneeds_review'}]}}).map(x=>x.path),['sections.paragraphs[0].text','sections.paragraphs[0].text']);
 assert.throws(()=>separateOwnerArticle('# Templated article — missing reader heading'),/no reader article heading/);
 assert.throws(()=>separateOwnerArticle('# Article\n{{unfinished'),/Unclosed/);
+const edition=separateOwnerArticle('# Article\nKeep all prose. {{aspectHits placed per house}}');
+assert.equal(edition.body,'# Article\nKeep all prose. {{aspectHits}}');
+assert.deepEqual(edition.slotDescriptions.aspectHits,['placed per house']);
+assert.deepEqual(edition.notes,['{{aspectHits placed per house}}']);
+assert.throws(()=>assertCleanReaderCopy({body:'{{aspectHits placed per house}}'}),/instruction inside template variable/);
+assert.throws(()=>separateOwnerArticle('# Article\n{{unknown write something here}}'),/instruction inside template variable/);
+assert.doesNotThrow(()=>assertCleanReaderCopy({body:'{{Name}} {{ entryDate }} {{aspectHits}}'}));
 for(const file of ['scripts/apply-tldr-astro-authored-library-complete.mjs','scripts/prepare-tldr-astro-store-import.mjs']){
  const text=fs.readFileSync(file,'utf8');
  assert.doesNotMatch(text,/summary:[^\n]*\[.*join\(" · "\)/u);
@@ -57,4 +64,11 @@ for (const mode of ['feed', 'in_depth']) {
   for (const status of ['REVIEWED', 'CONFIRMED']) {
     assert.throws(() => assertCleanReaderCopy({sections:{byMode:{[mode]:{summary:`${status} · internal-batch`}}}}), /workflow summary/);
   }
+}
+
+for (const note of ['Your published blocks, aspect threads moved to slots, per the owner ruling.', 'Twelve rising blocks, authored per edition. {{transitThreads}} fill from the engine.']) {
+  const imported=separateOwnerArticle(`# Article\nKeep this paragraph.\n*(${note})*\nKeep the ending.`);
+  assert.equal(imported.body,'# Article\nKeep this paragraph.\nKeep the ending.');
+  assert.deepEqual(imported.notes,[`*(${note})*\n`]);
+  assert.throws(()=>assertCleanReaderCopy({body:note}),/editorial instruction/);
 }
