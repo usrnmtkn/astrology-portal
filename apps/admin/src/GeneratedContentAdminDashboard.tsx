@@ -1,4 +1,3 @@
-import { studioArticleMemoryKey } from '../../web/src/content/studioMemoryIdentity';
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalExactContentKey, transitNatalExactSourceDraft } from "./transitNatalSources";
 import { importedSkySummary, skySummaryImportProvenance } from "./skySummaryImportedCopy";
@@ -179,8 +178,7 @@ import "./admin-content-studio-layout.css";
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
 const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
-const StudioArticleMemoryFeedback = lazy(() => import('./StudioMemoryFeedback'));
-const ReviewWorkflowPanel = lazy(() => import("./ReviewWorkflowPanel"));
+const StudioEditorReviewPanels = lazy(() => import('./StudioEditorReviewPanels'));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
@@ -9712,11 +9710,8 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
-          {selectedRow && studioArticleMemoryKey(selectedRow.content_key) && <Suspense fallback={null}>
-            <StudioArticleMemoryFeedback key={selectedRow.content_key} contentKey={selectedRow.content_key} credential={secret}
-              revision={selectedRow.updated_at} unsaved={draftHasUnsavedChanges || Boolean(skyArticleEditor && skyArticleEditor.saveState !== 'saved')} />
-          </Suspense>}
-          {selectedRow && !isPackageDraft && <Suspense fallback={<p role="status">Loading publication checks…</p>}><ReviewWorkflowPanel row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
+          {selectedRow && <Suspense fallback={<p role="status">Loading publication checks…</p>}><StudioEditorReviewPanels row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
+            isPackageDraft={isPackageDraft} articleUnsaved={Boolean(skyArticleEditor && skyArticleEditor.saveState !== 'saved')}
             onCheck={() => void runSkyDraftWriting(selectedRow.content_key, "recheck", selectedRow)}
             onGenerate={() => void runSkyDraftWriting(selectedRow.content_key, "generate", selectedRow)} /></Suspense>}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
