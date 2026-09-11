@@ -568,7 +568,14 @@ export async function runFriendReportJobs(input: {
       continue;
     }
     try {
-      const generated = await withTransitReadingCheckpoints({ admin, family: "friend", jobId: job.id, attempt: job.checkpoint_attempt ?? 1 }, () => generateFriendTransitReadingForUser({
+      const generated = await withTransitReadingCheckpoints({ admin, family: "friend", jobId: job.id, attempt: job.checkpoint_attempt ?? 1,
+        onProgress: async (stage) => {
+          await admin.update("user_generated_interpretations",
+            `user_id=eq.${job.user_id}&friend_report_entitlement_id=eq.${job.entitlement_id}&status=eq.DRAFT&body=eq.`,
+            { source_snapshot: { ...job.source_snapshot, reportProgress: { stage, updatedAt: new Date().toISOString() } } }
+          ).catch(() => { console.warn("Report progress could not be saved", { jobId: job.id, stage }); });
+        }
+      }, () => generateFriendTransitReadingForUser({
         userId: job.user_id,
         subjectId: job.subject_id,
         targetDate: job.target_date,

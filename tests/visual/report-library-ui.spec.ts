@@ -191,3 +191,31 @@ test("a shared Friends reading opens from a compact vanity URL without an owner 
   expect(page.url()).not.toContain("/generated/");
   expect(page.url()).not.toContain("?share=");
 });
+
+test('a preparing report advances and opens without a reload, preserving state through a transient error', async ({ page }) => {
+  const user = { id: '00000000-0000-4000-8000-000000000001', aud: 'authenticated', role: 'authenticated', email: 'progress@example.test' };
+  const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
+  await page.addInitScript(({ user, storageKey }) => {
+    localStorage.setItem(storageKey, JSON.stringify({ access_token: 'fixture-token', refresh_token: 'fixture-refresh', expires_at: Math.floor(Date.now()/1000)+3600, token_type: 'bearer', user }));
+  }, { user, storageKey });
+  const row = { id: '00000000-0000-4000-8000-000000000002', subject_type: 'you_day_reading', status: 'DRAFT', body: '', headline: 'Daily progress fixture', target_date: '2026-09-11', created_at: '2026-09-11T12:00:00Z', updated_at: '2026-09-11T12:00:00Z', you_report_entitlement_id: 'fixture-entitlement', source_snapshot: { reportProgress: { stage: 'writing' } } };
+  let failNext = false;
+  await page.route('**/auth/v1/**', route => route.fulfill({ json: user }));
+  await page.route('**/rest/v1/**', async route => {
+    const table = new URL(route.request().url()).pathname.split('/').pop();
+    if (table === 'user_generated_interpretations') {
+      if (failNext) { failNext = false; return route.fulfill({ status: 500, json: { message: 'temporary fixture failure' } }); }
+      return route.fulfill({ json: route.request().headers().accept?.includes('vnd.pgrst.object') ? row : [row] });
+    }
+    return route.fulfill({ json: [] });
+  });
+  await page.goto('/reports/');
+  await expect(page.getByText('Writing', { exact: true })).toBeVisible();
+  await page.getByRole('button').filter({ hasText: 'Daily progress fixture' }).click();
+  await expect(page.getByRole('status')).toContainText('Writing. This page updates automatically');
+  failNext = true;
+  row.source_snapshot.reportProgress.stage = 'checking';
+  await expect(page.getByRole('status')).toContainText('Checking.', { timeout: 12000 });
+  row.body = 'The completed fixture report is now available.';
+  await expect(page.getByText(row.body, { exact: true })).toBeVisible();
+});

@@ -37,7 +37,7 @@ const request = (name: string): ReportModelCallInput<{ name: string }> => ({
 });
 const result = (name: string) => ({ value: { name }, provider: 'fixture', model: 'fixture', usage: { inputTokens: 2, outputTokens: 1, totalTokens: 3 } });
 
-// Six serial steps are spread across six requests. A fully replayed request
+// Six fast serial steps complete in one request. A fully replayed request
 // performs zero provider calls, and re-runs validation before using responses.
 for (const family of ['you', 'friend'] as const) {
   const { rows, admin } = storage();
@@ -53,11 +53,6 @@ for (const family of ['you', 'friend'] as const) {
     }));
     return values;
   };
-  for (let invocation = 0; invocation < 5; invocation++) {
-    await assert.rejects(resume(scope, pipeline), TransitReadingCheckpointYield);
-    assert.equal(billed, invocation + 1);
-    assert.equal(rows.filter(r => r.state === 'complete').length, billed);
-  }
   assert.equal((await resume(scope, pipeline)).length, 6);
   assert.equal(billed, 6);
   await resume(scope, pipeline);
@@ -168,5 +163,25 @@ console.log('Checkpoint transport: both providers receive cancellation; fallback
   admin.insert = async (...args) => { const row = await insert(...args); mock.timers.tick(240_001); return row; };
   try {
     await assert.rejects(resume({ admin, family: 'you', jobId: 'job', attempt: 1 }, () => step(request('writer'), async () => { assert.fail('deadline expired before billing'); })), TransitReadingCheckpointStopped);
+  } finally { mock.timers.reset(); }
+}
+
+// A slow successful call yields before the next reservation, then resumes
+// from its saved response without billing it twice.
+{
+  const { rows, admin } = storage();
+  const scope = { admin, family: 'friend' as const, jobId: 'slow-job', attempt: 1 };
+  let calls = 0;
+  mock.timers.enable({ apis: ['setTimeout', 'Date'], now: Date.now() });
+  const pipeline = async () => {
+    await step(request('writer'), async () => { calls++; mock.timers.tick(185_000); return result('writer'); });
+    return step(request('judge'), async () => { calls++; return result('judge'); });
+  };
+  try {
+    await assert.rejects(resume(scope, pipeline), TransitReadingCheckpointYield);
+    assert.equal(calls, 1);
+    assert.equal(rows.length, 1);
+    assert.equal((await resume(scope, pipeline)).value.name, 'judge');
+    assert.equal(calls, 2);
   } finally { mock.timers.reset(); }
 }
