@@ -18,7 +18,8 @@ export async function createWorkflowStore(initial = [baseline, source, importedC
         const text = action === 'recheck' ? body : original;
         beforeFinish?.();
         beforeFinish = null;
-        return { text, lint: { score: 3, fails: 0, findings: [] }, judge: null, provider: 'fixture-writer', pair };
+        return { text, lint: { score: 3, fails: 0, findings: [] }, judge: null, provider: 'fixture-writer', pair,
+            ...(action === 'generate' ? {memoryReceipt: {schema: 'tldr-sky-writing-memory/v1', promptSha256: 'fixture-hash', selected: []}} : {}) };
     };
     const outfile = fileURLToPath(new URL(`../../api/admin/.sky-workflow-${process.pid}-${Date.now()}.mjs`, import.meta.url));
     await build({ entryPoints: [fileURLToPath(new URL('../../api/admin/sky-draft-writing.ts', import.meta.url))], bundle: true, format: 'esm', platform: 'node', outfile,
