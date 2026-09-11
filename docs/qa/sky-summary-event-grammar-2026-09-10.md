@@ -39,3 +39,13 @@ established themes. Verify the real production route after main's deployment;
 for the owner's New York example use September 10 locally while keeping the
 September 11 UTC lunation link. Confirm exact revised Moon and unchanged Sun
 wording from the live reader and reopen the published Studio source.
+
+## Measured release size
+
+The fresh build with CI's Supabase configuration measures 422,509 bytes of
+startup JavaScript and 470,706 bytes including startup CSS (CI measured 422,512
+and 470,709). The new shared grammar, station timestamp guard, and exact former
+default migration exceed the previous caps by 509/456 bytes locally. Allocate
+1,000 bytes to each startup cap for this requested behavior. All CSS, total
+JavaScript, and per-route caps stay unchanged; no dependencies or source banks
+were added to the reader. `npm run qa:bundle` must still pass.
