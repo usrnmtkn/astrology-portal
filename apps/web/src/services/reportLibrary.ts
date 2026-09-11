@@ -16,6 +16,8 @@ export type ReportLibraryItem = {
   subjectLabel: string;
   subtitle: string;
   status: ReportLibraryStatus;
+  progressLabel?: string;
+  statusMessage?: string;
   targetDate: string | null;
   periodEnd: string | null;
   createdAt: string;
@@ -46,6 +48,7 @@ export type GeneratedReportRecord = {
 };
 
 type GeneratedReportRow = {
+  error?: string | null;
   id: string;
   subject_type: GeneratedReportKind;
   subject_id: string;
@@ -188,6 +191,20 @@ export function dispatchReportReady(detail: ReportReadyEventDetail) {
   window.dispatchEvent(new CustomEvent<ReportReadyEventDetail>(reportReadyEvent, { detail }));
 }
 
+function generatedProgressLabel(row: GeneratedReportRow, status: ReportLibraryStatus) {
+  if (status === "needs_attention") return row.error?.includes("quality gate") ? "Needs review" : "Could not finish";
+  if (status !== "generating") return undefined;
+  const progress = row.source_snapshot?.reportProgress;
+  const stage = progress && typeof progress === "object" ? (progress as { stage?: unknown }).stage : undefined;
+  switch (stage) {
+    case "writing": return "Writing";
+    case "checking": return "Checking";
+    case "revising": return "Revising";
+    case "waiting": return "Queued to continue";
+    default: return "Preparing";
+  }
+}
+
 export async function listReportLibrary(options: { expectedUserId?: string } = {}): Promise<ReportLibraryItem[]> {
   const context = await authenticatedContext(options.expectedUserId);
   if (!context) return [];
@@ -196,7 +213,7 @@ export async function listReportLibrary(options: { expectedUserId?: string } = {
   const [generatedResult, premiumResult, stateResult, shareResult] = await Promise.all([
     client
       .from("user_generated_interpretations")
-      .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, you_report_entitlement_id, created_at, updated_at")
+      .select("id, subject_type, subject_id, content_key, status, error, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, you_report_entitlement_id, created_at, updated_at")
       .eq("user_id", userId)
       .in("subject_type", generatedReportSubjectTypes)
       .in("status", ["DRAFT", "LIVE", "ARCHIVED", "ERROR"])
@@ -255,6 +272,12 @@ export async function listReportLibrary(options: { expectedUserId?: string } = {
       subjectLabel,
       subtitle: row.subject_type === "friend_transit_reading" ? "Friends" : "You",
       status,
+      progressLabel: generatedProgressLabel(row, status),
+      statusMessage: status === "needs_attention"
+        ? row.error?.includes("quality gate")
+          ? "This report did not pass its content checks. No finished report is available."
+          : "This report could not finish generating. Your saved reports are unchanged."
+        : undefined,
       targetDate: row.target_date,
       periodEnd,
       createdAt: row.created_at,
@@ -318,7 +341,7 @@ export async function loadGeneratedReportById(reportId: string): Promise<Generat
   if (deletion.data?.deleted_at) return null;
   const { data, error } = await client
     .from("user_generated_interpretations")
-    .select("id, subject_type, subject_id, content_key, status, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, you_report_entitlement_id, created_at, updated_at")
+    .select("id, subject_type, subject_id, content_key, status, error, event_type, target_date, headline, summary, body, source_snapshot, friend_report_entitlement_id, you_report_entitlement_id, created_at, updated_at")
     .eq("user_id", userId)
     .eq("id", reportId)
     .in("subject_type", generatedReportSubjectTypes)
