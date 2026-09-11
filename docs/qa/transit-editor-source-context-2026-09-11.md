@@ -51,3 +51,33 @@ before opening the reader. Profile Sun and Moon labels also come from that
 calculation. All four viewport/theme cases pass with unchanged complete-passage,
 reload, cache update, cross-surface equality, and overflow assertions. Never
 restore a person's chart data to repair this test.
+
+
+## Release handoff: GitHub Actions billing block
+
+On 2026-09-11, the local full API suite passed at `03c3851a`. The fresh
+combined editor/reader browser matrix passed 317 of 318 cases. The remaining
+Friends Imum Coeli sextile inverse fixture ranked its intended contact outside
+the 16-card cap. The same 47-degree synthetic offset used for the forward case
+also places the inverse contact inside the actual calculated list. Both
+full-copy/card/detail directions pass on a fresh rerun; application ranking and
+copy assertions are unchanged.
+
+Additional completed checks: four Lilith editor viewport/theme variants,
+24 standalone Sky Summary Studio cases, four Sky/You complete-transit parity
+variants, CSS audit, admin typecheck, admin and reader bundle budgets, and a
+238-file fresh public-assets privacy scan. Normal authenticated Studio and
+fresh anonymous 1440/390 readers confirm the exact approved Virgo New Moon
+wording is published. The new editor routing and summary paragraph code have
+not been deployed.
+
+Release is blocked externally: GitHub Actions run `34567750184` did not start
+any test steps. Its annotation says recent account payments failed or the
+spending limit needs to be increased. Do not describe these startup failures
+as failed code assertions or waive the exact-head API requirement in AGENTS.md.
+After the owner restores Actions access, rerun the required checks on the final
+PR head. Let prerequisite privacy PR #756 finish first; rebase onto current main,
+regenerate artifacts, and follow the privacy history-rewrite instructions if
+applicable. Then merge PR #759, verify the main commit's Vercel deployment, and
+repeat the live Lilith editor and full Daily Sky paragraph/link checks. Do not
+publish a feature branch directly to production.
