@@ -535,6 +535,7 @@ let localEmptyHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localLunationBookReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let lastKnownGoodReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCompatibilityReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
@@ -592,7 +593,10 @@ function mergeReaderBundles(
 }
 
 function recomposeReaderBundle() {
-  const localCoreWithDeferred = mergeReaderBundles(initialReaderBundle, localDeferredReaderBundle);
+  // Offline rows carry publication identities. Keep them underneath every live
+  // overlay; mergeReaderBundles excludes rows superseded by the current ledger.
+  const localCoreWithOffline = mergeReaderBundles(initialReaderBundle, lastKnownGoodReaderBundle);
+  const localCoreWithDeferred = mergeReaderBundles(localCoreWithOffline, localDeferredReaderBundle);
   const localCoreWithEmptyHouses = mergeReaderBundles(localCoreWithDeferred, localEmptyHouseReaderBundle);
   const localCoreWithRelationships = mergeReaderBundles(localCoreWithEmptyHouses, localRelationshipReaderBundle);
   const localCoreWithLunationBook = mergeReaderBundles(localCoreWithRelationships, localLunationBookReaderBundle);
@@ -771,6 +775,13 @@ export function transitV3SameBeatKeyForContentKey(contentKey: string | null | un
   }
 
   return null;
+}
+
+export function updateLastKnownGoodFallbackArchitectureV3Bundle(
+  update: (previous: FallbackArchitectureV3Bundle | null) => FallbackArchitectureV3Bundle
+) {
+  lastKnownGoodReaderBundle = readerEligibleBundle(update(lastKnownGoodReaderBundle));
+  recomposeReaderBundle();
 }
 
 export function installFallbackArchitectureV3Bundle(

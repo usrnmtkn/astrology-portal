@@ -1,3 +1,4 @@
+import { adminFetchJson, AdminHttpError, adminStorageRows } from "./admin-http.js";
 type FetchLike = typeof fetch;
 
 export type SupabaseReportAdmin = ReturnType<typeof createSupabaseReportAdmin>;
@@ -18,12 +19,12 @@ export function createSupabaseReportAdmin(input: {
   };
 
   async function request<T>(path: string, init: RequestInit = {}) {
-    const response = await fetchImpl(`${supabaseUrl}/rest/v1/${path}`, {
+    const response = await adminFetchJson(`${supabaseUrl}/rest/v1/${path}`, {
       ...init,
       headers: { ...headers, ...(init.headers ?? {}) }
-    });
-    const payload = await response.json().catch(() => null) as T;
-    if (!response.ok) throw new Error(`Supabase ${path} failed with ${response.status}: ${JSON.stringify(payload)}`);
+    }, undefined, fetchImpl);
+    const payload = response.payload as T;
+    if (!response.ok) throw new AdminHttpError(502, `Supabase ${path} failed with ${response.status}: ${JSON.stringify(payload)}`);
     return payload;
   }
 
@@ -32,7 +33,7 @@ export function createSupabaseReportAdmin(input: {
     async selectOne<T>(table: string, params: URLSearchParams) {
       params.set("limit", "1");
       const rows = await request<T[]>(`${table}?${params}`);
-      return rows[0] ?? null;
+      return adminStorageRows(rows)[0] as T ?? null;
     },
     async insert<T>(table: string, row: Record<string, unknown>, options: { onConflict?: string; ignoreDuplicates?: boolean } = {}) {
       const params = new URLSearchParams({ select: "*" });

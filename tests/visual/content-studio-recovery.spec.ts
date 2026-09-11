@@ -57,6 +57,9 @@ for (const initialPage of ["review-queue", "articles"]) {
       } else await route.fallback();
     });
     await page.goto(`${studioPath}#${initialPage}`);
+    // The fixture deliberately exercises two backoffs before loading the
+    // saved inventory. Verify that phase before timing the recovered UI.
+    await expect.poll(() => attempts).toBe(3);
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected");
     expect(attempts).toBe(3);
     await openStudioPage(page, "Sky Write-ups");

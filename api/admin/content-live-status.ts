@@ -3,12 +3,12 @@ import { loadLocalWebEnv } from "../_lib/local-env.js";
 loadLocalWebEnv();
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { AdminHttpError, adminFetch, readAdminJsonBody, sendAdminJson, adminErrorStatus, adminErrorMessage } from "../_lib/admin-http.js";
+import { AdminHttpError, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed, adminErrorStatus, adminErrorMessage } from "../_lib/admin-http.js";
 import { contentLiveStatuses, servingPackageRecords, builtinContentRecords, isSkyPartitionKey, type LiveStatusRow } from "../_lib/content-live-status.js";
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!await isContentAdminAuthorized(req)) return sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
-  if (req.method !== "POST") return sendAdminJson(res, 405, { ok: false, error: "Use POST." });
+  if (req.method !== "POST") return sendAdminMethodNotAllowed(res, ["POST"]);
   try {
     const body = await readAdminJsonBody<{ ids?: string[]; action?: string }>(req);
     if (body.action === "composition-catalog") {
@@ -17,6 +17,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         .map((record) => ({ content_key: record.contentKey, headline: record.headline ?? null, role: record.content_role }));
       return sendAdminJson(res, 200, { ok: true, rows });
     }
+    if (body.action !== undefined) throw new AdminHttpError(400, "Invalid live-status action.");
     if (!Array.isArray(body.ids) || body.ids.length > 64 || body.ids.some((id) => typeof id !== "string" || !/^[a-zA-Z0-9_./:|-]+$/.test(id))) throw new AdminHttpError(400, "Provide at most 64 content row IDs.");
     const base = (process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? "").replace(/\/$/, "");
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -24,10 +25,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const headers = { apikey: key, authorization: `Bearer ${key}` };
     const select = "id,content_key,target_date,status,lane,review_state,updated_at,provider,headline,summary,body,sections,source_snapshot,facts,mode,flags,surface,event_type";
     async function read(params: URLSearchParams, table = "generated_interpretations") {
-      const response = await adminFetch(`${base}/rest/v1/${table}?${params}`, { headers });
-      const result = await response.json();
-      if (!response.ok || !Array.isArray(result)) throw new Error("Could not verify content status.");
-      return result as LiveStatusRow[];
+      const response = await adminFetchJson(`${base}/rest/v1/${table}?${params}`, { headers });
+      const result = response.payload;
+      if (!response.ok) throw new AdminHttpError(502, "Could not verify content status.");
+      return adminStorageRows<LiveStatusRow>(result);
     }
     const ids = body.ids.filter((id) => !id.startsWith("package:") && !id.startsWith("builtin:") && !id.startsWith("user:"));
     const rows = ids.length ? await read(new URLSearchParams({ select, id: `in.(${ids.join(",")})` })) : [];
@@ -46,9 +47,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       for (let offset = 0; ; offset += 1000) {
         const params = new URLSearchParams({ select: "content_key,state,revision,row_id,row_updated_at,updated_at", order: "content_key.asc", limit: "1000", offset: String(offset) });
         params.set("content_key", `in.(${keyFilter})`);
-        const response = await adminFetch(`${base}/rest/v1/content_publications?${params}`, { headers });
-        const records: unknown = await response.json();
-        if (!response.ok || !Array.isArray(records) || !records.every(validContentPublication)) throw new Error("Could not verify publication status.");
+        const response = await adminFetchJson(`${base}/rest/v1/content_publications?${params}`, { headers });
+        const records: unknown = response.payload;
+        if (!response.ok || !Array.isArray(records) || !records.every(validContentPublication)) throw new AdminHttpError(502, "Could not verify publication status.");
         for (const record of records) publications.set(record.content_key, record);
         if (records.length < 1000) break;
       }
@@ -93,5 +94,5 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     }
     sendAdminJson(res, 200, { ok: true, statuses });
-  } catch (error) { sendAdminJson(res, adminErrorStatus(error), { ok: false, error: adminErrorMessage(error) }); }
+  } catch (error) { sendAdminJson(res, adminErrorStatus(error), { ok: false, error: adminErrorMessage(error, "Unable to verify live status.") }); }
 }

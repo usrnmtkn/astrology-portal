@@ -161,3 +161,9 @@ The same audit found the personalized list filter still omitted `friends` and
 and the current generation client. Both filters now reach storage; unsupported
 surface names still return 400 before lookup. This is an API filter correction,
 not a new content surface or a database migration.
+
+### Secondary editors and shared transport
+
+The [2026-09-10 route audit](content-studio-api-audit-2026-09-10.md) records scope, defects, and the distinction between source review and actual-handler verification. The required API gate now also covers Aspect Patterns, issue resolutions/source decisions, queue prepopulation, and report correction/feedback handlers. Test stores use `.invalid` hosts; never run these write scenarios against production.
+
+Existing Aspect Pattern and report-unit edits must submit `expectedUpdatedAt` from the opened record. Issue resolutions submit their opened version or null for first creation. Conflicts require reload; clients must preserve unsaved input. Prepopulation reports `skippedExistingRows`; on a failed batch, `savedRows` contains confirmed writes and `failedContentKey` identifies the uncertain/failed operation. Reload before retrying an uncertain write.

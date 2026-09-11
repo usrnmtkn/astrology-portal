@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { adminFetch, AdminHttpError } from "./admin-http.js";
+import { adminFetchJson, AdminHttpError } from "./admin-http.js";
 export function studioStorage() {
     const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -10,10 +10,10 @@ export function studioStorage() {
 export async function approvedStudioPairSources() {
     const { url, headers } = studioStorage();
     const params = new URLSearchParams({ content_key: "like.source/sky-aspect-pair/*", status: "eq.REVIEWED", lane: "eq.reference", review_state: "is.null", select: "id,content_key,body,updated_at,source_snapshot", limit: "100" });
-    const response = await adminFetch(`${url}?${params}`, { headers });
+    const response = await adminFetchJson(`${url}?${params}`, { headers });
     if (!response.ok)
         throw new AdminHttpError(502, "Could not load approved source revisions. Retry after storage recovers.");
-    const rows = await response.json();
+    const rows = response.payload as Array<Record<string, any>>;
     if (!Array.isArray(rows))
         throw new AdminHttpError(502, "Invalid source revision response.");
     return new Map(rows.filter(row => typeof row.source_snapshot?.pairKey === "string" && typeof row.body === "string" && row.body.trim())

@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetch, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import skyReviewHorizon from "../../src/astro-writing/skyReviewHorizon.cjs";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
@@ -83,18 +83,19 @@ async function skyReviewRows() {
       limit: String(pageSize)
     });
     if (cursorId) params.set("id", `gt.${cursorId}`);
-    const response = await adminFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
       headers: adminHeaders()
     });
-    const payload = await response.json().catch(() => null);
-    if (!response.ok) throw new Error(`Sky review horizon lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
-    const pageRows = Array.isArray(payload) ? payload as Array<{ id?: unknown }> : [];
+    const payload = response.payload;
+    if (!response.ok) throw new AdminHttpError(502, `Sky review horizon lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
+    const pageRows = adminStorageRows<{ id?: unknown }>(payload);
     rows.push(...pageRows);
     const lastId = pageRows.at(-1)?.id;
-    if (pageRows.length < pageSize || typeof lastId !== "string" || !lastId) break;
+    if (pageRows.length < pageSize) return rows;
+    if (typeof lastId !== "string" || !lastId || lastId === cursorId) throw new AdminHttpError(502, "Invalid review horizon cursor.");
     cursorId = lastId;
   }
-  return rows;
+  throw new AdminHttpError(502, "Review horizon exceeded the row limit; the inventory is incomplete.");
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {

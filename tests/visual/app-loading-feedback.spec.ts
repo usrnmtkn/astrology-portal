@@ -1,9 +1,148 @@
 import { expect, test } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-09-08T04:06:00Z"));
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+});
+
+test("offline snapshot publication keeps complete Calendar guidance available during live API failure", async ({ page }) => {
+  test.setTimeout(60_000);
+  const snapshot = JSON.parse(readFileSync("apps/web/public/content-studio-last-known-good.json", "utf8"));
+  const key = "authored/calendar-weekly-moon/taurus/variant-4";
+  const row = snapshot.rows.find((candidate: { content_key: string }) => candidate.content_key === key);
+  let releaseSnapshot!: () => void;
+  let releaseLive!: () => void;
+  const heldSnapshot = new Promise<void>(resolve => { releaseSnapshot = resolve; });
+  const heldLive = new Promise<void>(resolve => { releaseLive = resolve; });
+  await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({
+    label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York"
+  })));
+  await page.route("**/api/calendar?**", route => route.fulfill({ status: 503, json: {} }));
+  await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ status: 503, json: {} }));
+  // Keep the independent live overlay request pending. The offline snapshot
+  // must install its own rows before announcing their publication identities.
+  await page.route("**/rest/v1/rpc/content_runtime_revision", async route => {
+    await heldLive;
+    await route.fulfill({ status: 503, json: {} }).catch(() => {});
+  });
+  await page.route("**/content-studio-last-known-good.json", async route => {
+    await heldSnapshot;
+    await route.fulfill({ json: snapshot }).catch(() => {});
+  });
+  try {
+    await page.goto("/#calendar?view=weekly&date=2026-08-03");
+    const weekly = page.locator("#lunar-weekly-2026-08-05 .lunar-weekly-day__guidance");
+    await expect(weekly).toHaveAttribute("data-guidance-key", key, { timeout: 25_000 });
+    releaseSnapshot();
+    await expect.poll(() => page.evaluate(key => {
+      const records = JSON.parse(localStorage.getItem("tldrastro:content-publications:v1") ?? "[]");
+      return records.some((record: { content_key: string }) => record.content_key === key);
+    }, key), { timeout: 15_000 }).toBe(true);
+    await expect(weekly).toHaveText(row.body);
+    await page.goto("/#calendar?view=day&date=2026-08-05");
+    const day = page.getByRole("region", { name: "Moon guidance" });
+    await expect(day).toHaveAttribute("data-guidance-key", key, { timeout: 15_000 });
+    await expect(day.locator("p")).toHaveText(row.body);
+  } finally { releaseSnapshot(); releaseLive(); }
+});
+
+test("Calendar Day waits for full event facts before selecting the Week's Moon passage", async ({ page }) => {
+  const { getLunarCalendarWeek } = await import("../../apps/web/src/services/ephemeris");
+  const location = { label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
+  const anchor = new Date("2026-08-04T12:00:00Z");
+  const full = await getLunarCalendarWeek(location, anchor, { detail: "full" });
+  const basic = await getLunarCalendarWeek(location, anchor, { detail: "basic" });
+  let holdFull = false;
+  let waiting = false;
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.addInitScript(({ location, basic }) => {
+    localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
+    // A pre-fix Day cache must not bypass the full-facts loading requirement.
+    localStorage.setItem("tldr-lunar-calendar|v10|week|2026-08-03|40.7128|-74.0060|America/New_York",
+      JSON.stringify({ savedAt: Date.now(), calendar: basic }));
+  }, { location, basic });
+  await page.route("**/api/calendar?**", async route => {
+    const detailed = new URL(route.request().url()).searchParams.get("detail") === "full";
+    if (detailed && holdFull) { waiting = true; await held; }
+    await route.fulfill({ json: { ok: true, calendar: detailed ? full : basic } });
+  });
+  await page.goto("/#calendar?view=weekly&date=2026-08-04");
+  const weekly = page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__guidance");
+  await expect(weekly).toBeVisible({ timeout: 15_000 });
+  const expectedBody = (await weekly.innerText()).trim();
+  const expectedKey = await weekly.getAttribute("data-guidance-key");
+  holdFull = true;
+  try {
+    await page.goto("/#calendar?view=day&date=2026-08-04");
+    await expect.poll(() => waiting).toBe(true);
+    await expect(page.locator(".lunar-calendar-loading")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Moon guidance" })).toHaveCount(0);
+  } finally { release(); }
+  const day = page.getByRole("region", { name: "Moon guidance" });
+  await expect(day).toHaveAttribute("data-guidance-key", expectedKey!);
+  await expect(day.locator("p")).toHaveText(expectedBody);
+});
+
+for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${leaveCalendar ? "does not reopen after leaving" : "opens after the Sky calculation loads"}`, async ({ page }) => {
+  test.setTimeout(60_000);
+  const { getLunarCalendarWeek } = await import("../../apps/web/src/services/ephemeris");
+  const location = { label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
+  const calendar = await getLunarCalendarWeek(location, new Date("2026-09-10T12:00:00Z"), { detail: "full" });
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.addInitScript(location => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location)), location);
+  await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar } }));
+  await page.route(/\/assets\/skyCalculation\.worker-.*\.js$/, async route => {
+    await held;
+    await route.continue().catch(() => {});
+  });
+  try {
+    await page.goto("/#calendar?view=day&date=2026-09-10");
+    await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
+    await expect(page.locator(".sky-detail-article")).toHaveCount(0);
+    if (leaveCalendar) await page.getByRole("button", { name: "Sky", exact: true }).first().click();
+  } finally { release(); }
+  if (leaveCalendar) {
+    await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator(".sky-detail-article")).toHaveCount(0);
+    return;
+  }
+  await expect(page.locator(".sky-detail-article h1")).toContainText("Venus in Scorpio", { timeout: 30_000 });
+  const venus = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-pluto.json", "utf8"));
+  await expect(page.locator(".sky-detail-article")).toContainText(venus.readerCopy.body);
+});
+
+for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored Moon content before choosing copy`, async ({ page }) => {
+  test.setTimeout(60_000);
+  const key = "authored/calendar-weekly-moon/aries/variant-2";
+  const source = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json", "utf8"))
+    .authoredCards.find((row: { contentKey: string }) => row.contentKey === key);
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  await page.route(/\/assets\/fallbackArchitectureV3DeferredBundle-.*\.js$/, async route => {
+    await held;
+    await route.continue().catch(() => {});
+  });
+  await page.route("**/api/calendar?**", route => route.fulfill({ status: 503, json: {} }));
+  await page.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({
+    label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York"
+  })));
+  try {
+    await page.goto(`/#calendar?view=${view}&date=2026-08-04`, { waitUntil: "domcontentloaded" });
+    // Calculation has completed independently of the deliberately held prose bundle.
+    await expect.poll(() => page.evaluate(() => Object.keys(localStorage).some(key => key.startsWith("tldr-lunar-calendar|"))), { timeout: 25_000 }).toBe(true);
+    await expect(page.locator(".lunar-calendar-loading")).toBeVisible();
+    await expect(page.locator(".lunar-calendar-body")).toHaveCount(0);
+  } finally { release(); }
+  const guidance = view === "weekly"
+    ? page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__guidance")
+    : page.getByRole("region", { name: "Moon guidance" });
+  await expect(guidance).toHaveAttribute("data-guidance-key", key, { timeout: 25_000 });
+  await expect(view === "weekly" ? guidance : guidance.locator("p")).toHaveText(source.body);
+  await expect(page.locator(".lunar-calendar-loading")).toHaveCount(0);
 });
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {

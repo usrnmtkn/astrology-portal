@@ -11028,6 +11028,7 @@ export function App() {
   const fallbackDashboardHydrationRequestedRef = useRef(false);
   const friendDetailOverlayRefreshKeyRef = useRef("");
   const compatibilityDashboardHydrationVersionRef = useRef<number | null>(null);
+  const pendingCalendarTransitRef = useRef<LunarCalendarEvent | null>(null);
   const selectedCalendarTransitEventRef = useRef<{
     event: LunarCalendarEvent;
     description?: string;
@@ -11339,10 +11340,23 @@ export function App() {
   }
 
   function openCalendarTransitDetail(event: LunarCalendarEvent, description?: string) {
+    pendingCalendarTransitRef.current = event;
     const contentKeys = calendarTransitDetailContentKeys(event);
     const missingKeys = contentKeys.filter((key) => !skyGeneratedContent.has(key));
 
-    openCalendarTransitDetailWithContent(event, skyGeneratedContent, description);
+    if (sky) {
+      openCalendarTransitDetailWithContent(event, skyGeneratedContent, description);
+    } else {
+      // Calendar facts can arrive before the selected day's Sky snapshot.
+      // Preserve the click and calculate its event instead of silently dropping it.
+      const requestedFrom = window.location.href;
+      void getAstrodienstSky(withTimeZone(location), new Date(event.startsAt), { includeTransitWindows: true })
+        .then(eventSky => {
+          if (pendingCalendarTransitRef.current !== event || window.location.href !== requestedFrom) return;
+          openCalendarTransitDetailWithContent(event, skyGeneratedContent, description, eventSky);
+        })
+        .catch(error => console.warn("Calendar calculation failed.", error));
+    }
 
     if (missingKeys.length === 0) {
       return;
@@ -11368,16 +11382,17 @@ export function App() {
         }
       })
       .catch((error) => {
-        console.warn("Calendar detail interpretation failed to load; keeping the factual detail.", error);
+        console.warn("Calendar detail content failed to load.", error);
       });
   }
 
   function openCalendarTransitDetailWithContent(
     event: LunarCalendarEvent,
     generatedContent: GeneratedContentMap,
-    description?: string
+    description?: string,
+    detailSky: SkySnapshot | null = sky
   ) {
-    const detail = calendarTransitDetailWithContent(event, generatedContent, description);
+    const detail = calendarTransitDetailWithContent(event, generatedContent, description, detailSky);
 
     if (!detail) {
       return;

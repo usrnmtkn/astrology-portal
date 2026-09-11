@@ -332,18 +332,37 @@ test.describe("Friends loading performance matrix", () => {
     for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
       samples.push(await withContext(browser, {}, async (_context, page) => {
         await preparePage(page);
-        return timed("direct-link Friends Synastry", async () => {
-          await page.goto(
-            url("/#friends?tab=charts&chart=friend-nikki&view=synastry"),
-            { waitUntil: "domcontentloaded" }
-          );
-          await expect(
-            page
-              .getByRole("region", { name: `${fixtureFriendName} chart profile` })
-              .locator(".friend-aspect-row")
-              .first()
-          ).toBeVisible();
-        });
+        // Measure readiness in the page: Playwright's cross-process selector
+        // polling can finish hundreds of milliseconds after the row is visible.
+        await page.addInitScript((friendName) => {
+          const check = () => {
+            const row = document.querySelector<HTMLElement>(`section[aria-label="${friendName} chart profile"] .friend-aspect-row`);
+            if (row) {
+              const rect = row.getBoundingClientRect();
+              const visibility = getComputedStyle(row).visibility;
+              if (rect.width > 0 && rect.height > 0 && visibility !== "hidden" && visibility !== "collapse") {
+                (window as any).__friendsSynastryReadyAt = performance.timeOrigin + performance.now();
+                return;
+              }
+            }
+            requestAnimationFrame(check);
+          };
+          requestAnimationFrame(check);
+        }, fixtureFriendName);
+        const startedAt = Date.now();
+        await page.goto(
+          url("/#friends?tab=charts&chart=friend-nikki&view=synastry"),
+          { waitUntil: "domcontentloaded" }
+        );
+        await page.waitForFunction(() => Number.isFinite((window as any).__friendsSynastryReadyAt));
+        // Keep the original accessible-region/visible-row release assertion.
+        await expect(
+          page.getByRole("region", { name: `${fixtureFriendName} chart profile` })
+            .locator(".friend-aspect-row").first()
+        ).toBeVisible();
+        const readyAt = await page.evaluate(() => (window as any).__friendsSynastryReadyAt as number);
+        expect(readyAt).toBeGreaterThanOrEqual(startedAt);
+        return { label: "direct-link Friends Synastry", elapsedMs: Math.round(readyAt - startedAt) };
       }));
     }
 
@@ -381,6 +400,26 @@ test.describe("Friends loading performance matrix", () => {
     for (let sample = 0; sample < FRIENDS_LOADING_SAMPLE_COUNT; sample += 1) {
       await withContext(browser, {}, async (_context, page) => {
         const prepared = await preparePage(page, { incompleteChart: true, slowCalculation: true });
+        // Capture the visible repair in the browser. Selector polling can
+        // otherwise add hundreds of milliseconds after the chart is ready.
+        await page.addInitScript(() => {
+          let sawPending = false;
+          const check = () => {
+            const button = document.querySelector<HTMLElement>('button[aria-label="Open Casey"]');
+            if (button?.textContent?.includes("Moon pending")) sawPending = true;
+            if (sawPending && button && !button.textContent?.includes("pending")) {
+              const rect = button.getBoundingClientRect();
+              const visibility = getComputedStyle(button).visibility;
+              if (rect.width > 0 && rect.height > 0 && visibility !== "hidden" && visibility !== "collapse") {
+                (window as any).__friendsRepairReadyAt = performance.timeOrigin + performance.now();
+                return;
+              }
+            }
+            requestAnimationFrame(check);
+          };
+          requestAnimationFrame(check);
+        });
+        const wallStartedAt = Date.now();
         const startedAt = performance.now();
         await page.goto(url("/#friends?tab=charts"), { waitUntil: "domcontentloaded" });
         const chartButton = page.getByRole("button", { name: "Open Casey" });
@@ -392,9 +431,12 @@ test.describe("Friends loading performance matrix", () => {
         await expect(chartButton).not.toContainText("pending", {
           timeout: friendsLoadingPerformanceBudgets.incompleteChartRepairReadyMs
         });
+        await page.waitForFunction(() => Number.isFinite((window as any).__friendsRepairReadyAt));
+        const repairedAt = await page.evaluate(() => (window as any).__friendsRepairReadyAt as number);
+        expect(repairedAt).toBeGreaterThanOrEqual(wallStartedAt);
         repairSamples.push({
           label: "incomplete Friends repair",
-          elapsedMs: Math.round(performance.now() - startedAt)
+          elapsedMs: Math.round(repairedAt - wallStartedAt)
         });
         expect(prepared.delayedCalculationRequests()).toBeGreaterThan(0);
         expect(
