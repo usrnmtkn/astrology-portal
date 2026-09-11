@@ -58,6 +58,12 @@ With the flag enabled, new Sky edit history no longer appends bodies to
 The separate privacy/history cleanup must review existing exports, metadata,
 branches and cached references; this migration does not claim to erase them.
 
+Production database verification (2026-09-11): migration version
+`20260911152710` is installed. Both tables have RLS enabled, visitor/member
+table and RPC access is denied, and the active snapshot initially contained zero
+corrections. Database advisors added only the expected informational no-policy
+notices for these server-only tables; existing warnings were unchanged.
+
 ## Verification and next milestones
 
 - Run `npm run test:content-studio-api` (includes PostgreSQL trigger/RLS/decision
