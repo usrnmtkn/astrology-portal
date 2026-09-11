@@ -576,6 +576,51 @@
 
   /* Shared container boundaries. Component aliases below should reference these. */
   --container-picker: 360px;
+  /* Shared knowledge-browser working area and adjacent source inspector. */
+  /* Full-screen graph controls: owner-requested reference measurements (heyhaigh.ai, 2026-09-10). */
+  --font-graph: "Geist Mono Graph", monospace;
+  --graph-control-blur: 10px;
+  --graph-match-icon-size: 18px;
+  --graph-back-background: rgba(255, 255, 255, .1);
+  --graph-search-border: rgba(255, 255, 255, .12);
+  --graph-search-focus-background: rgba(255, 255, 255, .12);
+  --graph-search-focus-border: rgba(255, 255, 255, .25);
+  --graph-chip-border: rgba(255, 255, 255, .2);
+  --graph-chip-hover-border: rgba(255, 255, 255, .35);
+  --graph-chip-active-background: rgba(255, 255, 255, .2);
+  --graph-chip-ink: rgba(255, 255, 255, .8);
+  --graph-title-ink: rgba(255, 255, 255, .9);
+  --graph-detail-ink: rgba(255, 255, 255, .6);
+  --graph-results-max-height: calc(100dvh - 160px);
+  --graph-mobile-panel-width: calc(100vw - 32px);
+  --graph-pulse-low: 0 0 20px rgba(255,255,255,.08), 0 0 40px rgba(255,255,255,.04);
+  --graph-pulse-high: 0 0 30px rgba(255,255,255,.15), 0 0 60px rgba(255,255,255,.08);
+  --graph-control-height: 38px;
+  --graph-back-width: 85.6px;
+  --graph-legend-max-height: calc(100dvh - 40px);
+  --graph-legend-header-height: 49px;
+  --graph-icon-gap: 2px;
+  --graph-chip-inset: 6px;
+  --graph-search-width: 280px;
+  --graph-legend-width: 164px;
+  --graph-results-width: 400px;
+  --graph-detail-width: 500px;
+  --graph-detail-height: 200px;
+  --graph-results-bottom: 80px;
+  --graph-detail-bottom: 180px;
+  --graph-control-radius: 19px;
+  --graph-control-label-size: 14px;
+  --graph-back-inset: 14px;
+  --graph-canvas-background: #0a0a0a;
+  --graph-detail-background: rgba(20, 20, 20, .95);
+  --graph-control-background: rgba(255, 255, 255, .08);
+  --graph-control-hover: rgba(255, 255, 255, .15);
+  --graph-control-border: rgba(255, 255, 255, .15);
+  --graph-ink: #e3e3e3;
+  --graph-muted: rgba(255, 255, 255, .7);
+  --graph-faint: rgba(255, 255, 255, .4);
+
+
   --container-chart-mobile: 520px;
   --container-dialog: 560px;
   --container-dialog-wide: 640px;

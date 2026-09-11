@@ -1,8 +1,8 @@
 {
   "appBootGzipBytes": 422000,
   "appChunkGzipBytes": 180000,
-  "readerBootGzipBytes": 470000,
-  "readerInitialCssGzipBytes": 48000,
+  "readerBootGzipBytes": 470250,
+  "readerInitialCssGzipBytes": 48250,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 5500,
@@ -12,8 +12,8 @@
   "transitFallbackChunkGzipBytes": 390000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
-  "totalCssGzipBytes": 115000,
-  "totalJavaScriptGzipBytes": 2987000,
+  "totalCssGzipBytes": 129500,
+  "totalJavaScriptGzipBytes": 3052000,
   "_rationale": {
     "transitArticleFacts": "Allow 1,000 aggregate gzip bytes for the requested calculated transit/natal placement footer across You and Friends articles. After rebasing onto f36b697e, the fresh build with CI's Supabase environment measures 2,949,088 bytes across 116 JavaScript files, 88 bytes above the previous aggregate cap. Shared article fact components keep SkyDetailArticle within its existing 5.4 kB limit. Startup, CSS, and every individual chunk limit remain unchanged; reader boot measures 463.5 kB against 467 kB. No dependencies or authored content changed.",
     "skyPlacementVariables": "The shared Sky variable contract and deferred Studio variable key/template comparison measure 2,940,574 aggregate JavaScript gzip bytes in the fresh CI-environment build. Allow 4,000 aggregate bytes for this feature. Reader boot, startup CSS, and every individual chunk limit are unchanged. See docs/qa/sky-placement-variables-2026-09-09.md.",
@@ -31,6 +31,9 @@
     "skyIngressV5": "After rebasing onto main d8b17bf7, the opt-in V5 composer, validated source references and deferred occurrence preview measure 2,971,430 total JavaScript gzip bytes. Allow 12 kB above main's aggregate cap; all startup, CSS and per-chunk limits remain unchanged. Reader boot measures 466.9 kB against 467 kB. See docs/qa/sky-ingress-v5-2026-09-10.md.",
     "skyInlineTemplate": "Allow 1 kB for the requested separately editable planet/sign template fields, legacy-template compatibility, validation, and complete placement-link assembly. The CI-environment build measures 467,675 reader startup bytes and 2,964,215 aggregate JavaScript bytes. Admin editing remains in the existing lazy Studio chunk. No dependencies, CSS budget, App boot budget, or individual chunk budgets changed. See docs/qa/sky-inline-template-editor-2026-09-10.md.",
     "moonSourceBankV6": "The owner-supplied V6 Moon bank adds 35 complete source-locked passages and 25 explicit blank records, with event selection and 60 editor keys. CI environment measures 421,676 App boot bytes, 469,447 reader startup bytes, and 2,971,627 aggregate JavaScript bytes. Allocate 2 kB to App/reader startup and 7 kB aggregate for the bank and source routing. No dependencies, startup CSS, or individual deferred chunk caps changed. Source audit metadata remains in deferred Admin code. See docs/qa/daily-sky-moon-v6-2026-09-10.md.",
-    "reviewQueueWorkflow": "Allocate 3 kB aggregate gzip for the authorized Studio workflow and shared reader eligibility checks. Fresh CI-environment assets measure 2,985,002 bytes against the prior 2,984,000 cap. Reader boot, startup CSS and individual reader chunk caps remain unchanged. See docs/qa/review-queue-workflow.md."
-  }
+    "reviewQueueWorkflow": "Allocate 3 kB aggregate gzip for the authorized Studio workflow and shared reader eligibility checks. Fresh CI-environment assets measure 2,985,002 bytes against the prior 2,984,000 cap. Reader boot, startup CSS and individual reader chunk caps remain unchanged. See docs/qa/review-queue-workflow.md.",
+    "memoryGraph": "Owner requested integration of the reference memory graph in task 01a08d25-4329-7582-bc2f-369adb3c0013. The pinned renderer plus route measures 62,515 gzip bytes and its stylesheet 13,879 bytes. Allocate 65 kB aggregate JS and 14.5 kB aggregate CSS; separately cap the deferred graph at 64 kB JS and 14.5 kB CSS and reject it in reader boot. Shared graph tokens bring reader CSS to 48,190 bytes, requiring only 250 additional bytes of cap. The same 250-byte shared-style allocation applies to combined reader boot: the build rebased onto 18c9b50f measures 470,025 bytes against the former 470,000-byte cap. Reader JavaScript and existing per-route caps remain unchanged. See docs/qa/memory-graph-integration-2026-09-10.md."
+  },
+  "memoryGraphJavaScriptGzipBytes": 64000,
+  "memoryGraphCssGzipBytes": 14500
 }
