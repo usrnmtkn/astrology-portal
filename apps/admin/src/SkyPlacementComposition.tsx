@@ -135,17 +135,17 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
       <StudioTabs label="Sky placement composition views" value={view} onValueChange={setView}
         tabs={views.map(item => ({ value: item.id, label: item.label }))}>
       <div className="admin-composition-variable-legend" aria-label="Composition color key">
-        <span className="variable-fact">Calculated fact</span><span className="variable-hook">Authored hook</span><span className="variable-copy">Saved copy</span>
+        <span className="variable-fact" data-variable-color="1">Calculated fact</span><span className="variable-hook" data-variable-color="2">Authored hook</span><span className="variable-copy" data-variable-color="3">Saved copy</span>
       </div>
         {view === "preview" && <div className="admin-template-reader-surface">
           <div className="admin-composition-preview-chrome"><span>Sky placement</span><span>Saved source preview</span></div>
           <div className="admin-template-reader-copy">
             <div className="admin-composition-preview-field"><span className="admin-eyebrow">Headline</span>
-              <p><span className="admin-composition-variable variable-fact" title="Planet and motion come from the selected chart context">{title(current.planet)}{current.motion === "retrograde" && retrogradeBodies.has(current.planet) ? " Rx" : ""}</span> in <span className="admin-composition-variable variable-fact" title="Sign comes from the selected chart context">{title(current.sign)}</span></p>
+              <p><span className="admin-composition-variable variable-fact" data-variable-color="1" title="Planet and motion come from the selected chart context">{title(current.planet)}{current.motion === "retrograde" && retrogradeBodies.has(current.planet) ? " Rx" : ""}</span> in <span className="admin-composition-variable variable-fact" data-variable-color="1" title="Sign comes from the selected chart context">{title(current.sign)}</span></p>
             </div>
             {parts.map(field => <div className="admin-composition-preview-field field-body" key={`${field.row.content_key}/${field.path}`}>
               <span className="admin-eyebrow">{field.label}</span>
-              <p><StudioButton type="button" className={`admin-composition-variable variable-${field.kind}`} aria-label={`Edit ${field.label.toLowerCase()}`} onClick={() => edit(field)}>
+              <p><StudioButton type="button" className={`admin-composition-variable variable-${field.kind}`} data-variable-color={field.kind === "hook" ? "2" : "3"} aria-label={`Edit ${field.label.toLowerCase()}`} onClick={() => edit(field)}>
                 {field.value ? isSkyPlacementVariableField(field.row.content_key, field.path)
                   ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value
                   : "No writing saved. Select to write this section."}
@@ -157,7 +157,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           <p>The template joins the sections below in order. Each section slot supplies a whole passage; inline Sky variables substitute calculated facts within that passage. Empty sections are skipped.</p>
           <ol aria-label="Placement template order">
             {parts.map(field => <li key={`${field.row.content_key}/${field.path}`}>
-              <StudioButton type="button" className={`admin-composition-variable variable-${field.kind}`} onClick={() => edit(field)} aria-label={`Edit ${field.label.toLowerCase()}`}>
+              <StudioButton type="button" className={`admin-composition-variable variable-${field.kind}`} data-variable-color={field.kind === "hook" ? "2" : "3"} onClick={() => edit(field)} aria-label={`Edit ${field.label.toLowerCase()}`}>
                 {sectionIdentity(field)}
               </StudioButton>
               <code className="admin-sky-section-reference">{`${field.row.content_key}#${field.path}`}</code>
