@@ -17,6 +17,7 @@
  */
 
 const crypto = require("node:crypto");
+const { sourceSha256 } = require("./source-verification.js");
 const fs = require("node:fs");
 const path = require("node:path");
 
@@ -53,7 +54,7 @@ function verifyPhraseSources(meta) {
     if (!fs.existsSync(absolute)) {
       throw new Error(`PHRASE_SOURCE_MISSING: ${relative}. No provider call is allowed.`);
     }
-    if (sha256(fs.readFileSync(absolute)) !== expectedSha256) {
+    if (sourceSha256(absolute) !== expectedSha256) {
       throw new Error(`PHRASE_INDEX_STALE: ${relative} changed after the phrase index was built. No provider call is allowed.`);
     }
   }
@@ -242,7 +243,7 @@ function selectPhrases(canonicalId, { context = {}, min = 5, max = 10, surface =
 function assertPhraseEvidence(selection) {
   if (selection.blocked) throw new Error(selection.reason);
   verifyPhraseSources(loadPhraseIndex().meta);
-  const currentIndexSha256 = sha256(fs.readFileSync(phraseIndexPath, "utf8"));
+  const currentIndexSha256 = sourceSha256(phraseIndexPath);
   if (selection.phraseIndexSha256 !== currentIndexSha256) {
     throw new Error("PHRASE_INDEX_STALE: phrase evidence changed after selection. No provider call is allowed.");
   }

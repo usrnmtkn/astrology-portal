@@ -48,3 +48,17 @@ Offline verification:
 - `node --import tsx scripts/test-generated-report-judge-governance.mts`
 - Run `apps/web/supabase/tests/transit_report_model_checkpoints.sql` against a
   migrated disposable database (the test rolls back its fixtures).
+
+Evidence verification deduplicates file hashing only inside one synchronous
+preparation or assertion. The scope is discarded on return or exception; no
+verified-byte cache crosses an await or provider call. The next provider
+boundary reads and hashes the sources again. This prevents multi-target
+packets and checkpoint replay from repeatedly reading the full corpus for each
+nested target while preserving source-drift and packet-integrity failures.
+Regression: `node scripts/test-source-verification.mjs` (also included in the
+production pre-call gate suite).
+
+Deterministic feedback stays local to the current generation attempt and is
+carried through initial recovery and the judge's corrective rewrite. This
+prevents later rewrites from forgetting earlier diagnosed defects. It does not
+add model calls, weaken validation, or turn diagnostics into owner evidence.
