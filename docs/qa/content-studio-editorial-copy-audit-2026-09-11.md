@@ -97,3 +97,29 @@ The first hosted run caught stale knowledge-index source hashes after the macro
 cleanup. The index was regenerated; the knowledge/phrase freshness checks and
 generated-report judge-governance regression pass. This updates source hashes,
 not approval/signoff records or assertions.
+
+
+### Final release integration and startup regression
+
+The release integrates main's report retry/source verification and report deletion
+changes through `1991a3b3`. The combined local API suite passed without changing
+owner copy or review state. On release head `83198f0b`, all 213 reader functional
+cases and the Summary/Studio jobs passed, but four Friends timing scenarios
+exceeded the original budgets. Main `bbbc8ed0` independently failed the direct
+Synastry and incomplete-chart repair timing scenarios (workflow `34612895920`).
+These failures are not waived.
+
+Release trace `34613622490` shows Friends route/profile downloads starting only
+after App is evaluated (roughly 600 ms into a representative cached-list load),
+followed by another component download. Initial Friends routes now begin these
+same imports alongside App. Only the selected profile tab is preloaded; a bare
+list still does not fetch relationship or natal/transit content. Vanity routes
+receive the same preload after their route resolves. Import errors remain owned
+by the mounted route's recovery boundary. The existing seven-scenario, three-
+samples-per-scenario performance matrix and every threshold remain unchanged.
+
+After route preloading, all seven local performance scenarios pass with their
+original budgets, as do the startup performance contracts, CSS audits and
+typecheck. CI runs the same performance step before the lengthy reader suite
+so regressions fail earlier. Final hosted and production evidence belongs in
+PR #759; local timings alone are not a hosted performance pass.
