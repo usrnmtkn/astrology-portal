@@ -1,3 +1,5 @@
+// @ts-ignore Shared reader-copy boundary.
+import { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
@@ -125,6 +127,7 @@ async function updateUserGeneratedContent(req: IncomingMessage) {
     if (body[field] !== undefined && typeof body[field] !== "string") throw new AdminHttpError(400, `${field} must be a string.`);
   }
 
+  try { assertCleanReaderCopy(body); } catch (error) { throw new AdminHttpError(400, (error as Error).message); }
   const row: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (body.status) row.status = body.status;
   if (body.headline !== undefined) row.headline = body.headline;

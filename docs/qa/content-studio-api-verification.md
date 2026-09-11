@@ -166,3 +166,11 @@ The same audit found the personalized list filter still omitted `friends` and
 and the current generation client. Both filters now reach storage; unsupported
 surface names still return 400 before lookup. This is an API filter correction,
 not a new content surface or a database migration.
+
+### Reader-copy import boundary
+
+The API gate also runs `test:reader-copy-boundary` and the actual handler tests in
+`test-editorial-copy-api.mts`. Imports must keep workflow labels, drafting
+instructions and source notes outside reader fields, including nested package
+revisions. See [the saved-row audit](content-studio-editorial-copy-audit-2026-09-11.md)
+for the repair journal, full-inventory checks and agent requirements.

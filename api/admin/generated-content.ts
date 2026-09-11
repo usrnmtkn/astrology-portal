@@ -1,3 +1,5 @@
+// @ts-ignore Shared import and publication boundary.
+import { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
 import { packagePublicationAdmissionIssue } from "../_lib/content-studio-package-admission.js";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
@@ -1051,6 +1053,9 @@ const generatedContentOwnerActions = new Set([
 ]);
 
 function validateWriteBody(body: Record<string, unknown>) {
+  try { assertCleanReaderCopy(body); } catch (error) {
+    throw new GeneratedContentRequestError((error as Error).message);
+  }
   for (const field of ["id", "contentKey", "surface", "mode", "eventType", "status", "headline", "summary", "body", "reviewStatus", "sourceLifecycleAction", "editorialNotes", "promptVersion", "provider", "model", "reviewerNotes", "expectedUpdatedAt", "ownerAction"]) {
     if (body[field] !== undefined && typeof body[field] !== "string") throw new GeneratedContentRequestError(`${field} must be a string.`);
   }
@@ -1077,6 +1082,9 @@ function validateWriteBody(body: Record<string, unknown>) {
 
 function assertReaderEligiblePublication(row: Record<string, any>) {
   if (row.status !== "LIVE") return;
+  try { assertCleanReaderCopy(row); } catch (error) {
+    throw new GeneratedContentRequestError((error as Error).message, 409);
+  }
   if ((row.lane ?? "serving") !== "serving") throw new GeneratedContentRequestError("Published content must use the serving lane.", 409);
   if (row.review_state) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
   const admissionIssue = packagePublicationAdmissionIssue(row);
