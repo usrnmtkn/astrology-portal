@@ -15,7 +15,7 @@ These exist in the repo working tree (or owner will supply them); commit them fi
 - `tldr-astro-phrasebank/TLDR-REPORT-HORIZONS-GENERATION-PROMPT-OWNER.md` — the canonical generation prompt, one prompt with required `REPORT_HORIZON` in {1_month, 4_months, 6_months, 12_months}. This is the system-prompt source of truth.
 - `tldr-astro-phrasebank/TLDR-YEAR-AHEAD-GENERATION-LOGIC-OWNER.md` — the 27-point GENERATION STANDARD (12-month deep rules).
 - `tldr-astro-phrasebank/TLDR-YEAR-AHEAD-MANIFESTATION-SETS-OWNER.md` — manifestation-set record format.
-- `artifacts/owner-author-year-ahead-2026-FINAL.md` — owner-authored final reference report (12_months); its text is owner_authored_final voice evidence.
+- `private:report/general-2026` — owner-authored final reference report (12_months); its text is owner_authored_final voice evidence.
 - `artifacts/owner-author-year-ahead-2026-manifestation-sets-v1.md` — worked manifestation sets for the reference chart.
 - `artifacts/owner-author-year-ahead-2026-candidate-v2-review.md` — the full v1→FINAL review record (history; do not modify).
 

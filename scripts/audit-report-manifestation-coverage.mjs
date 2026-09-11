@@ -71,7 +71,7 @@ const gapsByType = Object.fromEntries(
       .sort()])
 );
 
-const diagnosticFacts = JSON.parse(fs.readFileSync(path.join(repoRoot, "scripts", "fixtures", "marie-report-frozen-facts.json"), "utf8"));
+const diagnosticFacts = JSON.parse(fs.readFileSync(path.join(repoRoot, "scripts", "fixtures", "synthetic-report-frozen-facts.json"), "utf8"));
 const diagnosticFactors = reportFactors(diagnosticFacts);
 const diagnosticCoverage = resolveManifestationSets(diagnosticFactors);
 

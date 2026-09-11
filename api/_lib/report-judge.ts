@@ -1,3 +1,4 @@
+import { readPrivateReportDocument } from "./private-report-documents.mjs";
 import fs from "node:fs";
 import type { ReportDraft, ReportGenerationPayload } from "./report-generation.ts";
 import { reportDraftMovementApplicable, reportEvaluationPacket } from "./report-evaluation-packet.js";
@@ -243,10 +244,10 @@ export function deterministicCalibrationScore(text: string) {
 
 export function reportJudgeCalibrationFixtures() {
   const references = [
-    "artifacts/owner-author-year-ahead-2026-FINAL.md",
-    "artifacts/owner-author-work-money-2026-owner-v1.md",
-    "artifacts/owner-author-love-connection-2026-owner-v1.md"
-  ].map((sourcePath) => ({ sourcePath, text: fs.readFileSync(sourcePath, "utf8") }));
+    "private:report/general-2026",
+    "private:report/work-money-2026",
+    "private:report/love-connection-2026"
+  ].map((sourcePath) => ({ sourcePath, text: readPrivateReportDocument(sourcePath) }));
   const base = references[0].text;
   const firstParagraph = base.split(/\n\s*\n/u).find((value) => value.trim() && !value.startsWith("#"))?.trim() ?? "FIXTURE_ONLY_PARAGRAPH";
   return {

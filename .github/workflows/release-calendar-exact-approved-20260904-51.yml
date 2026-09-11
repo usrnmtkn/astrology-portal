@@ -97,3 +97,6 @@ jobs:
             tests/visual/client-facing-user-flows.spec.ts
           git commit -m "release(calendar): serve final 51 approved exact aspects"
           git push origin HEAD
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

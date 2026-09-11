@@ -124,3 +124,6 @@ jobs:
           fi
           git commit -m "release(calendar): serve collective exact aspect rewrite"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

@@ -10,7 +10,7 @@ import {
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(new URL(relativePath, import.meta.url), "utf8"));
 const model = readJson("../config/ask-tldr/answer-model-v1.json");
 const career = readJson("../config/ask-tldr/pillars/career.json");
-const reportWindow = readJson("./fixtures/marie-report-frozen-facts.json");
+const reportWindow = readJson("./fixtures/synthetic-report-frozen-facts.json");
 const now = new Date("2026-09-05T12:00:00Z");
 const recognition = career.questions.find((question) => question.id === "career.recognition");
 assert.ok(recognition);
@@ -81,7 +81,7 @@ assert.deepEqual(renegotiationFreeText.plan.focus, {
 
 const primaryId = evergreen.writerRequest.primaryEvidenceId;
 const writerValue = {
-  answer: "Recognition is more available when you put the work where people can see and respond to it. Jupiter opposing your Midheaven around September 15 can make public opportunity and visibility feel larger, but it can also make other people's reaction seem more important than the result itself.\n\nUse the opening to show the concrete work, ask for the credit or role attached to it, and let the response give you information. You may get more from a visible result and a specific request than from trying to manage how everyone feels about what you are doing.",
+  answer: "Recognition is more available when you put the work where people can see and respond to it. Jupiter opposing your Midheaven around September 18 can make public opportunity and visibility feel larger, but it can also make other people's reaction seem more important than the result itself.\n\nUse the opening to show the concrete work, ask for the credit or role attached to it, and let the response give you information. You may get more from a visible result and a specific request than from trying to manage how everyone feels about what you are doing.",
   evidenceIdsUsed: [primaryId],
   primaryEvidenceId: primaryId,
   whyNowEvidenceId: primaryId,
@@ -112,7 +112,7 @@ assert.ok(finalized.judgeRequest.input.includes("GOVERNED QUESTION RELEVANCE EVI
 
 const badFacts = finalizeAskTldrCalibration({
   prepared: evergreen,
-  writerValue: { ...writerValue, answer: writerValue.answer.replace("September 15", "September 16") },
+  writerValue: { ...writerValue, answer: writerValue.answer.replace("September 18", "September 16") },
   judgeValue: {
     scores: judgeScores,
     timingApplicability: { applicable: true, reason: "fixture" },

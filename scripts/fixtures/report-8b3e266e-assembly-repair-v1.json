@@ -5,7 +5,7 @@
   "ownerApproved": false,
   "promotionAuthorized": false,
   "provenance": {
-    "ownerReference": "artifacts/owner-author-year-ahead-2026-FINAL.md",
+    "ownerReference": "private:report/general-2026",
     "productionSnapshot": "artifacts/owner-author-general-12m-report-8b3e266e-review-snapshot.md",
     "ownerInstructionDate": "2026-08-13",
     "note": "Nineteen title/sentence pairs are owner-authored reference lines. MAY 12 and AUG 19 preserve existing needs-review date-specific repair lines. Key Dates contains only eligible factors interpreted by the report; fact-only placeholders are excluded. All remain needs_review; dates and attributions remain calculation-owned."

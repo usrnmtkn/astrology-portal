@@ -7,7 +7,7 @@
 
 - Add `personal_health` as a fourth report domain in the existing calculation, factor-selection, envelope, checkout, and fulfillment pipeline.
 - Reuse one frozen facts bundle per user and report window. The new domain receives an independent tiered factor-selection pass.
-- Use `artifacts/owner-author-personal-health-2026-owner-v1.md` as the owner reference.
+- Use `private:report/personal-health-2026` as the owner reference.
 - Load `tldr-astro-phrasebank/TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md` into every report-generation payload.
 - Keep generated reader copy at `needs_review`; the implementation adds no generated prose and performs no model calls.
 - Add a fourth complete-unit v3 score pair based on the Personal & Health owner reference.

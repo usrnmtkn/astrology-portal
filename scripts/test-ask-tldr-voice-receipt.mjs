@@ -17,7 +17,7 @@ const readJson = (relativePath) => JSON.parse(fs.readFileSync(new URL(relativePa
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 const model = readJson("../config/ask-tldr/answer-model-v1.json");
 const career = readJson("../config/ask-tldr/pillars/career.json");
-const reportWindow = readJson("./fixtures/marie-report-frozen-facts.json");
+const reportWindow = readJson("./fixtures/synthetic-report-frozen-facts.json");
 const now = new Date("2026-09-05T12:00:00Z");
 const recognition = career.questions.find((question) => question.id === "career.recognition");
 assert.ok(recognition);

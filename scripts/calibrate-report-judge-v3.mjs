@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { readPrivateReportDocument } from '../api/_lib/private-report-documents.mjs';
 
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
@@ -33,7 +33,7 @@ const hardGates = new Set([
 ]);
 
 function read(sourcePath) {
-  return fs.readFileSync(sourcePath, "utf8");
+  return (sourcePath.startsWith("private:report/") ? readPrivateReportDocument(sourcePath) : fs.readFileSync(sourcePath, "utf8"));
 }
 
 const activeJudgePrompt = loadActiveReportJudgePrompt();

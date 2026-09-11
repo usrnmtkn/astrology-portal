@@ -112,3 +112,6 @@ jobs:
               issue_number: issue.number,
               body: `## ${status} — run ${context.runId}\n\n[Open workflow run](${runUrl})\n\n${alertMessage ? `${alertMessage}\n\n` : ""}${summary}`
             });
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

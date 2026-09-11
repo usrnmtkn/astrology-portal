@@ -4,7 +4,8 @@ import { zonedDateTimeToUtc } from "../../apps/web/src/services/timezones";
 import { natalSkySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
-const birthDate = "1990-01-01";
+// Fictional profile: True Node is near the September Sun in Virgo.
+const birthDate = "1979-02-01";
 const birthTime = "12:00 PM";
 
 async function seed(page: Page, now: string, theme: string) {

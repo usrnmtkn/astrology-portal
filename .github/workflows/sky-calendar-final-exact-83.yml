@@ -53,3 +53,6 @@ jobs:
         run: node scripts/build-production-sky-kernel-comparison.mjs
       - name: Verify whitespace integrity
         run: git diff --check
+
+env:
+  PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
