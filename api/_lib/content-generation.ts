@@ -1,3 +1,4 @@
+import { studioArticleWritingMemory } from './studio-article-memory.js';
 import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt } from "./transit-reading-owner-voice.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -77,6 +78,7 @@ export type GeneratedSkyArticleTemplateSlots = {
   generatedAt: string;
   requestedSlots: string[];
   generation_metadata?: ReturnType<typeof writeGenerationMetadata>;
+  memoryReceipt?: NonNullable<Awaited<ReturnType<typeof studioArticleWritingMemory>>>["receipt"];
 };
 
 export type GeneratedAstrologyDraft = {
@@ -5896,18 +5898,21 @@ export async function generateSkyArticleTemplateSlots(
     throw new Error("Template slot names must be unique alphanumeric identifiers.");
   }
 
+  const memory = await studioArticleWritingMemory(input);
   const generationInput = skyArticleSlotGenerationInput(input);
   const productionGate = prepareProductionPreCallGate(generationInput);
   const evidenceShadow = buildProductionEvidenceShadow(generationInput);
   const approvedExamples = await loadApprovedExamples(generationInput);
-  const prompt = skyArticleTemplateSlotPrompt(input, approvedExamples);
+  const publicPrompt = skyArticleTemplateSlotPrompt(input, approvedExamples);
+  // Private corrections must not enter prompt-shadow artifacts or row snapshots.
+  const prompt = [publicPrompt, memory?.prompt].filter(Boolean).join("\n\n");
   const schema = skyArticleTemplateSlotSchema(input.requestedSlots);
   const provider = contentGenerationProvider({
     requestedProvider: input.provider,
     blockType: "sky_article",
     contentType: "sky_article"
   });
-  recordLegacyPromptShadow(evidenceShadow, prompt);
+  recordLegacyPromptShadow(evidenceShadow, publicPrompt);
   assertProductionRoleGate(productionGate, "WRITER", generationInput);
 
   if (provider === "openai") {
@@ -5950,6 +5955,7 @@ export async function generateSkyArticleTemplateSlots(
       model,
       generatedAt: new Date().toISOString(),
       requestedSlots: names,
+    ...(memory ? { memoryReceipt: memory.receipt } : {}),
       generation_metadata: writeGenerationMetadata({
         role: "WRITER",
         model,
@@ -6001,6 +6007,7 @@ export async function generateSkyArticleTemplateSlots(
     model,
     generatedAt: new Date().toISOString(),
     requestedSlots: names,
+    ...(memory ? { memoryReceipt: memory.receipt } : {}),
     generation_metadata: writeGenerationMetadata({
       role: "WRITER",
       model,

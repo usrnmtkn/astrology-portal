@@ -1,9 +1,17 @@
 import { useEffect, useState } from 'react';
 import { adminCredentialHeaders } from './adminSecret';
 
-type Feedback = { id: string; content_key: string; before_text: string; after_text: string;
+type Feedback = { id: string; content_key: string; family?: string; before_text: string; after_text: string;
   status: 'pending' | 'active' | 'retired'; scope: 'passage' | 'family' | 'sky'; reason: string;
   version: number; created_at: string };
+
+function readableCorrection(text: string, family?: string) {
+  if (family !== 'sky-article') return text;
+  try {
+    const fields = JSON.parse(text);
+    return Object.entries(fields).map(([field, value]) => `${field}\n${typeof value === 'string' ? value : JSON.stringify(value, null, 2)}`).join('\n\n');
+  } catch { return text; }
+}
 
 function Decision({ row, disabled, decide, credential }: { row: Feedback; disabled: boolean; credential: string;
   decide: (row: Feedback, status: 'active' | 'retired', scope: string, reason: string) => void }) {
@@ -22,12 +30,12 @@ function Decision({ row, disabled, decide, credential }: { row: Feedback; disabl
   return <article className="admin-editor-guidance">
     <p><strong>{row.status === 'active' ? 'Used for future drafts' : row.status === 'retired' ? 'Excluded from future drafts' : 'Pending your decision'}</strong> · {new Date(row.created_at).toLocaleString()}</p>
     <details><summary>Compare original and replacement</summary>
-      <p><strong>Original</strong></p><p className="admin-composition-source-copy">{row.before_text}</p>
-      <p><strong>Replacement</strong></p><p className="admin-composition-source-copy">{row.after_text}</p>
+      <p><strong>Original</strong></p><p className="admin-composition-source-copy">{readableCorrection(row.before_text, row.family)}</p>
+      <p><strong>Replacement</strong></p><p className="admin-composition-source-copy">{readableCorrection(row.after_text, row.family)}</p>
     </details>
     <label>Apply this correction to
       <select value={scope} onChange={event => setScope(event.target.value as Feedback['scope'])} disabled={disabled}>
-        <option value="passage">This passage only</option><option value="family">This Sky writing family</option><option value="sky">All Sky placements and aspects</option>
+        <option value="passage">This passage only</option><option value="family">{row.family === 'sky-article' ? 'Long-form Sky articles' : 'This Sky writing family'}</option>{row.family !== 'sky-article' && <option value="sky">All Sky placements and aspects</option>}
       </select>
     </label>
     <label>Reason {scope === 'passage' ? '(optional)' : '(required for broader guidance)'}
