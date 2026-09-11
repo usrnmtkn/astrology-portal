@@ -29,3 +29,9 @@ The matrix inherited `trace: retain-on-failure` from the functional-browser conf
 `npm run qa:friends-loading-matrix` now explicitly disables trace recording only for this timing benchmark. Screenshots on failure, console measurements, all correctness assertions, 3 samples, original ceilings, retries, calculation delays and network throttling remain unchanged. Functional browser suites retain traces. Diagnose a failure separately with `npx playwright test tests/visual/friends-loading-performance.spec.ts --trace on`; a traced diagnostic must not replace or waive the untraced timing gate. No polling or readiness threshold is changed.
 
 This correction must be confirmed on GitHub; local passes alone did not establish the CI result.
+
+## Readiness sampling correction
+
+The untraced hosted run 34630759172 on 9c00a577 passed all list checkpoints (cold median 509 ms, incomplete 511/503, slow list 456), warm detail, mobile, and download-order regression. Direct Synastry still measured 1986/2090 ms; repair measured 2502/2514 ms. These two failures are retained as evidence.
+
+The installed Playwright implementation uses retry delays of 20, 50, 100, 100, then 500 ms for locator assertions. Timing `toBeVisible` or `not.toContainText` therefore includes up to an extra half-second of observation delay. The benchmark now samples the same visibility and repaired-text conditions every 16 ms, retaining the existing timeout and performance ceilings. A synthetic delayed-button regression checks that observation lag stays below 150 ms; the old backoff cannot pass that checkpoint reliably. The initial `Moon pending` assertion and all completed-content assertions remain intact. This changes the measurement precision, not the definition of a ready page or the permitted loading time.
