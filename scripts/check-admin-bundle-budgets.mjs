@@ -72,6 +72,19 @@ if (!fs.existsSync(editorGuidanceAsset)) {
   }
 }
 
+// Moving provenance out of JavaScript must preserve every source record in the
+// deployed asset. A smaller bundle with missing data is not a passing build.
+const moonSourceFile = manifest["src/skyMoonSummarySources.json"]?.file;
+if (!moonSourceFile?.endsWith(".json") || !fs.existsSync(path.join(distRoot, moonSourceFile))) {
+  failures.push("Moon source metadata must ship as a deferred JSON asset.");
+} else {
+  const expected = JSON.parse(fs.readFileSync(path.join(repoRoot, "apps/admin/src/skyMoonSummarySources.json"), "utf8"));
+  const deployed = JSON.parse(fs.readFileSync(path.join(distRoot, moonSourceFile), "utf8"));
+  if (JSON.stringify(deployed) !== JSON.stringify(expected)) {
+    failures.push("Deployed Moon source metadata differs from the complete source artifact.");
+  }
+}
+
 const forbiddenEntryMarkers = [
   "bundled-deferred-core-rows-v3",
   "bundled-sky-core-rows-v3",

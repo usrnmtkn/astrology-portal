@@ -82,7 +82,7 @@ function manualChartsWithReliableAngleLongitudes(charts: ManualChart[]) {
 
 async function calculateSky(location: LocationInput, date: Date) {
   const { getAstrodienstSky } = await import("../../services/ephemeris");
-  return getAstrodienstSky(location, date);
+  return getAstrodienstSky(location, date, { includeDailyEvents: false });
 }
 
 async function natalSkyWithAspectPatternsForStorage(

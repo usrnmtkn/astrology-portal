@@ -5335,7 +5335,7 @@ export function GeneratedContentAdminDashboard() {
         `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(field.key)}&limit=1`, secret);
       if (!Array.isArray(result.rows)) throw new Error("Could not load the saved summary wording. Please try again.");
       const moonSource = /^cms\/sky-daily-summary\/moon\/[^/]+\/[^/]+$/u.test(field.key)
-        ? (await import("./skyMoonSummarySources.json")).default.rows.find(row => row.key === field.key) : undefined;
+        ? (await (await import("./skyMoonSummarySources")).loadSkyMoonSummarySources()).rows.find(row => row.key === field.key) : undefined;
       let existing = result.rows.find(row => row.content_key === field.key);
       if (!existing && field.key.startsWith("cms/sky-daily-summary/ingress/")) {
         const { ingressTldrSourceKeys, publishedIngressTldr } = await import("./skyIngressTldrSources");

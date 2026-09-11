@@ -13054,7 +13054,7 @@ export function App() {
 
     const natalSkyRequest = profileNatalSkyRequestRef.current?.key === natalSkyRequestKey
       ? profileNatalSkyRequestRef.current.request
-      : withNatalChartCalculationTimeout(getAstrodienstSky(birthLocation, birthDateTime));
+      : withNatalChartCalculationTimeout(getAstrodienstSky(birthLocation, birthDateTime, { includeDailyEvents: false }));
 
     profileNatalSkyRequestRef.current = { key: natalSkyRequestKey, request: natalSkyRequest };
 
