@@ -376,7 +376,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       const longitude = normalize(pointLongitude(fixture.inverse ? fixture.body : "Sun") + degrees);
       const friendSky = structuredClone(sky);
       // Avoid filling the 16-card ranking cap with same-chart conjunctions.
-      const fixtureOffset = fixture.body === "Imum Coeli" && fixture.aspect === "sextile" && !fixture.inverse ? 47 : 17;
+      const fixtureOffset = fixture.body === "Imum Coeli" && fixture.aspect === "sextile" ? 47 : 17;
       for (const position of friendSky.positions) {
         position.longitude = normalize(position.longitude! + fixtureOffset);
         position.degree = position.longitude % 30;
