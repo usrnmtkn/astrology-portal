@@ -1,3 +1,4 @@
+import { separateArticleHoroscopeRow } from "../../apps/web/src/content/skyArticleHoroscopes.mjs";
 // @ts-ignore Shared import and publication boundary.
 import { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
@@ -1080,6 +1081,11 @@ function validateWriteBody(body: Record<string, unknown>) {
   if (body.status === "LIVE" && body.reviewState) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
 }
 
+function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T): T {
+  try { return separateArticleHoroscopeRow(row); }
+  catch (error) { throw new GeneratedContentRequestError((error as Error).message, 422); }
+}
+
 function assertReaderEligiblePublication(row: Record<string, any>) {
   if (row.status !== "LIVE") return;
   try { assertCleanReaderCopy(row); } catch (error) {
@@ -1665,6 +1671,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     ...(packageState?.readerServing ? { reviewed_at: now, published_at: now } : {})
   };
 
+  Object.assign(row, normalizeArticleHoroscopes(row));
   assertReaderEligiblePublication(row);
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
     method: "POST",
@@ -1736,7 +1743,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
 
   const blockType = normalizedGeneratedContentBlockType(body.blockType, body.surface, body.mode);
   const isCmsRow = isCmsGeneratedContentWriteBody(body);
-  return {
+  return normalizeArticleHoroscopes({
     content_key: body.contentKey.trim(),
     surface: body.surface,
     mode: body.mode,
@@ -1761,7 +1768,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     sections: body.sections ?? [],
     reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey) ? sampleOnlyReviewerNote : ""),
     updated_at: new Date().toISOString()
-  };
+  });
 }
 
 async function fetchExistingRowsByContentKey(contentKeys: string[]) {
@@ -2618,6 +2625,27 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.evergreen_by = body.evergreen ? body.evergreenBy ?? "admin" : null;
   }
 
+  if (/^sky\/article-(?:template|edition)\//u.test(existing.content_key)
+    && existing.sections?.articleHoroscopes && body.sections !== undefined
+    && !(body.sections as Record<string, unknown>)?.articleHoroscopes) {
+    throw new GeneratedContentRequestError("Saved article horoscopes cannot be omitted. Reload the article before saving.", 422);
+  }
+  const effectiveArticle = { ...existing, ...patch };
+  const separatedArticle = normalizeArticleHoroscopes(effectiveArticle);
+  if (separatedArticle !== effectiveArticle) {
+    patch.body = separatedArticle.body;
+    patch.sections = separatedArticle.sections;
+    patch.source_snapshot = separatedArticle.source_snapshot;
+  }
+  const editsImportedHoroscopes = /^sky\/article-(?:template|edition)\//u.test(existing.content_key)
+    && body.sections !== undefined && JSON.stringify(body.sections) !== JSON.stringify(existing.sections);
+  if (editsImportedHoroscopes) {
+    patch.status = "DRAFT";
+    patch.review_state = "owner-review-required";
+    patch.reviewed_at = null;
+    patch.source_snapshot = { ...(existing.source_snapshot ?? {}), ...(patch.source_snapshot as Record<string, unknown> ?? {}), review_status: "needs_review" };
+  }
+
   const editsReferenceCopy = existing && isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {}) && (
     (body.body !== undefined && body.body !== existing.body) || (body.headline !== undefined && body.headline !== existing.headline)
     || (body.summary !== undefined && body.summary !== existing.summary));
@@ -2636,12 +2664,12 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   // New Sky correction bodies live in the private feedback table, not metadata
   // that can accompany reader-serving rows. Existing reference history is unchanged.
-  if ((editsReferenceCopy || editsSkyCopy && process.env.STUDIO_MEMORY_FEEDBACK_ENABLED !== 'true') && existing) {
+  if ((editsReferenceCopy || editsImportedHoroscopes || editsSkyCopy && process.env.STUDIO_MEMORY_FEEDBACK_ENABLED !== 'true') && existing) {
     const snapshot = { ...(existing.source_snapshot ?? {}), ...((patch.source_snapshot ?? {}) as Record<string, unknown>) };
     const history = Array.isArray(snapshot.studioRevisionHistory) ? snapshot.studioRevisionHistory : [];
     snapshot.studioRevisionHistory = [...history, { updatedAt: existing.updated_at, status: existing.status,
       headline: existing.headline, summary: existing.summary, body: existing.body,
-      bodyHash: createHash("sha256").update(existing.body ?? "").digest("hex") }];
+      bodyHash: createHash("sha256").update(existing.body ?? "").digest("hex"), ...(editsImportedHoroscopes ? { sections: existing.sections } : {}) }];
     patch.source_snapshot = snapshot;
   }
   if (editsSkyCopy) {

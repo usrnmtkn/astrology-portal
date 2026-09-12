@@ -1,3 +1,4 @@
+import { articleTemplateWithHoroscopes } from "../../apps/web/src/content/skyArticleHoroscopes.mjs";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
@@ -18,6 +19,7 @@ type TemplateRow = {
   content_key: string;
   headline?: string | null;
   body?: string | null;
+  sections?: unknown;
   status?: string | null;
   lane?: string | null;
   review_state?: string | null;
@@ -51,7 +53,7 @@ function supabaseUrl() {
 async function loadApprovedTemplate(templateId: string) {
   const params = new URLSearchParams({
     id: `eq.${templateId}`,
-    select: "id,content_key,headline,body,status,lane,review_state,event_type,source_snapshot",
+    select: "id,content_key,headline,body,sections,status,lane,review_state,event_type,source_snapshot",
     limit: "1"
   });
   const response = await adminFetchJson(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
@@ -117,7 +119,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       { transitWindowPoints: [planet] }
     );
     const facts = skyArticleEditionFactsFromSnapshot(snapshot, planet);
-    const placeholders = skyArticleTemplatePlaceholders(template.body ?? "")
+    const completeTemplate = articleTemplateWithHoroscopes(template.body ?? "", template.sections);
+    const placeholders = skyArticleTemplatePlaceholders(completeTemplate)
       .filter((placeholder) => placeholder.name !== "risingBlocks")
       .map((placeholder) => ({ ...placeholder,
         description: (template.source_snapshot?.editorialImport as {slotDescriptions?: Record<string, string[]>} | undefined)?.slotDescriptions?.[placeholder.name]?.join("\n") || placeholder.description
@@ -146,7 +149,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     const generation = await generateSkyArticleTemplateSlots({
       templateKey: template.content_key.replace(/^sky-article-template\//u, "sky/article-template/"),
-      templateBody: template.body ?? "",
+      templateBody: completeTemplate,
       planet: facts.planet,
       sign: facts.sign,
       facts,
