@@ -9,9 +9,9 @@ const variableColors = compositionVariableColors(SKY_PLACEMENT_VARIABLES);
 export type SkyVariableFacts = Record<string, string | undefined>;
 
 export function SkyVariableText({ value, facts }: { value: string; facts: SkyVariableFacts }) {
-  return <>{skyPlacementVariableSegments(value, facts).map((part: { text: string; token?: string; available?: boolean }, index: number) => part.token
+  return <>{skyPlacementVariableSegments(value, facts).map((part: { text: string; token?: string; name?: string; available?: boolean }, index: number) => part.token
     ? <span key={index} className={`admin-composition-variable ${part.available ? "variable-fact" : "variable-unmapped"}`}
-      data-variable-color={variableColors.get(part.token.replace(/[{}]/g, ""))}
+      data-variable-color={variableColors.get(part.name ?? "")}
       title={`${part.token}${part.available ? " · calculated value" : " · needs a calculated value"}`}>{part.text}</span>
     : <span key={index}>{part.text}</span>)}</>;
 }
