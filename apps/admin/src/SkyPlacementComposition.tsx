@@ -67,6 +67,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const availableRows = selectedRows.filter((row): row is CompositionMapRow => Boolean(row));
   const assembly = skyPlacementAssembly(availableRows, writing === "ingress" ? "fallback" : writing, current.motion);
   const ingressRow = availableRows.find(row => /^sky-placement\/article\//u.test(row.content_key));
+  const phraseRecord = useMemo(() => ingressRow ? effectivePackageRecord(ingressRow.sections) as Record<string, any> : undefined, [ingressRow?.sections]);
   const selectedWriting = writing === "ingress" && ingressRow ? writing : assembly.hasFallback ? writing === "ingress" ? "article" : writing : "article";
   const parts = selectedWriting === writing ? assembly.parts : skyPlacementAssembly(availableRows, selectedWriting === "ingress" ? "fallback" : selectedWriting, current.motion).parts;
   const edit = (field: SkyPlacementAssemblyField) => onEditField && !field.row.content_key.startsWith("fallback-hook/") ? onEditField(field.row, field.path, current) : onEditRow(field.row);
@@ -192,7 +193,17 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
               </div>
             </li>)}
           </ol>
-          <SkyPlacementVariableKey facts={variableFacts} />
+          <SkyPlacementVariableKey facts={variableFacts} phraseSource={phraseRecord && ingressRow ? {
+            planet: current.planet,
+            sign: current.sign,
+            label: `${title(current.planet)} in ${title(current.sign)}`,
+            record: phraseRecord,
+            onLoadSource: async key => {
+              const row = await loadRowRef.current?.({ id: `package:${key}`, content_key: key, inventory_only: true } as CompositionMapRow) as CompositionMapRow | undefined;
+              return row ? effectivePackageRecord(row.sections) as Record<string, any> : undefined;
+            },
+            onEdit: sourceId => onEditField ? onEditField(ingressRow, `ingress.sources.${sourceId}`, current) : onEditRow(ingressRow)
+          } : undefined} />
           <p>{selectedWriting === "fallback" ? "You can add and reorder evergreen sections in the linked editor. Empty sections are skipped." : "The app owns the article order. Edit the linked fields to change the wording."} The short retrograde copy is managed under Assembly and is not part of this article.</p>
         </div>}
         {view === "assembly" && availableRows.map(row => {
