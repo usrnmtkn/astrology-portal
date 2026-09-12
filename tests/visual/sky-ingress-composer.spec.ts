@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 const key = 'sky-placement/article/saturn/aries';
+const baseSource = skyPlacementSourceRecords.get(key)!;
 const virtual = (contentKey: string) => {
  const source = skyPlacementSourceRecords.get(contentKey);
  return source ? { id: `package:${contentKey}`, content_key: contentKey, surface: 'sky', mode: 'in_depth', status: 'DRAFT', lane: 'reference', provider: 'tldrastro-fallback-architecture-v3', headline: source.headline, summary: source.summary, body: source.body_you, sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: 'fallback_hook', event_type: 'fallback-hook', package_starter: true } : null;
@@ -48,9 +49,17 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await map.getByRole('button', { name: 'Set up placement composition' }).click();
   const editor = page.getByRole('dialog');
   await expect(editor).toBeVisible();
-  await editor.getByRole('button', { name: 'Add placement composition' }).click();
+  await editor.getByRole('button', { name: 'Add prefilled placement composition' }).click();
   const composer = editor.getByRole('region', { name: 'Placement composition' });
-  await expect(composer.getByLabel('Ingress sentence source')).toHaveValue('planetFunctionSentence');
+  const library = composer.getByRole('region', { name: 'Sky writing library' });
+  await expect(library).toBeVisible();
+  await expect(library.getByRole('button', { name: 'Fill empty fields from source library' })).toBeVisible();
+  await expect(library.getByLabel('Writing library Placement thesis')).toHaveValue(baseSource.tldrWhat);
+  await expect(library.getByLabel('Writing library How it shows up')).toHaveValue(baseSource.fallback.lived);
+  await expect(library.getByLabel('Writing library Challenge and response')).toHaveValue(baseSource.fallback.turn);
+  await expect(library.getByLabel('Writing library General')).toHaveValue(baseSource.fallback.lived);
+  await expect(library.getByLabel('Writing library Opening hook')).toHaveValue(baseSource.fallback.hook);
+  await expect(library.getByLabel('Writing library Closing line')).toHaveValue(baseSource.tldrTakeaway);
   await expect(composer.getByLabel('Ingress composition view').locator('option')).toHaveText(['Draft preview', 'Main template', 'Assembly and omissions']);
   const enabled = composer.getByLabel('Use composition when the complete article is empty');
   await enabled.check();
@@ -59,9 +68,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await enabled.uncheck();
   await expect(composer.getByText('Composition is not enabled', { exact: false })).toBeVisible();
   await expect(editor.getByLabel('Placement writing system details', { exact: true })).toHaveCount(1);
+  await composer.locator('summary').filter({ hasText: /^Advanced source tools$/u }).click();
+  await expect(composer.getByLabel('Ingress sentence source')).toHaveValue('planetFunctionSentence');
   await composer.getByLabel('Ingress source planetFunctionSentence').fill('Fixture {{planetTitle}} meaning.');
   await expect(composer.locator('.admin-sky-section-reference').first()).toHaveText(`${key}#ingress.sources.planetFunctionSentence`);
-  await composer.getByText('Add a named sentence source', { exact: true }).click();
+  await composer.getByText('Add a custom sentence source', { exact: true }).click();
   await composer.getByLabel('New ingress source name').fill('additionalMeaningSentence');
   await composer.getByRole('button', { name: 'Add sentence source', exact: true }).click();
   await composer.getByLabel('Ingress source additionalMeaningSentence').fill('Fixture additional {{signTitle}} sentence.');
@@ -70,7 +81,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await composer.getByLabel('Insert ingress source slot').selectOption('additionalMeaningSentence');
   await expect(composer.getByLabel('Ingress section template')).toHaveValue('{{additionalMeaningSentence}}');
   await composer.getByRole('button', { name: 'Move Additional meaning up', exact: true }).click();
-  await expect(composer.getByLabel('Ingress module order').locator('li').nth(14)).toContainText('Additional meaning');
+  await expect(composer.getByLabel('Ingress module order').getByRole('button', { name: 'Additional meaning', exact: true })).toBeVisible();
   await composer.getByLabel('Ingress composition view').selectOption('assembly');
   await expect(composer.locator('.admin-template-reader-surface')).toContainText(`${key}#ingress.sources.additionalMeaningSentence`);
   await expect(composer.locator('.admin-template-reader-surface')).toContainText('Fixture additional Aries sentence.');
