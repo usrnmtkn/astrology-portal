@@ -6,6 +6,8 @@ import {
   preferSkyWritingLibrary,
   skyWritingLibraryInstalled,
   skyWritingLibraryIsPrimary,
+  skyWritingLibrarySourceModuleEnabled,
+  toggleSkyWritingLibrarySourceModule,
   type SkyWritingLibraryComposition,
   type SkyWritingLibrarySource
 } from "./skyWritingLibrary";
@@ -47,11 +49,13 @@ export default function SkyWritingLibraryEditor({ contentKey, composition, disab
     {SKY_WRITING_LIBRARY_GROUPS.map((group, groupIndex) => <details className="admin-workspace-details" key={group.id} open={groupIndex < 3 || undefined}>
       <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary>
       <p>{group.description}</p>
+      {group.id === "experiences" && <p>Writing an experience stores it in the library. It only enters the fallback article after you choose <strong>Include in fallback</strong>, so you can keep several possibilities without publishing all of them at once.</p>}
       <div className="admin-review-stack">
         {group.fields.map(item => {
           const source = composition.sources[item.id];
           if (!source) return null;
           const reference = source.reference;
+          const included = group.id === "experiences" && skyWritingLibrarySourceModuleEnabled(composition, item.id);
           return <div className="admin-editor-guidance" key={item.id}>
             <label className="admin-review-copy-editor">
               <span><strong>{item.label}</strong> <code>{`{{${item.id}}}`}</code></span>
@@ -72,6 +76,12 @@ export default function SkyWritingLibraryEditor({ contentKey, composition, disab
               />}
             </label>
             <div className="admin-sky-writing-source-actions">
+              {group.id === "experiences" && <StudioButton
+                type="button"
+                aria-pressed={included}
+                disabled={disabled || (!included && composition.modules.length >= 32)}
+                onClick={() => onChange(toggleSkyWritingLibrarySourceModule(composition, item.id, item.label))}
+              >{included ? "Remove from fallback" : "Include in fallback"}</StudioButton>}
               <small>Source: <code>{contentKey}#ingress.sources.{item.id}</code> · scope: {item.kind}</small>
               <StudioButton type="button" disabled={disabled} onClick={() => onAdvancedSource(item.id)}>Advanced source tools</StudioButton>
             </div>
