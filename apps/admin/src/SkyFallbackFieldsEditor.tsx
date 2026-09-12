@@ -138,7 +138,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       {selectedSection && (selectedSection.paragraphs || selectedSection.items) ? <SkySectionPacketEditor section={selectedSection} disabled={disabled} facts={variableFacts} onChange={changeSection} /> : selectedSection?.phrases ? <SkyPhraseCompositionEditor phrases={selectedSection.phrases} disabled={disabled} facts={variableFacts} onChange={phrases => changeSection({ phrases })} /> : <label className="admin-review-copy-editor">
         <span>{field.label}</span>
         {retrograde && <small className="admin-field-hint">{field.key === "Body" ? "The full opening paragraph on the retrograde detail page." : "The short version used by retrograde cards. It does not replace the detail-page opening."}</small>}
-        {field.key.startsWith("fallback.") && <small className="admin-field-hint">Used when the full placement article is unavailable.{skyRetrogradeBodies.has(planet) && " Its motion setting controls which page includes it."}</small>}
+        {field.key.startsWith("fallback.") && <small className="admin-field-hint">Legacy fallback field. It remains available for existing serving copy, but new reusable writing belongs in the Writing library below.</small>}
         <StudioTextarea ref={textarea} className="admin-copy-field-body" aria-label={`Fallback field ${field.label}`} data-sky-field={field.key}
           value={field.value} disabled={disabled} aria-invalid={variableIssues.length > 0 || undefined} onChange={event => changeWriting(event.target.value)} />
       </label>}
@@ -151,14 +151,15 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       </details>
     </> : <p>No editable writing fields are available for this source.</p>}
     {placement && <SkyWritingSystemDetails system="placement" />}
-    {placement && <details className="admin-workspace-details" open={initialField?.startsWith("ingress") || undefined}>
-      <AdminDisclosureSummary>Placement composition</AdminDisclosureSummary>
+    {placement && <details className="admin-workspace-details" open>
+      <AdminDisclosureSummary>Writing library & placement composition</AdminDisclosureSummary>
+      <p>Edit reusable planet language, zodiac-sign lore, planet × sign synthesis, experience hooks, aspect writing, and optional context here. This is the preferred authoring path for new Sky fallback writing.</p>
       <SkyIngressComposer source={{ ...source, contentKey }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
         initialField={initialField} onChange={value => onChange("ingress", value)} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />
     </details>}
     {placement && <details className="admin-workspace-details admin-evergreen-sections" open={field?.key.startsWith("fallback.") || undefined}>
-      <AdminDisclosureSummary>Evergreen sections</AdminDisclosureSummary>
-      <p>Reusable writing for any occurrence of this placement. Complete placement articles and eligible placement composition take priority. Otherwise, the blocks matching the selected motion appear in this order. Empty blocks are skipped.</p>
+      <AdminDisclosureSummary>Legacy evergreen sections</AdminDisclosureSummary>
+      <p>These blocks remain editable so existing serving fallbacks can be reviewed or repaired without losing history. For new reusable placement writing, use the Writing library above. Complete placement articles and eligible placement composition still keep their existing resolver priority.</p>
       <ol aria-label="Evergreen section order">
         {evergreen.map((section, index) => {
           const path = section.source ? `fallback.${section.source}` : `${SKY_EVERGREEN_SECTIONS_PATH}.${section.id}`;
