@@ -217,3 +217,20 @@ for (const family of ['you', 'friend'] as const) {
   await assert.rejects(resume({...scope,admin:unreadable},priorFeedback),/feedback could not be read safely/);
 }
 console.log('Durable retry feedback: latest scoped draft/findings, stable replay, no duplicate billing, and storage failure passed.');
+
+// A new logical attempt cannot reset the enclosing worker's remaining budget.
+{
+  const { rows, admin } = storage();
+  mock.timers.enable({ apis: ['setTimeout', 'Date'], now: Date.now() });
+  const deadline = Date.now() + 70_000;
+  let calls = 0;
+  try {
+    await assert.rejects(resume({ admin, family: 'you', jobId: 'continuation', attempt: 2, deadline }, async () => {
+      await step(request('writer'), async () => { calls++; mock.timers.tick(11_000); return result('writer'); });
+      return step(request('judge'), async () => { assert.fail('the invocation budget must not reset'); });
+    }), TransitReadingCheckpointYield);
+    assert.equal(calls, 1);
+    assert.equal(rows.length, 1);
+  } finally { mock.timers.reset(); }
+}
+console.log('Continuation checkpoint: inherited worker deadline prevents an extra billed step.');
