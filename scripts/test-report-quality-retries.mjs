@@ -94,6 +94,15 @@ try {
                 if ('attempt' in patch) assert.equal(patch.attempt, job.attempt - 1, 'A continuation refunds only its scheduler claim.');
               } else assert.equal("attempt" in patch, false, "Automatic retries must never reset their budget.");
               assert.equal("facts" in patch, false, "The saved factual brief must remain locked.");
+              if (patch.state === "retry" && scenario !== "checkpoint-progress") {
+                assert.equal(placeholder.status, "DRAFT", "Rejected drafts remain private between attempts.");
+                assert.equal(patch.run_after, job.run_after, "Review retry retains its already-due timestamp.");
+                assert.equal(patch.locked_at, null);
+                assert.equal(patch.locked_by, null);
+                assert.match(patch.last_error, /Writing quality gate did not pass/);
+                assert.match(patch.last_error, /Diagnostic fixture/);
+                assert.ok(!String(placeholder.error).includes("Diagnostic fixture"));
+              }
               Object.assign(job, patch);
               rows = [job];
             } else if (route === "user_generated_interpretations") {
@@ -148,20 +157,9 @@ try {
           assert.equal(job.attempt, 1);
           assert.equal(generationCalls, 4);
         } else {
-          assert.equal(job.state, "retry", "First quality rejection must schedule another attempt.");
-          assert.equal(placeholder.status, "DRAFT", "The library must keep showing generating between attempts.");
-          assert.equal(Date.parse(job.run_after) - now, 120_000);
-          assert.equal(job.locked_at, null);
-          assert.equal(job.locked_by, null);
-          assert.match(job.last_error, /Writing quality gate did not pass/);
-          assert.match(job.last_error, /Diagnostic fixture/);
-          assert.ok(!String(placeholder.error).includes("Diagnostic fixture"), "Private diagnostics must not reach the reader placeholder.");
-          assert.equal((await execute()).claimed, 0, "The backoff must prevent immediate retry churn.");
-          while (job.state === "retry") {
-            assert.ok(job.attempt < 4, "Retries must stop at the attempt cap.");
-            now = Date.parse(job.run_after);
-            await execute();
-          }
+          // Completed review failures continue in this invocation through the
+          // same exclusive claim; the initial call must finish or exhaust its cap.
+          assert.equal(job.attempt, scenario === "recovery" ? 2 : 4);
           assert.equal(job.state, scenario === "recovery" ? "complete" : "failed");
           assert.equal(generationCalls, scenario === "recovery" ? 2 : 4);
           assert.equal(job.result_id, scenario === "recovery" ? "approved-report-fixture" : null);
