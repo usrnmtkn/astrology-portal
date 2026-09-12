@@ -6,7 +6,7 @@ export default function ImportedArticleHoroscopesEditor({sections,onChange}:{sec
   const section = (sections as {articleHoroscopes?: ArticleHoroscopeSection})?.articleHoroscopes;
   if (!section) return null;
   const update = (next:typeof section) => onChange({...sections as Record<string,unknown>,articleHoroscopes:next});
-  return <details className="admin-sky-related-group admin-diagnostics-details" open>
+  return <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details" open>
     <AdminDisclosureSummary><span>House horoscopes</span>{' '}<strong>{section.passages.length ? `${section.passages.length}/12 imported` : 'Template'}</strong></AdminDisclosureSummary>
     <p className="admin-sky-related-help">These passages belong to this article. Save stores the article and its horoscopes together. Review and publication apply to the saved version.</p>
     <label className="admin-review-copy-editor"><span>Horoscope section heading</span><StudioInput aria-label="Horoscope section heading" value={section.heading} onChange={event=>update({...section,heading:event.target.value})}/></label>
