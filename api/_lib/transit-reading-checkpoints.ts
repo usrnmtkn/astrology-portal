@@ -6,7 +6,7 @@ import type { ReportModelCallInput, ReportModelResult } from "./report-model-cli
 // Continue checkpointed steps while the invocation has time. Replaying saved
 // responses runs the existing fact/voice/review gates again, without billing.
 const MAX_STEPS = 6;
-const INVOCATION_BUDGET_MS = 240_000;
+export const TRANSIT_READING_INVOCATION_BUDGET_MS = 240_000;
 type Context = {
   admin: SupabaseReportAdmin;
   family: "you" | "friend";
@@ -33,10 +33,10 @@ export class TransitReadingCheckpointStopped extends Error {
 }
 
 export function withTransitReadingCheckpoints<T>(
-  input: Pick<Context, "admin" | "family" | "jobId" | "attempt" | "onProgress">,
+  input: Pick<Context, "admin" | "family" | "jobId" | "attempt" | "onProgress"> & { deadline?: number },
   run: () => Promise<T>
 ): Promise<T> {
-  return context.run({ ...input, step: 0, called: false, deadline: Date.now() + INVOCATION_BUDGET_MS }, run);
+  return context.run({ ...input, step: 0, called: false, deadline: Math.min(input.deadline ?? Infinity, Date.now() + TRANSIT_READING_INVOCATION_BUDGET_MS) }, run);
 }
 
 // Completed checkpoints are immutable, so this feedback remains identical when
