@@ -7,11 +7,20 @@ import SkyPhraseCompositionEditor from "./SkyPhraseCompositionEditor";
 import SkyIngressComposer from "./SkyIngressComposer";
 import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
 import SkySectionPacketEditor from "./SkySectionPacketEditor";
+import {
+  SKY_WRITING_LIBRARY_GROUPS,
+  installSkyWritingLibrary,
+  loadSkyWritingLibrarySeeds,
+  skyWritingLibraryInstalled,
+  type SkyWritingLibraryComposition
+} from "./skyWritingLibrary";
 import { makeSkyArticleOutline, SKY_ARTICLE_OUTLINES, type SkyEditorialSection } from "./skyArticleOutlines";
 // @ts-ignore Shared inline-variable contract used by the reader and save API.
 import { isSkyPlacementVariableField, skyPlacementVariableFacts, skyPlacementVariableIssues } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 // @ts-ignore Shared reader/editor schema; editor labels are never rendered as prose.
 import { skyEvergreenLayout, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
+// @ts-ignore Shared deterministic placement-composition starter.
+import { makeSkyIngressComposition } from "../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
 
 type Field = { key: string; label: string; value: string };
 type Props = {
@@ -33,7 +42,10 @@ type EvergreenSection = SkyEditorialSection;
 export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sourceFields, source, initialField, selection, disabled, onChange, onOpenSource, onLoadSource }: Props) {
   const [selectedField, setSelectedField] = useState(initialField ?? "");
   const [outline, setOutline] = useState("ingress");
+  const [installingLibrary, setInstallingLibrary] = useState(false);
+  const [libraryError, setLibraryError] = useState("");
   const textarea = useRef<HTMLTextAreaElement>(null);
+  const autoInstallAttempted = useRef("");
   const placement = contentKey.match(/^sky-placement\/article\/([^/]+)\/([^/]+)$/u);
   const retrograde = contentKey.match(/^sky-placement\/retrograde\/([^/]+)$/u);
   const planet = placement?.[1] ?? retrograde?.[1] ?? "";
@@ -47,6 +59,10 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const variableFacts = skyPlacementVariableFacts({ planet, sign, isRetrograde: rxContext });
   const variableIssues: string[] = supportsVariables ? skyPlacementVariableIssues(field.value) : [];
   const evergreen: EvergreenSection[] = placement ? skyEvergreenLayout(source) : [];
+  const initialLibrarySourceId = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1] ?? "";
+  const initialLibraryField = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields).find(item => item.id === initialLibrarySourceId);
+  const ingressComposition = (source as Record<string, any> | undefined)?.ingress as SkyWritingLibraryComposition | undefined;
+  const libraryReady = skyWritingLibraryInstalled(ingressComposition);
   const move = (index: number, offset: number) => {
     const next = [...evergreen];
     [next[index], next[index + offset]] = [next[index + offset], next[index]];
@@ -69,20 +85,56 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
     });
   };
 
+  // Direct phrase-variable edits should prepare the Writing Library in draft
+  // and open the exact named source, rather than falling back to Placement article.
+  useEffect(() => {
+    const attemptKey = `${contentKey}#${initialLibrarySourceId}`;
+    if (!placement || !initialLibrarySourceId || libraryReady || disabled || autoInstallAttempted.current === attemptKey) return;
+    autoInstallAttempted.current = attemptKey;
+    let active = true;
+    setInstallingLibrary(true);
+    setLibraryError("");
+    void (async () => {
+      const sourceRecord = { ...(source ?? {}), contentKey } as Record<string, any>;
+      const { values } = await loadSkyWritingLibrarySeeds(sourceRecord, planet, sign, onLoadSource);
+      if (!active) return;
+      const starter = ingressComposition ?? makeSkyIngressComposition() as SkyWritingLibraryComposition;
+      onChange("ingress", installSkyWritingLibrary(starter, values));
+    })().catch(reason => {
+      if (active) setLibraryError(reason instanceof Error ? reason.message : "The Writing Library could not be prepared.");
+    }).finally(() => {
+      if (active) setInstallingLibrary(false);
+    });
+    return () => { active = false; };
+  }, [contentKey, initialLibrarySourceId, libraryReady, disabled, planet, sign, onChange, onLoadSource, ingressComposition, Boolean(placement)]);
+
   // This component is deferred. Focus after it mounts, rather than racing the
   // dashboard's scroll request against a lazy-loaded editor.
   useEffect(() => {
-    setSelectedField(initialField ?? "");
-  }, [initialField]);
+    if (!initialLibrarySourceId) setSelectedField(initialField ?? "");
+  }, [initialField, initialLibrarySourceId]);
 
   useEffect(() => {
-    if (!initialField) return;
+    if (!initialField || initialLibrarySourceId) return;
     const frame = requestAnimationFrame(() => {
       textarea.current?.focus({ preventScroll: true });
       textarea.current?.scrollIntoView({ block: "center", behavior: "auto" });
     });
     return () => cancelAnimationFrame(frame);
-  }, [initialField, field?.key]);
+  }, [initialField, initialLibrarySourceId, field?.key]);
+
+  if (placement && initialLibrarySourceId) return <section className="admin-sky-writing-editor" aria-label="Phrase variable editor">
+    <div className="admin-sky-writing-context" aria-label="Phrase variable editing context">
+      <p className="admin-eyebrow">Editable phrase variable</p>
+      <h3>{initialLibraryField?.label ?? title(initialLibrarySourceId)} <code>{`{{${initialLibrarySourceId}}}`}</code></h3>
+      <p>Editing the dedicated Writing Library source for {title(planet)} in {title(sign)}. This is separate from the Placement article field. If this placement did not already have the Writing Library installed, its governed source content is prepared in draft automatically.</p>
+      <small>Nothing is published until you use the existing Save &amp; publish action.</small>
+    </div>
+    {libraryError && <p role="alert">{libraryError}</p>}
+    {!libraryReady ? <p role="status">{installingLibrary ? `Loading ${initialLibraryField?.label ?? initialLibrarySourceId} for ${title(planet)} in ${title(sign)}…` : `Preparing ${initialLibraryField?.label ?? initialLibrarySourceId}…`}</p>
+      : <SkyIngressComposer source={{ ...source, contentKey }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
+        initialField={initialField} onChange={value => onChange("ingress", value)} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />}
+  </section>;
 
   if (!planet) return <section className="admin-sky-edition-fields" aria-label="Editable fallback fields">
     <header>
