@@ -5,7 +5,8 @@ import {
   checkpointTransitReadingModel as step,
   withTransitReadingCheckpoints as resume,
   TransitReadingCheckpointYield,
-  TransitReadingCheckpointStopped
+  TransitReadingCheckpointStopped,
+  previousTransitReadingCorrectionFeedback as priorFeedback
 } from '../api/_lib/transit-reading-checkpoints.js';
 import type { SupabaseReportAdmin } from '../api/_lib/supabase-report-admin.js';
 import type { ReportModelCallInput } from '../api/_lib/report-model-client.js';
@@ -14,7 +15,10 @@ function storage() {
   const rows: any[] = [];
   const admin = {
     async selectOne(_table: string, params: URLSearchParams) {
-      return structuredClone(rows.find(row => [...params].every(([k, v]) => k === 'select' || String(row[k]) === v.slice(3))) ?? null);
+      const matching = rows.filter(row => [...params].every(([k, v]) => ['select','order','limit'].includes(k)
+        || (v.startsWith('neq.') ? String(row[k]) !== v.slice(4) : String(row[k]) === v.slice(3))));
+      if (params.get('order') === 'step.desc') matching.sort((a,b) => b.step-a.step);
+      return structuredClone(matching[0] ?? null);
     },
     async insert(_table: string, row: any) {
       if (rows.some(r => r.you_job_id === row.you_job_id && r.friend_job_id === row.friend_job_id && r.attempt === row.attempt && r.step === row.step)) throw new Error('duplicate step');
@@ -185,3 +189,31 @@ console.log('Checkpoint transport: both providers receive cancellation; fallback
     assert.equal(calls, 2);
   } finally { mock.timers.reset(); }
 }
+
+// Retry prompts use only immutable checkpoints from the same job and immediately
+// preceding attempt, and remain identical across replay without another call.
+for (const family of ['you', 'friend'] as const) {
+  const {rows,admin}=storage();
+  const column=`${family}_job_id`;
+  const saved=(step:number,schema:string,value:unknown,job='job')=>({id:`prior-${job}-${step}`,[column]:job,attempt:1,step,state:'complete',schema_name:schema,response:{value}});
+  rows.push(saved(0,'writer',{body:'Earlier discarded draft'}),
+    saved(1,'tldr_generated_report_judge',{findings:[{finding:'Earlier finding'}]}),
+    saved(2,'writer',{headline:'Fixture',tldr:'Fixture summary',body:'Last rejected draft'}),
+    saved(3,'tldr_generated_report_judge',{findings:[{category:'factual_traceability',location:'body',finding:'Preserve conditional language'}]}),
+    saved(9,'writer',{body:'Unrelated private draft'},'other-job'));
+  assert.equal(await resume({admin,family,jobId:'job',attempt:1},priorFeedback),'');
+  const scope={admin,family,jobId:'job',attempt:2};
+  const feedback=await resume(scope,priorFeedback);
+  assert.ok(feedback.includes('Last rejected draft'));
+  assert.ok(feedback.includes('Preserve conditional language'));
+  assert.ok(!feedback.includes('Earlier discarded draft'));
+  assert.ok(!feedback.includes('Unrelated private draft'));
+  let calls=0;
+  const pipeline=async()=>step(request(await priorFeedback()),async()=>{calls++;return result('revised');});
+  await resume(scope,pipeline); await resume(scope,pipeline);
+  assert.equal(calls,1);
+  assert.equal(await resume(scope,priorFeedback),feedback);
+  const unreadable={...admin,selectOne:async()=>{throw Error('storage unavailable');}} as SupabaseReportAdmin;
+  await assert.rejects(resume({...scope,admin:unreadable},priorFeedback),/feedback could not be read safely/);
+}
+console.log('Durable retry feedback: latest scoped draft/findings, stable replay, no duplicate billing, and storage failure passed.');
