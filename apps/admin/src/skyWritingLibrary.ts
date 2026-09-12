@@ -212,12 +212,24 @@ export function preferSkyWritingLibrary(composition: SkyWritingLibraryCompositio
       ? { ...item, enabled: true, required: true }
       : item);
   const byId = new Map(prepared.map(item => [item.id, item]));
-  const library = libraryOrder.map(id => byId.get(id)).filter((item): item is SkyWritingLibraryModule => Boolean(item));
+  const pick = (...ids: string[]) => ids.map(id => byId.get(id)).filter((item): item is SkyWritingLibraryModule => Boolean(item));
   const selectedExperiences = prepared.filter(item => item.id.startsWith("library-source-experience"));
   const timing = prepared.filter(item => timingModuleIds.has(item.id));
-  const structural = prepared.filter(item => !legacyBodyModuleIds.has(item.id) && !timingModuleIds.has(item.id) && !libraryOrder.includes(item.id) && !item.id.startsWith("library-source-experience"));
-  const close = library.filter(item => item.id === "library-close");
-  return { ...installed, modules: [...structural, ...library.filter(item => item.id !== "library-close" && item.id !== "library-pressure"), ...selectedExperiences, ...library.filter(item => item.id === "library-pressure"), ...timing, ...close] };
+  const structural = prepared.filter(item => !legacyBodyModuleIds.has(item.id)
+    && !timingModuleIds.has(item.id)
+    && !libraryOrder.includes(item.id)
+    && !item.id.startsWith("library-source-experience"));
+  return {
+    ...installed,
+    modules: [
+      ...structural,
+      ...pick("library-placement", "library-planet", "library-sign"),
+      ...selectedExperiences,
+      ...pick("library-pressure", "library-collective", "library-mythology", "library-astronomy", "library-history", "library-return"),
+      ...timing,
+      ...pick("library-response", "library-close")
+    ]
+  };
 }
 
 export function skyWritingLibraryIsPrimary(composition?: SkyWritingLibraryComposition | null) {
