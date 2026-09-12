@@ -1616,11 +1616,9 @@
     white-space: nowrap;
   }
 
-  .settings-row,
-  .settings-profile-row,
-  .settings-signout-row,
-  .account-editable-row {
-    grid-template-columns: 1fr;
+  .settings-row-control:has(.settings-row-copy):has(.settings-theme-control),
+  .account-handle-edit-row {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .settings-page,
@@ -1635,7 +1633,7 @@
   }
 
   .settings-panel {
-    gap: var(--section-gap);
+    gap: var(--stack-gap);
   }
 
   .settings-card,
@@ -1644,13 +1642,11 @@
   }
 
   .settings-row-control {
-    gap: calc(var(--space-4) + var(--space-1) / 2);
+    gap: var(--space-4);
   }
 
-  .settings-row__field,
-  .account-editable-row .settings-row__field {
-    width: 100%;
-    justify-content: space-between;
+  .settings-row__field {
+    max-width: 100%;
   }
 
   .account-handle-editor {
@@ -1666,13 +1662,8 @@
     justify-content: flex-end;
   }
 
-  .settings-theme-control {
-    max-width: calc(100vw - var(--mobile-settings-control-reserved-width));
-  }
-
-  .settings-theme-control button {
-    min-width: 96px;
-    padding-inline: calc(var(--space-5) + var(--space-1) / 2);
+  .settings-row-control:has(.settings-row-copy) .settings-theme-control {
+    justify-self: start;
   }
 }
 
