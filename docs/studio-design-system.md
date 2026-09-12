@@ -137,3 +137,10 @@ Component layout rules are consolidated for composition sections, preview cards,
 The madlib template, assembled reader preview, template-token list, assembly code badges, and reader drilldown use the same per-variable color mapping. The shared key lists each variable's readable name and source type. Colors identify variable names rather than source categories, so distinct calculated facts are visually separable. Repeated occurrences retain their color across views and audience changes. Source editing and keyboard inspection keep their existing behavior.
 
 Six categorical ink/surface pairs are defined in the shared Studio theme, with separate light/dark values and at least 4.5:1 text contrast. A template's sorted unique variable names select from this palette; palettes repeat beyond six variables, so the visible names and accessible action labels remain the authoritative identifiers. Colored narrative text retains the body typography, wraps inline, and keeps action underlines. Hover must preserve the identity color. This is a categorical extension to the reviewed system, separate from semantic error/status colors.
+
+
+## Disclosure surfaces and Sky variable definitions
+
+Standalone expandable groups use `admin-workspace-details` in both closed and open states, including source history, related passages, composition guidance and editorial history. Inline table and toolbar disclosures remain inside their existing row or toolbar surface. Native `details` elements do not inherit the section grid helper; the browser retains their disclosure layout and hidden-content behavior.
+
+The Sky variable key uses one raised definition list with 16px row insets and continuous separators. Variable names and descriptions align in two tracks on desktop and stack on mobile. Example values and availability labels have their own wrapping row. Variable badges and their rendered sentence values reuse the shared categorical palette and stable name mapping.

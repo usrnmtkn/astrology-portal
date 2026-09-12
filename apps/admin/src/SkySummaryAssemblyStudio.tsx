@@ -57,7 +57,7 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
       <h4>Full summary template</h4>
       <p>Click the white words to edit a sentence around its protected variables. Edit the opening with the Sun and Moon examples below. Paragraph and event controls are available here too.</p>
     </div></header>
-    <details><AdminDisclosureSummary>Paragraphs and event order</AdminDisclosureSummary>
+    <details className="admin-workspace-details"><AdminDisclosureSummary>Paragraphs and event order</AdminDisclosureSummary>
     <label><span>Assembly layout</span><StudioTextarea aria-label="Assembly layout" rows={6} value={layout} onChange={event => setEditedLayout(event.target.value)} /></label>
     <div className="admin-editor-guidance">
       <p>Use single braces for slots. Blank lines start new paragraphs. The opening is required; other sections can be removed. Event wording uses the first or additional variant according to this order.</p>
@@ -78,7 +78,7 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
         slots={openingSlots} busy={busy} onEdit={onEdit} label="Sentence wording editor" />
     </section></div></div>
     <StudioButton type="button" disabled={busy} onClick={() => onEdit(selectedField)}>Edit sentence template</StudioButton>
-    <details><AdminDisclosureSummary>Preview event examples</AdminDisclosureSummary>
+    <details className="admin-workspace-details"><AdminDisclosureSummary>Preview event examples</AdminDisclosureSummary>
       <p>These are examples for checking grammar, not today’s calculated sky. Separate multiple event labels with semicolons. Placement examples use the Sun and Moon selectors below.</p>
       <label><span>Retrograde planet examples</span><StudioInput aria-label="Retrograde planet examples" value={retrogrades} onChange={event => setRetrogrades(event.target.value)} /></label>
       <label><span>Void of course remaining time example</span><StudioInput aria-label="Void of course remaining time example" value={voidRemaining} onChange={event => setVoidRemaining(event.target.value)} /></label>

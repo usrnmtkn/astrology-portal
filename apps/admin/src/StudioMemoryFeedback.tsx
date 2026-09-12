@@ -31,7 +31,7 @@ function Decision({ row, disabled, decide, credential }: { row: Feedback; disabl
   }
   return <article className="admin-editor-guidance">
     <p><strong>{row.status === 'active' ? 'Used for future drafts' : row.status === 'retired' ? 'Excluded from future drafts' : 'Pending your decision'}</strong> · {new Date(row.created_at).toLocaleString()}</p>
-    <details><AdminDisclosureSummary>Compare original and replacement</AdminDisclosureSummary>
+    <details className="admin-workspace-details"><AdminDisclosureSummary>Compare original and replacement</AdminDisclosureSummary>
       <p><strong>Original</strong></p><p className="admin-composition-source-copy">{readableCorrection(row.before_text, row.family)}</p>
       <p><strong>Replacement</strong></p><p className="admin-composition-source-copy">{readableCorrection(row.after_text, row.family)}</p>
     </details>
@@ -47,7 +47,7 @@ function Decision({ row, disabled, decide, credential }: { row: Feedback; disabl
       {row.status === 'active' ? 'Save memory decision' : 'Use for future drafts'}
     </StudioButton>
     {row.status !== 'retired' && <StudioButton type="button" disabled={disabled} onClick={() => decide(row, 'retired', row.scope, row.reason)}>Exclude from future drafts</StudioButton>}
-    <details onToggle={event => { if (event.currentTarget.open && !history) void loadHistory(); }}>
+    <details className="admin-workspace-details" onToggle={event => { if (event.currentTarget.open && !history) void loadHistory(); }}>
       <AdminDisclosureSummary>Memory decision history</AdminDisclosureSummary>
       {historyError && <p role="alert">{historyError}</p>}
       {history?.length === 0 && <p>No memory decisions yet.</p>}
