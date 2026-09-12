@@ -88,7 +88,7 @@ export const SKY_WRITING_LIBRARY_GROUPS: SkyWritingLibraryGroup[] = [
   {
     id: "experiences",
     label: "Experience hooks",
-    description: "Broad, selectable manifestations by life area. These give the writer multiple plausible ways the astrology can land without forcing one narrow canned example.",
+    description: "Broad, selectable manifestations by life area. Write several possibilities here, then choose only the ones that belong in this fallback article.",
     fields: [
       field("experienceWork", "Work", "Workload, responsibility, leadership, deadlines, colleagues, or the structure of a workday.", "placement", 3),
       field("experienceMoney", "Money", "Income, spending, pricing, resources, financial choices, or material support.", "placement", 3),
@@ -150,18 +150,12 @@ export const SKY_WRITING_LIBRARY_MODULES: SkyWritingLibraryModule[] = [
   module("library-placement", "Placement thesis and opportunity", "{{placementThesis}} {{placementOpportunity}}"),
   module("library-planet", "Planet meaning", "{{planetSummary}} {{planetFunction}}"),
   module("library-sign", "Sign meaning", "{{signSummary}} {{signCoreDrive}} {{signMethod}}"),
-  module("library-experience-work", "Experience · work", "{{experienceWork}}"),
-  module("library-experience-money", "Experience · money", "{{experienceMoney}}"),
-  module("library-experience-relationships", "Experience · relationships", "{{experienceRelationships}}"),
-  module("library-experience-home", "Experience · home", "{{experienceHome}}"),
-  module("library-experience-body", "Experience · body", "{{experienceBody}}"),
-  module("library-experience-time", "Experience · time", "{{experienceTime}}"),
-  module("library-experience-recognition", "Experience · recognition", "{{experienceRecognition}}"),
-  module("library-experience-creative", "Experience · creativity", "{{experienceCreative}}"),
   module("library-pressure", "Placement pressure and shadow", "{{placementPressure}} {{placementShadow}}"),
   module("library-collective", "Collective expression", "{{placementCollectiveTheme}} {{placementCollectiveShadow}}"),
   module("library-mythology", "Optional mythology", "{{mythologySummary}}"),
+  module("library-astronomy", "Optional astronomy", "{{astronomySummary}}"),
   module("library-history", "Optional previous-cycle context", "{{historicalCallback}}"),
+  module("library-return", "Optional return context", "{{returnMeaning}}"),
   module("library-response", "Placement correction and practice", "{{placementCorrection}} {{placementPractice}}"),
   module("library-close", "Reflection and close", "{{reflectionQuestion}} {{closingLine}}")
 ];
@@ -186,6 +180,25 @@ export function installSkyWritingLibrary(composition: SkyWritingLibraryCompositi
   return next;
 }
 
+export function skyWritingLibrarySourceModuleId(sourceId: string) {
+  return `library-source-${sourceId}`;
+}
+
+export function skyWritingLibrarySourceModuleEnabled(composition: SkyWritingLibraryComposition, sourceId: string) {
+  return composition.modules.some(item => item.id === skyWritingLibrarySourceModuleId(sourceId) && item.enabled);
+}
+
+export function toggleSkyWritingLibrarySourceModule(composition: SkyWritingLibraryComposition, sourceId: string, label: string): SkyWritingLibraryComposition {
+  const id = skyWritingLibrarySourceModuleId(sourceId);
+  if (composition.modules.some(item => item.id === id)) return { ...composition, modules: composition.modules.filter(item => item.id !== id) };
+  if (composition.modules.length >= 32) return composition;
+  const next = module(id, `Experience · ${label}`, `{{${sourceId}}}`);
+  const before = composition.modules.findIndex(item => item.id === "library-pressure");
+  const modules = [...composition.modules];
+  modules.splice(before >= 0 ? before : modules.length, 0, next);
+  return { ...composition, modules };
+}
+
 const legacyBodyModuleIds = new Set(["practice", "manifestations", "third-manifestation", "response", "intro-mechanism", "intro-close", "close"]);
 const timingModuleIds = new Set(["single-pass", "first-pass", "return", "final-pass", "long-cycle"]);
 const primaryLibraryModuleIds = new Set(["library-placement", "library-response"]);
@@ -200,9 +213,11 @@ export function preferSkyWritingLibrary(composition: SkyWritingLibraryCompositio
       : item);
   const byId = new Map(prepared.map(item => [item.id, item]));
   const library = libraryOrder.map(id => byId.get(id)).filter((item): item is SkyWritingLibraryModule => Boolean(item));
+  const selectedExperiences = prepared.filter(item => item.id.startsWith("library-source-experience"));
   const timing = prepared.filter(item => timingModuleIds.has(item.id));
-  const structural = prepared.filter(item => !legacyBodyModuleIds.has(item.id) && !timingModuleIds.has(item.id) && !libraryOrder.includes(item.id));
-  return { ...installed, modules: [...structural, ...library.filter(item => item.id !== "library-close"), ...timing, ...library.filter(item => item.id === "library-close")] };
+  const structural = prepared.filter(item => !legacyBodyModuleIds.has(item.id) && !timingModuleIds.has(item.id) && !libraryOrder.includes(item.id) && !item.id.startsWith("library-source-experience"));
+  const close = library.filter(item => item.id === "library-close");
+  return { ...installed, modules: [...structural, ...library.filter(item => item.id !== "library-close" && item.id !== "library-pressure"), ...selectedExperiences, ...library.filter(item => item.id === "library-pressure"), ...timing, ...close] };
 }
 
 export function skyWritingLibraryIsPrimary(composition?: SkyWritingLibraryComposition | null) {
