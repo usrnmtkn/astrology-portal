@@ -51,7 +51,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       await page.goto(`${studioPath}#review-queue`);
       await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
       await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
-      const item = page.locator(".admin-review-queue-row").filter({ hasText: key }).first();
+      const item = page.getByRole("row").filter({ hasText: key }).first();
       await expect(item).toBeVisible();
       await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
       await item.getByRole("button", { name: "Edit", exact: true }).click();
@@ -74,7 +74,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
       await editor.getByRole("button", { name: "Close", exact: true }).click();
       await page.reload();
       await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
-      await page.locator(".admin-review-queue-row").filter({ hasText: key }).first().getByRole("button", { name: "Edit", exact: true }).click();
+      await page.getByRole("row").filter({ hasText: key }).first().getByRole("button", { name: "Edit", exact: true }).click();
       await expect(field).toHaveValue(revised);
       await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
       await editor.getByRole("button", { name: "Save & publish", exact: true }).click();

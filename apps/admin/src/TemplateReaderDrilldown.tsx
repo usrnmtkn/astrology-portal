@@ -1,3 +1,5 @@
+import { CompositionVariableKey, compositionVariableColors } from "./CompositionVariableKey";
+import { StudioButton } from "./StudioControls";
 import { useMemo, useState } from "react";
 import {
   buildCompositionTemplate,
@@ -20,7 +22,8 @@ function segmentButton(
   segment: CompositionPreviewSegment,
   key: string,
   label: string,
-  onOpenVariable: Props["onOpenVariable"]
+  onOpenVariable: Props["onOpenVariable"],
+  color: string | undefined
 ) {
   if (!segment.name || !segment.kind) return segment.text;
   const action = segment.source
@@ -29,17 +32,19 @@ function segmentButton(
       ? `Inspect how ${label} is calculated`
       : `Inspect ${label}`;
   return (
-    <button
+    <StudioButton
       type="button"
       className={`admin-composition-variable admin-template-reader-variable variable-${segment.kind}`}
       aria-label={`${segment.text}. ${action}`}
       data-variable-label={label}
+      data-variable-name={segment.name}
+      data-variable-color={color}
       key={key}
       onClick={() => onOpenVariable(segment.name!, segment.source?.row.id ?? null)}
       title={action}
     >
       {segment.text}
-    </button>
+    </StudioButton>
   );
 }
 
@@ -54,6 +59,7 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [previewOptions, rows, templateKey]
   );
+  const variableColors = compositionVariableColors(template.slots);
   const hasAudienceVariants = template.preview.fields.some((field) => field.audience === "you")
     && template.preview.fields.some((field) => field.audience === "they");
   const fields = template.preview.fields.filter((field) => !field.audience || field.audience === audience);
@@ -69,20 +75,15 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
         <span className="ui-pill admin-status status-reviewed">Example data</span>
       </header>
 
-      <div className="admin-composition-variable-legend" aria-label="Variable color key">
-        <span className="variable-fact">Calculated fact</span>
-        <span className="variable-phrase">Reusable phrase</span>
-        <span className="variable-hook">Authored hook</span>
-        <span className="variable-copy">Saved copy</span>
-      </div>
+      <CompositionVariableKey slots={template.slots} colors={variableColors} />
 
       <div className="admin-template-reader-surface">
         <div className="admin-composition-preview-chrome">
           <span>{template.destination}</span>
           {hasAudienceVariants ? (
             <div className="admin-composition-preview-audience" role="group" aria-label="Preview audience">
-              <button type="button" aria-pressed={audience === "you"} className={audience === "you" ? "active" : ""} onClick={() => setAudience("you")}>You</button>
-              <button type="button" aria-pressed={audience === "they"} className={audience === "they" ? "active" : ""} onClick={() => setAudience("they")}>They</button>
+              <StudioButton type="button" aria-pressed={audience === "you"} className={audience === "you" ? "active" : ""} onClick={() => setAudience("you")}>You</StudioButton>
+              <StudioButton type="button" aria-pressed={audience === "they"} className={audience === "they" ? "active" : ""} onClick={() => setAudience("they")}>They</StudioButton>
             </div>
           ) : <span>Reader preview</span>}
         </div>
@@ -97,7 +98,8 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
                     segment,
                     `${field.key}-${paragraphIndex}-${segmentIndex}`,
                     slot?.label ?? segment.name ?? "variable",
-                    onOpenVariable
+                    onOpenVariable,
+                    segment.name ? variableColors.get(segment.name) : undefined
                   );
                 });
                 return field.key.startsWith("headline")
@@ -114,7 +116,7 @@ export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVaria
           )}
         </div>
       </div>
-      {!compact && <p className="admin-field-hint">The preview is representative, not a live chart. Its colors show which words are calculated and which come from editable saved writing.</p>}
+      {!compact && <p className="admin-field-hint">The preview is representative, not a live chart. Matching colors identify the same variable throughout the template and assembled write-up.</p>}
     </section>
   );
 }

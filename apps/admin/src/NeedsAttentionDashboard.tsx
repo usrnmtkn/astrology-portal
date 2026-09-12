@@ -1,13 +1,12 @@
+import { getStudioTheme } from "./studioTheme";
+import "./studio-system.css";
+import { StudioButton } from "./StudioControls";
 import { AlertTriangle, ArrowLeft, CheckCircle2, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
 import { AdminAccessGate } from "./AdminStudioPrimitives";
 import { isPublishedButUnwired, type ContentWiringRow } from "./contentWiringStatus";
 import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./ownerSession";
-import "./admin.css";
-import "./admin-components.css";
-import "./admin-form-density.css";
-import "./admin-content-studio-layout.css";
 
 type CoverageRow = {
   id: string;
@@ -199,8 +198,9 @@ export default function NeedsAttentionDashboard() {
   ];
 
   return (
-    <main className="admin-dashboard">
+    <main className="admin-dashboard studio-standalone" data-studio-theme={getStudioTheme()}>
       <section className="admin-main">
+        {error && <p role="alert">{error}</p>}
         <header className="admin-dashboard-header">
           <div>
             <a href="/admin/content" className="admin-breadcrumb">
@@ -212,10 +212,10 @@ export default function NeedsAttentionDashboard() {
           </div>
           <div className="admin-toolbar-actions">
             <a className="admin-create-button admin-secondary-button" href="/admin/content/coverage">Content coverage</a>
-            <button type="button" className="admin-create-button admin-secondary-button" onClick={() => credential && void loadAttention(credential)} disabled={!credential || loading}>
+            <StudioButton type="button" className="admin-create-button admin-secondary-button" onClick={() => credential && void loadAttention(credential)} disabled={!credential || loading}>
               <RefreshCw size={16} aria-hidden="true" />
               {loading ? "Refreshing…" : "Refresh"}
-            </button>
+            </StudioButton>
           </div>
         </header>
 
@@ -233,7 +233,6 @@ export default function NeedsAttentionDashboard() {
         {!coverage && !loading && !bootstrapping && (
           <>
             <AdminAccessGate disabled={!normalizeAdminSecret(emergencySecret) || loading} onChange={setEmergencySecret} onSubmit={submitEmergencyAccess} value={emergencySecret} />
-            {error && <p role="alert">{error}</p>}
           </>
         )}
 

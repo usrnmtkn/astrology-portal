@@ -1,3 +1,5 @@
+import { StudioButton } from "./StudioControls";
+import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import NatalPlacementSourceEditor, { type NatalEditableRow, type NatalSourceEdits } from "./NatalPlacementSourceEditor";
 import NatalPlacementReaderPreview, { natalPlacementOverrideDraft } from "./NatalPlacementReaderPreview";
@@ -7,7 +9,6 @@ import {
   natalPlacementLabel,
   natalPlacementMotions,
   natalPlacementPlanets,
-  natalPlacementSignLabel,
   natalPlacementSigns,
   natalPlacementSourceGroups,
   type NatalPlacementHouse,
@@ -55,6 +56,7 @@ function normalizeText(value: unknown) {
 
 
 export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onDirtyChange, onSaveSource, onOpenSource, onSelectionChange, planet, rows, secret, sign }: Props) {
+  const selectionKey = `${planet}/${sign}/${house}/${motion}`;
   const signSelectionComplete = Boolean(planet && sign);
   const fullSelectionComplete = Boolean(signSelectionComplete && house);
   const readerHref = fullSelectionComplete
@@ -98,9 +100,9 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           <NatalPlacementSourceEditor row={savedRow} onDirtyChange={onDirtyChange} label={source.label} disabled={isLoading} onSave={onSaveSource} />
         )}
         {(!isOptionalExactOverride || savedRow) && (
-          <button type="button" onClick={() => onOpenSource(source.key, source.label, previewTemplate)} disabled={isLoading}>
+          <StudioButton type="button" onClick={() => onOpenSource(source.key, source.label, previewTemplate)} disabled={isLoading}>
             {previewTemplate ? savedRow ? "Preview template" : "Load preview" : savedRow ? "Edit source" : "Load and edit"}
-          </button>
+          </StudioButton>
         )}
       </article>
     );
@@ -108,34 +110,19 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
 
   return (
     <section className="admin-natal-placement-finder" aria-label="Find natal placement source writing">
-      <div className="admin-natal-placement-finder-heading">
-        <div>
-          <p className="admin-eyebrow">Natal placement source finder</p>
-          <h3>{fullSelectionComplete
-            ? natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse)
-            : signSelectionComplete
-              ? natalPlacementSignLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign)
-              : "Choose a natal placement"}</h3>
-          <p>Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.</p>
+      <h2 className="sr-only">Natal placement</h2>
+      {fullSelectionComplete && (
+        <div className="admin-natal-placement-finder-heading">
+          <StudioButton type="button" onClick={() => openContextualReaderHref(readerHref)}
+            aria-label={`View ${natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse)} in app`}>
+            View in app
+          </StudioButton>
         </div>
-        {fullSelectionComplete && (
-          <div className="admin-natal-placement-key">
-            <span>Reader path</span>
-            <code>{readerHref}</code>
-            <button
-              type="button"
-              onClick={() => openContextualReaderHref(readerHref)}
-              aria-label={`View ${natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse)} in app`}
-            >
-              View in app
-            </button>
-          </div>
-        )}
-      </div>
+      )}
       <div className="admin-natal-placement-selectors">
         <label>
-          <span>1. Planet or point</span><small>What is placed</small>
-          <select
+          <span>Planet or point</span>
+          <AdminSelect
             aria-label="Natal placement planet or point"
             value={planet}
             onChange={(event) => {
@@ -148,37 +135,36 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           >
             <option value="">Choose planet or point</option>
             {natalPlacementPlanets.map((item) => <option value={item} key={item}>{titleFromKey(item)}</option>)}
-          </select>
+          </AdminSelect>
         </label>
         <label>
-          <span>2. Zodiac sign</span><small>How it expresses itself</small>
-          <select aria-label="Natal placement zodiac sign" value={sign} onChange={(event) => onSelectionChange({ sign: event.target.value as NatalPlacementSign | "" })}>
+          <span>Zodiac sign</span>
+          <AdminSelect aria-label="Natal placement zodiac sign" value={sign} onChange={(event) => onSelectionChange({ sign: event.target.value as NatalPlacementSign | "" })}>
             <option value="">Choose sign</option>
             {natalPlacementSigns.map((item) => <option value={item} key={item}>{titleFromKey(item)}</option>)}
-          </select>
+          </AdminSelect>
         </label>
         <label>
-          <span>3. House</span><small>Where it shows up in life</small>
-          <select aria-label="Natal placement house" value={house} onChange={(event) => onSelectionChange({ house: event.target.value as NatalPlacementHouse | "" })}>
+          <span>House (optional)</span>
+          <AdminSelect aria-label="Natal placement house" value={house} onChange={(event) => onSelectionChange({ house: event.target.value as NatalPlacementHouse | "" })}>
             <option value="">Choose house</option>
             {natalPlacementHouses.map((item) => <option value={item} key={item}>{item}</option>)}
-          </select>
+          </AdminSelect>
         </label>
         <label>
-          <span>4. Motion preview</span><small>Calculated from the birth chart</small>
-          <select aria-label="Natal placement motion" value={motion} onChange={(event) => onSelectionChange({ motion: event.target.value as NatalPlacementMotion })}>
+          <span>Motion preview</span>
+          <AdminSelect aria-label="Natal placement motion" value={motion} onChange={(event) => onSelectionChange({ motion: event.target.value as NatalPlacementMotion })}>
             {natalPlacementMotions.map((item) => (
               <option value={item} key={item} disabled={item === "retrograde" && (planet === "sun" || planet === "moon")}>
                 {titleFromKey(item)}{item === "retrograde" && (planet === "sun" || planet === "moon") ? " (not possible)" : ""}
               </option>
             ))}
-          </select>
+          </AdminSelect>
         </label>
       </div>
-      {!signSelectionComplete && <p className="admin-natal-placement-prompt">Choose a planet or point and zodiac sign to read the planet-in-sign write-up.</p>}
-      {signSelectionComplete && !house && <p className="admin-natal-placement-prompt">The planet-in-sign write-up is shown below. Choose a house to add the house paragraph and exact full-placement override.</p>}
       {signSelectionComplete && (
         <NatalPlacementReaderPreview
+          key={selectionKey}
           house={house}
           motion={motion}
           onCreateOverride={onCreateOverride}
@@ -190,14 +176,14 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
         />
       )}
       {groups.filter((group) => group.key !== "structure").map((group) => (
-        <section className="admin-natal-source-group" key={group.key}>
+        <section className="admin-natal-source-group" key={`${selectionKey}/${group.key}`}>
           <header><h3>{group.label}</h3><p>{group.description}</p></header>
           <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source))}</div>
         </section>
       ))}
       {groups.filter((group) => group.key === "structure").map((group) => (
-        <details className="admin-natal-source-group admin-natal-source-advanced" key={group.key}>
-          <summary>{group.label}</summary><p>{group.description}</p>
+        <details className="admin-natal-source-group admin-natal-source-advanced" key={`${selectionKey}/${group.key}`}>
+          <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary><p>{group.description}</p>
           <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source, true))}</div>
         </details>
       ))}

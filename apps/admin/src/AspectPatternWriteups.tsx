@@ -1,3 +1,5 @@
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { AdminSelect } from "./AdminNativeControls";
 import { AlertTriangle, BookOpenText, Check, Columns2, RefreshCw, Save, Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
@@ -337,12 +339,12 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
           <p>Review, edit, preview, approve, and publish authored aspect-pattern write-ups through the normal content repository.</p>
         </div>
         <div className="admin-new-actions">
-          <button className={kind === "natal" ? "admin-primary-button" : ""} type="button" onClick={() => selectKind("natal")}>Natal Write-ups</button>
-          <button className={kind === "activation" ? "admin-primary-button" : ""} type="button" onClick={() => selectKind("activation")}>Active Now Write-ups</button>
-          <button type="button" onClick={() => void loadWriteups(kind)} disabled={isLoading}>
+          <StudioButton className={kind === "natal" ? "admin-primary-button" : ""} type="button" onClick={() => selectKind("natal")}>Natal Write-ups</StudioButton>
+          <StudioButton className={kind === "activation" ? "admin-primary-button" : ""} type="button" onClick={() => selectKind("activation")}>Active Now Write-ups</StudioButton>
+          <StudioButton type="button" onClick={() => void loadWriteups(kind)} disabled={isLoading}>
             <RefreshCw size={16} aria-hidden="true" />
             Refresh
-          </button>
+          </StudioButton>
         </div>
       </section>
 
@@ -355,9 +357,9 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
       {message && (
         <div className="admin-save-toast" role="status">
           <span>{message}</span>
-          <button type="button" onClick={() => setMessage("")} aria-label="Dismiss notification">
+          <StudioButton type="button" onClick={() => setMessage("")} aria-label="Dismiss notification">
             <X size={16} aria-hidden="true" />
-          </button>
+          </StudioButton>
         </div>
       )}
 
@@ -379,38 +381,38 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
       <section className="admin-panel aspect-writeups-filters" aria-label="Aspect pattern filters">
         <label>
           <span>Pattern</span>
-          <select value={patternFilter} onChange={(event) => setPatternFilter(event.target.value)}>
+          <AdminSelect value={patternFilter} onChange={(event) => setPatternFilter(event.target.value)}>
             <option value="all">All patterns</option>
             {patterns.map((pattern) => <option key={pattern} value={pattern}>{titlePart(pattern)}</option>)}
-          </select>
+          </AdminSelect>
         </label>
         <label>
           <span>Editorial stage</span>
-          <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as AuthoredStatus | "all")}>
+          <AdminSelect value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as AuthoredStatus | "all")}>
             <option value="all">All statuses</option>
             {statusOptions.map((status) => <option key={status} value={status}>{titlePart(status)}</option>)}
-          </select>
+          </AdminSelect>
         </label>
         <label>
           <span>Content level</span>
-          <select value={contentLevelFilter} onChange={(event) => setContentLevelFilter(event.target.value)}>
+          <AdminSelect value={contentLevelFilter} onChange={(event) => setContentLevelFilter(event.target.value)}>
             <option value="all">All levels</option>
             {contentLevels.map((level) => <option key={level} value={level}>{titlePart(level)}</option>)}
-          </select>
+          </AdminSelect>
         </label>
         <label>
           <span>Validation</span>
-          <select value={validationFilter} onChange={(event) => setValidationFilter(event.target.value)}>
+          <AdminSelect value={validationFilter} onChange={(event) => setValidationFilter(event.target.value)}>
             <option value="all">All validation</option>
             <option value="valid">Valid</option>
             <option value="needs_attention">Needs attention</option>
-          </select>
+          </AdminSelect>
         </label>
         <label className="aspect-writeups-search">
           <span>Search</span>
           <div className="admin-search-input-shell">
             <Search size={15} aria-hidden="true" />
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Record ID, headline, section, source" />
+            <StudioInput value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Record ID, headline, section, source" />
           </div>
         </label>
       </section>
@@ -419,7 +421,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
         <section className="admin-panel aspect-writeups-list" aria-label={`${kind} aspect pattern records`}>
           <h3>{kind === "activation" ? "Active Now routes" : "Natal pattern records"}</h3>
           {filteredRows.map((row) => (
-            <button
+            <StudioButton
               className={row.key === selectedRow?.key ? "is-selected" : ""}
               key={row.key}
               type="button"
@@ -432,7 +434,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
               <strong>{row.patternName}{row.targetRoleLabel ? `: ${row.targetRoleLabel}` : ""}</strong>
               <span>{row.record.id}</span>
               <span className={`ui-pill admin-status ${row.productionSelected ? "status-live" : "status-draft"}`}>{row.productionSelected ? "Live" : "Not live"}</span>
-            </button>
+            </StudioButton>
           ))}
           {!filteredRows.length && <p className="admin-empty">No aspect-pattern write-ups match these filters.</p>}
         </section>
@@ -446,17 +448,17 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
                 <p>Version {draft.version} · {titlePart(selectedRow.contentLevel)} · Last updated {formatDate(selectedRow.lastUpdated)}</p>
               </div>
               <div className="admin-new-actions">
-                <button type="button" onClick={() => void saveDraft("draft")} disabled={isLoading}>
+                <StudioButton type="button" onClick={() => void saveDraft("draft")} disabled={isLoading}>
                   <Save size={15} aria-hidden="true" />
                   Save draft
-                </button>
-                <button type="button" onClick={() => void saveDraft("reviewed")} disabled={isLoading}>
+                </StudioButton>
+                <StudioButton type="button" onClick={() => void saveDraft("reviewed")} disabled={isLoading}>
                   <Check size={15} aria-hidden="true" />
                   Mark reviewed
-                </button>
-                <button className="admin-primary-button" type="button" onClick={() => void saveDraft("approved")} disabled={isLoading}>
+                </StudioButton>
+                <StudioButton className="admin-primary-button" type="button" onClick={() => void saveDraft("approved")} disabled={isLoading}>
                   Publish approved
-                </button>
+                </StudioButton>
               </div>
             </header>
 
@@ -475,16 +477,16 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
 
             <label className="aspect-writeups-status">
               <span>Editorial stage</span>
-              <select value={draft.status} onChange={(event) => setDraft({ ...draft, status: event.target.value as AuthoredStatus })}>
+              <AdminSelect value={draft.status} onChange={(event) => setDraft({ ...draft, status: event.target.value as AuthoredStatus })}>
                 {statusOptions.map((status) => <option key={status} value={status}>{titlePart(status)}</option>)}
-              </select>
+              </AdminSelect>
             </label>
 
             <section className="aspect-writeups-fields" aria-label="Governed editable fields">
               {fieldOrder.map((field) => (
                 <label key={field}>
                   <span>{titlePart(field)}</span>
-                  <textarea
+                  <StudioTextarea
                     value={sectionTemplate(draft, field)}
                     onChange={(event) => updateField(field, event.target.value)}
                     onFocus={() => {
@@ -519,15 +521,15 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
               <h3>Preview</h3>
             </div>
             <div className="admin-new-actions">
-              <button className={previewMode === "authored" ? "admin-primary-button" : ""} type="button" onClick={() => setPreviewMode("authored")}>
+              <StudioButton className={previewMode === "authored" ? "admin-primary-button" : ""} type="button" onClick={() => setPreviewMode("authored")}>
                 <BookOpenText size={15} aria-hidden="true" />
                 Authored
-              </button>
-              <button className={previewMode === "fallback" ? "admin-primary-button" : ""} type="button" onClick={() => setPreviewMode("fallback")}>Fallback</button>
-              <button className={previewMode === "compare" ? "admin-primary-button" : ""} type="button" onClick={() => setPreviewMode("compare")}>
+              </StudioButton>
+              <StudioButton className={previewMode === "fallback" ? "admin-primary-button" : ""} type="button" onClick={() => setPreviewMode("fallback")}>Fallback</StudioButton>
+              <StudioButton className={previewMode === "compare" ? "admin-primary-button" : ""} type="button" onClick={() => setPreviewMode("compare")}>
                 <Columns2 size={15} aria-hidden="true" />
                 Compare
-              </button>
+              </StudioButton>
             </div>
           </header>
 
@@ -568,9 +570,9 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
             <h4>Approved slots</h4>
             <div>
               {slots.map((slot) => (
-                <button key={slot} type="button" onClick={() => insertSlot(slot)}>
+                <StudioButton key={slot} type="button" onClick={() => insertSlot(slot)}>
                   {slot}
-                </button>
+                </StudioButton>
               ))}
             </div>
           </section>

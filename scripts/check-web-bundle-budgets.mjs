@@ -112,7 +112,11 @@ const deferredSkyDetailItem = javaScriptFiles.find((item) => item.file.includes(
 const deferredReportRouteItem = javaScriptFiles.find((item) => item.file.includes("ReportRoute-"));
 const largestJavaScript = [...javaScriptFiles].sort((first, second) => second.gzipBytes - first.gzipBytes)[0];
 const memoryGraphItems = javaScriptFiles.filter(item => /\/(?:MemoryGraphDashboard|memory-graph-renderer)-/u.test(item.file));
-const memoryGraphCssItems = cssFiles.filter(item => /\/MemoryGraphDashboard-/u.test(item.file));
+// Follow the route's declared stylesheet dependency: Memory uses the canonical
+// Studio system, whose emitted name is shared with the other admin routes.
+const memoryGraphEntry = Object.values(manifest).find(item => item.name === "MemoryGraphDashboard");
+const memoryGraphCssFiles = new Set(memoryGraphEntry?.css ?? []);
+const memoryGraphCssItems = cssFiles.filter(item => memoryGraphCssFiles.has(item.file));
 const measurements = {
   memoryGraphJavaScriptGzipBytes: sum(memoryGraphItems, "gzipBytes"),
   memoryGraphCssGzipBytes: sum(memoryGraphCssItems, "gzipBytes"),

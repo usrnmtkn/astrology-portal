@@ -1,3 +1,4 @@
+import { StudioButton } from "./StudioControls";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
@@ -235,15 +236,11 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
     <section className="admin-natal-reader-preview" aria-label={`Reader preview for ${label}`}>
       <header>
         <div>
-          <p className="admin-eyebrow">Effective reader preview</p>
           <h3>{audience === "they" ? "What a friend sees" : "What you see"}</h3>
-          <p>{audience === "they"
-            ? "This preview uses the same production eligibility rules as the Friends reader. Friend view is composed from separate third-person source writing, so it can be reviewed and edited independently from You copy. Draft, reviewed-only, reference-lane, stale-package, and otherwise non-hydratable Studio rows are excluded."
-            : "This preview uses the same production eligibility rules as the app. Draft, reviewed-only, reference-lane, stale-package, and otherwise non-hydratable Studio rows are excluded."}</p>
         </div>
         <div className="admin-composition-preview-audience" role="group" aria-label="Natal preview audience">
-          <button type="button" aria-pressed={audience === "you"} className={audience === "you" ? "active" : ""} onClick={() => setAudience("you")}>You</button>
-          <button type="button" aria-pressed={audience === "they"} className={audience === "they" ? "active" : ""} onClick={() => setAudience("they")}>Friend</button>
+          <StudioButton type="button" aria-pressed={audience === "you"} className={audience === "you" ? "active" : ""} onClick={() => setAudience("you")}>You</StudioButton>
+          <StudioButton type="button" aria-pressed={audience === "they"} className={audience === "they" ? "active" : ""} onClick={() => setAudience("they")}>Friend</StudioButton>
         </div>
       </header>
 
@@ -251,15 +248,13 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
         <div className="admin-empty-state" role="status"><strong>Assembling reader preview…</strong></div>
       ) : preview.rendered ? (
         <div className="admin-natal-reader-preview-surface">
-          <span className="admin-eyebrow">Headline</span>
           <h3>{preview.rendered.headline}</h3>
-          <span className="admin-eyebrow">Write-up</span>
           <div className="admin-natal-reader-preview-parts">
             {preview.rendered.parts.map((part, index) => {
               const contentKey = preview.rendered?.partKeys?.[index] ?? preview.rendered?.templateKey ?? "";
               const sectionLabel = sourceLabel(contentKey);
               return (
-                <button
+                <StudioButton
                   type="button"
                   className={`admin-natal-reader-preview-part variable-${index % 2 === 0 ? "hook" : "phrase"}`}
                   key={`${contentKey}-${index}`}
@@ -268,7 +263,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
                 >
                   {part}
                   {contentKey && <small>Open {sectionLabel.toLowerCase()} →</small>}
-                </button>
+                </StudioButton>
               );
             })}
           </div>
@@ -279,8 +274,8 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             </span>
             {house && audience === "you" && !exactServing && (
               exactSaved
-                ? <button type="button" onClick={() => onOpenSource(exactKey, `Exact ${label} override`)}>Open saved override</button>
-                : <button type="button" onClick={() => onCreateOverride(exactKey, label, preview.rendered?.body ?? "")}>Create exact override</button>
+                ? <StudioButton type="button" onClick={() => onOpenSource(exactKey, `Exact ${label} override`)}>Open saved override</StudioButton>
+                : <StudioButton type="button" onClick={() => onCreateOverride(exactKey, label, preview.rendered?.body ?? "")}>Create exact override</StudioButton>
             )}
           </div>
           {preview.ignoredOverrides.length > 0 && (

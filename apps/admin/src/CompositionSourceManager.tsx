@@ -1,3 +1,5 @@
+import { StudioButton, StudioInput } from "./StudioControls";
+import { AdminSelect } from "./AdminNativeControls";
 import SkyPlacementComposition from "./SkyPlacementComposition";
 import type { SkyPlacementSelection } from "./skyPlacementAssembly";
 import { useEffect, useMemo, useState } from "react";
@@ -50,39 +52,38 @@ export default function CompositionSurfaceSources({ surfaceId, rows, templates, 
     .filter((value, index, values): value is string => typeof value === "string" && Boolean(value) && values.indexOf(value) === index);
   if (surfaceId === "sky-placement-detail") return <SkyPlacementComposition onEditField={onEditField} rows={rows} onEditRow={onEditRow} onLoadRow={onLoadRow} />;
   return <section className="admin-composition-surface-actions" aria-label="Manage composition sources">
-    <header><div><p className="admin-eyebrow">Composition Map</p><h3>Select and manage sources</h3></div><strong>{filtered.length} source{filtered.length === 1 ? "" : "s"}</strong></header>
+    <header><h3 className="sr-only">Select and manage sources</h3><span>{filtered.length} source{filtered.length === 1 ? "" : "s"}</span></header>
     {surfaceId === "natal-empty-house" && <div className="admin-natal-placement-selectors" aria-label="Empty house source context">
-      <label>Empty house<select aria-label="Empty house" value={house} onChange={(event) => { const next = Number(event.target.value); setHouse(next); if (next === rulerHouse) setRulerHouse(next === 12 ? 1 : next + 1); }}>
+      <label>Empty house<AdminSelect aria-label="Empty house" value={house} onChange={(event) => { const next = Number(event.target.value); setHouse(next); if (next === rulerHouse) setRulerHouse(next === 12 ? 1 : next + 1); }}>
         {Array.from({length:12}, (_, i) => <option key={i+1} value={i+1}>{i+1}</option>)}
-      </select></label>
-      <label>Cusp sign<select aria-label="Empty house cusp sign" value={sign} onChange={(event) => setSign(event.target.value)}>
+      </AdminSelect></label>
+      <label>Cusp sign<AdminSelect aria-label="Empty house cusp sign" value={sign} onChange={(event) => setSign(event.target.value)}>
         {Object.keys(emptyHouseRulers).map((sign) => <option key={sign} value={sign}>{sign[0].toUpperCase()+sign.slice(1)}</option>)}
-      </select></label>
-      <label>Ruler’s house<select aria-label="Empty house ruler house" value={rulerHouse} onChange={(event) => setRulerHouse(Number(event.target.value))}>
+      </AdminSelect></label>
+      <label>Ruler’s house<AdminSelect aria-label="Empty house ruler house" value={rulerHouse} onChange={(event) => setRulerHouse(Number(event.target.value))}>
         {Array.from({length:12}, (_, i) => i+1).filter((value) => value !== house).map((value) => <option key={value} value={value}>{value}</option>)}
-      </select></label>
-      <button type="button" aria-pressed={contextOnly} onClick={() => setContextOnly(!contextOnly)}>{contextOnly ? "Show all empty-house sources" : "Show selected context"}</button>
+      </AdminSelect></label>
+      <StudioButton type="button" aria-pressed={contextOnly} onClick={() => setContextOnly(!contextOnly)}>{contextOnly ? "Show all empty-house sources" : "Show selected context"}</StudioButton>
     </div>}
     <div className="admin-composition-source-tools">
-      <input aria-label="Search composition sources" placeholder="Planet, sign, house, phrase, or key" value={query} onChange={(event) => setQuery(event.target.value)} />
-      <select aria-label="Source family" value={family} onChange={(event) => setFamily(event.target.value)}>
+      <StudioInput aria-label="Search composition sources" placeholder="Planet, sign, house, phrase, or key" value={query} onChange={(event) => setQuery(event.target.value)} />
+      <AdminSelect aria-label="Source family" value={family} onChange={(event) => setFamily(event.target.value)}>
         <option value="">All source families</option>{families.map((key) => <option key={key} value={key}>{key}</option>)}
-      </select>
-      <button type="button" aria-pressed={allSources} onClick={() => { setAllSources((value) => !value); setFamily(""); }}>Search all Studio sources</button>
-      <label>Selected source<select aria-label="Selected composition source" value={selected?.id ?? ""} onChange={(event) => setSelectedId(event.target.value)}>
+      </AdminSelect>
+      <StudioButton type="button" aria-pressed={allSources} onClick={() => { setAllSources((value) => !value); setFamily(""); }}>Search all Studio sources</StudioButton>
+      <label>Selected source<AdminSelect aria-label="Selected composition source" disabled={!filtered.length} value={selected?.id ?? ""} onChange={(event) => setSelectedId(event.target.value)}>
+        {!filtered.length && <option value="">No matching sources</option>}
         {filtered.map((row) => <option key={row.id || row.content_key} value={row.id}>{row.headline || row.content_key} · {row.content_key}</option>)}
-      </select></label>
+      </AdminSelect></label>
     </div>
-    {loadError && <p role="alert">{loadError} <button type="button" onClick={() => setRetry((value) => value + 1)}>Retry source</button></p>}
+    {loadError && <p role="alert">{loadError} <StudioButton type="button" onClick={() => setRetry((value) => value + 1)}>Retry source</StudioButton></p>}
     {selected ? <article className="admin-composition-source-card">
-      <strong>{selected.headline || selected.content_key}</strong>
       <ContentLiveStatusBadge row={selected} />
-      <code>{selected.content_key}</code>
       {copy.map((body, index) => <p key={index} className="admin-composition-source-copy">{body}</p>)}
       {!copy.length && <p>Open this source to load its complete writing.</p>}
-      <button type="button" onClick={() => onEditRow(selected)}>Edit selected source</button>
-      {template && <button type="button" onClick={() => onSelectTemplate(selected.content_key)}>Open template assembly</button>}
-      <small>Shared sources can affect more than one surface. Saving a revision keeps it separate from the live copy until you publish.</small>
+      <StudioButton type="button" onClick={() => onEditRow(selected)}>Edit selected source</StudioButton>
+      {template && <StudioButton type="button" onClick={() => onSelectTemplate(selected.content_key)}>Open template assembly</StudioButton>}
+      <small>Changes stay in draft until published.</small>
     </article> : <p role="status">No sources match this selection. Clear the filters, search all Studio sources, or use an authoring destination below.</p>}
   </section>;
 }

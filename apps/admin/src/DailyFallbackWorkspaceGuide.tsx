@@ -1,3 +1,5 @@
+import { StudioButton } from "./StudioControls";
+import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { fallbackHookHouseLabel, fallbackHookWords } from "./fallbackHookTitle";
 
 export type FallbackHookEditorGuidanceInput = {
@@ -259,12 +261,12 @@ export default function DailyFallbackWorkspaceGuide({ onShowFamily }: DailyFallb
             <strong>{surface.title}</strong>
             <span>{surface.description}</span>
             <p>{surface.steps.map((step, index) => step === "→" ? <i key={index} aria-hidden="true">{step}</i> : <b key={step}>{step}</b>)}</p>
-            <div>{surface.actions.map((action) => <button key={action.family} type="button" onClick={() => onShowFamily(action.family)}>{action.label}</button>)}</div>
+            <div>{surface.actions.map((action) => <StudioButton key={action.family} type="button" onClick={() => onShowFamily(action.family)}>{action.label}</StudioButton>)}</div>
           </article>
         ))}
       </div>
       <details className="admin-daily-hook-create-note">
-        <summary>{guide.noteTitle}</summary>
+        <AdminDisclosureSummary>{guide.noteTitle}</AdminDisclosureSummary>
         <p>{guide.noteBody}</p>
       </details>
     </section>

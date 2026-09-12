@@ -120,7 +120,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   page.once("dialog", dialog => dialog.accept());
   await editor.getByRole("button", { name: "Close", exact: true }).click();
   await page.goto("/#composition-map");
-  await page.getByRole("button", { name: /Sky Placement Detail Pages/ }).click();
+  await page.getByRole("combobox", { name: "Selected surface", exact: true }).selectOption({ label: "Sky Placement Detail Pages" });
   await expect(map.getByRole("heading", { name: "Saturn Rx in Aries" })).toBeVisible();
   const analogous = page.locator(".admin-composition-surface-flow h3").first();
   expect(await analogous.evaluate(el => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing, s.margin, s.textTransform, s.textAlign]; })).toEqual(headingStyle);

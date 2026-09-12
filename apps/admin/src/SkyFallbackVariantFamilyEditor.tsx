@@ -1,3 +1,4 @@
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
 import { readGeneratedContentRows, saveGeneratedContentDraft } from "./generatedContentClient";
@@ -324,7 +325,7 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
     <div className="admin-review-filter-grid">
       <label>
         <span>Family version</span>
-        <input
+        <StudioInput
           value={family.familyVersion}
           disabled={props.disabled || saving || loading || !openedRow}
           onChange={(event) => {
@@ -336,7 +337,7 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
       </label>
       <label>
         <span>Event instance ID for preview</span>
-        <input value={eventInstanceId} disabled={props.disabled || saving || loading || !openedRow} onChange={(event) => setEventInstanceId(event.target.value)} />
+        <StudioInput value={eventInstanceId} disabled={props.disabled || saving || loading || !openedRow} onChange={(event) => setEventInstanceId(event.target.value)} />
         <small>Use the same value twice to verify refresh/day-to-day stability. Production will supply an immutable ephemeris event ID.</small>
       </label>
     </div>
@@ -346,11 +347,11 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
         <div className="admin-review-filter-grid">
           <label>
             <span>Lane ID</span>
-            <input value={lane.id} disabled={props.disabled || saving || loading || !openedRow} onChange={(event) => updateLane(laneIndex, { id: event.target.value })} />
+            <StudioInput value={lane.id} disabled={props.disabled || saving || loading || !openedRow} onChange={(event) => updateLane(laneIndex, { id: event.target.value })} />
           </label>
           <label>
             <span>Lane label</span>
-            <input value={lane.label} disabled={props.disabled || saving || loading || !openedRow} onChange={(event) => updateLane(laneIndex, { label: event.target.value })} />
+            <StudioInput value={lane.label} disabled={props.disabled || saving || loading || !openedRow} onChange={(event) => updateLane(laneIndex, { label: event.target.value })} />
           </label>
         </div>
         <p><strong>{laneComplete(lane) ? "Complete lane" : "Incomplete lane"}</strong> · selection never mixes sections across lanes.</p>
@@ -360,32 +361,32 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
           <small>{section.description}</small>
           {lane[section.key].map((variant, variantIndex) => <label key={`${lane.id}-${section.key}-${variantIndex}`}>
             <span><strong>Variant {variantIndex + 1}</strong> <code>{variant.id}</code></span>
-            <input
+            <StudioInput
               aria-label={`${section.label} variant ID`}
               value={variant.id}
               disabled={props.disabled || saving || loading || !openedRow}
               onChange={(event) => updateVariant(laneIndex, section.key, variantIndex, { id: event.target.value })}
             />
-            <textarea
+            <StudioTextarea
               rows={section.key === "closes" ? 4 : 7}
               value={variant.text}
               disabled={props.disabled || saving || loading || !openedRow}
               onChange={(event) => updateVariant(laneIndex, section.key, variantIndex, { text: event.target.value })}
             />
-            <button type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={() => removeVariant(laneIndex, section.key, variantIndex)}>Remove variant</button>
+            <StudioButton type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={() => removeVariant(laneIndex, section.key, variantIndex)}>Remove variant</StudioButton>
           </label>)}
-          <button type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={() => addVariant(laneIndex, section.key)}>Add {section.label.toLowerCase()} variant</button>
+          <StudioButton type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={() => addVariant(laneIndex, section.key)}>Add {section.label.toLowerCase()} variant</StudioButton>
         </div>)}
 
-        <button type="button" disabled={props.disabled || saving || loading || !openedRow || family.lanes.length === 1} onClick={() => removeLane(laneIndex)}>Remove lane</button>
+        <StudioButton type="button" disabled={props.disabled || saving || loading || !openedRow || family.lanes.length === 1} onClick={() => removeLane(laneIndex)}>Remove lane</StudioButton>
       </article>)}
     </div>
 
     <div className="admin-fallback-row-actions">
-      <button type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={addLane}>Add lane</button>
-      <button type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={() => void saveFamily()}>{saving ? "Saving family…" : "Save variant family draft"}</button>
-      <button type="button" disabled={props.disabled || loading || completeLaneCount === 0 || !eventInstanceId.trim()} onClick={() => void renderPreview()}>Preview event-locked fallback</button>
-      <button type="button" disabled={props.disabled || loading} onClick={() => void loadFamily()}>{loading ? "Loading…" : "Reload family"}</button>
+      <StudioButton type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={addLane}>Add lane</StudioButton>
+      <StudioButton type="button" disabled={props.disabled || saving || loading || !openedRow} onClick={() => void saveFamily()}>{saving ? "Saving family…" : "Save variant family draft"}</StudioButton>
+      <StudioButton type="button" disabled={props.disabled || loading || completeLaneCount === 0 || !eventInstanceId.trim()} onClick={() => void renderPreview()}>Preview event-locked fallback</StudioButton>
+      <StudioButton type="button" disabled={props.disabled || loading} onClick={() => void loadFamily()}>{loading ? "Loading…" : "Reload family"}</StudioButton>
     </div>
 
     {message && <p className="admin-editor-guidance">{message}</p>}

@@ -1,3 +1,5 @@
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useMemo, useState } from "react";
 import { Save, X } from "lucide-react";
 
@@ -103,19 +105,19 @@ export function DailyGlanceStudio({
       >
         <label>
           <span>Person or chart</span>
-          <input aria-label="Daily At-a-Glance person or chart" value={person} onChange={(event) => setPerson(event.target.value)} placeholder="Name or chart ID" required />
+          <StudioInput aria-label="Daily At-a-Glance person or chart" value={person} onChange={(event) => setPerson(event.target.value)} placeholder="Name or chart ID" required />
         </label>
         <label>
           <span>Local date</span>
-          <input aria-label="Daily At-a-Glance local date" type="date" value={date} onChange={(event) => setDate(event.target.value)} required />
+          <StudioInput aria-label="Daily At-a-Glance local date" type="date" value={date} onChange={(event) => setDate(event.target.value)} required />
         </label>
         <label>
           <span>Day boundary</span>
-          <input aria-label="Daily At-a-Glance timezone" value={timeZone} readOnly />
+          <StudioInput aria-label="Daily At-a-Glance timezone" value={timeZone} readOnly />
         </label>
-        <button className="admin-primary-button" type="submit" disabled={contextLoading || !person.trim()}>
+        <StudioButton className="admin-primary-button" type="submit" disabled={contextLoading || !person.trim()}>
           {contextLoading ? "Calculating…" : "Load current Moon write-up"}
-        </button>
+        </StudioButton>
       </form>
 
       {contextError && <p className="admin-inline-error" role="alert">{contextError}</p>}
@@ -132,9 +134,8 @@ export function DailyGlanceStudio({
             <div className="admin-daily-glance-reader-card">
               <h4>{dailyGlancePackageField(activePair.headlineRow, "body_you")}</h4>
               <p>{dailyGlancePackageField(activePair.passageRow, "body_you")}</p>
-              <hr />
               <p>{context.detailLine}</p>
-              <button type="button" onClick={() => onOpenPair(activePair.selector)}>Edit this headline and passage</button>
+              <StudioButton type="button" onClick={() => onOpenPair(activePair.selector)}>Edit this headline and passage</StudioButton>
             </div>
           ) : (
             <div className="admin-inline-warning" role="status">
@@ -154,7 +155,7 @@ export function DailyGlanceStudio({
               <p>{dailyGlancePackageField(pair.headlineRow, "body_you")}</p>
               <small>{dailyGlancePackageField(pair.passageRow, "body_you")}</small>
             </div>
-            <button type="button" onClick={() => onOpenPair(pair.selector)}>Edit write-up</button>
+            <StudioButton type="button" onClick={() => onOpenPair(pair.selector)}>Edit write-up</StudioButton>
           </article>
         ))}
         {visiblePairs.length === 0 && <p className="admin-empty">No complete Daily At-a-Glance write-ups match this search.</p>}
@@ -228,7 +229,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
 
   return (
     <>
-      <button type="button" className="admin-editor-backdrop" aria-label="Close Daily At-a-Glance editor" onClick={close} disabled={isSaving} />
+      <StudioButton type="button" className="admin-editor-backdrop" aria-label="Close Daily At-a-Glance editor" onClick={close} disabled={isSaving} />
       <aside className="admin-editor-panel admin-review-detail admin-daily-glance-pair-editor" role="dialog" aria-modal="true" aria-label="Daily At-a-Glance paired editor" aria-busy={isSaving}>
         <div className="admin-editor-toolbar">
           <div>
@@ -237,7 +238,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
             <p>Headline and passage remain separate source keys, but are reviewed and saved here as one reader write-up.</p>
           </div>
           <div className="admin-editor-toolbar-actions">
-            <button type="button" onClick={close} disabled={isSaving}><X size={16} aria-hidden="true" />Close</button>
+            <StudioButton type="button" onClick={close} disabled={isSaving}><X size={16} aria-hidden="true" />Close</StudioButton>
           </div>
         </div>
 
@@ -252,11 +253,11 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
 
           <section className="admin-daily-glance-audience" aria-label="You version">
             <div><p className="admin-eyebrow">You</p><h3>Signed-in reader</h3></div>
-            <label className="admin-review-copy-editor"><span>Headline · You</span><textarea value={edits.headlineYou} onChange={(event) => setEdits((value) => ({ ...value, headlineYou: event.target.value }))} /></label>
-            <label className="admin-review-copy-editor"><span>Passage · You</span><textarea value={edits.passageYou} onChange={(event) => setEdits((value) => ({ ...value, passageYou: event.target.value }))} /></label>
+            <label className="admin-review-copy-editor"><span>Headline · You</span><StudioTextarea value={edits.headlineYou} onChange={(event) => setEdits((value) => ({ ...value, headlineYou: event.target.value }))} /></label>
+            <label className="admin-review-copy-editor"><span>Passage · You</span><StudioTextarea value={edits.passageYou} onChange={(event) => setEdits((value) => ({ ...value, passageYou: event.target.value }))} /></label>
             <div className="admin-daily-glance-reader-card" aria-label="You reader preview">
               <h4>{edits.headlineYou}</h4><p>{edits.passageYou}</p>
-              {matchingContext && <><hr /><p>{matchingContext.detailLine}</p></>}
+              {matchingContext && <><p>{matchingContext.detailLine}</p></>}
             </div>
           </section>
 
@@ -265,20 +266,20 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
             <p className="admin-daily-glance-name-contract">
               Daily uses <code>{"{{personPreferredName}}"}</code> for <strong>Name</strong> so the app can use the selected person's preferred name and fall back to their display name. <code>{"{{Name}}"}</code> is not part of this renderer's variable contract.
             </p>
-            <label className="admin-review-copy-editor"><span>Headline · Friend</span><textarea value={edits.headlineThey} onChange={(event) => setEdits((value) => ({ ...value, headlineThey: event.target.value }))} /></label>
-            <label className="admin-review-copy-editor"><span>Passage · Friend</span><textarea value={edits.passageThey} onChange={(event) => setEdits((value) => ({ ...value, passageThey: event.target.value }))} /></label>
+            <label className="admin-review-copy-editor"><span>Headline · Friend</span><StudioTextarea value={edits.headlineThey} onChange={(event) => setEdits((value) => ({ ...value, headlineThey: event.target.value }))} /></label>
+            <label className="admin-review-copy-editor"><span>Passage · Friend</span><StudioTextarea value={edits.passageThey} onChange={(event) => setEdits((value) => ({ ...value, passageThey: event.target.value }))} /></label>
             <div className="admin-daily-glance-preview-controls" aria-label="Friend preview values">
               <label>
                 <span>Preview name</span>
-                <input aria-label="Friend preview name" value={previewName} onChange={(event) => setPreviewName(event.target.value)} placeholder="Alex" />
+                <StudioInput aria-label="Friend preview name" value={previewName} onChange={(event) => setPreviewName(event.target.value)} placeholder="Alex" />
               </label>
               <label>
                 <span>Preview pronouns</span>
-                <select aria-label="Friend preview pronouns" value={previewPronouns} onChange={(event) => setPreviewPronouns(event.target.value as DailyGlanceFriendPreviewPronouns)}>
+                <AdminSelect aria-label="Friend preview pronouns" value={previewPronouns} onChange={(event) => setPreviewPronouns(event.target.value as DailyGlanceFriendPreviewPronouns)}>
                   <option value="they">They / them</option>
                   <option value="she">She / her</option>
                   <option value="he">He / him</option>
-                </select>
+                </AdminSelect>
               </label>
               <p>Preview values only. They are not saved into the approved source.</p>
             </div>
@@ -286,7 +287,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
               <p className="admin-eyebrow">Rendered Friend write-up</p>
               <h4>{renderFriendPreviewParts(friendHeadlineParts)}</h4>
               <p>{renderFriendPreviewParts(friendPassageParts)}</p>
-              {matchingContext && <><hr /><p>{matchingContext.detailLine}</p></>}
+              {matchingContext && <><p>{matchingContext.detailLine}</p></>}
             </div>
             {friendVariableGuide.length > 0 && (
               <div className="admin-daily-glance-variable-guide" aria-label="Friend variable guide">
@@ -310,7 +311,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
           </section>
 
           <details className="admin-advanced admin-editor-key-details">
-            <summary>Source keys</summary>
+            <AdminDisclosureSummary>Source keys</AdminDisclosureSummary>
             <code>{pair.headlineRow.content_key}</code>
             <code>{pair.passageRow.content_key}</code>
           </details>
@@ -318,7 +319,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
 
         <div className="admin-toolbar-actions admin-editor-savebar">
           <span className={`admin-editor-save-state ${dirty ? "is-unsaved" : "is-saved"}`} aria-live="polite">{isSaving ? "Saving both sources…" : dirty ? "Unsaved changes" : "All changes saved"}</span>
-          <button className="admin-primary-button" type="button" onClick={() => void onSave(pair, edits)} disabled={!dirty || isSaving}><Save size={16} aria-hidden="true" />Save headline and passage</button>
+          <StudioButton className="admin-primary-button" type="button" onClick={() => void onSave(pair, edits)} disabled={!dirty || isSaving}><Save size={16} aria-hidden="true" />Save headline and passage</StudioButton>
         </div>
       </aside>
     </>

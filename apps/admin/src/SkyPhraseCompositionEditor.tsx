@@ -1,3 +1,5 @@
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { AdminSelect } from "./AdminNativeControls";
 import { useRef } from "react";
 import SkyPlacementVariableKey from "./SkyPlacementVariableKey";
 // @ts-ignore Shared editorial ingredient vocabulary.
@@ -25,37 +27,37 @@ export default function SkyPhraseCompositionEditor({ phrases, disabled, facts, o
     <p>Arrange your exact phrases and write the text that connects them. Spaces, punctuation, and paragraph breaks are preserved. A composition with an empty phrase is withheld as a whole.</p>
     {phrases.map((phrase, index) => <div className="admin-workspace-details" key={phrase.id} role="group" aria-label={`Phrase ${index + 1}`}>
       <label className="admin-field-wide"><span>Ingredient role</span>
-        <select aria-label={`Ingredient role ${index + 1}`} value={phrase.role ?? ""} disabled={disabled} onChange={event => update(phrase.id, { role: event.target.value || undefined })}>
+        <AdminSelect aria-label={`Ingredient role ${index + 1}`} value={phrase.role ?? ""} disabled={disabled} onChange={event => update(phrase.id, { role: event.target.value || undefined })}>
           <option value="">Unassigned</option>
           {SKY_INGREDIENT_ROLES.map((role: string) => <option key={role} value={role}>{role.replaceAll("-", " ")}</option>)}
-        </select>
+        </AdminSelect>
       </label>
       <label className="admin-review-copy-editor">
         <span>{index === 0 ? "Text before first phrase" : "Connecting text before this phrase"}</span>
-        <textarea aria-label={`Connecting text ${index + 1}`} className="admin-copy-field-summary" value={phrase.joinBefore} disabled={disabled} maxLength={Math.min(2000, remainingFor(phrase.joinBefore))}
+        <StudioTextarea aria-label={`Connecting text ${index + 1}`} className="admin-copy-field-summary" value={phrase.joinBefore} disabled={disabled} maxLength={Math.min(2000, remainingFor(phrase.joinBefore))}
           onFocus={event => { activeInput.current = { id: phrase.id, field: "joinBefore", input: event.currentTarget }; }}
           onChange={event => update(phrase.id, { joinBefore: event.target.value })} />
       </label>
       <label className="admin-review-copy-editor">
         <span>Phrase {index + 1}</span>
-        <textarea aria-label={`Phrase text ${index + 1}`} className="admin-copy-field-body" value={phrase.text} disabled={disabled} maxLength={remainingFor(phrase.text)}
+        <StudioTextarea aria-label={`Phrase text ${index + 1}`} className="admin-copy-field-body" value={phrase.text} disabled={disabled} maxLength={remainingFor(phrase.text)}
           onFocus={event => { activeInput.current = { id: phrase.id, field: "text", input: event.currentTarget }; }}
           onChange={event => update(phrase.id, { text: event.target.value })} />
       </label>
       <label className="admin-field-wide">
         <span>Corpus source or note</span>
-        <input aria-label={`Phrase source ${index + 1}`} value={phrase.source ?? ""} disabled={disabled} maxLength={1000} onChange={event => update(phrase.id, { source: event.target.value })} />
+        <StudioInput aria-label={`Phrase source ${index + 1}`} value={phrase.source ?? ""} disabled={disabled} maxLength={1000} onChange={event => update(phrase.id, { source: event.target.value })} />
       </label>
       <div className="admin-sky-writing-source-actions" role="group" aria-label={`Arrange phrase ${index + 1}`}>
-        <button type="button" disabled={disabled || index === 0} onClick={() => move(index, -1)}>Move phrase {index + 1} up</button>
-        <button type="button" disabled={disabled || index === phrases.length - 1} onClick={() => move(index, 1)}>Move phrase {index + 1} down</button>
-        <button type="button" disabled={disabled} onClick={() => {
+        <StudioButton type="button" disabled={disabled || index === 0} onClick={() => move(index, -1)}>Move phrase {index + 1} up</StudioButton>
+        <StudioButton type="button" disabled={disabled || index === phrases.length - 1} onClick={() => move(index, 1)}>Move phrase {index + 1} down</StudioButton>
+        <StudioButton type="button" disabled={disabled} onClick={() => {
           if (phrase.text.trim() && !window.confirm("Remove this phrase from the draft composition?")) return;
           onChange(phrases.filter(item => item.id !== phrase.id));
-        }}>Remove phrase {index + 1}</button>
+        }}>Remove phrase {index + 1}</StudioButton>
       </div>
     </div>)}
-    <button type="button" disabled={disabled || phrases.length >= 24} onClick={() => onChange([...phrases, { id: `phrase-${crypto.randomUUID()}`, text: "", joinBefore: "" }])}>Add phrase</button>
+    <StudioButton type="button" disabled={disabled || phrases.length >= 24} onClick={() => onChange([...phrases, { id: `phrase-${crypto.randomUUID()}`, text: "", joinBefore: "" }])}>Add phrase</StudioButton>
     <SkyPlacementVariableKey facts={facts} disabled={disabled} onInsert={token => {
       const active = activeInput.current;
       if (!active || !active.input.isConnected || disabled) return;

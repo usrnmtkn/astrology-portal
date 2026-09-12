@@ -15,7 +15,13 @@ export function PageLoadError({ message, onRetry }: { message: string; onRetry: 
   </div>;
 }
 
-type PageLoadBoundaryProps = { children: ReactNode; resetKey?: string; recoveryHref?: string; recoveryLabel?: string };
+type PageLoadBoundaryProps = {
+  children: ReactNode;
+  resetKey?: string;
+  recoveryHref?: string;
+  recoveryLabel?: string;
+  renderFallback?: (detail: string, retry: () => void) => ReactNode;
+};
 export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed: boolean; detail: string }> {
   state = { failed: false, detail: "" };
   static getDerivedStateFromError() { return { failed: true }; }
@@ -37,6 +43,7 @@ export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed:
   }
   render() {
     if (!this.state.failed) return this.props.children;
+    if (this.props.renderFallback) return this.props.renderFallback(this.state.detail, this.retry);
     return <div className="app-loading" role="alert">
         <span>This page could not load. Try another page or reload to try again.</span>
         {this.props.recoveryHref && <>

@@ -30,7 +30,7 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await page.goto('/admin/content#review-queue');
       await page.evaluate(value => document.documentElement.dataset.theme = value,colorScheme);
       await page.getByRole('button',{name:'Needs changes',exact:true}).click();
-      await page.locator('.admin-review-queue-row').filter({hasText:'Chiron sextile North Node'}).getByRole('button',{name:'Edit',exact:true}).click();
+      await page.getByRole('row').filter({hasText:'Chiron sextile North Node'}).getByRole('button',{name:'Edit',exact:true}).click();
       const editor=page.getByRole('dialog');
       const body=editor.getByRole('textbox',{name:'Full passage / body',exact:true});
       await body.fill('Fixture revised opening. Fixture complete final sentence.');

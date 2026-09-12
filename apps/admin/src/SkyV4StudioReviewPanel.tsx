@@ -1,3 +1,5 @@
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { AdminSelect } from "./AdminNativeControls";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
 import { readGeneratedContentRows, saveGeneratedContentDraft } from "./generatedContentClient";
@@ -418,7 +420,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
         {mainReaderFields.map((field) => <label key={field.path}>
           <span><strong>{field.label}</strong></span>
           <small>{field.description}</small>
-          <textarea
+          <StudioTextarea
             rows={field.rows}
             value={currentFields[field.path]}
             disabled={props.disabled || savingCurrent || !openedRow}
@@ -434,7 +436,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
         {fallbackFields.map((field) => <label key={field.path}>
           <span><strong>{field.label}</strong> <code>{field.path}</code></span>
           <small>{field.description}</small>
-          <textarea
+          <StudioTextarea
             rows={field.rows}
             value={currentFields[field.path]}
             disabled={props.disabled || savingCurrent || !openedRow}
@@ -451,12 +453,12 @@ export default function SkyV4StudioReviewPanel(props: Props) {
       />
 
       <div className="admin-fallback-row-actions">
-        <button type="button" disabled={props.disabled || savingCurrent || !openedRow || !currentDirty} onClick={() => void saveCurrentGroupedDraft()}>
+        <StudioButton type="button" disabled={props.disabled || savingCurrent || !openedRow || !currentDirty} onClick={() => void saveCurrentGroupedDraft()}>
           {savingCurrent ? "Saving draft…" : "Save grouped draft"}
-        </button>
-        <button type="button" disabled={props.disabled || batchLoading} onClick={() => void toggleBatchReview()}>
+        </StudioButton>
+        <StudioButton type="button" disabled={props.disabled || batchLoading} onClick={() => void toggleBatchReview()}>
           {batchOpen ? "Hide legacy fallback review" : "Review all 120 legacy continuous fallbacks"}
-        </button>
+        </StudioButton>
       </div>
       {currentSaveMessage && <p className="admin-editor-guidance">{currentSaveMessage}</p>}
 
@@ -470,36 +472,36 @@ export default function SkyV4StudioReviewPanel(props: Props) {
         <div className="admin-review-filter-grid" aria-label="Continuous fallback filters">
           <label>
             <span>Planet</span>
-            <select value={planetFilter} onChange={(event) => setPlanetFilter(event.target.value)}>
+            <AdminSelect value={planetFilter} onChange={(event) => setPlanetFilter(event.target.value)}>
               <option value="all">All planets</option>
               {planetOrder.map((planet) => <option key={planet} value={planet}>{titlePart(planet)}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>Sign</span>
-            <select value={signFilter} onChange={(event) => setSignFilter(event.target.value)}>
+            <AdminSelect value={signFilter} onChange={(event) => setSignFilter(event.target.value)}>
               <option value="all">All signs</option>
               {signOrder.map((sign) => <option key={sign} value={sign}>{titlePart(sign)}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>Field</span>
-            <select value={fieldFilter} onChange={(event) => setFieldFilter(event.target.value as BatchFieldFilter)}>
+            <AdminSelect value={fieldFilter} onChange={(event) => setFieldFilter(event.target.value as BatchFieldFilter)}>
               <option value="all">Hook + Lived + Turn</option>
               <option value="hook">Hook only</option>
               <option value="lived">Lived only</option>
               <option value="turn">Turn only</option>
-            </select>
+            </AdminSelect>
           </label>
           <label>
             <span>Search copy</span>
-            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search legacy fallback copy" />
+            <StudioInput value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search legacy fallback copy" />
           </label>
         </div>
 
         <div className="admin-fallback-row-actions">
           <strong>{batchLoading ? "Loading…" : `${visibleBatchRows.length} shown · ${continuousRows.length}/120 loaded`}</strong>
-          <button type="button" disabled={batchLoading || props.disabled} onClick={() => void loadContinuousFallbacks()}>Refresh</button>
+          <StudioButton type="button" disabled={batchLoading || props.disabled} onClick={() => void loadContinuousFallbacks()}>Refresh</StudioButton>
         </div>
         {batchError && <p role="alert">{batchError}</p>}
 
@@ -515,7 +517,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
               </div>
               {fieldsForBatch.map((field) => <label key={`${row.id}-${field.path}`}>
                 <span><strong>{field.label}</strong> <code>{field.path}</code></span>
-                <textarea
+                <StudioTextarea
                   rows={4}
                   value={batchValue(row, field.path)}
                   disabled={props.disabled || savingBatchKey === row.content_key}
@@ -523,13 +525,13 @@ export default function SkyV4StudioReviewPanel(props: Props) {
                 />
               </label>)}
               <div className="admin-fallback-row-actions">
-                <button
+                <StudioButton
                   type="button"
                   disabled={props.disabled || Boolean(savingBatchKey) || !hasUnsavedEdit}
                   onClick={() => void saveBatchFallbackDraft(row)}
                 >
                   {savingBatchKey === row.content_key ? "Saving draft…" : "Save fallback draft"}
-                </button>
+                </StudioButton>
                 {batchSaveMessage[row.content_key] && <small>{batchSaveMessage[row.content_key]}</small>}
               </div>
             </article>;
@@ -544,7 +546,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
         <h3>Render this draft through SKY V4</h3>
         <p>This calls the shared canonical resolver. It never promotes or serves the draft.</p>
       </div>
-      <button type="button" disabled={props.disabled} onClick={() => void renderPreview()}>Render canonical preview</button>
+      <StudioButton type="button" disabled={props.disabled} onClick={() => void renderPreview()}>Render canonical preview</StudioButton>
       {error && <p role="alert">{error}</p>}
       {preview?.contentKey === props.contentKey && <div className="admin-editor-guidance" aria-label="Rendered SKY V4 reader preview">
         <strong>{preview.servingEnabled ? "Serving" : "Stage preview · serving OFF"}</strong>
