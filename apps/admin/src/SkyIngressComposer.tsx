@@ -26,6 +26,7 @@ const color = (kind: string) => kind === "fact" ? "fact" : ["planet", "sign"].in
 export default function SkyIngressComposer({ source, motion, disabled = false, initialField, onChange, onOpenSource, onLoadSource }: Props) {
   const composition = source.ingress as Composition | undefined;
   const identity = String(source.contentKey).split("/").slice(2);
+  const initialSourceId = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1];
   const [selectedSource, setSelectedSource] = useState("planetFunctionSentence");
   const [selectedModule, setSelectedModule] = useState("practice");
   const [view, setView] = useState("preview");
@@ -45,7 +46,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
   const [installing, setInstalling] = useState(false);
   const generation = useRef(0);
   const writing = useRef<HTMLTextAreaElement>(null);
-  useEffect(() => { const id = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1]; if (id) { setSelectedSource(id); setAdvancedOpen(true); } }, [initialField]);
+  useEffect(() => { if (initialSourceId) setSelectedSource(initialSourceId); }, [initialSourceId]);
   useEffect(() => { generation.current++; setCalculated(null); setReferences([]); return () => { generation.current++; }; }, [source.contentKey]);
   const referencedKeys = JSON.stringify([...new Set(Object.values(composition?.sources ?? {}).map(value => value.reference?.contentKey).filter(key => key && key !== source.contentKey))]);
   useEffect(() => {
@@ -117,6 +118,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
   if (!composition) return <div className="admin-sky-writing-context">
     <strong>Placement composition</strong>
     <p>Build this evergreen article from named sentence sources. The prefilled setup reuses this placement’s existing governed TLDR/fallback copy plus approved planet/sign vocabulary. It does not generate new astrology prose or publish anything.</p>
+    {initialSourceId && <p role="status">To edit <code>{`{{${initialSourceId}}}`}</code>, add the prefilled placement composition. Its governed content will be loaded into the draft automatically.</p>}
     {error && <p role="alert">{error}</p>}
     {onChange ? <StudioButton type="button" disabled={disabled || installing} onClick={() => void addPrefilledComposition()}>{installing ? "Loading governed sources…" : "Add prefilled placement composition"}</StudioButton>
       : <StudioButton type="button" onClick={() => onOpenSource(source.contentKey, "ingress")}>Set up placement composition</StudioButton>}
@@ -139,6 +141,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
         sourceRecord={source}
         composition={composition}
         disabled={disabled}
+        initialSourceId={initialSourceId}
         onChange={onChange}
         onOpenSource={onOpenSource}
         onLoadSource={onLoadSource}
