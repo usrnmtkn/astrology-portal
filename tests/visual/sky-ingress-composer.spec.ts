@@ -68,7 +68,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await enabled.uncheck();
   await expect(composer.getByText('Composition is not enabled', { exact: false })).toBeVisible();
   await expect(editor.getByLabel('Placement writing system details', { exact: true })).toHaveCount(1);
-  await composer.getByText('Advanced source tools', { exact: true }).click();
+  await composer.locator('summary').filter({ hasText: /^Advanced source tools$/u }).click();
   await expect(composer.getByLabel('Ingress sentence source')).toHaveValue('planetFunctionSentence');
   await composer.getByLabel('Ingress source planetFunctionSentence').fill('Fixture {{planetTitle}} meaning.');
   await expect(composer.locator('.admin-sky-section-reference').first()).toHaveText(`${key}#ingress.sources.planetFunctionSentence`);
