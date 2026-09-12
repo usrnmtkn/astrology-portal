@@ -27,7 +27,7 @@
 
 .settings-panel {
   display: grid;
-  gap: var(--section-gap);
+  gap: var(--stack-gap);
 }
 
 .settings-back-row {
@@ -49,6 +49,7 @@
   border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
+  box-shadow: var(--card-shadow);
 }
 
 .settings-row,
@@ -59,9 +60,25 @@
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-5);
-  padding: var(--row-padding-y) var(--row-padding-x);
+  padding: var(--space-5) var(--row-padding-x);
   border-bottom: var(--border-width-thin) solid var(--card-border);
   background: var(--card-bg);
+}
+
+.settings-profile-row {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.settings-profile-row > div:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.settings-profile-row > div:last-child > span {
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .settings-row-control {
@@ -71,6 +88,7 @@
 .settings-row-button {
   width: 100%;
   border: 0;
+  border-bottom: var(--border-width-thin) solid var(--card-border);
   background: transparent;
   color: inherit;
   text-align: left;
@@ -104,24 +122,25 @@ button.settings-signout-row {
   border-bottom: 0;
 }
 
+/* Row titles use the body face; monospace labels belong above the cards. */
 .settings-row strong,
 .settings-row label,
 .settings-profile-row strong,
-.account-editable-row label {
+.account-editable-row label,
+.settings-row__label,
+.account-editable-row > .settings-row__label,
+.settings-row-title {
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
   font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
+  letter-spacing: var(--tracking-body);
+  line-height: var(--leading-body);
+  text-transform: none;
 }
 
-.settings-row__label,
-.account-editable-row > .settings-row__label {
-  color: var(--muted);
-  font-family: var(--font-ui);
-  font-size: var(--text-body-sm);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-label);
-  line-height: var(--leading-meta);
-  text-transform: uppercase;
+.settings-row-title {
+  display: block;
 }
 
 .settings-row__field {
@@ -135,15 +154,17 @@ button.settings-signout-row {
 }
 
 .settings-row__value {
-  color: var(--ink);
+  color: var(--card-body-color);
   font-family: var(--font-body);
-  font-size: var(--text-row-value);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-number);
-  line-height: var(--leading-meta);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--leading-body);
   text-align: right;
   text-transform: none;
   font-variant-numeric: tabular-nums;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .settings-row__chevron {
@@ -168,10 +189,10 @@ button.settings-signout-row {
 .settings-row__action {
   color: var(--ink);
   font-family: var(--font-body);
-  font-size: var(--text-row-value);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-number);
-  line-height: var(--leading-meta);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--leading-body);
   text-transform: none;
 }
 
@@ -182,27 +203,17 @@ button.settings-signout-row {
 .settings-row-copy {
   display: grid;
   min-width: 0;
-  gap: calc(var(--space-1) + var(--space-1) / 4);
-}
-
-.settings-row-title {
-  display: block;
-  color: var(--muted);
-  font-family: var(--font-ui);
-  font-size: var(--text-body-sm);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-label);
-  line-height: var(--leading-meta);
-  text-transform: uppercase;
+  gap: var(--space-1);
 }
 
 .settings-row-description {
   display: block;
   color: var(--card-body-color);
-  font-size: var(--type-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  line-height: var(--leading-description);
-  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
   text-transform: none;
 }
 
@@ -505,10 +516,10 @@ button.settings-signout-row {
   color: var(--ink);
   box-shadow: var(--shadow-flat);
   font-family: var(--font-body);
-  font-size: var(--text-row-value);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-number);
-  line-height: var(--leading-meta);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--leading-body);
   text-align: right;
   text-transform: none;
   font-variant-numeric: tabular-nums;
@@ -629,7 +640,7 @@ button.settings-signout-row {
   display: inline-flex;
   width: fit-content;
   max-width: 100%;
-  justify-self: start;
+  justify-self: end;
   border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   background: var(--control-bg);
@@ -641,9 +652,13 @@ button.settings-signout-row {
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--muted);
-  min-width: 104px;
-  padding: var(--space-3) var(--space-6);
+  min-width: var(--space-10);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-ui);
+  font-size: var(--text-button-size);
   font-weight: var(--weight-medium);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
 }
 
 .settings-theme-control button.active {
@@ -652,6 +667,8 @@ button.settings-signout-row {
 }
 
 .settings-switch {
+  flex-shrink: 0;
+  justify-self: end;
   display: flex;
   justify-content: flex-start;
   width: 72px;

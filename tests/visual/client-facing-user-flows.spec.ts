@@ -2093,6 +2093,70 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  for (const width of [390, 1440]) {
+    for (const theme of ["light", "dark"] as const) {
+      test(`Settings and Account share the row typography pattern ${width} ${theme}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 1000 });
+        await seedClientState(page, { profile: true, theme, pageAnimations: "off" });
+        // Account requires a real-shaped session; all auth and profile traffic stays local to this fixture.
+        const user = { id: fixtureUserId, email: "qa-flow@example.com", aud: "authenticated", role: "authenticated", app_metadata: { provider: "email" }, user_metadata: { name: "Project Author" } };
+        const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test").hostname.split(".")[0]}-auth-token`;
+        await page.addInitScript(({ user, storageKey }) => {
+          localStorage.setItem(storageKey, JSON.stringify({ access_token: "fixture-token", refresh_token: "fixture-refresh", expires_at: Math.floor(Date.now() / 1000) + 3600, token_type: "bearer", user }));
+        }, { user, storageKey });
+        await page.route("**/auth/v1/**", route => route.fulfill({ json: user }));
+        await page.route("**/rest/v1/user_profiles*", async route => {
+          const profile = await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!));
+          await route.fulfill({ json: { data: { version: 1, profile } } });
+        });
+        for (const route of ["settings", "account"]) {
+          if (route === "account") {
+            await page.getByRole("button", { name: "Open menu" }).click();
+            await page.getByRole("menuitem", { name: "Account", exact: true }).click();
+          } else {
+            await expectClientRouteLoads(page, "/#settings");
+          }
+          const surface = page.locator(`.${route}-page`);
+          await expect(surface.locator("h1")).toBeVisible();
+          await expect(surface.locator("h1")).toHaveCount(1);
+          const typography = await surface.evaluate(element => {
+            const probe = document.createElement("span");
+            probe.style.cssText = "font-family:var(--font-body);font-size:var(--text-body);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-body)";
+            element.append(probe);
+            const properties = ["fontFamily", "fontSize", "lineHeight", "letterSpacing"] as const;
+            const read = (node: Element) => {
+              const style = getComputedStyle(node);
+              return Object.fromEntries(properties.map(key => [key, style[key]]));
+            };
+            const expectedBody = read(probe);
+            const rows = Array.from(element.querySelectorAll(".settings-row-title, .settings-row__label, .settings-row-description, .settings-row__value, .account-row-input")).map(node => ({ text: node.textContent, actual: read(node), casing: getComputedStyle(node).textTransform }));
+            probe.style.fontFamily = "var(--font-ui)";
+            const uiFamily = getComputedStyle(probe).fontFamily;
+            const controls = Array.from(element.querySelectorAll(".settings-theme-control button")).map(node => getComputedStyle(node).fontFamily);
+            const labels = Array.from(element.querySelectorAll(".settings-group-label")).map(node => ({ family: getComputedStyle(node).fontFamily, casing: getComputedStyle(node).textTransform }));
+            probe.remove();
+            return { expectedBody, rows, uiFamily, controls, labels };
+          });
+          expect(typography.rows.length).toBeGreaterThan(0);
+          for (const row of typography.rows) {
+            expect(row.actual, `${route}: ${row.text}`).toEqual(typography.expectedBody);
+            expect(row.casing, `${route}: row titles retain sentence case`).toBe("none");
+          }
+          for (const family of typography.controls) expect(family).toBe(typography.uiFamily);
+          for (const label of typography.labels) expect(label).toEqual({ family: typography.uiFamily, casing: "uppercase" });
+          for (const control of await surface.locator(".settings-row-control:has(.settings-switch)").all()) {
+            const copy = await control.locator(".settings-row-copy").boundingBox();
+            const toggle = await control.locator(".settings-switch").boundingBox();
+            expect(toggle!.x).toBeGreaterThanOrEqual(copy!.x + copy!.width);
+          }
+
+          await expectNoHorizontalOverflow(page, `${route} ${width} ${theme}`);
+          await page.screenshot({ path: test.info().outputPath(`${route}-${width}-${theme}.png`), fullPage: true });
+        }
+      });
+    }
+  }
+
   test("settings preferences persist across reload", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 

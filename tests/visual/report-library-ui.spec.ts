@@ -29,6 +29,8 @@ test("Reports route keeps the TLDR navigation and design system across themes an
       const menuToggle = page.getByRole("button", { name: "Open menu" });
 
       await expect(heading).toBeVisible();
+      await expect(page.locator(".report-library-header")).toHaveText("Reports");
+      await expect(page.locator(".report-library-header > *")).toHaveCount(1);
       await expect(tabs).toBeVisible();
       await expect(topbar).toBeVisible();
       await expect(navPill).toBeVisible();
@@ -91,6 +93,7 @@ test("Reports route keeps the TLDR navigation and design system across themes an
       expect(computed.horizontalOverflow, `${viewport.name} ${theme}: Reports does not overflow horizontally`).toBe(false);
       bodyBackgrounds.set(`${viewport.name}-${theme}`, computed.bodyBackgroundColor);
 
+      await page.screenshot({ path: test.info().outputPath(`reports-header-${viewport.name}-${theme}.png`) });
       await context.close();
     }
   }
