@@ -40,7 +40,7 @@ export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGen
         {readerHref && <a href={readerHref} target="_blank" rel="noreferrer">Open reader view</a>}
       </div>}
     </div>
-    {source ? <details className="admin-review-status-help"><AdminDisclosureSummary>Source usage</AdminDisclosureSummary>
+    {source ? <details className="admin-workspace-details admin-review-status-help"><AdminDisclosureSummary>Source usage</AdminDisclosureSummary>
       <p>Background for writing finished cards. Readers never receive this source directly.</p>
       <p>{row.content_key.startsWith("source/sky-aspect-pair/")
                 ? "Used by the Sky aspect writer for this planet pair. Save edits, then Mark reviewed to activate this source revision for future generation. Existing cards keep their own writing."
@@ -58,13 +58,13 @@ export default function ReviewWorkflowPanel({ row, unsaved, busy, onCheck, onGen
           <StudioMemoryFeedback key={row.content_key} contentKey={row.content_key} credential={credential} revision={row.updated_at} unsaved={unsaved} />
         </Suspense>
       </div>}
-      {(sky || row.status === "LIVE") && <details className="admin-review-status-help">
+      {(sky || row.status === "LIVE") && <details className="admin-workspace-details admin-review-status-help">
         <AdminDisclosureSummary>About this status</AdminDisclosureSummary>
         {row.status === "LIVE" && <p>Live means eligible to appear. The reader’s chart, event timing, and approved sources determine what is shown.</p>}
       </details>}
     </>}
-    {row.source_snapshot?.importSummary && <details><AdminDisclosureSummary>Original import notes</AdminDisclosureSummary><p>{String(row.source_snapshot.importSummary)}</p></details>}
-    {Array.isArray(history) && history.length > 0 && <details><AdminDisclosureSummary>Version history ({history.length})</AdminDisclosureSummary>
+    {row.source_snapshot?.importSummary && <details className="admin-workspace-details"><AdminDisclosureSummary>Original import notes</AdminDisclosureSummary><p>{String(row.source_snapshot.importSummary)}</p></details>}
+    {Array.isArray(history) && history.length > 0 && <details className="admin-workspace-details"><AdminDisclosureSummary>Version history ({history.length})</AdminDisclosureSummary>
       {history.map((version: any, index: number) => <article key={`${version.updatedAt}-${index}`}>
         <strong>{version.updatedAt} · {version.status}</strong><p>{version.body}</p>
       </article>)}

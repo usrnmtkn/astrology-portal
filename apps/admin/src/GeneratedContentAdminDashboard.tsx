@@ -7423,7 +7423,7 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
         {alternateGroup && advancedSources.length > 0 && (
-          <details className="admin-natal-source-group admin-natal-source-advanced">
+          <details className="admin-workspace-details admin-natal-source-group admin-natal-source-advanced">
             <AdminDisclosureSummary>{alternateGroup.label}</AdminDisclosureSummary>
             <p>{alternateGroup.description}</p>
             <div className="admin-natal-source-grid">{advancedSources.map(renderSkyAssemblySource)}</div>
@@ -9112,7 +9112,7 @@ export function GeneratedContentAdminDashboard() {
               </Suspense>
 
               {isSkyV4StudioRecord && (
-                <SkyChangesContainer>
+                <SkyChangesContainer className="admin-workspace-details">
                   {isSkyPlacementSource && <AdminDisclosureSummary>Source history and validation</AdminDisclosureSummary>}
                 <Suspense fallback={null}>
                   <SkyV4StudioReviewPanel
@@ -9416,7 +9416,7 @@ export function GeneratedContentAdminDashboard() {
                     />
                   </label>
 
-                  <details className="admin-sky-related-group admin-diagnostics-details">
+                  <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details">
                     <AdminDisclosureSummary>
                       <span>House passages</span>
                       <strong>{skyArticleEditor.fields.housePassages.length}/12 complete</strong>
@@ -9436,7 +9436,7 @@ export function GeneratedContentAdminDashboard() {
                   </details>
 
                   {skyArticleEditor.fields.aspectPassages.length > 0 && (
-                    <details className="admin-sky-related-group admin-diagnostics-details">
+                    <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details">
                       <AdminDisclosureSummary>
                         <span>Natal-aspect passages</span>
                         <strong>{skyArticleEditor.fields.aspectPassages.length}</strong>
@@ -9678,7 +9678,7 @@ export function GeneratedContentAdminDashboard() {
             <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections, status: "DRAFT", reviewState: "owner-review-required"}))} />
           </Suspense>}
           {skyWriteupContext && selectedRow && (
-            <SkyRelatedContainer className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
+            <SkyRelatedContainer className="admin-workspace-details admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
               {isSkyPlacementSource && <AdminDisclosureSummary>Aspects and horoscopes</AdminDisclosureSummary>}
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
                 <div>
@@ -9701,7 +9701,7 @@ export function GeneratedContentAdminDashboard() {
                 </dl>
               </header>
 
-              <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
+              <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                 <AdminDisclosureSummary>
                   <span>Aspect passages</span>
                   {" "}
@@ -9748,7 +9748,7 @@ export function GeneratedContentAdminDashboard() {
                   <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections, status: "DRAFT", reviewState: "owner-review-required"}))} />
                 </Suspense>
               ) : skyLunationContext ? (
-                <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
+                <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                   <AdminDisclosureSummary>
                     <span>Rising-sign horoscopes</span>
                     {" "}
@@ -9787,7 +9787,7 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </details>
               ) : (
-                <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
+                <details className="admin-workspace-details admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                   <AdminDisclosureSummary>
                     <span>House horoscopes</span>
                     {" "}

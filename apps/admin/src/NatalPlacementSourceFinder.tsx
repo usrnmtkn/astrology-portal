@@ -182,7 +182,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
         </section>
       ))}
       {groups.filter((group) => group.key === "structure").map((group) => (
-        <details className="admin-natal-source-group admin-natal-source-advanced" key={`${selectionKey}/${group.key}`}>
+        <details className="admin-workspace-details admin-natal-source-group admin-natal-source-advanced" key={`${selectionKey}/${group.key}`}>
           <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary><p>{group.description}</p>
           <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source, true))}</div>
         </details>
