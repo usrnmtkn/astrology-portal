@@ -5822,7 +5822,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     await expect(editor.getByLabel('aries rising horoscope',{exact:true})).toHaveValue(revised);
     await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
     await editor.getByLabel('aries rising horoscope',{exact:true}).scrollIntoViewIfNeeded();
-    await page.screenshot({path:`/private/tmp/imported-horoscopes-${theme}-${width}.png`});
+    await page.screenshot({path:test.info().outputPath(`imported-horoscopes-${theme}-${width}.png`)});
     await expectNoHorizontalOverflow(page,`Separated article ${theme} ${width}`);
   });
 }
