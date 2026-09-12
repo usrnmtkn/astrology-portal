@@ -5772,15 +5772,20 @@ test("reopening a completed revision follows its published target", async ({ pag
 });
 
 for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
-  test(`Imported article keeps drafting notes outside reader copy ${theme} ${width}`, async ({page}) => {
+  test(`Imported article keeps drafting notes outside reader copy ${theme} ${width}`, async ({page,baseURL}) => {
+    test.skip(!baseURL || !['localhost','127.0.0.1'].includes(new URL(baseURL).hostname), 'Isolated local storage only.');
     await page.setViewportSize({width,height:1000});
     const body='# Sun Enters Aries\n\nThe complete opening remains here.\n\nThe complete final paragraph remains here.';
     const notes='Drafting notes: synthetic batch context.\nneeds_review was the old document label.';
+    const signs=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+    const passages=signs.map((sign,index)=>({risingSign:sign.toLowerCase(),house:(12-index)%12+1,heading:`### ${sign} & ${sign} Rising`,body:`${sign} complete opening.\n\n${sign} complete ending.`}));
+    const sections={articleHoroscopes:{schema:'sky-article-horoscopes-v1',heading:'## Horoscopes for the Sun in Aries',introduction:'',passages}};
+    const writes: {method:string;payload:Record<string,unknown>}[]=[];
     const row={...generatedContentRows[0],id:'qa-separated-article',content_key:'sky/article-template/sun/aries',
       headline:'Sun Enters Aries',body,summary:'',status:'REVIEWED',lane:'reference',review_state:null,
-      event_type:'sky-article-template',block_type:'sky_article',mode:'article',sections:{},facts:{},
+      event_type:'sky-article-template',block_type:'sky_article',mode:'article',sections,facts:{},
       source_snapshot:{sourceType:'owner-resource-review',contentType:'sky-article-template',importSummary:notes},target_date:null,provider:'owner-resource-review'};
-    await seedAdminApi(page,{generatedRows:[row],reviewRows:[]});
+    await seedAdminApi(page,{generatedRows:[row],reviewRows:[],onGeneratedContentWrite:write=>writes.push(write)});
     await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
     await expectAdminRouteLoads(page,'/admin/content#review-queue?view=all');
     await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
@@ -5792,7 +5797,52 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     await detail.locator('summary').click();
     await expect(detail).toContainText(notes);
     await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
+    await expect(editor.getByLabel('aries rising horoscope',{exact:true})).toHaveValue(passages[0].body);
+    await expect(editor.getByLabel('pisces rising horoscope',{exact:true})).toHaveValue(passages[11].body);
+    await expect(editor.getByLabel(/rising horoscope$/)).toHaveCount(12);
+    const headings=await editor.locator('h2,h3').allTextContents();
+    expect(headings.indexOf('Sun Enters Aries')>=0 || headings.some(h=>h.includes('Edit Sun Enters Aries'))).toBeTruthy();
+    const styles=await editor.evaluate(root=>{
+      const style=(selector:string)=>{const s=getComputedStyle(root.querySelector(selector)!);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing]};
+      return {body:style('.admin-copy-field-body'),horoscope:style('[aria-label="aries rising horoscope"]')};
+    });
+    expect(styles.horoscope).toEqual(styles.body);
+    const revised='Revised complete opening.\n\nRevised complete ending.';
+    await editor.getByLabel('aries rising horoscope',{exact:true}).fill('');
+    await expect(editor.getByLabel('pisces rising horoscope',{exact:true})).toHaveValue(passages[11].body);
+    await editor.getByLabel('aries rising horoscope',{exact:true}).fill(revised);
+    await editor.getByRole('button',{name:'Save',exact:true}).click();
+    await expect.poll(()=>writes.length).toBe(1);
+    expect(writes[0].payload.body).toBe(body);
+    const savedSections=writes[0].payload.sections as typeof sections;
+    expect(savedSections.articleHoroscopes.passages[0].body).toBe(revised);
+    expect(savedSections.articleHoroscopes.passages.slice(1)).toEqual(passages.slice(1));
+    await editor.getByRole('button',{name:'Close',exact:true}).click();
+    await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+    await expect(editor.getByLabel('aries rising horoscope',{exact:true})).toHaveValue(revised);
+    await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
+    await editor.getByLabel('aries rising horoscope',{exact:true}).scrollIntoViewIfNeeded();
+    await page.screenshot({path:`/private/tmp/imported-horoscopes-${theme}-${width}.png`});
     await expectNoHorizontalOverflow(page,`Separated article ${theme} ${width}`);
+  });
+}
+
+for (const contentKey of ['sky/article-template/nodes','sky/article-template/uranus/ingress']) for (const theme of ['light','dark']) for (const width of [1440,390]) {
+  test(`Imported generic horoscope fields ${contentKey} ${theme} ${width}`, async ({page,baseURL})=>{
+    test.skip(!baseURL || !['localhost','127.0.0.1'].includes(new URL(baseURL).hostname),'Isolated local storage only.');
+    await page.setViewportSize({width,height:1000});
+    const row={...generatedContentRows[0],id:'qa-generic-horoscopes',content_key:contentKey,headline:'Generic article',body:'Full article opening. Full article ending.',summary:'',status:'DRAFT',lane:'reference',review_state:null,event_type:'sky-article-template',block_type:'sky_article',mode:'article',facts:{},target_date:null,
+      sections:{articleHoroscopes:{schema:'sky-article-horoscopes-v1',heading:'## Horoscopes',introduction:'Read your rising sign.\n\n{{risingBlocks}}',passages:[]}},source_snapshot:{sourceType:'owner-resource-review',contentType:'sky-article-template'}};
+    await seedAdminApi(page,{generatedRows:[row],reviewRows:[]});
+    await page.addInitScript(value=>localStorage.setItem('tldrastro:studio-theme',value),theme);
+    await expectAdminRouteLoads(page,'/admin/content#review-queue?view=all');
+    await page.getByRole('row').filter({hasText:contentKey}).getByRole('button',{name:'Edit',exact:true}).click();
+    const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    await expect(editor.getByLabel('Horoscope introduction',{exact:true})).toHaveValue(row.sections.articleHoroscopes.introduction);
+    await editor.getByLabel('Horoscope introduction',{exact:true}).fill('');
+    await editor.getByLabel('Horoscope introduction',{exact:true}).fill(row.sections.articleHoroscopes.introduction);
+    await expect(editor.locator('.admin-copy-field-body')).toHaveValue(row.body);
+    await expectNoHorizontalOverflow(page,`Generic horoscope ${theme} ${width}`);
   });
 }
 
