@@ -42,12 +42,16 @@ export function skyPlacementAssemblyFields(row: CompositionMapRow): SkyPlacement
 export function skyPlacementAssembly(rows: CompositionMapRow[], writing: SkyPlacementWriting, motion = rows.some(row => row.content_key.includes("/retrograde/")) ? "retrograde" : "direct") {
   const fields = rows.flatMap(skyPlacementAssemblyFields);
   const retrograde = fields.filter(field => field.row.content_key.includes("/retrograde/") && field.path === "Body" && motion === "retrograde");
-  const placement = fields.filter(field => !field.row.content_key.includes("/retrograde/"));
+  const seasonal = fields.filter(field => field.row.content_key.startsWith("sky-placement/seasonal-context/"));
+  const placement = fields.filter(field => !field.row.content_key.includes("/retrograde/") && !field.row.content_key.startsWith("sky-placement/seasonal-context/"));
   const fallback = placement.filter(field => field.path.startsWith("fallback.") && (!field.motion || field.motion === "all" || field.motion === motion));
   const article = placement.filter(field => (!field.row.content_key.startsWith("sky-nodes/axis/") || field.path === "NodeAxisArticle") && !field.path.startsWith("fallback.") && (!/^placementArticle/u.test(field.path) || field.path === skyPlacementArticlePath(effectivePackageRecord(field.row.sections), motion)));
   const tldr = article.filter(field => /^(?:tldrWhat|tldrTakeaway|TLDR_What|TLDR_Takeaway)$/u.test(field.path));
+  const articleWithSeasonal = seasonal.length
+    ? [...tldr, ...seasonal, ...article.filter(field => !tldr.includes(field))] : article;
   // This is the field order of renderSkyV4ReaderRoute / the canonical fallback
-  // preview. Dynamic event overlays, dates, aspects and horoscopes need chart
+  // preview. Seasonal writing uses the selected preview hemisphere.
+  // Dynamic event overlays, dates, aspects and horoscopes need chart
   // facts, so this editor explicitly previews the base placement writing only.
-  return { fields, parts: writing === "fallback" ? [...retrograde, ...tldr, ...fallback] : [...retrograde, ...article], hasFallback: fields.some(field => field.path.startsWith("fallback.")) };
+  return { fields, parts: writing === "fallback" ? [...retrograde, ...tldr, ...seasonal, ...fallback] : [...retrograde, ...articleWithSeasonal], hasFallback: fields.some(field => field.path.startsWith("fallback.")) };
 }

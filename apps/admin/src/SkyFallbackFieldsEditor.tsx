@@ -73,8 +73,16 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   // dashboard's scroll request against a lazy-loaded editor.
   useEffect(() => {
     setSelectedField(initialField ?? "");
-    if (initialField) textarea.current?.focus({ preventScroll: true });
   }, [initialField]);
+
+  useEffect(() => {
+    if (!initialField) return;
+    const frame = requestAnimationFrame(() => {
+      textarea.current?.focus({ preventScroll: true });
+      textarea.current?.scrollIntoView({ block: "center", behavior: "auto" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [initialField, field?.key]);
 
   if (!planet) return <section className="admin-sky-edition-fields" aria-label="Editable fallback fields">
     <header>
@@ -85,7 +93,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
     {fields.map(item => <label className="admin-review-copy-editor" key={item.key}>
       <span>{item.label}</span>
       <small className="admin-field-hint">Internal source field: <code>{item.key}</code></small>
-      <StudioTextarea aria-label={`Fallback field ${item.label}`} data-sky-field={item.key} value={item.value} onChange={event => onChange(item.key, event.target.value)} />
+      <StudioTextarea ref={item.key === initialField ? textarea : undefined} disabled={disabled} aria-label={`Fallback field ${item.label}`} data-sky-field={item.key} value={item.value} onChange={event => onChange(item.key, event.target.value)} />
     </label>)}
   </section>;
 
@@ -101,6 +109,47 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
           : <><span className="ui-pill">Editing placement writing</span>{skyRetrogradeBodies.has(planet) && <StudioButton type="button" disabled={disabled} onClick={() => onOpenSource(`sky-placement/retrograde/${planet}`, "Body")}>Edit retrograde writing</StudioButton>}</>}
       </div>
     </div>}
+    {field ? <>
+      <label className="admin-field-wide">
+        <span>Writing section</span>
+        <AdminSelect aria-label="Writing section" value={field.key} onChange={event => setSelectedField(event.target.value)}>
+          {fields.map(item => <option key={item.key} value={item.key}>{item.label}</option>)}
+        </AdminSelect>
+      </label>
+      {selectedSection && <label className="admin-field-wide"><span>Section name</span>
+        <StudioInput aria-label="Section name" value={selectedSection.label ?? ""} maxLength={120} disabled={disabled} onChange={event => changeSection({ label: event.target.value })} />
+        <small className="admin-field-hint">For organizing your writing in Studio. Readers see the passage only.</small>
+      </label>}
+      {selectedBlock && !selectedSection?.paragraphs && !selectedSection?.items && <StudioButton type="button" disabled={disabled} onClick={() => {
+        const { source: _source, body: _body, phrases, ...block } = selectedBlock;
+        onChange(SKY_EVERGREEN_SECTIONS_PATH, evergreen.map(section => section.id === block.id ? {
+          ...block, label: field.label, role: block.role ?? "main", depth: block.depth ?? "standard",
+          paragraphs: [{ id: `paragraph-${crypto.randomUUID()}`, job: "Existing passage", phrases: phrases ?? [{ id: `phrase-${crypto.randomUUID()}`, text: field.value, joinBefore: "", source: `${contentKey}#${field.key}` }] }]
+        } : section));
+        setSelectedField(`${SKY_EVERGREEN_SECTIONS_PATH}.${block.id}`);
+      }}>Organize into paragraphs</StudioButton>}
+      {selectedBlock && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && <StudioButton type="button" disabled={disabled} onClick={() => {
+        const { source: originalSource, body: _body, ...block } = selectedBlock;
+        onChange(SKY_EVERGREEN_SECTIONS_PATH, evergreen.map(section => section.id === block.id ? {
+          ...block, label: field.label, phrases: [{ id: `phrase-${crypto.randomUUID()}`, text: field.value, joinBefore: "", source: `${contentKey}#${field.key}` }]
+        } : section));
+        setSelectedField(`${SKY_EVERGREEN_SECTIONS_PATH}.${block.id}`);
+      }}>Compose from phrases</StudioButton>}
+      {selectedSection && (selectedSection.paragraphs || selectedSection.items) ? <SkySectionPacketEditor section={selectedSection} disabled={disabled} facts={variableFacts} onChange={changeSection} /> : selectedSection?.phrases ? <SkyPhraseCompositionEditor phrases={selectedSection.phrases} disabled={disabled} facts={variableFacts} onChange={phrases => changeSection({ phrases })} /> : <label className="admin-review-copy-editor">
+        <span>{field.label}</span>
+        {retrograde && <small className="admin-field-hint">{field.key === "Body" ? "The full opening paragraph on the retrograde detail page." : "The short version used by retrograde cards. It does not replace the detail-page opening."}</small>}
+        {field.key.startsWith("fallback.") && <small className="admin-field-hint">Used when the full placement article is unavailable.{skyRetrogradeBodies.has(planet) && " Its motion setting controls which page includes it."}</small>}
+        <StudioTextarea ref={textarea} className="admin-copy-field-body" aria-label={`Fallback field ${field.label}`} data-sky-field={field.key}
+          value={field.value} disabled={disabled} aria-invalid={variableIssues.length > 0 || undefined} onChange={event => changeWriting(event.target.value)} />
+      </label>}
+      <p className="admin-sky-writing-count">{field.value.trim() ? field.value.trim().split(/\s+/u).length : 0} words · {field.value.length} characters</p>
+      {supportsVariables && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />}
+      {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}
+      <details className="admin-workspace-details">
+        <AdminDisclosureSummary>Preview this section</AdminDisclosureSummary>
+        <p className="admin-sky-writing-preview">{field.value ? supportsVariables ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value : "No writing saved for this section."}</p>
+      </details>
+    </> : <p>No editable writing fields are available for this source.</p>}
     {placement && <SkyWritingSystemDetails system="placement" />}
     {placement && <details className="admin-workspace-details" open={initialField?.startsWith("ingress") || undefined}>
       <AdminDisclosureSummary>Placement composition</AdminDisclosureSummary>
@@ -151,46 +200,6 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
         if (additions[0]) setSelectedField(`${SKY_EVERGREEN_SECTIONS_PATH}.${additions[0].id}`);
       }}>Add article outline</StudioButton>
     </details>}
-    {field ? <>
-      <label className="admin-field-wide">
-        <span>Writing section</span>
-        <AdminSelect aria-label="Writing section" value={field.key} onChange={event => setSelectedField(event.target.value)}>
-          {fields.map(item => <option key={item.key} value={item.key}>{item.label}</option>)}
-        </AdminSelect>
-      </label>
-      {selectedSection && <label className="admin-field-wide"><span>Section name</span>
-        <StudioInput aria-label="Section name" value={selectedSection.label ?? ""} maxLength={120} disabled={disabled} onChange={event => changeSection({ label: event.target.value })} />
-        <small className="admin-field-hint">For organizing your writing in Studio. Readers see the passage only.</small>
-      </label>}
-      {selectedBlock && !selectedSection?.paragraphs && !selectedSection?.items && <StudioButton type="button" disabled={disabled} onClick={() => {
-        const { source: _source, body: _body, phrases, ...block } = selectedBlock;
-        onChange(SKY_EVERGREEN_SECTIONS_PATH, evergreen.map(section => section.id === block.id ? {
-          ...block, label: field.label, role: block.role ?? "main", depth: block.depth ?? "standard",
-          paragraphs: [{ id: `paragraph-${crypto.randomUUID()}`, job: "Existing passage", phrases: phrases ?? [{ id: `phrase-${crypto.randomUUID()}`, text: field.value, joinBefore: "", source: `${contentKey}#${field.key}` }] }]
-        } : section));
-        setSelectedField(`${SKY_EVERGREEN_SECTIONS_PATH}.${block.id}`);
-      }}>Organize into paragraphs</StudioButton>}
-      {selectedBlock && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && <StudioButton type="button" disabled={disabled} onClick={() => {
-        const { source: originalSource, body: _body, ...block } = selectedBlock;
-        onChange(SKY_EVERGREEN_SECTIONS_PATH, evergreen.map(section => section.id === block.id ? {
-          ...block, label: field.label, phrases: [{ id: `phrase-${crypto.randomUUID()}`, text: field.value, joinBefore: "", source: `${contentKey}#${field.key}` }]
-        } : section));
-        setSelectedField(`${SKY_EVERGREEN_SECTIONS_PATH}.${block.id}`);
-      }}>Compose from phrases</StudioButton>}
-      {selectedSection && (selectedSection.paragraphs || selectedSection.items) ? <SkySectionPacketEditor section={selectedSection} disabled={disabled} facts={variableFacts} onChange={changeSection} /> : selectedSection?.phrases ? <SkyPhraseCompositionEditor phrases={selectedSection.phrases} disabled={disabled} facts={variableFacts} onChange={phrases => changeSection({ phrases })} /> : <label className="admin-review-copy-editor">
-        <span>{field.label}</span>
-        {retrograde && <small className="admin-field-hint">{field.key === "Body" ? "The full opening paragraph on the retrograde detail page." : "The short version used by retrograde cards. It does not replace the detail-page opening."}</small>}
-        {field.key.startsWith("fallback.") && <small className="admin-field-hint">Used when the full placement article is unavailable.{skyRetrogradeBodies.has(planet) && " Its motion setting controls which page includes it."}</small>}
-        <StudioTextarea ref={textarea} className="admin-copy-field-body" aria-label={`Fallback field ${field.label}`} data-sky-field={field.key}
-          value={field.value} disabled={disabled} aria-invalid={variableIssues.length > 0 || undefined} onChange={event => changeWriting(event.target.value)} />
-      </label>}
-      <p className="admin-sky-writing-count">{field.value.trim() ? field.value.trim().split(/\s+/u).length : 0} words · {field.value.length} characters</p>
-      {supportsVariables && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />}
-      {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}
-      <details className="admin-workspace-details">
-        <AdminDisclosureSummary>Preview this section</AdminDisclosureSummary>
-        <p className="admin-sky-writing-preview">{field.value ? supportsVariables ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value : "No writing saved for this section."}</p>
-      </details>
-    </> : <p>No editable writing fields are available for this source.</p>}
+
   </section>;
 }

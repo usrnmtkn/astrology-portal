@@ -331,3 +331,98 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(order.locator("li")).toHaveCount(4);
  });
 }
+
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+ test(`Sun live source editors and seasonal paragraph ${width} ${theme}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 });
+  await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "sun-editor-fixture"));
+  const saved = new Map<string, any>();
+  let version = 0;
+  const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
+  await page.route("**/api/admin/**", async route => {
+   const url = new URL(route.request().url());
+   const data: any = { ok: true, rows: [], statuses: [], nextCursor: null };
+   if (url.pathname.endsWith("/generated-content")) {
+    if (route.request().method() === "GET") data.rows = url.searchParams.has("id")
+      ? [...saved.values()].filter(row => row.id === url.searchParams.get("id"))
+      : (url.searchParams.get("contentKeys") ?? "").split(",").map(key => saved.get(key) ?? virtual(key)).filter(Boolean);
+    else {
+     const input = route.request().postDataJSON();
+     const current = [...saved.values()].find(row => row.id === input.id);
+     const key = input.contentKey ?? current?.content_key;
+     expect(key).toMatch(/^sky-placement\/seasonal-context\/aries\//);
+     const row = input.ownerAction
+       ? { ...current, status: "LIVE", lane: "serving", sections: { packageRecord: current.sections.packageDraft } }
+       : { ...virtual(key), id: `saved-${key}`, package_starter: false, sections: input.sections };
+     row.updated_at = new Date(Date.UTC(2026, 8, 12, 0, 0, ++version)).toISOString();
+     saved.set(key, row); data.rows = [row];
+    }
+   }
+   if (url.pathname.endsWith("/content-live-status")) data.statuses = contentLiveStatuses((route.request().postDataJSON().ids ?? []).map((id: string) => virtual(id.replace(/^package:/, ""))).filter(Boolean));
+   await route.fulfill({ json: data });
+  });
+  await page.goto("/admin/content#sky-writeups");
+  await expect(page.locator(".admin-theme-toggle")).toBeVisible();
+  const themeToggle = page.getByRole("button", { name: `Switch to ${theme} theme`, exact: true });
+  if (await themeToggle.count()) await themeToggle.click();
+  await expect(page.getByRole("button", { name: `Switch to ${theme === "light" ? "dark" : "light"} theme`, exact: true })).toBeVisible();
+  await page.getByLabel("Sky placement planet or point").selectOption("sun");
+  await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  const map = page.getByRole("region", { name: "Sky placement composition map" });
+  const actions = map.getByRole("group", { name: "Open placement section editors" });
+  await actions.getByRole("button", { name: "Open placement article editor", exact: true }).click();
+  const editor = page.getByRole("dialog");
+  const article = editor.getByRole("textbox", { name: "Fallback field Placement article", exact: true });
+  await expect(article).toBeFocused();
+  await expect(article).toBeInViewport();
+  await expect(article).toHaveValue(skyPlacementSourceRecords.get("sky-placement/article/sun/aries")!.placementArticle);
+  expect(await article.evaluate(el => Boolean(el.compareDocumentPosition(document.querySelector('.admin-sky-writing-editor .admin-evergreen-sections')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+  const labelStyle = await editor.getByLabel("Writing section", { exact: true }).evaluate(el => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; });
+  expect(await article.evaluate(el => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; })).toEqual(labelStyle);
+  await page.screenshot({ path: test.info().outputPath(`sun-editor-${width}-${theme}.png`) });
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
+  for (const [path, label] of [["tldrWhat", "tldr what"], ["tldrTakeaway", "tldr takeaway"]]) {
+   await actions.getByRole("button", { name: `Open ${label} editor`, exact: true }).click();
+   await expect(editor.locator(`textarea[data-sky-field="${path}"]`)).toHaveValue(skyPlacementSourceRecords.get("sky-placement/article/sun/aries")![path]);
+   await expect(editor.locator(`textarea[data-sky-field="${path}"]`)).toBeFocused();
+   await editor.getByRole("button", { name: "Close", exact: true }).click();
+  }
+  for (const hemisphere of ["northern", "southern", "neutral"]) {
+   await map.getByLabel("Seasonal preview hemisphere").selectOption(hemisphere);
+   const key = `sky-placement/seasonal-context/aries/${hemisphere}`;
+   const source = skyPlacementSourceRecords.get(key)!;
+   await expect(map.getByRole("button", { name: "Edit seasonal context copy", exact: true })).toHaveText(source.Copy);
+   await actions.getByRole("button", { name: "Open seasonal context copy editor", exact: true }).click();
+   const copy = editor.getByRole("textbox", { name: "Fallback field Seasonal context copy", exact: true });
+   await expect(copy).toHaveValue(source.Copy);
+   await expect(copy).toBeFocused(); await expect(copy).toBeInViewport();
+   await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeDisabled();
+   const revision = `Complete ${hemisphere} fixture opening.\n\nComplete ${hemisphere} fixture ending.`;
+   await copy.fill(revision);
+   await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+   await expect.poll(() => saved.get(key)?.sections.packageRecord.Copy).toBe(revision);
+   expect(saved.get(key).sections.packageRecord.ContentKey).toBe(key);
+   await editor.getByRole("button", { name: "Close", exact: true }).click();
+   await actions.getByRole("button", { name: "Open seasonal context copy editor", exact: true }).click();
+   await expect(copy).toHaveValue(revision);
+   await editor.getByRole("button", { name: "Close", exact: true }).click();
+  }
+  await page.getByLabel("Sky placement zodiac sign").selectOption("taurus");
+  await expect(map.getByLabel("Seasonal preview hemisphere")).toHaveCount(0);
+  await expect(map.getByRole("button", { name: "Open seasonal context copy editor", exact: true })).toHaveCount(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  expect(errors).toEqual([]);
+ });
+}
+
+test("all seasonal paragraphs match the reader order and keep hemisphere sources distinct", () => {
+ for (const sign of ["aries", "cancer", "libra", "capricorn"]) for (const hemisphere of ["northern", "southern", "neutral"]) {
+  const seasonal = virtual(`sky-placement/seasonal-context/${sign}/${hemisphere}`)!;
+  const article = virtual(`sky-placement/article/sun/${sign}`)!;
+  const map = skyPlacementAssembly([seasonal, article], "article");
+  const reader = renderSkyV4ReaderRoute(skyPlacementSourceCorpus, { route: "placement", planet: "sun", sign, seasonalContext: seasonal.sections.packageRecord.Copy });
+  expect(map.parts.map(part => part.value)).toEqual(reader.readerParts);
+  expect(map.parts.map(part => part.path)).toEqual(["tldrWhat", "tldrTakeaway", "Copy", "placementArticle"]);
+ }
+});
