@@ -193,7 +193,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
               <p className="admin-composition-source-copy">{field.value || "No writing saved for this section."}</p>
               <StudioButton type="button" onClick={() => edit(field)}>Edit {field.label.toLowerCase()}</StudioButton>
             </div>) : <><p className="admin-composition-source-copy">{row.body}</p><StudioButton type="button" onClick={() => onEditRow(row)}>Edit source</StudioButton></>}
-            <details><AdminDisclosureSummary>Source details</AdminDisclosureSummary><code>{row.content_key}</code></details>
+            <details className="admin-workspace-details"><AdminDisclosureSummary>Source details</AdminDisclosureSummary><code>{row.content_key}</code></details>
           </article>;
         })}
       </StudioTabs>

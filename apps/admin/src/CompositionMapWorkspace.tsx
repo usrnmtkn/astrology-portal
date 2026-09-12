@@ -124,7 +124,7 @@ function ReaderSurfaceWorkspace({
             </AdminSelect>
           </label>
         </header>
-        <details className="admin-composition-browse" open={browseOpen} onToggle={(event) => setBrowseOpen(event.currentTarget.open)}><AdminDisclosureSummary>Browse surfaces ({filtered.length})</AdminDisclosureSummary>
+        <details className="admin-workspace-details admin-composition-browse" open={browseOpen} onToggle={(event) => setBrowseOpen(event.currentTarget.open)}><AdminDisclosureSummary>Browse surfaces ({filtered.length})</AdminDisclosureSummary>
         <div className="admin-composition-template-items">
           {filtered.map((surface) => {
             const surfaceAccess = writingSurfaceAdminAccess[surface.id];
@@ -194,7 +194,7 @@ function ReaderSurfaceWorkspace({
               ) : null}
             </section>
 
-            <details className="admin-composition-technical"><AdminDisclosureSummary>Technical details</AdminDisclosureSummary>
+            <details className="admin-workspace-details admin-composition-technical"><AdminDisclosureSummary>Technical details</AdminDisclosureSummary>
             <section className="admin-composition-surface-summary" aria-label="Writing surface contract">
               <div>
                 <p className="admin-eyebrow">Surface content</p>
