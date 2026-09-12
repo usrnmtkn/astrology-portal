@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { separateArticleHoroscopeRow } from "../apps/web/src/content/skyArticleHoroscopes.mjs";
 import { assertCleanReaderCopy, separateOwnerArticle } from "../apps/web/src/content/editorialCopyBoundary.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -82,7 +83,7 @@ function row({
   }
   assertCleanReaderCopy({ headline: editorialOnly ? "" : headline, body });
   reviewSequence += 1;
-  return {
+  return separateArticleHoroscopeRow({
     content_key: contentKey,
     surface: "sky",
     mode,
@@ -116,7 +117,7 @@ function row({
     published_at: status === "LIVE" ? new Date().toISOString() : null,
     reviewer_notes: null,
     error: null
-  };
+  });
 }
 
 function placementRows(name, expected, priority, approved = false) {
@@ -378,9 +379,11 @@ async function importRows() {
           source_snapshot: { ...(current.source_snapshot ?? {}), ...candidate.source_snapshot }
         }
       : candidate;
-    const endpoint = current ? `generated_interpretations?id=eq.${encodeURIComponent(current.id)}` : "generated_interpretations";
+    assert.ok(!current || current.updated_at, `Saved version required before import: ${candidate.content_key}`);
+    const endpoint = current ? `generated_interpretations?id=eq.${encodeURIComponent(current.id)}&updated_at=eq.${encodeURIComponent(current.updated_at)}` : "generated_interpretations";
     assertCleanReaderCopy(payload);
-    await request(endpoint, { method: current ? "PATCH" : "POST", headers: { "content-type": "application/json", prefer: "return=minimal" }, body: JSON.stringify(payload) });
+    const saved = await request(endpoint, { method: current ? "PATCH" : "POST", headers: { "content-type": "application/json", prefer: "return=representation" }, body: JSON.stringify(payload) });
+    assert.ok(Array.isArray(saved) && saved.length === 1, `Content changed during import: ${candidate.content_key}. Reload before retrying.`);
     report[current ? "updated" : "inserted"] += 1;
   }
   return report;
