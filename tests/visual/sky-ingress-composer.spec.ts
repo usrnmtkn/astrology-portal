@@ -50,7 +50,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await expect(editor).toBeVisible();
   await editor.getByRole('button', { name: 'Add placement composition' }).click();
   const composer = editor.getByRole('region', { name: 'Placement composition' });
-  await expect(composer.getByLabel('Ingress sentence source')).toHaveValue('planetFunctionSentence');
+  await expect(composer.getByRole('region', { name: 'Sky writing library' })).toBeVisible();
+  await expect(composer.getByRole('button', { name: 'Add writing library fields' })).toBeVisible();
   await expect(composer.getByLabel('Ingress composition view').locator('option')).toHaveText(['Draft preview', 'Main template', 'Assembly and omissions']);
   const enabled = composer.getByLabel('Use composition when the complete article is empty');
   await enabled.check();
@@ -59,9 +60,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await enabled.uncheck();
   await expect(composer.getByText('Composition is not enabled', { exact: false })).toBeVisible();
   await expect(editor.getByLabel('Placement writing system details', { exact: true })).toHaveCount(1);
+  await composer.getByText('Advanced source tools', { exact: true }).click();
+  await expect(composer.getByLabel('Ingress sentence source')).toHaveValue('planetFunctionSentence');
   await composer.getByLabel('Ingress source planetFunctionSentence').fill('Fixture {{planetTitle}} meaning.');
   await expect(composer.locator('.admin-sky-section-reference').first()).toHaveText(`${key}#ingress.sources.planetFunctionSentence`);
-  await composer.getByText('Add a named sentence source', { exact: true }).click();
+  await composer.getByText('Add a custom sentence source', { exact: true }).click();
   await composer.getByLabel('New ingress source name').fill('additionalMeaningSentence');
   await composer.getByRole('button', { name: 'Add sentence source', exact: true }).click();
   await composer.getByLabel('Ingress source additionalMeaningSentence').fill('Fixture additional {{signTitle}} sentence.');
