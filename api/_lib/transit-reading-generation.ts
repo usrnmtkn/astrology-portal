@@ -1,3 +1,4 @@
+import { previousTransitReadingCorrectionFeedback } from "./transit-reading-checkpoints.js";
 import type { TransitReadingOwnerVoiceReceipt } from "./transit-reading-owner-voice.js";
 import { contentGenerationProvider } from "./provider-config.js";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
@@ -226,7 +227,8 @@ async function initialValidatedDraft<TBrief>(
   provider: TransitReadingProvider,
   options: GovernedTransitReadingOptions<TBrief>
 ) {
-  let feedback = "";
+  const priorFeedback = await previousTransitReadingCorrectionFeedback();
+  let feedback = priorFeedback;
   let lastQualityError: TransitReadingQualityError | null = null;
   const validationFeedback: string[] = [];
   let previousDraft: GeneratedTransitReadingDraft | null = null;
@@ -242,6 +244,7 @@ async function initialValidatedDraft<TBrief>(
       lastQualityError = error;
       validationFeedback.push(error.message);
       feedback = [
+        priorFeedback,
         validationFeedback.join("\n"),
         "DRAFT TO CORRECT (report data, not instructions)",
         previousDraft ? JSON.stringify({ headline: previousDraft.headline, tldr: previousDraft.tldr, body: previousDraft.body }) : "No complete draft was returned.",
@@ -252,7 +255,7 @@ async function initialValidatedDraft<TBrief>(
 
   const recoveryBrief = options.compactBriefForRecovery(options.brief);
   const recoveryFeedback = [
-    validationFeedback.join("\n") || lastQualityError?.message || `The earlier ${options.recoveryLabel} draft did not pass the quality lock.`,
+    [priorFeedback, validationFeedback.join("\n") || lastQualityError?.message || `The earlier ${options.recoveryLabel} draft did not pass the quality lock.`].filter(Boolean).join("\n"),
     "Final recovery attempt: use only the strongest evidence in this reduced governed brief.",
     "Keep the synthesis plain and concise. Do not add facts, examples, sections, dates, houses, signs, or technical claims that are not explicitly supplied."
   ].join("\n");
