@@ -105,7 +105,7 @@ export function TransitNatalPreviewOptions({ context, onChange }: {
   onChange: (next: Partial<TransitNatalReadingContext>) => void;
 }) {
   return (
-        <details>
+        <details className="admin-workspace-details">
           <AdminDisclosureSummary>Reading preview options</AdminDisclosureSummary>
           <p className="admin-field-hint">These are example inputs. Match the calculated reading when comparing its exact passage.</p>
           <div className="admin-natal-placement-selectors">
