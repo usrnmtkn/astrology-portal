@@ -178,6 +178,7 @@ import { memoByObject, naturalCollator } from "./derivedCache";
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
 const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
+const ImportedArticleHoroscopesEditor = lazy(() => import("./ImportedArticleHoroscopesEditor"));
 const StudioEditorReviewPanels = lazy(() => import('./StudioEditorReviewPanels'));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
@@ -4291,6 +4292,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const edition = await compileSkyArticleEdition({
         templateBody: templateRow.body ?? "",
+        templateSections: templateRow.sections,
         templateKey: templateRow.content_key.replace(/^sky-article-template\//u, "sky/article-template/"),
         planet: facts.planet,
         sign: facts.sign,
@@ -8322,8 +8324,12 @@ export function GeneratedContentAdminDashboard() {
       && currentDraft.lane === "serving"
       && !currentDraft.reviewState
       && cmsCanSignOff;
+    const importedHoroscopeSections = objectRecord(currentDraft.sections?.articleHoroscopes);
+    const savedHoroscopeSections = objectRecord(objectRecord(selectedRow?.sections)?.articleHoroscopes);
+    const savedHoroscopeText = [selectedRow?.body, savedHoroscopeSections?.heading, savedHoroscopeSections?.introduction,
+      ...(Array.isArray(savedHoroscopeSections?.passages) ? savedHoroscopeSections.passages.map((passage: {body?:string}) => passage.body) : [])].filter(Boolean).join("\n\n");
     const skyArticleTemplateFields = isSkyArticleTemplate && selectedRow
-      ? skyArticleTemplatePlaceholders(selectedRow.body ?? "").filter((placeholder) => placeholder.name !== "risingBlocks")
+      ? skyArticleTemplatePlaceholders(savedHoroscopeText).filter((placeholder) => placeholder.name !== "risingBlocks")
       : [];
     const skyArticleEditionFacts = skyArticleEditionForm?.facts ?? null;
     const skyArticleEditionContext = skyArticleEditionFacts
@@ -8334,7 +8340,7 @@ export function GeneratedContentAdminDashboard() {
           passage.availability === "Reader-ready" && isApprovedSkyRelationRow(passage.row)
         ))
       : [];
-    const skyArticleEditionHouseCoverage = new Set(skyArticleEditionHouseRows.map((passage) => passage.house)).size;
+    const skyArticleEditionHouseCoverage = Array.isArray(savedHoroscopeSections?.passages) && savedHoroscopeSections.passages.length ? savedHoroscopeSections.passages.length : new Set(skyArticleEditionHouseRows.map((passage) => passage.house)).size;
     const skyArticleEditionAspectCount = skyArticleEditionContext
       ? relatedAspectPassages(rows, skyArticleEditionContext).filter(isApprovedSkyRelationRow).length
       : 0;
@@ -9668,6 +9674,9 @@ export function GeneratedContentAdminDashboard() {
               )}
             </div>
           )}
+          {!skyWriteupContext && importedHoroscopeSections && <Suspense fallback={<p>Loading horoscope fields…</p>}>
+            <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections}))} />
+          </Suspense>}
           {skyWriteupContext && selectedRow && (
             <SkyRelatedContainer className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
               {isSkyPlacementSource && <AdminDisclosureSummary>Aspects and horoscopes</AdminDisclosureSummary>}
@@ -9685,7 +9694,7 @@ export function GeneratedContentAdminDashboard() {
                     <div><dt>Rising horoscopes</dt><dd>{sourceReadyLunationHoroscopes}/12 source-ready</dd></div>
                   ) : (
                     <>
-                      <div><dt>Complete horoscopes</dt><dd>{populatedSkyHouses}/12</dd></div>
+                      <div><dt>Complete horoscopes</dt><dd>{Array.isArray(importedHoroscopeSections?.passages) ? importedHoroscopeSections.passages.length : populatedSkyHouses}/12</dd></div>
                       <div><dt>Supporting passages</dt><dd>{candidateSkyHouses}/12 houses</dd></div>
                     </>
                   )}
@@ -9734,7 +9743,11 @@ export function GeneratedContentAdminDashboard() {
                 </div>
               </details>
 
-              {skyLunationContext ? (
+              {importedHoroscopeSections ? (
+                <Suspense fallback={<p>Loading horoscope fields…</p>}>
+                  <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections}))} />
+                </Suspense>
+              ) : skyLunationContext ? (
                 <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                   <AdminDisclosureSummary>
                     <span>Rising-sign horoscopes</span>

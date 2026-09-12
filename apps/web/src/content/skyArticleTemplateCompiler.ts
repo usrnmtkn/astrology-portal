@@ -35,6 +35,7 @@ export type CompileSkyArticleEditionInput = {
   sign: string;
   slotValues: Record<string, string>;
   templateBody: string;
+  templateSections?: unknown;
   templateKey: string;
   tldr: string;
   transitEndInstant: string;
@@ -318,7 +319,7 @@ export async function reviseSkyArticleEdition(
 function articleBodyBeforeHoroscopes(markdown: string) {
   return compactBlankLines(markdown
     .replace(/^Jump to Horoscopes\s*$/gmu, "")
-    .split(/^## Horoscopes\b.*$/mu)[0] ?? "");
+    .split(/^## [^\n]*\bHoroscopes\b[^\n]*$/imu)[0] ?? "");
 }
 
 function withoutFirstHeading(markdown: string) {
@@ -371,8 +372,16 @@ async function sha256(value: string) {
 }
 
 export async function compileSkyArticleEdition(input: CompileSkyArticleEditionInput): Promise<CompiledSkyArticleEdition> {
+  const { articleHoroscopeSection, articleTemplateWithHoroscopes } = await import("./skyArticleHoroscopes.mjs");
+  const horoscopeSection = articleHoroscopeSection(input.templateSections);
+  if (horoscopeSection?.passages.length) {
+    input = { ...input, housePassages: horoscopeSection.passages.map(passage => ({
+      ...passage, contentKey: `${input.templateKey}/horoscope/${passage.risingSign}`,
+      body: compactBlankLines(replaceTemplateTokens(passage.body, { ...input.slotValues, sign: input.slotValues.sign || titleCaseToken(input.sign) }))
+    })) };
+  }
   assertEditionInput(input);
-  const templateBody = extractSkyArticleTemplateBody(input.templateBody);
+  const templateBody = extractSkyArticleTemplateBody(articleTemplateWithHoroscopes(input.templateBody, input.templateSections));
   const placeholders = skyArticleTemplatePlaceholders(templateBody);
   const slotValues: Record<string, string> = {
     ...input.slotValues,
@@ -410,6 +419,7 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
 
   const generalMarkdown = withoutFirstHeading(articleBodyBeforeHoroscopes(compiledMarkdown));
   if (!generalMarkdown) throw new Error("Compiled Sky article edition has no reader-facing article body.");
+  if (input.housePassages.some(passage => balancedMustacheTokens(passage.body).length)) throw new Error("Sky article horoscopes contain unresolved placeholders.");
   const housePassages = uniqueByContentKey(input.housePassages).sort((left, right) => left.house - right.house);
   const aspectPassages = uniqueByContentKey(input.aspectPassages ?? []);
   const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages }));
@@ -418,7 +428,7 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
     schema: SKY_ARTICLE_EDITION_SCHEMA,
     contentKey: `sky-article/${input.planet}/${input.sign}/${input.entryYear}`,
     templateKey: input.templateKey,
-    templateHash: await sha256(normalizeNewlines(input.templateBody)),
+    templateHash: await sha256(normalizeNewlines(articleTemplateWithHoroscopes(input.templateBody, input.templateSections))),
     fixedProseHash: await sha256(templateBody),
     compiledHash,
     planet: input.planet,
