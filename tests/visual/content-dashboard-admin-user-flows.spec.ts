@@ -6937,23 +6937,28 @@ for (const theme of ['dark', 'light'] as const) {
       await noErrors();
     });
 
-    test(`Studio expanded secondary screens ${theme} ${width}`, async ({ page }) => {
-      const noErrors = await expectNoBrowserErrors(page);
-      await seedAdminApi(page);
-      await page.setViewportSize({ width, height: 1000 });
-      await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
-      for (const route of ['composition-map', 'templates', 'surface-map', 'slots', 'vocabulary', 'connection', 'users', 'report-fulfillment', 'exact-content?category=Natal+Chart']) {
+    for (const route of ['composition-map', 'templates', 'surface-map', 'slots', 'vocabulary', 'connection', 'users', 'report-fulfillment', 'exact-content?category=Natal+Chart']) {
+      test(`Studio expanded secondary screens ${route} ${theme} ${width}`, async ({ page }) => {
+        const noErrors = await expectNoBrowserErrors(page);
+        await seedAdminApi(page);
+        await page.setViewportSize({ width, height: 1000 });
+        await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
         await expectAdminRouteLoads(page, `/admin/content#${route}`);
-        for (const summary of await page.locator('.admin-main details > summary').all()) {
-          if (await summary.isVisible() && await summary.locator('..').getAttribute('open') === null) await summary.click();
+        const summaries = page.locator('.admin-main details > summary');
+        // Read disclosure state together; each disclosure still opens through a user click.
+        while (true) {
+          const closed = await summaries.evaluateAll(elements => elements.flatMap((element, index) =>
+            element.checkVisibility({ checkVisibilityCSS: true }) && !element.parentElement?.hasAttribute('open') ? [index] : []));
+          if (!closed.length) break;
+          for (const index of closed) await summaries.nth(index).click();
         }
         await expectStudioTypography(page, `expanded ${route}`);
         await expectNoHorizontalOverflow(page, `expanded ${route}`);
         const boldLabels = await page.locator('.admin-main label, .admin-main legend').evaluateAll(elements => elements.filter(element => element.checkVisibility({ checkVisibilityCSS: true }) && Number(getComputedStyle(element).fontWeight) > 400).map(element => element.textContent));
         expect(boldLabels, route).toEqual([]);
         await noErrors();
-      }
-    });
+      });
+    }
   }
 }
 
