@@ -1,0 +1,1 @@
+Owner requested editable phrase variables be discoverable immediately below calculated Sky variables in an accordion. This change implements that UI order and keeps the registry sourced from the Writing Library groups.
