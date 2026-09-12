@@ -1,4 +1,4 @@
-import { withTransitReadingCheckpoints, TransitReadingCheckpointYield, TransitReadingCheckpointStopped } from "./transit-reading-checkpoints.js";
+import { TRANSIT_READING_INVOCATION_BUDGET_MS, withTransitReadingCheckpoints, TransitReadingCheckpointYield, TransitReadingCheckpointStopped } from "./transit-reading-checkpoints.js";
 import { friendTransitReadingRequestLock } from "./friend-transit-reading.js";
 import { generateFriendTransitReadingForUser, type FriendTransitReadingRow } from "./friend-transit-reading-generation.js";
 import { isTransitReadingJudgeBlockedError } from "./transit-reading-generation.js";
@@ -546,6 +546,7 @@ export async function runFriendReportJobs(input: {
   batchLimit?: number;
   admin?: SupabaseReportAdmin;
 }) {
+  const deadline = Date.now() + TRANSIT_READING_INVOCATION_BUDGET_MS;
   const admin = adminClient(input.admin);
   const jobs = await claimJobs({ admin, workerId: input.workerId, jobId: input.jobId, batchLimit: input.batchLimit ?? 1 });
   const results: Array<{ jobId: string; status: string; resultId?: string }> = [];
@@ -568,7 +569,8 @@ export async function runFriendReportJobs(input: {
       continue;
     }
     try {
-      const generated = await withTransitReadingCheckpoints({ admin, family: "friend", jobId: job.id, attempt: job.checkpoint_attempt ?? 1,
+      if (deadline - Date.now() < 60_000) throw new TransitReadingCheckpointYield();
+      const generated = await withTransitReadingCheckpoints({ admin, family: "friend", jobId: job.id, attempt: job.checkpoint_attempt ?? 1, deadline,
         onProgress: async (stage) => {
           await admin.update("user_generated_interpretations",
             `user_id=eq.${job.user_id}&friend_report_entitlement_id=eq.${job.entitlement_id}&status=eq.DRAFT&body=eq.`,
@@ -603,7 +605,9 @@ export async function runFriendReportJobs(input: {
       const judgeBlocked = isTransitReadingJudgeBlockedError(error);
       // Reject this draft, but give the existing entitlement its remaining retries.
       const failed = job.attempt >= attemptCap || error instanceof TransitReadingCheckpointStopped;
-      const delayMinutes = Math.min(30, Math.max(1, job.attempt * 2));
+      // A completed review rejection is not a provider outage. Its next
+      // permitted attempt can run now; infrastructure failures keep backoff.
+      const delayMinutes = judgeBlocked ? 0 : Math.min(30, Math.max(1, job.attempt * 2));
       const errorMessage = judgeBlocked
         ? "Writing quality gate did not pass after one corrective rewrite and re-judge."
         : error instanceof Error
@@ -612,7 +616,8 @@ export async function runFriendReportJobs(input: {
       await admin.update("friend_report_jobs", `id=eq.${job.id}`, {
         state: failed ? "failed" : "retry",
         ...(!failed ? { checkpoint_attempt: (job.checkpoint_attempt ?? 1) + 1 } : {}),
-        run_after: failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),
+        run_after: !failed && judgeBlocked ? job.run_after
+          : failed ? new Date().toISOString() : new Date(Date.now() + delayMinutes * 60_000).toISOString(),
         locked_at: null,
         locked_by: null,
         last_error: judgeBlocked && error.diagnostic
@@ -622,6 +627,12 @@ export async function runFriendReportJobs(input: {
       if (failed) await markPlaceholderFailed(admin, job, error instanceof TransitReadingCheckpointStopped
         ? "This report could not finish generating. Please try again." : errorMessage);
       results.push({ jobId: job.id, status: failed ? "failed" : "retry" });
+      if (!failed && judgeBlocked && deadline - Date.now() >= 60_000) {
+        // Reclaim through the database, so cancellation, ownership and the
+        // attempt counter remain authoritative even with concurrent workers.
+        // Every continuation shares the original invocation deadline.
+        jobs.push(...await claimJobs({ admin, workerId: input.workerId, jobId: job.id, batchLimit: 1 }));
+      }
     }
   }
   return { claimed: jobs.length, results };

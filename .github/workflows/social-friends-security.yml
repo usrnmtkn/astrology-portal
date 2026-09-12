@@ -61,6 +61,7 @@ on:
       - "scripts/test-generated-report-correction.mjs"
       - "scripts/test-report-quality-retries.mjs"
       - "scripts/test-transit-reading-checkpoints.mts"
+      - "scripts/test-report-worker-continuation.mjs"
       - "api/_lib/transit-reading-checkpoints.ts"
       - "scripts/test-generated-report-breadth.mjs"
       - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md"
@@ -131,6 +132,7 @@ on:
       - "scripts/test-generated-report-correction.mjs"
       - "scripts/test-report-quality-retries.mjs"
       - "scripts/test-transit-reading-checkpoints.mts"
+      - "scripts/test-report-worker-continuation.mjs"
       - "api/_lib/transit-reading-checkpoints.ts"
       - "scripts/test-generated-report-breadth.mjs"
       - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-BREADTH-AND-VOICE-V1.md"
@@ -160,6 +162,7 @@ jobs:
       - run: node scripts/test-generated-report-correction.mjs
       - run: node scripts/test-report-quality-retries.mjs
       - run: node --import tsx scripts/test-transit-reading-checkpoints.mts
+      - run: node scripts/test-report-worker-continuation.mjs
       - run: node scripts/test-generated-report-owner-corpus.mjs
       - run: node scripts/test-generated-report-breadth.mjs
       - run: node scripts/test-friend-transit-reading-request-render.mjs
