@@ -503,7 +503,7 @@ const reviewRecordRows = generatedContentRows.map((row) => ({
 async function seedAdminApi(
   page: Page,
   options: {
-    onGeneratedContentWrite?: (write: { method: string; payload: Record<string, unknown> }) => void;
+    onGeneratedContentWrite?: (write: { method: string; payload: Record<string, unknown> }) => void | Promise<void>;
     onResolutionWrite?: (payload: Record<string, unknown>) => void;
     onSourceDecisionWrite?: (payload: Record<string, unknown>) => void;
     initialSecret?: string;
@@ -695,7 +695,7 @@ async function seedAdminApi(
       }
       if (method === "POST" || method === "PATCH") {
         const payload = route.request().postDataJSON() as Record<string, unknown>;
-        options.onGeneratedContentWrite?.({ method, payload });
+        await options.onGeneratedContentWrite?.({ method, payload });
         const existingRow = apiGeneratedContentRows.find((row) => row.id === payload.id) ?? generatedContentRows[0];
         if (payload.ownerAction === "approve-package-revision") {
           const existingSections = existingRow.sections && typeof existingRow.sections === "object"
@@ -843,6 +843,20 @@ async function seedAdminApi(
           ...(url.searchParams.get("includePackageSource") === "true" ? { packageSource: servingPackageRecords.get(url.searchParams.get("contentKey")!) ?? null } : {})
         })
       });
+      return;
+    }
+
+    if (pathname.endsWith("/report-fulfillment")) {
+      await route.fulfill({ json: {
+        billingMode: "free_test",
+        metrics: {
+          orders: 0, entitlementStatuses: {}, fulfillmentStatuses: {}, jobStates: {},
+          exceptionDepth: 0, auditDepth: 0, averageDeliveryMinutes: null, averageJudgeScore: null,
+          averageAcceptedTokenCount: 0, averageTotalTokenCount: 0, averageEstimatedSpendUsd: 0,
+          validatorPassRate: null, judgePassRate: null, attemptDistribution: {}, judgeScoreDistribution: {}
+        },
+        reports: [], audits: [], users: [], callEstimates: {}
+      } });
       return;
     }
 
@@ -1149,7 +1163,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("navigation", { name: "Content rows pagination" })).toContainText("Showing 51–100 of 7200");
 
     const searchStartedAt = Date.now();
-    await page.getByRole("textbox", { name: "Search content" }).fill("Production scale search target");
+    await page.getByRole("searchbox", { name: "Search content" }).fill("Production scale search target");
     await expect(page.locator(".admin-content-row")).toHaveCount(1, { timeout: 2_500 });
     await expect(page.locator(".admin-content-row")).toContainText("content/scale/row-7199");
     expect(Date.now() - searchStartedAt, "Content Library search resolves within the interaction budget").toBeLessThan(3_000);
@@ -1370,7 +1384,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page).toHaveURL(/#exact-content\?category=Calendar\+Aspects$/u);
     await expect(navigation.getByRole("button", { name: "Calendar Aspects", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
-    await expect(page.getByRole("heading", { name: "Edit Calendar aspect cards" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Edit Calendar aspect cards" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Content status definitions" })).toContainText("Live means readers can currently receive this copy. Not live means readers cannot currently receive this copy.");
     const contentFilters = page.locator("section[aria-label='Content list filters']");
     await expect(contentFilters.getByLabel("Content class")).toHaveCount(0);
@@ -1380,7 +1394,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(contentFilters.getByRole("button", { name: "Hide reference", exact: true })).toHaveCount(0);
     await expect(contentFilters.getByLabel("Find an aspect")).toHaveAttribute("placeholder", "Mercury sextile Mars");
     await contentFilters.getByText("Editorial filters", { exact: true }).click();
-    await expect(contentFilters.getByRole("tab", { name: "All 2" })).toBeVisible();
+    await expect(contentFilters.getByRole("button", { name: "All 2" })).toBeVisible();
 
     const contentRows = page.locator(".admin-content-row");
     await expect(contentRows).toHaveCount(2);
@@ -1463,7 +1477,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Content status definitions" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Generated content records" })).toHaveCount(0);
     await expect(page.getByText("QA Mercury Hidden Body Search Trap")).toHaveCount(0);
-    await expect(page.getByText("Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.")).toBeVisible();
+    await expect(page.getByText("Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.")).toHaveCount(0);
 
     const sourceFinder = page.getByRole("region", { name: "Find natal placement source writing" });
     const sourceFinderBox = await sourceFinder.boundingBox();
@@ -1476,7 +1490,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     selectorBoxes.forEach((box, index) => {
       expect(box.left).toBeGreaterThanOrEqual(sourceFinderBox!.x);
       expect(box.right).toBeLessThanOrEqual(sourceFinderBox!.x + sourceFinderBox!.width);
-      if (index > 0) expect(box.left).toBeGreaterThanOrEqual(selectorBoxes[index - 1].right);
+      if (index % 2 > 0) expect(box.left).toBeGreaterThanOrEqual(selectorBoxes[index - 1].right);
+      if (index >= 2) expect(box.top).toBeGreaterThanOrEqual(selectorBoxes[index - 2].bottom);
     });
     await expectNoHorizontalOverflow(page, "Natal Chart workspace");
 
@@ -1491,16 +1506,16 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Natal placement zodiac sign").selectOption("cancer");
     await page.getByLabel("Natal placement house").selectOption("");
     await expect(page.getByLabel("Natal placement motion")).toHaveValue("direct");
-    await expect(sourceFinder.locator(".admin-natal-placement-finder-heading h3")).toHaveText("Sun in Cancer");
+    await expect(sourceFinder.locator(".admin-natal-placement-finder-heading h3")).toHaveCount(0);
     await expect(sourceFinder.getByRole("heading", { name: "What you see" })).toBeVisible();
     await expect(sourceFinder.getByText("Your Sun is in Cancer, so the planet-in-sign write-up loads before a house is selected.")).toBeVisible();
-    await expect(sourceFinder.getByText("The planet-in-sign write-up is shown below. Choose a house to add the house paragraph and exact full-placement override.")).toBeVisible();
+    await expect(sourceFinder.getByText("The planet-in-sign write-up is shown below. Choose a house to add the house paragraph and exact full-placement override.")).toHaveCount(0);
     await expect(sourceFinder.locator(".admin-natal-source-group").first().getByRole("heading", { name: "Sun in Cancer", exact: true })).toBeVisible();
     await expect(sourceFinder.getByText("Optional exact override.")).toHaveCount(0);
     await expect(sourceFinder.getByRole("button", { name: "Create exact override" })).toHaveCount(0);
     await page.getByLabel("Natal placement house").selectOption("1");
-    await expect(sourceFinder.locator(".admin-natal-placement-finder-heading h3")).toHaveText("Sun in Cancer in the 1st house");
-    await expect(sourceFinder.getByText("Reader path", { exact: true })).toBeVisible();
+    await expect(sourceFinder.getByRole("button", { name: "View Sun in Cancer in the 1st house in app" })).toBeVisible();
+    await expect(sourceFinder.getByText("Reader path", { exact: true })).toHaveCount(0);
     await expect(sourceFinder.getByText("Source key", { exact: true }).first()).toBeVisible();
     await expect(sourceFinder.getByRole("heading", { name: "Complete Sun in Cancer in the 1st house write-up" })).toBeVisible();
     await expect(sourceFinder.getByText("Your Sun in Cancer in the 1st house makes care, identity, and self-expression immediately visible.")).toBeVisible();
@@ -1597,12 +1612,12 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await openAdminDeepLink("#vocabulary?category=relationship&q=trust");
     await expectAdminHeader(page, "Vocabulary & Phrases", "Admin / Composition / Vocabulary & phrases");
-    await expect(page.getByRole("tablist", { name: "Vocabulary categories" }).getByRole("tab", { name: "Relationship" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("navigation", { name: "Vocabulary categories" }).getByRole("link", { name: "Relationship" })).toHaveAttribute("aria-current", "page");
     await expect(page.getByLabel("Search vocabulary")).toHaveValue("trust");
 
     await openAdminDeepLink("#fallback-hooks?section=friends");
     await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
-    await expect(page.getByRole("tab", { name: /Friends/ })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("group", { name: "Fallback hook sections" }).getByRole("button", { name: "Friends", exact: true })).toHaveAttribute("aria-pressed", "true");
     const mainRail = await page.locator("section.admin-main").boundingBox();
     const fallbackHeader = await page.locator(".admin-dashboard-header").boundingBox();
     const fallbackRows = await page.locator(".admin-list-panel").first().boundingBox();
@@ -1751,9 +1766,9 @@ test.describe("content dashboard admin user flow case studies", () => {
           await expect(editor.getByText("Title / headline", { exact: true })).toBeVisible();
           await expect(editor.getByText("TL;DR / summary", { exact: true })).toBeVisible();
           await expect(editor.getByLabel("Full passage / body")).toBeVisible();
-          await expect(editor.getByText(/Stored internally as Headline/)).toBeVisible();
-          await expect(editor.getByText(/Stored internally as Summary/)).toBeVisible();
-          await expect(editor.getByText(/Stored internally as Body/)).toBeVisible();
+          await expect(editor.getByText(/Stored internally as Headline/)).toHaveCount(0);
+          await expect(editor.getByText(/Stored internally as Summary/)).toHaveCount(0);
+          await expect(editor.getByText(/Stored internally as Body/)).toHaveCount(0);
         }
         await fillAdminEditorField(editor, createCase.headlineLabel, `${createCase.action} QA row`);
         await fillAdminEditorField(editor, createCase.bodyLabel, `${createCase.action} body copy for the dashboard admin save contract.`);
@@ -1799,6 +1814,10 @@ test.describe("content dashboard admin user flow case studies", () => {
       }
       await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
       await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
+      expect(await editor.getByRole('heading', {name: 'Edit Sun in Cancer'}).evaluate(element => {
+        const box = element.getBoundingClientRect();
+        return element.contains(document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2));
+      }), 'Editor title must not be covered by navigation').toBe(true);
       await expect(contentSystemPanel).toContainText("Authored");
     }).toPass({ timeout: routeReadyTimeoutMs });
     await expect(contentSystemPanel.getByText("Content Level", { exact: true })).toHaveCount(0);
@@ -1970,7 +1989,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       };
     });
 
-    expect(layout.editorWidth).toBeLessThanOrEqual(761);
+    expect(layout.editorWidth).toBeLessThanOrEqual(960);
     expect(layout.editorOverflow).toBeLessThanOrEqual(1);
     expect(layout.postEditorColumns.trim().split(/\s+/)).toHaveLength(1);
     expect(layout.packageColumns.trim().split(/\s+/)).toHaveLength(1);
@@ -2032,9 +2051,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups");
     const row = page.locator(".admin-content-row", { hasText: contentKey });
     await expect(row.locator(".admin-col-visibility")).toHaveText("Live");
-    await row.getByText("Details", { exact: true }).click();
-    await expect(row.locator("details")).toContainText("Authored");
-    await expect(row.locator("details")).not.toContainText("Legacy generated");
+    await row.getByRole("button", { name: /^Details/ }).click();
+    await expect(row.locator("..").locator(".admin-content-expanded-body")).toContainText("Authored");
+    await expect(row.locator("..").locator(".admin-content-expanded-body")).not.toContainText("Legacy generated");
     for (const theme of ["light", "dark"]) {
       await page.evaluate((theme) => { document.documentElement.dataset.theme = theme; }, theme);
       for (const width of [1440, 390]) {
@@ -2069,9 +2088,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("lunations live in Sky Write-ups with macro, aspects, then twelve rising horoscopes", async ({ page }) => {
+  for (const theme of ["dark", "light"] as const) for (const width of [1440, 390]) test(`lunations live in Sky Write-ups ${theme} ${width}`, async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
-    await page.setViewportSize({ width: 1308, height: 900 });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
     const packageSource = {
       sourcePackage: "tldrastro-fallback-architecture-v3",
       contentSystem: "authored",
@@ -2174,7 +2194,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.screenshot({
       animations: "disabled",
       fullPage: true,
-      path: path.join(adminScreenshotDir, "narrow-lunation-sky-writeup-editor.png")
+      path: path.join(adminScreenshotDir, `lunation-native-${theme}-${width}.png`)
     });
     await assertNoBrowserErrors();
   });
@@ -2484,7 +2504,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(finder.getByRole("heading", { name: "Editable passages in this House Transit", level: 3 })).toBeVisible();
     await expect(finder.getByRole("button", { name: "Edit source row" })).toHaveCount(2);
 
-    const selectorLabels = await finder.locator(".admin-natal-placement-selectors label > span").allTextContents();
+    const selectorLabels = await finder.locator(".admin-natal-placement-selectors label > span:not(.admin-select-shell)").allTextContents();
     expect(selectorLabels).toEqual([
       "1. Transiting planet",
       "2. Current sign",
@@ -2591,7 +2611,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await articleFilters.getByLabel("Article planet or point").selectOption("sun");
     await expect(page.locator(".admin-content-row", { hasText: "article/manual/sun-in-cancer" })).toHaveCount(1);
-    await expect(page.locator(".admin-dashboard h2").filter({ hasText: "Articles" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Articles", level: 1, exact: true })).toBeVisible();
 
     await articleFilters.getByLabel("Search articles").fill("cancer");
     await expect(page.locator(".admin-content-row", { hasText: "Understanding the Sun in Cancer" }).first()).toBeVisible();
@@ -2648,15 +2668,15 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminHeader(page, "Compatibility", "Admin / Write / Compatibility");
     expect(compatibilityReads[0]?.searchParams.get("scope")).toBe("compatibility");
     expect(compatibilityReads[0]?.searchParams.get("visibility")).toBe("all");
-    const compatibilitySections = page.getByRole("tablist", { name: "Compatibility sections" });
-    await expect(compatibilitySections.getByRole("tab", { name: /All compatibility/ })).toHaveAttribute("aria-selected", "true");
+    const compatibilitySections = page.getByRole("group", { name: "Compatibility sections" });
+    await expect(compatibilitySections.getByRole("button", { name: /All compatibility/ })).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByRole("region", { name: "Compatibility sections summary" })).toHaveCount(0);
     await expect(page.getByRole("columnheader", { name: "Surface" })).toHaveCount(0);
     await expect(page.getByRole("columnheader", { name: "Kind" })).toHaveCount(0);
     await expect(page.getByRole("columnheader", { name: "Updated" })).toHaveCount(0);
-    await expect(compatibilitySections.getByRole("tab", { name: /Simple fallbacks 1/ })).toBeVisible();
-    await expect(compatibilitySections.getByRole("tab", { name: /Reusable phrases 1/ })).toBeVisible();
-    await expect(compatibilitySections.getByRole("tab", { name: /Templates & slots 1/ })).toBeVisible();
+    await expect(compatibilitySections.getByRole("button", { name: /Simple fallbacks 1/ })).toBeVisible();
+    await expect(compatibilitySections.getByRole("button", { name: /Reusable phrases 1/ })).toBeVisible();
+    await expect(compatibilitySections.getByRole("button", { name: /Templates & slots 1/ })).toBeVisible();
     const compatibilityRow = page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" });
     await expect(compatibilityRow).toHaveCount(1);
     await expect(compatibilityRow.getByText("Sun · Aries → Libra", { exact: true })).toBeVisible();
@@ -2911,14 +2931,14 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#vocabulary");
     await page.waitForURL("**/admin/content#vocabulary");
     await expectAdminHeader(page, "Vocabulary & Phrases", "Admin / Composition / Vocabulary & phrases");
-    const vocabularyTabs = page.getByRole("tablist", { name: "Vocabulary categories" });
-    await expect(vocabularyTabs.getByRole("tab", { name: "Planets" })).toHaveAttribute("aria-selected", "true");
-    const relationshipVocabTab = vocabularyTabs.getByRole("tab", { name: "Relationship" });
+    const vocabularyTabs = page.getByRole("navigation", { name: "Vocabulary categories" });
+    await expect(vocabularyTabs.getByRole("link", { name: "Planets" })).toHaveAttribute("aria-current", "page");
+    const relationshipVocabTab = vocabularyTabs.getByRole("link", { name: "Relationship" });
     await relationshipVocabTab.click();
     await expect(page).toHaveURL(/#vocabulary\?category=relationship$/);
     await expect(
-      page.getByRole("tablist", { name: "Vocabulary categories" }).getByRole("tab", { name: "Relationship" })
-    ).toHaveAttribute("aria-selected", "true");
+      page.getByRole("navigation", { name: "Vocabulary categories" }).getByRole("link", { name: "Relationship" })
+    ).toHaveAttribute("aria-current", "page");
     await page.getByLabel("Search vocabulary").fill("vocab/relationship/compatibility-repair");
     await expect(page.locator(".admin-content-row")).toHaveCount(1);
     await expect(page.locator(".admin-content-row")).toContainText("vocab/relationship/compatibility-repair");
@@ -2926,10 +2946,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByRole("navigation", { name: "Composition workspace" }).getByRole("button", { name: "Fallback Hooks" }).click();
     await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
     const friendsFallbackTab = page
-      .getByRole("tablist", { name: "Fallback hook sections" })
-      .getByRole("tab", { name: "Friends" });
+      .getByRole("group", { name: "Fallback hook sections" })
+      .getByRole("button", { name: "Friends", exact: true });
     await friendsFallbackTab.click();
-    await expect(friendsFallbackTab).toHaveAttribute("aria-selected", "true");
+    await expect(friendsFallbackTab).toHaveAttribute("aria-pressed", "true");
     await page.getByLabel("Search fallback articles and passages").fill("compatibility card");
     await expect(page.locator(".admin-content-row")).toHaveCount(1);
     await expect(page.locator(".admin-content-row")).toContainText("fallback-hook/friends.compatibility.planet-card");
@@ -3116,8 +3136,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
     await expect(page.locator("section[aria-label='Content list filters']")).toBeVisible();
     await page.getByText("Editorial filters", { exact: true }).click();
-    await expect(page.locator("[aria-label='Reader status']").getByRole("tab", { name: /Not live/ })).toBeVisible();
-    await expect(page.locator("[aria-label='Reader status']").getByRole("tab", { name: /Live/ })).toBeVisible();
+    await expect(page.locator("[aria-label='Reader status']").getByRole("button", { name: /Not live/ })).toBeVisible();
+    await expect(page.locator("[aria-label='Reader status']").getByRole("button", { name: /Live/ })).toBeVisible();
     await expect(page.getByRole("region", { name: "Content status definitions" })).toContainText("readers can currently receive this copy");
 
     await page.getByLabel("Search content").fill("moon");
@@ -3348,7 +3368,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page);
     await expectAdminRouteLoads(page, "/admin/content#review-queue?view=all");
 
-    const reviewRow = page.locator(".admin-review-queue-row", { hasText: "sky.placement.sun.cancer" });
+    const reviewRow = page.locator(".admin-review-queue-rows .admin-content-row", { hasText: "sky.placement.sun.cancer" });
     await expect(reviewRow).toHaveCount(1);
     await reviewRow.getByRole("button", { name: "Edit" }).click();
 
@@ -3423,23 +3443,23 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#review-queue?view=all");
 
     await page.getByRole("button", { name: "All review", exact: true }).click();
-    const currentSkyRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[0].content_key });
-    const transitToNatalRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[1].content_key });
-    const natalRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[2].content_key });
-    const synastryRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[3].content_key });
+    const currentSkyRow = page.locator(".admin-review-queue-rows .admin-content-row", { hasText: aspectRows[0].content_key });
+    const transitToNatalRow = page.locator(".admin-review-queue-rows .admin-content-row", { hasText: aspectRows[1].content_key });
+    const natalRow = page.locator(".admin-review-queue-rows .admin-content-row", { hasText: aspectRows[2].content_key });
+    const synastryRow = page.locator(".admin-review-queue-rows .admin-content-row", { hasText: aspectRows[3].content_key });
 
-    await expect(currentSkyRow.locator(".admin-aspect-context-pill")).toHaveText("Transit aspect · current sky");
-    await expect(transitToNatalRow.locator(".admin-aspect-context-pill")).toHaveText("Transit aspect · natal contact");
-    await expect(natalRow.locator(".admin-aspect-context-pill")).toHaveText("Natal aspect · birth chart");
-    await expect(synastryRow.locator(".admin-aspect-context-pill")).toHaveText("Relationship aspect · synastry");
+    await expect(currentSkyRow.locator(".admin-content-type-label")).toHaveText("Transit aspect · current sky");
+    await expect(transitToNatalRow.locator(".admin-content-type-label")).toHaveText("Transit aspect · natal contact");
+    await expect(natalRow.locator(".admin-content-type-label")).toHaveText("Natal aspect · birth chart");
+    await expect(synastryRow.locator(".admin-content-type-label")).toHaveText("Relationship aspect · synastry");
 
     await page.getByLabel("Search review queue").fill("Natal aspect birth chart");
-    await expect(page.locator(".admin-review-queue-row")).toHaveCount(1);
-    await expect(page.locator(".admin-review-queue-row")).toContainText(aspectRows[2].content_key);
+    await expect(page.locator(".admin-review-queue-rows .admin-content-row")).toHaveCount(1);
+    await expect(page.locator(".admin-review-queue-rows .admin-content-row")).toContainText(aspectRows[2].content_key);
 
     await page.getByLabel("Search review queue").fill("");
     await page.setViewportSize({ width: 390, height: 844 });
-    await expect(currentSkyRow.locator(".admin-aspect-context-pill")).toBeVisible();
+    await expect(currentSkyRow.locator(".admin-content-type-label")).toBeVisible();
     await expectNoHorizontalOverflow(page, "aspect-context review rows");
     await currentSkyRow.getByRole("button", { name: "Edit" }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
@@ -3833,7 +3853,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(compactTags.first()).toBeVisible();
     const tagHeights = await compactTags.evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().height)));
     expect(tagHeights.length).toBeGreaterThan(0);
-    expect(Math.max(...tagHeights)).toBeLessThanOrEqual(24);
+    expect(Math.max(...tagHeights)).toBeLessThanOrEqual(32);
     await page.getByLabel("Search fallback articles and passages").fill("Jupiter in Leo 10th House");
     await expect(articleGroup).toBeHidden();
     await expect(houseGroup.getByText("Jupiter in Leo · 10th House", { exact: true })).toBeVisible();
@@ -3922,9 +3942,10 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await openAdminDeepLink("#composition-map");
     await expectAdminHeader(page, "Composition Map", "Admin / Composition / Map");
-    await expect(page.getByText("Start with any reader-facing surface in the app, then follow its editorial sources, runtime path, templates, and calculated facts.")).toBeVisible();
+    await expect(page.getByText("Start with any reader-facing surface in the app, then follow its editorial sources, runtime path, templates, and calculated facts.")).toHaveCount(0);
     await expect(page.getByRole("tab", { name: /Surfaces & systems 24/ })).toHaveAttribute("aria-selected", "true");
     const surfaceList = page.getByRole("complementary", { name: "App surfaces and systems" });
+    await surfaceList.getByText(/^Browse surfaces/).click();
     await surfaceList.getByLabel("Search surfaces and systems").fill("Daily At-a-Glance");
     await expect(surfaceList.getByRole("button", { name: /Daily At-a-Glance/ })).toBeVisible();
     await surfaceList.getByRole("button", { name: /Daily At-a-Glance/ }).click();
@@ -3950,7 +3971,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await openAdminDeepLink("#fallback-hooks?section=daily&q=daily");
     await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
-    await expect(page.getByRole("tab", { name: "Daily" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("group", { name: "Fallback hook sections" }).getByRole("button", { name: "Daily", exact: true })).toHaveAttribute("aria-pressed", "true");
     const dailyGuide = page.getByRole("region", { name: "How daily content is assembled" });
     await expect(dailyGuide).toContainText("Daily At-a-Glance");
     await expect(dailyGuide).toContainText("Today between you two");
@@ -3972,8 +3993,8 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await openAdminDeepLink("#vocabulary");
     await expectAdminHeader(page, "Vocabulary & Phrases", "Admin / Composition / Vocabulary & phrases");
-    await expect(page.getByRole("tablist", { name: "Vocabulary categories" }).getByRole("tab", { name: "Planets" })).toBeVisible();
-    await expect(page.getByRole("tablist", { name: "Vocabulary categories" }).getByRole("tab", { name: "Relationship" })).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Vocabulary categories" }).getByRole("link", { name: "Planets" })).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Vocabulary categories" }).getByRole("link", { name: "Relationship" })).toBeVisible();
 
     await openAdminDeepLink("#fallback-hooks");
     await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
@@ -4442,8 +4463,8 @@ test.describe("content dashboard admin user flow case studies", () => {
       };
     });
     expect(desktopReviewTypography.heading).toMatchObject({
-      fontSize: 22,
-      fontWeight: 700,
+      fontSize: 16,
+      fontWeight: 600,
       marginTop: "0px",
       marginBottom: "0px",
       textTransform: "none"
@@ -4469,7 +4490,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         bodySize: body ? Number.parseFloat(getComputedStyle(body).fontSize) : null
       };
     });
-    expect(mobileReviewTypography).toEqual({ headingSize: 20, bodySize: 14 });
+    expect(mobileReviewTypography).toEqual({ headingSize: 16, bodySize: 16 });
     await expectNoHorizontalOverflow(page, "Composition Map compact article preview mobile");
     await page.setViewportSize({ width: 1308, height: 900 });
 
@@ -4693,12 +4714,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(desktopEditorHeadingStyle).toMatchObject({
       fontSize: 22,
       fontWeight: 500,
-      marginTop: "6px",
+      marginTop: "0px",
       textTransform: "none",
       textAlign: "start"
     });
     expect(desktopEditorHeadingStyle.fontFamily).toBeTruthy();
-    expect(desktopEditorHeadingStyle.lineHeight).toBeLessThanOrEqual(26);
+    expect(desktopEditorHeadingStyle.lineHeight).toBeLessThanOrEqual(29);
 
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(editor.getByRole("heading", { name: "Edit Pluto · Relationship role phrase" })).toBeVisible();
@@ -4985,11 +5006,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     const desktopNavRhythm = await readPrimaryNavRhythm();
     expect(desktopNavRhythm.rowGap).toBeLessThanOrEqual(8);
     expect(desktopNavRhythm.itemHeight).toBeGreaterThanOrEqual(32);
-    expect(desktopNavRhythm.itemHeight).toBeLessThanOrEqual(40);
+    expect(desktopNavRhythm.itemHeight).toBe(56);
     expect(desktopNavRhythm.fontFamily).toContain("system-ui");
-    expect(desktopNavRhythm.fontSize).toBe(15);
-    expect(desktopNavRhythm.fontWeight).toBe("500");
-    expect(desktopNavRhythm.lineHeight).toBe("normal");
+    expect(desktopNavRhythm.fontSize).toBe(14);
+    expect(desktopNavRhythm.fontWeight).toBe("400");
+    expect(desktopNavRhythm.lineHeight).toBe("20px");
     expect(desktopNavRhythm.letterSpacing).toBe("normal");
     await expectNoHorizontalOverflow(page, "Admin desktop home");
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-review-queue.png") });
@@ -4997,26 +5018,15 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
     await expect(page.locator("main.admin-dashboard")).not.toContainText(forbiddenReaderPreviewCopy);
     const contentToolbar = page.getByRole("region", { name: "Content controls" });
-    const contentToolbarCopy = contentToolbar.locator(".admin-content-toolbar-copy");
-    const contentToolbarActions = contentToolbar.locator("[aria-label='Content admin shortcuts']");
-    const contentToolbarLayout = await Promise.all([
-      contentToolbar.boundingBox(),
-      contentToolbarCopy.boundingBox(),
-      contentToolbarActions.boundingBox()
-    ]);
-    const [toolbarBox, toolbarCopyBox, toolbarActionsBox] = contentToolbarLayout;
-    expect(toolbarBox).not.toBeNull();
-    expect(toolbarCopyBox).not.toBeNull();
-    expect(toolbarActionsBox).not.toBeNull();
-    expect(toolbarCopyBox!.width).toBeGreaterThanOrEqual(Math.min(760, toolbarBox!.width - 52));
-    expect(toolbarActionsBox!.y).toBeGreaterThan(toolbarCopyBox!.y);
-    await expect(contentToolbar.getByRole("heading", { name: "All editable content rows" })).toHaveCSS("white-space", "normal");
-    const visibilityPanel = page.getByRole("region", { name: "Content status definitions" });
-    const visibilityCopy = visibilityPanel.locator(":scope > div").first();
-    await expect(visibilityCopy).toContainText("Live");
-    await expect(visibilityCopy).toContainText("Not live");
-    const visibilityMetrics = await visibilityPanel.evaluate((el) => ({ clientWidth: el.clientWidth, scrollWidth: el.scrollWidth }));
-    expect(visibilityMetrics.scrollWidth).toBeLessThanOrEqual(visibilityMetrics.clientWidth + 1);
+    await expect(contentToolbar.locator('.admin-library-guide')).toBeVisible();
+    await expect(contentToolbar.getByRole('heading')).toHaveCount(0);
+    await expect(contentToolbar.getByRole('button', { name: 'New content row', exact: true })).toBeHidden();
+    await contentToolbar.getByText('Library tools', { exact: true }).click();
+    await expect(contentToolbar.getByRole('button', { name: 'New content row', exact: true })).toBeVisible();
+    const visibilityPanel = page.getByRole('region', { name: 'Content status definitions' });
+    await visibilityPanel.locator('summary').click();
+    await expect(visibilityPanel).toContainText('Not live');
+    expect(await visibilityPanel.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     await expectNoHorizontalOverflow(page, "Content Library desktop");
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-exact-content.png") });
 
@@ -5295,24 +5305,28 @@ test("surface maps select source families and manage repeated edits across theme
   await expect(manager.getByLabel("Selected composition source")).toHaveValue(row.id);
   await manager.getByLabel("Source family").selectOption("fallback-hook/planet-intro");
   await manager.getByLabel("Selected composition source").selectOption(alternate.id);
-  await expect(manager.locator(".admin-composition-source-card > strong")).toHaveText(alternate.headline);
+  await expect(manager.getByLabel("Selected composition source").locator("option:checked")).toContainText(alternate.headline);
+  await expect(manager.locator(".admin-composition-source-card > strong")).toHaveCount(0);
   await manager.getByLabel("Selected composition source").selectOption(row.id);
 
   for (const theme of ["light", "dark"]) {
-    await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
+    if (await page.locator('.admin-dashboard').getAttribute('data-studio-theme') !== theme) {
+      await page.getByRole('button', { name: `Switch to ${theme} theme` }).click();
+    }
     for (const width of [1440, 390]) {
       await page.setViewportSize({ width, height: 1000 });
-      await expect(manager.getByRole("heading", { name: "Select and manage sources" })).toBeVisible();
+      await expect(manager.getByRole("heading", { name: "Select and manage sources" })).toHaveClass("sr-only");
       const style = async (locator: Locator) => locator.evaluate((element) => {
         const css = getComputedStyle(element);
         return [css.fontFamily, css.fontSize, css.fontWeight, css.lineHeight, css.letterSpacing, css.textTransform];
       });
-      expect(await style(manager.locator("h3"))).toEqual(await style(page.getByRole("heading", { name: "Required content parts" })));
+      expect((await style(manager.getByLabel("Selected composition source").locator("..")))[2]).toBe("400");
       await expectNoHorizontalOverflow(page, `Composition source manager ${theme} ${width}`);
       await mkdir(adminScreenshotDir, { recursive: true });
       await manager.screenshot({ path: path.join(adminScreenshotDir, `source-manager-${theme}-${width}.png`) });
       await manager.getByLabel("Search composition sources").fill("no-matching-source");
       await expect(manager.getByRole("status")).toContainText("No sources match");
+      await expect(manager.getByLabel("Selected composition source")).toBeDisabled();
       await expectNoHorizontalOverflow(page, `Empty composition source manager ${theme} ${width}`);
       await manager.getByLabel("Search composition sources").fill("");
     }
@@ -5415,17 +5429,18 @@ for (const width of [1440, 390]) {
     const pending = { ...baseline, id: "qa-calendar-pending", updated_at: now, headline: "QA pending Calendar revision", sections: { ...baseline.sections, packageDraft: { ...baseline.sections.packageRecord, Body: "QA pending Calendar revision." } } };
     await seedAdminApi(page, { generatedRows: [live, pending] });
     await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Calendar+Aspects");
+    if (width <= 720) await page.getByRole("button", { name: /^Filters/ }).click();
     await page.getByText("Editorial filters", { exact: true }).click();
-    const filters = page.getByRole("tablist", { name: "Reader status" });
-    await expect(filters.getByRole("tab", { name: "Live 1", exact: true })).toBeVisible();
-    await expect(filters.getByRole("tab", { name: "Not live 1", exact: true })).toBeVisible();
-    await filters.getByRole("tab", { name: "Live 1", exact: true }).click();
+    const filters = page.getByRole("group", { name: "Reader status" });
+    await expect(filters.getByRole("button", { name: "Live 1", exact: true })).toBeVisible();
+    await expect(filters.getByRole("button", { name: "Not live 1", exact: true })).toBeVisible();
+    await filters.getByRole("button", { name: "Live 1", exact: true }).click();
     const rows = page.locator(".admin-content-row:visible");
     await expect(rows).toHaveCount(1);
     await expect(rows.first()).toContainText("Saturn Square Lilith");
     await expect(rows.first().locator(".admin-status:visible").filter({ hasText: /^Live$/ })).toBeVisible();
     await expect(rows.first().getByText("Not live", { exact: true })).toHaveCount(0);
-    await filters.getByRole("tab", { name: "Not live 1", exact: true }).click();
+    await filters.getByRole("button", { name: "Not live 1", exact: true }).click();
     await expect(rows).toHaveCount(1);
     await expect(rows.first()).toContainText("QA pending Calendar revision");
     await expect(rows.first().locator(".admin-status:visible").filter({ hasText: /^Not live$/ })).toBeVisible();
@@ -5444,13 +5459,13 @@ test("Live filters keep unknown status separate and retry after refresh", async 
   await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Calendar+Aspects");
   await page.getByText("Editorial filters", { exact: true }).click();
   await expect(page.getByText(/Status unavailable for 1 entries/)).toBeVisible();
-  const filters = page.getByRole("tablist", { name: "Reader status" });
-  await filters.getByRole("tab", { name: "Not live 0", exact: true }).click();
+  const filters = page.getByRole("group", { name: "Reader status" });
+  await filters.getByRole("button", { name: "Not live 0", exact: true }).click();
   await expect(page.locator(".admin-content-row:visible")).toHaveCount(0);
   omit = false;
   await page.getByRole("button", { name: "Refresh rows", exact: true }).click();
-  await expect(filters.getByRole("tab", { name: "Live 1", exact: true })).toBeVisible();
-  await filters.getByRole("tab", { name: "Live 1", exact: true }).click();
+  await expect(filters.getByRole("button", { name: "Live 1", exact: true })).toBeVisible();
+  await filters.getByRole("button", { name: "Live 1", exact: true }).click();
   await expect(page.locator(".admin-content-row:visible")).toHaveCount(1);
 });
 
@@ -5512,18 +5527,20 @@ test("Sky placement filters select exact planet sign and motion independently of
   await expect(page.locator(".admin-content-row")).toHaveCount(1);
   await expect(page.locator(".admin-content-row .admin-content-row-title")).toHaveText("Mercury in Virgo · Retrograde");
   for(const theme of ["light","dark"]) for(const width of [1440,390]) {
-    await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+    if (await page.locator('.admin-dashboard').getAttribute('data-studio-theme') !== theme) {
+      await page.getByRole('button', {name: `Switch to ${theme} theme`}).click();
+    }
     await page.setViewportSize({width,height:1000});
     await expectNoHorizontalOverflow(page,`Sky selectors ${theme} ${width}`);
     const filters = page.getByRole("region", { name: "Sky write-up filters" });
-    await expect(filters.locator("label > span").first()).toHaveText("Planet or point");
-    await expect(filters.locator("label > span").nth(1)).toHaveText("Zodiac sign");
-    await expect(filters.locator("label > span").nth(2)).toHaveText("Motion");
+    await expect(filters.locator("label > span:not(.admin-select-shell)").first()).toHaveText("Planet or point");
+    await expect(filters.locator("label > span:not(.admin-select-shell)").nth(1)).toHaveText("Zodiac sign");
+    await expect(filters.locator("label > span:not(.admin-select-shell)").nth(2)).toHaveText("Motion");
     const typography = (element: Element) => {
       const style = getComputedStyle(element);
       return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "marginTop", "marginBottom", "textTransform", "textAlign"].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
     };
-    expect(await filters.locator("label > span").first().evaluate(typography)).toEqual(await filters.locator("label > span").nth(3).evaluate(typography));
+    expect(await filters.locator("label > span:not(.admin-select-shell)").first().evaluate(typography)).toEqual(await filters.locator("label > span:not(.admin-select-shell)").nth(3).evaluate(typography));
     await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
     await expect(page.locator(".admin-content-row")).toHaveCount(0);
     await expectNoHorizontalOverflow(page,`Empty Sky selectors ${theme} ${width}`);
@@ -5538,6 +5555,7 @@ test("Sky placement filters select exact planet sign and motion independently of
 for (const theme of ["light", "dark"]) for (const width of [1440, 390]) {
   test(`Sky approval failures stay visible in the editor ${theme} ${width}`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
     const row = { ...generatedContentRows[0], id: "qa-sky-approval", content_key: "sky.aspect.chiron.sextile.nodes.taurus.aquarius",
       headline: "Chiron sextile North Node", body: "Saved Sky approval fixture.", surface: "sky", mode: "feed",
       status: "DRAFT", event_type: "collective-aspect-card", block_type: "sky_aspect", review_state: "needs-review", judge_gate: "human-review",
@@ -5552,7 +5570,7 @@ for (const theme of ["light", "dark"]) for (const width of [1440, 390]) {
     });
     await expectAdminRouteLoads(page, "/admin/content#review-queue");
     await page.evaluate(value => document.documentElement.setAttribute("data-theme", value), theme);
-    await page.locator(".admin-review-queue-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+    await page.locator(".admin-review-queue-rows .admin-content-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await editor.getByRole("button", { name: "Mark reviewed", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
@@ -5599,7 +5617,7 @@ test("reopening a saved aspect fetches the current copy and version before anoth
     return route.fallback();
   });
   await expectAdminRouteLoads(page, "/admin/content#review-queue?view=all");
-  const open = page.locator(".admin-review-queue-row", { hasText: saved.content_key }).getByRole("button", { name: "Edit", exact: true });
+  const open = page.locator(".admin-review-queue-rows .admin-content-row", { hasText: saved.content_key }).getByRole("button", { name: "Edit", exact: true });
   await open.click();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue("First saved passage.");
@@ -5632,7 +5650,7 @@ for (const pair of ["sun-chiron", "moon-chiron"]) for (const width of [390, 1440
     ? route.fulfill({ json: { ok: true, rows: [] } }) : route.fallback());
   await expectAdminRouteLoads(page, "/admin/content#review-queue?view=sources");
   await page.evaluate(value => document.documentElement.dataset.theme = value, theme);
-  const queueRow = page.locator(".admin-review-queue-row", { hasText: row.content_key });
+  const queueRow = page.locator(".admin-review-queue-rows .admin-content-row", { hasText: row.content_key });
   await queueRow.getByRole("button", { name: "Edit", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   await expect(editor.getByRole("button", { name: "Publish to app", exact: true })).toHaveCount(0);
@@ -5672,7 +5690,7 @@ test("review queue publishes reader-ready hooks from the reference lane and conf
     return route.fulfill({ json: { ok: true, rows: [responseOverride] } });
   });
   await expectAdminRouteLoads(page, "/admin/content#review-queue");
-  await page.locator(".admin-review-queue-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+  await page.locator(".admin-review-queue-rows .admin-content-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   await editor.getByRole("button", { name: "Publish to app", exact: true }).click();
   await expect(editor.getByRole("alert")).toContainText("did not return the saved row");
@@ -5711,7 +5729,7 @@ test("review queue retains exact edits after a conflict or unconfirmed review an
     return route.fulfill({ json: { ok: true, rows: [{ ...row, status: "REVIEWED" }] } });
   });
   await expectAdminRouteLoads(page, "/admin/content#review-queue?view=sources");
-  await page.locator(".admin-review-queue-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+  await page.locator(".admin-review-queue-rows .admin-content-row", { hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   const exactEdit = "The complete replacement source passage, with its final sentence preserved.";
   await editor.getByLabel("Source text", { exact: true }).fill(exactEdit);
@@ -5747,7 +5765,7 @@ test("reopening a completed revision follows its published target", async ({ pag
     return route.fallback();
   });
   await expectAdminRouteLoads(page, "/admin/content#review-queue?view=all");
-  await page.locator(".admin-review-queue-row", { hasText: revision.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+  await page.locator(".admin-review-queue-rows .admin-content-row", { hasText: revision.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue("Current published passage.");
   await expect(editor.getByRole("button", { name: "Restore as draft", exact: true })).toHaveCount(0);
@@ -5763,9 +5781,9 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
       event_type:'sky-article-template',block_type:'sky_article',mode:'article',sections:{},facts:{},
       source_snapshot:{sourceType:'owner-resource-review',contentType:'sky-article-template',importSummary:notes},target_date:null,provider:'owner-resource-review'};
     await seedAdminApi(page,{generatedRows:[row],reviewRows:[]});
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
     await expectAdminRouteLoads(page,'/admin/content#review-queue?view=all');
-    await page.evaluate(value=>document.documentElement.setAttribute('data-theme',value),theme);
-    await page.locator('.admin-review-queue-row',{hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+    await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
     const editor=page.getByRole('dialog',{name:'Generated content editor'});
     await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
     await expect(editor.getByRole('heading',{name:'Edit Sun Enters Aries',exact:true})).toBeVisible();
@@ -5844,3 +5862,1507 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
     for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
   }
 });
+
+// Verify the shared workspace contract in the real Studio with isolated API fixtures.
+for (const theme of ["dark", "light"] as const) {
+  for (const width of [1440, 390]) {
+    test(`Studio workspace rhythm ${theme} ${width}`, async ({ page }) => {
+      const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+      await page.setViewportSize({ width, height: 1000 });
+      await seedAdminApi(page);
+      await page.addInitScript((value) => localStorage.setItem("tldrastro:studio-theme", value), theme);
+      await expectAdminRouteLoads(page, "/admin/content#exact-content");
+      const dashboard = page.locator(".admin-dashboard");
+      await expect(dashboard).toHaveAttribute("data-studio-theme", theme);
+      await expect(page.locator(".admin-dashboard-header h1")).toHaveText("Content Library");
+      await expect(page.locator(".admin-library-workspace h2")).toHaveCount(0);
+      await expect(page.locator(".admin-library-guide[open]")).toHaveCount(0);
+      const metrics = await page.locator(".admin-dashboard-header h1").evaluate((e) => {
+        const s = getComputedStyle(e);
+        return { family: s.fontFamily, size: s.fontSize, weight: s.fontWeight, leading: s.lineHeight, tracking: s.letterSpacing };
+      });
+      expect(metrics.family).toContain("system-ui");
+      expect(metrics.size).toBe("22px");
+      expect(metrics.weight).toBe("500");
+      expect(metrics.leading).toBe("28px");
+      expect(metrics.tracking).toBe("normal");
+      const searchField = page.getByRole('searchbox', { name: 'Search content', exact: true });
+      expect((await searchField.locator('..').boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      const searchGeometry = await searchField.evaluate(input => {
+        const icon = input.parentElement!.querySelector('svg')!;
+        const inputBox = input.getBoundingClientRect();
+        const iconBox = icon.getBoundingClientRect();
+        return { inputLeft: inputBox.left, iconRight: iconBox.right };
+      });
+      expect(searchGeometry.inputLeft - searchGeometry.iconRight).toBeGreaterThanOrEqual(8);
+      await expect(page.getByRole('group', {name:'Content Library saved views'}).getByRole('button', {name:'Editorial content',exact:true})).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.getByRole('button', {name:'Create',exact:true})).toHaveCSS('font-size', '14px');
+
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      if (width > 860) {
+        await expect(page.locator(".admin-content-row").first()).toBeInViewport({ ratio: 1 });
+        await expect(page.locator(".admin-sidebar-status")).toBeInViewport();
+        await expect(page.getByRole("button", { name: "Daily Sky Summary", exact: true })).toBeHidden();
+      }
+      await mkdir("outputs/studio-style", { recursive: true });
+      await page.screenshot({ path: `outputs/studio-style/library-${theme}-${width}.png` });
+      await page.getByLabel("Search content", { exact: true }).fill("no matching row in this fixture");
+      await expect(page.locator(".admin-content-row")).toHaveCount(0);
+      await page.screenshot({ path: `outputs/studio-style/empty-${theme}-${width}.png` });
+      await page.getByLabel("Search content", { exact: true }).fill("sky.placement.sun.cancer");
+      const row = page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" });
+      await expect(row).toHaveCount(1);
+      await row.getByRole("button", { name: "Edit", exact: true }).click();
+      const editor = page.locator(".admin-editor-panel");
+      await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
+      await expect(page.getByRole('button', {name:'Close editor',exact:true})).toHaveCSS('border-radius', '0px');
+      await expect(editor.getByRole('heading', {name:'Edit Sun in Cancer'})).toHaveCSS('font-family', metrics.family);
+      await expect(editor.getByRole('heading', {name:'Edit Sun in Cancer'})).toHaveCSS('line-height', '28px');
+      const fieldStyles = await editor.locator('textarea').first().evaluate(element => {
+        const s = getComputedStyle(element);
+        return {size:s.fontSize, weight:s.fontWeight, leading:s.lineHeight, tracking:s.letterSpacing};
+      });
+      expect(fieldStyles).toEqual({size:'16px', weight:'400', leading:'24px', tracking:'normal'});
+      await expect(editor.locator('.admin-title-field > span').first()).toHaveCSS('font-size', '14px');
+      await expect(editor.locator('.admin-title-field > span').first()).toHaveCSS('font-weight', '400');
+
+      await expectFormShellDoesNotOverlap(editor, `${theme} ${width} editor`);
+      expect(await editor.getByRole('heading', {name: 'Edit Sun in Cancer'}).evaluate(element => {
+        const box = element.getBoundingClientRect();
+        return element.contains(document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2));
+      }), 'Editor title must not be covered by navigation').toBe(true);
+      await expect(editor.locator("textarea").first()).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      await page.screenshot({ path: `outputs/studio-style/editor-${theme}-${width}.png` });
+      await assertNoBrowserErrors();
+    });
+  }
+}
+
+test("Studio theme persists and contextual navigation stays reachable", async ({ page }) => {
+  await seedAdminApi(page);
+  await expectAdminRouteLoads(page, "/admin/content#exact-content");
+  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", "light");
+  await page.reload();
+  await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", "light");
+  await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Sky Write-ups", exact: true }).click();
+  await page.getByRole("button", { name: "Daily Sky Summary", exact: true }).click();
+  await expect(page).toHaveURL(/view=daily-summary/);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: "Open Content Studio navigation" }).click();
+  const nav = page.getByRole("navigation", { name: "Content operations" });
+  await expect(nav).toBeVisible();
+  await nav.getByRole("button", { name: "Content Library", exact: true }).click();
+  await expect(page.locator(".admin-dashboard-header h1")).toHaveText("Content Library");
+  await expect(nav).toBeHidden();
+});
+
+for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390]) {
+  test(`Daily summary containers preserve layout and controls ${theme} ${width}`, async ({ page }) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page, '/admin/content#sky-writeups?view=daily-summary');
+    const assembly = page.getByRole('region', { name: 'Full summary assembly', exact: true });
+    const composition = page.getByRole('region', { name: 'Sun and Moon composition map', exact: true });
+    for (const card of [assembly, composition]) {
+      await expect(card).toHaveCSS('padding', '24px 0px 0px');
+      await expect(card).toHaveCSS('border-radius', '0px');
+      await expect(card).toHaveCSS('gap', '24px');
+      await expect(card).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      const outsideChildren = await card.evaluate(element => {
+        const parent = element.getBoundingClientRect();
+        return Array.from(element.children).filter(child => {
+          const rect = child.getBoundingClientRect();
+          return rect.width && (rect.left < parent.left || rect.right > parent.right + 1);
+        }).map(child => child.className);
+      });
+      expect(outsideChildren).toEqual([]);
+      for (const preview of await card.locator('.admin-template-reader-surface').all()) {
+        await expect(preview).toHaveCSS('padding', '16px');
+        await expect(preview).toHaveCSS('border-top-width', '1px');
+        await expect(preview).toHaveCSS('background-color', theme === 'light' ? 'rgb(239, 241, 239)' : 'rgb(25, 28, 27)');
+      }
+    }
+    const a = (await assembly.boundingBox())!;
+    const b = (await composition.boundingBox())!;
+    expect(b.x).toBe(a.x);
+    expect(b.width).toBe(a.width);
+    expect(b.y - a.y - a.height).toBe(24);
+    const controls = composition.locator('.admin-daily-glance-context-form > label');
+    const first = (await controls.nth(0).boundingBox())!;
+    const second = (await controls.nth(1).boundingBox())!;
+    if (width > 720) expect(second.y).toBe(first.y);
+    else expect(second.y).toBeGreaterThan(first.y + first.height);
+    await composition.getByLabel('Composition Sun sign', { exact: true }).selectOption('Aries');
+    await expect(composition.getByLabel('Combined Sun and Moon preview', { exact: true })).toContainText('Aries');
+    await expect(assembly.getByRole('region', { name: 'Full summary preview' })).toContainText('Aries');
+    await assembly.getByText('Preview event examples', { exact: true }).click();
+    await assembly.getByLabel('Exact aspect examples', { exact: true }).fill('Example aspect');
+    await expect(assembly.getByRole('region', { name: 'Full summary preview' })).toContainText('Example aspect');
+    await assembly.getByText('Preview event examples', { exact: true }).click();
+    const notification = page.getByRole('button', { name: 'Dismiss notification', exact: true });
+    if (await notification.isVisible()) await notification.click();
+    await assembly.screenshot({ path: `outputs/studio-style/summary-assembly-${theme}-${width}.png` });
+    await composition.screenshot({ path: `outputs/studio-style/summary-composition-${theme}-${width}.png` });
+    await page.getByLabel('Search summary wording', { exact: true }).fill('no-matching-summary-12345');
+    await expect(page.getByText('No summary fields match this search.', { exact: true })).toBeVisible();
+    await page.getByLabel('Search summary wording', { exact: true }).fill('');
+    const row = page.locator('.admin-daily-glance-pair-list > article').first();
+    await expect(row).toHaveCSS('padding', '24px');
+    await expectNoHorizontalOverflow(page, 'Daily summary containers');
+    await assertNoBrowserErrors();
+  });
+}
+
+for (const theme of ['dark', 'light'] as const) for (const width of [1440, 390]) {
+  test(`Composition spacing and narrative typography ${theme} ${width}`, async ({ page }) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({width, height: 1000});
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page, '/admin/content#composition-map');
+    await page.getByRole('tab', {name: /Template internals/}).click();
+    const review = page.getByRole('button', {name: 'Show only templates that need IA review'});
+    await expect(review).toHaveCSS('white-space', 'nowrap');
+    await expect(review).toHaveCSS('height', '40px');
+    const choices = page.locator('.admin-composition-template-items > button');
+    await expect(choices.first()).toHaveCSS('justify-items', 'start');
+    await expect(choices.first()).toHaveCSS('justify-content', 'stretch');
+    const detail = page.getByRole('region', {name:'Selected template composition',exact:true});
+    const heading = detail.locator(':scope > header h2');
+    await expect(heading).toHaveCSS('font-size', '22px');
+    await expect(heading).toHaveCSS('font-weight', '500');
+    const assertHeaderWidth = async (selector: string) => {
+      if (width > 720) return;
+      const header = detail.locator(selector);
+      const parent = await header.boundingBox();
+      const copy = await header.locator(':scope > div').boundingBox();
+      expect(parent).not.toBeNull();
+      expect(copy).not.toBeNull();
+      expect(Math.abs(copy!.width - parent!.width)).toBeLessThan(1);
+    };
+    await assertHeaderWidth(':scope > header');
+    await assertHeaderWidth('.admin-composition-reader-preview > header');
+    const assertNarrativeVariables = async (selector: string) => {
+      await expect(page.locator(selector).first()).toBeVisible();
+      const styles = await page.locator(selector).evaluateAll(elements => elements.map(element => {
+        const own = getComputedStyle(element), parent = getComputedStyle(element.closest('p')!);
+        return {font: own.fontFamily === parent.fontFamily, size:own.fontSize, leading:own.lineHeight, weight:own.fontWeight, tracking:own.letterSpacing};
+      }));
+      expect(styles.length).toBeGreaterThan(0);
+      for (const style of styles) expect(style).toEqual({font:true,size:'16px',leading:'24px',weight:'400',tracking:'normal'});
+    };
+    await assertNarrativeVariables('.admin-composition-preview-copy p .admin-composition-variable');
+    await expect(detail.locator('.admin-composition-preview-surface')).toHaveCSS('padding', '16px');
+    await expect(detail.locator('.admin-composition-preview-surface')).toHaveCSS('border-top-width', '1px');
+    const notification = page.getByRole('button', {name:'Dismiss notification',exact:true});
+    if (await notification.isVisible()) await notification.click();
+    await detail.screenshot({path:`outputs/studio-style/composition-preview-spacing-${theme}-${width}.png`});
+    await page.getByRole('tab', {name:'Main template',exact:true}).click();
+    await assertHeaderWidth('.admin-composition-template-workbench > header');
+    const tokens = detail.locator('.admin-composition-template-tokens > div');
+    await expect(tokens).toHaveCSS('gap','12px');
+    await expect(detail.locator('.admin-composition-template-fields pre').first()).toHaveCSS('margin','0px');
+    await expect(detail.getByRole('heading',{name:'Structure and fixed wording'})).toHaveCSS('font-size','16px');
+    await detail.screenshot({path:`outputs/studio-style/composition-template-spacing-${theme}-${width}.png`});
+    await page.getByRole('tab', {name:'Assembly',exact:true}).click();
+    await expect(page.getByLabel('Selected template coverage')).toHaveCSS('gap','12px');
+    for (const slot of await detail.locator('.admin-composition-slot').all()) {
+      await expect(slot).toHaveCSS('padding','16px');
+      await expect(slot).toHaveCSS('gap','8px');
+      await expect(slot.locator('.admin-composition-runtime-source > span')).toHaveCSS('display','grid');
+    }
+    await detail.screenshot({path:`outputs/studio-style/composition-assembly-spacing-${theme}-${width}.png`});
+    await expectNoHorizontalOverflow(page,'Composition workbench');
+    await page.getByLabel('Search the composition map',{exact:true}).fill('no-template-matches-1234');
+    await expect(page.getByText('No templates match',{exact:true})).toBeVisible();
+    await expectNoHorizontalOverflow(page,'Composition empty state');
+    await expectAdminRouteLoads(page,'/admin/content#sky-writeups?view=daily-summary');
+    await assertNarrativeVariables('.admin-daily-glance-studio p .admin-composition-variable');
+    await page.getByRole('region',{name:'Full summary assembly',exact:true}).screenshot({path:`outputs/studio-style/summary-type-spacing-${theme}-${width}.png`});
+    await expectNoHorizontalOverflow(page,'Daily summary typography');
+    await assertNoBrowserErrors();
+  });
+}
+
+async function expectStudioTypography(page: Page, surface: string) {
+  const unexpected = await page.locator('.admin-dashboard').evaluate(root => {
+    const allowed = new Set(['12px', '14px', '16px', '22px']);
+    return Array.from(root.querySelectorAll<HTMLElement>('*')).flatMap(element => {
+      if (element.closest('svg, canvas, [aria-hidden="true"], .sr-only, .admin-brand-mark')) return [];
+      if (!element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })) return [];
+      const style = getComputedStyle(element);
+      if (style.clipPath !== 'none' || style.clip !== 'auto') return [];
+      const text = Array.from(element.childNodes).filter(node => node.nodeType === Node.TEXT_NODE).map(node => node.textContent).join('').trim();
+      const control = element.matches('input, textarea, select');
+      if (!control && (!text || !/[A-Za-z0-9]/.test(text))) return [];
+      return allowed.has(style.fontSize) ? [] : [{ tag: element.tagName, class: element.className, size: style.fontSize, text: text.slice(0,70) }];
+    });
+  });
+  expect(unexpected, `${surface}: readable text uses the Studio role scale`).toEqual([]);
+}
+
+for (const theme of ['dark', 'light'] as const) {
+  for (const width of [1440, 390]) {
+    test(`Studio typography inventory ${theme} ${width}`, async ({ page }) => {
+      await page.setViewportSize({ width, height: 1000 });
+      await seedAdminApi(page);
+      await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme',value), theme);
+      const routes = [
+        ...adminPages.map(item => item.hash),
+        'exact-content?category=Natal+Chart', 'exact-content?category=Natal+Aspects',
+        'exact-content?category=Calendar+Aspects', 'fallback-hooks?section=lunar-calendar',
+        'templates', 'vocabulary', 'slots', 'source-drafts', 'users', 'report-fulfillment', 'connection', 'diagnostics/aspect-patterns', 'surface-map', 'content/aspect-patterns/activation'
+      ];
+      for (const route of routes) {
+        await expectAdminRouteLoads(page, `/admin/content#${route}`);
+        await expectStudioTypography(page, route);
+        await expect(page.locator('.admin-dashboard-header h1')).toHaveCSS('font-size','22px');
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route).toBe(true);
+      }
+      await expectAdminRouteLoads(page, '/admin/content#exact-content');
+      await page.getByLabel('Search content', { exact: true }).fill('sky.placement.sun.cancer');
+      await page.locator('.admin-content-row', { hasText: 'sky.placement.sun.cancer' }).getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(page.locator('.admin-editor-panel')).toBeVisible();
+      await expectStudioTypography(page, 'content editor');
+      await expect(page.locator('.admin-editor-toolbar h2')).toHaveCSS('font-size','22px');
+    });
+  }
+}
+
+for (const width of [1440, 390]) {
+  test(`Studio browse components preserve keyboard editing and details ${width}`, async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await page.setViewportSize({ width, height: 1000 });
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, '/admin/content#exact-content');
+    const create = page.getByRole('button', { name: 'Create', exact: true });
+    await create.click();
+    const items = page.getByRole('menuitem');
+    await expect(items.first()).toBeFocused();
+    await page.keyboard.press('ArrowDown');
+    await expect(items.nth(1)).toBeFocused();
+    await page.keyboard.press('End');
+    await expect(items.last()).toBeFocused();
+    await page.keyboard.press('Home');
+    await expect(items.first()).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(create).toBeFocused();
+    await expect(page.getByRole('menu')).toBeHidden();
+    const search = page.getByLabel('Search content', { exact: true });
+    if (width < 720) {
+      await expect(page.getByLabel('Category', { exact: true })).toBeHidden();
+      await page.getByRole('button', { name: 'Filters', exact: true }).click();
+    }
+    expect((await search.boundingBox())!.y).toBeLessThan((await page.getByLabel('Category', { exact: true }).boundingBox())!.y);
+    if (width < 720) await page.getByRole('button', { name: 'Filters', exact: true }).click();
+    await search.fill('sky.placement.sun.cancer');
+    const row = page.locator('.admin-content-row', { hasText: 'sky.placement.sun.cancer' });
+    await expect(row).toHaveCount(1);
+    await expect(row.locator('..').locator('.admin-content-expanded-body code')).toBeHidden();
+    await row.getByRole('button', {name: /^Details/}).click();
+    await expect(row.locator('..').locator('.admin-content-expanded-body code')).toBeVisible();
+    await expect(page.locator('.admin-editor-panel')).toHaveCount(0);
+    expect(await row.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+    expect(await page.locator('.admin-browse-table').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+    await row.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('.admin-editor-panel').getByRole('heading', { name: 'Edit Sun in Cancer' })).toBeVisible();
+    await assertNoBrowserErrors();
+  });
+}
+
+
+test('Studio tables keep titles and edit controls readable in narrow desktop panes', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 1000 });
+  await seedAdminApi(page);
+  for (const theme of ['dark', 'light']) {
+    for (const route of ['exact-content', 'articles', 'compatibility']) {
+      await expectAdminRouteLoads(page, `/admin/content#${route}`);
+      if (await page.locator('.admin-dashboard').getAttribute('data-studio-theme') !== theme) {
+        await page.getByRole('button', {name: `Switch to ${theme} theme`}).click();
+      }
+      await expect(page.locator('.admin-dashboard')).toHaveAttribute('data-studio-theme', theme);
+      const table = page.locator('.admin-browse-table').first();
+      await expect(table).toBeVisible();
+      const overflow = await table.locator('td, button').evaluateAll(elements => elements.filter(el => el.getBoundingClientRect().width > 0 && el.scrollWidth > el.clientWidth + 1).map(el => el.textContent));
+      expect(overflow, `${theme} ${route} table cells fit their content`).toEqual([]);
+      await expect(table.locator('.admin-content-row-title').first()).toHaveCSS('overflow', 'visible');
+      await page.screenshot({path: `outputs/studio-style/tablet-${route}-${theme}.png`, fullPage: true});
+    }
+  }
+});
+
+
+for (const theme of ['dark', 'light']) {
+  for (const width of [1440, 390]) {
+    test(`Studio concise workspace copy ${theme} ${width}`, async ({ page }) => {
+      await seedAdminApi(page);
+      await page.setViewportSize({width, height: 1000});
+      await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+      for (const route of ['exact-content?category=Natal+Chart', 'exact-content?category=Natal+Aspects', 'articles', 'compatibility', 'sky-writeups']) {
+        await expectAdminRouteLoads(page, `/admin/content#${route}`);
+        await expect(page.locator('.admin-dashboard-header h1')).toHaveCount(1);
+        await expect(page.locator('.admin-page-heading > p')).toHaveCount(0);
+        await expectStudioTypography(page, route);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+        if (route.includes('Natal+')) {
+          await expect(page.locator('.admin-content-library-toolbar')).toHaveCount(0);
+          await expect(page.locator('.admin-natal-placement-selectors small')).toHaveCount(0);
+          await expect(page.locator('.admin-natal-placement-finder .admin-eyebrow')).toHaveCount(0);
+          await expect(page.locator('.admin-natal-placement-finder > h2')).toHaveClass('sr-only');
+          await expect(page.locator('.admin-natal-placement-prompt')).toHaveCount(0);
+        }
+        if (route === 'articles' || route === 'compatibility') {
+          await expect(page.locator('.admin-collection-toolbar h2, .admin-collection-toolbar .admin-eyebrow')).toHaveCount(0);
+          const wide = await page.locator('.admin-collection-toolbar button').evaluateAll(buttons => buttons.filter(button => button.getBoundingClientRect().width > 250).map(button => button.textContent));
+          expect(wide).toEqual([]);
+        }
+        await page.screenshot({path: `outputs/studio-style/concise-${route.replace(/[^a-zA-Z]/g, '-')}-${theme}-${width}.png`});
+      }
+      await expectAdminRouteLoads(page, '/admin/content#exact-content?category=Natal+Chart&planet=sun&sign=cancer&house=1');
+      await expect(page.getByRole('button', {name: 'View Sun in Cancer in the 1st house in app'})).toBeVisible();
+      await expect(page.locator('.admin-natal-placement-finder-heading h3')).toHaveCount(0);
+      await expect(page.locator('.admin-natal-reader-preview .admin-eyebrow')).toHaveCount(0);
+      await expect(page.locator('.admin-natal-reader-preview > header p')).toHaveCount(0);
+      expect((await page.getByRole('button', {name: `Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}).boundingBox())!.width).toBeLessThan(200);
+      await page.screenshot({path: `outputs/studio-style/concise-natal-selected-${theme}-${width}.png`});
+    });
+  }
+}
+
+
+for (const theme of ['dark', 'light']) {
+  for (const width of [1440, 900, 390]) {
+    test(`Studio shared form audit ${theme} ${width}`, async ({ page }) => {
+      const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+      await seedAdminApi(page);
+      await page.setViewportSize({width, height: 1000});
+      await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+      const routes = [...adminPages.map(item => item.hash), 'exact-content?category=Natal+Chart', 'exact-content?category=Natal+Aspects', 'composition-map?surface=natal-empty-house', 'surface-map', 'templates', 'vocabulary', 'slots', 'source-drafts', 'users', 'report-fulfillment', 'connection', 'diagnostics/aspect-patterns'];
+      for (const route of routes) {
+        await expectAdminRouteLoads(page, `/admin/content#${route}`);
+        const problems = await page.locator('.admin-main input, .admin-main select, .admin-main textarea').evaluateAll(controls => controls.flatMap(control => {
+          const box = control.getBoundingClientRect();
+          if (!box.width || !box.height || ['checkbox', 'radio', 'range', 'color', 'hidden'].includes(control.getAttribute('type') || '')) return [];
+          const style = getComputedStyle(control);
+          const shell = control.closest('.admin-editor-panel') || control.closest('.admin-main');
+          const bounds = shell.getBoundingClientRect();
+          const failures = [];
+          if (box.left < bounds.left - 1 || box.right > bounds.right + 1) failures.push('outside form');
+          if (box.height < 36) failures.push('control too short');
+          if (style.color === style.backgroundColor) failures.push('unreadable text');
+          return failures.length ? [{label: control.getAttribute('aria-label') || control.id, failures}] : [];
+        }));
+        expect(problems, `${route} form controls`).toEqual([]);
+        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route).toBe(true);
+      }
+      await expectAdminRouteLoads(page, '/admin/content#composition-map?surface=natal-empty-house');
+      const detail = page.getByRole('region', {name: 'Selected app surface or system'});
+      const picker = page.getByRole('complementary', {name: 'App surfaces and systems'});
+      expect((await detail.boundingBox())!.width).toBeGreaterThan((await page.locator('.admin-main').boundingBox())!.width * 0.8);
+      expect((await detail.boundingBox())!.y).toBeGreaterThan((await picker.boundingBox())!.y);
+      await expect(page.getByLabel('Empty house', {exact: true})).toBeVisible();
+      await expect(page.getByRole('region', {name: 'Runtime rendering path'})).toBeHidden();
+      await expect(page.locator('.admin-composition-tabs')).toHaveCSS('border-top-width', '0px');
+      await expect(page.locator('.admin-sidebar-status')).toHaveCSS('border-top-width', '0px');
+      await expect(page.locator('.admin-composition-detail-header .status-live')).toHaveCSS('color', theme === 'light' ? 'rgb(47, 106, 57)' : 'rgb(150, 214, 154)');
+      await page.screenshot({path: `outputs/studio-style/forms-composition-${theme}-${width}.png`});
+      await expectAdminRouteLoads(page, '/admin/content#surface-map');
+      await expect(page.locator('.admin-surface-sources').first()).toHaveCSS('border-top-width', '0px');
+      await page.locator('.admin-surface-sources summary').first().click();
+      await expect(page.locator('.admin-surface-sources > p').first()).toHaveCSS('color', theme === 'light' ? 'rgb(87, 96, 93)' : 'rgb(163, 173, 169)');
+      await page.screenshot({path: `outputs/studio-style/forms-surface-${theme}-${width}.png`});
+      await assertNoBrowserErrors();
+    });
+  }
+}
+
+for (const theme of ['dark', 'light'] as const) {
+  for (const width of [1440, 390]) {
+    test(`Studio native controls ${theme} ${width}`, async ({page}) => {
+      const noErrors = await expectNoBrowserErrors(page);
+      await seedAdminApi(page);
+      await page.setViewportSize({width, height: 1000});
+      await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+      await expectAdminRouteLoads(page, '/admin/content#exact-content');
+      await page.getByLabel('Search content', {exact:true}).fill('sky.placement.sun.cancer');
+      const row = page.locator('.admin-content-row').first();
+      const summary = row.getByRole('button', {name: /^Details/});
+      await summary.focus();
+      await page.keyboard.press('Enter');
+      await expect(summary).toHaveAttribute('aria-expanded', 'true');
+      await expect(summary.locator('.admin-disclosure-chevron')).toHaveCSS('transform', 'matrix(0, 1, -1, 0, 0, 0)');
+      await expect(page.locator('.admin-editor-panel')).toHaveCount(0);
+      if (width === 390) {
+        const detailsBox = await row.locator('..').locator('.admin-content-expanded-body').boundingBox();
+        const editBox = await row.getByRole('button', {name:'Edit', exact:true}).boundingBox();
+        expect(detailsBox!.y).toBeGreaterThanOrEqual(editBox!.y + editBox!.height);
+      }
+      await row.locator('..').screenshot({path:`outputs/studio-style/native-row-${theme}-${width}.png`});
+      await page.keyboard.press('Space');
+      await expect(summary).toHaveAttribute('aria-expanded', 'false');
+      await row.getByRole('button', {name:'Edit', exact:true}).click();
+      const editor = page.locator('.admin-editor-panel');
+      const related = editor.locator('.admin-sky-related-editor');
+      const aspectSummary = related.locator('.admin-sky-related-group > summary').first();
+      await aspectSummary.scrollIntoViewIfNeeded();
+      await aspectSummary.focus();
+      await page.keyboard.press('Enter');
+      const search = editor.getByLabel('Find an aspect passage', {exact:true});
+      await expect(search).toBeVisible();
+      await expect(search).toHaveCSS('border-top-width', '0px');
+      await expect(editor.getByLabel('TL;DR / summary', {exact:true})).toHaveCSS('border-top-color', theme === 'dark' ? 'rgb(137, 147, 143)' : 'rgb(111, 121, 118)');
+      await expect(related.locator('.admin-hook-pattern-list')).toHaveCSS('width', await related.locator('.admin-sky-related-heading').evaluate(e => getComputedStyle(e).width));
+      await search.fill('no matching aspect');
+      await expect(search).toHaveCSS('outline-style', 'none');
+      await expect(search).toHaveCSS('box-shadow', 'none');
+      await expect(search.locator('..')).toHaveCSS('outline-style', 'solid');
+      await expect(related.getByRole('heading', {name:'Reader horoscopes'})).toHaveCSS('font-size', '16px');
+      await expect(related.locator('header h3')).toHaveCount(1);
+      await expect(related.locator('.admin-empty').first()).toBeVisible();
+      await expectStudioTypography(page, 'Expanded related passages');
+      await expectFormShellDoesNotOverlap(editor, `Native controls ${theme} ${width}`);
+      await related.screenshot({path:`outputs/studio-style/native-related-${theme}-${width}.png`});
+      const status = editor.getByRole('region', {name:'Review and publication readiness'});
+      await expect(status.getByRole('heading', {name:'Review and publication', exact:true})).toHaveClass('sr-only');
+      await expect(status.locator('.admin-review-status-values > div')).toHaveCount(2);
+      await expect(status.getByRole('button', {name:'Verify publication status'})).toHaveCSS('font-weight','400');
+      await expect(status.getByText('Live means eligible to appear.', {exact:false})).toBeHidden();
+      await status.screenshot({path:`outputs/studio-style/review-rhythm-${theme}-${width}.png`});
+      await related.locator('.admin-sky-related-group > summary').nth(1).click();
+      await expect(related.locator('.admin-sky-house-grid > article')).toHaveCount(12);
+      await related.locator('.admin-sky-house-grid').screenshot({path:`outputs/studio-style/house-rhythm-${theme}-${width}.png`});
+      await editor.locator('.admin-editor-details > summary').click();
+      const diagnostic = editor.locator('.admin-fallback-diagnostic-grid');
+      await expect(diagnostic.locator('> div').first()).toHaveCSS('border-top-width', '0px');
+      await diagnostic.scrollIntoViewIfNeeded();
+      await page.screenshot({path:`outputs/studio-style/details-rhythm-${theme}-${width}.png`});
+
+      await editor.getByRole('button', {name:'Close',exact:true}).click();
+      await expectAdminRouteLoads(page, '/admin/content#exact-content?category=Natal+Chart');
+      const select = page.locator('.admin-natal-placement-selectors select').first();
+      await expect(select).toHaveClass(/admin-native-select/);
+      await select.focus();
+      await select.selectOption('sun');
+      await expect(select).toBeFocused();
+      await expect(select).toHaveValue('sun');
+      await expect(page).toHaveURL(/planet=sun/);
+      await page.keyboard.press('Tab');
+      await expect(page.getByLabel('Natal placement zodiac sign')).toBeFocused();
+      await noErrors();
+    });
+  }
+}
+
+for (const theme of ['dark', 'light'] as const) for (const width of [1440, 900, 390]) {
+  test(`Studio expanded row rhythm ${theme} ${width}`, async ({page}) => {
+    const noErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await page.setViewportSize({width, height:1000});
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    for (const route of ['exact-content', 'sky-writeups', 'articles', 'compatibility']) {
+      await expectAdminRouteLoads(page, `/admin/content#${route}`);
+      const table = page.locator('.admin-browse-table').first();
+      const row = table.locator('.admin-content-row').first();
+      await expect(row).toBeVisible();
+      const group = row.locator('..');
+      const before = await row.boundingBox();
+      const toggle = row.getByRole('button', {name:/^Details/});
+      await toggle.click();
+      const expanded = group.locator('.admin-content-expanded-body');
+      await expect(expanded).toBeVisible();
+      await expect(expanded).toHaveCSS('text-align', 'start');
+      expect(Math.abs((await row.boundingBox())!.height - before!.height)).toBeLessThanOrEqual(1);
+      expect((await expanded.boundingBox())!.width).toBeGreaterThan((await table.boundingBox())!.width * 0.8);
+      expect(await table.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+      const brokenCells = await row.locator('td:not(.admin-col-select)').evaluateAll(cells => cells.filter(e => getComputedStyle(e).borderBottomWidth !== '0px').length);
+      expect(brokenCells).toBe(0);
+      await expect(toggle).toHaveCSS('font-weight','400');
+      await expect(row.locator('.admin-content-row-title')).toHaveCSS('font-weight','400');
+      await expect(row.getByRole('button', {name:'Edit',exact:true})).toHaveCSS('font-weight','400');
+      await expectStudioTypography(page, `Expanded ${route}`);
+      await table.screenshot({path:`outputs/studio-style/row-rhythm-${route}-${theme}-${width}.png`});
+      await toggle.click();
+      await expect(expanded).toBeHidden();
+    }
+    await noErrors();
+  });
+}
+
+for (const theme of ['light', 'dark'] as const) for (const width of [1440, 900, 390]) {
+  test(`Studio shared tables ${theme} ${width}`, async ({page}) => {
+    const noErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await page.setViewportSize({width, height:1000});
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    await page.route('**/api/admin/user-generated-content**', route => route.fulfill({json:{ok:true, rows:[{
+      ...generatedContentRows[0], id:'user-table-qa', user_id:'user-with-a-long-identifier-for-layout', subject_type:'chart', subject_id:'chart-qa', surface:'you', mode:'natal'
+    }]}}));
+    await page.route('**/api/admin/report-fulfillment**', route => route.fulfill({json:{billingMode:'free_test', metrics:{
+      orders:1, exceptionDepth:0, auditDepth:1, averageDeliveryMinutes:3, averageJudgeScore:0.95, validatorPassRate:1, judgePassRate:1,
+      averageAcceptedTokenCount:1200, averageTotalTokenCount:1600, averageEstimatedSpendUsd:0.45, attemptDistribution:{writer:1}, judgeScoreDistribution:{passed:1}
+    }, reports:[{id:'layout-report', entitlement_source:'comp', report_domain:'general', report_horizon:'12_months', fulfillment_status:'live', token_count:1200, token_count_total:1600, token_budget_lifetime:1450000, token_spend_usd_estimate:0.45, attempt_counts:{writer:1}, validator_results:[], failure_history:[]}], audits:[{id:'audit-layout',report_id:'layout-report',reason:'Layout fixture',status:'complete',findings:[]}], users:[],callEstimates:{}}}));
+    await page.route('**/api/admin/aspect-pattern-fixtures**',route=>route.fulfill({json:{ok:true,sky:{aspectPatterns:{patterns:[],relationships:[{parentPatternId:'grand-square',relationship:'contains',childPatternId:'t-square'}]}}}}));
+    await expectAdminRouteLoads(page,'/admin/content#review-queue?view=all');
+    const review = page.locator('.admin-review-queue-rows .admin-content-row').first();
+    await expect(review).toBeVisible();
+    await expect(page.locator('.admin-review-queue-row')).toHaveCount(0);
+    await review.getByRole('button',{name:/^Details/}).click();
+    await expect(review.locator('..').locator('.admin-content-expanded-body')).toBeVisible();
+    expect(await page.locator('.admin-browse-table').evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+    await page.locator('.admin-review-queue-layout').screenshot({path:`outputs/studio-style/shared-review-${theme}-${width}.png`});
+    await review.getByRole('button',{name:'Edit',exact:true}).click();
+    await expect(page.locator('.admin-editor-panel')).toBeVisible();
+    await page.getByRole('button',{name:'Close',exact:true}).click();
+    for (const route of ['users','unresolved-content','report-fulfillment','diagnostics/aspect-patterns']) {
+      await expectAdminRouteLoads(page,`/admin/content#${route}`);
+      if(route === 'diagnostics/aspect-patterns') await page.getByRole('button',{name:'Run diagnostics'}).click();
+      const tables=page.locator('.admin-data-table');
+      await expect(tables.first()).toBeVisible();
+      for(const table of await tables.all()) {
+        await expect(table.locator('tbody tr').first()).toBeVisible();
+        expect(await table.locator('tbody td').evaluateAll(cells=>cells.every(cell=>Boolean(cell.getAttribute('data-label'))))).toBe(true);
+        const failures=await table.locator('tbody td').evaluateAll(cells=>cells.filter(cell=>cell.scrollWidth>cell.clientWidth+1).map(cell=>cell.getAttribute('data-label')));
+        expect(failures, `${route} cell overflow`).toEqual([]);
+        await expect(table.locator('tbody td').first()).toHaveCSS('border-bottom-width','0px');
+        if(width===390) await expect(table).toHaveCSS('display','block');
+      }
+      await expectStudioTypography(page,route);
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      await tables.first().locator('..').screenshot({path:`outputs/studio-style/shared-${route.replaceAll('/','-')}-${theme}-${width}.png`});
+    }
+    await noErrors();
+  });
+}
+
+for (const theme of ['dark','light'] as const) for (const width of [1440,390]) {
+  test(`Studio expanded component audit ${theme} ${width}`, async ({page}) => {
+    test.setTimeout(120000);
+    await seedAdminApi(page);
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(value=>localStorage.setItem('tldrastro:studio-theme',value),theme);
+    const noErrors=await expectNoBrowserErrors(page);
+    const routes=[...new Set([...adminPages.map(item=>item.hash),'exact-content?category=Natal+Chart','exact-content?category=Natal+Aspects','composition-map?surface=natal-empty-house','surface-map','templates','vocabulary','slots','source-drafts','users','report-fulfillment','connection','diagnostics/aspect-patterns'])];
+    const allFindings: unknown[]=[];
+    for(const route of routes){
+      await expectAdminRouteLoads(page,`/admin/content#${route}`);
+      const visited=new Set<string>();
+      for(let n=0;n<40;n++){
+        const summaries=page.locator('.admin-main details:not([open]) > summary');
+        let next: Locator | undefined;
+        for(const summary of await summaries.all()){
+          if(!await summary.isVisible()) continue;
+          const key=await summary.evaluate(el=>`${el.className}:${el.parentElement?.className}:${el.textContent?.trim()}`);
+          if(visited.has(key)) continue;
+          visited.add(key);next=summary;break;
+        }
+        if(!next) break;
+        await next.click();
+      }
+      const findings=await page.locator('.admin-dashboard').evaluate(root=>{
+        const found: {kind:string;tag:string;label:string}[]=[];
+        const visible=(el:Element)=>{const s=getComputedStyle(el);return el.getClientRects().length>0&&s.visibility!=='hidden'&&!el.closest('[hidden],[aria-hidden="true"]');};
+        for(const el of root.querySelectorAll<HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement>('input,select,textarea')){
+          if(!visible(el)||el.type==='hidden')continue;
+          const label=el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||Array.from(el.labels||[]).map(x=>x.textContent?.trim()).join(' ')||el.getAttribute('title')||'';
+          if(!label)found.push({kind:'missing field label',tag:el.tagName,label:el.getAttribute('placeholder')||el.outerHTML.slice(0,160)});
+          if(el instanceof HTMLSelectElement&&!el.disabled&&el.selectedIndex<0)found.push({kind:'no selected option',tag:el.tagName,label});
+          const b=el.getBoundingClientRect();const shell=(el.closest('.admin-editor-panel')||el.closest('.admin-main'))?.getBoundingClientRect();
+          if(shell&&(b.left<shell.left-1||b.right>shell.right+1))found.push({kind:'field outside container',tag:el.tagName,label});
+        }
+        for(const el of root.querySelectorAll('button')){
+          if(!visible(el))continue;
+          const label=el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||el.getAttribute('title')||el.textContent?.trim();
+          if(!label)found.push({kind:'missing button name',tag:el.tagName,label:el.outerHTML.slice(0,160)});
+          const target=el.getAttribute('aria-controls');
+          if(target&&!document.getElementById(target))found.push({kind:'missing controlled panel',tag:el.tagName,label:target});
+        }
+        const ids=Array.from(root.querySelectorAll('[id]')).map(el=>el.id);
+        for(const id of new Set(ids.filter((id,index)=>ids.indexOf(id)!==index)))found.push({kind:'duplicate id',tag:'*',label:id});
+        return found;
+      });
+      if(findings.length){allFindings.push({route,findings});await page.screenshot({path:`outputs/studio-style/component-audit-${theme}-${width}-${routes.indexOf(route)}.png`});}
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`Expanded ${route}`).toBe(true);
+    }
+    expect(allFindings,'Expanded fields, dropdowns, buttons, and panel references').toEqual([]);
+    await noErrors();
+  });
+}
+
+
+test('manual source saves preserve typing during an in-flight response', async ({ page }) => {
+  const writes: Record<string, unknown>[] = [];
+  let releaseFirst!: () => void;
+  const pending = new Promise<void>(resolve => { releaseFirst = resolve; });
+  const row = { ...generatedContentRows[0], id: 'qa-pending-save', content_key: 'qa/pending-save', headline: 'Pending save fixture', mode: 'feed', status: 'DRAFT', body: 'Original fixture.', sections: {}, source_snapshot: {}, facts: {}, provider: 'manual', block_type: 'essay' };
+  await seedAdminApi(page, { generatedRows: [row], onGeneratedContentWrite: async ({ payload }) => {
+    writes.push(payload);
+    if (writes.length === 1) await pending;
+  }});
+  const noErrors = await expectNoBrowserErrors(page);
+  await expectAdminRouteLoads(page, '/admin/content#exact-content');
+  await page.locator('.admin-content-row').getByRole('button', {name:'Edit', exact:true}).click();
+  const editor = page.getByRole('dialog', {name:'Generated content editor'});
+  const body = editor.locator('textarea.admin-copy-field-body');
+  const save = editor.getByRole('button', {name:'Save',exact:true});
+  await body.fill('First fixture revision.');
+  await save.click();
+  await expect.poll(() => writes.length).toBe(1);
+  await body.fill('New typing while the first save is pending.');
+  releaseFirst();
+  await expect(editor.locator('.admin-editor-savebar')).toHaveAttribute('aria-busy','false');
+  await expect(body).toHaveValue('New typing while the first save is pending.');
+  await expect(save).toBeEnabled();
+  await save.click();
+  await expect.poll(() => writes.length).toBe(2);
+  await expect(editor.locator('.admin-editor-savebar')).toHaveAttribute('aria-busy','false');
+  expect(writes[1].body).toBe('New typing while the first save is pending.');
+  await expect(body).toHaveValue('New typing while the first save is pending.');
+  await expect(save).toBeDisabled();
+  await noErrors();
+});
+
+
+for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
+  test(`compact review status ${theme} ${width}`, async ({page}) => {
+    await seedAdminApi(page, {generatedRows: generatedContentRows.filter(row => row.content_key === 'synastry-ascendant-square-mercury')});
+    await page.setViewportSize({width, height:1000});
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme',value),theme);
+    const noErrors = await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page, '/admin/content#exact-content');
+    await page.locator('.admin-content-row').getByRole('button', {name:'Edit',exact:true}).click();
+    const status = page.getByRole('region', {name:'Review and publication readiness'});
+    await expect(status.locator('dt')).toHaveText(['Review', 'Publication']);
+    await expect(status.locator('dd')).toHaveText(['Complete', 'Not live']);
+    await expect(status.locator('h3')).toHaveClass('sr-only');
+    expect((await status.boundingBox())!.height).toBeLessThan(100);
+    const values = await status.locator('dl > div').evaluateAll(elements => elements.map(e => e.getBoundingClientRect().y));
+    expect(Math.abs(values[0] - values[1])).toBeLessThan(3);
+    await expectStudioTypography(page, `Compact status ${theme} ${width}`);
+    await expectNoHorizontalOverflow(page, 'Compact review status');
+    await status.screenshot({path:`outputs/studio-style/compact-review-status-${theme}-${width}.png`});
+    await noErrors();
+  });
+}
+
+
+for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
+  test(`compact editor header ${theme} ${width}`, async ({page, context}) => {
+    const key = 'synastry-ascendant-square-mercury';
+    await seedAdminApi(page, {generatedRows: generatedContentRows.filter(row => row.content_key === key)});
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme',value),theme);
+    const noErrors = await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page, '/admin/content#exact-content');
+    const edit = page.locator('.admin-content-row').getByRole('button', {name:'Edit',exact:true});
+    await edit.click();
+    const editor = page.getByRole('dialog', {name:'Generated content editor'});
+    const header = editor.locator('.admin-editor-header');
+    const title = header.getByRole('heading', {name:'Edit Ascendant square Mercury',exact:true});
+    const close = header.getByRole('button', {name:'Close',exact:true});
+    await expect(title).toBeVisible();
+    await expect(close).toBeFocused();
+    await expect(header.locator('.admin-eyebrow, code')).toHaveCount(0);
+    const box = (await close.boundingBox())!;
+    const titleBox = (await title.boundingBox())!;
+    expect(box.x).toBeGreaterThan(titleBox.x + titleBox.width - 1);
+    expect(box.width).toBeLessThanOrEqual(44);
+    expect((await header.boundingBox())!.height).toBeLessThan(width === 390 ? 230 : 150);
+    await expectStudioTypography(page, 'Editor header');
+    await expectFormShellDoesNotOverlap(editor, 'Compact editor header');
+    await expectNoHorizontalOverflow(page, 'Editor header');
+    await context.grantPermissions(['clipboard-read','clipboard-write']);
+    await expect(header.getByRole('button', {name:`Copy key ${key}`,exact:true})).toHaveCount(0);
+    await editor.locator('.admin-editor-details > summary').click();
+    await editor.locator('.admin-editor-key-details > summary').click();
+    await editor.getByRole('button', {name:`Copy key ${key}`,exact:true}).click();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(key);
+    await header.screenshot({path:`outputs/studio-style/compact-editor-header-${theme}-${width}.png`});
+    await close.click();
+    await expect(editor).toHaveCount(0);
+    await expect(edit).toBeFocused();
+    await noErrors();
+  });
+}
+
+for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
+  test(`themed page recovery ${theme} ${width}`, async ({page}) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({width, height:1000});
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme',value), theme);
+    const chunk = '**/MemoryGraphDashboard-*.js';
+    await page.route(chunk, route => route.abort('failed'));
+    await page.goto('/admin/content/memory');
+    const recovery = page.getByRole('region', {name:'Page recovery'});
+    await expect(recovery.getByRole('alert')).toHaveText('This page could not load.');
+    await expect(page.locator('.admin-page-error')).toHaveAttribute('data-studio-theme',theme);
+    await expect(recovery).toHaveCSS('background-color', theme === 'dark' ? 'rgb(29, 37, 35)' : 'rgb(250, 253, 250)');
+    await expect(recovery.getByRole('button', {name:'Retry page'})).toHaveCSS('font-size','14px');
+    const actions = recovery.locator('.admin-page-error-actions');
+    if (width === 1440) {
+      const positions = await actions.locator('button, a').evaluateAll(items=>items.map(item=>item.getBoundingClientRect().y));
+      expect(new Set(positions).size).toBe(1);
+    }
+    await recovery.getByText('Error details', {exact:true}).focus();
+    await page.keyboard.press('Enter');
+    await expect(recovery.locator('details')).toHaveAttribute('open','');
+    await expect(recovery.locator('pre')).toContainText('dynamically imported module');
+    await expectNoHorizontalOverflow(page, 'Page recovery');
+    await recovery.screenshot({path:`outputs/studio-style/themed-page-error-${theme}-${width}.png`});
+    await recovery.getByRole('button', {name:'Retry page'}).click();
+    await expect(recovery).toBeVisible(); // A rejected lazy chunk still needs a reload.
+    await recovery.getByRole('link', {name:'Open Review Queue'}).click();
+    await expect(page.locator('.admin-review-queue-rows')).toBeVisible();
+    await expect(page.locator('.admin-dashboard')).toHaveAttribute('data-studio-theme',theme);
+    await page.goto('/admin/content/memory');
+    await expect(recovery).toBeVisible();
+    await page.unroute(chunk);
+    await recovery.getByRole('button', {name:'Reload page'}).click();
+    await expect(page.getByRole('heading', {name:'Memory graph',exact:true})).toBeVisible();
+    await expect(recovery).toHaveCount(0);
+  });
+}
+
+for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
+  test(`themed API error recovery ${theme} ${width}`, async ({page}) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({width, height:1000});
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme',value),theme);
+    let unavailable = true;
+    await page.route('**/api/admin/generated-content**', async route => {
+      if (unavailable) return route.fulfill({status:503,json:{error:'Temporarily unavailable. Please retry.'}});
+      return route.fallback();
+    });
+    await page.goto('/admin/content#review-queue');
+    const error = page.locator('.admin-page-notice[role="alert"]');
+    await expect(error).toBeVisible();
+    await expect(error).toHaveCSS('background-color',theme === 'dark' ? 'rgb(147, 0, 10)' : 'rgb(255, 218, 214)');
+    await expect(error).toHaveCSS('color',theme === 'dark' ? 'rgb(255, 218, 214)' : 'rgb(65, 0, 2)');
+    await expect(error.locator('button svg')).toHaveCSS('color',theme === 'dark' ? 'rgb(255, 218, 214)' : 'rgb(65, 0, 2)');
+    await expect(error).toHaveCSS('padding','16px');
+    expect((await error.boundingBox())!.y).toBeLessThan((await page.locator('.admin-dashboard-header').boundingBox())!.y);
+    await expectNoHorizontalOverflow(page, 'API error');
+    await error.screenshot({path:`outputs/studio-style/themed-api-error-${theme}-${width}.png`});
+    await error.getByRole('button',{name:'Dismiss notification'}).click();
+    await expect(error).toHaveCount(0);
+    unavailable = false;
+    await page.getByRole('region',{name:'Content load failed'}).getByRole('button',{name:'Retry',exact:true}).click();
+    await expect(page.locator('.admin-review-queue-rows')).toBeVisible();
+    await expect(page.getByRole('region',{name:'Content load failed'})).toHaveCount(0);
+  });
+}
+
+for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
+  test(`quiet composition forms ${theme} ${width}`, async ({page}) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(value=>localStorage.setItem('tldrastro:studio-theme',value),theme);
+    const noErrors = await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page,'/admin/content#composition-map');
+    const selected = page.getByRole('region',{name:'Selected app surface or system'});
+    await expect(selected.locator('.admin-composition-detail-header h2')).toHaveClass('sr-only');
+    await expect(selected.locator('.admin-composition-detail-header .admin-eyebrow')).toHaveCount(0);
+    const manager = page.getByRole('region',{name:'Manage composition sources'});
+    await expect(manager.locator('h3')).toHaveClass('sr-only');
+    await expect(manager.locator('.admin-composition-source-card > strong, .admin-composition-source-card > code')).toHaveCount(0);
+    await expect(manager.getByRole('button',{name:'Edit selected source'})).toBeVisible();
+    await expectNoHorizontalOverflow(page,'Quiet composition map');
+    await selected.screenshot({path:`outputs/studio-style/quiet-composition-${theme}-${width}.png`});
+    await expectAdminRouteLoads(page,'/admin/content#templates');
+    await page.locator('.admin-content-row',{hasText:'slot-template/compatibility/planet-card'}).getByRole('button',{name:'Edit',exact:true}).click();
+    const editor = page.getByRole('dialog',{name:'Generated content editor'});
+    const guidance = editor.getByLabel('Editing guidance');
+    await expect(guidance.locator('summary .admin-disclosure-chevron')).toHaveCount(1);
+    await expect(guidance.locator('.admin-editor-brief-more')).toHaveCount(0);
+    await expect(guidance.locator('summary strong')).toHaveCSS('font-weight','400');
+    await expect(editor.locator('.admin-editor-header').getByRole('button',{name:/Copy key/})).toHaveCount(0);
+    const labelStyles = await editor.locator('label').evaluateAll(labels => labels.filter(label=>label.getBoundingClientRect().height>0).map(label=>({weight:getComputedStyle(label).fontWeight,casing:getComputedStyle(label).textTransform})));
+    expect(labelStyles.length).toBeGreaterThan(0);
+    expect(labelStyles.every(style=>style.weight==='400' && style.casing==='none')).toBe(true);
+    await guidance.locator('summary').focus();
+    await page.keyboard.press('Enter');
+    await expect(guidance).toHaveAttribute('open','');
+    await page.keyboard.press('Enter');
+    await expect(guidance).not.toHaveAttribute('open','');
+    await expectStudioTypography(page,'Quiet template form');
+    await expectNoHorizontalOverflow(page,'Quiet template form');
+    await page.screenshot({path:`outputs/studio-style/quiet-template-editor-${theme}-${width}.png`});
+    await noErrors();
+  });
+}
+
+for (const theme of ['dark','light']) for (const width of [1440,390]) {
+  test(`Fallback library sections and editor cards ${theme} ${width}`, async ({page}) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(value=>localStorage.setItem('tldrastro:studio-theme',value),theme);
+    const noErrors=await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page,'/admin/content#fallback-hooks');
+    const notification=page.getByRole('button',{name:'Dismiss notification',exact:true});
+    if(await notification.isVisible()) await notification.click();
+    const controls=page.getByRole('region',{name:'Fallback library controls',exact:true});
+    await expect(controls).toHaveCSS('padding',width===390?'16px':'24px');
+    const visibleTitles=await page.getByRole('heading',{name:'Fallback Articles & Passages',exact:true}).evaluateAll(nodes=>nodes.filter(node=>getComputedStyle(node).clipPath==='none').map(node=>node.tagName));
+    expect(visibleTitles).toEqual(['H1']);
+    const search=controls.getByLabel('Search fallback articles and passages', {exact:true});
+    const sort=controls.getByLabel('Sort fallback rows',{exact:true});
+    const searchBox=(await search.boundingBox())!,sortBox=(await sort.boundingBox())!;
+    if(width===390) expect(sortBox.y).toBeGreaterThan(searchBox.y+searchBox.height);
+    else { expect(Math.abs(searchBox.y-sortBox.y)).toBeLessThan(1); expect(searchBox.width).toBeGreaterThan(sortBox.width); }
+    const friends=controls.getByRole('button',{name:'Friends',exact:true});
+    await friends.click();
+    await friends.hover();
+    await expect(friends).toHaveCSS('background-color',theme==='dark'?'rgb(51, 75, 69)':'rgb(205, 232, 224)');
+    await search.fill('compatibility card');
+    const row=page.locator('.admin-content-row').filter({hasText:'fallback-hook/friends.compatibility.planet-card'});
+    await expect(row).toHaveCount(1);
+    const group=page.getByRole('region',{name:'Supporting fallback rows',exact:true});
+    await expect(group).toHaveCSS('padding',width===390?'16px':'24px');
+    await page.screenshot({path:`outputs/studio-style/fallback-library-cards-${theme}-${width}.png`,fullPage:true});
+    await row.getByRole('button',{name:'Edit',exact:true}).click();
+    const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    const copy=editor.getByRole('region',{name:'Content name and summary',exact:true});
+    await expect(copy).toHaveCSS('padding',width===390?'16px':'24px');
+    await expect(copy.getByLabel('Editor label',{exact:true})).toHaveValue('Compatibility card fallback');
+    await expect(copy.getByLabel('Purpose (editors only)',{exact:true})).toBeVisible();
+    await expect(copy.locator('label').first()).toHaveCSS('font-weight','400');
+    if(width===390) {
+      const footer=editor.locator('.admin-editor-savebar');
+      await expect(footer).toHaveCSS('display','grid');
+      const save=(await footer.getByRole('button',{name:'Save',exact:true}).boundingBox())!;
+      const retire=(await footer.getByRole('button',{name:'Retire everywhere',exact:true}).boundingBox())!;
+      expect(Math.abs(save.width-retire.width)).toBeLessThan(1);
+      expect(Math.abs(save.y-retire.y)).toBeLessThan(1);
+      const publish=(await footer.getByRole('button',{name:'Publish to app',exact:true}).boundingBox())!;
+      expect(publish.width).toBeGreaterThan(save.width*2);
+    }
+    await editor.screenshot({path:`outputs/studio-style/fallback-editor-cards-${theme}-${width}.png`});
+    const body=editor.locator('.admin-copy-field-body');
+    await body.scrollIntoViewIfNeeded();
+    const bodyCard=body.locator('..');
+    const cardBox=(await bodyCard.boundingBox())!,copyBox=(await copy.boundingBox())!;
+    expect(Math.abs(cardBox.x-copyBox.x)).toBeLessThan(1);
+    expect(Math.abs(cardBox.width-copyBox.width)).toBeLessThan(1);
+    await expectFormShellDoesNotOverlap(editor,'Fallback editor');
+    await editor.screenshot({path:`outputs/studio-style/fallback-editor-passage-${theme}-${width}.png`});
+    await editor.getByRole('button',{name:'Close',exact:true}).click();
+    await search.fill('no-fallback-match-987');
+    await expect(page.getByText('No rows match these filters.',{exact:true})).toBeVisible();
+    await page.screenshot({path:`outputs/studio-style/fallback-library-empty-${theme}-${width}.png`,fullPage:true});
+    await expectNoHorizontalOverflow(page,'Fallback library cards');
+    await noErrors();
+  });
+  test(`Studio container insets ${theme} ${width}`, async ({page,context}) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(value=>localStorage.setItem('tldrastro:studio-theme',value),theme);
+    const noErrors=await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page,'/admin/content#exact-content');
+    await page.getByLabel('Search content',{exact:true}).fill('sky.placement.sun.cancer');
+    await page.locator('.admin-content-row').getByRole('button',{name:'Edit',exact:true}).click();
+    const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    await editor.locator('.admin-editor-details > summary').click();
+    const diagnostic=editor.locator('.admin-fallback-diagnostic-grid');
+    const code=diagnostic.locator('code').first();
+    await expect(code).toHaveText('natal.placement');
+    const codeBox=(await code.boundingBox())!;
+    expect(codeBox.width).toBeLessThan(180);
+    await expect(code).toHaveCSS('padding-left','8px');
+    await expect(code).toHaveCSS('padding-top','4px');
+    await diagnostic.screenshot({path:`outputs/studio-style/token-diagnostics-${theme}-${width}.png`});
+    await editor.locator('.admin-editor-settings > summary').click();
+    const metadata=editor.locator('.admin-metadata-fields');
+    await expect(metadata.locator('label').first()).toHaveCSS('border-top-width','0px');
+    await expect(editor.locator('.admin-editor-settings > summary')).toHaveCSS('padding-top','12px');
+    const titleField=editor.locator('.admin-editor-copy-section');
+    const statusPanel=editor.getByRole('region',{name:'Review and publication readiness'});
+    expect(Math.abs((await titleField.boundingBox())!.width-(await statusPanel.boundingBox())!.width)).toBeLessThan(2);
+    const select=metadata.getByLabel('Mode',{exact:true});
+    await expect(select).toHaveCSS('height','56px');
+    await expect(select).toHaveCSS('padding-left','16px');
+    await expect(select).toHaveCSS('padding-right','48px');
+    await expect(metadata.getByLabel('Review state',{exact:true})).toHaveCSS('padding-left','16px');
+    await expect(select.locator('..').locator('.admin-select-chevron')).toHaveCount(1);
+    const left=(await metadata.boundingBox())!.x;
+    expect(Math.abs(left-(await metadata.locator('label').first().boundingBox())!.x)).toBeLessThan(2);
+    await select.focus();
+    await select.selectOption('feed');
+    await expect(select).toBeFocused();
+    await metadata.screenshot({path:`outputs/studio-style/token-metadata-${theme}-${width}.png`});
+    await editor.locator('.admin-editor-key-details > summary').click();
+    const key=editor.locator('.admin-editor-key-details');
+    await expect(key.locator('label > span')).toHaveClass('sr-only');
+    const body=key.locator('.admin-disclosure-content');
+    const field=key.getByLabel('Content key',{exact:true});
+    const button=key.getByRole('button',{name:/Copy key/});
+    const fieldBox=(await field.boundingBox())!;
+    expect(Math.abs(fieldBox.x-(await body.boundingBox())!.x)).toBeLessThan(2);
+    expect(Math.abs((await button.boundingBox())!.x-fieldBox.x)).toBeLessThan(2);
+    expect((await button.boundingBox())!.height).toBeGreaterThanOrEqual(40);
+    await context.grantPermissions(['clipboard-read','clipboard-write']);
+    await button.click();
+    expect(await page.evaluate(()=>navigator.clipboard.readText())).toBe('sky.placement.sun.cancer');
+    await key.screenshot({path:`outputs/studio-style/token-content-key-${theme}-${width}.png`});
+    await expectNoHorizontalOverflow(page,'Expanded Studio surfaces');
+    await noErrors();
+  });
+}
+
+for (const theme of ['dark', 'light'] as const) for (const width of [1440, 390]) {
+  test(`Studio source and house rows ${theme} ${width}`, async ({ page }) => {
+    const noErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    await expectAdminRouteLoads(page, '/admin/content#exact-content?category=Natal+Chart&planet=sun&sign=aries&house=1');
+    const finder = page.locator('.admin-natal-placement-finder');
+    const grid = finder.locator('.admin-natal-source-grid').first();
+    const card = grid.locator('> article').first();
+    await expect(card).toBeVisible();
+    expect(Math.abs((await card.boundingBox())!.width - (await grid.boundingBox())!.width)).toBeLessThan(2);
+    await expect(card).toHaveCSS('padding-left', '16px');
+    await expect(card).toHaveCSS('border-top-width', '0px');
+    await expect(card.locator('.admin-natal-source-key > span')).toHaveCSS('font-weight', '400');
+    await expect(card.locator('.admin-natal-source-key > span')).toHaveCSS('text-transform', 'none');
+    await expect(finder.locator('> h2')).toHaveClass('sr-only');
+    await expect(card.locator('h4')).toHaveCount(1);
+    await expectStudioTypography(page, 'Natal full-width sources');
+    await expectNoHorizontalOverflow(page, 'Natal full-width sources');
+    await card.screenshot({ path: `outputs/studio-style/source-row-${theme}-${width}.png` });
+    await finder.getByLabel('Natal placement house').selectOption('');
+    const signCard = finder.locator('.admin-natal-source-grid').first().locator('> article').first();
+    expect(Math.abs((await signCard.boundingBox())!.width - (await signCard.locator('..').boundingBox())!.width)).toBeLessThan(2);
+
+    await expectAdminRouteLoads(page, '/admin/content#exact-content');
+    await page.getByLabel('Search content', { exact: true }).fill('sky.placement.sun.cancer');
+    await page.locator('.admin-content-row').getByRole('button', { name: 'Edit', exact: true }).click();
+    const editor = page.getByRole('dialog', { name: 'Generated content editor' });
+    const related = editor.locator('.admin-sky-related-editor');
+    await related.locator('.admin-sky-related-group > summary').nth(1).click();
+    const houses = related.locator('.admin-sky-house-grid');
+    const rows = houses.locator('> article');
+    await expect(rows).toHaveCount(12);
+    await expect(rows.first()).toContainText('1st House');
+    await expect(rows.last()).toContainText('12th House');
+    const boxes = await rows.evaluateAll(items => items.map(item => {
+      const box = item.getBoundingClientRect();
+      return { x: box.x, y: box.y, width: box.width, height: box.height };
+    }));
+    for (let i = 0; i < boxes.length; i++) {
+      expect(boxes[i].x).toBe(boxes[0].x);
+      expect(boxes[i].width).toBe(boxes[0].width);
+      expect(boxes[i].height).toBeGreaterThanOrEqual(44);
+      expect(boxes[i].height).toBeLessThanOrEqual(64);
+      if (i) expect(boxes[i].y).toBeCloseTo(boxes[i - 1].y + boxes[i - 1].height, 0);
+    }
+    await expect(rows.first()).toHaveCSS('border-radius', '0px');
+    await expect(rows.last()).toHaveCSS('border-bottom-width', '0px');
+    await houses.screenshot({ path: `outputs/studio-style/house-rows-${theme}-${width}.png` });
+    await expectNoHorizontalOverflow(page, 'House coverage list');
+    await expectFormShellDoesNotOverlap(editor, 'House coverage list');
+    await noErrors();
+  });
+}
+
+for (const theme of ['dark', 'light'] as const) {
+  for (const width of [1440, 390]) {
+    test(`Studio secondary choices and search geometry ${theme} ${width}`, async ({ page }) => {
+      const noErrors = await expectNoBrowserErrors(page);
+      await seedAdminApi(page);
+      await page.setViewportSize({ width, height: 1000 });
+      await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+      await expectAdminRouteLoads(page, '/admin/content#composition-map');
+      const create = page.getByRole('button', { name: 'Create', exact: true });
+      await expect(page.locator('.admin-create-menu')).toHaveCSS('box-shadow', 'none');
+      await create.click();
+      await expect(page.getByRole('menu')).toHaveCSS('border-radius', '8px');
+      await expect(page.getByRole('menu')).not.toHaveCSS('box-shadow', 'none');
+      await expect(page.getByRole('menuitem').first()).toHaveCSS('border-radius', '8px');
+      await page.keyboard.press('Escape');
+      await expect(create).toBeFocused();
+
+      const search = page.getByLabel('Search surfaces and systems', { exact: true });
+      await search.fill('Friends');
+      const shell = page.locator('.admin-composition-search-shell');
+      const clear = page.getByRole('button', { name: 'Clear surface search' });
+      const geometry = await shell.evaluate(root => {
+        const box = root.getBoundingClientRect();
+        const input = root.querySelector('input')!.getBoundingClientRect();
+        const clear = root.querySelector('button')!.getBoundingClientRect();
+        return { height: box.height, inset: input.left - box.left, gap: clear.left - input.right, right: box.right - clear.right, clearHeight: clear.height };
+      });
+      expect(geometry.height).toBe(56);
+      expect(geometry.inset).toBe(17);
+      expect(geometry.gap).toBe(8);
+      expect(geometry.right).toBe(17);
+      expect(geometry.clearHeight).toBe(40);
+      await expect(search).toHaveCSS('border-width', '0px');
+
+      const choices = page.locator('.admin-composition-template-items > button');
+      await expect(choices.first()).toBeVisible();
+      for (const choice of await choices.all()) {
+        await expect(choice).toHaveCSS('border-radius', '16px');
+        await expect(choice).toHaveCSS('padding', '16px');
+        await expect(choice).toHaveCSS('text-align', 'start');
+        await expect(choice.locator('strong')).toHaveCSS('font-weight', '400');
+      }
+      const next = choices.nth(1);
+      await next.focus();
+      await page.keyboard.press('Enter');
+      await expect(next).toHaveAttribute('aria-pressed', 'true');
+      await expect(choices.first()).toHaveAttribute('aria-pressed', 'false');
+      await expect(next).toHaveCSS('background-color', theme === 'dark' ? 'rgb(51, 75, 69)' : 'rgb(205, 232, 224)');
+      await next.screenshot({ path: `outputs/studio-style/secondary-choice-${theme}-${width}.png` });
+      await expectStudioTypography(page, 'selected surface choices');
+      await expectNoHorizontalOverflow(page, 'selected surface choices');
+      await search.fill('no surface matches this search');
+      await expect(page.getByText('No surfaces match', { exact: true })).toBeVisible();
+      await expectNoHorizontalOverflow(page, 'empty surface choices');
+      await clear.click();
+      await expect(search).toHaveValue('');
+      await expect(choices.first()).toBeVisible();
+
+      await page.getByRole('tab', { name: /Template internals/ }).click();
+      await expect(choices.first()).toBeVisible();
+      await expect(choices.first()).toHaveCSS('border-radius', '16px');
+      await expect(choices.first()).toHaveCSS('padding', '16px');
+      const filterBox = await page.locator('.admin-composition-search-shell').boundingBox();
+      const cardBox = await choices.first().boundingBox();
+      expect(cardBox!.x).toBe(filterBox!.x);
+      await expectNoHorizontalOverflow(page, 'template choices');
+      await page.locator('.admin-composition-template-list').screenshot({ path: `outputs/studio-style/secondary-templates-${theme}-${width}.png` });
+      await noErrors();
+    });
+
+    for (const route of ['composition-map', 'templates', 'surface-map', 'slots', 'vocabulary', 'connection', 'users', 'report-fulfillment', 'exact-content?category=Natal+Chart']) {
+      test(`Studio expanded secondary screens ${route} ${theme} ${width}`, async ({ page }) => {
+        const noErrors = await expectNoBrowserErrors(page);
+        await seedAdminApi(page);
+        await page.setViewportSize({ width, height: 1000 });
+        await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+        await expectAdminRouteLoads(page, `/admin/content#${route}`);
+        const summaries = page.locator('.admin-main details > summary');
+        // Read disclosure state together; each disclosure still opens through a user click.
+        while (true) {
+          const closed = await summaries.evaluateAll(elements => elements.flatMap((element, index) =>
+            element.checkVisibility({ checkVisibilityCSS: true }) && !element.parentElement?.hasAttribute('open') ? [index] : []));
+          if (!closed.length) break;
+          for (const index of closed) await summaries.nth(index).click();
+        }
+        await expectStudioTypography(page, `expanded ${route}`);
+        await expectNoHorizontalOverflow(page, `expanded ${route}`);
+        const boldLabels = await page.locator('.admin-main label, .admin-main legend').evaluateAll(elements => elements.filter(element => element.checkVisibility({ checkVisibilityCSS: true }) && Number(getComputedStyle(element).fontWeight) > 400).map(element => element.textContent));
+        expect(boldLabels, route).toEqual([]);
+        await noErrors();
+      });
+    }
+  }
+}
+
+for (const theme of ['light','dark']) for (const width of [1440,390]) {
+  test(`Studio grid spacing ${theme} ${width}`, async ({page}) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(value=>localStorage.setItem('tldrastro:studio-theme',value),theme);
+    await expectAdminRouteLoads(page,'/admin/content#exact-content');
+    if (width < 720) await page.getByRole('button',{name:'Filters',exact:true}).click();
+    for (const name of ['Show reference','Show retired','Refresh rows','Clear filters']) {
+      const button=page.getByRole('button',{name,exact:true});
+      expect((await button.boundingBox())!.height,name).toBe(40);
+    }
+    const toolbar=page.locator('.admin-content-toolbar').first();
+    expect((await toolbar.boundingBox())!.height).toBeLessThan(width < 720 ? 160 : 90);
+    await page.screenshot({path:`outputs/studio-style/grid-library-${theme}-${width}.png`});
+    await expectAdminRouteLoads(page,'/admin/content#sky-writeups');
+    const grid=page.locator('.admin-review-filter-grid').first();
+    const selects=await grid.locator('select').evaluateAll(items=>items.map(e=>({x:e.getBoundingClientRect().x,y:e.getBoundingClientRect().y,height:e.getBoundingClientRect().height})));
+    expect(new Set(selects.map(e=>e.x)).size).toBe(width < 720 ? 1 : 3);
+    expect(selects.every(e=>e.height===56)).toBe(true);
+    expect((await grid.getByRole('button',{name:'Clear filters',exact:true}).boundingBox())!.height).toBe(40);
+    await expectNoHorizontalOverflow(page,'Sky filter grid');
+    await page.screenshot({path:`outputs/studio-style/grid-sky-${theme}-${width}.png`});
+    await expectAdminRouteLoads(page,'/admin/content#users');
+    const empty=page.getByText('No user-generated rows are loaded.',{exact:true});
+    await expect(empty).toHaveCSS('padding-left','16px');
+    await expect(empty).toHaveCSS('padding-top','16px');
+    await expectNoHorizontalOverflow(page,'Users empty state');
+    await page.screenshot({path:`outputs/studio-style/grid-users-${theme}-${width}.png`});
+  });
+
+  test(`Studio memory grid recovery ${theme} ${width}`, async ({page}) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(value=>localStorage.setItem('tldrastro:studio-theme',value),theme);
+    let failing=true;
+    await page.route('**/api/admin/memory-graph**',route=>route.fulfill({status:failing?503:200,contentType:'application/json',body:JSON.stringify(failing?{ok:false,error:'This screen has no sample data in the design preview.'}:{ok:true,documents:[]})}));
+    await page.goto('/admin/content/memory');
+    const error=page.locator('.memory-error');
+    await expect(error).toBeVisible();
+    await expect(error).toHaveCSS('background-color',theme==='dark'?'rgb(147, 0, 10)':'rgb(255, 218, 214)');
+    const message=(await error.locator('p').boundingBox())!;
+    const retry=(await error.getByRole('button',{name:'Try again'}).boundingBox())!;
+    expect(retry.height).toBe(40);
+    expect(width===390?retry.y-(message.y+message.height):retry.x-(message.x+message.width)).toBeGreaterThanOrEqual(15);
+    await expect(page.locator('.memory-loading')).toHaveCount(0);
+    await expect(page.locator('canvas')).toHaveCount(0);
+    const search=page.getByRole('textbox',{name:'Search memories'});
+    await expect(search).toHaveCSS('border-top-width','0px');
+    const toolbar=(await page.locator('.memory-toolbar').boundingBox())!;
+    const banner=(await error.boundingBox())!;
+    const back=(await page.getByRole('link',{name:'Back to Content Studio',exact:true}).boundingBox())!;
+    expect(banner.y).toBeLessThan(back.y);
+    expect(banner.x-toolbar.x).toBe(24);
+    expect(toolbar.x+toolbar.width-banner.x-banner.width).toBe(24);
+    await expectNoHorizontalOverflow(page,'Memory error');
+    await page.screenshot({path:`outputs/studio-style/grid-memory-error-${theme}-${width}.png`});
+    failing=false;
+    await error.getByRole('button',{name:'Try again'}).click();
+    await expect(page.getByText('No project memories available.',{exact:true})).toBeVisible();
+    await expect(error).toHaveCount(0);
+    await search.fill('query');
+    await page.getByRole('button',{name:'Clear search'}).click();
+    await expect(search).toHaveValue('');
+    await page.screenshot({path:`outputs/studio-style/grid-memory-empty-${theme}-${width}.png`});
+  });
+}
+
+for (const theme of ['light','dark']) for (const width of [1440,390]) {
+  test(`Studio populated memory workspace ${theme} ${width}`, async ({page}) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(value=>localStorage.setItem('tldrastro:studio-theme',value),theme);
+    const document={id:'qa-memory-source',orgId:'qa',userId:'qa',title:'Studio layout reference',contentHash:null,status:'done',createdAt:'2026-09-11',updatedAt:'2026-09-11',memoryEntries:[{id:'qa-memory-entry',documentId:'qa-memory-source',content:'Use consistent spacing for form fields.',title:'Field spacing',createdAt:'2026-09-11',updatedAt:'2026-09-11',isLatest:true}]};
+    await page.route('**/api/admin/memory-graph**',route=>route.fulfill({contentType:'application/json',body:JSON.stringify({ok:true,documents:[document]})}));
+    await page.goto('/admin/content/memory');
+    await expect(page.locator('.memory-reference-root canvas')).toBeVisible();
+    await expect(page.locator('.memory-error,.memory-loading')).toHaveCount(0);
+    const toolbar=(await page.locator('.memory-toolbar').boundingBox())!;
+    const workspace=(await page.locator('.memory-workspace').boundingBox())!;
+    expect(workspace.y-toolbar.y-toolbar.height).toBe(24);
+    expect(workspace.x).toBe(toolbar.x);
+    expect(workspace.width).toBe(toolbar.width);
+    await expectNoHorizontalOverflow(page,'Populated Memory graph');
+    await page.screenshot({path:`outputs/studio-style/grid-memory-populated-${theme}-${width}.png`});
+  });
+}
+
+for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
+  test(`Studio issue status guide ${theme} ${width}`, async ({ page }) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({ width, height: 1100 });
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    let responseState: 'populated' | 'failed' | 'empty' = 'populated';
+    let releaseLoading!: () => void;
+    const loading = new Promise<void>(resolve => { releaseLoading = resolve; });
+    await page.route('**/api/admin/content-unresolved', async route => {
+      await loading;
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(
+        responseState === 'failed' ? { ok: false, error: 'Fixture unavailable' } :
+          { ok: true, report: { ...unresolvedQueue, issues: responseState === 'empty' ? [] : [sourceRepairFixture] } }
+      ) });
+    });
+    await expectAdminRouteLoads(page, '/admin/content#unresolved-content');
+    const records = page.getByRole('region', { name: 'Unresolved content records' });
+    const guide = page.getByRole('region', { name: 'Issue status guide' });
+    const toolbar = page.getByRole('region', { name: 'Unresolved content search' });
+    await expect(records.getByText('Loading unresolved issues…')).toBeVisible();
+    await expect(records.getByRole('table')).toHaveCount(0);
+    await expect(toolbar.getByRole('button', { name: 'Refreshing…' })).toBeDisabled();
+    releaseLoading();
+    await expect(records.getByRole('table')).toBeVisible();
+    await expect(page.locator('.admin-unresolved-total')).toHaveText('1 issue');
+    const notification = page.getByRole('button', { name: 'Dismiss notification', exact: true });
+    await expect(notification).toBeVisible();
+    await notification.click();
+    await expect(page.getByRole('heading', { level: 1, name: 'Unresolved Content', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Resolve content holds' })).toBeVisible();
+    const heading = guide.getByRole('heading', { level: 3, name: 'Issue status guide' });
+    await expect(heading).toHaveCSS('font-size', '16px');
+    await expect(heading).toHaveCSS('line-height', '24px');
+    await expect(heading).toHaveCSS('font-weight', '600');
+    await expect(heading).toHaveCSS('margin-top', '0px');
+    await expect(heading).toHaveCSS('text-align', 'start');
+    await expect(heading).toHaveCSS('text-transform', 'none');
+    await expect(guide).toHaveCSS('padding', '24px');
+    const badges = guide.locator('dt .admin-unresolved-state');
+    for (const badge of await badges.all()) {
+      await expect(badge).toHaveCSS('font-weight', '400');
+      await expect(badge).toHaveCSS('padding', '4px 8px');
+      await expect(badge).toHaveCSS('min-height', '32px');
+    }
+    await expect(badges.first()).toHaveCSS('background-color', theme === 'light' ? 'rgb(255, 223, 152)' : 'rgb(88, 68, 11)');
+    const definitions = await guide.locator('dl > div').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().x));
+    expect(new Set(definitions).size).toBe(width === 390 ? 1 : 2);
+    await expect(guide.getByRole('button')).toHaveCount(0);
+    expect((await toolbar.getByRole('button', { name: 'Refresh status' }).boundingBox())!.height).toBe(40);
+    await expectNoHorizontalOverflow(page, 'Issue status guide');
+    await page.screenshot({ path: `outputs/studio-style/status-guide-${theme}-${width}.png` });
+    await expect(records.locator('.admin-unresolved-current-step')).toHaveCSS('display', 'grid');
+    await expect(records.locator('.admin-unresolved-progress')).toHaveCSS('list-style-type', 'none');
+    await records.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `outputs/studio-style/status-rows-${theme}-${width}.png` });
+    await toolbar.getByRole('textbox').fill('no-such-issue');
+    await expect(records.getByText('No matching issues.')).toBeVisible();
+    await toolbar.getByRole('textbox').fill('');
+    responseState = 'failed';
+    await toolbar.getByRole('button', { name: 'Refresh status' }).click();
+    await expect(records.getByRole('alert')).toHaveText('Issues could not load. Select Refresh status to try again.');
+    await expect(records.getByRole('table')).toHaveCount(0);
+    await expect(page.locator('.admin-unresolved-total')).toHaveText('Issues unavailable');
+    await expect(records.getByRole('alert')).toHaveCSS('background-color', theme === 'light' ? 'rgb(255, 218, 214)' : 'rgb(147, 0, 10)');
+    await records.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `outputs/studio-style/status-error-${theme}-${width}.png` });
+    responseState = 'empty';
+    await toolbar.getByRole('button', { name: 'Refresh status' }).click();
+    await expect(records.getByText('No unresolved issues.')).toBeVisible();
+    await expect(page.locator('.admin-unresolved-total')).toHaveText('0 issues');
+    await expect(records.getByRole('alert')).toHaveCount(0);
+    await expect(heading).toHaveCSS('font-size', '16px');
+    await expect(heading).toHaveCSS('font-weight', '600');
+    await expectNoHorizontalOverflow(page, 'Empty unresolved issues');
+    await records.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `outputs/studio-style/status-empty-${theme}-${width}.png` });
+  });
+}
+
+
+for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
+  test(`Studio tabs match the reference and keyboard contract ${theme} ${width}`, async ({ page }) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    await expectAdminRouteLoads(page, '/admin/content#sky-writeups?view=daily-summary');
+    const expectConnectedTabSurfaces = async () => {
+      for (const strip of await page.getByRole('tablist').all()) {
+        if (!(await strip.isVisible())) continue;
+        const connection = await strip.evaluate(element => {
+          const panel = element.nextElementSibling!;
+          const tabBox = element.getBoundingClientRect();
+          const panelBox = panel.getBoundingClientRect();
+          return { gap: panelBox.top - tabBox.bottom, left: panelBox.left - tabBox.left,
+            width: panelBox.width - tabBox.width, sameSurface: getComputedStyle(element).backgroundColor === getComputedStyle(panel).backgroundColor,
+            topLeft: getComputedStyle(panel).borderTopLeftRadius, topRight: getComputedStyle(panel).borderTopRightRadius };
+        });
+        expect(connection).toEqual({gap: 0, left: 0, width: 0, sameSurface: true, topLeft: '0px', topRight: '0px'});
+      }
+    };
+    const tabs = page.getByRole('tablist', { name: 'Sky Write-ups workspaces' });
+    await expectConnectedTabSurfaces();
+    const daily = tabs.getByRole('tab', { name: 'Daily Sky Summary' });
+    const catalog = tabs.getByRole('tab', { name: 'Placements & lunations' });
+    await expect(daily).toHaveAttribute('aria-selected', 'true');
+    await expect(daily).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(daily).toHaveCSS('border-bottom-width', '3px');
+    await expect(daily).toHaveCSS('border-bottom-color', theme === 'light' ? 'rgb(0, 107, 91)' : 'rgb(89, 219, 193)');
+    await expect(daily).toHaveCSS('color', theme === 'light' ? 'rgb(25, 28, 27)' : 'rgb(196, 199, 197)');
+    for (const tab of await tabs.getByRole('tab').all()) {
+      await expect(tab).toHaveCSS('font-weight', '400');
+      await expect(tab).toHaveCSS('font-size', '14px');
+      await expect(tab).toHaveCSS('line-height', '20px');
+      await expect(tab).toHaveCSS('border-radius', '0px');
+      await expect(tab).toHaveCSS('min-height', '56px');
+    }
+    const bounds = await tabs.getByRole('tab').evaluateAll(elements => elements.map(element => ({ x: element.getBoundingClientRect().x, y: element.getBoundingClientRect().y, width: element.getBoundingClientRect().width })));
+    expect(new Set(bounds.map(rect => rect.y)).size).toBe(1);
+    if (width > 720) expect(Math.max(...bounds.map(rect => rect.width)) - Math.min(...bounds.map(rect => rect.width))).toBeLessThan(1);
+    await daily.focus();
+    await daily.press('ArrowRight');
+    await expect(catalog).toBeFocused();
+    await expect(daily).toHaveAttribute('aria-selected', 'true');
+    await catalog.press('Enter');
+    await expect(catalog).toHaveAttribute('aria-selected', 'true');
+    const panel = page.getByRole('tabpanel', { name: 'Placements & lunations', exact: true });
+    await expect(panel).toBeVisible();
+    expect(await panel.getAttribute('id')).toBe(await catalog.getAttribute('aria-controls'));
+    expect(await panel.getAttribute('aria-labelledby')).toBe(await catalog.getAttribute('id'));
+    await catalog.press('End');
+    const house = tabs.getByRole('tab', { name: 'House Transits' });
+    await expect(house).toBeFocused();
+    const focusedBounds = (await house.boundingBox())!;
+    const stripBounds = (await tabs.boundingBox())!;
+    expect(focusedBounds.x).toBeGreaterThanOrEqual(stripBounds.x);
+    expect(focusedBounds.x + focusedBounds.width).toBeLessThanOrEqual(stripBounds.x + stripBounds.width + 1);
+    await house.press(' ');
+    await expect(page.getByRole('tabpanel', { name: 'House Transits', exact: true })).toBeVisible();
+    await house.press('Home');
+    await expect(daily).toBeFocused();
+    await daily.press('Enter');
+    await daily.press('ArrowLeft');
+    await expect(house).toBeFocused();
+    await house.press('ArrowRight');
+    await expect(daily).toBeFocused();
+    await daily.press('Tab');
+    await expect(page.getByRole('tabpanel', { name: 'Daily Sky Summary', exact: true })).toBeFocused();
+    const notification = page.getByRole('button', { name: 'Dismiss notification', exact: true });
+    if (await notification.isVisible()) await notification.click();
+    await expectNoHorizontalOverflow(page, 'Sky tabs');
+    await tabs.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: `outputs/studio-style/tabs-sky-${theme}-${width}.png` });
+
+    await expectAdminRouteLoads(page, '/admin/content#composition-map');
+    const scope = page.getByRole('tablist', { name: 'Composition Map scope' });
+    await scope.getByRole('tab').first().focus();
+    await scope.getByRole('tab').first().press('End');
+    await scope.getByRole('tab').last().press('Enter');
+    const compositionTabs = page.getByRole('tablist', { name: 'Composition views' });
+    await compositionTabs.getByRole('tab').first().focus();
+    await compositionTabs.getByRole('tab').first().press('End');
+    await compositionTabs.getByRole('tab').last().press('Enter');
+    await expect(page.getByRole('tabpanel', { name: 'Assembly', exact: true })).toBeVisible();
+    await expectConnectedTabSurfaces();
+    await expectNoHorizontalOverflow(page, 'Composition tabs');
+    await page.screenshot({ path: `outputs/studio-style/tabs-composition-${theme}-${width}.png` });
+
+    await expectAdminRouteLoads(page, '/admin/content#exact-content');
+    const savedViews = page.getByRole('group', { name: 'Content Library saved views' });
+    await expect(savedViews.getByRole('tab')).toHaveCount(0);
+    await expect(savedViews.getByRole('button', { name: 'Editorial content' })).toHaveAttribute('aria-pressed', 'true');
+    await expectAdminRouteLoads(page, '/admin/content#vocabulary');
+    const categories = page.getByRole('navigation', { name: 'Vocabulary categories' });
+    await categories.getByRole('link', { name: 'Relationship' }).click();
+    await expect(categories.getByRole('link', { name: 'Relationship' })).toHaveAttribute('aria-current', 'page');
+    await expect(categories.getByRole('tab')).toHaveCount(0);
+    await expectNoHorizontalOverflow(page, 'Vocabulary category links');
+  });
+}
+
+for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390]) {
+  test(`Composition variable identity colors ${theme} ${width}`, async ({ page }) => {
+    await seedAdminApi(page);
+    await page.setViewportSize({width, height:1000});
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page, '/admin/content#composition-map');
+    await page.getByRole('tab', {name:/Template internals/}).click();
+    const detail = page.getByRole('region', {name:'Selected template composition',exact:true});
+    const key = detail.getByLabel('Variable color key');
+    await expect(key.locator('[data-variable-name]')).toHaveCount(3);
+    const colors = await key.locator('[data-variable-name]').evaluateAll(elements => elements.map(element => ({
+      name: element.getAttribute('data-variable-name')!,
+      color: getComputedStyle(element).color,
+      background: getComputedStyle(element).backgroundColor,
+    })));
+    expect(new Set(colors.map(item => item.background)).size).toBe(3);
+    for (const variable of colors) {
+      const preview = detail.locator(`.admin-composition-preview-copy [data-variable-name="${variable.name}"]`).first();
+      await expect(preview).toHaveCSS('color',variable.color);
+      await expect(preview).toHaveCSS('background-color',variable.background);
+      await preview.hover();
+      await expect(preview).toHaveCSS('background-color',variable.background);
+      await expect(preview).toHaveCSS('font-size','16px');
+      await expect(preview).toHaveCSS('line-height','24px');
+      await expect(preview).toHaveAttribute('aria-label',new RegExp(`Inspect`));
+    }
+    // Verify every paired categorical color, including palette entries absent
+    // from this three-variable fixture, against its actual themed background.
+    const contrasts = await detail.evaluate(root => {
+      const luminance = (color: string) => {
+        const rgb = color.match(/[\d.]+/g)!.slice(0,3).map(Number).map(channel => {
+          const value=channel/255;
+          return value <= .04045 ? value/12.92 : ((value+.055)/1.055)**2.4;
+        });
+        return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;
+      };
+      return Array.from({length:6}, (_,index) => {
+        const probe=document.createElement('span');
+        probe.dataset.variableColor=String(index+1);
+        root.append(probe);
+        const style=getComputedStyle(probe);
+        const a=luminance(style.color),b=luminance(style.backgroundColor);
+        probe.remove();
+        return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+      });
+    });
+    for (const ratio of contrasts) expect(ratio).toBeGreaterThanOrEqual(4.5);
+    await detail.screenshot({path:`outputs/studio-style/variable-colors-preview-${theme}-${width}.png`});
+    await page.getByRole('tab',{name:'Main template',exact:true}).click();
+    for (const variable of colors) {
+      const token=detail.locator(`.admin-composition-template-fields [data-variable-name="${variable.name}"]`).first();
+      await expect(token).toHaveCSS('color',variable.color);
+      await expect(token).toHaveCSS('background-color',variable.background);
+    }
+    await detail.screenshot({path:`outputs/studio-style/variable-colors-template-${theme}-${width}.png`});
+    const first=colors[0];
+    const token=detail.locator(`.admin-composition-template-fields [data-variable-name="${first.name}"]`).first();
+    await token.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('tab',{name:'Assembly',exact:true})).toHaveAttribute('aria-selected','true');
+    await expect(page.locator(`[id="composition-slot-${first.name}"]`)).toBeFocused();
+    for (const variable of colors) {
+      const badge=detail.locator(`.admin-composition-slot code[data-variable-name="${variable.name}"]`);
+      await expect(badge).toHaveCSS('background-color',variable.background);
+      await expect(badge).toHaveCSS('color',variable.color);
+    }
+    await detail.screenshot({path:`outputs/studio-style/variable-colors-assembly-${theme}-${width}.png`});
+    await expectNoHorizontalOverflow(page,'Colored composition variables');
+    await assertNoBrowserErrors();
+  });
+}
+
+const containerAuditRoutes = [...new Set([...adminPages.map(item => item.hash),
+  'review-queue', 'exact-content?category=Natal+Chart', 'exact-content?category=Natal+Aspects',
+  'sky-writeups?view=daily-summary', 'sky-writeups?view=transits-to-natal', 'sky-writeups?view=house-transits',
+  'fallback-hooks?section=lunar-calendar', 'composition-map', 'surface-map', 'templates', 'vocabulary', 'slots',
+  'source-drafts', 'users', 'report-fulfillment', 'connection', 'diagnostics/aspect-patterns',
+  'content/aspect-pattern-activation', 'fallback-hooks', 'sky-writeups?view=transits-to-natal&audience=friends',
+  'exact-content?category=Calendar+Aspects'])];
+
+async function uncontainedStudioContent(page: Page) {
+  return page.locator('.admin-main').evaluate(main => {
+    const canvas = getComputedStyle(main.closest('.admin-dashboard')!).backgroundColor;
+    const isContained = (element: Element) => {
+      for (let parent = element.matches('input,select,textarea,button,a,span,strong,code') ? element.parentElement : element; parent && parent !== main; parent = parent.parentElement) {
+        const style = getComputedStyle(parent);
+        if (style.backgroundColor !== 'rgba(0, 0, 0, 0)' && style.backgroundColor !== canvas) return true;
+      }
+      return false;
+    };
+    return [...main.querySelectorAll('input,select,textarea,p,h1,h2,h3,label,nav,span,strong,button')].filter(el => el.checkVisibility({checkVisibilityCSS:true}) && !el.closest('.sr-only,.admin-sr-only,.admin-editor-backdrop,.admin-source-repair-backdrop,.admin-create-menu-backdrop') && !isContained(el)).map(el => ({
+      tag: el.tagName, text: (el.getAttribute('aria-label') || el.textContent || '').slice(0,70),
+      parents: [el.parentElement?.className,el.parentElement?.parentElement?.className,el.parentElement?.parentElement?.parentElement?.className]
+    }));
+  });
+}
+
+for (const theme of ['light','dark']) for (const width of [1440,390]) {
+  test(`Studio all pages and forms have containers ${theme} ${width}`, async ({ page }, testInfo) => {
+    test.setTimeout(180000);
+    const noErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(theme => localStorage.setItem('tldrastro:studio-theme', theme),theme);
+    const findings = [];
+    for (const route of containerAuditRoutes) {
+      await expectAdminRouteLoads(page, `/admin/content#${route}`);
+      await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+      await expect(page.locator('.admin-loaded-workspace')).not.toContainText(/Loading (aspect|report|Lunar|Composition)/);
+      await page.locator('.admin-main details').evaluateAll(items => items.forEach(item => { (item as HTMLDetailsElement).open = true; }));
+      for (const toggle of await page.locator('.admin-filter-disclosure-toggle[aria-expanded="false"],.admin-browse-filter-toggle[aria-expanded="false"]').all()) {
+        if (await toggle.isVisible()) await toggle.click();
+      }
+      const missing = await uncontainedStudioContent(page);
+      if (missing.length) findings.push({route,missing});
+      await expectNoHorizontalOverflow(page,route);
+      if (['review-queue','exact-content','surface-map','templates','connection'].includes(route)) {
+        await page.screenshot({path:`outputs/studio-style/containers-${route}-${theme}-${width}.png`});
+      }
+    }
+    for (const item of adminCreateCases) {
+      await openAdminCreateMenuHost(page);
+      await openCreateMenu(page);
+      await page.getByRole('menuitem',{name:item.action}).click();
+      const editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor).toBeVisible();
+      await editor.locator('details').evaluateAll(items => items.forEach(item => { (item as HTMLDetailsElement).open = true; }));
+      const missing=await uncontainedStudioContent(page);
+      if(missing.length) findings.push({route:item.action,missing});
+      await expectNoHorizontalOverflow(page,item.action);
+    }
+    await testInfo.attach('container-audit',{body:JSON.stringify({routes:containerAuditRoutes,editors:adminCreateCases.map(item=>item.action),findings},null,2),contentType:'application/json'});
+    expect(findings.map(item=>({route:item.route,missing:item.missing.slice(0,12),count:item.missing.length}))).toEqual([]);
+    await noErrors();
+  });
+}

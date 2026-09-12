@@ -144,9 +144,7 @@ assert.deepEqual(
 assert.match(webMain, /isContentCoveragePath\(\)/u, "public web entry recognizes the Content coverage route");
 assert.match(webMain, /ContentCoverageDashboard/u, "public web entry renders Content coverage instead of the reader app");
 assert.match(webMain, /setupAdminReaderLinks/u, "public web-mounted Content Studio enforces reader-link tab behavior");
-assert.match(webMain, /admin-row-selection\.css/u, "public web-mounted Content Studio loads row-selection compatibility styles");
-assert.match(webMain, /admin-form-density\.css/u, "public web-mounted Content Studio loads form-density styles");
-assert.match(webMain, /admin-content-studio-ux-compat\.css/u, "public web-mounted Content Studio loads the current UX compatibility layer");
+assert.match(webMain, /studio-system\.css/u, "Content Studio loads its canonical stylesheet");
 assert.match(adminHeader, />\s*Content coverage\s*</u, "Content Studio names the Coverage action clearly");
 
 const modes = Object.values(readerDestinationPolicyBySurface).reduce((counts, policy) => {

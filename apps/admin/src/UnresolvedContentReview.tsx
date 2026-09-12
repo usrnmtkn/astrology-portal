@@ -1,3 +1,6 @@
+import { StudioButton, StudioInput } from "./StudioControls";
+import { AdminDataTable } from "./AdminBrowseComponents";
+import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
@@ -468,23 +471,34 @@ export function UnresolvedContentReview({
           <h2>Resolve content holds</h2>
           <p>Review exact replacements and authorize source repairs here. Each row shows the current step, who needs to act, and what must finish before the next step unlocks.</p>
         </div>
-        <div className="admin-unresolved-total">
-          <strong>{report ? issues.length : "…"}</strong>
-          <span>issues</span>
+        <div className="admin-unresolved-total" role="status">
+          {report ? `${issues.length} ${issues.length === 1 ? "issue" : "issues"}` : reportState === null || refreshing ? "Loading issues…" : "Issues unavailable"}
         </div>
       </section>
 
-      <section className="admin-unresolved-guide" aria-label="Workflow status guide">
-        <div><span className="admin-unresolved-state is-action">Action needed</span><p>A button is ready for you now.</p></div>
-        <div><span className="admin-unresolved-state is-waiting">Waiting</span><p>Another person or system must finish first.</p></div>
-        <button className="admin-edit-row-button" type="button" onClick={() => setRefreshToken((current) => current + 1)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh status"}</button>
+      <section className="admin-unresolved-guide" aria-labelledby="unresolved-status-guide">
+        <div>
+          <h3 id="unresolved-status-guide">Issue status guide</h3>
+          <p>These labels appear beside issues in the list below.</p>
+        </div>
+        <dl>
+          <div>
+            <dt><span className="admin-unresolved-state is-action">Action needed</span></dt>
+            <dd>You can take the next step shown in the issue row.</dd>
+          </div>
+          <div>
+            <dt><span className="admin-unresolved-state is-waiting">Waiting</span></dt>
+            <dd>Another person or system must finish a step before you can continue.</dd>
+          </div>
+        </dl>
       </section>
 
       <section className="admin-filter-toolbar admin-unresolved-filters" aria-label="Unresolved content search">
         <div className="admin-search-field">
-          <span>Search</span>
+          <label htmlFor="unresolved-content-search">Search issues</label>
           <div className="admin-search-input-shell">
-            <input
+            <StudioInput
+              id="unresolved-content-search"
               aria-label="Search unresolved content"
               placeholder="Key, file, status"
               value={query}
@@ -492,15 +506,16 @@ export function UnresolvedContentReview({
             />
           </div>
         </div>
+        <StudioButton className="admin-edit-row-button" type="button" onClick={() => setRefreshToken((current) => current + 1)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh status"}</StudioButton>
       </section>
 
       <section className="admin-list-panel" aria-label="Unresolved content records">
         <div className="admin-content-table-scroll">
-          {reportState === false && <p className="admin-empty" role="alert">Load failed. Try again.</p>}
-          <AdminPaginatedCollection items={filteredIssues} label="Unresolved content" pageSize={25} resetKey={`${query}:${filteredIssues.length}`}>
-            {(visibleIssues) => <table className="admin-content-table admin-unresolved-content-table">
-            <thead><tr><th>Content</th><th>What it means</th><th>Source records</th><th>Next step</th></tr></thead>
-            <tbody>{visibleIssues.map((issue) => {
+          {!report && (reportState === null || refreshing) && <p className="admin-empty" role="status">Loading unresolved issues…</p>}
+          {reportState === false && !refreshing && <p className="admin-empty" role="alert">Issues could not load. Select Refresh status to try again.</p>}
+          {report && filteredIssues.length > 0 && <AdminPaginatedCollection items={filteredIssues} label="Unresolved content" pageSize={25} resetKey={`${query}:${filteredIssues.length}`}>
+            {(visibleIssues) => <AdminDataTable label="Unresolved content" columns={["Content", "What it means", "Source records", "Next step"]} className="admin-unresolved-content-table">
+{visibleIssues.map((issue) => {
               const sourceRepair = issue.kind === "source-repair";
               const sourceApproved = sourceRepair && Boolean(issue.sourceDecision);
               const editableRow = editableRowsByContentKey.get(issue.contentKey);
@@ -535,36 +550,36 @@ export function UnresolvedContentReview({
                     <strong>Completed checks</strong>
                     <ul>{workflow.completedChecks.map((check) => <li key={check}>✓ {check}</li>)}</ul>
                   </div>
-                  {issue.resolution && <details className="admin-unresolved-diagnosis"><summary>Codex diagnosis</summary><small>{issue.resolution.diagnosis}</small></details>}
+                  {issue.resolution && <details className="admin-unresolved-diagnosis"><AdminDisclosureSummary>Codex diagnosis</AdminDisclosureSummary><small>{issue.resolution.diagnosis}</small></details>}
                 </td>
-                <td data-label="Source records"><details><summary>{issue.records.length} record(s)</summary>{issue.records.map((record) => <code key={record.id}>{record.reviewStatus}: {record.sourcePath}{record.objectPath}</code>)}</details></td>
+                <td data-label="Source records"><details><AdminDisclosureSummary>{issue.records.length} record(s)</AdminDisclosureSummary>{issue.records.map((record) => <code key={record.id}>{record.reviewStatus}: {record.sourcePath}{record.objectPath}</code>)}</details></td>
                 <td data-label="Next step">{sourceRepair && issue.repairPlan
-                  ? <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${!sourceApproved ? "is-primary" : ""}`} type="button" onClick={() => openRepairReview(issue)}>{sourceApproved ? "View approved replacement" : "Review replacement now"}</button>{sourceApproved && issue.resolution?.result_status !== "implemented" && <button className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, "implementation", sourceImplementationRequest(issue))}>{requestCopied ? "Copy implementation request again" : "Copy implementation request"}</button>}<button className="admin-edit-row-button" type="button" onClick={() => void copyRequest(issue, "investigation", issue.aiRequest)}>Copy investigation</button>{requestCopied && <button className="admin-edit-row-button is-primary" type="button" onClick={() => void recordResolution(credential, issue)}>Record Codex response</button>}</div></div>
+                  ? <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><StudioButton className={`admin-edit-row-button ${!sourceApproved ? "is-primary" : ""}`} type="button" onClick={() => openRepairReview(issue)}>{sourceApproved ? "View approved replacement" : "Review replacement now"}</StudioButton>{sourceApproved && issue.resolution?.result_status !== "implemented" && <StudioButton className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, "implementation", sourceImplementationRequest(issue))}>{requestCopied ? "Copy implementation request again" : "Copy implementation request"}</StudioButton>}<StudioButton className="admin-edit-row-button" type="button" onClick={() => void copyRequest(issue, "investigation", issue.aiRequest)}>Copy investigation</StudioButton>{requestCopied && <StudioButton className="admin-edit-row-button is-primary" type="button" onClick={() => void recordResolution(credential, issue)}>Record Codex response</StudioButton>}</div></div>
                   : !contentLibraryReady && !sourceRepair
-                  ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting</span><button className="admin-edit-row-button" type="button" disabled>Checking Content Library…</button></div>
+                  ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting</span><StudioButton className="admin-edit-row-button" type="button" disabled>Checking Content Library…</StudioButton></div>
                   : canOpen && editorialDecision
                     ? <div className="admin-unresolved-actions admin-unresolved-review-action">
                         <strong>Owner review is recorded</strong>
-                        <button className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, "implementation", editorialSourceImplementationRequest(issue, editorialDecision))}>{requestCopied ? "Copy implementation request again" : "Copy source implementation request"}</button>
-                        <button className="admin-edit-row-button" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>View reviewed copy</button>
+                        <StudioButton className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, "implementation", editorialSourceImplementationRequest(issue, editorialDecision))}>{requestCopied ? "Copy implementation request again" : "Copy source implementation request"}</StudioButton>
+                        <StudioButton className="admin-edit-row-button" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>View reviewed copy</StudioButton>
                         <small><strong>Approved hash:</strong> <code>{editorialDecision.copySha256}</code></small>
                         <small>The copy remains held until Codex updates and deploys the governed source package.</small>
                       </div>
                   : canOpen
                     ? <div className="admin-unresolved-actions admin-unresolved-review-action">
                         <strong>Your next action</strong>
-                        <button className="admin-edit-row-button is-primary" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Review this horoscope</button>
+                        <StudioButton className="admin-edit-row-button is-primary" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Review this horoscope</StudioButton>
                         <small><strong>Opens:</strong> the Content Library editor with this exact row already selected.</small>
                         <small><strong>Review:</strong> the headline and full Body for accuracy, tone, repetition, and unfinished placeholders.</small>
                       </div>
                     : issue.resolution?.result_status === "implemented"
-                      ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting for import</span><button className="admin-edit-row-button" type="button" onClick={() => setRefreshToken((current) => current + 1)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh status"}</button></div>
-                      : <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${requestCopied ? "" : "is-primary"}`} type="button" onClick={() => void copyRequest(issue, issue.resolution ? "implementation" : "investigation", issue.resolution ? editorialImplementationRequest(issue) : issue.aiRequest)}>{requestCopied ? "Copy repair request again" : issue.resolution ? "Repair Content Library import" : "Copy investigation request"}</button><button className={`admin-edit-row-button ${requestCopied ? "is-primary" : ""}`} type="button" onClick={() => void recordResolution(credential, issue)}>{requestCopied ? "Record Codex response" : "Record an existing response"}</button></div></div>}</td>
+                      ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting for import</span><StudioButton className="admin-edit-row-button" type="button" onClick={() => setRefreshToken((current) => current + 1)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh status"}</StudioButton></div>
+                      : <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><StudioButton className={`admin-edit-row-button ${requestCopied ? "" : "is-primary"}`} type="button" onClick={() => void copyRequest(issue, issue.resolution ? "implementation" : "investigation", issue.resolution ? editorialImplementationRequest(issue) : issue.aiRequest)}>{requestCopied ? "Copy repair request again" : issue.resolution ? "Repair Content Library import" : "Copy investigation request"}</StudioButton><StudioButton className={`admin-edit-row-button ${requestCopied ? "is-primary" : ""}`} type="button" onClick={() => void recordResolution(credential, issue)}>{requestCopied ? "Record Codex response" : "Record an existing response"}</StudioButton></div></div>}</td>
               </tr>;
-            })}</tbody>
-            </table>}
-          </AdminPaginatedCollection>
-          {report && filteredIssues.length === 0 && <p className="admin-empty" role="status">No matching issues.</p>}
+            })}
+</AdminDataTable>}
+          </AdminPaginatedCollection>}
+          {report && filteredIssues.length === 0 && <p className="admin-empty" role="status">{query.trim() ? "No matching issues." : "No unresolved issues."}</p>}
         </div>
       </section>
 
@@ -573,10 +588,10 @@ export function UnresolvedContentReview({
           <header className="admin-source-repair-header">
             <div>
               <span>Governed source repair</span>
-              <strong>{repairIssue.repairPlan.title}</strong>
+              <h2>{repairIssue.repairPlan.title}</h2>
               <code>{repairIssue.contentKey}</code>
             </div>
-            <button type="button" onClick={closeRepairReview} disabled={decisionSaving} aria-label="Close replacement review">×</button>
+            <StudioButton type="button" onClick={closeRepairReview} disabled={decisionSaving} aria-label="Close replacement review">×</StudioButton>
           </header>
 
           <div className="admin-source-repair-body">
@@ -597,11 +612,11 @@ export function UnresolvedContentReview({
           <footer className="admin-source-repair-footer">
             {repairIssue.sourceDecision
               ? <div className="admin-source-repair-approved" role="status"><strong>Approved for implementation</strong><span>{new Date(repairIssue.sourceDecision.approved_at).toLocaleString()}</span><code>{repairIssue.sourceDecision.candidate_sha256}</code></div>
-              : <label className="admin-source-repair-confirmation"><input type="checkbox" checked={exactTextConfirmed} onChange={(event) => setExactTextConfirmed(event.target.checked)} /><span>{repairIssue.repairPlan.approvalStatement}</span></label>}
+              : <label className="admin-source-repair-confirmation"><StudioInput type="checkbox" checked={exactTextConfirmed} onChange={(event) => setExactTextConfirmed(event.target.checked)} /><span>{repairIssue.repairPlan.approvalStatement}</span></label>}
             {decisionError && <p className="admin-source-repair-error" role="alert">{decisionError}</p>}
             <div className="admin-toolbar-actions">
-              <button className="admin-edit-row-button" type="button" onClick={closeRepairReview} disabled={decisionSaving}>Close</button>
-              {!repairIssue.sourceDecision && <button className="admin-publish-button" type="button" onClick={() => void approveRepairReplacement()} disabled={!exactTextConfirmed || decisionSaving}>{decisionSaving ? "Recording…" : "Approve exact replacement"}</button>}
+              <StudioButton className="admin-edit-row-button" type="button" onClick={closeRepairReview} disabled={decisionSaving}>Close</StudioButton>
+              {!repairIssue.sourceDecision && <StudioButton className="admin-publish-button" type="button" onClick={() => void approveRepairReplacement()} disabled={!exactTextConfirmed || decisionSaving}>{decisionSaving ? "Recording…" : "Approve exact replacement"}</StudioButton>}
             </div>
           </footer>
         </aside>

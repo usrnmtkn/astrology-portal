@@ -1,12 +1,11 @@
+import { getStudioTheme } from "./studioTheme";
+import "./studio-system.css";
+import { StudioButton, StudioInput } from "./StudioControls";
 import { memo, useEffect, useRef, useState } from 'react';
 import { MemoryGraph, type DocumentWithMemories } from '@supermemory/memory-graph';
-import MemoryTerminal from './MemoryTerminal';
 import { AdminAccessGate } from './AdminStudioPrimitives';
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
 import { loadOwnerSessionAccessToken, ownerSessionStorageKey } from './ownerSession';
-import './admin.css';
-import './admin-components.css';
-import './memory-graph.css';
 
 type Kind = 'rule' | 'correction' | 'example' | 'navigation' | 'note';
 type MemoryRecord = { id: string; kind: Kind; status: string; title: string; path: string; line: number; sourceId: string; family: string; register: string; role: string; contentKey: string; bodySha256: string };
@@ -137,30 +136,33 @@ export default function MemoryGraphDashboard() {
     if (value) { rejectedCredential.current = ''; emergencyCredential.current = value; setCredential(value); setRefresh(value => value + 1); }
   }
   const back = <a className="memory-site-back" href="/admin/content" aria-label="Back to Content Studio"><svg viewBox="0 -960 960 960" aria-hidden="true"><path fill="currentColor" d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" /></svg>Back</a>;
-  if (!credential) return <main className="admin-dashboard memory-access"><section className="admin-main">{back}<h1>Memory graph</h1>{error && <p className="memory-access-error" role="alert">{error}</p>}{booting ? <p role="status">Checking owner access…</p> : <AdminAccessGate disabled={!normalizeAdminSecret(secret)} onChange={setSecret} onSubmit={submitSecret} value={secret} />}</section></main>;
-  return <main className="memory-is-open">
+  if (!credential) return <main className="admin-dashboard memory-access studio-standalone" data-studio-theme={getStudioTheme()}><section className="admin-main">{error && <p className="memory-access-error" role="alert">{error}</p>}<header className="admin-dashboard-header"><div>{back}<h1>Memory graph</h1></div></header>{booting ? <p className="studio-surface" role="status">Checking owner access…</p> : <AdminAccessGate disabled={!normalizeAdminSecret(secret)} onChange={setSecret} onSubmit={submitSecret} value={secret} />}</section></main>;
+  return <main className="admin-dashboard memory-is-open studio-standalone" data-studio-theme={getStudioTheme()}>
     <h1 className="memory-sr-only">Memory graph</h1>
+    <header className="memory-toolbar">
+    {error && <div className="memory-error" role="alert"><p>{error}</p><StudioButton type="button" onClick={() => setRefresh(value => value + 1)}>Try again</StudioButton></div>}
     {back}
-    {documents ? <GraphCanvas documents={documents} /> : <div className="memory-loading" role="status">Loading knowledge graph...</div>}
-    {documents?.length === 0 && <div className="memory-loading" role="status">No project memories available.</div>}
-    <MemoryTerminal />
-    {error && <div className="memory-error" role="alert">{error}<button type="button" onClick={() => setRefresh(value => value + 1)}>Try again</button></div>}
     <div className="memory-search-container">
       <SearchIcon className="memory-search-icon" aria-hidden="true" />
-      <input className="memory-search-input" aria-label="Search memories" placeholder="Search memories..." value={query} onChange={event => setQuery(event.target.value)} />
-      {query && <button className="memory-search-clear" type="button" aria-label="Clear search" onClick={() => { setQuery(''); setSearch(''); setPayload(null); setSelectedId(''); }}><svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" /></svg></button>}
+      <StudioInput className="memory-search-input" aria-label="Search memories" placeholder="Search memories..." value={query} onChange={event => setQuery(event.target.value)} />
+      {query && <StudioButton className="memory-search-clear" type="button" aria-label="Clear search" onClick={() => { setQuery(''); setSearch(''); setPayload(null); setSelectedId(''); }}><svg viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" /></svg></StudioButton>}
     </div>
+    </header>
+    <section className="memory-workspace" aria-label="Memory graph workspace">
+    {!!documents?.length && <GraphCanvas documents={documents} />}
+    {!documents && !error && <div className="memory-loading" role="status">Loading knowledge graph...</div>}
+    {documents?.length === 0 && !error && <div className="memory-loading" role="status">No project memories available.</div>}
     {payload && payload.total > 0 && <aside className="memory-match-panel" ref={matchesRef} aria-label="Matching memories">
       <div className="memory-match-header"><SearchIcon aria-hidden="true" /><h2>Matching memories:</h2></div>
-      <div className="memory-match-list">{payload.records.map(record => <button type="button" className={`memory-match-chip${selectedId === record.id ? ' expanded' : ''}`} key={record.id} aria-expanded={selectedId === record.id} onClick={() => setSelectedId(value => value === record.id ? '' : record.id)}>{memoryTitle(record)}</button>)}</div>
-      {payload.total > payload.limit && <nav className="memory-pagination" aria-label="Search result pages"><button type="button" disabled={!offset} onClick={() => setOffset(value => value - payload.limit)}>Previous</button><span>{offset + 1}–{Math.min(offset + payload.limit, payload.total)}</span><button type="button" disabled={offset + payload.limit >= payload.total} onClick={() => setOffset(value => value + payload.limit)}>Next</button></nav>}
+      <div className="memory-match-list">{payload.records.map(record => <StudioButton type="button" className={`memory-match-chip${selectedId === record.id ? ' expanded' : ''}`} key={record.id} aria-expanded={selectedId === record.id} onClick={() => setSelectedId(value => value === record.id ? '' : record.id)}>{memoryTitle(record)}</StudioButton>)}</div>
+      {payload.total > payload.limit && <nav className="memory-pagination" aria-label="Search result pages"><StudioButton type="button" disabled={!offset} onClick={() => setOffset(value => value - payload.limit)}>Previous</StudioButton><span>{offset + 1}–{Math.min(offset + payload.limit, payload.total)}</span><StudioButton type="button" disabled={offset + payload.limit >= payload.total} onClick={() => setOffset(value => value + payload.limit)}>Next</StudioButton></nav>}
     </aside>}
     {selectedId && <aside className="memory-detail" ref={detailRef} aria-label="Memory detail">
       {detail ? <><h2 className="memory-detail-title">{memoryTitle(detail)}</h2>
         {detail.connections.length > 0 && <details className="memory-connections"><summary>Connections ({detail.connections.length})</summary>
           {detail.connections.map((connection, i) => <div className="memory-connection" key={`${connection.target.id}-${i}`}>
             <p>{connection.basis === 'suggested' ? `Suggested · shared terms: ${connection.terms?.join(', ')}` : `Recorded · ${connection.direction === 'incoming' ? 'incoming ' : ''}${connection.relation}`}</p>
-            {connection.target.isSource ? <p>{connection.target.path}</p> : <button type="button" className="memory-match-chip" onClick={() => setSelectedId(connection.target.id)}>{memoryTitle(connection.target)}</button>}
+            {connection.target.isSource ? <p>{connection.target.path}</p> : <StudioButton type="button" className="memory-match-chip" onClick={() => setSelectedId(connection.target.id)}>{memoryTitle(connection.target)}</StudioButton>}
           </div>)}
         </details>}
         <div className="memory-detail-content">{detail.body}</div>
@@ -168,6 +170,7 @@ export default function MemoryGraphDashboard() {
           {detail.requiredContext.map(record => <details key={record.id}><summary>{record.title}</summary><div className="memory-detail-content">{record.body}</div></details>)}
         </details></> : <p role="status">Opening memory…</p>}
     </aside>}
+    </section>
     <p className="memory-sr-only" role="status">{loading ? 'Searching memories…' : payload ? `${payload.total} matching memories` : ''}</p>
   </main>;
 }

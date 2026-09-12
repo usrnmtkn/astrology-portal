@@ -113,9 +113,6 @@ jobs:
       - name: Run visual regression and smoke screens
         run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
 
-      - name: Run Content Studio admin user flows
-        run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts
-
       - name: Run client-facing user flows
         run: npx playwright test -c playwright.reader-release.config.ts tests/visual/client-facing-user-flows.spec.ts tests/visual/report-library-ui.spec.ts
 
@@ -127,6 +124,33 @@ jobs:
           path: |
             test-results/
             playwright-report/
+          if-no-files-found: ignore
+
+  studio-admin-flows:
+    # Keep the complete Studio matrix separate from the ~22-minute reader matrix.
+    # Both remain required release evidence; neither shares a preview or runner.
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Run Content Studio admin user flows
+        run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts
+      - name: Upload Content Studio flow artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: studio-admin-flow-results
+          path: test-results/
           if-no-files-found: ignore
 
   sky-placement-studio:

@@ -1,3 +1,6 @@
+import { StudioButton, StudioInput } from "./StudioControls";
+import { AdminDataTable } from "./AdminBrowseComponents";
+import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { AlertTriangle, BarChart3, RefreshCw, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -329,50 +332,50 @@ export function AspectPatternDiagnostics() {
           <h2>Aspect Pattern Inspector</h2>
           <p>Inspect detector output, structural relationships, and base ranking before anything reaches reader-facing copy.</p>
         </div>
-        <div className="aspect-diagnostics-mode" role="tablist" aria-label="Diagnostics mode">
-          <button type="button" className={mode === "fixture" ? "active" : ""} onClick={() => setMode("fixture")}>Fixture mode</button>
-          <button type="button" className={mode === "real" ? "active" : ""} onClick={() => setMode("real")}>Real chart mode</button>
+        <div className="aspect-diagnostics-mode" role="group" aria-label="Diagnostics mode">
+          <StudioButton type="button" aria-pressed={mode === "fixture"} className={mode === "fixture" ? "active" : ""} onClick={() => setMode("fixture")}>Fixture mode</StudioButton>
+          <StudioButton type="button" aria-pressed={mode === "real"} className={mode === "real" ? "active" : ""} onClick={() => setMode("real")}>Real chart mode</StudioButton>
         </div>
         {mode === "fixture" ? (
           <label className="admin-title-field">
             <span>Fixture</span>
-            <select value={fixture} onChange={(event) => setFixture(event.target.value as FixtureId)} aria-label="Aspect pattern fixture">
+            <AdminSelect value={fixture} onChange={(event) => setFixture(event.target.value as FixtureId)} aria-label="Aspect pattern fixture">
               {fixtureOptions.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
-            </select>
+            </AdminSelect>
           </label>
         ) : (
           <fieldset className="admin-metadata-fields aspect-diagnostics-real-chart">
             <label className="admin-metadata-field">
               <span>Date</span>
-              <input type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+              <StudioInput type="date" value={date} onChange={(event) => setDate(event.target.value)} />
             </label>
             <label className="admin-metadata-field">
               <span>Time</span>
-              <input type="time" value={time} onChange={(event) => setTime(event.target.value)} />
+              <StudioInput type="time" value={time} onChange={(event) => setTime(event.target.value)} />
             </label>
             <label className="admin-metadata-field">
               <span>Latitude</span>
-              <input inputMode="decimal" value={latitude} onChange={(event) => setLatitude(event.target.value)} />
+              <StudioInput inputMode="decimal" value={latitude} onChange={(event) => setLatitude(event.target.value)} />
             </label>
             <label className="admin-metadata-field">
               <span>Longitude</span>
-              <input inputMode="decimal" value={longitude} onChange={(event) => setLongitude(event.target.value)} />
+              <StudioInput inputMode="decimal" value={longitude} onChange={(event) => setLongitude(event.target.value)} />
             </label>
           </fieldset>
         )}
         <label className="admin-metadata-field aspect-diagnostics-copy-toggle">
           <span>Resolved copy</span>
-          <input type="checkbox" checked={includeCopy} onChange={(event) => setIncludeCopy(event.target.checked)} />
+          <StudioInput type="checkbox" checked={includeCopy} onChange={(event) => setIncludeCopy(event.target.checked)} />
         </label>
         <label className="admin-metadata-field aspect-diagnostics-copy-toggle">
           <span>Resolved activation copy</span>
-          <input type="checkbox" checked={includeActivationCopy} onChange={(event) => setIncludeActivationCopy(event.target.checked)} />
+          <StudioInput type="checkbox" checked={includeActivationCopy} onChange={(event) => setIncludeActivationCopy(event.target.checked)} />
         </label>
         <div className="admin-toolbar-actions">
-          <button className="admin-primary-button" type="button" onClick={() => void runDiagnostics()} disabled={isLoading}>
+          <StudioButton className="admin-primary-button" type="button" onClick={() => void runDiagnostics()} disabled={isLoading}>
             {isLoading ? <RefreshCw size={16} aria-hidden="true" /> : <Search size={16} aria-hidden="true" />}
             Run diagnostics
-          </button>
+          </StudioButton>
           {requestedUrl && <code className="aspect-diagnostics-request">{requestedUrl}</code>}
         </div>
       </section>
@@ -448,24 +451,17 @@ export function AspectPatternDiagnostics() {
 
           <section className="admin-panel aspect-relationship-table" aria-label="Structural relationships">
             <h3>Relationships</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Parent pattern</th>
-                  <th>Relationship</th>
-                  <th>Child pattern</th>
-                </tr>
-              </thead>
-              <tbody>
+            <AdminDataTable label="Pattern relationships" columns={["Parent pattern", "Relationship", "Child pattern"]} className="">
+
                 {relationships.map((relationship) => (
                   <tr key={`${relationship.parentPatternId}-${relationship.relationship}-${relationship.childPatternId}`}>
-                    <td>{patternLabel(relationship.parentPatternId, patternById)}</td>
-                    <td><code>{relationship.relationship}</code></td>
-                    <td>{patternLabel(relationship.childPatternId, patternById)}</td>
+                    <td data-label="Parent pattern">{patternLabel(relationship.parentPatternId, patternById)}</td>
+                    <td data-label="Relationship"><code>{relationship.relationship}</code></td>
+                    <td data-label="Child pattern">{patternLabel(relationship.childPatternId, patternById)}</td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
+
+</AdminDataTable>
             {relationships.length === 0 && <p className="admin-empty">No structural relationships detected.</p>}
           </section>
 
@@ -657,7 +653,7 @@ function PatternCard({
 function RawJson({ title, value }: { title: string; value: unknown }) {
   return (
     <details>
-      <summary>{title}</summary>
+      <AdminDisclosureSummary>{title}</AdminDisclosureSummary>
       <pre>{JSON.stringify(value, null, 2)}</pre>
     </details>
   );

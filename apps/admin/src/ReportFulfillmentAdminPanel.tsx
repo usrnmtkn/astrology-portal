@@ -1,3 +1,6 @@
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { AdminDataTable } from "./AdminBrowseComponents";
+import { AdminSelect } from "./AdminNativeControls";
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 import { GeneratedReportDraftReview } from "./GeneratedReportDraftReview";
@@ -203,40 +206,40 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
       <section className="admin-content-toolbar">
         <div><p className="admin-eyebrow">Purchased reports</p><h2>Fulfillment</h2><p>Queue health, gate outcomes, delivery time, spend, audit sampling, and terminal exceptions.</p></div>
         <div className="admin-toolbar-actions">
-          <button type="button" onClick={() => void action("pause_worker")} disabled={loading}>Pause worker</button>
-          <button type="button" onClick={() => void action("resume_worker")} disabled={loading}>Resume worker</button>
-          <button type="button" onClick={() => void load()} disabled={loading}><RefreshCw size={16} aria-hidden="true" />Refresh</button>
+          <StudioButton type="button" onClick={() => void action("pause_worker")} disabled={loading}>Pause worker</StudioButton>
+          <StudioButton type="button" onClick={() => void action("resume_worker")} disabled={loading}>Resume worker</StudioButton>
+          <StudioButton type="button" onClick={() => void load()} disabled={loading}><RefreshCw size={16} aria-hidden="true" />Refresh</StudioButton>
         </div>
       </section>
       {message && (
         <div className={`admin-report-feedback ${messageTone === "error" ? "is-error" : ""}`} role={messageTone === "error" ? "alert" : "status"}>
           <p>{message}</p>
-          <button type="button" onClick={() => setMessage("")} aria-label="Dismiss fulfillment message">Dismiss</button>
+          <StudioButton type="button" onClick={() => setMessage("")} aria-label="Dismiss fulfillment message">Dismiss</StudioButton>
         </div>
       )}
       <section className="admin-content-toolbar">
         <div><p className="admin-eyebrow">{dashboard?.billingMode === "free_test" ? "Free-test shadow launch" : "Owner-only comp path"}</p><h3>Grant report</h3><p>Creates the fulfillment envelope directly, with no Stripe request, then pauses before any billed model call.</p></div>
         <div className="admin-toolbar-actions">
           <label>User
-            <select value={grant.userId} onChange={(event) => setGrant({ ...grant, userId: event.target.value })}>
+            <AdminSelect value={grant.userId} onChange={(event) => setGrant({ ...grant, userId: event.target.value })}>
               <option value="">Select user</option>
               {dashboard?.users.map((user) => <option key={user.id} value={user.id}>{user.label}</option>)}
-            </select>
+            </AdminSelect>
           </label>
           <label>Domain
-            <select value={grant.reportDomain} onChange={(event) => setGrant({ ...grant, reportDomain: event.target.value })}>
+            <AdminSelect value={grant.reportDomain} onChange={(event) => setGrant({ ...grant, reportDomain: event.target.value })}>
               <option value="general">General</option><option value="work_money">Work &amp; Money</option>
               <option value="love_connection">Love &amp; Connection</option><option value="personal_health">Personal &amp; Health</option>
-            </select>
+            </AdminSelect>
           </label>
           <label>Horizon
-            <select value={grant.reportHorizon} onChange={(event) => setGrant({ ...grant, reportHorizon: event.target.value })}>
+            <AdminSelect value={grant.reportHorizon} onChange={(event) => setGrant({ ...grant, reportHorizon: event.target.value })}>
               <option value="1_month">1 month</option><option value="4_months">4 months</option>
               <option value="6_months">6 months</option><option value="12_months">12 months</option>
-            </select>
+            </AdminSelect>
           </label>
-          <label>Window start<input type="date" value={grant.windowStart} onChange={(event) => setGrant({ ...grant, windowStart: event.target.value })} /></label>
-          <button type="button" disabled={loading || !grant.userId || !grant.windowStart} onClick={() => void action("grant_comp", undefined, undefined, grant)}>Grant report</button>
+          <label>Window start<StudioInput type="date" value={grant.windowStart} onChange={(event) => setGrant({ ...grant, windowStart: event.target.value })} /></label>
+          <StudioButton type="button" disabled={loading || !grant.userId || !grant.windowStart} onClick={() => void action("grant_comp", undefined, undefined, grant)}>Grant report</StudioButton>
         </div>
       </section>
       {metrics && (
@@ -262,12 +265,12 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
             <h3>{String(inspection.report.report_domain).replaceAll("_", " ")} · {String(inspection.report.report_horizon).replaceAll("_", " ")}</h3>
             <p>Select a section to read the exact delivered copy. Save creates a private correction draft; only Publish correction changes what the reader sees.</p>
             <label>Report section
-              <select value={selectedUnitId} onChange={(event) => {
+              <AdminSelect value={selectedUnitId} onChange={(event) => {
                 const unit = inspection.units.find((candidate) => candidate.id === event.target.value);
                 if (unit) chooseUnit(unit);
               }}>
                 {inspection.units.map((unit) => <option key={unit.id} value={unit.id}>{unit.headline || unit.content_key.split(":").at(-1)}</option>)}
-              </select>
+              </AdminSelect>
             </label>
             {unitDraft && (
               <>
@@ -288,27 +291,27 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
                 </div>
                 <div className="admin-template-two-column">
                 <label>Title
-                  <input value={unitDraft.headline} onChange={(event) => setUnitDraft({ ...unitDraft, headline: event.target.value })} />
+                  <StudioInput value={unitDraft.headline} onChange={(event) => setUnitDraft({ ...unitDraft, headline: event.target.value })} />
                 </label>
                 <label>TL;DR
-                  <textarea value={unitDraft.summary} onChange={(event) => setUnitDraft({ ...unitDraft, summary: event.target.value })} />
+                  <StudioTextarea value={unitDraft.summary} onChange={(event) => setUnitDraft({ ...unitDraft, summary: event.target.value })} />
                 </label>
                 <label>Timing line
-                  <textarea value={unitDraft.timing} onChange={(event) => setUnitDraft({ ...unitDraft, timing: event.target.value })} />
+                  <StudioTextarea value={unitDraft.timing} onChange={(event) => setUnitDraft({ ...unitDraft, timing: event.target.value })} />
                 </label>
                 <label className="admin-field-wide">Body
-                  <textarea value={unitDraft.body} onChange={(event) => setUnitDraft({ ...unitDraft, body: event.target.value })} />
+                  <StudioTextarea value={unitDraft.body} onChange={(event) => setUnitDraft({ ...unitDraft, body: event.target.value })} />
                 </label>
                 {unitDraft.sections.map((section, index) => (
                   <div className="admin-field-wide" key={`${selectedUnitId}-section-${index}`}>
                     <label>Section {index + 1} title
-                      <input value={section.heading ?? ""} onChange={(event) => setUnitDraft({
+                      <StudioInput value={section.heading ?? ""} onChange={(event) => setUnitDraft({
                         ...unitDraft,
                         sections: unitDraft.sections.map((candidate, candidateIndex) => candidateIndex === index ? { ...candidate, heading: event.target.value } : candidate)
                       })} />
                     </label>
                     <label>Section {index + 1} body
-                      <textarea value={section.body ?? ""} onChange={(event) => setUnitDraft({
+                      <StudioTextarea value={section.body ?? ""} onChange={(event) => setUnitDraft({
                         ...unitDraft,
                         sections: unitDraft.sections.map((candidate, candidateIndex) => candidateIndex === index ? { ...candidate, body: event.target.value } : candidate)
                       })} />
@@ -321,74 +324,72 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
           </div>
           <div className="admin-toolbar-actions">
             <span className="ui-pill admin-status">{String(inspection.report.fulfillment_status)}</span>
-            <button type="button" disabled={loading || !unitDraft} onClick={() => void saveUnitDraft()}>Save correction draft</button>
+            <StudioButton type="button" disabled={loading || !unitDraft} onClick={() => void saveUnitDraft()}>Save correction draft</StudioButton>
             {inspection.units.find((unit) => unit.id === selectedUnitId)?.source_snapshot?.adminCorrectionDraft && (
               <>
-                <button type="button" disabled={loading} onClick={() => void discardUnitDraft()}>Discard draft</button>
-                <button type="button" disabled={loading} onClick={() => void publishUnitCorrection()}>Publish correction</button>
+                <StudioButton type="button" disabled={loading} onClick={() => void discardUnitDraft()}>Discard draft</StudioButton>
+                <StudioButton type="button" disabled={loading} onClick={() => void publishUnitCorrection()}>Publish correction</StudioButton>
               </>
             )}
-            <button type="button" onClick={() => { setInspection(null); setSelectedUnitId(""); setUnitDraft(null); }}>Close preview</button>
+            <StudioButton type="button" onClick={() => { setInspection(null); setSelectedUnitId(""); setUnitDraft(null); }}>Close preview</StudioButton>
           </div>
         </section>
       )}
       <div className="admin-content-table-scroll">
-        <table className="admin-content-table">
-          <thead><tr><th>Report</th><th>Source</th><th>Domain</th><th>Horizon</th><th>Status</th><th>Accepted / total tokens</th><th>Lifetime token cap</th><th>Estimated USD</th><th>Attempts</th><th>Assembly warnings</th><th>Last failure</th><th>Actions</th></tr></thead>
-          <tbody>{dashboard?.reports.map((report) => (
+        <AdminDataTable label="Report fulfillment" columns={["Report", "Source", "Domain", "Horizon", "Status", "Accepted / total tokens", "Lifetime token cap", "Estimated USD", "Attempts", "Assembly warnings", "Last failure", "Actions"]} className="">
+{dashboard?.reports.map((report) => (
             <tr
               id={`report-row-${String(report.id)}`}
               key={String(report.id)}
               className={focusedReportId === String(report.id) ? "admin-report-row-focused" : ""}
             >
-              <td><code>{String(report.id)}</code></td>
-              <td>{String(report.entitlement_source)}</td>
-              <td>{String(report.report_domain)}</td><td>{String(report.report_horizon)}</td><td>{String(report.fulfillment_status)}</td>
-              <td>{Number(report.token_count ?? 0).toLocaleString()} / {Number(report.token_count_total ?? 0).toLocaleString()}</td>
-              <td>
+              <td data-label="Report"><code>{String(report.id)}</code></td>
+              <td data-label="Source">{String(report.entitlement_source)}</td>
+              <td data-label="Domain">{String(report.report_domain)}</td><td data-label="Horizon">{String(report.report_horizon)}</td><td data-label="Status">{String(report.fulfillment_status)}</td>
+              <td data-label="Accepted / total tokens">{Number(report.token_count ?? 0).toLocaleString()} / {Number(report.token_count_total ?? 0).toLocaleString()}</td>
+              <td data-label="Lifetime token cap">
                 <div className="admin-toolbar-actions">
-                  <input
+                  <StudioInput
                     type="number"
                     min="1"
                     aria-label={`Lifetime token cap for ${String(report.id)}`}
                     value={lifetimeBudgets[String(report.id)] ?? String(report.token_budget_lifetime ?? 1_450_000)}
                     onChange={(event) => setLifetimeBudgets((current) => ({ ...current, [String(report.id)]: event.target.value }))}
                   />
-                  <button type="button" disabled={loading} onClick={() => void action("set_lifetime_token_budget", String(report.id), undefined, {
+                  <StudioButton type="button" disabled={loading} onClick={() => void action("set_lifetime_token_budget", String(report.id), undefined, {
                     lifetimeTokenBudget: Number(lifetimeBudgets[String(report.id)] ?? report.token_budget_lifetime ?? 1_450_000)
-                  })}>Set cap</button>
+                  })}>Set cap</StudioButton>
                 </div>
               </td>
-              <td>${Number(report.token_spend_usd_estimate ?? 0).toFixed(4)} est.</td>
-              <td><code>{JSON.stringify(report.attempt_counts ?? {})}</code></td>
-              <td><code>{JSON.stringify(Array.isArray(report.validator_results)
+              <td data-label="Estimated USD">${Number(report.token_spend_usd_estimate ?? 0).toFixed(4)} est.</td>
+              <td data-label="Attempts"><code>{JSON.stringify(report.attempt_counts ?? {})}</code></td>
+              <td data-label="Assembly warnings"><code>{JSON.stringify(Array.isArray(report.validator_results)
                 ? report.validator_results.find((entry) => entry && typeof entry === "object" && (entry as { unitId?: unknown }).unitId === "assembled-report") ?? null
                 : null)}</code></td>
-              <td><code>{JSON.stringify(Array.isArray(report.failure_history) ? report.failure_history.at(-1) ?? null : null)}</code></td>
-              <td>
+              <td data-label="Last failure"><code>{JSON.stringify(Array.isArray(report.failure_history) ? report.failure_history.at(-1) ?? null : null)}</code></td>
+              <td data-label="Actions">
                 <div className="admin-toolbar-actions">
-                  <button type="button" onClick={() => void inspectReport(String(report.id))}>Preview and edit</button>
-                  {report.fulfillment_status === "awaiting_authorization" && <button type="button" onClick={() => void action("authorize_generation", String(report.id), undefined, {
+                  <StudioButton type="button" onClick={() => void inspectReport(String(report.id))}>Preview and edit</StudioButton>
+                  {report.fulfillment_status === "awaiting_authorization" && <StudioButton type="button" onClick={() => void action("authorize_generation", String(report.id), undefined, {
                     callBudget: Number(dashboard.callEstimates[String(report.report_horizon)]?.recommendedCallBudget ?? 44)
-                  })}>Authorize {Number(dashboard.callEstimates[String(report.report_horizon)]?.recommendedCallBudget ?? 44)} calls</button>}
-                  {report.fulfillment_status === "exception" && <button type="button" onClick={() => void action("rerun", String(report.id))}>Re-run</button>}
-                  {report.fulfillment_status === "needs_review" && <button type="button" onClick={() => void action("release", String(report.id))}>Release</button>}
+                  })}>Authorize {Number(dashboard.callEstimates[String(report.report_horizon)]?.recommendedCallBudget ?? 44)} calls</StudioButton>}
+                  {report.fulfillment_status === "exception" && <StudioButton type="button" onClick={() => void action("rerun", String(report.id))}>Re-run</StudioButton>}
+                  {report.fulfillment_status === "needs_review" && <StudioButton type="button" onClick={() => void action("release", String(report.id))}>Release</StudioButton>}
                   {!["revoked", "live"].includes(String(report.fulfillment_status)) && (report.entitlement_source === "comp"
-                    ? <button type="button" onClick={() => void action("revoke_comp", String(report.id), String(report.entitlement_id))}>Revoke comp</button>
-                    : <button type="button" onClick={() => void action("mark_refunded", String(report.id), String(report.entitlement_id))}>Mark refunded</button>)}
+                    ? <StudioButton type="button" onClick={() => void action("revoke_comp", String(report.id), String(report.entitlement_id))}>Revoke comp</StudioButton>
+                    : <StudioButton type="button" onClick={() => void action("mark_refunded", String(report.id), String(report.entitlement_id))}>Mark refunded</StudioButton>)}
                 </div>
               </td>
             </tr>
-          ))}</tbody>
-        </table>
+          ))}
+</AdminDataTable>
       </div>
       <div className="admin-content-table-scroll">
-        <table className="admin-content-table">
-          <thead><tr><th>Audit report</th><th>Reason</th><th>Status</th><th>Findings</th></tr></thead>
-          <tbody>{dashboard?.audits.map((audit) => (
-            <tr key={String(audit.id)}><td><code>{String(audit.report_id)}</code></td><td>{String(audit.reason)}</td><td>{String(audit.status)}</td><td><code>{JSON.stringify(audit.findings ?? [])}</code></td></tr>
-          ))}</tbody>
-        </table>
+        <AdminDataTable label="Report audits" columns={["Audit report", "Reason", "Status", "Findings"]} className="">
+{dashboard?.audits.map((audit) => (
+            <tr key={String(audit.id)}><td data-label="Audit report"><code>{String(audit.report_id)}</code></td><td data-label="Reason">{String(audit.reason)}</td><td data-label="Status">{String(audit.status)}</td><td data-label="Findings"><code>{JSON.stringify(audit.findings ?? [])}</code></td></tr>
+          ))}
+</AdminDataTable>
       </div>
     </section>
   );

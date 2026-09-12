@@ -1,3 +1,5 @@
+import { StudioButton } from "./StudioControls";
+import { AdminDisclosureSummary } from "./AdminNativeControls";
 // @ts-ignore Shared with the publication validator and reader resolver.
 import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableSegments } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 
@@ -16,14 +18,14 @@ export default function SkyPlacementVariableKey({ facts, onInsert, disabled = fa
   disabled?: boolean;
 }) {
   return <details className="admin-workspace-details admin-sky-variable-key">
-    <summary>Sky variable key</summary>
+    <AdminDisclosureSummary>Sky variable key</AdminDisclosureSummary>
     <p>Use these variables inside a placement article, retrograde opening, or any evergreen fallback section. {onInsert ? "Select a variable to insert it at the cursor in the writing field." : "Open a section’s editor to insert a variable at the cursor."}</p>
     <p>Planet, sign, and motion below use the selected preview context. Dates and aspect lists require a calculated occurrence and remain marked until those facts are available. Missing facts never become invented dates, aspects, or empty text on the reader page.</p>
     <dl>
       {SKY_PLACEMENT_VARIABLES.map((variable: { name: string; description: string; availability: string }) => <div key={variable.name}>
-        <dt>{onInsert ? <button type="button" disabled={disabled} aria-label={`Insert {{${variable.name}}}`} onClick={() => onInsert(`{{${variable.name}}}`)}>
+        <dt>{onInsert ? <StudioButton type="button" disabled={disabled} aria-label={`Insert {{${variable.name}}}`} onClick={() => onInsert(`{{${variable.name}}}`)}>
           <code>{`{{${variable.name}}}`}</code>
-        </button> : <code>{`{{${variable.name}}}`}</code>}</dt>
+        </StudioButton> : <code>{`{{${variable.name}}}`}</code>}</dt>
         <dd><p>{variable.description}</p><span className={facts[variable.name] ? "variable-fact" : "variable-unmapped"}>{facts[variable.name] || "Needs calculated occurrence"}</span><small>{variable.availability}</small></dd>
       </div>)}
     </dl>
