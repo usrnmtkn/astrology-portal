@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { separateArticleHoroscopeRow } from "../apps/web/src/content/skyArticleHoroscopes.mjs";
 import { assertCleanReaderCopy, separateOwnerArticle } from "../apps/web/src/content/editorialCopyBoundary.mjs";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -82,7 +83,7 @@ function row({
   }
   assertCleanReaderCopy({ headline: editorialOnly ? "" : headline, body });
   reviewSequence += 1;
-  return {
+  return separateArticleHoroscopeRow({
     content_key: contentKey,
     surface: "sky",
     mode,
@@ -116,7 +117,7 @@ function row({
     published_at: status === "LIVE" ? new Date().toISOString() : null,
     reviewer_notes: null,
     error: null
-  };
+  });
 }
 
 function placementRows(name, expected, priority, approved = false) {
