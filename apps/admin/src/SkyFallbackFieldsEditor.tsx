@@ -46,7 +46,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const [libraryError, setLibraryError] = useState("");
   const [preparedLibrary, setPreparedLibrary] = useState<SkyWritingLibraryComposition | null>(null);
   const textarea = useRef<HTMLTextAreaElement>(null);
-  const autoInstallAttempted = useRef("");
+  const installRequestKey = useRef("");
   const placement = contentKey.match(/^sky-placement\/article\/([^/]+)\/([^/]+)$/u);
   const retrograde = contentKey.match(/^sky-placement\/retrograde\/([^/]+)$/u);
   const planet = placement?.[1] ?? retrograde?.[1] ?? "";
@@ -66,6 +66,14 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const savedLibraryReady = skyWritingLibraryInstalled(ingressComposition);
   const activeLibrary = preparedLibrary ?? (savedLibraryReady ? ingressComposition ?? null : null);
   const libraryReady = skyWritingLibraryInstalled(activeLibrary);
+  const sourceRef = useRef(source);
+  const onChangeRef = useRef(onChange);
+  const onLoadSourceRef = useRef(onLoadSource);
+  const ingressCompositionRef = useRef(ingressComposition);
+  sourceRef.current = source;
+  onChangeRef.current = onChange;
+  onLoadSourceRef.current = onLoadSource;
+  ingressCompositionRef.current = ingressComposition;
   const move = (index: number, offset: number) => {
     const next = [...evergreen];
     [next[index], next[index + offset]] = [next[index + offset], next[index]];
@@ -93,28 +101,34 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   // Keep the prepared composition locally too: the parent draft update is
   // asynchronous, and the field editor must not sit on a permanent Loading state
   // while waiting for that updated source prop to round-trip back into this modal.
+  // Parent inventory/loading renders also recreate callbacks, so read callback/source
+  // identities through refs instead of restarting and cancelling the seed request.
   useEffect(() => {
     const attemptKey = `${contentKey}#${initialLibrarySourceId}`;
-    if (!placement || !initialLibrarySourceId || libraryReady || disabled || autoInstallAttempted.current === attemptKey) return;
-    autoInstallAttempted.current = attemptKey;
-    let active = true;
+    if (!placement || !initialLibrarySourceId || libraryReady || disabled || installRequestKey.current === attemptKey) return;
+    installRequestKey.current = attemptKey;
+    let cancelled = false;
     setInstallingLibrary(true);
     setLibraryError("");
     void (async () => {
-      const sourceRecord = { ...(source ?? {}), contentKey } as Record<string, any>;
-      const { values } = await loadSkyWritingLibrarySeeds(sourceRecord, planet, sign, onLoadSource);
-      if (!active) return;
-      const starter = ingressComposition ?? makeSkyIngressComposition() as SkyWritingLibraryComposition;
+      const sourceRecord = { ...(sourceRef.current ?? {}), contentKey } as Record<string, any>;
+      const { values } = await loadSkyWritingLibrarySeeds(sourceRecord, planet, sign, onLoadSourceRef.current);
+      if (cancelled) return;
+      const starter = ingressCompositionRef.current ?? makeSkyIngressComposition() as SkyWritingLibraryComposition;
       const prepared = installSkyWritingLibrary(starter, values);
       setPreparedLibrary(prepared);
-      onChange("ingress", prepared);
+      onChangeRef.current("ingress", prepared);
     })().catch(reason => {
-      if (active) setLibraryError(reason instanceof Error ? reason.message : "The Writing Library could not be prepared.");
+      if (!cancelled) setLibraryError(reason instanceof Error ? reason.message : "The Writing Library could not be prepared.");
     }).finally(() => {
-      if (active) setInstallingLibrary(false);
+      if (!cancelled) setInstallingLibrary(false);
+      if (installRequestKey.current === attemptKey) installRequestKey.current = "";
     });
-    return () => { active = false; };
-  }, [contentKey, initialLibrarySourceId, libraryReady, disabled, planet, sign, onChange, onLoadSource, ingressComposition, Boolean(placement)]);
+    return () => {
+      cancelled = true;
+      if (installRequestKey.current === attemptKey) installRequestKey.current = "";
+    };
+  }, [contentKey, initialLibrarySourceId, libraryReady, disabled, planet, sign, Boolean(placement)]);
 
   // This component is deferred. Focus after it mounts, rather than racing the
   // dashboard's scroll request against a lazy-loaded editor.
