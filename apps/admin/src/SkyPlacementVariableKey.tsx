@@ -140,27 +140,43 @@ export default function SkyPlacementVariableKey({ facts, onInsert, disabled = fa
 
     <details className="admin-workspace-details admin-sky-variable-key" aria-label="Editable phrase variables">
       <AdminDisclosureSummary>Editable phrase variables</AdminDisclosureSummary>
-      <p>These are the authored prose values for <strong>{contextLabel}</strong>, not generic definitions. When a placement Writing Library already exists, this shows its saved local or linked value. Otherwise it shows the governed content that will prefill that variable when the Writing Library is added.</p>
+      <p>These are the authored prose values for <strong>{contextLabel}</strong>. Each variable now shows its loaded text directly beside the variable, using the same source-text pattern as the Main template.</p>
       {phraseLoading && <p role="status">Loading phrase content for {contextLabel}…</p>}
       {phraseError && <p role="alert">{phraseError}</p>}
-      {phraseSource && <p role="status"><strong>{phraseInstalled ? "Writing Library values loaded for this placement." : "Showing available prefill content for this placement."}</strong></p>}
+      {phraseSource && <p role="status"><strong>{phraseInstalled ? "Writing Library values loaded for this placement." : "Showing governed prefill content for this placement."}</strong></p>}
       {!phraseSource && <p>Choose a planet and sign source to load the current phrase values.</p>}
       <div className="admin-review-stack">
-        {SKY_WRITING_LIBRARY_GROUPS.map(group => <details className="admin-workspace-details" key={group.id}>
+        {SKY_WRITING_LIBRARY_GROUPS.map((group, groupIndex) => <details className="admin-workspace-details" key={group.id} open={groupIndex < 3 || undefined}>
           <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary>
           <p>{group.description}</p>
           <dl>
             {group.fields.map(item => {
               const currentValue = phraseValues[item.id]?.trim() ?? "";
+              const sourceLabel = phraseProvenance[item.id] || `No governed source mapped for ${contextLabel}`;
               return <div key={item.id}>
-                <dt><span className={`admin-composition-variable ${phraseClass(item.kind)}`}><code>{`{{${item.id}}}`}</code></span></dt>
+                <dt>
+                  <span className={`admin-composition-variable ${phraseClass(item.kind)}`}><code>{`{{${item.id}}}`}</code></span>
+                  <strong>{item.label}</strong>
+                </dt>
                 <dd>
-                  <p><strong>{item.label}</strong> · {item.description}</p>
-                  <p className="admin-composition-source-copy">{phraseLoading ? "Loading selected content…" : currentValue || `No content saved for ${contextLabel}.`}</p>
-                  <div className="admin-sky-variable-value">
-                    <span className={currentValue ? phraseClass(item.kind) : "variable-unmapped"}>{currentValue ? phraseInstalled ? "Loaded phrase value" : "Prefill source available" : "Empty"}</span>
-                    <small>{phraseProvenance[item.id] ? `source: ${phraseProvenance[item.id]}` : `scope: ${item.kind}`}</small>
+                  <div className="admin-sky-template-comparison">
+                    <div>
+                      <span className="admin-eyebrow">{phraseInstalled ? "Saved Writing Library text" : "Loaded prefill text"}</span>
+                      <p className="admin-composition-source-copy">{phraseLoading ? "Loading selected content…" : currentValue || "Empty · no source text is currently mapped to this variable."}</p>
+                    </div>
+                    <div>
+                      <span className="admin-eyebrow">Source</span>
+                      <p className="admin-composition-source-copy">{sourceLabel}</p>
+                      <div className="admin-sky-variable-value">
+                        <span className={currentValue ? phraseClass(item.kind) : "variable-unmapped"}>{currentValue ? phraseInstalled ? "Loaded phrase value" : "Prefill source available" : "Empty"}</span>
+                        <small>scope: {item.kind}</small>
+                      </div>
+                    </div>
                   </div>
+                  <details className="admin-workspace-details">
+                    <AdminDisclosureSummary>About {item.label.toLowerCase()}</AdminDisclosureSummary>
+                    <p>{item.description}</p>
+                  </details>
                   {phraseSource?.onEdit && <StudioButton type="button" disabled={disabled || phraseLoading} onClick={() => phraseSource.onEdit?.(item.id)}>{phraseInstalled ? `Edit ${item.label.toLowerCase()}` : `Open Writing Library for ${item.label.toLowerCase()}`}</StudioButton>}
                 </dd>
               </div>;
