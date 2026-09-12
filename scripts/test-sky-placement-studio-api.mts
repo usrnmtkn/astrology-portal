@@ -40,13 +40,16 @@ async function request(method: string, body?: any, query = "", expectedStatus = 
  const res = { statusCode: 0, setHeader() {}, end(value: string) { output = { status: this.statusCode, ...JSON.parse(value) }; } } as any;
  await handler(req, res); assert.equal(output.status, expectedStatus, JSON.stringify(output)); return output;
 }
-for (const [key, path] of [["sky-placement/article/saturn/aries", "placementArticle"], ["sky-placement/retrograde/saturn", "Body"]]) {
+const editorSources = [["sky-placement/article/saturn/aries", "placementArticle"], ["sky-placement/retrograde/saturn", "Body"],
+ ["sky-placement/article/sun/aries", "placementArticle"],
+ ...[...skyPlacementSourceRecords.keys()].filter(key => key.startsWith("sky-placement/seasonal-context/")).map(key => [key, "Copy"])];
+for (const [key, path] of editorSources) {
  const baseline = skyPlacementSourceRecords.get(key)!;
  const sources = await request("GET", undefined, `?contentKeys=${encodeURIComponent(key)}&status=all&visibility=all&limit=1`);
  assert.equal(sources.rows[0].sections.packageRecord[path], baseline[path]);
  let row: any = null;
  for (let version = 1; version <= 2; version++) {
-  const copy = { ...(row?.sections.packageRecord ?? baseline), [path]: `Fixture approved editorial revision ${version}.` };
+  const copy = { ...(row?.sections.packageRecord ?? baseline), [path]: `During this transit, fixture approved editorial revision ${version}.` };
   const data = { ...(row ? { id: row.id, expectedUpdatedAt: row.updated_at } : { contentKey: key, surface: "sky", mode: "in_depth", status: "DRAFT", eventType: "fallback-hook", blockType: "fallback_hook", lane: "reference" }),
    headline: baseline.headline, summary: baseline.summary, body: baseline.body_you,
    sections: { ...(row?.sections ?? { packageRecord: baseline }), packageDraft: copy },
@@ -82,7 +85,15 @@ assert(dashboard, "the actual reader loader must include canonical published sou
 runtime.installFallbackArchitectureV3Bundle(dashboard);
 await runtime.loadSkyPlacementFallbackArchitectureV3Bundle();
 const actual = runtime.skyV4ReaderRenderer.renderRoute({ route: "placement", planet: "saturn", sign: "aries", isRetrograde: true });
-assert(actual.readerParts.filter((part: string) => part === "Fixture approved editorial revision 2.").length === 2, JSON.stringify(actual.readerParts));
+assert(actual.readerParts.filter((part: string) => part === "During this transit, fixture approved editorial revision 2.").length === 2, JSON.stringify(actual.readerParts));
+for (const key of [...skyPlacementSourceRecords.keys()].filter(key => key.startsWith("sky-placement/seasonal-context/"))) {
+ const [, , sign, hemisphere] = key.split("/");
+ const seasonal = runtime.skyV4ReaderRenderer.renderRoute({ route: "seasonal", sign, hemisphere });
+ assert.deepEqual(seasonal.readerParts, ["During this transit, fixture approved editorial revision 2."]);
+ const placement = runtime.skyV4ReaderRenderer.renderRoute({ route: "placement", planet: "sun", sign, seasonalContext: seasonal.readerParts.join("\n\n") });
+ assert(placement.readerParts.includes("During this transit, fixture approved editorial revision 2."));
+}
+console.log("PASS: all twelve seasonal sources edit/publish twice through the actual API and arrive in the installed Sun reader.");
 console.log("PASS: API publication → actual dashboard loader → installed reader → full Saturn Rx payload.");
 
 // Structured evergreen sections use the same publish transaction and survive a

@@ -22,7 +22,7 @@ type Props = {
 };
 const title = (value: string) => value.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ");
 
-export function skyPlacementCompositionKeys({ planet, sign, motion }: Selection) {
+export function skyPlacementCompositionKeys({ planet, sign, motion }: Selection, hemisphere = "neutral") {
   const base = planet === "moon" ? `fallback-hook/sky-placement-hook/moon/${sign}` : planet === "lilith" ? `sky-lilith/article/${sign}`
     : planet.endsWith("-node") ? `sky-nodes/${planet}/${sign}` : `sky-placement/article/${planet}/${sign}`;
   if (planet.endsWith("-node")) {
@@ -30,11 +30,14 @@ export function skyPlacementCompositionKeys({ planet, sign, motion }: Selection)
     const axis = planet === "north-node" ? `${sign}-${opposite}` : `${opposite}-${sign}`;
     return ["sky-nodes/education", `sky-nodes/axis/${axis}`, base];
   }
-  return [...(motion === "retrograde" && retrogradeBodies.has(planet) ? [`sky-placement/retrograde/${planet}`] : []), base];
+  const seasonal = planet === "sun" && ["aries", "cancer", "libra", "capricorn"].includes(sign)
+    ? [`sky-placement/seasonal-context/${sign}/${hemisphere}`] : [];
+  return [...seasonal, ...(motion === "retrograde" && retrogradeBodies.has(planet) ? [`sky-placement/retrograde/${planet}`] : []), base];
 }
 
 export default function SkyPlacementComposition({ rows, selection, onEditRow, onEditField, onLoadRow }: Props) {
   const [view, setView] = useState<"preview" | "template" | "assembly">("preview");
+  const [hemisphere, setHemisphere] = useState("neutral");
   const [writing, setWriting] = useState<SkyPlacementWriting | "ingress">("article");
   const loadRowRef = useRef(onLoadRow);
   loadRowRef.current = onLoadRow;
@@ -46,7 +49,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const [finished, setFinished] = useState<Record<string, boolean>>({});
   const [error, setError] = useState("");
   const [retry, setRetry] = useState(0);
-  const keys = useMemo(() => skyPlacementCompositionKeys(current), [current.planet, current.sign, current.motion]);
+  const keys = useMemo(() => skyPlacementCompositionKeys(current, hemisphere), [current.planet, current.sign, current.motion, hemisphere]);
   useEffect(() => {
     const loadRow = loadRowRef.current;
     if (!loadRow) return;
@@ -72,6 +75,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
     : `${field.row.headline || `${title(current.planet)} in ${title(current.sign)}`} · ${field.label}`;
   const scope = (row: CompositionMapRow) => row.content_key.includes("/retrograde/")
     ? `Shared by ${title(current.planet)} retrograde in every sign.`
+    : row.content_key.startsWith("sky-placement/seasonal-context/") ? "Seasonal paragraph for the selected hemisphere. The reader selects this from the location."
     : row.content_key === "sky-nodes/education" ? "Shared node education." : row.content_key.startsWith("sky-nodes/axis/") ? "Shared by both ends of this node axis." : `Writing for ${title(current.planet)} in ${title(current.sign)}. Each section can be shared or specific to one motion.`;
   const views = [{ id: "preview", label: "Saved preview" }, { id: "template", label: "Main template" }, { id: "assembly", label: "Assembly" }] as const;
   return <section className="admin-composition-surface-actions admin-sky-placement-composition" aria-label="Sky placement composition map">
@@ -89,7 +93,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
         <option value="direct">Direct</option>{retrogradeBodies.has(current.planet) && <option value="retrograde">Retrograde</option>}
       </AdminSelect></label>
     </div>}
-    <p>Choose a writing path to inspect its saved sources and ordered blocks. This choice changes the preview, not what is published. Select a colored passage to edit its exact source.</p>
+    <p>Choose a writing path to inspect its saved sources and ordered blocks. This choice changes the preview, not what is published. Use the section buttons below or select a colored passage to edit its exact source. Imported article templates in the library below are separate records.</p>
     {ingressRow && <>
       <details className="admin-workspace-details admin-writing-system-details" aria-label="Placement reader selection">
         <AdminDisclosureSummary>How the reader chooses writing</AdminDisclosureSummary>
@@ -105,8 +109,13 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
       <SkyWritingSystemDetails system="placement" />
     </>}
     {selection?.motion === "all" && retrogradeBodies.has(current.planet) && <label>Preview motion<AdminSelect aria-label="Composition motion" value={current.motion} onChange={event => setContext({ ...context, motion: event.target.value })}><option value="direct">Direct</option><option value="retrograde">Retrograde</option></AdminSelect></label>}
+    {keys.some(key => key.startsWith("sky-placement/seasonal-context/")) && <label>Seasonal paragraph
+      <AdminSelect aria-label="Seasonal preview hemisphere" value={hemisphere} onChange={event => setHemisphere(event.target.value)}>
+        <option value="neutral">No location / equator</option><option value="northern">Northern hemisphere</option><option value="southern">Southern hemisphere</option>
+      </AdminSelect>
+    </label>}
     {error && <p role="alert">{error} <StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry sources</StudioButton></p>}
-    {keys.map((key, index) => !selectedRows[index] && <p role="status" key={key}>{error || finished[key] ? "Source unavailable: " : "Loading "}{key.includes("/retrograde/") ? "retrograde paragraph" : "planet-in-sign source"}{!error && !finished[key] && "…"}</p>)}
+    {keys.map((key, index) => !selectedRows[index] && <p role="status" key={key}>{error || finished[key] ? "Source unavailable: " : "Loading "}{key.includes("/retrograde/") ? "retrograde paragraph" : key.includes("/seasonal-context/") ? "seasonal paragraph" : "planet-in-sign source"}{!error && !finished[key] && "…"}</p>)}
     {availableRows.length > 0 && <>
       <div className="admin-sky-placement-sources" aria-label="Selected sources">
         {availableRows.map(row => <div key={row.content_key}>
@@ -114,6 +123,9 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           <p>{scope(row)}</p>
         </div>)}
       </div>
+      {selectedWriting !== "ingress" && <div className="admin-sky-writing-source-actions" role="group" aria-label="Open placement section editors">
+        {parts.map(field => <StudioButton key={`${field.row.content_key}/${field.path}`} type="button" onClick={() => edit(field)}>Open {field.label.toLowerCase()} editor</StudioButton>)}
+      </div>}
       <label className="admin-sky-placement-writing">Writing path
         <AdminSelect aria-label="Placement writing path" value={selectedWriting} onChange={event => setWriting(event.target.value as SkyPlacementWriting | "ingress")}>
           <option value="article">Placement article</option>
@@ -185,7 +197,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
         </div>}
         {view === "assembly" && availableRows.map(row => {
           const fields = skyPlacementAssemblyFields(row);
-          return <article className="admin-composition-source-card" key={row.content_key} aria-label={row.content_key.includes("/retrograde/") ? "Retrograde source" : "Planet-in-sign source"}>
+          return <article className="admin-composition-source-card" key={row.content_key} aria-label={row.content_key.includes("/retrograde/") ? "Retrograde source" : row.content_key.includes("/seasonal-context/") ? "Seasonal source" : "Planet-in-sign source"}>
             <strong>{row.headline || row.content_key}</strong>
             {fields.length ? fields.map(field => <div key={field.path} className="admin-composition-source-card">
               <strong className={`variable-${field.kind}`}>{field.label}</strong>
