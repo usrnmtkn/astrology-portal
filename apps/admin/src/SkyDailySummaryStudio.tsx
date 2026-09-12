@@ -138,7 +138,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
             <p>{(saved?.body ? currentSkySummaryWording(field.key, saved.body) : undefined) ?? ingressSource?.summary ?? (field.body || importedSkySummary(field.key) || (isIngress ? "No ingress TLDR added here. Add your wording, or open an existing ingress write-up to edit its TLDR." : "No summary added. Sky shows the calculated placement."))}</p>
             {source && <p><span>Source status: {saved?.body && saved.body !== source.body ? "Owner edit" : source.status}</span>{source.sources.map(url => <span key={url}> · <a href={url} target="_blank" rel="noreferrer">Source URL</a></span>)}</p>}
             <ContentLiveStatusBadge row={saved ?? ingressSource ?? (isIngress ? {} : { id: `builtin:${field.key}` })} />
-            {candidate && candidate.body !== currentBody && <details>
+            {candidate && candidate.body !== currentBody && <details className="admin-workspace-details">
               <AdminDisclosureSummary>Review supplied wording</AdminDisclosureSummary>
               <p>{candidate.body}</p>
               <p>This supplied version is not published. Open it to review the complete wording, then Save draft or Save &amp; publish.</p>

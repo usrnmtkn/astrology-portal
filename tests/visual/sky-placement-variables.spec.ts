@@ -7,7 +7,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
  test(`Sky variable insertion and named template ${width} ${theme}`, async ({ page }) => {
   const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
   await page.setViewportSize({ width, height: 1000 });
-  await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "sky-variable-fixture"));
+  await page.addInitScript(theme => { localStorage.setItem("tldrastro:contentAdminSecret", "sky-variable-fixture"); localStorage.setItem("tldrastro:studio-theme", theme); }, theme);
   await page.route("**/api/admin/**", async route => {
    const url = new URL(route.request().url());
    const rows = (url.searchParams.get("contentKeys") ?? "").split(",").flatMap(contentKey => {
@@ -50,6 +50,38 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await writing.fill("Before TARGET after");
   await writing.evaluate((el: HTMLTextAreaElement) => el.setSelectionRange(7, 13));
   await editor.locator(".admin-sky-variable-key > summary").click();
+  const variableKey = editor.locator(".admin-sky-variable-key");
+  const rowsGeometry = await variableKey.locator("dl > div").evaluateAll(rows => rows.map(row => {
+    const term = row.querySelector("dt")!.getBoundingClientRect();
+    const definition = row.querySelector("dd")!.getBoundingClientRect();
+    const bounds = row.getBoundingClientRect();
+    const style = getComputedStyle(row);
+    return { term: { x: term.x, bottom: term.bottom }, definition: { x: definition.x, y: definition.y }, top: bounds.top, bottom: bounds.bottom, padding: parseFloat(style.paddingLeft) };
+  }));
+  for (const [index, row] of rowsGeometry.entries()) {
+    expect(row.padding).toBe(16);
+    if (width < 720) expect(row.definition.y - row.term.bottom).toBeGreaterThanOrEqual(15);
+    else expect(row.definition.x).toBeGreaterThan(row.term.x);
+    if (index) expect(row.top).toBeGreaterThanOrEqual(rowsGeometry[index - 1].bottom);
+  }
+  for (const label of ["Source history and validation", "Aspects and horoscopes"]) {
+    const summary = editor.locator("summary").filter({ hasText: new RegExp(`^${label}$`) });
+    const disclosure = summary.locator("..");
+    const surface = await disclosure.evaluate(el => {
+      const style = getComputedStyle(el);
+      return { background: style.backgroundColor, padding: style.paddingLeft, radius: style.borderRadius };
+    });
+    expect(surface).toEqual(await variableKey.evaluate(el => {
+      const style = getComputedStyle(el);
+      return { background: style.backgroundColor, padding: style.paddingLeft, radius: style.borderRadius };
+    }));
+    await summary.click();
+    await expect(disclosure).toHaveAttribute("open", "");
+    expect(await disclosure.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+    await disclosure.screenshot({ path: `test-results/sky-disclosure-${label.replaceAll(" ", "-")}-${width}-${theme}.png` });
+    await summary.click();
+    await expect(disclosure).not.toHaveAttribute("open");
+  }
   await editor.getByRole("button", { name: "Insert {{signTitle}}", exact: true }).click();
   await expect(writing).toHaveValue("Before {{signTitle}} after");
   await expect(writing).toBeFocused();
@@ -65,6 +97,15 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await editor.getByLabel("Writing section", { exact: true }).selectOption("placementArticle");
   await writing.fill("{{planetTitle}} in {{signTitle}}");
   await expect(editor.locator(".admin-sky-writing-preview")).toHaveText("Saturn in Aries");
+  for (const name of ["planetTitle", "signTitle"]) {
+    const badge = variableKey.locator("code", { hasText: `{{${name}}}` });
+    const previewVariable = editor.locator(`.admin-sky-writing-preview [title^="{{${name}}}"]`);
+    expect(await previewVariable.getAttribute("data-variable-color")).toBe(await badge.getAttribute("data-variable-color"));
+    expect(await previewVariable.evaluate(el => getComputedStyle(el).color)).toBe(await badge.evaluate(el => getComputedStyle(el).color));
+    expect(await previewVariable.evaluate(labelStyle)).toEqual(await writing.evaluate(labelStyle));
+  }
+  expect(await variableKey.locator("code").evaluateAll(nodes => new Set(nodes.map(el => getComputedStyle(el).color)).size)).toBeGreaterThanOrEqual(3);
+
   expect(await editor.locator(".admin-sky-variable-key p").first().evaluate(labelStyle)).toEqual(await writing.evaluate(labelStyle));
   await editor.locator(".admin-sky-variable-key").screenshot({ path: `test-results/sky-variable-key-${width}-${theme}.png` });
   expect(await editor.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
