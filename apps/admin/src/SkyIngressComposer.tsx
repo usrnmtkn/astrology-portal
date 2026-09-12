@@ -1,6 +1,8 @@
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useRef, useState } from "react";
+import SkyWritingLibraryEditor from "./SkyWritingLibraryEditor";
+import { installSkyWritingLibrary, loadSkyWritingLibrarySeeds } from "./skyWritingLibrary";
 // @ts-ignore Shared deterministic implementation used by the actual reader.
 import { SKY_INGRESS_VARIABLES, makeSkyIngressComposition, renderSkyIngressComposition, skyIngressPublicationIssues, ingressTextIssues, skyIngressOccurrence, resolveIngressSource } from "../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
 // @ts-ignore Exact source revisions are pinned with the same content hash as the reader.
@@ -27,6 +29,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
   const [selectedSource, setSelectedSource] = useState("planetFunctionSentence");
   const [selectedModule, setSelectedModule] = useState("practice");
   const [view, setView] = useState("preview");
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const [referenceKey, setReferenceKey] = useState(String(source.contentKey));
   const [referenceField, setReferenceField] = useState("planetFunctionSentence");
   const [newSource, setNewSource] = useState("");
@@ -39,9 +42,10 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
   const [timeZone, setTimeZone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC");
   const [calculated, setCalculated] = useState<RecordValue | null>(null);
   const [calculating, setCalculating] = useState(false);
+  const [installing, setInstalling] = useState(false);
   const generation = useRef(0);
   const writing = useRef<HTMLTextAreaElement>(null);
-  useEffect(() => { const id = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1]; if (id) setSelectedSource(id); }, [initialField]);
+  useEffect(() => { const id = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1]; if (id) { setSelectedSource(id); setAdvancedOpen(true); } }, [initialField]);
   useEffect(() => { generation.current++; setCalculated(null); setReferences([]); return () => { generation.current++; }; }, [source.contentKey]);
   const referencedKeys = JSON.stringify([...new Set(Object.values(composition?.sources ?? {}).map(value => value.reference?.contentKey).filter(key => key && key !== source.contentKey))]);
   useEffect(() => {
@@ -65,6 +69,21 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
     issues = skyIngressPublicationIssues(source, [source, ...references]);
   } catch (reason) { issues = [reason instanceof Error ? reason.message : "Invalid composition."]; }
   const facts = skyIngressOccurrence(input).facts;
+
+  async function addPrefilledComposition() {
+    if (!onChange || installing) return;
+    setInstalling(true);
+    setError("");
+    try {
+      const starter = makeSkyIngressComposition() as Composition;
+      const { values } = await loadSkyWritingLibrarySeeds(source, identity[0], identity[1], onLoadSource);
+      onChange(installSkyWritingLibrary(starter, values) as Composition);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Placement composition could not be initialized.");
+    } finally {
+      setInstalling(false);
+    }
+  }
 
   async function calculatePreview() {
     const current = ++generation.current;
@@ -97,8 +116,9 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
 
   if (!composition) return <div className="admin-sky-writing-context">
     <strong>Placement composition</strong>
-    <p>Build this evergreen article from named sentence sources. The map will show each source, calculated value, and omitted section. Existing complete articles keep priority.</p>
-    {onChange ? <StudioButton type="button" disabled={disabled} onClick={() => onChange(makeSkyIngressComposition())}>Add placement composition</StudioButton>
+    <p>Build this evergreen article from named sentence sources. The prefilled setup reuses this placement’s existing governed TLDR/fallback copy plus approved planet/sign vocabulary. It does not generate new astrology prose or publish anything.</p>
+    {error && <p role="alert">{error}</p>}
+    {onChange ? <StudioButton type="button" disabled={disabled || installing} onClick={() => void addPrefilledComposition()}>{installing ? "Loading governed sources…" : "Add prefilled placement composition"}</StudioButton>
       : <StudioButton type="button" onClick={() => onOpenSource(source.contentKey, "ingress")}>Set up placement composition</StudioButton>}
   </div>;
 
@@ -112,8 +132,21 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
     {issues.length > 0 && <div role="alert">{issues.map(issue => <p key={issue}>{issue}</p>)}</div>}
     {error && <p role="alert">{error}</p>}
     {onChange && <>
-      <details className="admin-workspace-details" open>
-        <AdminDisclosureSummary>Sentence sources</AdminDisclosureSummary>
+      <SkyWritingLibraryEditor
+        contentKey={String(source.contentKey)}
+        planet={identity[0]}
+        sign={identity[1]}
+        sourceRecord={source}
+        composition={composition}
+        disabled={disabled}
+        onChange={onChange}
+        onOpenSource={onOpenSource}
+        onLoadSource={onLoadSource}
+        onAdvancedSource={id => { setSelectedSource(id); setAdvancedOpen(true); }}
+      />
+      <details className="admin-workspace-details" open={advancedOpen} onToggle={event => setAdvancedOpen(event.currentTarget.open)}>
+        <AdminDisclosureSummary>Advanced source tools</AdminDisclosureSummary>
+        <p>Use this area for custom source names and exact cross-placement links. The grouped Writing library above is the normal editing path.</p>
         <label className="admin-field-wide">Source to edit<AdminSelect aria-label="Ingress sentence source" value={selectedSource} onChange={event => setSelectedSource(event.target.value)}>
           {Object.entries(composition.sources).map(([id, item]) => <option key={id} value={id}>{words(id)} · {item.kind}</option>)}
         </AdminSelect></label>
@@ -125,7 +158,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
             <StudioTextarea ref={writing} className="admin-copy-field-body" aria-label={`Ingress source ${selectedSource}`} disabled={disabled} value={selected.text ?? ""} onChange={event => updateSource({ ...selected, text: event.target.value })} />
           </label>}
         {selected && !selected.reference && ingressTextIssues(selected.text ?? "").map((issue: string) => <p role="alert" key={issue}>{issue}</p>)}
-        <details className="admin-workspace-details"><AdminDisclosureSummary>Add a named sentence source</AdminDisclosureSummary>
+        <details className="admin-workspace-details"><AdminDisclosureSummary>Add a custom sentence source</AdminDisclosureSummary>
           <label>Unique name<StudioInput aria-label="New ingress source name" value={newSource} disabled={disabled} onChange={event => setNewSource(event.target.value)} placeholder="additionalMeaningSentence" /></label>
           <label>Reuse scope<AdminSelect aria-label="New ingress source scope" value={newKind} disabled={disabled} onChange={event => setNewKind(event.target.value)}>{["placement", "planet", "sign", "timing", "aspect"].map(kind => <option key={kind}>{kind}</option>)}</AdminSelect></label>
           <StudioButton type="button" disabled={disabled || Object.keys(composition.sources).length >= 80} onClick={() => {
@@ -140,7 +173,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
           <StudioButton type="button" disabled={disabled || !onLoadSource} onClick={() => void linkSource()}>Link exact source revision</StudioButton>
         </details>
       </details>
-      <details className="admin-workspace-details" open><AdminDisclosureSummary>Modules and order</AdminDisclosureSummary>
+      <details className="admin-workspace-details" open><AdminDisclosureSummary>Sections and order</AdminDisclosureSummary>
         <ol className="admin-ingress-module-list" aria-label="Ingress module order">
           {composition.modules.map((item, index) => <li key={item.id}><StudioButton type="button" aria-pressed={module?.id === item.id} onClick={() => setSelectedModule(item.id)}>{item.label}</StudioButton>
             <span>{item.enabled ? item.required ? "Required" : "Optional" : "Disabled"}</span>
@@ -176,8 +209,8 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
         </div>}
       </details>
     </>}
-    <details className="admin-workspace-details"><AdminDisclosureSummary>Sky variables and sentence key</AdminDisclosureSummary>
-      <p>Blue variables are calculated values. Named sentence slots resolve to the full source references below; they are available in section templates. Sentence writing accepts calculated variables only.</p>
+    <details className="admin-workspace-details"><AdminDisclosureSummary>Calculated Sky variables</AdminDisclosureSummary>
+      <p>Blue variables are calculated, read-only facts. Named Writing library sources are editable above and belong in section templates; they are not inline fact variables.</p>
       <div className="admin-ingress-key">{[...SKY_PLACEMENT_VARIABLES, ...SKY_INGRESS_VARIABLES].map((variable: { name: string; description: string }) => <div key={variable.name}>
         <StudioButton type="button" disabled={!onChange || disabled || Boolean(selected?.reference)} onClick={() => { const node = writing.current; if (!selected || !node) return; const start = node.selectionStart; const token = `{{${variable.name}}}`; updateSource({ ...selected, text: (selected.text ?? "").slice(0, start) + token + (selected.text ?? "").slice(node.selectionEnd) }); requestAnimationFrame(() => { node.focus(); node.setSelectionRange(start + token.length, start + token.length); }); }}><code>{`{{${variable.name}}}`}</code></StudioButton>
         <p>{variable.description}</p><span className="variable-fact">{facts[variable.name] ?? "Needs calculated occurrence"}</span>
