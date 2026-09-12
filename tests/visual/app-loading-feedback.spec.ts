@@ -227,12 +227,22 @@ test("a failed lazy route keeps navigation usable", async ({ page }) => {
 
 test("failed astronomy shows Retry and recovers on the same route", async ({ page }) => {
   const workerAssets = /\/assets\/skyCalculation\.worker-.*\.js$/;
-  await page.route(workerAssets, route => route.abort("failed"));
+  await page.route(workerAssets, async route => {
+    const retryClicked = await page.evaluate(() => document.documentElement.dataset.testSkyRetryClicked === "true");
+    await (retryClicked ? route.continue() : route.abort("failed"));
+  });
   await page.goto("/#sky");
   await expect(page.getByRole("alert")).toContainText("The current sky could not load");
-  await page.unroute(workerAssets);
-  await page.getByRole("button", { name: "Retry", exact: true }).click();
+  const retry = page.getByRole("button", { name: "Retry", exact: true });
+  // Keep the worker unavailable until the real click. Unrouting beforehand
+  // lets a concurrent calculation recover and remove Retry before it is clicked.
+  await retry.evaluate(button => button.addEventListener("click", () => {
+    document.documentElement.dataset.testSkyRetryClicked = "true";
+  }, { capture: true, once: true }));
+  await retry.click();
   await expect(page.getByLabel("Daily sky summary")).toBeVisible({ timeout: 15000 });
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await expect(page).toHaveURL(/\/#sky$/);
 });
 
 test("a signed-out Friends link explains what is needed instead of staying blank", async ({ page }) => {

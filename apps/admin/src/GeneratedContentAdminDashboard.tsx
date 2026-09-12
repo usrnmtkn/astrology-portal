@@ -8135,7 +8135,7 @@ export function GeneratedContentAdminDashboard() {
     const skyPlacementTemplateOptions = skyPlacementCompositionOptions(effectivePackageRecord(currentDraft.sections));
     const skyFallbackEditor = skyFallbackWorkspace(currentDraft.contentKey, currentDraft.sections);
     const skyFallbackContentIdentity = skyFallbackIdentity(currentDraft.contentKey);
-    const isSkyPlacementSource = /^sky-placement\/(?:article|retrograde)\//u.test(currentDraft.contentKey);
+    const isSkyPlacementSource = /^sky-placement\/(?:article|retrograde|seasonal-context)\//u.test(currentDraft.contentKey);
     const SkyRelatedContainer = isSkyPlacementSource ? "details" : "section";
     const SkyChangesContainer = isSkyPlacementSource ? "details" : "section";
     const effectiveSkyFallbackVariableTarget = skyFallbackEditor?.fields.some((field) => field.key === skyFallbackVariableTarget)
