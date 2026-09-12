@@ -379,9 +379,11 @@ async function importRows() {
           source_snapshot: { ...(current.source_snapshot ?? {}), ...candidate.source_snapshot }
         }
       : candidate;
-    const endpoint = current ? `generated_interpretations?id=eq.${encodeURIComponent(current.id)}` : "generated_interpretations";
+    assert.ok(!current || current.updated_at, `Saved version required before import: ${candidate.content_key}`);
+    const endpoint = current ? `generated_interpretations?id=eq.${encodeURIComponent(current.id)}&updated_at=eq.${encodeURIComponent(current.updated_at)}` : "generated_interpretations";
     assertCleanReaderCopy(payload);
-    await request(endpoint, { method: current ? "PATCH" : "POST", headers: { "content-type": "application/json", prefer: "return=minimal" }, body: JSON.stringify(payload) });
+    const saved = await request(endpoint, { method: current ? "PATCH" : "POST", headers: { "content-type": "application/json", prefer: "return=representation" }, body: JSON.stringify(payload) });
+    assert.ok(Array.isArray(saved) && saved.length === 1, `Content changed during import: ${candidate.content_key}. Reload before retrying.`);
     report[current ? "updated" : "inserted"] += 1;
   }
   return report;

@@ -9675,7 +9675,7 @@ export function GeneratedContentAdminDashboard() {
             </div>
           )}
           {!skyWriteupContext && importedHoroscopeSections && <Suspense fallback={<p>Loading horoscope fields…</p>}>
-            <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections}))} />
+            <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections, status: "DRAFT", reviewState: "owner-review-required"}))} />
           </Suspense>}
           {skyWriteupContext && selectedRow && (
             <SkyRelatedContainer className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
@@ -9745,7 +9745,7 @@ export function GeneratedContentAdminDashboard() {
 
               {importedHoroscopeSections ? (
                 <Suspense fallback={<p>Loading horoscope fields…</p>}>
-                  <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections}))} />
+                  <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections, status: "DRAFT", reviewState: "owner-review-required"}))} />
                 </Suspense>
               ) : skyLunationContext ? (
                 <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>

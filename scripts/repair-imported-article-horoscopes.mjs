@@ -22,7 +22,7 @@ const changes=rows.flatMap(row=>{
 });
 fs.writeFileSync(output,JSON.stringify({schema:'article-horoscope-repair-v1',changes},null,2),{mode:0o600});
 const sqlString=value=>`'${value.replace(/'/gu,"''")}'`;
-const payload=sqlString(JSON.stringify(changes));
+const payload=sqlString(JSON.stringify(changes.map(({source_snapshot,...change})=>change)));
 const delimiter = '$repair_' + crypto.randomBytes(16).toString('hex') + '$';
 assert(!payload.includes(delimiter));
 const sql=`begin;
@@ -36,7 +36,9 @@ begin
     or oldrow.updated_at <> (item->>'expected_updated_at')::timestamptz
     or encode(sha256(convert_to(oldrow.body,'UTF8')),'hex') <> item->>'original_body_sha256'
     or oldrow.status = 'LIVE' then raise exception 'Article changed since repair preparation: %', item->>'content_key'; end if;
-  update public.generated_interpretations set body=item->>'body', sections=item->'sections', source_snapshot=item->'source_snapshot'
+  update public.generated_interpretations set body=item->>'body', sections=item->'sections', source_snapshot=coalesce(oldrow.source_snapshot,'{}'::jsonb) || jsonb_build_object('horoscopeSeparation', jsonb_build_object(
+      'schema','sky-article-horoscopes-v1','originalBody',oldrow.body,'originalSections',oldrow.sections,
+      'originalUpdatedAt',oldrow.updated_at,'originalStatus',oldrow.status,'originalBodySha256',item->>'original_body_sha256'))
     where id=oldrow.id and updated_at=oldrow.updated_at returning * into repaired;
   if repaired.id is null or repaired.status is distinct from oldrow.status or repaired.lane is distinct from oldrow.lane
     or repaired.review_state is distinct from oldrow.review_state or repaired.reviewed_at is distinct from oldrow.reviewed_at
