@@ -388,9 +388,7 @@ export function ReportLibraryView() {
     <main className="report-library-page">
       <section className="report-library-shell" aria-labelledby="report-library-title">
         <header className="report-library-header">
-          <p className="type-section-label">Your library</p>
           <h1 className="type-page-title" id="report-library-title">Reports</h1>
-          <p className="type-body">Your readings are saved here, so you can return to them anytime.</p>
         </header>
 
         <SegmentedControl
