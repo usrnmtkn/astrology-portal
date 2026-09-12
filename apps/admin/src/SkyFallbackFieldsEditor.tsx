@@ -44,6 +44,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const [outline, setOutline] = useState("ingress");
   const [installingLibrary, setInstallingLibrary] = useState(false);
   const [libraryError, setLibraryError] = useState("");
+  const [preparedLibrary, setPreparedLibrary] = useState<SkyWritingLibraryComposition | null>(null);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const autoInstallAttempted = useRef("");
   const placement = contentKey.match(/^sky-placement\/article\/([^/]+)\/([^/]+)$/u);
@@ -62,7 +63,9 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const initialLibrarySourceId = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1] ?? "";
   const initialLibraryField = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields).find(item => item.id === initialLibrarySourceId);
   const ingressComposition = (source as Record<string, any> | undefined)?.ingress as SkyWritingLibraryComposition | undefined;
-  const libraryReady = skyWritingLibraryInstalled(ingressComposition);
+  const savedLibraryReady = skyWritingLibraryInstalled(ingressComposition);
+  const activeLibrary = preparedLibrary ?? (savedLibraryReady ? ingressComposition ?? null : null);
+  const libraryReady = skyWritingLibraryInstalled(activeLibrary);
   const move = (index: number, offset: number) => {
     const next = [...evergreen];
     [next[index], next[index + offset]] = [next[index + offset], next[index]];
@@ -87,6 +90,9 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
 
   // Direct phrase-variable edits should prepare the Writing Library in draft
   // and open the exact named source, rather than falling back to Placement article.
+  // Keep the prepared composition locally too: the parent draft update is
+  // asynchronous, and the field editor must not sit on a permanent Loading state
+  // while waiting for that updated source prop to round-trip back into this modal.
   useEffect(() => {
     const attemptKey = `${contentKey}#${initialLibrarySourceId}`;
     if (!placement || !initialLibrarySourceId || libraryReady || disabled || autoInstallAttempted.current === attemptKey) return;
@@ -99,7 +105,9 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       const { values } = await loadSkyWritingLibrarySeeds(sourceRecord, planet, sign, onLoadSource);
       if (!active) return;
       const starter = ingressComposition ?? makeSkyIngressComposition() as SkyWritingLibraryComposition;
-      onChange("ingress", installSkyWritingLibrary(starter, values));
+      const prepared = installSkyWritingLibrary(starter, values);
+      setPreparedLibrary(prepared);
+      onChange("ingress", prepared);
     })().catch(reason => {
       if (active) setLibraryError(reason instanceof Error ? reason.message : "The Writing Library could not be prepared.");
     }).finally(() => {
@@ -132,8 +140,8 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
     </div>
     {libraryError && <p role="alert">{libraryError}</p>}
     {!libraryReady ? <p role="status">{installingLibrary ? `Loading ${initialLibraryField?.label ?? initialLibrarySourceId} for ${title(planet)} in ${title(sign)}…` : `Preparing ${initialLibraryField?.label ?? initialLibrarySourceId}…`}</p>
-      : <SkyIngressComposer source={{ ...source, contentKey }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
-        initialField={initialField} onChange={value => onChange("ingress", value)} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />}
+      : <SkyIngressComposer source={{ ...(source ?? {}), contentKey, ingress: activeLibrary }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
+        initialField={initialField} onChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />}
   </section>;
 
   if (!planet) return <section className="admin-sky-edition-fields" aria-label="Editable fallback fields">
