@@ -18,7 +18,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    });
    await route.fulfill({ json: { ok: true, rows, statuses: [], nextCursor: null } });
   });
-  await page.goto("/#sky-writeups");
+  await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === "1" ? "/admin/content#sky-writeups" : "/#sky-writeups");
   await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
   await expect(page.getByRole("region", { name: "Sky placement composition map" })).toBeVisible();
   await expect(page.getByLabel("Composition planet or point")).toBeVisible();
@@ -105,6 +105,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     expect(await previewVariable.evaluate(labelStyle)).toEqual(await writing.evaluate(labelStyle));
   }
   expect(await variableKey.locator("code").evaluateAll(nodes => new Set(nodes.map(el => getComputedStyle(el).color)).size)).toBeGreaterThanOrEqual(3);
+  await writing.fill("{{ planetTitle }} in {{signTitle}}");
+  expect(await editor.locator(".admin-sky-writing-preview [data-variable-color]").count()).toBe(2);
 
   expect(await editor.locator(".admin-sky-variable-key p").first().evaluate(labelStyle)).toEqual(await writing.evaluate(labelStyle));
   await editor.locator(".admin-sky-variable-key").screenshot({ path: `test-results/sky-variable-key-${width}-${theme}.png` });
