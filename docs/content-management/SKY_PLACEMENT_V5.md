@@ -16,6 +16,49 @@ In Content Studio, open Sky Write-ups, select a planet and sign, and choose
 opens its source editor. “Add placement composition” creates blank named sentences
 and the proposed module structure. Enabling it makes it eligible after publication.
 
+The placement editor now opens **Writing library & placement composition** by
+default. The grouped **Editable writing library** is the normal authoring path.
+It keeps calculated facts separate from reusable prose and exposes the source
+families an editor actually needs instead of requiring them to work from opaque
+source IDs.
+
+### Editable writing library
+
+The writing library is stored inside the same V5 `ingress.sources` object. It is
+not another content database and does not bypass the existing publication gate.
+“Add writing library fields” installs blank named sources only. “Use writing
+library as primary fallback structure” changes the draft module order and required
+modules, but it does not publish or replace an approved serving baseline.
+
+The grouped editor exposes:
+
+- **Planet language:** appositive, summary/lore, function, productive expression,
+  shadow/excess, and collective expression.
+- **Zodiac sign language:** appositive, summary/lore, core drive, method, gift,
+  shadow, and values/life themes.
+- **Planet × sign synthesis:** thesis, opportunity, pressure, shadow, correction,
+  practice, collective theme, and collective shadow.
+- **Experience hooks:** work, money, relationships, home, body, time,
+  recognition, and creativity. These are stored as a bank; an experience enters
+  the fallback only after the editor explicitly chooses **Include in fallback**.
+- **Hooks and takeaways:** opening hook, reflection question, and closing line.
+- **Optional context:** mythology, astronomy, previous-cycle context, and return
+  meaning.
+- **Aspect writing:** the existing defining-aspect mechanism, manifestations,
+  challenge, and response sources, surfaced with friendly labels.
+
+Planet sources retain planet scope and may be hash-linked across that planet’s
+signs. Sign sources retain sign scope and may be linked across planets in that
+sign. Placement and experience sources stay specific to the exact planet/sign
+record. The existing **Advanced source tools** preserve custom source creation and
+hash-pinned cross-placement linking for editors who need it.
+
+The legacy Hook / Lived / Turn and older evergreen section editor remain available
+for audit, repair, and rollback of already governed serving copy. They are
+visually de-emphasized and are not the recommended authoring path for new Sky
+fallback writing. Existing rows are not deleted merely because the new library is
+installed.
+
 Each sentence shows its exact reference, such as
 `sky-placement/article/saturn/aries#ingress.sources.responseSentence`.
 Add named sentence sources and sections, edit each section template, and move
@@ -29,12 +72,14 @@ assembler as the reader. The map links sentences to exact editor fields and
 explains every skipped section. Blue means calculated facts, purple means
 reusable planet/sign sentences, amber means other authored writing.
 
-The Sky variable key inserts calculated variables into the selected sentence.
-Section templates also accept the names of this composition's sentence sources.
-Sentences accept facts only. Nested source expansion and conditional mustache
-blocks are rejected. A malformed or unknown variable reports an editor/save
-error; a missing calculated value omits its dependent module without deleting
-words from a sentence.
+The calculated Sky variable key inserts calculated variables into the selected
+sentence. Section templates also accept the names of this composition's sentence
+sources. Sentences accept facts only. Named library sources such as
+`{{placementThesis}}` belong in section templates; they are not inline calculated
+variables. Nested source expansion and conditional mustache blocks are rejected.
+A malformed or unknown variable reports an editor/save error; a missing
+calculated value omits its dependent module without deleting words from a
+sentence.
 
 Occurrence preview calculates residency and aspects using the ephemeris worker.
 It uses the selected date, or the next pass when the date is outside the sign.
@@ -103,6 +148,7 @@ has no aspect list in this provider. Unsupported or missing facts remain absent.
 source hashes, article priority, incomplete modules, timing, timezone dates,
 API draft/publish/reopen/removal behavior, and the actual published reader loader.
 `tests/visual/sky-ingress-composer.spec.ts` covers desktop/mobile and light/dark
-Studio authoring. Existing placement reader regressions protect full authored
-copy. The package bundle, version pins, and generated manifests must be rebuilt
-with every serving behavior change.
+Studio authoring, including the grouped writing-library entry point and the
+advanced source editor. Existing placement reader regressions protect full
+authored copy. The package bundle, version pins, and generated manifests must be
+rebuilt with every serving behavior change.
