@@ -147,12 +147,9 @@ const module = (id: string, label: string, template: string, required = false): 
 });
 
 export const SKY_WRITING_LIBRARY_MODULES: SkyWritingLibraryModule[] = [
+  module("library-placement", "Placement thesis and opportunity", "{{placementThesis}} {{placementOpportunity}}"),
   module("library-planet", "Planet meaning", "{{planetSummary}} {{planetFunction}}"),
   module("library-sign", "Sign meaning", "{{signSummary}} {{signCoreDrive}} {{signMethod}}"),
-  module("library-placement", "Placement thesis and opportunity", "{{placementThesis}} {{placementOpportunity}}"),
-  module("library-pressure", "Placement pressure and shadow", "{{placementPressure}} {{placementShadow}}"),
-  module("library-response", "Placement correction and practice", "{{placementCorrection}} {{placementPractice}}"),
-  module("library-collective", "Collective expression", "{{placementCollectiveTheme}} {{placementCollectiveShadow}}"),
   module("library-experience-work", "Experience · work", "{{experienceWork}}"),
   module("library-experience-money", "Experience · money", "{{experienceMoney}}"),
   module("library-experience-relationships", "Experience · relationships", "{{experienceRelationships}}"),
@@ -161,8 +158,11 @@ export const SKY_WRITING_LIBRARY_MODULES: SkyWritingLibraryModule[] = [
   module("library-experience-time", "Experience · time", "{{experienceTime}}"),
   module("library-experience-recognition", "Experience · recognition", "{{experienceRecognition}}"),
   module("library-experience-creative", "Experience · creativity", "{{experienceCreative}}"),
+  module("library-pressure", "Placement pressure and shadow", "{{placementPressure}} {{placementShadow}}"),
+  module("library-collective", "Collective expression", "{{placementCollectiveTheme}} {{placementCollectiveShadow}}"),
   module("library-mythology", "Optional mythology", "{{mythologySummary}}"),
   module("library-history", "Optional previous-cycle context", "{{historicalCallback}}"),
+  module("library-response", "Placement correction and practice", "{{placementCorrection}} {{placementPractice}}"),
   module("library-close", "Reflection and close", "{{reflectionQuestion}} {{closingLine}}")
 ];
 
@@ -186,19 +186,23 @@ export function installSkyWritingLibrary(composition: SkyWritingLibraryCompositi
   return next;
 }
 
-const legacyBodyModuleIds = new Set(["practice", "manifestations", "third-manifestation", "response", "intro-mechanism", "intro-close"]);
+const legacyBodyModuleIds = new Set(["practice", "manifestations", "third-manifestation", "response", "intro-mechanism", "intro-close", "close"]);
+const timingModuleIds = new Set(["single-pass", "first-pass", "return", "final-pass", "long-cycle"]);
 const primaryLibraryModuleIds = new Set(["library-placement", "library-response"]);
+const libraryOrder = SKY_WRITING_LIBRARY_MODULES.map(item => item.id);
 
 export function preferSkyWritingLibrary(composition: SkyWritingLibraryComposition): SkyWritingLibraryComposition {
   const installed = installSkyWritingLibrary(composition);
-  return {
-    ...installed,
-    modules: installed.modules.map(item => legacyBodyModuleIds.has(item.id)
-      ? { ...item, enabled: false, required: false }
-      : primaryLibraryModuleIds.has(item.id)
-        ? { ...item, enabled: true, required: true }
-        : item)
-  };
+  const prepared = installed.modules.map(item => legacyBodyModuleIds.has(item.id)
+    ? { ...item, enabled: false, required: false }
+    : primaryLibraryModuleIds.has(item.id)
+      ? { ...item, enabled: true, required: true }
+      : item);
+  const byId = new Map(prepared.map(item => [item.id, item]));
+  const library = libraryOrder.map(id => byId.get(id)).filter((item): item is SkyWritingLibraryModule => Boolean(item));
+  const timing = prepared.filter(item => timingModuleIds.has(item.id));
+  const structural = prepared.filter(item => !legacyBodyModuleIds.has(item.id) && !timingModuleIds.has(item.id) && !libraryOrder.includes(item.id));
+  return { ...installed, modules: [...structural, ...library.filter(item => item.id !== "library-close"), ...timing, ...library.filter(item => item.id === "library-close")] };
 }
 
 export function skyWritingLibraryIsPrimary(composition?: SkyWritingLibraryComposition | null) {
