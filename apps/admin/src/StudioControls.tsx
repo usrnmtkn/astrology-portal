@@ -1,12 +1,66 @@
 import "./studio-typography.css";
-import { forwardRef, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
+import "./studio-component-consistency.css";
+import { cloneElement, forwardRef, isValidElement, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
+import { requestStudioReturnAfterSave, returnToStudioParentEditor, studioEditorReturnContext } from "./studioEditorReturn";
+
+function nodeText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(nodeText).join("");
+  if (isValidElement<{ children?: ReactNode }>(node)) return nodeText(node.props.children);
+  return "";
+}
+
+function replaceNodeText(node: ReactNode, from: string, to: string): ReactNode {
+  if (typeof node === "string") return node.replace(from, to);
+  if (Array.isArray(node)) return node.map((child) => replaceNodeText(child, from, to));
+  if (isValidElement<{ children?: ReactNode }>(node) && node.props.children !== undefined) {
+    return cloneElement(node, undefined, replaceNodeText(node.props.children, from, to));
+  }
+  return node;
+}
 
 /** Studio controls preserve native semantics and use one visual contract. */
 export const StudioButton = forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<"button">>(
-  function StudioButton({ type = "button", ...props }, ref) {
-    return <button {...props} type={type} ref={ref} data-studio-component="button" />;
+  function StudioButton({ type = "button", className = "", children, onClick, title, "aria-label": ariaLabel, ...props }, ref) {
+    const returnContext = studioEditorReturnContext();
+    const text = nodeText(children).trim();
+    const nestedEditorClose = Boolean(returnContext && className.split(/\s+/u).includes("admin-editor-close"));
+    const saveAndPublishReturn = Boolean(returnContext && text === "Save & publish");
+    const saveDraftReturn = Boolean(returnContext && text === "Save draft");
+    const saveMode = saveAndPublishReturn ? "published" : saveDraftReturn ? "any" : null;
+    const displayedChildren = saveAndPublishReturn
+      ? replaceNodeText(children, "Save & publish", "Save & return")
+      : saveDraftReturn
+        ? replaceNodeText(children, "Save draft", "Save draft & return")
+        : children;
+
+    return <button
+      {...props}
+      type={type}
+      ref={ref}
+      data-studio-component="button"
+      className={className}
+      title={nestedEditorClose ? `Back to ${returnContext?.label ?? "previous editor"}` : title}
+      aria-label={nestedEditorClose ? `Back to ${returnContext?.label ?? "previous editor"}` : ariaLabel}
+      onClick={(event) => {
+        if (nestedEditorClose && returnToStudioParentEditor()) {
+          event.preventDefault();
+          return;
+        }
+        if (saveMode) requestStudioReturnAfterSave(saveMode);
+        onClick?.(event);
+      }}
+    >{displayedChildren}</button>;
   }
 );
+
+/** Icon-only controls use the same hit target, radius, hover and focus treatment. */
+export const StudioIconButton = forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<"button">>(
+  function StudioIconButton({ type = "button", className = "", ...props }, ref) {
+    return <button {...props} type={type} ref={ref} data-studio-component="icon-button" className={`studio-icon-button ${className}`.trim()} />;
+  }
+);
+
 export const StudioInput = forwardRef<HTMLInputElement, ComponentPropsWithoutRef<"input">>(
   function StudioInput(props, ref) {
     return <input {...props} ref={ref} data-studio-component="input" />;
@@ -17,6 +71,16 @@ export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWith
     return <textarea {...props} ref={ref} data-studio-component="textarea" />;
   }
 );
+
+export type StudioStatusTone = "live" | "ready" | "draft" | "inactive" | "retired" | "archived" | "error" | "unknown";
+export function StudioStatusBadge({ children, tone, title, className = "" }: {
+  children: ReactNode;
+  tone: StudioStatusTone;
+  title?: string;
+  className?: string;
+}) {
+  return <span className={`studio-status-badge status-${tone} ${className}`.trim()} title={title}>{children}</span>;
+}
 
 /** Tabs switch a content panel. Arrow keys move focus; Enter/Space selects. */
 export function StudioTabs<T extends string>({ label, tabs, value, onValueChange, children, hidden = false }: {

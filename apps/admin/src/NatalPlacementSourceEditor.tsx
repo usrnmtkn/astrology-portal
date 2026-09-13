@@ -37,7 +37,7 @@ export default function NatalPlacementSourceEditor({ row, label, disabled, onDir
     try {
       if (await onSave(edits ? baseline : row, fields, publish)) {
         setEdits(null);
-        setFeedback(publish ? "Published. The reader preview will refresh." : "Draft saved · Not live");
+        setFeedback(publish ? "Published. The reader preview will refresh." : "Draft saved.");
       } else {
         setFeedback("Could not save. Your edits are still here; check the error notification for details.");
       }
