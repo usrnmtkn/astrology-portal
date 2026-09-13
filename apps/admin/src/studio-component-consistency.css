@@ -1,6 +1,7 @@
-/* Shared Content Studio component treatments. Visual values come from the global design-system tokens. */
+/* Shared Content Studio component treatments. Visual values come from the
+   reviewed Studio token system; text controls use the Studio UI sans. */
 
-/* All visible close controls use one icon-button contract. Backdrop dismiss targets stay invisible. */
+/* Visible close controls use one icon-button contract. Backdrop dismiss targets stay invisible. */
 #root .admin-dashboard :is(
   .studio-icon-button,
   .admin-editor-close,
@@ -47,11 +48,11 @@
   border: var(--border-width-thin) solid var(--workspace-line);
   border-radius: var(--workspace-control-radius);
   display: inline-flex;
-  font-family: var(--font-label);
+  font-family: var(--font-body);
   font-size: var(--type-meta-size);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
-  line-height: var(--leading-label);
+  line-height: var(--leading-meta);
   min-height: var(--studio-chip-height);
   padding: var(--workspace-tag-padding);
   text-transform: none;
@@ -88,14 +89,14 @@
   color: var(--workspace-danger);
 }
 
-/* Legacy status wrappers inherit the same geometry until all callers migrate. */
+/* Legacy status wrappers keep the same geometry until their call sites migrate. */
 #root .admin-dashboard :is(.ui-pill.admin-status, .admin-table-tag.status-live, .admin-table-tag.status-draft) {
   border-radius: var(--workspace-control-radius);
-  font-family: var(--font-label);
+  font-family: var(--font-body);
   font-size: var(--type-meta-size);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
-  line-height: var(--leading-label);
+  line-height: var(--leading-meta);
   text-transform: none;
 }
 
