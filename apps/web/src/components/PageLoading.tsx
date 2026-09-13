@@ -1,7 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import "../styles/loading.css";
 
-const readerRecoverySessionKey = "tldrastro:reader-page-recovery";
+const readerRecoveryHistoryKey = "__tldrastroReaderPageRecovery";
 const readerRecoveryCooldownMs = 2 * 60 * 1000;
 const recoverableReaderHash = /^#\/?(?:you|sky|calendar|friends)(?:[/?]|$)/u;
 
@@ -22,20 +22,22 @@ function errorDetail(error: unknown) {
  * still points at an older hashed chunk. One guarded reload is safe on the
  * read-only reader surfaces and gives the browser the current HTML/chunk map.
  * Admin/report routes are deliberately excluded so unsaved editor work is not
- * discarded. The route-level timestamp prevents reload loops for real bugs.
+ * discarded. The history-entry timestamp survives one reload without leaking
+ * the recovery state into other tabs or future sessions.
  */
 function reloadReaderRouteOnce() {
   if (!readerRecoveryRoute()) return false;
   const route = `${window.location.pathname}${window.location.hash}`;
   const now = Date.now();
   try {
-    const previous = JSON.parse(window.sessionStorage.getItem(readerRecoverySessionKey) ?? "null") as { route?: unknown; at?: unknown } | null;
+    const historyState = window.history.state && typeof window.history.state === "object" ? window.history.state as Record<string, unknown> : {};
+    const previous = historyState[readerRecoveryHistoryKey] as { route?: unknown; at?: unknown } | undefined;
     if (previous?.route === route && typeof previous.at === "number" && now - previous.at < readerRecoveryCooldownMs) {
       return false;
     }
-    window.sessionStorage.setItem(readerRecoverySessionKey, JSON.stringify({ route, at: now }));
+    window.history.replaceState({ ...historyState, [readerRecoveryHistoryKey]: { route, at: now } }, "", window.location.href);
   } catch {
-    // Without storage there is no reliable loop guard, so keep recovery manual.
+    // Without a reliable loop guard, keep recovery manual.
     return false;
   }
   window.location.reload();
