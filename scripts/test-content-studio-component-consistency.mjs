@@ -80,6 +80,6 @@ for (const token of [
 ]) assert.ok(css.includes(`var(${token})`), `Shared Content Studio components must consume ${token}.`);
 
 assert.doesNotMatch(css, /#[0-9a-f]{3,8}\b/iu, "Component consistency CSS must not introduce raw colors.");
-assert.doesNotMatch(css, /font-family:\s*(?:\"|'|ui-|system-ui)/u, "Component consistency CSS must use Design System font tokens.");
+assert.doesNotMatch(css, /font-family:\s*(?:"|'|ui-|system-ui)/u, "Component consistency CSS must use Design System font tokens.");
 
 console.log("Content Studio component consistency contract passed.");
