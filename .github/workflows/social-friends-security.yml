@@ -142,8 +142,13 @@ on:
       - "vercel.json"
       - ".github/workflows/social-friends-security.yml"
 
+concurrency:
+  group: social-friends-security-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   social-contract:
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'Merge PR #')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -171,6 +176,7 @@ jobs:
       - run: npm run build:web
 
   database-authorization:
+    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'Merge PR #')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
