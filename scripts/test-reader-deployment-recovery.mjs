@@ -14,7 +14,7 @@ for (const source of [startup, boundary]) {
   assert.match(source, /__tldrastroReaderPageRecovery/u, "Reader recovery must use one shared history-state guard.");
   assert.match(source, /2 \* 60 \* 1000/u, "Reader recovery must be cooldown guarded so a real bug cannot reload-loop.");
   assert.match(source, /you\|sky\|calendar\|friends/u, "Reader recovery must cover the primary hash routes.");
-  assert.match(source, /pathname[^\n]*=== "\/"/u, "Automatic recovery must stay on the reader root and exclude admin/report routes.");
+  assert.match(source, /pathname[^\n]*(?:===|!==) "\/"/u, "Automatic recovery must stay on the reader root and exclude admin/report routes.");
   assert.match(source, /history\.replaceState/u, "Automatic recovery must be tab-local and survive the one reload it initiates.");
   assert.doesNotMatch(source, /sessionStorage/u, "Reader recovery must not consume the session-storage namespace used by app state.");
 }
