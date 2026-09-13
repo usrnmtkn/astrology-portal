@@ -2,6 +2,7 @@ import { useState } from "react";
 import { StudioButton, StudioTabs } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
+import EmptyHouseReaderPreview from "./EmptyHouseReaderPreview";
 import NatalPlacementSourceEditor, { type NatalEditableRow, type NatalSourceEdits } from "./NatalPlacementSourceEditor";
 import NatalPlacementReaderPreview, { natalPlacementOverrideDraft } from "./NatalPlacementReaderPreview";
 import { natalPlacementReaderHref, openContextualReaderHref } from "./adminReaderDestinations";
@@ -296,7 +297,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           <header className="admin-natal-source-group">
             <p className="admin-eyebrow">Empty houses</p>
             <h3>Choose the house, cusp sign, and where its ruler lands</h3>
-            <p>Content Studio shows only the source writing used by that empty-house reading, in the same order the meaning is assembled.</p>
+            <p>The full reader assembly and the source list below update with the selected context.</p>
           </header>
           <div className="admin-natal-placement-selectors" aria-label="Empty house context">
             <label>
@@ -322,14 +323,23 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               </AdminSelect>
             </label>
           </div>
-          <article className="admin-natal-source-card admin-natal-source-complete" aria-label="Selected empty house context">
-            <div className="admin-natal-source-card-copy">
-              <p className="admin-eyebrow">Selected reading</p>
-              <h4>{ordinalHouseLabel(emptyHouse)} in {titleFromKey(emptyHouseSign)}</h4>
-              <p><strong>{titleFromKey(emptyHouseRuler)}</strong> rules the cusp and lands in the <strong>{ordinalHouseLabel(emptyHouseRulerHouse)}</strong>.</p>
-              <p className="admin-field-hint">The source list below updates with this context. You do not need to search the full Content Library for each piece.</p>
-            </div>
-          </article>
+          <div className="admin-empty-house-context-summary" aria-label="Selected empty house context">
+            <p className="admin-eyebrow">Selected reading</p>
+            <h4>{ordinalHouseLabel(emptyHouse)} in {titleFromKey(emptyHouseSign)}</h4>
+            <p><strong>{titleFromKey(emptyHouseRuler)}</strong> rules the cusp and lands in the <strong>{ordinalHouseLabel(emptyHouseRulerHouse)}</strong>.</p>
+          </div>
+          <EmptyHouseReaderPreview
+            house={emptyHouse}
+            onOpenSource={onOpenSource}
+            rulerHouse={emptyHouseRulerHouse}
+            sign={emptyHouseSign}
+          />
+          <section className="admin-natal-source-group" aria-label="Sources used by the selected empty house assembly">
+            <header>
+              <h3>Edit the assembly sources</h3>
+              <p>These are the exact passages, vocabulary, and template pieces used to build the preview above.</p>
+            </header>
+          </section>
           {emptyHouseGroups.map((group) => (
             <section className="admin-natal-source-group" key={`empty-house/${emptyHouse}/${emptyHouseSign}/${emptyHouseRulerHouse}/${group.id}`}>
               <header><h3>{group.label}</h3><p>{group.description}</p></header>
