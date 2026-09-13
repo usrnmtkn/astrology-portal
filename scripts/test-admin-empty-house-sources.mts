@@ -6,7 +6,10 @@ import {createFallbackRenderer} from '../apps/web/src/content/fallbackArchitectu
 import fs from 'node:fs';
 const root='apps/web/src/content/fallbackArchitectureV3/';
 const renderer=createFallbackRenderer(JSON.parse(fs.readFileSync(root+'templates/fallback-templates-v3.json','utf8')),JSON.parse(fs.readFileSync(root+'source-rows/fallback-source-rows-v3.json','utf8')));
-const rulerSystem='modern';
+const rulerSystem='traditional';
+assert.equal(emptyHouseRulers.scorpio,'mars');
+assert.equal(emptyHouseRulers.aquarius,'saturn');
+assert.equal(emptyHouseRulers.pisces,'jupiter');
 for(let house=1;house<=12;house++) for(const sign of Object.keys(emptyHouseRulers)) for(let rulerHouse=1;rulerHouse<=12;rulerHouse++) {
  if(house===rulerHouse)continue;
  const keys=emptyHouseSourceKeys(house,sign,rulerHouse);
@@ -16,4 +19,4 @@ for(let house=1;house<=12;house++) for(const sign of Object.keys(emptyHouseRuler
  assert.equal(compositionSourcesForSurface('natal-empty-house',rows,[]).length,rows.length);
 }
 assert.deepEqual(emptyHouseSourceKeys(1,'gemini',1),[]);
-console.log('PASS empty-house source selectors match the reader for every valid house/sign/ruler-house in the current modern-ruler reader');
+console.log('PASS empty-house source selectors match the reader for every valid house/sign/ruler-house using traditional rulers');
