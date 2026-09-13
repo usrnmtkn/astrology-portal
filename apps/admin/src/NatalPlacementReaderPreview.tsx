@@ -2,6 +2,7 @@ import { StudioButton } from "./StudioControls";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
+import "./natal-reader-preview.css";
 import {
   natalPlacementExactKey,
   natalPlacementLabel,
@@ -237,6 +238,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
       <header>
         <div>
           <h3>{audience === "they" ? "What a friend sees" : "What you see"}</h3>
+          <p className="admin-field-hint">Each section is shown as reader copy. Use the edit action under a section to open its source.</p>
         </div>
         <div className="admin-composition-preview-audience" role="group" aria-label="Natal preview audience">
           <StudioButton type="button" aria-pressed={audience === "you"} className={audience === "you" ? "active" : ""} onClick={() => setAudience("you")}>You</StudioButton>
@@ -254,16 +256,21 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
               const contentKey = preview.rendered?.partKeys?.[index] ?? preview.rendered?.templateKey ?? "";
               const sectionLabel = sourceLabel(contentKey);
               return (
-                <StudioButton
-                  type="button"
+                <article
                   className={`admin-natal-reader-preview-part variable-${index % 2 === 0 ? "hook" : "phrase"}`}
                   key={`${contentKey}-${index}`}
-                  onClick={() => contentKey && onOpenSource(contentKey, sectionLabel, contentKey.startsWith("fallback-template/"))}
-                  title={contentKey ? `Open ${sectionLabel.toLowerCase()}` : undefined}
                 >
-                  {part}
-                  {contentKey && <small>Open {sectionLabel.toLowerCase()} →</small>}
-                </StudioButton>
+                  <p>{part}</p>
+                  {contentKey && (
+                    <StudioButton
+                      type="button"
+                      className="admin-natal-reader-preview-part-action"
+                      onClick={() => onOpenSource(contentKey, sectionLabel, contentKey.startsWith("fallback-template/"))}
+                    >
+                      Edit {sectionLabel.toLowerCase()}
+                    </StudioButton>
+                  )}
+                </article>
               );
             })}
           </div>
