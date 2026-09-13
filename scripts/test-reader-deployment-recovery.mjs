@@ -9,6 +9,8 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const startup = fs.readFileSync(path.join(repoRoot, "apps/web/src/startup.js"), "utf8");
 const boundary = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/PageLoading.tsx"), "utf8");
 const vercel = fs.readFileSync(path.join(repoRoot, "vercel.json"), "utf8");
+const skySummary = fs.readFileSync(path.join(repoRoot, "apps/web/src/content/skyDailySummary.ts"), "utf8");
+const skySummaryCache = fs.readFileSync(path.join(repoRoot, "apps/web/src/content/skyDailySummaryPublishedCopyCache.ts"), "utf8");
 
 for (const source of [startup, boundary]) {
   assert.match(source, /__tldrastroReaderPageRecovery/u, "Reader recovery must use one shared history-state guard.");
@@ -20,11 +22,20 @@ for (const source of [startup, boundary]) {
 }
 
 assert.match(startup, /vite:preloadError/u, "Vite stale-chunk failures must have an automatic reader recovery path.");
-assert.match(startup, /script\?\.src\.includes\("\/assets\/"\)/u, "A stale hashed entry chunk must use the same reader recovery path.");
+assert.match(startup, /script\?\.src.includes\("\/assets\/"\)/u, "A stale hashed entry chunk must use the same reader recovery path.");
 assert.match(startup, /if \(reloadReaderRouteOnce\(\)\) return;/u, "Startup must reload the reader once before showing the terminal failure state.");
 assert.match(boundary, /componentDidCatch[\s\S]*reloadReaderRouteOnce\(\)/u, "Mounted reader render failures must get one guarded recovery attempt.");
 assert.match(boundary, /addEventListener\("vite:preloadError", this\.handlePreloadError\)/u, "Late lazy-chunk failures must be caught after React mounts.");
 assert.match(boundary, /<summary>Error details<\/summary>/u, "If recovery cannot fix the page, the local failure detail must remain inspectable.");
+
+// A published Daily Sky sentence must not flash a second bundled/factual version
+// while its exact Content Studio row is still hydrating.
+assert.match(skySummary, /pendingPublishedCopy\?\.add\(key\)/u, "Daily Sky must distinguish a pending live publication from an absent authored source.");
+assert.match(skySummary, /if \(!editorialPreview && pendingPublishedCopy\.size\) return \[\];/u, "Daily Sky must not render alternate summary wording while exact live copy is pending.");
+assert.match(skySummary, /cachedPublishedSkySummaryCopy/u, "Daily Sky must reuse only its guarded exact published copy during transient revalidation.");
+assert.match(skySummaryCache, /entry\.revision === publication\.revision/u, "Daily Sky cache identity must include publication revision.");
+assert.match(skySummaryCache, /entry\.rowId === publication\.row_id/u, "Daily Sky cache identity must include serving row id.");
+assert.match(skySummaryCache, /publicationTimestamp\(left\) === publicationTimestamp\(right\)/u, "Daily Sky cache identity must preserve PostgreSQL microsecond row timestamps.");
 
 const vercelConfig = JSON.parse(vercel);
 assert.ok(Array.isArray(vercelConfig.headers), "Vercel must explicitly control HTML cache freshness.");
@@ -35,4 +46,4 @@ for (const route of ["/", "/index.html", "/admin/(.*)", "/reports/(.*)"]) {
   assert.match(cache, /no-store/u, `${route} must not retain a stale HTML/chunk map across deployments.`);
 }
 
-console.log("Reader deployment recovery contract passed.");
+console.log("Reader deployment recovery and Daily Sky hydration stability contract passed.");
