@@ -1,5 +1,6 @@
-/* Sky phrase values use the same spacing, surfaces, type, and controls as the
-   rest of Content Studio. Do not reintroduce the disconnected --admin-* token set. */
+/* Sky placement and phrase surfaces use the same spacing, surfaces, type, and
+   controls as the rest of Content Studio. Do not reintroduce the disconnected
+   --admin-* token set. */
 
 #root .admin-dashboard .admin-sky-phrase-list {
   background: var(--workspace-raised);
@@ -93,7 +94,92 @@
   overflow-wrap: anywhere;
 }
 
+/* The placement template used to inherit its rhythm only from the disconnected
+   legacy admin sheet. Give it an explicit Studio layout so template rows read
+   as sections instead of one continuous block of text. */
+#root .admin-dashboard .admin-sky-placement-template {
+  display: grid;
+  gap: var(--workspace-panel-inset);
+}
+
+#root .admin-dashboard .admin-sky-placement-template > ol {
+  margin: 0;
+  padding-inline-start: var(--workspace-card-padding);
+}
+
+#root .admin-dashboard .admin-sky-placement-template > ol > li {
+  padding-block: var(--workspace-panel-inset);
+}
+
+#root .admin-dashboard .admin-sky-placement-template > ol > li + li {
+  border-top: var(--border-width-thin) solid var(--workspace-line);
+}
+
+#root .admin-dashboard .admin-sky-placement-template > ol > li > * + * {
+  margin-top: var(--workspace-field-gap);
+}
+
+#root .admin-dashboard .admin-sky-section-reference {
+  display: block;
+  max-width: 100%;
+  width: fit-content;
+}
+
+#root .admin-dashboard .admin-sky-template-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--workspace-panel-inset);
+  margin-top: var(--workspace-panel-inset);
+}
+
+#root .admin-dashboard .admin-sky-template-comparison > div {
+  background: var(--workspace-canvas);
+  border: var(--border-width-thin) solid var(--workspace-line);
+  border-radius: var(--workspace-control-radius);
+  display: grid;
+  gap: var(--workspace-field-gap);
+  padding: var(--workspace-panel-inset);
+}
+
+#root .admin-dashboard .admin-sky-template-comparison .admin-composition-source-copy {
+  max-width: 92ch;
+}
+
+#root .admin-dashboard .admin-sky-placement-sources {
+  display: grid;
+  gap: var(--workspace-control-inset);
+}
+
+#root .admin-dashboard .admin-sky-placement-sources > div {
+  align-items: center;
+  background: var(--workspace-raised);
+  border-radius: var(--workspace-control-radius);
+  display: grid;
+  gap: var(--workspace-field-gap) var(--workspace-panel-inset);
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: var(--workspace-panel-inset);
+}
+
+#root .admin-dashboard .admin-sky-placement-sources > div > p {
+  color: var(--workspace-muted);
+  grid-column: 1 / -1;
+}
+
+#root .admin-dashboard .admin-sky-placement-writing {
+  max-width: var(--studio-sheet-width);
+}
+
 /* The shared Studio button owns shape, height, padding, type, hover, and focus. */
 #root .admin-dashboard .admin-sky-phrase-edit {
   justify-self: start;
+}
+
+@media (max-width: 720px) {
+  #root .admin-dashboard .admin-sky-template-comparison {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #root .admin-dashboard .admin-sky-placement-sources > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
