@@ -51,23 +51,21 @@ export const SKY_WRITING_LIBRARY_GROUPS: SkyWritingLibraryGroup[] = [
   {
     id: "planet",
     label: "Planet language",
-    description: "Reusable writing about what this planet does. Existing approved vocabulary is copied in as a starting point; editing here changes this placement draft only.",
+    description: "Reusable planet language with one clear job per field. Descriptor is a phrase; function is the planet's lived meaning. Mythology lives separately under Planet lore / mythology.",
     fields: [
-      field("planetDescriptor", "Planet descriptor", "A short phrase that explains what the planet is associated with. Example: ‘Venus, the planet of love, pleasure, and values, describes how you relate, choose, and enjoy.’ Use it when that phrase helps an opening or explanatory sentence.", "planet", 2),
-      field("planetSummary", "Planet summary / lore", "A concise reusable explanation of the planet’s role, symbolism, or larger meaning.", "planet", 4),
-      field("planetFunction", "Planet function", "What the planet actually does in lived terms: the activity, need, or process it represents.", "planet", 4),
+      field("planetDescriptor", "Planet descriptor", "A short identifying phrase used inside another sentence. Example: ‘the planet of love, pleasure, and values’ in ‘Venus, the planet of love, pleasure, and values, describes how we relate and what we enjoy.’", "planet", 2),
+      field("planetFunction", "Planet function", "What the planet represents in lived terms: the activity, need, or process it describes. This is the reusable meaning field and should not repeat the descriptor or mythology.", "planet", 4),
       field("planetProductive", "Productive expression", "How this planet can operate constructively when its function has somewhere useful to go.", "planet", 4),
       field("planetShadow", "Planet shadow / excess", "What can happen when the same planetary function gets overused, distorted, or pushed too far.", "planet", 4),
-      field("planetCollectiveExpression", "Collective expression", "Optional larger cultural or collective expression. This is not auto-filled because it must belong to the exact article argument.", "planet", 4)
+      field("planetCollectiveExpression", "Collective expression", "Optional larger cultural or collective expression. Author it only when it belongs to the exact article argument.", "planet", 4)
     ]
   },
   {
     id: "sign",
     label: "Zodiac sign language",
-    description: "Reusable sign lore and method. Existing approved sign vocabulary is copied in as a starting point without turning the sign into its traditionally associated house.",
+    description: "Reusable sign language with distinct jobs. Descriptor is a phrase; core drive says what the sign wants; method says how it tends to go about it.",
     fields: [
-      field("signAppositive", "Sign appositive", "A compact sign phrase for explanatory sentences. Leave empty unless the wording is useful for this article.", "sign", 2),
-      field("signSummary", "Sign summary / lore", "A concise reusable description of the sign’s style or orientation.", "sign", 4),
+      field("signDescriptor", "Sign descriptor", "A short identifying phrase used inside another sentence. Example: ‘a cardinal fire sign’ in ‘Aries, a cardinal fire sign, tends to move toward what needs to begin.’", "sign", 2),
       field("signCoreDrive", "Core drive", "What the sign needs or keeps trying to establish.", "sign", 4),
       field("signMethod", "Method", "How the sign tends to approach problems, choices, change, or expression.", "sign", 4),
       field("signGift", "Gift", "What the sign tends to do constructively when its method is working.", "sign", 4),
@@ -78,7 +76,7 @@ export const SKY_WRITING_LIBRARY_GROUPS: SkyWritingLibraryGroup[] = [
   {
     id: "placement",
     label: "Planet × sign synthesis",
-    description: "The exact planet-in-sign layer. Existing approved TLDR and fallback copy prefill the fields that have a clean one-to-one source; the rest stay empty rather than being invented.",
+    description: "The exact planet-in-sign layer. Existing approved TLDR and fallback copy prefill fields only when there is a clean one-to-one source; the rest stay empty rather than being invented.",
     fields: [
       field("placementThesis", "Placement thesis", "The central argument for this exact planet in this exact sign. Prefilled from the existing TLDR What when available.", "placement", 4),
       field("placementOpportunity", "Opportunity", "What may become easier, more available, or more worth developing. Author this only when it is distinct from the existing takeaway.", "placement", 4),
@@ -93,7 +91,7 @@ export const SKY_WRITING_LIBRARY_GROUPS: SkyWritingLibraryGroup[] = [
   {
     id: "experiences",
     label: "Experience hooks",
-    description: "A bank of plausible manifestations. The existing fallback lived passage is preserved as General; add broader life-area hooks only when they genuinely fit the placement.",
+    description: "A bank of plausible manifestations. General preserves the existing lived passage; add broader life-area hooks only when they genuinely fit the placement.",
     fields: [
       field("experienceGeneral", "General", "Existing approved lived manifestation for this placement. Prefilled when one exists.", "placement", 3),
       field("experienceWork", "Work", "Workload, responsibility, leadership, deadlines, colleagues, or the structure of a workday.", "placement", 3),
@@ -119,9 +117,9 @@ export const SKY_WRITING_LIBRARY_GROUPS: SkyWritingLibraryGroup[] = [
   {
     id: "context",
     label: "Optional context blocks",
-    description: "Use only when the body or event actually benefits from this context. These stay empty unless the source contains a clean, governed block for the same job.",
+    description: "Background context that is different from the planet's everyday function. Use only when the article benefits from it.",
     fields: [
-      field("mythologySummary", "Mythology summary", "A concise mythic story or symbol that materially helps explain the body or placement.", "planet", 5),
+      field("planetLore", "Planet lore / mythology", "Mythic, historical, or symbolic background attached to the planet. Example: a concise account of the deity or story associated with the planet and why that symbolism matters here.", "planet", 5),
       field("astronomySummary", "Astronomy summary", "A concise factual explanation for unusual astronomical bodies or cycles when useful.", "planet", 5),
       field("historicalCallback", "Previous-cycle / historical callback", "Context from a prior comparable residency or cycle. Calculated dates still come from fact variables.", "placement", 5),
       field("returnMeaning", "Return meaning", "Reusable meaning for a supported return story when applicable.", "planet", 5)
@@ -130,7 +128,7 @@ export const SKY_WRITING_LIBRARY_GROUPS: SkyWritingLibraryGroup[] = [
   {
     id: "aspects",
     label: "Aspect writing",
-    description: "The existing defining-aspect sentence sources. They stay empty until a specific calculated aspect has been chosen and authored.",
+    description: "The defining-aspect sentence sources. They stay empty until a specific calculated aspect has been chosen and authored.",
     fields: [
       field("aspectMechanismSentence", "Aspect mechanism", "What the two bodies and aspect are doing together.", "aspect", 4),
       field("aspectManifestationSentence1", "Aspect manifestation 1", "One plausible lived or collective expression of the aspect.", "aspect", 4),
@@ -165,7 +163,7 @@ export const SKY_WRITING_LIBRARY_MODULES: SkyWritingLibraryModule[] = [
 ];
 
 export const SKY_WRITING_LIBRARY_FIELD_IDS = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields.map(item => item.id));
-const librarySentinels = ["planetSummary", "signSummary", "placementThesis", "experienceGeneral"];
+const librarySentinels = ["planetFunction", "signMethod", "placementThesis", "experienceGeneral", "planetSummary", "signSummary"];
 
 export function skyWritingLibraryInstalled(composition?: SkyWritingLibraryComposition | null) {
   return Boolean(composition && librarySentinels.some(id => Object.hasOwn(composition.sources, id)));
@@ -184,13 +182,11 @@ function recordSeedValues(source: RecordValue = {}) {
 }
 
 const sharedSeedSpecs = (planet: string, sign: string) => [
-  { id: "planetSummary", keys: [`fallback-vocab/planet-topic/${planet}`, `fallback-vocab/planet-function/${planet}`] },
-  { id: "planetFunction", keys: [`fallback-vocab/sky-planet-function/${planet}`, `fallback-vocab/planet-function/${planet}`] },
+  { id: "planetFunction", keys: [`fallback-vocab/planet-function/${planet}`, `fallback-vocab/sky-planet-function/${planet}`] },
   { id: "planetProductive", keys: [`fallback-vocab/planet-productive/${planet}`] },
   { id: "planetShadow", keys: [`fallback-vocab/planet-excess/${planet}`] },
-  { id: "signSummary", keys: [`fallback-vocab/sign-style/${sign}`, `fallback-vocab/sky-sign-style/${sign}`] },
   { id: "signCoreDrive", keys: [`fallback-vocab/sign-need/${sign}`] },
-  { id: "signMethod", keys: [`fallback-vocab/sky-sign-style/${sign}`, `fallback-vocab/sign-style/${sign}`] },
+  { id: "signMethod", keys: [`fallback-vocab/sign-style/${sign}`, `fallback-vocab/sky-sign-style/${sign}`] },
   { id: "signGift", keys: [`fallback-vocab/sign-does/${sign}`] },
   { id: "signShadow", keys: [`fallback-hook/sky-sign-trap/${sign}`] }
 ];
@@ -228,8 +224,16 @@ export async function loadSkyWritingLibrarySeeds(source: RecordValue, planet: st
 
 export function installSkyWritingLibrary(composition: SkyWritingLibraryComposition, seeds: Record<string, string> = {}): SkyWritingLibraryComposition {
   const next = structuredClone(composition);
+
+  // Preserve existing drafts while moving unclear legacy names behind the new,
+  // reader-friendly field vocabulary. Legacy keys remain untouched for rollback.
   const legacyPlanetDescriptor = next.sources.planetAppositive;
   if (!next.sources.planetDescriptor && legacyPlanetDescriptor) next.sources.planetDescriptor = structuredClone(legacyPlanetDescriptor);
+  const legacySignDescriptor = next.sources.signAppositive;
+  if (!next.sources.signDescriptor && legacySignDescriptor) next.sources.signDescriptor = structuredClone(legacySignDescriptor);
+  const legacyPlanetLore = next.sources.mythologySummary;
+  if (!next.sources.planetLore && legacyPlanetLore) next.sources.planetLore = structuredClone(legacyPlanetLore);
+
   for (const group of SKY_WRITING_LIBRARY_GROUPS) {
     for (const item of group.fields) {
       const seed = text(seeds[item.id]);
