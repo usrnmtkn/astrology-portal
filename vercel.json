@@ -17,6 +17,10 @@
   },
   "rewrites": [
     {
+      "source": "/api/admin/review-records",
+      "destination": "/api/admin/review-records-fast"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
