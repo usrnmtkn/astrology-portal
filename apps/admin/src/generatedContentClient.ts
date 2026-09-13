@@ -68,6 +68,24 @@ export async function readGeneratedContentRows(path: string, secret: string, sig
   throw new Error("Content Studio inventory exceeded the page limit. Narrow the selection before editing.");
 }
 
+function submittedDraftFields(draftSections: Record<string, unknown>) {
+  return Object.fromEntries(Object.entries(draftSections).filter(([key]) => key === "packageDraft" || key === "skyFallbackVariantFamilyDraft"));
+}
+
+function saveMayHaveCompleted(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  return /(?:timed out|timeout|408|interrupted|late response|not been confirmed)/iu.test(message);
+}
+
+async function verifyTimedOutSave(row: GeneratedContentEditorRow, draftSections: Record<string, unknown>, secret: string) {
+  const path = `/api/admin/generated-content?contentKey=${encodeURIComponent(row.content_key)}&status=DRAFT&visibility=all&limit=10`;
+  const payload = await request(path, secret);
+  const submitted = submittedDraftFields(draftSections);
+  return rowsFromPayload(payload)
+    .filter((candidate) => candidate.content_key === row.content_key && candidate.updated_at)
+    .find((candidate) => containsSubmittedFields(candidate.sections, submitted)) ?? null;
+}
+
 export async function saveGeneratedContentDraft(row: GeneratedContentEditorRow, sections: Record<string, unknown>, secret: string) {
   if (!row.updated_at || row.id.startsWith("package:")) {
     throw new Error("Open a saved Content Library draft before using this editor.");
@@ -80,14 +98,28 @@ export async function saveGeneratedContentDraft(row: GeneratedContentEditorRow, 
     delete draftSections.packageDraft.serving_enabled;
     delete draftSections.packageDraft.review_status;
   }
-  const payload = await request("/api/admin/generated-content", secret, {
-    method: "PATCH",
-    body: JSON.stringify({ id: row.id, expectedUpdatedAt: row.updated_at, sections: draftSections, reviewStatus: "needs_review" })
-  });
+
+  let payload: Record<string, unknown>;
+  try {
+    payload = await request("/api/admin/generated-content", secret, {
+      method: "PATCH",
+      body: JSON.stringify({ id: row.id, expectedUpdatedAt: row.updated_at, sections: draftSections, reviewStatus: "needs_review" })
+    });
+  } catch (error) {
+    if (!saveMayHaveCompleted(error)) throw error;
+    try {
+      const verified = await verifyTimedOutSave(row, draftSections, secret);
+      if (verified) return verified;
+    } catch {
+      // Keep the original timeout as the useful error. Never issue a second write.
+    }
+    throw error;
+  }
+
   const saved = rowsFromPayload(payload);
   // A live baseline can fork a new draft id. The content identity must stay fixed.
   if (saved.length !== 1 || saved[0].content_key !== row.content_key || !saved[0].updated_at
-    || !containsSubmittedFields(saved[0].sections, Object.fromEntries(Object.entries(draftSections).filter(([key]) => key === "packageDraft" || key === "skyFallbackVariantFamilyDraft")))) {
+    || !containsSubmittedFields(saved[0].sections, submittedDraftFields(draftSections))) {
     throw new Error("The API did not confirm the saved draft. Reload before retrying.");
   }
   return saved[0];
