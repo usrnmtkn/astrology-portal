@@ -2,14 +2,20 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const controls = fs.readFileSync(new URL("../apps/admin/src/StudioControls.tsx", import.meta.url), "utf8");
-const css = fs.readFileSync(new URL("../apps/admin/src/studio-component-consistency.css", import.meta.url), "utf8");
-const status = fs.readFileSync(new URL("../apps/admin/src/ContentLiveStatus.tsx", import.meta.url), "utf8");
-const rail = fs.readFileSync(new URL("../apps/admin/src/TemplateVariablesRail.tsx", import.meta.url), "utf8");
-const returnFlow = fs.readFileSync(new URL("../apps/admin/src/studioEditorReturn.ts", import.meta.url), "utf8");
-const natalEditor = fs.readFileSync(new URL("../apps/admin/src/NatalPlacementSourceEditor.tsx", import.meta.url), "utf8");
-const attention = fs.readFileSync(new URL("../apps/admin/src/NeedsAttentionDashboard.tsx", import.meta.url), "utf8");
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const adminSrc = path.join(repoRoot, "apps/admin/src");
+const readAdmin = (name) => fs.readFileSync(path.join(adminSrc, name), "utf8");
+const controls = readAdmin("StudioControls.tsx");
+const css = readAdmin("studio-component-consistency.css");
+const status = readAdmin("ContentLiveStatus.tsx");
+const aspectPatterns = readAdmin("AspectPatternWriteups.tsx");
+const rail = readAdmin("TemplateVariablesRail.tsx");
+const returnFlow = readAdmin("studioEditorReturn.ts");
+const natalEditor = readAdmin("NatalPlacementSourceEditor.tsx");
+const attention = readAdmin("NeedsAttentionDashboard.tsx");
 
 assert.match(controls, /import "\.\/studio-component-consistency\.css";/u);
 assert.match(controls, /StudioIconButton/u);
@@ -31,6 +37,29 @@ for (const label of ["Live", "Ready", "Draft", "Inactive", "Archived", "Retired"
 assert.doesNotMatch(status, />\{status\.label\}</u, "The raw Live/Not live transport label must not be shown directly.");
 assert.doesNotMatch(natalEditor, /Draft saved · Not live/u, "Draft feedback must not invent a second publication-status vocabulary.");
 assert.doesNotMatch(attention, /label: "Not live"/u, "Needs Attention must describe unwired content by its actual condition.");
+
+// The backend transport still calls a false live-status result "Not live". Keep
+// that transport wording isolated to its adapter and the one legacy Aspect
+// Pattern row that is normalized by StudioButton. Any new occurrence anywhere
+// else in Content Studio fails the deployment build instead of resurfacing in UI.
+function adminSourceFiles(dir) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const absolute = path.join(dir, entry.name);
+    if (entry.isDirectory()) return adminSourceFiles(absolute);
+    return /\.(?:ts|tsx)$/u.test(entry.name) ? [absolute] : [];
+  });
+}
+const notLiveFiles = adminSourceFiles(adminSrc)
+  .filter((file) => fs.readFileSync(file, "utf8").includes("Not live"))
+  .map((file) => path.relative(adminSrc, file).replaceAll(path.sep, "/"))
+  .sort();
+assert.deepEqual(
+  notLiveFiles,
+  ["AspectPatternWriteups.tsx", "ContentLiveStatus.tsx"],
+  "No new Content Studio source may introduce the legacy Not live vocabulary. Use the canonical status components."
+);
+assert.equal((status.match(/Not live/gu) ?? []).length, 2, "ContentLiveStatus may contain Not live only in its transport type/validator, never presentation.");
+assert.equal((aspectPatterns.match(/Not live/gu) ?? []).length, 1, "Aspect Patterns has one legacy transport-facing label and StudioButton must normalize it to Inactive.");
 
 assert.match(css, /\.studio-icon-button/u);
 assert.match(css, /\.admin-editor-close/u);
