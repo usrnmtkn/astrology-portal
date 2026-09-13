@@ -1,9 +1,11 @@
-import { StudioButton } from "./StudioControls";
+import { useState } from "react";
+import { StudioButton, StudioTabs } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import NatalPlacementSourceEditor, { type NatalEditableRow, type NatalSourceEdits } from "./NatalPlacementSourceEditor";
 import NatalPlacementReaderPreview, { natalPlacementOverrideDraft } from "./NatalPlacementReaderPreview";
 import { natalPlacementReaderHref, openContextualReaderHref } from "./adminReaderDestinations";
+import { emptyHouseRulers, emptyHouseSourceKeys } from "./emptyHouseSources";
 import {
   natalPlacementHouses,
   natalPlacementLabel,
@@ -44,6 +46,15 @@ type Props = {
   sign: NatalPlacementSign | "";
 };
 
+type NatalChartWritingView = "placements" | "empty-houses";
+
+type EmptyHouseSourceGroup = {
+  id: string;
+  label: string;
+  description: string;
+  keys: string[];
+};
+
 export { natalPlacementOverrideDraft };
 
 function titleFromKey(value: string) {
@@ -54,8 +65,42 @@ function normalizeText(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function ordinalHouseLabel(value: number) {
+  const mod100 = value % 100;
+  const suffix = mod100 >= 11 && mod100 <= 13 ? "th" : value % 10 === 1 ? "st" : value % 10 === 2 ? "nd" : value % 10 === 3 ? "rd" : "th";
+  return `${value}${suffix} house`;
+}
+
+function emptyHouseSourceLabel(key: string, house: number, sign: string, ruler: string, rulerHouse: number) {
+  if (key === `fallback-hook/empty-house/base/${house}`) return `${ordinalHouseLabel(house)} foundation`;
+  if (key === `fallback-hook/empty-house/sign/${house}/${sign}`) return `${titleFromKey(sign)} on the ${ordinalHouseLabel(house)}`;
+  if (key.includes("/rising-ruler/")) return `Chart ruler: ${titleFromKey(ruler)} in the ${ordinalHouseLabel(rulerHouse)}`;
+  if (key.includes("/ruler-planet/")) return `${titleFromKey(ruler)} ruling the ${ordinalHouseLabel(house)}`;
+  if (key.includes("/ruler-house/")) return `Ruler in the ${ordinalHouseLabel(rulerHouse)}`;
+  if (key.includes("/bridge-template/")) return "House-to-ruler bridge";
+  if (key.includes("empty-house-ruler-jurisdiction")) return `${ordinalHouseLabel(rulerHouse)} life area`;
+  if (key.includes("empty-house-bridge-topic-short")) return `${ordinalHouseLabel(house)} bridge topic`;
+  if (key === "fallback-template/natal.empty-house-v14") return "Empty-house assembly template";
+  return titleFromKey(key.split("/").pop() ?? key);
+}
+
+function emptyHouseSourceScope(key: string) {
+  if (key.includes("/base/")) return "The house meaning that stays the same regardless of the cusp sign.";
+  if (key.includes("/sign/")) return "How the cusp sign changes the way this house is approached.";
+  if (key.includes("/rising-ruler/") || key.includes("/ruler-planet/")) return "The planet that rules the cusp sign and carries the house story elsewhere in the chart.";
+  if (key.includes("/ruler-house/")) return "How the ruler's house placement redirects the empty-house topic.";
+  if (key.includes("/bridge-template/")) return "The sentence structure that connects the empty house to its ruler placement.";
+  if (key.includes("ruler-jurisdiction")) return "Reusable language for the life area where the ruler lands.";
+  if (key.includes("bridge-topic-short")) return "Short reusable language for the empty-house topic.";
+  if (key.startsWith("fallback-template/")) return "The complete assembly structure used by the empty-house renderer.";
+  return "Reusable empty-house source writing.";
+}
 
 export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onDirtyChange, onSaveSource, onOpenSource, onSelectionChange, planet, rows, secret, sign }: Props) {
+  const [view, setView] = useState<NatalChartWritingView>("placements");
+  const [emptyHouse, setEmptyHouse] = useState(1);
+  const [emptyHouseSign, setEmptyHouseSign] = useState("aries");
+  const [emptyHouseRulerHouse, setEmptyHouseRulerHouse] = useState(2);
   const selectionKey = `${planet}/${sign}/${house}/${motion}`;
   const signSelectionComplete = Boolean(planet && sign);
   const fullSelectionComplete = Boolean(signSelectionComplete && house);
@@ -65,6 +110,34 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
   const groups = signSelectionComplete
     ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house, motion)
     : [];
+  const emptyHouseRuler = emptyHouseRulers[emptyHouseSign] ?? "";
+  const emptyHouseKeys = emptyHouseSourceKeys(emptyHouse, emptyHouseSign, emptyHouseRulerHouse);
+  const emptyHouseGroups: EmptyHouseSourceGroup[] = [
+    {
+      id: "meaning",
+      label: "House meaning",
+      description: "Start with the house itself, then add the cusp sign. These two sources establish what the empty house is about and how the person approaches it.",
+      keys: emptyHouseKeys.filter((key) => key.includes("/base/") || key.includes("/sign/"))
+    },
+    {
+      id: "ruler",
+      label: "Follow the ruler",
+      description: `The ${titleFromKey(emptyHouseSign)} cusp is ruled by ${titleFromKey(emptyHouseRuler)}. These sources show where that house story goes when ${titleFromKey(emptyHouseRuler)} lands in the ${ordinalHouseLabel(emptyHouseRulerHouse)}.`,
+      keys: emptyHouseKeys.filter((key) => key.includes("/rising-ruler/") || key.includes("/ruler-planet/") || key.includes("/ruler-house/"))
+    },
+    {
+      id: "bridge",
+      label: "Connection language",
+      description: "These shared pieces connect the house topic to the ruler's house without repeating the same explanation in every combination.",
+      keys: emptyHouseKeys.filter((key) => key.includes("/bridge-template/") || key.includes("empty-house-ruler-jurisdiction") || key.includes("empty-house-bridge-topic-short"))
+    },
+    {
+      id: "template",
+      label: "Assembly template",
+      description: "The final template controls how the selected pieces are assembled into the empty-house reading.",
+      keys: emptyHouseKeys.filter((key) => key.startsWith("fallback-template/"))
+    }
+  ].filter((group) => group.keys.length > 0);
 
   const renderSource = (source: ReturnType<typeof natalPlacementSourceGroups>[number]["sources"][number], previewTemplate = false) => {
     if (source.key.startsWith("fallback-template/natal.planet-in-sign/") && !rows.some((row) => row.content_key === source.key)) {
@@ -108,85 +181,163 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
     );
   };
 
-  return (
-    <section className="admin-natal-placement-finder" aria-label="Find natal placement source writing">
-      <h2 className="sr-only">Natal placement</h2>
-      {fullSelectionComplete && (
-        <div className="admin-natal-placement-finder-heading">
-          <StudioButton type="button" onClick={() => openContextualReaderHref(readerHref)}
-            aria-label={`View ${natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse)} in app`}>
-            View in app
-          </StudioButton>
+  const renderEmptyHouseSource = (contentKey: string) => {
+    const savedRow = rows.find((row) => row.content_key === contentKey);
+    const label = emptyHouseSourceLabel(contentKey, emptyHouse, emptyHouseSign, emptyHouseRuler, emptyHouseRulerHouse);
+    const preview = savedRow ? normalizeText(savedRow.body) || normalizeText(savedRow.summary) || normalizeText(savedRow.headline) : "";
+    return (
+      <article className="admin-natal-source-card" key={contentKey}>
+        <div className="admin-natal-source-card-copy">
+          <div className="admin-natal-source-card-heading">
+            <h4>{label}</h4>
+            {savedRow && <ContentLiveStatusBadge row={savedRow} />}
+          </div>
+          <p>{emptyHouseSourceScope(contentKey)}</p>
+          <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>
+          {preview ? <blockquote>{preview}</blockquote> : <p className="admin-field-hint">Open this source to load or author its writing.</p>}
         </div>
-      )}
-      <div className="admin-natal-placement-selectors">
-        <label>
-          <span>Planet or point</span>
-          <AdminSelect
-            aria-label="Natal placement planet or point"
-            value={planet}
-            onChange={(event) => {
-              const nextPlanet = event.target.value as NatalPlacementPlanet | "";
-              onSelectionChange({
-                planet: nextPlanet,
-                ...((nextPlanet === "sun" || nextPlanet === "moon") ? { motion: "direct" as const } : {})
-              });
-            }}
-          >
-            <option value="">Choose planet or point</option>
-            {natalPlacementPlanets.map((item) => <option value={item} key={item}>{titleFromKey(item)}</option>)}
-          </AdminSelect>
-        </label>
-        <label>
-          <span>Zodiac sign</span>
-          <AdminSelect aria-label="Natal placement zodiac sign" value={sign} onChange={(event) => onSelectionChange({ sign: event.target.value as NatalPlacementSign | "" })}>
-            <option value="">Choose sign</option>
-            {natalPlacementSigns.map((item) => <option value={item} key={item}>{titleFromKey(item)}</option>)}
-          </AdminSelect>
-        </label>
-        <label>
-          <span>House (optional)</span>
-          <AdminSelect aria-label="Natal placement house" value={house} onChange={(event) => onSelectionChange({ house: event.target.value as NatalPlacementHouse | "" })}>
-            <option value="">Choose house</option>
-            {natalPlacementHouses.map((item) => <option value={item} key={item}>{item}</option>)}
-          </AdminSelect>
-        </label>
-        <label>
-          <span>Motion preview</span>
-          <AdminSelect aria-label="Natal placement motion" value={motion} onChange={(event) => onSelectionChange({ motion: event.target.value as NatalPlacementMotion })}>
-            {natalPlacementMotions.map((item) => (
-              <option value={item} key={item} disabled={item === "retrograde" && (planet === "sun" || planet === "moon")}>
-                {titleFromKey(item)}{item === "retrograde" && (planet === "sun" || planet === "moon") ? " (not possible)" : ""}
-              </option>
-            ))}
-          </AdminSelect>
-        </label>
-      </div>
-      {signSelectionComplete && (
-        <NatalPlacementReaderPreview
-          key={selectionKey}
-          house={house}
-          motion={motion}
-          onCreateOverride={onCreateOverride}
-          onOpenSource={onOpenSource}
-          planet={planet as NatalPlacementPlanet}
-          rows={rows}
-          secret={secret}
-          sign={sign as NatalPlacementSign}
-        />
-      )}
-      {groups.filter((group) => group.key !== "structure").map((group) => (
-        <section className="admin-natal-source-group" key={`${selectionKey}/${group.key}`}>
-          <header><h3>{group.label}</h3><p>{group.description}</p></header>
-          <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source))}</div>
-        </section>
-      ))}
-      {groups.filter((group) => group.key === "structure").map((group) => (
-        <details className="admin-workspace-details admin-natal-source-group admin-natal-source-advanced" key={`${selectionKey}/${group.key}`}>
-          <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary><p>{group.description}</p>
-          <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source, true))}</div>
-        </details>
-      ))}
+        <StudioButton type="button" disabled={isLoading} onClick={() => onOpenSource(contentKey, label, contentKey.startsWith("fallback-template/"))}>
+          {savedRow?.inventory_only ? "Load and edit" : savedRow ? "Edit source" : "Load and edit"}
+        </StudioButton>
+      </article>
+    );
+  };
+
+  return (
+    <section className="admin-natal-placement-finder" aria-label="Find natal chart source writing">
+      <h2 className="sr-only">Natal chart writing</h2>
+      <StudioTabs
+        label="Natal Chart writing areas"
+        value={view}
+        onValueChange={setView}
+        tabs={[
+          { value: "placements", label: "Planet placements" },
+          { value: "empty-houses", label: "Empty houses" }
+        ] as const}
+      >
+        {view === "placements" ? <>
+          {fullSelectionComplete && (
+            <div className="admin-natal-placement-finder-heading">
+              <StudioButton type="button" onClick={() => openContextualReaderHref(readerHref)}
+                aria-label={`View ${natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse)} in app`}>
+                View in app
+              </StudioButton>
+            </div>
+          )}
+          <div className="admin-natal-placement-selectors">
+            <label>
+              <span>Planet or point</span>
+              <AdminSelect
+                aria-label="Natal placement planet or point"
+                value={planet}
+                onChange={(event) => {
+                  const nextPlanet = event.target.value as NatalPlacementPlanet | "";
+                  onSelectionChange({
+                    planet: nextPlanet,
+                    ...((nextPlanet === "sun" || nextPlanet === "moon") ? { motion: "direct" as const } : {})
+                  });
+                }}
+              >
+                <option value="">Choose planet or point</option>
+                {natalPlacementPlanets.map((item) => <option value={item} key={item}>{titleFromKey(item)}</option>)}
+              </AdminSelect>
+            </label>
+            <label>
+              <span>Zodiac sign</span>
+              <AdminSelect aria-label="Natal placement zodiac sign" value={sign} onChange={(event) => onSelectionChange({ sign: event.target.value as NatalPlacementSign | "" })}>
+                <option value="">Choose sign</option>
+                {natalPlacementSigns.map((item) => <option value={item} key={item}>{titleFromKey(item)}</option>)}
+              </AdminSelect>
+            </label>
+            <label>
+              <span>House (optional)</span>
+              <AdminSelect aria-label="Natal placement house" value={house} onChange={(event) => onSelectionChange({ house: event.target.value as NatalPlacementHouse | "" })}>
+                <option value="">Choose house</option>
+                {natalPlacementHouses.map((item) => <option value={item} key={item}>{item}</option>)}
+              </AdminSelect>
+            </label>
+            <label>
+              <span>Motion preview</span>
+              <AdminSelect aria-label="Natal placement motion" value={motion} onChange={(event) => onSelectionChange({ motion: event.target.value as NatalPlacementMotion })}>
+                {natalPlacementMotions.map((item) => (
+                  <option value={item} key={item} disabled={item === "retrograde" && (planet === "sun" || planet === "moon")}>
+                    {titleFromKey(item)}{item === "retrograde" && (planet === "sun" || planet === "moon") ? " (not possible)" : ""}
+                  </option>
+                ))}
+              </AdminSelect>
+            </label>
+          </div>
+          {signSelectionComplete && (
+            <NatalPlacementReaderPreview
+              key={selectionKey}
+              house={house}
+              motion={motion}
+              onCreateOverride={onCreateOverride}
+              onOpenSource={onOpenSource}
+              planet={planet as NatalPlacementPlanet}
+              rows={rows}
+              secret={secret}
+              sign={sign as NatalPlacementSign}
+            />
+          )}
+          {groups.filter((group) => group.key !== "structure").map((group) => (
+            <section className="admin-natal-source-group" key={`${selectionKey}/${group.key}`}>
+              <header><h3>{group.label}</h3><p>{group.description}</p></header>
+              <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source))}</div>
+            </section>
+          ))}
+          {groups.filter((group) => group.key === "structure").map((group) => (
+            <details className="admin-workspace-details admin-natal-source-group admin-natal-source-advanced" key={`${selectionKey}/${group.key}`}>
+              <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary><p>{group.description}</p>
+              <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source, true))}</div>
+            </details>
+          ))}
+        </> : <section className="admin-empty-house-workspace" aria-label="Empty house writing">
+          <header className="admin-natal-source-group">
+            <p className="admin-eyebrow">Empty houses</p>
+            <h3>Choose the house, cusp sign, and where its ruler lands</h3>
+            <p>Content Studio shows only the source writing used by that empty-house reading, in the same order the meaning is assembled.</p>
+          </header>
+          <div className="admin-natal-placement-selectors" aria-label="Empty house context">
+            <label>
+              <span>Empty house</span>
+              <AdminSelect aria-label="Empty house" value={emptyHouse} onChange={(event) => {
+                const next = Number(event.target.value);
+                setEmptyHouse(next);
+                if (next === emptyHouseRulerHouse) setEmptyHouseRulerHouse(next === 12 ? 1 : next + 1);
+              }}>
+                {Array.from({ length: 12 }, (_, index) => index + 1).map((item) => <option key={item} value={item}>{ordinalHouseLabel(item)}</option>)}
+              </AdminSelect>
+            </label>
+            <label>
+              <span>Cusp sign</span>
+              <AdminSelect aria-label="Empty house cusp sign" value={emptyHouseSign} onChange={(event) => setEmptyHouseSign(event.target.value)}>
+                {Object.keys(emptyHouseRulers).map((item) => <option key={item} value={item}>{titleFromKey(item)}</option>)}
+              </AdminSelect>
+            </label>
+            <label>
+              <span>Ruler's house</span>
+              <AdminSelect aria-label="Empty house ruler house" value={emptyHouseRulerHouse} onChange={(event) => setEmptyHouseRulerHouse(Number(event.target.value))}>
+                {Array.from({ length: 12 }, (_, index) => index + 1).filter((item) => item !== emptyHouse).map((item) => <option key={item} value={item}>{ordinalHouseLabel(item)}</option>)}
+              </AdminSelect>
+            </label>
+          </div>
+          <article className="admin-natal-source-card admin-natal-source-complete" aria-label="Selected empty house context">
+            <div className="admin-natal-source-card-copy">
+              <p className="admin-eyebrow">Selected reading</p>
+              <h4>{ordinalHouseLabel(emptyHouse)} in {titleFromKey(emptyHouseSign)}</h4>
+              <p><strong>{titleFromKey(emptyHouseRuler)}</strong> rules the cusp and lands in the <strong>{ordinalHouseLabel(emptyHouseRulerHouse)}</strong>.</p>
+              <p className="admin-field-hint">The source list below updates with this context. You do not need to search the full Content Library for each piece.</p>
+            </div>
+          </article>
+          {emptyHouseGroups.map((group) => (
+            <section className="admin-natal-source-group" key={`empty-house/${emptyHouse}/${emptyHouseSign}/${emptyHouseRulerHouse}/${group.id}`}>
+              <header><h3>{group.label}</h3><p>{group.description}</p></header>
+              <div className="admin-natal-source-grid">{group.keys.map(renderEmptyHouseSource)}</div>
+            </section>
+          ))}
+        </section>}
+      </StudioTabs>
     </section>
   );
 }
