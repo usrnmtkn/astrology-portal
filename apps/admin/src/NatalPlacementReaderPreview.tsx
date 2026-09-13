@@ -1,6 +1,6 @@
 import { StudioButton } from "./StudioControls";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 import "./natal-reader-preview.css";
 import {
@@ -161,6 +161,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
     loading: true,
     rendered: null
   });
+  const previewContextRef = useRef("");
   const dependencyKeys = useMemo(
     () => new Set(natalPlacementResolverDependencyKeys(planet, sign, house, motion)),
     [house, motion, planet, sign]
@@ -168,11 +169,32 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
   const overrides = useMemo(() => rows
     .filter((row) => dependencyKeys.has(row.content_key) && !row.id?.startsWith("package:"))
     .map(previewOverrideCandidate)
-    .filter((row): row is NonNullable<ReturnType<typeof previewOverrideCandidate>> => Boolean(row)), [dependencyKeys, rows]);
+    .filter((row): row is NonNullable<ReturnType<typeof previewOverrideCandidate>> => Boolean(row))
+    .sort((left, right) => String(left.packageRow.contentKey).localeCompare(String(right.packageRow.contentKey))), [dependencyKeys, rows]);
+  const overrideFingerprint = useMemo(() => JSON.stringify(overrides), [overrides]);
+  const previewContextKey = `${audience}|${planet}|${sign}|${house || "all"}|${motion}`;
 
   useEffect(() => {
     const controller = new AbortController();
-    setPreview((current) => ({ ...current, error: null, loading: true }));
+    const contextChanged = previewContextRef.current !== previewContextKey;
+    previewContextRef.current = previewContextKey;
+
+    // Content Studio loads its inventory progressively. Those row batches used to
+    // rebuild the override array and replace an already-rendered preview with the
+    // loading state, producing a visible flash even when none of this placement's
+    // effective source rows changed. Only clear the surface for a genuine reader
+    // context change; background source/publication refreshes keep the last good
+    // assembly visible until the replacement response is ready.
+    setPreview((current) => contextChanged || !current.rendered
+      ? {
+          appliedOverrideKeys: contextChanged ? [] : current.appliedOverrideKeys,
+          error: null,
+          ignoredOverrides: contextChanged ? [] : current.ignoredOverrides,
+          loading: true,
+          rendered: contextChanged ? null : current.rendered
+        }
+      : { ...current, error: null, loading: false });
+
     void fetch("/api/admin/natal-placement-preview", {
       method: "POST",
       headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
@@ -195,16 +217,18 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
       });
     }).catch((error) => {
       if (controller.signal.aborted) return;
-      setPreview({
-        appliedOverrideKeys: [],
-        error: error instanceof Error ? error.message : "The reader preview could not be assembled.",
-        ignoredOverrides: [],
-        loading: false,
-        rendered: null
-      });
+      setPreview((current) => current.rendered && previewContextRef.current === previewContextKey
+        ? { ...current, error: error instanceof Error ? error.message : "The reader preview could not be refreshed.", loading: false }
+        : {
+            appliedOverrideKeys: [],
+            error: error instanceof Error ? error.message : "The reader preview could not be assembled.",
+            ignoredOverrides: [],
+            loading: false,
+            rendered: null
+          });
     });
     return () => controller.abort();
-  }, [audience, house, motion, overrides, planet, secret, sign, publicationVersion]);
+  }, [audience, house, motion, overrideFingerprint, planet, previewContextKey, publicationVersion, secret, sign]);
 
   const exactKey = house ? natalPlacementExactKey(planet, sign, house, motion) : "";
   const exactSaved = Boolean(exactKey && rows.some((row) => row.content_key === exactKey));
@@ -234,7 +258,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
           : "Composed from production package";
 
   return (
-    <section className="admin-natal-reader-preview" aria-label={`Reader preview for ${label}`}>
+    <section className="admin-natal-reader-preview" aria-label={`Reader preview for ${label}`} aria-busy={preview.loading}>
       <header>
         <div>
           <h3>{audience === "they" ? "What a friend sees" : "What you see"}</h3>
@@ -285,6 +309,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
                 : <StudioButton type="button" onClick={() => onCreateOverride(exactKey, label, preview.rendered?.body ?? "")}>Create exact override</StudioButton>
             )}
           </div>
+          {preview.error && <p className="admin-field-hint" role="status">The last assembled preview is still shown. Refreshing it failed: {preview.error}</p>}
           {preview.ignoredOverrides.length > 0 && (
             <p
               className="admin-field-hint"
