@@ -2,17 +2,20 @@
 
 ## Fonts
 
-TLDR Astro uses two text faces plus one symbol face:
+TLDR Astro uses three text roles plus one symbol face:
 
 - `Newsreader` via `var(--serif)` and `var(--font-display)` for display copy and titles.
-- `Geist Mono` via `var(--mono)`, `var(--font-body)`, `var(--font-ui)`, and `var(--font-brand)` for body copy, UI, data, labels, and the wordmark.
+- The proportional sans stack via `var(--sans)` and `var(--font-body)` for narrative copy, long-form reading, helper prose, and editable field values.
+- `Geist Mono` via `var(--mono)`, `var(--font-label)`, `var(--font-ui)`, and `var(--font-brand)` for UI, data, labels, chips, metadata, source keys, and the wordmark.
 - `Noto Sans Symbols` via `var(--symbols)` and `var(--font-glyph)` for astrological glyphs only.
 
 The TLDR Astro wordmark is `18px` Geist Mono, weight `600`, with `-0.01em` letter spacing.
 
 ## Base Styles
 
-Body text, UI controls, labels, chips, metadata, and data values use Geist Mono. Display headings, page titles, card titles, row titles, and editorial names use Newsreader. Glyph rules remain optically tuned and should not be normalized to the text scale.
+Narrative body text and editable values use the body face. UI controls, form labels, chips, metadata, source identities, and data values use Geist Mono. Display headings, page titles, card titles, row titles, and editorial names use Newsreader. Glyph rules remain optically tuned and should not be normalized to the text scale.
+
+Form labels use the tiny-label treatment: `var(--font-label)`, `var(--type-label-size)`, `var(--weight-semibold)`, `var(--tracking-label)`, and uppercase text. The value inside an input, select, or textarea resets to `var(--font-body)`, normal tracking, and sentence case. Checkbox and radio sentence labels remain body copy rather than tiny caps.
 
 Shared card titles use `18px`. Navigation links use `16px`. Tiny uppercase labels use `11px`.
 
@@ -44,8 +47,9 @@ Use the shared spacing primitives before local values:
 | Tiny caps label | 11px | Geist Mono |
 | Compact metadata | 12px | Geist Mono |
 | Dense data / metadata | 13px | Geist Mono |
-| Description / meta | 14px | Geist Mono |
-| Body / controls | 15px | Geist Mono |
+| Description / helper prose | 14px | Body sans |
+| Narrative body / editable value | 15px | Body sans |
+| UI control | 15px | Geist Mono |
 | Nav link / primary button | 16px | Geist Mono |
 | Card and row title | 18px | Newsreader |
 | Small display title | 20px | Newsreader |
