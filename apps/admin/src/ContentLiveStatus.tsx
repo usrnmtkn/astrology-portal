@@ -82,16 +82,21 @@ export function useContentLiveStatusResults(load: Load, rows: StatusRow[], enabl
   return result?.load === load && result.rows === rows ? result : null;
 }
 
-function savedStatusPresentation(row: StatusRow, live: LiveStatus): { label: string; tone: StudioStatusTone } {
-  if (live.live) return { label: "Live", tone: "live" };
+function editorialStatusPresentation(row: StatusRow): { label: string; tone: StudioStatusTone } | null {
   switch ((row.status ?? "").toUpperCase()) {
+    case "LIVE": return { label: "Live", tone: "live" };
     case "REVIEWED": return { label: "Ready", tone: "ready" };
     case "DRAFT": return { label: "Draft", tone: "draft" };
     case "ARCHIVED": return { label: "Archived", tone: "archived" };
     case "ERROR": return { label: "Error", tone: "error" };
     case "RETIRED": return { label: "Retired", tone: "retired" };
-    default: return { label: "Inactive", tone: "inactive" };
+    default: return null;
   }
+}
+
+function savedStatusPresentation(row: StatusRow, live: LiveStatus): { label: string; tone: StudioStatusTone } {
+  if (live.live) return { label: "Live", tone: "live" };
+  return editorialStatusPresentation(row) ?? { label: "Inactive", tone: "inactive" };
 }
 
 export default function ContentLiveStatusBadge({ row, unsaved = false, label }: { row: StatusRow; unsaved?: boolean; label?: string }) {
@@ -110,6 +115,10 @@ export default function ContentLiveStatusBadge({ row, unsaved = false, label }: 
     return <StudioStatusBadge tone="draft" title="These edits have not been saved and published." className="admin-status">Draft</StudioStatusBadge>;
   }
   if (status === "unavailable") {
+    const editorial = editorialStatusPresentation(row);
+    if (editorial) {
+      return <StudioStatusBadge tone={editorial.tone} title="Reader serving status could not be verified. Showing the saved editorial state." className="admin-status">{editorial.label}</StudioStatusBadge>;
+    }
     return <StudioStatusBadge tone="unknown" title="Status unavailable. Refresh rows to retry." className="admin-status">Unavailable</StudioStatusBadge>;
   }
   if (!status) {
