@@ -5,28 +5,35 @@ type StudioEditorReturnContext = {
   label: string;
   returnToParent: () => void;
 };
+type ReturnAfterSave = "published" | "any" | null;
 
 let context: StudioEditorReturnContext | null = null;
-let returnAfterPublish = false;
+let returnAfterSave: ReturnAfterSave = null;
 let listening = false;
+
+function performReturn() {
+  if (!context) return;
+  const callback = context.returnToParent;
+  context = null;
+  returnAfterSave = null;
+  window.requestAnimationFrame(callback);
+}
 
 function ensureListener() {
   if (listening || typeof window === "undefined") return;
   listening = true;
   window.addEventListener(contentUpdateEvent, (event) => {
-    if (!context || !returnAfterPublish) return;
+    if (!context || !returnAfterSave) return;
     const notice = (event as CustomEvent<ContentUpdateNotice>).detail;
-    if (!notice?.published || notice.contentKey !== context.childContentKey) return;
-    const callback = context.returnToParent;
-    context = null;
-    returnAfterPublish = false;
-    window.requestAnimationFrame(callback);
+    if (!notice || notice.contentKey !== context.childContentKey) return;
+    if (returnAfterSave === "published" && !notice.published) return;
+    performReturn();
   });
 }
 
 export function rememberStudioEditorReturn(next: StudioEditorReturnContext) {
   context = next;
-  returnAfterPublish = false;
+  returnAfterSave = null;
   ensureListener();
 }
 
@@ -34,27 +41,24 @@ export function studioEditorReturnContext() {
   return context;
 }
 
-export function requestStudioReturnAfterPublish() {
+export function requestStudioReturnAfterSave(mode: Exclude<ReturnAfterSave, null>) {
   if (!context) return false;
-  returnAfterPublish = true;
+  returnAfterSave = mode;
   ensureListener();
   return true;
 }
 
-export function cancelStudioReturnAfterPublish() {
-  returnAfterPublish = false;
+export function cancelStudioReturnAfterSave() {
+  returnAfterSave = null;
 }
 
 export function returnToStudioParentEditor() {
   if (!context) return false;
-  const callback = context.returnToParent;
-  context = null;
-  returnAfterPublish = false;
-  callback();
+  performReturn();
   return true;
 }
 
 export function clearStudioEditorReturn() {
   context = null;
-  returnAfterPublish = false;
+  returnAfterSave = null;
 }
