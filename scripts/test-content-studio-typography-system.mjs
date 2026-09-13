@@ -64,10 +64,19 @@ assert.doesNotMatch(
   "The Content Studio typography layer must use Design System font tokens instead of raw font stacks."
 );
 
-for (const [name, source] of [["Sky phrase rows", skyVariableCss], ["Natal reader preview", natalPreviewCss]]) {
+for (const [name, source] of [["Sky placement surfaces", skyVariableCss], ["Natal reader preview", natalPreviewCss]]) {
   assert.doesNotMatch(source, /--admin-/u, `${name} must not depend on the disconnected legacy admin token set.`);
   assert.doesNotMatch(source, /!important/u, `${name} must not override the shared Studio component geometry.`);
   assert.ok(source.includes("var(--workspace-"), `${name} must use the shared Studio workspace tokens.`);
+}
+
+for (const selector of [
+  ".admin-sky-phrase-row",
+  ".admin-sky-placement-template > ol > li",
+  ".admin-sky-template-comparison",
+  ".admin-sky-placement-sources"
+]) {
+  assert.ok(skyVariableCss.includes(selector), `Sky placement CSS must explicitly style ${selector}; it may not rely on disconnected legacy admin.css.`);
 }
 
 console.log("Content Studio typography and component-token contract passed.");
