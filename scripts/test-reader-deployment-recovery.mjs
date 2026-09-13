@@ -11,11 +11,12 @@ const boundary = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/Pa
 const vercel = fs.readFileSync(path.join(repoRoot, "vercel.json"), "utf8");
 
 for (const source of [startup, boundary]) {
-  assert.match(source, /tldrastro:reader-page-recovery/u, "Reader recovery must use one shared session guard.");
+  assert.match(source, /__tldrastroReaderPageRecovery/u, "Reader recovery must use one shared history-state guard.");
   assert.match(source, /2 \* 60 \* 1000/u, "Reader recovery must be cooldown guarded so a real bug cannot reload-loop.");
-  assert.match(source, /(?:you\|sky\|calendar\|friends|you\|sky\|calendar\|friends)/u, "Reader recovery must cover the primary hash routes.");
+  assert.match(source, /you\|sky\|calendar\|friends/u, "Reader recovery must cover the primary hash routes.");
   assert.match(source, /pathname[^\n]*=== "\/"/u, "Automatic recovery must stay on the reader root and exclude admin/report routes.");
-  assert.match(source, /sessionStorage/u, "Automatic recovery must be session guarded.");
+  assert.match(source, /history\.replaceState/u, "Automatic recovery must be tab-local and survive the one reload it initiates.");
+  assert.doesNotMatch(source, /sessionStorage/u, "Reader recovery must not consume the session-storage namespace used by app state.");
 }
 
 assert.match(startup, /vite:preloadError/u, "Vite stale-chunk failures must have an automatic reader recovery path.");
