@@ -1,4 +1,4 @@
-import { StudioButton, StudioInput } from "./StudioControls";
+import { StudioButton, StudioIconButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { ChevronRight, CircleHelp, Search, X } from "lucide-react";
 import { Suspense, lazy } from "react";
@@ -7,6 +7,7 @@ import type { CompositionMapRow, CompositionPreviewOptions } from "./composition
 import type { TemplateVariableReference } from "./templateVariableReference";
 import { templateVariableSourceKeyPrefixes } from "./templateVariableSources";
 import { TemplateVariableReviewPanels, type TemplateVariableSourceRow } from "./TemplateVariableReviewPanels";
+import { rememberStudioEditorReturn } from "./studioEditorReturn";
 
 const TemplateReaderDrilldown = lazy(() => import("./TemplateReaderDrilldown"));
 
@@ -64,6 +65,26 @@ export default function TemplateVariablesRail({
   const selected = selectedVariableName
     ? references.find((reference) => reference.name === selectedVariableName) ?? null
     : null;
+  const parentSourceRow = rows.find((row) => row.content_key === reviewTemplateRow.content_key) ?? null;
+
+  const editVariableSource = (row: TemplateVariableSourceRow) => {
+    if (selected && parentSourceRow) {
+      const selectedName = selected.name;
+      const selectedSource = selectedSourceId;
+      rememberStudioEditorReturn({
+        childContentKey: row.content_key,
+        label: `{{${selectedName}}}`,
+        returnToParent: () => {
+          onEditSource(parentSourceRow);
+          window.requestAnimationFrame(() => {
+            onSelectVariable(selectedName);
+            onSelectSource(selectedSource);
+          });
+        }
+      });
+    }
+    onEditSource(row);
+  };
 
   return (
     <aside
@@ -100,9 +121,9 @@ export default function TemplateVariablesRail({
               </dl>
             </div>
           </details>
-          <StudioButton type="button" className="admin-secondary-button admin-variables-rail-close" onClick={onClose} aria-label="Close variables" title="Close variables">
+          <StudioIconButton type="button" className="admin-variables-rail-close" onClick={onClose} aria-label="Close variables" title="Close variables">
             <X size={16} aria-hidden="true" />
-          </StudioButton>
+          </StudioIconButton>
         </div>
       </header>
 
@@ -121,7 +142,7 @@ export default function TemplateVariablesRail({
               onSelectSource(null);
               onSelectVariable(name);
             }}
-            onEditSource={onEditSource}
+            onEditSource={editVariableSource}
           />
         ) : (
           <>

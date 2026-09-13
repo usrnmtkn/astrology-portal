@@ -1,0 +1,109 @@
+/* Shared Content Studio component treatments. Visual values come from the global design-system tokens. */
+
+/* All visible close controls use one icon-button contract. Backdrop dismiss targets stay invisible. */
+#root .admin-dashboard :is(
+  .studio-icon-button,
+  .admin-editor-close,
+  .admin-variables-rail-close
+) {
+  align-items: center;
+  align-self: center;
+  background: var(--workspace-selected);
+  border: var(--border-width-thin) solid transparent;
+  border-radius: var(--radius-pill);
+  color: var(--workspace-on-selected);
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: var(--workspace-control-icon-space);
+  justify-content: center;
+  min-height: var(--workspace-control-icon-space);
+  min-width: var(--workspace-control-icon-space);
+  padding: 0;
+  width: var(--workspace-control-icon-space);
+}
+
+#root .admin-dashboard :is(
+  .studio-icon-button,
+  .admin-editor-close,
+  .admin-variables-rail-close
+):not(:disabled):hover {
+  background: var(--workspace-hover);
+  border-color: var(--workspace-line-strong);
+  color: var(--workspace-ink);
+}
+
+#root .admin-dashboard :is(
+  .studio-icon-button,
+  .admin-editor-close,
+  .admin-variables-rail-close
+) svg {
+  height: var(--type-ui-size);
+  width: var(--type-ui-size);
+}
+
+/* One status-badge family for every authoring surface. */
+#root .admin-dashboard .studio-status-badge {
+  align-items: center;
+  border: var(--border-width-thin) solid var(--workspace-line);
+  border-radius: var(--workspace-control-radius);
+  display: inline-flex;
+  font-family: var(--font-label);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--leading-label);
+  min-height: var(--studio-chip-height);
+  padding: var(--workspace-tag-padding);
+  text-transform: none;
+  width: fit-content;
+}
+
+#root .admin-dashboard .studio-status-badge.status-live {
+  background: var(--workspace-surface);
+  border-color: var(--workspace-positive);
+  color: var(--workspace-positive);
+}
+
+#root .admin-dashboard .studio-status-badge.status-ready {
+  background: var(--workspace-selected);
+  border-color: transparent;
+  color: var(--workspace-on-selected);
+}
+
+#root .admin-dashboard .studio-status-badge:is(.status-draft, .status-inactive, .status-unknown) {
+  background: transparent;
+  border-color: var(--workspace-line-strong);
+  color: var(--workspace-muted);
+}
+
+#root .admin-dashboard .studio-status-badge:is(.status-retired, .status-archived) {
+  background: var(--workspace-raised);
+  border-color: transparent;
+  color: var(--workspace-muted);
+}
+
+#root .admin-dashboard .studio-status-badge.status-error {
+  background: transparent;
+  border-color: var(--workspace-danger);
+  color: var(--workspace-danger);
+}
+
+/* Legacy status wrappers inherit the same geometry until all callers migrate. */
+#root .admin-dashboard :is(.ui-pill.admin-status, .admin-table-tag.status-live, .admin-table-tag.status-draft) {
+  border-radius: var(--workspace-control-radius);
+  font-family: var(--font-label);
+  font-size: var(--type-meta-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--leading-label);
+  text-transform: none;
+}
+
+/* Editor headers and docked rails share the same close/action alignment. */
+#root .admin-dashboard :is(.admin-editor-header, .admin-variables-rail-header) {
+  align-items: center;
+}
+
+#root .admin-dashboard :is(.admin-editor-header, .admin-variables-rail-header) > :last-child {
+  align-items: center;
+}

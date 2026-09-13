@@ -192,7 +192,7 @@ export default function NeedsAttentionDashboard() {
 
   const groupDefinitions = [
     { key: "required", label: "Required editorial decisions", items: groups.required },
-    { key: "unwired", label: "Not live", items: groups.unwired },
+    { key: "unwired", label: "Published but unwired", items: groups.unwired },
     { key: "errors", label: "Content errors", items: groups.errors },
     { key: "coverage", label: "Required coverage gaps", items: groups.coverage }
   ];

@@ -1,10 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { publicationTimestamp } from "../../web/src/content/contentPublicationState";
+import { StudioStatusBadge, type StudioStatusTone } from "./StudioControls";
+
 export type LiveStatus = { id: string; live: boolean; label: "Live" | "Not live"; detail: string; source: string | null; updatedAt: string | null };
-type StatusRow = { id?: string | null; updated_at?: string | null; requestRevision?: number };
+type StatusRow = { id?: string | null; updated_at?: string | null; requestRevision?: number; status?: string | null };
 type Load = (row: StatusRow) => Promise<LiveStatus>;
 const Context = createContext<Load | null>(null);
+
 function validLiveStatus(value: unknown): value is LiveStatus {
   if (!value || typeof value !== "object") return false;
   const status = value as Record<string, unknown>;
@@ -15,6 +18,7 @@ function validLiveStatus(value: unknown): value is LiveStatus {
     && (status.updatedAt === null || typeof status.updatedAt === "string")
     && (status.source === null || typeof status.source === "string");
 }
+
 export function useContentLiveStatusLoader(request: (ids: string[]) => Promise<LiveStatus[]>, identity: string) {
   const requestRef = useRef(request);
   requestRef.current = request;
@@ -54,7 +58,9 @@ export function useContentLiveStatusLoader(request: (ids: string[]) => Promise<L
   }, [revision, identity]);
   return load;
 }
+
 export const ContentLiveStatusProvider = Context.Provider;
+
 export function useContentLiveStatusResults(load: Load, rows: StatusRow[], enabled: boolean) {
   const [result, setResult] = useState<{ load: Load; rows: StatusRow[]; statuses: Map<string, LiveStatus>; failed: number; pending: number } | null>(null);
   useEffect(() => {
@@ -63,8 +69,6 @@ export function useContentLiveStatusResults(load: Load, rows: StatusRow[], enabl
     void (async () => {
       const statuses = new Map<string, LiveStatus>();
       let failed = 0;
-      // Stream matching rows as batches resolve and stop scheduling work when
-      // the editor changes the search/category or leaves this screen.
       for (let offset = 0; offset < rows.length || offset === 0; offset += 64) {
         await Promise.all(rows.slice(offset, offset + 64).map((row) => load(row)
           .then((status) => { statuses.set(status.id, status); })
@@ -77,6 +81,19 @@ export function useContentLiveStatusResults(load: Load, rows: StatusRow[], enabl
   }, [load, rows, enabled]);
   return result?.load === load && result.rows === rows ? result : null;
 }
+
+function savedStatusPresentation(row: StatusRow, live: LiveStatus): { label: string; tone: StudioStatusTone } {
+  if (live.live) return { label: "Live", tone: "live" };
+  switch ((row.status ?? "").toUpperCase()) {
+    case "REVIEWED": return { label: "Ready", tone: "ready" };
+    case "DRAFT": return { label: "Draft", tone: "draft" };
+    case "ARCHIVED": return { label: "Archived", tone: "archived" };
+    case "ERROR": return { label: "Error", tone: "error" };
+    case "RETIRED": return { label: "Retired", tone: "retired" };
+    default: return { label: "Inactive", tone: "inactive" };
+  }
+}
+
 export default function ContentLiveStatusBadge({ row, unsaved = false, label }: { row: StatusRow; unsaved?: boolean; label?: string }) {
   const load = useContext(Context);
   const [status, setStatus] = useState<LiveStatus | "unavailable" | null>(null);
@@ -88,7 +105,16 @@ export default function ContentLiveStatusBadge({ row, unsaved = false, label }: 
       .catch(() => { if (!cancelled) setStatus("unavailable"); });
     return () => { cancelled = true; };
   }, [load, row.id, row.updated_at, row.requestRevision, unsaved]);
-  if (unsaved || !row.id) return <span aria-label={label} className="ui-pill admin-status status-draft" title="These edits have not been saved and published.">Not live</span>;
-  if (!status || status === "unavailable") return <span aria-label={label} className="admin-field-hint" title={status === "unavailable" ? "Status unavailable. Refresh rows to retry." : undefined}>{status === "unavailable" ? "Status unavailable" : "Checking status…"}</span>;
-  return <span aria-label={label} className={`ui-pill admin-status admin-table-tag ${status.live ? "status-live" : "status-draft"}`} title={status.detail}>{status.label}</span>;
+
+  if (unsaved || !row.id) {
+    return <StudioStatusBadge tone="draft" title="These edits have not been saved and published." className="admin-status">Draft</StudioStatusBadge>;
+  }
+  if (status === "unavailable") {
+    return <StudioStatusBadge tone="unknown" title="Status unavailable. Refresh rows to retry." className="admin-status">Unavailable</StudioStatusBadge>;
+  }
+  if (!status) {
+    return <span aria-label={label} className="admin-field-hint">Checking status…</span>;
+  }
+  const presentation = savedStatusPresentation(row, status);
+  return <StudioStatusBadge tone={presentation.tone} title={status.detail} className="admin-status admin-table-tag">{presentation.label}</StudioStatusBadge>;
 }
