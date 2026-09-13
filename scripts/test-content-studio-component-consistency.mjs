@@ -30,6 +30,7 @@ assert.match(controls, /text\.includes\("Not live"\)[\s\S]*"Inactive"/u, "Legacy
 assert.match(controls, /ariaLabel\?\.startsWith\("Close"\)/u, "Visible close buttons must opt into the shared icon-button treatment.");
 
 assert.match(compatibility, /\.admin-status/u, "Legacy status compatibility must cover old status pills.");
+assert.match(compatibility, /\.admin-editor-save-state/u, "Legacy editor footer state must be normalized before it can surface to an editor.");
 assert.match(compatibility, /status-draft/u, "Legacy draft pills must resolve to Draft, not a second publication vocabulary.");
 assert.match(compatibility, /Published but unwired/u, "Published-but-unwired notices must use their actual condition.");
 assert.match(compatibility, /Draft saved/u, "Saved draft feedback must not append a second publication status.");
