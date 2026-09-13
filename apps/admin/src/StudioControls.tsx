@@ -1,3 +1,4 @@
+import "./studio-typography.css";
 import { forwardRef, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
 
 /** Studio controls preserve native semantics and use one visual contract. */
