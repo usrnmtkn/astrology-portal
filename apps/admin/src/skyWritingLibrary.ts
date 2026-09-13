@@ -53,7 +53,7 @@ export const SKY_WRITING_LIBRARY_GROUPS: SkyWritingLibraryGroup[] = [
     label: "Planet language",
     description: "Reusable writing about what this planet does. Existing approved vocabulary is copied in as a starting point; editing here changes this placement draft only.",
     fields: [
-      field("planetAppositive", "Planet appositive", "A compact phrase such as ‘the planet of …’ for openings and explanatory sentences. Leave empty unless you have wording you want to reuse.", "planet", 2),
+      field("planetDescriptor", "Planet descriptor", "A short phrase that explains what the planet is associated with. Example: ‘Venus, the planet of love, pleasure, and values, describes how you relate, choose, and enjoy.’ Use it when that phrase helps an opening or explanatory sentence.", "planet", 2),
       field("planetSummary", "Planet summary / lore", "A concise reusable explanation of the planet’s role, symbolism, or larger meaning.", "planet", 4),
       field("planetFunction", "Planet function", "What the planet actually does in lived terms: the activity, need, or process it represents.", "planet", 4),
       field("planetProductive", "Productive expression", "How this planet can operate constructively when its function has somewhere useful to go.", "planet", 4),
@@ -228,6 +228,8 @@ export async function loadSkyWritingLibrarySeeds(source: RecordValue, planet: st
 
 export function installSkyWritingLibrary(composition: SkyWritingLibraryComposition, seeds: Record<string, string> = {}): SkyWritingLibraryComposition {
   const next = structuredClone(composition);
+  const legacyPlanetDescriptor = next.sources.planetAppositive;
+  if (!next.sources.planetDescriptor && legacyPlanetDescriptor) next.sources.planetDescriptor = structuredClone(legacyPlanetDescriptor);
   for (const group of SKY_WRITING_LIBRARY_GROUPS) {
     for (const item of group.fields) {
       const seed = text(seeds[item.id]);
