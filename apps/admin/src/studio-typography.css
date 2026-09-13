@@ -1,9 +1,9 @@
 /* Content Studio typography roles.
-   Keep Content Studio on the same semantic type system as the reader UI:
+   This layer maps Studio UI onto the shared TLDR Astro semantic tokens:
    Newsreader for titles, the body face for prose and editable values, Geist Mono
    for labels/UI/data, and the glyph face only for astrological symbols. */
 
-/* Page, panel, card, row, and editor titles use the display face. */
+/* Page, panel, card, row, and editor titles. */
 #root .admin-dashboard :is(
   h1,
   h2,
@@ -25,7 +25,7 @@
   text-transform: none;
 }
 
-/* Narrative copy and editable values stay readable and proportional. */
+/* Narrative copy and reader/editor prose. */
 #root .admin-dashboard :is(
   p,
   li,
@@ -37,59 +37,31 @@
   .admin-preview-copy
 ) {
   font-family: var(--font-body);
-  letter-spacing: var(--tracking-body);
-}
-
-#root .admin-dashboard :where(
-  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-  select,
-  textarea
-) {
-  font-family: var(--font-body);
-  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
   line-height: var(--leading-body);
-  text-transform: none;
 }
 
-/* Tiny form labels use the Design System label treatment instead of body copy. */
+/* Default compact metadata. More specific semantic labels/helpers below override it. */
 #root .admin-dashboard :is(
-  label:not(:has(> input[type="checkbox"])):not(:has(> input[type="radio"])),
-  legend,
-  .admin-field-label,
-  .admin-title-field > span:first-child,
-  .admin-metadata-field > span:first-child,
-  .admin-review-copy-editor > span:first-child,
-  .admin-review-tldr-editor > span:first-child,
-  .admin-field-wide > span:first-child,
-  .admin-editor-guidance > label > span:first-child,
-  .admin-search-field > span:first-child,
-  .aspect-writeups-fields > label > span:first-child,
-  .admin-natal-source-editor label > span:first-child
+  small,
+  .admin-breadcrumb,
+  .admin-editor-details-summary,
+  .admin-textarea-counter,
+  .admin-text-counter,
+  .admin-unresolved-total,
+  .admin-unresolved-owner,
+  .admin-sky-phrase-source,
+  .admin-sky-phrase-token,
+  .admin-natal-source-key,
+  .admin-source-meta
 ) {
   color: var(--workspace-muted);
   font-family: var(--font-label);
-  font-size: var(--type-label-size);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  line-height: var(--leading-label);
-  text-transform: uppercase;
-}
-
-/* Form controls and helper copy must never inherit caps/tracking from their label. */
-#root .admin-dashboard :is(label, legend) :where(input, select, textarea, option, p, small, code) {
-  letter-spacing: var(--tracking-body);
-  text-transform: none;
-}
-
-#root .admin-dashboard label:has(> input:is([type="checkbox"], [type="radio"])) {
-  color: var(--workspace-ink);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
-  line-height: var(--leading-body);
+  line-height: var(--leading-meta);
   text-transform: none;
 }
 
@@ -109,8 +81,20 @@
   text-transform: none;
 }
 
-/* Eyebrows and column labels use the tiny-caps token treatment. */
+/* Tiny form labels, eyebrows, table headings, and source-key labels. */
 #root .admin-dashboard :is(
+  label:not(:has(> input[type="checkbox"])):not(:has(> input[type="radio"])),
+  legend,
+  .admin-field-label,
+  .admin-title-field > span:first-child,
+  .admin-metadata-field > span:first-child,
+  .admin-review-copy-editor > span:first-child,
+  .admin-review-tldr-editor > span:first-child,
+  .admin-field-wide > span:first-child,
+  .admin-editor-guidance > label > span:first-child,
+  .admin-search-field > span:first-child,
+  .aspect-writeups-fields > label > span:first-child,
+  .admin-natal-source-editor label > span:first-child,
   .admin-eyebrow,
   .admin-content-type-label,
   .admin-section-label,
@@ -128,35 +112,45 @@
   text-transform: uppercase;
 }
 
-/* Metadata and source identities stay mono without pretending to be form labels. */
-#root .admin-dashboard :is(
-  small,
-  .admin-breadcrumb,
-  .admin-editor-details-summary,
-  .admin-textarea-counter,
-  .admin-text-counter,
-  .admin-unresolved-total,
-  .admin-unresolved-owner,
-  .admin-sky-phrase-source,
-  .admin-sky-phrase-token,
-  .admin-natal-source-key,
-  .admin-source-meta
+/* Form values use the readable body face and never inherit label caps/tracking. */
+#root .admin-dashboard :where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea
 ) {
-  font-family: var(--font-label);
-  font-size: var(--type-meta-size);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
-  line-height: var(--leading-meta);
+  line-height: var(--leading-body);
   text-transform: none;
 }
 
+#root .admin-dashboard :is(label, legend) :where(input, select, textarea, option, p, small, code) {
+  letter-spacing: var(--tracking-body);
+  text-transform: none;
+}
+
+/* Checkbox/radio labels are sentences, not tiny caps. */
+#root .admin-dashboard label:has(> input:is([type="checkbox"], [type="radio"])) {
+  color: var(--workspace-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--leading-body);
+  text-transform: none;
+}
+
+/* Exact source identities and technical snippets. */
 #root .admin-dashboard :is(code, pre) {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   letter-spacing: var(--tracking-body);
+  text-transform: none;
 }
 
-/* Buttons, tabs, segmented choices, disclosures, and status chips use the UI face. */
+/* Buttons, tabs, segmented choices, disclosures, and status chips. */
 #root .admin-dashboard :is(
   button,
   .admin-public-link,
@@ -193,7 +187,7 @@
   line-height: var(--leading-label);
 }
 
-/* Studio tabs are navigation labels, not paragraph copy. */
+/* Studio tabs are compact navigation labels. */
 #root .admin-dashboard .studio-tabs > [role="tablist"] > [role="tab"] {
   font-family: var(--font-ui);
   font-size: var(--type-meta-size);
@@ -238,7 +232,7 @@
   line-height: var(--leading-body);
 }
 
-/* Sidebar UI and brand follow the same UI/wordmark rules as the public shell. */
+/* Sidebar UI and brand follow the public-shell wordmark/UI contract. */
 #root .admin-dashboard .admin-brand strong {
   font-family: var(--font-ui);
   font-size: var(--text-card-title);
