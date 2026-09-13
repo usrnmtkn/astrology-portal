@@ -39,9 +39,9 @@ assert.doesNotMatch(natalEditor, /Draft saved · Not live/u, "Draft feedback mus
 assert.doesNotMatch(attention, /label: "Not live"/u, "Needs Attention must describe unwired content by its actual condition.");
 
 // The backend transport still calls a false live-status result "Not live". Keep
-// that transport wording isolated to its adapter and the one legacy Aspect
-// Pattern row that is normalized by StudioButton. Any new occurrence anywhere
-// else in Content Studio fails the deployment build instead of resurfacing in UI.
+// that wording isolated to its adapter, the shared normalizer, and the one
+// legacy Aspect Pattern row covered by that normalizer. Any new occurrence
+// anywhere else in Content Studio fails the deployment build.
 function adminSourceFiles(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const absolute = path.join(dir, entry.name);
@@ -55,11 +55,12 @@ const notLiveFiles = adminSourceFiles(adminSrc)
   .sort();
 assert.deepEqual(
   notLiveFiles,
-  ["AspectPatternWriteups.tsx", "ContentLiveStatus.tsx"],
+  ["AspectPatternWriteups.tsx", "ContentLiveStatus.tsx", "StudioControls.tsx"],
   "No new Content Studio source may introduce the legacy Not live vocabulary. Use the canonical status components."
 );
 assert.equal((status.match(/Not live/gu) ?? []).length, 2, "ContentLiveStatus may contain Not live only in its transport type/validator, never presentation.");
 assert.equal((aspectPatterns.match(/Not live/gu) ?? []).length, 1, "Aspect Patterns has one legacy transport-facing label and StudioButton must normalize it to Inactive.");
+assert.equal((controls.match(/Not live/gu) ?? []).length, 2, "StudioControls may mention Not live only in the shared normalization expression.");
 
 assert.match(css, /\.studio-icon-button/u);
 assert.match(css, /\.admin-editor-close/u);
