@@ -5,6 +5,8 @@ import fs from "node:fs";
 
 const controls = fs.readFileSync(new URL("../apps/admin/src/StudioControls.tsx", import.meta.url), "utf8");
 const css = fs.readFileSync(new URL("../apps/admin/src/studio-typography.css", import.meta.url), "utf8");
+const skyVariableCss = fs.readFileSync(new URL("../apps/admin/src/sky-variable-key.css", import.meta.url), "utf8");
+const natalPreviewCss = fs.readFileSync(new URL("../apps/admin/src/natal-reader-preview.css", import.meta.url), "utf8");
 
 assert.match(
   controls,
@@ -12,24 +14,29 @@ assert.match(
   "Studio controls must load the Content Studio typography layer."
 );
 
-for (const token of ["--font-display", "--font-body", "--font-label", "--font-ui", "--font-glyph"]) {
+for (const token of ["--font-body", "--font-mono", "--font-glyph"]) {
   assert.ok(css.includes(`var(${token})`), `Content Studio typography must consume ${token}.`);
 }
 
 assert.match(
   css,
-  /label:not\(:has\(> input\[type="checkbox"\]\)\)/u,
-  "Form labels must receive the semantic label treatment without forcing checkbox copy into tiny caps."
+  /:is\([\s\S]*h1[\s\S]*h6[\s\S]*font-family: var\(--font-body\)/u,
+  "Studio headings must use the reviewed Studio UI sans instead of reader-display typography."
 );
 assert.match(
   css,
-  /text-transform: uppercase;/u,
-  "Form labels and eyebrows must use the tiny uppercase Design System treatment."
+  /label:not\(:has\(> input\[type="checkbox"\]\)\)[\s\S]*font-family: var\(--font-body\)/u,
+  "Form labels must use the Studio UI sans."
 );
 assert.match(
   css,
-  /\.admin-field-hint[\s\S]*font-family: var\(--font-body\)/u,
-  "Helper copy must remain narrative body text rather than metadata typography."
+  /button,[\s\S]*font-family: var\(--font-body\)/u,
+  "Buttons and Studio actions must use the Studio UI sans."
+);
+assert.match(
+  css,
+  /\.admin-field-hint[\s\S]*font-size: var\(--text-body\)/u,
+  "Helper copy must remain readable body text."
 );
 assert.match(
   css,
@@ -38,8 +45,18 @@ assert.match(
 );
 assert.match(
   css,
-  /\.admin-natal-source-card h4[\s\S]*font-family: var\(--font-display\)/u,
-  "Source-card titles must use the display face."
+  /:is\(code, pre\)[\s\S]*font-family: var\(--font-mono\)/u,
+  "Monospace must be reserved for exact identifiers and technical snippets."
+);
+assert.doesNotMatch(
+  css,
+  /text-transform:\s*uppercase/u,
+  "Studio labels, eyebrows, controls, and table headings must remain sentence case."
+);
+assert.doesNotMatch(
+  css,
+  /font-family:\s*var\(--font-(?:label|ui|display)\)/u,
+  "Studio text roles must not fall back to the reader display face or mono label/UI aliases."
 );
 assert.doesNotMatch(
   css,
@@ -47,4 +64,19 @@ assert.doesNotMatch(
   "The Content Studio typography layer must use Design System font tokens instead of raw font stacks."
 );
 
-console.log("Content Studio typography Design System contract passed.");
+for (const [name, source] of [["Sky placement surfaces", skyVariableCss], ["Natal reader preview", natalPreviewCss]]) {
+  assert.doesNotMatch(source, /--admin-/u, `${name} must not depend on the disconnected legacy admin token set.`);
+  assert.doesNotMatch(source, /!important/u, `${name} must not override the shared Studio component geometry.`);
+  assert.ok(source.includes("var(--workspace-"), `${name} must use the shared Studio workspace tokens.`);
+}
+
+for (const selector of [
+  ".admin-sky-phrase-row",
+  ".admin-sky-placement-template > ol > li",
+  ".admin-sky-template-comparison",
+  ".admin-sky-placement-sources"
+]) {
+  assert.ok(skyVariableCss.includes(selector), `Sky placement CSS must explicitly style ${selector}; it may not rely on disconnected legacy admin.css.`);
+}
+
+console.log("Content Studio typography and component-token contract passed.");
