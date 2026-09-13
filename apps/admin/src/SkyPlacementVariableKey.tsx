@@ -5,6 +5,7 @@ import { AdminDisclosureSummary } from "./AdminNativeControls";
 import {
   SKY_WRITING_LIBRARY_FIELD_IDS,
   SKY_WRITING_LIBRARY_GROUPS,
+  installSkyWritingLibrary,
   loadSkyWritingLibrarySeeds,
   skyWritingLibraryInstalled,
   type SkyWritingLibraryComposition
@@ -87,8 +88,9 @@ export default function SkyPlacementVariableKey({ facts, onInsert, disabled = fa
       );
       const values = { ...seededValues };
       const provenance = { ...seededProvenance };
-      const composition = phraseSource.record.ingress as SkyWritingLibraryComposition | undefined;
-      const installed = skyWritingLibraryInstalled(composition);
+      const rawComposition = phraseSource.record.ingress as SkyWritingLibraryComposition | undefined;
+      const installed = skyWritingLibraryInstalled(rawComposition);
+      const composition = installed && rawComposition ? installSkyWritingLibrary(rawComposition) : rawComposition;
 
       if (installed && composition) {
         const linkedRecords = new Map<string, Record<string, any> | undefined>();
