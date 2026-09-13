@@ -13,7 +13,7 @@ function canonicalStatusLabel(element: Element) {
     element.textContent = "Published but unwired";
     return;
   }
-  if (text === `Draft saved · ${legacyNotServingLabel}`) {
+  if (text === `Draft saved · ${legacyNotServingLabel}` && element.matches(".admin-editor-save-state")) {
     element.textContent = "Draft saved";
     return;
   }
@@ -43,7 +43,7 @@ function canonicalStatusLabel(element: Element) {
 function normalizeTree(root: ParentNode) {
   if (root instanceof Element) canonicalStatusLabel(root);
   root.querySelectorAll?.(
-    ".admin-status, .admin-wiring-notice .admin-eyebrow, .admin-status-guide p, .admin-field-hint, [title]"
+    ".admin-status, .admin-editor-save-state, .admin-wiring-notice .admin-eyebrow, .admin-status-guide p, .admin-field-hint, [title]"
   ).forEach(canonicalStatusLabel);
 }
 
