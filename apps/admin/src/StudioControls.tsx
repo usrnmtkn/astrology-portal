@@ -1,4 +1,5 @@
 import "./studio-typography.css";
+import "./studio-component-consistency.css";
 import { forwardRef, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
 
 /** Studio controls preserve native semantics and use one visual contract. */
@@ -7,6 +8,14 @@ export const StudioButton = forwardRef<HTMLButtonElement, ComponentPropsWithoutR
     return <button {...props} type={type} ref={ref} data-studio-component="button" />;
   }
 );
+
+/** Icon-only controls use the same hit target, radius, hover and focus treatment. */
+export const StudioIconButton = forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<"button">>(
+  function StudioIconButton({ type = "button", className = "", ...props }, ref) {
+    return <button {...props} type={type} ref={ref} data-studio-component="icon-button" className={`studio-icon-button ${className}`.trim()} />;
+  }
+);
+
 export const StudioInput = forwardRef<HTMLInputElement, ComponentPropsWithoutRef<"input">>(
   function StudioInput(props, ref) {
     return <input {...props} ref={ref} data-studio-component="input" />;
@@ -17,6 +26,16 @@ export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWith
     return <textarea {...props} ref={ref} data-studio-component="textarea" />;
   }
 );
+
+export type StudioStatusTone = "live" | "ready" | "draft" | "inactive" | "retired" | "archived" | "error" | "unknown";
+export function StudioStatusBadge({ children, tone, title, className = "" }: {
+  children: ReactNode;
+  tone: StudioStatusTone;
+  title?: string;
+  className?: string;
+}) {
+  return <span className={`studio-status-badge status-${tone} ${className}`.trim()} title={title}>{children}</span>;
+}
 
 /** Tabs switch a content panel. Arrow keys move focus; Enter/Space selects. */
 export function StudioTabs<T extends string>({ label, tabs, value, onValueChange, children, hidden = false }: {
