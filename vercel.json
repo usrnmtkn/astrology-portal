@@ -1,9 +1,47 @@
 {
   "installCommand": "npm install --include=optional",
   "devCommand": "npm run dev -w @tldr/web -- --port $PORT",
-  "buildCommand": "node scripts/assert-vercel-production-source.mjs && npm run build",
+  "buildCommand": "node scripts/assert-vercel-production-source.mjs && node scripts/test-content-studio-component-consistency.mjs && node scripts/test-reader-deployment-recovery.mjs && npm run build",
   "outputDirectory": "apps/web/dist",
   "framework": "vite",
+  "headers": [
+    {
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/admin/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/reports/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ],
   "functions": {
     "api/admin/sky-draft-writing.ts": {
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank,data/writing}/**/*.{*js,json,jsonl,md,ts}"
