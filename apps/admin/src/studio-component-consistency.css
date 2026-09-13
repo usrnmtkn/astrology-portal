@@ -68,9 +68,9 @@
 }
 
 #root .admin-dashboard .studio-status-badge.status-live {
-  background: var(--studio-success-container);
-  border-color: transparent;
-  color: var(--studio-on-success-container);
+  background: var(--workspace-surface);
+  border-color: var(--workspace-positive);
+  color: var(--workspace-positive);
 }
 
 #root .admin-dashboard .studio-status-badge.status-ready {
@@ -92,9 +92,9 @@
 }
 
 #root .admin-dashboard .studio-status-badge.status-error {
-  background: var(--studio-danger-container);
-  border-color: transparent;
-  color: var(--studio-on-danger-container);
+  background: transparent;
+  border-color: var(--workspace-danger);
+  color: var(--workspace-danger);
 }
 
 /* Legacy status wrappers inherit the same geometry until all callers migrate. */
