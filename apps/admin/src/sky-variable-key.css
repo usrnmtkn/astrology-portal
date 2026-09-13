@@ -1,0 +1,79 @@
+.admin-dashboard .admin-sky-phrase-list {
+  display: grid;
+  gap: 0;
+}
+
+.admin-dashboard .admin-sky-phrase-row {
+  border-bottom: var(--border-width-thin) solid var(--admin-ui-border);
+  display: grid;
+  gap: var(--admin-space-lg);
+  padding: var(--admin-space-2xl) 0;
+}
+
+.admin-dashboard .admin-sky-phrase-row:last-child {
+  border-bottom: 0;
+}
+
+.admin-dashboard .admin-sky-phrase-row-header {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+}
+
+.admin-dashboard .admin-sky-phrase-row-header strong {
+  font-size: var(--admin-ui-type-body);
+}
+
+.admin-dashboard .admin-sky-phrase-token {
+  background: var(--admin-ui-neutral-soft);
+  border-radius: var(--admin-radius-sm);
+  padding: var(--admin-space-xs) var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-sky-phrase-token code {
+  font-size: var(--admin-ui-type-caption);
+}
+
+.admin-dashboard .admin-sky-phrase-description,
+.admin-dashboard .admin-sky-phrase-source summary,
+.admin-dashboard .admin-sky-phrase-source p {
+  color: var(--admin-muted);
+  margin: 0;
+}
+
+.admin-dashboard .admin-sky-phrase-current {
+  background: var(--admin-ui-surface-2);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-radius-md);
+  padding: var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-sky-phrase-current p {
+  line-height: var(--leading-description);
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.admin-dashboard .admin-sky-phrase-current.is-empty {
+  background: transparent;
+  border-style: dashed;
+}
+
+.admin-dashboard .admin-sky-phrase-source {
+  font-size: var(--admin-ui-type-caption);
+}
+
+.admin-dashboard .admin-sky-phrase-source summary {
+  cursor: pointer;
+  font-weight: var(--weight-medium);
+}
+
+.admin-dashboard .admin-sky-phrase-source code {
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-sky-phrase-edit {
+  border-radius: var(--admin-radius-sm) !important;
+  justify-self: start;
+}
