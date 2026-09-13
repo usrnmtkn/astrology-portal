@@ -17,6 +17,8 @@ assert.match(controls, /StudioStatusBadge/u);
 assert.match(controls, /Save & return/u, "Nested source publication must expose Save & return.");
 assert.match(controls, /Save draft & return/u, "Nested source drafts must expose Save draft & return.");
 assert.match(controls, /returnToStudioParentEditor/u, "Nested editor close must return to the parent authoring context.");
+assert.match(controls, /text\.includes\("Not live"\)[\s\S]*"Inactive"/u, "Legacy button statuses must normalize Not live to Inactive.");
+assert.match(controls, /ariaLabel\?\.startsWith\("Close"\)/u, "Visible close buttons must opt into the shared icon-button treatment.");
 
 assert.match(rail, /rememberStudioEditorReturn/u);
 assert.match(rail, /onEditSource\(parentSourceRow\)/u, "Variable source editing must preserve its parent template row.");
