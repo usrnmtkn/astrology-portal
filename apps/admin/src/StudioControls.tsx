@@ -2,6 +2,9 @@ import "./studio-typography.css";
 import "./studio-component-consistency.css";
 import { cloneElement, forwardRef, isValidElement, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { requestStudioReturnAfterSave, returnToStudioParentEditor, studioEditorReturnContext } from "./studioEditorReturn";
+import { installStudioStatusCompatibility } from "./studioStatusCompatibility";
+
+installStudioStatusCompatibility();
 
 function nodeText(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") return String(node);
@@ -25,21 +28,24 @@ export const StudioButton = forwardRef<HTMLButtonElement, ComponentPropsWithoutR
     const returnContext = studioEditorReturnContext();
     const text = nodeText(children).trim();
     const nestedEditorClose = Boolean(returnContext && className.split(/\s+/u).includes("admin-editor-close"));
+    const visibleCloseControl = Boolean(children && ariaLabel?.startsWith("Close"));
     const saveAndPublishReturn = Boolean(returnContext && text === "Save & publish");
     const saveDraftReturn = Boolean(returnContext && text === "Save draft");
     const saveMode = saveAndPublishReturn ? "published" : saveDraftReturn ? "any" : null;
+    const statusNormalizedChildren = text.includes("Not live") ? replaceNodeText(children, "Not live", "Inactive") : children;
     const displayedChildren = saveAndPublishReturn
-      ? replaceNodeText(children, "Save & publish", "Save & return")
+      ? replaceNodeText(statusNormalizedChildren, "Save & publish", "Save & return")
       : saveDraftReturn
-        ? replaceNodeText(children, "Save draft", "Save draft & return")
-        : children;
+        ? replaceNodeText(statusNormalizedChildren, "Save draft", "Save draft & return")
+        : statusNormalizedChildren;
+    const resolvedClassName = `${className}${visibleCloseControl ? " studio-icon-button" : ""}`.trim();
 
     return <button
       {...props}
       type={type}
       ref={ref}
       data-studio-component="button"
-      className={className}
+      className={resolvedClassName}
       title={nestedEditorClose ? `Back to ${returnContext?.label ?? "previous editor"}` : title}
       aria-label={nestedEditorClose ? `Back to ${returnContext?.label ?? "previous editor"}` : ariaLabel}
       onClick={(event) => {

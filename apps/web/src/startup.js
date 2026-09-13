@@ -1,9 +1,35 @@
 // This independent, small entry runs while the reader/admin bundles download.
 const root = document.getElementById("root");
 const startup = document.getElementById("app-startup");
+const readerRecoveryHistoryKey = "__tldrastroReaderPageRecovery";
+const readerRecoveryCooldownMs = 2 * 60 * 1000;
+const recoverableReaderHash = /^#\/?(?:you|sky|calendar|friends)(?:[/?]|$)/u;
 try {
   document.documentElement.dataset.theme = localStorage.getItem("tldrastro:theme") === "dark" ? "dark" : "light";
 } catch { /* The loading screen also works when storage is unavailable. */ }
+
+const readerRecoveryRoute = () => location.pathname === "/" && (
+  location.hash === "" || recoverableReaderHash.test(location.hash)
+);
+
+const reloadReaderRouteOnce = () => {
+  if (!readerRecoveryRoute()) return false;
+  const route = `${location.pathname}${location.hash}`;
+  const now = Date.now();
+  try {
+    const historyState = history.state && typeof history.state === "object" ? history.state : {};
+    const previous = historyState[readerRecoveryHistoryKey];
+    if (previous?.route === route && typeof previous.at === "number" && now - previous.at < readerRecoveryCooldownMs) {
+      return false;
+    }
+    history.replaceState({ ...historyState, [readerRecoveryHistoryKey]: { route, at: now } }, "", location.href);
+  } catch {
+    // Without a reliable loop guard, keep recovery manual.
+    return false;
+  }
+  location.reload();
+  return true;
+};
 
 const showStartupMessage = (failed = false) => {
   if (!startup?.isConnected) return;
@@ -25,9 +51,16 @@ if (root) observer.observe(root, { childList: true });
 window.addEventListener("tldrastro:startup-error", () => showStartupMessage(true));
 window.addEventListener("unhandledrejection", () => showStartupMessage(true));
 window.addEventListener("error", (event) => {
-  if (event.target instanceof HTMLScriptElement || event instanceof ErrorEvent) showStartupMessage(true);
+  if (!startup?.isConnected) return;
+  const script = event.target instanceof HTMLScriptElement ? event.target : null;
+  if (script?.src.includes("/assets/") && reloadReaderRouteOnce()) return;
+  if (script || event instanceof ErrorEvent) showStartupMessage(true);
 }, true);
 window.addEventListener("vite:preloadError", (event) => {
-  // Do not reload automatically: a lazy chunk failure must not discard form edits.
-  if (startup?.isConnected) { event.preventDefault(); showStartupMessage(true); }
+  if (!startup?.isConnected) return;
+  event.preventDefault();
+  // Reader surfaces can safely reload once to pick up the current deployment.
+  // Admin/report paths remain manual so unsaved authoring work is never lost.
+  if (reloadReaderRouteOnce()) return;
+  showStartupMessage(true);
 });
