@@ -6,14 +6,36 @@ import defaultTiming from "./skyDailySummaryTiming.json" with { type: "json" };
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "./skyDailySummaryCatalog";
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
 import { contentPublication, publicationAllowsContent } from "./contentPublicationState";
+import { cachedPublishedSkySummaryCopy, rememberPublishedSkySummaryCopy } from "./skyDailySummaryPublishedCopyCache";
 
-function savedCopy(content: CmsGeneratedContentMap | undefined, key: string, fallback: string, editorialPreview = false) {
+function savedCopy(
+  content: CmsGeneratedContentMap | undefined,
+  key: string,
+  fallback: string,
+  editorialPreview = false,
+  pendingPublishedCopy?: Set<string>
+) {
   const publication = editorialPreview ? undefined : contentPublication(key);
   if (publication?.state === "retired") return "";
   // The reader loader filters LIVE, serving, review-clear rows before normalizing this map.
   const row = content?.get(key);
-  if (publication && (!row || !publicationAllowsContent(key, row.id, row.updatedAt))) return "";
-  if (!row || (row.status && row.status !== "LIVE") || !row.body.trim() || skySummaryTemplateErrors(key, row.body).length) return publication ? "" : fallback;
+  if (publication) {
+    const rowIsCurrent = Boolean(row
+      && publicationAllowsContent(key, row.id, row.updatedAt)
+      && (!row.status || row.status === "LIVE")
+      && row.body.trim()
+      && !skySummaryTemplateErrors(key, row.body).length);
+    if (row && rowIsCurrent) {
+      const body = currentSkySummaryWording(key, row.body.trim());
+      rememberPublishedSkySummaryCopy(key, publication, body);
+      return body;
+    }
+    const cached = cachedPublishedSkySummaryCopy(key, publication);
+    if (cached) return cached;
+    pendingPublishedCopy?.add(key);
+    return "";
+  }
+  if (!row || (row.status && row.status !== "LIVE") || !row.body.trim() || skySummaryTemplateErrors(key, row.body).length) return fallback;
   return currentSkySummaryWording(key, row.body.trim());
 }
 
@@ -34,8 +56,14 @@ export type SkyDailySummaryFacts = {
   event?: { placementsPending?: boolean; sun?: SummaryPlacement; name: string; degree?: number; sign: string; countdown: string; isToday?: boolean; eclipseType?: "solar" | "lunar" };
 };
 
-function fullerClause(body: "sun" | "moon", sign?: string, content?: CmsGeneratedContentMap, editorialPreview = false) {
-  return sign ? savedCopy(content, `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`, (clauses.sun as Record<string, string>)[sign.toLowerCase()] ?? "", editorialPreview) : "";
+function fullerClause(
+  body: "sun" | "moon",
+  sign?: string,
+  content?: CmsGeneratedContentMap,
+  editorialPreview = false,
+  pendingPublishedCopy?: Set<string>
+) {
+  return sign ? savedCopy(content, `cms/sky-daily-summary/${body}/${sign.toLowerCase()}`, (clauses.sun as Record<string, string>)[sign.toLowerCase()] ?? "", editorialPreview, pendingPublishedCopy) : "";
 }
 
 // Templates contain text and named slots only. Slot values remain structured parts,
@@ -62,7 +90,8 @@ export function skySummaryOpeningKey(sun?: string, moon?: string, content?: CmsG
 }
 
 export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false } = {}): SummaryPart[] {
-  const copy = (key: string, fallback: string) => savedCopy(content, `cms/sky-daily-summary/${key}`, fallback, editorialPreview);
+  const pendingPublishedCopy = new Set<string>();
+  const copy = (key: string, fallback: string) => savedCopy(content, `cms/sky-daily-summary/${key}`, fallback, editorialPreview, pendingPublishedCopy);
   const timing = { ...defaultTiming };
   for (const field of skyDailySummaryFields.filter(field => field.group === "Timing and retrogrades")) {
     timing[field.key.split("/").at(-1) as Exclude<keyof typeof timing, "provenance">] = copy(field.key.replace("cms/sky-daily-summary/", ""), field.body);
@@ -80,16 +109,23 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     const placement = body === "moon" ? moonPlacement : sunPlacement;
     if (!placement?.sign) continue;
     const sourceKey = body === "moon" ? moonSummaryKey(placement.sign, moonKind) : `cms/sky-daily-summary/sun/${placement.sign.toLowerCase()}`;
-    const clause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview) : fullerClause(body, placement.sign, content, editorialPreview);
+    const clause = body === "moon"
+      ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview, pendingPublishedCopy)
+      : fullerClause(body, placement.sign, content, editorialPreview, pendingPublishedCopy);
     values[`${body}Name`] = plain(body === "sun" ? "Sun" : moonEventNames[moonKind]);
     values[`${body}Sign`] = plain(placement.sign);
     values[`${body}Degree`] = plain(degreeText(placement.degree));
     values[`${body}Summary`] = clause ? [{ text: clause, sourceKey }] : [];
   }
+  // A known live Studio publication is authoritative. If that exact row is still
+  // hydrating and there is no exact last-known-good copy for the same publication
+  // identity, do not flash an older bundled sentence or a generic factual fallback.
+  // The next render uses the current row atomically once hydration completes.
+  if (!editorialPreview && pendingPublishedCopy.size) return [];
   const hasSun = Boolean(values.sunName), hasMoon = Boolean(values.moonName);
   const openingKey = skySummaryOpeningKey(sunPlacement?.sign, moonPlacement?.sign, content);
   let opening = hasSun && hasMoon ? assembly[openingKey] : hasSun ? assembly.sunOnly : assembly.moonOnly;
-  // Preserve the existing factual fallback when a summary is unavailable.
+  // Preserve the existing factual fallback when a summary genuinely has no publication.
   if (!values.sunSummary?.length) opening = opening.replace("{sunName} in {sunSign}", "{sunName} is in {sunSign}");
   if (!values.moonSummary?.length) opening = opening.replace("{moonName} in {moonSign}", specialMoon ? "{moonName} is in {moonSign}" : "{moonName} moves through {moonSign}");
   // The editor separates facts; readers still get one complete placement link.
