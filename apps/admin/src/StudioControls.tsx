@@ -2,6 +2,9 @@ import "./studio-typography.css";
 import "./studio-component-consistency.css";
 import { cloneElement, forwardRef, isValidElement, useId, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { requestStudioReturnAfterSave, returnToStudioParentEditor, studioEditorReturnContext } from "./studioEditorReturn";
+import { installStudioStatusCompatibility } from "./studioStatusCompatibility";
+
+installStudioStatusCompatibility();
 
 function nodeText(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") return String(node);
