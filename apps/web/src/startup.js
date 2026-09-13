@@ -1,7 +1,7 @@
 // This independent, small entry runs while the reader/admin bundles download.
 const root = document.getElementById("root");
 const startup = document.getElementById("app-startup");
-const readerRecoverySessionKey = "tldrastro:reader-page-recovery";
+const readerRecoveryHistoryKey = "__tldrastroReaderPageRecovery";
 const readerRecoveryCooldownMs = 2 * 60 * 1000;
 const recoverableReaderHash = /^#\/?(?:you|sky|calendar|friends)(?:[/?]|$)/u;
 try {
@@ -17,13 +17,14 @@ const reloadReaderRouteOnce = () => {
   const route = `${location.pathname}${location.hash}`;
   const now = Date.now();
   try {
-    const previous = JSON.parse(sessionStorage.getItem(readerRecoverySessionKey) ?? "null");
+    const historyState = history.state && typeof history.state === "object" ? history.state : {};
+    const previous = historyState[readerRecoveryHistoryKey];
     if (previous?.route === route && typeof previous.at === "number" && now - previous.at < readerRecoveryCooldownMs) {
       return false;
     }
-    sessionStorage.setItem(readerRecoverySessionKey, JSON.stringify({ route, at: now }));
+    history.replaceState({ ...historyState, [readerRecoveryHistoryKey]: { route, at: now } }, "", location.href);
   } catch {
-    // Without storage there is no safe loop guard, so leave recovery manual.
+    // Without a reliable loop guard, keep recovery manual.
     return false;
   }
   location.reload();
