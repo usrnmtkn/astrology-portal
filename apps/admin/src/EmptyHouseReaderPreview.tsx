@@ -70,6 +70,7 @@ export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHous
             house,
             sign,
             rulerHouse,
+            rulerSystem: "traditional",
             voice: audience === "you" ? "you" : "they"
           },
           { includeEmptyHouseBridge: true }
@@ -96,7 +97,7 @@ export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHous
         <div>
           <p className="admin-eyebrow">Full assembly</p>
           <h3>{audience === "they" ? "What a friend sees" : "What you see"}</h3>
-          <p>The complete reader passage updates when you change the empty house, cusp sign, or ruler&apos;s house.</p>
+          <p>The complete reader passage updates when you change the empty house, cusp sign, or ruler&apos;s house. Empty Houses use traditional rulership.</p>
         </div>
         <div className="admin-composition-preview-audience" role="group" aria-label="Empty-house preview audience">
           <StudioButton type="button" aria-pressed={audience === "you"} className={audience === "you" ? "active" : ""} onClick={() => setAudience("you")}>You</StudioButton>
