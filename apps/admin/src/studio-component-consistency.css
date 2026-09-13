@@ -1,13 +1,10 @@
 /* Shared Content Studio component treatments. Visual values come from the global design-system tokens. */
 
-/* All close controls use one icon-button contract, regardless of which editor owns them. */
+/* All visible close controls use one icon-button contract. Backdrop dismiss targets stay invisible. */
 #root .admin-dashboard :is(
   .studio-icon-button,
   .admin-editor-close,
-  .admin-variables-rail-close,
-  button[aria-label^="Close "],
-  button[aria-label="Close"],
-  button[title^="Close "]
+  .admin-variables-rail-close
 ) {
   align-items: center;
   align-self: center;
@@ -28,10 +25,7 @@
 #root .admin-dashboard :is(
   .studio-icon-button,
   .admin-editor-close,
-  .admin-variables-rail-close,
-  button[aria-label^="Close "],
-  button[aria-label="Close"],
-  button[title^="Close "]
+  .admin-variables-rail-close
 ):not(:disabled):hover {
   background: var(--workspace-hover);
   border-color: var(--workspace-line-strong);
@@ -41,10 +35,7 @@
 #root .admin-dashboard :is(
   .studio-icon-button,
   .admin-editor-close,
-  .admin-variables-rail-close,
-  button[aria-label^="Close "],
-  button[aria-label="Close"],
-  button[title^="Close "]
+  .admin-variables-rail-close
 ) svg {
   height: var(--type-ui-size);
   width: var(--type-ui-size);
