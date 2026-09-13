@@ -14,6 +14,8 @@
   .admin-card-title,
   .admin-row-title,
   .admin-content-title,
+  .admin-content-row-title,
+  .admin-content-location > strong,
   .admin-natal-source-card-heading > :is(strong, span):first-child,
   .admin-sky-phrase-row-header > strong
 ) {
@@ -198,6 +200,23 @@
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-pill);
   line-height: var(--leading-label);
+}
+
+/* Browse rows use the same title/meta hierarchy as content cards. */
+#root .admin-dashboard .admin-content-row-title {
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-title);
+}
+
+#root .admin-dashboard .admin-content-location > strong {
+  font-family: var(--font-display);
+  font-size: var(--type-title-size);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-title);
 }
 
 /* Source cards mirror the reader hierarchy: title -> body description -> source metadata. */
