@@ -47,7 +47,7 @@ jobs:
   content-studio-api:
     # The same merge commit has already been validated on its PR. Preserve direct
     # pushes to main, but do not bill a second identical run for normal PR merges.
-    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'Merge PR #')
+    if: ${{ github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'Merge PR #') }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
