@@ -1,9 +1,8 @@
-/* Content Studio typography roles.
-   This layer maps Studio UI onto the shared TLDR Astro semantic tokens:
-   Newsreader for titles, the body face for prose and editable values, Geist Mono
-   for labels/UI/data, and the glyph face only for astrological symbols. */
+/* Content Studio typography follows the reviewed Studio design system.
+   Studio UI is intentionally sans-serif. Monospace is reserved for exact
+   identifiers/code, and the astrology glyph face is reserved for glyphs. */
 
-/* Page, panel, card, row, and editor titles. */
+/* Page, panel, card, row, and editor titles use the same readable UI face. */
 #root .admin-dashboard :is(
   h1,
   h2,
@@ -19,13 +18,25 @@
   .admin-natal-source-card-heading > :is(strong, span):first-child,
   .admin-sky-phrase-row-header > strong
 ) {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-style: normal;
-  letter-spacing: var(--tracking-display);
+  letter-spacing: var(--tracking-body);
   text-transform: none;
 }
 
-/* Narrative copy and reader/editor prose. */
+#root .admin-dashboard :is(h1, h2) {
+  font-size: var(--type-large-title-size);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-title);
+}
+
+#root .admin-dashboard :is(h3, h4, h5, h6) {
+  font-size: var(--type-section-heading-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-body);
+}
+
+/* Narrative copy and editable values stay at the standard 16/24 body role. */
 #root .admin-dashboard :is(
   p,
   li,
@@ -37,12 +48,13 @@
   .admin-preview-copy
 ) {
   font-family: var(--font-body);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
   line-height: var(--leading-body);
 }
 
-/* Default compact metadata. More specific semantic labels/helpers below override it. */
+/* Metadata is smaller, but still uses the UI sans. */
 #root .admin-dashboard :is(
   small,
   .admin-breadcrumb,
@@ -52,12 +64,11 @@
   .admin-unresolved-total,
   .admin-unresolved-owner,
   .admin-sky-phrase-source,
-  .admin-sky-phrase-token,
   .admin-natal-source-key,
   .admin-source-meta
 ) {
   color: var(--workspace-muted);
-  font-family: var(--font-label);
+  font-family: var(--font-body);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
@@ -65,7 +76,7 @@
   text-transform: none;
 }
 
-/* Explanatory help is prose, not metadata. */
+/* Help text is prose and should never collapse to tiny metadata. */
 #root .admin-dashboard :is(
   .admin-field-hint,
   .admin-editor-guidance > small,
@@ -74,14 +85,14 @@
 ) {
   color: var(--workspace-muted);
   font-family: var(--font-body);
-  font-size: var(--type-hint-size);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
-  line-height: var(--leading-description);
+  line-height: var(--leading-body);
   text-transform: none;
 }
 
-/* Tiny form labels, eyebrows, table headings, and source-key labels. */
+/* Form labels, table labels, eyebrows, and source labels are sentence-case UI text. */
 #root .admin-dashboard :is(
   label:not(:has(> input[type="checkbox"])):not(:has(> input[type="radio"])),
   legend,
@@ -104,15 +115,15 @@
   .admin-natal-source-key > span:first-child
 ) {
   color: var(--workspace-muted);
-  font-family: var(--font-label);
+  font-family: var(--font-body);
   font-size: var(--type-label-size);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
   line-height: var(--leading-label);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
-/* Form values use the readable body face and never inherit label caps/tracking. */
+/* Form values use the same readable body face. */
 #root .admin-dashboard :where(
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
   select,
@@ -126,12 +137,11 @@
   text-transform: none;
 }
 
-#root .admin-dashboard :is(label, legend) :where(input, select, textarea, option, p, small, code) {
+#root .admin-dashboard :is(label, legend) :where(input, select, textarea, option, p, small) {
   letter-spacing: var(--tracking-body);
   text-transform: none;
 }
 
-/* Checkbox/radio labels are sentences, not tiny caps. */
 #root .admin-dashboard label:has(> input:is([type="checkbox"], [type="radio"])) {
   color: var(--workspace-ink);
   font-family: var(--font-body);
@@ -142,7 +152,7 @@
   text-transform: none;
 }
 
-/* Exact source identities and technical snippets. */
+/* Exact source identities and technical snippets are the only text set in mono. */
 #root .admin-dashboard :is(code, pre) {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
@@ -150,7 +160,7 @@
   text-transform: none;
 }
 
-/* Buttons, tabs, segmented choices, disclosures, and status chips. */
+/* Actions, tabs, choices, disclosures, and status controls use the 14/20 UI role. */
 #root .admin-dashboard :is(
   button,
   .admin-public-link,
@@ -163,64 +173,41 @@
   .admin-unresolved-state,
   .admin-unresolved-action-state
 ) {
-  font-family: var(--font-ui);
+  font-family: var(--font-body);
+  font-size: var(--type-ui-size);
   font-style: normal;
+  font-weight: var(--weight-regular);
   font-variant-numeric: tabular-nums;
-  letter-spacing: var(--tracking-pill);
-}
-
-#root .admin-dashboard :is(
-  .admin-create-button,
-  .admin-primary-button,
-  .admin-publish-button
-) {
-  font-size: var(--type-nav-size);
-  font-weight: var(--weight-semibold);
-}
-
-#root .admin-dashboard :is(
-  .ui-pill,
-  .admin-status,
-  .admin-template-badge
-) {
-  font-size: var(--type-meta-size);
+  letter-spacing: var(--tracking-body);
   line-height: var(--leading-label);
+  text-transform: none;
 }
 
-/* Studio tabs are compact navigation labels. */
+#root .admin-dashboard :is(.ui-pill, .admin-status, .admin-template-badge) {
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-meta);
+}
+
 #root .admin-dashboard .studio-tabs > [role="tablist"] > [role="tab"] {
-  font-family: var(--font-ui);
-  font-size: var(--type-meta-size);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-pill);
+  font-family: var(--font-body);
+  font-size: var(--type-ui-size);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
   line-height: var(--leading-label);
 }
 
-/* Browse rows use the same title/meta hierarchy as content cards. */
-#root .admin-dashboard .admin-content-row-title {
-  font-family: var(--font-display);
-  font-size: var(--text-card-title);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-display);
-  line-height: var(--leading-title);
-}
-
-#root .admin-dashboard .admin-content-location > strong {
-  font-family: var(--font-display);
-  font-size: var(--type-title-size);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-display);
-  line-height: var(--leading-title);
-}
-
-/* Source cards mirror the reader hierarchy: title -> body description -> source metadata. */
-#root .admin-dashboard .admin-natal-source-card h4,
-#root .admin-dashboard .admin-sky-phrase-row-header > strong {
-  font-family: var(--font-display);
-  font-size: var(--text-card-title);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-display);
-  line-height: var(--leading-title);
+/* Browse/source titles use section-heading scale rather than reader-display typography. */
+#root .admin-dashboard :is(
+  .admin-content-row-title,
+  .admin-content-location > strong,
+  .admin-natal-source-card h4,
+  .admin-sky-phrase-row-header > strong
+) {
+  font-family: var(--font-body);
+  font-size: var(--type-section-heading-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--leading-body);
 }
 
 #root .admin-dashboard .admin-natal-source-card-copy > p:not(.admin-natal-source-key):not(.admin-field-hint),
@@ -232,19 +219,19 @@
   line-height: var(--leading-body);
 }
 
-/* Sidebar UI and brand follow the public-shell wordmark/UI contract. */
+#root .admin-dashboard :is(.admin-brand strong, .admin-nav button, .admin-public-link) {
+  font-family: var(--font-body);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
+}
+
 #root .admin-dashboard .admin-brand strong {
-  font-family: var(--font-ui);
-  font-size: var(--text-card-title);
+  font-size: var(--type-section-heading-size);
   font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-tight);
 }
 
 #root .admin-dashboard :is(.admin-nav button, .admin-public-link) {
-  font-family: var(--font-ui);
   font-size: var(--type-nav-size);
-  font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-body);
 }
 
 /* Astrological symbols remain isolated from text typography. */
