@@ -4,9 +4,12 @@ on:
   pull_request:
     paths:
       - '.github/workflows/memory-graph.yml'
-      - 'api/**'
-      - 'apps/admin/**'
-      - 'apps/web/**'
+      - 'api/admin/memory-graph.ts'
+      - 'apps/admin/src/MemoryGraphDashboard.tsx'
+      - 'apps/admin/src/StudioControls.tsx'
+      - 'apps/admin/src/studio-system.css'
+      - 'apps/admin/src/studioTheme.ts'
+      - 'apps/web/src/main.tsx'
       - 'config/agent-memory-sources-v1.json'
       - 'data/agent-memory/**'
       - 'scripts/*memory*'
@@ -15,8 +18,10 @@ on:
       - 'tests/helpers/studio-article-memory*'
       - 'tests/visual/studio-article-memory.spec.ts'
       - 'tests/visual/studio-memory-feedback.spec.ts'
+      - 'tests/visual/review-queue-workflow.spec.ts'
       - 'playwright.memory.config.ts'
-      - 'package*.json'
+      - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
 
 permissions:
