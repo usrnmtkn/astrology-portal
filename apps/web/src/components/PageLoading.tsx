@@ -35,8 +35,8 @@ function reloadReaderRouteOnce() {
     }
     window.sessionStorage.setItem(readerRecoverySessionKey, JSON.stringify({ route, at: now }));
   } catch {
-    // Storage can be unavailable in hardened browser modes. A single reload is
-    // still preferable to leaving a reader on a stale deployment shell.
+    // Without storage there is no reliable loop guard, so keep recovery manual.
+    return false;
   }
   window.location.reload();
   return true;
