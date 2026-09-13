@@ -43,7 +43,8 @@ function filledLibraryFields(composition: SkyWritingLibraryComposition) {
 
 export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sourceRecord, composition, disabled, initialSourceId, onChange, onOpenSource, onLoadSource, onAdvancedSource }: Props) {
   const installed = skyWritingLibraryInstalled(composition);
-  const primary = skyWritingLibraryIsPrimary(composition);
+  const workingComposition = installed ? installSkyWritingLibrary(composition) : composition;
+  const primary = skyWritingLibraryIsPrimary(workingComposition);
   const [seeding, setSeeding] = useState(false);
   const [seedStatus, setSeedStatus] = useState("");
   const initialTextarea = useRef<HTMLTextAreaElement>(null);
@@ -65,9 +66,9 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
     setSeeding(true);
     setSeedStatus("");
     try {
-      const before = filledLibraryFields(composition);
+      const before = filledLibraryFields(workingComposition);
       const { values, provenance } = await loadSkyWritingLibrarySeeds(sourceRecord, planet, sign, onLoadSource);
-      const next = installSkyWritingLibrary(composition, values);
+      const next = installSkyWritingLibrary(workingComposition, values);
       const after = filledLibraryFields(next);
       onChange(next);
       const added = Math.max(0, after - before);
@@ -91,7 +92,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
   </section>;
 
   if (initialField && initialSourceId) {
-    const source = composition.sources[initialSourceId];
+    const source = workingComposition.sources[initialSourceId];
     if (!source) return <p role="alert">This Writing Library field is not available.</p>;
     const reference = source.reference;
     return <section className="admin-sky-writing-editor admin-sky-single-variable-editor" aria-label={`Edit ${initialField.label}`}>
@@ -106,7 +107,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
           <p>Linked source: <code>{reference.contentKey}#{reference.field}</code></p>
           <div className="admin-sky-writing-source-actions">
             <StudioButton type="button" onClick={() => onOpenSource(reference.contentKey, reference.field)}>Edit linked source</StudioButton>
-            <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(composition, initialSourceId, { kind: source.kind, text: "" }))}>Use local writing</StudioButton>
+            <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(workingComposition, initialSourceId, { kind: source.kind, text: "" }))}>Use local writing</StudioButton>
           </div>
         </> : <StudioTextarea
           ref={initialTextarea}
@@ -115,15 +116,15 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
           className="admin-copy-field-body"
           disabled={disabled}
           value={source.text ?? ""}
-          onChange={event => onChange(updateSource(composition, initialSourceId, { ...source, text: event.target.value }))}
+          onChange={event => onChange(updateSource(workingComposition, initialSourceId, { ...source, text: event.target.value }))}
         />}
       </label>
       {initialField.groupId === "experiences" && <StudioButton
         type="button"
-        aria-pressed={skyWritingLibrarySourceModuleEnabled(composition, initialSourceId)}
-        disabled={disabled || (!skyWritingLibrarySourceModuleEnabled(composition, initialSourceId) && composition.modules.length >= 32)}
-        onClick={() => onChange(toggleSkyWritingLibrarySourceModule(composition, initialSourceId, initialField.label))}
-      >{skyWritingLibrarySourceModuleEnabled(composition, initialSourceId) ? "Remove from fallback" : "Include in fallback"}</StudioButton>}
+        aria-pressed={skyWritingLibrarySourceModuleEnabled(workingComposition, initialSourceId)}
+        disabled={disabled || (!skyWritingLibrarySourceModuleEnabled(workingComposition, initialSourceId) && workingComposition.modules.length >= 32)}
+        onClick={() => onChange(toggleSkyWritingLibrarySourceModule(workingComposition, initialSourceId, initialField.label))}
+      >{skyWritingLibrarySourceModuleEnabled(workingComposition, initialSourceId) ? "Remove from fallback" : "Include in fallback"}</StudioButton>}
       <details className="admin-workspace-details">
         <AdminDisclosureSummary>Source details</AdminDisclosureSummary>
         <p><code>{contentKey}#ingress.sources.{initialSourceId}</code></p>
@@ -139,7 +140,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
       <p>Edit reusable writing here. Empty optional fields stay empty instead of receiving invented prose.</p>
       <div className="admin-sky-writing-source-actions">
         <StudioButton type="button" disabled={disabled || seeding} onClick={() => void fillFromGovernedSources()}>{seeding ? "Loading governed sources…" : "Fill empty fields from source library"}</StudioButton>
-        {!primary && <StudioButton type="button" disabled={disabled} onClick={() => onChange(preferSkyWritingLibrary(composition))}>Use writing library as primary fallback structure</StudioButton>}
+        {!primary && <StudioButton type="button" disabled={disabled} onClick={() => onChange(preferSkyWritingLibrary(workingComposition))}>Use writing library as primary fallback structure</StudioButton>}
       </div>
       {seedStatus && <p role="status">{seedStatus}</p>}
       <p role="status"><strong>{primary ? "Writing library is the primary V5 fallback structure in this draft." : "The existing V5 structure still controls required fallback sections."}</strong></p>
@@ -152,10 +153,10 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
       {group.id === "experiences" && <p>An experience can live in the library without appearing in reader copy. Include only manifestations that genuinely belong in this article.</p>}
       <div className="admin-review-stack">
         {group.fields.map(item => {
-          const source = composition.sources[item.id];
+          const source = workingComposition.sources[item.id];
           if (!source) return null;
           const reference = source.reference;
-          const included = group.id === "experiences" && skyWritingLibrarySourceModuleEnabled(composition, item.id);
+          const included = group.id === "experiences" && skyWritingLibrarySourceModuleEnabled(workingComposition, item.id);
           return <div className="admin-editor-guidance" key={item.id}>
             <label className="admin-review-copy-editor">
               <span><strong>{item.label}</strong> <code>{`{{${item.id}}}`}</code></span>
@@ -164,7 +165,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
                 <p>Linked source: <code>{reference.contentKey}#{reference.field}</code></p>
                 <div className="admin-sky-writing-source-actions">
                   <StudioButton type="button" onClick={() => onOpenSource(reference.contentKey, reference.field)}>Edit linked source</StudioButton>
-                  <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(composition, item.id, { kind: source.kind, text: "" }))}>Use local writing</StudioButton>
+                  <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(workingComposition, item.id, { kind: source.kind, text: "" }))}>Use local writing</StudioButton>
                 </div>
               </> : <StudioTextarea
                 rows={item.rows ?? 4}
@@ -172,15 +173,15 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
                 className="admin-copy-field-body"
                 disabled={disabled}
                 value={source.text ?? ""}
-                onChange={event => onChange(updateSource(composition, item.id, { ...source, text: event.target.value }))}
+                onChange={event => onChange(updateSource(workingComposition, item.id, { ...source, text: event.target.value }))}
               />}
             </label>
             <div className="admin-sky-writing-source-actions">
               {group.id === "experiences" && <StudioButton
                 type="button"
                 aria-pressed={included}
-                disabled={disabled || (!included && composition.modules.length >= 32)}
-                onClick={() => onChange(toggleSkyWritingLibrarySourceModule(composition, item.id, item.label))}
+                disabled={disabled || (!included && workingComposition.modules.length >= 32)}
+                onClick={() => onChange(toggleSkyWritingLibrarySourceModule(workingComposition, item.id, item.label))}
               >{included ? "Remove from fallback" : "Include in fallback"}</StudioButton>}
               <details className="admin-workspace-details">
                 <AdminDisclosureSummary>Source details</AdminDisclosureSummary>
