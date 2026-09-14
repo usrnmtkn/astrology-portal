@@ -227,13 +227,14 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-content-expanded-row > td { padding: 0; }
 #root .admin-dashboard .admin-content-expanded-body { display: grid; gap: var(--workspace-control-inset); padding: var(--workspace-card-padding); background: var(--workspace-raised); }
 #root .admin-dashboard :is(.admin-review-queue-rows,.admin-template-card-list,.admin-sky-aspect-list) { display: grid; gap: var(--workspace-panel-inset); }
-#root .admin-dashboard .admin-natal-source-grid > article { padding: var(--workspace-panel-inset); border-radius: var(--workspace-radius); background: var(--workspace-surface); }
 #root .admin-dashboard .admin-sky-house-grid { display: grid; gap: 0; }
 #root .admin-dashboard .admin-sky-house-grid > article { border-radius: 0; border-bottom: var(--border-width-thin) solid var(--workspace-line); padding: 0; background: transparent; }
 #root .admin-dashboard .admin-sky-house-grid > article:last-child { border-bottom: 0; }
 #root .admin-dashboard .admin-sky-house-grid > article > header { padding-block: var(--workspace-field-gap); min-height: var(--studio-nav-height); display: flex; align-items: center; justify-content: space-between; gap: var(--workspace-control-inset); }
-#root .admin-dashboard .admin-natal-source-card { display: grid; gap: var(--workspace-panel-inset); }
-#root .admin-dashboard .admin-natal-source-card-copy { display: grid; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .admin-natal-source-card { display: grid; gap: var(--workspace-panel-inset); padding: var(--workspace-card-padding); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-radius); background: var(--workspace-surface); }
+#root .admin-dashboard .admin-natal-source-card-copy { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-natal-source-card-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .admin-natal-source-card blockquote { margin: 0; font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); white-space: pre-wrap; overflow-wrap: anywhere; }
 
 
 /* Shared grid: columns share edges, controls retain their intrinsic height. */

@@ -2,7 +2,7 @@
   "entryJavaScriptRawBytes": 625000,
   "entryJavaScriptGzipBytes": 178750,
   "largestJavaScriptRawBytes": 625000,
-  "totalJavaScriptGzipBytes": 452500,
+  "totalJavaScriptGzipBytes": 453000,
   "_rationale": {
     "entryJavaScriptGzipBytes": "Shared paragraph and practical-item validation measures 176.3 kB entry gzip; allow 0.7 kB headroom. No new runtime dependencies. See docs/qa/sky-composable-blocks-2026-09-10.md.",
     "totalJavaScriptGzipBytes": "Paragraph editor, eight structural outlines, and repeatable practical items measure 316.8 kB aggregate gzip. Allow 0.2 kB headroom. See docs/qa/sky-composable-blocks-2026-09-10.md.",
@@ -15,7 +15,8 @@
     "placementArticlePhrases20260914": "Main #799 added the owner-requested article phrase-variable editor. After retaining that feature and moving empty-house assembly behind the authenticated preview API, the 5d8feb447-based reconciliation measures 178.0 kB entry gzip and 450.7 kB total (versus 177.9 / 447.9 kB before #799). Allocate 0.5 kB entry and 3 kB aggregate for this implemented feature. Raw-entry/largest-chunk limits, lazy boundaries, forbidden payload markers and graph cap are unchanged. See docs/qa/pr-reconciliation/2026-09-14.md.",
     "calendarMoonEditor20260914": "The requested direct Moon-sign editing and separate draft chooser add about 1 kB aggregate gzip over main 120ae1dbf. Measured 451.7 kB aggregate and 178.2 kB entry gzip. Allocate 1 kB aggregate for this interface; entry, largest-chunk, memory-graph and forbidden-payload limits remain unchanged. LunarCalendarWorkspace remains deferred. See docs/qa/calendar-moon-sign-editor.md.",
     "integratedSkyRelease20260914": "The combined main #801\u2013#803 Calendar editor and article save/revision controls plus the repaired accessible serving-status badge measure 178.55 kB entry and 452.13 kB aggregate gzip under the actual CI Supabase configuration. Allocate 250 bytes entry and 500 bytes aggregate above main\u2019s existing caps. Raw-entry, largest-chunk, deferred graph, forbidden payload, all reader startup limits and accuracy checks are unchanged. The standalone build without CI configuration understated this combined size. See docs/qa/sky-publication-hydration-ci-repair-2026-09-14.md.",
-    "calendarSunIntroduction20260914": "Using the workflow Supabase environment, main caaa140fb measures 178,540 entry / 452,096 aggregate gzip bytes; the Calendar Sun introduction and shared editor links measure 178,552 / 452,210 (+12 / +114 bytes). Account for the existing CI configuration overhead and this feature with caps of 178,750 / 452,500. Raw entry, largest chunk, deferred graph and forbidden payload boundaries are unchanged. See docs/qa/calendar-shared-daily-summary.md."
+    "calendarSunIntroduction20260914": "Using the workflow Supabase environment, main caaa140fb measures 178,540 entry / 452,096 aggregate gzip bytes; the Calendar Sun introduction and shared editor links measure 178,552 / 452,210 (+12 / +114 bytes). Account for the existing CI configuration overhead and this feature with caps of 178,750 / 452,500. Raw entry, largest chunk, deferred graph and forbidden payload boundaries are unchanged. See docs/qa/calendar-shared-daily-summary.md.",
+    "houseTransitLoading20260914": "House Transit inventory loading, failure/retry, and confirmed-missing states measure 452,579 total gzip bytes with the workflow Supabase configuration after reusing the existing load-error state and simplifying the status UI. Allocate 500 aggregate bytes over the prior 452,500 cap for this feature. Entry, raw entry, largest chunk, graph, and forbidden-payload limits remain unchanged."
   },
   "memoryGraphJavaScriptGzipBytes": 64000
 }

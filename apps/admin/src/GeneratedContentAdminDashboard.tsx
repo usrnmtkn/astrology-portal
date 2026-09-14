@@ -3363,6 +3363,7 @@ export function GeneratedContentAdminDashboard() {
       || showReferenceRows
       || showRetiredRows;
     if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
+    setLoadError(null);
     let cancelled = false;
     const controller = new AbortController();
     void loadAllGeneratedContentRows(
@@ -3386,6 +3387,7 @@ export function GeneratedContentAdminDashboard() {
       })
       .catch((error) => {
         if (cancelled) return;
+        setLoadError(dashboardErrorMessage(error));
         setMessage(dashboardErrorMessage(error));
       });
     return () => {
@@ -7251,7 +7253,7 @@ export function GeneratedContentAdminDashboard() {
             <p>{friendsTransitAudience
               ? "This is the editor for Friends > Transits > Active for {{Name}}. The preview uses the Friends reader resolver and its approved Friend View Copy. Open the selected source to edit that passage."
               : "Choose the current placement and the natal point it contacts. The preview uses the same approved transit writing as Sky and You. Open the selected source to edit the complete passage."}</p>
-            <p><strong>Editable lifecycle:</strong> open a passage to read it, Save to create or update it, Archive to remove it from active use, and Restore to reopen it as a non-serving draft.</p>
+            <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
           </div>
           {selection && <code>transit/{selection.planet}-{selection.sign}-{selection.transitHouse}h/{selection.aspect}/{selection.natalPoint}-{selection.natalHouse}h</code>}
         </div>
@@ -7344,8 +7346,9 @@ export function GeneratedContentAdminDashboard() {
       house: houseTransitHouse,
       motion: houseTransitMotion
     } as HouseTransitSelection : null;
-    const groups = selection ? houseTransitSourceGroups(selection) : [];
-    const preview = selection ? renderHouseTransitPreview(selection, (candidateKeys) => {
+    const sourcesReady = loadState === "loaded" && allRowsLoaded;
+    const groups = selection && sourcesReady ? houseTransitSourceGroups(selection) : [];
+    const preview = selection && sourcesReady ? renderHouseTransitPreview(selection, (candidateKeys) => {
       const source = skySourceForCandidates(candidateKeys);
       return source ? { key: source.contentKey, text: source.text } : null;
     }) : null;
@@ -7358,19 +7361,19 @@ export function GeneratedContentAdminDashboard() {
 
     return (
       <section className="admin-natal-placement-finder" aria-label="House Transits source finder">
-        <div className="admin-natal-placement-finder-heading">
+        <div className="admin-natal-placement-finder-heading admin-surface-card">
           <div>
             <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Where it lands" : "House Transits workspace"}</p>
             <h3>{selection ? houseTransitLabel(selection) : "Find a House Transit write-up"}</h3>
             <p>{friendsTransitAudience
               ? "This is the editor for Friends > Transits > Where it lands. The preview prefers Friends copy for the evergreen house passage, current-sign passage, and retrograde overlay when those sources have separate audience versions."
-              : "Choose the transiting planet, its current sign, and the reader's house. The complete card appears first, followed by the evergreen house passage, sign-specific passage, and any retrograde passage inside it."}</p>
-            <p><strong>Editable lifecycle:</strong> open a passage to read it, Save to create or update it, Archive to remove it from active use, and Restore to reopen it as a non-serving draft.</p>
+              : "Choose a planet, sign, and house to preview the complete House Transit and edit its passages."}</p>
+            <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
           </div>
           {selection && <code>transit/{selection.planet}-{selection.sign}/{selection.house}h/{selection.motion}</code>}
         </div>
 
-        <div className="admin-natal-placement-selectors">
+        <div className="admin-natal-placement-selectors admin-surface-card">
           <label>
             <span>1. Transiting planet</span>
             <AdminSelect aria-label="House Transit planet" value={houseTransitPlanet} onChange={(event) => updateHouseTransitSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
@@ -7402,13 +7405,19 @@ export function GeneratedContentAdminDashboard() {
         </div>
 
         {!selection && <p className="admin-natal-placement-prompt">Choose the planet, sign, and house to preview the reader's House Transit and open its exact source rows.</p>}
+        {selection && !sourcesReady && (
+          <section className="admin-surface-card" aria-label="House Transit content loading" aria-busy={!loadError}>
+            <p role={loadError ? "alert" : "status"}>{loadError || "Loading House Transit passages…"}</p>
+            {loadError && <StudioButton type="button" onClick={() => void loadDashboardData()}>Retry</StudioButton>}
+          </section>
+        )}
         {selection && preview && (
           <section className="admin-natal-source-group" aria-label="Effective House Transit reader preview">
-            <header>
+            <header className="admin-surface-card"><div className="admin-page-heading">
               <p className="admin-eyebrow">Effective reader preview</p>
               <h3>What you see</h3>
               <p>The dates and motion are calculated facts. The writing comes from the editable passages listed below.</p>
-            </header>
+            </div></header>
             <article className="admin-natal-source-card">
               <div className="admin-natal-source-card-copy">
                 <div className="admin-natal-source-card-heading">
@@ -7426,10 +7435,10 @@ export function GeneratedContentAdminDashboard() {
 
         {compositionGroup && (
           <section className="admin-natal-source-group">
-            <header>
+            <header className="admin-surface-card"><div className="admin-page-heading">
               <h3>{compositionGroup.label}</h3>
               <p>{servingLegacy ? "This reader card is currently stored as one complete editable passage." : compositionGroup.description}</p>
-            </header>
+            </div></header>
             <div className="admin-natal-source-grid">{visibleCompositionSources.map(renderSkyAssemblySource)}</div>
           </section>
         )}
