@@ -1,8 +1,11 @@
 import { getSupabaseClient } from "./auth";
-import { installContentPublications, validContentPublication } from "../content/contentPublicationState";
+import { installContentPublications, validContentPublication, publicationLedgerReady } from "../content/contentPublicationState";
 
 let pending: Promise<void> | null = null;
 let checkedAt = 0;
+let resolved = false;
+/** A failed first lookup is not evidence that no published override exists. */
+export function contentPublicationsResolved() { return resolved || publicationLedgerReady(); }
 /** Fetch every page before installing; partial or failed reads cannot erase retirements. */
 export async function refreshContentPublications(force = false): Promise<void> {
   if (pending) return pending;
@@ -10,7 +13,8 @@ export async function refreshContentPublications(force = false): Promise<void> {
   pending = (async () => {
     if (typeof navigator !== "undefined" && navigator.onLine === false) return;
     const client = await getSupabaseClient();
-    if (!client) return;
+    // Unconfigured local readers have no remote publication plane to resolve.
+    if (!client) { resolved = true; return; }
     const records = [];
     let cursor: string | null = null;
     for (;;) {
@@ -26,6 +30,7 @@ export async function refreshContentPublications(force = false): Promise<void> {
       cursor = nextCursor;
     }
     installContentPublications(records);
+    resolved = true;
     checkedAt = Date.now();
   })().catch(() => undefined).finally(() => { pending = null; });
   return pending;
