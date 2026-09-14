@@ -9,7 +9,8 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const adminSrc = path.join(repoRoot, "apps/admin/src");
 const readAdmin = (name) => fs.readFileSync(path.join(adminSrc, name), "utf8");
 const controls = readAdmin("StudioControls.tsx");
-const css = readAdmin("studio-component-consistency.css");
+const systemCss = readAdmin("studio-system.css");
+const css = systemCss.slice(systemCss.indexOf("/* Shared Content Studio component treatments."));
 const status = readAdmin("ContentLiveStatus.tsx");
 const aspectPatterns = readAdmin("AspectPatternWriteups.tsx");
 const dashboard = readAdmin("GeneratedContentAdminDashboard.tsx");
@@ -19,7 +20,9 @@ const returnFlow = readAdmin("studioEditorReturn.ts");
 const natalEditor = readAdmin("NatalPlacementSourceEditor.tsx");
 const attention = readAdmin("NeedsAttentionDashboard.tsx");
 
-assert.match(controls, /import "\.\/studio-component-consistency\.css";/u);
+assert.doesNotMatch(controls, /import "\.\/studio-component-consistency\.css";/u, "Shared controls must use the canonical Studio stylesheet.");
+assert.match(dashboard, /import "\.\/studio-system\.css";/u);
+assert.match(readAdmin("main.tsx"), /import "\.\/studio-system\.css";/u);
 assert.match(controls, /StudioIconButton/u);
 assert.match(controls, /StudioStatusBadge/u);
 assert.match(controls, /installStudioStatusCompatibility/u, "The shared Studio control layer must install the legacy-status compatibility boundary.");

@@ -211,3 +211,103 @@ console.log("PASS: an empty published evergreen layout survives reload without r
  }
  console.log('PASS: V5 incomplete draft retained and publish rejected; complete revisions and removed sources round-trip through API, publication, actual loader and reader.');
 }
+
+// Inline Writing Library phrases use the complete article even with composition disabled.
+{
+ const { makeSkyIngressComposition } = await import('../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs');
+ let row = stored.find(item => item.content_key === articleKey && item.status === 'LIVE');
+ const composition = { ...makeSkyIngressComposition(), modules: [], enabled: false };
+ Object.assign(composition.sources, {
+  openingHook: { kind: 'placement', text: 'During this transit, fixture article opening.' },
+  planetFunction: { kind: 'planet', text: 'fixture planetary function' },
+  signMethod: { kind: 'sign', text: 'fixture sign method' },
+  closingLine: { kind: 'placement', text: 'Fixture article final sentence.' },
+  directNote: { kind: 'placement', text: 'During this transit, fixture direct {{planetTitle}}.' },
+  retrogradeNote: { kind: 'placement', text: 'During this transit, fixture retrograde {{planetTitle}}.' }
+ });
+ const template = '{{openingHook}} {{planetTitle}} uses {{planetFunction}} with {{signMethod}}. {{closingLine}}';
+ for (let revision = 1; revision <= 2; revision++) {
+  composition.sources.closingLine.text = `Fixture article final sentence ${revision}.`;
+  const copy = { ...row.sections.packageRecord, ingress: composition, placementArticle: template,
+   placementArticleDirect: '{{directNote}} {{closingLine}}', placementArticleRetrograde: '{{retrogradeNote}} {{closingLine}}' };
+  const draft = (await request('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, reviewStatus: 'needs_review', sections: { ...row.sections, packageDraft: copy } })).rows[0];
+  assert.equal(draft.sections.packageDraft.placementArticle, template);
+  row = (await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' })).rows[0];
+  assert.equal(row.sections.packageRecord.placementArticle, template);
+  assert.equal(row.sections.packageRecord.ingress.enabled, false);
+  await runtime.refreshContentPublications(true); runtime.clearCachedFallbackArchitectureV3Bundle();
+  runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
+  for (const isRetrograde of [false, true]) {
+   const rendered = runtime.skyV4ReaderRenderer.renderRoute({ route: 'placement', planet: 'saturn', sign: 'aries', isRetrograde });
+   assert.equal(rendered.mainBody, `During this transit, fixture ${isRetrograde ? 'retrograde' : 'direct'} Saturn. Fixture article final sentence ${revision}.`);
+   assert.equal(rendered.resolution, 'canonical-article');
+  }
+ }
+ console.log('PASS: shared and custom Direct/Retrograde phrase templates saved, published, loaded and rendered across two revisions.');
+ const lastPublished = JSON.stringify(row.sections.packageRecord);
+ let pending = row;
+ for (const ingress of [null, { ...composition, sources: { ...composition.sources, placementOpportunity: { kind: 'placement', text: '' } } }]) {
+  const copy = { ...pending.sections.packageRecord, ingress, placementArticle: '{{placementOpportunity}}', placementArticleDirect: '', placementArticleRetrograde: '' };
+  const draft = (await request('PATCH', { id: pending.id, expectedUpdatedAt: pending.updated_at, reviewStatus: 'needs_review', sections: { ...pending.sections, packageDraft: copy } })).rows[0];
+  pending = draft;
+  assert.equal(draft.sections.packageDraft.placementArticle, '{{placementOpportunity}}');
+  const rejected = await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' }, '', 400);
+  assert(JSON.stringify(rejected).includes('placementOpportunity'));
+  row = stored.find(item => item.id === row.id);
+  assert.equal(JSON.stringify(row.sections.packageRecord), lastPublished, 'rejected publication preserves approved copy');
+ }
+ console.log('PASS: phrase templates and both motions save/publish twice through API/loader/reader; missing phrases cannot publish with disabled or absent composition.');
+}
+
+// Shared planet/sign edits stay at their source and require exact revision review.
+{
+ const { makeSkyIngressComposition } = await import('../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs');
+ const { sha256Text } = await import('../apps/web/src/content/fallbackArchitectureV3/resolver/contentIntegrity.mjs');
+ async function saveSource(key: string, source: any, row?: any) {
+  const base = row?.sections.packageRecord ?? skyPlacementSourceRecords.get(key)!;
+  return (await request(row ? 'PATCH' : 'POST', {
+   ...(row ? { id: row.id, expectedUpdatedAt: row.updated_at } : { contentKey: key, surface: 'sky', mode: 'in_depth', status: 'DRAFT', eventType: 'fallback-hook', blockType: 'fallback_hook', lane: 'reference' }),
+   headline: base.headline, summary: base.summary, body: base.body_you,
+   sections: { ...(row?.sections ?? { packageRecord: base }), packageDraft: { ...base, ...source } },
+   sourceSnapshot: { ...(row?.source_snapshot ?? {}), sourcePackage: base.source_package, content_role: base.content_role },
+   facts: { fallbackArchitectureV3: true }, reviewStatus: 'needs_review'
+  })).rows[0];
+ }
+ const publish = async (draft: any) => (await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' })).rows[0];
+ const library = (sources: any) => ({ ...makeSkyIngressComposition(), enabled: false, modules: [], sources });
+ const planetKey = 'sky-placement/article/sun/taurus';
+ const signKey = 'sky-placement/article/venus/virgo';
+ const ownerKey = 'sky-placement/article/sun/virgo';
+ const planetText = 'fixture shared Sun function';
+ const signText = 'fixture shared Virgo method';
+ let planetRow = await publish(await saveSource(planetKey, { ingress: library({ planetFunction: { kind: 'planet', text: planetText } }) }));
+ await publish(await saveSource(signKey, { ingress: library({ signMethod: { kind: 'sign', text: signText } }) }));
+ const references = library({
+  planetFunction: { kind: 'planet', reference: { contentKey: planetKey, field: 'ingress.sources.planetFunction', sha256: sha256Text(planetText) } },
+  signMethod: { kind: 'sign', reference: { contentKey: signKey, field: 'ingress.sources.signMethod', sha256: sha256Text(signText) } },
+  placementPressure: { kind: 'placement', text: 'Fixture Sun in Virgo ending.' }
+ });
+ const template = 'During this transit, {{planetTitle}} uses {{planetFunction}} and {{signMethod}}. {{placementPressure}}';
+ let ownerRow = await publish(await saveSource(ownerKey, { ingress: references, placementArticle: template, placementArticleDirect: '', placementArticleRetrograde: '' }));
+ const render = async () => {
+  await runtime.refreshContentPublications(true); runtime.clearCachedFallbackArchitectureV3Bundle();
+  runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
+  return runtime.skyV4ReaderRenderer.renderRoute({ route: 'placement', planet: 'sun', sign: 'virgo', facts: { entryDate: 'Fixture entry', exitDate: 'Fixture exit' } });
+ };
+ assert.equal((await render()).mainBody, 'During this transit, Sun uses fixture shared Sun function and fixture shared Virgo method. Fixture Sun in Virgo ending.');
+ const changedLibrary = library({ planetFunction: { kind: 'planet', text: 'fixture revised Sun function' } });
+ const planetDraft = await saveSource(planetKey, { ingress: changedLibrary }, planetRow);
+ assert((await render()).mainBody.includes(planetText), 'a source draft never alters published dependent copy');
+ planetRow = await publish(planetDraft);
+ const approvedOwner = JSON.stringify(ownerRow.sections.packageRecord);
+ const ownerDraft = await saveSource(ownerKey, { ingress: references }, ownerRow);
+ const rejected = await request('PATCH', { id: ownerDraft.id, expectedUpdatedAt: ownerDraft.updated_at, ownerAction: 'approve-package-revision' }, '', 400);
+ assert.match(rejected.error, /Referenced writing changed/);
+ assert.equal(JSON.stringify(stored.find(row => row.id === ownerRow.id).sections.packageRecord), approvedOwner);
+ await assert.rejects(render, /Referenced writing changed/);
+ references.sources.planetFunction.reference.sha256 = sha256Text(changedLibrary.sources.planetFunction.text);
+ ownerRow = await publish(await saveSource(ownerKey, { ingress: references }, ownerDraft));
+ assert((await render()).mainBody.includes('fixture revised Sun function'));
+ assert.equal(ownerRow.sections.packageRecord.placementArticle, template);
+ console.log('PASS: actual API and reader resolve Sun, Virgo and Sun-in-Virgo scopes; source drafts preserve approved copy, stale links block publication/reading, and reviewed relinking admits the new source revision.');
+}

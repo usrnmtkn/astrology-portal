@@ -8861,14 +8861,23 @@ export function GeneratedContentAdminDashboard() {
               {editorReaderDestination && editorReaderDestination !== editorUseLabel && <span className="admin-editor-reader-destination">{editorReaderDestination}</span>}
             </div>
             <div className="admin-editor-toolbar-actions">
-              {variableReferences.length > 0 && (
+              {(variableReferences.length > 0 || /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(currentDraft.contentKey)) && (
                 <StudioButton type="button" onClick={() => {
+                  // Placement articles use their scoped picker and textarea cursor.
+                  const articlePicker = editorRef.current?.querySelector<HTMLDetailsElement>("[data-sky-article-variable-picker]");
+                  if (articlePicker) {
+                    setTemplateVariableReferenceOpen(false);
+                    articlePicker.open = true;
+                    articlePicker.scrollIntoView({ block: "start", behavior: "smooth" });
+                    articlePicker.querySelector<HTMLElement>("summary")?.focus({ preventScroll: true });
+                    return;
+                  }
                   setSelectedTemplateVariableName(null);
                   setSelectedTemplateVariableSourceId(null);
                   setTemplateVariableReferenceOpen(true);
                 }}>
                   <Braces size={16} aria-hidden="true" />
-                  {isTemplateDraft ? "Reader preview & variables" : "Variables"} ({variableReferences.length})
+                  {/^sky-placement\/article\/[^/]+\/[^/]+$/u.test(currentDraft.contentKey) ? "Variables" : <>{isTemplateDraft ? "Reader preview & variables" : "Variables"} ({variableReferences.length})</>}
                 </StudioButton>
               )}
             </div>
