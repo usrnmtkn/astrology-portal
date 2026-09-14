@@ -2,6 +2,7 @@ import { correctedReaderSource } from "./readerSourceReferenceCorrections.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
 import { skyPlacementArticlePath, skyEvergreenFields, skyEvergreenEditableFields, validateSkyEvergreenSections } from "./skyEvergreenSections.mjs";
 import { skyPlacementVariableFacts, fillSkyPlacementVariables } from "./skyPlacementVariables.mjs";
+import { fillSkyPlacementArticleVariables, skyPlacementArticleDependencyText } from "./skyPlacementArticleVariables.mjs";
 import { renderSkyIngressComposition, validateSkyIngressComposition } from "./skyIngressComposition.mjs";
 import continuousOwnerApproval from "../authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
 import readerCopyOwnerApproval from "../authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
@@ -866,7 +867,7 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
   input = { ...input, contexts: matchingPlacementContexts(input) };
   const facts = skyPlacementVariableFacts(input);
   const fullArticle = article && input.articleAvailable !== false
-    ? fillSkyPlacementVariables(article[skyPlacementArticlePath(article, facts.motion)], facts).trim()
+    ? fillSkyPlacementArticleVariables(article[skyPlacementArticlePath(article, facts.motion)], facts, article, [article, ...corpus.content.continuous.filter(row => row.contentKey !== article.contentKey)]).trim()
     : "";
   const overlays = resolveSkyV4ContextualOverlays(corpus, input.contexts, input.overlaySettings, input.overlaySuppressions);
   const fallbackOverlays = resolveSkyV4ContextualOverlays(
@@ -1362,6 +1363,7 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   if (input.inspectVariables === true) {
     const retrograde = corpus.content.retrogradeGeneric.find(row => lower(row.Planet) === lower(input.planet));
     const copy = [source.placementArticle, source.placementArticleDirect, source.placementArticleRetrograde,
+      skyPlacementArticleDependencyText(source, [source, ...corpus.content.continuous.filter(row => row.contentKey !== source.contentKey)]),
       ...skyEvergreenFields(source).map(field => field.value), retrograde?.Body, source.ingress?.enabled ? JSON.stringify(source.ingress) : ""].join("\n");
     return { contentKey, requiresAspectFacts: Boolean(source.ingress?.enabled && source.ingress.modules.some(module => module.enabled && module.aspect)) || /\{\{\s*(?:aspectsInSign(?:Count)?|aspectsWhileRetrograde(?:Count)?|retrogradeStartDate|retrogradeEndDate)\s*\}\}/u.test(copy) };
   }

@@ -161,24 +161,24 @@ function skyPlacementVariableFacts(input) {
     motion: input.isRetrograde === true ? "retrograde" : "direct"
   };
 }
-function skyPlacementVariableSegments(value, facts = {}) {
+function skyPlacementVariableSegments(value, facts2 = {}) {
   const copy = String(value ?? "");
   const segments = [];
   let from = 0;
   for (const match of copy.matchAll(tokenPattern())) {
     if (match.index > from) segments.push({ text: copy.slice(from, match.index) });
     const [token, name] = match;
-    const available = names.has(name) && Object.hasOwn(facts, name) && typeof facts[name] === "string" && facts[name].trim().length > 0;
-    segments.push({ text: available ? facts[name] : token, token, name, available });
+    const available = names.has(name) && Object.hasOwn(facts2, name) && typeof facts2[name] === "string" && facts2[name].trim().length > 0;
+    segments.push({ text: available ? facts2[name] : token, token, name, available });
     from = match.index + token.length;
   }
   if (from < copy.length) segments.push({ text: copy.slice(from) });
   return segments;
 }
-function fillSkyPlacementVariables(value, facts) {
+function fillSkyPlacementVariables(value, facts2) {
   const issues = skyPlacementVariableIssues(value);
   if (issues.length) throw new Error(`SKY_V4_SOURCE_GAP: ${issues.join(" ")}`);
-  const segments = skyPlacementVariableSegments(value, facts);
+  const segments = skyPlacementVariableSegments(value, facts2);
   const missing = segments.filter((segment) => segment.token && !segment.available);
   if (missing.length) throw new Error(`SKY_V4_SOURCE_GAP: missing calculated facts ${missing.map((segment) => segment.token).join(", ")}`);
   return segments.map((segment) => segment.text).join("");
@@ -242,7 +242,7 @@ function makeSkyIngressComposition() {
   return {
     version: SKY_INGRESS_VERSION,
     enabled: false,
-    sources: Object.fromEntries(SKY_INGRESS_FIELDS.map((field) => [field.id, { kind: field.kind, text: "" }])),
+    sources: Object.fromEntries(SKY_INGRESS_FIELDS.map((field2) => [field2.id, { kind: field2.kind, text: "" }])),
     modules: [
       module("opening", "Opening", ["openingHook"]),
       module("intro", "Ingress introduction", [], false, { template: "On {{passEntryDate}}, {{planetTitle}}, {{planetRole}}, {{ingressVerb}} {{signTitle}}. {{durationSentence}} {{placementThesisSentence}}" }),
@@ -293,8 +293,8 @@ function validateSkyIngressComposition(value) {
     if (module.aspect !== void 0 && (!exactKeys(module.aspect, ["otherPlanet", "type", "weight"]) || !/^(sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|lilith)$/u.test(module.aspect.otherPlanet) || !["conjunction", "sextile", "square", "trine", "opposition"].includes(module.aspect.type) || !["defining", "supporting", "minor"].includes(module.aspect.weight))) fail(`${module.label}: invalid aspect selection.`);
   }
 }
-function ingressSourceAt(record2, field) {
-  const match = /^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u.exec(field);
+function ingressSourceAt(record2, field2) {
+  const match = /^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u.exec(field2);
   return match && record2?.ingress?.sources?.[match[1]];
 }
 function resolveIngressSource(owner, id, records = []) {
@@ -314,7 +314,7 @@ function resolveIngressSource(owner, id, records = []) {
   return { reference, text: target.text, sha256: ref.sha256, kind: target.kind };
 }
 function skyIngressOccurrence(input = {}) {
-  const facts = skyPlacementVariableFacts(input);
+  const facts2 = skyPlacementVariableFacts(input);
   const occurrence = input.ingressOccurrence ?? {};
   const timeZone = occurrence.timeZone ?? input.aspectFacts?.timeZone ?? "UTC";
   const format = (value) => new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric", timeZone }).format(new Date(value));
@@ -324,28 +324,28 @@ function skyIngressOccurrence(input = {}) {
   const pass = passes[index];
   const aspectIdentity = title2(input.aspectFacts?.planet) === title2(input.planet) && title2(input.aspectFacts?.sign) === title2(input.sign);
   const events = aspectIdentity ? input.aspectFacts?.inSign : void 0;
-  if (!pass) return { facts, duration: "unknown", timing: "unknown", events, timeZone };
-  facts.passEntryDate = format(pass.entryDate);
-  facts.passExitDate = format(pass.exitDate);
-  facts.firstEntryDate = format(passes[0].entryDate);
-  facts.finalExitDate = format(passes.at(-1).exitDate);
-  facts.currentYear = new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone }).format(new Date(pass.entryDate));
-  if (index > 0) facts.priorPassYear = new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone }).format(new Date(passes[index - 1].entryDate));
-  if (passes[index + 1]) facts.returnDate = format(passes[index + 1].entryDate);
-  if (pass.entryMotion === "direct") facts.ingressVerb = index ? "re-enters" : "enters";
-  else if (pass.entryMotion === "retrograde") facts.ingressVerb = "moves back into";
-  if (pass.previousSign) facts.previousSignTitle = title2(pass.previousSign);
+  if (!pass) return { facts: facts2, duration: "unknown", timing: "unknown", events, timeZone };
+  facts2.passEntryDate = format(pass.entryDate);
+  facts2.passExitDate = format(pass.exitDate);
+  facts2.firstEntryDate = format(passes[0].entryDate);
+  facts2.finalExitDate = format(passes.at(-1).exitDate);
+  facts2.currentYear = new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone }).format(new Date(pass.entryDate));
+  if (index > 0) facts2.priorPassYear = new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone }).format(new Date(passes[index - 1].entryDate));
+  if (passes[index + 1]) facts2.returnDate = format(passes[index + 1].entryDate);
+  if (pass.entryMotion === "direct") facts2.ingressVerb = index ? "re-enters" : "enters";
+  else if (pass.entryMotion === "retrograde") facts2.ingressVerb = "moves back into";
+  if (pass.previousSign) facts2.previousSignTitle = title2(pass.previousSign);
   return {
-    facts,
+    facts: facts2,
     duration: (dateValue(passes.at(-1).exitDate) - dateValue(passes[0].entryDate)) / 864e5 >= 90 ? "long" : "short",
     timing: passes.length === 1 ? "single_pass" : index === passes.length - 1 ? "final_pass" : index === 0 ? "first_pass" : "return_pass",
     events,
     timeZone
   };
 }
-function fillText(text2, facts) {
-  const missing = tokens(text2).filter((match) => typeof facts[match[1]] !== "string" || !facts[match[1]].trim()).map((match) => match[1]);
-  return { missing, text: missing.length ? "" : text2.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, (_, name) => facts[name]) };
+function fillText(text2, facts2) {
+  const missing = tokens(text2).filter((match) => typeof facts2[match[1]] !== "string" || !facts2[match[1]].trim()).map((match) => match[1]);
+  return { missing, text: missing.length ? "" : text2.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, (_, name) => facts2[name]) };
 }
 function renderSkyIngressComposition(owner, input = {}, records = [], options = {}) {
   const composition = owner?.ingress;
@@ -369,19 +369,19 @@ function renderSkyIngressComposition(owner, input = {}, records = [], options = 
       continue;
     }
     for (const event of selected) {
-      const facts = { ...occurrence.facts };
-      if (event) Object.assign(facts, { aspectPlanetTitle: title2(event.otherPlanet), aspectType: type(event.aspect), aspectVerb: { conjunction: "conjoins", sextile: "sextiles", square: "squares", trine: "trines", opposition: "opposes" }[type(event.aspect)], aspectExactDate: new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: occurrence.timeZone ?? "UTC" }).format(new Date(event.occursAt)) });
+      const facts2 = { ...occurrence.facts };
+      if (event) Object.assign(facts2, { aspectPlanetTitle: title2(event.otherPlanet), aspectType: type(event.aspect), aspectVerb: { conjunction: "conjoins", sextile: "sextiles", square: "squares", trine: "trines", opposition: "opposes" }[type(event.aspect)], aspectExactDate: new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: occurrence.timeZone ?? "UTC" }).format(new Date(event.occursAt)) });
       const slots = [];
       const values = {};
       for (const match of tokens(module.template)) {
         const name = match[1];
         if (Object.hasOwn(values, name)) continue;
         if (factNames.has(name)) {
-          values[name] = facts[name];
-          slots.push({ name, kind: "fact", text: facts[name] ?? "", reference: `calculated#${name}`, reason: facts[name] ? "" : "Needs calculated value" });
+          values[name] = facts2[name];
+          slots.push({ name, kind: "fact", text: facts2[name] ?? "", reference: `calculated#${name}`, reason: facts2[name] ? "" : "Needs calculated value" });
         } else {
           const source = resolveIngressSource(owner, name, records);
-          const filled = source.text?.trim() ? fillText(source.text, facts) : { text: "", missing: [] };
+          const filled = source.text?.trim() ? fillText(source.text, facts2) : { text: "", missing: [] };
           values[name] = filled.text;
           slots.push({ name, ...source, raw: source.text ?? "", text: filled.text, reason: source.reason || (filled.missing.length ? `Needs calculated ${filled.missing.join(", ")}` : !filled.text ? "No writing saved" : "") });
         }
@@ -477,10 +477,10 @@ function withoutLegacyHouseBridge(body, house, voice) {
   const paragraphBreak = body.indexOf("\n\n");
   return paragraphBreak >= 0 ? body.slice(paragraphBreak + 2).trim() : "";
 }
-function natalPlacementMotionExactKey(facts) {
-  if (!facts.house) return null;
-  const directKey = `fallback-hook/natal-you-placement-complete-final/${facts.planet}/${facts.sign}/${facts.house}`;
-  return facts.isRetrograde ? `${directKey}/retrograde` : directKey;
+function natalPlacementMotionExactKey(facts2) {
+  if (!facts2.house) return null;
+  const directKey = `fallback-hook/natal-you-placement-complete-final/${facts2.planet}/${facts2.sign}/${facts2.house}`;
+  return facts2.isRetrograde ? `${directKey}/retrograde` : directKey;
 }
 function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
   const blockedKeys = new Set(publication.blockedContentKeys ?? []);
@@ -557,10 +557,10 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     if (/\{\{|\}\}/.test(body)) throw new RoleViolationError(`Unresolved slots in rendered output: ${body}`);
     return body;
   };
-  function renderNatalPlacement(facts, opts2 = {}) {
-    const { planet, sign, house } = facts;
-    const voice = facts.voice === "you" ? "you" : "they";
-    const exactCompleteKey = natalPlacementMotionExactKey(facts);
+  function renderNatalPlacement(facts2, opts2 = {}) {
+    const { planet, sign, house } = facts2;
+    const voice = facts2.voice === "you" ? "you" : "they";
+    const exactCompleteKey = natalPlacementMotionExactKey(facts2);
     const exactCompleteLived = exactCompleteKey ? getReaderLivedRow(exactCompleteKey, voice, opts2) : null;
     if (exactCompleteLived) {
       const body = exactCompleteLived.body ?? "";
@@ -578,7 +578,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     const exactSignLived = getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2);
     const genericSignLived = getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts2);
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
-    const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
+    const possessive = facts2.voice === "you" ? "Your" : `${facts2.voice}'s`;
     const ctx = {
       possessive,
       planetTitle: title3(planet),
@@ -606,14 +606,14 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       const raw = voice === "you" ? t.body_you ?? t.body : t.body_they ?? t.body;
       mods.push(mustache(raw, { ...ctx, ...extra }));
     };
-    if (facts.dignity) {
-      const specific = getHook(`fallback-hook/dignity-line/${facts.dignity}/${planet}`, voice, opts2);
+    if (facts2.dignity) {
+      const specific = getHook(`fallback-hook/dignity-line/${facts2.dignity}/${planet}`, voice, opts2);
       if (specific) mods.push(specific);
-      else mod(`fallback-template/natal.modifier.dignity-${facts.dignity}`);
+      else mod(`fallback-template/natal.modifier.dignity-${facts2.dignity}`);
     }
-    if (facts.isRetrograde) mod("fallback-template/natal.modifier.retrograde");
-    if (facts.sect?.hasReliableSect && facts.sect.effect) {
-      mod(`fallback-template/natal.modifier.sect-${facts.sect.isDayChart ? "day" : "night"}`, { sectEffect: facts.sect.effect });
+    if (facts2.isRetrograde) mod("fallback-template/natal.modifier.retrograde");
+    if (facts2.sect?.hasReliableSect && facts2.sect.effect) {
+      mod(`fallback-template/natal.modifier.sect-${facts2.sect.isDayChart ? "day" : "night"}`, { sectEffect: facts2.sect.effect });
     }
     const gapLabel = `${planet}/${sign}${house ? `/house-${house}` : ""}`;
     const parts = [];
@@ -682,18 +682,18 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       templateKey: exactHouseLived?.contentKey ?? headlineTemplate.contentKey
     };
   }
-  function renderNatalAngle(facts, opts2 = {}) {
-    const voice = facts.voice === "you" ? "you" : "they";
+  function renderNatalAngle(facts2, opts2 = {}) {
+    const voice = facts2.voice === "you" ? "you" : "they";
     const ctx = {
-      possessive: facts.voice === "you" ? "Your" : `${facts.voice}'s`,
-      angleTitle: ANGLE_TITLE[facts.angle] ?? title3(facts.angle),
-      signTitle: title3(facts.sign),
-      angleIntro: getHook(`fallback-hook/angle-intro/${facts.angle}`, voice, opts2),
-      angleSignSentences: getHook(`fallback-hook/angle-sign/${facts.angle}/${facts.sign}`, voice, opts2),
+      possessive: facts2.voice === "you" ? "Your" : `${facts2.voice}'s`,
+      angleTitle: ANGLE_TITLE[facts2.angle] ?? title3(facts2.angle),
+      signTitle: title3(facts2.sign),
+      angleIntro: getHook(`fallback-hook/angle-intro/${facts2.angle}`, voice, opts2),
+      angleSignSentences: getHook(`fallback-hook/angle-sign/${facts2.angle}/${facts2.sign}`, voice, opts2),
       modifierSentences: []
     };
     const template = getTemplate("fallback-template/natal.angle-in-sign");
-    const body = renderTemplate(template, ctx, `${facts.angle}/${facts.sign}`, voice);
+    const body = renderTemplate(template, ctx, `${facts2.angle}/${facts2.sign}`, voice);
     return {
       headline: mustache(template.headline ?? "", ctx),
       parts: [body],
@@ -701,14 +701,14 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       templateKey: template.contentKey
     };
   }
-  function renderNatalAspect(facts, opts2 = {}) {
-    const voice = facts.voice === "you" ? "you" : "they";
-    const aspect = facts.aspect;
-    const exactLived = getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetA}/${aspect}/${facts.planetB}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts2);
+  function renderNatalAspect(facts2, opts2 = {}) {
+    const voice = facts2.voice === "you" ? "you" : "they";
+    const aspect = facts2.aspect;
+    const exactLived = getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts2.planetA}/${aspect}/${facts2.planetB}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts2.planetB}/${aspect}/${facts2.planetA}`, voice, opts2);
     if (exactLived) {
-      const exactBody = mustache(exactLived.body ?? "", { Name: facts.voice });
+      const exactBody = mustache(exactLived.body ?? "", { Name: facts2.voice });
       return {
-        headline: `${title3(facts.planetA)} ${aspect} ${title3(facts.planetB)}`,
+        headline: `${title3(facts2.planetA)} ${aspect} ${title3(facts2.planetB)}`,
         parts: [exactBody],
         body: exactBody,
         astroHint: exactLived.astroHint,
@@ -717,28 +717,28 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       };
     }
     const group = ASPECT_GROUP[aspect];
-    const pair = group ? getHook(`fallback-hook/aspect-pair/${facts.planetA}/${facts.planetB}/${group}`, voice, opts2) ?? getHook(`fallback-hook/aspect-pair/${facts.planetB}/${facts.planetA}/${group}`, voice, opts2) : null;
+    const pair = group ? getHook(`fallback-hook/aspect-pair/${facts2.planetA}/${facts2.planetB}/${group}`, voice, opts2) ?? getHook(`fallback-hook/aspect-pair/${facts2.planetB}/${facts2.planetA}/${group}`, voice, opts2) : null;
     if (!group) {
-      throw new SourceGapError(`SOURCE_GAP: natal aspect ${facts.planetA}-${aspect}-${facts.planetB}`);
+      throw new SourceGapError(`SOURCE_GAP: natal aspect ${facts2.planetA}-${aspect}-${facts2.planetB}`);
     }
     if (!pair) {
-      throw new SourceGapError(`SOURCE_GAP: natal aspect pair ${facts.planetA}-${aspect}-${facts.planetB}`);
+      throw new SourceGapError(`SOURCE_GAP: natal aspect pair ${facts2.planetA}-${aspect}-${facts2.planetB}`);
     }
     const ctx = {
-      possessive: facts.voice === "you" ? "Your" : `${facts.voice}'s`,
-      planetATitle: title3(facts.planetA),
-      planetBTitle: title3(facts.planetB),
+      possessive: facts2.voice === "you" ? "Your" : `${facts2.voice}'s`,
+      planetATitle: title3(facts2.planetA),
+      planetBTitle: title3(facts2.planetB),
       aspectName: aspect,
       aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, voice, opts2),
-      planetACore: getVocab(`fallback-vocab/planet-core/${facts.planetA}`, voice, opts2),
-      planetBCore: getVocab(`fallback-vocab/planet-core/${facts.planetB}`, voice, opts2),
+      planetACore: getVocab(`fallback-vocab/planet-core/${facts2.planetA}`, voice, opts2),
+      planetBCore: getVocab(`fallback-vocab/planet-core/${facts2.planetB}`, voice, opts2),
       aspectTypeLine: getHook(`fallback-hook/aspect-type/${aspect}`, voice, opts2),
       aspectMotion: getVocab(`fallback-vocab/aspect-motion/${aspect}`, voice, opts2),
-      possessiveLow: facts.voice === "you" ? "your" : `${facts.voice}'s`,
+      possessiveLow: facts2.voice === "you" ? "your" : `${facts2.voice}'s`,
       pairSentences: pair
     };
     const template = getTemplate("fallback-template/natal.aspect");
-    const body = renderTemplate(template, ctx, `${facts.planetA}-${facts.aspect}-${facts.planetB}`, voice);
+    const body = renderTemplate(template, ctx, `${facts2.planetA}-${facts2.aspect}-${facts2.planetB}`, voice);
     return {
       headline: mustache(template.headline ?? "", ctx),
       parts: [body],
@@ -776,18 +776,18 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     const body = voice === "you" ? r.body_you : r.body_they;
     return { headline: `${ordinal(house)} House`, body, parts: [body], templateKey: "fallback-template/natal.house-glossary", contentKey: r.contentKey };
   }
-  function renderNatalEmptyHouse(facts, opts2 = {}) {
-    const { house, sign, rulerHouse, voice = "you" } = facts;
+  function renderNatalEmptyHouse(facts2, opts2 = {}) {
+    const { house, sign, rulerHouse, voice = "you" } = facts2;
     const v = voice === "you" ? "you" : "they";
-    const rulerSystem = facts.rulerSystem ?? "modern";
+    const rulerSystem = facts2.rulerSystem ?? "modern";
     const rulerMap = EMPTY_HOUSE_RULERS[rulerSystem];
     if (!rulerMap) throw new RoleViolationError(`Unknown empty-house ruler system: ${rulerSystem}.`);
     const ruler = rulerMap[sign];
     if (!Number.isInteger(house) || house < 1 || house > 12 || !ruler || !Number.isInteger(rulerHouse) || !rulerHouse || rulerHouse < 1 || rulerHouse > 12 || rulerHouse === house) {
       throw new SourceGapError(`SOURCE_GAP: empty house ${house}/${sign} (${v})`);
     }
-    if (facts.primaryRuler && facts.primaryRuler !== ruler) {
-      throw new RoleViolationError(`Empty-house V14 ${rulerSystem} system requires ruler ${ruler} for ${sign}; received ${facts.primaryRuler}.`);
+    if (facts2.primaryRuler && facts2.primaryRuler !== ruler) {
+      throw new RoleViolationError(`Empty-house V14 ${rulerSystem} system requires ruler ${ruler} for ${sign}; received ${facts2.primaryRuler}.`);
     }
     const baseKey = `fallback-hook/empty-house/base/${house}`;
     const signKey = `fallback-hook/empty-house/sign/${house}/${sign}`;
@@ -827,15 +827,15 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       sourceKeys: [baseKey, signKey, ...bridgeSourceKeys, rulerKey]
     };
   }
-  function renderProfectionYear(facts, opts2 = {}) {
-    const { house, sign, voice = "you" } = facts;
+  function renderProfectionYear(facts2, opts2 = {}) {
+    const { house, sign, voice = "you" } = facts2;
     const v = voice === "you" ? "you" : "they";
     const body = getHook(`fallback-hook/profection-year/${house}`, v, opts2);
     if (!body) throw new SourceGapError(`SOURCE_GAP: profection year ${house} (${v})`);
     const note = getHook("fallback-hook/profection-explainer", v, opts2);
     const parts = [body];
     if (sign) {
-      const ruler = facts.ruler ?? SIGN_RULER[sign];
+      const ruler = facts2.ruler ?? SIGN_RULER[sign];
       const frame = getHook(`fallback-hook/profection-ruler/${ruler}`, v, opts2) ?? getHook(ruler === "sun" || ruler === "moon" ? "fallback-hook/profection-ruler-luminary" : "fallback-hook/profection-ruler", v, opts2);
       if (frame && ruler) {
         const REF = { sun: "the Sun", moon: "the Moon" };
@@ -893,9 +893,9 @@ function passageSources(body, contributions, sourceFor, headlineSources = []) {
     headlineSources
   };
 }
-function passageSource(row, audience = "you", field) {
+function passageSource(row, audience = "you", field2) {
   if (!row) throw new Error("Passage source receipt refers to an unavailable source.");
-  const selected = field ?? (audience === "they" && row.body_they != null ? "body_they" : row.body_you != null ? "body_you" : "body");
+  const selected = field2 ?? (audience === "they" && row.body_they != null ? "body_they" : row.body_you != null ? "body_you" : "body");
   return { contentKey: row.contentKey, field: selected, audience };
 }
 
@@ -1017,7 +1017,7 @@ var AMBIGUOUS_TAROT_CARD_CONTEXT = new RegExp(
   "u"
 );
 function readerCopyStrings(row) {
-  const values = READER_COPY_FIELDS.map((field) => row[field]).filter((value) => typeof value === "string");
+  const values = READER_COPY_FIELDS.map((field2) => row[field2]).filter((value) => typeof value === "string");
   for (const section of row.article_sections ?? []) {
     if (typeof section?.heading === "string") values.push(section.heading);
     if (typeof section?.body === "string") values.push(section.body);
@@ -1184,8 +1184,8 @@ function skyPlacementKeyDates({
   }
   return keyDates.sort((left, right) => left.date.localeCompare(right.date));
 }
-function skyPlacementKeyDatesIntro(facts) {
-  return String(facts.planet ?? "").trim().toLowerCase() === "lilith" && skyPlacementKeyDates(facts).length > 0 ? TRUE_LILITH_KEY_DATES_INTRO : null;
+function skyPlacementKeyDatesIntro(facts2) {
+  return String(facts2.planet ?? "").trim().toLowerCase() === "lilith" && skyPlacementKeyDates(facts2).length > 0 ? TRUE_LILITH_KEY_DATES_INTRO : null;
 }
 function dailyGlanceHash(value) {
   let hash = 2166136261;
@@ -1573,34 +1573,34 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     }
     return rendered;
   };
-  const renderFinalSkyArticle = (candidate, facts) => {
+  const renderFinalSkyArticle = (candidate, facts2) => {
     if (candidate.article_structure !== "final-v1") {
       return null;
     }
     assertSkyArticleCopy(candidate);
     const sections = candidate.article_sections ?? [];
-    const kinds = new Set(sections.map((section) => section.kind));
-    const hasOpening = facts.planet === "sun" ? kinds.has("seasonal-context") || kinds.has("ingress") : FAST.has(facts.planet) ? kinds.has("seasonal-context") && kinds.has("ingress") : kinds.has("ingress");
-    if (!hasOpening || !kinds.has("collective-read") || !kinds.has("exit-tone-shift")) {
+    const kinds2 = new Set(sections.map((section) => section.kind));
+    const hasOpening = facts2.planet === "sun" ? kinds2.has("seasonal-context") || kinds2.has("ingress") : FAST.has(facts2.planet) ? kinds2.has("seasonal-context") && kinds2.has("ingress") : kinds2.has("ingress");
+    if (!hasOpening || !kinds2.has("collective-read") || !kinds2.has("exit-tone-shift")) {
       throw new SourceGapError(
         `SOURCE_GAP: sky article ${candidate.contentKey} is missing a required FINAL section`
       );
     }
     const baseSlots = {
-      entryDate: facts.entryDate,
-      exitDate: facts.exitDate,
-      historyEntryDate: facts.historyEntryDate,
-      historyExitDate: facts.historyExitDate,
-      historyDegreeRange: facts.historyDegreeRange
+      entryDate: facts2.entryDate,
+      exitDate: facts2.exitDate,
+      historyEntryDate: facts2.historyEntryDate,
+      historyExitDate: facts2.historyExitDate,
+      historyDegreeRange: facts2.historyDegreeRange
     };
     const renderedSections = sections.map((section, sourceIndex) => ({ section, sourceIndex })).sort((first, second) => ARTICLE_SECTION_ORDER[first.section.kind] - ARTICLE_SECTION_ORDER[second.section.kind] || first.sourceIndex - second.sourceIndex).flatMap(({ section }) => {
-      if (section.kind === "historic-movement" && !skyPlacementHistoryAllowed(facts.planet, Boolean(facts.isRetrograde), facts.historyEligible)) {
+      if (section.kind === "historic-movement" && !skyPlacementHistoryAllowed(facts2.planet, Boolean(facts2.isRetrograde), facts2.historyEligible)) {
         return [];
       }
-      if (section.kind === "retrograde-variant" && !facts.isRetrograde && !facts.isShadowPhase) {
+      if (section.kind === "retrograde-variant" && !facts2.isRetrograde && !facts2.isShadowPhase) {
         return [];
       }
-      const event = articleSectionEvent(section, facts.events ?? []);
+      const event = articleSectionEvent(section, facts2.events ?? []);
       if ((section.kind === "dated-aspect" || section.kind === "event-interaction" || section.kind === "retrograde-variant" && section.event_type) && !event) {
         return [];
       }
@@ -1634,13 +1634,13 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     });
     const risingRows = candidate.rising_horoscopes ?? [];
     const risingSigns = new Set(risingRows.map((entry) => entry.rising_sign));
-    if (risingRows.length !== 12 || risingSigns.size !== 12 || !facts.risingHouseMap) {
+    if (risingRows.length !== 12 || risingSigns.size !== 12 || !facts2.risingHouseMap) {
       throw new SourceGapError(
         `SOURCE_GAP: sky article ${candidate.contentKey} must provide twelve public rising horoscopes`
       );
     }
     const risingHoroscopes = risingRows.map((entry) => {
-      const house = facts.risingHouseMap?.[entry.rising_sign];
+      const house = facts2.risingHouseMap?.[entry.rising_sign];
       if (!house) {
         throw new SourceGapError(
           `SOURCE_GAP: sky article ${candidate.contentKey} is missing the ${entry.rising_sign} rising house`
@@ -2320,7 +2320,7 @@ ${passHook}`;
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement dates ${planet}/${sign}`);
     }
     const requiredFields = ["fact_line", "opening", "tension", "development", "close"];
-    if (requiredFields.some((field) => typeof signCopy[field] !== "string" || !signCopy[field]?.trim())) {
+    if (requiredFields.some((field2) => typeof signCopy[field2] !== "string" || !signCopy[field2]?.trim())) {
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement structure ${planet}/${sign}`);
     }
     const dates = continuousSkyPlacementDateContext(entryDate, exitDate);
@@ -2352,14 +2352,14 @@ ${passHook}`;
         throw new SourceGapError(`SOURCE_GAP: slow-mover era layer ${planet}/${sign}`);
       }
       const eraFields = ["frame", "handoff", "recurrence", "collective_lesson"];
-      const hasCompleteEraCopy = eraFields.every((field) => typeof eraSource[field] === "string" && Boolean(eraSource[field].trim()));
+      const hasCompleteEraCopy = eraFields.every((field2) => typeof eraSource[field2] === "string" && Boolean(eraSource[field2].trim()));
       const hasCompleteEraFacts = Boolean(
         priorSign && priorSignEntryDate && priorSignExitDate && previousResidencyEntryDate && previousResidencyExitDate
       );
       if (!hasCompleteEraCopy || !hasCompleteEraFacts) {
         throw new SourceGapError(`SOURCE_GAP: slow-mover era layer ${planet}/${sign}`);
       }
-      eraLayer = eraFields.map((field) => fillKeep(eraSource[field], ctx));
+      eraLayer = eraFields.map((field2) => fillKeep(eraSource[field2], ctx));
     }
     const close = fillKeep(signCopy.close, ctx);
     const masterHeadings = [
@@ -2709,17 +2709,17 @@ ${passHook}`;
     }
     throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
   }
-  function renderSkyPlacement(facts) {
-    const keyDates = skyPlacementKeyDates(facts);
+  function renderSkyPlacement(facts2) {
+    const keyDates = skyPlacementKeyDates(facts2);
     const rendered = {
-      ...renderSkyPlacementCopy(facts),
+      ...renderSkyPlacementCopy(facts2),
       keyDates,
-      keyDatesIntro: skyPlacementKeyDatesIntro(facts)
+      keyDatesIntro: skyPlacementKeyDatesIntro(facts2)
     };
-    if (facts.surface === "calendar" && /\b(?:you|your|yours|yourself|you're|you've|you'll|you'd)\b/iu.test(
+    if (facts2.surface === "calendar" && /\b(?:you|your|yours|yourself|you're|you've|you'll|you'd)\b/iu.test(
       [rendered.tagline, rendered.body].filter(Boolean).join(" ")
     )) {
-      throw new SourceGapError(`SOURCE_GAP: calendar ingress ${facts.planet}/${facts.sign} violates the collective register`);
+      throw new SourceGapError(`SOURCE_GAP: calendar ingress ${facts2.planet}/${facts2.sign} violates the collective register`);
     }
     return rendered;
   }
@@ -3455,8 +3455,8 @@ var reader_source_reference_removals_v1_default = {
 };
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/readerSourceReferenceCorrections.mjs
-function correctedReaderSource(contentKey, field, original) {
-  const correction = reader_source_reference_removals_v1_default.records.find((entry) => entry.contentKey === contentKey && entry.field === field);
+function correctedReaderSource(contentKey, field2, original) {
+  const correction = reader_source_reference_removals_v1_default.records.find((entry) => entry.contentKey === contentKey && entry.field === field2);
   if (!correction || typeof original !== "string" || sha256Text(original) !== correction.previous_sha256) return original;
   return correction.text;
 }
@@ -3765,7 +3765,7 @@ function skyEvergreenFields(source, motion) {
 function skyEvergreenEditableFields(source) {
   const fields = source?.studio_editable_fields ?? [];
   return isSkyEvergreenSource(source) ? [
-    ...fields.filter((field) => field.path !== SKY_EVERGREEN_SECTIONS_PATH && !["placementArticleDirect", "placementArticleRetrograde", "ingress"].includes(field.path)),
+    ...fields.filter((field2) => field2.path !== SKY_EVERGREEN_SECTIONS_PATH && !["placementArticleDirect", "placementArticleRetrograde", "ingress"].includes(field2.path)),
     { path: "placementArticleDirect", label: "Direct placement article" },
     { path: "placementArticleRetrograde", label: "Retrograde placement article" },
     { path: SKY_EVERGREEN_SECTIONS_PATH, label: "Evergreen sections and order" },
@@ -3775,6 +3775,190 @@ function skyEvergreenEditableFields(source) {
 function skyPlacementArticlePath(source, motion) {
   const path = motion === "retrograde" ? "placementArticleRetrograde" : "placementArticleDirect";
   return typeof source?.[path] === "string" && source[path].trim() ? path : "placementArticle";
+}
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/skyWritingLibraryRegistry.mjs
+var field = (id, label, description, kind, rows = 4) => ({ id, label, description, kind, rows });
+var SKY_WRITING_LIBRARY_GROUPS = [
+  {
+    id: "planet",
+    label: "Planet language",
+    description: "Reusable planet language with one clear job per field. Descriptor is a phrase; function is the planet's lived meaning. Mythology lives separately under Planet lore / mythology.",
+    fields: [
+      field("planetDescriptor", "Planet descriptor", "A short identifying phrase used inside another sentence. Example: \u2018the planet of love, pleasure, and values\u2019 in \u2018Venus, the planet of love, pleasure, and values, describes how we relate and what we enjoy.\u2019", "planet", 2),
+      field("planetFunction", "Planet function", "What the planet represents in lived terms: the activity, need, or process it describes. This is the reusable meaning field and should not repeat the descriptor or mythology.", "planet", 4),
+      field("planetProductive", "Productive expression", "How this planet can operate constructively when its function has somewhere useful to go.", "planet", 4),
+      field("planetShadow", "Planet shadow / excess", "What can happen when the same planetary function gets overused, distorted, or pushed too far.", "planet", 4),
+      field("planetCollectiveExpression", "Collective expression", "Optional larger cultural or collective expression. Author it only when it belongs to the exact article argument.", "planet", 4)
+    ]
+  },
+  {
+    id: "sign",
+    label: "Zodiac sign language",
+    description: "Reusable sign language with distinct jobs. Descriptor is a phrase; core drive says what the sign wants; method says how it tends to go about it.",
+    fields: [
+      field("signDescriptor", "Sign descriptor", "A short identifying phrase used inside another sentence. Example: \u2018a cardinal fire sign\u2019 in \u2018Aries, a cardinal fire sign, tends to move toward what needs to begin.\u2019", "sign", 2),
+      field("signCoreDrive", "Core drive", "What the sign needs or keeps trying to establish.", "sign", 4),
+      field("signMethod", "Method", "How the sign tends to approach problems, choices, change, or expression.", "sign", 4),
+      field("signGift", "Gift", "What the sign tends to do constructively when its method is working.", "sign", 4),
+      field("signShadow", "Sign shadow", "Where the sign\u2019s method can become rigid, excessive, avoidant, or counterproductive.", "sign", 4),
+      field("signValues", "Values and life themes", "Optional sign themes. This stays empty by default rather than importing a house-shaped list.", "sign", 4)
+    ]
+  },
+  {
+    id: "placement",
+    label: "Planet \xD7 sign synthesis",
+    description: "The exact planet-in-sign layer. Existing approved TLDR and fallback copy prefill fields only when there is a clean one-to-one source; the rest stay empty rather than being invented.",
+    fields: [
+      field("placementThesis", "Placement thesis", "The central argument for this exact planet in this exact sign. Prefilled from the existing TLDR What when available.", "placement", 4),
+      field("placementOpportunity", "Opportunity", "What may become easier, more available, or more worth developing. Author this only when it is distinct from the existing takeaway.", "placement", 4),
+      field("placementPressure", "How it shows up", "Recognizable behavior or consequence. Prefilled from the existing fallback lived passage when available.", "placement", 4),
+      field("placementShadow", "Placement shadow", "The specific failure mode created by this planet and sign together. Left empty unless the current approved source isolates it cleanly.", "placement", 4),
+      field("placementCorrection", "Challenge and response", "The useful turn already established by the placement. Prefilled from the existing fallback challenge/response passage when available.", "placement", 4),
+      field("placementPractice", "Practice", "Optional additional concrete ways to work with the placement. Do not duplicate the challenge/response field.", "placement", 4),
+      field("placementCollectiveTheme", "Collective theme", "Optional larger social or cultural expression of this exact placement.", "placement", 4),
+      field("placementCollectiveShadow", "Collective shadow", "Optional larger social or cultural excess or consequence of this exact placement.", "placement", 4)
+    ]
+  },
+  {
+    id: "experiences",
+    label: "Experience hooks",
+    description: "A bank of plausible manifestations. General preserves the existing lived passage; add broader life-area hooks only when they genuinely fit the placement.",
+    fields: [
+      field("experienceGeneral", "General", "Existing approved lived manifestation for this placement. Prefilled when one exists.", "placement", 3),
+      field("experienceWork", "Work", "Workload, responsibility, leadership, deadlines, colleagues, or the structure of a workday.", "placement", 3),
+      field("experienceMoney", "Money", "Income, spending, pricing, resources, financial choices, or material support.", "placement", 3),
+      field("experienceRelationships", "Relationships", "Close connections, agreements, reciprocity, conflict, support, or intimacy.", "placement", 3),
+      field("experienceHome", "Home", "Living situation, family, roots, privacy, belonging, or domestic responsibilities.", "placement", 3),
+      field("experienceBody", "Body", "Energy, pace, rest, appetite, physical cues, appearance, or sensory experience without making medical claims.", "placement", 3),
+      field("experienceTime", "Time", "Scheduling, waiting, urgency, delays, attention, bandwidth, or what is taking too much of the day.", "placement", 3),
+      field("experienceRecognition", "Recognition", "Visibility, credit, reputation, audience, praise, authority, or being taken seriously.", "placement", 3),
+      field("experienceCreative", "Creativity", "Art, play, hobbies, self-expression, experimentation, pleasure, or making something visible.", "placement", 3)
+    ]
+  },
+  {
+    id: "hooks",
+    label: "Hooks and takeaways",
+    description: "Reader-facing openings and closes. Existing approved fallback and TLDR copy prefill the fields that already have exact source wording.",
+    fields: [
+      field("openingHook", "Opening hook", "Prefilled from the existing fallback opening when available.", "placement", 4),
+      field("reflectionQuestion", "Reflection question", "Optional question that deepens the article. Left empty rather than generating a generic journal prompt.", "placement", 3),
+      field("closingLine", "Closing line", "Prefilled from the existing TLDR Takeaway when available.", "placement", 3)
+    ]
+  },
+  {
+    id: "context",
+    label: "Optional context blocks",
+    description: "Background context that is different from the planet's everyday function. Use only when the article benefits from it.",
+    fields: [
+      field("planetLore", "Planet lore / mythology", "Mythic, historical, or symbolic background attached to the planet. Example: a concise account of the deity or story associated with the planet and why that symbolism matters here.", "planet", 5),
+      field("astronomySummary", "Astronomy summary", "A concise factual explanation for unusual astronomical bodies or cycles when useful.", "planet", 5),
+      field("historicalCallback", "Previous-cycle / historical callback", "Context from a prior comparable residency or cycle. Calculated dates still come from fact variables.", "placement", 5),
+      field("returnMeaning", "Return meaning", "Reusable meaning for a supported return story when applicable.", "planet", 5)
+    ]
+  },
+  {
+    id: "aspects",
+    label: "Aspect writing",
+    description: "The defining-aspect sentence sources. They stay empty until a specific calculated aspect has been chosen and authored.",
+    fields: [
+      field("aspectMechanismSentence", "Aspect mechanism", "What the two bodies and aspect are doing together.", "aspect", 4),
+      field("aspectManifestationSentence1", "Aspect manifestation 1", "One plausible lived or collective expression of the aspect.", "aspect", 4),
+      field("aspectManifestationSentence2", "Aspect manifestation 2", "A second manifestation that broadens the first instead of repeating it.", "aspect", 4),
+      field("aspectChallengeSentence", "Aspect challenge", "Where the aspect can become costly or difficult.", "aspect", 4),
+      field("aspectResponseSentence", "Aspect response", "The useful response to the tension described above.", "aspect", 4)
+    ]
+  }
+];
+var SKY_WRITING_LIBRARY_FIELD_IDS = Object.freeze(SKY_WRITING_LIBRARY_GROUPS.flatMap((group) => group.fields.map((item) => item.id)));
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs
+var articlePaths = ["placementArticle", "placementArticleDirect", "placementArticleRetrograde"];
+var facts = new Set(SKY_PLACEMENT_VARIABLES.map((item) => item.name));
+var phraseFields = new Map(SKY_WRITING_LIBRARY_GROUPS.flatMap((group) => group.fields).map((item) => [item.id, item]));
+var kinds = /* @__PURE__ */ new Set(["planet", "sign", "placement", "timing", "aspect"]);
+var safeName = (name) => /^[A-Za-z][A-Za-z0-9]*$/u.test(name) && !["constructor", "prototype", "__proto__"].includes(name);
+var tokenPattern2 = () => /\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu;
+var tokens2 = (value) => [...String(value ?? "").matchAll(tokenPattern2())];
+function isSkyPlacementArticleField(contentKey, path) {
+  return /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(String(contentKey ?? "")) && articlePaths.includes(path);
+}
+function skyPlacementArticlePhraseNames(value) {
+  return [...new Set(tokens2(value).map((match) => match[1]).filter((name) => !facts.has(name)))];
+}
+function knownPhrase(name, owner) {
+  return safeName(name) && (phraseFields.has(name) || Object.hasOwn(owner?.ingress?.sources ?? {}, name) && kinds.has(owner.ingress.sources[name]?.kind));
+}
+function skyPlacementArticleVariableIssues(value, owner = {}) {
+  const issues = [];
+  const remaining = String(value ?? "").replace(tokenPattern2(), (token, name) => {
+    if (!facts.has(name) && !knownPhrase(name, owner)) issues.push(`Unknown Sky variable ${token}. Use a calculated or editable phrase variable from the article variable picker.`);
+    return "";
+  });
+  if (/\{\{|\}\}/u.test(remaining)) issues.push("Use a complete {{variableName}} token. Conditional blocks and nested phrase references are not supported.");
+  return [...new Set(issues)];
+}
+function phraseSource(owner, name, records) {
+  const source = owner?.ingress?.sources?.[name];
+  if (!source) return { reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
+  const expected = phraseFields.get(name)?.kind;
+  if (!kinds.has(source.kind) || expected && source.kind !== expected) return { reason: `{{${name}}} has the wrong source scope.` };
+  if (!isSkyPlacementArticleField(owner?.contentKey, "placementArticle")) return { reason: "Phrase variables need the selected planet-in-sign source." };
+  const resolved = resolveIngressSource(owner, name, records);
+  if (resolved.reason) return resolved;
+  if (typeof resolved.text !== "string" || !resolved.text.trim()) return { ...resolved, reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
+  const issues = skyPlacementVariableIssues(resolved.text);
+  if (issues.length) return { ...resolved, reason: `{{${name}}}: ${issues.join(" ")} Phrase text supports calculated article variables only.` };
+  return resolved;
+}
+function skyPlacementArticleVariableSegments(value, calculated = {}, owner = {}, records = []) {
+  const copy = String(value ?? "");
+  const segments = [];
+  let from = 0;
+  for (const match of tokens2(copy)) {
+    if (match.index > from) segments.push({ text: copy.slice(from, match.index) });
+    const [token, name] = match;
+    let text2 = "";
+    let reason = "";
+    let kind = "fact";
+    let reference = `calculated#${name}`;
+    if (facts.has(name)) {
+      text2 = Object.hasOwn(calculated, name) && typeof calculated[name] === "string" ? calculated[name] : "";
+      if (!text2.trim()) reason = `Needs calculated ${name}`;
+    } else if (knownPhrase(name, owner)) {
+      const resolved = phraseSource(owner, name, records);
+      kind = resolved.kind ?? phraseFields.get(name)?.kind ?? "placement";
+      reference = resolved.reference ?? `${owner.contentKey}#ingress.sources.${name}`;
+      reason = resolved.reason ?? "";
+      if (!reason) {
+        const missing = tokens2(resolved.text).map((part) => part[1]).filter((id) => !Object.hasOwn(calculated, id) || typeof calculated[id] !== "string" || !calculated[id].trim());
+        if (missing.length) reason = `Needs calculated ${[...new Set(missing)].join(", ")}`;
+        else text2 = resolved.text.replace(tokenPattern2(), (_, id) => calculated[id]);
+      }
+    } else reason = `Unknown Sky variable ${token}`;
+    if (!reason && /\{\{|\}\}/u.test(text2)) reason = `Unresolved variable inside ${token}`;
+    segments.push({ text: reason ? token : text2, token, name, kind, reference, reason, available: !reason });
+    from = match.index + token.length;
+  }
+  if (from < copy.length) segments.push({ text: copy.slice(from) });
+  return segments;
+}
+function fillSkyPlacementArticleVariables(value, calculated = {}, owner = {}, records = []) {
+  const issues = skyPlacementArticleVariableIssues(value, owner);
+  if (issues.length) throw new Error(`SKY_V4_SOURCE_GAP: ${issues.join(" ")}`);
+  const segments = skyPlacementArticleVariableSegments(value, calculated, owner, records);
+  const missing = segments.filter((part) => part.token && !part.available);
+  if (missing.length) {
+    const factOnly = missing.every((part) => part.kind === "fact");
+    throw new Error(`SKY_V4_SOURCE_GAP: ${factOnly ? "missing calculated facts" : "unavailable article variables"} ${missing.map((part) => `${part.token}: ${part.reason}`).join("; ")}`);
+  }
+  return segments.map((part) => part.text).join("");
+}
+function skyPlacementArticleDependencyText(owner, records = []) {
+  return [...new Set(articlePaths.flatMap((path) => skyPlacementArticlePhraseNames(owner?.[path])))].flatMap((name) => {
+    const source = knownPhrase(name, owner) ? phraseSource(owner, name, records) : null;
+    return source && !source.reason ? [source.text] : [];
+  }).join("\n");
 }
 
 // apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-120-owner-approval-v1.json
@@ -4421,8 +4605,8 @@ function withoutUnresolvedSlots(value) {
   }
   return text(value).trim();
 }
-function fillFacts(value, facts) {
-  return text(value).replace(/\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu, (match, key) => Object.hasOwn(facts, key) ? text(facts[key]) : match);
+function fillFacts(value, facts2) {
+  return text(value).replace(/\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu, (match, key) => Object.hasOwn(facts2, key) ? text(facts2[key]) : match);
 }
 function releasedPackage(source, schema, recordCount, chunkCount, expectedKeys, complete) {
   if (source?.schema !== schema || source.review_status !== "approved" || source.owner_approved !== true || source.serving_enabled !== true || !text(source.approval_id).trim() || !text(source.release_id).trim() || source.expected_records !== recordCount || source.records?.length !== recordCount || source.chunks?.length !== chunkCount) return null;
@@ -4600,7 +4784,7 @@ function assertSkyV4ReaderCopyOwnerApproval(corpus, records = []) {
       const row = recordsByKey.get(key);
       if (!row) throw new Error(`SKY_V4_GOVERNANCE: approval contains non-canonical key ${key}.`);
       const expectedFields = sky_v4_reader_copy_280_owner_approval_v1_default.approved_fields_by_content_type[row.studio_content_type];
-      const editableFields = row.studio_editable_fields.map((field) => field.path);
+      const editableFields = row.studio_editable_fields.map((field2) => field2.path);
       if (JSON.stringify(row.owner_approved_fields) !== JSON.stringify(expectedFields)) {
         throw new Error(`SKY_V4_GOVERNANCE: approved-field mismatch for ${key}.`);
       }
@@ -5090,8 +5274,8 @@ function renderSkyV4ContinuousPreview(corpus, input) {
     throw new Error(`SKY_V4_PLACEMENT_IDENTITY: expected ${expectedKey}.`);
   }
   input = { ...input, contexts: matchingPlacementContexts(input) };
-  const facts = skyPlacementVariableFacts(input);
-  const fullArticle = article && input.articleAvailable !== false ? fillSkyPlacementVariables(article[skyPlacementArticlePath(article, facts.motion)], facts).trim() : "";
+  const facts2 = skyPlacementVariableFacts(input);
+  const fullArticle = article && input.articleAvailable !== false ? fillSkyPlacementArticleVariables(article[skyPlacementArticlePath(article, facts2.motion)], facts2, article, [article, ...corpus.content.continuous.filter((row) => row.contentKey !== article.contentKey)]).trim() : "";
   const overlays = resolveSkyV4ContextualOverlays(corpus, input.contexts, input.overlaySettings, input.overlaySuppressions);
   const fallbackOverlays = resolveSkyV4ContextualOverlays(
     corpus,
@@ -5103,8 +5287,8 @@ function renderSkyV4ContinuousPreview(corpus, input) {
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook ? fallbackOverlays[0]?.FallbackHookOverlay ?? "" : "";
   const ingressAssembly = renderSkyIngressComposition(article, input, article?.ingress ? [article, ...corpus.content.continuous.filter((row) => row.contentKey !== article.contentKey)] : []);
   const assembled = input.fallbackAvailable !== false && ingressAssembly.status === "ready" ? [ingressAssembly.body, input.lunarFallbackBody, fallbackOverlay].filter(Boolean).join("\n\n") : "";
-  const evergreen = article && !fullArticle && !assembled && input.fallbackAvailable !== false ? skyEvergreenFields(article, facts.motion).map((section) => fillSkyPlacementVariables(section.value, facts)) : [];
-  const fallback = article && !fullArticle && !assembled && input.fallbackAvailable !== false ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)].filter(Boolean).map((part) => withoutUnresolvedSlots(fillFacts(part, facts))).filter((part) => part.trim()).join("\n\n") : "";
+  const evergreen = article && !fullArticle && !assembled && input.fallbackAvailable !== false ? skyEvergreenFields(article, facts2.motion).map((section) => fillSkyPlacementVariables(section.value, facts2)) : [];
+  const fallback = article && !fullArticle && !assembled && input.fallbackAvailable !== false ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)].filter(Boolean).map((part) => withoutUnresolvedSlots(fillFacts(part, facts2))).filter((part) => part.trim()).join("\n\n") : "";
   const mainBody = fullArticle || assembled || fallback;
   const resolution = fullArticle ? "canonical-article" : assembled ? "ingress-composition" : fallback ? "exact-fallback" : "facts-only";
   const aspects = selectSkyV4Aspects(input.aspects, { subjectBody: input.planet });
@@ -5401,7 +5585,7 @@ ${renderAspect(aspect)}`
 function renderSkyV4StudioPreview(corpus, input) {
   const source = skyV4ContentStudioRecords(corpus).find((row) => row.contentKey === input.contentKey) ?? input.placementLunarContextSource ?? (input.governedAspectSource ? skyV4GovernedAspectStudioRecord(input.governedAspectSource) : null);
   if (!source) throw new Error(`SKY_V4_SOURCE_GAP: ${input.contentKey}`);
-  const allowed = new Set(skyEvergreenEditableFields(source).map((field) => field.path));
+  const allowed = new Set(skyEvergreenEditableFields(source).map((field2) => field2.path));
   const draftFields = record(input.draftFields);
   const blocked = Object.keys(draftFields).filter((path) => !allowed.has(path));
   if (blocked.length) throw new Error(`SKY_V4_STRUCTURE_LOCK: ${blocked.join(", ")}`);
@@ -5461,7 +5645,7 @@ function renderSkyV4StudioPreview(corpus, input) {
   if (effective.studio_content_type === "placement-lunar-context") {
     const surface = record(input.previewSurface);
     const subjectSign = text(surface.subjectSign || "Aries");
-    const facts2 = {
+    const facts3 = {
       eventSign: text(record(input.facts).eventSign || "Aries"),
       oppositeSign: text(record(input.facts).oppositeSign || "Libra"),
       ...record(input.facts)
@@ -5470,10 +5654,10 @@ function renderSkyV4StudioPreview(corpus, input) {
       ...input,
       planet: effective.Planet,
       sign: subjectSign,
-      facts: facts2
+      facts: facts3
     });
-    const fullPageBody = withoutUnresolvedSlots(fillFacts(effective.FullPageBody, facts2));
-    const fallbackBody = withoutUnresolvedSlots(fillFacts(effective.FallbackBody, facts2));
+    const fullPageBody = withoutUnresolvedSlots(fillFacts(effective.FullPageBody, facts3));
+    const fallbackBody = withoutUnresolvedSlots(fillFacts(effective.FallbackBody, facts3));
     return {
       ...base,
       contentKey: input.contentKey,
@@ -5484,8 +5668,8 @@ function renderSkyV4StudioPreview(corpus, input) {
       page: [base.page, "## What changes on the matching event day", fullPageBody, "## Fallback version", fallbackBody].filter(Boolean).join("\n\n")
     };
   }
-  const facts = record(input.facts);
-  const body = withoutUnresolvedSlots(fillFacts(studioReaderBody(effective), facts));
+  const facts2 = record(input.facts);
+  const body = withoutUnresolvedSlots(fillFacts(studioReaderBody(effective), facts2));
   const blocks = [`# ${text(effective.headline) || title5(input.contentKey)}`, body];
   const motionConditions = input.motionConditions ?? [];
   if (motionConditions.length) {
@@ -5592,7 +5776,8 @@ function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
       source.placementArticle,
       source.placementArticleDirect,
       source.placementArticleRetrograde,
-      ...skyEvergreenFields(source).map((field) => field.value),
+      skyPlacementArticleDependencyText(source, [source, ...corpus.content.continuous.filter((row) => row.contentKey !== source.contentKey)]),
+      ...skyEvergreenFields(source).map((field2) => field2.value),
       retrograde?.Body,
       source.ingress?.enabled ? JSON.stringify(source.ingress) : ""
     ].join("\n");
@@ -5700,7 +5885,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-11b";
+var PACKAGE_VERSION = "v3-2026-09-14a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
