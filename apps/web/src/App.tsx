@@ -11518,7 +11518,9 @@ export function App() {
       signGlyph: eventSign ? signGlyph(eventSign) : position.signGlyph,
       motion: event.direction ?? (isRetrogradeEvent ? "retrograde" : position.motion),
       transitStart: event.type === "ingress" ? event.startsAt : position.transitStart,
-      transitEnd: event.type === "ingress" ? event.endsAt ?? null : position.transitEnd
+      transitEnd: event.type === "ingress"
+        ? event.endsAt ?? (eventSign === position.sign ? position.transitEnd : null)
+        : position.transitEnd
     };
 
     const detail = currentSkyPlacementDetailArticle({
