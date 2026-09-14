@@ -2,7 +2,7 @@
   "entryJavaScriptRawBytes": 625000,
   "entryJavaScriptGzipBytes": 178500,
   "largestJavaScriptRawBytes": 625000,
-  "totalJavaScriptGzipBytes": 451000,
+  "totalJavaScriptGzipBytes": 452000,
   "_rationale": {
     "entryJavaScriptGzipBytes": "Shared paragraph and practical-item validation measures 176.3 kB entry gzip; allow 0.7 kB headroom. No new runtime dependencies. See docs/qa/sky-composable-blocks-2026-09-10.md.",
     "totalJavaScriptGzipBytes": "Paragraph editor, eight structural outlines, and repeatable practical items measure 316.8 kB aggregate gzip. Allow 0.2 kB headroom. See docs/qa/sky-composable-blocks-2026-09-10.md.",
@@ -12,7 +12,8 @@
     "moonSourceBankV6": "Allocate 8 kB aggregate for the supplied V6 provenance, source status, 60-record Moon bank, and selector. Measured total 328.9 kB gzip. Entry and largest-chunk budgets remain unchanged; source metadata is deferred.",
     "reviewQueueWorkflow": "The authorized Review Queue readiness panel, source history, saved-text checking and generation actions measure 622.7 kB entry raw / 177.3 kB entry gzip and 381.1 kB aggregate gzip after rebasing onto 57a32a63. Allocate 2.5 kB entry raw, 1 kB entry gzip and 4 kB aggregate above the prior caps. No runtime dependency or reader CSS added. See docs/qa/review-queue-workflow.md.",
     "memoryGraph": "The owner-requested memory graph integration adds a deferred route and renderer measuring 60.0 kB gzip in the standalone admin build; total JavaScript measures 442.8 kB. Allocate the same 65 kB aggregate feature budget used by the web build, with a separate 64 kB graph cap and a static-entry exclusion check. Initial-entry and largest-chunk caps remain unchanged. See docs/qa/memory-graph-integration-2026-09-10.md.",
-    "placementArticlePhrases20260914": "Main #799 added the owner-requested article phrase-variable editor. After retaining that feature and moving empty-house assembly behind the authenticated preview API, the 5d8feb447-based reconciliation measures 178.0 kB entry gzip and 450.7 kB total (versus 177.9 / 447.9 kB before #799). Allocate 0.5 kB entry and 3 kB aggregate for this implemented feature. Raw-entry/largest-chunk limits, lazy boundaries, forbidden payload markers and graph cap are unchanged. See docs/qa/pr-reconciliation/2026-09-14.md."
+    "placementArticlePhrases20260914": "Main #799 added the owner-requested article phrase-variable editor. After retaining that feature and moving empty-house assembly behind the authenticated preview API, the 5d8feb447-based reconciliation measures 178.0 kB entry gzip and 450.7 kB total (versus 177.9 / 447.9 kB before #799). Allocate 0.5 kB entry and 3 kB aggregate for this implemented feature. Raw-entry/largest-chunk limits, lazy boundaries, forbidden payload markers and graph cap are unchanged. See docs/qa/pr-reconciliation/2026-09-14.md.",
+    "calendarMoonEditor20260914": "The requested direct Moon-sign editing and separate draft chooser add about 1 kB aggregate gzip over main 120ae1dbf. Measured 451.7 kB aggregate and 178.2 kB entry gzip. Allocate 1 kB aggregate for this interface; entry, largest-chunk, memory-graph and forbidden-payload limits remain unchanged. LunarCalendarWorkspace remains deferred. See docs/qa/calendar-moon-sign-editor.md."
   },
   "memoryGraphJavaScriptGzipBytes": 64000
 }
