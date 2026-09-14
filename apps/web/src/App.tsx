@@ -3,6 +3,7 @@ import {
   loadFriendsExperience,
   preloadFriendsExperience
 } from "./features/friends/friendsExperienceLoader";
+import { CalendarDayReading, calendarSkyForDay } from "./features/calendar/CalendarDayReading";
 import { skySummaryEventPlacements } from "./content/skySummaryEventPlacements";
 import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
@@ -10972,7 +10973,7 @@ export function App() {
   const lastSocialProfileSaveRef = useRef("");
   const initialSkyCacheKey = skySnapshotCacheKey(
     withTimeZone(initialLocationState.location),
-    (mode === "guest" || mode === "member") && liveSkyReference(getInitialTransitDate(), withTimeZone(initialLocationState.location).timeZone)
+    (mode === "guest" || mode === "member" || mode === "calendar") && liveSkyReference(getInitialTransitDate(), withTimeZone(initialLocationState.location).timeZone)
       ? `live-${skyDateTimeFromInput(getInitialTransitDate(), initialLocationState.location, true).toISOString()}`
       : getInitialTransitDate()
   );
@@ -12170,7 +12171,12 @@ export function App() {
         content: new Map<string, LiveGeneratedContent>(),
         requestedKeys: new Set<string>()
       };
-      const missingKeys = calendarContentRequest.contentKeys.filter((key) => !cached.requestedKeys.has(key));
+      const requestedKeys = [...new Set([
+        ...calendarContentRequest.contentKeys,
+        ...skyDailySummaryFields.map((field) => field.key),
+        ...cmsSurfaceKeys.retrogradeSummary()
+      ])];
+      const missingKeys = requestedKeys.filter((key) => !cached.requestedKeys.has(key));
 
       setSkyGeneratedContent(mergeGeneratedContentMaps(cached.content, normalizedSkySnapshotContent));
 
@@ -12611,8 +12617,8 @@ export function App() {
     }
 
     const skyLocation = withTimeZone(location);
-    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member"));
-    const live = (mode === "guest" || mode === "member") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
+    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member" || mode === "calendar"));
+    const live = (mode === "guest" || mode === "member" || mode === "calendar") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
     const selectionKey = skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`);
     const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky);
     skyCalculationSelectionRef.current = selectionKey;
@@ -12707,7 +12713,7 @@ export function App() {
   }, [friendCalculationNeeds, location, mode, skyDate, skyRefreshKey]);
 
   useEffect(() => {
-    if (mode !== "guest" && mode !== "member") return;
+    if (mode !== "guest" && mode !== "member" && mode !== "calendar") return;
     const timeZone = withTimeZone(location).timeZone;
     const refresh = () => {
       if (document.visibilityState === "visible" && liveSkyReference(skyDate, timeZone)) setSkyRefreshKey(Date.now());
@@ -14567,6 +14573,40 @@ export function App() {
                     setManualLocation(nextLocation.label);
                     setHasLocationPreference(true);
                   }}
+                  renderDayReading={(day) => {
+                    const selectedSky = calendarSkyForDay(sky, day.dateKey, withTimeZone(location));
+                    const moon = selectedSky?.positions.find((position) => position.planet === "Moon");
+                    const article = selectedSky && moon && skyPlacementFallbackStatus === "ready"
+                      ? currentSkyPlacementDetailArticle({
+                          position: moon,
+                          positions: selectedSky.positions,
+                          aspects: selectedSky.aspects,
+                          aspectFacts: selectedSky.placementAspectFacts,
+                          generatedAt: selectedSky.generatedAt,
+                          generatedContent: skyGeneratedContent,
+                          locationLatitude: selectedSky.location.latitude,
+                          locationTimeZone: selectedSky.location.timeZone,
+                          moonEvent: selectedSky.moonEvent
+                        })
+                      : null;
+                    return {
+                      moonSign: moon?.sign,
+                      content: <CalendarDayReading
+                        dateKey={day.dateKey}
+                        moonSign={moon?.sign}
+                        article={article}
+                        skyError={skyStatus === "error"}
+                        contentStatus={skyPlacementFallbackStatus}
+                        overview={selectedSky ? <SkyCards
+                          embedded
+                          eventsForDay={day.events}
+                          sky={selectedSky}
+                          generatedContent={skyGeneratedContent}
+                          onOpenEvent={openCalendarTransitDetail}
+                        /> : null}
+                      />
+                    };
+                  }}
                   onGeneratedContentRequest={requestCalendarContent}
                   onOpenTransit={openCalendarTransitDetail}
                   showJournalPrompts={journalPromptsEnabled}
@@ -15807,14 +15847,18 @@ function SkyCards({
   sky,
   dateLabel,
   locationLabel,
-  onOpenChart
+  onOpenChart,
+  embedded = false,
+  eventsForDay
 }: {
   onOpenEvent: (event: LunarCalendarEvent) => void;
   generatedContent: Map<string, LiveGeneratedContent>;
   sky: SkySnapshot;
-  dateLabel: string;
-  locationLabel: string;
-  onOpenChart: () => void;
+  dateLabel?: string;
+  locationLabel?: string;
+  onOpenChart?: () => void;
+  embedded?: boolean;
+  eventsForDay?: LunarCalendarEvent[];
 }) {
   const [dailyEvents, setDailyEvents] = useState<{ key: string; events: LunarCalendarEvent[] }>({ key: "", events: [] });
   const [eventContent, setEventContent] = useState<Map<string, LiveGeneratedContent>>(new Map());
@@ -15822,6 +15866,7 @@ function SkyCards({
   const dayKey = new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(sky.generatedAt));
   const requestKey = `${dayKey}:${sky.location.latitude}:${sky.location.longitude}:${timeZone}`;
   useEffect(() => {
+    if (eventsForDay !== undefined) return;
     let active = true;
     const anchor = new Date(sky.generatedAt);
     void import("./services/calendarApi").then(({ getLunarCalendarFromApi }) => getLunarCalendarFromApi(sky.location, "week", anchor, "full"))
@@ -15830,15 +15875,21 @@ function SkyCards({
         const events = calendar.days.find(day => day.dateKey === dayKey)?.events.filter(event => event.type === "aspect" || event.type === "ingress" || event.type === "station" || event.type === "lunation") ?? [];
         if (!active) return;
         setDailyEvents({ key: requestKey, events });
-        const keys = events.flatMap(ingressSummaryKeys);
-        if (keys.length) {
-          const content = await loadLiveGeneratedContentForKeys(keys);
-          if (active) setEventContent(content);
-        }
       }).catch(error => console.warn("Daily sky events could not load.", error));
     return () => { active = false; };
-  }, [requestKey]);
-  const events = dailyEvents.key === requestKey ? dailyEvents.events : [];
+  }, [requestKey, eventsForDay]);
+  const events = eventsForDay ?? (dailyEvents.key === requestKey ? dailyEvents.events : []);
+  const ingressKeys = [...new Set(events.flatMap(ingressSummaryKeys))].sort().join("|");
+  useEffect(() => {
+    let active = true;
+    setEventContent(new Map());
+    if (ingressKeys) {
+      void loadLiveGeneratedContentForKeys(ingressKeys.split("|"))
+        .then((content) => { if (active) setEventContent(content); })
+        .catch((error) => console.warn("Daily sky ingress content could not load.", error));
+    }
+    return () => { active = false; };
+  }, [requestKey, ingressKeys]);
   const summaryContent = new Map([...eventContent, ...generatedContent]);
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
@@ -15883,22 +15934,7 @@ function SkyCards({
       countdown: lunationCountdownLabel(selectedDate, eventDate, sky.location.timeZone).toLowerCase()
     } : undefined
   }, summaryContent);
-
-  return (
-    <>
-      <section className="sky-today-ledger sky-daily-summary" aria-label="The sky today">
-        <header className="sky-today-ledger__head">
-          <h3>
-            <span>The sky</span>
-            {" "}
-            <span className="soft">today</span>
-          </h3>
-          <p>
-            <span>{dateLabel}</span>
-            <span>{locationLabel}</span>
-          </p>
-        </header>
-
+  const summaryBody = (
         <div className="sky-daily-summary__body" aria-label="Daily sky summary">
           {skySummaryParagraphs(summaryParts).map((paragraph, paragraphIndex) => <p key={paragraphIndex}>
           {paragraph.map((part, index) => {
@@ -15936,6 +15972,25 @@ function SkyCards({
           })}
           </p>)}
         </div>
+  );
+  if (embedded) return summaryBody;
+
+  return (
+    <>
+      <section className="sky-today-ledger sky-daily-summary" aria-label="The sky today">
+        <header className="sky-today-ledger__head">
+          <h3>
+            <span>The sky</span>
+            {" "}
+            <span className="soft">today</span>
+          </h3>
+          <p>
+            <span>{dateLabel}</span>
+            <span>{locationLabel}</span>
+          </p>
+        </header>
+
+        {summaryBody}
 
         <button className="sky-today-ledger__foot" type="button" onClick={onOpenChart} aria-label="Open full current sky chart">
           <ChartWheelMini />

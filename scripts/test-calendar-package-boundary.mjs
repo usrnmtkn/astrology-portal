@@ -50,7 +50,12 @@ for (const method of calendarRendererMethods) {
   );
 }
 assert.match(calendarSource, /renderWeeklyMoon\(\{/u);
-assert.match(calendarSource, /main: selectedPackageWeeklyMoon \? \[selectedPackageWeeklyMoon\.body\] : \[\]/u);
+assert.match(calendarSource, /selectedDayReading\?\.content/u);
+assert.doesNotMatch(calendarSource, /selectedPackageWeeklyMoon|selectedDayBodyPresentation/u);
+const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+assert.match(appSource, /renderDayReading=\{\(day\) =>/u);
+assert.match(appSource, /const article = selectedSky && moon && skyPlacementFallbackStatus === "ready"/u);
+assert.match(appSource, /eventsForDay=\{day\.events\}/u);
 assert.match(calendarSource, /selectedPackagePhase\?\.headline/u);
 assert.match(calendarSource, /selectedPackagePhase\?\.tagline/u);
 assert.doesNotMatch(calendarSource, /lunarCalendarLibraryResolver|content-library\.json/u);
