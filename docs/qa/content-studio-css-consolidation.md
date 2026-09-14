@@ -24,3 +24,13 @@ The active component stylesheet imports only `apps/web/src/styles/theme.css`. Bo
 - Visually inspected the library, empty state, editor field cards and action bar, connected Sky tabs, template workbench, and assembly cards in both themes and widths.
 
 Browser checks use isolated fixtures and freshly built previews with `reuseExistingServer: false`. They do not establish production content or API availability.
+
+## September 14 reconciliation
+
+Main subsequently introduced four active semantic layers: `natal-reader-preview.css`,
+`sky-variable-key.css`, `studio-typography.css`, and `studio-component-consistency.css`.
+The import audit now registers these exact files while rejecting unregistered
+stylesheets. Registered modules may not import further stylesheets, declare local
+tokens, or use `!important`; the existing CSS/token audits continue to inspect
+component visual values. This preserves the current rendered system rather than
+removing the later preview and typography styles to satisfy the older audit.
