@@ -15863,7 +15863,7 @@ function SkyCards({
     && Number.isFinite(selectedDate.getTime()) && (Boolean(todayLunation) || eventDate >= selectedDate);
   const eventIsToday = Boolean(validEvent && eventDate && new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(eventDate) === dayKey);
   const exactEventKey = eventIsToday && event ? `${requestKey}:${event.occursAt}:${event.name}:${event.eclipseType ?? ""}` : "";
-  const [summaryEventSky, setSummaryEventSky] = useState<{ key: string; sun: PlanetPosition; moon: PlanetPosition } | null>(null);
+  const [summaryEventSky, setSummaryEventSky] = useState<{ key: string; placements: ReturnType<typeof skySummaryEventPlacements> | null } | null>(null);
   useEffect(() => {
     if (!exactEventKey || !event) return;
     let active = true;
@@ -15871,14 +15871,20 @@ function SkyCards({
       getAstrodienstSkyOffMainThread(sky.location, new Date(event.occursAt), { includeTransitWindows: false }))
       .then(exactSky => {
         const placements = skySummaryEventPlacements(event, exactSky.positions);
-        if (active) setSummaryEventSky({ key: exactEventKey, ...placements });
+        if (active) setSummaryEventSky({ key: exactEventKey, placements });
       }).catch(error => {
         console.warn("Daily sky lunation placements could not be verified.", error);
-        if (active) setSummaryFactsError(exactEventKey);
+        if (!active) return;
+        // A disproven calendar event is resolved and omitted. A failed
+        // calculation still needs Retry before its facts can be used.
+        if (error instanceof Error && error.message.startsWith("IMPOSSIBLE_SKY:")) {
+          setSummaryEventSky({ key: exactEventKey, placements: null });
+        } else setSummaryFactsError(exactEventKey);
       });
     return () => { active = false; };
   }, [exactEventKey, summaryFactsRetry]);
-  const verifiedEventSky = summaryEventSky?.key === exactEventKey ? summaryEventSky : null;
+  const eventResolved = summaryEventSky?.key === exactEventKey;
+  const verifiedEventSky = eventResolved ? summaryEventSky.placements : null;
   const summaryFacts = {
     sun,
     moon,
@@ -15913,7 +15919,7 @@ function SkyCards({
         </header>
 
         <PublishedSkySummary facts={summaryFacts} events={events}
-          factsReady={dailyEvents.key === requestKey && (!exactEventKey || Boolean(verifiedEventSky))}
+          factsReady={dailyEvents.key === requestKey && (!exactEventKey || eventResolved)}
           factsError={summaryFactsError === requestKey || Boolean(exactEventKey && summaryFactsError === exactEventKey)}
           onRetryFacts={() => setSummaryFactsRetry(value => value + 1)}>
           {summaryParts => skySummaryParagraphs(summaryParts).map((paragraph, paragraphIndex) => <p key={paragraphIndex}>

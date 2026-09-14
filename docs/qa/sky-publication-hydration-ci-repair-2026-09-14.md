@@ -38,8 +38,15 @@ project automation credential scoped only to that exact preview hostname.
   Four stale macOS reference images were visually reviewed and updated to current
   main's Studio styles and existing Sky summary grammar; pixel tolerance is unchanged.
 
-Main releases #799–#803 are integrated, including phrase variables, Calendar
+Main releases #799–#804 are integrated, including phrase variables, Calendar
 Moon-sign editing, shared You account state and article draft-save corrections.
+The downstream client run passed 215 cases; three intermittent Friends article
+openings each passed three isolated serial repeats without a code change.
+The 25-case summary Studio run passed 23 cases, with the two remaining cases
+passing after the final correction: unsaved/saved reader-status vocabulary and
+rejecting an impossible calendar lunation while retaining valid current Sky facts.
+A failed calculation still requires Retry; a disproven event is omitted.
+
 Final-head CI and the merged production deployment remain release gates.
 The final PR report records those outcomes separately from these earlier checks.
 
