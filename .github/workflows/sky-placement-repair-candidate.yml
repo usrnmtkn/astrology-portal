@@ -1,0 +1,69 @@
+name: Sky placement repair candidate
+
+on:
+  push:
+    branches: [chatgpt/ci-and-sky-verification-20260914]
+    paths:
+      - '.github/workflows/sky-placement-repair-candidate.yml'
+      - 'scripts/apply-sky-placement-hydration.py'
+      - 'apps/web/src/services/skyPlacementHydration.ts'
+      - 'tests/visual/sky-placement-hydration-boundary.spec.ts'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sky-placement-repair-candidate
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    if: github.ref == 'refs/heads/chatgpt/ci-and-sky-verification-20260914'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/ci-and-sky-verification-20260914
+      - name: Apply reviewed narrow reader patch on this draft branch only
+        run: |
+          if ! grep -q 'prepareSkyPlacementSources' apps/web/src/App.tsx; then
+            python scripts/apply-sky-placement-hydration.py
+          fi
+          git diff --check
+          git diff --stat
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npm run typecheck
+      - name: Verify source selection and publication contracts
+        run: |
+          node --import tsx scripts/test-sky-placement-loading-system.mjs
+          node --import tsx scripts/test-sky-detail-content.mts
+          npm run test:sky-daily-summary
+      - run: npx playwright install --with-deps chromium
+      - name: Record every visible placement and summary version under delayed sources
+        run: npx playwright test -c playwright.config.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts --workers=1
+      - name: Commit validated reader patch back to this draft branch (never main)
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps/web/src/App.tsx apps/web/src/features/sky/skyPlacementContentState.ts apps/web/src/services/skyDetailContent.ts scripts/test-sky-placement-loading-system.mjs scripts/test-sky-detail-content.mts
+          if ! git diff --cached --quiet; then
+            git commit -m 'Resolve authoritative Sky sources before the first placement prose paint'
+            git push origin HEAD:chatgpt/ci-and-sky-verification-20260914
+          fi
+          git rev-parse HEAD > test-results/validated-source-sha.txt
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: sky-placement-candidate-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 3
