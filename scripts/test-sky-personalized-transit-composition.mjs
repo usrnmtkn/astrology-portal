@@ -15,6 +15,22 @@ const pkg = "../apps/web/src/content/fallbackArchitectureV3/";
 const bundle = [require(pkg + "source-rows/transit-synastry-rows-v1.json"), require(pkg + "templates/fallback-templates-v3.json"), require(pkg + "source-rows/fallback-source-rows-v3.json")];
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "transit-retirement-"));
 try {
+  await build({ entryPoints: ["apps/web/src/utils/articleAspects.ts"], bundle: true, platform: "node", format: "esm", outfile: path.join(dir, "active-events.mjs"), logLevel: "silent" });
+  const { skyActiveChartEvents } = await import(pathToFileURL(path.join(dir, "active-events.mjs")));
+  const aspects = [
+    { key: "north", heading: "Mars square your natal North Node", body: "Complete first passage. Its final sentence stays.\n\nIts final paragraph stays too." },
+    { key: "moon", heading: "Mars trine your natal Moon", body: null },
+    { key: "south", heading: "Mars square your natal South Node", body: "Complete second passage. Its final sentence stays." },
+    { key: "other", heading: "Venus square your natal South Node", body: "A different transit remains separate." }
+  ];
+  const groups = skyActiveChartEvents(aspects);
+  assert.deepEqual(groups.map(group => group.members.map(member => member.key)), [["north", "south"], ["moon"], ["other"]]);
+  assert.equal(groups[0].members[0], aspects[0]);
+  assert.equal(groups[0].members[1], aspects[2]);
+  assert.equal(groups[0].members[0].body, aspects[0].body);
+  assert.equal(groups[0].members[1].body, aspects[2].body);
+  assert.deepEqual(skyActiveChartEvents([]), []);
+  assert.equal(skyActiveChartEvents([aspects[0], { ...aspects[2], heading: "Mars trine your natal South Node" }]).length, 2);
   await build({ entryPoints: ["apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts"], bundle: true, platform: "node", format: "esm", outfile: path.join(dir, "browser.mjs"), logLevel: "silent" });
   const browser = await import(pathToFileURL(path.join(dir, "browser.mjs")));
   await build({ entryPoints: ["apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts"], bundle: true, platform: "node", format: "esm", outfile: path.join(dir, "eligibility.mjs"), logLevel: "silent" });

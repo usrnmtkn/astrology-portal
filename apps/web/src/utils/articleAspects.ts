@@ -43,3 +43,30 @@ export function articleAspectGlyphPartsFromHeading(heading: string) {
     to: point(match[3])
   };
 }
+
+export type SkyActiveChartAspect = { key: string; heading: string; body: string | null };
+export type SkyActiveChartEvent = { key: string; heading: string; members: SkyActiveChartAspect[] };
+
+// Group only mirrored contacts to the same natal node axis. Original passages,
+// keys and order are retained; grouping never composes or shortens reader copy.
+export function skyActiveChartEvents(aspects: SkyActiveChartAspect[]): SkyActiveChartEvent[] {
+  const node = (heading: string) => heading.trim().match(/^(.+?)\s+(conjunction|conjunct|opposition|opposite|square|trine|sextile)\s+(?:your\s+)?(?:natal\s+)?(north|south)\s+node$/iu);
+  const normalize = (value: string) => value.toLowerCase().replace(/^conjunct$/, "conjunction").replace(/^opposite$/, "opposition");
+  const mirror: Record<string, string> = { conjunction: "opposition", opposition: "conjunction", square: "square", trine: "sextile", sextile: "trine" };
+  const used = new Set<number>();
+  return aspects.flatMap((aspect, index) => {
+    if (used.has(index)) return [];
+    const first = node(aspect.heading);
+    const match = first ? aspects.findIndex((candidate, otherIndex) => {
+      if (otherIndex <= index || used.has(otherIndex)) return false;
+      const second = node(candidate.heading);
+      return second && first[1].toLowerCase() === second[1].toLowerCase()
+        && first[3].toLowerCase() !== second[3].toLowerCase()
+        && mirror[normalize(first[2])] === normalize(second[2]);
+    }) : -1;
+    if (match < 0) return [{ key: aspect.key, heading: aspect.heading, members: [aspect] }];
+    used.add(match);
+    const second = aspects[match];
+    return [{ key: `${aspect.key}:${second.key}`, heading: `${aspect.heading} · ${second.heading}`, members: [aspect, second] }];
+  });
+}

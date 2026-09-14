@@ -21,7 +21,8 @@ import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import {
   articleAspectGlyphPartsFromHeading,
   articleAspectTypeFromText,
-  normalizedArticleAspectToneBucket
+  normalizedArticleAspectToneBucket,
+  skyActiveChartEvents
 } from "../../utils/articleAspects";
 import {
   cleanGeneratedSectionBody,
@@ -824,12 +825,12 @@ export function SkyDetailArticle({
                     {detail.personalizedPlacement.natalAspects.length > 0 ? (
                       <>
                         <h3>Aspects to the natal chart</h3>
-                        {detail.personalizedPlacement.natalAspects.map((aspect) => (
+                        {skyActiveChartEvents(detail.personalizedPlacement.natalAspects).map((aspect) => (
                           <section className="sky-detail-personalized-aspect" key={aspect.key}>
                             <h4>{aspect.heading}</h4>
-                            {aspect.body ? fullDetailReaderFacingParagraphs([aspect.body]).map((paragraph, index) => (
-                              <p key={`${aspect.key}-${index}`}>{paragraph}</p>
-                            )) : null}
+                            {aspect.members.flatMap((member) => member.body ? fullDetailReaderFacingParagraphs([member.body]).map((paragraph, index) => (
+                              <p key={`${member.key}-${index}`}>{paragraph}</p>
+                            )) : [])}
                           </section>
                         ))}
                       </>
