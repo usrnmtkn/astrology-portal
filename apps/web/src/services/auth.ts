@@ -1,4 +1,4 @@
-import type { SupabaseClient, User } from "@supabase/supabase-js";
+import type { AuthChangeEvent, SupabaseClient, User } from "@supabase/supabase-js";
 import { normalizeBirthTime } from "./chartTime";
 import { rememberStudioReturnPath } from "./studioAuthReturn";
 
@@ -53,6 +53,15 @@ const supabasePublishableKey = (
 const authRedirectUrl = import.meta.env.VITE_AUTH_REDIRECT_URL as string | undefined;
 
 export const isAuthConfigured = Boolean(supabaseUrl && supabasePublishableKey);
+export function isAuthSessionStorageKey(key: string | null) {
+  if (!supabaseUrl) return false;
+  try {
+    return key === null || key === `sb-${new URL(supabaseUrl).hostname.split(".")[0]}-auth-token`;
+  } catch {
+    return false;
+  }
+}
+
 export const isPhoneAuthEnabled = (
   isAuthConfigured
   && import.meta.env.VITE_PHONE_AUTH_ENABLED === "true"
@@ -89,7 +98,8 @@ export async function getVerifiedAuthUser(client?: SupabaseClient | null) {
     return null;
   }
 
-  const { data: sessionData } = await supabase.auth.getSession();
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
   const accessToken = sessionData.session?.access_token;
 
   if (!accessToken) {
@@ -162,7 +172,7 @@ export async function getAuthAccount() {
   return authAccountFromUser(user);
 }
 
-export function onAuthAccountChange(callback: (account: AuthAccount | null) => void) {
+export function onAuthAccountChange(callback: (account: AuthAccount | null, event: AuthChangeEvent) => void) {
   let unsubscribe: (() => void) | null = null;
   let cancelled = false;
 
@@ -171,14 +181,20 @@ export function onAuthAccountChange(callback: (account: AuthAccount | null) => v
       return;
     }
 
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      callback(session?.user ? authAccountFromUser(session.user) : null);
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      callback(session?.user ? authAccountFromUser(session.user) : null, event);
     });
     unsubscribe = () => data.subscription.unsubscribe();
 
     if (cancelled) {
       unsubscribe();
     }
+  }).catch((error) => {
+    // The account lookup exposes the recovery action; avoid an unhandled
+    // rejection when the same SDK load also prevents the listener starting.
+    console.warn("Account change listener could not start.", {
+      name: error instanceof Error ? error.name : "UnknownError"
+    });
   });
 
   return () => {
