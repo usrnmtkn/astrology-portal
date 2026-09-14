@@ -2,6 +2,10 @@ import { expect, test } from "@playwright/test";
 import { writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 
+const moonPlacement = (sign: string) => JSON.parse(readFileSync(
+  "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json", "utf8"
+)).hookRows.find((row: { contentKey: string }) => row.contentKey === `fallback-hook/sky-placement-lived/moon/${sign}`);
+
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-09-08T04:06:00Z"));
   await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
@@ -43,12 +47,13 @@ test("offline snapshot publication keeps complete Calendar guidance available du
     await expect(weekly).toHaveText(row.body);
     await page.goto("/#calendar?view=day&date=2026-08-05");
     const day = page.getByRole("region", { name: "Moon guidance" });
-    await expect(day).toHaveAttribute("data-guidance-key", key, { timeout: 15_000 });
-    await expect(day.locator("p")).toHaveText(row.body);
+    const fullMoon = moonPlacement("taurus");
+    await expect(day).toHaveAttribute("data-guidance-key", fullMoon.contentKey, { timeout: 15_000 });
+    await expect(day.locator("p")).toHaveText(fullMoon.body_you.split(/\n\n/));
   } finally { releaseSnapshot(); releaseLive(); }
 });
 
-test("Calendar Day waits for full event facts before selecting the Week's Moon passage", async ({ page }) => {
+test("Calendar Day waits for full event facts before selecting its full Moon passage", async ({ page }) => {
   const { getLunarCalendarWeek } = await import("../../apps/web/src/services/ephemeris");
   const location = { label: "New York, New York", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
   const anchor = new Date("2026-08-04T12:00:00Z");
@@ -72,8 +77,8 @@ test("Calendar Day waits for full event facts before selecting the Week's Moon p
   await page.goto("/#calendar?view=weekly&date=2026-08-04");
   const weekly = page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__guidance");
   await expect(weekly).toBeVisible({ timeout: 15_000 });
-  const expectedBody = (await weekly.innerText()).trim();
-  const expectedKey = await weekly.getAttribute("data-guidance-key");
+  await expect(weekly).toHaveAttribute("data-guidance-key", "authored/calendar-weekly-moon/aries/variant-2");
+  const fullMoon = moonPlacement("aries");
   holdFull = true;
   try {
     await page.goto("/#calendar?view=day&date=2026-08-04");
@@ -82,8 +87,8 @@ test("Calendar Day waits for full event facts before selecting the Week's Moon p
     await expect(page.getByRole("region", { name: "Moon guidance" })).toHaveCount(0);
   } finally { release(); }
   const day = page.getByRole("region", { name: "Moon guidance" });
-  await expect(day).toHaveAttribute("data-guidance-key", expectedKey!);
-  await expect(day.locator("p")).toHaveText(expectedBody);
+  await expect(day).toHaveAttribute("data-guidance-key", fullMoon.contentKey);
+  await expect(day.locator("p")).toHaveText(fullMoon.body_you.split(/\n\n/));
 });
 
 for (const leaveCalendar of [false, true]) test(`Calendar pending event click ${leaveCalendar ? "does not reopen after leaving" : "opens after the Sky calculation loads"}`, async ({ page }) => {
@@ -140,8 +145,9 @@ for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored
   const guidance = view === "weekly"
     ? page.locator("#lunar-weekly-2026-08-04 .lunar-weekly-day__guidance")
     : page.getByRole("region", { name: "Moon guidance" });
-  await expect(guidance).toHaveAttribute("data-guidance-key", key, { timeout: 25_000 });
-  await expect(view === "weekly" ? guidance : guidance.locator("p")).toHaveText(source.body);
+  const selected = view === "weekly" ? { contentKey: key, body: source.body } : { contentKey: moonPlacement("aries").contentKey, body: moonPlacement("aries").body_you.split(/\n\n/) };
+  await expect(guidance).toHaveAttribute("data-guidance-key", selected.contentKey, { timeout: 25_000 });
+  await expect(view === "weekly" ? guidance : guidance.locator("p")).toHaveText(selected.body);
   await expect(page.locator(".lunar-calendar-loading")).toHaveCount(0);
 });
 

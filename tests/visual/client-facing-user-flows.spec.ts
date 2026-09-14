@@ -2439,7 +2439,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("calendar Day and Week views share one consecutive Moon-sign write-up per date", async ({ page }) => {
+  test("calendar preserves consecutive Week passages and complete Day Moon writing", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-03T16:00:00.000Z" });
@@ -2468,8 +2468,11 @@ test.describe("client-facing user flow case studies", () => {
       await expectClientRouteLoads(page, `/#calendar?view=daily&date=${dateKey}`);
       const dayGuidance = page.getByRole("region", { name: "Moon guidance" });
       await expect(dayGuidance).toHaveCount(1);
-      await expect(dayGuidance).toHaveAttribute("data-guidance-key", expectedByDate.get(dateKey)?.contentKey ?? "");
-      await expect(dayGuidance.locator("p")).toHaveText(expectedByDate.get(dateKey)?.body ?? "");
+      const sign = expectedByDate.get(dateKey)!.contentKey.split("/")[2];
+      const fullMoonKey = `fallback-hook/sky-placement-lived/moon/${sign}`;
+      const fullMoon = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === fullMoonKey)!;
+      await expect(dayGuidance).toHaveAttribute("data-guidance-key", fullMoonKey);
+      await expect(dayGuidance.locator("p")).toHaveText(fullMoon.body_you!.split(/\n\n/));
     }
 
     await assertNoClientErrors();
@@ -3053,11 +3056,27 @@ test.describe("client-facing user flow case studies", () => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
+    const user = { id: fixtureUserId, email: "qa-flow@example.com", aud: "authenticated", role: "authenticated",
+      app_metadata: { provider: "email" }, user_metadata: { name: "Project Author" } };
+    const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test").hostname.split(".")[0]}-auth-token`;
+    await page.addInitScript(({ user, storageKey }) => localStorage.setItem(storageKey, JSON.stringify({
+      access_token: "synthetic-signout-token", refresh_token: "synthetic-refresh", user,
+      expires_at: Math.floor(Date.now() / 1000) + 3600, token_type: "bearer"
+    })), { user, storageKey });
+    let signedOut = false;
+    await page.route("**/auth/v1/**", route => {
+      if (new URL(route.request().url()).pathname.endsWith("/logout")) {
+        signedOut = true;
+        return route.fulfill({ status: 204 });
+      }
+      return route.fulfill({ json: user });
+    });
     await expectClientRouteLoads(page, "/#you");
 
     await expect(page.getByText("Project Author")).toBeVisible();
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.getByRole("menuitem", { name: "Sign out" }).click();
+    await expect.poll(() => signedOut).toBe(true);
 
     await expect(page.getByRole("region", { name: "Create account" })).toBeVisible();
     await expect(page.getByText("Create profile")).toBeVisible();
