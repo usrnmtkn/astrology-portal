@@ -16,7 +16,6 @@ export default function SkyForecastTemplateStudio({ period, rows, busy, onOpen, 
       <div>
         <h3>{template.title}</h3>
         <p>{template.description}</p>
-        <p>Open the template to edit its structure and writing guidance.</p>
       </div>
       <StudioButton disabled={busy} onClick={() => onOpen(period)}>Open {period === "weekly-sky" ? "weekly" : "monthly"} template</StudioButton>
     </header>
