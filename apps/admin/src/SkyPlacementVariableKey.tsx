@@ -66,6 +66,9 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
   const [phraseError, setPhraseError] = useState("");
   const [phraseInstalled, setPhraseInstalled] = useState(false);
 
+  // Row hydration recreates object identities. Only changed content should
+  // reload phrase values, otherwise the picker can continuously hydrate itself.
+  const phraseSourceRevision = JSON.stringify(phraseSource?.record ?? null);
   useEffect(() => {
     let active = true;
     if (!phraseSource) {
@@ -80,16 +83,15 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
     setPhraseError("");
     void (async () => {
       const loadSource = loadSourceRef.current;
-      const { values: seededValues, provenance: seededProvenance } = await loadSkyWritingLibrarySeeds(
-        phraseSource.record,
-        phraseSource.planet,
-        phraseSource.sign,
-        loadSource
-      );
-      const values = { ...seededValues };
-      const provenance = { ...seededProvenance };
       const rawComposition = phraseSource.record.ingress as SkyWritingLibraryComposition | undefined;
       const installed = skyWritingLibraryInstalled(rawComposition);
+      // Saved local or linked library fields are authoritative, including blanks.
+      // Governed prefill is needed only before a library exists.
+      const seeds = installed ? { values: {}, provenance: {} } : await loadSkyWritingLibrarySeeds(
+        phraseSource.record, phraseSource.planet, phraseSource.sign, loadSource
+      );
+      const values: Record<string, string> = { ...seeds.values };
+      const provenance: Record<string, string> = { ...seeds.provenance };
       const composition = installed && rawComposition ? installSkyWritingLibrary(rawComposition) : rawComposition;
 
       if (installed && composition) {
@@ -130,7 +132,7 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
       setPhraseLoading(false);
     });
     return () => { active = false; };
-  }, [phraseSource?.planet, phraseSource?.sign, phraseSource?.record]);
+  }, [phraseSource?.planet, phraseSource?.sign, phraseSourceRevision]);
 
   const contextLabel = phraseSource?.label ?? (phraseSource ? `${phraseSource.planet} in ${phraseSource.sign}` : "the selected placement");
 
