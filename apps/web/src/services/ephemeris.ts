@@ -1490,7 +1490,8 @@ function findIngresses(
   swe: SwissEphInstance,
   start: Date,
   end: Date,
-  timeZone: string
+  timeZone: string,
+  onlyPlanet?: string
 ): LunarCalendarEvent[] {
   const planetIds = [
     swe.SE_SUN,
@@ -1507,6 +1508,7 @@ function findIngresses(
   const events: LunarCalendarEvent[] = [];
 
   calendarPlanets.forEach(([planet, glyph], index) => {
+    if (onlyPlanet && planet !== onlyPlanet) return;
     const planetId = planetIds[index];
     const stepMs = planet === "Moon" ? 3 * 60 * 60_000 : 12 * 60 * 60_000;
     let previousDate = start;
@@ -2756,6 +2758,12 @@ function buildLunarCalendarRange(
   timeZone: string,
   detail: LunarCalendarDetailLevel
 ): LunarCalendarMonth {
+  // A visible week/month can sit entirely inside one Sun season. Carry its
+  // bounding ingresses as calculation context, independently of visible events.
+  // Forty days on each side spans a complete solar sign passage in every season.
+  const seasonIngresses = findIngresses(swe,
+    new Date(gridStart.getTime() - 40 * 86_400_000),
+    new Date(gridEnd.getTime() + 40 * 86_400_000), timeZone, "Sun");
   const events = detail === "full"
     ? (() => {
       const eventStart = new Date(gridStart.getTime() - 2 * 86_400_000);
@@ -2821,7 +2829,11 @@ function buildLunarCalendarRange(
     timeZone,
     location,
     days,
-    events: events.filter((event) => days.some((day) => day.dateKey === event.dateKey))
+    events: [
+      ...events.filter((event) => event.planet !== "Sun" || event.type !== "ingress")
+        .filter((event) => days.some((day) => day.dateKey === event.dateKey)),
+      ...seasonIngresses
+    ].sort((first, second) => first.startsAt.localeCompare(second.startsAt))
   };
 }
 
@@ -2833,7 +2845,8 @@ async function calculateLunarCalendarMonth(
   const swe = await getSwissEph();
   const detail = options.detail ?? "full";
   const timeZone = location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-  const monthAnchor = new Date(month.getFullYear(), month.getMonth(), 1);
+  const parts = localDateParts(month, location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC");
+  const monthAnchor = new Date(parts.year, parts.month - 1, 15, 12);
   const { gridStart, gridEnd } = monthGridRange(monthAnchor, timeZone);
 
   return buildLunarCalendarRange(swe, location, monthAnchor, gridStart, gridEnd, 42, timeZone, detail);
@@ -2845,7 +2858,8 @@ export function getLunarCalendarMonth(
   options: LunarCalendarMonthOptions = {}
 ): Promise<LunarCalendarMonth> {
   const detail = options.detail ?? "full";
-  const monthAnchor = new Date(month.getFullYear(), month.getMonth(), 1);
+  const parts = localDateParts(month, location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC");
+  const monthAnchor = new Date(parts.year, parts.month - 1, 15, 12);
   const key = lunarCalendarMonthCacheKey(location, monthAnchor, detail);
   const cached = lunarCalendarMonthCache.get(key);
 
@@ -2876,7 +2890,8 @@ async function calculateLunarCalendarWeek(
   const swe = await getSwissEph();
   const detail = options.detail ?? "full";
   const timeZone = location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-  const monthAnchor = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
+  const parts = localDateParts(anchor, timeZone);
+  const monthAnchor = new Date(parts.year, parts.month - 1, 15, 12);
   const { gridStart, gridEnd } = weekGridRange(anchor, timeZone);
 
   return buildLunarCalendarRange(swe, location, monthAnchor, gridStart, gridEnd, 7, timeZone, detail);
@@ -3459,7 +3474,7 @@ export async function getAstrodienstSky(
       houseSystem: "whole_sign",
       motion,
       theme: themeForPoint(planet),
-      transitTimeZone: options.includeTransitWindows ? location.timeZone ?? "UTC" : undefined,
+      transitTimeZone: location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
       ...transitWindow,
       residencyStations,
       ...structuralTransitFacts,

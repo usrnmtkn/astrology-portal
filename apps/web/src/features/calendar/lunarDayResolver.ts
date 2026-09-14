@@ -920,7 +920,7 @@ export function lunarDayGeneratedContentKeys(
   const lunationSignPart = slugContentPart(currentLunation?.sign ?? day.moonSign);
   const initialPhaseType = phaseTypeForMoonPhase(day.moonPhase);
   const exactLunation = exactLunationForDay(day, initialPhaseType);
-  const calendarSunSign = exactLunation?.sunSign ?? season.sign;
+  const calendarSunSign = exactLunation?.sunSign ?? season?.sign ?? "";
   const calendarMoonSign = exactLunation?.sign || day.moonSign;
   const seasonPart = slugContentPart(calendarSunSign);
   const signPart = slugContentPart(calendarMoonSign);
@@ -1011,7 +1011,7 @@ export function resolveLunarDay({
   const transits = dayModifiers(day, events, selectedTime);
   const hasEclipse = transits.some((transit) => transit.type === "eclipse");
   const checkpointRole = hasEclipse ? "eclipse" : checkpointRoleForPhase(day.moonPhase);
-  const editorial = editorialFor(day, season.sign, currentLunation, transits, {
+  const editorial = editorialFor(day, season?.sign ?? "", currentLunation, transits, {
     origin,
     culmination,
     nextNewMoon
@@ -1035,7 +1035,7 @@ export function resolveLunarDay({
       transits,
       activeAspects: day.activeAspects
     },
-    arc: arcEnabled ? {
+    arc: arcEnabled && season ? {
       season,
       origin: arcPointFor(origin, day.moonSign),
       checkpoint: {
@@ -1058,7 +1058,7 @@ export function resolveLunarDay({
     editorial,
     source: {
       lunationId: currentLunation?.id ?? null,
-      seasonId: `season.${slugContentPart(season.sign)}.${season.start}`,
+      seasonId: season ? `season.${slugContentPart(season.sign)}.${season.start}` : "",
       signId: slugContentPart(day.moonSign)
     }
   };

@@ -119,9 +119,9 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
   { value: "month", label: "Month" }
 ];
 
-// v11 drops partial Day caches that could select a different Moon passage
-// before the full event facts used by Week finished loading.
-const calendarStorageVersion = "v11";
+// v12 requires calculated bounding Sun ingresses, including in basic/month
+// caches. Earlier seven-day caches cannot supply a reliable season range.
+const calendarStorageVersion = "v12";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD
@@ -174,12 +174,8 @@ function updateCalendarRouteUrl(view: LunarCalendarViewMode, date: string, mode:
   }
 }
 
-function monthStart(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
 function addMonths(date: Date, amount: number) {
-  return new Date(date.getFullYear(), date.getMonth() + amount, 1);
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + amount, 15, 12));
 }
 
 function dateKeyFromDate(date: Date) {
@@ -190,14 +186,14 @@ function dateKeyFromDate(date: Date) {
   return `${year}-${month}-${day}`;
 }
 
-function monthStartFromDateKey(
+function monthAnchorFromDateKey(
   dateKey: string,
-  timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+  _timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
 ) {
   const [year = new Date().getFullYear(), month = 1] = dateKey.split("-").map(Number);
-  const monthKey = `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-01`;
-
-  return zonedDateTimeToUtc(monthKey, "12:00 PM", timeZone);
+  // This Date is a month identifier, not an event instant. A midpoint stays in
+  // the same month in both the browser and selected zone, including UTC+14/-12.
+  return new Date(Date.UTC(year, month - 1, 15, 12));
 }
 
 function dateFromDateKey(
@@ -220,23 +216,8 @@ function weeklyMoonVariantForDate(dateKey: string) {
   return ((isoWeek - 1) % 4) + 1;
 }
 
-function startOfWeekDate(date: Date) {
-  const start = new Date(date);
-  const weekday = start.getDay();
-  const daysSinceMonday = weekday === 0 ? 6 : weekday - 1;
-
-  start.setHours(0, 0, 0, 0);
-  start.setDate(start.getDate() - daysSinceMonday);
-
-  return start;
-}
-
 function isWeekBasedView(mode: LunarCalendarViewMode) {
   return mode === "week" || mode === "weekly";
-}
-
-function storageDateKey(date: Date) {
-  return dateKeyFromDate(date);
 }
 
 function calendarStorageKey(
@@ -247,13 +228,18 @@ function calendarStorageKey(
   // Keep view-specific caches; Day and editorial Week both store full facts
   // so passage selection never runs against a partial event list.
   const normalizedMode = mode === "weekly" ? "weekly" : mode;
-  const normalizedAnchor = isWeekBasedView(mode) ? startOfWeekDate(anchor) : monthStart(anchor);
+  const civilKey = timestampDateKey(anchor.toISOString(), location.timeZone || "UTC");
+  const civilDate = new Date(`${civilKey}T12:00:00Z`);
+  const weekday = civilDate.getUTCDay() || 7;
+  const normalizedKey = isWeekBasedView(mode)
+    ? new Date(civilDate.getTime() - (weekday - 1) * 86_400_000).toISOString().slice(0, 10)
+    : `${civilKey.slice(0, 7)}-01`;
 
   return [
     "tldr-lunar-calendar",
     calendarStorageVersion,
     normalizedMode,
-    storageDateKey(normalizedAnchor),
+    normalizedKey,
     location.latitude.toFixed(4),
     location.longitude.toFixed(4),
     location.timeZone || "UTC"
@@ -1099,7 +1085,7 @@ function isLilithStationEvent(event: LunarCalendarEvent) {
     && event.phase !== "retrograde-passage" && !isActiveRetrogradeEvent(event);
 }
 
-function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "Today") {
+function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "Today", timeZone = "UTC") {
   if (event.type === "lunation" && event.sign) {
     try {
       const phase = calendarPhaseContentKey(lunationDisplayLabel(event));
@@ -1137,7 +1123,7 @@ function calendarEventPackageDescription(event: LunarCalendarEvent, dateLine = "
       const rendered = calendarFallbackRendererV3.renderTransitRetro({
         planet: slugContentPart(event.planet),
         sign: event.sign ? slugContentPart(event.sign) : undefined,
-        window: event.retrogradeEnd ? `Until ${formatEventDate(event.retrogradeEnd, "UTC")}` : undefined,
+        window: event.retrogradeEnd ? `Until ${formatEventDate(event.retrogradeEnd, timeZone)}` : undefined,
         format: "card"
       });
 
@@ -1268,7 +1254,8 @@ export function normalizeCalendarEventSurface(
   knowledgeMatrixV9?: CalendarV9TransitResolver | null,
   approvedExactSkyAspectLookup?: ApprovedExactSkyAspectLookup | null,
   composedSkyCalendarCardLookup?: SkyCalendarComposedCardLookup | null,
-  generatedContent?: Map<string, LiveGeneratedContent>
+  generatedContent?: Map<string, LiveGeneratedContent>,
+  timeZone = "UTC"
 ): NormalizedCalendarEventSurface {
   if (event.type === "aspect" && event.planets && event.aspect && isSkyAspectRetired(event.planets[0], event.aspect, event.planets[1])) {
     return { surface: "calendar-event", status: "not-servable", sections: [] };
@@ -1460,7 +1447,7 @@ export function normalizeCalendarEventSurface(
     };
   }
 
-  const packageDescription = calendarEventPackageDescription(event, dateLine);
+  const packageDescription = calendarEventPackageDescription(event, dateLine, timeZone);
 
   if (!isReaderFacingCopy(packageDescription)) {
     return {
@@ -1510,7 +1497,8 @@ function calendarEventEditorialContent(
     knowledgeMatrixV9,
     approvedExactSkyAspectLookup,
     composedSkyCalendarCardLookup,
-    generatedContent
+    generatedContent,
+    timeZone
   );
   const description = normalized.sections[0];
   const detailsSection = normalized.sections.find((section) => section.slot === "details");
@@ -1696,6 +1684,7 @@ function lunarDayFor(day: LunarCalendarDay, events: LunarCalendarEvent[]) {
 
 function seasonLunarArc(day: LunarCalendarDay, events: LunarCalendarEvent[], timeZone: string) {
   const window = sunIngressSeasonWindow(day.dateKey, events);
+  if (!window) return null;
   const selectedTime = dayKeyToUtcTime(day.dateKey);
   const startTime = dayKeyToUtcTime(window.start);
   const endTime = dayKeyToUtcTime(window.end);
@@ -1790,7 +1779,7 @@ function seasonEyebrowForDay(day: LunarCalendarDay, timeZone: string, events?: L
     day: "numeric"
   }).format(new Date(day.date));
 
-  return `${dateLabel} · ${seasonSign} season${isSeasonStart(day) ? " begins" : ""}`;
+  return seasonSign ? `${dateLabel} · ${seasonSign} season${isSeasonStart(day) ? " begins" : ""}` : dateLabel;
 }
 
 function titleForDay(day: LunarCalendarDay) {
@@ -1904,7 +1893,7 @@ export function LunarCalendar({
     [location.timeZone]
   );
   const initialDateKey = initialRouteState?.date ?? todayKey(location.timeZone || "UTC");
-  const [visibleMonth, setVisibleMonth] = useState(() => monthStartFromDateKey(
+  const [visibleMonth, setVisibleMonth] = useState(() => monthAnchorFromDateKey(
     initialDateKey,
     location.timeZone || "UTC"
   ));
@@ -2001,6 +1990,9 @@ export function LunarCalendar({
       });
       setStatus("ready");
     } else {
+      setCalendar(null);
+      setSelectedCalendar(null);
+      setSeasonEvents([]);
       setStatus("loading");
     }
 
@@ -2064,7 +2056,7 @@ export function LunarCalendar({
       setViewMode(routeState.view);
       setSelectedDateKey(routeState.date);
       setVisibleWeekDateKey(routeState.date);
-      setVisibleMonth(monthStartFromDateKey(routeState.date, location.timeZone || "UTC"));
+      setVisibleMonth(monthAnchorFromDateKey(routeState.date, location.timeZone || "UTC"));
     }
 
     window.addEventListener("popstate", syncCalendarRoute);
@@ -2105,7 +2097,7 @@ export function LunarCalendar({
 
     getLunarCalendarMonth(
       location,
-      monthStartFromDateKey(selectedDateKey, location.timeZone || "UTC"),
+      monthAnchorFromDateKey(selectedDateKey, location.timeZone || "UTC"),
       { detail: "full" }
     )
       .then((nextSelectedCalendar) => {
@@ -2135,6 +2127,10 @@ export function LunarCalendar({
       ...(selectedCalendar?.events ?? [])
     ];
     const season = sunIngressSeasonWindow(selectedDateKey, localEvents);
+    // Clear the previous selection before loading; never carry a season across
+    // location/date changes or substitute static dates while facts are absent.
+    setSeasonEvents([]);
+    if (!season) return;
 
     // The day and week surfaces intentionally load a seven-day calendar for a
     // fast first paint. Fetch only the season's lunation/station feed so the
@@ -2142,15 +2138,15 @@ export function LunarCalendar({
     // additional 42-day visual calendar.
     getLunarCalendarRangeEvents(
       location,
-      dateFromDateKey(season.start, location.timeZone || "UTC"),
-      dateFromDateKey(season.end, location.timeZone || "UTC")
+      new Date(season.startsAt),
+      new Date(season.endsAt)
     )
       .then((events) => {
         if (!cancelled) {
           setSeasonEvents(events.filter((event) => (
             event.type === "lunation"
-            && event.dateKey >= season.start
-            && event.dateKey < season.end
+            && event.startsAt >= season.startsAt
+            && event.startsAt < season.endsAt
           )));
         }
       })
@@ -2632,13 +2628,13 @@ export function LunarCalendar({
       return [] as Array<{ id: string; label: string; discClass: string; point: { sign: string; datetime: string }; isCurrent: boolean }>;
     }
 
-    const startTime = dayKeyToUtcTime(selectedSeasonArc.season.start);
-    const endTime = dayKeyToUtcTime(selectedSeasonArc.season.end);
+    const startTime = Date.parse(selectedSeasonArc.season.startsAt);
+    const endTime = Date.parse(selectedSeasonArc.season.endsAt);
     const selectedTime = dayKeyToUtcTime(selectedDay.dateKey);
     const seasonLunations = arcEvents
       .filter((event) => event.type === "lunation")
       .filter((event) => {
-        const eventTime = dayKeyToUtcTime(event.dateKey);
+        const eventTime = Date.parse(event.startsAt);
 
         return eventTime >= startTime && eventTime < endTime;
       });
@@ -2924,7 +2920,7 @@ export function LunarCalendar({
     setSelectedDateKey(dateKey);
     setVisibleWeekDateKey(dateKey);
     if (!dateKeyInMonth(dateKey, visibleMonth)) {
-      setVisibleMonth(monthStartFromDateKey(dateKey, location.timeZone || "UTC"));
+      setVisibleMonth(monthAnchorFromDateKey(dateKey, location.timeZone || "UTC"));
     }
     updateCalendarRouteUrl(viewMode, dateKey);
 
@@ -2959,7 +2955,7 @@ export function LunarCalendar({
 
     setSelectedDateKey(nextDateKey);
     setVisibleWeekDateKey(nextDateKey);
-    setVisibleMonth(monthStartFromDateKey(nextDateKey, location.timeZone || "UTC"));
+    setVisibleMonth(monthAnchorFromDateKey(nextDateKey, location.timeZone || "UTC"));
     updateCalendarRouteUrl(viewMode, nextDateKey);
   };
   const handleCalendarNavigation = (direction: -1 | 1) => {
@@ -2967,7 +2963,7 @@ export function LunarCalendar({
       const nextWeekDateKey = dateKeyFromUtcTime(dayKeyToUtcTime(visibleWeekDateKey) + direction * 7 * 86_400_000);
 
       setVisibleWeekDateKey(nextWeekDateKey);
-      setVisibleMonth(monthStartFromDateKey(nextWeekDateKey, location.timeZone || "UTC"));
+      setVisibleMonth(monthAnchorFromDateKey(nextWeekDateKey, location.timeZone || "UTC"));
       const nextDateKey = selectedDateKey
         ? dateKeyFromUtcTime(dayKeyToUtcTime(selectedDateKey) + direction * 7 * 86_400_000)
         : nextWeekDateKey;
@@ -2979,8 +2975,8 @@ export function LunarCalendar({
     const nextMonth = addMonths(visibleMonth, direction);
 
     setVisibleMonth(nextMonth);
-    setVisibleWeekDateKey(dateKeyFromDate(nextMonth));
-    const nextDateKey = dateKeyFromDate(nextMonth);
+    const nextDateKey = `${nextMonth.toISOString().slice(0, 7)}-01`;
+    setVisibleWeekDateKey(nextDateKey);
     setSelectedDateKey(nextDateKey);
     updateCalendarRouteUrl(viewMode, nextDateKey);
 
