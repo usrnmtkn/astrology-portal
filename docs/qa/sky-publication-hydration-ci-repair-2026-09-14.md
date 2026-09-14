@@ -3,111 +3,96 @@
 ## Reproduction and correction
 
 A fresh guest browser on production main `b259099352e1f73eeac0b3a90528bb661be213bf`
-observed two complete Sun-in-Virgo article variants on the first visit. A normal
-reload was stable, but navigating away and back selected different prose.
-`scripts/verify-production-sky-placement.mjs` records every prose mutation,
-checks the full opening and ending, and samples card height through refresh.
-It delays existing content reads without changing response payloads.
+observed two complete Sun-in-Virgo article variants on the first visit. Navigation
+back also selected different prose. The placement loader now resolves the
+publication ledger, bundled renderer, and both Studio overlays before painting
+an article. Article identity and selected prose commit together. Ordinary clock
+and background updates retain the verified article; publication changes replace
+it, retirement removes it, and failed authoritative reads offer retry.
+Canonical publications cannot fall through to older legacy prose.
 
-The placement loader resolves the publication ledger, bundled renderer, and both
-Studio source overlays before declaring the first article ready. A publication
-identity change invalidates unresolved prose; ordinary clock ticks keep the same
-resolved article. Detail composition waits for current published aspect sources
-and offers retry when an authoritative source is unavailable. An authoritative canonical
-publication cannot fall through to the older legacy article while unavailable
-or retired. Existing copy remains mounted during ordinary background refresh.
-No reader prose, approvals, source rows, calculation thresholds, or source
-distribution states change in this repair.
+Sky summary follows the same publication-readiness boundary and preserves the
+verified paragraph through ordinary refresh. No competing prose cache is added.
+No owner writing, approvals, source distribution state, or accuracy thresholds
+change. The failed-chunk recovery boundary also lets a child route own its error
+so navigation remains usable; stale entry assets retain one guarded recovery.
 
-## Local evidence
+## Verification evidence
 
-- Seven placement browser cases passed: desktop/mobile, light/dark, protected
-  opening/ending, delayed cold load, reload, navigation, background refresh,
-  publication replacement, retirement, and retry.
-- Thirty summary/clock/layout browser cases and two publication lifecycle
-  summary cases passed.
-- The complete `test:content-studio-api` suite passed, including actual handler
-  saves, repeated publication, retirement, stale revision refusal, and the new
-  authenticated empty-house preview. The evergreen/composable source suite passed.
-- Workflow YAML/condition checks, conservative changed-path selection, CSS token
-  audits, and public web/admin asset privacy scans passed.
-- Studio browser repair restores status badge accessibility labels and preserves
-  body typography for clickable prose variables. Assertions for the established
-  Studio status names and Natal workspace name follow the shipped UI contract.
-  The 293-case Studio matrix passed across the full run (291) and targeted
-  rerun (2) after fixing confirmed-inactive Calendar badges. Another 28 reader
-  navigation, retrograde, composition and Sky/You parity cases passed.
-  Combined delayed-source boundary cases and remote checks remain pending on
-  the final integrated PR head.
+The READY preview for `8e88eb86f` passed all eight placement visits: cold cache,
+reload, navigation return, and 65-second background refresh at 1440 and 390 px.
+Every visit retained one complete prose variant with no collapsed card. All five
+real-data summary visits passed with no page errors. Access used the existing
+project automation credential scoped only to that exact preview hostname.
 
-## CI fixes
+- Nine isolated cold-load, revision replacement, retirement and retry cases passed.
+- Thirty summary/clock/layout cases and 32 integrated reader cases passed,
+  including current main's article phrase variables and exact protected copy.
+- The current Studio matrix passed 275 cases together and six corrected row-style
+  assertions separately. All four corresponding CI shards passed on `6a8ee9e71`.
+- Complete Content Studio API contracts passed locally and in CI on that head,
+  then locally again with main through #802 integrated. The contracts exercise
+  actual handler saves, publication, retirement, stale writes and empty-house preview.
+- The current loading, visual baseline and smoke suite passed all 25 cases locally.
+  Linux reference capture on `89bcac5bc` matched all existing images byte-for-byte.
+  Four stale macOS reference images were visually reviewed and updated to current
+  main's Studio styles and existing Sky summary grammar; pixel tolerance is unchanged.
 
-The unfiltered Content Studio API workflow remains mandatory on every PR and main
-update. Merge commits are no longer skipped by commit-message conditions; YAML
-conditions containing `#` no longer become truncated scalars. Studio browser
-cases run in four isolated shards without dropping cases or increasing timeouts.
-Source tests importing React components use Vite's module loader for CSS imports.
-Bundled-content browser fixtures explicitly resolve an empty publication ledger;
-an unreachable synthetic host cannot establish the absence of published copy.
+Main releases #799–#803 are integrated, including phrase variables, Calendar
+Moon-sign editing, shared You account state and article draft-save corrections.
+Final-head CI and the merged production deployment remain release gates.
+The final PR report records those outcomes separately from these earlier checks.
 
-The empty-house Studio preview uses the existing authenticated read-only preview
-endpoint and shipped renderer instead of downloading the complete reader engine.
-The serving-status lookup uses generated exact keys checked against the complete
-canonical manifest. Full approval records remain in that manifest. Bundle limits
-are unchanged; JavaScript formatting/compression preserves runtime string values.
+## CI repairs and budgets
 
-## Existing full-suite limitation
+The mandatory Content Studio API workflow runs on every PR/main update. YAML
+conditions containing `#` no longer become truncated scalars, and merge commits
+are checked. Conservative path selection includes shared dependencies and removed
+files. The complete Studio suite runs in four isolated shards. CSS-importing Node
+tests use Vite's module loader. Browser fixtures selecting bundled content resolve
+an explicit empty publication ledger and isolate the nightly fallback snapshot.
+Editor tests distinguish calculated facts from the new editable phrase panel and
+open the same article disclosures a user opens before inserting variables.
 
-`npm test` reaches `scripts/test-natal-exact-copy-routing.mjs:49` and fails the
-historical natal-aspect metadata checksum (expected `087d8486…`, actual
-`7469bac8…`). This same failure is documented in
-`docs/qa/sky-summary-event-grammar-2026-09-10.md` under Combined release
-verification. The 231 protected rows and their projected fields are unchanged
-from the historical repository revision `71f256d28` and from current main.
-The checksum and its content/approval inputs are deliberately unchanged here.
-This failure must not be described as a passing full content suite.
+The empty-house preview uses the existing authenticated read-only endpoint rather
+than downloading the whole reader engine. Serving-status keys are generated from
+the canonical manifest; approval records stay in that manifest. Web compression
+uses the safe Terser options already used by standalone Studio. The only added
+web allowance is 500 bytes for the graph route's shared Studio CSS: main #799
+moved approved styles into that file, now 23,126 gzip bytes against a 23,300 cap.
+Reader startup, web JavaScript and accuracy limits remain unchanged.
+The combined #801–#803 Studio features and accessible serving-status badge
+measure about 178.55 kB entry and 452.13 kB total gzip with the actual CI
+Supabase configuration. Studio receives 250 bytes entry and 500 bytes aggregate
+above main’s allocations; raw/chunk/graph boundaries remain unchanged.
+The attempted extra compression passes, function hoisting, alternate quotation
+and badge restructuring were discarded; they did not justify changing runtime
+code or compiler settings for this small integrated feature allocation.
 
-## NASA/JPL
+## Existing full-suite and reference limitations
 
-The completed Horizons comparison in Actions run `34760840299` reported zero
-discrepancies and 377 reference gaps across 12 fixtures. Its existing
-partial-reference policy remains in effect. The dependent freshness gate passed;
-no accuracy threshold was loosened. Production completion still requires the
-merged main deployment and both read-only live browser regressions.
+`npm test` stops at `scripts/test-natal-exact-copy-routing.mjs:49`: historical
+metadata checksum expected `087d8486…`, actual `7469bac8…`. This same failure is
+documented in `docs/qa/sky-summary-event-grammar-2026-09-10.md`. The 231 protected
+rows and projected fields are unchanged from `71f256d28` and current main.
+The checksum and protected source inputs are not rebaselined. This is not a
+passing full content suite.
 
-The Chrome task added source-boundary staging commits through `ddcd1c054`;
-these are preserved in the branch history. Their patch is applied as reviewable
-source code. The candidate workflow only validates it and cannot mutate or push
-the branch. All 37 workflow YAML documents pass syntax/condition validation.
+The completed NASA/JPL comparison in Actions run `34760840299` reported zero
+discrepancies and 377 reference gaps across 12 fixtures under the existing partial
+reference policy. The dependent freshness gate passed. No accuracy threshold
+was loosened; the run does not establish complete reference coverage.
 
-## Final integration verification
+## Live verification commands
 
-Main releases #799 and #800 are preserved through merge `7216a6ed5`.
-The fixture-only update `8e88eb86f` isolates the nightly fallback snapshot;
-all nine cold/publication/retirement/retry cases passed (eight together and the
-retry case after isolation). The current Studio matrix passed 275 cases in the
-full run and six row-layout cases after aligning the assertion with main's
-canonical regular-weight row titles. No Studio styling changes were needed.
-The exact-head Content Studio API suite passed locally and in GitHub Actions.
+After the exact merged main deployment is READY, run both public guest checks:
 
-The final web build uses the same safe Terser options as standalone Studio to
-retain the existing reader boot limit. The graph CSS gate measures the shared
-Studio stylesheet, which grew to 23,126 gzip bytes in already merged #799.
-Its CSS allowance increases by 500 bytes to 23,300; no graph styling, runtime
-dependency, JavaScript budget, reader startup limit, or accuracy threshold is
-relaxed. The admin budgets are the existing #800 allocations, unchanged here.
-The exploratory CSS minifier and chunk regrouping are not included.
+```sh
+node scripts/verify-production-sky-placement.mjs
+node scripts/verify-production-sky-summary.mjs
+```
 
-The preview for `8e88eb86f` is READY. The first real-data cold desktop placement
-check passed with one prose variant and no collapse; remaining preview and
-production visit results are still pending. Access uses the project's existing
-automation credential, scoped exclusively to the exact preview hostname.
-
-The completed preview verification passed all eight placement visits (cold,
-reload, navigation return, background refresh at 1440 and 390 px), each with
-one complete prose variant and no collapse. All five summary checks passed
-with no page errors. The final compressed build passed 32 reader browser cases,
-including exact article phrases, dark/light layouts, fresh publication loading,
-replacement, retirement, and failed-source retry. Startup/performance contracts
-also passed after following the relocated preparation module in the serving
-partition assertion. Production verification is still required after merge.
+The placement script delays original content reads without modifying responses,
+records all full-prose mutations and samples card height. Both scripts use fresh
+guest contexts and write visit reports plus screenshots under `test-results/`.
+Deployment completion alone is insufficient; both live browser reports must pass.
