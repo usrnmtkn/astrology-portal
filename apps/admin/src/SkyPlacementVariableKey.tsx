@@ -10,7 +10,6 @@ import {
   skyWritingLibraryInstalled,
   type SkyWritingLibraryComposition
 } from "./skyWritingLibrary";
-import "./sky-variable-key.css";
 // @ts-ignore Same hash/scope checks as the article renderer.
 import { resolveIngressSource } from "../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
 // @ts-ignore Shared source-aware article preview.

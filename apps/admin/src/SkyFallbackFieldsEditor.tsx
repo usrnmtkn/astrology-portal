@@ -5,7 +5,7 @@ import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementA
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
 import SkyPlacementArticleVariables from "./SkyPlacementArticleVariables";
 // @ts-ignore Shared article-token validator used by publishing and readers.
-import { isSkyPlacementArticleField, skyPlacementArticleVariableIssues } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
+import { isSkyPlacementArticleField, skyPlacementArticleVariableIssues, skyPlacementArticlePhraseNames } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 import SkyPhraseCompositionEditor from "./SkyPhraseCompositionEditor";
 import SkyIngressComposer from "./SkyIngressComposer";
 import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
@@ -70,7 +70,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const initialLibraryField = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields).find(item => item.id === initialLibrarySourceId);
   const ingressComposition = (source as Record<string, any> | undefined)?.ingress as SkyWritingLibraryComposition | undefined;
   const savedLibraryReady = skyWritingLibraryInstalled(ingressComposition);
-  const activeLibrary = preparedLibrary ?? (savedLibraryReady ? ingressComposition ?? null : null);
+  const activeLibrary = savedLibraryReady ? ingressComposition ?? null : preparedLibrary;
   const libraryReady = skyWritingLibraryInstalled(activeLibrary);
   const sourceRef = useRef(source);
   const onChangeRef = useRef(onChange);
@@ -102,7 +102,11 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
     });
   };
 
-  // Direct phrase-variable edits should prepare the Writing Library in draft
+  const articleNeedsLibrary = ["placementArticle", "placementArticleDirect", "placementArticleRetrograde"]
+    .some(path => skyPlacementArticlePhraseNames((source as Record<string, any> | undefined)?.[path]).length > 0);
+  const libraryRequested = Boolean(initialLibrarySourceId || articleNeedsLibrary);
+
+  // Article insertion, pasted templates, and direct phrase edits prepare the Writing Library in draft
   // and open the exact named source, rather than falling back to Placement article.
   // Keep the prepared composition locally too: the parent draft update is
   // asynchronous, and the field editor must not sit on a permanent Loading state
@@ -110,8 +114,8 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   // Parent inventory/loading renders also recreate callbacks, so read callback/source
   // identities through refs instead of restarting and cancelling the seed request.
   useEffect(() => {
-    const attemptKey = `${contentKey}#${initialLibrarySourceId}`;
-    if (!placement || !initialLibrarySourceId || libraryReady || disabled || installRequestKey.current === attemptKey) return;
+    const attemptKey = contentKey;
+    if (!placement || !libraryRequested || libraryReady || disabled || installRequestKey.current === attemptKey) return;
     installRequestKey.current = attemptKey;
     let cancelled = false;
     setInstallingLibrary(true);
@@ -122,6 +126,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       if (cancelled) return;
       const starter = ingressCompositionRef.current ?? makeSkyIngressComposition() as SkyWritingLibraryComposition;
       const prepared = installSkyWritingLibrary(starter, values);
+      if (articleNeedsLibrary && !initialLibrarySourceId) prepared.modules = starter.modules;
       setPreparedLibrary(prepared);
       onChangeRef.current("ingress", prepared);
     })().catch(reason => {
@@ -134,7 +139,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       cancelled = true;
       if (installRequestKey.current === attemptKey) installRequestKey.current = "";
     };
-  }, [contentKey, initialLibrarySourceId, libraryReady, disabled, planet, sign, Boolean(placement)]);
+  }, [contentKey, libraryRequested, libraryReady, disabled, planet, sign, Boolean(placement)]);
 
   // This component is deferred. Focus after it mounts, rather than racing the
   // dashboard's scroll request against a lazy-loaded editor.
@@ -224,9 +229,9 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       </label>}
       <p className="admin-sky-writing-count">{field.value.trim() ? field.value.trim().split(/\s+/u).length : 0} words · {field.value.length} characters</p>
       {supportsVariables && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && (supportsArticlePhrases
-        ? <SkyPlacementArticleVariables key={`${contentKey}#${field.key}`} contentKey={contentKey} planet={planet} sign={sign} motion={rxContext ? "retrograde" : "direct"}
-          fieldPath={field.key} value={field.value} source={source} disabled={disabled} onInsert={insertVariable}
-          onCompositionChange={value => onChange("ingress", value)} onLoadSource={onLoadSource} onOpenSource={onOpenSource} />
+        ? <SkyPlacementArticleVariables key={contentKey} contentKey={contentKey} planet={planet} sign={sign} motion={rxContext ? "retrograde" : "direct"}
+          fieldPath={field.key} value={field.value} source={activeLibrary ? { ...source, ingress: activeLibrary } : source} disabled={disabled} onInsert={insertVariable}
+          preparing={installingLibrary} preparationError={libraryError} onLoadSource={onLoadSource} onOpenSource={onOpenSource} />
         : <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />)}
       {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}
       {!supportsArticlePhrases && <details className="admin-workspace-details">

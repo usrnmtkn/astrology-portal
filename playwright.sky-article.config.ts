@@ -5,7 +5,7 @@ export default defineConfig({
  reporter: [['list']],
  use: { baseURL: 'http://127.0.0.1:4174', trace: 'retain-on-failure', screenshot: 'only-on-failure' },
  webServer: {
-  command: 'npm run preview -w @tldr/admin', url: 'http://127.0.0.1:4174',
-  reuseExistingServer: false, timeout: 60000
+  command: 'npm run build:admin && npm run preview -w @tldr/admin', url: 'http://127.0.0.1:4174',
+  reuseExistingServer: false, timeout: 120000
  }
 });
