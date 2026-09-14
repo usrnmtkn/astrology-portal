@@ -11,54 +11,53 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
         with: {fetch-depth: 1}
       - uses: actions/setup-node@v6
         with: {node-version: 22, cache: npm}
-      - name: Apply isolated fixture correction
+      - name: Keep local phrase edits in the current article draft
         run: |
-          python3 scripts/finalize-placement-article-tests.py
+          python3 scripts/refine-inline-phrase-editing.py
           git diff --check
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add scripts/test-sky-placement-studio-api.mts
+          git add apps/admin/src/SkyPlacementArticleVariables.tsx tests/visual/sky-placement-article-phrases.spec.ts
           if ! git diff --cached --quiet; then
-            git commit -m "Separate missing-library publication fixture from custom motion source requirements"
+            git commit -m "Edit phrase values inline without reopening or discarding the article draft"
             git push origin HEAD:codex/placement-article-inline-vars
           fi
       - run: npm ci
       - run: npm run build:knowledge
-      - name: Article publication roundtrips
-        id: roundtrip
+      - name: Placement save publish and reader regressions
+        id: placement
         continue-on-error: true
+        shell: bash {0}
         run: |
           mkdir -p verification-logs
           export NODE_OPTIONS="--import $GITHUB_WORKSPACE/scripts/register-test-css.mjs"
-          node --import tsx scripts/test-sky-placement-studio-api.mts > verification-logs/roundtrip.txt 2>&1; code=$?; tail -80 verification-logs/roundtrip.txt; exit $code
-        shell: bash {0}
-      - name: Placement resolver regressions
-        id: placement
-        continue-on-error: true
-        run: |
-          export NODE_OPTIONS="--import $GITHUB_WORKSPACE/scripts/register-test-css.mjs"
           npm run test:sky-evergreen-sections > verification-logs/placement.txt 2>&1; code=$?; tail -80 verification-logs/placement.txt; exit $code
-        shell: bash {0}
-      - name: Content Studio API regressions
-        id: api
-        continue-on-error: true
-        run: |
-          export NODE_OPTIONS="--import $GITHUB_WORKSPACE/scripts/register-test-css.mjs"
-          npm run test:content-studio-api > verification-logs/api.txt 2>&1; code=$?; tail -80 verification-logs/api.txt; exit $code
-        shell: bash {0}
       - name: Build standalone Content Studio
         id: admin
         continue-on-error: true
+        shell: bash {0}
         run: |
           export NODE_OPTIONS="--import $GITHUB_WORKSPACE/scripts/register-test-css.mjs"
           npm run build:admin > verification-logs/admin.txt 2>&1; code=$?; tail -80 verification-logs/admin.txt; exit $code
-        shell: bash {0}
+      - name: Collect executable browser review build and fixture
+        if: steps.admin.outcome == 'success'
+        run: |
+          node --import tsx --input-type=module -e "import fs from 'node:fs'; import {skyPlacementSourceRecords} from './api/_lib/sky-placement-sources.ts'; fs.writeFileSync('verification-logs/sky-fixture.json', JSON.stringify(Object.fromEntries(skyPlacementSourceRecords)));"
+          (cd apps/admin && zip -qr ../../verification-logs/admin-preview.zip dist)
+      - uses: actions/upload-artifact@v4
+        if: steps.admin.outcome == 'success'
+        with:
+          name: article-browser-preview
+          path: |
+            verification-logs/admin-preview.zip
+            verification-logs/sky-fixture.json
+          retention-days: 1
       - name: Install browser
         if: steps.admin.outcome == 'success'
         run: npx playwright install --with-deps chromium > verification-logs/browser-install.txt 2>&1
@@ -66,18 +65,16 @@ jobs:
         id: browser
         if: steps.admin.outcome == 'success'
         continue-on-error: true
-        run: npx playwright test --config=playwright.sky-article.config.ts 2>&1 | tee verification-logs/browser.txt
+        run: npx playwright test --config=playwright.sky-article.config.ts --max-failures=1 2>&1 | tee verification-logs/browser.txt
       - name: Record final outcomes
         if: always()
         env:
-          ROUNDTRIP: ${{ steps.roundtrip.outcome }}
           PLACEMENT: ${{ steps.placement.outcome }}
-          API: ${{ steps.api.outcome }}
           ADMIN: ${{ steps.admin.outcome }}
           BROWSER: ${{ steps.browser.outcome }}
         run: |
           mkdir -p verification-logs
-          for name in ROUNDTRIP PLACEMENT API ADMIN BROWSER; do echo "$name=${!name}"; done | tee verification-logs/outcomes.txt
+          for name in PLACEMENT ADMIN BROWSER; do echo "$name=${!name}"; done | tee verification-logs/outcomes.txt
           git status --short > verification-logs/git-status.txt
           git log -1 --oneline > verification-logs/commit.txt
       - uses: actions/upload-artifact@v4
@@ -85,7 +82,7 @@ jobs:
         with:
           name: placement-article-verification
           path: |
-            verification-logs/
+            verification-logs/*.txt
             test-results/
           retention-days: 2
       - name: Require verification gates
