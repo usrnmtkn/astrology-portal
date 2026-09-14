@@ -2,7 +2,6 @@ import { StudioButton } from "./StudioControls";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
-import "./natal-reader-preview.css";
 import {
   natalPlacementExactKey,
   natalPlacementLabel,

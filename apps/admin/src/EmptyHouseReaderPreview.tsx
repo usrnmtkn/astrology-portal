@@ -5,7 +5,6 @@ import {
   fallbackRendererV3,
   loadEmptyHouseFallbackArchitectureV3Bundle
 } from "../../web/src/content/fallbackArchitectureV3Runtime";
-import "./natal-reader-preview.css";
 
 type Audience = "you" | "they";
 

@@ -13,6 +13,9 @@ import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariable
 // @ts-ignore Shared inline-variable contract, separate from composition section slots.
 import { isSkyPlacementVariableField, skyPlacementVariableFacts } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 
+// @ts-ignore Shared article scope; other sections remain facts-only.
+import { isSkyPlacementArticleField, skyPlacementArticlePhraseNames } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
+
 type Props = {
   rows: CompositionMapRow[];
   selection?: Selection;
@@ -68,6 +71,23 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const assembly = skyPlacementAssembly(availableRows, writing === "ingress" ? "fallback" : writing, current.motion);
   const ingressRow = availableRows.find(row => /^sky-placement\/article\//u.test(row.content_key));
   const phraseRecord = useMemo(() => ingressRow ? effectivePackageRecord(ingressRow.sections) as Record<string, any> : undefined, [ingressRow?.sections]);
+  const [phraseReferences, setPhraseReferences] = useState<Record<string, any>[]>([]);
+  const phraseReferenceKey = JSON.stringify([...new Set(["placementArticle", "placementArticleDirect", "placementArticleRetrograde"]
+    .flatMap(path => skyPlacementArticlePhraseNames(phraseRecord?.[path]))
+    .map((name: any) => phraseRecord?.ingress?.sources?.[name]?.reference)
+    .filter(Boolean))]);
+  useEffect(() => {
+    let active = true;
+    const refs: Array<{ contentKey: string }> = JSON.parse(phraseReferenceKey);
+    const referenceKeys = [...new Set(refs.map(ref => ref.contentKey))].filter(key => key !== phraseRecord?.contentKey);
+    setPhraseReferences([]);
+    void Promise.all(referenceKeys.map(async key => {
+      const row = await loadRowRef.current?.({ id: `package:${key}`, content_key: key, inventory_only: true } as CompositionMapRow) as CompositionMapRow | undefined;
+      return row ? effectivePackageRecord(row.sections) as Record<string, any> : undefined;
+    })).then(records => { if (active) setPhraseReferences(records.filter((row): row is Record<string, any> => Boolean(row))); })
+      .catch(reason => { if (active) setError(reason instanceof Error ? reason.message : "Linked writing could not be loaded."); });
+    return () => { active = false; };
+  }, [phraseReferenceKey, phraseRecord?.contentKey]);
   const selectedWriting = writing === "ingress" && ingressRow ? writing : assembly.hasFallback ? writing === "ingress" ? "article" : writing : "article";
   const parts = selectedWriting === writing ? assembly.parts : skyPlacementAssembly(availableRows, selectedWriting === "ingress" ? "fallback" : selectedWriting, current.motion).parts;
   const edit = (field: SkyPlacementAssemblyField) => onEditField && !field.row.content_key.startsWith("fallback-hook/") ? onEditField(field.row, field.path, current) : onEditRow(field.row);
@@ -160,14 +180,14 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
               <span className="admin-eyebrow">{field.label}</span>
               <p><StudioButton type="button" className={`admin-composition-variable variable-${field.kind}`} data-variable-color={field.kind === "hook" ? "2" : "3"} aria-label={`Edit ${field.label.toLowerCase()}`} onClick={() => edit(field)}>
                 {field.value ? isSkyPlacementVariableField(field.row.content_key, field.path)
-                  ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value
+                  ? <SkyVariableText value={field.value} facts={variableFacts} source={isSkyPlacementArticleField(field.row.content_key, field.path) ? phraseRecord : undefined} references={phraseRecord ? [phraseRecord, ...phraseReferences] : []} /> : field.value
                   : "No writing saved. Select to write this section."}
               </StudioButton></p>
             </div>)}
           </div>
         </div>}
         {view === "template" && <div className="admin-sky-placement-template">
-          <p>The template joins the sections below in order. Each section slot supplies a whole passage; inline Sky variables substitute calculated facts within that passage. Empty sections are skipped.</p>
+          <p>The template joins the sections below in order. Each section slot supplies a whole passage; article variables substitute calculated facts and saved Writing Library phrases within that passage. Fallback sections retain their calculated-variable contract. Empty sections are skipped.</p>
           <ol aria-label="Placement template order">
             {parts.map(field => <li key={`${field.row.content_key}/${field.path}`}>
               <StudioButton type="button" className={`admin-composition-variable variable-${field.kind}`} data-variable-color={field.kind === "hook" ? "2" : "3"} onClick={() => edit(field)} aria-label={`Edit ${field.label.toLowerCase()}`}>
@@ -188,7 +208,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
               <div className="admin-sky-template-comparison">
                 <div><span className="admin-eyebrow">Saved section text</span><p className="admin-composition-source-copy">{field.value || "Empty · skipped"}</p></div>
                 <div><span className="admin-eyebrow">With selected variables</span><p className="admin-composition-source-copy">{field.value
-                  ? isSkyPlacementVariableField(field.row.content_key, field.path) ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value
+                  ? isSkyPlacementVariableField(field.row.content_key, field.path) ? <SkyVariableText value={field.value} facts={variableFacts} source={isSkyPlacementArticleField(field.row.content_key, field.path) ? phraseRecord : undefined} references={phraseRecord ? [phraseRecord, ...phraseReferences] : []} /> : field.value
                   : "Empty · skipped"}</p></div>
               </div>
             </li>)}
