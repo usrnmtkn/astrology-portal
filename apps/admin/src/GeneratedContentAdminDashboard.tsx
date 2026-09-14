@@ -1,4 +1,5 @@
 import { rememberStudioEditorReturn } from "./studioEditorReturn";
+import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
 import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey, supportsZodiacSeasonVariables } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import "./studio-system.css";
 import { StudioTabs, StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
@@ -161,7 +162,8 @@ import {
   houseTransitSourceGroups,
   renderHouseTransitPreview,
   type HouseTransitMotion,
-  type HouseTransitSelection
+  type HouseTransitSelection,
+  type HouseTransitSource
 } from "./houseTransitSources";
 
 import type {
@@ -215,6 +217,7 @@ const DailyGlanceStudio = lazy(async () => {
   const module = await import("./DailyGlanceStudio");
   return { default: module.DailyGlanceStudio };
 });
+const HouseTransitWriteupEditor = lazy(() => import("./HouseTransitWriteupEditor"));
 const DailyGlancePairEditor = lazy(async () => {
   const module = await import("./DailyGlanceStudio");
   return { default: module.DailyGlancePairEditor };
@@ -2846,6 +2849,11 @@ export function GeneratedContentAdminDashboard() {
   const [houseTransitSign, setHouseTransitSign] = useState<TransitNatalSign | "">("");
   const [houseTransitHouse, setHouseTransitHouse] = useState<TransitNatalHouse | "">("");
   const [houseTransitMotion, setHouseTransitMotion] = useState<HouseTransitMotion>("direct");
+  const [houseTransitEditor, setHouseTransitEditor] = useState<{ title: string; audience: "you" | "friends"; sources: HouseTransitEditorSource[] } | null>(null);
+  const [houseTransitOpening, setHouseTransitOpening] = useState(false);
+  const houseTransitOpenRequest = useRef(0);
+  const houseTransitEditorDrafts = useRef(new Map<string, { draft: AdminDraft; source: HouseTransitEditorSource; kind: HouseTransitSource["id"] }>());
+  const houseTransitCloseGuard = useRef<(() => boolean) | null>(null);
   const [transitNatalSourceBodies, setTransitNatalSourceBodies] = useState<Map<string, string>>(() => new Map());
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
   const [articleQuery, setArticleQuery] = useState("");
@@ -3829,6 +3837,7 @@ export function GeneratedContentAdminDashboard() {
   }, [draft, skyArticleEditor, skyArticleEditionForm]);
 
   function closeEditor() {
+    if (houseTransitEditor && houseTransitCloseGuard.current && !houseTransitCloseGuard.current()) return false;
     const hasOpenEditor = Boolean(
       selectedRow
       || draft
@@ -3864,6 +3873,10 @@ export function GeneratedContentAdminDashboard() {
     setCompositionEditorContext(null);
     setSelectedRowId(null);
     setDraft(null);
+    setHouseTransitEditor(null);
+    setHouseTransitOpening(false);
+    houseTransitEditorDrafts.current.clear();
+    houseTransitOpenRequest.current += 1;
     editorBaselineRef.current = null;
     editorSavedInputRef.current = null;
     setSkyWriteupParentId(null);
@@ -4442,7 +4455,8 @@ export function GeneratedContentAdminDashboard() {
     draftOverride?: AdminDraft,
     sourceLifecycleAction?: "archive" | "restore",
     updateEditor = true,
-    recoveryAttempt = false
+    recoveryAttempt = false,
+    propagateError = false
   ) {
     setEditorSaveError("");
     const activeDraft = draftOverride ?? draft;
@@ -4591,6 +4605,7 @@ export function GeneratedContentAdminDashboard() {
       const feedback = dashboardErrorMessage(error);
       setEditorSaveError(feedback);
       setMessage(feedback);
+      if (propagateError) throw error;
       return null;
     } finally {
       setIsLoading(false);
@@ -7088,7 +7103,7 @@ export function GeneratedContentAdminDashboard() {
     scope: string;
     candidateKeys: string[];
     optional?: boolean;
-  }) {
+  }, readOnly = false) {
     const resolved = skySourceForCandidates(source.candidateKeys);
     const sourceReaderDestination = skyWriteupWorkspaceView === "transits-to-natal"
       ? friendsTransitAudience ? "Friends → Transits → Active for {{Name}}" : "You → Personal Transits"
@@ -7109,13 +7124,13 @@ export function GeneratedContentAdminDashboard() {
           <code>{resolved?.contentKey ?? source.candidateKeys.join(" → ")}</code>
           <blockquote className={!resolved ? "missing" : ""}>{resolved?.text ?? (source.optional ? "No optional passage is saved for this selection." : "No saved passage is available for this source path.")}</blockquote>
         </div>
-        <StudioButton
+        {!readOnly && <StudioButton
           type="button"
           onClick={() => resolved && void openSkySourceRow(resolved.contentKey, source.label)}
-          disabled={!resolved || isLoading}
+          disabled={!resolved || isLoading || houseTransitOpening}
         >
           {resolved ? "Edit source row" : source.optional ? "Optional row unavailable" : "Source row unavailable"}
-        </StudioButton>
+        </StudioButton>}
       </article>
     );
   }
@@ -7332,6 +7347,7 @@ export function GeneratedContentAdminDashboard() {
     house: TransitNatalHouse | "";
     motion: HouseTransitMotion;
   }>) {
+    if (!closeEditor()) return;
     const planet = next.planet ?? houseTransitPlanet;
     const sign = next.sign ?? houseTransitSign;
     const house = next.house ?? houseTransitHouse;
@@ -7348,6 +7364,105 @@ export function GeneratedContentAdminDashboard() {
     if (house) params.set("transitHouse", house);
     if (friendsTransitAudience) params.set("audience", "friends");
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
+  }
+
+  async function openHouseTransitWriteup(selection: HouseTransitSelection, sources: HouseTransitSource[]) {
+    if (!closeEditor()) return;
+    const originatingHash = window.location.hash;
+    const editorSession = editorSessionRef.current;
+    const requestId = ++houseTransitOpenRequest.current;
+    setHouseTransitOpening(true);
+    setMessage("Loading complete House Transit write-up…");
+    try {
+      // Read full documents afresh. Inventory bodies and composed previews are not editable originals.
+      const loaded = await Promise.all(sources.map(async source => {
+        const key = source.candidateKeys[0];
+        const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
+          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1&includePackageSource=true`, secret);
+        if (!Array.isArray(payload.rows) || payload.rows.some(row => row.content_key !== key || row.inventory_only)) {
+          throw new Error(`Could not load the complete source for ${source.label}.`);
+        }
+        let row = payload.rows[0];
+        if (row?.status === "ARCHIVED" && row.review_state === "published-revision") {
+          row = await hydrateGeneratedContentRow(row, true, true);
+        }
+        let sourceDraft: AdminDraft;
+        if (row) {
+          sourceDraft = draftFromRow(row);
+        } else if (payload.packageSource) {
+          const { transitNatalPackagedSourceDraft } = await import("./transitNatalPackagedSource");
+          sourceDraft = transitNatalPackagedSourceDraft(payload.packageSource, key);
+        } else {
+          const record = { contentKey: key, content_role: source.id === "retrograde" ? "fallback_hook" : "full_copy",
+            surface: "you|friends", body_you: "", body_they: "", review_status: "needs_review" };
+          sourceDraft = { id: null, contentKey: key, headline: source.label, summary: "", body: "", surface: "you", mode: "in_depth",
+            status: "DRAFT", lane: "reference", reviewState: "needs-review", blockType: "fallback_hook", promptVersion: "manual-admin",
+            reviewerNotes: "", sections: { packageRecord: record }, facts: { fallbackArchitectureV3: true, review_status: "needs_review" },
+            sourceSnapshot: { contentType: key.startsWith("authored/") ? "authored-content" : "fallback-system", contentSystem: "fallback",
+              content_role: record.content_role, review_status: "needs_review", sourcePackage: "tldrastro-fallback-architecture-v3" } };
+        }
+        const fields = houseTransitEditableFields(sourceDraft, source.id, row?.body);
+        return { row, draft: sourceDraft, kind: source.id, source: { key, label: source.label, scope: source.scope, optional: source.optional, ...fields,
+          ...(source.id === "legacy" ? { friendsUnavailable: "This older passage is used only in You. Friends uses the sign-specific composition when available." } : {}) } };
+      }));
+      if (requestId !== houseTransitOpenRequest.current || originatingHash !== window.location.hash || editorSession !== editorSessionRef.current) return;
+      houseTransitEditorDrafts.current = new Map(loaded.map(item => [item.source.key, item]));
+      setRows(current => mergeContentInventory(current, loaded.flatMap(item => item.row ? [item.row] : [])));
+      setSelectedRowId(null);
+      setDraft(null);
+      setDailyGlancePairSelector(null);
+      setCompositionEditorContext(null);
+      setHouseTransitEditor({ title: houseTransitLabel(selection), audience: friendsTransitAudience ? "friends" : "you", sources: loaded.map(item => item.source) });
+      setMessage("");
+    } catch (error) {
+      if (requestId === houseTransitOpenRequest.current && originatingHash === window.location.hash) setMessage(dashboardErrorMessage(error));
+    } finally {
+      if (requestId === houseTransitOpenRequest.current) setHouseTransitOpening(false);
+    }
+  }
+
+  function houseTransitEditableFields(sourceDraft: AdminDraft, kind: HouseTransitSource["id"], rawBody?: string | null) {
+    const record = effectivePackageRecord(sourceDraft.sections);
+    return { body_you: kind !== "legacy" && typeof record.body_you === "string" ? record.body_you
+      : typeof record.body === "string" ? record.body : typeof record.body_they === "string" ? "" : rawBody ?? "",
+      body_they: kind === "legacy" ? "" : typeof record.body_they === "string" ? record.body_they
+        : ["house-core", "sign-synthesis"].includes(kind) && typeof record.body === "string" ? record.body : "" };
+  }
+
+  async function saveHouseTransitPassage(key: string, edits: { body_you: string; body_they: string }) {
+    const captured = houseTransitEditorDrafts.current.get(key);
+    if (!captured) throw new Error("This write-up editor is no longer open. Reopen it before saving.");
+    const baseline = captured.draft;
+    if (baseline.id && !baseline.updatedAt) throw new Error("The saved source version is missing. Reopen the write-up before saving.");
+    let revised = baseline;
+    if (edits.body_you !== captured.source.body_you) revised = setPackageSectionField(revised, captured.kind === "legacy" ? "body" : "body_you", edits.body_you);
+    if (captured.kind !== "legacy" && edits.body_they !== captured.source.body_they) revised = setPackageSectionField(revised, "body_they", edits.body_they);
+    const acknowledge = (saved: AdminGeneratedContentRow | null) => {
+      if (!saved || saved.content_key !== key || saved.inventory_only || !saved.updated_at
+        || (baseline.id && (saved.id !== baseline.id || saved.updated_at === baseline.updatedAt))) return false;
+      const savedDraft = draftFromRow(saved);
+      const fields = houseTransitEditableFields(savedDraft, captured.kind, saved.body);
+      if (fields.body_you !== edits.body_you || fields.body_they !== edits.body_they) return false;
+      houseTransitEditorDrafts.current.set(key, { ...captured, draft: savedDraft, source: { ...captured.source, ...fields } });
+      return true;
+    };
+    try {
+      const saved = await saveDraft(undefined, revised, undefined, false, false, true);
+      if (!acknowledge(saved)) throw new Error("The save response did not confirm the complete passage. Your edits are still here; reopen the saved source to check it.");
+    } catch (error) {
+      // An uncertain response may follow a committed write. A reread can acknowledge
+      // identical text, but never graft a newer version onto conflicting local edits.
+      if (error instanceof AdminRequestError && [408, 504].includes(error.status)) {
+        const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1`, secret);
+        const saved = payload.rows?.find(row => row.content_key === key) ?? null;
+        if (acknowledge(saved)) {
+          setRows(current => mergeContentInventory(current, [saved!]));
+          return;
+        }
+      }
+      throw new Error(dashboardErrorMessage(error));
+    }
   }
 
   function renderHouseTransitSourceFinder() {
@@ -7450,15 +7565,19 @@ export function GeneratedContentAdminDashboard() {
             <header className="admin-surface-card"><div className="admin-page-heading">
               <h3>{compositionGroup.label}</h3>
               <p>{servingLegacy ? "This reader card is currently stored as one complete editable passage." : compositionGroup.description}</p>
-            </div></header>
-            <div className="admin-natal-source-grid">{visibleCompositionSources.map(renderSkyAssemblySource)}</div>
+            </div>
+              <StudioButton type="button" disabled={isLoading || houseTransitOpening} onClick={() => selection && void openHouseTransitWriteup(selection, visibleCompositionSources)}>
+                Edit complete write-up
+              </StudioButton>
+            </header>
+            <div className="admin-natal-source-grid">{visibleCompositionSources.map(source => renderSkyAssemblySource(source, true))}</div>
           </section>
         )}
         {alternateGroup && advancedSources.length > 0 && (
           <details className="admin-workspace-details admin-natal-source-group admin-natal-source-advanced">
             <AdminDisclosureSummary>{alternateGroup.label}</AdminDisclosureSummary>
             <p>{alternateGroup.description}</p>
-            <div className="admin-natal-source-grid">{advancedSources.map(renderSkyAssemblySource)}</div>
+            <div className="admin-natal-source-grid">{advancedSources.map(source => renderSkyAssemblySource(source))}</div>
           </details>
         )}
       </section>
@@ -8102,6 +8221,18 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function renderEditor() {
+    if (houseTransitEditor) {
+      return <Suspense fallback={<p role="status">Loading write-up editor…</p>}>
+        <HouseTransitWriteupEditor
+          title={houseTransitEditor.title}
+          initialAudience={houseTransitEditor.audience}
+          sources={houseTransitEditor.sources}
+          registerCloseGuard={guard => { houseTransitCloseGuard.current = guard; }}
+          onClose={() => { setHouseTransitEditor(null); houseTransitEditorDrafts.current.clear(); }}
+          onSave={saveHouseTransitPassage}
+        />
+      </Suspense>;
+    }
     if (selectedDailyGlancePair) {
       return (
         <Suspense fallback={null}>
