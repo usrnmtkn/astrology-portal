@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
   content-studio-api:
+    # Validate the actual main revision too. A merge message is not test evidence.
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

@@ -96,6 +96,9 @@ function editorialStatusPresentation(row: StatusRow): { label: string; tone: Stu
 
 function savedStatusPresentation(row: StatusRow, live: LiveStatus): { label: string; tone: StudioStatusTone } {
   if (live.live) return { label: "Live", tone: "live" };
+  // A successful negative serving check overrides a saved LIVE state. The
+  // unavailable branch below still preserves the known editorial state.
+  if (row.status?.toUpperCase() === "LIVE") return { label: "Inactive", tone: "inactive" };
   return editorialStatusPresentation(row) ?? { label: "Inactive", tone: "inactive" };
 }
 
@@ -112,18 +115,18 @@ export default function ContentLiveStatusBadge({ row, unsaved = false, label }: 
   }, [load, row.id, row.updated_at, row.requestRevision, unsaved]);
 
   if (unsaved || !row.id) {
-    return <StudioStatusBadge tone="draft" title="These edits have not been saved and published." className="admin-status">Draft</StudioStatusBadge>;
+    return <StudioStatusBadge aria-label={label} tone="draft" title="These edits have not been saved and published." className="admin-status">Draft</StudioStatusBadge>;
   }
   if (status === "unavailable") {
     const editorial = editorialStatusPresentation(row);
     if (editorial) {
-      return <StudioStatusBadge tone={editorial.tone} title="Reader serving status could not be verified. Showing the saved editorial state." className="admin-status">{editorial.label}</StudioStatusBadge>;
+      return <StudioStatusBadge aria-label={label} tone={editorial.tone} title="Reader serving status could not be verified. Showing the saved editorial state." className="admin-status">{editorial.label}</StudioStatusBadge>;
     }
-    return <StudioStatusBadge tone="unknown" title="Status unavailable. Refresh rows to retry." className="admin-status">Unavailable</StudioStatusBadge>;
+    return <StudioStatusBadge aria-label={label} tone="unknown" title="Status unavailable. Refresh rows to retry." className="admin-status">Unavailable</StudioStatusBadge>;
   }
   if (!status) {
     return <span aria-label={label} className="admin-field-hint">Checking status…</span>;
   }
   const presentation = savedStatusPresentation(row, status);
-  return <StudioStatusBadge tone={presentation.tone} title={status.detail} className="admin-status admin-table-tag">{presentation.label}</StudioStatusBadge>;
+  return <StudioStatusBadge aria-label={label} tone={presentation.tone} title={status.detail} className="admin-status admin-table-tag">{presentation.label}</StudioStatusBadge>;
 }

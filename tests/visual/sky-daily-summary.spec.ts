@@ -1,4 +1,6 @@
 import { expect, test } from "@playwright/test";
+import { bundledPublications } from '../helpers/bundled-publications';
+test.beforeEach(async ({ page }) => bundledPublications(page));
 
 test.beforeEach(async ({ page }) => {
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: new URL(route.request().url()).searchParams.get("date"), events: [] }] } } }));

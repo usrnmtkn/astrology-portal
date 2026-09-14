@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { bundledPublications } from "../helpers/bundled-publications";
 import { observeArticleTransitions, expectAnimatedArticleNavigation } from "./qaArticleTransitions";
 import { readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
@@ -122,6 +123,7 @@ async function selectYouNatalTab(page: Page) {
 }
 
 async function seedClientState(page: Page, options: SeedOptions = {}) {
+  await bundledPublications(page);
   const requestedNow = options.now ?? fixedNow;
   const profileBirthDate = options.profileBirthDate ?? "1990-01-01";
   const profileBirthDateTime = zonedDateTimeToUtc(
@@ -157,6 +159,13 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         contentType: "application/json",
         body: JSON.stringify(options.generatedInterpretations)
       });
+      return;
+    }
+
+    // A bundled-source fixture means a successful empty remote result. Reserve
+    // outages (and the client's retry/backoff) for explicit offline/cache cases.
+    if (!options.cachedDashboardOverlay) {
+      await route.fulfill({ json: [] });
       return;
     }
 
@@ -1558,6 +1567,7 @@ test.describe("client-facing user flow case studies", () => {
     const macro = page.locator(".weekly-horoscope__macro");
     await expect(macro).toBeVisible({ timeout: 30_000 });
     await expect(macro).toContainText("You do not need another plan for becoming a better version of yourself.");
+    await macro.getByRole("button", { name: "Read more", exact: true }).click();
     await expect(macro).toContainText("They need a life that does not require you to keep treating yourself as the problem.");
     await expect(macro).not.toContainText("A Virgo New Moon begins with the checklist");
   });
@@ -1596,6 +1606,7 @@ test.describe("client-facing user flow case studies", () => {
       await expect(macro).toHaveCount(0);
       releaseCopy();
       await expect(macro).toContainText("You do not need another plan for becoming a better version of yourself.", { timeout: 15_000 });
+      await macro.getByRole("button", { name: "Read more", exact: true }).click();
       await expect(macro).toContainText("They need a life that does not require you to keep treating yourself as the problem.");
       await expect(macro).not.toContainText("A Virgo New Moon begins with the checklist");
     } finally {
@@ -2428,7 +2439,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("calendar Day and Week views share one consecutive Moon-sign write-up per date", async ({ page }) => {
+  test("calendar preserves consecutive Week passages and complete Day Moon writing", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-03T16:00:00.000Z" });
@@ -2457,8 +2468,11 @@ test.describe("client-facing user flow case studies", () => {
       await expectClientRouteLoads(page, `/#calendar?view=daily&date=${dateKey}`);
       const dayGuidance = page.getByRole("region", { name: "Moon guidance" });
       await expect(dayGuidance).toHaveCount(1);
-      await expect(dayGuidance).toHaveAttribute("data-guidance-key", expectedByDate.get(dateKey)?.contentKey ?? "");
-      await expect(dayGuidance.locator("p")).toHaveText(expectedByDate.get(dateKey)?.body ?? "");
+      const sign = expectedByDate.get(dateKey)!.contentKey.split("/")[2];
+      const fullMoonKey = `fallback-hook/sky-placement-lived/moon/${sign}`;
+      const fullMoon = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === fullMoonKey)!;
+      await expect(dayGuidance).toHaveAttribute("data-guidance-key", fullMoonKey);
+      await expect(dayGuidance.locator("p")).toHaveText(fullMoon.body_you!.split(/\n\n/));
     }
 
     await assertNoClientErrors();
@@ -3042,11 +3056,27 @@ test.describe("client-facing user flow case studies", () => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
+    const user = { id: fixtureUserId, email: "qa-flow@example.com", aud: "authenticated", role: "authenticated",
+      app_metadata: { provider: "email" }, user_metadata: { name: "Project Author" } };
+    const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test").hostname.split(".")[0]}-auth-token`;
+    await page.addInitScript(({ user, storageKey }) => localStorage.setItem(storageKey, JSON.stringify({
+      access_token: "synthetic-signout-token", refresh_token: "synthetic-refresh", user,
+      expires_at: Math.floor(Date.now() / 1000) + 3600, token_type: "bearer"
+    })), { user, storageKey });
+    let signedOut = false;
+    await page.route("**/auth/v1/**", route => {
+      if (new URL(route.request().url()).pathname.endsWith("/logout")) {
+        signedOut = true;
+        return route.fulfill({ status: 204 });
+      }
+      return route.fulfill({ json: user });
+    });
     await expectClientRouteLoads(page, "/#you");
 
     await expect(page.getByText("Project Author")).toBeVisible();
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.getByRole("menuitem", { name: "Sign out" }).click();
+    await expect.poll(() => signedOut).toBe(true);
 
     await expect(page.getByRole("region", { name: "Create account" })).toBeVisible();
     await expect(page.getByText("Create profile")).toBeVisible();
@@ -4523,7 +4553,36 @@ for (const theme of ["light", "dark"] as const) {
 }
 
 // Run this same release regression against local preview and PLAYWRIGHT_BASE_URL.
-// CMS endpoints fail in seedClientState, proving the shipped canonical package.
+// Empty CMS fixtures prove the shipped canonical package.
+test("an open Friends article survives an empty initial dashboard overlay", async ({ page }) => {
+  await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true,
+    synastryFixture: { body: "Midheaven", aspect: "sextile", inverse: true } });
+  let releaseOverlay!: () => void;
+  const overlayReady = new Promise<void>(resolve => { releaseOverlay = resolve; });
+  let overlayReads = 0;
+  await page.route("**/rest/v1/generated_interpretations*", async route => {
+    if (new URL(route.request().url()).searchParams.get("provider") === "eq.tldrastro-fallback-architecture-v3") {
+      overlayReads += 1;
+      await overlayReady;
+    }
+    await route.fulfill({ json: [] });
+  });
+  await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=synastry");
+  const card = page.getByRole("button", { name: "Open full entry for Your Midheaven sextile Sofia's Sun", exact: true });
+  await expect(card.locator(".synastry-contact-description")).not.toBeEmpty();
+  const copy = await card.locator(".synastry-contact-description").innerText();
+  await expect.poll(() => overlayReads).toBeGreaterThan(0);
+  await card.click();
+  const detail = page.locator(".app-shell.mode-detail");
+  await expect(detail).toContainText(copy);
+  releaseOverlay();
+  // Observe the asynchronous installation after the deliberately late response.
+  for (let sample = 0; sample < 8; sample += 1) {
+    await page.waitForTimeout(250);
+    await expect(detail).toContainText(copy);
+  }
+});
+
 for (const body of ["Ascendant", "Midheaven", "Descendant", "Imum Coeli", "Chiron", "North Node", "South Node", "Lilith"]) {
   for (const aspect of ["conjunction", "square", "opposition", "trine", "sextile"]) {
     for (const inverse of [false, true]) {
@@ -4652,7 +4711,7 @@ async function seedCrossSurfacePublications(page: Page, records: Array<Record<st
 
 for (const theme of ["light", "dark"] as const) {
   for (const width of [390, 1440]) {
-    test(`new Studio exact synastry publication reaches reader ${theme} ${width}`, async ({ page }) => {
+    test(`new Studio exact synastry publication reaches reader and retires ${theme} ${width}`, async ({ page }) => {
       test.setTimeout(90_000);
       await page.setViewportSize({ width, height: 1000 });
       const inverse = width === 390;
@@ -4675,6 +4734,18 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.locator(".app-shell.mode-detail")).toContainText(copy);
       await expectNoHorizontalOverflow(page, "new synastry publication");
       await page.screenshot({ path: `test-results/studio-synastry-admission-${theme}-${width}.png`, fullPage: true });
+      const retiredAt = "2026-09-10T21:00:00.000Z";
+      await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [{
+        content_key: contentKey, state: "retired", revision: 100_001,
+        row_id: "qa-cross-surface-0", row_updated_at: "2026-09-10T20:00:00.000Z", updated_at: retiredAt
+      }] }));
+      await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: retiredAt }));
+      await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+      await page.evaluate(contentKey => window.dispatchEvent(new CustomEvent("tldrastro:content-update", {
+        detail: { contentKey, published: false }
+      })), contentKey);
+      await expect(page.locator(".app-shell.mode-detail")).toHaveCount(0);
+      await expect(page.locator("main.app-shell")).not.toContainText(copy);
       errors();
     });
 

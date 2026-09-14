@@ -1,3 +1,4 @@
+import { bundledPublications } from "../helpers/bundled-publications";
 import { expect, test } from '@playwright/test';
 import { observeArticleTransitions, expectAnimatedArticleNavigation } from './qaArticleTransitions';
 
@@ -54,3 +55,5 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   expect(errors).toEqual([]);
  });
 }
+
+test.beforeEach(async ({ page }) => { await bundledPublications(page); });

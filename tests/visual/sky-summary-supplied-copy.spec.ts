@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { bundledPublications } from '../helpers/bundled-publications';
+test.beforeEach(async ({ page }) => bundledPublications(page));
 
 for (const width of [390, 1440]) {
   test(`supplied Sagittarius Sun and Virgo Moon summaries appear ${width}`, async ({ page }) => {

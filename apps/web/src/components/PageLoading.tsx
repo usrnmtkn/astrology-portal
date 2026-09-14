@@ -87,6 +87,9 @@ export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed:
   };
 
   handlePreloadError = (event: Event) => {
+    // A mounted child boundary owns its failed route; the root must retain
+    // navigation instead of replacing the entire application as well.
+    if (event.defaultPrevented) return;
     const payload = (event as Event & { payload?: unknown }).payload;
     const detail = payload ? errorDetail(payload) : "A page asset from an older deployment could not be loaded.";
     if (reloadReaderRouteOnce()) { event.preventDefault(); return; }
@@ -97,7 +100,11 @@ export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed:
 
   componentDidMount() {
     if (this.props.recoveryHref) window.addEventListener("hashchange", this.retry);
-    window.addEventListener("vite:preloadError", this.handlePreloadError);
+    // Route/editor boundaries own failed assets. The outer reader boundary
+    // still catches React errors, but must not also replace the navigation.
+    if (this.props.resetKey !== undefined || this.props.recoveryHref) {
+      window.addEventListener("vite:preloadError", this.handlePreloadError);
+    }
   }
   componentWillUnmount() {
     window.removeEventListener("hashchange", this.retry);

@@ -8,14 +8,15 @@ import { skySummaryEventPlacements } from "./content/skySummaryEventPlacements";
 import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
-import { isContentRetired } from "./content/contentPublicationState";
+import { isContentRetired, contentPublication } from "./content/contentPublicationState";
+import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
 import { usePageTransition, readAnimationPreference, animationPreferenceKey } from "./hooks/usePageTransition";
 import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
 import { calendarDayDistance } from "./services/calendarDayDistance";
 import { liveSkyReference, remainingSkyMinutes } from "./services/skyClock";
-import { skyDailySummaryParts, skySummaryParagraphs } from "./content/skyDailySummary";
-import { ingressSummaryKeys, skySummaryEventFacts } from "./content/skySummaryEvents";
+import { skySummaryParagraphs } from "./content/skyDailySummary";
+import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { refreshContentPublications } from "./services/contentPublications";
 import {
   ArrowDownRight,
@@ -80,7 +81,6 @@ import {
   loadEmptyHouseFallbackArchitectureV3Bundle,
   loadLunationBookFallbackArchitectureV3Bundle,
   loadRelationshipFallbackArchitectureV3Bundle,
-  loadSkyPlacementFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
   skyV4ReaderRenderer,
   fallbackRendererV3,
@@ -216,7 +216,6 @@ import {
   generatedContentPreviewModeChangeEvent,
   loadFallbackArchitectureV3CompatibilityDashboardBundle,
   loadFallbackArchitectureV3DashboardBundle,
-  loadFallbackArchitectureV3SkyPlacementDashboardBundle,
   loadLiveGeneratedContentForKeys,
   loadLiveGeneratedContentForSurfaces,
   readGeneratedContentPreviewMode,
@@ -5115,6 +5114,13 @@ function skyPlacementWritingSection(
     if (!(error instanceof Error) || !/^SKY_V4_(?:NOT_RELEASED|NOT_SERVABLE|SOURCE_GAP)/u.test(error.message)) {
       throw error;
     }
+    // A governed publication can withhold the canonical article while its exact
+    // row loads, or retire it. Neither state licenses an older article underneath.
+    const canonicalKey = planet === "lilith" ? `sky-lilith/article/${sign}`
+      : planet.endsWith("-node") ? `sky-nodes/${planet}/${sign}`
+      : planet === "moon" ? `fallback-hook/sky-placement-hook/moon/${sign}`
+      : `sky-placement/article/${planet}/${sign}`;
+    if (contentPublication(canonicalKey)) return null;
   }
   if (!rendered) return null;
   const motionCopy = skyPlacementMotionCopy(planet, hasRetrogradeGuidance, skyV4ReaderRenderer);
@@ -11038,7 +11044,16 @@ export function App() {
   ));
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
   const [fallbackDashboardOverlayVersion, setFallbackDashboardOverlayVersion] = useState(0);
-  const [skyPlacementFallbackStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
+  const fallbackDashboardOverlayPresentRef = useRef(false);
+  const [skyPlacementLoadStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
+  const [skyPlacementResolvedIdentity, setSkyPlacementResolvedIdentity] = useState<string | null>(null);
+  // A ledger change invalidates prose during render, before asynchronous effects
+  // can install the new source set. A clock tick does not change this identity.
+  const skyPlacementFallbackStatus: SkyPlacementContentStatus = skyPlacementLoadStatus === "ready"
+    && skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() ? "loading" : skyPlacementLoadStatus;
+  const [skyDetailReadError, setSkyDetailReadError] = useState<string | null>(null);
+  const [skyDetailRetry, setSkyDetailRetry] = useState(0);
+  const [skyDetailResolvedIdentity, setSkyDetailResolvedIdentity] = useState<string | null>(null);
   const [skyPlacementFallbackRetryKey, setSkyPlacementFallbackRetryKey] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [contentRefreshVersion, setContentRefreshVersion] = useState(0);
@@ -11052,7 +11067,7 @@ export function App() {
   const selectedSkyDetailContentRef = useRef<GeneratedContentMap>(new Map());
   const selectedSkyDetailRefreshSkyRef = useRef<SkySnapshot | null>(null);
   const fallbackDashboardHydrationRequestedRef = useRef(false);
-  const friendDetailOverlayRefreshKeyRef = useRef("");
+  const friendDetailOverlayVersionRef = useRef(0);
   const compatibilityDashboardHydrationVersionRef = useRef<number | null>(null);
   const pendingCalendarTransitRef = useRef<LunarCalendarEvent | null>(null);
   const selectedCalendarTransitEventRef = useRef<{
@@ -11340,19 +11355,13 @@ export function App() {
 
   function openSkyDetail(detail: SkyDetail) {
     selectedCalendarTransitEventRef.current = null;
-    // A card supplies a fresh, lightweight article. Even for a previously
-    // opened route, its full placement facts must finish loading again.
+    // Reopening a card must load its complete placement facts again.
     selectedSkyDetailRefreshKeyRef.current = "";
-    if (detail.routePath?.startsWith("friends?")) {
-      // The clicked article was assembled with the current overlay. Only a
-      // subsequent overlay revision should invalidate it, not its first render.
-      friendDetailOverlayRefreshKeyRef.current = `${detail.routePath}:${fallbackDashboardOverlayVersion}`;
-    }
-    const [, detailType, detailPlanet, detailSign] = decodeSkyRouteParts(detail.routePath ?? "");
-    const placementPosition = detailType === "placement" && skyNodeDisplayPositions(sky?.positions ?? [])
-      .find(position => skyRoutePartMatches(position.planet, detailPlanet) && skyRoutePartMatches(position.sign, detailSign));
-    const awaitPlacementTiming = detailType === "placement"
-      && (skyPlacementFallbackStatus !== "ready" || !placementPosition || !placementPosition.transitStart || !placementPosition.transitEnd);
+    // Friends invalidation compares this article's revision with later overlays.
+    friendDetailOverlayVersionRef.current = fallbackDashboardOverlayVersion;
+    const [, detailType] = decodeSkyRouteParts(detail.routePath ?? "");
+    const awaitPlacementTiming = detail.routePath?.startsWith("sky/")
+      && (detailType === "placement" || detailType === "retrograde");
     transitionPage(() => {
       setSelectedSkyDetail(personalizedSkyPlacementDetail(
         awaitPlacementTiming ? null : detail,
@@ -11749,14 +11758,15 @@ export function App() {
       })
       .catch((error) => {
         compatibilityDashboardHydrationVersionRef.current = null;
-        console.warn("Compatibility dashboard content failed to install; bundled relationship copy remains active.", error);
+        console.warn("Compatibility overlay failed to load; retaining bundled copy.", error);
       });
     return () => { cancelled = true; compatibilityDashboardHydrationVersionRef.current = null; };
   }, [contentRefreshVersion, friendRelationshipContentRequests, mode]);
 
+  const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath });
   useEffect(() => {
     if (
-      !shouldHydrateFallbackDashboardContent({
+      placementContentNeeded || !shouldHydrateFallbackDashboardContent({
   mode,
   friendNatalContentRequested,
   friendRelationshipContentRequests
@@ -11773,15 +11783,16 @@ export function App() {
         if (cancelled) return;
         installFallbackArchitectureV3Bundle(bundle);
         setFallbackArchitectureV3Version((version) => version + 1);
-        setFallbackDashboardOverlayVersion((version) => version + 1);
+        // A first empty response adds no copy. Removing an installed overlay
+        // still invalidates an open article, including after retirement.
+        if (bundle || fallbackDashboardOverlayPresentRef.current) setFallbackDashboardOverlayVersion((version) => version + 1);
+        fallbackDashboardOverlayPresentRef.current = !!bundle;
       })
       .catch((error) => {
-        console.warn("Fallback architecture V3 dashboard bundle failed to install; local JSON snapshot remains active.", error);
+        console.warn("Dashboard overlay failed to load; retaining local copy.", error);
       });
     return () => { cancelled = true; fallbackDashboardHydrationRequestedRef.current = false; };
-  }, [contentRefreshVersion, friendNatalContentRequested, friendRelationshipContentRequests, mode]);
-
-  const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath });
+  }, [contentRefreshVersion, friendNatalContentRequested, friendRelationshipContentRequests, mode, placementContentNeeded]);
   useEffect(() => {
     let cancelled = false;
     const shouldLoadPlacementContent = placementContentNeeded;
@@ -11793,38 +11804,27 @@ export function App() {
       };
     }
 
-    setSkyPlacementFallbackStatus("loading");
-    let available = false;
-    const markAvailable = () => {
-      if (!cancelled) {
-        available = true;
-        setFallbackArchitectureV3Version((version) => version + 1);
-        setSkyPlacementFallbackStatus("ready");
-      }
-    };
-    const localLoad = loadSkyPlacementFallbackArchitectureV3Bundle()
-      .then(() => {
-        markAvailable();
-        return true;
-      });
-    const dashboardLoad = loadFallbackArchitectureV3SkyPlacementDashboardBundle()
-      .then(async (dashboardBundle) => {
-        if (cancelled) return false;
-        installSkyPlacementFallbackArchitectureV3Bundle(dashboardBundle);
-        // Published rows cannot serve the reader until its canonical module is ready.
-        await localLoad;
-        markAvailable();
-        return true;
-      });
-
-    Promise.allSettled([localLoad, dashboardLoad]).then((results) => {
-      if (cancelled || available) return;
-
-      console.warn("Sky Placement fallback package failed to load; reader copy remains fail-closed.", {
-        localError: results[0].status === "rejected" ? results[0].reason : null,
-        dashboardError: results[1].status === "rejected" ? results[1].reason : null
-      });
-      setSkyPlacementFallbackStatus("error");
+    // Keep a fully resolved, unchanged revision visible during revalidation.
+    // On first load (or after a publication changes), the view stays in its
+    // existing loading skeleton until *all* source planes have resolved.
+    setSkyPlacementFallbackStatus(previous => previous === "ready" ? previous : "loading");
+    void prepareSkyPlacementSources().then(({ coreBundle, placementBundle, identity }) => {
+      if (cancelled) return;
+      if (identity !== skyPlacementPublicationIdentity()) throw new Error("Sky sources changed during loading. Please retry.");
+      // Commit both overlays in the same task; never announce the bundled
+      // passage as ready and replace it later with the Studio passage.
+      installFallbackArchitectureV3Bundle(coreBundle);
+      fallbackDashboardOverlayPresentRef.current = !!coreBundle;
+      installSkyPlacementFallbackArchitectureV3Bundle(placementBundle);
+      setFallbackArchitectureV3Version((version) => version + 1);
+      setFallbackDashboardOverlayVersion((version) => version + 1);
+      setSkyPlacementResolvedIdentity(identity);
+      setSkyPlacementFallbackStatus("ready");
+    }).catch(error => {
+      if (cancelled) return;
+      console.warn("Sky placement sources failed to load.", error);
+      setSkyPlacementFallbackStatus(previous => previous === "ready"
+        && skyPlacementResolvedIdentity === skyPlacementPublicationIdentity() ? previous : "error");
     });
 
     return () => {
@@ -11967,6 +11967,13 @@ export function App() {
       return;
     }
 
+    const commitResolvedSkyDetail = (detail: SkyDetail | null) => {
+      // Evaluate the complete article before advancing both React state values.
+      // A new overlay must not expose the old article for one intermediate frame.
+      setSkyDetailResolvedIdentity(skyPlacementPublicationIdentity());
+      setSelectedSkyDetail(detail);
+    };
+    setSkyDetailReadError(null);
     const availableDetailContent = eligibleSkyDetailContent(mergeGeneratedContentMaps(skyGeneratedContent, selectedSkyDetailContentRef.current));
     const personalizationKey = [
       profileNatalSky?.ascendant ?? userProfile?.rising ?? "",
@@ -12000,7 +12007,7 @@ export function App() {
     if (!calendarEvent && routeSurface === "sky" && ["placement", "retrograde"].includes(routeType) && placementSign
       && routePosition && zodiacSigns.some(sign => skyRoutePartMatches(sign, placementSign))) {
       let cancelled = false;
-      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) setSelectedSkyDetail(null);
+      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) commitResolvedSkyDetail(null);
       void import("./services/skyCalculationClient").then(({ getSkyPlacementSnapshotOffMainThread }) => (
         getSkyPlacementSnapshotOffMainThread(sky.location, routePlanet, placementSign, new Date(sky.generatedAt), true)
       )).then(async placementSky => {
@@ -12013,19 +12020,18 @@ export function App() {
             selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
             selectedSkyDetailRefreshSkyRef.current = sky;
           }
-          setSelectedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
+          commitResolvedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
             skyPlacementPersonalizationTransits, skyDate));
         };
-        renderPlacement(availableDetailContent);
         renderPlacement(await loadSkyDetailContent(placementSky, availableDetailContent, [], loadLiveGeneratedContentForKeys), true);
-      }).catch(error => { if (!cancelled) console.warn("Requested placement calculation failed.", error); });
+      }).catch(error => { if (!cancelled) { console.warn("Requested placement calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
       return () => { cancelled = true; };
     }
     if (!calendarEvent && encodedExactAt && baseRoute.startsWith("sky/aspect/")) {
       const exactAt = decodeURIComponent(encodedExactAt);
-      if (Number.isNaN(Date.parse(exactAt))) { setSelectedSkyDetail(null); return; }
+      if (Number.isNaN(Date.parse(exactAt))) { commitResolvedSkyDetail(null); return; }
       let cancelled = false;
-      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) setSelectedSkyDetail(null);
+      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) commitResolvedSkyDetail(null);
       // Recompute the dated event on reload; never borrow today's motion or signs.
       void getAstrodienstSky(sky.location, new Date(exactAt)).then(async eventSky => {
         const renderAspect = (detailContent: GeneratedContentMap, complete = false) => {
@@ -12037,15 +12043,14 @@ export function App() {
             selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
             selectedSkyDetailRefreshSkyRef.current = sky;
           }
-          setSelectedSkyDetail(detail
+          commitResolvedSkyDetail(detail
             ? skyDetailRoutePath.includes("/at/")
               ? datedSkyAspectDetail(detail, exactAt, sky.location.timeZone || "UTC")
               : { ...detail, routePath: skyDetailRoutePath }
             : null);
         };
-        renderAspect(availableDetailContent);
         renderAspect(await loadSkyDetailContent(eventSky, availableDetailContent, [], loadLiveGeneratedContentForKeys), true);
-      }).catch(error => { if (!cancelled) console.warn("Dated aspect calculation failed.", error); });
+      }).catch(error => { if (!cancelled) { console.warn("Dated aspect calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
       return () => { cancelled = true; };
     }
     let cancelled = false;
@@ -12060,13 +12065,13 @@ export function App() {
         selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
         selectedSkyDetailRefreshSkyRef.current = sky;
       }
-      setSelectedSkyDetail(personalizedSkyPlacementDetail(
+      commitResolvedSkyDetail(personalizedSkyPlacementDetail(
         detail, profileNatalSky?.ascendant ?? userProfile?.rising,
         skyPlacementPersonalizationTransits, skyDate
       ));
     };
-    // Keep immediately available copy visible while the matching published rows load.
-    if (!calendarEvent) renderDetail(sky, availableDetailContent);
+    // Keep an already committed article visible, but never paint a newly
+    // assembled partial article before its matching published rows resolve.
     const calendarPlacementSign = ["placement", "retrograde"].includes(routeType)
       ? calendarEvent?.event.toSign ?? calendarEvent?.event.sign : undefined;
     const detailSnapshot = calendarEvent
@@ -12076,26 +12081,20 @@ export function App() {
         : getAstrodienstSky(sky.location, new Date(calendarEvent.event.startsAt), { includeTransitWindows: true })
       : Promise.resolve(sky);
     void detailSnapshot.then(async detailSky => {
-      if (calendarEvent) renderDetail(detailSky, availableDetailContent);
       const content = await loadSkyDetailContent(detailSky, availableDetailContent,
         calendarEvent ? calendarTransitDetailContentKeys(calendarEvent.event) : [], loadLiveGeneratedContentForKeys);
       renderDetail(detailSky, content, true);
-    }).catch(error => { if (!cancelled) console.warn("Sky detail interpretation failed to load.", error); });
+    }).catch(error => { if (!cancelled) { console.warn("Sky detail interpretation failed to load.", error); setSkyDetailReadError(skyDetailRoutePath); } });
     return () => { cancelled = true; };
-  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising]);
+  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, skyDetailRetry]);
 
   useEffect(() => {
-    const routePath = selectedSkyDetail?.routePath;
-    if (!fallbackDashboardOverlayVersion || !routePath?.startsWith("friends?")) {
+    if (!selectedSkyDetail?.routePath?.startsWith("friends?")
+      || friendDetailOverlayVersionRef.current === fallbackDashboardOverlayVersion) {
       return;
     }
 
-    const refreshKey = `${routePath}:${fallbackDashboardOverlayVersion}`;
-    if (friendDetailOverlayRefreshKeyRef.current === refreshKey) {
-      return;
-    }
-
-    friendDetailOverlayRefreshKeyRef.current = refreshKey;
+    friendDetailOverlayVersionRef.current = fallbackDashboardOverlayVersion;
     setSelectedSkyDetail(null);
   }, [fallbackDashboardOverlayVersion, selectedSkyDetail?.routePath]);
 
@@ -12128,14 +12127,14 @@ export function App() {
 
   useEffect(() => {
     const refreshContent = () => {
-    void refreshContentPublications(true);
-    clearSharedGeneratedContentCache();
-    clearPlanetTopicVocabularyCache();
-    clearNatalCardTaglineCache();
-    calendarContentCacheRef.current.clear();
-    fallbackDashboardHydrationRequestedRef.current = false;
-    compatibilityDashboardHydrationVersionRef.current = null;
-    setContentRefreshVersion((version) => version + 1);
+      void refreshContentPublications(true);
+      clearSharedGeneratedContentCache();
+      clearPlanetTopicVocabularyCache();
+      clearNatalCardTaglineCache();
+      calendarContentCacheRef.current.clear();
+      fallbackDashboardHydrationRequestedRef.current = false;
+      compatibilityDashboardHydrationVersionRef.current = null;
+      setContentRefreshVersion((version) => version + 1);
     };
     const unsubscribe = subscribeToContentUpdates(refreshContent);
     const stopRevalidation = subscribeToContentRevalidation(refreshContent);
@@ -12253,7 +12252,7 @@ export function App() {
       };
     }
 
-    setSkyGeneratedContent(normalizedSkySnapshotContent);
+    setSkyGeneratedContent(previous => eligibleSkyDetailContent(previous));
 
     const aspectContentKeys = sky.aspects.flatMap((aspect) => {
       const firstSign = skyAspectPosition(aspect.from, sky.positions)?.sign;
@@ -14429,7 +14428,8 @@ export function App() {
 
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
       <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
-      {selectedSkyDetail ? (
+      {selectedSkyDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
+        || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity) ? (
         <>
           {skyPlacementFallbackStatus === "error" ? (
             <div className="feature-loading-fallback" role="status">
@@ -14445,7 +14445,9 @@ export function App() {
         skyStatus === "error" ? <PageLoadError message="The sky calculation could not load. Check your connection and try again." onRetry={() => setSkyRefreshKey(value => value + 1)} />
           : skyPlacementFallbackStatus === "error" && /^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)
             ? <PageLoadError message="The placement reading could not load. Please try again." onRetry={() => setSkyPlacementFallbackRetryKey(value => value + 1)} />
-            : <FeatureLoadingFallback />
+            : skyDetailReadError === skyDetailRoutePath
+              ? <PageLoadError message="The placement reading could not load. Please try again." onRetry={() => setSkyDetailRetry(value => value + 1)} />
+              : <FeatureLoadingFallback />
       ) : (
         <>
           <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
@@ -14570,6 +14572,10 @@ export function App() {
                   </section>
                   {isSkyLoading && (
                     <SkyLoadingCards />
+                  )}
+                  {!isSkyLoading && sky && skyPlacementFallbackStatus === "error" && (
+                    <PageLoadError message="The placement readings could not load. Please try again."
+                      onRetry={() => setSkyPlacementFallbackRetryKey(value => value + 1)} />
                   )}
                   {!isSkyLoading && sky && mode === "guest" && (
                     <TodayView
@@ -15865,7 +15871,6 @@ function ChartWheelMini() {
 
 function SkyCards({
   onOpenEvent,
-  generatedContent,
   sky,
   dateLabel,
   locationLabel,
@@ -15879,12 +15884,14 @@ function SkyCards({
   onOpenChart: () => void;
 }) {
   const [dailyEvents, setDailyEvents] = useState<{ key: string; events: LunarCalendarEvent[] }>({ key: "", events: [] });
-  const [eventContent, setEventContent] = useState<Map<string, LiveGeneratedContent>>(new Map());
+  const [summaryFactsError, setSummaryFactsError] = useState<string | null>(null);
+  const [summaryFactsRetry, setSummaryFactsRetry] = useState(0);
   const timeZone = sky.location.timeZone || "UTC";
   const dayKey = new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(sky.generatedAt));
   const requestKey = `${dayKey}:${sky.location.latitude}:${sky.location.longitude}:${timeZone}`;
   useEffect(() => {
     let active = true;
+    setSummaryFactsError(null);
     const anchor = new Date(sky.generatedAt);
     void import("./services/calendarApi").then(({ getLunarCalendarFromApi }) => getLunarCalendarFromApi(sky.location, "week", anchor, "full"))
       .catch(() => import("./services/skyCalculationClient").then(({ getLunarCalendarWeekOffMainThread }) => getLunarCalendarWeekOffMainThread(sky.location, anchor, { detail: "full" })))
@@ -15892,16 +15899,14 @@ function SkyCards({
         const events = calendar.days.find(day => day.dateKey === dayKey)?.events.filter(event => event.type === "aspect" || event.type === "ingress" || event.type === "station" || event.type === "lunation") ?? [];
         if (!active) return;
         setDailyEvents({ key: requestKey, events });
-        const keys = events.flatMap(ingressSummaryKeys);
-        if (keys.length) {
-          const content = await loadLiveGeneratedContentForKeys(keys);
-          if (active) setEventContent(content);
-        }
-      }).catch(error => console.warn("Daily sky events could not load.", error));
+
+      }).catch(error => {
+        console.warn("Daily sky events could not load.", error);
+        if (active) setSummaryFactsError(requestKey);
+      });
     return () => { active = false; };
-  }, [requestKey]);
+  }, [requestKey, summaryFactsRetry]);
   const events = dailyEvents.key === requestKey ? dailyEvents.events : [];
-  const summaryContent = new Map([...eventContent, ...generatedContent]);
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
   // Use the event-time ephemeris event supplied by the snapshot. Do not infer
@@ -15914,7 +15919,7 @@ function SkyCards({
     && Number.isFinite(selectedDate.getTime()) && (Boolean(todayLunation) || eventDate >= selectedDate);
   const eventIsToday = Boolean(validEvent && eventDate && new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" }).format(eventDate) === dayKey);
   const exactEventKey = eventIsToday && event ? `${requestKey}:${event.occursAt}:${event.name}:${event.eclipseType ?? ""}` : "";
-  const [summaryEventSky, setSummaryEventSky] = useState<{ key: string; sun: PlanetPosition; moon: PlanetPosition } | null>(null);
+  const [summaryEventSky, setSummaryEventSky] = useState<{ key: string; placements: ReturnType<typeof skySummaryEventPlacements> | null } | null>(null);
   useEffect(() => {
     if (!exactEventKey || !event) return;
     let active = true;
@@ -15922,17 +15927,25 @@ function SkyCards({
       getAstrodienstSkyOffMainThread(sky.location, new Date(event.occursAt), { includeTransitWindows: false }))
       .then(exactSky => {
         const placements = skySummaryEventPlacements(event, exactSky.positions);
-        if (active) setSummaryEventSky({ key: exactEventKey, ...placements });
-      }).catch(error => console.warn("Daily sky lunation placements could not be verified.", error));
+        if (active) setSummaryEventSky({ key: exactEventKey, placements });
+      }).catch(error => {
+        console.warn("Daily sky lunation placements could not be verified.", error);
+        if (!active) return;
+        // A disproven calendar event is resolved and omitted. A failed
+        // calculation still needs Retry before its facts can be used.
+        if (error instanceof Error && error.message.startsWith("IMPOSSIBLE_SKY:")) {
+          setSummaryEventSky({ key: exactEventKey, placements: null });
+        } else setSummaryFactsError(exactEventKey);
+      });
     return () => { active = false; };
-  }, [exactEventKey]);
-  const verifiedEventSky = summaryEventSky?.key === exactEventKey ? summaryEventSky : null;
-  const summaryParts = skyDailySummaryParts({
+  }, [exactEventKey, summaryFactsRetry]);
+  const eventResolved = summaryEventSky?.key === exactEventKey;
+  const verifiedEventSky = eventResolved ? summaryEventSky.placements : null;
+  const summaryFacts = {
     sun,
     moon,
     moonIsVoid: sky.moonStatus?.kind === "void",
     retrogradePlacements: activeRetrogradePositions(sky.positions).map(position => ({ ...position, planet: skyDisplayPlanetName(position.planet) })),
-    ...skySummaryEventFacts(events, summaryContent),
     asOf: sky.generatedAt,
     voidRemainingLabel: sky.moonStatus?.remainingLabel,
     event: validEvent && (!eventIsToday || verifiedEventSky) ? {
@@ -15944,7 +15957,7 @@ function SkyCards({
       isToday: eventIsToday,
       countdown: lunationCountdownLabel(selectedDate, eventDate, sky.location.timeZone).toLowerCase()
     } : undefined
-  }, summaryContent);
+  };
 
   return (
     <>
@@ -15961,8 +15974,11 @@ function SkyCards({
           </p>
         </header>
 
-        <div className="sky-daily-summary__body" aria-label="Daily sky summary">
-          {skySummaryParagraphs(summaryParts).map((paragraph, paragraphIndex) => <p key={paragraphIndex}>
+        <PublishedSkySummary facts={summaryFacts} events={events}
+          factsReady={dailyEvents.key === requestKey && (!exactEventKey || eventResolved)}
+          factsError={summaryFactsError === requestKey || Boolean(exactEventKey && summaryFactsError === exactEventKey)}
+          onRetryFacts={() => setSummaryFactsRetry(value => value + 1)}>
+          {summaryParts => skySummaryParagraphs(summaryParts).map((paragraph, paragraphIndex) => <p key={paragraphIndex}>
           {paragraph.map((part, index) => {
             if (part.action === "event") {
               const item = events.find(event => event.id === part.eventId);
@@ -15997,7 +16013,7 @@ function SkyCards({
             return <span key={index}>{part.text}</span>;
           })}
           </p>)}
-        </div>
+        </PublishedSkySummary>
 
         <button className="sky-today-ledger__foot" type="button" onClick={onOpenChart} aria-label="Open full current sky chart">
           <ChartWheelMini />
@@ -16316,7 +16332,8 @@ function PlacementTable({
           const transitRangeLabel = isRetrograde
             ? retrogradeRangeText(position)
             : placementTransitRangeLabel(position, generatedAt);
-          const rowSummary = normalizedSurfacePreview(
+          const placementReady = contentStatus === "ready" && Boolean(position.transitStart && position.transitEnd);
+          const rowSummary = placementReady ? normalizedSurfacePreview(
             normalizeSkyPlacementSurface(
               position,
               transitRangeLabel,
@@ -16335,8 +16352,9 @@ function PlacementTable({
                 positions: displayPositions
               }
             )
-          );
-          const descriptionState = skyPlacementDescriptionState(rowSummary, contentStatus);
+          ) : "";
+          const descriptionState = skyPlacementDescriptionState(rowSummary,
+            contentStatus === "ready" && !placementReady ? "loading" : contentStatus);
           const openDetail = () => onOpenDetail(currentSkyPlacementDetailArticle({
             aspects,
             generatedAt,
