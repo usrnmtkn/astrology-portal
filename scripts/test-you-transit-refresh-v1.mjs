@@ -34,7 +34,7 @@ const bundled = read(bundledPath);
 const sunAscAuthority = read(sunAscAuthorityPath);
 const venusMoonAuthority = read(venusMoonAuthorityPath);
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-14a");
+assert.equal(PACKAGE_VERSION, "v3-2026-09-14b");
 assert.equal(candidates.status, "ready_for_owner_directed_batch_promotion");
 assert.equal(candidates.count, 376);
 assert.equal(review.status, "clear");
