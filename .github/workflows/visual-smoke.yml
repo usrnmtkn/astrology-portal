@@ -127,8 +127,6 @@ jobs:
         run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts
       - name: Run visual regression and smoke screens
         run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
-      - name: Run client-facing user flows
-        run: npx playwright test -c playwright.reader-release.config.ts tests/visual/client-facing-user-flows.spec.ts tests/visual/report-library-ui.spec.ts
       - name: Upload visual smoke artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -137,6 +135,37 @@ jobs:
           path: |
             test-results/
             playwright-report/
+          if-no-files-found: ignore
+
+  client-facing-flows:
+    needs: scope
+    if: needs.scope.outputs.reader == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Run client-facing user flows
+        run: npx playwright test -c playwright.reader-release.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/client-facing-user-flows.spec.ts tests/visual/report-library-ui.spec.ts
+      - name: Upload client-facing flow artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: client-facing-flow-results-${{ matrix.shard }}
+          path: test-results/
           if-no-files-found: ignore
 
   studio-admin-flows:
@@ -188,11 +217,10 @@ jobs:
       - name: Verify Studio publication lifecycle and actual reader hydration
         run: npm run test:content-studio-api && npm run test:sky-evergreen-sections
       - run: npx playwright install --with-deps chromium
-      - name: Verify placement composition editing and reader refresh stability
+      - name: Verify placement composition editing
         run: |
           npx playwright test -c playwright.studio-secondary.config.ts
           npx playwright test -c playwright.sky-composition.config.ts
-          npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts
       - name: Verify Studio crash recovery through the production web entry
         run: STUDIO_PRODUCTION_ENTRY=1 npx playwright test -c playwright.studio-recovery.config.ts
       - name: Upload Sky placement artifacts
@@ -200,6 +228,33 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: sky-placement-studio-results
+          path: test-results/
+          if-no-files-found: ignore
+
+  sky-placement-reader:
+    needs: scope
+    if: needs.scope.outputs.sky == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Verify placement reader refresh stability
+        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts
+      - name: Upload Sky placement reader artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: sky-placement-reader-results
           path: test-results/
           if-no-files-found: ignore
 

@@ -76,6 +76,27 @@ The attempted extra compression passes, function hoisting, alternate quotation
 and badge restructuring were discarded; they did not justify changing runtime
 code or compiler settings for this small integrated feature allocation.
 
+## Final integrated preview and CI scheduling
+
+Main through #805 is integrated. The exact `8f718baa6` preview passed all eight
+desktop/mobile placement visits and all five summary visits, with no prose
+replacement, card collapse, or page errors. Its CI passed all four Studio shards,
+the mandatory API contract, all 32 Sky reader cases, and 24 of 25 summary Studio
+cases. The remaining retirement fixture left Calendar unmocked: the preview
+returned 404 and invoked unrelated worker calculation before its five-second
+assertion. An explicit empty Calendar fixture preserves the retirement,
+unavailable-copy, Retry, and no-legacy-copy assertions. Five consecutive fresh
+build repetitions passed in under a second each, without widening timeouts.
+
+The serialized placement job approached its 30-minute runner limit while the
+long client flow suite continued separately. Placement reader verification now
+has its own job, retaining the original seven-file command. The complete client
+suite uses four isolated shards with one worker each, matching the existing
+Studio sharding model. Test collection proves all 218 cases occur exactly once
+across shards of 55, 55, 54, and 54, with no omissions or duplicates. Per-test
+timeouts, retries, assertions, and calculation thresholds are unchanged. All
+38 workflow YAML files and conservative changed-path regressions pass.
+
 ## Existing full-suite and reference limitations
 
 `npm test` stops at `scripts/test-natal-exact-copy-routing.mjs:49`: historical
