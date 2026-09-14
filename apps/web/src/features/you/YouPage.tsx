@@ -23,7 +23,7 @@ import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 import { updateYouTabUrl, youTabFromUrl, type YouTab } from "./youRouting";
-import { YouReportActions } from "./YouReportActions";
+import { YouReportActions, type YouAccountRecovery } from "./YouReportActions";
 
 type NatalChartViewMode = "circle" | "table";
 type AspectToneBucket = "gifts" | "lessons";
@@ -105,6 +105,7 @@ export type YouTransitArticle = {
 
 export type YouPageProps = {
   accountId?: string | null;
+  accountRecovery?: YouAccountRecovery;
   onArticleNavigate?: (update: () => void) => void;
   aspectRows: ReactNode[];
   bigThreeRows: ReactNode[];
@@ -523,6 +524,7 @@ function YouMacroView({ headline, body }: { headline: string; body: string }) {
 
 function YouUpdatesTab({
   accountId,
+  accountRecovery,
   aspectRows,
   dailyHoroscopeAssembly,
   dailyUpdateSummary,
@@ -538,6 +540,7 @@ function YouUpdatesTab({
   weeklyTransitRows = []
 }: {
   accountId: string | null | undefined;
+  accountRecovery?: YouAccountRecovery;
   aspectRows: ReactNode[];
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
@@ -602,6 +605,7 @@ function YouUpdatesTab({
       {hasSavedCurrentCity ? (
         <YouReportActions
           accountId={accountId}
+          accountRecovery={accountRecovery}
           dailyHoroscopeAssembly={dailyHoroscopeAssembly}
           dailyUpdateSummary={dailyUpdateSummary}
           weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
@@ -1171,6 +1175,7 @@ function YouTransitArticlePage({
 
 export function YouPage({
   accountId,
+  accountRecovery,
   aspectRows,
   bigThreeRows,
   dailyHoroscopeAssembly,
@@ -1356,6 +1361,7 @@ export function YouPage({
           {profileTab === "transits" && (
             <YouUpdatesTab
               accountId={accountId}
+              accountRecovery={accountRecovery}
               aspectRows={aspectRows}
               dailyHoroscopeAssembly={dailyHoroscopeAssembly}
               dailyUpdateSummary={dailyUpdateSummary}

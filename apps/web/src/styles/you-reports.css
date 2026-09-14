@@ -13,7 +13,8 @@
   justify-self: stretch;
   width: 100%;
   min-height: 44px;
-  white-space: nowrap;
+  white-space: normal;
+  text-align: center;
 }
 
 .you-empty-card .you-report-actions__button.is-ready {

@@ -26,3 +26,34 @@ try {
  assert.equal(calls,1);assert.equal(queries,0);
  console.log('Report session boundaries passed: missing/recovering and changed accounts never submit; recovered session succeeds.');
 }finally {globalThis.fetch=previousFetch;delete globalThis.reportSessionFixture;}
+
+// Exercise account recovery through the actual auth service, with only its
+// Supabase transport replaced. An outage must not look like a missing session.
+const authBuild = await build({
+  stdin: { contents: "export { getVerifiedAuthUser, isAuthSessionStorageKey } from './apps/web/src/services/auth.ts';", resolveDir: process.cwd() },
+  bundle: true, write: false, platform: 'node', format: 'esm',
+  external: ['@supabase/supabase-js'],
+  define: { 'import.meta.env': JSON.stringify({ VITE_SUPABASE_URL: 'https://session-fixture.supabase.test', VITE_SUPABASE_PUBLISHABLE_KEY: 'fixture-key' }) }
+});
+const { getVerifiedAuthUser, isAuthSessionStorageKey } = await import(`data:text/javascript;base64,${Buffer.from(authBuild.outputFiles[0].text).toString('base64')}`);
+let recoveredSession = null;
+let recoveryError = new Error('Temporary session recovery failure');
+let userReads = 0;
+const verifiedUser = { id: 'synthetic-google-owner', app_metadata: { provider: 'google' } };
+const client = { auth: {
+  getSession: async () => ({ data: { session: recoveredSession }, error: recoveryError }),
+  getUser: async () => { userReads++; return { data: { user: verifiedUser }, error: null }; }
+} };
+await assert.rejects(getVerifiedAuthUser(client), /Temporary session recovery failure/);
+assert.equal(userReads, 0);
+recoveryError = null;
+assert.equal(await getVerifiedAuthUser(client), null);
+assert.equal(userReads, 0);
+recoveredSession = { access_token: 'synthetic-recovered-token' };
+assert.deepEqual(await getVerifiedAuthUser(client), verifiedUser);
+assert.equal(userReads, 1);
+assert.equal(isAuthSessionStorageKey('sb-session-fixture-auth-token'), true);
+assert.equal(isAuthSessionStorageKey(null), true);
+assert.equal(isAuthSessionStorageKey('sb-unrelated-auth-token'), false);
+assert.equal(isAuthSessionStorageKey('tldrastro:theme'), false);
+console.log('Account recovery preserves errors, verifies recovered sessions, and scopes cross-tab session updates.');
