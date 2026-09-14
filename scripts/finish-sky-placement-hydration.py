@@ -9,7 +9,7 @@ if 'skyDetailResolvedIdentity' not in s:
  start=s.index('    // A calculation/content update can queue this effect')
  end=s.index('\n  }, [contentRegistryVersion',start)
  part=s[start:end]
- assert part.count('setSelectedSkyDetail(')==4
+ assert part.count('setSelectedSkyDetail(')==6
  part=part.replace('setSelectedSkyDetail(', 'commitResolvedSkyDetail(')
  marker='    setSkyDetailReadError(null);'
  assert part.count(marker)==1
