@@ -5428,7 +5428,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
         `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(template.contentKey)}&limit=1`, secret);
-      if (!Array.isArray(payload.rows) || payload.rows.some(row => row.content_key !== template.contentKey)) throw new Error("Could not verify the saved template. Please try again.");
+      if (!Array.isArray(payload.rows) || payload.rows.some(row => row.content_key !== template.contentKey)) throw new Error("Could not verify the saved template.");
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       const saved = payload.rows[0];
       if (saved) {
@@ -5438,13 +5438,13 @@ export function GeneratedContentAdminDashboard() {
         rememberSavedDraft({
           id: null, contentKey: template.contentKey, surface: "sky", mode: "card", status: "DRAFT",
           headline: template.headline, body: template.body,
-          summary: `${template.description} Use verified dates and timing. Keep writing guidance here and named variables in the template.`,
+          summary: template.description,
           lane: "reference", reviewState: "EDITORIAL_REVIEW_REQUIRED", blockType: "fallback_template",
           promptVersion: "manual-admin", sections: null, facts: null, reviewerNotes: "",
-          sourceSnapshot: { contentType: "template", contentSystem: "fallback", content_role: "template", contentLevel: "source-grounded", authoringSource: "admin-dashboard" }
+          sourceSnapshot: { contentType: "template", contentSystem: "fallback", content_role: "template", authoringSource: "admin-dashboard" }
         });
       }
-      setMessage(`Opened ${template.title}. Use Save to keep your structure and writing guidance.`);
+      setMessage("");
       scrollEditorToTop();
     } catch (error) {
       if (requestId === sourceOpenRequestRef.current && window.location.hash === originatingHash) setMessage(dashboardErrorMessage(error));

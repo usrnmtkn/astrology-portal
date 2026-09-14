@@ -87,7 +87,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await tabs.getByRole("tab", { name: "Monthly Sky", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Monthly overview template" })).toBeVisible();
     expect(await page.getByRole("heading", { name: "Monthly overview template" }).evaluate(headingStyle)).toEqual(summaryStyle);
-    await expect(page.getByText("No saved template in the loaded library.", { exact: false })).toBeVisible();
+    await expect(page.getByText("Open to find your saved template or start a draft.", { exact: false })).toBeVisible();
     if (await notification.isVisible()) await notification.click();
     await page.screenshot({ path: `test-results/sky-forecast-${width}-${theme}.png` });
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
