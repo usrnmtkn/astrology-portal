@@ -74,9 +74,25 @@ assert.deepEqual(
     isEventChart: false,
     profileActive: true
   }),
-  { currentSky: false, profileNatal: true },
-  "Compatibility must request only the account natal chart it compares."
+  { currentSky: true, profileNatal: true },
+  "Compatibility must request today's Sky for Pair Daily as well as the account natal chart."
 );
+assert.deepEqual(
+  friendCalculationReadiness({
+    activeTab: "compatibility",
+    isEventChart: true,
+    profileActive: true
+  }),
+  idleFriendCalculationReadiness,
+  "Event charts must not request Pair Daily calculations."
+);
+for (const activeTab of ["synastry", "composite"]) {
+  assert.deepEqual(
+    friendCalculationReadiness({ activeTab, isEventChart: false, profileActive: true }),
+    { currentSky: false, profileNatal: true },
+    `${activeTab} must not request today's Sky for a static relationship chart.`
+  );
+}
 const transitReadiness = friendCalculationReadiness({
   activeTab: "transits",
   isEventChart: false,

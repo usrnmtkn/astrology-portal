@@ -61,6 +61,13 @@ assert.deepEqual(
 );
 assert.deepEqual(
   initialFriendCalculationReadiness(
+    initialFriendProfileContentRequest("https://tldrastro.vercel.app/#friends?tab=charts&chart=friend-nikki&view=compatibility")
+  ),
+  { currentSky: true, profileNatal: true },
+  "A direct Compatibility link must load today's Sky for the Pair Daily card."
+);
+assert.deepEqual(
+  initialFriendCalculationReadiness(
     initialFriendProfileContentRequest("https://tldrastro.vercel.app/#friends?tab=charts&chart=friend-nikki&view=synastry")
   ),
   { currentSky: false, profileNatal: true },
