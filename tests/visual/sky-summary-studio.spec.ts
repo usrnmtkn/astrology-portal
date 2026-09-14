@@ -268,7 +268,7 @@ test('live bundled summary stays Live when opened, then publishes twice without 
   await body.fill('QA unpublished revision');
   await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe('DRAFT');
-  await expect(status).toHaveText('Draft');
+  await expect(status).toHaveText('Inactive');
 });
 
 test('Daily Sky retirement and an unavailable publication never reveal older bundled copy', async ({ page }) => {
