@@ -10,12 +10,12 @@ const panel = fs.readFileSync(path.join(root, "apps/web/src/features/friends/Man
 
 assert.match(
   app,
-  /installFallbackArchitectureV3Bundle\(bundle\);[\s\S]{0,180}setFallbackArchitectureV3Version[\s\S]{0,180}setFallbackDashboardOverlayVersion/u,
+  /installFallbackArchitectureV3Bundle\(bundle\);[\s\S]{0,180}setFallbackArchitectureV3Version[\s\S]{0,300}if \(bundle \|\| fallbackDashboardOverlayPresentRef\.current\) setFallbackDashboardOverlayVersion/u,
   "Installing a live Content Studio core overlay must publish a distinct overlay generation."
 );
 assert.match(
   app,
-  /routePath = selectedSkyDetail\?\.routePath[\s\S]{0,500}routePath\?\.startsWith\("friends\?"\)[\s\S]{0,500}setSelectedSkyDetail\(null\)/u,
+  /selectedSkyDetail\?\.routePath\?\.startsWith\("friends\?"\)[\s\S]{0,300}friendDetailOverlayVersionRef\.current === fallbackDashboardOverlayVersion[\s\S]{0,300}setSelectedSkyDetail\(null\)/u,
   "An already-open Friends detail must be released after a newer live overlay installs so it cannot remain a frozen pre-hydration snapshot."
 );
 assert.match(

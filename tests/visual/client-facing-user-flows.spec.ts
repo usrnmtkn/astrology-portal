@@ -1567,6 +1567,7 @@ test.describe("client-facing user flow case studies", () => {
     const macro = page.locator(".weekly-horoscope__macro");
     await expect(macro).toBeVisible({ timeout: 30_000 });
     await expect(macro).toContainText("You do not need another plan for becoming a better version of yourself.");
+    await macro.getByRole("button", { name: "Read more", exact: true }).click();
     await expect(macro).toContainText("They need a life that does not require you to keep treating yourself as the problem.");
     await expect(macro).not.toContainText("A Virgo New Moon begins with the checklist");
   });
@@ -1605,6 +1606,7 @@ test.describe("client-facing user flow case studies", () => {
       await expect(macro).toHaveCount(0);
       releaseCopy();
       await expect(macro).toContainText("You do not need another plan for becoming a better version of yourself.", { timeout: 15_000 });
+      await macro.getByRole("button", { name: "Read more", exact: true }).click();
       await expect(macro).toContainText("They need a life that does not require you to keep treating yourself as the problem.");
       await expect(macro).not.toContainText("A Virgo New Moon begins with the checklist");
     } finally {
@@ -4532,7 +4534,36 @@ for (const theme of ["light", "dark"] as const) {
 }
 
 // Run this same release regression against local preview and PLAYWRIGHT_BASE_URL.
-// CMS endpoints fail in seedClientState, proving the shipped canonical package.
+// Empty CMS fixtures prove the shipped canonical package.
+test("an open Friends article survives an empty initial dashboard overlay", async ({ page }) => {
+  await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true,
+    synastryFixture: { body: "Midheaven", aspect: "sextile", inverse: true } });
+  let releaseOverlay!: () => void;
+  const overlayReady = new Promise<void>(resolve => { releaseOverlay = resolve; });
+  let overlayReads = 0;
+  await page.route("**/rest/v1/generated_interpretations*", async route => {
+    if (new URL(route.request().url()).searchParams.get("provider") === "eq.tldrastro-fallback-architecture-v3") {
+      overlayReads += 1;
+      await overlayReady;
+    }
+    await route.fulfill({ json: [] });
+  });
+  await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=synastry");
+  const card = page.getByRole("button", { name: "Open full entry for Your Midheaven sextile Sofia's Sun", exact: true });
+  await expect(card.locator(".synastry-contact-description")).not.toBeEmpty();
+  const copy = await card.locator(".synastry-contact-description").innerText();
+  await expect.poll(() => overlayReads).toBeGreaterThan(0);
+  await card.click();
+  const detail = page.locator(".app-shell.mode-detail");
+  await expect(detail).toContainText(copy);
+  releaseOverlay();
+  // Observe the asynchronous installation after the deliberately late response.
+  for (let sample = 0; sample < 8; sample += 1) {
+    await page.waitForTimeout(250);
+    await expect(detail).toContainText(copy);
+  }
+});
+
 for (const body of ["Ascendant", "Midheaven", "Descendant", "Imum Coeli", "Chiron", "North Node", "South Node", "Lilith"]) {
   for (const aspect of ["conjunction", "square", "opposition", "trine", "sextile"]) {
     for (const inverse of [false, true]) {
@@ -4661,7 +4692,7 @@ async function seedCrossSurfacePublications(page: Page, records: Array<Record<st
 
 for (const theme of ["light", "dark"] as const) {
   for (const width of [390, 1440]) {
-    test(`new Studio exact synastry publication reaches reader ${theme} ${width}`, async ({ page }) => {
+    test(`new Studio exact synastry publication reaches reader and retires ${theme} ${width}`, async ({ page }) => {
       test.setTimeout(90_000);
       await page.setViewportSize({ width, height: 1000 });
       const inverse = width === 390;
@@ -4684,6 +4715,18 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.locator(".app-shell.mode-detail")).toContainText(copy);
       await expectNoHorizontalOverflow(page, "new synastry publication");
       await page.screenshot({ path: `test-results/studio-synastry-admission-${theme}-${width}.png`, fullPage: true });
+      const retiredAt = "2026-09-10T21:00:00.000Z";
+      await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [{
+        content_key: contentKey, state: "retired", revision: 100_001,
+        row_id: "qa-cross-surface-0", row_updated_at: "2026-09-10T20:00:00.000Z", updated_at: retiredAt
+      }] }));
+      await page.route("**/rest/v1/rpc/content_runtime_revision", route => route.fulfill({ json: retiredAt }));
+      await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+      await page.evaluate(contentKey => window.dispatchEvent(new CustomEvent("tldrastro:content-update", {
+        detail: { contentKey, published: false }
+      })), contentKey);
+      await expect(page.locator(".app-shell.mode-detail")).toHaveCount(0);
+      await expect(page.locator("main.app-shell")).not.toContainText(copy);
       errors();
     });
 
