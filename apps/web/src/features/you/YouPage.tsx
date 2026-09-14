@@ -104,6 +104,7 @@ export type YouTransitArticle = {
 };
 
 export type YouPageProps = {
+  accountId?: string | null;
   onArticleNavigate?: (update: () => void) => void;
   aspectRows: ReactNode[];
   bigThreeRows: ReactNode[];
@@ -488,6 +489,7 @@ function YouNatalTab({
 }
 
 function YouUpdatesTab({
+  accountId,
   aspectRows,
   dailyHoroscopeAssembly,
   dailyUpdateSummary,
@@ -502,6 +504,7 @@ function YouUpdatesTab({
   transitsLoading = false,
   weeklyTransitRows = []
 }: {
+  accountId: string | null | undefined;
   aspectRows: ReactNode[];
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
@@ -565,6 +568,15 @@ function YouUpdatesTab({
           <span>{transitLoadingMessage}</span>
         </div>
       )}
+      {hasSavedCurrentCity ? (
+        <YouReportActions
+          accountId={accountId}
+          dailyHoroscopeAssembly={dailyHoroscopeAssembly}
+          dailyUpdateSummary={dailyUpdateSummary}
+          weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
+          transitDateLabel={transitDateLabel}
+        />
+      ) : null}
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary you-horoscope-card${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
           {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
@@ -593,14 +605,6 @@ function YouUpdatesTab({
           ) : null}
         </section>
       )}
-      {hasSavedCurrentCity ? (
-        <YouReportActions
-          dailyHoroscopeAssembly={dailyHoroscopeAssembly}
-          dailyUpdateSummary={dailyUpdateSummary}
-          weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
-          transitDateLabel={transitDateLabel}
-        />
-      ) : null}
       {hasSavedCurrentCity
         && dailyHoroscopeAssembly?.doItems?.length === 3
         && dailyHoroscopeAssembly.dontItems?.length === 3 ? (
@@ -1135,6 +1139,7 @@ function YouTransitArticlePage({
 }
 
 export function YouPage({
+  accountId,
   aspectRows,
   bigThreeRows,
   dailyHoroscopeAssembly,
@@ -1319,6 +1324,7 @@ export function YouPage({
 
           {profileTab === "transits" && (
             <YouUpdatesTab
+              accountId={accountId}
               aspectRows={aspectRows}
               dailyHoroscopeAssembly={dailyHoroscopeAssembly}
               dailyUpdateSummary={dailyUpdateSummary}
