@@ -2525,7 +2525,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     })));
     expect(headingLevels.slice(0, 3)).toEqual([
       { level: 1, text: "Sky Write-ups" },
-      { level: 2, text: "Placements, lunations, and transits" },
+      { level: 2, text: "Sky writing workspaces" },
       { level: 3, text: "Uranus through your 1st house" }
     ]);
     const contentOrder = await finder.evaluate((region) => {

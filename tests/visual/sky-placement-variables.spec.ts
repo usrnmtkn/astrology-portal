@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { skyPlacementSourceRecords } from "../../api/_lib/sky-placement-sources";
+import { ZODIAC_SEASON_SOURCE_STARTERS } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 
 const key = "sky-placement/article/saturn/aries";
 const template = "Fixture {{planetTitle}} in {{signTitle}}, {{motion}}. Entry: {{entryDate}}.";
@@ -11,10 +12,11 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.route("**/api/admin/**", async route => {
    const url = new URL(route.request().url());
    const rows = (url.searchParams.get("contentKeys") ?? "").split(",").flatMap(contentKey => {
-    const baseline = skyPlacementSourceRecords.get(contentKey);
+    const baseline = skyPlacementSourceRecords.get(contentKey)
+      ?? ZODIAC_SEASON_SOURCE_STARTERS.find(source => source.contentKey === contentKey);
     if (!baseline) return [];
     const source = contentKey === key ? { ...baseline, placementArticle: template, fallback: { ...baseline.fallback, hook: template, sections: [{ id: "hook", source: "hook" }, { id: "structure", label: "Structural fixture", role: "main", depth: "deep", paragraphs: [{ id: "first", job: "Event and meaning", phrases: [{ id: "one", role: "meaning", text: "Fixture packet.", joinBefore: "" }] }] }] } } : baseline;
-    return [{ id: `package:${contentKey}`, content_key: contentKey, surface: "sky", mode: "in_depth", status: "DRAFT", lane: "reference", provider: "tldrastro-fallback-architecture-v3", headline: source.headline, summary: source.summary, body: source.body_you, sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: "fallback_hook", event_type: "fallback-hook", package_starter: true }];
+    return [{ id: `package:${contentKey}`, content_key: contentKey, surface: "sky", mode: "in_depth", status: "DRAFT", lane: "reference", provider: "tldrastro-fallback-architecture-v3", headline: source.headline, summary: source.summary ?? "", body: source.body_you ?? source.body ?? "", sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: "fallback_hook", event_type: "fallback-hook", package_starter: true }];
    });
    await route.fulfill({ json: { ok: true, rows, statuses: [], nextCursor: null } });
   });
@@ -87,6 +89,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await summary.click();
     await expect(disclosure).not.toHaveAttribute("open");
   }
+  await expect(editor.getByRole("alert")).toHaveCount(0);
   await editor.getByRole("button", { name: "Insert {{signTitle}}", exact: true }).click();
   await expect(writing).toHaveValue("Before {{signTitle}} after");
   await expect(writing).toBeFocused();
