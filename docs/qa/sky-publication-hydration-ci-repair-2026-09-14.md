@@ -141,3 +141,12 @@ The placement script delays original content reads without modifying responses,
 records all full-prose mutations and samples card height. Both scripts use fresh
 guest contexts and write visit reports plus screenshots under `test-results/`.
 Deployment completion alone is insufficient; both live browser reports must pass.
+
+## Concurrent main integration
+
+Main through #809 is retained, including Calendar Sun/Moon reading and Account
+session recovery. Both branches independently chose the same admin limits;
+the merge retains both rationales without adding the allowances together.
+The initial-empty-overlay fix uses concise developer diagnostics; no visible
+copy changes. Reader broadcast and periodic revalidation share the same cache
+refresh callback, now reflected in the source contract.

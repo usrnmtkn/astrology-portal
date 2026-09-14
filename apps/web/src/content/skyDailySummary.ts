@@ -122,13 +122,14 @@ export function skySummaryOpeningKey(sun?: string, moon?: string, content?: CmsG
     ? "openingSameSign" : "opening";
 }
 
-export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false } = {}): SummaryPart[] {
+export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false, openingOnly = false } = {}): SummaryPart[] {
   const copy = (key: string, fallback: string) => savedCopy(content, `cms/sky-daily-summary/${key}`, fallback, editorialPreview);
   const timing = { ...defaultTiming };
   for (const field of skyDailySummaryFields.filter(field => field.group === "Timing and retrogrades")) {
     timing[field.key.split("/").at(-1) as Exclude<keyof typeof timing, "provenance">] = copy(field.key.replace("cms/sky-daily-summary/", ""), field.body);
   }
   const assembly = Object.fromEntries(Object.entries(defaultAssembly).map(([key, value]) => [key, copy(`assembly/${key}`, value)])) as typeof defaultAssembly;
+  if (openingOnly) assembly.layout = "{openingSentence}";
   const values: Record<string, SummaryPart[]> = {};
   const moonKind = selectedMoonKind(facts.event);
   const specialMoon = moonKind !== "regular";
