@@ -28,6 +28,8 @@ jobs:
       - run: npm ci
       - name: Verify CRUD, publication, storage and actual reader contracts
         run: npm run test:content-studio-api
+      - name: Verify Studio variable directory contracts
+        run: npm run test:studio-variables
 
 env:
   PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
