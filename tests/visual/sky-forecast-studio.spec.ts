@@ -30,7 +30,9 @@ async function studioApi(page: Page, rows = fixtureRows()) {
         data.rows = [saved];
       } else {
         const key = url.searchParams.get("contentKey");
-        data.rows = rows.filter(row => !key || row.content_key === key);
+        const keys = url.searchParams.getAll("contentKeys");
+        const id = url.searchParams.get("id");
+        data.rows = rows.filter(row => (!key || row.content_key === key) && (!keys.length || keys.includes(row.content_key)) && (!id || row.id === id));
       }
     }
     await route.fulfill({ json: data });

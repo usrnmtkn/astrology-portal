@@ -43,7 +43,7 @@ import {
   Users,
   X
 } from "lucide-react";
-import { Fragment, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import { renderCmsTemplatePreview, validateCmsTemplate } from "../../web/src/content/cmsTemplateValidation";
@@ -2792,6 +2792,16 @@ export function GeneratedContentAdminDashboard() {
   }
   const [secret, setSecret, setTransientCredential] = useSavedSecret();
   const [secretInput, setSecretInput] = useState(secret);
+  const loadCalendarPreviewRows = useCallback(async (keys: string[]) => {
+    const query = new URLSearchParams({ status: "all", visibility: "all", limit: "1000" });
+    keys.forEach(key => query.append("contentKeys", key));
+    const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?${query}`, secret);
+    if (!Array.isArray(payload.rows) || payload.rows.length >= 1000 || payload.rows.some(row => !keys.includes(row.content_key) || row.inventory_only)) {
+      throw new Error("Could not verify the full saved Calendar sources.");
+    }
+    return payload.rows;
+  }, [secret]);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
   const friendsTransitAudience = parseAdminHash().params.get("audience") === "friends";
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
@@ -6268,7 +6278,10 @@ export function GeneratedContentAdminDashboard() {
             <StudioTabs label="Calendar Write-ups workspaces" value={calendarWriteupWorkspaceView}
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
-              {calendarWriteupWorkspaceView === "daily-sky" ? (
+              <SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
+                loadRows={loadCalendarPreviewRows} draft={draft}
+                onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} />
+              {calendarWriteupWorkspaceView === "daily-sky" && (
                 <Suspense fallback={<p>Loading Moon-sign write-ups…</p>}>
                   <LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
                     onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
@@ -6276,9 +6289,6 @@ export function GeneratedContentAdminDashboard() {
                     onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
                     onCreate={sign => handleCreateAction("knowledge", "Draft opened. Nothing has been saved yet.", sign)} />
                 </Suspense>
-              ) : (
-                <SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
-                  onOpen={period => void openSkyForecastTemplate(period)} editor={renderEditor()} />
               )}
             </StudioTabs>
           </section>

@@ -1,5 +1,12 @@
 /** Collective Sky writing references, separate from rising-sign horoscopes. */
 export const skyForecastTemplates = {
+  "daily-sky": {
+    title: "Daily overview template",
+    contentKey: "slot-template/calendar/daily-overview/v1",
+    headline: "Calendar · Daily Overview",
+    description: "Preview the Sun summary and a complete Moon-sign passage for the selected sky.",
+    body: "{{date}}\n\n{{sunSummary}}\n\n{{moonWriteup}}"
+  },
   "weekly-sky": {
     title: "Weekly overview template",
     contentKey: "slot-template/calendar/weekly-overview/v1",
