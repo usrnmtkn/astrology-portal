@@ -4,7 +4,7 @@ on:
     branches: [chatgpt/calendar-day-overview-20260913]
     paths: [.github/workflows/calendar-day-workbench.yml]
 permissions:
-  contents: read
+  contents: write
 defaults:
   run:
     shell: bash
@@ -16,16 +16,23 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: chatgpt/calendar-day-overview-20260913
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - name: Identify tested source
+      - name: Sync latest main into the isolated feature branch
         run: |
           test "$GITHUB_REF" = "refs/heads/chatgpt/calendar-day-overview-20260913"
           test "$GITHUB_REPOSITORY" = "usrnmtkn/astrology-portal"
+          git fetch origin main
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git merge --no-edit origin/main
+          git push origin HEAD:chatgpt/calendar-day-overview-20260913
           mkdir -p test-results/calendar-day-diagnostics
           git log -1 --format='TESTED_COMMIT=%H' | tee test-results/calendar-day-diagnostics/revision.txt
+          git rev-list --left-right --count origin/main...HEAD | tee -a test-results/calendar-day-diagnostics/revision.txt
           git diff --check
       - run: npm ci
       - id: knowledge
