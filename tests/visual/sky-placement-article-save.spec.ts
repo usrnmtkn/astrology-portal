@@ -42,7 +42,17 @@ for (const legacyDraft of [false, true]) for (const [width, theme] of [[390, 'li
     await page.getByLabel('Sky placement planet or point').selectOption('sun');
     await page.getByLabel('Sky placement zodiac sign').selectOption('virgo');
    };
+   const recoverChunk = !legacyDraft && width === 1440;
+   let missingChunk = recoverChunk;
+   if (recoverChunk) await page.route('**/SkyPlacementComposition-*.js', route => missingChunk ? route.abort('failed') : route.continue());
    await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');
+   if (recoverChunk) {
+    const recovery = page.getByRole('region', { name: 'Page recovery', exact: true });
+    await expect(recovery).toBeVisible();
+    missingChunk = false;
+    await recovery.getByRole('button', { name: 'Retry page', exact: true }).click();
+    await expect(recovery).toHaveCount(0);
+   }
    await selectSunVirgo();
    const map = page.getByRole('region', { name: 'Sky placement composition map' });
    const edit = map.getByRole('button', { name: 'Edit placement article', exact: true });

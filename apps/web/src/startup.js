@@ -58,9 +58,9 @@ window.addEventListener("error", (event) => {
 }, true);
 window.addEventListener("vite:preloadError", (event) => {
   if (!startup?.isConnected) return;
-  event.preventDefault();
   // Reader surfaces can safely reload once to pick up the current deployment.
   // Admin/report paths remain manual so unsaved authoring work is never lost.
-  if (reloadReaderRouteOnce()) return;
+  if (reloadReaderRouteOnce()) { event.preventDefault(); return; }
+  // Let the import reject normally; preventDefault would resolve it undefined.
   showStartupMessage(true);
 });
