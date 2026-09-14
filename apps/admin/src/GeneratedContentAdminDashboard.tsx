@@ -2867,6 +2867,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyFallbackVariableTarget, setSkyFallbackVariableTarget] = useState("");
   const [skyWritingContext, setSkyWritingContext] = useState<{ fieldPath?: string; selection?: SkyPlacementSelection }>({});
   const [templateVariableReferenceOpen, setTemplateVariableReferenceOpen] = useState(false);
+  const [calendarCreateRequest, setCalendarCreateRequest] = useState(0);
   const [templateVariableQuery, setTemplateVariableQuery] = useState("");
   const [selectedTemplateVariableName, setSelectedTemplateVariableName] = useState<string | null>(null);
   const [selectedTemplateVariableSourceId, setSelectedTemplateVariableSourceId] = useState<string | null>(null);
@@ -5213,6 +5214,11 @@ export function GeneratedContentAdminDashboard() {
 
   function handleCreateAction(page: AdminDashboardPage, nextMessage: string, calendarSign?: string) {
     const isCalendarWriteup = page === "knowledge" && activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar";
+    if (isCalendarWriteup && !calendarSign) {
+      setIsCreateMenuOpen(false);
+      setCalendarCreateRequest(value => value + 1);
+      return;
+    }
     const usedVariants = new Set(rows.filter(row => lunarContentIdentity(row.content_key)?.sign === calendarSign && row.content_key.startsWith("authored/calendar-weekly-moon/")).map(row => lunarContentIdentity(row.content_key)!.variant));
     const nextVariant = [1, 2, 3, 4].find(variant => !usedVariants.has(variant) && !(calendarSign === "cancer" && variant === 1));
     if (calendarSign && !nextVariant) { setMessage("All four variants already exist for this sign. Edit or restore an existing passage."); return; }
@@ -5337,7 +5343,7 @@ export function GeneratedContentAdminDashboard() {
         surface: "sky",
         mode: isCalendarWriteup ? "in_depth" : "feed",
         status: "DRAFT",
-        headline: "",
+        headline: isCalendarWriteup ? lunarContentIdentity(newMoonKey)?.title ?? "" : "",
         summary: "",
         body: "",
         lane: "reference",
@@ -5938,7 +5944,7 @@ export function GeneratedContentAdminDashboard() {
             {
               key: "fallback",
               label: activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" ? "Create Calendar write-up" : "Create fallback hook",
-              description: "Saved route fallback",
+              description: activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" ? "Choose a Moon sign and start a separate draft" : "Saved route fallback",
               icon: Flag,
               onSelect: () => handleCreateAction("knowledge", "Create fallback hook opened.")
             }
@@ -6424,7 +6430,7 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         {activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" && (
-          <Suspense fallback={<p>Loading Lunar Calendar…</p>}><LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow)} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} onCreate={sign => handleCreateAction("knowledge", "New Moon-sign passage opened.", sign)} /></Suspense>
+          <Suspense fallback={<p>Loading Lunar Calendar…</p>}><LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest} onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"} editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow)} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} onCreate={sign => handleCreateAction("knowledge", "Draft opened. Nothing has been saved yet.", sign)} /></Suspense>
         )}
         {activePage === "knowledge" && fallbackSectionFilter !== "lunar-calendar" && (
           <section className="admin-template-page admin-fallback-library">
@@ -8733,7 +8739,7 @@ export function GeneratedContentAdminDashboard() {
       return `${wordCount} ${wordCount === 1 ? "word" : "words"} · ${value.length} ${value.length === 1 ? "character" : "characters"}`;
     };
     const unchangedSkySource = isSkyPlacementSource && selectedRow?.id.startsWith("package:") && !draftHasUnsavedChanges && !packageHasProposal;
-    const editorHeading = isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
+    const editorHeading = !currentDraft.id && currentDraft.contentKey.startsWith("authored/calendar-weekly-moon/") ? `New ${lunarIdentity?.title ?? "Moon-in-sign write-up"}` : isSkySummaryDraft || selectedRow?.id.startsWith("package:") ? `Edit ${currentDraft.headline}` : currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
         : compatibilityIdentity
