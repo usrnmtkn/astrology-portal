@@ -1895,6 +1895,49 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  for (const theme of ["light", "dark"] as const) {
+    for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
+      test(`Compatibility Pair Daily appears above planets on a cold visit (${theme}, ${viewport.width}px)`, async ({ page }, testInfo) => {
+        const assertNoClientErrors = await expectNoClientErrors(page);
+        await page.setViewportSize(viewport);
+        await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme });
+
+        // Exercise both entry paths without visiting Sky or Transits first.
+        if (viewport.width === 1440) {
+          await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=compatibility");
+        } else {
+          await expectClientRouteLoads(page, "/#friends?tab=charts");
+          await page.getByRole("button", { name: "Open Nikki" }).click();
+          await page.getByRole("tab", { name: "Compatibility" }).click();
+        }
+
+        const daily = page.locator(".friend-compatibility-stage .friend-daily-forecast");
+        const comparisons = page.getByLabel("Planet comparisons");
+        await expect(daily).toBeVisible();
+        await expect(daily.locator(".friend-section-label")).toHaveText(/^Today - /);
+        await expect(daily.locator("p")).toContainText("Nikki");
+        const body = await daily.locator("p").innerText();
+        expect(body.length).toBeGreaterThan(40);
+        expect(body).not.toMatch(/SOURCE_GAP|\{[^}]+\}|undefined/);
+        await expect(comparisons.locator(".compatibility-card").first()).toBeVisible();
+        const dailyBounds = (await daily.boundingBox())!;
+        const comparisonsBounds = (await comparisons.boundingBox())!;
+        expect(dailyBounds.y + dailyBounds.height).toBeLessThanOrEqual(comparisonsBounds.y);
+        expect(dailyBounds.x).toBeGreaterThanOrEqual(0);
+        expect(dailyBounds.x + dailyBounds.width).toBeLessThanOrEqual(viewport.width);
+        await daily.screenshot({ path: testInfo.outputPath("pair-daily.png") });
+
+        // A reload and a tab round-trip must retain the complete approved reading.
+        await page.reload();
+        await expect(daily.locator("p")).toHaveText(body);
+        await page.getByRole("tab", { name: "Natal" }).click();
+        await page.getByRole("tab", { name: "Compatibility" }).click();
+        await expect(daily.locator("p")).toHaveText(body);
+        await assertNoClientErrors();
+      });
+    }
+  }
+
   test("signed-in user can inspect friend chart relationship tabs and actions", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
