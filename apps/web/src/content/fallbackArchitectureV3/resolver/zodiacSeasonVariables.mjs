@@ -20,7 +20,7 @@ export function isZodiacSeasonSourceKey(key) {
 }
 
 /** Structural editor starters only: no generated prose or serving approval. */
-export const ZODIAC_SEASON_SOURCE_STARTERS = Object.freeze(ZODIAC_SIGNS.flatMap((sign, index) => ZODIAC_SEASON_VARIABLES.map(field => ({
+export const ZODIAC_SEASON_SOURCE_STARTERS = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ ZODIAC_SIGNS.flatMap((sign, index) => ZODIAC_SEASON_VARIABLES.map(field => ({
   contentKey: zodiacSeasonSourceKey(field.id, sign), content_role: "fallback_hook", grammar_frame: "complete_sentence",
   headline: `${title(sign)} · ${field.label}`, body: "", review_status: "needs_review",
   sign, oppositeSign: ZODIAC_SIGNS[(index + 6) % ZODIAC_SIGNS.length],
