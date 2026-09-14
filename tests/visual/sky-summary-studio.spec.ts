@@ -273,6 +273,9 @@ test('live bundled summary stays Live when opened, then publishes twice without 
 
 test('Daily Sky retirement and an unavailable publication never reveal older bundled copy', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-09-07T16:00:00Z'));
+  // Keep this publication fixture independent of the preview server's absent
+  // Calendar API and the unrelated worker calculation fallback it triggers.
+  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: '2026-09-07', events: [] }] } } }));
   const key = 'cms/sky-daily-summary/sun/virgo';
   const publication = { content_key: key, state: 'retired', revision: 1, row_id: 'missing-summary', row_updated_at: '2026-09-07T15:00:00Z', updated_at: '2026-09-07T15:00:00Z' };
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
