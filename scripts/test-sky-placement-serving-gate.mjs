@@ -136,7 +136,9 @@ assert.match(runtimeSource, /import\("\.\/fallbackArchitectureV3SkyPlacementBund
 assert.doesNotMatch(runtimeSource, /^import .*sky-(?:planet-frames|placement-inventories|sign-copy).*\.json/mu);
 assert.match(placementBundleSource, /bundled-sky-placement-rows-v3\.json/u);
 assert.match(placementBundleSource, /bundled-sky-placement-house-rows-v3\.json/u);
-assert.match(appSource, /loadSkyPlacementFallbackArchitectureV3Bundle/u);
+assert.match(appSource, /prepareSkyPlacementSources\(\)/u);
+const preparationSource = readSource("apps/web/src/services/skyPlacementHydration.ts");
+assert.match(preparationSource, /loadSkyPlacementFallbackArchitectureV3Bundle\(\)/u);
 assert.match(generatedContentSource, /tldrastro-fallback-architecture-v3-sky-placement/u);
 assert.match(materializerSource, /serving-awaiting-owner-approval/u);
 assert.match(importerSource, /distribution_state: "staged"/u);
