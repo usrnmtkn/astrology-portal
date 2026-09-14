@@ -35,6 +35,11 @@ try {
   await fallbackRuntime.loadDeferredFallbackArchitectureV3Bundle();
   const weekly = await vite.ssrLoadModule("/src/services/weeklyHoroscope.ts");
 
+  assert.deepEqual(weekly.weeklyHoroscopeTagItems("First focus, second focus"), ["First focus", "second focus"]);
+  assert.deepEqual(weekly.weeklyHoroscopeTagItems(" first focus, , first focus, second focus "), ["first focus", "second focus"]);
+  assert.deepEqual(weekly.weeklyHoroscopeTagItems(null), []);
+  assert.deepEqual(weekly.weeklyHoroscopeTagItems(), []);
+
   assert.deepEqual(weekly.weeklyContentImportCounts, {
     total: rows.length,
     station: rows.filter((row) => row.surface === "weekly-station").length,

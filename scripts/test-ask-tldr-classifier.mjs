@@ -96,8 +96,8 @@ const moneyDecision = validateAskTldrClassifierResult({
   pillar: money,
   value: {
     route: "in_pillar",
-    primaryIntent: "financial_decision",
-    secondaryIntents: ["priority"],
+    primaryIntent: "financial_decision_context",
+    secondaryIntents: ["risk"],
     questionTypes: ["decision", "guidance"],
     timeWindow: "4_months",
     confidence: "high",

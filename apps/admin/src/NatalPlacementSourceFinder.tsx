@@ -329,6 +329,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
             <p><strong>{titleFromKey(emptyHouseRuler)}</strong> rules the cusp and lands in the <strong>{ordinalHouseLabel(emptyHouseRulerHouse)}</strong>.</p>
           </div>
           <EmptyHouseReaderPreview
+            secret={secret}
             house={emptyHouse}
             onOpenSource={onOpenSource}
             rulerHouse={emptyHouseRulerHouse}

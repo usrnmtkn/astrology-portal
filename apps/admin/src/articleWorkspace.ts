@@ -45,8 +45,8 @@ export function articleAppDestination(row: ArticleWorkspaceRow): ArticleAppDesti
 
   if (row.status !== "LIVE") {
     return {
-      detail: "This article is still an editorial draft and cannot appear for readers.",
-      label: "Draft—not published",
+      detail: "Readers cannot currently receive this article.",
+      label: "Draft",
       state: "draft"
     };
   }

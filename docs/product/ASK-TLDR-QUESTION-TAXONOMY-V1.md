@@ -22,11 +22,13 @@ Ask TLDR uses nine user-facing life pillars:
 
 Each pillar contains six evergreen questions, for 54 total.
 
-The evergreen questions are product prompts. Their answers are never canned. The answer engine must use the reader's deterministic TLDR astrology facts at the time the question is asked.
+The evergreen questions are product prompts. Their answers are never canned. Any future answer engine must use the reader's deterministic TLDR astrology facts at the time the question is asked.
 
-User-written questions and evergreen questions share the same intent layer. A free-text question is classified to a pillar, one primary intent, and zero or more secondary intents, then sent through the same astrology retrieval and ranking system as the evergreen question library.
+User-written questions and evergreen questions may eventually share one intent layer. A free-text question can be classified to a pillar, one primary intent, and zero or more secondary intents, then use the same governed astrology retrieval concepts as the evergreen library.
 
-## Required sequence
+This review artifact does **not** implement that classifier, retrieval layer, writer, judge, provider, release path, or reader runtime.
+
+## Required future sequence
 
 `question -> pillar + intent -> deterministic astrology retrieval -> evidence ranking -> governed TLDR meanings -> generated answer`
 
@@ -44,7 +46,21 @@ Examples:
 - Daily Life & Health may use the 6th house plus 10th, 12th, or 4th-house factors when those areas create the daily load.
 - Social may use the 11th house plus 7th or 10th-house evidence only when collaboration or professional networks are relevant.
 
-The retrieval layer must follow the question's intent rather than mechanically dumping every factor associated with the pillar.
+Future retrieval must follow the question's intent rather than mechanically dumping every factor associated with the pillar.
+
+## Evergreen question design
+
+Evergreen prompts must make sense without hidden context.
+
+They must not depend on undefined phrases such as `this relationship`, `this friendship`, `this course`, or `this position`. Those can work in free-text only when the user has supplied the referent.
+
+Decision and timing prompts should ask astrology for **context, tradeoffs, pressure points, or timing evidence**, not permission. Avoid evergreen forms such as `Should I...?`, `Am I in the right...?`, or `Is this a good time to...?` when the answer would imply that astrology makes the decision.
+
+Questions may be emotionally direct. A self-selected premise such as `Where am I overcommitting?` tells the system what the reader wants explored; it does not prove that the chart has established overcommitment as a fact. Evergreen prompts should not presuppose hidden facts about another person or an external outcome.
+
+Evergreen question text is **intent, not evidence**. Selecting a prompt tells the future answer system what the reader wants explored; the prompt's premise is not a calculated fact and must not be repeated back as though the chart proved it.
+
+Decision prompts also need distinct human language. Safety rewrites must not collapse into a repeated stem such as `What should I look at before...` or `What should I consider before...`. The question library should ask what matters, what the choice would require, what would make it workable, or what problem the decision needs to solve.
 
 ## Evidence inheritance
 
@@ -52,7 +68,7 @@ Each pillar defines `defaultEvidencePriority`.
 
 Each question defines `evidenceFocus`.
 
-Effective retrieval priority is:
+Future effective retrieval priority should be:
 
 1. the question's `evidenceFocus`;
 2. the pillar's `defaultEvidencePriority`;
@@ -69,7 +85,7 @@ Allowed question types:
 - `pattern`: what repeats or underlies the situation;
 - `guidance`: what to do with the current astrology;
 - `direction`: what the astrology is developing toward;
-- `decision`: how to evaluate a choice without pretending astrology makes the choice;
+- `decision`: context for evaluating a choice without pretending astrology makes the choice;
 - `timing`: when conditions are more or less supportive.
 
 A question can have more than one type.
@@ -80,13 +96,13 @@ A question can have more than one type.
 - `4_months`: developing situation, decision, or medium-term opportunity;
 - `12_months`: long arc, recurring pattern, or direction requiring annual context.
 
-The default window is a retrieval starting point, not a promise that every answer needs the entire period. The engine may narrow to the exact active factor when that is sufficient.
+The default window is a retrieval starting point, not a promise that every answer needs the entire period. A future engine may narrow to the exact active factor when that is sufficient.
 
 ## Free-text routing
 
-A user-written question should preserve the user's exact wording for the answer screen.
+A future free-text question should preserve the user's exact wording for the answer screen.
 
-Classification returns:
+Classification may return:
 
 - `pillar`;
 - `primaryIntent`;
@@ -103,14 +119,14 @@ may route to:
 
 - pillar: `career`;
 - primary intent: `recognition`;
-- secondary intents: `credit`, `workload`, `authority`;
-- nearest evergreen: `career.recognition` or `career.credit`.
+- secondary intents: `workload`, `authority`;
+- nearest evergreen: `career.recognition`.
 
 The nearest evergreen record supplies retrieval hints only. The system must answer the user's actual question.
 
 ## Money boundary
 
-`Money` can surface financial pressure, priorities, tradeoffs, and timing context.
+`Money` can surface financial pressure, priorities, tradeoffs, compensation themes, and timing context.
 
 The question system must not use astrology to recommend or guarantee an investment, trade, loan, debt action, purchase, sale, or other financial transaction. Decision questions are reflective and contextual, not financial advice.
 
@@ -126,9 +142,9 @@ The question system must not use astrology to diagnose illness, infer symptoms, 
 
 It must not assert psychic certainty, supernatural ability, spiritual awakening, or hidden facts about another person.
 
-## Answer contract
+## Future answer contract
 
-The generated answer should usually follow:
+A generated answer should usually:
 
 1. answer the question directly;
 2. name the strongest astrology that explains why;
@@ -141,11 +157,6 @@ Do not force one transit to carry an answer when two or three factors are necess
 
 ## Governance
 
-This V1 taxonomy is product-authoring data only.
+The historical proposal #566 records an approval claim, but does not provide a resolvable owner approval receipt for reconciliation. The current repository's `needs_review` / `ownerApproved:false` boundary is therefore preserved. Question revisions remain review material; importing them does not activate the reader runtime or approve generated answers.
 
-Until the owner explicitly approves it:
-
-- it remains `needs_review`;
-- it is not reader-runtime data;
-- it must not be promoted into Content Studio/live generated content;
-- it must not be used as proof that any individual answer is owner-approved.
+Source: PR #566, cleaned branch revision `8a3d7c6c07983b262e3dc9418403f7f9d7ed6032`. A separate owner decision with exact question-set provenance is required before changing approval or serving state.

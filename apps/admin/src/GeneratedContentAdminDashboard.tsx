@@ -1309,7 +1309,7 @@ function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord)
   }
 
   const contentClass = contentClassForRow(row);
-  if (sourceContentSystem === "authored") return "authored-content";
+  if (sourceContentSystem === "authored" || sourceContentType === "authored-content" || sourceRole === "authored-card") return "authored-content";
   if (sourceContentSystem === "generated" || contentClass === "generated") return "generated-content";
   if (contentClass === "reference") return "source-material";
   if (contentClass === "legacy" || (provider && !/phrasebank|migration|local-normalized-dashboard-source|manual-admin/i.test(provider))) return "legacy-generated";
