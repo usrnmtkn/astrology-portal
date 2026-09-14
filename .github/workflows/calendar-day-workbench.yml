@@ -4,7 +4,7 @@ on:
     branches: [chatgpt/calendar-day-overview-20260913]
     paths: [.github/workflows/calendar-day-workbench.yml]
 permissions:
-  contents: write
+  contents: read
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -13,55 +13,47 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: chatgpt/calendar-day-overview-20260913
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - name: Verify provenance and retrieve project context
+      - name: Identify tested source
         run: |
           test "$GITHUB_REF" = "refs/heads/chatgpt/calendar-day-overview-20260913"
           test "$GITHUB_REPOSITORY" = "usrnmtkn/astrology-portal"
-          git remote set-url origin https://github.com/usrnmtkn/astrology-portal.git
-          git fetch --prune origin
-          git log -1 --oneline
-          git rev-list --left-right --count origin/main...HEAD
-          node scripts/agent-memory.mjs recall "Calendar day overview full Sky Moon placement article" --repo . --ref origin/main --fetch --limit 4 --state "$HOME/.local/state/tldr-astro-memory"
-      - name: Apply guarded integration and commit scoped source
-        run: |
-          if ! grep -q 'renderDayReading={(day)' apps/web/src/App.tsx; then
-            python3 .github/apply-calendar-day.py
-          fi
-          python3 .github/finalize-calendar-day.py
+          mkdir -p test-results/calendar-day-diagnostics
+          git log -1 --format='TESTED_COMMIT=%H' | tee test-results/calendar-day-diagnostics/revision.txt
           git diff --check
-          git add apps/web/src/App.tsx apps/web/src/features/calendar/LunarCalendar.tsx apps/web/src/routes/CalendarRoute.tsx apps/web/src/styles/lunar-calendar.css scripts/test-calendar-package-boundary.mjs
-          if ! git diff --cached --quiet; then
-            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'feat(calendar): share Sky overview and full Moon reading in Day view'
-            git push origin HEAD:chatgpt/calendar-day-overview-20260913
-          fi
-          git log -1 --format='TESTED_COMMIT=%H'
       - run: npm ci
-      - run: npm run build:knowledge
+      - id: knowledge
+        run: npm run build:knowledge
       - name: Day reading and Calendar content boundary
+        if: ${{ !cancelled() && steps.knowledge.outcome == 'success' }}
         run: |
-          node --import tsx scripts/test-calendar-day-reading.mts
-          node scripts/test-calendar-package-boundary.mjs
+          node --import tsx scripts/test-calendar-day-reading.mts 2>&1 | tee test-results/calendar-day-diagnostics/reading.log
+          node scripts/test-calendar-package-boundary.mjs 2>&1 | tee test-results/calendar-day-diagnostics/boundary.log
       - name: Shared overview regression suite
-        run: npm run test:sky-daily-summary
+        if: ${{ !cancelled() && steps.knowledge.outcome == 'success' }}
+        run: npm run test:sky-daily-summary 2>&1 | tee test-results/calendar-day-diagnostics/summary.log
       - name: Design token audits
-        run: npm run qa:css-audit
+        if: ${{ !cancelled() && steps.knowledge.outcome == 'success' }}
+        run: npm run qa:css-audit 2>&1 | tee test-results/calendar-day-diagnostics/css.log
       - name: Web typecheck
-        run: npm run typecheck -w @tldr/web
+        if: ${{ !cancelled() && steps.knowledge.outcome == 'success' }}
+        run: npm run typecheck -w @tldr/web 2>&1 | tee test-results/calendar-day-diagnostics/typecheck.log
       - name: Install browser
+        if: ${{ !cancelled() && steps.knowledge.outcome == 'success' }}
         run: npx playwright install --with-deps chromium
       - name: Fresh release build and browser verification
-        run: npx playwright test tests/visual/calendar-day-reading.spec.ts --project=chromium-desktop --retries=0 --max-failures=1
+        if: ${{ !cancelled() && steps.knowledge.outcome == 'success' }}
+        run: npx playwright test tests/visual/calendar-day-reading.spec.ts --project=chromium-desktop --retries=0 --max-failures=1 2>&1 | tee test-results/calendar-day-diagnostics/browser.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: calendar-day-verification
           retention-days: 2
           path: |
+            test-results/calendar-day-diagnostics
             test-results/calendar-day-reading
             test-results/playwright
             apps/web/src/features/calendar/CalendarDayReading.tsx
