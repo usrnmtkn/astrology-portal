@@ -1,3 +1,4 @@
+import { bundledPublications } from "../helpers/bundled-publications";
 import { expect, test, type Page } from "@playwright/test";
 import {
   expectInteractionLoadsWithin,
@@ -91,6 +92,7 @@ function fixtureSky(signOffset: number) {
 }
 
 async function seedClientState(page: Page, theme: "light" | "dark" = "light") {
+  await bundledPublications(page);
   const friendNatalChart = fixtureSky(0);
   await freezeTime(page);
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {

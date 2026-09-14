@@ -46,8 +46,11 @@ await loadSkyDetailContent(facts, stale, [], async keys => {
 });
 const offline = await loadSkyDetailContent(facts, content, ["unavailable-row"], async () => { throw new Error("offline fixture"); });
 assert.equal(offline.get(key), content.get(key), "An offline refresh keeps the eligible approved row.");
-const staleOffline = await loadSkyDetailContent(facts, stale, [], async () => { throw new Error("offline fixture"); });
-assert.equal(staleOffline.has(key), false, "An offline refresh cannot retain a superseded row.");
+await assert.rejects(
+  loadSkyDetailContent(facts, stale, [], async () => { throw new Error("offline fixture"); }),
+  /current article publication/i,
+  "An unavailable authoritative row must reject a partial article, not reveal older fallback prose."
+);
 installContentPublications([{content_key:key,state:"retired",revision:999999,row_id:null,row_updated_at:null,updated_at:"2026-09-08T15:00:00Z"}]);
 const retired = await loadSkyDetailContent(facts, content, [], async () => { throw new Error("offline fixture"); });
 assert.equal(retired.has(key), false, "A missing response must not restore a retired row.");

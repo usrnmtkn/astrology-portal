@@ -34,6 +34,8 @@ import {
   KNOWLEDGE_MATRIX_V9_VERSION,
   isDeferredFallbackArchitectureV3BundleLoaded,
   loadDeferredFallbackArchitectureV3Bundle,
+  loadSkyPlacementFallbackArchitectureV3Bundle,
+  isSkyPlacementFallbackArchitectureV3BundleLoaded,
   loadKnowledgeMatrixV9Runtime,
   skyV4ReaderRenderer,
   SourceGapError as FallbackV3SourceGapError,
@@ -1912,7 +1914,7 @@ export function LunarCalendar({
   const [selectedCalendar, setSelectedCalendar] = useState<LunarCalendarMonthData | null>(null);
   const [seasonEvents, setSeasonEvents] = useState<LunarCalendarEvent[]>([]);
   const [status, setStatus] = useState<LunarCalendarStatus>("loading");
-  const [moonContentReady, setMoonContentReady] = useState(isDeferredFallbackArchitectureV3BundleLoaded);
+  const [moonContentReady, setMoonContentReady] = useState(() => isDeferredFallbackArchitectureV3BundleLoaded() && isSkyPlacementFallbackArchitectureV3BundleLoaded());
   const [selectedDateKey, setSelectedDateKey] = useState(initialDateKey);
   const [retryNonce, setRetryNonce] = useState(0);
   const [locationPickerOpen, setLocationPickerOpen] = useState(false);
@@ -1929,7 +1931,7 @@ export function LunarCalendar({
     let active = true;
     // Calculated days and the authored Moon bundle load concurrently. An absent
     // row while its bundle is loading is not a genuine content gap.
-    void loadDeferredFallbackArchitectureV3Bundle()
+    void Promise.all([loadDeferredFallbackArchitectureV3Bundle(), loadSkyPlacementFallbackArchitectureV3Bundle()])
       .catch(error => console.warn("Calendar Moon content could not load; keeping available fallback content.", error))
       .finally(() => { if (active) setMoonContentReady(true); });
     return () => { active = false; };

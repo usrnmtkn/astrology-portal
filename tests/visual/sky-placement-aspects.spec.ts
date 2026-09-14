@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { bundledPublications } from '../helpers/bundled-publications';
+test.beforeEach(async ({ page }) => bundledPublications(page));
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`aspects live inside placements ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(90_000);

@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { bundledPublications } from '../helpers/bundled-publications';
+test.beforeEach(async ({ page }) => bundledPublications(page));
 for (const theme of ['light', 'dark']) for (const width of [390, 1440]) {
   test(`summary paragraphs ${theme} ${width}`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1100 });

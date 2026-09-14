@@ -1,0 +1,52 @@
+name: Sky summary browser regression
+
+on:
+  pull_request:
+    paths:
+      - 'apps/web/**'
+      - 'scripts/ci-*'
+      - 'tests/visual/sky-*.spec.ts'
+      - 'playwright*.ts'
+      - 'package*.json'
+      - '.github/workflows/sky-summary-candidate.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'tests/visual/sky-*.spec.ts'
+      - 'playwright*.ts'
+      - 'package*.json'
+      - '.github/workflows/sky-summary-candidate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sky-summary-browser-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  summary-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npm run typecheck
+      - run: npx playwright install --with-deps chromium
+      - name: Verify cold load, warm refresh, publication replacement, retirement, retry and initial loading budget
+        run: npx playwright test -c playwright.config.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts --workers=1
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: sky-summary-browser-results
+          path: test-results/
+          retention-days: 7
