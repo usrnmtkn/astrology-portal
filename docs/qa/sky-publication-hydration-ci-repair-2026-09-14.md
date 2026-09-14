@@ -158,3 +158,13 @@ Calendar/Account features bring the combined build to 475,143 gzip bytes, 393
 over that cap. A 500-byte allocation covers those features (new cap 475,250).
 App JavaScript, startup CSS, aggregate and individual deferred-chunk limits,
 accuracy thresholds and all behavioral assertions remain unchanged.
+
+The new main #806 Calendar full-Moon reading initially selected the old weekly
+paragraph in the local release build. Its intended full passage is in the Sky
+placement partition, while Calendar waited only for the older deferred bundle.
+Calendar now loads both existing dependencies before its first body render;
+no new source, cache, wording or publication state is introduced. Eight
+viewport/theme/data cases verify the complete intended paragraphs. A delayed
+partition and DOM observer also assert that no other Moon passage paints first.
+These eight tests join the existing placement reader job. Calendar package
+boundaries, type checking and the integrated web budget remain passing.
