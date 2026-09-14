@@ -5413,7 +5413,7 @@ export function GeneratedContentAdminDashboard() {
           blockType: "essay", promptVersion: "cms-surface-template-v1", sections: null, facts: null, reviewerNotes: "",
           sourceSnapshot: {
             contentType: "mustache-template", contentSystem: "cms-surface-override", contentLevel: "owner-authored",
-            authoringSource: "admin-dashboard", cmsSurfaceId: "sky-daily-summary", readerLocation: "Sky → Daily Sky Summary",
+            authoringSource: "admin-dashboard", cmsSurfaceId: "sky-daily-summary", readerLocation: "Sky → Daily Sky Summary; Calendar → Sun introduction",
             allowedSlots: field.allowedSlots,
             ...(initialBody !== undefined && candidateReceipt ? { suppliedBank: candidateReceipt } : {}),
             ...(moonSource ? { moonSource, sourceAttachment: "daily-sky-summary-moon-system-v6-owner-phrases-audited.md" } : {}),

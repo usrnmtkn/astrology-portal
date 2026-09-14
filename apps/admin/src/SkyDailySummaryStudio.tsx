@@ -62,7 +62,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
       <div>
         <p className="admin-eyebrow">Sky Write-ups</p>
         <h3>Daily Sky Summary</h3>
-        <p>Edit the wording in the paragraph at the top of Sky. Signs, degrees, planet names, and timing come from the calculated sky.</p>
+        <p>Edit the Sky overview and Calendar Sun summary. Signs, degrees, planet names, and timing come from the calculated sky.</p>
         <p>Start Sun and Moon summaries with a finite verb, such as “turns” or “brings”, without a final period. If no summary is published or included in the app, Sky shows the placement alone. Save & publish makes your edits live. Save draft keeps your changes for later.</p>
       </div>
     </header>

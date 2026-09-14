@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import type { ReactNode } from "react";
-import type { LocationInput } from "../types";
+import type { LocationInput, SkySnapshot } from "../types";
 import type { LunarCalendarEvent } from "../services/ephemeris";
 import type { LiveGeneratedContent } from "../services/generatedContent";
 import type { SkyPlacementContentStatus } from "../features/sky/skyPlacementContentState";
@@ -14,6 +14,7 @@ const LunarCalendar = lazy(() =>
 
 type CalendarRouteProps = {
   fallback: ReactNode;
+  sky?: SkySnapshot | null;
   generatedContent: Map<string, LiveGeneratedContent>;
   generatedContentStatus?: "idle" | "loading" | "ready";
   skyPlacementContentStatus?: SkyPlacementContentStatus;
@@ -27,6 +28,7 @@ type CalendarRouteProps = {
 
 export function CalendarRoute({
   fallback,
+  sky,
   generatedContent,
   generatedContentStatus,
   skyPlacementContentStatus,
@@ -40,6 +42,7 @@ export function CalendarRoute({
   return (
     <Suspense fallback={fallback}>
       <LunarCalendar
+        sky={sky}
         generatedContent={generatedContent}
         generatedContentStatus={generatedContentStatus}
         skyPlacementContentStatus={skyPlacementContentStatus}

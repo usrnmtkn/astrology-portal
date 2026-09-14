@@ -10973,7 +10973,7 @@ export function App() {
   const lastSocialProfileSaveRef = useRef("");
   const initialSkyCacheKey = skySnapshotCacheKey(
     withTimeZone(initialLocationState.location),
-    (mode === "guest" || mode === "member") && liveSkyReference(getInitialTransitDate(), withTimeZone(initialLocationState.location).timeZone)
+    (mode === "guest" || mode === "member" || mode === "calendar") && liveSkyReference(getInitialTransitDate(), withTimeZone(initialLocationState.location).timeZone)
       ? `live-${skyDateTimeFromInput(getInitialTransitDate(), initialLocationState.location, true).toISOString()}`
       : getInitialTransitDate()
   );
@@ -12612,8 +12612,8 @@ export function App() {
     }
 
     const skyLocation = withTimeZone(location);
-    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member"));
-    const live = (mode === "guest" || mode === "member") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
+    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member" || mode === "calendar"));
+    const live = (mode === "guest" || mode === "member" || mode === "calendar") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
     const selectionKey = skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`);
     const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky);
     skyCalculationSelectionRef.current = selectionKey;
@@ -12708,7 +12708,7 @@ export function App() {
   }, [friendCalculationNeeds, location, mode, skyDate, skyRefreshKey]);
 
   useEffect(() => {
-    if (mode !== "guest" && mode !== "member") return;
+    if (mode !== "guest" && mode !== "member" && mode !== "calendar") return;
     const timeZone = withTimeZone(location).timeZone;
     const refresh = () => {
       if (document.visibilityState === "visible" && liveSkyReference(skyDate, timeZone)) setSkyRefreshKey(Date.now());
@@ -14557,6 +14557,7 @@ export function App() {
               )}
               {mode === "calendar" && (
                 <CalendarRoute
+                  sky={sky}
                   fallback={<FeatureLoadingFallback />}
                   generatedContent={skyGeneratedContent}
                   generatedContentStatus={calendarContentStatus}
