@@ -65,8 +65,8 @@ type PageLoadBoundaryProps = {
   recoveryLabel?: string;
   renderFallback?: (detail: string, retry: () => void) => ReactNode;
 };
-export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed: boolean; detail: string }> {
-  state = { failed: false, detail: "" };
+export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed: boolean; detail: string; assetFailure: boolean }> {
+  state = { failed: false, detail: "", assetFailure: false };
   static getDerivedStateFromError() { return { failed: true }; }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
@@ -78,7 +78,13 @@ export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed:
     this.setState({ detail });
   }
 
-  retry = () => { if (this.state.failed) this.setState({ failed: false, detail: "" }); };
+  retry = () => {
+    if (!this.state.failed) return;
+    // React.lazy caches a failed import, and an old chunk URL cannot recover
+    // by remounting it. An explicit retry fetches the current HTML/chunk map.
+    if (this.state.assetFailure && this.props.recoveryHref) { window.location.reload(); return; }
+    this.setState({ failed: false, detail: "", assetFailure: false });
+  };
 
   handlePreloadError = (event: Event) => {
     // A mounted child boundary owns its failed route; the root must retain
@@ -86,14 +92,19 @@ export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed:
     if (event.defaultPrevented) return;
     const payload = (event as Event & { payload?: unknown }).payload;
     const detail = payload ? errorDetail(payload) : "A page asset from an older deployment could not be loaded.";
-    event.preventDefault();
-    if (reloadReaderRouteOnce()) return;
-    this.setState({ failed: true, detail });
+    if (reloadReaderRouteOnce()) { event.preventDefault(); return; }
+    // Suppressing this event makes Vite resolve the import as undefined. Keep
+    // the original rejection so React receives the actual asset failure.
+    this.setState({ failed: true, detail, assetFailure: true });
   };
 
   componentDidMount() {
     if (this.props.recoveryHref) window.addEventListener("hashchange", this.retry);
-    window.addEventListener("vite:preloadError", this.handlePreloadError);
+    // Route/editor boundaries own failed assets. The outer reader boundary
+    // still catches React errors, but must not also replace the navigation.
+    if (this.props.resetKey !== undefined || this.props.recoveryHref) {
+      window.addEventListener("vite:preloadError", this.handlePreloadError);
+    }
   }
   componentWillUnmount() {
     window.removeEventListener("hashchange", this.retry);
