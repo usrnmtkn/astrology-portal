@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import assert from "node:assert/strict";
 import { Readable } from "node:stream";
-import { servingPackageRecords } from "../api/_lib/content-live-status";
+import { contentLiveStatuses, servingPackageRecords } from "../api/_lib/content-live-status";
 import { ZODIAC_SEASON_SOURCE_STARTERS } from "../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { skyPlacementSourceRecords } from "../api/_lib/sky-placement-sources";
 process.env.NODE_ENV = "test";
@@ -57,6 +57,7 @@ async function publish(row: any, expected=200) { return request('PATCH', {id: ro
 for (const source of ZODIAC_SEASON_SOURCE_STARTERS) {
  const got = await request('GET', undefined, `?contentKeys=${encodeURIComponent(source.contentKey)}&status=all&visibility=all&limit=1`);
  assert.equal(got.rows[0].sections.packageRecord.body, '');
+ assert.equal(contentLiveStatuses(got.rows, stored)[0].live, false, `${source.contentKey}: an empty starter is not live prose`);
 }
 const baseline = skyPlacementSourceRecords.get('sky-placement/article/sun/virgo')!;
 let draft = await saveSource(baseline, {...baseline, placementArticle: '{{zodiacSeason}}\n\n{{zodiacSeasonPolarAxis}}'});
@@ -71,6 +72,7 @@ for (const source of ZODIAC_SEASON_SOURCE_STARTERS) {
  value = (await publish(value)).rows[0];
  assert.equal(value.status, 'LIVE'); assert.equal(value.lane, 'serving');
  assert.equal(value.sections.packageRecord.body, `During this transit, fixture approved full season prose for ${source.sign}.\n\nFixture second paragraph.`);
+ assert.equal(contentLiveStatuses([value], stored)[0].live, true, `${source.contentKey}: published prose is live`);
 }
 const published = (await publish(draft)).rows[0];
 assert.equal((await publish(moonDraft)).rows[0].sections.packageRecord.TLDR_What, '{{zodiacSeason}}');
@@ -106,6 +108,8 @@ assert(runtime.fallbackRendererV3.renderNatalAngle({angle: 'ascendant', sign: 'v
 assert(firstBody.includes('full season prose for virgo')); assert(!firstBody.includes('{{'));
 const sharedLive = stored.find(row => row.content_key === 'fallback-hook/zodiac-season/virgo' && row.status === 'LIVE');
 const changed = await saveSource(sharedLive.sections.packageRecord, {...sharedLive.sections.packageRecord, body: 'During this transit, fixture new approved season prose.\n\nFixture preserved second paragraph.'}, sharedLive);
+assert.equal(contentLiveStatuses([changed], stored)[0].live, false, 'An unpublished source revision must not be labeled live');
+assert.equal(contentLiveStatuses([sharedLive], stored)[0].live, true, 'The existing published source remains live during drafting');
 await runtime.refreshContentPublications(true); runtime.clearCachedFallbackArchitectureV3Bundle();
 runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
 assert.equal(runtime.skyV4ReaderRenderer.renderRoute(input).mainBody, firstBody, 'Shared draft must not change reader copy');
@@ -119,6 +123,7 @@ console.log('PASS: actual publication -> dashboard loader -> shipped Sky reader,
 
 // A source still marked LIVE in storage cannot bypass its retired publication.
 retired.add('fallback-hook/zodiac-season/virgo');
+assert.equal(contentLiveStatuses(stored.filter(row => row.content_key === 'fallback-hook/zodiac-season/virgo'), stored, row => !retired.has(row.content_key)).some(row => row.live), false, 'Retired shared prose must not fall back to an empty starter labeled live');
 const currentArticle = stored.find(row => row.id === published.id);
 const retiredDraft = await saveSource(currentArticle.sections.packageRecord, {...currentArticle.sections.packageRecord, placementArticle: 'During this transit, {{zodiacSeason}}'}, currentArticle);
 await publish(retiredDraft, 400);
