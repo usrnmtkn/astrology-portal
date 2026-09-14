@@ -1,0 +1,31 @@
+name: Isolated CI diagnostics
+on:
+  push:
+    branches: ['chatgpt/ci-diagnostic-reproduction-20260914']
+permissions:
+  contents: read
+jobs:
+  diagnostics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - name: Package isolated reproduction without Git credentials or environment files
+        run: |
+          mkdir -p /tmp/ci-diagnostics
+          git archive --format=tar HEAD | gzip > /tmp/ci-diagnostics/source.tar.gz
+          tar --exclude='.env*' -czf /tmp/ci-diagnostics/dependencies.tar.gz node_modules packages/astro-knowledge/dist
+          git log -1 --format='%H %s' > /tmp/ci-diagnostics/revision.txt
+      - uses: actions/upload-artifact@v6
+        with:
+          name: isolated-ci-reproduction
+          path: /tmp/ci-diagnostics/
+          retention-days: 1
