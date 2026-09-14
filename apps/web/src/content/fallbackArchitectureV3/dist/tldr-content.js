@@ -3880,6 +3880,7 @@ var kinds = /* @__PURE__ */ new Set(["planet", "sign", "placement", "timing", "a
 var safeName = (name) => /^[A-Za-z][A-Za-z0-9]*$/u.test(name) && !["constructor", "prototype", "__proto__"].includes(name);
 var tokenPattern2 = () => /\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu;
 var tokens2 = (value) => [...String(value ?? "").matchAll(tokenPattern2())];
+var articleFactText = (name, value) => ["aspectsInSign", "aspectsWhileRetrograde"].includes(name) ? value.split(/\r?\n/u).map((line) => line.replace(/^\s*-\s+/u, "").trim()).filter(Boolean).join(", ") : value;
 function isSkyPlacementArticleField(contentKey, path) {
   return /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(String(contentKey ?? "")) && articlePaths.includes(path);
 }
@@ -3923,7 +3924,7 @@ function skyPlacementArticleVariableSegments(value, calculated = {}, owner = {},
     let kind = "fact";
     let reference = `calculated#${name}`;
     if (facts.has(name)) {
-      text2 = Object.hasOwn(calculated, name) && typeof calculated[name] === "string" ? calculated[name] : "";
+      text2 = Object.hasOwn(calculated, name) && typeof calculated[name] === "string" ? articleFactText(name, calculated[name]) : "";
       if (!text2.trim()) reason = `Needs calculated ${name}`;
     } else if (knownPhrase(name, owner)) {
       const resolved = phraseSource(owner, name, records);
@@ -3933,7 +3934,7 @@ function skyPlacementArticleVariableSegments(value, calculated = {}, owner = {},
       if (!reason) {
         const missing = tokens2(resolved.text).map((part) => part[1]).filter((id) => !Object.hasOwn(calculated, id) || typeof calculated[id] !== "string" || !calculated[id].trim());
         if (missing.length) reason = `Needs calculated ${[...new Set(missing)].join(", ")}`;
-        else text2 = resolved.text.replace(tokenPattern2(), (_, id) => calculated[id]);
+        else text2 = resolved.text.replace(tokenPattern2(), (_, id) => articleFactText(id, calculated[id]));
       }
     } else reason = `Unknown Sky variable ${token}`;
     if (!reason && /\{\{|\}\}/u.test(text2)) reason = `Unresolved variable inside ${token}`;
@@ -5885,7 +5886,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-14a";
+var PACKAGE_VERSION = "v3-2026-09-14b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
