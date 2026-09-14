@@ -1,3 +1,4 @@
+import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
 import { normalizeTransitNatalPreviewInput, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
 import { approveNatalAspectStudioCopy } from "../../api/_lib/content-studio-approval";
 import { contentLiveStatuses, servingPackageRecords, type LiveStatusRow } from "../../api/_lib/content-live-status";
@@ -7416,3 +7417,35 @@ for (const theme of ['light','dark']) for (const width of [1440,390]) {
     await noErrors();
   });
 }
+
+for (const width of [390, 1440]) test(`Empty-house preview uses the actual authenticated reader API at ${width}`, async ({ page }) => {
+  await seedAdminApi(page);
+  const api = emptyHousePreviewApi();
+  const results: Array<{ body: any; rendered: any }> = [];
+  try {
+    await page.route("**/api/admin/natal-placement-preview", async route => {
+      const body = route.request().postDataJSON();
+      const result = await api.invoke(body, route.request().headers());
+      expect(result.status).toBe(200);
+      results.push({ body, rendered: result.payload.rendered });
+      await route.fulfill({ status: result.status, json: result.payload });
+    });
+    await page.setViewportSize({ width, height: 1000 });
+    await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Natal+Chart");
+    await page.getByRole("tab", { name: "Empty houses", exact: true }).click();
+    const workspace = page.getByRole("region", { name: "Empty house writing", exact: true });
+    await workspace.getByLabel("Empty house cusp sign").selectOption("gemini");
+    await workspace.getByLabel("Empty house ruler house").selectOption("10");
+    const copy = workspace.locator(".admin-empty-house-assembly-copy p");
+    for (const audience of ["you", "they"]) {
+      await workspace.getByRole("button", { name: audience === "you" ? "You" : "Friend", exact: true }).click();
+      await expect.poll(() => results.some(result => result.body.sign === "gemini" && result.body.rulerHouse === 10 && result.body.audience === audience)).toBe(true);
+      const result = results.filter(result => result.body.sign === "gemini" && result.body.rulerHouse === 10 && result.body.audience === audience).at(-1)!;
+      await expect(copy).toHaveText(result.rendered.body);
+      expect(result.rendered.body.length).toBeGreaterThan(100);
+      await expect(workspace.getByLabel("Sources used in this assembly").getByRole("button")).toHaveCount(result.rendered.sourceKeys.length);
+    }
+    await expectNoHorizontalOverflow(page, `Empty-house actual API preview ${width}`);
+    await workspace.screenshot({ path: `test-results/empty-house-actual-api-${width}.png` });
+  } finally { await page.unroute("**/api/admin/natal-placement-preview"); api.close(); }
+});

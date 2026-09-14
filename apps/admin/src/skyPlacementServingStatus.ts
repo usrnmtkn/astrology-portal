@@ -1,14 +1,8 @@
-import skyPlacementServingManifestV1 from "../../web/src/content/fallbackArchitectureV3/authored-inputs/sky-placement-serving-manifest-v1.json";
+import skyPlacementServingKeys from "./skyPlacementServingKeys.json";
 
 export const ownerApprovedReplacementLabel = "Not serving — replaced by owner-approved article";
 
-const servingSkyPlacementArticleKeys = new Set(
-  skyPlacementServingManifestV1.releases.flatMap((release) => (
-    release.distribution_state === "serving"
-      ? release.approved_keys.filter((key) => key.startsWith("fallback-hook/sky-sign-copy/"))
-      : []
-  ))
-);
+const servingSkyPlacementArticleKeys = new Set(skyPlacementServingKeys);
 
 export function ownerApprovedSkyPlacementArticleKey(contentKey: string) {
   const match = /^sky\.placement\.base\.([^.]+)\.([^.]+)$/u.exec(contentKey);
@@ -18,5 +12,5 @@ export function ownerApprovedSkyPlacementArticleKey(contentKey: string) {
   const sign = match[2].replaceAll("_", "-");
   const articleKey = `fallback-hook/sky-sign-copy/${planet}/${sign}`;
 
-  return servingSkyPlacementArticleKeys.has(articleKey) ? articleKey : null;
+  return servingSkyPlacementArticleKeys.has(`${planet}/${sign}`) ? articleKey : null;
 }
