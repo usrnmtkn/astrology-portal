@@ -11340,6 +11340,9 @@ export function App() {
 
   function openSkyDetail(detail: SkyDetail) {
     selectedCalendarTransitEventRef.current = null;
+    // A card supplies a fresh, lightweight article. Even for a previously
+    // opened route, its full placement facts must finish loading again.
+    selectedSkyDetailRefreshKeyRef.current = "";
     if (detail.routePath?.startsWith("friends?")) {
       // The clicked article was assembled with the current overlay. Only a
       // subsequent overlay revision should invalidate it, not its first render.
