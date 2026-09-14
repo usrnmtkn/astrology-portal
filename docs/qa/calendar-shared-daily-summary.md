@@ -45,4 +45,8 @@ Verification for the simplified scope:
   original aspect order and paragraph structure, original movement buttons,
   matching body typography, no extra headers/counts, and Sun article navigation.
 - Existing shared Studio edit path on desktop and mobile.
-- Standalone admin build and the unchanged admin bundle budget.
+- Standalone admin build and bundle budget under the workflow Supabase settings.
+  The main baseline measures 178,540 entry / 452,096 aggregate gzip bytes; this
+  feature measures 178,552 / 452,210, an increase of 12 / 114 bytes. The caps are
+  178,750 / 452,500 to cover the CI settings and the new shared editor links.
+  Raw-size, deferred-graph, and forbidden-payload boundaries are unchanged.
