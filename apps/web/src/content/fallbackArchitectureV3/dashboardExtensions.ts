@@ -1,3 +1,4 @@
+import { isZodiacSeasonSourceKey } from "./resolver/zodiacSeasonVariables.mjs";
 import skyReaderRelease from "./authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
 import skyReaderApproval from "./authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 import { isDynamicTransitNatalExactKey } from "../transitNatalIdentity.js";
@@ -111,7 +112,8 @@ export function isFallbackDashboardRecordAllowed(
   record: FallbackDashboardExtensionRecord,
   currentPackageKeys: ReadonlySet<string>
 ) {
-  return currentPackageKeys.has(record.contentKey)
+  return (isZodiacSeasonSourceKey(record.contentKey) && record.content_role === "fallback_hook")
+    || currentPackageKeys.has(record.contentKey)
     || isDynamicNatalPlacementExactRecord(record)
     || isDynamicNatalAspectExactRecord(record)
     || isDynamicTransitNatalExactRecord(record)

@@ -1,3 +1,4 @@
+import { ZODIAC_SEASON_SOURCE_STARTERS } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { test, expect } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 import { makeSkyIngressComposition } from '../../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs';
@@ -13,7 +14,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
    const keys = url.searchParams.getAll('contentKeys').flatMap(v => v.split(','));
    if (delayLibrary && keys.some(key => key.startsWith('fallback-'))) await new Promise(resolve => setTimeout(resolve, 300));
    const rows = keys.flatMap(contentKey => {
-    const baseline = skyPlacementSourceRecords.get(contentKey);
+    const baseline = skyPlacementSourceRecords.get(contentKey) ?? ZODIAC_SEASON_SOURCE_STARTERS.find(row => row.contentKey === contentKey);
+    if (baseline && contentKey.startsWith('fallback-hook/zodiac-season')) { baseline.body = contentKey.includes('polar-axis') ? 'Fixture Aries and Libra axis paragraph. This is season prose.' : 'Fixture Aries season paragraph. A second full sentence stays editable.'; baseline.review_status = 'approved'; }
     if (!baseline) return [];
     const source = structuredClone(baseline);
     if (contentKey === key) {
@@ -24,6 +26,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
       source.ingress = { ...makeSkyIngressComposition(), modules: [] };
       source.ingress.sources.openingHook = { kind: 'placement', text: 'During this transit, fixture local opening.' };
       source.ingress.sources.closingLine = { kind: 'placement', text: 'Fixture local ending.' };
+      source.ingress.sources.signMethod = { kind: 'sign', text: 'Fixture existing sign method.' };
      }
     }
     return [{ id: `package:${contentKey}`, content_key: contentKey, surface: 'sky', mode: 'in_depth', status: 'DRAFT', lane: 'reference', provider: 'tldrastro-fallback-architecture-v3', headline: source.headline, summary: source.summary, body: source.body_you, sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: 'fallback_hook', event_type: 'fallback-hook', package_starter: true }];
@@ -75,6 +78,15 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   await expect(preview).toHaveText('During this transit, fixture edited opening. Saturn in Aries. Fixture ' + (prefilled ? 'local' : 'governed') + ' ending.');
   await phraseEditor.screenshot({ path: `test-results/article-phrase-edit-${width}-${theme}-${prefilled}.png` });
   await phraseEditor.getByRole('button', { name: 'Done editing phrase' }).click();
+  // Existing libraries must expose newly registered sign fields immediately.
+  // Both fields hold full prose while the article retains the inserted tokens.
+  await writing.fill('Before TARGET after');
+  await writing.evaluate((el: HTMLTextAreaElement) => { el.focus(); el.setSelectionRange(7, 13); });
+  await picker.getByRole('button', { name: 'Insert {{zodiacSeason}}', exact: true }).click();
+  await expect(writing).toHaveValue('Before {{zodiacSeason}} after');
+  await writing.fill('{{zodiacSeason}}\n\n{{zodiacSeasonPolarAxis}}');
+  await expect(preview).toHaveText('Fixture Aries season paragraph. A second full sentence stays editable.\n\nFixture Aries and Libra axis paragraph. This is season prose.');
+  await expect(writing).not.toHaveAttribute('aria-invalid', 'true');
   const summaryStyles = await editor.locator('summary').filter({ hasText: /^(Article variables|Preview this section)$/ }).evaluateAll(elements => elements.map(el => { const style = getComputedStyle(el); return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing]; }));
   expect(summaryStyles).toHaveLength(2);
   expect(summaryStyles[0]).toEqual(summaryStyles[1]);

@@ -1,3 +1,4 @@
+import { isZodiacSeasonSourceKey } from "./fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { contentPublicationRecords, publicationAllowsContent } from "./contentPublicationState";
 import { isCanonicalSkyReaderRecord } from "./fallbackArchitectureV3/dashboardExtensions";
 // @ts-ignore The canonical renderer and its editable-field contract are shared ESM.
@@ -27,8 +28,8 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
   let render: ((input: Record<string, unknown>) => any) | null = null;
   let blocked = new Set<string>();
   return (input: Record<string, unknown>) => {
-    const published = sources().map(object).filter(row => isCanonicalSkyReaderRecord(row as any)
-      && row.studio_version_status === "approved-serving-revision"
+    const published = sources().map(object).filter(row => (isZodiacSeasonSourceKey(row.contentKey) || isCanonicalSkyReaderRecord(row as any)
+      && row.studio_version_status === "approved-serving-revision")
       && typeof row.publicationRowId === "string"
       && row.review_status === "approved"
       && publicationAllowsContent(row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt));
@@ -63,7 +64,7 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
         return Object.fromEntries(Object.entries(source).map(([key, child]) => [key, visit(child)]));
       }
       const effective = { ...corpus, content: visit(corpus.content) };
-      render = createSkyV4ReaderRoute(effective, lunarSource);
+      render = createSkyV4ReaderRoute(effective, lunarSource, published.filter(row => isZodiacSeasonSourceKey(row.contentKey)));
       // Advance the cache only after the complete revision validates. A bad
       // revision must fail again, never reuse an older published renderer.
       blocked = nextBlocked;

@@ -1,3 +1,4 @@
+import { ZODIAC_SEASON_VARIABLES, supportsZodiacSeasonVariables } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 export type TemplateVariableRequirement = "Required" | "Optional" | "Runtime";
 
 export type TemplateVariableReference = {
@@ -16,6 +17,8 @@ type VariableDefinition = Pick<TemplateVariableReference, "meaning" | "example" 
 };
 
 const variableDefinitions: Record<string, VariableDefinition> = {
+  zodiacSeason: { meaning: "Full editable season prose for the current sign. Compatibility uses the reader's first sign.", example: "The complete prose saved in that sign's Zodiac season source", source: "Shared sign season source", sourceKind: "saved-copy" },
+  zodiacSeasonPolarAxis: { meaning: "Full editable prose about the current sign's season and its opposite sign. Compatibility uses the reader's first sign.", example: "The complete prose saved in that sign's Zodiac season polar axis source", source: "Shared sign season polar axis source", sourceKind: "saved-copy" },
   possessive: {
     meaning: "The possessive wording for the person whose chart is being read.",
     example: "Your or Maya's",
@@ -574,7 +577,8 @@ function collectTemplateStrings(value: unknown, path: string, output: Array<{ fi
 
 export function templateVariableReferences(
   fields: Record<string, unknown>,
-  packageRecord: Record<string, unknown> = {}
+  packageRecord: Record<string, unknown> = {},
+  includeAvailable = false
 ): TemplateVariableReference[] {
   const required = new Set(stringArray(packageRecord.requiredSlots));
   const optional = new Set(stringArray(packageRecord.optionalSlots));
@@ -601,10 +605,13 @@ export function templateVariableReferences(
     }
   });
 
+  if (includeAvailable && supportsZodiacSeasonVariables(packageRecord)) for (const field of ZODIAC_SEASON_VARIABLES) {
+    if (!usages.has(field.id)) usages.set(field.id, { fields: new Set(["Available for insertion"]), conditional: true });
+  }
   return [...usages.entries()]
     .map(([name, usage]) => {
       const definition = variableDefinitions[name] ?? genericDefinition(name);
-      const requirement: TemplateVariableRequirement = required.has(name)
+      const requirement: TemplateVariableRequirement = required.has(name) || ZODIAC_SEASON_VARIABLES.some(field => field.id === name) && !usage.fields.has("Available for insertion")
         ? "Required"
         : optional.has(name) || usage.conditional
           ? "Optional"
