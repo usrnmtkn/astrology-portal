@@ -34,7 +34,7 @@ export async function getLunarCalendarFromApi(
   const params = new URLSearchParams({
     mode,
     detail,
-    factsVersion: "civil-days-v2",
+    factsVersion: "solar-seasons-v3",
     date: requestedDate,
     lat: String(location.latitude),
     lon: String(location.longitude),
