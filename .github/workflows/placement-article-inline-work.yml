@@ -1,0 +1,39 @@
+name: Placement article inline variable work
+on:
+  push:
+    branches: [codex/placement-article-inline-vars]
+    paths:
+      - .github/workflows/placement-article-inline-work.yml
+      - scripts/apply-placement-article-inline-vars.py
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Verify checkout and collect implementation sources
+        run: |
+          git fetch --prune origin
+          git remote -v
+          git log -1 --oneline
+          git rev-list --left-right --count origin/main...HEAD
+          node scripts/agent-memory.mjs recall "Placement article inline Writing Library variables validation preview publication" --repo . --ref origin/main --limit 4 --state "$HOME/.local/state/tldr-astro-memory" || true
+          python3 - <<'PY'
+          import pathlib, subprocess, zipfile
+          files = subprocess.check_output(['git', 'ls-files'], text=True).splitlines()
+          roots = ('apps/admin/src/', 'apps/web/src/content/fallbackArchitectureV3/resolver/', 'tests/visual/', 'docs/content-management/')
+          chosen = [p for p in files if (p.startswith(roots) and pathlib.Path(p).suffix in ('.ts', '.tsx', '.mjs', '.md', '.json')) or p in ('api/admin/generated-content.ts', 'package.json', 'playwright.config.ts', 'apps/admin/package.json', 'apps/web/package.json') or p.startswith('scripts/') and any(s in p for s in ('sky-placement', 'sky-ingress', 'sky-evergreen', 'fallback-manifest', 'build-fallback', 'content-package', 'test-content-studio'))]
+          with zipfile.ZipFile('/tmp/placement-article-sources.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
+              for p in chosen:
+                  archive.write(p)
+          print('Collected', len(chosen), 'implementation and test source files')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: placement-article-sources
+          path: /tmp/placement-article-sources.zip
+          retention-days: 1
