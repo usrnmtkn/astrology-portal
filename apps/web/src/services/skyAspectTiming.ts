@@ -29,7 +29,7 @@ function monthDay(date: Date, timeZone?: string) {
   return new Intl.DateTimeFormat(undefined, { month: "long", day: "numeric", timeZone: safeTimeZone(timeZone) }).format(date);
 }
 
-function localDateParts(date: Date, timeZone?: string) {
+export function localDateParts(date: Date, timeZone?: string) {
   return Object.fromEntries(new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "numeric",
@@ -124,7 +124,7 @@ export function timingStringIsReaderSafe(value: string) {
   return !FORBIDDEN_TIMING_LANGUAGE.test(value);
 }
 
-export function skyAspectDateRange(aspect: SkyAspect, start: Date, end: Date) {
+export function skyAspectDateRange(aspect: { timing?: { timeZone?: string } | null }, start: Date, end: Date) {
   const timeZone = aspect.timing?.timeZone;
   const startParts = localDateParts(start, timeZone);
   const endParts = localDateParts(end, timeZone);

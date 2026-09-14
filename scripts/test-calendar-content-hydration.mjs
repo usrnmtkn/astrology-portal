@@ -413,7 +413,7 @@ const venusLibraIngress = bundledSkyCore.hookRows.find(
 );
 const authoredCalendarCopyIndex = calendarSource.indexOf("if (content && generatedDescription && generatedDescriptionFitsDateContext)");
 const v9CalendarCopyIndex = calendarSource.indexOf("const matrixResult = resolveCalendarV9Transit(event, knowledgeMatrixV9)");
-const packageCalendarCopyIndex = calendarSource.indexOf("const packageDescription = calendarEventPackageDescription(event, dateLine)");
+const packageCalendarCopyIndex = calendarSource.indexOf("const packageDescription = calendarEventPackageDescription(event, dateLine, timeZone)");
 
 assert.ok(
   authoredCalendarCopyIndex >= 0
@@ -537,8 +537,8 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /getLunarCalendarRangeEvents\([\s\S]*?dateFromDateKey\(season\.start, location\.timeZone \|\| "UTC"\),[\s\S]*?dateFromDateKey\(season\.end, location\.timeZone \|\| "UTC"\)/u,
-  "Calendar must load the zodiac season's lean event range using the selected location's civil dates."
+  /getLunarCalendarRangeEvents\([\s\S]*?new Date\(season\.startsAt\),[\s\S]*?new Date\(season\.endsAt\)/u,
+  "Calendar must load the zodiac season's lean event range using the calculated ingress instants."
 );
 assert.match(
   calendarSource,
@@ -547,7 +547,7 @@ assert.match(
 );
 assert.match(
   calendarSource,
-  /setSeasonEvents\(events\.filter\(\(event\) => \([\s\S]*?event\.type === "lunation"[\s\S]*?event\.dateKey >= season\.start[\s\S]*?event\.dateKey < season\.end/u,
+  /setSeasonEvents\(events\.filter\(\(event\) => \([\s\S]*?event\.type === "lunation"[\s\S]*?event\.startsAt >= season\.startsAt[\s\S]*?event\.startsAt < season\.endsAt/u,
   "The season milestone loader must retain the New and Full Moon across the complete zodiac season."
 );
 assert.match(
@@ -577,7 +577,7 @@ assert.doesNotMatch(
 );
 assert.match(
   calendarSource,
-  /return `\$\{dateLabel\} · \$\{seasonSign\} season/u,
+  /return seasonSign \? `\$\{dateLabel\} · \$\{seasonSign\} season/u,
   "The selected-day card must identify the date whose zodiac season it is showing."
 );
 assert.match(

@@ -1,4 +1,5 @@
 import type { LunarCalendarActiveAspect, LunarCalendarEvent } from "../../services/ephemeris";
+import type { SeasonWindow } from "./seasonWindow";
 import type { LocationInput } from "../../types";
 
 export type LunarDayTransitType = "ingress" | "retrograde" | "station" | "aspect" | "eclipse";
@@ -59,11 +60,7 @@ export type LunarDay = {
     activeAspects: LunarCalendarActiveAspect[];
   };
   arc: {
-    season: {
-      sign: string;
-      start: string;
-      end: string;
-    };
+    season: SeasonWindow;
     origin: LunarDayArcPoint | null;
     checkpoint: {
       phaseType: string;
