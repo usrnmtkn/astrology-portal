@@ -79,3 +79,26 @@ The Chrome task added source-boundary staging commits through `ddcd1c054`;
 these are preserved in the branch history. Their patch is applied as reviewable
 source code. The candidate workflow only validates it and cannot mutate or push
 the branch. All 37 workflow YAML documents pass syntax/condition validation.
+
+## Final integration verification
+
+Main releases #799 and #800 are preserved through merge `7216a6ed5`.
+The fixture-only update `8e88eb86f` isolates the nightly fallback snapshot;
+all nine cold/publication/retirement/retry cases passed (eight together and the
+retry case after isolation). The current Studio matrix passed 275 cases in the
+full run and six row-layout cases after aligning the assertion with main's
+canonical regular-weight row titles. No Studio styling changes were needed.
+The exact-head Content Studio API suite passed locally and in GitHub Actions.
+
+The final web build uses the same safe Terser options as standalone Studio to
+retain the existing reader boot limit. The graph CSS gate measures the shared
+Studio stylesheet, which grew to 23,126 gzip bytes in already merged #799.
+Its CSS allowance increases by 500 bytes to 23,300; no graph styling, runtime
+dependency, JavaScript budget, reader startup limit, or accuracy threshold is
+relaxed. The admin budgets are the existing #800 allocations, unchanged here.
+The exploratory CSS minifier and chunk regrouping are not included.
+
+The preview for `8e88eb86f` is READY. The first real-data cold desktop placement
+check passed with one prose variant and no collapse; remaining preview and
+production visit results are still pending. Access uses the project's existing
+automation credential, scoped exclusively to the exact preview hostname.

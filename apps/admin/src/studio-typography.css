@@ -160,9 +160,9 @@
   text-transform: none;
 }
 
-/* Actions use the UI role. Clickable variables inside prose retain the body role. */
+/* Actions, tabs, choices, disclosures, and status controls use the 14/20 UI role. */
 #root .admin-dashboard :is(
-  button:not(.admin-composition-variable),
+  button,
   .admin-public-link,
   .studio-tabs [role="tab"],
   summary,
