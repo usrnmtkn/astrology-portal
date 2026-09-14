@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
-import { StudioButton, StudioInput } from "./StudioControls";
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { SKY_WRITING_LIBRARY_GROUPS, type SkyWritingLibraryComposition } from "./skyWritingLibrary";
 import SkyPlacementVariableKey, { SkyVariableText, type SkyVariableFacts } from "./SkyPlacementVariableKey";
 // @ts-ignore Pure shared article resolver, also used by publication and readers.
 import { skyPlacementArticleVariableSegments } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
@@ -14,6 +15,8 @@ type Props = {
   onInsert: (token: string) => void;
   preparing: boolean;
   preparationError: string;
+  onPrepareLibrary: () => void;
+  onCompositionChange: (value: SkyWritingLibraryComposition) => void;
   onLoadSource?: (key: string) => Promise<RecordValue | undefined>;
   onOpenSource: (key: string, path: string) => void;
 };
@@ -24,6 +27,8 @@ export default function SkyPlacementArticleVariables(props: Props) {
   const { contentKey, planet, sign, motion, fieldPath, value, source, disabled } = props;
   const latest = useRef(props); latest.current = props;
   const [error, setError] = useState("");
+  const [editingPhrase, setEditingPhrase] = useState("");
+  const phraseEditor = useRef<HTMLTextAreaElement>(null);
   const mounted = useRef(true);
   const [references, setReferences] = useState<RecordValue[]>([]);
   const [calculated, setCalculated] = useState<RecordValue | null>(null);
@@ -33,6 +38,9 @@ export default function SkyPlacementArticleVariables(props: Props) {
   const [timeZone, setTimeZone] = useState(() => Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC");
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; generation.current++; }; }, []);
   const record = useMemo(() => ({ ...source, contentKey }), [source, contentKey]);
+  const composition = source?.ingress as SkyWritingLibraryComposition | undefined;
+  const editingSource = composition?.sources?.[editingPhrase];
+  const editingField = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields).find(field => field.id === editingPhrase);
   const referenceKey = JSON.stringify(Object.values(source?.ingress?.sources ?? {})
     .map((item: any) => item.reference).filter(Boolean));
 
@@ -51,6 +59,12 @@ export default function SkyPlacementArticleVariables(props: Props) {
   const selectedMotion = fieldPath === "placementArticleDirect" ? "direct" : fieldPath === "placementArticleRetrograde" ? "retrograde" : motion;
   const facts: SkyVariableFacts = skyPlacementVariableFacts(calculated ?? { planet, sign, isRetrograde: selectedMotion === "retrograde" });
   const gaps = skyPlacementArticleVariableSegments(value, facts, record, [record, ...references]).filter((part: any) => part.token && !part.available);
+
+  useEffect(() => {
+    if (!editingPhrase || !editingSource || editingSource.reference) return;
+    const frame = requestAnimationFrame(() => phraseEditor.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(frame);
+  }, [editingPhrase, Boolean(editingSource)]);
 
   useEffect(() => {
     generation.current++;
@@ -82,8 +96,34 @@ export default function SkyPlacementArticleVariables(props: Props) {
     <details className="admin-workspace-details" data-sky-article-variable-picker>
       <AdminDisclosureSummary>Article variables</AdminDisclosureSummary>
       <SkyPlacementVariableKey facts={facts} disabled={disabled} onInsert={props.onInsert} onInsertPhrase={props.onInsert}
-        phraseSource={{ planet, sign, record, onLoadSource: props.onLoadSource, onEdit: id => props.onOpenSource(contentKey, `ingress.sources.${id}`) }} />
+        phraseSource={{ planet, sign, record, onLoadSource: props.onLoadSource, onEdit: id => {
+          setEditingPhrase(id);
+          props.onPrepareLibrary();
+        } }} />
     </details>
+    {editingPhrase && <section className="admin-sky-writing-context" aria-label="Edit article phrase">
+      <p>{editingField?.label ?? editingPhrase} <code>{`{{${editingPhrase}}}`}</code></p>
+      {editingField && <p>{editingField.description}</p>}
+      {!editingSource ? <p role="status">Preparing this phrase in your draft…</p> : editingSource.reference ? <>
+        <p>Linked source: <code>{editingSource.reference.contentKey}#{editingSource.reference.field}</code></p>
+        <StudioButton type="button" disabled={disabled} onClick={() => {
+          const reference = editingSource.reference!;
+          const localName = reference.field.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1];
+          if (reference.contentKey === contentKey && localName) setEditingPhrase(localName);
+          else props.onOpenSource(reference.contentKey, reference.field);
+        }}>Edit linked source</StudioButton>
+      </> : <label className="admin-review-copy-editor">
+        <span>Phrase value</span>
+        <StudioTextarea ref={phraseEditor} aria-label="Phrase value" rows={editingField?.rows ?? 4} disabled={disabled}
+          value={editingSource.text ?? ""} onChange={event => {
+            if (!disabled && composition) props.onCompositionChange({ ...composition, sources: {
+              ...composition.sources, [editingPhrase]: { ...editingSource, text: event.target.value }
+            } });
+          }} />
+      </label>}
+      <p className="admin-field-hint">Phrase changes stay in this article draft until you save and publish.</p>
+      <StudioButton type="button" onClick={() => setEditingPhrase("")}>Done editing phrase</StudioButton>
+    </section>}
     <details className="admin-workspace-details" open>
       <AdminDisclosureSummary>Preview this section</AdminDisclosureSummary>
       <p>Draft preview. Missing phrases must be filled before publishing. Dates and aspects appear only when the calculation supplies them.</p>

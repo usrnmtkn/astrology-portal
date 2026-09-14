@@ -30,7 +30,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
    });
    await route.fulfill({ json: { ok: true, rows, statuses: [], nextCursor: null } });
   });
-  await page.goto('/#sky-writeups');
+  await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');
   await page.getByLabel('Sky placement planet or point').selectOption('saturn');
   await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
   await page.getByLabel('Sky write-up motion').selectOption('direct');
@@ -65,6 +65,16 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   await writing.fill('{{openingHook}} {{planetTitle}} in {{signTitle}}. {{closingLine}}');
   await expect(preview).toHaveText(`During this transit, fixture ${prefilled ? 'local' : 'governed'} opening. Saturn in Aries. Fixture ${prefilled ? 'local' : 'governed'} ending.`);
   await expect(writing).not.toHaveAttribute('aria-invalid', 'true');
+  await editor.locator('.admin-editor-toolbar-actions').getByRole('button', { name: 'Variables', exact: true }).click();
+  const hooks = picker.locator('details').filter({ has: page.locator('summary', { hasText: 'Hooks and takeaways' }) });
+  if (await hooks.getAttribute('open') === null) await hooks.locator('summary').click();
+  await picker.getByRole('button', { name: 'Edit opening hook', exact: true }).click();
+  const phraseEditor = editor.getByRole('region', { name: 'Edit article phrase' });
+  await phraseEditor.getByLabel('Phrase value', { exact: true }).fill('During this transit, fixture edited opening.');
+  await expect(writing).toHaveValue('{{openingHook}} {{planetTitle}} in {{signTitle}}. {{closingLine}}');
+  await expect(preview).toHaveText('During this transit, fixture edited opening. Saturn in Aries. Fixture ' + (prefilled ? 'local' : 'governed') + ' ending.');
+  await phraseEditor.screenshot({ path: `test-results/article-phrase-edit-${width}-${theme}-${prefilled}.png` });
+  await phraseEditor.getByRole('button', { name: 'Done editing phrase' }).click();
   const summaryStyles = await editor.locator('summary').filter({ hasText: /^(Article variables|Preview this section)$/ }).evaluateAll(elements => elements.map(el => { const style = getComputedStyle(el); return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing]; }));
   expect(summaryStyles).toHaveLength(2);
   expect(summaryStyles[0]).toEqual(summaryStyles[1]);

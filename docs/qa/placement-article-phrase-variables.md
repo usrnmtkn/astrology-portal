@@ -3,11 +3,12 @@
 Date: 2026-09-14 UTC.
 
 Implementation worktree: `/Users/mprez/Code/tldrastro-article-phrases`.
-Branch: `codex/placement-article-phrases-review`, based on the prior implementation
-at `b52665915`, plus the uncommitted continuation in this worktree. Compared with
-fetched `origin/main` `b25909935`: 0 commits behind, 10 ahead before the local
-continuation. No merge, deployment, remote content writes, or editorial approval
-was performed.
+Release PR: #799 (`codex/placement-article-inline-vars`). This worktree combines
+the earlier remote implementation with local preparation, publishing, and browser
+fixes. The owner authorized merge and production deployment on 2026-09-14 in
+Codex task `01a09d87-b080-7873-a45b-81373e2b0a0b`. Exact release checks and the
+production result are recorded on the PR after execution. No production content
+writes or editorial approval are part of this code release.
 
 ## Result
 
@@ -17,7 +18,8 @@ The article's Variables action opens the two scoped groups. Insert replaces the
 selection and restores the cursor while retaining the literal token. Pasted and
 inserted phrase tokens prepare the library in the placement draft; switching
 writing sections during preparation preserves the result and existing text.
-Preparation preserves the composition's enabled state and module order.
+Preparation preserves the composition's enabled state and module order. Editing a
+local phrase stays in the same unsaved article draft and updates its preview.
 
 Preview and reader resolution use the same shared source contract. Missing
 phrases block publishing, including when composition is disabled or absent.
@@ -57,7 +59,7 @@ and source-row files have no diff against main.
 - Generated knowledge and phrase index checks, release-path freshness contract,
   and `git diff --check`.
 
-## Release limitations
+## Known baseline failures
 
 `npm run test:content` stops at the existing protected natal-aspect projection
 assertion in `scripts/test-natal-exact-copy-routing.mjs:49`. Direct calculation
@@ -80,5 +82,6 @@ by this continuation. This comparison is diagnostic, not a passing release gate.
 | Web signup chunk, gzip | 4,008 bytes | 4,009 bytes | 4,000 bytes |
 
 No hash assertion or bundle threshold was weakened. The full content suite has
-not completed beyond its first failing assertion. Exact-head remote CI and
-production verification remain outstanding.
+not completed beyond its first failing assertion. The API workflow now runs without path filtering or merge-message skips so the
+required contract can run on each PR head and main revision. The former branch
+implementation scripts and self-mutating workflow are removed.

@@ -243,9 +243,10 @@ console.log("PASS: an empty published evergreen layout survives reload without r
    assert.equal(rendered.resolution, 'canonical-article');
   }
  }
+ console.log('PASS: shared and custom Direct/Retrograde phrase templates saved, published, loaded and rendered across two revisions.');
  const lastPublished = JSON.stringify(row.sections.packageRecord);
  let pending = row;
- for (const ingress of [undefined, { ...composition, sources: { ...composition.sources, placementOpportunity: { kind: 'placement', text: '' } } }]) {
+ for (const ingress of [null, { ...composition, sources: { ...composition.sources, placementOpportunity: { kind: 'placement', text: '' } } }]) {
   const copy = { ...pending.sections.packageRecord, ingress, placementArticle: '{{placementOpportunity}}', placementArticleDirect: '', placementArticleRetrograde: '' };
   const draft = (await request('PATCH', { id: pending.id, expectedUpdatedAt: pending.updated_at, reviewStatus: 'needs_review', sections: { ...pending.sections, packageDraft: copy } })).rows[0];
   pending = draft;

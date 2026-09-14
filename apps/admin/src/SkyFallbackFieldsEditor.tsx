@@ -104,7 +104,8 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
 
   const articleNeedsLibrary = ["placementArticle", "placementArticleDirect", "placementArticleRetrograde"]
     .some(path => skyPlacementArticlePhraseNames((source as Record<string, any> | undefined)?.[path]).length > 0);
-  const libraryRequested = Boolean(initialLibrarySourceId || articleNeedsLibrary);
+  const [articleLibraryRequested, setArticleLibraryRequested] = useState(false);
+  const libraryRequested = Boolean(initialLibrarySourceId || articleNeedsLibrary || articleLibraryRequested);
 
   // Article insertion, pasted templates, and direct phrase edits prepare the Writing Library in draft
   // and open the exact named source, rather than falling back to Placement article.
@@ -126,7 +127,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       if (cancelled) return;
       const starter = ingressCompositionRef.current ?? makeSkyIngressComposition() as SkyWritingLibraryComposition;
       const prepared = installSkyWritingLibrary(starter, values);
-      if (articleNeedsLibrary && !initialLibrarySourceId) prepared.modules = starter.modules;
+      if ((articleNeedsLibrary || articleLibraryRequested) && !initialLibrarySourceId) prepared.modules = starter.modules;
       setPreparedLibrary(prepared);
       onChangeRef.current("ingress", prepared);
     })().catch(reason => {
@@ -231,7 +232,9 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       {supportsVariables && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && (supportsArticlePhrases
         ? <SkyPlacementArticleVariables key={contentKey} contentKey={contentKey} planet={planet} sign={sign} motion={rxContext ? "retrograde" : "direct"}
           fieldPath={field.key} value={field.value} source={activeLibrary ? { ...source, ingress: activeLibrary } : source} disabled={disabled} onInsert={insertVariable}
-          preparing={installingLibrary} preparationError={libraryError} onLoadSource={onLoadSource} onOpenSource={onOpenSource} />
+          preparing={installingLibrary} preparationError={libraryError} onLoadSource={onLoadSource} onOpenSource={onOpenSource}
+          onPrepareLibrary={() => setArticleLibraryRequested(true)}
+          onCompositionChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} />
         : <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />)}
       {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}
       {!supportsArticlePhrases && <details className="admin-workspace-details">
