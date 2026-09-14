@@ -1151,7 +1151,7 @@ function skyPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues
   const signStyle = signStyleSlot(position.sign);
   const transitTiming = lunarNodeTransitRangeLabel(position)
     ?? (position.transitStart && position.transitEnd
-      ? formatTransitRange(new Date(position.transitStart), new Date(position.transitEnd))
+      ? formatTransitRange(new Date(position.transitStart), new Date(position.transitEnd), position)
       : null);
   const isRetrograde = isDisplayRetrograde(position);
   const retrogradeTiming = isRetrograde ? retrogradeRangeText(position) ?? transitTiming : transitTiming;
@@ -3471,8 +3471,31 @@ function formatEditorialDateRange(start: Date, end: Date, referenceDate = new Da
   return `${formatEditorialDate(start, true)} - ${formatEditorialDate(end, true)}`;
 }
 
-function formatTransitRange(start: Date, end: Date) {
-  return formatEditorialDateRange(start, end);
+function formatTransitRange(
+  start: Date,
+  end: Date,
+  position: Pick<PlanetPosition, "transitTimeZone">,
+  referenceDate = new Date()
+) {
+  // Match the article facts: compare calendar parts in the calculated location's
+  // zone as well as formatting there. UTC parts can cross a different day/year.
+  const timeZone = position.transitTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  const partsFormatter = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "numeric", day: "numeric", timeZone });
+  const parts = (date: Date) => Object.fromEntries(partsFormatter.formatToParts(date).map(part => [part.type, part.value]));
+  const first = parts(start), last = parts(end), reference = parts(referenceDate);
+  const formatDate = (date: Date, includeYear = false) => new Intl.DateTimeFormat("en-US", {
+    month: "short", day: "numeric", timeZone, ...(includeYear ? { year: "numeric" as const } : {})
+  }).format(date);
+  const sameYear = first.year === last.year;
+  const sameMonth = sameYear && first.month === last.month;
+  if (sameMonth && first.day === last.day) {
+    const today = first.year === reference.year && first.month === reference.month && first.day === reference.day;
+    const time = (date: Date) => new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "numeric", timeZone }).format(date).replace(":00", "");
+    return `${today ? "Today" : formatDate(start)} · ${time(start)} - ${time(end)}`;
+  }
+  const showYear = !sameYear || first.year !== reference.year;
+  if (sameMonth) return `${formatDate(start, showYear)} - ${last.day}${showYear ? `, ${last.year}` : ""}`;
+  return `${formatDate(start, showYear)} - ${formatDate(end, showYear)}`;
 }
 
 function formatSkyAspectDateRange(start: Date, end: Date, referenceDate = new Date()) {
@@ -3730,7 +3753,7 @@ function formatDurationLong(startInput: string | Date, endInput: string | Date, 
 function placementTransitRange(position: PlanetPosition, generatedAt: string) {
   const { start, end } = placementTransitEndpoints(position, generatedAt);
 
-  return formatTransitRange(start, end);
+  return formatTransitRange(start, end, position);
 }
 
 function verifiedPlacementResidencyPasses(position: PlanetPosition) {
@@ -3779,7 +3802,7 @@ export function placementFinalResidencyExit(position: PlanetPosition, fallback: 
 function placementTransitRangeLabel(position: PlanetPosition, generatedAt: string) {
   if (position.transitStart && position.transitEnd) {
     const { start, end } = placementTransitEndpoints(position, generatedAt);
-    return formatTransitRange(start, end);
+    return formatTransitRange(start, end, position);
   }
 
   const nodeRangeLabel = lunarNodeTransitRangeLabel(position);
@@ -4787,10 +4810,16 @@ function skyPlacementShadowPhaseActive(position: PlanetPosition, generatedAt: st
     && generatedTime <= shadowEnd;
 }
 
-function skyPlacementKeyDates(position: PlanetPosition): SkyDetailKeyDate[] {
+function skyPlacementKeyDates(
+  position: PlanetPosition,
+  aspectFacts?: SkySnapshot["placementAspectFacts"],
+  sourceDates?: { date: string; endDate?: string; label: string }[]
+): SkyDetailKeyDate[] {
   const planet = skyDisplayPlanetName(position.planet);
   const sign = position.sign;
-  const candidates = [
+  const candidates: { value?: string | null; endValue?: string; label: string }[] = sourceDates?.map(item => ({
+    value: item.date, endValue: item.endDate, label: item.label
+  })) ?? [
     { value: position.transitStart, label: `${planet} enters ${sign}` },
     { value: position.retrogradeShadowStart, label: `${planet} enters the pre-retrograde shadow` },
     { value: position.retrogradeStart, label: `${planet} stations Retrograde` },
@@ -4798,16 +4827,22 @@ function skyPlacementKeyDates(position: PlanetPosition): SkyDetailKeyDate[] {
     { value: position.retrogradeShadowEnd, label: `${planet} leaves the post-retrograde shadow` },
     { value: position.transitEnd, label: `${planet} completes its passage through ${sign}` }
   ];
+  if (aspectFacts && normalizeContentIdPart(aspectFacts.planet) === normalizeContentIdPart(position.planet)
+    && normalizeContentIdPart(aspectFacts.sign) === normalizeContentIdPart(sign)) {
+    candidates.push(...aspectFacts.inSign
+      .filter(event => normalizeContentIdPart(event.planet) === normalizeContentIdPart(position.planet))
+      .map(event => ({ value: event.occursAt, label: `${planet} ${event.aspect} ${skyDisplayPlanetName(event.otherPlanet)}` })));
+  }
   const formatter = new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
-    timeZone: position.transitTimeZone || "UTC"
+    timeZone: position.transitTimeZone || aspectFacts?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
   });
   const seen = new Set<string>();
 
   return candidates
-    .flatMap(({ value, label }) => {
+    .flatMap(({ value, endValue, label }) => {
       if (!value) {
         return [];
       }
@@ -4818,14 +4853,16 @@ function skyPlacementKeyDates(position: PlanetPosition): SkyDetailKeyDate[] {
         return [];
       }
 
-      const key = `${date.toISOString()}|${label}`;
+      const end = endValue ? new Date(endValue) : null;
+      if (end && Number.isNaN(end.getTime())) return [];
+      const key = `${date.toISOString()}|${end?.toISOString() ?? ""}|${label}`;
 
       if (seen.has(key)) {
         return [];
       }
 
       seen.add(key);
-      return [{ date: formatter.format(date), label, time: date.getTime() }];
+      return [{ date: end ? `${formatter.format(date)} - ${formatter.format(end)}` : formatter.format(date), label, time: date.getTime() }];
     })
     .sort((first, second) => first.time - second.time)
     .map(({ date, label }) => ({ date, label }));
@@ -5116,22 +5153,8 @@ function skyPlacementWritingSection(
     || rendered.contentKey?.startsWith("fallback-hook/sky-placement-sign/")
     || rendered.contentKey?.startsWith("fallback-hook/sky-sign-copy/")
   ) ? "authored" : "fallback";
-  const keyDateFormatter = new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: position.transitTimeZone || "UTC"
-  });
-  const keyDates = (rendered.keyDates ?? []).map((keyDate: { date: string; endDate?: string; label: string }) => {
-    const start = new Date(keyDate.date);
-    const end = keyDate.endDate ? new Date(keyDate.endDate) : null;
-    return {
-      date: end
-        ? `${keyDateFormatter.format(start)} - ${keyDateFormatter.format(end)}`
-        : keyDateFormatter.format(start),
-      label: keyDate.label
-    };
-  });
+  const keyDates = skyPlacementKeyDates(position, articleOptions?.aspectFacts,
+    rendered.keyDates?.length ? rendered.keyDates : undefined);
 
   return {
     slot: "meaning",
@@ -5148,7 +5171,7 @@ function skyPlacementWritingSection(
     heading: rendered.headline || skyPlacementDisplayTitle(position),
     tagline: rendered.tagline,
     closingCharge: rendered.closingCharge,
-    keyDates: rendered.templateKey === "sky-v4-canonical-reader-v1" ? skyPlacementKeyDates(position) : keyDates,
+    keyDates,
     keyDatesIntro: rendered.keyDatesIntro ?? null,
     articleWindow: rendered.articleWindow,
     residencyWindow: canonicalDateLine,
@@ -11332,6 +11355,8 @@ export function App() {
 
   function openSkyDetail(detail: SkyDetail) {
     selectedCalendarTransitEventRef.current = null;
+    // Reopening a card must load its complete placement facts again.
+    selectedSkyDetailRefreshKeyRef.current = "";
     // Friends invalidation compares this article's revision with later overlays.
     friendDetailOverlayVersionRef.current = fallbackDashboardOverlayVersion;
     const [, detailType] = decodeSkyRouteParts(detail.routePath ?? "");
@@ -11505,11 +11530,14 @@ export function App() {
       signGlyph: eventSign ? signGlyph(eventSign) : position.signGlyph,
       motion: event.direction ?? (isRetrogradeEvent ? "retrograde" : position.motion),
       transitStart: event.type === "ingress" ? event.startsAt : position.transitStart,
-      transitEnd: event.type === "ingress" ? event.endsAt ?? null : position.transitEnd
+      transitEnd: event.type === "ingress"
+        ? event.endsAt ?? (eventSign === position.sign ? position.transitEnd : null)
+        : position.transitEnd
     };
 
     const detail = currentSkyPlacementDetailArticle({
       aspects: detailSky.aspects,
+      aspectFacts: detailSky.placementAspectFacts,
       generatedAt,
       generatedContent,
       locationLatitude: detailSky.location.latitude,
@@ -11974,23 +12002,14 @@ export function App() {
       && skyPlacementFallbackStatus !== "ready") return;
     const routePosition = routePlanet && skyNodeDisplayPositions(sky.positions).find(position => skyRoutePartMatches(position.planet, routePlanet));
     const placementSign = routeType === "retrograde" ? (routePosition ? routePosition.sign : undefined) : routeSign;
-    let needsAspectFacts = false;
-    if (routeSurface === "sky" && ["placement", "retrograde"].includes(routeType) && placementSign) {
-      try {
-        needsAspectFacts = (skyV4ReaderRenderer.renderRoute({ route: "placement", planet: routePlanet,
-          sign: placementSign.toLowerCase(), inspectVariables: true }) as { requiresAspectFacts?: boolean }).requiresAspectFacts === true;
-      } catch (error) {
-        if (!(error instanceof Error) || !/^SKY_V4_(?:NOT_RELEASED|NOT_SERVABLE|SOURCE_GAP)/u.test(error.message)) throw error;
-      }
-    }
+    // Every placement timeline includes exact aspects, even when the author
+    // has not used an aspect token in the article.
     if (!calendarEvent && routeSurface === "sky" && ["placement", "retrograde"].includes(routeType) && placementSign
-      && routePosition && zodiacSigns.some(sign => skyRoutePartMatches(sign, placementSign))
-      && (needsAspectFacts || !routePosition.transitStart || !routePosition.transitEnd
-        || !skyRoutePartMatches(routePosition.sign, placementSign))) {
+      && routePosition && zodiacSigns.some(sign => skyRoutePartMatches(sign, placementSign))) {
       let cancelled = false;
       if (selectedSkyDetail?.routePath !== skyDetailRoutePath) commitResolvedSkyDetail(null);
       void import("./services/skyCalculationClient").then(({ getSkyPlacementSnapshotOffMainThread }) => (
-        getSkyPlacementSnapshotOffMainThread(sky.location, routePlanet, placementSign, new Date(sky.generatedAt), needsAspectFacts)
+        getSkyPlacementSnapshotOffMainThread(sky.location, routePlanet, placementSign, new Date(sky.generatedAt), true)
       )).then(async placementSky => {
         const renderPlacement = (detailContent: GeneratedContentMap, complete = false) => {
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
@@ -12053,8 +12072,13 @@ export function App() {
     };
     // Keep an already committed article visible, but never paint a newly
     // assembled partial article before its matching published rows resolve.
+    const calendarPlacementSign = ["placement", "retrograde"].includes(routeType)
+      ? calendarEvent?.event.toSign ?? calendarEvent?.event.sign : undefined;
     const detailSnapshot = calendarEvent
-      ? getAstrodienstSky(sky.location, new Date(calendarEvent.event.startsAt), { includeTransitWindows: true })
+      ? calendarPlacementSign && calendarEvent.event.planet
+        ? import("./services/skyCalculationClient").then(({ getSkyPlacementSnapshotOffMainThread }) =>
+          getSkyPlacementSnapshotOffMainThread(sky.location, normalizeContentIdPart(calendarEvent.event.planet!), calendarPlacementSign, new Date(calendarEvent.event.startsAt), true))
+        : getAstrodienstSky(sky.location, new Date(calendarEvent.event.startsAt), { includeTransitWindows: true })
       : Promise.resolve(sky);
     void detailSnapshot.then(async detailSky => {
       const content = await loadSkyDetailContent(detailSky, availableDetailContent,

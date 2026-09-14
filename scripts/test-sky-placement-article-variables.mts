@@ -56,3 +56,20 @@ for (const render of [renderSkyV4ReaderRoute, browser.renderSkyV4ReaderRoute, sh
 target.ingress.sources.planetFunction.text = 'Changed linked fixture.';
 for (const render of [renderSkyV4ReaderRoute, browser.renderSkyV4ReaderRoute, shipped]) assert.throws(() => render(updated, { route: 'placement', planet: 'saturn', sign: 'aries' }), /changed/);
 console.log('PASS: mixed article variables in Node, browser source, shipped artifact, draft preview and both motion-specific article paths; stale references fail closed.');
+
+const aspectCorpus = structuredClone(corpus);
+const sun = aspectCorpus.content.continuous.find((row: any) => row.contentKey === 'sky-placement/article/sun/virgo')!;
+sun.ingress = { ...makeSkyIngressComposition(), modules: [], enabled: false };
+sun.ingress.sources.openingHook = { kind: 'placement', text: 'Fixture nested aspects: {{aspectsInSign}}.' };
+const aspectText = '- August 27, 2026: Sun conjunction Mercury\n- August 28, 2026: Sun square Uranus';
+const inlineAspects = 'August 27, 2026: Sun conjunction Mercury, August 28, 2026: Sun square Uranus';
+sun.placementArticle = '{{openingHook}}\n\nFixture direct aspects: {{aspectsInSign}}.';
+sun.placementArticleDirect = '';
+sun.placementArticleRetrograde = '';
+const aspectInput = { route: 'placement', planet: 'sun', sign: 'virgo', facts: { aspectsInSign: aspectText } };
+const expectedAspects = `Fixture nested aspects: ${inlineAspects}.\n\nFixture direct aspects: ${inlineAspects}.`;
+for (const render of [renderSkyV4ReaderRoute, browser.renderSkyV4ReaderRoute, shipped]) {
+  assert.equal(render(aspectCorpus, aspectInput).mainBody, expectedAspects);
+}
+assert.equal(renderSkyV4StudioPreview(aspectCorpus, { contentKey: sun.contentKey, facts: aspectInput.facts }).mainBody, expectedAspects);
+console.log('PASS: comma-separated aspect tokens and nested phrase facts agree in Studio preview, Node, browser source, and shipped article resolvers.');
