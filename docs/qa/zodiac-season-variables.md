@@ -25,3 +25,13 @@ The resolver is shipped as package `v3-2026-09-14c`. Node, browser-source, shipp
 ## Studio delivery size
 
 The variable catalog now loads when an editor opens. Using the GitHub workflow's Supabase configuration, isolated main `ffe17d962` measures 620.8 kB raw / 178.6 kB gzip at entry and 452.4 kB aggregate gzip. This feature measures 608.8 kB raw / 176.3 kB gzip at entry and 457.0 kB aggregate. The startup download is smaller; the full editor feature adds 4.6 kB aggregate. Allocate 5 kB aggregate for the requested cross-surface controls while keeping the initial-entry, largest-chunk, memory-graph, lazy-boundary and forbidden-payload limits unchanged.
+
+## Reader delivery size
+
+The post-merge Visual smoke check for #813 identified the shared runtime's web bundle cost. An isolated build of pre-feature main `a6f21d663`, with its own dependencies and the workflow's Supabase environment, passes the previous budgets at 425.7 kB JavaScript boot and 475.3 kB reader boot. The feature initially measured 429,578 and 479,202 bytes respectively, with 3,061,247 aggregate JavaScript bytes.
+
+Marking the structural editor starter initializer as pure removes its unused initialization from the shipped reader artifact. The editor/API still retain all 24 empty source starters; resolver behavior and approved copy are unchanged. The optimized build measures 429,403 JavaScript boot bytes, 479,027 reader boot bytes, and 3,061,073 aggregate JavaScript bytes, saving 175 compressed bytes. Allocate 4 kB to each startup budget and 3 kB aggregate for the requested cross-surface runtime. Initial CSS remains 49.6 kB; CSS, individual chunk, deferred-source boundary and timing limits are unchanged. No dependency was added.
+
+Verification includes `npm run qa:bundle`, all-sign Node/browser-source/shipped-artifact tests, the unfiltered Content Studio API suite, and the deployed Studio browser flows. Production tests use an isolated actual API handler and synthetic prose; they do not write test content to the live store.
+
+Authenticated production inspection also found that the live-status helper treated the empty structural starters as bundled reader copy. Shared season sources now report live only when an eligible published overlay exists. The actual-handler regression checks all 24 empty starters, published values, a pending revision beside its live source, and retired publications. Reader eligibility and approved prose are unchanged.

@@ -1,4 +1,4 @@
-import { ZODIAC_SEASON_SOURCE_STARTERS } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
+import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skyPlacementSourceRecords } from "./sky-placement-sources.js";
 import { createDomainRegistry } from "../../apps/web/src/content/domainRegistry.js";
@@ -179,7 +179,8 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
     const bundled = servingPackageRecords.get(row.content_key);
     const overlay = overlays.get(row.content_key);
     if (bundled || Object.keys(packageRecord).length) {
-      const serving = overlay ? { ...record(overlay) } : bundled;
+      // Shared season starters reserve editable keys but contain no published prose.
+      const serving = overlay ? { ...record(overlay) } : isZodiacSeasonSourceKey(row.content_key) ? undefined : bundled;
       if (serving && overlay) {
         const { role } = generatedRowPackageRole(overlay);
         const destination = fallbackArchitectureV3DashboardPackageDestination({ contentKey: overlay.content_key, role, contentType: overlay.source_snapshot?.contentType ?? overlay.source_snapshot?.content_type ?? overlay.facts?.contentType ?? "" });
@@ -196,7 +197,9 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
         detail = overlay ? "Readers can receive this saved copy." : "Readers can receive this exact copy from the installed content package.";
       } else if (proposal) detail = "This saved revision is not live. Readers may still receive the previous version.";
       else if (serving) detail = "The app has a different version of this content. This copy is not live.";
-      else detail = "This source is not included in the reader's active content package.";
+      else detail = isZodiacSeasonSourceKey(row.content_key)
+        ? "This shared sign source needs reviewed, published prose before readers can receive it."
+        : "This source is not included in the reader's active content package.";
     } else {
       const wiring = contentWiringStatus(row);
       const edition = skyArticleEditionRecord(row.sections?.skyArticleEdition);

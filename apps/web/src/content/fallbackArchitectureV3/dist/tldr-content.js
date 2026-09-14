@@ -173,18 +173,6 @@ function zodiacSeasonSourceKey(name, sign) {
 function isZodiacSeasonSourceKey(key) {
   return ZODIAC_SEASON_VARIABLES.some((field2) => ZODIAC_SIGNS.some((sign) => key === zodiacSeasonSourceKey(field2.id, sign)));
 }
-var ZODIAC_SEASON_SOURCE_STARTERS = Object.freeze(ZODIAC_SIGNS.flatMap((sign, index) => ZODIAC_SEASON_VARIABLES.map((field2) => ({
-  contentKey: zodiacSeasonSourceKey(field2.id, sign),
-  content_role: "fallback_hook",
-  grammar_frame: "complete_sentence",
-  headline: `${title(sign)} \xB7 ${field2.label}`,
-  body: "",
-  review_status: "needs_review",
-  sign,
-  oppositeSign: ZODIAC_SIGNS[(index + 6) % ZODIAC_SIGNS.length],
-  source_package: "tldrastro-fallback-architecture-v3",
-  notes: `${field2.description} Saved drafts are not reader copy. Publish the exact wording to update references to this sign.`
-}))));
 function zodiacSeasonVariableNames(value) {
   return [...new Set([...String(value ?? "").matchAll(/\{\{\s*[#/^]?\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu)].map((match) => match[1]).filter((name) => names.has(name)))];
 }
