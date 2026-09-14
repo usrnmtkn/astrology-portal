@@ -11,9 +11,6 @@ concurrency:
   cancel-in-progress: true
 jobs:
   project-privacy:
-    # PR merge commits repeat the exact revision that already ran on the PR.
-    # Keep direct pushes protected without paying twice for ordinary merges.
-    if: ${{ github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'Merge PR #') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

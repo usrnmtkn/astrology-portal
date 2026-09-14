@@ -1,19 +1,16 @@
 name: Content Studio API contract
 
-# Run this contract when Content Studio, serving content, or shared dependencies
-# change. Avoid spending Actions minutes on unrelated report or editorial PRs.
 on:
   pull_request:
     paths:
-      - "api/admin/**"
-      - "api/_lib/**"
+      - "api/**"
       - "apps/admin/**"
-      - "apps/web/src/content/**"
-      - "apps/web/src/main.tsx"
-      - "apps/web/src/services/**"
+      - "apps/web/**"
       - "packages/astro-knowledge/**"
-      - "scripts/test-content-studio-*.mjs"
-      - "scripts/test-content-publications*.mjs"
+      - "scripts/test-content-*"
+      - "scripts/test-admin-*"
+      - "scripts/test-sky-*"
+      - "scripts/ci-*"
       - "package.json"
       - "package-lock.json"
       - "vercel.json"
@@ -21,15 +18,14 @@ on:
   push:
     branches: [main]
     paths:
-      - "api/admin/**"
-      - "api/_lib/**"
+      - "api/**"
       - "apps/admin/**"
-      - "apps/web/src/content/**"
-      - "apps/web/src/main.tsx"
-      - "apps/web/src/services/**"
+      - "apps/web/**"
       - "packages/astro-knowledge/**"
-      - "scripts/test-content-studio-*.mjs"
-      - "scripts/test-content-publications*.mjs"
+      - "scripts/test-content-*"
+      - "scripts/test-admin-*"
+      - "scripts/test-sky-*"
+      - "scripts/ci-*"
       - "package.json"
       - "package-lock.json"
       - "vercel.json"
@@ -45,9 +41,7 @@ concurrency:
 
 jobs:
   content-studio-api:
-    # The same merge commit has already been validated on its PR. Preserve direct
-    # pushes to main, but do not bill a second identical run for normal PR merges.
-    if: ${{ github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'Merge PR #') }}
+    # Validate the actual main revision too. A merge message is not test evidence.
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
