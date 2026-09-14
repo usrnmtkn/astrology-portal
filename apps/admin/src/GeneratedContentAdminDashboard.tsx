@@ -2774,6 +2774,7 @@ export function GeneratedContentAdminDashboard() {
   const [loadState, setLoadState] = useState<AdminLoadState>("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loadDiagnostics, setLoadDiagnostics] = useState<string | null>(null);
+  const [extendedInventoryError, setExtendedInventoryError] = useState<string | null>(null);
   // Inventory reads have their own loadState; only an editor/action request blocks writing.
   const [isLoading, setIsLoading] = useState(false);
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
@@ -3363,6 +3364,7 @@ export function GeneratedContentAdminDashboard() {
       || showReferenceRows
       || showRetiredRows;
     if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
+    setExtendedInventoryError(null);
     let cancelled = false;
     const controller = new AbortController();
     void loadAllGeneratedContentRows(
@@ -3386,6 +3388,7 @@ export function GeneratedContentAdminDashboard() {
       })
       .catch((error) => {
         if (cancelled) return;
+        setExtendedInventoryError(dashboardErrorMessage(error));
         setMessage(dashboardErrorMessage(error));
       });
     return () => {
@@ -3961,6 +3964,7 @@ export function GeneratedContentAdminDashboard() {
     }
 
     setLoadState("loading");
+    setExtendedInventoryError(null);
     setLoadError(null);
     setLoadDiagnostics(null);
     setMessage("Loading saved content…");
@@ -7344,8 +7348,10 @@ export function GeneratedContentAdminDashboard() {
       house: houseTransitHouse,
       motion: houseTransitMotion
     } as HouseTransitSelection : null;
-    const groups = selection ? houseTransitSourceGroups(selection) : [];
-    const preview = selection ? renderHouseTransitPreview(selection, (candidateKeys) => {
+    const sourcesReady = loadState === "loaded" && allRowsLoaded;
+    const sourceLoadError = loadError || extendedInventoryError;
+    const groups = selection && sourcesReady ? houseTransitSourceGroups(selection) : [];
+    const preview = selection && sourcesReady ? renderHouseTransitPreview(selection, (candidateKeys) => {
       const source = skySourceForCandidates(candidateKeys);
       return source ? { key: source.contentKey, text: source.text } : null;
     }) : null;
@@ -7358,7 +7364,7 @@ export function GeneratedContentAdminDashboard() {
 
     return (
       <section className="admin-natal-placement-finder" aria-label="House Transits source finder">
-        <div className="admin-natal-placement-finder-heading">
+        <div className="admin-natal-placement-finder-heading admin-surface-card">
           <div>
             <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Where it lands" : "House Transits workspace"}</p>
             <h3>{selection ? houseTransitLabel(selection) : "Find a House Transit write-up"}</h3>
@@ -7370,7 +7376,7 @@ export function GeneratedContentAdminDashboard() {
           {selection && <code>transit/{selection.planet}-{selection.sign}/{selection.house}h/{selection.motion}</code>}
         </div>
 
-        <div className="admin-natal-placement-selectors">
+        <div className="admin-natal-placement-selectors admin-surface-card">
           <label>
             <span>1. Transiting planet</span>
             <AdminSelect aria-label="House Transit planet" value={houseTransitPlanet} onChange={(event) => updateHouseTransitSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
@@ -7402,13 +7408,21 @@ export function GeneratedContentAdminDashboard() {
         </div>
 
         {!selection && <p className="admin-natal-placement-prompt">Choose the planet, sign, and house to preview the reader's House Transit and open its exact source rows.</p>}
+        {selection && !sourcesReady && (
+          <section className="admin-surface-card" aria-label="House Transit content loading" aria-busy={!sourceLoadError}>
+            {sourceLoadError ? <>
+              <p role="alert">House Transit passages could not be loaded. {sourceLoadError}</p>
+              <StudioButton type="button" onClick={() => void loadDashboardData()}>Retry House Transit loading</StudioButton>
+            </> : <p role="status">Loading House Transit passages…</p>}
+          </section>
+        )}
         {selection && preview && (
           <section className="admin-natal-source-group" aria-label="Effective House Transit reader preview">
-            <header>
+            <header className="admin-surface-card"><div className="admin-page-heading">
               <p className="admin-eyebrow">Effective reader preview</p>
               <h3>What you see</h3>
               <p>The dates and motion are calculated facts. The writing comes from the editable passages listed below.</p>
-            </header>
+            </div></header>
             <article className="admin-natal-source-card">
               <div className="admin-natal-source-card-copy">
                 <div className="admin-natal-source-card-heading">
@@ -7426,10 +7440,10 @@ export function GeneratedContentAdminDashboard() {
 
         {compositionGroup && (
           <section className="admin-natal-source-group">
-            <header>
+            <header className="admin-surface-card"><div className="admin-page-heading">
               <h3>{compositionGroup.label}</h3>
               <p>{servingLegacy ? "This reader card is currently stored as one complete editable passage." : compositionGroup.description}</p>
-            </header>
+            </div></header>
             <div className="admin-natal-source-grid">{visibleCompositionSources.map(renderSkyAssemblySource)}</div>
           </section>
         )}
