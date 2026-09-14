@@ -5,6 +5,9 @@ on:
     paths: [.github/workflows/calendar-day-workbench.yml]
 permissions:
   contents: read
+defaults:
+  run:
+    shell: bash
 jobs:
   verify:
     runs-on: ubuntu-latest
