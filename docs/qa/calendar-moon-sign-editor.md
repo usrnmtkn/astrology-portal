@@ -37,9 +37,16 @@ Verification:
 - `scripts/test-content-studio-api-roundtrip.mjs` verifies the Libra identity
   through draft/publish and the actual reader loader, including repeat edits.
 - The existing Calendar browsing/composition/CRUD browser case remains covered.
-- The full `test:content-studio-api` suite and admin typecheck pass locally.
-- CSS consistency and token integrity pass. The architecture subcheck currently
-  fails on unchanged main imports in `EmptyHouseReaderPreview`,
-  `NatalPlacementReaderPreview`, `SkyPlacementVariableKey`, and `StudioControls`.
-  They import stylesheets outside `studio-system.css`. This change introduces
-  no stylesheet imports or visual overrides; the release gate is not waived.
+- All five fresh-build Calendar browser cases pass on the rebased code, including
+  390px and 1440px in light and dark themes. No browser runtime errors occurred.
+- The full unfiltered `npm run test:content-studio-api` suite passes locally.
+- Admin typecheck and the complete CSS/token/architecture audit pass. The new
+  controls use existing shared styles and introduce no CSS overrides.
+
+Bundle allowance: compared with main `120ae1dbf`, the direct-edit controls and
+separate draft chooser add about 1 kB aggregate gzip. The build measures 451.7 kB
+aggregate, 178.2 kB entry gzip, and 619.7 kB entry raw. The aggregate allowance
+increases from 451,000 to 452,000 bytes for this implemented interface. Startup,
+largest-chunk, memory-graph, lazy-boundary, and forbidden-payload limits remain
+unchanged. LunarCalendarWorkspace stays deferred; no runtime dependency or
+reader-content payload is added.
