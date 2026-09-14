@@ -1,4 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
+
+const sourceRows = JSON.parse(readFileSync(new URL("../../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", import.meta.url), "utf8"));
+const macroBody: string = sourceRows.authoredCards.find((row: { contentKey: string }) => row.contentKey === "authored/sky-lunation-macro/new-moon/virgo").body;
 
 const user = {
   id: "00000000-0000-4000-8000-000000000101",
@@ -71,6 +75,35 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       await page.reload();
       await expect(reports.getByRole("button", { name: "Read day report", exact: true })).toBeEnabled();
       await expect(reports.getByText("Sign in to create or read your reports.")).toBeHidden();
+    });
+
+    test(`You macro view expands its complete passage on ${viewport.name} ${theme}`, async ({ page }) => {
+      test.setTimeout(60_000);
+      await page.setViewportSize(viewport);
+      await prepare(page, theme);
+      await page.goto("/#you");
+      const macro = page.locator(".weekly-horoscope__macro");
+      const body = macro.locator(".weekly-horoscope__macro-body");
+      const more = macro.getByRole("button", { name: "Read more", exact: true });
+      await expect(more).toBeVisible();
+      await expect(more).toHaveAttribute("aria-expanded", "false");
+      await expect(more).toHaveAttribute("aria-controls", await body.getAttribute("id") as string);
+      // The owner's sample is the first two paragraphs of this full passage.
+      const preview = `${macroBody.split("\n\n").slice(0, 2).join("\n\n")}…`;
+      expect((await body.locator("p").allTextContents()).join("\n\n")).toBe(preview);
+      expect(preview.length).toBeLessThanOrEqual(576);
+      await macro.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: test.info().outputPath(`you-macro-${viewport.name}-${theme}.png`) });
+      await more.focus();
+      await page.keyboard.press("Enter");
+      const less = macro.getByRole("button", { name: "Read less", exact: true });
+      await expect(less).toHaveAttribute("aria-expanded", "true");
+      expect((await body.locator("p").allTextContents()).join("\n\n")).toBe(macroBody);
+      await expect(body).toContainText("They need a life that does not require you to keep treating yourself as the problem.");
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
+      await less.click();
+      await expect(more).toHaveAttribute("aria-expanded", "false");
+      expect((await body.locator("p").allTextContents()).join("\n\n")).toBe(preview);
     });
   }
 }
