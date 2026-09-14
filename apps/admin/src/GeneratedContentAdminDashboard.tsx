@@ -95,7 +95,6 @@ import {
   skyPlacementFrameTemplateKey,
   skyFallbackWorkspace
 } from "./skyFallbackWorkspace";
-import { templateVariableReferences } from "./templateVariableReference";
 import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspace";
 import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatus";
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
@@ -2869,6 +2868,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyFallbackVariableTarget, setSkyFallbackVariableTarget] = useState("");
   const [skyWritingContext, setSkyWritingContext] = useState<{ fieldPath?: string; selection?: SkyPlacementSelection }>({});
   const [templateVariableReferenceOpen, setTemplateVariableReferenceOpen] = useState(false);
+  const [buildVariableReferences, setBuildVariableReferences] = useState<typeof import("./templateVariableReference").templateVariableReferences | null>(null);
   const [calendarCreateRequest, setCalendarCreateRequest] = useState(0);
   const [templateVariableQuery, setTemplateVariableQuery] = useState("");
   const [selectedTemplateVariableName, setSelectedTemplateVariableName] = useState<string | null>(null);
@@ -2912,6 +2912,15 @@ export function GeneratedContentAdminDashboard() {
   const skyArticleWorkspaceAutosaveSequenceRef = useRef(0);
   const dashboardLoadSequenceRef = useRef(0);
   const dashboardLoadControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    if (!draft || buildVariableReferences) return;
+    let active = true;
+    void import("./templateVariableReference")
+      .then(module => { if (active) setBuildVariableReferences(() => module.templateVariableReferences); })
+      .catch(() => { if (active) setEditorSaveError("The variable reference could not load. Reload Studio to try again."); });
+    return () => { active = false; };
+  }, [Boolean(draft), buildVariableReferences]);
 
   useEffect(() => {
     if (!draft || !draftIsFallbackHook(draft)) return;
@@ -8195,13 +8204,13 @@ export function GeneratedContentAdminDashboard() {
     const seasonSourceRows = ZODIAC_SEASON_SOURCE_STARTERS.map((record: Record<string, any>) => rows.find(row => row.content_key === record.contentKey) ?? {
       id: `package:${record.contentKey}`, content_key: record.contentKey, headline: record.headline, body: "", summary: "", surface: "sky", status: "DRAFT", inventory_only: true, block_type: "fallback_hook", sections: { packageRecord: record }
     } as AdminGeneratedContentRow);
-    const variableReferences = templateVariableReferences({
+    const variableReferences = buildVariableReferences?.({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
       Body: currentDraft.body,
       body_you: packageFieldString(currentDraft, "body_you"),
       body_they: packageFieldString(currentDraft, "body_they")
-    }, effectiveSkyFallback, true);
+    }, effectiveSkyFallback, true) ?? [];
     const baseFallbackEditorGuidance = isFallbackHookDraft && !skyFallbackEditor && fallbackHookEditorGuidanceBuilder
       ? fallbackHookEditorGuidanceBuilder({
           contentKey: currentDraft.contentKey,

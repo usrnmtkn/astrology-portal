@@ -21,3 +21,7 @@ Verification commands:
 - `npm run qa:css-audit`
 
 The resolver is shipped as package `v3-2026-09-14c`. Node, browser-source, shipped-artifact and Studio tests cover all twelve signs, complete paragraphs, missing sources, published revisions, cursor insertion, source editing and return, and saved token preservation. Tests use isolated storage and synthetic prose.
+
+## Studio delivery size
+
+The variable catalog now loads when an editor opens. Using the GitHub workflow's Supabase configuration, isolated main `ffe17d962` measures 620.8 kB raw / 178.6 kB gzip at entry and 452.4 kB aggregate gzip. This feature measures 608.8 kB raw / 176.3 kB gzip at entry and 457.0 kB aggregate. The startup download is smaller; the full editor feature adds 4.6 kB aggregate. Allocate 5 kB aggregate for the requested cross-surface controls while keeping the initial-entry, largest-chunk, memory-graph, lazy-boundary and forbidden-payload limits unchanged.
