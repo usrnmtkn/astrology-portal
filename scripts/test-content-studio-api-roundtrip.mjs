@@ -296,6 +296,7 @@ const beforeBank = structuredClone(row);
 // Collective Sky templates must roundtrip as held writing references, including
 // editor-only guidance. An old editor must not overwrite a newer saved template.
 const { skyForecastTemplates } = await import("../apps/admin/src/skyForecastTemplates.ts");
+const { calendarMoonPassages } = await import("../apps/admin/src/calendarPreviewModel.ts");
 for (const template of Object.values(skyForecastTemplates)) {
   const guidance = "Editor-only source and structure guidance for this fixture.";
   const created = await invokeApi("POST", "/api/admin/generated-content", {
@@ -310,6 +311,15 @@ for (const template of Object.values(skyForecastTemplates)) {
   assert.equal(opened.payload.rows[0].body, template.body);
   assert.equal(opened.payload.rows[0].summary, guidance);
   assert.equal(opened.payload.rows[0].lane, "reference");
+  const previewQuery = new URLSearchParams({ status: "all", visibility: "all", limit: "1000" });
+  for (const key of [template.contentKey, "cms/sky-daily-summary/sun/virgo", "authored/calendar-weekly-moon/aries"]) previewQuery.append("contentKeys", key);
+  const previewRead = await invokeApi("GET", `/api/admin/generated-content?${previewQuery}`);
+  assert.equal(previewRead.status, 200, JSON.stringify(previewRead.payload));
+  const previewTemplate = previewRead.payload.rows.find(candidate => candidate.content_key === template.contentKey);
+  assert.equal(previewTemplate.body, template.body);
+  assert.equal(previewTemplate.summary, guidance);
+  const moonSource = previewRead.payload.rows.find(candidate => candidate.content_key === "authored/calendar-weekly-moon/aries");
+  assert.equal(calendarMoonPassages(previewRead.payload.rows, "Aries")[0]?.body, moonSource.sections.packageRecord.body);
   assert.equal((await loadLiveGeneratedContentForKeys([template.contentKey])).size, 0);
   const version = row.updated_at;
   row = { ...row, updated_at: "2026-09-14T16:00:00.000Z" };

@@ -635,3 +635,9 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard :is(.admin-editor-header, .admin-variables-rail-header) > :last-child {
   align-items: center;
 }
+
+/* Preserve complete saved paragraphs and calculated event line breaks. */
+#root .admin-dashboard .admin-calendar-template-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
