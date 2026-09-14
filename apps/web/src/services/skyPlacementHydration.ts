@@ -1,5 +1,6 @@
 import { contentPublicationRecords, publicationAllowsContent, publicationTimestamp } from "../content/contentPublicationState";
-import type { FallbackArchitectureV3Bundle } from "../content/fallbackArchitectureV3Runtime";
+import { loadSkyPlacementFallbackArchitectureV3Bundle, type FallbackArchitectureV3Bundle } from "../content/fallbackArchitectureV3Runtime";
+import { loadFallbackArchitectureV3DashboardBundle, loadFallbackArchitectureV3SkyPlacementDashboardBundle } from "./generatedContent";
 import { contentPublicationsResolved, refreshContentPublications } from "./contentPublications";
 
 const isSkySource = (key: string) => /^sky-(?:placement|context|lunation|nodes|lilith|v4)\//u.test(key)
@@ -33,9 +34,6 @@ export function missingSkyPlacementPublications(bundles: Array<FallbackArchitect
 export async function prepareSkyPlacementSources() {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const prepare = async () => {
-    const [{ loadSkyPlacementFallbackArchitectureV3Bundle }, {
-      loadFallbackArchitectureV3DashboardBundle, loadFallbackArchitectureV3SkyPlacementDashboardBundle
-    }] = await Promise.all([import("../content/fallbackArchitectureV3Runtime"), import("./generatedContent")]);
     await refreshContentPublications();
     if (!contentPublicationsResolved()) throw new Error("Sky publication state is unavailable.");
     const identity = skyPlacementPublicationIdentity();

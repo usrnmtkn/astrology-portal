@@ -9,7 +9,7 @@ export function shouldLoadSkyPlacementContent({
   hasSky: boolean;
   detailRoutePath: string | null;
 }) {
-  const isSkyPlacementList = hasSky && (mode === "guest" || mode === "member" || mode === "calendar");
+  const isSkyPlacementList = hasSky && (mode === "guest" || mode === "member");
   const isSkyPlacementDetail = Boolean(
     detailRoutePath && /^sky\/(?:placement|retrograde|lunation)\//u.test(detailRoutePath)
   );
@@ -21,9 +21,10 @@ export function skyPlacementDescriptionState(
   description: string | null | undefined,
   contentStatus: SkyPlacementContentStatus
 ) {
+  if (contentStatus === "loading" || contentStatus === "idle") return "loading" as const;
   if (description?.trim()) {
     return "ready" as const;
   }
 
-  return contentStatus === "loading" ? "loading" as const : "empty" as const;
+  return "empty" as const;
 }

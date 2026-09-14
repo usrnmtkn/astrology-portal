@@ -1,4 +1,4 @@
-import { publicationAllowsContent } from "../content/contentPublicationState";
+import { contentPublication, publicationAllowsContent } from "../content/contentPublicationState";
 import type { SkySnapshot } from "../types";
 import type { LiveGeneratedContent } from "./generatedContent";
 import { skyAspectGeneratedContentKeys } from "./skyAspectContent";
@@ -30,14 +30,24 @@ export async function loadSkyDetailContent(
   const keys = Array.from(new Set([...skySnapshotAspectContentKeys(snapshot), ...extraKeys]));
   const retained = eligibleSkyDetailContent(existing);
   const missing = keys.filter(key => !retained.has(key));
-  if (!missing.length) return retained.size === existing.size ? existing : retained;
+  const complete = (content: Map<string, LiveGeneratedContent>) => {
+    const unresolved = keys.filter(key => {
+      const publication = contentPublication(key);
+      if (publication?.state !== "live") return false;
+      const row = content.get(key);
+      return !row || !publicationAllowsContent(key, row.id, row.updatedAt, row.targetDate);
+    });
+    if (unresolved.length) throw new Error("The current article publication could not load.");
+    return content;
+  };
+  if (!missing.length) return complete(retained.size === existing.size ? existing : retained);
   try {
     const incoming = await load(missing);
-    return new Map([...retained, ...incoming]);
+    return complete(new Map([...retained, ...incoming]));
   } catch (error) {
     // Local approved sources may have finished loading during this request.
     // Let the reader recompose them with only still-eligible cached rows.
     console.warn("Sky detail content refresh failed; retaining eligible cached content.", error);
-    return retained;
+    return complete(retained);
   }
 }
