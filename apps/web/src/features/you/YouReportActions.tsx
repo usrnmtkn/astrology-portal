@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getSupabaseClient } from "../../services/auth";
 import { listReportLibrary, type ReportLibraryItem } from "../../services/reportLibrary";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import "../../styles/you-reports.css";
@@ -53,11 +52,13 @@ function reconcileAction(current: ReportAction, item: ReportLibraryItem | null):
 }
 
 export function YouReportActions({
+  accountId,
   dailyHoroscopeAssembly,
   dailyUpdateSummary,
   weeklyHoroscopeAssembly,
   transitDateLabel
 }: {
+  accountId: string | null | undefined;
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
   weeklyHoroscopeAssembly?: WeeklyHoroscopeAssembly | null;
@@ -66,7 +67,12 @@ export function YouReportActions({
   const [dayAction, setDayAction] = useState<ReportAction>(checkingAction);
   const [weekAction, setWeekAction] = useState<ReportAction>(checkingAction);
   const [message, setMessage] = useState("");
-  const [session, setSession] = useState<{ status: "checking" | "ready" | "signed_out" | "error"; userId: string | null }>({ status: "checking", userId: null });
+  // The page owns auth recovery. A second subscription can disagree with the
+  // account already displayed by the app; requests still verify the session.
+  const session = {
+    status: accountId === undefined ? "checking" : accountId ? "ready" : "signed_out",
+    userId: accountId ?? null
+  };
   const scope = `${session.userId ?? session.status}:${transitDateLabel}`;
   const scopeRef = useRef(scope);
   scopeRef.current = scope;
@@ -75,28 +81,7 @@ export function YouReportActions({
 
   useEffect(() => {
     mounted.current = true;
-    let cancelled = false;
-    let unsubscribe: (() => void) | undefined;
-    void getSupabaseClient().then((client) => {
-      if (cancelled) return;
-      if (!client) {
-        setSession({ status: "error", userId: null });
-        return;
-      }
-      // INITIAL_SESSION waits for persisted-session recovery. The callback must
-      // stay synchronous: Supabase holds its auth lock while delivering it.
-      const { data } = client.auth.onAuthStateChange((_event, value) => {
-        if (cancelled) return;
-        const userId = value?.user.id ?? null;
-        setSession((current) => current.userId === userId && current.status !== "checking"
-          ? current
-          : { status: userId ? "ready" : "signed_out", userId });
-      });
-      unsubscribe = () => data.subscription.unsubscribe();
-    }).catch(() => {
-      if (!cancelled) setSession({ status: "error", userId: null });
-    });
-    return () => { cancelled = true; mounted.current = false; unsubscribe?.(); ++requestVersion.current; };
+    return () => { mounted.current = false; ++requestVersion.current; };
   }, []);
   const dayBrief = useMemo(() => buildYouDayReportBrief({
     dateLabel: transitDateLabel,
@@ -215,7 +200,6 @@ export function YouReportActions({
         {reportButton("week", weekAction, Boolean(weekBrief))}
       </div>
       {session.status === "signed_out" ? <p role="status">Sign in to create or read your reports.</p>
-        : session.status === "error" ? <p role="status">Your session could not be checked. Please reload and try again.</p>
         : message ? <p role="status">{message}</p> : null}
     </section>
   );
