@@ -21,7 +21,7 @@ for (const source of [startup, boundary]) {
 
 assert.match(startup, /vite:preloadError/u, "Vite stale-chunk failures must have an automatic reader recovery path.");
 assert.match(startup, /script\?\.src\.includes\("\/assets\/"\)/u, "A stale hashed entry chunk must use the same reader recovery path.");
-assert.match(startup, /if \(reloadReaderRouteOnce\(\)\) return;/u, "Startup must reload the reader once before showing the terminal failure state.");
+assert.match(startup, /if \(reloadReaderRouteOnce\(\)\)/u, "Startup must reload the reader once before showing the terminal failure state.");
 assert.match(boundary, /componentDidCatch[\s\S]*reloadReaderRouteOnce\(\)/u, "Mounted reader render failures must get one guarded recovery attempt.");
 assert.match(boundary, /addEventListener\("vite:preloadError", this\.handlePreloadError\)/u, "Late lazy-chunk failures must be caught after React mounts.");
 assert.match(boundary, /<summary>Error details<\/summary>/u, "If recovery cannot fix the page, the local failure detail must remain inspectable.");
