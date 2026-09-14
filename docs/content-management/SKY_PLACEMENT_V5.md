@@ -102,8 +102,9 @@ writing.
 The calculated Sky variable key inserts calculated variables into the selected
 sentence. Section templates also accept the names of this composition's sentence
 sources. Sentences accept facts only. Named library sources such as
-`{{placementThesis}}` belong in section templates; they are not inline calculated
-variables. Nested source expansion and conditional mustache blocks are rejected.
+`{{placementThesis}}` can be used in section templates and directly in Placement
+article, Direct placement article, and Retrograde placement article. They remain
+authored phrase variables, not calculated facts. Nested source expansion and conditional mustache blocks are rejected.
 A malformed or unknown variable reports an editor/save error; a missing
 calculated value omits its dependent module without deleting words from a
 sentence.
@@ -145,8 +146,10 @@ saved atomically, including after reopening a draft.
 Selection remains: selected motion-specific article → shared complete article
 → enabled complete V5 composition → existing evergreen sections. TLDR,
 retrograde opening, and occurrence additions retain their existing paths. The
-complete-article fields do not accept sentence-source aliases; use the V5 section
-templates for assembly. Existing inline Sky variables remain compatible.
+complete-article fields accept the selected placement's named Writing Library
+sources as well as existing calculated article variables. Source values stay
+in `ingress.sources`; `ingress.enabled` only selects the separate composition
+fallback. Existing inline Sky variables remain compatible.
 
 New calculated variables: `passEntryDate`, `passExitDate`, `firstEntryDate`,
 `finalExitDate`, `returnDate` (next pass entry), `priorPassYear`, `currentYear`
@@ -179,3 +182,26 @@ Studio authoring, including governed prefill, the grouped writing-library entry
 point, and the advanced source editor. Existing placement reader regressions
 protect full authored copy. The package bundle, version pins, and generated
 manifests must be rebuilt with every serving behavior change.
+
+## Inline phrase variables in Placement articles
+
+The three complete article fields support literal prose, calculated variables,
+and Writing Library tokens. The Variables button opens Calculated Sky variables
+and Editable phrase variables. Insert retains the token at the cursor. Inserting
+or pasting a phrase prepares the Writing Library in the draft from governed
+sources, preserving local text and links. It never enables or publishes writing.
+
+Draft and saved previews use the same pure article source resolver as the reader.
+Missing phrases remain visible as draft gaps and block publication, even when
+composition is disabled or absent. The reader refuses incomplete articles; it
+does not delete part of a sentence. Unused library fields remain optional.
+Direct and retrograde articles use the explicit tokens the editor wrote; there
+is no automatic motion suffix substitution or prose rewrite.
+
+Links retain one-hop scope and SHA-256 checks. Changed or retired links require
+review and relinking. Governed local prefill is a copy, not an automatically
+updating link. Phrase text can contain calculated article variables but never
+other phrase tokens, recursive references, or conditional blocks. Use entryDate
+and exitDate for sign residency; pass dates and per-event aspect facts stay in
+composition modules. No existing prose, phrase grammar, approval, or reader
+selection precedence changes when this feature is installed.

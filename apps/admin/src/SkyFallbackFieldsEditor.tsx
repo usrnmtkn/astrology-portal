@@ -3,6 +3,9 @@ import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useRef, useState } from "react";
 import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementAssembly";
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
+import SkyPlacementArticleVariables from "./SkyPlacementArticleVariables";
+// @ts-ignore Shared article-token validator used by publishing and readers.
+import { isSkyPlacementArticleField, skyPlacementArticleVariableIssues } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 import SkyPhraseCompositionEditor from "./SkyPhraseCompositionEditor";
 import SkyIngressComposer from "./SkyIngressComposer";
 import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
@@ -58,7 +61,10 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const field = fields.find(item => item.key === selectedField) ?? fallbackField;
   const supportsVariables = field && isSkyPlacementVariableField(contentKey, field.key);
   const variableFacts = skyPlacementVariableFacts({ planet, sign, isRetrograde: rxContext });
-  const variableIssues: string[] = supportsVariables ? skyPlacementVariableIssues(field.value) : [];
+  const supportsArticlePhrases = field && isSkyPlacementArticleField(contentKey, field.key);
+  const variableIssues: string[] = supportsVariables ? supportsArticlePhrases
+    ? skyPlacementArticleVariableIssues(field.value, { ...source, contentKey })
+    : skyPlacementVariableIssues(field.value) : [];
   const evergreen: EvergreenSection[] = placement ? skyEvergreenLayout(source) : [];
   const initialLibrarySourceId = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1] ?? "";
   const initialLibraryField = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields).find(item => item.id === initialLibrarySourceId);
@@ -217,12 +223,16 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
           value={field.value} disabled={disabled} aria-invalid={variableIssues.length > 0 || undefined} onChange={event => changeWriting(event.target.value)} />
       </label>}
       <p className="admin-sky-writing-count">{field.value.trim() ? field.value.trim().split(/\s+/u).length : 0} words · {field.value.length} characters</p>
-      {supportsVariables && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />}
+      {supportsVariables && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && (supportsArticlePhrases
+        ? <SkyPlacementArticleVariables key={`${contentKey}#${field.key}`} contentKey={contentKey} planet={planet} sign={sign} motion={rxContext ? "retrograde" : "direct"}
+          fieldPath={field.key} value={field.value} source={source} disabled={disabled} onInsert={insertVariable}
+          onCompositionChange={value => onChange("ingress", value)} onLoadSource={onLoadSource} onOpenSource={onOpenSource} />
+        : <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />)}
       {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}
-      <details className="admin-workspace-details">
+      {!supportsArticlePhrases && <details className="admin-workspace-details">
         <AdminDisclosureSummary>Preview this section</AdminDisclosureSummary>
         <p className="admin-sky-writing-preview">{field.value ? supportsVariables ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value : "No writing saved for this section."}</p>
-      </details>
+      </details>}
     </> : <p>No editable writing fields are available for this source.</p>}
     {placement && <SkyWritingSystemDetails system="placement" />}
     {placement && <details className="admin-workspace-details" open>
