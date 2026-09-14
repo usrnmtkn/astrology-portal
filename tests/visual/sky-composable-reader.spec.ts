@@ -92,3 +92,43 @@ test('published motion blocks receive real residency and retrograde aspect facts
  await expect(body).not.toContainText('{{aspects');
  await page.screenshot({ path:'test-results/sky-composable-reader.png', fullPage:true });
 });
+
+for (const motionArticle of [false, true]) test(`Placement article phrases reach the calculated reader ${motionArticle ? 'retrograde article' : 'shared article'}`, async ({ page }) => {
+ test.setTimeout(120_000);
+ const key = 'sky-placement/article/mercury/cancer';
+ const base = skyPlacementSourceRecords.get(key)!;
+ const ingress = { ...makeSkyIngressComposition(), enabled: false, modules: [], sources: {
+  openingHook: { kind: 'placement', text: 'Fixture article opening for {{planetTitle}} in {{signTitle}}.' },
+  planetFunction: { kind: 'planet', text: 'Fixture planet function.' },
+  signMethod: { kind: 'sign', text: 'Fixture sign method.' },
+  placementPressure: { kind: 'placement', text: 'Fixture placement pressure with {{aspectsInSignCount}} residency aspects.' },
+  closingLine: { kind: 'placement', text: 'Fixture complete article final sentence.' }
+ } };
+ const template = '{{openingHook}}\n\n{{planetFunction}} {{signMethod}} {{placementPressure}} From {{entryDate}} to {{exitDate}}.\n\n{{closingLine}}';
+ const updatedAt = '2026-07-09T12:00:00.000Z';
+ const source = { ...base, studio_version_status: 'approved-serving-revision', placementArticle: motionArticle ? 'Fixture unselected shared article.' : template,
+  placementArticleDirect: motionArticle ? 'Fixture unselected direct article.' : '', placementArticleRetrograde: motionArticle ? template : '', ingress };
+ const row = { id: 'cccccccc-cccc-cccc-cccc-cccccccccccc', content_key: key, surface: 'sky', mode: 'in_depth', status: 'LIVE', lane: 'serving', review_state: null, target_date: null,
+  provider: 'tldrastro-fallback-architecture-v3', updated_at: updatedAt, headline: base.headline, body: template, summary: base.summary,
+  sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: base.source_package, content_role: base.content_role }, block_type: 'fallback_hook', event_type: 'fallback-hook' };
+ await page.clock.setFixedTime(new Date('2026-07-10T12:00:00Z'));
+ await page.addInitScript(() => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' })));
+ const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+ await page.route('**/rest/v1/**', route => {
+  const path = new URL(route.request().url()).pathname;
+  return route.fulfill({ json: path.endsWith('/content_runtime_revision') ? updatedAt
+   : path.endsWith('/content_publications') ? [{ content_key: key, state: 'live', revision: 1, row_id: row.id, row_updated_at: updatedAt, updated_at: updatedAt }]
+   : path.endsWith('/generated_interpretations') ? [row] : [] });
+ });
+ await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+ await page.goto('/?date=2026-07-10#sky/placement/mercury/cancer');
+ const article = page.locator('.sky-detail-article');
+ await expect(article).toContainText('Fixture article opening for Mercury in Cancer.', { timeout: 60_000 });
+ await expect(article).toContainText('Fixture planet function. Fixture sign method. Fixture placement pressure with 4 residency aspects.');
+ await expect(article).toContainText(/From [A-Z][a-z]+ \d+, 2026 to [A-Z][a-z]+ \d+, 2026\./);
+ await expect(article).toContainText('Fixture complete article final sentence.');
+ await expect(article).not.toContainText('{{');
+ await expect(article).not.toContainText('Fixture unselected');
+ expect(errors).toEqual([]);
+ await article.screenshot({ path: `test-results/sky-article-phrase-reader-${motionArticle}.png` });
+});
