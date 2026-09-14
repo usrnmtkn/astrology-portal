@@ -7,17 +7,18 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: visual-smoke-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   scope:
-    # A normal merge commit repeats the revision already tested on the PR. Keep
-    # direct pushes to main covered, but do not buy the same browser matrix twice.
-    if: github.event_name != 'push' || !startsWith(github.event.head_commit.message, 'Merge PR #')
+    # Always evaluate the actual revision, including merge commits on main.
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
     outputs:
       reader: ${{ steps.scope.outputs.reader }}
       studio: ${{ steps.scope.outputs.studio }}
@@ -27,63 +28,21 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Validate workflow YAML and conditions
+        run: ruby scripts/test-ci-workflow-syntax.rb
+      - name: Verify shared-dependency scope regressions
+        run: node scripts/test-ci-visual-scope.mjs
       - id: scope
         name: Determine affected browser surfaces
-        shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PUSH_BASE_SHA: ${{ github.event.before }}
           HEAD_SHA: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-
-          emit_all() {
-            echo "reader=true" >> "$GITHUB_OUTPUT"
-            echo "studio=true" >> "$GITHUB_OUTPUT"
-            echo "friends=true" >> "$GITHUB_OUTPUT"
-            echo "sky=true" >> "$GITHUB_OUTPUT"
-          }
-
-          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
-            emit_all
-            exit 0
-          fi
-
-          base="$PR_BASE_SHA"
-          if [ -z "$base" ]; then base="$PUSH_BASE_SHA"; fi
-          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
-            emit_all
-            exit 0
-          fi
-
-          files="$(git diff --name-only "$base" "$HEAD_SHA")"
-          echo "Changed files:"
-          printf '%s\n' "$files"
-
-          matches() {
-            printf '%s\n' "$files" | grep -Eq "$1"
-          }
-
-          reader=false
-          studio=false
-          friends=false
-          sky=false
-
-          if matches '^(package(-lock)?\.json|\.github/workflows/visual-smoke\.yml)$'; then
-            emit_all
-            exit 0
-          fi
-
-          if matches '^(apps/web/|api/|packages/astro-knowledge/|vercel\.json$|playwright\.config\.ts$|playwright\.reader-release\.config\.ts$|tests/visual/(app-loading-feedback|visual-regression-baseline|visual-smoke|client-facing-user-flows|report-library-ui)\.spec\.ts$)'; then reader=true; fi
-          if matches '^(apps/admin/|api/admin/|playwright\.studio|tests/visual/(content-dashboard-admin-user-flows|calendar-review-queue-api|review-queue-workflow|content-publication-offline|content-studio-reader-destinations|content-studio-needs-attention)\.spec\.ts$|scripts/test-(admin-content-studio-usability|content-studio-link-routing|content-live-status-node-runtime)\.mjs$)'; then studio=true; fi
-          if matches '^(apps/web/src/features/friends/|apps/web/src/features/you/|apps/web/src/components/reports/|apps/web/src/services/(auth|birthTimeReliability|chartProfile|manualCharts|reportLibrary|reportSharing|socialFriends|userGeneratedContent)\.ts$|api/(friend|you-report|report-share|generate-friend|stripe-webhook|cron/run-(friend|you)-report-jobs)|tests/visual/.*friends|scripts/.*friend)'; then friends=true; fi
-          if matches '^(apps/admin/src/Sky|apps/web/src/features/sky/|apps/web/src/styles/sky|api/.*sky|scripts/.*sky|tests/visual/sky|playwright\.sky|playwright\.studio-secondary\.config\.ts$|packages/astro-knowledge/.*sky)'; then sky=true; fi
-
-          echo "reader=$reader" >> "$GITHUB_OUTPUT"
-          echo "studio=$studio" >> "$GITHUB_OUTPUT"
-          echo "friends=$friends" >> "$GITHUB_OUTPUT"
-          echo "sky=$sky" >> "$GITHUB_OUTPUT"
+        run: node scripts/ci-visual-scope.mjs
 
   friends-loading-performance:
     needs: scope
@@ -120,79 +79,56 @@ jobs:
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
-
       - name: Set up Node
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
-
       - name: Verify fallback package manifest freshness
         run: node scripts/generate-fallback-package-manifest.mjs --check
-
       - name: Install dependencies
         run: npm ci
-
       - name: Audit form typography
         run: npm run qa:form-typography
-
       - name: Verify Content Studio link routing
         run: node --experimental-strip-types scripts/test-content-studio-link-routing.mjs
-
       - name: Verify Content Studio editor UX
         run: node scripts/test-admin-content-studio-usability.mjs
-
       - name: Verify Content Studio server module startup
         run: npm run build:knowledge && node scripts/test-content-live-status-node-runtime.mjs
-
       - name: Verify publication lifecycle and offline retirement
         run: npm run test:content-publications
-
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
-
       - name: Enforce fresh browser release path
         run: npm run test:playwright-release-path
-
       - name: Build app
         run: npm run build
-
       - name: Check public downloads for personal identifiers
         env:
           PROJECT_PRIVACY_POLICY: ${{ secrets.PROJECT_PRIVACY_POLICY }}
         run: node scripts/check-project-privacy.mjs --directory apps/web/dist
-
       - name: Verify production health endpoint imports
         run: npm run test:production-health
-
       - name: Verify production report smoke contract
         run: node scripts/test-production-report-smoke.mjs
-
       - name: Enforce browser knowledge boundary
         run: npm run test:browser-knowledge-boundary
-
       - name: Verify reader copy eligibility and content boundary
         run: npm run test:reader-copy-repair
-
       - name: Enforce web bundle budgets
         run: npm run qa:bundle
-
       - name: Verify startup performance contracts
         run: npm run test:performance-contracts
-
       - name: Verify visible loading and recovery on slow or failed downloads
         run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts
-
       - name: Run visual regression and smoke screens
         run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
-
       - name: Run client-facing user flows
         run: npx playwright test -c playwright.reader-release.config.ts tests/visual/client-facing-user-flows.spec.ts tests/visual/report-library-ui.spec.ts
-
       - name: Upload visual smoke artifacts
         if: always()
         uses: actions/upload-artifact@v6
