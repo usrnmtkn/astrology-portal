@@ -1,0 +1,50 @@
+name: Calendar day workbench
+on:
+  push:
+    branches: [chatgpt/calendar-day-overview-20260913]
+    paths: [.github/workflows/calendar-day-workbench.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect current Calendar and Sky integration
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          app = Path('apps/web/src/App.tsx').read_text()
+          lines = app.splitlines()
+          for query, before, after in [('function SkyCards(', 0, 190), ('onGeneratedContentRequest={requestCalendarContent}', 15, 10), ('function currentSkyV4Placement', 0, 200), ('function currentSkyPlacement', 0, 140)]:
+              for i, line in enumerate(lines):
+                  if query in line:
+                      print(f'\n--- App.tsx:{i+1} {query} ---')
+                      print('\n'.join(f'{j+1}: {lines[j]}' for j in range(max(0, i-before), min(len(lines), i+after))))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: calendar-day-source-context
+          retention-days: 1
+          path: |
+            AGENTS.md
+            package.json
+            apps/web/package.json
+            apps/web/src/App.tsx
+            apps/web/src/types.ts
+            apps/web/src/features/calendar/*.ts
+            apps/web/src/features/calendar/*.tsx
+            apps/web/src/features/sky/*.ts
+            apps/web/src/features/sky/*.tsx
+            apps/web/src/content/skyDailySummary.ts
+            apps/web/src/content/skySummaryEvents.ts
+            apps/web/src/content/skySummaryEventPlacements.ts
+            apps/web/src/services/skyClock.ts
+            apps/web/src/services/astrologyDisplay.ts
+            apps/web/src/services/ephemeris.ts
+            apps/web/src/services/skyCalculationClient.ts
+            apps/web/src/styles/*.css
+            tests/visual/*calendar*
+            playwright.config.*
