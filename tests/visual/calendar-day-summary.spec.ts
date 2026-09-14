@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { bundledPublications } from '../helpers/bundled-publications';
 const source = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json', 'utf8'));
 const moonBody = source.hookRows.find((row: any) => row.contentKey === 'fallback-hook/sky-placement-lived/moon/libra').body_you;
 const location = { label: 'New York, NY', latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York' };
@@ -31,7 +32,19 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       localStorage.setItem('tldrastro:dyslexiaFont', 'false');
     }, { location, theme });
     await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { month: '2026-09', timeZone: location.timeZone, location, days: [day], events } } }));
-    await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+    await bundledPublications(page);
+    await page.route('**/assets/fallback-content-sky-placement-*.js', async route => {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      await route.continue();
+    });
+    await page.addInitScript(() => {
+      const observed: string[] = [];
+      (window as typeof window & { moonCopyObserved: string[] }).moonCopyObserved = observed;
+      new MutationObserver(() => {
+        const copy = document.querySelector('[aria-label="Moon guidance"] p')?.textContent?.trim();
+        if (copy && !observed.includes(copy)) observed.push(copy);
+      }).observe(document, { subtree: true, childList: true, characterData: true });
+    });
     await page.goto(`/?date=${dateKey}#calendar?view=day&date=${dateKey}`);
     const card = page.getByRole('region', { name: 'Selected lunar day', exact: true });
     const moon = card.getByRole('region', { name: 'Moon guidance', exact: true });
@@ -42,6 +55,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     await expect(moon.locator('p').first()).toHaveText(moonBody.split(/\n\n/)[0]);
     for (const paragraph of moonBody.split(/\n\n/)) await expect(moon.getByText(paragraph, { exact: true })).toBeVisible();
     await expect(moon.locator('p')).toHaveCount(moonBody.split(/\n\n/).length);
+    expect(await page.evaluate(() => (window as typeof window & { moonCopyObserved: string[] }).moonCopyObserved))
+      .toEqual([moonBody.split(/\n\n/)[0]]);
     await expect(moon.getByText(/Moon in Libra at \d+°/)).toHaveCount(0);
     await expect(card.getByRole('region', { name: 'Daily Calendar overview' })).toHaveCount(0);
     await expect(card.locator('mark')).toHaveCount(0);
