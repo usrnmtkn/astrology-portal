@@ -1,3 +1,4 @@
+import { zodiacSeasonVariableNames } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 // @ts-ignore Shared reader/editor contract for the optional evergreen layout.
 import { skyEvergreenEditableFields, skyEvergreenFields } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 
@@ -75,7 +76,7 @@ export function validateSkyV4TransitPov(
   const hasPlacementBody = typeof readerFields.placementArticle !== "string" || readerFields.placementArticle.trim()
     || skyEvergreenFields({ fallback: { hook: readerFields["fallback.hook"], lived: readerFields["fallback.lived"], turn: readerFields["fallback.turn"], sections: readerFields["fallback.sections"] } })
       .some((section: { value: string }) => section.value.trim());
-  if (contentType === "continuous-placement" && hasPlacementBody && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
+  if (contentType === "continuous-placement" && hasPlacementBody && !zodiacSeasonVariableNames(copy).length && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
     hardFailures.push("STP-03: continuous placement copy needs an explicit current-sky or time anchor.");
   }
   return { hardFailures, warnings: [], passed: hardFailures.length === 0 };

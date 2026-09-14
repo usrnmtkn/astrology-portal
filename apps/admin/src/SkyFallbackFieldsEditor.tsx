@@ -1,6 +1,6 @@
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementAssembly";
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
 import SkyPlacementArticleVariables from "./SkyPlacementArticleVariables";
@@ -70,7 +70,11 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const initialLibraryField = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields).find(item => item.id === initialLibrarySourceId);
   const ingressComposition = (source as Record<string, any> | undefined)?.ingress as SkyWritingLibraryComposition | undefined;
   const savedLibraryReady = skyWritingLibraryInstalled(ingressComposition);
-  const activeLibrary = savedLibraryReady ? ingressComposition ?? null : preparedLibrary;
+  // Existing libraries may predate newly registered sign fields. Make those
+  // fields editable immediately without changing the saved section order.
+  const activeLibrary = useMemo(() => savedLibraryReady && ingressComposition
+    ? { ...installSkyWritingLibrary(ingressComposition), modules: ingressComposition.modules }
+    : preparedLibrary, [savedLibraryReady, ingressComposition, preparedLibrary]);
   const libraryReady = skyWritingLibraryInstalled(activeLibrary);
   const sourceRef = useRef(source);
   const onChangeRef = useRef(onChange);

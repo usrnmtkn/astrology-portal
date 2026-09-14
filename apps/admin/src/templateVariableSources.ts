@@ -5,6 +5,8 @@ import type { TemplateVariableReference } from "./templateVariableReference";
 // can fill it. Variables omitted here are calculated by the app and do not have
 // an editable content row.
 const resolverSourceFamilies: Record<string, string[]> = {
+  zodiacSeason: ["fallback-hook/zodiac-season/"],
+  zodiacSeasonPolarAxis: ["fallback-hook/zodiac-season-polar-axis/"],
   planetVerb: ["fallback-vocab/planet-verb/"],
   signAdverb: ["fallback-vocab/sign-adverb/"],
   signNeed: ["fallback-vocab/sign-need/"],

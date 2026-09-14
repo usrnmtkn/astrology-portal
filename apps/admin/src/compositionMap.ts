@@ -1,3 +1,4 @@
+import { zodiacSeasonVariableNames } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import { templateVariableReferences, type TemplateVariableReference } from "./templateVariableReference";
 import {
@@ -276,6 +277,7 @@ function representativeExampleForRow(row: CompositionMapRow, name: string, examp
 function previewSourceText(source: CompositionMapSource, audience: "you" | "they", slotName: string) {
   const packageRecord = packageRecordForRow(source.row);
   const sections = objectRecord(source.row.sections) ?? {};
+  if (["zodiacSeason", "zodiacSeasonPolarAxis"].includes(slotName)) return text(packageRecord.body) || text(source.row.body);
   if (/headline$/iu.test(slotName)) {
     const audienceHeadline = audience === "they" ? text(packageRecord.headline_they) : "";
     return audienceHeadline
@@ -299,6 +301,10 @@ function representativeSource(
   values: Map<string, string>,
   includeOptionalSources = false
 ) {
+  if (["zodiacSeason", "zodiacSeasonPolarAxis"].includes(slot.name)) {
+    const sign = (values.get("signTitle") || values.get("signATitle") || "").toLowerCase().trim();
+    return slot.sources.find(source => source.row.content_key.split("/").at(-1) === sign && previewSourceText(source, "you", slot.name).trim()) ?? null;
+  }
   if ((!includeOptionalSources && slot.requirement === "Optional") || !slot.sources.length) return null;
   if (slot.sources.length === 1) return slot.sources[0];
   const directAnchorNames: Record<string, string[]> = {
@@ -421,6 +427,7 @@ function renderPreviewText(template: string, values: Map<string, string>, seen =
     if (seen.has(name)) return fallbackPreviewValue(name);
     if (!values.has(name)) return fallbackPreviewValue(name);
     const raw = values.get(name) ?? "";
+    if (["zodiacSeason", "zodiacSeasonPolarAxis"].includes(name)) return mark ? mark(name, raw) : raw;
     if (!raw) return "";
     const value = renderPreviewText(raw, values, new Set([...seen, name]), mark);
     return mark ? mark(name, value) : value;
@@ -437,8 +444,9 @@ function renderPreviewText(template: string, values: Map<string, string>, seen =
         : "";
     });
   }
-  return rendered
-    .replace(/\{\{\s*([\w.-]+)\s*\}\}/gu, (_match, name: string) => resolve(name))
+  const expanded = rendered.replace(/\{\{\s*([\w.-]+)\s*\}\}/gu, (_match, name: string) => resolve(name));
+  if (zodiacSeasonVariableNames(template).length) return expanded.trim();
+  return expanded
     .replace(/\{\{[^}]+\}\}/gu, "")
     .replace(/[ \t]+\n/gu, "\n")
     .replace(/[ \t]{2,}/gu, " ")
@@ -537,7 +545,7 @@ function buildCompositionPreview(
 ): CompositionPreview {
   const values = new Map<string, string>();
   slots.forEach((slot) => {
-    values.set(slot.name, slot.requirement === "Optional"
+    values.set(slot.name, ["zodiacSeason", "zodiacSeasonPolarAxis"].includes(slot.name) ? `[Missing ${slot.name} prose for the selected sign]` : slot.requirement === "Optional"
       ? ""
       : representativeExampleForRow(row, slot.name, slot.example));
   });

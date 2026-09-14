@@ -1,4 +1,5 @@
 import { assertNodePublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
+import { zodiacSeasonTemplateContext, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
 export { setNodeBlockedContentKeys } from "./publicationGuard.mjs";
 // TLDR Astro fallback resolver — reference implementation (v3)
 // Renders a per-surface fallback template from role-labeled rows.
@@ -70,6 +71,7 @@ function checkFrame(row, b = row.body) {
 // minimal mustache subset: {{var}}, {{#key}}...{{/key}} (truthy or array w/ {{.}}),
 // {{^key}}...{{/key}} inverted sections, no escaping needed for plain text
 function mustache(body, ctx) {
+  ctx = zodiacSeasonTemplateContext(body, ctx, hooks);
   body = body.replace(/\{\{#([\w.]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key, inner) => {
     const v = ctx[key];
     if (!v || (Array.isArray(v) && v.length === 0)) return "";
@@ -152,11 +154,13 @@ const ORD = { 1: "1st", 2: "2nd", 3: "3rd" };
 const ordinal = (n) => ORD[n] ?? `${n}th`;
 
 function renderTemplate(template, ctx, gapLabel, voice = "you") {
+  const raw = voice === "you" ? (template.body_you ?? template.body) : (template.body_they ?? template.body);
+  ctx = zodiacSeasonTemplateContext(raw, ctx, hooks);
   for (const slot of template.requiredSlots) {
     if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: required slot '${slot}' has no eligible row for ${gapLabel}`);
   }
-  const raw = voice === "you" ? (template.body_you ?? template.body) : (template.body_they ?? template.body);
-  const body = fixArticles(mustache(raw, ctx)).replace(/\s{2,}/g, " ").trim();
+  const rendered = mustache(raw, ctx);
+    const body = zodiacSeasonVariableNames(raw).length ? rendered.trim() : fixArticles(rendered).replace(/\s{2,}/g, " ").trim();
   if (/\{\{|\}\}/.test(body)) throw new RoleViolationError(`Unresolved slots in rendered output: ${body}`);
   return body;
 }

@@ -1,3 +1,4 @@
+import { ZODIAC_SEASON_VARIABLES } from "./zodiacSeasonVariables.mjs";
 // Shared editorial field registry. This is not reader prose.
 const field = (id, label, description, kind, rows = 4) => ({ id, label, description, kind, rows });
 
@@ -22,6 +23,7 @@ export const SKY_WRITING_LIBRARY_GROUPS = [
       field("signDescriptor", "Sign descriptor", "A short identifying phrase used inside another sentence. Example: ‘a cardinal fire sign’ in ‘Aries, a cardinal fire sign, tends to move toward what needs to begin.’", "sign", 2),
       field("signCoreDrive", "Core drive", "What the sign needs or keeps trying to establish.", "sign", 4),
       field("signMethod", "Method", "How the sign tends to approach problems, choices, change, or expression.", "sign", 4),
+      ...ZODIAC_SEASON_VARIABLES,
       field("signGift", "Gift", "What the sign tends to do constructively when its method is working.", "sign", 4),
       field("signShadow", "Sign shadow", "Where the sign’s method can become rigid, excessive, avoidant, or counterproductive.", "sign", 4),
       field("signValues", "Values and life themes", "Optional sign themes. This stays empty by default rather than importing a house-shaped list.", "sign", 4)
