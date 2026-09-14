@@ -1,0 +1,10 @@
+from pathlib import Path
+p=Path('apps/admin/src/SkyPlacementArticleVariables.tsx');s=p.read_text()
+s=s.replace('const next = installSkyWritingLibrary(base, values);', 'const seeded = installSkyWritingLibrary(base, values);\n      // Preparing article ingredients must not alter the independent fallback.\n      const next = { ...seeded, modules: base.modules };')
+p.write_text(s)
+p=Path('apps/admin/src/SkyPlacementComposition.tsx');s=p.read_text()
+s=s.replace('.map((name: any) => phraseRecord?.ingress?.sources?.[name]?.reference?.contentKey)\n    .filter((key: any) => key && key !== phraseRecord?.contentKey))]);', '.map((name: any) => phraseRecord?.ingress?.sources?.[name]?.reference)\n    .filter(Boolean))]);')
+s=s.replace('const referenceKeys: string[] = JSON.parse(phraseReferenceKey);', 'const refs: Array<{ contentKey: string }> = JSON.parse(phraseReferenceKey);\n    const referenceKeys = [...new Set(refs.map(ref => ref.contentKey))].filter(key => key !== phraseRecord?.contentKey);')
+p.write_text(s)
+p=Path('docs/content-management/SKY_WRITING_SYSTEMS.md');s=p.read_text().replace('Fallback hooks are ordered evergreen\nsections, not source aliases inside the complete-article field.', 'Fallback hooks are ordered evergreen\nsections. Complete Placement articles can also resolve explicit Writing Library\nphrase tokens from the same placement, with scope and hash checks intact.')
+p.write_text(s)
