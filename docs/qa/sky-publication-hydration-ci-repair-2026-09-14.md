@@ -67,7 +67,8 @@ the canonical manifest; approval records stay in that manifest. Web compression
 uses the safe Terser options already used by standalone Studio. The only added
 web allowance is 500 bytes for the graph route's shared Studio CSS: main #799
 moved approved styles into that file, now 23,126 gzip bytes against a 23,300 cap.
-Reader startup, web JavaScript and accuracy limits remain unchanged.
+At this checkpoint, reader startup, web JavaScript and accuracy limits remained
+unchanged; the later main #806–#809 integration is measured separately below.
 The combined #801–#803 Studio features and accessible serving-status badge
 measure about 178.55 kB entry and 452.13 kB total gzip with the actual CI
 Supabase configuration. Studio receives 250 bytes entry and 500 bytes aggregate
@@ -150,3 +151,10 @@ the merge retains both rationales without adding the allowances together.
 The initial-empty-overlay fix uses concise developer diagnostics; no visible
 copy changes. Reader broadcast and periodic revalidation share the same cache
 refresh callback, now reflected in the source contract.
+
+The hydration/Friends repair passed the 474,750-byte reader startup cap before
+this integration. With the same CI configuration and compiler, the newly merged
+Calendar/Account features bring the combined build to 475,143 gzip bytes, 393
+over that cap. A 500-byte allocation covers those features (new cap 475,250).
+App JavaScript, startup CSS, aggregate and individual deferred-chunk limits,
+accuracy thresholds and all behavioral assertions remain unchanged.
