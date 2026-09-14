@@ -168,3 +168,22 @@ viewport/theme/data cases verify the complete intended paragraphs. A delayed
 partition and DOM observer also assert that no other Moon passage paints first.
 These eight tests join the existing placement reader job. Calendar package
 boundaries, type checking and the integrated web budget remain passing.
+
+## Final integration regressions
+
+The `30c78c91d` real-data preview passed all eight placement visits and all five
+summary visits, including both 65-second background checks, with one prose
+variant, no collapse and no page errors. Its mandatory API contract passed
+locally and in GitHub; all 27 retained Account recovery cases passed locally.
+The complete client matrix exposed only two outdated fixtures: Day now selects
+the complete Moon placement passage while Week retains consecutive variants;
+and the sign-out case supplied a cached profile without a verified session.
+The revised tests preserve complete-text comparisons and seed an actual synthetic
+Supabase session, then require the logout request and cleared reader state.
+Both pass. Three loading cases similarly retain their waiting/offline assertions
+while selecting the current full Moon passage for Day/selected Week cards.
+
+The new Calendar editor links were outside a Studio container. They now sit
+inside the existing toolbar; all four unchanged full-page/form container audits
+pass, with the seven Calendar loading checks and five related Studio cases
+(16 total). No blanket exclusion, wider timeout or snapshot rebaseline was used.
