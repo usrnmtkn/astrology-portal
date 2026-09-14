@@ -94,7 +94,9 @@ test("Sky Write-ups navigation remains usable with a malformed status response",
   await page.goto(`${studioPath}#review-queue`);
   await openStudioPage(page, "Sky Write-ups");
   await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
-  await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first().locator(".admin-col-visibility")).toHaveText("Status unavailable");
+  const status = page.getByLabel("Sky write-up rows").locator("tbody tr").first().locator(".admin-col-visibility");
+  await expect(status).toHaveText("Live");
+  await expect(status.locator("[title]")).toHaveAttribute("title", "Reader serving status could not be verified. Showing the saved editorial state.");
   await openStudioPage(page, "Content Library");
   await openStudioPage(page, "Sky Write-ups");
   await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first()).toBeVisible();
