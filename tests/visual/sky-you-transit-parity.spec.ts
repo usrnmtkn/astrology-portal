@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { zonedDateTimeToUtc } from "../../apps/web/src/services/timezones";
 import { natalSkySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
+import { bundledPublications } from "../helpers/bundled-publications";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 // Synthetic chart selected for a calculated Virgo North Node near September's Sun.
@@ -18,7 +19,7 @@ async function seed(page: Page, now: string, theme: string) {
   expect(node?.degree).toBeLessThan(20);
   const cacheKey = natalSkySnapshotCacheKey(location, birth);
   await page.clock.setFixedTime(new Date(now));
-  await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+  await bundledPublications(page);
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", route => route.fulfill({ status: 503, body: "QA uses local calculations" }));
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
   await page.addInitScript(({ now, theme, location, birthDate, birthTime, natalSky, cacheKey, schema }) => {
@@ -49,7 +50,7 @@ for (const [day, hour, width, theme] of [
   await page.setViewportSize({ width, height: 1000 });
   await seed(page, `${day}T${hour}:00Z`, theme);
   await page.goto(`/?date=${day}#sky/placement/sun/virgo`);
-  const aspect = page.locator(".sky-detail-personalized-aspect").filter({ has: page.getByRole("heading", { name: "Sun conjunction your North Node", exact: true }) });
+  const aspect = page.locator(".sky-detail-personalized-aspect").filter({ has: page.getByRole("heading", { name: "Sun conjunction your North Node · Sun opposition your South Node", exact: true }) });
   await expect(aspect).toContainText("You may be offered a role that feels slightly ahead", { timeout: 60_000 });
   await expect(aspect).toContainText("learn from what happens next.");
   const skyParagraphs = await aspect.locator("p").allTextContents();
@@ -69,7 +70,12 @@ for (const [day, hour, width, theme] of [
   await expect(article).toContainText("You may be offered a role that feels slightly ahead");
   await expect(article).toContainText("learn from what happens next.");
   const youParagraphs = await article.locator(".article-section").filter({ has: page.getByRole("heading", { name: "Sun Conjunction North Node", exact: true }) }).locator("p").allTextContents();
-  expect(skyParagraphs).toEqual(youParagraphs);
+  // Sky groups both ends of the nodal axis. You opens the selected North Node
+  // contact, whose complete two-paragraph fixture must still match exactly.
+  expect(youParagraphs).toHaveLength(2);
+  expect(skyParagraphs).toHaveLength(3);
+  expect(skyParagraphs.slice(0, 2)).toEqual(youParagraphs);
+  expect(skyParagraphs[2]).toContain("opposing your natal South Node");
   expect(errors).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

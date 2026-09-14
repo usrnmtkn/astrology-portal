@@ -88,8 +88,13 @@ assertion. An explicit empty Calendar fixture preserves the retirement,
 unavailable-copy, Retry, and no-legacy-copy assertions. Five consecutive fresh
 build repetitions passed in under a second each, without widening timeouts.
 
-The serialized placement job approached its 30-minute runner limit while the
-long client flow suite continued separately. Placement reader verification now
+The serialized placement job exceeded its 30-minute runner limit while the
+long client flow suite continued separately. Its final log also exposed an old
+single-node heading selector: Sky now groups the North/South Node axis. All
+four corrected parity cases pass, comparing the complete two-paragraph North
+Node fixture between Sky and You and retaining the paired South Node passage.
+The fixture now isolates the publication ledger and nightly snapshot as well.
+Placement reader verification now
 has its own job, retaining the original seven-file command. The complete client
 suite uses four isolated shards with one worker each, matching the existing
 Studio sharding model. Test collection proves all 218 cases occur exactly once
