@@ -65,7 +65,7 @@ async function installSources(page: Page) {
   });
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
   const notify = () => page.evaluate(key => window.dispatchEvent(new CustomEvent('tldrastro:content-update', {
-    detail: { contentKey: key, published: true, updatedAt: new Date().toISOString() }
+    detail: { contentKey: key, published: true, updatedAt: new Date(Date.now() + ((window as any).__noticeSequence = ((window as any).__noticeSequence ?? 0) + 1)).toISOString() }
   })), key);
   return { notify,
     publish: async () => { revision++; await notify(); },

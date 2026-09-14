@@ -11015,6 +11015,7 @@ export function App() {
     && skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() ? "loading" : skyPlacementLoadStatus;
   const [skyDetailReadError, setSkyDetailReadError] = useState<string | null>(null);
   const [skyDetailRetry, setSkyDetailRetry] = useState(0);
+  const [skyDetailResolvedIdentity, setSkyDetailResolvedIdentity] = useState<string | null>(null);
   const [skyPlacementFallbackRetryKey, setSkyPlacementFallbackRetryKey] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
   const [contentRefreshVersion, setContentRefreshVersion] = useState(0);
@@ -11922,6 +11923,12 @@ export function App() {
       return;
     }
 
+    const commitResolvedSkyDetail = (detail: SkyDetail | null) => {
+      // Evaluate the complete article before advancing both React state values.
+      // A new overlay must not expose the old article for one intermediate frame.
+      setSkyDetailResolvedIdentity(skyPlacementPublicationIdentity());
+      setSelectedSkyDetail(detail);
+    };
     setSkyDetailReadError(null);
     const availableDetailContent = eligibleSkyDetailContent(mergeGeneratedContentMaps(skyGeneratedContent, selectedSkyDetailContentRef.current));
     const personalizationKey = [
@@ -11965,7 +11972,7 @@ export function App() {
       && (needsAspectFacts || !routePosition.transitStart || !routePosition.transitEnd
         || !skyRoutePartMatches(routePosition.sign, placementSign))) {
       let cancelled = false;
-      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) setSelectedSkyDetail(null);
+      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) commitResolvedSkyDetail(null);
       void import("./services/skyCalculationClient").then(({ getSkyPlacementSnapshotOffMainThread }) => (
         getSkyPlacementSnapshotOffMainThread(sky.location, routePlanet, placementSign, new Date(sky.generatedAt), needsAspectFacts)
       )).then(async placementSky => {
@@ -11978,7 +11985,7 @@ export function App() {
             selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
             selectedSkyDetailRefreshSkyRef.current = sky;
           }
-          setSelectedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
+          commitResolvedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
             skyPlacementPersonalizationTransits, skyDate));
         };
         renderPlacement(await loadSkyDetailContent(placementSky, availableDetailContent, [], loadLiveGeneratedContentForKeys), true);
@@ -11987,9 +11994,9 @@ export function App() {
     }
     if (!calendarEvent && encodedExactAt && baseRoute.startsWith("sky/aspect/")) {
       const exactAt = decodeURIComponent(encodedExactAt);
-      if (Number.isNaN(Date.parse(exactAt))) { setSelectedSkyDetail(null); return; }
+      if (Number.isNaN(Date.parse(exactAt))) { commitResolvedSkyDetail(null); return; }
       let cancelled = false;
-      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) setSelectedSkyDetail(null);
+      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) commitResolvedSkyDetail(null);
       // Recompute the dated event on reload; never borrow today's motion or signs.
       void getAstrodienstSky(sky.location, new Date(exactAt)).then(async eventSky => {
         const renderAspect = (detailContent: GeneratedContentMap, complete = false) => {
@@ -12001,7 +12008,7 @@ export function App() {
             selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
             selectedSkyDetailRefreshSkyRef.current = sky;
           }
-          setSelectedSkyDetail(detail
+          commitResolvedSkyDetail(detail
             ? skyDetailRoutePath.includes("/at/")
               ? datedSkyAspectDetail(detail, exactAt, sky.location.timeZone || "UTC")
               : { ...detail, routePath: skyDetailRoutePath }
@@ -12023,7 +12030,7 @@ export function App() {
         selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
         selectedSkyDetailRefreshSkyRef.current = sky;
       }
-      setSelectedSkyDetail(personalizedSkyPlacementDetail(
+      commitResolvedSkyDetail(personalizedSkyPlacementDetail(
         detail, profileNatalSky?.ascendant ?? userProfile?.rising,
         skyPlacementPersonalizationTransits, skyDate
       ));
@@ -14374,7 +14381,7 @@ export function App() {
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
       <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {selectedSkyDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
-        || skyPlacementFallbackStatus === "ready") ? (
+        || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity) ? (
         <>
           {skyPlacementFallbackStatus === "error" ? (
             <div className="feature-loading-fallback" role="status">
