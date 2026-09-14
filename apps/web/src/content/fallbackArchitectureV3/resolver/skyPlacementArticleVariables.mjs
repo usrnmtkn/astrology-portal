@@ -41,9 +41,9 @@ export function skyPlacementArticleVariableIssues(value, owner = {}) {
 
 function phraseSource(owner, name, records) {
   const source = owner?.ingress?.sources?.[name];
-  if (!source) return { reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
+  if (!source && !phraseFields.get(name)?.shared) return { reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
   const expected = phraseFields.get(name)?.kind;
-  if (!kinds.has(source.kind) || expected && source.kind !== expected) return { reason: `{{${name}}} has the wrong source scope.` };
+  if (source && (!kinds.has(source.kind) || expected && source.kind !== expected)) return { reason: `{{${name}}} has the wrong source scope.` };
   if (!isSkyPlacementArticleField(owner?.contentKey, "placementArticle")) return { reason: "Phrase variables need the selected planet-in-sign source." };
   const resolved = resolveIngressSource(owner, name, records);
   if (resolved.reason) return resolved;

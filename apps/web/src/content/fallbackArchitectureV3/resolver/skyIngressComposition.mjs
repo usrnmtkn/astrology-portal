@@ -1,3 +1,4 @@
+import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey, zodiacSeasonContextSign, resolveZodiacSeasonVariables } from "./zodiacSeasonVariables.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
 import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableFacts } from "./skyPlacementVariables.mjs";
 
@@ -87,7 +88,7 @@ export function validateSkyIngressComposition(value) {
   for (const module of value.modules) {
     if (!exactKeys(module, ["id", "label", "template", "required", "enabled", "motion", "duration", "timing", "aspect"]) || !identifier(module.id) || ids.has(module.id) || typeof module.label !== "string" || module.label.length > 120 || typeof module.template !== "string" || module.template.length > 20000 || typeof module.required !== "boolean" || typeof module.enabled !== "boolean" || !["all", "direct", "retrograde"].includes(module.motion) || !["all", "short", "long"].includes(module.duration) || !["all", "single_pass", "first_pass", "return_pass", "final_pass"].includes(module.timing)) fail("Each module needs a unique ID, template, and valid selection rules.");
     ids.add(module.id);
-    const issues = ingressTextIssues(module.template, Object.keys(value.sources));
+    const issues = ingressTextIssues(module.template, [...Object.keys(value.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id)]);
     if (issues.length) fail(`${module.label}: ${issues.join(" ")}`);
     if (module.aspect !== undefined && (!exactKeys(module.aspect, ["otherPlanet", "type", "weight"]) || !/^(sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|lilith)$/u.test(module.aspect.otherPlanet) || !["conjunction", "sextile", "square", "trine", "opposition"].includes(module.aspect.type) || !["defining", "supporting", "minor"].includes(module.aspect.weight))) fail(`${module.label}: invalid aspect selection.`);
   }
@@ -102,6 +103,11 @@ export function ingressSourceAt(record, field) {
 export function resolveIngressSource(owner, id, records = []) {
   const source = owner.ingress?.sources?.[id];
   const localRef = `${owner.contentKey}#ingress.sources.${id}`;
+  if (!source && ZODIAC_SEASON_VARIABLES.some(field => field.id === id)) {
+    const reference = `${zodiacSeasonSourceKey(id, zodiacSeasonContextSign(owner))}#body`;
+    try { return { reference, kind: "sign", text: resolveZodiacSeasonVariables(`{{${id}}}`, owner, records) }; }
+    catch (error) { return { reference, kind: "sign", reason: error.message }; }
+  }
   if (!source) return { reference: localRef, reason: "Source missing" };
   if (!source.reference) return { reference: localRef, text: source.text, kind: source.kind, sha256: sha256Text(source.text) };
   const ref = source.reference;
@@ -186,7 +192,7 @@ export function renderSkyIngressComposition(owner, input = {}, records = [], opt
       const result = fillText(module.template, values);
       const missing = slots.filter(slot => slot.reason);
       const incomplete = missing.length > 0 || !result.text.trim();
-      if (incomplete && module.required) requiredGap = true;
+      if (incomplete && (module.required || missing.some(slot => ZODIAC_SEASON_VARIABLES.some(field => field.id === slot.name)))) requiredGap = true;
       trace.push({ id: module.id, eventId: event?.id, label: module.label, template: module.template, status: incomplete ? "omitted" : "included", reason: incomplete ? `${module.required ? "Required module incomplete" : "Optional module omitted"}: ${missing.map(slot => slot.name).join(", ") || "empty template"}` : "Selected by this composition", text: result.text, slots });
     }
   }

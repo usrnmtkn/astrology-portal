@@ -1,3 +1,4 @@
+import { resolveZodiacSeasonVariables, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
 import { passageSources, passageSource } from "./passageSources.mjs";
 import { isEligibleTransitReturn } from "./transitReturns.mjs";
 import { assertNodePublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
@@ -119,7 +120,7 @@ const ELEMENT = { aries: "fire", leo: "fire", sagittarius: "fire", taurus: "eart
 const ORD = { 1: "1st", 2: "2nd", 3: "3rd" };
 const ordinal = (n) => ORD[n] ?? `${n}th`;
 const tpl = (key) => { assertKey(key); return templates.templates.find((t) => t.contentKey === key); };
-const fill = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(/\s{2,}/g, " ").trim();
+const fill = (body, ctx) => resolveZodiacSeasonVariables(body, ctx, hooks).replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(zodiacSeasonVariableNames(body).length ? /$^/g : /\s{2,}/g, " ").trim();
 const READER_HOLDER_VERBS = new Map(Object.entries({
   is: "are", was: "were", has: "have", does: "do", feels: "feel", gives: "give",
   keeps: "keep", makes: "make", helps: "help", responds: "respond", reaches: "reach",
@@ -599,7 +600,7 @@ const result = (c, templateKey) => ({
   provenanceTier: transitReaderTier(c) ?? undefined
 });
 
-const fillKeep = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).trim();
+const fillKeep = (body, ctx) => resolveZodiacSeasonVariables(body, ctx, hooks).replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).trim();
 
 export function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant, events, isRetrograde }) {
   const v = voice === "you" ? "you" : "they";
@@ -657,7 +658,7 @@ export function renderTransitHouse({ planet, house, sign, window: win, voice = "
   const effectRaw = hookVoice(`fallback-hook/transit-effect-house/${planet}`, v);
   const ctx = {
     timeOpen: win ?? WINDOW_HOUSE[planet] ?? "Currently",
-    transitTitle: title(planet), transitRef: transitRef(planet, sign), houseOrdinal: ordinal(house),
+    signTitle: sign ? title(sign) : null, transitTitle: title(planet), transitRef: transitRef(planet, sign), houseOrdinal: ordinal(house),
     houseTopic, otherPoss: v === "they" ? `${voice}'s` : null,
     // what this planet DOES to that area of life, not just that it is visiting
     houseEffect: effectRaw && houseTopic ? fill(effectRaw, { houseTopic }) : null,
@@ -773,7 +774,7 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, pass, 
   const transitEffect = effectRaw && transitEffectArea ? fill(effectRaw, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" }) : null;
   const ctx = {
     timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
-    transitTitle: title(transiting), transitRef: transitRef(transiting, sign), natalTitle: title(natal), aspectName: aspect,
+    signTitle: sign ? title(sign) : null, transitTitle: title(transiting), transitRef: transitRef(transiting, sign), natalTitle: title(natal), aspectName: aspect,
     aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
     transitTopic: vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body,
     aspectVerb: (() => { const f = vocab.get(`fallback-vocab/aspect-verb/${aspect}`)?.body; const tt = vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body; return f && tt && natalCoreVal ? fill(f, { transitTopic: tt, natalCore: natalCoreVal }) : null; })(),
@@ -883,7 +884,7 @@ export function renderTransitRetro({ planet, sign, window: win, format }) {
   const T = tpl("fallback-template/transit.retrograde");
   const ctx = {
     timeOpen: win ?? WINDOW_RETRO[planet],
-    transitTitle: title(planet), transitRef: transitRef(planet, sign),
+    signTitle: sign ? title(sign) : null, transitTitle: title(planet), transitRef: transitRef(planet, sign),
     retroMeaning: hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you,
   };
   for (const slot of T.requiredSlots) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: retrograde ${planet} (slot ${slot} missing; Sun/Moon/nodes have no retrograde copy by design)`);
@@ -2159,7 +2160,8 @@ export function renderWeeklyMoon({ sign, variant }) {
   ));
   const c = contentKey ? card(contentKey) : null;
   if (!c) throw new SourceGapError(`SOURCE_GAP: no weekly moon card for ${sign}`);
-  return { headline: `Weekly Moon: ${title(sign)}`, body: c.body, focus: c.focus ?? null, strategy: c.strategy ?? null, parts: [c.body], templateKey: "authored/calendar-weekly-moon", contentKey: c.contentKey };
+  const body = resolveZodiacSeasonVariables(c.body, { sign }, hooks);
+    return { headline: `Weekly Moon: ${title(sign)}`, body, focus: c.focus ?? null, strategy: c.strategy ?? null, parts: [body], templateKey: "authored/calendar-weekly-moon", contentKey: c.contentKey };
 }
 
 // ---- Sky aspect card (Gifts/Lessons list under sky placement pages). This is a SKY event

@@ -1,3 +1,4 @@
+import { zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { useEffect, useRef, useState } from "react";
 import { StudioButton, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
@@ -153,6 +154,11 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
       {group.id === "experiences" && <p>An experience can live in the library without appearing in reader copy. Include only manifestations that genuinely belong in this article.</p>}
       <div className="admin-review-stack">
         {group.fields.map(item => {
+          if (item.shared && !workingComposition.sources[item.id]) return <div className="admin-editor-guidance" key={item.id}>
+            <p>{item.label} <code>{`{{${item.id}}}`}</code></p>
+            <p>{item.description} One source per sign is shared across Content Studio.</p>
+            <StudioButton type="button" disabled={disabled} onClick={() => onOpenSource(zodiacSeasonSourceKey(item.id, sign), "body")}>Edit {item.label.toLowerCase()}</StudioButton>
+          </div>;
           const source = workingComposition.sources[item.id];
           if (!source) return null;
           const reference = source.reference;

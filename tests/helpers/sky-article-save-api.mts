@@ -1,3 +1,4 @@
+import { servingPackageRecords } from "../../api/_lib/content-live-status";
 // Actual handler, isolated storage, realistic latest-first/limit-one reads.
 import { createApiStore } from './calendar-review-api.mjs';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
@@ -15,7 +16,10 @@ const revision = { ...structuredClone(live), id: 'revision-sun-virgo', mode: 'st
  event_type: 'sky-v4-reader-copy-draft', updated_at: '2026-09-14T00:55:46.035Z',
  sections: { packageRecord: { ...structuredClone(record), owner_approved: false, serving_enabled: false }, packageDraft: structuredClone(record) },
  source_snapshot: { ...live.source_snapshot, targetRowId: live.id, targetRowUpdatedAt: process.env.SKY_SAVE_LEGACY_DRAFT ? live.updated_at : '2026-09-14T00:50:00.000Z' } };
-const store = await createApiStore([revision, live]);
+const template = structuredClone(servingPackageRecords.get('fallback-template/natal.angle-in-sign')!);
+template.body = 'Fixture {{signTitle}}. TARGET';
+const templateRow = {...structuredClone(live), id: 'fixture-natal-template', content_key: template.contentKey, surface: 'natal', event_type: 'fallback-template', block_type: 'fallback_template', headline: 'Fixture sign-aware template', body: template.body, sections: {packageRecord: template}, source_snapshot: {sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'template'}};
+const store = await createApiStore(process.env.ZODIAC_TEMPLATE_FIXTURE ? [templateRow] : [revision, live]);
 const matches = (row: any, params: URLSearchParams) => [...params].every(([field, value]) => {
  if (['select', 'order', 'limit', 'offset', 'on_conflict'].includes(field)) return true;
  if (value === 'is.null') return row[field] == null;

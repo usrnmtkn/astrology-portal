@@ -1,3 +1,4 @@
+import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
@@ -46,7 +47,7 @@ export default function SkyPlacementArticleVariables(props: Props) {
 
   useEffect(() => {
     let active = true;
-    const keys = [...new Set((JSON.parse(referenceKey) as Array<{ contentKey: string }>).map(item => item.contentKey))].filter(key => key !== contentKey);
+    const keys = [...new Set([...(JSON.parse(referenceKey) as Array<{ contentKey: string }>).map(item => item.contentKey), ...ZODIAC_SEASON_VARIABLES.map((field: { id: string }) => zodiacSeasonSourceKey(field.id, sign))])].filter(key => key !== contentKey);
     if (!keys.length) { setReferences([]); return; }
     void Promise.all(keys.map(key => latest.current.onLoadSource?.(key))).then(rows => {
       if (active) setReferences(rows.filter((row): row is RecordValue => Boolean(row)));
@@ -54,7 +55,7 @@ export default function SkyPlacementArticleVariables(props: Props) {
       if (active) { setReferences([]); setError(reason instanceof Error ? reason.message : "Linked writing could not be loaded."); }
     });
     return () => { active = false; };
-  }, [referenceKey, contentKey]);
+  }, [referenceKey, contentKey, sign]);
 
   const selectedMotion = fieldPath === "placementArticleDirect" ? "direct" : fieldPath === "placementArticleRetrograde" ? "retrograde" : motion;
   const facts: SkyVariableFacts = skyPlacementVariableFacts(calculated ?? { planet, sign, isRetrograde: selectedMotion === "retrograde" });
@@ -97,6 +98,8 @@ export default function SkyPlacementArticleVariables(props: Props) {
       <AdminDisclosureSummary>Article variables</AdminDisclosureSummary>
       <SkyPlacementVariableKey facts={facts} disabled={disabled} onInsert={props.onInsert} onInsertPhrase={props.onInsert}
         phraseSource={{ planet, sign, record, onLoadSource: props.onLoadSource, onEdit: id => {
+          const sharedKey = zodiacSeasonSourceKey(id, sign);
+          if (sharedKey && !composition?.sources[id]) { props.onOpenSource(sharedKey, "body"); return; }
           setEditingPhrase(id);
           props.onPrepareLibrary();
         } }} />

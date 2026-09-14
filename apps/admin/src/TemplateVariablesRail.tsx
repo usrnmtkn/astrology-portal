@@ -29,6 +29,7 @@ type Props = {
   onSelectSource: (id: string | null) => void;
   onEditSource: (row: TemplateVariableSourceRow) => void;
   onClose: () => void;
+  onInsert?: (token: string) => void;
   onKeyDown?: (event: ReactKeyboardEvent<HTMLElement>) => void;
 };
 
@@ -60,7 +61,7 @@ const kindLabels: Record<VariableKind, string> = {
 export default function TemplateVariablesRail({
   references, filteredReferences, query, onQueryChange, rows, templateContentKey, templatePreviewRow,
   reviewTemplateRow, previewOptions, selectedVariableName, selectedSourceId,
-  onSelectVariable, onSelectSource, onEditSource, onClose, onKeyDown
+  onSelectVariable, onSelectSource, onEditSource, onClose, onKeyDown, onInsert
 }: Props) {
   const selected = selectedVariableName
     ? references.find((reference) => reference.name === selectedVariableName) ?? null
@@ -197,6 +198,7 @@ export default function TemplateVariablesRail({
                         {reference.source}
                       </span>
                     </StudioButton>
+                    {onInsert && ["zodiacSeason", "zodiacSeasonPolarAxis"].includes(reference.name) && <StudioButton type="button" aria-label={`Insert {{${reference.name}}}`} onClick={() => onInsert(`{{${reference.name}}}`)}>Insert</StudioButton>}
                   </li>
                 );
               })}
