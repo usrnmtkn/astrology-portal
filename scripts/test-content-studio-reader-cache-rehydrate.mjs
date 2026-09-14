@@ -5,7 +5,7 @@ import fs from "node:fs";
 const app = fs.readFileSync("apps/web/src/App.tsx", "utf8");
 const signal = fs.readFileSync("apps/web/src/services/contentUpdateSignal.ts", "utf8");
 
-assert.match(app, /subscribeToContentUpdates\(\(\) => \{[\s\S]{0,700}setContentRefreshVersion\(\(version\) => version \+ 1\)/u,
+assert.match(app, /const refreshContent = \(\) => \{[\s\S]{0,700}setContentRefreshVersion\(\(version\) => version \+ 1\)[\s\S]{0,200}subscribeToContentUpdates\(refreshContent\)[\s\S]{0,200}subscribeToContentRevalidation\(refreshContent\)/u,
   "Open reader tabs must react to Content Studio update broadcasts.");
 
 for (const [label, loader] of [

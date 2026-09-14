@@ -11008,6 +11008,7 @@ export function App() {
   ));
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
   const [fallbackDashboardOverlayVersion, setFallbackDashboardOverlayVersion] = useState(0);
+  const fallbackDashboardOverlayPresentRef = useRef(false);
   const [skyPlacementLoadStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementResolvedIdentity, setSkyPlacementResolvedIdentity] = useState<string | null>(null);
   // A ledger change invalidates prose during render, before asynchronous effects
@@ -11030,7 +11031,7 @@ export function App() {
   const selectedSkyDetailContentRef = useRef<GeneratedContentMap>(new Map());
   const selectedSkyDetailRefreshSkyRef = useRef<SkySnapshot | null>(null);
   const fallbackDashboardHydrationRequestedRef = useRef(false);
-  const friendDetailOverlayRefreshKeyRef = useRef("");
+  const friendDetailOverlayVersionRef = useRef(0);
   const compatibilityDashboardHydrationVersionRef = useRef<number | null>(null);
   const pendingCalendarTransitRef = useRef<LunarCalendarEvent | null>(null);
   const selectedCalendarTransitEventRef = useRef<{
@@ -11318,11 +11319,8 @@ export function App() {
 
   function openSkyDetail(detail: SkyDetail) {
     selectedCalendarTransitEventRef.current = null;
-    if (detail.routePath?.startsWith("friends?")) {
-      // The clicked article was assembled with the current overlay. Only a
-      // subsequent overlay revision should invalidate it, not its first render.
-      friendDetailOverlayRefreshKeyRef.current = `${detail.routePath}:${fallbackDashboardOverlayVersion}`;
-    }
+    // Friends invalidation compares this article's revision with later overlays.
+    friendDetailOverlayVersionRef.current = fallbackDashboardOverlayVersion;
     const [, detailType] = decodeSkyRouteParts(detail.routePath ?? "");
     const awaitPlacementTiming = detail.routePath?.startsWith("sky/")
       && (detailType === "placement" || detailType === "retrograde");
@@ -11719,7 +11717,7 @@ export function App() {
       })
       .catch((error) => {
         compatibilityDashboardHydrationVersionRef.current = null;
-        console.warn("Compatibility dashboard content failed to install; bundled relationship copy remains active.", error);
+        console.warn("Compatibility overlay failed to load; retaining bundled copy.", error);
       });
     return () => { cancelled = true; compatibilityDashboardHydrationVersionRef.current = null; };
   }, [contentRefreshVersion, friendRelationshipContentRequests, mode]);
@@ -11744,10 +11742,13 @@ export function App() {
         if (cancelled) return;
         installFallbackArchitectureV3Bundle(bundle);
         setFallbackArchitectureV3Version((version) => version + 1);
-        setFallbackDashboardOverlayVersion((version) => version + 1);
+        // A first empty response adds no copy. Removing an installed overlay
+        // still invalidates an open article, including after retirement.
+        if (bundle || fallbackDashboardOverlayPresentRef.current) setFallbackDashboardOverlayVersion((version) => version + 1);
+        fallbackDashboardOverlayPresentRef.current = !!bundle;
       })
       .catch((error) => {
-        console.warn("Fallback architecture V3 dashboard bundle failed to install; local JSON snapshot remains active.", error);
+        console.warn("Dashboard overlay failed to load; retaining local copy.", error);
       });
     return () => { cancelled = true; fallbackDashboardHydrationRequestedRef.current = false; };
   }, [contentRefreshVersion, friendNatalContentRequested, friendRelationshipContentRequests, mode, placementContentNeeded]);
@@ -11772,14 +11773,15 @@ export function App() {
       // Commit both overlays in the same task; never announce the bundled
       // passage as ready and replace it later with the Studio passage.
       installFallbackArchitectureV3Bundle(coreBundle);
+      fallbackDashboardOverlayPresentRef.current = !!coreBundle;
       installSkyPlacementFallbackArchitectureV3Bundle(placementBundle);
-      setFallbackArchitectureV3Version(version => version + 1);
-      setFallbackDashboardOverlayVersion(version => version + 1);
+      setFallbackArchitectureV3Version((version) => version + 1);
+      setFallbackDashboardOverlayVersion((version) => version + 1);
       setSkyPlacementResolvedIdentity(identity);
       setSkyPlacementFallbackStatus("ready");
     }).catch(error => {
       if (cancelled) return;
-      console.warn("The authoritative Sky placement sources could not load.", error);
+      console.warn("Sky placement sources failed to load.", error);
       setSkyPlacementFallbackStatus(previous => previous === "ready"
         && skyPlacementResolvedIdentity === skyPlacementPublicationIdentity() ? previous : "error");
     });
@@ -12050,17 +12052,12 @@ export function App() {
   }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, sky, skyDate, skyDetailRoutePath, skyGeneratedContent, skyPlacementFallbackStatus, skyPlacementPersonalizationTransits, userProfile?.rising, skyDetailRetry]);
 
   useEffect(() => {
-    const routePath = selectedSkyDetail?.routePath;
-    if (!fallbackDashboardOverlayVersion || !routePath?.startsWith("friends?")) {
+    if (!selectedSkyDetail?.routePath?.startsWith("friends?")
+      || friendDetailOverlayVersionRef.current === fallbackDashboardOverlayVersion) {
       return;
     }
 
-    const refreshKey = `${routePath}:${fallbackDashboardOverlayVersion}`;
-    if (friendDetailOverlayRefreshKeyRef.current === refreshKey) {
-      return;
-    }
-
-    friendDetailOverlayRefreshKeyRef.current = refreshKey;
+    friendDetailOverlayVersionRef.current = fallbackDashboardOverlayVersion;
     setSelectedSkyDetail(null);
   }, [fallbackDashboardOverlayVersion, selectedSkyDetail?.routePath]);
 
@@ -12093,14 +12090,14 @@ export function App() {
 
   useEffect(() => {
     const refreshContent = () => {
-    void refreshContentPublications(true);
-    clearSharedGeneratedContentCache();
-    clearPlanetTopicVocabularyCache();
-    clearNatalCardTaglineCache();
-    calendarContentCacheRef.current.clear();
-    fallbackDashboardHydrationRequestedRef.current = false;
-    compatibilityDashboardHydrationVersionRef.current = null;
-    setContentRefreshVersion((version) => version + 1);
+      void refreshContentPublications(true);
+      clearSharedGeneratedContentCache();
+      clearPlanetTopicVocabularyCache();
+      clearNatalCardTaglineCache();
+      calendarContentCacheRef.current.clear();
+      fallbackDashboardHydrationRequestedRef.current = false;
+      compatibilityDashboardHydrationVersionRef.current = null;
+      setContentRefreshVersion((version) => version + 1);
     };
     const unsubscribe = subscribeToContentUpdates(refreshContent);
     const stopRevalidation = subscribeToContentRevalidation(refreshContent);

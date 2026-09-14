@@ -97,10 +97,22 @@ The fixture now isolates the publication ledger and nightly snapshot as well.
 Placement reader verification now
 has its own job, retaining the original seven-file command. The complete client
 suite uses four isolated shards with one worker each, matching the existing
-Studio sharding model. Test collection proves all 218 cases occur exactly once
-across shards of 55, 55, 54, and 54, with no omissions or duplicates. Per-test
+Studio sharding model. Test collection proves all 219 cases occur exactly once
+across shards of 55, 55, 55, and 54, with no omissions or duplicates. Per-test
 timeouts, retries, assertions, and calculation thresholds are unchanged. All
 38 workflow YAML files and conservative changed-path regressions pass.
+
+The original client-flow job also exceeded its 45-minute limit. Its failures
+identified a real initial hydration race: an empty dashboard overlay arriving
+after a Friends article opened invalidated that article even though no source
+changed. A controlled late-response regression fails before the correction.
+The reader now distinguishes an empty initial overlay from removal of an
+installed overlay; article revision bookkeeping stores the revision without a
+redundant route string. The regression plus all 80 canonical Friends openings
+pass. Four publication scenarios also verify that retirement removes the open
+published passage. The two You macro tests now expand main #804's Read more
+control before asserting the complete final sentence. Seven focused runtime
+regressions and type checking pass; authored source data remains unchanged.
 
 ## Existing full-suite and reference limitations
 
