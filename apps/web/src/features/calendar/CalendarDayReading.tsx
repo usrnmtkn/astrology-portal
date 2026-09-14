@@ -1,4 +1,4 @@
-import { Fragment, type ReactNode } from "react";
+import React, { Fragment, type ReactNode } from "react";
 import type { LocationInput, SkySnapshot } from "../../types";
 import type { SkyDetail } from "../sky/SkyDetailArticle";
 import type { SkyPlacementContentStatus } from "../sky/skyPlacementContentState";
