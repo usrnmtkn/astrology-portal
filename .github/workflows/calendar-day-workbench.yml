@@ -21,8 +21,9 @@ jobs:
       - name: Verify provenance and retrieve project context
         run: |
           test "$GITHUB_REF" = "refs/heads/chatgpt/calendar-day-overview-20260913"
+          test "$GITHUB_REPOSITORY" = "usrnmtkn/astrology-portal"
+          git remote set-url origin https://github.com/usrnmtkn/astrology-portal.git
           git fetch --prune origin
-          git remote -v
           git log -1 --oneline
           git rev-list --left-right --count origin/main...HEAD
           node scripts/agent-memory.mjs recall "Calendar day overview full Sky Moon placement article" --repo . --ref origin/main --fetch --limit 4 --state "$HOME/.local/state/tldr-astro-memory"
@@ -30,8 +31,11 @@ jobs:
         run: |
           if ! grep -q 'renderDayReading={(day)' apps/web/src/App.tsx; then
             python3 .github/apply-calendar-day.py
-            git diff --check
-            git add apps/web/src/App.tsx apps/web/src/features/calendar/LunarCalendar.tsx apps/web/src/routes/CalendarRoute.tsx apps/web/src/styles/lunar-calendar.css scripts/test-calendar-package-boundary.mjs
+          fi
+          python3 .github/finalize-calendar-day.py
+          git diff --check
+          git add apps/web/src/App.tsx apps/web/src/features/calendar/LunarCalendar.tsx apps/web/src/routes/CalendarRoute.tsx apps/web/src/styles/lunar-calendar.css scripts/test-calendar-package-boundary.mjs
+          if ! git diff --cached --quiet; then
             git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'feat(calendar): share Sky overview and full Moon reading in Day view'
             git push origin HEAD:chatgpt/calendar-day-overview-20260913
           fi
