@@ -65,8 +65,11 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
     })).catch(error => { if (active) setError(error instanceof Error ? error.message : "Could not load these sources."); });
     return () => { active = false; };
   }, [keys, retry]);
-  const selectedRows = keys.map(key => rows.find(row => row.content_key === key && !row.inventory_only && !row.id.startsWith("package:"))
-    ?? loaded[key] ?? rows.find(row => row.content_key === key && !row.inventory_only));
+  const currentSource = (row: CompositionMapRow) => !row.inventory_only
+    && !(row.status === "ARCHIVED" && row.review_state === "published-revision");
+  const selectedRows = keys.map(key => rows.find(row => row.content_key === key && currentSource(row) && !row.id.startsWith("package:"))
+    ?? (loaded[key] && currentSource(loaded[key]) ? loaded[key] : undefined)
+    ?? rows.find(row => row.content_key === key && currentSource(row)));
   const availableRows = selectedRows.filter((row): row is CompositionMapRow => Boolean(row));
   const assembly = skyPlacementAssembly(availableRows, writing === "ingress" ? "fallback" : writing, current.motion);
   const ingressRow = availableRows.find(row => /^sky-placement\/article\//u.test(row.content_key));

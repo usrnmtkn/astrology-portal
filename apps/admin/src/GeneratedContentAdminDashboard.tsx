@@ -4532,7 +4532,12 @@ export function GeneratedContentAdminDashboard() {
         setDraft((current) => {
           // A response acknowledges the submitted version, not newer typing.
           if (current && current !== editorDraftAtSave && current.contentKey === activeDraft.contentKey) {
-            return { ...current, id: savedDraft.id, updatedAt: savedDraft.updatedAt };
+            const proposal = draftPackageProposal(current);
+            const savedRecord = draftPackageRecord(savedDraft);
+            return { ...current, id: savedDraft.id, updatedAt: savedDraft.updatedAt,
+              ...(proposal && savedRecord ? { sections: { ...current.sections, packageDraft: { ...proposal,
+                ...Object.fromEntries(["owner_approved", "serving_enabled"].filter(flag => Object.hasOwn(proposal, flag)).map(flag => [flag, savedRecord[flag]]))
+              } } } : {}) };
           }
           return savedDraft;
         });
@@ -4869,7 +4874,7 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false) {
+  async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false, followPublishedRevision = false) {
     if (!row.inventory_only && !refresh) return row;
     const selector = row.id.startsWith("package:") ? `contentKeys=${encodeURIComponent(row.content_key)}` : `id=${encodeURIComponent(row.id)}`;
     const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
@@ -4878,7 +4883,7 @@ export function GeneratedContentAdminDashboard() {
     );
     let hydrated = payload.rows?.find((candidate) => candidate.id === row.id || row.id.startsWith("package:") && candidate.content_key === row.content_key);
     const publishedTarget = hydrated?.source_snapshot?.targetRowId;
-    if (refresh && row.status !== "ARCHIVED" && hydrated?.status === "ARCHIVED"
+    if ((row.id.startsWith("package:") || followPublishedRevision || refresh && row.status !== "ARCHIVED") && hydrated?.status === "ARCHIVED"
       && hydrated.review_state === "published-revision" && typeof publishedTarget === "string") {
       const target = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
         `/api/admin/generated-content?id=${encodeURIComponent(publishedTarget)}&status=all&visibility=all&limit=1`, secret);
@@ -4904,7 +4909,7 @@ export function GeneratedContentAdminDashboard() {
     if (row.inventory_only || !row.id.startsWith("package:")) {
       setIsLoading(true);
       try {
-        row = await hydrateGeneratedContentRow(row, true);
+        row = await hydrateGeneratedContentRow(row, true, Boolean(placementSelection));
       } catch (error) {
         setEditorSaveError(dashboardErrorMessage(error));
         setMessage(dashboardErrorMessage(error));
