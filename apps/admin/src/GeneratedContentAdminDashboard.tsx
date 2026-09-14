@@ -2774,7 +2774,6 @@ export function GeneratedContentAdminDashboard() {
   const [loadState, setLoadState] = useState<AdminLoadState>("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loadDiagnostics, setLoadDiagnostics] = useState<string | null>(null);
-  const [extendedInventoryError, setExtendedInventoryError] = useState<string | null>(null);
   // Inventory reads have their own loadState; only an editor/action request blocks writing.
   const [isLoading, setIsLoading] = useState(false);
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
@@ -3364,7 +3363,7 @@ export function GeneratedContentAdminDashboard() {
       || showReferenceRows
       || showRetiredRows;
     if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
-    setExtendedInventoryError(null);
+    setLoadError(null);
     let cancelled = false;
     const controller = new AbortController();
     void loadAllGeneratedContentRows(
@@ -3388,7 +3387,7 @@ export function GeneratedContentAdminDashboard() {
       })
       .catch((error) => {
         if (cancelled) return;
-        setExtendedInventoryError(dashboardErrorMessage(error));
+        setLoadError(dashboardErrorMessage(error));
         setMessage(dashboardErrorMessage(error));
       });
     return () => {
@@ -3964,7 +3963,6 @@ export function GeneratedContentAdminDashboard() {
     }
 
     setLoadState("loading");
-    setExtendedInventoryError(null);
     setLoadError(null);
     setLoadDiagnostics(null);
     setMessage("Loading saved content…");
@@ -7255,7 +7253,7 @@ export function GeneratedContentAdminDashboard() {
             <p>{friendsTransitAudience
               ? "This is the editor for Friends > Transits > Active for {{Name}}. The preview uses the Friends reader resolver and its approved Friend View Copy. Open the selected source to edit that passage."
               : "Choose the current placement and the natal point it contacts. The preview uses the same approved transit writing as Sky and You. Open the selected source to edit the complete passage."}</p>
-            <p><strong>Editable lifecycle:</strong> open a passage to read it, Save to create or update it, Archive to remove it from active use, and Restore to reopen it as a non-serving draft.</p>
+            <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
           </div>
           {selection && <code>transit/{selection.planet}-{selection.sign}-{selection.transitHouse}h/{selection.aspect}/{selection.natalPoint}-{selection.natalHouse}h</code>}
         </div>
@@ -7349,7 +7347,6 @@ export function GeneratedContentAdminDashboard() {
       motion: houseTransitMotion
     } as HouseTransitSelection : null;
     const sourcesReady = loadState === "loaded" && allRowsLoaded;
-    const sourceLoadError = loadError || extendedInventoryError;
     const groups = selection && sourcesReady ? houseTransitSourceGroups(selection) : [];
     const preview = selection && sourcesReady ? renderHouseTransitPreview(selection, (candidateKeys) => {
       const source = skySourceForCandidates(candidateKeys);
@@ -7370,8 +7367,8 @@ export function GeneratedContentAdminDashboard() {
             <h3>{selection ? houseTransitLabel(selection) : "Find a House Transit write-up"}</h3>
             <p>{friendsTransitAudience
               ? "This is the editor for Friends > Transits > Where it lands. The preview prefers Friends copy for the evergreen house passage, current-sign passage, and retrograde overlay when those sources have separate audience versions."
-              : "Choose the transiting planet, its current sign, and the reader's house. The complete card appears first, followed by the evergreen house passage, sign-specific passage, and any retrograde passage inside it."}</p>
-            <p><strong>Editable lifecycle:</strong> open a passage to read it, Save to create or update it, Archive to remove it from active use, and Restore to reopen it as a non-serving draft.</p>
+              : "Choose a planet, sign, and house to preview the complete House Transit and edit its passages."}</p>
+            <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
           </div>
           {selection && <code>transit/{selection.planet}-{selection.sign}/{selection.house}h/{selection.motion}</code>}
         </div>
@@ -7409,11 +7406,9 @@ export function GeneratedContentAdminDashboard() {
 
         {!selection && <p className="admin-natal-placement-prompt">Choose the planet, sign, and house to preview the reader's House Transit and open its exact source rows.</p>}
         {selection && !sourcesReady && (
-          <section className="admin-surface-card" aria-label="House Transit content loading" aria-busy={!sourceLoadError}>
-            {sourceLoadError ? <>
-              <p role="alert">House Transit passages could not be loaded. {sourceLoadError}</p>
-              <StudioButton type="button" onClick={() => void loadDashboardData()}>Retry House Transit loading</StudioButton>
-            </> : <p role="status">Loading House Transit passages…</p>}
+          <section className="admin-surface-card" aria-label="House Transit content loading" aria-busy={!loadError}>
+            <p role={loadError ? "alert" : "status"}>{loadError || "Loading House Transit passages…"}</p>
+            {loadError && <StudioButton type="button" onClick={() => void loadDashboardData()}>Retry</StudioButton>}
           </section>
         )}
         {selection && preview && (
