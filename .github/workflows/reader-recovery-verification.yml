@@ -1,0 +1,63 @@
+name: Reader recovery verification
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - 'scripts/verify-production-sky-summary.mjs'
+      - 'apps/web/src/content/skyDailySummary*'
+      - 'apps/web/src/App.tsx'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reader-recovery-verification-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  production-summary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Inspect the deployed guest Sky page without modifying content
+        run: node scripts/verify-production-sky-summary.mjs
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: production-sky-summary-verification
+          path: test-results/production-sky-summary/
+          retention-days: 7
+
+  reader-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - name: Verify Daily Sky composition
+        run: npm run test:sky-daily-summary
+      - name: Verify hydration regression
+        if: success() || failure()
+        run: node --import tsx scripts/test-sky-summary-hydration-stability.mts
+      - name: Verify Content Studio save and reader contracts
+        if: success() || failure()
+        run: npm run test:content-studio-api
+      - name: Verify publication retirement
+        if: success() || failure()
+        run: npm run test:content-publications
