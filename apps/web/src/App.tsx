@@ -240,7 +240,7 @@ import {
   resolveApprovedExactSkyAspectCopy,
   selectSkyAspectCopyByPrecedence
 } from "./services/skyAspectRouting";
-import { skyAspectDateRange, skyAspectNarrativeTimingLines, timingGroupLabel } from "./services/skyAspectTiming";
+import { localDateParts as eventCalendarParts, skyAspectDateRange, skyAspectNarrativeTimingLines, timingGroupLabel } from "./services/skyAspectTiming";
 import { transitArticleDescription } from "./services/transitArticleDescription";
 import { natalTransitGeometry, natalTransitWindowDays } from "./services/natalTransitGeometry";
 import { isEligibleTransitReturn } from "./services/transitReturns";
@@ -460,6 +460,7 @@ export type TransitItem = {
   transitPlanet: string;
   transitSign?: string;
   transitMotion?: "direct" | "retrograde";
+  timeZone?: string;
   aspect: string;
   natalPoint: string;
   natalSign: string;
@@ -3414,17 +3415,14 @@ function dateFromOffsetDays(dateValue: string, days: number) {
   return new Date(date.getTime() + days * 86_400_000);
 }
 
-function sameLocalDate(first: Date, second: Date) {
-  return first.getUTCFullYear() === second.getUTCFullYear()
-    && first.getUTCMonth() === second.getUTCMonth()
-    && first.getUTCDate() === second.getUTCDate();
+function sameLocalDate(first: Date, second: Date, timeZone = "UTC") {
+  const a = eventCalendarParts(first, timeZone), b = eventCalendarParts(second, timeZone);
+  return a.year === b.year && a.month === b.month && a.day === b.day;
 }
 
-function formatEditorialDate(date: Date, includeYear = false) {
+function formatEditorialDate(date: Date, includeYear = false, timeZone = "UTC") {
   return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
+    month: "short", day: "numeric", timeZone,
     ...(includeYear ? { year: "numeric" } : {})
   }).format(date);
 }
@@ -3442,33 +3440,14 @@ function formatPlacementTransitEndpoint(
   }).format(date);
 }
 
-function formatEditorialTime(date: Date) {
+function formatEditorialTime(date: Date, timeZone = "UTC") {
   return new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    timeZone: "UTC"
+    hour: "numeric", minute: "numeric", timeZone
   }).format(date).replace(":00", "");
 }
 
-function formatEditorialDateRange(start: Date, end: Date, referenceDate = new Date()) {
-  if (sameLocalDate(start, end)) {
-    const dateLabel = sameLocalDate(start, referenceDate) ? "Today" : formatEditorialDate(start);
-    return `${dateLabel} · ${formatEditorialTime(start)} - ${formatEditorialTime(end)}`;
-  }
-
-  const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
-  const sameMonth = sameYear && start.getUTCMonth() === end.getUTCMonth();
-  const showYear = !sameYear || start.getUTCFullYear() !== referenceDate.getUTCFullYear();
-
-  if (sameMonth) {
-    return `${formatEditorialDate(start, showYear)} - ${end.getUTCDate()}${showYear ? `, ${end.getUTCFullYear()}` : ""}`;
-  }
-
-  if (sameYear) {
-    return `${formatEditorialDate(start, showYear)} - ${formatEditorialDate(end, showYear)}`;
-  }
-
-  return `${formatEditorialDate(start, true)} - ${formatEditorialDate(end, true)}`;
+function formatEditorialDateRange(start: Date, end: Date, referenceDate = new Date(), timeZone = "UTC") {
+  return formatTransitRange(start, end, { transitTimeZone: timeZone }, referenceDate);
 }
 
 function formatTransitRange(
@@ -3480,17 +3459,13 @@ function formatTransitRange(
   // Match the article facts: compare calendar parts in the calculated location's
   // zone as well as formatting there. UTC parts can cross a different day/year.
   const timeZone = position.transitTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-  const partsFormatter = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "numeric", day: "numeric", timeZone });
-  const parts = (date: Date) => Object.fromEntries(partsFormatter.formatToParts(date).map(part => [part.type, part.value]));
-  const first = parts(start), last = parts(end), reference = parts(referenceDate);
-  const formatDate = (date: Date, includeYear = false) => new Intl.DateTimeFormat("en-US", {
-    month: "short", day: "numeric", timeZone, ...(includeYear ? { year: "numeric" as const } : {})
-  }).format(date);
+  const first = eventCalendarParts(start, timeZone), last = eventCalendarParts(end, timeZone), reference = eventCalendarParts(referenceDate, timeZone);
+  const formatDate = (date: Date, includeYear = false) => formatEditorialDate(date, includeYear, timeZone);
   const sameYear = first.year === last.year;
   const sameMonth = sameYear && first.month === last.month;
   if (sameMonth && first.day === last.day) {
     const today = first.year === reference.year && first.month === reference.month && first.day === reference.day;
-    const time = (date: Date) => new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "numeric", timeZone }).format(date).replace(":00", "");
+    const time = (date: Date) => formatEditorialTime(date, timeZone);
     return `${today ? "Today" : formatDate(start)} · ${time(start)} - ${time(end)}`;
   }
   const showYear = !sameYear || first.year !== reference.year;
@@ -3498,31 +3473,19 @@ function formatTransitRange(
   return `${formatDate(start, showYear)} - ${formatDate(end, showYear)}`;
 }
 
-function formatSkyAspectDateRange(start: Date, end: Date, referenceDate = new Date()) {
-  if (sameLocalDate(start, end)) {
-    return sameLocalDate(start, referenceDate) ? "Today" : formatEditorialDate(start, true);
-  }
-
-  const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
-  const sameMonth = sameYear && start.getUTCMonth() === end.getUTCMonth();
-
-  if (sameMonth) {
-    return `${formatEditorialDate(start)} - ${end.getUTCDate()}, ${end.getUTCFullYear()}`;
-  }
-
-  if (sameYear) {
-    return `${formatEditorialDate(start)} - ${formatEditorialDate(end)}, ${end.getUTCFullYear()}`;
-  }
-
-  return `${formatEditorialDate(start, true)} - ${formatEditorialDate(end, true)}`;
+function formatSkyAspectDateRange(start: Date, end: Date, referenceDate = new Date(), timeZone = "UTC") {
+  if (sameLocalDate(start, end, timeZone) && sameLocalDate(start, referenceDate, timeZone)) return "Today";
+  return skyAspectDateRange({ timing: { timeZone } }, start, end);
 }
 
-function dateFromDurationInput(value: string | Date) {
-  const date = typeof value === "string"
-    ? new Date(`${value.slice(0, 10)}T00:00:00Z`)
-    : new Date(value);
-
-  return Number.isNaN(date.getTime()) ? null : date;
+function dateFromDurationInput(value: string | Date, timeZone = "UTC") {
+  // A date-only value already identifies the selected civil day; it is not a
+  // UTC instant to shift into the preceding date in western time zones.
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(`${value}T00:00:00Z`);
+  const instant = new Date(value);
+  if (Number.isNaN(instant.getTime())) return null;
+  const parts = eventCalendarParts(instant, timeZone);
+  return new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day)));
 }
 
 function dateOnly(value: string | Date) {
@@ -3559,9 +3522,9 @@ function addCalendarMonths(start: Date, months: number) {
   return new Date(Date.UTC(normalizedYear, normalizedMonth, day));
 }
 
-function differenceInCalendarParts(startInput: string | Date, endInput: string | Date) {
-  const start = dateFromDurationInput(startInput);
-  const end = dateFromDurationInput(endInput);
+function differenceInCalendarParts(startInput: string | Date, endInput: string | Date, timeZone = "UTC") {
+  const start = dateFromDurationInput(startInput, timeZone);
+  const end = dateFromDurationInput(endInput, timeZone);
 
   if (!start || !end || end.getTime() < start.getTime()) {
     return null;
@@ -3664,15 +3627,17 @@ function formatApproximateDurationCompact(startInput: string | Date, endInput: s
     : `${years}Y`;
 }
 
-function exactDateFromInput(value: string | Date) {
-  const date = typeof value === "string" ? new Date(value) : new Date(value);
+function exactDateFromInput(value: string | Date, timeZone = "UTC") {
+  const date = typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? zonedDateTimeToUtc(value, "12:00 PM", timeZone)
+    : new Date(value);
 
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function formatRemainingClockCompact(startInput: string | Date, endInput: string | Date) {
-  const start = exactDateFromInput(startInput);
-  const end = exactDateFromInput(endInput);
+function formatRemainingClockCompact(startInput: string | Date, endInput: string | Date, timeZone = "UTC") {
+  const start = exactDateFromInput(startInput, timeZone);
+  const end = exactDateFromInput(endInput, timeZone);
 
   if (!start || !end) {
     return null;
@@ -3685,7 +3650,7 @@ function formatRemainingClockCompact(startInput: string | Date, endInput: string
   }
 
   if (remainingMs >= 86_400_000) {
-    return formatCountdown(startInput, endInput);
+    return formatCountdown(startInput, endInput, timeZone);
   }
 
   const remainingMinutes = remainingSkyMinutes(start, end);
@@ -3695,8 +3660,8 @@ function formatRemainingClockCompact(startInput: string | Date, endInput: string
   return `${hours}H ${minutes}MIN left`;
 }
 
-function formatCountdown(startInput: string | Date, endInput: string | Date) {
-  const parts = differenceInCalendarParts(startInput, endInput);
+function formatCountdown(startInput: string | Date, endInput: string | Date, timeZone = "UTC") {
+  const parts = differenceInCalendarParts(startInput, endInput, timeZone);
 
   if (!parts) {
     return null;
@@ -3823,7 +3788,7 @@ function compactTransitDurationLabel(position: PlanetPosition, generatedAt: stri
     return null;
   }
 
-  return formatRemainingClockCompact(generatedAt, placementTransitEndpoints(position, generatedAt).end);
+  return formatRemainingClockCompact(generatedAt, placementTransitEndpoints(position, generatedAt).end, position.transitTimeZone || "UTC");
 }
 
 function currentSkyAspectTransitWindow(
@@ -3916,13 +3881,13 @@ type AspectTimingDisplay = {
   label: string;
 };
 
-function aspectTimingCategoryForWindow(start: Date, end: Date, referenceDate = new Date()) {
+function aspectTimingCategoryForWindow(start: Date, end: Date, referenceDate = new Date(), timeZone = "UTC") {
   const durationMs = Math.max(0, end.getTime() - start.getTime());
   const durationDays = durationMs / 86_400_000;
   const compactDuration = formatDurationCompact(start, end);
 
-  if (sameLocalDate(start, end)) {
-    return sameLocalDate(start, referenceDate) ? "Today" : formatEditorialDate(start);
+  if (sameLocalDate(start, end, timeZone)) {
+    return sameLocalDate(start, referenceDate, timeZone) ? "Today" : formatEditorialDate(start, false, timeZone);
   }
 
   if (durationDays <= 3) {
@@ -3936,36 +3901,32 @@ function aspectTimingCategoryForWindow(start: Date, end: Date, referenceDate = n
   return compactDuration ?? "Ongoing";
 }
 
-function aspectRangeLabelForWindow(start: Date, end: Date, referenceDate = new Date(), includeYear = false) {
+function aspectRangeLabelForWindow(start: Date, end: Date, referenceDate = new Date(), includeYear = false, timeZone = "UTC") {
   const durationMs = Math.max(0, end.getTime() - start.getTime());
   const durationDays = durationMs / 86_400_000;
 
-  if (sameLocalDate(start, end)) {
-    return `${formatEditorialTime(start)} - ${formatEditorialTime(end)}`;
+  if (sameLocalDate(start, end, timeZone)) {
+    return `${formatEditorialTime(start, timeZone)} - ${formatEditorialTime(end, timeZone)}`;
   }
 
   if (durationMs < 86_400_000 || durationDays < 365) {
-    if (sameLocalDate(start, end)) {
-      return includeYear ? formatEditorialDate(start, true) : formatEditorialDate(start);
-    }
-
     return includeYear
-      ? formatSkyAspectDateRange(start, end, referenceDate)
-      : formatEditorialDateRange(start, end, referenceDate);
+      ? formatSkyAspectDateRange(start, end, referenceDate, timeZone)
+      : formatEditorialDateRange(start, end, referenceDate, timeZone);
   }
 
   const formatter = new Intl.DateTimeFormat("en-US", {
     month: "short",
     year: "numeric",
-    timeZone: "UTC"
+    timeZone
   });
 
   return `${formatter.format(start)} - ${formatter.format(end)}`;
 }
 
-function aspectTimingDisplayForWindow(start: Date, end: Date, referenceDate = new Date(), includeYear = false): AspectTimingDisplay {
-  const durationLabel = aspectTimingCategoryForWindow(start, end, referenceDate);
-  const rangeLabel = aspectRangeLabelForWindow(start, end, referenceDate, includeYear);
+function aspectTimingDisplayForWindow(start: Date, end: Date, referenceDate = new Date(), includeYear = false, timeZone = "UTC"): AspectTimingDisplay {
+  const durationLabel = aspectTimingCategoryForWindow(start, end, referenceDate, timeZone);
+  const rangeLabel = aspectRangeLabelForWindow(start, end, referenceDate, includeYear, timeZone);
 
   return {
     durationLabel,
@@ -4715,6 +4676,8 @@ function skyPlacementAspectExactMoment(
   generatedAt: string,
   positions?: PlanetPosition[]
 ) {
+  const calculatedExact = aspect.timing?.exactPasses?.[Math.max(0, (aspect.timing.passIndex ?? 1) - 1)]?.exactAt ?? aspect.exactAt;
+  if (calculatedExact && Number.isFinite(Date.parse(calculatedExact))) return new Date(calculatedExact);
   const from = skyAspectPosition(aspect.from, positions);
   const to = skyAspectPosition(aspect.to, positions);
   const fromSpeed = typeof from?.speed === "number" ? from.speed : averageDailyMotion[aspect.from] ?? 0;
@@ -4734,10 +4697,12 @@ function skyPlacementAspectExactDate(
 ) {
   const exactDate = skyPlacementAspectExactMoment(aspect, generatedAt, positions);
   const generatedDate = new Date(generatedAt);
-  const includeYear = exactDate.getFullYear() !== generatedDate.getFullYear();
+  const timeZone = aspect.timing?.timeZone || positions?.find(position => position.transitTimeZone)?.transitTimeZone || "UTC";
+  const includeYear = eventCalendarParts(exactDate, timeZone).year !== eventCalendarParts(generatedDate, timeZone).year;
 
   return new Intl.DateTimeFormat("en-US", {
     month: "long",
+    timeZone,
     day: "numeric",
     ...(includeYear ? { year: "numeric" } : {})
   }).format(exactDate);
@@ -4781,17 +4746,15 @@ function skyPlacementEgressDateLabel(position: PlanetPosition, generatedAt: stri
     return null;
   }
 
+  const timeZone = position.transitTimeZone || "UTC";
   const yearsAway = Math.abs(egress.getTime() - generatedDate.getTime()) / (365.25 * 86_400_000);
 
   if (yearsAway >= 2) {
-    return new Intl.DateTimeFormat("en-US", { year: "numeric" }).format(egress);
+    return new Intl.DateTimeFormat("en-US", { year: "numeric", timeZone }).format(egress);
   }
 
-  return new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    day: "numeric",
-    ...(egress.getFullYear() !== generatedDate.getFullYear() ? { year: "numeric" } : {})
-  }).format(egress);
+  return formatPlacementTransitEndpoint(position, egress,
+    eventCalendarParts(egress, timeZone).year !== eventCalendarParts(generatedDate, timeZone).year);
 }
 
 function skyPlacementShadowPhaseActive(position: PlanetPosition, generatedAt: string) {
@@ -5859,7 +5822,7 @@ function transitAspectOrb(definition: (typeof transitAspectDefinitions)[number],
   return isSunHorizonContact ? baseOrb + sunriseOrb : baseOrb;
 }
 
-function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositions: PlanetPosition[], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES): TransitItem[] {
+function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositions: PlanetPosition[], sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES, timeZone?: string): TransitItem[] {
   return transitPositions.flatMap((transitPosition) => (
     natalPositions.flatMap((natalPosition) => {
       const separation = angularDistance(zodiacLongitude(transitPosition), zodiacLongitude(natalPosition));
@@ -5904,6 +5867,7 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
         transitPlanet: transitPosition.planet,
         transitSign: transitPosition.sign,
         transitMotion: transitPosition.motion,
+        timeZone: timeZone || transitPosition.transitTimeZone || "UTC",
         aspect: aspect.type,
         natalPoint: natalPosition.planet,
         natalSign: natalPosition.sign,
@@ -6041,9 +6005,13 @@ function transitItemActiveWindow(transit: TransitItem, generatedAt: string) {
   };
 }
 
+function transitEventTimeZone(transit: TransitItem) {
+  return transit.timing?.timeZone || transit.timeZone || "UTC";
+}
+
 function transitItemTimingDisplay(transit: TransitItem, generatedAt: string) {
   const window = transitItemActiveWindow(transit, generatedAt);
-  const display = aspectTimingDisplayForWindow(window.start, window.end, new Date(generatedAt));
+  const display = aspectTimingDisplayForWindow(window.start, window.end, exactDateFromInput(generatedAt, transitEventTimeZone(transit)) ?? new Date(generatedAt), false, transitEventTimeZone(transit));
   return transit.stationary && !transit.timing
     ? { ...display, rangeLabel: display.durationLabel, label: display.durationLabel }
     : display;
@@ -6062,11 +6030,11 @@ function transitItemExactDate(transit: TransitItem, generatedAt: string) {
   return dateFromOffsetDays(generatedAt, exactOffsetDays);
 }
 
-function formatActivationWindowDate(date: Date) {
+function formatActivationWindowDate(date: Date, timeZone: string) {
   return new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
-    timeZone: "UTC"
+    timeZone
   }).format(date);
 }
 
@@ -6077,17 +6045,17 @@ function transitItemActivationTimingWindow(transit: TransitItem, generatedAt: st
   const separatingOrb = transitToNatalOrbLimit(transit.transitPlanet, "separating") || transitToNatalOrbLimit(transit.transitPlanet);
   const start = dateFromOffsetDays(exact.toISOString(), -(applyingOrb / speed));
   const end = dateFromOffsetDays(exact.toISOString(), separatingOrb / speed);
-  const startLabel = formatEditorialDate(start, true);
-  const exactLabel = formatEditorialDate(exact, true);
-  const endLabel = formatEditorialDate(end, true);
+  const startLabel = formatEditorialDate(start, true, transitEventTimeZone(transit));
+  const exactLabel = formatEditorialDate(exact, true, transitEventTimeZone(transit));
+  const endLabel = formatEditorialDate(end, true, transitEventTimeZone(transit));
 
   return {
     startLabel,
     exactLabel,
     endLabel,
     rangeLabel: `${startLabel} - ${endLabel}`,
-    durationLabel: formatRemainingClockCompact(generatedAt, end) ?? "Duration",
-    activeRangeLabel: `${formatActivationWindowDate(start)} - ${formatActivationWindowDate(end)} (Exact: ${formatActivationWindowDate(exact)})`
+    durationLabel: formatRemainingClockCompact(generatedAt, end, transitEventTimeZone(transit)) ?? "Duration",
+    activeRangeLabel: `${formatActivationWindowDate(start, transitEventTimeZone(transit))} - ${formatActivationWindowDate(end, transitEventTimeZone(transit))} (Exact: ${formatActivationWindowDate(exact, transitEventTimeZone(transit))})`
   };
 }
 
@@ -7465,7 +7433,7 @@ function rankedProfileTransits(currentSky: SkySnapshot, natalSky: SkySnapshot, b
     birthTimeKnown
   });
 
-  return rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalPositions, sunriseOrb), timing);
+  return rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalPositions, sunriseOrb, currentSky.location.timeZone), timing);
 }
 
 function rankedFriendTransits(currentSky: SkySnapshot, chart: ManualChart, sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
@@ -7473,7 +7441,7 @@ function rankedFriendTransits(currentSky: SkySnapshot, chart: ManualChart, sunri
   const timing = friendTimingContext(chart, currentSky);
   const natalPositions = chart.natalChart ? natalTransitTargets(chart.natalChart, birthTimeKnown) : [];
 
-  return dedupeTransitAxisContacts(rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalPositions, sunriseOrb), timing));
+  return dedupeTransitAxisContacts(rankedTransitItems(buildNatalTransitItems(currentSky.positions, natalPositions, sunriseOrb, currentSky.location.timeZone), timing));
 }
 
 function transitLifeArea(transit: TransitItem, chart: ManualChart) {
@@ -7692,24 +7660,24 @@ function personalTransitDisplayTitle(transit: TransitItem) {
 
 function personalTransitPackageWindow(transit: TransitItem, generatedAt: string) {
   const window = transitItemActiveWindow(transit, generatedAt);
-  const referenceDate = new Date(generatedAt);
+  const referenceDate = exactDateFromInput(generatedAt, transitEventTimeZone(transit)) ?? new Date(generatedAt);
 
   if (window.end >= referenceDate) {
     const endLabel = new Intl.DateTimeFormat("en-US", {
       month: "long",
       day: "numeric",
-      timeZone: "UTC"
+      timeZone: transitEventTimeZone(transit)
     }).format(window.end);
 
     return `Until ${endLabel}`;
   }
 
-  return aspectTimingDisplayForWindow(window.start, window.end, referenceDate, true).rangeLabel;
+  return aspectTimingDisplayForWindow(window.start, window.end, referenceDate, true, transitEventTimeZone(transit)).rangeLabel;
 }
 
 function transitHouseAspectEventWindow(transit: TransitItem, generatedAt: string) {
   const window = transitItemActiveWindow(transit, generatedAt);
-  return formatEditorialDate(window.end, true);
+  return formatEditorialDate(window.end, true, transitEventTimeZone(transit));
 }
 
 function personalTransitPackageContentKey(transit: TransitItem, generatedAt: string) {
@@ -15769,12 +15737,12 @@ function isPersonalRetrogradePlanet(planet: string) {
   return personalRetrogradePlanets.has(planet);
 }
 
-function formatRetrogradeCountChip(retrogradeStartDate?: string, retrogradeEndDate?: string) {
+function formatRetrogradeCountChip(retrogradeStartDate?: string, retrogradeEndDate?: string, timeZone = "UTC") {
   if (!retrogradeStartDate || !retrogradeEndDate) {
     return null;
   }
 
-  return formatCountdown(retrogradeStartDate, retrogradeEndDate)?.replace(/\s+left$/u, "") ?? null;
+  return formatCountdown(retrogradeStartDate, retrogradeEndDate, timeZone)?.replace(/\s+left$/u, "") ?? null;
 }
 
 function retrogradeSummaryCaption(
@@ -15831,14 +15799,14 @@ function activeRetrogradePositions(positions: PlanetPosition[]) {
 }
 
 function retrogradeRemainingCountLabel(generatedAt: string, position: PlanetPosition) {
-  const count = formatRetrogradeCountChip(generatedAt, position.retrogradeEnd ?? undefined);
+  const count = formatRetrogradeCountChip(generatedAt, position.retrogradeEnd ?? undefined, position.transitTimeZone || "UTC");
 
   return count ? `${count} left` : null;
 }
 
 export function primaryPlacementDurationLabel(position: PlanetPosition, generatedAt: string) {
   if (isDisplayRetrograde(position) && position.retrogradeEnd) {
-    return formatCountdown(generatedAt, position.retrogradeEnd);
+    return formatCountdown(generatedAt, position.retrogradeEnd, position.transitTimeZone || "UTC");
   }
 
   return compactTransitDurationLabel(position, generatedAt);
@@ -17350,7 +17318,7 @@ function ProfileView({
       : null;
     const passDateMeta = transit.timing?.exactPasses.map((pass, index) => ({
       label: `Pass ${index + 1}`,
-      value: formatEditorialDate(new Date(pass.exactAt), true)
+      value: formatEditorialDate(new Date(pass.exactAt), true, transitEventTimeZone(transit))
     })) ?? [];
     const articleSections = normalizedTransit.sections.map((section) => ({
       heading: section.heading || title,
@@ -17438,7 +17406,7 @@ function ProfileView({
     );
     const window = civilDayExact
       ? "Today"
-      : `Until ${formatEditorialDate(end, true)}`;
+      : `Until ${formatEditorialDate(end, true, currentSky?.location.timeZone ?? "UTC")}`;
 
     try {
       const rendered = transitSynastryFallbackRendererV3.renderTransitLabel({
