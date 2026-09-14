@@ -1266,7 +1266,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const search = page.getByRole("textbox", { name: "Search Lunar Calendar" });
     const browse = page.getByRole("complementary", { name: "Lunar passages" });
     await search.fill("Cancer Variant 2");
-    await browse.getByRole("button", { name: /Moon in Cancer · Variant 2/ }).click();
+    await browse.getByRole("button", { name: /^Moon in Cancer · Variant 2$/ }).click();
     const detail = page.getByRole("region", { name: "Selected lunar passage" });
     await expect(detail).toContainText(record.body);
     await detail.getByRole("button", { name: "Review composition and variables" }).click();
@@ -1289,7 +1289,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect.poll(() => writes.length).toBe(2);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Publication", { exact: true }).selectOption("archived");
-    await expect(browse.getByRole("button", { name: /Moon in Cancer/ })).toBeVisible();
+    await expect(browse.getByRole("button", { name: /^Moon in Cancer/ })).toBeVisible();
     await detail.getByRole("button", { name: "Edit passage", exact: true }).click();
     await editor.getByRole("button", { name: "Restore as draft" }).click();
     await expect.poll(() => writes.length).toBe(3);
@@ -1305,6 +1305,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect.poll(() => writes.length).toBe(5);
     expect(writes[4].method).toBe("DELETE");
     await search.fill("");
+    await page.getByLabel("Content family", { exact: true }).selectOption("all");
     await page.getByRole("tab", { name: "Composition & variables" }).click();
     await page.getByRole("complementary", { name: "Composition templates" }).getByRole("button", { name: /Calendar Day/ }).click();
     await expect(composition.getByText("Not traceable", { exact: true })).toBeVisible();
@@ -1315,6 +1316,10 @@ test.describe("content dashboard admin user flow case studies", () => {
       await page.setViewportSize({ width, height: 900 });
       for (const colorScheme of ["light", "dark"] as const) {
         await page.emulateMedia({ colorScheme });
+        if (await page.locator('main.admin-dashboard').getAttribute('data-studio-theme') !== colorScheme) {
+          await page.getByRole('button', { name: `Switch to ${colorScheme} theme` }).click();
+        }
+        await expect(page.locator('main.admin-dashboard')).toHaveAttribute('data-studio-theme', colorScheme);
         await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, colorScheme);
         await search.fill("Cancer");
         await expect(detail.getByRole("heading", { name: "Moon in Cancer · Variant 2" })).toBeVisible();
