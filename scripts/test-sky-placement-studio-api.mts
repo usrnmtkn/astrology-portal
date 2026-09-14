@@ -70,6 +70,59 @@ for (const [key, path] of editorSources) {
 }
 console.log("PASS: canonical Saturn source lookup, create, edit, publish, second edit/publish, immutable originals and approval receipt.");
 
+// Match the editor: subsequent saves reuse the returned proposal, including its
+// server-owned metadata. A LIVE source must stay unchanged until publication.
+{
+ const key = "sky-placement/article/sun/aries";
+ const live = stored.find(row => row.content_key === key && row.status === "LIVE");
+ const before = structuredClone(live);
+ let draft = (await request("PATCH", { id: live.id, expectedUpdatedAt: live.updated_at, reviewStatus: "needs_review",
+  sections: { ...live.sections, packageDraft: { ...live.sections.packageRecord, placementArticle: "During this transit, fixture repeated save 1." } } })).rows[0];
+ for (const version of [2, 3]) {
+  draft = (await request("PATCH", { id: draft.id, expectedUpdatedAt: draft.updated_at, reviewStatus: "needs_review",
+   sections: { ...draft.sections, packageDraft: { ...draft.sections.packageDraft, placementArticle: `During this transit, fixture repeated save ${version}.` } } })).rows[0];
+ }
+ assert.deepEqual(live, before);
+ assert.equal(draft.sections.packageRecord.owner_approved, false);
+ assert.equal(draft.sections.packageDraft.owner_approved, false);
+ assert.equal(draft.sections.packageDraft.serving_enabled, false);
+ for (const flag of ["owner_approved", "serving_enabled"]) {
+  await request("PATCH", { id: draft.id, expectedUpdatedAt: draft.updated_at, reviewStatus: "needs_review",
+   sections: { ...draft.sections, packageDraft: { ...draft.sections.packageDraft, [flag]: true } } }, "", 400);
+ }
+ // Old stored revisions had true proposal flags copied from the LIVE source.
+ const legacy = stored.find(row => row.id === draft.id);
+ legacy.sections.packageDraft.owner_approved = true;
+ legacy.sections.packageDraft.serving_enabled = true;
+ draft = (await request("PATCH", { id: legacy.id, expectedUpdatedAt: legacy.updated_at, reviewStatus: "needs_review", sections: legacy.sections })).rows[0];
+ assert.equal(draft.sections.packageDraft.owner_approved, false);
+ const published = (await request("PATCH", { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: "approve-package-revision" })).rows[0];
+ assert.equal(published.sections.packageRecord.placementArticle, "During this transit, fixture repeated save 3.");
+ const completedLegacy = stored.find(row => row.id === draft.id);
+ completedLegacy.sections.packageDraft.owner_approved = true;
+ completedLegacy.sections.packageDraft.serving_enabled = true;
+ const archived = structuredClone(completedLegacy);
+ assert.equal(archived.status, "ARCHIVED");
+ // A tab opened by the old source picker may still hold this completed revision.
+ const recovered = (await request("PATCH", { id: archived.id, expectedUpdatedAt: archived.updated_at, reviewStatus: "needs_review",
+  sections: { ...archived.sections, packageDraft: { ...archived.sections.packageDraft, placementArticle: "During this transit, fixture recovered open editor." } } })).rows[0];
+ assert.equal(recovered.source_snapshot.targetRowUpdatedAt, published.updated_at);
+ assert.equal(live.sections.packageRecord.placementArticle, "During this transit, fixture repeated save 3.");
+ const republished = (await request("PATCH", { id: recovered.id, expectedUpdatedAt: recovered.updated_at, ownerAction: "approve-package-revision" })).rows[0];
+ assert.equal(republished.sections.packageRecord.placementArticle, "During this transit, fixture recovered open editor.");
+ const completed = structuredClone(stored.find(row => row.id === draft.id));
+ // Competing edits to the same passage still block recovery.
+ live.sections.packageRecord.placementArticle = "During this transit, fixture competing owner edit.";
+ live.updated_at = new Date(Date.parse(live.updated_at) + 1).toISOString();
+ const conflict = await request("PATCH", { id: completed.id, expectedUpdatedAt: completed.updated_at, reviewStatus: "needs_review",
+  sections: { ...completed.sections, packageDraft: { ...completed.sections.packageDraft, placementArticle: "During this transit, fixture stale editor edit." } } }, "", 409);
+ assert.match(conflict.error, /changed/);
+ assert.equal(live.sections.packageRecord.placementArticle, "During this transit, fixture competing owner edit.");
+ // Restore this independent fixture for the reader assertions below.
+ Object.assign(live, before);
+ console.log("PASS: repeated draft saves, legacy flag repair, archived-tab recovery, explicit publication and competing-edit protection.");
+}
+
 const bundlePath = join(tmpdir(), "sky-studio-reader-roundtrip.mjs");
 await build({ bundle: true, format: "esm", platform: "node", outfile: bundlePath, logLevel: "silent",
  define: { "import.meta.env": JSON.stringify({ VITE_SUPABASE_URL: "https://sky-studio-test.invalid", VITE_SUPABASE_PUBLISHABLE_KEY: "sky-studio-test" }) },
