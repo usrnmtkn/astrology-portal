@@ -9,8 +9,11 @@ reload was stable, but navigating away and back selected different prose.
 checks the full opening and ending, and samples card height through refresh.
 It delays existing content reads without changing response payloads.
 
-The placement loader now waits for both the bundled renderer and publication
-resolution before declaring the first article ready. An authoritative canonical
+The placement loader resolves the publication ledger, bundled renderer, and both
+Studio source overlays before declaring the first article ready. A publication
+identity change invalidates unresolved prose; ordinary clock ticks keep the same
+resolved article. Detail composition waits for current published aspect sources
+and offers retry when an authoritative source is unavailable. An authoritative canonical
 publication cannot fall through to the older legacy article while unavailable
 or retired. Existing copy remains mounted during ordinary background refresh.
 No reader prose, approvals, source rows, calculation thresholds, or source
@@ -31,7 +34,11 @@ distribution states change in this repair.
 - Studio browser repair restores status badge accessibility labels and preserves
   body typography for clickable prose variables. Assertions for the established
   Studio status names and Natal workspace name follow the shipped UI contract.
-  The full browser matrix and remote checks must pass on the final PR head.
+  The 293-case Studio matrix passed across the full run (291) and targeted
+  rerun (2) after fixing confirmed-inactive Calendar badges. Another 28 reader
+  navigation, retrograde, composition and Sky/You parity cases passed.
+  Combined delayed-source boundary cases and remote checks remain pending on
+  the final integrated PR head.
 
 ## CI fixes
 
@@ -67,3 +74,8 @@ discrepancies and 377 reference gaps across 12 fixtures. Its existing
 partial-reference policy remains in effect. The dependent freshness gate passed;
 no accuracy threshold was loosened. Production completion still requires the
 merged main deployment and both read-only live browser regressions.
+
+The Chrome task added source-boundary staging commits through `42d52e030`;
+these are preserved in the branch history. Their patch is applied as reviewable
+source code. The candidate workflow only validates it and cannot mutate or push
+the branch. All 37 workflow YAML documents pass syntax/condition validation.

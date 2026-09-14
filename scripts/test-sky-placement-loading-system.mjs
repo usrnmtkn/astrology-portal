@@ -39,7 +39,7 @@ assert.equal(
   "Placement details opened outside the Sky list must retain on-demand content loading."
 );
 
-assert.equal(skyPlacementDescriptionState("Approved copy", "loading"), "ready");
+assert.equal(skyPlacementDescriptionState("Approved copy", "loading"), "loading");
 assert.equal(skyPlacementDescriptionState("", "loading"), "loading");
 assert.equal(skyPlacementDescriptionState("", "ready"), "empty");
 assert.equal(skyPlacementDescriptionState(null, "error"), "empty");

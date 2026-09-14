@@ -99,7 +99,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     const start = states.findIndex((s: any) => s.card === firstCopy);
     expect(states.slice(start).every((s: any) => s.card === firstCopy)).toBe(true);
     await card.click();
-    const article = page.locator('.article-body-inner');
+    const article = page.locator('.sky-detail-article .article-body-inner').first();
     await expect(article).toContainText(firstCopy, { timeout: 60_000 });
     await page.waitForTimeout(2500);
     states = await page.evaluate(() => (window as any).__readingStates);
@@ -117,7 +117,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(article).toContainText(secondCopy, { timeout: 60_000 });
     await expect(article).not.toContainText(firstCopy);
     await sources.retire();
-    await expect(page.locator('.article-body-inner')).not.toContainText(secondCopy, { timeout: 60_000 });
+    await expect(page.locator('.sky-detail-article .article-body-inner').first()).not.toContainText(secondCopy, { timeout: 60_000 });
     expect(errors).toEqual([]);
   });
 }
@@ -130,10 +130,10 @@ test('known live placement failure shows retry rather than another authored vers
   sources.fail();
   await page.goto('/?date=2026-09-13#sky/placement/sun/virgo');
   await expect(page.getByText('The placement reading could not load. Please try again.')).toBeVisible({ timeout: 60_000 });
-  expect(await page.locator('.article-body-inner').count()).toBe(0);
+  expect(await page.locator('.sky-detail-article .article-body-inner').first().count()).toBe(0);
   sources.recover();
   await page.getByRole('button', { name: 'Retry', exact: true }).click();
-  await expect(page.locator('.article-body-inner')).toContainText(firstCopy, { timeout: 60_000 });
+  await expect(page.locator('.sky-detail-article .article-body-inner').first()).toContainText(firstCopy, { timeout: 60_000 });
   const states = await page.evaluate(() => (window as any).__readingStates);
   expect(states.filter((s: any) => s.article).every((s: any) => s.article.includes(firstCopy))).toBe(true);
 });
