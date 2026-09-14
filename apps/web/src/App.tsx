@@ -1,3 +1,4 @@
+import { weeklyHoroscopeTagItems } from "./utils/weeklyFocusTags";
 import {
   loadManualChartsPanel,
   loadFriendsExperience,
@@ -17645,7 +17646,7 @@ function ProfileView({
               pills: { durationLabel, labels: house ? [
                 { label: longTransitPlanets.has(planet) ? "Long-term" : "Short-term", tone: "term" as const },
                 ...houseLifeAreaKeywords(house).map((label) => ({ label, tone: "muted" as const }))
-              ] : reading.tag ? [{ label: reading.tag, tone: "term" }] : [] },
+              ] : weeklyHoroscopeTagItems(reading.tag).map((label) => ({ label, tone: "term" as const })) },
               title: displayTitle,
               glyph: planet ? pointGlyph(planet) : "",
               subtitle: "",
