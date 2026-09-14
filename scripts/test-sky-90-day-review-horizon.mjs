@@ -100,7 +100,7 @@ assert.match(dashboard, /if \(draft\.blockType === "sky_aspect"\) return "collec
 
 const servingStatus = fs.readFileSync(path.join(repoRoot, "apps/admin/src/skyPlacementServingStatus.ts"), "utf8");
 assert.match(servingStatus, /Not serving — replaced by owner-approved article/u);
-assert.match(servingStatus, /sky-placement-serving-manifest-v1\.json/u);
+assert.match(servingStatus, /skyPlacementServingKeys\.json/u);
 assert.match(servingStatus, /fallback-hook\/sky-sign-copy\/\$\{planet\}\/\$\{sign\}/u);
 
 console.log(`Sky 90-day review horizon checks passed (${horizon.counts.occurrences} fixture candidates, ${horizon.counts.activeWindows} active windows).`);

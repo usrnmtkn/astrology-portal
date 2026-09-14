@@ -1,7 +1,16 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { fallbackHookEditorGuidance } from "../apps/admin/src/DailyFallbackWorkspaceGuide.tsx";
+import { fileURLToPath } from "node:url";
+import { createServer } from "vite";
 import { fallbackHookDisplayTitle } from "../apps/admin/src/fallbackHookTitle.ts";
+
+// This export lives in the actual styled Studio module. Load it through Vite,
+// just as other browser-module contract tests do, rather than asking Node to
+// interpret CSS. No function, label, or assertion is mocked or bypassed.
+const server = await createServer({ root: fileURLToPath(new URL("../", import.meta.url)), configFile: false,
+  appType: "custom", server: { middlewareMode: true, hmr: { port: 0 } }, optimizeDeps: { noDiscovery: true, include: [] } });
+const { fallbackHookEditorGuidance } = await server.ssrLoadModule("/apps/admin/src/DailyFallbackWorkspaceGuide.tsx") as typeof import("../apps/admin/src/DailyFallbackWorkspaceGuide.tsx");
+await server.close();
 
 const guidanceCopy = JSON.parse(fs.readFileSync(
   new URL("../apps/admin/content/fallback-hook-editor-guidance-v1.json", import.meta.url),

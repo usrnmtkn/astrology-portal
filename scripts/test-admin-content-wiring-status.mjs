@@ -12,7 +12,7 @@ const approvedMoonHouse = {
 };
 
 assert.deepEqual(contentWiringStatus(approvedMoonHouse), {
-  detail: "This row is published, but no live reader call site requests this key family. Runtime integration was never completed.",
+  detail: "Readers cannot currently receive this copy because no live reader call site requests this key family. Runtime integration was never completed.",
   label: "Needs connection",
   reason: "unfinished",
   state: "not-connected"

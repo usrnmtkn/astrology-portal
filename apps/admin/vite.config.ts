@@ -138,11 +138,14 @@ export default defineConfig(({ command, mode }) => {
       },
       minify: "terser",
       terserOptions: {
+        ecma: 2020,
         compress: {
-          passes: 2
+          passes: 5
         },
         format: {
-          comments: false
+          comments: false,
+          ascii_only: true,
+          wrap_func_args: false
         }
       }
     }
