@@ -102,3 +102,12 @@ The preview for `8e88eb86f` is READY. The first real-data cold desktop placement
 check passed with one prose variant and no collapse; remaining preview and
 production visit results are still pending. Access uses the project's existing
 automation credential, scoped exclusively to the exact preview hostname.
+
+The completed preview verification passed all eight placement visits (cold,
+reload, navigation return, background refresh at 1440 and 390 px), each with
+one complete prose variant and no collapse. All five summary checks passed
+with no page errors. The final compressed build passed 32 reader browser cases,
+including exact article phrases, dark/light layouts, fresh publication loading,
+replacement, retirement, and failed-source retry. Startup/performance contracts
+also passed after following the relocated preparation module in the serving
+partition assertion. Production verification is still required after merge.
