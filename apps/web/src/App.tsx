@@ -1152,7 +1152,7 @@ function skyPlacementTemplateSlots(position: PlanetPosition): TemplateSlotValues
   const signStyle = signStyleSlot(position.sign);
   const transitTiming = lunarNodeTransitRangeLabel(position)
     ?? (position.transitStart && position.transitEnd
-      ? formatTransitRange(new Date(position.transitStart), new Date(position.transitEnd))
+      ? formatTransitRange(new Date(position.transitStart), new Date(position.transitEnd), position)
       : null);
   const isRetrograde = isDisplayRetrograde(position);
   const retrogradeTiming = isRetrograde ? retrogradeRangeText(position) ?? transitTiming : transitTiming;
@@ -3472,8 +3472,31 @@ function formatEditorialDateRange(start: Date, end: Date, referenceDate = new Da
   return `${formatEditorialDate(start, true)} - ${formatEditorialDate(end, true)}`;
 }
 
-function formatTransitRange(start: Date, end: Date) {
-  return formatEditorialDateRange(start, end);
+function formatTransitRange(
+  start: Date,
+  end: Date,
+  position: Pick<PlanetPosition, "transitTimeZone">,
+  referenceDate = new Date()
+) {
+  // Match the article facts: compare calendar parts in the calculated location's
+  // zone as well as formatting there. UTC parts can cross a different day/year.
+  const timeZone = position.transitTimeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  const partsFormatter = new Intl.DateTimeFormat("en-US", { year: "numeric", month: "numeric", day: "numeric", timeZone });
+  const parts = (date: Date) => Object.fromEntries(partsFormatter.formatToParts(date).map(part => [part.type, part.value]));
+  const first = parts(start), last = parts(end), reference = parts(referenceDate);
+  const formatDate = (date: Date, includeYear = false) => new Intl.DateTimeFormat("en-US", {
+    month: "short", day: "numeric", timeZone, ...(includeYear ? { year: "numeric" as const } : {})
+  }).format(date);
+  const sameYear = first.year === last.year;
+  const sameMonth = sameYear && first.month === last.month;
+  if (sameMonth && first.day === last.day) {
+    const today = first.year === reference.year && first.month === reference.month && first.day === reference.day;
+    const time = (date: Date) => new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "numeric", timeZone }).format(date).replace(":00", "");
+    return `${today ? "Today" : formatDate(start)} · ${time(start)} - ${time(end)}`;
+  }
+  const showYear = !sameYear || first.year !== reference.year;
+  if (sameMonth) return `${formatDate(start, showYear)} - ${last.day}${showYear ? `, ${last.year}` : ""}`;
+  return `${formatDate(start, showYear)} - ${formatDate(end, showYear)}`;
 }
 
 function formatSkyAspectDateRange(start: Date, end: Date, referenceDate = new Date()) {
@@ -3731,7 +3754,7 @@ function formatDurationLong(startInput: string | Date, endInput: string | Date, 
 function placementTransitRange(position: PlanetPosition, generatedAt: string) {
   const { start, end } = placementTransitEndpoints(position, generatedAt);
 
-  return formatTransitRange(start, end);
+  return formatTransitRange(start, end, position);
 }
 
 function verifiedPlacementResidencyPasses(position: PlanetPosition) {
@@ -3780,7 +3803,7 @@ export function placementFinalResidencyExit(position: PlanetPosition, fallback: 
 function placementTransitRangeLabel(position: PlanetPosition, generatedAt: string) {
   if (position.transitStart && position.transitEnd) {
     const { start, end } = placementTransitEndpoints(position, generatedAt);
-    return formatTransitRange(start, end);
+    return formatTransitRange(start, end, position);
   }
 
   const nodeRangeLabel = lunarNodeTransitRangeLabel(position);
