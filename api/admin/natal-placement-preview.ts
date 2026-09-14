@@ -1,4 +1,5 @@
 import { natalPlacementResolverDependencyKeys } from "../../apps/admin/src/natalPlacementSources.js";
+import { emptyHouseSourceKeys } from "../../apps/admin/src/emptyHouseSources.js";
 import { publicationLedgerKey, validContentPublication, publicationTimestamp, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
@@ -50,6 +51,7 @@ const bundledSharedPlacementRows = require("../../apps/web/src/content/fallbackA
   hookRows: PackageRow[];
   vocabularyRows: PackageRow[];
 };
+const bundledEmptyHouseRows = require("../../apps/web/src/content/fallbackArchitectureV3/bundled-empty-house-rows-v3.json") as { hookRows: PackageRow[] };
 const bundledManifest = require("../../apps/web/src/content/fallbackArchitectureV3/bundled-manifest-v3.json") as {
   keys: string[];
 };
@@ -89,11 +91,16 @@ function normalizeOverrideCandidate(value: unknown): PreviewOverrideCandidate | 
 export function normalizeNatalPlacementPreviewInput(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Preview selection is missing.");
   const input = value as Record<string, unknown>;
-  const planet = typeof input.planet === "string" ? input.planet : "";
+  const emptyHouse = input.kind === "empty-house";
+  const planet = emptyHouse ? "sun" : typeof input.planet === "string" ? input.planet : "";
   const sign = typeof input.sign === "string" ? input.sign : "";
   const house = typeof input.house === "string" ? input.house : "";
   const audience = input.audience === "they" ? "they" : "you";
   const motion: "direct" | "retrograde" = input.motion === "retrograde" || input.isRetrograde === true ? "retrograde" : "direct";
+  const rulerHouse = emptyHouse && typeof input.rulerHouse === "number" ? input.rulerHouse : null;
+  if (input.kind !== undefined && input.kind !== "empty-house") throw new Error("Unknown preview kind.");
+  if (emptyHouse && (!/^(?:[1-9]|1[0-2])$/u.test(house) || !Number.isInteger(rulerHouse)
+    || rulerHouse! < 1 || rulerHouse! > 12 || rulerHouse === Number(house))) throw new Error("Choose an empty house and a different ruler house between 1 and 12.");
   if (!planets.has(planet) || !signs.has(sign) || (house && !/^(?:[1-9]|1[0-2])$/u.test(house))) {
     throw new Error("Choose a valid planet and sign. If provided, the house must be between 1 and 12.");
   }
@@ -101,7 +108,7 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
   const overrides = input.overrides
     .map(normalizeOverrideCandidate)
     .filter((candidate): candidate is PreviewOverrideCandidate => Boolean(candidate));
-  return { audience, house, motion, overrides, planet, sign };
+  return { audience, house, motion, overrides, planet, sign, emptyHouse, rulerHouse };
 }
 
 function ignoredReason(candidate: PreviewOverrideCandidate): IgnoredPreviewOverride["reason"] | null {
@@ -182,7 +189,7 @@ export function renderNatalPlacementPreviewState(input: ReturnType<typeof normal
   // which is why Content Studio could show the generic Leo floor while the app
   // correctly rendered the Jupiter-specific paragraph.
   const base = productionBaseReaderRows();
-  const hooks = new Map(base.hookRows.map((row) => [row.contentKey, row]));
+  const hooks = new Map([...base.hookRows, ...(input.emptyHouse ? bundledEmptyHouseRows.hookRows : [])].map((row) => [row.contentKey, row]));
   const vocabulary = new Map(base.vocabularyRows.map((row) => [row.contentKey, row]));
   const templates = new Map(base.templates.map((row) => [row.contentKey, row]));
   const byKey = new Map(publications.map((publication) => [publication.content_key, publication]));
@@ -206,7 +213,10 @@ export function renderNatalPlacementPreviewState(input: ReturnType<typeof normal
     { hookRows: [...hooks.values()], vocabularyRows: [...vocabulary.values()] },
     { blockedContentKeys }
   );
-  const rendered = renderer.renderNatalPlacement({
+  const rendered = input.emptyHouse ? renderer.renderNatalEmptyHouse({
+    house: Number(input.house), sign: input.sign, rulerHouse: input.rulerHouse,
+    rulerSystem: "traditional", voice: input.audience
+  }, { includeEmptyHouseBridge: true }) : renderer.renderNatalPlacement({
     ...(input.house ? { house: Number(input.house) } : {}),
     isRetrograde: input.motion === "retrograde",
     planet: input.planet,
@@ -239,7 +249,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const base = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!base || !key) throw new AdminHttpError(503, "Publication status is unavailable. The reader preview cannot be verified.");
-    const dependencyKeys = natalPlacementResolverDependencyKeys(
+    const dependencyKeys = input.emptyHouse ? emptyHouseSourceKeys(Number(input.house), input.sign, input.rulerHouse!) : natalPlacementResolverDependencyKeys(
       input.planet as Parameters<typeof natalPlacementResolverDependencyKeys>[0],
       input.sign as Parameters<typeof natalPlacementResolverDependencyKeys>[1],
       input.house as Parameters<typeof natalPlacementResolverDependencyKeys>[2], input.motion

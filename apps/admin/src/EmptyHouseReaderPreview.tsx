@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { StudioButton } from "./StudioControls";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
-import {
-  fallbackRendererV3,
-  loadEmptyHouseFallbackArchitectureV3Bundle
-} from "../../web/src/content/fallbackArchitectureV3Runtime";
+import { adminCredentialHeaders } from "./adminSecret";
 import "./natal-reader-preview.css";
 
 type Audience = "you" | "they";
@@ -29,6 +26,7 @@ type Props = {
   onOpenSource: (contentKey: string, label: string, previewTemplate?: boolean) => void;
   rulerHouse: number;
   sign: string;
+  secret: string;
 };
 
 function titleFromKey(value: string) {
@@ -53,7 +51,7 @@ function sourceLabel(contentKey: string) {
   return titleFromKey(contentKey.split("/").pop() ?? "Source");
 }
 
-export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHouse, sign }: Props) {
+export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHouse, sign, secret }: Props) {
   const [audience, setAudience] = useState<Audience>("you");
   const [publicationVersion, setPublicationVersion] = useState(0);
   const [preview, setPreview] = useState<PreviewState>({ error: null, loading: true, rendered: null });
@@ -62,19 +60,16 @@ export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHous
 
   useEffect(() => {
     let active = true;
+    const controller = new AbortController();
     setPreview((current) => ({ ...current, error: null, loading: true }));
-    void loadEmptyHouseFallbackArchitectureV3Bundle()
-      .then(() => {
-        const rendered = fallbackRendererV3.renderNatalEmptyHouse(
-          {
-            house,
-            sign,
-            rulerHouse,
-            rulerSystem: "traditional",
-            voice: audience === "you" ? "you" : "they"
-          },
-          { includeEmptyHouseBridge: true }
-        ) as EmptyHouseRender;
+    void fetch("/api/admin/natal-placement-preview", {
+      method: "POST", headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
+      body: JSON.stringify({ kind: "empty-house", house: String(house), sign, rulerHouse, audience, overrides: [] }),
+      signal: controller.signal
+    }).then(async response => {
+        const payload = await response.json();
+        if (!response.ok || !payload?.rendered) throw new Error(payload?.error ?? "The empty-house assembly could not be rendered.");
+        const rendered = payload.rendered as EmptyHouseRender;
         if (active) setPreview({ error: null, loading: false, rendered });
       })
       .catch((reason) => {
@@ -85,8 +80,8 @@ export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHous
           rendered: null
         });
       });
-    return () => { active = false; };
-  }, [audience, house, rulerHouse, sign, publicationVersion]);
+    return () => { active = false; controller.abort(); };
+  }, [audience, house, rulerHouse, sign, secret, publicationVersion]);
 
   const contextLabel = `${ordinalHouseLabel(house)} in ${titleFromKey(sign)}`;
   const sourceKeys = preview.rendered?.sourceKeys ?? [];
