@@ -94,7 +94,9 @@ test("Sky Write-ups navigation remains usable with a malformed status response",
   await page.goto(`${studioPath}#review-queue`);
   await openStudioPage(page, "Sky Write-ups");
   await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
-  await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first().locator(".admin-col-visibility")).toHaveText("Status unavailable");
+  const savedStatus = page.getByLabel("Sky write-up rows").locator("tbody tr").first().locator(".admin-col-visibility .admin-status");
+  await expect(savedStatus).toHaveText("Live");
+  await expect(savedStatus).toHaveAttribute("title", "Reader serving status could not be verified. Showing the saved editorial state.");
   await openStudioPage(page, "Content Library");
   await openStudioPage(page, "Sky Write-ups");
   await expect(page.getByLabel("Sky write-up rows").locator("tbody tr").first()).toBeVisible();
@@ -148,3 +150,49 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     expect(await page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("studio-recovery-fixture");
   });
 }
+
+for (const action of ['Retry page', 'Open Review Queue']) {
+  test(`Studio recovers a missing deployment chunk through ${action}`, async ({ page }) => {
+    await mockStudio(page);
+    let missing = true;
+    let documents = 0;
+    page.on('request', request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++; });
+    await page.route('**/SkyPlacementComposition-*.js', route => missing ? route.abort('failed') : route.continue());
+    await page.goto(`${studioPath}#review-queue`);
+    await openStudioPage(page, 'Sky Write-ups');
+    const recovery = page.getByRole('region', { name: 'Page recovery', exact: true });
+    await expect(recovery).toBeVisible();
+    await recovery.getByText('Error details', { exact: true }).click();
+    // Vite must reject the import with its real failure, not resolve undefined
+    // and poison React.lazy with "reading default" for every future Retry.
+    await expect(recovery.locator('pre')).toContainText(/Failed to fetch dynamically imported module|Importing a module script failed|Unable to preload/);
+    expect(documents).toBe(1); // Authoring pages never reload without an action.
+    missing = false;
+    await recovery.getByRole(action === 'Retry page' ? 'button' : 'link', { name: action, exact: true }).click();
+    await expect.poll(() => documents).toBe(2);
+    if (action === 'Open Review Queue') {
+      await expect(page.getByRole('heading', { name: 'Review Queue', exact: true })).toBeVisible();
+      await openStudioPage(page, 'Sky Write-ups');
+    }
+    await expect(page.getByLabel('Sky placement planet or point')).toBeVisible();
+    await expect(recovery).toHaveCount(0);
+    expect(await page.evaluate(() => localStorage.getItem('tldrastro:contentAdminSecret'))).toBe('studio-recovery-fixture');
+  });
+}
+
+test('reader startup keeps its guarded reload and manual recovery', async ({ page }) => {
+  test.skip(process.env.STUDIO_PRODUCTION_ENTRY !== '1', 'Reader startup requires the production web entry.');
+  await mockStudio(page);
+  let missing = true;
+  let documents = 0;
+  page.on('request', request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++; });
+  await page.route('**/App-*.js', route => missing ? route.abort('failed') : route.continue());
+  await page.goto('/#sky', { waitUntil: 'commit' });
+  await expect(page.locator('#app-startup')).toHaveAttribute('role', 'alert');
+  expect(documents).toBe(2);
+  missing = false;
+  await page.locator('#app-startup button').click();
+  await expect(page.locator('.topbar')).toBeVisible({ timeout: 15000 });
+  await expect(page.locator('#app-startup')).toHaveCount(0);
+  expect(documents).toBe(3);
+});
