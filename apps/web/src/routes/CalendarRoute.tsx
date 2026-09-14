@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import type { ReactNode } from "react";
 import type { LocationInput } from "../types";
-import type { LunarCalendarEvent } from "../services/ephemeris";
+import type { LunarCalendarDay, LunarCalendarEvent } from "../services/ephemeris";
 import type { LiveGeneratedContent } from "../services/generatedContent";
 import type { SkyPlacementContentStatus } from "../features/sky/skyPlacementContentState";
 import "../styles/lunar-calendar.css";
@@ -22,6 +22,7 @@ type CalendarRouteProps = {
   onLocationChange: (location: LocationInput) => void;
   onGeneratedContentRequest?: (request: { cacheKey: string; contentKeys: string[] }) => void;
   onOpenTransit?: (event: LunarCalendarEvent, description?: string) => void;
+  renderDayReading?: (day: LunarCalendarDay) => { content: ReactNode; moonSign?: string };
   showJournalPrompts?: boolean;
 };
 
@@ -35,6 +36,7 @@ export function CalendarRoute({
   onLocationChange,
   onGeneratedContentRequest,
   onOpenTransit,
+  renderDayReading,
   showJournalPrompts = true
 }: CalendarRouteProps) {
   return (
@@ -48,6 +50,7 @@ export function CalendarRoute({
         onLocationChange={onLocationChange}
         onGeneratedContentRequest={onGeneratedContentRequest}
         onOpenTransit={onOpenTransit}
+        renderDayReading={renderDayReading}
         showJournalPrompts={showJournalPrompts}
       />
     </Suspense>
