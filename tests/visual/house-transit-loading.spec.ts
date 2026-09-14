@@ -1,0 +1,87 @@
+import { expect, test, type Page } from "@playwright/test";
+
+const housePath = "/admin/content#sky-writeups?view=house-transits&motion=direct&transit=sun&sign=aries&transitHouse=1";
+const intro = "First complete fixture paragraph.\n\nSecond complete fixture paragraph.";
+const sign = "The complete sign-specific fixture passage.";
+const rows = [
+  { id: "house-intro", content_key: "authored/transit-house-intro/sun/1", body: intro },
+  { id: "house-sign", content_key: "authored/transit-house-sign/sun/1/aries", body: sign }
+].map(row => ({ ...row, headline: "House Transit fixture", surface: "sky", mode: "article", status: "DRAFT", lane: "reference", sections: {}, facts: {}, source_snapshot: {}, updated_at: "2026-09-14T00:00:00Z" }));
+const unrelated = { ...rows[0], id: "unrelated", content_key: "fixture/unrelated" };
+
+async function mock(page: Page) {
+  await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "house-loading-fixture"));
+  await page.route("**/api/**", route => route.fulfill({ json: { ok: true, rows: [], statuses: [], nextCursor: null } }));
+}
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+  test(`House Transit waits for all pages and uses Studio surfaces ${width} ${theme}`, async ({ page }) => {
+    await mock(page);
+    await page.setViewportSize({ width, height: 1100 });
+    await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
+    let release!: () => void;
+    const pending = new Promise<void>(resolve => { release = resolve; });
+    await page.route("**/api/admin/generated-content?**", async route => {
+      const query = new URL(route.request().url()).searchParams;
+      if (query.get("visibility") !== "all") return route.fulfill({ json: { ok: true, rows: [unrelated], nextCursor: null } });
+      if (!query.has("cursor")) return route.fulfill({ json: { ok: true, rows: [rows[0]], nextCursor: "second" } });
+      await pending;
+      await route.fulfill({ json: { ok: true, rows: [rows[1]], nextCursor: null } });
+    });
+    await page.goto(housePath);
+    const finder = page.getByRole("region", { name: "House Transits source finder" });
+    await expect(finder.getByText("Loading House Transit passages…", { exact: true })).toBeVisible();
+    await expect(finder).not.toContainText(/Source passage required|Missing:|No saved passage|Source row unavailable|incomplete/);
+    // A selection change while the final page is pending must not report missing sources.
+    await page.getByLabel("House Transit zodiac sign").selectOption("taurus");
+    await expect(finder).not.toContainText("Source passage required");
+    await page.getByLabel("House Transit zodiac sign").selectOption("aries");
+    release();
+    const preview = finder.getByRole("region", { name: "Effective House Transit reader preview" });
+    await expect(preview.getByText("Complete composition", { exact: true })).toBeVisible();
+    await expect(preview.locator("blockquote")).toHaveText(`${intro}\n\n${sign}`);
+    await expect(finder.getByText("Loading House Transit passages…", { exact: true })).toHaveCount(0);
+    const cards = finder.locator(".admin-natal-source-card");
+    for (const card of await cards.all()) {
+      const metrics = await card.evaluate(el => {
+        const s = getComputedStyle(el), q = el.querySelector("blockquote")!, qs = getComputedStyle(q);
+        const p = document.querySelector('.admin-natal-placement-finder-heading p:not(.admin-eyebrow)')!, ps = getComputedStyle(p);
+        return { padding: s.paddingLeft, border: s.borderTopWidth, radius: s.borderRadius, background: s.backgroundColor,
+          margin: qs.margin, whiteSpace: qs.whiteSpace, typography: [qs.fontFamily, qs.fontSize, qs.fontWeight, qs.lineHeight, qs.letterSpacing],
+          bodyTypography: [ps.fontFamily, ps.fontSize, ps.fontWeight, ps.lineHeight, ps.letterSpacing], overflow: el.scrollWidth - el.clientWidth };
+      });
+      expect(parseFloat(metrics.padding)).toBeGreaterThan(0);
+      expect(parseFloat(metrics.border)).toBeGreaterThan(0);
+      expect(parseFloat(metrics.radius)).toBeGreaterThan(0);
+      expect(metrics.background).not.toBe("rgba(0, 0, 0, 0)");
+      expect(metrics.margin).toBe("0px");
+      expect(metrics.whiteSpace).toBe("pre-wrap");
+      expect(metrics.typography).toEqual(metrics.bodyTypography);
+      expect(metrics.overflow).toBeLessThanOrEqual(1);
+    }
+    await expect(preview.getByRole("heading", { level: 3 })).toHaveText("What you see");
+    await expect(preview.getByRole("heading", { level: 4 })).toHaveText("Sun through your 1st house");
+    expect(await preview.evaluate(el => Boolean(el.compareDocumentPosition(el.nextElementSibling!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+    await preview.screenshot({ path: `test-results/house-transit-preview-${width}-${theme}.png` });
+    await finder.locator(".admin-natal-source-grid").first().screenshot({ path: `test-results/house-transit-passages-${width}-${theme}.png` });
+  });
+}
+
+test("House Transit failed inventory offers retry, then distinguishes confirmed missing copy", async ({ page }) => {
+  await mock(page);
+  let fail = true;
+  await page.route("**/api/admin/generated-content?**", route => {
+    const extended = new URL(route.request().url()).searchParams.get("visibility") === "all";
+    return extended && fail ? route.fulfill({ status: 503, json: { error: "Fixture inventory unavailable" } })
+      : route.fulfill({ json: { ok: true, rows: [unrelated], nextCursor: null } });
+  });
+  await page.goto(housePath);
+  const finder = page.getByRole("region", { name: "House Transits source finder" });
+  await expect(finder.getByRole("alert")).toContainText("House Transit passages could not be loaded.");
+  await expect(finder).not.toContainText(/Source passage required|Missing:|No saved passage/);
+  fail = false;
+  await finder.getByRole("button", { name: "Retry House Transit loading" }).click();
+  await expect(finder.getByText("Source passage required", { exact: true })).toBeVisible();
+  await expect(finder).toContainText("Missing: Sun through the 1st house, Sun in Aries through the 1st house");
+  await expect(finder.getByRole("alert")).toHaveCount(0);
+});
