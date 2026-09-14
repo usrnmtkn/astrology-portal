@@ -738,7 +738,7 @@ for (const revision of [1, 2]) {
 }
 // Lunar Calendar articles use their authored key and lowercase body field.
 const moonRecord = JSON.parse(readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", import.meta.url))).authoredCards
-  .find((item) => item.contentKey === "authored/calendar-weekly-moon/cancer/variant-2");
+  .find((item) => item.contentKey === "authored/calendar-weekly-moon/libra/variant-2");
 assert.ok(moonRecord);
 row = {
   ...row, content_key: moonRecord.contentKey, body: moonRecord.body,
