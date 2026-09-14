@@ -11,7 +11,7 @@ test.beforeAll(async () => {
     const assembly={specialSections:[],derivation:{targetDate:'2026-09-11',qualifyingTransits:[{}]}};
     const reading={body:'Synthetic weekly fixture.',dayLabel:'Test',sourceUnits:[]};
     const weekly={status:'ready',weekStart:'2026-09-07',weekEnd:'2026-09-13',horoscope:reading,aspects:[]};
-    h.render=(ready=h.ready ?? true,date='September 11')=>{h.ready=ready;root.render(<YouReportActions accountId={h.userId} transitDateLabel={date} dailyUpdateSummary={ready?summary:{...summary,status:'loading'}} dailyHoroscopeAssembly={assembly} weeklyHoroscopeAssembly={ready?weekly:{...weekly,status:'loading'}}/>);};
+    h.render=(ready=h.ready ?? true,date='September 11')=>{h.ready=ready;root.render(<YouReportActions accountId={h.userId} accountRecovery={h.recovery} transitDateLabel={date} dailyUpdateSummary={ready?summary:{...summary,status:'loading'}} dailyHoroscopeAssembly={assembly} weeklyHoroscopeAssembly={ready?weekly:{...weekly,status:'loading'}}/>);};
     h.emit=(id)=>{h.userId=id;h.render();};
     h.render();`,resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,format:'iife',platform:'browser',jsx:'automatic',plugins:[{name:'isolated-session',setup(b){
       b.onResolve({filter:/services\/auth$/},()=>({path:'auth',namespace:'fixture'}));
@@ -81,4 +81,26 @@ test('uses the signed-in page account immediately after mounting', async ({page}
   await page.getByRole('button',{name:'Create day report',exact:true}).click();
   await expect(page.getByRole('status')).toContainText('Your day report is being prepared.');
   expect(await page.evaluate(()=>(window as any).reportHarness.creates)).toBe(1);
+});
+
+test('failed account recovery offers retry without requesting another sign-in', async ({page}) => {
+  await page.evaluate(() => {
+    const h = (window as any).reportHarness;
+    h.retries = 0;
+    h.signIns = 0;
+    h.recovery = {
+      error: 'Your account could not be checked. Please try again.',
+      onRetry: () => { h.retries++; h.recovery.error = null; h.emit('recovered-owner'); },
+      onSignIn: () => { h.signIns++; }
+    };
+    h.emit(null);
+  });
+  await expect(page.getByRole('status')).toHaveText('Your account could not be checked. Please try again.');
+  await expect(page.getByRole('button', {name:'Sign in', exact:true})).toBeHidden();
+  await page.getByRole('button', {name:'Try again', exact:true}).click();
+  await expect(page.getByRole('button', {name:'Create day report', exact:true})).toBeEnabled();
+  expect(await page.evaluate(() => {
+    const h = (window as any).reportHarness;
+    return {retries:h.retries, signIns:h.signIns};
+  })).toEqual({retries:1, signIns:0});
 });

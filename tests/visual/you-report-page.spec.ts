@@ -18,9 +18,13 @@ const profile = {
   currentLocation: location.label, currentLocationData: location,
   charts: [{ id: "fixture-chart", name: "Report Fixture", type: "Birth chart", birthDate: "1990-01-01", birthTime: "12:00 PM", birthCity: location.label, birthLocation: location }]
 };
+const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test").hostname.split(".")[0]}-auth-token`;
+const session = {
+  access_token: "synthetic-token", refresh_token: "synthetic-refresh",
+  expires_at: Date.parse("2026-09-14T16:00:00Z") / 1000, token_type: "bearer", user
+};
 
 async function prepare(page: Page, theme: string, signedIn = true) {
-  const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test").hostname.split(".")[0]}-auth-token`;
   await page.clock.setFixedTime(new Date("2026-09-13T16:00:00Z"));
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(({ user, profile, location, storageKey, theme, signedIn }) => {
@@ -51,6 +55,61 @@ async function prepare(page: Page, theme: string, signedIn = true) {
 
 for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: "mobile", width: 390, height: 844 }]) {
   for (const theme of ["light", "dark"]) {
+    for (const signedIn of [true, false]) {
+      test(`Account route stays separate from You with ${signedIn ? "active" : "cached"} account on ${viewport.name} ${theme}`, async ({ page }) => {
+        test.setTimeout(60_000);
+        await page.setViewportSize(viewport);
+        await prepare(page, theme, signedIn);
+        await page.goto("/?date=2026-09-12#you");
+        await expect(page.getByRole("region", { name: "In-depth transit reports" })).toBeVisible();
+        await page.getByRole("button", { name: "Open menu", exact: true }).click();
+        await page.getByRole("menuitem", { name: "Account", exact: true }).click();
+        const account = page.locator(".account-page");
+        const assertAccount = async () => {
+          await expect(account.getByLabel("Birth date", { exact: true })).toHaveValue("1990-01-01");
+          await expect(page.getByRole("region", { name: "In-depth transit reports" })).toBeHidden();
+          await expect(page).toHaveURL(/\?date=2026-09-12#account$/);
+        };
+        await assertAccount();
+        // An auth recovery check must not replace the selected destination.
+        await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+        await assertAccount();
+        await page.reload();
+        await assertAccount();
+        await page.screenshot({ path: test.info().outputPath(`account-${signedIn ? "active" : "cached"}-${viewport.name}-${theme}.png`) });
+        await page.goBack();
+        await expect(page.getByRole("region", { name: "In-depth transit reports" })).toBeVisible();
+        await page.goForward();
+        await assertAccount();
+      });
+    }
+
+    test(`cached You profile offers Google reconnect on ${viewport.name} ${theme}`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await prepare(page, theme, false);
+      await page.goto("/#you");
+      const reports = page.getByRole("region", { name: "In-depth transit reports" });
+      await expect(reports.getByText("Sign in to create or read your reports.")).toBeVisible();
+      await expect(reports.getByRole("button", { name: "Create day report", exact: true })).toBeDisabled();
+      await page.getByRole("button", { name: "Open menu", exact: true }).click();
+      await expect(page.getByRole("menuitem", { name: "Sign out", exact: true })).toBeHidden();
+      await expect(page.getByRole("menuitem", { name: "Login", exact: true })).toBeVisible();
+      await page.getByRole("button", { name: "Close menu", exact: true }).click();
+      await expect(page.getByRole("menu", { name: "Site menu" })).toBeHidden();
+      await expect(page.getByRole("region", { name: "Daily horoscope summary" }).getByRole("heading")).toBeVisible();
+      expect(await reports.getByRole("button").evaluateAll(buttons => buttons.every(button => button.scrollWidth <= button.clientWidth + 1))).toBe(true);
+      await reports.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: test.info().outputPath(`you-reconnect-${viewport.name}-${theme}.png`) });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
+      await reports.getByRole("button", { name: "Sign in", exact: true }).click();
+      const login = page.getByRole("region", { name: "Log in", exact: true });
+      await expect(login.getByRole("button", { name: "Continue with Google", exact: true })).toBeVisible();
+      await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeHidden();
+      expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).id)).toBe(user.id);
+      await login.getByRole("button", { name: "Close", exact: true }).click();
+      await expect(reports).toBeVisible();
+    });
+
     test(`signed-in You report card precedes the daily reading on ${viewport.name} ${theme}`, async ({ page }) => {
       test.setTimeout(60_000);
       await page.setViewportSize(viewport);
@@ -108,10 +167,38 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
   }
 }
 
-test("a cached profile without a signed-in account cannot access reports", async ({ page }) => {
+test("You recovers a session written by another tab and notices its removal", async ({ page, context }) => {
   await prepare(page, "light", false);
   await page.goto("/#you");
   const reports = page.getByRole("region", { name: "In-depth transit reports" });
   await expect(reports.getByText("Sign in to create or read your reports.")).toBeVisible();
+  // Studio writes shared storage directly, without a Supabase broadcast.
+  const otherTab = await context.newPage();
+  await otherTab.route("**/__session-update", route => route.fulfill({ contentType: "text/html", body: "<title>Session fixture</title>" }));
+  await otherTab.goto("/__session-update");
+  await otherTab.evaluate(({ storageKey, session }) => localStorage.setItem(storageKey, JSON.stringify(session)), { storageKey, session });
+  await expect(reports.getByRole("button", { name: "Read day report", exact: true })).toBeEnabled();
+  await expect(reports.getByText("Sign in to create or read your reports.")).toBeHidden();
+  await otherTab.evaluate(storageKey => localStorage.removeItem(storageKey), storageKey);
+  await expect(reports.getByText("Sign in to create or read your reports.")).toBeVisible();
   await expect(reports.getByRole("button", { name: "Create day report", exact: true })).toBeDisabled();
+  await otherTab.close();
+});
+
+test("You rechecks the session when returning to the page", async ({ page }) => {
+  await prepare(page, "light", false);
+  await page.goto("/#you");
+  const reports = page.getByRole("region", { name: "In-depth transit reports" });
+  await expect(reports.getByText("Sign in to create or read your reports.")).toBeVisible();
+  // Model a storage update whose cross-tab notification was missed while away.
+  await page.evaluate(({ storageKey, session }) => {
+    localStorage.setItem(storageKey, JSON.stringify(session));
+    window.dispatchEvent(new Event("focus"));
+  }, { storageKey, session });
+  await expect(reports.getByRole("button", { name: "Read day report", exact: true })).toBeEnabled();
+  await page.evaluate(storageKey => {
+    localStorage.removeItem(storageKey);
+    window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true }));
+  }, storageKey);
+  await expect(reports.getByText("Sign in to create or read your reports.")).toBeVisible();
 });

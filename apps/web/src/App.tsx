@@ -200,6 +200,7 @@ import {
 import {
   getAuthAccount,
   isAuthConfigured,
+  isAuthSessionStorageKey,
   loadPersistedProfile,
   normalizePersistedProfileBirthTimes,
   onAuthAccountChange,
@@ -207,6 +208,7 @@ import {
   upsertPersistedProfile
 } from "./services/auth";
 import type { AuthAccount } from "./services/auth";
+import type { YouAccountRecovery } from "./features/you/YouReportActions";
 import { rememberStudioReturnPath, returnToStudioAfterSignIn } from "./services/studioAuthReturn";
 import {
   generatedContentSections,
@@ -2584,8 +2586,14 @@ function authenticatedLandingMode(currentMode: PortalMode, restoredMode: PortalM
   return "profile";
 }
 
-function unauthenticatedLandingMode(currentMode: PortalMode): PortalMode {
+function unauthenticatedLandingMode(currentMode: PortalMode, hasSavedProfile: boolean): PortalMode {
   const urlMode = portalModeFromUrl();
+
+  // The local Account page remains available while its session reconnects.
+  // Do not leave #account in the address bar while rendering the You page.
+  if (urlMode === "account") {
+    return hasSavedProfile ? "account" : "profile";
+  }
 
   if (urlMode === "friends" || currentMode === "friends") {
     return "friends";
@@ -2607,7 +2615,11 @@ function unauthenticatedLandingMode(currentMode: PortalMode): PortalMode {
     return "guest";
   }
 
-  if (currentMode === "account" || currentMode === "settings") {
+  if (currentMode === "account") {
+    return hasSavedProfile ? "account" : "profile";
+  }
+
+  if (currentMode === "settings") {
     return "profile";
   }
 
@@ -10939,6 +10951,7 @@ export function App() {
   const [socialInvitationStatus, setSocialInvitationStatus] = useState<"idle" | "loading">("idle");
   const [socialInvitationMessage, setSocialInvitationMessage] = useState("");
   const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
+  const [authAccountError, setAuthAccountError] = useState<string | null>(null);
   const appActiveRef = useRef(true);
   const appliedAuthAccountIdRef = useRef<string | null>(null);
   const authBootstrapGenerationRef = useRef(0);
@@ -10979,7 +10992,7 @@ export function App() {
   const lastSocialProfileSaveRef = useRef("");
   const initialSkyCacheKey = skySnapshotCacheKey(
     withTimeZone(initialLocationState.location),
-    (mode === "guest" || mode === "member") && liveSkyReference(getInitialTransitDate(), withTimeZone(initialLocationState.location).timeZone)
+    (mode === "guest" || mode === "member" || mode === "calendar") && liveSkyReference(getInitialTransitDate(), withTimeZone(initialLocationState.location).timeZone)
       ? `live-${skyDateTimeFromInput(getInitialTransitDate(), initialLocationState.location, true).toISOString()}`
       : getInitialTransitDate()
   );
@@ -11050,7 +11063,7 @@ export function App() {
     ? rankTransitsByLifeAreaFocus(profileTransits, userLifeAreaFocus)
     : [];
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
-  const isSignupMode = mode === "profile" && !userProfile;
+  const isSignupMode = mode === "profile" && (!userProfile || signInRequested || Boolean(studioReturnPath));
   const isFriendsMode = mode === "friends";
   const isCalendarMode = mode === "calendar";
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
@@ -12612,8 +12625,8 @@ export function App() {
     }
 
     const skyLocation = withTimeZone(location);
-    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member"));
-    const live = (mode === "guest" || mode === "member") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
+    const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation, (mode === "guest" || mode === "member" || mode === "calendar"));
+    const live = (mode === "guest" || mode === "member" || mode === "calendar") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
     const selectionKey = skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`);
     const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky);
     skyCalculationSelectionRef.current = selectionKey;
@@ -12708,7 +12721,7 @@ export function App() {
   }, [friendCalculationNeeds, location, mode, skyDate, skyRefreshKey]);
 
   useEffect(() => {
-    if (mode !== "guest" && mode !== "member") return;
+    if (mode !== "guest" && mode !== "member" && mode !== "calendar") return;
     const timeZone = withTimeZone(location).timeZone;
     const refresh = () => {
       if (document.visibilityState === "visible" && liveSkyReference(skyDate, timeZone)) setSkyRefreshKey(Date.now());
@@ -13339,6 +13352,8 @@ export function App() {
 
     if (account && returnToStudioAfterSignIn()) return;
 
+    setAuthAccountError(null);
+
     if (account) {
       const bootstrapAction = accountProfileBootstrapAction({
         accountId: account.id,
@@ -13364,7 +13379,8 @@ export function App() {
       setRemoteProfileReady(false);
       setOwnSocialProfile(null);
       lastRemoteProfileSaveRef.current = "";
-      setMode(unauthenticatedLandingMode);
+      const hasSavedProfile = Boolean(getInitialUserProfile());
+      setMode((currentMode) => unauthenticatedLandingMode(currentMode, hasSavedProfile));
       setAuthAccountChecked(true);
       return;
     }
@@ -13505,8 +13521,27 @@ export function App() {
     }
   }, []);
 
-  useEffect(() => () => {
-    appActiveRef.current = false;
+  const recoverAuthAccount = useCallback(async () => {
+    const generation = authBootstrapGenerationRef.current;
+    try {
+      const account = await getAuthAccount();
+      // A newer auth event (including sign-out) wins over an earlier lookup.
+      if (appActiveRef.current && generation === authBootstrapGenerationRef.current) {
+        await applyAuthAccount(account);
+      }
+    } catch (error) {
+      if (!appActiveRef.current || generation !== authBootstrapGenerationRef.current) return;
+      console.warn("Account session recovery failed.", {
+        name: error instanceof Error ? error.name : "UnknownError"
+      });
+      setAuthAccountError("Your account could not be checked. Please try again.");
+      setAuthAccountChecked(true);
+    }
+  }, [applyAuthAccount]);
+
+  useEffect(() => {
+    appActiveRef.current = true;
+    return () => { appActiveRef.current = false; };
   }, []);
 
   useEffect(() => {
@@ -13516,43 +13551,34 @@ export function App() {
     }
 
     let cancelled = false;
-
-    getAuthAccount()
-      .then((account) => {
-        if (!cancelled) {
-          void applyAuthAccount(account);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setAuthAccountChecked(true);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!shouldBootstrapAuth(mode)) {
-      return;
-    }
-
-    let cancelled = false;
-    const unsubscribe = onAuthAccountChange((account) => {
-      if (cancelled) {
+    const unsubscribe = onAuthAccountChange((account, event) => {
+      // getAuthAccount owns initial recovery, including refresh failures. A
+      // null INITIAL_SESSION must not turn a failed check into signed-out UI.
+      if (cancelled || event === "INITIAL_SESSION") {
         return;
       }
 
       void applyAuthAccount(account);
     });
 
+    const recover = () => { if (!cancelled) void recoverAuthAccount(); };
+    const recoverStoredSession = (event: StorageEvent) => {
+      // Studio can refresh the shared session without the SDK's broadcast event.
+      if (isAuthSessionStorageKey(event.key)) recover();
+    };
+    window.addEventListener("focus", recover);
+    window.addEventListener("pageshow", recover);
+    window.addEventListener("storage", recoverStoredSession);
+    recover();
+
     return () => {
       cancelled = true;
       unsubscribe();
+      window.removeEventListener("focus", recover);
+      window.removeEventListener("pageshow", recover);
+      window.removeEventListener("storage", recoverStoredSession);
     };
-  }, [applyAuthAccount, mode]);
+  }, [applyAuthAccount, mode, recoverAuthAccount]);
 
   useEffect(() => {
     if (hasLocationPreference || !("geolocation" in navigator)) {
@@ -14309,7 +14335,7 @@ export function App() {
                 <Settings size={20} aria-hidden="true" />
                 <span>Settings</span>
               </button>
-              {userProfile ? (
+              {isAuthConfigured && !authAccountChecked ? null : remoteAccountId || (!isAuthConfigured && userProfile) ? (
                 <button
                   className="site-menu-signout"
                   type="button"
@@ -14564,6 +14590,7 @@ export function App() {
               )}
               {mode === "calendar" && (
                 <CalendarRoute
+                  sky={sky}
                   fallback={<FeatureLoadingFallback />}
                   generatedContent={skyGeneratedContent}
                   generatedContentStatus={calendarContentStatus}
@@ -14587,6 +14614,14 @@ export function App() {
                   ) : userProfile && !studioReturnPath && !signInRequested ? (
                     <ProfileView
                       accountId={remoteAccountId}
+                      accountRecovery={{
+                        error: authAccountError,
+                        onRetry: () => {
+                          setAuthAccountChecked(false);
+                          void recoverAuthAccount();
+                        },
+                        onSignIn: () => setAccountIntent("login")
+                      }}
                       transitionPage={transitionPage}
                       profile={userProfile}
                       profileHandle={ownSocialProfile?.handle}
@@ -16794,6 +16829,7 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
 
 function ProfileView({
   accountId,
+  accountRecovery,
   transitionPage,
   profile,
   profileHandle,
@@ -16820,6 +16856,7 @@ function ProfileView({
   generatedContent
 }: {
   accountId: string | null;
+  accountRecovery: YouAccountRecovery;
   transitionPage: ReturnType<typeof usePageTransition>;
   profile: UserProfile;
   profileHandle?: string | null;
@@ -17940,6 +17977,7 @@ function ProfileView({
     <Suspense fallback={<FeatureLoadingFallback />}>
       <YouPage
         accountId={accountId}
+        accountRecovery={accountRecovery}
         onArticleNavigate={transitionPage}
         bigThreeRows={bigThreeRows}
         dailyHoroscopeAssembly={dailyHoroscopeAssembly}
