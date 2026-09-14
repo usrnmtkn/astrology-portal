@@ -1174,58 +1174,6 @@
   dominant-baseline: middle;
 }
 
-.sky-loading-cards {
-  display: grid;
-  width: 100%;
-  gap: var(--stack-gap);
-}
-
-.sky-loading-cards--compact {
-  gap: var(--snapshot-card-gap);
-}
-
-.sky-loading-card {
-  display: grid;
-  grid-template-columns: 46px minmax(0, 1fr);
-  gap: var(--sky-ledger-gap);
-  min-height: 188px;
-  padding: var(--sky-ledger-padding);
-  border: var(--border-width-thin) solid color-mix(in srgb, var(--card-border) 74%, transparent);
-  border-radius: var(--card-radius);
-  background: color-mix(in srgb, var(--card-bg) 54%, transparent);
-  box-shadow: var(--shadow-mobile-panel);
-}
-
-.sky-loading-card--compact {
-  min-height: 132px;
-  padding: var(--snapshot-card-padding);
-  border-radius: var(--snapshot-card-radius);
-}
-
-.sky-loading-card__dot {
-  width: 46px;
-  height: 46px;
-  margin-top: calc(var(--space-1) * 0.75);
-  border-radius: var(--radius-circle);
-  background: color-mix(in srgb, var(--card-meta-color) 32%, transparent);
-  animation: sky-loading-pulse 1.45s ease-in-out infinite;
-}
-
-.sky-loading-card__main,
-.sky-loading-card__body {
-  display: grid;
-  min-width: 0;
-}
-
-.sky-loading-card__main {
-  gap: var(--space-3);
-}
-
-.sky-loading-card__body {
-  gap: var(--space-3);
-  margin-top: var(--space-2);
-}
-
 .sky-loading-line {
   display: block;
   height: 11px;
@@ -1267,7 +1215,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sky-loading-card__dot,
   .sky-loading-line {
     animation: none;
   }
@@ -1467,6 +1414,38 @@
 }
 
 /* The same narrative replaces the desktop chips and phone ledger rows. */
+.sky-reading-layout,
+.sky-reading-layout__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--stack-gap);
+  min-width: 0;
+}
+
+.sky-reading-layout {
+  position: relative;
+}
+
+.sky-reading-layout[aria-busy="true"] {
+  overflow: clip;
+}
+
+.sky-reading-layout__content[aria-hidden="true"] {
+  position: absolute;
+  inset: 0 0 auto;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.sky-reading-layout__loading {
+  min-height: var(--ds-layout-deferred-placeholder-height);
+}
+
+.sky-reading-layout__loading > .app-loading {
+  width: 100%;
+  margin: 0;
+}
+
 .sky-daily-summary {
   display: block;
 }

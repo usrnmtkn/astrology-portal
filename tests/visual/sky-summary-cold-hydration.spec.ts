@@ -50,7 +50,7 @@ for (const width of [390, 1440]) {
     const notify = () => page.evaluate(key => window.dispatchEvent(new CustomEvent('tldrastro:content-update', { detail: { contentKey: key, published: true, updatedAt: new Date().toISOString() + Math.random() } })), moonKey);
     const summary = page.getByLabel('Daily sky summary');
     await page.goto('/?date=2026-09-13#sky');
-    await expect(summary.getByRole('status')).toBeVisible({ timeout: 60000 });
+    await expect(page.getByText('Loading the sky…', { exact: true })).toBeVisible({ timeout: 60000 });
     await expect(summary).toContainText(first, { timeout: 60000 });
     await page.waitForTimeout(4000);
     const openings = await page.evaluate(() => (window as any).__summaryOpenings as string[]);

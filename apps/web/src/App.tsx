@@ -17,6 +17,8 @@ import { calendarDayDistance } from "./services/calendarDayDistance";
 import { liveSkyReference, remainingSkyMinutes } from "./services/skyClock";
 import { skySummaryParagraphs } from "./content/skyDailySummary";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
+import { SkyReadingLayout } from "./features/sky/SkyReadingLayout";
+import { SkyRoute } from "./routes/SkyRoute";
 import { refreshContentPublications } from "./services/contentPublications";
 import {
   ArrowDownRight,
@@ -10736,12 +10738,6 @@ const AccountView = lazy(() =>
   }))
 );
 
-const SkyRoute = lazy(() =>
-  import("./routes/SkyRoute").then((module) => ({
-    default: module.SkyRoute
-  }))
-);
-
 const SkyDetailArticle = lazy(() =>
   import("./features/sky/SkyDetailArticle").then((module) => ({
     default: module.SkyDetailArticle
@@ -10846,35 +10842,6 @@ function SkyLoadingWheel() {
           );
         })}
       </svg>
-    </div>
-  );
-}
-
-function SkyLoadingCard({ compact = false }: { compact?: boolean }) {
-  const bodyLines = compact ? ["short", "long"] : ["short", "long", "long", "medium"];
-
-  return (
-    <article className={`sky-loading-card${compact ? " sky-loading-card--compact" : ""}`} aria-hidden="true">
-      <span className="sky-loading-card__dot" />
-      <div className="sky-loading-card__main">
-        <span className="sky-loading-line sky-loading-line--title" />
-        <span className="sky-loading-line sky-loading-line--meta" />
-        <div className="sky-loading-card__body">
-          {bodyLines.map((size, index) => (
-            <span className={`sky-loading-line sky-loading-line--${size}`} key={`${size}-${index}`} />
-          ))}
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function SkyLoadingCards({ compact = false }: { compact?: boolean }) {
-  return (
-    <div className={`sky-loading-cards${compact ? " sky-loading-cards--compact" : ""}`} role="status" aria-label="Loading current sky">
-      {compact && <span className="loading-milestone">Calculating current sky…</span>}
-      <SkyLoadingCard compact={compact} />
-      <SkyLoadingCard compact={compact} />
     </div>
   );
 }
@@ -10990,6 +10957,7 @@ export function App() {
   const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "cached" : "loading");
+  const [skyTimingStatus, setSkyTimingStatus] = useState<"loading" | "ready" | "error">("loading");
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
   const [calendarContentStatus, setCalendarContentStatus] = useState<CalendarContentStatus>("idle");
   const [calendarContentRequest, setCalendarContentRequest] = useState<CalendarContentRequest | null>(null);
@@ -12629,6 +12597,8 @@ export function App() {
     // background astronomy. Sky itself still starts immediately.
     const coreSkyDelayMs = mode === "profile" ? 500 : 0;
 
+    if (!refreshing) setSkyTimingStatus("loading");
+
     if (cachedSky && !refreshing) {
       setSky(cachedSky);
       setSkyStatus("cached");
@@ -12677,7 +12647,9 @@ export function App() {
         // station/residency dates never vanish between worker responses.
         void getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: refreshing })
           .then((nextSky) => {
-            if (!publishFreshSky(nextSky, { preserveCachedDetails: !refreshing }) || refreshing) {
+            const published = publishFreshSky(nextSky, { preserveCachedDetails: !refreshing });
+            if (!published || refreshing) {
+              if (!cancelled) setSkyTimingStatus(published ? "ready" : "error");
               return;
             }
 
@@ -12685,10 +12657,12 @@ export function App() {
               detailedSkyTimer = window.setTimeout(() => {
                 void getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: true })
                   .then((detailedSky) => {
-                    publishFreshSky(detailedSky);
+                    const published = publishFreshSky(detailedSky);
+                    if (!cancelled) setSkyTimingStatus(published ? "ready" : "error");
                   })
                   .catch((error) => {
                     console.warn("Swiss Ephemeris transit-window enrichment failed; keeping the verified core sky.", error);
+                    if (!cancelled) setSkyTimingStatus("error");
                   });
               }, 0);
             });
@@ -12696,6 +12670,7 @@ export function App() {
           .catch((error) => {
             console.warn("Swiss Ephemeris sky calculation failed; retaining the verified selection or its exact-key cache when available.", error);
             if (!cancelled) {
+              setSkyTimingStatus("error");
               if (!refreshing) setSky(cachedSky);
               setSkyStatus(refreshing || cachedSky ? "stale" : "error");
             }
@@ -14492,6 +14467,9 @@ export function App() {
                       </form>
                     )}
                   </section>
+                  <SkyReadingLayout key={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
+                    pending={isSkyLoading || skyTimingStatus === "loading" || skyPlacementFallbackStatus === "idle" || skyPlacementFallbackStatus === "loading"}
+                    failed={skyStatus === "error" || skyTimingStatus === "error" || skyPlacementFallbackStatus === "error"}>
                   {(skyStatus === "cached" || skyStatus === "stale") && sky?.cacheState && (
                     <div
                       className="sky-cache-notice"
@@ -14515,9 +14493,7 @@ export function App() {
                   )}
                   <section className="today-summary-cards" aria-label="Sky summary">
                     {skyStatus === "error" && <PageLoadError message="The current sky could not load. Check your connection and try again." onRetry={() => setSkyRefreshKey(value => value + 1)} />}
-                    {isSkyLoading ? (
-                      <SkyLoadingCards compact />
-                    ) : sky ? (
+                    {isSkyLoading ? null : sky ? (
                       <SkyCards
                         onOpenEvent={openCalendarTransitDetail}
                         generatedContent={skyGeneratedContent}
@@ -14538,9 +14514,9 @@ export function App() {
                       </div>
                     )}
                   </section>
-                  {isSkyLoading && (
-                    <SkyLoadingCards />
-                  )}
+                  {skyTimingStatus === "error" && skyStatus !== "error" && <PageLoadError
+                    message="The transit dates could not load. Please try again."
+                    onRetry={() => setSkyRefreshKey(value => value + 1)} />}
                   {!isSkyLoading && sky && skyPlacementFallbackStatus === "error" && (
                     <PageLoadError message="The placement readings could not load. Please try again."
                       onRetry={() => setSkyPlacementFallbackRetryKey(value => value + 1)} />
@@ -14578,6 +14554,7 @@ export function App() {
                       sky={sky}
                     />
                   )}
+                  </SkyReadingLayout>
                 </SkyRoute>
               )}
               {mode === "calendar" && (

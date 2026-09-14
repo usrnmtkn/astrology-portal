@@ -477,7 +477,7 @@
     .friends-feed-card,
     .manual-chart-row,
     .retro-list .retro,
-    .planet-placement-row,
+    .planet-placement-row:not(.planet-placement-row--sky),
     .placement-table-row
   ) {
     content-visibility: auto;
