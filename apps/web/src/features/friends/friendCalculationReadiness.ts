@@ -18,7 +18,8 @@ export function initialFriendCalculationReadiness(
   }
 
   return {
-    currentSky: activeTab === "transits",
+    // Compatibility's Pair Daily card needs today's transits for both charts.
+    currentSky: activeTab === "transits" || activeTab === "compatibility",
     profileNatal: activeTab !== "natal"
   };
 }
@@ -55,7 +56,7 @@ export function friendCalculationReadiness({
   const relationshipChartNeeded = !isEventChart && activeTab !== "natal";
 
   return {
-    currentSky: activeTab === "transits",
+    currentSky: activeTab === "transits" || (relationshipChartNeeded && activeTab === "compatibility"),
     profileNatal: relationshipChartNeeded
   };
 }
