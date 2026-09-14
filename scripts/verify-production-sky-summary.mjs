@@ -28,6 +28,7 @@ try {
       if (!opening || window.__skyVerification.at(-1)?.opening === opening) return;
       window.__skyVerification.push({ ms: Math.round(performance.now()), opening, height: Math.round(body.getBoundingClientRect().height) });
     };
+    window.__sampleSkyVerification = sample;
     new MutationObserver(sample).observe(document, { subtree: true, childList: true, characterData: true });
   });
   // Expose the original race without changing any response payloads.
@@ -41,7 +42,7 @@ try {
     await page.locator('[aria-label="Daily sky summary"]').waitFor({ state: 'visible', timeout: 90000 });
     await page.waitForTimeout(waitMs);
     const body = page.locator('[aria-label="Daily sky summary"]');
-    const samples = await page.evaluate(() => window.__skyVerification);
+    const samples = await page.evaluate(() => { window.__sampleSkyVerification(); return window.__skyVerification; });
     const variants = [...new Set(samples.map(sample => normalize(sample.opening)))];
     const final = await body.innerText();
     const links = await body.locator('a').evaluateAll(nodes => nodes.map(node => ({ text: node.textContent, href: node.getAttribute('href') })));

@@ -204,7 +204,7 @@ export default defineConfig(({ mode }) => {
     build: {
       // Match the standalone Studio's compression without changing lazy boundaries.
       minify: "terser",
-      terserOptions: { compress: { passes: 2 }, format: { comments: false } },
+      terserOptions: { ecma: 2020, compress: { passes: 5 }, format: { comments: false, ascii_only: true, wrap_func_args: false } },
       manifest: true,
       // Large data registries are route-split and governed by gzip budgets.
       // Use a raw-size advisory that reflects the largest intentional registry.

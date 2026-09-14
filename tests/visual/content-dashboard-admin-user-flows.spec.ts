@@ -6432,7 +6432,7 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 900, 
       const brokenCells = await row.locator('td:not(.admin-col-select)').evaluateAll(cells => cells.filter(e => getComputedStyle(e).borderBottomWidth !== '0px').length);
       expect(brokenCells).toBe(0);
       await expect(toggle).toHaveCSS('font-weight','400');
-      await expect(row.locator('.admin-content-row-title')).toHaveCSS('font-weight','600');
+      await expect(row.locator('.admin-content-row-title')).toHaveCSS('font-weight','400');
       await expect(row.getByRole('button', {name:'Edit',exact:true})).toHaveCSS('font-weight','400');
       await expectStudioTypography(page, `Expanded ${route}`);
       await table.screenshot({path:`outputs/studio-style/row-rhythm-${route}-${theme}-${width}.png`});
