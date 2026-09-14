@@ -512,7 +512,12 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     const changedPaths = packageLeafFields(packageDraft)
       .filter(([field, value]) => JSON.stringify(value) !== JSON.stringify(packageValueAt(record, field)))
       .map(([field]) => field);
-    const structuralChanges = changedPaths.filter((field) => !isEditablePackageCopyPath(field, record));
+    const savedDraft = isRecord(row.sections?.packageDraft) ? row.sections.packageDraft : {};
+    const structuralChanges = changedPaths.filter((field) => !isEditablePackageCopyPath(field, record)
+      // Older saves copied LIVE flags into the proposal before demoting the
+      // revision record. Accept only that unchanged, persisted metadata.
+      && !(["owner_approved", "serving_enabled"].includes(field)
+        && typeof savedDraft[field] === "boolean" && packageDraft[field] === savedDraft[field]));
     if (structuralChanges.length) {
       throw new GeneratedContentRequestError(`Package proposals cannot change read-only fields: ${structuralChanges.join(", ")}.`);
     }
@@ -819,6 +824,16 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   }
 
   if (!hasPackageDraft && body.reviewStatus === "approved") validateAndApproveNatalAspectCopy(record, row.content_key);
+  validateFallbackArchitectureV3Copy(row, { ...patch, sections });
+  if (hasPackageDraft) {
+    const proposal = { ...(sections.packageDraft as Record<string, unknown>) };
+    // Approval belongs to the server-owned record. Keep mirrored proposal
+    // metadata in sync so saving/reopening cannot invent an approval change.
+    for (const flag of ["owner_approved", "serving_enabled"]) {
+      if (Object.hasOwn(proposal, flag)) proposal[flag] = record[flag];
+    }
+    sections.packageDraft = proposal;
+  }
   sections.packageRecord = record;
   sections.packageOriginalRecord = packageOriginalRecord;
   const versionId = `draft-${String(patch.updated_at).replace(/[^0-9]/gu, "")}`;
@@ -863,7 +878,6 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       : isSkyV4CanonicalStage && reviewStatus === "approved"
       ? "serving-disabled"
       : "needs-review";
-  validateFallbackArchitectureV3Copy(row, patch);
 }
 
 function sourceSnapshotSourceType(sourceSnapshot: unknown) {
@@ -907,6 +921,7 @@ function isLegacyLiveWritingCandidate(row: {
 }
 
 function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWritingCandidate>[0] & {
+  body?: string | null;
   blockType?: string | null;
   block_type?: string | null;
   judgeScore?: number | null;
@@ -2056,6 +2071,42 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
   };
 }
 
+// Older Sky pickers opened completed revisions by content key. Preserve an
+// already-open editor by applying only its new copy changes to the current live
+// source. Conflicting copy stays blocked; publication still checks target CAS.
+async function recoverPublishedSkyRevision(existing: ExistingGeneratedContentRow, body: GeneratedContentWriteBody) {
+  const sections = isRecord(body.sections) ? body.sections : {};
+  const proposal = isRecord(sections.packageDraft) ? sections.packageDraft : null;
+  if (existing.status !== "ARCHIVED" || existing.review_state !== "published-revision"
+    || existing.event_type !== "sky-v4-reader-copy-draft" || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
+  validateFallbackArchitectureV3Copy(existing, { sections: body.sections });
+  const targetId = stringFrom(existing.source_snapshot?.targetRowId);
+  const target = targetId ? await fetchExistingRowById(targetId) : null;
+  if (!target || target.status !== "LIVE" || target.content_key !== existing.content_key
+    || !isFallbackArchitectureV3Row(target)) {
+    throw new GeneratedContentRequestError("The published source is no longer available. Your edits are still here; reload its current status before saving.", 409);
+  }
+  const baseline = isRecord(existing.sections?.packageDraft) ? existing.sections.packageDraft : {};
+  const current = v3PackageRecord(target);
+  const recovered = structuredClone(current);
+  const changes = packageLeafFields(proposal).filter(([field]) => isEditablePackageCopyPath(field, current) && !field.startsWith("ingress."));
+  // Composition replacement includes removed references and modules.
+  if (Object.hasOwn(proposal, "ingress") && isRecord(proposal.ingress)) changes.push(["ingress", proposal.ingress]);
+  for (const [field, value] of changes) {
+    const previous = packageValueAt(baseline, field);
+    const remote = packageValueAt(current, field);
+    if (JSON.stringify(value) === JSON.stringify(previous)) continue;
+    if (JSON.stringify(remote) !== JSON.stringify(previous) && JSON.stringify(remote) !== JSON.stringify(value)) {
+      throw new GeneratedContentRequestError(`The published copy changed in ${field}. Your edits are still here; review the current source before replacing that text.`, 409);
+    }
+    setPackageValueAt(recovered, field, value);
+  }
+  body.sections = { ...target.sections, packageDraft: recovered };
+  const snapshot = { ...target.source_snapshot, targetRowId: target.id, targetRowUpdatedAt: target.updated_at, targetContentKey: target.content_key };
+  body.sourceSnapshot = snapshot;
+  return { ...existing, sections: target.sections, source_snapshot: snapshot };
+}
+
 async function updateGeneratedContent(req: IncomingMessage) {
   const body = await readJsonBody(req);
 
@@ -2070,13 +2121,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
     throw new GeneratedContentRequestError("sourceLifecycleAction must be archive or restore.");
   }
 
-  const existing = await fetchExistingRowById(body.id);
+  let existing = await fetchExistingRowById(body.id);
   if (!existing) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
   }
   if (body.expectedUpdatedAt && body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
   }
+  existing = await recoverPublishedSkyRevision(existing, body);
   const isPackageRow = isFallbackArchitectureV3Row(existing);
   if (body.status === "LIVE" && isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {})) {
     throw new GeneratedContentRequestError("Source notes can be reviewed but cannot be published as reader copy. Publish a finished card instead.", 409);
