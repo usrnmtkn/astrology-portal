@@ -2,12 +2,8 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import {
-  loadUnresolvedContentReport,
-  editorialReviewSubject,
-  unresolvedIssueWorkflow,
-  type UnresolvedContentReport
-} from "../apps/admin/src/UnresolvedContentReview";
+import { createServer } from "vite";
+import type { UnresolvedContentReport } from "../apps/admin/src/UnresolvedContentReview";
 import {
   loadContentUnresolvedReport,
   unresolvedContentSurface,
@@ -22,6 +18,10 @@ import {
   normalizeContentStudioSourceDecision
 } from "../api/admin/content-source-repair-decisions";
 import { contentSourceRepairPlan } from "../api/admin/content-source-repair-plans";
+
+const server = await createServer({ configFile: false, appType: "custom", server: { middlewareMode: true }, optimizeDeps: { noDiscovery: true, include: [] } });
+const { loadUnresolvedContentReport, editorialReviewSubject, unresolvedIssueWorkflow } = await server.ssrLoadModule("/apps/admin/src/UnresolvedContentReview.tsx") as typeof import("../apps/admin/src/UnresolvedContentReview");
+await server.close();
 
 const dashboardSource = fs.readFileSync(new URL("../apps/admin/src/GeneratedContentAdminDashboard.tsx", import.meta.url), "utf8");
 const reviewSource = fs.readFileSync(new URL("../apps/admin/src/UnresolvedContentReview.tsx", import.meta.url), "utf8");

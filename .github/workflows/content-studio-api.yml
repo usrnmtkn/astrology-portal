@@ -2,34 +2,8 @@ name: Content Studio API contract
 
 on:
   pull_request:
-    paths:
-      - "api/**"
-      - "apps/admin/**"
-      - "apps/web/**"
-      - "packages/astro-knowledge/**"
-      - "scripts/test-content-*"
-      - "scripts/test-admin-*"
-      - "scripts/test-sky-*"
-      - "scripts/ci-*"
-      - "package.json"
-      - "package-lock.json"
-      - "vercel.json"
-      - ".github/workflows/content-studio-api.yml"
   push:
     branches: [main]
-    paths:
-      - "api/**"
-      - "apps/admin/**"
-      - "apps/web/**"
-      - "packages/astro-knowledge/**"
-      - "scripts/test-content-*"
-      - "scripts/test-admin-*"
-      - "scripts/test-sky-*"
-      - "scripts/ci-*"
-      - "package.json"
-      - "package-lock.json"
-      - "vercel.json"
-      - ".github/workflows/content-studio-api.yml"
   workflow_dispatch:
 
 permissions:

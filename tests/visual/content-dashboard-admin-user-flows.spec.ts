@@ -1,3 +1,4 @@
+import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
 import { normalizeTransitNatalPreviewInput, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
 import { approveNatalAspectStudioCopy } from "../../api/_lib/content-studio-approval";
 import { contentLiveStatuses, servingPackageRecords, type LiveStatusRow } from "../../api/_lib/content-live-status";
@@ -1385,7 +1386,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(navigation.getByRole("button", { name: "Calendar Aspects", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("heading", { name: "Edit Calendar aspect cards" })).toHaveCount(0);
-    await expect(page.getByRole("region", { name: "Content status definitions" })).toContainText("Live means readers can currently receive this copy. Not live means readers cannot currently receive this copy.");
+    await expect(page.getByRole("region", { name: "Content status definitions" })).toContainText("Live means readers can currently receive this copy. Draft, Ready, Inactive, Archived, Retired, Error, and Unavailable describe content that is not currently serving.");
     const contentFilters = page.locator("section[aria-label='Content list filters']");
     await expect(contentFilters.getByLabel("Content class")).toHaveCount(0);
     await expect(contentFilters.getByLabel("Tier")).toHaveCount(0);
@@ -1468,7 +1469,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page).toHaveURL(/#exact-content\?category=Natal\+Chart$/);
     await expect(navigation.getByRole("button", { name: "Natal Chart", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
-    await expect(page.getByRole("region", { name: "Find natal placement source writing" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Find natal chart source writing" })).toBeVisible();
     await expect(page.getByLabel("Natal placement planet or point")).toBeVisible();
     await expect(page.getByLabel("Natal placement zodiac sign")).toBeVisible();
     await expect(page.getByLabel("Natal placement house")).toBeVisible();
@@ -1479,7 +1480,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByText("QA Mercury Hidden Body Search Trap")).toHaveCount(0);
     await expect(page.getByText("Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.")).toHaveCount(0);
 
-    const sourceFinder = page.getByRole("region", { name: "Find natal placement source writing" });
+    const sourceFinder = page.getByRole("region", { name: "Find natal chart source writing" });
     const sourceFinderBox = await sourceFinder.boundingBox();
     const selectorBoxes = await sourceFinder.locator(".admin-natal-placement-selectors label").evaluateAll((labels) => labels.map((label) => {
       const box = label.getBoundingClientRect();
@@ -2025,7 +2026,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await editor.getByRole("button", { name: "Retire everywhere", exact: true }).click();
     await expect(editor.getByRole("button", { name: "Publish again", exact: true })).toBeEnabled();
-    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:content-publications:v1") ?? "[]"));
     expect(stored.find((record: any) => record.content_key === contentKey).state).toBe("retired");
     await page.reload();
@@ -2073,7 +2074,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     for (const body of ["QA first revised macro.", "QA second revised macro."]) {
       await editor.getByLabel("Full lunar passage", { exact: true }).fill(body);
-      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
+      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Draft");
       await editor.getByRole("button", { name: "Save draft", exact: true }).click();
       await expect(editor.getByRole("button", { name: "Save draft", exact: true })).toBeDisabled();
       await expect(editor.getByLabel("Full lunar passage", { exact: true })).toHaveValue(body);
@@ -2873,7 +2874,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("CMS template preview")).toContainText("Your 2nd house begins in Taurus.");
     await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
-    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
     await expect(editor.getByRole("button", { name: "Mark reviewed" })).toHaveCount(0);
     await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeEnabled();
     expect(cmsWrite?.method).toBe("POST");
@@ -3045,7 +3046,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(writes[0].payload.body).toBe("Agreeing before checking your capacity");
     expect((writes[0].payload.sections as { packageDraft: { body: string } }).packageDraft.body)
       .toBe("Agreeing before checking your capacity");
-    await expect(editor.getByText("Draft saved · Not live", { exact: true })).toBeVisible();
+    await expect(editor.getByText("Draft saved", { exact: true })).toBeVisible();
     await mkdir(adminScreenshotDir, { recursive: true });
     await page.screenshot({
       animations: "disabled",
@@ -3136,7 +3137,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
     await expect(page.locator("section[aria-label='Content list filters']")).toBeVisible();
     await page.getByText("Editorial filters", { exact: true }).click();
-    await expect(page.locator("[aria-label='Reader status']").getByRole("button", { name: /Not live/ })).toBeVisible();
+    await expect(page.locator("[aria-label='Reader status']").getByRole("button", { name: /Inactive/ })).toBeVisible();
     await expect(page.locator("[aria-label='Reader status']").getByRole("button", { name: /Live/ })).toBeVisible();
     await expect(page.getByRole("region", { name: "Content status definitions" })).toContainText("readers can currently receive this copy");
 
@@ -3531,7 +3532,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByLabel("Approval", { exact: true }).selectOption("approved");
     await expect(editor.getByLabel("Fallback review status")).toHaveCount(0);
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
-    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Draft");
     await expect(editor.getByLabel("Reader status after save")).toHaveText("Live");
     await expect(editor.getByText("This copy is approved. Save to publish it to readers.")).toBeVisible();
     await expect(editor.getByRole("button", { name: "Save & publish", exact: true })).toBeDisabled();
@@ -3601,7 +3602,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
-    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
     await expect(editor.getByText("Ready to publish", { exact: true })).toBeVisible();
     const publishButton = editor.getByRole("button", { name: "Save & publish" });
     await expect(publishButton).toBeEnabled();
@@ -3672,8 +3673,8 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Approval status")).toHaveText("Needs review");
-    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Not live");
-    await expect(editor.getByText("Draft saved · Not live", { exact: true })).toBeVisible();
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
+    await expect(editor.getByText("Draft saved", { exact: true })).toBeVisible();
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
     const publishRevisionButton = editor.getByRole("button", { name: "Save & publish" });
     await expect(publishRevisionButton).toBeEnabled();
@@ -4303,7 +4304,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         }
       }
     });
-    await expect(editor.getByText("Draft saved · Not live", { exact: true })).toBeVisible();
+    await expect(editor.getByText("Draft saved", { exact: true })).toBeVisible();
 
     let discardPrompts = 0;
     page.on("dialog", async (dialog) => {
@@ -5025,7 +5026,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(contentToolbar.getByRole('button', { name: 'New content row', exact: true })).toBeVisible();
     const visibilityPanel = page.getByRole('region', { name: 'Content status definitions' });
     await visibilityPanel.locator('summary').click();
-    await expect(visibilityPanel).toContainText('Not live');
+    await expect(visibilityPanel).toContainText('Inactive');
     expect(await visibilityPanel.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     await expectNoHorizontalOverflow(page, "Content Library desktop");
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-exact-content.png") });
@@ -5108,7 +5109,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(field).toHaveValue("first test revision");
 
     await action.getByRole("button", { name: "Save draft", exact: true }).click();
-    await expect(action).toContainText("Draft saved · Not live");
+    await expect(action).toContainText("Draft saved.");
     await field.fill("second test revision");
     await expect(action.getByRole("button", { name: "Save draft", exact: true })).toBeEnabled();
     await action.getByRole("button", { name: "Save draft", exact: true }).click();
@@ -5118,7 +5119,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(action).toContainText("Published. The reader preview will refresh.");
     await field.fill("third test revision");
     await action.getByRole("button", { name: "Save draft", exact: true }).click();
-    await expect(action).toContainText("Draft saved · Not live");
+    await expect(action).toContainText("Draft saved.");
     await expect(page.getByRole("dialog", { name: "Generated content editor" })).toHaveCount(0);
     // Shared phrase changes cannot splice into the author-final sign passage.
     await expect(preview).toContainText(opening);
@@ -5406,7 +5407,7 @@ test("Chiron transit recovers stale save versions and keeps conflicting edits vi
   await expect(editor.locator(".admin-editor-savebar")).toContainText("All changes saved");
   expect(writes).toHaveLength(4);
   expect(writes[3].payload.ownerAction).toBe("approve-package-revision");
-  await expect(editor.getByText("Draft saved · Not live", { exact: true })).toHaveCount(0);
+  await expect(editor.getByText("Draft saved", { exact: true })).toHaveCount(0);
   const savedWriteCount = writes.length;
   rejectNext = true;
   competingCopy = true;
@@ -5433,17 +5434,17 @@ for (const width of [1440, 390]) {
     await page.getByText("Editorial filters", { exact: true }).click();
     const filters = page.getByRole("group", { name: "Reader status" });
     await expect(filters.getByRole("button", { name: "Live 1", exact: true })).toBeVisible();
-    await expect(filters.getByRole("button", { name: "Not live 1", exact: true })).toBeVisible();
+    await expect(filters.getByRole("button", { name: "Inactive 1", exact: true })).toBeVisible();
     await filters.getByRole("button", { name: "Live 1", exact: true }).click();
     const rows = page.locator(".admin-content-row:visible");
     await expect(rows).toHaveCount(1);
     await expect(rows.first()).toContainText("Saturn Square Lilith");
     await expect(rows.first().locator(".admin-status:visible").filter({ hasText: /^Live$/ })).toBeVisible();
     await expect(rows.first().getByText("Not live", { exact: true })).toHaveCount(0);
-    await filters.getByRole("button", { name: "Not live 1", exact: true }).click();
+    await filters.getByRole("button", { name: "Inactive 1", exact: true }).click();
     await expect(rows).toHaveCount(1);
     await expect(rows.first()).toContainText("QA pending Calendar revision");
-    await expect(rows.first().locator(".admin-status:visible").filter({ hasText: /^Not live$/ })).toBeVisible();
+    await expect(rows.first().locator(".admin-status:visible").filter({ hasText: /^Inactive$/ })).toBeVisible();
   });
 }
 
@@ -5460,7 +5461,7 @@ test("Live filters keep unknown status separate and retry after refresh", async 
   await page.getByText("Editorial filters", { exact: true }).click();
   await expect(page.getByText(/Status unavailable for 1 entries/)).toBeVisible();
   const filters = page.getByRole("group", { name: "Reader status" });
-  await filters.getByRole("button", { name: "Not live 0", exact: true }).click();
+  await filters.getByRole("button", { name: "Inactive 0", exact: true }).click();
   await expect(page.locator(".admin-content-row:visible")).toHaveCount(0);
   omit = false;
   await page.getByRole("button", { name: "Refresh rows", exact: true }).click();
@@ -6276,7 +6277,7 @@ for (const theme of ['dark', 'light']) {
       await expect(page.getByRole('button', {name: 'View Sun in Cancer in the 1st house in app'})).toBeVisible();
       await expect(page.locator('.admin-natal-placement-finder-heading h3')).toHaveCount(0);
       await expect(page.locator('.admin-natal-reader-preview .admin-eyebrow')).toHaveCount(0);
-      await expect(page.locator('.admin-natal-reader-preview > header p')).toHaveCount(0);
+      await expect(page.locator('.admin-natal-reader-preview > header p')).toHaveCount(1);
       expect((await page.getByRole('button', {name: `Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}).boundingBox())!.width).toBeLessThan(200);
       await page.screenshot({path: `outputs/studio-style/concise-natal-selected-${theme}-${width}.png`});
     });
@@ -6431,7 +6432,7 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 900, 
       const brokenCells = await row.locator('td:not(.admin-col-select)').evaluateAll(cells => cells.filter(e => getComputedStyle(e).borderBottomWidth !== '0px').length);
       expect(brokenCells).toBe(0);
       await expect(toggle).toHaveCSS('font-weight','400');
-      await expect(row.locator('.admin-content-row-title')).toHaveCSS('font-weight','400');
+      await expect(row.locator('.admin-content-row-title')).toHaveCSS('font-weight','600');
       await expect(row.getByRole('button', {name:'Edit',exact:true})).toHaveCSS('font-weight','400');
       await expectStudioTypography(page, `Expanded ${route}`);
       await table.screenshot({path:`outputs/studio-style/row-rhythm-${route}-${theme}-${width}.png`});
@@ -6586,7 +6587,7 @@ for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
     await page.locator('.admin-content-row').getByRole('button', {name:'Edit',exact:true}).click();
     const status = page.getByRole('region', {name:'Review and publication readiness'});
     await expect(status.locator('dt')).toHaveText(['Review', 'Publication']);
-    await expect(status.locator('dd')).toHaveText(['Complete', 'Not live']);
+    await expect(status.locator('dd')).toHaveText(['Complete', 'Ready']);
     await expect(status.locator('h3')).toHaveClass('sr-only');
     expect((await status.boundingBox())!.height).toBeLessThan(100);
     const values = await status.locator('dl > div').evaluateAll(elements => elements.map(e => e.getBoundingClientRect().y));
@@ -7416,3 +7417,35 @@ for (const theme of ['light','dark']) for (const width of [1440,390]) {
     await noErrors();
   });
 }
+
+for (const width of [390, 1440]) test(`Empty-house preview uses the actual authenticated reader API at ${width}`, async ({ page }) => {
+  await seedAdminApi(page);
+  const api = emptyHousePreviewApi();
+  const results: Array<{ body: any; rendered: any }> = [];
+  try {
+    await page.route("**/api/admin/natal-placement-preview", async route => {
+      const body = route.request().postDataJSON();
+      const result = await api.invoke(body, route.request().headers());
+      expect(result.status).toBe(200);
+      results.push({ body, rendered: result.payload.rendered });
+      await route.fulfill({ status: result.status, json: result.payload });
+    });
+    await page.setViewportSize({ width, height: 1000 });
+    await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Natal+Chart");
+    await page.getByRole("tab", { name: "Empty houses", exact: true }).click();
+    const workspace = page.getByRole("region", { name: "Empty house writing", exact: true });
+    await workspace.getByLabel("Empty house cusp sign").selectOption("gemini");
+    await workspace.getByLabel("Empty house ruler house").selectOption("10");
+    const copy = workspace.locator(".admin-empty-house-assembly-copy p");
+    for (const audience of ["you", "they"]) {
+      await workspace.getByRole("button", { name: audience === "you" ? "You" : "Friend", exact: true }).click();
+      await expect.poll(() => results.some(result => result.body.sign === "gemini" && result.body.rulerHouse === 10 && result.body.audience === audience)).toBe(true);
+      const result = results.filter(result => result.body.sign === "gemini" && result.body.rulerHouse === 10 && result.body.audience === audience).at(-1)!;
+      await expect(copy).toHaveText(result.rendered.body);
+      expect(result.rendered.body.length).toBeGreaterThan(100);
+      await expect(workspace.getByLabel("Sources used in this assembly").getByRole("button")).toHaveCount(result.rendered.sourceKeys.length);
+    }
+    await expectNoHorizontalOverflow(page, `Empty-house actual API preview ${width}`);
+    await workspace.screenshot({ path: `test-results/empty-house-actual-api-${width}.png` });
+  } finally { await page.unroute("**/api/admin/natal-placement-preview"); api.close(); }
+});

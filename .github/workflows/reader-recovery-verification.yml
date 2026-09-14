@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/**'
       - 'scripts/verify-production-sky-summary.mjs'
+      - 'scripts/verify-production-sky-placement.mjs'
       - 'scripts/test-admin-*.mts'
       - 'apps/web/src/content/skyDailySummary*'
       - 'apps/web/src/features/sky/PublishedSkySummary.tsx'
@@ -42,12 +43,14 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - name: Inspect the deployed guest Sky page without modifying content
-        run: node scripts/verify-production-sky-summary.mjs
+        run: node scripts/verify-production-sky-summary.mjs && node scripts/verify-production-sky-placement.mjs
       - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: production-sky-summary-verification
-          path: test-results/production-sky-summary/
+          path: |
+            test-results/production-sky-summary/
+            test-results/production-sky-placement/
           retention-days: 7
 
   reader-contracts:

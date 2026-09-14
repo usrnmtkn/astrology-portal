@@ -7,7 +7,7 @@ import { skySummaryEventPlacements } from "./content/skySummaryEventPlacements";
 import type { ArticlePillData } from "./components/ArticlePills";
 import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from "./services/articleNavigation";
 import { CardReadMore } from "./components/CardReadMore";
-import { isContentRetired } from "./content/contentPublicationState";
+import { isContentRetired, contentPublication } from "./content/contentPublicationState";
 import { usePageTransition, readAnimationPreference, animationPreferenceKey } from "./hooks/usePageTransition";
 import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
@@ -15,7 +15,7 @@ import { calendarDayDistance } from "./services/calendarDayDistance";
 import { liveSkyReference, remainingSkyMinutes } from "./services/skyClock";
 import { skySummaryParagraphs } from "./content/skyDailySummary";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
-import { refreshContentPublications } from "./services/contentPublications";
+import { contentPublicationsResolved, refreshContentPublications } from "./services/contentPublications";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -5065,6 +5065,13 @@ function skyPlacementWritingSection(
     if (!(error instanceof Error) || !/^SKY_V4_(?:NOT_RELEASED|NOT_SERVABLE|SOURCE_GAP)/u.test(error.message)) {
       throw error;
     }
+    // A governed publication can withhold the canonical article while its exact
+    // row loads, or retire it. Neither state licenses an older article underneath.
+    const canonicalKey = planet === "lilith" ? `sky-lilith/article/${sign}`
+      : planet.endsWith("-node") ? `sky-nodes/${planet}/${sign}`
+      : planet === "moon" ? `fallback-hook/sky-placement-hook/moon/${sign}`
+      : `sky-placement/article/${planet}/${sign}`;
+    if (contentPublication(canonicalKey)) return null;
   }
   if (!rendered) return null;
   const motionCopy = skyPlacementMotionCopy(planet, hasRetrogradeGuidance, skyV4ReaderRenderer);
@@ -11751,36 +11758,20 @@ export function App() {
     }
 
     setSkyPlacementFallbackStatus("loading");
-    let available = false;
-    const markAvailable = () => {
-      if (!cancelled) {
-        available = true;
-        setFallbackArchitectureV3Version((version) => version + 1);
-        setSkyPlacementFallbackStatus("ready");
-      }
-    };
-    const localLoad = loadSkyPlacementFallbackArchitectureV3Bundle()
-      .then(() => {
-        markAvailable();
-        return true;
-      });
-    const dashboardLoad = loadFallbackArchitectureV3SkyPlacementDashboardBundle()
-      .then(async (dashboardBundle) => {
-        if (cancelled) return false;
-        installSkyPlacementFallbackArchitectureV3Bundle(dashboardBundle);
-        // Published rows cannot serve the reader until its canonical module is ready.
-        await localLoad;
-        markAvailable();
-        return true;
-      });
-
-    Promise.allSettled([localLoad, dashboardLoad]).then((results) => {
-      if (cancelled || available) return;
-
-      console.warn("Sky Placement fallback package failed to load; reader copy remains fail-closed.", {
-        localError: results[0].status === "rejected" ? results[0].reason : null,
-        dashboardError: results[1].status === "rejected" ? results[1].reason : null
-      });
+    // Resolve the publication plane before the first prose paint. On background
+    // checks the selected detail stays mounted until the complete snapshot lands.
+    void Promise.all([
+      loadSkyPlacementFallbackArchitectureV3Bundle(),
+      loadFallbackArchitectureV3SkyPlacementDashboardBundle()
+    ]).then(([, dashboardBundle]) => {
+      if (cancelled) return;
+      if (!contentPublicationsResolved()) throw new Error("The placement publication status could not be loaded.");
+      installSkyPlacementFallbackArchitectureV3Bundle(dashboardBundle);
+      setFallbackArchitectureV3Version((version) => version + 1);
+      setSkyPlacementFallbackStatus("ready");
+    }).catch(error => {
+      if (cancelled) return;
+      console.warn("Sky Placement package failed to load; reader copy remains fail-closed.", error);
       setSkyPlacementFallbackStatus("error");
     });
 

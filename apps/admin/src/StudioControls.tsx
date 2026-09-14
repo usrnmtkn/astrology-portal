@@ -79,13 +79,14 @@ export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWith
 );
 
 export type StudioStatusTone = "live" | "ready" | "draft" | "inactive" | "retired" | "archived" | "error" | "unknown";
-export function StudioStatusBadge({ children, tone, title, className = "" }: {
+export function StudioStatusBadge({ children, tone, title, className = "", "aria-label": ariaLabel }: {
   children: ReactNode;
   tone: StudioStatusTone;
   title?: string;
   className?: string;
+  "aria-label"?: string;
 }) {
-  return <span className={`studio-status-badge status-${tone} ${className}`.trim()} title={title}>{children}</span>;
+  return <span aria-label={ariaLabel} className={`studio-status-badge status-${tone} ${className}`.trim()} title={title}>{children}</span>;
 }
 
 /** Tabs switch a content panel. Arrow keys move focus; Enter/Space selects. */

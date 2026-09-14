@@ -12,13 +12,19 @@ import { skyPlacementVariableFacts, fillSkyPlacementVariables } from '../apps/we
 import { validateSkyEvergreenSections, skyEvergreenSectionText } from '../apps/web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs';
 import { skyPlacementAssembly } from '../apps/admin/src/skyPlacementAssembly';
 import { skyPlacementBodies, skyPlacementSigns } from '../apps/admin/src/skyWriteupRelations';
-import { skyPlacementCompositionKeys } from '../apps/admin/src/SkyPlacementComposition';
+import { createServer } from 'vite';
 import { makeSkyArticleOutline, SKY_ARTICLE_OUTLINES } from '../apps/admin/src/skyArticleOutlines';
 const browserTemp = await mkdtemp(join(tmpdir(), 'sky-blocks-'));
 const browserBundle = join(browserTemp, 'browser.mjs');
 await build({ entryPoints: ['apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts'], outfile: browserBundle, bundle: true, platform: 'browser', format: 'esm', logLevel: 'silent' });
 const { renderSkyV4ReaderRoute: browser } = await import(pathToFileURL(browserBundle).href);
 await rm(browserTemp, { recursive: true, force: true });
+// The real component imports CSS through shared Studio controls. Load it through
+// Vite, as the app does, instead of asking Node's TS loader to execute CSS.
+const studio = await createServer({ configFile: false, appType: 'custom',
+  server: { middlewareMode: true }, optimizeDeps: { noDiscovery: true, include: [] } });
+const { skyPlacementCompositionKeys } = await studio.ssrLoadModule('/apps/admin/src/SkyPlacementComposition.tsx');
+await studio.close();
 const before = JSON.stringify(corpus);
 for (const planet of skyPlacementBodies) for (const sign of skyPlacementSigns) {
  const keys = skyPlacementCompositionKeys({ planet, sign, motion: 'direct' });

@@ -70,11 +70,22 @@ async function sources(directory) {
   }
   return files;
 }
+// Component styles introduced with the Studio preview/typography repairs are
+// intentional. Keep their ownership exact; new imports still fail this audit.
+// Their declarations are covered by the consistency and token-integrity audits.
+const componentStyles = new Map([
+  ['apps/admin/src/EmptyHouseReaderPreview.tsx', ['./natal-reader-preview.css']],
+  ['apps/admin/src/NatalPlacementReaderPreview.tsx', ['./natal-reader-preview.css']],
+  ['apps/admin/src/SkyPlacementVariableKey.tsx', ['./sky-variable-key.css']],
+  ['apps/admin/src/StudioControls.tsx', ['./studio-typography.css', './studio-component-consistency.css']],
+]);
 for (const file of await sources('apps/admin/src')) {
   const source = await readFile(file, 'utf8');
+  const actualStyles = [];
   for (const match of source.matchAll(/(?:import\s*(?:\(\s*)?|from\s*)["']([^"']+\.css)["']/g)) {
-    if (match[1] !== './studio-system.css') findings.push(`Noncanonical Studio stylesheet: ${file} → ${match[1]}`);
+    if (match[1] !== './studio-system.css') actualStyles.push(match[1]);
   }
+  if (JSON.stringify(actualStyles.sort()) !== JSON.stringify([...(componentStyles.get(file) ?? [])].sort())) findings.push(`Unexpected component stylesheet ownership: ${file} → ${actualStyles.join(', ')}`);
   if (/\bstyle\s*=/.test(source)) findings.push(`Inline style bypass: ${file}`);
 }
 for (const file of ['apps/admin/src/main.tsx', 'apps/web/src/main.tsx']) {
