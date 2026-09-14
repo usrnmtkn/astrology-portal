@@ -9,6 +9,7 @@ import { contentPublicationsResolved, refreshContentPublications } from "../../s
 import { loadLiveGeneratedContentForKeys, type LiveGeneratedContent } from "../../services/generatedContent";
 import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../../services/contentUpdateSignal";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
+import { useSkySummarySettled } from "./SkyReadingLayout";
 
 type Content = Map<string, LiveGeneratedContent>;
 type LoadState = { key: string; content: Content; status: "loading" | "ready" | "error" };
@@ -92,6 +93,7 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
     && missingPublishedSkySummaryKeys(keys, state.content).length === 0;
   const failed = factsError || current && state.status === "error";
   const loading = !failed && (!factsReady || !ready);
+  useSkySummarySettled(!loading);
   useLayoutEffect(() => {
     if (loading || failed || !body.current) return;
     const observer = new ResizeObserver(() => {

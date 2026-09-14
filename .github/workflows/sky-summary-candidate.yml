@@ -43,7 +43,7 @@ jobs:
       - run: npm run typecheck
       - run: npx playwright install --with-deps chromium
       - name: Verify cold load, warm refresh, publication replacement, retirement, retry and initial loading budget
-        run: npx playwright test -c playwright.config.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts --workers=1
+        run: npx playwright test -c playwright.config.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts --workers=1
       - uses: actions/upload-artifact@v6
         if: always()
         with:
