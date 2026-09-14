@@ -1,6 +1,6 @@
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { TransitFacts } from "../../components/ArticleFacts";
-import { Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, isValidElement, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
@@ -488,6 +488,39 @@ function YouNatalTab({
   );
 }
 
+function YouMacroView({ headline, body }: { headline: string; body: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const bodyId = useId();
+  // Match the owner's requested preview length; the expanded passage stays intact.
+  const hasMore = body.length > 575;
+  const preview = hasMore
+    ? `${body.slice(0, 575).replace(/\s+\S*$/u, "").trimEnd()}…`
+    : body;
+
+  return (
+    <article className="weekly-horoscope__macro daily-horoscope-summary you-horoscope-card">
+      <span className="eyebrow section-label">The macro view</span>
+      <h3>{headline}</h3>
+      <div id={bodyId} className="weekly-horoscope__macro-body">
+        {(expanded ? body : preview)
+          .split(/\n{2,}/)
+          .map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+      </div>
+      {hasMore ? (
+        <button
+          type="button"
+          className="card-read-more weekly-horoscope__toggle"
+          aria-expanded={expanded}
+          aria-controls={bodyId}
+          onClick={() => setExpanded((current) => !current)}
+        >
+          {expanded ? "Read less" : "Read more"}
+        </button>
+      ) : null}
+    </article>
+  );
+}
+
 function YouUpdatesTab({
   accountId,
   aspectRows,
@@ -544,13 +577,11 @@ function YouUpdatesTab({
   ) : weeklyTransitRows.length === 0 && !weeklyHoroscopeAssembly.macro ? null : (
     <section className="weekly-horoscope weekly-horoscope--embedded" aria-label="This week's transits">
       {weeklyHoroscopeAssembly.macro ? (
-        <article className="weekly-horoscope__macro daily-horoscope-summary you-horoscope-card">
-          <span className="eyebrow section-label">The macro view</span>
-          <h3>{weeklyHoroscopeAssembly.macro.headline}</h3>
-          {weeklyHoroscopeAssembly.macro.body
-            .split(/\n{2,}/)
-            .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
-        </article>
+        <YouMacroView
+          key={`${weeklyHoroscopeAssembly.weekStart}:${weeklyHoroscopeAssembly.macro.body}`}
+          headline={weeklyHoroscopeAssembly.macro.headline}
+          body={weeklyHoroscopeAssembly.macro.body}
+        />
       ) : null}
       {weeklyTransitRows.length > 0 ? (
         <div className="updates-aspect-list weekly-horoscope__transits" aria-label="Weekly transit cards">
