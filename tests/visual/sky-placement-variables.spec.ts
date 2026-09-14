@@ -49,8 +49,13 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   const writing = editor.locator(".admin-sky-writing-editor textarea");
   await writing.fill("Before TARGET after");
   await writing.evaluate((el: HTMLTextAreaElement) => el.setSelectionRange(7, 13));
-  await editor.locator(".admin-sky-variable-key > summary").click();
-  const variableKey = editor.locator(".admin-sky-variable-key");
+  const variableKey = editor.locator(".admin-sky-variable-key").filter({ has: page.getByText("Calculated Sky variables", { exact: true }) });
+  const openVariableKey = async () => {
+    const articlePicker = editor.locator("[data-sky-article-variable-picker]");
+    if (await articlePicker.count() && !(await articlePicker.evaluate(el => el.hasAttribute("open")))) await articlePicker.locator(":scope > summary").click();
+    if (!(await variableKey.evaluate(el => el.hasAttribute("open")))) await variableKey.locator(":scope > summary").click();
+  };
+  await openVariableKey();
   const rowsGeometry = await variableKey.locator("dl > div").evaluateAll(rows => rows.map(row => {
     const term = row.querySelector("dt")!.getBoundingClientRect();
     const definition = row.querySelector("dd")!.getBoundingClientRect();
@@ -95,6 +100,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(writing).not.toHaveAttribute("aria-invalid", "true");
   await expect(editor.locator(".admin-sky-writing-preview")).toHaveText("No writing saved for this section.");
   await editor.getByLabel("Writing section", { exact: true }).selectOption("placementArticle");
+  await openVariableKey();
   await writing.fill("{{planetTitle}} in {{signTitle}}");
   await expect(editor.locator(".admin-sky-writing-preview")).toHaveText("Saturn in Aries");
   for (const name of ["planetTitle", "signTitle"]) {
@@ -108,10 +114,11 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await writing.fill("{{ planetTitle }} in {{signTitle}}");
   expect(await editor.locator(".admin-sky-writing-preview [data-variable-color]").count()).toBe(2);
 
-  expect(await editor.locator(".admin-sky-variable-key p").first().evaluate(labelStyle)).toEqual(await writing.evaluate(labelStyle));
-  await editor.locator(".admin-sky-variable-key").screenshot({ path: `test-results/sky-variable-key-${width}-${theme}.png` });
+  expect(await variableKey.locator("p").first().evaluate(labelStyle)).toEqual(await writing.evaluate(labelStyle));
+  await variableKey.screenshot({ path: `test-results/sky-variable-key-${width}-${theme}.png` });
   expect(await editor.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
   await editor.getByLabel("Writing section", { exact: true }).selectOption("placementArticleRetrograde");
+  await openVariableKey();
   await writing.fill("Fixture {{planetTitle}} {{motion}} article.");
   await expect(editor.locator(".admin-sky-writing-preview")).toHaveText("Fixture Saturn retrograde article.");
   const sections = editor.locator(".admin-evergreen-sections");
@@ -121,6 +128,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(editor.getByLabel("Motion for Retrograde aspects", { exact: true })).toHaveValue("retrograde");
   await writing.fill("During this transit, {{aspectsWhileRetrograde}}");
   await expect(writing).not.toHaveAttribute("aria-invalid", "true");
+  await openVariableKey();
   await expect(editor.getByRole("button", { name: "Insert {{aspectsInSign}}", exact: true })).toBeVisible();
   await editor.getByRole("button", { name: "Insert {{aspectsWhileRetrograde}}", exact: true }).click();
   expect(await writing.inputValue()).toContain("{{aspectsWhileRetrograde}}");
@@ -135,7 +143,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await editor.getByLabel("Connecting text 2", { exact: true }).fill(", ");
   await editor.getByLabel("Phrase text 2", { exact: true }).fill("fixture {{planetTitle}}.");
   await editor.getByLabel("Phrase text 2", { exact: true }).evaluate((el: HTMLTextAreaElement) => el.setSelectionRange(8, 23));
-  await editor.locator(".admin-sky-phrase-composition .admin-sky-variable-key > summary").click();
+  await openVariableKey();
   await editor.getByRole("button", { name: "Insert {{signTitle}}", exact: true }).click();
   await expect(editor.getByLabel("Phrase text 2", { exact: true })).toHaveValue("fixture {{signTitle}}.");
   await editor.getByLabel("Phrase text 2", { exact: true }).fill("fixture {{planetTitle}}.");

@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { bundledPublications } from "../helpers/bundled-publications";
 import { observeArticleTransitions, expectAnimatedArticleNavigation } from "./qaArticleTransitions";
 import { readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
@@ -122,6 +123,7 @@ async function selectYouNatalTab(page: Page) {
 }
 
 async function seedClientState(page: Page, options: SeedOptions = {}) {
+  await bundledPublications(page);
   const requestedNow = options.now ?? fixedNow;
   const profileBirthDate = options.profileBirthDate ?? "1990-01-01";
   const profileBirthDateTime = zonedDateTimeToUtc(
