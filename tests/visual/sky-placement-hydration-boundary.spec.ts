@@ -117,7 +117,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(article).toContainText(secondCopy, { timeout: 60_000 });
     await expect(article).not.toContainText(firstCopy);
     await sources.retire();
-    await expect(page.locator('.sky-detail-article .article-body-inner').first()).not.toContainText(secondCopy, { timeout: 60_000 });
+    await expect(article).toHaveCount(0, { timeout: 60_000 });
+    await expect(page.locator('.sky-detail-article')).not.toContainText(secondCopy);
     expect(errors).toEqual([]);
   });
 }
