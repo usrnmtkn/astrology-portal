@@ -55,6 +55,35 @@ async function prepare(page: Page, theme: string, signedIn = true) {
 
 for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: "mobile", width: 390, height: 844 }]) {
   for (const theme of ["light", "dark"]) {
+    for (const signedIn of [true, false]) {
+      test(`Account route stays separate from You with ${signedIn ? "active" : "cached"} account on ${viewport.name} ${theme}`, async ({ page }) => {
+        test.setTimeout(60_000);
+        await page.setViewportSize(viewport);
+        await prepare(page, theme, signedIn);
+        await page.goto("/?date=2026-09-12#you");
+        await expect(page.getByRole("region", { name: "In-depth transit reports" })).toBeVisible();
+        await page.getByRole("button", { name: "Open menu", exact: true }).click();
+        await page.getByRole("menuitem", { name: "Account", exact: true }).click();
+        const account = page.locator(".account-page");
+        const assertAccount = async () => {
+          await expect(account.getByLabel("Birth date", { exact: true })).toHaveValue("1990-01-01");
+          await expect(page.getByRole("region", { name: "In-depth transit reports" })).toBeHidden();
+          await expect(page).toHaveURL(/\?date=2026-09-12#account$/);
+        };
+        await assertAccount();
+        // An auth recovery check must not replace the selected destination.
+        await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+        await assertAccount();
+        await page.reload();
+        await assertAccount();
+        await page.screenshot({ path: test.info().outputPath(`account-${signedIn ? "active" : "cached"}-${viewport.name}-${theme}.png`) });
+        await page.goBack();
+        await expect(page.getByRole("region", { name: "In-depth transit reports" })).toBeVisible();
+        await page.goForward();
+        await assertAccount();
+      });
+    }
+
     test(`cached You profile offers Google reconnect on ${viewport.name} ${theme}`, async ({ page }) => {
       await page.setViewportSize(viewport);
       await prepare(page, theme, false);
