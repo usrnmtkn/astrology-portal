@@ -162,6 +162,13 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       return;
     }
 
+    // A bundled-source fixture means a successful empty remote result. Reserve
+    // outages (and the client's retry/backoff) for explicit offline/cache cases.
+    if (!options.cachedDashboardOverlay) {
+      await route.fulfill({ json: [] });
+      return;
+    }
+
     await route.fulfill({
       status: 503,
       contentType: "application/json",

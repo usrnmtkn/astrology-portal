@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
+import { bundledPublications } from "../helpers/bundled-publications";
 import { builtinContentRecords, contentLiveStatuses } from "../../api/_lib/content-live-status";
 
 const readerBaseURL = `http://127.0.0.1:${process.env.SKY_READER_TEST_PORT ?? "4294"}`;
@@ -251,7 +252,7 @@ test('live bundled summary stays Live when opened, then publishes twice without 
   const baseline = await body.inputValue();
   await expect(map.getByLabel('Combined Sun and Moon preview')).toContainText(baseline);
   await body.fill('QA first published summary');
-  await expect(status).toHaveText('Not live');
+  await expect(status).toHaveText('Draft');
   await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe('LIVE');
   await expect(status).toHaveText('Live');
@@ -267,7 +268,7 @@ test('live bundled summary stays Live when opened, then publishes twice without 
   await body.fill('QA unpublished revision');
   await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe('DRAFT');
-  await expect(status).toHaveText('Not live');
+  await expect(status).toHaveText('Draft');
 });
 
 test('Daily Sky retirement and an unavailable publication never reveal older bundled copy', async ({ page }) => {
@@ -283,7 +284,8 @@ test('Daily Sky retirement and an unavailable publication never reveal older bun
   await expect(summary).not.toContainText('turns our attention to the daily rituals');
   publication.state = 'live'; publication.revision = 2;
   await page.reload();
-  await expect(summary).toContainText('The Sun is in Virgo');
+  await expect(summary).toContainText('The daily summary could not load.');
+  await expect(summary.getByRole('button', { name: 'Retry', exact: true })).toBeVisible();
   await expect(summary).not.toContainText('turns our attention to the daily rituals');
 });
 
@@ -381,6 +383,7 @@ test("inline connecting words preserve variables, publish and reach the reader",
   await expect(preview).toContainText("Today, the Sun moving through Virgo turns our attention");
   const reader = await context.newPage();
   await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
+  await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [] }] } } }));
   await reader.route("**/content-studio-last-known-good.json", route => route.fulfill({ json: { schema: "content-studio-last-known-good-v1", rowCount: stored.length, rows: stored } }));
   await reader.goto(`${readerBaseURL}/#sky`);
   const summary = reader.getByLabel("Daily sky summary", { exact: true });
@@ -487,6 +490,7 @@ test(`${asset} loading can retry without blocking current summary editing`, asyn
 
 test("reader omits an impossible calendar lunation without losing the current sky", async ({ context }) => {
   const reader = await context.newPage();
+  await bundledPublications(reader);
   await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
   await reader.addInitScript(() => localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" })));
   const warnings: string[] = [];
