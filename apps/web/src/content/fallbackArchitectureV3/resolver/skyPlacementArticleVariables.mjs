@@ -9,6 +9,11 @@ const kinds = new Set(["planet", "sign", "placement", "timing", "aspect"]);
 const safeName = name => /^[A-Za-z][A-Za-z0-9]*$/u.test(name) && !["constructor", "prototype", "__proto__"].includes(name);
 const tokenPattern = () => /\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu;
 const tokens = value => [...String(value ?? "").matchAll(tokenPattern())];
+// Article paragraphs need an inline sequence; section templates retain their
+// calculated multiline list. Apply this to direct tokens and phrase expansion.
+const articleFactText = (name, value) => ["aspectsInSign", "aspectsWhileRetrograde"].includes(name)
+  ? value.split(/\r?\n/u).map(line => line.replace(/^\s*-\s+/u, "").trim()).filter(Boolean).join(", ")
+  : value;
 
 export function isSkyPlacementArticleField(contentKey, path) {
   return /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(String(contentKey ?? "")) && articlePaths.includes(path);
@@ -63,7 +68,7 @@ export function skyPlacementArticleVariableSegments(value, calculated = {}, owne
     let kind = "fact";
     let reference = `calculated#${name}`;
     if (facts.has(name)) {
-      text = Object.hasOwn(calculated, name) && typeof calculated[name] === "string" ? calculated[name] : "";
+      text = Object.hasOwn(calculated, name) && typeof calculated[name] === "string" ? articleFactText(name, calculated[name]) : "";
       if (!text.trim()) reason = `Needs calculated ${name}`;
     } else if (knownPhrase(name, owner)) {
       const resolved = phraseSource(owner, name, records);
@@ -73,7 +78,7 @@ export function skyPlacementArticleVariableSegments(value, calculated = {}, owne
       if (!reason) {
         const missing = tokens(resolved.text).map(part => part[1]).filter(id => !Object.hasOwn(calculated, id) || typeof calculated[id] !== "string" || !calculated[id].trim());
         if (missing.length) reason = `Needs calculated ${[...new Set(missing)].join(", ")}`;
-        else text = resolved.text.replace(tokenPattern(), (_, id) => calculated[id]);
+        else text = resolved.text.replace(tokenPattern(), (_, id) => articleFactText(id, calculated[id]));
       }
     } else reason = `Unknown Sky variable ${token}`;
     if (!reason && /\{\{|\}\}/u.test(text)) reason = `Unresolved variable inside ${token}`;

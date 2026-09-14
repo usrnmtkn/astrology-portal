@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-09-14a",
+  "packageVersion": "v3-2026-09-14b",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "f5c70d0fee1d644266cbc5db90d495b31f8cfbb516bad023b306a58ff8069421",
+    "sha256": "f54a103e33f90f6feed94e1ea8ca4150d6221a4d80de6bc56acafdd5cfc267ef",
     "count": 9806,
     "emissionCount": 9882,
     "exactSourceMatchCount": 8764
