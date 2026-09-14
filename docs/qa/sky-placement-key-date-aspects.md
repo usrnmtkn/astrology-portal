@@ -16,6 +16,8 @@ article token usage. Calendar links into those articles also fetch the matching
 placement facts. All calculations stay in the existing ephemeris worker.
 An ingress event without an explicit end retains the calculated placement exit
 when the snapshot matches its destination sign.
+Opening a card invalidates the previous article's refresh-complete marker, so
+closing and reopening the same placement reloads its complete timeline.
 
 Within shared, direct, and retrograde Placement articles, `aspectsInSign` and
 `aspectsWhileRetrograde` expand into comma-separated prose with no leading

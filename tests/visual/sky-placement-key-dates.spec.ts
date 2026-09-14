@@ -56,6 +56,9 @@ for (const width of [390, 1440]) for (const withVariable of [false, true]) {
     await verifyDates();
     await page.reload();
     await verifyDates();
+    await page.getByRole("button", { name: "Close detail", exact: true }).click();
+    await page.getByRole("button", { name: "Read more about Sun in Virgo", exact: true }).click();
+    await verifyDates();
     expect(errors).toEqual([]);
   });
 }
