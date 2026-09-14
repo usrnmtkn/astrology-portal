@@ -54,7 +54,9 @@ export default function SkyPlacementArticleVariables(props: Props) {
       if (!mounted.current || latest.current.contentKey !== key) return;
       // Read the latest draft after loading so edits made during the request survive.
       const base = latest.current.source?.ingress ?? makeSkyIngressComposition();
-      const next = installSkyWritingLibrary(base, values);
+      const seeded = installSkyWritingLibrary(base, values);
+      // Preparing article ingredients must not alter the independent fallback.
+      const next = { ...seeded, modules: base.modules };
       setPrepared(next);
       latest.current.onCompositionChange(next);
     } catch (reason) {

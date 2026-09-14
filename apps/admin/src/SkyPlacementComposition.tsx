@@ -74,11 +74,12 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const [phraseReferences, setPhraseReferences] = useState<Record<string, any>[]>([]);
   const phraseReferenceKey = JSON.stringify([...new Set(["placementArticle", "placementArticleDirect", "placementArticleRetrograde"]
     .flatMap(path => skyPlacementArticlePhraseNames(phraseRecord?.[path]))
-    .map((name: any) => phraseRecord?.ingress?.sources?.[name]?.reference?.contentKey)
-    .filter((key: any) => key && key !== phraseRecord?.contentKey))]);
+    .map((name: any) => phraseRecord?.ingress?.sources?.[name]?.reference)
+    .filter(Boolean))]);
   useEffect(() => {
     let active = true;
-    const referenceKeys: string[] = JSON.parse(phraseReferenceKey);
+    const refs: Array<{ contentKey: string }> = JSON.parse(phraseReferenceKey);
+    const referenceKeys = [...new Set(refs.map(ref => ref.contentKey))].filter(key => key !== phraseRecord?.contentKey);
     setPhraseReferences([]);
     void Promise.all(referenceKeys.map(async key => {
       const row = await loadRowRef.current?.({ id: `package:${key}`, content_key: key, inventory_only: true } as CompositionMapRow) as CompositionMapRow | undefined;
