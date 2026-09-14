@@ -50,7 +50,9 @@ for (const method of calendarRendererMethods) {
   );
 }
 assert.match(calendarSource, /renderWeeklyMoon\(\{/u);
-assert.match(calendarSource, /main: selectedPackageWeeklyMoon \? \[selectedPackageWeeklyMoon\.body\] : \[\]/u);
+assert.match(calendarSource, /main: selectedMoonReading \? textParagraphs\(selectedMoonReading\.body\) : \[\]/u);
+assert.match(calendarSource, /fallback-hook\/sky-placement-lived\/moon\//u);
+assert.match(calendarSource, /fallbackV3HookBody\(selectedFullMoonKey\)/u);
 assert.match(calendarSource, /selectedPackagePhase\?\.headline/u);
 assert.match(calendarSource, /selectedPackagePhase\?\.tagline/u);
 assert.doesNotMatch(calendarSource, /lunarCalendarLibraryResolver|content-library\.json/u);
