@@ -187,3 +187,14 @@ The new Calendar editor links were outside a Studio container. They now sit
 inside the existing toolbar; all four unchanged full-page/form container audits
 pass, with the seven Calendar loading checks and five related Studio cases
 (16 total). No blanket exclusion, wider timeout or snapshot rebaseline was used.
+
+Main #807 landed during the final check and conflicted in `openSkyDetail` and
+Calendar placement snapshot selection, preventing GitHub's PR workflows from
+starting. The resolution retains its timezone-aware date ranges, complete
+aspect timelines, recalculation when reopening a card, and calculated ingress
+exit. It also retains the hydration barrier: no partial article renders before
+its publication sources resolve. Its date/timeline browser tests join the
+placement reader job. The integrated startup now measures 475,313 gzip bytes,
+63 over the preceding cap; a 250-byte feature allocation covers #807 (475,500
+new cap). Other budgets and accuracy thresholds remain unchanged. Upstream's
+approved Calendar source routing and metadata updates are preserved verbatim.
