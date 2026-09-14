@@ -4,47 +4,63 @@ on:
     branches: [chatgpt/calendar-day-overview-20260913]
     paths: [.github/workflows/calendar-day-workbench.yml]
 permissions:
-  contents: read
+  contents: write
 jobs:
-  inspect:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - name: Inspect current Calendar and Sky integration
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          app = Path('apps/web/src/App.tsx').read_text()
-          lines = app.splitlines()
-          for query, before, after in [('function SkyCards(', 0, 190), ('onGeneratedContentRequest={requestCalendarContent}', 15, 10), ('function currentSkyV4Placement', 0, 200), ('function currentSkyPlacement', 0, 140)]:
-              for i, line in enumerate(lines):
-                  if query in line:
-                      print(f'\n--- App.tsx:{i+1} {query} ---')
-                      print('\n'.join(f'{j+1}: {lines[j]}' for j in range(max(0, i-before), min(len(lines), i+after))))
-          PY
-      - uses: actions/upload-artifact@v4
         with:
-          name: calendar-day-source-context
-          retention-days: 1
+          ref: chatgpt/calendar-day-overview-20260913
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify provenance and retrieve project context
+        run: |
+          test "$GITHUB_REF" = "refs/heads/chatgpt/calendar-day-overview-20260913"
+          git fetch --prune origin
+          git remote -v
+          git log -1 --oneline
+          git rev-list --left-right --count origin/main...HEAD
+          node scripts/agent-memory.mjs recall "Calendar day overview full Sky Moon placement article" --repo . --ref origin/main --fetch --limit 4 --state "$HOME/.local/state/tldr-astro-memory"
+      - name: Apply guarded integration and commit scoped source
+        run: |
+          if ! grep -q 'renderDayReading={(day)' apps/web/src/App.tsx; then
+            python3 .github/apply-calendar-day.py
+            git diff --check
+            git add apps/web/src/App.tsx apps/web/src/features/calendar/LunarCalendar.tsx apps/web/src/routes/CalendarRoute.tsx apps/web/src/styles/lunar-calendar.css scripts/test-calendar-package-boundary.mjs
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'feat(calendar): share Sky overview and full Moon reading in Day view'
+            git push origin HEAD:chatgpt/calendar-day-overview-20260913
+          fi
+          git log -1 --format='TESTED_COMMIT=%H'
+      - run: npm ci
+      - run: npm run build:knowledge
+      - name: Day reading and Calendar content boundary
+        run: |
+          node --import tsx scripts/test-calendar-day-reading.mts
+          node scripts/test-calendar-package-boundary.mjs
+      - name: Shared overview regression suite
+        run: npm run test:sky-daily-summary
+      - name: Design token audits
+        run: npm run qa:css-audit
+      - name: Web typecheck
+        run: npm run typecheck -w @tldr/web
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Fresh release build and browser verification
+        run: npx playwright test tests/visual/calendar-day-reading.spec.ts --project=chromium-desktop --retries=0 --max-failures=1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: calendar-day-verification
+          retention-days: 2
           path: |
-            AGENTS.md
-            package.json
-            apps/web/package.json
+            test-results/calendar-day-reading
+            test-results/playwright
+            apps/web/src/features/calendar/CalendarDayReading.tsx
             apps/web/src/App.tsx
-            apps/web/src/types.ts
-            apps/web/src/features/calendar/*.ts
-            apps/web/src/features/calendar/*.tsx
-            apps/web/src/features/sky/*.ts
-            apps/web/src/features/sky/*.tsx
-            apps/web/src/content/skyDailySummary.ts
-            apps/web/src/content/skySummaryEvents.ts
-            apps/web/src/content/skySummaryEventPlacements.ts
-            apps/web/src/services/skyClock.ts
-            apps/web/src/services/astrologyDisplay.ts
-            apps/web/src/services/ephemeris.ts
-            apps/web/src/services/skyCalculationClient.ts
-            apps/web/src/styles/*.css
-            tests/visual/*calendar*
-            playwright.config.*
+            apps/web/src/features/calendar/LunarCalendar.tsx
+            scripts/test-calendar-package-boundary.mjs
