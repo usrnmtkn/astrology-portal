@@ -7,13 +7,74 @@ import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErro
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
 import { contentPublication, publicationAllowsContent } from "./contentPublicationState";
 
+const skySummaryLiveCopyCacheKey = "tldrastro:sky-daily-summary-live-copy:v1";
+type CachedSkySummaryCopy = { identity: string; body: string };
+const verifiedSkySummaryCopy = new Map<string, CachedSkySummaryCopy>();
+let skySummaryCacheLoaded = false;
+
+function publicationIdentity(key: string) {
+  const publication = contentPublication(key);
+  return publication
+    ? `${publication.revision}:${publication.row_id ?? ""}:${publication.row_updated_at ?? ""}`
+    : "";
+}
+
+function loadVerifiedSkySummaryCache() {
+  if (skySummaryCacheLoaded || typeof window === "undefined") return;
+  skySummaryCacheLoaded = true;
+  try {
+    const cached: unknown = JSON.parse(window.sessionStorage.getItem(skySummaryLiveCopyCacheKey) ?? "{}");
+    if (!cached || typeof cached !== "object" || Array.isArray(cached)) return;
+    for (const [key, value] of Object.entries(cached as Record<string, unknown>)) {
+      if (!value || typeof value !== "object" || Array.isArray(value)) continue;
+      const entry = value as Record<string, unknown>;
+      if (typeof entry.identity === "string" && typeof entry.body === "string" && entry.body.trim()) {
+        verifiedSkySummaryCopy.set(key, { identity: entry.identity, body: entry.body });
+      }
+    }
+  } catch { /* A reader cache failure must never block the summary. */ }
+}
+
+function rememberVerifiedSkySummaryCopy(key: string, identity: string, body: string) {
+  if (!identity || !body.trim()) return;
+  const previous = verifiedSkySummaryCopy.get(key);
+  if (previous?.identity === identity && previous.body === body) return;
+  verifiedSkySummaryCopy.set(key, { identity, body });
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(skySummaryLiveCopyCacheKey, JSON.stringify(Object.fromEntries(verifiedSkySummaryCopy)));
+  } catch { /* Memory still keeps the verified copy for this page. */ }
+}
+
+function cachedVerifiedSkySummaryCopy(key: string, identity: string) {
+  loadVerifiedSkySummaryCache();
+  const cached = verifiedSkySummaryCopy.get(key);
+  return cached?.identity === identity ? cached.body : "";
+}
+
 function savedCopy(content: CmsGeneratedContentMap | undefined, key: string, fallback: string, editorialPreview = false) {
   const publication = editorialPreview ? undefined : contentPublication(key);
-  if (publication?.state === "retired") return "";
+  if (publication?.state === "retired") {
+    verifiedSkySummaryCopy.delete(key);
+    return "";
+  }
   // The reader loader filters LIVE, serving, review-clear rows before normalizing this map.
   const row = content?.get(key);
-  if (publication && (!row || !publicationAllowsContent(key, row.id, row.updatedAt))) return "";
-  if (!row || (row.status && row.status !== "LIVE") || !row.body.trim() || skySummaryTemplateErrors(key, row.body).length) return publication ? "" : fallback;
+  if (publication) {
+    const identity = publicationIdentity(key);
+    const rowIsCurrent = Boolean(row && publicationAllowsContent(key, row.id, row.updatedAt));
+    const rowIsUsable = Boolean(rowIsCurrent && row && (!row.status || row.status === "LIVE") && row.body.trim() && skySummaryTemplateErrors(key, row.body).length === 0);
+    if (rowIsUsable && row) {
+      const body = currentSkySummaryWording(key, row.body.trim());
+      rememberVerifiedSkySummaryCopy(key, identity, body);
+      return body;
+    }
+    // Background content hydration can temporarily replace the reader map with an
+    // empty snapshot. Keep the last body verified for this exact publication
+    // revision instead of making the daily summary visibly rewrite itself.
+    return cachedVerifiedSkySummaryCopy(key, identity);
+  }
+  if (!row || (row.status && row.status !== "LIVE") || !row.body.trim() || skySummaryTemplateErrors(key, row.body).length) return fallback;
   return currentSkySummaryWording(key, row.body.trim());
 }
 
