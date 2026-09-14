@@ -26,3 +26,6 @@ for (const outputPath of outputPaths) {
   await writeFile(outputPath, `${JSON.stringify(payload)}\n`, "utf8");
 }
 console.log(`Built Admin writing surface map: ${writingSurfaceSourceMap.length} surfaces.`);
+
+// Keep the central directory synchronized with the same build as editor metadata.
+await import("./build-studio-variable-catalog.mts");
