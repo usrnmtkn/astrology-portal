@@ -1,3 +1,7 @@
+import { calendarSunSummary, calendarSkyForDay } from "./calendarDaySummary";
+import { CalendarSummaryText } from "./CalendarSummaryText";
+import { skyDailySummaryFields } from "../../content/skyDailySummaryCatalog";
+import type { SkySnapshot } from "../../types";
 import { CardReadMore } from "../../components/CardReadMore";
 import { calendarMotionTitle } from "../../content/skyMotionLabels";
 import { CalendarDays, ChevronLeft, ChevronRight, Loader2, MapPin, Search } from "lucide-react";
@@ -93,6 +97,7 @@ type NormalizedCalendarEventSurface = {
 };
 
 type LunarCalendarProps = {
+  sky?: SkySnapshot | null;
   location: LocationInput;
   onLocationChange: (location: LocationInput) => void;
   generatedContent?: Map<string, LiveGeneratedContent>;
@@ -1882,6 +1887,7 @@ function locationFromLabel(label: string): LocationInput {
 }
 
 export function LunarCalendar({
+  sky,
   location,
   onLocationChange,
   generatedContent,
@@ -2244,6 +2250,7 @@ export function LunarCalendar({
     const contentKeys = [
       ...visibleEvents.flatMap(calendarEventGeneratedContentKeys),
       ...selectedEvents.flatMap(calendarEventGeneratedContentKeys),
+      ...skyDailySummaryFields.map(field => field.key),
       ...(selectedDay ? lunarDayGeneratedContentKeys(selectedDay, editorialEvents) : []),
       ...visibleDays.flatMap((day) => [
         ...cmsSurfaceKeys.calendarDay("moon", day.moonSign),
@@ -2488,6 +2495,10 @@ export function LunarCalendar({
         })
       : null
   ), [arcEvents, generatedContent, location, selectedDay, zone]);
+  const selectedSky = selectedDay ? calendarSkyForDay(sky, selectedDay.dateKey, location) : null;
+  const selectedMoon = selectedSky?.positions.find(position => position.planet === "Moon");
+  const readingDay = selectedDay && selectedMoon ? { ...selectedDay, moonSign: selectedMoon.sign } : selectedDay;
+  const sunSummary = calendarSunSummary(selectedSky, generatedContent);
   const selectedEvents = selectedDay ? dayEventPreview(selectedDay.events) : [];
   const selectedDayTransits = selectedDay
     ? selectedDayTransitEvents(selectedDay, selectedLunarDay, selectedEvents)
@@ -2535,7 +2546,7 @@ export function LunarCalendar({
   const selectedDayPhase = selectedDay && calendar
     ? calendarPhaseLabelForDay(selectedDay, calendar.days)
     : null;
-  const selectedDayPhaseSign = selectedPrimaryLunation?.sign ?? selectedDay?.moonSign ?? "";
+  const selectedDayPhaseSign = selectedPrimaryLunation?.sign ?? readingDay?.moonSign ?? "";
   const selectedTransitNotes = enableLunarArcContent && selectedLunarDay
     ? selectedLunarDay.editorial.transitNotes
         .map((note) => ({
@@ -2547,8 +2558,8 @@ export function LunarCalendar({
   const selectedVoidWindow = selectedDay ? formatVoidCourseDetailWindow(selectedDay, zone) : "";
   const selectedVoidDuration = selectedDay?.voidOfCourse?.durationLabel || "";
   const selectedVoidNextSign = selectedDay ? voidCourseNextSignLabel(selectedDay) : null;
-  // Day and Week share the same dated guidance selection so the reader does
-  // not get a different Moon interpretation when switching views.
+  // Keep the dated Calendar source for lunation days and as the approved
+  // fallback when a full Moon placement passage is unavailable.
   const selectedWeeklyGuidance = selectedDay
     ? weeklyDayWriteups.find(({ day }) => day.dateKey === selectedDay.dateKey)?.guidance ?? null
     : null;
@@ -2565,12 +2576,14 @@ export function LunarCalendar({
         }
       })()
     : null;
+  const selectedFullMoonKey = readingDay ? `fallback-hook/sky-placement-lived/moon/${slugContentPart(readingDay.moonSign)}` : "";
+  const selectedFullMoonBody = !selectedPrimaryLunation ? fallbackV3HookBody(selectedFullMoonKey) : "";
+  const selectedMoonReading = selectedFullMoonBody
+    ? { contentKey: selectedFullMoonKey, body: selectedFullMoonBody }
+    : selectedPackageWeeklyMoon;
   const selectedDayBodyPresentation = {
-    main: selectedPackageWeeklyMoon ? [selectedPackageWeeklyMoon.body] : [],
-    loreTitle: null,
-    lore: [],
-    prompt: null,
-    storyPosition: null
+    main: selectedMoonReading ? textParagraphs(selectedMoonReading.body) : [],
+    prompt: null
   };
   const selectedPackagePhase = selectedDay && selectedDayPhase
     ? (() => {
@@ -2709,8 +2722,8 @@ export function LunarCalendar({
             <small className="lunar-selected-card__phase-tagline">{selectedPackagePhase.tagline}</small>
           )}
           <p className="lunar-selected-card__meta">
-            <span className={`lunar-selected-card__meta-element ${elementClassForSign(selectedDay.moonSign)}`}>
-              {signElements[selectedDay.moonSign] ?? "Element"}
+            <span className={`lunar-selected-card__meta-element ${elementClassForSign(readingDay?.moonSign ?? selectedDay.moonSign)}`}>
+              {signElements[readingDay?.moonSign ?? selectedDay.moonSign] ?? "Element"}
             </span>
             <span className="lunar-selected-card__meta-separator" aria-hidden="true">·</span>
             <span className="lunar-selected-card__meta-date">{formatSelectedDay(selectedDay, zone)}</span>
@@ -2721,18 +2734,23 @@ export function LunarCalendar({
               </>
             )}
           </p>
-          {(selectedDayBodyPresentation.main.length > 0 || selectedDayAspectWriteups.length > 0) && (
+          {(sunSummary.length > 0 || selectedDayBodyPresentation.main.length > 0 || selectedDayAspectWriteups.length > 0) && (
             <div className="lunar-selected-card__body">
-              {selectedDayBodyPresentation.main.length > 0 && (
-                <section
-                  className="lunar-selected-card__body-section"
-                  aria-label="Moon guidance"
-                  data-guidance-key={selectedPackageWeeklyMoon?.contentKey}
-                >
-                  {selectedDayBodyPresentation.main.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </section>
+              {(sunSummary.length > 0 || selectedDayBodyPresentation.main.length > 0) && (
+                <div className="lunar-selected-card__body-section">
+                  {sunSummary.length > 0 && <section aria-label="Sun in season"><CalendarSummaryText parts={sunSummary} sky={selectedSky} date={selectedDay.dateKey} /></section>}
+                  {selectedDayBodyPresentation.main.length > 0 && (
+                    <section
+                      className="lunar-selected-card__body-section"
+                      aria-label="Moon guidance"
+                      data-guidance-key={selectedMoonReading?.contentKey}
+                    >
+                      {selectedDayBodyPresentation.main.map((paragraph) => (
+                        <p key={paragraph}>{paragraph}</p>
+                      ))}
+                    </section>
+                  )}
+                </div>
               )}
               {selectedDayAspectWriteups.length > 0 && (
                 <section className="lunar-selected-card__body-section" aria-labelledby="lunar-selected-exact-heading">
