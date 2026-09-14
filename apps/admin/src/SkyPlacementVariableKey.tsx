@@ -1,3 +1,4 @@
+import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { useEffect, useRef, useState } from "react";
 import { compositionVariableColors } from "./CompositionVariableKey";
 import { StudioButton } from "./StudioControls";
@@ -121,6 +122,13 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
         }
       }
 
+      await Promise.all(ZODIAC_SEASON_VARIABLES.map(async field => {
+        if (composition?.sources[field.id]) return;
+        const key = zodiacSeasonSourceKey(field.id, phraseSource.sign);
+        const row = await loadSource?.(key);
+        values[field.id] = typeof row?.body === "string" ? row.body : "";
+        provenance[field.id] = `${key}#body · Shared across sign-aware templates. Publish changes to update references.`;
+      }));
       if (!active) return;
       setPhraseValues(values);
       setPhraseProvenance(provenance);

@@ -31,6 +31,7 @@ export type SkyWritingLibraryField = {
   description: string;
   kind: SkyWritingLibrarySourceKind;
   rows?: number;
+  shared?: boolean;
 };
 
 export type SkyWritingLibraryGroup = {
@@ -147,6 +148,7 @@ export function installSkyWritingLibrary(composition: SkyWritingLibraryCompositi
 
   for (const group of SKY_WRITING_LIBRARY_GROUPS) {
     for (const item of group.fields) {
+      if (item.shared) continue;
       const seed = text(seeds[item.id]);
       const existing = next.sources[item.id];
       if (!existing) next.sources[item.id] = { kind: item.kind, text: seed };

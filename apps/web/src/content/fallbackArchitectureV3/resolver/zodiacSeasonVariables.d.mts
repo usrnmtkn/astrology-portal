@@ -1,0 +1,13 @@
+type Source = Record<string, any>;
+export const ZODIAC_SIGNS: readonly string[];
+export const ZODIAC_SEASON_VARIABLES: readonly { id: string; label: string; family: string; description: string; kind: 'sign'; rows: number; shared: true }[];
+export const ZODIAC_SEASON_SOURCE_STARTERS: readonly Source[];
+export function zodiacSeasonSourceKey(name: string, sign: unknown): string;
+export function isZodiacSeasonSourceKey(key: unknown): boolean;
+export function zodiacSeasonVariableNames(value: unknown): string[];
+export function zodiacSeasonContextSign(context?: Source): string;
+export function zodiacSeasonSourceText(row?: Source, options?: {preview?: boolean}): string;
+export function resolveZodiacSeasonVariables(value: unknown, context: Source, sourceRows?: Source[] | Map<string, any>, options?: {preview?: boolean}): string;
+export function zodiacSeasonTemplateContext<T extends Source>(copy: unknown, context: T, sourceRows?: Source[] | Map<string, any>, options?: {preview?: boolean}): T & Record<string, any>;
+export function supportsZodiacSeasonVariables(record?: Source): boolean;
+export function zodiacSeasonRecordDependencies(record?: Source): Array<{name: string; sign: string; contentKey: string}>;

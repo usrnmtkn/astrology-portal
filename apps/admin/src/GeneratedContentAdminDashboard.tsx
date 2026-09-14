@@ -1,3 +1,5 @@
+import { rememberStudioEditorReturn } from "./studioEditorReturn";
+import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey, supportsZodiacSeasonVariables } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import "./studio-system.css";
 import { StudioTabs, StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
@@ -2892,6 +2894,7 @@ export function GeneratedContentAdminDashboard() {
   const guidedReviewOpenedRef = useRef("");
   const sourceOpenRequestRef = useRef(0);
   const editorRef = useRef<HTMLElement | null>(null);
+  const variableInsertionRef = useRef<{ element: HTMLTextAreaElement; start: number; end: number } | null>(null);
   const editorReturnFocusRef = useRef<HTMLElement | null>(null);
   const [editorSaveError, setEditorSaveError] = useState("");
   const editorBaselineRef = useRef<string | null>(null);
@@ -4898,12 +4901,12 @@ export function GeneratedContentAdminDashboard() {
     return hydrated;
   }
 
-  async function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection): Promise<boolean> {
+  async function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection, preservingParentDraft = false): Promise<boolean> {
     const replacingUnsavedEditor = draft && row.id !== draft.id && (
       JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
       || hasPendingArticleChanges()
     );
-    if (replacingUnsavedEditor && !window.confirm("Discard the unsaved changes in this editor?")) return false;
+    if (replacingUnsavedEditor && !preservingParentDraft && !window.confirm("Discard the unsaved changes in this editor?")) return false;
     // Capture focus and the owner's decision before loading disables controls.
     if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
       editorReturnFocusRef.current = document.activeElement;
@@ -8189,13 +8192,16 @@ export function GeneratedContentAdminDashboard() {
     const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes || packageCanApproveRevision ? "LIVE" : "DRAFT";
     const packageWillPublishOnSave = packageApprovalPublishes && currentDraft.status !== "LIVE";
     const natalAspectMissingCopy = isExactNatalAspectDraft && !["body", "body_you", "body_they"].some((field) => packageFieldString(currentDraft, field).trim());
+    const seasonSourceRows = ZODIAC_SEASON_SOURCE_STARTERS.map((record: Record<string, any>) => rows.find(row => row.content_key === record.contentKey) ?? {
+      id: `package:${record.contentKey}`, content_key: record.contentKey, headline: record.headline, body: "", summary: "", surface: "sky", status: "DRAFT", inventory_only: true, block_type: "fallback_hook", sections: { packageRecord: record }
+    } as AdminGeneratedContentRow);
     const variableReferences = templateVariableReferences({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
       Body: currentDraft.body,
       body_you: packageFieldString(currentDraft, "body_you"),
       body_they: packageFieldString(currentDraft, "body_they")
-    }, effectiveSkyFallback);
+    }, effectiveSkyFallback, true);
     const baseFallbackEditorGuidance = isFallbackHookDraft && !skyFallbackEditor && fallbackHookEditorGuidanceBuilder
       ? fallbackHookEditorGuidanceBuilder({
           contentKey: currentDraft.contentKey,
@@ -8411,6 +8417,27 @@ export function GeneratedContentAdminDashboard() {
       };
       const saved = await saveDraft(undefined, reviewedDraft);
       if (saved) setMessage("Owner copy review recorded. The row is still held and ready for governed source implementation.");
+    };
+    const rememberVariableSelection = (element: EventTarget | null) => {
+      if (element instanceof HTMLTextAreaElement && ["body", "body_you", "body_they"].includes(element.dataset.skyField ?? "")) variableInsertionRef.current = { element, start: element.selectionStart, end: element.selectionEnd };
+    };
+    const openSharedSeasonSource = async (key: string) => {
+      const parentDraft = currentDraft;
+      const parentBaseline = editorBaselineRef.current;
+      const parentSavedInput = editorSavedInputRef.current;
+      const parentRow = editorSourceRow;
+      const parentSelection = selectedRowId;
+      const parentContext = skyWritingContext;
+      const parentComposition = compositionEditorContext;
+      const parentVariablesOpen = templateVariableReferenceOpen;
+      const opened = await openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, "body", undefined, true);
+      if (!opened) return;
+      rememberStudioEditorReturn({ childContentKey: key, label: parentDraft.headline || "article", returnToParent: () => {
+        setDraft(parentDraft); editorBaselineRef.current = parentBaseline; editorSavedInputRef.current = parentSavedInput;
+        setEditorSourceRow(parentRow); setSelectedRowId(parentSelection); setSkyWritingContext(parentContext);
+        setCompositionEditorContext(parentComposition); setTemplateVariableReferenceOpen(parentVariablesOpen);
+        setEditorSaveError(""); editorSessionRef.current += 1;
+      } });
     };
     const updateGenericBody = (body: string) => {
       const nextDraft = invalidateContentStudioReview({ ...currentDraft, body });
@@ -8862,7 +8889,7 @@ export function GeneratedContentAdminDashboard() {
     return (
       <>
       <StudioButton type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={closeEditor} disabled={isLoading} />
-      <aside ref={editorRef} className={`admin-editor-panel admin-review-detail${templateVariableReferenceOpen ? " has-variables-rail" : ""}`} role="dialog" aria-modal="true" aria-label="Generated content editor" aria-busy={isLoading} onKeyDown={handleEditorKeyDown}>
+      <aside ref={editorRef} className={`admin-editor-panel admin-review-detail${templateVariableReferenceOpen ? " has-variables-rail" : ""}`} role="dialog" aria-modal="true" aria-label="Generated content editor" aria-busy={isLoading} onKeyDown={handleEditorKeyDown} onSelectCapture={event => rememberVariableSelection(event.target)} onBlurCapture={event => rememberVariableSelection(event.target)}>
         {skyWriteupParent && (
           <StudioButton type="button" className="admin-sky-writeup-back" onClick={returnToSkyWriteup} disabled={isLoading}>
             <ArrowLeft size={16} aria-hidden="true" />
@@ -9134,7 +9161,7 @@ export function GeneratedContentAdminDashboard() {
                     return row ? effectivePackageRecord(row.sections) : undefined;
                   }}
                   disabled={isLoading} onChange={updateSkyFallbackField}
-                  onOpenSource={(key, path) => openRow(
+                  onOpenSource={(key, path) => isZodiacSeasonSourceKey(key) ? void openSharedSeasonSource(key) : openRow(
                     rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow,
                     null, path, skyWritingContext.selection
                   )} />
@@ -10294,9 +10321,21 @@ export function GeneratedContentAdminDashboard() {
             filteredReferences={filteredVariableReferences}
             query={templateVariableQuery}
             onQueryChange={setTemplateVariableQuery}
-            rows={hasNatalTemplatePreviewContext
+            rows={[...(hasNatalTemplatePreviewContext
               ? rows.filter((row) => natalPlacementResolverDependencyKeys(natalPlacementPlanet as NatalPlacementPlanet, natalPlacementSign as NatalPlacementSign, natalPlacementHouse, natalPlacementMotion).includes(row.content_key))
-              : rows}
+              : rows).filter(row => !isZodiacSeasonSourceKey(row.content_key)), ...seasonSourceRows]}
+            onInsert={supportsZodiacSeasonVariables(effectiveSkyFallback) ? token => {
+              const saved = variableInsertionRef.current;
+              const element = saved && editorRef.current?.contains(saved.element) ? saved.element : editorRef.current?.querySelector<HTMLTextAreaElement>('textarea[data-sky-field="body"]');
+              if (!element) return;
+              const start = saved?.element === element ? saved.start : element.value.length;
+              const end = saved?.element === element ? saved.end : start;
+              const value = element.value.slice(0, start) + token + element.value.slice(end);
+              const field = element.dataset.skyField;
+              if (field === "body") updateGenericBody(value);
+              else if (field === "body_you" || field === "body_they") setDraft(setPackageSectionField(currentDraft, field, value));
+              requestAnimationFrame(() => { element.focus(); element.setSelectionRange(start + token.length, start + token.length); });
+            } : undefined}
             templateContentKey={currentDraft.contentKey}
             templatePreviewRow={templatePreviewRow}
             reviewTemplateRow={templatePreviewRow ?? {
@@ -10325,7 +10364,7 @@ export function GeneratedContentAdminDashboard() {
             selectedSourceId={selectedTemplateVariableSourceId}
             onSelectVariable={setSelectedTemplateVariableName}
             onSelectSource={setSelectedTemplateVariableSourceId}
-            onEditSource={(row) => openRow(row as AdminGeneratedContentRow)}
+            onEditSource={(row) => isZodiacSeasonSourceKey(row.content_key) ? void openSharedSeasonSource(row.content_key) : openRow(row as AdminGeneratedContentRow)}
             onClose={closeVariablesRail}
             onKeyDown={handleEditorKeyDown}
           />

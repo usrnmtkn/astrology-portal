@@ -1,3 +1,4 @@
+import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useRef, useState } from "react";
@@ -48,7 +49,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
   const writing = useRef<HTMLTextAreaElement>(null);
   useEffect(() => { if (initialSourceId) setSelectedSource(initialSourceId); }, [initialSourceId]);
   useEffect(() => { generation.current++; setCalculated(null); setReferences([]); return () => { generation.current++; }; }, [source.contentKey]);
-  const referencedKeys = JSON.stringify([...new Set(Object.values(composition?.sources ?? {}).map(value => value.reference?.contentKey).filter(key => key && key !== source.contentKey))]);
+  const referencedKeys = JSON.stringify([...new Set([...Object.values(composition?.sources ?? {}).map(value => value.reference?.contentKey).filter(key => key && key !== source.contentKey), ...ZODIAC_SEASON_VARIABLES.map((field: {id: string}) => zodiacSeasonSourceKey(field.id, identity[1]))])]);
   useEffect(() => {
     let active = true;
     const load = loadSourceRef.current;
@@ -198,8 +199,8 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
           </div>
           <p>Long means at least 90 days from the first entry to final exit, including gaps. Final pass takes priority over return pass. Sentence order within the template is preserved.</p>
           <label className="admin-review-copy-editor"><span>Section template</span><StudioTextarea className="admin-copy-field-body" aria-label="Ingress section template" value={module.template} disabled={disabled} onChange={event => updateModule({ template: event.target.value })} /></label>
-          <label>Insert sentence source<AdminSelect aria-label="Insert ingress source slot" value="" disabled={disabled} onChange={event => { updateModule({ template: module.template + (module.template ? " " : "") + `{{${event.target.value}}}` }); }}><option value="">Choose an exact named sentence</option>{Object.keys(composition.sources).map(id => <option key={id} value={id}>{words(id)} · {identity.join(" in ")}</option>)}</AdminSelect></label>
-          {ingressTextIssues(module.template, Object.keys(composition.sources)).map((issue: string) => <p role="alert" key={issue}>{issue}</p>)}
+          <label>Insert sentence source<AdminSelect aria-label="Insert ingress source slot" value="" disabled={disabled} onChange={event => { updateModule({ template: module.template + (module.template ? " " : "") + `{{${event.target.value}}}` }); }}><option value="">Choose an exact named sentence</option>{[...new Set([...Object.keys(composition.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id)])].map(id => <option key={id} value={id}>{words(id)} · {identity.join(" in ")}</option>)}</AdminSelect></label>
+          {ingressTextIssues(module.template, [...Object.keys(composition.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id)]).map((issue: string) => <p role="alert" key={issue}>{issue}</p>)}
           <details className="admin-workspace-details"><AdminDisclosureSummary>Aspect selection</AdminDisclosureSummary>
             <label><StudioInput type="checkbox" checked={Boolean(module.aspect)} disabled={disabled} onChange={event => updateModule({ aspect: event.target.checked ? { otherPlanet: "sun", type: "conjunction", weight: "defining" } : undefined })} /> Repeat for a calculated aspect</label>
             {module.aspect && <div className="admin-natal-placement-selectors">

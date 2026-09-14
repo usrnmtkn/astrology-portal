@@ -1,3 +1,4 @@
+import { resolveZodiacSeasonVariables } from "./zodiacSeasonVariables.mjs";
 import { correctedReaderSource } from "./readerSourceReferenceCorrections.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
 import { skyPlacementArticlePath, skyEvergreenFields, skyEvergreenEditableFields, validateSkyEvergreenSections } from "./skyEvergreenSections.mjs";
@@ -867,7 +868,7 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
   input = { ...input, contexts: matchingPlacementContexts(input) };
   const facts = skyPlacementVariableFacts(input);
   const fullArticle = article && input.articleAvailable !== false
-    ? fillSkyPlacementArticleVariables(article[skyPlacementArticlePath(article, facts.motion)], facts, article, [article, ...corpus.content.continuous.filter(row => row.contentKey !== article.contentKey)]).trim()
+    ? fillSkyPlacementArticleVariables(article[skyPlacementArticlePath(article, facts.motion)], facts, article, [article, ...corpus.content.continuous.filter(row => row.contentKey !== article.contentKey), ...(input.zodiacSeasonSources ?? [])]).trim()
     : "";
   const overlays = resolveSkyV4ContextualOverlays(corpus, input.contexts, input.overlaySettings, input.overlaySuppressions);
   const fallbackOverlays = resolveSkyV4ContextualOverlays(
@@ -876,7 +877,7 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook
     ? fallbackOverlays[0]?.FallbackHookOverlay ?? ""
     : "";
-  const ingressAssembly = renderSkyIngressComposition(article, input, article?.ingress ? [article, ...corpus.content.continuous.filter(row => row.contentKey !== article.contentKey)] : []);
+  const ingressAssembly = renderSkyIngressComposition(article, input, article?.ingress ? [article, ...corpus.content.continuous.filter(row => row.contentKey !== article.contentKey), ...(input.zodiacSeasonSources ?? [])] : []);
   const assembled = input.fallbackAvailable !== false && ingressAssembly.status === "ready"
     ? [ingressAssembly.body, input.lunarFallbackBody, fallbackOverlay].filter(Boolean).join("\n\n") : "";
   const evergreen = article && !fullArticle && !assembled && input.fallbackAvailable !== false
@@ -1163,6 +1164,11 @@ export function renderSkyV4StudioPreview(corpus, input) {
     (current, [path, nextValue]) => setValueAt(current, path, nextValue),
     structuredClone(source)
   );
+  if (effective.studio_content_type !== "continuous-placement") {
+    for (const path of allowed) {
+      if (typeof effective[path] === "string") effective[path] = resolveZodiacSeasonVariables(effective[path], { ...effective, ...input }, input.zodiacSeasonSources ?? []);
+    }
+  }
   if (effective.studio_content_type === "continuous-placement") {
     validateSkyEvergreenSections(effective.fallback?.sections);
     validateSkyIngressComposition(effective.ingress);
@@ -1305,13 +1311,13 @@ function matchingPlacementContexts(input) {
  * calculated facts and governed aspect records, but never a Content Studio
  * draft. Selection remains conditional and configuration rows cannot resolve.
  */
-export function createSkyV4ReaderRoute(corpus, lunarContextSource) {
+export function createSkyV4ReaderRoute(corpus, lunarContextSource, zodiacSeasonSources = []) {
   const snapshot = structuredClone(corpus);
   const lunarSnapshot = lunarContextSource ? structuredClone(lunarContextSource) : lunarContextSource;
   // Materializing every Studio row hashes the entire corpus. Do that once per
   // publication snapshot, not twice for every card on every React render.
   preparedReaderRecords.set(snapshot, skyV4ContentStudioRecords(snapshot));
-  return (input) => renderSkyV4ReaderRoute(snapshot, input, lunarSnapshot);
+  return (input) => renderSkyV4ReaderRoute(snapshot, { ...input, zodiacSeasonSources }, lunarSnapshot);
 }
 
 export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
@@ -1395,7 +1401,7 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
     readerParts
   };
   const pushReaderBody = (value, prepend = false) => {
-    const body = withoutUnresolvedSlots(fillFacts(text(value), record(input.facts))).trim();
+    const body = withoutUnresolvedSlots(fillFacts(resolveZodiacSeasonVariables(text(value), { ...source, ...input }, input.zodiacSeasonSources ?? []), record(input.facts))).trim();
     if (body) {
       if (prepend) readerParts.unshift(body);
       else readerParts.push(body);
@@ -1403,8 +1409,8 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   };
   const what = text(source.TLDR_What || source.tldrWhat).trim();
   const takeaway = text(source.TLDR_Takeaway || source.tldrTakeaway || source.TLDR).trim();
-  if (what) readerParts.push(what);
-  if (takeaway) readerParts.push(takeaway);
+  if (what) pushReaderBody(what);
+  if (takeaway) pushReaderBody(takeaway);
   if (route === "placement" && text(input.seasonalContext).trim()) {
     pushReaderBody(input.seasonalContext);
   }

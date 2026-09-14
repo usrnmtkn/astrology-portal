@@ -1,3 +1,4 @@
+import { isZodiacSeasonSourceKey, supportsZodiacSeasonVariables, zodiacSeasonVariableNames, zodiacSeasonRecordDependencies, resolveZodiacSeasonVariables } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { separateArticleHoroscopeRow } from "../../apps/web/src/content/skyArticleHoroscopes.mjs";
 // @ts-ignore Shared import and publication boundary.
 import { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
@@ -439,7 +440,7 @@ function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, 
     || path.startsWith("era_layer.");
 }
 
-function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDraft: Record<string, unknown> | null) {
+function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDraft: Record<string, unknown> | null, seasonSources?: Record<string, any>[]) {
   if (stringFrom(record.source_package) !== skyV4CanonicalStagePackage) return { passed: true, hardFailures: [] as string[] };
   const effective = packageDraft ?? record;
   const fields = Array.isArray(record.studio_editable_fields)
@@ -447,7 +448,8 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
     : [];
   const sections = isRecord(effective.fallback) && Array.isArray(effective.fallback.sections) ? effective.fallback.sections : [];
   const copy = [...fields.map((path) => packageValueAt(effective, path)), ...sections.filter(isRecord).map(section => skyEvergreenSectionText(section))]
-    .filter((value) => typeof value === "string").join("\n\n");
+    .filter((value) => typeof value === "string").map(value => seasonSources ? String(value).replace(/\{\{\s*(zodiacSeason|zodiacSeasonPolarAxis)\s*\}\}/gu, (token, name) =>
+      isRecord(effective.ingress) && isRecord(effective.ingress.sources) && effective.ingress.sources[name] ? token : resolveZodiacSeasonVariables(token, effective, seasonSources)) : value).join("\n\n");
   const hardFailures: string[] = [];
   if (isSkyEvergreenSource(record)) {
     validateSkyIngressComposition(effective.ingress);
@@ -470,7 +472,7 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
   if (/\bright now,? you are\b/iu.test(copy)) hardFailures.push("STP-10 time-adverb trait sentence");
   const hasPlacementBody = !isSkyEvergreenSource(effective) || stringFrom(effective.placementArticle).trim()
     || skyEvergreenFields(effective).some((section: { value: string }) => section.value.trim());
-  if (record.studio_content_type === "continuous-placement" && hasPlacementBody && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
+  if (record.studio_content_type === "continuous-placement" && hasPlacementBody && !(seasonSources === undefined && zodiacSeasonVariableNames(copy).length) && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
     hardFailures.push("STP-03 missing current-sky anchor");
   }
   return { passed: hardFailures.length === 0, hardFailures };
@@ -534,6 +536,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
 
   for (const [field, value, original] of editableFields) {
     if (typeof value !== "string") continue;
+    if (isZodiacSeasonSourceKey(row.content_key) && /\{\{|\}\}/u.test(value)) throw new GeneratedContentRequestError("Season sources contain full prose, without nested variables.");
     const ingressVariableField = isSkyEvergreenSource(record) && /^packageDraft\.ingress\.sources\.[A-Za-z][A-Za-z0-9]*\.text$/u.test(field);
     if (ingressVariableField) {
       const issues = ingressTextIssues(value);
@@ -548,7 +551,8 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       // Canonical article mirrors accept the same tokens as their source.
       const articleField = isSkyPlacementArticleField(row.content_key, field.replace(/^packageDraft\./u, ""))
         || isSkyEvergreenSource(record) && ["body", "body_you"].includes(field);
-      const issues = articleField ? skyPlacementArticleVariableIssues(value, proposedRecord) : skyPlacementVariableIssues(value);
+      const checkedValue = supportsZodiacSeasonVariables(proposedRecord) ? value.replace(/\{\{\s*(?:zodiacSeason|zodiacSeasonPolarAxis)\s*\}\}/gu, "") : value;
+      const issues = articleField ? skyPlacementArticleVariableIssues(value, proposedRecord) : skyPlacementVariableIssues(checkedValue);
       if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
     }
     if (value.includes("—")) {
@@ -574,6 +578,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
       if (skyVariableField || ingressVariableField) continue;
+      if (supportsZodiacSeasonVariables(proposedRecord) && zodiacSeasonVariableNames(slot).length) continue;
       const isAllowedFriendName = (
         row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
         || row.content_key.startsWith("authored/transit-aspect/")
@@ -1696,6 +1701,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
 
   Object.assign(row, normalizeArticleHoroscopes(row));
   assertReaderEligiblePublication(row);
+  await assertZodiacSeasonPublication(row);
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
     method: "POST",
     headers: {
@@ -1840,6 +1846,38 @@ function nextGeneratedContentVersion(previous?: string | null) {
   return new Date(Math.max(Date.now(), Number.isFinite(previousTime) ? previousTime + 1 : 0)).toISOString();
 }
 
+/** Validate shared dependencies against serving revisions, never an editor draft. */
+async function assertZodiacSeasonPublication(row: Record<string, any>) {
+  if (row.status !== "LIVE") return [];
+  const source = v3PackageRecord(row);
+  if (isZodiacSeasonSourceKey(source.contentKey)) {
+    if (!stringFrom(source.body).trim() || /\{\{|\}\}/u.test(stringFrom(source.body))) throw new GeneratedContentRequestError("Write complete season prose before publishing this source. Nested variables are not supported.");
+    return [];
+  }
+  const dependencies = zodiacSeasonRecordDependencies(source);
+  if (!dependencies.length) return [];
+  if (!supportsZodiacSeasonVariables(source)) throw new GeneratedContentRequestError("This template has no supported sign context for zodiac season variables.");
+  const keys = [...new Set(dependencies.map((item: {contentKey: string}) => item.contentKey))];
+  const params = new URLSearchParams({ select: "id,content_key,sections,status,lane,review_state,updated_at", content_key: `in.(${keys.join(",")})`, status: "eq.LIVE", lane: "eq.serving", order: "updated_at.desc", limit: "80" });
+  const publicationParams = new URLSearchParams({ select: "content_key,row_id,row_updated_at,state", content_key: `in.(${keys.join(",")})` });
+  const [response, publications] = await Promise.all([
+    adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, { headers: adminHeaders() }),
+    adminStorageFetch(`${supabaseUrl()}/rest/v1/content_publications?${publicationParams}`, { headers: adminHeaders() })
+  ]);
+  if (!response.ok || !Array.isArray(response.payload) || !publications.ok || !Array.isArray(publications.payload)) throw new GeneratedContentRequestError("Shared season writing could not be verified. The current publication has not changed.");
+  const sources: Record<string, any>[] = [];
+  for (const candidate of response.payload) {
+    const publication = publications.payload.find((item: Record<string, any>) => item.content_key === candidate.content_key);
+    const isPublished = publication?.state === "live" && publication.row_id === candidate.id && publication.row_updated_at === candidate.updated_at;
+    if (isPublished && !candidate.review_state && !sources.some(item => item.contentKey === candidate.content_key)) sources.push(v3PackageRecord(candidate));
+  }
+  for (const dependency of dependencies) {
+    try { resolveZodiacSeasonVariables(`{{${dependency.name}}}`, { sign: dependency.sign }, sources); }
+    catch (error) { throw new GeneratedContentRequestError(error instanceof Error ? error.message : "Publish the required season source first."); }
+  }
+  return sources;
+}
+
 async function patchGeneratedContentRow(
   id: string,
   patch: Record<string, unknown>,
@@ -1850,6 +1888,7 @@ async function patchGeneratedContentRow(
     const existing = await fetchExistingRowById(id);
     if (!existing) throw new GeneratedContentRequestError("The source no longer exists. Reload before publishing.", 404);
     assertReaderEligiblePublication({ ...existing, ...patch });
+    await assertZodiacSeasonPublication({ ...existing, ...patch });
   }
   const params = new URLSearchParams();
   params.set("id", `eq.${id}`);
@@ -2023,6 +2062,7 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
   // Validate the complete batch before the first storage write.
   const prepared = rows.map(generatedContentRowFromWriteBody);
   prepared.forEach(assertReaderEligiblePublication);
+  for (const row of prepared) await assertZodiacSeasonPublication(row);
   const targets = rows.map(generatedContentTargetKey);
   if (new Set(targets).size !== targets.length) throw new GeneratedContentRequestError("Each content key, target date, and mode may appear only once per batch.");
   const existingRows = await fetchExistingRowsByContentKey(rows.map(row => row.contentKey ?? ""));
@@ -2078,7 +2118,7 @@ async function recoverPublishedSkyRevision(existing: ExistingGeneratedContentRow
   const sections = isRecord(body.sections) ? body.sections : {};
   const proposal = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   if (existing.status !== "ARCHIVED" || existing.review_state !== "published-revision"
-    || existing.event_type !== "sky-v4-reader-copy-draft" || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
+    || !["sky-v4-reader-copy-draft", "shared-sign-prose-draft"].includes(existing.event_type ?? "") || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
   validateFallbackArchitectureV3Copy(existing, { sections: body.sections });
   const targetId = stringFrom(existing.source_snapshot?.targetRowId);
   const target = targetId ? await fetchExistingRowById(targetId) : null;
@@ -2159,7 +2199,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error(`Approve & publish revision cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
     }
 
-    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft"].includes(existing.event_type ?? "");
+    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft", "shared-sign-prose-draft"].includes(existing.event_type ?? "");
     const targetRowId = isVersionedReaderDraft ? stringFrom(existing.source_snapshot?.targetRowId) : existing.id;
     if (!targetRowId) throw new Error("This governed revision is missing its live target row.");
     const target = targetRowId === existing.id ? existing : await fetchExistingRowById(targetRowId);
@@ -2225,12 +2265,13 @@ async function updateGeneratedContent(req: IncomingMessage) {
     if (isSkyEvergreenSource(promotedRecord) && Object.hasOwn(packageDraft, "ingress")) {
       promotedRecord.ingress = structuredClone(packageDraft.ingress);
     }
+    const sharedSources = await assertZodiacSeasonPublication({ status: "LIVE", sections: { packageRecord: promotedRecord } });
     if (isSkyEvergreenSource(promotedRecord)) {
       const composition = isRecord(promotedRecord.ingress) ? promotedRecord.ingress : {};
       const references = Object.values(isRecord(composition.sources) ? composition.sources : {}).filter(isRecord)
         .map(source => isRecord(source.reference) ? stringFrom(source.reference.contentKey) : "").filter(Boolean);
       const keys = [...new Set(references)].filter(key => key !== promotedRecord.contentKey);
-      const referencedRecords: Record<string, unknown>[] = [promotedRecord];
+      const referencedRecords: Record<string, unknown>[] = [promotedRecord, ...sharedSources];
       if (keys.length) {
         const params = new URLSearchParams({ select: "content_key,sections,status,lane", content_key: `in.(${keys.join(",")})`, status: "eq.LIVE", lane: "eq.serving", limit: "80" });
         const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, { headers: adminHeaders() });
@@ -2288,7 +2329,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
     finalSections.dashboardEditHistory = history;
     if (canonicalRevision) {
-      const validation = validateSkyV4TransitPovCopy(promotedRecord, null);
+      const validation = validateSkyV4TransitPovCopy(promotedRecord, null, sharedSources);
       if (!validation.passed) throw new Error(`SKY V4 POV validation failed: ${validation.hardFailures.join(", ")}.`);
       const approvedRecord = isRecord(finalSections.packageRecord) ? finalSections.packageRecord : {};
       approvedRecord.owner_approved = true;
@@ -2769,18 +2810,20 @@ async function updateGeneratedContent(req: IncomingMessage) {
     && skyV4ServingReleasedReaderCopyKeys.has(existing.content_key)
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft)
   );
-  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft) && existing) {
+  const forksSharedSeasonDraft = Boolean(isPackageRow && existing?.status === "LIVE" && isZodiacSeasonSourceKey(existing.content_key)
+    && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
+  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft || forksSharedSeasonDraft) && existing) {
     const skyV4ReaderDraft = forksSkyV4ServingDraft && !forksGovernedAspectDraft;
     return upsertGeneratedContentRow({
       content_key: existing.content_key,
       surface: existing.surface,
       target_date: existing.target_date,
       mode: "studio-draft",
-      event_type: skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
+      event_type: forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
       block_type: existing.block_type,
       provider: "owner-content-studio",
-      prompt_version: skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
-      reviewer_notes: skyV4ReaderDraft
+      prompt_version: forksSharedSeasonDraft ? "shared-sign-prose-draft-v1" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
+      reviewer_notes: forksSharedSeasonDraft ? "Shared sign prose draft. The published source remains unchanged until this revision is published." : skyV4ReaderDraft
         ? "Versioned reader-copy draft. The approved SKY V4 serving baseline remains LIVE and unchanged."
         : "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",
       knowledge_ids: [],
@@ -2799,6 +2842,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   assertReaderEligiblePublication({ ...existing, ...patch });
+  await assertZodiacSeasonPublication({ ...existing, ...patch });
 
   const updateParams = new URLSearchParams();
   updateParams.set("id", `eq.${body.id}`);

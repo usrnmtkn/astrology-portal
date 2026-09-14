@@ -1,3 +1,228 @@
+// apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs
+var retiredCompositionFamilies = [
+  "cms/personal-transit-aspect/",
+  "fallback-hook/transit-house-event-frame/"
+];
+function isRetiredCompositionKey(key) {
+  return typeof key === "string" && (key === "fallback-template/transit.house-event" || retiredCompositionFamilies.some((prefix) => key.startsWith(prefix)));
+}
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/readerContentBoundary.mjs
+var READER_CONTENT_TYPES = Object.freeze({
+  ASTROLOGY: "astrology",
+  TAROT: "tarot",
+  MIXED: "mixed"
+});
+var READER_COPY_FIELDS = Object.freeze([
+  "headline",
+  "tagline",
+  "title",
+  "body",
+  "body_you",
+  "body_they",
+  "focus",
+  "strategy",
+  "summary",
+  "preview_note",
+  "core_theme",
+  "sign_jurisdiction",
+  "lived_experience",
+  "rulership_twist",
+  "history_echo",
+  "closing_charge"
+]);
+var EXPLICIT_TAROT_REFERENCE = /\b(?:tarot|major\s+arcana|minor\s+arcana)\b/iu;
+var DISTINCTIVE_MAJOR_ARCANA_CARD_NAME = "(?:the\\s+)?(?:chariot|emperor|empress|hierophant|high\\s+priestess|hermit|magician|fool|lovers|devil|hanged\\s+man|wheel\\s+of\\s+fortune|temperance|judg(?:e)?ment)";
+var AMBIGUOUS_MAJOR_ARCANA_CARD_NAME = "(?:Strength|Justice|Death|The\\s+Tower|The\\s+Star|The\\s+Moon|The\\s+Sun|The\\s+World)";
+var MINOR_ARCANA_CARD_NAME = "(?:ace|two|three|four|five|six|seven|eight|nine|ten|page|knight|queen|king)\\s+of\\s+(?:wands|cups|swords|pentacles|coins)";
+var DISTINCTIVE_OR_MINOR_CARD_NAME = `(?:${DISTINCTIVE_MAJOR_ARCANA_CARD_NAME}|${MINOR_ARCANA_CARD_NAME})`;
+var TAROT_CARD_CONTEXT = new RegExp(
+  `(?:\\b${DISTINCTIVE_OR_MINOR_CARD_NAME}\\b[^.!?\\n]{0,80}\\b(?:cards?|arcana|tarot)\\b|\\b(?:cards?|arcana|tarot)\\b[^.!?\\n]{0,80}\\b${DISTINCTIVE_OR_MINOR_CARD_NAME}\\b|\\b(?:corresponds?\\s+to|represented\\s+by|associated\\s+with|symboli[sz]ed\\s+by)\\b[^.!?\\n]{0,80}\\b${DISTINCTIVE_OR_MINOR_CARD_NAME}\\b)`,
+  "iu"
+);
+var AMBIGUOUS_TAROT_CARD_CONTEXT = new RegExp(
+  `(?:\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b[^.!?\\n]{0,24}\\bcard\\b|\\b(?:tarot|arcana)\\b[^.!?\\n]{0,80}\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b|\\bcard\\b[^.!?\\n]{0,24}\\b(?:called|named|is)\\s+${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b|\\b(?:corresponds?\\s+to|represented\\s+by|symboli[sz]ed\\s+by)\\b[^.!?\\n]{0,80}\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b)`,
+  "u"
+);
+function readerCopyStrings(row) {
+  const values = READER_COPY_FIELDS.map((field2) => row?.[field2]).filter((value) => typeof value === "string");
+  for (const section of row?.article_sections ?? []) {
+    if (typeof section?.heading === "string") values.push(section.heading);
+    if (typeof section?.body === "string") values.push(section.body);
+  }
+  for (const entry of row?.rising_horoscopes ?? []) {
+    if (typeof entry?.body === "string") values.push(entry.body);
+  }
+  return values;
+}
+function readerContentType(row) {
+  const declared = String(row?.reader_content_type ?? row?.content_type ?? "").trim().toLowerCase();
+  return Object.values(READER_CONTENT_TYPES).includes(declared) ? declared : null;
+}
+function hasTarotReferenceInReaderCopy(row) {
+  return readerCopyStrings(row).some((value) => EXPLICIT_TAROT_REFERENCE.test(value) || TAROT_CARD_CONTEXT.test(value) || AMBIGUOUS_TAROT_CARD_CONTEXT.test(value));
+}
+function mixedContentHasOwnerApproval(row) {
+  const boundary = row?.content_boundary;
+  const approval = row?.approval;
+  return boundary?.mixedOwnerApproved === true && approval?.approvalLevel === "exact_owner_approved" && typeof approval.recordPath === "string" && approval.recordPath.trim().length > 0 && typeof approval.payloadSha256 === "string" && /^[a-f0-9]{64}$/iu.test(approval.payloadSha256) && typeof approval.approvedAt === "string" && approval.approvedAt.trim().length > 0;
+}
+function readerContentBoundaryReason(row) {
+  const contentType = readerContentType(row);
+  if (!contentType) return null;
+  if (contentType === READER_CONTENT_TYPES.TAROT) return null;
+  if (contentType === READER_CONTENT_TYPES.MIXED) {
+    return mixedContentHasOwnerApproval(row) ? null : "mixed-astrology-tarot-owner-approval-required";
+  }
+  return hasTarotReferenceInReaderCopy(row) ? "tarot-reference-in-astrology-copy" : null;
+}
+function passesReaderContentBoundary(row) {
+  return readerContentBoundaryReason(row) === null;
+}
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs
+var READER_ELIGIBLE_REVIEW_STATUSES = /* @__PURE__ */ new Set([
+  "approved",
+  "approved_reuse",
+  "reviewed"
+]);
+var EXACT_APPROVAL_REQUIRED_PREFIXES = [
+  "authored/transit-",
+  "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-",
+  "authored/lunation-eclipse-section/",
+  "fallback-hook/daily-",
+  "fallback-hook/natal-aspect-lived/",
+  "fallback-hook/synastry-pair/",
+  "daily-glance-variant/"
+];
+var QUARANTINED_CONTENT_KEYS = /* @__PURE__ */ new Set([]);
+var EXACT_SYNASTRY_ASPECTS = /* @__PURE__ */ new Set([
+  "conjunction",
+  "opposition",
+  "square",
+  "trine",
+  "sextile"
+]);
+var GROUPED_SYNASTRY_ASPECTS = /* @__PURE__ */ new Set(["hard", "soft"]);
+var DAILY_CONTINUITY_PREFIXES = ["fallback-hook/daily-", "daily-glance-variant/"];
+function transitReaderTier(row) {
+  if (!String(row?.contentKey ?? "").startsWith("authored/transit-")) return null;
+  if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row?.review_status ?? "").trim().toLowerCase())) {
+    return null;
+  }
+  if (!passesReaderContentBoundary(row)) return null;
+  return hasExactOwnerApproval(row) ? "exact-owner-approved" : "legacy-reviewed";
+}
+function synastryReaderTier(row) {
+  if (!String(row?.contentKey ?? "").startsWith("fallback-hook/synastry-pair/")) return null;
+  if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row?.review_status ?? "").trim().toLowerCase())) {
+    return null;
+  }
+  if (!passesReaderContentBoundary(row)) return null;
+  const aspect = String(row.contentKey).split("/").at(-1) ?? "";
+  if (EXACT_SYNASTRY_ASPECTS.has(aspect) && hasExactOwnerApproval(row)) {
+    return "exact-owner-approved";
+  }
+  if (GROUPED_SYNASTRY_ASPECTS.has(aspect) && hasExactOwnerApproval(row)) {
+    return "owner-approved-grouped";
+  }
+  if (EXACT_SYNASTRY_ASPECTS.has(aspect) || GROUPED_SYNASTRY_ASPECTS.has(aspect)) {
+    return "legacy-reviewed";
+  }
+  return null;
+}
+function hasExactOwnerApproval(row) {
+  const approval = row?.approval;
+  return approval?.approvalLevel === "exact_owner_approved" && typeof approval.recordPath === "string" && approval.recordPath.trim().length > 0 && typeof approval.payloadSha256 === "string" && /^[a-f0-9]{64}$/iu.test(approval.payloadSha256) && typeof approval.approvedAt === "string" && approval.approvedAt.trim().length > 0;
+}
+function requiresExactOwnerApproval(contentKey) {
+  return EXACT_APPROVAL_REQUIRED_PREFIXES.some((prefix) => String(contentKey ?? "").startsWith(prefix));
+}
+function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) {
+  if (isRetiredCompositionKey(row.contentKey)) return false;
+  if (allowUnreviewed) return true;
+  if (QUARANTINED_CONTENT_KEYS.has(row.contentKey)) return false;
+  if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) return false;
+  if (!passesReaderContentBoundary(row)) return false;
+  if (String(row.contentKey).startsWith("fallback-hook/synastry-pair/")) {
+    return synastryReaderTier(row) !== null;
+  }
+  if (String(row.contentKey).startsWith("authored/transit-")) {
+    return transitReaderTier(row) !== null;
+  }
+  if (DAILY_CONTINUITY_PREFIXES.some((prefix) => String(row.contentKey).startsWith(prefix))) {
+    return true;
+  }
+  return !requiresExactOwnerApproval(row.contentKey) || hasExactOwnerApproval(row);
+}
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs
+var ZODIAC_SIGNS = Object.freeze(["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]);
+var ZODIAC_SEASON_VARIABLES = Object.freeze([
+  { id: "zodiacSeason", label: "Zodiac season", family: "zodiac-season", description: "Full editable prose about the selected sign's zodiac season.", kind: "sign", rows: 6, shared: true },
+  { id: "zodiacSeasonPolarAxis", label: "Zodiac season polar axis", family: "zodiac-season-polar-axis", description: "Full editable prose about the selected sign and its opposite sign. This is shared season language, separate from lunation-specific axis copy.", kind: "sign", rows: 6, shared: true }
+]);
+var names = new Set(ZODIAC_SEASON_VARIABLES.map((field2) => field2.id));
+var normalizeSign = (value) => typeof value === "string" && ZODIAC_SIGNS.includes(value.toLowerCase().trim()) ? value.toLowerCase().trim() : "";
+var title = (value) => value[0].toUpperCase() + value.slice(1);
+function zodiacSeasonSourceKey(name, sign) {
+  const field2 = ZODIAC_SEASON_VARIABLES.find((field3) => field3.id === name);
+  const selected = normalizeSign(sign);
+  return field2 && selected ? `fallback-hook/${field2.family}/${selected}` : "";
+}
+function isZodiacSeasonSourceKey(key) {
+  return ZODIAC_SEASON_VARIABLES.some((field2) => ZODIAC_SIGNS.some((sign) => key === zodiacSeasonSourceKey(field2.id, sign)));
+}
+var ZODIAC_SEASON_SOURCE_STARTERS = Object.freeze(ZODIAC_SIGNS.flatMap((sign, index) => ZODIAC_SEASON_VARIABLES.map((field2) => ({
+  contentKey: zodiacSeasonSourceKey(field2.id, sign),
+  content_role: "fallback_hook",
+  grammar_frame: "complete_sentence",
+  headline: `${title(sign)} \xB7 ${field2.label}`,
+  body: "",
+  review_status: "needs_review",
+  sign,
+  oppositeSign: ZODIAC_SIGNS[(index + 6) % ZODIAC_SIGNS.length],
+  source_package: "tldrastro-fallback-architecture-v3",
+  notes: `${field2.description} Saved drafts are not reader copy. Publish the exact wording to update references to this sign.`
+}))));
+function zodiacSeasonVariableNames(value) {
+  return [...new Set([...String(value ?? "").matchAll(/\{\{\s*[#/^]?\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu)].map((match) => match[1]).filter((name) => names.has(name)))];
+}
+function zodiacSeasonContextSign(context = {}) {
+  for (const value of [context.sign, context.signTitle, context.Sign, context.SubjectSign, context.signA, context.signATitle]) {
+    const sign = normalizeSign(value);
+    if (sign) return sign;
+  }
+  const parts = String(context.contentKey ?? "").split(/[/-]/u);
+  return parts.find((part) => ZODIAC_SIGNS.includes(part)) ?? "";
+}
+function zodiacSeasonSourceText(row, { preview = false } = {}) {
+  if (!row || !isZodiacSeasonSourceKey(row.contentKey)) return "";
+  if (!preview && !isGovernedReaderEligible(row)) return "";
+  return typeof row.body === "string" ? row.body.trim() : "";
+}
+function resolveZodiacSeasonVariables(value, context, sourceRows = [], options = {}) {
+  const copy = String(value ?? "");
+  const used = zodiacSeasonVariableNames(copy);
+  if (!used.length) return copy;
+  const sign = zodiacSeasonContextSign(context);
+  if (!sign) throw new Error("ZODIAC_SEASON_SOURCE_GAP: Select a sign before resolving season variables.");
+  const rows = sourceRows instanceof Map ? sourceRows : new Map(sourceRows.map((row) => [row.contentKey, row]));
+  const values = new Map(used.map((name) => {
+    const key = zodiacSeasonSourceKey(name, sign);
+    const body = zodiacSeasonSourceText(rows.get(key), options);
+    if (!body) throw new Error(`ZODIAC_SEASON_SOURCE_GAP: Publish ${name} prose for ${title(sign)} before using {{${name}}}.`);
+    if (/\{\{|\}\}/u.test(body)) throw new Error(`ZODIAC_SEASON_SOURCE_GAP: ${key} must contain complete prose, without nested variables.`);
+    return [name, body];
+  }));
+  return copy.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, (token, name) => values.get(name) ?? token);
+}
+function zodiacSeasonTemplateContext(copy, context, sourceRows = [], options = {}) {
+  const result = { ...context };
+  for (const name of zodiacSeasonVariableNames(copy)) result[name] = resolveZodiacSeasonVariables(`{{${name}}}`, context, sourceRows, options);
+  return result;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/contentIntegrity.mjs
 var SHA256_CONSTANTS = [
   1116352408,
@@ -139,14 +364,14 @@ var SKY_PLACEMENT_VARIABLES = Object.freeze([
   { name: "aspectsWhileRetrogradeCount", description: "Number of calculated exact aspects in the retrograde cycle.", availability: "Calculated full retrograde cycle" },
   { name: "exitDate", description: "Final exit from the sign residency, including year.", availability: "Calculated residency dates; not the retrograde window" }
 ]);
-var names = new Set(SKY_PLACEMENT_VARIABLES.map((variable) => variable.name));
-var title = (value) => String(value ?? "").trim().toLowerCase().split(/[ -]+/u).filter(Boolean).map((word) => word[0].toUpperCase() + word.slice(1)).join(" ");
+var names2 = new Set(SKY_PLACEMENT_VARIABLES.map((variable) => variable.name));
+var title2 = (value) => String(value ?? "").trim().toLowerCase().split(/[ -]+/u).filter(Boolean).map((word) => word[0].toUpperCase() + word.slice(1)).join(" ");
 var tokenPattern = () => /\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu;
 function skyPlacementVariableIssues(value) {
   const copy = String(value ?? "");
   const issues = [];
   const remaining = copy.replace(tokenPattern(), (token, name) => {
-    if (!names.has(name)) issues.push(`Unknown Sky variable ${token}. Use a variable from the Sky variable key.`);
+    if (!names2.has(name)) issues.push(`Unknown Sky variable ${token}. Use a variable from the Sky variable key.`);
     return "";
   });
   if (/\{\{|\}\}/u.test(remaining)) issues.push("Use a complete {{variableName}} token. Conditional blocks and section references are not inline Sky variables.");
@@ -156,8 +381,8 @@ function skyPlacementVariableFacts(input) {
   return {
     ...input.facts ?? {},
     ...skyPlacementAspectVariables(input),
-    planetTitle: title(input.planet),
-    signTitle: title(input.sign),
+    planetTitle: title2(input.planet),
+    signTitle: title2(input.sign),
     motion: input.isRetrograde === true ? "retrograde" : "direct"
   };
 }
@@ -168,7 +393,7 @@ function skyPlacementVariableSegments(value, facts2 = {}) {
   for (const match of copy.matchAll(tokenPattern())) {
     if (match.index > from) segments.push({ text: copy.slice(from, match.index) });
     const [token, name] = match;
-    const available = names.has(name) && Object.hasOwn(facts2, name) && typeof facts2[name] === "string" && facts2[name].trim().length > 0;
+    const available = names2.has(name) && Object.hasOwn(facts2, name) && typeof facts2[name] === "string" && facts2[name].trim().length > 0;
     segments.push({ text: available ? facts2[name] : token, token, name, available });
     from = match.index + token.length;
   }
@@ -185,14 +410,14 @@ function fillSkyPlacementVariables(value, facts2) {
 }
 function skyPlacementAspectVariables(input) {
   const data = input.aspectFacts;
-  if (!data || title(data.planet) !== title(input.planet) || title(data.sign) !== title(input.sign)) return {};
+  if (!data || title2(data.planet) !== title2(input.planet) || title2(data.sign) !== title2(input.sign)) return {};
   const formatDate = (value) => new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: data.timeZone }).format(new Date(value));
   const result = {};
   const add = (name, events) => {
     if (!Array.isArray(events)) return;
-    const unique = [...new Map(events.filter((event) => title(event.planet) === title(input.planet)).map((event) => [event.id, event])).values()].sort((a, b) => a.occursAt.localeCompare(b.occursAt));
+    const unique = [...new Map(events.filter((event) => title2(event.planet) === title2(input.planet)).map((event) => [event.id, event])).values()].sort((a, b) => a.occursAt.localeCompare(b.occursAt));
     result[`${name}Count`] = String(unique.length);
-    result[name] = unique.length ? unique.map((event) => `- ${formatDate(event.occursAt)}: ${title(event.planet)} ${event.aspect} ${title(event.otherPlanet)}`).join("\n") : "No exact major aspects in this calculated window.";
+    result[name] = unique.length ? unique.map((event) => `- ${formatDate(event.occursAt)}: ${title2(event.planet)} ${event.aspect} ${title2(event.otherPlanet)}`).join("\n") : "No exact major aspects in this calculated window.";
   };
   add("aspectsInSign", data.inSign);
   if (data.retrogradeStart && data.retrogradeEnd) {
@@ -231,14 +456,14 @@ var factNames = new Set([...SKY_PLACEMENT_VARIABLES, ...SKY_INGRESS_VARIABLES].m
 var identifier = (value) => typeof value === "string" && /^[a-zA-Z][a-zA-Z0-9-]{0,63}$/u.test(value) && !["constructor", "prototype", "__proto__"].includes(value);
 var object = (value) => value && typeof value === "object" && !Array.isArray(value);
 var tokens = (value) => [...String(value).matchAll(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu)];
-var title2 = (value) => String(value ?? "").split(/[- ]/u).map((part) => part[0]?.toUpperCase() + part.slice(1).toLowerCase()).join(" ");
+var title3 = (value) => String(value ?? "").split(/[- ]/u).map((part) => part[0]?.toUpperCase() + part.slice(1).toLowerCase()).join(" ");
 var fail = (message) => {
   throw new Error(`SKY_V5_COMPOSITION: ${message}`);
 };
 var exactKeys = (value, keys) => object(value) && Object.keys(value).every((key) => keys.includes(key));
 var dateValue = (value) => typeof value === "string" && Number.isFinite(Date.parse(value)) ? Date.parse(value) : NaN;
 function makeSkyIngressComposition() {
-  const module = (id, label, names2, required2 = false, extra = {}) => ({ id, label, required: required2, enabled: true, motion: "all", duration: "all", timing: "all", template: names2.map((name) => `{{${name}}}`).join(" "), ...extra });
+  const module = (id, label, names3, required2 = false, extra = {}) => ({ id, label, required: required2, enabled: true, motion: "all", duration: "all", timing: "all", template: names3.map((name) => `{{${name}}}`).join(" "), ...extra });
   return {
     version: SKY_INGRESS_VERSION,
     enabled: false,
@@ -264,8 +489,8 @@ function makeSkyIngressComposition() {
 }
 function ingressTextIssues(text2, sourceNames = []) {
   if (typeof text2 !== "string") return ["Writing must be text."];
-  const names2 = /* @__PURE__ */ new Set([...factNames, ...sourceNames]);
-  const issues = tokens(text2).filter((match) => !names2.has(match[1])).map((match) => `Unknown ingress slot ${match[0]}.`);
+  const names3 = /* @__PURE__ */ new Set([...factNames, ...sourceNames]);
+  const issues = tokens(text2).filter((match) => !names3.has(match[1])).map((match) => `Unknown ingress slot ${match[0]}.`);
   if (/\{\{|\}\}/u.test(text2.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, ""))) issues.push("Use complete {{name}} tokens; conditional blocks and nested references are not supported.");
   return [...new Set(issues)];
 }
@@ -288,7 +513,7 @@ function validateSkyIngressComposition(value) {
   for (const module of value.modules) {
     if (!exactKeys(module, ["id", "label", "template", "required", "enabled", "motion", "duration", "timing", "aspect"]) || !identifier(module.id) || ids.has(module.id) || typeof module.label !== "string" || module.label.length > 120 || typeof module.template !== "string" || module.template.length > 2e4 || typeof module.required !== "boolean" || typeof module.enabled !== "boolean" || !["all", "direct", "retrograde"].includes(module.motion) || !["all", "short", "long"].includes(module.duration) || !["all", "single_pass", "first_pass", "return_pass", "final_pass"].includes(module.timing)) fail("Each module needs a unique ID, template, and valid selection rules.");
     ids.add(module.id);
-    const issues = ingressTextIssues(module.template, Object.keys(value.sources));
+    const issues = ingressTextIssues(module.template, [...Object.keys(value.sources), ...ZODIAC_SEASON_VARIABLES.map((field2) => field2.id)]);
     if (issues.length) fail(`${module.label}: ${issues.join(" ")}`);
     if (module.aspect !== void 0 && (!exactKeys(module.aspect, ["otherPlanet", "type", "weight"]) || !/^(sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|lilith)$/u.test(module.aspect.otherPlanet) || !["conjunction", "sextile", "square", "trine", "opposition"].includes(module.aspect.type) || !["defining", "supporting", "minor"].includes(module.aspect.weight))) fail(`${module.label}: invalid aspect selection.`);
   }
@@ -300,6 +525,14 @@ function ingressSourceAt(record2, field2) {
 function resolveIngressSource(owner, id, records = []) {
   const source = owner.ingress?.sources?.[id];
   const localRef = `${owner.contentKey}#ingress.sources.${id}`;
+  if (!source && ZODIAC_SEASON_VARIABLES.some((field2) => field2.id === id)) {
+    const reference2 = `${zodiacSeasonSourceKey(id, zodiacSeasonContextSign(owner))}#body`;
+    try {
+      return { reference: reference2, kind: "sign", text: resolveZodiacSeasonVariables(`{{${id}}}`, owner, records) };
+    } catch (error) {
+      return { reference: reference2, kind: "sign", reason: error.message };
+    }
+  }
   if (!source) return { reference: localRef, reason: "Source missing" };
   if (!source.reference) return { reference: localRef, text: source.text, kind: source.kind, sha256: sha256Text(source.text) };
   const ref = source.reference;
@@ -322,7 +555,7 @@ function skyIngressOccurrence(input = {}) {
   const selectedAt = dateValue(occurrence.asOfDate);
   const index = passes.findIndex((pass2) => dateValue(pass2.entryDate) <= selectedAt && selectedAt < dateValue(pass2.exitDate));
   const pass = passes[index];
-  const aspectIdentity = title2(input.aspectFacts?.planet) === title2(input.planet) && title2(input.aspectFacts?.sign) === title2(input.sign);
+  const aspectIdentity = title3(input.aspectFacts?.planet) === title3(input.planet) && title3(input.aspectFacts?.sign) === title3(input.sign);
   const events = aspectIdentity ? input.aspectFacts?.inSign : void 0;
   if (!pass) return { facts: facts2, duration: "unknown", timing: "unknown", events, timeZone };
   facts2.passEntryDate = format(pass.entryDate);
@@ -334,7 +567,7 @@ function skyIngressOccurrence(input = {}) {
   if (passes[index + 1]) facts2.returnDate = format(passes[index + 1].entryDate);
   if (pass.entryMotion === "direct") facts2.ingressVerb = index ? "re-enters" : "enters";
   else if (pass.entryMotion === "retrograde") facts2.ingressVerb = "moves back into";
-  if (pass.previousSign) facts2.previousSignTitle = title2(pass.previousSign);
+  if (pass.previousSign) facts2.previousSignTitle = title3(pass.previousSign);
   return {
     facts: facts2,
     duration: (dateValue(passes.at(-1).exitDate) - dateValue(passes[0].entryDate)) / 864e5 >= 90 ? "long" : "short",
@@ -370,7 +603,7 @@ function renderSkyIngressComposition(owner, input = {}, records = [], options = 
     }
     for (const event of selected) {
       const facts2 = { ...occurrence.facts };
-      if (event) Object.assign(facts2, { aspectPlanetTitle: title2(event.otherPlanet), aspectType: type(event.aspect), aspectVerb: { conjunction: "conjoins", sextile: "sextiles", square: "squares", trine: "trines", opposition: "opposes" }[type(event.aspect)], aspectExactDate: new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: occurrence.timeZone ?? "UTC" }).format(new Date(event.occursAt)) });
+      if (event) Object.assign(facts2, { aspectPlanetTitle: title3(event.otherPlanet), aspectType: type(event.aspect), aspectVerb: { conjunction: "conjoins", sextile: "sextiles", square: "squares", trine: "trines", opposition: "opposes" }[type(event.aspect)], aspectExactDate: new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: occurrence.timeZone ?? "UTC" }).format(new Date(event.occursAt)) });
       const slots = [];
       const values = {};
       for (const match of tokens(module.template)) {
@@ -389,7 +622,7 @@ function renderSkyIngressComposition(owner, input = {}, records = [], options = 
       const result = fillText(module.template, values);
       const missing = slots.filter((slot) => slot.reason);
       const incomplete = missing.length > 0 || !result.text.trim();
-      if (incomplete && module.required) requiredGap = true;
+      if (incomplete && (module.required || missing.some((slot) => ZODIAC_SEASON_VARIABLES.some((field2) => field2.id === slot.name)))) requiredGap = true;
       trace.push({ id: module.id, eventId: event?.id, label: module.label, template: module.template, status: incomplete ? "omitted" : "included", reason: incomplete ? `${module.required ? "Required module incomplete" : "Optional module omitted"}: ${missing.map((slot) => slot.name).join(", ") || "empty template"}` : "Selected by this composition", text: result.text, slots });
     }
   }
@@ -410,15 +643,6 @@ function skyIngressPublicationIssues(owner, records = []) {
     }
   }
   return [...new Set(issues)];
-}
-
-// apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs
-var retiredCompositionFamilies = [
-  "cms/personal-transit-aspect/",
-  "fallback-hook/transit-house-event-frame/"
-];
-function isRetiredCompositionKey(key) {
-  return typeof key === "string" && (key === "fallback-template/transit.house-event" || retiredCompositionFamilies.some((prefix) => key.startsWith(prefix)));
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/publicationGuard.mjs
@@ -452,10 +676,10 @@ var OPPOSITE_SIGN = { aries: "libra", taurus: "scorpio", gemini: "sagittarius", 
 var ASPECT_GROUP = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
 var ANGLE_TITLE = { ascendant: "Ascendant", midheaven: "Midheaven", descendant: "Descendant", "imum-coeli": "IC" };
 var ORD = { 1: "1st", 2: "2nd", 3: "3rd" };
-var title3 = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
+var title4 = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
 var ordinal = (n) => ORD[n] ?? `${n}th`;
 var fixArticles = (t) => t.replace(/\b(a|A) (?!(?:one|once|uni|use|usu|eu))([aeiouAEIOU])/g, (_, art, ch) => `${art === "A" ? "An" : "an"} ${ch}`);
-function mustache(body, ctx) {
+function baseMustache(body, ctx) {
   body = body.replace(/\{\{#([\w.]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key, inner) => {
     const v = ctx[key];
     if (!v || Array.isArray(v) && v.length === 0) return "";
@@ -494,6 +718,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
   const hooks = new Map((rowsFile.hookRows ?? []).map((r) => [r.contentKey, r]));
   guardPublicationMap(vocab, assertKey);
   guardPublicationMap(hooks, assertKey);
+  const mustache = (body, ctx) => baseMustache(body, zodiacSeasonTemplateContext(body, ctx, hooks));
   const getVocab = (key, voice = "you", opts2 = {}) => {
     const row = [...vocab.get(key) ?? []].reverse().find((candidate) => opts2.allowUnreviewed || READER_ELIGIBLE.has(candidate.review_status));
     if (!row) return null;
@@ -549,11 +774,13 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     return template;
   };
   const renderTemplate = (template, ctx, gapLabel, voice) => {
+    const raw = voice === "you" ? template.body_you ?? template.body : template.body_they ?? template.body;
+    ctx = zodiacSeasonTemplateContext(raw, ctx, hooks);
     for (const slot of template.requiredSlots ?? []) {
       if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: required slot '${slot}' has no eligible row for ${gapLabel}`);
     }
-    const raw = voice === "you" ? template.body_you ?? template.body : template.body_they ?? template.body;
-    const body = fixArticles(mustache(raw, ctx)).replace(/\s{2,}/g, " ").trim();
+    const rendered = mustache(raw, ctx);
+    const body = zodiacSeasonVariableNames(raw).length ? rendered.trim() : fixArticles(rendered).replace(/\s{2,}/g, " ").trim();
     if (/\{\{|\}\}/.test(body)) throw new RoleViolationError(`Unresolved slots in rendered output: ${body}`);
     return body;
   };
@@ -565,7 +792,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     if (exactCompleteLived) {
       const body = exactCompleteLived.body ?? "";
       return {
-        headline: `${title3(planet)} in ${title3(sign)} in the ${ordinal(house)} house`,
+        headline: `${title4(planet)} in ${title4(sign)} in the ${ordinal(house)} house`,
         parts: [body],
         partKeys: [exactCompleteLived.contentKey],
         body,
@@ -581,10 +808,10 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     const possessive = facts2.voice === "you" ? "Your" : `${facts2.voice}'s`;
     const ctx = {
       possessive,
-      planetTitle: title3(planet),
-      planetRef: needsArticle ? `the ${title3(planet)}` : title3(planet),
-      planetRefCap: needsArticle ? `The ${title3(planet)}` : title3(planet),
-      signTitle: title3(sign),
+      planetTitle: title4(planet),
+      planetRef: needsArticle ? `the ${title4(planet)}` : title4(planet),
+      planetRefCap: needsArticle ? `The ${title4(planet)}` : title4(planet),
+      signTitle: title4(sign),
       planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, opts2),
       planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, opts2),
       planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, opts2),
@@ -624,7 +851,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       const j = getHook(`fallback-hook/node-journey/${planet}`, voice, opts2);
       const oppSign = OPPOSITE_SIGN[sign];
       const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, voice, opts2);
-      ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title3(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
+      ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title4(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
     }
     const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts2) ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
     if (exactSignLived) {
@@ -675,7 +902,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       }
     }
     return {
-      headline: exactHouseLived ? `${title3(planet)} in the ${ordinal(house)} house` : fixArticles(mustache(headlineTemplate.headline ?? "", ctx)),
+      headline: exactHouseLived ? `${title4(planet)} in the ${ordinal(house)} house` : fixArticles(mustache(headlineTemplate.headline ?? "", ctx)),
       parts,
       partKeys,
       body: parts.join("\n\n"),
@@ -686,8 +913,8 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     const voice = facts2.voice === "you" ? "you" : "they";
     const ctx = {
       possessive: facts2.voice === "you" ? "Your" : `${facts2.voice}'s`,
-      angleTitle: ANGLE_TITLE[facts2.angle] ?? title3(facts2.angle),
-      signTitle: title3(facts2.sign),
+      angleTitle: ANGLE_TITLE[facts2.angle] ?? title4(facts2.angle),
+      signTitle: title4(facts2.sign),
       angleIntro: getHook(`fallback-hook/angle-intro/${facts2.angle}`, voice, opts2),
       angleSignSentences: getHook(`fallback-hook/angle-sign/${facts2.angle}/${facts2.sign}`, voice, opts2),
       modifierSentences: []
@@ -708,7 +935,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     if (exactLived) {
       const exactBody = mustache(exactLived.body ?? "", { Name: facts2.voice });
       return {
-        headline: `${title3(facts2.planetA)} ${aspect} ${title3(facts2.planetB)}`,
+        headline: `${title4(facts2.planetA)} ${aspect} ${title4(facts2.planetB)}`,
         parts: [exactBody],
         body: exactBody,
         astroHint: exactLived.astroHint,
@@ -726,8 +953,8 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     }
     const ctx = {
       possessive: facts2.voice === "you" ? "Your" : `${facts2.voice}'s`,
-      planetATitle: title3(facts2.planetA),
-      planetBTitle: title3(facts2.planetB),
+      planetATitle: title4(facts2.planetA),
+      planetBTitle: title4(facts2.planetB),
       aspectName: aspect,
       aspectAdj: getVocab(`fallback-vocab/aspect-adj/${aspect}`, voice, opts2),
       planetACore: getVocab(`fallback-vocab/planet-core/${facts2.planetA}`, voice, opts2),
@@ -807,10 +1034,10 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     const bridgeTemplate = opts2.includeEmptyHouseBridge ? findTemplate(bridgeTemplateKey, opts2) : null;
     const topicM = bridgeTemplate ? getVocab(topicMKey, v, opts2) : null;
     const topicN = house === 1 ? null : bridgeTemplate ? getVocab(topicNKey, v, opts2) : null;
-    const planet = ruler === "sun" || ruler === "moon" ? `the ${title3(ruler)}` : title3(ruler);
+    const planet = ruler === "sun" || ruler === "moon" ? `the ${title4(ruler)}` : title4(ruler);
     const bridge = bridgeTemplate && topicM && (house === 1 || topicN) ? renderTemplate(bridgeTemplate, {
       houseN: ordinal(house),
-      sign: title3(sign),
+      sign: title4(sign),
       planet,
       houseM: ordinal(rulerHouse),
       topicN,
@@ -839,7 +1066,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       const frame = getHook(`fallback-hook/profection-ruler/${ruler}`, v, opts2) ?? getHook(ruler === "sun" || ruler === "moon" ? "fallback-hook/profection-ruler-luminary" : "fallback-hook/profection-ruler", v, opts2);
       if (frame && ruler) {
         const REF = { sun: "the Sun", moon: "the Moon" };
-        const p = mustache(frame, { signTitle: title3(sign), houseOrdinal: ordinal(house), rulerRef: REF[ruler] ?? title3(ruler) });
+        const p = mustache(frame, { signTitle: title4(sign), houseOrdinal: ordinal(house), rulerRef: REF[ruler] ?? title4(ruler) });
         if (!/\{\{/.test(p)) parts.push(p);
       }
     }
@@ -980,12 +1207,12 @@ function fillDailyGlancePersonSlots(bodyThey, slots) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/readerContentBoundary.browser.ts
-var READER_CONTENT_TYPES = Object.freeze({
+var READER_CONTENT_TYPES2 = Object.freeze({
   ASTROLOGY: "astrology",
   TAROT: "tarot",
   MIXED: "mixed"
 });
-var READER_COPY_FIELDS = Object.freeze([
+var READER_COPY_FIELDS2 = Object.freeze([
   "headline",
   "tagline",
   "title",
@@ -1003,21 +1230,21 @@ var READER_COPY_FIELDS = Object.freeze([
   "history_echo",
   "closing_charge"
 ]);
-var EXPLICIT_TAROT_REFERENCE = /\b(?:tarot|major\s+arcana|minor\s+arcana)\b/iu;
-var DISTINCTIVE_MAJOR_ARCANA_CARD_NAME = "(?:the\\s+)?(?:chariot|emperor|empress|hierophant|high\\s+priestess|hermit|magician|fool|lovers|devil|hanged\\s+man|wheel\\s+of\\s+fortune|temperance|judg(?:e)?ment)";
-var AMBIGUOUS_MAJOR_ARCANA_CARD_NAME = "(?:Strength|Justice|Death|The\\s+Tower|The\\s+Star|The\\s+Moon|The\\s+Sun|The\\s+World)";
-var MINOR_ARCANA_CARD_NAME = "(?:ace|two|three|four|five|six|seven|eight|nine|ten|page|knight|queen|king)\\s+of\\s+(?:wands|cups|swords|pentacles|coins)";
-var DISTINCTIVE_OR_MINOR_CARD_NAME = `(?:${DISTINCTIVE_MAJOR_ARCANA_CARD_NAME}|${MINOR_ARCANA_CARD_NAME})`;
-var TAROT_CARD_CONTEXT = new RegExp(
-  `(?:\\b${DISTINCTIVE_OR_MINOR_CARD_NAME}\\b[^.!?\\n]{0,80}\\b(?:cards?|arcana|tarot)\\b|\\b(?:cards?|arcana|tarot)\\b[^.!?\\n]{0,80}\\b${DISTINCTIVE_OR_MINOR_CARD_NAME}\\b|\\b(?:corresponds?\\s+to|represented\\s+by|associated\\s+with|symboli[sz]ed\\s+by)\\b[^.!?\\n]{0,80}\\b${DISTINCTIVE_OR_MINOR_CARD_NAME}\\b)`,
+var EXPLICIT_TAROT_REFERENCE2 = /\b(?:tarot|major\s+arcana|minor\s+arcana)\b/iu;
+var DISTINCTIVE_MAJOR_ARCANA_CARD_NAME2 = "(?:the\\s+)?(?:chariot|emperor|empress|hierophant|high\\s+priestess|hermit|magician|fool|lovers|devil|hanged\\s+man|wheel\\s+of\\s+fortune|temperance|judg(?:e)?ment)";
+var AMBIGUOUS_MAJOR_ARCANA_CARD_NAME2 = "(?:Strength|Justice|Death|The\\s+Tower|The\\s+Star|The\\s+Moon|The\\s+Sun|The\\s+World)";
+var MINOR_ARCANA_CARD_NAME2 = "(?:ace|two|three|four|five|six|seven|eight|nine|ten|page|knight|queen|king)\\s+of\\s+(?:wands|cups|swords|pentacles|coins)";
+var DISTINCTIVE_OR_MINOR_CARD_NAME2 = `(?:${DISTINCTIVE_MAJOR_ARCANA_CARD_NAME2}|${MINOR_ARCANA_CARD_NAME2})`;
+var TAROT_CARD_CONTEXT2 = new RegExp(
+  `(?:\\b${DISTINCTIVE_OR_MINOR_CARD_NAME2}\\b[^.!?\\n]{0,80}\\b(?:cards?|arcana|tarot)\\b|\\b(?:cards?|arcana|tarot)\\b[^.!?\\n]{0,80}\\b${DISTINCTIVE_OR_MINOR_CARD_NAME2}\\b|\\b(?:corresponds?\\s+to|represented\\s+by|associated\\s+with|symboli[sz]ed\\s+by)\\b[^.!?\\n]{0,80}\\b${DISTINCTIVE_OR_MINOR_CARD_NAME2}\\b)`,
   "iu"
 );
-var AMBIGUOUS_TAROT_CARD_CONTEXT = new RegExp(
-  `(?:\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b[^.!?\\n]{0,24}\\bcard\\b|\\b(?:tarot|arcana)\\b[^.!?\\n]{0,80}\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b|\\bcard\\b[^.!?\\n]{0,24}\\b(?:called|named|is)\\s+${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b|\\b(?:corresponds?\\s+to|represented\\s+by|symboli[sz]ed\\s+by)\\b[^.!?\\n]{0,80}\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b)`,
+var AMBIGUOUS_TAROT_CARD_CONTEXT2 = new RegExp(
+  `(?:\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME2}\\b[^.!?\\n]{0,24}\\bcard\\b|\\b(?:tarot|arcana)\\b[^.!?\\n]{0,80}\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME2}\\b|\\bcard\\b[^.!?\\n]{0,24}\\b(?:called|named|is)\\s+${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME2}\\b|\\b(?:corresponds?\\s+to|represented\\s+by|symboli[sz]ed\\s+by)\\b[^.!?\\n]{0,80}\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME2}\\b)`,
   "u"
 );
-function readerCopyStrings(row) {
-  const values = READER_COPY_FIELDS.map((field2) => row[field2]).filter((value) => typeof value === "string");
+function readerCopyStrings2(row) {
+  const values = READER_COPY_FIELDS2.map((field2) => row[field2]).filter((value) => typeof value === "string");
   for (const section of row.article_sections ?? []) {
     if (typeof section?.heading === "string") values.push(section.heading);
     if (typeof section?.body === "string") values.push(section.body);
@@ -1027,38 +1254,38 @@ function readerCopyStrings(row) {
   }
   return values;
 }
-function readerContentType(row) {
+function readerContentType2(row) {
   const declared = String(row.reader_content_type ?? row.content_type ?? "").trim().toLowerCase();
-  return Object.values(READER_CONTENT_TYPES).includes(declared) ? declared : null;
+  return Object.values(READER_CONTENT_TYPES2).includes(declared) ? declared : null;
 }
-function hasTarotReferenceInReaderCopy(row) {
-  return readerCopyStrings(row).some((value) => EXPLICIT_TAROT_REFERENCE.test(value) || TAROT_CARD_CONTEXT.test(value) || AMBIGUOUS_TAROT_CARD_CONTEXT.test(value));
+function hasTarotReferenceInReaderCopy2(row) {
+  return readerCopyStrings2(row).some((value) => EXPLICIT_TAROT_REFERENCE2.test(value) || TAROT_CARD_CONTEXT2.test(value) || AMBIGUOUS_TAROT_CARD_CONTEXT2.test(value));
 }
-function mixedContentHasOwnerApproval(row) {
+function mixedContentHasOwnerApproval2(row) {
   const boundary = row.content_boundary;
   const approval = row.approval;
   return boundary?.mixedOwnerApproved === true && approval?.approvalLevel === "exact_owner_approved" && typeof approval.recordPath === "string" && approval.recordPath.trim().length > 0 && typeof approval.payloadSha256 === "string" && /^[a-f0-9]{64}$/iu.test(approval.payloadSha256) && typeof approval.approvedAt === "string" && approval.approvedAt.trim().length > 0;
 }
-function readerContentBoundaryReason(row) {
-  const contentType = readerContentType(row);
+function readerContentBoundaryReason2(row) {
+  const contentType = readerContentType2(row);
   if (!contentType) return null;
-  if (contentType === READER_CONTENT_TYPES.TAROT) return null;
-  if (contentType === READER_CONTENT_TYPES.MIXED) {
-    return mixedContentHasOwnerApproval(row) ? null : "mixed-astrology-tarot-owner-approval-required";
+  if (contentType === READER_CONTENT_TYPES2.TAROT) return null;
+  if (contentType === READER_CONTENT_TYPES2.MIXED) {
+    return mixedContentHasOwnerApproval2(row) ? null : "mixed-astrology-tarot-owner-approval-required";
   }
-  return hasTarotReferenceInReaderCopy(row) ? "tarot-reference-in-astrology-copy" : null;
+  return hasTarotReferenceInReaderCopy2(row) ? "tarot-reference-in-astrology-copy" : null;
 }
-function passesReaderContentBoundary(row) {
-  return readerContentBoundaryReason(row) === null;
+function passesReaderContentBoundary2(row) {
+  return readerContentBoundaryReason2(row) === null;
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts
-var READER_ELIGIBLE_REVIEW_STATUSES = /* @__PURE__ */ new Set([
+var READER_ELIGIBLE_REVIEW_STATUSES2 = /* @__PURE__ */ new Set([
   "approved",
   "approved_reuse",
   "reviewed"
 ]);
-var EXACT_APPROVAL_REQUIRED_PREFIXES = [
+var EXACT_APPROVAL_REQUIRED_PREFIXES2 = [
   "authored/transit-",
   "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-",
   "authored/lunation-eclipse-section/",
@@ -1067,67 +1294,67 @@ var EXACT_APPROVAL_REQUIRED_PREFIXES = [
   "fallback-hook/synastry-pair/",
   "daily-glance-variant/"
 ];
-var QUARANTINED_CONTENT_KEYS = /* @__PURE__ */ new Set([]);
-var EXACT_SYNASTRY_ASPECTS = /* @__PURE__ */ new Set([
+var QUARANTINED_CONTENT_KEYS2 = /* @__PURE__ */ new Set([]);
+var EXACT_SYNASTRY_ASPECTS2 = /* @__PURE__ */ new Set([
   "conjunction",
   "opposition",
   "square",
   "trine",
   "sextile"
 ]);
-var GROUPED_SYNASTRY_ASPECTS = /* @__PURE__ */ new Set(["hard", "soft"]);
-var DAILY_CONTINUITY_PREFIXES = ["fallback-hook/daily-", "daily-glance-variant/"];
-function transitReaderTier(row) {
+var GROUPED_SYNASTRY_ASPECTS2 = /* @__PURE__ */ new Set(["hard", "soft"]);
+var DAILY_CONTINUITY_PREFIXES2 = ["fallback-hook/daily-", "daily-glance-variant/"];
+function transitReaderTier2(row) {
   if (!row.contentKey.startsWith("authored/transit-")) return null;
-  if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
+  if (!READER_ELIGIBLE_REVIEW_STATUSES2.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return null;
   }
-  if (!passesReaderContentBoundary(row)) return null;
-  return hasExactOwnerApproval(row) ? "exact-owner-approved" : "legacy-reviewed";
+  if (!passesReaderContentBoundary2(row)) return null;
+  return hasExactOwnerApproval2(row) ? "exact-owner-approved" : "legacy-reviewed";
 }
-function synastryReaderTier(row) {
+function synastryReaderTier2(row) {
   if (!row.contentKey.startsWith("fallback-hook/synastry-pair/")) return null;
-  if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
+  if (!READER_ELIGIBLE_REVIEW_STATUSES2.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return null;
   }
-  if (!passesReaderContentBoundary(row)) return null;
+  if (!passesReaderContentBoundary2(row)) return null;
   const aspect = row.contentKey.split("/").at(-1) ?? "";
-  if (EXACT_SYNASTRY_ASPECTS.has(aspect) && hasExactOwnerApproval(row)) {
+  if (EXACT_SYNASTRY_ASPECTS2.has(aspect) && hasExactOwnerApproval2(row)) {
     return "exact-owner-approved";
   }
-  if (GROUPED_SYNASTRY_ASPECTS.has(aspect) && hasExactOwnerApproval(row)) {
+  if (GROUPED_SYNASTRY_ASPECTS2.has(aspect) && hasExactOwnerApproval2(row)) {
     return "owner-approved-grouped";
   }
-  if (EXACT_SYNASTRY_ASPECTS.has(aspect) || GROUPED_SYNASTRY_ASPECTS.has(aspect)) {
+  if (EXACT_SYNASTRY_ASPECTS2.has(aspect) || GROUPED_SYNASTRY_ASPECTS2.has(aspect)) {
     return "legacy-reviewed";
   }
   return null;
 }
-function hasExactOwnerApproval(row) {
+function hasExactOwnerApproval2(row) {
   const approval = row.approval;
   return approval?.approvalLevel === "exact_owner_approved" && typeof approval.recordPath === "string" && approval.recordPath.trim().length > 0 && typeof approval.payloadSha256 === "string" && /^[a-f0-9]{64}$/iu.test(approval.payloadSha256) && typeof approval.approvedAt === "string" && approval.approvedAt.trim().length > 0;
 }
-function requiresExactOwnerApproval(contentKey) {
-  return EXACT_APPROVAL_REQUIRED_PREFIXES.some((prefix) => contentKey.startsWith(prefix));
+function requiresExactOwnerApproval2(contentKey) {
+  return EXACT_APPROVAL_REQUIRED_PREFIXES2.some((prefix) => contentKey.startsWith(prefix));
 }
-function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) {
+function isGovernedReaderEligible2(row, { allowUnreviewed = false } = {}) {
   if (isRetiredCompositionKey(row.contentKey)) return false;
   if (allowUnreviewed) return true;
-  if (QUARANTINED_CONTENT_KEYS.has(row.contentKey)) return false;
-  if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
+  if (QUARANTINED_CONTENT_KEYS2.has(row.contentKey)) return false;
+  if (!READER_ELIGIBLE_REVIEW_STATUSES2.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return false;
   }
-  if (!passesReaderContentBoundary(row)) return false;
+  if (!passesReaderContentBoundary2(row)) return false;
   if (row.contentKey.startsWith("fallback-hook/synastry-pair/")) {
-    return synastryReaderTier(row) !== null;
+    return synastryReaderTier2(row) !== null;
   }
   if (row.contentKey.startsWith("authored/transit-")) {
-    return transitReaderTier(row) !== null;
+    return transitReaderTier2(row) !== null;
   }
-  if (DAILY_CONTINUITY_PREFIXES.some((prefix) => row.contentKey.startsWith(prefix))) {
+  if (DAILY_CONTINUITY_PREFIXES2.some((prefix) => row.contentKey.startsWith(prefix))) {
     return true;
   }
-  return !requiresExactOwnerApproval(row.contentKey) || hasExactOwnerApproval(row);
+  return !requiresExactOwnerApproval2(row.contentKey) || hasExactOwnerApproval2(row);
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/lunationNormalization.mjs
@@ -1178,7 +1405,7 @@ function skyPlacementKeyDates({
     if (!isVerifiedInsidePass || !stationSign) continue;
     keyDates.push({
       date: station.occursAt,
-      label: `${title4(planet)} stations ${station.direction} in ${title4(stationSign)}`,
+      label: `${title5(planet)} stations ${station.direction} in ${title5(stationSign)}`,
       event: `station-${station.direction}`
     });
   }
@@ -1211,7 +1438,7 @@ function selectDailyGlanceVariantSet({
 }) {
   const fallback = { id: "primary", ...primary };
   if (!variantSet || variantSet.pairing_policy !== "explicit_pairs_only") return fallback;
-  const eligible = (kind, item) => isGovernedReaderEligible({
+  const eligible = (kind, item) => isGovernedReaderEligible2({
     ...item,
     contentKey: `daily-glance-variant/${contentKey}/${kind}/${item.id}`
   }, { allowUnreviewed });
@@ -1238,7 +1465,7 @@ var WINDOW_HOUSE = { moon: "For the next couple of days", sun: "This month", mer
 var WINDOW_RETRO = { mercury: "For about three weeks", venus: "For about six weeks", mars: "For the next couple of months", jupiter: "For about four months", saturn: "For about four and a half months", uranus: "For about five months", neptune: "For about five months", pluto: "For about five months", chiron: "For about five months" };
 var ORD2 = { 1: "1st", 2: "2nd", 3: "3rd" };
 var ordinal2 = (n) => ORD2[n] ?? `${n}th`;
-var title4 = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
+var title5 = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
 function localizedLunationDateParts(exactAt, timeZone, label) {
   const date = new Date(exactAt);
   if (!Number.isFinite(date.getTime())) {
@@ -1262,7 +1489,7 @@ function localizedLunationDateParts(exactAt, timeZone, label) {
   }
 }
 var NEEDS_ARTICLE = /* @__PURE__ */ new Set(["sun", "moon", "north-node", "south-node"]);
-var transitRef = (planet, sign) => `${NEEDS_ARTICLE.has(planet) ? "the " : ""}${title4(planet)}${sign ? ` in ${title4(sign)}` : ""}`;
+var transitRef = (planet, sign) => `${NEEDS_ARTICLE.has(planet) ? "the " : ""}${title5(planet)}${sign ? ` in ${title5(sign)}` : ""}`;
 var fill = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(/\s{2,}/g, " ").trim();
 var READER_HOLDER_VERBS = new Map(Object.entries({
   is: "are",
@@ -1423,7 +1650,7 @@ function eligibleRowsByKey(rows, allowUnreviewed) {
   return new Map(
     [...candidates].map(([key, keyed]) => [
       key,
-      [...keyed].reverse().find((candidate) => isGovernedReaderEligible(candidate, { allowUnreviewed }))
+      [...keyed].reverse().find((candidate) => isGovernedReaderEligible2(candidate, { allowUnreviewed }))
     ]).filter((entry) => Boolean(entry[1]))
   );
 }
@@ -1435,6 +1662,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
   const vocab = eligibleRowsByKey(rowsFile.vocabularyRows, allowUnreviewed);
   const hooks = eligibleRowsByKey(rowsFile.hookRows ?? [], allowUnreviewed);
   for (const map of [cards, vocab, hooks]) guardPublicationMap(map, assertKey);
+  const fill2 = (body, ctx) => resolveZodiacSeasonVariables(body, ctx, hooks).replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(zodiacSeasonVariableNames(body).length ? /$^/g : /\s{2,}/g, " ").trim();
   function renderSkyPlacementHouseCore({ planet, sign, house }) {
     const normalizedPlanet = String(planet ?? "").trim().toLowerCase();
     const normalizedSign = String(sign ?? "").trim().toLowerCase();
@@ -1647,7 +1875,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
         );
       }
       return {
-        risingSign: title4(entry.rising_sign),
+        risingSign: title5(entry.rising_sign),
         body: articleSlotFill(entry.body, {
           house,
           houseOrdinal: ordinal2(house)
@@ -1674,9 +1902,9 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     sourceKeys: [c.contentKey],
     templateKey,
     contentKey: c.contentKey,
-    provenanceTier: transitReaderTier(c) ?? void 0
+    provenanceTier: transitReaderTier2(c) ?? void 0
   });
-  const fillKeep = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] != null ? String(ctx[k]) : `{{${k}}}`).trim();
+  const fillKeep = (body, ctx) => resolveZodiacSeasonVariables(body, ctx, hooks).replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] != null ? String(ctx[k]) : `{{${k}}}`).trim();
   function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant, events, isRetrograde }) {
     const v = voice === "you" ? "you" : "they";
     if (sign) {
@@ -1688,7 +1916,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
         const nameCtx = { Name: v === "they" ? voice : "" };
         const parts = [fillKeep(pick(intro), nameCtx), fillKeep(pick(synth), nameCtx)];
         const partSourceKeys = [[intro.contentKey], [synth.contentKey]];
-        const headline = v === "you" ? `${title4(planet)} moving through your ${ordinal2(house)} house` : `${title4(planet)} moving through ${voice}'s ${ordinal2(house)} house`;
+        const headline = v === "you" ? `${title5(planet)} moving through your ${ordinal2(house)} house` : `${title5(planet)} moving through ${voice}'s ${ordinal2(house)} house`;
         if (isRetrograde) {
           const retroKey = `fallback-hook/transit-house-retro-overlay/${planet}`;
           const ro = hookVoice(retroKey, v);
@@ -1735,17 +1963,18 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     const effectRaw = hookVoice(`fallback-hook/transit-effect-house/${planet}`, v);
     const ctx = {
       timeOpen: win ?? WINDOW_HOUSE[planet] ?? "Currently",
-      transitTitle: title4(planet),
+      signTitle: sign ? title5(sign) : null,
+      transitTitle: title5(planet),
       transitRef: transitRef(planet, sign),
       houseOrdinal: ordinal2(house),
       houseTopic,
       otherPoss: v === "they" ? `${voice}'s` : null,
       // what this planet DOES to that area of life, not just that it is visiting
-      houseEffect: effectRaw && houseTopic ? fill(effectRaw, { houseTopic }) : null
+      houseEffect: effectRaw && houseTopic ? fill2(effectRaw, { houseTopic }) : null
     };
     for (const slot of T.requiredSlots ?? []) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: transit-house ${planet}/${house} (no card, fallback slot ${slot} missing)`);
-    const body = fill(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
-    return { headline: fill((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
+    const body = fill2(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
+    return { headline: fill2((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
   function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, isRetrograde, window: win, voice = "you" }) {
     const v = voice === "you" ? "you" : "they";
@@ -1812,7 +2041,7 @@ ${insBody}`;
 ${fogNote}`;
           }
         }
-        const authoredHeadline = v === "you" ? c.headline || "" : `${title4(transiting)} ${aspect} ${voice}'s ${title4(natal)}`;
+        const authoredHeadline = v === "you" ? c.headline || "" : `${title5(transiting)} ${aspect} ${voice}'s ${title5(natal)}`;
         const passHook2 = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
         if (passHook2) {
           contributions2.push({ text: passHook2, keys: [`fallback-hook/transit-pass/${pass}`], start: aBody.length });
@@ -1820,7 +2049,7 @@ ${fogNote}`;
 
 ${passHook2}`;
         }
-        return { ...passageSources(aBody, contributions2, (key) => passageSource(card(key) ?? hooks.get(key), v), v === "you" && c.headline ? [passageSource(c, v, "headline")] : []), headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier(c) ?? void 0 };
+        return { ...passageSources(aBody, contributions2, (key) => passageSource(card(key) ?? hooks.get(key), v), v === "you" && c.headline ? [passageSource(c, v, "headline")] : []), headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier2(c) ?? void 0 };
       }
     }
     const T = tpl("fallback-template/transit.aspect");
@@ -1830,26 +2059,27 @@ ${passHook2}`;
     const effectRaw = hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/${natal}`, v) ?? (variant ? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}/variant-${variant}`, v) : null) ?? hookVoice(`fallback-hook/transit-effect-${effectFamily}/${transiting}`, v);
     const natalCoreVal = hookVoice(`fallback-hook/natal-core/${natal}`, v) ?? vocab.get(`fallback-vocab/planet-core/${natal}`)?.body;
     const transitEffectArea = ANGLES.has(natal) ? natalCoreVal : natalArea;
-    const transitEffect = effectRaw && transitEffectArea ? fill(effectRaw, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" }) : null;
+    const transitEffect = effectRaw && transitEffectArea ? fill2(effectRaw, { natalArea: transitEffectArea, Name: v === "they" ? voice : "" }) : null;
     const ctx = {
       timeOpen: win ?? WINDOW_ASPECT[transiting] ?? "Currently",
-      transitTitle: title4(transiting),
+      signTitle: sign ? title5(sign) : null,
+      transitTitle: title5(transiting),
       transitRef: transitRef(transiting, sign),
-      natalTitle: title4(natal),
+      natalTitle: title5(natal),
       aspectName: aspect,
       aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
       transitTopic: vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body,
       aspectVerb: (() => {
         const f = vocab.get(`fallback-vocab/aspect-verb/${aspect}`)?.body;
         const tt = vocab.get(`fallback-vocab/planet-topic/${transiting}`)?.body;
-        return f && tt && natalCoreVal ? fill(f, { transitTopic: tt, natalCore: natalCoreVal }) : null;
+        return f && tt && natalCoreVal ? fill2(f, { transitTopic: tt, natalCore: natalCoreVal }) : null;
       })(),
       // voice-aware natal target ("your mind", "how you meet the world"); friend view uses body_they
       natalCore: natalCoreVal,
       otherPoss,
       timeInline: inlineWindow(win ?? WINDOW_ASPECT[transiting] ?? "currently"),
       transitEffectLine: transitEffect ? `${transitEffect.charAt(0).toUpperCase()}${transitEffect.slice(1).replace(/\.$/, "")}.` : null,
-      transitTypeLine: typeLineRaw ? fill(typeLineRaw, { natalArea, transitEffect }) : typeLineRaw
+      transitTypeLine: typeLineRaw ? fill2(typeLineRaw, { natalArea, transitEffect }) : typeLineRaw
     };
     for (const slot of T.requiredSlots ?? []) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: transit-aspect ${transiting}/${natal}/${g} (no card, fallback slot ${slot} missing)`);
     const AVERB = { conjunction: "sitting right on", square: "squaring", opposition: "opposing", trine: "trining", sextile: "sextiling" };
@@ -1883,7 +2113,7 @@ ${passHook2}`;
       body = `${ctx.transitEffectLine} ${mechanics}`;
       sourceKeys = effectSources;
     } else {
-      body = fill(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
+      body = fill2(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
       const templateBody = v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body;
       const natalCoreKey = firstHookKey([`fallback-hook/natal-core/${natal}`]) ?? `fallback-vocab/planet-core/${natal}`;
       const typeSources = [
@@ -1910,7 +2140,7 @@ ${passHook2}`;
     if (isRetrograde && v === "you") {
       const retroLine = hooks.get("fallback-hook/transit-retro-aspect")?.body_you;
       if (retroLine) {
-        const text2 = fill(retroLine, ctx);
+        const text2 = fill2(retroLine, ctx);
         contributions.push({ text: text2, keys: ["fallback-hook/transit-retro-aspect"], start: body.length });
         body = `${body} ${text2}`;
       }
@@ -1922,7 +2152,7 @@ ${passHook2}`;
 
 ${passHook}`;
     }
-    return { headline: fill((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey, ...passageSources(body, contributions, sourceFor, [passageSource(T, v, v === "they" && T.headline_they != null ? "headline_they" : "headline")]) };
+    return { headline: fill2((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey, ...passageSources(body, contributions, sourceFor, [passageSource(T, v, v === "they" && T.headline_they != null ? "headline_they" : "headline")]) };
   }
   function renderTransitRetro({ planet, sign, window: win, format }) {
     if (format === "article") {
@@ -1930,7 +2160,7 @@ ${passHook}`;
       if (ca) return result(ca, "authored/transit-retro-article");
       const T2 = tpl("fallback-template/transit.retrograde-article");
       const row = hooks.get(`fallback-hook/transit-retro-article/${planet}`);
-      const articleBody = row?.body_you ? fill(row.body_you, { timeOpen: win ?? WINDOW_RETRO[planet], transitRef: transitRef(planet, sign) }) : null;
+      const articleBody = row?.body_you ? fill2(row.body_you, { timeOpen: win ?? WINDOW_RETRO[planet], transitRef: transitRef(planet, sign) }) : null;
       if (articleBody == null) throw new SourceGapError(`SOURCE_GAP: retrograde article ${planet}`);
       return { headline: row?.headline ?? "", body: articleBody, parts: [articleBody], templateKey: T2.contentKey };
     }
@@ -1939,13 +2169,14 @@ ${passHook}`;
     const T = tpl("fallback-template/transit.retrograde");
     const ctx = {
       timeOpen: win ?? WINDOW_RETRO[planet],
-      transitTitle: title4(planet),
+      signTitle: sign ? title5(sign) : null,
+      transitTitle: title5(planet),
       transitRef: transitRef(planet, sign),
       retroMeaning: hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you
     };
     for (const slot of T.requiredSlots ?? []) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: retrograde ${planet} (slot ${slot} missing; Sun/Moon/nodes have no retrograde copy by design)`);
-    const body = fill(T.body, ctx);
-    return { headline: fill(T.headline ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
+    const body = fill2(T.body, ctx);
+    return { headline: fill2(T.headline ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
   function renderTransitLabel({ transiting, natal, aspect, window: win }) {
     const g = GROUP[aspect] ?? aspect;
@@ -1953,7 +2184,7 @@ ${passHook}`;
     const noun = vocab.get(`fallback-vocab/transit-label-noun/${natal}`)?.body;
     if (!noun) throw new SourceGapError(`SOURCE_GAP: no label noun for ${natal}`);
     return {
-      label: `${title4(transiting)} ${verb} ${noun}`,
+      label: `${title5(transiting)} ${verb} ${noun}`,
       noun,
       window: win ?? WINDOW_ASPECT[transiting] ?? "Currently"
     };
@@ -1976,17 +2207,17 @@ ${passHook}`;
     const T = tpl(signA === signB ? "fallback-template/compat.same-sign" : "fallback-template/compat.cross-sign");
     const ctx = {
       compatDomain: domain,
-      planetTitle: title4(planet),
-      signATitle: title4(signA),
-      signBTitle: title4(signB),
+      planetTitle: title5(planet),
+      signATitle: title5(signA),
+      signBTitle: title5(signB),
       otherName,
       readerBlock,
       friendBlock,
       elementPattern
     };
     for (const slot of T.requiredSlots ?? []) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: compat ${planet}/${signA}/${signB} (fallback slot ${slot} missing)`);
-    const body = sub(fill(T.body, ctx));
-    return { headline: sub(fill(T.headline ?? "", ctx)), body, parts: [body], templateKey: T.contentKey };
+    const body = sub(fill2(T.body, ctx));
+    return { headline: sub(fill2(T.headline ?? "", ctx)), body, parts: [body], templateKey: T.contentKey };
   }
   function renderSynastryAspect({
     planetA,
@@ -2006,7 +2237,7 @@ ${passHook}`;
     const fwd = exactFwd ?? groupedFwd;
     const rev = exactRev ?? groupedRev;
     const pairRow = fwd ?? rev;
-    const selectionTier = pairRow ? synastryReaderTier(pairRow) : null;
+    const selectionTier = pairRow ? synastryReaderTier2(pairRow) : null;
     const otherSubject = otherPronouns?.subject?.trim() || "they";
     const otherObject = otherPronouns?.object?.trim() || "them";
     const otherPossessive = otherPronouns?.possessive?.trim() || "their";
@@ -2017,8 +2248,8 @@ ${passHook}`;
     if (pairSentences) {
       const headlinePair = (T.headline ?? "").replace(/\{\{([\w.]+)\}\}/g, (_, k) => ({
         possessive: "Your",
-        planetATitle: title4(planetA),
-        planetBTitle: title4(planetB),
+        planetATitle: title5(planetA),
+        planetBTitle: title5(planetB),
         aspectAdj: { conjunction: "conjunct", opposition: "opposite" }[aspect] ?? aspect,
         otherName
       })[k] ?? "");
@@ -2044,7 +2275,7 @@ ${passHook}`;
     const raw = hooks.get(`fallback-hook/transit-effect-${family}/${slower}`)?.body_you;
     const area = areaOverride ?? vocab.get(`fallback-vocab/planet-topic/${faster}`)?.body;
     if (!raw || !area) return null;
-    const eff = fill(raw, { natalArea: area });
+    const eff = fill2(raw, { natalArea: area });
     return eff.charAt(0).toLowerCase() + eff.slice(1) + ".";
   }
   function reviewedSkyAspectRow({ a, b, aspect, aSign, bSign }) {
@@ -2076,7 +2307,7 @@ ${passHook}`;
       aTopic: ev.a ? vocab.get(`fallback-vocab/planet-topic/${ev.a}`)?.body : null,
       bTopic: ev.b ? vocab.get(`fallback-vocab/planet-topic/${ev.b}`)?.body : null,
       aspectAdj: ev.aspect ? vocab.get(`fallback-vocab/aspect-adj/${ev.aspect}`)?.body : null,
-      signTitle: ev.sign ? title4(ev.sign) : null,
+      signTitle: ev.sign ? title5(ev.sign) : null,
       signNeed: ev.sign ? vocab.get(`fallback-vocab/sign-need/${ev.sign}`)?.body : null,
       signTrap: ev.sign ? hooks.get(`fallback-hook/sky-sign-trap/${ev.sign}`)?.body_you : null,
       houseAOrdinal: ev.houseA ? ordinal2(ev.houseA) : null,
@@ -2103,12 +2334,12 @@ ${passHook}`;
       const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect ?? ""] ?? ev.aspect}` : ev.type;
       const frame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
       if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
-      const body = fill(frame, eventCtx(ev));
+      const body = fill2(frame, eventCtx(ev));
       if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-event ${type} missing facts (${body})`);
       paras.push(body);
     }
     paras.push(shadow, close);
-    return { headline: `${title4(sign)} Season`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.season-article" };
+    return { headline: `${title5(sign)} Season`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.season-article" };
   }
   function renderSkyLunation({ kind, sign, dateLine, mechanics, events = [], northSign, southSign, variant }) {
     const OPP = { aries: "libra", taurus: "scorpio", gemini: "sagittarius", cancer: "capricorn", leo: "aquarius", virgo: "pisces", libra: "aries", scorpio: "taurus", sagittarius: "gemini", capricorn: "cancer", aquarius: "leo", pisces: "virgo" };
@@ -2125,14 +2356,14 @@ ${passHook}`;
     const macro = card(`authored/sky-lunation-macro/${macroKind}/${sign}`);
     const paras = [];
     if (macro?.body) paras.push(macro.body);
-    paras.push(fill(opener, { dateLine, signTitle: title4(sign) }) + (mechanics ? ` ${mechanics}` : ""));
+    paras.push(fill2(opener, { dateLine, signTitle: title5(sign) }) + (mechanics ? ` ${mechanics}` : ""));
     if (isEclipse) {
       const ecOpen = hooks.get(`fallback-hook/sky-eclipse-opener/${which === "new" ? "solar" : "lunar"}`)?.body_you;
       if (ecOpen) paras.push(ecOpen);
     }
-    if (which === "full" && axisRow) paras.push(`A Full Moon happens when the Moon sits directly opposite the Sun. Right now that means the Moon in ${title4(sign)} facing the Sun in ${title4(opp)}. This is ${axisRow.axis_name}: ${axisRow.body_you} An opposition asks you to balance its two ends, and when the balance cannot be found, it marks an ending.`);
+    if (which === "full" && axisRow) paras.push(`A Full Moon happens when the Moon sits directly opposite the Sun. Right now that means the Moon in ${title5(sign)} facing the Sun in ${title5(opp)}. This is ${axisRow.axis_name}: ${axisRow.body_you} An opposition asks you to balance its two ends, and when the balance cannot be found, it marks an ending.`);
     paras.push(lore);
-    paras.push(`The ${title4(sign)} trap runs strong under this Moon: ${trap}`);
+    paras.push(`The ${title5(sign)} trap runs strong under this Moon: ${trap}`);
     const moonKind = which === "full" ? "fullmoon" : "newmoon";
     const authored = (variant ? card(`authored/sky-${moonKind}/${sign}-${variant}`) : null) ?? (isEclipse ? card(`authored/sky-eclipse/${which === "new" ? "solar" : "lunar"}-${sign}`) : null) ?? card(`authored/sky-${moonKind}/${sign}`);
     const signMoon = hooks.get(`fallback-hook/sky-${moonKind}-sign/${sign}`);
@@ -2149,19 +2380,19 @@ ${passHook}`;
     }
     if (isEclipse && northSign && southSign) {
       const nodeRow = hooks.get("fallback-hook/sky-eclipse-node")?.body_you;
-      if (nodeRow) paras.push(fill(nodeRow, { northTitle: title4(northSign), southTitle: title4(southSign) }));
+      if (nodeRow) paras.push(fill2(nodeRow, { northTitle: title5(northSign), southTitle: title5(southSign) }));
     }
     for (const ev of events) {
       const isAspect = ev.type === "aspect" || ev.type === "moon-aspect" || ev.type === "sun-aspect";
       const type = isAspect ? `${ev.a === "sun" || ev.type === "sun-aspect" ? "sun-aspect" : "moon-aspect"}-${GROUP[ev.aspect ?? ""] ?? ev.aspect}` : ev.type;
       const frame = hooks.get(`fallback-hook/sky-event/${type}`)?.body_you;
       if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-event frame ${type}`);
-      paras.push(fill(frame, eventCtx(isAspect ? { ...ev, a: ev.a ?? "moon" } : ev)));
+      paras.push(fill2(frame, eventCtx(isAspect ? { ...ev, a: ev.a ?? "moon" } : ev)));
     }
     paras.push(...tail);
     if (isEclipse) paras.push(close);
     const label = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
-    return { headline: `${label} in ${title4(sign)}`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-article" };
+    return { headline: `${label} in ${title5(sign)}`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-article" };
   }
   function renderSkyHoroscope({ risingSign, events = [] }) {
     const MAP = { "full-moon": "lunation-full", "new-moon": "lunation-new", "eclipse-lunar": "eclipse", "eclipse-solar": "eclipse" };
@@ -2170,11 +2401,11 @@ ${passHook}`;
       const type = ev.type === "aspect" ? `aspect-${GROUP[ev.aspect ?? ""] ?? ev.aspect}` : MAP[ev.type] ?? ev.type;
       const frame = hooks.get(`fallback-hook/sky-horoscope/${type}`)?.body_you;
       if (!frame) throw new SourceGapError(`SOURCE_GAP: sky-horoscope frame ${type}`);
-      const body = fill(frame, eventCtx(ev));
+      const body = fill2(frame, eventCtx(ev));
       if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: sky-horoscope ${type} missing facts (${body})`);
       paras.push(body);
     }
-    return { headline: `${title4(risingSign)} & ${title4(risingSign)} Rising`, body: paras.join(" "), parts: paras, templateKey: "fallback-template/sky.season-horoscope" };
+    return { headline: `${title5(risingSign)} & ${title5(risingSign)} Rising`, body: paras.join(" "), parts: paras, templateKey: "fallback-template/sky.season-horoscope" };
   }
   const SKY_PLACEMENT_ASPECT_FRAME = {
     conjunction: (aRef, bRef, timing) => `${aRef} meets ${bRef}${timing.exact ? `, exact on ${timing.label}` : ` ${timing.label}`}.`,
@@ -2197,8 +2428,8 @@ ${passHook}`;
     if (fullMoonSpecific) {
       if (!sunSign || !ev.exactDate) throw new SourceGapError("SOURCE_GAP: sky placement Full Moon facts");
       const fullMoonBody = fillKeep(fullMoonSpecific, {
-        moonSignTitle: title4(moonSign),
-        sunSignTitle: title4(sunSign),
+        moonSignTitle: title5(moonSign),
+        sunSignTitle: title5(sunSign),
         exactDate: ev.exactDate
       });
       if (/\{\{/.test(fullMoonBody)) throw new SourceGapError("SOURCE_GAP: sky placement Full Moon slots");
@@ -2327,8 +2558,8 @@ ${passHook}`;
     const ctx = {
       entryDate: dates.entry.body,
       exitDate: dates.exit.body,
-      signTitle: title4(sign),
-      priorSign: priorSign ? title4(priorSign) : null,
+      signTitle: title5(sign),
+      priorSign: priorSign ? title5(priorSign) : null,
       priorSignEntryDate: priorSignEntryDate ? continuousSkyPlacementDate(priorSignEntryDate, "prior-sign entry").body : null,
       priorSignExitDate: priorSignExitDate ? continuousSkyPlacementDate(priorSignExitDate, "prior-sign exit").body : null,
       previousResidencyEntryDate: previousResidencyEntryDate ? continuousSkyPlacementDate(previousResidencyEntryDate, "previous-residency entry").body : null,
@@ -2413,7 +2644,7 @@ ${passHook}`;
       { kind: "exit-tone-shift", heading: "", body: close }
     ];
     const renderedText = [
-      `${title4(planet)} in ${title4(sign)}`,
+      `${title5(planet)} in ${title5(sign)}`,
       ...parts,
       ...articleSections.map((section) => section.heading)
     ].join("\n");
@@ -2435,7 +2666,7 @@ ${passHook}`;
       }
     }
     return {
-      headline: `${transitRef(planet)} in ${title4(sign)}`.replace(/^the /, "The "),
+      headline: `${transitRef(planet)} in ${title5(sign)}`.replace(/^the /, "The "),
       tagline: primaryHook,
       closingCharge: null,
       keyDates: [],
@@ -2488,7 +2719,7 @@ ${passHook}`;
       throw new SourceGapError(`SOURCE_GAP: Moon sign-entry slots ${planet}/${sign}`);
     }
     return {
-      headline: `${transitRef(planet)} in ${title4(sign)}`.replace(/^the /, "The "),
+      headline: `${transitRef(planet)} in ${title5(sign)}`.replace(/^the /, "The "),
       tagline: null,
       closingCharge: null,
       keyDates: [],
@@ -2564,7 +2795,7 @@ ${passHook}`;
       });
       if (finalArticle) {
         return {
-          headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title4(sign)}`,
+          headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title5(sign)}`,
           tagline: null,
           closingCharge: null,
           keyDates: [],
@@ -2592,7 +2823,7 @@ ${passHook}`;
           closingCharge
         ].filter((part) => Boolean(part));
         return {
-          headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title4(sign)}`,
+          headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title5(sign)}`,
           tagline: null,
           closingCharge,
           keyDates: [],
@@ -2610,7 +2841,7 @@ ${passHook}`;
       }
       const parts = [authoredArticle.body, retrogradeGuidance].filter((part) => Boolean(part));
       return {
-        headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title4(sign)}`,
+        headline: authoredArticle.headline || `${capitalizeSentence(transitRef(planet))} in ${title5(sign)}`,
         tagline: null,
         keyDates: [],
         articleWindow: articleWindow(authoredArticle),
@@ -2682,7 +2913,7 @@ ${passHook}`;
       const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
       if (windowFrame && signStyle && entryDate && exitDate && signParts.length > 0) {
         const ctx = {
-          signTitle: title4(sign),
+          signTitle: title5(sign),
           signStyle,
           entryDate,
           exitDate
@@ -2698,7 +2929,7 @@ ${passHook}`;
           throw new SourceGapError(`SOURCE_GAP: sky placement V3 frame ${planet}/${sign}`);
         }
         return {
-          headline: `${transitRef(planet)} in ${title4(sign)}`.replace(/^the /, "The "),
+          headline: `${transitRef(planet)} in ${title5(sign)}`.replace(/^the /, "The "),
           tagline,
           body: parts.join("\n\n"),
           parts,
@@ -2723,8 +2954,8 @@ ${passHook}`;
     }
     return rendered;
   }
-  function formatCircleNames(names2 = [], includesReader = true) {
-    const clean = names2.map((n) => {
+  function formatCircleNames(names3 = [], includesReader = true) {
+    const clean = names3.map((n) => {
       const s = (n ?? "").toString().trim();
       return s.length >= 2 ? s : "a friend";
     });
@@ -2735,10 +2966,10 @@ ${passHook}`;
     return `${list[0]}, ${list[1]}, and ${list.length - 2} more`;
   }
   function renderCircleStory(f) {
-    const { trigger, names: names2 = [], includesReader = true, members = [] } = f;
-    const namesLine = formatCircleNames(names2, includesReader);
+    const { trigger, names: names3 = [], includesReader = true, members = [] } = f;
+    const namesLine = formatCircleNames(names3, includesReader);
     const namesMid = includesReader ? "you" + namesLine.slice(3) : namesLine;
-    const total = names2.length + (includesReader ? 1 : 0);
+    const total = names3.length + (includesReader ? 1 : 0);
     const row = (k) => hooks.get(`fallback-hook/${k}`);
     const ctx = { names: namesLine, namesMid, allWord: total >= 3 ? "all" : "both" };
     let r, subtitle = null, headline = null;
@@ -2748,33 +2979,33 @@ ${passHook}`;
     } else if (trigger === "lunation") {
       r = row(`circle-lunation/${f.kind}`);
       const label = f.kind === "full" ? "Full Moon" : "New Moon";
-      ctx.lunationRef = f.sign ? `The ${label} in ${title4(f.sign)}` : `The ${label}`;
+      ctx.lunationRef = f.sign ? `The ${label} in ${title5(f.sign)}` : `The ${label}`;
       ctx.dateLine = f.dateLine;
-      subtitle = f.sign ? `${label} in ${title4(f.sign)}` : label;
+      subtitle = f.sign ? `${label} in ${title5(f.sign)}` : label;
     } else if (trigger === "retro") {
       r = row("circle-cycle-retro");
-      ctx.retroRef = `${title4(f.planet ?? "")} retrograde`;
+      ctx.retroRef = `${title5(f.planet ?? "")} retrograde`;
       ctx.window = f.window ?? WINDOW_RETRO[f.planet ?? ""] ?? "For the next few weeks";
-      subtitle = `${title4(f.planet ?? "")} retrograde`;
+      subtitle = `${title5(f.planet ?? "")} retrograde`;
     } else if (trigger === "return") {
       r = row(`circle-cycle-return/${f.planet}`) ?? row("circle-cycle-return/generic");
-      ctx.planetTitle = title4(f.planet ?? "");
+      ctx.planetTitle = title5(f.planet ?? "");
       ctx.planetTopic = vocab.get(`fallback-vocab/planet-topic/${f.planet}`)?.body;
-      subtitle = `${title4(f.planet ?? "")} returns`;
+      subtitle = `${title5(f.planet ?? "")} returns`;
     } else if (trigger === "synastry") {
       r = row(`circle-synastry/${GROUP[f.aspect ?? ""] ?? f.aspect}`);
       ctx.nameA = f.nameA;
       ctx.nameB = f.nameB;
       const adj = vocab.get(`fallback-vocab/aspect-adj/${f.aspect}`)?.body;
       if (f.planetA && f.planetB && adj && f.nameA && f.nameB)
-        headline = `${f.nameA}'s ${title4(f.planetA)} ${adj} ${f.nameB}'s ${title4(f.planetB)}`;
+        headline = `${f.nameA}'s ${title5(f.planetA)} ${adj} ${f.nameB}'s ${title5(f.planetB)}`;
       subtitle = "Chart to chart";
     }
     if (!r) throw new SourceGapError(`SOURCE_GAP: no circle row for trigger ${trigger}`);
-    const body = fill(r.body_you, ctx);
+    const body = fill2(r.body_you, ctx);
     const leftover = body.match(/\{\{([\w.]+)\}\}/);
     if (leftover) throw new SourceGapError(`SOURCE_GAP: circle story ${trigger} missing slot ${leftover[1]}`);
-    const question = r.question ? fill(r.question, ctx) : null;
+    const question = r.question ? fill2(r.question, ctx) : null;
     if (question && /\{\{/.test(question)) throw new SourceGapError(`SOURCE_GAP: circle question ${trigger} has an unfilled slot`);
     headline = headline ?? r.headline ?? "";
     const sections = members.filter((m) => m && m.body).map((m) => {
@@ -2924,13 +3155,13 @@ ${passHook}`;
     }
     const selectedRow = exactRow ?? compactLunationRow ?? signRow;
     const rawBody = exactRow?.body_you ?? compactLunationRow?.body_you ?? String(signRow?.body ?? "");
-    const body = fill(rawBody, { signTitle: title4(normalizedSign) }).replace(/^in \. /, "");
+    const body = fill2(rawBody, { signTitle: title5(normalizedSign) }).replace(/^in \. /, "");
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: phase ${phase} in ${normalizedSign} has an unfilled slot`);
     if (/\b(?:you|your|yours|yourself|you're|you've|you'll|you'd)\b/iu.test(body)) {
       throw new SourceGapError(`SOURCE_GAP: calendar phase ${phase} in ${normalizedSign} violates the collective register`);
     }
     const PHASE_NAMES = { "new-moon": "New Moon", "waxing-crescent": "Waxing Crescent Moon", "first-quarter": "First Quarter Moon", "waxing-gibbous": "Waxing Gibbous Moon", "full-moon": "Full Moon", "disseminating": "Disseminating Moon", "last-quarter": "Last Quarter Moon", "balsamic": "Balsamic Moon" };
-    const plain = `${PHASE_NAMES[phase] ?? title4(phase)} in ${title4(normalizedSign)}`;
+    const plain = `${PHASE_NAMES[phase] ?? title5(phase)} in ${title5(normalizedSign)}`;
     return {
       headline: plain,
       tagline: exactRow?.title ?? phaseRow.title ?? "",
@@ -2945,7 +3176,7 @@ ${passHook}`;
   function renderVoidOfCourse({ sign, nextSign }) {
     const r = hooks.get("fallback-hook/moon-void");
     if (!r) throw new SourceGapError("SOURCE_GAP: no void-of-course row");
-    const body = fill(r.body_you, { signTitle: title4(sign), nextSignTitle: title4(nextSign) });
+    const body = fill2(r.body_you, { signTitle: title5(sign), nextSignTitle: title5(nextSign) });
     if (/\{\{/.test(body)) throw new SourceGapError("SOURCE_GAP: void-of-course facts missing");
     return { headline: "Moon void of course", body, parts: [body], templateKey: "fallback-template/calendar.void", contentKey: r.contentKey };
   }
@@ -2967,13 +3198,14 @@ ${passHook}`;
     const contentKey = [...new Set(candidateKeys)].find((key) => !rejectedOwnerFeedbackKeys.has(key) && Boolean(card(key)));
     const c = contentKey ? card(contentKey) : null;
     if (!c) throw new SourceGapError(`SOURCE_GAP: no weekly moon card for ${sign}`);
-    return { headline: `Weekly Moon: ${title4(sign)}`, body: c.body, focus: c.focus ?? null, strategy: c.strategy ?? null, parts: [c.body], templateKey: "authored/calendar-weekly-moon", contentKey: c.contentKey };
+    const body = resolveZodiacSeasonVariables(c.body, { sign }, hooks);
+    return { headline: `Weekly Moon: ${title5(sign)}`, body, focus: c.focus ?? null, strategy: c.strategy ?? null, parts: [body], templateKey: "authored/calendar-weekly-moon", contentKey: c.contentKey };
   }
   function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
     const reviewed = reviewedSkyAspectRow({ a, b, aspect, aSign, bSign });
     if (reviewed) {
       return {
-        headline: `${title4(a)} ${title4(aspect)} ${title4(b)}`,
+        headline: `${title5(a)} ${title5(aspect)} ${title5(b)}`,
         body: reviewed.body_you,
         parts: [reviewed.body_you],
         templateKey: reviewed.contentKey,
@@ -3019,16 +3251,16 @@ ${passHook}`;
       sextile: "sextile"
     };
     const timeClose = inlineWindow(timeOpen);
-    const endpoint = endpointOwner === "reader" ? `your ${title4(endpointPlanet)}` : `${otherName}'s ${title4(endpointPlanet)}`;
-    const activatedList = endpointOwner === "reader" ? `${otherName}'s ${serialList(activatedPlanets.map(title4))}` : serialList(activatedPlanets.map((planet) => `your ${title4(planet)}`));
+    const endpoint = endpointOwner === "reader" ? `your ${title5(endpointPlanet)}` : `${otherName}'s ${title5(endpointPlanet)}`;
+    const activatedList = endpointOwner === "reader" ? `${otherName}'s ${serialList(activatedPlanets.map(title5))}` : serialList(activatedPlanets.map((planet) => `your ${title5(planet)}`));
     const plural = activatedPlanets.length !== 1;
-    const endpointReference = plural && endpointOwner === "friend" ? `${friendPossessivePronoun || "their"} ${title4(endpointPlanet)}` : "it";
+    const endpointReference = plural && endpointOwner === "friend" ? `${friendPossessivePronoun || "their"} ${title5(endpointPlanet)}` : "it";
     const closing = `${transitRef(transiting, sign).replace(/^./, (char) => char.toUpperCase())} is ${relation[aspect] ?? aspectAdj} ${endpoint}${timeClose ? ` ${timeClose}` : ""}, activating the connection${plural ? "s" : ""} ${endpointReference} makes with ${activatedList}.`;
     const paras = [effect, closing];
     const body = paras.join("\n\n").trim();
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} unresolved slot`);
     const HL = { conjunction: "conjunct", opposition: "opposite" };
-    const headline = `${title4(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
+    const headline = `${title5(transiting)} ${HL[aspect] ?? aspect} ${endpoint}`;
     return { headline, body, parts: paras, templateKey: "fallback-template/bond.transit", contentKey: effectKey };
   }
   const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
@@ -3098,14 +3330,14 @@ ${passHook}`;
       const newMoonLocal = localizedLunationDateParts(matchingNewMoon.exactAt, timeZone, "matching New Moon");
       const crossYear = newMoonLocal.year !== fullMoonLocal.year;
       matchingNewMoonSlotCache = {
-        matchingNewMoonSign: title4(normalizeLunationSign(matchingNewMoon.sign)),
+        matchingNewMoonSign: title5(normalizeLunationSign(matchingNewMoon.sign)),
         matchingNewMoonDate: `${newMoonLocal.month} ${newMoonLocal.day}${crossYear ? `, ${newMoonLocal.year}` : ""}`
       };
       return matchingNewMoonSlotCache;
     };
     const renderStoredBody = (stored) => {
       const needsMatchingNewMoon = /\{\{matchingNewMoon(?:Sign|Date)\}\}/u.test(stored.body ?? "");
-      const renderedBookBody = needsMatchingNewMoon ? fill(stored.body, matchingNewMoonSlots()) : stored.body;
+      const renderedBookBody = needsMatchingNewMoon ? fill2(stored.body, matchingNewMoonSlots()) : stored.body;
       if (/\{\{/u.test(renderedBookBody)) {
         throw new SourceGapError(`SOURCE_GAP: unresolved lunation book slot in ${stored.contentKey}`);
       }
@@ -3202,7 +3434,7 @@ ${passHook}`;
     if (!authoredBodyUsed) {
       const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
       if (!frame || !jurisdiction) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
-      const houseFrame = fill(frame, { houseOrdinal: ordinal2(h), jurisdiction });
+      const houseFrame = fill2(frame, { houseOrdinal: ordinal2(h), jurisdiction });
       const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
       pushPart(opening ? `${opening} ${houseFrame}` : houseFrame, [
         `fallback-hook/lunation-horoscope/${which}`,
@@ -3223,7 +3455,7 @@ ${passHook}`;
       const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
       if (!anchor) throw new SourceGapError("SOURCE_GAP: missing Full Moon cycle anchor");
       try {
-        pushPart(fill(anchor, matchingNewMoonSlots()), ["fallback-hook/lunation-matching-new-moon-anchor/full"]);
+        pushPart(fill2(anchor, matchingNewMoonSlots()), ["fallback-hook/lunation-matching-new-moon-anchor/full"]);
       } catch (error) {
         if (error instanceof SourceGapError && "publicationBlocked" in error) throw error;
         if (!(kind === "eclipse-lunar" && error instanceof SourceGapError)) throw error;
@@ -3258,7 +3490,7 @@ ${passHook}`;
       const rulerHouseBody = hooks.get(`fallback-hook/lunation-ruler-house/${rulerHouse}`)?.body_you;
       if (rulerHouseBody) {
         const lunationLabel = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
-        const rulerTitle = title4(ruler);
+        const rulerTitle = title5(ruler);
         let rulerParagraph = `${rulerTitle} rules this ${lunationLabel} from your ${ordinal2(rulerHouse)} house, so ${rulerHouseBody.replace(/\.+$/u, "")}.`;
         if (rulerRetrograde) {
           const retroOverlay = hooks.get("fallback-hook/lunation-ruler-retro")?.body_you;
@@ -3268,7 +3500,7 @@ ${passHook}`;
               "fallback-hook/lunation-ruler-retro"
             );
           } else {
-            rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
+            rulerParagraph += ` ${fill2(retroOverlay, { rulerTitle })}`;
           }
         }
         pushPart(rulerParagraph, [
@@ -3285,7 +3517,7 @@ ${passHook}`;
     const weekLayer = weekly && !authoredBodyUsed ? hooks.get("fallback-hook/lunation-week-layer")?.body_you : null;
     if (weekLayer) pushPart(weekLayer, ["fallback-hook/lunation-week-layer"]);
     const label = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
-    const headline = isEclipse ? `${title4(sign)} ${label} Horoscope` : bookCell?.headline || `${label} for ${title4(risingSign)} Rising`;
+    const headline = isEclipse ? `${title5(sign)} ${label} Horoscope` : bookCell?.headline || `${label} for ${title5(risingSign)} Rising`;
     if (isEclipse && (partSourceKeys.length !== paras.length || partSourceKeys.some((keys) => keys.length === 0))) {
       throw new SourceGapError(`ECLIPSE_PROVENANCE_MISSING: ${kind}/${sign}/rising-${risingSign}/house-${h}`);
     }
@@ -3800,6 +4032,7 @@ var SKY_WRITING_LIBRARY_GROUPS = [
       field("signDescriptor", "Sign descriptor", "A short identifying phrase used inside another sentence. Example: \u2018a cardinal fire sign\u2019 in \u2018Aries, a cardinal fire sign, tends to move toward what needs to begin.\u2019", "sign", 2),
       field("signCoreDrive", "Core drive", "What the sign needs or keeps trying to establish.", "sign", 4),
       field("signMethod", "Method", "How the sign tends to approach problems, choices, change, or expression.", "sign", 4),
+      ...ZODIAC_SEASON_VARIABLES,
       field("signGift", "Gift", "What the sign tends to do constructively when its method is working.", "sign", 4),
       field("signShadow", "Sign shadow", "Where the sign\u2019s method can become rigid, excessive, avoidant, or counterproductive.", "sign", 4),
       field("signValues", "Values and life themes", "Optional sign themes. This stays empty by default rather than importing a house-shaped list.", "sign", 4)
@@ -3901,9 +4134,9 @@ function skyPlacementArticleVariableIssues(value, owner = {}) {
 }
 function phraseSource(owner, name, records) {
   const source = owner?.ingress?.sources?.[name];
-  if (!source) return { reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
+  if (!source && !phraseFields.get(name)?.shared) return { reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
   const expected = phraseFields.get(name)?.kind;
-  if (!kinds.has(source.kind) || expected && source.kind !== expected) return { reason: `{{${name}}} has the wrong source scope.` };
+  if (source && (!kinds.has(source.kind) || expected && source.kind !== expected)) return { reason: `{{${name}}} has the wrong source scope.` };
   if (!isSkyPlacementArticleField(owner?.contentKey, "placementArticle")) return { reason: "Phrase variables need the selected planet-in-sign source." };
   const resolved = resolveIngressSource(owner, name, records);
   if (resolved.reason) return resolved;
@@ -4582,7 +4815,7 @@ function lower(value) {
 function slug(value) {
   return lower(value).replace(/[\s_]+/gu, "-");
 }
-function title5(value) {
+function title6(value) {
   return text(value).trim().replace(/[-_]+/gu, " ").replace(/\b\w/gu, (match) => match.toUpperCase());
 }
 function record(value) {
@@ -4696,8 +4929,8 @@ function placementLunarContext(source, input) {
     module,
     facts: {
       ...record(input.facts),
-      eventSign: title5(eventSign),
-      oppositeSign: title5(SIGNS[(SIGNS.indexOf(eventSign) + 6) % 12])
+      eventSign: title6(eventSign),
+      oppositeSign: title6(SIGNS[(SIGNS.indexOf(eventSign) + 6) % 12])
     }
   };
 }
@@ -5276,7 +5509,7 @@ function renderSkyV4ContinuousPreview(corpus, input) {
   }
   input = { ...input, contexts: matchingPlacementContexts(input) };
   const facts2 = skyPlacementVariableFacts(input);
-  const fullArticle = article && input.articleAvailable !== false ? fillSkyPlacementArticleVariables(article[skyPlacementArticlePath(article, facts2.motion)], facts2, article, [article, ...corpus.content.continuous.filter((row) => row.contentKey !== article.contentKey)]).trim() : "";
+  const fullArticle = article && input.articleAvailable !== false ? fillSkyPlacementArticleVariables(article[skyPlacementArticlePath(article, facts2.motion)], facts2, article, [article, ...corpus.content.continuous.filter((row) => row.contentKey !== article.contentKey), ...input.zodiacSeasonSources ?? []]).trim() : "";
   const overlays = resolveSkyV4ContextualOverlays(corpus, input.contexts, input.overlaySettings, input.overlaySuppressions);
   const fallbackOverlays = resolveSkyV4ContextualOverlays(
     corpus,
@@ -5286,14 +5519,14 @@ function renderSkyV4ContinuousPreview(corpus, input) {
     "fallback"
   );
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook ? fallbackOverlays[0]?.FallbackHookOverlay ?? "" : "";
-  const ingressAssembly = renderSkyIngressComposition(article, input, article?.ingress ? [article, ...corpus.content.continuous.filter((row) => row.contentKey !== article.contentKey)] : []);
+  const ingressAssembly = renderSkyIngressComposition(article, input, article?.ingress ? [article, ...corpus.content.continuous.filter((row) => row.contentKey !== article.contentKey), ...input.zodiacSeasonSources ?? []] : []);
   const assembled = input.fallbackAvailable !== false && ingressAssembly.status === "ready" ? [ingressAssembly.body, input.lunarFallbackBody, fallbackOverlay].filter(Boolean).join("\n\n") : "";
   const evergreen = article && !fullArticle && !assembled && input.fallbackAvailable !== false ? skyEvergreenFields(article, facts2.motion).map((section) => fillSkyPlacementVariables(section.value, facts2)) : [];
   const fallback = article && !fullArticle && !assembled && input.fallbackAvailable !== false ? [evergreen[0], input.lunarFallbackBody, fallbackOverlay, ...evergreen.slice(1)].filter(Boolean).map((part) => withoutUnresolvedSlots(fillFacts(part, facts2))).filter((part) => part.trim()).join("\n\n") : "";
   const mainBody = fullArticle || assembled || fallback;
   const resolution = fullArticle ? "canonical-article" : assembled ? "ingress-composition" : fallback ? "exact-fallback" : "facts-only";
   const aspects = selectSkyV4Aspects(input.aspects, { subjectBody: input.planet });
-  const blocks = [`# ${title5(input.planet)} in ${title5(input.sign)}`];
+  const blocks = [`# ${title6(input.planet)} in ${title6(input.sign)}`];
   if (text(input.dateLine).trim()) blocks.push(input.dateLine);
   if (mainBody) {
     blocks.push(`## TLDR
@@ -5495,7 +5728,7 @@ function skyV4GovernedAspectStudioRecord(sourceRow) {
   const parts = text(sourceRow.contentKey).split("/");
   if (parts.length !== 7 || parts[0] !== "fallback-hook" || parts[1] !== "sky-aspect-sign") return null;
   const [, , bodyA, signA, aspectType, bodyB, signB] = parts;
-  const headline = `${title5(bodyA)} in ${title5(signA)} ${lower(aspectType)} ${title5(bodyB)} in ${title5(signB)}`;
+  const headline = `${title6(bodyA)} in ${title6(signA)} ${lower(aspectType)} ${title6(bodyB)} in ${title6(signB)}`;
   const baseline = {
     ...structuredClone(sourceRow),
     Headline: headline,
@@ -5594,6 +5827,11 @@ function renderSkyV4StudioPreview(corpus, input) {
     (current, [path, nextValue]) => setValueAt(current, path, nextValue),
     structuredClone(source)
   );
+  if (effective.studio_content_type !== "continuous-placement") {
+    for (const path of allowed) {
+      if (typeof effective[path] === "string") effective[path] = resolveZodiacSeasonVariables(effective[path], { ...effective, ...input }, input.zodiacSeasonSources ?? []);
+    }
+  }
   if (effective.studio_content_type === "continuous-placement") {
     validateSkyEvergreenSections(effective.fallback?.sections);
     validateSkyIngressComposition(effective.ingress);
@@ -5671,7 +5909,7 @@ function renderSkyV4StudioPreview(corpus, input) {
   }
   const facts2 = record(input.facts);
   const body = withoutUnresolvedSlots(fillFacts(studioReaderBody(effective), facts2));
-  const blocks = [`# ${text(effective.headline) || title5(input.contentKey)}`, body];
+  const blocks = [`# ${text(effective.headline) || title6(input.contentKey)}`, body];
   const motionConditions = input.motionConditions ?? [];
   if (motionConditions.length) {
     blocks.push(`## What is shaping this transit now
@@ -5719,11 +5957,11 @@ function placementContentKey(body, sign) {
 function matchingPlacementContexts(input) {
   return (input.contexts ?? []).filter((context) => slug(context.subjectBody) === slug(input.planet) && lower(context.subjectSign) === lower(input.sign));
 }
-function createSkyV4ReaderRoute(corpus, lunarContextSource) {
+function createSkyV4ReaderRoute(corpus, lunarContextSource, zodiacSeasonSources = []) {
   const snapshot = structuredClone(corpus);
   const lunarSnapshot = lunarContextSource ? structuredClone(lunarContextSource) : lunarContextSource;
   preparedReaderRecords.set(snapshot, skyV4ContentStudioRecords(snapshot));
-  return (input) => renderSkyV4ReaderRoute(snapshot, input, lunarSnapshot);
+  return (input) => renderSkyV4ReaderRoute(snapshot, { ...input, zodiacSeasonSources }, lunarSnapshot);
 }
 function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   if (input.draftFields && Object.keys(input.draftFields).length) {
@@ -5812,7 +6050,7 @@ ${lunarFullPageBody}` : "";
     readerParts
   };
   const pushReaderBody = (value, prepend = false) => {
-    const body = withoutUnresolvedSlots(fillFacts(text(value), record(input.facts))).trim();
+    const body = withoutUnresolvedSlots(fillFacts(resolveZodiacSeasonVariables(text(value), { ...source, ...input }, input.zodiacSeasonSources ?? []), record(input.facts))).trim();
     if (body) {
       if (prepend) readerParts.unshift(body);
       else readerParts.push(body);
@@ -5820,8 +6058,8 @@ ${lunarFullPageBody}` : "";
   };
   const what = text(source.TLDR_What || source.tldrWhat).trim();
   const takeaway = text(source.TLDR_Takeaway || source.tldrTakeaway || source.TLDR).trim();
-  if (what) readerParts.push(what);
-  if (takeaway) readerParts.push(takeaway);
+  if (what) pushReaderBody(what);
+  if (takeaway) pushReaderBody(takeaway);
   if (route === "placement" && text(input.seasonalContext).trim()) {
     pushReaderBody(input.seasonalContext);
   }
@@ -5886,7 +6124,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-14b";
+var PACKAGE_VERSION = "v3-2026-09-14c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

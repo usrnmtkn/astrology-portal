@@ -1,0 +1,23 @@
+# Shared zodiac season variables
+
+Content Studio provides `{{zodiacSeason}}` and `{{zodiacSeasonPolarAxis}}` as full editable prose. Each sign owns two shared source rows:
+
+- `fallback-hook/zodiac-season/{sign}`
+- `fallback-hook/zodiac-season-polar-axis/{sign}`
+
+The 24 structural starters are empty, unapproved editor records. This release does not generate or publish astrology prose, change existing templates, or modify approved source wording. The polar-axis source is specific to the current sign's season and its opposite sign; it does not reuse Full Moon axis writing.
+
+In a Placement article, open **Variables → Editable phrase variables → Sign**. Insert keeps the token at the cursor. Edit opens the shared source; Save & return publishes it and restores the parent article, including unsaved changes. Saved drafts remain separate from the live source. The Sign section of the Writing Library also links to these shared sources. The general Variables rail exposes both tokens and all twelve sign sources for supported templates.
+
+Resolution uses the selected sign. Natal planet/node/angle and house-context templates, sign-aware personal transit templates, compatibility same-sign/cross-sign templates, Placement articles and compositions, sign-specific lunar/seasonal Sky sources, and Calendar Moon phase/void/weekly-Moon writing use the same source families. Compatibility uses the reader's primary sign (`signA`), not the friend's sign. Signless templates do not accept these variables. Existing local Writing Library values and explicit same-sign hash-pinned references retain their existing behavior.
+
+Both variables are optional until used. Publication requires a nonempty, approved source with a current live publication for every sign supported by the consuming template. Generic templates therefore require all twelve values for each token they use; a sign-specific article requires only that sign. Missing or retired values fail closed. Shared sources contain full prose without nested tokens. Publishing a shared source releases its approved wording to intentional references; source drafts cannot alter readers. Competing source versions retain exact-version conflict protection.
+
+Verification commands:
+
+- `npm run test:zodiac-season-variables`
+- `npm run test:content-studio-api` (includes the actual shared-source CRUD and publication-to-reader round trip)
+- `npx playwright test --config playwright.sky-article.config.ts`
+- `npm run qa:css-audit`
+
+The resolver is shipped as package `v3-2026-09-14c`. Node, browser-source, shipped-artifact and Studio tests cover all twelve signs, complete paragraphs, missing sources, published revisions, cursor insertion, source editing and return, and saved token preservation. Tests use isolated storage and synthetic prose.

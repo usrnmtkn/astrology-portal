@@ -1,4 +1,5 @@
 import { assertPublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
+import { zodiacSeasonTemplateContext, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
 // TLDR Astro fallback resolver — browser/TypeScript build (v3)
 // Same logic as renderFallback.mjs, with NO Node APIs. The app passes the data in
 // (static JSON imports are inlined by every bundler):
@@ -185,7 +186,7 @@ const fixArticles = (t: string) => t.replace(/\b(a|A) (?!(?:one|once|uni|use|usu
 
 type Ctx = Record<string, string | string[] | null | undefined>;
 
-function mustache(body: string, ctx: Ctx): string {
+function baseMustache(body: string, ctx: Ctx): string {
   body = body.replace(/\{\{#([\w.]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key, inner) => {
     const v = ctx[key];
     if (!v || (Array.isArray(v) && v.length === 0)) return "";
@@ -229,6 +230,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   const hooks = new Map((rowsFile.hookRows ?? []).map((r) => [r.contentKey, r]));
   guardPublicationMap(vocab, assertKey);
   guardPublicationMap(hooks, assertKey);
+  const mustache = (body: string, ctx: Ctx) => baseMustache(body, zodiacSeasonTemplateContext(body, ctx, hooks));
 
   const getVocab = (key: string, voice: "you" | "they" = "you", opts: RenderOpts = {}): string | null => {
     const row = [...(vocab.get(key) ?? [])]
@@ -292,11 +294,13 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     return template;
   };
   const renderTemplate = (template: TemplateRow, ctx: Ctx, gapLabel: string, voice: "you" | "they"): string => {
+    const raw = voice === "you" ? (template.body_you ?? template.body) : (template.body_they ?? template.body);
+    ctx = zodiacSeasonTemplateContext(raw, ctx, hooks);
     for (const slot of template.requiredSlots ?? []) {
       if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: required slot '${slot}' has no eligible row for ${gapLabel}`);
     }
-    const raw = voice === "you" ? (template.body_you ?? template.body) : (template.body_they ?? template.body);
-    const body = fixArticles(mustache(raw, ctx)).replace(/\s{2,}/g, " ").trim();
+    const rendered = mustache(raw, ctx);
+    const body = zodiacSeasonVariableNames(raw).length ? rendered.trim() : fixArticles(rendered).replace(/\s{2,}/g, " ").trim();
     if (/\{\{|\}\}/.test(body)) throw new RoleViolationError(`Unresolved slots in rendered output: ${body}`);
     return body;
   };

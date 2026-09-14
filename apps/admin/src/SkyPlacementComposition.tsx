@@ -1,3 +1,4 @@
+import { zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { StudioTabs, StudioButton } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useMemo, useState, useRef } from "react";
@@ -77,7 +78,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
   const [phraseReferences, setPhraseReferences] = useState<Record<string, any>[]>([]);
   const phraseReferenceKey = JSON.stringify([...new Set(["placementArticle", "placementArticleDirect", "placementArticleRetrograde"]
     .flatMap(path => skyPlacementArticlePhraseNames(phraseRecord?.[path]))
-    .map((name: any) => phraseRecord?.ingress?.sources?.[name]?.reference)
+    .map((name: any) => zodiacSeasonSourceKey(name, current.sign) ? { contentKey: zodiacSeasonSourceKey(name, current.sign) } : phraseRecord?.ingress?.sources?.[name]?.reference)
     .filter(Boolean))]);
   useEffect(() => {
     let active = true;
