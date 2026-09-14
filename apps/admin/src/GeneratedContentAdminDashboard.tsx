@@ -5438,7 +5438,7 @@ export function GeneratedContentAdminDashboard() {
         rememberSavedDraft({
           id: null, contentKey: template.contentKey, surface: "sky", mode: "card", status: "DRAFT",
           headline: template.headline, body: template.body,
-          summary: `${template.description} Use verified calendar facts for dates and timing. Keep writing guidance in this editor-only field and named variables in the template. This is a manual writing reference; automatic population and public Calendar integration are not connected.`,
+          summary: `${template.description} Use verified dates and timing. Keep writing guidance here and named variables in the template.`,
           lane: "reference", reviewState: "EDITORIAL_REVIEW_REQUIRED", blockType: "fallback_template",
           promptVersion: "manual-admin", sections: null, facts: null, reviewerNotes: "",
           sourceSnapshot: { contentType: "template", contentSystem: "fallback", content_role: "template", contentLevel: "source-grounded", authoringSource: "admin-dashboard" }
@@ -5860,36 +5860,18 @@ export function GeneratedContentAdminDashboard() {
                   <Icon size={16} aria-hidden="true" />
                   <span>{item.label}</span>
                 </StudioButton>
-                {item.page === "calendarWriteups" && (
-                  <div className="admin-nav-workspace-group" hidden={activePage !== "calendarWriteups"} aria-label="Calendar Write-ups sections">
-                    {calendarWriteupWorkspaceTabs.map(tab => <StudioButton key={tab.value} type="button"
-                      onClick={() => navigateAdminPage("calendarWriteups", new URLSearchParams({ view: tab.value }))}
-                      aria-current={activePage === "calendarWriteups" && calendarWriteupWorkspaceView === tab.value ? "page" : undefined}>
+                {(item.page === "calendarWriteups" || item.page === "skyWriteups") && (
+                  <div className="admin-nav-workspace-group" hidden={activePage !== item.page}
+                    aria-label={`${item.label} sections`}>
+                    {(item.page === "calendarWriteups" ? calendarWriteupWorkspaceTabs : [
+                      skyWriteupWorkspaceTabs[0],
+                      { value: "transits-to-natal", label: "Transit to Natal Charts" },
+                      skyWriteupWorkspaceTabs[3]
+                    ]).map(tab => <StudioButton key={tab.value} type="button"
+                      onClick={() => navigateAdminPage(item.page, new URLSearchParams({ view: tab.value }))}
+                      aria-current={activePage === item.page && (item.page === "calendarWriteups" ? calendarWriteupWorkspaceView : skyWriteupWorkspaceView) === tab.value ? "page" : undefined}>
                       <span>{tab.label}</span>
                     </StudioButton>)}
-                  </div>
-                )}
-                {item.page === "skyWriteups" && (
-                  <div className="admin-nav-workspace-group" hidden={activePage !== "skyWriteups"} aria-label="Sky Write-ups sections">
-                    <StudioButton type="button"
-                      onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "daily-summary" }))}
-                      aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "daily-summary" ? "page" : undefined}>
-                      <span>Daily Sky Summary</span>
-                    </StudioButton>
-                    <StudioButton
-                      type="button"
-                      onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal" }))}
-                      aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "transits-to-natal" ? "page" : undefined}
-                    >
-                      <span>Transit to Natal Charts</span>
-                    </StudioButton>
-                    <StudioButton
-                      type="button"
-                      onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "house-transits" }))}
-                      aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits" ? "page" : undefined}
-                    >
-                      <span>House Transits</span>
-                    </StudioButton>
                   </div>
                 )}
                 {item.page === "skyWriteups" && (
