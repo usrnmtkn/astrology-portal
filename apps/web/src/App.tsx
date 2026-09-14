@@ -2587,8 +2587,14 @@ function authenticatedLandingMode(currentMode: PortalMode, restoredMode: PortalM
   return "profile";
 }
 
-function unauthenticatedLandingMode(currentMode: PortalMode): PortalMode {
+function unauthenticatedLandingMode(currentMode: PortalMode, hasSavedProfile: boolean): PortalMode {
   const urlMode = portalModeFromUrl();
+
+  // The local Account page remains available while its session reconnects.
+  // Do not leave #account in the address bar while rendering the You page.
+  if (urlMode === "account") {
+    return hasSavedProfile ? "account" : "profile";
+  }
 
   if (urlMode === "friends" || currentMode === "friends") {
     return "friends";
@@ -2610,7 +2616,11 @@ function unauthenticatedLandingMode(currentMode: PortalMode): PortalMode {
     return "guest";
   }
 
-  if (currentMode === "account" || currentMode === "settings") {
+  if (currentMode === "account") {
+    return hasSavedProfile ? "account" : "profile";
+  }
+
+  if (currentMode === "settings") {
     return "profile";
   }
 
@@ -13369,7 +13379,8 @@ export function App() {
       setRemoteProfileReady(false);
       setOwnSocialProfile(null);
       lastRemoteProfileSaveRef.current = "";
-      setMode(unauthenticatedLandingMode);
+      const hasSavedProfile = Boolean(getInitialUserProfile());
+      setMode((currentMode) => unauthenticatedLandingMode(currentMode, hasSavedProfile));
       setAuthAccountChecked(true);
       return;
     }
