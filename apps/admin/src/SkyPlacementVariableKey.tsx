@@ -10,7 +10,10 @@ import {
   skyWritingLibraryInstalled,
   type SkyWritingLibraryComposition
 } from "./skyWritingLibrary";
-import "./sky-variable-key.css";
+// @ts-ignore Same hash/scope checks as the article renderer.
+import { resolveIngressSource } from "../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
+// @ts-ignore Shared source-aware article preview.
+import { skyPlacementArticleVariableSegments } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 // @ts-ignore Shared with the publication validator and reader resolver.
 import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableSegments } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 
@@ -28,13 +31,6 @@ type PhraseSourceContext = {
   onEdit?: (sourceId: string) => void;
 };
 
-function sourceTextAtPath(record: Record<string, any> | undefined, path: string) {
-  if (!record) return "";
-  const value = path.split(".").reduce<any>((current, key) => current && typeof current === "object" ? current[key] : undefined, record);
-  if (typeof value === "string") return value;
-  if (value && typeof value === "object" && typeof value.text === "string") return value.text;
-  return "";
-}
 
 function scopeLabel(kind: string) {
   if (kind === "planet") return "Shared planet language";
@@ -44,17 +40,21 @@ function scopeLabel(kind: string) {
   return "This planet-in-sign placement";
 }
 
-export function SkyVariableText({ value, facts }: { value: string; facts: SkyVariableFacts }) {
-  return <>{skyPlacementVariableSegments(value, facts).map((part: { text: string; token?: string; name?: string; available?: boolean }, index: number) => part.token
-    ? <span key={index} className={`admin-composition-variable ${part.available ? "variable-fact" : "variable-unmapped"}`}
+export function SkyVariableText({ value, facts, source, references = [] }: {
+  value: string; facts: SkyVariableFacts; source?: Record<string, any>; references?: Record<string, any>[];
+}) {
+  const segments = source ? skyPlacementArticleVariableSegments(value, facts, source, references) : skyPlacementVariableSegments(value, facts);
+  return <>{segments.map((part: { text: string; token?: string; name?: string; kind?: string; reason?: string; available?: boolean }, index: number) => part.token
+    ? <span key={index} className={`admin-composition-variable ${!part.available ? "variable-unmapped" : part.kind && part.kind !== "fact" ? phraseClass(part.kind) : "variable-fact"}`}
       data-variable-color={variableColors.get(part.name ?? "")}
-      title={`${part.token}${part.available ? " · calculated value" : " · needs a calculated value"}`}>{part.text}</span>
+      title={`${part.token} · ${part.reason || (part.kind && part.kind !== "fact" ? "Writing Library phrase" : part.available ? "calculated value" : "needs a calculated value")}`}>{part.text}</span>
     : <span key={index}>{part.text}</span>)}</>;
 }
 
-export default function SkyPlacementVariableKey({ facts, onInsert, disabled = false, phraseSource }: {
+export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhrase, disabled = false, phraseSource }: {
   facts: SkyVariableFacts;
   onInsert?: (token: string) => void;
+  onInsertPhrase?: (token: string) => void;
   disabled?: boolean;
   phraseSource?: PhraseSourceContext;
 }) {
@@ -66,6 +66,9 @@ export default function SkyPlacementVariableKey({ facts, onInsert, disabled = fa
   const [phraseError, setPhraseError] = useState("");
   const [phraseInstalled, setPhraseInstalled] = useState(false);
 
+  // Row hydration recreates object identities. Only changed content should
+  // reload phrase values, otherwise the picker can continuously hydrate itself.
+  const phraseSourceRevision = JSON.stringify(phraseSource?.record ?? null);
   useEffect(() => {
     let active = true;
     if (!phraseSource) {
@@ -80,16 +83,15 @@ export default function SkyPlacementVariableKey({ facts, onInsert, disabled = fa
     setPhraseError("");
     void (async () => {
       const loadSource = loadSourceRef.current;
-      const { values: seededValues, provenance: seededProvenance } = await loadSkyWritingLibrarySeeds(
-        phraseSource.record,
-        phraseSource.planet,
-        phraseSource.sign,
-        loadSource
-      );
-      const values = { ...seededValues };
-      const provenance = { ...seededProvenance };
       const rawComposition = phraseSource.record.ingress as SkyWritingLibraryComposition | undefined;
       const installed = skyWritingLibraryInstalled(rawComposition);
+      // Saved local or linked library fields are authoritative, including blanks.
+      // Governed prefill is needed only before a library exists.
+      const seeds = installed ? { values: {}, provenance: {} } : await loadSkyWritingLibrarySeeds(
+        phraseSource.record, phraseSource.planet, phraseSource.sign, loadSource
+      );
+      const values: Record<string, string> = { ...seeds.values };
+      const provenance: Record<string, string> = { ...seeds.provenance };
       const composition = installed && rawComposition ? installSkyWritingLibrary(rawComposition) : rawComposition;
 
       if (installed && composition) {
@@ -109,8 +111,9 @@ export default function SkyPlacementVariableKey({ facts, onInsert, disabled = fa
               }
               linkedRecords.set(source.reference.contentKey, target);
             }
-            values[sourceId] = sourceTextAtPath(target, source.reference.field);
-            provenance[sourceId] = `${source.reference.contentKey}#${source.reference.field}`;
+            const checked = resolveIngressSource({ ...phraseSource.record, ingress: composition }, sourceId, target ? [target] : []);
+            values[sourceId] = checked.reason ? "" : checked.text ?? "";
+            provenance[sourceId] = checked.reason || `${source.reference.contentKey}#${source.reference.field}`;
           } else {
             values[sourceId] = typeof source.text === "string" ? source.text : "";
             provenance[sourceId] = `${phraseSource.record.contentKey ?? "selected placement"}#ingress.sources.${sourceId}`;
@@ -129,7 +132,7 @@ export default function SkyPlacementVariableKey({ facts, onInsert, disabled = fa
       setPhraseLoading(false);
     });
     return () => { active = false; };
-  }, [phraseSource?.planet, phraseSource?.sign, phraseSource?.record]);
+  }, [phraseSource?.planet, phraseSource?.sign, phraseSourceRevision]);
 
   const contextLabel = phraseSource?.label ?? (phraseSource ? `${phraseSource.planet} in ${phraseSource.sign}` : "the selected placement");
 
@@ -149,7 +152,7 @@ export default function SkyPlacementVariableKey({ facts, onInsert, disabled = fa
 
     <details className="admin-workspace-details admin-sky-variable-key" aria-label="Editable phrase variables" open>
       <AdminDisclosureSummary>Editable phrase variables</AdminDisclosureSummary>
-      <p><strong>Current writing for {contextLabel}.</strong> The text shown here is the value the Writing Library will use. Empty optional fields are clearly marked instead of being filled with generic copy.</p>
+      <p><strong>Current writing for {contextLabel}.</strong> Editable phrase variables can be used directly in Placement articles, motion-specific Placement articles, and placement composition templates. Their prose is edited in the Writing Library. Empty fields stay empty until authored.</p>
       {phraseLoading && <p role="status">Loading the current Writing Library values…</p>}
       {phraseError && <p role="alert">{phraseError}</p>}
       {!phraseSource && <p>Choose a planet and sign to load the phrase values.</p>}
@@ -177,6 +180,7 @@ export default function SkyPlacementVariableKey({ facts, onInsert, disabled = fa
                   <p><code>{sourceLabel}</code></p>
                   {!phraseInstalled && currentValue && <p>This is governed prefill text. It becomes an editable placement value when the Writing Library is saved.</p>}
                 </details>
+                {onInsertPhrase && <StudioButton type="button" disabled={disabled} aria-label={`Insert {{${item.id}}}`} onClick={() => onInsertPhrase(`{{${item.id}}}`)}>Insert</StudioButton>}
                 {phraseSource?.onEdit && <StudioButton className="admin-sky-phrase-edit" type="button" disabled={disabled || phraseLoading} onClick={() => phraseSource.onEdit?.(item.id)}>Edit {item.label.toLowerCase()}</StudioButton>}
               </article>;
             })}

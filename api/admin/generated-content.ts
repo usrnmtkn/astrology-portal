@@ -7,6 +7,8 @@ import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArch
 import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 // @ts-ignore Shared inline-variable contract for continuous Sky placement prose.
 import { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
+// @ts-ignore Shared article validation and exact source publication checks.
+import { isSkyPlacementArticleField, skyPlacementArticleVariableIssues, skyPlacementArticlePublicationIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 // @ts-ignore Shared canonical section schema; no database metadata can expand it.
 import { isSkyEvergreenSource, skyEvergreenEditableFields, skyEvergreenFields, skyEvergreenSectionText, skyEvergreenSectionFragments, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
 // @ts-ignore Shared V5 structure and publication checks.
@@ -450,7 +452,10 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
   if (isSkyEvergreenSource(record)) {
     validateSkyIngressComposition(effective.ingress);
     for (const path of ["placementArticle", "placementArticleDirect", "placementArticleRetrograde", "fallback.hook", "fallback.lived", "fallback.turn"]) {
-      hardFailures.push(...skyPlacementVariableIssues(packageValueAt(effective, path)).map((issue: string) => `${path}: ${issue}`));
+      const issues = isSkyPlacementArticleField(record.contentKey, path)
+        ? skyPlacementArticleVariableIssues(packageValueAt(effective, path), effective)
+        : skyPlacementVariableIssues(packageValueAt(effective, path));
+      hardFailures.push(...issues.map((issue: string) => `${path}: ${issue}`));
     }
     for (const section of sections.filter(isRecord)) {
       hardFailures.push(...skyPlacementVariableIssues(skyEvergreenSectionText(section)).map((issue: string) => `Evergreen section ${section.id}: ${issue}`));
@@ -535,7 +540,10 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
         // fields. They must accept the same tokens as their source passage.
         || (isSkyEvergreenSource(record) || /^sky-placement\/retrograde\/[^/]+$/u.test(row.content_key)) && ["body", "body_you"].includes(field));
     if (skyVariableField) {
-      const issues = skyPlacementVariableIssues(value);
+      // Canonical article mirrors accept the same tokens as their source.
+      const articleField = isSkyPlacementArticleField(row.content_key, field.replace(/^packageDraft\./u, ""))
+        || isSkyEvergreenSource(record) && ["body", "body_you"].includes(field);
+      const issues = articleField ? skyPlacementArticleVariableIssues(value, proposedRecord) : skyPlacementVariableIssues(value);
       if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
     }
     if (value.includes("—")) {
@@ -2165,8 +2173,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
     if (isSkyEvergreenSource(promotedRecord) && Object.hasOwn(packageDraft, "ingress")) {
       promotedRecord.ingress = structuredClone(packageDraft.ingress);
     }
-    if (isSkyEvergreenSource(promotedRecord) && isRecord(promotedRecord.ingress)) {
-      const composition = promotedRecord.ingress;
+    if (isSkyEvergreenSource(promotedRecord)) {
+      const composition = isRecord(promotedRecord.ingress) ? promotedRecord.ingress : {};
       const references = Object.values(isRecord(composition.sources) ? composition.sources : {}).filter(isRecord)
         .map(source => isRecord(source.reference) ? stringFrom(source.reference.contentKey) : "").filter(Boolean);
       const keys = [...new Set(references)].filter(key => key !== promotedRecord.contentKey);
@@ -2177,7 +2185,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
         if (!response.ok || !Array.isArray(response.payload)) throw new Error("Referenced writing could not be verified. The current publication has not changed.");
         referencedRecords.push(...response.payload.map((row: ExistingGeneratedContentRow) => v3PackageRecord(row)));
       }
-      const issues = skyIngressPublicationIssues(promotedRecord, referencedRecords);
+      const issues = [
+        ...skyIngressPublicationIssues(promotedRecord, referencedRecords),
+        ...skyPlacementArticlePublicationIssues(promotedRecord, referencedRecords)
+      ];
       if (issues.length) throw new GeneratedContentRequestError(issues.join("\n"));
     }
     if (canonicalRevision) {
