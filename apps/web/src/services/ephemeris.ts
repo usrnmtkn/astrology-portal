@@ -2313,10 +2313,11 @@ function directedAspectResidualsAt(
   firstPlanetId: number,
   secondPlanetId: number,
   date: Date,
-  targetDegrees: number
+  targetDegrees: number,
+  longitudeAt = exactPlanetLongitude
 ) {
   const directed = shortestAngleDistance(
-    exactPlanetLongitude(swe, firstPlanetId, date) - exactPlanetLongitude(swe, secondPlanetId, date)
+    longitudeAt(swe, firstPlanetId, date) - longitudeAt(swe, secondPlanetId, date)
   );
   const residuals = [shortestAngleDistance(directed - targetDegrees)];
   if (targetDegrees !== 0 && targetDegrees !== 180) {
@@ -2333,10 +2334,11 @@ function scanExactAspectPasses(
   start: Date,
   end: Date,
   stepDays: number,
-  branchFilter: number | null = null
+  branchFilter: number | null = null,
+  longitudeAt = exactPlanetLongitude
 ) {
   return scanResidualPasses(
-    (date) => directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, date, targetDegrees),
+    (date) => directedAspectResidualsAt(swe, firstPlanetId, secondPlanetId, date, targetDegrees, longitudeAt),
     start,
     end,
     stepDays,
@@ -3160,6 +3162,21 @@ function findSkyPlacementResidencyAspects(
   const glyphByPlanet = new Map<string, string>(planets.map(([name, glyph]) => [name, glyph]));
   const events: LunarCalendarEvent[] = [];
 
+  // Each aspect scans the same six-hour samples. Reuse exact Swiss results
+  // within this calculation, including shared refinement instants. Keep the
+  // sampling interval and root refinement unchanged; discard samples afterward.
+  const longitudeSamples = new Map<number, Map<number, number>>();
+  const longitudeAt: typeof exactPlanetLongitude = (instance, id, date) => {
+    let samples = longitudeSamples.get(id);
+    if (!samples) longitudeSamples.set(id, samples = new Map());
+    const time = date.getTime();
+    const cached = samples.get(time);
+    if (cached !== undefined) return cached;
+    const value = exactPlanetLongitude(instance, id, date);
+    samples.set(time, value);
+    return value;
+  };
+
   for (const otherPlanet of otherPlanets) {
     const otherPlanetId = skyPointPlanetId(swe, otherPlanet);
     if (otherPlanetId === null) continue;
@@ -3172,7 +3189,9 @@ function findSkyPlacementResidencyAspects(
         planet === "South Node" ? 180 - degrees : degrees,
         start,
         end,
-        0.25
+        0.25,
+        null,
+        longitudeAt
       );
 
       for (const occursAt of passes) {

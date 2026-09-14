@@ -198,3 +198,11 @@ placement reader job. The integrated startup now measures 475,313 gzip bytes,
 63 over the preceding cap; a 250-byte feature allocation covers #807 (475,500
 new cap). Other budgets and accuracy thresholds remain unchanged. Upstream's
 approved Calendar source routing and metadata updates are preserved verbatim.
+
+### Final summary CI diagnosis: repeated long-transit calculations
+
+Head `f08e374a19f4f1aba5844c5934186244fa377c9a` passed all eight real-data preview placement visits and all five summary visits, plus exact-head Content Studio API locally and in GitHub. The summary interaction matrix nevertheless failed at Neptune's article: the full placement-aspect timeline introduced by main #807 exceeded the unchanged 15-second navigation assertion on GitHub runners. Repeated failures exhausted the separate 15-minute summary job. The failure was calculation latency, not billing or a missing runner.
+
+The correction reuses exact Swiss longitude results only within one residency-aspect scan. Every aspect still uses the same six-hour samples, root refinement, full interval and exact event selection; the temporary numeric samples are discarded after the calculation. Publication state, prose selection, shared content caches and calculation accuracy thresholds do not change. A new regression compares every pass timestamp with the uncached scanner for Sun, Neptune and South Node and counts actual Swiss evaluations. Counts fall from 12,270 to 1,598; 275,980 to 35,252; and 152,700 to 19,112 respectively. The complete all-planet timeline/inline-aspect test, typecheck, workflow validation and existing bundle budgets pass. The parity regression runs in placement-reader CI. No test timeout, retry or budget was widened for this correction.
+
+All 14 daily-summary browser cases pass with this correction, including all eight viewport/theme navigation cases. The new calculation-reuse regression fails against unchanged `f08e374a1` (12,282 evaluations versus 12,270 uncached for Sun) and passes against the correction. The prior placement-reader run also recorded Neptune opening failures and exhausted its job time; its artifacts are checked alongside the summary failure before the final rerun.
