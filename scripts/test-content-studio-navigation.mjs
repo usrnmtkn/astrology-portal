@@ -27,7 +27,7 @@ assert.doesNotMatch(
 
 const navigation = source.slice(navigateStart, source.indexOf("  function navigatePrimaryAdminItem", navigateStart));
 assert.match(navigation, /if \(!closeEditor\(\)\) return;/u);
-assert.match(navigation, /applyAdminRouteState\(page, params \?\? new URLSearchParams\(\)\);/u);
-assert.match(navigation, /setAdminHash\(adminHashForPage\(page, params\)\);/u);
+assert.match(navigation, /applyAdminRouteState\(route.page, route.params\);/u);
+assert.match(navigation, /setAdminHash\(adminHashForPage\(route.page, route.params\)\);/u);
 
 console.log("Content Studio navigation contract passed.");

@@ -1238,7 +1238,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("Calendar Write-ups navigation supports named browsing, composition, variables and CRUD", async ({ page }) => {
+  test("Daily Sky Moon-sign navigation supports named browsing, composition, variables and CRUD", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const contentKey = "authored/calendar-weekly-moon/cancer/variant-2";
     const source = JSON.parse(readFileSync("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", "utf8"));
@@ -1257,11 +1257,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page, { generatedRows: [moonRow, pattern], onGeneratedContentWrite: write => writes.push(write) });
     await expectAdminRouteLoads(page, "/admin/content");
     const nav = page.getByRole("navigation", { name: "Content operations" });
-    const calendarNav = nav.getByRole("button", { name: "Calendar Write-ups", exact: true });
-    const labels = await nav.getByRole("button").allTextContents();
-    expect(labels.indexOf("Calendar Write-ups") + 1).toBe(labels.indexOf("Calendar Aspects"));
+    await nav.getByRole("button", { name: "Calendar Write-ups", exact: true }).click();
+    const calendarNav = nav.getByRole("button", { name: "Daily Sky", exact: true });
     await calendarNav.click();
-    await expectAdminHeader(page, "Lunar Calendar write-ups", "Admin / Write / Lunar Calendar");
+    await expectAdminHeader(page, "Calendar Write-ups", "Admin / Write / Calendar write-ups");
     await expect(calendarNav).toHaveAttribute("aria-current", "page");
     const search = page.getByRole("textbox", { name: "Search Lunar Calendar" });
     const browse = page.getByRole("complementary", { name: "Lunar passages" });
@@ -1327,7 +1326,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         await search.fill("Cancer");
         await expect(detail.getByRole("heading", { name: "Moon in Cancer · Variant 2" })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-        await expect(page.locator('.admin-dashboard-header h1')).toHaveText('Lunar Calendar write-ups');
+        await expect(page.locator('.admin-dashboard-header h1')).toHaveText('Calendar Write-ups');
         await expect(page.getByRole('region', { name: 'Lunar Calendar workspace' }).getByRole('heading', { level: 2, name: 'Lunar Calendar write-ups' })).toHaveCount(0);
         const headingStyle = (element: Element) => {
           const style = getComputedStyle(element);
