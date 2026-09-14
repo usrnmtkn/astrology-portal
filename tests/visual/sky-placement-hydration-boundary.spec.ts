@@ -44,6 +44,11 @@ async function installSources(page: Page) {
     source_snapshot: { sourcePackage: baseline.source_package, content_role: baseline.content_role },
     block_type: 'fallback_hook', event_type: 'fallback-hook'
   });
+  // A failed fixture request must not install unrelated production publication
+  // identities from the checked-in nightly snapshot before Retry is exercised.
+  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({
+    json: { schema: 'content-studio-last-known-good-v1', rows: [], publications: [], rowCount: 0 }
+  }));
   await page.route('**/rest/v1/**', async route => {
     const url = new URL(route.request().url());
     if (url.pathname.endsWith('/content_publications')) {
