@@ -1,3 +1,4 @@
+import { bundledPublications } from "../helpers/bundled-publications";
 import fs from "node:fs";
 import { skyPlacementSourceRecords } from "../../api/_lib/sky-placement-sources";
 import { execFileSync } from "node:child_process";
@@ -326,3 +327,5 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
  });
 }
+
+test.beforeEach(async ({ page }) => { await bundledPublications(page); });

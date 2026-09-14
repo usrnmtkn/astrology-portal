@@ -96,6 +96,9 @@ function editorialStatusPresentation(row: StatusRow): { label: string; tone: Stu
 
 function savedStatusPresentation(row: StatusRow, live: LiveStatus): { label: string; tone: StudioStatusTone } {
   if (live.live) return { label: "Live", tone: "live" };
+  // A successful negative serving check overrides a saved LIVE state. The
+  // unavailable branch below still preserves the known editorial state.
+  if (row.status?.toUpperCase() === "LIVE") return { label: "Inactive", tone: "inactive" };
   return editorialStatusPresentation(row) ?? { label: "Inactive", tone: "inactive" };
 }
 
