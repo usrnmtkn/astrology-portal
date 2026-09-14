@@ -1385,7 +1385,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(navigation.getByRole("button", { name: "Calendar Aspects", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("heading", { name: "Edit Calendar aspect cards" })).toHaveCount(0);
-    await expect(page.getByRole("region", { name: "Content status definitions" })).toContainText("Live means readers can currently receive this copy. Not live means readers cannot currently receive this copy.");
+    await expect(page.getByRole("region", { name: "Content status definitions" })).toContainText("Live means readers can currently receive this copy. Draft, Ready, Inactive, Archived, Retired, Error, and Unavailable describe content that is not currently serving.");
     const contentFilters = page.locator("section[aria-label='Content list filters']");
     await expect(contentFilters.getByLabel("Content class")).toHaveCount(0);
     await expect(contentFilters.getByLabel("Tier")).toHaveCount(0);

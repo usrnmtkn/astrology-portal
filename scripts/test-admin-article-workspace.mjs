@@ -25,8 +25,8 @@ assert.deepEqual(articleAppDestination({
   content_key: "article/manual/draft",
   status: "DRAFT"
 }), {
-  detail: "This article is still an editorial draft and cannot appear for readers.",
-  label: "Draft—not published",
+  detail: "Readers cannot currently receive this article.",
+  label: "Draft",
   state: "draft"
 });
 

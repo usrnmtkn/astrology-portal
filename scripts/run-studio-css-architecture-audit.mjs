@@ -70,10 +70,30 @@ async function sources(directory) {
   }
   return files;
 }
+// These token-only layers were introduced after the original single-file
+// consolidation. Keep the import boundary explicit rather than treating every
+// historical admin stylesheet as part of the active design system.
+const semanticStylesheets = new Set([
+  './studio-system.css',
+  './natal-reader-preview.css',
+  './sky-variable-key.css',
+  './studio-typography.css',
+  './studio-component-consistency.css',
+]);
+for (const name of semanticStylesheets) {
+  if (name === './studio-system.css') continue;
+  const file = path.join('apps/admin/src', name);
+  const moduleTree = postcss.parse(await readFile(file, 'utf8'), {from: file});
+  moduleTree.walkAtRules('import', () => findings.push(`Nested Studio stylesheet import: ${file}`));
+  moduleTree.walkDecls(declaration => {
+    if (declaration.prop.startsWith('--')) findings.push(`Component-local token: ${file} / ${declaration.prop}`);
+    if (declaration.important) findings.push(`Styling !important: ${file} / ${declaration.prop}`);
+  });
+}
 for (const file of await sources('apps/admin/src')) {
   const source = await readFile(file, 'utf8');
   for (const match of source.matchAll(/(?:import\s*(?:\(\s*)?|from\s*)["']([^"']+\.css)["']/g)) {
-    if (match[1] !== './studio-system.css') findings.push(`Noncanonical Studio stylesheet: ${file} → ${match[1]}`);
+    if (!semanticStylesheets.has(match[1])) findings.push(`Noncanonical Studio stylesheet: ${file} → ${match[1]}`);
   }
   if (/\bstyle\s*=/.test(source)) findings.push(`Inline style bypass: ${file}`);
 }
@@ -83,4 +103,4 @@ for (const file of ['apps/admin/src/main.tsx', 'apps/web/src/main.tsx']) {
   assert.doesNotMatch(source, /["'][^"']*\/admin[^/"']*\.css["']/, `${file} must not load legacy admin styles`);
 }
 assert.deepEqual(findings, [], findings.join('\n'));
-console.log(`Studio CSS architecture passed: ${rules.size} selectors; no duplicate rules/properties, legacy imports, inline styles, local tokens, or styling !important. Accessibility exceptions: hidden and reduced motion.`);
+console.log(`Studio CSS architecture passed: ${rules.size} selectors; no duplicate rules/properties, unregistered imports, inline styles, local tokens, or styling !important. Accessibility exceptions: hidden and reduced motion.`);

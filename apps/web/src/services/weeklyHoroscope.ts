@@ -62,6 +62,8 @@ export type WeeklyHoroscopeReading = {
   reviewFlags?: WeeklyHoroscopeSection["reviewFlags"];
 };
 
+export { weeklyHoroscopeTagItems } from "../utils/weeklyFocusTags";
+
 export type CalendarWeeklyOverview = {
   headline: string;
   overview: string;
