@@ -81,6 +81,9 @@ export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed:
   retry = () => { if (this.state.failed) this.setState({ failed: false, detail: "" }); };
 
   handlePreloadError = (event: Event) => {
+    // A mounted child boundary owns its failed route; the root must retain
+    // navigation instead of replacing the entire application as well.
+    if (event.defaultPrevented) return;
     const payload = (event as Event & { payload?: unknown }).payload;
     const detail = payload ? errorDetail(payload) : "A page asset from an older deployment could not be loaded.";
     event.preventDefault();

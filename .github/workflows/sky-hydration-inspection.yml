@@ -16,6 +16,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  visual-reference-candidates:
+    if: github.ref == 'refs/heads/chatgpt/ci-and-sky-verification-20260914'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      # Candidates require visual review before adoption. This read-only job
+      # cannot commit baselines or turn a release check green automatically.
+      - name: Capture Linux candidates for the current merged UI
+        run: npx playwright test tests/visual/visual-regression-baseline.spec.ts --workers=1 --update-snapshots
+      - run: git rev-parse HEAD > test-results/visual-reference-source-sha.txt
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: visual-reference-candidates
+          path: |
+            tests/visual/visual-regression-baseline.spec.ts-snapshots/*-linux.png
+            test-results/
+          retention-days: 3
   source-and-browser:
     runs-on: ubuntu-latest
     timeout-minutes: 12

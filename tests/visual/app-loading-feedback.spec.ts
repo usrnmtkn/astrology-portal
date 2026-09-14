@@ -179,14 +179,15 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   });
 }
 
-test("an unavailable entry bundle shows a reload action without an automatic refresh", async ({ page }) => {
+test("an unavailable entry bundle attempts one guarded recovery before manual reload", async ({ page }) => {
   let navigations = 0;
-  page.on("framenavigated", frame => { if (frame === page.mainFrame()) navigations++; });
+  page.on("request", request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) navigations++; });
   await page.route(/\/assets\/index-.*\.js$/, route => route.abort("failed"));
   await page.goto("/#sky", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("alert")).toContainText("The page could not load");
   await expect(page.getByRole("button", { name: "Reload page" })).toBeVisible();
-  expect(navigations).toBe(1);
+  await page.waitForTimeout(500);
+  expect(navigations).toBe(2);
 });
 
 test("blocked web fonts do not block startup or reader content", async ({ page }) => {
