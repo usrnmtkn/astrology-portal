@@ -37,7 +37,8 @@ TLDR, retrograde opening, calculated dates, and occurrence additions have their
 own sources. Complete articles can be evergreen authored passages; they are not
 necessarily dated editions. Sentence composition supplies a complete body from
 named sources and executable templates. Fallback hooks are ordered evergreen
-sections, not source aliases inside the complete-article field.
+sections. Complete Placement articles can also resolve explicit Writing Library
+phrase tokens from the same placement, with scope and hash checks intact.
 
 Studio's **Saved preview** can contain saved drafts. **Draft preview** in the
 editor can contain unsaved changes. Neither chooses or proves the published
