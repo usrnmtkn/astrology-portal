@@ -1,5 +1,6 @@
 name: Content Studio API contract
 
+# Every repository update must verify the actual Content Studio contract.
 on:
   pull_request:
   push:

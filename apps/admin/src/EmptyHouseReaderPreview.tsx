@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { StudioButton } from "./StudioControls";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { adminCredentialHeaders } from "./adminSecret";
-import "./natal-reader-preview.css";
 
 type Audience = "you" | "they";
 
