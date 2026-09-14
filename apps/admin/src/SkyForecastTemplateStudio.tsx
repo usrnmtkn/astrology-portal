@@ -11,7 +11,7 @@ export default function SkyForecastTemplateStudio({ period, rows, busy, onOpen, 
 }) {
   const template = skyForecastTemplates[period];
   const saved = rows.find(row => row.content_key === template.contentKey);
-  return <section className="admin-daily-glance-studio" aria-label={`${template.label} workspace`}>
+  return <section className="admin-daily-glance-studio" aria-label={template.title}>
     <header className="admin-section-heading-row">
       <div>
         <h3>{template.title}</h3>
@@ -19,8 +19,8 @@ export default function SkyForecastTemplateStudio({ period, rows, busy, onOpen, 
       </div>
       <StudioButton disabled={busy} onClick={() => onOpen(period)}>Open {period === "weekly-sky" ? "weekly" : "monthly"} template</StudioButton>
     </header>
-    <p>{saved ? `Saved template · ${saved.status.toLowerCase()}` : "No saved template in the loaded library. Open it to check for saved work or start a draft."}</p>
-    <p className="admin-field-hint">These templates are writing references. Saving one does not generate an overview or add it to the public Calendar.</p>
+    <p>{saved ? `Saved template · ${saved.status.toLowerCase()}` : "Open to find your saved template or start a draft."}</p>
+    <p className="admin-field-hint">These are manual writing templates. Saving does not generate or publish an overview.</p>
     {editor}
   </section>;
 }
