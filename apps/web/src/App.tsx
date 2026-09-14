@@ -14579,6 +14579,7 @@ export function App() {
                     <FeatureLoadingFallback message="Loading your profile" />
                   ) : userProfile && !studioReturnPath && !signInRequested ? (
                     <ProfileView
+                      accountId={remoteAccountId}
                       transitionPage={transitionPage}
                       profile={userProfile}
                       profileHandle={ownSocialProfile?.handle}
@@ -16773,6 +16774,7 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
 
 
 function ProfileView({
+  accountId,
   transitionPage,
   profile,
   profileHandle,
@@ -16798,6 +16800,7 @@ function ProfileView({
   onCreateChart,
   generatedContent
 }: {
+  accountId: string | null;
   transitionPage: ReturnType<typeof usePageTransition>;
   profile: UserProfile;
   profileHandle?: string | null;
@@ -17917,6 +17920,7 @@ function ProfileView({
   return (
     <Suspense fallback={<FeatureLoadingFallback />}>
       <YouPage
+        accountId={accountId}
         onArticleNavigate={transitionPage}
         bigThreeRows={bigThreeRows}
         dailyHoroscopeAssembly={dailyHoroscopeAssembly}
