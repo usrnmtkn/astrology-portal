@@ -75,7 +75,7 @@ partial-reference policy remains in effect. The dependent freshness gate passed;
 no accuracy threshold was loosened. Production completion still requires the
 merged main deployment and both read-only live browser regressions.
 
-The Chrome task added source-boundary staging commits through `42d52e030`;
+The Chrome task added source-boundary staging commits through `ddcd1c054`;
 these are preserved in the branch history. Their patch is applied as reviewable
 source code. The candidate workflow only validates it and cannot mutate or push
 the branch. All 37 workflow YAML documents pass syntax/condition validation.
