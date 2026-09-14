@@ -25,6 +25,14 @@ for (const width of [390, 1440]) {
       }).observe(document, { subtree: true, childList: true, characterData: true });
     });
     await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: '2026-09-13', events: [] }] } } }));
+    // The outage fixture must include its offline plane. Do not mix synthetic
+    // revision 1000 with a real nightly snapshot whose revisions may be newer.
+    // An explicitly older offline publication must not resurrect old prose.
+    await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
+      schema: 'content-studio-last-known-good-v1', rowCount: 1,
+      rows: [{ id: 'older-moon', content_key: moonKey, surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null, target_date: null, event_type: null, headline: null, summary: null, body: 'contains an obsolete offline Moon summary', sections: null, model: null, updated_at: '2026-09-12T23:00:00Z' }],
+      publications: [{ content_key: moonKey, state: 'live', revision: 999, row_id: 'older-moon', row_updated_at: '2026-09-12T23:00:00Z', updated_at: '2026-09-12T23:00:00Z' }]
+    } }));
     await page.route('**/rest/v1/content_publications*', async route => {
       await new Promise(resolve => setTimeout(resolve, 500));
       await route.fulfill({ json: [
@@ -68,6 +76,7 @@ for (const width of [390, 1440]) {
     await expect(summary.getByRole('alert')).toBeVisible({ timeout: 30000 });
     await expect(summary).not.toContainText(first);
     await expect(summary).not.toContainText(second);
+    await expect(summary).not.toContainText('obsolete offline Moon');
     unavailable = false;
     await summary.getByRole('button', { name: 'Retry', exact: true }).click();
     await expect(summary).toContainText(third, { timeout: 30000 });
