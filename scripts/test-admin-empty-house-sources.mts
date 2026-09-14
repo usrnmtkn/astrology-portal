@@ -19,8 +19,9 @@ for(let house=1;house<=12;house++) for(const sign of Object.keys(emptyHouseRuler
  const keys=emptyHouseSourceKeys(house,sign,rulerHouse);
  const backlogKey=house===1?`fallback-hook/empty-house/rising-ruler/${sign}/${emptyHouseRulers[sign]}/${rulerHouse}`:'';
  if(backlog.has(backlogKey)) {
-  // Verify refusal, rather than inventing prose or silently switching rulers.
-  assert.throws(()=>renderer.renderNatalEmptyHouse({house,sign,rulerHouse,rulerSystem},{includeEmptyHouseBridge:true}),error=>error instanceof Error && error.name==='SourceGapError' && error.message.includes(`empty house ${house}/${sign}/${emptyHouseRulers[sign]}-in-${rulerHouse}`));
+  // The shipped SourceGapError inherits Error.name; match its exact contract,
+  // including requested house, traditional ruler and audience, not display name.
+  assert.throws(()=>renderer.renderNatalEmptyHouse({house,sign,rulerHouse,rulerSystem},{includeEmptyHouseBridge:true}),error=>error instanceof Error && error.message===`SOURCE_GAP: empty house ${house}/${sign}/${emptyHouseRulers[sign]}-in-${rulerHouse} (you)`);
   observedGaps.add(backlogKey);
  } else {
   const rendered=renderer.renderNatalEmptyHouse({house,sign,rulerHouse,rulerSystem},{includeEmptyHouseBridge:true});

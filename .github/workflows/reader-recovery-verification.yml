@@ -5,19 +5,32 @@ on:
     paths:
       - '.github/workflows/**'
       - 'scripts/verify-production-sky-summary.mjs'
+      - 'scripts/test-admin-*.mts'
       - 'apps/web/src/content/skyDailySummary*'
+      - 'apps/web/src/features/sky/PublishedSkySummary.tsx'
+      - 'apps/web/src/services/contentPublications.ts'
       - 'apps/web/src/App.tsx'
+  deployment_status:
   workflow_dispatch:
 
 permissions:
   contents: read
+  deployments: read
 
 concurrency:
-  group: reader-recovery-verification-${{ github.event.pull_request.number || github.ref }}
+  group: reader-recovery-verification-${{ github.event_name }}-${{ github.event.pull_request.number || github.event.deployment.sha || github.ref }}
   cancel-in-progress: true
 
 jobs:
   production-summary:
+    # The public site is tested AFTER production deployment, not against a PR's
+    # still-unfixed base. The strict cold-load assertion is unchanged.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'deployment_status' &&
+       github.event.deployment_status.state == 'success' &&
+       (startsWith(github.event.deployment.environment, 'Production') ||
+        startsWith(github.event.deployment.environment, 'production')))
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -38,6 +51,7 @@ jobs:
           retention-days: 7
 
   reader-contracts:
+    if: github.event_name != 'deployment_status'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -58,6 +72,6 @@ jobs:
       - name: Verify Content Studio save and reader contracts
         if: success() || failure()
         run: npm run test:content-studio-api
-      - name: Verify publication retirement
+      - name: Verify publication retirement and exact documented source-gap refusals
         if: success() || failure()
         run: npm run test:content-publications
