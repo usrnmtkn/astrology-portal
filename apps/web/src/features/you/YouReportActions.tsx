@@ -21,6 +21,12 @@ type ReportAction = {
 const idleAction: ReportAction = { state: "idle", route: null };
 const checkingAction: ReportAction = { state: "checking", route: null };
 
+export type YouAccountRecovery = {
+  error: string | null;
+  onRetry: () => void;
+  onSignIn: () => void;
+};
+
 function isPending(state: ActionState) {
   return state === "checking" || state === "loading" || state === "queued";
 }
@@ -53,12 +59,14 @@ function reconcileAction(current: ReportAction, item: ReportLibraryItem | null):
 
 export function YouReportActions({
   accountId,
+  accountRecovery,
   dailyHoroscopeAssembly,
   dailyUpdateSummary,
   weeklyHoroscopeAssembly,
   transitDateLabel
 }: {
   accountId: string | null | undefined;
+  accountRecovery?: YouAccountRecovery;
   dailyHoroscopeAssembly?: DailyHoroscopeAssembly | null;
   dailyUpdateSummary?: PersonalTimingSummary | null;
   weeklyHoroscopeAssembly?: WeeklyHoroscopeAssembly | null;
@@ -70,7 +78,7 @@ export function YouReportActions({
   // The page owns auth recovery. A second subscription can disagree with the
   // account already displayed by the app; requests still verify the session.
   const session = {
-    status: accountId === undefined ? "checking" : accountId ? "ready" : "signed_out",
+    status: accountId === undefined ? "checking" : accountId ? "ready" : accountRecovery?.error ? "error" : "signed_out",
     userId: accountId ?? null
   };
   const scope = `${session.userId ?? session.status}:${transitDateLabel}`;
@@ -199,7 +207,17 @@ export function YouReportActions({
         {reportButton("day", dayAction, Boolean(dayBrief))}
         {reportButton("week", weekAction, Boolean(weekBrief))}
       </div>
-      {session.status === "signed_out" ? <p role="status">Sign in to create or read your reports.</p>
+      {session.status === "error" ? (
+        <>
+          <p role="status">{accountRecovery?.error}</p>
+          <button type="button" onClick={accountRecovery?.onRetry}>Try again</button>
+        </>
+      ) : session.status === "signed_out" ? (
+        <>
+          <p role="status">Sign in to create or read your reports.</p>
+          {accountRecovery ? <button type="button" onClick={accountRecovery.onSignIn}>Sign in</button> : null}
+        </>
+      )
         : message ? <p role="status">{message}</p> : null}
     </section>
   );
