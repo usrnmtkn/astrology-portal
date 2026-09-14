@@ -6882,8 +6882,9 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 390])
     const card = grid.locator('> article').first();
     await expect(card).toBeVisible();
     expect(Math.abs((await card.boundingBox())!.width - (await grid.boundingBox())!.width)).toBeLessThan(2);
-    await expect(card).toHaveCSS('padding-left', '16px');
-    await expect(card).toHaveCSS('border-top-width', '0px');
+    // Source passages share the Studio surface-card spacing and boundary.
+    await expect(card).toHaveCSS('padding-left', '24px');
+    await expect(card).toHaveCSS('border-top-width', '1px');
     await expect(card.locator('.admin-natal-source-key > span')).toHaveCSS('font-weight', '400');
     await expect(card.locator('.admin-natal-source-key > span')).toHaveCSS('text-transform', 'none');
     await expect(finder.locator('> h2')).toHaveClass('sr-only');
