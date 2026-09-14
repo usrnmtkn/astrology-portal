@@ -1295,7 +1295,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect.poll(() => writes.length).toBe(3);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Publication", { exact: true }).selectOption("active");
-    await page.getByRole("button", { name: "New Moon-sign passage" }).click();
+    await page.getByRole("button", { name: "Add Moon-in-sign write-up", exact: true }).click();
+    await page.getByLabel("Moon sign for the new write-up", { exact: true }).selectOption("cancer");
+    await page.getByRole("button", { name: "Start draft", exact: true }).click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/calendar-weekly-moon/cancer/variant-3");
     await editor.getByLabel("Full lunar passage").fill("QA new lunar passage.");
     await editor.getByRole("button", { name: "Save draft", exact: true }).click();
@@ -1305,6 +1307,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect.poll(() => writes.length).toBe(5);
     expect(writes[4].method).toBe("DELETE");
     await search.fill("");
+    await page.getByLabel("Moon sign", { exact: true }).selectOption("all");
     await page.getByLabel("Content family", { exact: true }).selectOption("all");
     await page.getByRole("tab", { name: "Composition & variables" }).click();
     await page.getByRole("complementary", { name: "Composition templates" }).getByRole("button", { name: /Calendar Day/ }).click();
@@ -1325,7 +1328,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         await expect(detail.getByRole("heading", { name: "Moon in Cancer · Variant 2" })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
         await expect(page.locator('.admin-dashboard-header h1')).toHaveText('Lunar Calendar write-ups');
-        await expect(page.getByRole('region', { name: 'Lunar Calendar workspace' }).getByRole('heading', { level: 2, name: 'Lunar Calendar write-ups' })).toBeVisible();
+        await expect(page.getByRole('region', { name: 'Lunar Calendar workspace' }).getByRole('heading', { level: 2, name: 'Lunar Calendar write-ups' })).toHaveCount(0);
         const headingStyle = (element: Element) => {
           const style = getComputedStyle(element);
           return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => [key, style[key as keyof CSSStyleDeclaration]]));

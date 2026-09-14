@@ -8,8 +8,8 @@ type Row = CompositionMapRow & { inventory_only?: boolean; facts?: Record<string
 const isArchived = (row: Row) => row.status === 'ARCHIVED'
   || (row.source_snapshot as Record<string, unknown> | null)?.review_status === 'deprecated'
   || (row.facts as Record<string, unknown> | null)?.review_status === 'deprecated';
-type Props = { rows: Row[]; editor: ReactNode; query: string; onQuery: (value: string) => void; onEdit: (row: Row) => void; onLoad: (row: Row) => Promise<unknown>; onCreate: (sign: string) => void };
-export default function LunarCalendarWorkspace({ rows, editor, query, onQuery, onEdit, onLoad, onCreate }: Props) {
+type Props = { rows: Row[]; editor: ReactNode; query: string; createRequest?: number; onCreateRequestHandled?: () => void; isLoading?: boolean; onQuery: (value: string) => void; onEdit: (row: Row) => void; onLoad: (row: Row) => Promise<unknown>; onCreate: (sign: string) => void };
+export default function LunarCalendarWorkspace({ rows, editor, query, createRequest = 0, onCreateRequestHandled, isLoading = false, onQuery, onEdit, onLoad, onCreate }: Props) {
   const [family, setFamily] = useState('Moon-sign passages');
   const [sign, setSign] = useState('all');
   const [status, setStatus] = useState('active');
@@ -18,6 +18,9 @@ export default function LunarCalendarWorkspace({ rows, editor, query, onQuery, o
   const [error, setError] = useState('');
   const [retry, setRetry] = useState(0);
   const [limit, setLimit] = useState(12);
+  const [adding, setAdding] = useState(false);
+  const [newSign, setNewSign] = useState('');
+  useEffect(() => { if (createRequest) { setAdding(true); setNewSign(''); setView('writeups'); onCreateRequestHandled?.(); } }, [createRequest, onCreateRequestHandled]);
   useEffect(() => { setLimit(12); setView('writeups'); }, [family, sign, status, query]);
   const entries = useMemo(() => rows.flatMap(row => {
     const identity = lunarContentIdentity(row.content_key);
@@ -33,6 +36,9 @@ export default function LunarCalendarWorkspace({ rows, editor, query, onQuery, o
   }).sort((a, b) => a.identity.family.localeCompare(b.identity.family) || lunarSigns.indexOf(a.identity.sign) - lunarSigns.indexOf(b.identity.sign) || a.identity.variant - b.identity.variant);
   const selected = filtered.find(entry => entry.row.content_key === selectedKey) ?? filtered[0];
   const selectedRow = selected?.row;
+  const existingForSign = entries.filter(({ row, identity }) => row.content_key.startsWith('authored/calendar-weekly-moon/') && identity.sign === newSign);
+  const usedVariants = new Set(existingForSign.map(({ identity }) => identity.variant));
+  const availableVariant = [1, 2, 3, 4].find(value => !usedVariants.has(value) && !(newSign === 'cancer' && value === 1));
   useEffect(() => {
     setError('');
     if (!selectedRow?.inventory_only) return;
@@ -42,7 +48,19 @@ export default function LunarCalendarWorkspace({ rows, editor, query, onQuery, o
   }, [selectedRow?.id, selectedRow?.inventory_only, retry]);
   const keys = useMemo(() => filtered.map(entry => entry.row.content_key), [rows, family, sign, status, query]);
   return <section className="admin-template-page" aria-label="Lunar Calendar workspace">
-    <section className="admin-content-toolbar"><div><p className="admin-eyebrow">Calendar writing</p><h2>Lunar Calendar write-ups</h2><p>Choose a Moon sign to find its complete write-ups, then select Edit passage. Each variant is a separate write-up used by the Calendar.</p></div><StudioButton type="button" onClick={() => onCreate(sign !== 'all' ? sign : selected?.identity.sign || 'aries')}>New Moon-sign passage</StudioButton></section>
+    <section className="admin-content-toolbar"><div><p>Choose a Moon sign, read its saved write-ups, then select Edit passage. To write an alternative, add a separate write-up.</p></div><StudioButton type="button" onClick={() => { setNewSign(sign === 'all' ? '' : sign); setAdding(true); setView('writeups'); }}>Add Moon-in-sign write-up</StudioButton></section>
+    {adding && <section className="admin-panel" aria-label="Add Moon-in-sign write-up">
+      <header className="admin-composition-detail-header"><div><h2>Add Moon-in-sign write-up</h2><p>Create a general Calendar overview for a Moon sign. New Moon and Full Moon horoscopes are separate.</p></div><StudioButton onClick={() => setAdding(false)}>Cancel</StudioButton></header>
+      <div className="admin-review-filter-grid"><label><span>Moon sign for the new write-up</span><AdminSelect autoFocus aria-label="Moon sign for the new write-up" value={newSign} onChange={event => setNewSign(event.target.value)}><option value="">Choose a Moon sign</option>{lunarSigns.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}</AdminSelect></label></div>
+      <p role="status">{isLoading ? 'Loading saved write-ups…' : !newSign ? 'Choose the sign before starting a draft.' : !availableVariant ? 'All available alternatives already exist for this sign. Edit or restore a saved write-up.' : existingForSign.length ? `${existingForSign.length} saved write-ups. This creates a separate alternative; your existing writing stays in place.` : 'No saved write-ups for this sign. Start its first draft.'}</p>
+      <div className="admin-new-actions"><StudioButton className="admin-primary-button" disabled={!newSign || !availableVariant || isLoading} onClick={() => {
+        setSign(newSign); setFamily('Moon-sign passages'); setStatus('active'); onQuery('');
+        setSelectedKey(`authored/calendar-weekly-moon/${newSign}${availableVariant === 1 ? '' : `/variant-${availableVariant}`}`);
+        onCreate(newSign); setAdding(false);
+      }}>Start draft</StudioButton>
+      {newSign && existingForSign.length > 0 && <StudioButton onClick={() => { setSign(newSign); setFamily('Moon-sign passages'); setStatus('all'); onQuery(''); setAdding(false); }}>View saved write-ups</StudioButton>}</div>
+      <p className="admin-field-hint">Opening a draft does not save or publish it. Save draft keeps unfinished work for later; Save &amp; publish makes it available for Calendar selection.</p>
+    </section>}
     <div className="admin-review-filter-grid studio-surface">
       <label><span>Moon sign</span><AdminSelect aria-label="Moon sign" value={sign} onChange={event => setSign(event.target.value)}><option value="all">All signs</option>{lunarSigns.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}</AdminSelect></label>
       <label><span>Search Lunar Calendar</span><StudioInput aria-label="Search Lunar Calendar" value={query} onChange={event => onQuery(event.target.value)} placeholder="Moon in Libra, sign, or passage name" /></label>
