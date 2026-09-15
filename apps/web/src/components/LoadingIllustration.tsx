@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ThinkingOrb } from "thinking-orbs";
 
 const subjects = ["sun", "moon", "aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 const source = (index: number) => `/loading-artwork/${subjects[index]}.png`;
@@ -54,7 +55,13 @@ export function LoadingIllustration() {
     };
   }, []);
 
+  const visibleSlot = [frames.front, 1 - frames.front].find(slot => {
+    const src = frames.sources[slot];
+    return src && !failed.includes(src);
+  });
+
   return <div className="loading-illustration" aria-hidden="true">
+    {visibleSlot === undefined && <ThinkingOrb state="working" size={64} theme="auto" />}
     {frames.sources.map((src, slot) => <img
       key={slot}
       src={src}
@@ -62,7 +69,8 @@ export function LoadingIllustration() {
       width="512"
       height="512"
       decoding="async"
-      className={slot === frames.front && src && !failed.includes(src) ? "is-active" : undefined}
+      className={slot === visibleSlot ? "is-active" : undefined}
+      onLoad={() => { if (src) setFailed(previous => previous.filter(failedSource => failedSource !== src)); }}
       onError={() => { if (src) setFailed(previous => [...previous, src]); }}
     />)}
   </div>;

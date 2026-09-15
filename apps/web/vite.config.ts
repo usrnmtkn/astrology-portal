@@ -337,6 +337,9 @@ export default defineConfig(({ mode }) => {
               return "astro-knowledge";
             }
             if (id.includes("node_modules/@supermemory/memory-graph") || id.includes("node_modules/ogl/")) return "memory-graph-renderer";
+            // This React consumer must not share the vendor chunk with the
+            // scheduler React imports, which would create an initialization cycle.
+            if (id.includes("node_modules/thinking-orbs/")) return "thinking-orbs";
             if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
               return "react";
             }
