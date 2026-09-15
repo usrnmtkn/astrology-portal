@@ -23,6 +23,18 @@ image. Reduced motion shows a stationary illustration, hidden tabs stop cycling,
 and unmount cleans up timers/listeners. The initial HTML shows the same Sun
 while the small reader entry downloads.
 
+If no illustration is usable after an image failure, the frame displays the
+`working` animation from [Thinking Orbs](https://libraries.dev/orbs)
+(`thinking-orbs` 0.3.1, MIT) as the owner's requested backup. It uses the tuned
+64px canvas preset within the same reserved frame, follows the app theme, and
+respects reduced motion and tab visibility. A decoded replacement restores the
+artwork; either visual remains decorative beside the accessible loading status.
+The dependency is bundled locally so the backup does not depend on another
+image host or a separate runtime request after an image has failed.
+
+The startup root contains the initial card's margins before the app's lazy CSS
+arrives. This prevents the document shifting during the first-load handoff.
+
 Verification from a fresh build:
 
 ```sh
