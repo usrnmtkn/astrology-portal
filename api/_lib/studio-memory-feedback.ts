@@ -111,7 +111,7 @@ export function selectStudioFeedback(rows: StudioFeedback[], key: string) {
   ].join('\n\n') : '';
   return { prompt, corrections: selected.map(row => ({
     row: { bad: row.before_text, corrected: row.after_text, owner_reason: row.reason, family,
-      scope: row.scope, content_key: row.content_key },
+      scope: row.scope, content_key: row.content_key, ...articleCorrectionContext(row) },
     reference: { memoryId: feedbackMemoryId(row), path: 'private-studio/approved-corrections',
       line: 0, version: row.version, bodySha256: feedbackHash(row), sourceSha256: feedbackHash(row),
       scope: row.scope, sourceRowId: row.source_row_id, beforeVersion: row.before_version, afterVersion: row.after_version },
