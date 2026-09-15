@@ -3764,6 +3764,14 @@ export function placementFinalResidencyExit(position: PlanetPosition, fallback: 
   return verifiedPlacementResidencyPasses(position).at(-1)?.end ?? fallback;
 }
 
+function placementArticleDateLine(position: PlanetPosition, start: Date, end: Date) {
+  const entry = formatPlacementTransitEndpoint(position, start, true);
+  const exit = formatPlacementTransitEndpoint(position, end, true);
+  return entry.match(/, (\d{4})$/u)?.[1] === exit.match(/, (\d{4})$/u)?.[1]
+    ? `${entry.replace(/, \d{4}$/u, "")} to ${exit}`
+    : `${entry} to ${exit}`;
+}
+
 function placementTransitRangeLabel(position: PlanetPosition, generatedAt: string) {
   if (position.transitStart && position.transitEnd) {
     const { start, end } = placementTransitEndpoints(position, generatedAt);
@@ -5343,7 +5351,16 @@ function currentSkyPlacementDetailArticle({
     role: "main" as const
   }));
   const displayArticleSections = isFallbackOnlyPreview ? [] : articleSections;
-  const effectiveTransitRangeLabel = placementSection?.articleWindow ?? transitRangeLabel;
+  const visit = placementTransitEndpoints(position, generatedAt);
+  const residencyStart = verifiedPlacementResidencyPasses(position)[0]?.start ?? visit.start;
+  const residencyEnd = placementFinalResidencyExit(position, visit.end);
+  const hasSeparateResidency = residencyStart.getTime() !== visit.start.getTime()
+    || residencyEnd.getTime() !== visit.end.getTime();
+  // Current headers and countdowns describe the same continuous visit as the
+  // card. Template exitDate remains the final exit after any return visits.
+  const effectiveTransitRangeLabel = articleMode === "current" && !isRetrograde
+    ? placementArticleDateLine(position, visit.start, visit.end)
+    : placementSection?.articleWindow ?? transitRangeLabel;
   const historicalLookback = null;
   return {
     routePath: articleMode === "archive" && articleKey
@@ -5362,10 +5379,12 @@ function currentSkyPlacementDetailArticle({
       articleMode === "archive" ? null : formatPlacementPosition(position).toUpperCase(),
       isRegistryArticle || isContinuousFallback ? null : effectiveTransitRangeLabel
     ].filter(Boolean).join(" · "),
-    residencyDuration: isRetrograde && placementSection?.residencyWindow
-      ? `In ${position.sign}: ${placementSection.residencyWindow}`
+    residencyDuration: articleMode === "current" && (isRetrograde || hasSeparateResidency)
+      ? `Full residency in ${position.sign}: ${placementArticleDateLine(position, residencyStart, residencyEnd)}`
       : undefined,
-    duration: isRetrograde ? transitRangeLabel ?? undefined : isFallbackOnlyPreview
+    duration: isRetrograde ? transitRangeLabel ?? undefined : articleMode === "current"
+      ? effectiveTransitRangeLabel ?? undefined
+      : isFallbackOnlyPreview
       ? fallbackDateLine ?? effectiveTransitRangeLabel ?? undefined
       : isRegistryArticle || isContinuousFallback
         ? undefined
