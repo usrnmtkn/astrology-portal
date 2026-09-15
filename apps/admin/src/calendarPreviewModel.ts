@@ -8,7 +8,7 @@ import { isReaderServableGeneratedContentRow } from "../../web/src/content/gener
 import { isGovernedReaderEligible } from "../../web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser";
 
 export type CalendarPreviewRow = SummaryCompositionRow & { id: string; facts?: Record<string, unknown> | null; sections?: unknown };
-export type CalendarPreviewValue = { text: string; kind: "fact" | "copy" | "example"; sourceKey?: string };
+export type CalendarPreviewValue = { text: string; kind: "fact" | "copy" | "example"; sourceKey?: string; sourceLabel?: string };
 export const calendarPreviewSign = (value: string) => lunarSigns.includes(value.toLowerCase()) ? value[0].toUpperCase() + value.slice(1).toLowerCase() : "";
 
 export function calendarPreviewSeasons(calculation?: CalendarPreviewCalculation) {
@@ -72,8 +72,19 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   const seasonCopy = (prefix: string, sign: string) => {
     for (const [name, family] of [["zodiacSeason", "zodiac-season"], ["zodiacSeasonPolarAxis", "zodiac-season-polar-axis"]]) {
       const key = `fallback-hook/${family}/${sign.toLowerCase()}`;
-      const row = rows.find(row => row.content_key === key && calendarCopyEligible(row));
-      if (row && !/\{\{|\}\}/u.test(row.body ?? "")) put(prefix ? `${prefix}${name[0].toUpperCase()}${name.slice(1)}` : name, row.body!, "copy", key);
+      // This is the owner editor preview. Drafts are useful here; the reader's
+      // publication gate remains in calendarCopyEligible and the shared resolver.
+      const row = rows.filter(row => row.content_key === key && !row.inventory_only && ["LIVE", "DRAFT"].includes(row.status))
+        .sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))[0];
+      const sections = row?.sections as { packageDraft?: { body?: string }; packageRecord?: { calendarWritingSource?: { title?: string } } } | undefined;
+      const body = sections?.packageDraft?.body ?? row?.body;
+      if (body?.trim() && !/\{\{|\}\}/u.test(body)) {
+        const variable = prefix ? `${prefix}${name[0].toUpperCase()}${name.slice(1)}` : name;
+        put(variable, body, "copy", key);
+        values[variable].sourceLabel = row?.id.startsWith("package:") && sections?.packageRecord?.calendarWritingSource
+          ? `Existing writing · ${sections.packageRecord.calendarWritingSource.title}`
+          : calendarCopyEligible(row!) ? "Saved writing" : "Saved draft";
+      }
     }
   };
   put("seasonSign", sunSign, calculation ? "fact" : "example");
