@@ -1,0 +1,100 @@
+import assert from 'node:assert/strict';
+import { store } from '../tests/helpers/sky-article-save-api.mts';
+import { resolveStudioVariableRecord, studioVariableValue } from '../apps/web/src/content/studioCustomVariables.mjs';
+const endpoint = '/api/admin/generated-content?variables=true';
+const definition = { name: 'myOpening', label: 'My opening', description: 'Owner-defined writing', tags: ['Sky', 'My voice'], value: 'Fixture shared opening.', overrides: [
+  { scope: 'sign', sign: 'virgo', planet: '', value: 'Fixture Virgo opening.' },
+  { scope: 'planet', planet: 'sun', sign: '', value: 'Fixture Sun opening.' },
+  { scope: 'placement', planet: 'sun', sign: 'virgo', value: 'Fixture Sun in Virgo opening.' }
+] };
+const invoke = (method: string, body?: any) => store.invoke(method, body, endpoint);
+assert.equal((await store.invoke('GET', undefined, endpoint, 'not-authorized')).status, 401);
+assert.deepEqual((await invoke('GET')).payload.variables, []);
+const created = await invoke('POST', { variable: definition });
+assert.equal(created.status, 200, JSON.stringify(created.payload));
+let variable = created.payload.variable;
+assert.equal((await invoke('POST', { variable: definition })).status, 409);
+assert.equal((await invoke('POST', { variable: { ...definition, name: 'MYOPENING' } })).status, 409);
+assert.equal((await invoke('POST', { variable: { ...definition, name: 'planetTitle' } })).status, 400);
+assert.equal((await invoke('POST', { variable: { ...definition, name: 'broken', value: '{{planetTitle}}' } })).status, 400);
+assert.equal((await store.invoke('PATCH', { id: variable.id, status: 'LIVE' })).status, 400, 'Generic endpoint cannot publish private variable definitions');
+assert.equal((await invoke('PATCH', { id: variable.id, expectedUpdatedAt: '2020-01-01T00:00:00Z', variable: definition })).status, 409);
+assert.equal(studioVariableValue(variable, {}).value, definition.value);
+assert.equal(studioVariableValue(variable, { sign: 'Virgo' }).value, definition.overrides[0].value);
+assert.equal(studioVariableValue(variable, { planet: 'Sun', sign: 'Aries' }).value, definition.overrides[1].value);
+assert.equal(studioVariableValue(variable, { planet: 'Sun', sign: 'Virgo' }).value, definition.overrides[2].value);
+
+const live = store.rows.get('live-sun-virgo');
+const raw = 'During this transit, {{myOpening}}';
+const draft = { ...structuredClone(live.sections.packageRecord), placementArticle: raw };
+delete draft.owner_approved; delete draft.serving_enabled;
+let saved = await store.invoke('PATCH', { id: live.id, expectedUpdatedAt: live.updated_at, sections: { ...live.sections, packageDraft: draft }, reviewStatus: 'needs_review' });
+assert.equal(saved.status, 200, JSON.stringify(saved.payload));
+let revision = saved.payload.rows[0];
+assert.equal(revision.sections.packageDraft.placementArticle, raw, 'Saving preserves visible tokens');
+assert.equal(revision.sections.packageDraft._studioVariables[0].value, definition.value);
+for (const field of ['label', 'description', 'tags']) assert.equal(field in revision.sections.packageDraft._studioVariables[0], false, `${field} stays private`);
+assert.equal(resolveStudioVariableRecord(revision.sections.packageDraft).placementArticle, 'During this transit, Fixture Sun in Virgo opening.');
+const updated = await invoke('PATCH', { id: variable.id, expectedUpdatedAt: variable.updatedAt, variable: { ...definition, value: 'Fixture revised shared opening.', overrides: definition.overrides.map(item => ({ ...item, value: item.value.replace('opening.', 'revision.') })) } });
+assert.equal(updated.status, 200, JSON.stringify(updated.payload));
+variable = updated.payload.variable;
+let publish = await store.invoke('PATCH', { id: revision.id, expectedUpdatedAt: revision.updated_at, ownerAction: 'approve-package-revision' });
+assert.equal(publish.status, 409, JSON.stringify(publish.payload));
+assert.match(publish.payload.error, /changed.*Save and review/);
+saved = await store.invoke('PATCH', { id: revision.id, expectedUpdatedAt: revision.updated_at, sections: revision.sections, reviewStatus: 'needs_review' });
+assert.equal(saved.status, 200, JSON.stringify(saved.payload));
+revision = saved.payload.rows[0];
+const tagged = await invoke('PATCH', { id: variable.id, expectedUpdatedAt: variable.updatedAt, variable: { ...variable, tags: ['Private organizational tag'], description: 'Private editor description.' } });
+assert.equal(tagged.status, 200); variable = tagged.payload.variable;
+publish = await store.invoke('PATCH', { id: revision.id, expectedUpdatedAt: revision.updated_at, ownerAction: 'approve-package-revision' });
+assert.equal(publish.status, 200, JSON.stringify(publish.payload));
+const published = store.rows.get(live.id);
+assert.equal(published.status, 'LIVE');
+assert.equal(published.sections.packageRecord.placementArticle, raw);
+assert.equal(resolveStudioVariableRecord(published.sections.packageRecord).placementArticle, 'During this transit, Fixture Sun in Virgo revision.');
+assert.equal((await invoke('DELETE', { id: variable.id })).status, 409);
+assert.equal((await invoke('DELETE', { id: variable.id, expectedUpdatedAt: variable.updatedAt })).status, 200);
+assert.deepEqual((await invoke('GET')).payload.variables, []);
+assert.equal(resolveStudioVariableRecord(published.sections.packageRecord).placementArticle, 'During this transit, Fixture Sun in Virgo revision.', 'Deleting a definition leaves approved publication values intact');
+assert.equal((await store.invoke('PATCH', { id: published.id, expectedUpdatedAt: published.updated_at, sections: { ...published.sections, packageDraft: { ...published.sections.packageRecord, placementArticle: raw + ' Edited.' } } })).status, 400, 'A deleted token blocks the next save');
+console.log('PASS: authenticated variable CRUD, tags, overrides, reserved names, stale edits, article token preservation, exact publication snapshots, changed-source review and deletion.');
+
+// Unfinished values are draftable but cannot be published, including an empty override.
+const incomplete = await invoke('POST', { variable: { ...definition, name: 'myUnfinished', value: '' } });
+assert.equal(incomplete.status, 200);
+let unfinished = incomplete.payload.variable;
+const saveUnfinished = async () => {
+ const source = [...store.rows.values()].find((row: any) => row.content_key === live.content_key && row.mode === 'studio-draft' && row.status === 'DRAFT') ?? store.rows.get(live.id);
+ const copy = JSON.parse(JSON.stringify(source.sections.packageRecord).replaceAll('myOpening', 'myUnfinished'));
+ copy.placementArticle = 'During this transit, {{myUnfinished}}';
+ delete copy.owner_approved; delete copy.serving_enabled;
+ const result = await store.invoke('PATCH', { id: source.id, expectedUpdatedAt: source.updated_at, body: copy.placementArticle, sections: { ...source.sections, packageDraft: copy }, reviewStatus: 'needs_review' });
+ assert.equal(result.status, 200, JSON.stringify(result.payload));
+ const revision = result.payload.rows[0];
+ const publication = await store.invoke('PATCH', { id: revision.id, expectedUpdatedAt: revision.updated_at, ownerAction: 'approve-package-revision' });
+ assert.equal(publication.status, 400, JSON.stringify(publication.payload));
+ assert.match(publication.payload.error, /Complete the shared value/);
+ return revision;
+};
+await saveUnfinished();
+const emptyOverride = await invoke('PATCH', { id: unfinished.id, expectedUpdatedAt: unfinished.updatedAt, variable: { ...unfinished, value: 'Fixture shared value.', overrides: [{ scope: 'sign', sign: 'aries', value: '' }] } });
+assert.equal(emptyOverride.status, 200); unfinished = emptyOverride.payload.variable;
+await saveUnfinished();
+const renamed = await invoke('PATCH', { id: unfinished.id, expectedUpdatedAt: unfinished.updatedAt, variable: { ...unfinished, name: 'myRenamed', overrides: [] } });
+assert.equal(renamed.status, 200);
+assert.equal((await invoke('GET')).payload.variables[0].name, 'myRenamed');
+const competing = await Promise.all(['First', 'Second'].map(label => invoke('PATCH', { id: unfinished.id, expectedUpdatedAt: renamed.payload.variable.updatedAt, variable: { ...renamed.payload.variable, label } })));
+assert.deepEqual(competing.map(result => result.status).sort(), [200, 409], 'Concurrent saves cannot overwrite each other');
+console.log('PASS: private metadata, tag-only edits, incomplete shared/override values, renaming and concurrent CAS updates.');
+
+const compositionRevision = [...store.rows.values()].find((row: any) => row.content_key === live.content_key && row.mode === 'studio-draft' && row.status === 'DRAFT');
+const compositionDraft = JSON.parse(JSON.stringify(compositionRevision.sections.packageDraft).replaceAll('myUnfinished', 'myRenamed'));
+compositionDraft.placementArticle = '';
+compositionDraft.ingress = { version: 5, enabled: true, sources: {}, modules: [{ id: 'main', label: 'Main', template: 'During this transit, {{myRenamed}}', required: true, enabled: true, motion: 'all', duration: 'all', timing: 'all' }] };
+const compositionSave = await store.invoke('PATCH', { id: compositionRevision.id, expectedUpdatedAt: compositionRevision.updated_at, sections: { ...compositionRevision.sections, packageDraft: compositionDraft }, reviewStatus: 'needs_review' });
+assert.equal(compositionSave.status, 200, JSON.stringify(compositionSave.payload));
+const compositionRow = compositionSave.payload.rows[0];
+const compositionPublish = await store.invoke('PATCH', { id: compositionRow.id, expectedUpdatedAt: compositionRow.updated_at, ownerAction: 'approve-package-revision' });
+assert.equal(compositionPublish.status, 200, JSON.stringify(compositionPublish.payload));
+assert.equal(store.rows.get(live.id).sections.packageRecord.ingress.modules[0].template, 'During this transit, {{myRenamed}}');
+console.log('PASS: renamed custom variable saves and publishes in a Placement composition section with the token intact.');

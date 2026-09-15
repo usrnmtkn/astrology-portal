@@ -1,3 +1,4 @@
+import StudioVariableInsert from "./StudioVariableInsert";
 import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
@@ -96,6 +97,7 @@ export default function SkyPlacementArticleVariables(props: Props) {
     {(error || props.preparationError) && <p role="alert">{error || props.preparationError}</p>}
     <details className="admin-workspace-details" data-sky-article-variable-picker>
       <AdminDisclosureSummary>Article variables</AdminDisclosureSummary>
+      <StudioVariableInsert variables={source?._studioVariables ?? []} context={{ planet, sign }} onInsert={props.onInsert} disabled={disabled} />
       <SkyPlacementVariableKey facts={facts} disabled={disabled} onInsert={props.onInsert} onInsertPhrase={props.onInsert}
         phraseSource={{ planet, sign, record, onLoadSource: props.onLoadSource, onEdit: id => {
           const sharedKey = zodiacSeasonSourceKey(id, sign);

@@ -9,13 +9,14 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   const base = skyPlacementSourceRecords.get(key)!;
   let revision = 1000;
   let retired = false;
-  const copy = () => `Fixture published opening ${revision}.\n\nFixture published final sentence ${revision}.`;
+  const copy = () => `{{myCustomOpening}}\n\nFixture published final sentence ${revision}.`;
   const timestamp = () => `2026-09-13T23:00:00.${String(revision).padStart(6, '0')}Z`;
   const row = () => ({
     id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', content_key: key, surface: 'sky', mode: 'in_depth',
     status: 'LIVE', lane: 'serving', review_state: null, target_date: null,
     provider: 'tldrastro-fallback-architecture-v3', updated_at: timestamp(), headline: base.headline,
     body: copy(), summary: base.summary, sections: { packageRecord: { ...base,
+      _studioVariables: [{ id: 'fixture-custom-variable', name: 'myCustomOpening', value: 'Fixture shared opening.', overrides: [{ scope: 'placement', planet: 'sun', sign: 'virgo', value: `Fixture published opening ${revision}.` }] }],
       studio_version_status: 'approved-serving-revision', placementArticle: copy(), placementArticleDirect: copy(),
       fallback: { ...base.fallback, sections: [{ id: 'fixture', label: '', body: copy() }] }
     } }, facts: { fallbackArchitectureV3: true },
