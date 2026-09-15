@@ -16,6 +16,10 @@ the Sun and Moon use pattern 2 (SHA-256
 `dcc5020841940e5ba5dbb331ee89efe052704be014375e565dc89984c45b3cc3`). Original source files remain separate from the
 application. No generative redraw or white fill is included.
 
+Loading status frames sit directly on the page background, without a card
+surface or border. Their spacing, illustration size, and readiness behavior
+remain shared across the initial document, Sky, and Friends.
+
 The fixed frame uses shared design tokens. Black linework is inverted in the
 dark theme. After React mounts, one next illustration downloads every 2.2 seconds
 and crossfades only after decoding. A failed next image retains the previous
