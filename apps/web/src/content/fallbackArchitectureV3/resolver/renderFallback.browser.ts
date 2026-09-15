@@ -1,3 +1,4 @@
+import { bindStudioVariableRenderer } from "../../studioCustomVariables.mjs";
 import { assertPublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 import { zodiacSeasonTemplateContext, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
 // TLDR Astro fallback resolver — browser/TypeScript build (v3)
@@ -649,7 +650,8 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     return { headline: `${ordinal(house)} House Year`, note, body: parts.join("\n\n"), parts, templateKey: "fallback-template/natal.profection-year" };
   }
 
-  return { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, renderHouseGlossary, renderAspectPattern };
+  const renderer = { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, renderHouseGlossary, renderAspectPattern };
+  return bindStudioVariableRenderer(renderer, ([templates, vocabularyRows, hookRows]: any[][]) => createFallbackRenderer({ ...templatesFile, templates }, { ...rowsFile, vocabularyRows, hookRows }, publication), [templatesFile.templates, rowsFile.vocabularyRows, rowsFile.hookRows ?? []]) as typeof renderer;
 }
 
 /** Normalize app wording to the supported canonical aspect ids ("conjunct" -> "conjunction", etc).

@@ -72,8 +72,11 @@ for (const access of Object.values(writingSurfaceAdminAccess)) for (const starte
   add(name, 'readonly', `The ${words(name).toLowerCase()} supplied by this surface's runtime context.`, 'CMS surface template context',
     [{ key: starter.contentKey, label: access.readerLocation, surface: surfaceFor(starter.contentKey) }]);
 }
-export const studioVariableCatalog: StudioVariableCatalog = { schema: 'studio-variables/v1', variables: [...variables.values()].sort((a, b) => a.name.localeCompare(b.name) || a.source.localeCompare(b.source)) };
+const authoredPhraseNames = new Set([...libraryFields.map(field => field.id), ...SKY_INGRESS_FIELDS.map(field => field.id)]);
+export const studioVariableCatalog: StudioVariableCatalog = { schema: 'studio-variables/v1', variables: [...variables.values()].filter(variable => variable.kind === 'readonly' || variable.kind === 'editable' && (authoredPhraseNames.has(variable.name) || variable.sources.length > 0 && variable.sources.every(source => source.key.startsWith('fallback-vocab/')))).sort((a, b) => a.name.localeCompare(b.name) || a.source.localeCompare(b.source)) };
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+await mkdir(path.join(root, 'api/_generated'), { recursive: true });
+await writeFile(path.join(root, 'api/_generated/studio-variable-names.json'), JSON.stringify([...new Set([...variables.values()].map(variable => variable.name))].sort(), null, 2) + '\n');
 for (const app of ['admin', 'web']) {
   const directory = path.join(root, 'apps', app, 'public/generated');
   await mkdir(directory, { recursive: true });
@@ -81,8 +84,8 @@ for (const app of ['admin', 'web']) {
   const sources = [...new Map(studioVariableCatalog.variables.flatMap(variable => variable.sources).map(item => [JSON.stringify(item), item])).values()];
   const usageIds = new Map(usages.map((item, index) => [JSON.stringify(item), index]));
   const sourceIds = new Map(sources.map((item, index) => [JSON.stringify(item), index]));
-  const payload = { schema: studioVariableCatalog.schema, usages, sources, variables: studioVariableCatalog.variables.map(variable => ({ ...variable,
+  const payload = { schema: studioVariableCatalog.schema, reservedNames: [...new Set([...variables.values()].map(variable => variable.name))].sort(), usages, sources, variables: studioVariableCatalog.variables.map(variable => ({ ...variable,
     usages: variable.usages.map(item => usageIds.get(JSON.stringify(item))), sources: variable.sources.map(item => sourceIds.get(JSON.stringify(item))) })) };
   await writeFile(path.join(directory, 'studio-variables-v1.json'), JSON.stringify(payload) + '\n');
 }
-console.log(`Built Studio variable catalog: ${variables.size} contextual variable definitions.`);
+console.log(`Built Studio variable catalog: ${studioVariableCatalog.variables.length} contextual variable definitions.`);

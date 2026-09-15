@@ -1,3 +1,4 @@
+import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { rememberStudioEditorReturn } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
 import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey, supportsZodiacSeasonVariables } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
@@ -208,6 +209,7 @@ const PackagedHookCatalogResults = lazy(async () => {
 const SkyV4StudioReviewPanel = lazy(() => import("./SkyV4StudioReviewPanel"));
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import AdminFilterDisclosure from "./AdminFilterDisclosure";
+const StudioVariableInsert = lazy(() => import("./StudioVariableInsert"));
 const StudioVariables = lazy(() => import("./StudioVariables"));
 const SkyForecastTemplateStudio = lazy(() => import("./SkyForecastTemplateStudio"));
 const CalendarOverviewEditor = lazy(() => import("./CalendarOverviewEditor"));
@@ -2803,6 +2805,7 @@ export function GeneratedContentAdminDashboard() {
     saveStudioTheme(next);
   }
   const [secret, setSecret, setTransientCredential] = useSavedSecret();
+  const [variableCreateRequest, setVariableCreateRequest] = useState(0);
   const [secretInput, setSecretInput] = useState(secret);
   const loadCalendarPreviewRows = useCallback(async (keys: string[]) => {
     const query = new URLSearchParams({ status: "all", visibility: "all", limit: "1000" });
@@ -2939,6 +2942,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
+  const customVariableLibrary = useStudioCustomVariables(secret, activePage === "variables" || Boolean(draft));
   const [fallbackHookEditorGuidanceBuilder, setFallbackHookEditorGuidanceBuilder] = useState<FallbackHookEditorGuidanceBuilder | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
@@ -3046,6 +3050,7 @@ export function GeneratedContentAdminDashboard() {
       || (activePage === "skyWriteups" && isSkyWriteupLibraryRow(row))
       || !isPassiveReferenceAdminRow(row))
     && !row.id.startsWith("package:")
+    && !row.content_key.startsWith("studio-variable/")
     && (showRetiredRows || !isRetiredAdminRow(row))
   )), [rows, activePage, categoryFilter, showReferenceRows, showRetiredRows]);
   const savedFallbackRows = useMemo(
@@ -6042,7 +6047,7 @@ export function GeneratedContentAdminDashboard() {
             href: item.page ? adminHashForPage(item.page) : undefined,
             onSelect: item.page ? () => navigateAdminPage(item.page as AdminDashboardPage) : undefined
           }))}
-          createActions={[
+          createActions={activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setVariableCreateRequest(value => value + 1); setIsCreateMenuOpen(false); } }] : [
             {
               key: "article",
               label: "Create article",
@@ -6121,7 +6126,7 @@ export function GeneratedContentAdminDashboard() {
           </nav>
         )}
 
-        {activePage === "variables" && <><Suspense fallback={<p role="status">Loading variables…</p>}><StudioVariables onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
+        {activePage === "variables" && <><Suspense fallback={<p role="status">Loading variables…</p>}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
         {activePage === "reviewQueue" && (
           <section className="admin-template-page">
@@ -8421,7 +8426,7 @@ export function GeneratedContentAdminDashboard() {
     const effectiveSkyFallbackVariableTarget = skyFallbackEditor?.fields.some((field) => field.key === skyFallbackVariableTarget)
       ? skyFallbackVariableTarget
       : skyFallbackEditor?.fields.find((field) => field.key === "fact_line")?.key ?? skyFallbackEditor?.fields[0]?.key ?? "";
-    const effectiveSkyFallback = effectivePackageRecord(currentDraft.sections);
+    const effectiveSkyFallback: Record<string, any> = { ...effectivePackageRecord(currentDraft.sections), _studioVariables: customVariableLibrary.variables };
     const isSkyV4OverlaySettings = currentDraft.contentKey === "sky-v4/settings/contextual-overlays";
     const skyV4OverlaysEnabled = effectiveSkyFallback.contextualTransitOverlaysEnabled !== false;
     const skyV4FallbackOverlayEnabled = effectiveSkyFallback.includeContextualOverlayInFallbackHook === true;
@@ -8479,6 +8484,7 @@ export function GeneratedContentAdminDashboard() {
     const templatePreviewPackage = isPackageDraft
       ? {
           ...draftEditablePackageRecord(currentDraft),
+          _studioVariables: customVariableLibrary.variables,
           headline: currentDraft.headline,
           summary: currentDraft.summary,
           body: currentDraft.body,
@@ -9190,6 +9196,19 @@ export function GeneratedContentAdminDashboard() {
           </div>
         </header>
         <section className="admin-post-editor">
+          {isPackageDraft && !skyFallbackEditor && <Suspense fallback={<p role="status">Loading variables…</p>}><StudioVariableInsert variables={customVariableLibrary.variables} context={effectiveSkyFallback} disabled={isLoading} onInsert={token => {
+            const saved = variableInsertionRef.current;
+            const element = saved && editorRef.current?.contains(saved.element) ? saved.element : editorRef.current?.querySelector<HTMLTextAreaElement>('textarea[data-sky-field="body_you"],textarea[data-sky-field="body"]');
+            if (!element) return;
+            const start = saved?.element === element ? saved.start : element.value.length;
+            const end = saved?.element === element ? saved.end : start;
+            const value = element.value.slice(0, start) + token + element.value.slice(end);
+            const field = element.dataset.skyField;
+            if (field === "body_you" || field === "body_they") setDraft(setPackageSectionField(currentDraft, field, value));
+            else updateGenericBody(value);
+            requestAnimationFrame(() => { element.focus(); element.setSelectionRange(start + token.length, start + token.length); });
+          }} /></Suspense>}
+
           {guidedReviewKey === currentDraft.contentKey && (
             <section className="admin-guided-content-review" aria-label="Guided unresolved-content review">
               <div>

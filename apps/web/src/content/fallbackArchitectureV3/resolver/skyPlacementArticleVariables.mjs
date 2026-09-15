@@ -1,3 +1,4 @@
+import { studioVariableValue } from "../../studioCustomVariables.mjs";
 import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableIssues } from "./skyPlacementVariables.mjs";
 import { resolveIngressSource } from "./skyIngressComposition.mjs";
 import { SKY_WRITING_LIBRARY_GROUPS } from "./skyWritingLibraryRegistry.mjs";
@@ -6,7 +7,7 @@ const articlePaths = ["placementArticle", "placementArticleDirect", "placementAr
 const facts = new Set(SKY_PLACEMENT_VARIABLES.map(item => item.name));
 const phraseFields = new Map(SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields).map(item => [item.id, item]));
 const kinds = new Set(["planet", "sign", "placement", "timing", "aspect"]);
-const safeName = name => /^[A-Za-z][A-Za-z0-9]*$/u.test(name) && !["constructor", "prototype", "__proto__"].includes(name);
+const safeName = name => /^[A-Za-z][A-Za-z0-9_]*$/u.test(name) && !["constructor", "prototype", "__proto__"].includes(name);
 const tokenPattern = () => /\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu;
 const tokens = value => [...String(value ?? "").matchAll(tokenPattern())];
 // Article paragraphs need an inline sequence; section templates retain their
@@ -24,7 +25,7 @@ export function skyPlacementArticlePhraseNames(value) {
 }
 
 function knownPhrase(name, owner) {
-  return safeName(name) && (phraseFields.has(name) || Object.hasOwn(owner?.ingress?.sources ?? {}, name)
+  return safeName(name) && (owner?._studioVariables?.some(item => item.name === name) || phraseFields.has(name) || Object.hasOwn(owner?.ingress?.sources ?? {}, name)
     && kinds.has(owner.ingress.sources[name]?.kind));
 }
 
@@ -40,6 +41,11 @@ export function skyPlacementArticleVariableIssues(value, owner = {}) {
 }
 
 function phraseSource(owner, name, records) {
+  const custom = owner?._studioVariables?.find(item => item.name === name);
+  if (custom) {
+    const { value } = studioVariableValue(custom, owner);
+    return value?.trim() ? { text: value, kind: "custom", reference: `studio-variable/${custom.name}` } : { reason: `No value saved for {{${name}}}. Open Variables to complete it.` };
+  }
   const source = owner?.ingress?.sources?.[name];
   if (!source && !phraseFields.get(name)?.shared) return { reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
   const expected = phraseFields.get(name)?.kind;

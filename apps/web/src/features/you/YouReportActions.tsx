@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { listReportLibrary, type ReportLibraryItem } from "../../services/reportLibrary";
+import { ReportGenerationBeam } from "../../components/reports/ReportGenerationBeam";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import "../../styles/you-reports.css";
 import type { DailyHoroscopeAssembly, PersonalTimingSummary } from "./YouPage";
@@ -123,6 +124,7 @@ export function YouReportActions({
   }, [scope]);
 
   const shouldPoll = isPending(dayAction.state) || isPending(weekAction.state);
+  const generating = session.status === "ready" && [dayAction.state, weekAction.state].some((state) => state === "loading" || state === "queued");
   useEffect(() => {
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout>;
@@ -199,7 +201,7 @@ export function YouReportActions({
   }
 
   return (
-    <section className="you-empty-card you-report-actions" aria-label="In-depth transit reports">
+    <section className="you-empty-card you-report-actions" aria-label="In-depth transit reports" data-report-generating={generating || undefined}>
       <span>Reports</span>
       <h3>Day and week reports</h3>
       <p>Your day and week readings stay in Reports while they are being prepared and after they are ready.</p>
@@ -219,6 +221,7 @@ export function YouReportActions({
         </>
       )
         : message ? <p role="status">{message}</p> : null}
+      {generating ? <ReportGenerationBeam /> : null}
     </section>
   );
 }

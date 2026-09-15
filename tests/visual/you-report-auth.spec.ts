@@ -30,6 +30,7 @@ test.beforeEach(async ({page})=>{
 
 test('waits for recovered session and preserves ready controls during brief rehydration',async({page})=>{
   await expect(page.getByRole('button',{name:'Day report is loading',exact:true})).toBeDisabled();
+  await expect(page.locator('[data-beam]')).toHaveCount(0);
   expect(await page.evaluate(()=> (window as any).reportHarness.reads)).toBe(0);
   await page.evaluate(()=>{const h=(window as any).reportHarness;h.items=[{reportKind:'you_day_reading',targetDate:'2026-09-11',status:'ready',route:'/reports/day',updatedAt:'one'}];h.emit('synthetic-owner');});
   await expect(page.getByRole('button',{name:'Read day report',exact:true})).toBeEnabled();
@@ -61,6 +62,7 @@ test('polling cannot replace a submitted retry with the earlier failed report',a
   await page.evaluate(()=>{const h=(window as any).reportHarness;h.items=[{reportKind:'you_day_reading',targetDate:'2026-09-11',status:'needs_attention',updatedAt:'old'}];h.create=()=>new Promise(resolve=>h.finish=resolve);h.emit('owner');});
   await expect(page.getByRole('button',{name:'Try day report again',exact:true})).toBeEnabled();
   await page.getByRole('button',{name:'Try day report again',exact:true}).click();
+  await expect(page.locator('[data-beam]')).toHaveCount(1);
   await page.clock.fastForward(2100);
   await expect(page.getByRole('button',{name:'Day report is loading',exact:true})).toBeDisabled();
   await page.evaluate(()=>(window as any).reportHarness.finish({status:'queued'}));
@@ -69,6 +71,7 @@ test('polling cannot replace a submitted retry with the earlier failed report',a
   await page.evaluate(()=>{const h=(window as any).reportHarness;h.items=[{reportKind:'you_day_reading',targetDate:'2026-09-11',status:'ready',route:'/reports/day',updatedAt:'new'}];});
   await page.clock.fastForward(2100);
   await expect(page.getByRole('button',{name:'Read day report',exact:true})).toBeEnabled();
+  await expect(page.locator('[data-beam]')).toHaveCount(0);
 });
 
 // A mounted report card must use an account already recovered by its parent;

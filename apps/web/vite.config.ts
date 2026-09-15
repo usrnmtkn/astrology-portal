@@ -343,6 +343,12 @@ export default defineConfig(({ mode }) => {
             if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
               return "react";
             }
+
+            // This React consumer must not join vendor: React's scheduler is
+            // already there, so vendor importing React would create a cycle.
+            if (id.includes("node_modules/border-beam/")) {
+              return "report-generation-beam";
+            }
             if (id.includes("node_modules/@supabase")) {
               return "supabase";
             }
