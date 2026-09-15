@@ -6,6 +6,9 @@ import assert from "node:assert/strict";
 import { Readable } from "node:stream";
 import { contentLiveStatuses, servingPackageRecords } from "../api/_lib/content-live-status";
 import { ZODIAC_SEASON_SOURCE_STARTERS } from "../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
+import { calendarWritingSourceStarters } from "../api/_lib/calendar-writing-sources";
+import { createHash } from "node:crypto";
+import { calendarPreviewValues } from "../apps/admin/src/calendarPreviewModel";
 import { skyPlacementSourceRecords } from "../api/_lib/sky-placement-sources";
 process.env.NODE_ENV = "test";
 const { default: handler } = await import("../api/admin/generated-content.ts");
@@ -56,8 +59,14 @@ async function saveSource(baseline: any, copy: any, live?: any) {
 async function publish(row: any, expected=200) { return request('PATCH', {id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'approve-package-revision'}, '', expected); }
 for (const source of ZODIAC_SEASON_SOURCE_STARTERS) {
  const got = await request('GET', undefined, `?contentKeys=${encodeURIComponent(source.contentKey)}&status=all&visibility=all&limit=1`);
- assert.equal(got.rows[0].sections.packageRecord.body, '');
- assert.equal(contentLiveStatuses(got.rows, stored)[0].live, false, `${source.contentKey}: an empty starter is not live prose`);
+ const record = got.rows[0].sections.packageRecord;
+ const expected = calendarWritingSourceStarters.find(row => row.contentKey === source.contentKey)!;
+ assert.equal(record.body, expected.calendarWritingSource.originalBody);
+ assert.equal(createHash('sha256').update(record.body).digest('hex'), record.calendarWritingSource.bodySha256);
+ assert.equal(record.review_status, 'needs_review');
+ assert.equal(contentLiveStatuses(got.rows, stored)[0].live, false, `${source.contentKey}: existing writing starts as an unpublished draft`);
+ const variable = source.contentKey.includes('polar-axis') ? 'zodiacSeasonPolarAxis' : 'zodiacSeason';
+ assert.equal(calendarPreviewValues({ sunSign: source.sign, moonSign: 'Aries', rows: got.rows })[variable].text, record.body);
 }
 const baseline = skyPlacementSourceRecords.get('sky-placement/article/sun/virgo')!;
 let draft = await saveSource(baseline, {...baseline, placementArticle: '{{zodiacSeason}}\n\n{{zodiacSeasonPolarAxis}}'});

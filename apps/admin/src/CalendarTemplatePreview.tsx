@@ -12,10 +12,12 @@ export type CalendarTemplatePreviewProps = {
   rows: CalendarPreviewRow[];
   loadRows: (keys: string[]) => Promise<CalendarPreviewRow[]>;
   draft?: { contentKey: string; body: string; sections?: unknown } | null;
+  onEditSource: (row: CalendarPreviewRow) => void;
+  onEditOverview: (field: string) => void;
 };
 const dateInput = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}T${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 
-export default function CalendarTemplatePreview({ period, rows, loadRows, draft }: CalendarTemplatePreviewProps) {
+export default function CalendarTemplatePreview({ period, rows, loadRows, draft, onEditSource, onEditOverview }: CalendarTemplatePreviewProps) {
   const [mode, setMode] = useState("ephemeris");
   const [view, setView] = useState("preview");
   const [date, setDate] = useState(() => dateInput(new Date()));
@@ -65,7 +67,9 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft 
       .catch(reason => { if (active) setLoaded({ key: sourceKey, error: reason instanceof Error ? reason.message : "Could not load saved writing." }); });
     return () => { active = false; };
   }, [sourceKey, loadRows]);
-  const baseValues = useMemo(() => calendarPreviewValues({ sunSign, moonSign, calculation, rows: sources ?? [], moonKey }), [sunSign, moonSign, calculation, sources, moonKey]);
+  const baseValues = useMemo(() => calendarPreviewValues({ sunSign, moonSign, calculation,
+    rows: (sources ?? []).map(row => row.content_key === draft?.contentKey ? { ...row, body: draft.body, sections: draft.sections } : row), moonKey
+  }), [sunSign, moonSign, calculation, sources, moonKey, draft]);
   const template = skyForecastTemplates[period];
   const saved = sources?.find(row => row.content_key === template.contentKey);
   const pattern = draft?.contentKey === template.contentKey ? draft.body : saved?.body ?? calendarOverviewPattern(period);
@@ -97,12 +101,20 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft 
     {!sources && !sourceError && <p role="status">Loading the full saved template and matching passages…</p>}
     <StudioTabs label="Calendar template views" value={view} onValueChange={setView} tabs={[{ value: "preview", label: "Preview" }, { value: "pattern", label: "Template pattern" }, { value: "variables", label: "Variables" }]}>
       {view === "pattern" ? <div className="admin-composition-preview-field"><span>{draft?.contentKey === template.contentKey ? "Open editor pattern" : saved ? "Saved template pattern" : "Starter template pattern"}</span><p className="admin-calendar-template-text" aria-label="Calendar template pattern">{sources ? pattern : "Loading saved template…"}</p></div>
-        : view === "variables" ? <div className="admin-editor-guidance"><p>Use these named variables in the template pattern. Ephemeris values cannot be edited; saved writing is edited at its source.</p><dl aria-label="Calendar preview variables">{availableNames.map(name => {
+        : view === "variables" ? <div className="admin-editor-guidance admin-calendar-variables"><p>Select Edit passage to change reusable writing, or Write passage to fill an overview field. Changes appear in the preview while you edit; Save keeps them. Dates and positions update from the ephemeris.</p>
+          {calculation && !seasons.closing && <p role="note">No zodiac season change in this period. Closing-season variables are not needed.</p>}
+          <table className="admin-data-table" aria-label="Calendar preview variables"><thead><tr><th scope="col">Variable</th><th scope="col">Writing or value</th><th scope="col">Edit</th></tr></thead><tbody>{availableNames.filter(name => !calculation || seasons.closing || !/^(closing|seasonChangeDate)/u.test(name)).map(name => {
           const value = values[name];
           const sourceKey = value?.sourceKey ?? calendarSeasonSourceKey(name, sunSign, values.openingSeasonSign?.text ?? "", values.closingSeasonSign?.text ?? "");
           const field = calendarOverviewFields(period).find(field => field.name === name);
-          const unavailable = field ? field.help : sourceKey ? "No eligible saved season passage. Open the writing source to review or write it." : mode === "signs" ? "Choose Use ephemeris to calculate dates and season changes." : "This fact is not available for the selected period.";
-          return <div key={name}><dt><code>{`{{${name}}}`}</code> · {value?.kind === "fact" ? "Read-only ephemeris" : value?.kind === "example" ? "Example sign" : value ? "Saved writing" : "Not filled"}</dt><dd className="admin-calendar-template-text">{value?.text ?? unavailable}{sourceKey && <p><a href={`#exact-content?q=${encodeURIComponent(sourceKey)}`}>Open writing source</a></p>}</dd></div>; })}</dl></div>
+          const source = sources?.find(row => row.content_key === sourceKey);
+          const unavailable = field ? field.help : sourceKey ? "Add or edit the shared passage for this sign." : mode === "signs" ? "Choose Use ephemeris to calculate dates and season changes." : "This fact is not available for the selected period.";
+          const kind = value?.kind === "fact" ? "Read-only ephemeris" : value?.kind === "example" ? "Example sign" : value?.sourceLabel ?? (value ? "Saved writing" : field || sourceKey ? "Needs writing" : "Unavailable");
+          return <tr key={name}><th scope="row"><code>{`{{${name}}}`}</code><span className="admin-field-hint">{kind}</span></th>
+            <td><p className="admin-calendar-template-text">{value?.text ?? unavailable}</p></td>
+            <td>{field ? <StudioButton onClick={() => onEditOverview(field.name)} aria-label={`Edit ${name}`}>{value ? "Edit passage" : "Write passage"}</StudioButton>
+              : source ? <StudioButton onClick={() => onEditSource(source)} aria-label={`Edit ${name}`}>Edit passage</StudioButton>
+              : <span className="admin-field-hint">{value?.kind === "example" ? "Use sign selectors above" : sourceKey ? "Choose a sign and refresh sources" : "Calculated automatically"}</span>}</td></tr>; })}</tbody></table></div>
         : <div className="admin-template-reader-surface"><div className="admin-template-reader-copy">
           {ready ? <>
 
