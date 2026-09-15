@@ -47,6 +47,7 @@ for (const legacyDraft of [false, true]) for (const [width, theme] of [[390, 'li
    if (recoverChunk) await page.route('**/SkyPlacementComposition-*.js', route => missingChunk ? route.abort('failed') : route.continue());
    await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');
    if (recoverChunk) {
+    await selectSunVirgo();
     const recovery = page.getByRole('region', { name: 'Page recovery', exact: true });
     await expect(recovery).toBeVisible();
     missingChunk = false;
