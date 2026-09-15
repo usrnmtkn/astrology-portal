@@ -15,9 +15,9 @@ function VariableCard({ variable, color, onOpenSource }: { variable: StudioVaria
     try { await navigator.clipboard.writeText(variable.token); setCopyState('Copied'); }
     catch { setCopyState('Copy unavailable. Select the token and copy it manually.'); }
   }
-  return <article className="studio-surface studio-variable-card" aria-label={`${variable.token} · ${variable.source}`}>
-    <header className="studio-variable-card-header">
-      <div className="studio-variable-identity">
+  return <article className="studio-surface studio-section studio-variable-card" aria-label={`${variable.token} · ${variable.source}`}>
+    <header className="admin-template-card-header">
+      <div className="admin-new-actions">
         <h2><code data-variable-name={variable.name} data-variable-color={color}>{variable.token}</code></h2>
         <span className="ui-pill">{kindLabels[variable.kind]}</span>
       </div>
@@ -81,7 +81,7 @@ export default function StudioVariables({ onOpenSource }: { onOpenSource: (key: 
     {error ? <div className="admin-empty-state" role="alert"><p>{error}</p><StudioButton onClick={() => setAttempt(value => value + 1)}>Retry catalog</StudioButton></div>
       : !catalog ? <p role="status">Loading variables…</p> : <>
         {filtered.length ? <AdminPaginatedCollection items={filtered} label="Variables" pageSize={20} resetKey={`${query}|${kind}|${surface}`}>
-          {visible => <div className="studio-variable-list">{visible.map(variable => <VariableCard key={variable.id} variable={variable} color={colors.get(variable.name)} onOpenSource={onOpenSource} />)}</div>}
+          {visible => <div className="studio-section studio-variable-list">{visible.map(variable => <VariableCard key={variable.id} variable={variable} color={colors.get(variable.name)} onOpenSource={onOpenSource} />)}</div>}
         </AdminPaginatedCollection> : <div className="admin-empty-state"><h2>No matching variables</h2><p>Try another name or clear the filters.</p><StudioButton onClick={reset}>Show all variables</StudioButton></div>}
       </>}
   </section>;
