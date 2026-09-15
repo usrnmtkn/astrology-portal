@@ -138,7 +138,7 @@ test("Calendar forecast tabs leave Friends context and protect unsaved changes",
   await page.getByRole("button", { name: "Open weekly template" }).click();
   await page.getByLabel("Template pattern", { exact: true }).fill("{{unsavedTemplate}}");
   page.once("dialog", dialog => dialog.dismiss());
-  await tabs.getByRole("tab", { name: "Daily Sky", exact: true }).click({ force: true });
+  await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Close", exact: true }).click();
   await expect(tabs.getByRole("tab", { name: "Weekly Sky", exact: true })).toHaveAttribute("aria-selected", "true");
   await expect(page.getByLabel("Template pattern", { exact: true })).toHaveValue("{{unsavedTemplate}}");
 });

@@ -299,10 +299,11 @@ const { skyForecastTemplates } = await import("../apps/admin/src/skyForecastTemp
 const { calendarMoonPassages } = await import("../apps/admin/src/calendarPreviewModel.ts");
 for (const template of Object.values(skyForecastTemplates)) {
   const guidance = "Editor-only source and structure guidance for this fixture.";
+  const overviewSections = { calendarOverview: { monthlyOverview: "Fixture complete overview opening.\n\n{{zodiacSeason}}\n\nFixture final sentence.", weeklyIntegration: "Fixture closing passage." }, preservedMetadata: "Fixture existing metadata" };
   const created = await invokeApi("POST", "/api/admin/generated-content", {
     contentKey: template.contentKey, surface: "sky", mode: "card", status: "DRAFT",
     lane: "reference", reviewState: "EDITORIAL_REVIEW_REQUIRED", blockType: "fallback_template", eventType: "fallback-template",
-    headline: template.headline, body: template.body, summary: guidance,
+    headline: template.headline, body: template.body, summary: guidance, sections: overviewSections,
     sourceSnapshot: { contentType: "template", contentSystem: "fallback", content_role: "template" }
   });
   assert.equal(created.status, 200, JSON.stringify(created.payload));
@@ -310,6 +311,7 @@ for (const template of Object.values(skyForecastTemplates)) {
   const opened = await invokeApi("GET", `/api/admin/generated-content?contentKey=${encodeURIComponent(template.contentKey)}&status=all&visibility=all`);
   assert.equal(opened.payload.rows[0].body, template.body);
   assert.equal(opened.payload.rows[0].summary, guidance);
+  assert.deepEqual(opened.payload.rows[0].sections, overviewSections);
   assert.equal(opened.payload.rows[0].lane, "reference");
   const previewQuery = new URLSearchParams({ status: "all", visibility: "all", limit: "1000" });
   for (const key of [template.contentKey, "cms/sky-daily-summary/sun/virgo", "authored/calendar-weekly-moon/aries"]) previewQuery.append("contentKeys", key);
@@ -318,6 +320,7 @@ for (const template of Object.values(skyForecastTemplates)) {
   const previewTemplate = previewRead.payload.rows.find(candidate => candidate.content_key === template.contentKey);
   assert.equal(previewTemplate.body, template.body);
   assert.equal(previewTemplate.summary, guidance);
+  assert.deepEqual(previewTemplate.sections, overviewSections);
   const moonSource = previewRead.payload.rows.find(candidate => candidate.content_key === "authored/calendar-weekly-moon/aries");
   assert.equal(calendarMoonPassages(previewRead.payload.rows, "Aries")[0]?.body, moonSource.sections.packageRecord.body);
   assert.equal((await loadLiveGeneratedContentForKeys([template.contentKey])).size, 0);
