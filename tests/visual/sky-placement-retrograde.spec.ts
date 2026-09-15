@@ -65,7 +65,7 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     await expect(page.locator("#sky-detail-title")).toHaveText("Neptune Rx in Aries");
     const headerDates = page.locator(".sky-detail-id .article-duration");
     await expect(headerDates.first()).toHaveText(/Jul 7, 2026 - Dec 12, 2026/);
-    await expect(headerDates.nth(1)).toHaveText(/In Aries: January 26, 2026 to March 23, 2039/);
+    await expect(headerDates.nth(1)).toHaveText(/Full residency in Aries: March 30, 2025 to March 23, 2039/);
     await expect(page.locator(".article-body-inner p").first()).toHaveText(modifier("Neptune"));
     // Preserve both the opening and final sentence of the owner-authored base unit.
     await expect(page.locator(".sky-detail-article")).toContainText("Neptune in Aries makes a new dream feel urgent before its shape is fully clear.");

@@ -7,7 +7,7 @@ import SwissEph from "swisseph-wasm";
 const vite = await createServer({
   root: path.join(process.cwd(), "apps/web"), appType: "custom", logLevel: "silent", server: { middlewareMode: true },
   plugins: [{ name: "placement-date-test-exports", enforce: "pre", transform(code, id) {
-    if (id.endsWith("/src/App.tsx")) return code + "\nexport { placementTransitRangeLabel, formatPlacementTransitEndpoint, formatTransitRange, currentSkyPlacementDetailArticle };";
+    if (id.endsWith("/src/App.tsx")) return code + "\nexport { placementTransitRangeLabel, formatPlacementTransitEndpoint, formatTransitRange, currentSkyPlacementDetailArticle, retrogradeRangeText, loadContentRegistry };";
     if (id.includes("/fallbackArchitectureV3/authored-inputs/") && id.endsWith(".json?url")) {
       return `export default ${fs.readFileSync(id.slice(0, -4), "utf8")};`;
     }
@@ -25,6 +25,7 @@ try {
   const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");
   const runtime = await vite.ssrLoadModule("/src/content/fallbackArchitectureV3Runtime.ts");
   await runtime.loadSkyPlacementFallbackArchitectureV3Bundle();
+  await app.loadContentRegistry("sky");
   for (const [date, signIndex] of [["2026-09-12T12:00:00Z", 5], ["2027-01-12T12:00:00Z", 9]] as const) {
     const snapshot = await ephemeris.getAstrodienstSky(ephemeris.defaultLocation, new Date(date), { includeTransitWindows: true });
     const sun = snapshot.positions.find((position: { planet: string }) => position.planet === "Sun");
@@ -48,6 +49,43 @@ try {
       assert.equal(article.duration, `${sameYear ? entry.replace(/, \d{4}$/, "") : entry} to ${exit}`);
       console.log(`${date} ${timeZone}: ${start.toISOString()} / ${end.toISOString()} -> ${range}; ${article.duration}`);
     }
+  }
+  // Use real residency passes for every supported body, including a return
+  // visit. Compare the adapter to civil dates, not its own date-line helper.
+  const location = { label: "Test location", latitude: 40.7, longitude: -74, timeZone: "America/New_York" };
+  const today = await ephemeris.getAstrodienstSky(location, new Date("2026-09-14T12:00:00Z"));
+  assert.equal(today.positions.length, 14);
+  const cases = today.positions.map((p: any) => ({ planet: p.planet, sign: p.sign, date: "2026-09-14" }));
+  cases.push({ planet: "Venus", sign: "Scorpio", date: "2026-12-10" });
+  for (const scenario of cases) {
+    const date = `${scenario.date}T12:00:00Z`;
+    const snapshot = await ephemeris.getSkyPlacementSnapshot(location, scenario.planet.toLowerCase().replaceAll(" ", "-"), scenario.sign, new Date(date), true);
+    for (const timeZone of ["America/New_York", "UTC", "Asia/Tokyo"]) {
+      const positions = snapshot.positions.map((p: any) => ({ ...p, transitTimeZone: timeZone }));
+      const position = positions.find((p: any) => p.planet === scenario.planet);
+      const passes = position.residencyPasses;
+      const current = passes.find((pass: any) => date >= pass.entryDate && date < pass.exitDate);
+      assert.ok(current, `${scenario.planet} must have a calculated current visit`);
+      const full = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone });
+      const dateLine = (start: string, end: string) => {
+        const entry = full.format(new Date(start)), exit = full.format(new Date(end));
+        return `${entry.slice(-4) === exit.slice(-4) ? entry.replace(/, \d{4}$/, "") : entry} to ${exit}`;
+      };
+      const article = app.currentSkyPlacementDetailArticle({ position, positions, aspects: [], generatedAt: date, generatedContent: new Map() });
+      assert.equal(article.duration, article.retrograde ? app.retrogradeRangeText(position) : dateLine(current.entryDate, current.exitDate));
+      const separate = passes[0].entryDate !== current.entryDate || passes.at(-1).exitDate !== current.exitDate;
+      assert.equal(article.residencyDuration, article.retrograde || separate
+        ? `Full residency in ${scenario.sign}: ${dateLine(passes[0].entryDate, passes.at(-1).exitDate)}` : undefined);
+      if (scenario.planet === "Venus") {
+        assert.equal(article.duration, scenario.date === "2026-09-14"
+          ? "September 10 to October 25, 2026"
+          : "December 4, 2026 to January 7, 2027");
+        assert.equal(article.residencyDuration, "Full residency in Scorpio: September 10, 2026 to January 7, 2027");
+        assert.equal(article.pills.durationLabel, scenario.date === "2026-09-14" ? "41D left" : "28D left");
+
+      }
+    }
+    console.log(`PASS: ${scenario.planet} ${scenario.date} current visit / full residency in three zones`);
   }
   // Local calendar boundaries must govern compression, year labels, and same-day times too.
   const ny = { transitTimeZone: "America/New_York" };

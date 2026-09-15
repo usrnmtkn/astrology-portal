@@ -52,7 +52,13 @@ assert.match(dashboard, /Friends Transits · Where it lands/u);
 assert.match(dashboard, /Friends Transits · Between you two/u);
 assert.match(dashboard, /audienceKey = audience === "friends" \? "body_they" : "body_you"/u, "Friends previews must resolve body_they instead of silently showing You copy.");
 assert.match(dashboard, /if \(audience === "friends" && hasAudienceField\) continue;/u, "An explicitly blank Friends field must not fall back to the You body in the Studio preview.");
-assert.ok((dashboard.match(/if \(friendsTransitAudience\) params\.set\("audience", "friends"\);/gu) ?? []).length >= 4, "Friends context must survive selector and transit-tab changes.");
+for (const name of ["updateTransitNatalSelection", "updateHouseTransitSelection"]) {
+  const start = dashboard.indexOf(`  function ${name}(`);
+  assert.ok(start >= 0, `${name} must remain reachable.`);
+  const selection = dashboard.slice(start, dashboard.indexOf("\n  function ", start + 1));
+  assert.match(selection, /if \(friendsTransitAudience\) params\.set\("audience", "friends"\);/u, "Friends context must survive selector changes.");
+}
+assert.match(dashboard, /if \(friendsTransitAudience && \(view === "transits-to-natal" \|\| view === "house-transits"\)\) params\.set\("audience", "friends"\);/u, "Transit tabs preserve the Friends audience; collective Sky tabs leave that audience.");
 
 assert.doesNotMatch(app, /renderTransitHouseEvent/u, "The retired house composition must not return.");
 assert.match(app, /renderTransitHouse\(\{/u);
