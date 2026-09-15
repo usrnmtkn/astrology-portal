@@ -52,6 +52,9 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   const { sky, days, events, timeZone } = calculation;
   const formatDate = (value: string) => new Intl.DateTimeFormat("en-US", { dateStyle: "full", timeZone }).format(new Date(value));
   const formatTime = (value: string) => new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short", timeZone }).format(new Date(value));
+  // Passage rows begin at local midnight to describe an ongoing state, not an exact station.
+  const timedEvents = (items: typeof events) => items.filter(event => event.phase !== "retrograde-passage")
+    .map(event => `${formatTime(event.startsAt)} · ${event.title}`).join("\n");
   put("date", formatDate(sky.generatedAt), "fact");
   put("timeZone", timeZone, "fact");
   put("asOf", formatTime(sky.generatedAt), "fact");
@@ -71,12 +74,12 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
       if (days.length !== 7) continue;
       put(`${weekday}Date`, formatDate(day.date), "fact");
       put(`${weekday}MoonSign`, day.moonSign, "fact");
-      put(`${weekday}Timing`, day.events.map(event => `${formatTime(event.startsAt)} · ${event.title}`).join("\n") || `Moon in ${day.moonSign} at noon · ${day.moonPhase}`, "fact");
+      put(`${weekday}Timing`, timedEvents(day.events) || `Moon in ${day.moonSign} at noon · ${day.moonPhase}`, "fact");
       const passage = calendarMoonPassages(rows, day.moonSign)[0];
       put(`${weekday}Writeup`, passage?.body ?? undefined, "copy", passage?.content_key);
     }
   }
-  put("keyDates", events.map(event => `${formatTime(event.startsAt)} · ${event.title}`).join("\n"), "fact");
+  put("keyDates", timedEvents(events), "fact");
   return values;
 }
 
