@@ -19,6 +19,12 @@
   letter-spacing: var(--tracking-body);
 }
 
+.app-loading[role="status"] {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
 .app-loading__lines {
   display: grid;
   gap: var(--space-4);
