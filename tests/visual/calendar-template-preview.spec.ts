@@ -130,9 +130,11 @@ test("Calendar preview calculates two real skies and clears unavailable facts", 
   await expect(rendered).toContainText("Monday, January 11, 2027", { timeout: 45_000 });
   await expect(rendered).not.toContainText("{{mondayTiming}}");
   await expect(rendered).not.toContainText("{{mondayWriteup}}");
+  await expect(rendered).not.toContainText(/12:00 AM[^\n]*retrograde/);
   await page.getByRole("tablist", { name: "Calendar Write-ups workspaces" }).getByRole("tab", { name: "Monthly Sky" }).click();
   await expect(rendered).toContainText("Friday, January 1, 2027", { timeout: 45_000 });
   await expect(rendered).toContainText("Sunday, January 31, 2027");
   await expect(rendered).not.toContainText("{{keyDates}}");
+  await expect(rendered).not.toContainText(/12:00 AM[^\n]*retrograde/);
   expect(state.writes).toEqual([]);
 });
