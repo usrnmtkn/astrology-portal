@@ -27,7 +27,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Monthl
   expect(await writer.getByRole('heading',{name:'Monthly sentence templates',exact:true}).evaluate(headingStyle)).toEqual(await page.getByRole('heading',{name:'Template preview',exact:true}).evaluate(headingStyle));
   await tabs.getByRole('tab',{name:'Sentence templates',exact:true}).click();
   await expect(writer.getByLabel('Monthly definition value')).toHaveValue(monthlyTemplateStarter().definitions.monthlyOverview.value);
-  await writer.getByLabel('Monthly definition').selectOption('openingSeasonOpportunity');
+  await writer.getByLabel('Monthly definition',{exact:true}).selectOption('openingSeasonOpportunity');
   await expect(writer.getByLabel('Monthly definition value')).toHaveValue('{{openingSeasonStrengthening}} and {{openingSeasonCorrection}}');
   await writer.getByRole('button',{name:'Save reusable sentence templates',exact:true}).click();
   await expect(writer.getByText('Reusable sentence templates saved. Existing monthly editions were not changed.',{exact:true})).toBeVisible();
