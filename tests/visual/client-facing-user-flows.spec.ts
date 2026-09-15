@@ -4237,7 +4237,10 @@ test.describe("client-facing user flow case studies", () => {
     await expect(horoscopeSection.getByRole("heading", { name: "Libra & Libra Rising" })).toBeVisible();
     await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
     await expect(page.getByText("You may want more of what is actually fun.", { exact: true })).toHaveCount(0);
-    await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
+    const dateLines = page.locator(".sky-detail-id .article-duration");
+    await expect(dateLines).toHaveCount(2);
+    await expect(dateLines.nth(0)).not.toBeEmpty();
+    await expect(dateLines.nth(1)).toContainText("Full residency in Libra:");
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await assertNoClientErrors();
   });

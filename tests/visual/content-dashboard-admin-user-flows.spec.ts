@@ -7036,11 +7036,20 @@ for (const theme of ['light','dark']) for (const width of [1440,390]) {
     expect((await toolbar.boundingBox())!.height).toBeLessThan(width < 720 ? 160 : 90);
     await page.screenshot({path:`outputs/studio-style/grid-library-${theme}-${width}.png`});
     await expectAdminRouteLoads(page,'/admin/content#sky-writeups');
-    const grid=page.locator('.admin-review-filter-grid').first();
-    const selects=await grid.locator('select').evaluateAll(items=>items.map(e=>({x:e.getBoundingClientRect().x,y:e.getBoundingClientRect().y,height:e.getBoundingClientRect().height})));
-    expect(new Set(selects.map(e=>e.x)).size).toBe(width < 720 ? 1 : 3);
-    expect(selects.every(e=>e.height===56)).toBe(true);
-    expect((await grid.getByRole('button',{name:'Clear filters',exact:true}).boundingBox())!.height).toBe(40);
+    const filters=page.getByRole('region',{name:'Sky write-up filters',exact:true});
+    const compactHeight=await filters.evaluate(element=>Number.parseFloat(getComputedStyle(element).getPropertyValue('--workspace-control-height')));
+    expect(compactHeight).toBe(44);
+    await filters.getByText('More filters',{exact:true}).click();
+    const grids=filters.locator('.admin-review-filter-grid');
+    await expect(grids).toHaveCount(2);
+    for (const grid of await grids.all()) {
+      const selects=await grid.locator('select').evaluateAll(items=>items.map(e=>({x:e.getBoundingClientRect().x,y:e.getBoundingClientRect().y,height:e.getBoundingClientRect().height})));
+      expect(selects).toHaveLength(3);
+      expect(new Set(selects.map(e=>e.x)).size).toBe(width < 720 ? 1 : 3);
+      expect(selects.every(e=>e.height===compactHeight)).toBe(true);
+    }
+    expect((await filters.getByLabel('Search Sky write-ups').boundingBox())!.height).toBe(compactHeight);
+    expect((await filters.getByRole('button',{name:'Clear filters',exact:true}).boundingBox())!.height).toBe(40);
     await expectNoHorizontalOverflow(page,'Sky filter grid');
     await page.screenshot({path:`outputs/studio-style/grid-sky-${theme}-${width}.png`});
     await expectAdminRouteLoads(page,'/admin/content#users');
@@ -7134,8 +7143,8 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     await expect(records.getByRole('table')).toBeVisible();
     await expect(page.locator('.admin-unresolved-total')).toHaveText('1 issue');
     const notification = page.getByRole('button', { name: 'Dismiss notification', exact: true });
-    await expect(notification).toBeVisible();
-    await notification.click();
+    await expect(page.getByRole('region', { name: 'Admin status' })).toContainText('Connected');
+    await expect(notification).toHaveCount(0);
     await expect(page.getByRole('heading', { level: 1, name: 'Unresolved Content', exact: true })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'Resolve content holds' })).toBeVisible();
     const heading = guide.getByRole('heading', { level: 3, name: 'Issue status guide' });
