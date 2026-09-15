@@ -27,6 +27,16 @@ const week = await calculateCalendarPreview("weekly-sky", "2026-11-01T17:00:00.0
 assert.equal(week.days.length, 7);
 assert.equal(week.days[0].dateKey, "2026-10-26");
 assert.equal(week.days[6].dateKey, "2026-11-01");
+const ongoing = week.events.find(event => event.phase === "retrograde-passage")!;
+assert(ongoing, "The real week supplies ongoing retrograde state rows.");
+const station = { ...ongoing, id: "fixture-exact-station", phase: "station-direct" as const, title: "Fixture exact station", startsAt: "2026-10-27T17:45:00.000Z", dateKey: "2026-10-27" };
+const timingValues = calendarPreviewValues({ sunSign: "Scorpio", moonSign: "Leo", rows: [], calculation: {
+  ...week, events: [ongoing, station], days: week.days.map(day => ({ ...day, events: day.dateKey === station.dateKey ? [ongoing, station] : [ongoing] }))
+} });
+assert.equal(timingValues.keyDates.text, "Oct 27, 2026, 1:45 PM EDT · Fixture exact station");
+assert.equal(timingValues.tuesdayTiming.text, timingValues.keyDates.text);
+assert.match(timingValues.mondayTiming.text, / at noon · /);
+assert(timingValues.retrogradePlanets.text.includes(ongoing.planet!), "Ongoing retrogrades remain available as current state.");
 const month = await calculateCalendarPreview("monthly-sky", "2027-02-12T17:00:00.000Z", "America/New_York");
 assert.equal(month.days.length, 28);
 assert(month.events.every(event => event.dateKey.startsWith("2027-02-")));
