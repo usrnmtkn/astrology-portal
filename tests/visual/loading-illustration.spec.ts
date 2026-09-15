@@ -43,13 +43,16 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
       await page.goto(screen === 'sky' ? '/?date=2026-09-14#sky' : '/#friends?tab=charts', { waitUntil: 'domcontentloaded' });
       const loader = screen === 'sky' ? page.locator('.sky-reading-layout__loading .app-loading') : page.getByRole('status').filter({ hasText: 'Loading Friends…' });
       await expect(loader).toBeVisible({ timeout: 60_000 });
+      await expect(loader).toHaveAttribute('role', 'status');
+      await expect(loader).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      await expect(loader).toHaveCSS('border-width', '0px');
       const frame = loader.locator('.loading-illustration');
       await expect(frame.locator('img.is-active')).toHaveAttribute('src', '/loading-artwork/sun.png');
       await expect.poll(() => frame.locator('img.is-active').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(512);
       const bounds = await frame.boundingBox();
       const loaderBounds = await loader.boundingBox();
       const navigationBounds = await page.locator('.topbar').boundingBox();
-      expect(loaderBounds!.y, 'The loading card must clear the fixed navigation').toBeGreaterThanOrEqual(navigationBounds!.y + navigationBounds!.height);
+      expect(loaderBounds!.y, 'The loading content must clear the fixed navigation').toBeGreaterThanOrEqual(navigationBounds!.y + navigationBounds!.height);
       await expect(frame.locator('img.is-active')).not.toHaveAttribute('src', '/loading-artwork/sun.png', { timeout: 8000 });
       await page.waitForTimeout(450);
       expect(await frame.boundingBox()).toEqual(bounds);
