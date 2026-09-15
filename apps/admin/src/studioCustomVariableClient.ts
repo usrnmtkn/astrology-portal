@@ -15,19 +15,20 @@ export async function customVariableRequest(secret: string, method = "GET", body
   return data;
 }
 
-export function useStudioCustomVariables(secret: string) {
+export function useStudioCustomVariables(secret: string, enabled: boolean) {
   const [variables, setVariables] = useState<CustomVariable[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [attempt, setAttempt] = useState(0);
   const reload = useCallback(() => setAttempt(value => value + 1), []);
   useEffect(() => {
+    if (!enabled) return;
     const controller = new AbortController(); setLoading(true); setError("");
     void customVariableRequest(secret, "GET", undefined, controller.signal).then(data => {
       if (!controller.signal.aborted) setVariables(data.variables);
     }).catch(reason => { if (!controller.signal.aborted) setError(reason instanceof Error ? reason.message : "Your variables could not load."); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [secret, attempt]);
+  }, [secret, attempt, enabled]);
   return { variables, setVariables, error, loading, reload };
 }

@@ -2805,7 +2805,6 @@ export function GeneratedContentAdminDashboard() {
     saveStudioTheme(next);
   }
   const [secret, setSecret, setTransientCredential] = useSavedSecret();
-  const customVariableLibrary = useStudioCustomVariables(secret);
   const [variableCreateRequest, setVariableCreateRequest] = useState(0);
   const [secretInput, setSecretInput] = useState(secret);
   const loadCalendarPreviewRows = useCallback(async (keys: string[]) => {
@@ -2943,6 +2942,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
+  const customVariableLibrary = useStudioCustomVariables(secret, activePage === "variables" || Boolean(draft));
   const [fallbackHookEditorGuidanceBuilder, setFallbackHookEditorGuidanceBuilder] = useState<FallbackHookEditorGuidanceBuilder | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
