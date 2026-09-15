@@ -51,6 +51,10 @@
     },
     "api/**/*.ts": {
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,md,mjs,ts}"
+    },
+    "api/admin/calendar-phrase-writing.ts": {
+      "maxDuration": 300,
+      "includeFiles": "{AGENTS.md,{api/_lib,artifacts,config,src/*-writing,packages/*knowledge/{generated,scripts,data,config,referen*,review,voice,sources},apps/web/*/content,tldr-*-phrasebank,data/{writing,agent-memory},docs,skills,.agents/skills}/**/*.{*js,json*,md,ts}}"
     }
   },
   "rewrites": [

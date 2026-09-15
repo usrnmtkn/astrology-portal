@@ -101,6 +101,8 @@ export function isReaderServableGeneratedContentRow(
   }
 ) {
   const normalizedContentKey = row.content_key.trim().toLowerCase();
+  // Monthly phrase authoring records are private source documents, never reader prose.
+  if (normalizedContentKey.startsWith("slot-template/calendar/monthly-composition")) return false;
   if (normalizedContentKey.startsWith("sky/article-template/") || normalizedContentKey.startsWith("sky-article-template/")) {
     return false;
   }
@@ -180,6 +182,7 @@ export function isReaderServableGeneratedContentRow(
 
 type GeneratedContentReaderBoundaryRow = { content_key: string; event_type?: string | null; surface?: string | null; source_snapshot?: Record<string, unknown> | null };
 export function isGeneratedContentReaderBoundaryAllowed(row: GeneratedContentReaderBoundaryRow) {
+  if (row.content_key.toLowerCase().startsWith("slot-template/calendar/monthly-composition")) return false;
   const contentType = typeof row.source_snapshot?.contentType === "string"
     ? row.source_snapshot.contentType
     : "";

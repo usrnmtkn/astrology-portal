@@ -2911,6 +2911,8 @@ export function GeneratedContentAdminDashboard() {
   const houseTransitOpenRequest = useRef(0);
   const houseTransitEditorDrafts = useRef(new Map<string, { draft: AdminDraft; source: HouseTransitEditorSource; kind: HouseTransitSource["id"] }>());
   const houseTransitCloseGuard = useRef<(() => boolean) | null>(null);
+  const calendarPhraseCloseGuard = useRef<(() => boolean) | null>(null);
+  const registerCalendarPhraseGuard = useCallback((guard: (() => boolean) | null) => { calendarPhraseCloseGuard.current = guard; }, []);
   const [transitNatalSourceBodies, setTransitNatalSourceBodies] = useState<Map<string, string>>(() => new Map());
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
   const [articleQuery, setArticleQuery] = useState("");
@@ -3889,6 +3891,7 @@ export function GeneratedContentAdminDashboard() {
   }, [draft, skyArticleEditor, skyArticleEditionForm]);
 
   function closeEditor() {
+    if (calendarPhraseCloseGuard.current && !calendarPhraseCloseGuard.current()) return false;
     if (houseTransitEditor && houseTransitCloseGuard.current && !houseTransitCloseGuard.current()) return false;
     const hasOpenEditor = Boolean(
       selectedRow
@@ -6328,7 +6331,7 @@ export function GeneratedContentAdminDashboard() {
             <StudioTabs label="Calendar Write-ups workspaces" value={calendarWriteupWorkspaceView}
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
-              <Suspense fallback={<p role="status">Loading Calendar template…</p>}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
+              <Suspense fallback={<p role="status">Loading Calendar template…</p>}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading} credential={secret} registerCloseGuard={registerCalendarPhraseGuard}
                 loadRows={loadCalendarPreviewRows} draft={draft}
                 onEditSource={row => void openCalendarWritingSource(row as AdminGeneratedContentRow)}
                 onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView, field)}
