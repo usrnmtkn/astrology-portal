@@ -133,7 +133,7 @@ export function DailyGlanceStudio({
           {activePair ? (
             <div className="admin-daily-glance-reader-card">
               <h4>{dailyGlancePackageField(activePair.headlineRow, "body_you")}</h4>
-              <p>{dailyGlancePackageField(activePair.passageRow, "body_you")}</p>
+              <p className="admin-copy-preview">{dailyGlancePackageField(activePair.passageRow, "body_you")}</p>
               <p>{context.detailLine}</p>
               <StudioButton type="button" onClick={() => onOpenPair(activePair.selector)}>Edit this headline and passage</StudioButton>
             </div>
@@ -153,7 +153,7 @@ export function DailyGlanceStudio({
             <div>
               <strong>{pair.label}</strong>
               <p>{dailyGlancePackageField(pair.headlineRow, "body_you")}</p>
-              <small>{dailyGlancePackageField(pair.passageRow, "body_you")}</small>
+              <p className="admin-copy-preview">{dailyGlancePackageField(pair.passageRow, "body_you")}</p>
             </div>
             <StudioButton type="button" onClick={() => onOpenPair(pair.selector)}>Edit write-up</StudioButton>
           </article>
@@ -256,7 +256,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
             <label className="admin-review-copy-editor"><span>Headline · You</span><StudioTextarea value={edits.headlineYou} onChange={(event) => setEdits((value) => ({ ...value, headlineYou: event.target.value }))} /></label>
             <label className="admin-review-copy-editor"><span>Passage · You</span><StudioTextarea value={edits.passageYou} onChange={(event) => setEdits((value) => ({ ...value, passageYou: event.target.value }))} /></label>
             <div className="admin-daily-glance-reader-card" aria-label="You reader preview">
-              <h4>{edits.headlineYou}</h4><p>{edits.passageYou}</p>
+              <h4>{edits.headlineYou}</h4><p className="admin-copy-preview">{edits.passageYou}</p>
               {matchingContext && <><p>{matchingContext.detailLine}</p></>}
             </div>
           </section>

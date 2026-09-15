@@ -83,7 +83,7 @@ export default function CompositionSurfaceSources({ surfaceId, rows, templates, 
       {!copy.length && <p>Open this source to load its complete writing.</p>}
       <StudioButton type="button" onClick={() => onEditRow(selected)}>Edit selected source</StudioButton>
       {template && <StudioButton type="button" onClick={() => onSelectTemplate(selected.content_key)}>Open template assembly</StudioButton>}
-      <small>Changes stay in draft until published.</small>
+      <p>Changes stay in draft until published.</p>
     </article> : <p role="status">No sources match this selection. Clear the filters, search all Studio sources, or use an authoring destination below.</p>}
   </section>;
 }

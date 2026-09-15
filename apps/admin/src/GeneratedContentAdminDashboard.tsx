@@ -6129,7 +6129,7 @@ export function GeneratedContentAdminDashboard() {
               <div className="admin-review-queue-commandbar-copy">
                 <p className="admin-eyebrow">Editorial workflow</p>
                 <h2>Review, sign off, publish</h2>
-                <span>Create writing, run checks, review, and publish. Source material has its own library.</span>
+                <p>Create writing, run checks, review, and publish. Source material has its own library.</p>
               </div>
               <div className="admin-new-actions">
                 <StudioButton type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
@@ -8235,10 +8235,10 @@ export function GeneratedContentAdminDashboard() {
                   <div><dt>{isPlacement ? "Sign" : "Signs"}</dt><dd>{isPlacement ? String(facts?.sign ?? "Not recorded") : signs || "Not recorded"}</dd></div>
                   {isPlacementTopper ? <div><dt>Contact</dt><dd>{topperContact || "Not recorded"}</dd></div> : null}
                 </dl>
-                <div className="admin-sky-voice-body">{row.body || "No card body saved."}</div>
+                <p className="admin-sky-voice-body">{row.body || "No card body saved."}</p>
                 <div className="admin-sky-voice-judge">
-                  <p><strong>Why</strong>{row.judge_why || "No judge rationale saved."}</p>
-                  <p><strong>Weakest</strong>{weakest || "No weakest beat recorded."}</p>
+                  <p><strong>Why</strong>{" "}{row.judge_why || "No judge rationale saved."}</p>
+                  <p><strong>Weakest</strong>{" "}{weakest || "No weakest beat recorded."}</p>
                 </div>
                 <div className="admin-review-queue-actions">
                   <StudioButton type="button" onClick={() => openRow(row)}>Edit</StudioButton>
@@ -8318,7 +8318,7 @@ export function GeneratedContentAdminDashboard() {
                     ? <div><dt>Reader source</dt><dd><code>{ownerApprovedArticleKey}</code></dd></div>
                     : null}
                 </dl>
-                <div className="admin-sky-voice-body">{row?.body || "No writing is saved for this configuration. Generate a draft or write it manually, then review it before publication."}</div>
+                <p className="admin-sky-voice-body">{row?.body || "No writing is saved for this configuration. Generate a draft or write it manually, then review it before publication."}</p>
                 <div className="admin-review-queue-actions">
                   {ownerApprovedArticleKey ? (
                     <StudioButton type="button" onClick={() => void openServingFallbackRow(ownerApprovedArticleKey, occurrence)} disabled={isLoading}>
@@ -9354,7 +9354,7 @@ export function GeneratedContentAdminDashboard() {
                   {fallbackEditorGuidance.audienceLabel && (
                     <div className="admin-editor-audience-note" role="note" aria-label={fallbackEditorGuidance.audienceLabel}>
                       <strong>{fallbackEditorGuidance.audienceLabel}</strong>
-                      <span>{fallbackEditorGuidance.audienceHint}</span>
+                      <p>{fallbackEditorGuidance.audienceHint}</p>
                     </div>
                   )}
                 </section>
@@ -9450,7 +9450,7 @@ export function GeneratedContentAdminDashboard() {
                 ) : null}
                 {skyFallbackPreview.map((paragraph, index) => <p key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>)}
                 {skyFallbackEditor.variables.some((variable) => !skyFallbackPreviewFacts[variable]) && (
-                  <small className="admin-field-hint">Unfilled tokens remain visible until this workspace is opened from a calculated Sky occurrence.</small>
+                  <p className="admin-field-hint">Unfilled tokens remain visible until this workspace is opened from a calculated Sky occurrence.</p>
                 )}
               </section>}
 
@@ -9578,9 +9578,9 @@ export function GeneratedContentAdminDashboard() {
                       <Sparkles size={16} aria-hidden="true" />
                       Generate unfinished fields
                     </StudioButton>
-                    <small className="admin-field-hint">
+                    <p className="admin-field-hint">
                       Explicit action only. Sends this approved template, calculated facts, and unfinished field names to the configured writing provider. Fixed owner prose is never rewritten.
-                    </small>
+                    </p>
                   </div>
                   {skyArticleEditionForm.slotGeneration && (
                     <p className="admin-field-hint">
@@ -9773,7 +9773,7 @@ export function GeneratedContentAdminDashboard() {
                     <p className="admin-eyebrow">Reader preview</p>
                     <h3>{skyArticleEditor.fields.headline}</h3>
                     <p><strong>TL;DR:</strong> {skyArticleEditor.fields.tldr}</p>
-                    <div className="admin-copy-preview">{skyArticleEditor.fields.body}</div>
+                    <p className="admin-copy-preview">{skyArticleEditor.fields.body}</p>
                   </section>
 
                   <div className="admin-toolbar-actions admin-sky-article-actions">
@@ -10439,9 +10439,9 @@ export function GeneratedContentAdminDashboard() {
                     {contentSystemLabel(contentSystem)}
                   </strong>
                 </div>
-                <small className="admin-field-hint">
+                <p className="admin-field-hint">
                   Published is a status. Authored, generated, and fallback are provenance systems; publication never changes one system into another.
-                </small>
+                </p>
               </section>
             )}
 
@@ -10517,7 +10517,7 @@ export function GeneratedContentAdminDashboard() {
             </StudioButton>
           )}
           {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (
-            <span className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</span>
+            <p className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</p>
           )}
           {isPackageDraft && !isNewDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
             <StudioButton type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
@@ -10548,7 +10548,7 @@ export function GeneratedContentAdminDashboard() {
             </StudioButton>
           )}
           {!isPackageDraft && !isCmsSurfaceDraft && isNewDraft && (
-            <span className="admin-savebar-next-step">Save this draft before review or publication.</span>
+            <p className="admin-savebar-next-step">Save this draft before review or publication.</p>
           )}
           {!isPackageDraft && !isCmsSurfaceDraft && !isNewDraft && (
             <>
