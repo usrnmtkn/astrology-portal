@@ -24,7 +24,7 @@ jobs:
         run: |
           tar --exclude-vcs -czf /tmp/monthly-template-source.tar.gz .
           find . -type d -name node_modules -prune -print0 > /tmp/dependency-paths
-          printf 'packages/astro-knowledge/dist\0' >> /tmp/dependency-paths
+          printf '.git\0packages/astro-knowledge/dist\0' >> /tmp/dependency-paths
           tar --null -T /tmp/dependency-paths -czf /tmp/monthly-template-deps.tar.gz
       - uses: actions/upload-artifact@v4
         with:
