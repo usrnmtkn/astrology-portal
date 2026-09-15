@@ -172,6 +172,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     // A collapsing startup-card margin used to move the whole document down
     // until the app stylesheet arrived, producing a visible reload jump.
     expect(await page.locator("body").evaluate(el => el.getBoundingClientRect().top)).toBe(0);
+    expect(await page.locator("#root").evaluate(el => el.getBoundingClientRect().top)).toBe(0);
     const illustration = loading.locator('.loading-illustration img.is-active');
     await expect(illustration).toBeVisible();
     await expect.poll(() => illustration.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(512);
