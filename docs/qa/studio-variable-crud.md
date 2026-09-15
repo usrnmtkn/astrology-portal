@@ -25,3 +25,9 @@ Repeat both browser flows on the Ready main deployment using `PLAYWRIGHT_BASE_UR
 Separate worktrees with their own `npm ci` dependencies and the workflow Supabase configuration compared main `347fc5c83` with this feature. Admin entry/aggregate gzip: 179.2/477.0 kB to 180.0/482.3 kB. Form, directory and insertion UI are deferred. Allocate 1 kB entry and 6 kB aggregate without changing raw-entry, largest-chunk or forbidden-payload limits.
 
 Reader boot including CSS: approximately 480.1 to 481.2 kB; allocate 1.5 kB for shared frozen-value selection and 1 kB for its separately measured JavaScript portion. The two shared Studio CSS rules add 31 gzip bytes to the deferred graph stylesheet; allocate 50 bytes. No runtime dependency or bundled custom library data is added.
+
+## Existing broad-suite limitation
+
+The broader `npm run test:content` still stops at the protected natal-aspect projection assertion: actual `7469bac8…`, expected `087d8486…`. The unchanged main worktree reproduces the identical failure. This is the known baseline documented in `docs/qa/placement-article-phrase-variables.md`; this release changes neither those rows nor their assertion. The full Content Studio API suite and the targeted renderer/browser contracts pass independently.
+
+Regenerating the package-version integrity index also requires regenerating `production-sky-kernel-comparison-v1/comparison.json`. Its changed fields are packet hashes only; evidence text, approval state, serving state and character counts remain unchanged.
