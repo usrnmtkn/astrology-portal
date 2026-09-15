@@ -370,11 +370,6 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard [data-variable-color="6"] { color: var(--studio-variable-6-ink); background: var(--studio-variable-6-surface); border-color: currentColor; }
 
 /* The variable directory uses separate source cards and the shared token key. */
-#root .admin-dashboard .studio-variable-list { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-block-gap); }
-#root .admin-dashboard .studio-variable-card { display: grid; grid-template-columns: minmax(0,1fr); align-content: start; gap: var(--workspace-panel-inset); }
-#root .admin-dashboard .studio-variable-card-header { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: var(--workspace-panel-inset); }
-#root .admin-dashboard .studio-variable-card-header > button { justify-self: end; }
-#root .admin-dashboard .studio-variable-identity { display: flex; align-items: center; flex-wrap: wrap; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .studio-variable-description { display: grid; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .studio-variable-usage { border-block-start: var(--border-width-thin) solid var(--workspace-line); padding-block-start: var(--workspace-field-gap); }
 #root .admin-dashboard .studio-variable-usage ul { display: grid; gap: var(--workspace-control-inset); list-style: none; margin: 0; padding: 0; }
@@ -496,8 +491,7 @@ body:has(.admin-dashboard) { margin: 0; }
 
 @media (max-width: 720px) {
   #root .admin-dashboard :is(.studio-variable-card,.studio-variable-controls) { padding: var(--workspace-panel-inset); }
-  #root .admin-dashboard :is(.studio-variable-card-header,.studio-variable-source) { grid-template-columns: minmax(0,1fr); }
-  #root .admin-dashboard .studio-variable-card-header > button { justify-self: start; }
+  #root .admin-dashboard .studio-variable-source { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .studio-variable-source > button { margin-block-end: 0; }
   #root .admin-dashboard .admin-filter-form { grid-template-columns: minmax(0, 1fr); }
   #root .admin-dashboard .admin-studio-map { grid-template-columns: minmax(0,1fr); }

@@ -46,3 +46,13 @@ and desktop, light and dark, populated and empty results, combined filters,
 clipboard syntax, source draft save/reopen, returning to filters, heading
 consistency with the existing Templates page, placement-specific phrase editing,
 unsaved draft protection, deferred loading, retry after metadata failure, and page errors.
+
+The September 15 design follow-up verifies 24px between cards, 24px desktop and
+16px mobile insets, and stable categorical token colors with at least 4.5:1
+contrast. Controls and cards reuse the canonical Studio surfaces, grids and
+headers. Browser screenshots cover both themes and screen sizes.
+
+Under the same workflow-configured web build, main a532fbb8c's stylesheet weighs
+23,299 gzip bytes (level 9); the final stylesheet weighs 23,432 bytes. The 133-byte
+increase gets a 250-byte allowance in the shared Studio CSS limit (also used by
+Memory). Reader startup, JavaScript, aggregate CSS and other limits are unchanged.
