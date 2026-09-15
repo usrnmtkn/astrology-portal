@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { LoadingIllustration } from "./LoadingIllustration";
 import "../styles/loading.css";
 
 const readerRecoveryHistoryKey = "__tldrastroReaderPageRecovery";
@@ -44,10 +45,11 @@ function reloadReaderRouteOnce() {
   return true;
 }
 
-export function PageLoading({ message = "Loading page…" }: { message?: string }) {
-  return <div className="app-loading" role="status" aria-live="polite" aria-busy="true">
+export function PageLoading({ message = "Loading page…", illustrated = false }: { message?: string; illustrated?: boolean }) {
+  return <div className={`app-loading${illustrated ? " app-loading--illustrated" : ""}`} role="status" aria-live="polite" aria-busy="true">
+    {illustrated && <LoadingIllustration />}
     <span>{message}</span>
-    <div className="app-loading__lines" aria-hidden="true"><span /><span /><span /></div>
+    {!illustrated && <div className="app-loading__lines" aria-hidden="true"><span /><span /><span /></div>}
   </div>;
 }
 

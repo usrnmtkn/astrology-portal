@@ -358,7 +358,7 @@ export default function SkyFallbackVariantFamilyEditor(props: Props) {
 
         {sectionDefinitions.map((section) => <div className="admin-editor-guidance" key={`${lane.id}-${section.key}`}>
           <p className="admin-eyebrow">{section.label}</p>
-          <small>{section.description}</small>
+          <p>{section.description}</p>
           {lane[section.key].map((variant, variantIndex) => <label key={`${lane.id}-${section.key}-${variantIndex}`}>
             <span><strong>Variant {variantIndex + 1}</strong> <code>{variant.id}</code></span>
             <StudioInput

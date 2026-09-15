@@ -111,7 +111,7 @@ export function TemplateVariableReviewPanels({
             {copy.map(([label, value]) => (
               <article className="admin-hook-detail-section" key={label}>
                 <p className="admin-eyebrow">{label}</p>
-                <div className="admin-variable-source-prose">{sourceCopyParts(value, reviewReferences, onSelectVariable)}</div>
+                <p className="admin-variable-source-prose">{sourceCopyParts(value, reviewReferences, onSelectVariable)}</p>
               </article>
             ))}
           </section>

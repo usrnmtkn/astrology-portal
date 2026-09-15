@@ -90,12 +90,12 @@ for (const token of [
   "--workspace-control-radius",
   "--workspace-positive",
   "--workspace-danger",
-  "--font-body",
+  "--font-label",
   "--type-meta-size"
 ]) assert.ok(css.includes(`var(${token})`), `Shared Content Studio components must consume ${token}.`);
 
 assert.doesNotMatch(css, /--admin-/u, "Shared Content Studio components must not depend on the disconnected legacy admin token set.");
-assert.doesNotMatch(css, /font-family:\s*var\(--font-(?:label|ui|display)\)/u, "Shared Studio controls must use the Studio UI sans rather than reader/mono aliases.");
+assert.doesNotMatch(css, /font-family:\s*var\(--font-(?:body|ui|display|mono)\)/u, "Shared Studio controls must use the semantic label font; narrative paragraphs use the body font.");
 assert.doesNotMatch(css, /#[0-9a-f]{3,8}\b/iu, "Component consistency CSS must not introduce raw colors.");
 assert.doesNotMatch(css, /font-family:\s*(?:"|'|ui-|system-ui)/u, "Component consistency CSS must use Design System font tokens.");
 

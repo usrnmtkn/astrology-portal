@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { createPortal } from "react-dom";
 import type { ManualChart } from "../../services/manualCharts";
 import { ChartPatternPill } from "./ChartPatternPill";
+import { PageLoading } from "../../components/PageLoading";
 import type { FriendChartListItem } from "./friendChartModel";
 
 export type FriendChartsListProps = {
@@ -119,13 +120,7 @@ export function FriendChartsList({
 
         <section className={embedded ? "friends-unified-chart-list" : "manual-chart-list"} aria-label="Saved charts">
           {showMessage && message ? <p className="manual-chart-message">{message}</p> : null}
-          {isLoading && (
-            <section className="you-empty-card manual-chart-empty" aria-label="Loading charts">
-              <span>Charts</span>
-              <h3>Loading saved charts.</h3>
-              <p>Your saved charts and comparison charts will appear here.</p>
-            </section>
-          )}
+          {isLoading && charts.length === 0 && <PageLoading illustrated message="Loading saved charts…" />}
           {!isLoading && charts.length === 0 && (
             <section className={embedded ? "friends-unified-empty" : "you-empty-card manual-chart-empty"} aria-label="No charts">
               <h3>{embedded ? "No charts yet." : "No private charts yet."}</h3>

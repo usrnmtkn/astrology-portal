@@ -165,9 +165,9 @@ export default function MemoryGraphDashboard() {
             {connection.target.isSource ? <p>{connection.target.path}</p> : <StudioButton type="button" className="memory-match-chip" onClick={() => setSelectedId(connection.target.id)}>{memoryTitle(connection.target)}</StudioButton>}
           </div>)}
         </details>}
-        <div className="memory-detail-content">{detail.body}</div>
+        <p className="memory-detail-content">{detail.body}</p>
         <details className="memory-provenance"><summary>Source and provenance</summary><p>{detail.role} · {detail.status.replaceAll('_', ' ')}</p>{checkedAt && <p>Memory checked {new Date(checkedAt).toLocaleString()}</p>}<p>{detail.path}{detail.line ? `:${detail.line}` : ''}</p>{detail.sourceUrl && <a href={detail.sourceUrl} target="_blank" rel="noreferrer">Open source</a>}<p>Exact text SHA-256</p><code>{detail.bodySha256}</code>
-          {detail.requiredContext.map(record => <details key={record.id}><summary>{record.title}</summary><div className="memory-detail-content">{record.body}</div></details>)}
+          {detail.requiredContext.map(record => <details key={record.id}><summary>{record.title}</summary><p className="memory-detail-content">{record.body}</p></details>)}
         </details></> : <p role="status">Opening memory…</p>}
     </aside>}
     </section>

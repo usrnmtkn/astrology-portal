@@ -3233,6 +3233,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(sourceRepairIssue).toContainText("Action needed");
     await expect(sourceRepairIssue).toContainText("Review the exact replacement");
     await expect(sourceRepairIssue).toContainText("Responsible now: You");
+    const workflowParagraph = sourceRepairIssue.locator('.admin-unresolved-current-step > p');
+    await expect(workflowParagraph).toHaveText('The diagnosis and replacement plan are ready. Review the exact wording and approve it only if it is correct.');
+    await expectStudioRole(page, workflowParagraph, 'body', 'Unresolved workflow explanation inside its table cell');
     await expect(sourceRepairIssue.getByRole("list", { name: /Resolution progress/ })).toContainText("Diagnose conflict");
     await expect(sourceRepairIssue.getByRole("list", { name: /Resolution progress/ })).toContainText("Review replacement");
     await expect(sourceRepairIssue.getByRole("button", { name: "Open exact row" })).toHaveCount(0);
@@ -4096,17 +4099,26 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(studio).toContainText("1 matched write-ups");
     await page.getByLabel("Search fallback articles and passages").fill("schedule");
     await expect(studio.getByText("Check the schedule before committing.")).toBeVisible();
+    const listPassage = studio.locator('.admin-daily-glance-pair-list p.admin-copy-preview');
+    await expect(listPassage).toHaveText('Check the schedule before committing.');
+    await expectStudioRole(page, listPassage, 'body', 'Daily matched passage paragraph');
 
     await studio.getByLabel("Daily At-a-Glance person or chart").fill("Alisa P");
     await studio.getByLabel("Daily At-a-Glance local date").fill("2026-09-01");
     await studio.getByRole("button", { name: "Load current Moon write-up" }).click();
     await expect(studio.getByText("Moon in Aries", { exact: true })).toBeVisible();
     await expect(studio).toContainText("Moon in Aries is trine Alisa P's natal Mars at a 1.2° orb.");
+    const currentPassage = studio.locator('.admin-daily-glance-current p.admin-copy-preview');
+    await expect(currentPassage).toHaveText('Check the schedule before committing.');
+    await expectStudioRole(page, currentPassage, 'body', 'Calculated Daily passage paragraph');
     await studio.getByRole("button", { name: "Edit this headline and passage" }).click();
 
     const editor = page.getByRole("dialog", { name: "Daily At-a-Glance paired editor" });
     await expect(editor.getByLabel("Headline · You")).toHaveValue("Take the useful opening.");
     await expect(editor.getByLabel("Passage · You")).toHaveValue("Check the schedule before committing.");
+    const youPassage = editor.getByLabel('You reader preview').locator('p.admin-copy-preview');
+    await expect(youPassage).toHaveText('Check the schedule before committing.');
+    await expectStudioRole(page, youPassage, 'body', 'Daily paired editor passage paragraph');
     const friendPreview = editor.getByLabel("Friend reader preview");
     await expect(editor.getByLabel("Friend preview name")).toHaveValue("Alisa P");
     await expect(friendPreview).toContainText("Alisa P may take the useful opening for themselves.");
@@ -4882,6 +4894,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     let variableDetails = variableGuide.getByRole("region", { name: "Planet best variable details" });
     await expect(variableDetails).toContainText("At your best,");
     await expect(variableDetails.getByRole("region", { name: "Saved source copy" }).getByRole("button", { name: "{{planetTitle}}" })).toBeVisible();
+    const sourceParagraphs = variableDetails.getByRole('region', { name: 'Saved source copy' }).locator('p.admin-variable-source-prose');
+    const sourceProse = sourceParagraphs.filter({ has: page.getByRole('button', { name: '{{planetTitle}}', exact: true }) });
+    await expect(sourceProse).toHaveText(planetBestRow.body);
+    expect(await sourceProse.evaluate(element => element.textContent)).toBe(planetBestRow.body);
+    await expectStudioRole(page, sourceParagraphs, 'body', 'Saved variable source paragraphs');
+    await expectStudioRole(page, sourceProse.getByRole('button', { name: '{{planetTitle}}', exact: true }), 'body', 'Inline source variable keeps saved paragraph typography');
     await expect(variableDetails.getByRole("region", { name: "Variables inside Planet Best" })).toContainText("Planet Title");
     await variableDetails.getByRole("region", { name: "Saved source copy" }).getByRole("button", { name: "{{planetTitle}}" }).click();
     variableDetails = variableGuide.getByRole("region", { name: "Planet title variable details" });
@@ -6161,6 +6179,142 @@ async function expectStudioTypography(page: Page, surface: string) {
   });
   expect(unexpected, `${surface}: readable text uses the Studio role scale`).toEqual([]);
 }
+
+type StudioTypeRole = 'body' | 'title' | 'section' | 'label' | 'meta';
+const studioTypeProperties = ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing'] as const;
+async function expectStudioRole(page: Page, elements: Locator, role: StudioTypeRole, context: string) {
+  await expect(elements.first(), context).toBeVisible();
+  const expected = await page.locator('.admin-dashboard').evaluate((root, role) => {
+    const tokens = {
+      body: ['--font-body', '--text-body', '--weight-regular', '--leading-body'],
+      title: ['--font-display', '--type-large-title-size', '--weight-medium', '--leading-title'],
+      section: ['--font-display', '--type-section-heading-size', '--weight-semibold', '--leading-body'],
+      label: ['--font-label', '--type-ui-size', '--weight-regular', '--leading-label'],
+      meta: ['--font-label', '--type-meta-size', '--weight-regular', '--leading-meta']
+    }[role];
+    // Resolve canonical variables for expected values. Only the real component
+    // elements below are assertions; this probe is not a replacement fixture.
+    const probe = document.createElement('span');
+    probe.style.cssText = `visibility:hidden;position:absolute;font-family:var(${tokens[0]});font-size:var(${tokens[1]});font-weight:var(${tokens[2]});line-height:var(${tokens[3]});letter-spacing:var(--tracking-body)`;
+    root.append(probe);
+    const css = getComputedStyle(probe);
+    const value = [css.fontFamily, css.fontSize, css.fontWeight, css.lineHeight, css.letterSpacing];
+    probe.remove();
+    return value;
+  }, role);
+  const actual = await elements.evaluateAll((items, properties) => items.map(element => {
+    const css = getComputedStyle(element);
+    return properties.map(property => css[property]);
+  }), [...studioTypeProperties]);
+  for (const value of actual) expect(value, context).toEqual(expected);
+}
+
+test.describe('Content Dashboard shared text roles', () => {
+  test.use({ serviceWorkers: 'block' });
+  for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390]) {
+    test(`Studio shared prose roles ${theme} ${width}`, async ({ page }) => {
+      const savedBody = 'Complete fixture opening.\n\nComplete fixture final paragraph.';
+      const voiceRow = { ...generatedContentRows[0], id: 'qa-typography-voice', content_key: 'sky.placement.fixture.mars.aries',
+        headline: 'Mars in Aries fixture', body: savedBody, block_type: 'sky_placement', status: 'DRAFT',
+        judge_gate: 'human-review', judge_why: 'Complete fixture review explanation.', judge_score: 2,
+        review_state: 'needs-review', facts: { planet: 'mars', sign: 'aries' }, source_snapshot: {}, lane: 'reference' };
+      await page.setViewportSize({ width, height: 1000 });
+      await page.route('**/api/**', route => route.fulfill({ json: { ok: true, rows: [], statuses: [], nextCursor: null } }));
+      await seedAdminApi(page, { generatedRows: [...generatedContentRows, voiceRow] });
+      await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+
+      await expectAdminRouteLoads(page, '/admin/content#review-queue?view=all');
+      const commandCopy = page.locator('.admin-review-queue-commandbar-copy > p:not(.admin-eyebrow)');
+      await expect(commandCopy).toHaveText('Create writing, run checks, review, and publish. Source material has its own library.');
+      await expectStudioRole(page, commandCopy, 'body', 'Review instructions are paragraphs');
+      await expectStudioRole(page, page.locator('.admin-dashboard-header h1'), 'title', 'Page heading');
+      await expectStudioRole(page, page.locator('.admin-review-queue-commandbar-copy > .admin-eyebrow'), 'meta', 'Eyebrow remains metadata');
+      await expectStudioRole(page, page.getByRole('button', { name: 'Create', exact: true }), 'label', 'Action label');
+      const tableRow = page.locator('.admin-review-queue-rows .admin-content-row', { hasText: 'sky.placement.sun.cancer' });
+      await tableRow.getByRole('button', { name: /^Details/ }).click();
+      const summary = page.getByRole('region', { name: 'Details for Sun in Cancer', exact: true }).locator('p.admin-review-preview');
+      await expect(summary).toHaveText(generatedContentRows[0].summary);
+      await expectStudioRole(page, summary, 'body', 'Expanded table summary does not inherit table label sizing');
+      await tableRow.getByRole('button', { name: 'Edit', exact: true }).click();
+      const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+      await expectStudioRole(page, editor.getByRole('heading', { name: 'Edit Sun in Cancer', exact: true }), 'title', 'Modal heading');
+      await expectStudioRole(page, editor.locator('.admin-editor-context-line'), 'meta', 'Editor context uses the shared metadata role');
+      await expectStudioRole(page, editor.locator('.admin-title-field > span').first(), 'label', 'Modal field label');
+      const body = editor.getByRole('textbox', { name: 'Article body', exact: true });
+      await expect(body).toHaveValue(generatedContentRows[0].body);
+      await expectStudioRole(page, body, 'body', 'Full passage editor');
+      await expectStudioRole(page, editor.locator('.admin-title-field > small.admin-field-hint').first(), 'meta', 'Inline field hint remains metadata');
+      await editor.locator('.admin-editor-details > summary').click();
+      const paragraphHelp = editor.getByRole('region', { name: 'Article content system', exact: true }).locator('p.admin-field-hint');
+      await expect(paragraphHelp).toHaveText('Published is a status. Authored, generated, and fallback are provenance systems; publication never changes one system into another.');
+      await expectStudioRole(page, paragraphHelp, 'body', 'Explanatory paragraph overrides the field-hint metadata class');
+      await expectNoHorizontalOverflow(page, 'Shared modal typography');
+      await editor.getByRole('button', { name: 'Close', exact: true }).click();
+
+      await page.getByRole('button', { name: /Sky voice: needs review/ }).click();
+      const card = page.locator('.admin-sky-voice-card', { hasText: 'Mars in Aries fixture' });
+      const voice = card.locator('p.admin-sky-voice-body');
+      await expect(voice).toHaveText(savedBody);
+      expect(await voice.evaluate(element => element.textContent)).toBe(savedBody);
+      await expect(voice).toHaveCSS('white-space', 'pre-wrap');
+      await expectStudioRole(page, voice, 'body', 'Saved voice passage paragraph');
+      await expect(card.locator('.admin-sky-voice-judge p')).toHaveText([
+        'Why Complete fixture review explanation.', 'Weakest No weakest beat recorded.'
+      ]);
+      await expectStudioRole(page, card.locator('.admin-sky-voice-judge p'), 'body', 'Nested review rationale');
+      await expectStudioRole(page, card.locator('h3'), 'section', 'Card heading');
+      await expectStudioRole(page, card.locator('dt'), 'label', 'Definition labels');
+      await page.screenshot({ path: test.info().outputPath(`shared-voice-${theme}-${width}.png`) });
+
+      await expectAdminRouteLoads(page, '/admin/content#fallback-hooks?section=daily');
+      const guide = page.getByRole('region', { name: 'How daily content is assembled', exact: true });
+      const descriptions = guide.locator('.admin-daily-hook-guide-grid > article > p:first-of-type');
+      await expect(descriptions).toHaveCount(2);
+      const guidance = JSON.parse(readFileSync(path.join(process.cwd(), 'apps/admin/public/generated/admin-fallback-hook-editor-guidance-v1.json'), 'utf8'));
+      await expect(descriptions).toHaveText(guidance.workspaceGuide.surfaces.map((surface: { description: string }) => surface.description));
+      await expectStudioRole(page, descriptions, 'body', 'Daily guide descriptions retain paragraph roles');
+      await expectStudioRole(page, guide.getByRole('heading', { level: 3 }), 'section', 'Guide heading');
+      await guide.locator('summary').click();
+      await expectStudioRole(page, guide.locator('summary'), 'label', 'Disclosure label');
+      await expectStudioRole(page, guide.locator('details > p'), 'body', 'Disclosure paragraph');
+
+      await expectAdminRouteLoads(page, '/admin/content#composition-map');
+      await page.getByRole('tab', { name: /Template internals/ }).click();
+      const passages = page.locator('.admin-composition-preview-copy p .admin-composition-variable');
+      await expectStudioRole(page, passages, 'body', 'Clickable inline passage keeps the paragraph typography');
+      await expectStudioRole(page, page.locator('.admin-composition-preview-copy p'), 'body', 'Composition paragraphs');
+      await expectNoHorizontalOverflow(page, 'Shared composition typography');
+
+      const memoryBody = 'Complete memory fixture opening.\n\nComplete memory fixture ending.';
+      const contextBody = 'Complete required context fixture opening.\n\nComplete required context fixture ending.';
+      const memory = { id: 'fixture-memory', kind: 'note', status: 'current', title: 'Fixture memory', path: 'fixture.md', line: 1,
+        sourceId: 'fixture-source', family: '', register: '', role: 'task-note', contentKey: '', bodySha256: 'a'.repeat(64) };
+      await page.route('**/api/admin/memory-graph?**', route => {
+        const query = new URL(route.request().url()).searchParams;
+        const json = query.get('mode') === 'visual' ? { ok: true, documents: [], freshness: { checkedAt: now } }
+          : query.get('mode') === 'detail' ? { ok: true, record: { ...memory, body: memoryBody, sourceUrl: null, sourceSha256: 'b'.repeat(64), metadata: {}, related: [], connections: [], requiredContext: [{ ...memory, id: 'fixture-context', title: 'Required fixture context', body: contextBody }] } }
+            : { ok: true, records: [memory], sources: [], edges: [], total: 1, offset: 0, limit: 20, revision: 'fixture', counts: { note: 1 } };
+        return route.fulfill({ json });
+      });
+      await page.goto('/admin/content/memory');
+      await page.getByRole('textbox', { name: 'Search memories', exact: true }).fill('fixture');
+      await page.getByRole('complementary', { name: 'Matching memories', exact: true }).getByRole('button', { name: 'Fixture memory', exact: true }).click();
+      const memoryDetail = page.getByRole('complementary', { name: 'Memory detail', exact: true });
+      const detailBody = memoryDetail.locator(':scope > p.memory-detail-content');
+      await expect(detailBody).toHaveText(memoryBody);
+      expect(await detailBody.evaluate(element => element.textContent)).toBe(memoryBody);
+      await expectStudioRole(page, detailBody, 'body', 'Full memory text paragraph');
+      await expect(memoryDetail.locator('h2')).toHaveText('Fixture memory');
+      await memoryDetail.locator('.memory-provenance > summary').click();
+      await memoryDetail.getByText('Required fixture context', { exact: true }).click();
+      const required = memoryDetail.locator('.memory-provenance p.memory-detail-content');
+      await expect(required).toHaveText(contextBody);
+      await expectStudioRole(page, required, 'body', 'Required context paragraph');
+      await expectNoHorizontalOverflow(page, 'Shared memory typography');
+      await page.screenshot({ path: test.info().outputPath(`shared-memory-${theme}-${width}.png`) });
+    });
+  }
+});
 
 for (const theme of ['dark', 'light'] as const) {
   for (const width of [1440, 390]) {

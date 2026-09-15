@@ -8,6 +8,13 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageJson = JSON.parse(fs.readFileSync(path.join(repoRoot, "package.json"), "utf8"));
 const scripts = packageJson.scripts ?? {};
+const adminPackage = JSON.parse(fs.readFileSync(path.join(repoRoot, "apps/admin/package.json"), "utf8"));
+
+assert.equal(
+  adminPackage.scripts.prebuild,
+  "node ../../scripts/test-isolated-worktree-prerequisite.mjs && npm run build -w @tldr/astro-knowledge",
+  "Standalone Admin builds must prepare knowledge artifacts before their application checks import them."
+);
 
 assert.equal(
   scripts["prepare:app-test-dependencies"],

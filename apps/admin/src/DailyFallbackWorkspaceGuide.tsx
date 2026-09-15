@@ -259,7 +259,7 @@ export default function DailyFallbackWorkspaceGuide({ onShowFamily }: DailyFallb
         {guide.surfaces.map((surface) => (
           <article key={surface.title}>
             <strong>{surface.title}</strong>
-            <span>{surface.description}</span>
+            <p>{surface.description}</p>
             <p>{surface.steps.map((step, index) => step === "→" ? <i key={index} aria-hidden="true">{step}</i> : <b key={step}>{step}</b>)}</p>
             <div>{surface.actions.map((action) => <StudioButton key={action.family} type="button" onClick={() => onShowFamily(action.family)}>{action.label}</StudioButton>)}</div>
           </article>

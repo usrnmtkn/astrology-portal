@@ -166,7 +166,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       <p className="admin-eyebrow">Editable phrase variable</p>
       <h3>{initialLibraryField?.label ?? title(initialLibrarySourceId)} <code>{`{{${initialLibrarySourceId}}}`}</code></h3>
       <p>Editing the dedicated Writing Library source for {title(planet)} in {title(sign)}. This is separate from the Placement article field. If this placement did not already have the Writing Library installed, its governed source content is prepared in draft automatically.</p>
-      <small>Nothing is published until you use the existing Save &amp; publish action.</small>
+      <p>Nothing is published until you use the existing Save &amp; publish action.</p>
     </div>
     {libraryError && <p role="alert">{libraryError}</p>}
     {!libraryReady ? <p role="status">{installingLibrary ? `Loading ${initialLibraryField?.label ?? initialLibrarySourceId} for ${title(planet)} in ${title(sign)}…` : `Preparing ${initialLibraryField?.label ?? initialLibrarySourceId}…`}</p>

@@ -25,7 +25,7 @@ export function SkyReadingLayout({ pending, failed, children }: {
   const loading = !revealed && !failed;
   return <SummarySettled.Provider value={setSummarySettled}>
     <div className="sky-reading-layout" aria-busy={loading}>
-      {loading && <div className="sky-reading-layout__loading"><PageLoading message="Loading the sky…" /></div>}
+      {loading && <div className="sky-reading-layout__loading"><PageLoading illustrated message="Loading the sky…" /></div>}
       <div className="sky-reading-layout__content" aria-hidden={loading || undefined}>{children}</div>
     </div>
   </SummarySettled.Provider>;
