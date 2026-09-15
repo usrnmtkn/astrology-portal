@@ -303,11 +303,15 @@ test.describe("visual regression baseline", () => {
         timeout: routeReadyTimeoutMs
       });
     });
-    await expect(page.getByRole("status", { name: "Loading current sky" }).first()).toBeVisible();
+    const initialLoading = page.locator(".sky-reading-layout__loading").getByRole("status");
+    await expect(initialLoading).toBeVisible();
+    await expect(initialLoading).toHaveText("Loading the sky…");
+    await expect(page.getByLabel("Daily sky summary")).not.toBeVisible();
+    await page.screenshot({ path: test.info().outputPath("sky-single-loading-desktop-dark.png"), animations: "disabled" });
     await expect(page).toHaveScreenshot("client-sky-desktop-dark.png", screenshotOptions);
     await page.evaluate(() => (window as any).__releaseVisualSkyLoading());
     await expect(page.getByRole("button", { name: "Read more about Sun in Cancer", exact: true })).toBeVisible({ timeout: routeReadyTimeoutMs });
-    await expect(page.getByRole("status", { name: "Loading current sky" })).toHaveCount(0);
+    await expect(initialLoading).toHaveCount(0);
 
     await expectRouteLoadsWithin(page, "/#calendar", "client calendar desktop dark", async () => {
       await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: routeReadyTimeoutMs });
