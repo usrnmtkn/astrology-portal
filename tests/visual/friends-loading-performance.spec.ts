@@ -398,7 +398,7 @@ test.describe("Friends loading performance matrix", () => {
 
         return timed("mobile Friends navigation", async () => {
           await friendsMenuItem.click();
-          await expect(page.getByRole("heading", { name: "friends.", exact: true })).toBeVisible();
+          await waitForMeasuredVisibility(page.getByRole("heading", { name: "friends.", exact: true }));
           await waitForMeasuredVisibility(page.getByRole("button", { name: `Open ${fixtureFriendName}` }));
         });
       }));
