@@ -271,6 +271,10 @@ jobs:
     if: needs.scope.outputs.sky == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        phase: [reader, studio, recovery]
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
@@ -284,17 +288,24 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run build:knowledge
       - name: Verify daily Sky summary composition
+        if: matrix.phase == 'reader'
         run: npm run test:sky-daily-summary && node scripts/test-sky-placement-aspect-matrix.mjs && node --import tsx scripts/test-calendar-template-preview.mts
-      - name: Verify daily Sky summary reader and Studio
+      - name: Verify daily Sky summary reader
+        if: matrix.phase == 'reader'
+        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts
+      - name: Verify daily Sky summary Studio
+        if: matrix.phase == 'studio'
         run: |
-          npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts
           npx playwright test -c playwright.sky-studio.config.ts
           npx playwright test -c playwright.sky-forecast.config.ts tests/visual/calendar-template-preview.spec.ts tests/visual/sky-forecast-studio.spec.ts
       - name: Enforce Content Studio bundle size and deferred editor boundaries
+        if: matrix.phase == 'studio'
         run: node scripts/check-admin-bundle-budgets.mjs
       - name: Verify owner sign-in return and storage-timeout recovery
+        if: matrix.phase == 'recovery'
         run: npx playwright test -c playwright.studio-auth.config.ts
       - name: Verify Friends recovery, transit visibility, and Calendar dates
+        if: matrix.phase == 'recovery'
         run: |
           node --experimental-strip-types scripts/test-sky-aspect-date-range.mjs
           node scripts/test-you-transit-live-content-wiring.mjs
@@ -304,7 +315,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: sky-summary-results
+          name: sky-summary-results-${{ matrix.phase }}
           path: test-results/
           if-no-files-found: ignore
 
