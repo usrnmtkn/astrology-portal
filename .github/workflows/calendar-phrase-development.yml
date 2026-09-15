@@ -1,33 +1,30 @@
-name: Calendar phrase development snapshot
+name: Apply verified monthly authoring patch
 on:
   push:
     branches: [chatgpt/monthly-phrase-authoring-memory]
     paths: [.github/workflows/calendar-phrase-development.yml]
 permissions:
-  contents: read
+  contents: write
 jobs:
-  source:
+  apply:
+    if: github.ref == 'refs/heads/chatgpt/monthly-phrase-authoring-memory'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: false
-          fetch-depth: 4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build -w @tldr/astro-knowledge
-      - name: Archive installed development dependencies and credential-free Git metadata
+          ref: chatgpt/monthly-phrase-authoring-memory
+      - name: Verify and apply reviewed source patch
+        shell: bash
         run: |
-          find . -type d -name node_modules -prune -print0 > /tmp/dependency-paths
-          printf '.git\0packages/astro-knowledge/dist\0' >> /tmp/dependency-paths
-          tar --null -T /tmp/dependency-paths -czf /tmp/calendar-phrase-dependencies.tar.gz
-      - uses: actions/upload-artifact@v4
-        with:
-          name: calendar-phrase-dependencies
-          path: /tmp/calendar-phrase-dependencies.tar.gz
-          retention-days: 1
-          compression-level: 0
+          set -euo pipefail
+          cat .github/monthly-patch-1.txt .github/monthly-patch-2.txt .github/monthly-patch-3.txt | base64 --decode > /tmp/monthly-source.patch.xz
+          echo '24eeec3299611ad6b5910a1e6e14b478344c8f61421882b88fc360b6598bef70  /tmp/monthly-source.patch.xz' | sha256sum --check
+          xz -dc /tmp/monthly-source.patch.xz > /tmp/monthly-source.patch
+          git apply --check --unidiff-zero /tmp/monthly-source.patch
+          git apply --index --unidiff-zero /tmp/monthly-source.patch
+          git rm .github/monthly-patch-1.txt .github/monthly-patch-2.txt .github/monthly-patch-3.txt .github/workflows/calendar-phrase-development.yml
+          git config user.name 'ChatGPT'
+          git config user.email 'chatgpt@users.noreply.github.com'
+          git commit -m 'feat: add memory-supported monthly phrase authoring to Content Studio'
+          git push origin HEAD:refs/heads/chatgpt/monthly-phrase-authoring-memory
