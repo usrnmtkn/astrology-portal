@@ -24,6 +24,33 @@
   gap: var(--space-4);
 }
 
+.app-loading--illustrated {
+  align-content: center;
+  justify-items: center;
+  min-height: var(--ds-layout-deferred-placeholder-height);
+  text-align: center;
+}
+
+.loading-illustration {
+  position: relative;
+  width: var(--loading-illustration-size);
+  max-width: 100%;
+  aspect-ratio: 1;
+}
+
+.loading-illustration img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  filter: var(--loading-illustration-filter);
+  transition: opacity var(--loading-illustration-fade) ease;
+}
+
+.loading-illustration img.is-active { opacity: 1; }
+
 .app-loading__lines span {
   display: block;
   height: var(--space-3);
@@ -57,4 +84,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .app-loading__lines span { animation: none; }
+  .loading-illustration img { transition: none; }
 }
