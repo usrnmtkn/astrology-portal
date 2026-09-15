@@ -101,6 +101,7 @@ export function isReaderServableGeneratedContentRow(
   }
 ) {
   const normalizedContentKey = row.content_key.trim().toLowerCase();
+  if (normalizedContentKey.startsWith("studio-monthly/")) return false;
   if (normalizedContentKey.startsWith("sky/article-template/") || normalizedContentKey.startsWith("sky-article-template/")) {
     return false;
   }

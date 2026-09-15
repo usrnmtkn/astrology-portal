@@ -1,0 +1,46 @@
+import assert from 'node:assert/strict';
+import {createMonthlyApiFixture} from '../tests/helpers/monthly-writing-api.mts';
+import {monthlyKey} from '../api/_lib/monthly-authoring-storage';
+import {monthlyFixture} from '../tests/monthly-writing/fixtures';
+import {monthlyTemplateStarter} from '../src/monthly-writing/starter';
+import {createMonthlyEdition,stableJson} from '../src/monthly-writing/model';
+import {isReaderServableGeneratedContentRow} from '../apps/web/src/content/generatedContentEligibility';
+const api=await createMonthlyApiFixture();
+try {
+ assert.equal((await api.invoke('GET',undefined,undefined,'')).status,401);
+ assert.equal((await api.invoke('GET',undefined,undefined,'wrong')).status,401);
+ assert.equal((await api.invoke('DELETE')).status,405);
+ assert.equal((await api.invoke('GET',undefined,'/?month=no&timeZone=UTC')).status,422);
+ let result=await api.invoke('GET');assert.equal(result.status,200);assert.equal(result.payload.edition,null);assert.equal(result.payload.template,null);
+ assert.equal(result.headers['cache-control'],'no-store');
+ const template=monthlyTemplateStarter();
+ result=await api.invoke('POST',{action:'save-template',document:template,expectedUpdatedAt:null});
+ assert.equal(result.status,200,JSON.stringify(result.payload));let saved=result.payload.saved;
+ assert.equal(saved.document.body,template.body);assert(saved.id.match(/^[a-f0-9-]{36}$/));
+ assert.equal((await api.invoke('POST',{action:'save-template',document:template,expectedUpdatedAt:null})).status,409);
+ const modified=structuredClone(template);modified.definitions.transitOverview.value='Fixture {{openingSeasonFocus}}';
+ result=await api.invoke('POST',{action:'save-template',document:modified,expectedUpdatedAt:saved.updatedAt});
+ assert.equal(result.status,200,JSON.stringify(result.payload));assert.notEqual(result.payload.saved.updatedAt,saved.updatedAt,'Database trigger assigns the returned update version');saved=result.payload.saved;
+ const competing=await Promise.all(['A','B'].map(label=>api.invoke('POST',{action:'save-template',document:{...modified,body:`${label} {{seasonOverview}}`},expectedUpdatedAt:saved.updatedAt})));
+ assert.deepEqual(competing.map(item=>item.status).sort(),[200,409]);
+ saved=competing.find(item=>item.status===200)!.payload.saved;
+ api.loseNextWriteResponse();const count=api.mutations.length;
+ result=await api.invoke('POST',{action:'save-template',document:template,expectedUpdatedAt:saved.updatedAt});
+ assert.equal(result.status,200,JSON.stringify(result.payload));assert.equal(api.mutations.length,count+1,'A lost write response is reconciled with reads, never retried');
+ const edition=createMonthlyEdition(monthlyFixture(),template);
+ result=await api.invoke('POST',{action:'save-edition',document:edition,expectedUpdatedAt:null});
+ assert.equal(result.status,200,JSON.stringify(result.payload));const es=result.payload.saved;
+ assert.equal(stableJson(es.document.template),stableJson(result.payload.saved.document.template));
+ result=await api.invoke('GET');assert.equal(result.payload.edition.id,es.id);
+ assert.equal((await api.invoke('GET',undefined,'/?month=2027-09&timeZone=America%2FNew_York')).payload.edition,null);
+ const poisoned={...edition,values:{monthName:'Wrong'}};assert.equal((await api.invoke('POST',{action:'save-edition',document:poisoned,expectedUpdatedAt:es.updatedAt})).status,422);
+ assert.equal((await api.invoke('POST',{action:'generate',document:edition,targetIds:['edition::openingSeasonFocus']})).status,422,'Generation requires explicit highlight review');assert.equal(api.generations,0);
+ const oldFingerprint={...edition,factsFingerprint:'incorrect'};assert.equal((await api.invoke('POST',{action:'generate',document:oldFingerprint,targetIds:['edition::openingSeasonFocus'],selectionReviewed:true})).status,422);assert.equal(api.generations,0);
+ result=await api.invoke('POST',{action:'generate',document:edition,targetIds:['edition::openingSeasonFocus'],selectionReviewed:true});assert.equal(result.status,200,JSON.stringify(result.payload));assert.equal(api.generations,1);
+ assert.equal((await api.invoke('GET')).payload.edition.updatedAt,es.updatedAt,'Generation does not save');
+ assert.equal(result.payload.changes[0].name,'openingSeasonFocus');
+ const rows=(await api.db.query('select * from generated_interpretations')).rows;
+ for(const row:any of rows){assert.equal(row.status,'DRAFT');assert.equal(row.lane,'reference');assert.equal(row.body,'');assert.equal(isReaderServableGeneratedContentRow({...row,status:'LIVE'} as any,{} as any),false);}
+ assert.notEqual(monthlyKey('edition','2026-09','UTC'),monthlyKey('edition','2026-09','America/New_York'));
+ console.log('PASS monthly API: actual handler/auth and PostgreSQL JSONB/update triggers; template and edition save/read, concurrent CAS, initial duplicates, lost response reconciliation, month/timezone separation, server-recomputed facts, and generation without publication.');
+} finally {await api.db.close();}

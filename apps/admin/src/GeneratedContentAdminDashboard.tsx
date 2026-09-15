@@ -3865,6 +3865,9 @@ export function GeneratedContentAdminDashboard() {
     setSelectedTemplateVariableSourceId(null);
   }
 
+  const monthlyCloseGuard = useRef<(()=>boolean)|null>(null);
+  const registerMonthlyCloseGuard = useCallback((guard:(()=>boolean)|null) => { monthlyCloseGuard.current = guard; }, []);
+
   function hasPendingArticleChanges() {
     return Boolean(
       skyArticleEditor && skyArticleEditor.saveState !== "saved"
@@ -3889,6 +3892,7 @@ export function GeneratedContentAdminDashboard() {
   }, [draft, skyArticleEditor, skyArticleEditionForm]);
 
   function closeEditor() {
+    if (monthlyCloseGuard.current && !monthlyCloseGuard.current()) return false;
     if (houseTransitEditor && houseTransitCloseGuard.current && !houseTransitCloseGuard.current()) return false;
     const hasOpenEditor = Boolean(
       selectedRow
@@ -6328,7 +6332,7 @@ export function GeneratedContentAdminDashboard() {
             <StudioTabs label="Calendar Write-ups workspaces" value={calendarWriteupWorkspaceView}
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
-              <Suspense fallback={<p role="status">Loading Calendar template…</p>}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
+              <Suspense fallback={<p role="status">Loading Calendar template…</p>}><SkyForecastTemplateStudio registerMonthlyCloseGuard={registerMonthlyCloseGuard} monthlyCloseGuard={monthlyCloseGuard} secret={secret} period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft}
                 onEditSource={row => void openCalendarWritingSource(row as AdminGeneratedContentRow)}
                 onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView, field)}
