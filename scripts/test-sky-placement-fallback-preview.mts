@@ -62,8 +62,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /duration: isRetrograde \? transitRangeLabel \?\? undefined : isFallbackOnlyPreview[\s\S]*?fallbackDateLine \?\? effectiveTransitRangeLabel/u,
-  "Rx headers must prioritize the computed retrograde window; direct fallback previews keep the residency date line."
+  /duration: isRetrograde \? transitRangeLabel \?\? undefined : articleMode === "current"\s*\? effectiveTransitRangeLabel[\s\S]*?isFallbackOnlyPreview/u,
+  "Rx headers prioritize station dates; current direct previews prioritize the current calculated visit."
 );
 assert.match(
   appSource,
