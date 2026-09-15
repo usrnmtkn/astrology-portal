@@ -7,3 +7,8 @@ body:has(#app-startup) {
   background: var(--bg);
   color: var(--ink);
 }
+
+/* Contain the card's margins before the app's lazy root styles arrive. */
+#root:has(#app-startup) {
+  display: flow-root;
+}
