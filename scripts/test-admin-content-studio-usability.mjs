@@ -26,7 +26,9 @@ assert.match(dashboard, /className="admin-editor-key-copy"[\s\S]*?title=\{curren
 // never be reintroduced to satisfy historical implementation assertions.
 assert.match(dashboard, /import "\.\/studio-system\.css";/u);
 assert.doesNotMatch(dashboard + primitives, /import ["'][^"']*(?:admin-components|admin-content-studio-ux-compat|admin-content-studio-editor-redesign)\.css/u);
-assert.match(css, /\.admin-editor-context-line \{[^}]*font-size: var\(--type-meta-size\)/u);
+// The context label can share the canonical metadata rule instead of repeating
+// the same font declaration in its component layout rule.
+assert.match(css, /\.admin-editor-context-line(?:\s|[,)])[^{}]*\{[^}]*font-size: var\(--type-meta-size\)/u);
 assert.match(css, /\.admin-editor-panel \{[^}]*width: var\(--studio-sheet-width\)/u);
 assert.match(css, /\.admin-post-editor \{[^}]*overflow-y: auto;[^}]*padding: var\(--workspace-card-padding\)/u);
 assert.match(css, /textarea \{[^}]*min-height: var\(--studio-textarea-height\)/u);
