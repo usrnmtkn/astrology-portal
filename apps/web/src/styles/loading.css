@@ -16,7 +16,7 @@
   letter-spacing: var(--tracking-body);
 }
 
-.app-loading[role="alert"] {
+.app-loading:not([role="status"]) {
   border: var(--border-width-thin) solid var(--line);
   border-radius: var(--radius-card);
   background: var(--surface);
