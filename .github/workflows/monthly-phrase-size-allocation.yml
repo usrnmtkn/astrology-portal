@@ -1,0 +1,48 @@
+name: Apply measured monthly feature allocation
+on:
+  push:
+    branches: [chatgpt/monthly-phrase-authoring-memory]
+    paths: [.github/workflows/monthly-phrase-size-allocation.yml]
+permissions:
+  contents: write
+jobs:
+  allocate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/monthly-phrase-authoring-memory
+      - name: Apply independently measured feature allowance and lazy boundary
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path('.')
+          allocations = [
+            ('admin', 483500, 492500, 'Separate base fe56c4a2 and feature builds with the workflow Supabase configuration measure 482747 to 491286 aggregate gzip bytes (+8539), and 180132 to 180192 entry gzip bytes (+60). The synthetic merge with main 566ed6bb measures 492.0 kB aggregate. Allocate 9000 aggregate bytes for the requested deferred monthly phrase composer. All startup, raw-entry, largest-chunk, graph, CSS and forbidden-payload limits remain unchanged.'),
+            ('web', 3098500, 3107500, 'Separate base fe56c4a2 and feature builds with the workflow Supabase configuration measure 3097281 to 3105943 aggregate gzip bytes (+8662). App startup changes 437773 to 437809 bytes and reader startup 487597 to 487633 bytes (+36 each). Allocate 9000 aggregate bytes for the requested deferred Studio feature. All startup, per-chunk, graph, CSS and forbidden-payload limits remain unchanged.')
+          ]
+          for target, old, new, rationale in allocations:
+              path = root / f'scripts/{target}-bundle-budgets.json'
+              data = json.loads(path.read_text())
+              assert data['totalJavaScriptGzipBytes'] == old, 'Baseline changed; allocation needs review'
+              data['totalJavaScriptGzipBytes'] = new
+              data['_rationale']['monthlyPhraseAuthoring20260915'] = rationale + ' See docs/qa/calendar-phrase-writing.md.'
+              path.write_text(json.dumps(data, indent=2) + '\n')
+          path = root / 'scripts/check-admin-bundle-budgets.mjs'
+          text = path.read_text()
+          marker = '  "src/SkyForecastTemplateStudio.tsx",'
+          assert text.count(marker) == 1
+          text = text.replace(marker, marker + '\n  "src/MonthlyPhraseStudio.tsx",')
+          text = text.replace('const expectedDeferredGroups = [', 'if (initialChunks.has("src/MonthlyPhraseStudio.tsx")) failures.push("Monthly phrase authoring must remain deferred from Content Studio startup.");\nconst expectedDeferredGroups = [')
+          path.write_text(text)
+          path = root / 'docs/qa/calendar-phrase-writing.md'
+          with path.open('a') as out:
+              out.write('\n## Measured lazy-feature allocation\n\nSeparate base `fe56c4a2` and feature worktrees used independent copies of the exact installed dependency artifact and the workflow Supabase configuration. Gzip uses level 9. Remote source status was checked through the authorized GitHub connector, not stale local refs.\n\n| Gzip bytes | Base | Feature | Change |\n| --- | ---: | ---: | ---: |\n| Admin initial entry | 180,132 | 180,192 | +60 |\n| Admin all JavaScript | 482,747 | 491,286 | +8,539 |\n| Web app startup | 437,773 | 437,809 | +36 |\n| Reader startup including CSS | 487,597 | 487,633 | +36 |\n| Web all JavaScript | 3,097,281 | 3,105,943 | +8,662 |\n\nAllocate 9,000 aggregate bytes in each build for this measured feature, retaining all entry, raw/largest-chunk, reader startup, CSS, Memory Map and forbidden-payload gates. The Admin checker requires `MonthlyPhraseStudio` outside the initial static graph. The initial synthetic merge with main `566ed6bb` measured 492.0 kB aggregate Admin JavaScript; its only Admin size failure was the previously unallocated aggregate feature.\n\nThe initial Vercel preview failed and the connected account was denied project-team log access. No deployment cause or successful production release is claimed.\n')
+          PY
+          git config user.name 'ChatGPT'
+          git config user.email 'chatgpt@users.noreply.github.com'
+          git add scripts/admin-bundle-budgets.json scripts/web-bundle-budgets.json scripts/check-admin-bundle-budgets.mjs docs/qa/calendar-phrase-writing.md
+          git commit -m 'test: allocate measured lazy composer size and preserve startup gates'
+          git push origin HEAD:refs/heads/chatgpt/monthly-phrase-authoring-memory
