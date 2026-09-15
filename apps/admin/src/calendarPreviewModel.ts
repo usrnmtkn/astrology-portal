@@ -11,22 +11,43 @@ export type CalendarPreviewRow = SummaryCompositionRow & { id: string; facts?: R
 export type CalendarPreviewValue = { text: string; kind: "fact" | "copy" | "example"; sourceKey?: string };
 export const calendarPreviewSign = (value: string) => lunarSigns.includes(value.toLowerCase()) ? value[0].toUpperCase() + value.slice(1).toLowerCase() : "";
 
+export function calendarPreviewSeasons(calculation?: CalendarPreviewCalculation) {
+  const ingresses = [...(calculation?.seasonIngresses ?? [])].sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+  const at = (instant: string) => ingresses.reduce((found, event, index) => event.startsAt <= instant ? index : found, -1);
+  const window = (index: number) => index >= 0 && ingresses[index + 1] ? {
+    sign: ingresses[index].toSign ?? ingresses[index].sign ?? "",
+    startsAt: ingresses[index].startsAt, endsAt: ingresses[index + 1].startsAt
+  } : undefined;
+  const current = calculation ? window(at(calculation.sky.generatedAt)) : undefined;
+  const first = calculation?.days[0];
+  const last = calculation?.days.at(-1);
+  const opening = first ? window(at(first.date)) : current;
+  // Calendar range ends at the next local midnight; compare date keys to include an ingress late on the last day.
+  const closingIndex = last ? ingresses.reduce((found, event, index) => event.dateKey <= last.dateKey ? index : found, -1) : -1;
+  const closing = last ? window(closingIndex) : undefined;
+  return { current, opening, closing: closing?.sign !== opening?.sign ? closing : undefined };
+}
+
+function calendarCopyEligible(row: CalendarPreviewRow) {
+  const record = (row.sections as { packageRecord?: Record<string, unknown> } | null)?.packageRecord;
+  const packaged = row.id === `package:${row.content_key}` && record?.contentKey === row.content_key
+    && isGovernedReaderEligible({ ...record, contentKey: row.content_key }) && row.body === record.body;
+  return !row.inventory_only && (packaged || row.status === "LIVE" && row.lane === "serving" && !row.review_state)
+    && isReaderServableGeneratedContentRow(row) && Boolean(row.body?.trim());
+}
+
 export function calendarPreviewSourceKeys(period: SkyForecastPeriod, signs: string[]) {
   return [skyForecastTemplates[period].contentKey, ...new Set(signs.filter(Boolean).flatMap(sign => {
     const slug = sign.toLowerCase();
-    return [`cms/sky-daily-summary/sun/${slug}`, ...[1, 2, 3, 4].map(variant => `authored/calendar-weekly-moon/${slug}${variant === 1 ? "" : `/variant-${variant}`}`)];
+    return [`fallback-hook/zodiac-season/${slug}`, `fallback-hook/zodiac-season-polar-axis/${slug}`, `cms/sky-daily-summary/sun/${slug}`, ...[1, 2, 3, 4].map(variant => `authored/calendar-weekly-moon/${slug}${variant === 1 ? "" : `/variant-${variant}`}`)];
   }))];
 }
 
 export function calendarMoonPassages(rows: CalendarPreviewRow[], sign: string) {
   return rows.filter(row => {
     const identity = lunarContentIdentity(row.content_key);
-    const record = (row.sections as { packageRecord?: Record<string, unknown> } | null)?.packageRecord;
-    const packaged = row.id === `package:${row.content_key}` && record?.contentKey === row.content_key
-      && isGovernedReaderEligible({ ...record, contentKey: row.content_key }) && row.body === record.body;
     return identity?.family === "Moon-sign passages" && identity.sign === sign.toLowerCase() && !identity.excluded
-      && !row.inventory_only && (packaged || row.status === "LIVE" && row.lane === "serving" && !row.review_state)
-      && isReaderServableGeneratedContentRow(row) && Boolean(row.body?.trim());
+      && calendarCopyEligible(row);
   }).sort((a, b) => a.content_key.localeCompare(b.content_key));
 }
 
@@ -48,6 +69,23 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   const moonPassages = calendarMoonPassages(rows, moonSign);
   const moon = moonPassages.find(row => row.content_key === moonKey) ?? moonPassages[0];
   put("moonWriteup", moon?.body ?? undefined, "copy", moon?.content_key);
+  const seasonCopy = (prefix: string, sign: string) => {
+    for (const [name, family] of [["zodiacSeason", "zodiac-season"], ["zodiacSeasonPolarAxis", "zodiac-season-polar-axis"]]) {
+      const key = `fallback-hook/${family}/${sign.toLowerCase()}`;
+      const row = rows.find(row => row.content_key === key && calendarCopyEligible(row));
+      if (row && !/\{\{|\}\}/u.test(row.body ?? "")) put(prefix ? `${prefix}${name[0].toUpperCase()}${name.slice(1)}` : name, row.body!, "copy", key);
+    }
+  };
+  put("seasonSign", sunSign, calculation ? "fact" : "example");
+  seasonCopy("", sunSign);
+  const seasons = calendarPreviewSeasons(calculation);
+  const openingSign = seasons.opening?.sign ?? (!calculation ? sunSign : "");
+  put("openingSeasonSign", openingSign, calculation ? "fact" : "example");
+  if (openingSign) seasonCopy("opening", openingSign);
+  if (seasons.closing) {
+    put("closingSeasonSign", seasons.closing.sign, "fact");
+    seasonCopy("closing", seasons.closing.sign);
+  }
   if (!calculation) return values;
   const { sky, days, events, timeZone } = calculation;
   const formatDate = (value: string) => new Intl.DateTimeFormat("en-US", { dateStyle: "full", timeZone }).format(new Date(value));
@@ -55,6 +93,21 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   // Passage rows begin at local midnight to describe an ongoing state, not an exact station.
   const timedEvents = (items: typeof events) => items.filter(event => event.phase !== "retrograde-passage")
     .map(event => `${formatTime(event.startsAt)} · ${event.title}`).join("\n");
+  if (seasons.current) {
+    put("seasonStart", formatTime(seasons.current.startsAt), "fact");
+    put("seasonEnd", formatTime(seasons.current.endsAt), "fact");
+  }
+  if (seasons.closing) put("seasonChangeDate", formatTime(seasons.closing.startsAt), "fact");
+  if (days.length) {
+    const timed = events.filter(event => event.phase !== "retrograde-passage");
+    const lunations = timed.filter(event => event.type === "lunation" && (event.primary || event.eclipseType));
+    const changes = timed.filter(event => ["ingress", "station"].includes(event.type) && event.planet !== "Moon");
+    const aspects = timed.filter(event => event.type === "aspect" && !event.planets?.includes("Moon"));
+    put("lunationDates", timedEvents(lunations) || "No New Moon, Full Moon, or eclipse in this period.", "fact");
+    put("planetaryChanges", timedEvents(changes) || "No planetary ingresses or stations in this period.", "fact");
+    put("planetaryAspects", timedEvents(aspects) || "No exact planetary aspects in this period.", "fact");
+    put("overviewKeyDates", timedEvents(timed.filter(event => lunations.includes(event) || changes.includes(event) || aspects.includes(event))) || "No exact overview events in this period.", "fact");
+  }
   put("date", formatDate(sky.generatedAt), "fact");
   put("timeZone", timeZone, "fact");
   put("asOf", formatTime(sky.generatedAt), "fact");
@@ -85,7 +138,9 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
 
 /** Replace known named slots once; unknown slots and tokens inside saved prose remain visible. */
 export function calendarTemplateSegments(pattern: string, values: Record<string, CalendarPreviewValue>) {
-  return pattern.split(/(\{\{\s*[\w.]+\s*\}\})/u).filter(Boolean).map(text => {
+  // Optional sections hide only when their controlling fact is absent (for example a season change outside the week).
+  const expanded = pattern.replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/gu, (_block, name: string, body: string) => values[name] ? body : "");
+  return expanded.split(/(\{\{\s*[\w.]+\s*\}\})/u).filter(Boolean).map(text => {
     const name = text.match(/^\{\{\s*([\w.]+)\s*\}\}$/u)?.[1];
     return { text: name && values[name] ? values[name].text : text, name, value: name ? values[name] : undefined };
   });

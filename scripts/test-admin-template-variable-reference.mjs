@@ -153,3 +153,12 @@ assert.equal(packageReferences.size, 72, "The variable guide should cover every 
 assert.deepEqual(genericPackageReferences, [], "Every packaged template variable should have a specific editorial definition, example, and source.");
 
 console.log(`Admin template variable reference tests passed (${packageReferences.size} packaged variables documented).`);
+
+for (const period of ["daily", "weekly", "monthly"]) {
+  const calendar = templateVariableReferences({ body: "{{monthlyOverview}}" }, { contentKey: `slot-template/calendar/${period}-overview/v1` }, true);
+  for (const name of ["zodiacSeason", "zodiacSeasonPolarAxis"]) {
+    const reference = calendar.find(field => field.name === name);
+    assert(reference, `${period} Calendar templates expose ${name} for insertion.`);
+    assert.equal(reference.sourceKind, "saved-copy");
+  }
+}
