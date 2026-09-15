@@ -51,6 +51,9 @@
     },
     "api/**/*.ts": {
       "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,md,mjs,ts}"
+    },
+    "api/admin/monthly-writing.ts": {
+      "includeFiles": "{AGENTS.md,packages/*/review/**/*.md,{api/_lib,artifacts,config,src,data,docs,skills,.agents,tldr-astro-phrasebank,packages/*/{generated,scripts,data,config,reference,voice,sources},apps/web/{public,src}/content}/**/*.{*js,json*,md,ts}}"
     }
   },
   "rewrites": [
