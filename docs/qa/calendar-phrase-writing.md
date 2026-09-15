@@ -103,3 +103,19 @@ Tests never publish production content, activate private feedback, or incur mode
 charges. Runtime packaging must include every Memory Map source and governed
 writer asset; browser code may import only the shared receipt types, not server
 memory/provider modules.
+
+## Measured lazy-feature allocation
+
+Separate base `fe56c4a2` and feature worktrees used independent copies of the exact installed dependency artifact and the workflow Supabase configuration. Gzip uses level 9. Remote source status was checked through the authorized GitHub connector, not stale local refs.
+
+| Gzip bytes | Base | Feature | Change |
+| --- | ---: | ---: | ---: |
+| Admin initial entry | 180,132 | 180,192 | +60 |
+| Admin all JavaScript | 482,747 | 491,286 | +8,539 |
+| Web app startup | 437,773 | 437,809 | +36 |
+| Reader startup including CSS | 487,597 | 487,633 | +36 |
+| Web all JavaScript | 3,097,281 | 3,105,943 | +8,662 |
+
+Allocate 9,000 aggregate bytes in each build for this measured feature, retaining all entry, raw/largest-chunk, reader startup, CSS, Memory Map and forbidden-payload gates. The Admin checker requires `MonthlyPhraseStudio` outside the initial static graph. The initial synthetic merge with main `566ed6bb` measured 492.0 kB aggregate Admin JavaScript; its only Admin size failure was the previously unallocated aggregate feature.
+
+The initial Vercel preview failed and the connected account was denied project-team log access. No deployment cause or successful production release is claimed.
