@@ -61,6 +61,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(rendered).toContainText("The Sun in Virgo shows the virgo fixture.");
     await expect(rendered).toContainText("{{sunDegree}}");
     await expect(rendered).toContainText("{{weeklyIntegration}}");
+    const colorStyle = (element: Element) => { const s = getComputedStyle(element); return [s.color, s.backgroundColor]; };
+    const sunColor = await rendered.locator('[data-variable-name="sunSign"]').evaluate(colorStyle);
+    expect(sunColor[1]).not.toBe("rgba(0, 0, 0, 0)");
     expect(await preview.getByRole("heading", { name: "Template preview" }).evaluate(style)).toEqual(reference);
     expect(await page.locator(".admin-main h1,.admin-main h2,.admin-main h3,.admin-main h4").allTextContents()).toEqual(["Calendar Write-ups", "Calendar writing workspaces", "Weekly overview template", "Template preview"]);
     await preview.getByLabel("Preview Sun sign").selectOption("Leo");
@@ -70,9 +73,13 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(rendered).not.toContainText(moonBody("cancer"));
     await preview.getByRole("tab", { name: "Template pattern", exact: true }).click();
     await expect(preview.getByLabel("Calendar template pattern")).toHaveText(pattern);
+    expect(await preview.getByLabel("Calendar template pattern").locator('[data-variable-name="sunSign"]').evaluate(colorStyle)).toEqual(sunColor);
     await preview.getByRole("tab", { name: "Variables", exact: true }).click();
     await expect(preview.getByLabel("Calendar preview variables")).toContainText("Example sign");
     await expect(preview.getByLabel("Calendar preview variables").getByRole("textbox")).toHaveCount(0);
+    expect(await preview.getByLabel("Calendar preview variables").locator('[data-variable-name="sunSign"]').evaluate(colorStyle)).toEqual(sunColor);
+    const seasonColor = await preview.getByLabel("Calendar preview variables").locator('[data-variable-name="zodiacSeason"]').evaluate(colorStyle);
+    expect(new Set(await preview.getByLabel("Calendar preview variables").locator('[data-variable-color]').evaluateAll(elements => elements.map(element => getComputedStyle(element).backgroundColor))).size).toBeGreaterThanOrEqual(4);
     const variableRow = preview.getByRole("row").filter({ has: page.getByRole("rowheader", { name: /\{\{zodiacSeason\}\}/ }) });
     await expect(variableRow).toContainText(seasonBody("leo"));
     expect(await variableRow.locator("td p").evaluate(style)).toEqual(await preview.locator('p').first().evaluate(style));
@@ -94,6 +101,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.getByRole("button", { name: "Open weekly template", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Template purpose (optional)", { exact: true })).toHaveValue(notes);
+    expect(await editor.getByRole("button", { name: "Insert {{zodiacSeason}} into Calendar template", exact: true }).evaluate(colorStyle)).toEqual(seasonColor);
     await editor.getByLabel("Template pattern", { exact: true }).fill(`${pattern}\n\nFixture added {{moonSign}}.`);
     await expect(rendered).toContainText("Fixture added Taurus.");
     const closing = editor.getByLabel("Closing passage", { exact: true });
@@ -126,6 +134,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(rendered).toContainText("Zodiac Seasons");
     await expect(rendered).toContainText("Lunar Cycle");
     await expect(rendered).toContainText("Planetary Changes");
+    await preview.getByRole("tab", { name: "Variables", exact: true }).click();
+    expect(await preview.getByLabel("Calendar preview variables").locator('[data-variable-name="zodiacSeason"]').evaluate(colorStyle)).toEqual(seasonColor);
+    await preview.getByRole("tab", { name: "Preview", exact: true }).click();
     await expect(preview.getByRole("region", { name: "Selected Sun and Moon writing" })).toHaveCount(0);
     expect(await preview.getByRole("heading", { name: "Template preview" }).evaluate(style)).toEqual(reference);
     await preview.screenshot({ path: `test-results/calendar-monthly-preview-${width}-${theme}.png` });
@@ -199,7 +210,7 @@ test("Calendar source editing opens a complete existing draft and stays in the w
   const state = await fixture(page);
   const key = "fallback-hook/zodiac-season/virgo";
   const source = state.rows.find(row => row.content_key === key);
-  Object.assign(source, { id: `package:${key}`, status: "DRAFT", lane: "reference", review_state: "needs-review",
+  Object.assign(source, { id: `package:${key}`, status: "DRAFT", surface: "you", lane: "reference", review_state: "needs-review",
     sections: { packageRecord: { contentKey: key, content_role: "fallback_hook", body: source.body, review_status: "needs_review", sign: "virgo", grammar_frame: "complete_sentence", calendarWritingSource: { title: "Sign season content", originalBody: source.body } } } });
   await page.goto("/admin/content#calendar-writeups?view=weekly-sky");
   const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
@@ -211,12 +222,18 @@ test("Calendar source editing opens a complete existing draft and stays in the w
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   const body = editor.locator('textarea[data-sky-field="body"]');
   await expect(body).toHaveValue(seasonBody("virgo"));
+  await expect(editor.locator('.admin-editor-details-summary')).toContainText("Shared zodiac season source");
+  await expect(editor.locator('.admin-editor-details-summary')).not.toContainText("you");
+  await editor.locator('.admin-editor-details > summary').click();
+  await expect(editor.getByLabel("Row metadata")).toContainText("Calendar, Sky and other supported templates");
+  await expect(editor.getByLabel("Surface", { exact: true })).toHaveCount(0);
   await body.fill("Fixture revised season opening.\n\nFixture complete final sentence.");
   await expect(preview.getByLabel("Calendar preview variables")).toContainText("Fixture complete final sentence.");
   await editor.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => state.writes.length).toBe(1);
   expect(state.writes[0].sections.packageDraft.body).toBe("Fixture revised season opening.\n\nFixture complete final sentence.");
   expect(state.writes[0].status).toBe("DRAFT");
+  expect(state.writes[0].surface).toBe("you");
   await editor.getByRole("button", { name: "Close", exact: true }).click();
   await expect(page).toHaveURL(/#calendar-writeups\?view=weekly-sky$/);
   await preview.getByRole("button", { name: "Edit zodiacSeason", exact: true }).click();

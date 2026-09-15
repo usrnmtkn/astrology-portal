@@ -19,6 +19,13 @@ export function calendarOverviewFields(period: SkyForecastPeriod) {
 
 export const calendarSeasonVariables = ["zodiacSeason", "zodiacSeasonPolarAxis", "seasonSign", "seasonStart", "seasonEnd", "openingSeasonSign", "openingZodiacSeason", "openingZodiacSeasonPolarAxis", "closingSeasonSign", "closingZodiacSeason", "closingZodiacSeasonPolarAxis", "seasonChangeDate"];
 
+/** Stable across periods, source loading and editors; uses the shared Studio palette. */
+export function calendarVariableColor(name: string) {
+  let hash = 0;
+  for (const character of name) hash = (hash * 31 + character.charCodeAt(0)) | 0;
+  return String((hash >>> 0) % 6 + 1);
+}
+
 export function calendarOverviewWriting(sections: unknown): Record<string, string> {
   const value = (sections as { calendarOverview?: unknown } | null)?.calendarOverview;
   return value && typeof value === "object" && !Array.isArray(value)
