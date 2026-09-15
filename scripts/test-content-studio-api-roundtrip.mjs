@@ -293,6 +293,43 @@ assert.equal(hiddenFromReader.size, 0, "Draft Content Studio rows must not reach
 // Exact source-bank candidate: draft/reopen/publication goes through the real
 // handler and serving loader. The attachment's claims grant no approval.
 const beforeBank = structuredClone(row);
+// Collective Sky templates must roundtrip as held writing references, including
+// editor-only guidance. An old editor must not overwrite a newer saved template.
+const { skyForecastTemplates } = await import("../apps/admin/src/skyForecastTemplates.ts");
+const { calendarMoonPassages } = await import("../apps/admin/src/calendarPreviewModel.ts");
+for (const template of Object.values(skyForecastTemplates)) {
+  const guidance = "Editor-only source and structure guidance for this fixture.";
+  const created = await invokeApi("POST", "/api/admin/generated-content", {
+    contentKey: template.contentKey, surface: "sky", mode: "card", status: "DRAFT",
+    lane: "reference", reviewState: "EDITORIAL_REVIEW_REQUIRED", blockType: "fallback_template", eventType: "fallback-template",
+    headline: template.headline, body: template.body, summary: guidance,
+    sourceSnapshot: { contentType: "template", contentSystem: "fallback", content_role: "template" }
+  });
+  assert.equal(created.status, 200, JSON.stringify(created.payload));
+  assert.equal(created.payload.rows[0].block_type, "fallback_template");
+  const opened = await invokeApi("GET", `/api/admin/generated-content?contentKey=${encodeURIComponent(template.contentKey)}&status=all&visibility=all`);
+  assert.equal(opened.payload.rows[0].body, template.body);
+  assert.equal(opened.payload.rows[0].summary, guidance);
+  assert.equal(opened.payload.rows[0].lane, "reference");
+  const previewQuery = new URLSearchParams({ status: "all", visibility: "all", limit: "1000" });
+  for (const key of [template.contentKey, "cms/sky-daily-summary/sun/virgo", "authored/calendar-weekly-moon/aries"]) previewQuery.append("contentKeys", key);
+  const previewRead = await invokeApi("GET", `/api/admin/generated-content?${previewQuery}`);
+  assert.equal(previewRead.status, 200, JSON.stringify(previewRead.payload));
+  const previewTemplate = previewRead.payload.rows.find(candidate => candidate.content_key === template.contentKey);
+  assert.equal(previewTemplate.body, template.body);
+  assert.equal(previewTemplate.summary, guidance);
+  const moonSource = previewRead.payload.rows.find(candidate => candidate.content_key === "authored/calendar-weekly-moon/aries");
+  assert.equal(calendarMoonPassages(previewRead.payload.rows, "Aries")[0]?.body, moonSource.sections.packageRecord.body);
+  assert.equal((await loadLiveGeneratedContentForKeys([template.contentKey])).size, 0);
+  const version = row.updated_at;
+  row = { ...row, updated_at: "2026-09-14T16:00:00.000Z" };
+  const stale = await invokeApi("PATCH", "/api/admin/generated-content", {
+    id: row.id, expectedUpdatedAt: version, body: "Stale replacement", status: "DRAFT"
+  });
+  assert.equal(stale.status, 409);
+  assert.equal(row.body, template.body);
+}
+row = structuredClone(beforeBank);
 const { suppliedSkySummaryCandidate, skySummaryCandidateReceipt } = await import("../apps/admin/src/skySummarySourceBank.ts");
 const suppliedBank = JSON.parse(readFileSync("apps/admin/src/skySummarySourceBank.json", "utf8"));
 for (const key of ["cms/sky-daily-summary/sun/aries", "cms/sky-daily-summary/moon/aries/newMoon"]) {
