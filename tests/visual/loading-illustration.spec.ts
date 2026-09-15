@@ -48,6 +48,8 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
       await expect.poll(() => frame.locator('img.is-active').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(512);
       const bounds = await frame.boundingBox();
       const loaderBounds = await loader.boundingBox();
+      const navigationBounds = await page.locator('.topbar').boundingBox();
+      expect(loaderBounds!.y, 'The loading card must clear the fixed navigation').toBeGreaterThanOrEqual(navigationBounds!.y + navigationBounds!.height);
       await expect(frame.locator('img.is-active')).not.toHaveAttribute('src', '/loading-artwork/sun.png', { timeout: 8000 });
       await page.waitForTimeout(450);
       expect(await frame.boundingBox()).toEqual(bounds);
