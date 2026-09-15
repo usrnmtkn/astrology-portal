@@ -14,7 +14,7 @@ const selection = {
   motion: "direct"
 };
 
-assert.equal(houseTransitLabel(selection), "Uranus through your 1st house");
+assert.equal(houseTransitLabel(selection), "Uranus in Gemini through your 1st house");
 const groups = houseTransitSourceGroups(selection);
 assert.deepEqual(groups.map((group) => group.key), ["composition", "alternate"]);
 assert.deepEqual(groups[0].sources.map((source) => source.id), ["house-core", "sign-synthesis"]);
@@ -30,7 +30,7 @@ const preview = renderHouseTransitPreview(selection, (candidateKeys) => {
   return key ? { key, text: copy.get(key) } : null;
 });
 assert.equal(preview.complete, true);
-assert.equal(preview.headline, "Uranus through your 1st house");
+assert.equal(preview.headline, "Uranus in Gemini through your 1st house");
 assert.equal(
   preview.body,
   "Over the next several years, the pull is toward freedom: old roles stop fitting.\n\nUranus in Gemini changes how you introduce yourself, speak up, and choose what comes next."

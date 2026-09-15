@@ -60,7 +60,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       expect(metrics.overflow).toBeLessThanOrEqual(1);
     }
     await expect(preview.getByRole("heading", { level: 3 })).toHaveText("What you see");
-    await expect(preview.getByRole("heading", { level: 4 })).toHaveText("Sun through your 1st house");
+    await expect(preview.getByRole("heading", { level: 4 })).toHaveText("Sun in Aries through your 1st house");
     expect(await preview.evaluate(el => Boolean(el.compareDocumentPosition(el.nextElementSibling!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
     await preview.screenshot({ path: `test-results/house-transit-preview-${width}-${theme}.png` });
     await finder.locator(".admin-natal-source-grid").first().screenshot({ path: `test-results/house-transit-passages-${width}-${theme}.png` });
