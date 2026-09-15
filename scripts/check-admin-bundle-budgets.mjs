@@ -132,6 +132,7 @@ const expectedDynamicEntries = [
   "src/CalendarTemplatePreview.tsx",
   "src/CalendarOverviewEditor.tsx",
   "src/SkyForecastTemplateStudio.tsx",
+  "src/MonthlyTemplateStudio.tsx",
   "src/calendarPreviewCalculation.ts",
 ];
 for (const key of expectedDynamicEntries) {
