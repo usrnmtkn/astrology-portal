@@ -4,6 +4,7 @@ on:
     branches: [chatgpt/monthly-template-ai-writer-v1]
     paths:
       - '.github/monthly-authoring-implementation.patch.gz.b64.part20'
+      - '.github/workflows/monthly-apply-implementation.yml'
 permissions:
   contents: write
 jobs:
