@@ -64,8 +64,9 @@ const seasonsManual = calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cance
 assert.equal(seasonsManual.zodiacSeason.text, seasonBody);
 assert.equal(seasonsManual.openingZodiacSeason.text, seasonBody);
 assert.equal(seasonsManual.seasonStart, undefined);
-assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [{ ...seasonRow, status: "DRAFT" }] }).zodiacSeason, undefined);
-assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [{ ...seasonRow, review_state: "held" }] }).zodiacSeason, undefined);
+assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [{ ...seasonRow, status: "DRAFT" }] }).zodiacSeason.text, seasonBody);
+assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [{ ...seasonRow, review_state: "held" }] }).zodiacSeason.sourceLabel, "Saved draft");
+assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [{ ...seasonRow, sections: { packageDraft: { body: "Fixture complete unsaved passage." } } }] }).zodiacSeason.text, "Fixture complete unsaved passage.");
 assert.equal(calendarPreviewValues({ sunSign: "Cancer", moonSign: "Virgo", rows: [seasonRow] }).zodiacSeason, undefined);
 assert(calendarPreviewSourceKeys("monthly-sky", ["Virgo", "Libra"]).includes("fallback-hook/zodiac-season-polar-axis/libra"));
 assert.equal(calendarTemplateSegments("Before{{#closingSeasonSign}}After {{closingSeasonSign}}{{/closingSeasonSign}}", {}).map(part => part.text).join(""), "Before");
