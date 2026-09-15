@@ -169,6 +169,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     // arrives over a real network. Assert its computed style with a web-first
     // expectation before measuring typography and reduced-motion behavior.
     await expect(loading).toHaveCSS("font-family", /system-ui/);
+    // A collapsing startup-card margin used to move the whole document down
+    // until the app stylesheet arrived, producing a visible reload jump.
+    expect(await page.locator("body").evaluate(el => el.getBoundingClientRect().top)).toBe(0);
     const illustration = loading.locator('.loading-illustration img.is-active');
     await expect(illustration).toBeVisible();
     await expect.poll(() => illustration.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(512);
