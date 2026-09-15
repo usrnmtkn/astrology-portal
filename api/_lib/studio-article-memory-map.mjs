@@ -125,6 +125,8 @@ export function buildStudioArticleMemoryMap(identity, {
       memoryId: item.reference.memoryId,
       family: item.row.family,
       ...(item.row.scope ? { scope: item.row.scope, originalContentKey: item.row.content_key } : {}),
+      ...(Array.isArray(item.row.changedFields) ? { changedFields: item.row.changedFields } : {}),
+      ...(typeof item.row.contextRule === 'string' ? { contextRule: item.row.contextRule } : {}),
       rejected: item.row.bad,
       replacement: item.row.corrected ?? null,
       ownerReason: item.row.owner_reason ?? item.row.why ?? null,
