@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementAssembly";
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
 import SkyPlacementArticleVariables from "./SkyPlacementArticleVariables";
+import SkyArticleAiWriter from "./SkyArticleAiWriter";
 // @ts-ignore Shared article-token validator used by publishing and readers.
 import { isSkyPlacementArticleField, skyPlacementArticleVariableIssues, skyPlacementArticlePhraseNames } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 import SkyPhraseCompositionEditor from "./SkyPhraseCompositionEditor";
@@ -233,6 +234,9 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
           value={field.value} disabled={disabled} aria-invalid={variableIssues.length > 0 || undefined} onChange={event => changeWriting(event.target.value)} />
       </label>}
       <p className="admin-sky-writing-count">{field.value.trim() ? field.value.trim().split(/\s+/u).length : 0} words · {field.value.length} characters</p>
+      {placement && ["placementArticle", "placementArticleDirect", "placementArticleRetrograde"].includes(field.key)
+        && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items
+        && <SkyArticleAiWriter planet={planet} sign={sign} field={field.key} currentText={field.value} disabled={disabled} onUse={changeWriting} />}
       {supportsVariables && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && (supportsArticlePhrases
         ? <SkyPlacementArticleVariables key={contentKey} contentKey={contentKey} planet={planet} sign={sign} motion={rxContext ? "retrograde" : "direct"}
           fieldPath={field.key} value={field.value} source={activeLibrary ? { ...source, ingress: activeLibrary } : source} disabled={disabled} onInsert={insertVariable}
