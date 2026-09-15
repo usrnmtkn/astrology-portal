@@ -4,8 +4,11 @@
 /* The document can paint this shell before any application JavaScript arrives. */
 body:has(#app-startup) {
   margin: 0;
-  /* Match the app body's formatting context before its lazy styles arrive. */
-  overflow-x: hidden;
   background: var(--bg);
   color: var(--ink);
+}
+
+/* Contain the card's margins before the app's lazy root styles arrive. */
+#root:has(#app-startup) {
+  display: flow-root;
 }
