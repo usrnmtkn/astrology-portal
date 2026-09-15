@@ -497,7 +497,9 @@ export function SkyDetailArticle({
   const fallbackParagraphs = leadingPlacementDate
     ? rawFallbackParagraphs.slice(1)
     : rawFallbackParagraphs;
-  const headerDate = detail.retrograde ? detail.duration : leadingSectionDate ?? leadingPlacementDate ?? detail.duration;
+  // A surface's calculated interval must win over a date line embedded in an
+  // article template (which may describe the full residency across visits).
+  const headerDate = detail.retrograde ? detail.duration : detail.duration ?? leadingSectionDate ?? leadingPlacementDate;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const eyebrowLabel = articleEyebrowLabel(detail.title, detail.kicker);
   const eyebrowGlyphs = articleEyebrowGlyphs({
