@@ -1,0 +1,21 @@
+name: Calendar phrase development snapshot
+on:
+  push:
+    branches: [chatgpt/monthly-phrase-authoring-memory]
+    paths: [.github/workflows/calendar-phrase-development.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Archive tracked source without credentials or runtime data
+        run: git archive --format=tar HEAD | gzip -1 > /tmp/calendar-phrase-source.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: calendar-phrase-source
+          path: /tmp/calendar-phrase-source.tar.gz
+          retention-days: 1
+          compression-level: 0
