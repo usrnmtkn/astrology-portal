@@ -7,7 +7,7 @@ import { studioVariableValue } from "../../web/src/content/studioCustomVariables
 export default function StudioVariableInsert({ variables, context, onInsert, disabled = false }: { variables: CustomVariable[]; context: Record<string, any>; onInsert: (token: string) => void; disabled?: boolean }) {
   const [query, setQuery] = useState("");
   const [name, setName] = useState("");
-  const filtered = variables.filter(item => [item.name, item.label, ...item.tags].join(" ").toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+  const filtered = variables.filter(item => [item.name, item.label, ...(item.tags ?? [])].join(" ").toLocaleLowerCase().includes(query.toLocaleLowerCase()));
   const selected = filtered.find(item => item.name === name);
   const resolved = selected ? studioVariableValue(selected, context) : null;
   return <details className="studio-variable-usage"><AdminDisclosureSummary>My variables</AdminDisclosureSummary><div className="studio-section">
