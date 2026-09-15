@@ -238,6 +238,10 @@ jobs:
     if: needs.scope.outputs.sky == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
@@ -253,12 +257,12 @@ jobs:
       - name: Verify exact placement scan parity and calculation reuse
         run: node --import tsx scripts/test-sky-placement-scan-reuse.mts
       - name: Verify placement reader refresh stability
-        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts tests/visual/calendar-day-summary.spec.ts tests/visual/sky-placement-dates.spec.ts tests/visual/placement-visit-dates.spec.ts tests/visual/sky-placement-key-dates.spec.ts
+        run: npx playwright test -c playwright.config.ts --workers=1 --shard=${{ matrix.shard }}/2 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts tests/visual/calendar-day-summary.spec.ts tests/visual/sky-placement-dates.spec.ts tests/visual/placement-visit-dates.spec.ts tests/visual/sky-placement-key-dates.spec.ts
       - name: Upload Sky placement reader artifacts
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: sky-placement-reader-results
+          name: sky-placement-reader-results-${{ matrix.shard }}
           path: test-results/
           if-no-files-found: ignore
 
