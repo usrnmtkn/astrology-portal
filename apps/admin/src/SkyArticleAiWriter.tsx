@@ -2,13 +2,6 @@ import { useEffect, useState } from 'react';
 import { AdminDisclosureSummary } from './AdminNativeControls';
 import { StudioButton, StudioInput, StudioTextarea } from './StudioControls';
 
-type GenerationInfo = {
-  memoryReceipt?: {
-    selected?: unknown[];
-    studioFeedback?: { selected?: unknown[] } | null;
-  } | null;
-};
-
 type Props = {
   planet: string;
   sign: string;
@@ -24,21 +17,14 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
   const [referenceDate, setReferenceDate] = useState(today);
   const [instruction, setInstruction] = useState('');
   const [draft, setDraft] = useState('');
-  const [generation, setGeneration] = useState<GenerationInfo | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     setInstruction('');
     setDraft('');
-    setGeneration(null);
     setError('');
   }, [planet, sign, field]);
-
-  const memoryCount = Math.max(
-    generation?.memoryReceipt?.selected?.length ?? 0,
-    generation?.memoryReceipt?.studioFeedback?.selected?.length ?? 0,
-  );
 
   const generate = async () => {
     if (busy || disabled) return;
@@ -55,7 +41,6 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
         throw new Error(typeof payload?.error === 'string' ? payload.error : 'No draft was returned.');
       }
       setDraft(payload.draft);
-      setGeneration(payload.generation ?? null);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Writing failed. Your article was not changed.');
     } finally {
@@ -65,7 +50,7 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
 
   return <details className="admin-workspace-details">
     <AdminDisclosureSummary>AI writing</AdminDisclosureSummary>
-    <p>Create a private suggestion from calculated Sky facts and your approved correction memory. It never saves or publishes automatically.</p>
+    <p>Create a private suggestion from calculated Sky facts and approved correction memory. It never saves or publishes automatically.</p>
     <label className="admin-field-wide">
       <span>Reference date</span>
       <StudioInput type="date" value={referenceDate} disabled={disabled || busy} onChange={event => setReferenceDate(event.target.value)} />
@@ -82,7 +67,7 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
         {busy ? 'Writing…' : currentText.trim() ? 'Suggest revision' : 'Generate draft'}
       </StudioButton>
       {draft && <StudioButton type="button" disabled={disabled || busy} onClick={() => { onUse(draft); setDraft(''); }}>Use this draft</StudioButton>}
-      {draft && <StudioButton type="button" disabled={busy} onClick={() => { setDraft(''); setGeneration(null); setError(''); }}>Discard</StudioButton>}
+      {draft && <StudioButton type="button" disabled={busy} onClick={() => { setDraft(''); setError(''); }}>Discard</StudioButton>}
     </div>
     {error && <p role="alert">{error}</p>}
     {draft && <label className="admin-review-copy-editor">
@@ -90,6 +75,5 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
       <StudioTextarea value={draft} readOnly aria-label="AI article suggestion" />
       <small className="admin-field-hint">Use this draft only copies the suggestion into the editor.</small>
     </label>}
-    {generation && <p className="admin-field-hint">Correction memory: {memoryCount ? `${memoryCount} relevant correction${memoryCount === 1 ? '' : 's'} considered.` : 'none selected.'}</p>}
   </details>;
 }
