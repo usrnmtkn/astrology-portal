@@ -1,0 +1,52 @@
+name: Monthly template authoring
+on:
+  pull_request:
+    paths:
+      - 'src/monthly-writing/**'
+      - 'api/**/monthly-*.ts'
+      - 'api/_lib/content-generation.ts'
+      - 'apps/admin/src/MonthlyTemplateStudio.tsx'
+      - 'apps/admin/src/SkyForecastTemplateStudio.tsx'
+      - 'tests/**/monthly-*'
+      - 'scripts/test-monthly-*'
+      - 'playwright.monthly-writing.config.ts'
+      - '.github/workflows/monthly-writing.yml'
+permissions:
+  contents: read
+jobs:
+  authoring:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npm run test:monthly-writing
+      - run: npm run qa:css-audit
+      - run: npx playwright install --with-deps chromium
+      - name: Fresh-build monthly editor browser contract
+        run: npx playwright test --config=playwright.monthly-writing.config.ts
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: monthly-writing-browser
+          path: test-results/monthly-writing*
+          retention-days: 5
+  unchanged-bundle-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npm run build:admin
+      - name: Enforce the existing Studio bundle limits
+        run: node scripts/check-admin-bundle-budgets.mjs
