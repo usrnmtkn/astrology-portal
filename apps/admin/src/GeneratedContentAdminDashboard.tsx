@@ -210,6 +210,7 @@ import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import AdminFilterDisclosure from "./AdminFilterDisclosure";
 const StudioVariables = lazy(() => import("./StudioVariables"));
 const SkyForecastTemplateStudio = lazy(() => import("./SkyForecastTemplateStudio"));
+const CalendarOverviewEditor = lazy(() => import("./CalendarOverviewEditor"));
 const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
 const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
 import type { NatalEditableRow, NatalSourceEdits } from "./NatalPlacementSourceEditor";
@@ -505,7 +506,7 @@ type SkyArticleEditorState = {
   saveState: "saved" | "saving" | "unsaved" | "error";
 };
 
-type AdminDraft = {
+export type AdminDraft = {
   updatedAt?: string | null;
   id: string | null;
   contentKey: string;
@@ -9881,6 +9882,8 @@ export function GeneratedContentAdminDashboard() {
           {selectedRow && <Suspense fallback={<p role="status">Loading publication checks…</p>}><StudioEditorReviewPanels row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
             isPackageDraft={isPackageDraft} articleSaveState={skyArticleEditor?.saveState}
             onWritingAction={(action) => void runSkyDraftWriting(selectedRow.content_key, action, selectedRow)} /></Suspense>}
+          {currentDraft.contentKey.startsWith("slot-template/calendar/") && <Suspense fallback={null}><CalendarOverviewEditor
+            draft={currentDraft} onChange={next => setDraft(invalidateContentStudioReview(next))} /></Suspense>}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor studio-surface">
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
@@ -10553,7 +10556,7 @@ export function GeneratedContentAdminDashboard() {
             rows={[...(hasNatalTemplatePreviewContext
               ? rows.filter((row) => natalPlacementResolverDependencyKeys(natalPlacementPlanet as NatalPlacementPlanet, natalPlacementSign as NatalPlacementSign, natalPlacementHouse, natalPlacementMotion).includes(row.content_key))
               : rows).filter(row => !isZodiacSeasonSourceKey(row.content_key)), ...seasonSourceRows]}
-            onInsert={supportsZodiacSeasonVariables(effectiveSkyFallback) ? token => {
+            onInsert={supportsZodiacSeasonVariables(effectiveSkyFallback) || currentDraft.contentKey.startsWith("slot-template/calendar/") ? token => {
               const saved = variableInsertionRef.current;
               const element = saved && editorRef.current?.contains(saved.element) ? saved.element : editorRef.current?.querySelector<HTMLTextAreaElement>('textarea[data-sky-field="body"]');
               if (!element) return;

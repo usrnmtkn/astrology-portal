@@ -6,12 +6,16 @@ import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 const weekly = skyForecastTemplates["weekly-sky"];
 const pattern = "{{sunSign}} / {{moonSign}} · {{sunDegree}}\n\n{{sunSummary}}\n\n{{moonWriteup}}\n\n{{mondayDate}}\n{{mondayTiming}}\n{{mondayWriteup}}\n\n{{weeklyIntegration}}";
 const notes = "Fixture editor-only writing instructions. Preserve this complete guidance.";
+const seasonBody = (sign: string) => `Fixture ${sign} season opening.\n\nFixture ${sign} complete season final sentence.`;
+const axisBody = (sign: string) => `Fixture ${sign} polar axis opening. Fixture ${sign} polar axis final sentence.`;
 const moonBody = (sign: string) => `Fixture ${sign} opening.\n\nFixture ${sign} middle.\n\nFixture ${sign} final sentence.`;
 async function fixture(page: Page) {
   const writes: any[] = [];
   const rows: any[] = [
     { id: "weekly", content_key: weekly.contentKey, headline: weekly.headline, body: pattern, summary: notes, status: "DRAFT", lane: "reference", surface: "sky", mode: "card", block_type: "fallback_template", source_snapshot: { contentType: "template", content_role: "template", contentSystem: "fallback" }, updated_at: "2026-09-14T12:00:00Z" },
     ...lunarSigns.flatMap(sign => [
+      { id: `season-${sign}`, content_key: `fallback-hook/zodiac-season/${sign}`, body: seasonBody(sign), status: "LIVE", lane: "serving", source_snapshot: { content_role: "fallback_hook", review_status: "approved" } },
+      { id: `axis-${sign}`, content_key: `fallback-hook/zodiac-season-polar-axis/${sign}`, body: axisBody(sign), status: "LIVE", lane: "serving", source_snapshot: { content_role: "fallback_hook", review_status: "approved" } },
       { id: `sun-${sign}`, content_key: `cms/sky-daily-summary/sun/${sign}`, body: `shows the ${sign} fixture`, status: "LIVE", lane: "serving" },
       { id: `moon-${sign}`, content_key: `authored/calendar-weekly-moon/${sign}${sign === "cancer" ? "/variant-2" : ""}`, body: moonBody(sign), status: "LIVE", lane: "serving", source_snapshot: { content_role: "full_copy", review_status: "approved_reuse" } }
     ])
@@ -76,16 +80,37 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(editor.getByLabel("Template purpose (optional)", { exact: true })).toHaveValue(notes);
     await editor.getByLabel("Template pattern", { exact: true }).fill(`${pattern}\n\nFixture added {{moonSign}}.`);
     await expect(rendered).toContainText("Fixture added Taurus.");
+    const closing = editor.getByLabel("Closing passage", { exact: true });
+    await closing.fill("Fixture complete closing. ");
+    await closing.focus();
+    await closing.evaluate((element: HTMLTextAreaElement) => element.setSelectionRange(element.value.length, element.value.length));
+    await editor.getByRole("button", { name: "Insert {{zodiacSeason}} into Calendar template", exact: true }).click();
+    await expect(closing).toHaveValue("Fixture complete closing. {{zodiacSeason}}");
+    await expect(rendered).toContainText(seasonBody("leo"));
+    const overviewEditor = editor.getByRole("region", { name: "Calendar overview writing", exact: true });
+    expect(await overviewEditor.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+    expect(await overviewEditor.locator("label > span").first().evaluate(style)).toEqual(await editor.locator('label:has(textarea[data-sky-field="body"]) > span').evaluate(style));
+    await overviewEditor.screenshot({ path: `test-results/calendar-overview-editor-${width}-${theme}.png` });
     expect(state.writes).toEqual([]);
     await editor.getByRole("button", { name: "Save", exact: true }).click();
     await expect.poll(() => state.writes.length).toBe(1);
     expect(state.writes[0].summary).toBe(notes);
     expect(state.writes[0].body).toBe(`${pattern}\n\nFixture added {{moonSign}}.`);
     expect(state.writes[0].facts).toEqual({});
+    expect(state.writes[0].sections.calendarOverview.weeklyIntegration).toBe("Fixture complete closing. {{zodiacSeason}}");
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("button", { name: "Open weekly template", exact: true }).click();
+    await expect(editor.getByLabel("Closing passage", { exact: true })).toHaveValue("Fixture complete closing. {{zodiacSeason}}");
+    await expect(editor.getByLabel("Template purpose (optional)", { exact: true })).toHaveValue(notes);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByRole("tablist", { name: "Calendar Write-ups workspaces" }).getByRole("tab", { name: "Monthly Sky" }).click();
     await expect(preview.getByLabel("Rendered Calendar template")).toContainText("{{monthlyOverview}}");
-    await expect(preview.getByRole("region", { name: "Selected Sun and Moon writing" })).toContainText(moonBody("taurus"));
+    await expect(rendered).toContainText(seasonBody("leo"));
+    await expect(rendered).toContainText(axisBody("leo"));
+    await expect(rendered).toContainText("Zodiac Seasons");
+    await expect(rendered).toContainText("Lunar Cycle");
+    await expect(rendered).toContainText("Planetary Changes");
+    await expect(preview.getByRole("region", { name: "Selected Sun and Moon writing" })).toHaveCount(0);
     expect(await preview.getByRole("heading", { name: "Template preview" }).evaluate(style)).toEqual(reference);
     await preview.screenshot({ path: `test-results/calendar-monthly-preview-${width}-${theme}.png` });
     expect(errors).toEqual([]);
@@ -134,7 +159,55 @@ test("Calendar preview calculates two real skies and clears unavailable facts", 
   await page.getByRole("tablist", { name: "Calendar Write-ups workspaces" }).getByRole("tab", { name: "Monthly Sky" }).click();
   await expect(rendered).toContainText("Friday, January 1, 2027", { timeout: 45_000 });
   await expect(rendered).toContainText("Sunday, January 31, 2027");
-  await expect(rendered).not.toContainText("{{keyDates}}");
+  await expect(rendered).not.toContainText("{{lunationDates}}");
+  await expect(rendered).toContainText(seasonBody("capricorn"));
+  await expect(rendered).toContainText(seasonBody("aquarius"));
+  await expect(rendered).not.toContainText("Moon square");
   await expect(rendered).not.toContainText(/12:00 AM[^\n]*retrograde/);
   expect(state.writes).toEqual([]);
+});
+
+test("Monthly overview structure is an explicit draft change and preserves saved writing", async ({ page }) => {
+  const state = await fixture(page);
+  const monthly = skyForecastTemplates["monthly-sky"];
+  const previous = "{{monthRange}}\n\n{{monthlyOverview}}\n\n{{keyDates}}\n\n{{monthlyIntegration}}";
+  state.rows.push({ ...state.rows[0], id: "monthly", content_key: monthly.contentKey, headline: monthly.headline, body: previous,
+    sections: { contentStudioReview: { decision: "approved-exact-copy", copySha256: "fixture-prior-review" }, preservedMetadata: "Fixture existing metadata", calendarOverview: { monthlyIntegration: "Fixture complete saved ending." } } });
+  await page.goto("/admin/content#calendar-writeups?view=monthly-sky");
+  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await preview.getByLabel("Preview source").selectOption("signs");
+  await preview.getByLabel("Preview Sun sign").selectOption("Virgo");
+  await preview.getByLabel("Preview Moon sign").selectOption("Cancer");
+  await preview.getByRole("tab", { name: "Template pattern", exact: true }).click();
+  await expect(preview.getByLabel("Calendar template pattern")).toHaveText(previous);
+  await page.getByRole("button", { name: "Open monthly template", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  page.once("dialog", dialog => dialog.accept());
+  await editor.getByRole("button", { name: "Use overview structure", exact: true }).click();
+  await expect(editor.getByLabel("Template pattern", { exact: true })).toHaveValue(monthly.body);
+  await editor.getByLabel("Monthly overview", { exact: true }).fill("Fixture monthly opening.\n\nFixture monthly final sentence.");
+  await editor.getByLabel("Season transition", { exact: true }).fill("Fixture season transition. ");
+  await editor.getByRole("button", { name: "Insert {{zodiacSeasonPolarAxis}} into Calendar template", exact: true }).click();
+  await expect(editor.getByLabel("Season transition", { exact: true })).toHaveValue("Fixture season transition. {{zodiacSeasonPolarAxis}}");
+  await expect(editor.getByLabel("Closing passage", { exact: true })).toHaveValue("Fixture complete saved ending.");
+  await expect(editor.getByLabel("Template purpose (optional)", { exact: true })).toHaveValue(notes);
+  expect(state.writes).toEqual([]);
+  await editor.getByRole("button", { name: "Save", exact: true }).click();
+  await expect.poll(() => state.writes.length).toBe(1);
+  expect(state.writes[0].status).toBe("DRAFT");
+  expect(state.writes[0].lane).toBe("reference");
+  expect(state.writes[0].sections.preservedMetadata).toBe("Fixture existing metadata");
+  expect(state.writes[0].sections.contentStudioReview).toBeNull();
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
+  await preview.getByRole("tab", { name: "Preview", exact: true }).click();
+  const rendered = preview.getByLabel("Rendered Calendar template");
+  await expect(rendered).toContainText("Fixture monthly opening.");
+  await expect(rendered).toContainText("Fixture monthly final sentence.");
+  await expect(rendered).toContainText("Fixture complete saved ending.");
+  await expect(rendered).toContainText(axisBody("virgo"));
+  await expect(rendered).not.toContainText("{{monthlyOverview}}");
+  await page.getByRole("button", { name: "Open monthly template", exact: true }).click();
+  await expect(editor.getByLabel("Monthly overview", { exact: true })).toHaveValue("Fixture monthly opening.\n\nFixture monthly final sentence.");
+  await expect(editor.getByLabel("Season transition", { exact: true })).toHaveValue("Fixture season transition. {{zodiacSeasonPolarAxis}}");
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
 });

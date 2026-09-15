@@ -130,6 +130,7 @@ const expectedDynamicEntries = [
   "src/MemoryGraphDashboard.tsx",
   "src/StudioMemoryFeedback.tsx",
   "src/CalendarTemplatePreview.tsx",
+  "src/CalendarOverviewEditor.tsx",
   "src/SkyForecastTemplateStudio.tsx",
   "src/calendarPreviewCalculation.ts",
 ];
