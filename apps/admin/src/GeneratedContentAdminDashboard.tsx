@@ -9112,8 +9112,10 @@ export function GeneratedContentAdminDashboard() {
             : showTemplateGuidance
               ? { title: "Assembly pattern, not final prose", hint: "Check the complete result in Reader preview before publishing." }
               : { title: "How this row is used", hint: null };
+    const isSharedSeasonSource = isZodiacSeasonSourceKey(currentDraft.contentKey);
+    const seasonSourceUsage = "Calendar, Sky and other supported templates";
     const editorDetailsSummary = [
-      currentDraft.surface,
+      isSharedSeasonSource ? "Shared zodiac season source" : currentDraft.surface,
       currentDraft.mode,
       currentDraft.lane,
       isPackageDraft ? packageReviewStatusLabel(packageReviewStatus) : null
@@ -10355,7 +10357,7 @@ export function GeneratedContentAdminDashboard() {
             {!(isVocabularyDraft && isPackageDraft) && (
               <div className="admin-editor-metadata" aria-label="Row metadata">
                 <dl className="admin-editor-meta-summary">
-                  <div><dt>Surface</dt><dd>{currentDraft.surface}</dd></div>
+                  <div><dt>{isSharedSeasonSource ? "Used in" : "Surface"}</dt><dd>{isSharedSeasonSource ? seasonSourceUsage : currentDraft.surface}</dd></div>
                   <div><dt>Mode</dt><dd>{currentDraft.mode}</dd></div>
                   <div><dt>Lane</dt><dd>{currentDraft.lane}</dd></div>
                   <div><dt>Block type</dt><dd>{currentDraft.blockType || "—"}</dd></div>
@@ -10392,12 +10394,12 @@ export function GeneratedContentAdminDashboard() {
                         : "This is the editorial workflow stage. The Status badge checks the copy readers can receive."}
                     </small>
                   </label>
-                  <label className="admin-metadata-field">
+                  {!isSharedSeasonSource && <label className="admin-metadata-field">
                     <span>Surface</span>
                     <AdminSelect aria-label="Surface" value={currentDraft.surface} onChange={(event) => setDraft({ ...currentDraft, surface: event.target.value as GeneratedContentSurface })} disabled={isPackageDraft}>
                       {["sky", "you", "natal", "synastry", "composite", "relationship", "modifier"].map((surface) => <option key={surface} value={surface}>{surface}</option>)}
                     </AdminSelect>
-                  </label>
+                  </label>}
                   <label className="admin-metadata-field">
                     <span>Mode</span>
                     <AdminSelect aria-label="Mode" value={currentDraft.mode} onChange={(event) => setDraft({ ...currentDraft, mode: event.target.value })} disabled={isPackageDraft}>
