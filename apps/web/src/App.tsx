@@ -14389,7 +14389,7 @@ export function App() {
       )}
 
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
-      <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
+      <Suspense fallback={<PageLoading illustrated={isTodayMode || isFriendsMode} message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {selectedSkyDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
         || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity) ? (
         <>
@@ -14674,7 +14674,7 @@ export function App() {
                 </YouRoute>
               )}
               {mode === "friends" && !userProfile && (
-                isAuthConfigured && !authAccountChecked ? <FeatureLoadingFallback message="Loading your profile…" /> : (
+                isAuthConfigured && !authAccountChecked ? <PageLoading illustrated message="Loading Friends…" /> : (
                   <div className="app-loading">
                     <span>Sign in to view your Friends.</span>
                     <button type="button" className="app-loading__action" onClick={() => {

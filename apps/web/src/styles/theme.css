@@ -137,6 +137,8 @@
   --loading-pulse-duration: 1.4s;
   --loading-pulse-opacity: 0.45;
   --loading-line-short-width: 72%;
+  /* Shared decorative loading frame: three units of the canonical 64px scale. */
+  --loading-illustration-size: calc(var(--size-8) * 3);
   --bg: var(--color-bg-warm);
   --surface: var(--color-surface);
   --surface-2: var(--color-surface-2);

@@ -171,13 +171,13 @@ function ReaderSurfaceWorkspace({
               <div className="admin-composition-surface-route-list">
                 {access.routes.map((route) => (
                   <a key={`${selected.id}-${route.hash}`} href={route.hash} className={route.purpose === "reader-copy" ? "primary" : ""}>
-                    <span><strong>{route.label}</strong><small>{route.note}</small></span>
+                    <div><strong>{route.label}</strong><p>{route.note}</p></div>
                     <span aria-hidden="true">→</span>
                   </a>
                 ))}
                 {access.routes.length === 0 && (
                   <div className="admin-composition-missing-source" role="note">
-                    <span><strong>No atomic editor yet</strong><small>This surface is mapped so the gap is visible; its code-composed prose still needs governed source rows.</small></span>
+                    <div><strong>No atomic editor yet</strong><p>This surface is mapped so the gap is visible; its code-composed prose still needs governed source rows.</p></div>
                   </div>
                 )}
               </div>
@@ -376,7 +376,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
         <aside className="admin-composition-template-list" aria-label="Composition templates">
           <header>
             <div><p className="admin-eyebrow">{templateKeys ? "Choose a passage or template" : "Choose a template"}</p><strong>{filtered.length} of {map.length}</strong></div>
-            <small>Choose one to read its surface.</small>
+            <p>Choose one to read its surface.</p>
             <div className="admin-composition-template-tools">
               <span className="admin-composition-search-shell">
                 <StudioInput aria-label="Search the composition map" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a template or source" />

@@ -145,7 +145,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
       </div>
       {seedStatus && <p role="status">{seedStatus}</p>}
       <p role="status"><strong>{primary ? "Writing library is the primary V5 fallback structure in this draft." : "The existing V5 structure still controls required fallback sections."}</strong></p>
-      <small>Source filling never overwrites writing you have already saved or linked. Save & publish remains a separate owner action.</small>
+      <p>Source filling never overwrites writing you have already saved or linked. Save & publish remains a separate owner action.</p>
     </div>
 
     {SKY_WRITING_LIBRARY_GROUPS.map((group, groupIndex) => <details className="admin-workspace-details" key={group.id} open={groupIndex < 3 || undefined}>
