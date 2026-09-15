@@ -448,7 +448,40 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .memory-loading { margin: var(--workspace-card-padding); }
 #root .admin-dashboard .memory-error[role="alert"] { display: grid; grid-column: 1 / -1; color: var(--studio-on-error-container); background: var(--studio-error-container); }
 #root .admin-dashboard .memory-error button { color: inherit; border-color: currentColor; }
+/* Finder and filter controls share a compact form layout. Explicit grid
+   specificity keeps surface-card styling from turning fields into one column. */
+#root .admin-dashboard .admin-filter-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--workspace-panel-inset);
+  align-items: start;
+}
+#root .admin-dashboard .admin-filter-form :is(input, select) {
+  height: var(--workspace-control-height);
+  min-height: var(--workspace-control-height);
+  padding-block: var(--workspace-field-gap);
+  padding-inline-start: var(--workspace-control-inset);
+}
+#root .admin-dashboard .admin-filter-form input { padding-inline-end: var(--workspace-control-inset); }
+#root .admin-dashboard .admin-filter-search { grid-column: 1 / -1; }
+#root .admin-dashboard :is(.admin-sky-filters, .admin-transit-finder) { gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-filter-options {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+#root .admin-dashboard .admin-filter-options > summary { padding-inline: 0; }
+#root .admin-dashboard .admin-filter-options[open] > .admin-filter-form { margin-top: var(--workspace-control-inset); }
+#root .admin-dashboard .admin-filter-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--workspace-control-inset);
+}
+
 @media (max-width: 720px) {
+  #root .admin-dashboard .admin-filter-form { grid-template-columns: minmax(0, 1fr); }
   #root .admin-dashboard .admin-studio-map { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-access-gate { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-access-gate-actions { padding-inline-start: 0; border-inline-start: 0; padding-block-start: var(--workspace-card-padding); border-block-start: var(--border-width-thin) solid var(--workspace-line); }
@@ -505,6 +538,8 @@ body:has(.admin-dashboard) { margin: 0; }
   #root .admin-dashboard .admin-sky-variable-key dl > div { grid-template-columns: minmax(0,1fr); }
 }
 @media (min-width: 1280px) {
+  #root .admin-dashboard .admin-filter-form.admin-filter-form--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #root .admin-dashboard .admin-filter-form.admin-filter-form--four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   #root .admin-dashboard .admin-natal-placement-selectors:not(:has(> :nth-child(4))),
   #root .admin-dashboard .admin-natal-placement-selectors:has(> :nth-child(5)),
   #root .admin-dashboard .admin-review-filter-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }

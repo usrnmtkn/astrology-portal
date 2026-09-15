@@ -284,6 +284,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
   await page.getByLabel("Sky placement planet or point").selectOption("saturn");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await page.getByLabel("Sky write-up motion").selectOption("retrograde");
   const map = page.getByRole("region", { name: "Sky placement composition map" });
   await map.getByLabel("Placement writing path").selectOption("fallback");
   await expect(map.getByRole("button", { name: "Preview evergreen in app" })).toBeVisible();
@@ -369,6 +370,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(page.getByRole("button", { name: `Switch to ${theme === "light" ? "dark" : "light"} theme`, exact: true })).toBeVisible();
   await page.getByLabel("Sky placement planet or point").selectOption("sun");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await page.getByLabel("Sky write-up motion").selectOption("direct");
   const map = page.getByRole("region", { name: "Sky placement composition map" });
   const actions = map.getByRole("group", { name: "Open placement section editors" });
   await actions.getByRole("button", { name: "Open placement article editor", exact: true }).click();

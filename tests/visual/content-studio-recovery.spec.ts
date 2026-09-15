@@ -37,6 +37,11 @@ async function openStudioPage(page: Page, name: string) {
   await page.getByRole("button", { name, exact: true }).click();
 }
 
+async function selectSaturnPlacement(page: Page) {
+  await page.getByLabel("Sky placement planet or point").selectOption("saturn");
+  await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+}
+
 test("invalid secondary responses do not block saved Studio content", async ({ page }) => {
   await mockStudio(page);
   await page.route(/\/api\/admin\/(review-records|user-generated-content|content-review-events)\?/, route => route.fulfill({ json: null }));
@@ -116,8 +121,8 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     await page.goto(`${studioPath}#review-queue`);
     await page.evaluate(value => document.documentElement.setAttribute("data-theme", value), theme);
     await openStudioPage(page, "Sky Write-ups");
-    // The map now mounts before filters are selected, so the injected crash
-    // happens on navigation rather than after a planet/sign selection.
+    // A complete placement mounts the map and exercises the injected failure.
+    await selectSaturnPlacement(page);
     await expect(page.getByRole("alert").filter({ hasText: "This page could not load." })).toBeVisible();
     await page.getByText("Error details", { exact: true }).click();
     await expect(page.getByText("Error: Studio recovery fixture", { exact: true })).toBeVisible();
@@ -136,17 +141,22 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     await openStudioPage(page, "Review Queue");
     await page.evaluate(() => document.documentElement.removeAttribute("data-qa-recovered"));
     await openStudioPage(page, "Sky Write-ups");
+    await selectSaturnPlacement(page);
     await expect(page.getByRole("alert").filter({ hasText: "This page could not load." })).toBeVisible();
     await page.getByRole("link", { name: "Open Review Queue", exact: true }).click();
     await expect(page).toHaveURL(/#review-queue$/);
     await expect(page.getByRole("heading", { name: "Review Queue", exact: true })).toBeVisible();
     await openStudioPage(page, "Sky Write-ups");
+    await selectSaturnPlacement(page);
+    await expect(page.getByRole("alert").filter({ hasText: "This page could not load." })).toBeVisible();
     recoverOnReload = true;
     await Promise.all([
       page.waitForEvent("load"),
       page.getByRole("button", { name: "Reload page", exact: true }).click()
     ]);
     await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
+    await selectSaturnPlacement(page);
+    await expect(page.getByRole("alert").filter({ hasText: "This page could not load." })).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("studio-recovery-fixture");
   });
 }
@@ -160,6 +170,7 @@ for (const action of ['Retry page', 'Open Review Queue']) {
     await page.route('**/SkyPlacementComposition-*.js', route => missing ? route.abort('failed') : route.continue());
     await page.goto(`${studioPath}#review-queue`);
     await openStudioPage(page, 'Sky Write-ups');
+    await selectSaturnPlacement(page);
     const recovery = page.getByRole('region', { name: 'Page recovery', exact: true });
     await expect(recovery).toBeVisible();
     await recovery.getByText('Error details', { exact: true }).click();
@@ -175,6 +186,8 @@ for (const action of ['Retry page', 'Open Review Queue']) {
       await openStudioPage(page, 'Sky Write-ups');
     }
     await expect(page.getByLabel('Sky placement planet or point')).toBeVisible();
+    await selectSaturnPlacement(page);
+    await expect(page.getByRole('region', { name: 'Sky placement composition map', exact: true })).toBeVisible();
     await expect(recovery).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.getItem('tldrastro:contentAdminSecret'))).toBe('studio-recovery-fixture');
   });
