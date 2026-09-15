@@ -1,4 +1,5 @@
 import { CardReadMore } from "../../components/CardReadMore";
+import { ReportGenerationBeam } from "../../components/reports/ReportGenerationBeam";
 import { useEffect, useState } from "react";
 import type { NatalAspectPatternActivationTimingWindow } from "../../services/natalAspectPatterns";
 import { loadUserGeneratedInterpretation } from "../../services/userGeneratedContent";
@@ -195,7 +196,7 @@ export function FriendTransitsTab({
           </div>
         ) : null}
         {!isLoading && readingAvailable ? (
-          <article className="friends-logic-card friend-transit-reading" aria-label={`What's going on with ${friendName} right now?`}>
+          <article className="friends-logic-card friend-transit-reading" aria-label={`What's going on with ${friendName} right now?`} data-report-generating={effectiveReadingStatus === "loading" || undefined}>
             <div className="friend-transit-reading__topline">
               <span>Right now</span>
               <span className="friend-transit-reading__premium">Paid reading</span>
@@ -219,6 +220,7 @@ export function FriendTransitsTab({
                 <button className="friend-transit-reading__cta" onClick={onGenerateReading} type="button">Generate reading</button>
               </>
             )}
+            {effectiveReadingStatus === "loading" ? <ReportGenerationBeam /> : null}
           </article>
         ) : null}
         {daily?.forecast ? (

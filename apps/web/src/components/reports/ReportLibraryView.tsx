@@ -11,6 +11,7 @@ import {
   type ReportLibraryItem
 } from "../../services/reportLibrary";
 import { createReportShareLink, stopReportSharing } from "../../services/reportSharing";
+import { ReportGenerationBeam } from "./ReportGenerationBeam";
 
 const reportMonthNames = [
   "Jan", "Feb", "Mar", "Apr", "May", "June",
@@ -190,7 +191,7 @@ function ReportLibraryRow({
   }, [menuOpen]);
 
   return (
-    <article className="report-library-row" data-report-status={item.status}>
+    <article className="report-library-row" data-report-status={item.status} data-report-generating={item.status === "generating" || undefined}>
       <button className="report-library-row__open" type="button" onClick={() => openItem(item)}>
         <span className="report-library-row__icon" aria-hidden="true"><FileText size={20} /></span>
         <span className="report-library-row__copy">
@@ -205,6 +206,7 @@ function ReportLibraryRow({
         </span>
       </button>
 
+      {item.status === "generating" ? <ReportGenerationBeam /> : null}
       <div className="report-library-row__actions" ref={actionRef}>
         <button
           className="report-library-row__menu-trigger"
