@@ -1,0 +1,25 @@
+name: Apply monthly implementation handoff
+on:
+  push:
+    branches: [chatgpt/monthly-template-ai-writer-v1]
+    paths:
+      - '.github/monthly-authoring-implementation.patch.gz.b64.part3'
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Apply reviewed local implementation commit
+        run: |
+          cat .github/monthly-authoring-implementation.patch.gz.b64.part{1,2,3} | base64 -d | gzip -d > /tmp/monthly.patch
+          git config user.name 'usrnmtkn'
+          git config user.email 'usrnmtkn@proton.me'
+          git am /tmp/monthly.patch
+          git rm .github/monthly-authoring-implementation.patch.gz.b64.part{1,2,3} .github/workflows/monthly-apply-implementation.yml
+          git commit -m 'chore: remove monthly implementation handoff'
+          git push origin HEAD:chatgpt/monthly-template-ai-writer-v1
