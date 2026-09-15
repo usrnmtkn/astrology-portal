@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { StudioButton, StudioInput } from './StudioControls';
 import { AdminSelect, AdminDisclosureSummary } from './AdminNativeControls';
 import { AdminPaginatedCollection } from './AdminPaginatedCollection';
+import { compositionVariableColors } from './CompositionVariableKey';
 import { decodeStudioVariableCatalog, filterStudioVariables, type StudioVariable, type StudioVariableCatalog } from './studioVariableCatalog';
 
 const kindLabels = { readonly: 'Read-only', editable: 'Editable prose', unmapped: 'Provider not documented' };
 
-function VariableCard({ variable, onOpenSource }: { variable: StudioVariable; onOpenSource: (key: string, label: string, field: string) => void }) {
+function VariableCard({ variable, color, onOpenSource }: { variable: StudioVariable; color?: string; onOpenSource: (key: string, label: string, field: string) => void }) {
   const [selectedSource, setSelectedSource] = useState('');
   const [copyState, setCopyState] = useState('');
   const source = variable.sources.find(item => `${item.key}#${item.field}` === selectedSource);
@@ -14,21 +15,25 @@ function VariableCard({ variable, onOpenSource }: { variable: StudioVariable; on
     try { await navigator.clipboard.writeText(variable.token); setCopyState('Copied'); }
     catch { setCopyState('Copy unavailable. Select the token and copy it manually.'); }
   }
-  return <article className="admin-template-card studio-variable-card" aria-label={`${variable.token} · ${variable.source}`}>
-    <div className="admin-new-actions">
-      <h2><code>{variable.token}</code></h2>
-      <span className="ui-pill">{kindLabels[variable.kind]}</span>
+  return <article className="studio-surface studio-section studio-variable-card" aria-label={`${variable.token} · ${variable.source}`}>
+    <header className="admin-template-card-header">
+      <div className="admin-new-actions">
+        <h2><code data-variable-name={variable.name} data-variable-color={color}>{variable.token}</code></h2>
+        <span className="ui-pill">{kindLabels[variable.kind]}</span>
+      </div>
       <StudioButton onClick={() => void copy()} aria-label={`Copy ${variable.token}`}>Copy token</StudioButton>
-    </div>
+    </header>
     {copyState && <p role="status">{copyState}</p>}
-    <p>{variable.description}</p>
-    <p className="admin-field-hint">Source: {variable.source}</p>
-    <details className="admin-workspace-details">
+    <div className="studio-variable-description">
+      <p>{variable.description}</p>
+      <p className="admin-field-hint">Source: {variable.source}</p>
+    </div>
+    <details className="studio-variable-usage">
       <AdminDisclosureSummary>Used in {variable.usages.length} {variable.usages.length === 1 ? 'context' : 'contexts'}</AdminDisclosureSummary>
       <p>Use this token only in the listed fields or templates. Each editor keeps its own variable contract.</p>
       <AdminPaginatedCollection items={variable.usages} label={`${variable.token} usage`} pageSize={10}>{usages => <ul>{usages.map(usage => <li key={usage.key}>{usage.label}<br /><code>{usage.key}</code></li>)}</ul>}</AdminPaginatedCollection>
     </details>
-    {variable.kind === 'editable' && (variable.sources.length ? <div className="admin-new-actions">
+    {variable.kind === 'editable' && (variable.sources.length ? <div className="studio-variable-source">
       <label><span>Edit value for</span><AdminSelect aria-label={`Source for ${variable.token}`} value={selectedSource} onChange={event => setSelectedSource(event.target.value)}>
         <option value="">Choose a source</option>
         {variable.sources.map(item => <option key={`${item.key}#${item.field}`} value={`${item.key}#${item.field}`}>{item.label}</option>)}
@@ -57,21 +62,26 @@ export default function StudioVariables({ onOpenSource }: { onOpenSource: (key: 
     return () => controller.abort();
   }, [attempt]);
   const surfaces = useMemo(() => [...new Set(catalog?.variables.flatMap(variable => variable.usages.map(usage => usage.surface)) ?? [])].sort(), [catalog]);
+  const colors = useMemo(() => compositionVariableColors(catalog?.variables ?? []), [catalog]);
   const filtered = useMemo(() => filterStudioVariables(catalog?.variables ?? [], query, kind, surface), [catalog, query, kind, surface]);
   const reset = () => { setQuery(''); setKind(''); setSurface(''); };
   return <section className="admin-template-page studio-variables" aria-label="Variable directory">
-    <p>Find calculated facts and editable prose across Content Studio. Copy a token into a supported editor, or choose an editable source to change its writing.</p>
-    <section className="admin-content-filters" aria-label="Variable filters">
-      <label><span>Search variables</span><StudioInput type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Token, meaning, planet, sign, or source" /></label>
-      <label><span>Type</span><AdminSelect aria-label="Type" value={kind} onChange={event => setKind(event.target.value)}><option value="">All types</option><option value="readonly">Read-only</option><option value="editable">Editable prose</option><option value="unmapped">Provider not documented</option></AdminSelect></label>
-      <label><span>Used in</span><AdminSelect aria-label="Used in" value={surface} onChange={event => setSurface(event.target.value)}><option value="">All surfaces</option>{surfaces.map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
-      <StudioButton disabled={!query && !kind && !surface} onClick={reset}>Clear filters</StudioButton>
-    </section>
+    <div className="studio-surface studio-section studio-variable-controls">
+      <p>Find calculated facts and editable prose across Content Studio. Copy a token into a supported editor, or choose an editable source to change its writing.</p>
+      <section className="admin-filter-form" aria-label="Variable filters">
+        <label className="admin-filter-search"><span>Search variables</span><StudioInput type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Token, meaning, planet, sign, or source" /></label>
+        <label><span>Type</span><AdminSelect aria-label="Type" value={kind} onChange={event => setKind(event.target.value)}><option value="">All types</option><option value="readonly">Read-only</option><option value="editable">Editable prose</option><option value="unmapped">Provider not documented</option></AdminSelect></label>
+        <label><span>Used in</span><AdminSelect aria-label="Used in" value={surface} onChange={event => setSurface(event.target.value)}><option value="">All surfaces</option>{surfaces.map(value => <option key={value}>{value}</option>)}</AdminSelect></label>
+      </section>
+      <div className="admin-filter-actions">
+        {catalog && <p className="admin-field-hint" role="status">{filtered.length} of {catalog.variables.length} variable definitions</p>}
+        <StudioButton disabled={!query && !kind && !surface} onClick={reset}>Clear filters</StudioButton>
+      </div>
+    </div>
     {error ? <div className="admin-empty-state" role="alert"><p>{error}</p><StudioButton onClick={() => setAttempt(value => value + 1)}>Retry catalog</StudioButton></div>
       : !catalog ? <p role="status">Loading variables…</p> : <>
-        <p role="status">{filtered.length} of {catalog.variables.length} variable definitions</p>
         {filtered.length ? <AdminPaginatedCollection items={filtered} label="Variables" pageSize={20} resetKey={`${query}|${kind}|${surface}`}>
-          {visible => <div className="admin-fallback-row-list">{visible.map(variable => <VariableCard key={variable.id} variable={variable} onOpenSource={onOpenSource} />)}</div>}
+          {visible => <div className="studio-section studio-variable-list">{visible.map(variable => <VariableCard key={variable.id} variable={variable} color={colors.get(variable.name)} onOpenSource={onOpenSource} />)}</div>}
         </AdminPaginatedCollection> : <div className="admin-empty-state"><h2>No matching variables</h2><p>Try another name or clear the filters.</p><StudioButton onClick={reset}>Show all variables</StudioButton></div>}
       </>}
   </section>;
