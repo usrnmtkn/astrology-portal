@@ -60,7 +60,7 @@ export function houseTransitOrdinal(house: TransitNatalHouse) {
 }
 
 export function houseTransitLabel(selection: HouseTransitSelection) {
-  return `${titleCase(selection.planet)} through your ${houseTransitOrdinal(selection.house)} house`;
+  return `${titleCase(selection.planet)} in ${titleCase(selection.sign)} through your ${houseTransitOrdinal(selection.house)} house${selection.motion === "retrograde" ? " · Retrograde" : ""}`;
 }
 
 export function houseTransitSourceGroups(selection: HouseTransitSelection): HouseTransitSourceGroup[] {
@@ -71,13 +71,13 @@ export function houseTransitSourceGroups(selection: HouseTransitSelection): Hous
     {
       id: "house-core",
       label: `${planet} through the ${house} house`,
-      scope: `The evergreen meaning of ${planet} moving through this house, regardless of its current sign.`,
+      scope: `Shared introduction for ${planet} in the ${house} house. Edits apply to all 12 signs.`,
       candidateKeys: [`authored/transit-house-intro/${selection.planet}/${selection.house}`]
     },
     {
       id: "sign-synthesis",
       label: `${planet} in ${sign} through the ${house} house`,
-      scope: `The more specific passage for ${planet}'s current sign inside this house.`,
+      scope: `Specific to ${planet} in ${sign} in the ${house} house.`,
       candidateKeys: [`authored/transit-house-sign/${selection.planet}/${selection.house}/${selection.sign}`]
     }
   ];
@@ -85,7 +85,7 @@ export function houseTransitSourceGroups(selection: HouseTransitSelection): Hous
     composition.push({
       id: "retrograde",
       label: `${planet} retrograde overlay`,
-      scope: `An optional passage added while ${planet} is retrograde during this house crossing.`,
+      scope: `Optional passage shared by every ${planet} retrograde House Transit, across all signs and houses.`,
       candidateKeys: [`fallback-hook/transit-house-retro-overlay/${selection.planet}`],
       optional: true
     });
