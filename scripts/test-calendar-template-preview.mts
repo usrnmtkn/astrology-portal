@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import SwissEph from "swisseph-wasm";
 import { calculateCalendarPreview } from "../apps/admin/src/calendarPreviewCalculation.ts";
-import { calendarPreviewValues, calendarTemplateSegments, calendarMoonPassages, type CalendarPreviewRow } from "../apps/admin/src/calendarPreviewModel.ts";
+import { calendarPreviewValues, calendarTemplateSegments, calendarMoonPassages, calendarPreviewSeasons, calendarPreviewSourceKeys, type CalendarPreviewRow } from "../apps/admin/src/calendarPreviewModel.ts";
 import { lunarSigns } from "../apps/admin/src/lunarCalendarContent.ts";
 
 const swe = new SwissEph();
@@ -56,3 +56,45 @@ assert.equal(calendarTemplateSegments("{{moonWriteup}}\n\n{{weeklyIntegration}}"
 assert.equal(calendarTemplateSegments("{{moonWriteup}}", { moonWriteup: { kind: "copy", text: "{{unknownSourceSlot}}" } })[0].text, "{{unknownSourceSlot}}");
 await assert.rejects(calculateCalendarPreview("daily-sky", "invalid", "UTC"), /valid date/);
 console.log("Calendar template preview: two direct Swiss comparisons, DST week, month boundaries, complete source preservation, publication exclusions, and example/fact separation passed.");
+
+// Shared seasonal writing remains complete and follows the Sun, not the Moon.
+const seasonBody = "  Fixture season opening.\n\nFixture season final sentence.  ";
+const seasonRow = { id: "season", content_key: "fallback-hook/zodiac-season/virgo", body: seasonBody, status: "LIVE", lane: "serving", source_snapshot: { content_role: "fallback_hook", review_status: "approved" } } satisfies CalendarPreviewRow;
+const seasonsManual = calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [seasonRow] });
+assert.equal(seasonsManual.zodiacSeason.text, seasonBody);
+assert.equal(seasonsManual.openingZodiacSeason.text, seasonBody);
+assert.equal(seasonsManual.seasonStart, undefined);
+assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [{ ...seasonRow, status: "DRAFT" }] }).zodiacSeason, undefined);
+assert.equal(calendarPreviewValues({ sunSign: "Virgo", moonSign: "Cancer", rows: [{ ...seasonRow, review_state: "held" }] }).zodiacSeason, undefined);
+assert.equal(calendarPreviewValues({ sunSign: "Cancer", moonSign: "Virgo", rows: [seasonRow] }).zodiacSeason, undefined);
+assert(calendarPreviewSourceKeys("monthly-sky", ["Virgo", "Libra"]).includes("fallback-hook/zodiac-season-polar-axis/libra"));
+assert.equal(calendarTemplateSegments("Before{{#closingSeasonSign}}After {{closingSeasonSign}}{{/closingSeasonSign}}", {}).map(part => part.text).join(""), "Before");
+assert.equal(calendarTemplateSegments("Before{{#closingSeasonSign}}After {{closingSeasonSign}}{{/closingSeasonSign}}", { closingSeasonSign: { kind: "fact", text: "Libra" } }).map(part => part.text).join(""), "BeforeAfter Libra");
+for (const [instant, zone, opening, closing] of [
+  ["2026-09-14T16:00:00.000Z", "America/New_York", "Virgo", "Libra"],
+  ["2027-01-12T17:00:00.000Z", "Australia/Sydney", "Capricorn", "Aquarius"]
+]) {
+  const result = await calculateCalendarPreview("monthly-sky", instant, zone);
+  const windows = calendarPreviewSeasons(result);
+  assert.equal(windows.opening?.sign, opening);
+  assert.equal(windows.closing?.sign, closing);
+  assert(result.events.every(event => result.days.some(day => day.dateKey === event.dateKey)), "Bounding season ingresses stay outside the visible event list.");
+  const transition = new Date(windows.closing!.startsAt);
+  const longitudeAt = (offset: number) => {
+    const date = new Date(transition.getTime() + offset);
+    const jd = swe.julday(date.getUTCFullYear(), date.getUTCMonth()+1, date.getUTCDate(), date.getUTCHours()+date.getUTCMinutes()/60+date.getUTCSeconds()/3600);
+    return swe.calc_ut(jd, swe.SE_SUN, swe.SEFLG_SWIEPH)[0];
+  };
+  assert.equal(lunarSigns[Math.floor(longitudeAt(-120000)/30)], opening.toLowerCase());
+  assert.equal(lunarSigns[Math.floor(longitudeAt(120000)/30)], closing.toLowerCase());
+  for (const offset of [-120000, 120000]) {
+    const atBoundary = { ...result, sky: { ...result.sky, generatedAt: new Date(transition.getTime()+offset).toISOString() } };
+    assert.equal(calendarPreviewSeasons(atBoundary).current?.sign, offset < 0 ? opening : closing);
+  }
+  const periodValues = calendarPreviewValues({ sunSign: opening, moonSign: "Cancer", rows: [], calculation: result });
+  assert(periodValues.seasonChangeDate.text.includes(zone === "America/New_York" ? "EDT" : "GMT+11"));
+  assert(!periodValues.overviewKeyDates.text.includes("Moon square"));
+  assert(!/12:00 AM[^\n]*retrograde/.test(periodValues.overviewKeyDates.text));
+}
+assert.equal(calendarPreviewSeasons(week).closing, undefined, "A week inside one season has no invented transition.");
+console.log("Calendar season overview: exact complete shared sources, missing/draft safety, both monthly seasons, direct Swiss boundaries in two zones and conditional sections passed.");

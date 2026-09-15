@@ -605,7 +605,7 @@ export function templateVariableReferences(
     }
   });
 
-  if (includeAvailable && supportsZodiacSeasonVariables(packageRecord)) for (const field of ZODIAC_SEASON_VARIABLES) {
+  if (includeAvailable && (supportsZodiacSeasonVariables(packageRecord) || String(packageRecord.contentKey ?? "").startsWith("slot-template/calendar/"))) for (const field of ZODIAC_SEASON_VARIABLES) {
     if (!usages.has(field.id)) usages.set(field.id, { fields: new Set(["Available for insertion"]), conditional: true });
   }
   return [...usages.entries()]
