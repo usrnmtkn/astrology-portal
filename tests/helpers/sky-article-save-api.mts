@@ -19,10 +19,11 @@ const revision = { ...structuredClone(live), id: 'revision-sun-virgo', mode: 'st
 const template = structuredClone(servingPackageRecords.get('fallback-template/natal.angle-in-sign')!);
 template.body = 'Fixture {{signTitle}}. TARGET';
 const templateRow = {...structuredClone(live), id: 'fixture-natal-template', content_key: template.contentKey, surface: 'natal', event_type: 'fallback-template', block_type: 'fallback_template', headline: 'Fixture sign-aware template', body: template.body, sections: {packageRecord: template}, source_snapshot: {sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'template'}};
-const store = await createApiStore(process.env.ZODIAC_TEMPLATE_FIXTURE ? [templateRow] : [revision, live]);
+export const store = await createApiStore(process.env.ZODIAC_TEMPLATE_FIXTURE ? [templateRow] : [revision, live]);
 const matches = (row: any, params: URLSearchParams) => [...params].every(([field, value]) => {
  if (['select', 'order', 'limit', 'offset', 'on_conflict'].includes(field)) return true;
  if (value === 'is.null') return row[field] == null;
+ if (value.startsWith('like.')) return String(row[field] ?? '').startsWith(value.slice(5).replace(/\*$/u, ''));
  if (value.startsWith('eq.')) return String(row[field] ?? '') === value.slice(3);
  if (value.startsWith('neq.')) return String(row[field] ?? '') !== value.slice(4);
  if (value.startsWith('in.(')) return value.slice(4, -1).split(',').map(v => v.replaceAll('"', '')).includes(String(row[field]));
@@ -39,18 +40,19 @@ globalThis.fetch = async (input: any, options: any = {}) => {
   const offset = Number(url.searchParams.get('offset') ?? 0);
   return Response.json(found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length)));
  }
+ if (options.method === 'DELETE') { found.forEach(row => store.rows.delete(row.id)); return Response.json(found); }
  const patch = JSON.parse(String(options.body));
  if (options.method === 'PATCH') {
   const updated = found.map(row => ({ ...row, ...patch })); updated.forEach(row => store.rows.set(row.id, row)); return Response.json(updated);
  }
  if (options.method === 'POST') {
-  if ([...store.rows.values()].some((r: any) => r.content_key === patch.content_key && r.mode === patch.mode && r.target_date == patch.target_date)) return Response.json([]);
+  if ([...store.rows.values()].some((r: any) => r.content_key === patch.content_key && r.mode === patch.mode && r.target_date == patch.target_date)) return Response.json({message: 'duplicate target'}, {status: 409});
   const created = { ...patch, id: `new-${store.rows.size}` }; store.rows.set(created.id, created); return Response.json([created]);
  }
  throw new Error(`Unexpected storage method ${options.method}`);
 };
-process.on('message', async ({ id, method, body, url }: any) => {
+if (process.send) process.on('message', async ({ id, method, body, url }: any) => {
  try { process.send!({ id, result: method === 'rows' ? [...store.rows.values()] : await store.invoke(method, body, url) }); }
  catch (error) { process.send!({ id, error: String(error) }); }
 });
-process.send!({ ready: true });
+if (process.send) process.send({ ready: true });

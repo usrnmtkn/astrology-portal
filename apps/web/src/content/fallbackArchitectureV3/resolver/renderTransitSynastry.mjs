@@ -1,3 +1,4 @@
+import { bindStudioVariableReference } from "../../studioCustomVariables.mjs";
 import { resolveZodiacSeasonVariables, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
 import { passageSources, passageSource } from "./passageSources.mjs";
 import { isEligibleTransitReturn } from "./transitReturns.mjs";
@@ -142,7 +143,7 @@ const READER_HOLDER_VERBS = new Map(Object.entries({
 }));
 const READER_HOLDER_ADVERBS = "(?:usually|often|also|still|readily|completely|quickly|emotionally|actually|almost|naturally|only|then)";
 const READER_HOLDER_VERB_PATTERN = [...READER_HOLDER_VERBS.keys()].join("|");
-export function renderSynastryPairVoice(body, holders) {
+function renderSynastryPairVoiceReference(body, holders) {
   const readerHolder = holders.holder1 === "you" ? "holder1" : "holder2";
   const marker = "__reader_holder__";
   let rendered = fill(body, { ...holders, [readerHolder]: marker });
@@ -236,7 +237,7 @@ const NEEDS_ARTICLE = new Set(["sun", "moon", "north-node", "south-node"]);
 // mid-sentence reference: "the Sun", optionally with its current sign: "the Sun in Leo"
 const transitRef = (planet, sign) => `${NEEDS_ARTICLE.has(planet) ? "the " : ""}${title(planet)}${sign ? ` in ${title(sign)}` : ""}`;
 
-export function renderSkyPlacementHouseCore({ planet, sign, house }) {
+function renderSkyPlacementHouseCoreReference({ planet, sign, house }) {
   const normalizedPlanet = String(planet ?? "").trim().toLowerCase();
   const normalizedSign = String(sign ?? "").trim().toLowerCase();
   const normalizedHouse = Number(house);
@@ -602,7 +603,7 @@ const result = (c, templateKey) => ({
 
 const fillKeep = (body, ctx) => resolveZodiacSeasonVariables(body, ctx, hooks).replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).trim();
 
-export function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant, events, isRetrograde }) {
+function renderTransitHouseReference({ planet, house, sign, window: win, voice = "you", variant, events, isRetrograde }) {
   const v = voice === "you" ? "you" : "they";
   // Two-layer authored lane (Mars pilot): house intro + house-sign synthesis, dual voice.
   // Requires sign; variant 2+ rotates to the Satori-register rows, falling back to base.
@@ -668,7 +669,7 @@ export function renderTransitHouse({ planet, house, sign, window: win, voice = "
   return { headline: fill(v === "you" ? T.headline : (T.headline_they ?? T.headline), ctx), body, parts: [body], templateKey: T.contentKey };
 }
 
-export function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, isRetrograde, window: win, voice = "you" }) {
+function renderTransitAspectReference({ transiting, natal, aspect, variant, pass, sign, isRetrograde, window: win, voice = "you" }) {
   // voice: "you" (reader) or a friend's display name. The authored library is reader-voice,
   // so friend view renders fallback-only in authored friend-voice rows (never pronoun swaps).
   const v = voice === "you" ? "you" : "they";
@@ -863,7 +864,7 @@ export function renderTransitAspect({ transiting, natal, aspect, variant, pass, 
 
 // Retrograde season card: what this planet's retrograde means and what to do with it.
 // Sun and Moon never go retrograde; the nodes nearly always are, so neither gets a card.
-export function renderTransitRetro({ planet, sign, window: win, format }) {
+function renderTransitRetroReference({ planet, sign, window: win, format }) {
   if (format === "article") {
     const ca = card(`authored/transit-retro-article/${planet}`);
     if (ca) return result(ca, "authored/transit-retro-article");
@@ -896,7 +897,7 @@ export function renderTransitRetro({ planet, sign, window: win, format }) {
 // Formula (Co-Star convention, owner-approved verbs): {Planet} {verb} {natal life area}.
 // conjunction = transforming, hard = challenging, soft = boosting. Engine supplies the
 // duration line ("Through Saturday") from real ephemeris data via `window`.
-export function renderTransitLabel({ transiting, natal, aspect, window: win }) {
+function renderTransitLabelReference({ transiting, natal, aspect, window: win }) {
   const g = GROUP[aspect] ?? aspect;
   const verb = g === "conjunction" ? "transforming" : g === "hard" ? "challenging" : "boosting";
   const noun = vocab.get(`fallback-vocab/transit-label-noun/${natal}`)?.body;
@@ -984,7 +985,7 @@ function eventCtx(ev) {
 // Season article: opener + one paragraph per engine-supplied sky event + shadow + close.
 // events: [{ type: ingress|station-retro|station-direct|new-moon|full-moon|eclipse-lunar|eclipse-solar|aspect,
 //            a, b, aspect, sign, aSign, bSign, dateLine }]
-export function renderSkySeason({ sign, events = [] }) {
+function renderSkySeasonReference({ sign, events = [] }) {
   const opener = hooks.get(`fallback-hook/sky-season-opener/${sign}`)?.body_you;
   const shadow = hooks.get(`fallback-hook/sky-season-shadow/${sign}`)?.body_you;
   const close = hooks.get(`fallback-hook/sky-season-close/${sign}`)?.body_you;
@@ -1011,7 +1012,7 @@ export function renderSkySeason({ sign, events = [] }) {
 // lunations; eclipses skip rituals by canon) -> (nodal axis on eclipses) -> engine events -> close.
 // kind: "new-moon" | "full-moon" | "eclipse-solar" | "eclipse-lunar". variant picks an authored
 // alternate (e.g. "year-end" -> authored/sky-newmoon/capricorn-year-end).
-export function renderSkyLunation({ kind, sign, dateLine, mechanics, events = [], northSign, southSign, variant }) {
+function renderSkyLunationReference({ kind, sign, dateLine, mechanics, events = [], northSign, southSign, variant }) {
   const OPP = { aries: "libra", taurus: "scorpio", gemini: "sagittarius", cancer: "capricorn", leo: "aquarius", virgo: "pisces", libra: "aries", scorpio: "taurus", sagittarius: "gemini", capricorn: "cancer", aquarius: "leo", pisces: "virgo" };
   const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
   const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
@@ -1080,7 +1081,7 @@ export function renderSkyLunation({ kind, sign, dateLine, mechanics, events = []
 
 // Per-rising-sign horoscope for one or more events. The engine converts each event into
 // the houses it touches for this rising sign (whole-sign) and passes houseA/houseB.
-export function renderSkyHoroscope({ risingSign, events = [] }) {
+function renderSkyHoroscopeReference({ risingSign, events = [] }) {
   const paras = [];
   const MAP = { "full-moon": "lunation-full", "new-moon": "lunation-new", "eclipse-lunar": "eclipse", "eclipse-solar": "eclipse" };
   for (const ev of events) {
@@ -1094,13 +1095,13 @@ export function renderSkyHoroscope({ risingSign, events = [] }) {
   return { headline: `${title(risingSign)} & ${title(risingSign)} Rising`, body: paras.join(" "), parts: paras, templateKey: "fallback-template/sky.season-horoscope" };
 }
 
-export function renderTransitReturn({ planet }) {
+function renderTransitReturnReference({ planet }) {
   const c = card(`authored/transit-return/${planet}`);
   if (!c) throw new SourceGapError(`SOURCE_GAP: no return card for ${planet}`);
   return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, "you", "body")) };
 }
 
-export function renderCompat({ planet, signA, signB, otherName }) {
+function renderCompatReference({ planet, signA, signB, otherName }) {
   // signA = the reader's sign, signB = the friend's sign
   const sub = (s) => s.replace(/\{\{other_name\}\}/g, otherName);
   const deep = card(`authored/compat-deep/${planet}/${signA}/${signB}`);
@@ -1126,7 +1127,7 @@ export function renderCompat({ planet, signA, signB, otherName }) {
   return { headline: sub(fill(T.headline, ctx)), body, parts: [body], templateKey: T.contentKey };
 }
 
-export function renderSynastryAspect({
+function renderSynastryAspectReference({
   planetA,
   planetB,
   aspect,
@@ -1207,7 +1208,7 @@ export function formatCircleNames(names = [], includesReader = true) {
   return `${list[0]}, ${list[1]}, and ${list.length - 2} more`;
 }
 
-export function renderCircleStory(f) {
+function renderCircleStoryReference(f) {
   const { trigger, names = [], includesReader = true, members = [] } = f;
   const namesLine = formatCircleNames(names, includesReader);
   // mid-sentence version: the reader's "You" drops its capital, friend names keep theirs
@@ -1319,7 +1320,7 @@ const pairDailyFriendReference = ({ handle, displayName }) => {
 };
 const PAIR_DAILY_WINDOW_RANGE = /\b(?:until|through)\s+(?:today\b|tomorrow\b|(?:mon|tues|wednes|thurs|fri|satur|sun)day\b|(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b|\d|the end of\b|next\s+(?:day|week|month|year)\b)/iu;
 
-export function renderPairDaily({ reader, friend, shared = { kind: null }, variant = 1 }) {
+function renderPairDailyReference({ reader, friend, shared = { kind: null }, variant = 1 }) {
   if (!reader?.clauseKey || !friend?.clauseKey) {
     throw new SourceGapError("SOURCE_GAP: pair daily requires both daily clause keys");
   }
@@ -2055,7 +2056,7 @@ function renderSkyPlacementCopy({
   throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
 }
 
-export function renderSkyPlacement(facts) {
+function renderSkyPlacementReference(facts) {
   const keyDates = skyPlacementKeyDates(facts);
   const rendered = {
     ...renderSkyPlacementCopy(facts),
@@ -2080,7 +2081,7 @@ export function renderSkyPlacement(facts) {
 // disseminating | last-quarter | balsamic. sign is always the Moon's current,
 // ephemeris-calculated sign. The generic phase row supplies phase metadata only;
 // reader copy must resolve through the exact phase x current-sign lane.
-export function renderCalendarPhase({ phase, sign }) {
+function renderCalendarPhaseReference({ phase, sign }) {
   const normalizedSign = String(sign ?? "").trim().toLowerCase();
   if (!normalizedSign) throw new SourceGapError(`SOURCE_GAP: current Moon sign required for phase ${phase}`);
   const phaseRow = hooks.get(`fallback-hook/moon-phase/${phase}`);
@@ -2128,7 +2129,7 @@ export function renderCalendarPhase({ phase, sign }) {
   };
 }
 
-export function renderVoidOfCourse({ sign, nextSign }) {
+function renderVoidOfCourseReference({ sign, nextSign }) {
   const r = hooks.get("fallback-hook/moon-void");
   if (!r) throw new SourceGapError("SOURCE_GAP: no void-of-course row");
   const body = fill(r.body_you, { signTitle: title(sign), nextSignTitle: title(nextSign) });
@@ -2137,7 +2138,7 @@ export function renderVoidOfCourse({ sign, nextSign }) {
 }
 
 // which: march-equinox | june-solstice | september-equinox | december-solstice
-export function renderSeasonMarker({ which }) {
+function renderSeasonMarkerReference({ which }) {
   const r = hooks.get(`fallback-hook/season-marker/${which}`);
   if (!r) throw new SourceGapError(`SOURCE_GAP: no season marker for ${which}`);
   return { headline: r.title ?? "", body: r.body_you, parts: [r.body_you], templateKey: "fallback-template/calendar.season-marker", contentKey: r.contentKey };
@@ -2145,7 +2146,7 @@ export function renderSeasonMarker({ which }) {
 
 // Owner's weekly Moon-sign tone. variant rotates the authored alternates (suggested:
 // stable per ISO week, e.g. (isoWeek % variantCount) + 1; 1 or absent = base card).
-export function renderWeeklyMoon({ sign, variant }) {
+function renderWeeklyMoonReference({ sign, variant }) {
   const rejectedOwnerFeedbackKeys = new Set([
     // Owner rejection, 2026-08-03: contains “The Cancer Moon doesn't make you weak; it makes you aware.”
     "authored/calendar-weekly-moon/cancer"
@@ -2167,7 +2168,7 @@ export function renderWeeklyMoon({ sign, variant }) {
 // ---- Sky aspect card (Gifts/Lessons list under sky placement pages). This is a SKY event
 // between two transiting bodies, written for everyone at once. NEVER serve transit-to-natal
 // cards ("your natal Neptune") on sky pages; those belong to the You page. ----
-export function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
+function renderSkyAspectCardReference({ a, b, aspect, aSign, bSign, dateLine }) {
   const reviewed = reviewedSkyAspectRow({ a, b, aspect, aSign, bSign });
   if (reviewed) {
     return {
@@ -2187,7 +2188,7 @@ export function renderSkyAspectCard({ a, b, aspect, aSign, bSign, dateLine }) {
 // card by swapping perspective (never by editing this output). ----
 // facts: transiting, aspect (transit's aspect TO the contact), planetA (reader's), planetB
 // (friend's), natalAspect (the synastry aspect between A and B), otherName, sign?, window?
-export function renderBondTransit({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, duplicateIndex, window: win }) {
+function renderBondTransitReference({ transiting, aspect, endpointPlanet, endpointOwner, activatedPlanets, otherName, friendPossessivePronoun, sign, variant, duplicateIndex, window: win }) {
   if (!endpointPlanet || !["reader", "friend"].includes(endpointOwner) || !activatedPlanets?.length) {
     throw new SourceGapError(`SOURCE_GAP: bond transit ${transiting}/${aspect} missing endpoint facts`);
   }
@@ -2250,14 +2251,14 @@ export function renderBondTransit({ transiting, aspect, endpointPlanet, endpoint
 // house -> one present-tense ending. Moving-body houses
 // arrive as event-time facts. ----
 const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
-export function renderLunationMacro({ kind, sign }) {
+function renderLunationMacroReference({ kind, sign }) {
   const which = kind === "new-moon" || kind === "eclipse-solar" ? "new-moon" : "full-moon";
   const macro = card(`authored/sky-lunation-macro/${which}/${sign}`);
   if (!macro) throw new SourceGapError(`SOURCE_GAP: no lunation macro for ${which}/${sign}`);
   return result(macro, "authored/sky-lunation-macro");
 }
 
-export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, matchingNewMoon, house, moonHouse, sunHouse, ruler, rulerHouse, rulerRetrograde, timeZone = "UTC", weekly = false }) {
+function renderLunationHoroscopeReference({ kind, sign, risingSign, eventDate, matchingNewMoon, house, moonHouse, sunHouse, ruler, rulerHouse, rulerRetrograde, timeZone = "UTC", weekly = false }) {
   const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
   const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
   const h = moonHouse ?? house ?? ((SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12) + 1;
@@ -2561,7 +2562,7 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
   };
 }
 
-export function renderLunationEventCard({ eventDate, blendFallbackEnabled = false, ...blendFacts }) {
+function renderLunationEventCardReference({ eventDate, blendFallbackEnabled = false, ...blendFacts }) {
   const normalizedEventDate = eventDate.trim().slice(0, 10);
   const risingKey = `${blendFacts.risingSign}-rising`;
   const satori = card(
@@ -2578,7 +2579,7 @@ export function renderLunationEventCard({ eventDate, blendFallbackEnabled = fals
 // transiting Moon. Pass natal+aspect for the Moon's tightest applying aspect; pass house
 // (whole-sign house of the Moon) when no aspect is within orb. No astrology words render. ----
 const DAILY_GROUP = { conjunction: "conjunction", square: "square", opposition: "opposition", trine: "soft", sextile: "soft" };
-export function renderDailyGlance({
+function renderDailyGlanceReference({
   natal,
   aspect,
   house,
@@ -2662,7 +2663,7 @@ export function renderDailyGlance({
 // seeds. The transit picks which natal planet needs tending; the natal chart writes the
 // list. Do = sign seed + house seed + transiting counterweight. Don't = placement shadow
 // + transit friction + the aggravated natal aspect partner's shadow (when supplied). ----
-export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey, voice = "you" }) {
+function renderDoDontReference({ planet, sign, house, transiting, weakPlanet, weakSign, moonSign, moonHouse, dayKey, voice = "you" }) {
   const seed = (k) => vocabularyBodyForVoice(vocab.get(`fallback-vocab/${k}`), voice);
   const APPROVED = new Set(["approved", "approved_reuse", "reviewed"]);
   const moonSeed = (k) => { const r = vocab.get(`fallback-vocab/${k}`); return r && APPROVED.has(r.review_status) ? vocabularyBodyForVoice(r, voice) : null; };
@@ -2697,3 +2698,30 @@ export function renderDoDont({ planet, sign, house, transiting, weakPlanet, weak
     templateKey: "fallback-template/daily.dodont",
   };
 }
+
+export const renderSynastryPairVoice = bindStudioVariableReference(renderSynastryPairVoiceReference, [templates.templates, cards, vocab, hooks]);
+export const renderSkyPlacementHouseCore = bindStudioVariableReference(renderSkyPlacementHouseCoreReference, [templates.templates, cards, vocab, hooks]);
+export const renderTransitHouse = bindStudioVariableReference(renderTransitHouseReference, [templates.templates, cards, vocab, hooks]);
+export const renderTransitAspect = bindStudioVariableReference(renderTransitAspectReference, [templates.templates, cards, vocab, hooks]);
+export const renderTransitRetro = bindStudioVariableReference(renderTransitRetroReference, [templates.templates, cards, vocab, hooks]);
+export const renderTransitLabel = bindStudioVariableReference(renderTransitLabelReference, [templates.templates, cards, vocab, hooks]);
+export const renderSkySeason = bindStudioVariableReference(renderSkySeasonReference, [templates.templates, cards, vocab, hooks]);
+export const renderSkyLunation = bindStudioVariableReference(renderSkyLunationReference, [templates.templates, cards, vocab, hooks]);
+export const renderSkyHoroscope = bindStudioVariableReference(renderSkyHoroscopeReference, [templates.templates, cards, vocab, hooks]);
+export const renderTransitReturn = bindStudioVariableReference(renderTransitReturnReference, [templates.templates, cards, vocab, hooks]);
+export const renderCompat = bindStudioVariableReference(renderCompatReference, [templates.templates, cards, vocab, hooks]);
+export const renderSynastryAspect = bindStudioVariableReference(renderSynastryAspectReference, [templates.templates, cards, vocab, hooks]);
+export const renderCircleStory = bindStudioVariableReference(renderCircleStoryReference, [templates.templates, cards, vocab, hooks]);
+export const renderPairDaily = bindStudioVariableReference(renderPairDailyReference, [templates.templates, cards, vocab, hooks]);
+export const renderSkyPlacement = bindStudioVariableReference(renderSkyPlacementReference, [templates.templates, cards, vocab, hooks]);
+export const renderCalendarPhase = bindStudioVariableReference(renderCalendarPhaseReference, [templates.templates, cards, vocab, hooks]);
+export const renderVoidOfCourse = bindStudioVariableReference(renderVoidOfCourseReference, [templates.templates, cards, vocab, hooks]);
+export const renderSeasonMarker = bindStudioVariableReference(renderSeasonMarkerReference, [templates.templates, cards, vocab, hooks]);
+export const renderWeeklyMoon = bindStudioVariableReference(renderWeeklyMoonReference, [templates.templates, cards, vocab, hooks]);
+export const renderSkyAspectCard = bindStudioVariableReference(renderSkyAspectCardReference, [templates.templates, cards, vocab, hooks]);
+export const renderBondTransit = bindStudioVariableReference(renderBondTransitReference, [templates.templates, cards, vocab, hooks]);
+export const renderLunationMacro = bindStudioVariableReference(renderLunationMacroReference, [templates.templates, cards, vocab, hooks]);
+export const renderLunationHoroscope = bindStudioVariableReference(renderLunationHoroscopeReference, [templates.templates, cards, vocab, hooks]);
+export const renderLunationEventCard = bindStudioVariableReference(renderLunationEventCardReference, [templates.templates, cards, vocab, hooks]);
+export const renderDailyGlance = bindStudioVariableReference(renderDailyGlanceReference, [templates.templates, cards, vocab, hooks]);
+export const renderDoDont = bindStudioVariableReference(renderDoDontReference, [templates.templates, cards, vocab, hooks]);
