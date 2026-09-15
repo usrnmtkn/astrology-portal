@@ -121,6 +121,8 @@ jobs:
         run: npm run test:reader-copy-repair
       - name: Enforce web bundle budgets
         run: npm run qa:bundle
+      - name: Verify initial content values in the shipped web bundle
+        run: node scripts/test-web-initial-content-parity.mjs
       - name: Verify startup performance contracts
         run: npm run test:performance-contracts
       - name: Verify visible loading and recovery on slow or failed downloads
