@@ -6238,6 +6238,7 @@ test.describe('Content Dashboard shared text roles', () => {
       await tableRow.getByRole('button', { name: 'Edit', exact: true }).click();
       const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
       await expectStudioRole(page, editor.getByRole('heading', { name: 'Edit Sun in Cancer', exact: true }), 'title', 'Modal heading');
+      await expectStudioRole(page, editor.locator('.admin-editor-context-line'), 'meta', 'Editor context uses the shared metadata role');
       await expectStudioRole(page, editor.locator('.admin-title-field > span').first(), 'label', 'Modal field label');
       const body = editor.getByRole('textbox', { name: 'Article body', exact: true });
       await expect(body).toHaveValue(generatedContentRows[0].body);
