@@ -5445,7 +5445,29 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function openSkyForecastTemplate(period: SkyForecastPeriod) {
+  async function openCalendarWritingSource(row: AdminGeneratedContentRow) {
+    const parentDraft = draft;
+    const parentBaseline = editorBaselineRef.current;
+    const parentSavedInput = editorSavedInputRef.current;
+    const parentRow = editorSourceRow;
+    const parentSelection = selectedRowId;
+    const parentContext = skyWritingContext;
+    const parentComposition = compositionEditorContext;
+    const parentVariablesOpen = templateVariableReferenceOpen;
+    if (!await openRow(row, null, "body", undefined, Boolean(parentDraft))) return;
+    if (parentDraft) rememberStudioEditorReturn({ childContentKey: row.content_key, label: parentDraft.headline || "template", returnToParent: () => {
+      setDraft(parentDraft); editorBaselineRef.current = parentBaseline; editorSavedInputRef.current = parentSavedInput;
+      setEditorSourceRow(parentRow); setSelectedRowId(parentSelection); setSkyWritingContext(parentContext);
+      setCompositionEditorContext(parentComposition); setTemplateVariableReferenceOpen(parentVariablesOpen);
+      setEditorSaveError(""); editorSessionRef.current += 1;
+    } });
+  }
+
+  async function openSkyForecastTemplate(period: SkyForecastPeriod, field?: string) {
+    const fieldPath = field ? `calendarOverview.${field}` : undefined;
+    if (fieldPath && draft?.contentKey === `slot-template/calendar/${period.split("-")[0]}-overview/v1`) {
+      setSkyWritingContext({ fieldPath }); scrollEditorToTop(fieldPath); return;
+    }
     if (!closeEditor()) return;
     const originatingHash = window.location.hash;
     const requestId = ++sourceOpenRequestRef.current;
@@ -5473,7 +5495,8 @@ export function GeneratedContentAdminDashboard() {
         });
       }
       setMessage("");
-      scrollEditorToTop();
+      setSkyWritingContext({ fieldPath });
+      scrollEditorToTop(fieldPath);
     } catch (error) {
       if (requestId === sourceOpenRequestRef.current && window.location.hash === originatingHash) setMessage(dashboardErrorMessage(error));
     } finally {
@@ -6302,6 +6325,8 @@ export function GeneratedContentAdminDashboard() {
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
               <Suspense fallback={<p role="status">Loading Calendar template…</p>}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft}
+                onEditSource={row => void openCalendarWritingSource(row as AdminGeneratedContentRow)}
+                onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView, field)}
                 onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>
               {calendarWriteupWorkspaceView === "daily-sky" && (
                 <Suspense fallback={<p>Loading Moon-sign write-ups…</p>}>
@@ -9885,7 +9910,7 @@ export function GeneratedContentAdminDashboard() {
             isPackageDraft={isPackageDraft} articleSaveState={skyArticleEditor?.saveState}
             onWritingAction={(action) => void runSkyDraftWriting(selectedRow.content_key, action, selectedRow)} /></Suspense>}
           {currentDraft.contentKey.startsWith("slot-template/calendar/") && <Suspense fallback={null}><CalendarOverviewEditor
-            draft={currentDraft} onChange={next => setDraft(invalidateContentStudioReview(next))} /></Suspense>}
+            draft={currentDraft} initialField={skyWritingContext.fieldPath} onChange={next => setDraft(invalidateContentStudioReview(next))} /></Suspense>}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor studio-surface">
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>

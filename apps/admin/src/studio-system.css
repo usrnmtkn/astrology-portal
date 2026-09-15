@@ -487,10 +487,20 @@ body:has(.admin-dashboard) { margin: 0; }
   gap: var(--workspace-control-inset);
 }
 
+/* Calendar variables retain complete prose with room between source rows. */
+#root .admin-dashboard .admin-calendar-variables :is(th,td) { padding-block: var(--workspace-card-padding); }
+#root .admin-dashboard .admin-calendar-variables th { font-family: var(--font-label); font-size: var(--type-label-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); }
+#root .admin-dashboard .admin-calendar-variables th:first-child { width: 28%; }
+#root .admin-dashboard .admin-calendar-variables th:last-child { width: 20%; }
+#root .admin-dashboard .admin-calendar-variables th .admin-field-hint { display: block; margin-top: var(--workspace-field-gap); }
+
 @media (max-width: 720px) {
   #root .admin-dashboard :is(.studio-variable-card,.studio-variable-controls) { padding: var(--workspace-panel-inset); }
   #root .admin-dashboard .studio-variable-source { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .studio-variable-source > button { margin-block-end: 0; }
+  #root .admin-dashboard .admin-calendar-variables tr { padding-block: var(--workspace-panel-inset); }
+  #root .admin-dashboard .admin-calendar-variables :is(td,th:first-child,th:last-child) { display: block; width: 100%; padding: var(--workspace-field-gap) 0; }
+
   #root .admin-dashboard .admin-filter-form { grid-template-columns: minmax(0, 1fr); }
   #root .admin-dashboard .admin-studio-map { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-access-gate { grid-template-columns: minmax(0,1fr); }
