@@ -1,7 +1,7 @@
 name: Apply verified monthly implementation
 on:
   push:
-    branches: [chatgpt/monthly-template-ai-writer-v1]
+    branches: [chatgpt/monthly-template-reviewed-v1]
     paths: [.github/workflows/monthly-authoring-apply.yml]
 permissions:
   contents: write
@@ -12,11 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: chatgpt/monthly-template-ai-writer-v1
-          fetch-depth: 0
+          ref: chatgpt/monthly-template-reviewed-v1
+          fetch-depth: 12
       - name: Verify exact transfer and unchanged application base
         run: |
-          test "$GITHUB_REF" = refs/heads/chatgpt/monthly-template-ai-writer-v1
+          test "$GITHUB_REF" = refs/heads/chatgpt/monthly-template-reviewed-v1
           python3 - <<'PY'
           import base64, hashlib, pathlib, subprocess, lzma
           baseline = '1c204aeb74c9894c7b4616cf0e1149fe68304ea5'
@@ -50,5 +50,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'feat: add memory-supported monthly sentence-template authoring'
-          git push origin HEAD:refs/heads/chatgpt/monthly-template-ai-writer-v1
+          git push origin HEAD:refs/heads/chatgpt/monthly-template-reviewed-v1
           git show --stat --oneline HEAD
