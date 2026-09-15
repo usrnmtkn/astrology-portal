@@ -169,6 +169,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     // arrives over a real network. Assert its computed style with a web-first
     // expectation before measuring typography and reduced-motion behavior.
     await expect(loading).toHaveCSS("font-family", /system-ui/);
+    await expect(loading).toHaveAttribute("role", "status");
+    await expect(loading).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(loading).toHaveCSS("border-width", "0px");
     const illustration = loading.locator('.loading-illustration img.is-active');
     await expect(illustration).toBeVisible();
     await expect.poll(() => illustration.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(512);
@@ -193,7 +196,10 @@ test("an unavailable entry bundle attempts one guarded recovery before manual re
   page.on("request", request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) navigations++; });
   await page.route(/\/assets\/index-.*\.js$/, route => route.abort("failed"));
   await page.goto("/#sky", { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("alert")).toContainText("The page could not load");
+  const error = page.getByRole("alert");
+  await expect(error).toContainText("The page could not load");
+  await expect(error).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(error).not.toHaveCSS("border-width", "0px");
   await expect(page.getByRole("button", { name: "Reload page" })).toBeVisible();
   await page.waitForTimeout(500);
   expect(navigations).toBe(2);
@@ -217,6 +223,9 @@ test("lazy Calendar navigation keeps the nav and a visible loading state", async
   await page.getByRole("button", { name: "Calendar", exact: true }).first().click();
   try {
     await expect(page.getByText("Loading calendar…", { exact: true })).toBeVisible();
+    const loading = page.getByRole("status").filter({ hasText: "Loading calendar…" });
+    await expect(loading).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await expect(loading).toHaveCSS("border-width", "0px");
     await expect(page.locator(".topbar")).toBeVisible();
     await expect(page.getByRole("button", { name: "Sky", exact: true }).first()).toBeVisible();
   } finally { release(); }
@@ -270,7 +279,14 @@ test("reports and Studio have document feedback before their bundles arrive", as
     const matcher = /\/assets\/.*\.js$/;
     await page.route(matcher, async route => { await held; await route.continue().catch(() => {}); });
     await page.goto(routePath, { waitUntil: "commit" });
-    try { await expect(page.locator("#app-startup")).toBeVisible(); }
+    try {
+      const loading = page.locator("#app-startup");
+      await expect(loading).toBeVisible();
+      await expect(loading).toHaveCSS("font-family", /system-ui/);
+      await expect(loading).toHaveAttribute("role", "status");
+      await expect(loading).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      await expect(loading).toHaveCSS("border-width", "0px");
+    }
     finally { release(); }
     await expect(page.locator("#app-startup")).toHaveCount(0);
     await page.unroute(matcher);
