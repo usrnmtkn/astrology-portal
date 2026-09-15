@@ -1,12 +1,17 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { AdminDraft } from "./GeneratedContentAdminDashboard";
 import { StudioButton, StudioTextarea } from "./StudioControls";
 import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewPeriod, calendarOverviewWriting, calendarSeasonVariables } from "./calendarOverviewTemplate";
 
-export default function CalendarOverviewEditor({ draft, onChange }: { draft: AdminDraft; onChange: (draft: AdminDraft) => void }) {
+export default function CalendarOverviewEditor({ draft, initialField, onChange }: { draft: AdminDraft; initialField?: string; onChange: (draft: AdminDraft) => void }) {
   const { contentKey, body, sections } = draft;
   const change = (body: string, sections: Record<string, unknown>) => onChange({ ...draft, body, sections });
   const selected = useRef<HTMLTextAreaElement | null>(null);
+  const container = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const field = Array.from(container.current?.querySelectorAll<HTMLTextAreaElement>("textarea[data-sky-field]") ?? []).find(element => element.dataset.skyField === initialField);
+    if (field) { field.focus({ preventScroll: true }); field.scrollIntoView({ block: "center" }); }
+  }, [initialField]);
   const period = calendarOverviewPeriod(contentKey);
   if (!period) return null;
   const writing = calendarOverviewWriting(sections);
@@ -21,14 +26,16 @@ export default function CalendarOverviewEditor({ draft, onChange }: { draft: Adm
       requestAnimationFrame(() => { element.focus(); element.setSelectionRange(start + token.length, start + token.length); });
     } else change(`${body}${body ? "\n\n" : ""}${token}`, sections ?? {});
   };
-  return <section className="admin-editor-guidance" aria-label="Calendar overview writing">
+  return <section ref={container} className="admin-editor-guidance" aria-label="Calendar overview writing">
     <p>Write the overview passages below. Each passage fills its named variable in the template and updates the preview. Save keeps the passages, pattern, and existing guidance together.</p>
     {calendarOverviewFields(period).map(field => <label className="admin-review-copy-editor studio-surface" key={field.name}>
       <span>{field.label} <code>{`{{${field.name}}}`}</code></span>
-      <StudioTextarea aria-label={field.label} data-calendar-field={field.name} value={writing[field.name] ?? ""}
+      <StudioTextarea aria-label={field.label} data-calendar-field={field.name} data-sky-field={`calendarOverview.${field.name}`} value={writing[field.name] ?? ""}
         onFocus={event => { selected.current = event.currentTarget; }} onChange={event => update(field.name, event.target.value)} />
       <small className="admin-field-hint">{field.help}</small>
     </label>)}
+    <p>Reuse an existing passage by inserting its variable into the selected overview field. The full passage follows your chosen signs and stays editable from the Variables tab.</p>
+    <div className="admin-new-actions">{[{ name: "sunSummary", label: "Use Sun summary" }, { name: "moonWriteup", label: "Use Moon passage" }, { name: "openingZodiacSeason", label: "Use opening season passage" }, { name: "openingZodiacSeasonPolarAxis", label: "Use season axis passage" }].map(item => <StudioButton key={item.name} type="button" onClick={() => insert(item.name)}>{item.label}</StudioButton>)}</div>
     <p>Insert a zodiac season variable into the last selected overview passage, or append it to the pattern. Season writing follows the selected Sun sign; opening and closing season variables follow the whole week or month.</p>
     <div className="admin-new-actions">{calendarSeasonVariables.map(name => <StudioButton key={name} type="button" aria-label={`Insert {{${name}}} into Calendar template`} onClick={() => insert(name)}>{`{{${name}}}`}</StudioButton>)}</div>
     {period !== "daily-sky" && <div className="admin-new-actions"><StudioButton type="button" onClick={() => {

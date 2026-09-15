@@ -27,8 +27,9 @@ async function fixture(page: Page) {
     if (!url.pathname.endsWith("generated-content")) return route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });
     if (route.request().method() !== "GET") {
       const input = route.request().postDataJSON(); writes.push(input);
-      const row = { ...rows.find(row => row.id === input.id), ...input, content_key: input.contentKey, updated_at: new Date().toISOString() };
-      rows.splice(0, rows.length, ...rows.filter(value => value.id !== row.id), row);
+      const original = rows.find(row => row.id === input.id) ?? rows.find(row => row.content_key === input.contentKey);
+      const row = { ...original, ...input, id: input.id ?? `saved-${writes.length}`, content_key: input.contentKey, updated_at: new Date().toISOString() };
+      rows.splice(0, rows.length, ...rows.filter(value => value.id !== row.id && value !== original), row);
       return route.fulfill({ json: { ok: true, rows: [row] } });
     }
     const keys = url.searchParams.getAll("contentKeys");
@@ -72,6 +73,19 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await preview.getByRole("tab", { name: "Variables", exact: true }).click();
     await expect(preview.getByLabel("Calendar preview variables")).toContainText("Example sign");
     await expect(preview.getByLabel("Calendar preview variables").getByRole("textbox")).toHaveCount(0);
+    const variableRow = preview.getByRole("row").filter({ has: page.getByRole("rowheader", { name: /\{\{zodiacSeason\}\}/ }) });
+    await expect(variableRow).toContainText(seasonBody("leo"));
+    expect(await variableRow.locator("td p").evaluate(style)).toEqual(await preview.locator('p').first().evaluate(style));
+    expect(await variableRow.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+    await preview.getByLabel("Calendar preview variables").screenshot({ path: `test-results/calendar-variables-${width}-${theme}.png` });
+    await preview.getByRole("button", { name: "Edit weeklyOverview", exact: true }).click();
+    const overviewDialog = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(overviewDialog.getByLabel("Weekly overview", { exact: true })).toBeFocused();
+    await overviewDialog.getByRole("button", { name: "Use Sun summary", exact: true }).click();
+    await expect(overviewDialog.getByLabel("Weekly overview", { exact: true })).toHaveValue("{{sunSummary}}");
+    // Exercise discard only for this synthetic, unsaved editor fixture.
+    page.once("dialog", dialog => dialog.accept());
+    await overviewDialog.getByRole("button", { name: "Close", exact: true }).click();
     await preview.getByRole("tab", { name: "Preview", exact: true }).click();
     expect(await preview.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
     const toast = page.getByRole("button", { name: "Dismiss notification", exact: true });
@@ -179,6 +193,34 @@ test("Calendar preview calculates two real skies and clears unavailable facts", 
   await expect(rendered).not.toContainText("Moon square");
   await expect(rendered).not.toContainText(/12:00 AM[^\n]*retrograde/);
   expect(state.writes).toEqual([]);
+});
+
+test("Calendar source editing opens a complete existing draft and stays in the workspace", async ({ page }) => {
+  const state = await fixture(page);
+  const key = "fallback-hook/zodiac-season/virgo";
+  const source = state.rows.find(row => row.content_key === key);
+  Object.assign(source, { id: `package:${key}`, status: "DRAFT", lane: "reference", review_state: "needs-review",
+    sections: { packageRecord: { contentKey: key, content_role: "fallback_hook", body: source.body, review_status: "needs_review", sign: "virgo", grammar_frame: "complete_sentence", calendarWritingSource: { title: "Sign season content", originalBody: source.body } } } });
+  await page.goto("/admin/content#calendar-writeups?view=weekly-sky");
+  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await preview.getByLabel("Preview source").selectOption("signs");
+  await preview.getByLabel("Preview Sun sign").selectOption("Virgo");
+  await preview.getByRole("tab", { name: "Variables", exact: true }).click();
+  await expect(preview.getByLabel("Calendar preview variables")).toContainText("Existing writing · Sign season content");
+  await preview.getByRole("button", { name: "Edit zodiacSeason", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  const body = editor.locator('textarea[data-sky-field="body"]');
+  await expect(body).toHaveValue(seasonBody("virgo"));
+  await body.fill("Fixture revised season opening.\n\nFixture complete final sentence.");
+  await expect(preview.getByLabel("Calendar preview variables")).toContainText("Fixture complete final sentence.");
+  await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect.poll(() => state.writes.length).toBe(1);
+  expect(state.writes[0].sections.packageDraft.body).toBe("Fixture revised season opening.\n\nFixture complete final sentence.");
+  expect(state.writes[0].status).toBe("DRAFT");
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(page).toHaveURL(/#calendar-writeups\?view=weekly-sky$/);
+  await preview.getByRole("button", { name: "Edit zodiacSeason", exact: true }).click();
+  await expect(body).toHaveValue("Fixture revised season opening.\n\nFixture complete final sentence.");
 });
 
 test("Monthly overview structure is an explicit draft change and preserves saved writing", async ({ page }) => {
