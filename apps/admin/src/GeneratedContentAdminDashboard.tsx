@@ -13,6 +13,7 @@ import { refreshContentPublications } from "../../web/src/services/contentPublic
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
 import { lunarContentIdentity } from "./lunarCalendarContent";
+import type { SkyForecastPeriod } from "./skyForecastTemplates";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
 import { mergeContentInventory } from "./contentStudioState";
 import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
@@ -42,7 +43,7 @@ import {
   Users,
   X
 } from "lucide-react";
-import { Fragment, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import { renderCmsTemplatePreview, validateCmsTemplate } from "../../web/src/content/cmsTemplateValidation";
@@ -208,6 +209,7 @@ const SkyV4StudioReviewPanel = lazy(() => import("./SkyV4StudioReviewPanel"));
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import AdminFilterDisclosure from "./AdminFilterDisclosure";
 const StudioVariables = lazy(() => import("./StudioVariables"));
+const SkyForecastTemplateStudio = lazy(() => import("./SkyForecastTemplateStudio"));
 const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
 const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
 import type { NatalEditableRow, NatalSourceEdits } from "./NatalPlacementSourceEditor";
@@ -238,6 +240,7 @@ type GeneratedContentMode = "feed" | "in_depth" | "article" | "card" | string;
 type AdminDashboardPage =
   | "articles"
   | "skyWriteups"
+  | "calendarWriteups"
   | "compatibility"
   | "content"
   | "reviewQueue"
@@ -292,6 +295,18 @@ type AdminWritingSurfaceMapPayload = {
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits";
+type CalendarWriteupWorkspaceView = "daily-sky" | SkyForecastPeriod;
+const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
+  { value: "daily-sky", label: "Daily Sky" },
+  { value: "weekly-sky", label: "Weekly Sky" },
+  { value: "monthly-sky", label: "Monthly Sky" }
+];
+const skyWriteupWorkspaceTabs: { value: SkyWriteupWorkspaceView; label: string }[] = [
+  { value: "daily-summary", label: "Daily Sky Summary" },
+  { value: "catalog", label: "Placements & lunations" },
+  { value: "transits-to-natal", label: "Personal Transits" },
+  { value: "house-transits", label: "House Transits" }
+];
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
@@ -583,6 +598,7 @@ const vocabularySections: Array<{ key: AdminVocabularySection; label: string; de
 const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   articles: "articles",
   skyWriteups: "sky-writeups",
+  calendarWriteups: "calendar-writeups",
   compatibility: "compatibility",
   content: "exact-content",
   reviewQueue: "review-queue",
@@ -642,7 +658,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "content", label: "Natal Chart", icon: Orbit, key: "natal-chart", category: "Natal Chart", group: "Write" },
   { page: "content", label: "Natal Aspects", icon: ArrowLeftRight, key: "natal-aspects", category: "Natal Aspects", group: "Write" },
   { page: "skyWriteups", label: "Sky Write-ups", icon: Moon, group: "Write" },
-  { page: "knowledge", label: "Calendar Write-ups", icon: Moon, key: "calendar-writeups", section: "lunar-calendar", group: "Write" },
+  { page: "calendarWriteups", label: "Calendar Write-ups", icon: CalendarDays, group: "Write" },
   { page: "content", label: "Calendar Aspects", icon: CalendarDays, key: "calendar-aspects", category: "Calendar Aspects", group: "Write" },
   { page: "articles", label: "Articles", icon: FileText, group: "Write" },
   { page: "compatibility", label: "Compatibility", icon: Users, group: "Write" },
@@ -779,6 +795,23 @@ function adminHashForPage(page: AdminDashboardPage, params?: URLSearchParams) {
   return `#${adminPageHashKeys[page]}${query ? `?${query}` : ""}`;
 }
 
+function canonicalAdminRoute(page: AdminDashboardPage, input = new URLSearchParams()) {
+  const params = new URLSearchParams(input);
+  const view = params.get("view");
+  if (page === "knowledge" && params.get("section") === "lunar-calendar"
+    || page === "skyWriteups" && view === "daily-sky" && params.get("section") === "lunar-calendar") {
+    page = "calendarWriteups";
+    params.set("view", "daily-sky");
+    params.delete("section");
+  } else if (page === "skyWriteups" && (view === "weekly-sky" || view === "monthly-sky")) {
+    page = "calendarWriteups";
+  } else if (page === "skyWriteups" && view === "daily-sky") {
+    params.set("view", "daily-summary");
+  }
+  if (page === "calendarWriteups") params.delete("audience");
+  return { page, params };
+}
+
 function parseAdminHash() {
   const rawHash = window.location.hash || "#review-queue";
   const hashBody = rawHash.replace(/^#/, "");
@@ -786,16 +819,14 @@ function parseAdminHash() {
   const params = new URLSearchParams(query);
   if (key === "compatibility") params.set("view", "compatibility");
   if (key === "composite-review") params.set("view", "composite");
-  return {
-    page: adminPageByHashKey[key] ?? "reviewQueue",
-    params
-  };
+  return canonicalAdminRoute(adminPageByHashKey[key] ?? "reviewQueue", params);
 }
 
 function adminPageTitle(activePage: AdminDashboardPage) {
   switch (activePage) {
     case "articles": return "Articles";
     case "skyWriteups": return "Sky Write-ups";
+    case "calendarWriteups": return "Calendar Write-ups";
     case "compatibility": return "Compatibility";
     case "content": return "Content Library";
     case "reviewQueue": return "Review Queue";
@@ -828,6 +859,7 @@ function adminPageBreadcrumbItems(activePage: AdminDashboardPage): AdminBreadcru
   switch (activePage) {
     case "articles": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Articles" }];
     case "skyWriteups": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Sky write-ups" }];
+    case "calendarWriteups": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Calendar write-ups" }];
     case "compatibility": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Compatibility" }];
     case "content": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Content library" }];
     case "reviewQueue": return [{ label: "Admin", page: "reviewQueue" }, { label: "Publish", page: "reviewQueue" }, { label: "Review queue" }];
@@ -857,6 +889,8 @@ function adminPageDescription(activePage: AdminDashboardPage) {
       return "Write and manage standalone articles.";
     case "skyWriteups":
       return "Edit planetary placements, lunations, aspects, and horoscopes.";
+    case "calendarWriteups":
+      return "Manage daily, weekly, and monthly Calendar writing.";
     case "reviewQueue":
       return "Review, approve, and publish content.";
     case "unresolvedContent":
@@ -2769,6 +2803,16 @@ export function GeneratedContentAdminDashboard() {
   }
   const [secret, setSecret, setTransientCredential] = useSavedSecret();
   const [secretInput, setSecretInput] = useState(secret);
+  const loadCalendarPreviewRows = useCallback(async (keys: string[]) => {
+    const query = new URLSearchParams({ status: "all", visibility: "all", limit: "1000" });
+    keys.forEach(key => query.append("contentKeys", key));
+    const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?${query}`, secret);
+    if (!Array.isArray(payload.rows) || payload.rows.length >= 1000 || payload.rows.some(row => !keys.includes(row.content_key) || row.inventory_only)) {
+      throw new Error("Could not verify the full saved Calendar sources.");
+    }
+    return payload.rows;
+  }, [secret]);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
   const friendsTransitAudience = parseAdminHash().params.get("audience") === "friends";
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
@@ -2846,6 +2890,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyWriteupDestinationFilter, setSkyWriteupDestinationFilter] = useState<ContentDestinationFilter>("all");
   const [skyWriteupSort, setSkyWriteupSort] = useState<ContentPlacementSort>("updated-desc");
   const [skyWriteupWorkspaceView, setSkyWriteupWorkspaceView] = useState<SkyWriteupWorkspaceView>("catalog");
+  const [calendarWriteupWorkspaceView, setCalendarWriteupWorkspaceView] = useState<CalendarWriteupWorkspaceView>("daily-sky");
   const [transitReadingContext, setTransitReadingContext] = useState<import("./transitNatalSources").TransitNatalReadingContext>({});
   const [transitNatalPlanet, setTransitNatalPlanet] = useState<TransitNatalPlanet | "">("");
   const [transitNatalSign, setTransitNatalSign] = useState<TransitNatalSign | "">("");
@@ -3510,7 +3555,7 @@ export function GeneratedContentAdminDashboard() {
   }, []);
 
   useEffect(() => {
-    if (activePage !== "skyWriteups" || skyWriteupWorkspaceView === "catalog" || transitNatalSourceBodies.size > 0) return;
+    if (activePage !== "skyWriteups" || !["transits-to-natal", "house-transits"].includes(skyWriteupWorkspaceView) || transitNatalSourceBodies.size > 0) return;
     let cancelled = false;
     void loadAdminHookCatalogBodies("sky")
       .then((bodies) => {
@@ -3764,13 +3809,10 @@ export function GeneratedContentAdminDashboard() {
     setNatalAspectName(page === "content" && category === "Natal Aspects" ? natalAspectNameParam : "");
     setNatalAspectSecond(page === "content" && category === "Natal Aspects" ? natalAspectSecondParam : "");
     setSkyWriteupWorkspaceView(
-      page === "skyWriteups" && view === "daily-summary" ? "daily-summary"
-        : page === "skyWriteups" && view === "transits-to-natal"
-        ? "transits-to-natal"
-        : page === "skyWriteups" && view === "house-transits"
-          ? "house-transits"
-          : "catalog"
+      page === "skyWriteups" && skyWriteupWorkspaceTabs.some(tab => tab.value === view)
+        ? view as SkyWriteupWorkspaceView : "catalog"
     );
+    setCalendarWriteupWorkspaceView(page === "calendarWriteups" && (view === "weekly-sky" || view === "monthly-sky") ? view : "daily-sky");
     setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
       ...(params.get("pass") ? { pass: Number(params.get("pass")) } : {}),
       ...(params.get("variant") ? { variant: Number(params.get("variant")) } : {}),
@@ -3917,8 +3959,9 @@ export function GeneratedContentAdminDashboard() {
       if (!confirmNatalNavigation()) return;
       if (!closeEditor()) return;
     }
-    applyAdminRouteState(page, params ?? new URLSearchParams());
-    setAdminHash(adminHashForPage(page, params));
+    const route = canonicalAdminRoute(page, params);
+    applyAdminRouteState(route.page, route.params);
+    setAdminHash(adminHashForPage(route.page, route.params));
   }
 
   function navigatePrimaryAdminItem(item: AdminNavItem) {
@@ -5255,7 +5298,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function handleCreateAction(page: AdminDashboardPage, nextMessage: string, calendarSign?: string) {
-    const isCalendarWriteup = page === "knowledge" && activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar";
+    const isCalendarWriteup = page === "knowledge" && lunarWorkspaceActive;
     if (isCalendarWriteup && !calendarSign) {
       setIsCreateMenuOpen(false);
       setCalendarCreateRequest(value => value + 1);
@@ -5406,6 +5449,42 @@ export function GeneratedContentAdminDashboard() {
           authoringSource: "admin-dashboard"
         }
       });
+    }
+  }
+
+  async function openSkyForecastTemplate(period: SkyForecastPeriod) {
+    if (!closeEditor()) return;
+    const originatingHash = window.location.hash;
+    const requestId = ++sourceOpenRequestRef.current;
+    setIsLoading(true);
+    try {
+      const { skyForecastTemplates } = await import("./skyForecastTemplates");
+      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+      const template = skyForecastTemplates[period];
+      const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(template.contentKey)}&limit=1`, secret);
+      if (!Array.isArray(payload.rows) || payload.rows.some(row => row.content_key !== template.contentKey)) throw new Error("Could not verify the saved template.");
+      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+      const saved = payload.rows[0];
+      if (saved) {
+        setRows(current => [saved, ...current.filter(row => row.id !== saved.id)]);
+        if (!await openRow(saved)) return;
+      } else {
+        rememberSavedDraft({
+          id: null, contentKey: template.contentKey, surface: "sky", mode: "card", status: "DRAFT",
+          headline: template.headline, body: template.body,
+          summary: template.description,
+          lane: "reference", reviewState: "EDITORIAL_REVIEW_REQUIRED", blockType: "fallback_template",
+          promptVersion: "manual-admin", sections: null, facts: null, reviewerNotes: "",
+          sourceSnapshot: { contentType: "template", contentSystem: "fallback", content_role: "template", authoringSource: "admin-dashboard" }
+        });
+      }
+      setMessage("");
+      scrollEditorToTop();
+    } catch (error) {
+      if (requestId === sourceOpenRequestRef.current && window.location.hash === originatingHash) setMessage(dashboardErrorMessage(error));
+    } finally {
+      if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
     }
   }
 
@@ -5735,22 +5814,22 @@ export function GeneratedContentAdminDashboard() {
   const natalChartWorkspaceActive = activePage === "content" && categoryFilter === "Natal Chart";
   const natalAspectWorkspaceActive = activePage === "content" && categoryFilter === "Natal Aspects";
   const calendarAspectWorkspaceActive = activePage === "content" && categoryFilter === "Calendar Aspects";
-  const lunarWorkspaceActive = activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar";
-  const currentPageTitle = lunarWorkspaceActive ? "Lunar Calendar write-ups" : natalChartWorkspaceActive
+  const lunarWorkspaceActive = activePage === "calendarWriteups" && calendarWriteupWorkspaceView === "daily-sky";
+  const currentPageTitle = natalChartWorkspaceActive
     ? "Natal Chart Write-ups"
     : natalAspectWorkspaceActive
       ? "Natal Aspect Write-ups"
       : calendarAspectWorkspaceActive
         ? "Calendar Aspect Cards"
         : adminPageTitle(activePage);
-  const currentPageDescription = lunarWorkspaceActive ? "Manage Moon-sign passages and inspect their composition and variables." : natalChartWorkspaceActive
+  const currentPageDescription = natalChartWorkspaceActive
     ? "Find the exact writing for a planet or point in its sign and house."
     : natalAspectWorkspaceActive
       ? "Find and edit the exact writing for two natal bodies and their aspect."
       : calendarAspectWorkspaceActive
         ? "Edit composed Calendar cards and their reusable sign-specific aspect passages."
         : adminPageDescription(activePage);
-  const currentPageBreadcrumbs = lunarWorkspaceActive ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Lunar Calendar" }] : natalChartWorkspaceActive
+  const currentPageBreadcrumbs = natalChartWorkspaceActive
     ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal chart" }]
     : natalAspectWorkspaceActive
       ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal aspects" }]
@@ -5816,27 +5895,18 @@ export function GeneratedContentAdminDashboard() {
                   <Icon size={16} aria-hidden="true" />
                   <span>{item.label}</span>
                 </StudioButton>
-                {item.page === "skyWriteups" && (
-                  <div className="admin-nav-workspace-group" hidden={activePage !== "skyWriteups"} aria-label="Sky Write-ups sections">
-                    <StudioButton type="button"
-                      onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "daily-summary" }))}
-                      aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "daily-summary" ? "page" : undefined}>
-                      <span>Daily Sky Summary</span>
-                    </StudioButton>
-                    <StudioButton
-                      type="button"
-                      onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal" }))}
-                      aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "transits-to-natal" ? "page" : undefined}
-                    >
-                      <span>Transit to Natal Charts</span>
-                    </StudioButton>
-                    <StudioButton
-                      type="button"
-                      onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "house-transits" }))}
-                      aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits" ? "page" : undefined}
-                    >
-                      <span>House Transits</span>
-                    </StudioButton>
+                {(item.page === "calendarWriteups" || item.page === "skyWriteups") && (
+                  <div className="admin-nav-workspace-group" hidden={activePage !== item.page}
+                    aria-label={`${item.label} sections`}>
+                    {(item.page === "calendarWriteups" ? calendarWriteupWorkspaceTabs : [
+                      skyWriteupWorkspaceTabs[0],
+                      { value: "transits-to-natal", label: "Transit to Natal Charts" },
+                      skyWriteupWorkspaceTabs[3]
+                    ]).map(tab => <StudioButton key={tab.value} type="button"
+                      onClick={() => navigateAdminPage(item.page, new URLSearchParams({ view: tab.value }))}
+                      aria-current={activePage === item.page && (item.page === "calendarWriteups" ? calendarWriteupWorkspaceView : skyWriteupWorkspaceView) === tab.value ? "page" : undefined}>
+                      <span>{tab.label}</span>
+                    </StudioButton>)}
                   </div>
                 )}
                 {item.page === "skyWriteups" && (
@@ -5985,8 +6055,8 @@ export function GeneratedContentAdminDashboard() {
             },
             {
               key: "fallback",
-              label: activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" ? "Create Calendar write-up" : "Create fallback hook",
-              description: activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" ? "Choose a Moon sign and start a separate draft" : "Saved route fallback",
+              label: lunarWorkspaceActive ? "Create Calendar write-up" : "Create fallback hook",
+              description: lunarWorkspaceActive ? "Choose a Moon sign and start a separate draft" : "Saved route fallback",
               icon: Flag,
               onSelect: () => handleCreateAction("knowledge", "Create fallback hook opened.")
             }
@@ -6229,27 +6299,39 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
+        {activePage === "calendarWriteups" && (
+          <section className="admin-template-page">
+            <h2 className="sr-only">Calendar writing workspaces</h2>
+            <StudioTabs label="Calendar Write-ups workspaces" value={calendarWriteupWorkspaceView}
+              tabs={calendarWriteupWorkspaceTabs}
+              onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
+              <Suspense fallback={<p role="status">Loading Calendar template…</p>}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
+                loadRows={loadCalendarPreviewRows} draft={draft}
+                onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>
+              {calendarWriteupWorkspaceView === "daily-sky" && (
+                <Suspense fallback={<p>Loading Moon-sign write-ups…</p>}>
+                  <LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
+                    onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
+                    editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow)}
+                    onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
+                    onCreate={sign => handleCreateAction("knowledge", "Draft opened. Nothing has been saved yet.", sign)} />
+                </Suspense>
+              )}
+            </StudioTabs>
+          </section>
+        )}
+
         {activePage === "skyWriteups" && (
           <section className="admin-template-page">
-            <h2 className="sr-only">Placements, lunations, and transits</h2>
+            <h2 className="sr-only">Sky writing workspaces</h2>
             <StudioTabs label="Sky Write-ups workspaces" value={skyWriteupWorkspaceView}
-              tabs={[
-                { value: "daily-summary", label: "Daily Sky Summary" },
-                { value: "catalog", label: "Placements & lunations" },
-                { value: "transits-to-natal", label: "Personal Transits" },
-                { value: "house-transits", label: "House Transits" }
-              ]} onValueChange={view => {
-                if (view === "daily-summary") {
-                  navigateAdminPage("skyWriteups", new URLSearchParams({ view }));
-                  return;
-                }
-                setSkyWriteupWorkspaceView(view);
+              tabs={skyWriteupWorkspaceTabs} onValueChange={view => {
                 const params = new URLSearchParams();
                 if (view !== "catalog") {
                   params.set("view", view);
-                  if (friendsTransitAudience) params.set("audience", "friends");
+                  if (friendsTransitAudience && (view === "transits-to-natal" || view === "house-transits")) params.set("audience", "friends");
                 }
-                setAdminHash(adminHashForPage("skyWriteups", params));
+                navigateAdminPage("skyWriteups", params);
               }}>
             {skyWriteupWorkspaceView === "daily-summary" ? (
               <>
@@ -6473,9 +6555,6 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
-        {activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" && (
-          <Suspense fallback={<p>Loading Lunar Calendar…</p>}><LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest} onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"} editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow)} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} onCreate={sign => handleCreateAction("knowledge", "Draft opened. Nothing has been saved yet.", sign)} /></Suspense>
-        )}
         {activePage === "knowledge" && fallbackSectionFilter !== "lunar-calendar" && (
           <section className="admin-template-page admin-fallback-library">
             <section className="studio-surface studio-section admin-fallback-library-controls" aria-label="Fallback library controls">
@@ -10308,7 +10387,7 @@ export function GeneratedContentAdminDashboard() {
               <div className="admin-disclosure-content">
               <label className="admin-title-field">
                 <span className="sr-only">{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
-                <StudioInput aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value, ...(isPackageDraft ? { sections: { ...currentDraft.sections, packageRecord: { ...draftPackageRecord(currentDraft), contentKey: event.target.value }, ...(draftPackageProposal(currentDraft) ? { packageDraft: { ...draftPackageProposal(currentDraft), contentKey: event.target.value } } : {}) } } : {}) })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || (isPackageDraft && !(activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar"))} />
+                <StudioInput aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value, ...(isPackageDraft ? { sections: { ...currentDraft.sections, packageRecord: { ...draftPackageRecord(currentDraft), contentKey: event.target.value }, ...(draftPackageProposal(currentDraft) ? { packageDraft: { ...draftPackageProposal(currentDraft), contentKey: event.target.value } } : {}) } } : {}) })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || (isPackageDraft && !lunarWorkspaceActive)} />
                 {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
               </label>
               <StudioButton type="button" className="admin-editor-key-copy" onClick={() => void copyContentKey(currentDraft.contentKey)} aria-label={`Copy key ${currentDraft.contentKey}`} title={currentDraft.contentKey}>
@@ -10433,7 +10512,7 @@ export function GeneratedContentAdminDashboard() {
               {sourceIsArchived ? "Restore as draft" : "Archive source"}
             </StudioButton>
           )}
-          {selectedRow && selectedRow.status !== "LIVE" && activePage === "knowledge" && fallbackSectionFilter === "lunar-calendar" && (
+          {selectedRow && selectedRow.status !== "LIVE" && lunarWorkspaceActive && (
             <StudioButton type="button" className="admin-danger-button" disabled={isLoading || draftHasUnsavedChanges} onClick={() => void deleteSelectedDrafts([selectedRow])}>
               Delete draft
             </StudioButton>
