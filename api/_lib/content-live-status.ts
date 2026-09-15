@@ -1,4 +1,5 @@
-import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
+import { isZodiacSeasonSourceKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
+import { calendarWritingSourceStarters } from "./calendar-writing-sources.js";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skyPlacementSourceRecords } from "./sky-placement-sources.js";
 import { createDomainRegistry } from "../../apps/web/src/content/domainRegistry.js";
@@ -46,7 +47,7 @@ for (const partition of readerPartitions as Record<string, any>[]) {
     for (const record of partition[bucket] ?? []) servingPackageRecords.set(record.contentKey, record);
   }
 }
-for (const record of ZODIAC_SEASON_SOURCE_STARTERS) servingPackageRecords.set(record.contentKey, record);
+for (const record of calendarWritingSourceStarters) servingPackageRecords.set(record.contentKey, record);
 for (const [key, record] of skyPlacementSourceRecords) servingPackageRecords.set(key, record);
 // Calendar and Sky share this approved exact-aspect registry, outside the V3 partitions.
 const { approvedExactSkyAspectCopy } = createDomainRegistry(require("../../packages/astro-knowledge/dist/sky-runtime-web.json"));
