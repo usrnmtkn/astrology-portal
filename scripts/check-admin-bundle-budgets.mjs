@@ -132,11 +132,13 @@ const expectedDynamicEntries = [
   "src/CalendarTemplatePreview.tsx",
   "src/CalendarOverviewEditor.tsx",
   "src/SkyForecastTemplateStudio.tsx",
+  "src/MonthlyPhraseStudio.tsx",
   "src/calendarPreviewCalculation.ts",
 ];
 for (const key of expectedDynamicEntries) {
   if (!manifest[key]?.isDynamicEntry) failures.push(`Expected lazy Admin entry is missing: ${key}`);
 }
+if (initialChunks.has("src/MonthlyPhraseStudio.tsx")) failures.push("Monthly phrase authoring must remain deferred from Content Studio startup.");
 const expectedDeferredGroups = [
   "admin-deferred-editor-tools",
   "admin-deferred-fallback-tools",
