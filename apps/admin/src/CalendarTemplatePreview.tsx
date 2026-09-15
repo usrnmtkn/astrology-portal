@@ -7,6 +7,7 @@ import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewWritin
 import CalendarVariableText from "./CalendarVariableText";
 import type { CalendarPreviewCalculation } from "./calendarPreviewCalculation";
 import { calendarMoonPassages, calendarPreviewSeasons, calendarPreviewSign, calendarPreviewSourceKeys, calendarPreviewValues, calendarTemplateSegments, type CalendarPreviewRow } from "./calendarPreviewModel";
+import { resolveCalendarNestedTemplate } from "./calendarTemplateResolver";
 
 export type CalendarTemplatePreviewProps = {
   period: SkyForecastPeriod;
@@ -76,8 +77,17 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
   const pattern = draft?.contentKey === template.contentKey ? draft.body : saved?.body ?? calendarOverviewPattern(period);
   const writing = calendarOverviewWriting(draft?.contentKey === template.contentKey ? draft.sections : saved?.sections);
   const values = { ...baseValues };
+  const overviewTemplates = Object.fromEntries(calendarOverviewFields(period)
+    .filter(field => writing[field.name]?.trim())
+    .map(field => [field.name, writing[field.name]]));
+  const literalValues = Object.fromEntries(Object.entries(baseValues).map(([name, value]) => [name, value.text]));
+  const nestedErrors = new Set<string>();
   for (const field of calendarOverviewFields(period)) {
-    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], baseValues).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
+    if (writing[field.name]?.trim()) {
+      const resolved = resolveCalendarNestedTemplate(`{{${field.name}}}`, literalValues, overviewTemplates);
+      resolved.errors.forEach(error => nestedErrors.add(error));
+      values[field.name] = { text: resolved.text, kind: "copy", sourceKey: template.contentKey };
+    }
   }
   const passages = calendarMoonPassages(sources ?? [], moonSign);
   const segments = calendarTemplateSegments(pattern, values);
@@ -99,6 +109,7 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
     <div className="admin-new-actions"><StudioButton onClick={() => { setMode("ephemeris"); setLive(true); setDate(dateInput(new Date())); setAttempt(value => value + 1); }}>Use current sky</StudioButton><StudioButton onClick={() => setAttempt(value => value + 1)}>Refresh preview</StudioButton></div>
     <p role="status">{mode === "signs" ? "Example signs · degrees and event timing are unavailable in this mode." : calculation ? `${live ? "Live sky" : "Selected sky"} · ${values.asOf?.text} · ${timeZone} · Swiss Ephemeris · tropical, geocentric` : calculationError ? "Calculation unavailable." : "Calculating ephemeris facts…"}</p>
     {(calculationError || sourceError) && <p role="alert">{calculationError || sourceError} Use Refresh preview to retry.</p>}
+    {nestedErrors.size > 0 && <p role="alert">Nested template error: {[...nestedErrors].join(" ")}</p>}
     {!sources && !sourceError && <p role="status">Loading the full saved template and matching passages…</p>}
     <StudioTabs label="Calendar template views" value={view} onValueChange={setView} tabs={[{ value: "preview", label: "Preview" }, { value: "pattern", label: "Template pattern" }, { value: "variables", label: "Variables" }]}>
       {view === "pattern" ? <div className="admin-composition-preview-field"><span>{draft?.contentKey === template.contentKey ? "Open editor pattern" : saved ? "Saved template pattern" : "Starter template pattern"}</span><p className="admin-calendar-template-text" aria-label="Calendar template pattern">{sources ? <CalendarVariableText text={pattern} /> : "Loading saved template…"}</p></div>
