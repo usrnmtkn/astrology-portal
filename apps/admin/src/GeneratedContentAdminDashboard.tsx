@@ -9883,7 +9883,7 @@ export function GeneratedContentAdminDashboard() {
             isPackageDraft={isPackageDraft} articleSaveState={skyArticleEditor?.saveState}
             onWritingAction={(action) => void runSkyDraftWriting(selectedRow.content_key, action, selectedRow)} /></Suspense>}
           {currentDraft.contentKey.startsWith("slot-template/calendar/") && <Suspense fallback={null}><CalendarOverviewEditor
-            draft={currentDraft} onChange={setDraft} /></Suspense>}
+            draft={currentDraft} onChange={next => setDraft(invalidateContentStudioReview(next))} /></Suspense>}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor studio-surface">
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
