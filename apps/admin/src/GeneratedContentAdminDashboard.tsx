@@ -207,6 +207,7 @@ const PackagedHookCatalogResults = lazy(async () => {
 const SkyV4StudioReviewPanel = lazy(() => import("./SkyV4StudioReviewPanel"));
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import AdminFilterDisclosure from "./AdminFilterDisclosure";
+const StudioVariables = lazy(() => import("./StudioVariables"));
 const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
 const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
 import type { NatalEditableRow, NatalSourceEdits } from "./NatalPlacementSourceEditor";
@@ -245,6 +246,7 @@ type AdminDashboardPage =
   | "connection"
   | "compositionMap"
   | "vocabulary"
+  | "variables"
   | "slotDictionary"
   | "knowledge"
   | "templates"
@@ -590,6 +592,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   compositionMap: "composition-map",
   vocabulary: "vocabulary",
   slotDictionary: "slots",
+  variables: "variables",
   knowledge: "fallback-hooks",
   templates: "templates",
   hooks: "surface-map",
@@ -632,6 +635,7 @@ const compositionTabs: AdminNavItem[] = [
   { page: "hooks", label: "Surface Map", icon: Flag }
 ];
 const primaryAdminNavItems: AdminNavItem[] = [
+  { page: "variables", label: "Variables", icon: KeyRound, group: "Compose" },
   { page: "reviewQueue", label: "Review Queue", icon: Check, group: "Publish" },
   { page: "unresolvedContent", label: "Unresolved Content", icon: Flag, group: "Publish" },
   { page: "content", label: "Content Library", icon: BookOpenText, group: "Write" },
@@ -800,6 +804,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "connection": return "Connection";
     case "compositionMap": return "Composition Map";
     case "vocabulary": return "Vocabulary & Phrases";
+    case "variables": return "Variables";
     case "slotDictionary": return "Slots";
     case "knowledge": return "Fallback Articles & Passages";
     case "templates": return "Templates";
@@ -831,6 +836,7 @@ function adminPageBreadcrumbItems(activePage: AdminDashboardPage): AdminBreadcru
     case "connection": return [{ label: "Admin", page: "reviewQueue" }, { label: "Connection" }];
     case "compositionMap": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Map" }];
     case "vocabulary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Vocabulary & phrases" }];
+    case "variables": return [{ label: "Admin", page: "reviewQueue" }, { label: "Variables" }];
     case "slotDictionary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Slots" }];
     case "knowledge": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Fallback articles & passages" }];
     case "templates": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Templates" }];
@@ -863,6 +869,8 @@ function adminPageDescription(activePage: AdminDashboardPage) {
       return "Edit backup copy used when primary content is unavailable.";
     case "vocabulary":
       return "Edit reusable words and phrases used across the app.";
+    case "variables":
+      return "Search calculated facts and editable prose, and find where each variable can be used.";
     case "slotDictionary":
       return "See what fills each template variable.";
     case "templates":
@@ -6024,6 +6032,8 @@ export function GeneratedContentAdminDashboard() {
             ))}
           </nav>
         )}
+
+        {activePage === "variables" && <><Suspense fallback={<p role="status">Loading variables…</p>}><StudioVariables onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
         {activePage === "reviewQueue" && (
           <section className="admin-template-page">
