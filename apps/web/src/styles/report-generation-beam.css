@@ -1,0 +1,17 @@
+[data-report-generating] {
+  position: relative;
+}
+
+.report-generation-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.report-generation-beam__effect,
+.report-generation-beam__shape {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
