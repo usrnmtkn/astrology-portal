@@ -3,7 +3,8 @@ import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
 import { lunarSigns, lunarContentIdentity } from "./lunarCalendarContent";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
-import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewWriting, calendarSeasonVariables, calendarSeasonSourceKey } from "./calendarOverviewTemplate";
+import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewWriting, calendarSeasonVariables, calendarSeasonSourceKey, calendarVariableColor } from "./calendarOverviewTemplate";
+import CalendarVariableText from "./CalendarVariableText";
 import type { CalendarPreviewCalculation } from "./calendarPreviewCalculation";
 import { calendarMoonPassages, calendarPreviewSeasons, calendarPreviewSign, calendarPreviewSourceKeys, calendarPreviewValues, calendarTemplateSegments, type CalendarPreviewRow } from "./calendarPreviewModel";
 
@@ -100,7 +101,7 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
     {(calculationError || sourceError) && <p role="alert">{calculationError || sourceError} Use Refresh preview to retry.</p>}
     {!sources && !sourceError && <p role="status">Loading the full saved template and matching passages…</p>}
     <StudioTabs label="Calendar template views" value={view} onValueChange={setView} tabs={[{ value: "preview", label: "Preview" }, { value: "pattern", label: "Template pattern" }, { value: "variables", label: "Variables" }]}>
-      {view === "pattern" ? <div className="admin-composition-preview-field"><span>{draft?.contentKey === template.contentKey ? "Open editor pattern" : saved ? "Saved template pattern" : "Starter template pattern"}</span><p className="admin-calendar-template-text" aria-label="Calendar template pattern">{sources ? pattern : "Loading saved template…"}</p></div>
+      {view === "pattern" ? <div className="admin-composition-preview-field"><span>{draft?.contentKey === template.contentKey ? "Open editor pattern" : saved ? "Saved template pattern" : "Starter template pattern"}</span><p className="admin-calendar-template-text" aria-label="Calendar template pattern">{sources ? <CalendarVariableText text={pattern} /> : "Loading saved template…"}</p></div>
         : view === "variables" ? <div className="admin-editor-guidance admin-calendar-variables"><p>Select Edit passage to change reusable writing, or Write passage to fill an overview field. Changes appear in the preview while you edit; Save keeps them. Dates and positions update from the ephemeris.</p>
           {calculation && !seasons.closing && <p role="note">No zodiac season change in this period. Closing-season variables are not needed.</p>}
           <table className="admin-data-table" aria-label="Calendar preview variables"><thead><tr><th scope="col">Variable</th><th scope="col">Writing or value</th><th scope="col">Edit</th></tr></thead><tbody>{availableNames.filter(name => !calculation || seasons.closing || !/^(closing|seasonChangeDate)/u.test(name)).map(name => {
@@ -110,7 +111,7 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
           const source = sources?.find(row => row.content_key === sourceKey);
           const unavailable = field ? field.help : sourceKey ? "Add or edit the shared passage for this sign." : mode === "signs" ? "Choose Use ephemeris to calculate dates and season changes." : "This fact is not available for the selected period.";
           const kind = value?.kind === "fact" ? "Read-only ephemeris" : value?.kind === "example" ? "Example sign" : value?.sourceLabel ?? (value ? "Saved writing" : field || sourceKey ? "Needs writing" : "Unavailable");
-          return <tr key={name}><th scope="row"><code>{`{{${name}}}`}</code><span className="admin-field-hint">{kind}</span></th>
+          return <tr key={name}><th scope="row"><code className="admin-composition-variable-token" data-variable-name={name} data-variable-color={calendarVariableColor(name)}>{`{{${name}}}`}</code><span className="admin-field-hint">{kind}</span></th>
             <td><p className="admin-calendar-template-text">{value?.text ?? unavailable}</p></td>
             <td>{field ? <StudioButton onClick={() => onEditOverview(field.name)} aria-label={`Edit ${name}`}>{value ? "Edit passage" : "Write passage"}</StudioButton>
               : source ? <StudioButton onClick={() => onEditSource(source)} aria-label={`Edit ${name}`}>Edit passage</StudioButton>
@@ -118,7 +119,7 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
         : <div className="admin-template-reader-surface"><div className="admin-template-reader-copy">
           {ready ? <>
 
-            <div className="admin-composition-preview-field"><span>{saved ? "Saved template" : "Starter template"}{draft?.contentKey === template.contentKey ? " · including open editor changes" : ""}</span><p className="admin-calendar-template-text" aria-label="Rendered Calendar template">{segments.map((segment, index) => <span key={index} className={segment.value ? `admin-composition-variable variable-${segment.value.kind === "copy" ? "copy" : "fact"}` : segment.name ? "variable-unmapped" : undefined} title={segment.name ? `{{${segment.name}}} · ${segment.value?.kind === "fact" ? "Read-only ephemeris" : segment.value?.kind === "copy" ? "Saved writing" : segment.value ? "Example sign" : "Needs writing or a calculated value"}` : undefined}>{segment.text}</span>)}</p></div>
+            <div className="admin-composition-preview-field"><span>{saved ? "Saved template" : "Starter template"}{draft?.contentKey === template.contentKey ? " · including open editor changes" : ""}</span><p className="admin-calendar-template-text" aria-label="Rendered Calendar template">{segments.map((segment, index) => <span key={index} data-variable-name={segment.name} data-variable-color={segment.name ? calendarVariableColor(segment.name) : undefined} className={segment.value ? `admin-composition-variable variable-${segment.value.kind === "copy" ? "copy" : "fact"}` : segment.name ? "admin-composition-variable variable-unmapped" : undefined} title={segment.name ? `{{${segment.name}}} · ${segment.value?.kind === "fact" ? "Read-only ephemeris" : segment.value?.kind === "copy" ? "Saved writing" : segment.value ? "Example sign" : "Needs writing or a calculated value"}` : undefined}>{segment.text}</span>)}</p></div>
             {missing.length > 0 && <p role="note">Unfilled variables: {missing.map(name => `{{${name}}}`).join(", ")}. Open the template to fill the overview passages. Missing season passages can be written in the shared Zodiac season sources.</p>}
           </> : <p>The preview will appear when its facts and saved sources are ready.</p>}
         </div></div>}
