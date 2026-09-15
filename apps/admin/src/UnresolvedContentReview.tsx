@@ -537,7 +537,7 @@ export function UnresolvedContentReview({
                   <div className="admin-unresolved-current-step">
                     <span className={`admin-unresolved-state is-${workflow.status}`}>{workflow.statusLabel}</span>
                     <strong>{workflow.currentStep}</strong>
-                    <small>{workflow.explanation}</small>
+                    <p>{workflow.explanation}</p>
                     <span className="admin-unresolved-owner">Responsible now: <strong>{workflow.responsibleParty}</strong></span>
                   </div>
                   <ol className="admin-unresolved-progress" aria-label={`Resolution progress for ${issue.contentKey}`}>
@@ -550,7 +550,7 @@ export function UnresolvedContentReview({
                     <strong>Completed checks</strong>
                     <ul>{workflow.completedChecks.map((check) => <li key={check}>✓ {check}</li>)}</ul>
                   </div>
-                  {issue.resolution && <details className="admin-unresolved-diagnosis"><AdminDisclosureSummary>Codex diagnosis</AdminDisclosureSummary><small>{issue.resolution.diagnosis}</small></details>}
+                  {issue.resolution && <details className="admin-unresolved-diagnosis"><AdminDisclosureSummary>Codex diagnosis</AdminDisclosureSummary><p>{issue.resolution.diagnosis}</p></details>}
                 </td>
                 <td data-label="Source records"><details><AdminDisclosureSummary>{issue.records.length} record(s)</AdminDisclosureSummary>{issue.records.map((record) => <code key={record.id}>{record.reviewStatus}: {record.sourcePath}{record.objectPath}</code>)}</details></td>
                 <td data-label="Next step">{sourceRepair && issue.repairPlan
@@ -563,14 +563,14 @@ export function UnresolvedContentReview({
                         <StudioButton className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, "implementation", editorialSourceImplementationRequest(issue, editorialDecision))}>{requestCopied ? "Copy implementation request again" : "Copy source implementation request"}</StudioButton>
                         <StudioButton className="admin-edit-row-button" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>View reviewed copy</StudioButton>
                         <small><strong>Approved hash:</strong> <code>{editorialDecision.copySha256}</code></small>
-                        <small>The copy remains held until Codex updates and deploys the governed source package.</small>
+                        <p>The copy remains held until Codex updates and deploys the governed source package.</p>
                       </div>
                   : canOpen
                     ? <div className="admin-unresolved-actions admin-unresolved-review-action">
                         <strong>Your next action</strong>
                         <StudioButton className="admin-edit-row-button is-primary" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Review this horoscope</StudioButton>
-                        <small><strong>Opens:</strong> the Content Library editor with this exact row already selected.</small>
-                        <small><strong>Review:</strong> the headline and full Body for accuracy, tone, repetition, and unfinished placeholders.</small>
+                        <p><strong>Opens:</strong> the Content Library editor with this exact row already selected.</p>
+                        <p><strong>Review:</strong> the headline and full Body for accuracy, tone, repetition, and unfinished placeholders.</p>
                       </div>
                     : issue.resolution?.result_status === "implemented"
                       ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting for import</span><StudioButton className="admin-edit-row-button" type="button" onClick={() => setRefreshToken((current) => current + 1)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh status"}</StudioButton></div>
