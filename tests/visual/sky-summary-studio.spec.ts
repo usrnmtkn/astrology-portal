@@ -175,6 +175,9 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [] }] } } }));
   await reader.goto(`${readerBaseURL}/#sky`);
   const summary = reader.getByLabel("Daily sky summary");
+  // Hidden mounted copy can resolve before the calculated reading is ready.
+  // Exercise the visible reader before checking its accessible links.
+  await expect(summary).toBeVisible({ timeout: 60_000 });
   await expect(summary).toContainText("The next New Moon in Virgo is in 3 days.");
   const sunLink = summary.getByRole("link", { name: "Read about Sun in Virgo", exact: true });
   const moonLink = summary.getByRole("link", { name: "Read about Moon in Cancer", exact: true });
@@ -185,6 +188,7 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
   await page.getByRole("button", { name: "Save & publish", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("LIVE");
   await reader.reload();
+  await expect(summary).toBeVisible({ timeout: 60_000 });
   await expect(summary).toContainText("The next New Moon in Virgo happens in 3 days.");
   await expect(summary.getByRole("link", { name: "New Moon in Virgo", exact: true })).toHaveText("New Moon in Virgo");
   await expect(summary.locator("mark.content-highlight").filter({ hasText: "void of course" })).toContainText("void of course");
@@ -196,6 +200,7 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
   await page.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   await reader.reload();
+  await expect(summary).toBeVisible({ timeout: 60_000 });
   await expect(summary).toContainText("The next New Moon in Virgo is in 3 days.");
 });
 
