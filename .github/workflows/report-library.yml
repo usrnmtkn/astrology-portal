@@ -8,6 +8,7 @@ on:
       - "api/_lib/report-library-deletion.ts"
       - "scripts/test-report-library-delete*.mjs"
       - "tests/visual/report-library-delete.spec.ts"
+      - "tests/visual/report-generation-beam.spec.ts"
       - "tests/visual/you-report-auth.spec.ts"
       - "tests/visual/you-report-page.spec.ts"
       - "tests/visual/friend-report-state.spec.ts"
@@ -25,6 +26,7 @@ on:
       - "apps/web/src/services/reportSharing.ts"
       - "apps/web/src/services/userGeneratedContent.ts"
       - "apps/web/src/styles/report-library.css"
+      - "apps/web/src/styles/report-generation-beam.css"
       - "apps/web/src/styles/report-notifications.css"
       - "apps/web/src/main.tsx"
       - "apps/web/supabase/migrations/*report_library*.sql"
@@ -40,6 +42,7 @@ on:
       - "api/_lib/report-library-deletion.ts"
       - "scripts/test-report-library-delete*.mjs"
       - "tests/visual/report-library-delete.spec.ts"
+      - "tests/visual/report-generation-beam.spec.ts"
       - "tests/visual/you-report-auth.spec.ts"
       - "tests/visual/you-report-page.spec.ts"
       - "tests/visual/friend-report-state.spec.ts"
@@ -57,6 +60,7 @@ on:
       - "apps/web/src/services/reportSharing.ts"
       - "apps/web/src/services/userGeneratedContent.ts"
       - "apps/web/src/styles/report-library.css"
+      - "apps/web/src/styles/report-generation-beam.css"
       - "apps/web/src/styles/report-notifications.css"
       - "apps/web/src/main.tsx"
       - "apps/web/supabase/migrations/*report_library*.sql"
@@ -101,7 +105,7 @@ jobs:
         run: npm run build:knowledge
       - run: npx playwright install --with-deps chromium
       - name: Verify standalone Reports UI
-        run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts tests/visual/report-library-delete.spec.ts tests/visual/you-report-auth.spec.ts tests/visual/you-report-page.spec.ts tests/visual/friend-report-state.spec.ts
+        run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts tests/visual/report-library-delete.spec.ts tests/visual/report-generation-beam.spec.ts tests/visual/you-report-auth.spec.ts tests/visual/you-report-page.spec.ts tests/visual/friend-report-state.spec.ts
 
   report-library-database:
     runs-on: ubuntu-latest
