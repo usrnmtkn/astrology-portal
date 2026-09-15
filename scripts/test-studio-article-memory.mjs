@@ -29,7 +29,10 @@ try{
   assert.equal(selectStudioFeedback([active],'sky-article/saturn/pisces/2023').receipt.selected.length,0);
   assert.equal(selectStudioFeedback([{...active,scope:'sky',family:'sky-placement',content_key:'sky.placement.base.sun.leo'}],edition.contentKey).receipt.selected.length,0);
   const packet=await studioArticleWritingMemory({planet:'saturn',sign:'aries',facts:{entryYear:2026}});
-  assert.equal(packet.receipt.selected.length,1);assert(packet.prompt.includes('Synthetic complete house ending'));
+  assert(packet.receipt.selected.length>=1);
+  assert(packet.receipt.selected.some(item=>String(item.memoryId).startsWith('studio-')),'Combined memory must retain the approved Studio correction.');
+  assert(packet.prompt.includes('Synthetic complete house ending'));
+  assert(packet.prompt.includes('Unchanged fields and unchanged wording are context, not rejected writing.'));
   assert(!JSON.stringify(packet.receipt).includes('Synthetic complete'));
   result=await review(active,'active','family','Synthetic explicit article-family decision');assert.equal(result.statusCode,200);
   active=result.payload.rows[0];
@@ -59,5 +62,5 @@ try{
   for(const role of ['anon','authenticated']){await db.exec(`set role ${role}`);await assert.rejects(db.query("select studio_article_memory_fields('{}')"),/permission denied/);await db.exec('reset role');}
   globalThis.fetch=async()=>{throw new Error('Synthetic memory outage')};
   await assert.rejects(studioArticleWritingMemory({planet:'saturn',sign:'aries',facts:{entryYear:2026}}),/Storage request failed/);
-  console.log('Article memory passed: real structured save/approval, full fields, first published revision, exact scope, private metadata, retirement, and fail-closed retrieval.');
+  console.log('Article memory passed: real structured save/approval, combined governed corrections, full fields, first published revision, exact scope, private metadata, retirement, and fail-closed retrieval.');
 }finally{await db.close();delete process.env.STUDIO_MEMORY_FEEDBACK_ENABLED;}
