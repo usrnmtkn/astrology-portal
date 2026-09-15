@@ -1,6 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
+
+const editorialSourceBank = JSON.parse(readFileSync(path.resolve('apps/web/src/content/fallbackArchitectureV3/source-rows/editorial-source-bank-v1.json'), 'utf8'));
+const virgoAxisBody: string = editorialSourceBank.collections.find((collection: any) => collection.id === 'sign-axis-tensions')
+ .entries.find((entry: any) => entry.id === 'virgo-pisces').body;
+const revisedAxisBody = 'Fixture revised Virgo axis opening from the Variables directory.\n\nFixture complete Virgo axis final sentence.';
 
 for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1440, 'dark']] as const) {
  test(`Variables directory search, filters, source editing and return at ${width} ${theme}`, async ({ page, context }) => {
@@ -95,15 +101,21 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await variable.getByRole('button', {name: 'Edit source', exact: true}).click();
    const editor = page.getByRole('dialog');
    const writing = editor.locator('textarea[data-sky-field="body"]');
-   await expect(writing).toHaveValue('');
-   await writing.fill('Fixture full Virgo axis prose from the Variables directory.');
+   // Missing Calendar sources are prepared from the complete canonical entry.
+   expect(virgoAxisBody).toMatch(/^Core Tension: Control vs\. Surrender /);
+   expect(virgoAxisBody).toMatch(/or drifted into fantasy to avoid facing reality\.$/);
+   await expect(writing).toHaveValue(virgoAxisBody);
+   await writing.fill(revisedAxisBody);
    await editor.getByRole('button', {name: 'Save draft', exact: true}).click();
-   await expect.poll(async () => (await call({method:'rows'})).some((row:any) => row.content_key === 'fallback-hook/zodiac-season-polar-axis/virgo' && JSON.stringify(row).includes('Fixture full Virgo axis prose from the Variables directory.'))).toBe(true);
+   await expect.poll(async () => {
+    const row = (await call({method:'rows'})).find((row:any) => row.content_key === 'fallback-hook/zodiac-season-polar-axis/virgo');
+    return {body: row?.sections?.packageDraft?.body, status: row?.status};
+   }).toEqual({body: revisedAxisBody, status: 'DRAFT'});
    await editor.getByRole('button', {name: /Close/}).first().click();
    await expect(directory.getByLabel('Search variables', {exact: true})).toHaveValue('zodiacSeasonPolarAxis');
    await expect(directory.getByLabel('Used in', {exact: true})).toHaveValue('Natal');
    await variable.getByRole('button', {name: 'Edit source', exact: true}).click();
-   await expect(writing).toHaveValue('Fixture full Virgo axis prose from the Variables directory.');
+   await expect(writing).toHaveValue(revisedAxisBody);
    await editor.getByRole('button', {name: /Close/}).first().click();
    await directory.getByLabel('Search variables', {exact: true}).fill('planetFunction');
    await directory.getByLabel('Used in', {exact: true}).selectOption('Sky');
