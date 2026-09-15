@@ -1103,6 +1103,7 @@ const generatedContentOwnerActions = new Set([
 ]);
 
 function validateWriteBody(body: Record<string, unknown>) {
+  if (/^studio-monthly\//u.test(String(body.contentKey ?? ""))) throw new GeneratedContentRequestError("Manage monthly writing in Calendar → Monthly Sky.");
   if (String(body.contentKey ?? "").startsWith(STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   try { assertCleanReaderCopy(body); } catch (error) {
     throw new GeneratedContentRequestError((error as Error).message);
@@ -2197,6 +2198,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (body.expectedUpdatedAt && body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
   }
+  if (existing.content_key.startsWith("studio-monthly/")) throw new GeneratedContentRequestError("Manage monthly writing in Calendar → Monthly Sky.");
   if (existing.content_key.startsWith(STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   await prepareStudioVariables(body);
   existing = await recoverPublishedSkyRevision(existing, body);
@@ -2920,6 +2922,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (!existing) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
   }
+  if (existing.content_key.startsWith("studio-monthly/")) throw new GeneratedContentRequestError("Manage monthly writing in Calendar → Monthly Sky.");
   if (existing.content_key.startsWith(STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.status === "LIVE") {
     throw new GeneratedContentRequestError("Published rows cannot be hard-deleted. Demote or archive the row first.", 409);
