@@ -23,3 +23,6 @@ assert(variables.filter(variable => variable.name === 'passEntryDate').every(var
 assert(variables.filter(variable => variable.kind === 'readonly').every(variable => variable.sources.length === 0));
 assert.throws(() => decodeStudioVariableCatalog({...encoded, usages: []}), /incomplete/);
 console.log(`PASS ${variables.length} variable definitions, contract coverage, source scopes, syntax, filters, and shipped catalog parity`);
+
+for (const name of ["articleBody", "articleHeadline", "angleIntro", "allWord", "aRef"]) assert(!variables.some(variable => variable.name === name), `${name} must not be offered as reusable writing`);
+assert(variables.every(variable => variable.kind !== "unmapped"));

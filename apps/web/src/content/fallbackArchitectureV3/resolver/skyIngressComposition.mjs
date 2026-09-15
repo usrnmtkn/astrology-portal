@@ -1,3 +1,4 @@
+import { studioVariableValue } from "../../studioCustomVariables.mjs";
 import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey, zodiacSeasonContextSign, resolveZodiacSeasonVariables } from "./zodiacSeasonVariables.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
 import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableFacts } from "./skyPlacementVariables.mjs";
@@ -29,7 +30,7 @@ export const SKY_INGRESS_VARIABLES = Object.freeze([
 const factNames = new Set([...SKY_PLACEMENT_VARIABLES, ...SKY_INGRESS_VARIABLES].map(item => item.name));
 const identifier = value => typeof value === "string" && /^[a-zA-Z][a-zA-Z0-9-]{0,63}$/u.test(value) && !["constructor", "prototype", "__proto__"].includes(value);
 const object = value => value && typeof value === "object" && !Array.isArray(value);
-const tokens = value => [...String(value).matchAll(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu)];
+const tokens = value => [...String(value).matchAll(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu)];
 const title = value => String(value ?? "").split(/[- ]/u).map(part => part[0]?.toUpperCase() + part.slice(1).toLowerCase()).join(" ");
 const fail = message => { throw new Error(`SKY_V5_COMPOSITION: ${message}`); };
 const exactKeys = (value, keys) => object(value) && Object.keys(value).every(key => keys.includes(key));
@@ -65,19 +66,19 @@ export function ingressTextIssues(text, sourceNames = []) {
   if (typeof text !== "string") return ["Writing must be text."];
   const names = new Set([...factNames, ...sourceNames]);
   const issues = tokens(text).filter(match => !names.has(match[1])).map(match => `Unknown ingress slot ${match[0]}.`);
-  if (/\{\{|\}\}/u.test(text.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, ""))) issues.push("Use complete {{name}} tokens; conditional blocks and nested references are not supported.");
+  if (/\{\{|\}\}/u.test(text.replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, ""))) issues.push("Use complete {{name}} tokens; conditional blocks and nested references are not supported.");
   return [...new Set(issues)];
 }
 
-export function validateSkyIngressComposition(value) {
+export function validateSkyIngressComposition(value, customNames = []) {
   if (value === undefined || value === null) return;
   if (!exactKeys(value, ["version", "enabled", "sources", "modules"]) || value.version !== 5 || typeof value.enabled !== "boolean" || !object(value.sources) || !Array.isArray(value.modules)) fail("Choose a version 5 composition with sources and ordered modules.");
   if (Object.keys(value.sources).length > 80 || value.modules.length > 32 || JSON.stringify(value).length > 180000) fail("Composition exceeds the supported size.");
   for (const [id, source] of Object.entries(value.sources)) {
-    if (!identifier(id) || !/^[A-Za-z][A-Za-z0-9]*$/u.test(id) || factNames.has(id) || !exactKeys(source, ["kind", "text", "reference"]) || !["planet", "sign", "placement", "timing", "aspect"].includes(source.kind)) fail(`Invalid source ${id}.`);
+    if (!identifier(id) || !/^[A-Za-z][A-Za-z0-9_]*$/u.test(id) || factNames.has(id) || !exactKeys(source, ["kind", "text", "reference"]) || !["planet", "sign", "placement", "timing", "aspect"].includes(source.kind)) fail(`Invalid source ${id}.`);
     if (source.reference !== undefined) {
       const ref = source.reference;
-      if (source.text !== undefined || !exactKeys(ref, ["contentKey", "field", "sha256"]) || !/^sky-placement\/article\/[a-z-]+\/[a-z-]+$/u.test(ref.contentKey) || !/^ingress\.sources\.[A-Za-z][A-Za-z0-9]*$/u.test(ref.field) || !/^[a-f0-9]{64}$/u.test(ref.sha256)) fail(`Source ${id} needs an exact field reference and text hash.`);
+      if (source.text !== undefined || !exactKeys(ref, ["contentKey", "field", "sha256"]) || !/^sky-placement\/article\/[a-z-]+\/[a-z-]+$/u.test(ref.contentKey) || !/^ingress\.sources\.[A-Za-z][A-Za-z0-9_]*$/u.test(ref.field) || !/^[a-f0-9]{64}$/u.test(ref.sha256)) fail(`Source ${id} needs an exact field reference and text hash.`);
     } else {
       if (typeof source.text !== "string" || source.text.length > 20000) fail(`Source ${id} needs writing.`);
       const issues = ingressTextIssues(source.text);
@@ -88,19 +89,24 @@ export function validateSkyIngressComposition(value) {
   for (const module of value.modules) {
     if (!exactKeys(module, ["id", "label", "template", "required", "enabled", "motion", "duration", "timing", "aspect"]) || !identifier(module.id) || ids.has(module.id) || typeof module.label !== "string" || module.label.length > 120 || typeof module.template !== "string" || module.template.length > 20000 || typeof module.required !== "boolean" || typeof module.enabled !== "boolean" || !["all", "direct", "retrograde"].includes(module.motion) || !["all", "short", "long"].includes(module.duration) || !["all", "single_pass", "first_pass", "return_pass", "final_pass"].includes(module.timing)) fail("Each module needs a unique ID, template, and valid selection rules.");
     ids.add(module.id);
-    const issues = ingressTextIssues(module.template, [...Object.keys(value.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id)]);
+    const issues = ingressTextIssues(module.template, [...Object.keys(value.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id), ...customNames]);
     if (issues.length) fail(`${module.label}: ${issues.join(" ")}`);
     if (module.aspect !== undefined && (!exactKeys(module.aspect, ["otherPlanet", "type", "weight"]) || !/^(sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|lilith)$/u.test(module.aspect.otherPlanet) || !["conjunction", "sextile", "square", "trine", "opposition"].includes(module.aspect.type) || !["defining", "supporting", "minor"].includes(module.aspect.weight))) fail(`${module.label}: invalid aspect selection.`);
   }
 }
 
 export function ingressSourceAt(record, field) {
-  const match = /^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u.exec(field);
+  const match = /^ingress\.sources\.([A-Za-z][A-Za-z0-9_]*)$/u.exec(field);
   return match && record?.ingress?.sources?.[match[1]];
 }
 
 /** References are one hop, hash-pinned, and resolved from the already eligible snapshot. */
-export function resolveIngressSource(owner, id, records = []) {
+export function resolveIngressSource(owner, id, records = [], context = owner) {
+  const custom = owner._studioVariables?.find(item => item.name === id);
+  if (custom) {
+    const { value } = studioVariableValue(custom, context);
+    return { reference: `studio-variable/${id}#value`, kind: "custom", text: value, reason: value?.trim() ? "" : "Complete this variable in Variables before publishing" };
+  }
   const source = owner.ingress?.sources?.[id];
   const localRef = `${owner.contentKey}#ingress.sources.${id}`;
   if (!source && ZODIAC_SEASON_VARIABLES.some(field => field.id === id)) {
@@ -150,12 +156,12 @@ export function skyIngressOccurrence(input = {}) {
 
 function fillText(text, facts) {
   const missing = tokens(text).filter(match => typeof facts[match[1]] !== "string" || !facts[match[1]].trim()).map(match => match[1]);
-  return { missing, text: missing.length ? "" : text.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, (_, name) => facts[name]) };
+  return { missing, text: missing.length ? "" : text.replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (_, name) => facts[name]) };
 }
 
 export function renderSkyIngressComposition(owner, input = {}, records = [], options = {}) {
   const composition = owner?.ingress;
-  validateSkyIngressComposition(composition);
+  validateSkyIngressComposition(composition, owner?._studioVariables?.map(item => item.name));
   if (!composition) return { status: "absent", body: "", trace: [] };
   if (!composition.enabled && !options.preview) return { status: "disabled", body: "", trace: [] };
   const occurrence = skyIngressOccurrence(input);
@@ -183,7 +189,7 @@ export function renderSkyIngressComposition(owner, input = {}, records = [], opt
         if (Object.hasOwn(values, name)) continue;
         if (factNames.has(name)) { values[name] = facts[name]; slots.push({ name, kind: "fact", text: facts[name] ?? "", reference: `calculated#${name}`, reason: facts[name] ? "" : "Needs calculated value" }); }
         else {
-          const source = resolveIngressSource(owner, name, records);
+          const source = resolveIngressSource(owner, name, records, input);
           const filled = source.text?.trim() ? fillText(source.text, facts) : { text: "", missing: [] };
           values[name] = filled.text;
           slots.push({ name, ...source, raw: source.text ?? "", text: filled.text, reason: source.reason || (filled.missing.length ? `Needs calculated ${filled.missing.join(", ")}` : !filled.text ? "No writing saved" : "") });
@@ -192,7 +198,7 @@ export function renderSkyIngressComposition(owner, input = {}, records = [], opt
       const result = fillText(module.template, values);
       const missing = slots.filter(slot => slot.reason);
       const incomplete = missing.length > 0 || !result.text.trim();
-      if (incomplete && (module.required || missing.some(slot => ZODIAC_SEASON_VARIABLES.some(field => field.id === slot.name)))) requiredGap = true;
+      if (incomplete && (module.required || missing.some(slot => (slot.kind === "custom" || ZODIAC_SEASON_VARIABLES.some(field => field.id === slot.name))))) requiredGap = true;
       trace.push({ id: module.id, eventId: event?.id, label: module.label, template: module.template, status: incomplete ? "omitted" : "included", reason: incomplete ? `${module.required ? "Required module incomplete" : "Optional module omitted"}: ${missing.map(slot => slot.name).join(", ") || "empty template"}` : "Selected by this composition", text: result.text, slots });
     }
   }
@@ -202,7 +208,7 @@ export function renderSkyIngressComposition(owner, input = {}, records = [], opt
 
 /** Publication checks writing completeness without requiring an invented occurrence. */
 export function skyIngressPublicationIssues(owner, records = []) {
-  validateSkyIngressComposition(owner.ingress);
+  validateSkyIngressComposition(owner.ingress, owner._studioVariables?.map(item => item.name));
   if (!owner.ingress?.enabled) return [];
   const issues = [];
   const required = owner.ingress.modules.filter(module => module.required && module.enabled);

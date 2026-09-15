@@ -107,7 +107,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   };
 
   const articleNeedsLibrary = ["placementArticle", "placementArticleDirect", "placementArticleRetrograde"]
-    .some(path => skyPlacementArticlePhraseNames((source as Record<string, any> | undefined)?.[path]).length > 0);
+    .some(path => skyPlacementArticlePhraseNames((source as Record<string, any> | undefined)?.[path]).some((name: string) => !(source as Record<string, any> | undefined)?._studioVariables?.some((item: any) => item.name === name)));
   const [articleLibraryRequested, setArticleLibraryRequested] = useState(false);
   const libraryRequested = Boolean(initialLibrarySourceId || articleNeedsLibrary || articleLibraryRequested);
 

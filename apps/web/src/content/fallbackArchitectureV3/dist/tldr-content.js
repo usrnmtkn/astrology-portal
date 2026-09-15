@@ -1,3 +1,80 @@
+// apps/web/src/content/studioCustomVariables.mjs
+var VARIABLE_SIGNS = "aries taurus gemini cancer leo virgo libra scorpio sagittarius capricorn aquarius pisces".split(" ");
+var VARIABLE_PLANETS = "sun moon mercury venus mars jupiter saturn uranus neptune pluto chiron lilith north-node south-node".split(" ");
+var object = (value) => value && typeof value === "object" && !Array.isArray(value);
+var normalize = (value, allowed) => typeof value === "string" && allowed.includes(value.trim().toLowerCase()) ? value.trim().toLowerCase() : "";
+function studioVariableContext(context = {}) {
+  const parts = String(context.contentKey ?? context.content_key ?? "").split("/");
+  const planet = [context.planet, context.planetTitle, context.Planet, context.transiting, context.transitPlanet, ...parts].map((value) => normalize(value, VARIABLE_PLANETS)).find(Boolean) ?? "";
+  const sign = [context.sign, context.signTitle, context.Sign, context.SubjectSign, context.signA, context.signATitle, ...parts].map((value) => normalize(value, VARIABLE_SIGNS)).find(Boolean) ?? "";
+  return { planet, sign };
+}
+function studioVariableValue(definition, context = {}) {
+  const { planet, sign } = studioVariableContext(context);
+  const overrides = definition.overrides ?? [];
+  const selected = overrides.find((item) => item.scope === "placement" && item.planet === planet && item.sign === sign) ?? overrides.find((item) => item.scope === "planet" && item.planet === planet) ?? overrides.find((item) => item.scope === "sign" && item.sign === sign);
+  return { value: selected ? selected.value : definition.value, scope: selected?.scope ?? "shared" };
+}
+var readerFields = /* @__PURE__ */ new Set(["body", "body_you", "body_they", "headline", "summary", "template", "copy", "text", "title", "question", "placementArticle", "placementArticleDirect", "placementArticleRetrograde", "tldrLead", "tldrTakeaway", "Body", "Copy", "Template", "Article", "NewMoonArticle", "FullMoonArticle", "EventArticle", "FallbackArticle", "ModifierArticle", "NodeAxisArticle", "ExactIngressCopy", "LilithArticle", "OverlayBody", "TLDR_Lead", "TLDR_Takeaway", "CanonicalShort"]);
+function mapStudioVariableCopy(record2, map) {
+  const result = { ...record2 };
+  for (const key of readerFields) if (typeof record2[key] === "string") result[key] = map(record2[key]);
+  for (const field2 of record2.studio_editable_fields ?? []) {
+    const path = typeof field2 === "string" ? field2 : field2?.path;
+    if (!path || path.startsWith("_studio") || path.split(".").some((key) => ["__proto__", "constructor", "prototype"].includes(key))) continue;
+    const keys = path.split(".");
+    let source = record2, target = result;
+    for (const key of keys.slice(0, -1)) {
+      if (!object(source?.[key])) {
+        source = null;
+        break;
+      }
+      source = source[key];
+      target[key] = { ...target[key] ?? source };
+      target = target[key];
+    }
+    const last = keys.at(-1);
+    if (source && typeof source[last] === "string") target[last] = map(source[last]);
+  }
+  if (Array.isArray(record2.ingress?.modules)) result.ingress = { ...record2.ingress, modules: record2.ingress.modules.map((module) => ({ ...module, template: typeof module.template === "string" ? map(module.template) : module.template })) };
+  else if (object(record2.ingress?.modules)) result.ingress = { ...record2.ingress, modules: Object.fromEntries(Object.entries(record2.ingress.modules).map(([key, value]) => [key, typeof value === "string" ? map(value) : value])) };
+  return result;
+}
+function resolveStudioVariableCopy(copy, bindings = [], context = {}) {
+  const indexed = new Map(bindings.map((item) => [item.name, item]));
+  return String(copy ?? "").replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (token, name) => {
+    const definition = indexed.get(name);
+    if (!definition) return token;
+    const { value } = studioVariableValue(definition, context);
+    if (typeof value !== "string" || !value.trim() || /\{\{|\}\}/u.test(value)) throw new Error(`Missing value for ${token}. Open Variables to complete it before publishing.`);
+    return value;
+  });
+}
+function resolveStudioVariableRecord(record2, context = {}) {
+  const bindings = record2?._studioVariables;
+  if (!Array.isArray(bindings) || !bindings.length) return record2;
+  const result = mapStudioVariableCopy(record2, (copy) => resolveStudioVariableCopy(copy, bindings, { ...studioVariableContext(record2), ...context }));
+  const names3 = new Set(bindings.map((item) => item.name));
+  for (const field2 of ["requiredSlots", "optionalSlots"]) if (Array.isArray(result[field2])) result[field2] = result[field2].filter((name) => !names3.has(name));
+  delete result._studioVariables;
+  return result;
+}
+function bindStudioVariableRenderer(renderer, create, collections) {
+  if (!collections.some((rows) => rows.some((row) => row?._studioVariables?.length))) return renderer;
+  const cache = /* @__PURE__ */ new Map();
+  return Object.fromEntries(Object.entries(renderer).map(([key, render]) => [key, typeof render !== "function" ? render : (...args) => {
+    const context = object(args[0]) ? args[0] : {};
+    const selection = studioVariableContext(context);
+    const cacheKey = `${selection.planet}/${selection.sign}`;
+    if (!cache.has(cacheKey)) {
+      const resolved = collections.map((rows) => rows.map((row) => resolveStudioVariableRecord(row, context)));
+      if (cache.size >= 24) cache.delete(cache.keys().next().value);
+      cache.set(cacheKey, create(resolved));
+    }
+    return cache.get(cacheKey)[key](...args);
+  }]));
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs
 var retiredCompositionFamilies = [
   "cms/personal-transit-aspect/",
@@ -442,13 +519,13 @@ var SKY_INGRESS_VARIABLES = Object.freeze([
 ]);
 var factNames = new Set([...SKY_PLACEMENT_VARIABLES, ...SKY_INGRESS_VARIABLES].map((item) => item.name));
 var identifier = (value) => typeof value === "string" && /^[a-zA-Z][a-zA-Z0-9-]{0,63}$/u.test(value) && !["constructor", "prototype", "__proto__"].includes(value);
-var object = (value) => value && typeof value === "object" && !Array.isArray(value);
-var tokens = (value) => [...String(value).matchAll(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu)];
+var object2 = (value) => value && typeof value === "object" && !Array.isArray(value);
+var tokens = (value) => [...String(value).matchAll(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu)];
 var title3 = (value) => String(value ?? "").split(/[- ]/u).map((part) => part[0]?.toUpperCase() + part.slice(1).toLowerCase()).join(" ");
 var fail = (message) => {
   throw new Error(`SKY_V5_COMPOSITION: ${message}`);
 };
-var exactKeys = (value, keys) => object(value) && Object.keys(value).every((key) => keys.includes(key));
+var exactKeys = (value, keys) => object2(value) && Object.keys(value).every((key) => keys.includes(key));
 var dateValue = (value) => typeof value === "string" && Number.isFinite(Date.parse(value)) ? Date.parse(value) : NaN;
 function makeSkyIngressComposition() {
   const module = (id, label, names3, required2 = false, extra = {}) => ({ id, label, required: required2, enabled: true, motion: "all", duration: "all", timing: "all", template: names3.map((name) => `{{${name}}}`).join(" "), ...extra });
@@ -479,18 +556,18 @@ function ingressTextIssues(text2, sourceNames = []) {
   if (typeof text2 !== "string") return ["Writing must be text."];
   const names3 = /* @__PURE__ */ new Set([...factNames, ...sourceNames]);
   const issues = tokens(text2).filter((match) => !names3.has(match[1])).map((match) => `Unknown ingress slot ${match[0]}.`);
-  if (/\{\{|\}\}/u.test(text2.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, ""))) issues.push("Use complete {{name}} tokens; conditional blocks and nested references are not supported.");
+  if (/\{\{|\}\}/u.test(text2.replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, ""))) issues.push("Use complete {{name}} tokens; conditional blocks and nested references are not supported.");
   return [...new Set(issues)];
 }
-function validateSkyIngressComposition(value) {
+function validateSkyIngressComposition(value, customNames = []) {
   if (value === void 0 || value === null) return;
-  if (!exactKeys(value, ["version", "enabled", "sources", "modules"]) || value.version !== 5 || typeof value.enabled !== "boolean" || !object(value.sources) || !Array.isArray(value.modules)) fail("Choose a version 5 composition with sources and ordered modules.");
+  if (!exactKeys(value, ["version", "enabled", "sources", "modules"]) || value.version !== 5 || typeof value.enabled !== "boolean" || !object2(value.sources) || !Array.isArray(value.modules)) fail("Choose a version 5 composition with sources and ordered modules.");
   if (Object.keys(value.sources).length > 80 || value.modules.length > 32 || JSON.stringify(value).length > 18e4) fail("Composition exceeds the supported size.");
   for (const [id, source] of Object.entries(value.sources)) {
-    if (!identifier(id) || !/^[A-Za-z][A-Za-z0-9]*$/u.test(id) || factNames.has(id) || !exactKeys(source, ["kind", "text", "reference"]) || !["planet", "sign", "placement", "timing", "aspect"].includes(source.kind)) fail(`Invalid source ${id}.`);
+    if (!identifier(id) || !/^[A-Za-z][A-Za-z0-9_]*$/u.test(id) || factNames.has(id) || !exactKeys(source, ["kind", "text", "reference"]) || !["planet", "sign", "placement", "timing", "aspect"].includes(source.kind)) fail(`Invalid source ${id}.`);
     if (source.reference !== void 0) {
       const ref = source.reference;
-      if (source.text !== void 0 || !exactKeys(ref, ["contentKey", "field", "sha256"]) || !/^sky-placement\/article\/[a-z-]+\/[a-z-]+$/u.test(ref.contentKey) || !/^ingress\.sources\.[A-Za-z][A-Za-z0-9]*$/u.test(ref.field) || !/^[a-f0-9]{64}$/u.test(ref.sha256)) fail(`Source ${id} needs an exact field reference and text hash.`);
+      if (source.text !== void 0 || !exactKeys(ref, ["contentKey", "field", "sha256"]) || !/^sky-placement\/article\/[a-z-]+\/[a-z-]+$/u.test(ref.contentKey) || !/^ingress\.sources\.[A-Za-z][A-Za-z0-9_]*$/u.test(ref.field) || !/^[a-f0-9]{64}$/u.test(ref.sha256)) fail(`Source ${id} needs an exact field reference and text hash.`);
     } else {
       if (typeof source.text !== "string" || source.text.length > 2e4) fail(`Source ${id} needs writing.`);
       const issues = ingressTextIssues(source.text);
@@ -501,16 +578,21 @@ function validateSkyIngressComposition(value) {
   for (const module of value.modules) {
     if (!exactKeys(module, ["id", "label", "template", "required", "enabled", "motion", "duration", "timing", "aspect"]) || !identifier(module.id) || ids.has(module.id) || typeof module.label !== "string" || module.label.length > 120 || typeof module.template !== "string" || module.template.length > 2e4 || typeof module.required !== "boolean" || typeof module.enabled !== "boolean" || !["all", "direct", "retrograde"].includes(module.motion) || !["all", "short", "long"].includes(module.duration) || !["all", "single_pass", "first_pass", "return_pass", "final_pass"].includes(module.timing)) fail("Each module needs a unique ID, template, and valid selection rules.");
     ids.add(module.id);
-    const issues = ingressTextIssues(module.template, [...Object.keys(value.sources), ...ZODIAC_SEASON_VARIABLES.map((field2) => field2.id)]);
+    const issues = ingressTextIssues(module.template, [...Object.keys(value.sources), ...ZODIAC_SEASON_VARIABLES.map((field2) => field2.id), ...customNames]);
     if (issues.length) fail(`${module.label}: ${issues.join(" ")}`);
     if (module.aspect !== void 0 && (!exactKeys(module.aspect, ["otherPlanet", "type", "weight"]) || !/^(sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|lilith)$/u.test(module.aspect.otherPlanet) || !["conjunction", "sextile", "square", "trine", "opposition"].includes(module.aspect.type) || !["defining", "supporting", "minor"].includes(module.aspect.weight))) fail(`${module.label}: invalid aspect selection.`);
   }
 }
 function ingressSourceAt(record2, field2) {
-  const match = /^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u.exec(field2);
+  const match = /^ingress\.sources\.([A-Za-z][A-Za-z0-9_]*)$/u.exec(field2);
   return match && record2?.ingress?.sources?.[match[1]];
 }
-function resolveIngressSource(owner, id, records = []) {
+function resolveIngressSource(owner, id, records = [], context = owner) {
+  const custom = owner._studioVariables?.find((item) => item.name === id);
+  if (custom) {
+    const { value } = studioVariableValue(custom, context);
+    return { reference: `studio-variable/${id}#value`, kind: "custom", text: value, reason: value?.trim() ? "" : "Complete this variable in Variables before publishing" };
+  }
   const source = owner.ingress?.sources?.[id];
   const localRef = `${owner.contentKey}#ingress.sources.${id}`;
   if (!source && ZODIAC_SEASON_VARIABLES.some((field2) => field2.id === id)) {
@@ -566,11 +648,11 @@ function skyIngressOccurrence(input = {}) {
 }
 function fillText(text2, facts2) {
   const missing = tokens(text2).filter((match) => typeof facts2[match[1]] !== "string" || !facts2[match[1]].trim()).map((match) => match[1]);
-  return { missing, text: missing.length ? "" : text2.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, (_, name) => facts2[name]) };
+  return { missing, text: missing.length ? "" : text2.replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (_, name) => facts2[name]) };
 }
 function renderSkyIngressComposition(owner, input = {}, records = [], options = {}) {
   const composition = owner?.ingress;
-  validateSkyIngressComposition(composition);
+  validateSkyIngressComposition(composition, owner?._studioVariables?.map((item) => item.name));
   if (!composition) return { status: "absent", body: "", trace: [] };
   if (!composition.enabled && !options.preview) return { status: "disabled", body: "", trace: [] };
   const occurrence = skyIngressOccurrence(input);
@@ -601,7 +683,7 @@ function renderSkyIngressComposition(owner, input = {}, records = [], options = 
           values[name] = facts2[name];
           slots.push({ name, kind: "fact", text: facts2[name] ?? "", reference: `calculated#${name}`, reason: facts2[name] ? "" : "Needs calculated value" });
         } else {
-          const source = resolveIngressSource(owner, name, records);
+          const source = resolveIngressSource(owner, name, records, input);
           const filled = source.text?.trim() ? fillText(source.text, facts2) : { text: "", missing: [] };
           values[name] = filled.text;
           slots.push({ name, ...source, raw: source.text ?? "", text: filled.text, reason: source.reason || (filled.missing.length ? `Needs calculated ${filled.missing.join(", ")}` : !filled.text ? "No writing saved" : "") });
@@ -610,7 +692,7 @@ function renderSkyIngressComposition(owner, input = {}, records = [], options = 
       const result = fillText(module.template, values);
       const missing = slots.filter((slot) => slot.reason);
       const incomplete = missing.length > 0 || !result.text.trim();
-      if (incomplete && (module.required || missing.some((slot) => ZODIAC_SEASON_VARIABLES.some((field2) => field2.id === slot.name)))) requiredGap = true;
+      if (incomplete && (module.required || missing.some((slot) => slot.kind === "custom" || ZODIAC_SEASON_VARIABLES.some((field2) => field2.id === slot.name)))) requiredGap = true;
       trace.push({ id: module.id, eventId: event?.id, label: module.label, template: module.template, status: incomplete ? "omitted" : "included", reason: incomplete ? `${module.required ? "Required module incomplete" : "Optional module omitted"}: ${missing.map((slot) => slot.name).join(", ") || "empty template"}` : "Selected by this composition", text: result.text, slots });
     }
   }
@@ -618,7 +700,7 @@ function renderSkyIngressComposition(owner, input = {}, records = [], options = 
   return { status: requiredGap || !body.trim() ? "incomplete" : "ready", body: requiredGap ? "" : body, trace, timing: occurrence.timing, duration: occurrence.duration };
 }
 function skyIngressPublicationIssues(owner, records = []) {
-  validateSkyIngressComposition(owner.ingress);
+  validateSkyIngressComposition(owner.ingress, owner._studioVariables?.map((item) => item.name));
   if (!owner.ingress?.enabled) return [];
   const issues = [];
   const required2 = owner.ingress.modules.filter((module) => module.required && module.enabled);
@@ -1060,7 +1142,8 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     }
     return { headline: `${ordinal(house)} House Year`, note, body: parts.join("\n\n"), parts, templateKey: "fallback-template/natal.profection-year" };
   }
-  return { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, renderHouseGlossary, renderAspectPattern };
+  const renderer = { renderNatalPlacement, renderNatalAngle, renderNatalAspect, renderNatalEmptyHouse, renderProfectionYear, renderHouseGlossary, renderAspectPattern };
+  return bindStudioVariableRenderer(renderer, ([templates, vocabularyRows, hookRows]) => createFallbackRenderer({ ...templatesFile, templates }, { ...rowsFile, vocabularyRows, hookRows }, publication), [templatesFile.templates, rowsFile.vocabularyRows, rowsFile.hookRows ?? []]);
 }
 function normalizeAspect(input) {
   const k = input.trim().toLowerCase();
@@ -3647,7 +3730,8 @@ ${passHook}`;
       templateKey: "fallback-template/daily.dodont"
     };
   }
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  const renderer = { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  return bindStudioVariableRenderer(renderer, ([authoredCards, templates, vocabularyRows, hookRows]) => createTransitSynastryRenderer({ ...transitLib, authoredCards }, { ...templatesFile, templates }, { ...rowsFile, vocabularyRows, hookRows }, opts2), [transitLib.authoredCards, templatesFile.templates, rowsFile.vocabularyRows, rowsFile.hookRows ?? []]);
 }
 
 // apps/web/src/content/fallbackArchitectureV3/authored-inputs/reader-source-reference-removals-v1.json
@@ -4098,7 +4182,7 @@ var articlePaths = ["placementArticle", "placementArticleDirect", "placementArti
 var facts = new Set(SKY_PLACEMENT_VARIABLES.map((item) => item.name));
 var phraseFields = new Map(SKY_WRITING_LIBRARY_GROUPS.flatMap((group) => group.fields).map((item) => [item.id, item]));
 var kinds = /* @__PURE__ */ new Set(["planet", "sign", "placement", "timing", "aspect"]);
-var safeName = (name) => /^[A-Za-z][A-Za-z0-9]*$/u.test(name) && !["constructor", "prototype", "__proto__"].includes(name);
+var safeName = (name) => /^[A-Za-z][A-Za-z0-9_]*$/u.test(name) && !["constructor", "prototype", "__proto__"].includes(name);
 var tokenPattern2 = () => /\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu;
 var tokens2 = (value) => [...String(value ?? "").matchAll(tokenPattern2())];
 var articleFactText = (name, value) => ["aspectsInSign", "aspectsWhileRetrograde"].includes(name) ? value.split(/\r?\n/u).map((line) => line.replace(/^\s*-\s+/u, "").trim()).filter(Boolean).join(", ") : value;
@@ -4109,7 +4193,7 @@ function skyPlacementArticlePhraseNames(value) {
   return [...new Set(tokens2(value).map((match) => match[1]).filter((name) => !facts.has(name)))];
 }
 function knownPhrase(name, owner) {
-  return safeName(name) && (phraseFields.has(name) || Object.hasOwn(owner?.ingress?.sources ?? {}, name) && kinds.has(owner.ingress.sources[name]?.kind));
+  return safeName(name) && (owner?._studioVariables?.some((item) => item.name === name) || phraseFields.has(name) || Object.hasOwn(owner?.ingress?.sources ?? {}, name) && kinds.has(owner.ingress.sources[name]?.kind));
 }
 function skyPlacementArticleVariableIssues(value, owner = {}) {
   const issues = [];
@@ -4121,6 +4205,11 @@ function skyPlacementArticleVariableIssues(value, owner = {}) {
   return [...new Set(issues)];
 }
 function phraseSource(owner, name, records) {
+  const custom = owner?._studioVariables?.find((item) => item.name === name);
+  if (custom) {
+    const { value } = studioVariableValue(custom, owner);
+    return value?.trim() ? { text: value, kind: "custom", reference: `studio-variable/${custom.name}` } : { reason: `No value saved for {{${name}}}. Open Variables to complete it.` };
+  }
   const source = owner?.ingress?.sources?.[name];
   if (!source && !phraseFields.get(name)?.shared) return { reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
   const expected = phraseFields.get(name)?.kind;
@@ -5490,7 +5579,8 @@ ${required(aspect.dateLine, "aspect date line")}
 ${required(aspect.body, "aspect body")}`;
 }
 function renderSkyV4ContinuousPreview(corpus, input) {
-  const article = input.articleOverride ?? continuousArticleFor(corpus, input.planet, input.sign);
+  const rawArticle = input.articleOverride ?? continuousArticleFor(corpus, input.planet, input.sign);
+  const article = rawArticle ? resolveStudioVariableRecord(rawArticle, input) : rawArticle;
   const expectedKey = `sky-placement/article/${lower(input.planet)}/${lower(input.sign)}`;
   if (article && (article.contentKey !== expectedKey || lower(article.planet) !== lower(input.planet) || lower(article.sign) !== lower(input.sign))) {
     throw new Error(`SKY_V4_PLACEMENT_IDENTITY: expected ${expectedKey}.`);
@@ -5811,10 +5901,10 @@ function renderSkyV4StudioPreview(corpus, input) {
   const draftFields = record(input.draftFields);
   const blocked = Object.keys(draftFields).filter((path) => !allowed.has(path));
   if (blocked.length) throw new Error(`SKY_V4_STRUCTURE_LOCK: ${blocked.join(", ")}`);
-  const effective = Object.entries(draftFields).reduce(
+  const effective = resolveStudioVariableRecord(Object.entries(draftFields).reduce(
     (current, [path, nextValue]) => setValueAt(current, path, nextValue),
     structuredClone(source)
-  );
+  ), input);
   if (effective.studio_content_type !== "continuous-placement") {
     for (const path of allowed) {
       if (typeof effective[path] === "string") effective[path] = resolveZodiacSeasonVariables(effective[path], { ...effective, ...input }, input.zodiacSeasonSources ?? []);
@@ -5996,7 +6086,7 @@ function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   } else if (!contentKey && route === "seasonal") {
     contentKey = `sky-placement/seasonal-context/${lower(input.sign)}/${lower(input.hemisphere)}`;
   }
-  const source = releasedReaderRecord(corpus, contentKey);
+  const source = resolveStudioVariableRecord(releasedReaderRecord(corpus, contentKey), input);
   if (input.inspectVariables === true) {
     const retrograde = corpus.content.retrogradeGeneric.find((row) => lower(row.Planet) === lower(input.planet));
     const copy = [
@@ -6112,7 +6202,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-14c";
+var PACKAGE_VERSION = "v3-2026-09-15-custom-variables";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

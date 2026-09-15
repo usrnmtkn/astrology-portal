@@ -1,3 +1,4 @@
+import { resolveStudioVariableRecord } from "../../studioCustomVariables.mjs";
 import { resolveZodiacSeasonVariables } from "./zodiacSeasonVariables.mjs";
 import { correctedReaderSource } from "./readerSourceReferenceCorrections.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
@@ -859,7 +860,8 @@ function renderAspect(aspect) {
 }
 
 export function renderSkyV4ContinuousPreview(corpus, input) {
-  const article = input.articleOverride ?? continuousArticleFor(corpus, input.planet, input.sign);
+  const rawArticle = input.articleOverride ?? continuousArticleFor(corpus, input.planet, input.sign);
+  const article = rawArticle ? resolveStudioVariableRecord(rawArticle, input) : rawArticle;
   const expectedKey = `sky-placement/article/${lower(input.planet)}/${lower(input.sign)}`;
   if (article && (article.contentKey !== expectedKey
     || lower(article.planet) !== lower(input.planet) || lower(article.sign) !== lower(input.sign))) {
@@ -1160,10 +1162,10 @@ export function renderSkyV4StudioPreview(corpus, input) {
   const draftFields = record(input.draftFields);
   const blocked = Object.keys(draftFields).filter((path) => !allowed.has(path));
   if (blocked.length) throw new Error(`SKY_V4_STRUCTURE_LOCK: ${blocked.join(", ")}`);
-  const effective = Object.entries(draftFields).reduce(
+  const effective = resolveStudioVariableRecord(Object.entries(draftFields).reduce(
     (current, [path, nextValue]) => setValueAt(current, path, nextValue),
     structuredClone(source)
-  );
+  ), input);
   if (effective.studio_content_type !== "continuous-placement") {
     for (const path of allowed) {
       if (typeof effective[path] === "string") effective[path] = resolveZodiacSeasonVariables(effective[path], { ...effective, ...input }, input.zodiacSeasonSources ?? []);
@@ -1365,7 +1367,7 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   } else if (!contentKey && route === "seasonal") {
     contentKey = `sky-placement/seasonal-context/${lower(input.sign)}/${lower(input.hemisphere)}`;
   }
-  const source = releasedReaderRecord(corpus, contentKey);
+  const source = resolveStudioVariableRecord(releasedReaderRecord(corpus, contentKey), input);
   if (input.inspectVariables === true) {
     const retrograde = corpus.content.retrogradeGeneric.find(row => lower(row.Planet) === lower(input.planet));
     const copy = [source.placementArticle, source.placementArticleDirect, source.placementArticleRetrograde,

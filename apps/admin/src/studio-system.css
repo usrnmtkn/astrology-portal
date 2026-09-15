@@ -698,3 +698,6 @@ body:has(.admin-dashboard) { margin: 0; }
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+#root .admin-dashboard .studio-variable-value { white-space: pre-wrap; overflow-wrap: anywhere; }
+#root .admin-dashboard .studio-variable-tags { list-style: none; padding: 0; margin: 0; }

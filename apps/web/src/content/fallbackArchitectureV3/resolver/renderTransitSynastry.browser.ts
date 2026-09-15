@@ -1,3 +1,4 @@
+import { bindStudioVariableRenderer } from "../../studioCustomVariables.mjs";
 import { resolveZodiacSeasonVariables, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
 import { passageSources, passageSource } from "./passageSources.mjs";
 import { isEligibleTransitReturn } from "./transitReturns.mjs";
@@ -3081,5 +3082,6 @@ export function createTransitSynastryRenderer(
     };
   }
 
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  const renderer = { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  return bindStudioVariableRenderer(renderer, ([authoredCards, templates, vocabularyRows, hookRows]: any[][]) => createTransitSynastryRenderer({ ...transitLib, authoredCards }, { ...templatesFile, templates }, { ...rowsFile, vocabularyRows, hookRows }, opts), [transitLib.authoredCards, templatesFile.templates, rowsFile.vocabularyRows, rowsFile.hookRows ?? []]) as typeof renderer;
 }

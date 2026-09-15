@@ -26,7 +26,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await page.route('**/api/**', async route => {
     const request = route.request(), url = new URL(request.url());
     if (url.pathname === '/api/admin/generated-content') {
-     if (request.method() !== 'GET' || url.searchParams.has('id') || url.searchParams.has('contentKeys')) {
+     if (request.method() !== 'GET' || url.searchParams.has('id') || url.searchParams.has('contentKeys') || url.searchParams.has('variables')) {
       const result = await call({ method: request.method(), body: request.method() === 'GET' ? undefined : request.postDataJSON(), url: url.pathname + url.search });
       if (request.method() !== 'GET') responses.push(result);
       return route.fulfill({ status: result.status, json: result.payload });
@@ -41,6 +41,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await page.goto(entry + '#variables');
    const directory = page.getByRole('region', {name: 'Variable directory', exact: true});
    await expect(page.getByRole('heading', {name: 'Variables', exact: true})).toBeVisible();
+   await directory.getByLabel('Library', {exact: true}).selectOption('readonly');
    await expect(directory.locator('.studio-variable-card').first()).toBeVisible();
    const notice = page.getByRole('button', {name: 'Dismiss notification', exact: true});
    if (await notice.isVisible()) await notice.click();
@@ -69,8 +70,8 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    expect(await angleToken.getAttribute('data-variable-color')).toBe(initialStyle.colors.find(token => token.name === '{{angleTitle}}')?.id);
    await page.screenshot({path: `test-results/variables-directory-${width}-${theme}.png`, fullPage: true});
    await directory.getByLabel('Search variables', {exact: true}).fill('entryDate');
-   await directory.getByLabel('Type', {exact: true}).selectOption('readonly');
-   await directory.getByLabel('Used in', {exact: true}).selectOption('Sky');
+   await directory.getByLabel('Library', {exact: true}).selectOption('readonly');
+   await directory.getByLabel('Available in', {exact: true}).selectOption('Sky');
    const entryCard = directory.getByRole('article', {name: '{{entryDate}} · Calculated residency dates; not the retrograde window', exact: true});
    await expect(entryCard).toBeVisible();
    await expect(entryCard.getByRole('button', {name: 'Edit source', exact: true})).toHaveCount(0);
@@ -78,13 +79,13 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('{{entryDate}}');
    await entryCard.locator('summary').click();
    await expect(entryCard.getByText(/Use this token only in the listed/)).toBeVisible();
-   await directory.getByLabel('Type', {exact: true}).selectOption('editable');
+   await directory.getByLabel('Library', {exact: true}).selectOption('editable');
    await expect(directory.getByRole('heading', {name: 'No matching variables'})).toBeVisible();
    await page.screenshot({path: `test-results/variables-empty-${width}-${theme}.png`, fullPage: true});
    await directory.getByRole('button', {name: 'Show all variables', exact: true}).click();
    await directory.getByLabel('Search variables', {exact: true}).fill('zodiacSeasonPolarAxis');
-   await directory.getByLabel('Type', {exact: true}).selectOption('editable');
-   await directory.getByLabel('Used in', {exact: true}).selectOption('Natal');
+   await directory.getByLabel('Library', {exact: true}).selectOption('editable');
+   await directory.getByLabel('Available in', {exact: true}).selectOption('Natal');
    await expect(directory.getByRole('article')).toHaveCount(1);
    const variable = directory.getByRole('article');
    await expect(variable.getByRole('heading', {name: '{{zodiacSeasonPolarAxis}}', exact: true})).toBeVisible();
@@ -95,18 +96,18 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await variable.getByRole('button', {name: 'Edit source', exact: true}).click();
    const editor = page.getByRole('dialog');
    const writing = editor.locator('textarea[data-sky-field="body"]');
-   await expect(writing).toHaveValue('');
+   await expect(writing).not.toHaveValue('');
    await writing.fill('Fixture full Virgo axis prose from the Variables directory.');
    await editor.getByRole('button', {name: 'Save draft', exact: true}).click();
    await expect.poll(async () => (await call({method:'rows'})).some((row:any) => row.content_key === 'fallback-hook/zodiac-season-polar-axis/virgo' && JSON.stringify(row).includes('Fixture full Virgo axis prose from the Variables directory.'))).toBe(true);
    await editor.getByRole('button', {name: /Close/}).first().click();
    await expect(directory.getByLabel('Search variables', {exact: true})).toHaveValue('zodiacSeasonPolarAxis');
-   await expect(directory.getByLabel('Used in', {exact: true})).toHaveValue('Natal');
+   await expect(directory.getByLabel('Available in', {exact: true})).toHaveValue('Natal');
    await variable.getByRole('button', {name: 'Edit source', exact: true}).click();
    await expect(writing).toHaveValue('Fixture full Virgo axis prose from the Variables directory.');
    await editor.getByRole('button', {name: /Close/}).first().click();
    await directory.getByLabel('Search variables', {exact: true}).fill('planetFunction');
-   await directory.getByLabel('Used in', {exact: true}).selectOption('Sky');
+   await directory.getByLabel('Available in', {exact: true}).selectOption('Sky');
    const planetVariable = directory.getByRole('article', {name: '{{planetFunction}} · Writing Library · Planet', exact: true});
    await planetVariable.getByLabel('Source for {{planetFunction}}', {exact: true}).selectOption('sky-placement/article/sun/virgo#ingress.sources.planetFunction');
    await planetVariable.getByRole('button', {name: 'Edit source', exact: true}).click();
@@ -124,7 +125,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
 test('Variables loads only when opened and offers recovery after a catalog failure', async ({page}) => {
   await page.setViewportSize({width: 1440, height: 1000});
   await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
-  await page.route('**/api/**', route => route.fulfill({json: {ok:true, rows:[], statuses:[], records:[], nextCursor:null}}));
+  await page.route('**/api/**', route => route.fulfill({json: {ok:true, variables:[], rows:[], statuses:[], records:[], nextCursor:null}}));
   let requests = 0;
   await page.route('**/generated/studio-variables-v1.json', async route => {
     requests++;
@@ -136,6 +137,7 @@ test('Variables loads only when opened and offers recovery after a catalog failu
   expect(requests).toBe(0);
   await page.getByRole('button', {name:'Variables', exact:true}).click();
   const directory = page.getByRole('region', {name:'Variable directory', exact:true});
+  await directory.getByLabel('Library', {exact: true}).selectOption('readonly');
   await expect(directory.getByRole('alert')).toContainText('The variable catalog could not load.');
   await directory.getByRole('button', {name:'Retry catalog', exact:true}).click();
   await expect(directory.getByRole('article').first()).toBeVisible();
