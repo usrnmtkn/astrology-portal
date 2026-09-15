@@ -196,7 +196,8 @@
     "test:sky-placement-article-variables": "node scripts/test-sky-placement-article-variable-unit.mjs && node --import tsx scripts/test-sky-placement-article-variables.mts",
     "test:weekly-focus-tags": "node --import tsx scripts/test-weekly-focus-tags.mjs",
     "test:zodiac-season-variables": "node --import tsx scripts/test-zodiac-season-variables.mts && node --import tsx scripts/test-zodiac-season-renderers.mts",
-    "test:event-dates": "node --import tsx scripts/test-app-event-date-consistency.mts"
+    "test:event-dates": "node --import tsx scripts/test-app-event-date-consistency.mts",
+    "test:studio-variables": "node --import tsx scripts/test-studio-variable-catalog.mts"
   },
   "optionalDependencies": {
     "@esbuild/linux-x64": "^0.27.7",
