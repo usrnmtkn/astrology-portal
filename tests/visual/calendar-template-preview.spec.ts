@@ -20,7 +20,7 @@ async function fixture(page: Page) {
       { id: `moon-${sign}`, content_key: `authored/calendar-weekly-moon/${sign}${sign === "cancer" ? "/variant-2" : ""}`, body: moonBody(sign), status: "LIVE", lane: "serving", source_snapshot: { content_role: "full_copy", review_status: "approved_reuse" } }
     ])
   ];
-  const state = { fail: false, writes, rows };
+  const state = { fail: false, failKey: "", keyRequests: [] as string[][], writes, rows };
   await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "calendar-preview-fixture"));
   await page.route("**/api/admin/**", async route => {
     const url = new URL(route.request().url());
@@ -32,7 +32,9 @@ async function fixture(page: Page) {
       return route.fulfill({ json: { ok: true, rows: [row] } });
     }
     const keys = url.searchParams.getAll("contentKeys");
-    if (state.fail && keys.length) return route.fulfill({ status: 503, json: { error: "Fixture saved-source outage" } });
+    if (keys.length) state.keyRequests.push(keys);
+    if (keys.length > 64) return route.fulfill({ status: 400, json: { error: "Invalid exact content keys." } });
+    if ((state.fail && keys.length) || keys.includes(state.failKey)) return route.fulfill({ status: 503, json: { error: "Fixture saved-source outage" } });
     expect(keys.every(key => !key.includes(","))).toBe(true);
     const key = url.searchParams.get("contentKey"); const id = url.searchParams.get("id");
     return route.fulfill({ json: { ok: true, rows: rows.filter(row => (!keys.length || keys.includes(row.content_key)) && (!key || row.content_key === key) && (!id || row.id === id)), nextCursor: null } });
@@ -162,6 +164,18 @@ test("Calendar preview calculates two real skies and clears unavailable facts", 
   await expect(rendered).not.toContainText("{{lunationDates}}");
   await expect(rendered).toContainText(seasonBody("capricorn"));
   await expect(rendered).toContainText(seasonBody("aquarius"));
+  expect(new Set(state.keyRequests.flat()).size).toBeGreaterThan(64);
+  expect(Math.max(...state.keyRequests.map(keys => keys.length))).toBeLessThanOrEqual(64);
+  const tail = state.keyRequests.find(keys => keys.length === 21);
+  expect(tail).toBeDefined();
+  state.failKey = tail![0];
+  await preview.getByRole("button", { name: "Refresh preview" }).click();
+  await expect(preview.getByRole("alert")).toBeVisible();
+  await expect(rendered).toHaveCount(0);
+  state.failKey = "";
+  await preview.getByRole("button", { name: "Refresh preview" }).click();
+  await expect(rendered).toContainText(seasonBody("aquarius"));
+  await expect(rendered).toContainText(seasonBody("capricorn"));
   await expect(rendered).not.toContainText("Moon square");
   await expect(rendered).not.toContainText(/12:00 AM[^\n]*retrograde/);
   expect(state.writes).toEqual([]);
