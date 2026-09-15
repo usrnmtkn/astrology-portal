@@ -1,7 +1,7 @@
 {
-  "appBootGzipBytes": 431500,
+  "appBootGzipBytes": 437500,
   "appChunkGzipBytes": 180000,
-  "readerBootGzipBytes": 481000,
+  "readerBootGzipBytes": 487000,
   "readerInitialCssGzipBytes": 50000,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
@@ -47,8 +47,8 @@
     "studioVariableDesign20260915": "The owner-requested Variables spacing and categorical token styling reuse shared card/header primitives. Identical workflow-configured web builds with main a532fbb8c Studio CSS and the final stylesheet measure 23,299 and 23,432 gzip bytes (level 9): 133 added bytes. Allocate 250 bytes to the deferred shared Studio stylesheet, which Memory also imports. Reader startup CSS, all JavaScript, aggregate CSS and every other limit remain unchanged. See docs/qa/studio-variable-directory.md.",
     "calendarVariableRows20260915": "Calendar variable rows reuse the canonical Studio stylesheet and semantic typography/spacing tokens. After retaining main PRs #826 and #818, the workflow-configured shared stylesheet measures 23,526 gzip bytes, inside the existing 23,550-byte cap. No additional CSS allocation, new stylesheet, graph styling, dependency, or reader startup allowance is needed. See docs/qa/calendar-period-workspaces.md.",
     "illustratedLoading20260915": "The owner-requested transparent rotating illustration adds a shared fixed frame, crossfade, dark-theme inversion, reduced-motion treatment and navigation clearance to the initial loading stylesheet. The workflow-configured build measures 49,787 startup CSS gzip bytes, 37 above the former 49,750 cap. Allocate 250 bytes for this new UI, leaving 213 bytes headroom. The combined reader boot, JavaScript, total CSS, and all measured loading-time budgets remain unchanged. The 14 original PNGs are requested one at a time only while loading, not imported into the boot graph. See docs/qa/illustrated-loading.md. Reuse the existing page-fade token and keep theme inversion in reader CSS; the deferred shared Studio stylesheet stays inside its unchanged 23,550-byte cap at 23,544 bytes.",
-    "concurrentStudioIllustrations20260915": "PRs #827 (shared Studio text roles) and #829 (the shared loading illustration size token) each passed before merging, but their combined main revision 347fc5c8 measures 23,556 gzip bytes in the shared deferred Studio stylesheet, 6 bytes above its prior 23,550-byte cap. The startup margin correction does not edit this stylesheet or its shared theme. Allocate 50 bytes for the integrated approved styles, leaving 44 bytes headroom. Reader startup, total CSS, every JavaScript limit, loading-time budgets and calculation accuracy thresholds remain unchanged."
+    "thinkingOrbBackup20260915": "The owner explicitly requested thinking-orbs as the backup for failed loading illustrations. The pinned 0.3.1 MIT package is bundled locally so an image failure does not require an additional runtime download. Keep this React consumer separate from the vendor/scheduler chunk to avoid a React initialization cycle. The workflow-configured build measures 436,582 app boot and 486,390 reader boot gzip bytes. Allocate 6 kB to each startup cap for the requested backup, leaving 918 and 610 bytes headroom. All individual chunk, aggregate payload, CSS, loading-time and calculation accuracy limits remain unchanged. After retaining Calendar PR #830, shared Studio CSS measures 23,547 bytes, so its original 23,550-byte cap remains sufficient."
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
-  "memoryGraphCssGzipBytes": 23600
+  "memoryGraphCssGzipBytes": 23550
 }
