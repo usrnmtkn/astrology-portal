@@ -8,9 +8,6 @@
   min-height: var(--ds-layout-deferred-placeholder-height-variant-2);
   margin: var(--space-6) auto;
   padding: var(--space-6);
-  border: var(--border-width-thin) solid var(--line);
-  border-radius: var(--radius-card);
-  background: var(--surface);
   color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -19,10 +16,10 @@
   letter-spacing: var(--tracking-body);
 }
 
-.app-loading[role="status"] {
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+.app-loading[role="alert"] {
+  border: var(--border-width-thin) solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
 }
 
 .app-loading__lines {
