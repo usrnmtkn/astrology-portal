@@ -8,14 +8,26 @@ permissions:
 jobs:
   source:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Archive tracked source without credentials or runtime data
-        run: git archive --format=tar HEAD | gzip -1 > /tmp/calendar-phrase-source.tar.gz
+        with:
+          persist-credentials: false
+          fetch-depth: 4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @tldr/astro-knowledge
+      - name: Archive installed development dependencies and credential-free Git metadata
+        run: |
+          find . -type d -name node_modules -prune -print0 > /tmp/dependency-paths
+          printf '.git\0packages/astro-knowledge/dist\0' >> /tmp/dependency-paths
+          tar --null -T /tmp/dependency-paths -czf /tmp/calendar-phrase-dependencies.tar.gz
       - uses: actions/upload-artifact@v4
         with:
-          name: calendar-phrase-source
-          path: /tmp/calendar-phrase-source.tar.gz
+          name: calendar-phrase-dependencies
+          path: /tmp/calendar-phrase-dependencies.tar.gz
           retention-days: 1
           compression-level: 0
