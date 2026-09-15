@@ -1,3 +1,5 @@
+import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
+import { STUDIO_VARIABLE_PREFIX, resolveStudioVariableCopy } from "../../apps/web/src/content/studioCustomVariables.mjs";
 import { isZodiacSeasonSourceKey, supportsZodiacSeasonVariables, zodiacSeasonVariableNames, zodiacSeasonRecordDependencies, resolveZodiacSeasonVariables } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { separateArticleHoroscopeRow } from "../../apps/web/src/content/skyArticleHoroscopes.mjs";
 // @ts-ignore Shared import and publication boundary.
@@ -262,6 +264,20 @@ function stringFrom(value: unknown) {
   return typeof value === "string" ? value : "";
 }
 
+function studioVariableStorage(params: URLSearchParams, options: { method?: string; body?: string } = {}) {
+  return adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    ...options, headers: { ...adminHeaders(), prefer: "return=representation" }
+  });
+}
+
+async function prepareStudioVariables(body: GeneratedContentWriteBody) {
+  const sections = isRecord(body.sections) ? body.sections : null;
+  if (!sections) return;
+  for (const field of [isRecord(sections.packageDraft) ? "packageDraft" : "packageRecord"]) {
+    if (isRecord(sections[field])) sections[field] = await snapshotStudioVariables(sections[field], studioVariableStorage);
+  }
+}
+
 function v3PackageRecord(row: Pick<ExistingGeneratedContentRow, "sections">) {
   const sections = isRecord(row.sections) ? row.sections : {};
   return isRecord(sections.packageRecord) ? sections.packageRecord : {};
@@ -452,7 +468,7 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
       isRecord(effective.ingress) && isRecord(effective.ingress.sources) && effective.ingress.sources[name] ? token : resolveZodiacSeasonVariables(token, effective, seasonSources)) : value).join("\n\n");
   const hardFailures: string[] = [];
   if (isSkyEvergreenSource(record)) {
-    validateSkyIngressComposition(effective.ingress);
+    validateSkyIngressComposition(effective.ingress, Array.isArray(effective._studioVariables) ? effective._studioVariables.map((item: any) => item.name) : []);
     for (const path of ["placementArticle", "placementArticleDirect", "placementArticleRetrograde", "fallback.hook", "fallback.lived", "fallback.turn"]) {
       const issues = isSkyPlacementArticleField(record.contentKey, path)
         ? skyPlacementArticleVariableIssues(packageValueAt(effective, path), effective)
@@ -497,7 +513,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
   const packageDraft = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   const proposedRecord = packageDraft ?? (isRecord(sections.packageRecord) ? sections.packageRecord : record);
   if (isSkyEvergreenSource(record)) {
-    validateSkyIngressComposition(proposedRecord.ingress);
+    validateSkyIngressComposition(proposedRecord.ingress, Array.isArray(proposedRecord._studioVariables) ? proposedRecord._studioVariables.map((item: any) => item.name) : []);
     const layout = packageValueAt(proposedRecord, SKY_EVERGREEN_SECTIONS_PATH);
     validateSkyEvergreenSections(layout);
     if (Array.isArray(layout)) for (const section of layout.filter(isRecord)) {
@@ -515,7 +531,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       .filter(([field, value]) => JSON.stringify(value) !== JSON.stringify(packageValueAt(record, field)))
       .map(([field]) => field);
     const savedDraft = isRecord(row.sections?.packageDraft) ? row.sections.packageDraft : {};
-    const structuralChanges = changedPaths.filter((field) => !isEditablePackageCopyPath(field, record)
+    const structuralChanges = changedPaths.filter((field) => !field.startsWith("_studioVariables") && !isEditablePackageCopyPath(field, record)
       // Older saves copied LIVE flags into the proposal before demoting the
       // revision record. Accept only that unchanged, persisted metadata.
       && !(["owner_approved", "serving_enabled"].includes(field)
@@ -536,6 +552,8 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
 
   for (const [field, value, original] of editableFields) {
     if (typeof value !== "string") continue;
+    // Envelope mirrors remain on the approved source while a separate draft is edited.
+    const variableOwner = packageDraft && !field.startsWith("packageDraft.") ? record : proposedRecord;
     if (isZodiacSeasonSourceKey(row.content_key) && /\{\{|\}\}/u.test(value)) throw new GeneratedContentRequestError("Season sources contain full prose, without nested variables.");
     const ingressVariableField = isSkyEvergreenSource(record) && /^packageDraft\.ingress\.sources\.[A-Za-z][A-Za-z0-9]*\.text$/u.test(field);
     if (ingressVariableField) {
@@ -551,8 +569,9 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       // Canonical article mirrors accept the same tokens as their source.
       const articleField = isSkyPlacementArticleField(row.content_key, field.replace(/^packageDraft\./u, ""))
         || isSkyEvergreenSource(record) && ["body", "body_you"].includes(field);
-      const checkedValue = supportsZodiacSeasonVariables(proposedRecord) ? value.replace(/\{\{\s*(?:zodiacSeason|zodiacSeasonPolarAxis)\s*\}\}/gu, "") : value;
-      const issues = articleField ? skyPlacementArticleVariableIssues(value, proposedRecord) : skyPlacementVariableIssues(checkedValue);
+      const variableCopy = value.replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (token, name) => Array.isArray(variableOwner._studioVariables) && variableOwner._studioVariables.some((item: any) => item.name === name) ? "authored phrase" : token);
+      const checkedValue = supportsZodiacSeasonVariables(proposedRecord) ? variableCopy.replace(/\{\{\s*(?:zodiacSeason|zodiacSeasonPolarAxis)\s*\}\}/gu, "") : variableCopy;
+      const issues = articleField ? skyPlacementArticleVariableIssues(variableCopy, variableOwner) : skyPlacementVariableIssues(checkedValue);
       if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
     }
     if (value.includes("—")) {
@@ -578,6 +597,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
       if (skyVariableField || ingressVariableField) continue;
+      if (Array.isArray(variableOwner._studioVariables) && variableOwner._studioVariables.some((item: any) => slot.replace(/[{}\s]/gu, "") === item.name)) continue;
       if (supportsZodiacSeasonVariables(proposedRecord) && zodiacSeasonVariableNames(slot).length) continue;
       const isAllowedFriendName = (
         row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
@@ -677,6 +697,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   // the installed package record. This includes nested studio fields such as
   // era_layer.* rather than only the older top-level prose fields.
   if (!body.revertToPackageOriginal && !hasPackageDraft) {
+    if (Array.isArray(incomingRecord._studioVariables)) record._studioVariables = structuredClone(incomingRecord._studioVariables);
     for (const [field, value] of packageLeafFields(incomingRecord)) {
       if (isEditablePackageCopyPath(field, record) && !field.startsWith("ingress.")) {
         setPackageValueAt(record, field, value);
@@ -1082,6 +1103,7 @@ const generatedContentOwnerActions = new Set([
 ]);
 
 function validateWriteBody(body: Record<string, unknown>) {
+  if (String(body.contentKey ?? "").startsWith(STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   try { assertCleanReaderCopy(body); } catch (error) {
     throw new GeneratedContentRequestError((error as Error).message);
   }
@@ -1628,6 +1650,7 @@ async function generatedContentStats(req: IncomingMessage) {
 }
 
 async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
+  await prepareStudioVariables(body);
   if (!body.contentKey?.trim()) {
     throw new GeneratedContentRequestError("contentKey is required.");
   }
@@ -1702,6 +1725,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   Object.assign(row, normalizeArticleHoroscopes(row));
   assertReaderEligiblePublication(row);
   await assertZodiacSeasonPublication(row);
+  if (row.status === "LIVE") await assertStudioVariablePublication(v3PackageRecord(row), studioVariableStorage);
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
     method: "POST",
     headers: {
@@ -1889,6 +1913,7 @@ async function patchGeneratedContentRow(
     if (!existing) throw new GeneratedContentRequestError("The source no longer exists. Reload before publishing.", 404);
     assertReaderEligiblePublication({ ...existing, ...patch });
     await assertZodiacSeasonPublication({ ...existing, ...patch });
+    await assertStudioVariablePublication(v3PackageRecord({ ...existing, ...patch }), studioVariableStorage);
   }
   const params = new URLSearchParams();
   params.set("id", `eq.${id}`);
@@ -2060,9 +2085,13 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
   }
 
   // Validate the complete batch before the first storage write.
+  for (const row of rows) await prepareStudioVariables(row);
   const prepared = rows.map(generatedContentRowFromWriteBody);
   prepared.forEach(assertReaderEligiblePublication);
-  for (const row of prepared) await assertZodiacSeasonPublication(row);
+  for (const row of prepared) {
+    await assertZodiacSeasonPublication(row);
+    if (row.status === "LIVE") await assertStudioVariablePublication(v3PackageRecord(row), studioVariableStorage);
+  }
   const targets = rows.map(generatedContentTargetKey);
   if (new Set(targets).size !== targets.length) throw new GeneratedContentRequestError("Each content key, target date, and mode may appear only once per batch.");
   const existingRows = await fetchExistingRowsByContentKey(rows.map(row => row.contentKey ?? ""));
@@ -2168,6 +2197,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (body.expectedUpdatedAt && body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
   }
+  if (existing.content_key.startsWith(STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
+  await prepareStudioVariables(body);
   existing = await recoverPublishedSkyRevision(existing, body);
   const isPackageRow = isFallbackArchitectureV3Row(existing);
   if (body.status === "LIVE" && isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {})) {
@@ -2255,7 +2286,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     validateFallbackArchitectureV3Copy(target, {
       sections: { ...targetSections, packageDraft: publicationDraft }
     });
+    await assertStudioVariablePublication(packageDraft, studioVariableStorage);
     const promotedRecord = structuredClone(targetRecord);
+    if (Array.isArray(packageDraft._studioVariables)) promotedRecord._studioVariables = structuredClone(packageDraft._studioVariables);
     for (const [field, value] of packageLeafFields(packageDraft)) {
       if (isEditablePackageCopyPath(field, targetRecord) && !field.startsWith("ingress.")) {
         setPackageValueAt(promotedRecord, field, value);
@@ -2843,6 +2876,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   assertReaderEligiblePublication({ ...existing, ...patch });
   await assertZodiacSeasonPublication({ ...existing, ...patch });
+  if (patch.status === "LIVE") await assertStudioVariablePublication(v3PackageRecord({ ...existing, ...patch }), studioVariableStorage);
 
   const updateParams = new URLSearchParams();
   updateParams.set("id", `eq.${body.id}`);
@@ -2886,6 +2920,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (!existing) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
   }
+  if (existing.content_key.startsWith(STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.status === "LIVE") {
     throw new GeneratedContentRequestError("Published rows cannot be hard-deleted. Demote or archive the row first.", 409);
   }
@@ -2925,6 +2960,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   }
 
   try {
+    if (new URL(req.url ?? "/", "http://localhost").searchParams.get("variables") === "true") {
+      sendJson(res, 200, await handleStudioVariables(req, studioVariableStorage));
+      return;
+    }
     if (req.method === "GET") {
       const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
       if (requestUrl.searchParams.get("sourceDrafts") === "sky-aspects") {
@@ -2992,7 +3031,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   } catch (error) {
     sendJson(
       res,
-      error instanceof GeneratedContentRequestError
+      error instanceof GeneratedContentRequestError || error instanceof StudioVariableError
         ? error.statusCode
         : error instanceof AdminStorageTimeoutError
           ? 504

@@ -47,11 +47,12 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
         const baseline = baselines.get(key);
         if (baseline && (byKey.has(key) || nextBlocked.has(key))) {
           const next = { ...source };
+          if (!nextBlocked.has(key) && Array.isArray(byKey.get(key)?._studioVariables)) next._studioVariables = structuredClone(byKey.get(key)!._studioVariables);
           for (const field of skyEvergreenEditableFields(baseline)) {
             const copy = nextBlocked.has(key) ? "" : at(byKey.get(key)!, field.path);
             if (field.path === "ingress") {
               const composition = nextBlocked.has(key) ? null : copy;
-              validateSkyIngressComposition(composition);
+              validateSkyIngressComposition(composition, Array.isArray(next._studioVariables) ? next._studioVariables.map((item: any) => item.name) : []);
               if (composition !== undefined) set(next, field.path, structuredClone(composition));
             } else if (field.path === SKY_EVERGREEN_SECTIONS_PATH) {
               const layout = nextBlocked.has(key) ? [] : copy;

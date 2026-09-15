@@ -1,3 +1,4 @@
+import { bindStudioVariableReference } from "../../studioCustomVariables.mjs";
 import { assertNodePublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 import { zodiacSeasonTemplateContext, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
 export { setNodeBlockedContentKeys } from "./publicationGuard.mjs";
@@ -185,7 +186,7 @@ export function natalPlacementMotionExactKey(facts) {
   return facts.isRetrograde ? `${directKey}/retrograde` : directKey;
 }
 
-export function renderNatalPlacement(facts, opts = {}) {
+function renderNatalPlacementReference(facts, opts = {}) {
   // facts: { planet, sign, house?, voice: "you" | name, dignity?, isRetrograde?, sect? }
   // Returns a TWO-PART result: parts[0] = planet-in-sign paragraph,
   // parts[1] (when house is known) = house-context paragraph.
@@ -344,7 +345,7 @@ export function renderNatalPlacement(facts, opts = {}) {
   };
 }
 
-export function renderNatalAngle(facts, opts = {}) {
+function renderNatalAngleReference(facts, opts = {}) {
   // facts: { angle: "ascendant"|"midheaven"|"descendant"|"imum-coeli", sign, voice: "you" | name }
   const { angle, sign } = facts;
   const allowUnreviewed = opts.allowUnreviewed ?? false;
@@ -370,7 +371,7 @@ export function renderNatalAngle(facts, opts = {}) {
 
 const ASPECT_GROUP = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
 
-export function renderNatalAspect(facts, opts = {}) {
+function renderNatalAspectReference(facts, opts = {}) {
   // facts: { planetA, planetB, aspect: conjunction|square|trine|sextile|opposition|quincunx, voice }
   const { planetA, planetB } = facts;
   const aspect = facts.aspect === "inconjunct" ? "quincunx" : facts.aspect;
@@ -453,7 +454,7 @@ const EMPTY_HOUSE_RULERS = { modern: EMPTY_HOUSE_V14_MODERN_RULER, traditional: 
 // natal pattern card + activation card. Replaces the astro-knowledge copy entries; the
 // detection engine stays in the app, the words come from here. ----
 const PATTERN_NAMES = { t_square: "T-Square", grand_square: "Grand Cross", grand_trine: "Grand Trine", kite: "Kite", yod: "Yod", mystic_rectangle: "Mystic Rectangle" };
-export function renderAspectPattern({ type, apexTitle, mode, element, activation = false, voice = "you" }) {
+function renderAspectPatternReference({ type, apexTitle, mode, element, activation = false, voice = "you" }) {
   const vocabularyVoice = voice === "you" ? "you" : "they";
   const pick = (key) => { const r = hooks.get(key); return r ? (voice === "you" ? r.body_you : r.body_they) : null; };
   const body = pick(`fallback-hook/aspect-pattern${activation ? "-activation" : ""}/${type}`);
@@ -476,14 +477,14 @@ export function renderAspectPattern({ type, apexTitle, mode, element, activation
 
 // ---- House glossary: one-sentence house definitions (replaces the legacy hardcoded
 // glossary in App.tsx). Used for tooltips, chart legends, and house headers. ----
-export function renderHouseGlossary({ house, voice = "you" }) {
+function renderHouseGlossaryReference({ house, voice = "you" }) {
   const r = hooks.get(`fallback-hook/house-glossary/${house}`);
   if (!r) throw new SourceGapError(`SOURCE_GAP: house glossary ${house}`);
   const body = voice === "you" ? r.body_you : r.body_they;
   return { headline: `${ordinal(house)} House`, body, parts: [body], templateKey: "fallback-template/natal.house-glossary", contentKey: r.contentKey };
 }
 
-export function renderNatalEmptyHouse(facts, opts = {}) {
+function renderNatalEmptyHouseReference(facts, opts = {}) {
   // V14 dual-system contract. Phase 1 launches with modern; traditional
   // house-1 rows remain SOURCE_GAP until their owner-authored layer lands.
   // facts: { house, sign, rulerHouse, primaryRuler?, rulerSystem?, voice }.
@@ -551,7 +552,7 @@ export function renderNatalEmptyHouse(facts, opts = {}) {
 
 // Profection-year line (annual profections): per-person section for Friends Circle
 // profection stories and the You page. Dual-voice by construction.
-export function renderProfectionYear(facts, opts = {}) {
+function renderProfectionYearReference(facts, opts = {}) {
   // facts: { house, sign?, voice }. sign = the sign on the profected house; when given, the
   // card names the year's ruler (time lord) so the reader knows whose transits run the year.
   const { house, sign, voice = "you" } = facts;
@@ -572,3 +573,11 @@ export function renderProfectionYear(facts, opts = {}) {
   }
   return { headline: `${ordinal(house)} House Year`, note, body: parts.join("\n\n"), parts, templateKey: "fallback-template/natal.profection-year" };
 }
+
+export const renderNatalPlacement = bindStudioVariableReference(renderNatalPlacementReference, [templates.templates, vocab, hooks]);
+export const renderNatalAngle = bindStudioVariableReference(renderNatalAngleReference, [templates.templates, vocab, hooks]);
+export const renderNatalAspect = bindStudioVariableReference(renderNatalAspectReference, [templates.templates, vocab, hooks]);
+export const renderAspectPattern = bindStudioVariableReference(renderAspectPatternReference, [templates.templates, vocab, hooks]);
+export const renderHouseGlossary = bindStudioVariableReference(renderHouseGlossaryReference, [templates.templates, vocab, hooks]);
+export const renderNatalEmptyHouse = bindStudioVariableReference(renderNatalEmptyHouseReference, [templates.templates, vocab, hooks]);
+export const renderProfectionYear = bindStudioVariableReference(renderProfectionYearReference, [templates.templates, vocab, hooks]);
