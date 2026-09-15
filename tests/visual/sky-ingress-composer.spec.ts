@@ -22,6 +22,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme);
   await page.getByLabel('Sky placement planet or point').selectOption('saturn');
   await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
+  await page.getByLabel('Sky write-up motion').selectOption('retrograde');
   const map = page.getByRole('region', { name: 'Sky placement composition map' });
   await expect(map.getByRole('heading')).toHaveText('Saturn Rx in Aries');
   const systemDetails = map.getByLabel('Placement writing system details', { exact: true });
