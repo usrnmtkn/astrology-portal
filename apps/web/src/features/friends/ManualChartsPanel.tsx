@@ -1,4 +1,5 @@
 import { transitArticleDescription } from "../../services/transitArticleDescription";
+import { PageLoading } from "../../components/PageLoading";
 import { FriendDetail } from "./FriendDetail";
 import { X } from "lucide-react";
 import {
@@ -231,7 +232,7 @@ const FriendProfileChartFullscreen = lazy(() =>
 );
 
 function FeatureLoadingFallback() {
-  return <div className="feature-loading-fallback" aria-hidden="true" />;
+  return <PageLoading illustrated message="Loading Friends…" />;
 }
 
 export function ManualChartsPanel({

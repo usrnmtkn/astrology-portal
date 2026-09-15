@@ -1,4 +1,5 @@
 import { withFriendsLoadingTimeout } from "./socialFriendsLoading";
+import { PageLoading } from "../../components/PageLoading";
 import { Check, ChevronRight, Copy, Link2, MoreHorizontal, Search, X } from "lucide-react";
 import {
   useCallback,
@@ -1084,14 +1085,7 @@ export function SocialFriendsPanel({
           role={queryIsActive ? "region" : "tabpanel"}
           aria-labelledby={queryIsActive ? undefined : `friends-${activeView}-tab`}
         >
-          <div className="friends-search-skeleton" aria-label="Loading friends">
-            {[0, 1].map((item) => (
-              <span className="friends-search-skeleton-row" key={item}>
-                <i />
-                <span><i /><i /></span>
-              </span>
-            ))}
-          </div>
+          <PageLoading illustrated message="Loading friends…" />
         </div>
       </section>
     );

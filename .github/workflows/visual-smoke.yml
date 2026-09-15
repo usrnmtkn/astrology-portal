@@ -128,7 +128,7 @@ jobs:
       - name: Verify visible loading and recovery on slow or failed downloads
         run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/app-loading-feedback.spec.ts
       - name: Run visual regression and smoke screens
-        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
+        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts tests/visual/loading-illustration.spec.ts
       - name: Upload visual smoke artifacts
         if: always()
         uses: actions/upload-artifact@v6
