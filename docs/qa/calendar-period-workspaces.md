@@ -2,6 +2,8 @@
 
 Calendar Write-ups contains Daily Sky, Weekly Sky, and Monthly Sky. Daily Sky uses the existing Moon-sign workspace and its CRUD controls. Weekly and Monthly Sky open exact saved template keys, preserving the complete saved pattern and editor-only purpose. Missing templates start as unsaved reference drafts; retrieval errors never replace saved work. Sky Write-ups keeps the shared summary, placements/lunations, and transit workspaces. Existing Lunar Calendar and earlier Sky forecast links are preserved, including search state.
 
+Delivery is inside the existing Content Studio at `https://tldrastro.vercel.app/admin/content`, using its existing owner session and saved content. The Calendar navigation opens the three period views on that same origin. A feature-branch deployment is only release testing infrastructure; it is not a separate dashboard for the owner to adopt or manage, and is not completion of the production request.
+
 These templates are writing references with an interactive preview. Saving a template does not generate new astrology prose or publish an overview to the public Calendar. No reader prose, serving resolver, or generated content package changes are included.
 
 ## Interactive preview
@@ -41,3 +43,5 @@ The interactive follow-up was measured separately against `be85f9764` with the s
 Allocate 8,000 additional aggregate bytes (466,500 total, with 508 bytes of headroom). The initial-entry, largest-chunk, memory-graph, and forbidden-payload limits are unchanged. Both new preview modules must remain dynamic entries; a static-graph check rejects eagerly loaded preview UI. The preview reuses the existing Swiss worker and adds no runtime dependency.
 
 CI results and the production merge/deployment receipt belong to PR #816 and its final head. Live verification is read-only for saved owner templates; browser write fixtures use isolated test data.
+
+The integration with main `cfc75ea90` preserves the new shared Variables directory alongside Calendar Write-ups. Its independent 3,000-byte aggregate allocation combines with the Calendar allocation for a 469,500-byte limit. The combined CI-configured build measures 468,241 aggregate gzip bytes and 177,934 entry gzip bytes (613,979 raw). Initial-entry, largest-chunk, graph and deferred-content limits remain unchanged.

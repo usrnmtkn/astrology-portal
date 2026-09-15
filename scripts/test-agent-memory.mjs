@@ -97,6 +97,22 @@ test('real repository search finds the documented replacement and excludes empty
   assert.deepEqual(index.sources.filter(source => !packaged.has(source.path)).map(source => source.path), []);
 });
 
+test('cross-surface date rule and owner task provenance are retrievable in deployed sources', () => {
+  const index = buildMemoryIndex({ root: process.cwd() });
+  const rule = queryMemory(index, { query: 'Cross-surface event dates and placement windows', phrase: true, kind: 'rule' }).records
+    .find(record => record.path === 'AGENTS.md');
+  assert(rule, 'The date verification rule must be searchable, not only a local note');
+  const detail = memoryDetail(index, rule.id);
+  for (const phrase of ['You/Friends', 'continuous visit', 'full-residency', 'station-to-station', 'DST', 'hydration']) assert(detail.body.includes(phrase));
+  assert.equal(detail.bodySha256, sha256(detail.body));
+  assert.equal(detail.sourceSha256, sha256(fs.readFileSync('AGENTS.md')));
+  const note = index.records.find(record => record.metadata.id === 'cross-surface-placement-dates-2026-09-14');
+  assert(note);
+  assert.equal(note.metadata.source_uri, 'thread:01a0a070-33be-7811-9a73-86df25435b3d');
+  assert.equal(note.writerPacketEligible, false);
+  assert.equal(note.metadata.ownerApproved, false);
+});
+
 Object.assign(process.env, { NODE_ENV: 'production', CONTENT_GENERATION_SECRET: 'memory-test-secret', VITE_SUPABASE_URL: 'https://memory-test.invalid', VITE_SUPABASE_PUBLISHABLE_KEY: 'fixture', CONTENT_ADMIN_EMAILS: 'owner@example.invalid' });
 const { default: handler } = await import('../api/admin/memory-graph.ts');
 async function request(url = '', headers = {}, method = 'GET') {
