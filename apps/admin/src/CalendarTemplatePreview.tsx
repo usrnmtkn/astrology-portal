@@ -58,7 +58,10 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft 
   }, [calculationKey, mode]);
   useEffect(() => {
     let active = true;
-    void loadRows(JSON.parse(keysJson)).then(rows => { if (active) setLoaded({ key: sourceKey, rows }); })
+    const keys: string[] = JSON.parse(keysJson);
+    // The owner API accepts at most 64 exact keys; a full month spans all 12 signs.
+    const batches = Array.from({ length: Math.ceil(keys.length / 64) }, (_, index) => keys.slice(index * 64, (index + 1) * 64));
+    void Promise.all(batches.map(keys => loadRows(keys))).then(rows => { if (active) setLoaded({ key: sourceKey, rows: rows.flat() }); })
       .catch(reason => { if (active) setLoaded({ key: sourceKey, error: reason instanceof Error ? reason.message : "Could not load saved writing." }); });
     return () => { active = false; };
   }, [sourceKey, loadRows]);
