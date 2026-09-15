@@ -172,7 +172,7 @@ test("Monthly overview structure is an explicit draft change and preserves saved
   const monthly = skyForecastTemplates["monthly-sky"];
   const previous = "{{monthRange}}\n\n{{monthlyOverview}}\n\n{{keyDates}}\n\n{{monthlyIntegration}}";
   state.rows.push({ ...state.rows[0], id: "monthly", content_key: monthly.contentKey, headline: monthly.headline, body: previous,
-    sections: { preservedMetadata: "Fixture existing metadata", calendarOverview: { monthlyIntegration: "Fixture complete saved ending." } } });
+    sections: { contentStudioReview: { decision: "approved-exact-copy", copySha256: "fixture-prior-review" }, preservedMetadata: "Fixture existing metadata", calendarOverview: { monthlyIntegration: "Fixture complete saved ending." } } });
   await page.goto("/admin/content#calendar-writeups?view=monthly-sky");
   const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
   await preview.getByLabel("Preview source").selectOption("signs");
@@ -197,6 +197,7 @@ test("Monthly overview structure is an explicit draft change and preserves saved
   expect(state.writes[0].status).toBe("DRAFT");
   expect(state.writes[0].lane).toBe("reference");
   expect(state.writes[0].sections.preservedMetadata).toBe("Fixture existing metadata");
+  expect(state.writes[0].sections.contentStudioReview).toBeNull();
   await editor.getByRole("button", { name: "Close", exact: true }).click();
   await preview.getByRole("tab", { name: "Preview", exact: true }).click();
   const rendered = preview.getByLabel("Rendered Calendar template");
