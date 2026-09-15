@@ -50,11 +50,12 @@
   height: 100%;
   object-fit: contain;
   opacity: 0;
-  filter: var(--loading-illustration-filter);
-  transition: opacity var(--loading-illustration-fade) ease;
+  transition: opacity var(--motion-page-duration) ease;
 }
 
 .loading-illustration img.is-active { opacity: 1; }
+
+[data-theme="dark"] .loading-illustration img { filter: invert(1); }
 
 .app-loading__lines span {
   display: block;

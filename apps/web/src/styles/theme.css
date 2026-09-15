@@ -139,8 +139,6 @@
   --loading-line-short-width: 72%;
   /* Shared decorative loading frame: three units of the canonical 64px scale. */
   --loading-illustration-size: calc(var(--size-8) * 3);
-  --loading-illustration-fade: 360ms;
-  --loading-illustration-filter: none;
   --bg: var(--color-bg-warm);
   --surface: var(--color-surface);
   --surface-2: var(--color-surface-2);
@@ -1218,7 +1216,6 @@
 
 .theme-dark,
 [data-theme="dark"] {
-  --loading-illustration-filter: invert(1);
   --color-bg-warm: #16181b;
   --content-highlight-tint: rgba(205, 217, 116, 0.18);
   --color-paper: #16181b;
