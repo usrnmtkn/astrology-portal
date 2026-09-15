@@ -15,6 +15,7 @@ function matches(row: any, params: URLSearchParams) {
  return [...params].every(([name, filter]) => {
   if (["on_conflict", "select", "order", "limit", "offset", "or"].includes(name)) return true;
   if (filter === "is.null") return row[name] == null;
+  if (filter.startsWith("like.")) return String(row[name]).startsWith(filter.slice(5).replace(/\*$/u, ""));
   if (filter.startsWith("eq.")) return String(row[name]) === filter.slice(3);
   if (filter.startsWith("neq.")) return String(row[name]) !== filter.slice(4);
   if (filter.startsWith("in.(")) return filter.slice(4, -1).split(",").map(v => v.replace(/^"|"$/g, "")).includes(row[name]);
@@ -28,6 +29,7 @@ globalThis.fetch = async (input, init = {}) => {
  if (url.pathname === "/rest/v1/content_publications") return Response.json(stored.filter(row => row.status === "LIVE").map(row => ({ content_key: row.content_key, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at, state: "live", revision: Date.parse(row.updated_at) })));
  assert.equal(url.pathname, "/rest/v1/generated_interpretations");
  const found = stored.filter(row => matches(row, url.searchParams));
+ if (init.method === "DELETE") { for (const row of found) stored.splice(stored.indexOf(row), 1); return Response.json(found); }
  const body = init.body ? JSON.parse(String(init.body)) : null;
  if (init.method === "PATCH") { found.forEach(row => Object.assign(row, body)); return Response.json(found); }
  if (init.method === "POST") { const row = { id: `test-${stored.length}`, updated_at: new Date().toISOString(), ...body }; stored.push(row); return Response.json([row]); }
@@ -363,4 +365,23 @@ console.log("PASS: an empty published evergreen layout survives reload without r
  assert((await render()).mainBody.includes('fixture revised Sun function'));
  assert.equal(ownerRow.sections.packageRecord.placementArticle, template);
  console.log('PASS: actual API and reader resolve Sun, Virgo and Sun-in-Virgo scopes; source drafts preserve approved copy, stale links block publication/reading, and reviewed relinking admits the new source revision.');
+}
+
+// Owner-defined variables survive the actual publication, dashboard hydration and shipped reader.
+{
+ const variable = (await request('POST', { variable: { name: 'myCustomOpening', label: 'Custom opening', description: '', value: 'fixture shared prose', tags: ['owner tag'], overrides: [{scope: 'placement', planet: 'sun', sign: 'virgo', value: 'fixture scoped prose'}] } }, '?variables=true')).variable;
+ const live = stored.find(row => row.content_key === 'sky-placement/article/sun/virgo' && row.status === 'LIVE');
+ const copy = { ...live.sections.packageRecord, placementArticle: 'During this transit, {{myCustomOpening}}.', placementArticleDirect: '', placementArticleRetrograde: '' };
+ const saved = (await request('PATCH', { id: live.id, expectedUpdatedAt: live.updated_at, sections: {...live.sections, packageDraft: copy}, reviewStatus: 'needs_review' })).rows[0];
+ const published = (await request('PATCH', {id: saved.id, expectedUpdatedAt: saved.updated_at, ownerAction: 'approve-package-revision'})).rows[0];
+ assert.equal(published.sections.packageRecord.placementArticle, copy.placementArticle);
+ const render = async () => {
+  await runtime.refreshContentPublications(true); runtime.clearCachedFallbackArchitectureV3Bundle();
+  runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
+  return runtime.skyV4ReaderRenderer.renderRoute({ route: 'placement', planet: 'sun', sign: 'virgo' }).mainBody;
+ };
+ assert.equal(await render(), 'During this transit, fixture scoped prose.');
+ await request('DELETE', {id: variable.id, expectedUpdatedAt: variable.updatedAt}, '?variables=true');
+ assert.equal(await render(), 'During this transit, fixture scoped prose.');
+ console.log('PASS: custom variable → saved template → exact publication → actual dashboard loader → shipped Sky reader; library deletion preserves approved prose.');
 }

@@ -1,3 +1,4 @@
+import StudioVariableInsert from "./StudioVariableInsert";
 import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
@@ -27,7 +28,7 @@ const color = (kind: string) => kind === "fact" ? "fact" : ["planet", "sign"].in
 export default function SkyIngressComposer({ source, motion, disabled = false, initialField, onChange, onOpenSource, onLoadSource }: Props) {
   const composition = source.ingress as Composition | undefined;
   const identity = String(source.contentKey).split("/").slice(2);
-  const initialSourceId = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1];
+  const initialSourceId = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9_]*)$/u)?.[1];
   const [selectedSource, setSelectedSource] = useState("planetFunctionSentence");
   const [selectedModule, setSelectedModule] = useState("practice");
   const [view, setView] = useState("preview");
@@ -47,6 +48,8 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
   const [installing, setInstalling] = useState(false);
   const generation = useRef(0);
   const writing = useRef<HTMLTextAreaElement>(null);
+  const moduleWriting = useRef<HTMLTextAreaElement>(null);
+  const customVariables = source._studioVariables ?? [];
   useEffect(() => { if (initialSourceId) setSelectedSource(initialSourceId); }, [initialSourceId]);
   useEffect(() => { generation.current++; setCalculated(null); setReferences([]); return () => { generation.current++; }; }, [source.contentKey]);
   const referencedKeys = JSON.stringify([...new Set([...Object.values(composition?.sources ?? {}).map(value => value.reference?.contentKey).filter(key => key && key !== source.contentKey), ...ZODIAC_SEASON_VARIABLES.map((field: {id: string}) => zodiacSeasonSourceKey(field.id, identity[1]))])]);
@@ -198,9 +201,16 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
             <label>Pass<AdminSelect aria-label="Ingress module pass" value={module.timing} disabled={disabled} onChange={event => updateModule({ timing: event.target.value })}>{["all", "single_pass", "first_pass", "return_pass", "final_pass"].map(value => <option key={value} value={value}>{words(value.replaceAll("_", " "))}</option>)}</AdminSelect></label>
           </div>
           <p>Long means at least 90 days from the first entry to final exit, including gaps. Final pass takes priority over return pass. Sentence order within the template is preserved.</p>
-          <label className="admin-review-copy-editor"><span>Section template</span><StudioTextarea className="admin-copy-field-body" aria-label="Ingress section template" value={module.template} disabled={disabled} onChange={event => updateModule({ template: event.target.value })} /></label>
+          <label className="admin-review-copy-editor"><span>Section template</span><StudioTextarea ref={moduleWriting} className="admin-copy-field-body" aria-label="Ingress section template" value={module.template} disabled={disabled} onChange={event => updateModule({ template: event.target.value })} /></label>
           <label>Insert sentence source<AdminSelect aria-label="Insert ingress source slot" value="" disabled={disabled} onChange={event => { updateModule({ template: module.template + (module.template ? " " : "") + `{{${event.target.value}}}` }); }}><option value="">Choose an exact named sentence</option>{[...new Set([...Object.keys(composition.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id)])].map(id => <option key={id} value={id}>{words(id)} · {identity.join(" in ")}</option>)}</AdminSelect></label>
-          {ingressTextIssues(module.template, [...Object.keys(composition.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id)]).map((issue: string) => <p role="alert" key={issue}>{issue}</p>)}
+          <StudioVariableInsert variables={customVariables} context={input} disabled={disabled} onInsert={token => {
+            const node = moduleWriting.current;
+            const start = node?.selectionStart ?? module.template.length;
+            const end = node?.selectionEnd ?? start;
+            updateModule({ template: module.template.slice(0, start) + token + module.template.slice(end) });
+            requestAnimationFrame(() => { node?.focus(); node?.setSelectionRange(start + token.length, start + token.length); });
+          }} />
+          {ingressTextIssues(module.template, [...Object.keys(composition.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id), ...customVariables.map((item: RecordValue) => item.name)]).map((issue: string) => <p role="alert" key={issue}>{issue}</p>)}
           <details className="admin-workspace-details"><AdminDisclosureSummary>Aspect selection</AdminDisclosureSummary>
             <label><StudioInput type="checkbox" checked={Boolean(module.aspect)} disabled={disabled} onChange={event => updateModule({ aspect: event.target.checked ? { otherPlanet: "sun", type: "conjunction", weight: "defining" } : undefined })} /> Repeat for a calculated aspect</label>
             {module.aspect && <div className="admin-natal-placement-selectors">
@@ -238,9 +248,9 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
         {result.status === "incomplete" && <p role="status">This composition is incomplete. Readers continue through the existing eligible writing path.</p>}
         {result.trace.filter((part: RecordValue) => view !== "preview" || part.status === "included").map((part: RecordValue) => <div key={`${part.id}/${part.eventId ?? ""}`} className="admin-composition-preview-field">
           <strong>{part.label}</strong>
-          {view === "preview" ? <p>{part.template.split(/(\{\{\s*[A-Za-z][A-Za-z0-9]*\s*\}\})/gu).map((fragment: string, index: number) => {
-            const name = fragment.match(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/u)?.[1]; const slot = part.slots.find((item: RecordValue) => item.name === name);
-            return slot ? slot.kind === "fact" ? <span key={index} className="admin-composition-variable variable-fact">{slot.text}</span> : <StudioButton key={index} type="button" className={`admin-composition-variable variable-${color(slot.kind)}`} onClick={() => { const [key, field] = slot.reference.split("#"); onOpenSource(key, field); }}>{slot.text}</StudioButton> : <span key={index}>{fragment}</span>;
+          {view === "preview" ? <p>{part.template.split(/(\{\{\s*[A-Za-z][A-Za-z0-9_]*\s*\}\})/gu).map((fragment: string, index: number) => {
+            const name = fragment.match(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/u)?.[1]; const slot = part.slots.find((item: RecordValue) => item.name === name);
+            return slot ? ["fact", "custom"].includes(slot.kind) ? <span key={index} className="admin-composition-variable variable-fact">{slot.text}</span> : <StudioButton key={index} type="button" className={`admin-composition-variable variable-${color(slot.kind)}`} onClick={() => { const [key, field] = slot.reference.split("#"); onOpenSource(key, field); }}>{slot.text}</StudioButton> : <span key={index}>{fragment}</span>;
           })}</p> : <><p>{part.reason}</p><code className="admin-sky-section-reference">{part.template}</code>
             {part.slots.map((slot: RecordValue) => <div className="admin-composition-source-card" key={slot.name}><strong className={`variable-${color(slot.kind)}`}>{words(slot.name)}</strong><code className="admin-sky-section-reference">{slot.reference}</code><p>{slot.reason || slot.text}</p>{view === "template" && slot.raw && <p className="admin-composition-source-copy">{slot.raw}</p>}</div>)}</>}
         </div>)}

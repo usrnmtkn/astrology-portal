@@ -686,6 +686,10 @@ async function seedAdminApi(
 
     if (pathname.endsWith("/generated-content")) {
       const method = route.request().method();
+      if (method === "GET" && url.searchParams.get("variables") === "true") {
+        await route.fulfill({ json: { ok: true, variables: [] } });
+        return;
+      }
       if (method === "GET" && url.searchParams.get("sourceDrafts") === "sky-aspects") {
         await route.fulfill({
           status: 200,
@@ -1106,6 +1110,10 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   test("production-scale Compatibility renders its first scoped page before the full editorial inventory", async ({ page }) => {
     test.setTimeout(60_000);
+    const variableReads: string[] = [];
+    page.on("request", request => {
+      if (new URL(request.url()).searchParams.get("variables") === "true") variableReads.push(request.url());
+    });
     const compatibilityRowsAtScale = Array.from({ length: 1_261 }, (_, index) => ({
       ...generatedContentRows.find((row) => row.id === "qa-compatibility-content-row")!,
       id: `qa-compat-scale-${index}`,
@@ -1133,6 +1141,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(Date.now() - startedAt, "first Compatibility page becomes usable within 3 seconds").toBeLessThan(3_000);
     expect(reads[0]?.searchParams.get("scope")).toBe("compatibility");
     expect(reads[0]?.searchParams.get("limit")).toBe("500");
+    expect(variableReads, "custom writing loads when opening Variables or an editor").toEqual([]);
 
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected · 1,261 rows", {
       timeout: routeReadyTimeoutMs

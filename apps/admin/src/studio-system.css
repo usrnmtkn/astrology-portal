@@ -678,3 +678,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard :is(.admin-editor-header, .admin-variables-rail-header) > :last-child {
   align-items: center;
 }
+
+#root .admin-dashboard .studio-variable-value { white-space: pre-wrap; overflow-wrap: anywhere; }
+#root .admin-dashboard .studio-variable-tags { list-style: none; padding: 0; margin: 0; }
+
