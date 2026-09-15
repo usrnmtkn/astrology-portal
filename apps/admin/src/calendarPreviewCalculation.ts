@@ -7,6 +7,7 @@ export type CalendarPreviewCalculation = {
   sky: SkySnapshot;
   days: LunarCalendarDay[];
   events: LunarCalendarEvent[];
+  seasonIngresses?: LunarCalendarEvent[];
   timeZone: string;
 };
 
@@ -26,5 +27,5 @@ export async function calculateCalendarPreview(period: SkyForecastPeriod, instan
   }
   const days = calendar?.days.filter(day => period !== "monthly-sky" || day.inMonth) ?? [];
   const dates = new Set(days.map(day => day.dateKey));
-  return { sky, days, events: calendar?.events.filter(event => dates.has(event.dateKey)) ?? [], timeZone };
+  return { sky, days, seasonIngresses: calendar?.events.filter(event => event.planet === "Sun" && event.type === "ingress") ?? [], events: calendar?.events.filter(event => dates.has(event.dateKey)) ?? [], timeZone };
 }
