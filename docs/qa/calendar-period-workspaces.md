@@ -59,3 +59,13 @@ The existing editor now has five editable overview passages in `sections.calenda
 `zodiacSeason` and `zodiacSeasonPolarAxis` use the selected instant's Sun sign (or manually selected example Sun). `openingZodiacSeason`, `openingZodiacSeasonPolarAxis`, and their `closing` equivalents use the calculated period boundaries. `seasonSign`, `seasonStart`, `seasonEnd`, `openingSeasonSign`, `closingSeasonSign`, and `seasonChangeDate` supply the corresponding facts. Bounding Sun ingresses are retained from the existing Swiss calendar response separately from visible events. Current-season selection compares exact timestamps; late ingresses on the last local day remain part of the period. No fixed season date table or calculation algorithm is introduced. Missing, held, draft, or nested-placeholder season sources stay unavailable; approved complete source text is preserved exactly. The template's own authored passages remain private reference writing.
 
 Validation covers actual-handler passage/metadata roundtrip and stale-write protection, two direct Swiss ingress boundaries across New York and Sydney (including the year transition), a week entirely in one season, complete season source preservation and exclusions, and 14 fresh browser cases. The browser matrix includes desktop/mobile and light/dark, named-variable insertion, live preview, save/reopen, explicit legacy-structure adoption, empty and saved templates, source failures, old links, Friends navigation context, and the actual unsaved-editor close flow. Editor labels are compared to the existing template-pattern label style, and horizontal overflow is checked. The new editor is required to remain a lazy entry by the bundle regression.
+
+The hosted web budget check exposed an inherited production-baseline overrun. Separate clean builds of `aa7de8ccf` and `1919ccaf4`, each with their own dependencies and the workflow environment, measured:
+
+| Gzip bytes | Production main | Calendar correction | Change |
+| --- | ---: | ---: | ---: |
+| App startup JavaScript | 431,210 | 431,211 | +1 |
+| Reader startup with CSS | 480,834 | 480,835 | +1 |
+| All JavaScript | 3,077,942 | 3,081,336 | +3,394 |
+
+Main already exceeded the previous 430,500 / 479,500 / 3,069,000 limits. Hosted Linux CI measured 431,204 / 480,828 / 3,081,334 for the correction. The reconciled limits are 431,500 / 481,000 / 3,082,500. This accounts for the inherited baseline and the measured deferred editor addition; startup CSS, per-chunk, graph, deferred-source, and runtime timing limits remain unchanged.
