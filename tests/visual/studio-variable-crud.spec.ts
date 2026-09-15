@@ -44,6 +44,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Cr
     await form.getByLabel('Preview planet').selectOption('sun');
     await form.getByLabel('Preview sign').selectOption('virgo');
     await expect(form.locator('.studio-variable-value')).toHaveText('Fixture Sun in Virgo opening.');
+    const titleStyles = await page.locator('h1, form[aria-label="Create variable"] h2').evaluateAll(nodes => nodes.map(node => {
+      const style = getComputedStyle(node);
+      return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.textTransform, style.textAlign];
+    }));
+    expect(titleStyles).toHaveLength(2);
+    expect(titleStyles[0]).toEqual(titleStyles[1]);
+    await expect(form.getByRole('heading')).toHaveText(['Create variable', 'Overrides']);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: `test-results/custom-variable-form-${width}-${theme}.png`, fullPage: true });
     await form.getByRole('button', { name: 'Save variable', exact: true }).click();

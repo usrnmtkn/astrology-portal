@@ -1,4 +1,3 @@
-const StudioVariableInsert = lazy(() => import("./StudioVariableInsert"));
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { rememberStudioEditorReturn } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
@@ -210,6 +209,7 @@ const PackagedHookCatalogResults = lazy(async () => {
 const SkyV4StudioReviewPanel = lazy(() => import("./SkyV4StudioReviewPanel"));
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import AdminFilterDisclosure from "./AdminFilterDisclosure";
+const StudioVariableInsert = lazy(() => import("./StudioVariableInsert"));
 const StudioVariables = lazy(() => import("./StudioVariables"));
 const SkyForecastTemplateStudio = lazy(() => import("./SkyForecastTemplateStudio"));
 const CalendarOverviewEditor = lazy(() => import("./CalendarOverviewEditor"));

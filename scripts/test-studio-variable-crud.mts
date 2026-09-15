@@ -86,3 +86,15 @@ assert.equal((await invoke('GET')).payload.variables[0].name, 'myRenamed');
 const competing = await Promise.all(['First', 'Second'].map(label => invoke('PATCH', { id: unfinished.id, expectedUpdatedAt: renamed.payload.variable.updatedAt, variable: { ...renamed.payload.variable, label } })));
 assert.deepEqual(competing.map(result => result.status).sort(), [200, 409], 'Concurrent saves cannot overwrite each other');
 console.log('PASS: private metadata, tag-only edits, incomplete shared/override values, renaming and concurrent CAS updates.');
+
+const compositionRevision = [...store.rows.values()].find((row: any) => row.content_key === live.content_key && row.mode === 'studio-draft' && row.status === 'DRAFT');
+const compositionDraft = JSON.parse(JSON.stringify(compositionRevision.sections.packageDraft).replaceAll('myUnfinished', 'myRenamed'));
+compositionDraft.placementArticle = '';
+compositionDraft.ingress = { version: 5, enabled: true, sources: {}, modules: [{ id: 'main', label: 'Main', template: 'During this transit, {{myRenamed}}', required: true, enabled: true, motion: 'all', duration: 'all', timing: 'all' }] };
+const compositionSave = await store.invoke('PATCH', { id: compositionRevision.id, expectedUpdatedAt: compositionRevision.updated_at, sections: { ...compositionRevision.sections, packageDraft: compositionDraft }, reviewStatus: 'needs_review' });
+assert.equal(compositionSave.status, 200, JSON.stringify(compositionSave.payload));
+const compositionRow = compositionSave.payload.rows[0];
+const compositionPublish = await store.invoke('PATCH', { id: compositionRow.id, expectedUpdatedAt: compositionRow.updated_at, ownerAction: 'approve-package-revision' });
+assert.equal(compositionPublish.status, 200, JSON.stringify(compositionPublish.payload));
+assert.equal(store.rows.get(live.id).sections.packageRecord.ingress.modules[0].template, 'During this transit, {{myRenamed}}');
+console.log('PASS: renamed custom variable saves and publishes in a Placement composition section with the token intact.');
