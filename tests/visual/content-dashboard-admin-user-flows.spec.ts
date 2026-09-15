@@ -2504,13 +2504,14 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("House Transit house").selectOption("1");
 
     const finder = page.getByRole("region", { name: "House Transits source finder" });
-    await expect(finder.getByRole("heading", { name: "Uranus through your 1st house", level: 3 })).toBeVisible();
+    await expect(finder.getByRole("heading", { name: "Uranus in Gemini through your 1st house", level: 3 })).toBeVisible();
     const preview = finder.getByRole("region", { name: "Effective House Transit reader preview" });
     await expect(preview).toContainText("Complete composition");
     await expect(preview).toContainText("Over the next several years, the pull is toward freedom");
     await expect(preview).toContainText("Uranus in Gemini changes how you introduce yourself");
     await expect(finder.getByRole("heading", { name: "Editable passages in this House Transit", level: 3 })).toBeVisible();
-    await expect(finder.getByRole("button", { name: "Edit source row" })).toHaveCount(2);
+    await expect(finder.getByRole("button", { name: "Edit complete write-up", exact: true })).toHaveCount(1);
+    await expect(finder.locator('.admin-natal-source-group:not(details)').getByRole("button", { name: "Edit source row" })).toHaveCount(0);
 
     const selectorLabels = await finder.locator(".admin-natal-placement-selectors label > span:not(.admin-select-shell)").allTextContents();
     expect(selectorLabels).toEqual([
@@ -2526,7 +2527,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(headingLevels.slice(0, 3)).toEqual([
       { level: 1, text: "Sky Write-ups" },
       { level: 2, text: "Sky writing workspaces" },
-      { level: 3, text: "Uranus through your 1st house" }
+      { level: 3, text: "Uranus in Gemini through your 1st house" }
     ]);
     const contentOrder = await finder.evaluate((region) => {
       const readerPreview = region.querySelector('[aria-label="Effective House Transit reader preview"]');
@@ -2535,26 +2536,20 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     expect(contentOrder, "House Transit reader preview precedes its editable source passages").toBe(true);
 
-    const signPassage = finder.locator(".admin-natal-source-card", { hasText: "Uranus in Gemini through the 1st house" }).last();
-    await signPassage.getByRole("button", { name: "Edit source row" }).click();
-    const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await expect(editor.getByLabel("Body")).toHaveValue("Uranus in Gemini changes how you introduce yourself, speak up, and choose what comes next.");
-    await editor.getByLabel("Body").fill("Uranus in Gemini changes how you introduce yourself and choose what comes next.");
-    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await finder.getByRole("button", { name: "Edit complete write-up", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "House Transit write-up editor" });
+    const signField = editor.getByRole("textbox", { name: "Uranus in Gemini through the 1st house — You copy", exact: true });
+    await expect(signField).toHaveValue("Uranus in Gemini changes how you introduce yourself, speak up, and choose what comes next.");
+    await signField.fill("Uranus in Gemini changes how you introduce yourself and choose what comes next.");
+    await editor.getByRole("button", { name: "Save all changes", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0]).toMatchObject({ method: "PATCH", payload: { id: "qa-uranus-gemini-house-1" } });
-    await editor.getByRole("button", { name: "Archive source" }).click();
-    await expect.poll(() => writes.length).toBe(2);
-    expect(writes[1]).toMatchObject({ method: "PATCH", payload: { id: "qa-uranus-gemini-house-1", status: "ARCHIVED" } });
-    await expect(editor.getByRole("button", { name: "Restore as draft" })).toBeVisible();
-    await editor.getByRole("button", { name: "Restore as draft" }).click();
-    await expect.poll(() => writes.length).toBe(3);
-    expect(writes[2]).toMatchObject({ method: "PATCH", payload: { id: "qa-uranus-gemini-house-1", status: "DRAFT" } });
-    await expect(editor.getByRole("button", { name: "Archive source" })).toBeVisible();
-    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    // Row lifecycle remains covered by the ordinary-content save/archive/restore test.
+    // The combined editor changes prose without adding a new publication action.
+    await editor.getByRole("button", { name: /^Close/ }).click();
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await expect(finder.getByRole("heading", { name: "Uranus through your 1st house", level: 3 })).toBeVisible();
+    await expect(finder.getByRole("heading", { name: "Uranus in Gemini through your 1st house", level: 3 })).toBeVisible();
     await expectNoHorizontalOverflow(page, "House Transits Sky write-up workspace");
     await assertNoBrowserErrors();
   });
@@ -2574,14 +2569,15 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("House Transit zodiac sign").selectOption("gemini");
     await page.getByLabel("House Transit house").selectOption("1");
 
-    const source = page.getByRole("region", { name: "House Transits source finder" })
-      .locator(".admin-natal-source-card", { hasText: "Uranus through the 1st house" }).first();
-    await source.getByRole("button", { name: "Edit source row" }).click();
-    const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await editor.getByLabel("Body").fill("A proposed change that must remain visibly unsaved.");
-    await editor.getByRole("button", { name: "Save", exact: true }).click();
-    await expect(page.getByRole("status")).toContainText("did not return the saved row");
-    await expect(editor.getByText("Unsaved changes", { exact: true })).toBeVisible();
+    await page.getByRole("region", { name: "House Transits source finder" })
+      .getByRole("button", { name: "Edit complete write-up", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "House Transit write-up editor" });
+    const field = editor.getByRole("textbox", { name: "Uranus through the 1st house — You copy", exact: true });
+    await field.fill("A proposed change that must remain visibly unsaved.");
+    await editor.getByRole("button", { name: "Save all changes", exact: true }).click();
+    await expect(editor.getByRole("alert")).toContainText(/did not return the saved row|not saved|save failed/i);
+    await expect(field).toHaveValue("A proposed change that must remain visibly unsaved.");
+    await expect(editor.getByRole("button", { name: "Save all changes", exact: true })).toBeEnabled();
   });
 
   test("legacy transit searches and navigation lead directly to Transit to Natal Charts", async ({ page }) => {
