@@ -2826,7 +2826,7 @@ export function GeneratedContentAdminDashboard() {
   }, []);
   const [userRows, setUserRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [facts, setFacts] = useState<AdminContentFact[]>([]);
-  const [message, setMessage] = useState("Loading saved content…");
+  const [message, setMessage] = useState("");
   const [loadState, setLoadState] = useState<AdminLoadState>("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loadDiagnostics, setLoadDiagnostics] = useState<string | null>(null);
@@ -3443,12 +3443,9 @@ export function GeneratedContentAdminDashboard() {
       secret,
       "all",
       "all",
-      (loadedRows, complete) => {
+      (loadedRows) => {
         if (cancelled) return;
         setRows((current) => mergeContentInventory(current, loadedRows));
-        setMessage(complete
-          ? `Loaded the extended ${loadedRows.length}-row content inventory.`
-          : `Loaded ${loadedRows.length} extended content records…`);
       },
       controller.signal
     )
@@ -3456,7 +3453,6 @@ export function GeneratedContentAdminDashboard() {
         if (cancelled) return;
         setRows((current) => mergeContentInventory(current, allRows));
         setAllRowsLoaded(true);
-        setMessage(`Loaded the extended ${allRows.length}-row content inventory.`);
       })
       .catch((error) => {
         if (cancelled) return;
@@ -4041,7 +4037,7 @@ export function GeneratedContentAdminDashboard() {
     setLoadState("loading");
     setLoadError(null);
     setLoadDiagnostics(null);
-    setMessage("Loading saved content…");
+    setMessage("");
     setSourceDraftLoadState("loading");
     setSourceDraftError(null);
     try {
@@ -4058,13 +4054,9 @@ export function GeneratedContentAdminDashboard() {
           normalizedSecret,
           needsExtendedInventory || loadsCompatibilityFirst ? "all" : "editorial",
           loadsCompatibilityFirst ? "compatibility" : "all",
-          (loadedRows, complete) => {
+          (loadedRows) => {
             if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return;
             setRows((current) => mergeContentInventory(current, loadedRows));
-            const inventoryLabel = loadsCompatibilityFirst ? "compatibility records" : "content records";
-            setMessage(complete
-              ? `Loaded ${loadedRows.length} ${inventoryLabel}.`
-              : `Loaded ${loadedRows.length} ${inventoryLabel}…`);
           },
           loadController.signal
         ),
@@ -4119,7 +4111,7 @@ export function GeneratedContentAdminDashboard() {
         sourceDraftResult.status === "rejected" ? "Sky source drafts failed" : ""
       ].filter(Boolean);
       setLoadState("loaded");
-      setMessage(`Loaded ${generatedRows.length} saved rows, ${reviewRowsPayload.length} review records, and ${usersPayload.rows?.length ?? 0} user rows.${partialWarnings.length ? ` Partial load: ${partialWarnings.join(", ")}.` : ""}`);
+      if (partialWarnings.length) setMessage(`Partial load: ${partialWarnings.join(", ")}.`);
       if (loadsCompatibilityFirst) {
         void loadAllGeneratedContentRows(normalizedSecret, "editorial")
           .then((editorialRows) => {
@@ -5815,6 +5807,8 @@ export function GeneratedContentAdminDashboard() {
   const natalAspectWorkspaceActive = activePage === "content" && categoryFilter === "Natal Aspects";
   const calendarAspectWorkspaceActive = activePage === "content" && categoryFilter === "Calendar Aspects";
   const lunarWorkspaceActive = activePage === "calendarWriteups" && calendarWriteupWorkspaceView === "daily-sky";
+  const inventoryLoading = loadState === "loading"
+    || (activePage === "skyWriteups" && loadState === "loaded" && !allRowsLoaded && !loadError);
   const currentPageTitle = natalChartWorkspaceActive
     ? "Natal Chart Write-ups"
     : natalAspectWorkspaceActive
@@ -5977,16 +5971,16 @@ export function GeneratedContentAdminDashboard() {
         </details>
       </nav>
       <section
-        className={`admin-sidebar-status is-${loadState === "loaded" ? "ok" : loadState === "accessDenied" || loadState === "error" ? "error" : "pending"}`}
+        className={`admin-sidebar-status is-${inventoryLoading ? "pending" : loadState === "loaded" ? "ok" : loadState === "accessDenied" || loadState === "error" ? "error" : "pending"}`}
         aria-label="Admin status"
         title={`Fallback package ${hookCatalogPackageVersion}`}
       >
         <span className="admin-sidebar-status-dot" aria-hidden="true" />
         <span>
-          {loadState === "loaded"
-            ? `Connected · ${rows.length.toLocaleString()} rows`
-            : loadState === "loading"
-              ? "Loading…"
+          {inventoryLoading
+            ? `Loading… ${rows.length.toLocaleString()} rows`
+            : loadState === "loaded"
+              ? `Connected · ${rows.length.toLocaleString()} rows`
               : loadState === "accessDenied"
                 ? "Access denied"
                 : loadState === "error"
@@ -6352,8 +6346,8 @@ export function GeneratedContentAdminDashboard() {
               </>
             ) : (
               <>
-                <section className="admin-content-filters" aria-label="Sky write-up filters">
-                  <div className="admin-review-filter-grid">
+                <section className="admin-content-filters admin-sky-filters" aria-label="Sky write-up filters">
+                  <div className="admin-review-filter-grid admin-filter-form admin-filter-form--three">
                     <label>
                       <span>Planet or point</span>
                       <AdminSelect aria-label="Sky placement planet or point" value={skyPlacementBody} onChange={(event) => setSkyPlacementBody(event.target.value)}>
@@ -6374,40 +6368,52 @@ export function GeneratedContentAdminDashboard() {
                         {skyWriteupMotionFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
                       </AdminSelect>
                     </label>
-                    <label>
-                      <span>Content group</span>
-                      <AdminSelect
-                        aria-label="Sky write-up type"
-                        value={skyWriteupSubjectFilter}
-                        onChange={(event) => setSkyWriteupSubjectFilter(event.target.value as AdminSkyWriteupSubjectFilter)}
-                      >
-                        {skyWriteupSubjectFilters.map((filter) => (
-                          <option key={filter.key} value={filter.key}>{filter.label}</option>
-                        ))}
-                      </AdminSelect>
-                    </label>
-                    <label>
+                    <label className="admin-filter-search">
                       <span>Search by keyword</span>
                       <StudioInput
                         aria-label="Search Sky write-ups"
                         type="search"
                         value={skyWriteupQuery}
                         onChange={(event) => setSkyWriteupQuery(event.target.value)}
-                        placeholder="Title, sign, aspect, body text, or content key"
+                        placeholder="Search write-ups"
                       />
                     </label>
-                    <label>
-                      <span>Reader use</span>
-                      <AdminSelect aria-label="Sky write-up reader use" value={skyWriteupDestinationFilter} onChange={(event) => setSkyWriteupDestinationFilter(event.target.value as ContentDestinationFilter)}>
-                        {skyWriteupDestinationFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                      </AdminSelect>
-                    </label>
-                    <label>
-                      <span>Sort</span>
-                      <AdminSelect aria-label="Sort Sky write-ups" value={skyWriteupSort} onChange={(event) => setSkyWriteupSort(event.target.value as ContentPlacementSort)}>
-                        {skyWriteupSortOptions.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
-                      </AdminSelect>
-                    </label>
+                  </div>
+                  <details className="admin-filter-options">
+                    <AdminDisclosureSummary>More filters</AdminDisclosureSummary>
+                    <div className="admin-review-filter-grid admin-filter-form admin-filter-form--three">
+                      <label>
+                        <span>Content group</span>
+                        <AdminSelect
+                          aria-label="Sky write-up type"
+                          value={skyWriteupSubjectFilter}
+                          onChange={(event) => setSkyWriteupSubjectFilter(event.target.value as AdminSkyWriteupSubjectFilter)}
+                        >
+                          {skyWriteupSubjectFilters.map((filter) => (
+                            <option key={filter.key} value={filter.key}>{filter.label}</option>
+                          ))}
+                        </AdminSelect>
+                      </label>
+                      <label>
+                        <span>Reader use</span>
+                        <AdminSelect aria-label="Sky write-up reader use" value={skyWriteupDestinationFilter} onChange={(event) => setSkyWriteupDestinationFilter(event.target.value as ContentDestinationFilter)}>
+                          {skyWriteupDestinationFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+                        </AdminSelect>
+                      </label>
+                      <label>
+                        <span>Sort</span>
+                        <AdminSelect aria-label="Sort Sky write-ups" value={skyWriteupSort} onChange={(event) => setSkyWriteupSort(event.target.value as ContentPlacementSort)}>
+                          {skyWriteupSortOptions.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
+                        </AdminSelect>
+                      </label>
+                    </div>
+                  </details>
+                  <div className="admin-filter-actions">
+                    <p className="admin-filter-result-count" aria-live="polite">
+                      {skyPlacementBody !== "all" && skyPlacementSign !== "all"
+                        ? <>Composition sources below · <strong>{filteredSkyWriteupRows.length}</strong> matching library rows</>
+                        : <><strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown</>}
+                    </p>
                     <StudioButton
                       type="button"
                       onClick={() => {
@@ -6429,18 +6435,14 @@ export function GeneratedContentAdminDashboard() {
                     >
                       Clear filters
                     </StudioButton>
-                    <p className="admin-filter-result-count" aria-live="polite">
-                      {skyPlacementBody !== "all" && skyPlacementSign !== "all"
-                        ? <>Composition sources below · <strong>{filteredSkyWriteupRows.length}</strong> matching library rows</>
-                        : <><strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown</>}
-                    </p>
                   </div>
                 </section>
-                {secret.trim() && !hasAccessIssue && (
+                {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
                   <Suspense fallback={<p className="admin-empty" role="status">Loading Composition Map…</p>}>
-                    <SkyPlacementComposition onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)} rows={compositionRows} selection={skyPlacementBody !== "all" && skyPlacementSign !== "all" ? { planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter } : undefined} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
+                    <SkyPlacementComposition onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)} rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
                   </Suspense>
                 )}
+                {(skyPlacementBody === "all" || skyPlacementSign === "all") && <p className="admin-natal-placement-prompt">Choose a planet and zodiac sign above to preview and edit its complete write-up.</p>}
                 {publishedButUnwiredSkyRows.length > 0 && (
                   <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
                     <div>
@@ -7361,7 +7363,7 @@ export function GeneratedContentAdminDashboard() {
     } as TransitNatalSelection : null;
 
     return (
-      <section className="admin-natal-placement-finder" aria-label="Personal Transits source finder">
+      <section className="admin-natal-placement-finder admin-transit-finder" aria-label="Personal Transits source finder">
         <div className="admin-natal-placement-finder-heading">
           <div>
             <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Active for {{Name}}" : "Personal Transits workspace"}</p>
@@ -7374,7 +7376,7 @@ export function GeneratedContentAdminDashboard() {
           {selection && <code>transit/{selection.planet}-{selection.sign}-{selection.transitHouse}h/{selection.aspect}/{selection.natalPoint}-{selection.natalHouse}h</code>}
         </div>
 
-        <div className="admin-natal-placement-selectors">
+        <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three">
           <label>
             <span>1. Transiting planet</span>
             <AdminSelect aria-label="Transiting planet" value={transitNatalPlanet} onChange={(event) => updateTransitNatalSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
@@ -7576,8 +7578,8 @@ export function GeneratedContentAdminDashboard() {
     const advancedSources = alternateGroup?.sources.filter((source) => !servingLegacy || source.id !== "legacy") ?? [];
 
     return (
-      <section className="admin-natal-placement-finder" aria-label="House Transits source finder">
-        <div className="admin-natal-placement-finder-heading admin-surface-card">
+      <section className="admin-natal-placement-finder admin-transit-finder" aria-label="House Transits source finder">
+        <div className="admin-natal-placement-finder-heading">
           <div>
             <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Where it lands" : "House Transits workspace"}</p>
             <h3>{selection ? houseTransitLabel(selection) : "Find a House Transit write-up"}</h3>
@@ -7589,7 +7591,7 @@ export function GeneratedContentAdminDashboard() {
           {selection && <code>transit/{selection.planet}-{selection.sign}/{selection.house}h/{selection.motion}</code>}
         </div>
 
-        <div className="admin-natal-placement-selectors admin-surface-card">
+        <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--four">
           <label>
             <span>1. Transiting planet</span>
             <AdminSelect aria-label="House Transit planet" value={houseTransitPlanet} onChange={(event) => updateHouseTransitSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>

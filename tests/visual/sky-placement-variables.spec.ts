@@ -22,12 +22,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   });
   await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === "1" ? "/admin/content#sky-writeups" : "/#sky-writeups");
   await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
-  await expect(page.getByRole("region", { name: "Sky placement composition map" })).toBeVisible();
-  await expect(page.getByLabel("Composition planet or point")).toBeVisible();
+  await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
   await page.getByLabel("Sky placement planet or point").selectOption("saturn");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
   await page.getByLabel("Sky write-up motion").selectOption("retrograde");
   const map = page.getByRole("region", { name: "Sky placement composition map" });
+  await expect(map).toBeVisible();
   await expect(map.getByRole("button", { name: "Edit placement article", exact: true })).toContainText("Fixture Saturn in Aries, retrograde. Entry: {{entryDate}}.");
   await map.getByLabel("Placement writing path").selectOption("fallback");
   await map.getByRole("tab", { name: "Main template", exact: true }).click();

@@ -1075,10 +1075,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page, { generatedContentDelayMs: 1_000 });
     await page.goto("/admin/content");
 
-    await expect(page.getByRole("status")).toContainText("Loading saved content…");
-    await expect(page.getByRole("status")).not.toContainText("Content Studio ready");
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Loading");
-    await expect(page.getByRole("region", { name: "Loading saved content" })).toBeVisible();
+    const loading = page.getByRole("region", { name: "Loading saved content" });
+    await expect(loading).toContainText("Loading saved content…");
+    await expect(loading).not.toContainText("Content Studio ready");
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Loading… 0 rows");
+    await expect(loading).toBeVisible();
     await expect(page.getByRole("navigation", { name: "Review queue views" })).toBeHidden();
 
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`Connected · ${generatedContentRows.length.toLocaleString("en-US")} rows`, {
@@ -1202,8 +1203,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`Connected · ${generatedContentRows.length.toLocaleString("en-US")} rows`, {
       timeout: routeReadyTimeoutMs
     });
-    await expect(page.getByRole("status")).toContainText(`Loaded ${generatedContentRows.length} saved rows`);
-    await page.getByRole("button", { name: "Dismiss notification" }).click();
+    await expect(page.getByRole("region", { name: "Admin access required" })).toBeHidden();
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("qa-secret");
     await expect(page.getByRole("status")).toHaveCount(0);
   });
 
@@ -1567,8 +1568,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     const filters = page.getByRole("region", { name: "Sky write-up filters" });
     const search = filters.getByLabel("Search Sky write-ups");
     const type = filters.getByLabel("Sky write-up type");
-    await expect(search).toHaveAttribute("placeholder", "Title, sign, aspect, body text, or content key");
+    await expect(search).toHaveAttribute("placeholder", "Search write-ups");
     await expect(filters.getByLabel("Sky write-up motion")).toBeVisible();
+    await expect(filters.getByLabel("Sky write-up reader use")).toBeHidden();
+    await filters.getByText("More filters", { exact: true }).click();
     await expect(filters.getByLabel("Sky write-up reader use")).toBeVisible();
 
     await search.fill("care belonging");
@@ -1910,6 +1913,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups");
 
     await expect(page.getByLabel("Sky write-up motion")).toBeVisible();
+    await page.getByRole("region", { name: "Sky write-up filters" }).getByText("More filters", { exact: true }).click();
     await expect(page.getByLabel("Sky write-up reader use")).toBeVisible();
     await expect(page.getByLabel("Sort Sky write-ups")).toBeVisible();
     await page.getByLabel("Sky write-up motion").selectOption("retrograde");
