@@ -949,7 +949,9 @@
   }
 
   .mode-guest .today-hero:has(+ .today-summary-cards .sky-today-ledger),
-  .mode-member .today-hero:has(+ .today-summary-cards .sky-today-ledger) {
+  .mode-member .today-hero:has(+ .today-summary-cards .sky-today-ledger),
+  .mode-guest .today-hero:has(+ .sky-reading-layout),
+  .mode-member .today-hero:has(+ .sky-reading-layout) {
     display: none;
   }
 

@@ -191,6 +191,9 @@ export default defineConfig(({ mode }) => {
       react()
     ],
     assetsInclude: ["**/*.wasm"],
+    // Emit imported JSON as literals so the minifier can compact property keys
+    // without retaining an escaped JSON string inside each JavaScript chunk.
+    json: { stringify: false },
     worker: {
       format: "es",
       plugins: () => [
@@ -271,6 +274,9 @@ export default defineConfig(({ mode }) => {
               id.includes("fallbackArchitectureV3/bundled-sky-core-rows-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-sky-authored-cards-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-initial-reader-rows-v3.json")
+              // Both are already part of reader startup; share one compressed
+              // payload instead of downloading the protected passages separately.
+              || id.includes("fallbackArchitectureV3/authored-inputs/owner-authored-sky-placement-house-passages-v1.json")
             ) {
               return "fallback-content-sky-core";
             }
