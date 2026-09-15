@@ -1,0 +1,26 @@
+name: Monthly isolated dependency cache
+on:
+  push:
+    branches: [chatgpt/monthly-template-reviewed-v1]
+    paths: [.github/workflows/monthly-dev-cache.yml]
+permissions:
+  contents: read
+jobs:
+  cache:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: npm ci --cache /tmp/monthly-npm
+      - name: Archive package cache only, without logs or credentials
+        run: tar -czf /tmp/monthly-npm.tgz -C /tmp/monthly-npm _cacache
+      - uses: actions/upload-artifact@v6
+        with:
+          name: monthly-isolated-npm-cache
+          path: /tmp/monthly-npm.tgz
+          retention-days: 1
