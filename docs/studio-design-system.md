@@ -144,3 +144,16 @@ Six categorical ink/surface pairs are defined in the shared Studio theme, with s
 Standalone expandable groups use `admin-workspace-details` in both closed and open states, including source history, related passages, composition guidance and editorial history. Inline table and toolbar disclosures remain inside their existing row or toolbar surface. Native `details` elements do not inherit the section grid helper; the browser retains their disclosure layout and hidden-content behavior.
 
 The Sky variable key uses one raised definition list with 16px row insets and continuous separators. Variable names and descriptions align in two tracks on desktop and stack on mobile. Example values and availability labels have their own wrapping row. Variable badges and their rendered sentence values reuse the shared categorical palette and stable name mapping.
+
+## Variables directory
+
+The directory groups its introduction, search and filters in one shared surface.
+Source cards have the shared 24px collection gap, 24px desktop inset and 16px
+mobile inset. Headers align the variable identity and Copy token action; source
+selection and Edit source share a row on desktop and stack on mobile. Descriptions
+and metadata have an explicit 8px gap. Usage disclosures are flat, divided sections
+inside each card and preserve native closed-content behavior.
+
+Variable code badges use the existing six categorical ink/surface pairs. The
+color map is calculated from the complete catalog, so filtering and pagination
+never recolor a name. Type labels remain visible and independent of color.

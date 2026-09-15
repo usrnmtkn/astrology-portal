@@ -46,6 +46,28 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    if (await notice.isVisible()) await notice.click();
    const typography = () => page.locator('h1').evaluate(el => { const s = getComputedStyle(el); return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign]; });
    const headingStyle = await typography();
+   const initialStyle = await directory.locator('.studio-variable-card').evaluateAll(cards => {
+    const rects = cards.slice(0, 2).map(card => card.getBoundingClientRect());
+    const tokens = cards.map(card => card.querySelector('h2 code')!);
+    return {
+     gap: rects[1].top - rects[0].bottom,
+     inset: parseFloat(getComputedStyle(cards[0]).paddingLeft),
+     colors: tokens.map(token => ({name: token.textContent, id: token.getAttribute('data-variable-color'), ink: getComputedStyle(token).color, surface: getComputedStyle(token).backgroundColor})),
+    };
+   });
+   expect(initialStyle.gap).toBe(24);
+   expect(initialStyle.inset).toBe(width < 720 ? 16 : 24);
+   expect(new Set(initialStyle.colors.map(token => token.id)).size).toBeGreaterThan(1);
+   const luminance = (rgb: string) => rgb.match(/[\d.]+/g)!.slice(0, 3).map(Number).map(c => c / 255).reduce((sum, c, i) => sum + (c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4) * [.2126, .7152, .0722][i], 0);
+   for (const token of initialStyle.colors) {
+    expect(token.id).toMatch(/^[1-6]$/);
+    const levels = [luminance(token.ink), luminance(token.surface)].sort((a,b) => a-b);
+    expect((levels[1] + .05) / (levels[0] + .05)).toBeGreaterThanOrEqual(4.5);
+   }
+   await directory.getByLabel('Search variables', {exact: true}).fill('angle');
+   const angleToken = directory.locator('code[data-variable-name="angleTitle"]');
+   expect(await angleToken.getAttribute('data-variable-color')).toBe(initialStyle.colors.find(token => token.name === '{{angleTitle}}')?.id);
+   await page.screenshot({path: `test-results/variables-directory-${width}-${theme}.png`, fullPage: true});
    await directory.getByLabel('Search variables', {exact: true}).fill('entryDate');
    await directory.getByLabel('Type', {exact: true}).selectOption('readonly');
    await directory.getByLabel('Used in', {exact: true}).selectOption('Sky');

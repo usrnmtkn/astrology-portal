@@ -368,6 +368,15 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard [data-variable-color="5"] { color: var(--studio-variable-5-ink); background: var(--studio-variable-5-surface); border-color: currentColor; }
 #root .admin-dashboard [data-variable-color="6"] { color: var(--studio-variable-6-ink); background: var(--studio-variable-6-surface); border-color: currentColor; }
 
+/* The variable directory uses separate source cards and the shared token key. */
+#root .admin-dashboard .studio-variable-description { display: grid; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .studio-variable-usage { border-block-start: var(--border-width-thin) solid var(--workspace-line); padding-block-start: var(--workspace-field-gap); }
+#root .admin-dashboard .studio-variable-usage ul { display: grid; gap: var(--workspace-control-inset); list-style: none; margin: 0; padding: 0; }
+#root .admin-dashboard .studio-variable-source { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .studio-variable-source > button { align-self: end; margin-block-end: var(--workspace-field-gap); }
+#root .admin-dashboard .studio-variables :is(.admin-pagination,.admin-pagination > div) { display: flex; align-items: center; flex-wrap: wrap; gap: var(--workspace-control-inset); }
+#root .admin-dashboard .studio-variables .admin-pagination { justify-content: space-between; }
+
 #root .admin-dashboard .admin-help-popover { position: relative; }
 #root .admin-dashboard .admin-help-popover .admin-hook-pattern-list { grid-template-columns: minmax(0,1fr); }
 #root .admin-dashboard .admin-help-popover > div { position: absolute; inset-inline-end: 0; z-index: 75; width: var(--studio-menu-width); max-width: var(--studio-overlay-max-width); padding: var(--workspace-panel-inset); background: var(--workspace-raised); border-radius: var(--workspace-radius); box-shadow: var(--workspace-menu-shadow); }
@@ -479,6 +488,9 @@ body:has(.admin-dashboard) { margin: 0; }
 }
 
 @media (max-width: 720px) {
+  #root .admin-dashboard :is(.studio-variable-card,.studio-variable-controls) { padding: var(--workspace-panel-inset); }
+  #root .admin-dashboard .studio-variable-source { grid-template-columns: minmax(0,1fr); }
+  #root .admin-dashboard .studio-variable-source > button { margin-block-end: 0; }
   #root .admin-dashboard .admin-filter-form { grid-template-columns: minmax(0, 1fr); }
   #root .admin-dashboard .admin-studio-map { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-access-gate { grid-template-columns: minmax(0,1fr); }
