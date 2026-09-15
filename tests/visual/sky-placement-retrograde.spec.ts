@@ -250,7 +250,7 @@ for (const width of [390, 1440]) test(`Saturn date windows stay visible through 
   const dates = page.locator(".sky-detail-id .article-duration");
   await expect(dates).toHaveText([
     "Jul 26, 2026 - Dec 10, 2026",
-    "In Aries: February 13, 2026 to April 12, 2028"
+    "Full residency in Aries: May 24, 2025 to April 12, 2028"
   ], { timeout: 60_000 });
   await page.evaluate(() => document.fonts.ready);
   // The article can finish its own exact placement calculation before the
