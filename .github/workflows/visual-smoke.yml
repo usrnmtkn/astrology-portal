@@ -251,7 +251,7 @@ jobs:
       - name: Verify exact placement scan parity and calculation reuse
         run: node --import tsx scripts/test-sky-placement-scan-reuse.mts
       - name: Verify placement reader refresh stability
-        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts tests/visual/calendar-day-summary.spec.ts tests/visual/sky-placement-dates.spec.ts tests/visual/sky-placement-key-dates.spec.ts
+        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-placement-retrograde.spec.ts tests/visual/sky-composable-reader.spec.ts tests/visual/sky-placement-stability.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-placement-hydration-boundary.spec.ts tests/visual/article-navigation-stability.spec.ts tests/visual/sky-you-transit-parity.spec.ts tests/visual/calendar-day-summary.spec.ts tests/visual/sky-placement-dates.spec.ts tests/visual/placement-visit-dates.spec.ts tests/visual/sky-placement-key-dates.spec.ts
       - name: Upload Sky placement reader artifacts
         if: always()
         uses: actions/upload-artifact@v6
@@ -278,11 +278,12 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run build:knowledge
       - name: Verify daily Sky summary composition
-        run: npm run test:sky-daily-summary && node scripts/test-sky-placement-aspect-matrix.mjs
+        run: npm run test:sky-daily-summary && node scripts/test-sky-placement-aspect-matrix.mjs && node --import tsx scripts/test-calendar-template-preview.mts
       - name: Verify daily Sky summary reader and Studio
         run: |
           npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts
           npx playwright test -c playwright.sky-studio.config.ts
+          npx playwright test -c playwright.sky-forecast.config.ts tests/visual/calendar-template-preview.spec.ts tests/visual/sky-forecast-studio.spec.ts
       - name: Enforce Content Studio bundle size and deferred editor boundaries
         run: node scripts/check-admin-bundle-budgets.mjs
       - name: Verify owner sign-in return and storage-timeout recovery
