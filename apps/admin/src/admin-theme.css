@@ -49,6 +49,7 @@
   --studio-overlay-panel-height: calc(100% - 32px);
   --studio-dialog-height: calc(100dvh - 48px);
   --studio-textarea-height: 160px;
+  --studio-compact-textarea-height: 96px;
   --studio-body-field-height: 240px;
   --studio-code-max-height: 44vh;
   --studio-table-action-width: 112px;

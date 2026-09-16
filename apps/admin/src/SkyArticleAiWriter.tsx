@@ -90,6 +90,7 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
         disabled={disabled || busy}
         maxLength={6000}
         rows={4}
+        className="admin-ai-writing-instruction"
         placeholder="Keep the opening, make the middle more concrete, and preserve the evergreen meaning."
         onChange={event => setInstruction(event.target.value)}
       />

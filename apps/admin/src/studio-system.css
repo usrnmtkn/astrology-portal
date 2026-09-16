@@ -66,6 +66,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard :is(input,select,textarea):disabled { opacity: var(--studio-disabled-opacity); background: var(--workspace-surface); cursor: not-allowed; }
 #root .admin-dashboard :is(input,select,textarea)[aria-invalid="true"] { border-color: var(--workspace-danger); }
 #root .admin-dashboard textarea { min-height: var(--studio-textarea-height); resize: vertical; }
+#root .admin-dashboard .admin-ai-writing-instruction { min-height: var(--studio-compact-textarea-height); }
 #root .admin-dashboard :is(input[type="checkbox"],input[type="radio"]) { width: var(--studio-selection-size); height: var(--studio-selection-size); font: inherit; margin: 0; accent-color: var(--workspace-primary); flex-shrink: 0; }
 #root .admin-dashboard label:has(> input:is([type="checkbox"],[type="radio"])) { display: flex; align-items: center; gap: var(--workspace-control-inset); color: var(--workspace-ink); }
 #root .admin-dashboard input[type="range"] { accent-color: var(--workspace-primary); width: 100%; }
