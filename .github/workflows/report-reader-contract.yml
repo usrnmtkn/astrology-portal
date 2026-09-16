@@ -1,0 +1,95 @@
+name: Report reader contract
+
+on:
+  pull_request:
+    paths:
+      - 'api/_lib/**'
+      - 'scripts/test-*report*'
+      - 'scripts/test-*transit*'
+      - 'src/astro-writing/**'
+      - 'tldr-astro-phrasebank/**'
+      - 'apps/web/src/components/reports/**'
+      - 'apps/web/src/services/reportLibrary.ts'
+      - '.github/workflows/report-reader-contract.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'api/_lib/**'
+      - 'scripts/test-*report*'
+      - 'scripts/test-*transit*'
+      - 'src/astro-writing/**'
+      - 'tldr-astro-phrasebank/**'
+      - 'apps/web/src/components/reports/**'
+      - 'apps/web/src/services/reportLibrary.ts'
+      - '.github/workflows/report-reader-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  report-reader-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - name: Typecheck the report API and lifecycle
+        run: >-
+          npx tsc --noEmit --target es2023 --module esnext --moduleResolution bundler
+          --allowImportingTsExtensions --esModuleInterop --skipLibCheck
+          api/_lib/transit-reading-generation.ts api/_lib/transit-reading-judge.ts
+          api/_lib/friend-transit-reading-generation.ts api/_lib/you-transit-reading-generation.ts
+          api/_lib/you-report-lifecycle.ts api/_lib/friend-report-lifecycle.ts
+      - name: Reader contract, claim parsing, correction, storage and delivery regressions
+        run: |
+          node --import tsx --test scripts/test-report-reader-contract.mts
+          node --import tsx scripts/test-transit-reading-checkpoints.mts
+          node --import tsx scripts/test-transit-report-delivery.mjs
+          node --import tsx scripts/test-you-report-paid-lifecycle.mts
+          node --import tsx scripts/test-you-report-quality-floor.mts
+          node --import tsx scripts/test-friend-report-paid-lifecycle.mts
+          node --import tsx scripts/test-friend-transit-reading-contract.mts
+          node --import tsx scripts/test-generated-report-judge-governance.mts
+          node --import tsx scripts/test-report-provider-schemas.mjs
+          node --import tsx scripts/test-report-library-delete.mjs
+          node --import tsx scripts/test-report-library-notifications.mjs
+          node --import tsx scripts/test-you-report-session.mjs
+      - name: Protected owner-corpus integration without paid provider calls
+        env:
+          PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
+        run: |
+          node --import tsx scripts/test-generated-report-correction.mjs
+          node --import tsx scripts/test-generated-report-breadth.mjs
+          node --import tsx scripts/test-generated-report-owner-corpus.mjs
+      - run: npm run typecheck
+      - run: npm run build:web
+
+  report-reader-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VITE_SUPABASE_URL: https://report-library.supabase.test
+      VITE_SUPABASE_ANON_KEY: report-library-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Fresh built Reports reader, account isolation and generation states
+        run: >-
+          npx playwright test -c playwright.config.ts
+          tests/visual/report-library-ui.spec.ts tests/visual/you-report-auth.spec.ts
+          tests/visual/you-report-page.spec.ts tests/visual/friend-report-state.spec.ts

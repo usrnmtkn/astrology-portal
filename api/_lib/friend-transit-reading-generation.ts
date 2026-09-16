@@ -1,3 +1,4 @@
+import { transitReadingReaderCopy, assertSavedTransitReading } from "./transit-reading-reader-copy.js";
 import {
   FRIEND_TRANSIT_READING_PROMPT_VERSION,
   friendTransitReadingPrompt,
@@ -80,7 +81,8 @@ function validateGeneratedReading(
   brief: FriendTransitReadingBrief,
   expectedHeadline: string
 ) {
-  const factLock = validateFriendTransitReadingDraft({ draft, brief, expectedHeadline });
+  const readerCopy = transitReadingReaderCopy(draft);
+  const factLock = validateFriendTransitReadingDraft({ draft: readerCopy, brief, expectedHeadline });
   if (!factLock.passed) {
     return {
       passed: false,
@@ -88,7 +90,7 @@ function validateGeneratedReading(
     };
   }
 
-  const writingValidation = validateCopy(draft, {
+  const writingValidation = validateCopy(readerCopy, {
     validationProfile: "friends-transit",
     family: "friend-transit-reading",
     register: "third_person"
@@ -176,7 +178,7 @@ async function saveReading(input: {
   judgeAudit: TransitReadingJudgeAudit | null;
 }) {
   const admin = createSupabaseReportAdmin();
-  return admin.insert<FriendTransitReadingRow>("user_generated_interpretations", {
+  const rows = await admin.insert<FriendTransitReadingRow>("user_generated_interpretations", {
     user_id: input.userId,
     subject_type: "friend_transit_reading",
     subject_id: input.subjectId,
@@ -195,14 +197,14 @@ async function saveReading(input: {
     prompt_version: FRIEND_TRANSIT_READING_PROMPT_VERSION,
     provider: input.provider,
     model: input.generated.model,
-    headline: input.generated.headline,
-    summary: input.generated.summary,
-    body: input.generated.body,
+    ...transitReadingReaderCopy(input.generated),
     sections: { sections: [], sceneLock: null, astrologyDrilldown: null },
     response_id: input.generated.responseId,
     error: null,
     ...(input.entitlementId ? { friend_report_entitlement_id: input.entitlementId } : {})
   }, { onConflict: "user_id,subject_type,subject_id,content_key,target_date,mode" });
+  assertSavedTransitReading(rows, input.generated);
+  return rows;
 }
 
 export async function generateFriendTransitReadingForUser(input: {

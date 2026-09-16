@@ -2,7 +2,7 @@
 
 ## Scope
 
-This change is stacked on Step 3 (#848). It adds owner-only source binding and
+Step 3 (#848) is merged; this change is integrated with main 412fdff8. It adds owner-only source binding and
 preview for the five seasonal aliases in `monthlyPhraseVariables.ts`:
 `openingSeasonFocus`, `openingSeasonOpportunity`, `closingSeasonFocus`,
 `closingSeasonChallenge`, and `closingSeasonPractice`.
@@ -36,30 +36,49 @@ replacing a newer token selection. Source text remains literal and byte-preserve
 - No custom-variable nested-template policy change. Existing overview templates
   can consume these literal phrase leaves; broader definition work in #845/#846
   remains separate and must be reconciled before integration.
-- No bundle limit increases, new runtime dependencies, fonts or CSS.
+- No new runtime dependencies, fonts or product CSS. The measured deferred
+  aggregate allocation is documented below; startup and reader budgets stay fixed.
 
 ## Verification and release status
 
-Preliminary local checks passed for the dependency-light phrase lookup suite,
-TypeScript checking of the new helper/hook, and syntax checks of the changed UI
-and test files. The helper suite covers separate signs, source priority,
-case-sensitive token identity, exact-key validation, missing/renamed/deleted
-sources, blank overrides, invalid rows, deterministic results and owner-section
-preservation. These checks used archived tooling and are not release evidence.
+The Actions spending blocker has cleared. The earlier integrated-head run
+35108267384 completed npm ci, knowledge generation, the seasonal lookup suite,
+and the actual-handler save/read-back/concurrency suite. It then stopped at the
+CSS audit, before browser tests. Those API/lookup successes are not browser proof.
 
-The isolated `npm ci --offline` prerequisite could not complete because the npm
-cache lacked `zod-4.1.11.tgz`; direct GitHub/npm network resolution was unavailable.
-A development snapshot workflow also failed before a runner started (run
-35065028674, no executed steps). Its cause was not established.
+The token audit treated 13 disconnected historical admin stylesheets as shipped
+and reported 2,964 missing references to their retired token aliases. It now
+follows the canonical Studio CSS import graph, preserving all reader-style
+coverage and reporting the disconnected files separately. Existing architecture
+checks still reject noncanonical imports. The regression verifies that importing
+an invalid historical sheet fails, unshipped definitions cannot satisfy active
+references, nested/cyclic imports terminate, and missing/remote imports fail.
+No tokens or debt thresholds were added to silence active violations.
 
-The actual-handler save/read-back/CAS tests and desktop/mobile light/dark browser
-regressions have been added but were not run locally. The latter include two
-calculated monthly contexts across a year boundary and source-outage recovery.
-The dedicated seasonal workflow runs the new lookup and actual-handler tests,
-the browser cases and unchanged size limits. The existing unfiltered Studio API
-workflow remains a separate required release gate.
+A fresh source/ref snapshot and lockfile-verified npm cache were obtained through
+private Actions artifact 10468942076. Each local worktree performed its own
+npm ci --offline installation; dependencies were not copied or symlinked between
+worktrees. Knowledge generation completed in each before application checks.
+The local remote fetch still lacks DNS; source comparison is pinned to connector-
+verified main 412fdff8 and Step 4 head 5ef7e77. Repository memory recall succeeded
+against that pinned reference after normalizing the same origin URL to its
+canonical .git spelling. It is repository evidence, not live Studio feedback.
 
-Do not merge or report this as live until isolated installation, the full
-`test:content-studio-api`, CSS/token audit, browser regressions, bundle budgets,
-privacy and all gate-relevant checks pass on the integrated revision. Step 3's
-previous green checks are not Step 4 validation. No production row has been written.
+Isolated builds under identical workflow Supabase environment:
+
+| Build | Aggregate JavaScript gzip |
+| --- | ---: |
+| main 412fdff8 | 484,425 bytes |
+| Integrated Step 4 | 487,523 bytes |
+| Feature difference | 3,098 bytes |
+
+Allocate 3,500 bytes to the deferred aggregate, from 484,500 to 488,000.
+Entry gzip remains approximately 180.1 kB inside the unchanged 180,250-byte
+limit. Raw entry, largest chunk, graph, CSS and all public-reader budgets stay
+unchanged. This allocation accounts for the new feature; it does not waive any
+behavioral, source-preservation, security or browser assertion.
+
+The isolated lookup/API suites, active-CSS regression and all CSS audits pass.
+The fresh-build browser regressions and all hosted integrated-head release gates
+must pass before this PR is declared verified. No production content has been
+written and no approval or publication state has changed.

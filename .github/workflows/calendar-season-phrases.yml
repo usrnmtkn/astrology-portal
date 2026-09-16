@@ -36,6 +36,7 @@ jobs:
       - run: npm run build:knowledge
       - run: node --import tsx scripts/test-calendar-season-phrases.mjs
       - run: node --import tsx scripts/test-calendar-season-phrase-api.mts
+      - run: node scripts/test-css-token-active-sources.mjs
       - run: npm run qa:css-audit
       - run: npx playwright install --with-deps chromium
       - name: Test source bindings and shared AI controls in a fresh Studio build

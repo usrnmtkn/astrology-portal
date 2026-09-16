@@ -101,17 +101,17 @@ jobs:
       - run: npm run build:knowledge
       - run: node scripts/test-social-friends-contract.mjs
       - run: node --import tsx scripts/test-birth-time-angle-reliability.mts
-      - run: node --experimental-strip-types scripts/test-friend-transit-reading-contract.mts
-      - run: node --experimental-strip-types scripts/test-friend-report-paid-lifecycle.mts
-      - run: node --experimental-strip-types scripts/test-you-report-paid-lifecycle.mts
-      - run: node --experimental-strip-types scripts/test-generated-report-judge-governance.mts
-      - run: node scripts/test-generated-report-correction.mjs
-      - run: node scripts/test-report-quality-retries.mjs
+      - run: node --import tsx scripts/test-friend-transit-reading-contract.mts
+      - run: node --import tsx scripts/test-friend-report-paid-lifecycle.mts
+      - run: node --import tsx scripts/test-you-report-paid-lifecycle.mts
+      - run: node --import tsx scripts/test-generated-report-judge-governance.mts
+      - run: node --import tsx scripts/test-generated-report-correction.mjs
+      - run: node --import tsx scripts/test-report-quality-retries.mjs
       - run: node --import tsx scripts/test-transit-reading-checkpoints.mts
-      - run: node scripts/test-report-worker-continuation.mjs
-      - run: node scripts/test-generated-report-owner-corpus.mjs
-      - run: node scripts/test-generated-report-breadth.mjs
-      - run: node scripts/test-friend-transit-reading-request-render.mjs
+      - run: node --import tsx scripts/test-report-worker-continuation.mjs
+      - run: node --import tsx scripts/test-generated-report-owner-corpus.mjs
+      - run: node --import tsx scripts/test-generated-report-breadth.mjs
+      - run: node --import tsx scripts/test-friend-transit-reading-request-render.mjs
       - run: npm run typecheck
       - run: npm run build:web
 

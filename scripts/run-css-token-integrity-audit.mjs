@@ -76,10 +76,30 @@ const files = (await Promise.all(cssRoots.map((cssRoot) => collectCssFiles(path.
   .flat()
   .filter((file, index, all) => all.indexOf(file) === index)
   .sort();
+// The historical admin sheets are not shipped. Follow the canonical Studio
+// entry's CSS imports instead of treating every file in admin/src as active.
+// run-studio-css-architecture-audit separately rejects noncanonical JS imports.
+const activeFiles = new Set(files.filter(file => !path.relative(root, file).startsWith("apps/admin/")));
+async function includeImports(absolute) {
+  if (activeFiles.has(absolute)) return;
+  if (path.relative(root, absolute).startsWith("..")) throw new Error(`CSS import outside repository: ${absolute}`);
+  activeFiles.add(absolute);
+  const tree = postcss.parse(await readFile(absolute, "utf8"), { from: absolute });
+  const imported = [];
+  tree.walkAtRules(/^import$/i, rule => {
+    const match = rule.params.match(/^(?:["']([^"']+)["']|url\(\s*(?:["']([^"']+)["']|([^\s)]+))\s*\))/i);
+    const target = match?.[1] ?? match?.[2] ?? match?.[3];
+    if (!target || /^(?:[a-z]+:|\/)/i.test(target)) throw new Error(`Unresolved Studio CSS import: ${rule.params}`);
+    imported.push(path.resolve(path.dirname(absolute), target));
+  });
+  for (const file of imported) await includeImports(file);
+}
+await includeImports(path.join(root, "apps/admin/src/studio-system.css"));
+const disconnectedFiles = files.filter(file => !activeFiles.has(file));
 const parsedFiles = [];
 const definitions = new Map();
 
-for (const absolute of files) {
+for (const absolute of [...activeFiles].sort()) {
   const relative = path.relative(root, absolute);
   const source = await readFile(absolute, "utf8");
   const tree = postcss.parse(source, { from: absolute });
@@ -147,7 +167,8 @@ const lines = [
   "",
   `Generated: ${new Date().toISOString()}`,
   "",
-  `- CSS files scanned: ${files.length}`,
+  `- CSS files scanned: ${activeFiles.size}`,
+  `- Disconnected historical stylesheets: ${disconnectedFiles.length}`,
   `- Tokens defined: ${definitions.size}`,
   `- Unresolved active token references: ${unresolved.length}`,
   `- Reader raw visual values: ${webRawVisuals} / ${debtBudgets.webRawVisuals}`,
@@ -157,6 +178,10 @@ const lines = [
   `- Reader page-local raw token declarations: ${webLocalTokens} / ${debtBudgets.webLocalTokens}`,
   `- Admin page-local raw token declarations: ${adminLocalTokens} / ${debtBudgets.adminLocalTokens}`,
   `- Contextual token aliases and overrides: ${contextualTokenOverrides.length}`,
+  "",
+  "## Disconnected Historical Stylesheets",
+  "",
+  ...disconnectedFiles.map(file => `- ${path.relative(root, file)}`),
   "",
   "## Unresolved Tokens",
   "",
@@ -181,7 +206,8 @@ await mkdir(reportDir, { recursive: true });
 await writeFile(reportPath, `${lines.join("\n")}\n`);
 
 console.log(`# CSS Token Integrity Audit
-CSS files scanned: ${files.length}
+CSS files scanned: ${activeFiles.size}
+Disconnected historical stylesheets: ${disconnectedFiles.length}
 Unresolved active token references: ${unresolved.length}
 Reader raw visual values: ${webRawVisuals} / ${debtBudgets.webRawVisuals}
 Admin raw visual values: ${adminRawVisuals} / ${debtBudgets.adminRawVisuals}

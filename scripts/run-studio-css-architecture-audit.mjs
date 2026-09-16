@@ -5,7 +5,9 @@ import postcss from 'postcss';
 
 // Audit the shipped Studio system, not disconnected historical stylesheets.
 const stylesheet = 'apps/admin/src/studio-system.css';
+const themeStylesheet = 'apps/admin/src/admin-theme.css';
 const tree = postcss.parse(await readFile(stylesheet, 'utf8'), { from: stylesheet });
+const themeTree = postcss.parse(await readFile(themeStylesheet, 'utf8'), { from: themeStylesheet });
 const findings = [];
 const rules = new Map();
 const conditions = new Set();
@@ -22,7 +24,12 @@ tree.walkAtRules(rule => {
     conditions.add(condition);
   }
 });
-assert.deepEqual(imports, ['"../../web/src/styles/theme.css"'], 'Studio imports only shared design tokens');
+assert.deepEqual(imports, ['"./admin-theme.css"'], 'Studio imports only the canonical admin theme');
+const themeImports = [];
+themeTree.walkAtRules(rule => {
+  if (rule.name === 'import') themeImports.push(rule.params);
+});
+assert.deepEqual(themeImports, [], 'The canonical admin theme owns Studio tokens and must not re-import the web theme');
 tree.walkRules(rule => {
   const context = [];
   for (let parent = rule.parent; parent.type !== 'root'; parent = parent.parent) context.unshift(`${parent.name} ${parent.params}`);
@@ -83,4 +90,4 @@ for (const file of ['apps/admin/src/main.tsx', 'apps/web/src/main.tsx']) {
   assert.doesNotMatch(source, /["'][^"']*\/admin[^/"']*\.css["']/, `${file} must not load legacy admin styles`);
 }
 assert.deepEqual(findings, [], findings.join('\n'));
-console.log(`Studio CSS architecture passed: ${rules.size} selectors; no duplicate rules/properties, legacy imports, inline styles, local tokens, or styling !important. Accessibility exceptions: hidden and reduced motion.`);
+console.log(`Studio CSS architecture passed: ${rules.size} selectors; canonical admin-theme ownership; no duplicate rules/properties, legacy imports, inline styles, local tokens, or styling !important. Accessibility exceptions: hidden and reduced motion.`);
