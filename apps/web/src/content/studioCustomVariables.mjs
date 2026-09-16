@@ -55,7 +55,7 @@ export function studioVariableValue(definition, context = {}) {
 }
 
 // Only reader-facing fields are traversed. Provenance, editorial notes, and manifests stay untouched.
-const readerFields = new Set(["body", "body_you", "body_they", "headline", "summary", "template", "copy", "text", "title", "question", "placementArticle", "placementArticleDirect", "placementArticleRetrograde", "tldrLead", "tldrTakeaway", "Body", "Copy", "Template", "Article", "NewMoonArticle", "FullMoonArticle", "EventArticle", "FallbackArticle", "ModifierArticle", "NodeAxisArticle", "ExactIngressCopy", "LilithArticle", "OverlayBody", "TLDR_Lead", "TLDR_Takeaway", "CanonicalShort"]);
+const readerFields = new Set(["body", "body_you", "body_they", "headline", "summary", "template", "copy", "text", "title", "question", "placementArticle", "placementArticleDirect", "placementArticleRetrograde", "tldrLead", "tldrWhat", "tldrTakeaway", "TLDR_Lead", "TLDR_What", "TLDR_Takeaway", "Body", "Copy", "Template", "Article", "NewMoonArticle", "FullMoonArticle", "EventArticle", "FallbackArticle", "ModifierArticle", "NodeAxisArticle", "ExactIngressCopy", "LilithArticle", "OverlayBody", "CanonicalShort"]);
 export function mapStudioVariableCopy(record, map) {
   const result = { ...record };
   for (const key of readerFields) if (typeof record[key] === "string") result[key] = map(record[key]);
@@ -83,7 +83,7 @@ export function studioRecordVariableNames(record) {
 }
 
 export function resolveStudioVariableCopy(copy, bindings = [], context = {}) {
-  const indexed = new Map(bindings.map(item => [item.name, item]));
+  const indexed = new Map(bindings.filter(item => !item?.builtin).map(item => [item.name, item]));
   return String(copy ?? "").replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (token, name) => {
     const definition = indexed.get(name);
     if (!definition) return token;
@@ -97,7 +97,7 @@ export function resolveStudioVariableRecord(record, context = {}) {
   const bindings = record?._studioVariables;
   if (!Array.isArray(bindings) || !bindings.length) return record;
   const result = mapStudioVariableCopy(record, copy => resolveStudioVariableCopy(copy, bindings, { ...studioVariableContext(record), ...context }));
-  const names = new Set(bindings.map(item => item.name));
+  const names = new Set(bindings.filter(item => !item?.builtin).map(item => item.name));
   for (const field of ["requiredSlots", "optionalSlots"]) if (Array.isArray(result[field])) result[field] = result[field].filter(name => !names.has(name));
   delete result._studioVariables;
   return result;
