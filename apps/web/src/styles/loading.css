@@ -43,7 +43,7 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: var(--loading-illustration-size);
+  width: calc(var(--size-8) * 3);
   max-width: 100%;
   aspect-ratio: 1;
 }
