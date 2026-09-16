@@ -1,4 +1,4 @@
-@import "../../web/src/styles/theme.css";
+@import "./admin-theme.css";
 
 /* Studio system. No legacy admin sheets are imported. Component families own
    their layout and states here; all visual values come from shared tokens. */
