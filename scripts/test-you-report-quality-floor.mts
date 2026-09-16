@@ -31,7 +31,7 @@ assert.match(weekPrompt, /does not authorize a new behavioral interpretation/u);
 assert.match(weekPrompt, /If the evidence is thin, write shorter rather than padding the report/u);
 assert.match(weekPrompt, /one meaningful reader-safe source, 140-220 words is enough/u);
 assert.match(weekPrompt, /Do not use report-scaffolding phrases/u);
-assert.match(weekPrompt, /do not invent a day, progression across the week, or consequence in the following week/u);
+assert.match(weekPrompt, /do not invent a day, progression across the week, or consequence in the following week/iu);
 assert.match(weekPrompt, /summary: return the same text as tldr/u);
 
 const dayBrief = assertYouTransitReadingBrief({
