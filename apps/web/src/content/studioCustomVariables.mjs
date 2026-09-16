@@ -47,13 +47,14 @@ export function studioVariableContext(context = {}) {
 }
 
 function calculatedStudioVariableValue(name, context = {}) {
+  const { planet, sign } = studioVariableContext(context);
+  if (name === "planetTitle" && planet) return title(planet);
+  if (name === "signTitle" && sign) return title(sign);
+  if (name === "motion" && typeof context.isRetrograde === "boolean") return context.isRetrograde ? "retrograde" : "direct";
   const facts = object(context.facts) ? context.facts : {};
   for (const candidate of [context[name], facts[name]]) {
     if (typeof candidate === "string" && candidate.trim()) return candidate;
   }
-  const { planet, sign } = studioVariableContext(context);
-  if (name === "planetTitle" && planet) return title(planet);
-  if (name === "signTitle" && sign) return title(sign);
   return "";
 }
 
