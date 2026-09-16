@@ -28,7 +28,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const summary = editor.locator("summary").filter({ hasText: /^AI writing$/u });
     await summary.click();
     const writer = summary.locator("..");
-    const direction = writer.getByLabel("Optional direction for the evergreen draft", { exact: true });
+    // The wrapping label also includes its help text in the accessible name.
+    const direction = writer.getByRole("textbox", { name: /^Optional direction for the evergreen draft\b/u });
+    await expect(direction).toHaveCount(1);
     await expect(direction).toBeVisible();
     await expect(direction).toHaveAttribute("rows", "4");
     expect(await direction.getAttribute("style")).toBeNull();
