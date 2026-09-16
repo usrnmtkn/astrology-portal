@@ -5,7 +5,7 @@ type RecordLike = Record<string, unknown>;
 export const YOU_TRANSIT_READING_BRIEF_SCHEMA = "tldr.you-transit-reading-brief.v1";
 export const YOU_DAY_READING_SUBJECT_TYPE = "you_day_reading";
 export const YOU_WEEK_READING_SUBJECT_TYPE = "you_week_reading";
-export const YOU_TRANSIT_READING_PROMPT_VERSION = "you-transit-reading-v1.3";
+export const YOU_TRANSIT_READING_PROMPT_VERSION = "you-transit-reading-v1.4";
 
 export type YouTransitReadingWindow = "day" | "week";
 
@@ -158,28 +158,32 @@ export function compactYouTransitReadingBrief(brief: YouTransitReadingBrief): Yo
 export function youTransitReadingPrompt(input: { brief: YouTransitReadingBrief; headline: string }) {
   const { brief } = input;
   const bodyContract = brief.window === "day"
-    ? "body: 2-3 natural paragraphs, roughly 120-220 words. Start with what matters today, connect the strongest supplied threads, and end with the practical consequence or useful perspective."
-    : "body: 3-5 natural paragraphs, roughly 220-380 words. Build the internal stages what is happening → where it hits → trap → what to do from the supplied evidence, without section headings. Advance the TLDR instead of restarting it. Preserve supplied timing and distinguish the main theme from secondary pressure or support; never invent a trap or action to fill a stage.";
+    ? "body: 2-3 natural paragraphs, roughly 120-200 words. The TLDR already states the main observation, so begin with the next supported consequence, distinction, or action and end with a practical consequence or useful perspective."
+    : "body: 3-5 natural paragraphs, usually 180-300 words. If the brief has only one meaningful reader-safe source, 140-220 words is enough. Build the internal stages what is happening → where it hits → trap → what to do from the supplied evidence, without section headings. Advance the TLDR instead of restarting it. Preserve supplied timing and distinguish the main theme from secondary pressure or support; never invent a trap or action to fill a stage.";
   return [
-    "TLDR ASTRO PERSONAL TRANSIT SYNTHESIS V1.3",
+    "TLDR ASTRO PERSONAL TRANSIT SYNTHESIS V1.4",
     "",
     "TASK",
     `Write one in-depth ${brief.window} report for the reader.`,
     "Write directly to the reader in second person using you/your.",
     "Use the same synthesis standard as the governed Friends transit reading: what matters first, astrology only as needed, concrete known life domains when they are actually supplied, and no invented scenes.",
     "This is synthesis only. TLDR Astro has already calculated and selected the evidence and already supplied reader-safe source text.",
+    "Reader-facing meaning must come from APPROVED READER TEXT. TECHNICAL EVIDENCE may confirm names, dates, houses, aspects, and timing, but it does not authorize a new behavioral interpretation, motive, outcome, or life circumstance from general astrology knowledge. If a technical transit has no reader-safe meaning in APPROVED READER TEXT, omit its interpretation instead of explaining it.",
     "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, interpretation, example, or life event that is not present below.",
     "Do not turn a temporary transit into a permanent personality claim.",
     "Do not expose source units, IDs, schemas, scores, derivation fields, approval state, or backend language.",
     "No tarot. No em dashes. No bullets. No section labels inside the body.",
     "Do not invent texting, workplace, money, family, health, dating, shopping, travel, or other concrete examples unless that situation is already present in APPROVED READER TEXT.",
     "Prefer concrete nouns already present in the approved reader text instead of retreating to vague phrases such as 'something important' or 'an area of life.'",
-    "For a week report, use supplied date/day/timing information to organize the sequence only when it is present. Do not invent a day for a theme that has no supplied timing.",
+    "Do not animate abstractions. An opening or opportunity may appear, be available, or be used; do not make it sit, become a door, point, carry weight, form a longer arc, or 'point the same way' unless that wording is explicitly supplied in APPROVED READER TEXT.",
+    "Do not use report-scaffolding phrases such as 'the trap is,' 'what this means,' 'what this looks like in practice,' 'the conditions right now,' or 'not today's headline.' State the supported condition or consequence directly.",
+    "The TLDR has already made the opening observation. The body must not restate it or repeat its example list with synonyms. Every paragraph must add a distinct supported consequence, explanation, distinction, or action. If the evidence is thin, write shorter rather than padding the report.",
+    "For a week report, use supplied date/day/timing information to organize the sequence only when it is present. Do not invent a day, progression across the week, or consequence in the following week when the brief does not supply it.",
     "",
     "OUTPUT",
     `headline: return exactly ${JSON.stringify(input.headline)}.`,
     "tldr: 1-2 natural sentences that answer what matters in this period.",
-    "summary: use the same core answer in 1-2 sentences, at least 40 characters.",
+    "summary: return the same text as tldr. These are compatibility aliases for one visible TLDR, not two reader-facing passages.",
     bodyContract,
     "Do not add a generic coaching closer.",
     "Return JSON only.",

@@ -53,6 +53,7 @@ jobs:
           node --import tsx scripts/test-transit-reading-checkpoints.mts
           node --import tsx scripts/test-transit-report-delivery.mjs
           node --import tsx scripts/test-you-report-paid-lifecycle.mts
+          node --import tsx scripts/test-you-report-quality-floor.mts
           node --import tsx scripts/test-friend-report-paid-lifecycle.mts
           node --import tsx scripts/test-friend-transit-reading-contract.mts
           node --import tsx scripts/test-generated-report-judge-governance.mts
