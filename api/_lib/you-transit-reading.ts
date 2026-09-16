@@ -1,3 +1,5 @@
+import { transitReadingReaderText } from "./transit-reading-reader-copy.js";
+import { extractTransitAspectClaims, isOrdinaryAspectWord, transitAspectKeysFromEvidence } from "./transit-reading-aspect-claims.js";
 type RecordLike = Record<string, unknown>;
 
 export const YOU_TRANSIT_READING_BRIEF_SCHEMA = "tldr.you-transit-reading-brief.v1";
@@ -33,6 +35,7 @@ export type YouTransitReadingValidationIssue = {
     | "internal_field_leak"
     | "untraceable_body"
     | "untraceable_aspect"
+    | "untraceable_transit_claim"
     | "untraceable_sign"
     | "untraceable_house"
     | "untraceable_degree"
@@ -190,9 +193,7 @@ export function youTransitReadingPrompt(input: { brief: YouTransitReadingBrief; 
 }
 
 function renderedText(draft: YouTransitReadingDraft) {
-  return [draft.headline, draft.tldr, draft.summary, draft.body, draft.action, draft.timing, ...(draft.sections ?? []).flatMap((section) => [section.heading, section.body])]
-    .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
-    .join("\n");
+  return transitReadingReaderText(draft);
 }
 
 function sourceText(brief: YouTransitReadingBrief) {
@@ -223,7 +224,18 @@ export function validateYouTransitReadingDraft(input: {
     if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_body", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
   }
   for (const match of text.matchAll(new RegExp(`\\b(${ASPECT_PATTERN})\\b`, "giu"))) {
+    if (isOrdinaryAspectWord(text, match.index ?? 0, match[0])) continue;
     if (!source.includes(canonicalAspect(match[0]))) issues.push({ code: "untraceable_aspect", value: match[0], message: `${match[0]} is not present in the governed report brief.` });
+  }
+  const allowedClaims = transitAspectKeysFromEvidence({
+    approvedReaderText: input.brief.approvedReaderText,
+    technicalEvidence: input.brief.technicalEvidence
+  });
+  for (const claim of extractTransitAspectClaims(text)) {
+    if (!allowedClaims.has(claim.key)) issues.push({
+      code: "untraceable_transit_claim", value: claim.text,
+      message: `${claim.text} does not match a complete transit/aspect/natal-point claim in the governed report brief.`
+    });
   }
   for (const match of text.matchAll(new RegExp(`\\b(${SIGN_PATTERN})\\b`, "giu"))) {
     if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_sign", value: match[0], message: `${match[0]} is not present in the governed report brief.` });

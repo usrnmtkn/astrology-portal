@@ -107,10 +107,11 @@ function assertSchemaNode(
     audit.objectProperties += propertyNames.length;
     if (audit.objectProperties > 5_000) throw new ReportProviderSchemaError("Schema exceeds 5,000 object properties.");
     addStringBudget(audit, propertyNames, `${path}.properties`);
-    if (!Array.isArray(schema.required)
-      || schema.required.length !== propertyNames.length
-      || new Set(schema.required).size !== propertyNames.length
-      || propertyNames.some((property) => !schema.required?.includes(property))) {
+    const required = schema.required;
+    if (!Array.isArray(required)
+      || required.length !== propertyNames.length
+      || new Set(required).size !== propertyNames.length
+      || propertyNames.some((property) => !required.includes(property))) {
       throw new ReportProviderSchemaError(`${path}.required must contain every property exactly once.`);
     }
     for (const [property, propertySchema] of Object.entries(properties)) {

@@ -1,3 +1,5 @@
+import { transitReadingReaderText } from "./transit-reading-reader-copy.js";
+import { extractTransitAspectClaims, isOrdinaryAspectWord } from "./transit-reading-aspect-claims.js";
 type RecordLike = Record<string, unknown>;
 
 export const FRIEND_TRANSIT_READING_CONTENT_TYPE = "friend_transit_reading";
@@ -90,7 +92,7 @@ export type FriendTransitReadingValidationIssue = {
   message: string;
 };
 
-const BODY_ALIASES = new Map([
+const BODY_ALIASES = new Map<string, string>([
   ["sun", "sun"], ["moon", "moon"], ["mercury", "mercury"], ["venus", "venus"], ["mars", "mars"],
   ["jupiter", "jupiter"], ["saturn", "saturn"], ["uranus", "uranus"], ["neptune", "neptune"], ["pluto", "pluto"],
   ["chiron", "chiron"], ["lilith", "lilith"], ["black moon lilith", "lilith"], ["north node", "north node"], ["south node", "south node"],
@@ -98,7 +100,7 @@ const BODY_ALIASES = new Map([
   ["descendant", "descendant"], ["ic", "ic"], ["imum coeli", "ic"]
 ] as const);
 const SIGNS = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"] as const;
-const ASPECT_ALIASES = new Map([
+const ASPECT_ALIASES = new Map<string, string>([
   ["conjunct", "conjunction"], ["conjunction", "conjunction"], ["opposes", "opposition"], ["opposite", "opposition"], ["opposition", "opposition"],
   ["square", "square"], ["squares", "square"], ["trine", "trine"], ["trines", "trine"], ["sextile", "sextile"], ["sextiles", "sextile"]
 ] as const);
@@ -452,8 +454,7 @@ export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingB
 }
 
 function renderedText(draft: FriendTransitReadingDraft) {
-  return [draft.headline, draft.tldr, draft.summary, draft.body, draft.action, draft.timing, ...(draft.sections ?? []).flatMap((section) => [section.heading, section.body])]
-    .filter((value): value is string => typeof value === "string" && value.trim().length > 0).join("\n");
+  return transitReadingReaderText(draft);
 }
 
 function sourceText(brief: FriendTransitReadingBrief) {
@@ -529,6 +530,7 @@ export function validateFriendTransitReadingDraft(input: { draft: FriendTransitR
     if (!allowed.bodies.has(body)) issues.push({ code: "untraceable_body", value: match[0], message: `${match[0]} is not present in the governed brief.` });
   }
   for (const match of text.matchAll(new RegExp(`\\b(${ASPECT_PATTERN})\\b`, "giu"))) {
+    if (isOrdinaryAspectWord(text, match.index ?? 0, match[0])) continue;
     const aspect = canonicalAspect(match[1]);
     if (!allowed.aspects.has(aspect)) issues.push({ code: "untraceable_aspect", value: match[0], message: `${match[0]} is not present in the governed brief.` });
   }
@@ -538,9 +540,8 @@ export function validateFriendTransitReadingDraft(input: { draft: FriendTransitR
   for (const match of text.matchAll(/\b([1-9]|1[0-2])(?:st|nd|rd|th)?\s+house\b/giu)) {
     if (!allowed.houses.has(Number(match[1]))) issues.push({ code: "untraceable_house", value: match[0], message: `${match[0]} is not present in the governed brief.` });
   }
-  for (const match of text.matchAll(new RegExp(`\\b(${BODY_PATTERN})\\s+(${ASPECT_PATTERN})\\s+(?:their\\s+|natal\\s+|their natal\\s+)?(${BODY_PATTERN})\\b`, "giu"))) {
-    const key = `${canonicalBody(match[1])}|${canonicalAspect(match[2])}|${canonicalBody(match[3])}`;
-    if (!allowed.transitClaims.has(key)) issues.push({ code: "untraceable_transit_claim", value: match[0], message: `${match[0]} is not a transit in the governed brief.` });
+  for (const claim of extractTransitAspectClaims(text)) {
+    if (!allowed.transitClaims.has(claim.key)) issues.push({ code: "untraceable_transit_claim", value: claim.text, message: `${claim.text} is not a transit in the governed brief.` });
   }
   for (const match of text.matchAll(/\b\d{1,3}(?:\.\d+)?°/gu)) {
     if (!source.includes(match[0].toLowerCase())) issues.push({ code: "untraceable_degree", value: match[0], message: `${match[0]} is not present in the governed brief.` });
