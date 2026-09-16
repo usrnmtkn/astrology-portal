@@ -37,11 +37,11 @@ jobs:
           git merge --no-edit origin/main
           cat .dignity-transport/part-* | gzip -dc > /tmp/dignity-change.patch
           echo '39da081d2dcee2039be73f99e56665a74e7b03ad5a7b40e92231a3b37bc2d285  /tmp/dignity-change.patch' | sha256sum --check
-          if git apply --reverse --check /tmp/dignity-change.patch 2>/dev/null; then
+          if git apply --exclude='.github/workflows/placement-dignity.yml' --reverse --check /tmp/dignity-change.patch 2>/dev/null; then
             echo 'Exact source patch is already present.'
           else
-            git apply --check /tmp/dignity-change.patch
-            git apply --index /tmp/dignity-change.patch
+            git apply --exclude='.github/workflows/placement-dignity.yml' --check /tmp/dignity-change.patch
+            git apply --exclude='.github/workflows/placement-dignity.yml' --index /tmp/dignity-change.patch
             git diff --cached --check
             git commit -m 'Connect shared planet-sign dignity lookup to placement templates'
           fi
@@ -90,12 +90,12 @@ jobs:
             'apps/web/public/generated/studio-variables-v1.json'
           ]);
           const changed = execFileSync('git', ['diff', '--name-only'], {encoding:'utf8'}).trim().split('\n').filter(Boolean);
-          const generated = /^apps\/web\/src\/content\/fallbackArchitectureV3\/(?:bundled[^/]*\.json|approved-serving-projection\.json|lineage[^/]*\.json)$/u;
+          const generated = /^apps\/web\/src\/content\/fallbackArchitectureV3\/(?:bundled[^/]*\.json|approved-serving-(?:projection|lineage)-v1\.json)$/u;
           const unexpected = changed.filter(path => !allowed.has(path) && !generated.test(path));
           if (unexpected.length) throw new Error('Review unexpected build outputs before staging: ' + unexpected.join(', '));
           if (changed.length) execFileSync('git', ['add', '--', ...changed]);
           NODE
-          git rm -r .dignity-transport .github/workflows/dignity-review-snapshot.yml .github/workflows/dignity-apply-verify.yml
+          git rm -r .dignity-transport
           git diff --cached --check
           git diff --cached --stat
           git commit -m 'Verify dignity selection and rebuild shipped reader and variable catalogs'
