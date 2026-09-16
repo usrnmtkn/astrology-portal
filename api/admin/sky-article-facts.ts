@@ -2,9 +2,8 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminErrorMessage, adminErrorStatus, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
-import { currentSkyFacts } from "../_lib/current-sky.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
-import { skyArticleEditionFactsFromSnapshot } from "../_lib/sky-article-facts.js";
+import { calculateSkyArticleEditionFacts } from "../_lib/sky-article-facts.js";
 
 loadLocalWebEnv();
 
@@ -37,8 +36,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const referenceDate = requestUrl.searchParams.get("date") ?? new Date().toISOString().slice(0, 10);
     if (!planet) throw new AdminHttpError(400, "planet is required.");
     const referenceInstant = validReferenceDate(referenceDate);
-    const snapshot = await currentSkyFacts(referenceInstant, { transitWindowPoints: [planet] });
-    sendAdminJson(res, 200, { ok: true, facts: skyArticleEditionFactsFromSnapshot(snapshot, planet) });
+    sendAdminJson(res, 200, { ok: true, facts: await calculateSkyArticleEditionFacts(referenceInstant, planet) });
   } catch (error) {
     sendAdminJson(res, adminErrorStatus(error), {
       ok: false,
