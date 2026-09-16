@@ -5,7 +5,7 @@ import type { ReportModelCallInput, ReportModelResult } from "./report-model-cli
 
 // Continue checkpointed steps while the invocation has time. Replaying saved
 // responses runs the existing fact/voice/review gates again, without billing.
-const MAX_STEPS = 6;
+const MAX_STEPS = 7;
 export const TRANSIT_READING_INVOCATION_BUDGET_MS = 240_000;
 type Context = {
   admin: SupabaseReportAdmin;
@@ -69,7 +69,7 @@ export async function checkpointTransitReadingModel<T>(
   const scope = context.getStore();
   if (!scope) return call(input);
   const step = scope.step++;
-  if (step >= MAX_STEPS) throw new TransitReadingCheckpointStopped("Report generation exceeded its six-step limit.");
+  if (step >= MAX_STEPS) throw new TransitReadingCheckpointStopped("Report generation exceeded its seven-step limit.");
   const jobColumn = `${scope.family}_job_id`;
   const requestHash = createHash("sha256").update(JSON.stringify({
     version: 1, provider: input.provider, model: input.model,
