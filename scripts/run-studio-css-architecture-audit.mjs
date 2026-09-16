@@ -6,8 +6,10 @@ import postcss from 'postcss';
 // Audit the shipped Studio system, not disconnected historical stylesheets.
 const stylesheet = 'apps/admin/src/studio-system.css';
 const themeStylesheet = 'apps/admin/src/admin-theme.css';
+const webThemeStylesheet = 'apps/web/src/styles/theme.css';
 const tree = postcss.parse(await readFile(stylesheet, 'utf8'), { from: stylesheet });
 const themeTree = postcss.parse(await readFile(themeStylesheet, 'utf8'), { from: themeStylesheet });
+const webTheme = await readFile(webThemeStylesheet, 'utf8');
 const findings = [];
 const rules = new Map();
 const conditions = new Set();
@@ -29,7 +31,9 @@ const themeImports = [];
 themeTree.walkAtRules(rule => {
   if (rule.name === 'import') themeImports.push(rule.params);
 });
-assert.deepEqual(themeImports, [], 'The canonical admin theme owns Studio tokens and must not re-import the web theme');
+assert.deepEqual(themeImports, ['"../../web/src/styles/theme.css"'], 'The admin theme layers Studio roles over the shared application primitives');
+assert.doesNotMatch(webTheme, /:root\s+\.admin-dashboard\s*\{/, 'Reader theme must not own Studio-scoped tokens');
+assert.doesNotMatch(webTheme, /--studio-(?:variable|button|field|chip|nav|selection|sheet|rail|menu|memory|overlay|dialog|textarea|body|code|table|docked|disabled|motion|layer|scrim|warning|error|surface)/, 'Reader theme must not define Studio-specific tokens');
 tree.walkRules(rule => {
   const context = [];
   for (let parent = rule.parent; parent.type !== 'root'; parent = parent.parent) context.unshift(`${parent.name} ${parent.params}`);
@@ -90,4 +94,4 @@ for (const file of ['apps/admin/src/main.tsx', 'apps/web/src/main.tsx']) {
   assert.doesNotMatch(source, /["'][^"']*\/admin[^/"']*\.css["']/, `${file} must not load legacy admin styles`);
 }
 assert.deepEqual(findings, [], findings.join('\n'));
-console.log(`Studio CSS architecture passed: ${rules.size} selectors; canonical admin-theme ownership; no duplicate rules/properties, legacy imports, inline styles, local tokens, or styling !important. Accessibility exceptions: hidden and reduced motion.`);
+console.log(`Studio CSS architecture passed: ${rules.size} selectors; shared primitives + canonical admin-theme ownership; no duplicate rules/properties, legacy imports, inline styles, local tokens, or styling !important. Accessibility exceptions: hidden and reduced motion.`);
