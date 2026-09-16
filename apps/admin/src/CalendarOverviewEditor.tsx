@@ -31,7 +31,7 @@ export default function CalendarOverviewEditor({ draft, initialField, onChange }
     <p>Write the overview passages below. Each passage fills its named variable in the template and updates the preview. Save keeps the passages, pattern, and existing guidance together.</p>
     {calendarOverviewFields(period).map(field => <label className="admin-review-copy-editor studio-surface" key={field.name}>
       <span>{field.label} <code className="admin-composition-variable-token" data-variable-name={field.name} data-variable-color={calendarVariableColor(field.name)}>{`{{${field.name}}}`}</code></span>
-      <StudioTextarea aria-label={field.label} data-calendar-field={field.name} data-sky-field={field.name} value={writing[field.name] ?? ""}
+      <StudioTextarea aria-label={field.label} data-calendar-field={field.name} data-sky-field={`calendarOverview.${field.name}`} value={writing[field.name] ?? ""}
         onFocus={event => { selected.current = event.currentTarget; }} onChange={event => update(field.name, event.target.value)} />
       <small className="admin-field-hint">{field.help}</small>
     </label>)}
