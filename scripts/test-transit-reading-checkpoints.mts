@@ -41,7 +41,7 @@ const request = (name: string): ReportModelCallInput<{ name: string }> => ({
 });
 const result = (name: string) => ({ value: { name }, provider: 'fixture', model: 'fixture', usage: { inputTokens: 2, outputTokens: 1, totalTokens: 3 } });
 
-// Six fast serial steps complete in one request. A fully replayed request
+// Seven fast serial steps complete in one request. A fully replayed request
 // performs zero provider calls, and re-runs validation before using responses.
 for (const family of ['you', 'friend'] as const) {
   const { rows, admin } = storage();
@@ -49,7 +49,7 @@ for (const family of ['you', 'friend'] as const) {
   const scope = { admin, family, jobId: 'job', attempt: 1 };
   const pipeline = async () => {
     const values = [];
-    for (let i = 0; i < 6; i++) values.push(await step({ ...request(`step-${i}`), validateResponse: () => { validated++; } }, async input => {
+    for (let i = 0; i < 7; i++) values.push(await step({ ...request(`step-${i}`), validateResponse: () => { validated++; } }, async input => {
       billed++;
       assert.equal(input.disableFallback, true);
       assert.ok(input.signal instanceof AbortSignal);
@@ -57,16 +57,16 @@ for (const family of ['you', 'friend'] as const) {
     }));
     return values;
   };
-  assert.equal((await resume(scope, pipeline)).length, 6);
-  assert.equal(billed, 6);
+  assert.equal((await resume(scope, pipeline)).length, 7);
+  assert.equal(billed, 7);
   await resume(scope, pipeline);
-  assert.equal(billed, 6);
-  assert.ok(validated >= 6);
+  assert.equal(billed, 7);
+  assert.ok(validated >= 7);
   await assert.rejects(resume(scope, () => step(request('changed evidence'), async () => { throw new Error('must not bill'); })), /instructions or evidence changed/);
   await assert.rejects(resume(scope, async () => {
     await pipeline();
-    return step(request('seventh'), async () => { throw new Error('must not bill'); });
-  }), /six-step limit/);
+    return step(request('eighth'), async () => { throw new Error('must not bill'); });
+  }), /seven-step limit/);
 }
 
 // A killed worker may leave a reserved call; a stale scheduler claim keeps the

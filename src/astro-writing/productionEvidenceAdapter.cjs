@@ -396,6 +396,25 @@ function mapLegacyIdentifier(legacyIdentifier, context = {}) {
     };
   }
 
+  // A quiet/headliner week can legitimately be sourced only from the approved
+  // weekly Moon-sign card. That source carries no natal aspect or house, so it
+  // must enter the You-transit gate as composed mechanism evidence rather than
+  // pretending to be a personalized placement. The governed brief and fact
+  // lock remain authoritative for the exact Moon sign and reader-facing copy.
+  const weeklyMoonMatch = /^weekly-moon-([a-z]+)$/u.exec(base);
+  if (weeklyMoonMatch && context.evidenceSurface === "you-transit") {
+    const canonicalIds = [
+      requireCanonicalId("body/moon", legacyIdentifier),
+      requireCanonicalId(`sign/${weeklyMoonMatch[1]}`, legacyIdentifier)
+    ];
+    return {
+      legacyIdentifier,
+      canonicalIds,
+      targetUsages: canonicalIds.map(() => "mechanism-reference"),
+      mappingBasis: "weekly-moon-composed-mechanism"
+    };
+  }
+
   const placementMatch = /^(?:natal-)?([a-z0-9-]+?)-in-([a-z]+)$/u.exec(base);
   if (placementMatch) {
     return {
