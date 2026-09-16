@@ -10,6 +10,8 @@ Phase 0 found 14 disconnected admin stylesheets. This cleanup promotes `admin-th
 
 The architecture audit now rejects Studio-scoped tokens and `--workspace-*` ownership in the reader theme, verifies the admin-theme import chain, and continues to reject duplicate Studio selectors/properties, component-local tokens, inline style bypasses, legacy stylesheet imports, and non-accessibility `!important` rules.
 
+The token-integrity release gate now matches runtime ownership: it scans every reader stylesheet plus the two active admin sheets (`admin-theme.css` and `studio-system.css`). The 13 disconnected historical admin sheets are deliberately excluded from the "active token" gate; the architecture audit remains responsible for proving that application entry points cannot load them. This removes false unresolved-token failures from dead CSS without weakening checks on shipped styles.
+
 The reader loading illustration previously consumed one token that was added after the original Studio block landed. Its size now resolves directly from the shared `--size-8` primitive, so removing the Studio suffix does not leave an unresolved reader token.
 
 The aggregate CSS budget remains capped at 115,000 gzip bytes, matching the Phase 0 ceiling. The unfiltered CSS design-system workflow runs the CSS architecture/token audits, verifies the approved Studio layer values, typechecks and builds the admin app, and checks the admin bundle budget for every pull request and main push.
