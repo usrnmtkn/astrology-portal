@@ -7,6 +7,7 @@ import { skyPlacementSourceCorpus as corpus } from "../api/_lib/sky-placement-so
 import { renderSkyV4ReaderRoute, renderSkyV4StudioPreview } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 import { renderSkyV4ReaderRoute as shipped } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { skyPlacementVariableFacts, skyPlacementVariableIssues, skyPlacementVariableSegments, isSkyPlacementVariableField } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
+import { resolveStudioVariableRecord } from "../apps/web/src/content/studioCustomVariables.mjs";
 
 const outfile = join(tmpdir(), `sky-variables-browser-${process.pid}.mjs`);
 await build({ entryPoints: ["apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts"], outfile, platform: "browser", format: "esm", bundle: true, logLevel: "silent" });
@@ -37,6 +38,12 @@ for (const render of [renderSkyV4ReaderRoute, browser.renderSkyV4ReaderRoute, sh
   assert.deepEqual(render(corpus, { ...input }).readerParts, renderSkyV4ReaderRoute(corpus, input).readerParts);
 }
 assert.equal(renderSkyV4StudioPreview(updated, { ...input, contentKey: key }).mainBody, expected);
+const resolvedTldr = resolveStudioVariableRecord({
+  tldrWhat: "{{planetTitle}} moves through {{signTitle}} from {{entryDate}} to {{exitDate}}.",
+  tldrTakeaway: "Motion: {{motion}}."
+}, input);
+assert.equal(resolvedTldr.tldrWhat, "Saturn moves through Aries from February 13, 2026 to April 12, 2028.");
+assert.equal(resolvedTldr.tldrTakeaway, "Motion: retrograde.");
 const facts = skyPlacementVariableFacts(input);
 assert.equal(skyPlacementVariableFacts({}).planetTitle, "");
 assert.equal(skyPlacementVariableFacts({}).signTitle, "");
