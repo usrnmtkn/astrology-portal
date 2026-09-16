@@ -250,6 +250,8 @@ console.log("PASS: an empty published evergreen layout survives reload without r
  const incomplete = (await request('PATCH', { id: evergreenRow.id, expectedUpdatedAt: evergreenRow.updated_at, reviewStatus: 'needs_review', sections: { ...evergreenRow.sections, packageDraft: { ...base, ingress: composition } } })).rows[0];
  await request('PATCH', { id: incomplete.id, expectedUpdatedAt: incomplete.updated_at, ownerAction: 'approve-package-revision' }, '', 400);
  for (const module of composition.modules.filter((item: any) => item.required)) for (const match of module.template.matchAll(/\{\{(\w+)\}\}/gu)) composition.sources[match[1]].text = `During this transit, fixture ${match[1]} for {{planetTitle}}.`;
+ composition.sources.placementDignityMechanism.text = 'the fixture mechanism belongs to {{planetTitle}} in {{signTitle}}';
+ composition.sources.placementDignityExpression.text = 'complete the fixture activity';
  for (let revision = 0; revision < 2; revision++) {
   if (revision === 1) { composition.modules.reverse(); delete composition.sources.openingHook; composition.modules = composition.modules.filter((item: any) => item.id !== 'opening'); }
   const copy = { ...incomplete.sections.packageRecord, placementArticleDirect: '', placementArticleRetrograde: '', ingress: composition };
@@ -384,4 +386,37 @@ console.log("PASS: an empty published evergreen layout survives reload without r
  await request('DELETE', {id: variable.id, expectedUpdatedAt: variable.updatedAt}, '?variables=true');
  assert.equal(await render(), 'During this transit, fixture scoped prose.');
  console.log('PASS: custom variable → saved template → exact publication → actual dashboard loader → shipped Sky reader; library deletion preserves approved prose.');
+}
+
+// Dignity variables use the real draft/save/publish path, not a mocked validator.
+// All network requests in this file stay on sky-studio-test.invalid.
+{
+ const { makeSkyIngressComposition } = await import('../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs');
+ const key = 'sky-placement/article/saturn/aries';
+ let row = stored.find(item => item.content_key === key && item.status === 'LIVE');
+ const priorPublished = JSON.stringify(row.sections.packageRecord);
+ const composition = { ...makeSkyIngressComposition(), modules: [], enabled: false };
+ const template = 'During this transit, fixture dignity opening.\n\n{{placementDignityMeaning}}\n\nFixture dignity final sentence.';
+ const copy = { ...row.sections.packageRecord, ingress: composition, placementArticle: template, placementArticleDirect: '', placementArticleRetrograde: '' };
+ row = (await request('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, reviewStatus: 'needs_review', sections: { ...row.sections, packageDraft: copy } })).rows[0];
+ assert.equal(JSON.stringify(row.sections.packageRecord), priorPublished, 'Incomplete draft cannot alter the published baseline');
+ const rejected = await request('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'approve-package-revision' }, '', 400);
+ assert.match(rejected.error, /placementDignityMechanism/);
+ composition.sources.placementDignityMechanism.text = 'the fixture mechanism belongs to {{planetTitle}} in {{signTitle}}';
+ composition.sources.placementDignityExpression.text = 'complete the fixture activity';
+ row = (await request('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, reviewStatus: 'needs_review', sections: { ...row.sections, packageDraft: copy } })).rows[0];
+ row = (await request('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'approve-package-revision' })).rows[0];
+ assert.equal(row.sections.packageRecord.placementArticle, template);
+ assert.deepEqual(row.sections.packageRecord.ingress, composition);
+ await runtime.refreshContentPublications(true); runtime.clearCachedFallbackArchitectureV3Bundle();
+ runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
+ for (const isRetrograde of [false, true]) {
+  const rendered = runtime.skyV4ReaderRenderer.renderRoute({ route: 'placement', planet: 'saturn', sign: 'aries', isRetrograde });
+  assert.equal(rendered.resolution, 'canonical-article');
+  assert(rendered.mainBody.startsWith('During this transit, fixture dignity opening.'));
+  assert(rendered.mainBody.includes('Aries is the sign of Saturn’s fall'));
+  assert(rendered.mainBody.endsWith('Fixture dignity final sentence.'));
+  assert(!rendered.mainBody.includes('{{'));
+ }
+ console.log('PASS: dignity draft saves with missing explanation, actual publication refuses it, completed exact sources round-trip through publication, installed package and direct/retrograde reader.');
 }

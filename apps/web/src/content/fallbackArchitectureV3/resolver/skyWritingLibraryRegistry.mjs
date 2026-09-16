@@ -1,3 +1,4 @@
+import { PLACEMENT_DIGNITY_FIELDS } from "./placementDignityMeaning.mjs";
 import { ZODIAC_SEASON_VARIABLES } from "./zodiacSeasonVariables.mjs";
 // Shared editorial field registry. This is not reader prose.
 const field = (id, label, description, kind, rows = 4) => ({ id, label, description, kind, rows });
@@ -34,6 +35,7 @@ export const SKY_WRITING_LIBRARY_GROUPS = [
     label: "Planet × sign synthesis",
     description: "The exact planet-in-sign layer. Existing approved TLDR and fallback copy prefill fields only when there is a clean one-to-one source; the rest stay empty rather than being invented.",
     fields: [
+      ...PLACEMENT_DIGNITY_FIELDS,
       field("placementThesis", "Placement thesis", "The central argument for this exact planet in this exact sign. Prefilled from the existing TLDR What when available.", "placement", 4),
       field("placementOpportunity", "Opportunity", "What may become easier, more available, or more worth developing. Author this only when it is distinct from the existing takeaway.", "placement", 4),
       field("placementPressure", "How it shows up", "Recognizable behavior or consequence. Prefilled from the existing fallback lived passage when available.", "placement", 4),

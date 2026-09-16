@@ -1,3 +1,4 @@
+import { PLACEMENT_DIGNITY_FIELDS, PLACEMENT_DIGNITY_MEANING, resolvePlacementDignityMeaning } from "./placementDignityMeaning.mjs";
 import { studioVariableValue } from "../../studioCustomVariables.mjs";
 import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey, zodiacSeasonContextSign, resolveZodiacSeasonVariables } from "./zodiacSeasonVariables.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
@@ -6,6 +7,7 @@ import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableFacts } from "./skyPlaceme
 export const SKY_INGRESS_PATH = "ingress";
 export const SKY_INGRESS_VERSION = 5;
 export const SKY_INGRESS_FIELDS = Object.freeze([
+  ...PLACEMENT_DIGNITY_FIELDS,
   ...["planetRole", "planetFunctionSentence"].map(id => ({ id, kind: "planet" })),
   { id: "signFunctionSentence", kind: "sign" },
   ...["openingHook", "placementThesisSentence", "planetSignMechanismSentence", "introManifestationSentence", "introClosingSentence", "dignitySentence", "placementMeaningSentence", "deeperMeaningSentence", "manifestationSentence1", "manifestationSentence2", "manifestationSentence3", "challengeSentence", "stakesSentence", "responseSentence", "practiceClosingLine"].map(id => ({ id, kind: "placement" })),
@@ -45,7 +47,7 @@ export function makeSkyIngressComposition() {
     modules: [
       module("opening", "Opening", ["openingHook"]),
       module("intro", "Ingress introduction", [], false, { template: "On {{passEntryDate}}, {{planetTitle}}, {{planetRole}}, {{ingressVerb}} {{signTitle}}. {{durationSentence}} {{placementThesisSentence}}" }),
-      module("dignity", "Dignity", ["dignitySentence"]),
+      module("dignity", "Dignity", [PLACEMENT_DIGNITY_MEANING]),
       module("intro-mechanism", "Intro mechanism and experience", ["planetSignMechanismSentence", "introManifestationSentence"]),
       module("intro-close", "Intro close", ["introClosingSentence"]),
       module("practice", "Placement in practice", ["planetFunctionSentence", "signFunctionSentence", "placementMeaningSentence", "deeperMeaningSentence"], true),
@@ -89,7 +91,7 @@ export function validateSkyIngressComposition(value, customNames = []) {
   for (const module of value.modules) {
     if (!exactKeys(module, ["id", "label", "template", "required", "enabled", "motion", "duration", "timing", "aspect"]) || !identifier(module.id) || ids.has(module.id) || typeof module.label !== "string" || module.label.length > 120 || typeof module.template !== "string" || module.template.length > 20000 || typeof module.required !== "boolean" || typeof module.enabled !== "boolean" || !["all", "direct", "retrograde"].includes(module.motion) || !["all", "short", "long"].includes(module.duration) || !["all", "single_pass", "first_pass", "return_pass", "final_pass"].includes(module.timing)) fail("Each module needs a unique ID, template, and valid selection rules.");
     ids.add(module.id);
-    const issues = ingressTextIssues(module.template, [...Object.keys(value.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id), ...customNames]);
+    const issues = ingressTextIssues(module.template, [...Object.keys(value.sources), PLACEMENT_DIGNITY_MEANING, ...ZODIAC_SEASON_VARIABLES.map(field => field.id), ...customNames]);
     if (issues.length) fail(`${module.label}: ${issues.join(" ")}`);
     if (module.aspect !== undefined && (!exactKeys(module.aspect, ["otherPlanet", "type", "weight"]) || !/^(sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|lilith)$/u.test(module.aspect.otherPlanet) || !["conjunction", "sextile", "square", "trine", "opposition"].includes(module.aspect.type) || !["defining", "supporting", "minor"].includes(module.aspect.weight))) fail(`${module.label}: invalid aspect selection.`);
   }
@@ -102,6 +104,12 @@ export function ingressSourceAt(record, field) {
 
 /** References are one hop, hash-pinned, and resolved from the already eligible snapshot. */
 export function resolveIngressSource(owner, id, records = [], context = owner) {
+  if (id === PLACEMENT_DIGNITY_MEANING) return resolvePlacementDignityMeaning(owner, context, name => resolveRawIngressSource(owner, name, records, context), "ingress");
+  // Saved legacy tokens and hash-pinned references remain readable unchanged.
+  return resolveRawIngressSource(owner, id, records, context);
+}
+
+function resolveRawIngressSource(owner, id, records = [], context = owner) {
   const custom = owner._studioVariables?.find(item => item.name === id);
   if (custom) {
     const { value } = studioVariableValue(custom, context);
@@ -179,6 +187,15 @@ export function renderSkyIngressComposition(owner, input = {}, records = [], opt
       if (module.required && reason.startsWith("Needs calculated")) requiredGap = true;
       trace.push({ id: module.id, label: module.label, status: "omitted", reason, template: module.template, slots: [] }); continue;
     }
+    if (tokens(module.template).some(match => match[1] === PLACEMENT_DIGNITY_MEANING)) {
+      const dignity = resolveIngressSource(owner, PLACEMENT_DIGNITY_MEANING, records, input);
+      if (dignity.omitted) {
+        const standalone = /^\s*\{\{\s*placementDignityMeaning\s*\}\}\s*$/u.test(module.template);
+        if (!standalone) requiredGap = true;
+        trace.push({ id: module.id, label: module.label, status: "omitted", reason: standalone ? dignity.omissionReason : "An omitted dignity paragraph must be a standalone module.", template: module.template, slots: [{ name: PLACEMENT_DIGNITY_MEANING, ...dignity }] });
+        continue;
+      }
+    }
     for (const event of selected) {
       const facts = { ...occurrence.facts };
       if (event) Object.assign(facts, { aspectPlanetTitle: title(event.otherPlanet), aspectType: type(event.aspect), aspectVerb: ({ conjunction: "conjoins", sextile: "sextiles", square: "squares", trine: "trines", opposition: "opposes" })[type(event.aspect)], aspectExactDate: new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: occurrence.timeZone ?? "UTC" }).format(new Date(event.occursAt)) });
@@ -198,7 +215,7 @@ export function renderSkyIngressComposition(owner, input = {}, records = [], opt
       const result = fillText(module.template, values);
       const missing = slots.filter(slot => slot.reason);
       const incomplete = missing.length > 0 || !result.text.trim();
-      if (incomplete && (module.required || missing.some(slot => (slot.kind === "custom" || ZODIAC_SEASON_VARIABLES.some(field => field.id === slot.name))))) requiredGap = true;
+      if (incomplete && (module.required || missing.some(slot => (slot.name === PLACEMENT_DIGNITY_MEANING || slot.kind === "custom" || ZODIAC_SEASON_VARIABLES.some(field => field.id === slot.name))))) requiredGap = true;
       trace.push({ id: module.id, eventId: event?.id, label: module.label, template: module.template, status: incomplete ? "omitted" : "included", reason: incomplete ? `${module.required ? "Required module incomplete" : "Optional module omitted"}: ${missing.map(slot => slot.name).join(", ") || "empty template"}` : "Selected by this composition", text: result.text, slots });
     }
   }
@@ -211,12 +228,16 @@ export function skyIngressPublicationIssues(owner, records = []) {
   validateSkyIngressComposition(owner.ingress, owner._studioVariables?.map(item => item.name));
   if (!owner.ingress?.enabled) return [];
   const issues = [];
-  const required = owner.ingress.modules.filter(module => module.required && module.enabled);
-  if (!required.length) issues.push("An enabled composition needs at least one required core module.");
+  const required = owner.ingress.modules.filter(module => module.enabled && (module.required || tokens(module.template).some(match => match[1] === PLACEMENT_DIGNITY_MEANING)));
+  if (!owner.ingress.modules.some(module => module.enabled && module.required)) issues.push("An enabled composition needs at least one required core module.");
   for (const module of required) {
     if (!module.template.trim()) issues.push(`${module.label}: required template is empty.`);
     for (const match of tokens(module.template)) if (!factNames.has(match[1])) {
       const resolved = resolveIngressSource(owner, match[1], records);
+      if (resolved.omitted) {
+        if (!/^\s*\{\{\s*placementDignityMeaning\s*\}\}\s*$/u.test(module.template)) issues.push(`${module.label}: an omitted dignity paragraph must be a standalone module.`);
+        continue;
+      }
       if (!resolved.text?.trim() || resolved.reason) issues.push(`${module.label} → ${match[1]}: ${resolved.reason || "required writing is empty"}.`);
     }
   }
