@@ -4,6 +4,7 @@ import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
 import { lunarSigns, lunarContentIdentity } from "./lunarCalendarContent";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
 import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewWriting, calendarSeasonVariables, calendarSeasonSourceKey, calendarVariableColor } from "./calendarOverviewTemplate";
+import { calendarTemplateDefinitionInputs, calendarTemplateDefinitions } from "./calendarTemplateDefinitions";
 import CalendarVariableText from "./CalendarVariableText";
 import type { CalendarPreviewCalculation } from "./calendarPreviewCalculation";
 import { calendarMoonPassages, calendarPreviewSeasons, calendarPreviewSign, calendarPreviewSourceKeys, calendarPreviewValues, calendarTemplateSegments, type CalendarPreviewRow } from "./calendarPreviewModel";
@@ -73,15 +74,25 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
   }), [sunSign, moonSign, calculation, sources, moonKey, draft]);
   const template = skyForecastTemplates[period];
   const saved = sources?.find(row => row.content_key === template.contentKey);
+  const templateSections = draft?.contentKey === template.contentKey ? draft.sections : saved?.sections;
   const pattern = draft?.contentKey === template.contentKey ? draft.body : saved?.body ?? calendarOverviewPattern(period);
-  const writing = calendarOverviewWriting(draft?.contentKey === template.contentKey ? draft.sections : saved?.sections);
+  const writing = calendarOverviewWriting(templateSections);
   const overviewFields = calendarOverviewFields(period);
-  const values = { ...baseValues };
+  const definitions = calendarTemplateDefinitions(templateSections);
+  const definitionInputs = calendarTemplateDefinitionInputs(definitions);
+  const reservedNames = new Set([...Object.keys(baseValues), ...overviewFields.map(field => field.name), ...calendarSeasonVariables]);
+  const phraseValues = Object.fromEntries(Object.entries(definitionInputs.phrases)
+    .filter(([name]) => !reservedNames.has(name))
+    .map(([name, text]) => [name, { text, kind: "copy" as const, sourceKey: template.contentKey }]));
+  const customTemplates = Object.fromEntries(Object.entries(definitionInputs.templates).filter(([name]) => !reservedNames.has(name)));
+  const nestedTemplates = { ...customTemplates, ...writing };
+  const leafValues = { ...phraseValues, ...baseValues };
+  const values = { ...leafValues };
   for (const field of overviewFields) {
-    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], baseValues, writing, [field.name]).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
+    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], leafValues, nestedTemplates, [field.name]).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
   }
   const passages = calendarMoonPassages(sources ?? [], moonSign);
-  const segments = calendarTemplateSegments(pattern, values);
+  const segments = calendarTemplateSegments(pattern, values, customTemplates);
   const missing = [...new Set([...segments.map(segment => segment.text).join("").matchAll(/\{\{\s*([\w.]+)\s*\}\}/gu)].map(match => match[1]))];
   const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...overviewFields.map(field => field.name)])];
   const ready = Boolean(sources) && (mode === "signs" || Boolean(calculation));
