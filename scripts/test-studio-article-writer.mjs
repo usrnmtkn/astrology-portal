@@ -4,7 +4,7 @@ import { generateSkyArticleTemplateSlots } from '../api/_lib/content-generation.
 Object.assign(process.env,{STUDIO_MEMORY_FEEDBACK_ENABLED:'true',SUPABASE_URL:'https://studio-memory.invalid',SUPABASE_SERVICE_ROLE_KEY:'synthetic',OPENAI_API_KEY:'synthetic',ANTHROPIC_API_KEY:'synthetic'});
 const memory={id:'11111111-1111-4111-8111-111111111111',source_row_id:'22222222-2222-4222-8222-222222222222',
  content_key:'sky-article/saturn/aries/2026',family:'sky-article',before_text:JSON.stringify({body:'Synthetic rejected article.'}),after_text:JSON.stringify({body:'Synthetic approved article replacement. Complete last sentence.'}),
- before_version:'2026-09-10T12:00:00Z',after_version:'2026-09-10T12:01:00Z',status:'active',scope:'passage',reason:'Synthetic reason',version:2,created_at:'2026-09-10T12:01:00Z',updated_at:'2026-09-10T12:02:00Z'};
+ before_version:'2026-09-10T12:00:00Z',after_version:'2026-09-10T12:01:00Z',status:'active',scope:'passage',reason:'Synthetic reason',version:2,created_at:'2026-09-10T12:01:00Z',updated_at:'2026-09-10T12:01:00Z'};
 const input={templateKey:'sky/article-template/saturn/ingress',templateBody:'# Synthetic article\n\n{{opener}}',planet:'saturn',sign:'aries',facts:{planet:'saturn',sign:'aries',entryYear:2026},requestedSlots:[{name:'opener',description:'Synthetic opener field.'}]};
 const prompts=[];let unavailable=false;
 globalThis.fetch=async(url,init={})=>{
@@ -37,7 +37,10 @@ try{
  const ui=fs.readFileSync(new URL('../apps/admin/src/SkyArticleAiWriter.tsx',import.meta.url),'utf8');
  const endpoint=fs.readFileSync(new URL('../api/admin/sky-article-writing.ts',import.meta.url),'utf8');
  assert.match(ui,/adminCredentialHeaders\(credential\)/u,'AI writer must send the current Content Studio credential.');
- assert.match(ui,/rows=\{4\}[\s\S]{0,120}minHeight: 96/u,'AI direction field must stay compact enough to keep the generate action visible.');
+ assert.match(ui,/rows=\{4\}/u,'AI direction field must use four rows rather than an article-sized editor.');
+ assert.doesNotMatch(ui,/style\s*=\s*\{/u,'AI direction must use the shared Studio field sizing, not an inline style bypass.');
+ const css=fs.readFileSync(new URL('../apps/admin/src/studio-system.css',import.meta.url),'utf8');
+ assert.match(css,/textarea \{[^}]*min-height: var\(--studio-textarea-height\)/u,'The shared textarea token owns field height; browser coverage checks the action remains accessible.');
  assert.match(ui,/className="admin-primary-button"[\s\S]{0,220}Generate evergreen revision/u,'Evergreen AI writer must expose a visible primary generate action.');
  assert.match(ui,/Open dated authored article generator/u,'Placement editor must expose the dated authored-article path.');
  assert.match(ui,/sky\/article-template\/\$\{planet\}\/\$\{sign\}/u,'Dated-article action must target the matching authored article template.');

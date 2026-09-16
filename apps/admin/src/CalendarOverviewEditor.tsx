@@ -1,6 +1,8 @@
 import { useEffect, useRef } from "react";
+import { AdminDisclosureSummary } from "./AdminNativeControls";
+import { calendarSeasonPhraseBindings, calendarSeasonPhraseVariables, calendarSeasonSourceName, setCalendarSeasonPhraseBinding } from "../../../src/content-studio/calendarSeasonPhrases";
 import type { AdminDraft } from "./GeneratedContentAdminDashboard";
-import { StudioButton, StudioTextarea } from "./StudioControls";
+import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewPeriod, calendarOverviewWriting, calendarSeasonVariables, calendarVariableColor } from "./calendarOverviewTemplate";
 
 export default function CalendarOverviewEditor({ draft, initialField, onChange }: { draft: AdminDraft; initialField?: string; onChange: (draft: AdminDraft) => void }) {
@@ -9,12 +11,13 @@ export default function CalendarOverviewEditor({ draft, initialField, onChange }
   const selected = useRef<HTMLTextAreaElement | null>(null);
   const container = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    const field = Array.from(container.current?.querySelectorAll<HTMLTextAreaElement>("textarea[data-sky-field]") ?? []).find(element => element.dataset.skyField === initialField);
-    if (field) { field.focus({ preventScroll: true }); field.scrollIntoView({ block: "center" }); }
+    const field = Array.from(container.current?.querySelectorAll<HTMLTextAreaElement | HTMLInputElement>("textarea[data-sky-field],input[data-sky-field]") ?? []).find(element => element.dataset.skyField === initialField);
+    if (field) { const details = field.closest("details"); if (details) details.open = true; field.focus({ preventScroll: true }); field.scrollIntoView({ block: "center" }); }
   }, [initialField]);
   const period = calendarOverviewPeriod(contentKey);
   if (!period) return null;
   const fields = calendarOverviewFields(period);
+  const phraseBindings = calendarSeasonPhraseBindings(sections);
   const writing = calendarOverviewWriting(sections);
   const update = (name: string, value: string) => change(body, { ...sections, calendarOverview: { ...writing, [name]: value } });
   const insert = (name: string) => {
@@ -41,6 +44,25 @@ export default function CalendarOverviewEditor({ draft, initialField, onChange }
       <small className="admin-field-hint">{field.help}</small>
     </label>)}
     {fields.some(field => field.starter) && <div className="admin-new-actions">{fields.filter(field => field.starter).map(field => <StudioButton key={field.name} type="button" onClick={() => adoptStarter(field.name, field.starter!)}>Use {field.label.toLowerCase()} starter</StudioButton>)}</div>}
+    {period === "monthly-sky" && <details className="studio-variable-usage" open>
+      <AdminDisclosureSummary>Season phrase sources</AdminDisclosureSummary>
+      <div className="studio-section">
+        <p>Use a token from Variables → My variables for each small phrase. The preview selects its opening or closing Sun-sign value. Edit the wording and sign overrides in My variables; saving here keeps only the source references.</p>
+        {calendarSeasonPhraseVariables.map(variable => {
+          const value = phraseBindings[variable.name]?.variableName ?? "";
+          const invalid = Boolean(value.trim()) && !calendarSeasonSourceName(value);
+          return <div key={variable.name} className="admin-review-copy-editor studio-surface">
+            <label><span><code data-variable-name={variable.name} data-variable-color={calendarVariableColor(variable.name)}>{`{{${variable.name}}}`}</code></span>
+              <StudioInput aria-label={`Source for ${variable.name}`} aria-invalid={invalid || undefined} data-sky-field={`calendarOverview.${variable.name}`} value={value} maxLength={80} placeholder="{{mySeasonFocus}}"
+                onChange={event => change(body, setCalendarSeasonPhraseBinding(sections, variable.name, event.target.value))} />
+            </label>
+            <small className="admin-field-hint">{variable.description} Use a {variable.grammar.replace("-", " ")}.</small>
+            {invalid && <p role="alert">Enter a variable name or a complete double-brace token.</p>}
+            <StudioButton type="button" onClick={() => insert(variable.name)} aria-label={`Insert {{${variable.name}}} into Calendar template`}>Insert variable</StudioButton>
+          </div>;
+        })}
+      </div>
+    </details>}
     <p>Insert a saved passage variable into the selected field.</p>
     <div className="admin-new-actions">{[{ name: "sunSummary", label: "Use Sun summary" }, { name: "moonWriteup", label: "Use Moon passage" }, { name: "openingZodiacSeason", label: "Use opening season passage" }, { name: "openingZodiacSeasonPolarAxis", label: "Use season axis passage" }].map(item => <StudioButton key={item.name} type="button" data-variable-name={item.name} data-variable-color={calendarVariableColor(item.name)} onClick={() => insert(item.name)}>{item.label}</StudioButton>)}</div>
     <p>Insert a season variable into the selected field or template pattern.</p>

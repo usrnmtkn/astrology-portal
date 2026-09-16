@@ -1,0 +1,51 @@
+import assert from "node:assert/strict";
+import { store } from "../tests/helpers/sky-article-save-api.mts";
+import { skyForecastTemplates } from "../apps/admin/src/skyForecastTemplates";
+import { setCalendarSeasonPhraseBinding, resolveCalendarSeasonPhrases, calendarSeasonPhraseSourceKeys } from "../src/content-studio/calendarSeasonPhrases";
+
+const definition = { name: "calendarFixtureFocus", label: "Calendar fixture focus", description: "Synthetic source", tags: [], value: "Shared fixture", overrides: [
+  { scope: "sign", sign: "virgo", planet: "", value: "Virgo fixture" },
+  { scope: "sign", sign: "libra", planet: "", value: "Libra fixture" }
+] };
+const endpoint = "/api/admin/generated-content?variables=true";
+const created = await store.invoke("POST", { variable: definition }, endpoint);
+assert.equal(created.status, 200, JSON.stringify(created.payload));
+const variable = created.payload.variable;
+const monthly = skyForecastTemplates["monthly-sky"];
+const original = { id: "calendar-template-fixture", content_key: monthly.contentKey, surface: "sky", mode: "card", status: "DRAFT", lane: "reference", event_type: "slot-template", block_type: "fallback_template", target_date: null, updated_at: "2026-09-16T00:00:00Z", headline: monthly.headline, summary: "Private fixture guidance", body: "{{monthlyOverview}}\n\n{{seasonOverview}}", sections: { calendarOverview: { monthlyOverview: "Fixture complete opening. Its final sentence stays.", seasonOverview: "{{openingSeasonFocus}} / {{closingSeasonFocus}}" }, preservedMetadata: "Keep this fixture metadata" }, source_snapshot: { contentType: "template", content_role: "template", contentSystem: "fallback" } };
+store.rows.set(original.id, structuredClone(original));
+const sections = setCalendarSeasonPhraseBinding(setCalendarSeasonPhraseBinding(original.sections, "openingSeasonFocus", definition.name), "closingSeasonFocus", definition.name);
+const saved = await store.invoke("PATCH", { id: original.id, expectedUpdatedAt: original.updated_at, body: original.body, sections });
+assert.equal(saved.status, 200, JSON.stringify(saved.payload));
+const row = saved.payload.rows[0];
+assert.equal(row.status, "DRAFT");
+assert.equal(row.body, original.body);
+assert.equal(row.summary, original.summary);
+assert.deepEqual(row.sections.calendarOverview, original.sections.calendarOverview);
+assert.equal(row.sections.preservedMetadata, original.sections.preservedMetadata);
+assert.deepEqual(row.sections.calendarSeasonPhraseBindings, sections.calendarSeasonPhraseBindings);
+const readBack = await store.invoke("GET", undefined, `/api/admin/generated-content?id=${original.id}`);
+assert.equal(readBack.status, 200);
+assert.deepEqual(readBack.payload.rows[0].sections.calendarSeasonPhraseBindings, sections.calendarSeasonPhraseBindings);
+const keys = calendarSeasonPhraseSourceKeys(sections);
+const query = new URLSearchParams({ status: "all", visibility: "all", limit: "1000" });
+keys.forEach(key => query.append("contentKeys", key));
+const url = `/api/admin/generated-content?${query}`;
+assert.equal((await store.invoke("GET", undefined, url, "not-authorized")).status, 401);
+const fetched = await store.invoke("GET", undefined, url);
+assert.equal(fetched.status, 200, JSON.stringify(fetched.payload));
+assert.equal(fetched.payload.rows.length, 1);
+assert.equal(fetched.payload.rows[0].sections.variable.schema, "studio-variable/v1");
+let phrases = resolveCalendarSeasonPhrases(sections, fetched.payload.rows, { openingSign: "Virgo", closingSign: "Libra" });
+assert.equal(phrases.find(value => value.name === "openingSeasonFocus")?.text, "Virgo fixture");
+assert.equal(phrases.find(value => value.name === "closingSeasonFocus")?.text, "Libra fixture");
+const stale = await store.invoke("PATCH", { id: original.id, expectedUpdatedAt: original.updated_at, sections: {} });
+assert.equal(stale.status, 409, "Source bindings obey the actual draft's concurrency guard.");
+assert.deepEqual(store.rows.get(original.id).sections.calendarSeasonPhraseBindings, sections.calendarSeasonPhraseBindings);
+assert.equal((await store.invoke("DELETE", { id: variable.id, expectedUpdatedAt: variable.updatedAt }, endpoint)).status, 200);
+const afterDelete = await store.invoke("GET", undefined, url);
+assert.equal(afterDelete.status, 200);
+phrases = resolveCalendarSeasonPhrases(sections, afterDelete.payload.rows, { openingSign: "Virgo" });
+assert.equal(phrases.find(value => value.name === "openingSeasonFocus")?.status, "missing-variable");
+assert.equal(store.rows.get(original.id).status, "DRAFT", "No approval or publication occurs in this flow.");
+console.log("PASS: actual authenticated exact-key source reads, monthly binding save/read-back, owner-copy preservation, stale-save rejection, and missing-source behavior");

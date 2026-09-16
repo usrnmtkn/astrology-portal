@@ -17,6 +17,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: node scripts/test-css-token-active-sources.mjs
       - name: Run shared CSS audits
         run: npm run qa:css-audit
       - name: Run Content Studio architecture audit

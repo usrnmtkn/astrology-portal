@@ -1,0 +1,60 @@
+name: Calendar seasonal phrase contract
+on:
+  pull_request:
+    paths:
+      - 'src/content-studio/**'
+      - 'apps/admin/src/CalendarOverviewEditor.tsx'
+      - 'apps/admin/src/CalendarTemplatePreview.tsx'
+      - 'apps/admin/src/calendar*.ts'
+      - 'apps/admin/src/useCalendarSeasonPhraseSources.ts'
+      - 'apps/admin/src/SkyArticleAiWriter.tsx'
+      - 'apps/admin/src/studio-system.css'
+      - 'apps/web/src/content/studioCustomVariables.*'
+      - 'api/_lib/studio-variables.ts'
+      - 'scripts/test-calendar-season-*'
+      - 'scripts/test-studio-article-writer.mjs'
+      - 'tests/visual/calendar-season-phrases.spec.ts'
+      - 'tests/visual/studio-ai-direction-field.spec.ts'
+      - 'playwright.sky-forecast.config.ts'
+      - '.github/workflows/calendar-season-phrases.yml'
+permissions:
+  contents: read
+concurrency:
+  group: calendar-season-phrases-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  seasonal-phrases:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: node --import tsx scripts/test-calendar-season-phrases.mjs
+      - run: node --import tsx scripts/test-calendar-season-phrase-api.mts
+      - run: node scripts/test-css-token-active-sources.mjs
+      - run: npm run qa:css-audit
+      - run: npx playwright install --with-deps chromium
+      - name: Test source bindings and shared AI controls in a fresh Studio build
+        run: npx playwright test -c playwright.sky-forecast.config.ts tests/visual/calendar-season-phrases.spec.ts tests/visual/studio-ai-direction-field.spec.ts
+      - name: Keep the existing Studio bundle limits
+        run: node scripts/check-admin-bundle-budgets.mjs
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: calendar-season-phrase-results
+          path: |
+            test-results/sky-forecast-runs/
+            test-results/calendar-season-phrases-*.png
+            test-results/studio-ai-direction-*.png
+            test-results/css-audit/
+          if-no-files-found: ignore
+          retention-days: 3
+    env:
+      PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
