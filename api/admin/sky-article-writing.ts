@@ -108,18 +108,25 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       ownerRequest,
       context,
       `\n${evergreenOccurrenceRule}`,
-      '\nReturn only reader-facing prose for the requested article field. Do not include drafting notes, explanations, labels, source commentary, or approval language. Do not invent dates, aspects, or historical facts. Preserve literal template variables only when they are already present in the current article context and valid for this field.',
+      '\nReturn only reader-facing prose for the requested article field. Do not include drafting notes, explanations, labels, source commentary, or approval language. Do not invent dates, aspects, or historical facts. Preserve literal template variables only when they are already present in the current article context and valid for this field. Never output {{articleDraft}} or any other generation-control placeholder.',
     ].join('');
 
+    // Do not seed the writer with {{articleDraft}} as immutable template context.
+    // The shared slot writer is explicitly told to preserve immutable context, so
+    // giving it a generation-control placeholder makes echoing that placeholder a
+    // plausible model response and guarantees the post-call validator will reject
+    // an otherwise usable draft. The requested slot is already supplied separately
+    // through requestedSlots; templateBody should contain only reader-facing context.
+    const immutableContext = currentText.trim() || 'No existing reader-facing article prose was supplied.';
     const generation = await generateSkyArticleTemplateSlots({
       templateKey: `sky/article/${planet}/${sign}/${referenceYear}`,
-      templateBody: '{{articleDraft}}',
+      templateBody: immutableContext,
       planet,
       sign,
       facts,
       requestedSlots: [{
         name: 'articleDraft',
-        description: articleJob(field, planet, sign),
+        description: `${articleJob(field, planet, sign)} Return finished reader-facing prose. Do not output template placeholders or double-brace tokens.`,
       }],
       provider: body.provider,
       voiceNotes,
