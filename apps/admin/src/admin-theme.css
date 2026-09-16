@@ -2,9 +2,24 @@
 
 /* Content Studio theme tokens.
    Shared primitive scales come from the application design theme above.
-   Studio-specific visual roles live here so reader CSS no longer owns admin styling. */
+   Studio-specific workspace, palette, typography, and layer roles live here so
+   reader CSS no longer owns admin styling. */
 
 :root .admin-dashboard {
+  /* Studio workspace geometry. */
+  --workspace-gutter: clamp(var(--size-3), 3vw, var(--size-5));
+  --workspace-block-gap: var(--size-3);
+  --workspace-card-padding: var(--size-3);
+  --workspace-sidebar-width: 280px;
+  --workspace-max-width: 1600px;
+  --workspace-wide-table-min-width: 1200px;
+  --workspace-control-height: 44px;
+  --workspace-control-inset: var(--space-3);
+  --workspace-control-icon-space: var(--size-5);
+  --workspace-field-gap: var(--size-1);
+  --workspace-panel-inset: var(--size-2);
+  --workspace-tag-padding: var(--space-1) var(--space-2);
+
   /* Categorical variable identities: paired ink/surface colors in both themes. */
   --studio-variable-1-ink: light-dark(#174ea6, #b6d3ff);
   --studio-variable-1-surface: light-dark(#e8f0fe, #163657);
