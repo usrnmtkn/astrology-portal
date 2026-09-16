@@ -1,10 +1,6 @@
 import assert from "node:assert/strict";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { assertYouTransitReadingBrief, youTransitReadingPrompt } from "../api/_lib/you-transit-reading.ts";
-
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+import { transitReadingRevisionPrompt } from "../api/_lib/transit-reading-revision.ts";
 
 const weekBrief = assertYouTransitReadingBrief({
   schema: "tldr.you-transit-reading-brief.v1",
@@ -25,14 +21,15 @@ const weekBrief = assertYouTransitReadingBrief({
 });
 
 const weekPrompt = youTransitReadingPrompt({ brief: weekBrief, headline: "Your week, in depth" });
-assert.match(weekPrompt, /Reader-facing meaning must come from APPROVED READER TEXT/u);
-assert.match(weekPrompt, /TECHNICAL EVIDENCE may confirm names, dates, houses, aspects, and timing/u);
-assert.match(weekPrompt, /does not authorize a new behavioral interpretation/u);
+assert.match(weekPrompt, /APPROVED READER TEXT below is the only evidence available to the writer/u);
+assert.match(weekPrompt, /raw technical evidence is intentionally withheld/u);
 assert.match(weekPrompt, /If the evidence is thin, write shorter rather than padding the report/u);
 assert.match(weekPrompt, /one meaningful reader-safe source, 140-220 words is enough/u);
 assert.match(weekPrompt, /Do not use report-scaffolding phrases/u);
 assert.match(weekPrompt, /do not invent a day, progression across the week, or consequence in the following week/iu);
 assert.match(weekPrompt, /summary: return the same text as tldr/u);
+assert.doesNotMatch(weekPrompt, /weekStart/u, "Raw weekly timing fields must stay out of the writer prompt.");
+assert.doesNotMatch(weekPrompt, /driverLabel/u, "Technical driver labels must stay out of the writer prompt.");
 
 const dayBrief = assertYouTransitReadingBrief({
   schema: "tldr.you-transit-reading-brief.v1",
@@ -52,9 +49,24 @@ const dayBrief = assertYouTransitReadingBrief({
 const dayPrompt = youTransitReadingPrompt({ brief: dayBrief, headline: "Your day, in depth" });
 assert.match(dayPrompt, /begin with the next supported consequence, distinction, or action/u);
 assert.match(dayPrompt, /do not make it sit, become a door, point, carry weight, form a longer arc/u);
-assert.match(dayPrompt, /If a technical transit has no reader-safe meaning in APPROVED READER TEXT, omit its interpretation/u);
+assert.doesNotMatch(dayPrompt, /North Node/u, "A technical-only transit must not become writer evidence.");
+assert.doesNotMatch(dayPrompt, /qualifyingTransits/u);
 
-const revisionSource = fs.readFileSync(path.join(repoRoot, "api/_lib/transit-reading-revision.ts"), "utf8");
-assert.match(revisionSource, /Before returning JSON, scan all four fields and replace every em dash/u);
+const revisionPrompt = transitReadingRevisionPrompt({
+  brief: dayBrief,
+  headline: "Your day, in depth",
+  surface: "you",
+  task: "revision",
+  feedback: "Remove the unsupported North Node interpretation from the rejected draft.",
+  minSummaryLength: 40,
+  minBodyLength: 180,
+  maxBodyLength: 2200
+});
+assert.match(revisionPrompt, /WRITER-SAFE GOVERNED BRIEF/u);
+assert.match(revisionPrompt, /only APPROVED READER TEXT below is writer evidence/u);
+const governedSection = revisionPrompt.split("WRITER-SAFE GOVERNED BRIEF (approved reader evidence only)")[1]?.split("DRAFT AND FINDINGS TO ADDRESS")[0] ?? "";
+assert.doesNotMatch(governedSection, /technicalEvidence/u);
+assert.doesNotMatch(governedSection, /North Node/u);
+assert.match(revisionPrompt, /Before returning JSON, scan all four fields and replace every em dash/u);
 
-console.log("You report quality floor keeps source-thin reports concise, evidence-bounded, and free of common abstract scaffolding.");
+console.log("You report writers and revision writers stay inside approved reader evidence while deterministic fact locks retain technical evidence separately.");
