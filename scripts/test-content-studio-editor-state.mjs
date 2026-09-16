@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { mergeContentInventory } from "../apps/admin/src/contentStudioState.ts";
 import { calendarTemplateSegments } from "../apps/admin/src/calendarPreviewModel.ts";
-import { calendarPhraseVariables } from "../apps/admin/src/calendarOverviewTemplate.ts";
+import { monthlyPhraseVariable, monthlyPhraseVariables } from "../src/content-studio/monthlyPhraseVariables.ts";
 const full = { id: "one", updated_at: "2026-09-07T10:00:01Z", body: "Saved owner copy", sections: { packageDraft: { body: "Revision" } } };
 const inventory = { id: "one", updated_at: full.updated_at, inventory_only: true, body: "", sections: {} };
 assert.deepEqual(mergeContentInventory([full], [inventory]), [full], "Inventory refresh must retain the hydrated proposal needed for publishing.");
@@ -22,16 +22,15 @@ assert.equal(cyclic, "{{monthlyOverview}}", "circular overview references stop a
 const missing = calendarTemplateSegments("{{monthName}} · {{notWrittenYet}}", nestedValues({ monthName: "September" })).map(segment => segment.text).join("");
 assert.equal(missing, "September · {{notWrittenYet}}");
 
-const phrases = calendarPhraseVariables("monthly-sky");
-assert.equal(phrases.length, 11, "Monthly authoring must expose the reviewed small phrase registry.");
-assert.equal(new Set(phrases.map(variable => variable.name)).size, phrases.length, "Monthly phrase names must be unique.");
-assert.equal(calendarPhraseVariables("weekly-sky").length, 0, "The monthly phrase registry must not leak into weekly authoring.");
-assert.equal(phrases.some(variable => variable.name === "monthlyFocus"), false, "The retired catch-all monthlyFocus must not return.");
-assert.deepEqual(phrases.find(variable => variable.name === "openingSeasonFocus"), {
-  name: "openingSeasonFocus", label: "Opening season focus", grammar: "noun phrase", source: "opening-season",
-  help: "The emphasis of the zodiac season active when the month begins."
+assert.equal(monthlyPhraseVariables.length, 11, "Monthly authoring must define the reviewed small phrase registry.");
+assert.equal(new Set(monthlyPhraseVariables.map(variable => variable.name)).size, monthlyPhraseVariables.length, "Monthly phrase names must be unique.");
+assert.equal(monthlyPhraseVariables.some(variable => variable.name === "monthlyFocus"), false, "The retired catch-all monthlyFocus must not return.");
+assert.deepEqual(monthlyPhraseVariable("openingSeasonFocus"), {
+  name: "openingSeasonFocus", grammar: "noun-phrase", source: "opening-season",
+  description: "Focus of the Sun season active at month start."
 });
-assert.equal(phrases.find(variable => variable.name === "leadEventOpportunity")?.grammar, "verb phrase");
-assert.equal(phrases.find(variable => variable.name === "secondaryMonthlyThemeFocus")?.source, "edition");
+assert.equal(monthlyPhraseVariable("leadEventOpportunity")?.grammar, "verb-phrase");
+assert.equal(monthlyPhraseVariable("secondaryMonthlyThemeFocus")?.source, "edition");
+assert.equal(monthlyPhraseVariables.filter(variable => variable.source === "closing-season").length, 3);
 
 console.log("PASS: hydrated editor preservation, recursive Calendar overview fields, and scoped monthly phrase-variable registry");
