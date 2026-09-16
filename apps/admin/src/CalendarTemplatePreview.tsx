@@ -75,14 +75,15 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
   const saved = sources?.find(row => row.content_key === template.contentKey);
   const pattern = draft?.contentKey === template.contentKey ? draft.body : saved?.body ?? calendarOverviewPattern(period);
   const writing = calendarOverviewWriting(draft?.contentKey === template.contentKey ? draft.sections : saved?.sections);
+  const overviewFields = calendarOverviewFields(period);
   const values = { ...baseValues };
-  for (const field of calendarOverviewFields(period)) {
-    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], baseValues).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
+  for (const field of overviewFields) {
+    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], baseValues, writing, [field.name]).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
   }
   const passages = calendarMoonPassages(sources ?? [], moonSign);
   const segments = calendarTemplateSegments(pattern, values);
   const missing = [...new Set([...segments.map(segment => segment.text).join("").matchAll(/\{\{\s*([\w.]+)\s*\}\}/gu)].map(match => match[1]))];
-  const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...calendarOverviewFields(period).map(field => field.name)])];
+  const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...overviewFields.map(field => field.name)])];
   const ready = Boolean(sources) && (mode === "signs" || Boolean(calculation));
   return <section className="admin-template-reader-drilldown studio-surface" aria-label="Calendar template preview">
     <header className="admin-section-heading-row"><div><h4>Template preview</h4><p>Choose signs or a date to preview the template. Open the template to write the overview passages and insert zodiac season variables.</p></div></header>
@@ -107,7 +108,7 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
           <table className="admin-data-table" aria-label="Calendar preview variables"><thead><tr><th scope="col">Variable</th><th scope="col">Writing or value</th><th scope="col">Edit</th></tr></thead><tbody>{availableNames.filter(name => !calculation || seasons.closing || !/^(closing|seasonChangeDate)/u.test(name)).map(name => {
           const value = values[name];
           const sourceKey = value?.sourceKey ?? calendarSeasonSourceKey(name, sunSign, values.openingSeasonSign?.text ?? "", values.closingSeasonSign?.text ?? "");
-          const field = calendarOverviewFields(period).find(field => field.name === name);
+          const field = overviewFields.find(field => field.name === name);
           const source = sources?.find(row => row.content_key === sourceKey);
           const unavailable = field ? field.help : sourceKey ? "Add or edit the shared passage for this sign." : mode === "signs" ? "Choose Use ephemeris to calculate dates and season changes." : "This fact is not available for the selected period.";
           const kind = value?.kind === "fact" ? "Read-only ephemeris" : value?.kind === "example" ? "Example sign" : value?.sourceLabel ?? (value ? "Saved writing" : field || sourceKey ? "Needs writing" : "Unavailable");
