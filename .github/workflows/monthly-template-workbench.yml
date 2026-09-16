@@ -1,0 +1,25 @@
+name: Monthly template workbench
+on:
+  push:
+    branches: [chatgpt/monthly-editorial-template-final]
+    paths: [.github/workflows/monthly-template-workbench.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Export tracked source only
+        run: |
+          mkdir -p /tmp/monthly-template-source
+          git rev-parse HEAD > /tmp/monthly-template-source/source-sha.txt
+          git archive --format=tar.gz HEAD > /tmp/monthly-template-source/source.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: monthly-template-source
+          path: /tmp/monthly-template-source
+          retention-days: 1
