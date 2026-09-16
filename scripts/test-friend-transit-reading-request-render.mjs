@@ -80,7 +80,8 @@ assert.match(friendGenerationSource, /export const FRIEND_TRANSIT_READING_PROVID
 assert.match(friendGenerationSource, /required: \["headline", "tldr", "summary", "body"\]/u);
 assert.doesNotMatch(friendGenerationSource, /maxItems\s*:/u, "The live Friends provider schema must not use unsupported array-size constraints.");
 assert.doesNotMatch(friendGenerationSource, /type:\s*"null"/u, "The live Friends provider schema must not require null-only article fields.");
-assert.match(friendGenerationSource, /validateFriendTransitReadingDraft\(\{ draft, brief, expectedHeadline \}\)/u);
+assert.match(friendGenerationSource, /const readerCopy = transitReadingReaderCopy\(draft\)/u);
+assert.match(friendGenerationSource, /validateFriendTransitReadingDraft\(\{ draft: readerCopy, brief, expectedHeadline \}\)/u, "The fact lock must validate the exact reader projection, not duplicate aliases or model metadata.");
 assert.match(friendGenerationSource, /validationProfile:\s*"friends-transit"[\s\S]{0,120}family:\s*"friend-transit-reading"[\s\S]{0,120}register:\s*"third_person"/u);
 assert.match(friendGenerationSource, /\["DRAFT", "REVIEWED", "LIVE"\]\.includes\(existing\.status\)[\s\S]{0,120}existing\.body\.trim\(\)/u,
   "A completed saved paid reading must be reused instead of regenerated.");
