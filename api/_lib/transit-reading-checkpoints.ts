@@ -98,14 +98,19 @@ export async function checkpointTransitReadingModel<T>(
   }
   await scope.onProgress?.(input.schemaName.includes("judge") ? "checking" : step === 0 ? "writing" : "revising");
   scope.called = true;
-  // A unique row is reserved BEFORE billing. After a crash, a started row is
-  // ambiguous and must be inspected, never silently sent to the provider again.
-  const [reserved] = await scope.admin.insert<Checkpoint<T>>("transit_report_model_checkpoints", {
-    [jobColumn]: scope.jobId, attempt: scope.attempt, step,
-    request_hash: requestHash, state: "started", provider: input.provider,
-    model: input.model, schema_name: input.schemaName
-  }).catch((cause) => { throw new TransitReadingCheckpointStopped("Report checkpoint reservation failed; no new call was sent.", { cause }); });
-  if (!reserved) throw new TransitReadingCheckpointStopped("Could not reserve report model checkpoint.");
+  // Reserve before billing. If the reservation itself fails, no provider call
+  // has happened, so the lifecycle can safely start a fresh logical attempt.
+  let reserved: Checkpoint<T> | undefined;
+  try {
+    [reserved] = await scope.admin.insert<Checkpoint<T>>("transit_report_model_checkpoints", {
+      [jobColumn]: scope.jobId, attempt: scope.attempt, step,
+      request_hash: requestHash, state: "started", provider: input.provider,
+      model: input.model, schema_name: input.schemaName
+    });
+  } catch (cause) {
+    throw new Error("Report checkpoint reservation failed before any provider call. A fresh logical attempt is safe.", { cause });
+  }
+  if (!reserved) throw new Error("Report checkpoint reservation returned no row before any provider call. A fresh logical attempt is safe.");
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(new TransitReadingCheckpointStopped(
     `Report model step ${step + 1} exceeded the worker time budget.`
