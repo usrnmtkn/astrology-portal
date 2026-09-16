@@ -1,15 +1,38 @@
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
 
+export type CalendarOverviewField = { name: string; label: string; help: string; starter?: string };
+
+const monthlyOverviewStarter = `{{#hasMonthlyTheme}}
+{{monthName}} brings attention to {{primaryMonthlyThemeFocus}}{{#hasSecondaryMonthlyTheme}} and {{secondaryMonthlyThemeFocus}}{{/hasSecondaryMonthlyTheme}}.
+{{/hasMonthlyTheme}}
+
+{{#hasLeadEvent}}
+On {{leadEventDate}}, {{leadEventClause}}. You may notice {{leadEventExperience}}, making this a useful time to {{leadEventOpportunity}}.
+{{/hasLeadEvent}}`;
+
+const monthlySeasonStarter = `The Sun in {{openingSeasonSign}} turns our attention to {{openingSeasonFocus}}, helping us {{openingSeasonOpportunity}}.
+
+{{#closingSeasonSign}}
+When the Sun enters {{closingSeasonSign}} on {{seasonChangeDate}}, attention turns toward {{closingSeasonFocus}}. The challenge is {{closingSeasonChallenge}}. You can {{closingSeasonPractice}}.
+{{/closingSeasonSign}}`;
+
 export function calendarOverviewPeriod(key: string): SkyForecastPeriod | undefined {
   return (Object.keys(skyForecastTemplates) as SkyForecastPeriod[]).find(period => skyForecastTemplates[period].contentKey === key);
 }
 
-export function calendarOverviewFields(period: SkyForecastPeriod) {
+export function calendarOverviewFields(period: SkyForecastPeriod): CalendarOverviewField[] {
   if (period === "daily-sky") return [];
   const prefix = period === "weekly-sky" ? "weekly" : "monthly";
   const periodName = prefix === "weekly" ? "week" : "month";
+  if (period === "monthly-sky") return [
+    { name: "monthlyOverview", label: "Monthly opening template", help: "Edit the reusable sentence structure for optional month-specific themes and the reviewed lead event. Phrase values are bound separately.", starter: monthlyOverviewStarter },
+    { name: "seasonOverview", label: "Season transition template", help: "Edit the reusable sentence structure for the opening and incoming zodiac seasons. Seasonal phrase values are bound separately.", starter: monthlySeasonStarter },
+    { name: "lunarOverview", label: "Lunar cycle", help: "Connect the New Moon, Full Moon, or eclipse to the period’s main story." },
+    { name: "transitOverview", label: "Planetary changes", help: "Describe the significance of the period’s ingresses, stations, and planetary aspects." },
+    { name: "monthlyIntegration", label: "Closing passage", help: "Bring the month’s themes together without repeating the event list." }
+  ];
   return [
-    { name: `${prefix}Overview`, label: `${prefix === "weekly" ? "Weekly" : "Monthly"} overview`, help: `Describe the main story of the ${periodName} and how its events connect.` },
+    { name: `${prefix}Overview`, label: "Weekly overview", help: `Describe the main story of the ${periodName} and how its events connect.` },
     { name: "seasonOverview", label: "Season transition", help: "Explain how the zodiac season shapes this period and what changes when the Sun enters the next sign." },
     { name: "lunarOverview", label: "Lunar cycle", help: "Connect the New Moon, Full Moon, or eclipse to the period’s main story." },
     { name: "transitOverview", label: "Planetary changes", help: "Describe the significance of the period’s ingresses, stations, and planetary aspects." },
