@@ -9,6 +9,7 @@ import {
 import {
   normalizeReportColdReadCritique,
   REPORT_DRAFT_SCHEMA,
+  REPORT_GENERAL_YEAR_DRAFT_SCHEMA,
   REPORT_REVISION_PATCH_SCHEMA,
   reportSentenceAddressedCritiqueSchema
 } from "../api/_lib/report-writer-chain.ts";
@@ -36,6 +37,7 @@ const markdownHeavyKeyDates = {
 
 const providerSchemas = new Map([
   ["report_unit_draft", REPORT_DRAFT_SCHEMA],
+  ["report_general_year_unit_draft", REPORT_GENERAL_YEAR_DRAFT_SCHEMA],
   ["report_unit_critique", reportSentenceAddressedCritiqueSchema(markdownHeavyKeyDates, true)],
   ["report_unit_cold_read", reportSentenceAddressedCritiqueSchema(markdownHeavyKeyDates, true)],
   ["report_unit_revision_spans", REPORT_REVISION_PATCH_SCHEMA],

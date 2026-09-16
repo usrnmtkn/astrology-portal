@@ -383,8 +383,8 @@ for (const factorId of [
 }
 // Raw Production-shaped fact captured from report 74951c07 on 2026-08-10.
 // This deliberately does not use the checked-in Marie fixture: the Production
-// calculator reports the conjunction contact in quadrant house 9 even though
-// the contacted point is the Midheaven, whose canonical report house is 10.
+// calculator reports the conjunction contact in whole-sign house 9. The
+// Midheaven point, not a conventional house rewrite, owns doctrine lookup.
 const rawProductionAngleFact = {
   natal: {
     positions: [],
@@ -429,7 +429,7 @@ const rawProductionAngleFact = {
 };
 const productionAngleFactors = reportFactors(rawProductionAngleFact);
 const productionMidheavenFactor = productionAngleFactors.find((factor) => factor.id === "solar_eclipse-2027-02-06-midheaven");
-assert.equal(productionMidheavenFactor?.house, 10);
+assert.equal(productionMidheavenFactor?.house, 9);
 assert.equal(productionMidheavenFactor?.activationHouse, 9);
 assert.equal(resolveManifestationSets([productionMidheavenFactor]).resolved[0]?.record.id, "eclipse-on-midheaven-house-10");
 
@@ -439,15 +439,15 @@ const canonicalAngleFactors = reportFactors({
   lunarEvents: [],
   slowTransitArcs: [
     { id: "angle-midheaven", transitPlanet: "Saturn", natalPoint: "Midheaven", natalHouse: 9, aspect: "square" },
-    { id: "angle-ascendant", transitPlanet: "Saturn", natalPoint: "Ascendant", natalHouse: 12, aspect: "square" },
+    { id: "angle-ascendant", transitPlanet: "Saturn", natalPoint: "Ascendant", natalHouse: 1, aspect: "square" },
     { id: "angle-ic", transitPlanet: "Saturn", natalPoint: "IC", natalHouse: 3, aspect: "square" },
-    { id: "angle-descendant", transitPlanet: "Saturn", natalPoint: "Descendant", natalHouse: 6, aspect: "square" }
+    { id: "angle-descendant", transitPlanet: "Saturn", natalPoint: "Descendant", natalHouse: 7, aspect: "square" }
   ]
 });
 assert.deepEqual(Object.fromEntries(canonicalAngleFactors.map((factor) => [factor.natalPoint, factor.house])), {
-  Midheaven: 10,
+  Midheaven: 9,
   Ascendant: 1,
-  IC: 4,
+  IC: 3,
   Descendant: 7
 });
 const eligibilityFixture = reportFactors({
