@@ -13,6 +13,8 @@ type Props = {
   onUse: (text: string) => void;
 };
 
+type Readiness = 'idle' | 'checking' | 'ready' | 'error';
+
 const today = () => new Date().toISOString().slice(0, 10);
 
 async function contentStudioCredential() {
@@ -31,18 +33,52 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [readiness, setReadiness] = useState<Readiness>('idle');
+  const [readinessMessage, setReadinessMessage] = useState('');
 
   useEffect(() => {
     setInstruction('');
     setDraft('');
     setError('');
+    setReadiness('idle');
+    setReadinessMessage('');
   }, [planet, sign, field]);
+
+  const checkReadiness = async () => {
+    setReadiness('checking');
+    setReadinessMessage('Checking calculation, writing memory, and model configuration…');
+    try {
+      const credential = await contentStudioCredential();
+      if (!credential) throw new Error('Content Studio owner access is unavailable. Reload and sign in again before generating.');
+      const params = new URLSearchParams({ planet, sign, date: referenceDate });
+      const response = await fetch(`/api/admin/sky-article-writing?${params.toString()}`, {
+        method: 'GET',
+        headers: adminCredentialHeaders(credential),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.ok || payload?.ready !== true) {
+        throw new Error(typeof payload?.error === 'string' ? payload.error : 'The AI writer is not ready.');
+      }
+      const provider = payload.provider === 'claude' ? 'Claude' : 'OpenAI';
+      const memoryCount = Number.isFinite(payload.memorySelectedCount) ? Number(payload.memorySelectedCount) : 0;
+      setReadiness('ready');
+      setReadinessMessage(`Ready to generate with ${provider}. ${memoryCount} relevant writing correction${memoryCount === 1 ? '' : 's'} loaded.`);
+      return true;
+    } catch (reason) {
+      const message = reason instanceof Error ? reason.message : 'The AI writer readiness check failed.';
+      setReadiness('error');
+      setReadinessMessage(message);
+      return false;
+    }
+  };
 
   const generate = async () => {
     if (busy || disabled) return;
     setBusy(true);
     setError('');
     try {
+      const ready = await checkReadiness();
+      if (!ready) throw new Error('Fix the readiness issue above before generating.');
       const credential = await contentStudioCredential();
       if (!credential) throw new Error('Content Studio owner access is unavailable. Reload and sign in again before generating.');
       const response = await fetch('/api/admin/sky-article-writing', {
@@ -67,7 +103,16 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
     window.location.hash = `#articles?q=${encodeURIComponent(templateKey)}`;
   };
 
-  return <details className="admin-workspace-details">
+  const changeReferenceDate = (value: string) => {
+    setReferenceDate(value);
+    setReadiness('idle');
+    setReadinessMessage('');
+    setError('');
+  };
+
+  return <details className="admin-workspace-details" onToggle={event => {
+    if (event.currentTarget.open && readiness === 'idle' && referenceDate) void checkReadiness();
+  }}>
     <AdminDisclosureSummary>AI writing</AdminDisclosureSummary>
     <p>This generator revises the evergreen {planet.replace(/-/gu, ' ')} in {sign} placement article. It does not put a specific year's story into the reusable placement source.</p>
     <div className="admin-sky-writing-source-actions" role="group" aria-label="Choose AI article destination">
@@ -76,9 +121,15 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
     </div>
     <label className="admin-field-wide">
       <span>Reference date</span>
-      <StudioInput type="date" value={referenceDate} disabled={disabled || busy} onChange={event => setReferenceDate(event.target.value)} />
+      <StudioInput type="date" value={referenceDate} disabled={disabled || busy} onChange={event => changeReferenceDate(event.target.value)} />
       <small className="admin-field-hint">Choose a date when {planet.replace(/-/gu, ' ')} is in {sign}. The date validates the placement; the evergreen draft will not turn that year's dates or aspects into reusable prose.</small>
     </label>
+    <div className="admin-sky-writing-source-actions" role="group" aria-label="AI writer readiness">
+      <StudioButton type="button" disabled={disabled || busy || readiness === 'checking' || !referenceDate} onClick={() => void checkReadiness()}>
+        {readiness === 'checking' ? 'Checking writer…' : 'Check writer readiness'}
+      </StudioButton>
+      {readinessMessage && <small className={`admin-field-hint${readiness === 'error' ? ' admin-field-error' : ''}`} role={readiness === 'error' ? 'alert' : 'status'}>{readinessMessage}</small>}
+    </div>
     <label className="admin-review-copy-editor">
       <span>Optional direction for the evergreen draft</span>
       <StudioTextarea
