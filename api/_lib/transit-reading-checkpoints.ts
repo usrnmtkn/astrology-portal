@@ -115,9 +115,11 @@ export async function checkpointTransitReadingModel<T>(
   const timer = setTimeout(() => controller.abort(new TransitReadingCheckpointStopped(
     `Report model step ${step + 1} exceeded the worker time budget.`
   )), Math.max(1, scope.deadline - Date.now()));
+  let providerReturned = false;
   try {
     if (Date.now() >= scope.deadline) throw new TransitReadingCheckpointStopped("Report checkpoint reservation exhausted the worker time budget.");
     const result = await call({ ...input, signal: controller.signal, disableFallback: true });
+    providerReturned = true;
     const rows = await scope.admin.update<Checkpoint<T>>("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "complete", response: result, completed_at: new Date().toISOString()
     });
@@ -130,7 +132,9 @@ export async function checkpointTransitReadingModel<T>(
     // to retry under a fresh logical checkpoint attempt. Timeouts, crashes and
     // response-persistence uncertainty remain fail-closed because billing or a
     // successful provider response may be ambiguous.
-    const unsafeReplay = error instanceof TransitReadingCheckpointStopped;
+    // A thrown database/network error after the provider returns is also an
+    // ambiguous persistence state, even if it is an ordinary Error instance.
+    const unsafeReplay = providerReturned || controller.signal.aborted || error instanceof TransitReadingCheckpointStopped;
     const failedRows = await scope.admin.update("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "failed", error: (error instanceof Error ? error.message : "Model step failed").slice(0, 2000),
       completed_at: new Date().toISOString()

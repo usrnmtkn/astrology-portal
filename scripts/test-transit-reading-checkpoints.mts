@@ -234,3 +234,21 @@ console.log('Durable retry feedback: latest scoped draft/findings, stable replay
   } finally { mock.timers.reset(); }
 }
 console.log('Continuation checkpoint: inherited worker deadline prevents an extra billed step.');
+
+// A successful provider response followed by a failed save is never a fresh
+// billable retry, even when recording the failure itself succeeds.
+for (const family of ['you', 'friend'] as const) {
+  const { rows, admin } = storage();
+  const update = admin.update;
+  let calls = 0;
+  admin.update = async (table, query, patch) => {
+    if (patch.state === 'complete') throw new Error('response persistence unavailable');
+    return update(table, query, patch);
+  };
+  const scope = { admin, family, jobId: 'post-provider-save-failure', attempt: 1 };
+  await assert.rejects(resume(scope, () => step(request('writer'), async () => { calls++; return result('writer'); })), TransitReadingCheckpointStopped);
+  assert.equal(calls, 1);
+  assert.equal(rows[0].state, 'failed');
+  await assert.rejects(resume(scope, () => step(request('writer'), async () => { assert.fail('must not repeat a returned response'); })), TransitReadingCheckpointStopped);
+}
+console.log('Post-provider save errors fail closed even when recording the failure succeeds.');

@@ -251,7 +251,7 @@ async function markPlaceholderFailed(admin: SupabaseReportAdmin, job: YouReportJ
   const subjectType = job.report_window === "day" ? "you_day_reading" : "you_week_reading";
   await admin.update(
     "user_generated_interpretations",
-    `you_report_entitlement_id=eq.${job.entitlement_id}&subject_type=eq.${subjectType}`,
+    `you_report_entitlement_id=eq.${job.entitlement_id}&subject_type=eq.${subjectType}&body=eq.`,
     { status: "ERROR", error: message.slice(0, 2000) }
   );
 }
@@ -299,9 +299,10 @@ export async function runYouReportJobs(input: {
         entitlementId: job.entitlement_id
       }));
       const resultId = generated.saved[0]?.id;
+      if (!resultId) throw new Error("Report persistence returned no result identifier. The job cannot be completed.");
       await admin.update("you_report_jobs", `id=eq.${job.id}`, {
         state: "complete",
-        result_id: resultId ?? null,
+        result_id: resultId,
         locked_at: null,
         locked_by: null,
         last_error: null
