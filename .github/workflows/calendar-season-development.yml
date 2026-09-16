@@ -1,0 +1,39 @@
+name: Calendar season development source
+on:
+  push:
+    branches: [chatgpt/calendar-season-phrases-step4-dev]
+    paths: [.github/workflows/calendar-season-development.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: 334ee1c1a44acb2770eaac9b23f5d6373b5256b7
+          persist-credentials: false
+          fetch-depth: 1
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Package tracked source, credential-free Git objects, and npm package cache
+        shell: bash
+        run: |
+          mkdir -p /tmp/calendar-dev/source /tmp/calendar-dev/npm-cache
+          git archive HEAD | tar -x -C /tmp/calendar-dev/source
+          cp -a .git /tmp/calendar-dev/source/.git
+          rm -f /tmp/calendar-dev/source/.git/config
+          printf '[core]\n  repositoryformatversion = 0\n  bare = false\n[remote "origin"]\n  url = https://github.com/usrnmtkn/astrology-portal\n  fetch = +refs/heads/*:refs/remotes/origin/*\n' > /tmp/calendar-dev/source/.git/config
+          cp -a "$(npm config get cache)/_cacache" /tmp/calendar-dev/npm-cache/
+          git rev-parse HEAD > /tmp/calendar-dev/SOURCE_COMMIT
+          tar -czf /tmp/calendar-season-development.tar.gz -C /tmp/calendar-dev .
+      - uses: actions/upload-artifact@v6
+        with:
+          name: calendar-season-development
+          path: /tmp/calendar-season-development.tar.gz
+          retention-days: 1
+          compression-level: 0
