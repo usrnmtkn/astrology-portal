@@ -14,11 +14,11 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 2
-      - name: Verify pinned patch and apply only to the repair branch
+      - name: Verify pinned patch and apply source files only
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = 9a4a2218ef50288502e6403c6544d67fda50f375
+          test "$(git rev-parse HEAD^)" = f7b27b6eea0490c1fcc7cc7d8aa350a4b79ff17c
           python3 - <<'PY'
           import base64, gzip, hashlib, os
           from pathlib import Path
@@ -40,11 +40,12 @@ jobs:
           assert touched == allowed, touched ^ allowed
           Path(os.environ['RUNNER_TEMP'], 'verified-report.patch').write_bytes(patch)
           PY
-          git apply --check "$RUNNER_TEMP/verified-report.patch"
-          git apply "$RUNNER_TEMP/verified-report.patch"
+          git apply --exclude='.github/workflows/*' --check "$RUNNER_TEMP/verified-report.patch"
+          git apply --exclude='.github/workflows/*' "$RUNNER_TEMP/verified-report.patch"
           git diff --check
-          git rm .report-repair-transfer/{1,2,3,4}.txt .github/workflows/apply-verified-report-repair.yml
-          git add .github/workflows/report-reader-contract.yml api/_lib/friend-report-lifecycle.ts api/_lib/friend-transit-reading-generation.ts api/_lib/friend-transit-reading.ts api/_lib/report-provider-schema.ts api/_lib/transit-reading-aspect-claims.ts api/_lib/transit-reading-checkpoints.ts api/_lib/transit-reading-generation.ts api/_lib/transit-reading-judge.ts api/_lib/transit-reading-reader-copy.ts api/_lib/transit-reading-revision.ts api/_lib/you-report-lifecycle.ts api/_lib/you-transit-reading-generation.ts api/_lib/you-transit-reading.ts scripts/test-report-reader-contract.mts scripts/test-transit-reading-checkpoints.mts scripts/test-transit-report-delivery.mjs
+          git rm .report-repair-transfer/{1,2,3,4}.txt
+          git add api/_lib/friend-report-lifecycle.ts api/_lib/friend-transit-reading-generation.ts api/_lib/friend-transit-reading.ts api/_lib/report-provider-schema.ts api/_lib/transit-reading-aspect-claims.ts api/_lib/transit-reading-checkpoints.ts api/_lib/transit-reading-generation.ts api/_lib/transit-reading-judge.ts api/_lib/transit-reading-reader-copy.ts api/_lib/transit-reading-revision.ts api/_lib/you-report-lifecycle.ts api/_lib/you-transit-reading-generation.ts api/_lib/you-transit-reading.ts scripts/test-report-reader-contract.mts scripts/test-transit-reading-checkpoints.mts scripts/test-transit-report-delivery.mjs
+          test -z "$(git diff --cached --name-only -- .github/workflows)"
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'fix(reports): align reader validation and targeted correction; guard persistence'
