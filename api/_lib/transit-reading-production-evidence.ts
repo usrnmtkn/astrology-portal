@@ -12,7 +12,9 @@ const ASPECT_ALIASES = new Map<string, string>([
   ["sextiles", "sextile"]
 ]);
 const BODY_PATTERN = "Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|Lilith|North Node|South Node|Ascendant|Rising|Midheaven|MC|Descendant|IC";
+const SIGN_PATTERN = "Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces";
 const DRIVER_ASPECT = new RegExp(`^(${BODY_PATTERN})\\s+(conjunct|conjunction|opposes|opposite|opposition|square|squares|trine|trines|sextile|sextiles)\\s+(${BODY_PATTERN})$`, "iu");
+const WEEKLY_MOON_PLACEMENT = new RegExp(`^Moon\\s+in\\s+(${SIGN_PATTERN})$`, "iu");
 const HOUSE_TEXT_PATTERN = /\b([1-9]|1[0-2])(?:st|nd|rd|th)?(?:\s+|-)house\b/giu;
 
 function slug(value: unknown) {
@@ -55,6 +57,12 @@ function addDriver(ids: Set<string>, driverLabel: unknown) {
   if (match) addTransit(ids, match[1], match[2], match[3]);
 }
 
+function addWeeklyMoonPlacement(ids: Set<string>, source: unknown, driverLabel: unknown) {
+  if (stringValue(source).toLowerCase() !== "weekly-moon") return;
+  const match = WEEKLY_MOON_PLACEMENT.exec(stringValue(driverLabel));
+  if (match) ids.add(`moon-in-${slug(match[1])}`);
+}
+
 function walkTechnicalEvidence(ids: Set<string>, value: unknown) {
   if (Array.isArray(value)) {
     value.forEach((entry) => walkTechnicalEvidence(ids, entry));
@@ -67,6 +75,7 @@ function walkTechnicalEvidence(ids: Set<string>, value: unknown) {
   addHouse(ids, item.house);
   addHouse(ids, item.natalHouse);
   addDriver(ids, item.driverLabel);
+  addWeeklyMoonPlacement(ids, item.source, item.driverLabel);
 
   for (const entry of Object.values(item)) {
     if (entry && typeof entry === "object") walkTechnicalEvidence(ids, entry);
@@ -95,7 +104,10 @@ function walkApprovedReaderText(ids: Set<string>, value: unknown) {
  * Weekly assemblies can intentionally carry `house: null` in a compact
  * technical reading while their approved personalized reader text already
  * names the governed house. In that case the named approved house is valid
- * evidence identity, just as it is for the deterministic fact lock.
+ * evidence identity, just as it is for the deterministic fact lock. A weekly
+ * Moon-sign headliner can also be the entire governed weekly source; its exact
+ * Moon-in-sign driver therefore contributes the corresponding catalogued
+ * placement identity without inventing a house or an aspect.
  */
 export function youTransitReadingProductionKnowledgeIds(brief: {
   approvedReaderText?: Record<string, unknown>;
