@@ -8,7 +8,6 @@ export class StudioVariableError extends Error {
   constructor(message: string, public statusCode = 400) { super(message); }
 }
 const asDefinition = (row: any) => ({ ...row.sections.variable, id: row.id, updatedAt: row.updated_at });
-const reservedNameSet = new Set(reservedNames);
 
 export async function listStudioVariables(storage: Storage, names?: string[]) {
   if (names && !names.length) return [];
@@ -75,26 +74,22 @@ export async function handleStudioVariables(req: IncomingMessage, storage: Stora
 export async function snapshotStudioVariables(record: any, storage: Storage) {
   const names = studioRecordVariableNames(record);
   const old = Array.isArray(record._studioVariables) ? record._studioVariables : [];
-  const builtInBindings = names.filter(name => reservedNameSet.has(name)).map(name => ({ name, builtin: true }));
-  const customNames = names.filter(name => !reservedNameSet.has(name));
-  const oldCustom = old.filter((item: any) => !item?.builtin);
-  if (!customNames.length && !oldCustom.length && !builtInBindings.length) return record;
-  const definitions = await listStudioVariables(storage, customNames);
-  const customBindings = customNames.map(name => {
+  if (!names.some(name => !reservedNames.includes(name)) && !old.length) return record;
+  const definitions = await listStudioVariables(storage, names.filter(name => !reservedNames.includes(name)));
+  const bindings = names.filter(name => !reservedNames.includes(name)).map(name => {
     const definition = definitions.find(item => item.name === name);
-    if (!definition && oldCustom.some((item: any) => item.name === name)) throw new StudioVariableError(`{{${name}}} was deleted or renamed. Update the token before saving this draft.`);
+    if (!definition && old.some((item: any) => item.name === name)) throw new StudioVariableError(`{{${name}}} was deleted or renamed. Update the token before saving this draft.`);
     // Editorial labels, descriptions and tags stay in the private library.
     return definition ? { id: definition.id, name: definition.name, value: definition.value, overrides: definition.overrides, updatedAt: definition.updatedAt } : undefined;
   }).filter(Boolean);
-  return { ...record, _studioVariables: [...builtInBindings, ...customBindings] };
+  return { ...record, _studioVariables: bindings };
 }
 
 export async function assertStudioVariablePublication(record: any, storage: Storage) {
   const saved = Array.isArray(record._studioVariables) ? record._studioVariables : [];
-  const customSaved = saved.filter((item: any) => !item?.builtin);
   if (!saved.length) return;
-  const current = await listStudioVariables(storage, customSaved.map((item: any) => item.name));
-  for (const binding of customSaved) {
+  const current = await listStudioVariables(storage, saved.map((item: any) => item.name));
+  for (const binding of saved) {
     const definition = current.find(item => item.id === binding.id && item.name === binding.name);
     if (!definition || JSON.stringify([definition.name, definition.value, definition.overrides]) !== JSON.stringify([binding.name, binding.value, binding.overrides])) throw new StudioVariableError(`{{${binding.name}}} changed or was deleted. Save and review this draft again before publishing.`, 409);
     if (!binding.value?.trim() || binding.overrides.some((item: any) => !item.value?.trim())) throw new StudioVariableError(`Complete the shared value and every override for {{${binding.name}}} before publishing.`);
