@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { generateSkyArticleTemplateSlots } from '../api/_lib/content-generation.ts';
 Object.assign(process.env,{STUDIO_MEMORY_FEEDBACK_ENABLED:'true',SUPABASE_URL:'https://studio-memory.invalid',SUPABASE_SERVICE_ROLE_KEY:'synthetic',OPENAI_API_KEY:'synthetic',ANTHROPIC_API_KEY:'synthetic'});
 const memory={id:'11111111-1111-4111-8111-111111111111',source_row_id:'22222222-2222-4222-8222-222222222222',
@@ -33,5 +34,13 @@ try{
  const count=prompts.length;unavailable=true;
  await assert.rejects(generateSkyArticleTemplateSlots({...input,provider:'openai'}),/Storage request failed/);
  assert.equal(prompts.length,count,'Memory outage must precede any paid request');
- console.log('Article writer passed: actual OpenAI and Claude prompt delivery, full correction, metadata-only receipts, and outage before provider calls.');
+ const ui=fs.readFileSync(new URL('../apps/admin/src/SkyArticleAiWriter.tsx',import.meta.url),'utf8');
+ const endpoint=fs.readFileSync(new URL('../api/admin/sky-article-writing.ts',import.meta.url),'utf8');
+ assert.match(ui,/adminCredentialHeaders\(credential\)/u,'AI writer must send the current Content Studio credential.');
+ assert.match(ui,/rows=\{4\}[\s\S]{0,120}minHeight: 96/u,'AI direction field must stay compact enough to keep the generate action visible.');
+ assert.match(ui,/className="admin-primary-button"[\s\S]{0,220}Generate evergreen revision/u,'Evergreen AI writer must expose a visible primary generate action.');
+ assert.match(ui,/Open dated authored article generator/u,'Placement editor must expose the dated authored-article path.');
+ assert.match(ui,/sky\/article-template\/\$\{planet\}\/\$\{sign\}/u,'Dated-article action must target the matching authored article template.');
+ assert.match(endpoint,/occurrence-specific facts into the evergreen prose/u,'Evergreen generation must reject year-specific occurrence facts.');
+ console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, visible controls, and separate evergreen versus dated article destinations.');
 }finally{delete process.env.STUDIO_MEMORY_FEEDBACK_ENABLED;}
