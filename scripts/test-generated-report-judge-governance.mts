@@ -93,19 +93,46 @@ assert.doesNotThrow(() => productionEvidence.buildProductionCatalogEvidence({
   sourceSnapshot: {}
 }), "A governed lunation week must resolve the personalized approved house before the writer or judge can run.");
 
+const weeklyMoonKnowledgeIds = youTransitReadingProductionKnowledgeIds({
+  approvedReaderText: {
+    horoscope: { body: "The surface feels fake and you're too tired to pretend otherwise." }
+  },
+  technicalEvidence: {
+    readings: [{ source: "weekly-moon", driverLabel: "Moon in Scorpio", house: null }]
+  }
+});
+assert.deepEqual(weeklyMoonKnowledgeIds, ["weekly-moon-scorpio"]);
+const weeklyMoonEvidence = productionEvidence.buildProductionCatalogEvidence({
+  contentKey: "you-transit-reading/week/2026-09-14",
+  surface: "you",
+  mode: "in_depth",
+  eventType: "you-transit-you-week-reading",
+  facts: { type: "you-transit-reading" },
+  knowledgeIds: weeklyMoonKnowledgeIds,
+  sourceSnapshot: {}
+});
+assert.deepEqual(weeklyMoonEvidence.mapped.canonicalIds, ["body/moon", "sign/scorpio"]);
+
 const sharedGenerator = read("api/_lib/transit-reading-generation.ts");
 assert.match(sharedGenerator, /initialValidatedDraft/u, "Deterministic validation must precede the judge.");
 assert.match(sharedGenerator, /firstJudgment\.result\.verdict === "pass"/u);
 assert.match(sharedGenerator, /QUALITY JUDGE CORRECTION — ONE PASS ONLY/u);
+assert.match(sharedGenerator, /DETERMINISTIC CLEANUP — NO NEW INTERPRETATION/u);
+assert.match(sharedGenerator, /deterministicCleanupFeedback\(firstJudgment, corrected, error\.message, initial\.validationFeedback\)/u);
 assert.match(sharedGenerator, /const secondJudgment = await options\.judge/u);
 assert.match(sharedGenerator, /secondJudgment\.result\.verdict !== "pass"\) throw new TransitReadingJudgeBlockedError/u);
-assert.match(sharedGenerator, /validateShape\(corrected, options, initial\.brief\)/u, "The judge correction must be deterministically revalidated before re-judge.");
+assert.match(sharedGenerator, /validateShape\(corrected, options, initial\.brief\)/u, "The judge correction and any deterministic cleanup must pass validation before re-judge.");
 assert.match(sharedGenerator, /judgeAudit\(secondJudgment, 2\)/u);
 assert.doesNotMatch(sharedGenerator, /findings:\s*judged\.result\.findings/u, "Judge findings must not be persisted in the pass audit.");
 assert.doesNotMatch(sharedGenerator, /callOpenAIResponses\s*\(/u, "Friends/You writers may not open a direct provider path.");
 assert.doesNotMatch(sharedGenerator, /api\.anthropic\.com/u, "Friends/You writers may not open a direct Claude path.");
 assert.match(sharedGenerator, /prepareTransitReadingProductionKernel/u);
 assert.match(sharedGenerator, /callGovernedTransitReadingModel/u);
+
+const checkpointRuntime = read("api/_lib/transit-reading-checkpoints.ts");
+assert.match(checkpointRuntime, /const MAX_STEPS = 7/u, "The bounded checkpoint budget must allow one deterministic cleanup before the final re-judge.");
+const checkpointMigration = read("apps/web/supabase/migrations/20260916062707_transit_report_checkpoint_cleanup_step.sql");
+assert.match(checkpointMigration, /step <= 6/u, "The database checkpoint bound must admit the seventh bounded model step.");
 
 const judgeRuntime = read("api/_lib/transit-reading-judge.ts");
 assert.doesNotMatch(judgeRuntime, /callOpenAIResponses\s*\(/u, "Generated report judge may not open a direct provider path.");
@@ -175,4 +202,4 @@ assert.match(draftReview, /Judge findings are never promoted here automatically/
 const adminPanel = read("apps/admin/src/ReportFulfillmentAdminPanel.tsx");
 assert.match(adminPanel, /GeneratedReportDraftReview/u);
 
-console.log("Friends and You generated reports are judge-gated, production-kernel-gated, one-pass-correctable, and owner-feedback-governed.");
+console.log("Friends and You generated reports are judge-gated, production-kernel-gated, one-pass-correctable, deterministic-cleanup-safe, and owner-feedback-governed.");

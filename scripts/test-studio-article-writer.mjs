@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { generateSkyArticleTemplateSlots } from '../api/_lib/content-generation.ts';
 Object.assign(process.env,{STUDIO_MEMORY_FEEDBACK_ENABLED:'true',SUPABASE_URL:'https://studio-memory.invalid',SUPABASE_SERVICE_ROLE_KEY:'synthetic',OPENAI_API_KEY:'synthetic',ANTHROPIC_API_KEY:'synthetic'});
 const memory={id:'11111111-1111-4111-8111-111111111111',source_row_id:'22222222-2222-4222-8222-222222222222',
@@ -33,5 +34,28 @@ try{
  const count=prompts.length;unavailable=true;
  await assert.rejects(generateSkyArticleTemplateSlots({...input,provider:'openai'}),/Storage request failed/);
  assert.equal(prompts.length,count,'Memory outage must precede any paid request');
- console.log('Article writer passed: actual OpenAI and Claude prompt delivery, full correction, metadata-only receipts, and outage before provider calls.');
+ const ui=fs.readFileSync(new URL('../apps/admin/src/SkyArticleAiWriter.tsx',import.meta.url),'utf8');
+ const endpoint=fs.readFileSync(new URL('../api/admin/sky-article-writing.ts',import.meta.url),'utf8');
+ assert.match(ui,/adminCredentialHeaders\(credential\)/u,'AI writer must send the current Content Studio credential.');
+ assert.match(ui,/rows=\{4\}[\s\S]{0,120}minHeight: 96/u,'AI direction field must stay compact enough to keep the generate action visible.');
+ assert.match(ui,/className="admin-primary-button"[\s\S]{0,220}Generate evergreen revision/u,'Evergreen AI writer must expose a visible primary generate action.');
+ assert.match(ui,/Open dated authored article generator/u,'Placement editor must expose the dated authored-article path.');
+ assert.match(ui,/sky\/article-template\/\$\{planet\}\/\$\{sign\}/u,'Dated-article action must target the matching authored article template.');
+ assert.match(endpoint,/occurrence-specific facts into the evergreen prose/u,'Evergreen generation must reject year-specific occurrence facts.');
+ assert.match(endpoint,/currentSkyFacts\(referenceInstant\)/u,'Evergreen generation must validate the selected planet/sign from the current Sky calculation.');
+ assert.doesNotMatch(endpoint,/skyArticleEditionFactsFromSnapshot/u,'Evergreen generation must not require the dated-edition sign-residency window.');
+ assert.doesNotMatch(endpoint,/transitWindowPoints:\s*\[planet\]/u,'Evergreen generation must not request a full sign-residency window just to validate the selected sign.');
+ const deployment=JSON.parse(fs.readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
+ const memoryConfig=JSON.parse(fs.readFileSync(new URL('../config/agent-memory-sources-v1.json',import.meta.url),'utf8'));
+ for(const functionKey of ['api/admin/sky-article-writing.ts','api/admin/sky-article-template-slots.ts']){
+   const pattern=deployment.functions[functionKey]?.includeFiles ?? '';
+   assert.ok(pattern.length>0 && pattern.length<=256,`${functionKey} must have a deployable includeFiles pattern.`);
+   assert.match(pattern,/data\/writing/u,`${functionKey} must package repository writing-memory sources.`);
+   assert.match(pattern,/jsonl/u,`${functionKey} must package JSONL correction-memory files.`);
+   const packaged=new Set(fs.globSync(pattern));
+   for(const spec of memoryConfig.sources.filter(item=>item.kind==='correction')){
+     assert(packaged.has(spec.path),`${functionKey} is missing configured correction source: ${spec.path}`);
+   }
+ }
+ console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, visible controls, separate evergreen versus dated destinations, sign-only evergreen validation, and deploy-safe correction-memory packaging.');
 }finally{delete process.env.STUDIO_MEMORY_FEEDBACK_ENABLED;}

@@ -64,12 +64,22 @@ assert.match(adminSource, /Generate unfinished fields/u);
 assert.match(adminSource, /if \(!Object\.prototype\.hasOwnProperty\.call\(slotValues, name\)\) slotValues\[name\] = value/u);
 assert.match(adminSource, /slotGeneration: form\.slotGeneration/u);
 
+const articleFactsSource = fs.readFileSync(new URL("../api/_lib/sky-article-facts.ts", import.meta.url), "utf8");
+assert.match(articleFactsSource, /getAstrodienstSky/u, "Dated article facts must use the packaged Swiss Ephemeris engine.");
+assert.match(articleFactsSource, /includeTransitWindows:\s*true/u, "Dated article facts must calculate the complete sign-residency window.");
+assert.match(articleFactsSource, /local Swiss Ephemeris sign-residency calculation/u, "Dated article facts must report their calculation source.");
+
 for (const endpoint of ["sky-article-facts.ts", "sky-article-template-slots.ts"]) {
   const endpointSource = fs.readFileSync(new URL(`../api/admin/${endpoint}`, import.meta.url), "utf8");
   assert.match(
     endpointSource,
+    /calculateSkyArticleEditionFacts/u,
+    `${endpoint} must use the governed local Swiss article-fact calculation.`
+  );
+  assert.doesNotMatch(
+    endpointSource,
     /transitWindowPoints:\s*\[planet\]/u,
-    `${endpoint} must request the governed calculation window instead of accepting missing dates.`
+    `${endpoint} must not depend on the external current-sky transit-window response.`
   );
 }
 
@@ -82,4 +92,4 @@ assert.ok(
   "The personalized passage must render before the complete rising-sign horoscope list."
 );
 
-console.log("Sky article AI fills only unfinished safe slots, preserves existing values, and keeps the all-sign list after the personal house passage.");
+console.log("Sky article AI fills only unfinished safe slots, preserves existing values, and calculates dated article windows with the local Swiss Ephemeris engine.");

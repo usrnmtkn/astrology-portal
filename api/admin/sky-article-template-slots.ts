@@ -2,10 +2,9 @@ import { articleTemplateWithHoroscopes } from "../../apps/web/src/content/skyArt
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
-import { currentSkyFacts } from "../_lib/current-sky.js";
 import { generateSkyArticleTemplateSlots } from "../_lib/content-generation.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
-import { skyArticleEditionFactsFromSnapshot } from "../_lib/sky-article-facts.js";
+import { calculateSkyArticleEditionFacts } from "../_lib/sky-article-facts.js";
 import {
   skyArticleTemplateSlotNeedsAdditionalFacts,
   unfinishedSkyArticleTemplateSlots
@@ -114,11 +113,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const template = await loadApprovedTemplate(body.templateId.trim());
     const planet = templatePlanet(template);
     if (!planet) throw new Error("The selected template does not identify one Sky planet.");
-    const snapshot = await currentSkyFacts(
-      new Date(`${referenceDate}T12:00:00.000Z`),
-      { transitWindowPoints: [planet] }
-    );
-    const facts = skyArticleEditionFactsFromSnapshot(snapshot, planet);
+    const facts = await calculateSkyArticleEditionFacts(instant, planet);
     const completeTemplate = articleTemplateWithHoroscopes(template.body ?? "", template.sections);
     const placeholders = skyArticleTemplatePlaceholders(completeTemplate)
       .filter((placeholder) => placeholder.name !== "risingBlocks")

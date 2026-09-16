@@ -5,7 +5,7 @@ import type { ReportModelCallInput, ReportModelResult } from "./report-model-cli
 
 // Continue checkpointed steps while the invocation has time. Replaying saved
 // responses runs the existing fact/voice/review gates again, without billing.
-const MAX_STEPS = 6;
+const MAX_STEPS = 7;
 export const TRANSIT_READING_INVOCATION_BUDGET_MS = 240_000;
 type Context = {
   admin: SupabaseReportAdmin;
@@ -69,7 +69,7 @@ export async function checkpointTransitReadingModel<T>(
   const scope = context.getStore();
   if (!scope) return call(input);
   const step = scope.step++;
-  if (step >= MAX_STEPS) throw new TransitReadingCheckpointStopped("Report generation exceeded its six-step limit.");
+  if (step >= MAX_STEPS) throw new TransitReadingCheckpointStopped("Report generation exceeded its seven-step limit.");
   const jobColumn = `${scope.family}_job_id`;
   const requestHash = createHash("sha256").update(JSON.stringify({
     version: 1, provider: input.provider, model: input.model,
@@ -116,16 +116,27 @@ export async function checkpointTransitReadingModel<T>(
     const rows = await scope.admin.update<Checkpoint<T>>("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "complete", response: result, completed_at: new Date().toISOString()
     });
-    if (rows.length !== 1) throw new Error("Report response could not be checkpointed.");
+    if (rows.length !== 1) throw new TransitReadingCheckpointStopped(
+      "Report response could not be checkpointed after the provider returned. Automatic replay stopped to avoid duplicate billing."
+    );
     return result;
   } catch (error) {
-    // A failed persistence write can leave a started row, which also fails closed.
-    await scope.admin.update("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
+    // A confirmed provider rejection/failure has no usable response and is safe
+    // to retry under a fresh logical checkpoint attempt. Timeouts, crashes and
+    // response-persistence uncertainty remain fail-closed because billing or a
+    // successful provider response may be ambiguous.
+    const unsafeReplay = error instanceof TransitReadingCheckpointStopped;
+    const failedRows = await scope.admin.update("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "failed", error: (error instanceof Error ? error.message : "Model step failed").slice(0, 2000),
       completed_at: new Date().toISOString()
-    }).catch(() => undefined);
-    throw new TransitReadingCheckpointStopped(
-      `Report model step ${step + 1} did not complete safely. Saved earlier steps are retained for inspection.`, { cause: error }
+    }).catch(() => []);
+    if (unsafeReplay || failedRows.length !== 1) {
+      throw new TransitReadingCheckpointStopped(
+        `Report model step ${step + 1} has an ambiguous provider or checkpoint state. Automatic replay stopped to avoid duplicate billing.`, { cause: error }
+      );
+    }
+    throw new Error(
+      `Report model step ${step + 1} failed before a usable response was saved. A fresh logical attempt is safe.`, { cause: error }
     );
   } finally {
     clearTimeout(timer);
