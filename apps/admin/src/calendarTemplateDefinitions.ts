@@ -19,7 +19,7 @@ export function validCalendarTemplateDefinitionName(name: string) {
  * Validate the editable definition registry without choosing any monthly phrase schema.
  * Phrase values are literal leaves. Only template definitions may contain {{tokens}}.
  */
-export function validateCalendarTemplateDefinitions(value: unknown, reservedNames: Iterable<string> = {}): Record<string, CalendarTemplateDefinition> {
+export function validateCalendarTemplateDefinitions(value: unknown, reservedNames: Iterable<string> = []): Record<string, CalendarTemplateDefinition> {
   if (!isRecord(value)) throw new Error("Template definitions must be an object.");
   const entries = Object.entries(value);
   if (entries.length > 160) throw new Error("Use at most 160 template definitions.");
