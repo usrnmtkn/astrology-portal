@@ -33,6 +33,7 @@ themeTree.walkAtRules(rule => {
 });
 assert.deepEqual(themeImports, ['"../../web/src/styles/theme.css"'], 'The admin theme layers Studio roles over the shared application primitives');
 assert.doesNotMatch(webTheme, /:root\s+\.admin-dashboard\s*\{/, 'Reader theme must not own Studio-scoped tokens');
+assert.doesNotMatch(webTheme, /--workspace-/, 'Reader theme must not own Studio workspace tokens');
 assert.doesNotMatch(webTheme, /--studio-(?:variable|button|field|chip|nav|selection|sheet|rail|menu|memory|overlay|dialog|textarea|body|code|table|docked|disabled|motion|layer|scrim|warning|error|surface)/, 'Reader theme must not define Studio-specific tokens');
 tree.walkRules(rule => {
   const context = [];
