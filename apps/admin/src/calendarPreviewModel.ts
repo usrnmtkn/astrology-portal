@@ -132,6 +132,7 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   if (sky.moonSignTransition) put("moonIngress", `${sky.moonSignTransition.from} → ${sky.moonSignTransition.to} · ${formatTime(sky.moonSignTransition.occursAt)}`, "fact");
   if (days.length) {
     const range = `${formatDate(days[0].date)} – ${formatDate(days[days.length - 1].date)}`;
+    if (days.length !== 7) put("monthName", new Intl.DateTimeFormat("en-US", { month: "long", timeZone }).format(new Date(sky.generatedAt)), "fact");
     put(days.length === 7 ? "weekRange" : "monthRange", range, "fact");
     for (const day of days) {
       const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone }).format(new Date(day.date)).toLowerCase();
