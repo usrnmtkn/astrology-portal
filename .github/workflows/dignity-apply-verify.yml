@@ -1,0 +1,117 @@
+name: Apply and verify dignity integration
+
+on:
+  push:
+    branches: ['codex/planet-sign-dignity-20260916']
+    paths: ['.github/workflows/dignity-apply-verify.yml', '.dignity-transport/**']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dignity-apply-verify
+  cancel-in-progress: false
+
+jobs:
+  apply-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: codex/planet-sign-dignity-20260916
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify patch identity and apply on current main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch --prune origin
+          git merge --no-edit origin/main
+          cat .dignity-transport/part-* | gzip -dc > /tmp/dignity-change.patch
+          echo '39da081d2dcee2039be73f99e56665a74e7b03ad5a7b40e92231a3b37bc2d285  /tmp/dignity-change.patch' | sha256sum --check
+          if git apply --reverse --check /tmp/dignity-change.patch 2>/dev/null; then
+            echo 'Exact source patch is already present.'
+          else
+            git apply --check /tmp/dignity-change.patch
+            git apply --index /tmp/dignity-change.patch
+            git diff --cached --check
+            git commit -m 'Connect shared planet-sign dignity lookup to placement templates'
+          fi
+          git push origin HEAD:refs/heads/codex/planet-sign-dignity-20260916
+          git log -1 --oneline
+          git rev-list --left-right --count origin/main...HEAD
+      - run: npm ci
+      - name: Build knowledge and regenerate the actual shipped artifacts
+        run: |
+          npm run prepare:app-test-dependencies
+          npx esbuild apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts --bundle --format=esm --platform=browser --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+          npm run build:fallback-manifest
+          node --import tsx scripts/build-studio-variable-catalog.mts
+      - name: Verify lookup, prose selection and three runtime artifacts
+        run: npm run test:placement-dignity
+      - name: Verify existing composition and variable contracts
+        run: |
+          node --import tsx scripts/test-sky-ingress-composition.mts
+          npm run test:sky-placement-article-variables
+          node --import tsx scripts/test-sky-placement-variables.mts
+          npm run test:studio-variables
+      - name: Verify actual draft and publication handlers using the mock store
+        run: node --import tsx scripts/test-sky-placement-studio-api.mts
+      - name: Typecheck and build both applications
+        run: |
+          npm run typecheck
+          npm run build:web
+          npm run build:admin
+      - name: Verify design tokens and desktop/mobile editor behavior
+        run: |
+          npm run qa:css-audit
+          npx playwright install --with-deps chromium
+          npm run test:placement-dignity-editor
+      - name: Verify reader-copy boundary
+        run: npm run test:reader-copy-boundary
+      - name: Commit only regenerated artifacts and remove temporary transport
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { execFileSync } from 'node:child_process';
+          const allowed = new Set([
+            'apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js',
+            'api/_generated/studio-variable-names.json',
+            'apps/admin/public/generated/studio-variables-v1.json',
+            'apps/web/public/generated/studio-variables-v1.json'
+          ]);
+          const changed = execFileSync('git', ['diff', '--name-only'], {encoding:'utf8'}).trim().split('\n').filter(Boolean);
+          const generated = /^apps\/web\/src\/content\/fallbackArchitectureV3\/(?:bundled[^/]*\.json|approved-serving-projection\.json|lineage[^/]*\.json)$/u;
+          const unexpected = changed.filter(path => !allowed.has(path) && !generated.test(path));
+          if (unexpected.length) throw new Error('Review unexpected build outputs before staging: ' + unexpected.join(', '));
+          if (changed.length) execFileSync('git', ['add', '--', ...changed]);
+          NODE
+          git rm -r .dignity-transport .github/workflows/dignity-review-snapshot.yml .github/workflows/dignity-apply-verify.yml
+          git diff --cached --check
+          git diff --cached --stat
+          git commit -m 'Verify dignity selection and rebuild shipped reader and variable catalogs'
+          git push origin HEAD:refs/heads/codex/planet-sign-dignity-20260916
+      - name: Package verification diff for review
+        if: always()
+        run: |
+          mkdir -p test-results/dignity-review
+          git diff 33763e257d99ac8df6f9cdc9089cba9b08bbc515 --binary > test-results/dignity-review/changes.patch
+          git rev-parse HEAD > test-results/dignity-review/head.txt
+          git status --short > test-results/dignity-review/status.txt
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: dignity-integration-verification
+          path: |
+            test-results/dignity-review/
+            test-results/placement-dignity-editor/
+          retention-days: 3
