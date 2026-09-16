@@ -1,0 +1,27 @@
+name: Monthly calendar workbench
+on:
+  push:
+    branches: [chatgpt/calendar-monthly-overview-wiring]
+    paths: [.github/workflows/monthly-calendar-workbench.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 16
+      - name: Export tracked source and provenance
+        run: |
+          mkdir -p /tmp/monthly-calendar-source
+          git rev-parse HEAD > /tmp/monthly-calendar-source/source-sha.txt
+          git archive --format=tar.gz HEAD > /tmp/monthly-calendar-source/source.tar.gz
+          git log -16 --oneline > /tmp/monthly-calendar-source/history.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: monthly-calendar-source
+          path: /tmp/monthly-calendar-source
+          retention-days: 1
