@@ -7,10 +7,14 @@ on:
       - 'apps/admin/src/CalendarTemplatePreview.tsx'
       - 'apps/admin/src/calendar*.ts'
       - 'apps/admin/src/useCalendarSeasonPhraseSources.ts'
+      - 'apps/admin/src/SkyArticleAiWriter.tsx'
+      - 'apps/admin/src/studio-system.css'
       - 'apps/web/src/content/studioCustomVariables.*'
       - 'api/_lib/studio-variables.ts'
       - 'scripts/test-calendar-season-*'
+      - 'scripts/test-studio-article-writer.mjs'
       - 'tests/visual/calendar-season-phrases.spec.ts'
+      - 'tests/visual/studio-ai-direction-field.spec.ts'
       - 'playwright.sky-forecast.config.ts'
       - '.github/workflows/calendar-season-phrases.yml'
 permissions:
@@ -21,7 +25,7 @@ concurrency:
 jobs:
   seasonal-phrases:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -34,8 +38,8 @@ jobs:
       - run: node --import tsx scripts/test-calendar-season-phrase-api.mts
       - run: npm run qa:css-audit
       - run: npx playwright install --with-deps chromium
-      - name: Test source bindings in a fresh Studio build
-        run: npx playwright test -c playwright.sky-forecast.config.ts tests/visual/calendar-season-phrases.spec.ts
+      - name: Test source bindings and shared AI controls in a fresh Studio build
+        run: npx playwright test -c playwright.sky-forecast.config.ts tests/visual/calendar-season-phrases.spec.ts tests/visual/studio-ai-direction-field.spec.ts
       - name: Keep the existing Studio bundle limits
         run: node scripts/check-admin-bundle-budgets.mjs
       - uses: actions/upload-artifact@v6
@@ -45,6 +49,8 @@ jobs:
           path: |
             test-results/sky-forecast-runs/
             test-results/calendar-season-phrases-*.png
+            test-results/studio-ai-direction-*.png
+            test-results/css-audit/
           if-no-files-found: ignore
           retention-days: 3
     env:
