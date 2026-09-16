@@ -29,8 +29,8 @@ export function calendarOverviewFields(period: SkyForecastPeriod): CalendarOverv
   const prefix = period === "weekly-sky" ? "weekly" : "monthly";
   const periodName = prefix === "weekly" ? "week" : "month";
   if (period === "monthly-sky") return [
-    { name: "monthlyOverview", label: "Monthly opening template", help: "Reusable structure for monthly themes and the reviewed lead event.", starter: monthlyOverviewStarter },
-    { name: "seasonOverview", label: "Season transition template", help: "Reusable structure for the opening and incoming Sun seasons.", starter: monthlySeasonStarter },
+    { name: "monthlyOverview", label: "Monthly overview", help: "Reusable structure for monthly themes and the reviewed lead event.", starter: monthlyOverviewStarter },
+    { name: "seasonOverview", label: "Season transition", help: "Reusable structure for the opening and incoming Sun seasons.", starter: monthlySeasonStarter },
     { name: "lunarOverview", label: "Lunar cycle", help: "Connect the New Moon, Full Moon, or eclipse to the month." },
     { name: "transitOverview", label: "Planetary changes", help: "Describe the month’s ingresses, stations, and planetary aspects." },
     { name: "monthlyIntegration", label: "Closing passage", help: "Bring the month’s themes together without repeating the event list." }
