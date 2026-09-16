@@ -94,7 +94,9 @@ export async function checkpointTransitReadingModel<T>(
       await scope.onProgress?.("waiting");
       throw new TransitReadingCheckpointYield();
     }
-    throw new TransitReadingCheckpointStopped("Report preparation exhausted the worker time budget.");
+    // No provider call was made in this logical attempt, so the lifecycle may
+    // safely start a fresh checkpoint attempt instead of terminally failing.
+    throw new Error("Report preparation exhausted the worker time budget.");
   }
   await scope.onProgress?.(input.schemaName.includes("judge") ? "checking" : step === 0 ? "writing" : "revising");
   scope.called = true;
@@ -104,28 +106,39 @@ export async function checkpointTransitReadingModel<T>(
     [jobColumn]: scope.jobId, attempt: scope.attempt, step,
     request_hash: requestHash, state: "started", provider: input.provider,
     model: input.model, schema_name: input.schemaName
-  }).catch((cause) => { throw new TransitReadingCheckpointStopped("Report checkpoint reservation failed; no new call was sent.", { cause }); });
-  if (!reserved) throw new TransitReadingCheckpointStopped("Could not reserve report model checkpoint.");
+  }).catch((cause) => { throw new Error("Report checkpoint reservation failed; no new call was sent.", { cause }); });
+  if (!reserved) throw new Error("Could not reserve report model checkpoint.");
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(new TransitReadingCheckpointStopped(
+  const timer = setTimeout(() => controller.abort(new Error(
     `Report model step ${step + 1} exceeded the worker time budget.`
   )), Math.max(1, scope.deadline - Date.now()));
   try {
-    if (Date.now() >= scope.deadline) throw new TransitReadingCheckpointStopped("Report checkpoint reservation exhausted the worker time budget.");
+    if (Date.now() >= scope.deadline) throw new Error("Report checkpoint reservation exhausted the worker time budget.");
     const result = await call({ ...input, signal: controller.signal, disableFallback: true });
     const rows = await scope.admin.update<Checkpoint<T>>("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "complete", response: result, completed_at: new Date().toISOString()
     });
-    if (rows.length !== 1) throw new Error("Report response could not be checkpointed.");
+    if (rows.length !== 1) throw new TransitReadingCheckpointStopped(
+      "Report response could not be checkpointed after the provider returned. Automatic replay stopped to avoid duplicate billing."
+    );
     return result;
   } catch (error) {
-    // A failed persistence write can leave a started row, which also fails closed.
-    await scope.admin.update("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
+    // If persistence after a successful provider response is uncertain, fail
+    // closed: the call may have succeeded and must not be repeated. Otherwise a
+    // confirmed provider failure can be marked failed and retried under a fresh
+    // logical checkpoint attempt without duplicate billing.
+    const ambiguousResponse = error instanceof TransitReadingCheckpointStopped;
+    const failedRows = await scope.admin.update("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "failed", error: (error instanceof Error ? error.message : "Model step failed").slice(0, 2000),
       completed_at: new Date().toISOString()
-    }).catch(() => undefined);
-    throw new TransitReadingCheckpointStopped(
-      `Report model step ${step + 1} did not complete safely. Saved earlier steps are retained for inspection.`, { cause: error }
+    }).catch(() => []);
+    if (ambiguousResponse || failedRows.length !== 1) {
+      throw new TransitReadingCheckpointStopped(
+        `Report model step ${step + 1} has an ambiguous provider or checkpoint state. Automatic replay stopped to avoid duplicate billing.`, { cause: error }
+      );
+    }
+    throw new Error(
+      `Report model step ${step + 1} failed before a usable response was saved. A fresh logical attempt is safe.`, { cause: error }
     );
   } finally {
     clearTimeout(timer);
