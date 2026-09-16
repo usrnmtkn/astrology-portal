@@ -131,7 +131,7 @@ assert.match(sharedGenerator, /callGovernedTransitReadingModel/u);
 
 const checkpointRuntime = read("api/_lib/transit-reading-checkpoints.ts");
 assert.match(checkpointRuntime, /const MAX_STEPS = 7/u, "The bounded checkpoint budget must allow one deterministic cleanup before the final re-judge.");
-const checkpointMigration = read("apps/web/supabase/migrations/20260916070000_transit_report_checkpoint_cleanup_step.sql");
+const checkpointMigration = read("apps/web/supabase/migrations/20260916062707_transit_report_checkpoint_cleanup_step.sql");
 assert.match(checkpointMigration, /step <= 6/u, "The database checkpoint bound must admit the seventh bounded model step.");
 
 const judgeRuntime = read("api/_lib/transit-reading-judge.ts");
