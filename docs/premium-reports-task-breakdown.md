@@ -87,6 +87,7 @@ Tasks are ordered for execution. Each lists files touched and a done-check. IDs 
 **Work**
 - Server-side facts composer: given viewer + friend chart inputs, call FastAPI `/chart/natal` (friend), `/synastry`, `/composite`; normalize into one facts bundle `{friendNatal, contacts[], overlays[], composite}` with engine provenance.
 - Contact selection: top 3–5 by `synastry.py` weighted score; hardest aspect flagged for the "What to watch" section.
+- Implementation note: the canonical `/synastry` response does not emit applying/separating. The composer preserves those fields when present and never synthesizes them. If a future section needs aspect phase, add it in the FastAPI service, not the composer.
 
 **Done when:** facts bundle for two fixture charts matches expected contacts in a script test; results cross-checked against browser `chartMath.calculatedSynastryContacts()` within orb tolerance (log drift, don't fail — feeds H3).
 

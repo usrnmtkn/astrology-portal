@@ -1,0 +1,90 @@
+{
+  "pairs": [
+    {
+      "id": "fixture-only-pair-one",
+      "personA": {
+        "name": "FIXTURE_ONLY_PAIR_ONE_A",
+        "datetime": {
+          "date": "1994-04-12",
+          "time": "08:35",
+          "timeKnown": true,
+          "timeZone": "America/New_York"
+        },
+        "location": {
+          "label": "FIXTURE_ONLY_NEW_YORK",
+          "latitude": 40.7128,
+          "longitude": -74.006,
+          "timeZone": "America/New_York"
+        },
+        "settings": {
+          "houseSystem": "whole_sign",
+          "zodiac": "tropical",
+          "aspectProfile": "standard"
+        }
+      },
+      "personB": {
+        "name": "FIXTURE_ONLY_PAIR_ONE_B",
+        "datetime": {
+          "date": "1991-11-03",
+          "time": "21:10",
+          "timeKnown": true,
+          "timeZone": "America/Los_Angeles"
+        },
+        "location": {
+          "label": "FIXTURE_ONLY_LOS_ANGELES",
+          "latitude": 34.0522,
+          "longitude": -118.2437,
+          "timeZone": "America/Los_Angeles"
+        },
+        "settings": {
+          "houseSystem": "whole_sign",
+          "zodiac": "tropical",
+          "aspectProfile": "standard"
+        }
+      }
+    },
+    {
+      "id": "fixture-only-pair-two",
+      "personA": {
+        "name": "FIXTURE_ONLY_PAIR_TWO_A",
+        "datetime": {
+          "date": "1985-08-24",
+          "time": "14:20",
+          "timeKnown": true,
+          "timeZone": "America/Chicago"
+        },
+        "location": {
+          "label": "FIXTURE_ONLY_CHICAGO",
+          "latitude": 41.8781,
+          "longitude": -87.6298,
+          "timeZone": "America/Chicago"
+        },
+        "settings": {
+          "houseSystem": "whole_sign",
+          "zodiac": "tropical",
+          "aspectProfile": "standard"
+        }
+      },
+      "personB": {
+        "name": "FIXTURE_ONLY_PAIR_TWO_B",
+        "datetime": {
+          "date": "1989-02-17",
+          "time": "06:45",
+          "timeKnown": true,
+          "timeZone": "Europe/London"
+        },
+        "location": {
+          "label": "FIXTURE_ONLY_LONDON",
+          "latitude": 51.5074,
+          "longitude": -0.1278,
+          "timeZone": "Europe/London"
+        },
+        "settings": {
+          "houseSystem": "whole_sign",
+          "zodiac": "tropical",
+          "aspectProfile": "standard"
+        }
+      }
+    }
+  ]
+}
