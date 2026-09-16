@@ -60,7 +60,7 @@ function addDriver(ids: Set<string>, driverLabel: unknown) {
 function addWeeklyMoonPlacement(ids: Set<string>, source: unknown, driverLabel: unknown) {
   if (stringValue(source).toLowerCase() !== "weekly-moon") return;
   const match = WEEKLY_MOON_PLACEMENT.exec(stringValue(driverLabel));
-  if (match) ids.add(`moon-in-${slug(match[1])}`);
+  if (match) ids.add(`weekly-moon-${slug(match[1])}`);
 }
 
 function walkTechnicalEvidence(ids: Set<string>, value: unknown) {
@@ -106,8 +106,8 @@ function walkApprovedReaderText(ids: Set<string>, value: unknown) {
  * names the governed house. In that case the named approved house is valid
  * evidence identity, just as it is for the deterministic fact lock. A weekly
  * Moon-sign headliner can also be the entire governed weekly source; its exact
- * Moon-in-sign driver therefore contributes the corresponding catalogued
- * placement identity without inventing a house or an aspect.
+ * Moon-in-sign driver contributes a composed Moon + sign mechanism identity
+ * without inventing a house or an aspect.
  */
 export function youTransitReadingProductionKnowledgeIds(brief: {
   approvedReaderText?: Record<string, unknown>;
