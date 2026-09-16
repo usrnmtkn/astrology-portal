@@ -101,8 +101,8 @@ const weeklyMoonKnowledgeIds = youTransitReadingProductionKnowledgeIds({
     readings: [{ source: "weekly-moon", driverLabel: "Moon in Scorpio", house: null }]
   }
 });
-assert.deepEqual(weeklyMoonKnowledgeIds, ["moon-in-scorpio"]);
-assert.doesNotThrow(() => productionEvidence.buildProductionCatalogEvidence({
+assert.deepEqual(weeklyMoonKnowledgeIds, ["weekly-moon-scorpio"]);
+const weeklyMoonEvidence = productionEvidence.buildProductionCatalogEvidence({
   contentKey: "you-transit-reading/week/2026-09-14",
   surface: "you",
   mode: "in_depth",
@@ -110,7 +110,8 @@ assert.doesNotThrow(() => productionEvidence.buildProductionCatalogEvidence({
   facts: { type: "you-transit-reading" },
   knowledgeIds: weeklyMoonKnowledgeIds,
   sourceSnapshot: {}
-}), "A weekly-Moon-only report must resolve the exact Moon-sign placement instead of failing before generation.");
+});
+assert.deepEqual(weeklyMoonEvidence.mapped.canonicalIds, ["body/moon", "sign/scorpio"]);
 
 const sharedGenerator = read("api/_lib/transit-reading-generation.ts");
 assert.match(sharedGenerator, /initialValidatedDraft/u, "Deterministic validation must precede the judge.");
@@ -130,6 +131,8 @@ assert.match(sharedGenerator, /callGovernedTransitReadingModel/u);
 
 const checkpointRuntime = read("api/_lib/transit-reading-checkpoints.ts");
 assert.match(checkpointRuntime, /const MAX_STEPS = 7/u, "The bounded checkpoint budget must allow one deterministic cleanup before the final re-judge.");
+const checkpointMigration = read("apps/web/supabase/migrations/20260916070000_transit_report_checkpoint_cleanup_step.sql");
+assert.match(checkpointMigration, /step <= 6/u, "The database checkpoint bound must admit the seventh bounded model step.");
 
 const judgeRuntime = read("api/_lib/transit-reading-judge.ts");
 assert.doesNotMatch(judgeRuntime, /callOpenAIResponses\s*\(/u, "Generated report judge may not open a direct provider path.");
