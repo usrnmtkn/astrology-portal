@@ -1,0 +1,41 @@
+name: Calendar offline verification inputs
+on:
+  push:
+    branches: [chatgpt/calendar-verification-tools]
+    paths: [.github/workflows/calendar-verification-tools.yml]
+permissions:
+  contents: read
+jobs:
+  inputs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/calendar-season-phrases-step4
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Populate a clean package cache through a locked installation
+        run: npm ci --cache "$RUNNER_TEMP/calendar-npm-cache"
+      - name: Package only tracked source, credential-free Git metadata and package cache
+        run: |
+          set -euo pipefail
+          if git config --local --get-regexp 'extraheader|includeIf|credential'; then
+            echo 'Refusing to archive credential-bearing Git configuration.' >&2
+            exit 1
+          fi
+          mkdir -p "$RUNNER_TEMP/calendar-inputs"
+          git archive --format=tar HEAD | gzip -1 > "$RUNNER_TEMP/calendar-inputs/source.tar.gz"
+          tar -czf "$RUNNER_TEMP/calendar-inputs/git.tar.gz" .git
+          tar -C "$RUNNER_TEMP/calendar-npm-cache" -czf "$RUNNER_TEMP/calendar-inputs/npm-cache.tar.gz" _cacache
+          git rev-parse HEAD > "$RUNNER_TEMP/calendar-inputs/head.txt"
+          git rev-parse refs/remotes/origin/main > "$RUNNER_TEMP/calendar-inputs/main.txt"
+      - uses: actions/upload-artifact@v6
+        with:
+          name: calendar-isolated-inputs
+          path: ${{ runner.temp }}/calendar-inputs/
+          retention-days: 1
+          compression-level: 0
