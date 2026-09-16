@@ -29,11 +29,11 @@ export default function CalendarOverviewEditor({ draft, initialField, onChange }
   };
   const adoptStarter = (name: string, starter: string) => {
     const existing = writing[name]?.trim();
-    if (existing && writing[name] !== starter && !window.confirm("Replace this field with the reusable sentence template? Your current writing will not be changed unless you confirm.")) return;
+    if (existing && writing[name] !== starter && !window.confirm("Replace this field with its sentence-template starter?")) return;
     update(name, starter);
   };
   return <section ref={container} className="admin-editor-guidance" aria-label="Calendar overview writing">
-    <p>{period === "monthly-sky" ? "The monthly opening and season transition are reusable sentence templates. Edit their sentence structure here; smaller phrase values are supplied separately as the selected month changes. Existing saved writing stays untouched until you choose a starter below." : "Write the overview passages below. Each passage fills its named variable in the template and updates the preview. Save keeps the passages, pattern, and existing guidance together."}</p>
+    <p>{period === "monthly-sky" ? "Monthly opening and season transition are reusable sentence templates. Existing writing stays until you choose a starter." : "Write the overview passages below. Each passage fills its named variable in the template and updates the preview."}</p>
     {fields.map(field => <label className="admin-review-copy-editor studio-surface" key={field.name}>
       <span>{field.label} <code className="admin-composition-variable-token" data-variable-name={field.name} data-variable-color={calendarVariableColor(field.name)}>{`{{${field.name}}}`}</code></span>
       <StudioTextarea aria-label={field.label} data-calendar-field={field.name} data-sky-field={`calendarOverview.${field.name}`} value={writing[field.name] ?? ""}
@@ -41,12 +41,12 @@ export default function CalendarOverviewEditor({ draft, initialField, onChange }
       <small className="admin-field-hint">{field.help}</small>
     </label>)}
     {fields.some(field => field.starter) && <div className="admin-new-actions">{fields.filter(field => field.starter).map(field => <StudioButton key={field.name} type="button" onClick={() => adoptStarter(field.name, field.starter!)}>Use {field.label.toLowerCase()} starter</StudioButton>)}</div>}
-    <p>Reuse an existing passage by inserting its variable into the selected overview field. The full passage follows your chosen signs and stays editable from the Variables tab.</p>
+    <p>Insert a saved passage variable into the selected field.</p>
     <div className="admin-new-actions">{[{ name: "sunSummary", label: "Use Sun summary" }, { name: "moonWriteup", label: "Use Moon passage" }, { name: "openingZodiacSeason", label: "Use opening season passage" }, { name: "openingZodiacSeasonPolarAxis", label: "Use season axis passage" }].map(item => <StudioButton key={item.name} type="button" data-variable-name={item.name} data-variable-color={calendarVariableColor(item.name)} onClick={() => insert(item.name)}>{item.label}</StudioButton>)}</div>
-    <p>Insert a zodiac season variable into the last selected overview passage, or append it to the pattern. Season writing follows the selected Sun sign; opening and closing season variables follow the whole week or month.</p>
+    <p>Insert a season variable into the selected field or template pattern.</p>
     <div className="admin-new-actions">{calendarSeasonVariables.map(name => <StudioButton key={name} type="button" data-variable-name={name} data-variable-color={calendarVariableColor(name)} aria-label={`Insert {{${name}}} into Calendar template`} onClick={() => insert(name)}>{`{{${name}}}`}</StudioButton>)}</div>
     {period !== "daily-sky" && <div className="admin-new-actions"><StudioButton type="button" onClick={() => {
-      if (body !== calendarOverviewPattern(period) && !window.confirm("Replace the pattern with the overview structure? Your written overview passages and editor guidance will stay. Save applies the change.")) return;
+      if (body !== calendarOverviewPattern(period) && !window.confirm("Replace the pattern with the overview structure?")) return;
       change(calendarOverviewPattern(period), sections ?? {});
     }}>Use overview structure</StudioButton></div>}
   </section>;
