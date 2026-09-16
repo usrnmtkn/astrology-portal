@@ -42,5 +42,8 @@ try{
  assert.match(ui,/Open dated authored article generator/u,'Placement editor must expose the dated authored-article path.');
  assert.match(ui,/sky\/article-template\/\$\{planet\}\/\$\{sign\}/u,'Dated-article action must target the matching authored article template.');
  assert.match(endpoint,/occurrence-specific facts into the evergreen prose/u,'Evergreen generation must reject year-specific occurrence facts.');
- console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, visible controls, and separate evergreen versus dated article destinations.');
+ assert.match(endpoint,/currentSkyFacts\(referenceInstant\)/u,'Evergreen generation must validate the selected planet/sign from the current Sky calculation.');
+ assert.doesNotMatch(endpoint,/skyArticleEditionFactsFromSnapshot/u,'Evergreen generation must not require the dated-edition sign-residency window.');
+ assert.doesNotMatch(endpoint,/transitWindowPoints:\s*\[planet\]/u,'Evergreen generation must not request a full sign-residency window just to validate the selected sign.');
+ console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, visible controls, separate evergreen versus dated destinations, and sign-only evergreen validation.');
 }finally{delete process.env.STUDIO_MEMORY_FEEDBACK_ENABLED;}
