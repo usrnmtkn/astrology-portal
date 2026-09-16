@@ -1,7 +1,7 @@
 import { TRANSIT_READING_INVOCATION_BUDGET_MS, withTransitReadingCheckpoints, TransitReadingCheckpointYield, TransitReadingCheckpointStopped } from "./transit-reading-checkpoints.js";
 import { youTransitReadingRequestLock, type YouTransitReadingWindow } from "./you-transit-reading.js";
 import { generateYouTransitReadingForUser, type YouTransitReadingRow } from "./you-transit-reading-generation.js";
-import { isTransitReadingJudgeBlockedError } from "./transit-reading-generation.js";
+import { isTransitReadingJudgeBlockedError, type GeneratedTransitReadingDraft } from "./transit-reading-generation.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
 
 export type YouReportJobState = "queued" | "running" | "retry" | "complete" | "failed" | "cancelled";
@@ -39,6 +39,8 @@ export type YouReportJob = {
   last_error: string | null;
   result_id: string | null;
 };
+
+const ownerReviewRequiredPrefix = "OWNER_REVIEW_REQUIRED:";
 
 function adminClient(admin?: SupabaseReportAdmin) {
   return admin ?? createSupabaseReportAdmin();
@@ -120,6 +122,10 @@ async function ensurePlaceholder(input: {
   return rows[0] ?? null;
 }
 
+function ownerReviewRequired(job: Pick<YouReportJob, "state" | "last_error">) {
+  return job.state === "failed" && Boolean(job.last_error?.startsWith(ownerReviewRequiredPrefix));
+}
+
 async function ensureJob(input: {
   admin: SupabaseReportAdmin;
   entitlement: YouReportEntitlement;
@@ -130,11 +136,18 @@ async function ensureJob(input: {
     new URLSearchParams({ entitlement_id: `eq.${input.entitlement.id}`, select: "*" })
   );
   if (existing) {
+    if (ownerReviewRequired(existing)) return existing;
     if (["failed", "cancelled"].includes(existing.state) && input.entitlement.status === "active") {
       await input.admin.update(
         "user_generated_interpretations",
         `you_report_entitlement_id=eq.${input.entitlement.id}&subject_type=eq.${input.locked.subjectType}`,
-        { status: "DRAFT", error: null }
+        {
+          status: "DRAFT",
+          error: null,
+          body: "",
+          summary: null,
+          source_snapshot: input.locked.sourceSnapshot
+        }
       );
       const rows = await input.admin.update<YouReportJob>("you_report_jobs", `id=eq.${existing.id}`, {
         state: "queued",
@@ -218,14 +231,15 @@ export async function requestYouReport(input: {
   }
 
   const completed = await findYouReading({ userId: input.userId, locked, admin });
-  if (completed?.body?.trim() && (!entitlement || completed.you_report_entitlement_id === entitlement.id)) {
+  if (completed?.body?.trim() && ["DRAFT", "REVIEWED", "LIVE"].includes(completed.status)
+    && (!entitlement || completed.you_report_entitlement_id === entitlement.id)) {
     return { status: "ready" as const, reading: completed, entitlement, job: null };
   }
 
   if (!entitlement) entitlement = await createFreeTestEntitlement({ admin, userId: input.userId, locked });
   const placeholder = await ensurePlaceholder({ admin, entitlement, locked });
   const job = await ensureJob({ admin, entitlement, locked });
-  if (job.state === "complete" && placeholder?.body?.trim()) {
+  if (job.state === "complete" && placeholder?.body?.trim() && ["DRAFT", "REVIEWED", "LIVE"].includes(placeholder.status)) {
     return { status: "ready" as const, reading: placeholder, entitlement, job };
   }
   return { status: "queued" as const, reading: placeholder, entitlement, job };
@@ -256,6 +270,38 @@ async function markPlaceholderFailed(admin: SupabaseReportAdmin, job: YouReportJ
   );
 }
 
+async function markPlaceholderReviewCandidate(
+  admin: SupabaseReportAdmin,
+  job: YouReportJob,
+  candidate: GeneratedTransitReadingDraft,
+  diagnostic: unknown
+) {
+  const subjectType = job.report_window === "day" ? "you_day_reading" : "you_week_reading";
+  await admin.update(
+    "user_generated_interpretations",
+    `you_report_entitlement_id=eq.${job.entitlement_id}&subject_type=eq.${subjectType}`,
+    {
+      status: "ERROR",
+      error: "Generated draft needs owner review before it can be shown.",
+      source_snapshot: {
+        ...job.source_snapshot,
+        generatedReportReviewCandidate: {
+          schema: "tldr-generated-report-review-candidate.v1",
+          headline: candidate.headline,
+          tldr: candidate.tldr,
+          summary: candidate.summary,
+          body: candidate.body,
+          model: candidate.model,
+          responseId: candidate.responseId ?? null,
+          retryCount: candidate.retryCount,
+          diagnostic,
+          recordedAt: new Date().toISOString()
+        }
+      }
+    }
+  );
+}
+
 export async function runYouReportJobs(input: {
   workerId: string;
   jobId?: string;
@@ -267,6 +313,7 @@ export async function runYouReportJobs(input: {
   const jobs = await claimJobs({ admin, workerId: input.workerId, jobId: input.jobId, batchLimit: input.batchLimit ?? 1 });
   const results: Array<{ jobId: string; status: string; resultId?: string }> = [];
   const attemptCap = Math.max(1, Number.parseInt(process.env.YOU_REPORT_JOB_ATTEMPT_CAP ?? "4", 10) || 4);
+  const qualityAttemptCap = Math.max(1, Number.parseInt(process.env.YOU_REPORT_QUALITY_ATTEMPT_CAP ?? "2", 10) || 2);
 
   for (const job of jobs) {
     const entitlement = await admin.selectOne<YouReportEntitlement>(
@@ -317,16 +364,16 @@ export async function runYouReportJobs(input: {
         continue;
       }
       const judgeBlocked = isTransitReadingJudgeBlockedError(error);
-      // Reject this draft, but give the existing entitlement its remaining retries.
-      const failed = job.attempt >= attemptCap || error instanceof TransitReadingCheckpointStopped;
-      // A completed review rejection is not a provider outage. Its next
-      // permitted attempt can run now; infrastructure failures keep backoff.
+      const qualityReviewRequired = judgeBlocked && job.attempt >= qualityAttemptCap;
+      const failed = qualityReviewRequired || job.attempt >= attemptCap || error instanceof TransitReadingCheckpointStopped;
       const delayMinutes = judgeBlocked ? 0 : Math.min(30, Math.max(1, job.attempt * 2));
-      const errorMessage = judgeBlocked
-        ? "Writing quality gate did not pass after one corrective rewrite and re-judge."
-        : error instanceof Error
-          ? error.message.slice(0, 2000)
-          : "You report generation failed.";
+      const errorMessage = qualityReviewRequired
+        ? `${ownerReviewRequiredPrefix} Generated draft needs owner review before it can be shown.`
+        : judgeBlocked
+          ? "Writing quality gate did not pass after one corrective rewrite and re-judge."
+          : error instanceof Error
+            ? error.message.slice(0, 2000)
+            : "You report generation failed.";
       await admin.update("you_report_jobs", `id=eq.${job.id}`, {
         state: failed ? "failed" : "retry",
         ...(!failed ? { checkpoint_attempt: (job.checkpoint_attempt ?? 1) + 1 } : {}),
@@ -338,13 +385,16 @@ export async function runYouReportJobs(input: {
           ? `${errorMessage} ${JSON.stringify(error.diagnostic)}`.slice(0, 12000)
           : errorMessage
       });
-      if (failed) await markPlaceholderFailed(admin, job, error instanceof TransitReadingCheckpointStopped
-        ? "This report could not finish generating. Please try again." : errorMessage);
-      results.push({ jobId: job.id, status: failed ? "failed" : "retry" });
+      if (failed) {
+        if (qualityReviewRequired && judgeBlocked && error.reviewCandidate) {
+          await markPlaceholderReviewCandidate(admin, job, error.reviewCandidate, error.diagnostic ?? null);
+        } else {
+          await markPlaceholderFailed(admin, job, error instanceof TransitReadingCheckpointStopped
+            ? "This report could not finish generating. Please try again." : errorMessage);
+        }
+      }
+      results.push({ jobId: job.id, status: qualityReviewRequired ? "review_required" : failed ? "failed" : "retry" });
       if (!failed && judgeBlocked && deadline - Date.now() >= 60_000) {
-        // Reclaim through the database, so cancellation, ownership and the
-        // attempt counter remain authoritative even with concurrent workers.
-        // Every continuation shares the original invocation deadline.
         jobs.push(...await claimJobs({ admin, workerId: input.workerId, jobId: job.id, batchLimit: 1 }));
       }
     }
