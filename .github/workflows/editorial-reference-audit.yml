@@ -1,0 +1,67 @@
+name: Editorial reference audit
+on:
+  push:
+    branches: [chatgpt/remove-external-editorial-references-20260916]
+    paths: [.github/workflows/editorial-reference-audit.yml]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Inventory tracked references without changing source
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import collections, json, pathlib, re, subprocess, tarfile
+          root = pathlib.Path.cwd()
+          out = pathlib.Path('/tmp/editorial-reference-audit')
+          out.mkdir()
+          brand = 'cha' + 'ni'
+          pattern = re.compile(r'(?<!me)' + brand, re.I)
+          tracked = subprocess.check_output(['git', 'ls-files', '-z']).decode().split('\0')
+          records = []
+          binaries = []
+          counts = collections.Counter()
+          for name in filter(None, tracked):
+              path = root / name
+              if not path.is_file() or path.is_symlink():
+                  continue
+              data = path.read_bytes()
+              try:
+                  text = data.decode('utf-8')
+                  if '\0' in text:
+                      raise UnicodeError()
+              except UnicodeError:
+                  binaries.append({'path': name, 'size': len(data), 'pathMatch': bool(pattern.search(name))})
+                  continue
+              matches = [{'line': n, 'text': line} for n, line in enumerate(text.splitlines(), 1) if pattern.search(line)]
+              if matches or pattern.search(name):
+                  records.append({'path': name, 'size': len(data), 'matches': matches})
+                  counts[name.split('/')[0]] += 1
+          report = {'commit': subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode().strip(), 'trackedFiles': len([p for p in tracked if p]), 'matchingFiles': len(records), 'matchingLines': sum(len(r['matches']) for r in records), 'groups': dict(counts), 'records': records, 'binaryFiles': binaries}
+          (out/'audit.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
+          with tarfile.open(out/'source-files.tar.gz', 'w:gz') as tar:
+              for record in records:
+                  tar.add(root/record['path'], arcname=record['path'], recursive=False)
+              for name in ['package.json', 'AGENTS.md', 'docs/content-management/README.md', 'docs/content-management/ARCHITECTURE.md', 'scripts/build-knowledge-index.mjs', 'scripts/build-phrase-index.mjs', 'scripts/build-writing-harness-data.mjs', 'packages/astro-knowledge/package.json', 'api/_lib/content-generation.ts']:
+                  if (root/name).is_file() and name not in [r['path'] for r in records]:
+                      tar.add(root/name, arcname=name, recursive=False)
+          print(json.dumps({k:v for k,v in report.items() if k not in ['records','binaryFiles']}, indent=2))
+          print('MATCHING PATHS')
+          for record in records:
+              print(str(len(record['matches'])) + '\t' + record['path'])
+          print('MATCHING BINARY PATHS')
+          for record in binaries:
+              if record['pathMatch']:
+                  print(record['path'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: editorial-reference-audit
+          path: /tmp/editorial-reference-audit/
+          retention-days: 2
