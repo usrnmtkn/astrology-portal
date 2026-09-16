@@ -1,0 +1,25 @@
+name: CSS design system
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  css-design-system:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Run shared CSS audits
+        run: npm run qa:css-audit
+      - name: Run Content Studio architecture audit
+        run: node scripts/run-studio-css-architecture-audit.mjs
+      - name: Verify approved Studio layer tokens
+        run: node scripts/test-studio-layer-tokens.mjs
