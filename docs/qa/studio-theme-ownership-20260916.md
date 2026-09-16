@@ -12,4 +12,4 @@ The architecture audit now rejects Studio-scoped tokens and `--workspace-*` owne
 
 The reader loading illustration previously consumed one token that was added after the original Studio block landed. Its size now resolves directly from the shared `--size-8` primitive, so removing the Studio suffix does not leave an unresolved reader token.
 
-The aggregate CSS budget remains capped at 115,000 gzip bytes, matching the Phase 0 ceiling. The unfiltered CSS design-system workflow added in the preceding cleanup runs `test-studio-layer-tokens`, the CSS audit, admin typecheck, and admin build for every pull request and main push.
+The aggregate CSS budget remains capped at 115,000 gzip bytes, matching the Phase 0 ceiling. The unfiltered CSS design-system workflow runs the CSS architecture/token audits, verifies the approved Studio layer values, typechecks and builds the admin app, and checks the admin bundle budget for every pull request and main push.
