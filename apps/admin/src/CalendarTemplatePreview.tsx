@@ -6,7 +6,7 @@ import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTempl
 import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewWriting, calendarSeasonVariables, calendarSeasonSourceKey, calendarVariableColor } from "./calendarOverviewTemplate";
 import CalendarVariableText from "./CalendarVariableText";
 import type { CalendarPreviewCalculation } from "./calendarPreviewCalculation";
-import { calendarMoonPassages, calendarNestedTemplateText, calendarPreviewSeasons, calendarPreviewSign, calendarPreviewSourceKeys, calendarPreviewValues, calendarTemplateSegments, type CalendarPreviewRow } from "./calendarPreviewModel";
+import { calendarMoonPassages, calendarPreviewSeasons, calendarPreviewSign, calendarPreviewSourceKeys, calendarPreviewValues, calendarTemplateSegments, type CalendarPreviewRow } from "./calendarPreviewModel";
 
 export type CalendarTemplatePreviewProps = {
   period: SkyForecastPeriod;
@@ -75,20 +75,16 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
   const saved = sources?.find(row => row.content_key === template.contentKey);
   const pattern = draft?.contentKey === template.contentKey ? draft.body : saved?.body ?? calendarOverviewPattern(period);
   const writing = calendarOverviewWriting(draft?.contentKey === template.contentKey ? draft.sections : saved?.sections);
+  const overviewFields = calendarOverviewFields(period);
   const values = { ...baseValues };
-  const overviewTemplates = Object.fromEntries(calendarOverviewFields(period).filter(field => writing[field.name]?.trim()).map(field => [field.name, writing[field.name]]));
-  const nestedErrors = new Set<string>();
-  for (const field of calendarOverviewFields(period)) {
-    if (writing[field.name]?.trim()) {
-      const resolved = calendarNestedTemplateText(`{{${field.name}}}`, baseValues, overviewTemplates);
-      if (resolved.error) nestedErrors.add(resolved.error);
-      values[field.name] = { text: resolved.text, kind: "copy", sourceKey: template.contentKey };
-    }
+  const overviewTemplates = Object.fromEntries(overviewFields.filter(field => writing[field.name]?.trim()).map(field => [field.name, writing[field.name]]));
+  for (const field of overviewFields) {
+    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], baseValues, overviewTemplates, [field.name]).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
   }
   const passages = calendarMoonPassages(sources ?? [], moonSign);
   const segments = calendarTemplateSegments(pattern, values);
   const missing = [...new Set([...segments.map(segment => segment.text).join("").matchAll(/\{\{\s*([\w.]+)\s*\}\}/gu)].map(match => match[1]))];
-  const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...calendarOverviewFields(period).map(field => field.name)])];
+  const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...overviewFields.map(field => field.name)])];
   const ready = Boolean(sources) && (mode === "signs" || Boolean(calculation));
   return <section className="admin-template-reader-drilldown studio-surface" aria-label="Calendar template preview">
     <header className="admin-section-heading-row"><div><h4>Template preview</h4><p>Choose signs or a date to preview the template. Open the template to write the overview passages and insert zodiac season variables.</p></div></header>
@@ -105,7 +101,6 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
     <div className="admin-new-actions"><StudioButton onClick={() => { setMode("ephemeris"); setLive(true); setDate(dateInput(new Date())); setAttempt(value => value + 1); }}>Use current sky</StudioButton><StudioButton onClick={() => setAttempt(value => value + 1)}>Refresh preview</StudioButton></div>
     <p role="status">{mode === "signs" ? "Example signs · degrees and event timing are unavailable in this mode." : calculation ? `${live ? "Live sky" : "Selected sky"} · ${values.asOf?.text} · ${timeZone} · Swiss Ephemeris · tropical, geocentric` : calculationError ? "Calculation unavailable." : "Calculating ephemeris facts…"}</p>
     {(calculationError || sourceError) && <p role="alert">{calculationError || sourceError} Use Refresh preview to retry.</p>}
-    {nestedErrors.size > 0 && <p role="alert">Nested template error: {[...nestedErrors].join(" ")}</p>}
     {!sources && !sourceError && <p role="status">Loading the full saved template and matching passages…</p>}
     <StudioTabs label="Calendar template views" value={view} onValueChange={setView} tabs={[{ value: "preview", label: "Preview" }, { value: "pattern", label: "Template pattern" }, { value: "variables", label: "Variables" }]}>
       {view === "pattern" ? <div className="admin-composition-preview-field"><span>{draft?.contentKey === template.contentKey ? "Open editor pattern" : saved ? "Saved template pattern" : "Starter template pattern"}</span><p className="admin-calendar-template-text" aria-label="Calendar template pattern">{sources ? <CalendarVariableText text={pattern} /> : "Loading saved template…"}</p></div>
@@ -114,7 +109,7 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
           <table className="admin-data-table" aria-label="Calendar preview variables"><thead><tr><th scope="col">Variable</th><th scope="col">Writing or value</th><th scope="col">Edit</th></tr></thead><tbody>{availableNames.filter(name => !calculation || seasons.closing || !/^(closing|seasonChangeDate)/u.test(name)).map(name => {
           const value = values[name];
           const sourceKey = value?.sourceKey ?? calendarSeasonSourceKey(name, sunSign, values.openingSeasonSign?.text ?? "", values.closingSeasonSign?.text ?? "");
-          const field = calendarOverviewFields(period).find(field => field.name === name);
+          const field = overviewFields.find(field => field.name === name);
           const source = sources?.find(row => row.content_key === sourceKey);
           const unavailable = field ? field.help : sourceKey ? "Add or edit the shared passage for this sign." : mode === "signs" ? "Choose Use ephemeris to calculate dates and season changes." : "This fact is not available for the selected period.";
           const kind = value?.kind === "fact" ? "Read-only ephemeris" : value?.kind === "example" ? "Example sign" : value?.sourceLabel ?? (value ? "Saved writing" : field || sourceKey ? "Needs writing" : "Unavailable");
