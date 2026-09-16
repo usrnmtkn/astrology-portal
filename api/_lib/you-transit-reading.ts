@@ -5,7 +5,7 @@ type RecordLike = Record<string, unknown>;
 export const YOU_TRANSIT_READING_BRIEF_SCHEMA = "tldr.you-transit-reading-brief.v1";
 export const YOU_DAY_READING_SUBJECT_TYPE = "you_day_reading";
 export const YOU_WEEK_READING_SUBJECT_TYPE = "you_week_reading";
-export const YOU_TRANSIT_READING_PROMPT_VERSION = "you-transit-reading-v1.4";
+export const YOU_TRANSIT_READING_PROMPT_VERSION = "you-transit-reading-v1.5";
 
 export type YouTransitReadingWindow = "day" | "week";
 
@@ -161,15 +161,15 @@ export function youTransitReadingPrompt(input: { brief: YouTransitReadingBrief; 
     ? "body: 2-3 natural paragraphs, roughly 120-200 words. The TLDR already states the main observation, so begin with the next supported consequence, distinction, or action and end with a practical consequence or useful perspective."
     : "body: 3-5 natural paragraphs, usually 180-300 words. If the brief has only one meaningful reader-safe source, 140-220 words is enough. Build the internal stages what is happening → where it hits → trap → what to do from the supplied evidence, without section headings. Advance the TLDR instead of restarting it. Preserve supplied timing and distinguish the main theme from secondary pressure or support; never invent a trap or action to fill a stage.";
   return [
-    "TLDR ASTRO PERSONAL TRANSIT SYNTHESIS V1.4",
+    "TLDR ASTRO PERSONAL TRANSIT SYNTHESIS V1.5",
     "",
     "TASK",
     `Write one in-depth ${brief.window} report for the reader.`,
     "Write directly to the reader in second person using you/your.",
     "Use the same synthesis standard as the governed Friends transit reading: what matters first, astrology only as needed, concrete known life domains when they are actually supplied, and no invented scenes.",
     "This is synthesis only. TLDR Astro has already calculated and selected the evidence and already supplied reader-safe source text.",
-    "Reader-facing meaning must come from APPROVED READER TEXT. TECHNICAL EVIDENCE may confirm names, dates, houses, aspects, and timing, but it does not authorize a new behavioral interpretation, motive, outcome, or life circumstance from general astrology knowledge. If a technical transit has no reader-safe meaning in APPROVED READER TEXT, omit its interpretation instead of explaining it.",
-    "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, interpretation, example, or life event that is not present below.",
+    "APPROVED READER TEXT below is the only evidence available to the writer. Production still keeps the technical fact lock separately, but raw technical evidence is intentionally withheld from this writing task so it cannot become a new interpretation by accident.",
+    "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, interpretation, example, or life event that is not present in APPROVED READER TEXT.",
     "Do not turn a temporary transit into a permanent personality claim.",
     "Do not expose source units, IDs, schemas, scores, derivation fields, approval state, or backend language.",
     "No tarot. No em dashes. No bullets. No section labels inside the body.",
@@ -189,10 +189,7 @@ export function youTransitReadingPrompt(input: { brief: YouTransitReadingBrief; 
     "Return JSON only.",
     "",
     "APPROVED READER TEXT",
-    JSON.stringify(brief.approvedReaderText, null, 2),
-    "",
-    "TECHNICAL EVIDENCE - FACT LOCK ONLY",
-    JSON.stringify(brief.technicalEvidence, null, 2)
+    JSON.stringify(brief.approvedReaderText, null, 2)
   ].join("\n");
 }
 
