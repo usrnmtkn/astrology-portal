@@ -45,5 +45,17 @@ try{
  assert.match(endpoint,/currentSkyFacts\(referenceInstant\)/u,'Evergreen generation must validate the selected planet/sign from the current Sky calculation.');
  assert.doesNotMatch(endpoint,/skyArticleEditionFactsFromSnapshot/u,'Evergreen generation must not require the dated-edition sign-residency window.');
  assert.doesNotMatch(endpoint,/transitWindowPoints:\s*\[planet\]/u,'Evergreen generation must not request a full sign-residency window just to validate the selected sign.');
- console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, visible controls, separate evergreen versus dated destinations, and sign-only evergreen validation.');
+ const deployment=JSON.parse(fs.readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
+ const memoryConfig=JSON.parse(fs.readFileSync(new URL('../config/agent-memory-sources-v1.json',import.meta.url),'utf8'));
+ for(const functionKey of ['api/admin/sky-article-writing.ts','api/admin/sky-article-template-slots.ts']){
+   const pattern=deployment.functions[functionKey]?.includeFiles ?? '';
+   assert.ok(pattern.length>0 && pattern.length<=256,`${functionKey} must have a deployable includeFiles pattern.`);
+   assert.match(pattern,/data\/writing/u,`${functionKey} must package repository writing-memory sources.`);
+   assert.match(pattern,/jsonl/u,`${functionKey} must package JSONL correction-memory files.`);
+   const packaged=new Set(fs.globSync(pattern));
+   for(const spec of memoryConfig.sources.filter(item=>item.kind==='correction')){
+     assert(packaged.has(spec.path),`${functionKey} is missing configured correction source: ${spec.path}`);
+   }
+ }
+ console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, visible controls, separate evergreen versus dated destinations, sign-only evergreen validation, and deploy-safe correction-memory packaging.');
 }finally{delete process.env.STUDIO_MEMORY_FEEDBACK_ENABLED;}
