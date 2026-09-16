@@ -36,6 +36,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 .github/editorial-reference-cleanup.py | tee /tmp/editorial-cleanup-verification/source-changes.json
+          sed -i '/outside-writer.*[[:space:]]$/s/[[:space:]]*$//I' packages/astro-knowledge/voice/tldr-astro/owner-author-owner-feedback-audit.md
           node packages/astro-knowledge/scripts/compile-satori-editorial-decisions.js
           node scripts/build-writing-harness-instructions.mjs
           node scripts/build-knowledge-index.mjs --write > /tmp/editorial-cleanup-verification/knowledge-build.log
