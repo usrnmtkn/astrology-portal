@@ -8,18 +8,24 @@ permissions:
 jobs:
   source:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           persist-credentials: false
-      - name: Export tracked source only
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - name: Export isolated test dependencies
         run: |
-          mkdir -p /tmp/monthly-template-source
-          git rev-parse HEAD > /tmp/monthly-template-source/source-sha.txt
-          git archive --format=tar.gz HEAD > /tmp/monthly-template-source/source.tar.gz
+          mkdir -p /tmp/monthly-template-dependencies
+          git rev-parse HEAD > /tmp/monthly-template-dependencies/source-sha.txt
+          tar -czf /tmp/monthly-template-dependencies/dependencies.tar.gz node_modules packages/astro-knowledge/dist
       - uses: actions/upload-artifact@v4
         with:
-          name: monthly-template-source
-          path: /tmp/monthly-template-source
+          name: monthly-template-dependencies
+          path: /tmp/monthly-template-dependencies
           retention-days: 1
