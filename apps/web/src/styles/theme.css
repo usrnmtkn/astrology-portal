@@ -1456,6 +1456,16 @@
   --studio-docked-sheet-width: min(960px, calc(100vw - 440px));
   --studio-disabled-opacity: 0.6;
   --studio-motion-duration: 160ms;
+  --studio-layer-memory-canvas: 0;
+  --studio-layer-memory-panel: 6;
+  --studio-layer-create-backdrop: 50;
+  --studio-layer-create-menu: 51;
+  --studio-layer-editor-backdrop: 70;
+  --studio-layer-editor-panel: 71;
+  --studio-layer-variables-rail: 73;
+  --studio-layer-help-popover: 75;
+  --studio-layer-source-repair-backdrop: 80;
+  --studio-layer-toast: 90;
   --studio-scrim: #00000066;
   --studio-warning-container: light-dark(#ffdf98, #58440b);
   --studio-error-container: light-dark(#ffdad6, #93000a);
