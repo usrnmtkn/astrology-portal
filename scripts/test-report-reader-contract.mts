@@ -106,13 +106,15 @@ test('one displayed negation pivot is counted once, two displayed pivots still f
   assert.ok(validateCopy(transitReadingReaderCopy(two), plan).violations.some((v: any) => v.category.includes('negation')));
 });
 for (const task of ['revision', 'cleanup'] as const) {
-  test(`${task} uses the locked brief and diagnosed draft, not initial drafting instructions`, () => {
+  test(`${task} uses approved reader evidence plus the diagnosed draft, not raw technical fields or initial drafting instructions`, () => {
     const brief = structuredClone(pairedYou);
     const before = JSON.stringify(brief);
     const prompt = transitReadingRevisionPrompt({ brief, headline: 'Example', surface: 'you', task,
       feedback: 'Rejected synthetic draft; exact finding.', minSummaryLength: 40, minBodyLength: 180, maxBodyLength: 2200 });
     assert.equal(JSON.stringify(brief), before);
-    assert.ok(prompt.includes('"qualifyingTransits"'));
+    const governedSection = prompt.split('WRITER-SAFE GOVERNED BRIEF (approved reader evidence only)')[1]?.split('DRAFT AND FINDINGS TO ADDRESS')[0] ?? '';
+    assert.ok(governedSection.includes('"approvedReaderText"'));
+    assert.ok(!governedSection.includes('"qualifyingTransits"'));
     assert.ok(prompt.includes('Rejected synthetic draft; exact finding.'));
     assert.ok(prompt.includes('Retain unaffected wording'));
     assert.ok(prompt.includes('one visible TLDR'));
