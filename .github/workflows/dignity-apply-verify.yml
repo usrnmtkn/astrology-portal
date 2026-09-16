@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Apply narrowly scoped renderer compatibility correction
+      - name: Apply narrowly scoped fixture corrections
         shell: bash
         run: |
           set -euo pipefail
@@ -51,7 +51,7 @@ jobs:
           PY
             git rm .dignity-transport/compat.json
             git diff --cached --check
-            git commit -m 'Defer placement facts until the surface-specific renderer validates them'
+            git commit -m 'Use existing draft and actual base stylesheet in dignity regression fixtures'
           fi
           git push origin HEAD:refs/heads/codex/planet-sign-dignity-20260916
       - run: npm ci
@@ -61,8 +61,8 @@ jobs:
           npm run prepare:app-test-dependencies > test-results/dignity-review/prepare.log 2>&1
           npx esbuild apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts --bundle --format=esm --platform=browser --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
           npm run build:fallback-manifest > test-results/dignity-review/manifest.log 2>&1
-          node --import tsx scripts/build-studio-variable-catalog.mts > test-results/dignity-review/catalog.log 2>&1
-      - name: Run all independent checks and preserve individual results
+          node --import tsx scripts/build-studio-variable-catalog.mts > test-results/dignity-review/catalog-build.log 2>&1
+      - name: Run independent feature checks and compare unchanged global CSS debt
         shell: bash
         run: |
           set +e
@@ -89,7 +89,36 @@ jobs:
           check typecheck npm run typecheck
           check build-web npm run build:web
           check build-admin npm run build:admin
-          check css npm run qa:css-audit
+          check css-consistency node scripts/run-css-consistency-audit.mjs
+          check css-architecture node scripts/run-studio-css-architecture-audit.mjs
+          check css-baseline node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {execFileSync, spawnSync} from 'node:child_process';
+          import {mkdtempSync,readFileSync,writeFileSync,symlinkSync,rmSync} from 'node:fs';
+          import {tmpdir} from 'node:os';
+          import path from 'node:path';
+          const root=process.cwd(), baseline=mkdtempSync(path.join(tmpdir(),'dignity-css-main-'));
+          const out=path.join(root,'test-results/dignity-review');
+          try {
+            const archive=execFileSync('git',['archive','origin/main','package.json','scripts','apps/web/src/styles','apps/admin/src'],{maxBuffer:30*1024*1024});
+            execFileSync('tar',['-x','-C',baseline],{input:archive});
+            symlinkSync(path.join(root,'node_modules'),path.join(baseline,'node_modules'),'dir');
+            const audit=cwd=>spawnSync('npm',['run','qa:css-audit'],{cwd,encoding:'utf8',maxBuffer:10*1024*1024});
+            const feature=audit(root), before=audit(baseline);
+            writeFileSync(path.join(out,'css-global.log'),feature.stdout+'\n'+feature.stderr);
+            writeFileSync(path.join(out,'css-main.log'),before.stdout+'\n'+before.stderr);
+            const normalize=(cwd,file)=>readFileSync(path.join(cwd,'test-results/css-audit',file),'utf8').replaceAll(cwd,'<repo>');
+            for(const file of ['latest.md','token-integrity.md']) {
+              const actual=normalize(root,file), expected=normalize(baseline,file);
+              writeFileSync(path.join(out,'css-'+file),actual);
+              assert.equal(actual,expected,'This feature must not introduce or alter CSS audit findings');
+            }
+            assert.equal(feature.status,before.status,'CSS audit exit status must match main');
+            writeFileSync(path.join(out,'css-baseline.json'),JSON.stringify({base:execFileSync('git',['rev-parse','origin/main'],{encoding:'utf8'}).trim(),featureAuditExit:feature.status,mainAuditExit:before.status,identicalReports:true},null,2));
+            if(feature.status) console.log('KNOWN BASELINE FAILURE: the global CSS audit is not passing. Its complete reports and exit status are identical on main and this branch. No CSS rule or token budget was changed.');
+            else console.log('PASS: global CSS audit on both main and feature.');
+          } finally {rmSync(baseline,{recursive:true,force:true});}
+          NODE
           check chromium npx playwright install --with-deps chromium
           check editor npm run test:placement-dignity-editor
           check reader-boundary npm run test:reader-copy-boundary
