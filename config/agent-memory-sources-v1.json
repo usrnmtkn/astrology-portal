@@ -2,96 +2,25 @@
   "schemaVersion": 1,
   "authorityIndex": "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md",
   "sources": [
-    {
-      "path": "AGENTS.md",
-      "kind": "rule",
-      "role": "Project instructions"
-    },
-    {
-      "path": "skills/tldr-astro-writer/SKILL.md",
-      "kind": "rule",
-      "role": "Writing guidance"
-    },
-    {
-      "path": ".agents/skills/satori-writer/SKILL.md",
-      "kind": "rule",
-      "role": "Writing guidance"
-    },
-    {
-      "path": "docs/writing/WRITING_PIPELINE_V3.md",
-      "kind": "rule",
-      "role": "Writing guidance"
-    },
-    {
-      "path": "docs/writing/SOURCE_GOVERNANCE.md",
-      "kind": "rule",
-      "role": "Writing guidance"
-    },
-    {
-      "path": "docs/writing/SHARED_EVIDENCE_STANDARD.md",
-      "kind": "rule",
-      "role": "Writing guidance"
-    },
-    {
-      "path": "docs/writing/BANNED_LANGUAGE.md",
-      "kind": "rule",
-      "role": "Writing guidance"
-    },
-    {
-      "path": "docs/writing/BANNED_PATTERNS.md",
-      "kind": "rule",
-      "role": "Writing guidance"
-    },
-    {
-      "path": "docs/content-management/WRITING-DIRECTIVE.md",
-      "kind": "rule",
-      "role": "Writing guidance"
-    },
-    {
-      "path": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
-      "kind": "rule",
-      "role": "Writing guidance"
-    },
-    {
-      "path": "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md",
-      "kind": "navigation",
-      "role": "Authority index"
-    },
-    {
-      "path": "data/writing/OWNER_CORRECTIONS.jsonl",
-      "kind": "correction",
-      "role": "Owner correction; includes rejected text"
-    },
-    {
-      "path": "data/writing/owner-corrections.jsonl",
-      "kind": "correction",
-      "role": "Owner correction; includes rejected text"
-    },
-    {
-      "path": "data/writing/owner-feedback-corpus.jsonl",
-      "kind": "correction",
-      "role": "Owner correction; includes rejected text"
-    },
-    {
-      "path": "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
-      "kind": "example",
-      "role": "Existing approved-example projection"
-    },
-    {
-      "path": "data/agent-memory/decisions.jsonl",
-      "kind": "note",
-      "role": "Task decision; not wording approval"
-    },
-    {
-      "path": "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V6-OWNER.md",
-      "kind": "rule",
-      "role": "Historical ruling"
-    },
-    {
-      "path": "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V7-OWNER.md",
-      "kind": "rule",
-      "role": "Indexed ruling"
-    }
+    { "path": "AGENTS.md", "kind": "rule", "role": "Project instructions" },
+    { "path": "skills/tldr-astro-writer/SKILL.md", "kind": "rule", "role": "Writing guidance" },
+    { "path": ".agents/skills/satori-writer/SKILL.md", "kind": "rule", "role": "Writing guidance" },
+    { "path": "docs/writing/WRITING_PIPELINE_V3.md", "kind": "rule", "role": "Writing guidance" },
+    { "path": "docs/writing/SOURCE_GOVERNANCE.md", "kind": "rule", "role": "Writing guidance" },
+    { "path": "docs/writing/SHARED_EVIDENCE_STANDARD.md", "kind": "rule", "role": "Writing guidance" },
+    { "path": "docs/writing/BANNED_LANGUAGE.md", "kind": "rule", "role": "Writing guidance" },
+    { "path": "docs/writing/BANNED_PATTERNS.md", "kind": "rule", "role": "Writing guidance" },
+    { "path": "docs/content-management/WRITING-DIRECTIVE.md", "kind": "rule", "role": "Writing guidance" },
+    { "path": "docs/writing/AI_GENERATION_RELIABILITY.md", "kind": "rule", "role": "AI generation reliability architecture" },
+    { "path": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md", "kind": "rule", "role": "Writing guidance" },
+    { "path": "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md", "kind": "navigation", "role": "Authority index" },
+    { "path": "data/writing/OWNER_CORRECTIONS.jsonl", "kind": "correction", "role": "Owner correction; includes rejected text" },
+    { "path": "data/writing/owner-corrections.jsonl", "kind": "correction", "role": "Owner correction; includes rejected text" },
+    { "path": "data/writing/owner-feedback-corpus.jsonl", "kind": "correction", "role": "Owner correction; includes rejected text" },
+    { "path": "data/writing/OWNER_APPROVED_EXAMPLES.jsonl", "kind": "example", "role": "Existing approved-example projection" },
+    { "path": "data/agent-memory/decisions.jsonl", "kind": "note", "role": "Task decision; not wording approval" },
+    { "path": "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V6-OWNER.md", "kind": "rule", "role": "Historical ruling" },
+    { "path": "tldr-astro-phrasebank/TLDR-REPORT-CRITIQUE-CHECKLIST-V7-OWNER.md", "kind": "rule", "role": "Indexed ruling" }
   ],
   "supersedes": [
     {
@@ -112,12 +41,14 @@
         "docs/writing/BANNED_LANGUAGE.md",
         "docs/writing/BANNED_PATTERNS.md",
         "docs/content-management/WRITING-DIRECTIVE.md",
+        "docs/writing/AI_GENERATION_RELIABILITY.md",
         "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md",
         "tldr-astro-phrasebank/WRITING-STANDARD.md"
       ]
     }
   ],
   "requiredContext": [
-    "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md"
+    "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+    "docs/writing/AI_GENERATION_RELIABILITY.md"
   ]
 }
