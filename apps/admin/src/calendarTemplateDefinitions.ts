@@ -51,10 +51,12 @@ export function calendarTemplateDefinitions(sections: unknown): Record<string, C
   return validateCalendarTemplateDefinitions(stored);
 }
 
-export function calendarTemplateDefinitionInputs(definitions: Record<string, CalendarTemplateDefinition>) {
+export function calendarTemplateDefinitionInputs(definitions: Record<string, CalendarTemplateDefinition>, reservedNames: Iterable<string> = []) {
   const phrases: Record<string, string> = {};
   const templates: Record<string, string> = {};
+  const reserved = new Set(reservedNames);
   for (const [name, definition] of Object.entries(definitions)) {
+    if (reserved.has(name)) continue;
     (definition.kind === "phrase" ? phrases : templates)[name] = definition.value;
   }
   return { phrases, templates };
