@@ -27,68 +27,80 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Verify patch identity and apply on current main
+      - name: Apply narrowly scoped renderer compatibility correction
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git fetch --prune origin
+          git fetch origin main --quiet
           git merge --no-edit origin/main
-          cat .dignity-transport/part-* | gzip -dc > /tmp/dignity-change.patch
-          echo '39da081d2dcee2039be73f99e56665a74e7b03ad5a7b40e92231a3b37bc2d285  /tmp/dignity-change.patch' | sha256sum --check
-          if git apply --exclude='.github/workflows/placement-dignity.yml' --reverse --check /tmp/dignity-change.patch 2>/dev/null; then
-            echo 'Exact source patch is already present.'
-          else
-            git apply --exclude='.github/workflows/placement-dignity.yml' --check /tmp/dignity-change.patch
-            git apply --exclude='.github/workflows/placement-dignity.yml' --index /tmp/dignity-change.patch
+          if test -f .dignity-transport/compat.json; then
+            python3 - <<'PY'
+          import json, pathlib, subprocess
+          edits = json.loads(pathlib.Path('.dignity-transport/compat.json').read_text())
+          paths = []
+          for edit in edits:
+              p = pathlib.Path(edit['path'])
+              assert str(p).startswith(('apps/', 'scripts/')) and '..' not in p.parts
+              text = p.read_text()
+              assert text.count(edit['before']) == edit.get('count', 1), str(p)
+              p.write_text(text.replace(edit['before'], edit['after']))
+              paths.append(str(p))
+          subprocess.run(['git','add','--',*sorted(set(paths))], check=True)
+          PY
+            git rm .dignity-transport/compat.json
             git diff --cached --check
-            git commit -m 'Connect shared planet-sign dignity lookup to placement templates'
+            git commit -m 'Defer placement facts until the surface-specific renderer validates them'
           fi
           git push origin HEAD:refs/heads/codex/planet-sign-dignity-20260916
-          git log -1 --oneline
-          git rev-list --left-right --count origin/main...HEAD
       - run: npm ci
-      - name: Build knowledge and regenerate the actual shipped artifacts
+      - name: Rebuild the actual reader and shared catalogs
         run: |
-          npm run prepare:app-test-dependencies
+          mkdir -p test-results/dignity-review
+          npm run prepare:app-test-dependencies > test-results/dignity-review/prepare.log 2>&1
           npx esbuild apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts --bundle --format=esm --platform=browser --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
-          npm run build:fallback-manifest
-          node --import tsx scripts/build-studio-variable-catalog.mts
-      - name: Verify lookup, prose selection and three runtime artifacts
-        run: npm run test:placement-dignity
-      - name: Verify existing composition and variable contracts
+          npm run build:fallback-manifest > test-results/dignity-review/manifest.log 2>&1
+          node --import tsx scripts/build-studio-variable-catalog.mts > test-results/dignity-review/catalog.log 2>&1
+      - name: Run all independent checks and preserve individual results
+        shell: bash
         run: |
-          node --import tsx scripts/test-sky-ingress-composition.mts
-          npm run test:sky-placement-article-variables
-          node --import tsx scripts/test-sky-placement-variables.mts
-          npm run test:studio-variables
-      - name: Verify actual draft and publication handlers using the mock store
-        run: node --import tsx scripts/test-sky-placement-studio-api.mts
-      - name: Typecheck and build both applications
-        run: |
-          npm run typecheck
-          npm run build:web
-          npm run build:admin
-      - name: Verify design tokens and desktop/mobile editor behavior
-        run: |
-          npm run qa:css-audit
-          npx playwright install --with-deps chromium
-          npm run test:placement-dignity-editor
-      - name: Verify reader-copy boundary
-        run: npm run test:reader-copy-boundary
-      - name: Commit only regenerated artifacts and remove temporary transport
+          set +e
+          failed=0
+          check() {
+            name="$1"; shift
+            "$@" > "test-results/dignity-review/$name.log" 2>&1
+            result=$?
+            printf '%s\t%s\n' "$name" "$result" | tee -a test-results/dignity-review/status.tsv
+            if test "$result" -ne 0; then
+              failed=1
+              echo "::error::$name failed"
+              tail -60 "test-results/dignity-review/$name.log"
+            else
+              tail -4 "test-results/dignity-review/$name.log"
+            fi
+          }
+          check dignity npm run test:placement-dignity
+          check ingress node --import tsx scripts/test-sky-ingress-composition.mts
+          check article-variables npm run test:sky-placement-article-variables
+          check sky-variables node --import tsx scripts/test-sky-placement-variables.mts
+          check catalog npm run test:studio-variables
+          check actual-api node --import tsx scripts/test-sky-placement-studio-api.mts
+          check typecheck npm run typecheck
+          check build-web npm run build:web
+          check build-admin npm run build:admin
+          check css npm run qa:css-audit
+          check chromium npx playwright install --with-deps chromium
+          check editor npm run test:placement-dignity-editor
+          check reader-boundary npm run test:reader-copy-boundary
+          exit "$failed"
+      - name: Commit verified generated artifacts and remove transport
         shell: bash
         run: |
           set -euo pipefail
           node --input-type=module <<'NODE'
           import { execFileSync } from 'node:child_process';
-          const allowed = new Set([
-            'apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js',
-            'api/_generated/studio-variable-names.json',
-            'apps/admin/public/generated/studio-variables-v1.json',
-            'apps/web/public/generated/studio-variables-v1.json'
-          ]);
+          const allowed = new Set(['apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js','api/_generated/studio-variable-names.json','apps/admin/public/generated/studio-variables-v1.json','apps/web/public/generated/studio-variables-v1.json']);
           const changed = execFileSync('git', ['diff', '--name-only'], {encoding:'utf8'}).trim().split('\n').filter(Boolean);
           const generated = /^apps\/web\/src\/content\/fallbackArchitectureV3\/(?:bundled[^/]*\.json|approved-serving-(?:projection|lineage)-v1\.json)$/u;
           const unexpected = changed.filter(path => !allowed.has(path) && !generated.test(path));
@@ -100,13 +112,13 @@ jobs:
           git diff --cached --stat
           git commit -m 'Verify dignity selection and rebuild shipped reader and variable catalogs'
           git push origin HEAD:refs/heads/codex/planet-sign-dignity-20260916
-      - name: Package verification diff for review
+      - name: Package verification diff
         if: always()
         run: |
           mkdir -p test-results/dignity-review
           git diff 33763e257d99ac8df6f9cdc9089cba9b08bbc515 --binary > test-results/dignity-review/changes.patch
           git rev-parse HEAD > test-results/dignity-review/head.txt
-          git status --short > test-results/dignity-review/status.txt
+          git status --short > test-results/dignity-review/git-status.txt
       - uses: actions/upload-artifact@v6
         if: always()
         with:
