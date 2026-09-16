@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const theme = await readFile('apps/web/src/styles/theme.css', 'utf8');
+const theme = await readFile('apps/admin/src/admin-theme.css', 'utf8');
 const studio = await readFile('apps/admin/src/studio-system.css', 'utf8');
 
 const expected = new Map([
@@ -31,4 +31,4 @@ assert.doesNotMatch(studio, /z-index\s*:\s*-?\d+(?:\.\d+)?\s*;/, 'Studio CSS mus
 const usedTokens = [...studio.matchAll(/z-index\s*:\s*var\((--studio-layer-[^)]+)\)/g)].map(match => match[1]);
 assert.deepEqual(new Set(usedTokens), new Set(expected.keys()), 'Studio z-index declarations must use the approved layer token set');
 
-console.log(`Studio layer tokens passed: ${expected.size} named layers preserve the approved numeric order.`);
+console.log(`Studio layer tokens passed: ${expected.size} named layers preserve the approved numeric order in admin-theme.css.`);
