@@ -31,10 +31,11 @@ const { generateGovernedTransitReading, isTransitReadingJudgeBlockedError } = aw
 );
 const original = { headline: "Test report", tldr: "Original summary", body: "Original report body with the diagnosed defect." };
 const corrected = { ...original, tldr: "Corrected summary", body: "Corrected report body preserving the source facts." };
+const cleaned = { ...corrected, tldr: "Cleaned summary", body: "Cleaned corrected report body preserving the source facts." };
 const brief = { source: "locked fixture" };
 const priorFixture = globalThis.reportCorrectionFixture;
 try {
-  for (const scenario of ["first-pass", "corrected-pass", "second-block", "invalid-correction", "invalid-initial"]) {
+  for (const scenario of ["first-pass", "corrected-pass", "cleanup-pass", "second-block", "invalid-cleanup", "invalid-initial"]) {
     const events = [];
     const prompts = [];
     let judgeCalls = 0;
@@ -47,8 +48,9 @@ try {
       assert.ok(prompt.includes("Prose movement and owner voice"));
       events.push("writer");
       prompts.push(prompt);
-      assert.ok(prompts.length <= (scenario === "invalid-initial" ? 3 : 2), "The rewrite budget must be bounded.");
-      return { value: prompts.length === 1 ? original : corrected, model: "fixture" };
+      const maxPrompts = scenario === "invalid-initial" ? 3 : ["cleanup-pass", "invalid-cleanup"].includes(scenario) ? 3 : 2;
+      assert.ok(prompts.length <= maxPrompts, "The rewrite budget must be bounded.");
+      return { value: prompts.length === 1 ? original : prompts.length === 2 ? corrected : cleaned, model: "fixture" };
     };
     const run = generateGovernedTransitReading({
       brief,
@@ -63,7 +65,12 @@ try {
       validate: (draft, source) => {
         events.push("validate");
         assert.deepEqual(source, brief);
-        return { passed: scenario !== "invalid-initial" && !(scenario === "invalid-correction" && draft.body === corrected.body) };
+        if (scenario === "invalid-initial") return { passed: false };
+        if (scenario === "cleanup-pass" && draft.body === corrected.body) return { passed: false, message: "Corrected draft introduced a deterministic defect" };
+        if (scenario === "invalid-cleanup" && [corrected.body, cleaned.body].includes(draft.body)) {
+          return { passed: false, message: draft.body === corrected.body ? "Corrected draft introduced a deterministic defect" : "Cleanup still violates deterministic rules" };
+        }
+        return { passed: true };
       },
       compactBriefForRecovery: (source) => source,
       minSummaryLength: 1,
@@ -75,10 +82,11 @@ try {
         judgeCalls += 1;
         assert.deepEqual(input.brief, brief);
         assert.deepEqual(input.ownerEvidence, ["Approved fixture evidence"]);
-        assert.equal(input.draft.body, judgeCalls === 1 ? original.body : corrected.body);
+        const expectedBody = judgeCalls === 1 ? original.body : scenario === "cleanup-pass" ? cleaned.body : corrected.body;
+        assert.equal(input.draft.body, expectedBody);
         return {
           result: {
-            verdict: scenario === "first-pass" || (judgeCalls === 2 && scenario === "corrected-pass") ? "pass" : "below_threshold",
+            verdict: scenario === "first-pass" || (judgeCalls === 2 && ["corrected-pass", "cleanup-pass"].includes(scenario)) ? "pass" : "below_threshold",
             overall: 0.9,
             scores: { owner_voice: 3 },
             findings: [{ category: "over_specification", location: "body", finding: "Fixture diagnostic" }]
@@ -87,13 +95,14 @@ try {
         };
       }
     });
-    if (["second-block", "invalid-correction"].includes(scenario)) {
+    if (["second-block", "invalid-cleanup"].includes(scenario)) {
       await assert.rejects(run, (error) => {
         assert.ok(isTransitReadingJudgeBlockedError(error));
         assert.equal(error.diagnostic.stage, scenario === "second-block" ? "second_judgment" : "corrected_validation");
         assert.equal(error.diagnostic.judgment.result.scores.owner_voice, 3);
         assert.equal(error.diagnostic.judgment.result.findings[0].finding, "Fixture diagnostic");
         assert.ok(!JSON.stringify(error.diagnostic).includes(original.body));
+        if (scenario === "invalid-cleanup") assert.match(error.diagnostic.validationError, /Cleanup still violates deterministic rules/u);
         return true;
       });
     } else if (scenario === "invalid-initial") {
@@ -101,18 +110,29 @@ try {
       assert.equal(judgeCalls, 0, "Invalid drafts must never reach a judge.");
     } else {
       const result = await run;
-      assert.equal(result.draft.body, scenario === "first-pass" ? original.body : corrected.body);
+      assert.equal(result.draft.body, scenario === "first-pass" ? original.body : scenario === "cleanup-pass" ? cleaned.body : corrected.body);
       assert.equal(result.judgeAudit.attempts, scenario === "first-pass" ? 1 : 2);
       assert.equal(JSON.stringify(result).includes("Fixture diagnostic"), false, "Judge findings must remain run-local.");
     }
     if (scenario !== "invalid-initial") {
-      assert.deepEqual(events, scenario === "first-pass" ? ["writer", "validate", "judge"]
-        : scenario === "invalid-correction" ? ["writer", "validate", "judge", "writer", "validate"]
-          : ["writer", "validate", "judge", "writer", "validate", "judge"]);
+      const expectedEvents = scenario === "first-pass"
+        ? ["writer", "validate", "judge"]
+        : scenario === "cleanup-pass"
+          ? ["writer", "validate", "judge", "writer", "validate", "writer", "validate", "judge"]
+          : scenario === "invalid-cleanup"
+            ? ["writer", "validate", "judge", "writer", "validate", "writer", "validate"]
+            : ["writer", "validate", "judge", "writer", "validate", "judge"];
+      assert.deepEqual(events, expectedEvents);
       if (scenario !== "first-pass") {
         assert.ok(prompts[1].includes(original.body), "The corrective writer must receive the draft the judge diagnosed.");
         assert.ok(prompts[1].includes(original.tldr));
         assert.ok(prompts[1].includes("Fixture diagnostic"));
+      }
+      if (["cleanup-pass", "invalid-cleanup"].includes(scenario)) {
+        assert.ok(prompts[2].includes(corrected.body), "Deterministic cleanup must receive the corrected draft that failed validation.");
+        assert.ok(prompts[2].includes("DETERMINISTIC CLEANUP — NO NEW INTERPRETATION"));
+        assert.ok(prompts[2].includes("Corrected draft introduced a deterministic defect"));
+        assert.ok(prompts[2].includes("Fixture diagnostic"), "Cleanup must preserve the quality correction instead of starting over.");
       }
     }
   }
@@ -149,7 +169,7 @@ try {
   if (priorFixture === undefined) delete globalThis.reportCorrectionFixture;
   else globalThis.reportCorrectionFixture = priorFixture;
 }
-console.log("Generated report correction: first pass, correction pass, terminal block, and deterministic rejection passed.");
+console.log("Generated report correction: first pass, correction pass, deterministic cleanup, terminal block, and deterministic rejection passed.");
 
 // Correction feedback must identify the actual standing-pattern marker.
 const { validateCopy } = await import('../src/astro-writing/validateCopy.mjs');
