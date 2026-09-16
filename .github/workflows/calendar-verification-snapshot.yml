@@ -1,0 +1,46 @@
+name: Calendar verification snapshot
+on:
+  push:
+    branches: [chatgpt/calendar-step4-verification-snapshot]
+    paths: [.github/workflows/calendar-verification-snapshot.yml]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 80
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Capture reviewed refs without credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git -c http.extraheader="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)" fetch --prune origin +refs/heads/main:refs/remotes/origin/main +refs/heads/chatgpt/calendar-season-phrases-step4:refs/remotes/origin/chatgpt/calendar-season-phrases-step4
+          git remote -v
+          git log -1
+          git rev-list --left-right --count origin/main...HEAD
+      - name: Populate lockfile-verified cache
+        run: npm ci --cache /tmp/calendar-npm-cache
+      - name: Recall repository context
+        run: |
+          mkdir -p /tmp/calendar-verification
+          node scripts/agent-memory.mjs recall "Calendar seasonal phrase source bindings Step 4 verification CSS token audit monthly edition storage" --repo . --ref origin/main --limit 4 --state /tmp/calendar-memory > /tmp/calendar-verification/memory-recall.json 2>/tmp/calendar-verification/memory-recall.stderr || echo "Memory recall incomplete; inspect captured error" > /tmp/calendar-verification/memory-recall-incomplete.txt
+      - name: Archive tracked source and credential-free Git objects
+        run: |
+          git archive HEAD | gzip -1 > /tmp/calendar-verification/source.tar.gz
+          tar -czf /tmp/calendar-verification/git-metadata.tar.gz .git
+          tar -C /tmp/calendar-npm-cache -czf /tmp/calendar-verification/npm-cache.tar.gz _cacache
+          git rev-parse HEAD origin/main origin/chatgpt/calendar-season-phrases-step4 > /tmp/calendar-verification/refs.txt
+          sha256sum package-lock.json > /tmp/calendar-verification/lockfile.sha256
+      - uses: actions/upload-artifact@v6
+        with:
+          name: calendar-isolated-verification
+          path: /tmp/calendar-verification/
+          retention-days: 1
+          compression-level: 0
