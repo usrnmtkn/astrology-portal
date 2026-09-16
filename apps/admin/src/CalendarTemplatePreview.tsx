@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { resolveCalendarSeasonPhrases } from "../../../src/content-studio/calendarSeasonPhrases";
+import { useCalendarSeasonPhraseSources } from "./useCalendarSeasonPhraseSources";
 import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
 import { lunarSigns, lunarContentIdentity } from "./lunarCalendarContent";
@@ -74,16 +76,24 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
   const template = skyForecastTemplates[period];
   const saved = sources?.find(row => row.content_key === template.contentKey);
   const pattern = draft?.contentKey === template.contentKey ? draft.body : saved?.body ?? calendarOverviewPattern(period);
-  const writing = calendarOverviewWriting(draft?.contentKey === template.contentKey ? draft.sections : saved?.sections);
+  const writingSections = draft?.contentKey === template.contentKey ? draft.sections : saved?.sections;
+  const writing = calendarOverviewWriting(writingSections);
+  const phraseSources = useCalendarSeasonPhraseSources(writingSections, loadRows, period === "monthly-sky", `${sourceKey}|${revisions}`);
+  const seasonalPhrases = period === "monthly-sky" ? resolveCalendarSeasonPhrases(writingSections, phraseSources.rows,
+    { openingSign: baseValues.openingSeasonSign?.text, closingSign: baseValues.closingSeasonSign?.text }) : [];
+  const templateValues = { ...baseValues };
+  for (const phrase of seasonalPhrases) if (phrase.status === "ready" && phrase.text) {
+    templateValues[phrase.name] = { text: phrase.text, kind: "copy", sourceKey: phrase.sourceKey, sourceLabel: phrase.sourceLabel };
+  }
   const overviewFields = calendarOverviewFields(period);
-  const values = { ...baseValues };
+  const values = { ...templateValues };
   for (const field of overviewFields) {
-    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], baseValues, writing, [field.name]).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
+    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], templateValues, writing, [field.name]).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
   }
   const passages = calendarMoonPassages(sources ?? [], moonSign);
   const segments = calendarTemplateSegments(pattern, values);
   const missing = [...new Set([...segments.map(segment => segment.text).join("").matchAll(/\{\{\s*([\w.]+)\s*\}\}/gu)].map(match => match[1]))];
-  const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...overviewFields.map(field => field.name)])];
+  const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...overviewFields.map(field => field.name), ...seasonalPhrases.map(phrase => phrase.name)])];
   const ready = Boolean(sources) && (mode === "signs" || Boolean(calculation));
   return <section className="admin-template-reader-drilldown studio-surface" aria-label="Calendar template preview">
     <header className="admin-section-heading-row"><div><h4>Template preview</h4><p>Choose signs or a date to preview the template. Open the template to write the overview passages and insert zodiac season variables.</p></div></header>
@@ -100,6 +110,7 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
     <div className="admin-new-actions"><StudioButton onClick={() => { setMode("ephemeris"); setLive(true); setDate(dateInput(new Date())); setAttempt(value => value + 1); }}>Use current sky</StudioButton><StudioButton onClick={() => setAttempt(value => value + 1)}>Refresh preview</StudioButton></div>
     <p role="status">{mode === "signs" ? "Example signs · degrees and event timing are unavailable in this mode." : calculation ? `${live ? "Live sky" : "Selected sky"} · ${values.asOf?.text} · ${timeZone} · Swiss Ephemeris · tropical, geocentric` : calculationError ? "Calculation unavailable." : "Calculating ephemeris facts…"}</p>
     {(calculationError || sourceError) && <p role="alert">{calculationError || sourceError} Use Refresh preview to retry.</p>}
+    {phraseSources.error && <p role="alert">{phraseSources.error} Seasonal phrases are unavailable. Use Refresh preview to retry.</p>}
     {!sources && !sourceError && <p role="status">Loading the full saved template and matching passages…</p>}
     <StudioTabs label="Calendar template views" value={view} onValueChange={setView} tabs={[{ value: "preview", label: "Preview" }, { value: "pattern", label: "Template pattern" }, { value: "variables", label: "Variables" }]}>
       {view === "pattern" ? <div className="admin-composition-preview-field"><span>{draft?.contentKey === template.contentKey ? "Open editor pattern" : saved ? "Saved template pattern" : "Starter template pattern"}</span><p className="admin-calendar-template-text" aria-label="Calendar template pattern">{sources ? <CalendarVariableText text={pattern} /> : "Loading saved template…"}</p></div>
@@ -109,12 +120,14 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
           const value = values[name];
           const sourceKey = value?.sourceKey ?? calendarSeasonSourceKey(name, sunSign, values.openingSeasonSign?.text ?? "", values.closingSeasonSign?.text ?? "");
           const field = overviewFields.find(field => field.name === name);
+          const phrase = seasonalPhrases.find(phrase => phrase.name === name);
           const source = sources?.find(row => row.content_key === sourceKey);
-          const unavailable = field ? field.help : sourceKey ? "Add or edit the shared passage for this sign." : mode === "signs" ? "Choose Use ephemeris to calculate dates and season changes." : "This fact is not available for the selected period.";
-          const kind = value?.kind === "fact" ? "Read-only ephemeris" : value?.kind === "example" ? "Example sign" : value?.sourceLabel ?? (value ? "Saved writing" : field || sourceKey ? "Needs writing" : "Unavailable");
+          const unavailable = phrase ? phraseSources.loading ? "Loading seasonal phrase sources…" : phraseSources.error ? "The selected sources could not load. Refresh before reviewing this phrase." : phrase.status === "unbound" ? "Set a source token in Season phrase sources." : phrase.status === "invalid-binding" ? "Enter a valid source token." : phrase.status === "missing-variable" ? "The source was not found. Check My variables for a renamed or deleted token." : phrase.status === "invalid-source" ? "The source could not be verified as a complete variable definition." : phrase.status === "no-season" ? "No corresponding season is available in this preview." : "Complete the matching value in My variables. An empty override remains empty." : field ? field.help : sourceKey ? "Add or edit the shared passage for this sign." : mode === "signs" ? "Choose Use ephemeris to calculate dates and season changes." : "This fact is not available for the selected period.";
+          const kind = value?.kind === "fact" ? "Read-only ephemeris" : value?.kind === "example" ? "Example sign" : value?.sourceLabel ?? (value ? "Saved writing" : field || phrase || sourceKey ? "Needs writing" : "Unavailable");
           return <tr key={name}><th scope="row"><code className="admin-composition-variable-token" data-variable-name={name} data-variable-color={calendarVariableColor(name)}>{`{{${name}}}`}</code><span className="admin-field-hint">{kind}</span></th>
             <td><p className="admin-calendar-template-text">{value?.text ?? unavailable}</p></td>
             <td>{field ? <StudioButton onClick={() => onEditOverview(field.name)} aria-label={`Edit ${name}`}>{value ? "Edit passage" : "Write passage"}</StudioButton>
+              : phrase ? <StudioButton onClick={() => onEditOverview(phrase.name)} aria-label={`Edit ${name}`}>Choose phrase source</StudioButton>
               : source ? <StudioButton onClick={() => onEditSource(source)} aria-label={`Edit ${name}`}>Edit passage</StudioButton>
               : <span className="admin-field-hint">{value?.kind === "example" ? "Use sign selectors above" : sourceKey ? "Choose a sign and refresh sources" : "Calculated automatically"}</span>}</td></tr>; })}</tbody></table></div>
         : <div className="admin-template-reader-surface"><div className="admin-template-reader-copy">
