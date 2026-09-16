@@ -77,9 +77,8 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
   const writing = calendarOverviewWriting(draft?.contentKey === template.contentKey ? draft.sections : saved?.sections);
   const overviewFields = calendarOverviewFields(period);
   const values = { ...baseValues };
-  const overviewTemplates = Object.fromEntries(overviewFields.filter(field => writing[field.name]?.trim()).map(field => [field.name, writing[field.name]]));
   for (const field of overviewFields) {
-    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], baseValues, overviewTemplates, [field.name]).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
+    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], baseValues, writing, [field.name]).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
   }
   const passages = calendarMoonPassages(sources ?? [], moonSign);
   const segments = calendarTemplateSegments(pattern, values);
