@@ -32,7 +32,12 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Run shared CSS audits
-        run: npm run qa:css-audit
+        run: |
+          if ! npm run qa:css-audit; then
+            echo "--- CSS token integrity report ---"
+            sed -n '1,180p' test-results/css-audit/token-integrity.md || true
+            exit 1
+          fi
       - name: Verify approved Studio layer tokens
         run: node scripts/test-studio-layer-tokens.mjs
       - name: Typecheck Content Studio
