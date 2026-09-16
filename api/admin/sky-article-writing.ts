@@ -18,6 +18,7 @@ export const maxDuration = 300;
 
 const articleFields = new Set(['placementArticle', 'placementArticleDirect', 'placementArticleRetrograde']);
 const token = (value: unknown) => typeof value === 'string' ? value.trim().toLowerCase().replace(/[-\s]+/gu, '_') : '';
+const evergreenOccurrenceRule = 'The selected occurrence is validation context only. Do not put its year, entry or exit dates, current-year aspects, or other occurrence-specific facts into the evergreen prose. Preserve a calculated fact only when it already appears as a valid literal template variable in the current article.';
 
 function validDate(value: unknown) {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/u.test(value)) {
@@ -32,12 +33,12 @@ function validDate(value: unknown) {
 
 function articleJob(field: string, planet: string, sign: string) {
   if (field === 'placementArticleRetrograde') {
-    return `Write one complete retrograde-specific ${planet} in ${sign} placement article passage. It must stand on its own as reader copy and may use the supplied calculated occurrence facts only.`;
+    return `Write one complete evergreen retrograde-specific ${planet} in ${sign} placement article passage. It must stand on its own as reader copy. ${evergreenOccurrenceRule}`;
   }
   if (field === 'placementArticleDirect') {
-    return `Write one complete direct-motion-specific ${planet} in ${sign} placement article passage. It must stand on its own as reader copy and may use the supplied calculated occurrence facts only.`;
+    return `Write one complete evergreen direct-motion-specific ${planet} in ${sign} placement article passage. It must stand on its own as reader copy. ${evergreenOccurrenceRule}`;
   }
-  return `Write one complete shared ${planet} in ${sign} placement article passage. It must stand on its own as reader copy and may use the supplied calculated occurrence facts only.`;
+  return `Write one complete evergreen shared ${planet} in ${sign} placement article passage. It must stand on its own as reader copy. ${evergreenOccurrenceRule}`;
 }
 
 type RequestBody = {
@@ -84,10 +85,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       : '';
     const ownerRequest = instruction
       ? `OWNER REQUEST FOR THIS DRAFT:\n${instruction}`
-      : 'OWNER REQUEST FOR THIS DRAFT:\nWrite the complete article passage for owner review.';
+      : 'OWNER REQUEST FOR THIS DRAFT:\nWrite the complete evergreen article passage for owner review.';
     const voiceNotes = [
       ownerRequest,
       context,
+      `\n${evergreenOccurrenceRule}`,
       '\nReturn only reader-facing prose for the requested article field. Do not include drafting notes, explanations, labels, source commentary, or approval language. Do not invent dates, aspects, or historical facts. Preserve literal template variables only when they are already present in the current article context and valid for this field.',
     ].join('');
 
