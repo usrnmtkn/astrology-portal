@@ -3,11 +3,11 @@ import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTempl
 export type CalendarOverviewField = { name: string; label: string; help: string; starter?: string };
 
 const monthlyOverviewStarter = `{{#hasMonthlyTheme}}
-{{monthName}} brings attention to {{primaryMonthlyThemeFocus}}.
+{{monthName}} brings attention to {{primaryMonthlyThemeFocus}}. You may notice {{primaryMonthlyThemeExperience}}.
 {{/hasMonthlyTheme}}
 
 {{#hasSecondaryMonthlyTheme}}
-It also brings attention to {{secondaryMonthlyThemeFocus}}.
+It also brings attention to {{secondaryMonthlyThemeFocus}}. You may notice {{secondaryMonthlyThemeExperience}}.
 {{/hasSecondaryMonthlyTheme}}
 
 {{#hasLeadEvent}}
