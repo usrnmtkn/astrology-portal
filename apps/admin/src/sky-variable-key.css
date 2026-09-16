@@ -1,30 +1,120 @@
-/* Sky placement and phrase surfaces use the same spacing, surfaces, type, and
-   controls as the rest of Content Studio. Do not reintroduce the disconnected
-   --admin-* token set. */
+/* Sky placement variable picker. This file is imported by SkyPlacementVariableKey
+   so the picker keeps its component layout inside the standalone Studio system. */
 
-#root .admin-dashboard .admin-sky-phrase-list {
-  background: var(--workspace-raised);
-  border-radius: var(--workspace-control-radius);
+#root .admin-dashboard .admin-sky-variable-key {
+  display: grid;
+  gap: var(--workspace-panel-inset);
+  padding-block: var(--workspace-control-inset);
+}
+
+#root .admin-dashboard .admin-sky-variable-key > :not(summary) {
+  margin-top: 0;
+}
+
+#root .admin-dashboard .admin-sky-variable-key > p {
+  max-width: 88ch;
+  color: var(--workspace-muted);
+}
+
+/* Calculated variables: token column, description/value column. */
+#root .admin-dashboard .admin-sky-variable-key > dl {
   display: grid;
   gap: 0;
-  overflow: hidden;
+  margin: 0;
+}
+
+#root .admin-dashboard .admin-sky-variable-key > dl > div {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.65fr);
+  gap: var(--workspace-card-padding);
+  align-items: start;
+  padding-block: var(--workspace-panel-inset);
+  border-top: var(--border-width-thin) solid var(--workspace-line);
+}
+
+#root .admin-dashboard .admin-sky-variable-key > dl > div:last-child {
+  border-bottom: var(--border-width-thin) solid var(--workspace-line);
+}
+
+#root .admin-dashboard .admin-sky-variable-key dt,
+#root .admin-dashboard .admin-sky-variable-key dd {
+  margin: 0;
+  min-width: 0;
+}
+
+#root .admin-dashboard .admin-sky-variable-key dt button {
+  width: fit-content;
+  max-width: 100%;
+  min-height: var(--studio-button-height);
+  padding: var(--space-2) var(--workspace-panel-inset);
+}
+
+#root .admin-dashboard .admin-sky-variable-key dt button code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+#root .admin-dashboard .admin-sky-variable-key dd {
+  display: grid;
+  gap: var(--workspace-field-gap);
+}
+
+#root .admin-dashboard .admin-sky-variable-value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--workspace-field-gap);
+}
+
+#root .admin-dashboard .admin-sky-variable-value small {
+  color: var(--workspace-muted);
+}
+
+/* Phrase variables are cards rather than an unbroken stream of text. */
+#root .admin-dashboard .admin-review-stack,
+#root .admin-dashboard .admin-sky-phrase-list {
+  display: grid;
+  gap: var(--workspace-panel-inset);
+}
+
+#root .admin-dashboard .admin-sky-variable-key .admin-review-stack > details {
+  padding-block: var(--workspace-control-inset);
+  border-top: var(--border-width-thin) solid var(--workspace-line);
+}
+
+#root .admin-dashboard .admin-sky-variable-key .admin-review-stack > details > p {
+  max-width: 88ch;
+  color: var(--workspace-muted);
+}
+
+#root .admin-dashboard .admin-sky-phrase-list {
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: var(--workspace-panel-inset);
 }
 
 #root .admin-dashboard .admin-sky-phrase-row {
   display: grid;
-  gap: var(--workspace-control-inset);
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--workspace-control-inset) var(--workspace-panel-inset);
   padding: var(--workspace-panel-inset);
+  border: var(--border-width-thin) solid var(--workspace-line);
+  border-radius: var(--workspace-control-radius);
+  background: var(--workspace-canvas);
 }
 
-#root .admin-dashboard .admin-sky-phrase-row + .admin-sky-phrase-row {
-  border-top: var(--border-width-thin) solid var(--workspace-line);
+#root .admin-dashboard .admin-sky-phrase-row-header,
+#root .admin-dashboard .admin-sky-phrase-description,
+#root .admin-dashboard .admin-sky-phrase-current,
+#root .admin-dashboard .admin-sky-phrase-source {
+  grid-column: 1 / -1;
 }
 
 #root .admin-dashboard .admin-sky-phrase-row-header {
+  display: grid;
+  grid-template-columns: minmax(180px, auto) minmax(0, 1fr) auto;
+  gap: var(--workspace-control-inset);
   align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--workspace-field-gap);
 }
 
 #root .admin-dashboard .admin-sky-phrase-row-header strong {
@@ -36,150 +126,101 @@
 
 #root .admin-dashboard .admin-sky-phrase-token {
   display: inline-flex;
+  width: fit-content;
   max-width: 100%;
+  padding: var(--workspace-tag-padding);
+  border-radius: var(--workspace-control-radius);
 }
 
 #root .admin-dashboard .admin-sky-phrase-token code {
-  font-size: var(--type-meta-size);
+  padding: 0;
+  background: transparent;
+  color: inherit;
 }
 
-#root .admin-dashboard :is(
-  .admin-sky-phrase-description,
-  .admin-sky-phrase-source summary,
-  .admin-sky-phrase-source p
-) {
-  margin: 0;
+#root .admin-dashboard .admin-sky-phrase-status {
+  display: inline-flex;
+  width: fit-content;
+  padding: var(--workspace-tag-padding);
+  border-radius: var(--workspace-control-radius);
+  font-family: var(--font-label);
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-meta);
 }
 
 #root .admin-dashboard .admin-sky-phrase-description {
   color: var(--workspace-muted);
+  max-width: 88ch;
 }
 
 #root .admin-dashboard .admin-sky-phrase-current {
-  background: var(--workspace-canvas);
-  border: var(--border-width-thin) solid var(--workspace-line);
-  border-radius: var(--studio-field-radius);
-  padding: var(--workspace-panel-inset);
+  padding: var(--workspace-control-inset) var(--workspace-panel-inset);
+  border-inline-start: var(--border-width-thick) solid var(--workspace-line-strong);
+  background: var(--workspace-surface);
 }
 
 #root .admin-dashboard .admin-sky-phrase-current p {
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  margin: 0;
   white-space: pre-wrap;
 }
 
 #root .admin-dashboard .admin-sky-phrase-current.is-empty {
   color: var(--workspace-muted);
-  background: var(--workspace-surface);
 }
 
 #root .admin-dashboard .admin-sky-phrase-source {
   color: var(--workspace-muted);
-  font-family: var(--font-body);
-  font-size: var(--type-meta-size);
-  line-height: var(--leading-meta);
 }
 
 #root .admin-dashboard .admin-sky-phrase-source summary {
+  min-height: 0;
+  padding-block: var(--workspace-field-gap);
   color: var(--workspace-muted);
-  font-family: var(--font-body);
-  font-size: var(--type-ui-size);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-label);
+}
+
+#root .admin-dashboard .admin-sky-phrase-source p {
+  margin-top: var(--workspace-field-gap);
 }
 
 #root .admin-dashboard .admin-sky-phrase-source code {
   overflow-wrap: anywhere;
 }
 
-/* The placement template used to inherit its rhythm only from the disconnected
-   legacy admin sheet. Give it an explicit Studio layout so template rows read
-   as sections instead of one continuous block of text. */
-#root .admin-dashboard .admin-sky-placement-template {
-  display: grid;
-  gap: var(--workspace-panel-inset);
+#root .admin-dashboard .admin-sky-phrase-row > button {
+  align-self: end;
 }
 
-#root .admin-dashboard .admin-sky-placement-template > ol {
-  margin: 0;
-  padding-inline-start: var(--workspace-card-padding);
-}
-
-#root .admin-dashboard .admin-sky-placement-template > ol > li {
-  padding-block: var(--workspace-panel-inset);
-}
-
-#root .admin-dashboard .admin-sky-placement-template > ol > li + li {
-  border-top: var(--border-width-thin) solid var(--workspace-line);
-}
-
-#root .admin-dashboard .admin-sky-placement-template > ol > li > * + * {
-  margin-top: var(--workspace-field-gap);
-}
-
-#root .admin-dashboard .admin-sky-section-reference {
-  display: block;
-  max-width: 100%;
-  width: fit-content;
-}
-
-#root .admin-dashboard .admin-sky-template-comparison {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--workspace-panel-inset);
-  margin-top: var(--workspace-panel-inset);
-}
-
-#root .admin-dashboard .admin-sky-template-comparison > div {
-  background: var(--workspace-canvas);
-  border: var(--border-width-thin) solid var(--workspace-line);
-  border-radius: var(--workspace-control-radius);
-  display: grid;
-  gap: var(--workspace-field-gap);
-  padding: var(--workspace-panel-inset);
-}
-
-#root .admin-dashboard .admin-sky-template-comparison .admin-composition-source-copy {
-  max-width: 92ch;
-}
-
-#root .admin-dashboard .admin-sky-placement-sources {
-  display: grid;
-  gap: var(--workspace-control-inset);
-}
-
-#root .admin-dashboard .admin-sky-placement-sources > div {
-  align-items: center;
-  background: var(--workspace-raised);
-  border-radius: var(--workspace-control-radius);
-  display: grid;
-  gap: var(--workspace-field-gap) var(--workspace-panel-inset);
-  grid-template-columns: minmax(0, 1fr) auto;
-  padding: var(--workspace-panel-inset);
-}
-
-#root .admin-dashboard .admin-sky-placement-sources > div > p {
-  color: var(--workspace-muted);
-  grid-column: 1 / -1;
-}
-
-#root .admin-dashboard .admin-sky-placement-writing {
-  max-width: var(--studio-sheet-width);
-}
-
-/* The shared Studio button owns shape, height, padding, type, hover, and focus. */
 #root .admin-dashboard .admin-sky-phrase-edit {
   justify-self: start;
 }
 
+/* Placement composition helpers retained by this component stylesheet. */
+#root .admin-dashboard .admin-sky-placement-template { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-sky-placement-template > ol { margin: 0; padding-inline-start: var(--workspace-card-padding); }
+#root .admin-dashboard .admin-sky-placement-template > ol > li { padding-block: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-sky-placement-template > ol > li + li { border-top: var(--border-width-thin) solid var(--workspace-line); }
+#root .admin-dashboard .admin-sky-placement-template > ol > li > * + * { margin-top: var(--workspace-field-gap); }
+#root .admin-dashboard .admin-sky-section-reference { display: block; max-width: 100%; width: fit-content; }
+#root .admin-dashboard .admin-sky-template-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--workspace-panel-inset); margin-top: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-sky-template-comparison > div { background: var(--workspace-canvas); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); display: grid; gap: var(--workspace-field-gap); padding: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-sky-template-comparison .admin-composition-source-copy { max-width: 92ch; }
+#root .admin-dashboard .admin-sky-placement-sources { display: grid; gap: var(--workspace-control-inset); }
+#root .admin-dashboard .admin-sky-placement-sources > div { align-items: center; background: var(--workspace-raised); border-radius: var(--workspace-control-radius); display: grid; gap: var(--workspace-field-gap) var(--workspace-panel-inset); grid-template-columns: minmax(0, 1fr) auto; padding: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-sky-placement-sources > div > p { color: var(--workspace-muted); grid-column: 1 / -1; }
+#root .admin-dashboard .admin-sky-placement-writing { max-width: var(--studio-sheet-width); }
+
 @media (max-width: 720px) {
-  #root .admin-dashboard .admin-sky-template-comparison {
+  #root .admin-dashboard .admin-sky-variable-key > dl > div,
+  #root .admin-dashboard .admin-sky-phrase-row-header,
+  #root .admin-dashboard .admin-sky-template-comparison,
+  #root .admin-dashboard .admin-sky-placement-sources > div {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  #root .admin-dashboard .admin-sky-placement-sources > div {
+  #root .admin-dashboard .admin-sky-phrase-row {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  #root .admin-dashboard .admin-sky-phrase-row > * {
+    grid-column: 1;
   }
 }
