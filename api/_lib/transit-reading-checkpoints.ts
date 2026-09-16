@@ -94,9 +94,7 @@ export async function checkpointTransitReadingModel<T>(
       await scope.onProgress?.("waiting");
       throw new TransitReadingCheckpointYield();
     }
-    // No provider call was made in this logical attempt, so the lifecycle may
-    // safely start a fresh checkpoint attempt instead of terminally failing.
-    throw new Error("Report preparation exhausted the worker time budget.");
+    throw new TransitReadingCheckpointStopped("Report preparation exhausted the worker time budget.");
   }
   await scope.onProgress?.(input.schemaName.includes("judge") ? "checking" : step === 0 ? "writing" : "revising");
   scope.called = true;
@@ -106,14 +104,14 @@ export async function checkpointTransitReadingModel<T>(
     [jobColumn]: scope.jobId, attempt: scope.attempt, step,
     request_hash: requestHash, state: "started", provider: input.provider,
     model: input.model, schema_name: input.schemaName
-  }).catch((cause) => { throw new Error("Report checkpoint reservation failed; no new call was sent.", { cause }); });
-  if (!reserved) throw new Error("Could not reserve report model checkpoint.");
+  }).catch((cause) => { throw new TransitReadingCheckpointStopped("Report checkpoint reservation failed; no new call was sent.", { cause }); });
+  if (!reserved) throw new TransitReadingCheckpointStopped("Could not reserve report model checkpoint.");
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(new Error(
+  const timer = setTimeout(() => controller.abort(new TransitReadingCheckpointStopped(
     `Report model step ${step + 1} exceeded the worker time budget.`
   )), Math.max(1, scope.deadline - Date.now()));
   try {
-    if (Date.now() >= scope.deadline) throw new Error("Report checkpoint reservation exhausted the worker time budget.");
+    if (Date.now() >= scope.deadline) throw new TransitReadingCheckpointStopped("Report checkpoint reservation exhausted the worker time budget.");
     const result = await call({ ...input, signal: controller.signal, disableFallback: true });
     const rows = await scope.admin.update<Checkpoint<T>>("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "complete", response: result, completed_at: new Date().toISOString()
@@ -123,16 +121,16 @@ export async function checkpointTransitReadingModel<T>(
     );
     return result;
   } catch (error) {
-    // If persistence after a successful provider response is uncertain, fail
-    // closed: the call may have succeeded and must not be repeated. Otherwise a
-    // confirmed provider failure can be marked failed and retried under a fresh
-    // logical checkpoint attempt without duplicate billing.
-    const ambiguousResponse = error instanceof TransitReadingCheckpointStopped;
+    // A confirmed provider rejection/failure has no usable response and is safe
+    // to retry under a fresh logical checkpoint attempt. Timeouts, crashes and
+    // response-persistence uncertainty remain fail-closed because billing or a
+    // successful provider response may be ambiguous.
+    const unsafeReplay = error instanceof TransitReadingCheckpointStopped;
     const failedRows = await scope.admin.update("transit_report_model_checkpoints", `id=eq.${reserved.id}&state=eq.started`, {
       state: "failed", error: (error instanceof Error ? error.message : "Model step failed").slice(0, 2000),
       completed_at: new Date().toISOString()
     }).catch(() => []);
-    if (ambiguousResponse || failedRows.length !== 1) {
+    if (unsafeReplay || failedRows.length !== 1) {
       throw new TransitReadingCheckpointStopped(
         `Report model step ${step + 1} has an ambiguous provider or checkpoint state. Automatic replay stopped to avoid duplicate billing.`, { cause: error }
       );
