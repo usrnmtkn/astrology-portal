@@ -37,7 +37,7 @@ replacing a newer token selection. Source text remains literal and byte-preserve
   can consume these literal phrase leaves; broader definition work in #845/#846
   remains separate and must be reconciled before integration.
 - No new runtime dependencies, fonts or product CSS. The measured deferred
-  aggregate allocation is documented below; startup and reader budgets stay fixed.
+  aggregate allocations are documented below; startup, CSS and per-chunk limits stay fixed.
 
 ## Verification and release status
 
@@ -74,7 +74,7 @@ Isolated builds under identical workflow Supabase environment:
 
 Allocate 3,500 bytes to the deferred aggregate, from 484,500 to 488,000.
 Entry gzip remains approximately 180.1 kB inside the unchanged 180,250-byte
-limit. Raw entry, largest chunk, graph, CSS and all public-reader budgets stay
+limit. Raw entry, largest chunk, graph, CSS and all reader-startup budgets stay
 unchanged. This allocation accounts for the new feature; it does not waive any
 behavioral, source-preservation, security or browser assertion.
 
@@ -82,3 +82,46 @@ The isolated lookup/API suites, active-CSS regression and all CSS audits pass.
 The fresh-build browser regressions and all hosted integrated-head release gates
 must pass before this PR is declared verified. No production content has been
 written and no approval or publication state has changed.
+
+
+## Exact-head browser verification and production-entry accounting
+
+On head 31f0b336, focused run 35152252873 passed isolated installation,
+knowledge generation, seasonal lookup, actual-handler API, active CSS auditing,
+all nine fresh-build browser checks, and the standalone Studio bundle limits.
+The full Content Studio API run 35152252798, Memory Graph browser run
+35152252753, privacy run 35152252760, ephemeris run 35152252935, and reader
+recovery run 35152252862 also passed. Calendar source-binding screenshots were
+inspected in both themes and at mobile/desktop widths. The separate AI-control
+test was corrected to match the actual accessible label and recognize the
+existing read-only content-live-status POST query; every generation and content
+mutation remains forbidden in that fixture.
+
+The wider Visual smoke run 35152252821 then exposed the same new deferred
+Studio code in the production web aggregate. Its startup, CSS, individual
+chunks and content boundaries passed; aggregate JavaScript exceeded its old
+allocation. The standalone admin allowance does not apply to the web build.
+Two isolated web builds with the same workflow environment confirm:
+
+| Measurement | main 412fdff8 | Step 4 |
+| --- | ---: | ---: |
+| Aggregate JavaScript gzip | 3,098,954 | 3,101,937 |
+| App boot gzip | 437,768 | 437,758 |
+| Reader boot gzip | 487,685 | 487,675 |
+| Reader startup CSS gzip | 49,917 | 49,917 |
+| Aggregate CSS gzip | 85,831 | 85,831 |
+
+The hosted Step 4 aggregate is 3,101,958 bytes. Main itself is 454 bytes over
+the prior 3,098,500 aggregate allowance. Allocate 4,000 bytes to that aggregate
+only (3,102,500), covering the inherited difference and the measured 2,983-byte
+feature delta. No startup, CSS, per-chunk, source-content, performance or browser
+assertion is relaxed. This explicitly supersedes the original no-web-budget-
+change boundary: only total deferred-inclusive JavaScript accounting changes.
+
+The first attempt to build both web worktrees concurrently exceeded the local
+memory allowance and was not used as evidence. The feature build was restarted
+alone and completed successfully; both measurements above are from successful
+builds. No local browser policy was bypassed.
+
+The final accounting-only revision still requires fresh hosted release gates
+before merge. No monthly edition, AI generation or content publication is added.
