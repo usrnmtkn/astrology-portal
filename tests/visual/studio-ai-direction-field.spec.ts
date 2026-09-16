@@ -11,6 +11,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     }, theme);
     await page.route("**/api/admin/**", async route => {
       const request = route.request(), url = new URL(request.url());
+      // This endpoint uses POST for batched read-only status/catalog queries.
+      if (request.method() === "POST" && url.pathname === "/api/admin/content-live-status") {
+        const body = request.postDataJSON();
+        expect(body.action === "composition-catalog" || Array.isArray(body.ids)).toBe(true);
+        return route.fulfill({ json: { ok: true, rows: [], statuses: [] } });
+      }
       if (request.method() !== "GET") writes.push(url.pathname);
       const keys = url.searchParams.getAll("contentKeys").flatMap(value => value.split(","));
       const rows = keys.flatMap(contentKey => {
