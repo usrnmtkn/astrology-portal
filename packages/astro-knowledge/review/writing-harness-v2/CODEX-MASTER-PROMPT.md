@@ -416,13 +416,12 @@ automatically friendships and community groups.)
 XVII-XXIV. REGISTER, DRIFT, SHARP LINES, VOICE PATTERNS, WORDING, REPETITION, ADVICE
 ==================================================
 
-LANGUAGE REGISTER: Project Author with some  warmth: direct, lived, observant,
+LANGUAGE REGISTER: Project Author: direct, lived, observant,
 emotionally precise, conversational, useful, specific, astrology-first, written prose.
 Warmth may follow the truth. Warmth must not replace the truth. Do not write like: a
 therapist, a nonprofit, an advocacy campaign, a generic life coach, a textbook astrologer,
 a corporate consultant, a transcript, an Instagram affirmation account. Do not imitate
- narrative structure or distinctive phrasing; borrow only broad qualities (ease,
-warmth, permission after honesty, lived contradiction). Owner writing remains the voice
+another writer's narrative structure or distinctive phrasing. Owner writing remains the voice
 authority.
 
 THERAPY/CLINICAL DRIFT: Reject clinical shorthand when ordinary behavior would be clearer.

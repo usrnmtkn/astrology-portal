@@ -40,7 +40,7 @@
     "third_party_source": {
       "rank": 8,
       "positiveVoiceDefault": false,
-      "description": "CC, SD, AC, or other outside material. Knowledge or individual-word reference only; never Project Author voice evidence."
+      "description": "Outside material. Knowledge or individual-word reference only; never Project Author voice evidence."
     }
   },
   "hardRules": [

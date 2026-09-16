@@ -22,75 +22,75 @@
     },
     {
       "pattern": "Great question.",
-      "reason": "CC signature answer-opener.",
+      "reason": "Outside-writer signature answer-opener.",
       "useInstead": "Answer directly.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "Think: [image list]",
-      "reason": "CC colon-fragment image delivery.",
+      "reason": "Outside-writer colon-fragment image delivery.",
       "useInstead": "Write the image as a sentence.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "Let's be real: / Full disclosure: / Spoiler alert:",
-      "reason": "CC confessional throat-clear openers.",
+      "reason": "Outside-writer confessional throat-clear openers.",
       "useInstead": "Start with the point.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "[planet pet name: the messenger planet, our cosmic sovereign, Sol, Luna]",
-      "reason": "CC planet epithets.",
+      "reason": "Outside-writer planet epithets.",
       "useInstead": "Use the planet's name.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "[chat-app idiom: exiting the chat, main character energy, the overthinking Olympics]",
-      "reason": "CC millennial-idiom grafts.",
+      "reason": "Outside-writer millennial-idiom grafts.",
       "useInstead": "Describe the behavior plainly.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "When distorted, [shadow] ... [redemption pivot]",
-      "reason": "CC mandated shadow-paragraph formula.",
+      "reason": "Outside-writer mandated shadow-paragraph formula.",
       "useInstead": "Show cost inside the same tension, no separate shadow module.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "redemption arc [as difficulty framing]",
-      "reason": "CC framing signature.",
+      "reason": "Outside-writer framing signature.",
       "useInstead": "Name what changes and what it costs.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "[weather-not-curse metaphor: cosmic weather, stormy forecast not a curse]",
-      "reason": "CC signature metaphor family.",
+      "reason": "Outside-writer signature metaphor family.",
       "useInstead": "State what gets harder or easier.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "It's not X to be feared. It's Y to be [verbed].",
-      "reason": "CC reframe formula.",
+      "reason": "Outside-writer reframe formula.",
       "useInstead": "Say what it is.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "[alliterative rule-of-three: tricky, testy, and tedious]",
-      "reason": "CC cadence signature.",
+      "reason": "Outside-writer cadence signature.",
       "useInstead": "Use one precise word.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "(aka ...)",
-      "reason": "CC glossing tic.",
+      "reason": "Outside-writer glossing tic.",
       "useInstead": "Choose one term and use it.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "You got this. / There's no finish line.",
-      "reason": "CC pep-talk sign-offs.",
+      "reason": "Outside-writer pep-talk sign-offs.",
       "useInstead": "End on the concrete choice.",
-      "source": "CC"
+      "source": "external"
     },
     {
       "pattern": "Welcome to another powerful week",

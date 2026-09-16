@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "b00fe9e687d4f0795f2008450e6da0957bfdad6ff1633a20a2b0a9c9afdb8c02",
+  "decisionSourceSha256": "66555699c5f47edfded720c9042d1269b5fc12bff0e09e60624c1923f132c222",
   "role": "Classify and explain final acceptability of the untouched draft. Never rewrite, approve, or promote it.",
   "compactRubric": [
     "Read-aloud rule: does every central sentence sound natural and literal when spoken?",
@@ -314,7 +314,7 @@
           "all-generated-copy"
         ]
       },
-      "rule": "Flag sentences matching the documented CC/SD constructions in voice/banned-constructions.json because they read as CC or SD rather than the house voice. Owner-verbatim text is exempt. Treat this as a judged consideration, not an automatic score failure; falsifiable language versus unsupported affirmation is the tiebreaker.",
+      "rule": "Flag sentences matching the documented outside-writer constructions in voice/banned-constructions.json because they read as an outside writer rather than the house voice. Owner-verbatim text is exempt. Treat this as a judged consideration, not an automatic score failure; falsifiable language versus unsupported affirmation is the tiebreaker.",
       "rationale": "Generated astrology copy drifts toward the genre's two dominant sites by default, while a small number of house-approved moves sit near the boundary.",
       "effect": "judge_consideration",
       "examplesAllowed": [
@@ -332,7 +332,7 @@
           "all-editorial-copy"
         ]
       },
-      "rule": "CC-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Documented adjacent-site constructions and advocacy-default subject matter are not.",
+      "rule": "Warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Documented adjacent-site constructions and advocacy-default subject matter are not.",
       "rationale": "Softness is not the problem; recognizable borrowed constructions and the wrong recurring subject matter are.",
       "effect": "conditional",
       "examplesAllowed": [

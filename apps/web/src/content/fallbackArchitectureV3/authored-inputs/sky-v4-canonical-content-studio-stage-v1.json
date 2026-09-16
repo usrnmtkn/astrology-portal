@@ -2464,9 +2464,8 @@
         "ownerApprovedForV4Role": false,
         "sourceExactStatus": "owner_approved_ingress_anchor",
         "sourcePrimary": "transit-meanings-v8-owner-approved-locked.json · Chiron|Taurus|ingress",
-        "sourceSecondary": "Your guide to Chiron in Taurus _ .pdf + tldr-astro-cc-knowledge-matrix-source-safe-domain-audited-v4.xlsx",
         "ownerPhraseAnchors": "EXACT ingress two sentences | owner matrix: plan gets measured by cost, time, feeling to keep doing it | body/material resources/nature | no quick fixes | comfort earned",
-        "sourceNotes": "Marie/TLDR governed copy remains phrase authority.  is used only for Taurus mechanism/context: body, material resources, natural world, slow healing/no quick fixes. | 2026-08-30 transit POV audit: collective sensitivity first, then individual trigger/response; natal trait framing removed. | 2026-08-30 owner-phrase refinement: restored more Marie/owner phrasing, contrasts, and argument structure while preserving collective transit → individual impact POV.",
+        "sourceNotes": "Marie/TLDR governed copy remains phrase authority. | 2026-08-30 transit POV audit: collective sensitivity first, then individual trigger/response; natal trait framing removed. | 2026-08-30 owner-phrase refinement: restored more Marie/owner phrasing, contrasts, and argument structure while preserving collective transit → individual impact POV.",
         "qa": "PASS_TRANSIT_POV_SOURCE_VOICE"
       },
       {
@@ -4125,8 +4124,7 @@
         "RequiredSeriesFields": "eclipseSeasonStart; exactEclipseDate; eclipseSeasonEnd; nodeAxis; nodeRelation; previousEclipseInSeries; nextEclipseInSeries; linkedNewMoon",
         "PrimaryMarieSource": "https://private-author-source.invalid/blogs/astrology/2025-overview",
         "MariePhraseAnchors": "eclipses speed up time | solar eclipses are moments of initiation / new paths emerge | bold beginnings",
-        "Comparison": " similarly treats North Node eclipses as increase/hunger and eclipse periods as charged, disruptive openings.",
-        "Governance": "Marie is phrase/voice authority.  is structural comparison only.",
+        "Governance": "Marie is phrase/voice authority.",
         "EditorialStatus": "voice_audited_proposed",
         "QA": "PASS"
       },
@@ -4140,8 +4138,7 @@
         "RequiredSeriesFields": "eclipseSeasonStart; exactEclipseDate; eclipseSeasonEnd; nodeAxis; nodeRelation; previousEclipseInSeries; nextEclipseInSeries; linkedNewMoon",
         "PrimaryMarieSource": "https://private-author-source.invalid/blogs/astrology/2025-new-and-full-moons",
         "MariePhraseAnchors": "South Node eclipse: release and completion | pause, reflect, and release | create space for new ways of being",
-        "Comparison": " also treats the South Node as catharsis/release rather than 'less important' or simply negative.",
-        "Governance": "Marie is phrase/voice authority.  is structural comparison only.",
+        "Governance": "Marie is phrase/voice authority.",
         "EditorialStatus": "voice_audited_proposed",
         "QA": "PASS"
       },
@@ -4155,8 +4152,7 @@
         "RequiredSeriesFields": "eclipseSeasonStart; exactEclipseDate; eclipseSeasonEnd; nodeAxis; nodeRelation; previousEclipseInSeries; nextEclipseInSeries; linkedNewMoon; sixMonthArc",
         "PrimaryMarieSource": "https://private-author-source.invalid/blogs/astrology/2025-2026-lunar-nodes-in-pisces-and-virgo-overview-eclipses-and-your-rising-sign-horoscopes",
         "MariePhraseAnchors": "eclipses speed up time | sudden clarity | North Node: lessons / growth / what calls us forward",
-        "Comparison": " describes the North Node as hunger and increase, which supports treating this eclipse as amplification rather than automatic release.",
-        "Governance": "Marie is phrase/voice authority.  is structural comparison only.",
+        "Governance": "Marie is phrase/voice authority.",
         "EditorialStatus": "voice_audited_proposed",
         "QA": "PASS"
       },
@@ -4170,8 +4166,7 @@
         "RequiredSeriesFields": "eclipseSeasonStart; exactEclipseDate; eclipseSeasonEnd; nodeAxis; nodeRelation; previousEclipseInSeries; nextEclipseInSeries; linkedNewMoon; sixMonthArc",
         "PrimaryMarieSource": "https://private-author-source.invalid/blogs/astrology/pisces-total-lunar-eclipse",
         "MariePhraseAnchors": "You are not meant to push harder right now | release and revelation | focus on integration | what was carried too long asks to be set down",
-        "Comparison": " similarly describes South Node eclipses through catharsis/release and recommends lower-stimulation, reflective handling around eclipse days.",
-        "Governance": "Marie is phrase/voice authority.  is structural comparison only.",
+        "Governance": "Marie is phrase/voice authority.",
         "EditorialStatus": "voice_audited_proposed",
         "QA": "PASS"
       }
@@ -9469,7 +9464,6 @@
         "Sign": "Taurus",
         "ContentKey": "sky-placement/article/chiron/taurus",
         "PrimarySource": "transit-meanings-v8-owner-approved-locked.json · Chiron|Taurus|ingress",
-        "SecondarySource": "Your guide to Chiron in Taurus _ .pdf + tldr-astro-cc-knowledge-matrix-source-safe-domain-audited-v4.xlsx",
         "OwnerPhraseAnchorCount": 5,
         "ArticleExactAnchorCount": 1,
         "ArticleConceptAnchorCount": 3,

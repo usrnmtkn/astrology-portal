@@ -18,7 +18,7 @@
 | `tldr-astro-voice-spec.md` | The Project Author house voice: gold-standard exemplars, signature moves, banned register. | prose | Voice authority (serving lane) |
 | `CC-APP-CONTENT-LOGIC.json` | Reverse-engineered CC generation logic for natal placement pages, gift/challenge aspect sorting, and transit prioritization, from 42 screenshots. | structured | REFERENCE_ONLY (mechanics, not copy) |
 | `source-derived-clause-exemplars.json` | 4 sentence-ready calibration records (sky retrograde, natal Sun, saturn-square-venus transit, moon-node aspect) showing fact→meaning→voice. | records with `slots` | REVIEWED_CLAUSE exemplars |
-| `references/CC-*-screenshots/` (50 PNG) | 40 legacy + 10 current CC app screens (Me/birth-chart, Transits, Home planetary horoscopes, Moon forecast, Sky). | images | REFERENCE_ONLY / `raw__copy` PROHIBITED as serving source |
+| `references/CC-*-screenshots/` (50 PNG) | 40 legacy + 10 current CC app screens (Me/birth-chart, Transits, Home planetary horoscopes, Moon forecast, Sky). | images | REFERENCE_ONLY / `raw_external_copy` PROHIBITED as serving source |
 
 **Duplicate sources:** the four smaller ZIPs (`-REVIEWED-COMPLETE`, `-NEW-NATAL-TRANSITS-DIRECTION`, `-FULL-DASHBOARD-NEW-DIRECTION`, `-FINAL-SOURCE-GROUNDED-TEMPLATES`) are prior iterations; their `cc-source-phrases.json` / `marie-source-phrases.json` / `tldr-astro-records.json` are byte-identical to v2.0.1. Use v2.0.1 only. See §14 and the changelog.
 
@@ -1311,7 +1311,7 @@ An executable subset of these is implemented in `resolver/` (`surface_resolver.p
 **Status ladder + serving rules (spec §15):**
 `CONFIRMED` → may serve verbatim · `APPROVED` → may serve or guide generation · `DRAFT` → may inform generation, not serve verbatim · `REFERENCE_ONLY` → structure/research only · `RAW_QUARANTINE` → cannot enter automatic generation context · `MANUAL_ONLY` → requires human selection · `DEPRECATED` → never retrieve.
 
-**Package tier mapping (from `SOURCE-CLASSIFICATION.json`):** default `EVIDENCE_ONLY`; reader-eligible only at `REVIEWED_CLAUSE` / `REVIEWED_RECORD`. `cc/transit/*/house-*` → `REFERENCE_SCAFFOLD` (not reader-eligible). `cc/aspect-pair/*` → `EVIDENCE_ONLY_UNTIL_REVIEWED`. Prohibited source classes (never serve): prompt, chat_feedback, status_report, audit_report, test_fixture_text, tldr_failure_screenshot, developer_diagnostic, **raw__copy**.
+**Package tier mapping (from `SOURCE-CLASSIFICATION.json`):** default `EVIDENCE_ONLY`; reader-eligible only at `REVIEWED_CLAUSE` / `REVIEWED_RECORD`. `cc/transit/*/house-*` → `REFERENCE_SCAFFOLD` (not reader-eligible). `cc/aspect-pair/*` → `EVIDENCE_ONLY_UNTIL_REVIEWED`. Prohibited source classes (never serve): prompt, chat_feedback, status_report, audit_report, test_fixture_text, tldr_failure_screenshot, developer_diagnostic, **raw_external_copy**.
 
 **Provenance requirement:** every served clause records `sourceKeys, slot, reviewStatus, originalityCheck`; every served record additionally records `surface, templateId, templateVersion, renderedFields`. Provenance keys appear inline throughout §5–§8.
 

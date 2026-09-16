@@ -224,7 +224,7 @@ SURFACE REQUIREMENTS
           "all-editorial-copy"
         ]
       },
-      "rule": "-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Documented adjacent-site constructions and advocacy-default subject matter are not."
+      "rule": "Warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Documented adjacent-site constructions and advocacy-default subject matter are not."
     },
     {
       "id": "CF-007",

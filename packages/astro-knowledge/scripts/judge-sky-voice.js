@@ -142,7 +142,7 @@ function buildJudgePrompt(card, options = {}) {
         ]
       : []),
     `  - Sounding like a generic horoscope rather than these examples.`,
-    `  - Adjacent-voice recognizability: flag phrasing that matches the CC/SD/AC construction families in voice/banned-constructions.json. AC timing devices may be adapted structurally, but theatrical titles and dense stacked metaphor stay out. Shared astrological knowledge and terminology are never flagged: Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary are common to astrologers. Owner-verbatim text is exempt.`,
+    `  - Adjacent-voice recognizability: flag phrasing that matches the documented outside-writer construction families in voice/banned-constructions.json. AC timing devices may be adapted structurally, but theatrical titles and dense stacked metaphor stay out. Shared astrological knowledge and terminology are never flagged: Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary are common to astrologers. Owner-verbatim text is exempt.`,
     ...require("./owner-corpus-warmth-policy.js").judgePolicyLines(options).map((rule) => `  - ${rule}`),
     `  - Vague shrink/shrinking shorthand for self-reduction. If that behavior appears, identify the precise family and score generic shorthand no higher than 2:`,
     ...SELF_REDUCTION_FAMILIES.map(([key, meaning]) => `      ${key} = ${meaning}.`),

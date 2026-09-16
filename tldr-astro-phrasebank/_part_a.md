@@ -18,7 +18,7 @@
 | `tldr-astro-voice-spec.md` | The Project Author house voice: gold-standard exemplars, signature moves, banned register. | prose | Voice authority (serving lane) |
 | `CC-APP-CONTENT-LOGIC.json` | Reverse-engineered CC generation logic for natal placement pages, gift/challenge aspect sorting, and transit prioritization, from 42 screenshots. | structured | REFERENCE_ONLY (mechanics, not copy) |
 | `source-derived-clause-exemplars.json` | 4 sentence-ready calibration records (sky retrograde, natal Sun, saturn-square-venus transit, moon-node aspect) showing fact→meaning→voice. | records with `slots` | REVIEWED_CLAUSE exemplars |
-| `references/CC-*-screenshots/` (50 PNG) | 40 legacy + 10 current CC app screens (Me/birth-chart, Transits, Home planetary horoscopes, Moon forecast, Sky). | images | REFERENCE_ONLY / `raw__copy` PROHIBITED as serving source |
+| `references/CC-*-screenshots/` (50 PNG) | 40 legacy + 10 current CC app screens (Me/birth-chart, Transits, Home planetary horoscopes, Moon forecast, Sky). | images | REFERENCE_ONLY / `raw_external_copy` PROHIBITED as serving source |
 
 **Duplicate sources:** the four smaller ZIPs (`-REVIEWED-COMPLETE`, `-NEW-NATAL-TRANSITS-DIRECTION`, `-FULL-DASHBOARD-NEW-DIRECTION`, `-FINAL-SOURCE-GROUNDED-TEMPLATES`) are prior iterations; their `cc-source-phrases.json` / `marie-source-phrases.json` / `tldr-astro-records.json` are byte-identical to v2.0.1. Use v2.0.1 only. See §14 and the changelog.
 

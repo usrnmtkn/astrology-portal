@@ -153,7 +153,7 @@ async function main() {
   });
   assert.ok(
     ccSdLiteral.findings.some((finding) => finding.severity === "fail" && finding.term === "Welcome to another powerful week"),
-    "a verbatim CC/SD tic must fail mechanically"
+    "a verbatim outside-writer tic must fail mechanically"
   );
   for (const literal of [
     "Great question.",
@@ -163,7 +163,7 @@ async function main() {
   ]) {
     assert.ok(
       findBannedConstructions(literal, bannedConstructions).some((finding) => finding.severity === "fail"),
-      `verbatim CC/SD tic must fail mechanically: ${literal}`
+      `verbatim outside-writer tic must fail mechanically: ${literal}`
     );
   }
   const ccSdFamily = lintArticle({
@@ -173,7 +173,7 @@ async function main() {
   });
   assert.ok(
     !ccSdFamily.findings.some((finding) => finding.term === "[Sign] reminds us that [lesson]"),
-    "bracketed CC/SD pattern families must remain judge-only"
+    "bracketed outside-writer pattern families must remain judge-only"
   );
   for (const token of ["You", "Your", "Yours", "Yourself", "Yourselves"]) {
     const secondPersonSky = lintArticle({
@@ -345,7 +345,7 @@ async function main() {
     assert.ok(jp.includes("LIMITED OWNER-APPROVED CALIBRATION EVIDENCE"), `judge prompt must label limited owner-approved evidence explicitly for tier ${tier}`);
     assert.ok(jp.includes("The person who remembers every birthday, keeps the spare key"), `judge prompt must carry exact approved v3 calibration evidence for tier ${tier}`);
     assert.ok(!jp.includes("Nobody claps for the thing we never show them"), `judge prompt must exclude collective adaptation candidates for tier ${tier}`);
-    assert.ok(jp.includes("[ED-013]") && jp.includes("CC/SD constructions"), `judge prompt must carry the CC/SD recognizability check for tier ${tier}`);
+    assert.ok(jp.includes("[ED-013]") && jp.includes("outside-writer constructions"), `judge prompt must carry the Outside-writer recognizability check for tier ${tier}`);
     assert.ok(jp.includes("[ED-001]") && jp.includes("ordinary, current language"), `judge prompt must enforce everyday language for tier ${tier}`);
     assert.ok(jp.includes("[ED-028]") && jp.includes("Sky placement copy may address the reader directly"), `judge prompt must carry the active Sky placement register for tier ${tier}`);
     assert.ok(jp.includes("Direct address to the reader is allowed"), `judge prompt must not reject second person on Sky placement for tier ${tier}`);

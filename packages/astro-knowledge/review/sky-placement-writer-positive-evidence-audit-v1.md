@@ -48,7 +48,7 @@ These sources are not interchangeable. A repository claim, historical fixture, c
 | Uranus in Cancer v3 | Blocked for generation | Exact approval is calibration-only and expressly forbids generation evidence |
 | Collective adaptations in `sky-placement.json` | Blocked | `needs_review`; not owner-approved |
 | AI candidates and rejected drafts | Blocked | Never positive owner voice evidence |
-| CC, SD, and AC prose | Blocked as Marie voice evidence | Third-party sources are not owner voice |
+| External prose | Blocked as Marie voice evidence | Third-party sources are not owner voice |
 
 ## Full-sentence tagline finding
 

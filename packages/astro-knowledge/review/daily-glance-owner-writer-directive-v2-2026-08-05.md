@@ -6,7 +6,7 @@ Status: owner-authored critique and structure, supplied in chat 2026-08-05 after
 
 "direct truth + lived consequence + humane understanding. Not: poetic opening + therapeutic reassurance + generic instruction."
 
-Marie is the foundation: the writing names the event, power dynamic, cost, contradiction, or consequence in ordinary language first.  contributes warmth AFTER the situation is clear; the reader is not shamed for the coping mechanism. Never imitation of another writer's phrasing; the target is the owner's voice with more warmth and breathing room.
+Marie is the foundation: the writing names the event, power dynamic, cost, contradiction, or consequence in ordinary language first. Warmth follows AFTER the situation is clear; the reader is not shamed for the coping mechanism. Never imitation of another writer's phrasing; the target is the owner's voice with more warmth and breathing room.
 
 ## First owner-authored pair under this directive (exact wording, 2026-08-05)
 
