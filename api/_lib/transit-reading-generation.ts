@@ -101,11 +101,20 @@ class TransitReadingQualityError extends Error {
 export class TransitReadingJudgeBlockedError extends Error {
   readonly code = "TRANSIT_READING_JUDGE_BLOCKED";
 
-  constructor(readonly diagnostic?: {
-    stage: "corrected_validation" | "second_judgment";
-    judgment: TransitReadingJudgeOutcome;
-    validationError?: string;
-  }) {
+  constructor(
+    readonly diagnostic?: {
+      stage: "corrected_validation" | "second_judgment";
+      judgment: TransitReadingJudgeOutcome;
+      validationError?: string;
+    },
+    /**
+     * A private owner-review candidate that already passed deterministic fact
+     * and writing validation. It is never reader-serving merely because it is
+     * attached to this error; the lifecycle may persist it only as ERROR copy
+     * for Content Studio Draft Review.
+     */
+    readonly reviewCandidate?: GeneratedTransitReadingDraft
+  ) {
     super("The generated report did not pass its writing quality gate after one corrective rewrite and re-judge.");
     this.name = "TransitReadingJudgeBlockedError";
   }
@@ -356,7 +365,7 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
     if (!(error instanceof TransitReadingQualityError)) throw error;
     if (!corrected) throw new TransitReadingJudgeBlockedError({
       stage: "corrected_validation", judgment: firstJudgment, validationError: error.message
-    });
+    }, initial.draft);
     try {
       corrected = await providerDraft(
         provider,
@@ -369,14 +378,14 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
     } catch (cleanupError) {
       if (cleanupError instanceof TransitReadingQualityError) throw new TransitReadingJudgeBlockedError({
         stage: "corrected_validation", judgment: firstJudgment, validationError: cleanupError.message
-      });
+      }, initial.draft);
       throw cleanupError;
     }
   }
 
   if (!corrected) throw new TransitReadingJudgeBlockedError({
     stage: "corrected_validation", judgment: firstJudgment, validationError: "The corrective draft was unavailable for final review."
-  });
+  }, initial.draft);
 
   const secondJudgment = await options.judge({
     draft: corrected,
@@ -385,7 +394,7 @@ export async function generateGovernedTransitReading<TBrief>(options: GovernedTr
   });
   if (secondJudgment.result.verdict !== "pass") throw new TransitReadingJudgeBlockedError({
     stage: "second_judgment", judgment: secondJudgment
-  });
+  }, corrected);
 
   return { draft: corrected, provider, judgeAudit: judgeAudit(secondJudgment, 2) };
 }
