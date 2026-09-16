@@ -45,5 +45,14 @@ try{
  assert.match(endpoint,/currentSkyFacts\(referenceInstant\)/u,'Evergreen generation must validate the selected planet/sign from the current Sky calculation.');
  assert.doesNotMatch(endpoint,/skyArticleEditionFactsFromSnapshot/u,'Evergreen generation must not require the dated-edition sign-residency window.');
  assert.doesNotMatch(endpoint,/transitWindowPoints:\s*\[planet\]/u,'Evergreen generation must not request a full sign-residency window just to validate the selected sign.');
- console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, visible controls, separate evergreen versus dated destinations, and sign-only evergreen validation.');
+ const deployment=JSON.parse(fs.readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
+ const apiPattern=deployment.functions['api/**/*.ts']?.includeFiles ?? '';
+ assert.match(apiPattern,/data\/writing/u,'All article-writing API functions must package repository writing-memory sources.');
+ assert.match(apiPattern,/jsonl/u,'Article-writing API functions must package JSONL correction-memory files.');
+ const packaged=new Set(fs.globSync(apiPattern));
+ const memoryConfig=JSON.parse(fs.readFileSync(new URL('../config/agent-memory-sources-v1.json',import.meta.url),'utf8'));
+ for(const spec of memoryConfig.sources.filter(item=>item.kind==='correction')){
+   assert(packaged.has(spec.path),`Article writer correction source is not packaged for Vercel: ${spec.path}`);
+ }
+ console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, visible controls, separate evergreen versus dated destinations, sign-only evergreen validation, and deploy-safe correction-memory packaging.');
 }finally{delete process.env.STUDIO_MEMORY_FEEDBACK_ENABLED;}
