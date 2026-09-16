@@ -48,7 +48,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(structure).toContainText("Target depth: deep");
   await opening.getByRole("button").click();
   const editor = page.getByRole("dialog");
-  const writing = editor.locator(".admin-sky-writing-editor textarea");
+  const writing = editor.locator("textarea[data-sky-field]");
   await writing.fill("Before TARGET after");
   await writing.evaluate((el: HTMLTextAreaElement) => el.setSelectionRange(7, 13));
   const variableKey = editor.locator(".admin-sky-variable-key").filter({ has: page.getByText("Calculated Sky variables", { exact: true }) });
