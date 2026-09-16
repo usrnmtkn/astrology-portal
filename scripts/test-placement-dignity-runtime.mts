@@ -49,6 +49,14 @@ try {
     }
     const preview = renderSkyV4StudioPreview(corpus, { contentKey: key, draftFields: { placementArticle: owner.placementArticle, placementArticleDirect: '', placementArticleRetrograde: '', ingress: owner.ingress } });
     assert.equal(preview.mainBody, renderSkyV4ReaderRoute(fixture, { route: 'placement', planet, sign }).mainBody);
+    const originalArticle = owner.placementArticle;
+    owner.placementArticle = '{{placementDignity}}\n\n' + originalArticle;
+    for (const render of [renderSkyV4ReaderRoute, browser.renderSkyV4ReaderRoute, shipped.renderSkyV4ReaderRoute]) {
+      const result = render(fixture, { route: 'placement', planet, sign, facts: { placementDignity: 'Incorrect caller condition', placementDignityMeaning: 'Incorrect caller paragraph' } });
+      assert(!result.mainBody.includes('Incorrect caller'), 'Caller facts cannot choose dignity or bypass the selected paragraph');
+      if (marker) assert(result.mainBody.includes(marker));
+    }
+    owner.placementArticle = originalArticle;
     if (marker) {
       owner.ingress.sources.placementDignityMechanism.text = '';
       for (const render of [renderSkyV4ReaderRoute, browser.renderSkyV4ReaderRoute, shipped.renderSkyV4ReaderRoute]) assert.throws(() => render(fixture, { route: 'placement', planet, sign }), /placementDignityMechanism/);

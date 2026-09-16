@@ -96,9 +96,10 @@ export function studioRecordVariableNames(record) {
   return [...names];
 }
 
-export function resolveStudioVariableCopy(copy, bindings = [], context = {}) {
+export function resolveStudioVariableCopy(copy, bindings = [], context = {}, deferredNames = []) {
   const indexed = new Map(bindings.filter(item => !item?.builtin && typeof item?.id === "string").map(item => [item.name, item]));
   return String(copy ?? "").replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (token, name) => {
+    if (deferredNames.includes(name)) return token;
     const definition = indexed.get(name);
     if (definition) {
       const { value } = studioVariableValue(definition, context);
@@ -109,9 +110,9 @@ export function resolveStudioVariableCopy(copy, bindings = [], context = {}) {
   });
 }
 
-export function resolveStudioVariableRecord(record, context = {}) {
+export function resolveStudioVariableRecord(record, context = {}, deferredNames = []) {
   const bindings = Array.isArray(record?._studioVariables) ? record._studioVariables : [];
-  const result = mapStudioVariableCopy(record, copy => resolveStudioVariableCopy(copy, bindings, { ...studioVariableContext(record), ...context }));
+  const result = mapStudioVariableCopy(record, copy => resolveStudioVariableCopy(copy, bindings, { ...studioVariableContext(record), ...context }, deferredNames));
   const names = new Set(bindings.filter(item => !item?.builtin && typeof item?.id === "string").map(item => item.name));
   for (const field of ["requiredSlots", "optionalSlots"]) if (Array.isArray(result[field])) result[field] = result[field].filter(name => !names.has(name));
   if (Object.hasOwn(result, "_studioVariables")) delete result._studioVariables;

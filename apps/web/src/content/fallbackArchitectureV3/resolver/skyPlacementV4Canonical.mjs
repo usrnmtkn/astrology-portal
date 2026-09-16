@@ -3,12 +3,21 @@ import { resolveZodiacSeasonVariables } from "./zodiacSeasonVariables.mjs";
 import { correctedReaderSource } from "./readerSourceReferenceCorrections.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
 import { skyPlacementArticlePath, skyEvergreenFields, skyEvergreenEditableFields, validateSkyEvergreenSections } from "./skyEvergreenSections.mjs";
-import { skyPlacementVariableFacts, fillSkyPlacementVariables } from "./skyPlacementVariables.mjs";
+import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableFacts, fillSkyPlacementVariables } from "./skyPlacementVariables.mjs";
 import { fillSkyPlacementArticleVariables, skyPlacementArticleDependencyText } from "./skyPlacementArticleVariables.mjs";
 import { renderSkyIngressComposition, validateSkyIngressComposition } from "./skyIngressComposition.mjs";
 import continuousOwnerApproval from "../authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
 import readerCopyOwnerApproval from "../authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 import readerCopyServingRelease from "../authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
+
+// Placement facts and its selected paragraph belong to the placement renderer.
+// Deferring them preserves surface-specific formatting and prevents caller facts
+// or a legacy custom binding from overriding calculated dignity.
+const placementDeferredNames = [...SKY_PLACEMENT_VARIABLES.map(item => item.name), "placementDignityMeaning"];
+function resolveSkyV4VariableRecord(source, context) {
+  const deferred = /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(String(source?.contentKey ?? "")) ? placementDeferredNames : [];
+  return resolveStudioVariableRecord(source, context, deferred);
+}
 
 export const SKY_V4_CANONICAL_PACKAGE_VERSION = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
 export const SKY_V4_CANONICAL_JSON_SHA256 = "9b91e715bea63a2c835001783240122aad1e000b3982d68bfebbb3cef690a750";
@@ -861,7 +870,7 @@ function renderAspect(aspect) {
 
 export function renderSkyV4ContinuousPreview(corpus, input) {
   const rawArticle = input.articleOverride ?? continuousArticleFor(corpus, input.planet, input.sign);
-  const article = rawArticle ? resolveStudioVariableRecord(rawArticle, input) : rawArticle;
+  const article = rawArticle ? resolveSkyV4VariableRecord(rawArticle, input) : rawArticle;
   const expectedKey = `sky-placement/article/${lower(input.planet)}/${lower(input.sign)}`;
   if (article && (article.contentKey !== expectedKey
     || lower(article.planet) !== lower(input.planet) || lower(article.sign) !== lower(input.sign))) {
@@ -1162,7 +1171,7 @@ export function renderSkyV4StudioPreview(corpus, input) {
   const draftFields = record(input.draftFields);
   const blocked = Object.keys(draftFields).filter((path) => !allowed.has(path));
   if (blocked.length) throw new Error(`SKY_V4_STRUCTURE_LOCK: ${blocked.join(", ")}`);
-  const effective = resolveStudioVariableRecord(Object.entries(draftFields).reduce(
+  const effective = resolveSkyV4VariableRecord(Object.entries(draftFields).reduce(
     (current, [path, nextValue]) => setValueAt(current, path, nextValue),
     structuredClone(source)
   ), input);
@@ -1367,7 +1376,7 @@ export function renderSkyV4ReaderRoute(corpus, input, lunarContextSource) {
   } else if (!contentKey && route === "seasonal") {
     contentKey = `sky-placement/seasonal-context/${lower(input.sign)}/${lower(input.hemisphere)}`;
   }
-  const source = resolveStudioVariableRecord(releasedReaderRecord(corpus, contentKey), input);
+  const source = resolveSkyV4VariableRecord(releasedReaderRecord(corpus, contentKey), input);
   if (input.inspectVariables === true) {
     const retrograde = corpus.content.retrogradeGeneric.find(row => lower(row.Planet) === lower(input.planet));
     const copy = [source.placementArticle, source.placementArticleDirect, source.placementArticleRetrograde,
