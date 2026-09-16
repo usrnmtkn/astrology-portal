@@ -41,10 +41,19 @@ try{
  assert.match(ui,/className="admin-primary-button"[\s\S]{0,220}Generate evergreen revision/u,'Evergreen AI writer must expose a visible primary generate action.');
  assert.match(ui,/Open dated authored article generator/u,'Placement editor must expose the dated authored-article path.');
  assert.match(ui,/sky\/article-template\/\$\{planet\}\/\$\{sign\}/u,'Dated-article action must target the matching authored article template.');
+ assert.match(ui,/Check writer readiness/u,'Writer must expose an explicit production readiness check.');
+ assert.match(ui,/Checking calculation, writing memory, and model configuration/u,'Readiness state must tell the owner what is being verified.');
+ assert.match(ui,/await checkReadiness\(\)/u,'Generation must run the readiness check before the paid model request.');
  assert.match(endpoint,/occurrence-specific facts into the evergreen prose/u,'Evergreen generation must reject year-specific occurrence facts.');
  assert.match(endpoint,/currentSkyFacts\(referenceInstant\)/u,'Evergreen generation must validate the selected planet/sign from the current Sky calculation.');
  assert.doesNotMatch(endpoint,/skyArticleEditionFactsFromSnapshot/u,'Evergreen generation must not require the dated-edition sign-residency window.');
  assert.doesNotMatch(endpoint,/transitWindowPoints:\s*\[planet\]/u,'Evergreen generation must not request a full sign-residency window just to validate the selected sign.');
+ assert.match(endpoint,/req\.method === 'GET'/u,'Article writer must provide an authenticated readiness preflight.');
+ assert.match(endpoint,/studioArticleWritingMemory\(\{ planet, sign, facts \}\)/u,'Readiness preflight must prove governed writing memory can load in the deployed function.');
+ assert.match(endpoint,/contentGenerationProvider\(/u,'Readiness preflight must resolve the same configured provider used by generation.');
+ assert.match(endpoint,/ANTHROPIC_API_KEY/u,'Readiness preflight must check the Claude production key when selected.');
+ assert.match(endpoint,/OPENAI_API_KEY/u,'Readiness preflight must check the OpenAI production key when selected.');
+ assert.match(endpoint,/memorySelectedCount/u,'Readiness preflight must return a metadata-only memory count, not correction bodies.');
  const deployment=JSON.parse(fs.readFileSync(new URL('../vercel.json',import.meta.url),'utf8'));
  const memoryConfig=JSON.parse(fs.readFileSync(new URL('../config/agent-memory-sources-v1.json',import.meta.url),'utf8'));
  for(const functionKey of ['api/admin/sky-article-writing.ts','api/admin/sky-article-template-slots.ts']){
@@ -57,5 +66,5 @@ try{
      assert(packaged.has(spec.path),`${functionKey} is missing configured correction source: ${spec.path}`);
    }
  }
- console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, visible controls, separate evergreen versus dated destinations, sign-only evergreen validation, and deploy-safe correction-memory packaging.');
+ console.log('Article writer passed: provider prompt delivery, correction memory, authenticated browser action, production readiness preflight, visible controls, separate evergreen versus dated destinations, sign-only evergreen validation, and deploy-safe correction-memory packaging.');
 }finally{delete process.env.STUDIO_MEMORY_FEEDBACK_ENABLED;}
