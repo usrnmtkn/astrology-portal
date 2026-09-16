@@ -57,7 +57,7 @@ function firstNonResolveSettleMatch(text, pattern) {
 
 const SLOTS = ["hook", "lived", "turn"];
 const FACT_GATED_SLOTS = ["priorSignHandoff", "cycleLine", "concurrentEvents", "cycleLocation"];
-// CC-modeled extended slots (2026-07-27). Optional: the 7 approved trios
+// Extended placement slots (2026-07-27). Optional: the 7 approved trios
 // predate them, so they lint only when present. The engine always emits them.
 const EXTENDED_SLOTS = ["tagline", "moves"];
 const sentencesOf = (text) => (String(text).match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());
@@ -448,7 +448,7 @@ function lintArticle(article, context = {}) {
     source: "banned-constructions",
     term: "appositive-planet-definition",
     match: appositivePlanetDefinition[0],
-    reason: "Use the planet's name and show its function; do not attach a CC-style planet epithet."
+    reason: "Use the planet's name and show its function; do not attach a stock planet epithet."
   });
 
   for (const name of spec.excludedStructures?.culturalHistory?.knownCelebrityNamesForMechanicalCheck || []) {

@@ -11,7 +11,7 @@ Improve it in small, draft-only waves. The first wave should target batch-level 
 - 14 bodies × 12 signs = 168 write-ups
 - Five approved rows per write-up: tagline, hook, lived, turn, and moves
 - 840 rows inspected in `fallback-source-rows-v3.json`
-- Current placement linter, banned-word rules, and CC/SD recognizability matcher applied to every complete five-slot article
+- Current placement linter, banned-word rules, and Outside-writer recognizability matcher applied to every complete five-slot article
 - Cross-library checks for repeated taglines, hook openers, move openers, and shared three-word phrases
 
 ## Results

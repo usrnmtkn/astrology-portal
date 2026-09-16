@@ -64,10 +64,10 @@ Authoritative machine-readable decisions live in `owner-author-editorial-decisio
 **OWNER DECISION:** PERMITTED EXCEPTION — `steady` is allowed for observable effort, pace, support, light, or reliability. It is prohibited only when used as vague energy language or an empty positive adjective. Remove the machine rule requiring `stable`, `strong`, or `solid` before it. (Owner-resolved worksheet, 2026-08-03.)  
 **Notes:** Judge the noun and sentence, not the word in isolation.
 
-### CF-016 — CC warmth versus CC fingerprints
+### CF-016 — Warmth versus outside-writer imitation
 
-**Earlier rule:** Flag CC/SD recognizability because generated copy drifts toward their constructions.  
-**Later clarification:** CC-adjacent warmth, tenderness, permission, and moderate lyrical cadence are acceptable.
+**Earlier rule:** Flag Outside-writer recognizability because generated copy drifts toward their constructions.
+**Later clarification:** Warmth, tenderness, permission, and moderate lyrical cadence are acceptable.
 **Affected surfaces:** All editorial writing.  
 **Proposed resolution:** Keep warmth and emotional intelligence. Flag documented constructions and advocacy-default subject matter, not softness by itself. Marie determines what the article notices.  
 **OWNER DECISION:** ____________________  
@@ -246,8 +246,8 @@ These are normalized summaries of rules currently affecting future work. They re
 | OV-025 | informational | Marie’s recurring themes include technology, power, gatekeeping, recognition, work, money, status, control, exclusion, invisible labor, and someone else setting the terms. | Theme selection | Owner rule | |
 | OV-026 | informational | Use Marie’s recurring themes only when the placement supports them. | Theme selection | Owner rule | |
 | OV-027 | informational | Do not treat collective astrology as an automatic instruction to write about activism, policy, institutions, or collective healing. | Collective astrology | Owner rule | |
-| OV-023 | informational | CC-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are acceptable. | Delivery | Owner clarification | |
-| OV-024 | informational | CC-like advocacy-default subject matter is not acceptable unless the astrology and owner material directly support it. | Theme selection | Owner clarification | |
+| OV-023 | informational | Warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are acceptable. | Delivery | Owner clarification | |
+| OV-024 | informational | Advocacy-default subject matter is not acceptable unless the astrology and owner material directly support it. | Theme selection | Owner clarification | |
 | OV-037 | informational | Source corpora supply facts and scene notes, not crafted prose. Voice enters at the owner-evidence writing pass. | Source use | Owner rule | |
 
 ### Governance and approval
@@ -365,7 +365,7 @@ These are normalized summaries of rules currently affecting future work. They re
 
 ### VC-013 — Adjacent-site construction fingerprints
 
-**Normalized rule:** Shared warmth and astrological terminology are allowed; recognizable CC, SD, and AC construction habits are not Marie voice evidence.  
+**Normalized rule:** Shared warmth and astrological terminology are allowed; recognizable outside-writer construction habits are not Marie voice evidence.
 **Representative examples:** “Great question,” “Welcome to another powerful week,” “Let’s dive into what the stars have in store,” “You got this,” ritual-prop reflexes, planet pet names, redemption arcs, theatrical titles, and dense stacked metaphor.  
 **Preferred behavior:** Use owner-authored sentence movement and subject matter. Borrow facts or structural timing only through the governed source lane.  
 **Scope:** Generated editorial copy.  
@@ -717,7 +717,7 @@ House/general constructions:
 - “This challenge is actually preparing you for...”
 - “What feels like limitation is really liberation.”
 
-CC fingerprints:
+Outside-writer fingerprints:
 
 - “Great question.”
 - “Think: [image list]”
@@ -772,12 +772,12 @@ Shared terminology exemption: Dragon’s Head/Tail, decans, dignities, cazimi, s
 | SO-002 | informational | Exact owner approval is positive evidence only within its approved scope. | active |
 | SO-003 | informational | “This is better/good/great” is directional, not exact approval. | active |
 | SO-004 | informational | AI candidates and assistant rewrites are never positive owner-voice evidence. | active |
-| SO-005 | informational | CC, SD, and AC prose is never Marie voice evidence. | active |
-| SO-006 | informational | CC/SD facts and dates are unnecessary when NASA and the app ephemeris supply date authority. | owner direction |
+| SO-005 | informational | External prose is never Marie voice evidence. | active |
+| SO-006 | informational | Outside-source facts and dates are unnecessary when NASA and the app ephemeris supply date authority. | owner direction |
 | SO-007 | informational | SD individual words may be sampled when already natural in Marie’s writing; do not copy SD phrases or cadence. | owner direction |
 | SO-008 | informational | AC may supply astrology knowledge, structural timing devices, and individual lexical overlap. Source as `AC`. | owner direction |
 | SO-009 | informational | AC-only vocabulary remains owner-review-required and is not injected automatically. | active |
-| SO-010 | informational | CC/SD recognizability checks target constructions, not warmth or shared astrological terms. | active |
+| SO-010 | informational | Outside-writer recognizability checks target constructions, not warmth or shared astrological terms. | active |
 | SO-011 | informational | A word bank should use frequent substantive owner words and signature phrasing naturally, never as a quota. | owner direction |
 | SO-012 | informational | Historical owner writing remains verbatim for provenance even when it conflicts with a newer surface rule. | active governance |
 
@@ -945,7 +945,7 @@ return, moving, past, shift, money, felt, learned, love, kind, time, themes, lea
 
 | ID | Derived status | Recorded decision | Authority |
 | --- | --- | --- | --- |
-| AF-002 | informational | NASA data and the app ephemeris are date authorities; CC/SD dates are unnecessary. | owner permanent |
+| AF-002 | informational | NASA data and the app ephemeris are date authorities; Outside-source dates are unnecessary. | owner permanent |
 | AF-003 | informational | Cazimi’s primary traditional figure is within 17 arcminutes. A claim of “within 1 degree” should be flaggable. | source-bank requirement |
 | AF-004 | informational | The Barbault quote and section remain blocked as `UNVERIFIED` until independently confirmed. | source governance |
 | AF-007 | informational | AC timing devices are structural only; AC prose never enters the writer prompt. | owner-directed |

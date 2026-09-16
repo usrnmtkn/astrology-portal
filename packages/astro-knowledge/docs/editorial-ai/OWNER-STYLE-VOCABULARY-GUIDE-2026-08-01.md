@@ -179,4 +179,4 @@ The useful target is Marie's variation: compact lines interrupt longer explanato
 
 Blocked SD register words: download, downloads, frequency, manifestation, portal, transmission, vibration, vibrations.
 
-The existing CC/SD construction bank remains authoritative. In particular, shared vocabulary must never be assembled into SD's weekly opener, lesson-delivery sentence, benediction, future-self formula, affirmational permission language, or New Age register.
+The existing documented construction bank remains authoritative. In particular, shared vocabulary must never be assembled into SD's weekly opener, lesson-delivery sentence, benediction, future-self formula, affirmational permission language, or New Age register.

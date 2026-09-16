@@ -74,7 +74,7 @@ function buildJudgePrompt(entry, options = {}) {
     `- The entry is direct, natural, and specific. It does not read like generic horoscope copy, a strategy brief, or a template with nouns swapped.`,
     `- It stays collective and temporary. Direct you/your guidance is allowed after the shared condition is clear, but natal standing-pattern claims, signs, dates, degrees, houses, natal framing, and relationship compatibility framing are not.`,
     `- It preserves nuance: soft aspects are not automatically good, hard aspects are not automatically bad, and the node axis is not treated as fate.`,
-    `- It does not reproduce CC/SD/AC phrasing constructions from voice/banned-constructions.json. AC timing devices may be adapted structurally, but theatrical titles and dense stacked metaphor stay out. Shared astrological knowledge and terminology are never flagged: Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary are common to astrologers. Owner-verbatim text is exempt.`,
+    `- It does not reproduce documented outside-writer phrasing constructions from voice/banned-constructions.json. AC timing devices may be adapted structurally, but theatrical titles and dense stacked metaphor stay out. Shared astrological knowledge and terminology are never flagged: Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary are common to astrologers. Owner-verbatim text is exempt.`,
     ...ownerWarmthJudgePolicyLines(options).map((rule) => `- ${rule}`),
     `- Exactly two paragraphs, 5-10 sentences, 90-180 words. No em dash.`,
     ``,

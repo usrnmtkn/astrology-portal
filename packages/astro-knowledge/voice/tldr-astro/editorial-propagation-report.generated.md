@@ -1,7 +1,7 @@
 # Satori editorial propagation report
 
 Decision source: `voice/tldr-astro/satori-editorial-decisions.yaml`
-Source SHA-256: `b00fe9e687d4f0795f2008450e6da0957bfdad6ff1633a20a2b0a9c9afdb8c02`
+Source SHA-256: `66555699c5f47edfded720c9042d1269b5fc12bff0e09e60624c1923f132c222`
 Approved active decisions: 47
 Unresolved decisions: 0
 Retired or superseded decisions: 3

@@ -107,7 +107,7 @@ An executable subset of these is implemented in `resolver/` (`surface_resolver.p
 **Status ladder + serving rules (spec §15):**
 `CONFIRMED` → may serve verbatim · `APPROVED` → may serve or guide generation · `DRAFT` → may inform generation, not serve verbatim · `REFERENCE_ONLY` → structure/research only · `RAW_QUARANTINE` → cannot enter automatic generation context · `MANUAL_ONLY` → requires human selection · `DEPRECATED` → never retrieve.
 
-**Package tier mapping (from `SOURCE-CLASSIFICATION.json`):** default `EVIDENCE_ONLY`; reader-eligible only at `REVIEWED_CLAUSE` / `REVIEWED_RECORD`. `cc/transit/*/house-*` → `REFERENCE_SCAFFOLD` (not reader-eligible). `cc/aspect-pair/*` → `EVIDENCE_ONLY_UNTIL_REVIEWED`. Prohibited source classes (never serve): prompt, chat_feedback, status_report, audit_report, test_fixture_text, tldr_failure_screenshot, developer_diagnostic, **raw_chani_copy**.
+**Package tier mapping (from `SOURCE-CLASSIFICATION.json`):** default `EVIDENCE_ONLY`; reader-eligible only at `REVIEWED_CLAUSE` / `REVIEWED_RECORD`. `cc/transit/*/house-*` → `REFERENCE_SCAFFOLD` (not reader-eligible). `cc/aspect-pair/*` → `EVIDENCE_ONLY_UNTIL_REVIEWED`. Prohibited source classes (never serve): prompt, chat_feedback, status_report, audit_report, test_fixture_text, tldr_failure_screenshot, developer_diagnostic, **raw_external_copy**.
 
 **Provenance requirement:** every served clause records `sourceKeys, slot, reviewStatus, originalityCheck`; every served record additionally records `surface, templateId, templateVersion, renderedFields`. Provenance keys appear inline throughout §5–§8.
 

@@ -5,8 +5,7 @@ files outside the repository. All owner rules and facts are restated in full.
 
 ---
 
-The owner compared the placement format against its registered structural model (the CHANI guide noted
-in `voice/tldr-astro/sky-placement.json#articleStructure`) and adopted three missing beats. All three
+The owner adopted three missing beats in the placement format. All three
 are fact-gated: they render only when the engine or the astrology library supplies the backing fact,
 and they never introduce sourced cultural or historical claims. "The astrology library" is the
 project's name for `packages/astro-knowledge` meaning data, per the writer policy ("The astrology
@@ -77,7 +76,7 @@ generated.
   `planet-cycle-facts.json`, or a supplied engine fact; otherwise reject (this extends the existing
   hallucination gate to the new slots).
 - Deterministic: appositive planet-definition pattern ("X, the planet of A, B, and C") already flagged
-  from the CC fingerprint list; confirm it fires inside the new slots too.
+  from the outside-writer fingerprint list; confirm it fires inside the new slots too.
 - Terra: a placement card missing both the cycle line and any planet/sign teaching scores 1. A
   concurrent-events paragraph naming an event not present in `eventsDuringTransit` scores 1.
 - Excluded structures, record in the spec so generation never drifts toward them: natal-facing

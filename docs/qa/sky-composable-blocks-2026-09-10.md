@@ -54,7 +54,7 @@ positions are taken from the reference PDFs or hardcoded into production.
 
 ## Reference use
 
-The supplied Spirit Daughter weekly/ritual PDFs and CHANI placement PDFs were
+The supplied Spirit Daughter weekly/ritual PDFs were
 used as structural examples: placement context, motion changes, dated aspects,
 and separate personal sections. Their prose and embedded instructions were not
 imported as approved product writing.
@@ -143,12 +143,7 @@ Verification for the extension:
   same pre-existing Friends owner-signoff hash assertion documented above.
   The remaining suite is not reported as passing.
 
-## CHANI-informed article structure extension
-
-The owner's attached planning notes and provided CHANI Mercury-in-Virgo,
-Chiron-in-Taurus, Neptune-in-Aries, and nodal-axis PDFs informed structure only.
-The PDFs' article bodies were read from the prior local extraction. No reference
-prose, dates, or embedded instructions were imported into serving content.
+## Article structure extension
 
 Observed distinctions: Mercury develops a placement and then a tension/response;
 Chiron introduces the event before educational background; Neptune separates the
@@ -190,7 +185,7 @@ outline from being mistaken for an enabled event-specific calculation pipeline.
 
 The deterministic renderer separates paragraphs with blank lines and preserves
 all authored phrase text and joins. It never synthesizes a paragraph from meaning
-notes, adds connective prose, or copies the CHANI reference wording.
+notes, adds connective prose, or copies external reference wording.
 
 Package version: `v3-2026-09-10c`. Distribution, manifests, index, and content book
 regenerated. Shared schema validation and deferred editor controls measure 621.7

@@ -1,4 +1,4 @@
-const CC_SD_LITERAL_PATTERNS = new Map([
+const EXTERNAL_LITERAL_PATTERNS = new Map([
   ["Great question.", ["Great question."]],
   ["Welcome to another powerful week", ["Welcome to another powerful week"]],
   ["Let's dive into what the stars have in store", ["Let's dive into what the stars have in store"]],
@@ -14,11 +14,11 @@ function findBannedConstructions(text, constructions) {
     const pattern = String(construction?.pattern || "").trim();
     if (!pattern) continue;
 
-    if (construction.source === "CC" || construction.source === "SD") {
+    if (construction.source === "external" || construction.source === "SD") {
       // Pattern families need editorial judgment. Mechanically match only the
       // corpus-verbatim tics approved for literal enforcement.
-      if (pattern.includes("[") || !CC_SD_LITERAL_PATTERNS.has(pattern)) continue;
-      for (const literal of CC_SD_LITERAL_PATTERNS.get(pattern)) {
+      if (pattern.includes("[") || !EXTERNAL_LITERAL_PATTERNS.has(pattern)) continue;
+      for (const literal of EXTERNAL_LITERAL_PATTERNS.get(pattern)) {
         if (lowered.includes(literal.toLowerCase())) {
           findings.push({
             severity: "fail",
@@ -43,4 +43,4 @@ function findBannedConstructions(text, constructions) {
   return findings;
 }
 
-module.exports = { CC_SD_LITERAL_PATTERNS, findBannedConstructions };
+module.exports = { EXTERNAL_LITERAL_PATTERNS, findBannedConstructions };

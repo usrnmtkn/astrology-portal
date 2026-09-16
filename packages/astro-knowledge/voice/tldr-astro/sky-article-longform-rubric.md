@@ -58,8 +58,8 @@ place.
    every block through a generated-template order. Across the set, look for
    house or life-area specificity, lived patterns, and usable movement. Those
    elements may occur in any order and need not all appear in every block.
-9. **Recognizability.** Generated prose must not reproduce documented CC,
-   Spirit Daughter, or AC phrasing constructions. AC timing devices
+9. **Recognizability.** Generated prose must not reproduce documented outside-writer
+   phrasing constructions. AC timing devices
    may be adapted structurally, but theatrical titles and dense stacked metaphor
    remain out. Shared astrological knowledge and terminology are never flagged:
    Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary
@@ -116,7 +116,7 @@ calibration baseline. The expanded owner corpus adds Mercury, Venus, Mars, and
 Chiron same-surface diagnostics plus adjacent-format references. Articles used
 to diagnose v2–v5 are not blind promotion evidence.
 
-CC and Spirit Daughter research is an anti-imitation boundary only. It does
+Outside-source research is an anti-imitation boundary only. It does
 not supply dates, doctrine, or generated copy. Runtime astrology continues to
 come from the app's ephemeris and user-local timezone.
 

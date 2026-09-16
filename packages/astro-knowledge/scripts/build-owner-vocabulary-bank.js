@@ -714,7 +714,7 @@ function guideMarkdown(bank) {
     "",
     `Blocked SD register words: ${bank.avoid.sdBlockedWords.join(", ")}.`,
     "",
-    "The existing CC/SD construction bank remains authoritative. In particular, shared vocabulary must never be assembled into SD's weekly opener, lesson-delivery sentence, benediction, future-self formula, affirmational permission language, or New Age register.",
+    "The existing documented construction bank remains authoritative. In particular, shared vocabulary must never be assembled into SD's weekly opener, lesson-delivery sentence, benediction, future-self formula, affirmational permission language, or New Age register.",
     ""
   );
   return `${lines.join("\n").replace(/\n+$/u, "")}\n`;

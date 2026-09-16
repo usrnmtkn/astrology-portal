@@ -3,7 +3,7 @@
 Status: approved owner ruling
 Date: 2026-08-09
 
-- The product uses true/osculating Black Moon Lilith, matching the calculation identified by the owner for CHANI parity.
+- The product uses true/osculating Black Moon Lilith.
 - True Lilith replaces mean Lilith everywhere: natal charts, synastry, transits, current sky, sky placements, stations, and sign-residency facts.
 - True Lilith can station retrograde and direct roughly monthly. Those stations are dated events.
 - Sign residency is multi-pass. A placement `exitDate` means the final exit after the current residency's re-entry passes, not the end of the current contiguous pass.

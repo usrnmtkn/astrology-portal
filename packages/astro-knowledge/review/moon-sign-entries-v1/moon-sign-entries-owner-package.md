@@ -39,12 +39,7 @@ Rev 9, per your notes: the "Here's what the X Moon does:" formula is gone (mecha
 into prose); the "By {{exitDate}}, the mood has moved on." close is dropped everywhere (dates
 now appear once, at entry); the aspects section is shown below as its own labeled section - the
 engine fills it with any exact aspect the transit Moon makes (planets, aspect, and date all
-verified before a word renders; empty sky means the section simply does not appear); and
-CHANI's Moon-in-sign placement pages were read as meaning reference (never phrasing) - they
-shaped one line each in Gemini (asking as self-care), Virgo (clearing the desk settles the
-nerves), Libra (evening things out as self-soothing), Capricorn (finishing things as safety),
-Cancer (chosen family), Sagittarius (comfort in the unfamiliar), Aquarius (distance to sort a
-feeling), and the Aries close (quick to move on).
+verified before a word renders; empty sky means the section simply does not appear).
 
 One decision for you: the serving Taurus entry still ends with your original "By August 7, the
 mood has moved on." close. RESOLVED: owner aligned Taurus to the no-exit-date pattern.

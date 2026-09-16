@@ -83,7 +83,7 @@ function main() {
     "tilt-literal-passes",
     "steady-observable-allowed",
     "steady-vague-energy-rejected",
-    "CC-warmth-allowed",
+    "warmth-allowed",
     "adjacent-site-construction-rejected",
     "current-sky-operation-matched-retrieval",
     "generic-planet-sign-tagline",
