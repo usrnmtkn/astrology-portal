@@ -1,6 +1,6 @@
-// Shared contract for inline variables in the continuous placement body.
-// Section references (fallback.hook, placementArticle, etc.) are composition
-// slots, not inline facts. No natal inputs or generated prose belong here.
+// Shared contract for inline variables in continuous placement writing.
+// Every editable prose field for a placement article may use the same calculated
+// placement facts. No natal inputs or generated prose belong here.
 export const SKY_PLACEMENT_VARIABLES = Object.freeze([
   { name: "planetTitle", description: "Planet name, without ‘the’ or Rx.", availability: "Selected placement" },
   { name: "signTitle", description: "Zodiac sign name.", availability: "Selected placement" },
@@ -21,7 +21,9 @@ const tokenPattern = () => /\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu;
 export function isSkyPlacementVariableField(contentKey, path) {
   if (/^sky-placement\/retrograde\/[^/]+$/u.test(contentKey)) return path === "Body";
   return /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(contentKey)
-    && (/^placementArticle(?:Direct|Retrograde)?$/u.test(path) || /^fallback\.(?:hook|lived|turn)$/u.test(path)
+    && (/^tldr(?:What|Takeaway)$/u.test(path)
+      || /^placementArticle(?:Direct|Retrograde)?$/u.test(path)
+      || /^fallback\.(?:hook|lived|turn)$/u.test(path)
       || /^fallback\.sections\.[^.]+$/u.test(path));
 }
 
