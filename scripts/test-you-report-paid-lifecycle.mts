@@ -59,6 +59,10 @@ assert.match(prompt, /same synthesis standard as the governed Friends transit re
 assert.match(prompt, /second person using you\/your/u);
 assert.match(prompt, /Do not calculate astrology/u);
 assert.match(prompt, /Do not invent texting, workplace, money, family, health, dating, shopping, travel/u);
+assert.match(prompt, /Reader-facing meaning must come from APPROVED READER TEXT/u);
+assert.match(prompt, /do not copy the TLDR sentence-for-sentence/u);
+assert.match(prompt, /write shorter rather than padding the report/u);
+assert.match(prompt, /do not make it sit, become a door, point, carry weight/u);
 
 const validDraft = {
   headline: dayLock.headline,
@@ -98,6 +102,45 @@ const inventedAspect = validateYouTransitReadingDraft({
 });
 assert.equal(inventedAspect.passed, false);
 assert.ok(inventedAspect.issues.some((issue) => issue.code === "untraceable_aspect"));
+
+const moonOnlyBrief = assertYouTransitReadingBrief({
+  schema: "tldr.you-transit-reading-brief.v1",
+  window: "week",
+  targetDate: "2026-09-14",
+  periodEnd: "2026-09-20",
+  dateLabel: "September 14 through September 20",
+  approvedReaderText: {
+    horoscope: { body: "The Moon in Scorpio makes the feelings below the pleasant surface harder to ignore." }
+  },
+  technicalEvidence: {
+    weekStart: "2026-09-14",
+    weekEnd: "2026-09-20",
+    readings: [{ driverLabel: "Moon in Scorpio", source: "weekly-moon", house: null }]
+  }
+});
+const moonOnlyLock = youTransitReadingRequestLock({ brief: moonOnlyBrief });
+const ordinaryOpposite = validateYouTransitReadingDraft({
+  draft: {
+    headline: moonOnlyLock.headline,
+    summary: "The approved weekly source keeps the focus on feelings that have been kept below the surface.",
+    body: "Looking directly at the feeling is the opposite of pretending it is not there. The Moon in Scorpio is already named in the approved weekly text."
+  },
+  brief: moonOnlyBrief,
+  expectedHeadline: moonOnlyLock.headline
+});
+assert.equal(ordinaryOpposite.passed, true, "Ordinary-language 'opposite of' must not be mistaken for an invented astrological opposition.");
+
+const inventedMoonOnlyAspect = validateYouTransitReadingDraft({
+  draft: {
+    headline: moonOnlyLock.headline,
+    summary: "This summary is long enough to exercise the Moon-only aspect fact lock.",
+    body: "The Moon opposite your Sun makes the week more intense."
+  },
+  brief: moonOnlyBrief,
+  expectedHeadline: moonOnlyLock.headline
+});
+assert.equal(inventedMoonOnlyAspect.passed, false);
+assert.ok(inventedMoonOnlyAspect.issues.some((issue) => issue.code === "untraceable_aspect"), "A true invented aspect must still fail closed.");
 
 const standingTrait = validateYouTransitReadingDraft({
   draft: { ...validDraft, body: "You always take on too much when the Sun opposes your Moon." },
