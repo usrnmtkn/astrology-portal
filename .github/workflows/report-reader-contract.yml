@@ -1,0 +1,53 @@
+name: Report reader contract
+
+on:
+  pull_request:
+    paths:
+      - 'api/_lib/**'
+      - 'scripts/test-*report*'
+      - 'scripts/test-*transit*'
+      - 'src/astro-writing/**'
+      - 'apps/web/src/components/reports/**'
+      - 'apps/web/src/services/reportLibrary.ts'
+      - '.github/workflows/report-reader-contract.yml'
+  push:
+    branches: [main, fix/report-reader-contract-20260916]
+    paths:
+      - 'api/_lib/**'
+      - 'scripts/test-*report*'
+      - 'scripts/test-*transit*'
+      - '.github/workflows/report-reader-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  report-reader-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Export pinned source and public package cache for isolated offline verification
+        if: github.ref == 'refs/heads/fix/report-reader-contract-20260916'
+        run: |
+          mkdir -p "$RUNNER_TEMP/report-verification"
+          git archive --format=tar.gz --output="$RUNNER_TEMP/report-verification/source.tar.gz" HEAD
+          tar -czf "$RUNNER_TEMP/report-verification/npm-cache.tar.gz" -C "$HOME/.npm" _cacache
+          git rev-parse HEAD > "$RUNNER_TEMP/report-verification/revision.txt"
+          sha256sum "$RUNNER_TEMP/report-verification/"*.tar.gz > "$RUNNER_TEMP/report-verification/SHA256SUMS"
+      - uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/fix/report-reader-contract-20260916'
+        with:
+          name: report-verification-source
+          path: ${{ runner.temp }}/report-verification/
+          retention-days: 1
+      - run: npm run build:knowledge
+      - name: Report reader contract regression
+        run: node --import tsx --test scripts/test-report-reader-contract.mts
