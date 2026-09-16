@@ -1,5 +1,6 @@
 import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { useEffect, useRef, useState } from "react";
+import "./sky-variable-key.css";
 import { compositionVariableColors } from "./CompositionVariableKey";
 import { StudioButton } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
@@ -18,7 +19,8 @@ import { skyPlacementArticleVariableSegments } from "../../web/src/content/fallb
 // @ts-ignore Shared with the publication validator and reader resolver.
 import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableSegments } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 
-const variableColors = compositionVariableColors(SKY_PLACEMENT_VARIABLES);
+const phraseVariables = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields.map(field => ({ name: field.id })));
+const variableColors = compositionVariableColors([...SKY_PLACEMENT_VARIABLES, ...phraseVariables]);
 const phraseClass = (kind: string) => ["planet", "sign"].includes(kind) ? "variable-phrase" : "variable-hook";
 
 export type SkyVariableFacts = Record<string, string | undefined>;
@@ -31,7 +33,6 @@ type PhraseSourceContext = {
   onLoadSource?: (key: string) => Promise<Record<string, any> | undefined>;
   onEdit?: (sourceId: string) => void;
 };
-
 
 function scopeLabel(kind: string) {
   if (kind === "planet") return "Shared planet language";
@@ -67,8 +68,6 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
   const [phraseError, setPhraseError] = useState("");
   const [phraseInstalled, setPhraseInstalled] = useState(false);
 
-  // Row hydration recreates object identities. Only changed content should
-  // reload phrase values, otherwise the picker can continuously hydrate itself.
   const phraseSourceRevision = JSON.stringify(phraseSource?.record ?? null);
   useEffect(() => {
     let active = true;
@@ -86,8 +85,6 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
       const loadSource = loadSourceRef.current;
       const rawComposition = phraseSource.record.ingress as SkyWritingLibraryComposition | undefined;
       const installed = skyWritingLibraryInstalled(rawComposition);
-      // Saved local or linked library fields are authoritative, including blanks.
-      // Governed prefill is needed only before a library exists.
       const seeds = installed ? { values: {}, provenance: {} } : await loadSkyWritingLibrarySeeds(
         phraseSource.record, phraseSource.planet, phraseSource.sign, loadSource
       );
@@ -172,11 +169,12 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
             {group.fields.map(item => {
               const currentValue = phraseValues[item.id]?.trim() ?? "";
               const sourceLabel = phraseProvenance[item.id] || "No governed source is mapped yet.";
+              const color = variableColors.get(item.id);
               return <article className="admin-sky-phrase-row" key={item.id}>
                 <header className="admin-sky-phrase-row-header">
-                  <span className={`admin-sky-phrase-token ${phraseClass(item.kind)}`}><code>{`{{${item.id}}}`}</code></span>
+                  <span className={`admin-sky-phrase-token ${phraseClass(item.kind)}`} data-variable-color={color}><code>{`{{${item.id}}}`}</code></span>
                   <strong>{item.label}</strong>
-                  <span className={currentValue ? phraseClass(item.kind) : "variable-unmapped"}>{currentValue ? "Loaded" : "Empty"}</span>
+                  <span className={`admin-sky-phrase-status ${currentValue ? phraseClass(item.kind) : "variable-unmapped"}`} data-variable-color={currentValue ? color : undefined}>{currentValue ? "Loaded" : "Empty"}</span>
                 </header>
                 <p className="admin-sky-phrase-description">{item.description}</p>
                 <div className={`admin-sky-phrase-current${currentValue ? "" : " is-empty"}`}>
