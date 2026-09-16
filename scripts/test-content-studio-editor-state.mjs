@@ -46,13 +46,13 @@ assert.match(monthlyStarter, /\{\{#hasLeadEvent\}\}/);
 assert.equal(calendarOverviewWriting({ calendarOverview: { monthlyOverview: "Existing owner passage" } }).monthlyOverview, "Existing owner passage", "Existing saved prose remains byte-for-byte until the owner opts into a starter.");
 
 const renderedMonthlyStarter = calendarTemplateSegments(monthlyStarter, nestedValues({
-  hasMonthlyTheme: "yes", monthName: "September", primaryMonthlyThemeFocus: "the primary theme",
-  hasSecondaryMonthlyTheme: "yes", secondaryMonthlyThemeFocus: "the second theme",
+  hasMonthlyTheme: "yes", monthName: "September", primaryMonthlyThemeFocus: "the primary theme", primaryMonthlyThemeExperience: "the plan needing revision",
+  hasSecondaryMonthlyTheme: "yes", secondaryMonthlyThemeFocus: "the second theme", secondaryMonthlyThemeExperience: "another concern becoming more visible",
   hasLeadEvent: "yes", leadEventDate: "September 15", leadEventClause: "Neptune sextiles Pluto",
   leadEventExperience: "the situation changing", leadEventOpportunity: "revise the plan"
 })).map(segment => segment.text).join("");
-assert.match(renderedMonthlyStarter, /September brings attention to the primary theme\./);
-assert.match(renderedMonthlyStarter, /It also brings attention to the second theme\./);
+assert.match(renderedMonthlyStarter, /September brings attention to the primary theme\. You may notice the plan needing revision\./);
+assert.match(renderedMonthlyStarter, /It also brings attention to the second theme\. You may notice another concern becoming more visible\./);
 assert.match(renderedMonthlyStarter, /On September 15, Neptune sextiles Pluto\./);
 const renderedSeasonStarter = calendarTemplateSegments(seasonStarter, nestedValues({
   openingSeasonSign: "Virgo", openingSeasonFocus: "daily rituals and systems", openingSeasonOpportunity: "strengthen what works",
