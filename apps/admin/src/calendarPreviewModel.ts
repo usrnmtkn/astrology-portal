@@ -147,29 +147,16 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   return values;
 }
 
-export function calendarNestedTemplateText(pattern: string, values: Record<string, CalendarPreviewValue>, templates: Record<string, string>) {
-  const resolving = new Set<string>();
-  const render = (source: string, name?: string): string => {
-    if (name) { if (resolving.has(name)) throw new Error(`Circular Calendar template reference: ${[...resolving, name].join(" → ")}.`); resolving.add(name); }
-    const nested = { ...values };
-    for (const [key, template] of Object.entries(templates)) {
-      if (!source.includes(`{{${key}}}`) && !source.includes(`{{#${key}}}`)) continue;
-      nested[key] = { text: render(template, key), kind: "copy" };
-    }
-    const text = calendarTemplateSegments(source, nested).map(segment => segment.text).join("");
-    if (name) resolving.delete(name);
-    return text;
+/** Replace known named slots once; overview templates can opt into bounded recursion. */
+export function calendarTemplateSegments(pattern: string, values: Record<string, CalendarPreviewValue>, templates: Record<string, string> = {}, path: string[] = []) {
+  const nested = { ...values };
+  for (const name in templates) if (pattern.includes(`{{${name}}}`)) nested[name] = {
+    text: path.includes(name) ? `{{${name}}}` : calendarTemplateSegments(templates[name], values, templates, [...path, name]).map(segment => segment.text).join(""), kind: "copy"
   };
-  try { return { text: render(pattern), error: "" }; }
-  catch (error) { return { text: pattern, error: error instanceof Error ? error.message : "Calendar template could not be resolved." }; }
-}
-
-/** Replace known named slots once; unknown slots and tokens inside saved prose remain visible. */
-export function calendarTemplateSegments(pattern: string, values: Record<string, CalendarPreviewValue>) {
   // Optional sections hide only when their controlling fact is absent (for example a season change outside the week).
-  const expanded = pattern.replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/gu, (_block, name: string, body: string) => values[name] ? body : "");
+  const expanded = pattern.replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/gu, (_block, name: string, body: string) => nested[name] ? body : "");
   return expanded.split(/(\{\{\s*[\w.]+\s*\}\})/u).filter(Boolean).map(text => {
     const name = text.match(/^\{\{\s*([\w.]+)\s*\}\}$/u)?.[1];
-    return { text: name && values[name] ? values[name].text : text, name, value: name ? values[name] : undefined };
+    return { text: name && nested[name] ? nested[name].text : text, name, value: name ? nested[name] : undefined };
   });
 }
