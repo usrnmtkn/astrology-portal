@@ -51,22 +51,22 @@ jobs:
         run: |
           node --import tsx --test scripts/test-report-reader-contract.mts
           node --import tsx scripts/test-transit-reading-checkpoints.mts
-          node scripts/test-transit-report-delivery.mjs
+          node --import tsx scripts/test-transit-report-delivery.mjs
           node --import tsx scripts/test-you-report-paid-lifecycle.mts
           node --import tsx scripts/test-friend-report-paid-lifecycle.mts
           node --import tsx scripts/test-friend-transit-reading-contract.mts
           node --import tsx scripts/test-generated-report-judge-governance.mts
-          node scripts/test-report-provider-schemas.mjs
-          node scripts/test-report-library-delete.mjs
-          node scripts/test-report-library-notifications.mjs
-          node scripts/test-you-report-session.mjs
+          node --import tsx scripts/test-report-provider-schemas.mjs
+          node --import tsx scripts/test-report-library-delete.mjs
+          node --import tsx scripts/test-report-library-notifications.mjs
+          node --import tsx scripts/test-you-report-session.mjs
       - name: Protected owner-corpus integration without paid provider calls
         env:
           PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
         run: |
-          node scripts/test-generated-report-correction.mjs
-          node scripts/test-generated-report-breadth.mjs
-          node scripts/test-generated-report-owner-corpus.mjs
+          node --import tsx scripts/test-generated-report-correction.mjs
+          node --import tsx scripts/test-generated-report-breadth.mjs
+          node --import tsx scripts/test-generated-report-owner-corpus.mjs
       - run: npm run typecheck
       - run: npm run build:web
 
