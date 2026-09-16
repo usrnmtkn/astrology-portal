@@ -35,7 +35,17 @@ jobs:
           git rev-parse refs/remotes/origin/main > "$RUNNER_TEMP/calendar-inputs/main.txt"
       - uses: actions/upload-artifact@v6
         with:
-          name: calendar-isolated-inputs
-          path: ${{ runner.temp }}/calendar-inputs/
+          name: calendar-isolated-source-cache
+          path: |
+            ${{ runner.temp }}/calendar-inputs/source.tar.gz
+            ${{ runner.temp }}/calendar-inputs/npm-cache.tar.gz
+            ${{ runner.temp }}/calendar-inputs/head.txt
+            ${{ runner.temp }}/calendar-inputs/main.txt
+          retention-days: 1
+          compression-level: 0
+      - uses: actions/upload-artifact@v6
+        with:
+          name: calendar-isolated-git
+          path: ${{ runner.temp }}/calendar-inputs/git.tar.gz
           retention-days: 1
           compression-level: 0
