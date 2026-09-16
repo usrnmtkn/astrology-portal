@@ -15,4 +15,4 @@ Phase 1 preserves the existing Content Studio stacking order exactly. No new num
 | `--studio-layer-source-repair-backdrop` | `80` | Source-repair modal/backdrop |
 | `--studio-layer-toast` | `90` | Save/status toast |
 
-The values remain scoped to `.admin-dashboard` in the shared theme. `studio-system.css` consumes the named tokens and does not define component-local layer values. The disconnected legacy admin stylesheets remain disconnected and are not used as a token source.
+The values are scoped to `.admin-dashboard` in `apps/admin/src/admin-theme.css`. That theme imports the shared application primitives from `apps/web/src/styles/theme.css`, while Studio-only colors, typography overrides, component measurements, and layer values remain admin-owned. `studio-system.css` consumes the named layer tokens and does not define component-local layer values. The disconnected legacy admin stylesheets remain disconnected and are not used as a token source.
