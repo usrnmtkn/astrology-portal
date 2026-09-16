@@ -3,10 +3,10 @@ import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
 import { lunarSigns, lunarContentIdentity } from "./lunarCalendarContent";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
-import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewWriting, calendarSeasonVariables, calendarSeasonSourceKey, calendarVariableColor, resolveCalendarNestedTemplate } from "./calendarOverviewTemplate";
+import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewWriting, calendarSeasonVariables, calendarSeasonSourceKey, calendarVariableColor } from "./calendarOverviewTemplate";
 import CalendarVariableText from "./CalendarVariableText";
 import type { CalendarPreviewCalculation } from "./calendarPreviewCalculation";
-import { calendarMoonPassages, calendarPreviewSeasons, calendarPreviewSign, calendarPreviewSourceKeys, calendarPreviewValues, calendarTemplateSegments, type CalendarPreviewRow } from "./calendarPreviewModel";
+import { calendarMoonPassages, calendarNestedTemplateText, calendarPreviewSeasons, calendarPreviewSign, calendarPreviewSourceKeys, calendarPreviewValues, calendarTemplateSegments, type CalendarPreviewRow } from "./calendarPreviewModel";
 
 export type CalendarTemplatePreviewProps = {
   period: SkyForecastPeriod;
@@ -76,15 +76,12 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
   const pattern = draft?.contentKey === template.contentKey ? draft.body : saved?.body ?? calendarOverviewPattern(period);
   const writing = calendarOverviewWriting(draft?.contentKey === template.contentKey ? draft.sections : saved?.sections);
   const values = { ...baseValues };
-  const overviewTemplates = Object.fromEntries(calendarOverviewFields(period)
-    .filter(field => writing[field.name]?.trim())
-    .map(field => [field.name, writing[field.name]]));
-  const literalValues = Object.fromEntries(Object.entries(baseValues).map(([name, value]) => [name, value.text]));
+  const overviewTemplates = Object.fromEntries(calendarOverviewFields(period).filter(field => writing[field.name]?.trim()).map(field => [field.name, writing[field.name]]));
   const nestedErrors = new Set<string>();
   for (const field of calendarOverviewFields(period)) {
     if (writing[field.name]?.trim()) {
-      const resolved = resolveCalendarNestedTemplate(`{{${field.name}}}`, literalValues, overviewTemplates);
-      resolved.errors.forEach(error => nestedErrors.add(error));
+      const resolved = calendarNestedTemplateText(`{{${field.name}}}`, baseValues, overviewTemplates);
+      if (resolved.error) nestedErrors.add(resolved.error);
       values[field.name] = { text: resolved.text, kind: "copy", sourceKey: template.contentKey };
     }
   }
