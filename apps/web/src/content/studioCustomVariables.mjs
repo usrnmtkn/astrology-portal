@@ -46,6 +46,7 @@ export function studioVariableContext(context = {}) {
 }
 
 export function studioVariableValue(definition, context = {}) {
+  if (!definition?.id && definition?.name) return { value: `{{${definition.name}}}`, scope: "builtin" };
   const { planet, sign } = studioVariableContext(context);
   const overrides = definition.overrides ?? [];
   const selected = overrides.find(item => item.scope === "placement" && item.planet === planet && item.sign === sign)
@@ -83,7 +84,7 @@ export function studioRecordVariableNames(record) {
 }
 
 export function resolveStudioVariableCopy(copy, bindings = [], context = {}) {
-  const indexed = new Map(bindings.filter(item => !item?.builtin).map(item => [item.name, item]));
+  const indexed = new Map(bindings.filter(item => !item?.builtin && typeof item?.id === "string").map(item => [item.name, item]));
   return String(copy ?? "").replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (token, name) => {
     const definition = indexed.get(name);
     if (!definition) return token;
@@ -97,7 +98,7 @@ export function resolveStudioVariableRecord(record, context = {}) {
   const bindings = record?._studioVariables;
   if (!Array.isArray(bindings) || !bindings.length) return record;
   const result = mapStudioVariableCopy(record, copy => resolveStudioVariableCopy(copy, bindings, { ...studioVariableContext(record), ...context }));
-  const names = new Set(bindings.filter(item => !item?.builtin).map(item => item.name));
+  const names = new Set(bindings.filter(item => !item?.builtin && typeof item?.id === "string").map(item => item.name));
   for (const field of ["requiredSlots", "optionalSlots"]) if (Array.isArray(result[field])) result[field] = result[field].filter(name => !names.has(name));
   delete result._studioVariables;
   return result;
