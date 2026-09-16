@@ -52,6 +52,10 @@ assert.throws(
   () => validateSkyArticleTemplateSlotValues({ seasonOpener: "A vague shift — without behavior." }, [unfinished[0]]),
   /em dash/u
 );
+assert.throws(
+  () => validateSkyArticleTemplateSlotValues({ seasonOpener: "Notice whether the plan still works." }, [unfinished[0]]),
+  /banned word whether/u
+);
 
 const generatorSource = fs.readFileSync(new URL("../api/_lib/content-generation.ts", import.meta.url), "utf8");
 assert.match(generatorSource, /The template's fixed prose is immutable\. Do not rewrite it/u);
@@ -92,4 +96,4 @@ assert.ok(
   "The personalized passage must render before the complete rising-sign horoscope list."
 );
 
-console.log("Sky article AI fills only unfinished safe slots, preserves existing values, and calculates dated article windows with the local Swiss Ephemeris engine.");
+console.log("Sky article AI fills only unfinished safe slots, rejects banned voice language, preserves existing values, and calculates dated article windows with the local Swiss Ephemeris engine.");
