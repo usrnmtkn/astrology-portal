@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { mergeContentInventory } from "../apps/admin/src/contentStudioState.ts";
-import { resolveCalendarNestedTemplate } from "../apps/admin/src/calendarTemplateResolver.ts";
+import { resolveCalendarNestedTemplate } from "../apps/admin/src/calendarOverviewTemplate.ts";
 
 const full = { id: "one", updated_at: "2026-09-07T10:00:01Z", body: "Saved owner copy", sections: { packageDraft: { body: "Revision" } } };
 const inventory = { id: "one", updated_at: full.updated_at, inventory_only: true, body: "", sections: {} };
