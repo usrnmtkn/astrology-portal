@@ -1,6 +1,15 @@
-import type { SkySnapshot } from "./current-sky.js";
-
 const defaultTimeZone = "America/New_York";
+
+type SkyArticleFactsSnapshot = {
+  generatedAt: string;
+  location: { timeZone?: string };
+  positions: Array<{
+    planet: string;
+    sign: string;
+    transitStart?: string | null;
+    transitEnd?: string | null;
+  }>;
+};
 
 function normalizeToken(value: string) {
   return value.trim().toLowerCase().replace(/[_\s]+/gu, "-");
@@ -44,7 +53,7 @@ function stayLengthLabel(start: string, end: string) {
   return `${days} days`;
 }
 
-export function skyArticleEditionFactsFromSnapshot(snapshot: SkySnapshot, requestedPlanet: string) {
+export function skyArticleEditionFactsFromSnapshot(snapshot: SkyArticleFactsSnapshot, requestedPlanet: string) {
   const planet = normalizeToken(requestedPlanet);
   const position = snapshot.positions.find((candidate) => normalizeToken(candidate.planet) === planet);
   if (!position) throw new Error(`${titleCase(planet)} is not present in the calculated Sky snapshot.`);
@@ -57,7 +66,7 @@ export function skyArticleEditionFactsFromSnapshot(snapshot: SkySnapshot, reques
 
   return {
     schema: "tldrastro-sky-article-engine-facts-v1",
-    calculationSource: "current-sky event-time ephemeris",
+    calculationSource: "local Swiss Ephemeris sign-residency calculation",
     generatedAt: snapshot.generatedAt,
     referenceTimeZone: timeZone,
     planet,
@@ -75,4 +84,19 @@ export function skyArticleEditionFactsFromSnapshot(snapshot: SkySnapshot, reques
       entryYear: validFrom.slice(0, 4)
     }
   };
+}
+
+/**
+ * Calculate the complete dated article residency with the same packaged Swiss
+ * Ephemeris engine used by the reader and `/api/astrology-facts`. This keeps
+ * article authoring independent of an older Cloud Run deployment omitting the
+ * optional transitWindows response.
+ */
+export async function calculateSkyArticleEditionFacts(referenceInstant: Date, requestedPlanet: string) {
+  const { defaultLocation, getAstrodienstSky } = await import("../../apps/web/src/services/ephemeris.js");
+  const snapshot = await getAstrodienstSky(defaultLocation, referenceInstant, {
+    includeDailyEvents: false,
+    includeTransitWindows: true
+  });
+  return skyArticleEditionFactsFromSnapshot(snapshot, requestedPlanet);
 }
