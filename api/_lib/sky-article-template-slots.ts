@@ -55,6 +55,9 @@ export function validateSkyArticleTemplateSlotValues(
     if (body.includes("—")) {
       throw new Error(`The writing provider used an em dash in ${name}.`);
     }
+    if (/\bwhether\b/iu.test(body)) {
+      throw new Error(`The writing provider used the banned word whether in ${name}.`);
+    }
     result[name] = body;
   }
 
