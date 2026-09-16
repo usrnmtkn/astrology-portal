@@ -1,6 +1,8 @@
+@import "../../web/src/styles/theme.css";
+
 /* Content Studio theme tokens.
-   Shared primitive scales still come from the application theme loaded by startup.css.
-   Studio-specific visual roles live here so the reader theme does not own admin styling. */
+   Shared primitive scales come from the application design theme above.
+   Studio-specific visual roles live here so reader CSS no longer owns admin styling. */
 
 :root .admin-dashboard {
   /* Categorical variable identities: paired ink/surface colors in both themes. */
