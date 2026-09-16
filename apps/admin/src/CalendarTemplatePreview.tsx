@@ -3,11 +3,10 @@ import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
 import { lunarSigns, lunarContentIdentity } from "./lunarCalendarContent";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
-import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewWriting, calendarSeasonVariables, calendarSeasonSourceKey, calendarVariableColor } from "./calendarOverviewTemplate";
+import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewWriting, calendarSeasonVariables, calendarSeasonSourceKey, calendarVariableColor, resolveCalendarNestedTemplate } from "./calendarOverviewTemplate";
 import CalendarVariableText from "./CalendarVariableText";
 import type { CalendarPreviewCalculation } from "./calendarPreviewCalculation";
 import { calendarMoonPassages, calendarPreviewSeasons, calendarPreviewSign, calendarPreviewSourceKeys, calendarPreviewValues, calendarTemplateSegments, type CalendarPreviewRow } from "./calendarPreviewModel";
-import { resolveCalendarNestedTemplate } from "./calendarTemplateResolver";
 
 export type CalendarTemplatePreviewProps = {
   period: SkyForecastPeriod;
