@@ -38,11 +38,23 @@ export function validateStudioVariable(value, reservedNames = []) {
 }
 
 const normalize = (value, allowed) => typeof value === "string" && allowed.includes(value.trim().toLowerCase()) ? value.trim().toLowerCase() : "";
+const title = value => String(value ?? "").trim().toLowerCase().split(/[ -]+/u).filter(Boolean).map(word => word[0].toUpperCase() + word.slice(1)).join(" ");
 export function studioVariableContext(context = {}) {
   const parts = String(context.contentKey ?? context.content_key ?? "").split("/");
   const planet = [context.planet, context.planetTitle, context.Planet, context.transiting, context.transitPlanet, ...parts].map(value => normalize(value, VARIABLE_PLANETS)).find(Boolean) ?? "";
   const sign = [context.sign, context.signTitle, context.Sign, context.SubjectSign, context.signA, context.signATitle, ...parts].map(value => normalize(value, VARIABLE_SIGNS)).find(Boolean) ?? "";
   return { planet, sign };
+}
+
+function calculatedStudioVariableValue(name, context = {}) {
+  const facts = object(context.facts) ? context.facts : {};
+  for (const candidate of [context[name], facts[name]]) {
+    if (typeof candidate === "string" && candidate.trim()) return candidate;
+  }
+  const { planet, sign } = studioVariableContext(context);
+  if (name === "planetTitle" && planet) return title(planet);
+  if (name === "signTitle" && sign) return title(sign);
+  return "";
 }
 
 export function studioVariableValue(definition, context = {}) {
@@ -87,20 +99,21 @@ export function resolveStudioVariableCopy(copy, bindings = [], context = {}) {
   const indexed = new Map(bindings.filter(item => !item?.builtin && typeof item?.id === "string").map(item => [item.name, item]));
   return String(copy ?? "").replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (token, name) => {
     const definition = indexed.get(name);
-    if (!definition) return token;
-    const { value } = studioVariableValue(definition, context);
-    if (typeof value !== "string" || !value.trim() || /\{\{|\}\}/u.test(value)) throw new Error(`Missing value for ${token}. Open Variables to complete it before publishing.`);
-    return value;
+    if (definition) {
+      const { value } = studioVariableValue(definition, context);
+      if (typeof value !== "string" || !value.trim() || /\{\{|\}\}/u.test(value)) throw new Error(`Missing value for ${token}. Open Variables to complete it before publishing.`);
+      return value;
+    }
+    return calculatedStudioVariableValue(name, context) || token;
   });
 }
 
 export function resolveStudioVariableRecord(record, context = {}) {
-  const bindings = record?._studioVariables;
-  if (!Array.isArray(bindings) || !bindings.length) return record;
+  const bindings = Array.isArray(record?._studioVariables) ? record._studioVariables : [];
   const result = mapStudioVariableCopy(record, copy => resolveStudioVariableCopy(copy, bindings, { ...studioVariableContext(record), ...context }));
   const names = new Set(bindings.filter(item => !item?.builtin && typeof item?.id === "string").map(item => item.name));
   for (const field of ["requiredSlots", "optionalSlots"]) if (Array.isArray(result[field])) result[field] = result[field].filter(name => !names.has(name));
-  delete result._studioVariables;
+  if (Object.hasOwn(result, "_studioVariables")) delete result._studioVariables;
   return result;
 }
 
