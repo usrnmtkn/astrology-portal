@@ -393,13 +393,16 @@ console.log("PASS: an empty published evergreen layout survives reload without r
 {
  const { makeSkyIngressComposition } = await import('../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs');
  const key = 'sky-placement/article/saturn/aries';
- let row = stored.find(item => item.content_key === key && item.status === 'LIVE');
- const priorPublished = JSON.stringify(row.sections.packageRecord);
+ const live = stored.find(item => item.content_key === key && item.status === 'LIVE');
+ const priorPublished = JSON.stringify(live.sections.packageRecord);
+ // Earlier refusal cases intentionally leave a proposal open. Resume it, just
+ // as the editor does; creating a second revision must remain a conflict.
+ let row = stored.find(item => item.status === 'DRAFT' && item.source_snapshot?.targetRowId === live.id) ?? live;
  const composition = { ...makeSkyIngressComposition(), modules: [], enabled: false };
  const template = 'During this transit, fixture dignity opening.\n\n{{placementDignityMeaning}}\n\nFixture dignity final sentence.';
- const copy = { ...row.sections.packageRecord, ingress: composition, placementArticle: template, placementArticleDirect: '', placementArticleRetrograde: '' };
+ const copy = { ...(row.sections.packageDraft ?? row.sections.packageRecord), ingress: composition, placementArticle: template, placementArticleDirect: '', placementArticleRetrograde: '' };
  row = (await request('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, reviewStatus: 'needs_review', sections: { ...row.sections, packageDraft: copy } })).rows[0];
- assert.equal(JSON.stringify(row.sections.packageRecord), priorPublished, 'Incomplete draft cannot alter the published baseline');
+ assert.equal(JSON.stringify(stored.find(item => item.id === live.id).sections.packageRecord), priorPublished, 'Incomplete draft cannot alter the published baseline');
  const rejected = await request('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'approve-package-revision' }, '', 400);
  assert.match(rejected.error, /placementDignityMechanism/);
  composition.sources.placementDignityMechanism.text = 'the fixture mechanism belongs to {{planetTitle}} in {{signTitle}}';

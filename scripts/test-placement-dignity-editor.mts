@@ -17,6 +17,7 @@ import { createRoot } from 'react-dom/client';
 import Editor from './apps/admin/src/SkyWritingLibraryEditor';
 import { installSkyWritingLibrary } from './apps/admin/src/skyWritingLibrary';
 import { makeSkyIngressComposition } from './apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs';
+import './apps/web/src/styles/startup.css';
 import './apps/admin/src/studio-system.css';
 const params = new URLSearchParams(location.search);
 const planet = params.get('planet') || 'mercury', sign = params.get('sign') || 'virgo';
@@ -67,6 +68,7 @@ try {
       ['uranus','gemini','not applicable'], ['saturn','ariesx','invalid placement']
     ]) {
       await page.goto(`http://127.0.0.1:${address.port}/?planet=${planet}&sign=${sign}&theme=${theme}`);
+      await page.evaluate(() => document.fonts.ready);
       const selection = page.getByTestId('placement-dignity-selection');
       await selection.waitFor();
       assert.equal(await selection.locator('code').innerText(), label);
