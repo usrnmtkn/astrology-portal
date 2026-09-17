@@ -18,7 +18,7 @@ export const skyForecastTemplates = {
     title: "Monthly overview template",
     contentKey: "slot-template/calendar/monthly-overview/v1",
     headline: "Calendar · Monthly Overview",
-    description: "Write the month’s seasonal opening, selected highlights, lunations, season transition, and closing.",
+    description: "Start from the month range, then write the overview, seasons, lunar cycle, planetary changes, and closing.",
     body: calendarOverviewPattern("monthly-sky")
   }
 } as const;
@@ -39,7 +39,7 @@ export function calendarMonthlyCompatibilityPattern() {
   ].join("\n\n");
 }
 
-/** Default Monthly Sky starter. Saved templates are not rewritten. */
+/** Opt-in Monthly Sky layout. Saved templates are not rewritten. */
 export function calendarMonthlyEditorialPattern() {
   return [
     "{{monthRange}}",
@@ -56,7 +56,7 @@ export function calendarMonthlyEditorialPattern() {
 /** Explicit starter adoption is an editor action, never a saved-template migration. */
 export function calendarOverviewPattern(period: SkyForecastPeriod) {
   if (period === "daily-sky") return "{{date}}\n\n{{sunSummary}}\n\n{{moonWriteup}}";
-  if (period === "monthly-sky") return calendarMonthlyEditorialPattern();
+  if (period === "monthly-sky") return calendarMonthlyCompatibilityPattern();
   const sections = [
     "{{weekRange}}",
     "Weekly Overview\n{{weeklyOverview}}",

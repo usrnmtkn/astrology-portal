@@ -9,14 +9,14 @@ Contextual facts: `signTitle`, `entryDate`, `exitDate`, `eventDate`, and `eventD
 Included:
 
 - Step 2a/2b phrase and nested-template definition validation, resolved in Calendar preview only when names are not reserved calculated facts or overview fields;
-- unsaved Monthly Sky starters use the editorial layout; **Use overview structure** restores the previous labeled compatibility pattern;
+- unsaved Monthly Sky starters use the labeled overview layout; **Use monthly editorial structure** remains opt-in;
 - new monthly fields for seasonal opening, selected planetary highlights, independent New Moon and Full Moon writing, and optional lunation connection;
 - three alternative seasonal-opening starters and lunation/eclipse starters;
 - calculated `hasNewMoon`, `hasFullMoon`, eclipse flags, `entryDate` / `exitDate` from the opening Sun visit, and `hasSeasonTransition` from a closing ingress.
 
 Deliberate boundaries:
 
-- editor field labels `Monthly overview` / `Season transition` / `Lunar cycle` / `Planetary changes` / `Closing passage` stay for compatibility; the unsaved starter pattern no longer prints those as preview section labels;
+- editor field labels `Monthly overview` / `Season transition` / `Lunar cycle` / `Planetary changes` / `Closing passage` stay for compatibility; the unsaved starter pattern prints those labeled sections until the owner opts into the editorial layout;
 - `seasonOverview` remains the existing saved season-transition field; the spec opening uses the new `seasonOpening` field so saved transition prose is not remapped;
 - monthly editorial starters and insert buttons use `signTitle`, `entryDate`, `exitDate`, `eventDate`, and `eventDescription`; labeled `newMoonSign` / `fullMoonSign` facts remain only so older saved compatibility writing still resolves;
 - highlight selection is the presence of authored `planetaryHighlights` writing, not automatic ranking of every calculated event;

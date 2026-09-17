@@ -129,11 +129,11 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(editor.getByLabel("Template purpose (optional)", { exact: true })).toHaveValue(notes);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByRole("tablist", { name: "Calendar Write-ups workspaces" }).getByRole("tab", { name: "Monthly Sky" }).click();
-    await expect(preview.getByLabel("Rendered Calendar template")).toContainText("{{seasonOpening}}");
+    await expect(preview.getByLabel("Rendered Calendar template")).toContainText("Zodiac Seasons");
+    await expect(preview.getByLabel("Rendered Calendar template")).toContainText("Lunar Cycle");
+    await expect(preview.getByLabel("Rendered Calendar template")).toContainText("Planetary Changes");
+    await expect(preview.getByLabel("Rendered Calendar template")).toContainText("{{monthlyOverview}}");
     await expect(preview.getByLabel("Rendered Calendar template")).toContainText("{{monthlyIntegration}}");
-    await expect(rendered).not.toContainText("Zodiac Seasons");
-    await expect(rendered).not.toContainText("Lunar Cycle");
-    await expect(rendered).not.toContainText("Planetary Changes");
     await expect(preview.getByRole("heading", { name: "Template preview" }).evaluate(style)).toEqual(reference);
     await preview.getByRole("tab", { name: "Variables", exact: true }).click();
     expect(await preview.getByLabel("Calendar preview variables").locator('[data-variable-name="zodiacSeason"]').evaluate(colorStyle)).toEqual(seasonColor);
