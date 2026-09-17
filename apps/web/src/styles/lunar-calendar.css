@@ -2569,6 +2569,7 @@ a.tx-card.has-article:hover .tx-more {
   .lunar-selected-card,
   .lunar-week-transits,
   .lunar-month-transits,
+  .lunar-month-overview,
   .tx-card {
     box-sizing: border-box;
     width: 100%;
@@ -2883,6 +2884,22 @@ a.tx-card.has-article:hover .tx-more {
   font-family: var(--font-label);
   font-size: var(--lunar-type-caption);
   font-weight: var(--weight-semibold);
+}
+
+.lunar-month-overview {
+  display: grid;
+  gap: var(--lunar-space-12);
+  max-width: var(--ds-lunar-calendar-lunar-selected-content-width);
+}
+
+.lunar-month-overview p {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
 }
 
 .lunar-calendar-month-primary {

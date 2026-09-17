@@ -1,3 +1,4 @@
+import { calendarOverviewWriting as sharedCalendarOverviewWriting } from "../../web/src/features/calendar/calendarOverviewResolve";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
 
 export type CalendarOverviewStarter = { action: string; value: string };
@@ -136,11 +137,7 @@ export function calendarVariableColor(name: string) {
   return String((hash >>> 0) % 6 + 1);
 }
 
-export function calendarOverviewWriting(sections: unknown): Record<string, string> {
-  const value = (sections as { calendarOverview?: unknown } | null)?.calendarOverview;
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? Object.fromEntries(Object.entries(value).filter((entry): entry is [string, string] => typeof entry[1] === "string")) : {};
-}
+export const calendarOverviewWriting = sharedCalendarOverviewWriting;
 
 export { calendarMonthlyCompatibilityPattern, calendarMonthlyEditorialPattern, calendarOverviewPattern } from "./skyForecastTemplates";
 

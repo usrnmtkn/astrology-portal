@@ -72,6 +72,7 @@ import { calendarMoonContinuationText, calendarPhaseLabelForDay } from "./calend
 import { lunarDayGeneratedContentKeys, resolveLunarDay } from "./lunarDayResolver";
 import type { LunarDay, LunarDayArcPoint } from "./lunarDayTypes";
 import { sunIngressSeasonSign, sunIngressSeasonWindow } from "./seasonWindow";
+import { calendarMonthlyOverviewContentKeys, resolveCalendarMonthlyOverview } from "./monthlyOverview";
 import {
   resolveWeeklyDayRole,
   weeklyEventDescriptionFitsDateContext,
@@ -2255,7 +2256,8 @@ export function LunarCalendar({
         ...cmsSurfaceKeys.calendarDay("moon", day.moonSign),
         ...cmsSurfaceKeys.calendarDay("phase", calendarPhaseContentKey(calendarPhaseLabelForDay(day, calendar.days))),
         ...cmsSurfaceKeys.calendarDay("continuation", day.moonSign)
-      ])
+      ]),
+      ...(viewMode === "month" ? calendarMonthlyOverviewContentKeys(calendar) : [])
     ].filter((contentKey) => !fallbackArchitectureV3AuthoredContentForKey(contentKey));
     const firstDate = visibleDays[0]?.dateKey ?? selectedDateKey;
     const lastDate = visibleDays.at(-1)?.dateKey ?? selectedDateKey;
@@ -2275,6 +2277,11 @@ export function LunarCalendar({
       onGeneratedContentRequest?.(generatedContentRequest);
     }
   }, [generatedContentRequestSignature, onGeneratedContentRequest]);
+
+  const monthlyOverview = useMemo(() => {
+    if (viewMode !== "month" || !calendar) return null;
+    return resolveCalendarMonthlyOverview(calendar, generatedContent);
+  }, [calendar, generatedContent, viewMode, contentVersion]);
 
   const weeklyDayWriteups = useMemo(() => {
     if (!calendar) {
@@ -3320,6 +3327,12 @@ export function LunarCalendar({
 
       {viewMode === "month" && (
         <div className="lunar-calendar-layout">
+          {monthlyOverview && (
+            <section className="lunar-month-overview" aria-labelledby="lunar-month-overview-heading">
+              <h2 className="sr-only" id="lunar-month-overview-heading">Monthly overview</h2>
+              {monthlyOverview.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+            </section>
+          )}
           <div className="lunar-calendar-month-primary">
             <section className="lunar-calendar-grid-panel" aria-label={`${formatMonthLabel(visibleMonth)} lunar grid`}>
             <div className="lunar-calendar-legend" aria-label="Calendar event legend">
