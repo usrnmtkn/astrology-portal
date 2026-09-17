@@ -51,6 +51,15 @@ export function calendarMoonPassages(rows: CalendarPreviewRow[], sign: string) {
   }).sort((a, b) => a.content_key.localeCompare(b.content_key));
 }
 
+function calendarMoonFocus(row?: CalendarPreviewRow) {
+  if (!row) return undefined;
+  const sections = row.sections as { packageRecord?: { focus?: unknown } } | null;
+  const snapshot = row.source_snapshot;
+  const facts = row.facts;
+  const focus = [sections?.packageRecord?.focus, snapshot?.focus, facts?.focus].find(value => typeof value === "string" && value.trim());
+  return typeof focus === "string" ? focus.trim() : undefined;
+}
+
 export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, moonKey }: {
   sunSign: string; moonSign: string; calculation?: CalendarPreviewCalculation; rows: CalendarPreviewRow[]; moonKey?: string;
 }) {
@@ -69,6 +78,12 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   const moonPassages = calendarMoonPassages(rows, moonSign);
   const moon = moonPassages.find(row => row.content_key === moonKey) ?? moonPassages[0];
   put("moonWriteup", moon?.body ?? undefined, "copy", moon?.content_key);
+  put("moonFocus", calendarMoonFocus(moon), "copy", moon?.content_key);
+  if (!calculation && moonSign) {
+    put("mondayMoonSign", moonSign, "example");
+    put("mondayWriteup", moon?.body ?? undefined, "copy", moon?.content_key);
+    put("mondayMoonFocus", calendarMoonFocus(moon), "copy", moon?.content_key);
+  }
   const seasonCopy = (prefix: string, sign: string) => {
     for (const [name, family] of [["zodiacSeason", "zodiac-season"], ["zodiacSeasonPolarAxis", "zodiac-season-polar-axis"]]) {
       const key = `fallback-hook/${family}/${sign.toLowerCase()}`;
@@ -158,14 +173,148 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
       const weekday = new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone }).format(new Date(day.date)).toLowerCase();
       if (days.length !== 7) continue;
       put(`${weekday}Date`, formatDate(day.date), "fact");
-      put(`${weekday}MoonSign`, day.moonSign, "fact");
+      put(`${weekday}MoonSign`, calendarPreviewSign(day.moonSign) || day.moonSign, "fact");
       put(`${weekday}Timing`, timedEvents(day.events) || `Moon in ${day.moonSign} at noon · ${day.moonPhase}`, "fact");
       const passage = calendarMoonPassages(rows, day.moonSign)[0];
       put(`${weekday}Writeup`, passage?.body ?? undefined, "copy", passage?.content_key);
+      put(`${weekday}MoonFocus`, calendarMoonFocus(passage), "copy", passage?.content_key);
     }
   }
   put("keyDates", timedEvents(events), "fact");
   return values;
+}
+
+export const calendarContextualVariableNames = [
+  "signTitle", "entryDate", "exitDate", "eventDate", "eventDescription",
+  "newMoonSign", "newMoonDate", "fullMoonSign", "fullMoonDate",
+  "hasNewMoon", "hasFullMoon", "hasSolarEclipse", "hasLunarEclipse",
+  "hasSeasonTransition", "placementFocus", "placementOpportunity", "placementChallenge", "placementPractice"
+] as const;
+
+const contextualNames = calendarContextualVariableNames;
+
+function calendarFact(text: string | undefined, kind: CalendarPreviewValue["kind"] = "fact"): CalendarPreviewValue | undefined {
+  return text ? { text, kind } : undefined;
+}
+
+function calendarTimedEvents(calculation: CalendarPreviewCalculation) {
+  return calculation.events.filter(event => event.phase !== "retrograde-passage" && event.type === "lunation" && (event.primary || event.eclipseType));
+}
+
+function calendarNewMoonEvents(calculation: CalendarPreviewCalculation) {
+  return calendarTimedEvents(calculation).filter(event => event.eclipseType === "solar" || event.glyph === "●");
+}
+
+function calendarFullMoonEvents(calculation: CalendarPreviewCalculation) {
+  return calendarTimedEvents(calculation).filter(event => event.eclipseType === "lunar" || event.glyph === "○");
+}
+
+function calendarClearContext(values: Record<string, CalendarPreviewValue>) {
+  const next = { ...values };
+  for (const name of contextualNames) delete next[name];
+  return next;
+}
+
+function calendarAssignFacts(values: Record<string, CalendarPreviewValue>, facts: Record<string, CalendarPreviewValue | undefined>) {
+  const next = { ...values };
+  for (const [name, value] of Object.entries(facts)) {
+    if (value) next[name] = value;
+  }
+  return next;
+}
+
+function calendarSeasonContext(
+  values: Record<string, CalendarPreviewValue>,
+  visit: { sign: string; startsAt: string; endsAt: string } | undefined,
+  calculation: CalendarPreviewCalculation | undefined,
+  aliases: Record<string, string | undefined>
+) {
+  const next = calendarClearContext(values);
+  const sign = calendarPreviewSign(visit?.sign ?? "");
+  const kind = calculation ? "fact" as const : "example" as const;
+  const formatTime = calculation
+    ? (value: string) => new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZoneName: "short", timeZone: calculation.timeZone }).format(new Date(value))
+    : undefined;
+  return calendarAssignFacts(next, {
+    signTitle: calendarFact(sign, kind),
+    seasonSign: calendarFact(sign, kind),
+    entryDate: formatTime && visit?.startsAt ? calendarFact(formatTime(visit.startsAt)) : undefined,
+    exitDate: formatTime && visit?.endsAt ? calendarFact(formatTime(visit.endsAt)) : undefined,
+    placementFocus: calendarFact(aliases.placementFocus, "copy"),
+    placementOpportunity: calendarFact(aliases.placementOpportunity, "copy"),
+    placementChallenge: calendarFact(aliases.placementChallenge, "copy"),
+    placementPractice: calendarFact(aliases.placementPractice, "copy")
+  });
+}
+
+function calendarLunationContext(values: Record<string, CalendarPreviewValue>, event: CalendarPreviewCalculation["events"][number], calculation: CalendarPreviewCalculation) {
+  const next = calendarClearContext(values);
+  const sign = calendarPreviewSign(event.sign ?? "");
+  const formatDate = (value: string) => new Intl.DateTimeFormat("en-US", { dateStyle: "full", timeZone: calculation.timeZone }).format(new Date(value));
+  const date = formatDate(event.startsAt);
+  const isSolar = event.eclipseType === "solar";
+  const isLunar = event.eclipseType === "lunar";
+  const isNew = isSolar || event.glyph === "●";
+  return calendarAssignFacts(next, {
+    signTitle: calendarFact(sign),
+    eventDate: calendarFact(date),
+    eventDescription: calendarFact(event.title.replace(/\.+$/u, "")),
+    newMoonSign: isNew ? calendarFact(sign) : undefined,
+    newMoonDate: isNew ? calendarFact(date) : undefined,
+    fullMoonSign: isNew ? undefined : calendarFact(sign),
+    fullMoonDate: isNew ? undefined : calendarFact(date),
+    hasNewMoon: isNew ? calendarFact("yes") : undefined,
+    hasFullMoon: isNew ? undefined : calendarFact("yes"),
+    hasSolarEclipse: isSolar ? calendarFact("yes") : undefined,
+    hasLunarEclipse: isLunar ? calendarFact("yes") : undefined
+  });
+}
+
+/** Same template names, different calculated context per overview passage. */
+export function calendarOverviewFieldContexts(
+  field: string,
+  values: Record<string, CalendarPreviewValue>,
+  calculation?: CalendarPreviewCalculation
+): Record<string, CalendarPreviewValue>[] {
+  const seasons = calendarPreviewSeasons(calculation);
+  if (field === "seasonOpening") {
+    const visit = seasons.opening ?? (values.openingSeasonSign?.text || values.signTitle?.text
+      ? { sign: values.openingSeasonSign?.text || values.signTitle?.text || "", startsAt: "", endsAt: "" }
+      : undefined);
+    return [calendarSeasonContext(values, visit, calculation, {
+      placementFocus: values.openingSeasonFocus?.text ?? values.placementFocus?.text,
+      placementOpportunity: values.openingSeasonOpportunity?.text ?? values.placementOpportunity?.text
+    })];
+  }
+  if (field === "seasonOverview") {
+    return [calendarSeasonContext(values, seasons.closing, calculation, {
+      placementFocus: values.closingSeasonFocus?.text ?? values.placementFocus?.text,
+      placementChallenge: values.closingSeasonChallenge?.text ?? values.placementChallenge?.text,
+      placementPractice: values.closingSeasonPractice?.text ?? values.placementPractice?.text
+    })];
+  }
+  if (field === "newMoonOverview" && calculation) {
+    const events = calendarNewMoonEvents(calculation);
+    return events.length ? events.map(event => calendarLunationContext(values, event, calculation)) : [calendarClearContext(values)];
+  }
+  if (field === "fullMoonOverview" && calculation) {
+    const events = calendarFullMoonEvents(calculation);
+    return events.length ? events.map(event => calendarLunationContext(values, event, calculation)) : [calendarClearContext(values)];
+  }
+  return [values];
+}
+
+export function calendarResolveOverviewField(
+  field: string,
+  body: string,
+  values: Record<string, CalendarPreviewValue>,
+  templates: Record<string, string> = {},
+  calculation?: CalendarPreviewCalculation
+) {
+  return calendarOverviewFieldContexts(field, values, calculation)
+    .map(context => calendarTemplateSegments(body, context, templates, [field]).map(segment => segment.text).join(""))
+    .filter(text => text.trim())
+    .join("\n\n");
 }
 
 /** Replace known named slots once; overview templates can opt into bounded recursion. */

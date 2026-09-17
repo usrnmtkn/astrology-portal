@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { skyForecastTemplates } from "../../apps/admin/src/skyForecastTemplates";
-import { calendarMonthlyEditorialPattern } from "../../apps/admin/src/calendarOverviewTemplate";
+import { calendarMonthlyCompatibilityPattern, calendarMonthlyEditorialPattern } from "../../apps/admin/src/calendarOverviewTemplate";
 import { lunarSigns } from "../../apps/admin/src/lunarCalendarContent";
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 
@@ -129,12 +129,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(editor.getByLabel("Template purpose (optional)", { exact: true })).toHaveValue(notes);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByRole("tablist", { name: "Calendar Write-ups workspaces" }).getByRole("tab", { name: "Monthly Sky" }).click();
-    await expect(preview.getByLabel("Rendered Calendar template")).toContainText("{{monthlyOverview}}");
-    await expect(rendered).toContainText(seasonBody("leo"));
-    await expect(rendered).toContainText(axisBody("leo"));
-    await expect(rendered).toContainText("Zodiac Seasons");
-    await expect(rendered).toContainText("Lunar Cycle");
-    await expect(rendered).toContainText("Planetary Changes");
+    await expect(preview.getByLabel("Rendered Calendar template")).toContainText("{{seasonOpening}}");
+    await expect(preview.getByLabel("Rendered Calendar template")).toContainText("{{monthlyIntegration}}");
+    await expect(rendered).not.toContainText("Zodiac Seasons");
+    await expect(rendered).not.toContainText("Lunar Cycle");
+    await expect(rendered).not.toContainText("Planetary Changes");
+    await expect(preview.getByRole("heading", { name: "Template preview" }).evaluate(style)).toEqual(reference);
     await preview.getByRole("tab", { name: "Variables", exact: true }).click();
     expect(await preview.getByLabel("Calendar preview variables").locator('[data-variable-name="zodiacSeason"]').evaluate(colorStyle)).toEqual(seasonColor);
     await preview.getByRole("tab", { name: "Preview", exact: true }).click();
@@ -258,7 +258,7 @@ test("Monthly overview structure is an explicit draft change and preserves saved
   const editor = page.getByRole("dialog", { name: "Generated content editor" });
   page.once("dialog", dialog => dialog.accept());
   await editor.getByRole("button", { name: "Use overview structure", exact: true }).click();
-  await expect(editor.getByLabel("Template pattern", { exact: true })).toHaveValue(monthly.body);
+  await expect(editor.getByLabel("Template pattern", { exact: true })).toHaveValue(calendarMonthlyCompatibilityPattern());
   await editor.getByLabel("Monthly overview", { exact: true }).fill("Fixture monthly opening.\n\nFixture monthly final sentence.");
   await editor.getByLabel("Season transition", { exact: true }).fill("Fixture season transition. ");
   await editor.getByRole("button", { name: "Insert {{zodiacSeasonPolarAxis}} into Calendar template", exact: true }).click();
@@ -322,6 +322,9 @@ test("Monthly editorial structure is opt-in and keeps saved overview passages", 
   page.once("dialog", dialog => dialog.accept());
   await editor.getByRole("button", { name: "Use invitation opening starter", exact: true }).click();
   await expect(editor.getByLabel("Seasonal opening", { exact: true })).toHaveValue(/\{\{placementFocus\}\}/);
+  await editor.getByLabel("New Moon overview", { exact: true }).fill("The New Moon in ");
+  await editor.getByRole("button", { name: "Insert {{signTitle}} into Calendar template", exact: true }).click();
+  await expect(editor.getByLabel("New Moon overview", { exact: true })).toHaveValue("The New Moon in {{signTitle}}");
   await expect(editor.getByLabel("Monthly overview", { exact: true })).toHaveValue("Fixture saved monthly overview.");
   expect(state.writes).toEqual([]);
   await editor.getByRole("button", { name: "Save", exact: true }).click();
@@ -329,10 +332,33 @@ test("Monthly editorial structure is opt-in and keeps saved overview passages", 
   expect(state.writes[0].body).toBe(calendarMonthlyEditorialPattern());
   expect(state.writes[0].sections.calendarOverview.monthlyOverview).toBe("Fixture saved monthly overview.");
   expect(state.writes[0].sections.calendarOverview.monthlyIntegration).toBe("Fixture complete saved ending.");
+  expect(state.writes[0].sections.calendarOverview.newMoonOverview).toBe("The New Moon in {{signTitle}}");
   await editor.getByRole("button", { name: "Close", exact: true }).click();
   await preview.getByRole("tab", { name: "Preview", exact: true }).click();
   const rendered = preview.getByLabel("Rendered Calendar template");
   await expect(rendered).toContainText("{{placementFocus}}");
   await expect(rendered).not.toContainText("Fixture saved monthly overview.");
+});
+
+test("Weekly overview starter uses Monday Moon sign and passage", async ({ page }) => {
+  const state = await fixture(page);
+  const template = state.rows.find(row => row.content_key === weekly.contentKey);
+  template.body = `{{weeklyOverview}}\n\n${pattern}`;
+  const moon = state.rows.find(row => row.content_key === "authored/calendar-weekly-moon/scorpio");
+  moon.source_snapshot.focus = "Necessary endings, emotional honesty, powerful truth";
+  await page.goto("/admin/content#calendar-writeups?view=weekly-sky");
+  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await preview.getByLabel("Preview source").selectOption("signs");
+  await preview.getByLabel("Preview Sun sign").selectOption("Capricorn");
+  await preview.getByLabel("Preview Moon sign").selectOption("Scorpio");
+  await page.getByRole("button", { name: "Open weekly template", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  await expect(editor.getByLabel("Weekly overview", { exact: true })).toHaveValue("");
+  await editor.getByRole("button", { name: "Use weekly overview starter", exact: true }).click();
+  await expect(editor.getByLabel("Weekly overview", { exact: true })).toHaveValue(/The Moon is in \{\{mondayMoonSign\}\}, so the emotional tone for this week is:/);
+  await expect(editor.getByLabel("Weekly overview", { exact: true })).toHaveValue(/\{\{mondayWriteup\}\}/);
+  await expect(preview.getByLabel("Rendered Calendar template")).toContainText("The Moon is in Scorpio, so the emotional tone for this week is:");
+  await expect(preview.getByLabel("Rendered Calendar template")).toContainText(moonBody("scorpio"));
+  expect(state.writes).toEqual([]);
 });
 

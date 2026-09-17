@@ -4,19 +4,21 @@
 
 This installs the monthly overview editorial layout into the existing Content Studio Monthly Sky workspace without converting saved writing or publishing a reader edition.
 
+Contextual facts: `signTitle`, `entryDate`, `exitDate`, `eventDate`, and `eventDescription` resolve from the passage they appear in. Seasonal opening uses the opening Sun visit; season transition uses the incoming visit; New Moon and Full Moon passages repeat once per qualifying event, including the matching eclipse. Authored phrases stay empty until written.
+
 Included:
 
 - Step 2a/2b phrase and nested-template definition validation, resolved in Calendar preview only when names are not reserved calculated facts or overview fields;
-- opt-in **Use monthly editorial structure**, separate from the existing overview structure;
+- unsaved Monthly Sky starters use the editorial layout; **Use overview structure** restores the previous labeled compatibility pattern;
 - new monthly fields for seasonal opening, selected planetary highlights, independent New Moon and Full Moon writing, and optional lunation connection;
 - three alternative seasonal-opening starters and lunation/eclipse starters;
 - calculated `hasNewMoon`, `hasFullMoon`, eclipse flags, `entryDate` / `exitDate` from the opening Sun visit, and `hasSeasonTransition` from a closing ingress.
 
 Deliberate boundaries:
 
-- default Monthly Sky pattern, labels `Monthly overview` / `Season transition` / `Lunar cycle` / `Planetary changes` / `Closing passage`, and Step 3 starters stay for compatibility;
+- editor field labels `Monthly overview` / `Season transition` / `Lunar cycle` / `Planetary changes` / `Closing passage` stay for compatibility; the unsaved starter pattern no longer prints those as preview section labels;
 - `seasonOverview` remains the existing saved season-transition field; the spec opening uses the new `seasonOpening` field so saved transition prose is not remapped;
-- lunation starters use `newMoonDate` / `newMoonSign` and `fullMoonDate` / `fullMoonSign` because the current preview resolver is flat and cannot give `signTitle` / `eventDate` a per-section context yet;
+- monthly editorial starters and insert buttons use `signTitle`, `entryDate`, `exitDate`, `eventDate`, and `eventDescription`; labeled `newMoonSign` / `fullMoonSign` facts remain only so older saved compatibility writing still resolves;
 - highlight selection is the presence of authored `planetaryHighlights` writing, not automatic ranking of every calculated event;
 - dignity meaning, edition storage, Memory Map / AI writing, horoscope embedding, and reader publication are not included;
 - PR 874 remains the held documentation source and is not merged by this change.

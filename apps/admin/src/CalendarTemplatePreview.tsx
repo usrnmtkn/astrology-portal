@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { PageLoading } from "../../web/src/components/PageLoading";
 import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
 import { lunarSigns, lunarContentIdentity } from "./lunarCalendarContent";
@@ -7,7 +8,7 @@ import { calendarOverviewFields, calendarOverviewPattern, calendarOverviewWritin
 import { calendarTemplateDefinitionInputs, calendarTemplateDefinitions } from "./calendarTemplateDefinitions";
 import CalendarVariableText from "./CalendarVariableText";
 import type { CalendarPreviewCalculation } from "./calendarPreviewCalculation";
-import { calendarMoonPassages, calendarPreviewSeasons, calendarPreviewSign, calendarPreviewSourceKeys, calendarPreviewValues, calendarTemplateSegments, type CalendarPreviewRow, type CalendarPreviewValue } from "./calendarPreviewModel";
+import { calendarMoonPassages, calendarPreviewSeasons, calendarPreviewSign, calendarPreviewSourceKeys, calendarPreviewValues, calendarResolveOverviewField, calendarTemplateSegments, calendarContextualVariableNames, type CalendarPreviewRow, type CalendarPreviewValue } from "./calendarPreviewModel";
 
 export type CalendarTemplatePreviewProps = {
   period: SkyForecastPeriod;
@@ -91,14 +92,15 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
   const leafValues: Record<string, CalendarPreviewValue> = { ...phraseValues, ...baseValues };
   const values: Record<string, CalendarPreviewValue> = { ...leafValues };
   for (const field of overviewFields) {
-    if (writing[field.name]?.trim()) values[field.name] = { text: calendarTemplateSegments(writing[field.name], leafValues, nestedTemplates, [field.name]).map(segment => segment.text).join(""), kind: "copy", sourceKey: template.contentKey };
+    if (writing[field.name]?.trim()) values[field.name] = { text: calendarResolveOverviewField(field.name, writing[field.name], leafValues, nestedTemplates, calculation), kind: "copy", sourceKey: template.contentKey };
   }
   if (writing.planetaryHighlights?.trim()) values.hasPlanetaryHighlights = { text: "yes", kind: "copy", sourceKey: template.contentKey };
   if (writing.lunationConnection?.trim()) values.hasLunationConnection = { text: "yes", kind: "copy", sourceKey: template.contentKey };
   const passages = calendarMoonPassages(sources ?? [], moonSign);
   const segments = calendarTemplateSegments(pattern, values, customTemplates);
   const missing = [...new Set([...segments.map(segment => segment.text).join("").matchAll(/\{\{\s*([\w.]+)\s*\}\}/gu)].map(match => match[1]))];
-  const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...overviewFields.map(field => field.name)])];
+  const availableNames = [...new Set([...calendarSeasonVariables, ...Object.keys(values), ...overviewFields.map(field => field.name)])]
+    .filter(name => !calendarContextualVariableNames.includes(name as typeof calendarContextualVariableNames[number]));
   const ready = Boolean(sources) && (mode === "signs" || Boolean(calculation));
   return <section className="admin-template-reader-drilldown studio-surface" aria-label="Calendar template preview">
     <header className="admin-section-heading-row"><div><h4>Template preview</h4><p>Choose signs or a date to preview the template. Open the template to write the overview passages and insert zodiac season variables.</p></div></header>
@@ -115,11 +117,12 @@ export default function CalendarTemplatePreview({ period, rows, loadRows, draft,
     <div className="admin-new-actions"><StudioButton onClick={() => { setMode("ephemeris"); setLive(true); setDate(dateInput(new Date())); setAttempt(value => value + 1); }}>Use current sky</StudioButton><StudioButton onClick={() => setAttempt(value => value + 1)}>Refresh preview</StudioButton></div>
     <p role="status">{mode === "signs" ? "Example signs · degrees and event timing are unavailable in this mode." : calculation ? `${live ? "Live sky" : "Selected sky"} · ${values.asOf?.text} · ${timeZone} · Swiss Ephemeris · tropical, geocentric` : calculationError ? "Calculation unavailable." : "Calculating ephemeris facts…"}</p>
     {(calculationError || sourceError) && <p role="alert">{calculationError || sourceError} Use Refresh preview to retry.</p>}
-    {!sources && !sourceError && <p role="status">Loading the full saved template and matching passages…</p>}
+    {!sources && !sourceError && <PageLoading message="Loading the full saved template and matching passages…" />}
     <StudioTabs label="Calendar template views" value={view} onValueChange={setView} tabs={[{ value: "preview", label: "Preview" }, { value: "pattern", label: "Template pattern" }, { value: "variables", label: "Variables" }]}>
       {view === "pattern" ? <div className="admin-composition-preview-field"><span>{draft?.contentKey === template.contentKey ? "Open editor pattern" : saved ? "Saved template pattern" : "Starter template pattern"}</span><p className="admin-calendar-template-text" aria-label="Calendar template pattern">{sources ? <CalendarVariableText text={pattern} /> : "Loading saved template…"}</p></div>
         : view === "variables" ? <div className="admin-editor-guidance admin-calendar-variables"><p>Select Edit passage to change reusable writing, or Write passage to fill an overview field. Changes appear in the preview while you edit; Save keeps them. Dates and positions update from the ephemeris.</p>
           {calculation && !seasons.closing && <p role="note">No zodiac season change in this period. Closing-season variables are not needed.</p>}
+          <p>Names such as signTitle, entryDate, exitDate, and eventDate follow the passage they appear in: the opening season, incoming season, New Moon, Full Moon, or eclipse.</p>
           <table className="admin-data-table" aria-label="Calendar preview variables"><thead><tr><th scope="col">Variable</th><th scope="col">Writing or value</th><th scope="col">Edit</th></tr></thead><tbody>{availableNames.filter(name => !calculation || seasons.closing || !/^(closing|seasonChangeDate)/u.test(name)).map(name => {
           const value = values[name];
           const sourceKey = value?.sourceKey ?? calendarSeasonSourceKey(name, sunSign, values.openingSeasonSign?.text ?? "", values.closingSeasonSign?.text ?? "");

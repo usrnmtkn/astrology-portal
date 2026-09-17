@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { mergeContentInventory } from "../apps/admin/src/contentStudioState.ts";
-import { calendarMonthlyEditorialPattern, calendarOverviewFields, calendarOverviewWriting } from "../apps/admin/src/calendarOverviewTemplate.ts";
-import { calendarPreviewValues, calendarTemplateSegments } from "../apps/admin/src/calendarPreviewModel.ts";
+import { calendarMonthlyCompatibilityPattern, calendarMonthlyEditorialPattern, calendarOverviewFields, calendarOverviewPattern, calendarOverviewWriting } from "../apps/admin/src/calendarOverviewTemplate.ts";
+import { calendarPreviewValues, calendarResolveOverviewField, calendarTemplateSegments } from "../apps/admin/src/calendarPreviewModel.ts";
 import { calendarTemplateDefinitionInputs, calendarTemplateDefinitions, validateCalendarTemplateDefinitions } from "../apps/admin/src/calendarTemplateDefinitions.ts";
 import { monthlyPhraseVariable, monthlyPhraseVariables } from "../src/content-studio/monthlyPhraseVariables.ts";
 const full = { id: "one", updated_at: "2026-09-07T10:00:01Z", body: "Saved owner copy", sections: { packageDraft: { body: "Revision" } } };
@@ -39,7 +39,12 @@ const monthlyFields = calendarOverviewFields("monthly-sky");
 const monthlyStarter = monthlyFields.find(field => field.name === "monthlyOverview")?.starter;
 const seasonStarter = monthlyFields.find(field => field.name === "seasonOverview")?.starter;
 assert.ok(monthlyStarter && seasonStarter, "Monthly opening and season overview must expose opt-in sentence-template starters.");
-assert.equal(calendarOverviewFields("weekly-sky").some(field => field.starter), false, "Step 3 must not change weekly authoring.");
+const weeklyStarter = calendarOverviewFields("weekly-sky").find(field => field.name === "weeklyOverview")?.starter;
+assert.ok(weeklyStarter, "Weekly overview must expose an opt-in Monday Moon-tone starter.");
+assert.match(weeklyStarter, /\{\{mondayMoonSign\}\}/);
+assert.match(weeklyStarter, /\{\{mondayWriteup\}\}/);
+assert.equal(weeklyStarter.includes("{{weeklyFocus}}"), false);
+assert.equal(calendarOverviewWriting({ calendarOverview: { weeklyOverview: "Existing owner weekly passage" } }).weeklyOverview, "Existing owner weekly passage", "Existing weekly prose remains until the owner opts into a starter.");
 assert.equal(monthlyStarter.includes("{{monthlyFocus}}"), false, "The monthly starter must not reintroduce the catch-all monthlyFocus.");
 assert.match(monthlyStarter, /\{\{#hasMonthlyTheme\}\}/);
 assert.match(monthlyStarter, /\{\{#hasSecondaryMonthlyTheme\}\}/);
@@ -50,10 +55,20 @@ const monthlyFieldNames = monthlyFields.map(field => field.name);
 assert.deepEqual(monthlyFieldNames.slice(0, 5), ["monthlyOverview", "seasonOverview", "lunarOverview", "transitOverview", "monthlyIntegration"]);
 assert.ok(monthlyFieldNames.includes("seasonOpening") && monthlyFieldNames.includes("newMoonOverview") && monthlyFieldNames.includes("fullMoonOverview"));
 assert.equal(calendarOverviewFields("weekly-sky").some(field => field.name === "seasonOpening"), false, "Weekly authoring must not gain monthly editorial fields.");
+assert.equal(calendarOverviewPattern("monthly-sky"), calendarMonthlyEditorialPattern(), "Unsaved Monthly Sky starters use the editorial layout.");
+assert.match(calendarMonthlyCompatibilityPattern(), /Monthly Overview/);
 assert.equal(calendarMonthlyEditorialPattern().includes("Monthly Overview"), false, "The editorial layout must not add the compatibility section labels.");
 assert.match(calendarMonthlyEditorialPattern(), /\{\{seasonOpening\}\}/);
 assert.match(calendarMonthlyEditorialPattern(), /\{\{#hasNewMoon\}\}/);
 assert.match(monthlyFields.find(field => field.name === "seasonOpening")?.starters?.map(starter => starter.value).join("\n") ?? "", /\{\{placementFocus\}\}/);
+const monthlyStarterBodies = [
+  monthlyStarter,
+  seasonStarter,
+  ...(monthlyFields.find(field => field.name === "seasonOpening")?.starters?.map(starter => starter.value) ?? []),
+  ...(monthlyFields.find(field => field.name === "newMoonOverview")?.starters?.map(starter => starter.value) ?? []),
+  ...(monthlyFields.find(field => field.name === "fullMoonOverview")?.starters?.map(starter => starter.value) ?? [])
+].join("\n");
+assert.equal(/\{\{(newMoonSign|newMoonDate|fullMoonSign|fullMoonDate|openingSeasonSign|closingSeasonSign|seasonChangeDate)\}\}/u.test(monthlyStarterBodies), false, "Monthly editorial starters use contextual names, not labeled lunation or season facts.");
 assert.equal(monthlyFields.find(field => field.name === "seasonOpening")?.starters?.length, 3, "The three seasonal openings are alternatives, not stacked paragraphs.");
 assert.equal(calendarOverviewWriting({ calendarOverview: { monthlyOverview: "Existing owner passage", seasonOpening: "" } }).monthlyOverview, "Existing owner passage");
 
@@ -124,6 +139,64 @@ assert.ok(lunationPreview.entryDate?.text);
 assert.ok(lunationPreview.exitDate?.text);
 assert.notEqual(lunationPreview.entryDate?.text, lunationPreview.exitDate?.text, "Season dates must come from the opening visit, not the calendar month.");
 
+const lunationCalculation = {
+  sky: { generatedAt: "2026-09-15T16:00:00.000Z", positions: [], moonPhase: "Waxing" },
+  days: monthDays,
+  events: [
+    { id: "nm", type: "lunation", title: "New Moon in Virgo", startsAt: "2026-09-07T16:00:00.000Z", dateKey: "2026-09-07", glyph: "●", primary: true, sign: "Virgo" },
+    { id: "nm2", type: "lunation", title: "New Moon in Cancer", startsAt: "2026-09-08T16:00:00.000Z", dateKey: "2026-09-08", glyph: "●", primary: true, sign: "Cancer" },
+    { id: "fm", type: "lunation", title: "Full Moon Lunar Eclipse in Pisces", startsAt: "2026-09-21T16:00:00.000Z", dateKey: "2026-09-21", glyph: "○", primary: true, sign: "Pisces", eclipseType: "lunar" }
+  ],
+  seasonIngresses: [
+    { id: "leo", type: "ingress", title: "Sun enters Leo", startsAt: "2026-07-22T12:00:00.000Z", dateKey: "2026-07-22", glyph: "☉", primary: true, planet: "Sun", toSign: "Leo" },
+    { id: "virgo", type: "ingress", title: "Sun enters Virgo", startsAt: "2026-08-22T12:00:00.000Z", dateKey: "2026-08-22", glyph: "☉", primary: true, planet: "Sun", toSign: "Virgo" },
+    { id: "libra", type: "ingress", title: "Sun enters Libra", startsAt: "2026-09-22T16:00:00.000Z", dateKey: "2026-09-22", glyph: "☉", primary: true, planet: "Sun", toSign: "Libra" },
+    { id: "scorpio", type: "ingress", title: "Sun enters Scorpio", startsAt: "2026-10-23T12:00:00.000Z", dateKey: "2026-10-23", glyph: "☉", primary: true, planet: "Sun", toSign: "Scorpio" }
+  ],
+  timeZone: "America/New_York"
+};
+const openingContext = calendarResolveOverviewField("seasonOpening", "The Sun moves through {{signTitle}}.", lunationPreview, {}, lunationCalculation);
+assert.match(openingContext, /Virgo/);
+assert.equal(/Libra/.test(openingContext), false, "Opening-season signTitle must not use the incoming ingress.");
+const incomingContext = calendarResolveOverviewField("seasonOverview", "The Sun enters {{signTitle}}.", lunationPreview, {}, lunationCalculation);
+assert.match(incomingContext, /Libra/);
+assert.equal(/Virgo/.test(incomingContext), false, "Season transition signTitle must use the incoming visit.");
+const newMoonContext = calendarResolveOverviewField("newMoonOverview", "{{signTitle}}{{#hasSolarEclipse}} solar{{/hasSolarEclipse}}", lunationPreview, {}, lunationCalculation);
+assert.match(newMoonContext, /Virgo/);
+assert.match(newMoonContext, /Cancer/);
+assert.equal(/solar/.test(newMoonContext), false);
+assert.equal(/Pisces/.test(newMoonContext), false, "New Moon passages must not inherit the Full Moon sign.");
+const fullMoonContext = calendarResolveOverviewField("fullMoonOverview", "{{signTitle}}{{#hasLunarEclipse}} eclipse{{/hasLunarEclipse}}{{#hasSolarEclipse}} solar{{/hasSolarEclipse}}", lunationPreview, {}, lunationCalculation);
+assert.match(fullMoonContext, /Pisces/);
+assert.match(fullMoonContext, /eclipse/);
+assert.equal(/solar/.test(fullMoonContext), false, "Full Moon context must not keep a solar-eclipse flag.");
+assert.equal(/Virgo/.test(fullMoonContext), false);
+
+const weeklyDays = ["11", "12", "13", "14", "15", "16", "17"].map(day => ({
+  date: `2027-01-${day}T17:00:00.000Z`, dateKey: `2027-01-${day}`,
+  moonSign: day === "11" ? "Scorpio" : "Sagittarius", moonPhase: "Waxing", events: []
+}));
+const weeklyMoonRow = {
+  id: "moon-scorpio", content_key: "authored/calendar-weekly-moon/scorpio", body: "Scorpio Moon complete weekly passage.",
+  status: "LIVE", lane: "serving", source_snapshot: { content_role: "full_copy", review_status: "approved_reuse", focus: "Necessary endings, emotional honesty, powerful truth" }
+};
+const weeklyPreview = calendarPreviewValues({
+  sunSign: "Capricorn", moonSign: "Scorpio", rows: [weeklyMoonRow],
+  calculation: { sky: { generatedAt: "2027-01-12T17:00:00.000Z", positions: [], moonPhase: "Waxing" }, days: weeklyDays, events: [], seasonIngresses: [], timeZone: "UTC" }
+});
+assert.equal(weeklyPreview.mondayMoonSign?.text, "Scorpio");
+assert.equal(weeklyPreview.mondayWriteup?.text, weeklyMoonRow.body);
+assert.equal(weeklyPreview.mondayMoonFocus?.text, "Necessary endings, emotional honesty, powerful truth");
+const signsPreview = calendarPreviewValues({ sunSign: "Capricorn", moonSign: "Scorpio", rows: [weeklyMoonRow] });
+assert.equal(signsPreview.mondayMoonSign?.text, "Scorpio", "Choose-signs mode uses the selected Moon as Monday's stand-in.");
+assert.equal(signsPreview.mondayWriteup?.text, weeklyMoonRow.body);
+const renderedWeeklyStarter = calendarTemplateSegments(weeklyStarter, {
+  mondayMoonSign: { text: "Scorpio", kind: "fact" },
+  mondayWriteup: { text: weeklyMoonRow.body, kind: "copy" }
+}).map(segment => segment.text).join("");
+assert.match(renderedWeeklyStarter, /The Moon is in Scorpio, so the emotional tone for this week is:/);
+assert.match(renderedWeeklyStarter, /Scorpio Moon complete weekly passage\./);
+
 const renderedMonthlyStarter = calendarTemplateSegments(monthlyStarter, nestedValues({
   hasMonthlyTheme: "yes", monthName: "September", primaryMonthlyThemeFocus: "the primary theme", primaryMonthlyThemeExperience: "the plan needing revision",
   hasSecondaryMonthlyTheme: "yes", secondaryMonthlyThemeFocus: "the second theme", secondaryMonthlyThemeExperience: "another concern becoming more visible",
@@ -133,12 +206,13 @@ const renderedMonthlyStarter = calendarTemplateSegments(monthlyStarter, nestedVa
 assert.match(renderedMonthlyStarter, /September brings attention to the primary theme\. You may notice the plan needing revision\./);
 assert.match(renderedMonthlyStarter, /It also brings attention to the second theme\. You may notice another concern becoming more visible\./);
 assert.match(renderedMonthlyStarter, /On September 15, Neptune sextiles Pluto\./);
-const renderedSeasonStarter = calendarTemplateSegments(seasonStarter, nestedValues({
-  openingSeasonSign: "Virgo", openingSeasonFocus: "daily rituals and systems", openingSeasonOpportunity: "strengthen what works",
-  closingSeasonSign: "Libra", seasonChangeDate: "September 22", closingSeasonFocus: "cooperation and relationships",
-  closingSeasonChallenge: "making agreement more important than honesty", closingSeasonPractice: "say what needs to change"
-})).map(segment => segment.text).join("");
-assert.match(renderedSeasonStarter, /The Sun in Virgo turns our attention to daily rituals and systems, helping us strengthen what works\./);
-assert.match(renderedSeasonStarter, /When the Sun enters Libra on September 22/);
+const renderedSeasonStarter = calendarResolveOverviewField("seasonOverview", seasonStarter, nestedValues({
+  placementFocus: "cooperation and relationships",
+  placementChallenge: "making agreement more important than honesty",
+  placementPractice: "say what needs to change"
+}), {}, lunationCalculation);
+assert.match(renderedSeasonStarter, /When the Sun enters Libra on/);
+assert.match(renderedSeasonStarter, /attention turns toward cooperation and relationships/);
+assert.equal(/Virgo/.test(renderedSeasonStarter), false, "Season transition starter must use the incoming visit, not the opening season.");
 
-console.log("PASS: hydrated editor preservation, recursive Calendar overview fields, scoped monthly phrase registry, opt-in monthly sentence templates, definition validation, and monthly editorial structure");
+console.log("PASS: hydrated editor preservation, recursive Calendar overview fields, scoped monthly phrase registry, opt-in monthly sentence templates, weekly Monday Moon-tone starter, definition validation, and monthly editorial structure");
