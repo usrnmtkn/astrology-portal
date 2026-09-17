@@ -23,7 +23,10 @@ export function skyDebilityPlacementLinks(keys: readonly string[], positions: re
     const sign = DIGNITY_SIGNS.find(value => normalized(value) === signKey);
     if (!planet || !sign) throw new Error(`Invalid calculated effort-summary placement: ${key}`);
     const position = positions.find(value => normalized(value.planet) === planetKey && normalized(value.sign) === signKey);
-    const motion = position?.motion && isDisplayRetrograde({ planet, motion: position.motion }) ? "retrograde" : undefined;
+    // The general display helper excludes lunar nodes, not luminaries.
+    // Never display an impossible Sun/Moon Rx marker, even for invalid input.
+    const motion = planet !== "Sun" && planet !== "Moon" && position?.motion
+      && isDisplayRetrograde({ planet, motion: position.motion }) ? "retrograde" : undefined;
     return { text: skyPlacementLinkLabel(planet, sign, motion), href: `#sky/placement/${encodeURIComponent(planetKey)}/${encodeURIComponent(signKey)}` };
   });
 }
