@@ -7,9 +7,10 @@ time and decorative downloads never control content readiness. Cached chart
 rows and a revealed Sky reading remain visible during revalidation.
 
 The active decorative loader is the `working` animation from
-[Thinking Orbs](https://libraries.dev/orbs) (`thinking-orbs` 0.3.1, MIT). It
-uses the tuned 64px canvas preset within the reserved frame on page, route,
-Friends, Calendar, You, Reports, and Content Studio waits. Compact waits use
+[Thinking Orbs](https://libraries.dev/orbs) (`thinking-orbs` 0.3.1, MIT). The
+app paints that engine on its own canvas clock so the wait stays in motion:
+the packaged React component waits for IntersectionObserver and freezes under
+`prefers-reduced-motion`, which left Sky on a still frame. Compact waits use
 the 20px preset beside the status text. The pre-JavaScript document shell,
 including Content Studio, uses a CSS orb in the same frame until React mounts
 the canvas.
