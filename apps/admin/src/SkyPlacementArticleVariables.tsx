@@ -6,6 +6,7 @@ import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { SKY_PLACEMENT_PLANET_SIGN_INGRESS_TEMPLATE } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementPlanetSignTemplate.mjs";
 import { SKY_WRITING_LIBRARY_GROUPS, type SkyWritingLibraryComposition } from "./skyWritingLibrary";
 import SkyPlacementVariableKey, { SkyVariableText, type SkyVariableFacts } from "./SkyPlacementVariableKey";
+import { PageLoading } from "../../web/src/components/PageLoading";
 // @ts-ignore Pure shared article resolver, also used by publication and readers.
 import { skyPlacementArticleVariableSegments } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 // @ts-ignore Calculated values have the existing article contract.
@@ -107,12 +108,12 @@ export default function SkyPlacementArticleVariables(props: Props) {
     {props.onReplaceBody && <div className="admin-new-actions">
       <StudioButton type="button" disabled={disabled} onClick={useIngressTemplate}>Use planet-in-sign Sky template</StudioButton>
     </div>}
-    {props.preparing && <p role="status">Preparing the Writing Library in this draft…</p>}
+    {props.preparing && <PageLoading compact message="Preparing the Writing Library in this draft…" />}
     {(error || props.preparationError) && <p role="alert">{error || props.preparationError}</p>}
     <details className="admin-workspace-details" data-sky-article-variable-picker>
       <AdminDisclosureSummary>Article variables</AdminDisclosureSummary>
       <StudioVariableInsert variables={source?._studioVariables ?? []} context={{ planet, sign }} onInsert={props.onInsert} disabled={disabled} />
-      <SkyPlacementVariableKey facts={facts} disabled={disabled} onInsert={props.onInsert} onInsertPhrase={props.onInsert}
+      <SkyPlacementVariableKey facts={facts} disabled={disabled} onInsert={props.onInsert} onInsertPhrase={props.onInsert} omitKinds={["aspect"]}
         phraseSource={{ planet, sign, record, onLoadSource: props.onLoadSource, onEdit: id => {
           const sharedKey = zodiacSeasonSourceKey(id, sign);
           if (sharedKey && !composition?.sources[id]) { props.onOpenSource(sharedKey, "body"); return; }
@@ -123,7 +124,7 @@ export default function SkyPlacementArticleVariables(props: Props) {
     {editingPhrase && <section className="admin-sky-writing-context" aria-label="Edit article phrase">
       <p>{editingField?.label ?? editingPhrase} <code>{`{{${editingPhrase}}}`}</code></p>
       {editingField && <p>{editingField.description}</p>}
-      {!editingSource ? <p role="status">Preparing this phrase in your draft…</p> : editingSource.reference ? <>
+      {!editingSource ? <PageLoading compact message="Preparing this phrase in your draft…" /> : editingSource.reference ? <>
         <p>Linked source: <code>{editingSource.reference.contentKey}#{editingSource.reference.field}</code></p>
         <StudioButton type="button" disabled={disabled} onClick={() => {
           const reference = editingSource.reference!;

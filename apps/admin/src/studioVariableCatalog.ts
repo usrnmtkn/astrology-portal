@@ -27,3 +27,11 @@ export function filterStudioVariables(variables: StudioVariable[], query: string
       ...variable.usages.flatMap(usage => [usage.label, usage.key, usage.surface]),
       ...variable.sources.flatMap(source => [source.key, source.label])].join(" ").toLocaleLowerCase().includes(term)));
 }
+
+export function matchingVariableSources(variable: StudioVariable, query: string) {
+  const terms = query.toLocaleLowerCase().replace(/[{}]/gu, "").trim().split(/\s+/u).filter(Boolean);
+  const identity = [variable.name, variable.token, variable.description, variable.source].join(" ").toLocaleLowerCase();
+  const extra = terms.filter(term => !identity.includes(term));
+  if (!extra.length) return variable.sources;
+  return variable.sources.filter(source => extra.every(term => `${source.key} ${source.label} ${source.field}`.toLocaleLowerCase().includes(term)));
+}
