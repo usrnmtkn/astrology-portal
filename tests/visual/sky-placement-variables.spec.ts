@@ -71,6 +71,42 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     else expect(row.definition.x).toBeGreaterThan(row.term.x);
     if (index) expect(row.top).toBeGreaterThanOrEqual(rowsGeometry[index - 1].bottom);
   }
+  const phraseKey = editor.getByLabel("Editable phrase variables");
+  if (!(await phraseKey.evaluate(el => el.hasAttribute("open")))) await phraseKey.locator(":scope > summary").click();
+  const planetLanguage = phraseKey.locator("details").filter({ has: page.locator(":scope > summary").filter({ hasText: /^Planet language$/ }) });
+  if (!(await planetLanguage.evaluate(el => el.hasAttribute("open")))) await planetLanguage.locator(":scope > summary").click();
+  const phraseRows = planetLanguage.locator("dl > div");
+  await expect(phraseRows.first()).toBeVisible();
+  const phraseGeometry = await phraseRows.evaluateAll(rows => rows.slice(0, 4).map(row => {
+    const term = row.querySelector("dt")!.getBoundingClientRect();
+    const definition = row.querySelector("dd")!.getBoundingClientRect();
+    const bounds = row.getBoundingClientRect();
+    const style = getComputedStyle(row);
+    const token = row.querySelector("dt code") as HTMLElement | null;
+    return {
+      term: { x: term.x, bottom: term.bottom },
+      definition: { x: definition.x, y: definition.y },
+      top: bounds.top, bottom: bounds.bottom,
+      padding: parseFloat(style.paddingLeft),
+      color: token?.getAttribute("data-variable-color") ?? "",
+      background: token ? getComputedStyle(token).backgroundColor : "",
+      label: row.querySelector("dd p")?.textContent ?? "",
+      status: row.querySelector("small")?.textContent ?? ""
+    };
+  }));
+  const phraseBackgrounds = new Set(phraseGeometry.map(row => row.background));
+  expect(phraseBackgrounds.size).toBeGreaterThanOrEqual(2);
+  for (const [index, row] of phraseGeometry.entries()) {
+    expect(row.padding).toBe(16);
+    expect(row.color).toMatch(/^[1-6]$/);
+    expect(row.label).toMatch(/^[A-Z].+\. /);
+    expect(row.status).toMatch(/^(Empty|Loaded)$/);
+    expect(row.label + row.status).not.toMatch(/descriptorEmpty|functionLoaded/u);
+    if (width < 720) expect(row.definition.y - row.term.bottom).toBeGreaterThanOrEqual(15);
+    else expect(row.definition.x).toBeGreaterThan(row.term.x);
+    if (index) expect(row.top).toBeGreaterThanOrEqual(phraseGeometry[index - 1].bottom);
+  }
+  await phraseKey.screenshot({ path: `test-results/sky-phrase-variable-key-${width}-${theme}.png` });
   for (const label of ["Source history and validation", "Aspects and horoscopes"]) {
     const summary = editor.locator("summary").filter({ hasText: new RegExp(`^${label}$`) });
     const disclosure = summary.locator("..");
