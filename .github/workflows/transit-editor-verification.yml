@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
       - name: Record source provenance and memory
@@ -25,7 +25,7 @@ jobs:
           node scripts/agent-memory.mjs recall "personal transits exact source shared fallback editor" --repo . --ref origin/main --limit 4 --state "$RUNNER_TEMP/transit-memory" > "$RUNNER_TEMP/transit-editor/memory.json"
       - name: Export tracked source for isolated repair
         run: git archive --format=tar.gz HEAD > "$RUNNER_TEMP/transit-editor/source.tar.gz"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: transit-editor-source
           path: ${{ runner.temp }}/transit-editor
