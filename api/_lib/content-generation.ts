@@ -68,6 +68,10 @@ export type GenerateSkyArticleTemplateSlotsInput = {
   requestedSlots: SkyArticleTemplateSlotRequest[];
   provider?: "openai" | "claude" | "anthropic";
   voiceNotes?: string;
+  surface?: Surface;
+  eventType?: string;
+  knowledgeIds?: string[];
+  writingMemory?: { prompt: string; receipt: NonNullable<GeneratedSkyArticleTemplateSlots["memoryReceipt"]> } | null;
 };
 
 export type GeneratedSkyArticleTemplateSlots = {
@@ -4648,6 +4652,8 @@ let canonicalOwnerExamplesCache: CanonicalOwnerExample[] | null = null;
 
 function canonicalExampleFamilies(input: GenerateContentInput) {
   const context = `${input.surface} ${input.eventType} ${input.contentKey}`.toLowerCase();
+  if (context.includes("transit-house-sign")) return ["authored/transit-house-sign", "authored/transit-house-intro", "house-core"];
+  if (context.includes("transit-house")) return ["authored/transit-house-intro", "authored/transit-house", "house-core", "knowledge-matrix-house"];
   if (context.includes("synastry") || context.includes("relationship")) return ["synastry"];
   if (context.includes("daily")) return ["daily"];
   if (context.includes("aspect") && input.surface === "sky") {
@@ -5830,8 +5836,12 @@ function skyArticleTemplateSlotPrompt(
     readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md"),
     "",
     "TASK",
-    "Fill only the requested unfinished fields in an owner-authored Sky article template.",
-    "The template's fixed prose is immutable. Do not rewrite it, summarize it, or return it.",
+    input.surface === "you"
+      ? "Fill only the requested unfinished Personal Transit audience fields for one locked destination."
+      : "Fill only the requested unfinished fields in an owner-authored Sky article template.",
+    input.surface === "you"
+      ? `Return reader-facing prose only. Do not save, approve, or publish.${input.facts.housesExcluded ? " Do not name houses or signs." : input.facts.signsExcluded ? " Use the locked houses. Do not invent a sign." : " Use the locked house and sign facts. Do not invent other placements."}`
+      : "The template's fixed prose is immutable. Do not rewrite it, summarize it, or return it.",
     "Return one value for every requested field and no other fields.",
     "Do not invent dates, aspect hits, historical events, quotations, or astronomical facts.",
     "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, and the immutable template context.",
@@ -5866,16 +5876,16 @@ function skyArticleTemplateSlotPrompt(
 function skyArticleSlotGenerationInput(input: GenerateSkyArticleTemplateSlotsInput): GenerateContentInput {
   return {
     contentKey: input.templateKey,
-    surface: "sky",
+    surface: input.surface ?? "sky",
     mode: "article",
-    eventType: "sky-article-template-slots",
+    eventType: input.eventType ?? "sky-article-template-slots",
     provider: input.provider,
     facts: {
       ...input.facts,
-      blockType: "sky_article",
-      contentType: "sky_article"
+      blockType: input.surface === "you" ? "transit_to_natal" : "sky_article",
+      contentType: input.surface === "you" ? "transit_to_natal" : "sky_article"
     },
-    knowledgeIds: [`sky-placement-${input.planet}-${input.sign}`],
+    knowledgeIds: input.knowledgeIds ?? [`sky-placement-${input.planet}-${input.sign}`],
     sourceSnapshot: {
       contentType: "sky-article-template-slots",
       templateKey: input.templateKey,
@@ -5898,7 +5908,9 @@ export async function generateSkyArticleTemplateSlots(
     throw new Error("Template slot names must be unique alphanumeric identifiers.");
   }
 
-  const memory = await studioArticleWritingMemory(input);
+  const memory = input.writingMemory !== undefined
+    ? input.writingMemory
+    : await studioArticleWritingMemory(input);
   const generationInput = skyArticleSlotGenerationInput(input);
   const productionGate = prepareProductionPreCallGate(generationInput);
   const evidenceShadow = buildProductionEvidenceShadow(generationInput);
@@ -5909,8 +5921,8 @@ export async function generateSkyArticleTemplateSlots(
   const schema = skyArticleTemplateSlotSchema(input.requestedSlots);
   const provider = contentGenerationProvider({
     requestedProvider: input.provider,
-    blockType: "sky_article",
-    contentType: "sky_article"
+    blockType: typeof generationInput.facts.blockType === "string" ? generationInput.facts.blockType : "sky_article",
+    contentType: typeof generationInput.facts.contentType === "string" ? generationInput.facts.contentType : "sky_article"
   });
   recordLegacyPromptShadow(evidenceShadow, publicPrompt);
   assertProductionRoleGate(productionGate, "WRITER", generationInput);

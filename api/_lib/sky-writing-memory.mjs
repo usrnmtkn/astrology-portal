@@ -20,13 +20,13 @@ export function buildSkyWritingMemory(identity, {
   revision = process.env.VERCEL_GIT_COMMIT_SHA ?? null,
   studioCorrections = [],
 } = {}) {
-  if (!['placement', 'aspect'].includes(identity?.kind)) throw new Error('Unsupported Sky memory target');
+  if (!['placement', 'aspect', 'personal-transit'].includes(identity?.kind)) throw new Error('Unsupported Sky memory target');
   const configText = readSource('config/agent-memory-sources-v1.json');
   const config = JSON.parse(configText);
   const superseded = new Set((config.supersedes ?? []).map(item => item.old));
   const specs = config.sources.filter(item => item.kind === 'correction' && correctionPaths.has(item.path));
   if (!specs.length) throw new Error('Sky writing correction sources are missing');
-  const targetFamily = `sky-${identity.kind}`;
+  const targetFamily = identity.kind === 'personal-transit' ? 'personal-transit' : `sky-${identity.kind}`;
   const query = words(Object.values(identity.args).join(' '));
   const sources = [], eligible = [], excluded = [];
   for (const spec of specs) {

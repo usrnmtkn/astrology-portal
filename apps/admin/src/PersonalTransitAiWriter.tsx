@@ -1,0 +1,209 @@
+import { useEffect, useState } from "react";
+import { AdminDisclosureSummary } from "./AdminNativeControls";
+import { StudioButton, StudioTextarea } from "./StudioControls";
+import { adminCredentialHeaders, adminSecretStorageKey } from "./adminSecret";
+import { loadOwnerSessionAccessToken } from "./ownerSession";
+
+type Audience = "you" | "friend" | "both";
+type Check = { code: string; audience?: "you" | "friend"; detail: string };
+type NextMissing = {
+  contentKey: string;
+  transiting: string;
+  natal: string;
+  aspect: string;
+  missingAudiences: Array<"you" | "friend">;
+};
+
+type Props = {
+  contentKey: string;
+  transiting?: string;
+  natal?: string;
+  aspect?: string;
+  transitHouse?: string;
+  natalHouse?: string;
+  planet?: string;
+  house?: string;
+  sign?: string;
+  youText: string;
+  friendText: string;
+  disabled: boolean;
+  onUseYou: (text: string) => void;
+  onUseFriend: (text: string) => void;
+  onOpenNext?: (next: NextMissing) => void;
+};
+
+async function contentStudioCredential() {
+  const session = await loadOwnerSessionAccessToken();
+  if (session) return session;
+  try {
+    return window.localStorage.getItem(adminSecretStorageKey) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+export default function PersonalTransitAiWriter({
+  transiting = "", natal = "", aspect = "", transitHouse = "", natalHouse = "",
+  planet = "", house = "", sign = "", contentKey, youText, friendText, disabled, onUseYou, onUseFriend, onOpenNext
+}: Props) {
+  const [instruction, setInstruction] = useState("");
+  const [audience, setAudience] = useState<Audience>("both");
+  const [youDraft, setYouDraft] = useState("");
+  const [friendDraft, setFriendDraft] = useState("");
+  const [checks, setChecks] = useState<Check[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
+
+  useEffect(() => {
+    setInstruction("");
+    setYouDraft("");
+    setFriendDraft("");
+    setChecks([]);
+    setError("");
+    setStatus("");
+    setAudience("both");
+  }, [contentKey]);
+
+  const request = async (action: "generate" | "next-missing") => {
+    if (busy || disabled) return;
+    setBusy(true);
+    setError("");
+    setStatus("");
+    try {
+      const credential = await contentStudioCredential();
+      if (!credential) throw new Error("Content Studio owner access is unavailable. Reload and sign in again before generating.");
+      const response = await fetch("/api/admin/personal-transit-writing", {
+        method: "POST",
+        headers: { "content-type": "application/json", ...adminCredentialHeaders(credential) },
+        body: JSON.stringify(action === "next-missing"
+          ? { action, afterContentKey: contentKey }
+          : {
+            action,
+            transiting,
+            natal,
+            aspect,
+            transitHouse,
+            natalHouse,
+            planet,
+            house,
+            sign,
+            contentKey,
+            youText,
+            friendText,
+            instruction,
+            audience
+          })
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || !payload?.ok) {
+        throw new Error(typeof payload?.error === "string" ? payload.error : "No draft was returned.");
+      }
+      if (payload.saved || payload.published || payload.approved) {
+        throw new Error("The writer tried to save or publish. Existing writing was left unchanged.");
+      }
+      if (action === "next-missing") {
+        if (!payload.next) {
+          setStatus("No remaining exact contacts are missing You or Friend copy in packaged writing or saved Studio drafts.");
+          return;
+        }
+        onOpenNext?.(payload.next);
+        setStatus(`Opened ${payload.next.contentKey}. Missing: ${payload.next.missingAudiences.join(" and ")}.`);
+        return;
+      }
+      setYouDraft(typeof payload.youDraft === "string" ? payload.youDraft : "");
+      setFriendDraft(typeof payload.friendDraft === "string" ? payload.friendDraft : "");
+      setChecks(Array.isArray(payload.checks) ? payload.checks : []);
+      const preserved = Array.isArray(payload.preservedAudiences) ? payload.preservedAudiences.join(" and ") : "";
+      setStatus(preserved
+        ? `Private suggestion ready. Existing ${preserved} copy was left in the editor.`
+        : "Private suggestion ready. Saving, approval, and publication stay separate.");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Writing failed. Existing writing was not changed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return <details className="admin-workspace-details">
+    <AdminDisclosureSummary>AI writing</AdminDisclosureSummary>
+    <p>This generator writes the selected destination only: {destinationLabel({ contentKey, transiting, natal, aspect, transitHouse, natalHouse, planet, house, sign })}. It does not save, approve, or publish.</p>
+    <label className="admin-review-copy-editor">
+      <span>Optional direction</span>
+      <StudioTextarea
+        value={instruction}
+        disabled={disabled || busy}
+        maxLength={6000}
+        rows={4}
+        style={{ minHeight: 96 }}
+        placeholder="Keep the opening; make the advice more specific. Leave blank to fill only the missing audience."
+        onChange={(event) => setInstruction(event.target.value)}
+      />
+      <small className="admin-field-hint">Direction can revise one audience without regenerating the other.</small>
+    </label>
+    <div className="admin-sky-writing-source-actions" role="group" aria-label="Personal Transit AI writing actions">
+      <StudioButton type="button" disabled={disabled || busy} onClick={() => setAudience("both")}>Both audiences</StudioButton>
+      <StudioButton type="button" disabled={disabled || busy} onClick={() => setAudience("you")}>You only</StudioButton>
+      <StudioButton type="button" disabled={disabled || busy} onClick={() => setAudience("friend")}>Friend only</StudioButton>
+      <StudioButton className="admin-primary-button" type="button" disabled={disabled || busy} onClick={() => void request("generate")}>
+        {busy ? "Generating draft…" : "Generate You + Friend draft"}
+      </StudioButton>
+      {onOpenNext && <StudioButton type="button" disabled={disabled || busy} onClick={() => void request("next-missing")}>Next missing write-up</StudioButton>}
+      {youDraft && <StudioButton type="button" disabled={disabled || busy} onClick={() => { onUseYou(youDraft); setYouDraft(""); }}>Use You draft</StudioButton>}
+      {friendDraft && <StudioButton type="button" disabled={disabled || busy} onClick={() => { onUseFriend(friendDraft); setFriendDraft(""); }}>Use Friend draft</StudioButton>}
+      {(youDraft || friendDraft) && <StudioButton type="button" disabled={busy} onClick={() => { setYouDraft(""); setFriendDraft(""); setChecks([]); setError(""); }}>Discard</StudioButton>}
+    </div>
+    <p className="admin-field-hint">Current audience request: {audience === "both" ? "You and Friend, filling only what is missing unless you give direction" : audience === "you" ? "You only" : "Friend only"}.</p>
+    {busy && <p role="status">Writing a private suggestion. Saved copy is unchanged.</p>}
+    {status && <p role="status">{status}</p>}
+    {error && <p role="alert">{error}</p>}
+    {checks.length > 0 && <ul aria-label="Writing review checks">
+      {checks.map((check) => <li key={`${check.code}:${check.audience}:${check.detail}`}>{check.audience ? `${check.audience}: ${check.detail}` : check.detail}</li>)}
+    </ul>}
+    {youDraft && <label className="admin-review-copy-editor">
+      <span>AI suggestion · You</span>
+      <StudioTextarea value={youDraft} readOnly aria-label="AI You suggestion" />
+      <small className="admin-field-hint">Use You draft copies this suggestion into the You field only.</small>
+    </label>}
+    {friendDraft && <label className="admin-review-copy-editor">
+      <span>AI suggestion · Friend</span>
+      <StudioTextarea value={friendDraft} readOnly aria-label="AI Friend suggestion" />
+      <small className="admin-field-hint">Use Friend draft copies this suggestion into the Friend field only.</small>
+    </label>}
+  </details>;
+}
+
+function title(value: string) {
+  return value.replace(/-/gu, " ");
+}
+
+function houseOrdinal(house: string) {
+  if (house === "1") return "1st";
+  if (house === "2") return "2nd";
+  if (house === "3") return "3rd";
+  return house ? `${house}th` : "";
+}
+
+function destinationLabel(input: {
+  contentKey: string;
+  transiting: string;
+  natal: string;
+  aspect: string;
+  transitHouse: string;
+  natalHouse: string;
+  planet: string;
+  house: string;
+  sign: string;
+}) {
+  if (input.contentKey.startsWith("authored/transit-house-sign/")) {
+    return `${title(input.planet)} in ${title(input.sign)} through the ${houseOrdinal(input.house)} house`;
+  }
+  if (input.contentKey.startsWith("authored/transit-house")) {
+    return `${title(input.planet || input.transiting)} through the ${houseOrdinal(input.house)} house`;
+  }
+  const houses = [
+    input.transitHouse ? `transiting from the ${houseOrdinal(input.transitHouse)} house` : "",
+    input.natalHouse ? `natal ${title(input.natal)} in the ${houseOrdinal(input.natalHouse)} house` : ""
+  ].filter(Boolean).join("; ");
+  return `${title(input.transiting)} ${input.aspect} natal ${title(input.natal)}${houses ? `. ${houses}` : ""}`;
+}

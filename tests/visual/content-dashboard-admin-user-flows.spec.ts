@@ -565,6 +565,44 @@ async function seedAdminApi(
       return;
     }
 
+    if (pathname.endsWith("/personal-transit-writing")) {
+      const payload = route.request().postDataJSON() as Record<string, unknown>;
+      if (payload.action === "next-missing") {
+        await route.fulfill({
+          json: {
+            ok: true,
+            action: "next-missing",
+            next: {
+              contentKey: "authored/transit-aspect/sun/sun/square",
+              transiting: "sun",
+              natal: "sun",
+              aspect: "square",
+              missingAudiences: ["you", "friend"]
+            },
+            saved: false,
+            published: false
+          }
+        });
+        return;
+      }
+      await route.fulfill({
+        json: {
+          ok: true,
+          action: "generate",
+          saved: false,
+          published: false,
+          approved: false,
+          contentKey: payload.contentKey,
+          generatedAudiences: payload.audience === "friend" ? ["friend"] : payload.audience === "you" ? ["you"] : ["you", "friend"],
+          preservedAudiences: [],
+          youDraft: payload.audience === "friend" ? null : "Synthetic You draft for the selected contact.",
+          friendDraft: payload.audience === "you" ? null : "{{Name}} may treat a question about their plan as a verdict until {{untilDate}}.",
+          checks: []
+        }
+      });
+      return;
+    }
+
     if (pathname.endsWith("/content-publication")) {
       const request = route.request().postDataJSON();
       const source = apiGeneratedContentRows.find((row) => row.id === request.id && row.content_key === request.contentKey);
@@ -2331,6 +2369,36 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectNoHorizontalOverflow(page, "Separate transit editor");
     await mkdir(adminScreenshotDir, { recursive: true });
     await finder.screenshot({ path: path.join(adminScreenshotDir, `separate-transit-editor-${width}-${theme}.png`) });
+    await noErrors();
+  });
+
+  test("Personal Transit AI writer copies one contact without saving", async ({ page }) => {
+    page.on("dialog", dialog => { dialog.accept().catch(() => undefined); });
+    const noErrors = await expectNoBrowserErrors(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await seedAdminApi(page, { onGeneratedContentWrite: write => writes.push(write) });
+    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.route("**/api/admin/transit-natal-preview", async route => {
+      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } });
+    });
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=sun&sign=virgo&transitHouse=3&aspect=square&natal=sun&natalHouse=3");
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/sun/square");
+    const writer = editor.locator("details").filter({ hasText: "This generator writes the selected destination only" });
+    await expect(writer.locator("summary")).toBeVisible();
+    await writer.locator("summary").click();
+    await editor.getByRole("button", { name: "Generate You + Friend draft", exact: true }).click();
+    await expect(editor.getByLabel("AI You suggestion")).toHaveValue("Synthetic You draft for the selected contact.");
+    await expect(editor.getByLabel("AI Friend suggestion")).toHaveValue("{{Name}} may treat a question about their plan as a verdict until {{untilDate}}.");
+    await editor.getByRole("button", { name: "Use You draft", exact: true }).click();
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("Synthetic You draft for the selected contact.");
+    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("");
+    expect(writes).toHaveLength(0);
+    await editor.getByRole("button", { name: "Generate You + Friend draft", exact: true }).click();
+    await editor.getByRole("button", { name: "Use Friend draft", exact: true }).click();
+    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("{{Name}} may treat a question about their plan as a verdict until {{untilDate}}.");
+    expect(writes).toHaveLength(0);
     await noErrors();
   });
 

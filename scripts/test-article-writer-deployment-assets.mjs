@@ -16,6 +16,7 @@ for (const source of correctionSources) {
 for (const endpoint of [
   "api/admin/sky-article-writing.ts",
   "api/admin/sky-article-template-slots.ts",
+  "api/admin/personal-transit-writing.ts",
 ]) {
   const rule = deployment.functions?.[endpoint];
   assert.ok(rule && typeof rule.includeFiles === "string", `${endpoint} needs an explicit Vercel includeFiles rule.`);
