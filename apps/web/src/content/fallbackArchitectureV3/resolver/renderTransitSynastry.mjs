@@ -1,3 +1,4 @@
+import { prioritizeExactTransitSources } from "./transitAspectSourcePriority.mjs";
 import { bindStudioVariableReference } from "../../studioCustomVariables.mjs";
 import { resolveZodiacSeasonVariables, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
 import { passageSources, passageSource } from "./passageSources.mjs";
@@ -711,7 +712,7 @@ function renderTransitAspectReference({ transiting, natal, aspect, variant, pass
   push(transiting, natal);
   if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting); // mirror rule (Batch 4)
   tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
-  for (const k of tryKeys) {
+  for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect)) {
     const c = card(k);
     if (c) {
       // v2 aspect library (owner-approved 2026-07-27/28): authored bodies carry

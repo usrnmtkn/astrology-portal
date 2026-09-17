@@ -122,3 +122,39 @@ for (const selection of [
 assert.equal(transitNatalExactContentKey({planet:'sun',natalPoint:'lilith',aspect:'square'}),null);
 for(const key of ['authored/transit-return/pluto','authored/transit-return/sun/extra','authored/transit-aspect/sun/sun/conjunction','authored/transit-aspect/sun/fake/square','authored/transit-aspect/sun/moon/hard','cms/personal-transit-aspect/sun/south-node/opposition'])assert.equal(isDynamicTransitNatalExactKey(key),false,key);
 console.log('PASS new exact personal-transit and return sources, draft exclusion, retirement, and valid identities.');
+
+// Exercise the actual published-overlay resolver used by the HTTP handler.
+// Keep all writes synthetic and in memory: no production database is contacted.
+for (const pair of [{planet:'sun',natalPoint:'sun'}, {planet:'mars',natalPoint:'moon'}, {planet:'saturn',natalPoint:'mercury'}] as const) {
+ const aspects=['trine','sextile','square','opposition'] as const;
+ const exactRows=aspects.map((aspect,index)=>{
+  const draft=transitNatalExactSourceDraft({...pair,aspect});
+  const you=`Synthetic ${pair.planet} ${aspect} You opening.\n\nSynthetic ${aspect} You ending.`;
+  const friend=`Synthetic ${pair.planet} ${aspect} {{Name}} opening.\n\nSynthetic ${aspect} Friend ending.`;
+  return {id:`bbbbbbbb-bbbb-bbbb-bbbb-00000000000${index+1}`,content_key:draft.contentKey,provider:'tldrastro-fallback-architecture-v3',status:'LIVE',lane:'serving',updated_at:stamp,body:you,
+   sections:{packageRecord:{...draft.sections.packageRecord,body:you,body_you:you,body_they:friend,review_status:'approved'}},
+   facts:{...draft.facts,review_status:'approved'},source_snapshot:{...draft.sourceSnapshot,review_status:'approved'}};
+ });
+ const pub=exactRows.map((row,index)=>({content_key:row.content_key,state:'live',revision:index+1,row_id:row.id,row_updated_at:stamp,updated_at:stamp}));
+ for (const voice of ['you','QA Friend']) for (const aspect of aspects) for (const context of [{},{variant:2},{pass:2,variant:3}]) {
+  const facts=normalizeTransitNatalPreviewInput({...pair,aspect,voice,sign:'capricorn',...context});
+  const before=renderTransitNatalPreviewState(facts,exactRows as any,pub as any);
+  assert.equal(before.sourceKeys[0],`authored/transit-aspect/${pair.planet}/${pair.natalPoint}/${aspect}`);
+  assert.match(before.body,new RegExp(`Synthetic ${pair.planet} ${aspect} ${voice==='you'?'You':'QA Friend'} opening`));
+  const changedRows=structuredClone(exactRows), changed=changedRows.find(row=>row.content_key.endsWith(`/${aspect}`))!;
+  const field=voice==='you'?'body_you':'body_they';
+  changed.sections.packageRecord[field]=`Synthetic isolated ${aspect} revision.`;
+  const after=renderTransitNatalPreviewState(facts,changedRows as any,pub as any);
+  assert.match(after.body,new RegExp(`Synthetic isolated ${aspect} revision`));
+  for (const sibling of aspects.filter(value=>value!==aspect)) {
+   const siblingFacts=normalizeTransitNatalPreviewInput({...pair,aspect:sibling,voice,sign:'capricorn',...context});
+   assert.deepEqual(renderTransitNatalPreviewState(siblingFacts,changedRows as any,pub as any),renderTransitNatalPreviewState(siblingFacts,exactRows as any,pub as any),'An exact source change cannot leak into another aspect');
+  }
+  const otherVoice=normalizeTransitNatalPreviewInput({...pair,aspect,voice:voice==='you'?'QA Friend':'you',sign:'capricorn',...context});
+  assert.deepEqual(renderTransitNatalPreviewState(otherVoice,changedRows as any,pub as any),renderTransitNatalPreviewState(otherVoice,exactRows as any,pub as any),'You and Friend fields must remain independent');
+  const unpublished=structuredClone(changedRows);unpublished.find(row=>row.content_key===changed.content_key)!.status='DRAFT';
+  let draftResult;try{draftResult=renderTransitNatalPreviewState(facts,unpublished as any,pub as any);}catch(error){assert.match(String(error),/SOURCE_GAP|No reader-eligible/);}
+  assert.ok(!draftResult?.body.includes(`Synthetic isolated ${aspect} revision`),'A saved draft must not appear in published preview');
+ }
+}
+console.log('PASS actual transit preview overlay: exact trine/sextile/square/opposition isolation, three planet pairs, both voices, draft exclusion and variant/pass contexts.');

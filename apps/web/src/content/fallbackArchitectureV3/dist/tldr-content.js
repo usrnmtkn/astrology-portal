@@ -1409,6 +1409,13 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs
+function prioritizeExactTransitSources(keys, transiting, natal, aspect) {
+  const exact = `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
+  const isExact = (key) => key === exact || key.startsWith(`${exact}/`);
+  return [...keys.filter(isExact), ...keys.filter((key) => !isExact(key))];
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/passageSources.mjs
 function passageSources(body, contributions, sourceFor, headlineSources = []) {
   const ranges = contributions.map(({ text: text2, keys, start = 0 }) => {
@@ -2317,7 +2324,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     push(transiting, natal);
     if (FAST.has(transiting) && FAST.has(natal)) push(natal, transiting);
     tryKeys.push(`authored/transit-aspect/any/${natal}/${g}`, `authored/transit-aspect/any/${natal}/conjunction`);
-    for (const k of tryKeys) {
+    for (const k of prioritizeExactTransitSources(tryKeys, transiting, natal, aspect)) {
       const c = card(k);
       if (c) {
         const AW = { conjunction: "conjunct", square: "square", opposition: "opposite", trine: "trine", sextile: "sextile" };
@@ -6455,7 +6462,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-16-planet-sign-template";
+var PACKAGE_VERSION = "v3-2026-09-17-transit-exact-isolation";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

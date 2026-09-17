@@ -1,17 +1,20 @@
 import { AdminSelect, AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioInput } from "./StudioControls";
 import { Fragment, useEffect, useState } from "react";
-import { renderTransitNatalPreview, type TransitNatalSelection, type TransitNatalReadingContext } from "./transitNatalSources";
+import { renderTransitNatalPreview, transitNatalExactContentKey, type TransitNatalSelection, type TransitNatalReadingContext, type TransitPassageSource } from "./transitNatalSources";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { requestStudioJson } from "./generatedContentClient";
 
+import ContentLiveStatusBadge from "./ContentLiveStatus";
+import { transitNatalExactActionLabel, transitSourceEditScope, transitExactPassageState, type TransitExactPassageState } from "./transitNatalEditorScope";
+
 type Preview = ReturnType<typeof renderTransitNatalPreview>;
 
-export function TransitNatalExactSourceAction({ contentKey, secret, disabled, onOpen }: {
-  contentKey: string; secret: string; disabled: boolean; onOpen: () => void;
+export function TransitNatalExactSourceAction({ contentKey, title, secret, disabled, onOpen }: {
+  contentKey: string; title: string; secret: string; disabled: boolean; onOpen: () => void;
 }) {
   const [revision, setRevision] = useState(0);
-  const [state, setState] = useState<{ key: string; exists?: boolean; error?: string }>({ key: "" });
+  const [state, setState] = useState<{ key: string; passage?: TransitExactPassageState; error?: string }>({ key: "" });
   useEffect(() => subscribeToContentUpdates(() => setRevision(value => value + 1)), []);
   useEffect(() => {
     let cancelled = false;
@@ -19,17 +22,54 @@ export function TransitNatalExactSourceAction({ contentKey, secret, disabled, on
     setState({ key: contentKey });
     void requestStudioJson(`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1&includePackageSource=true`, secret, { signal: controller.signal })
       .then(payload => {
-        if (!Array.isArray(payload.rows) || payload.rows.some(row => !row || row.content_key !== contentKey || typeof row.id !== "string")) throw new Error("The exact passage could not be verified.");
-        const packaged = payload.packageSource as Record<string, unknown> | null | undefined;
-        if (packaged != null && (packaged.contentKey !== contentKey || ![packaged.body, packaged.body_you, packaged.body_they].some(value => typeof value === "string" && value.trim()))) throw new Error("The packaged exact passage could not be verified.");
-        if (!cancelled) setState({ key: contentKey, exists: Boolean(payload.packageSource) || payload.rows.length > 0 });
+        const passage = transitExactPassageState(contentKey, payload);
+        if (!cancelled) setState({ key: contentKey, passage });
       })
       .catch(error => { if (!cancelled) setState({ key: contentKey, error: error.message }); });
     return () => { cancelled = true; controller.abort(); };
   }, [contentKey, secret, revision]);
-  if (state.key !== contentKey || state.exists === undefined && !state.error) return <p role="status">Checking the exact passage…</p>;
-  if (state.error) return <p role="alert">{state.error} <StudioButton type="button" onClick={() => setRevision(value => value + 1)}>Retry exact passage lookup</StudioButton></p>;
-  return <StudioButton type="button" disabled={disabled} onClick={onOpen}>{state.exists ? "Edit exact passage" : "Write a new exact passage"}</StudioButton>;
+  if (state.key !== contentKey || !state.passage && !state.error) return <p role="status">Opening this transit…</p>;
+  if (state.error) return <p role="alert">{state.error} <StudioButton type="button" onClick={() => setRevision(value => value + 1)}>Retry this transit</StudioButton></p>;
+  return <section className="admin-natal-source-group" aria-label="This transit write-up">
+    <header>
+      <p className="admin-eyebrow">This transit</p>
+      <p><code>{contentKey}</code></p>
+      <p>{state.passage?.detail}</p>
+      {state.passage?.row && <ContentLiveStatusBadge row={state.passage.row} />}
+    </header>
+    <StudioButton type="button" disabled={disabled} onClick={onOpen}>{transitNatalExactActionLabel(Boolean(state.passage?.exists), title)}</StudioButton>
+    <p className="admin-field-hint">This opens the You and Friend fields for the selected contact. Saving does not change other aspects or publish the write-up.</p>
+  </section>;
+}
+
+/** Shared sources require an explicit second action; selection is not ownership. */
+function TransitSourceEditAction({ source, exactKey, headline, onOpenSource }: {
+  source: TransitPassageSource; exactKey: string | null; headline: string;
+  onOpenSource: (contentKey: string, label: string, field?: string) => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
+  const scope = transitSourceEditScope(exactKey, source.contentKey);
+  const audience = source.field === "body_they" ? "Friend" : source.field === "body_you" ? "You" : "Text";
+  if (scope.kind !== "shared") return <div data-transit-source-key={source.contentKey}>
+    <p className="admin-field-hint">{scope.label}. {scope.explanation}</p>
+    <StudioButton type="button" onClick={() => onOpenSource(source.contentKey, headline, source.field)}>
+      {scope.kind === "exact-variant" ? "Edit selected variant" : "Edit selected source"} <code>{source.contentKey}</code> · {audience}
+    </StudioButton>
+  </div>;
+  return <details className="admin-workspace-details" data-transit-source-key={source.contentKey}>
+    <AdminDisclosureSummary>Shared source (advanced) · {audience}</AdminDisclosureSummary>
+    <p><code>{source.contentKey}</code></p>
+    <p>{scope.explanation}</p>
+    <p>{exactKey ? "To change only this contact, use Edit or Write for the selected transit above. This shared source can affect other aspects." : "This contact has no independent write-up key. Open a shared source only to make an intentional shared change."}</p>
+    {!confirming ? <StudioButton type="button" onClick={() => setConfirming(true)}>Edit shared source</StudioButton> : <div role="alert">
+      <p>You are opening shared writing, not a separate passage for this aspect. Any later publication can change other readings that use this source.</p>
+      <StudioButton type="button" onClick={() => {
+        setConfirming(false);
+        onOpenSource(source.contentKey, `Shared transit source: ${source.contentKey}`, source.field);
+      }}>Continue to shared source</StudioButton>
+      <StudioButton type="button" onClick={() => setConfirming(false)}>Cancel shared edit</StudioButton>
+    </div>}
+  </details>;
 }
 
 export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource }: {
@@ -42,6 +82,7 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
   const [state, setState] = useState<{ preview: Preview | null; error: string | null; loading: boolean }>({ preview: null, error: null, loading: true });
   useEffect(() => subscribeToContentUpdates(() => setRevision((value) => value + 1)), []);
   const { planet, sign, aspect, natalPoint, pass, variant, isRetrograde, window: timing } = selection;
+  const exactKey = transitNatalExactContentKey(selection);
   const identity = JSON.stringify({ planet, sign, aspect, natalPoint, pass, variant, isRetrograde, window: timing, voice });
   const [loadedIdentity, setLoadedIdentity] = useState("");
   useEffect(() => {
@@ -86,12 +127,15 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
         <article className="admin-natal-source-card">
           <div className="admin-natal-source-card-copy">
             <div className="admin-natal-source-card-heading"><h4>{state.preview.headline}</h4></div>
+            {groups.some(group => group.sources.some(source => transitSourceEditScope(exactKey, source.contentKey).kind === "shared")) && <aside className="admin-field-hint">
+              {exactKey ? "The published preview is still using shared fallback writing. The editor for this transit is the selected contact only. A saved draft does not replace published reader copy." : "This preview includes shared fallback writing. There is no independent write-up key for this contact; shared source changes can affect other readings."}
+            </aside>}
             {groups.map((group, index) => <Fragment key={index}>
               {group.texts.map((text, paragraphIndex) => <p key={paragraphIndex}>{text}</p>)}
-              {group.sources.map(source => <StudioButton type="button" key={`${source.contentKey}:${source.field}`}
-                onClick={() => onOpenSource(source.contentKey, state.preview!.headline, source.field)}>
-                Edit selected source <code>{source.contentKey}</code> · {source.field === "body_they" ? "They" : source.field === "body_you" ? "You" : "Text"}
-              </StudioButton>)}
+              {group.sources.map(source => <TransitSourceEditAction
+                key={`${identity}:${revision}:${source.contentKey}:${source.field}`}
+                source={source} exactKey={exactKey} headline={state.preview!.headline} onOpenSource={onOpenSource}
+              />)}
             </Fragment>)}
           </div>
         </article>
