@@ -2959,6 +2959,8 @@ export function GeneratedContentAdminDashboard() {
   const routeNavigationGuardRef = useRef<() => boolean>(() => true);
   const guidedReviewOpenedRef = useRef("");
   const sourceOpenRequestRef = useRef(0);
+  const openExactTransitNatalSourceRef = useRef<(selection: TransitNatalSelection) => Promise<void>>(async () => {});
+  const transitExactDismissedKeyRef = useRef<string | null>(null);
   const editorRef = useRef<HTMLElement | null>(null);
   const variableInsertionRef = useRef<{ element: HTMLTextAreaElement; start: number; end: number } | null>(null);
   const editorReturnFocusRef = useRef<HTMLElement | null>(null);
@@ -3570,6 +3572,40 @@ export function GeneratedContentAdminDashboard() {
   }, [activePage, skyWriteupWorkspaceView, transitNatalSourceBodies.size]);
 
   useEffect(() => {
+    if (activePage !== "skyWriteups" || skyWriteupWorkspaceView !== "transits-to-natal") return;
+    if (!transitNatalPlanet || !transitNatalSign || !transitNatalTransitHouse || !transitNatalAspect || !transitNatalPoint || !transitNatalNatalHouse) return;
+    const selection = {
+      ...transitReadingContext,
+      planet: transitNatalPlanet,
+      sign: transitNatalSign,
+      transitHouse: transitNatalTransitHouse,
+      aspect: transitNatalAspect,
+      natalPoint: transitNatalPoint,
+      natalHouse: transitNatalNatalHouse
+    } satisfies TransitNatalSelection;
+    const key = transitNatalExactContentKey(selection);
+    if (!key) return;
+    if (draft?.contentKey === key) return;
+    if (houseTransitEditor || skyArticleEditor) return;
+    if (transitExactDismissedKeyRef.current === key) return;
+    void openExactTransitNatalSourceRef.current(selection);
+  }, [
+    activePage,
+    skyWriteupWorkspaceView,
+    transitNatalPlanet,
+    transitNatalSign,
+    transitNatalTransitHouse,
+    transitNatalAspect,
+    transitNatalPoint,
+    transitNatalNatalHouse,
+    draft,
+    selectedRowId,
+    houseTransitEditor,
+    skyArticleEditor
+  ]);
+  openExactTransitNatalSourceRef.current = openExactTransitNatalSource;
+
+  useEffect(() => {
     const emergencySecret = secret;
     let cancelled = false;
     let activeSessionToken = "";
@@ -3918,6 +3954,8 @@ export function GeneratedContentAdminDashboard() {
     if ((hasUnsavedChanges || hasPendingArticleChanges()) && !window.confirm("Discard the unsaved changes in this editor?")) {
       return false;
     }
+    if (draft?.contentKey) transitExactDismissedKeyRef.current = draft.contentKey;
+    sourceOpenRequestRef.current += 1;
     setTemplateVariableReferenceOpen(false);
     setTemplateVariableQuery("");
     setSelectedTemplateVariableName(null);
@@ -7340,6 +7378,10 @@ export function GeneratedContentAdminDashboard() {
   async function openExactTransitNatalSource(selection: TransitNatalSelection) {
     const key = transitNatalExactContentKey(selection);
     if (!key) return;
+    if (draft?.contentKey === key && (selectedRowId || draft.id || draft.body || draft.headline)) {
+      return;
+    }
+    transitExactDismissedKeyRef.current = null;
     const originatingHash = window.location.hash;
     const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
@@ -7356,7 +7398,7 @@ export function GeneratedContentAdminDashboard() {
       setSelectedRowId(null);
       setCompositionEditorContext(null);
       setDraft(transitNatalExactSourceDraft(selection));
-      setMessage("No exact passage is saved for this combination. This is a new blank draft. To change the current reading, close this draft and use Edit selected source beneath the reader preview.");
+      setMessage("No write-up is saved for this contact yet. You and Friend below are for this aspect only. Shared fallback writing stays unchanged until this passage is reviewed and published.");
       scrollEditorToTop();
     } catch (error) {
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
@@ -7400,8 +7442,8 @@ export function GeneratedContentAdminDashboard() {
             <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Active for {{Name}}" : "Personal Transits workspace"}</p>
             <h3>{selection ? transitNatalLabel(selection) : "Find a Personal Transit write-up"}</h3>
             <p>{friendsTransitAudience
-              ? "This is the editor for Friends > Transits > Active for {{Name}}. The preview uses the Friends reader resolver and its approved Friend View Copy. Open the selected source to edit that passage."
-              : "Choose the current placement and the natal point it contacts. The preview uses the same approved transit writing as Sky and You. Open the selected source to edit the complete passage."}</p>
+              ? "This is the editor for Friends > Transits > Active for {{Name}}. Choose the contact; the Friend and You fields for that exact transit open here. Shared fallback writing is a separate advanced edit."
+              : "Choose the current placement and the natal point it contacts. The You and Friend fields for that exact transit open here. Shared fallback writing is a separate advanced edit."}</p>
             <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
           </div>
           {selection && <code>transit/{selection.planet}-{selection.sign}-{selection.transitHouse}h/{selection.aspect}/{selection.natalPoint}-{selection.natalHouse}h</code>}
@@ -7452,13 +7494,15 @@ export function GeneratedContentAdminDashboard() {
           </label>
         </div>
 
+        {selection && transitNatalExactContentKey(selection) && <Suspense fallback={<p role="status">Opening this transit…</p>}><TransitNatalExactSourceAction
+          contentKey={transitNatalExactContentKey(selection)!} title={transitNatalLabel(selection)} secret={secret} disabled={isLoading} onOpen={() => void openExactTransitNatalSource(selection)} /></Suspense>}
+
         <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
 
-        {!selection && <p className="admin-natal-placement-prompt">Choose all six values to preview the write-up and open its exact source rows.</p>}
+        {!selection && <p className="admin-natal-placement-prompt">Choose all six values to open this transit's You and Friend write-up.</p>}
         {selection && <Suspense fallback={<p role="status">Loading reader preview…</p>}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
-        {selection && <p className="admin-field-hint">Edit selected source changes the writing shown above. A new exact passage replaces fallback writing only after you write, review, and publish it. Signs and houses are calculated separately.</p>}
-        {selection && transitNatalExactContentKey(selection) && <Suspense fallback={<p role="status">Checking the exact passage…</p>}><TransitNatalExactSourceAction
-          contentKey={transitNatalExactContentKey(selection)!} secret={secret} disabled={isLoading} onOpen={() => void openExactTransitNatalSource(selection)} /></Suspense>}
+        {selection && <p className="admin-field-hint">The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses are calculated separately.</p>}
+
       </section>
     );
   }
@@ -9068,7 +9112,7 @@ export function GeneratedContentAdminDashboard() {
           : isCompatibilityCardDraft
             ? "Create compatibility card"
             : isFallbackHookDraft
-              ? isAuthoredTransitAspectDraft ? "Write a new exact passage" : isCompatibilityWorkspaceDraft ? "Create compatibility fallback" : "Create fallback passage"
+              ? isAuthoredTransitAspectDraft ? `Write ${currentDraft.headline || "this transit"}` : isCompatibilityWorkspaceDraft ? "Create compatibility fallback" : "Create fallback passage"
               : isTemplateDraft
                 ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
                 : "Create saved row";
@@ -9247,7 +9291,9 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-editor-guidance" aria-label="Selected transit context">
               <p>Selected transit: {titleFromKey(transitNatalPlanet)} in {titleFromKey(transitNatalSign)}{transitNatalTransitHouse ? `, ${ordinalHouse(transitNatalTransitHouse)} house` : ""}, {transitNatalAspect} natal {titleFromKey(transitNatalPoint)}{transitNatalNatalHouse ? `, ${ordinalHouse(transitNatalNatalHouse)} house` : ""}.</p>
               <p>{isNewDraft && isAuthoredTransitAspectDraft && !currentDraft.sections?.packageOriginalRecord
-                ? "No exact passage is saved for this combination. This is a new blank draft. To edit the current reading, close this draft and choose Edit selected source under the preview."
+                ? "No write-up is saved for this exact contact yet. You and Friend below are for this aspect only. Shared fallback writing is unchanged until you review and publish this passage."
+                : isAuthoredTransitAspectDraft
+                  ? "These You and Friend fields belong to the selected contact. Signs, houses, and dates come from the calculated chart. Shared fallback writing is edited separately under the published preview."
                 : "This source is shared by matching readings. Edit its words here; signs, houses, and dates come from the calculated chart. Variables opens a preview using the transit selected above."}</p>
             </div>
           )}

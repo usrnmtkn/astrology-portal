@@ -1,3 +1,5 @@
+import "./test-transit-natal-editor-scope.mjs";
+import "./test-transit-exact-isolation.mjs";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
