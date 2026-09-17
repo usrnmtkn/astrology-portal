@@ -198,6 +198,7 @@ export function preferSkyWritingLibrary(composition: SkyWritingLibraryCompositio
     && !timingModuleIds.has(item.id)
     && !libraryOrder.includes(item.id)
     && !item.id.startsWith("library-source-experience"));
+  const legacy = prepared.filter(item => legacyBodyModuleIds.has(item.id));
   return {
     ...installed,
     modules: [
@@ -206,7 +207,8 @@ export function preferSkyWritingLibrary(composition: SkyWritingLibraryCompositio
       ...selectedExperiences,
       ...pick("library-experience"),
       ...timing,
-      ...pick("library-challenge", "library-response")
+      ...pick("library-challenge", "library-response"),
+      ...legacy
     ]
   };
 }

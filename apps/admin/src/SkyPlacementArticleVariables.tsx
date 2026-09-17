@@ -19,6 +19,7 @@ type Props = {
   preparing: boolean;
   preparationError: string;
   onPrepareLibrary: () => void;
+  onApplyPlanetSignTemplate?: () => void;
   onCompositionChange: (value: SkyWritingLibraryComposition) => void;
   onReplaceBody?: (value: string) => void;
   onLoadSource?: (key: string) => Promise<RecordValue | undefined>;
@@ -97,7 +98,7 @@ export default function SkyPlacementArticleVariables(props: Props) {
     if (disabled || !props.onReplaceBody) return;
     if (value.trim() && value !== SKY_PLACEMENT_PLANET_SIGN_INGRESS_TEMPLATE
       && !window.confirm("Replace this placement article with the planet-in-sign Sky template? Existing article wording stays in the editor until you confirm.")) return;
-    props.onPrepareLibrary();
+    (props.onApplyPlanetSignTemplate ?? props.onPrepareLibrary)();
     props.onReplaceBody(SKY_PLACEMENT_PLANET_SIGN_INGRESS_TEMPLATE);
   }
 
