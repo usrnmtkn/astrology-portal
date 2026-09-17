@@ -3,7 +3,7 @@ import { createRequire } from "node:module";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminFetchJson, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
-import { renderTransitNatalPreview, transitNatalPlanets, transitNatalSigns, transitNatalAspects, transitNatalPoints } from "../../apps/admin/src/transitNatalSources.js";
+import { renderTransitNatalPreview, transitNatalPlanets, transitNatalSigns, transitNatalAspects, transitNatalPoints, transitNatalHouses } from "../../apps/admin/src/transitNatalSources.js";
 import { packageFallbackArchitectureV3CoreRows } from "../../apps/web/src/services/fallbackArchitectureV3CorePackaging.js";
 import { publicationAllowsContent, validContentPublication, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import type { GeneratedContentRow } from "../../apps/web/src/services/generatedContent.js";
@@ -36,7 +36,9 @@ export function normalizeTransitNatalPreviewInput(value: unknown) {
     ...(input.pass !== undefined ? { pass: input.pass as number } : {}),
     ...(input.variant !== undefined ? { variant: input.variant as number } : {}),
     ...(input.isRetrograde !== undefined ? { isRetrograde: input.isRetrograde as boolean } : {}),
-    ...(input.window !== undefined ? { window: input.window as string } : {}) };
+    ...(input.window !== undefined ? { window: input.window as string } : {}),
+    ...(transitNatalHouses.includes(String(input.transitHouse)) ? { transitHouse: String(input.transitHouse) as typeof transitNatalHouses[number] } : {}),
+    ...(transitNatalHouses.includes(String(input.natalHouse)) ? { natalHouse: String(input.natalHouse) as typeof transitNatalHouses[number] } : {}) };
 
 }
 

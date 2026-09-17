@@ -132,6 +132,8 @@ assert.equal(transitNatalSharedFallbackKey({planet:'sun',natalPoint:'sun',aspect
  assert.equal(seeded.sections.packageRecord.body_they,'{{Name}} {{aspectWord}}.');
 }
 for(const key of ['authored/transit-return/pluto','authored/transit-return/sun/extra','authored/transit-aspect/sun/sun/conjunction','authored/transit-aspect/sun/fake/square','authored/transit-aspect/sun/moon/hard','cms/personal-transit-aspect/sun/south-node/opposition'])assert.equal(isDynamicTransitNatalExactKey(key),false,key);
+assert.equal(isDynamicTransitNatalExactKey('authored/transit-aspect/sun/moon/square/aries/1/7'),true);
+assert.equal(isDynamicTransitNatalExactKey('authored/transit-aspect/sun/sun/conjunction/aries/1/1'),false);
 console.log('PASS new exact personal-transit and return sources, draft exclusion, retirement, and valid identities.');
 
 // Exercise the actual published-overlay resolver used by the HTTP handler.

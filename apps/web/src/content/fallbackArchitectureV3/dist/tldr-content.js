@@ -23,6 +23,16 @@ var DIGNITY_SIGNS = Object.freeze([
   "Aquarius",
   "Pisces"
 ]);
+var TRADITIONAL_DIGNITY_PLANETS = Object.freeze([
+  "Sun",
+  "Moon",
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn"
+]);
+var DEBILITY_DIGNITIES = Object.freeze(["detriment", "fall"]);
 var planetDignities = {
   Sun: {
     Leo: "domicile",
@@ -225,7 +235,11 @@ function calculatedStudioVariableValue(name, context = {}) {
   return "";
 }
 function studioVariableValue(definition, context = {}) {
-  if (!definition?.id && definition?.name) return { value: `{{${definition.name}}}`, scope: "builtin" };
+  const isCustom = definition && (typeof definition.value === "string" || Array.isArray(definition.overrides));
+  if (!isCustom && definition?.name) {
+    const calculated = calculatedStudioVariableValue(definition.name, context);
+    return { value: calculated || `{{${definition.name}}}`, scope: "builtin" };
+  }
   const { planet, sign } = studioVariableContext(context);
   const overrides = definition.overrides ?? [];
   const selected = overrides.find((item) => item.scope === "placement" && item.planet === planet && item.sign === sign) ?? overrides.find((item) => item.scope === "planet" && item.planet === planet) ?? overrides.find((item) => item.scope === "sign" && item.sign === sign);
@@ -258,15 +272,15 @@ function mapStudioVariableCopy(record2, map) {
 }
 function resolveStudioVariableCopy(copy, bindings = [], context = {}, deferredNames = []) {
   const indexed = new Map(bindings.filter((item) => !item?.builtin && typeof item?.id === "string").map((item) => [item.name, item]));
-  return String(copy ?? "").replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (token, name) => {
-    if (deferredNames.includes(name)) return token;
+  return String(copy ?? "").replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (token2, name) => {
+    if (deferredNames.includes(name)) return token2;
     const definition = indexed.get(name);
     if (definition) {
       const { value } = studioVariableValue(definition, context);
-      if (typeof value !== "string" || !value.trim() || /\{\{|\}\}/u.test(value)) throw new Error(`Missing value for ${token}. Open Variables to complete it before publishing.`);
+      if (typeof value !== "string" || !value.trim() || /\{\{|\}\}/u.test(value)) throw new Error(`Missing value for ${token2}. Open Variables to complete it before publishing.`);
       return value;
     }
-    return calculatedStudioVariableValue(name, context) || token;
+    return calculatedStudioVariableValue(name, context) || token2;
   });
 }
 function resolveStudioVariableRecord(record2, context = {}, deferredNames = []) {
@@ -498,7 +512,7 @@ function resolveZodiacSeasonVariables(value, context, sourceRows = [], options =
     if (/\{\{|\}\}/u.test(body)) throw new Error(`ZODIAC_SEASON_SOURCE_GAP: ${key} must contain complete prose, without nested variables.`);
     return [name, body];
   }));
-  return copy.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, (token, name) => values.get(name) ?? token);
+  return copy.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, (token2, name) => values.get(name) ?? token2);
 }
 function zodiacSeasonTemplateContext(copy, context, sourceRows = [], options = {}) {
   const result = { ...context };
@@ -654,8 +668,8 @@ var tokenPattern = () => /\{\{\s*([A-Za-z][A-Za-z0-9_.-]*)\s*\}\}/gu;
 function skyPlacementVariableIssues(value) {
   const copy = String(value ?? "");
   const issues = [];
-  const remaining = copy.replace(tokenPattern(), (token, name) => {
-    if (!names2.has(name)) issues.push(`Unknown Sky variable ${token}. Use a variable from the Sky variable key.`);
+  const remaining = copy.replace(tokenPattern(), (token2, name) => {
+    if (!names2.has(name)) issues.push(`Unknown Sky variable ${token2}. Use a variable from the Sky variable key.`);
     return "";
   });
   if (/\{\{|\}\}/u.test(remaining)) issues.push("Use a complete {{variableName}} token. Conditional blocks and section references are not inline Sky variables.");
@@ -678,10 +692,10 @@ function skyPlacementVariableSegments(value, facts2 = {}) {
   let from = 0;
   for (const match of copy.matchAll(tokenPattern())) {
     if (match.index > from) segments.push({ text: copy.slice(from, match.index) });
-    const [token, name] = match;
+    const [token2, name] = match;
     const available = names2.has(name) && Object.hasOwn(facts2, name) && typeof facts2[name] === "string" && facts2[name].trim().length > 0;
-    segments.push({ text: available ? facts2[name] : token, token, name, available });
-    from = match.index + token.length;
+    segments.push({ text: available ? facts2[name] : token2, token: token2, name, available });
+    from = match.index + token2.length;
   }
   if (from < copy.length) segments.push({ text: copy.slice(from) });
   return segments;
@@ -1410,6 +1424,37 @@ function normalizeAspect(input) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs
+var situationSigns = /* @__PURE__ */ new Set([
+  "aries",
+  "taurus",
+  "gemini",
+  "cancer",
+  "leo",
+  "virgo",
+  "libra",
+  "scorpio",
+  "sagittarius",
+  "capricorn",
+  "aquarius",
+  "pisces"
+]);
+var situationHouses = /* @__PURE__ */ new Set(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]);
+function token(value) {
+  return typeof value === "string" || typeof value === "number" ? String(value).trim().toLowerCase() : "";
+}
+function houseToken(value) {
+  const match = token(value).match(/^(1[0-2]|[1-9])(?:st|nd|rd|th)?$/u);
+  return match?.[1] ?? "";
+}
+function transitAspectSituationKey(transiting, natal, aspect, sign, transitHouse, natalHouse) {
+  const signToken = token(sign);
+  const fromHouse = houseToken(transitHouse);
+  const natalHouseToken = houseToken(natalHouse);
+  if (!transiting || !natal || !aspect || !situationSigns.has(signToken) || !situationHouses.has(fromHouse) || !situationHouses.has(natalHouseToken)) {
+    return null;
+  }
+  return `authored/transit-aspect/${transiting}/${natal}/${aspect}/${signToken}/${fromHouse}/${natalHouseToken}`;
+}
 function prioritizeExactTransitSources(keys, transiting, natal, aspect) {
   const exact = `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
   const isExact = (key) => key === exact || key.startsWith(`${exact}/`);
@@ -2252,7 +2297,9 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
               variant,
               voice,
               isRetrograde,
-              window: e.window ?? null
+              window: e.window ?? null,
+              transitHouse: house,
+              natalHouse: e.natalHouse
             });
             parts.push(renderedEvent.body);
             partSourceKeys.push(renderedEvent.sourceKeys ?? [renderedEvent.contentKey ?? renderedEvent.templateKey]);
@@ -2293,7 +2340,7 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     const body = fill2(v === "you" ? T.body_you ?? T.body : T.body_they ?? T.body, ctx);
     return { headline: fill2((v === "you" ? T.headline : T.headline_they ?? T.headline) ?? "", ctx), body, parts: [body], templateKey: T.contentKey };
   }
-  function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, isRetrograde, window: win, voice = "you" }) {
+  function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, transitHouse, natalHouse, isRetrograde, window: win, voice = "you" }) {
     const v = voice === "you" ? "you" : "they";
     const otherPoss = v === "they" ? `${voice}'s` : null;
     const g = GROUP[aspect] ?? aspect;
@@ -2307,6 +2354,8 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     const groupsToTry = [g, ...SHARE[g] ?? []];
     const tryKeys = [];
     const push = (a, b) => {
+      const situation = transitAspectSituationKey(a, b, aspect, sign, transitHouse, natalHouse);
+      if (situation) tryKeys.push(situation);
       if (pass && pass >= 1 && pass <= 3) {
         tryKeys.push(`authored/transit-aspect/${a}/${b}/${aspect}/pass-${pass}`);
         if (g !== aspect) tryKeys.push(`authored/transit-aspect/${a}/${b}/${g}/pass-${pass}`);
@@ -4446,8 +4495,8 @@ function knownPhrase(name, owner) {
 }
 function skyPlacementArticleVariableIssues(value, owner = {}) {
   const issues = [];
-  const remaining = String(value ?? "").replace(tokenPattern2(), (token, name) => {
-    if (!facts.has(name) && !knownPhrase(name, owner)) issues.push(`Unknown Sky variable ${token}. Use a calculated or editable phrase variable from the article variable picker.`);
+  const remaining = String(value ?? "").replace(tokenPattern2(), (token2, name) => {
+    if (!facts.has(name) && !knownPhrase(name, owner)) issues.push(`Unknown Sky variable ${token2}. Use a calculated or editable phrase variable from the article variable picker.`);
     return "";
   });
   if (/\{\{|\}\}/u.test(remaining)) issues.push("Use a complete {{variableName}} token. Conditional blocks and nested phrase references are not supported.");
@@ -4477,7 +4526,7 @@ function skyPlacementArticleVariableSegments(value, calculated = {}, owner = {},
   let from = 0;
   for (const match of tokens2(copy)) {
     if (match.index > from) segments.push({ text: copy.slice(from, match.index) });
-    const [token, name] = match;
+    const [token2, name] = match;
     let text2 = "";
     let reason = "";
     let kind = "fact";
@@ -4501,10 +4550,10 @@ function skyPlacementArticleVariableSegments(value, calculated = {}, owner = {},
         if (missing.length) reason = `Needs calculated ${[...new Set(missing)].join(", ")}`;
         else text2 = resolved.text.replace(tokenPattern2(), (_, id) => articleFactText(id, calculated[id]));
       }
-    } else reason = `Unknown Sky variable ${token}`;
-    if (!reason && /\{\{|\}\}/u.test(text2)) reason = `Unresolved variable inside ${token}`;
-    segments.push({ text: reason ? token : text2, token, name, kind, reference, reason, available: !reason });
-    from = match.index + token.length;
+    } else reason = `Unknown Sky variable ${token2}`;
+    if (!reason && /\{\{|\}\}/u.test(text2)) reason = `Unresolved variable inside ${token2}`;
+    segments.push({ text: reason ? token2 : text2, token: token2, name, kind, reference, reason, available: !reason });
+    from = match.index + token2.length;
   }
   if (from < copy.length) segments.push({ text: copy.slice(from) });
   return segments;
@@ -6462,7 +6511,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-17-transit-exact-isolation";
+var PACKAGE_VERSION = "v3-2026-09-17-transit-situation-exact";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

@@ -66,7 +66,7 @@ export default function PersonalTransitAiWriter({
     setError("");
     setStatus("");
     setAudience("both");
-  }, [contentKey]);
+  }, [contentKey, sign, transitHouse, natalHouse]);
 
   const request = async (action: "generate" | "next-missing" | "recheck") => {
     if (busy || disabled) return;
@@ -143,7 +143,7 @@ export default function PersonalTransitAiWriter({
 
   return <details className="admin-workspace-details" {...(defaultOpen ? { open: true } : {})}>
     <AdminDisclosureSummary>AI writing</AdminDisclosureSummary>
-    <p>This generator writes the selected destination only: {destinationLabel({ contentKey, transiting, natal, aspect, transitHouse, natalHouse, planet, house, sign })}. Generate copies into this exact contact's You and Friend fields. Save keeps a draft. Approve &amp; publish stays with you.</p>
+    <p>This generator writes the selected destination only: {destinationLabel({ contentKey, transiting, natal, aspect, transitHouse, natalHouse, planet, house, sign })}. Generate copies into this destination's You and Friend fields. Save keeps a draft on this key. Approve &amp; publish stays with you.</p>
     <label className="admin-review-copy-editor">
       <span>Optional direction</span>
       <StudioTextarea
@@ -219,5 +219,12 @@ function destinationLabel(input: {
   if (input.contentKey.startsWith("authored/transit-house")) {
     return `${title(input.planet || input.transiting)} through the ${houseOrdinal(input.house)} house`;
   }
-  return `${title(input.transiting)} ${input.aspect} natal ${title(input.natal)}`;
+  const situation = [
+    input.sign ? `currently in ${title(input.sign)}` : "",
+    input.transitHouse ? `from the ${houseOrdinal(input.transitHouse)} house` : "",
+    input.natalHouse ? `natal ${title(input.natal)} in the ${houseOrdinal(input.natalHouse)} house` : ""
+  ].filter(Boolean);
+  return situation.length
+    ? `${title(input.transiting)} ${input.aspect} natal ${title(input.natal)}; this draft uses ${situation.join("; ")}`
+    : `${title(input.transiting)} ${input.aspect} natal ${title(input.natal)}`;
 }

@@ -14,7 +14,7 @@ const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
 type Preview = ReturnType<typeof renderTransitNatalPreview>;
 
 export function TransitNatalExactSourceAction({
-  contentKey, title, secret, disabled, onOpen, transiting, natal, aspect, onUseYou, onUseFriend, onOpenNext
+  contentKey, title, secret, disabled, onOpen, transiting, natal, aspect, sign = "", transitHouse = "", natalHouse = "", onUseYou, onUseFriend, onOpenNext
 }: {
   contentKey: string;
   title: string;
@@ -24,6 +24,9 @@ export function TransitNatalExactSourceAction({
   transiting: string;
   natal: string;
   aspect: string;
+  sign?: string;
+  transitHouse?: string;
+  natalHouse?: string;
   onUseYou: (text: string) => void;
   onUseFriend: (text: string) => void;
   onOpenNext?: (next: { contentKey: string; transiting: string; natal: string; aspect: string; missingAudiences: Array<"you" | "friend"> }) => void;
@@ -53,12 +56,15 @@ export function TransitNatalExactSourceAction({
       {state.passage?.row && <ContentLiveStatusBadge row={state.passage.row} />}
     </header>
     <StudioButton type="button" disabled={disabled} onClick={onOpen}>{transitNatalExactActionLabel(Boolean(state.passage?.exists), title)}</StudioButton>
-    <p className="admin-field-hint">This opens the You and Friend fields for the selected contact. Generate copies into those fields for this exact aspect. Save keeps a draft. Approve &amp; publish makes the write-up live. Preview sign and houses are not used.</p>
+    <p className="admin-field-hint">This opens the You and Friend fields for the selected contact. Fill all six finder values to save a six-part situation. Leave sign or houses blank to save the three-part aspect only. Generate copies into those fields. Approve &amp; publish makes the write-up live.</p>
     <Suspense fallback={null}><PersonalTransitAiWriter
       defaultOpen
       transiting={transiting}
       natal={natal}
       aspect={aspect}
+      sign={sign}
+      transitHouse={transitHouse}
+      natalHouse={natalHouse}
       contentKey={contentKey}
       youText=""
       friendText=""
