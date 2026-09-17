@@ -10,6 +10,7 @@ import { PageLoading } from "../../web/src/components/PageLoading";
 import { isSkyPlacementArticleField, skyPlacementArticleVariableIssues, skyPlacementArticlePhraseNames } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 import SkyPhraseCompositionEditor from "./SkyPhraseCompositionEditor";
 import SkyIngressComposer from "./SkyIngressComposer";
+import SkyWritingLibraryEditor from "./SkyWritingLibraryEditor";
 import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
 import SkySectionPacketEditor from "./SkySectionPacketEditor";
 import {
@@ -112,6 +113,8 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   const articleNeedsLibrary = ["placementArticle", "placementArticleDirect", "placementArticleRetrograde"]
     .some(path => skyPlacementArticlePhraseNames((source as Record<string, any> | undefined)?.[path]).some((name: string) => !(source as Record<string, any> | undefined)?._studioVariables?.some((item: any) => item.name === name)));
   const [articleLibraryRequested, setArticleLibraryRequested] = useState(false);
+  const [showComposition, setShowComposition] = useState(false);
+  const [showLibraryComposer, setShowLibraryComposer] = useState(false);
   const libraryRequested = Boolean(initialLibrarySourceId || articleNeedsLibrary || articleLibraryRequested);
 
   // Article insertion, pasted templates, and direct phrase edits prepare the Writing Library in draft
@@ -175,9 +178,28 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       <p>Nothing is published until you use the existing Save &amp; publish action.</p>
     </div>
     {libraryError && <p role="alert">{libraryError}</p>}
-    {!libraryReady ? <PageLoading compact message={installingLibrary ? `Loading ${initialLibraryField?.label ?? initialLibrarySourceId} for ${title(planet)} in ${title(sign)}…` : `Preparing ${initialLibraryField?.label ?? initialLibrarySourceId}…`} />
-      : <SkyIngressComposer source={{ ...(source ?? {}), contentKey, ingress: activeLibrary }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
-        initialField={initialField} onChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />}
+    {!libraryReady || !activeLibrary ? <PageLoading compact message={installingLibrary ? `Loading ${initialLibraryField?.label ?? initialLibrarySourceId} for ${title(planet)} in ${title(sign)}…` : `Preparing ${initialLibraryField?.label ?? initialLibrarySourceId}…`} />
+      : <>
+        <SkyWritingLibraryEditor
+          contentKey={contentKey}
+          planet={planet}
+          sign={sign}
+          sourceRecord={{ ...(source ?? {}), contentKey, ingress: activeLibrary }}
+          composition={activeLibrary}
+          disabled={disabled}
+          initialSourceId={initialLibrarySourceId}
+          onChange={value => { setPreparedLibrary(value); onChange("ingress", value); }}
+          onOpenSource={onOpenSource}
+          onLoadSource={onLoadSource}
+          onAdvancedSource={() => setShowComposition(true)}
+        />
+        <details className="admin-workspace-details" open={showComposition} onToggle={event => setShowComposition(event.currentTarget.open)}>
+          <AdminDisclosureSummary>Placement composition</AdminDisclosureSummary>
+          <p>Section templates, motion, and aspect modules. Open this only when you need to assemble the placement, not to edit this phrase.</p>
+          {showComposition && <SkyIngressComposer source={{ ...(source ?? {}), contentKey, ingress: activeLibrary }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
+            hideLibrary initialField={initialField} onChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />}
+        </details>
+      </>}
   </section>;
 
   if (!planet) return <section className="admin-sky-edition-fields" aria-label="Editable fallback fields">
@@ -265,11 +287,11 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       </details>}
     </> : <p>No editable writing fields are available for this source.</p>}
     {placement && <SkyWritingSystemDetails system="placement" />}
-    {placement && <details className="admin-workspace-details" open>
+    {placement && <details className="admin-workspace-details" open={showLibraryComposer} onToggle={event => setShowLibraryComposer(event.currentTarget.open)}>
       <AdminDisclosureSummary>Writing library & placement composition</AdminDisclosureSummary>
-      <p>Edit reusable planet language, zodiac-sign lore, planet × sign synthesis, experience hooks, aspect writing, and optional context here. This is the preferred authoring path for new Sky fallback writing.</p>
-      <SkyIngressComposer source={{ ...source, contentKey }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
-        initialField={initialField} onChange={value => onChange("ingress", value)} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />
+      <p>Edit reusable planet language, zodiac-sign lore, planet × sign synthesis, experience hooks, aspect writing, and optional context here. Open this only when you need the library or to assemble sections.</p>
+      {showLibraryComposer && <SkyIngressComposer source={{ ...source, contentKey }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
+        initialField={initialField} onChange={value => onChange("ingress", value)} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />}
     </details>}
     {placement && <details className="admin-workspace-details admin-evergreen-sections" open={field?.key.startsWith("fallback.") || undefined}>
       <AdminDisclosureSummary>Legacy evergreen sections</AdminDisclosureSummary>

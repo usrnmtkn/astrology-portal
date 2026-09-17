@@ -51,6 +51,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   await expect(picker).toHaveAttribute('open', '');
   await expect(picker.getByText('Calculated Sky variables', { exact: true })).toBeVisible();
   await expect(picker.getByText('Editable phrase variables', { exact: true })).toBeVisible();
+  await expect(picker.locator('summary').filter({ hasText: /^Aspect writing$/ })).toHaveCount(0);
+  await expect(picker.getByRole('button', { name: 'Insert {{aspectMechanismSentence}}' })).toHaveCount(0);
   await picker.locator('summary').filter({ hasText: 'Hooks and takeaways' }).click();
   delayLibrary = !prefilled;
   await picker.getByRole('button', { name: 'Insert {{openingHook}}', exact: true }).click();

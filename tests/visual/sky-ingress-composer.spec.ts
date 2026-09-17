@@ -50,6 +50,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await map.getByRole('button', { name: 'Set up placement composition' }).click();
   const editor = page.getByRole('dialog');
   await expect(editor).toBeVisible();
+  await editor.locator('summary').filter({ hasText: /^Writing library & placement composition$/u }).click();
   await editor.getByRole('button', { name: 'Add prefilled placement composition' }).click();
   const composer = editor.getByRole('region', { name: 'Placement composition' });
   const library = composer.getByRole('region', { name: 'Sky writing library' });
@@ -77,6 +78,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await composer.getByLabel('New ingress source name').fill('additionalMeaningSentence');
   await composer.getByRole('button', { name: 'Add sentence source', exact: true }).click();
   await composer.getByLabel('Ingress source additionalMeaningSentence').fill('Fixture additional {{signTitle}} sentence.');
+  await composer.locator('summary').filter({ hasText: /^Sections and order$/u }).click();
+  await expect(composer.getByLabel('Insert ingress source slot').locator('option[value="aspectMechanismSentence"]')).toHaveCount(0);
+  await composer.locator('summary').filter({ hasText: /^Aspect selection$/u }).click();
+  await composer.getByLabel('Repeat for a calculated aspect').check();
+  await expect(composer.getByLabel('Insert ingress source slot').locator('option[value="aspectMechanismSentence"]')).toHaveCount(1);
+  await composer.getByLabel('Repeat for a calculated aspect').uncheck();
   await composer.getByRole('button', { name: 'Add composition section' }).click();
   await composer.getByLabel('Ingress section name').fill('Additional meaning');
   await composer.getByLabel('Insert ingress source slot').selectOption('additionalMeaningSentence');
@@ -107,3 +114,31 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   expect(errors).toEqual([]);
  });
 }
+
+test('Phrase variable from Sky write-ups stays a phrase editor', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'ingress-test'));
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.route('**/api/admin/**', async route => {
+   const url = new URL(route.request().url());
+   const rows = (url.searchParams.get('contentKeys') ?? key).split(',').map(virtual).filter(Boolean);
+   await route.fulfill({ json: { ok: true, rows: url.pathname.endsWith('/generated-content') ? rows : [], statuses: [], nextCursor: null } });
+  });
+  await page.goto('/#sky-writeups');
+  await page.getByLabel('Sky placement planet or point').selectOption('saturn');
+  await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
+  await page.getByLabel('Sky write-up motion').selectOption('direct');
+  const map = page.getByRole('region', { name: 'Sky placement composition map' });
+  await map.getByRole('tab', { name: 'Main template', exact: true }).click();
+  const phrases = map.getByLabel('Editable phrase variables');
+  await phrases.getByRole('button', { name: 'Edit planet function', exact: true }).click();
+  const editor = page.getByRole('dialog');
+  const phrase = editor.getByRole('region', { name: 'Phrase variable editor' });
+  await expect(phrase.getByRole('region', { name: 'Edit Planet function', exact: true })).toBeVisible();
+  await expect(phrase.getByLabel('Writing library Planet function')).toBeVisible();
+  await expect(phrase.getByRole('heading', { name: /Planet function/ })).toHaveCount(1);
+  await expect(editor.getByRole('region', { name: 'Placement composition' })).toHaveCount(0);
+  await expect(editor.getByLabel('Insert ingress source slot')).toHaveCount(0);
+  await expect(editor.getByLabel('Ingress section template')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});

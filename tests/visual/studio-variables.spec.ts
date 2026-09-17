@@ -80,7 +80,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await directory.getByLabel('Available in', {exact: true}).selectOption('Sky');
    const entryCard = directory.getByRole('article', {name: '{{entryDate}} · Calculated residency dates; not the retrograde window', exact: true});
    await expect(entryCard).toBeVisible();
-   await expect(entryCard.getByRole('button', {name: 'Edit source', exact: true})).toHaveCount(0);
+   await expect(entryCard.getByRole('button', {name: 'Open writing', exact: true})).toHaveCount(0);
    await entryCard.getByRole('button', {name: 'Copy {{entryDate}}', exact: true}).click();
    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('{{entryDate}}');
    await entryCard.locator('summary').click();
@@ -95,11 +95,11 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await expect(directory.getByRole('article')).toHaveCount(1);
    const variable = directory.getByRole('article');
    await expect(variable.getByRole('heading', {name: '{{zodiacSeasonPolarAxis}}', exact: true})).toBeVisible();
-   await expect(variable.getByRole('button', {name: 'Edit source', exact: true})).toBeDisabled();
-   await variable.getByLabel('Source for {{zodiacSeasonPolarAxis}}', {exact: true}).selectOption('fallback-hook/zodiac-season-polar-axis/virgo#body');
+   await expect(variable.getByRole('button', {name: 'Open writing', exact: true})).toBeDisabled();
+   await variable.getByLabel('Find writing for {{zodiacSeasonPolarAxis}}', {exact: true}).fill('virgo');
    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
    await page.screenshot({path: `test-results/variables-populated-${width}-${theme}.png`, fullPage: true});
-   await variable.getByRole('button', {name: 'Edit source', exact: true}).click();
+   await variable.getByRole('button', {name: 'Open writing', exact: true}).click();
    const editor = page.getByRole('dialog');
    const writing = editor.locator('textarea[data-sky-field="body"]');
 
@@ -117,15 +117,18 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await editor.getByRole('button', {name: /Close/}).first().click();
    await expect(directory.getByLabel('Search variables', {exact: true})).toHaveValue('zodiacSeasonPolarAxis');
    await expect(directory.getByLabel('Available in', {exact: true})).toHaveValue('Natal');
-   await variable.getByRole('button', {name: 'Edit source', exact: true}).click();
+   await variable.getByRole('button', {name: 'Open writing', exact: true}).click();
    await expect(writing).toHaveValue(revisedAxisBody);
    await editor.getByRole('button', {name: /Close/}).first().click();
-   await directory.getByLabel('Search variables', {exact: true}).fill('planetFunction');
+   await directory.getByLabel('Search variables', {exact: true}).fill('openingHook');
    await directory.getByLabel('Available in', {exact: true}).selectOption('Sky');
-   const planetVariable = directory.getByRole('article', {name: '{{planetFunction}} · Writing Library · Planet', exact: true});
-   await planetVariable.getByLabel('Source for {{planetFunction}}', {exact: true}).selectOption('sky-placement/article/sun/virgo#ingress.sources.planetFunction');
-   await planetVariable.getByRole('button', {name: 'Edit source', exact: true}).click();
-   await expect(editor.getByRole('region', {name: 'Edit Planet function', exact: true}).or(editor.getByText(/To edit.*planetFunction/u))).toBeVisible();
+   const openingHook = directory.getByRole('article', {name: '{{openingHook}} · Writing Library · Placement', exact: true});
+   await expect(openingHook.getByRole('button', {name: 'Open writing', exact: true})).toBeDisabled();
+   await openingHook.getByLabel('Find writing for {{openingHook}}', {exact: true}).fill('sun virgo');
+   await openingHook.getByRole('button', {name: 'Open writing', exact: true}).click();
+   await expect(editor.getByRole('region', {name: 'Edit Opening hook', exact: true}).or(editor.getByText(/To edit.*openingHook/u))).toBeVisible();
+   await expect(editor.getByRole('region', {name: 'Placement composition'})).toHaveCount(0);
+   await expect(editor.getByLabel('Insert ingress source slot')).toHaveCount(0);
    page.once('dialog', dialog => dialog.accept());
    await editor.getByRole('button', {name: /Close/}).first().click();
    await page.goto(entry + '#templates');
