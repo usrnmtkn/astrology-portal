@@ -16,8 +16,8 @@ export const skyDebilityDefaults = {
   many: "{count} of {total} planets are in detriment or fall. They do not have access to their usual tools.",
   openingHook: "Things may take more effort right now",
   experienceTemplate: "You may {livedExperienceList}. {situationList} can take more out of you than you expected.",
-  contextTemplate: "{planetList} {signConditionClause} how we {planetFunctionList}. That is what “detriment or fall” describes, not a prediction that things will go badly. It may help to {responseList}.",
-  signConditionOne: "is in a sign that complicates",
+  contextTemplate: "{planetList} {signConditionClause} how we {planetFunctionList}. Detriment and fall describe signs where a planet has a harder time doing its usual work. It may help to {responseList}.",
+  signConditionOne: "is in {signTitle}, a sign that complicates",
   signConditionMany: "are in signs that complicate",
   exampleOrder: "Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn"
 } as const;
@@ -35,7 +35,7 @@ const fieldMeta: Record<SkyDebilityTemplateName, { label: string; allowedSlots: 
   openingHook: { label: "Heading", allowedSlots: [] },
   experienceTemplate: { label: "Experience paragraph template", allowedSlots: ["livedExperienceList", "situationList"] },
   contextTemplate: { label: "Context and response paragraph template", allowedSlots: ["planetList", "signConditionClause", "planetFunctionList", "responseList"] },
-  signConditionOne: { label: "One-planet connecting phrase", allowedSlots: [] },
+  signConditionOne: { label: "One-planet connecting phrase", allowedSlots: ["signTitle"] },
   signConditionMany: { label: "Multiple-planet connecting phrase", allowedSlots: [] },
   exampleOrder: { label: "Example order (not a severity ranking)", allowedSlots: [] }
 };
@@ -79,7 +79,10 @@ export function skyDebilityTemplateErrors(key: string, body: string): string[] {
     if (/[.!?;:,]$/u.test(body.trim())) errors.push("Leave final punctuation to the paragraph template.");
     if (/[\r\n]/u.test(body)) errors.push("Keep this phrase on one line.");
     if (/^(you may|it may help to|how we|and\b|or\b)/iu.test(body.trim())) errors.push("Do not repeat the sentence introduction or start with a conjunction.");
-    if (/[{}<>]/u.test(body)) errors.push("Use plain wording, not nested variables or markup.");
+    // Only the single-planet connector accepts the calculated signTitle fact.
+    // Placement phrases still cannot contain nested variables or markup.
+    if (/[<>]/u.test(body) || (key.includes("/placement/") && /[{}]/u.test(body)))
+      errors.push("Use plain wording, not nested variables or markup.");
   }
   if (key.endsWith("/situationPhrase") && !/^(a|an|the)\s/iu.test(body.trim())) errors.push("Include the situation's article: a, an, or the.");
   if (key.endsWith("/exampleOrder")) {

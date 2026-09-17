@@ -17,6 +17,11 @@ import {
 import type { SummaryCompositionRow } from "./skySummaryComposition";
 
 const templateNames = ["openingHook", "experienceTemplate", "contextTemplate", "signConditionOne", "signConditionMany", "exampleOrder", "countLabel", "countUnit"];
+const templateGuidance: Record<string, string> = {
+  contextTemplate: "Edit the shared detriment/fall explanation and the wording around the response here. This paragraph is used for every qualifying combination.",
+  signConditionOne: "Edit the connecting wording for a single planet here. Keep {signTitle}; it inserts that planet's calculated sign, such as Aries for Saturn in Aries.",
+  exampleOrder: "Use all seven planet names once, separated by commas. This order selects examples only; it does not change the count or dignity."
+};
 export function SkyDebilityStudio({ rows, onEdit, busy }: {
   rows: SummaryCompositionRow[];
   onEdit: (field: SkySummaryField, initialBody?: string) => void;
@@ -119,8 +124,7 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
     <details>
       <summary>Card template, heading, and example order</summary>
       <p>Experiences and situations are joined with “or”; responses, planet names, and functions are joined with “and”. Example order chooses up to three complete sets, not a difficulty score.</p>
-      <div className="admin-daily-glance-pair-list">{templateNames.map(name => editor(`cms/sky-debility/${name}`,
-        name === "exampleOrder" ? "Use all seven planet names once, separated by commas. This order selects examples only; it does not change the count or dignity." : undefined))}</div>
+      <div className="admin-daily-glance-pair-list">{templateNames.map(name => editor(`cms/sky-debility/${name}`, templateGuidance[name]))}</div>
     </details>
     <details>
       <summary>Legacy wording for reference</summary>
