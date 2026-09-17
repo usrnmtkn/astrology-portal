@@ -2999,6 +2999,7 @@ export function GeneratedContentAdminDashboard() {
   const sourceOpenRequestRef = useRef(0);
   const openExactTransitNatalSourceRef = useRef<(selection: TransitNatalContact) => Promise<void>>(async () => {});
   const transitExactDismissedKeyRef = useRef<string | null>(null);
+  const pendingExactAiCopyRef = useRef<{ key: string; you?: string; friend?: string } | null>(null);
   const editorRef = useRef<HTMLElement | null>(null);
   const variableInsertionRef = useRef<{ element: HTMLTextAreaElement; start: number; end: number } | null>(null);
   const editorReturnFocusRef = useRef<HTMLElement | null>(null);
@@ -3631,6 +3632,16 @@ export function GeneratedContentAdminDashboard() {
     skyArticleEditor
   ]);
   openExactTransitNatalSourceRef.current = openExactTransitNatalSource;
+
+  useEffect(() => {
+    const pending = pendingExactAiCopyRef.current;
+    if (!pending || !draft || draft.contentKey !== pending.key) return;
+    pendingExactAiCopyRef.current = null;
+    let next = draft;
+    if (pending.you) next = setPackageSectionField(next, "body_you", pending.you);
+    if (pending.friend) next = setPackageSectionField(next, "body_they", pending.friend);
+    if (next !== draft) setDraft(next);
+  }, [draft]);
 
   useEffect(() => {
     const emergencySecret = secret;
@@ -7535,7 +7546,28 @@ export function GeneratedContentAdminDashboard() {
         </div>
 
         {exactKey && contact && <Suspense fallback={<PageLoading compact message="Opening this transit…" />}><TransitNatalExactSourceAction
-          contentKey={exactKey} title={transitNatalLabel(contact)} secret={secret} disabled={isLoading} onOpen={() => void openExactTransitNatalSource(contact)} /></Suspense>}
+          contentKey={exactKey}
+          title={transitNatalLabel(contact)}
+          transiting={contact.planet}
+          natal={contact.natalPoint}
+          aspect={contact.aspect}
+          secret={secret}
+          disabled={isLoading}
+          onOpen={() => void openExactTransitNatalSource(contact)}
+          onUseYou={(text) => {
+            pendingExactAiCopyRef.current = { key: exactKey, ...(pendingExactAiCopyRef.current?.key === exactKey ? pendingExactAiCopyRef.current : {}), you: text };
+            void openExactTransitNatalSource(contact);
+          }}
+          onUseFriend={(text) => {
+            pendingExactAiCopyRef.current = { key: exactKey, ...(pendingExactAiCopyRef.current?.key === exactKey ? pendingExactAiCopyRef.current : {}), friend: text };
+            void openExactTransitNatalSource(contact);
+          }}
+          onOpenNext={(next) => updateTransitNatalSelection({
+            planet: next.transiting as TransitNatalPlanet,
+            aspect: next.aspect as TransitNatalAspect,
+            natalPoint: next.natal as TransitNatalPoint
+          })}
+        /></Suspense>}
 
         <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
 
@@ -10088,8 +10120,6 @@ export function GeneratedContentAdminDashboard() {
             transiting={currentDraft.contentKey.split("/")[2] ?? ""}
             natal={currentDraft.contentKey.split("/")[3] ?? ""}
             aspect={currentDraft.contentKey.split("/")[4] ?? ""}
-            transitHouse={transitNatalTransitHouse}
-            natalHouse={transitNatalNatalHouse}
             contentKey={currentDraft.contentKey}
             youText={packageFieldString(currentDraft, "body_you")}
             friendText={packageFieldString(currentDraft, "body_they")}
@@ -10099,10 +10129,7 @@ export function GeneratedContentAdminDashboard() {
             onOpenNext={(next) => updateTransitNatalSelection({
               planet: next.transiting as TransitNatalPlanet,
               aspect: next.aspect as TransitNatalAspect,
-              natalPoint: next.natal as TransitNatalPoint,
-              sign: transitNatalSign || "aries",
-              transitHouse: transitNatalTransitHouse || "1",
-              natalHouse: transitNatalNatalHouse || "1"
+              natalPoint: next.natal as TransitNatalPoint
             })}
           /></Suspense>}
           {selectedRow && <Suspense fallback={<PageLoading message="Loading publication checks…" />}><StudioEditorReviewPanels row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}

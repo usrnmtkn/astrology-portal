@@ -24,4 +24,7 @@ assert.match(transitSources, /label: "Natal chart points"/u);
 assert.match(transitSources, /transitNatalContactReady/u);
 assert.match(dashboard, /Choose transiting planet, aspect, and natal planet or chart point to open this transit's You and Friend write-up./u);
 assert.doesNotMatch(dashboard, /Choose all six values/u);
+const exactAction = fs.readFileSync(path.join(root, "apps/admin/src/TransitNatalReaderPreview.tsx"), "utf8");
+assert.match(exactAction, /<PersonalTransitAiWriter/u);
+assert.match(exactAction, /youText=""/u);
 console.log("Content Studio Transit to Natal Friends editor contract passed.");

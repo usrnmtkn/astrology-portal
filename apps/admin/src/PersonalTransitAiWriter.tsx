@@ -30,6 +30,7 @@ type Props = {
   onUseYou: (text: string) => void;
   onUseFriend: (text: string) => void;
   onOpenNext?: (next: NextMissing) => void;
+  defaultOpen?: boolean;
 };
 
 async function contentStudioCredential() {
@@ -44,7 +45,7 @@ async function contentStudioCredential() {
 
 export default function PersonalTransitAiWriter({
   transiting = "", natal = "", aspect = "", transitHouse = "", natalHouse = "",
-  planet = "", house = "", sign = "", contentKey, youText, friendText, disabled, onUseYou, onUseFriend, onOpenNext
+  planet = "", house = "", sign = "", contentKey, youText, friendText, disabled, onUseYou, onUseFriend, onOpenNext, defaultOpen = false
 }: Props) {
   const [instruction, setInstruction] = useState("");
   const [audience, setAudience] = useState<Audience>("both");
@@ -135,7 +136,7 @@ export default function PersonalTransitAiWriter({
     }
   };
 
-  return <details className="admin-workspace-details">
+  return <details className="admin-workspace-details" {...(defaultOpen ? { open: true } : {})}>
     <AdminDisclosureSummary>AI writing</AdminDisclosureSummary>
     <p>This generator writes the selected destination only: {destinationLabel({ contentKey, transiting, natal, aspect, transitHouse, natalHouse, planet, house, sign })}. It does not save, approve, or publish.</p>
     <label className="admin-review-copy-editor">
@@ -146,7 +147,7 @@ export default function PersonalTransitAiWriter({
         maxLength={6000}
         rows={4}
         className="admin-ai-writing-instruction"
-        placeholder="Keep the opening; make the advice more specific. Leave blank to fill only the missing audience."
+        placeholder="Keep the opening; make the advice more specific. Leave blank to fill a missing audience, or to draft this contact when no exact write-up is saved yet."
         onChange={(event) => setInstruction(event.target.value)}
       />
       <small className="admin-field-hint">Direction can revise one audience without regenerating the other.</small>
@@ -164,7 +165,7 @@ export default function PersonalTransitAiWriter({
       {friendDraft && <StudioButton type="button" disabled={disabled || busy} onClick={() => { onUseFriend(friendDraft); setFriendDraft(""); }}>Use Friend draft</StudioButton>}
       {(youDraft || friendDraft) && <StudioButton type="button" disabled={busy} onClick={() => { setYouDraft(""); setFriendDraft(""); setChecks([]); setError(""); }}>Discard</StudioButton>}
     </div>
-    <p className="admin-field-hint">Current audience request: {audience === "both" ? "You and Friend, filling only what is missing unless you give direction" : audience === "you" ? "You only" : "Friend only"}.</p>
+    <p className="admin-field-hint">Current audience request: {audience === "both" ? "You and Friend. Missing fields are filled first; if both already have starter copy and no exact write-up is saved, Generate drafts both" : audience === "you" ? "You only" : "Friend only"}.</p>
     {busy && <p role="status">Writing a private suggestion. Saved copy is unchanged.</p>}
     {status && <p role="status">{status}</p>}
     {memoryCount > 0 && <p className="admin-field-hint">Memory Map: {memoryCount} owner correction{memoryCount === 1 ? "" : "s"} attached to this writing request. They are evidence, not approval.</p>}
@@ -213,9 +214,5 @@ function destinationLabel(input: {
   if (input.contentKey.startsWith("authored/transit-house")) {
     return `${title(input.planet || input.transiting)} through the ${houseOrdinal(input.house)} house`;
   }
-  const houses = [
-    input.transitHouse ? `transiting from the ${houseOrdinal(input.transitHouse)} house` : "",
-    input.natalHouse ? `natal ${title(input.natal)} in the ${houseOrdinal(input.natalHouse)} house` : ""
-  ].filter(Boolean).join("; ");
-  return `${title(input.transiting)} ${input.aspect} natal ${title(input.natal)}${houses ? `. ${houses}` : ""}`;
+  return `${title(input.transiting)} ${input.aspect} natal ${title(input.natal)}`;
 }

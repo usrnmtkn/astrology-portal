@@ -1,6 +1,6 @@
 import { AdminSelect, AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioInput } from "./StudioControls";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, lazy, Suspense, useEffect, useState } from "react";
 import { renderTransitNatalPreview, transitNatalExactContentKey, type TransitNatalSelection, type TransitNatalReadingContext, type TransitPassageSource } from "./transitNatalSources";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { requestStudioJson } from "./generatedContentClient";
@@ -9,10 +9,24 @@ import { PageLoading } from "../../web/src/components/PageLoading";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { transitNatalExactActionLabel, transitSourceEditScope, transitExactPassageState, type TransitExactPassageState } from "./transitNatalEditorScope";
 
+const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
+
 type Preview = ReturnType<typeof renderTransitNatalPreview>;
 
-export function TransitNatalExactSourceAction({ contentKey, title, secret, disabled, onOpen }: {
-  contentKey: string; title: string; secret: string; disabled: boolean; onOpen: () => void;
+export function TransitNatalExactSourceAction({
+  contentKey, title, secret, disabled, onOpen, transiting, natal, aspect, onUseYou, onUseFriend, onOpenNext
+}: {
+  contentKey: string;
+  title: string;
+  secret: string;
+  disabled: boolean;
+  onOpen: () => void;
+  transiting: string;
+  natal: string;
+  aspect: string;
+  onUseYou: (text: string) => void;
+  onUseFriend: (text: string) => void;
+  onOpenNext?: (next: { contentKey: string; transiting: string; natal: string; aspect: string; missingAudiences: Array<"you" | "friend"> }) => void;
 }) {
   const [revision, setRevision] = useState(0);
   const [state, setState] = useState<{ key: string; passage?: TransitExactPassageState; error?: string }>({ key: "" });
@@ -39,7 +53,20 @@ export function TransitNatalExactSourceAction({ contentKey, title, secret, disab
       {state.passage?.row && <ContentLiveStatusBadge row={state.passage.row} />}
     </header>
     <StudioButton type="button" disabled={disabled} onClick={onOpen}>{transitNatalExactActionLabel(Boolean(state.passage?.exists), title)}</StudioButton>
-    <p className="admin-field-hint">This opens the You and Friend fields for the selected contact. Save keeps a draft. Approve & publish makes the write-up live.</p>
+    <p className="admin-field-hint">This opens the You and Friend fields for the selected contact. Save keeps a draft. Approve & publish makes the write-up live. Generate below writes this exact contact only. Preview sign and houses are not used.</p>
+    <Suspense fallback={null}><PersonalTransitAiWriter
+      defaultOpen
+      transiting={transiting}
+      natal={natal}
+      aspect={aspect}
+      contentKey={contentKey}
+      youText=""
+      friendText=""
+      disabled={disabled}
+      onUseYou={onUseYou}
+      onUseFriend={onUseFriend}
+      onOpenNext={onOpenNext}
+    /></Suspense>
   </section>;
 }
 
