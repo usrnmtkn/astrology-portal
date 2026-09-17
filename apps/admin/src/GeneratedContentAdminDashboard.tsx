@@ -1,7 +1,7 @@
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { rememberStudioEditorReturn } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
-import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey, supportsZodiacSeasonVariables } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
+import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import "./studio-system.css";
 import { StudioTabs, StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
@@ -2946,7 +2946,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
-  const customVariableLibrary = useStudioCustomVariables(secret, activePage === "variables" || Boolean(draft));
+  const customVariableLibrary = useStudioCustomVariables(secret, Boolean(secret));
   const [fallbackHookEditorGuidanceBuilder, setFallbackHookEditorGuidanceBuilder] = useState<FallbackHookEditorGuidanceBuilder | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
@@ -8473,7 +8473,12 @@ export function GeneratedContentAdminDashboard() {
     const effectiveSkyFallbackVariableTarget = skyFallbackEditor?.fields.some((field) => field.key === skyFallbackVariableTarget)
       ? skyFallbackVariableTarget
       : skyFallbackEditor?.fields.find((field) => field.key === "fact_line")?.key ?? skyFallbackEditor?.fields[0]?.key ?? "";
-    const effectiveSkyFallback: Record<string, any> = { ...effectivePackageRecord(currentDraft.sections), _studioVariables: customVariableLibrary.variables };
+    const effectiveSkyFallback: Record<string, any> = {
+      ...effectivePackageRecord(currentDraft.sections),
+      _studioVariables: customVariableLibrary.variables,
+      _studioVariablesLoading: customVariableLibrary.loading,
+      _studioVariablesError: customVariableLibrary.error
+    };
     const isSkyV4OverlaySettings = currentDraft.contentKey === "sky-v4/settings/contextual-overlays";
     const skyV4OverlaysEnabled = effectiveSkyFallback.contextualTransitOverlaysEnabled !== false;
     const skyV4FallbackOverlayEnabled = effectiveSkyFallback.includeContextualOverlayInFallbackHook === true;
@@ -8504,12 +8509,16 @@ export function GeneratedContentAdminDashboard() {
     const seasonSourceRows = ZODIAC_SEASON_SOURCE_STARTERS.map((record: Record<string, any>) => rows.find(row => row.content_key === record.contentKey) ?? {
       id: `package:${record.contentKey}`, content_key: record.contentKey, headline: record.headline, body: "", summary: "", surface: "sky", status: "DRAFT", inventory_only: true, block_type: "fallback_hook", sections: { packageRecord: record }
     } as AdminGeneratedContentRow);
+    const hasTransitTemplatePreviewContext = activePage === "skyWriteups"
+      && skyWriteupWorkspaceView === "transits-to-natal"
+      && Boolean(transitNatalPlanet && transitNatalSign && transitNatalPoint && transitNatalAspect);
     const variableReferences = buildVariableReferences?.({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
       Body: currentDraft.body,
       body_you: packageFieldString(currentDraft, "body_you"),
-      body_they: packageFieldString(currentDraft, "body_they")
+      body_they: packageFieldString(currentDraft, "body_they"),
+      ...(hasTransitTemplatePreviewContext ? { Available: "{{transitTitle}} {{natalTitle}} {{aspectName}} {{signTitle}} {{timeOpen}}" } : {})
     }, effectiveSkyFallback, true) ?? [];
     const baseFallbackEditorGuidance = isFallbackHookDraft && !skyFallbackEditor && fallbackHookEditorGuidanceBuilder
       ? fallbackHookEditorGuidanceBuilder({
@@ -8532,6 +8541,8 @@ export function GeneratedContentAdminDashboard() {
       ? {
           ...draftEditablePackageRecord(currentDraft),
           _studioVariables: customVariableLibrary.variables,
+          _studioVariablesLoading: customVariableLibrary.loading,
+          _studioVariablesError: customVariableLibrary.error,
           headline: currentDraft.headline,
           summary: currentDraft.summary,
           body: currentDraft.body,
@@ -8539,10 +8550,7 @@ export function GeneratedContentAdminDashboard() {
           body_they: packageFieldString(currentDraft, "body_they")
         }
       : null;
-    const hasTransitTemplatePreviewContext = activePage === "skyWriteups"
-      && skyWriteupWorkspaceView === "transits-to-natal"
-      && Boolean(transitNatalPlanet && transitNatalSign && transitNatalPoint && transitNatalAspect);
-    const templatePreviewRow = selectedRow && (isTemplateDraft || hasTransitTemplatePreviewContext && variableReferences.length > 0) ? {
+    const templatePreviewRow = selectedRow && (isTemplateDraft || hasTransitTemplatePreviewContext) ? {
       ...selectedRow,
       headline: currentDraft.headline,
       summary: currentDraft.summary,
@@ -8733,7 +8741,29 @@ export function GeneratedContentAdminDashboard() {
       if (saved) setMessage("Owner copy review recorded. The row is still held and ready for governed source implementation.");
     };
     const rememberVariableSelection = (element: EventTarget | null) => {
-      if (element instanceof HTMLTextAreaElement && ["body", "body_you", "body_they"].includes(element.dataset.skyField ?? "")) variableInsertionRef.current = { element, start: element.selectionStart, end: element.selectionEnd };
+      if (element instanceof HTMLTextAreaElement && (element.dataset.skyField || element.dataset.calendarField)) {
+        variableInsertionRef.current = { element, start: element.selectionStart, end: element.selectionEnd };
+      }
+    };
+    const insertDraftToken = (token: string) => {
+      const saved = variableInsertionRef.current;
+      const element = saved && editorRef.current?.contains(saved.element)
+        ? saved.element
+        : editorRef.current?.querySelector<HTMLTextAreaElement>('textarea[data-sky-field="body_you"],textarea[data-sky-field="body"],textarea[data-calendar-field]');
+      if (!element) return;
+      const start = saved?.element === element ? saved.start : element.selectionStart ?? element.value.length;
+      const end = saved?.element === element ? saved.end : element.selectionEnd ?? start;
+      const next = element.value.slice(0, start) + token + element.value.slice(end);
+      const field = element.dataset.skyField;
+      const calendarField = element.dataset.calendarField;
+      if (field === "body_you" || field === "body_they") setDraft(setPackageSectionField(currentDraft, field, next));
+      else if (calendarField) {
+        const overview = currentDraft.sections?.calendarOverview && typeof currentDraft.sections.calendarOverview === "object"
+          ? currentDraft.sections.calendarOverview as Record<string, unknown>
+          : {};
+        setDraft({ ...currentDraft, sections: { ...currentDraft.sections, calendarOverview: { ...overview, [calendarField]: next } } });
+      } else updateGenericBody(next);
+      requestAnimationFrame(() => { element.focus(); element.setSelectionRange(start + token.length, start + token.length); });
     };
     const openSharedSeasonSource = async (key: string) => {
       const parentDraft = currentDraft;
@@ -9224,7 +9254,7 @@ export function GeneratedContentAdminDashboard() {
               {editorReaderDestination && editorReaderDestination !== editorUseLabel && <span className="admin-editor-reader-destination">{editorReaderDestination}</span>}
             </div>
             <div className="admin-editor-toolbar-actions">
-              {(variableReferences.length > 0 || /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(currentDraft.contentKey)) && (
+              {(variableReferences.length > 0 || hasTransitTemplatePreviewContext || isTemplateDraft || /^sky-placement\/article\/[^/]+\/[^/]+$/u.test(currentDraft.contentKey) || currentDraft.contentKey.startsWith("slot-template/calendar/")) && (
                 <StudioButton type="button" onClick={() => {
                   // Placement articles use their scoped picker and textarea cursor.
                   const articlePicker = editorRef.current?.querySelector<HTMLDetailsElement>("[data-sky-article-variable-picker]");
@@ -9247,18 +9277,7 @@ export function GeneratedContentAdminDashboard() {
           </div>
         </header>
         <section className="admin-post-editor">
-          {isPackageDraft && !skyFallbackEditor && <Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariableInsert variables={customVariableLibrary.variables} context={effectiveSkyFallback} disabled={isLoading} onInsert={token => {
-            const saved = variableInsertionRef.current;
-            const element = saved && editorRef.current?.contains(saved.element) ? saved.element : editorRef.current?.querySelector<HTMLTextAreaElement>('textarea[data-sky-field="body_you"],textarea[data-sky-field="body"]');
-            if (!element) return;
-            const start = saved?.element === element ? saved.start : element.value.length;
-            const end = saved?.element === element ? saved.end : start;
-            const value = element.value.slice(0, start) + token + element.value.slice(end);
-            const field = element.dataset.skyField;
-            if (field === "body_you" || field === "body_they") setDraft(setPackageSectionField(currentDraft, field, value));
-            else updateGenericBody(value);
-            requestAnimationFrame(() => { element.focus(); element.setSelectionRange(start + token.length, start + token.length); });
-          }} /></Suspense>}
+          {isPackageDraft && !skyFallbackEditor && <Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariableInsert variables={customVariableLibrary.variables} context={effectiveSkyFallback} disabled={isLoading} loading={customVariableLibrary.loading} error={customVariableLibrary.error} onRetry={customVariableLibrary.reload} onInsert={insertDraftToken} /></Suspense>}
 
           {guidedReviewKey === currentDraft.contentKey && (
             <section className="admin-guided-content-review" aria-label="Guided unresolved-content review">
@@ -10657,18 +10676,7 @@ export function GeneratedContentAdminDashboard() {
             rows={[...(hasNatalTemplatePreviewContext
               ? rows.filter((row) => natalPlacementResolverDependencyKeys(natalPlacementPlanet as NatalPlacementPlanet, natalPlacementSign as NatalPlacementSign, natalPlacementHouse, natalPlacementMotion).includes(row.content_key))
               : rows).filter(row => !isZodiacSeasonSourceKey(row.content_key)), ...seasonSourceRows]}
-            onInsert={supportsZodiacSeasonVariables(effectiveSkyFallback) || currentDraft.contentKey.startsWith("slot-template/calendar/") ? token => {
-              const saved = variableInsertionRef.current;
-              const element = saved && editorRef.current?.contains(saved.element) ? saved.element : editorRef.current?.querySelector<HTMLTextAreaElement>('textarea[data-sky-field="body"]');
-              if (!element) return;
-              const start = saved?.element === element ? saved.start : element.value.length;
-              const end = saved?.element === element ? saved.end : start;
-              const value = element.value.slice(0, start) + token + element.value.slice(end);
-              const field = element.dataset.skyField;
-              if (field === "body") updateGenericBody(value);
-              else if (field === "body_you" || field === "body_they") setDraft(setPackageSectionField(currentDraft, field, value));
-              requestAnimationFrame(() => { element.focus(); element.setSelectionRange(start + token.length, start + token.length); });
-            } : undefined}
+            onInsert={insertDraftToken}
             templateContentKey={currentDraft.contentKey}
             templatePreviewRow={templatePreviewRow}
             reviewTemplateRow={templatePreviewRow ?? {

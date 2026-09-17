@@ -59,7 +59,11 @@ function calculatedStudioVariableValue(name, context = {}) {
 }
 
 export function studioVariableValue(definition, context = {}) {
-  if (!definition?.id && definition?.name) return { value: `{{${definition.name}}}`, scope: "builtin" };
+  const isCustom = definition && (typeof definition.value === "string" || Array.isArray(definition.overrides));
+  if (!isCustom && definition?.name) {
+    const calculated = calculatedStudioVariableValue(definition.name, context);
+    return { value: calculated || `{{${definition.name}}}`, scope: "builtin" };
+  }
   const { planet, sign } = studioVariableContext(context);
   const overrides = definition.overrides ?? [];
   const selected = overrides.find(item => item.scope === "placement" && item.planet === planet && item.sign === sign)

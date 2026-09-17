@@ -56,6 +56,7 @@ async function fixture(page: Page, initialRows = fixtureRows()) {
     if (url.pathname !== '/api/admin/generated-content') return route.fulfill({ json: { ok: true, rows: [], records: [], statuses: [], nextCursor: null } });
     if (method === 'GET') {
       reads.push(url);
+      if (url.searchParams.get('variables') === 'true') return route.fulfill({ json: { ok: true, variables: [] } });
       if (url.searchParams.has('id') || url.searchParams.has('contentKey') || url.searchParams.has('contentKeys')) {
         if (detailGate) await detailGate;
         const result = await call({ method, url: `${url.pathname}${url.search}` });

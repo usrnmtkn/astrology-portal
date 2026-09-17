@@ -22,7 +22,10 @@ export function useStudioCustomVariables(secret: string, enabled: boolean) {
   const [attempt, setAttempt] = useState(0);
   const reload = useCallback(() => setAttempt(value => value + 1), []);
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
     const controller = new AbortController(); setLoading(true); setError("");
     void customVariableRequest(secret, "GET", undefined, controller.signal).then(data => {
       if (!controller.signal.aborted) setVariables(data.variables);

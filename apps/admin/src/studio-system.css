@@ -3,6 +3,7 @@
 /* Studio system. No legacy admin sheets are imported. Component families own
    their layout and states here; all visual values come from shared tokens. */
 html:has(.admin-dashboard) { color-scheme: dark; background: var(--workspace-canvas); }
+html:has(.admin-dashboard[data-studio-theme="light"]) { color-scheme: light; }
 body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard { color-scheme: dark; color: var(--workspace-ink); background: var(--workspace-canvas); font-family: var(--font-body); font-size: var(--text-body); line-height: var(--leading-body); font-weight: var(--weight-regular); letter-spacing: var(--tracking-body); display: grid; grid-template-columns: var(--workspace-sidebar-width) minmax(0, 1fr); min-height: 100dvh; text-align: start; }
 #root .admin-dashboard[data-studio-theme="light"] { color-scheme: light; }
@@ -71,7 +72,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard label:has(> input:is([type="checkbox"],[type="radio"])) { display: flex; align-items: center; gap: var(--workspace-control-inset); color: var(--workspace-ink); }
 #root .admin-dashboard input[type="range"] { accent-color: var(--workspace-primary); width: 100%; }
 #root .admin-dashboard .admin-select-shell { position: relative; display: block; width: 100%; min-width: 0; }
-#root .admin-dashboard .admin-native-select { appearance: none; padding-inline-end: var(--studio-field-icon-inset); }
+#root .admin-dashboard .admin-native-select { appearance: none; padding-inline-end: var(--studio-field-icon-inset); color-scheme: inherit; }
 #root .admin-dashboard .admin-native-select:is([multiple],[size]) { appearance: auto; }
 #root .admin-dashboard .admin-select-chevron { position: absolute; inset-inline-end: var(--workspace-panel-inset); top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--workspace-muted); }
 #root .admin-dashboard :is(.admin-search-input-shell,.admin-browse-search,.admin-composition-search-shell) { align-items: center; gap: var(--workspace-field-gap); padding: 0 var(--workspace-panel-inset); min-height: var(--studio-field-height); border: var(--border-width-thin) solid var(--workspace-line-strong); border-radius: var(--studio-field-radius); background: transparent; }

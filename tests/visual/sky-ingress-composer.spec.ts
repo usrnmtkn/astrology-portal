@@ -15,6 +15,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   page.on('request', request => { if (/skyCalculation\.worker|swisseph\.(wasm|data)/u.test(request.url())) calculations.push(request.url()); });
   await page.route('**/api/admin/**', async route => {
    const url = new URL(route.request().url());
+   if (url.searchParams.get('variables') === 'true') {
+    await route.fulfill({ json: { ok: true, variables: [] } });
+    return;
+   }
    const rows = (url.searchParams.get('contentKeys') ?? key).split(',').map(virtual).filter(Boolean);
    await route.fulfill({ json: { ok: true, rows: url.pathname.endsWith('/generated-content') ? rows : [], statuses: [], nextCursor: null } });
   });
@@ -121,6 +125,10 @@ test('Phrase variable from Sky write-ups stays a phrase editor', async ({ page }
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.route('**/api/admin/**', async route => {
    const url = new URL(route.request().url());
+   if (url.searchParams.get('variables') === 'true') {
+    await route.fulfill({ json: { ok: true, variables: [] } });
+    return;
+   }
    const rows = (url.searchParams.get('contentKeys') ?? key).split(',').map(virtual).filter(Boolean);
    await route.fulfill({ json: { ok: true, rows: url.pathname.endsWith('/generated-content') ? rows : [], statuses: [], nextCursor: null } });
   });

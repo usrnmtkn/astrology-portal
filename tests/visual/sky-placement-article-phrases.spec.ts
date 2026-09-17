@@ -11,6 +11,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   let delayLibrary = false;
   await page.route('**/api/admin/**', async route => {
    const url = new URL(route.request().url());
+   if (url.searchParams.get('variables') === 'true') {
+    await route.fulfill({ json: { ok: true, variables: [] } });
+    return;
+   }
    const keys = url.searchParams.getAll('contentKeys').flatMap(v => v.split(','));
    if (delayLibrary && keys.some(key => key.startsWith('fallback-'))) await new Promise(resolve => setTimeout(resolve, 300));
    const rows = keys.flatMap(contentKey => {
@@ -53,6 +57,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   await expect(picker.getByText('Editable phrase variables', { exact: true })).toBeVisible();
   await expect(picker.locator('summary').filter({ hasText: /^Aspect writing$/ })).toHaveCount(0);
   await expect(picker.getByRole('button', { name: 'Insert {{aspectMechanismSentence}}' })).toHaveCount(0);
+  await picker.getByText('My variables', { exact: true }).click();
+  await expect(picker.getByText('No saved variables yet', { exact: false })).toBeVisible();
+  await expect(picker.getByLabel('Variable', { exact: true })).toHaveCount(0);
   await picker.locator('summary').filter({ hasText: 'Hooks and takeaways' }).click();
   delayLibrary = !prefilled;
   await picker.getByRole('button', { name: 'Insert {{openingHook}}', exact: true }).click();
