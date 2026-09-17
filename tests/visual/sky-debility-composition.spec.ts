@@ -99,7 +99,10 @@ test("one, four, and zero-planet branches use the same source map", async ({ pag
   const mapped = studio.getByLabel("Mapped effort summary", { exact: true });
   await expect(mapped).toContainText("Saturn is in Aries, a sign that complicates how we take responsibility.");
   await expect(mapped.locator('[data-source-kind="fact"]').filter({ hasText: /^Aries$/ })).toBeVisible();
-  await mapped.getByRole("link", { name: "Edit One-planet connecting phrase", exact: true }).first().click();
+  const connector = mapped.getByRole("button", { name: "Edit One-planet connecting phrase", exact: true }).first();
+  await connector.focus();
+  await connector.press("Enter");
+  await expect(studio.getByTestId("sky-debility-selected-source").getByRole("textbox")).toBeFocused();
   await expect(studio.getByTestId("sky-debility-selected-source").getByRole("textbox")).toHaveValue("is in {signTitle}, a sign that complicates");
   await studio.getByLabel("Preview Mercury placement").selectOption("Pisces");
   await studio.getByLabel("Preview Venus placement").selectOption("Scorpio");
