@@ -1,4 +1,5 @@
 import { isEligibleTransitReturn } from "./fallbackArchitectureV3/resolver/transitReturns.mjs";
+// @ts-expect-error Shared ESM; the resolver folder is excluded from app tsc.
 import { transitAspectSituationKey } from "./fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs";
 
 const transitBodies = new Set(["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "north-node", "south-node", "lilith"]);
