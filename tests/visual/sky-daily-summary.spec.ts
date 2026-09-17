@@ -27,18 +27,17 @@ test("debility card counts traditional detriment and fall under the sky today ca
   });
   await page.goto("/?date=2026-09-08#sky");
   const skyToday = page.getByRole("region", { name: "The sky today", exact: true });
-  const debility = page.getByRole("region", { name: "Without their tools", exact: true });
+  const debility = page.getByRole("region", { name: "Things may take more effort right now", exact: true });
   await expect(skyToday).toBeVisible({ timeout: 60_000 });
   await expect(debility).toBeVisible();
   const summaryCards = page.locator(".today-summary-cards > section");
   await expect(summaryCards.first()).toHaveAttribute("aria-label", "The sky today");
-  await expect(summaryCards.nth(1)).toHaveAttribute("aria-label", "Without their tools");
-  const heading = debility.getByRole("heading", { level: 3, name: "Without their tools" });
+  await expect(summaryCards.nth(1)).toHaveAttribute("aria-label", "Things may take more effort right now");
+  const heading = debility.getByRole("heading", { level: 3, name: "Things may take more effort right now" });
   await expect(heading).toBeVisible();
-  await expect(heading.locator(":scope > span")).toHaveText(["Without", "their tools"]);
   await expect(debility.locator(".sky-today-ledger__head p span").first()).toHaveText("2 of 7");
-  await expect(debility.getByRole("link")).toHaveText(["Mars in Cancer", "Saturn in Aries"]);
-  await expect(debility).toContainText("2 of 7 planets are in detriment or fall. They do not have access to their usual tools.");
+  await expect(debility.getByRole("link")).toHaveText(["Mars in Cancer", "Saturn Rx in Aries"]);
+  await expect(debility).toContainText("Detriment and fall");
   const headingType = await heading.evaluate(el => {
     const style = getComputedStyle(el);
     const probe = document.createElement("h3");
@@ -113,26 +112,24 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
       const summaryCards = page.locator(".today-summary-cards > section");
       await expect(summaryCards.first()).toHaveAttribute("aria-label", "The sky today");
-      await expect(summaryCards.nth(1)).toHaveAttribute("aria-label", "Without their tools");
-      const debility = page.getByRole("region", { name: "Without their tools" });
+      await expect(summaryCards.nth(1)).toHaveAttribute("aria-label", "Things may take more effort right now");
+      const debility = page.getByRole("region", { name: "Things may take more effort right now" });
       await expect(debility).toBeVisible();
-      const debilityHeading = debility.getByRole("heading", { level: 3, name: "Without their tools" });
+      const debilityHeading = debility.getByRole("heading", { level: 3, name: "Things may take more effort right now" });
       await expect(debilityHeading).toBeVisible();
-      await expect(debilityHeading.locator(":scope > span")).toHaveText(["Without", "their tools"]);
       const countLabel = debility.locator(".sky-today-ledger__head p span").first();
       await expect(countLabel).toHaveText(/^\d+ of 7$/);
       const debilitatedCount = Number((await countLabel.innerText()).split(" ")[0]);
       await expect(debility.getByRole("link")).toHaveCount(debilitatedCount);
-      await expect(debility.getByRole("link", { name: "Read about Saturn in Aries" })).toBeVisible();
-      await expect(debility).toContainText("detriment or fall");
-      await expect(debility).toContainText("usual tools");
+      await expect(debility.getByRole("link", { name: "Read about Saturn Rx in Aries" })).toBeVisible();
+      await expect(debility).toContainText("Detriment and fall");
       const headingOrder = await page.evaluate(() => Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6"), node => ({
         level: Number(node.tagName.slice(1)),
         text: node.textContent?.replace(/\s+/g, " ").trim() ?? "",
         visible: (node as HTMLElement).offsetParent !== null || getComputedStyle(node).position === "fixed"
       })));
       const visibleHeadings = headingOrder.filter(node => node.visible).map(node => node.text);
-      expect(visibleHeadings.indexOf("Without their tools")).toBeGreaterThan(visibleHeadings.findIndex(text => /The sky today|Today, simple/i.test(text)));
+      expect(visibleHeadings.indexOf("Things may take more effort right now")).toBeGreaterThan(visibleHeadings.findIndex(text => /The sky today|Today, simple/i.test(text)));
       const debilityType = await debilityHeading.evaluate(el => {
         const style = getComputedStyle(el);
         const probe = document.createElement("h3");

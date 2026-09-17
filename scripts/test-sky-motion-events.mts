@@ -1,10 +1,13 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { createServer } from "vite";
-import { skyBodyLabel, calendarMotionTitle } from "../apps/web/src/content/skyMotionLabels.ts";
+import { skyBodyLabel, skyPlacementLinkLabel, calendarMotionTitle } from "../apps/web/src/content/skyMotionLabels.ts";
 import { skySummaryEventFacts } from "../apps/web/src/content/skySummaryEvents.ts";
 
 assert.equal(skyBodyLabel("Neptune"), "Neptune");
+assert.equal(skyPlacementLinkLabel("Mars", "Cancer"), "Mars in Cancer");
+assert.equal(skyPlacementLinkLabel("Saturn", "Aries", "direct"), "Saturn in Aries");
+assert.equal(skyPlacementLinkLabel("Saturn", "Aries", "retrograde"), "Saturn Rx in Aries");
 const base = { id: "aspect-neptune-sextile-pluto-2026-09-09", type: "aspect" as const,
   title: "Neptune sextile Pluto", startsAt: "2026-09-09T00:00:00Z", dateKey: "2026-09-09",
   planets: ["Neptune", "Pluto"] as [string,string], aspect: "sextile", glyph: "♆♇", primary: true };

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { skyDebilityFields, skyDebilityField, skyDebilityTemplateErrors } from "../apps/web/src/content/skyDebilityCatalog.ts";
 import { assembleSkyDebilityCopy, joinSkyDebilityList } from "../apps/web/src/content/skyDebilityAssembly.ts";
 import { skyDebilityPhraseSets, skyDebilityPhraseNames, skyDebilityPhraseKey, skyDebilityPlacementId } from "../apps/web/src/content/skyDebilityPhrases.ts";
@@ -16,6 +17,12 @@ const withEdits = (edits: Record<string, string | null>) => (key: string) => Obj
 assert.equal(skyDebilityPhraseSets.length, 18);
 assert.equal(new Set(skyDebilityContentKeys()).size, skyDebilityFields.length);
 assert.equal(skyDebilityFields.length, 85);
+assert.match(
+  readFileSync(new URL("../apps/web/src/content/cmsSurfaceOverrides.ts", import.meta.url), "utf8"),
+  /skyDebility:\s*\(\) => skyDebilityFields\.map\(field => field\.key\)/u
+);
+assert.ok(skyDebilityContentKeys().includes("cms/sky-debility/signConditionMany"));
+assert.ok(skyDebilityContentKeys().includes("cms/sky-debility/signConditionOne"));
 for (const field of skyDebilityFields) assert.deepEqual(skyDebilityTemplateErrors(field.key, field.body), [], field.key);
 for (const planet of TRADITIONAL_DIGNITY_PLANETS) for (const sign of DIGNITY_SIGNS) {
   const authored = skyDebilityPhraseSets.filter(row => row.planetTitle === planet && row.signTitle === sign);
