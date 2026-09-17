@@ -1,0 +1,32 @@
+name: Personal transit writer verification
+on:
+  push:
+    branches: [feat/personal-transit-ai-writer-20260917]
+permissions:
+  contents: read
+jobs:
+  source-snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Record source and governed project memory
+        run: |
+          mkdir -p "$RUNNER_TEMP/personal-transit-writer"
+          git remote -v > "$RUNNER_TEMP/personal-transit-writer/provenance.txt"
+          git log -1 >> "$RUNNER_TEMP/personal-transit-writer/provenance.txt"
+          git rev-list --left-right --count origin/main...HEAD >> "$RUNNER_TEMP/personal-transit-writer/provenance.txt"
+          node scripts/agent-memory.mjs recall "Personal Transits exact base You Friend AI draft generator canonical writing pipeline and saved draft preservation" --repo . --ref origin/main --limit 4 --state "$RUNNER_TEMP/writer-memory" > "$RUNNER_TEMP/personal-transit-writer/memory.json"
+          git rev-parse HEAD > "$RUNNER_TEMP/personal-transit-writer/source-commit.txt"
+          git archive --format=tar.gz HEAD > "$RUNNER_TEMP/personal-transit-writer/source.tar.gz"
+      - uses: actions/upload-artifact@v6
+        with:
+          name: personal-transit-writer-source
+          path: ${{ runner.temp }}/personal-transit-writer
+          retention-days: 1
