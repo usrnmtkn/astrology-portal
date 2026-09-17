@@ -108,6 +108,18 @@ export function isDynamicSynastryExactRecord(record: FallbackDashboardExtensionR
     && ["conjunction", "opposition", "square", "trine", "sextile"].includes(aspect) && extra === undefined;
 }
 
+export function isDynamicSkyPlacementArticleRecord(
+  record: FallbackDashboardExtensionRecord & { studio_content_type?: unknown }
+) {
+  const match = /^sky-placement\/article\/([^/]+)\/([^/]+)$/u.exec(record.contentKey);
+  return Boolean(
+    match
+    && natalBodies.has(match[1])
+    && zodiacSigns.has(match[2])
+    && record.studio_content_type === "continuous-placement"
+  );
+}
+
 export function isFallbackDashboardRecordAllowed(
   record: FallbackDashboardExtensionRecord,
   currentPackageKeys: ReadonlySet<string>
@@ -119,5 +131,6 @@ export function isFallbackDashboardRecordAllowed(
     || isDynamicTransitNatalExactRecord(record)
     || isDynamicHouseTransitRecord(record)
     || isDynamicSynastryExactRecord(record)
+    || isDynamicSkyPlacementArticleRecord(record)
     || (isCanonicalSkyReaderRecord(record) && record.studio_version_status === "approved-serving-revision");
 }

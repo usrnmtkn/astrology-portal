@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   isDynamicHouseTransitRecord,
+  isDynamicSkyPlacementArticleRecord,
   isDynamicSynastryExactRecord,
   isFallbackDashboardRecordAllowed
 } from "../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.ts";
@@ -45,4 +46,18 @@ for (const key of ["authored/transit-house-intro/moon/1", "fallback-hook/synastr
   })!, /different content keys/);
   assert.equal(packagePublicationAdmissionIssue({ ...row, status: "DRAFT", content_key: "authored/unknown/new" }), null);
 }
+const moonTaurus = {
+  contentKey: "sky-placement/article/moon/taurus",
+  content_role: "fallback_hook",
+  studio_content_type: "continuous-placement"
+};
+assert.ok(isDynamicSkyPlacementArticleRecord(moonTaurus));
+assert.equal(isDynamicSkyPlacementArticleRecord({ ...moonTaurus, studio_content_type: "card" }), false);
+assert.ok(isFallbackDashboardRecordAllowed(moonTaurus, new Set()));
+assert.equal(packagePublicationAdmissionIssue({
+  status: "LIVE",
+  provider: "tldrastro-fallback-architecture-v3",
+  content_key: moonTaurus.contentKey,
+  sections: { packageRecord: moonTaurus }
+}), null);
 console.log("PASS: bounded House Transit and exact synastry admission, distinct chart holders, and publication key protection.");
