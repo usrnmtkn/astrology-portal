@@ -16,7 +16,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
   await expect(paragraphs.nth(0)).toContainText("You may want reassurance but find it hard to ask for");
   await expect(paragraphs.nth(1)).toHaveText(linkedThreePlanetContext);
   await expect(card.locator(".sky-today-ledger__head")).toContainText("3 of 7");
-  const emphasis = paragraphs.nth(1).getByTestId("effort-count-statement");
+  const emphasis = paragraphs.nth(1).locator("mark.content-highlight");
   await expect(emphasis).toHaveText(highlightedCountStatement);
   await expect(emphasis.getByRole("link")).toHaveCount(0);
   await expect(card.getByRole("link")).toHaveCount(3);
@@ -24,12 +24,18 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
   for (const placement of ["venus/scorpio", "mars/cancer", "saturn/aries"])
     await expect(paragraphs.nth(1).locator(`a[href="#sky/placement/${placement}"]`)).toBeVisible();
   const typography = await emphasis.evaluate(el => {
-    const actual = getComputedStyle(el), body = getComputedStyle(el.parentElement!);
-    return { emphasized: Number(actual.fontWeight), regular: Number(body.fontWeight),
-      same: ["fontFamily", "fontSize", "lineHeight", "letterSpacing"].every(key => actual[key as any] === body[key as any]) };
+    const actual = getComputedStyle(el);
+    const probe = document.createElement("span");
+    probe.style.cssText = "font-family:var(--font-highlight);font-size:var(--text-highlight);font-weight:var(--weight-highlight);line-height:var(--leading-highlight);letter-spacing:var(--tracking-highlight)";
+    el.append(probe);
+    const expected = getComputedStyle(probe);
+    const matches = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"].every(key => actual[key as any] === expected[key as any]);
+    probe.remove();
+    return { matches, background: actual.backgroundImage, wrapping: actual.boxDecorationBreak };
   });
-  expect(typography.emphasized).toBeGreaterThan(typography.regular);
-  expect(typography.same).toBe(true);
+  expect(typography.matches).toBe(true);
+  expect(typography.background).toContain("linear-gradient");
+  expect(typography.wrapping).toBe("clone");
   expect(await card.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
   await card.screenshot({ path: `test-results/effort-reader-inline-${width}-${theme}.png` });
   await paragraphs.nth(1).getByRole("link", { name: "Read about Saturn Rx in Aries", exact: true }).click();
