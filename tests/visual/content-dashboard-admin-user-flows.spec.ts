@@ -4995,6 +4995,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const variableGuide = page.getByRole("complementary", { name: "Template variable reference" });
     await expect(variableGuide).toBeVisible();
+    await expect(variableGuide.getByRole("button", { name: "Insert {{planetTitle}}", exact: true })).toBeVisible();
     await expectFormShellDoesNotOverlap(variableGuide, "template variable rail desktop", railShellSelectors);
     await expect(variableGuide.getByRole("heading", { name: /in this row$/u })).toBeVisible();
     // The rail docks beside the editor instead of covering it.

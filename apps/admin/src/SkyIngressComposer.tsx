@@ -222,7 +222,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
           <p>Long means at least 90 days from the first entry to final exit, including gaps. Final pass takes priority over return pass. Sentence order within the template is preserved.</p>
           <label className="admin-review-copy-editor"><span>Section template</span><StudioTextarea ref={moduleWriting} className="admin-copy-field-body" aria-label="Ingress section template" value={module.template} disabled={disabled} onChange={event => updateModule({ template: event.target.value })} /></label>
           <label>Insert sentence source<AdminSelect aria-label="Insert ingress source slot" value="" disabled={disabled} onChange={event => { updateModule({ template: module.template + (module.template ? " " : "") + `{{${event.target.value}}}` }); }}><option value="">Choose a sentence for this section</option>{sentenceInsertGroups(composition, identity, Boolean(module.aspect)).map(([group, items]) => <optgroup key={group} label={group}>{items.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}</optgroup>)}</AdminSelect></label>
-          <StudioVariableInsert variables={customVariables} context={input} disabled={disabled} onInsert={token => {
+          <StudioVariableInsert variables={customVariables} context={input} disabled={disabled} loading={Boolean(source._studioVariablesLoading)} error={typeof source._studioVariablesError === "string" ? source._studioVariablesError : ""} onInsert={token => {
             const node = moduleWriting.current;
             const start = node?.selectionStart ?? module.template.length;
             const end = node?.selectionEnd ?? start;

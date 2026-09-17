@@ -28,7 +28,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await page.route('**/api/**', async route => {
     const request = route.request(), url = new URL(request.url());
     if (url.pathname === '/api/admin/generated-content') {
-     if (request.method() !== 'GET' || url.searchParams.has('id') || url.searchParams.has('contentKeys')) {
+     if (request.method() !== 'GET' || url.searchParams.has('id') || url.searchParams.has('contentKeys') || url.searchParams.has('variables')) {
       const result = await call({ method: request.method(), body: request.method() === 'GET' ? undefined : request.postDataJSON(), url: url.pathname + url.search });
       if (request.method() !== 'GET') responses.push(result);
       return route.fulfill({ status: result.status, json: result.payload });
@@ -54,8 +54,8 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await expect(rail.getByText('12 source rows can fill this variable.', {exact: true})).toBeVisible();
    await rail.locator('.admin-variable-source-row').filter({hasText: 'fallback-hook/zodiac-season/virgo'}).click();
    await rail.getByRole('button', {name: /Edit.*source/i}).click();
-   await expect(writing).toHaveValue('');
-   await writing.fill('Fixture full shared Virgo prose.');
+   const sourceWriting = editor.getByLabel('Reader copy', { exact: true });
+   await sourceWriting.fill('Fixture full shared Virgo prose.');
    await editor.getByRole('button', {name: 'Save & return', exact: true}).click();
    await expect(writing).toHaveValue('Fixture {{signTitle}}. {{zodiacSeason}}{{zodiacSeasonPolarAxis}}');
     await page.getByRole('button', {name: 'Dismiss notification', exact: true}).click();

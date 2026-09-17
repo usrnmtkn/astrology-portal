@@ -23,6 +23,8 @@ assert.equal(studioVariableValue(variable, {}).value, definition.value);
 assert.equal(studioVariableValue(variable, { sign: 'Virgo' }).value, definition.overrides[0].value);
 assert.equal(studioVariableValue(variable, { planet: 'Sun', sign: 'Aries' }).value, definition.overrides[1].value);
 assert.equal(studioVariableValue(variable, { planet: 'Sun', sign: 'Virgo' }).value, definition.overrides[2].value);
+assert.equal(studioVariableValue({ ...definition, id: undefined }, { planet: 'Sun', sign: 'Virgo' }).value, definition.overrides[2].value);
+assert.equal(studioVariableValue({ name: 'planetTitle' }, { planet: 'Sun' }).value, 'Sun');
 
 const live = store.rows.get('live-sun-virgo');
 const raw = 'During this transit, {{myOpening}}';

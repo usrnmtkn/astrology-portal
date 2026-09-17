@@ -199,7 +199,7 @@ export default function TemplateVariablesRail({
                         {reference.source}
                       </span>
                     </StudioButton>
-                    {onInsert && ["zodiacSeason", "zodiacSeasonPolarAxis"].includes(reference.name) && <StudioButton type="button" aria-label={`Insert {{${reference.name}}}`} onClick={() => onInsert(`{{${reference.name}}}`)}>Insert</StudioButton>}
+                    {onInsert && <StudioButton type="button" aria-label={`Insert {{${reference.name}}}`} onClick={() => onInsert(`{{${reference.name}}}`)}>Insert</StudioButton>}
                   </li>
                 );
               })}
