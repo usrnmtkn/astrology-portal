@@ -23,7 +23,7 @@ import process from "node:process";
 
 const BATCH_SIZE = 100;
 const REQUIRED = ["content_key", "surface", "mode", "block_type", "lane", "status", "headline", "body"];
-const ALLOWED_SURFACE = new Set(["sky", "you", "natal", "synastry", "composite", "relationship"]);
+const ALLOWED_SURFACE = new Set(["sky", "you", "natal", "synastry", "composite", "relationship", "education"]);
 const ALLOWED_MODE = new Set(["feed", "in_depth", "article"]);
 const ALLOWED_STATUS = new Set(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
 const ALLOWED_BLOCK_TYPE = new Set(["essay", "sky_article"]);
@@ -56,6 +56,21 @@ function loadEnvLocal() {
       if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, "");
     }
   }
+}
+
+function prepareRows(rows, { live = false } = {}) {
+  return rows.map((row) => {
+    const next = { ...row };
+    if (String(next.content_key ?? "").startsWith(KEY_PREFIX)) {
+      next.surface = "education";
+    }
+    if (live) {
+      next.status = "LIVE";
+      next.review_state = null;
+      next.lane = "serving";
+    }
+    return next;
+  });
 }
 
 function validate(rows) {
@@ -126,10 +141,11 @@ async function upsert(rows, { url, key }) {
 async function main() {
   const source = arg("source", "./astro-101-rows.json");
   const approve = arg("approve", false);
+  const live = Boolean(arg("live", false));
   const out = arg("out", null);
 
   const doc = JSON.parse(fs.readFileSync(path.resolve(source), "utf8"));
-  const rows = Array.isArray(doc) ? doc : doc.rows;
+  const rows = prepareRows(Array.isArray(doc) ? doc : doc.rows, { live });
   if (!Array.isArray(rows) || !rows.length) throw new Error(`no rows in ${source}`);
   console.log(`loaded ${rows.length} rows from ${source}`);
 
@@ -167,7 +183,7 @@ async function main() {
     content_keys: touched,
   }, null, 2) + "\n");
   console.log(`\ndone. audit written to ${out}`);
-  console.log("rows land as status=DRAFT, review_state=needs_review. Review in Content Studio, Articles page.");
+  console.log("rows land as education surface. Review in Content Studio, Astro 101 page. Use --live with --approve to publish LIVE serving rows.");
 }
 
 main().catch((err) => {

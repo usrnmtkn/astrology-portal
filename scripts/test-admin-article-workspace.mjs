@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   articleAppDestination,
+  isAstro101ContentRow,
   isSkyWriteupContentRow
 } from "../apps/admin/src/articleWorkspace.ts";
 
@@ -20,6 +21,21 @@ assert.equal(isSkyWriteupContentRow({
   block_type: "essay",
   mode: "article"
 }), false);
+
+assert.equal(isAstro101ContentRow({
+  content_key: "education/astro-101/sign/aries",
+  facts: { slug: "/learn/signs/aries" }
+}), true);
+
+assert.deepEqual(articleAppDestination({
+  content_key: "education/astro-101/sign/aries",
+  status: "LIVE",
+  facts: { slug: "/learn/signs/aries" }
+}), {
+  detail: "Readers open this page at /learn/signs/aries.",
+  label: "/learn/signs/aries",
+  state: "connected"
+});
 
 assert.deepEqual(articleAppDestination({
   content_key: "article/manual/draft",

@@ -149,6 +149,11 @@ for (const mode of ["guest", "member", "profile", "calendar", "account", "settin
     `${mode} must retain dashboard hydration.`
   );
 }
+assert.equal(
+  shouldHydrateFallbackDashboardContent(loadingState([], { mode: "learn" })),
+  false,
+  "Learn must not hydrate natal fallback dashboard rows."
+);
 
 assert.equal(
   shouldHydrateCompatibilityDashboardContent(loadingState(["compatibility"])),

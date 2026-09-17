@@ -19,11 +19,13 @@ import { skySummaryParagraphs } from "./content/skyDailySummary";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { SkyReadingLayout } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
+import { isStandaloneLearnPath } from "./content/astro101";
 import { refreshContentPublications } from "./services/contentPublications";
 import {
   ArrowDownRight,
   ArrowRight,
   ArrowUpRight,
+  BookOpen,
   CalendarDays,
   ChevronDown,
   ChevronLeft,
@@ -372,7 +374,7 @@ import {
 import { compactCityLabel } from "./utils/locationLabels";
 
 type FriendRelationshipContentTab = Exclude<FriendProfileTab, "natal">;
-type PortalMode = AccountMode | "member" | "profile" | "friends" | "calendar" | "account" | "settings";
+type PortalMode = AccountMode | "member" | "profile" | "friends" | "calendar" | "account" | "settings" | "learn";
 type TransitTerm = "short" | "long";
 type TransitDirection = "applying" | "separating";
 type UiTheme = "light" | "dark";
@@ -2345,13 +2347,40 @@ const lifeAreaFocusAstrology: Record<LifeAreaFocus, {
   growth: { houses: [9, 11, 1], planets: ["Jupiter", "Sun", "Saturn", "North Node"], aspects: ["conjunction", "trine", "sextile", "square"] },
   spirituality: { houses: [12, 9, 8], planets: ["Neptune", "Jupiter", "Moon", "Pluto"], aspects: ["conjunction", "trine", "sextile", "opposition"] }
 };
-const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "calendar", "account", "settings"];
-const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "calendar", "account", "settings"];
+const portalModes: PortalMode[] = ["guest", "member", "profile", "friends", "calendar", "account", "settings", "learn"];
+const authenticatedPortalModes: PortalMode[] = ["member", "profile", "friends", "calendar", "account", "settings", "learn"];
 
 function isPortalMode(value: unknown): value is PortalMode {
   return typeof value === "string" && portalModes.includes(value as PortalMode);
 }
 
+
+function clearStandalonePortalPath(url: URL) {
+  if (url.pathname === "/friends" || isStandaloneLearnPath(url.pathname)) {
+    url.pathname = "/";
+  }
+}
+
+function learnPathFromUrl() {
+  try {
+    const url = new URL(window.location.href);
+    return isStandaloneLearnPath(url.pathname) ? url.pathname.replace(/\/+$/u, "") || "/learn" : "/learn";
+  } catch {
+    return "/learn";
+  }
+}
+
+function updateLearnPathUrl(nextPath: string, historyMode: "push" | "replace" = "push") {
+  try {
+    const url = new URL(window.location.href);
+    url.pathname = nextPath || "/learn";
+    url.hash = "";
+    url.searchParams.delete("tab");
+    window.history[historyMode === "replace" ? "replaceState" : "pushState"]({}, "", url.toString());
+  } catch {
+    // URL state is an enhancement; keep navigation usable if history is unavailable.
+  }
+}
 
 function portalModeFromHashPath(path: string): PortalMode | null {
   switch (path) {
@@ -2389,6 +2418,10 @@ function portalModeFromUrl(): PortalMode | null {
       return "friends";
     }
 
+    if (isStandaloneLearnPath(url.pathname)) {
+      return "learn";
+    }
+
     const { path } = friendsHashParts(url.hash);
 
     return portalModeFromHashPath(path);
@@ -2412,6 +2445,8 @@ function portalHashForMode(mode: PortalMode) {
       return "account";
     case "settings":
       return "settings";
+    case "learn":
+      return "";
     default:
       return "";
   }
@@ -2422,13 +2457,15 @@ function updatePortalModeUrl(nextMode: PortalMode, mode: "push" | "replace" = "p
     updateFriendsTabUrl(initialFriendsTab(), mode);
     return;
   }
+  if (nextMode === "learn") {
+    updateLearnPathUrl("/learn", mode);
+    return;
+  }
 
   try {
     const url = new URL(window.location.href);
 
-    if (url.pathname === "/friends") {
-      url.pathname = "/";
-    }
+    clearStandalonePortalPath(url);
 
     url.searchParams.delete("tab");
     url.hash = portalHashForMode(nextMode);
@@ -2458,9 +2495,7 @@ function updatePlacementRouteUrl(placementId: string, mode: "push" | "replace" =
   try {
     const url = new URL(window.location.href);
 
-    if (url.pathname === "/friends") {
-      url.pathname = "/";
-    }
+    clearStandalonePortalPath(url);
 
     url.searchParams.delete("tab");
     url.hash = `you/placement/${encodeURIComponent(placementId)}`;
@@ -2532,9 +2567,7 @@ function updateSkyDetailRouteUrl(routePath: string, mode: "push" | "replace" = "
   try {
     const url = new URL(window.location.href);
 
-    if (url.pathname === "/friends") {
-      url.pathname = "/";
-    }
+    clearStandalonePortalPath(url);
 
     url.searchParams.delete("tab");
     url.hash = routePath;
@@ -10719,6 +10752,23 @@ const CalendarRoute = lazy(() =>
 );
 
 
+const loadLearnExperience = () => import("./features/learn/LearnExperience");
+const preloadLearnExperience = () => {
+  void loadLearnExperience();
+};
+
+const LearnRoute = lazy(() =>
+  loadLearnExperience().then((module) => ({
+    default: module.LearnRoute
+  }))
+);
+
+const LearnExperience = lazy(() =>
+  loadLearnExperience().then((module) => ({
+    default: module.LearnExperience
+  }))
+);
+
 const FriendsRoute = lazy(() =>
   loadFriendsExperience().then(([module]) => ({ default: module.FriendsRoute }))
 );
@@ -10861,6 +10911,7 @@ export function App() {
   const skyDateRef = useRef(skyDate);
   const followsCurrentTransitDateRef = useRef(skyDate === currentLocalDate);
   const [mode, setMode] = useState<PortalMode>(() => studioReturnPath ? "profile" : getInitialPortalMode());
+  const [learnPath, setLearnPath] = useState(learnPathFromUrl);
   const [animationPreference, setAnimationPreference] = useState(readAnimationPreference);
   const transitionPage = usePageTransition(animationPreference);
   useEffect(() => {
@@ -11015,8 +11066,9 @@ export function App() {
   const isSignupMode = mode === "profile" && (!userProfile || signInRequested || Boolean(studioReturnPath));
   const isFriendsMode = mode === "friends";
   const isCalendarMode = mode === "calendar";
+  const isLearnMode = mode === "learn";
   const isProfileMode = mode === "profile" || mode === "account" || mode === "settings";
-  const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode;
+  const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode || isLearnMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
   const primaryProfileChart = userProfile?.charts[0];
   const primaryProfileBirthDate = validChartBirthDate(primaryProfileChart);
@@ -11565,7 +11617,20 @@ export function App() {
       updatePortalModeUrl(nextMode, "push");
       storePortalMode(nextMode);
       setMode(nextMode);
+      if (nextMode === "learn") setLearnPath(learnPathFromUrl());
     }, animate && (nextMode !== mode || Boolean(selectedSkyDetail)) && !isSignupMode && !(nextMode === "profile" && !userProfile));
+  }
+
+  function navigateToLearnPath(nextPath: string) {
+    const normalized = nextPath.startsWith("/learn") ? nextPath : "/learn";
+    transitionPage(() => {
+      setSelectedSkyDetail(null);
+      setSkyDetailRoutePath(null);
+      updateLearnPathUrl(normalized, "push");
+      storePortalMode("learn");
+      setLearnPath(normalized.replace(/\/+$/u, "") || "/learn");
+      setMode("learn");
+    }, (mode !== "learn" || learnPath !== normalized) && !isSignupMode);
   }
 
   useEffect(() => {
@@ -11826,6 +11891,9 @@ export function App() {
 
       setSelectedSkyDetail(null);
       setMode(nextMode);
+      if (nextMode === "learn") {
+        setLearnPath(learnPathFromUrl());
+      }
 
       if (nextMode === "friends") {
         setFriendsLandingKey((currentKey) => currentKey + 1);
@@ -14052,6 +14120,10 @@ export function App() {
                 <CalendarDays size={18} aria-hidden="true" />
                 <span>Calendar</span>
               </button>
+              <button className={mode === "learn" ? "active" : ""} type="button" onFocus={preloadLearnExperience} onPointerEnter={preloadLearnExperience} onClick={() => navigateToPortalMode("learn")}>
+                <BookOpen size={18} aria-hidden="true" />
+                <span>Learn</span>
+              </button>
               {userProfile && (
                 <>
                   <button
@@ -14600,6 +14672,13 @@ export function App() {
                   onOpenTransit={openCalendarTransitDetail}
                   showJournalPrompts={journalPromptsEnabled}
                 />
+              )}
+              {mode === "learn" && (
+                <LearnRoute>
+                  <Suspense fallback={<PageLoading message="Loading Astro 101…" />}>
+                    <LearnExperience pathname={learnPath} onOpenPath={navigateToLearnPath} />
+                  </Suspense>
+                </LearnRoute>
               )}
               {mode === "profile" && (
                 <YouRoute>

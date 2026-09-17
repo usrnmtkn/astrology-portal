@@ -1,0 +1,34 @@
+.learn-page .learn-index,
+.learn-page .learn-related {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.learn-page .learn-index__link,
+.learn-page .learn-related__link,
+.learn-page .learn-back {
+  appearance: none;
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  cursor: pointer;
+  font: inherit;
+}
+
+.learn-page .learn-index__summary {
+  color: var(--ink-2);
+}
+
+.learn-page .learn-back {
+  width: auto;
+  margin-block-end: var(--space-4);
+}

@@ -25,6 +25,7 @@ import {
   ArrowLeft,
   ArrowLeftRight,
   BarChart3,
+  BookOpen,
   BookOpenText,
   Braces,
   CalendarDays,
@@ -101,7 +102,8 @@ import {
   skyPlacementFrameTemplateKey,
   skyFallbackWorkspace
 } from "./skyFallbackWorkspace";
-import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspace";
+import { articleAppDestination, isAstro101ContentRow, isSkyWriteupContentRow } from "./articleWorkspace";
+import { astro101BlocksFromSections, astro101IntroFromSections } from "../../web/src/content/astro101";
 import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatus";
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
 import type { FallbackHookEditorGuidanceBuilder } from "./DailyFallbackWorkspaceGuide";
@@ -245,10 +247,11 @@ const reviewQueuePageSize = 25;
 const compositeReviewPageSize = 10;
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
-type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends";
+type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends" | "year_ahead" | "education";
 type GeneratedContentMode = "feed" | "in_depth" | "article" | "card" | string;
 type AdminDashboardPage =
   | "articles"
+  | "astro101"
   | "skyWriteups"
   | "calendarWriteups"
   | "compatibility"
@@ -607,6 +610,7 @@ const vocabularySections: Array<{ key: AdminVocabularySection; label: string; de
 
 const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   articles: "articles",
+  astro101: "astro-101",
   skyWriteups: "sky-writeups",
   calendarWriteups: "calendar-writeups",
   compatibility: "compatibility",
@@ -671,6 +675,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "calendarWriteups", label: "Calendar Write-ups", icon: CalendarDays, group: "Write" },
   { page: "content", label: "Calendar Aspects", icon: CalendarDays, key: "calendar-aspects", category: "Calendar Aspects", group: "Write" },
   { page: "articles", label: "Articles", icon: FileText, group: "Write" },
+  { page: "astro101", label: "Astro 101", icon: BookOpen, group: "Write" },
   { page: "compatibility", label: "Compatibility", icon: Users, group: "Write" },
   { page: "compositeByType", label: "Composite Review", icon: Users, group: "Write" },
   { page: "compositionMap", label: "Composition", icon: Sparkles, group: "Compose" },
@@ -835,6 +840,7 @@ function parseAdminHash() {
 function adminPageTitle(activePage: AdminDashboardPage) {
   switch (activePage) {
     case "articles": return "Articles";
+    case "astro101": return "Astro 101";
     case "skyWriteups": return "Sky Write-ups";
     case "calendarWriteups": return "Calendar Write-ups";
     case "compatibility": return "Compatibility";
@@ -868,6 +874,7 @@ type AdminBreadcrumbItem = {
 function adminPageBreadcrumbItems(activePage: AdminDashboardPage): AdminBreadcrumbItem[] {
   switch (activePage) {
     case "articles": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Articles" }];
+    case "astro101": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Astro 101" }];
     case "skyWriteups": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Sky write-ups" }];
     case "calendarWriteups": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Calendar write-ups" }];
     case "compatibility": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Compatibility" }];
@@ -897,6 +904,8 @@ function adminPageDescription(activePage: AdminDashboardPage) {
   switch (activePage) {
     case "articles":
       return "Write and manage standalone articles.";
+    case "astro101":
+      return "Manage Astro 101 education pages served on /learn.";
     case "skyWriteups":
       return "Edit planetary placements, lunations, aspects, and horoscopes.";
     case "calendarWriteups":
@@ -1117,7 +1126,12 @@ function isArticleLibraryRow(row: AdminGeneratedContentRow) {
   return row.mode === "article"
     && row.lane === "serving"
     && !isSkyWriteupContentRow(row)
+    && !isAstro101ContentRow(row)
     && !isRetiredAdminRow(row);
+}
+
+function isAstro101LibraryRow(row: AdminGeneratedContentRow) {
+  return !isRetiredAdminRow(row) && isAstro101ContentRow(row);
 }
 
 function isSkyWriteupLibraryRow(row: AdminGeneratedContentRow) {
@@ -2952,6 +2966,7 @@ export function GeneratedContentAdminDashboard() {
   const [transitNatalSourceBodies, setTransitNatalSourceBodies] = useState<Map<string, string>>(() => new Map());
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
   const [articleQuery, setArticleQuery] = useState("");
+  const [astro101Query, setAstro101Query] = useState("");
   const [compatibilitySectionFilter, setCompatibilitySectionFilter] = useState<AdminCompatibilitySectionFilter>("all");
   const [compatibilityStatusFilter, setCompatibilityStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [compatibilityPlanetFilter, setCompatibilityPlanetFilter] = useState<AdminArticlePointFilter>("all");
@@ -3125,6 +3140,10 @@ export function GeneratedContentAdminDashboard() {
     () => visibleRows.filter(isArticleLibraryRow),
     [visibleRows]
   );
+  const astro101Rows = useMemo(
+    () => visibleRows.filter(isAstro101LibraryRow).sort((left, right) => left.content_key.localeCompare(right.content_key)),
+    [visibleRows]
+  );
   const skyWriteupRows = useMemo(
     () => visibleRows.filter(isSkyWriteupLibraryRow).sort((left, right) => {
       const leftIsLunation = Boolean(skyLunationContextForRow(left));
@@ -3152,6 +3171,9 @@ export function GeneratedContentAdminDashboard() {
       && (articleContentSystemFilter === "all" || contentSystemForRole(contentRoleForRecord(row)) === articleContentSystemFilter)
       && matchesAdminSearch(visibleRowSearchText(row), articleQuery);
   }), [articleRows, articleStatusFilter, articlePointFilter, articleContentSystemFilter, articleQuery]);
+  const filteredAstro101Rows = useMemo(() => astro101Rows.filter((row) => (
+    matchesAdminSearch(visibleRowSearchText(row), astro101Query)
+  )), [astro101Query, astro101Rows]);
   const compatibilityRows = useMemo(
     () => rows.filter((row) => !isRetiredAdminRow(row) && isCompatibilityRow(row)),
     [rows]
@@ -6602,6 +6624,32 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
+        {activePage === "astro101" && (
+          <section className="admin-template-page">
+            <section className="admin-content-toolbar admin-collection-toolbar">
+              <div>
+                <span className="admin-field-hint">{filteredAstro101Rows.length} of {astro101Rows.length} Astro 101 pages</span>
+              </div>
+            </section>
+            <AdminFilterBar
+              label="Astro 101 filters"
+              searchLabel="Search Astro 101"
+              query={astro101Query}
+              onQueryChange={setAstro101Query}
+              placeholder="Search headline, key, or body"
+              activeFilterCount={astro101Query.trim() ? 1 : 0}
+              filters={<></>}
+              actions={<></>}
+            />
+            <section className="admin-workbench admin-review-workspace">
+              {renderEditor()}
+              <aside className="admin-list-panel" aria-label="Astro 101 rows">
+                {renderContentTable(filteredAstro101Rows, true)}
+              </aside>
+            </section>
+          </section>
+        )}
+
         {activePage === "compatibility" && (
           <section className="admin-template-page">
             <section className="admin-content-toolbar admin-collection-toolbar">
@@ -8497,6 +8545,9 @@ export function GeneratedContentAdminDashboard() {
 
     const isVocabularyDraft = draftIsVocabulary(currentDraft);
     const isArticleDraft = draftIsArticle(currentDraft);
+    const isAstro101Draft = isAstro101ContentRow({ content_key: currentDraft.contentKey, facts: currentDraft.facts });
+    const astro101Blocks = astro101BlocksFromSections(currentDraft.sections);
+    const astro101Intro = astro101IntroFromSections(currentDraft.sections);
     const isFallbackHookDraft = draftIsFallbackHook(currentDraft);
     const isTemplateDraft = draftIsTemplate(currentDraft) && !(lunarContentIdentity(currentDraft.contentKey) && !currentDraft.body.includes("{{"));
     const isPackageDraft = draftIsFallbackArchitectureV3(currentDraft);
@@ -10157,6 +10208,51 @@ export function GeneratedContentAdminDashboard() {
                 : "This is the exact editable phrase the fallback resolver reads. Saving updates the stored package value and its dashboard copy together."}</small>}
             </label>
           )}
+          {isAstro101Draft && (
+            <section className="admin-review-copy-editor studio-surface" aria-label="Astro 101 sections">
+              <p className="admin-eyebrow">Astro 101 sections</p>
+              {astro101Intro ? (
+                <label className="admin-review-copy-editor">
+                  <span>Intro</span>
+                  <StudioTextarea
+                    aria-label="Astro 101 intro"
+                    value={astro101Intro}
+                    onChange={(event) => {
+                      const sections = { ...(currentDraft.sections ?? {}), intro: event.target.value };
+                      setDraft({ ...currentDraft, sections });
+                    }}
+                  />
+                </label>
+              ) : null}
+              {astro101Blocks.map((block, index) => (
+                <label className="admin-review-copy-editor" key={`${block.heading || "block"}-${index}`}>
+                  <span>{block.heading || `Section ${index + 1}`}</span>
+                  <StudioInput
+                    aria-label={`Astro 101 heading ${index + 1}`}
+                    value={block.heading ?? ""}
+                    onChange={(event) => {
+                      const nextBlocks = astro101Blocks.map((entry, blockIndex) => (
+                        blockIndex === index ? { ...entry, heading: event.target.value } : entry
+                      ));
+                      const sections = { ...(currentDraft.sections ?? {}), blocks: nextBlocks };
+                      setDraft({ ...currentDraft, sections });
+                    }}
+                  />
+                  <StudioTextarea
+                    aria-label={`Astro 101 section ${index + 1}`}
+                    value={block.body ?? ""}
+                    onChange={(event) => {
+                      const nextBlocks = astro101Blocks.map((entry, blockIndex) => (
+                        blockIndex === index ? { ...entry, body: event.target.value } : entry
+                      ));
+                      const sections = { ...(currentDraft.sections ?? {}), blocks: nextBlocks };
+                      setDraft({ ...currentDraft, sections });
+                    }}
+                  />
+                </label>
+              ))}
+            </section>
+          )}
           {showNatalFriendEditor && natalPlacementPlanet && natalPlacementSign && (
             <section className="admin-editor-guidance admin-natal-friend-editor" aria-label="Friends natal copy and sources">
               <div>
@@ -10602,7 +10698,7 @@ export function GeneratedContentAdminDashboard() {
                   {!isSharedSeasonSource && <label className="admin-metadata-field">
                     <span>Surface</span>
                     <AdminSelect aria-label="Surface" value={currentDraft.surface} onChange={(event) => setDraft({ ...currentDraft, surface: event.target.value as GeneratedContentSurface })} disabled={isPackageDraft}>
-                      {["sky", "you", "natal", "synastry", "composite", "relationship", "modifier"].map((surface) => <option key={surface} value={surface}>{surface}</option>)}
+                      {["sky", "you", "natal", "synastry", "composite", "relationship", "modifier", "year_ahead", "education"].map((surface) => <option key={surface} value={surface}>{surface}</option>)}
                     </AdminSelect>
                   </label>}
                   <label className="admin-metadata-field">
