@@ -14,5 +14,6 @@ alter table public.generated_interpretations
     'relationship',
     'modifier',
     'year_ahead',
+    'ask_tldr',
     'education'
   ));
