@@ -44,7 +44,7 @@ function invokeHandler(handler, method, url, body) {
 const dashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 const component = read("apps/admin/src/AspectPatternWriteups.tsx");
 const endpoint = read("api/admin/aspect-pattern-writeups.ts");
-const styles = read("apps/admin/src/admin.css");
+const styles = read("apps/admin/src/studio-system.css");
 
 assert.match(dashboard, /aspectPatternCoverage:\s*"content\/aspect-patterns"/);
 assert.match(dashboard, /aspectPatternActivationCoverage:\s*"content\/aspect-patterns\/activation"/);
@@ -79,7 +79,7 @@ assert.doesNotMatch(endpoint, /detectGrandSquares|detectGrandTrines|detectKites|
 assert.match(styles, /aspect-writeups-page/);
 assert.match(styles, /aspect-writeups-compare/);
 assert.match(styles, /container-name:\s*aspect-writeups/);
-assert.match(styles, /@container aspect-writeups \(max-width:\s*1120px\)[\s\S]*?aspect-writeups-layout[\s\S]*?grid-template-columns:\s*1fr/u, "Aspect Patterns must collapse inside its available content container before it overflows a 1280px viewport.");
+assert.match(styles, /@container aspect-writeups \(max-width:\s*1120px\)[\s\S]*?aspect-writeups-layout[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\)/u, "Aspect Patterns must collapse inside its available content container before it overflows a 1280px viewport.");
 
 const vite = await createServer({
   root: repoRoot,
