@@ -7408,13 +7408,13 @@ export function GeneratedContentAdminDashboard() {
     setMessage(`Opened ${label}. Saving creates the editable Content Studio row; it does not publish unreviewed wording.`);
   }
 
-  async function openPackagedTransitSource(source: Record<string, unknown>, contentKey: string, fieldPath?: string) {
+  async function openPackagedTransitSource(source: Record<string, unknown>, contentKey: string, fieldPath?: string, options?: { skipUnsavedPrompt?: boolean }) {
     const originatingHash = window.location.hash;
     const requestId = sourceOpenRequestRef.current;
     const { transitNatalPackagedSourceDraft } = await import("./transitNatalPackagedSource");
     if (requestId !== sourceOpenRequestRef.current || originatingHash !== window.location.hash) return;
     const packagedDraft = transitNatalPackagedSourceDraft(source, contentKey);
-    if (!confirmSkyEditorNavigation()) return;
+    if (!options?.skipUnsavedPrompt && !confirmSkyEditorNavigation()) return;
     setSelectedRowId(null);
     setCompositionEditorContext(null);
     setDraft(packagedDraft);
@@ -7440,7 +7440,12 @@ export function GeneratedContentAdminDashboard() {
       if (!Array.isArray(payload.rows) || payload.rows.some(candidate => candidate.content_key !== key)) throw new Error("The exact passage could not be verified.");
       const row = payload.rows.find(candidate => candidate.content_key === key);
       if (row) { await openRow(row); return; }
-      if (payload.packageSource) { await openPackagedTransitSource(payload.packageSource, key); return; }
+      if (payload.packageSource) {
+        await openPackagedTransitSource(payload.packageSource, key, undefined, {
+          skipUnsavedPrompt: Boolean(draft && !isDynamicTransitNatalExactKey(draft.contentKey))
+        });
+        return;
+      }
       const parentKey = transitNatalContactContentKey(selection);
       const sharedKey = transitNatalSharedFallbackKey(selection);
       let starter = { body_you: "", body_they: "" };
@@ -7461,7 +7466,7 @@ export function GeneratedContentAdminDashboard() {
         starter = transitNatalStarterCopy(rowHasCopy && starterRecord ? starterRecord : starterPayload.packageSource);
         if (starter.body_you.trim() || starter.body_they.trim()) break;
       }
-      if (!confirmSkyEditorNavigation()) return;
+      if (!(draft && !isDynamicTransitNatalExactKey(draft.contentKey)) && !confirmSkyEditorNavigation()) return;
       setSelectedRowId(null);
       setCompositionEditorContext(null);
       const nextDraft = transitNatalExactSourceDraft(selection, starter);
@@ -8725,12 +8730,18 @@ export function GeneratedContentAdminDashboard() {
     const isContinuousSkyPackage = isPackageDraft && packageRecord.render_policy === "sky-placement-continuous-v2";
     const isAuthoredTransitAspectDraft = isPackageDraft
       && currentDraft.contentKey.startsWith("authored/transit-aspect/");
+    const isExactTransitReturnDraft = isPackageDraft
+      && currentDraft.contentKey.startsWith("authored/transit-return/");
+    const isExactPersonalTransitDraft = isAuthoredTransitAspectDraft || isExactTransitReturnDraft;
     const showPackageBodyYou = isPackageDraft
       && !isVocabularyDraft
       && !isContinuousSkyPackage
-      && (typeof editablePackageRecord.body_you === "string" || typeof objectRecord(currentDraft.sections)?.body_you === "string");
+      && (typeof editablePackageRecord.body_you === "string"
+        || typeof objectRecord(currentDraft.sections)?.body_you === "string"
+        || isExactTransitReturnDraft);
     const showPackageBodyThey = isPackageDraft
       && !isVocabularyDraft
+      && !isExactTransitReturnDraft
       && (isAuthoredTransitAspectDraft
         || typeof editablePackageRecord.body_they === "string"
         || typeof objectRecord(currentDraft.sections)?.body_they === "string");
@@ -9265,7 +9276,7 @@ export function GeneratedContentAdminDashboard() {
           : isCompatibilityCardDraft
             ? "Create compatibility card"
             : isFallbackHookDraft
-              ? isAuthoredTransitAspectDraft ? `Write ${currentDraft.headline || "this transit"}` : isCompatibilityWorkspaceDraft ? "Create compatibility fallback" : "Create fallback passage"
+              ? isExactPersonalTransitDraft ? `Write ${currentDraft.headline || "this transit"}` : isCompatibilityWorkspaceDraft ? "Create compatibility fallback" : "Create fallback passage"
               : isTemplateDraft
                 ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
                 : "Create saved row";
@@ -9457,15 +9468,51 @@ export function GeneratedContentAdminDashboard() {
                 </label>
               </fieldset>
               <p className="admin-field-hint">Changing planet, aspect, or natal point opens that contact&apos;s You and Friend fields. Insert <code>{"{{aspectWord}}"}</code> and <code>{"{{untilDate}}"}</code> where the calculated aspect and window belong. Sign and house stay on the page behind this editor; they do not change this write-up.</p>
-              <p>{isNewDraft && isAuthoredTransitAspectDraft && !currentDraft.sections?.packageOriginalRecord
-                ? (packageFieldString(currentDraft, "body_you").trim()
-                  ? "You and Friend below start from the shared fallback currently in the preview. Save keeps a draft for this aspect only. Approve & publish makes it live. The shared source is not changed."
-                  : "No write-up is saved for this exact contact yet. You and Friend below are for this aspect only. Save keeps a draft. Approve & publish makes it live.")
-                : isAuthoredTransitAspectDraft
-                  ? "These You and Friend fields belong to the selected contact. Signs, houses, and dates come from the calculated chart. Shared fallback writing is edited separately under the published preview."
+              <p>{isNewDraft && isExactPersonalTransitDraft && !currentDraft.sections?.packageOriginalRecord
+                ? (packageFieldString(currentDraft, "body_you").trim() || currentDraft.body.trim()
+                  ? (isExactTransitReturnDraft
+                    ? "The You field below starts from existing return writing. Save keeps a draft for this return only. Approve & publish makes it live."
+                    : "You and Friend below start from the shared fallback currently in the preview. Save keeps a draft for this aspect only. Approve & publish makes it live. The shared source is not changed.")
+                  : (isExactTransitReturnDraft
+                    ? "No write-up is saved for this return yet. The You field below is for this return only. Save keeps a draft. Approve & publish makes it live."
+                    : "No write-up is saved for this exact contact yet. You and Friend below are for this aspect only. Save keeps a draft. Approve & publish makes it live."))
+                : isExactPersonalTransitDraft
+                  ? (isExactTransitReturnDraft
+                    ? "The You field belongs to this return. Changing planet, aspect, or natal point opens that contact instead. Signs, houses, and dates come from the calculated chart."
+                    : "These You and Friend fields belong to the selected contact. Signs, houses, and dates come from the calculated chart. Shared fallback writing is edited separately under the published preview.")
                 : "This source is shared by matching readings. Edit its words here; signs, houses, and dates come from the calculated chart. Variables opens a preview using the transit selected above."}</p>
             </div>
           )}
+          {isExactPersonalTransitDraft && isDynamicTransitNatalExactKey(currentDraft.contentKey) && <Suspense fallback={null}><PersonalTransitAiWriter
+            defaultOpen
+            transiting={transitNatalPlanet}
+            natal={transitNatalPoint}
+            aspect={transitNatalAspect}
+            sign={transitNatalSign}
+            transitHouse={transitNatalTransitHouse}
+            natalHouse={transitNatalNatalHouse}
+            contentKey={currentDraft.contentKey}
+            youText={isExactTransitReturnDraft
+              ? (packageFieldString(currentDraft, "body_you") || packageFieldString(currentDraft, "body") || currentDraft.body)
+              : packageFieldString(currentDraft, "body_you")}
+            friendText={isExactTransitReturnDraft ? "" : packageFieldString(currentDraft, "body_they")}
+            disabled={isLoading}
+            onUseYou={(text) => setDraft((current) => {
+              if (!current) return current;
+              if (current.contentKey.startsWith("authored/transit-return/")) {
+                return setPackageSectionField(setPackageSectionField(current, "body", text), "body_you", text);
+              }
+              return setPackageSectionField(current, "body_you", text);
+            })}
+            onUseFriend={(text) => setDraft((current) => current && !current.contentKey.startsWith("authored/transit-return/")
+              ? setPackageSectionField(current, "body_they", text)
+              : current)}
+            onOpenNext={(next) => updateTransitNatalSelection({
+              planet: next.transiting as TransitNatalPlanet,
+              aspect: next.aspect as TransitNatalAspect,
+              natalPoint: next.natal as TransitNatalPoint
+            })}
+          /></Suspense>}
           {isNewDraft && isCompatibilityCardDraft && (
             <fieldset className="admin-metadata-fields admin-compatibility-identity-fields" aria-label="Compatibility card identity">
               <legend>Choose the exact card first</legend>
@@ -10095,9 +10142,23 @@ export function GeneratedContentAdminDashboard() {
           {showPackageBodyYou && !skyFallbackEditor && (
             <label className="admin-review-copy-editor" data-reader-audience="you">
               <span>{fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"}</span>
-              <StudioTextarea data-sky-field="body_you" aria-label={fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"} value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
+              <StudioTextarea
+                data-sky-field="body_you"
+                aria-label={fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"}
+                value={isExactTransitReturnDraft
+                  ? (packageFieldString(currentDraft, "body_you") || packageFieldString(currentDraft, "body") || currentDraft.body)
+                  : packageFieldString(currentDraft, "body_you")}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setDraft(isExactTransitReturnDraft
+                    ? setPackageSectionField(setPackageSectionField(currentDraft, "body", value), "body_you", value)
+                    : setPackageSectionField(currentDraft, "body_you", value));
+                }}
+              />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyYouHint}</small>}
-              {!fallbackEditorGuidance && <small className="admin-field-hint">Used when someone reads their own natal chart in You.</small>}
+              {!fallbackEditorGuidance && <small className="admin-field-hint">{isExactTransitReturnDraft
+                ? "Used when someone reads this return in You."
+                : "Used when someone reads their own natal chart in You."}</small>}
             </label>
           )}
           {isContinuousSkyPackage && !skyFallbackEditor && ([
@@ -10142,25 +10203,6 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
-          {isAuthoredTransitAspectDraft && isDynamicTransitNatalExactKey(currentDraft.contentKey) && <Suspense fallback={null}><PersonalTransitAiWriter
-            transiting={currentDraft.contentKey.split("/")[2] ?? ""}
-            natal={currentDraft.contentKey.split("/")[3] ?? ""}
-            aspect={currentDraft.contentKey.split("/")[4] ?? ""}
-            sign={transitNatalSign}
-            transitHouse={transitNatalTransitHouse}
-            natalHouse={transitNatalNatalHouse}
-            contentKey={currentDraft.contentKey}
-            youText={packageFieldString(currentDraft, "body_you")}
-            friendText={packageFieldString(currentDraft, "body_they")}
-            disabled={isLoading}
-            onUseYou={(text) => setDraft((current) => current ? setPackageSectionField(current, "body_you", text) : current)}
-            onUseFriend={(text) => setDraft((current) => current ? setPackageSectionField(current, "body_they", text) : current)}
-            onOpenNext={(next) => updateTransitNatalSelection({
-              planet: next.transiting as TransitNatalPlanet,
-              aspect: next.aspect as TransitNatalAspect,
-              natalPoint: next.natal as TransitNatalPoint
-            })}
-          /></Suspense>}
           {selectedRow && <Suspense fallback={<PageLoading message="Loading publication checks…" />}><StudioEditorReviewPanels row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
             isPackageDraft={isPackageDraft} articleSaveState={skyArticleEditor?.saveState}
             onWritingAction={(action) => void runSkyDraftWriting(selectedRow.content_key, action, selectedRow)} /></Suspense>}

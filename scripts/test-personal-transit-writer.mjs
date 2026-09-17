@@ -18,6 +18,8 @@ const endpoint = fs.readFileSync(new URL("../api/admin/personal-transit-writing.
 const lib = fs.readFileSync(new URL("../api/_lib/personal-transit-writing.ts", import.meta.url), "utf8");
 
 assert.equal(parsePersonalTransitContact({ transiting: "Sun", natal: "sun", aspect: "square" }).contentKey, "authored/transit-aspect/sun/sun/square");
+assert.equal(parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "conjunction" }).contentKey, "authored/transit-return/sun");
+assert.equal(parsePersonalTransitContact({ contentKey: "authored/transit-return/sun" }).contentKey, "authored/transit-return/sun");
 assert.equal(parsePersonalTransitContact({ transiting: "sun", natal: "moon", aspect: "square", transitHouse: "3rd", natalHouse: "7" }).contentKey, "authored/transit-aspect/sun/moon/square");
 assert.equal(parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "square", sign: "aries", transitHouse: "1", natalHouse: "1" }).contentKey, "authored/transit-aspect/sun/sun/square/aries/1/1");
 assert.deepEqual(knowledgeIdsFor(parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "square", sign: "aries", transitHouse: "1", natalHouse: "1" })), ["transit-aspect/sun/sun/square"]);
@@ -92,7 +94,10 @@ assert.match(dashboard, /transitHouse=\{transitNatalTransitHouse\}/u);
 assert.match(dashboard, /natalHouse=\{transitNatalNatalHouse\}/u);
 assert.match(dashboard, /sign=\{transitNatalSign\}/u);
 assert.match(dashboard, /pendingExactAiCopyRef/u);
-assert.match(dashboard, /setDraft\(\(current\) => current \? setPackageSectionField\(current, "body_you"/u);
+assert.match(dashboard, /isExactPersonalTransitDraft && isDynamicTransitNatalExactKey/u);
+assert.match(dashboard, /authored\/transit-return\//u);
+assert.match(dashboard, /defaultOpen/u);
+assert.match(dashboard, /setPackageSectionField\(current, "body_you", text\)/u);
 const exactAction = fs.readFileSync(new URL("../apps/admin/src/TransitNatalReaderPreview.tsx", import.meta.url), "utf8");
 assert.match(exactAction, /<PersonalTransitAiWriter[\s\S]{0,800}youText=""/u);
 assert.match(exactAction, /transitHouse=\{transitHouse\}/u);

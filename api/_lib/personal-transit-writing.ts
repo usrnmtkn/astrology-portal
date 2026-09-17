@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { isDynamicTransitNatalExactKey, transitAspectSituationKey } from "../../apps/web/src/content/transitNatalIdentity.js";
+import { isEligibleTransitReturn } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/transitReturns.mjs";
 import { generateSkyArticleTemplateSlots } from "./content-generation.js";
 import { servingPackageRecords } from "./content-live-status.js";
 import { AdminHttpError, adminFetchJson, adminStorageRows } from "./admin-http.js";
@@ -50,10 +51,16 @@ export function parsePersonalTransitContact(input: {
   const parts = fromKey.split("/");
   const houseFromKey = parseHouseTransitKey(fromKey);
   if (houseFromKey) return houseFromKey;
+  if (fromKey && parts[1] === "transit-return" && isDynamicTransitNatalExactKey(fromKey)) {
+    return { family: "aspect", transiting: parts[2], natal: parts[2], aspect: "conjunction", contentKey: fromKey };
+  }
 
   const transiting = token(input.transiting) || (parts[0] === "authored" && parts[1] === "transit-aspect" ? parts[2] : "");
   const natal = token(input.natal) || (parts[0] === "authored" && parts[1] === "transit-aspect" ? parts[3] : "");
   const aspect = token(input.aspect) || (parts[0] === "authored" && parts[1] === "transit-aspect" ? parts[4] : "");
+  if (transiting && natal && aspect && isEligibleTransitReturn(transiting, natal, aspect)) {
+    return { family: "aspect", transiting, natal, aspect, contentKey: `authored/transit-return/${transiting}` };
+  }
   if (transiting && natal && aspect) {
     const fromKeySituation = parts.length === 8 ? parsePersonalTransitPreview({
       sign: parts[5], transitHouse: parts[6], natalHouse: parts[7]
