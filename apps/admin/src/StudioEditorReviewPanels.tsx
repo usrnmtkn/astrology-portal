@@ -1,5 +1,5 @@
 import { lazy, Suspense, type ComponentProps } from 'react';
-import { studioArticleMemoryKey } from '../../web/src/content/studioMemoryIdentity';
+import { studioWritingMemoryKey } from '../../web/src/content/studioMemoryIdentity';
 import ReviewWorkflowPanel from './ReviewWorkflowPanel';
 
 const StudioMemoryFeedback = lazy(() => import('./StudioMemoryFeedback'));
@@ -12,7 +12,7 @@ export default function StudioEditorReviewPanels({ isPackageDraft, articleSaveSt
 }) {
   const { row, credential = '', unsaved } = review;
   return <>
-    {studioArticleMemoryKey(row.content_key) && <Suspense fallback={null}>
+    {studioWritingMemoryKey(row.content_key) && <Suspense fallback={null}>
       <StudioMemoryFeedback key={row.content_key} contentKey={row.content_key} credential={credential}
         revision={row.updated_at} unsaved={unsaved || Boolean(articleSaveState && articleSaveState !== 'saved')} />
     </Suspense>}

@@ -1,6 +1,8 @@
 import { Save, X } from "lucide-react";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useId, useRef, useState } from "react";
 import { StudioButton, StudioTabs, StudioTextarea } from "./StudioControls";
+
+const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
 
 export type HouseTransitEditorSource = {
   key: string;
@@ -216,6 +218,21 @@ export default function HouseTransitWriteupEditor({
                   {audience === "friends" && source.friendsUnavailable && (
                     <p className="admin-field-hint" id={`${sourceDescriptionId}-${index}`}>{source.friendsUnavailable}</p>
                   )}
+                  {source.key.startsWith("authored/transit-house") && <Suspense fallback={null}><PersonalTransitAiWriter
+                    contentKey={source.key}
+                    planet={source.key.split("/")[2] ?? ""}
+                    house={source.key.split("/")[3] ?? ""}
+                    sign={source.key.split("/")[4] ?? ""}
+                    youText={source.edits.body_you}
+                    friendText={source.edits.body_they}
+                    disabled={saving}
+                    onUseYou={(text) => setSourceEdits((current) => current.map((item) => item.key === source.key
+                      ? { ...item, edits: { ...item.edits, body_you: text } }
+                      : item))}
+                    onUseFriend={(text) => setSourceEdits((current) => current.map((item) => item.key === source.key
+                      ? { ...item, edits: { ...item.edits, body_they: text } }
+                      : item))}
+                  /></Suspense>}
                   {sourceChanged(source) && <p className="admin-field-hint">Unsaved changes</p>}
                 </section>
               ))}

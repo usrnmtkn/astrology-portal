@@ -86,7 +86,8 @@ for (const path of [
   "api/admin/content-unresolved.ts",
   "api/admin/content-unresolved-resolutions.ts",
   "api/admin/content-source-repair-decisions.ts",
-  "api/admin/sky-article-facts.ts"
+  "api/admin/sky-article-facts.ts",
+  "api/admin/personal-transit-writing.ts"
 ]) {
   const text = source(path);
   assert.match(text, /sendAdminMethodNotAllowed/u, `${path} must advertise allowed methods.`);
@@ -129,5 +130,12 @@ const reviewRecords = source("api/admin/review-records.ts");
 assert.match(reviewRecords, /adminFetch/u);
 assert.match(reviewRecords, /AdminHttpError\(400/u);
 assert.match(reviewRecords, /sendAdminMethodNotAllowed\(res, \["GET"\]\)/u);
+
+const personalTransitWriter = source("api/admin/personal-transit-writing.ts");
+assert.match(personalTransitWriter, /sendAdminMethodNotAllowed\(res, \["POST"\]\)/u);
+assert.match(personalTransitWriter, /saved: false/u);
+assert.match(personalTransitWriter, /published: false/u);
+assert.match(personalTransitWriter, /action === "recheck"/u);
+assert.doesNotMatch(personalTransitWriter, /saveDraft/u);
 
 console.log("Content Studio admin API contract passed.");

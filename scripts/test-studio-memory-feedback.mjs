@@ -70,6 +70,7 @@ try {
   const shared = {...active,scope:'family'};
   assert.equal(selectStudioFeedback([shared],'sky.placement.base.moon.cancer').receipt.selected.length,1);
   assert.equal(selectStudioFeedback([shared],'sky.aspect.sun.trine.moon.leo.aries').receipt.selected.length,0);
+  assert.equal(selectStudioFeedback([shared],'authored/transit-aspect/sun/sun/square').receipt.selected.length,0);
   assert.equal(selectStudioFeedback([shared,{...shared,id:'conflicting',after_text:'Conflicting replacement'}],key).receipt.selected.length,0);
   const index = withStudioFeedback(buildMemoryIndex({root:process.cwd(),revision:'a'.repeat(40)}),[active]);
   const detail = memoryDetail(index,packet.receipt.selected[0].memoryId);

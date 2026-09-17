@@ -10,6 +10,7 @@ import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowse
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
+import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
@@ -186,6 +187,7 @@ import { memoByObject, naturalCollator } from "./derivedCache";
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
 const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
+const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
 const ImportedArticleHoroscopesEditor = lazy(() => import("./ImportedArticleHoroscopesEditor"));
 const StudioEditorReviewPanels = lazy(() => import('./StudioEditorReviewPanels'));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
@@ -10084,6 +10086,27 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
+          {isAuthoredTransitAspectDraft && isDynamicTransitNatalExactKey(currentDraft.contentKey) && <Suspense fallback={null}><PersonalTransitAiWriter
+            transiting={currentDraft.contentKey.split("/")[2] ?? ""}
+            natal={currentDraft.contentKey.split("/")[3] ?? ""}
+            aspect={currentDraft.contentKey.split("/")[4] ?? ""}
+            transitHouse={transitNatalTransitHouse}
+            natalHouse={transitNatalNatalHouse}
+            contentKey={currentDraft.contentKey}
+            youText={packageFieldString(currentDraft, "body_you")}
+            friendText={packageFieldString(currentDraft, "body_they")}
+            disabled={isLoading}
+            onUseYou={(text) => setDraft(setPackageSectionField(currentDraft, "body_you", text))}
+            onUseFriend={(text) => setDraft(setPackageSectionField(currentDraft, "body_they", text))}
+            onOpenNext={(next) => updateTransitNatalSelection({
+              planet: next.transiting as TransitNatalPlanet,
+              aspect: next.aspect as TransitNatalAspect,
+              natalPoint: next.natal as TransitNatalPoint,
+              sign: transitNatalSign || "aries",
+              transitHouse: transitNatalTransitHouse || "1",
+              natalHouse: transitNatalNatalHouse || "1"
+            })}
+          /></Suspense>}
           {selectedRow && <Suspense fallback={<PageLoading message="Loading publication checks…" />}><StudioEditorReviewPanels row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
             isPackageDraft={isPackageDraft} articleSaveState={skyArticleEditor?.saveState}
             onWritingAction={(action) => void runSkyDraftWriting(selectedRow.content_key, action, selectedRow)} /></Suspense>}

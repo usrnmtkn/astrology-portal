@@ -1,0 +1,102 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import {
+  exactPersonalTransitContentKeys,
+  findNextMissingPersonalTransitWriteup,
+  missingPersonalTransitAudiences,
+  parsePersonalTransitContact,
+  personalTransitReviewChecks,
+  reviewPersonalTransitCopy
+} from "../api/_lib/personal-transit-writing.ts";
+
+const ui = fs.readFileSync(new URL("../apps/admin/src/PersonalTransitAiWriter.tsx", import.meta.url), "utf8");
+const dashboard = fs.readFileSync(new URL("../apps/admin/src/GeneratedContentAdminDashboard.tsx", import.meta.url), "utf8");
+const endpoint = fs.readFileSync(new URL("../api/admin/personal-transit-writing.ts", import.meta.url), "utf8");
+const lib = fs.readFileSync(new URL("../api/_lib/personal-transit-writing.ts", import.meta.url), "utf8");
+
+assert.equal(parsePersonalTransitContact({ transiting: "Sun", natal: "sun", aspect: "square" }).contentKey, "authored/transit-aspect/sun/sun/square");
+assert.equal(parsePersonalTransitContact({ transiting: "sun", natal: "moon", aspect: "square", transitHouse: "3rd", natalHouse: "7" }).transitHouse, "3");
+assert.equal(parsePersonalTransitContact({ contentKey: "authored/transit-house-intro/sun/4" }).family, "house-intro");
+assert.equal(parsePersonalTransitContact({ planet: "mars", house: "11", sign: "virgo" }).contentKey, "authored/transit-house-sign/mars/11/virgo");
+assert.throws(() => parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "quincunx" }), /exact transit-to-natal contact or House Transit passage/u);
+assert.deepEqual(missingPersonalTransitAudiences({ you: "", friend: "saved" }), ["you"]);
+assert.deepEqual(missingPersonalTransitAudiences({ you: "saved", friend: "saved" }), []);
+
+const checks = personalTransitReviewChecks({
+  you: "You may defend a plan in Aries.",
+  friend: "You may defend a plan in Aries.",
+  siblings: [{ contentKey: "authored/transit-aspect/sun/sun/trine", you: "You may defend a plan in Aries.", friend: "" }]
+});
+assert(checks.some((item) => item.code === "unexpected-sign"));
+assert(checks.some((item) => item.code === "missing-name"));
+assert(checks.some((item) => item.code === "near-identical-sibling"));
+assert(!personalTransitReviewChecks({
+  you: "You may defend a plan in the 4th house.",
+  allowHouses: true,
+  allowSigns: false
+}).some((item) => item.code === "unexpected-house" || item.code === "unexpected-sign"));
+
+const keys = exactPersonalTransitContentKeys();
+assert(keys.includes("authored/transit-aspect/sun/sun/square"));
+assert(!keys.includes("authored/transit-aspect/sun/sun/soft"));
+const next = findNextMissingPersonalTransitWriteup({
+  keys: ["authored/transit-aspect/sun/sun/sextile", "authored/transit-aspect/sun/sun/square"],
+  studioByKey: new Map([
+    ["authored/transit-aspect/sun/sun/sextile", { content_key: "authored/transit-aspect/sun/sun/sextile", sections: { packageDraft: { body_you: "Saved You.", body_they: "Saved Friend." } } }]
+  ])
+});
+assert.equal(next?.contentKey, "authored/transit-aspect/sun/sun/square");
+assert.deepEqual(next?.missingAudiences, ["you", "friend"]);
+const skipped = findNextMissingPersonalTransitWriteup({
+  afterContentKey: "authored/transit-aspect/sun/sun/sextile",
+  keys: ["authored/transit-aspect/sun/sun/sextile", "authored/transit-aspect/sun/sun/square"],
+  studioByKey: new Map([
+    ["authored/transit-aspect/sun/sun/square", { content_key: "authored/transit-aspect/sun/sun/square", sections: { packageDraft: { body_you: "Studio You only.", body_they: "" } } }]
+  ])
+});
+assert.equal(skipped?.contentKey, "authored/transit-aspect/sun/sun/square");
+assert.deepEqual(skipped?.missingAudiences, ["friend"]);
+assert.equal(skipped?.hasStudioDraft, true);
+
+assert.match(ui, /Generate You \+ Friend draft/u);
+assert.match(ui, /Run writing checks/u);
+assert.match(ui, /Use You draft/u);
+assert.match(ui, /Use Friend draft/u);
+assert.match(ui, /Next missing write-up/u);
+assert.match(ui, /adminCredentialHeaders\(credential\)/u);
+assert.match(ui, /rows=\{4\}[\s\S]{0,120}minHeight: 96/u);
+assert.match(dashboard, /PersonalTransitAiWriter/u);
+assert.match(dashboard, /transitHouse=\{transitNatalTransitHouse\}/u);
+assert.match(dashboard, /natalHouse=\{transitNatalNatalHouse\}/u);
+const houseEditor = fs.readFileSync(new URL("../apps/admin/src/HouseTransitWriteupEditor.tsx", import.meta.url), "utf8");
+assert.match(houseEditor, /PersonalTransitAiWriter/u);
+assert.match(houseEditor, /authored\/transit-house/u);
+assert.match(endpoint, /sendAdminMethodNotAllowed\(res, \["POST"\]\)/u);
+assert.match(endpoint, /saved: false/u);
+assert.match(endpoint, /action === "recheck"/u);
+assert.doesNotMatch(endpoint, /status: "LIVE"/u);
+assert.doesNotMatch(lib, /saveGeneratedInterpretation/u);
+assert.match(lib, /loadStudioTransitRows/u);
+assert.match(lib, /kind: "personal-transit"/u);
+assert.match(lib, /housesExcluded: !allowsHouses/u);
+const reviewed = reviewPersonalTransitCopy({
+  contact: parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "square" }),
+  you: "You may defend a plan in Aries.",
+  friend: "{{Name}} may defend a plan."
+});
+assert.equal(reviewed.contentKey, "authored/transit-aspect/sun/sun/square");
+assert(reviewed.checks.some((item) => item.code === "unexpected-sign"));
+assert.match(lib, /signsExcluded: !allowsSigns/u);
+
+const deployment = JSON.parse(fs.readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));
+const memoryConfig = JSON.parse(fs.readFileSync(new URL("../config/agent-memory-sources-v1.json", import.meta.url), "utf8"));
+const pattern = deployment.functions["api/admin/personal-transit-writing.ts"]?.includeFiles ?? "";
+assert.ok(pattern.length > 0 && pattern.length <= 256, "Personal Transit writer must have a deployable includeFiles pattern.");
+assert.match(pattern, /data\/writing/u);
+assert.match(pattern, /jsonl/u);
+const packaged = new Set(fs.globSync(pattern));
+for (const spec of memoryConfig.sources.filter((item) => item.kind === "correction")) {
+  assert(packaged.has(spec.path), `Personal Transit writer is missing configured correction source: ${spec.path}`);
+}
+
+console.log("Personal Transit writer passed: exact-contact lock, House Transit destinations, Studio-draft inventory, missing-audience fill, review checks, no save/publish path, and correction-memory packaging.");
