@@ -37,5 +37,10 @@ export async function expectEffortCardSpacing(card: Locator) {
   expect(layout.bottomPadding).toBe(layout.expectedInset);
   expect(layout.paragraphGap).toBeCloseTo(layout.expectedParagraphGap, 1);
   expect(layout.bodyTypography).toBe(true);
+  // Cancel smooth scrolling before capture so the phone screenshot includes the
+  // title instead of using a clip rectangle from an earlier scroll position.
+  await card.evaluate(el => el.scrollIntoView({ behavior: "instant", block: "center" }));
+  await expect(card).toBeInViewport({ ratio: 1 });
+  await expect(card.getByRole("heading", { level: 3 })).toBeInViewport({ ratio: 1 });
   return layout;
 }
