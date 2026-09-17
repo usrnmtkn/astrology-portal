@@ -53,6 +53,21 @@ assert.ok(northNodeAries.has("fallback-hook/node-journey/north-node"));
 assert.ok(northNodeAries.has("fallback-vocab/node-direction/libra"));
 assert.ok(northNodeAries.has("fallback-template/natal.node-in-sign"));
 
+const ascendantAries = natalPlacementResolverDependencyKeys("ascendant", "aries");
+assert.deepEqual(ascendantAries, [
+  "fallback-hook/angle-intro/ascendant",
+  "fallback-hook/angle-sign/ascendant/aries",
+  "fallback-template/natal.angle-in-sign"
+]);
+assert.deepEqual(
+  natalPlacementResolverDependencyKeys("imum-coeli", "cancer", "4", "retrograde"),
+  [
+    "fallback-hook/angle-intro/imum-coeli",
+    "fallback-hook/angle-sign/imum-coeli/cancer",
+    "fallback-template/natal.angle-in-sign"
+  ]
+);
+
 const previewSource = readFileSync("apps/admin/src/NatalPlacementReaderPreview.tsx", "utf8");
 assert.match(
   previewSource,

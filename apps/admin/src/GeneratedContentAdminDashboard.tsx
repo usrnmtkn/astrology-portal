@@ -120,6 +120,7 @@ import {
   natalPlacementHouses,
   natalPlacementMotions,
   natalPlacementPlanets,
+  natalPlacementPointLabel,
   natalPlacementSelectionFromText,
   natalPlacementResolverDependencyKeys,
   natalPlacementSigns,
@@ -8553,13 +8554,15 @@ export function GeneratedContentAdminDashboard() {
       && (currentDraft.contentKey === `fallback-template/natal.planet-in-sign/${natalPlacementPlanet}`
         || currentDraft.contentKey === "fallback-template/natal.planet-in-sign"
         || currentDraft.contentKey === "fallback-template/natal.node-in-sign"
+        || currentDraft.contentKey === "fallback-template/natal.angle-in-sign"
         || currentDraft.contentKey === "fallback-template/natal.modifier.retrograde"
         || currentDraft.contentKey === "fallback-template/natal.house-context");
     const natalTemplatePreviewOptions = hasNatalTemplatePreviewContext ? {
       exampleValues: {
-        planetTitle: titleFromKey(natalPlacementPlanet),
-        planetRef: `${["sun", "moon", "north-node", "south-node"].includes(natalPlacementPlanet) ? "the " : ""}${titleFromKey(natalPlacementPlanet)}`,
-        planetRefCap: `${["sun", "moon", "north-node", "south-node"].includes(natalPlacementPlanet) ? "The " : ""}${titleFromKey(natalPlacementPlanet)}`,
+        planetTitle: natalPlacementPointLabel(natalPlacementPlanet),
+        planetRef: `${["sun", "moon", "north-node", "south-node"].includes(natalPlacementPlanet) ? "the " : ""}${natalPlacementPointLabel(natalPlacementPlanet)}`,
+        planetRefCap: `${["sun", "moon", "north-node", "south-node"].includes(natalPlacementPlanet) ? "The " : ""}${natalPlacementPointLabel(natalPlacementPlanet)}`,
+        angleTitle: natalPlacementPointLabel(natalPlacementPlanet),
         signTitle: titleFromKey(natalPlacementSign),
         ...(natalPlacementHouse ? { houseOrdinal: ordinalHouse(natalPlacementHouse) } : {}),
         possessive: "Your",

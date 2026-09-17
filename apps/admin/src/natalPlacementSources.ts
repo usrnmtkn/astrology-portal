@@ -12,8 +12,32 @@ export const natalPlacementPlanets = [
   "chiron",
   "lilith",
   "north-node",
-  "south-node"
+  "south-node",
+  "ascendant",
+  "descendant",
+  "midheaven",
+  "imum-coeli"
 ] as const;
+
+export const natalPlacementAngles = ["ascendant", "descendant", "midheaven", "imum-coeli"] as const;
+
+const natalPlacementPointLabels = {
+  ascendant: "ASC",
+  descendant: "DC",
+  midheaven: "MC",
+  "imum-coeli": "IC"
+} as const;
+
+const natalPlacementPointAliases: Array<{ pattern: RegExp; point: typeof natalPlacementAngles[number] }> = [
+  { pattern: /\bimum[- ]coeli\b/, point: "imum-coeli" },
+  { pattern: /\bascendant\b/, point: "ascendant" },
+  { pattern: /\bdescendant\b/, point: "descendant" },
+  { pattern: /\bmidheaven\b/, point: "midheaven" },
+  { pattern: /\basc\b/, point: "ascendant" },
+  { pattern: /\bdc\b/, point: "descendant" },
+  { pattern: /\bmc\b/, point: "midheaven" },
+  { pattern: /\bic\b/, point: "imum-coeli" }
+];
 
 export const natalPlacementSigns = [
   "aries",
@@ -34,9 +58,22 @@ export const natalPlacementHouses = ["1", "2", "3", "4", "5", "6", "7", "8", "9"
 export const natalPlacementMotions = ["direct", "retrograde"] as const;
 
 export type NatalPlacementPlanet = typeof natalPlacementPlanets[number];
+export type NatalPlacementAngle = typeof natalPlacementAngles[number];
 export type NatalPlacementSign = typeof natalPlacementSigns[number];
 export type NatalPlacementHouse = typeof natalPlacementHouses[number];
 export type NatalPlacementMotion = typeof natalPlacementMotions[number];
+
+export function isNatalPlacementAngle(value: string): value is NatalPlacementAngle {
+  return (natalPlacementAngles as readonly string[]).includes(value);
+}
+
+export function natalPlacementPointLabel(planet: string) {
+  return natalPlacementPointLabels[planet as NatalPlacementAngle] ?? titleCase(planet);
+}
+
+export function natalPlacementMotionIsFixed(planet: NatalPlacementPlanet | "") {
+  return planet === "sun" || planet === "moon" || isNatalPlacementAngle(planet);
+}
 
 export type NatalPlacementSource = {
   key: string;
@@ -81,11 +118,11 @@ export function ordinalHouse(house: NatalPlacementHouse) {
 }
 
 export function natalPlacementLabel(planet: NatalPlacementPlanet, sign: NatalPlacementSign, house: NatalPlacementHouse) {
-  return `${titleCase(planet)} in ${titleCase(sign)} in the ${ordinalHouse(house)} house`;
+  return `${natalPlacementPointLabel(planet)} in ${titleCase(sign)} in the ${ordinalHouse(house)} house`;
 }
 
 export function natalPlacementSignLabel(planet: NatalPlacementPlanet, sign: NatalPlacementSign) {
-  return `${titleCase(planet)} in ${titleCase(sign)}`;
+  return `${natalPlacementPointLabel(planet)} in ${titleCase(sign)}`;
 }
 
 export function natalPlacementExactKey(
@@ -105,7 +142,7 @@ export function natalPlacementExactKey(
  * or generic floors, and any LIVE serving override for one of those keys must
  * be present in the Studio preview too.
  *
- * Keep this list synchronized with renderNatalPlacement in renderFallback.*.
+ * Keep this list synchronized with renderNatalPlacement / renderNatalAngle in renderFallback.*.
  */
 export function natalPlacementResolverDependencyKeys(
   planet: NatalPlacementPlanet,
@@ -113,6 +150,14 @@ export function natalPlacementResolverDependencyKeys(
   house?: NatalPlacementHouse | "",
   motion: NatalPlacementMotion = "direct"
 ) {
+  if (isNatalPlacementAngle(planet)) {
+    return [
+      `fallback-hook/angle-intro/${planet}`,
+      `fallback-hook/angle-sign/${planet}/${sign}`,
+      "fallback-template/natal.angle-in-sign"
+    ];
+  }
+
   const keys = new Set<string>([
     `fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`,
     `fallback-hook/placement-sign-lived/${planet}/${sign}`,
@@ -167,8 +212,29 @@ export function natalPlacementSourceGroups(
   house?: NatalPlacementHouse | "",
   motion: NatalPlacementMotion = "direct"
 ): NatalPlacementSourceGroup[] {
-  const planetLabel = titleCase(planet);
+  const planetLabel = natalPlacementPointLabel(planet);
   const signLabel = titleCase(sign);
+  if (isNatalPlacementAngle(planet)) {
+    return [
+      {
+        key: "sign",
+        label: `${planetLabel} in ${signLabel}`,
+        description: "Edit the angle introduction or the sign-specific natal passage. These are the sources the reader uses for this chart angle.",
+        sources: [
+          { key: `fallback-hook/angle-sign/${planet}/${sign}`, label: `${planetLabel} in ${signLabel} passage`, scope: `Used for ${planetLabel} in ${signLabel}.` },
+          { key: `fallback-hook/angle-intro/${planet}`, label: `${planetLabel} introduction`, scope: `Used by every natal ${planetLabel} placement.` }
+        ]
+      },
+      {
+        key: "structure",
+        label: "Sentence structure (advanced)",
+        description: "Preview the assembled reader copy before editing its structure. Colored sections link to the exact facts, phrases, and hooks used for this placement.",
+        sources: [
+          { key: "fallback-template/natal.angle-in-sign", label: "Natal angle template", scope: "Controls the sentence order for every natal angle-in-sign write-up." }
+        ]
+      }
+    ];
+  }
   const signGroup: NatalPlacementSourceGroup = {
     key: "sign",
     label: `${planetLabel} in ${signLabel}`,
@@ -251,7 +317,9 @@ export function natalPlacementSelectionFromText(text: string): {
   motion?: NatalPlacementMotion;
 } {
   const normalized = text.toLowerCase().replace(/[_/.]+/g, " ").replace(/-/g, "-");
-  const planet = natalPlacementPlanets.find((value) => new RegExp(`\\b${value.replace("-", "[- ]")}\\b`).test(normalized));
+  const aliasedAngle = natalPlacementPointAliases.find((alias) => alias.pattern.test(normalized))?.point;
+  const planet = aliasedAngle
+    ?? natalPlacementPlanets.find((value) => new RegExp(`\\b${value.replace("-", "[- ]")}\\b`).test(normalized));
   const sign = natalPlacementSigns.find((value) => new RegExp(`\\b${value}\\b`).test(normalized));
   const houseMatch = normalized.match(/(?:house\s*[-:]?\s*|\b)(1[0-2]|[1-9])(?:st|nd|rd|th)?(?:\s+house)?\b/);
   const house = houseMatch && natalPlacementHouses.includes(houseMatch[1] as NatalPlacementHouse)

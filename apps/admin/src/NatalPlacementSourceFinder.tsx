@@ -10,8 +10,10 @@ import { emptyHouseRulers, emptyHouseSourceKeys } from "./emptyHouseSources";
 import {
   natalPlacementHouses,
   natalPlacementLabel,
+  natalPlacementMotionIsFixed,
   natalPlacementMotions,
   natalPlacementPlanets,
+  natalPlacementPointLabel,
   natalPlacementSigns,
   natalPlacementSourceGroups,
   type NatalPlacementHouse,
@@ -235,12 +237,12 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
                   const nextPlanet = event.target.value as NatalPlacementPlanet | "";
                   onSelectionChange({
                     planet: nextPlanet,
-                    ...((nextPlanet === "sun" || nextPlanet === "moon") ? { motion: "direct" as const } : {})
+                    ...(natalPlacementMotionIsFixed(nextPlanet) ? { motion: "direct" as const } : {})
                   });
                 }}
               >
                 <option value="">Choose planet or point</option>
-                {natalPlacementPlanets.map((item) => <option value={item} key={item}>{titleFromKey(item)}</option>)}
+                {natalPlacementPlanets.map((item) => <option value={item} key={item}>{natalPlacementPointLabel(item)}</option>)}
               </AdminSelect>
             </label>
             <label>
@@ -261,8 +263,8 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               <span>Motion preview</span>
               <AdminSelect aria-label="Natal placement motion" value={motion} onChange={(event) => onSelectionChange({ motion: event.target.value as NatalPlacementMotion })}>
                 {natalPlacementMotions.map((item) => (
-                  <option value={item} key={item} disabled={item === "retrograde" && (planet === "sun" || planet === "moon")}>
-                    {titleFromKey(item)}{item === "retrograde" && (planet === "sun" || planet === "moon") ? " (not possible)" : ""}
+                  <option value={item} key={item} disabled={item === "retrograde" && natalPlacementMotionIsFixed(planet)}>
+                    {titleFromKey(item)}{item === "retrograde" && natalPlacementMotionIsFixed(planet) ? " (not possible)" : ""}
                   </option>
                 ))}
               </AdminSelect>
