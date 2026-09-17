@@ -3586,7 +3586,7 @@ export function GeneratedContentAdminDashboard() {
     const key = transitNatalExactContentKey(selection);
     if (!key) return;
     if (draft?.contentKey === key) return;
-    if (draft || selectedRowId || houseTransitEditor || skyArticleEditor) return;
+    if (houseTransitEditor || skyArticleEditor) return;
     if (transitExactDismissedKeyRef.current === key) return;
     void openExactTransitNatalSourceRef.current(selection);
   }, [
@@ -3603,6 +3603,7 @@ export function GeneratedContentAdminDashboard() {
     houseTransitEditor,
     skyArticleEditor
   ]);
+  openExactTransitNatalSourceRef.current = openExactTransitNatalSource;
 
   useEffect(() => {
     const emergencySecret = secret;
@@ -3954,6 +3955,7 @@ export function GeneratedContentAdminDashboard() {
       return false;
     }
     if (draft?.contentKey) transitExactDismissedKeyRef.current = draft.contentKey;
+    sourceOpenRequestRef.current += 1;
     setTemplateVariableReferenceOpen(false);
     setTemplateVariableQuery("");
     setSelectedTemplateVariableName(null);
@@ -7403,7 +7405,6 @@ export function GeneratedContentAdminDashboard() {
       setMessage(error instanceof Error ? error.message : "Could not open the exact transit passage.");
     } finally { if (requestId === sourceOpenRequestRef.current) setIsLoading(false); }
   }
-  openExactTransitNatalSourceRef.current = openExactTransitNatalSource;
 
   function updateTransitReadingContext(next: Partial<import("./transitNatalSources").TransitNatalReadingContext>) {
     const context = { ...transitReadingContext, ...next };
