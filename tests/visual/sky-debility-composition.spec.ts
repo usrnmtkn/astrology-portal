@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { builtinContentRecords, contentLiveStatuses } from "../../api/_lib/content-live-status";
+import { approvedThreePlanetContext, singularSaturnContext } from "../fixtures/sky-effort-count-first";
 
 async function mockStudio(page: Page, stored: any[]) {
   await page.addInitScript(() => localStorage.setItem("tldrastro:contentAdminSecret", "effort-test-only"));
@@ -37,9 +38,6 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const stored: any[] = [];
     await mockStudio(page, stored);
     await page.setViewportSize({ width, height: 1000 });
-    // Studio owns its theme independently of the reader's html[data-theme].
-    // Set the real preference before mount and assert the rendered theme so
-    // light/dark screenshots cannot silently capture the same default theme.
     await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
     await page.goto("/#sky-writeups?view=daily-summary");
     await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", theme);
@@ -47,7 +45,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(studio.getByRole("heading", { name: "Things may take more effort right now", level: 3 })).toBeVisible();
     const reading = studio.getByLabel("Complete effort summary", { exact: true });
     await expect(reading).toContainText("You may want reassurance but find it hard to ask for");
-    await expect(reading).toContainText("give yourself time to think before committing.");
+    await expect(reading.getByTestId("effort-paragraph-1")).toHaveText(approvedThreePlanetContext);
     await expect(studio.getByRole("button", { name: "Review and save wording" }).first()).toBeHidden();
     const original = await reading.locator('[data-testid^="effort-paragraph-"]').allTextContents();
     const bodyStyle = await reading.getByTestId("effort-paragraph-0").evaluate(style);
@@ -59,22 +57,30 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     expect(await mapped.locator('[data-testid^="effort-paragraph-"]').allTextContents()).toEqual(original);
     expect(await mapped.getByTestId("effort-paragraph-0").evaluate(style)).toEqual(bodyStyle);
     expect(await mapped.getByRole("link", { name: "Edit Venus in Scorpio: Lived experience", exact: true }).evaluate(el => getComputedStyle(el).display)).toBe("inline");
+    await expect(mapped.locator('[data-source-kind="fact"]').filter({ hasText: /^Three$/ })).toBeVisible();
     await mapped.getByRole("link", { name: "Edit Venus in Scorpio: Lived experience", exact: true }).click();
     const editor = studio.getByTestId("sky-debility-selected-source");
     await expect(editor.getByRole("textbox")).toBeFocused();
     await expect(editor.getByRole("textbox")).toHaveValue("want reassurance but find it hard to ask for");
     await editor.getByRole("textbox").fill("need more time to answer");
     await expect(mapped).toContainText("You may need more time to answer");
-    await expect(mapped).toContainText("ask directly for the support you need");
+    await expect(mapped.getByTestId("effort-paragraph-1")).toHaveText(approvedThreePlanetContext);
     await studio.getByRole("tab", { name: "Read-through", exact: true }).click();
     await expect(reading).toContainText("You may need more time to answer");
     await studio.getByRole("tab", { name: "Full template", exact: true }).click();
     const full = studio.getByTestId("sky-debility-full-template");
     await expect(full).toContainText("You may {livedExperienceList}. {situationList} can take more out of you than you expected.");
+    await expect(full).toContainText("{countWord} out of the {totalWord} classical planets {countVerb} currently in detriment or fall: {planetList}.");
+    await expect(full).toContainText("{dignityExplanationSentence} With {planetReference} involved");
     await expect(full).toContainText("It may help to {responseList}.");
-    await expect(full).toContainText("Detriment and fall describe signs where a planet has a harder time doing its usual work.");
-    await full.getByRole("link", { name: "Inspect livedExperienceList variable", exact: true }).click();
+    await full.getByRole("link", { name: "Inspect countWord variable", exact: true }).click();
     const variable = studio.getByLabel("Selected template variable", { exact: true });
+    await expect(variable).toContainText("Three");
+    await expect(variable).toContainText("This value is calculated");
+    await full.getByRole("link", { name: "Inspect dignityExplanationSentence variable", exact: true }).click();
+    await expect(variable).toContainText("Multiple-planet detriment or fall explanation");
+    await expect(variable).toContainText("This means they are moving through signs that make it harder for them to do their usual work.");
+    await full.getByRole("link", { name: "Inspect livedExperienceList variable", exact: true }).click();
     await expect(variable).toContainText("Venus in Scorpio: Lived experience");
     await expect(variable).toContainText("Mars in Cancer: Lived experience");
     await expect(variable).toContainText("Saturn in Aries: Lived experience");
@@ -97,23 +103,25 @@ test("one, four, and zero-planet branches use the same source map", async ({ pag
   await studio.getByLabel("Preview Mars placement").selectOption("");
   await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
   const mapped = studio.getByLabel("Mapped effort summary", { exact: true });
-  await expect(mapped).toContainText("Saturn is in Aries, a sign that complicates how we take responsibility.");
+  await expect(mapped.getByTestId("effort-paragraph-1")).toHaveText(singularSaturnContext);
   await expect(mapped.locator('[data-source-kind="fact"]').filter({ hasText: /^Aries$/ })).toBeVisible();
-  const connector = mapped.getByRole("button", { name: "Edit One-planet connecting phrase", exact: true }).first();
-  await connector.focus();
-  await connector.press("Enter");
-  await expect(studio.getByTestId("sky-debility-selected-source").getByRole("textbox")).toBeFocused();
-  await expect(studio.getByTestId("sky-debility-selected-source").getByRole("textbox")).toHaveValue("is in {signTitle}, a sign that complicates");
+  const explanation = mapped.getByRole("button", { name: "Edit One-planet detriment or fall explanation", exact: true }).first();
+  await explanation.focus();
+  await explanation.press("Enter");
+  const textbox = studio.getByTestId("sky-debility-selected-source").getByRole("textbox");
+  await expect(textbox).toBeFocused();
+  await expect(textbox).toHaveValue("This means it is moving through {signTitle}, a sign that makes it harder for it to do its usual work.");
   await studio.getByLabel("Preview Mercury placement").selectOption("Pisces");
   await studio.getByLabel("Preview Venus placement").selectOption("Scorpio");
   await studio.getByLabel("Preview Mars placement").selectOption("Cancer");
   await expect(mapped).toContainText("4 of 7 planets");
+  await expect(mapped).toContainText("Four out of the seven classical planets are currently in detriment or fall: Mercury, Venus, Mars, and Saturn.");
   await expect(mapped.getByRole("link", { name: "Edit Saturn in Aries: Planetary function in human terms", exact: true })).toBeVisible();
   await expect(mapped.getByRole("link", { name: "Edit Saturn in Aries: Helpful response", exact: true })).toHaveCount(0);
   for (const planet of ["Mercury", "Venus", "Mars", "Saturn"]) await studio.getByLabel(`Preview ${planet} placement`).selectOption("");
   await expect(studio.getByTestId("sky-debility-preview")).toContainText("The reader card is hidden when no planets qualify");
   await studio.getByRole("tab", { name: "Full template", exact: true }).click();
-  await expect(studio.getByTestId("sky-debility-full-template")).toContainText("{livedExperienceList}");
+  await expect(studio.getByTestId("sky-debility-full-template")).toContainText("{countWord}");
 });
 
 test("mapped source edits reach the existing draft, publish, and reload controls", async ({ page }) => {
@@ -132,7 +140,6 @@ test("mapped source edits reach the existing draft, publish, and reload controls
   await page.getByRole("button", { name: /^Save draft(?: & return)?$/ }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   expect(stored[0].content_key).toBe("cms/sky-debility/placement/venus/scorpio/livedExperienceClause");
-  // Reload proves saved persistence rather than local component state.
   await page.reload();
   await expect(studio.getByLabel("Complete effort summary", { exact: true })).toContainText("need more time to explain what would help");
   await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
@@ -143,4 +150,29 @@ test("mapped source edits reach the existing draft, publish, and reload controls
   await expect.poll(() => stored[0]?.status).toBe("LIVE");
   await page.reload();
   await expect(studio.getByLabel("Complete effort summary", { exact: true })).toContainText("need more time to explain what would help");
+});
+
+test("new explanation field saves and reopens without changing older connector overrides", async ({ page }) => {
+  const stored: any[] = [{ id: "legacy-connector", content_key: "cms/sky-debility/signConditionMany", body: "are now in signs that complicate", status: "LIVE", lane: "serving", review_state: null }];
+  await mockStudio(page, stored);
+  await page.goto("/#sky-writeups?view=daily-summary");
+  const studio = page.getByTestId("sky-debility-studio");
+  await expect(studio.getByTestId("effort-paragraph-1")).toHaveText(approvedThreePlanetContext);
+  await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
+  await studio.getByLabel("Mapped effort summary", { exact: true }).getByRole("button", { name: "Edit Multiple-planet detriment or fall explanation", exact: true }).click();
+  const selected = studio.getByTestId("sky-debility-selected-source");
+  await selected.getByRole("textbox").fill("This is the explanation saved in the browser test.");
+  await selected.getByRole("button", { name: "Review and save wording" }).click();
+  await page.getByRole("button", { name: /^Save draft(?: & return)?$/ }).click();
+  await expect.poll(() => stored.find(row => row.content_key === "cms/sky-debility/dignityExplanationMany")?.status).toBe("DRAFT");
+  await page.reload();
+  await expect(studio.getByTestId("effort-paragraph-1")).toContainText("This is the explanation saved in the browser test.");
+  expect(stored.find(row => row.id === "legacy-connector")?.body).toBe("are now in signs that complicate");
+  await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
+  await studio.getByLabel("Mapped effort summary", { exact: true }).getByRole("button", { name: "Edit Multiple-planet detriment or fall explanation", exact: true }).click();
+  await selected.getByRole("button", { name: "Review and save wording" }).click();
+  await page.getByRole("button", { name: /^Save (& publish|& return)$/ }).click();
+  await expect.poll(() => stored.find(row => row.content_key === "cms/sky-debility/dignityExplanationMany")?.status).toBe("LIVE");
+  await page.reload();
+  await expect(studio.getByTestId("effort-paragraph-1")).toContainText("This is the explanation saved in the browser test.");
 });
