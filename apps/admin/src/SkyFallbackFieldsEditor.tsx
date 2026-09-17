@@ -15,6 +15,7 @@ import {
   SKY_WRITING_LIBRARY_GROUPS,
   installSkyWritingLibrary,
   loadSkyWritingLibrarySeeds,
+  preferSkyWritingLibrary,
   skyWritingLibraryInstalled,
   type SkyWritingLibraryComposition
 } from "./skyWritingLibrary";
@@ -131,8 +132,11 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       const { values } = await loadSkyWritingLibrarySeeds(sourceRecord, planet, sign, onLoadSourceRef.current);
       if (cancelled) return;
       const starter = ingressCompositionRef.current ?? makeSkyIngressComposition() as SkyWritingLibraryComposition;
-      const prepared = installSkyWritingLibrary(starter, values);
-      if ((articleNeedsLibrary || articleLibraryRequested) && !initialLibrarySourceId) prepared.modules = starter.modules;
+      const installed = installSkyWritingLibrary(starter, values);
+      const prepared = articleLibraryRequested
+        ? preferSkyWritingLibrary(installed)
+        : installed;
+      if (!articleLibraryRequested && articleNeedsLibrary && !initialLibrarySourceId) prepared.modules = starter.modules;
       setPreparedLibrary(prepared);
       onChangeRef.current("ingress", prepared);
     })().catch(reason => {
@@ -242,6 +246,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
           fieldPath={field.key} value={field.value} source={activeLibrary ? { ...source, ingress: activeLibrary } : source} disabled={disabled} onInsert={insertVariable}
           preparing={installingLibrary} preparationError={libraryError} onLoadSource={onLoadSource} onOpenSource={onOpenSource}
           onPrepareLibrary={() => setArticleLibraryRequested(true)}
+          onReplaceBody={changeWriting}
           onCompositionChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} />
         : <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />)}
       {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}

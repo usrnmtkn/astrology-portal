@@ -67,11 +67,11 @@ const module = (id: string, label: string, template: string, required = false): 
 // deliberately inserts it into a section; noun phrases are never dumped into
 // reader prose as standalone paragraphs.
 export const SKY_WRITING_LIBRARY_MODULES: SkyWritingLibraryModule[] = [
-  module("library-opening", "Opening hook", "{{openingHook}}"),
-  module("library-placement", "Placement thesis", "{{placementThesis}}", true),
-  module("library-pressure", "How it shows up", "{{placementPressure}}", true),
-  module("library-response", "Challenge and response", "{{placementCorrection}}", true),
-  module("library-close", "Takeaway", "{{closingLine}}")
+  module("library-opening", "Planet in sign", "From {{entryDate}} to {{exitDate}}, {{planetTitle}} moves through {{signTitle}}. {{planetTitle}} describes {{planetFunction}}, while {{signTitle}} pursues {{signCoreDrive}} through {{signMethod}}. {{placementThesis}}", true),
+  module("library-dignity", "Dignity", "{{placementDignityMeaning}}"),
+  module("library-experience", "Lived experience", "{{experienceGeneral}} {{placementOpportunity}}", true),
+  module("library-challenge", "The challenge", "The challenge\n\n{{placementPressure}}", true),
+  module("library-response", "Response and close", "{{responseSentence}} {{practiceClosingLine}}", true)
 ];
 
 export const SKY_WRITING_LIBRARY_FIELD_IDS = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields.map(item => item.id));
@@ -94,11 +94,8 @@ function recordSeedValues(source: RecordValue = {}) {
 }
 
 const sharedSeedSpecs = (planet: string, sign: string) => [
-  { id: "planetFunction", keys: [`fallback-vocab/planet-function/${planet}`, `fallback-vocab/sky-planet-function/${planet}`] },
   { id: "planetProductive", keys: [`fallback-vocab/planet-productive/${planet}`] },
   { id: "planetShadow", keys: [`fallback-vocab/planet-excess/${planet}`] },
-  { id: "signCoreDrive", keys: [`fallback-vocab/sign-need/${sign}`] },
-  { id: "signMethod", keys: [`fallback-vocab/sign-style/${sign}`, `fallback-vocab/sky-sign-style/${sign}`] },
   { id: "signGift", keys: [`fallback-vocab/sign-does/${sign}`] },
   { id: "signShadow", keys: [`fallback-hook/sky-sign-trap/${sign}`] }
 ];
@@ -175,7 +172,7 @@ export function toggleSkyWritingLibrarySourceModule(composition: SkyWritingLibra
   if (composition.modules.some(item => item.id === id)) return { ...composition, modules: composition.modules.filter(item => item.id !== id) };
   if (composition.modules.length >= 32) return composition;
   const next = module(id, `Experience · ${label}`, `{{${sourceId}}}`);
-  const before = composition.modules.findIndex(item => item.id === "library-pressure");
+  const before = composition.modules.findIndex(item => item.id === "library-challenge");
   const modules = [...composition.modules];
   modules.splice(before >= 0 ? before : modules.length, 0, next);
   return { ...composition, modules };
@@ -183,7 +180,7 @@ export function toggleSkyWritingLibrarySourceModule(composition: SkyWritingLibra
 
 const legacyBodyModuleIds = new Set(["opening", "practice", "manifestations", "third-manifestation", "response", "intro-mechanism", "intro-close", "close"]);
 const timingModuleIds = new Set(["single-pass", "first-pass", "return", "final-pass", "long-cycle"]);
-const primaryLibraryModuleIds = new Set(["library-placement", "library-pressure", "library-response"]);
+const primaryLibraryModuleIds = new Set(["library-opening", "library-experience", "library-challenge", "library-response"]);
 const libraryOrder = SKY_WRITING_LIBRARY_MODULES.map(item => item.id);
 
 export function preferSkyWritingLibrary(composition: SkyWritingLibraryComposition): SkyWritingLibraryComposition {
@@ -205,11 +202,11 @@ export function preferSkyWritingLibrary(composition: SkyWritingLibraryCompositio
     ...installed,
     modules: [
       ...structural,
-      ...pick("library-opening", "library-placement"),
+      ...pick("library-opening", "library-dignity"),
       ...selectedExperiences,
-      ...pick("library-pressure"),
+      ...pick("library-experience"),
       ...timing,
-      ...pick("library-response", "library-close")
+      ...pick("library-challenge", "library-response")
     ]
   };
 }

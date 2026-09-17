@@ -3,6 +3,7 @@ import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from "../../web/src/co
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { SKY_PLACEMENT_PLANET_SIGN_INGRESS_TEMPLATE } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementPlanetSignTemplate.mjs";
 import { SKY_WRITING_LIBRARY_GROUPS, type SkyWritingLibraryComposition } from "./skyWritingLibrary";
 import SkyPlacementVariableKey, { SkyVariableText, type SkyVariableFacts } from "./SkyPlacementVariableKey";
 // @ts-ignore Pure shared article resolver, also used by publication and readers.
@@ -19,6 +20,7 @@ type Props = {
   preparationError: string;
   onPrepareLibrary: () => void;
   onCompositionChange: (value: SkyWritingLibraryComposition) => void;
+  onReplaceBody?: (value: string) => void;
   onLoadSource?: (key: string) => Promise<RecordValue | undefined>;
   onOpenSource: (key: string, path: string) => void;
 };
@@ -91,8 +93,19 @@ export default function SkyPlacementArticleVariables(props: Props) {
     }
   }
 
+  function useIngressTemplate() {
+    if (disabled || !props.onReplaceBody) return;
+    if (value.trim() && value !== SKY_PLACEMENT_PLANET_SIGN_INGRESS_TEMPLATE
+      && !window.confirm("Replace this placement article with the planet-in-sign Sky template? Existing article wording stays in the editor until you confirm.")) return;
+    props.onPrepareLibrary();
+    props.onReplaceBody(SKY_PLACEMENT_PLANET_SIGN_INGRESS_TEMPLATE);
+  }
+
   return <>
-    <p className="admin-field-hint">Use calculated Sky variables and editable phrase variables directly in this article. Phrase text comes from this placement's Writing Library; the tokens stay in your draft.</p>
+    <p className="admin-field-hint">Use calculated Sky variables and editable phrase variables directly in this article. Phrase text comes from this placement's Writing Library; the tokens stay in your draft. Sky Placement stays current-sky: this template describes a dated visit, not a birth-chart placement.</p>
+    {props.onReplaceBody && <div className="admin-new-actions">
+      <StudioButton type="button" disabled={disabled} onClick={useIngressTemplate}>Use planet-in-sign Sky template</StudioButton>
+    </div>}
     {props.preparing && <p role="status">Preparing the Writing Library in this draft…</p>}
     {(error || props.preparationError) && <p role="alert">{error || props.preparationError}</p>}
     <details className="admin-workspace-details" data-sky-article-variable-picker>

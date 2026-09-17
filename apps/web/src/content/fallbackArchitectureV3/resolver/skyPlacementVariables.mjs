@@ -1,8 +1,11 @@
+import { planetSignDignity } from "../../../services/planetSignDignity.mjs";
+
 // Shared contract for inline variables in the continuous placement writing.
 // All six editable placement writing fields use the same calculated fact tokens.
 // Section references are composition slots, not inline facts. No natal inputs
 // or generated prose belong here.
 export const SKY_PLACEMENT_VARIABLES = Object.freeze([
+  { name: "placementDignity", description: "Calculated traditional sign condition, retaining combined dignities. Not a peregrine calculation.", availability: "Selected valid planet and sign; independent of motion and dates" },
   { name: "planetTitle", description: "Planet name, without ‘the’ or Rx.", availability: "Selected placement" },
   { name: "signTitle", description: "Zodiac sign name.", availability: "Selected placement" },
   { name: "motion", description: "The word direct or retrograde.", availability: "Calculated motion" },
@@ -42,9 +45,11 @@ export function skyPlacementVariableIssues(value) {
 // Identity comes from the caller's calculated placement, never editable copy.
 // A missing date stays missing. Studio does not invent an example occurrence.
 export function skyPlacementVariableFacts(input) {
+  const dignity = planetSignDignity(input.planet, input.sign);
   return {
     ...(input.facts ?? {}),
     ...skyPlacementAspectVariables(input),
+    placementDignity: dignity.status === "invalid" ? undefined : dignity.status === "not_applicable" ? "not applicable" : dignity.dignities.length ? dignity.dignities.join(" and ") : "no major sign condition",
     planetTitle: title(input.planet),
     signTitle: title(input.sign),
     motion: input.isRetrograde === true ? "retrograde" : "direct"

@@ -1,3 +1,4 @@
+import { PLACEMENT_DIGNITY_MEANING, isStandaloneDignityParagraph } from "./placementDignityMeaning.mjs";
 import { studioVariableValue } from "../../studioCustomVariables.mjs";
 import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableIssues } from "./skyPlacementVariables.mjs";
 import { resolveIngressSource } from "./skyIngressComposition.mjs";
@@ -40,19 +41,19 @@ export function skyPlacementArticleVariableIssues(value, owner = {}) {
   return [...new Set(issues)];
 }
 
-function phraseSource(owner, name, records) {
+function phraseSource(owner, name, records, context = owner) {
   const custom = owner?._studioVariables?.find(item => item.name === name);
-  if (custom) {
+  if (custom && name !== PLACEMENT_DIGNITY_MEANING) {
     const { value } = studioVariableValue(custom, owner);
     return value?.trim() ? { text: value, kind: "custom", reference: `studio-variable/${custom.name}` } : { reason: `No value saved for {{${name}}}. Open Variables to complete it.` };
   }
   const source = owner?.ingress?.sources?.[name];
-  if (!source && !phraseFields.get(name)?.shared) return { reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
+  if (!source && name !== PLACEMENT_DIGNITY_MEANING && !phraseFields.get(name)?.shared) return { reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
   const expected = phraseFields.get(name)?.kind;
   if (source && (!kinds.has(source.kind) || expected && source.kind !== expected)) return { reason: `{{${name}}} has the wrong source scope.` };
   if (!isSkyPlacementArticleField(owner?.contentKey, "placementArticle")) return { reason: "Phrase variables need the selected planet-in-sign source." };
-  const resolved = resolveIngressSource(owner, name, records);
-  if (resolved.reason) return resolved;
+  const resolved = resolveIngressSource(owner, name, records, context);
+  if (resolved.reason || resolved.omitted) return resolved;
   if (typeof resolved.text !== "string" || !resolved.text.trim()) return { ...resolved, reason: `No writing saved for {{${name}}}. Fill this phrase in the Writing Library.` };
   // One phrase expansion only. Phrase text may contain the article's calculated
   // variables, never another authored source or an unrestricted object path.
@@ -77,11 +78,17 @@ export function skyPlacementArticleVariableSegments(value, calculated = {}, owne
       text = Object.hasOwn(calculated, name) && typeof calculated[name] === "string" ? articleFactText(name, calculated[name]) : "";
       if (!text.trim()) reason = `Needs calculated ${name}`;
     } else if (knownPhrase(name, owner)) {
-      const resolved = phraseSource(owner, name, records);
+      const context = {
+        ...(Object.hasOwn(calculated, "planetTitle") ? { planet: calculated.planetTitle } : {}),
+        ...(Object.hasOwn(calculated, "signTitle") ? { sign: calculated.signTitle } : {})
+      };
+      const resolved = phraseSource(owner, name, records, context);
       kind = resolved.kind ?? phraseFields.get(name)?.kind ?? "placement";
       reference = resolved.reference ?? `${owner.contentKey}#ingress.sources.${name}`;
       reason = resolved.reason ?? "";
-      if (!reason) {
+      if (resolved.omitted) {
+        if (!isStandaloneDignityParagraph(copy, match.index)) reason = "An omitted dignity paragraph must occupy its own paragraph.";
+      } else if (!reason) {
         const missing = tokens(resolved.text).map(part => part[1]).filter(id => !Object.hasOwn(calculated, id) || typeof calculated[id] !== "string" || !calculated[id].trim());
         if (missing.length) reason = `Needs calculated ${[...new Set(missing)].join(", ")}`;
         else text = resolved.text.replace(tokenPattern(), (_, id) => articleFactText(id, calculated[id]));
@@ -122,6 +129,7 @@ export function skyPlacementArticlePublicationIssues(owner, records = []) {
       if (!knownPhrase(name, owner)) continue;
       const resolved = phraseSource(owner, name, records);
       if (resolved.reason) issues.push(`${path} → ${name}: ${resolved.reason}`);
+      if (resolved.omitted && String(value).split(/\n\s*\n/u).some(paragraph => tokens(paragraph).some(match => match[1] === name) && !/^\s*\{\{\s*placementDignityMeaning\s*\}\}\s*$/u.test(paragraph))) issues.push(`${path} → ${name}: an omitted dignity paragraph must occupy its own paragraph.`);
     }
   }
   return [...new Set(issues)];

@@ -1,3 +1,4 @@
+import { planetSignDignity, type EssentialDignity } from "../../services/planetSignDignity.mjs";
 import { CardReadMore } from "../CardReadMore";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
@@ -39,7 +40,7 @@ export type SocialPlacementRow = {
   detailAvailable?: boolean;
 };
 
-type EssentialDignity = "domicile" | "exaltation" | "detriment" | "fall";
+
 type DignityTone = "good" | "weak" | "neutral";
 
 export type PlacementDignity = {
@@ -141,60 +142,6 @@ function normalizePlacementMicrocopySection(
   };
 }
 
-type EssentialDignityValue = EssentialDignity | EssentialDignity[];
-
-const planetDignities: Record<string, Partial<Record<string, EssentialDignityValue>>> = {
-  Sun: {
-    Leo: "domicile",
-    Aries: "exaltation",
-    Aquarius: "detriment",
-    Libra: "fall"
-  },
-  Moon: {
-    Cancer: "domicile",
-    Taurus: "exaltation",
-    Capricorn: "detriment",
-    Scorpio: "fall"
-  },
-  Mercury: {
-    Gemini: "domicile",
-    Virgo: ["domicile", "exaltation"],
-    Sagittarius: "detriment",
-    Pisces: ["detriment", "fall"]
-  },
-  Venus: {
-    Taurus: "domicile",
-    Libra: "domicile",
-    Pisces: "exaltation",
-    Aries: "detriment",
-    Scorpio: "detriment",
-    Virgo: "fall"
-  },
-  Mars: {
-    Aries: "domicile",
-    Scorpio: "domicile",
-    Capricorn: "exaltation",
-    Taurus: "detriment",
-    Libra: "detriment",
-    Cancer: "fall"
-  },
-  Jupiter: {
-    Sagittarius: "domicile",
-    Pisces: "domicile",
-    Cancer: "exaltation",
-    Gemini: "detriment",
-    Virgo: "detriment",
-    Capricorn: "fall"
-  },
-  Saturn: {
-    Capricorn: "domicile",
-    Aquarius: "domicile",
-    Libra: "exaltation",
-    Cancer: "detriment",
-    Leo: "detriment",
-    Aries: "fall"
-  }
-};
 
 function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
@@ -315,13 +262,7 @@ function placementDignityFromValue(dignity: EssentialDignity, planet: string, vo
 }
 
 export function dignitiesFor(planet: string, sign: string, voice: "you" | "they" | "sky" = "you"): PlacementDignity[] {
-  const dignity = planetDignities[planet]?.[sign] ?? null;
-
-  if (!dignity) {
-    return [];
-  }
-
-  return (Array.isArray(dignity) ? dignity : [dignity]).map((value) => placementDignityFromValue(value, planet, voice));
+  return planetSignDignity(planet, sign).dignities.map((value) => placementDignityFromValue(value, planet, voice));
 }
 
 export function dignityFor(planet: string, sign: string, voice: "you" | "they" | "sky" = "you"): PlacementDignity | null {

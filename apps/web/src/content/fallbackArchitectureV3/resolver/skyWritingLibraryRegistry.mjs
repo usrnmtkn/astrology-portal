@@ -1,3 +1,4 @@
+import { PLACEMENT_DIGNITY_FIELDS } from "./placementDignityMeaning.mjs";
 import { ZODIAC_SEASON_VARIABLES } from "./zodiacSeasonVariables.mjs";
 // Shared editorial field registry. This is not reader prose.
 const field = (id, label, description, kind, rows = 4) => ({ id, label, description, kind, rows });
@@ -9,7 +10,7 @@ export const SKY_WRITING_LIBRARY_GROUPS = [
     description: "Reusable planet language with one clear job per field. Descriptor is a phrase; function is the planet's lived meaning. Mythology lives separately under Planet lore / mythology.",
     fields: [
       field("planetDescriptor", "Planet descriptor", "A short identifying phrase used inside another sentence. Example: ‘the planet of love, pleasure, and values’ in ‘Venus, the planet of love, pleasure, and values, describes how we relate and what we enjoy.’", "planet", 2),
-      field("planetFunction", "Planet function", "What the planet represents in lived terms: the activity, need, or process it describes. This is the reusable meaning field and should not repeat the descriptor or mythology.", "planet", 4),
+      field("planetFunction", "Planet function", "A grammatical ingredient that follows “describes.” Write the planet’s work as a noun phrase, not a complete sentence. Example: identity, vitality, and the part of life that wants to be lived with purpose.", "planet", 4),
       field("planetProductive", "Productive expression", "How this planet can operate constructively when its function has somewhere useful to go.", "planet", 4),
       field("planetShadow", "Planet shadow / excess", "What can happen when the same planetary function gets overused, distorted, or pushed too far.", "planet", 4),
       field("planetCollectiveExpression", "Collective expression", "Optional larger cultural or collective expression. Author it only when it belongs to the exact article argument.", "planet", 4)
@@ -21,8 +22,8 @@ export const SKY_WRITING_LIBRARY_GROUPS = [
     description: "Reusable sign language with distinct jobs. Descriptor is a phrase; core drive says what the sign wants; method says how it tends to go about it.",
     fields: [
       field("signDescriptor", "Sign descriptor", "A short identifying phrase used inside another sentence. Example: ‘a cardinal fire sign’ in ‘Aries, a cardinal fire sign, tends to move toward what needs to begin.’", "sign", 2),
-      field("signCoreDrive", "Core drive", "What the sign needs or keeps trying to establish.", "sign", 4),
-      field("signMethod", "Method", "How the sign tends to approach problems, choices, change, or expression.", "sign", 4),
+      field("signCoreDrive", "Core drive", "A grammatical ingredient that follows “pursues.” Write what the sign keeps trying to establish as a noun phrase, not a complete sentence.", "sign", 4),
+      field("signMethod", "Method", "A grammatical ingredient that follows “through.” Write how the sign tends to go about it as a noun or gerund phrase, not a complete sentence.", "sign", 4),
       ...ZODIAC_SEASON_VARIABLES,
       field("signGift", "Gift", "What the sign tends to do constructively when its method is working.", "sign", 4),
       field("signShadow", "Sign shadow", "Where the sign’s method can become rigid, excessive, avoidant, or counterproductive.", "sign", 4),
@@ -34,9 +35,11 @@ export const SKY_WRITING_LIBRARY_GROUPS = [
     label: "Planet × sign synthesis",
     description: "The exact planet-in-sign layer. Existing approved TLDR and fallback copy prefill fields only when there is a clean one-to-one source; the rest stay empty rather than being invented.",
     fields: [
-      field("placementThesis", "Placement thesis", "The central argument for this exact planet in this exact sign. Prefilled from the existing TLDR What when available.", "placement", 4),
-      field("placementOpportunity", "Opportunity", "What may become easier, more available, or more worth developing. Author this only when it is distinct from the existing takeaway.", "placement", 4),
-      field("placementPressure", "How it shows up", "Recognizable behavior or consequence. Prefilled from the existing fallback lived passage when available.", "placement", 4),
+      ...PLACEMENT_DIGNITY_FIELDS,
+      field("placementThesis", "Placement thesis", "What is distinctive about this exact planet–sign combination. Do not repeat the planet’s general function or the sign’s general motivation. Prefilled from the existing TLDR What when available.", "placement", 4),
+      field("placementOpportunity", "Opportunity", "What becomes possible through the lived situation already described. Author this only when it is distinct from the thesis and the takeaway.", "placement", 4),
+      field("placementPressure", "The challenge", "The complete challenge paragraph. Name the behavior that creates difficulty and what it costs in time, work, money, relationships, or another relevant area. Do not merely repeat the calculated dignity condition.", "placement", 4),
+      field("responseSentence", "Response", "The response to the specific difficulty already described in the challenge paragraph.", "placement", 4),
       field("placementShadow", "Placement shadow", "The specific failure mode created by this planet and sign together. Left empty unless the current approved source isolates it cleanly.", "placement", 4),
       field("placementCorrection", "Challenge and response", "The useful turn already established by the placement. Prefilled from the existing fallback challenge/response passage when available.", "placement", 4),
       field("placementPractice", "Practice", "Optional additional concrete ways to work with the placement. Do not duplicate the challenge/response field.", "placement", 4),
@@ -49,7 +52,7 @@ export const SKY_WRITING_LIBRARY_GROUPS = [
     label: "Experience hooks",
     description: "A bank of plausible manifestations. General preserves the existing lived passage; add broader life-area hooks only when they genuinely fit the placement.",
     fields: [
-      field("experienceGeneral", "General", "Existing approved lived manifestation for this placement. Prefilled when one exists.", "placement", 3),
+      field("experienceGeneral", "General", "A recognizable situation: a behavior and its consequence, not a list of traits. Prefilled from the existing lived passage when one exists.", "placement", 3),
       field("experienceWork", "Work", "Workload, responsibility, leadership, deadlines, colleagues, or the structure of a workday.", "placement", 3),
       field("experienceMoney", "Money", "Income, spending, pricing, resources, financial choices, or material support.", "placement", 3),
       field("experienceRelationships", "Relationships", "Close connections, agreements, reciprocity, conflict, support, or intimacy.", "placement", 3),
@@ -67,7 +70,8 @@ export const SKY_WRITING_LIBRARY_GROUPS = [
     fields: [
       field("openingHook", "Opening hook", "Prefilled from the existing fallback opening when available.", "placement", 4),
       field("reflectionQuestion", "Reflection question", "Optional question that deepens the article. Left empty rather than generating a generic journal prompt.", "placement", 3),
-      field("closingLine", "Closing line", "Prefilled from the existing TLDR Takeaway when available.", "placement", 3)
+      field("closingLine", "Closing line", "Prefilled from the existing TLDR Takeaway when available.", "placement", 3),
+      field("practiceClosingLine", "Practice close", "Perspective or permission that completes the article without introducing a new assignment.", "placement", 3)
     ]
   },
   {
