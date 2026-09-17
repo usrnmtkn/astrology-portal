@@ -1741,7 +1741,8 @@ function generatedContentMapFromRows(
 
   for (const row of rows) {
     // Snapshot loading must apply the same serving filter as the live database query.
-    if (row.content_key.startsWith("cms/sky-daily-summary/")
+    if ((row.content_key.startsWith("cms/sky-daily-summary/")
+      || row.content_key.startsWith("cms/sky-debility/"))
       && (row.status !== "LIVE" || row.lane !== "serving" || row.review_state)) continue;
     if (!publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date)) continue;
     if (!isGeneratedContentReaderBoundaryAllowed(row)) {

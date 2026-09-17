@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { DIGNITY_SIGNS, planetSignDignity } from '../apps/web/src/services/planetSignDignity.mjs';
+import { DIGNITY_SIGNS, planetSignDebilities, planetSignDignity, traditionalSkyDebilities } from '../apps/web/src/services/planetSignDignity.mjs';
 import { placementDignityTemplate, placementDignityForSource, migrateLegacyDignityComposition } from '../apps/web/src/content/fallbackArchitectureV3/resolver/placementDignityMeaning.mjs';
 import { makeSkyIngressComposition, resolveIngressSource, renderSkyIngressComposition, skyIngressPublicationIssues, validateSkyIngressComposition } from '../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs';
 import { skyPlacementVariableFacts } from '../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs';
@@ -49,6 +49,34 @@ function inputFor(owner) {
 function article(owner, copy = 'Fixture opening.\n\n{{placementDignityMeaning}}\n\nFixture final sentence.', input = inputFor(owner)) {
   return fillSkyPlacementArticleVariables(copy, skyPlacementVariableFacts(input), owner);
 }
+test('traditional sky debilities count unique seven-planet detriment and fall once', () => {
+  assert.deepEqual(planetSignDebilities('Mercury', 'Pisces'), ['detriment', 'fall']);
+  assert.deepEqual(planetSignDebilities('Sun', 'Leo'), []);
+  const snapshot = traditionalSkyDebilities([
+    { planet: 'Sun', sign: 'Leo' },
+    { planet: 'Moon', sign: 'Scorpio' },
+    { planet: 'Mercury', sign: 'Pisces' },
+    { planet: 'Mercury', sign: 'Pisces' },
+    { planet: 'Venus', sign: 'Aries' },
+    { planet: 'Mars', sign: 'Capricorn' },
+    { planet: 'Jupiter', sign: 'Capricorn' },
+    { planet: 'Saturn', sign: 'Aries' },
+    { planet: 'Uranus', sign: 'Taurus' },
+    { planet: 'Neptune', sign: 'Aries' }
+  ]);
+  assert.equal(snapshot.traditionalCount, 7);
+  assert.equal(snapshot.knownCount, 7);
+  assert.equal(snapshot.count, 5);
+  assert.deepEqual(snapshot.planets.map(row => [row.planet, row.sign, row.dignities.join('+')]), [
+    ['Moon', 'Scorpio', 'fall'],
+    ['Mercury', 'Pisces', 'detriment+fall'],
+    ['Venus', 'Aries', 'detriment'],
+    ['Jupiter', 'Capricorn', 'fall'],
+    ['Saturn', 'Aries', 'fall']
+  ]);
+  assert.equal(traditionalSkyDebilities([]).count, 0);
+  assert.equal(traditionalSkyDebilities([{ planet: 'Pluto', sign: 'Aquarius' }]).knownCount, 0);
+});
 test('normalization, invalid input, unsupported bodies and mutable callers are independent', () => {
   assert.equal(planetSignDignity(' MERCURY ', 'viRGo').variant, 'domicile_exaltation');
   for (const planet of ['Uranus', 'Neptune', 'Pluto', 'Chiron', 'Lilith', 'North Node', 'South Node', 'Ascendant', 'Midheaven']) assert.equal(planetSignDignity(planet, 'Aries').status, 'not_applicable');

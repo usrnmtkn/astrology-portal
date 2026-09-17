@@ -1,6 +1,7 @@
 import { StudioButton } from "./StudioControls";
 import { Fragment, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { currentSkySummaryWording, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
+import { isSkyDebilityKey, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
 
 function EditableWords({ value, label, disabled, onChange }: { value: string; label: string; disabled: boolean; onChange: (value: string) => void }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -23,7 +24,7 @@ export function SkyInlineTemplate({ field, body, slots, onEdit, busy, label }: {
   const initial = currentSkySummaryWording(field.key, body);
   const [draft, setDraft] = useState(initial);
   const chunks = draft.split(/(\{[^{}]+\})/gu);
-  const errors = skySummaryTemplateErrors(field.key, draft);
+  const errors = isSkyDebilityKey(field.key) ? skyDebilityTemplateErrors(field.key, draft) : skySummaryTemplateErrors(field.key, draft);
   return <>
     <p aria-label={label}>{chunks.map((chunk, index) => /^\{[^{}]+\}$/u.test(chunk)
       ? <Fragment key={index}>{slots[chunk.slice(1, -1)] ?? <span contentEditable={false} className="admin-composition-variable variable-fact">{chunk.slice(1, -1).replace(/([A-Z])/gu, " $1")}</span>}</Fragment>

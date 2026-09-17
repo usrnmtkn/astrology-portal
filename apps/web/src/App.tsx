@@ -165,6 +165,7 @@ import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "./services
 import { assertLunationBodyMatchesEventSky, lunationBlendFacts } from "./services/lunationEphemerisFacts";
 import { reportLiveOmittedSections } from "./services/conditionalSectionReviewReporter";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
+import { SkyDebilityCard } from "./features/sky/SkyDebilityCard";
 import {
   SkyPlacementList,
   SkyPlacementListItem,
@@ -12177,6 +12178,7 @@ export function App() {
     const currentSkyContentKeys = [
       ...new Set([
         ...cmsSurfaceKeys.retrogradeSummary(),
+        ...cmsSurfaceKeys.skyDebility(),
         ...skyDailySummaryFields.map(field => field.key),
         ...aspectContentKeys
       ])
@@ -15787,6 +15789,7 @@ function ChartWheelMini() {
 
 function SkyCards({
   onOpenEvent,
+  generatedContent,
   sky,
   dateLabel,
   locationLabel,
@@ -15939,6 +15942,7 @@ function SkyCards({
           </span>
         </button>
       </section>
+      <SkyDebilityCard generatedContent={generatedContent} positions={sky.positions} />
 
     </>
   );
