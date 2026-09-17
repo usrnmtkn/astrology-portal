@@ -1085,7 +1085,7 @@ export function SocialFriendsPanel({
           role={queryIsActive ? "region" : "tabpanel"}
           aria-labelledby={queryIsActive ? undefined : `friends-${activeView}-tab`}
         >
-          <PageLoading illustrated message="Loading friends…" />
+          <PageLoading message="Loading friends…" />
         </div>
       </section>
     );
@@ -1273,14 +1273,7 @@ export function SocialFriendsPanel({
                 </div>
               )}
               {queryIsSearchable && showSearchSkeleton && lookupResults.length === 0 && (
-                <div className="friends-search-skeleton" aria-label="Searching for people">
-                  {[0, 1, 2].map((item) => (
-                    <span className="friends-search-skeleton-row" key={item}>
-                      <i />
-                      <span><i /><i /></span>
-                    </span>
-                  ))}
-                </div>
+                <PageLoading compact message="Searching for people" />
               )}
               {queryIsSearchable && searchError && searchState === "idle" && (
                 <div className="friends-unified-empty" role="status">

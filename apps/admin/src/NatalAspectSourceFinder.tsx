@@ -1,4 +1,5 @@
 import { StudioButton } from "./StudioControls";
+import { PageLoading } from "../../web/src/components/PageLoading";
 import { AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import {
@@ -94,7 +95,7 @@ export default function NatalAspectSourceFinder({
       </div>
 
       {isLoading && exactRows.length === 0 && (
-        <div className="admin-empty-state" role="status"><strong>Loading exact natal aspect passages…</strong></div>
+        <PageLoading message="Loading exact natal aspect passages…" />
       )}
 
       {!isLoading && fullSelection && matches.length === 0 && (

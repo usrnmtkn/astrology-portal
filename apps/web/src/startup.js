@@ -8,6 +8,13 @@ try {
   document.documentElement.dataset.theme = localStorage.getItem("tldrastro:theme") === "dark" ? "dark" : "light";
 } catch { /* The loading screen also works when storage is unavailable. */ }
 
+try {
+  if (localStorage.getItem("tldrastro:loadingVisual") === "artwork") {
+    const frame = startup?.querySelector(".loading-illustration");
+    if (frame) frame.innerHTML = '<img class="is-active" src="/loading-artwork/sun.png" alt="" width="512" height="512">';
+  }
+} catch { /* The default orb placeholder remains when storage is unavailable. */ }
+
 const readerRecoveryRoute = () => location.pathname === "/" && (
   location.hash === "" || recoverableReaderHash.test(location.hash)
 );

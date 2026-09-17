@@ -2,6 +2,7 @@ import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from "../../web/src/co
 import { useEffect, useRef, useState } from "react";
 import { compositionVariableColors } from "./CompositionVariableKey";
 import { StudioButton } from "./StudioControls";
+import { PageLoading } from "../../web/src/components/PageLoading";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import {
   SKY_WRITING_LIBRARY_FIELD_IDS,
@@ -162,7 +163,7 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
     <details className="admin-workspace-details admin-sky-variable-key" aria-label="Editable phrase variables" open>
       <AdminDisclosureSummary>Editable phrase variables</AdminDisclosureSummary>
       <p><strong>Current writing for {contextLabel}.</strong> Editable phrase variables can be used directly in Placement articles, motion-specific Placement articles, and placement composition templates. Their prose is edited in the Writing Library. Empty fields stay empty until authored.</p>
-      {phraseLoading && <p role="status">Loading the current Writing Library values…</p>}
+      {phraseLoading && <PageLoading compact message="Loading the current Writing Library values…" />}
       {phraseError && <p role="alert">{phraseError}</p>}
       {!phraseSource && <p>Choose a planet and sign to load the phrase values.</p>}
       {SKY_WRITING_LIBRARY_GROUPS.map((group, groupIndex) => <details className="admin-workspace-details" key={group.id} open={groupIndex < 3 || undefined}>

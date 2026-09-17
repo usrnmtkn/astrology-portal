@@ -5,6 +5,7 @@ import { AlertTriangle, ArrowLeft, CheckCircle2, RefreshCw } from "lucide-react"
 import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
 import { AdminAccessGate } from "./AdminStudioPrimitives";
+import { PageLoading } from "../../web/src/components/PageLoading";
 import { isPublishedButUnwired, type ContentWiringRow } from "./contentWiringStatus";
 import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./ownerSession";
 
@@ -198,7 +199,7 @@ export default function NeedsAttentionDashboard() {
   ];
 
   return (
-    <main className="admin-dashboard studio-standalone" data-studio-theme={getStudioTheme()}>
+    <main className="admin-dashboard studio-standalone" data-studio-theme={getStudioTheme()} data-theme={getStudioTheme()}>
       <section className="admin-main">
         {error && <p role="alert">{error}</p>}
         <header className="admin-dashboard-header">
@@ -220,14 +221,7 @@ export default function NeedsAttentionDashboard() {
         </header>
 
         {!coverage && (loading || bootstrapping) && (
-          <section className="admin-content-toolbar admin-initial-loading" aria-label="Loading" aria-live="polite">
-            <div>
-              <p className="admin-eyebrow">Connecting to Content Studio</p>
-              <h2>Loading…</h2>
-              <p>Checking access and loading coverage.</p>
-            </div>
-            <RefreshCw size={22} aria-hidden="true" />
-          </section>
+          <PageLoading message="Checking access and loading coverage." />
         )}
 
         {!coverage && !loading && !bootstrapping && (

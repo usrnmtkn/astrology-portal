@@ -45,11 +45,18 @@ function reloadReaderRouteOnce() {
   return true;
 }
 
-export function PageLoading({ message = "Loading page…", illustrated = false }: { message?: string; illustrated?: boolean }) {
-  return <div className={`app-loading${illustrated ? " app-loading--illustrated" : ""}`} role="status" aria-live="polite" aria-busy="true">
-    {illustrated && <LoadingIllustration />}
+export function PageLoading({
+  message = "Loading page…",
+  compact = false
+}: {
+  message?: string;
+  compact?: boolean;
+  /** @deprecated Orbs are the default loader. Kept so existing call sites typecheck. */
+  illustrated?: boolean;
+}) {
+  return <div className={`app-loading app-loading--illustrated${compact ? " app-loading--compact" : ""}`} role="status" aria-label={message} aria-live="polite" aria-busy="true">
+    <LoadingIllustration compact={compact} />
     <span>{message}</span>
-    {!illustrated && <div className="app-loading__lines" aria-hidden="true"><span /><span /><span /></div>}
   </div>;
 }
 

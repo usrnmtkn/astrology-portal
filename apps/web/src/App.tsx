@@ -10704,8 +10704,14 @@ const YouRoute = lazy(() =>
   }))
 );
 
+const loadCalendarRoute = () => import("./routes/CalendarRoute");
+const loadLunarCalendar = () => import("./features/calendar/LunarCalendar");
+const preloadCalendarExperience = () => {
+  void Promise.all([loadCalendarRoute(), loadLunarCalendar()]);
+};
+
 const CalendarRoute = lazy(() =>
-  import("./routes/CalendarRoute").then((module) => ({
+  loadCalendarRoute().then((module) => ({
     default: module.CalendarRoute
   }))
 );
@@ -10803,72 +10809,13 @@ function withNatalChartCalculationTimeout(request: Promise<SkySnapshot>) {
 }
 
 function FeatureLoadingFallback({ message = "Loading reading…" }: { message?: string }) {
-  return (
-    <div className="feature-loading-fallback" role="status" aria-label="Loading page" aria-live="polite">
-      {message ? (
-        <div className="loading-milestone">
-          <span className="sky-loading-line sky-loading-line--medium" aria-hidden="true" />
-          <span>{message}</span>
-        </div>
-      ) : null}
-      <span className="summary-skeleton feature-loading-fallback__lines" aria-hidden="true">
-        <span />
-        <span />
-      </span>
-    </div>
-  );
-}
-
-function SkyLoadingWheel() {
-  const wheelSigns = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
-
-  return (
-    <div className="sky-loading-wheel" aria-hidden="true">
-      <svg viewBox="0 0 240 240" role="img">
-        <circle className="sky-loading-wheel__ring" cx="120" cy="120" r="110" />
-        <circle className="sky-loading-wheel__ring" cx="120" cy="120" r="82" />
-        <circle className="sky-loading-wheel__ring" cx="120" cy="120" r="38" />
-        <circle className="sky-loading-wheel__center" cx="120" cy="120" r="8" />
-        {Array.from({ length: 12 }).map((_, index) => {
-          const angle = ((index * 30) - 90) * (Math.PI / 180);
-          const inner = 40;
-          const outer = 110;
-          const x1 = 120 + Math.cos(angle) * inner;
-          const y1 = 120 + Math.sin(angle) * inner;
-          const x2 = 120 + Math.cos(angle) * outer;
-          const y2 = 120 + Math.sin(angle) * outer;
-
-          return (
-            <line
-              className="sky-loading-wheel__spoke"
-              key={index}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-            />
-          );
-        })}
-        {wheelSigns.map((sign, index) => {
-          const angle = ((index * 30) - 75) * (Math.PI / 180);
-          const x = 120 + Math.cos(angle) * 92;
-          const y = 120 + Math.sin(angle) * 92;
-
-          return (
-            <text className="sky-loading-wheel__sign" key={sign} x={x} y={y}>
-              {sign}
-            </text>
-          );
-        })}
-      </svg>
-    </div>
-  );
+  return <PageLoading message={message} />;
 }
 
 export function App() {
   if (isAdminContentPath()) {
     return (
-      <Suspense fallback={<main className="admin-loading-fallback">Loading admin dashboard...</main>}>
+      <Suspense fallback={<main className="admin-loading-fallback"><PageLoading message="Loading Content Studio…" /></main>}>
         <GeneratedContentAdminDashboard />
       </Suspense>
     );
@@ -11753,7 +11700,8 @@ export function App() {
     const shouldLoadPlacementContent = placementContentNeeded;
 
     if (!shouldLoadPlacementContent) {
-      setSkyPlacementFallbackStatus("idle");
+      // Keep a resolved Sky reading. Resetting to idle made every return visit
+      // replay the illustrated loader even when sources were already ready.
       return () => {
         cancelled = true;
       };
@@ -14046,7 +13994,7 @@ export function App() {
                 <SkyNavIcon size={18} />
                 <span>Sky</span>
               </button>
-              <button className={mode === "calendar" ? "active" : ""} type="button" onClick={() => navigateToPortalMode("calendar")}>
+              <button className={mode === "calendar" ? "active" : ""} type="button" onFocus={preloadCalendarExperience} onPointerEnter={preloadCalendarExperience} onClick={() => navigateToPortalMode("calendar")}>
                 <CalendarDays size={18} aria-hidden="true" />
                 <span>Calendar</span>
               </button>
@@ -14239,6 +14187,7 @@ export function App() {
                   preloadYouExperience();
                   preloadFriendsExperience();
                 }
+                preloadCalendarExperience();
                 return !isOpen;
               });
             }}
@@ -14268,6 +14217,8 @@ export function App() {
                 className={mode === "calendar" ? "active" : ""}
                 type="button"
                 role="menuitem"
+                onFocus={preloadCalendarExperience}
+                onPointerEnter={preloadCalendarExperience}
                 onClick={() => {
                   setSelectedSkyDetail(null);
                   navigateToPortalMode("calendar");
@@ -14389,7 +14340,7 @@ export function App() {
       )}
 
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
-      <Suspense fallback={<PageLoading illustrated={isTodayMode || isFriendsMode} message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
+      <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {selectedSkyDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
         || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity) ? (
         <>
@@ -14433,7 +14384,7 @@ export function App() {
             )}
             {!isSignupMode && !usesFullPageLayout && isSkyLoading && (
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Loading current sky chart">
-                <SkyLoadingWheel />
+                <PageLoading message="Loading the sky chart…" />
               </section>
             )}
             <section className={isCalendarMode ? "detail-panel calendar-content-column" : "detail-panel sky-content-column chart-layout__content"} aria-label="Portal details">
@@ -14486,7 +14437,8 @@ export function App() {
                       </form>
                     )}
                   </section>
-                  <SkyReadingLayout key={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
+                  <SkyReadingLayout persistKey={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
+                    key={`${skyDate}:${location.latitude}:${location.longitude}:${location.timeZone}`}
                     pending={isSkyLoading || skyTimingStatus === "loading" || skyPlacementFallbackStatus === "idle" || skyPlacementFallbackStatus === "loading"}
                     failed={skyStatus === "error" || skyTimingStatus === "error" || skyPlacementFallbackStatus === "error"}>
                   {(skyStatus === "cached" || skyStatus === "stale") && sky?.cacheState && (
@@ -14579,7 +14531,7 @@ export function App() {
               {mode === "calendar" && (
                 <CalendarRoute
                   sky={sky}
-                  fallback={<FeatureLoadingFallback />}
+                  fallback={<PageLoading message="Loading calendar…" />}
                   generatedContent={skyGeneratedContent}
                   generatedContentStatus={calendarContentStatus}
                   skyPlacementContentStatus={skyPlacementFallbackStatus}
@@ -14674,7 +14626,7 @@ export function App() {
                 </YouRoute>
               )}
               {mode === "friends" && !userProfile && (
-                isAuthConfigured && !authAccountChecked ? <PageLoading illustrated message="Loading Friends…" /> : (
+                isAuthConfigured && !authAccountChecked ? <PageLoading message="Loading Friends…" /> : (
                   <div className="app-loading">
                     <span>Sign in to view your Friends.</span>
                     <button type="button" className="app-loading__action" onClick={() => {

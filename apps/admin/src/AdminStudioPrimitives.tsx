@@ -1,5 +1,6 @@
 import { StudioButton } from "./StudioControls";
 import { AlertTriangle, BarChart3, Plus, type LucideIcon } from "lucide-react";
+import { PageLoading } from "../../web/src/components/PageLoading";
 import { lazy, Suspense, useEffect, useRef, type ComponentProps, type KeyboardEvent } from "react";
 
 export type AdminBreadcrumb = {
@@ -165,7 +166,7 @@ const DeferredAccessGate = lazy(() => import("./AdminAccessGate"));
 
 export function AdminAccessGate(props: ComponentProps<typeof DeferredAccessGate>) {
   return (
-    <Suspense fallback={<section className="admin-content-toolbar" role="status">Loading sign-in…</section>}>
+    <Suspense fallback={<PageLoading compact message="Loading sign-in…" />}>
       <DeferredAccessGate {...props} />
     </Suspense>
   );

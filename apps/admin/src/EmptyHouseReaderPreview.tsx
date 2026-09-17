@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { StudioButton } from "./StudioControls";
+import { PageLoading } from "../../web/src/components/PageLoading";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { adminCredentialHeaders } from "./adminSecret";
 
@@ -100,7 +101,7 @@ export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHous
       </header>
 
       {preview.loading ? (
-        <div className="admin-empty-state" role="status"><strong>Assembling empty-house preview…</strong></div>
+        <PageLoading compact message="Assembling empty-house preview…" />
       ) : preview.rendered ? (
         <div className="admin-natal-reader-preview-surface">
           <h3>{preview.rendered.headline || contextLabel}</h3>

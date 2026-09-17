@@ -3,6 +3,7 @@ import { StudioButton } from "./StudioControls";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { getStudioTheme } from "./studioTheme";
+import { PageLoading } from "../../web/src/components/PageLoading";
 
 export function AdminPageError({ detail, onRetry, recoveryHref }: {
   detail: string;
@@ -26,7 +27,8 @@ export function AdminPageError({ detail, onRetry, recoveryHref }: {
 }
 
 export function AdminPageLoading({ label }: { label: string }) {
-  return <main className="admin-dashboard studio-loading-page" data-studio-theme={getStudioTheme()}>
-    <p role="status" aria-busy="true">{label}</p>
+  const theme = getStudioTheme();
+  return <main className="admin-dashboard studio-loading-page" data-studio-theme={theme} data-theme={theme}>
+    <PageLoading message={label} />
   </main>;
 }

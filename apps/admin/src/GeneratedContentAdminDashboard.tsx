@@ -7,6 +7,7 @@ import { StudioTabs, StudioButton, StudioInput, StudioTextarea } from "./StudioC
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioTheme, saveStudioTheme } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
+import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalExactContentKey, transitNatalExactSourceDraft } from "./transitNatalSources";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
@@ -6063,7 +6064,7 @@ export function GeneratedContentAdminDashboard() {
 
   return (
     <ContentLiveStatusProvider value={loadLiveStatus}>
-    <main className="admin-dashboard" data-studio-theme={studioTheme}>
+    <main className="admin-dashboard" data-studio-theme={studioTheme} data-theme={studioTheme}>
       {nav}
       <section className={`admin-main${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
         {message && (
@@ -6142,12 +6143,7 @@ export function GeneratedContentAdminDashboard() {
 
         {isInitialDashboardLoad && (
           <section className="admin-content-toolbar admin-review-queue-hero admin-initial-loading" aria-label="Loading saved content" aria-live="polite">
-            <div>
-              <p className="admin-eyebrow">Connecting to Content Studio</p>
-              <h2>Loading saved content…</h2>
-              <p>Verifying access and loading CMS rows. Counts and editing controls will appear when the request finishes.</p>
-            </div>
-            <RefreshCw size={22} aria-hidden="true" />
+            <PageLoading message="Loading saved content…" />
           </section>
         )}
 
@@ -6164,7 +6160,7 @@ export function GeneratedContentAdminDashboard() {
           </nav>
         )}
 
-        {activePage === "variables" && <><Suspense fallback={<p role="status">Loading variables…</p>}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
+        {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
         {activePage === "reviewQueue" && (
           <section className="admin-template-page">
@@ -6366,13 +6362,13 @@ export function GeneratedContentAdminDashboard() {
             <StudioTabs label="Calendar Write-ups workspaces" value={calendarWriteupWorkspaceView}
               tabs={calendarWriteupWorkspaceTabs}
               onValueChange={view => navigateAdminPage("calendarWriteups", new URLSearchParams({ view }))}>
-              <Suspense fallback={<p role="status">Loading Calendar template…</p>}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
+              <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft}
                 onEditSource={row => void openCalendarWritingSource(row as AdminGeneratedContentRow)}
                 onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView, field)}
                 onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>
               {calendarWriteupWorkspaceView === "daily-sky" && (
-                <Suspense fallback={<p>Loading Moon-sign write-ups…</p>}>
+                <Suspense fallback={<PageLoading message="Loading Moon-sign write-ups…" />}>
                   <LunarCalendarWorkspace rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
                     onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
                     editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow)}
@@ -6398,7 +6394,7 @@ export function GeneratedContentAdminDashboard() {
               }}>
             {skyWriteupWorkspaceView === "daily-summary" ? (
               <>
-                <Suspense fallback={<p>Loading Daily Sky Summary editor…</p>}>
+                <Suspense fallback={<PageLoading message="Loading Daily Sky Summary editor…" />}>
                   <SkyDailySummaryStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} />
                 </Suspense>
                 {renderEditor()}
@@ -6507,7 +6503,7 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </section>
                 {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
-                  <Suspense fallback={<p className="admin-empty" role="status">Loading Composition Map…</p>}>
+                  <Suspense fallback={<PageLoading message="Loading Composition Map…" />}>
                     <SkyPlacementComposition onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)} rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
                   </Suspense>
                 )}
@@ -6679,7 +6675,7 @@ export function GeneratedContentAdminDashboard() {
                 {filteredHookCatalog.length > 0
                   && (Boolean(query.trim()) || fallbackSectionFilter === "friends")
                   && !(fallbackSectionFilter === "daily" && !query.includes("pair-daily")) && (
-                  <Suspense fallback={<p className="admin-empty">Loading packaged source phrases…</p>}>
+                  <Suspense fallback={<PageLoading message="Loading packaged source phrases…" />}>
                     <PackagedHookCatalogResults
                       items={filteredHookCatalog}
                       savedKeys={savedHookKeys}
@@ -6789,7 +6785,7 @@ export function GeneratedContentAdminDashboard() {
               <AdminDisclosureSummary>Supporting fallback-hook catalog ({savedHookCatalogCount}/{hookCatalogItems.length} saved)</AdminDisclosureSummary>
               {renderFallbackTabs()}
               <section className="admin-fallback-row-list" aria-label="Hook catalog">
-                {hookCatalogLoadState === "loading" && <div className="admin-empty-state" role="status"><p>Loading hook catalog…</p></div>}
+                {hookCatalogLoadState === "loading" && <PageLoading message="Loading hook catalog…" />}
                 {hookCatalogLoadState === "error" && <div className="admin-empty-state" role="alert"><p>{hookCatalogError ?? "Could not load the hook catalog."}</p><StudioButton type="button" onClick={() => void refreshHookCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry catalog</StudioButton></div>}
                 {filteredHookCatalog.map((item) => {
                   const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
@@ -6820,7 +6816,7 @@ export function GeneratedContentAdminDashboard() {
               <span>Search by planet, point, aspect, phrase, or source key</span>
               <StudioInput aria-label="Search Sky aspect drafts" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Sun trine Chiron" />
             </label>
-            {sourceDraftLoadState === "loading" && <div className="admin-empty-state" role="status"><p>Loading held source drafts…</p></div>}
+            {sourceDraftLoadState === "loading" && <PageLoading message="Loading held source drafts…" />}
             {sourceDraftLoadState === "error" && (
               <div className="admin-empty-state" role="alert"><p>{sourceDraftError ?? "Could not load source drafts."}</p><StudioButton type="button" onClick={() => void refreshSourceDraftCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry</StudioButton></div>
             )}
@@ -6898,7 +6894,7 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         {activePage === "compositionMap" && (
-          <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
+          <Suspense fallback={<PageLoading message="Loading Composition Map…" />}>
             <CompositionMapWorkspace
               onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)}
               key={new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("surface") ?? "all"}
@@ -7051,19 +7047,19 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         {activePage === "aspectPatternCoverage" && (
-          <Suspense fallback={<p className="admin-loading-state" role="status">Loading aspect-pattern tools…</p>}>
+          <Suspense fallback={<PageLoading message="Loading aspect-pattern tools…" />}>
             <AspectPatternWriteups initialKind="natal" secret={secret} />
           </Suspense>
         )}
 
         {activePage === "aspectPatternActivationCoverage" && (
-          <Suspense fallback={<p className="admin-loading-state" role="status">Loading aspect-pattern tools…</p>}>
+          <Suspense fallback={<PageLoading message="Loading aspect-pattern tools…" />}>
             <AspectPatternWriteups initialKind="activation" secret={secret} />
           </Suspense>
         )}
 
         {activePage === "aspectDiagnostics" && (
-          <Suspense fallback={<p className="admin-loading-state" role="status">Loading aspect diagnostics…</p>}>
+          <Suspense fallback={<PageLoading message="Loading aspect diagnostics…" />}>
             <AspectPatternDiagnostics />
           </Suspense>
         )}
@@ -7102,7 +7098,7 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         {activePage === "reportFulfillment" && (
-          <Suspense fallback={<p className="admin-loading-state" role="status">Loading report fulfillment…</p>}>
+          <Suspense fallback={<PageLoading message="Loading report fulfillment…" />}>
             <ReportFulfillmentAdminPanel secret={secret} />
           </Suspense>
         )}
@@ -7171,7 +7167,7 @@ export function GeneratedContentAdminDashboard() {
   function renderNatalPlacementSourceFinder() {
     if (categoryFilter !== "Natal Chart") return null;
     return (
-      <Suspense fallback={<div className="admin-empty-state" role="status"><strong>Loading natal placement finder…</strong></div>}>
+      <Suspense fallback={<PageLoading message="Loading natal placement finder…" />}>
         <NatalPlacementSourceFinder
           house={natalPlacementHouse}
           isLoading={isLoading || natalSourcesLoading}
@@ -7211,7 +7207,7 @@ export function GeneratedContentAdminDashboard() {
   function renderNatalAspectSourceFinder() {
     if (categoryFilter !== "Natal Aspects") return null;
     return (
-      <Suspense fallback={<div className="admin-empty-state" role="status"><strong>Loading natal aspect finder…</strong></div>}>
+      <Suspense fallback={<PageLoading message="Loading natal aspect finder…" />}>
         <NatalAspectSourceFinder
           aspect={natalAspectName}
           first={natalAspectFirst}
@@ -7494,13 +7490,13 @@ export function GeneratedContentAdminDashboard() {
           </label>
         </div>
 
-        {selection && transitNatalExactContentKey(selection) && <Suspense fallback={<p role="status">Opening this transit…</p>}><TransitNatalExactSourceAction
+        {selection && transitNatalExactContentKey(selection) && <Suspense fallback={<PageLoading compact message="Opening this transit…" />}><TransitNatalExactSourceAction
           contentKey={transitNatalExactContentKey(selection)!} title={transitNatalLabel(selection)} secret={secret} disabled={isLoading} onOpen={() => void openExactTransitNatalSource(selection)} /></Suspense>}
 
         <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
 
         {!selection && <p className="admin-natal-placement-prompt">Choose all six values to open this transit's You and Friend write-up.</p>}
-        {selection && <Suspense fallback={<p role="status">Loading reader preview…</p>}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
+        {selection && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
         {selection && <p className="admin-field-hint">The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses are calculated separately.</p>}
 
       </section>
@@ -7700,7 +7696,7 @@ export function GeneratedContentAdminDashboard() {
         {!selection && <p className="admin-natal-placement-prompt">Choose the planet, sign, and house to preview the reader's House Transit and open its exact source rows.</p>}
         {selection && !sourcesReady && (
           <section className="admin-surface-card" aria-label="House Transit content loading" aria-busy={!loadError}>
-            <p role={loadError ? "alert" : "status"}>{loadError || "Loading House Transit passages…"}</p>
+            {loadError ? <p role="alert">{loadError}</p> : <PageLoading message="Loading House Transit passages…" />}
             {loadError && <StudioButton type="button" onClick={() => void loadDashboardData()}>Retry</StudioButton>}
           </section>
         )}
@@ -8055,7 +8051,7 @@ export function GeneratedContentAdminDashboard() {
     return (
       <div className="admin-sky-edition-fields" aria-label="Fallback content grouped by reader use">
         {showDailyGlanceStudio && (
-          <Suspense fallback={<p className="admin-empty">Loading the paired Daily At-a-Glance editor…</p>}>
+          <Suspense fallback={<PageLoading message="Loading the paired Daily At-a-Glance editor…" />}>
             <DailyGlanceStudio
               context={dailyGlanceContext}
               contextError={dailyGlanceContextError}
@@ -8388,7 +8384,7 @@ export function GeneratedContentAdminDashboard() {
 
   function renderEditor() {
     if (houseTransitEditor) {
-      return <Suspense fallback={<p role="status">Loading write-up editor…</p>}>
+      return <Suspense fallback={<PageLoading message="Loading write-up editor…" />}>
         <HouseTransitWriteupEditor
           title={houseTransitEditor.title}
           initialAudience={houseTransitEditor.audience}
@@ -9240,7 +9236,7 @@ export function GeneratedContentAdminDashboard() {
           </div>
         </header>
         <section className="admin-post-editor">
-          {isPackageDraft && !skyFallbackEditor && <Suspense fallback={<p role="status">Loading variables…</p>}><StudioVariableInsert variables={customVariableLibrary.variables} context={effectiveSkyFallback} disabled={isLoading} onInsert={token => {
+          {isPackageDraft && !skyFallbackEditor && <Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariableInsert variables={customVariableLibrary.variables} context={effectiveSkyFallback} disabled={isLoading} onInsert={token => {
             const saved = variableInsertionRef.current;
             const element = saved && editorRef.current?.contains(saved.element) ? saved.element : editorRef.current?.querySelector<HTMLTextAreaElement>('textarea[data-sky-field="body_you"],textarea[data-sky-field="body"]');
             if (!element) return;
@@ -9476,7 +9472,7 @@ export function GeneratedContentAdminDashboard() {
                 </details>
               </header>
 
-              <Suspense fallback={<p role="status">Loading writing editor…</p>}>
+              <Suspense fallback={<PageLoading message="Loading writing editor…" />}>
                 <SkyFallbackFieldsEditor key={currentDraft.contentKey} contentKey={currentDraft.contentKey}
                   kind={skyFallbackEditor.kind} fields={skyFallbackEditor.fields} initialField={skyWritingContext.fieldPath} selection={skyWritingContext.selection}
                   source={effectiveSkyFallback}
@@ -9973,7 +9969,7 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
-          {selectedRow && <Suspense fallback={<p role="status">Loading publication checks…</p>}><StudioEditorReviewPanels row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
+          {selectedRow && <Suspense fallback={<PageLoading message="Loading publication checks…" />}><StudioEditorReviewPanels row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
             isPackageDraft={isPackageDraft} articleSaveState={skyArticleEditor?.saveState}
             onWritingAction={(action) => void runSkyDraftWriting(selectedRow.content_key, action, selectedRow)} /></Suspense>}
           {currentDraft.contentKey.startsWith("slot-template/calendar/") && <Suspense fallback={null}><CalendarOverviewEditor
@@ -10005,7 +10001,7 @@ export function GeneratedContentAdminDashboard() {
                 <h3>Edit the copy a friend sees</h3>
                 <p>The exact copy above is You-only. Friends is composed from separate third-person passages. Open a colored section below to edit the source that actually supplies that part of the Friends write-up.</p>
               </div>
-              <Suspense fallback={<div className="admin-empty-state" role="status"><strong>Loading Friends copy…</strong></div>}>
+              <Suspense fallback={<PageLoading message="Loading Friends copy…" />}>
                 <NatalPlacementReaderPreview
                   house={natalPlacementHouse}
                   initialAudience="they"
@@ -10056,7 +10052,7 @@ export function GeneratedContentAdminDashboard() {
               )}
             </div>
           )}
-          {!skyWriteupContext && importedHoroscopeSections && <Suspense fallback={<p>Loading horoscope fields…</p>}>
+          {!skyWriteupContext && importedHoroscopeSections && <Suspense fallback={<PageLoading message="Loading horoscope fields…" />}>
             <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections, status: "DRAFT", reviewState: "owner-review-required"}))} />
           </Suspense>}
           {skyWriteupContext && selectedRow && (
@@ -10126,7 +10122,7 @@ export function GeneratedContentAdminDashboard() {
               </details>
 
               {importedHoroscopeSections ? (
-                <Suspense fallback={<p>Loading horoscope fields…</p>}>
+                <Suspense fallback={<PageLoading message="Loading horoscope fields…" />}>
                   <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections, status: "DRAFT", reviewState: "owner-review-required"}))} />
                 </Suspense>
               ) : skyLunationContext ? (

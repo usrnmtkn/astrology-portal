@@ -8,6 +8,7 @@ import type { TemplateVariableReference } from "./templateVariableReference";
 import { templateVariableSourceKeyPrefixes } from "./templateVariableSources";
 import { TemplateVariableReviewPanels, type TemplateVariableSourceRow } from "./TemplateVariableReviewPanels";
 import { rememberStudioEditorReturn } from "./studioEditorReturn";
+import { PageLoading } from "../../web/src/components/PageLoading";
 
 const TemplateReaderDrilldown = lazy(() => import("./TemplateReaderDrilldown"));
 
@@ -148,7 +149,7 @@ export default function TemplateVariablesRail({
         ) : (
           <>
             {templatePreviewRow && (
-              <Suspense fallback={<div className="admin-empty-state"><strong>Building reader preview…</strong></div>}>
+              <Suspense fallback={<PageLoading message="Building reader preview…" />}>
                 <TemplateReaderDrilldown
                   key={`${templateContentKey}:${previewOptions?.initialAudience ?? "you"}`}
                   compact

@@ -232,7 +232,7 @@ const FriendProfileChartFullscreen = lazy(() =>
 );
 
 function FeatureLoadingFallback() {
-  return <PageLoading illustrated message="Loading Friends…" />;
+  return <PageLoading message="Loading Friends…" />;
 }
 
 export function ManualChartsPanel({
@@ -2783,11 +2783,7 @@ export function ManualChartsPanel({
                   <article className="friends-logic-card friend-compatibility-loading__card">
                     <span>Compatibility</span>
                     <h3>Loading compatibility…</h3>
-                    <div className="friend-compatibility-loading__lines" aria-hidden="true">
-                      <span />
-                      <span />
-                      <span />
-                    </div>
+                    <PageLoading compact message="Loading compatibility…" />
                   </article>
                 </div>
               </div>
