@@ -13,6 +13,7 @@ import {
   generatePersonalTransitAudienceDrafts,
   nextMissingPersonalTransitWriteup,
   parsePersonalTransitContact,
+  reviewPersonalTransitCopy,
   type PersonalTransitAudience
 } from "../_lib/personal-transit-writing.js";
 
@@ -57,11 +58,25 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         published: false
       });
     }
-    if (action !== "generate") throw new AdminHttpError(400, "Choose Generate You + Friend draft or Next missing write-up.");
-
-    const instruction = typeof body.instruction === "string" ? body.instruction.trim() : "";
     const youText = typeof body.youText === "string" ? body.youText : "";
     const friendText = typeof body.friendText === "string" ? body.friendText : "";
+    if (action === "recheck") {
+      return sendAdminJson(res, 200, {
+        ok: true,
+        action: "recheck",
+        saved: false,
+        published: false,
+        approved: false,
+        ...reviewPersonalTransitCopy({
+          contact: parsePersonalTransitContact(body),
+          you: youText,
+          friend: friendText
+        })
+      });
+    }
+    if (action !== "generate") throw new AdminHttpError(400, "Choose Generate You + Friend draft, Run writing checks, or Next missing write-up.");
+
+    const instruction = typeof body.instruction === "string" ? body.instruction.trim() : "";
     const audience = body.audience === "you" || body.audience === "friend" ? body.audience : "both";
     if (instruction.length > 6000) throw new AdminHttpError(413, "The writing request is too long. Keep it under 6,000 characters.");
     if (youText.length > 60_000 || friendText.length > 60_000) {

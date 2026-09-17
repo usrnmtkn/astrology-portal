@@ -4652,8 +4652,11 @@ let canonicalOwnerExamplesCache: CanonicalOwnerExample[] | null = null;
 
 function canonicalExampleFamilies(input: GenerateContentInput) {
   const context = `${input.surface} ${input.eventType} ${input.contentKey}`.toLowerCase();
-  if (context.includes("transit-house-sign")) return ["authored/transit-house-sign", "authored/transit-house-intro", "house-core"];
+  if (context.includes("transit-house-sign")) return ["authored/transit-house-sign", "authored/transit-house-intro", "house-core", "knowledge-matrix-house"];
   if (context.includes("transit-house")) return ["authored/transit-house-intro", "authored/transit-house", "house-core", "knowledge-matrix-house"];
+  if (context.includes("transit-aspect") || (input.surface === "you" && context.includes("aspect"))) {
+    return ["authored/transit-aspect", "knowledge-matrix-transit", "natal"];
+  }
   if (context.includes("synastry") || context.includes("relationship")) return ["synastry"];
   if (context.includes("daily")) return ["daily"];
   if (context.includes("aspect") && input.surface === "sky") {

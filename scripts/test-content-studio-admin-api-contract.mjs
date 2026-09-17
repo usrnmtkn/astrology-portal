@@ -135,6 +135,7 @@ const personalTransitWriter = source("api/admin/personal-transit-writing.ts");
 assert.match(personalTransitWriter, /sendAdminMethodNotAllowed\(res, \["POST"\]\)/u);
 assert.match(personalTransitWriter, /saved: false/u);
 assert.match(personalTransitWriter, /published: false/u);
+assert.match(personalTransitWriter, /action === "recheck"/u);
 assert.doesNotMatch(personalTransitWriter, /saveDraft/u);
 
 console.log("Content Studio admin API contract passed.");

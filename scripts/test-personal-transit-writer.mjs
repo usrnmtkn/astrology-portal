@@ -5,7 +5,8 @@ import {
   findNextMissingPersonalTransitWriteup,
   missingPersonalTransitAudiences,
   parsePersonalTransitContact,
-  personalTransitReviewChecks
+  personalTransitReviewChecks,
+  reviewPersonalTransitCopy
 } from "../api/_lib/personal-transit-writing.ts";
 
 const ui = fs.readFileSync(new URL("../apps/admin/src/PersonalTransitAiWriter.tsx", import.meta.url), "utf8");
@@ -58,6 +59,7 @@ assert.deepEqual(skipped?.missingAudiences, ["friend"]);
 assert.equal(skipped?.hasStudioDraft, true);
 
 assert.match(ui, /Generate You \+ Friend draft/u);
+assert.match(ui, /Run writing checks/u);
 assert.match(ui, /Use You draft/u);
 assert.match(ui, /Use Friend draft/u);
 assert.match(ui, /Next missing write-up/u);
@@ -71,10 +73,19 @@ assert.match(houseEditor, /PersonalTransitAiWriter/u);
 assert.match(houseEditor, /authored\/transit-house/u);
 assert.match(endpoint, /sendAdminMethodNotAllowed\(res, \["POST"\]\)/u);
 assert.match(endpoint, /saved: false/u);
+assert.match(endpoint, /action === "recheck"/u);
 assert.doesNotMatch(endpoint, /status: "LIVE"/u);
 assert.doesNotMatch(lib, /saveGeneratedInterpretation/u);
 assert.match(lib, /loadStudioTransitRows/u);
+assert.match(lib, /kind: "personal-transit"/u);
 assert.match(lib, /housesExcluded: !allowsHouses/u);
+const reviewed = reviewPersonalTransitCopy({
+  contact: parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "square" }),
+  you: "You may defend a plan in Aries.",
+  friend: "{{Name}} may defend a plan."
+});
+assert.equal(reviewed.contentKey, "authored/transit-aspect/sun/sun/square");
+assert(reviewed.checks.some((item) => item.code === "unexpected-sign"));
 assert.match(lib, /signsExcluded: !allowsSigns/u);
 
 const deployment = JSON.parse(fs.readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));

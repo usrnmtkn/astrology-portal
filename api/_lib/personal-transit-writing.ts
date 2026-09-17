@@ -140,6 +140,23 @@ export function personalTransitReviewChecks(input: {
   return checks;
 }
 
+export function reviewPersonalTransitCopy(input: {
+  contact: PersonalTransitContact;
+  you?: string;
+  friend?: string;
+}) {
+  return {
+    contentKey: input.contact.contentKey,
+    checks: personalTransitReviewChecks({
+      you: input.you,
+      friend: input.friend,
+      siblings: siblingFields(input.contact),
+      allowHouses: allowsHouses(input.contact),
+      allowSigns: allowsSigns(input.contact)
+    })
+  };
+}
+
 export async function loadStudioTransitRows(contentKeys?: string[]) {
   const { url, headers } = studioStorage();
   if (contentKeys?.length === 1) {

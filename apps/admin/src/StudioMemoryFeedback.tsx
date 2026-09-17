@@ -37,7 +37,7 @@ function Decision({ row, disabled, decide, credential }: { row: Feedback; disabl
     </details>
     <label>Apply this correction to
       <AdminSelect value={scope} onChange={event => setScope(event.target.value as Feedback['scope'])} disabled={disabled}>
-        <option value="passage">This passage only</option><option value="family">{row.family === 'sky-article' ? 'Long-form Sky articles' : 'This Sky writing family'}</option>{row.family !== 'sky-article' && <option value="sky">All Sky placements and aspects</option>}
+        <option value="passage">This passage only</option><option value="family">{row.family === 'sky-article' ? 'Long-form Sky articles' : row.family === 'personal-transit' ? 'Personal Transit You and Friend writing' : 'This Sky writing family'}</option>{row.family !== 'sky-article' && row.family !== 'personal-transit' && <option value="sky">All Sky placements and aspects</option>}
       </AdminSelect>
     </label>
     <label>Reason {scope === 'passage' ? '(optional)' : '(required for broader guidance)'}

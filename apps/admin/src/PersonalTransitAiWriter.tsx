@@ -51,6 +51,7 @@ export default function PersonalTransitAiWriter({
   const [youDraft, setYouDraft] = useState("");
   const [friendDraft, setFriendDraft] = useState("");
   const [checks, setChecks] = useState<Check[]>([]);
+  const [memoryCount, setMemoryCount] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
@@ -60,12 +61,13 @@ export default function PersonalTransitAiWriter({
     setYouDraft("");
     setFriendDraft("");
     setChecks([]);
+    setMemoryCount(0);
     setError("");
     setStatus("");
     setAudience("both");
   }, [contentKey]);
 
-  const request = async (action: "generate" | "next-missing") => {
+  const request = async (action: "generate" | "next-missing" | "recheck") => {
     if (busy || disabled) return;
     setBusy(true);
     setError("");
@@ -111,13 +113,21 @@ export default function PersonalTransitAiWriter({
         setStatus(`Opened ${payload.next.contentKey}. Missing: ${payload.next.missingAudiences.join(" and ")}.`);
         return;
       }
+      setChecks(Array.isArray(payload.checks) ? payload.checks : []);
+      const selected = Array.isArray(payload.memoryReceipt?.selected) ? payload.memoryReceipt.selected.length : 0;
+      setMemoryCount(selected);
+      if (action === "recheck") {
+        setStatus(payload.checks?.length
+          ? "Writing checks found issues in the current editor text. Saved copy was not rewritten."
+          : "Writing checks passed on the current editor text. Approval and publication stay separate.");
+        return;
+      }
       setYouDraft(typeof payload.youDraft === "string" ? payload.youDraft : "");
       setFriendDraft(typeof payload.friendDraft === "string" ? payload.friendDraft : "");
-      setChecks(Array.isArray(payload.checks) ? payload.checks : []);
       const preserved = Array.isArray(payload.preservedAudiences) ? payload.preservedAudiences.join(" and ") : "";
       setStatus(preserved
-        ? `Private suggestion ready. Existing ${preserved} copy was left in the editor.`
-        : "Private suggestion ready. Saving, approval, and publication stay separate.");
+        ? `Private suggestion ready. Existing ${preserved} copy was left in the editor.${selected ? ` Memory Map attached ${selected} correction${selected === 1 ? "" : "s"}.` : ""}`
+        : `Private suggestion ready. Saving, approval, and publication stay separate.${selected ? ` Memory Map attached ${selected} correction${selected === 1 ? "" : "s"}.` : ""}`);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Writing failed. Existing writing was not changed.");
     } finally {
@@ -148,6 +158,7 @@ export default function PersonalTransitAiWriter({
       <StudioButton className="admin-primary-button" type="button" disabled={disabled || busy} onClick={() => void request("generate")}>
         {busy ? "Generating draft…" : "Generate You + Friend draft"}
       </StudioButton>
+      <StudioButton type="button" disabled={disabled || busy} onClick={() => void request("recheck")}>Run writing checks</StudioButton>
       {onOpenNext && <StudioButton type="button" disabled={disabled || busy} onClick={() => void request("next-missing")}>Next missing write-up</StudioButton>}
       {youDraft && <StudioButton type="button" disabled={disabled || busy} onClick={() => { onUseYou(youDraft); setYouDraft(""); }}>Use You draft</StudioButton>}
       {friendDraft && <StudioButton type="button" disabled={disabled || busy} onClick={() => { onUseFriend(friendDraft); setFriendDraft(""); }}>Use Friend draft</StudioButton>}
@@ -156,6 +167,7 @@ export default function PersonalTransitAiWriter({
     <p className="admin-field-hint">Current audience request: {audience === "both" ? "You and Friend, filling only what is missing unless you give direction" : audience === "you" ? "You only" : "Friend only"}.</p>
     {busy && <p role="status">Writing a private suggestion. Saved copy is unchanged.</p>}
     {status && <p role="status">{status}</p>}
+    {memoryCount > 0 && <p className="admin-field-hint">Memory Map: {memoryCount} owner correction{memoryCount === 1 ? "" : "s"} attached to this writing request. They are evidence, not approval.</p>}
     {error && <p role="alert">{error}</p>}
     {checks.length > 0 && <ul aria-label="Writing review checks">
       {checks.map((check) => <li key={`${check.code}:${check.audience}:${check.detail}`}>{check.audience ? `${check.audience}: ${check.detail}` : check.detail}</li>)}

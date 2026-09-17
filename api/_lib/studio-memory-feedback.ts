@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { adminFetchJson, AdminHttpError } from './admin-http.js';
 import { studioStorage } from './sky-studio-sources.js';
-import { studioArticleMemoryKey } from '../../apps/web/src/content/studioMemoryIdentity.js';
+import { studioArticleMemoryKey, studioPersonalTransitMemoryKey } from '../../apps/web/src/content/studioMemoryIdentity.js';
 import { studioSkyIdentity } from './sky-studio-identity.js';
 
 export type StudioFeedback = {
@@ -10,8 +10,12 @@ export type StudioFeedback = {
   status: 'pending' | 'active' | 'retired'; scope: 'passage' | 'family' | 'sky';
   reason: string; version: number; created_at: string; updated_at: string;
 };
-const feedbackFamily = (key: string) => studioArticleMemoryKey(key) ? 'sky-article' : `sky-${studioSkyIdentity(key).kind}`;
-const feedbackKey = (key: string) => studioArticleMemoryKey(key) ?? key;
+const feedbackFamily = (key: string) => {
+  if (studioArticleMemoryKey(key)) return 'sky-article';
+  if (studioPersonalTransitMemoryKey(key)) return 'personal-transit';
+  return `sky-${studioSkyIdentity(key).kind}`;
+};
+const feedbackKey = (key: string) => studioArticleMemoryKey(key) ?? studioPersonalTransitMemoryKey(key) ?? key;
 export const studioFeedbackEnabled = () => process.env.STUDIO_MEMORY_FEEDBACK_ENABLED === 'true';
 export const feedbackHash = (row: StudioFeedback) => createHash('sha256').update(JSON.stringify([
   row.id, row.content_key, row.family, row.before_text, row.after_text,
@@ -83,8 +87,14 @@ export async function activeStudioFeedback() {
 
 export function selectStudioFeedback(rows: StudioFeedback[], key: string) {
   const family = feedbackFamily(key);
-  const candidates = rows.filter(row => row.status === 'active' && (row.family === 'sky-article') === (family === 'sky-article') && (row.scope === 'sky'
-    || row.scope === 'family' && row.family === family || row.scope === 'passage' && feedbackKey(row.content_key) === feedbackKey(key)));
+  const candidates = rows.filter(row => {
+    if (row.status !== 'active') return false;
+    if ((row.family === 'sky-article') !== (family === 'sky-article')) return false;
+    if ((row.family === 'personal-transit') !== (family === 'personal-transit')) return false;
+    if (row.scope === 'sky') return family.startsWith('sky-') && row.family.startsWith('sky-');
+    if (row.scope === 'family') return row.family === family;
+    return feedbackKey(row.content_key) === feedbackKey(key);
+  });
   const groups = new Map<string, StudioFeedback[]>();
   for (const row of candidates) {
     const group = groups.get(row.before_text) ?? []; group.push(row); groups.set(row.before_text, group);

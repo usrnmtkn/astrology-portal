@@ -41,6 +41,16 @@ const changed = buildSkyWritingMemory(identity, { readSource: name => name === s
 assert.notEqual(changed.receipt.promptSha256, packet.receipt.promptSha256);
 assert.throws(() => buildSkyWritingMemory(identity, { readSource: () => { throw new Error('missing'); } }), /missing/);
 assert.throws(() => buildSkyWritingMemory({ kind: 'natal', args: {} }, { readSource }), /Unsupported/);
+const transitRows = JSON.stringify({ bad: 'Fixture transit wording', corrected: 'Replace Fixture transit wording', family: 'personal-transit', rejected_at: '2026-09-01' })
+  + '\n' + JSON.stringify({ bad: 'Fixture Sun Leo wording', corrected: 'Replace Fixture Sun Leo wording', family: 'sky-placement' });
+const transitPacket = buildSkyWritingMemory({ kind: 'personal-transit', args: { transiting: 'sun', natal: 'moon', aspect: 'square' } }, {
+  readSource: name => name === sourcePath ? transitRows : readSource(name), revision: 'a'.repeat(40)
+});
+assert.equal(transitPacket.receipt.family, 'personal-transit');
+assert.equal(transitPacket.receipt.schema, 'tldr-personal-transit-writing-memory/v1');
+assert.equal(transitPacket.receipt.selected.length, 1);
+assert.match(transitPacket.prompt, /Personal Transit You and Friend writing/);
+assert(!transitPacket.prompt.includes('Fixture Sun Leo wording'));
 const superseded = buildSkyWritingMemory(identity, { readSource: name => name === 'config/agent-memory-sources-v1.json'
   ? JSON.stringify({ ...config, supersedes: [{ old: sourcePath, new: 'current.md' }] }) : readSource(name) });
 assert.equal(superseded.receipt.selected.length, 0);
