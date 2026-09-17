@@ -221,7 +221,11 @@ export function transitNatalExactSourceDraft(
     surface: "you" as const,
     mode: "in_depth" as const,
     status: "DRAFT" as const,
-    headline: isReturn ? `${selection.planet.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")} return` : transitNatalLabel(selection),
+    headline: isReturn
+      ? `${selection.planet.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")} return`
+      : contentKey.split("/").length === 8
+        ? `${transitNatalLabel(selection)} · ${selection.sign} houses ${selection.transitHouse}/${selection.natalHouse}`
+        : transitNatalLabel(selection),
     summary: "",
     body: you,
     lane: "reference" as const,
