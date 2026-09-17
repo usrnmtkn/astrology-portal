@@ -4,6 +4,7 @@ import { subscribeToContentPublications } from "../../web/src/content/contentPub
 import { useEffect, useMemo, useRef, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 import {
+  isNatalPlacementAngle,
   natalPlacementExactKey,
   natalPlacementLabel,
   natalPlacementResolverDependencyKeys,
@@ -98,6 +99,7 @@ function previewOverrideCandidate(row: PreviewRow) {
 
 function sourceLabel(contentKey: string) {
   if (contentKey.includes("planet-in-sign") || contentKey.includes("placement-sign-final")) return "Planet-in-sign section";
+  if (contentKey.includes("angle-in-sign") || contentKey.includes("angle-sign")) return "Angle-in-sign section";
   if (contentKey.includes("house-context")) return "House section";
   if (contentKey.includes("natal.modifier.retrograde")) return "Retrograde modifier";
   if (contentKey.includes("complete-final")) return "Exact full write-up";
@@ -303,7 +305,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             <span className={`ui-pill admin-status ${motion === "retrograde" ? "status-reviewed" : "status-live"}`}>
               {motion === "retrograde" ? "Retrograde chart context" : "Direct chart context"}
             </span>
-            {house && audience === "you" && !exactServing && (
+            {house && audience === "you" && !isNatalPlacementAngle(planet) && !exactServing && (
               exactSaved
                 ? <StudioButton type="button" onClick={() => onOpenSource(exactKey, `Exact ${label} override`)}>Open saved override</StudioButton>
                 : <StudioButton type="button" onClick={() => onCreateOverride(exactKey, label, preview.rendered?.body ?? "")}>Create exact override</StudioButton>

@@ -1487,17 +1487,28 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(navigation.getByRole("button", { name: "Natal Chart", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("region", { name: "Find natal chart source writing" })).toBeVisible();
+    const sourceFinder = page.getByRole("region", { name: "Find natal chart source writing" });
     await expect(page.getByLabel("Natal placement planet or point")).toBeVisible();
     await expect(page.getByLabel("Natal placement zodiac sign")).toBeVisible();
     await expect(page.getByLabel("Natal placement house")).toBeVisible();
     await expect(page.getByLabel("Natal placement motion")).toBeVisible();
+    const natalPointSelect = page.getByLabel("Natal placement planet or point");
+    await expect(natalPointSelect.locator("option[value='ascendant']")).toHaveText("ASC");
+    await expect(natalPointSelect.locator("option[value='descendant']")).toHaveText("DC");
+    await expect(natalPointSelect.locator("option[value='midheaven']")).toHaveText("MC");
+    await expect(natalPointSelect.locator("option[value='imum-coeli']")).toHaveText("IC");
+    await natalPointSelect.selectOption("ascendant");
+    await page.getByLabel("Natal placement zodiac sign").selectOption("aries");
+    await expect(page).toHaveURL(/planet=ascendant&sign=aries/u);
+    await expect(sourceFinder.getByRole("heading", { name: "ASC in Aries", exact: true })).toBeVisible();
+    await expect(sourceFinder.getByText("fallback-hook/angle-sign/ascendant/aries")).toBeVisible();
+    await expect(sourceFinder.getByText("fallback-hook/angle-intro/ascendant")).toBeVisible();
     await expect(page.getByRole("region", { name: "Content list filters" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Content status definitions" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Generated content records" })).toHaveCount(0);
     await expect(page.getByText("QA Mercury Hidden Body Search Trap")).toHaveCount(0);
     await expect(page.getByText("Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.")).toHaveCount(0);
 
-    const sourceFinder = page.getByRole("region", { name: "Find natal chart source writing" });
     const sourceFinderBox = await sourceFinder.boundingBox();
     const selectorBoxes = await sourceFinder.locator(".admin-natal-placement-selectors label").evaluateAll((labels) => labels.map((label) => {
       const box = label.getBoundingClientRect();

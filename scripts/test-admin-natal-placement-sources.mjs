@@ -2,10 +2,12 @@ import assert from "node:assert/strict";
 import {
   natalPlacementExactKey,
   natalPlacementLabel,
+  natalPlacementPlanets,
+  natalPlacementPointLabel,
   natalPlacementSelectionFromText,
   natalPlacementSourceGroups
 } from "../apps/admin/src/natalPlacementSources.ts";
-import { renderNatalPlacement } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.mjs";
+import { renderNatalAngle, renderNatalPlacement } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.mjs";
 
 const selection = natalPlacementSelectionFromText("Chiron in Taurus in the 12th house");
 assert.deepEqual(selection, { planet: "chiron", sign: "taurus", house: "12" });
@@ -22,6 +24,30 @@ assert.deepEqual(
   natalPlacementSelectionFromText("Mercury retrograde in Virgo in the 6th house"),
   { planet: "mercury", sign: "virgo", house: "6", motion: "retrograde" }
 );
+assert.deepEqual(
+  natalPlacementSelectionFromText("ASC in Leo"),
+  { planet: "ascendant", sign: "leo" }
+);
+assert.deepEqual(
+  natalPlacementSelectionFromText("IC in Cancer"),
+  { planet: "imum-coeli", sign: "cancer" }
+);
+assert.deepEqual(
+  natalPlacementSelectionFromText("MC in Capricorn"),
+  { planet: "midheaven", sign: "capricorn" }
+);
+assert.deepEqual(
+  natalPlacementSelectionFromText("DC in Libra"),
+  { planet: "descendant", sign: "libra" }
+);
+assert.equal(natalPlacementPointLabel("ascendant"), "ASC");
+assert.equal(natalPlacementPointLabel("descendant"), "DC");
+assert.equal(natalPlacementPointLabel("midheaven"), "MC");
+assert.equal(natalPlacementPointLabel("imum-coeli"), "IC");
+assert.ok(natalPlacementPlanets.includes("ascendant"));
+assert.ok(natalPlacementPlanets.includes("descendant"));
+assert.ok(natalPlacementPlanets.includes("midheaven"));
+assert.ok(natalPlacementPlanets.includes("imum-coeli"));
 
 assert.equal(
   natalPlacementExactKey("jupiter", "leo", "3", "direct"),
@@ -116,6 +142,20 @@ assert.equal(sunAries.parts.length, 1, "Planet and sign must render the first na
 assert.equal(sunAries.partKeys.length, 1, "The sign-only paragraph must retain source provenance.");
 assert.ok(sunAries.body.trim().length > 0);
 assert.doesNotMatch(sunAries.body, /\{\{|\}\}/);
+
+const angleGroups = natalPlacementSourceGroups("ascendant", "aries");
+assert.deepEqual(angleGroups.map((group) => group.key), ["sign", "structure"]);
+const angleSources = angleGroups.flatMap((group) => group.sources);
+assert.ok(angleSources.some((source) => source.key === "fallback-hook/angle-sign/ascendant/aries"));
+assert.ok(angleSources.some((source) => source.key === "fallback-hook/angle-intro/ascendant"));
+assert.ok(angleSources.some((source) => source.key === "fallback-template/natal.angle-in-sign"));
+assert.ok(angleSources.every((source) => !source.key.includes("planet-intro") && !source.key.includes("complete-final")));
+assert.equal(natalPlacementSourceGroups("midheaven", "capricorn", "10").flatMap((group) => group.sources).length, 3);
+
+const ascendantAries = renderNatalAngle({ angle: "ascendant", sign: "aries", voice: "you" }, { allowUnreviewed: true });
+assert.match(ascendantAries.headline, /Ascendant in Aries/u);
+assert.ok(ascendantAries.body.trim().length > 0);
+assert.doesNotMatch(ascendantAries.body, /\{\{|\}\}/);
 
 const friendSunAriesFirst = renderNatalPlacement({ planet: "sun", sign: "aries", house: 1, voice: "Maya" });
 assert.match(friendSunAriesFirst.body, /Maya's Sun|they|them/i, "The natal preview must support the Friend voice.");

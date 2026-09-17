@@ -191,4 +191,24 @@ assert.throws(
   /house must be between 1 and 12/u
 );
 
+const ascendantInput = normalizeNatalPlacementPreviewInput({
+  audience: "you",
+  overrides: [],
+  planet: "ascendant",
+  sign: "aries"
+});
+const ascendantPreview = renderNatalPlacementPreview(ascendantInput);
+assert.match(ascendantPreview.headline, /Ascendant in Aries/u);
+assert.ok(ascendantPreview.body.trim().length > 0, "Angle previews must assemble from the natal angle renderer.");
+assert.doesNotMatch(ascendantPreview.body, /\{\{|\}\}/);
+
+const icInput = normalizeNatalPlacementPreviewInput({
+  audience: "you",
+  overrides: [],
+  planet: "imum-coeli",
+  sign: "cancer"
+});
+const icPreview = renderNatalPlacementPreview(icInput);
+assert.match(icPreview.headline, /\bIC in Cancer\b/u);
+
 console.log("Natal placement preview matches the shipped reader projection, mirrors production hydration gates, and preserves Jupiter Leo retrograde parity.");

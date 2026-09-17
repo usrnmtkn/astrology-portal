@@ -1,4 +1,4 @@
-import { natalPlacementResolverDependencyKeys } from "../../apps/admin/src/natalPlacementSources.js";
+import { isNatalPlacementAngle, natalPlacementResolverDependencyKeys } from "../../apps/admin/src/natalPlacementSources.js";
 import { emptyHouseSourceKeys } from "../../apps/admin/src/emptyHouseSources.js";
 import { publicationLedgerKey, validContentPublication, publicationTimestamp, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
@@ -56,7 +56,7 @@ const bundledManifest = require("../../apps/web/src/content/fallbackArchitecture
   keys: string[];
 };
 
-const planets = new Set(["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith", "north-node", "south-node"]);
+const planets = new Set(["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith", "north-node", "south-node", "ascendant", "descendant", "midheaven", "imum-coeli"]);
 const signs = new Set(["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]);
 const approvedReviewStatuses = new Set(["approved", "approved_reuse", "reviewed"]);
 const fallbackProvider = "tldrastro-fallback-architecture-v3";
@@ -102,7 +102,7 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
   if (emptyHouse && (!/^(?:[1-9]|1[0-2])$/u.test(house) || !Number.isInteger(rulerHouse)
     || rulerHouse! < 1 || rulerHouse! > 12 || rulerHouse === Number(house))) throw new Error("Choose an empty house and a different ruler house between 1 and 12.");
   if (!planets.has(planet) || !signs.has(sign) || (house && !/^(?:[1-9]|1[0-2])$/u.test(house))) {
-    throw new Error("Choose a valid planet and sign. If provided, the house must be between 1 and 12.");
+    throw new Error("Choose a valid planet or point and sign. If provided, the house must be between 1 and 12.");
   }
   if (!Array.isArray(input.overrides) || input.overrides.length > 64) throw new Error("Preview source overrides are invalid.");
   const overrides = input.overrides
@@ -216,7 +216,11 @@ export function renderNatalPlacementPreviewState(input: ReturnType<typeof normal
   const rendered = input.emptyHouse ? renderer.renderNatalEmptyHouse({
     house: Number(input.house), sign: input.sign, rulerHouse: input.rulerHouse,
     rulerSystem: "traditional", voice: input.audience
-  }, { includeEmptyHouseBridge: true }) : renderer.renderNatalPlacement({
+  }, { includeEmptyHouseBridge: true }) : isNatalPlacementAngle(input.planet) ? renderer.renderNatalAngle({
+    angle: input.planet,
+    sign: input.sign,
+    voice: input.audience === "you" ? "you" : "Maya"
+  }) : renderer.renderNatalPlacement({
     ...(input.house ? { house: Number(input.house) } : {}),
     isRetrograde: input.motion === "retrograde",
     planet: input.planet,
