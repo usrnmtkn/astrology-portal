@@ -146,6 +146,7 @@ export function transitNatalExactSourceDraft(selection: Pick<TransitNatalSelecti
     sections: { packageRecord: {
       contentKey, content_role: "full_copy", grammar_frame: "complete_sentence", surface: isReturn ? "transit-return" : "transit-aspect",
       body: "", ...(!isReturn ? { body_you: "", body_they: "" } : {}),
+      requiredSlots: ["aspectWord", "untilDate"], optionalSlots: ["Name"],
       reader_only: true, render_policy: "personal-transit-exact-v1", review_status: "needs_review"
     } },
     facts: { fallbackArchitectureV3: true, transiting: selection.planet, natal: selection.natalPoint, aspect: selection.aspect },

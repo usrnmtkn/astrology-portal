@@ -235,6 +235,16 @@ const variableDefinitions: Record<string, VariableDefinition> = {
     example: "trine or opposition",
     source: "Calculated chart fact"
   },
+  aspectWord: {
+    meaning: "The aspect word the reader renderer inserts into an exact transit write-up.",
+    example: "square, trine, conjunct, or opposite",
+    source: "Calculated transit fact"
+  },
+  untilDate: {
+    meaning: "The calculated end of the transit window, without a leading until.",
+    example: "September 30",
+    source: "Calculated transit timing"
+  },
   aspectTypeLine: {
     meaning: "A complete reviewed sentence explaining the general behavior of this aspect type.",
     example: "Squares create pressure that has to be worked through actively.",
@@ -607,6 +617,12 @@ export function templateVariableReferences(
 
   if (includeAvailable && (supportsZodiacSeasonVariables(packageRecord) || String(packageRecord.contentKey ?? "").startsWith("slot-template/calendar/"))) for (const field of ZODIAC_SEASON_VARIABLES) {
     if (!usages.has(field.id)) usages.set(field.id, { fields: new Set(["Available for insertion"]), conditional: true });
+  }
+  const transitExactKey = String(packageRecord.contentKey ?? "");
+  if (includeAvailable && (/^authored\/transit-aspect\//u.test(transitExactKey) || /^authored\/transit-return\//u.test(transitExactKey))) {
+    for (const name of ["aspectWord", "untilDate", "Name"]) {
+      if (!usages.has(name)) usages.set(name, { fields: new Set(["Available for insertion"]), conditional: name === "Name" });
+    }
   }
   return [...usages.entries()]
     .map(([name, usage]) => {

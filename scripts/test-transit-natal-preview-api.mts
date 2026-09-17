@@ -105,6 +105,7 @@ for (const selection of [
 ] as const) {
  const draft=transitNatalExactSourceDraft(selection), key=draft.contentKey;
  assert.equal(draft.status,'DRAFT');assert.equal(draft.lane,'reference');assert.equal(draft.body,'');
+ assert.deepEqual(draft.sections.packageRecord.requiredSlots,['aspectWord','untilDate']);
  assert.equal(draft.sections.packageRecord.review_status,'needs_review');
  const content='A complete synthetic exact transit opening.\n\nA complete synthetic exact transit ending.';
  const record={...draft.sections.packageRecord,body:content,body_you:content,review_status:'approved'};
