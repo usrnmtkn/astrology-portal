@@ -55,7 +55,7 @@ const monthlyFieldNames = monthlyFields.map(field => field.name);
 assert.deepEqual(monthlyFieldNames.slice(0, 5), ["monthlyOverview", "seasonOverview", "lunarOverview", "transitOverview", "monthlyIntegration"]);
 assert.ok(monthlyFieldNames.includes("seasonOpening") && monthlyFieldNames.includes("newMoonOverview") && monthlyFieldNames.includes("fullMoonOverview"));
 assert.equal(calendarOverviewFields("weekly-sky").some(field => field.name === "seasonOpening"), false, "Weekly authoring must not gain monthly editorial fields.");
-assert.equal(calendarOverviewPattern("monthly-sky"), calendarMonthlyEditorialPattern(), "Unsaved Monthly Sky starters use the editorial layout.");
+assert.equal(calendarOverviewPattern("monthly-sky"), calendarMonthlyCompatibilityPattern(), "Unsaved Monthly Sky starters use the labeled overview layout.");
 assert.match(calendarMonthlyCompatibilityPattern(), /Monthly Overview/);
 assert.equal(calendarMonthlyEditorialPattern().includes("Monthly Overview"), false, "The editorial layout must not add the compatibility section labels.");
 assert.match(calendarMonthlyEditorialPattern(), /\{\{seasonOpening\}\}/);
