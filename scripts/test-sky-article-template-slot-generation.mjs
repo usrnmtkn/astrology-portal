@@ -56,9 +56,29 @@ assert.throws(
   () => validateSkyArticleTemplateSlotValues({ seasonOpener: "Notice whether the plan still works." }, [unfinished[0]]),
   /banned word whether/u
 );
+assert.throws(
+  () => validateSkyArticleTemplateSlotValues({
+    seasonOpener: "Keep the same question until {{untilDate}}."
+  }, [unfinished[0]]),
+  /unresolved placeholder in seasonOpener/u
+);
+assert.deepEqual(
+  validateSkyArticleTemplateSlotValues({
+    seasonOpener: "Keep the same question until {{untilDate}}."
+  }, [unfinished[0]], { licensedVariables: ["untilDate"] }),
+  { seasonOpener: "Keep the same question until {{untilDate}}." }
+);
+assert.throws(
+  () => validateSkyArticleTemplateSlotValues({
+    seasonOpener: "Keep the same question until {{untilDate}} and {{other}}."
+  }, [unfinished[0]], { licensedVariables: ["untilDate"] }),
+  /unresolved placeholder in seasonOpener/u
+);
 
 const generatorSource = fs.readFileSync(new URL("../api/_lib/content-generation.ts", import.meta.url), "utf8");
 assert.match(generatorSource, /The template's fixed prose is immutable\. Do not rewrite it/u);
+assert.match(generatorSource, /licensedVariables: input\.licensedVariables/u);
+assert.match(generatorSource, /Returned fields must not contain \{\{ or \}\} placeholders/u);
 assert.match(generatorSource, /Name the behavior before naming the pattern/u);
 assert.match(generatorSource, /prepareProductionPreCallGate\(generationInput\)/u);
 assert.match(generatorSource, /contentGenerationProvider\(\{/u);

@@ -71,6 +71,7 @@ export type GenerateSkyArticleTemplateSlotsInput = {
   surface?: Surface;
   eventType?: string;
   knowledgeIds?: string[];
+  licensedVariables?: readonly string[];
   writingMemory?: { prompt: string; receipt: NonNullable<GeneratedSkyArticleTemplateSlots["memoryReceipt"]> } | null;
 };
 
@@ -5845,6 +5846,9 @@ function skyArticleTemplateSlotPrompt(
     input.surface === "you"
       ? `Return reader-facing prose only. Do not save, approve, or publish.${input.facts.housesExcluded ? " Do not name houses or signs." : input.facts.signsExcluded ? " Use the locked houses. Do not invent a sign." : " Use the locked house and sign facts. Do not invent other placements."}`
       : "The template's fixed prose is immutable. Do not rewrite it, summarize it, or return it.",
+    input.licensedVariables?.length
+      ? `These exact reader variables may appear in returned fields: ${input.licensedVariables.map((name) => `{{${name}}}`).join(", ")}. Do not invent other {{variables}}.`
+      : "Returned fields must not contain {{ or }} placeholders.",
     "Return one value for every requested field and no other fields.",
     "Do not invent dates, aspect hits, historical events, quotations, or astronomical facts.",
     "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, and the immutable template context.",
@@ -5964,7 +5968,9 @@ export async function generateSkyArticleTemplateSlots(
     if (!outputText) throw new Error("OpenAI response did not include template slot values.");
     const parsed = JSON.parse(outputText) as { slotValues?: unknown };
     return {
-      slotValues: validateSkyArticleTemplateSlotValues(parsed.slotValues, input.requestedSlots),
+      slotValues: validateSkyArticleTemplateSlotValues(parsed.slotValues, input.requestedSlots, {
+        licensedVariables: input.licensedVariables
+      }),
       responseId: typedPayload.id,
       provider,
       model,
@@ -6016,7 +6022,9 @@ export async function generateSkyArticleTemplateSlots(
   ))?.input;
   if (!toolInput) throw new Error("Claude response did not include template slot values.");
   return {
-    slotValues: validateSkyArticleTemplateSlotValues(toolInput.slotValues, input.requestedSlots),
+    slotValues: validateSkyArticleTemplateSlotValues(toolInput.slotValues, input.requestedSlots, {
+      licensedVariables: input.licensedVariables
+    }),
     responseId: payload.id,
     provider,
     model,

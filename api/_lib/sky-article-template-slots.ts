@@ -26,7 +26,8 @@ export function unfinishedSkyArticleTemplateSlots(input: {
 
 export function validateSkyArticleTemplateSlotValues(
   value: unknown,
-  requestedSlots: SkyArticleTemplateSlot[]
+  requestedSlots: SkyArticleTemplateSlot[],
+  options: { licensedVariables?: readonly string[] } = {}
 ) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error("The writing provider did not return template slot values.");
@@ -34,6 +35,7 @@ export function validateSkyArticleTemplateSlotValues(
 
   const requestedNames = requestedSlots.map((slot) => slot.name);
   const requestedSet = new Set(requestedNames);
+  const licensed = new Set(options.licensedVariables ?? []);
   const returnedEntries = Object.entries(value as Record<string, unknown>);
   const unexpected = returnedEntries.map(([name]) => name).filter((name) => !requestedSet.has(name));
   if (unexpected.length) {
@@ -49,7 +51,7 @@ export function validateSkyArticleTemplateSlotValues(
       continue;
     }
     const body = raw.trim();
-    if (body.includes("{{") || body.includes("}}")) {
+    if (hasUnlicensedPlaceholder(body, licensed)) {
       throw new Error(`The writing provider left an unresolved placeholder in ${name}.`);
     }
     if (body.includes("—")) {
@@ -65,4 +67,11 @@ export function validateSkyArticleTemplateSlotValues(
     throw new Error(`The writing provider did not complete template slots: ${missing.join(", ")}.`);
   }
   return result;
+}
+
+function hasUnlicensedPlaceholder(body: string, licensed: Set<string>) {
+  const leftover = body.replace(/\{\{\s*([A-Za-z][A-Za-z0-9]*)\s*\}\}/gu, (match, name: string) => (
+    licensed.has(name) ? "" : match
+  ));
+  return leftover.includes("{{") || leftover.includes("}}");
 }

@@ -98,6 +98,7 @@ assert.doesNotMatch(endpoint, /status: "LIVE"/u);
 assert.doesNotMatch(lib, /saveGeneratedInterpretation/u);
 assert.match(lib, /loadStudioTransitRows/u);
 assert.match(lib, /allowFilledRewrite: !saved\.studioPresent/u);
+assert.match(lib, /licensedVariables: \[\.\.\.allowedVariables\]/u);
 assert.match(lib, /housesExcluded: !allowsHouses/u);
 const reviewed = reviewPersonalTransitCopy({
   contact: parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "square" }),
