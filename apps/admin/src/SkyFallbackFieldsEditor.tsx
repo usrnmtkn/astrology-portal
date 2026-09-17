@@ -246,6 +246,14 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
           fieldPath={field.key} value={field.value} source={activeLibrary ? { ...source, ingress: activeLibrary } : source} disabled={disabled} onInsert={insertVariable}
           preparing={installingLibrary} preparationError={libraryError} onLoadSource={onLoadSource} onOpenSource={onOpenSource}
           onPrepareLibrary={() => setArticleLibraryRequested(true)}
+          onApplyPlanetSignTemplate={() => {
+            setArticleLibraryRequested(true);
+            const current = activeLibrary ?? ingressComposition;
+            if (!current || !skyWritingLibraryInstalled(current)) return;
+            const preferred = preferSkyWritingLibrary(current);
+            setPreparedLibrary(preferred);
+            onChange("ingress", preferred);
+          }}
           onReplaceBody={changeWriting}
           onCompositionChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} />
         : <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />)}

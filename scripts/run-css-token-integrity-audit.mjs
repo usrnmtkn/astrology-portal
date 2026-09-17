@@ -10,7 +10,11 @@ const tokenThemePaths = new Set([
   "apps/web/src/styles/theme.css",
   "apps/admin/src/admin-theme.css"
 ]);
-const cssRoots = ["apps/web/src/styles", "apps/admin/src"];
+const webCssRoot = "apps/web/src/styles";
+const activeAdminCssPaths = [
+  "apps/admin/src/admin-theme.css",
+  "apps/admin/src/studio-system.css"
+];
 const reportDir = path.join(root, "test-results/css-audit");
 const reportPath = path.join(reportDir, "token-integrity.md");
 
@@ -72,8 +76,16 @@ function location(relative, node) {
   return `${relative}:${node.source?.start?.line ?? 1}`;
 }
 
-const files = (await Promise.all(cssRoots.map((cssRoot) => collectCssFiles(path.join(root, cssRoot)))))
-  .flat()
+// Reader styles are all active. Content Studio has a deliberately narrow active
+// chain: admin-theme.css -> shared web theme primitives, and studio-system.css ->
+// admin-theme.css. Historical admin CSS remains in the repository for migration
+// reference but is runtime-disconnected, so it must not create false "active"
+// token failures in this release gate. The Studio architecture audit separately
+// guarantees that no TypeScript entry point imports those historical sheets.
+const files = [
+  ...await collectCssFiles(path.join(root, webCssRoot)),
+  ...activeAdminCssPaths.map(file => path.join(root, file))
+]
   .filter((file, index, all) => all.indexOf(file) === index)
   .sort();
 const parsedFiles = [];

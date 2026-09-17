@@ -52,4 +52,13 @@ assert(preferred.modules.some(module => module.id === 'library-opening' && modul
 assert(preferred.modules.some(module => module.id === 'library-dignity' && module.template === '{{placementDignityMeaning}}'));
 assert(!preferred.modules.find(module => module.id === 'practice')?.required);
 
+const existing = makeSkyIngressComposition();
+existing.sources.planetFunctionSentence.text = 'Existing V5 planet sentence.';
+const preferredExisting = preferSkyWritingLibrary(existing);
+assert.equal(preferredExisting.sources.planetFunctionSentence.text, 'Existing V5 planet sentence.');
+assert(preferredExisting.modules.some(module => module.id === 'library-opening' && module.enabled && module.required));
+assert.equal(preferredExisting.modules.find(module => module.id === 'practice')?.enabled, false);
+assert.equal(preferredExisting.modules.find(module => module.id === 'practice')?.required, false);
+assert.equal(preferredExisting.enabled, false);
+
 console.log('PASS: planet-in-sign Sky template is ingress-only, dignity is selected before render, and natal wording stays out of Sky.');

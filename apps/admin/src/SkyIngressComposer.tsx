@@ -30,7 +30,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
   const identity = String(source.contentKey).split("/").slice(2);
   const initialSourceId = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9_]*)$/u)?.[1];
   const [selectedSource, setSelectedSource] = useState("planetFunctionSentence");
-  const [selectedModule, setSelectedModule] = useState("practice");
+  const [selectedModule, setSelectedModule] = useState("library-opening");
   const [view, setView] = useState("preview");
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [referenceKey, setReferenceKey] = useState(String(source.contentKey));
@@ -62,7 +62,9 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
     return () => { active = false; };
   }, [source.contentKey, referencedKeys]);
   const selected = composition?.sources[selectedSource];
-  const module = composition?.modules.find(item => item.id === selectedModule) ?? composition?.modules[0];
+  const module = composition?.modules.find(item => item.id === selectedModule)
+    ?? composition?.modules.find(item => item.id === "library-opening")
+    ?? composition?.modules[0];
   const update = (patch: Partial<Composition>) => composition && onChange?.({ ...composition, ...patch });
   const updateSource = (value: Source) => composition && update({ sources: { ...composition.sources, [selectedSource]: value } });
   const updateModule = (patch: Partial<Module>) => composition && module && update({ modules: composition.modules.map(item => item.id === module.id ? { ...item, ...patch } : item) });
