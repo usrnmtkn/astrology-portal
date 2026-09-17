@@ -1,16 +1,7 @@
 name: Release Calendar aspect batch 2B
 
 on:
-  push:
-    branches:
-      - "owner/release-calendar-batch-2b-20260903"
-    paths:
-      - "scripts/release-calendar-aspect-content-studio-batch-2b.mjs"
-      - "scripts/test-calendar-aspect-content-studio-batch-2b.mjs"
-      - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-content-studio-batch-2b-v1.json"
-      - "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2b-venus-saturn-trines-owner-approval.json"
-      - "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2b-venus-saturn-trines-serving-release.json"
-      - ".github/workflows/release-calendar-aspect-batch-2b.yml"
+  workflow_dispatch:
 
 permissions:
   contents: write

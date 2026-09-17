@@ -1,14 +1,7 @@
 name: Release Calendar aspect batch 2A
 
 on:
-  push:
-    branches:
-      - "owner/release-calendar-batch-2a-20260901"
-    paths:
-      - "scripts/release-calendar-aspect-content-studio-batch-2a.mjs"
-      - "scripts/test-calendar-aspect-content-studio-batch-2a.mjs"
-      - "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
-      - ".github/workflows/release-calendar-aspect-batch-2a.yml"
+  workflow_dispatch:
 
 permissions:
   contents: write

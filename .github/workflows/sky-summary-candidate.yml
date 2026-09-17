@@ -1,14 +1,6 @@
 name: Sky summary browser regression
 
 on:
-  pull_request:
-    paths:
-      - 'apps/web/**'
-      - 'scripts/ci-*'
-      - 'tests/visual/sky-*.spec.ts'
-      - 'playwright*.ts'
-      - 'package*.json'
-      - '.github/workflows/sky-summary-candidate.yml'
   push:
     branches: [main]
     paths:

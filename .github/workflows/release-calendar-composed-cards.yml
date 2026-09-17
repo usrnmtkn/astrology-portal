@@ -2,14 +2,7 @@ name: Release composed Calendar aspect cards
 # Human-authored final verification checkpoint after governed evidence refresh.
 
 on:
-  push:
-    branches:
-      - "owner/release-calendar-composed-cards-20260901"
-    paths:
-      - "scripts/release-calendar-composed-cards-owner-approved.mjs"
-      - "scripts/test-calendar-composed-cards-owner-approved-release.mjs"
-      - "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/composed-cards-serving-release-2026-09-01.json"
-      - ".github/workflows/release-calendar-composed-cards.yml"
+  workflow_dispatch:
 
 permissions:
   contents: write

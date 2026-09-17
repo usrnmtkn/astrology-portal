@@ -1,15 +1,6 @@
 name: Sky fallback variant families
 
 on:
-  pull_request:
-    paths:
-      - "apps/web/src/content/fallbackArchitectureV3/resolver/skyContinuousFallbackVariants.mjs"
-      - "apps/admin/src/SkyFallbackVariantFamilyEditor.tsx"
-      - "apps/admin/src/SkyV4StudioReviewPanel.tsx"
-      - "api/admin/sky-fallback-variant-preview.ts"
-      - "scripts/test-sky-v4-preview-api.mts"
-      - "scripts/test-sky-v4-content-studio-fallback-review-current.mjs"
-      - ".github/workflows/sky-fallback-variant-families.yml"
   push:
     branches: [main]
     paths:

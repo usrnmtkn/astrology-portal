@@ -2,9 +2,23 @@ name: CSS design system
 
 on:
   pull_request:
+    paths:
+      - "apps/web/src/styles/**"
+      - "apps/web/src/styles.css"
+      - "apps/admin/src/**/*.css"
+      - ".github/workflows/css-design-system.yml"
   push:
     branches:
       - main
+    paths:
+      - "apps/web/src/styles/**"
+      - "apps/web/src/styles.css"
+      - "apps/admin/src/**/*.css"
+      - ".github/workflows/css-design-system.yml"
+
+concurrency:
+  group: css-design-system-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   css-design-system:

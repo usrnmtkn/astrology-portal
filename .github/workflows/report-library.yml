@@ -1,38 +1,6 @@
 name: Report library
 
 on:
-  pull_request:
-    paths:
-      - "api/report-share.ts"
-      - "api/report-delivery.ts"
-      - "api/_lib/report-library-deletion.ts"
-      - "scripts/test-report-library-delete*.mjs"
-      - "tests/visual/report-library-delete.spec.ts"
-      - "tests/visual/report-generation-beam.spec.ts"
-      - "tests/visual/you-report-auth.spec.ts"
-      - "tests/visual/you-report-page.spec.ts"
-      - "tests/visual/friend-report-state.spec.ts"
-      - "apps/web/src/features/friends/FriendTransitsTab.tsx"
-      - "apps/web/src/features/friends/ManualChartsPanel.tsx"
-      - "scripts/test-you-report-session.mjs"
-      - "apps/web/src/features/you/YouReportActions.tsx"
-      - "apps/web/src/features/you/YouPage.tsx"
-      - "apps/web/src/features/you/youTransitReports.ts"
-      - "apps/web/src/components/reports/**"
-      - "apps/web/src/features/reports/**"
-      - "apps/web/src/routes/ReportRoute.tsx"
-      - "apps/web/src/services/reportLibrary.ts"
-      - "apps/web/src/services/reportLinks.ts"
-      - "apps/web/src/services/reportSharing.ts"
-      - "apps/web/src/services/userGeneratedContent.ts"
-      - "apps/web/src/styles/report-library.css"
-      - "apps/web/src/styles/report-generation-beam.css"
-      - "apps/web/src/styles/report-notifications.css"
-      - "apps/web/src/main.tsx"
-      - "apps/web/supabase/migrations/*report_library*.sql"
-      - "scripts/test-report-library-notifications.mjs"
-      - "tests/visual/report-library-ui.spec.ts"
-      - ".github/workflows/report-library.yml"
   push:
     branches:
       - main

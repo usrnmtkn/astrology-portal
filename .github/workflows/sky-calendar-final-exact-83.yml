@@ -1,14 +1,7 @@
 name: Sky Calendar final exact 83
 
 on:
-  pull_request:
-    paths:
-      - "packages/astro-knowledge/data/transits/**"
-      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/**"
-      - "scripts/release-calendar-exact-approved-20260906-final-83.mjs"
-      - "scripts/test-calendar-exact-approved-20260906-final-83.mjs"
-      - "scripts/test-calendar-major-exact-routing-complete.mjs"
-      - ".github/workflows/sky-calendar-final-exact-83.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
