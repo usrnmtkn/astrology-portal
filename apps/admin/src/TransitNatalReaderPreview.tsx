@@ -50,13 +50,15 @@ export function TransitNatalExactSourceAction({
   if (state.error) return <p role="alert">{state.error} <StudioButton type="button" onClick={() => setRevision(value => value + 1)}>Retry this transit</StudioButton></p>;
   return <section className="admin-natal-source-group" aria-label="This transit write-up">
     <header>
-      <p className="admin-eyebrow">This transit</p>
+      <p className="admin-eyebrow">{contentKey.split("/").length === 8 ? "Six-part situation write-up" : "Three-part aspect write-up"}</p>
       <p><code>{contentKey}</code></p>
       <p>{state.passage?.detail}</p>
       {state.passage?.row && <ContentLiveStatusBadge row={state.passage.row} />}
     </header>
-    <StudioButton type="button" disabled={disabled} onClick={onOpen}>{transitNatalExactActionLabel(Boolean(state.passage?.exists), title)}</StudioButton>
-    <p className="admin-field-hint">This opens the You and Friend fields for the selected contact. Fill all six finder values to save a six-part situation. Leave sign or houses blank to save the three-part aspect only. Generate copies into those fields. Approve &amp; publish makes the write-up live.</p>
+    <StudioButton type="button" disabled={disabled} onClick={onOpen}>{transitNatalExactActionLabel(Boolean(state.passage?.exists), title, contentKey)}</StudioButton>
+    <p className="admin-field-hint">{contentKey.split("/").length === 8
+      ? "This opens the You and Friend fields for this six-part situation: planet, aspect, natal point, current sign, and both houses. Generate copies into those fields. Save keeps a draft on this key. Approve & publish makes it live. The three-part aspect write-up stays separate."
+      : "This opens the You and Friend fields for the three-part aspect. Fill current sign and both houses in the finder to switch this destination to the six-part situation. Generate copies into those fields. Approve & publish makes the write-up live."}</p>
     <Suspense fallback={null}><PersonalTransitAiWriter
       defaultOpen
       transiting={transiting}
@@ -163,9 +165,11 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
           <div className="admin-natal-source-card-copy">
             <div className="admin-natal-source-card-heading"><h4>{state.preview.headline}</h4></div>
             {groups.some(group => group.sources.some(source => transitSourceEditScope(exactKey, source.contentKey).kind === "shared")) && <aside className="admin-field-hint">
-              {exactKey ? "The published preview is still using shared fallback writing. Edit this copy to start a write-up for this aspect only. A saved draft does not replace published reader copy." : "This preview includes shared fallback writing. There is no independent write-up key for this contact; shared source changes can affect other readings."}
+              {exactKey ? (exactKey.split("/").length === 8
+                ? "The published preview is still using shared fallback writing. Write this six-part situation to start a separate save. A saved draft does not replace published reader copy."
+                : "The published preview is still using shared fallback writing. Edit this copy to start a write-up for this aspect only. A saved draft does not replace published reader copy.") : "This preview includes shared fallback writing. There is no independent write-up key for this contact; shared source changes can affect other readings."}
             </aside>}
-            {exactKey && onOpenExact && <StudioButton type="button" onClick={onOpenExact}>Edit this copy</StudioButton>}
+            {exactKey && onOpenExact && <StudioButton type="button" onClick={onOpenExact}>{exactKey.split("/").length === 8 ? "Write this six-part situation" : "Edit this copy"}</StudioButton>}
             {groups.map((group, index) => <Fragment key={index}>
               {group.texts.map((text, paragraphIndex) => <p key={paragraphIndex}>{text}</p>)}
               {group.sources.map(source => <TransitSourceEditAction
