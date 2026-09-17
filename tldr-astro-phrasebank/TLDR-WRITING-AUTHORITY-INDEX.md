@@ -81,6 +81,7 @@ Each of these binds on its surface and postdates the standard.
 **Cards and transits**
 
 - `TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md` (2026-08-09).
+- 2026-09-17: on Taurus copy, `steady`, `steadier`, `steadily`, `steadiness`, and `steadies` are approved. Vague `steady energy` remains banned (CF-015, CF-019).
 
 **Lilith**
 

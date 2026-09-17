@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "66555699c5f47edfded720c9042d1269b5fc12bff0e09e60624c1923f132c222",
+  "decisionSourceSha256": "b265eeeeb478900d637a5dc4f7f67b92ac782c37b53c36eb8a684f73216105fd",
   "rules": [
     {
       "id": "ED-004",

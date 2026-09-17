@@ -138,4 +138,15 @@ assert.match(personalTransitWriter, /published: false/u);
 assert.match(personalTransitWriter, /action === "recheck"/u);
 assert.doesNotMatch(personalTransitWriter, /saveDraft/u);
 
+const contract = JSON.parse(source("apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json"));
+const taurusSteady = (contract.styleRules?.bannedWordAllowances ?? []).find((item) => item.words?.includes("steadier"));
+assert.ok(taurusSteady?.contentKeyPattern, "Taurus steady family needs a Studio content-key allowance.");
+const taurusSteadyKey = new RegExp(taurusSteady.contentKeyPattern, "u");
+assert.equal(taurusSteadyKey.test("fallback-hook/zodiac-season/taurus"), true);
+assert.equal(taurusSteadyKey.test("sky-placement/article/sun/taurus"), true);
+assert.equal(taurusSteadyKey.test("sky-placement/article/sun/virgo"), false);
+const generatedContent = source("api/admin/generated-content.ts");
+assert.match(generatedContent, /isBannedWordAllowedForContentKey/u);
+assert.match(generatedContent, /bannedWordAllowances/u);
+
 console.log("Content Studio admin API contract passed.");

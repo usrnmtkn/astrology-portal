@@ -224,7 +224,12 @@ const skyV4ServingReleasedReaderCopyKeys = skyV4ReaderCopyServingRelease.serving
   : new Set<string>();
 const personalizedSampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const sampleOnlyReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
-let contentRoleContractCache: { styleRules?: { bannedWords?: string[] } } | null = null;
+let contentRoleContractCache: {
+  styleRules?: {
+    bannedWords?: string[];
+    bannedWordAllowances?: Array<{ words?: string[]; contentKeyPattern?: string }>;
+  };
+} | null = null;
 
 function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string) {
   return Boolean(surface && personalizedSampleSurfaces.has(surface)) || Boolean(contentKey?.startsWith("sample-"));
@@ -247,8 +252,21 @@ function contentRoleContract() {
     path.dirname(fileURLToPath(import.meta.url)),
     "../../apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json"
   );
-  contentRoleContractCache = JSON.parse(fs.readFileSync(contractPath, "utf8")) as { styleRules?: { bannedWords?: string[] } };
+  contentRoleContractCache = JSON.parse(fs.readFileSync(contractPath, "utf8")) as {
+    styleRules?: {
+      bannedWords?: string[];
+      bannedWordAllowances?: Array<{ words?: string[]; contentKeyPattern?: string }>;
+    };
+  };
   return contentRoleContractCache;
+}
+
+function isBannedWordAllowedForContentKey(word: string, contentKey: string) {
+  const allowances = contentRoleContract().styleRules?.bannedWordAllowances ?? [];
+  return allowances.some((allowance) => {
+    if (!allowance.words?.includes(word) || !allowance.contentKeyPattern) return false;
+    return new RegExp(allowance.contentKeyPattern, "u").test(contentKey);
+  });
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -582,6 +600,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
 
     const lower = value.toLowerCase();
     const banned = bannedWords.find((word) => {
+      if (isBannedWordAllowedForContentKey(word, row.content_key)) return false;
       const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       return new RegExp(`(^|[^a-z])${escaped}([^a-z]|$)`, "i").test(lower);
     });
