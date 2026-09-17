@@ -6,7 +6,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   skyPlacementDescriptionState,
-  shouldLoadSkyPlacementContent
+  shouldLoadSkyPlacementContent,
+  skySnapshotHasTransitWindows
 } from "../apps/web/src/features/sky/skyPlacementContentState.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -18,6 +19,11 @@ assert.equal(
   shouldLoadSkyPlacementContent({ mode: "guest", hasSky: true, detailRoutePath: null }),
   true,
   "A cold guest Sky list must load approved placement content before a card is opened."
+);
+assert.equal(
+  shouldLoadSkyPlacementContent({ mode: "guest", hasSky: false, detailRoutePath: null }),
+  true,
+  "Guest Sky placement sources must start before the first sky snapshot exists."
 );
 assert.equal(
   shouldLoadSkyPlacementContent({ mode: "member", hasSky: true, detailRoutePath: null }),
@@ -39,6 +45,15 @@ assert.equal(
   "Placement details opened outside the Sky list must retain on-demand content loading."
 );
 
+assert.equal(
+  skySnapshotHasTransitWindows({ positions: [{ transitStart: "2026-09-01T00:00:00.000Z", transitEnd: "2026-09-30T00:00:00.000Z" }] }),
+  true
+);
+assert.equal(
+  skySnapshotHasTransitWindows({ positions: [{ planet: "Sun", sign: "Virgo" }] }),
+  false
+);
+
 assert.equal(skyPlacementDescriptionState("Approved copy", "loading"), "loading");
 assert.equal(skyPlacementDescriptionState("", "loading"), "loading");
 assert.equal(skyPlacementDescriptionState("", "ready"), "empty");
@@ -56,13 +71,40 @@ assert.match(
 );
 assert.match(
   placementRows,
-  /descriptionLoading\s*\?[\s\S]*summary-skeleton/,
-  "A placement with unresolved copy must render an in-card skeleton while content is loading."
+  /descriptionLoading\s*\?[\s\S]*PageLoading compact/,
+  "A placement with unresolved copy must render an in-card loader while content is loading."
 );
 assert.match(
   app,
-  /className="feature-loading-fallback"[\s\S]*role="status"[\s\S]*summary-skeleton/,
+  /className="feature-loading-fallback"[\s\S]*role="status"/,
   "Lazy page boundaries must expose an accessible, structured loading state."
+);
+
+const summary = read("apps/web/src/features/sky/PublishedSkySummary.tsx");
+assert.match(
+  summary,
+  /await refreshContentPublications\(\);/,
+  "The daily sky summary must reuse the shared publication cache on first load."
+);
+assert.match(
+  summary,
+  /void refreshContentPublications\(true\)\.finally/,
+  "A summary retry may force a fresh publication lookup."
+);
+assert.match(
+  app,
+  /const placementSnapshotRequest = canLoadPlacementArticle[\s\S]*skyPlacementFallbackStatus !== "ready"\) return/u,
+  "A Sky placement article must start its astronomy before published copy finishes resolving."
+);
+assert.match(
+  app,
+  /function requestSkyPlacementArticleSnapshot[\s\S]*skyPlacementArticleReferenceDate\(location, date\)/u,
+  "Placement article astronomy must use the selected day, not a live generatedAt timestamp."
+);
+assert.match(
+  read("apps/web/src/services/skyCalculationClient.ts"),
+  /placementSnapshotCache.size > 24/,
+  "Recently opened placement articles must remain cached across the current Sky list."
 );
 
 console.log("Sky placement loading-system contract passed.");

@@ -186,6 +186,7 @@ import {
 import {
   shouldLoadSkyPlacementContent,
   skyPlacementDescriptionState,
+  skySnapshotHasTransitWindows,
   type SkyPlacementContentStatus
 } from "./features/sky/skyPlacementContentState";
 import {
@@ -10779,6 +10780,26 @@ async function getAstrodienstSky(
   return calculateSky(...args);
 }
 
+function skyPlacementArticleReferenceDate(location: LocationInput, date: string) {
+  return skyDateTimeFromInput(date, withTimeZone(location), true);
+}
+
+async function requestSkyPlacementArticleSnapshot(
+  location: LocationInput,
+  planet: string,
+  sign: string,
+  date: string
+) {
+  const { getSkyPlacementSnapshotOffMainThread } = await import("./services/skyCalculationClient");
+  return getSkyPlacementSnapshotOffMainThread(
+    withTimeZone(location),
+    planet,
+    sign,
+    skyPlacementArticleReferenceDate(location, date),
+    true
+  );
+}
+
 async function buildWeeklyHoroscope(
   ...args: Parameters<typeof import("./services/weeklyHoroscope").buildWeeklyHoroscope>
 ) {
@@ -10924,7 +10945,9 @@ export function App() {
   const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "cached" : "loading");
-  const [skyTimingStatus, setSkyTimingStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [skyTimingStatus, setSkyTimingStatus] = useState<"loading" | "ready" | "error">(
+    initialCachedSky && skySnapshotHasTransitWindows(initialCachedSky) ? "ready" : "loading"
+  );
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
   const [calendarContentStatus, setCalendarContentStatus] = useState<CalendarContentStatus>("idle");
   const [calendarContentRequest, setCalendarContentRequest] = useState<CalendarContentRequest | null>(null);
@@ -10968,7 +10991,7 @@ export function App() {
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
   const selectedSkyDetailContentRef = useRef<GeneratedContentMap>(new Map());
-  const selectedSkyDetailRefreshSkyRef = useRef<SkySnapshot | null>(null);
+  const selectedSkyDetailRefreshSkyKeyRef = useRef("");
   const fallbackDashboardHydrationRequestedRef = useRef(false);
   const friendDetailOverlayVersionRef = useRef(0);
   const compatibilityDashboardHydrationVersionRef = useRef<number | null>(null);
@@ -11265,6 +11288,17 @@ export function App() {
     const [, detailType] = decodeSkyRouteParts(detail.routePath ?? "");
     const awaitPlacementTiming = detail.routePath?.startsWith("sky/")
       && (detailType === "placement" || detailType === "retrograde");
+    if (awaitPlacementTiming && sky && detail.routePath) {
+      const [baseRoute] = detail.routePath.split(/\/(?:at|on)\//u);
+      const [, detailKind, planetPart, signPart] = decodeSkyRouteParts(baseRoute);
+      const routePosition = planetPart
+        ? skyNodeDisplayPositions(sky.positions).find((position) => skyRoutePartMatches(position.planet, planetPart))
+        : undefined;
+      const placementSign = detailKind === "retrograde" ? routePosition?.sign : signPart;
+      if (planetPart && placementSign) {
+        void requestSkyPlacementArticleSnapshot(sky.location, planetPart, placementSign, skyDate);
+      }
+    }
     transitionPage(() => {
       setSelectedSkyDetail(personalizedSkyPlacementDetail(
         awaitPlacementTiming ? null : detail,
@@ -11468,6 +11502,17 @@ export function App() {
     event.preventDefault();
     const routePath = link.hash.slice(1);
     selectedCalendarTransitEventRef.current = null;
+    if (sky) {
+      const [baseRoute] = routePath.split(/\/(?:at|on)\//u);
+      const [, detailKind, planetPart, signPart] = decodeSkyRouteParts(baseRoute);
+      const routePosition = planetPart
+        ? skyNodeDisplayPositions(sky.positions).find((position) => skyRoutePartMatches(position.planet, planetPart))
+        : undefined;
+      const placementSign = detailKind === "retrograde" ? routePosition?.sign : signPart;
+      if ((detailKind === "placement" || detailKind === "retrograde") && planetPart && placementSign) {
+        void requestSkyPlacementArticleSnapshot(sky.location, planetPart, placementSign, skyDate);
+      }
+    }
     transitionPage(() => {
       updateSkyDetailRouteUrl(routePath);
       setSelectedSkyDetail(null);
@@ -11884,13 +11929,13 @@ export function App() {
       JSON.stringify(skyPlacementPersonalizationTransits)
     ].join(":");
     const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;
+    const skyArticleIdentityKey = `${skyDate}:${sky.location.latitude}:${sky.location.longitude}:${sky.location.timeZone}`;
 
     if (
       selectedSkyDetail?.routePath === skyDetailRoutePath
       && selectedSkyDetailRefreshKeyRef.current === refreshKey
       && selectedSkyDetailRefreshContentRef.current === skyGeneratedContent
-      // Residency dates and stations can arrive after the first snapshot.
-      && selectedSkyDetailRefreshSkyRef.current === sky
+      && selectedSkyDetailRefreshSkyKeyRef.current === skyArticleIdentityKey
     ) {
       return;
     }
@@ -11902,19 +11947,25 @@ export function App() {
       ? null : storedCalendarEvent;
     const [baseRoute, encodedExactAt] = skyDetailRoutePath.split(/\/(?:at|on)\//u);
     const [routeSurface, routeType, routePlanet, routeSign] = decodeSkyRouteParts(baseRoute);
-    if (routeSurface === "sky" && ["placement", "retrograde"].includes(routeType)
-      && skyPlacementFallbackStatus !== "ready") return;
     const routePosition = routePlanet && skyNodeDisplayPositions(sky.positions).find(position => skyRoutePartMatches(position.planet, routePlanet));
     const placementSign = routeType === "retrograde" ? (routePosition ? routePosition.sign : undefined) : routeSign;
+    const canLoadPlacementArticle = Boolean(
+      !calendarEvent && routeSurface === "sky" && ["placement", "retrograde"].includes(routeType) && placementSign
+      && routePlanet && routePosition && zodiacSigns.some(sign => skyRoutePartMatches(sign, placementSign))
+    );
+    const placementSnapshotRequest = canLoadPlacementArticle && routePlanet && placementSign
+      ? requestSkyPlacementArticleSnapshot(sky.location, routePlanet, placementSign, skyDate)
+      : null;
+    // Start the article astronomy immediately. Published copy still has to
+    // resolve before the first paint so a later overlay cannot replace it.
+    if (routeSurface === "sky" && ["placement", "retrograde"].includes(routeType)
+      && skyPlacementFallbackStatus !== "ready") return;
     // Every placement timeline includes exact aspects, even when the author
     // has not used an aspect token in the article.
-    if (!calendarEvent && routeSurface === "sky" && ["placement", "retrograde"].includes(routeType) && placementSign
-      && routePosition && zodiacSigns.some(sign => skyRoutePartMatches(sign, placementSign))) {
+    if (canLoadPlacementArticle && placementSnapshotRequest) {
       let cancelled = false;
       if (selectedSkyDetail?.routePath !== skyDetailRoutePath) commitResolvedSkyDetail(null);
-      void import("./services/skyCalculationClient").then(({ getSkyPlacementSnapshotOffMainThread }) => (
-        getSkyPlacementSnapshotOffMainThread(sky.location, routePlanet, placementSign, new Date(sky.generatedAt), true)
-      )).then(async placementSky => {
+      void placementSnapshotRequest.then(async placementSky => {
         const renderPlacement = (detailContent: GeneratedContentMap, complete = false) => {
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
           selectedSkyDetailContentRef.current = detailContent;
@@ -11922,7 +11973,7 @@ export function App() {
           if (complete) {
             selectedSkyDetailRefreshKeyRef.current = refreshKey;
             selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
-            selectedSkyDetailRefreshSkyRef.current = sky;
+            selectedSkyDetailRefreshSkyKeyRef.current = skyArticleIdentityKey;
           }
           commitResolvedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
             skyPlacementPersonalizationTransits, skyDate));
@@ -11945,7 +11996,7 @@ export function App() {
           if (complete) {
             selectedSkyDetailRefreshKeyRef.current = refreshKey;
             selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
-            selectedSkyDetailRefreshSkyRef.current = sky;
+            selectedSkyDetailRefreshSkyKeyRef.current = skyArticleIdentityKey;
           }
           commitResolvedSkyDetail(detail
             ? skyDetailRoutePath.includes("/at/")
@@ -11967,7 +12018,7 @@ export function App() {
       if (complete) {
         selectedSkyDetailRefreshKeyRef.current = refreshKey;
         selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
-        selectedSkyDetailRefreshSkyRef.current = sky;
+        selectedSkyDetailRefreshSkyKeyRef.current = skyArticleIdentityKey;
       }
       commitResolvedSkyDetail(personalizedSkyPlacementDetail(
         detail, profileNatalSky?.ascendant ?? userProfile?.rising,
@@ -12544,8 +12595,6 @@ export function App() {
     let cancelled = false;
     let coreSkyFrame = 0;
     let coreSkyTimer = 0;
-    let detailedSkyFrame = 0;
-    let detailedSkyTimer = 0;
 
     if (!shouldRunCurrentSkyCalculation(mode, friendCalculationNeeds)) {
       return () => {
@@ -12566,7 +12615,9 @@ export function App() {
     // background astronomy. Sky itself still starts immediately.
     const coreSkyDelayMs = mode === "profile" ? 500 : 0;
 
-    if (!refreshing) setSkyTimingStatus("loading");
+    if (!refreshing) {
+      setSkyTimingStatus(cachedSky && skySnapshotHasTransitWindows(cachedSky) ? "ready" : "loading");
+    }
 
     if (cachedSky && !refreshing) {
       setSky(cachedSky);
@@ -12611,30 +12662,33 @@ export function App() {
 
     coreSkyFrame = window.requestAnimationFrame(() => {
       coreSkyTimer = window.setTimeout(() => {
-        // Initial navigation paints core positions quickly. A refresh replaces
-        // the displayed snapshot atomically with its new timing windows, so
-        // station/residency dates never vanish between worker responses.
-        void getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: refreshing })
+        // Initial navigation paints core positions quickly. Queue window
+        // enrichment on the same worker immediately so it does not wait for
+        // the core round-trip. A refresh replaces the displayed snapshot
+        // atomically with its new timing windows, so station/residency dates
+        // never vanish between worker responses.
+        const coreSkyRequest = getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: refreshing });
+        const detailedSkyRequest = refreshing
+          ? null
+          : getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: true });
+        void coreSkyRequest
           .then((nextSky) => {
             const published = publishFreshSky(nextSky, { preserveCachedDetails: !refreshing });
             if (!published || refreshing) {
               if (!cancelled) setSkyTimingStatus(published ? "ready" : "error");
               return;
             }
+            if (!detailedSkyRequest) return;
 
-            detailedSkyFrame = window.requestAnimationFrame(() => {
-              detailedSkyTimer = window.setTimeout(() => {
-                void getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: true })
-                  .then((detailedSky) => {
-                    const published = publishFreshSky(detailedSky);
-                    if (!cancelled) setSkyTimingStatus(published ? "ready" : "error");
-                  })
-                  .catch((error) => {
-                    console.warn("Swiss Ephemeris transit-window enrichment failed; keeping the verified core sky.", error);
-                    if (!cancelled) setSkyTimingStatus("error");
-                  });
-              }, 0);
-            });
+            void detailedSkyRequest
+              .then((detailedSky) => {
+                const publishedDetailed = publishFreshSky(detailedSky);
+                if (!cancelled) setSkyTimingStatus(publishedDetailed ? "ready" : "error");
+              })
+              .catch((error) => {
+                console.warn("Swiss Ephemeris transit-window enrichment failed; keeping the verified core sky.", error);
+                if (!cancelled) setSkyTimingStatus("error");
+              });
           })
           .catch((error) => {
             console.warn("Swiss Ephemeris sky calculation failed; retaining the verified selection or its exact-key cache when available.", error);
@@ -12651,8 +12705,6 @@ export function App() {
       cancelled = true;
       window.cancelAnimationFrame(coreSkyFrame);
       window.clearTimeout(coreSkyTimer);
-      window.cancelAnimationFrame(detailedSkyFrame);
-      window.clearTimeout(detailedSkyTimer);
     };
   }, [friendCalculationNeeds, location, mode, skyDate, skyRefreshKey]);
 

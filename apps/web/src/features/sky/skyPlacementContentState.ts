@@ -1,15 +1,20 @@
+import type { SkySnapshot } from "../../types";
+
 export type SkyPlacementContentStatus = "idle" | "loading" | "ready" | "error";
+
+export function skySnapshotHasTransitWindows(sky: SkySnapshot) {
+  return sky.positions.some((position) => Boolean(position.transitStart && position.transitEnd));
+}
 
 export function shouldLoadSkyPlacementContent({
   mode,
-  hasSky,
   detailRoutePath
 }: {
   mode: string;
-  hasSky: boolean;
+  hasSky?: boolean;
   detailRoutePath: string | null;
 }) {
-  const isSkyPlacementList = hasSky && (mode === "guest" || mode === "member");
+  const isSkyPlacementList = mode === "guest" || mode === "member";
   const isSkyPlacementDetail = Boolean(
     detailRoutePath && /^sky\/(?:placement|retrograde|lunation)\//u.test(detailRoutePath)
   );

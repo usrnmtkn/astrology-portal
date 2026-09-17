@@ -126,7 +126,7 @@ export function getSkyPlacementSnapshotOffMainThread(
     ? loadEphemerisForNonBrowserRuntime().then(({ getSkyPlacementSnapshot }) => getSkyPlacementSnapshot(location, planet, sign, referenceDate, includeAspectLists))
     : requestCalculation<SkySnapshot>({ kind: "placement-sky", location, planet, sign, includeAspectLists, date: referenceDate.toISOString() });
   placementSnapshotCache.set(key, pending);
-  if (placementSnapshotCache.size > 8) placementSnapshotCache.delete(placementSnapshotCache.keys().next().value!);
+  if (placementSnapshotCache.size > 24) placementSnapshotCache.delete(placementSnapshotCache.keys().next().value!);
   void pending.catch(() => { if (placementSnapshotCache.get(key) === pending) placementSnapshotCache.delete(key); });
   return pending;
 }
