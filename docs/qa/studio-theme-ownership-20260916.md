@@ -14,4 +14,4 @@ The token-integrity release gate now matches runtime ownership: it scans every r
 
 The reader loading illustration previously consumed one token that was added after the original Studio block landed. Its size now resolves directly from the shared `--size-8` primitive, so removing the Studio suffix does not leave an unresolved reader token.
 
-The aggregate CSS budget remains capped at 115,000 gzip bytes, matching the Phase 0 ceiling. The unfiltered CSS design-system workflow runs the CSS architecture/token audits, verifies the approved Studio layer values, typechecks and builds the admin app, and checks the admin bundle budget for every pull request and main push.
+The aggregate CSS budget remains capped at 115,000 gzip bytes, matching the Phase 0 ceiling. The CSS design-system workflow runs the CSS architecture and token audits and verifies the approved Studio layer values when Studio or reader styles change. Admin typecheck, production build, and JavaScript bundle budgets stay in their existing Studio workflows so this CSS gate does not duplicate those minute-heavy jobs.
