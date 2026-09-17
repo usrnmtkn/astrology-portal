@@ -5,8 +5,11 @@ on:
       - 'apps/web/src/content/skyDebility*'
       - 'apps/web/src/services/planetSignDignity*'
       - 'apps/web/src/features/sky/SkyDebilityCard.tsx'
-      - 'apps/admin/src/SkyDebilityStudio.tsx'
-      - 'scripts/test-sky-debility-copy.mts'
+      - 'apps/admin/src/SkyDebility*'
+      - 'apps/admin/src/skyDebility*'
+      - 'scripts/test-sky-debility*'
+      - 'tests/visual/sky-debility-composition.spec.ts'
+      - 'playwright.sky-debility.config.ts'
       - '.github/workflows/sky-debility-summary.yml'
   push:
     branches: [main]
@@ -14,8 +17,11 @@ on:
       - 'apps/web/src/content/skyDebility*'
       - 'apps/web/src/services/planetSignDignity*'
       - 'apps/web/src/features/sky/SkyDebilityCard.tsx'
-      - 'apps/admin/src/SkyDebilityStudio.tsx'
-      - 'scripts/test-sky-debility-copy.mts'
+      - 'apps/admin/src/SkyDebility*'
+      - 'apps/admin/src/skyDebility*'
+      - 'scripts/test-sky-debility*'
+      - 'tests/visual/sky-debility-composition.spec.ts'
+      - 'playwright.sky-debility.config.ts'
       - '.github/workflows/sky-debility-summary.yml'
 permissions:
   contents: read
@@ -35,8 +41,22 @@ jobs:
       - run: npm ci
       - name: All placement sets, combinations, grammar and publication states
         run: node --import tsx scripts/test-sky-debility-copy.mts
+      - name: Source-map parity and exact field routing across all combinations
+        run: node --import tsx scripts/test-sky-debility-composition.mts
       - run: npm run build -w @tldr/astro-knowledge
       - name: Build Content Studio
         run: npm run build:admin
       - name: Build the web reader
         run: npm run build -w @tldr/web
+      - name: Audit shared CSS and tokens
+        run: npm run qa:css-audit
+      - name: Install browser for interaction checks
+        run: npx playwright install --with-deps chromium
+      - name: Full template, clickable sources, save and reopen in desktop/mobile themes
+        run: npx playwright test --config=playwright.sky-debility.config.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sky-debility-composition-browser
+          path: test-results/
+          retention-days: 7
