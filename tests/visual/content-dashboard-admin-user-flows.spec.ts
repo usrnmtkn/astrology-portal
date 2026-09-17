@@ -505,6 +505,7 @@ async function seedAdminApi(
   page: Page,
   options: {
     onGeneratedContentWrite?: (write: { method: string; payload: Record<string, unknown> }) => void | Promise<void>;
+    onPersonalTransitWrite?: (payload: Record<string, unknown>) => void;
     onResolutionWrite?: (payload: Record<string, unknown>) => void;
     onSourceDecisionWrite?: (payload: Record<string, unknown>) => void;
     initialSecret?: string;
@@ -567,6 +568,7 @@ async function seedAdminApi(
 
     if (pathname.endsWith("/personal-transit-writing")) {
       const payload = route.request().postDataJSON() as Record<string, unknown>;
+      options.onPersonalTransitWrite?.(payload);
       if (payload.action === "next-missing") {
         await route.fulfill({
           json: {
@@ -2328,7 +2330,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } });
     });
     await page.addInitScript(value => localStorage.setItem("tldrastro:theme", value), theme);
-    await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=sun&sign=virgo&transitHouse=3&aspect=trine&natal=sun&natalHouse=3");
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=sun&sign=virgo&aspect=trine&natal=sun");
     await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
     const finder = page.getByRole("region", { name: "Personal Transits source finder" });
     const exactEditor = finder.getByRole("region", { name: "This transit write-up" });
@@ -2394,15 +2396,19 @@ test.describe("content dashboard admin user flow case studies", () => {
     page.on("dialog", dialog => { dialog.accept().catch(() => undefined); });
     const noErrors = await expectNoBrowserErrors(page);
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const transitWrites: Array<Record<string, unknown>> = [];
     await page.setViewportSize({ width: 1440, height: 1000 });
-    await seedAdminApi(page, { onGeneratedContentWrite: write => writes.push(write) });
+    await seedAdminApi(page, {
+      onGeneratedContentWrite: write => writes.push(write),
+      onPersonalTransitWrite: payload => transitWrites.push(payload)
+    });
     await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
     await page.route("**/api/admin/transit-natal-preview", async route => {
       await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } });
     });
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=sun&sign=virgo&transitHouse=3&aspect=square&natal=sun&natalHouse=3");
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/sun/square");
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/sun/square/virgo/3/3");
     const writer = editor.locator("details").filter({ hasText: "This generator writes the selected destination only" });
     await expect(writer.locator("summary")).toBeVisible();
     await writer.locator("summary").click();
@@ -2412,6 +2418,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("Synthetic You draft for the selected contact.");
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("{{Name}} may treat a question about their plan as a verdict until {{untilDate}}.");
     expect(writes).toHaveLength(0);
+    expect(transitWrites[0]).toMatchObject({
+      action: "generate",
+      contentKey: "authored/transit-aspect/sun/sun/square/virgo/3/3",
+      sign: "virgo",
+      transitHouse: "3",
+      natalHouse: "3"
+    });
     await editor.getByRole("button", { name: "Run writing checks", exact: true }).click();
     await expect(editor.getByText("Writing checks passed on the current editor text.")).toBeVisible();
     expect(writes).toHaveLength(0);

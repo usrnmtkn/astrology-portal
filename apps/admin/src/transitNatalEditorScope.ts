@@ -15,8 +15,17 @@ export type TransitSourceEditScope = {
 export function transitSourceEditScope(exactKey: string | null, sourceKey: string): TransitSourceEditScope {
   if (exactKey && sourceKey === exactKey) return {
     kind: "exact", label: "Aspect-specific source",
-    explanation: "This is the source for the selected transit and natal contact. You and Friend have separate writing fields."
+    explanation: exactKey.split("/").length === 8
+      ? "This is the source for the selected six-part situation. You and Friend have separate writing fields."
+      : "This is the source for the selected transit and natal contact. You and Friend have separate writing fields."
   };
+  if (exactKey && exactKey.split("/").length === 8) {
+    const parent = exactKey.split("/").slice(0, 5).join("/");
+    if (sourceKey === parent) return {
+      kind: "shared", label: "Three-part aspect source",
+      explanation: "This is the three-part aspect write-up. The selected six-part situation is saved separately."
+    };
+  }
   if (exactKey && sourceKey.startsWith(`${exactKey}/`)) return {
     kind: "exact-variant", label: "Aspect-specific variant",
     explanation: "This source belongs to the selected contact, but only to a particular variant or context. The base passage is edited separately."

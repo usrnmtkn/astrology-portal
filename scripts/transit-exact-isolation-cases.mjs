@@ -51,5 +51,9 @@ export function verifyTransitExactIsolation(factory) {
   const exact = "authored/transit-aspect/sun/sun/sextile";
   const shared = "authored/transit-aspect/sun/sun/soft/variant-3";
   assert.equal(renderer([row(exact, "Draft.", "needs_review"), row(shared, "Shared.")]).renderTransitAspect({ transiting: "sun", natal: "sun", aspect: "sextile", variant: 3 }).contentKey, shared);
+  const situation = "authored/transit-aspect/sun/moon/square/aries/1/7";
+  const contact = "authored/transit-aspect/sun/moon/square";
+  assert.equal(renderer([row(situation, "Situation."), row(contact, "Contact.")]).renderTransitAspect({ transiting: "sun", natal: "moon", aspect: "square", sign: "aries", transitHouse: 1, natalHouse: 7 }).contentKey, situation);
+  assert.equal(renderer([row(contact, "Contact.")]).renderTransitAspect({ transiting: "sun", natal: "moon", aspect: "square", sign: "aries", transitHouse: 1, natalHouse: 7 }).contentKey, contact);
   return cases;
 }

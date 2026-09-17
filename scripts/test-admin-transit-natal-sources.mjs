@@ -19,10 +19,11 @@ try {
   await runtime.loadDeferredFallbackArchitectureV3Bundle();
   assert.equal(runtime.transitNatalExactContentKey({ planet: "mercury", natalPoint: "ascendant", aspect: "square" }), "authored/transit-aspect/mercury/ascendant/square");
   assert.equal(runtime.transitNatalExactContentKey({ planet: "sun", natalPoint: "midheaven", aspect: "trine" }), "authored/transit-aspect/sun/midheaven/trine");
+  assert.equal(runtime.transitNatalExactContentKey({ planet: "mercury", natalPoint: "ascendant", aspect: "square", sign: "aries", transitHouse: "1", natalHouse: "2" }), "authored/transit-aspect/mercury/ascendant/square/aries/1/2");
   const selection = { planet: "sun", sign: "virgo", transitHouse: "4", natalHouse: "4", natalPoint: "north-node", aspect: "conjunction" };
   for (const voice of ["you", "Alex"]) {
     const actual = runtime.renderTransitNatalPreview(selection, runtime.transitSynastryFallbackRendererV3, voice);
-    const expected = runtime.transitSynastryFallbackRendererV3.renderTransitAspect({ transiting: "sun", natal: "north-node", aspect: "conjunction", sign: "virgo", voice });
+    const expected = runtime.transitSynastryFallbackRendererV3.renderTransitAspect({ transiting: "sun", natal: "north-node", aspect: "conjunction", sign: "virgo", voice, transitHouse: "4", natalHouse: "4" });
     assert.equal(actual.body, expected.parts.join("\n\n"));
     assert.ok(actual.sourceKeys.includes(expected.contentKey));
     assert.deepEqual(runtime.renderTransitNatalPreview({ ...selection, transitHouse: "10", natalHouse: "8" }, runtime.transitSynastryFallbackRendererV3, voice), actual);

@@ -1,6 +1,6 @@
 import { isEligibleTransitReturn } from "../../web/src/services/transitReturns.js";
 import { fullDetailReaderFacingCopy, isReaderFacingCopy } from "../../web/src/content/readerSafety.js";
-import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity.js";
+import { isDynamicTransitNatalExactKey, transitAspectSituationKey } from "../../web/src/content/transitNatalIdentity.js";
 export const transitNatalPlanets = [
   "sun",
   "moon",
@@ -113,7 +113,7 @@ export type TransitPassageSource = {
 export type TransitPassageParagraph = { text: string; sources: TransitPassageSource[] };
 
 type TransitPreviewRenderer = {
-  renderTransitAspect: (facts: TransitNatalReadingContext & { transiting: string; natal: string; aspect: string; sign: string; voice: string }) => TransitPreviewResult;
+  renderTransitAspect: (facts: TransitNatalReadingContext & { transiting: string; natal: string; aspect: string; sign: string; voice: string; transitHouse?: string; natalHouse?: string }) => TransitPreviewResult;
   renderTransitReturn: (facts: { planet: string }) => TransitPreviewResult;
 };
 type TransitPreviewResult = { headline: string; parts: string[]; templateKey: string; contentKey?: string; sourceKeys?: string[]; paragraphSources?: TransitPassageParagraph[]; headlineSources?: TransitPassageSource[] };
@@ -124,10 +124,22 @@ export function transitNatalLabel(selection: Pick<TransitNatalSelection, "planet
 }
 
 /** Preview selection is delegated to the shipped reader resolver, never assembled in Studio. */
-export function renderTransitNatalPreview(selection: TransitNatalReadingContext & Pick<TransitNatalSelection, "planet" | "sign" | "aspect" | "natalPoint">, renderer: TransitPreviewRenderer, voice = "you") {
+export function renderTransitNatalPreview(selection: TransitNatalReadingContext & Pick<TransitNatalSelection, "planet" | "sign" | "aspect" | "natalPoint" | "transitHouse" | "natalHouse">, renderer: TransitPreviewRenderer, voice = "you") {
   const rendered = isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect)
     ? renderer.renderTransitReturn({ planet: selection.planet })
-    : renderer.renderTransitAspect({ transiting: selection.planet, natal: selection.natalPoint, aspect: selection.aspect, sign: selection.sign, voice, pass: selection.pass, variant: selection.variant, isRetrograde: selection.isRetrograde, window: selection.window });
+    : renderer.renderTransitAspect({
+      transiting: selection.planet,
+      natal: selection.natalPoint,
+      aspect: selection.aspect,
+      sign: selection.sign,
+      voice,
+      pass: selection.pass,
+      variant: selection.variant,
+      isRetrograde: selection.isRetrograde,
+      window: selection.window,
+      transitHouse: selection.transitHouse || undefined,
+      natalHouse: selection.natalHouse || undefined
+    });
   const body = fullDetailReaderFacingCopy(rendered.parts);
   if (!body || !isReaderFacingCopy(body)) throw new Error("No reader-eligible passage is available for this selection.");
   const paragraphs = rendered.paragraphSources;
@@ -144,11 +156,39 @@ export function renderTransitNatalPreview(selection: TransitNatalReadingContext 
 
 export type TransitNatalResolvedSource = { key: string; text: string };
 
-export function transitNatalExactContentKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">) {
+export function transitNatalContactContentKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">) {
   const key = isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect)
     ? `authored/transit-return/${selection.planet}`
     : `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${selection.aspect}`;
   return isDynamicTransitNatalExactKey(key) ? key : null;
+}
+
+export function transitNatalSituationContentKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect" | "sign" | "transitHouse" | "natalHouse">) {
+  const contactKey = transitNatalContactContentKey(selection);
+  if (!contactKey?.startsWith("authored/transit-aspect/")) return null;
+  const key = transitAspectSituationKey(
+    selection.planet,
+    selection.natalPoint,
+    selection.aspect,
+    selection.sign,
+    selection.transitHouse,
+    selection.natalHouse
+  );
+  return key && isDynamicTransitNatalExactKey(key) ? key : null;
+}
+
+export function transitNatalExactContentKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect"> & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>) {
+  if (selection.sign && selection.transitHouse && selection.natalHouse) {
+    return transitNatalSituationContentKey({
+      planet: selection.planet,
+      natalPoint: selection.natalPoint,
+      aspect: selection.aspect,
+      sign: selection.sign,
+      transitHouse: selection.transitHouse,
+      natalHouse: selection.natalHouse
+    }) ?? transitNatalContactContentKey(selection);
+  }
+  return transitNatalContactContentKey(selection);
 }
 
 export function transitNatalSharedFallbackKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">) {
@@ -167,7 +207,7 @@ export function transitNatalStarterCopy(source: Record<string, unknown> | null |
 
 /** New exact-key draft. Optional starter copy is the shared fallback currently shown, never labeled as that source. */
 export function transitNatalExactSourceDraft(
-  selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">,
+  selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect"> & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>,
   starter: { body_you?: string; body_they?: string } = {}
 ) {
   const contentKey = transitNatalExactContentKey(selection);
@@ -194,7 +234,15 @@ export function transitNatalExactSourceDraft(
       requiredSlots: ["aspectWord", "untilDate"], optionalSlots: ["Name"],
       reader_only: true, render_policy: "personal-transit-exact-v1", review_status: "needs_review"
     } },
-    facts: { fallbackArchitectureV3: true, transiting: selection.planet, natal: selection.natalPoint, aspect: selection.aspect },
+    facts: {
+      fallbackArchitectureV3: true,
+      transiting: selection.planet,
+      natal: selection.natalPoint,
+      aspect: selection.aspect,
+      ...(selection.sign ? { sign: selection.sign } : {}),
+      ...(selection.transitHouse ? { transitHouse: selection.transitHouse } : {}),
+      ...(selection.natalHouse ? { natalHouse: selection.natalHouse } : {})
+    },
     reviewerNotes: "Exact personal-transit source shared by Sky Placement and You Transit. Review the complete passage before publishing.",
     sourceSnapshot: { contentType: "authored-content", contentSystem: "fallback", content_role: "full_copy", review_status: "needs_review", sourcePackage: "tldrastro-fallback-architecture-v3" }
   };

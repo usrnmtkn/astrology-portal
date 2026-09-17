@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { isDynamicTransitNatalExactKey } from "../../apps/web/src/content/transitNatalIdentity.js";
+import { isDynamicTransitNatalExactKey, transitAspectSituationKey } from "../../apps/web/src/content/transitNatalIdentity.js";
 import { generateSkyArticleTemplateSlots } from "./content-generation.js";
 import { servingPackageRecords } from "./content-live-status.js";
 import { AdminHttpError, adminFetchJson, adminStorageRows } from "./admin-http.js";
@@ -36,6 +36,12 @@ export type PersonalTransitContact = {
   natalHouse?: string;
 };
 
+export type PersonalTransitPreview = {
+  sign?: string;
+  transitHouse?: string;
+  natalHouse?: string;
+};
+
 export function parsePersonalTransitContact(input: {
   transiting?: unknown; natal?: unknown; aspect?: unknown; contentKey?: unknown;
   planet?: unknown; house?: unknown; sign?: unknown; transitHouse?: unknown; natalHouse?: unknown;
@@ -49,16 +55,46 @@ export function parsePersonalTransitContact(input: {
   const natal = token(input.natal) || (parts[0] === "authored" && parts[1] === "transit-aspect" ? parts[3] : "");
   const aspect = token(input.aspect) || (parts[0] === "authored" && parts[1] === "transit-aspect" ? parts[4] : "");
   if (transiting && natal && aspect) {
-    const contentKey = `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
+    const fromKeySituation = parts.length === 8 ? parsePersonalTransitPreview({
+      sign: parts[5], transitHouse: parts[6], natalHouse: parts[7]
+    }) : {};
+    const preview = {
+      ...fromKeySituation,
+      ...parsePersonalTransitPreview(input)
+    };
+    const situationKey = transitAspectSituationKey(
+      transiting, natal, aspect, preview.sign, preview.transitHouse, preview.natalHouse
+    );
+    const contentKey = situationKey || `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
     if (!isDynamicTransitNatalExactKey(contentKey)) {
       throw new AdminHttpError(400, "Choose one exact transit-to-natal contact or House Transit passage. The writer cannot pick or change the destination.");
     }
-    return { family: "aspect", transiting, natal, aspect, contentKey };
+    return {
+      family: "aspect",
+      transiting,
+      natal,
+      aspect,
+      contentKey,
+      ...(situationKey ? { sign: preview.sign, transitHouse: preview.transitHouse, natalHouse: preview.natalHouse } : {})
+    };
   }
 
   const houseContact = parseHouseTransitParts(input.planet ?? input.transiting, input.house, input.sign);
   if (houseContact) return houseContact;
   throw new AdminHttpError(400, "Choose one exact transit-to-natal contact or House Transit passage. The writer cannot pick or change the destination.");
+}
+
+export function parsePersonalTransitPreview(input: {
+  sign?: unknown; transitHouse?: unknown; natalHouse?: unknown;
+}): PersonalTransitPreview {
+  const sign = token(input.sign);
+  const transitHouse = houseToken(input.transitHouse);
+  const natalHouse = houseToken(input.natalHouse);
+  return {
+    ...(knownSign(sign) ? { sign } : {}),
+    ...(transitHouse ? { transitHouse } : {}),
+    ...(natalHouse ? { natalHouse } : {})
+  };
 }
 
 export function exactPersonalTransitContentKeys() {
@@ -144,15 +180,17 @@ export function reviewPersonalTransitCopy(input: {
   contact: PersonalTransitContact;
   you?: string;
   friend?: string;
+  preview?: PersonalTransitPreview;
 }) {
+  const preview = input.preview ?? {};
   return {
     contentKey: input.contact.contentKey,
     checks: personalTransitReviewChecks({
       you: input.you,
       friend: input.friend,
       siblings: siblingFields(input.contact),
-      allowHouses: allowsHouses(input.contact),
-      allowSigns: allowsSigns(input.contact)
+      allowHouses: allowsHouses(input.contact) || Boolean(preview.transitHouse || preview.natalHouse),
+      allowSigns: allowsSigns(input.contact) || Boolean(preview.sign)
     })
   };
 }
@@ -244,6 +282,7 @@ export async function generatePersonalTransitAudienceDrafts(input: {
   friendText: string;
   instruction: string;
   audience: PersonalTransitAudience;
+  preview?: PersonalTransitPreview;
   provider?: GenerationProvider;
 }) {
   const studioRows = await loadStudioTransitRows([input.contact.contentKey]);
@@ -262,10 +301,19 @@ export async function generatePersonalTransitAudienceDrafts(input: {
   }
 
   const siblings = siblingFields(input.contact);
+  const preview = input.contact.family === "aspect"
+    ? {
+      ...(input.contact.sign ? { sign: input.contact.sign } : {}),
+      ...(input.contact.transitHouse ? { transitHouse: input.contact.transitHouse } : {}),
+      ...(input.contact.natalHouse ? { natalHouse: input.contact.natalHouse } : {}),
+      ...(input.preview ?? {})
+    }
+    : {};
   const memory = await personalTransitWritingMemory(input.contact);
+  const scope = placementScope(input.contact, preview);
   const slots = requested.map((audience) => audience === "you"
-    ? { name: "youDraft", description: youSlot(input.contact) }
-    : { name: "friendDraft", description: friendSlot(input.contact) });
+    ? { name: "youDraft", description: youSlot(input.contact, preview) }
+    : { name: "friendDraft", description: friendSlot(input.contact, preview) });
   const generation = await generateSkyArticleTemplateSlots({
     templateKey: input.contact.contentKey,
     templateBody: [
@@ -273,7 +321,7 @@ export async function generatePersonalTransitAudienceDrafts(input: {
       `EXISTING FRIEND COPY:\n${editorFriend.trim() || saved.friend.trim() || "(empty)"}`
     ].join("\n\n"),
     planet: title(input.contact.planet ?? input.contact.transiting ?? ""),
-    sign: input.contact.sign ?? "base",
+    sign: input.contact.sign ?? preview.sign ?? "base",
     facts: {
       schema: input.contact.family === "aspect" ? "tldrastro-personal-transit-base-v1" : "tldrastro-personal-transit-house-v1",
       family: input.contact.family,
@@ -282,11 +330,13 @@ export async function generatePersonalTransitAudienceDrafts(input: {
       aspect: input.contact.aspect,
       planet: input.contact.planet ?? input.contact.transiting,
       house: input.contact.house,
-      sign: input.contact.sign,
-      transitHouse: input.contact.transitHouse,
-      natalHouse: input.contact.natalHouse,
-      housesExcluded: !allowsHouses(input.contact),
-      signsExcluded: !allowsSigns(input.contact),
+      sign: input.contact.sign ?? preview.sign,
+      transitHouse: preview.transitHouse,
+      natalHouse: preview.natalHouse,
+      previewSituation: aspectPreviewLabel(input.contact, preview) || undefined,
+      placementScope: scope,
+      housesExcluded: !allowsHouses(input.contact) && !preview.sign && !preview.transitHouse && !preview.natalHouse,
+      signsExcluded: !allowsSigns(input.contact) && !preview.sign,
       contentKey: input.contact.contentKey
     },
     requestedSlots: slots,
@@ -296,7 +346,7 @@ export async function generatePersonalTransitAudienceDrafts(input: {
     eventType: input.contact.family === "aspect" ? "transit-aspect" : "transit-house",
     knowledgeIds: knowledgeIdsFor(input.contact),
     writingMemory: memory as NonNullable<Parameters<typeof generateSkyArticleTemplateSlots>[0]["writingMemory"]>,
-    voiceNotes: personalTransitVoiceNotes(input)
+    voiceNotes: personalTransitVoiceNotes({ ...input, preview })
   });
 
   const youDraft = requested.includes("you") ? generation.slotValues.youDraft?.trim() ?? "" : "";
@@ -314,8 +364,8 @@ export async function generatePersonalTransitAudienceDrafts(input: {
       you: youDraft || undefined,
       friend: friendDraft || undefined,
       siblings,
-      allowHouses: allowsHouses(input.contact),
-      allowSigns: allowsSigns(input.contact)
+      allowHouses: allowsHouses(input.contact) || Boolean(preview.transitHouse || preview.natalHouse),
+      allowSigns: allowsSigns(input.contact) || Boolean(preview.sign)
     }),
     memoryReceipt: generation.memoryReceipt ?? memory.receipt,
     generation: {
@@ -444,12 +494,12 @@ async function personalTransitWritingMemory(contact: PersonalTransitContact) {
   return memory;
 }
 
-function youSlot(contact: PersonalTransitContact) {
-  return `Write the You passage for ${destinationLabel(contact)}. Second person. Temporary personal transit, not a natal trait. ${placementScope(contact)} {{untilDate}} is allowed.`;
+function youSlot(contact: PersonalTransitContact, preview: PersonalTransitPreview = {}) {
+  return `Write the You passage for ${destinationLabel(contact)}. Second person. Temporary personal transit, not a natal trait. ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
 }
 
-function friendSlot(contact: PersonalTransitContact) {
-  return `Write the Friend passage for the same destination. Address the reader about {{Name}} using singular they/them. This is guidance for the person reading about their friend, not a pronoun swap of the You passage. ${placementScope(contact)} {{untilDate}} is allowed.`;
+function friendSlot(contact: PersonalTransitContact, preview: PersonalTransitPreview = {}) {
+  return `Write the Friend passage for the same destination. Address the reader about {{Name}} using singular they/them. This is guidance for the person reading about their friend, not a pronoun swap of the You passage. ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
 }
 
 function personalTransitVoiceNotes(input: {
@@ -458,13 +508,15 @@ function personalTransitVoiceNotes(input: {
   youText: string;
   friendText: string;
   audience: PersonalTransitAudience;
+  preview?: PersonalTransitPreview;
 }) {
+  const preview = input.preview ?? {};
   return [
     "TASK: Fill only the requested Personal Transit audience fields for one locked destination.",
     "This is not Sky season or planet-in-sign writing unless the locked destination is a House Transit sign passage.",
-    `LOCKED DESTINATION: ${input.contact.contentKey}. Do not change the planet, house, sign, natal point, or aspect.`,
+    `LOCKED DESTINATION: ${input.contact.contentKey}. Do not change the planet, natal point, or aspect.`,
     `REGISTER: personal transit. ${destinationLabel(input.contact)}.`,
-    placementScope(input.contact),
+    placementScope(input.contact, preview),
     "Do not save, approve, or publish. Return reader-facing prose only.",
     "Never use whether or an em dash.",
     input.instruction.trim() ? `OWNER DIRECTION:\n${input.instruction.trim()}` : "OWNER DIRECTION:\nWrite the missing audience fields for owner review.",
@@ -518,11 +570,11 @@ function houseDestination(
 }
 
 function allowsHouses(contact: PersonalTransitContact) {
-  return contact.family !== "aspect";
+  return contact.family !== "aspect" || Boolean(contact.transitHouse || contact.natalHouse);
 }
 
 function allowsSigns(contact: PersonalTransitContact) {
-  return contact.family === "house-sign";
+  return contact.family === "house-sign" || Boolean(contact.family === "aspect" && contact.sign);
 }
 
 export function knowledgeIdsFor(contact: PersonalTransitContact) {
@@ -548,10 +600,24 @@ function destinationLabel(contact: PersonalTransitContact) {
   return `${title(contact.planet ?? "")} through the ${houseOrdinal(contact.house ?? "")} house`;
 }
 
-function placementScope(contact: PersonalTransitContact) {
+function aspectPreviewLabel(contact: PersonalTransitContact, preview: PersonalTransitPreview) {
+  if (contact.family !== "aspect") return "";
+  const bits: string[] = [];
+  if (preview.sign) bits.push(`${title(contact.transiting ?? "")} currently in ${title(preview.sign)}`);
+  if (preview.transitHouse) bits.push(`transiting from the ${houseOrdinal(preview.transitHouse)} house`);
+  if (preview.natalHouse) bits.push(`natal ${title(contact.natal ?? "")} in the ${houseOrdinal(preview.natalHouse)} house`);
+  return bits.join("; ");
+}
+
+function placementScope(contact: PersonalTransitContact, preview: PersonalTransitPreview = {}) {
   if (contact.family === "house-sign") return "Name this locked planet, house, and sign. Do not invent another placement.";
   if (contact.family !== "aspect") return `Name the locked ${houseOrdinal(contact.house ?? "")} house when it explains the situation. Do not invent a sign.`;
-  return "Do not name houses or signs.";
+  const situation = aspectPreviewLabel(contact, preview);
+  if (!situation) return "Do not name houses or signs.";
+  const bans: string[] = [];
+  if (!preview.sign) bans.push("Do not invent a sign.");
+  if (!preview.transitHouse && !preview.natalHouse) bans.push("Do not invent houses.");
+  return `Use this chart situation as the scene: ${situation}. The saved destination remains ${contact.contentKey}.${bans.length ? ` ${bans.join(" ")}` : ""}`;
 }
 
 function houseToken(value: unknown) {

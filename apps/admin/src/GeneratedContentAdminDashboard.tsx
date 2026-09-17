@@ -9,7 +9,7 @@ import { getStudioTheme, saveStudioTheme } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
-import { transitNatalContactFromFields, transitNatalContactReady, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
+import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
@@ -159,6 +159,7 @@ import {
   type TransitNatalHouse,
   type TransitNatalPlanet,
   type TransitNatalPoint,
+  type TransitNatalSelection,
   type TransitNatalSign
 } from "./transitNatalSources";
 import {
@@ -2997,7 +2998,7 @@ export function GeneratedContentAdminDashboard() {
   const routeNavigationGuardRef = useRef<() => boolean>(() => true);
   const guidedReviewOpenedRef = useRef("");
   const sourceOpenRequestRef = useRef(0);
-  const openExactTransitNatalSourceRef = useRef<(selection: TransitNatalContact) => Promise<void>>(async () => {});
+  const openExactTransitNatalSourceRef = useRef<(selection: TransitNatalContact & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>) => Promise<void>>(async () => {});
   const transitExactDismissedKeyRef = useRef<string | null>(null);
   const pendingExactAiCopyRef = useRef<{ key: string; you?: string; friend?: string } | null>(null);
   const editorRef = useRef<HTMLElement | null>(null);
@@ -3614,18 +3615,27 @@ export function GeneratedContentAdminDashboard() {
     if (activePage !== "skyWriteups" || skyWriteupWorkspaceView !== "transits-to-natal") return;
     const contact = { planet: transitNatalPlanet, aspect: transitNatalAspect, natalPoint: transitNatalPoint };
     if (!transitNatalContactReady(contact)) return;
-    const key = transitNatalExactContentKey(contact);
+    const selection = {
+      ...contact,
+      ...(transitNatalSign ? { sign: transitNatalSign } : {}),
+      ...(transitNatalTransitHouse ? { transitHouse: transitNatalTransitHouse } : {}),
+      ...(transitNatalNatalHouse ? { natalHouse: transitNatalNatalHouse } : {})
+    };
+    const key = transitNatalExactContentKey(selection);
     if (!key) return;
     if (draft?.contentKey === key) return;
     if (houseTransitEditor || skyArticleEditor) return;
     if (transitExactDismissedKeyRef.current === key) return;
-    void openExactTransitNatalSourceRef.current(contact);
+    void openExactTransitNatalSourceRef.current(selection);
   }, [
     activePage,
     skyWriteupWorkspaceView,
     transitNatalPlanet,
     transitNatalAspect,
     transitNatalPoint,
+    transitNatalSign,
+    transitNatalTransitHouse,
+    transitNatalNatalHouse,
     draft,
     selectedRowId,
     houseTransitEditor,
@@ -7412,7 +7422,7 @@ export function GeneratedContentAdminDashboard() {
     scrollEditorToTop(fieldPath);
   }
 
-  async function openExactTransitNatalSource(selection: TransitNatalContact) {
+  async function openExactTransitNatalSource(selection: TransitNatalContact & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>) {
     const key = transitNatalExactContentKey(selection);
     if (!key) return;
     if (draft?.contentKey === key && (selectedRowId || draft.id || draft.body || draft.headline)) {
@@ -7431,31 +7441,38 @@ export function GeneratedContentAdminDashboard() {
       const row = payload.rows.find(candidate => candidate.content_key === key);
       if (row) { await openRow(row); return; }
       if (payload.packageSource) { await openPackagedTransitSource(payload.packageSource, key); return; }
+      const parentKey = transitNatalContactContentKey(selection);
       const sharedKey = transitNatalSharedFallbackKey(selection);
       let starter = { body_you: "", body_they: "" };
-      if (sharedKey) {
-        const sharedPayload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
-          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(sharedKey)}&limit=1&includePackageSource=true`, secret);
+      const starterKeys = [parentKey, sharedKey].filter((candidate, index, list): candidate is string => Boolean(candidate) && candidate !== key && list.indexOf(candidate) === index);
+      for (const starterKey of starterKeys) {
+        const starterPayload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
+          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(starterKey)}&limit=1&includePackageSource=true`, secret);
         if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
-        if (!Array.isArray(sharedPayload.rows) || sharedPayload.rows.some(candidate => candidate.content_key !== sharedKey)) {
+        if (!Array.isArray(starterPayload.rows) || starterPayload.rows.some(candidate => candidate.content_key !== starterKey)) {
           throw new Error("The shared fallback passage could not be verified.");
         }
-        const sharedRow = sharedPayload.rows.find(candidate => candidate.content_key === sharedKey);
-        const sharedRecord = objectRecord(objectRecord(sharedRow?.sections)?.packageRecord);
+        const starterRow = starterPayload.rows.find(candidate => candidate.content_key === starterKey);
+        const starterRecord = objectRecord(objectRecord(starterRow?.sections)?.packageRecord);
         const rowHasCopy = Boolean(
-          typeof sharedRecord?.body_you === "string" && sharedRecord.body_you.trim()
-          || typeof sharedRecord?.body === "string" && sharedRecord.body.trim()
+          typeof starterRecord?.body_you === "string" && starterRecord.body_you.trim()
+          || typeof starterRecord?.body === "string" && starterRecord.body.trim()
         );
-        starter = transitNatalStarterCopy(rowHasCopy && sharedRecord ? sharedRecord : sharedPayload.packageSource);
+        starter = transitNatalStarterCopy(rowHasCopy && starterRecord ? starterRecord : starterPayload.packageSource);
+        if (starter.body_you.trim() || starter.body_they.trim()) break;
       }
       if (!confirmSkyEditorNavigation()) return;
       setSelectedRowId(null);
       setCompositionEditorContext(null);
       const nextDraft = transitNatalExactSourceDraft(selection, starter);
       rememberSavedDraft(nextDraft);
-      setMessage(starter.body_you.trim()
+      setMessage(key.split("/").length === 8
+        ? (starter.body_you.trim()
+          ? "You and Friend below start from existing aspect writing. Save keeps a draft for this six-part situation only. Approve & publish makes it live; the three-part aspect write-up stays unchanged."
+          : "No write-up is saved for this six-part situation yet. You and Friend below are for this sign and houses only. Save keeps a draft. Approve & publish makes it live; the three-part aspect write-up stays unchanged.")
+        : (starter.body_you.trim()
         ? "You and Friend below start from the shared fallback currently in the preview. Save keeps a draft for this aspect only. Approve & publish makes it live; the shared source stays unchanged."
-        : "No write-up is saved for this contact yet. You and Friend below are for this aspect only. Save keeps a draft. Approve & publish makes it live; shared fallback writing stays unchanged.");
+        : "No write-up is saved for this contact yet. You and Friend below are for this aspect only. Save keeps a draft. Approve & publish makes it live; shared fallback writing stays unchanged."));
       scrollEditorToTop();
     } catch (error) {
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
@@ -7476,7 +7493,13 @@ export function GeneratedContentAdminDashboard() {
   function renderTransitNatalSourceFinder() {
     const contact = transitNatalContactFromFields(transitNatalPlanet, transitNatalAspect, transitNatalPoint);
     const contactReady = Boolean(contact);
-    const exactKey = contact ? transitNatalExactContentKey(contact) : null;
+    const exactSelection = contact ? {
+      ...contact,
+      ...(transitNatalSign ? { sign: transitNatalSign } : {}),
+      ...(transitNatalTransitHouse ? { transitHouse: transitNatalTransitHouse } : {}),
+      ...(transitNatalNatalHouse ? { natalHouse: transitNatalNatalHouse } : {})
+    } : null;
+    const exactKey = exactSelection ? transitNatalExactContentKey(exactSelection) : null;
     const previewReady = Boolean(contactReady && transitNatalSign);
     const selection = previewReady && contact ? {
       ...transitReadingContext,
@@ -7493,8 +7516,8 @@ export function GeneratedContentAdminDashboard() {
             <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Active for {{Name}}" : "Personal Transits workspace"}</p>
             <h3>{contact ? transitNatalLabel(contact) : "Find a Personal Transit write-up"}</h3>
             <p>{friendsTransitAudience
-              ? "This is the editor for Friends > Transits > Active for {{Name}}. Choose transiting planet, aspect, and natal planet or chart point. The Friend and You fields for that exact contact open here. Sign and houses are optional preview context."
-              : "Choose transiting planet, aspect, and natal planet or chart point, including Ascendant and Midheaven. The You and Friend fields for that exact contact open here. Sign and houses are optional preview context. Shared fallback writing is a separate advanced edit."}</p>
+              ? "This is the editor for Friends > Transits > Active for {{Name}}. Choose transiting planet, aspect, and natal planet or chart point. Fill current sign and both houses to save a six-part situation. Leave 4-6 blank to save the three-part aspect only."
+              : "Choose transiting planet, aspect, and natal planet or chart point, including Ascendant and Midheaven. Fill current sign and both houses to save a six-part situation. Leave 4-6 blank to save the three-part aspect only. Shared fallback writing is a separate advanced edit."}</p>
             <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
           </div>
           {exactKey && <code>{exactKey}</code>}
@@ -7525,42 +7548,45 @@ export function GeneratedContentAdminDashboard() {
           <label>
             <span>4. Current sign</span>
             <AdminSelect aria-label="Transit zodiac sign" value={transitNatalSign} onChange={(event) => updateTransitNatalSelection({ sign: event.target.value as TransitNatalSign | "" })}>
-              <option value="">Optional preview sign</option>
+              <option value="">Leave blank to omit from this draft</option>
               {transitNatalSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
             </AdminSelect>
           </label>
           <label>
             <span>5. Transit house</span>
             <AdminSelect aria-label="Transit house" value={transitNatalTransitHouse} onChange={(event) => updateTransitNatalSelection({ transitHouse: event.target.value as TransitNatalHouse | "" })}>
-              <option value="">Optional preview house</option>
+              <option value="">Leave blank to omit from this draft</option>
               {transitNatalHouses.map((house) => <option value={house} key={house}>{house}</option>)}
             </AdminSelect>
           </label>
           <label>
             <span>6. Natal house</span>
             <AdminSelect aria-label="Natal point house" value={transitNatalNatalHouse} onChange={(event) => updateTransitNatalSelection({ natalHouse: event.target.value as TransitNatalHouse | "" })}>
-              <option value="">Optional preview house</option>
+              <option value="">Leave blank to omit from this draft</option>
               {transitNatalHouses.map((house) => <option value={house} key={house}>{house}</option>)}
             </AdminSelect>
           </label>
         </div>
 
-        {exactKey && contact && <Suspense fallback={<PageLoading compact message="Opening this transit…" />}><TransitNatalExactSourceAction
+        {exactKey && exactSelection && contact && <Suspense fallback={<PageLoading compact message="Opening this transit…" />}><TransitNatalExactSourceAction
           contentKey={exactKey}
           title={transitNatalLabel(contact)}
           transiting={contact.planet}
           natal={contact.natalPoint}
           aspect={contact.aspect}
+          sign={transitNatalSign}
+          transitHouse={transitNatalTransitHouse}
+          natalHouse={transitNatalNatalHouse}
           secret={secret}
           disabled={isLoading}
-          onOpen={() => void openExactTransitNatalSource(contact)}
+          onOpen={() => void openExactTransitNatalSource(exactSelection)}
           onUseYou={(text) => {
             pendingExactAiCopyRef.current = { key: exactKey, ...(pendingExactAiCopyRef.current?.key === exactKey ? pendingExactAiCopyRef.current : {}), you: text };
-            void openExactTransitNatalSource(contact);
+            void openExactTransitNatalSource(exactSelection);
           }}
           onUseFriend={(text) => {
             pendingExactAiCopyRef.current = { key: exactKey, ...(pendingExactAiCopyRef.current?.key === exactKey ? pendingExactAiCopyRef.current : {}), friend: text };
-            void openExactTransitNatalSource(contact);
+            void openExactTransitNatalSource(exactSelection);
           }}
           onOpenNext={(next) => updateTransitNatalSelection({
             planet: next.transiting as TransitNatalPlanet,
@@ -10120,6 +10146,9 @@ export function GeneratedContentAdminDashboard() {
             transiting={currentDraft.contentKey.split("/")[2] ?? ""}
             natal={currentDraft.contentKey.split("/")[3] ?? ""}
             aspect={currentDraft.contentKey.split("/")[4] ?? ""}
+            sign={transitNatalSign}
+            transitHouse={transitNatalTransitHouse}
+            natalHouse={transitNatalNatalHouse}
             contentKey={currentDraft.contentKey}
             youText={packageFieldString(currentDraft, "body_you")}
             friendText={packageFieldString(currentDraft, "body_they")}

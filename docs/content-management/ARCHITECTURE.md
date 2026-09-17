@@ -223,6 +223,7 @@ Keys encode the narrowest stable selection facts:
 
 ```text
 authored/transit-aspect/{transiting}/{natal}/{aspect}
+authored/transit-aspect/{transiting}/{natal}/{aspect}/{sign}/{transitHouse}/{natalHouse}
 authored/transit-house-sign/{planet}/{house}/{sign}
 authored/compat-pair/{planet}/{reader-sign}/{other-sign}
 
@@ -237,7 +238,8 @@ fallback-vocab/planet-function/{planet}
 ```
 
 Do not encode a moving fact in a key unless the resolver derives that key from
-the event-time fact object.
+the event-time fact object. The six-part transit-aspect key is derived from the
+transiting sign plus both houses at event time.
 
 ## 7. Resolution
 
