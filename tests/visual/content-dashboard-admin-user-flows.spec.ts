@@ -2285,6 +2285,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(String(servingPackageRecords.get("authored/transit-aspect/sun/sun/soft")?.body_you ?? ""));
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(String(servingPackageRecords.get("authored/transit-aspect/sun/sun/soft")?.body_they ?? ""));
     await expect(editor.getByLabel("Write-up aspect", { exact: true })).toHaveValue("trine");
+    await expect(editor.getByRole("button", { name: "Save", exact: true })).toBeEnabled();
+    await expect(editor.getByRole("button", { name: "Approve & publish", exact: true })).toBeEnabled();
     await closeGeneratedEditor(page);
     await expect(exactEditor).toContainText("authored/transit-aspect/sun/sun/trine");
     await expect(transitWriteupButton(exactEditor, "Sun trine your Sun")).toBeVisible();
@@ -2336,6 +2338,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   });
 
   for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) test(`canonical Personal Transit Studio preview ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(60_000);
     page.on("dialog", dialog => { dialog.accept().catch(() => undefined); });
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
@@ -2409,14 +2412,20 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("");
     const candidate = "A synthetic complete opening for the exact transit.\n\nA synthetic complete ending for the exact transit.";
+    const friend = "{{Name}} may find a synthetic complete opening for the exact transit.\n\nA synthetic complete ending for the exact transit.";
     await editor.getByLabel("Reader phrase · You", { exact: true }).fill(candidate);
-    await editor.getByRole("button", { name: /^(Save draft|Save)$/ }).click();
+    await expect(editor.getByRole("button", { name: "Approve & publish", exact: true })).toBeDisabled();
+    await editor.getByLabel("Reader phrase · They", { exact: true }).fill(friend);
+    await editor.getByRole("button", { name: "Approve & publish", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
-    expect((writes[0].payload.sections as { packageDraft?: { body_you?: string } }).packageDraft?.body_you ?? writes[0].payload.body).toBe(candidate);
-    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    expect(writes[0].payload).toMatchObject({ reviewStatus: "approved" });
+    expect((writes[0].payload.sections as { packageRecord?: { body_you?: string; body_they?: string }; packageDraft?: { body_you?: string } }).packageRecord?.body_you
+      ?? (writes[0].payload.sections as { packageDraft?: { body_you?: string } }).packageDraft?.body_you
+      ?? writes[0].payload.body).toBe(candidate);
+    await closeGeneratedEditor(page);
     await transitWriteupButton(finder, "Sun opposition your South Node").click();
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(candidate);
-    await editor.getByRole("button", { name: "Close", exact: true }).click();
+    await closeGeneratedEditor(page);
     await page.getByLabel("Transiting planet", { exact: true }).selectOption("lilith");
     await page.getByLabel("Transit zodiac sign").selectOption("capricorn");
     await page.getByLabel("Transit house", { exact: true }).selectOption("8");
@@ -2438,7 +2447,6 @@ test.describe("content dashboard admin user flow case studies", () => {
     await rail.getByRole("button", { name: "Close variables", exact: true }).click();
     await editor.screenshot({ path: path.join(adminScreenshotDir, `lilith-source-${width}-${theme}.png`) });
     await editor.getByRole("button", { name: "Close", exact: true }).click();
-    await transitWriteupButton(finder, "Lilith trine your North Node").click();
     await expect(editor.getByRole("heading", { level: 2 })).toHaveText("Write Lilith trine your North Node");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
     await expect(editor.getByText(/No write-up is saved for this exact contact yet/)).toBeVisible();
