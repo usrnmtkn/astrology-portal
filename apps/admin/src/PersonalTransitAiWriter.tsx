@@ -219,6 +219,9 @@ function destinationLabel(input: {
   if (input.contentKey.startsWith("authored/transit-house")) {
     return `${title(input.planet || input.transiting)} through the ${houseOrdinal(input.house)} house`;
   }
+  if (input.contentKey.startsWith("authored/transit-return/")) {
+    return `${title(input.transiting || input.contentKey.split("/")[2] || "this")} return`;
+  }
   const situation = [
     input.sign ? `currently in ${title(input.sign)}` : "",
     input.transitHouse ? `from the ${houseOrdinal(input.transitHouse)} house` : "",
