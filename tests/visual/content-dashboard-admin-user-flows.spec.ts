@@ -2284,6 +2284,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/sun/trine");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("");
+    await expect(editor.getByLabel("Write-up aspect", { exact: true })).toHaveValue("trine");
     await closeGeneratedEditor(page);
     await expect(exactEditor).toContainText("authored/transit-aspect/sun/sun/trine");
     await expect(transitWriteupButton(exactEditor, "Sun trine your Sun")).toBeVisible();

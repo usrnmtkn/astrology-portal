@@ -6926,6 +6926,13 @@ body,
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
+.admin-dashboard .admin-transit-finder > .admin-natal-placement-selectors {
+  background: var(--admin-ui-surface);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .admin-dashboard .admin-natal-placement-selectors label {
   display: grid;
   gap: var(--admin-space-7);

@@ -9316,6 +9316,31 @@ export function GeneratedContentAdminDashboard() {
           {hasTransitTemplatePreviewContext && (
             <div className="admin-editor-guidance" aria-label="Selected transit context">
               <p>Selected transit: {titleFromKey(transitNatalPlanet)} in {titleFromKey(transitNatalSign)}{transitNatalTransitHouse ? `, ${ordinalHouse(transitNatalTransitHouse)} house` : ""}, {transitNatalAspect} natal {titleFromKey(transitNatalPoint)}{transitNatalNatalHouse ? `, ${ordinalHouse(transitNatalNatalHouse)} house` : ""}.</p>
+              <fieldset className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three" aria-label="Write-up contact">
+                <legend className="sr-only">Write-up contact</legend>
+                <label>
+                  <span>Transiting planet</span>
+                  <AdminSelect aria-label="Write-up transiting planet" value={transitNatalPlanet} onChange={(event) => updateTransitNatalSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
+                    <option value="">Choose transiting planet</option>
+                    {transitNatalPlanets.map((planet) => <option value={planet} key={planet}>{titleFromKey(planet)}</option>)}
+                  </AdminSelect>
+                </label>
+                <label>
+                  <span>Aspect</span>
+                  <AdminSelect aria-label="Write-up aspect" value={transitNatalAspect} onChange={(event) => updateTransitNatalSelection({ aspect: event.target.value as TransitNatalAspect | "" })}>
+                    <option value="">Choose aspect</option>
+                    {(transitNatalPoint === "lilith" ? ["conjunction", "opposition"] : transitNatalAspects).map((aspect) => <option value={aspect} key={aspect}>{titleFromKey(aspect)}</option>)}
+                  </AdminSelect>
+                </label>
+                <label>
+                  <span>Natal planet or point</span>
+                  <AdminSelect aria-label="Write-up natal planet or point" value={transitNatalPoint} onChange={(event) => updateTransitNatalSelection({ natalPoint: event.target.value as TransitNatalPoint | "" })}>
+                    <option value="">Choose natal planet or point</option>
+                    {transitNatalPoints.map((point) => <option value={point} key={point}>{titleFromKey(point)}</option>)}
+                  </AdminSelect>
+                </label>
+              </fieldset>
+              <p className="admin-field-hint">Changing planet, aspect, or natal point opens that contact&apos;s You and Friend fields. Insert <code>{"{{aspectWord}}"}</code> and <code>{"{{untilDate}}"}</code> where the calculated aspect and window belong. Sign and house stay on the page behind this editor; they do not change this write-up.</p>
               <p>{isNewDraft && isAuthoredTransitAspectDraft && !currentDraft.sections?.packageOriginalRecord
                 ? "No write-up is saved for this exact contact yet. You and Friend below are for this aspect only. Shared fallback writing is unchanged until you review and publish this passage."
                 : isAuthoredTransitAspectDraft
@@ -10697,7 +10722,11 @@ export function GeneratedContentAdminDashboard() {
               exampleValues: {
                 transitTitle: titleFromKey(transitNatalPlanet), natalTitle: titleFromKey(transitNatalPoint),
                 transitRef: `${titleFromKey(transitNatalPlanet)} in ${titleFromKey(transitNatalSign)}`,
-                aspectName: transitNatalAspect, signTitle: titleFromKey(transitNatalSign),
+                aspectName: transitNatalAspect,
+                aspectWord: transitNatalAspect === "conjunction" ? "conjunct" : transitNatalAspect === "opposition" ? "opposite" : transitNatalAspect,
+                untilDate: (transitReadingContext.window ?? "September 30").replace(/^until\s+/iu, ""),
+                Name: "{{Name}}",
+                signTitle: titleFromKey(transitNatalSign),
                 timeOpen: transitReadingContext.window ?? "Currently", timeInline: transitReadingContext.window ?? "currently", otherPoss: "{{Name}}'s"
               }
             } : natalTemplatePreviewOptions}

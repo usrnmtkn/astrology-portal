@@ -162,3 +162,12 @@ for (const period of ["daily", "weekly", "monthly"]) {
     assert.equal(reference.sourceKind, "saved-copy");
   }
 }
+
+const emptyTransit = templateVariableReferences({ body_you: "", body_they: "" }, {
+  contentKey: "authored/transit-aspect/sun/mercury/square"
+}, true);
+for (const name of ["aspectWord", "untilDate", "Name"]) {
+  const reference = emptyTransit.find(field => field.name === name);
+  assert(reference, `Empty exact transit drafts expose {{${name}}} for insertion.`);
+}
+assert.equal(emptyTransit.find(field => field.name === "aspectWord")?.source, "Calculated transit fact");
