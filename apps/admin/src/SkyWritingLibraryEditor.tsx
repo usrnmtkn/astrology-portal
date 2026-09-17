@@ -1,3 +1,5 @@
+// @ts-ignore Shared deterministic dignity resolution and explicit draft migration.
+import { placementDignityForSource, migrateLegacyDignityComposition } from "../../web/src/content/fallbackArchitectureV3/resolver/placementDignityMeaning.mjs";
 import { zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { useEffect, useRef, useState } from "react";
 import { StudioButton, StudioTextarea } from "./StudioControls";
@@ -62,6 +64,26 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
     return () => cancelAnimationFrame(frame);
   }, [installed, initialSourceId]);
 
+  const dignity = placementDignityForSource({ contentKey }, { planet, sign });
+  const legacyDignity = workingComposition.sources.dignitySentence;
+  const hasLegacyDignity = Boolean(legacyDignity?.reference || legacyDignity?.text?.trim());
+  function migrateDignity() {
+    if (disabled) return;
+    try {
+      onChange(migrateLegacyDignityComposition(workingComposition, { contentKey }));
+      setSeedStatus("Saved dignity wording copied exactly to placementDignityMeaning in this draft. The legacy source remains intact. Save and publication are separate actions.");
+    } catch (reason) {
+      setSeedStatus(reason instanceof Error ? reason.message : "Dignity migration could not be completed.");
+    }
+  }
+  const dignityDetails = <div className="admin-editor-guidance" data-testid="placement-dignity-selection">
+    <p>Calculated dignity: <code>{dignity.status === "known" ? dignity.dignities.join(" and ") || "no major sign condition" : dignity.status === "not_applicable" ? "not applicable" : "invalid placement"}</code></p>
+    <p>{dignity.status === "known" && dignity.variant !== "none"
+      ? "The selected planet and sign choose the paragraph variation. Complete the placement-specific fields below, or preserve a complete authored paragraph. No AI chooses the condition or fills missing writing."
+      : dignity.reason || "This pairing has no domicile, exaltation, detriment, or fall. The dignity paragraph is omitted; this is not a peregrine calculation."}</p>
+    {hasLegacyDignity && <StudioButton type="button" disabled={disabled} onClick={migrateDignity}>Migrate saved dignity paragraph</StudioButton>}
+  </div>;
+
   async function fillFromGovernedSources() {
     if (disabled || seeding) return;
     setSeeding(true);
@@ -102,6 +124,8 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
         <h4>{initialField.label} <code>{`{{${initialSourceId}}}`}</code></h4>
         <p>{initialField.description}</p>
       </header>
+      {initialSourceId.startsWith("placementDignity") && dignityDetails}
+      {seedStatus && <p role="status">{seedStatus}</p>}
       <label className="admin-review-copy-editor">
         <span>{initialField.label}</span>
         {reference ? <>
@@ -151,6 +175,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
     {SKY_WRITING_LIBRARY_GROUPS.map((group, groupIndex) => <details className="admin-workspace-details" key={group.id} open={groupIndex < 3 || undefined}>
       <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary>
       <p>{group.description}</p>
+      {group.id === "placement" && dignityDetails}
       {group.id === "experiences" && <p>An experience can live in the library without appearing in reader copy. Include only manifestations that genuinely belong in this article.</p>}
       <div className="admin-review-stack">
         {group.fields.map(item => {

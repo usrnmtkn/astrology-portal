@@ -1,0 +1,50 @@
+name: Placement dignity contracts
+
+on:
+  pull_request:
+    paths:
+      - 'apps/web/src/services/planetSignDignity*'
+      - 'apps/web/src/components/charts/PlacementRows.tsx'
+      - 'apps/web/src/content/fallbackArchitectureV3/**'
+      - 'apps/admin/src/SkyWritingLibraryEditor.tsx'
+      - 'scripts/test-*dignity*'
+      - 'scripts/test-sky-placement-studio-api.mts'
+      - '.github/workflows/placement-dignity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: placement-dignity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dignity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:placement-dignity
+      - name: Verify generated package and shared variable directory
+        run: |
+          node scripts/generate-fallback-package-manifest.mjs --check
+          npm run test:studio-variables
+      - name: Verify actual save/publication and installed reader path
+        run: node --import tsx scripts/test-sky-placement-studio-api.mts
+      - run: npm run qa:css-audit
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:placement-dignity-editor
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: placement-dignity-editor
+          path: test-results/placement-dignity-editor/
+          retention-days: 7
