@@ -11,6 +11,7 @@ import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalExactContentKey, transitNatalExactSourceDraft } from "./transitNatalSources";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
+import { skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
 import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
@@ -187,6 +188,7 @@ const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPre
 const ImportedArticleHoroscopesEditor = lazy(() => import("./ImportedArticleHoroscopesEditor"));
 const StudioEditorReviewPanels = lazy(() => import('./StudioEditorReviewPanels'));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
+const SkyDebilityStudio = lazy(() => import("./SkyDebilityStudio").then(module => ({ default: module.SkyDebilityStudio })));
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const SkyPlacementComposition = lazy(() => import("./SkyPlacementComposition"));
@@ -5589,7 +5591,8 @@ export function GeneratedContentAdminDashboard() {
           blockType: "essay", promptVersion: "cms-surface-template-v1", sections: null, facts: null, reviewerNotes: "",
           sourceSnapshot: {
             contentType: "mustache-template", contentSystem: "cms-surface-override", contentLevel: "owner-authored",
-            authoringSource: "admin-dashboard", cmsSurfaceId: "sky-daily-summary", readerLocation: "Sky → Daily Sky Summary; Calendar → Sun introduction",
+            authoringSource: "admin-dashboard", cmsSurfaceId: field.key.startsWith("cms/sky-debility/") ? "sky-debility-card" : "sky-daily-summary",
+            readerLocation: field.key.startsWith("cms/sky-debility/") ? "Sky → Without their tools card" : "Sky → Daily Sky Summary; Calendar → Sun introduction",
             allowedSlots: field.allowedSlots,
             ...(initialBody !== undefined && candidateReceipt ? { suppliedBank: candidateReceipt } : {}),
             ...(moonSource ? { moonSource, sourceAttachment: "daily-sky-summary-moon-system-v6-owner-phrases-audited.md" } : {}),
@@ -6396,6 +6399,9 @@ export function GeneratedContentAdminDashboard() {
               <>
                 <Suspense fallback={<PageLoading message="Loading Daily Sky Summary editor…" />}>
                   <SkyDailySummaryStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} />
+                </Suspense>
+                <Suspense fallback={<PageLoading message="Loading Without their tools editor…" />}>
+                  <SkyDebilityStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} />
                 </Suspense>
                 {renderEditor()}
               </>
@@ -8632,8 +8638,9 @@ export function GeneratedContentAdminDashboard() {
     const skyArticleChanges = skyArticleEditor
       ? skyArticleEditionFieldChanges(skyArticleEditor.baseEdition, skyArticleEditor.fields)
       : [];
-    const isSkySummaryDraft = currentDraft.contentKey.startsWith("cms/sky-daily-summary/");
-    const summaryBuiltin = skyDailySummaryFields.find(field => field.key === currentDraft.contentKey);
+    const isSkySummaryDraft = currentDraft.contentKey.startsWith("cms/sky-daily-summary/")
+      || currentDraft.contentKey.startsWith("cms/sky-debility/");
+    const summaryBuiltin = [...skyDailySummaryFields, ...skyDebilityFields].find(field => field.key === currentDraft.contentKey);
     const matchesBuiltinSummary = Boolean(summaryBuiltin?.body && currentDraft.body.trim() === summaryBuiltin.body.trim());
     const editorStatusRow = { id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : selectedRow?.id.startsWith("package:") ? selectedRow.id : null), updated_at: currentDraft.updatedAt };
     const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override" || currentDraft.contentKey.startsWith("cms/");
@@ -8647,6 +8654,7 @@ export function GeneratedContentAdminDashboard() {
       body: currentDraft.body
     });
     cmsTemplateValidation.errors.push(...skySummaryTemplateErrors(currentDraft.contentKey, currentDraft.body));
+    cmsTemplateValidation.errors.push(...skyDebilityTemplateErrors(currentDraft.contentKey, currentDraft.body));
     const cmsCanSignOff = !isCmsSurfaceDraft || cmsTemplateValidation.errors.length === 0;
     const cmsReaderEligible = isCmsSurfaceDraft
       && currentDraft.status === "LIVE"

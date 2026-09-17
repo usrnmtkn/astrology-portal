@@ -276,6 +276,22 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     ]
   },
   {
+    id: "sky-debility-card",
+    surface: "Sky: Without Their Tools",
+    area: "Sky",
+    status: "normalized",
+    requiredSlots: ["count", "total", "planetWord"],
+    visibleLayerOrder: ["source-grounded"],
+    currentRenderPath: "The Sky summary card counts traditional planets in detriment or fall from calculated placements, then fills reviewed CMS templates for the title and body. Bundled wording serves until a LIVE override is published.",
+    risk: "Planet names, signs, and counts are calculated. Editors may change surrounding wording only and must keep {count}, {total}, and {planetWord} as slots where those facts appear.",
+    nextAction: "Edit the Without their tools templates in Sky Write-ups, then Save and publish.",
+    sources: [
+      { label: "SkyDebilityCard.tsx", path: "apps/web/src/features/sky/SkyDebilityCard.tsx", role: "renderer" },
+      { label: "skyDebilityCatalog.ts", path: "apps/web/src/content/skyDebilityCatalog.ts", role: "source-grounded" },
+      { label: "cmsSurfaceOverrides.ts", path: "apps/web/src/content/cmsSurfaceOverrides.ts", role: "stored-source" }
+    ]
+  },
+  {
     id: "personal-transit-detail",
     surface: "Personal Transit Detail Pages",
     area: "Transits",
@@ -554,6 +570,18 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
       surface: "sky",
       headline: "Retrogrades",
       allowedSlots: ["count", "planetList", "personalCount", "personalPlanetList"]
+    }]
+  },
+  "sky-debility-card": {
+    readerLocation: "Sky > Without their tools card",
+    editability: "editable",
+    routes: [{ label: "Edit Without their tools", hash: "#sky-writeups?view=daily-summary", purpose: "reader-copy", note: "Opens the Sky Write-ups templates for the card under The sky today." }],
+    cmsStarters: [{
+      label: "Start Without their tools template",
+      contentKey: "cms/sky-debility/many",
+      surface: "sky",
+      headline: "Several debilitated planets",
+      allowedSlots: ["count", "total", "planetWord"]
     }]
   },
   "personal-transit-detail": {

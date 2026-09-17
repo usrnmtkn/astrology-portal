@@ -68,6 +68,7 @@ for (const surface of writingSurfaceSourceMap.filter((candidate) => candidate.ar
 
 const cmsSurfaceIds = [
   "sky-retrograde-summary",
+  "sky-debility-card",
   "sky-calendar-day-cards",
   "sky-horoscopes",
   "chart-placement-row-microcopy",
@@ -100,7 +101,8 @@ const requiredCmsStarterKeys = [
   "cms/natal-empty-house/detail/they/template",
   "cms/personal-transit-house/you/template",
   "cms/personal-transit-house/they/template",
-  "cms/sky-retrograde-summary"
+  "cms/sky-retrograde-summary",
+  "cms/sky-debility/many"
 ];
 const cmsStarterKeys = new Set(Object.values(writingSurfaceAdminAccess).flatMap((access) => access.cmsStarters?.map((starter) => starter.contentKey) ?? []));
 for (const contentKey of requiredCmsStarterKeys) {
@@ -198,5 +200,7 @@ for (const [label, source] of [
 assert.match(appSource, /subscribeToContentUpdates/u, "The reader app must refresh when Content Studio publishes or demotes a row.");
 assert.doesNotMatch(appSource, /void generatedContent;[\s\S]{0,300}retrogradeSummaryFallback/u, "The Sky retrograde summary must not ignore Content Studio content.");
 assert.match(appSource, /cmsSurfaceKeys\.retrogradeSummary\(\)/u, "The Sky retrograde summary must resolve its governed CMS surface.");
+assert.match(appSource, /cmsSurfaceKeys\.skyDebility\(\)/u, "The Sky Without their tools card must load its governed CMS templates.");
+assert.match(appSource, /SkyDebilityCard/u, "The Sky Without their tools card must render under The sky today.");
 
 console.log(`Admin writing surface map passed: ${surfaceIds.size} writing surfaces and systems have explicit editorial status.`);

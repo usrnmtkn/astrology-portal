@@ -15,6 +15,7 @@ export const compositionSurfaceFamilies: Record<string, RegExp> = {
   "sky-placement-detail": /^(?:authored\/sky-placement|sky-placement\/|sky[.]placement[.]|sky\/article-|sky-context\/|sky-nodes\/|sky-lilith\/|fallback-template\/sky-placement|fallback-hook\/(?:sky-placement|sky-sign-copy|sky-sign-trap|sky-element-close|sky-planet-education|fog-note))/,
   "sky-aspect-detail": /^(?:authored\/sky-aspect|sky[.]|fallback-template\/sky[.]aspect|fallback-hook\/sky-aspect)/,
   "sky-retrograde-summary": /^(?:cms\/sky-retrograde-summary|fallback-template\/transit[.]retro|fallback-hook\/transit-retro)/,
+  "sky-debility-card": /^cms\/sky-debility/,
   "personal-transit-detail": /^(?:authored\/transit-(?:aspect|return)\/|transit\/|fallback-template\/transit[.]aspect|fallback-hook\/(?:transit-aspect-type|transit-effect|transit-retro-aspect|transit-house-event-(?:wants|natal|scenes)))/,
   "sky-daily-timing": /^(?:daily-timing\/|fallback-template\/daily|fallback-hook\/daily-)/,
   "daily-at-a-glance": /^fallback-(?:hook|template)\/daily(?:[./-]|$)/,

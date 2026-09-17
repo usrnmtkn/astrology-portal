@@ -19,6 +19,15 @@ function keyPart(value: string | number | null | undefined) {
 
 export const cmsSurfaceKeys = {
   retrogradeSummary: () => ["cms/sky-retrograde-summary"],
+  skyDebility: () => [
+    "cms/sky-debility/titleLead",
+    "cms/sky-debility/titleSoft",
+    "cms/sky-debility/countLabel",
+    "cms/sky-debility/countUnit",
+    "cms/sky-debility/none",
+    "cms/sky-debility/one",
+    "cms/sky-debility/many"
+  ],
   soulRoadmap: (sun: string, moon: string, path: string) => [
     `cms/soul-roadmap/${keyPart(sun)}/${keyPart(moon)}/${keyPart(path)}`,
     "cms/soul-roadmap/template"
