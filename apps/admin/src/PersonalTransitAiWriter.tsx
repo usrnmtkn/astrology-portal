@@ -145,6 +145,7 @@ export default function PersonalTransitAiWriter({
         disabled={disabled || busy}
         maxLength={6000}
         rows={4}
+        className="admin-ai-writing-instruction"
         placeholder="Keep the opening; make the advice more specific. Leave blank to fill only the missing audience."
         onChange={(event) => setInstruction(event.target.value)}
       />
