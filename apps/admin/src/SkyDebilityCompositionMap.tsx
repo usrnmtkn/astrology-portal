@@ -26,11 +26,18 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
   const [variable, setVariable] = useState<string | null>(null);
   const { copy } = composition;
   const body = (name: string) => read(skyDebilityTemplateKey(name)) ?? "";
-  const editLink = (key: string, text: ReactNode, phrase = false) => <a
-    href={`#exact-content?q=${encodeURIComponent(key)}`} aria-disabled={busy} tabIndex={busy ? -1 : 0}
-    className={phrase ? "admin-composition-variable admin-template-reader-variable variable-copy" : "admin-summary-template-words"}
-    aria-label={`Edit ${skyDebilityField(key)?.label ?? key}`} title={skyDebilityField(key)?.label ?? key}
-    data-source-key={key} onClick={event => { event.preventDefault(); if (!busy) onSelectSource(key); }}>{text}</a>;
+  const editLink = (key: string, text: ReactNode, phrase = false) => {
+    if (typeof text === "string" && !text.trim()) return text;
+    const label = `Edit ${skyDebilityField(key)?.label ?? key}`;
+    if (!phrase) return <span role="button" tabIndex={busy ? -1 : 0} aria-disabled={busy}
+      className="admin-summary-template-words" aria-label={label} title={skyDebilityField(key)?.label ?? key}
+      data-source-key={key} onClick={() => { if (!busy) onSelectSource(key); }}
+      onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); if (!busy) onSelectSource(key); } }}>{text}</span>;
+    return <a href={`#exact-content?q=${encodeURIComponent(key)}`} aria-disabled={busy} tabIndex={busy ? -1 : 0}
+      className="admin-composition-variable admin-template-reader-variable variable-copy"
+      aria-label={label} title={skyDebilityField(key)?.label ?? key} data-source-key={key}
+      onClick={event => { event.preventDefault(); if (!busy) onSelectSource(key); }}>{text}</a>;
+  };
   function mapped(parts: readonly SkyDebilityMappedPart[]) {
     return parts.map((part, index) => <Fragment key={index}>{part.sourceKey
       ? editLink(part.sourceKey, part.text, part.kind === "phrase")
