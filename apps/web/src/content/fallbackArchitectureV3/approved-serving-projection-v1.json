@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-09-17-transit-exact-isolation",
+  "packageVersion": "v3-2026-09-17-transit-situation-exact",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "210bff5f4fb34e849fbfa3cc60937f47b449dceb0d25fb546382e866e82ceff9",
+    "sha256": "9a5407ba81c3b00b02f89b18ab80ade6abe6d230f775a21045e0d65e7e4f6db1",
     "count": 9806,
     "emissionCount": 9882,
     "exactSourceMatchCount": 8764

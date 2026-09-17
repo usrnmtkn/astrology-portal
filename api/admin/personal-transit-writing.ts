@@ -13,6 +13,7 @@ import {
   generatePersonalTransitAudienceDrafts,
   nextMissingPersonalTransitWriteup,
   parsePersonalTransitContact,
+  parsePersonalTransitPreview,
   reviewPersonalTransitCopy,
   type PersonalTransitAudience
 } from "../_lib/personal-transit-writing.js";
@@ -60,6 +61,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     const youText = typeof body.youText === "string" ? body.youText : "";
     const friendText = typeof body.friendText === "string" ? body.friendText : "";
+    const preview = parsePersonalTransitPreview(body);
     if (action === "recheck") {
       return sendAdminJson(res, 200, {
         ok: true,
@@ -70,7 +72,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         ...reviewPersonalTransitCopy({
           contact: parsePersonalTransitContact(body),
           you: youText,
-          friend: friendText
+          friend: friendText,
+          preview
         })
       });
     }
@@ -92,6 +95,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       friendText,
       instruction,
       audience,
+      preview,
       provider: body.provider === "anthropic" ? "claude" : body.provider
     });
 

@@ -471,6 +471,7 @@ export type TransitItem = {
   natalPoint: string;
   natalSign: string;
   natalHouse?: number;
+  transitHouse?: number;
   orb: string;
   direction?: TransitDirection;
   currentSpeed?: number;
@@ -5928,6 +5929,7 @@ function buildNatalTransitItems(transitPositions: PlanetPosition[], natalPositio
         natalPoint: natalPosition.planet,
         natalSign: natalPosition.sign,
         natalHouse: natalPosition.house,
+        transitHouse: transitPosition.house,
         orb: formatOrb(aspect.orbValue),
         direction: geometry.direction,
         currentSpeed: typeof transitPosition.speed === "number" ? transitPosition.speed : undefined,
@@ -7753,6 +7755,8 @@ function personalTransitPackageContentKey(transit: TransitItem, generatedAt: str
         : undefined,
       sign: transit.transitSign ? normalizeContentIdPart(transit.transitSign) : undefined,
       transiting: normalizeContentIdPart(transit.transitPlanet),
+      transitHouse: transit.transitHouse,
+      natalHouse: transit.natalHouse,
       window: personalTransitPackageWindow(transit, generatedAt)
     });
 
@@ -7882,6 +7886,8 @@ function personalTransitPackageSection(
         : undefined,
       sign: transit.transitSign ? normalizeContentIdPart(transit.transitSign) : undefined,
       transiting: normalizeContentIdPart(transit.transitPlanet),
+      transitHouse: transit.transitHouse,
+      natalHouse: transit.natalHouse,
       variant: stableTransitCopyVariant(voice, transit.id),
       window: windowLabel,
       voice

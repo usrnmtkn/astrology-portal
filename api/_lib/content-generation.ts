@@ -5844,7 +5844,15 @@ function skyArticleTemplateSlotPrompt(
       ? "Fill only the requested unfinished Personal Transit audience fields for one locked destination."
       : "Fill only the requested unfinished fields in an owner-authored Sky article template.",
     input.surface === "you"
-      ? `Return reader-facing prose only. Do not save, approve, or publish.${input.facts.housesExcluded ? " Do not name houses or signs." : input.facts.signsExcluded ? " Use the locked houses. Do not invent a sign." : " Use the locked house and sign facts. Do not invent other placements."}`
+      ? `Return reader-facing prose only. Do not save, approve, or publish.${
+        typeof input.facts.placementScope === "string" && input.facts.placementScope.trim()
+          ? ` ${input.facts.placementScope.trim()}`
+          : input.facts.housesExcluded
+            ? " Do not name houses or signs."
+            : input.facts.signsExcluded
+              ? " Use the locked houses. Do not invent a sign."
+              : " Use the locked house and sign facts. Do not invent other placements."
+      }`
       : "The template's fixed prose is immutable. Do not rewrite it, summarize it, or return it.",
     input.licensedVariables?.length
       ? `These exact reader variables may appear in returned fields: ${input.licensedVariables.map((name) => `{{${name}}}`).join(", ")}. Do not invent other {{variables}}.`

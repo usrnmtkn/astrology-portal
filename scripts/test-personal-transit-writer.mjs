@@ -6,6 +6,7 @@ import {
   knowledgeIdsFor,
   missingPersonalTransitAudiences,
   parsePersonalTransitContact,
+  parsePersonalTransitPreview,
   personalTransitReviewChecks,
   requestedAudiences,
   reviewPersonalTransitCopy
@@ -17,8 +18,13 @@ const endpoint = fs.readFileSync(new URL("../api/admin/personal-transit-writing.
 const lib = fs.readFileSync(new URL("../api/_lib/personal-transit-writing.ts", import.meta.url), "utf8");
 
 assert.equal(parsePersonalTransitContact({ transiting: "Sun", natal: "sun", aspect: "square" }).contentKey, "authored/transit-aspect/sun/sun/square");
+assert.equal(parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "conjunction" }).contentKey, "authored/transit-return/sun");
+assert.equal(parsePersonalTransitContact({ contentKey: "authored/transit-return/sun" }).contentKey, "authored/transit-return/sun");
 assert.equal(parsePersonalTransitContact({ transiting: "sun", natal: "moon", aspect: "square", transitHouse: "3rd", natalHouse: "7" }).contentKey, "authored/transit-aspect/sun/moon/square");
-assert.equal(parsePersonalTransitContact({ transiting: "sun", natal: "moon", aspect: "square", transitHouse: "1" }).transitHouse, undefined);
+assert.equal(parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "square", sign: "aries", transitHouse: "1", natalHouse: "1" }).contentKey, "authored/transit-aspect/sun/sun/square/aries/1/1");
+assert.deepEqual(knowledgeIdsFor(parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "square", sign: "aries", transitHouse: "1", natalHouse: "1" })), ["transit-aspect/sun/sun/square"]);
+assert.equal(parsePersonalTransitContact({ contentKey: "authored/transit-aspect/sun/sun/square/aries/1/1" }).contentKey, "authored/transit-aspect/sun/sun/square/aries/1/1");
+assert.deepEqual(parsePersonalTransitPreview({ sign: "Aries", transitHouse: "1", natalHouse: "1" }), { sign: "aries", transitHouse: "1", natalHouse: "1" });
 assert.deepEqual(knowledgeIdsFor(parsePersonalTransitContact({ transiting: "sun", natal: "moon", aspect: "square", transitHouse: "1" })), ["transit-aspect/sun/moon/square"]);
 assert.doesNotMatch(lib, /ids\.push\(`house\//u);
 assert.equal(parsePersonalTransitContact({ contentKey: "authored/transit-house-intro/sun/4" }).family, "house-intro");
@@ -49,7 +55,7 @@ assert(!personalTransitReviewChecks({
 
 const keys = exactPersonalTransitContentKeys();
 assert(keys.includes("authored/transit-aspect/sun/sun/sextile"));
-assert(!keys.includes("authored/transit-aspect/sun/sun/soft"));
+assert(!keys.includes("authored/transit-aspect/sun/sun/square/aries/1/1"));
 const next = findNextMissingPersonalTransitWriteup({
   keys: ["authored/transit-aspect/sun/sun/sextile", "authored/transit-aspect/sun/sun/square"],
   studioByKey: new Map([
@@ -84,12 +90,19 @@ assert.doesNotMatch(ui, /\bstyle\s*=/u);
 const studioCss = fs.readFileSync(new URL("../apps/admin/src/studio-system.css", import.meta.url), "utf8");
 assert.match(studioCss, /\.admin-ai-writing-instruction\s*\{\s*min-height:\s*var\(--studio-compact-textarea-height\)/u);
 assert.match(dashboard, /PersonalTransitAiWriter/u);
-assert.doesNotMatch(dashboard, /transitHouse=\{transitNatalTransitHouse\}/u);
-assert.doesNotMatch(dashboard, /natalHouse=\{transitNatalNatalHouse\}/u);
+assert.match(dashboard, /transitHouse=\{transitNatalTransitHouse\}/u);
+assert.match(dashboard, /natalHouse=\{transitNatalNatalHouse\}/u);
+assert.match(dashboard, /sign=\{transitNatalSign\}/u);
 assert.match(dashboard, /pendingExactAiCopyRef/u);
-assert.match(dashboard, /setDraft\(\(current\) => current \? setPackageSectionField\(current, "body_you"/u);
+assert.match(dashboard, /isExactPersonalTransitDraft && isDynamicTransitNatalExactKey/u);
+assert.match(dashboard, /authored\/transit-return\//u);
+assert.match(dashboard, /defaultOpen/u);
+assert.match(dashboard, /setPackageSectionField\(current, "body_you", text\)/u);
 const exactAction = fs.readFileSync(new URL("../apps/admin/src/TransitNatalReaderPreview.tsx", import.meta.url), "utf8");
-assert.match(exactAction, /<PersonalTransitAiWriter[\s\S]{0,400}youText=""/u);
+assert.match(exactAction, /<PersonalTransitAiWriter[\s\S]{0,800}youText=""/u);
+assert.match(exactAction, /transitHouse=\{transitHouse\}/u);
+assert.match(exactAction, /save a six-part situation/u);
+assert.doesNotMatch(exactAction, /Preview sign and houses are not used/u);
 assert.match(exactAction, /defaultOpen/u);
 const houseEditor = fs.readFileSync(new URL("../apps/admin/src/HouseTransitWriteupEditor.tsx", import.meta.url), "utf8");
 assert.match(houseEditor, /PersonalTransitAiWriter/u);
@@ -103,6 +116,8 @@ assert.match(lib, /loadStudioTransitRows/u);
 assert.match(lib, /allowFilledRewrite: !saved\.studioPresent/u);
 assert.match(lib, /licensedVariables: \[\.\.\.allowedVariables\]/u);
 assert.match(lib, /housesExcluded: !allowsHouses/u);
+assert.match(lib, /previewSituation: aspectPreviewLabel/u);
+assert.match(lib, /Use this chart situation as the scene/u);
 const reviewed = reviewPersonalTransitCopy({
   contact: parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "square" }),
   you: "You may defend a plan in Aries.",
@@ -110,6 +125,13 @@ const reviewed = reviewPersonalTransitCopy({
 });
 assert.equal(reviewed.contentKey, "authored/transit-aspect/sun/sun/square");
 assert(reviewed.checks.some((item) => item.code === "unexpected-sign"));
+const previewReviewed = reviewPersonalTransitCopy({
+  contact: parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "square" }),
+  preview: parsePersonalTransitPreview({ sign: "aries", transitHouse: "1", natalHouse: "1" }),
+  you: "You may defend a plan from the 1st house while the Sun is in Aries.",
+  friend: "{{Name}} may defend a plan from the 1st house."
+});
+assert.equal(previewReviewed.checks.some((item) => item.code === "unexpected-sign" || item.code === "unexpected-house"), false);
 assert.match(lib, /signsExcluded: !allowsSigns/u);
 
 const deployment = JSON.parse(fs.readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));

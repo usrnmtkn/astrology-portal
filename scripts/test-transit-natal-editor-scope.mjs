@@ -29,6 +29,10 @@ for (const planet of planets) for (const natal of points) for (const aspect of a
 }
 const key = "authored/transit-aspect/sun/sun/sextile";
 assert.match(transitSourceEditScope(key, "authored/transit-aspect/sun/sun/soft").explanation, /trines and sextiles/);
+const situation = "authored/transit-aspect/sun/sun/sextile/virgo/3/3";
+assert.equal(transitSourceEditScope(situation, situation).kind, "exact");
+assert.equal(transitSourceEditScope(situation, key).kind, "shared");
+assert.match(transitSourceEditScope(situation, key).explanation, /six-part situation is saved separately/);
 assert.match(transitSourceEditScope(key, "authored/transit-aspect/sun/sun/hard").explanation, /squares and oppositions/);
 assert.equal(transitSourceEditScope(null, key).kind, "shared");
 assert.equal(transitSourceEditScope(key, "fallback-hook/transit-effect-soft/sun").kind, "shared");
