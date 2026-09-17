@@ -37,8 +37,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const stored: any[] = [];
     await mockStudio(page, stored);
     await page.setViewportSize({ width, height: 1000 });
+    // Studio owns its theme independently of the reader's html[data-theme].
+    // Set the real preference before mount and assert the rendered theme so
+    // light/dark screenshots cannot silently capture the same default theme.
+    await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
     await page.goto("/#sky-writeups?view=daily-summary");
-    await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
+    await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", theme);
     const studio = page.getByTestId("sky-debility-studio");
     await expect(studio.getByRole("heading", { name: "Things may take more effort right now", level: 3 })).toBeVisible();
     const reading = studio.getByLabel("Complete effort summary", { exact: true });
