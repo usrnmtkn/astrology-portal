@@ -161,6 +161,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-sky-variable-key dl > div + div { border-top: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard .admin-sky-variable-key dd { display: grid; grid-template-columns: minmax(0,1fr); align-content: start; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-sky-variable-value { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .admin-sky-variable-value > span { flex: 1 1 auto; min-width: 0; white-space: pre-wrap; }
 #root .admin-dashboard .admin-sky-related-heading { display: grid; grid-template-columns: minmax(0,1fr); justify-content: stretch; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-hook-pattern-list { width: 100%; grid-template-columns: repeat(4,minmax(0,1fr)); }
 #root .admin-dashboard .admin-natal-source-grid { display: grid; grid-template-columns: minmax(0,1fr); align-content: start; gap: var(--workspace-panel-inset); }

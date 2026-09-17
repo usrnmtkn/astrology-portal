@@ -18,7 +18,8 @@ import { skyPlacementArticleVariableSegments } from "../../web/src/content/fallb
 // @ts-ignore Shared with the publication validator and reader resolver.
 import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableSegments } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 
-const variableColors = compositionVariableColors(SKY_PLACEMENT_VARIABLES);
+const libraryPhraseSlots = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields.map(field => ({ name: field.id })));
+const variableColors = compositionVariableColors([...SKY_PLACEMENT_VARIABLES, ...libraryPhraseSlots]);
 const phraseClass = (kind: string) => ["planet", "sign"].includes(kind) ? "variable-phrase" : "variable-hook";
 
 export type SkyVariableFacts = Record<string, string | undefined>;
@@ -164,37 +165,35 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
       {phraseLoading && <p role="status">Loading the current Writing Library values…</p>}
       {phraseError && <p role="alert">{phraseError}</p>}
       {!phraseSource && <p>Choose a planet and sign to load the phrase values.</p>}
-      <div className="admin-review-stack">
-        {SKY_WRITING_LIBRARY_GROUPS.map((group, groupIndex) => <details className="admin-workspace-details" key={group.id} open={groupIndex < 3 || undefined}>
+      {SKY_WRITING_LIBRARY_GROUPS.map((group, groupIndex) => <details className="admin-workspace-details" key={group.id} open={groupIndex < 3 || undefined}>
           <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary>
           <p>{group.description}</p>
-          <div className="admin-sky-phrase-list">
+          <dl>
             {group.fields.map(item => {
               const currentValue = phraseValues[item.id]?.trim() ?? "";
               const sourceLabel = phraseProvenance[item.id] || "No governed source is mapped yet.";
-              return <article className="admin-sky-phrase-row" key={item.id}>
-                <header className="admin-sky-phrase-row-header">
-                  <span className={`admin-sky-phrase-token ${phraseClass(item.kind)}`}><code>{`{{${item.id}}}`}</code></span>
-                  <strong>{item.label}</strong>
-                  <span className={currentValue ? phraseClass(item.kind) : "variable-unmapped"}>{currentValue ? "Loaded" : "Empty"}</span>
-                </header>
-                <p className="admin-sky-phrase-description">{item.description}</p>
-                <div className={`admin-sky-phrase-current${currentValue ? "" : " is-empty"}`}>
-                  <p>{phraseLoading ? "Loading selected content…" : currentValue || "No writing has been saved for this optional field."}</p>
-                </div>
-                <details className="admin-sky-phrase-source">
-                  <summary>Source and scope</summary>
-                  <p>{scopeLabel(item.kind)}</p>
-                  <p><code>{sourceLabel}</code></p>
-                  {!phraseInstalled && currentValue && <p>This is governed prefill text. It becomes an editable placement value when the Writing Library is saved.</p>}
-                </details>
-                {onInsertPhrase && <StudioButton type="button" disabled={disabled} aria-label={`Insert {{${item.id}}}`} onClick={() => onInsertPhrase(`{{${item.id}}}`)}>Insert</StudioButton>}
-                {phraseSource?.onEdit && <StudioButton className="admin-sky-phrase-edit" type="button" disabled={disabled || phraseLoading} onClick={() => phraseSource.onEdit?.(item.id)}>Edit {item.label.toLowerCase()}</StudioButton>}
-              </article>;
+              const insert = onInsertPhrase ?? onInsert;
+              const token = <code data-variable-color={variableColors.get(item.id)}>{`{{${item.id}}}`}</code>;
+              return <div key={item.id}>
+                <dt>{insert ? <StudioButton type="button" disabled={disabled} aria-label={`Insert {{${item.id}}}`} onClick={() => insert(`{{${item.id}}}`)}>{token}</StudioButton> : token}</dt>
+                <dd>
+                  <p>{item.label}. {item.description}</p>
+                  <div className="admin-sky-variable-value">
+                    <span className={currentValue ? phraseClass(item.kind) : "variable-unmapped"}>{phraseLoading ? "Loading selected content…" : currentValue || "No writing has been saved for this optional field."}</span>
+                    <small>{currentValue ? "Loaded" : "Empty"}</small>
+                  </div>
+                  <details className="admin-workspace-details">
+                    <AdminDisclosureSummary>Source and scope</AdminDisclosureSummary>
+                    <p>{scopeLabel(item.kind)}</p>
+                    <p><code>{sourceLabel}</code></p>
+                    {!phraseInstalled && currentValue && <p>This is governed prefill text. It becomes an editable placement value when the Writing Library is saved.</p>}
+                  </details>
+                  {phraseSource?.onEdit && <StudioButton type="button" disabled={disabled || phraseLoading} onClick={() => phraseSource.onEdit?.(item.id)}>Edit {item.label.toLowerCase()}</StudioButton>}
+                </dd>
+              </div>;
             })}
-          </div>
+          </dl>
         </details>)}
-      </div>
     </details>
   </>;
 }
