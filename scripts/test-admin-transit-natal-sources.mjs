@@ -11,12 +11,14 @@ const dir = fs.mkdtempSync(path.join(os.tmpdir(), "studio-transit-preview-"));
 try {
   await build({ bundle: true, platform: "node", format: "esm", outfile: path.join(dir, "preview.mjs"), logLevel: "silent", define: { "import.meta.env": "{}" }, stdin: { resolveDir: process.cwd(), contents: `
     export { createTransitSynastryRenderer } from './apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts';
-    export { renderTransitNatalPreview, transitNatalLabel, transitNatalPlanets, transitNatalPoints, transitNatalAspects } from './apps/admin/src/transitNatalSources.ts';
+    export { renderTransitNatalPreview, transitNatalExactContentKey, transitNatalLabel, transitNatalPlanets, transitNatalPoints, transitNatalAspects } from './apps/admin/src/transitNatalSources.ts';
     export { loadDeferredFallbackArchitectureV3Bundle, transitSynastryFallbackRendererV3 } from './apps/web/src/content/fallbackArchitectureV3Runtime.ts';
     export { installContentPublications } from './apps/web/src/content/contentPublicationState.ts';
   ` } });
   const runtime = await import(pathToFileURL(path.join(dir, "preview.mjs")));
   await runtime.loadDeferredFallbackArchitectureV3Bundle();
+  assert.equal(runtime.transitNatalExactContentKey({ planet: "mercury", natalPoint: "ascendant", aspect: "square" }), "authored/transit-aspect/mercury/ascendant/square");
+  assert.equal(runtime.transitNatalExactContentKey({ planet: "sun", natalPoint: "midheaven", aspect: "trine" }), "authored/transit-aspect/sun/midheaven/trine");
   const selection = { planet: "sun", sign: "virgo", transitHouse: "4", natalHouse: "4", natalPoint: "north-node", aspect: "conjunction" };
   for (const voice of ["you", "Alex"]) {
     const actual = runtime.renderTransitNatalPreview(selection, runtime.transitSynastryFallbackRendererV3, voice);

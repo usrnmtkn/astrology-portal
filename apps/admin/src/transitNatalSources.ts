@@ -37,7 +37,7 @@ export const transitNatalHouses = ["1", "2", "3", "4", "5", "6", "7", "8", "9", 
 
 export const transitNatalAspects = ["conjunction", "opposition", "square", "trine", "sextile"] as const;
 
-export const transitNatalPoints = [
+export const transitNatalPlanetPoints = [
   "sun",
   "moon",
   "mercury",
@@ -48,14 +48,23 @@ export const transitNatalPoints = [
   "uranus",
   "neptune",
   "pluto",
-  "chiron",
-  "north-node",
-  "south-node",
-  "lilith",
-  "ascendant",
-  "midheaven",
-  "descendant",
-  "imum-coeli"
+  "chiron"
+] as const;
+
+export const transitNatalNodePoints = ["north-node", "south-node", "lilith"] as const;
+
+export const transitNatalChartPoints = ["ascendant", "midheaven", "descendant", "imum-coeli"] as const;
+
+export const transitNatalPointGroups = [
+  { label: "Natal planets", values: transitNatalPlanetPoints },
+  { label: "Natal nodes", values: transitNatalNodePoints },
+  { label: "Natal chart points", values: transitNatalChartPoints }
+] as const;
+
+export const transitNatalPoints = [
+  ...transitNatalPlanetPoints,
+  ...transitNatalNodePoints,
+  ...transitNatalChartPoints
 ] as const;
 
 export type TransitNatalPlanet = typeof transitNatalPlanets[number];
@@ -71,14 +80,31 @@ export type TransitNatalReadingContext = {
   window?: string;
 };
 
-export type TransitNatalSelection = TransitNatalReadingContext & {
+export type TransitNatalContact = {
   planet: TransitNatalPlanet;
-  sign: TransitNatalSign;
-  transitHouse: TransitNatalHouse;
   aspect: TransitNatalAspect;
   natalPoint: TransitNatalPoint;
-  natalHouse: TransitNatalHouse;
 };
+
+export type TransitNatalSelection = TransitNatalReadingContext & TransitNatalContact & {
+  sign: TransitNatalSign;
+  transitHouse?: TransitNatalHouse | "";
+  natalHouse?: TransitNatalHouse | "";
+};
+
+export function transitNatalContactReady(
+  selection: { planet?: string; aspect?: string; natalPoint?: string }
+): selection is TransitNatalContact {
+  return Boolean(selection.planet && selection.aspect && selection.natalPoint);
+}
+
+export function transitNatalContactFromFields(
+  planet: TransitNatalPlanet | "",
+  aspect: TransitNatalAspect | "",
+  natalPoint: TransitNatalPoint | ""
+): TransitNatalContact | null {
+  return planet && aspect && natalPoint ? { planet, aspect, natalPoint } : null;
+}
 
 export type TransitPassageSource = {
   contentKey: string; field: string; audience: string;
