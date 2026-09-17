@@ -15,7 +15,20 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
   await expect(paragraphs).toHaveCount(2);
   await expect(paragraphs.nth(0)).toContainText("You may want reassurance but find it hard to ask for");
   await expect(paragraphs.nth(1)).toHaveText(linkedThreePlanetContext);
-  await expect(card.locator(".sky-today-ledger__head")).toContainText("3 of 7");
+  const head = card.locator(".sky-today-ledger__head");
+  await expect(head).toHaveText("Things may take more effort right now");
+  await expect(head.locator(":scope > :not(h3)")).toHaveCount(0);
+  const heading = head.getByRole("heading", { level: 3 });
+  const headingType = await heading.evaluate(el => {
+    const actual = getComputedStyle(el), probe = document.createElement("span");
+    probe.style.cssText = "font-family:var(--font-display);font-size:var(--sky-ledger-title-size);font-weight:var(--weight-regular);letter-spacing:var(--tracking-tight);line-height:var(--leading-h1)";
+    el.append(probe);
+    const expected = getComputedStyle(probe);
+    const matches = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"].every(key => actual[key as any] === expected[key as any]);
+    probe.remove();
+    return matches;
+  });
+  expect(headingType).toBe(true);
   const emphasis = paragraphs.nth(1).locator("mark.content-highlight");
   await expect(emphasis).toHaveText(highlightedCountStatement);
   await expect(emphasis.getByRole("link")).toHaveCount(0);

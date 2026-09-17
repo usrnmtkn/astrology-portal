@@ -49,7 +49,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(reading.getByTestId("effort-count-statement")).toHaveText(highlightedCountStatement);
     await expect(reading.locator('a[href*="#sky/placement/"]')).toHaveCount(3);
     await expect(reading.getByTestId("effort-paragraph-1").getByRole("link")).toHaveText(["Venus in Scorpio", "Mars in Cancer", "Saturn Rx in Aries"]);
-    await expect(reading.locator(":scope > p")).toHaveCount(3); // count + two paragraphs, no footer
+    await expect(reading.locator(":scope > p")).toHaveCount(2); // no separate count or footer
+    await expect(reading).not.toContainText("3 of 7");
     await expect(studio.getByRole("button", { name: "Review and save wording" }).first()).toBeHidden();
     const original = await reading.locator('[data-testid^="effort-paragraph-"]').allTextContents();
     const bodyStyle = await reading.getByTestId("effort-paragraph-0").evaluate(style);
@@ -59,6 +60,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
     const mapped = studio.getByLabel("Mapped effort summary", { exact: true });
     expect(await mapped.locator('[data-testid^="effort-paragraph-"]').allTextContents()).toEqual(original);
+    await expect(mapped.locator(":scope > p")).toHaveCount(2);
+    await expect(mapped).not.toContainText("3 of 7");
     await expect(mapped.getByTestId("effort-count-statement")).toHaveText(highlightedCountStatement);
     await expect(mapped.locator('a[href*="#sky/placement/"]')).toHaveText(["Venus in Scorpio", "Mars in Cancer", "Saturn Rx in Aries"]);
     expect(await mapped.getByTestId("effort-paragraph-0").evaluate(style)).toEqual(bodyStyle);
@@ -75,6 +78,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(reading).toContainText("You may need more time to answer");
     await studio.getByRole("tab", { name: "Full template", exact: true }).click();
     const full = studio.getByTestId("sky-debility-full-template");
+    await expect(full.locator(":scope > p")).toHaveCount(2);
+    await expect(full).not.toContainText("{count} of {total}");
     await expect(full).toContainText("You may {livedExperienceList}. {situationList} can take more out of you than you expected.");
     await expect(full).toContainText("{countWord} out of the {totalWord} classical planets {countVerb} currently in detriment or fall: {planetList}.");
     await expect(full.getByTestId("effort-count-statement")).toHaveText("{countWord} out of the {totalWord} classical planets {countVerb} currently in detriment or fall");
@@ -125,7 +130,8 @@ test("one, four, and zero-planet branches use the same source map", async ({ pag
   await studio.getByLabel("Preview Mercury placement").selectOption("Pisces");
   await studio.getByLabel("Preview Venus placement").selectOption("Scorpio");
   await studio.getByLabel("Preview Mars placement").selectOption("Cancer");
-  await expect(mapped).toContainText("4 of 7 planets");
+  await expect(mapped).not.toContainText("4 of 7");
+  await expect(mapped.locator(":scope > p")).toHaveCount(2);
   await expect(mapped).toContainText("Four out of the seven classical planets are currently in detriment or fall: Mercury in Pisces, Venus in Scorpio, Mars in Cancer, Saturn Rx in Aries.");
   await expect(mapped.locator('a[href*="#sky/placement/"]')).toHaveCount(4);
   await expect(mapped.getByRole("link", { name: "Edit Saturn in Aries: Planetary function in human terms", exact: true })).toBeVisible();
@@ -146,6 +152,8 @@ test("preview motion and sign changes update the same inline links without savin
   for (const [planet, sign] of Object.entries(placements)) await studio.getByLabel(`Preview ${planet} placement`).selectOption(sign);
   for (const planet of ["Mercury", "Venus", "Mars", "Jupiter", "Saturn"]) await studio.getByLabel(`Preview ${planet} motion`).selectOption("retrograde");
   const reading = studio.getByLabel("Complete effort summary", { exact: true });
+  await expect(reading).not.toContainText("7 of 7");
+  await expect(reading.locator(":scope > p")).toHaveCount(2);
   await expect(reading.getByTestId("effort-count-statement")).toHaveText("Seven out of the seven classical planets are currently in detriment or fall");
   await expect(reading.locator('a[href*="#sky/placement/"]')).toHaveText(["Sun in Aquarius", "Moon in Scorpio", "Mercury Rx in Pisces", "Venus Rx in Scorpio", "Mars Rx in Cancer", "Jupiter Rx in Capricorn", "Saturn Rx in Aries"]);
   await studio.getByLabel("Preview Saturn motion").selectOption("direct");

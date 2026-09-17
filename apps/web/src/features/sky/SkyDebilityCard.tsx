@@ -16,7 +16,6 @@ export function SkyDebilityCard({ generatedContent, positions }: {
     <section className="sky-today-ledger sky-debility-ledger" aria-label={copy.accessibleName}>
       <header className="sky-today-ledger__head">
         <h3>{copy.openingHook}</h3>
-        <p><span>{copy.countLabel}</span><span>{copy.countUnit}</span></p>
       </header>
       <div className="sky-today-ledger__copy">
         {copy.paragraphTemplates.map((template, index) => <p key={index}>

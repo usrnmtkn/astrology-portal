@@ -16,7 +16,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`pu
   await expect(paragraphs.nth(0)).toContainText("You may want reassurance but find it hard to ask for");
   await expect(paragraphs.nth(1)).toHaveText(linkedThreePlanetContext, { timeout: 30_000 });
   await expect(paragraphs.nth(1).getByTestId("effort-count-statement")).toHaveText(highlightedCountStatement);
-  await expect(card.locator(".sky-today-ledger__head")).toContainText("3 of 7");
+  const head = card.locator(".sky-today-ledger__head");
+  await expect(head).toHaveText("Things may take more effort right now");
+  await expect(head.locator(":scope > :not(h3)")).toHaveCount(0);
   await expect(card.getByRole("link")).toHaveCount(3);
   await expect(paragraphs.nth(1).getByRole("link")).toHaveText(["Venus in Scorpio", "Mars in Cancer", "Saturn Rx in Aries"]);
   for (const placement of ["venus/scorpio", "mars/cancer", "saturn/aries"])
