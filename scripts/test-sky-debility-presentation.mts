@@ -10,6 +10,8 @@ import { presentSkyDebilityParts, skyDebilityPlacementLinks, skyDebilityTemplate
 import { DIGNITY_SIGNS, TRADITIONAL_DIGNITY_PLANETS, planetSignDebilities, traditionalSkyDebilities } from "../apps/web/src/services/planetSignDignity.mjs";
 import { linkedThreePlanetContext, highlightedCountStatement } from "../tests/fixtures/sky-effort-count-first.ts";
 
+// Use the web app's automatic JSX transform for the actual React card below:
+// npx tsx --tsconfig apps/web/tsconfig.json scripts/test-sky-debility-presentation.mts
 const textOf = (parts: readonly SkyDebilityDisplayPart[]) => parts.map(part => part.text).join("");
 const positions = (selected: Record<string, string>, motion: "direct" | "retrograde" = "direct") => TRADITIONAL_DIGNITY_PLANETS.map(planet => ({
   planet, sign: selected[planet] ?? DIGNITY_SIGNS.find(sign => !planetSignDebilities(planet, sign).length)!, motion
@@ -85,7 +87,8 @@ assert(custom.some(part => part.sourceKey === "cms/sky-debility/contextTemplate"
 const html = renderToStaticMarkup(createElement(SkyDebilityCard, { positions: original }));
 assert.equal((html.match(/href="#sky\/placement\//gu) ?? []).length, 3);
 assert.equal((html.match(/<p>/gu) ?? []).length, 3); // header + two body paragraphs
-assert(html.includes(`${highlightedCountStatement}</strong>: `));
+assert(html.includes(`${highlightedCountStatement}</mark>: `));
+assert(html.includes('<mark class="content-highlight"'));
 assert(html.includes("Saturn Rx in Aries</a>"));
 assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: positions({}) })), "");
 assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: original.slice(1) })), "");
