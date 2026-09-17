@@ -113,7 +113,7 @@ export default function SkyPlacementArticleVariables(props: Props) {
     <details className="admin-workspace-details" data-sky-article-variable-picker>
       <AdminDisclosureSummary>Article variables</AdminDisclosureSummary>
       <StudioVariableInsert variables={source?._studioVariables ?? []} context={{ planet, sign }} onInsert={props.onInsert} disabled={disabled} />
-      <SkyPlacementVariableKey facts={facts} disabled={disabled} onInsert={props.onInsert} onInsertPhrase={props.onInsert}
+      <SkyPlacementVariableKey facts={facts} disabled={disabled} onInsert={props.onInsert} onInsertPhrase={props.onInsert} omitKinds={["aspect"]}
         phraseSource={{ planet, sign, record, onLoadSource: props.onLoadSource, onEdit: id => {
           const sharedKey = zodiacSeasonSourceKey(id, sign);
           if (sharedKey && !composition?.sources[id]) { props.onOpenSource(sharedKey, "body"); return; }

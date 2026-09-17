@@ -54,12 +54,13 @@ export function SkyVariableText({ value, facts, source, references = [] }: {
     : <span key={index}>{part.text}</span>)}</>;
 }
 
-export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhrase, disabled = false, phraseSource }: {
+export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhrase, disabled = false, phraseSource, omitKinds = [] }: {
   facts: SkyVariableFacts;
   onInsert?: (token: string) => void;
   onInsertPhrase?: (token: string) => void;
   disabled?: boolean;
   phraseSource?: PhraseSourceContext;
+  omitKinds?: string[];
 }) {
   const loadSourceRef = useRef(phraseSource?.onLoadSource);
   loadSourceRef.current = phraseSource?.onLoadSource;
@@ -166,7 +167,7 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
       {phraseLoading && <PageLoading compact message="Loading the current Writing Library values…" />}
       {phraseError && <p role="alert">{phraseError}</p>}
       {!phraseSource && <p>Choose a planet and sign to load the phrase values.</p>}
-      {SKY_WRITING_LIBRARY_GROUPS.map((group, groupIndex) => <details className="admin-workspace-details" key={group.id} open={groupIndex < 3 || undefined}>
+      {SKY_WRITING_LIBRARY_GROUPS.map(group => ({ ...group, fields: group.fields.filter(item => !omitKinds.includes(item.kind)) })).filter(group => group.fields.length).map((group, groupIndex) => <details className="admin-workspace-details" key={group.id} open={groupIndex < 3 || undefined}>
           <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary>
           <p>{group.description}</p>
           <dl>

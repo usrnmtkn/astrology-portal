@@ -4,7 +4,7 @@ import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useRef, useState } from "react";
 import SkyWritingLibraryEditor from "./SkyWritingLibraryEditor";
-import { installSkyWritingLibrary, loadSkyWritingLibrarySeeds, preferSkyWritingLibrary } from "./skyWritingLibrary";
+import { SKY_WRITING_LIBRARY_GROUPS, installSkyWritingLibrary, loadSkyWritingLibrarySeeds, preferSkyWritingLibrary } from "./skyWritingLibrary";
 // @ts-ignore Shared deterministic implementation used by the actual reader.
 import { SKY_INGRESS_VARIABLES, makeSkyIngressComposition, renderSkyIngressComposition, skyIngressPublicationIssues, ingressTextIssues, skyIngressOccurrence, resolveIngressSource } from "../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
 // @ts-ignore Exact source revisions are pinned with the same content hash as the reader.
@@ -18,14 +18,31 @@ type Composition = { version: number; enabled: boolean; sources: Record<string, 
 type RecordValue = Record<string, any>;
 type Props = {
   source: RecordValue; motion: string; disabled?: boolean; initialField?: string;
+  hideLibrary?: boolean;
   onChange?: (value: Composition) => void;
   onOpenSource: (key: string, field: string) => void;
   onLoadSource?: (key: string) => Promise<RecordValue | undefined>;
 };
 const words = (value: string) => value.replace(/([a-z])([A-Z])/gu, "$1 $2").replace(/^./u, char => char.toUpperCase());
 const color = (kind: string) => kind === "fact" ? "fact" : ["planet", "sign"].includes(kind) ? "phrase" : "hook";
+const libraryFields = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields.map(field => ({ ...field, group: group.label })));
+function sentenceInsertGroups(composition: Composition, identity: string[], includeAspect = false) {
+  const known = new Map(libraryFields.map(field => [field.id, field]));
+  const groups = new Map<string, Array<{ id: string; label: string }>>();
+  for (const id of [...new Set([...Object.keys(composition.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id)])]) {
+    const field = known.get(id);
+    const kind = field?.kind ?? composition.sources[id]?.kind;
+    if (kind === "aspect" && !includeAspect) continue;
+    const group = field?.group ?? "Other named sources";
+    const scope = kind === "aspect" ? "aspect" : kind === "planet" ? identity[0] : kind === "sign" ? identity[1] : kind === "timing" ? "timing" : identity.join(" in ");
+    const items = groups.get(group) ?? [];
+    items.push({ id, label: `${field?.label ?? words(id)} · ${scope}` });
+    groups.set(group, items);
+  }
+  return [...groups].filter(([, items]) => items.length);
+}
 
-export default function SkyIngressComposer({ source, motion, disabled = false, initialField, onChange, onOpenSource, onLoadSource }: Props) {
+export default function SkyIngressComposer({ source, motion, disabled = false, initialField, hideLibrary = false, onChange, onOpenSource, onLoadSource }: Props) {
   const composition = source.ingress as Composition | undefined;
   const identity = String(source.contentKey).split("/").slice(2);
   const initialSourceId = initialField?.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9_]*)$/u)?.[1];
@@ -140,7 +157,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
     {issues.length > 0 && <div role="alert">{issues.map(issue => <p key={issue}>{issue}</p>)}</div>}
     {error && <p role="alert">{error}</p>}
     {onChange && <>
-      <SkyWritingLibraryEditor
+      {!hideLibrary && <SkyWritingLibraryEditor
         contentKey={String(source.contentKey)}
         planet={identity[0]}
         sign={identity[1]}
@@ -152,7 +169,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
         onOpenSource={onOpenSource}
         onLoadSource={onLoadSource}
         onAdvancedSource={id => { setSelectedSource(id); setAdvancedOpen(true); }}
-      />
+      />}
       <details className="admin-workspace-details" open={advancedOpen} onToggle={event => setAdvancedOpen(event.currentTarget.open)}>
         <AdminDisclosureSummary>Advanced source tools</AdminDisclosureSummary>
         <p>Use this area for custom source names and exact cross-placement links. The grouped Writing library above is the normal editing path.</p>
@@ -182,7 +199,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
           <StudioButton type="button" disabled={disabled || !onLoadSource} onClick={() => void linkSource()}>Link exact source revision</StudioButton>
         </details>
       </details>
-      <details className="admin-workspace-details" open><AdminDisclosureSummary>Sections and order</AdminDisclosureSummary>
+      <details className="admin-workspace-details"><AdminDisclosureSummary>Sections and order</AdminDisclosureSummary>
         <ol className="admin-ingress-module-list" aria-label="Ingress module order">
           {composition.modules.map((item, index) => <li key={item.id}><StudioButton type="button" aria-pressed={module?.id === item.id} onClick={() => setSelectedModule(item.id)}>{item.label}</StudioButton>
             <span>{item.enabled ? item.required ? "Required" : "Optional" : "Disabled"}</span>
@@ -204,7 +221,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
           </div>
           <p>Long means at least 90 days from the first entry to final exit, including gaps. Final pass takes priority over return pass. Sentence order within the template is preserved.</p>
           <label className="admin-review-copy-editor"><span>Section template</span><StudioTextarea ref={moduleWriting} className="admin-copy-field-body" aria-label="Ingress section template" value={module.template} disabled={disabled} onChange={event => updateModule({ template: event.target.value })} /></label>
-          <label>Insert sentence source<AdminSelect aria-label="Insert ingress source slot" value="" disabled={disabled} onChange={event => { updateModule({ template: module.template + (module.template ? " " : "") + `{{${event.target.value}}}` }); }}><option value="">Choose an exact named sentence</option>{[...new Set([...Object.keys(composition.sources), ...ZODIAC_SEASON_VARIABLES.map(field => field.id)])].map(id => <option key={id} value={id}>{words(id)} · {identity.join(" in ")}</option>)}</AdminSelect></label>
+          <label>Insert sentence source<AdminSelect aria-label="Insert ingress source slot" value="" disabled={disabled} onChange={event => { updateModule({ template: module.template + (module.template ? " " : "") + `{{${event.target.value}}}` }); }}><option value="">Choose a sentence for this section</option>{sentenceInsertGroups(composition, identity, Boolean(module.aspect)).map(([group, items]) => <optgroup key={group} label={group}>{items.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}</optgroup>)}</AdminSelect></label>
           <StudioVariableInsert variables={customVariables} context={input} disabled={disabled} onInsert={token => {
             const node = moduleWriting.current;
             const start = node?.selectionStart ?? module.template.length;
