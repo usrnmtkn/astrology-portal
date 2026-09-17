@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-09-15-custom-variables",
+  "packageVersion": "v3-2026-09-16-planet-sign-template",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "12f9e7d4ce489c36016eff96a6a7688a1a59a2cb68a15b281c07bc62dfd1cf18",
+    "sha256": "2d5d539add81d64f43507c76704b8f2131bc447ba6d47ed47f152410b2b87498",
     "count": 9806,
     "emissionCount": 9882,
     "exactSourceMatchCount": 8764
