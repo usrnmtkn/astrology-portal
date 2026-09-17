@@ -2337,6 +2337,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const exactEditor = finder.getByRole("region", { name: "This transit write-up" });
     const preview = finder.getByRole("region", { name: "Effective transit to natal reader preview" });
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await transitWriteupButton(exactEditor, "Sun trine your Sun").click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/sun/trine");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(String(servingPackageRecords.get("authored/transit-aspect/sun/sun/soft")?.body_you ?? ""));
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(String(servingPackageRecords.get("authored/transit-aspect/sun/sun/soft")?.body_they ?? ""));
@@ -2362,6 +2363,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(preview.getByRole("button", { name: "Continue to shared source", exact: true })).toHaveCount(0);
     await expect(exactEditor).toContainText("A draft is saved for this contact");
     const publishedBody = await preview.locator(".admin-natal-source-card-copy > p").allTextContents();
+    await transitWriteupButton(exactEditor, "Sun sextile your Sun").click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(exactKey);
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(exact.body_you);
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(exact.body_they);
@@ -2378,11 +2380,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(preview.locator(`[data-transit-source-key="${sharedKey}"]`).first()).toBeVisible();
     expect(await preview.locator(".admin-natal-source-card-copy > p").allTextContents()).toEqual(publishedBody);
     await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("trine");
+    await transitWriteupButton(exactEditor, "Sun trine your Sun").click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/sun/trine");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(String(servingPackageRecords.get("authored/transit-aspect/sun/sun/soft")?.body_you ?? ""));
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(String(servingPackageRecords.get("authored/transit-aspect/sun/sun/soft")?.body_they ?? ""));
     await closeGeneratedEditor(page);
     await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("sextile");
+    await transitWriteupButton(exactEditor, "Sun sextile your Sun").click();
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(you);
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(friend);
     expect(writes).toHaveLength(1);
@@ -2466,7 +2470,6 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Transiting planet", { exact: true }).selectOption("sun");
     await page.getByLabel("Transit to natal aspect").selectOption("conjunction");
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("north-node");
-    await closeGeneratedEditor(page, true);
     await expect(finder).toContainText("This write-up is ready. Choose a current sign");
     await page.getByLabel("Transit zodiac sign").selectOption("virgo");
     const preview = finder.getByRole("region", { name: "Effective transit to natal reader preview" });
@@ -2496,10 +2499,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
+    const exactEditor = finder.getByRole("region", { name: "This transit write-up" });
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("ascendant");
+    await transitWriteupButton(exactEditor, "Sun conjunction your Ascendant").click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/ascendant/conjunction");
     await closeGeneratedEditor(page, true);
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("midheaven");
+    await transitWriteupButton(exactEditor, "Sun conjunction your Midheaven").click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/midheaven/conjunction");
     await closeGeneratedEditor(page, true);
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("sun");
@@ -2509,6 +2515,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await closeGeneratedEditor(page, true);
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("south-node");
     await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("opposition");
+    await transitWriteupButton(exactEditor, "Sun opposition your South Node").click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/south-node/opposition");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("");
