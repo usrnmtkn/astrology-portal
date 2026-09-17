@@ -1,0 +1,42 @@
+name: Sky effort summary
+on:
+  pull_request:
+    paths:
+      - 'apps/web/src/content/skyDebility*'
+      - 'apps/web/src/services/planetSignDignity*'
+      - 'apps/web/src/features/sky/SkyDebilityCard.tsx'
+      - 'apps/admin/src/SkyDebilityStudio.tsx'
+      - 'scripts/test-sky-debility-copy.mts'
+      - '.github/workflows/sky-debility-summary.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/src/content/skyDebility*'
+      - 'apps/web/src/services/planetSignDignity*'
+      - 'apps/web/src/features/sky/SkyDebilityCard.tsx'
+      - 'apps/admin/src/SkyDebilityStudio.tsx'
+      - 'scripts/test-sky-debility-copy.mts'
+      - '.github/workflows/sky-debility-summary.yml'
+permissions:
+  contents: read
+concurrency:
+  group: sky-effort-summary-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  combinations-and-builds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: All placement sets, combinations, grammar and publication states
+        run: node --import tsx scripts/test-sky-debility-copy.mts
+      - run: npm run build -w @tldr/astro-knowledge
+      - name: Build Content Studio
+        run: npm run build:admin
+      - name: Build the web reader
+        run: npm run build -w @tldr/web
