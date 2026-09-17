@@ -11,6 +11,10 @@ export const DIGNITY_SIGNS = Object.freeze([
   "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
   "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
 ]);
+export const TRADITIONAL_DIGNITY_PLANETS = Object.freeze([
+  "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"
+]);
+const DEBILITY_DIGNITIES = Object.freeze(["detriment", "fall"]);
 const planetDignities = {
   Sun: {
     Leo: "domicile",
@@ -87,4 +91,36 @@ export function planetSignDignity(planet, sign) {
   const dignities = value ? (Array.isArray(value) ? [...value] : [value]) : [];
   const variant = dignities.length ? dignities.join("_") : "none";
   return { ...base, status: "known", dignities, variant, reason: "" };
+}
+
+export function planetSignDebilities(planet, sign) {
+  const result = planetSignDignity(planet, sign);
+  return result.dignities.filter(value => DEBILITY_DIGNITIES.includes(value));
+}
+
+/** Sign-level Hellenistic debility only: detriment (exile) and fall.
+ * A planet with both is counted once. Outer bodies stay outside the seven.
+ */
+export function traditionalSkyDebilities(positions) {
+  const known = new Map();
+  for (const position of Array.isArray(positions) ? positions : []) {
+    const result = planetSignDignity(position?.planet, position?.sign);
+    if (result.status !== "known" || known.has(result.planet)) continue;
+    known.set(result.planet, {
+      planet: result.planet,
+      sign: result.sign,
+      dignities: planetSignDebilities(result.planet, result.sign)
+    });
+  }
+  const debilitated = TRADITIONAL_DIGNITY_PLANETS.flatMap(planet => {
+    const row = known.get(planet);
+    return row?.dignities.length ? [row] : [];
+  });
+  return {
+    framework: DIGNITY_FRAMEWORK,
+    traditionalCount: TRADITIONAL_DIGNITY_PLANETS.length,
+    knownCount: known.size,
+    count: debilitated.length,
+    planets: debilitated
+  };
 }

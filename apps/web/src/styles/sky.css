@@ -1446,10 +1446,12 @@
   margin: 0;
 }
 
-.sky-daily-summary {
+.sky-daily-summary,
+.sky-debility-ledger {
   display: block;
 }
 
+.sky-today-ledger__copy,
 .sky-daily-summary__body {
   margin: 0;
   padding: var(--space-5);
@@ -1462,12 +1464,14 @@
   text-wrap: pretty;
 }
 
+.sky-today-ledger__copy > p,
 .sky-daily-summary__body > p {
   margin: 0;
   font: inherit;
   letter-spacing: inherit;
 }
 
+.sky-today-ledger__copy > p + p,
 .sky-daily-summary__body > p + p {
   margin-top: var(--space-4);
 }

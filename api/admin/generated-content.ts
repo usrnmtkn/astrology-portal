@@ -8,6 +8,7 @@ import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadin
 import { packagePublicationAdmissionIssue } from "../_lib/content-studio-package-admission.js";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
+import { skyDebilityTemplateErrors } from "../../apps/web/src/content/skyDebilityCatalog.ts";
 // @ts-ignore Shared inline-variable contract for continuous Sky placement prose.
 import { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 // @ts-ignore Shared article validation and exact source publication checks.
@@ -188,6 +189,7 @@ function assertValidCmsTemplate({
     body: body ?? ""
   });
   validation.errors.push(...skySummaryTemplateErrors(contentKey ?? "", body ?? ""));
+  validation.errors.push(...skyDebilityTemplateErrors(contentKey ?? "", body ?? ""));
   if (validation.errors.length > 0) {
     throw new Error(`CMS template cannot be published: ${validation.errors.join(" ")}`);
   }
