@@ -40,7 +40,7 @@ function main() {
   assert(source.decisions.some((entry) => entry.id === "CF-001" && entry.status === "approved"));
   assert(source.decisions.some((entry) => entry.id === "ED-003" && entry.status === "superseded" && entry.superseded_by === "ED-028"), "ED-003 must remain superseded by ED-028");
   assert(source.decisions.some((entry) => entry.id === "ED-028" && entry.status === "approved"), "ED-028 must remain the active surface-register rule");
-  for (const id of ["CF-013", "CF-014", "CF-004", "CF-005", "CF-015", "CF-002"]) {
+  for (const id of ["CF-013", "CF-014", "CF-004", "CF-005", "CF-015", "CF-019", "CF-002"]) {
     assert(source.decisions.some((entry) => entry.id === id && entry.status === "approved"), `${id} must record the owner-resolved worksheet decision`);
   }
   assert(source.decisions.some((entry) => entry.id === "OW-001" && entry.scope.uses.includes("calibration-only")));
@@ -83,6 +83,7 @@ function main() {
     "tilt-literal-passes",
     "steady-observable-allowed",
     "steady-vague-energy-rejected",
+    "taurus-steadier-season-allowed",
     "warmth-allowed",
     "adjacent-site-construction-rejected",
     "current-sky-operation-matched-retrieval",
@@ -130,6 +131,12 @@ function main() {
   mustFailDecision(article({ lived: "For about a year, the loudest person in the room decides the plan. Everyone else goes along." }), "CF-004");
   mustPassDecision(article({ lived: "For about a year, the work takes steady effort. The result becomes easier to trust." }), "CF-015");
   mustFailDecision(article({ lived: "For about a year, steady energy fills the week. The result becomes easier to trust." }), "CF-015");
+  assert(result.compiled.artifacts.judge.decisions.some((entry) => entry.id === "CF-019" && /Taurus/u.test(entry.rule)), "Terra must receive the Taurus steady allowance");
+  mustPassDecision(article({
+    sign: "taurus",
+    planet: "sun",
+    lived: "When the Sun moves into Taurus, the work becomes quieter, steadier, more lasting. The result becomes easier to trust."
+  }), "CF-015");
   mustPassDecision(article({ lived: "For about a year, the actor prepares for the performance. The rehearsal changes after the director responds." }), "CF-002");
   mustPassDecision(article({ lived: "For about a year, the manager reviews quarterly job performance. The goals change after the results arrive." }), "CF-002");
   mustFailDecision(article({ lived: "For about a year, life becomes a performance review. The same pressure returns." }), "CF-002");

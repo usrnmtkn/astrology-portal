@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "66555699c5f47edfded720c9042d1269b5fc12bff0e09e60624c1923f132c222",
+  "decisionSourceSha256": "b265eeeeb478900d637a5dc4f7f67b92ac782c37b53c36eb8a684f73216105fd",
   "cases": [
     {
       "id": "natural-english-abstract-personification",
@@ -184,6 +184,16 @@
       "text": "Steady energy fills the week.",
       "expected": "fail",
       "decisionId": "CF-015",
+      "decisionStatus": "approved",
+      "active": true
+    },
+    {
+      "id": "taurus-steadier-season-allowed",
+      "surface": "sky-placement",
+      "kind": "judge",
+      "text": "When the Sun moves into Taurus, the work becomes quieter, steadier, more lasting.",
+      "expected": "pass",
+      "decisionId": "CF-019",
       "decisionStatus": "approved",
       "active": true
     },
@@ -752,6 +762,6 @@
       "active": true
     }
   ],
-  "activeCaseCount": 72,
+  "activeCaseCount": 73,
   "unresolvedCaseCount": 0
 }

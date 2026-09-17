@@ -46,7 +46,7 @@
     {
       "term": "steady",
       "requiresBefore": ["stable", "strong", "solid"],
-      "reason": "'steady' only when 'stable', 'strong', or 'solid' appears before it; otherwise use calm, solid, grounded, or sure."
+      "reason": "'steady' is approved on Taurus copy (CF-019). Elsewhere, only when 'stable', 'strong', or 'solid' appears before it; otherwise use calm, solid, grounded, or sure."
     }
   ],
 

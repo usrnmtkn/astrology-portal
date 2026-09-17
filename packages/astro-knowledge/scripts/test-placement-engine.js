@@ -112,6 +112,16 @@ for (const form of ["steady", "steadies", "steadiness", "steadier"]) {
   assert.match(finding.retryInstruction, /calm, solid, grounded, consistent, or sure/);
 }
 
+const taurusSteadyLint = lintCard(
+  "Taurus keeps the work quieter, steadier, more lasting.\n\nWe keep the work moving.",
+  { mode: placementMode }
+);
+assert.deepEqual(
+  { score: taurusSteadyLint.score, fails: taurusSteadyLint.fails, warns: taurusSteadyLint.warns },
+  { score: 3, fails: 0, warns: 0 },
+  "Taurus copy may use the steady family."
+);
+
 const ledSteadyLint = lintCard(
   "We rely on solid, steady work.\n\nWe keep the work moving.",
   { mode: placementMode }

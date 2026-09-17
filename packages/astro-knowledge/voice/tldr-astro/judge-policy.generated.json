@@ -4,7 +4,7 @@
   "generatedBy": "scripts/compile-satori-editorial-decisions.js",
   "decisionSource": "voice/tldr-astro/satori-editorial-decisions.yaml",
   "decisionSourceId": "satori-editorial-decisions-v1",
-  "decisionSourceSha256": "66555699c5f47edfded720c9042d1269b5fc12bff0e09e60624c1923f132c222",
+  "decisionSourceSha256": "b265eeeeb478900d637a5dc4f7f67b92ac782c37b53c36eb8a684f73216105fd",
   "role": "Classify and explain final acceptability of the untouched draft. Never rewrite, approve, or promote it.",
   "compactRubric": [
     "Read-aloud rule: does every central sentence sound natural and literal when spoken?",
@@ -182,6 +182,28 @@
       ],
       "examplesRejected": [
         "The transit brings steady energy."
+      ]
+    },
+    {
+      "id": "CF-019",
+      "category": "word-choice",
+      "scope": {
+        "surfaces": [
+          "all-reader-copy"
+        ],
+        "signs": [
+          "taurus"
+        ]
+      },
+      "rule": "On Taurus copy, the steady family (steady, steadies, steadier, steadily, steadiness) is approved. Do not fail Taurus season, polar-axis Taurus, or planet-in-Taurus writing for those words. CF-015 still rejects vague energy language such as steady energy.",
+      "rationale": "The owner approved steady as Taurus wording after Studio blocked the Taurus season write-up on steadier.",
+      "effect": "permit_sign_specific",
+      "examplesAllowed": [
+        "When the Sun moves into Taurus, the work becomes quieter, steadier, more lasting.",
+        "A full day in Taurus emphasizes steady effort."
+      ],
+      "examplesRejected": [
+        "The Taurus transit brings steady energy."
       ]
     },
     {

@@ -99,6 +99,7 @@ function lintPatternCard(card) {
   }
   // ---- conditional bans (steady) ----
   for (const c of pat.conditionalBans || []) {
+    if (/stead/iu.test(c.term) && /\btaurus\b/iu.test(text)) continue;
     const m = text.match(toRegex(c.term));
     if (m) {
       const before = text.slice(0, m.index).toLowerCase();

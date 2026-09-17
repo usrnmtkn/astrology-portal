@@ -181,6 +181,7 @@ function lintCard(text, { mode = "collective-aspect-card" } = {}) {
   }
   // conditional bans: term is allowed only if one of requiresBefore appears earlier
   for (const c of sky.conditionalBans || []) {
+    if (/stead/iu.test(c.term) && /\btaurus\b/iu.test(text)) continue;
     const m = text.match(toRegex(c.term));
     if (m) {
       const before = text.slice(0, m.index).toLowerCase();

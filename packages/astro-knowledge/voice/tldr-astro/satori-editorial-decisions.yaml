@@ -217,6 +217,25 @@
       ]
     },
     {
+      "id": "CF-019",
+      "status": "approved",
+      "category": "word-choice",
+      "scope": {"surfaces": ["all-reader-copy"], "signs": ["taurus"]},
+      "normalized_rule": "On Taurus copy, the steady family (steady, steadies, steadier, steadily, steadiness) is approved. Do not fail Taurus season, polar-axis Taurus, or planet-in-Taurus writing for those words. CF-015 still rejects vague energy language such as steady energy.",
+      "rationale": "The owner approved steady as Taurus wording after Studio blocked the Taurus season write-up on steadier.",
+      "owner_source": {"type": "owner_instruction", "reference": "sky write-up variables", "quote": "steady for Taurus is approved, update the judge", "date": "2026-09-17"},
+      "effective_date": "2026-09-17",
+      "supersedes": [],
+      "examples_allowed": ["When the Sun moves into Taurus, the work becomes quieter, steadier, more lasting.", "A full day in Taurus emphasizes steady effort."],
+      "examples_rejected": ["The Taurus transit brings steady energy."],
+      "effect": "permit_sign_specific",
+      "writer_prompt_exposure": "first_call",
+      "enforcement": {"writer": true, "judge": true, "linter": false, "vocabulary_retrieval": false, "regression_tests": ["taurus-steadier-season-allowed"]},
+      "regression_cases": [
+        {"id": "taurus-steadier-season-allowed", "surface": "sky-placement", "kind": "judge", "text": "When the Sun moves into Taurus, the work becomes quieter, steadier, more lasting.", "expected": "pass"}
+      ]
+    },
+    {
       "id": "CF-002",
       "status": "approved",
       "category": "construction",
