@@ -2,7 +2,9 @@ import { Fragment, useState, type ReactNode } from "react";
 import { StudioTabs } from "./StudioControls";
 import { skyDebilityField } from "../../web/src/content/skyDebilityCatalog";
 import { skyDebilityPhraseSets, skyDebilityPlacementId } from "../../web/src/content/skyDebilityPhrases";
-import { buildSkyDebilityComposition, skyDebilityTemplateKey, type SkyDebilityMappedPart } from "./skyDebilityComposition";
+import { SkyDebilityInline } from "../../web/src/content/skyDebilityInline";
+import { emphasizeSkyDebilityCount, presentSkyDebilityParts, skyDebilityPlacementLinks, skyDebilityTemplateParts, type SkyDebilityDisplayPart, type SkyDebilityDisplayPosition } from "../../web/src/content/skyDebilityPresentation";
+import { buildSkyDebilityComposition, skyDebilityTemplateKey, skyDebilityTemplateTokens } from "./skyDebilityComposition";
 
 type View = "reading" | "map" | "template";
 const views: { value: View; label: string }[] = [
@@ -15,16 +17,24 @@ const placementLabel = (key: string) => {
   return row ? `${row.planetTitle} in ${row.signTitle}` : key;
 };
 
-export function SkyDebilityCompositionMap({ composition, read, onSelectSource, busy, hasUnsaved }: {
+export function SkyDebilityCompositionMap({ composition, read, onSelectSource, busy, hasUnsaved, positions = [] }: {
   composition: ReturnType<typeof buildSkyDebilityComposition>;
   read: (key: string) => string | null | undefined;
   onSelectSource: (key: string) => void;
   busy: boolean;
   hasUnsaved: boolean;
+  positions?: readonly SkyDebilityDisplayPosition[];
 }) {
   const [view, setView] = useState<View>("reading");
   const [variable, setVariable] = useState<string | null>(null);
   const { copy } = composition;
+  const links = skyDebilityPlacementLinks(copy.allPlacementKeys, positions);
+  const readingParts = copy.paragraphTemplates.map(text => presentSkyDebilityParts(skyDebilityTemplateParts(text, copy.slots), links));
+  const mappedParts = composition.paragraphs.map(parts => presentSkyDebilityParts(parts, links));
+  const textOf = (parts: readonly SkyDebilityDisplayPart[]) => parts.map(part => part.text).join("");
+  const presentationErrors = [...composition.errors];
+  if (copy.visible && !presentationErrors.length && readingParts.some((parts, index) => textOf(parts) !== textOf(mappedParts[index] ?? [])))
+    presentationErrors.push("The formatted source map does not match the reader. Use the read-through view and individual fields.");
   const body = (name: string) => read(skyDebilityTemplateKey(name)) ?? "";
   const editLink = (key: string, text: ReactNode, phrase = false) => {
     if (typeof text === "string" && !text.trim()) return text;
@@ -38,7 +48,7 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
       aria-label={label} title={skyDebilityField(key)?.label ?? key} data-source-key={key}
       onClick={event => { event.preventDefault(); if (!busy) onSelectSource(key); }}>{text}</a>;
   };
-  function mapped(parts: readonly SkyDebilityMappedPart[]) {
+  function mapped(parts: readonly SkyDebilityDisplayPart[]) {
     return parts.map((part, index) => <Fragment key={index}>{part.sourceKey
       ? editLink(part.sourceKey, part.text, part.kind === "phrase")
       : <span className={part.kind === "fact" ? "admin-composition-variable variable-fact" : undefined}
@@ -46,12 +56,12 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
   }
   function rawTemplate(name: string) {
     const key = skyDebilityTemplateKey(name);
-    return body(name).split(/(\{[^{}]+\})/gu).filter(Boolean).map((part, index) => {
-      const match = /^\{([^{}]+)\}$/u.exec(part);
-      return <Fragment key={index}>{match ? <a href="#sky-writeups?view=daily-summary" className="admin-composition-variable admin-template-reader-variable variable-copy"
-        aria-label={`Inspect ${match[1]} variable`} onClick={event => { event.preventDefault(); setVariable(match[1]); }}>{part}</a>
-        : editLink(key, part)}</Fragment>;
-    });
+    const text = body(name);
+    const slots = Object.fromEntries(skyDebilityTemplateTokens(text).map(slot => [slot, `{${slot}}`]));
+    return <SkyDebilityInline parts={emphasizeSkyDebilityCount(skyDebilityTemplateParts(text, slots))}
+      renderText={part => part.slot ? <a href="#sky-writeups?view=daily-summary" className="admin-composition-variable admin-template-reader-variable variable-copy"
+        aria-label={`Inspect ${part.slot} variable`} onClick={event => { event.preventDefault(); setVariable(part.slot!); }}>{part.text}</a>
+        : editLink(key, part.text)} />;
   }
   const sourceKeys = [...new Set((variable ? composition.slots[variable] ?? [] : []).flatMap(part => part.sourceKey ? [part.sourceKey] : []))];
   if (variable === "signConditionClause" && !sourceKeys.length) sourceKeys.push(skyDebilityTemplateKey(copy.allPlacementKeys.length === 1 ? "signConditionOne" : "signConditionMany"));
@@ -79,22 +89,24 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
             <p>{rawTemplate("countLabel")} {rawTemplate("countUnit")}</p>
             <p>{rawTemplate("experienceTemplate")}</p>
             <p>{rawTemplate("contextTemplate")}</p>
-            <p><span className="admin-composition-variable variable-fact">Calculated planet-in-sign links</span></p>
           </section> : !copy.visible ? <div role="status">
             {copy.hiddenReason === "no-qualifying-planets" ? <p>The reader card is hidden when no planets qualify. The Full template tab is still available for editing.</p>
               : <><p>This example cannot be assembled until the writing below is corrected.</p>{copy.errors.map(error => <p key={error}>{error}</p>)}</>}
-          </div> : view === "map" && composition.errors.length ? <div role="alert">{composition.errors.map(error => <p key={error}>{error}</p>)}</div> :
+          </div> : view === "map" && presentationErrors.length ? <div role="alert">{presentationErrors.map(error => <p key={error}>{error}</p>)}</div> :
             <section className="admin-composition-preview-field field-body" aria-label={view === "reading" ? "Complete effort summary" : "Mapped effort summary"}>
               <h4>{view === "map" ? mapped(composition.heading) : copy.openingHook}</h4>
               <p>{view === "map" ? <>{mapped(composition.countLabel)} {mapped(composition.countUnit)}</> : `${copy.countLabel} ${copy.countUnit}`}</p>
-              {copy.paragraphs.map((paragraph, index) => <p key={index} data-testid={`effort-paragraph-${index}`}>{view === "map" ? mapped(composition.paragraphs[index]) : paragraph}</p>)}
-              <p>{copy.allPlacementKeys.map((key, index) => <Fragment key={key}>{index > 0 ? ", " : ""}<a href={`/#sky/placement/${key}`} target="_blank" rel="noreferrer" aria-label={`Read about ${placementLabel(key)}`}>{placementLabel(key)}</a></Fragment>)}.</p>
+              {readingParts.map((parts, index) => <p key={index} data-testid={`effort-paragraph-${index}`}>
+                <SkyDebilityInline parts={view === "map" ? mappedParts[index] : parts} linkPrefix="/" linkTarget="_blank"
+                  renderText={view === "map" ? part => mapped([part]) : undefined} />
+              </p>)}
             </section>}
         </div>
       </div>
       {view === "template" && variable && <section className="admin-editor-guidance" aria-label="Selected template variable" aria-live="polite">
         <h4>{`{${variable}}`}</h4>
-        <p>{copy.slots[variable] ?? "No value for this example. Choose qualifying placements to inspect the contributing wording."}</p>
+        <p>{variable === "planetList" && links.length ? links.map(link => link.text).join(", ") : copy.slots[variable] ?? "No value for this example. Choose qualifying placements to inspect the contributing wording."}</p>
+        {variable === "planetList" && <p>Each qualifying planet appears once as an inline link with its calculated sign. Rx appears inside the link only when that planet is retrograde. Direct motion has no extra marker.</p>}
         {sourceKeys.length ? sourceKeys.map(key => <p key={key}><strong>{skyDebilityField(key)?.label}</strong><br />{editLink(key, read(key) ?? "Missing wording", key.includes("/placement/"))}</p>)
           : <p>This value is calculated from the selected example, rather than authored in a wording field.</p>}
       </section>}
@@ -103,8 +115,8 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
       <summary>Sources and selection rules</summary>
       <p>Selected branch: {copy.allPlacementKeys.length === 0 ? "card hidden" : `${copy.allPlacementKeys.length === 1 ? "one-planet" : "multiple-planet"} ${branchLabel}`}.</p>
       <p>Selected matched examples: {copy.selectedPlacementKeys.length ? copy.selectedPlacementKeys.map(placementLabel).join(", ") : "none"}.</p>
-      {copy.omittedExamplePlacementKeys.length > 0 && <p>{copy.omittedExamplePlacementKeys.map(placementLabel).join(", ")} remain in the count, planetary functions, and links. Their experiences, situations, and responses are not among the three selected examples.</p>}
-      <p>Experiences and situations use “or”; responses, planet names, and functions use “and”. {editLink(skyDebilityTemplateKey("exampleOrder"), "Edit example order")}.</p>
+      {copy.omittedExamplePlacementKeys.length > 0 && <p>{copy.omittedExamplePlacementKeys.map(placementLabel).join(", ")} remain in the count, planetary functions, and inline links. Their experiences, situations, and responses are not among the three selected examples.</p>}
+      <p>Experiences and situations use “or”; responses and functions use “and”. The inline placement links are comma-separated. {editLink(skyDebilityTemplateKey("exampleOrder"), "Edit example order")}.</p>
       <p>{editLink(skyDebilityTemplateKey(oneKey), `Edit one-planet ${branchLabel}`)} · {editLink(skyDebilityTemplateKey(manyKey), `Edit multiple-planet ${branchLabel}`)}</p>
       {copy.requiredKeys.map(key => <p key={key}>{editLink(key, skyDebilityField(key)?.label ?? key)}</p>)}
     </details>

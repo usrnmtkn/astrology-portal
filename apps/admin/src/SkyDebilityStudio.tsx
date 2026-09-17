@@ -17,7 +17,7 @@ import type { SummaryCompositionRow } from "./skySummaryComposition";
 
 const templateNames = ["openingHook", "experienceTemplate", "contextTemplate", "dignityExplanationOne", "dignityExplanationMany", "exampleOrder", "countLabel", "countUnit", "signConditionOne", "signConditionMany"];
 const templateGuidance: Record<string, string> = {
-  contextTemplate: "Edit the count-first explanation and response paragraph here. The count, total, planet names, and singular/plural grammar are calculated. Your placement wording supplies the functions and responses.",
+  contextTemplate: "Edit the count-first explanation and response paragraph here. The count statement is emphasized. The planetList variable inserts inline links with each calculated sign and any Rx marker. Your placement wording supplies the functions and responses.",
   dignityExplanationOne: "A complete sentence for one qualifying planet. Keep {signTitle} so its calculated sign is named. Include the sentence's final punctuation.",
   dignityExplanationMany: "A complete sentence for several qualifying planets, explaining detriment or fall in everyday terms. Include the sentence's final punctuation.",
   signConditionOne: "Preserved for older saved paragraph templates containing {signConditionClause}. The count-first template uses the one-planet explanation instead. Keep {signTitle}.",
@@ -32,6 +32,8 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
   busy: boolean;
 }) {
   const [selection, setSelection] = useState<Record<string, string>>({ Venus: "Scorpio", Mars: "Cancer", Saturn: "Aries" });
+  // Illustration controls only, never a fallback for the reader's ephemeris.
+  const [previewMotion, setPreviewMotion] = useState<Record<string, "direct" | "retrograde">>({ Saturn: "retrograde" });
   const [placement, setPlacement] = useState("venus/scorpio");
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [activeKey, setActiveKey] = useState<string | null>(null);
@@ -41,11 +43,13 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
   const fieldByKey = (key: string) => skyDebilityFields.find(field => field.key === key)!;
   const savedBody = (key: string) => savedRow(key)?.body ?? fieldByKey(key)?.body;
   const read = (key: string) => Object.prototype.hasOwnProperty.call(drafts, key) ? drafts[key] : savedBody(key);
-  const snapshot = traditionalSkyDebilities(TRADITIONAL_DIGNITY_PLANETS.map(planet => ({
+  const previewPositions = TRADITIONAL_DIGNITY_PLANETS.map(planet => ({
     planet,
     // "Not qualifying" is an editorial choice, not an absent sky fact.
-    sign: selection[planet] || DIGNITY_SIGNS.find(sign => !planetSignDebilities(planet, sign).length)!
-  })));
+    sign: selection[planet] || DIGNITY_SIGNS.find(sign => !planetSignDebilities(planet, sign).length)!,
+    motion: previewMotion[planet] ?? "direct" as const
+  }));
+  const snapshot = traditionalSkyDebilities(previewPositions);
   const composition = buildSkyDebilityComposition(snapshot, read);
   const hasUnsaved = Object.entries(drafts).some(([key, value]) => value !== savedBody(key));
   const selected = skyDebilityPhraseSets.find(row => skyDebilityPlacementId(row.planetTitle, row.signTitle) === placement)!;
@@ -120,7 +124,7 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
       </div>
     </header>
 
-    <SkyDebilityCompositionMap composition={composition} read={read} onSelectSource={selectSource} busy={busy} hasUnsaved={hasUnsaved} />
+    <SkyDebilityCompositionMap composition={composition} read={read} onSelectSource={selectSource} busy={busy} hasUnsaved={hasUnsaved} positions={previewPositions} />
 
     {activeKey && <section ref={activeEditor} className="admin-editor-guidance" aria-label="Selected composition source" data-testid="sky-debility-selected-source">
       <header className="admin-section-heading-row"><h4>Selected source</h4><StudioButton type="button" onClick={() => setActiveKey(null)}>Close source editor</StudioButton></header>
@@ -129,17 +133,25 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
 
     <details className="admin-workspace-details">
       <summary>Change preview placements</summary>
-      <p>These are examples for checking the composition, not the sky for a particular date. Changing them does not change saved wording.</p>
+      <p>These are examples for checking the composition, not the sky for a particular date. Changing a sign or motion does not change saved wording.</p>
       <div className="admin-daily-glance-context-form">
-        {TRADITIONAL_DIGNITY_PLANETS.map(planet => <label key={planet} htmlFor={`effort-preview-${planet}`}><span>{planet}</span>
-          <AdminSelect id={`effort-preview-${planet}`} aria-label={`Preview ${planet} placement`} value={selection[planet] ?? ""}
-            onChange={event => setSelection(current => ({ ...current, [planet]: event.target.value }))}>
-            <option value="">Not in detriment or fall</option>
-            {skyDebilityPhraseSets.filter(row => row.planetTitle === planet).map(row => <option key={row.signTitle} value={row.signTitle}>
-              {row.signTitle} · {skyDebilityConditionLabel(planet, row.signTitle)}
-            </option>)}
-          </AdminSelect>
-        </label>)}
+        {TRADITIONAL_DIGNITY_PLANETS.map(planet => <div key={planet}>
+          <label htmlFor={`effort-preview-${planet}`}><span>{planet}</span>
+            <AdminSelect id={`effort-preview-${planet}`} aria-label={`Preview ${planet} placement`} value={selection[planet] ?? ""}
+              onChange={event => setSelection(current => ({ ...current, [planet]: event.target.value }))}>
+              <option value="">Not in detriment or fall</option>
+              {skyDebilityPhraseSets.filter(row => row.planetTitle === planet).map(row => <option key={row.signTitle} value={row.signTitle}>
+                {row.signTitle} · {skyDebilityConditionLabel(planet, row.signTitle)}
+              </option>)}
+            </AdminSelect>
+          </label>
+          {planet !== "Sun" && planet !== "Moon" && <label htmlFor={`effort-motion-${planet}`}><span>Motion</span>
+            <AdminSelect id={`effort-motion-${planet}`} aria-label={`Preview ${planet} motion`} value={previewMotion[planet] ?? "direct"}
+              onChange={event => setPreviewMotion(current => ({ ...current, [planet]: event.target.value === "retrograde" ? "retrograde" : "direct" }))}>
+              <option value="direct">Direct</option><option value="retrograde">Retrograde (Rx)</option>
+            </AdminSelect>
+          </label>}
+        </div>)}
       </div>
     </details>
     <details>
@@ -157,7 +169,7 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
     </details>
     <details>
       <summary>Card template, heading, and example order</summary>
-      <p>Experiences and situations are joined with “or”; responses, planet names, and functions are joined with “and”. Example order chooses up to three complete sets, not a difficulty score.</p>
+      <p>Experiences and situations are joined with “or”; responses and functions are joined with “and”. The planetList variable displays comma-separated placement links. Example order chooses up to three complete sets, not a difficulty score.</p>
       <div className="admin-daily-glance-pair-list">{templateNames.map(name => editor(`cms/sky-debility/${name}`, templateGuidance[name]))}</div>
     </details>
     <details>

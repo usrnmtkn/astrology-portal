@@ -35,6 +35,7 @@ export function assembleSkyDebilityCopy(
   const output = {
     visible: false, hiddenReason: "", openingHook: "", titleLead: "", titleSoft: "",
     countLabel: "", countUnit: slots.planetWord, body: "", paragraphs: [] as string[],
+    paragraphTemplates: [] as string[],
     accessibleName: "", slots, errors, requiredKeys, legacyContext: false,
     selectedPlacementKeys: [] as string[], allPlacementKeys: [] as string[], omittedExamplePlacementKeys: [] as string[]
   };
@@ -95,5 +96,8 @@ export function assembleSkyDebilityCopy(
   const paragraphs = [fill(experienceTemplate), fill(contextTemplate)];
   return { ...output, visible: true, openingHook: heading, titleLead: heading,
     accessibleName: heading, countLabel: fill(countLabel), countUnit: fill(countUnit),
+    // Capture validated templates from the same publication read. Presentation
+    // expands only their declared fact slots, never a second CMS snapshot.
+    paragraphTemplates: [experienceTemplate, contextTemplate],
     paragraphs, body: paragraphs.join("\n\n") };
 }
