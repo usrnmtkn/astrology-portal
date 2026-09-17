@@ -290,6 +290,7 @@ export async function generatePersonalTransitAudienceDrafts(input: {
       contentKey: input.contact.contentKey
     },
     requestedSlots: slots,
+    licensedVariables: [...allowedVariables],
     provider: input.provider,
     surface: "you",
     eventType: input.contact.family === "aspect" ? "transit-aspect" : "transit-house",
