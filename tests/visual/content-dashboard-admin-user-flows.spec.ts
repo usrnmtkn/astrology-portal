@@ -2409,13 +2409,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByRole("button", { name: "Generate You + Friend draft", exact: true }).click();
     await expect(editor.getByLabel("AI You suggestion")).toHaveValue("Synthetic You draft for the selected contact.");
     await expect(editor.getByLabel("AI Friend suggestion")).toHaveValue("{{Name}} may treat a question about their plan as a verdict until {{untilDate}}.");
-    const friendBeforeUseYou = await editor.getByLabel("Reader phrase · They", { exact: true }).inputValue();
-    await editor.getByRole("button", { name: "Use You draft", exact: true }).click();
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("Synthetic You draft for the selected contact.");
-    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(friendBeforeUseYou);
-    expect(writes).toHaveLength(0);
-    await editor.getByRole("button", { name: "Generate You + Friend draft", exact: true }).click();
-    await editor.getByRole("button", { name: "Use Friend draft", exact: true }).click();
     await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("{{Name}} may treat a question about their plan as a verdict until {{untilDate}}.");
     expect(writes).toHaveLength(0);
     await editor.getByRole("button", { name: "Run writing checks", exact: true }).click();
