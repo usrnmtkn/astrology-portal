@@ -1,0 +1,32 @@
+name: Transit editor verification
+on:
+  push:
+    branches: [fix/transit-natal-exact-editing-20260916]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Record source provenance and memory
+        run: |
+          mkdir -p "$RUNNER_TEMP/transit-editor"
+          git remote -v > "$RUNNER_TEMP/transit-editor/provenance.txt"
+          git log -1 >> "$RUNNER_TEMP/transit-editor/provenance.txt"
+          git rev-list --left-right --count origin/main...HEAD >> "$RUNNER_TEMP/transit-editor/provenance.txt"
+          node scripts/agent-memory.mjs recall "personal transits exact source shared fallback editor" --repo . --ref origin/main --limit 4 --state "$RUNNER_TEMP/transit-memory" > "$RUNNER_TEMP/transit-editor/memory.json"
+      - name: Export tracked source for isolated repair
+        run: git archive --format=tar.gz HEAD > "$RUNNER_TEMP/transit-editor/source.tar.gz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: transit-editor-source
+          path: ${{ runner.temp }}/transit-editor
+          retention-days: 1
