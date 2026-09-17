@@ -517,8 +517,13 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: refreshing \}\)[\s\S]*\|\| refreshing[\s\S]*requestAnimationFrame[\s\S]*getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: true \}\)/u,
-  "Initial core sky data must paint before transit-window enrichment; refreshes publish one complete calculation."
+  /const coreSkyRequest = getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: refreshing \}\)[\s\S]*getAstrodienstSky\(skyLocation, selectedDateTime, \{ includeTransitWindows: true \}\)/u,
+  "Initial core sky data is posted first so it can paint before transit-window enrichment; both requests are queued on the same worker without waiting for the core round-trip."
+);
+assert.match(
+  appSource,
+  /setSkyTimingStatus\(cachedSky && skySnapshotHasTransitWindows\(cachedSky\) \? "ready" : "loading"\)/u,
+  "A verified cached snapshot that already includes transit windows must not keep the Sky reading overlay waiting for another ephemeris pass."
 );
 assert.doesNotMatch(
   appSource,

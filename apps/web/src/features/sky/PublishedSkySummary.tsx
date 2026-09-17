@@ -78,7 +78,7 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
       ? previous : { key: sourceKey, content: new Map(), status: "error" });
     const timeout = window.setTimeout(() => { if (active) { fail(); active = false; } }, 20_000);
     void (async () => {
-      await refreshContentPublications(true);
+      await refreshContentPublications();
       const content = await loadLiveGeneratedContentForKeys(requestedKeys);
       if (!contentPublicationsResolved() || missingPublishedSkySummaryKeys(requestedKeys, content).length) {
         throw new Error("The current Daily Sky publication could not be loaded.");
@@ -103,7 +103,12 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
     observer.observe(body.current);
     return () => observer.disconnect();
   }, [loading, failed, sourceKey]);
-  const retry = () => { onRetryFacts(); setRefresh(value => value + 1); };
+  const retry = () => {
+    void refreshContentPublications(true).finally(() => {
+      onRetryFacts();
+      setRefresh(value => value + 1);
+    });
+  };
   return <div ref={body} className="sky-daily-summary__body" aria-label="Daily sky summary" aria-busy={loading}
     style={loading || failed ? { minHeight: height } : undefined}>
     {failed ? <PageLoadError message="The daily summary could not load. Your published writing has not changed." onRetry={retry} />
