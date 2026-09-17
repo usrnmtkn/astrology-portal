@@ -2282,8 +2282,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     const preview = finder.getByRole("region", { name: "Effective transit to natal reader preview" });
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/sun/trine");
-    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
-    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("");
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(String(servingPackageRecords.get("authored/transit-aspect/sun/sun/soft")?.body_you ?? ""));
+    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(String(servingPackageRecords.get("authored/transit-aspect/sun/sun/soft")?.body_they ?? ""));
     await expect(editor.getByLabel("Write-up aspect", { exact: true })).toHaveValue("trine");
     await closeGeneratedEditor(page);
     await expect(exactEditor).toContainText("authored/transit-aspect/sun/sun/trine");
@@ -2321,8 +2321,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(await preview.locator(".admin-natal-source-card-copy > p").allTextContents()).toEqual(publishedBody);
     await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("trine");
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/sun/trine");
-    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
-    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue("");
+    await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(String(servingPackageRecords.get("authored/transit-aspect/sun/sun/soft")?.body_you ?? ""));
+    await expect(editor.getByLabel("Reader phrase · They", { exact: true })).toHaveValue(String(servingPackageRecords.get("authored/transit-aspect/sun/sun/soft")?.body_they ?? ""));
     await closeGeneratedEditor(page);
     await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("sextile");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(you);

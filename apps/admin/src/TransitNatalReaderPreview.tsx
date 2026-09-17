@@ -73,11 +73,12 @@ function TransitSourceEditAction({ source, exactKey, headline, onOpenSource }: {
   </details>;
 }
 
-export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource }: {
+export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource, onOpenExact }: {
   selection: TransitNatalSelection;
   voice: string;
   secret: string;
   onOpenSource: (contentKey: string, label: string, field?: string) => void;
+  onOpenExact?: () => void;
 }) {
   const [revision, setRevision] = useState(0);
   const [state, setState] = useState<{ preview: Preview | null; error: string | null; loading: boolean }>({ preview: null, error: null, loading: true });
@@ -129,8 +130,9 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
           <div className="admin-natal-source-card-copy">
             <div className="admin-natal-source-card-heading"><h4>{state.preview.headline}</h4></div>
             {groups.some(group => group.sources.some(source => transitSourceEditScope(exactKey, source.contentKey).kind === "shared")) && <aside className="admin-field-hint">
-              {exactKey ? "The published preview is still using shared fallback writing. The editor for this transit is the selected contact only. A saved draft does not replace published reader copy." : "This preview includes shared fallback writing. There is no independent write-up key for this contact; shared source changes can affect other readings."}
+              {exactKey ? "The published preview is still using shared fallback writing. Edit this copy to start a write-up for this aspect only. A saved draft does not replace published reader copy." : "This preview includes shared fallback writing. There is no independent write-up key for this contact; shared source changes can affect other readings."}
             </aside>}
+            {exactKey && onOpenExact && <StudioButton type="button" onClick={onOpenExact}>Edit this copy</StudioButton>}
             {groups.map((group, index) => <Fragment key={index}>
               {group.texts.map((text, paragraphIndex) => <p key={paragraphIndex}>{text}</p>)}
               {group.sources.map(source => <TransitSourceEditAction

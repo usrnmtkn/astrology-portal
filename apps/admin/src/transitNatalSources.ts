@@ -125,11 +125,30 @@ export function transitNatalExactContentKey(selection: Pick<TransitNatalSelectio
   return isDynamicTransitNatalExactKey(key) ? key : null;
 }
 
-/** An empty authoring draft, never copied from or labeled as the fallback it will replace. */
-export function transitNatalExactSourceDraft(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">) {
+export function transitNatalSharedFallbackKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">) {
+  if (!transitNatalExactContentKey(selection) || isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect)) return null;
+  const family = selection.aspect === "trine" || selection.aspect === "sextile" ? "soft" : "hard";
+  return `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${family}`;
+}
+
+export function transitNatalStarterCopy(source: Record<string, unknown> | null | undefined) {
+  const you = typeof source?.body_you === "string" && source.body_you.trim()
+    ? source.body_you
+    : typeof source?.body === "string" ? source.body : "";
+  const they = typeof source?.body_they === "string" ? source.body_they : "";
+  return { body_you: you, body_they: they };
+}
+
+/** New exact-key draft. Optional starter copy is the shared fallback currently shown, never labeled as that source. */
+export function transitNatalExactSourceDraft(
+  selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">,
+  starter: { body_you?: string; body_they?: string } = {}
+) {
   const contentKey = transitNatalExactContentKey(selection);
   if (!contentKey) throw new Error("This transit aspect is not supported by the reader.");
   const isReturn = contentKey.startsWith("authored/transit-return/");
+  const you = typeof starter.body_you === "string" ? starter.body_you : "";
+  const they = typeof starter.body_they === "string" ? starter.body_they : "";
   return {
     id: null,
     contentKey,
@@ -138,14 +157,14 @@ export function transitNatalExactSourceDraft(selection: Pick<TransitNatalSelecti
     status: "DRAFT" as const,
     headline: isReturn ? `${selection.planet.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")} return` : transitNatalLabel(selection),
     summary: "",
-    body: "",
+    body: you,
     lane: "reference" as const,
     reviewState: "needs-review" as const,
     blockType: "fallback_hook" as const,
     promptVersion: "manual-admin",
     sections: { packageRecord: {
       contentKey, content_role: "full_copy", grammar_frame: "complete_sentence", surface: isReturn ? "transit-return" : "transit-aspect",
-      body: "", ...(!isReturn ? { body_you: "", body_they: "" } : {}),
+      body: you, ...(!isReturn ? { body_you: you, body_they: they } : {}),
       requiredSlots: ["aspectWord", "untilDate"], optionalSlots: ["Name"],
       reader_only: true, render_policy: "personal-transit-exact-v1", review_status: "needs_review"
     } },
