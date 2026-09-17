@@ -32,5 +32,15 @@ sources[0] = { ...sources[0], review_status: "approved", publicationRowUpdatedAt
 assert.throws(() => reader(input), /SOURCE_GAP/);
 installContentPublications([{ content_key: rxKey, state: "retired", revision: 3, row_id: null, row_updated_at: null, updated_at: "2026-09-08T01:00:03Z" }]);
 assert.throws(() => reader({ contentKey: rxKey }), /SOURCE_GAP/);
+const libraryKey = "sky-placement/article/venus/virgo";
+const libraryTime = "2026-09-17T18:00:00.000Z";
+installContentPublications([{
+  content_key: libraryKey, state: "live", revision: 4, row_id: "writing-library-test",
+  row_updated_at: libraryTime, updated_at: libraryTime
+}]);
+const libraryBaseline = records.get(libraryKey)?.placementArticle
+  ?? corpus.content.continuous.find((row: { contentKey: string }) => row.contentKey === libraryKey)?.placementArticle;
+assert(libraryBaseline, "corpus must still serve Venus in Virgo");
+assert(reader({ route: "placement", planet: "venus", sign: "virgo" }).readerParts.includes(libraryBaseline));
 assert.equal(JSON.stringify(corpus), original, "approved corpus remains byte-identical");
 console.log("PASS: current published Sky article/Rx revisions replace the baseline, repeated edits, stale/draft rejection and retirement.");

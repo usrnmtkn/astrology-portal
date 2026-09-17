@@ -7425,7 +7425,7 @@ export function GeneratedContentAdminDashboard() {
   async function openExactTransitNatalSource(selection: TransitNatalContact & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>) {
     const key = transitNatalExactContentKey(selection);
     if (!key) return;
-    if (draft?.contentKey === key && (selectedRowId || draft.id || draft.body || draft.headline)) {
+    if (draft && draft.contentKey === key && (selectedRowId || draft.id || draft.body || draft.headline)) {
       return;
     }
     transitExactDismissedKeyRef.current = null;

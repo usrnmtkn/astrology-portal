@@ -1,5 +1,5 @@
 import { isZodiacSeasonSourceKey } from "./fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
-import { contentPublicationRecords, publicationAllowsContent } from "./contentPublicationState";
+import { contentPublication, contentPublicationRecords, publicationAllowsContent } from "./contentPublicationState";
 import { isCanonicalSkyReaderRecord } from "./fallbackArchitectureV3/dashboardExtensions";
 // @ts-ignore The canonical renderer and its editable-field contract are shared ESM.
 import { createSkyV4ReaderRoute, skyV4ContentStudioRecords } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
@@ -28,7 +28,8 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
   let render: ((input: Record<string, unknown>) => any) | null = null;
   let blocked = new Set<string>();
   return (input: Record<string, unknown>) => {
-    const published = sources().map(object).filter(row => (isZodiacSeasonSourceKey(row.contentKey) || isCanonicalSkyReaderRecord(row as any)
+    const supplied = sources().map(object);
+    const published = supplied.filter(row => (isZodiacSeasonSourceKey(row.contentKey) || isCanonicalSkyReaderRecord(row as any)
       && row.studio_version_status === "approved-serving-revision")
       && typeof row.publicationRowId === "string"
       && row.review_status === "approved"
@@ -36,7 +37,17 @@ export function createPublishedSkyReader(corpus: RecordValue, lunarSource: unkno
     const nextFingerprint = JSON.stringify([published.map(row => [row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt]), contentPublicationRecords()]);
     if (nextFingerprint !== fingerprint) {
       const byKey = new Map(published.map(row => [row.contentKey, row]));
-      const nextBlocked = new Set([...baselines.keys()].filter(key => !byKey.has(key) && !publicationAllowsContent(key)));
+      const suppliedIds = new Set(supplied.map(row => row.publicationRowId).filter((id): id is string => typeof id === "string"));
+      const nextBlocked = new Set([...baselines.keys()].filter(key => {
+        if (byKey.has(key)) return false;
+        const publication = contentPublication(key);
+        if (!publication) return false;
+        if (publication.state === "retired") return true;
+        if (publication.state !== "live" || !publication.row_id) return false;
+        // A live Studio variable row that never entered this reader overlay
+        // must not hide the approved corpus.
+        return suppliedIds.has(publication.row_id);
+      }));
       // Copy only touched branches and whitelisted prose. Structural identity,
       // ephemeris configuration, release gates, and baseline hashes stay fixed.
       function visit(value: unknown): unknown {
