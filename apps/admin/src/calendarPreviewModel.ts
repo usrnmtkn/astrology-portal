@@ -92,9 +92,11 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   const seasons = calendarPreviewSeasons(calculation);
   const openingSign = seasons.opening?.sign ?? (!calculation ? sunSign : "");
   put("openingSeasonSign", openingSign, calculation ? "fact" : "example");
+  put("signTitle", openingSign, calculation ? "fact" : "example");
   if (openingSign) seasonCopy("opening", openingSign);
   if (seasons.closing) {
     put("closingSeasonSign", seasons.closing.sign, "fact");
+    put("hasSeasonTransition", "yes", "fact");
     seasonCopy("closing", seasons.closing.sign);
   }
   if (!calculation) return values;
@@ -108,13 +110,31 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
     put("seasonStart", formatTime(seasons.current.startsAt), "fact");
     put("seasonEnd", formatTime(seasons.current.endsAt), "fact");
   }
+  if (seasons.opening) {
+    put("entryDate", formatTime(seasons.opening.startsAt), "fact");
+    put("exitDate", formatTime(seasons.opening.endsAt), "fact");
+  }
   if (seasons.closing) put("seasonChangeDate", formatTime(seasons.closing.startsAt), "fact");
   if (days.length) {
     const timed = events.filter(event => event.phase !== "retrograde-passage");
     const lunations = timed.filter(event => event.type === "lunation" && (event.primary || event.eclipseType));
+    const newMoons = lunations.filter(event => event.eclipseType === "solar" || event.glyph === "●");
+    const fullMoons = lunations.filter(event => event.eclipseType === "lunar" || event.glyph === "○");
     const changes = timed.filter(event => ["ingress", "station"].includes(event.type) && event.planet !== "Moon");
     const aspects = timed.filter(event => event.type === "aspect" && !event.planets?.includes("Moon"));
     put("lunationDates", timedEvents(lunations) || "No New Moon, Full Moon, or eclipse in this period.", "fact");
+    if (newMoons.length) {
+      put("hasNewMoon", "yes", "fact");
+      put("newMoonDate", newMoons.map(event => formatDate(event.startsAt)).join("; "), "fact");
+      put("newMoonSign", [...new Set(newMoons.map(event => calendarPreviewSign(event.sign ?? "")))].filter(Boolean).join(", "), "fact");
+    }
+    if (fullMoons.length) {
+      put("hasFullMoon", "yes", "fact");
+      put("fullMoonDate", fullMoons.map(event => formatDate(event.startsAt)).join("; "), "fact");
+      put("fullMoonSign", [...new Set(fullMoons.map(event => calendarPreviewSign(event.sign ?? "")))].filter(Boolean).join(", "), "fact");
+    }
+    if (newMoons.some(event => event.eclipseType === "solar")) put("hasSolarEclipse", "yes", "fact");
+    if (fullMoons.some(event => event.eclipseType === "lunar")) put("hasLunarEclipse", "yes", "fact");
     put("planetaryChanges", timedEvents(changes) || "No planetary ingresses or stations in this period.", "fact");
     put("planetaryAspects", timedEvents(aspects) || "No exact planetary aspects in this period.", "fact");
     put("overviewKeyDates", timedEvents(timed.filter(event => lunations.includes(event) || changes.includes(event) || aspects.includes(event))) || "No exact overview events in this period.", "fact");
