@@ -1200,6 +1200,29 @@ function packageReviewStatusForDraft(draft: AdminDraft) {
     || "needs_review";
 }
 
+function draftWithPackageReviewStatus(draft: AdminDraft, reviewStatus: string): AdminDraft {
+  const proposal = draftPackageProposal(draft);
+  return {
+    ...draft,
+    sourceSnapshot: {
+      ...(draft.sourceSnapshot ?? {}),
+      review_status: reviewStatus
+    },
+    facts: {
+      ...(draft.facts ?? {}),
+      review_status: reviewStatus
+    },
+    sections: {
+      ...(draft.sections ?? {}),
+      packageRecord: {
+        ...draftPackageRecord(draft),
+        review_status: reviewStatus
+      },
+      ...(proposal ? { packageDraft: { ...proposal, review_status: reviewStatus } } : {})
+    }
+  };
+}
+
 function draftHasPackageProposal(draft: AdminDraft) {
   return Boolean(objectRecord(objectRecord(draft.sections)?.packageDraft));
 }
@@ -7420,8 +7443,8 @@ export function GeneratedContentAdminDashboard() {
       const nextDraft = transitNatalExactSourceDraft(selection, starter);
       rememberSavedDraft(nextDraft);
       setMessage(starter.body_you.trim()
-        ? "You and Friend below start from the shared fallback currently in the preview. Saving creates this aspect only; the shared source stays unchanged until you review and publish."
-        : "No write-up is saved for this contact yet. You and Friend below are for this aspect only. Shared fallback writing stays unchanged until this passage is reviewed and published.");
+        ? "You and Friend below start from the shared fallback currently in the preview. Save keeps a draft for this aspect only. Approve & publish makes it live; the shared source stays unchanged."
+        : "No write-up is saved for this contact yet. You and Friend below are for this aspect only. Save keeps a draft. Approve & publish makes it live; shared fallback writing stays unchanged.");
       scrollEditorToTop();
     } catch (error) {
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
@@ -8526,6 +8549,21 @@ export function GeneratedContentAdminDashboard() {
     const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes || packageCanApproveRevision ? "LIVE" : "DRAFT";
     const packageWillPublishOnSave = packageApprovalPublishes && currentDraft.status !== "LIVE";
     const natalAspectMissingCopy = isExactNatalAspectDraft && !["body", "body_you", "body_they"].some((field) => packageFieldString(currentDraft, field).trim());
+    const isPersonalTransitExactDraft = isPackageDraft
+      && (currentDraft.contentKey.startsWith("authored/transit-aspect/")
+        || currentDraft.contentKey.startsWith("authored/transit-return/"));
+    const transitNatalMissingCopy = isPersonalTransitExactDraft && (
+      currentDraft.contentKey.startsWith("authored/transit-return/")
+        ? !["body", "body_you"].some((field) => packageFieldString(currentDraft, field).trim())
+        : !["body_you", "body_they"].every((field) => packageFieldString(currentDraft, field).trim())
+    );
+    const transitNatalCanApprovePublish = isPersonalTransitExactDraft
+      && !packageHasProposal
+      && !packageCanApproveRevision
+      && !isGuidedHeldReview
+      && !packageIsSkyV4Governed
+      && packageRoleCanServeExactCopy
+      && !fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus);
     const seasonSourceRows = ZODIAC_SEASON_SOURCE_STARTERS.map((record: Record<string, any>) => rows.find(row => row.content_key === record.contentKey) ?? {
       id: `package:${record.contentKey}`, content_key: record.contentKey, headline: record.headline, body: "", summary: "", surface: "sky", status: "DRAFT", inventory_only: true, block_type: "fallback_hook", sections: { packageRecord: record }
     } as AdminGeneratedContentRow);
@@ -9363,8 +9401,8 @@ export function GeneratedContentAdminDashboard() {
               <p className="admin-field-hint">Changing planet, aspect, or natal point opens that contact&apos;s You and Friend fields. Insert <code>{"{{aspectWord}}"}</code> and <code>{"{{untilDate}}"}</code> where the calculated aspect and window belong. Sign and house stay on the page behind this editor; they do not change this write-up.</p>
               <p>{isNewDraft && isAuthoredTransitAspectDraft && !currentDraft.sections?.packageOriginalRecord
                 ? (packageFieldString(currentDraft, "body_you").trim()
-                  ? "You and Friend below start from the shared fallback currently in the preview. Saving creates this aspect only. The shared source is not changed."
-                  : "No write-up is saved for this exact contact yet. You and Friend below are for this aspect only. Shared fallback writing is unchanged until you review and publish this passage.")
+                  ? "You and Friend below start from the shared fallback currently in the preview. Save keeps a draft for this aspect only. Approve & publish makes it live. The shared source is not changed."
+                  : "No write-up is saved for this exact contact yet. You and Friend below are for this aspect only. Save keeps a draft. Approve & publish makes it live.")
                 : isAuthoredTransitAspectDraft
                   ? "These You and Friend fields belong to the selected contact. Signs, houses, and dates come from the calculated chart. Shared fallback writing is edited separately under the published preview."
                 : "This source is shared by matching readings. Edit its words here; signs, houses, and dates come from the calculated chart. Variables opens a preview using the transit selected above."}</p>
@@ -10609,8 +10647,8 @@ export function GeneratedContentAdminDashboard() {
                 ? draftHasUnsavedChanges
                   ? "Unsaved revision"
                   : "Draft saved · Not live"
-                : packageWillPublishOnSave
-                  ? natalAspectMissingCopy ? "Write the passage before publishing" : "Ready to publish"
+                  : packageWillPublishOnSave
+                  ? natalAspectMissingCopy || transitNatalMissingCopy ? "Write the passage before publishing" : "Ready to publish"
                   : unchangedSkySource
                     ? "No changes"
                     : isNewDraft
@@ -10630,8 +10668,8 @@ export function GeneratedContentAdminDashboard() {
                 await saveDraft(isCmsSurfaceDraft ? "LIVE" : undefined);
               }
             })()}
-            disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !(isCmsSurfaceDraft && currentDraft.status !== "LIVE"))}
-            title={packageWillPublishOnSave && natalAspectMissingCopy ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
+            disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !(isCmsSurfaceDraft && currentDraft.status !== "LIVE"))}
+            title={packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy) ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
             {isGuidedHeldReview
@@ -10655,6 +10693,25 @@ export function GeneratedContentAdminDashboard() {
               <Save size={16} aria-hidden="true" />
               Save draft
             </StudioButton>
+          )}
+          {transitNatalCanApprovePublish && (
+            <StudioButton
+              className="admin-publish-button"
+              type="button"
+              onClick={() => void saveDraft(undefined, draftWithPackageReviewStatus(currentDraft, "approved"))}
+              disabled={isLoading || unchangedSkySource || transitNatalMissingCopy}
+              title={transitNatalMissingCopy
+                ? currentDraft.contentKey.startsWith("authored/transit-return/")
+                  ? "Write the return passage before publishing."
+                  : "Write both You and Friend passages before publishing."
+                : "Approve this exact contact and make it live on You and Friends."}
+            >
+              <Check size={16} aria-hidden="true" />
+              Approve & publish
+            </StudioButton>
+          )}
+          {transitNatalCanApprovePublish && (
+            <p className="admin-savebar-next-step">Save keeps a draft. Approve &amp; publish makes this exact contact live.</p>
           )}
           {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (
             <p className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</p>
