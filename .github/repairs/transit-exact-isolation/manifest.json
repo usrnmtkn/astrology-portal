@@ -1,0 +1,27 @@
+{
+  "schema": "transit-source-isolation-repair/v1",
+  "baseCommit": "f5e10aa1f34bd4035b6a703b14793ddbf8c44149",
+  "files": [
+    {"path":"apps/admin/src/GeneratedContentAdminDashboard.tsx","before":"3371824ec64dff9dfa6b5a98e4960b6ac400631f","after":"5ecfef627ea81511cdea339bf06a6ede47e5ca46"},
+    {"path":"apps/admin/src/TransitNatalReaderPreview.tsx","before":"000aff14bff964e07d4ec1e8d09318913f9dc33d","after":"b7aaf3729554837d3a3c18d9a3266a34224e1736"},
+    {"path":"apps/admin/src/transitNatalEditorScope.ts","before":null,"after":"f3cc4a4be283a4ee46a2c8361570570e64c7cd99"},
+    {"path":"apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts","before":"000e90b5ae5e54c81b2bfb949110c88b188974a8","after":"7682c3af79f193fda16a8a0a2c49509dd091bf6d"},
+    {"path":"apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts","before":"e9b4b737366fd2693cc73ecb6aee7e44bd94be23","after":"756a8ca03911c24948cd1a6b01a25df08072424f"},
+    {"path":"apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs","before":"d16e264348f3c9f68b33a4671ac3f6c170c4ca17","after":"a28f89c2b4febabb727d606e819fc9dff1940c12"},
+    {"path":"apps/web/src/content/fallbackArchitectureV3/resolver/transitAspectSourcePriority.mjs","before":null,"after":"790b2ad66fba3fff193194b018222d4035950278"},
+    {"path":"docs/qa/transit-exact-isolation-2026-09-17.md","before":null,"after":"d4cede44bb620152757f9106b296d1838cac70e5"},
+    {"path":"scripts/test-admin-transit-natal-sources.mjs","before":"c5377cca1a5aa95fbde466296699ca5583fd3d36","after":"893d5001a22f68140a492abf0602ade33267140e"},
+    {"path":"scripts/test-empty-house-refinement.mjs","before":"25869efbf4b28f890e920481c6288caf251413dd","after":"c6f3b9c43c32c02e37f4ae55d38d57af64e576a2"},
+    {"path":"scripts/test-fallback-package-cache-contract.mjs","before":"2cf71dbce3267844d3935bd253d92ed720f8008f","after":"e4e4d76141f0aaad05173c418b6273e44d303439"},
+    {"path":"scripts/test-fallback-refresh-wiring.mjs","before":"a7d285acae5588299aeb2ec66608f02ac5de6c27","after":"bcd54912c85f5628dfe6482b5dc4e5858ecf55ea"},
+    {"path":"scripts/test-friends-transit-nonsun-serving-v1.mjs","before":"2d4f46924425dd3644893cda2012072bd624d253","after":"e2c4acbf614fdff6032a14301954905fbb03b36b"},
+    {"path":"scripts/test-sun-friends-serving-v1.mjs","before":"fee00cab3bbb3878488d15e75a275e3cc72bcc6d","after":"b9894b630c6063383c6b89ae27ccfa9539abb65a"},
+    {"path":"scripts/test-transit-exact-isolation.mjs","before":null,"after":"4dd0793fafde4662c4b3365b6537f2e11c9aa162"},
+    {"path":"scripts/test-transit-natal-editor-scope.mjs","before":null,"after":"870a0e07a9baf9b5480301e07f24060f15707ea4"},
+    {"path":"scripts/test-transit-natal-preview-api.mts","before":"2e4f19e92be49ed53478d045fb61be996ee2d6f8","after":"38f15f422e66e36537fede89a01752057b276b8c"},
+    {"path":"scripts/test-you-transit-refresh-v1.mjs","before":"0c7d5214d0b8b4fc1f94584778b46b0a47b5e3aa","after":"c0b1826ec340198d5099864621aa80c097c09115"},
+    {"path":"scripts/transit-exact-isolation-cases.mjs","before":null,"after":"8faf26c3abb3d2566e16aeb2bba751c1b4001c29"},
+    {"path":"tests/visual/content-dashboard-admin-user-flows.spec.ts","before":"68167f03eea7c4744e20839518bcd01a5fbfaccd","after":"c63df71b428a7de7a210329050c8269ec943bed6"}
+  ],
+  "patchSha256": "3a43ce9a0951f9812d28907beef670108438b436b242595cdc3290874295c64d"
+}
