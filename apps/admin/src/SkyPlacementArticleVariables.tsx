@@ -3,7 +3,6 @@ import { ZODIAC_SEASON_VARIABLES, zodiacSeasonSourceKey } from "../../web/src/co
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
-// @ts-ignore Shared planet-in-sign template, also used by publication and readers.
 import { SKY_PLACEMENT_PLANET_SIGN_INGRESS_TEMPLATE } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementPlanetSignTemplate.mjs";
 import { SKY_WRITING_LIBRARY_GROUPS, type SkyWritingLibraryComposition } from "./skyWritingLibrary";
 import SkyPlacementVariableKey, { SkyVariableText, type SkyVariableFacts } from "./SkyPlacementVariableKey";
