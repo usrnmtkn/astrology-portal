@@ -12,6 +12,11 @@
   padding-top: var(--chart-page-top);
 }
 
+.app-shell.mode-learn {
+  overflow-x: clip;
+  padding: 0;
+}
+
 .app-shell.mode-detail {
   padding: 0;
 }

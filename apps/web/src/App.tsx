@@ -14495,7 +14495,7 @@ export function App() {
               : <FeatureLoadingFallback />
       ) : (
         <>
-          <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
+          <section className={isSignupMode ? "portal-grid page-shell signup-layout" : isFriendsMode ? "portal-grid page-shell friends-layout" : isCalendarMode ? "portal-grid page-shell full-page-layout calendar-layout" : isLearnMode ? "portal-grid page-shell full-page-layout learn-layout" : isProfileMode ? "portal-grid page-shell full-page-layout" : "portal-grid page-shell sky-page sky-layout chart-layout"}>
             {!isSignupMode && !usesFullPageLayout && !isSkyLoading && sky && (
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Current sky">
                 <div className="chart-shell sky-chart-shell">
@@ -14519,7 +14519,7 @@ export function App() {
                 <PageLoading message="Loading the sky chart…" />
               </section>
             )}
-            <section className={isCalendarMode ? "detail-panel calendar-content-column" : "detail-panel sky-content-column chart-layout__content"} aria-label="Portal details">
+            <section className={isCalendarMode ? "detail-panel calendar-content-column" : isLearnMode ? "detail-panel learn-content-column" : "detail-panel sky-content-column chart-layout__content"} aria-label="Portal details">
               {isTodayMode && (
                 <SkyRoute>
                   <section className="today-hero" aria-label="Today controls">

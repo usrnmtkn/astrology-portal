@@ -17,6 +17,7 @@
 .mode-friends .portal-grid,
 .mode-account .portal-grid,
 .mode-settings .portal-grid,
+.mode-learn .portal-grid,
 .portal-grid.full-page-layout,
 .signup-layout {
   display: block;
@@ -42,13 +43,15 @@
 
 .mode-friends .sky-panel,
 .mode-account .sky-panel,
-.mode-settings .sky-panel {
+.mode-settings .sky-panel,
+.mode-learn .sky-panel {
   display: none;
 }
 
 .mode-friends .detail-panel,
 .mode-account .detail-panel,
 .mode-settings .detail-panel,
+.mode-learn .detail-panel,
 .portal-grid.full-page-layout .detail-panel {
   display: block;
   width: 100%;

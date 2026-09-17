@@ -6,3 +6,25 @@ test("Learn hub is reachable from primary navigation", async ({ page }) => {
   await expect(page).toHaveURL(/\/learn\/?$/);
   await expect(page.getByRole("heading", { name: "Astro 101", level: 1 })).toBeVisible({ timeout: 60_000 });
 });
+
+test("Learn uses the shared full-page article layout", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/learn");
+  const learnPage = page.locator(".learn-page");
+  await expect(learnPage).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator(".learn-layout")).toBeVisible();
+  await expect(learnPage).toHaveClass(/article-page/);
+  await expect(learnPage.locator(".article-card").first()).toBeVisible();
+
+  const box = await learnPage.boundingBox();
+  expect(box?.width ?? 0).toBeGreaterThan(1000);
+
+  const headingTags = await learnPage.locator("h1, h2, h3, h4, h5, h6").evaluateAll((nodes) =>
+    nodes.map((node) => node.tagName)
+  );
+  expect(headingTags[0]).toBe("H1");
+  expect(headingTags.slice(1).every((tag) => tag !== "H1")).toBeTruthy();
+
+  await expect(learnPage.locator(".article-eyebrow").first()).toHaveText(/Learn/i);
+  await expect(learnPage.getByRole("heading", { level: 1 })).toHaveText("Astro 101");
+});
