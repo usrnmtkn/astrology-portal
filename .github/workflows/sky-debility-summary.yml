@@ -49,7 +49,7 @@ jobs:
       - name: Source-map parity and exact field routing across all combinations
         run: node --import tsx scripts/test-sky-debility-composition.mts
       - name: Inline links, count emphasis, motion changes and all presentation states
-        run: node --import tsx scripts/test-sky-debility-presentation.mts
+        run: npx tsx --tsconfig apps/web/tsconfig.json scripts/test-sky-debility-presentation.mts
       - name: Reader-copy boundary
         run: npm run test:reader-copy-boundary
       - name: Build Content Studio
