@@ -90,6 +90,7 @@ const adminPages = [
   { nav: "Content Library", title: "Content Library", breadcrumb: "Admin / Write / Content library", hash: "exact-content" },
   { nav: "Sky Write-ups", title: "Sky Write-ups", breadcrumb: "Admin / Write / Sky write-ups", hash: "sky-writeups" },
   { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
+  { nav: "Astro 101", title: "Astro 101", breadcrumb: "Admin / Write / Astro 101", hash: "astro-101" },
   { nav: "Compatibility", title: "Compatibility", breadcrumb: "Admin / Write / Compatibility", hash: "compatibility" },
   { nav: "Composite Review", title: "Composite Review", breadcrumb: "Admin / Write / Composite review", hash: "composite-review" },
   { nav: "Composition", title: "Composition Map", breadcrumb: "Admin / Composition / Map", hash: "composition-map" },

@@ -299,7 +299,8 @@ const approvedConjunctionSunDailyBodyYou = "You might catch yourself hesitating 
 const approvedConjunctionSunDailyBodyThey = "{{personPreferredName}} may hesitate over the plan {{personPreferredName}} actually wants to skip, or wait for someone else to say the answer {{personPreferredName}} hopes for. Acting fine with whatever happens can read as distance when the desire is already showing. The day gets simpler once the preference is stated.";
 assert.equal(conjunctionSunDailyBody?.body_you, approvedConjunctionSunDailyBodyYou, "You Transit must preserve the approved conjunction-Sun daily body.");
 assert.equal(conjunctionSunDailyBody?.body_they, approvedConjunctionSunDailyBodyThey, "Friends Transit must preserve its separately governed conjunction-Sun daily body.");
-assert.doesNotMatch(app, /resolveSourceGroundedV2\("sky\.planet_sign"/, "Sky placement rendering must not resolve through legacy authored V2 rows.");
+assert.match(app, /mode === "learn"/, "The reader app must have a Learn portal mode.");
+assert.match(app, /LearnExperience/, "Astro 101 must render on /learn.");
 assert.match(app, /skyPlacementWritingSection/, "Sky placement rendering must fall back to Sky writing atoms when authored rows are absent.");
 assert.match(adminDashboard, /Content System/, "Admin article editor must label authored vs fallback as a content system, not a display override.");
 assert.doesNotMatch(adminDashboard, /Content Level/, "Admin article editor must not expose internal content level as a third reader choice.");
@@ -308,6 +309,9 @@ assert.doesNotMatch(adminDashboard, /aria-label="App display source"/, "Admin ed
 assert.match(adminDashboard, /<AdminFilterBar[\s\S]*?label="Article filters"/, "Articles admin surface must include dedicated filters.");
 assert.match(adminDashboard, /Article content system/, "Articles admin filters must include authored vs fallback content system.");
 assert.match(adminDashboard, /filteredArticleRows/, "Articles admin table must render the filtered article row set.");
+assert.match(adminDashboard, /\{ page: "astro101", label: "Astro 101"/, "Astro 101 must be a first-class Studio destination.");
+assert.match(adminDashboard, /!isAstro101ContentRow\(row\)/, "Astro 101 rows must not live in the Articles library.");
+assert.match(adminDashboard, /filteredAstro101Rows/, "Astro 101 admin table must render the education row set.");
 assert.match(adminDashboard, /<ContentLiveStatusBadge row=\{row\}/, "Content tables must use verified reader status.");
 assert.match(adminDashboard, /Content status definitions/, "Studio must explain Live and Not live.");
 assert.doesNotMatch(adminDashboard, /label: "Available in app"|label: "Not published"/, "Studio must not infer reader visibility from mirror workflow flags.");

@@ -174,6 +174,27 @@ await test('bulk saves preserve live rows, validate before writing, and report p
   assert.equal(partial.savedRows[0].content_key, 'cms/qa/new-batch-row'); assert.equal(rows.get(baseline.id).body, 'QA competing edit');
 });
 
+await test('section patches merge instead of replacing sibling keys', async () => {
+  reset([{ ...baseline, sections: { packageRecord: { contentKey: baseline.content_key }, intro: 'keep me' } }]);
+  const result = await invoke('PATCH', { id: baseline.id, sections: { blocks: [{ heading: 'H', body: 'B' }] } });
+  assert.equal(result.status, 200);
+  assert.equal(rows.get(baseline.id).sections.intro, 'keep me');
+  assert.equal(rows.get(baseline.id).sections.packageRecord.contentKey, baseline.content_key);
+  assert.deepEqual(rows.get(baseline.id).sections.blocks, [{ heading: 'H', body: 'B' }]);
+});
+
+await test('education astro-101 rows can publish; natal sample rows cannot', async () => {
+  reset([{ ...baseline, surface: 'natal', content_key: 'education/astro-101/sign/aries' }]);
+  const blocked = await invoke('PATCH', { id: baseline.id, status: 'LIVE' });
+  assert.ok(blocked.status >= 400, JSON.stringify(blocked));
+  assert.deepEqual(writes, []);
+  reset([{ ...baseline, surface: 'education', content_key: 'education/astro-101/sign/aries', mode: 'article' }]);
+  const published = await invoke('PATCH', { id: baseline.id, status: 'LIVE', reviewState: null, lane: 'serving' });
+  assert.equal(published.status, 200, JSON.stringify(published));
+  assert.equal(rows.get(baseline.id).status, 'LIVE');
+  assert.equal(rows.get(baseline.id).surface, 'education');
+});
+
 await test('unauthorized requests never reach storage', async () => {
   for (const method of ['GET', 'POST', 'PATCH', 'DELETE']) {
     reset(); assert.equal((await invoke(method, writeBody(), { secret: 'incorrect' })).status, 401); assert.deepEqual(writes, []);

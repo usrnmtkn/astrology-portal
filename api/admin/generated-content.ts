@@ -6,6 +6,7 @@ import { separateArticleHoroscopeRow } from "../../apps/web/src/content/skyArtic
 import { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
 import { packagePublicationAdmissionIssue } from "../_lib/content-studio-package-admission.js";
+import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 import { skyDebilityTemplateErrors } from "../../apps/web/src/content/skyDebilityCatalog.ts";
@@ -77,7 +78,7 @@ async function adminStorageFetch(input: string, init: RequestInit = {}) {
 }
 
 type ReviewStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
-type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier";
+type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "year_ahead" | "education";
 
 type GeneratedContentWriteBody = {
   id?: string;
@@ -2742,7 +2743,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   if (body.sections !== undefined) {
-    patch.sections = body.sections;
+    patch.sections = mergeGeneratedInterpretationSections(existing.sections, body.sections);
   }
 
   if (body.facts !== undefined) {

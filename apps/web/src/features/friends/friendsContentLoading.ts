@@ -7,7 +7,8 @@ type FriendsContentLoadingMode =
   | "friends"
   | "calendar"
   | "account"
-  | "settings";
+  | "settings"
+  | "learn";
 
 type FriendsContentLoadingState = {
   mode: FriendsContentLoadingMode;
@@ -28,6 +29,7 @@ export function shouldHydrateFallbackDashboardContent({
   friendNatalContentRequested,
   friendRelationshipContentRequests
 }: Pick<FriendsContentLoadingState, "mode" | "friendNatalContentRequested" | "friendRelationshipContentRequests">) {
+  if (mode === "learn") return false;
   if (mode !== "friends") return true;
 
   // Keep the bare Friends list fast, but once a reader opens any Friend detail
@@ -50,7 +52,7 @@ export function shouldLoadDeferredFallbackContent({
   skyPlacementPersonalizationRequested = false
 }: FriendsContentLoadingState) {
   if (skyPlacementPersonalizationRequested) return true;
-  if (mode === "guest" || mode === "member") return false;
+  if (mode === "guest" || mode === "member" || mode === "learn") return false;
   if (mode !== "friends") return true;
 
   return friendNatalContentRequested || friendRelationshipContentRequests.has("transits");

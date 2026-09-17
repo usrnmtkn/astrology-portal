@@ -112,6 +112,7 @@ assert.deepEqual(
 );
 assert.equal(friendsRouteStateFromHref("https://example.com/project-author/not-a-tab"), null);
 assert.equal(friendsRouteStateFromHref("https://example.com/settings"), null);
+assert.equal(friendsRouteStateFromHref("https://example.com/learn"), null);
 assert.equal(friendsTabFromHref("https://example.com/project-author/natal"), "charts");
 assert.equal(isFriendsHref("https://example.com/project-author"), true);
 

@@ -27,6 +27,8 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
     && key === `sky.aspect.${exact.a}.${exact.aspect}.${exact.b}`) return null;
   // Compatibility has a separate dynamically keyed loader.
   if (key.startsWith("authored/compat-pair/")) return null;
+  // Education articles have a dedicated /learn reader, not the fallback package loader.
+  if (row.surface === "education" || key.startsWith("education/astro-101/")) return null;
   if (skyKeys.has(key) || isFallbackDashboardRecordAllowed({ ...record, contentKey: key }, coreKeys)) return null;
   return "This content key has no supported reader route. Save it as a draft; connect it to a supported reader source before publishing.";
 }

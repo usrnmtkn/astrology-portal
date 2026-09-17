@@ -17,6 +17,14 @@ function text(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+export function isAstro101ContentRow(row: Pick<ArticleWorkspaceRow, "content_key" | "facts">) {
+  const key = row.content_key.toLowerCase();
+  if (key.startsWith("education/astro-101/")) return true;
+  const facts = record(row.facts);
+  const slug = text(facts.slug);
+  return slug.startsWith("/learn/");
+}
+
 export function isSkyWriteupContentRow(row: ArticleWorkspaceRow) {
   const key = row.content_key.toLowerCase();
   return row.block_type === "sky_placement"
@@ -55,6 +63,15 @@ export function articleAppDestination(row: ArticleWorkspaceRow): ArticleAppDesti
     return {
       detail: `The article declares ${explicitDestination} as its reader destination.`,
       label: explicitDestination,
+      state: "connected"
+    };
+  }
+
+  const slug = text(facts.slug);
+  if (isAstro101ContentRow(row) && slug.startsWith("/learn/")) {
+    return {
+      detail: `Readers open this page at ${slug}.`,
+      label: slug,
       state: "connected"
     };
   }

@@ -20,6 +20,7 @@ const reservedFriendHandlePaths = new Set([
   "calendar",
   "content",
   "friends",
+  "learn",
   "login",
   "logout",
   "privacy",
