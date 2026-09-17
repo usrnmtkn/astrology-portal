@@ -78,9 +78,11 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
   }
   const dignityDetails = <div className="admin-editor-guidance" data-testid="placement-dignity-selection">
     <p>Calculated dignity: <code>{dignity.status === "known" ? dignity.dignities.join(" and ") || "no major sign condition" : dignity.status === "not_applicable" ? "not applicable" : "invalid placement"}</code></p>
-    <p>{dignity.status === "known" && dignity.variant !== "none"
-      ? "The selected planet and sign choose the paragraph variation. Complete the placement-specific fields below, or preserve a complete authored paragraph. No AI chooses the condition or fills missing writing."
-      : dignity.reason || "This pairing has no domicile, exaltation, detriment, or fall. The dignity paragraph is omitted; this is not a peregrine calculation."}</p>
+    <p>{dignity.status === "not_applicable"
+      ? dignity.reason
+      : dignity.status !== "known"
+        ? dignity.reason || "A valid planet and zodiac sign are required for dignity selection."
+        : "The selected planet and sign choose the paragraph variation. Complete the placement-specific fields below, or preserve a complete authored paragraph. No model chooses the condition or fills missing writing."}</p>
     {hasLegacyDignity && <StudioButton type="button" disabled={disabled} onClick={migrateDignity}>Migrate saved dignity paragraph</StudioButton>}
   </div>;
 

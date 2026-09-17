@@ -13,7 +13,7 @@ The repository refs changed during verification. Tests below describe the captur
 - One traditional seven-planet sign lookup shared by chart badges and article selection, preserving Mercury's two combined conditions.
 - Calculated read-only `placementDignity` and exact-placement `placementDignityMeaning` resolution before interpolation.
 - The paragraph uses a canonical authored full paragraph, then preserved legacy full wording, then both authored mechanism and expression fields. It does not invent missing copy.
-- Intentional omission, unsupported bodies, invalid identities and missing explanation are separate outcomes. No sign-only peregrine assignment.
+- Intentional omission for bodies outside the traditional seven-planet framework, invalid identities and missing explanation are separate outcomes. A valid pairing with none of the four major conditions still uses the planet-in-sign dignity paragraph. That is not a peregrine calculation.
 - Legacy `dignitySentence` migration is an explicit, conflict-safe draft edit. It retains old text and does not save or publish by itself.
 - Sky placement, ingress composition, motion-specific reader variants and Studio validation use the same selection. Natal and ingress endings are separate; this change is not a migration of every natal essay template.
 - Placement facts are deferred past generic custom-variable interpolation so caller-provided facts cannot override the calculated condition or the paragraph validation.

@@ -56,7 +56,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await expect(library).toBeVisible();
   await expect(library.getByRole('button', { name: 'Fill empty fields from source library' })).toBeVisible();
   await expect(library.getByLabel('Writing library Placement thesis')).toHaveValue(baseSource.tldrWhat);
-  await expect(library.getByLabel('Writing library How it shows up')).toHaveValue(baseSource.fallback.lived);
+  await expect(library.getByLabel('Writing library The challenge')).toHaveValue(baseSource.fallback.lived);
   await expect(library.getByLabel('Writing library Challenge and response')).toHaveValue(baseSource.fallback.turn);
   await expect(library.getByLabel('Writing library General')).toHaveValue(baseSource.fallback.lived);
   await expect(library.getByLabel('Writing library Opening hook')).toHaveValue(baseSource.fallback.hook);

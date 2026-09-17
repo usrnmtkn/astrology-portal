@@ -21,13 +21,15 @@ for (const module of owner.ingress.modules.filter((item: any) => item.required))
  for (const match of module.template.matchAll(/\{\{(\w+)\}\}/gu)) owner.ingress.sources[match[1]].text = `Fixture ${match[1]} for {{planetTitle}} in {{signTitle}}.`;
 }
 owner.ingress.sources.openingHook.text = 'Fixture opening.';
+owner.ingress.sources.placementDignityMechanism.text = 'the fixture mechanism is specific to {{planetTitle}} in {{signTitle}}';
+owner.ingress.sources.placementDignityExpression.text = 'complete the fixture activity';
 const input: any = { route: 'placement', planet: 'mercury', sign: 'leo', articleAvailable: false, isRetrograde: false,
  ingressOccurrence: { asOfDate: '2026-08-10T12:00:00Z', timeZone: 'America/New_York', passes: [{ entryDate: '2026-08-01T01:00:00Z', exitDate: '2026-08-20T00:00:00Z', entryMotion: 'direct', previousSign: 'Cancer' }] } };
 assert.deepEqual(engine.skyIngressPublicationIssues(owner), []);
 for (const api of [engine, browser, shipped]) {
  const result = api.renderSkyIngressComposition(owner, input);
  assert.equal(result.status, 'ready');
- assert(result.body.startsWith('Fixture opening.\n\nFixture planetFunctionSentence for Mercury in Leo.'));
+ assert(result.body.startsWith('Fixture opening.\n\nHere, the fixture mechanism is specific to Mercury in Leo. During this period, the emphasis is on how we complete the fixture activity.\n\nFixture planetFunctionSentence for Mercury in Leo.'));
  assert(result.trace.find((row: any) => row.id === 'intro').reason.startsWith('Optional module omitted'));
  assert.equal(result.timing, 'single_pass'); assert.equal(result.duration, 'short');
  assert.equal(api.skyIngressOccurrence(input).facts.passEntryDate, 'July 31, 2026');

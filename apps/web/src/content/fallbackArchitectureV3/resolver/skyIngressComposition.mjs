@@ -8,9 +8,9 @@ export const SKY_INGRESS_PATH = "ingress";
 export const SKY_INGRESS_VERSION = 5;
 export const SKY_INGRESS_FIELDS = Object.freeze([
   ...PLACEMENT_DIGNITY_FIELDS,
-  ...["planetRole", "planetFunctionSentence"].map(id => ({ id, kind: "planet" })),
-  { id: "signFunctionSentence", kind: "sign" },
-  ...["openingHook", "placementThesisSentence", "planetSignMechanismSentence", "introManifestationSentence", "introClosingSentence", "dignitySentence", "placementMeaningSentence", "deeperMeaningSentence", "manifestationSentence1", "manifestationSentence2", "manifestationSentence3", "challengeSentence", "stakesSentence", "responseSentence", "practiceClosingLine"].map(id => ({ id, kind: "placement" })),
+  ...["planetRole", "planetFunctionSentence", "planetFunction"].map(id => ({ id, kind: "planet" })),
+  ...["signFunctionSentence", "signCoreDrive", "signMethod"].map(id => ({ id, kind: "sign" })),
+  ...["openingHook", "placementThesisSentence", "planetSignMechanismSentence", "introManifestationSentence", "introClosingSentence", "dignitySentence", "placementMeaningSentence", "deeperMeaningSentence", "manifestationSentence1", "manifestationSentence2", "manifestationSentence3", "challengeSentence", "stakesSentence", "responseSentence", "practiceClosingLine", "placementThesis", "experienceGeneral", "placementOpportunity", "placementPressure"].map(id => ({ id, kind: "placement" })),
   ...["durationSentence", "timingSinglePass", "timingFirstPass", "timingReturn", "timingFinalPass", "timingLongCycle"].map(id => ({ id, kind: "timing" })),
   ...["aspectMechanismSentence", "aspectManifestationSentence1", "aspectManifestationSentence2", "aspectChallengeSentence", "aspectResponseSentence"].map(id => ({ id, kind: "aspect" }))
 ]);

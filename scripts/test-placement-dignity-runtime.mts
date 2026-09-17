@@ -15,7 +15,7 @@ try {
   const before = JSON.stringify(corpus);
   const cases = [
     ['sun','leo','in domicile'], ['sun','aries','exaltation'], ['venus','aries','in detriment'], ['saturn','aries','fall'],
-    ['mercury','virgo','both domicile and exaltation'], ['mercury','pisces','both detriment and fall'], ['sun','virgo',''], ['uranus','gemini','']
+    ['mercury','virgo','both domicile and exaltation'], ['mercury','pisces','both detriment and fall'], ['sun','virgo','emphasis is on how we'], ['uranus','gemini','']
   ];
   for (const [planet, sign, marker] of cases) {
     const fixture = structuredClone(corpus);

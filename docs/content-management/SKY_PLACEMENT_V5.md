@@ -36,14 +36,12 @@ source role matches cleanly:
 - `openingHook` ← existing `fallback.hook`
 - `closingLine` ← existing `tldrTakeaway`
 - `planetSummary` ← approved `fallback-vocab/planet-topic/{planet}` when available
-- `planetFunction` ← approved `fallback-vocab/sky-planet-function/{planet}`, with
-  the general planet-function row as fallback
+- `planetFunction` ← left empty for the planet-in-sign sentence grammar; complete-sentence planet-function rows are not copied into this slot
 - `planetProductive` ← approved `fallback-vocab/planet-productive/{planet}`
 - `planetShadow` ← approved `fallback-vocab/planet-excess/{planet}`
 - `signSummary` ← approved `fallback-vocab/sign-style/{sign}`
-- `signCoreDrive` ← approved `fallback-vocab/sign-need/{sign}`
-- `signMethod` ← approved `fallback-vocab/sky-sign-style/{sign}`, with the
-  general sign-style row as fallback
+- `signCoreDrive` ← left empty for the planet-in-sign sentence grammar
+- `signMethod` ← left empty for the planet-in-sign sentence grammar
 - `signGift` ← approved `fallback-vocab/sign-does/{sign}`
 - `signShadow` ← approved `fallback-hook/sky-sign-trap/{sign}`
 
@@ -75,12 +73,11 @@ The grouped editor exposes:
   challenge, and response sources. These remain empty until a specific aspect is
   selected and authored.
 
-Planet and sign vocabulary is editing material, not an automatic reader
-paragraph. The default library fallback structure assembles only complete
-placement sentences: opening hook, placement thesis, lived manifestation,
-challenge/response, and takeaway. This prevents noun-phrase lore from being
-pasted into the article as standalone prose. Planet/sign sources remain
-available for deliberate insertion into a Placement article or composition template.
+Planet and sign vocabulary is editing material with a required grammar. The
+planet-in-sign fallback structure inserts those ingredients into one opening
+sentence, then dignity, lived experience, the challenge, and the response.
+Extra experience fields stay out of the fallback until the editor explicitly
+chooses **Include in fallback**.
 
 “Use writing library as primary fallback structure” changes the draft module
 order and required modules. It does not turn on the composition, publish it, or
@@ -257,12 +254,20 @@ The template helper distinguishes natal and ingress wording; the existing Sky
 composition and article consumers explicitly use ingress wording. This change
 does not install Sky copy into natal articles or alter existing natal prose.
 
-A valid pairing with none of the four major conditions omits the paragraph.
-A recognized body outside the framework also omits it, as not applicable.
-An unknown or missing identity is invalid, not a legitimate empty lookup.
-An omitted paragraph must occupy its own article paragraph or composition
-module, so surrounding sentences cannot become fragments. The calculated
-occurrence must match the source's planet and sign.
+A valid pairing with none of the four major conditions uses the standard
+planet-in-sign dignity paragraph. That is not peregrine; peregrine needs
+triplicity, bounds, and face in addition to this sign-level lookup. Sky
+reader copy omits the list of conditions that do not apply. A recognized
+body outside the traditional seven-planet framework omits the paragraph as
+not applicable. An unknown or missing identity is invalid, not a legitimate
+empty lookup. An omitted paragraph must occupy its own article paragraph or
+composition module, so surrounding sentences cannot become fragments. The
+calculated occurrence must match the source's planet and sign.
+
+The Sky Placement article starter is the dated ingress template. It is
+opt-in and does not rewrite saved articles. Natal birth-chart wording is
+kept in a separate template and is not inserted into Sky. Extra experience
+fields remain opt-in and are not added automatically.
 
 The Writing Library shows the condition and the three authored fields in the
 existing Planet × sign group. New compositions use `{{placementDignityMeaning}}`
@@ -271,7 +276,7 @@ modules, exact text and hash-pinned links continue to work. **Migrate saved
 dignity paragraph** copies an existing paragraph into the canonical field and
 updates this draft's composition tokens only. It keeps the legacy source and
 all enable/review/publication flags. Conflicting newer canonical writing blocks
-migration. A no-condition/not-applicable source cannot be migrated to automatic
+migration. A not-applicable source cannot be migrated to automatic
 omission: its existing authored paragraph remains on the legacy path.
 
 No database backfill, approved-text edit, automatic enablement or publication

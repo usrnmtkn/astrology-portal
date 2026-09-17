@@ -63,8 +63,8 @@ test('calculated condition overrides supplied text and is independent of retrogr
   assert.equal(skyPlacementVariableFacts({ planet: 'Uranus', sign: 'Gemini' }).placementDignity, 'not applicable');
   assert.equal(skyPlacementVariableFacts({ planet: '', sign: 'Virgo', facts: { placementDignity: 'domicile' } }).placementDignity, undefined);
 });
-test('all six templates keep natal and ingress registers explicit and distinct', () => {
-  for (const variant of ['domicile', 'exaltation', 'detriment', 'fall', 'domicile_exaltation', 'detriment_fall']) {
+test('all seven templates keep natal and ingress registers explicit and distinct', () => {
+  for (const variant of ['domicile', 'exaltation', 'detriment', 'fall', 'none', 'domicile_exaltation', 'detriment_fall']) {
     const natal = placementDignityTemplate(variant, 'natal'), ingress = placementDignityTemplate(variant, 'ingress');
     assert.notEqual(natal, ingress);
     assert(natal.includes('{{placementDignityMechanism}}'));
@@ -72,7 +72,9 @@ test('all six templates keep natal and ingress registers explicit and distinct',
     assert(!natal.includes('During this period'));
     assert(!ingress.includes('your capacity'));
   }
-  assert.equal(placementDignityTemplate('none', 'ingress'), '');
+  assert.match(placementDignityTemplate('none', 'ingress'), /^Here,/);
+  assert(!placementDignityTemplate('none', 'ingress').includes('is not in domicile'));
+  assert.match(placementDignityTemplate('none', 'natal'), /is not in domicile, exaltation, detriment, or fall/);
   assert.throws(() => placementDignityTemplate('fall', 'unknown'));
   assert.throws(() => placementDignityTemplate('peregrine', 'ingress'));
 });
@@ -86,7 +88,7 @@ test('applicable missing writing blocks even an optional dignity module and a co
   assert(skyPlacementArticlePublicationIssues(owner).length);
 });
 test('completed component sources resolve the matching condition without a model call', () => {
-  for (const [planet, sign, marker] of [['sun','leo','in domicile'], ['sun','aries','exaltation'], ['venus','aries','in detriment'], ['saturn','aries','fall'], ['mercury','virgo','both domicile and exaltation'], ['mercury','pisces','both detriment and fall']]) {
+  for (const [planet, sign, marker] of [['sun','leo','in domicile'], ['sun','aries','exaltation'], ['venus','aries','in detriment'], ['saturn','aries','fall'], ['mercury','virgo','both domicile and exaltation'], ['mercury','pisces','both detriment and fall'], ['sun','virgo','emphasis is on how we']]) {
     const owner = withComponents(ownerFor(planet, sign));
     const output = renderSkyIngressComposition(owner, inputFor(owner));
     assert.equal(output.status, 'ready');
@@ -99,26 +101,30 @@ test('completed component sources resolve the matching condition without a model
     assert(article(owner).includes(marker));
   }
 });
-test('no major sign condition and outside-framework omission never creates a fragment', () => {
-  for (const [planet, sign] of [['sun','virgo'], ['uranus','gemini']]) {
-    const owner = ownerFor(planet, sign);
-    assert.deepEqual(skyIngressPublicationIssues(owner), []);
-    const rendered = renderSkyIngressComposition(owner, inputFor(owner));
-    assert.equal(rendered.status, 'ready');
-    assert.equal(rendered.body, owner.ingress.sources.bodyFixture.text);
-    assert.match(rendered.trace.find(part => part.id === 'dignity').reason, /No domicile|outside/);
-    for (const newline of ['\n\n', '\r\n\r\n', '\n \n']) {
-      const output = article(owner, `Fixture opening.${newline}{{ placementDignityMeaning }}${newline}Fixture final sentence.`);
-      assert(!output.includes('{{'));
-      assert(output.startsWith('Fixture opening.')); assert(output.endsWith('Fixture final sentence.'));
-    }
-    assert.throws(() => article(owner, 'A fragment: {{placementDignityMeaning}}.'), /own paragraph/);
-    owner.placementArticle = 'A fragment: {{placementDignityMeaning}}.';
-    assert(skyPlacementArticlePublicationIssues(owner).some(issue => issue.includes('own paragraph')));
-    owner.ingress.modules[1].template = 'A fragment: {{placementDignityMeaning}}.';
-    assert.equal(renderSkyIngressComposition(owner, inputFor(owner)).status, 'incomplete');
-    assert(skyIngressPublicationIssues(owner).some(issue => issue.includes('standalone')));
+test('none of the four conditions still requires authored explanation and is not peregrine', () => {
+  const owner = ownerFor('sun', 'virgo');
+  assert(skyIngressPublicationIssues(owner).some(issue => issue.includes('placementDignityMechanism')));
+  assert.throws(() => article(owner), /placementDignityMechanism/);
+  assert(!JSON.stringify(planetSignDignity('sun', 'virgo')).includes('peregrine'));
+});
+test('outside-framework omission never creates a fragment', () => {
+  const owner = ownerFor('uranus', 'gemini');
+  assert.deepEqual(skyIngressPublicationIssues(owner), []);
+  const rendered = renderSkyIngressComposition(owner, inputFor(owner));
+  assert.equal(rendered.status, 'ready');
+  assert.equal(rendered.body, owner.ingress.sources.bodyFixture.text);
+  assert.match(rendered.trace.find(part => part.id === 'dignity').reason, /outside/);
+  for (const newline of ['\n\n', '\r\n\r\n', '\n \n']) {
+    const output = article(owner, `Fixture opening.${newline}{{ placementDignityMeaning }}${newline}Fixture final sentence.`);
+    assert(!output.includes('{{'));
+    assert(output.startsWith('Fixture opening.')); assert(output.endsWith('Fixture final sentence.'));
   }
+  assert.throws(() => article(owner, 'A fragment: {{placementDignityMeaning}}.'), /own paragraph/);
+  owner.placementArticle = 'A fragment: {{placementDignityMeaning}}.';
+  assert(skyPlacementArticlePublicationIssues(owner).some(issue => issue.includes('own paragraph')));
+  owner.ingress.modules[1].template = 'A fragment: {{placementDignityMeaning}}.';
+  assert.equal(renderSkyIngressComposition(owner, inputFor(owner)).status, 'incomplete');
+  assert(skyIngressPublicationIssues(owner).some(issue => issue.includes('standalone')));
 });
 test('invalid identity is not an empty/no-dignity success and owner/occurrence mismatch is rejected', () => {
   const owner = withComponents(ownerFor());
@@ -154,7 +160,7 @@ test('explicit migration preserves originals, references and disabled/review sta
   assert.equal(article({...owner,ingress:next},'{{placementDignityMeaning}}'),text);
   next.sources.placementDignityMeaning.text='Different newer paragraph.';
   assert.throws(()=>migrateLegacyDignityComposition(next,owner),/neither was overwritten/);
-  assert.throws(()=>migrateLegacyDignityComposition(owner.ingress,ownerFor('sun','virgo')),/was not changed/);
+  assert.throws(()=>migrateLegacyDignityComposition(owner.ingress,ownerFor('uranus','gemini')),/was not changed/);
   owner.ingress.sources.dignitySentence={kind:'placement',reference:{contentKey:owner.contentKey,field:'ingress.sources.oldParagraph',sha256:sha256Text(text)}};
   const linked=migrateLegacyDignityComposition(owner.ingress,owner);
   assert.deepEqual(linked.sources.placementDignityMeaning.reference,owner.ingress.sources.dignitySentence.reference);

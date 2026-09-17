@@ -4,8 +4,8 @@ export const PLACEMENT_DIGNITY_MEANING = "placementDignityMeaning";
 export const LEGACY_DIGNITY_MEANING = "dignitySentence";
 export const PLACEMENT_DIGNITY_FIELDS = Object.freeze([
   { id: PLACEMENT_DIGNITY_MEANING, kind: "placement", label: "Dignity paragraph", rows: 5, description: "A complete authored paragraph for this exact placement. Existing writing is preserved. When empty, the calculated dignity selects the template and the two fields below supply its explanation. No paragraph is invented when those fields are missing." },
-  { id: "placementDignityMechanism", kind: "placement", label: "Dignity mechanism", rows: 3, description: "An independent clause explaining why this sign supports or complicates this planet's work. Follows ‘Here,’ in the selected template. Do not add final punctuation. This is placement-specific, not reusable across every planet with the same dignity." },
-  { id: "placementDignityExpression", kind: "placement", label: "Dignity expression", rows: 3, description: "A verb phrase naming the specific capacity affected. Follows ‘to’ in the selected template. Do not add ‘to’ or final punctuation. Natal and ingress wording is authored separately." }
+  { id: "placementDignityMechanism", kind: "placement", label: "Dignity mechanism", rows: 3, description: "An independent clause explaining why this sign supports or complicates this planet's work. Identify what the planet needs, what the sign prioritizes, and how those interact. Follows ‘Here,’ and does not include a final period. Comfort language is not enough information for this field." },
+  { id: "placementDignityExpression", kind: "placement", label: "Dignity expression", rows: 3, description: "A verb phrase naming the specific capacity affected, such as ‘express affection directly’. Do not add a leading ‘to’ or final punctuation. Natal and ingress wording is authored separately." }
 ]);
 
 // Structural templates from the planet-in-sign template proposal. Installing
@@ -25,6 +25,7 @@ const endings = Object.freeze({
     exaltation: "This can strengthen your capacity to {{placementDignityExpression}}.",
     detriment: "This can make it harder to {{placementDignityExpression}}.",
     fall: "You may need more support or a more deliberate approach to {{placementDignityExpression}}.",
+    none: "This helps describe how you {{placementDignityExpression}}.",
     domicile_exaltation: "These conditions can support your ability to {{placementDignityExpression}}.",
     detriment_fall: "This can complicate your efforts to {{placementDignityExpression}}."
   }),
@@ -33,6 +34,7 @@ const endings = Object.freeze({
     exaltation: "This period can offer particular support for efforts to {{placementDignityExpression}}.",
     detriment: "During this period, it may take a different approach to {{placementDignityExpression}}.",
     fall: "During this period, more support or preparation may be needed to {{placementDignityExpression}}.",
+    none: "During this period, the emphasis is on how we {{placementDignityExpression}}.",
     domicile_exaltation: "Together, these conditions can support efforts to {{placementDignityExpression}} during this period.",
     detriment_fall: "During this period, attempts to {{placementDignityExpression}} may need more flexibility and practical support."
   })
@@ -40,7 +42,12 @@ const endings = Object.freeze({
 
 export function placementDignityTemplate(variant, register) {
   if (!Object.hasOwn(endings, register)) throw new Error("Choose natal or ingress dignity wording explicitly.");
-  if (variant === "none") return "";
+  if (variant === "none") {
+    const mechanism = "Here, {{placementDignityMechanism}}.";
+    // Sky reader copy omits the list of conditions that do not apply.
+    if (register === "ingress") return `${mechanism} ${endings.ingress.none}`;
+    return `{{planetTitle}} is not in domicile, exaltation, detriment, or fall in {{signTitle}}. The emphasis here is on the particular relationship between the planet’s work and the sign’s approach. ${mechanism} ${endings.natal.none}`;
+  }
   if (!Object.hasOwn(opening, variant)) throw new Error("Unknown dignity template condition.");
   return `${opening[variant]} Here, {{placementDignityMechanism}}. ${endings[register][variant]}`;
 }
@@ -65,7 +72,7 @@ export function resolvePlacementDignityMeaning(owner, context, resolveSource, re
   const dignity = placementDignityForSource(owner, context);
   const base = { kind: "placement", reference: `${owner?.contentKey}#ingress.sources.${PLACEMENT_DIGNITY_MEANING}`, dignity, variant: dignity.variant };
   if (dignity.status === "invalid") return { ...base, reason: dignity.reason };
-  if (dignity.status === "not_applicable" || dignity.variant === "none") return { ...base, text: "", omitted: true, omissionReason: dignity.reason || "No domicile, exaltation, detriment, or fall applies to this sign pairing." };
+  if (dignity.status === "not_applicable") return { ...base, text: "", omitted: true, omissionReason: dignity.reason };
   const sources = owner?.ingress?.sources ?? {};
   // A complete authored paragraph always stays whole. The legacy name is a
   // compatibility source, not a second interpretation or a shortened fallback.
@@ -99,7 +106,7 @@ export function migrateLegacyDignityComposition(composition, owner) {
   const legacy = composition.sources?.[LEGACY_DIGNITY_MEANING];
   if (!hasWriting(legacy)) return structuredClone(composition);
   const dignity = placementDignityForSource(owner);
-  if (dignity.status !== "known" || dignity.variant === "none") throw new Error("There is no applicable dignity paragraph for this source. Keep the existing authored paragraph under its legacy name; it was not changed.");
+  if (dignity.status !== "known") throw new Error("There is no applicable dignity paragraph for this source. Keep the existing authored paragraph under its legacy name; it was not changed.");
   const current = composition.sources?.[PLACEMENT_DIGNITY_MEANING];
   if (hasWriting(current) && JSON.stringify(current) !== JSON.stringify(legacy)) throw new Error("Both dignity fields contain different writing. Review them before migration; neither was overwritten.");
   const next = structuredClone(composition);

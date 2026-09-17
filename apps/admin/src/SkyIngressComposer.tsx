@@ -4,7 +4,7 @@ import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useRef, useState } from "react";
 import SkyWritingLibraryEditor from "./SkyWritingLibraryEditor";
-import { installSkyWritingLibrary, loadSkyWritingLibrarySeeds } from "./skyWritingLibrary";
+import { installSkyWritingLibrary, loadSkyWritingLibrarySeeds, preferSkyWritingLibrary } from "./skyWritingLibrary";
 // @ts-ignore Shared deterministic implementation used by the actual reader.
 import { SKY_INGRESS_VARIABLES, makeSkyIngressComposition, renderSkyIngressComposition, skyIngressPublicationIssues, ingressTextIssues, skyIngressOccurrence, resolveIngressSource } from "../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
 // @ts-ignore Exact source revisions are pinned with the same content hash as the reader.
@@ -82,7 +82,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
     try {
       const starter = makeSkyIngressComposition() as Composition;
       const { values } = await loadSkyWritingLibrarySeeds(source, identity[0], identity[1], onLoadSource);
-      onChange(installSkyWritingLibrary(starter, values) as Composition);
+      onChange(preferSkyWritingLibrary(installSkyWritingLibrary(starter, values)) as Composition);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Placement composition could not be initialized.");
     } finally {
