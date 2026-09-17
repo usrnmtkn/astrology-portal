@@ -96,7 +96,7 @@ try {
 } finally {globalThis.fetch=original;}
 
 // Newly authored identities must enter the same reader without a bundled-key release.
-const { transitNatalExactContentKey, transitNatalExactSourceDraft } = await import('../apps/admin/src/transitNatalSources.ts');
+const { transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } = await import('../apps/admin/src/transitNatalSources.ts');
 const { isDynamicTransitNatalExactKey } = await import('../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.ts');
 for (const selection of [
  {planet:'sun',natalPoint:'south-node',aspect:'opposition'},
@@ -105,6 +105,7 @@ for (const selection of [
 ] as const) {
  const draft=transitNatalExactSourceDraft(selection), key=draft.contentKey;
  assert.equal(draft.status,'DRAFT');assert.equal(draft.lane,'reference');assert.equal(draft.body,'');
+ assert.deepEqual(draft.sections.packageRecord.requiredSlots,['aspectWord','untilDate']);
  assert.equal(draft.sections.packageRecord.review_status,'needs_review');
  const content='A complete synthetic exact transit opening.\n\nA complete synthetic exact transit ending.';
  const record={...draft.sections.packageRecord,body:content,body_you:content,review_status:'approved'};
@@ -120,6 +121,16 @@ for (const selection of [
  assert.throws(()=>renderTransitNatalPreviewState(input,[row],[{...publication,state:'retired'}]),/SOURCE_GAP|No reader-eligible/);
 }
 assert.equal(transitNatalExactContentKey({planet:'sun',natalPoint:'lilith',aspect:'square'}),null);
+assert.equal(transitNatalSharedFallbackKey({planet:'sun',natalPoint:'moon',aspect:'square'}),'authored/transit-aspect/sun/moon/hard');
+assert.equal(transitNatalSharedFallbackKey({planet:'sun',natalPoint:'moon',aspect:'trine'}),'authored/transit-aspect/sun/moon/soft');
+assert.equal(transitNatalSharedFallbackKey({planet:'sun',natalPoint:'sun',aspect:'conjunction'}),null);
+{
+ const starter=transitNatalStarterCopy({body_you:'You {{aspectWord}}.',body_they:'{{Name}} {{aspectWord}}.'});
+ const seeded=transitNatalExactSourceDraft({planet:'sun',natalPoint:'moon',aspect:'square'},starter);
+ assert.equal(seeded.contentKey,'authored/transit-aspect/sun/moon/square');
+ assert.equal(seeded.sections.packageRecord.body_you,'You {{aspectWord}}.');
+ assert.equal(seeded.sections.packageRecord.body_they,'{{Name}} {{aspectWord}}.');
+}
 for(const key of ['authored/transit-return/pluto','authored/transit-return/sun/extra','authored/transit-aspect/sun/sun/conjunction','authored/transit-aspect/sun/fake/square','authored/transit-aspect/sun/moon/hard','cms/personal-transit-aspect/sun/south-node/opposition'])assert.equal(isDynamicTransitNatalExactKey(key),false,key);
 console.log('PASS new exact personal-transit and return sources, draft exclusion, retirement, and valid identities.');
 

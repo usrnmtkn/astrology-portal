@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { skyDebilityFields, skyDebilityField, skyDebilityTemplateErrors } from "../apps/web/src/content/skyDebilityCatalog.ts";
 import { assembleSkyDebilityCopy, joinSkyDebilityList } from "../apps/web/src/content/skyDebilityAssembly.ts";
 import { skyDebilityPhraseSets, skyDebilityPhraseNames, skyDebilityPhraseKey, skyDebilityPlacementId } from "../apps/web/src/content/skyDebilityPhrases.ts";
@@ -16,6 +17,12 @@ const withEdits = (edits: Record<string, string | null>) => (key: string) => Obj
 assert.equal(skyDebilityPhraseSets.length, 18);
 assert.equal(new Set(skyDebilityContentKeys()).size, skyDebilityFields.length);
 assert.equal(skyDebilityFields.length, 85);
+assert.match(
+  readFileSync(new URL("../apps/web/src/content/cmsSurfaceOverrides.ts", import.meta.url), "utf8"),
+  /skyDebility:\s*\(\) => skyDebilityFields\.map\(field => field\.key\)/u
+);
+assert.ok(skyDebilityContentKeys().includes("cms/sky-debility/signConditionMany"));
+assert.ok(skyDebilityContentKeys().includes("cms/sky-debility/signConditionOne"));
 for (const field of skyDebilityFields) assert.deepEqual(skyDebilityTemplateErrors(field.key, field.body), [], field.key);
 for (const planet of TRADITIONAL_DIGNITY_PLANETS) for (const sign of DIGNITY_SIGNS) {
   const authored = skyDebilityPhraseSets.filter(row => row.planetTitle === planet && row.signTitle === sign);
@@ -31,7 +38,8 @@ for (const row of skyDebilityPhraseSets) {
   assert.equal(copy.countLabel, "1 of 7");
   assert.ok(copy.paragraphs[0].startsWith(`You may ${row.livedExperienceClause}.`));
   assert.ok(copy.paragraphs[1].endsWith(`It may help to ${row.responseClause}.`));
-  assert.match(copy.paragraphs[1], / is in a sign that complicates how we /u);
+  assert.ok(copy.paragraphs[1].includes(` is in ${row.signTitle}, a sign that complicates how we ${row.planetFunctionVerbPhrase}.`));
+  assert.equal(copy.slots.signTitle, row.signTitle);
 }
 assert.match(assembleSkyDebilityCopy(snapshot({ Sun: "Aquarius" })).paragraphs[1], /^The Sun is /u);
 assert.match(assembleSkyDebilityCopy(snapshot({ Moon: "Scorpio" })).paragraphs[1], /^The Moon is /u);
@@ -39,10 +47,27 @@ assert.equal(assembleSkyDebilityCopy(snapshot()).visible, false);
 assert.equal(assembleSkyDebilityCopy(snapshot()).openingHook, "");
 assert.equal(assembleSkyDebilityCopy(traditionalSkyDebilities([])).hiddenReason, "incomplete-sky");
 
+// Owner refinement: name the single planet's calculated sign and remove the disclaimer.
+const saturn = snapshot({ Saturn: "Aries" });
+const refinedSaturn = "Saturn is in Aries, a sign that complicates how we take responsibility. Detriment and fall describe signs where a planet has a harder time doing its usual work. It may help to give yourself time to think before committing.";
+assert.equal(assembleSkyDebilityCopy(saturn).paragraphs[1], refinedSaturn);
+const connectorKey = "cms/sky-debility/signConditionOne";
+assert.deepEqual(skyDebilityField(connectorKey)?.allowedSlots, ["signTitle"]);
+for (const bad of ["is in a sign that complicates", "is in {unknown}, a sign that complicates", "is in {{signTitle}}, a sign that complicates", "is in {signTitle} and {signTitle}", "is in {signTitle}, a sign that complicates {responseList}", "is in <b>{signTitle}</b>, a sign that complicates"]) {
+  assert.ok(skyDebilityTemplateErrors(connectorKey, bad).length, bad);
+  assert.equal(assembleSkyDebilityCopy(saturn, withEdits({ [connectorKey]: bad })).visible, false);
+}
+const customConnector = "moves through {signTitle}, a sign that complicates";
+assert.deepEqual(skyDebilityTemplateErrors(connectorKey, customConnector), []);
+assert.ok(assembleSkyDebilityCopy(saturn, withEdits({ [connectorKey]: customConnector })).paragraphs[1].startsWith("Saturn moves through Aries, a sign that complicates"));
+assert.ok(skyDebilityTemplateErrors(skyDebilityPhraseKey("Saturn", "Aries", "responseClause"), "consider {signTitle}").length);
+
 const original = snapshot({ Venus: "Scorpio", Mars: "Cancer", Saturn: "Aries" });
 const originalCopy = assembleSkyDebilityCopy(original);
 assert.equal(originalCopy.paragraphs[0], "You may want reassurance but find it hard to ask for, hold in your frustration until it comes out more sharply than you intended, or feel pressure to make a decision before you are ready. A conversation with someone you love, a disagreement at work, or a new commitment can take more out of you than you expected.");
-assert.equal(originalCopy.paragraphs[1], "Venus, Mars, and Saturn are in signs that complicate how we connect, handle anger, and take responsibility. That is what “detriment or fall” describes, not a prediction that things will go badly. It may help to ask directly for the support you need, say what is bothering you before resentment builds, and give yourself time to think before committing.");
+assert.equal(originalCopy.paragraphs[1], "Venus, Mars, and Saturn are in signs that complicate how we connect, handle anger, and take responsibility. Detriment and fall describe signs where a planet has a harder time doing its usual work. It may help to ask directly for the support you need, say what is bothering you before resentment builds, and give yourself time to think before committing.");
+assert.equal(originalCopy.slots.signTitle, undefined);
+assert.deepEqual(assembleSkyDebilityCopy(original, withEdits({ [connectorKey]: null })), originalCopy);
 assert.deepEqual(assembleSkyDebilityCopy(traditionalSkyDebilities([...positions({ Venus: "Scorpio", Mars: "Cancer", Saturn: "Aries" })].reverse())), originalCopy);
 const duplicateMercury = traditionalSkyDebilities([...positions({ Mercury: "Pisces" }), { planet: "Mercury", sign: "Pisces" }, { planet: "Uranus", sign: "Leo" }]);
 assert.equal(duplicateMercury.count, 1);
@@ -63,6 +88,9 @@ function checkCombination(index: number, selected: Record<string, string>) {
     if (!sky.count) return;
     assert.equal(copy.paragraphs.length, 2);
     assert.doesNotMatch(copy.body, /undefined|null|\{[^}]*\}|\.\.|\s[,.]/u);
+    assert.ok(copy.body.includes("Detriment and fall describe signs where a planet has a harder time doing its usual work."));
+    assert.ok(!copy.body.includes("not a prediction"));
+    if (sky.count === 1) assert.ok(copy.paragraphs[1].includes(` is in ${sky.planets[0].sign}, a sign that complicates`));
     for (const planet of sky.planets) {
       assert.ok(copy.slots.planetList.includes(planet.planet));
       const key = skyDebilityPlacementId(planet.planet, planet.sign);
@@ -109,6 +137,8 @@ assert.ok(!assembleSkyDebilityCopy(snapshot({ Venus: "Aries" }), withEdits({ [ve
 
 const liveTime = "2026-09-16T00:00:00.000Z";
 const row = (key: string, body: string, status = "LIVE") => ({ id: `live:${key}`, contentKey: key, body, status, updatedAt: liveTime });
+assert.ok(resolveSkyDebilityCopy(new Map([[connectorKey, row(connectorKey, customConnector)]]) as never, saturn).paragraphs[1].startsWith("Saturn moves through Aries"));
+assert.equal(resolveSkyDebilityCopy(new Map([[connectorKey, row(connectorKey, customConnector, "DRAFT")]]) as never, saturn).paragraphs[1], refinedSaturn);
 const editedBody = "need support but hesitate to name what would help";
 assert.ok(resolveSkyDebilityCopy(new Map([[venusKey, row(venusKey, editedBody)]]) as never, original).body.includes(editedBody));
 for (const status of ["DRAFT", "REVIEWED", "ARCHIVED"]) {
@@ -121,4 +151,4 @@ assert.equal(resolveSkyDebilityCopy(new Map([[venusKey, row(venusKey, editedBody
 installContentPublications([{ content_key: venusKey, state: "retired", revision: 2, row_id: null, row_updated_at: null, updated_at: liveTime }]);
 assert.equal(resolveSkyDebilityCopy(new Map([[venusKey, row(venusKey, editedBody)]]) as never, original).visible, false);
 assert.equal(resolveSkyDebilityCopy(undefined, snapshot({ Venus: "Aries" })).visible, true);
-console.log(JSON.stringify({ result: "passed", placementSets: skyDebilityPhraseSets.length, catalogFields: skyDebilityFields.length, activeEditableFields: 80, retainedLegacyFields: 5, combinationStatesChecked: checked, countsByQualifyingPlanets: counts, lifecycleChecks: "live/draft/stale/retired", originalExample: "exact match" }, null, 2));
+console.log(JSON.stringify({ result: "passed", placementSets: skyDebilityPhraseSets.length, catalogFields: skyDebilityFields.length, activeEditableFields: 80, retainedLegacyFields: 5, combinationStatesChecked: checked, countsByQualifyingPlanets: counts, lifecycleChecks: "live/draft/stale/retired", refinedSaturnExample: "exact match", sharedExplanation: "updated for every combination" }, null, 2));

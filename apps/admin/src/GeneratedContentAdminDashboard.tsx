@@ -9,7 +9,7 @@ import { getStudioTheme, saveStudioTheme } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
-import { transitNatalExactContentKey, transitNatalExactSourceDraft } from "./transitNatalSources";
+import { transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
@@ -1200,6 +1200,29 @@ function packageReviewStatusForDraft(draft: AdminDraft) {
     || (typeof draft.facts?.review_status === "string" ? draft.facts.review_status : "")
     || (typeof draftPackageRecord(draft).review_status === "string" ? draftPackageRecord(draft).review_status as string : "")
     || "needs_review";
+}
+
+function draftWithPackageReviewStatus(draft: AdminDraft, reviewStatus: string): AdminDraft {
+  const proposal = draftPackageProposal(draft);
+  return {
+    ...draft,
+    sourceSnapshot: {
+      ...(draft.sourceSnapshot ?? {}),
+      review_status: reviewStatus
+    },
+    facts: {
+      ...(draft.facts ?? {}),
+      review_status: reviewStatus
+    },
+    sections: {
+      ...(draft.sections ?? {}),
+      packageRecord: {
+        ...draftPackageRecord(draft),
+        review_status: reviewStatus
+      },
+      ...(proposal ? { packageDraft: { ...proposal, review_status: reviewStatus } } : {})
+    }
+  };
 }
 
 function draftHasPackageProposal(draft: AdminDraft) {
@@ -7399,11 +7422,31 @@ export function GeneratedContentAdminDashboard() {
       const row = payload.rows.find(candidate => candidate.content_key === key);
       if (row) { await openRow(row); return; }
       if (payload.packageSource) { await openPackagedTransitSource(payload.packageSource, key); return; }
+      const sharedKey = transitNatalSharedFallbackKey(selection);
+      let starter = { body_you: "", body_they: "" };
+      if (sharedKey) {
+        const sharedPayload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
+          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(sharedKey)}&limit=1&includePackageSource=true`, secret);
+        if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+        if (!Array.isArray(sharedPayload.rows) || sharedPayload.rows.some(candidate => candidate.content_key !== sharedKey)) {
+          throw new Error("The shared fallback passage could not be verified.");
+        }
+        const sharedRow = sharedPayload.rows.find(candidate => candidate.content_key === sharedKey);
+        const sharedRecord = objectRecord(objectRecord(sharedRow?.sections)?.packageRecord);
+        const rowHasCopy = Boolean(
+          typeof sharedRecord?.body_you === "string" && sharedRecord.body_you.trim()
+          || typeof sharedRecord?.body === "string" && sharedRecord.body.trim()
+        );
+        starter = transitNatalStarterCopy(rowHasCopy && sharedRecord ? sharedRecord : sharedPayload.packageSource);
+      }
       if (!confirmSkyEditorNavigation()) return;
       setSelectedRowId(null);
       setCompositionEditorContext(null);
-      setDraft(transitNatalExactSourceDraft(selection));
-      setMessage("No write-up is saved for this contact yet. You and Friend below are for this aspect only. Shared fallback writing stays unchanged until this passage is reviewed and published.");
+      const nextDraft = transitNatalExactSourceDraft(selection, starter);
+      rememberSavedDraft(nextDraft);
+      setMessage(starter.body_you.trim()
+        ? "You and Friend below start from the shared fallback currently in the preview. Save keeps a draft for this aspect only. Approve & publish makes it live; the shared source stays unchanged."
+        : "No write-up is saved for this contact yet. You and Friend below are for this aspect only. Save keeps a draft. Approve & publish makes it live; shared fallback writing stays unchanged.");
       scrollEditorToTop();
     } catch (error) {
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
@@ -7505,7 +7548,7 @@ export function GeneratedContentAdminDashboard() {
         <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
 
         {!selection && <p className="admin-natal-placement-prompt">Choose all six values to open this transit's You and Friend write-up.</p>}
-        {selection && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
+        {selection && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(selection)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
         {selection && <p className="admin-field-hint">The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses are calculated separately.</p>}
 
       </section>
@@ -8508,6 +8551,21 @@ export function GeneratedContentAdminDashboard() {
     const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes || packageCanApproveRevision ? "LIVE" : "DRAFT";
     const packageWillPublishOnSave = packageApprovalPublishes && currentDraft.status !== "LIVE";
     const natalAspectMissingCopy = isExactNatalAspectDraft && !["body", "body_you", "body_they"].some((field) => packageFieldString(currentDraft, field).trim());
+    const isPersonalTransitExactDraft = isPackageDraft
+      && (currentDraft.contentKey.startsWith("authored/transit-aspect/")
+        || currentDraft.contentKey.startsWith("authored/transit-return/"));
+    const transitNatalMissingCopy = isPersonalTransitExactDraft && (
+      currentDraft.contentKey.startsWith("authored/transit-return/")
+        ? !["body", "body_you"].some((field) => packageFieldString(currentDraft, field).trim())
+        : !["body_you", "body_they"].every((field) => packageFieldString(currentDraft, field).trim())
+    );
+    const transitNatalCanApprovePublish = isPersonalTransitExactDraft
+      && !packageHasProposal
+      && !packageCanApproveRevision
+      && !isGuidedHeldReview
+      && !packageIsSkyV4Governed
+      && packageRoleCanServeExactCopy
+      && !fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus);
     const seasonSourceRows = ZODIAC_SEASON_SOURCE_STARTERS.map((record: Record<string, any>) => rows.find(row => row.content_key === record.contentKey) ?? {
       id: `package:${record.contentKey}`, content_key: record.contentKey, headline: record.headline, body: "", summary: "", surface: "sky", status: "DRAFT", inventory_only: true, block_type: "fallback_hook", sections: { packageRecord: record }
     } as AdminGeneratedContentRow);
@@ -9318,8 +9376,35 @@ export function GeneratedContentAdminDashboard() {
           {hasTransitTemplatePreviewContext && (
             <div className="admin-editor-guidance" aria-label="Selected transit context">
               <p>Selected transit: {titleFromKey(transitNatalPlanet)} in {titleFromKey(transitNatalSign)}{transitNatalTransitHouse ? `, ${ordinalHouse(transitNatalTransitHouse)} house` : ""}, {transitNatalAspect} natal {titleFromKey(transitNatalPoint)}{transitNatalNatalHouse ? `, ${ordinalHouse(transitNatalNatalHouse)} house` : ""}.</p>
+              <fieldset className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three" aria-label="Write-up contact">
+                <legend className="sr-only">Write-up contact</legend>
+                <label>
+                  <span>Transiting planet</span>
+                  <AdminSelect aria-label="Write-up transiting planet" value={transitNatalPlanet} onChange={(event) => updateTransitNatalSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
+                    <option value="">Choose transiting planet</option>
+                    {transitNatalPlanets.map((planet) => <option value={planet} key={planet}>{titleFromKey(planet)}</option>)}
+                  </AdminSelect>
+                </label>
+                <label>
+                  <span>Aspect</span>
+                  <AdminSelect aria-label="Write-up aspect" value={transitNatalAspect} onChange={(event) => updateTransitNatalSelection({ aspect: event.target.value as TransitNatalAspect | "" })}>
+                    <option value="">Choose aspect</option>
+                    {(transitNatalPoint === "lilith" ? ["conjunction", "opposition"] : transitNatalAspects).map((aspect) => <option value={aspect} key={aspect}>{titleFromKey(aspect)}</option>)}
+                  </AdminSelect>
+                </label>
+                <label>
+                  <span>Natal planet or point</span>
+                  <AdminSelect aria-label="Write-up natal planet or point" value={transitNatalPoint} onChange={(event) => updateTransitNatalSelection({ natalPoint: event.target.value as TransitNatalPoint | "" })}>
+                    <option value="">Choose natal planet or point</option>
+                    {transitNatalPoints.map((point) => <option value={point} key={point}>{titleFromKey(point)}</option>)}
+                  </AdminSelect>
+                </label>
+              </fieldset>
+              <p className="admin-field-hint">Changing planet, aspect, or natal point opens that contact&apos;s You and Friend fields. Insert <code>{"{{aspectWord}}"}</code> and <code>{"{{untilDate}}"}</code> where the calculated aspect and window belong. Sign and house stay on the page behind this editor; they do not change this write-up.</p>
               <p>{isNewDraft && isAuthoredTransitAspectDraft && !currentDraft.sections?.packageOriginalRecord
-                ? "No write-up is saved for this exact contact yet. You and Friend below are for this aspect only. Shared fallback writing is unchanged until you review and publish this passage."
+                ? (packageFieldString(currentDraft, "body_you").trim()
+                  ? "You and Friend below start from the shared fallback currently in the preview. Save keeps a draft for this aspect only. Approve & publish makes it live. The shared source is not changed."
+                  : "No write-up is saved for this exact contact yet. You and Friend below are for this aspect only. Save keeps a draft. Approve & publish makes it live.")
                 : isAuthoredTransitAspectDraft
                   ? "These You and Friend fields belong to the selected contact. Signs, houses, and dates come from the calculated chart. Shared fallback writing is edited separately under the published preview."
                 : "This source is shared by matching readings. Edit its words here; signs, houses, and dates come from the calculated chart. Variables opens a preview using the transit selected above."}</p>
@@ -10585,8 +10670,8 @@ export function GeneratedContentAdminDashboard() {
                 ? draftHasUnsavedChanges
                   ? "Unsaved revision"
                   : "Draft saved · Not live"
-                : packageWillPublishOnSave
-                  ? natalAspectMissingCopy ? "Write the passage before publishing" : "Ready to publish"
+                  : packageWillPublishOnSave
+                  ? natalAspectMissingCopy || transitNatalMissingCopy ? "Write the passage before publishing" : "Ready to publish"
                   : unchangedSkySource
                     ? "No changes"
                     : isNewDraft
@@ -10606,8 +10691,8 @@ export function GeneratedContentAdminDashboard() {
                 await saveDraft(isCmsSurfaceDraft ? "LIVE" : undefined);
               }
             })()}
-            disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && natalAspectMissingCopy) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !(isCmsSurfaceDraft && currentDraft.status !== "LIVE"))}
-            title={packageWillPublishOnSave && natalAspectMissingCopy ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
+            disabled={isLoading || unchangedSkySource || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy)) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageCanApproveRevision && !(isCmsSurfaceDraft && currentDraft.status !== "LIVE"))}
+            title={packageWillPublishOnSave && (natalAspectMissingCopy || transitNatalMissingCopy) ? "Write the passage before publishing." : !compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
             {isGuidedHeldReview
@@ -10631,6 +10716,25 @@ export function GeneratedContentAdminDashboard() {
               <Save size={16} aria-hidden="true" />
               Save draft
             </StudioButton>
+          )}
+          {transitNatalCanApprovePublish && (
+            <StudioButton
+              className="admin-publish-button"
+              type="button"
+              onClick={() => void saveDraft(undefined, draftWithPackageReviewStatus(currentDraft, "approved"))}
+              disabled={isLoading || unchangedSkySource || transitNatalMissingCopy}
+              title={transitNatalMissingCopy
+                ? currentDraft.contentKey.startsWith("authored/transit-return/")
+                  ? "Write the return passage before publishing."
+                  : "Write both You and Friend passages before publishing."
+                : "Approve this exact contact and make it live on You and Friends."}
+            >
+              <Check size={16} aria-hidden="true" />
+              Approve & publish
+            </StudioButton>
+          )}
+          {transitNatalCanApprovePublish && (
+            <p className="admin-savebar-next-step">Save keeps a draft. Approve &amp; publish makes this exact contact live.</p>
           )}
           {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (
             <p className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</p>
@@ -10720,7 +10824,11 @@ export function GeneratedContentAdminDashboard() {
               exampleValues: {
                 transitTitle: titleFromKey(transitNatalPlanet), natalTitle: titleFromKey(transitNatalPoint),
                 transitRef: `${titleFromKey(transitNatalPlanet)} in ${titleFromKey(transitNatalSign)}`,
-                aspectName: transitNatalAspect, signTitle: titleFromKey(transitNatalSign),
+                aspectName: transitNatalAspect,
+                aspectWord: transitNatalAspect === "conjunction" ? "conjunct" : transitNatalAspect === "opposition" ? "opposite" : transitNatalAspect,
+                untilDate: (transitReadingContext.window ?? "September 30").replace(/^until\s+/iu, ""),
+                Name: "{{Name}}",
+                signTitle: titleFromKey(transitNatalSign),
                 timeOpen: transitReadingContext.window ?? "Currently", timeInline: transitReadingContext.window ?? "currently", otherPoss: "{{Name}}'s"
               }
             } : natalTemplatePreviewOptions}

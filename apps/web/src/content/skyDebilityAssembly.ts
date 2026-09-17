@@ -55,7 +55,15 @@ export function assembleSkyDebilityCopy(
   const experienceTemplate = field("experienceTemplate");
   const contextTemplate = field("contextTemplate");
   const order = skyDebilityExampleOrder(field("exampleOrder"));
-  slots.signConditionClause = field(snapshot.count === 1 ? "signConditionOne" : "signConditionMany");
+  const signConditionTemplate = field(snapshot.count === 1 ? "signConditionOne" : "signConditionMany");
+  if (snapshot.count === 1) {
+    // Reuse the shared signTitle fact for this one qualifying placement only.
+    // This is a single calculated substitution, not recursive phrase expansion.
+    slots.signTitle = snapshot.planets[0].sign;
+    slots.signConditionClause = signConditionTemplate.replace(/\{signTitle\}/gu, () => slots.signTitle);
+  } else {
+    slots.signConditionClause = signConditionTemplate;
+  }
 
   const canonicalOrder = TRADITIONAL_DIGNITY_PLANETS as readonly string[];
   const rows = [...snapshot.planets].sort((a, b) => canonicalOrder.indexOf(a.planet) - canonicalOrder.indexOf(b.planet)).map(row => {

@@ -12,9 +12,12 @@ const transitSources = fs.readFileSync(path.join(root, "apps/admin/src/transitNa
 assert.match(dashboard, /const pageSize = scope === "compatibility" \? 500 : 400;/u);
 assert.match(dashboard, /const generatedContentPageRetryDelaysMs = \[350, 1_000\];/u);
 assert.match(dashboard, /const isAuthoredTransitAspectDraft = isPackageDraft[\s\S]{0,180}authored\/transit-aspect\//u);
+assert.match(dashboard, /const isPersonalTransitExactDraft = isPackageDraft[\s\S]{0,220}authored\/transit-return\//u);
+assert.match(dashboard, /const transitNatalCanApprovePublish = isPersonalTransitExactDraft[\s\S]{0,420}fallbackArchitectureV3ReaderEligibleReviews/u);
+assert.match(dashboard, /Approve & publish/u);
 assert.match(dashboard, /const showPackageBodyThey = isPackageDraft[\s\S]{0,260}isAuthoredTransitAspectDraft/u);
 assert.match(dashboard, /Friends uses this complete third-person passage/u);
 assert.match(dashboard, /transit-aspect-they-name-hint/u);
 assert.match(api, /authored\/transit-aspect\/[\s\S]{0,220}slot === "\{\{Name\}\}"/u);
-assert.match(transitSources, /separate You and Friends passages/u);
+assert.match(transitSources, /never labeled as that source/u);
 console.log("Content Studio Transit to Natal Friends editor contract passed.");

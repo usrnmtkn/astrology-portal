@@ -39,7 +39,7 @@ export function TransitNatalExactSourceAction({ contentKey, title, secret, disab
       {state.passage?.row && <ContentLiveStatusBadge row={state.passage.row} />}
     </header>
     <StudioButton type="button" disabled={disabled} onClick={onOpen}>{transitNatalExactActionLabel(Boolean(state.passage?.exists), title)}</StudioButton>
-    <p className="admin-field-hint">This opens the You and Friend fields for the selected contact. Saving does not change other aspects or publish the write-up.</p>
+    <p className="admin-field-hint">This opens the You and Friend fields for the selected contact. Save keeps a draft. Approve & publish makes the write-up live.</p>
   </section>;
 }
 
@@ -73,11 +73,12 @@ function TransitSourceEditAction({ source, exactKey, headline, onOpenSource }: {
   </details>;
 }
 
-export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource }: {
+export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource, onOpenExact }: {
   selection: TransitNatalSelection;
   voice: string;
   secret: string;
   onOpenSource: (contentKey: string, label: string, field?: string) => void;
+  onOpenExact?: () => void;
 }) {
   const [revision, setRevision] = useState(0);
   const [state, setState] = useState<{ preview: Preview | null; error: string | null; loading: boolean }>({ preview: null, error: null, loading: true });
@@ -129,8 +130,9 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
           <div className="admin-natal-source-card-copy">
             <div className="admin-natal-source-card-heading"><h4>{state.preview.headline}</h4></div>
             {groups.some(group => group.sources.some(source => transitSourceEditScope(exactKey, source.contentKey).kind === "shared")) && <aside className="admin-field-hint">
-              {exactKey ? "The published preview is still using shared fallback writing. The editor for this transit is the selected contact only. A saved draft does not replace published reader copy." : "This preview includes shared fallback writing. There is no independent write-up key for this contact; shared source changes can affect other readings."}
+              {exactKey ? "The published preview is still using shared fallback writing. Edit this copy to start a write-up for this aspect only. A saved draft does not replace published reader copy." : "This preview includes shared fallback writing. There is no independent write-up key for this contact; shared source changes can affect other readings."}
             </aside>}
+            {exactKey && onOpenExact && <StudioButton type="button" onClick={onOpenExact}>Edit this copy</StudioButton>}
             {groups.map((group, index) => <Fragment key={index}>
               {group.texts.map((text, paragraphIndex) => <p key={paragraphIndex}>{text}</p>)}
               {group.sources.map(source => <TransitSourceEditAction
