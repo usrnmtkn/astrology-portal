@@ -53,7 +53,7 @@ export function TransitNatalExactSourceAction({
       {state.passage?.row && <ContentLiveStatusBadge row={state.passage.row} />}
     </header>
     <StudioButton type="button" disabled={disabled} onClick={onOpen}>{transitNatalExactActionLabel(Boolean(state.passage?.exists), title)}</StudioButton>
-    <p className="admin-field-hint">This opens the You and Friend fields for the selected contact. Save keeps a draft. Approve & publish makes the write-up live. Generate below writes this exact contact only. Preview sign and houses are not used.</p>
+    <p className="admin-field-hint">This opens the You and Friend fields for the selected contact. Generate copies into those fields for this exact aspect. Save keeps a draft. Approve &amp; publish makes the write-up live. Preview sign and houses are not used.</p>
     <Suspense fallback={null}><PersonalTransitAiWriter
       defaultOpen
       transiting={transiting}

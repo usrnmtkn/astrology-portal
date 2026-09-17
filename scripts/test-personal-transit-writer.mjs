@@ -70,6 +70,8 @@ assert.deepEqual(skipped?.missingAudiences, ["friend"]);
 assert.equal(skipped?.hasStudioDraft, true);
 
 assert.match(ui, /Generate You \+ Friend draft/u);
+assert.match(ui, /Copied into this exact contact/u);
+assert.match(ui, /if \(nextYou\) onUseYou\(nextYou\)/u);
 assert.match(ui, /Run writing checks/u);
 assert.match(ui, /Use You draft/u);
 assert.match(ui, /Use Friend draft/u);
@@ -85,6 +87,7 @@ assert.match(dashboard, /PersonalTransitAiWriter/u);
 assert.doesNotMatch(dashboard, /transitHouse=\{transitNatalTransitHouse\}/u);
 assert.doesNotMatch(dashboard, /natalHouse=\{transitNatalNatalHouse\}/u);
 assert.match(dashboard, /pendingExactAiCopyRef/u);
+assert.match(dashboard, /setDraft\(\(current\) => current \? setPackageSectionField\(current, "body_you"/u);
 const exactAction = fs.readFileSync(new URL("../apps/admin/src/TransitNatalReaderPreview.tsx", import.meta.url), "utf8");
 assert.match(exactAction, /<PersonalTransitAiWriter[\s\S]{0,400}youText=""/u);
 assert.match(exactAction, /defaultOpen/u);

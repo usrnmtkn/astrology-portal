@@ -123,12 +123,17 @@ export default function PersonalTransitAiWriter({
           : "Writing checks passed on the current editor text. Approval and publication stay separate.");
         return;
       }
-      setYouDraft(typeof payload.youDraft === "string" ? payload.youDraft : "");
-      setFriendDraft(typeof payload.friendDraft === "string" ? payload.friendDraft : "");
+      const nextYou = typeof payload.youDraft === "string" ? payload.youDraft : "";
+      const nextFriend = typeof payload.friendDraft === "string" ? payload.friendDraft : "";
+      setYouDraft(nextYou);
+      setFriendDraft(nextFriend);
+      if (nextYou) onUseYou(nextYou);
+      if (nextFriend) onUseFriend(nextFriend);
       const preserved = Array.isArray(payload.preservedAudiences) ? payload.preservedAudiences.join(" and ") : "";
+      const memoryNote = selected ? ` Memory Map attached ${selected} correction${selected === 1 ? "" : "s"}.` : "";
       setStatus(preserved
-        ? `Private suggestion ready. Existing ${preserved} copy was left in the editor.${selected ? ` Memory Map attached ${selected} correction${selected === 1 ? "" : "s"}.` : ""}`
-        : `Private suggestion ready. Saving, approval, and publication stay separate.${selected ? ` Memory Map attached ${selected} correction${selected === 1 ? "" : "s"}.` : ""}`);
+        ? `Copied into this exact contact. Existing ${preserved} copy was left in the editor.${memoryNote}`
+        : `Copied into this exact contact's You and Friend fields. Save keeps a draft. Approve & publish stays separate.${memoryNote}`);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Writing failed. Existing writing was not changed.");
     } finally {
@@ -138,7 +143,7 @@ export default function PersonalTransitAiWriter({
 
   return <details className="admin-workspace-details" {...(defaultOpen ? { open: true } : {})}>
     <AdminDisclosureSummary>AI writing</AdminDisclosureSummary>
-    <p>This generator writes the selected destination only: {destinationLabel({ contentKey, transiting, natal, aspect, transitHouse, natalHouse, planet, house, sign })}. It does not save, approve, or publish.</p>
+    <p>This generator writes the selected destination only: {destinationLabel({ contentKey, transiting, natal, aspect, transitHouse, natalHouse, planet, house, sign })}. Generate copies into this exact contact's You and Friend fields. Save keeps a draft. Approve &amp; publish stays with you.</p>
     <label className="admin-review-copy-editor">
       <span>Optional direction</span>
       <StudioTextarea

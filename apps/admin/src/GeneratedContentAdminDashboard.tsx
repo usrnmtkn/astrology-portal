@@ -10124,8 +10124,8 @@ export function GeneratedContentAdminDashboard() {
             youText={packageFieldString(currentDraft, "body_you")}
             friendText={packageFieldString(currentDraft, "body_they")}
             disabled={isLoading}
-            onUseYou={(text) => setDraft(setPackageSectionField(currentDraft, "body_you", text))}
-            onUseFriend={(text) => setDraft(setPackageSectionField(currentDraft, "body_they", text))}
+            onUseYou={(text) => setDraft((current) => current ? setPackageSectionField(current, "body_you", text) : current)}
+            onUseFriend={(text) => setDraft((current) => current ? setPackageSectionField(current, "body_they", text) : current)}
             onOpenNext={(next) => updateTransitNatalSelection({
               planet: next.transiting as TransitNatalPlanet,
               aspect: next.aspect as TransitNatalAspect,
