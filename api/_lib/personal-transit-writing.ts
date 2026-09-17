@@ -53,7 +53,7 @@ export function parsePersonalTransitContact(input: {
     if (!isDynamicTransitNatalExactKey(contentKey)) {
       throw new AdminHttpError(400, "Choose one exact transit-to-natal contact or House Transit passage. The writer cannot pick or change the destination.");
     }
-    return withOptionalHouses({ family: "aspect", transiting, natal, aspect, contentKey }, input);
+    return { family: "aspect", transiting, natal, aspect, contentKey };
   }
 
   const houseContact = parseHouseTransitParts(input.planet ?? input.transiting, input.house, input.sign);
@@ -250,9 +250,15 @@ export async function generatePersonalTransitAudienceDrafts(input: {
   const saved = combinedAudienceFields(input.contact.contentKey, studioRows[0]);
   const editorYou = input.youText;
   const editorFriend = input.friendText;
-  const requested = requestedAudiences(input.audience, editorYou, editorFriend, input.instruction);
+  const requested = requestedAudiences(
+    input.audience,
+    editorYou,
+    editorFriend,
+    input.instruction,
+    { allowFilledRewrite: !saved.studioPresent }
+  );
   if (!requested.length) {
-    throw new AdminHttpError(409, "Both You and Friend already have writing. Give direction to revise one audience, or leave a missing audience empty.");
+    throw new AdminHttpError(409, "This contact already has You and Friend writing saved. Give direction to revise it, or clear one audience to fill only the empty field.");
   }
 
   const siblings = siblingFields(input.contact);
@@ -357,12 +363,20 @@ function pronounSwap(you: string, friend: string) {
   return converted === normalize(friend).replace(/\{\{name\}\}/gu, "");
 }
 
-function requestedAudiences(audience: PersonalTransitAudience, you: string, friend: string, instruction: string) {
-  if (audience === "you") return you.trim() && !instruction ? [] : ["you"] as Array<"you" | "friend">;
-  if (audience === "friend") return friend.trim() && !instruction ? [] : ["friend"] as Array<"you" | "friend">;
+export function requestedAudiences(
+  audience: PersonalTransitAudience,
+  you: string,
+  friend: string,
+  instruction: string,
+  options: { allowFilledRewrite?: boolean } = {}
+) {
+  const rewriteFilled = Boolean(instruction.trim() || options.allowFilledRewrite);
+  if (audience === "you") return you.trim() && !rewriteFilled ? [] : ["you"] as Array<"you" | "friend">;
+  if (audience === "friend") return friend.trim() && !rewriteFilled ? [] : ["friend"] as Array<"you" | "friend">;
   const missing = missingPersonalTransitAudiences({ you, friend });
   if (instruction.trim()) return missing.length ? missing : ["you", "friend"];
-  return missing;
+  if (missing.length) return missing;
+  return options.allowFilledRewrite ? ["you", "friend"] : [];
 }
 
 function siblingFields(contact: PersonalTransitContact) {
@@ -502,31 +516,17 @@ function houseDestination(
   return { family, planet, house, contentKey: `${prefix}/${planet}/${house}` };
 }
 
-function withOptionalHouses(contact: PersonalTransitContact, input: { transitHouse?: unknown; natalHouse?: unknown }): PersonalTransitContact {
-  if (contact.family !== "aspect") return contact;
-  const transitHouse = houseToken(input.transitHouse);
-  const natalHouse = houseToken(input.natalHouse);
-  return {
-    ...contact,
-    ...(transitHouse ? { transitHouse } : {}),
-    ...(natalHouse ? { natalHouse } : {})
-  };
-}
-
 function allowsHouses(contact: PersonalTransitContact) {
-  return contact.family !== "aspect" || Boolean(contact.transitHouse || contact.natalHouse);
+  return contact.family !== "aspect";
 }
 
 function allowsSigns(contact: PersonalTransitContact) {
   return contact.family === "house-sign";
 }
 
-function knowledgeIdsFor(contact: PersonalTransitContact) {
+export function knowledgeIdsFor(contact: PersonalTransitContact) {
   if (contact.family === "aspect") {
-    const ids = [`transit-aspect/${contact.transiting}/${contact.natal}/${contact.aspect}`];
-    if (contact.transitHouse) ids.push(`house/${contact.transitHouse}`);
-    if (contact.natalHouse) ids.push(`house/${contact.natalHouse}`);
-    return ids;
+    return [`transit-aspect/${contact.transiting}/${contact.natal}/${contact.aspect}`];
   }
   if (contact.family === "house-sign") {
     return [
@@ -539,11 +539,7 @@ function knowledgeIdsFor(contact: PersonalTransitContact) {
 
 function destinationLabel(contact: PersonalTransitContact) {
   if (contact.family === "aspect") {
-    const houses = [
-      contact.transitHouse ? `transiting from the ${houseOrdinal(contact.transitHouse)} house` : "",
-      contact.natalHouse ? `natal ${title(contact.natal ?? "")} in the ${houseOrdinal(contact.natalHouse)} house` : ""
-    ].filter(Boolean).join("; ");
-    return `${title(contact.transiting ?? "")} ${contact.aspect} natal ${title(contact.natal ?? "")}${houses ? `. ${houses}` : ""}`;
+    return `${title(contact.transiting ?? "")} ${contact.aspect} natal ${title(contact.natal ?? "")}`;
   }
   if (contact.family === "house-sign") {
     return `${title(contact.planet ?? "")} in ${title(contact.sign ?? "")} through the ${houseOrdinal(contact.house ?? "")} house`;
@@ -554,7 +550,6 @@ function destinationLabel(contact: PersonalTransitContact) {
 function placementScope(contact: PersonalTransitContact) {
   if (contact.family === "house-sign") return "Name this locked planet, house, and sign. Do not invent another placement.";
   if (contact.family !== "aspect") return `Name the locked ${houseOrdinal(contact.house ?? "")} house when it explains the situation. Do not invent a sign.`;
-  if (allowsHouses(contact)) return "Name the locked transit and natal houses when they explain the situation. Do not invent a sign.";
   return "Do not name houses or signs.";
 }
 
