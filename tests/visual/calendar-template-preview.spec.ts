@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { skyForecastTemplates } from "../../apps/admin/src/skyForecastTemplates";
+import { calendarMonthlyEditorialPattern } from "../../apps/admin/src/calendarOverviewTemplate";
 import { lunarSigns } from "../../apps/admin/src/lunarCalendarContent";
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 
@@ -263,6 +264,9 @@ test("Monthly overview structure is an explicit draft change and preserves saved
   await editor.getByRole("button", { name: "Insert {{zodiacSeasonPolarAxis}} into Calendar template", exact: true }).click();
   await expect(editor.getByLabel("Season transition", { exact: true })).toHaveValue("Fixture season transition. {{zodiacSeasonPolarAxis}}");
   await expect(editor.getByLabel("Closing passage", { exact: true })).toHaveValue("Fixture complete saved ending.");
+  await expect(editor.getByLabel("Seasonal opening", { exact: true })).toHaveValue("");
+  await expect(editor.getByLabel("New Moon overview", { exact: true })).toHaveValue("");
+  await expect(editor.getByRole("button", { name: "Use monthly editorial structure", exact: true })).toBeVisible();
   await expect(editor.getByLabel("Template purpose (optional)", { exact: true })).toHaveValue(notes);
   expect(state.writes).toEqual([]);
   await editor.getByRole("button", { name: "Save", exact: true }).click();
@@ -284,3 +288,51 @@ test("Monthly overview structure is an explicit draft change and preserves saved
   await expect(editor.getByLabel("Season transition", { exact: true })).toHaveValue("Fixture season transition. {{zodiacSeasonPolarAxis}}");
   await editor.getByRole("button", { name: "Close", exact: true }).click();
 });
+
+test("Monthly editorial structure is opt-in and keeps saved overview passages", async ({ page }) => {
+  const state = await fixture(page);
+  const monthly = skyForecastTemplates["monthly-sky"];
+  const previous = "{{monthRange}}\n\n{{monthlyOverview}}\n\n{{keyDates}}\n\n{{monthlyIntegration}}";
+  state.rows.push({ ...state.rows[0], id: "monthly-editorial", content_key: monthly.contentKey, headline: monthly.headline, body: previous,
+    sections: { preservedMetadata: "Fixture existing metadata", calendarOverview: { monthlyOverview: "Fixture saved monthly overview.", monthlyIntegration: "Fixture complete saved ending." } } });
+  await page.goto("/admin/content#calendar-writeups?view=monthly-sky");
+  const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });
+  await preview.getByLabel("Preview source").selectOption("signs");
+  await preview.getByLabel("Preview Sun sign").selectOption("Virgo");
+  await preview.getByLabel("Preview Moon sign").selectOption("Cancer");
+  await page.getByRole("button", { name: "Open monthly template", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  page.once("dialog", dialog => dialog.accept());
+  await editor.getByRole("button", { name: "Use monthly editorial structure", exact: true }).click();
+  await expect(editor.getByLabel("Template pattern", { exact: true })).toHaveValue(calendarMonthlyEditorialPattern());
+  await expect(editor.getByLabel("Monthly overview", { exact: true })).toHaveValue("Fixture saved monthly overview.");
+  await expect(editor.getByLabel("Closing passage", { exact: true })).toHaveValue("Fixture complete saved ending.");
+  await expect(editor.getByLabel("Seasonal opening", { exact: true })).toHaveValue("");
+  const overviewEditor = editor.getByRole("region", { name: "Calendar overview writing", exact: true });
+  const labelStyle = (element: Element) => {
+    const s = getComputedStyle(element);
+    return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing, s.marginTop, s.marginBottom, s.textTransform, s.textAlign];
+  };
+  expect(await overviewEditor.locator('label:has(textarea[data-calendar-field="seasonOpening"]) > span').evaluate(labelStyle))
+    .toEqual(await overviewEditor.locator('label:has(textarea[data-calendar-field="monthlyOverview"]) > span').evaluate(labelStyle));
+  expect(await overviewEditor.locator("textarea[data-calendar-field]").evaluateAll(elements => elements.map(element => element.getAttribute("aria-label")))).toEqual([
+    "Monthly overview", "Season transition", "Lunar cycle", "Planetary changes", "Closing passage",
+    "Seasonal opening", "Planetary highlights", "New Moon overview", "Full Moon overview", "Lunation connection"
+  ]);
+  page.once("dialog", dialog => dialog.accept());
+  await editor.getByRole("button", { name: "Use invitation opening starter", exact: true }).click();
+  await expect(editor.getByLabel("Seasonal opening", { exact: true })).toHaveValue(/\{\{placementFocus\}\}/);
+  await expect(editor.getByLabel("Monthly overview", { exact: true })).toHaveValue("Fixture saved monthly overview.");
+  expect(state.writes).toEqual([]);
+  await editor.getByRole("button", { name: "Save", exact: true }).click();
+  await expect.poll(() => state.writes.length).toBe(1);
+  expect(state.writes[0].body).toBe(calendarMonthlyEditorialPattern());
+  expect(state.writes[0].sections.calendarOverview.monthlyOverview).toBe("Fixture saved monthly overview.");
+  expect(state.writes[0].sections.calendarOverview.monthlyIntegration).toBe("Fixture complete saved ending.");
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
+  await preview.getByRole("tab", { name: "Preview", exact: true }).click();
+  const rendered = preview.getByLabel("Rendered Calendar template");
+  await expect(rendered).toContainText("{{placementFocus}}");
+  await expect(rendered).not.toContainText("Fixture saved monthly overview.");
+});
+
