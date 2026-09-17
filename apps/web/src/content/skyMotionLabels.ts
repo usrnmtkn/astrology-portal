@@ -7,6 +7,11 @@ export function skyBodyLabel(body: string, motion?: BodyMotion | null) {
   return motion === "retrograde" ? `${body} Rx` : body;
 }
 
+/** Same planet naming as the daily sky overview: "Saturn Rx in Aries". */
+export function skyPlacementLinkLabel(planet: string, sign: string, motion?: BodyMotion | null) {
+  return `${skyBodyLabel(planet, motion)} in ${sign}`;
+}
+
 export const skyAspectVerbs: Readonly<Record<string, string>> = {
   conjunction: "conjoins", opposition: "opposes", square: "squares",
   trine: "trines", sextile: "sextiles"
