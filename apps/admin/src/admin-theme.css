@@ -1,8 +1,25 @@
+@import "../../web/src/styles/theme.css";
+
 /* Content Studio theme tokens.
-   Shared primitive scales still come from the application theme loaded by startup.css.
-   Studio-specific visual roles live here so the reader theme does not own admin styling. */
+   Shared primitive scales come from the application design theme above.
+   Studio-specific workspace, palette, typography, and layer roles live here so
+   reader CSS no longer owns admin styling. */
 
 :root .admin-dashboard {
+  /* Studio workspace geometry. */
+  --workspace-gutter: clamp(var(--size-3), 3vw, var(--size-5));
+  --workspace-block-gap: var(--size-3);
+  --workspace-card-padding: var(--size-3);
+  --workspace-sidebar-width: 280px;
+  --workspace-max-width: 1600px;
+  --workspace-wide-table-min-width: 1200px;
+  --workspace-control-height: 44px;
+  --workspace-control-inset: var(--space-3);
+  --workspace-control-icon-space: var(--size-5);
+  --workspace-field-gap: var(--size-1);
+  --workspace-panel-inset: var(--size-2);
+  --workspace-tag-padding: var(--space-1) var(--space-2);
+
   /* Categorical variable identities: paired ink/surface colors in both themes. */
   --studio-variable-1-ink: light-dark(#174ea6, #b6d3ff);
   --studio-variable-1-surface: light-dark(#e8f0fe, #163657);
@@ -32,6 +49,7 @@
   --studio-overlay-panel-height: calc(100% - 32px);
   --studio-dialog-height: calc(100dvh - 48px);
   --studio-textarea-height: 160px;
+  --studio-compact-textarea-height: 96px;
   --studio-body-field-height: 240px;
   --studio-code-max-height: 44vh;
   --studio-table-action-width: 112px;
