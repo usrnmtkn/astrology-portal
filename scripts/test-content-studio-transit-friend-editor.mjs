@@ -20,4 +20,8 @@ assert.match(dashboard, /Friends uses this complete third-person passage/u);
 assert.match(dashboard, /transit-aspect-they-name-hint/u);
 assert.match(api, /authored\/transit-aspect\/[\s\S]{0,220}slot === "\{\{Name\}\}"/u);
 assert.match(transitSources, /never labeled as that source/u);
+assert.match(transitSources, /label: "Natal chart points"/u);
+assert.match(transitSources, /transitNatalContactReady/u);
+assert.match(dashboard, /Choose transiting planet, aspect, and natal planet or chart point to open this transit's You and Friend write-up./u);
+assert.doesNotMatch(dashboard, /Choose all six values/u);
 console.log("Content Studio Transit to Natal Friends editor contract passed.");

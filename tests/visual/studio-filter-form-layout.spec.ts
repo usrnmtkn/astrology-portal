@@ -6,7 +6,7 @@ const catalogPath = "/admin/content#sky-writeups";
 const personalPath = `${catalogPath}?view=transits-to-natal`;
 const housePath = `${catalogPath}?view=house-transits&motion=direct&transit=sun&sign=aries&transitHouse=1`;
 const houseControls = ["House Transit planet", "House Transit zodiac sign", "House Transit house", "House Transit motion"];
-const personalControls = ["Transiting planet", "Transit zodiac sign", "Transit house", "Transit to natal aspect", "Natal planet or point", "Natal point house"];
+const personalControls = ["Transiting planet", "Transit to natal aspect", "Natal planet or point", "Transit zodiac sign", "Transit house", "Natal point house"];
 const placementControls = ["Sky placement planet or point", "Sky placement zodiac sign", "Sky write-up motion"];
 
 // These rows are browser-only fixtures. No shipped writing or real storage is used.
@@ -93,7 +93,8 @@ for (const width of [390, 900, 1440]) for (const theme of ["light", "dark"]) {
     await expect(personal.getByRole("heading", { level: 3, name: "Find a Personal Transit write-up", exact: true })).toBeVisible();
     await assertGrid(personal, personalControls, width <= 720 ? 1 : width >= 1280 ? 3 : 2);
     expect(await typography(personal.getByLabel(personalControls[0], { exact: true }))).toEqual(sharedType);
-    await expect(personal).toContainText("Choose all six values");
+    await expect(personal).toContainText("Choose transiting planet, aspect, and natal planet or chart point");
+    await expect(personal.locator('optgroup[label="Natal chart points"]')).toHaveCount(1);
     await page.screenshot({ path: `test-results/studio-personal-form-${width}-${theme}.png`, fullPage: true });
 
     await page.goto(catalogPath);
@@ -160,8 +161,16 @@ test("placement filters keep the composition, keyword results, advanced filters 
 
   await page.goto(personalPath);
   const personal = page.getByRole("region", { name: "Personal Transits source finder" });
-  for (const [label, value] of personalControls.map((label, index) => [label, ["saturn", "aries", "1", "square", "moon", "4"][index]])) {
+  for (const [label, value] of personalControls.map((label, index) => [label, ["saturn", "square", "moon", "aries", "1", "4"][index]])) {
     await personal.getByLabel(label, { exact: true }).selectOption(value);
+    if (label === "Natal planet or point") {
+      const editor = page.getByRole("dialog", { name: "Generated content editor" });
+      await expect(editor).toBeVisible();
+      const close = editor.getByRole("button", { name: "Close", exact: true });
+      await expect(close).toBeEnabled();
+      await close.click();
+      await expect(editor).toHaveCount(0);
+    }
   }
   await expect(personal.getByRole("heading", { level: 3, name: "Saturn square your Moon", exact: true })).toBeVisible();
   const query = new URLSearchParams(new URL(page.url()).hash.split("?")[1]);

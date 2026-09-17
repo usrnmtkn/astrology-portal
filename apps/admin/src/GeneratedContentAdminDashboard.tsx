@@ -9,7 +9,7 @@ import { getStudioTheme, saveStudioTheme } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
-import { transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
+import { transitNatalContactFromFields, transitNatalContactReady, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
@@ -151,13 +151,14 @@ import {
   transitNatalHouses,
   transitNatalLabel,
   transitNatalPlanets,
+  transitNatalPointGroups,
   transitNatalPoints,
   transitNatalSigns,
   type TransitNatalAspect,
+  type TransitNatalContact,
   type TransitNatalHouse,
   type TransitNatalPlanet,
   type TransitNatalPoint,
-  type TransitNatalSelection,
   type TransitNatalSign
 } from "./transitNatalSources";
 import {
@@ -1824,6 +1825,14 @@ function titleFromKey(contentKey: string) {
     || contentKey;
 }
 
+function transitNatalPointSelectOptions() {
+  return transitNatalPointGroups.map((group) => (
+    <optgroup key={group.label} label={group.label}>
+      {group.values.map((point) => <option value={point} key={point}>{titleFromKey(point)}</option>)}
+    </optgroup>
+  ));
+}
+
 function vocabularyUsageDetails(contentKey: string) {
   const [, family = "", ...subjectParts] = contentKey.split("/");
   const subject = subjectParts.map(titleFromKey).join(" / ");
@@ -2988,7 +2997,7 @@ export function GeneratedContentAdminDashboard() {
   const routeNavigationGuardRef = useRef<() => boolean>(() => true);
   const guidedReviewOpenedRef = useRef("");
   const sourceOpenRequestRef = useRef(0);
-  const openExactTransitNatalSourceRef = useRef<(selection: TransitNatalSelection) => Promise<void>>(async () => {});
+  const openExactTransitNatalSourceRef = useRef<(selection: TransitNatalContact) => Promise<void>>(async () => {});
   const transitExactDismissedKeyRef = useRef<string | null>(null);
   const editorRef = useRef<HTMLElement | null>(null);
   const variableInsertionRef = useRef<{ element: HTMLTextAreaElement; start: number; end: number } | null>(null);
@@ -3602,31 +3611,20 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     if (activePage !== "skyWriteups" || skyWriteupWorkspaceView !== "transits-to-natal") return;
-    if (!transitNatalPlanet || !transitNatalSign || !transitNatalTransitHouse || !transitNatalAspect || !transitNatalPoint || !transitNatalNatalHouse) return;
-    const selection = {
-      ...transitReadingContext,
-      planet: transitNatalPlanet,
-      sign: transitNatalSign,
-      transitHouse: transitNatalTransitHouse,
-      aspect: transitNatalAspect,
-      natalPoint: transitNatalPoint,
-      natalHouse: transitNatalNatalHouse
-    } satisfies TransitNatalSelection;
-    const key = transitNatalExactContentKey(selection);
+    const contact = { planet: transitNatalPlanet, aspect: transitNatalAspect, natalPoint: transitNatalPoint };
+    if (!transitNatalContactReady(contact)) return;
+    const key = transitNatalExactContentKey(contact);
     if (!key) return;
     if (draft?.contentKey === key) return;
     if (houseTransitEditor || skyArticleEditor) return;
     if (transitExactDismissedKeyRef.current === key) return;
-    void openExactTransitNatalSourceRef.current(selection);
+    void openExactTransitNatalSourceRef.current(contact);
   }, [
     activePage,
     skyWriteupWorkspaceView,
     transitNatalPlanet,
-    transitNatalSign,
-    transitNatalTransitHouse,
     transitNatalAspect,
     transitNatalPoint,
-    transitNatalNatalHouse,
     draft,
     selectedRowId,
     houseTransitEditor,
@@ -7403,7 +7401,7 @@ export function GeneratedContentAdminDashboard() {
     scrollEditorToTop(fieldPath);
   }
 
-  async function openExactTransitNatalSource(selection: TransitNatalSelection) {
+  async function openExactTransitNatalSource(selection: TransitNatalContact) {
     const key = transitNatalExactContentKey(selection);
     if (!key) return;
     if (draft?.contentKey === key && (selectedRowId || draft.id || draft.body || draft.headline)) {
@@ -7465,36 +7463,30 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function renderTransitNatalSourceFinder() {
-    const selectionComplete = Boolean(
-      transitNatalPlanet
-      && transitNatalSign
-      && transitNatalTransitHouse
-      && transitNatalAspect
-      && transitNatalPoint
-      && transitNatalNatalHouse
-    );
-    const selection = selectionComplete ? {
+    const contact = transitNatalContactFromFields(transitNatalPlanet, transitNatalAspect, transitNatalPoint);
+    const contactReady = Boolean(contact);
+    const exactKey = contact ? transitNatalExactContentKey(contact) : null;
+    const previewReady = Boolean(contactReady && transitNatalSign);
+    const selection = previewReady && contact ? {
       ...transitReadingContext,
-      planet: transitNatalPlanet,
-      sign: transitNatalSign,
+      ...contact,
+      sign: transitNatalSign as TransitNatalSign,
       transitHouse: transitNatalTransitHouse,
-      aspect: transitNatalAspect,
-      natalPoint: transitNatalPoint,
       natalHouse: transitNatalNatalHouse
-    } as TransitNatalSelection : null;
+    } : null;
 
     return (
       <section className="admin-natal-placement-finder admin-transit-finder" aria-label="Personal Transits source finder">
         <div className="admin-natal-placement-finder-heading">
           <div>
             <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Active for {{Name}}" : "Personal Transits workspace"}</p>
-            <h3>{selection ? transitNatalLabel(selection) : "Find a Personal Transit write-up"}</h3>
+            <h3>{contact ? transitNatalLabel(contact) : "Find a Personal Transit write-up"}</h3>
             <p>{friendsTransitAudience
-              ? "This is the editor for Friends > Transits > Active for {{Name}}. Choose the contact; the Friend and You fields for that exact transit open here. Shared fallback writing is a separate advanced edit."
-              : "Choose the current placement and the natal point it contacts. The You and Friend fields for that exact transit open here. Shared fallback writing is a separate advanced edit."}</p>
+              ? "This is the editor for Friends > Transits > Active for {{Name}}. Choose transiting planet, aspect, and natal planet or chart point. The Friend and You fields for that exact contact open here. Sign and houses are optional preview context."
+              : "Choose transiting planet, aspect, and natal planet or chart point, including Ascendant and Midheaven. The You and Friend fields for that exact contact open here. Sign and houses are optional preview context. Shared fallback writing is a separate advanced edit."}</p>
             <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
           </div>
-          {selection && <code>transit/{selection.planet}-{selection.sign}-{selection.transitHouse}h/{selection.aspect}/{selection.natalPoint}-{selection.natalHouse}h</code>}
+          {exactKey && <code>{exactKey}</code>}
         </div>
 
         <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three">
@@ -7506,50 +7498,51 @@ export function GeneratedContentAdminDashboard() {
             </AdminSelect>
           </label>
           <label>
-            <span>2. Current sign</span>
-            <AdminSelect aria-label="Transit zodiac sign" value={transitNatalSign} onChange={(event) => updateTransitNatalSelection({ sign: event.target.value as TransitNatalSign | "" })}>
-              <option value="">Choose current sign</option>
-              {transitNatalSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
-            </AdminSelect>
-          </label>
-          <label>
-            <span>3. Transit house</span>
-            <AdminSelect aria-label="Transit house" value={transitNatalTransitHouse} onChange={(event) => updateTransitNatalSelection({ transitHouse: event.target.value as TransitNatalHouse | "" })}>
-              <option value="">Choose transit house</option>
-              {transitNatalHouses.map((house) => <option value={house} key={house}>{house}</option>)}
-            </AdminSelect>
-          </label>
-          <label>
-            <span>4. Aspect</span>
+            <span>2. Aspect</span>
             <AdminSelect aria-label="Transit to natal aspect" value={transitNatalAspect} onChange={(event) => updateTransitNatalSelection({ aspect: event.target.value as TransitNatalAspect | "" })}>
               <option value="">Choose aspect</option>
               {transitNatalAspects.map((aspect) => <option value={aspect} key={aspect}>{titleFromKey(aspect)}</option>)}
             </AdminSelect>
           </label>
           <label>
-            <span>5. Natal planet or point</span>
+            <span>3. Natal planet or point</span>
             <AdminSelect aria-label="Natal planet or point" value={transitNatalPoint} onChange={(event) => updateTransitNatalSelection({ natalPoint: event.target.value as TransitNatalPoint | "" })}>
               <option value="">Choose natal planet or point</option>
-              {transitNatalPoints.map((point) => <option value={point} key={point}>{titleFromKey(point)}</option>)}
+              {transitNatalPointSelectOptions()}
+            </AdminSelect>
+          </label>
+          <label>
+            <span>4. Current sign</span>
+            <AdminSelect aria-label="Transit zodiac sign" value={transitNatalSign} onChange={(event) => updateTransitNatalSelection({ sign: event.target.value as TransitNatalSign | "" })}>
+              <option value="">Optional preview sign</option>
+              {transitNatalSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
+            </AdminSelect>
+          </label>
+          <label>
+            <span>5. Transit house</span>
+            <AdminSelect aria-label="Transit house" value={transitNatalTransitHouse} onChange={(event) => updateTransitNatalSelection({ transitHouse: event.target.value as TransitNatalHouse | "" })}>
+              <option value="">Optional preview house</option>
+              {transitNatalHouses.map((house) => <option value={house} key={house}>{house}</option>)}
             </AdminSelect>
           </label>
           <label>
             <span>6. Natal house</span>
             <AdminSelect aria-label="Natal point house" value={transitNatalNatalHouse} onChange={(event) => updateTransitNatalSelection({ natalHouse: event.target.value as TransitNatalHouse | "" })}>
-              <option value="">Choose natal house</option>
+              <option value="">Optional preview house</option>
               {transitNatalHouses.map((house) => <option value={house} key={house}>{house}</option>)}
             </AdminSelect>
           </label>
         </div>
 
-        {selection && transitNatalExactContentKey(selection) && <Suspense fallback={<PageLoading compact message="Opening this transit…" />}><TransitNatalExactSourceAction
-          contentKey={transitNatalExactContentKey(selection)!} title={transitNatalLabel(selection)} secret={secret} disabled={isLoading} onOpen={() => void openExactTransitNatalSource(selection)} /></Suspense>}
+        {exactKey && contact && <Suspense fallback={<PageLoading compact message="Opening this transit…" />}><TransitNatalExactSourceAction
+          contentKey={exactKey} title={transitNatalLabel(contact)} secret={secret} disabled={isLoading} onOpen={() => void openExactTransitNatalSource(contact)} /></Suspense>}
 
         <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
 
-        {!selection && <p className="admin-natal-placement-prompt">Choose all six values to open this transit's You and Friend write-up.</p>}
-        {selection && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(selection)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
-        {selection && <p className="admin-field-hint">The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses are calculated separately.</p>}
+        {!contactReady && <p className="admin-natal-placement-prompt">Choose transiting planet, aspect, and natal planet or chart point to open this transit's You and Friend write-up.</p>}
+        {contactReady && !previewReady && <p className="admin-natal-placement-prompt">This write-up is ready. Choose a current sign only if you want a published-reading preview. Sign and houses do not change the passage.</p>}
+        {selection && contact && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(contact)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
+        {contactReady && <p className="admin-field-hint">The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses are calculated separately and are not part of this write-up.</p>}
 
       </section>
     );
@@ -8569,9 +8562,14 @@ export function GeneratedContentAdminDashboard() {
     const seasonSourceRows = ZODIAC_SEASON_SOURCE_STARTERS.map((record: Record<string, any>) => rows.find(row => row.content_key === record.contentKey) ?? {
       id: `package:${record.contentKey}`, content_key: record.contentKey, headline: record.headline, body: "", summary: "", surface: "sky", status: "DRAFT", inventory_only: true, block_type: "fallback_hook", sections: { packageRecord: record }
     } as AdminGeneratedContentRow);
-    const hasTransitTemplatePreviewContext = activePage === "skyWriteups"
+    const hasTransitContactContext = activePage === "skyWriteups"
       && skyWriteupWorkspaceView === "transits-to-natal"
-      && Boolean(transitNatalPlanet && transitNatalSign && transitNatalPoint && transitNatalAspect);
+      && transitNatalContactReady({
+        planet: transitNatalPlanet || undefined,
+        aspect: transitNatalAspect || undefined,
+        natalPoint: transitNatalPoint || undefined
+      });
+    const hasTransitTemplatePreviewContext = hasTransitContactContext && Boolean(transitNatalSign);
     const variableReferences = buildVariableReferences?.({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
@@ -9373,9 +9371,9 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
           )}
-          {hasTransitTemplatePreviewContext && (
+          {hasTransitContactContext && (
             <div className="admin-editor-guidance" aria-label="Selected transit context">
-              <p>Selected transit: {titleFromKey(transitNatalPlanet)} in {titleFromKey(transitNatalSign)}{transitNatalTransitHouse ? `, ${ordinalHouse(transitNatalTransitHouse)} house` : ""}, {transitNatalAspect} natal {titleFromKey(transitNatalPoint)}{transitNatalNatalHouse ? `, ${ordinalHouse(transitNatalNatalHouse)} house` : ""}.</p>
+              <p>Selected transit: {titleFromKey(transitNatalPlanet)} {transitNatalAspect} natal {titleFromKey(transitNatalPoint)}{transitNatalSign ? `, ${titleFromKey(transitNatalPlanet)} in ${titleFromKey(transitNatalSign)}` : ""}{transitNatalTransitHouse ? `, ${ordinalHouse(transitNatalTransitHouse)} house` : ""}{transitNatalNatalHouse ? `, natal ${ordinalHouse(transitNatalNatalHouse)} house` : ""}.</p>
               <fieldset className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three" aria-label="Write-up contact">
                 <legend className="sr-only">Write-up contact</legend>
                 <label>
@@ -9396,7 +9394,7 @@ export function GeneratedContentAdminDashboard() {
                   <span>Natal planet or point</span>
                   <AdminSelect aria-label="Write-up natal planet or point" value={transitNatalPoint} onChange={(event) => updateTransitNatalSelection({ natalPoint: event.target.value as TransitNatalPoint | "" })}>
                     <option value="">Choose natal planet or point</option>
-                    {transitNatalPoints.map((point) => <option value={point} key={point}>{titleFromKey(point)}</option>)}
+                    {transitNatalPointSelectOptions()}
                   </AdminSelect>
                 </label>
               </fieldset>
