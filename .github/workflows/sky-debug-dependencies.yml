@@ -1,8 +1,6 @@
 name: Sky isolated verification dependencies
 on:
-  push:
-    branches: [chatgpt/ci-and-sky-verification-20260914]
-    paths: ['.github/workflows/sky-debug-dependencies.yml']
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:

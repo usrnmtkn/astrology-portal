@@ -1,14 +1,7 @@
 name: Sky Calendar North Node exact 48
 
 on:
-  pull_request:
-    paths:
-      - "packages/astro-knowledge/data/transits/*-north-node.json"
-      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/**"
-      - "scripts/release-calendar-exact-approved-20260905-north-node-48.mjs"
-      - "scripts/test-calendar-exact-approved-20260905-north-node-48.mjs"
-      - "scripts/test-calendar-exact-sky-aspect-routing.mjs"
-      - ".github/workflows/sky-calendar-north-node-exact-48.yml"
+  workflow_dispatch:
 
 # These batches have shipped and were superseded by the collective release.
 # PR verification must not reapply historical prose or push it onto new branches.

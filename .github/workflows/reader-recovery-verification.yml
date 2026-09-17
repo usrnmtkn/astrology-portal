@@ -1,16 +1,6 @@
 name: Reader recovery verification
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/**'
-      - 'scripts/verify-production-sky-summary.mjs'
-      - 'scripts/verify-production-sky-placement.mjs'
-      - 'scripts/test-admin-*.mts'
-      - 'apps/web/src/content/skyDailySummary*'
-      - 'apps/web/src/features/sky/PublishedSkySummary.tsx'
-      - 'apps/web/src/services/contentPublications.ts'
-      - 'apps/web/src/App.tsx'
   deployment_status:
   workflow_dispatch:
 

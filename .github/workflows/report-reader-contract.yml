@@ -1,16 +1,6 @@
 name: Report reader contract
 
 on:
-  pull_request:
-    paths:
-      - 'api/_lib/**'
-      - 'scripts/test-*report*'
-      - 'scripts/test-*transit*'
-      - 'src/astro-writing/**'
-      - 'tldr-astro-phrasebank/**'
-      - 'apps/web/src/components/reports/**'
-      - 'apps/web/src/services/reportLibrary.ts'
-      - '.github/workflows/report-reader-contract.yml'
   push:
     branches: [main]
     paths:

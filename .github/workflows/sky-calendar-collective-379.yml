@@ -1,20 +1,7 @@
 name: Sky Calendar collective 379
 
 on:
-  pull_request:
-    paths:
-      - "packages/astro-knowledge/data/transits/**"
-      - "packages/astro-knowledge/review/sky-calendar-collective-rewrite-2026-09-07/**"
-      - "packages/astro-knowledge/review/sky-calendar-collective-approved-2026-09-07/**"
-      - "scripts/release-sky-calendar-collective-20260907.mjs"
-      - "scripts/test-sky-calendar-collective-rewrite-20260907.mjs"
-      - "scripts/test-sky-calendar-reader-address-overlay-20260907.mjs"
-      - "scripts/test-sky-calendar-collective-release-20260907.mjs"
-      - "apps/web/src/services/skyAspectContent.ts"
-      - "apps/web/src/features/calendar/LunarCalendar.tsx"
-      - "apps/web/src/App.tsx"
-      - "docs/content-management/**"
-      - ".github/workflows/sky-calendar-collective-379.yml"
+  workflow_dispatch:
 
 permissions:
   contents: write

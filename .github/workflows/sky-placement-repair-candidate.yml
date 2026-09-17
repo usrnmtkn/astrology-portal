@@ -1,15 +1,6 @@
 name: Sky placement repair candidate
 
 on:
-  push:
-    branches: [chatgpt/ci-and-sky-verification-20260914]
-    paths:
-      - '.github/workflows/sky-placement-repair-candidate.yml'
-      - 'apps/web/src/App.tsx'
-      - 'apps/web/src/services/skyDetailContent.ts'
-      - 'apps/web/src/features/sky/skyPlacementContentState.ts'
-      - 'apps/web/src/services/skyPlacementHydration.ts'
-      - 'tests/visual/sky-placement-hydration-boundary.spec.ts'
   workflow_dispatch:
 
 permissions:

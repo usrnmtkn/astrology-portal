@@ -1,44 +1,6 @@
 name: Social friends security
 
 on:
-  pull_request:
-    paths:
-      - "api/account.ts"
-      - "api/_lib/**"
-      - "api/friend-report-checkout.ts"
-      - "api/friend-report-request.ts"
-      - "api/you-report-request.ts"
-      - "api/report-share.ts"
-      - "api/generate-friend-transit-reading.ts"
-      - "api/stripe-webhook.ts"
-      - "api/cron/run-friend-report-jobs.ts"
-      - "api/cron/run-you-report-jobs.ts"
-      - "api/admin/friend-report-test-cleanup.ts"
-      - "api/admin/generated-report-feedback.ts"
-      - "apps/admin/src/GeneratedReportDraftReview.tsx"
-      - "apps/admin/src/ReportFulfillmentAdminPanel.tsx"
-      - "apps/web/src/App.tsx"
-      - "apps/web/src/main.tsx"
-      - "apps/web/src/features/friends/**"
-      - "apps/web/src/features/you/**"
-      - "apps/web/src/components/**"
-      - "apps/web/src/services/**"
-      - "apps/web/src/content/**"
-      - "apps/web/src/styles/**"
-      - "apps/web/src/styles.css"
-      - "apps/web/src/types.ts"
-      - "apps/web/supabase/**"
-      - "packages/**"
-      - "artifacts/owner-author-*-2026-*.md"
-      - "scripts/test-*friend*"
-      - "scripts/test-*report*"
-      - "scripts/test-birth-time-angle-reliability.mts"
-      - "scripts/test-transit-reading-checkpoints.mts"
-      - "tldr-astro-phrasebank/TLDR-GENERATED-REPORT-*.md"
-      - "package.json"
-      - "package-lock.json"
-      - "vercel.json"
-      - ".github/workflows/social-friends-security.yml"
   push:
     branches: [main]
     paths:

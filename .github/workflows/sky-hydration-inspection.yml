@@ -1,11 +1,6 @@
 name: Sky hydration inspection
 
 on:
-  push:
-    branches: [chatgpt/ci-and-sky-verification-20260914]
-    paths:
-      - '.github/workflows/sky-hydration-inspection.yml'
-      - 'scripts/verify-sky-placement-hydration.mjs'
   workflow_dispatch:
 
 permissions:

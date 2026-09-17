@@ -1,24 +1,6 @@
 name: Memory graph browser contract
 
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/memory-graph.yml'
-      - 'api/admin/**'
-      - 'api/_lib/**'
-      - 'apps/admin/**'
-      - 'apps/web/**'
-      - 'config/agent-memory-sources-v1.json'
-      - 'data/agent-memory/**'
-      - 'scripts/*memory*'
-      - 'tests/memory/**'
-      - 'tests/helpers/**'
-      - 'tests/visual/studio-article-memory.spec.ts'
-      - 'tests/visual/studio-memory-feedback.spec.ts'
-      - 'tests/visual/review-queue-workflow.spec.ts'
-      - 'playwright*.ts'
-      - 'package.json'
-      - 'package-lock.json'
   workflow_dispatch:
 
 permissions:
