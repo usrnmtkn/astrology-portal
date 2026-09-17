@@ -9,7 +9,7 @@ import { getStudioTheme, saveStudioTheme } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
-import { transitNatalExactContentKey, transitNatalExactSourceDraft } from "./transitNatalSources";
+import { transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
@@ -7397,11 +7397,31 @@ export function GeneratedContentAdminDashboard() {
       const row = payload.rows.find(candidate => candidate.content_key === key);
       if (row) { await openRow(row); return; }
       if (payload.packageSource) { await openPackagedTransitSource(payload.packageSource, key); return; }
+      const sharedKey = transitNatalSharedFallbackKey(selection);
+      let starter = { body_you: "", body_they: "" };
+      if (sharedKey) {
+        const sharedPayload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
+          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(sharedKey)}&limit=1&includePackageSource=true`, secret);
+        if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+        if (!Array.isArray(sharedPayload.rows) || sharedPayload.rows.some(candidate => candidate.content_key !== sharedKey)) {
+          throw new Error("The shared fallback passage could not be verified.");
+        }
+        const sharedRow = sharedPayload.rows.find(candidate => candidate.content_key === sharedKey);
+        const sharedRecord = objectRecord(objectRecord(sharedRow?.sections)?.packageRecord);
+        const rowHasCopy = Boolean(
+          typeof sharedRecord?.body_you === "string" && sharedRecord.body_you.trim()
+          || typeof sharedRecord?.body === "string" && sharedRecord.body.trim()
+        );
+        starter = transitNatalStarterCopy(rowHasCopy && sharedRecord ? sharedRecord : sharedPayload.packageSource);
+      }
       if (!confirmSkyEditorNavigation()) return;
       setSelectedRowId(null);
       setCompositionEditorContext(null);
-      setDraft(transitNatalExactSourceDraft(selection));
-      setMessage("No write-up is saved for this contact yet. You and Friend below are for this aspect only. Shared fallback writing stays unchanged until this passage is reviewed and published.");
+      const nextDraft = transitNatalExactSourceDraft(selection, starter);
+      rememberSavedDraft(nextDraft);
+      setMessage(starter.body_you.trim()
+        ? "You and Friend below start from the shared fallback currently in the preview. Saving creates this aspect only; the shared source stays unchanged until you review and publish."
+        : "No write-up is saved for this contact yet. You and Friend below are for this aspect only. Shared fallback writing stays unchanged until this passage is reviewed and published.");
       scrollEditorToTop();
     } catch (error) {
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
@@ -7503,7 +7523,7 @@ export function GeneratedContentAdminDashboard() {
         <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
 
         {!selection && <p className="admin-natal-placement-prompt">Choose all six values to open this transit's You and Friend write-up.</p>}
-        {selection && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
+        {selection && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(selection)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
         {selection && <p className="admin-field-hint">The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses are calculated separately.</p>}
 
       </section>
@@ -9342,7 +9362,9 @@ export function GeneratedContentAdminDashboard() {
               </fieldset>
               <p className="admin-field-hint">Changing planet, aspect, or natal point opens that contact&apos;s You and Friend fields. Insert <code>{"{{aspectWord}}"}</code> and <code>{"{{untilDate}}"}</code> where the calculated aspect and window belong. Sign and house stay on the page behind this editor; they do not change this write-up.</p>
               <p>{isNewDraft && isAuthoredTransitAspectDraft && !currentDraft.sections?.packageOriginalRecord
-                ? "No write-up is saved for this exact contact yet. You and Friend below are for this aspect only. Shared fallback writing is unchanged until you review and publish this passage."
+                ? (packageFieldString(currentDraft, "body_you").trim()
+                  ? "You and Friend below start from the shared fallback currently in the preview. Saving creates this aspect only. The shared source is not changed."
+                  : "No write-up is saved for this exact contact yet. You and Friend below are for this aspect only. Shared fallback writing is unchanged until you review and publish this passage.")
                 : isAuthoredTransitAspectDraft
                   ? "These You and Friend fields belong to the selected contact. Signs, houses, and dates come from the calculated chart. Shared fallback writing is edited separately under the published preview."
                 : "This source is shared by matching readings. Edit its words here; signs, houses, and dates come from the calculated chart. Variables opens a preview using the transit selected above."}</p>
