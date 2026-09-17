@@ -4,8 +4,8 @@ import { skyDebilityPhraseKey, skyDebilityPhraseNames, skyDebilityPhraseSets } f
 
 export const SKY_DEBILITY_KEY_PREFIX = "cms/sky-debility/";
 
-// Legacy keys stay readable and editable for recovery. The new card uses the
-// complete openingHook and the two paragraph templates, not the legacy bodies.
+// Retain existing keys and saved overrides. Count-first copy uses separate
+// explanation sentences, not the older signConditionOne/Many fragments.
 export const skyDebilityDefaults = {
   titleLead: "Without",
   titleSoft: "their tools",
@@ -16,7 +16,9 @@ export const skyDebilityDefaults = {
   many: "{count} of {total} planets are in detriment or fall. They do not have access to their usual tools.",
   openingHook: "Things may take more effort right now",
   experienceTemplate: "You may {livedExperienceList}. {situationList} can take more out of you than you expected.",
-  contextTemplate: "{planetList} {signConditionClause} how we {planetFunctionList}. Detriment and fall describe signs where a planet has a harder time doing its usual work. It may help to {responseList}.",
+  contextTemplate: "{countWord} out of the {totalWord} classical planets {countVerb} currently in detriment or fall: {planetList}. {dignityExplanationSentence} With {planetReference} involved, you may notice that it takes more effort to {planetFunctionList}. It may help to {responseList}.",
+  dignityExplanationOne: "This means it is moving through {signTitle}, a sign that makes it harder for it to do its usual work.",
+  dignityExplanationMany: "This means they are moving through signs that make it harder for them to do their usual work.",
   signConditionOne: "is in {signTitle}, a sign that complicates",
   signConditionMany: "are in signs that complicate",
   exampleOrder: "Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn"
@@ -34,7 +36,9 @@ const fieldMeta: Record<SkyDebilityTemplateName, { label: string; allowedSlots: 
   many: { label: "Legacy several-planet wording", allowedSlots: ["count", "total"] },
   openingHook: { label: "Heading", allowedSlots: [] },
   experienceTemplate: { label: "Experience paragraph template", allowedSlots: ["livedExperienceList", "situationList"] },
-  contextTemplate: { label: "Context and response paragraph template", allowedSlots: ["planetList", "signConditionClause", "planetFunctionList", "responseList"] },
+  contextTemplate: { label: "Context and response paragraph template", allowedSlots: ["countWord", "totalWord", "countVerb", "planetList", "dignityExplanationSentence", "planetReference", "planetFunctionList", "responseList"] },
+  dignityExplanationOne: { label: "One-planet detriment or fall explanation", allowedSlots: ["signTitle"] },
+  dignityExplanationMany: { label: "Multiple-planet detriment or fall explanation", allowedSlots: [] },
   signConditionOne: { label: "One-planet connecting phrase", allowedSlots: ["signTitle"] },
   signConditionMany: { label: "Multiple-planet connecting phrase", allowedSlots: [] },
   exampleOrder: { label: "Example order (not a severity ranking)", allowedSlots: [] }
@@ -60,27 +64,35 @@ const byKey = new Map(skyDebilityFields.map(field => [field.key, field]));
 export function isSkyDebilityKey(key: string) { return key.startsWith(SKY_DEBILITY_KEY_PREFIX); }
 export function skyDebilityField(key: string) { return byKey.get(key); }
 export function skyDebilityExampleOrder(body: string) { return body.split(",").map(value => value.trim()); }
+export function skyDebilityLegacyContext(body: string) { return body.includes("{signConditionClause}"); }
+export function skyDebilityTemplateSlots(key: string, body: string): readonly string[] {
+  // An existing owner-edited legacy paragraph keeps its complete contract.
+  // Never combine an older connector override with a new explanation sentence.
+  return key === `${SKY_DEBILITY_KEY_PREFIX}contextTemplate` && skyDebilityLegacyContext(body)
+    ? ["planetList", "signConditionClause", "planetFunctionList", "responseList"]
+    : skyDebilityField(key)?.allowedSlots ?? [];
+}
 
 export function skyDebilityTemplateErrors(key: string, body: string): string[] {
   if (!isSkyDebilityKey(key)) return [];
   const field = skyDebilityField(key);
   if (!field) return ["Unknown effort-summary field."];
+  const allowedSlots = skyDebilityTemplateSlots(key, body);
   const slots = Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]);
   const errors: string[] = [];
   if (/[{}]/u.test(body.replace(/\{[^{}]+\}/gu, ""))) errors.push("Close every slot with matching single braces.");
   if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
   if (body.includes("{{") || body.includes("}}")) errors.push("Use single-brace slots, for example {count}.");
-  if (slots.some(slot => !field.allowedSlots.includes(slot))) errors.push("This field contains an unsupported slot.");
-  for (const slot of field.allowedSlots) {
+  if (slots.some(slot => !allowedSlots.includes(slot))) errors.push("This field contains an unsupported slot.");
+  for (const slot of allowedSlots) {
     if (slots.filter(value => value === slot).length !== 1) errors.push(`Keep exactly one {${slot}} slot.`);
   }
   if (!body.trim()) errors.push("Keep wording in this field.");
+  if (/\/dignityExplanation(One|Many)$/u.test(key) && /[<>]/u.test(body)) errors.push("Use plain wording, not markup.");
   if (key.includes("/placement/") || /\/signCondition(One|Many)$/u.test(key)) {
     if (/[.!?;:,]$/u.test(body.trim())) errors.push("Leave final punctuation to the paragraph template.");
     if (/[\r\n]/u.test(body)) errors.push("Keep this phrase on one line.");
     if (/^(you may|it may help to|how we|and\b|or\b)/iu.test(body.trim())) errors.push("Do not repeat the sentence introduction or start with a conjunction.");
-    // Only the single-planet connector accepts the calculated signTitle fact.
-    // Placement phrases still cannot contain nested variables or markup.
     if (/[<>]/u.test(body) || (key.includes("/placement/") && /[{}]/u.test(body)))
       errors.push("Use plain wording, not nested variables or markup.");
   }

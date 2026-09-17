@@ -37,7 +37,7 @@ assert(!personalTransitReviewChecks({
 }).some((item) => item.code === "unexpected-house" || item.code === "unexpected-sign"));
 
 const keys = exactPersonalTransitContentKeys();
-assert(keys.includes("authored/transit-aspect/sun/sun/square"));
+assert(keys.includes("authored/transit-aspect/sun/sun/sextile"));
 assert(!keys.includes("authored/transit-aspect/sun/sun/soft"));
 const next = findNextMissingPersonalTransitWriteup({
   keys: ["authored/transit-aspect/sun/sun/sextile", "authored/transit-aspect/sun/sun/square"],
@@ -64,7 +64,12 @@ assert.match(ui, /Use You draft/u);
 assert.match(ui, /Use Friend draft/u);
 assert.match(ui, /Next missing write-up/u);
 assert.match(ui, /adminCredentialHeaders\(credential\)/u);
-assert.match(ui, /rows=\{4\}[\s\S]{0,120}minHeight: 96/u);
+// Keep the four-line compact instruction field without contradicting the
+// shared CSS audit by requiring an inline pixel style.
+assert.match(ui, /rows=\{4\}[\s\S]{0,120}className="admin-ai-writing-instruction"/u);
+assert.doesNotMatch(ui, /\bstyle\s*=/u);
+const studioCss = fs.readFileSync(new URL("../apps/admin/src/studio-system.css", import.meta.url), "utf8");
+assert.match(studioCss, /\.admin-ai-writing-instruction\s*\{\s*min-height:\s*var\(--studio-compact-textarea-height\)/u);
 assert.match(dashboard, /PersonalTransitAiWriter/u);
 assert.match(dashboard, /transitHouse=\{transitNatalTransitHouse\}/u);
 assert.match(dashboard, /natalHouse=\{transitNatalNatalHouse\}/u);

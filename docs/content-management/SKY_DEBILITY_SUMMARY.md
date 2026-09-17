@@ -1,23 +1,31 @@
 # Editable Sky detriment/fall summary
 
-## Editorial location and authorization
+## Editorial location
 
-Content Studio → Sky Write-Ups → Daily Sky Summary. The effort-summary editor
-is mounted immediately after the Daily Sky Summary editor by the existing
-`GeneratedContentAdminDashboard.tsx` integration. This change expands that
-section rather than mounting a duplicate.
+Content Studio → Sky Write-Ups → Daily Sky Summary → Things may take more
+effort right now. The existing `SkyDebilityStudio` is mounted immediately after
+the Daily Sky Summary editor. Read-through, Composition map, and Full template
+share the same working sources and the production assembler.
 
-The owner requested a complete matched phrase bank, approved wording for this
-work, and explicitly requested editing in this location. The Venus/Scorpio,
-Mars/Cancer and Saturn/Aries phrase sets are the supplied wording. The other
-15 sets are newly authored under that authorization, not represented as
-previously published owner sentences. All remain editable through the existing
-Save draft / Save & publish workflow. No runtime language model is involved.
+## Count-first refinement (2026-09-17)
 
-## Complete coverage
+The owner requested the explanation to begin with the qualifying count out of
+the seven classical planets, name the planets, explain detriment or fall, and
+then connect their functions to everyday experience and matched responses.
+The exact supplied three-planet paragraph is protected by the independent
+regression fixture `tests/fixtures/sky-effort-count-first.ts`. Fixtures are not
+imported by production code.
 
-The only dignity authority is `apps/web/src/services/planetSignDignity.mjs`.
-The 18 qualifying planet/sign identities are:
+Only the shared context paragraph, its new singular/plural explanation fields,
+and Venus in Scorpio's function phrase (`connect with others`) change. The
+heading, first experience paragraph, other 71 placement phrases, calculated
+positions, dignity lookup, example ordering and publication gates are preserved.
+No saved CMS rows are overwritten. Existing connecting-phrase overrides remain
+available for recovery and older explicitly saved paragraph templates.
+
+## Complete coverage and facts
+
+`apps/web/src/services/planetSignDignity.mjs` is the only dignity authority.
 
 | Planet | Detriment | Fall |
 | --- | --- | --- |
@@ -29,86 +37,119 @@ The 18 qualifying planet/sign identities are:
 | Jupiter | Gemini, Virgo | Capricorn |
 | Saturn | Cancer, Leo | Aries |
 
-Mercury/Pisces has one matched set and counts as one planet, retaining both
-conditions. No outer-planet, Chiron, angle, node, peregrine, house or aspect
-conditions are invented. This is collective Sky copy, not natal copy.
+Mercury in Pisces retains both conditions but counts once. The denominator is
+computed from the seven traditional bodies, including Sun and Moon; outer
+planets, Chiron, angles, nodes and peregrine conditions do not enter this card.
+The card requires all seven calculated positions and is hidden when facts are
+incomplete or no planets qualify. A zero count is not an easy-day prediction.
 
-## Writing contract
+## Source fields and grammar
 
-`skyDebilityPhrases.ts` contains one connected set per qualifying identity:
+One matched set per qualifying planet/sign provides:
 
-- `livedExperienceClause`: completes "You may…"
-- `situationPhrase`: a singular situation with an article
-- `planetFunctionVerbPhrase`: completes "how we…"
-- `responseClause`: completes "It may help to…"
+- `livedExperienceClause`: completes `You may…`
+- `situationPhrase`: a singular situation including its article
+- `planetFunctionVerbPhrase`: completes `it takes more effort to…`; older
+  paragraph templates may use `how we…`
+- `responseClause`: completes `It may help to…`
 
-These are short-form sources, not aliases for `placementDignityMeaning` or
-other complete-sentence/paragraph fields. No phrase contains final punctuation
-or nested template tokens. Each source is editable at
-`cms/sky-debility/placement/{planet}/{sign}/{fieldName}`.
+These fields remain at `cms/sky-debility/placement/{planet}/{sign}/{fieldName}`.
+They are not aliases for full dignity passages such as `placementDignityMeaning`.
+Phrases have no final punctuation or nested variables. Complete explanation
+sentences, in contrast, include their final punctuation.
 
-The shared catalog registers 72 phrase fields, eight active card fields and
-five retained legacy fields. Dignity and identity are not authored text.
+## Full paragraph templates
 
-## Card templates
+The editor and reader use the established single-brace syntax.
 
-The actual Sky summary editor uses single-brace tokens, consistent with its
-existing parser. The conceptual double-brace Mad-Libs names are unchanged.
-
-Heading: `{openingHook}` (an authored complete heading, resolved separately).
+`experienceTemplate` (unchanged):
 
 ```text
 You may {livedExperienceList}. {situationList} can take more out of you than you expected.
-
-{planetList} {signConditionClause} how we {planetFunctionList}. That is what “detriment or fall” describes, not a prediction that things will go badly. It may help to {responseList}.
 ```
 
-The first paragraph is `experienceTemplate`; the second is `contextTemplate`.
-The full heading, singular/plural connecting wording, example order, count line
-and count unit can also be edited. All required tokens must appear exactly once.
+`contextTemplate`:
 
-The assembler joins experiences/situations with "or", responses/functions/names
-with "and", capitalizes sentence starts, and selects singular/plural grammar.
-It renders Sun and Moon with their article while preserving calculated names.
+```text
+{countWord} out of the {totalWord} classical planets {countVerb} currently in detriment or fall: {planetList}. {dignityExplanationSentence} With {planetReference} involved, you may notice that it takes more effort to {planetFunctionList}. It may help to {responseList}.
+```
 
-## Selection and safety
+`dignityExplanationOne`:
 
-Zero qualifying planets hides the reader card. Missing planet positions also
-hide it rather than presenting unknown data as a zero count. One to three
-qualifying planets each receive a matched example. Above three, a saved
-`exampleOrder` selects three complete sets. Default order is Sun, Moon, Mercury,
-Venus, Mars, Jupiter, Saturn; it is editorial ordering, not a severity score.
-All qualifying planets remain in the count, names/functions and placement links.
+```text
+This means it is moving through {signTitle}, a sign that makes it harder for it to do its usual work.
+```
 
-Studio exposes seven preview selectors and names selected and omitted examples.
-This composition preview is explicitly not a dated astronomical chart.
-Changing an experience never selects another placement's response.
+`dignityExplanationMany`:
 
-The pure `assembleSkyDebilityCopy` powers both Studio and the reader. It reports
-missing/invalid wording and omits the whole reader card instead of rendering
-sentence fragments. The shared field validator is already used by the Studio
-editor and the generated-content API's publication validation. Required fields
-cannot be published with missing tokens, blank phrases, nested variables or
-malformed example order.
+```text
+This means they are moving through signs that make it harder for them to do their usual work.
+```
 
-The reader loader fetches the expanded keys through `skyDebilityContentKeys`.
-Only an eligible LIVE row replaces the authorized shipped baseline. Drafts do
-not leak into the reader; stale or retired published revisions never silently
-fall back to the bundled wording. Legacy title/body keys remain recoverable;
-no existing database row is overwritten or deleted by the code installation.
+The two new sentences are editable under **Card template, heading, and example
+order**, or by clicking their wording in Composition map. Clicking
+`{dignityExplanationSentence}` in Full template reveals the selected sentence's
+source. One planet selects the singular sentence and its calculated sign;
+multiple planets select the plural sentence.
+
+| Slot | Contract |
+| --- | --- |
+| `count` / `total` | Existing numeric strings used in the header |
+| `countWord` | Qualifying count in sentence-initial English, e.g. `Three` |
+| `totalWord` | Calculated classical-body total in lowercase English |
+| `countVerb` | `is` for one qualifying planet, otherwise `are` |
+| `planetReference` | `this planet` or `these planets` |
+| `planetList` | All qualifying planets, joined with `and` |
+| `dignityExplanationSentence` | Editable complete sentence selected by count |
+| `planetFunctionList` | All qualifying planets' saved function phrases |
+| `responseList` | Responses from the selected matched examples |
+
+Number words are formatting of the same snapshot used by the header, not a
+second count or a hardcoded example. Template words stay editable; calculated
+counts, identities, signs, and grammar values remain read-only in the map.
+
+## Compatibility and publication
+
+A saved `contextTemplate` containing `{signConditionClause}` is validated
+against its original four-slot contract and uses the existing
+`signConditionOne/Many` sources. It is never spliced together with the new
+explanation sentences. Mixed old/new contracts are rejected. The default
+count-first template does not consume the older connecting fragments.
+
+`skyDebilityTemplateSlots` exposes the exact active contract to the source
+editor. All required variables must occur exactly once. Missing, unknown,
+repeated or malformed variables block the affected composition and publication.
+
+The dynamic field registry and `skyDebilityContentKeys` include both new
+explanation sources. Only eligible current LIVE rows replace the shipped
+baseline. Drafts do not replace reader copy; missing, stale or retired published
+revisions fail closed instead of silently reviving the baseline. No runtime AI
+or string-level paraphrasing is used.
+
+## Matched examples
+
+One to three qualifying planets each receive a matched experience, situation
+and response. Above three, saved `exampleOrder` selects three whole sets. All
+qualifying planets still appear in the count, planet/function sentence and
+placement links. Default ordering is editorial, not a severity ranking.
+
+All 18 placement sets remain editable. Selecting or editing one experience does
+not substitute another placement's response. Preview placements are explicitly
+editorial examples, never saved astronomical facts.
 
 ## Verification
 
-Run `node --import tsx scripts/test-sky-debility-copy.mts` or the existing
-`npm run test:sky-daily-summary` aggregate. The focused test covers all 84
-traditional planet/sign lookups and all 6,912 normalized content states
-(including the hidden empty state), plus matched sets, grammar, saved ordering,
-CMS overrides, unpublished drafts, stale revisions and retirement.
+- `scripts/test-sky-debility-copy.mts`: all 84 traditional planet/sign lookups,
+  all 6,912 normalized content states, exact approved example, singular/plural
+  grammar, preserved legacy overrides, and draft/live/stale/retired behavior.
+- `scripts/test-sky-debility-composition.mts`: byte parity with the reader and
+  exact source routing across the same states, including calculated count tokens.
+- `tests/visual/sky-debility-composition.spec.ts`: full read-through, clickable
+  new sentences/variables, keyboard access, source edits, and draft/publish/reopen
+  with isolated mock storage on desktop/mobile and actual Studio light/dark themes.
+- `tests/visual/sky-debility-reader.spec.ts`: exact paragraph and placement links
+  in the rebuilt Sky reader using its ephemeris for a fixed regression instant.
 
-6,912 is a Cartesian-product test count: each planet can be non-qualifying or
-in one qualifying sign. It is not an assertion that every combination occurs
-in the physical sky. Real dates and positions remain the ephemeris's job.
-
-The dedicated PR workflow runs the focused test and builds both Studio and the
-web reader. A passing combination test alone is not a production deployment
-or a browser-level save/reopen test.
+6,912 is a Cartesian-product content-state count, not a claim that all tuples
+occur together in the physical sky. A CI pass is distinct from a deployment;
+production delivery must be verified separately after merge.

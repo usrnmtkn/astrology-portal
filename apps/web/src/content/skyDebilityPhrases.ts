@@ -10,9 +10,9 @@ export type SkyDebilityPhraseSet = Record<SkyDebilityPhraseName, string> & {
   signTitle: string;
 };
 
-// Owner authorized the complete bank in the creation thread. The three supplied
-// Venus/Scorpio, Mars/Cancer and Saturn/Aries sets retain their exact wording.
-// Dignity is always obtained from the shared calculation, never from this bank.
+// Owner authorized this matched bank in the creation thread. The count-first
+// refinement changes only the supplied Venus/Scorpio function to "connect with
+// others"; all other placement wording is preserved. Dignity is calculated.
 export const skyDebilityPhraseSets: readonly SkyDebilityPhraseSet[] = [
   { planetTitle: "Sun", signTitle: "Aquarius",
     livedExperienceClause: "want credit for your work but feel awkward drawing attention to what you contributed",
@@ -52,7 +52,7 @@ export const skyDebilityPhraseSets: readonly SkyDebilityPhraseSet[] = [
   { planetTitle: "Venus", signTitle: "Scorpio",
     livedExperienceClause: "want reassurance but find it hard to ask for",
     situationPhrase: "a conversation with someone you love",
-    planetFunctionVerbPhrase: "connect",
+    planetFunctionVerbPhrase: "connect with others",
     responseClause: "ask directly for the support you need" },
   { planetTitle: "Venus", signTitle: "Virgo",
     livedExperienceClause: "notice what needs fixing so quickly that it becomes hard to enjoy what is already going well",
@@ -109,7 +109,7 @@ export const skyDebilityPhraseSets: readonly SkyDebilityPhraseSet[] = [
 export const skyDebilityPhraseGuidance: Record<SkyDebilityPhraseName, string> = {
   livedExperienceClause: 'Completes "You may…". Start with a base-form verb; do not repeat "You may" or add final punctuation.',
   situationPhrase: 'A singular everyday situation, including its article, such as "a new commitment". No final punctuation.',
-  planetFunctionVerbPhrase: 'Completes "how we…", such as "take responsibility". No final punctuation.',
+  planetFunctionVerbPhrase: 'Completes "it takes more effort to…", such as "take responsibility". Older saved templates may use "how we…". No final punctuation.',
   responseClause: 'Completes "It may help to…". Start with a base-form verb; do not repeat the introduction or add final punctuation.'
 };
 

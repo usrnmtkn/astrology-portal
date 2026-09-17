@@ -8,8 +8,9 @@ on:
       - 'apps/admin/src/SkyDebility*'
       - 'apps/admin/src/skyDebility*'
       - 'scripts/test-sky-debility*'
-      - 'tests/visual/sky-debility-composition.spec.ts'
-      - 'playwright.sky-debility.config.ts'
+      - 'tests/visual/sky-debility-*.spec.ts'
+      - 'tests/fixtures/sky-effort-count-first.ts'
+      - 'playwright.sky-debility*.config.ts'
       - '.github/workflows/sky-debility-summary.yml'
   push:
     branches: [main]
@@ -20,8 +21,9 @@ on:
       - 'apps/admin/src/SkyDebility*'
       - 'apps/admin/src/skyDebility*'
       - 'scripts/test-sky-debility*'
-      - 'tests/visual/sky-debility-composition.spec.ts'
-      - 'playwright.sky-debility.config.ts'
+      - 'tests/visual/sky-debility-*.spec.ts'
+      - 'tests/fixtures/sky-effort-count-first.ts'
+      - 'playwright.sky-debility*.config.ts'
       - '.github/workflows/sky-debility-summary.yml'
 permissions:
   contents: read
@@ -31,7 +33,7 @@ concurrency:
 jobs:
   combinations-and-builds:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -39,11 +41,15 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: All placement sets, combinations, grammar and publication states
+      - run: npm run build -w @tldr/astro-knowledge
+      - name: Rebuild and verify fallback integrity indexes
+        run: npm run build:fallback-manifest && git diff --exit-code
+      - name: All placement sets, counts, grammar and publication states
         run: node --import tsx scripts/test-sky-debility-copy.mts
       - name: Source-map parity and exact field routing across all combinations
         run: node --import tsx scripts/test-sky-debility-composition.mts
-      - run: npm run build -w @tldr/astro-knowledge
+      - name: Reader-copy boundary
+        run: npm run test:reader-copy-boundary
       - name: Build Content Studio
         run: npm run build:admin
       - name: Build the web reader
@@ -52,11 +58,51 @@ jobs:
         run: npm run qa:css-audit
       - name: Install browser for interaction checks
         run: npx playwright install --with-deps chromium
-      - name: Full template, clickable sources, save and reopen in desktop/mobile themes
+      - name: Exact reader paragraph, composition map, and save/reopen controls
         run: npx playwright test --config=playwright.sky-debility.config.ts
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: sky-debility-composition-browser
+          path: test-results/
+          retention-days: 7
+  deployed-reader:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      statuses: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Wait for this merge commit's Vercel deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module <<'NODE'
+          const url = `https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/commits/${process.env.GITHUB_SHA}/status`;
+          let ready = false;
+          for (let attempt = 0; attempt < 60; attempt++) {
+            const response = await fetch(url, { headers: { authorization: `Bearer ${process.env.GH_TOKEN}`, accept: 'application/vnd.github+json' } });
+            if (!response.ok) throw new Error(`Deployment status request failed: ${response.status}`);
+            const status = (await response.json()).statuses.find(item => item.context === 'Vercel');
+            if (status?.state === 'success') { ready = true; console.log(`Deployment completed for ${process.env.GITHUB_SHA}`); break; }
+            if (status && ['failure', 'error'].includes(status.state)) throw new Error('Vercel deployment failed.');
+            await new Promise(resolve => setTimeout(resolve, 15_000));
+          }
+          if (!ready) throw new Error('Deployment did not complete within the verification window.');
+          NODE
+      - name: Verify public production card without writes or mocked responses
+        run: npx playwright test --config=playwright.sky-debility-production.config.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sky-debility-production-browser
           path: test-results/
           retention-days: 7

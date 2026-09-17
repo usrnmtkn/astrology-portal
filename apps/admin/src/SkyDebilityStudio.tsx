@@ -3,7 +3,7 @@ import { StudioButton, StudioTextarea } from "./StudioControls";
 import { AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import type { SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
-import { skyDebilityFields, skyDebilityLegacyNames, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
+import { skyDebilityFields, skyDebilityLegacyNames, skyDebilityTemplateErrors, skyDebilityTemplateSlots } from "../../web/src/content/skyDebilityCatalog";
 import { SkyDebilityCompositionMap } from "./SkyDebilityCompositionMap";
 import { buildSkyDebilityComposition } from "./skyDebilityComposition";
 import {
@@ -15,10 +15,13 @@ import {
 } from "../../web/src/services/planetSignDignity.mjs";
 import type { SummaryCompositionRow } from "./skySummaryComposition";
 
-const templateNames = ["openingHook", "experienceTemplate", "contextTemplate", "signConditionOne", "signConditionMany", "exampleOrder", "countLabel", "countUnit"];
+const templateNames = ["openingHook", "experienceTemplate", "contextTemplate", "dignityExplanationOne", "dignityExplanationMany", "exampleOrder", "countLabel", "countUnit", "signConditionOne", "signConditionMany"];
 const templateGuidance: Record<string, string> = {
-  contextTemplate: "Edit the shared detriment/fall explanation and the wording around the response here. This paragraph is used for every qualifying combination.",
-  signConditionOne: "Edit the connecting wording for a single planet here. Keep {signTitle}; it inserts that planet's calculated sign, such as Aries for Saturn in Aries.",
+  contextTemplate: "Edit the count-first explanation and response paragraph here. The count, total, planet names, and singular/plural grammar are calculated. Your placement wording supplies the functions and responses.",
+  dignityExplanationOne: "A complete sentence for one qualifying planet. Keep {signTitle} so its calculated sign is named. Include the sentence's final punctuation.",
+  dignityExplanationMany: "A complete sentence for several qualifying planets, explaining detriment or fall in everyday terms. Include the sentence's final punctuation.",
+  signConditionOne: "Preserved for older saved paragraph templates containing {signConditionClause}. The count-first template uses the one-planet explanation instead. Keep {signTitle}.",
+  signConditionMany: "Preserved for older saved paragraph templates containing {signConditionClause}. The count-first template uses the multiple-planet explanation instead.",
   exampleOrder: "Use all seven planet names once, separated by commas. This order selects examples only; it does not change the count or dignity."
 };
 const rowSignature = (row?: SummaryCompositionRow) => JSON.stringify([row?.id, row?.updated_at, row?.status, row?.body]);
@@ -40,7 +43,7 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
   const read = (key: string) => Object.prototype.hasOwnProperty.call(drafts, key) ? drafts[key] : savedBody(key);
   const snapshot = traditionalSkyDebilities(TRADITIONAL_DIGNITY_PLANETS.map(planet => ({
     planet,
-    // "Not qualifying" is a composition-preview choice, not an absent sky fact.
+    // "Not qualifying" is an editorial choice, not an absent sky fact.
     sign: selection[planet] || DIGNITY_SIGNS.find(sign => !planetSignDebilities(planet, sign).length)!
   })));
   const composition = buildSkyDebilityComposition(snapshot, read);
@@ -53,9 +56,8 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
     activeEditor.current?.scrollIntoView({ block: "nearest" });
   }, [activeKey]);
   useEffect(() => {
-    // A successful save may include more edits made in the existing review
-    // editor. Do not leave the earlier preview draft shadowing that saved row.
-    // Cancelled reviews and newer local typing are deliberately preserved.
+    // Preserve cancelled reviews and newer local typing; use the saved row
+    // after a successful review instead of shadowing it with an earlier draft.
     const completed = [...submitted.current].filter(([key, value]) => {
       const row = rows.find(item => item.content_key === key);
       return row && !row.inventory_only && rowSignature(row) !== value.signature;
@@ -81,6 +83,7 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
     const field = fieldByKey(key);
     const saved = savedRow(key);
     const body = read(key) ?? "";
+    const slots = skyDebilityTemplateSlots(key, body);
     const errors = skyDebilityTemplateErrors(key, body);
     const dirty = body !== savedBody(key);
     const inputId = `effort-wording-${prefix}-${key.replace(/[^a-z0-9]/giu, "-")}`;
@@ -88,16 +91,16 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
       <div>
         <label htmlFor={inputId}><strong>{field.label}</strong></label>
         {guidance && <p>{guidance}</p>}
-        <StudioTextarea id={inputId} aria-label={field.label} rows={field.allowedSlots.length ? 4 : 2}
+        <StudioTextarea id={inputId} aria-label={field.label} rows={slots.length ? 4 : 2}
           disabled={busy} value={body} onChange={event => setDrafts(current => ({ ...current, [key]: event.target.value }))} />
-        {field.allowedSlots.length > 0 && <p>Keep these slots: {field.allowedSlots.map(name => `{${name}}`).join(", ")}.</p>}
+        {slots.length > 0 && <p>Keep these slots: {slots.map(name => `{${name}}`).join(", ")}.</p>}
         {errors.length > 0 && <p role="alert">{errors.join(" ")}</p>}
         <p>{saved ? <ContentLiveStatusBadge row={saved} /> : <span>App default · no saved override</span>}{dirty ? " · Unsaved wording in preview" : ""}</p>
       </div>
       <div>
         <StudioButton type="button" disabled={busy || saved?.inventory_only || errors.length > 0} onClick={() => {
           submitted.current.set(key, { body, signature: rowSignature(saved) });
-          onEdit(field, body);
+          onEdit({ ...field, allowedSlots: [...slots] }, body);
         }}>Review and save wording</StudioButton>
         {dirty && <StudioButton type="button" disabled={busy} onClick={() => setDrafts(current => {
           const next = { ...current }; delete next[key]; return next;

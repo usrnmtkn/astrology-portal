@@ -54,9 +54,11 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
     });
   }
   const sourceKeys = [...new Set((variable ? composition.slots[variable] ?? [] : []).flatMap(part => part.sourceKey ? [part.sourceKey] : []))];
-  // A zero-planet example has no assembled source map. The connector still has
-  // a known editable source and remains inspectable in the template reference.
   if (variable === "signConditionClause" && !sourceKeys.length) sourceKeys.push(skyDebilityTemplateKey(copy.allPlacementKeys.length === 1 ? "signConditionOne" : "signConditionMany"));
+  if (variable === "dignityExplanationSentence" && !sourceKeys.length) sourceKeys.push(skyDebilityTemplateKey(copy.allPlacementKeys.length === 1 ? "dignityExplanationOne" : "dignityExplanationMany"));
+  const oneKey = copy.legacyContext ? "signConditionOne" : "dignityExplanationOne";
+  const manyKey = copy.legacyContext ? "signConditionMany" : "dignityExplanationMany";
+  const branchLabel = copy.legacyContext ? "connecting phrase" : "explanation";
 
   return <section className="admin-template-reader-drilldown admin-sky-summary-composition studio-surface" aria-label="Effort summary composition map">
     <header className="admin-section-heading-row"><div>
@@ -99,11 +101,11 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
     </StudioTabs>
     <details className="admin-workspace-details">
       <summary>Sources and selection rules</summary>
-      <p>Selected branch: {copy.allPlacementKeys.length === 0 ? "card hidden" : copy.allPlacementKeys.length === 1 ? "one-planet connecting phrase" : "multiple-planet connecting phrase"}.</p>
+      <p>Selected branch: {copy.allPlacementKeys.length === 0 ? "card hidden" : `${copy.allPlacementKeys.length === 1 ? "one-planet" : "multiple-planet"} ${branchLabel}`}.</p>
       <p>Selected matched examples: {copy.selectedPlacementKeys.length ? copy.selectedPlacementKeys.map(placementLabel).join(", ") : "none"}.</p>
       {copy.omittedExamplePlacementKeys.length > 0 && <p>{copy.omittedExamplePlacementKeys.map(placementLabel).join(", ")} remain in the count, planetary functions, and links. Their experiences, situations, and responses are not among the three selected examples.</p>}
       <p>Experiences and situations use “or”; responses, planet names, and functions use “and”. {editLink(skyDebilityTemplateKey("exampleOrder"), "Edit example order")}.</p>
-      <p>{editLink(skyDebilityTemplateKey("signConditionOne"), "Edit one-planet connecting phrase")} · {editLink(skyDebilityTemplateKey("signConditionMany"), "Edit multiple-planet connecting phrase")}</p>
+      <p>{editLink(skyDebilityTemplateKey(oneKey), `Edit one-planet ${branchLabel}`)} · {editLink(skyDebilityTemplateKey(manyKey), `Edit multiple-planet ${branchLabel}`)}</p>
       {copy.requiredKeys.map(key => <p key={key}>{editLink(key, skyDebilityField(key)?.label ?? key)}</p>)}
     </details>
   </section>;

@@ -18,7 +18,6 @@ function capitalize(parts: SkyDebilityMappedPart[]) {
 }
 function list(parts: SkyDebilityMappedPart[], conjunction: "and" | "or", slot: string) {
   return parts.flatMap((part, index): SkyDebilityMappedPart[] => {
-    // Match the shared list formatter; parity is checked before any map is shown.
     const separator = index === 0 ? "" : index < parts.length - 1 ? ", " : parts.length === 2 ? ` ${conjunction} ` : `, ${conjunction} `;
     return [...(separator ? [{ text: separator, kind: "grammar" as const, slot }] : []), { ...part, slot }];
   });
@@ -30,9 +29,8 @@ function template(text: string, sourceKey: string, slots: Record<string, SkyDebi
   });
 }
 
-/** An editor-only source map over the production assembler, never a second
- * reader composer. One captured source snapshot feeds both; every mapped field
- * must reproduce the assembler byte-for-byte or the map fails closed. */
+/** Editor-only source map over the production assembler. A captured source
+ * snapshot feeds both; every field must match byte-for-byte or fail closed. */
 export function buildSkyDebilityComposition(snapshot: TraditionalSkyDebilities, read: SkyDebilityCopyReader = key => skyDebilityField(key)?.body) {
   const sources = new Map<string, string | null | undefined>();
   const capturedRead: SkyDebilityCopyReader = key => {
@@ -55,20 +53,25 @@ export function buildSkyDebilityComposition(snapshot: TraditionalSkyDebilities, 
     return { text: body(sourceKey), sourceKey, kind: "phrase" };
   };
   const facts = (slot: string): SkyDebilityMappedPart[] => [{ text: copy.slots[slot], slot, kind: "fact" }];
+  const planetList = list(copy.allPlacementKeys.map(key => {
+    const { planetTitle } = sourceFor(key);
+    return { text: planetTitle === "Sun" || planetTitle === "Moon" ? `the ${planetTitle}` : planetTitle, kind: "fact" as const };
+  }), "and", "planetList");
   const slots: Record<string, SkyDebilityMappedPart[]> = {
     count: facts("count"), total: facts("total"), planetWord: facts("planetWord"),
+    countWord: facts("countWord"), totalWord: facts("totalWord"),
+    countVerb: facts("countVerb"), planetReference: facts("planetReference"),
     livedExperienceList: list(copy.selectedPlacementKeys.map(key => phrase(key, "livedExperienceClause")), "or", "livedExperienceList"),
     situationList: capitalize(list(copy.selectedPlacementKeys.map(key => phrase(key, "situationPhrase")), "or", "situationList")),
     responseList: list(copy.selectedPlacementKeys.map(key => phrase(key, "responseClause")), "and", "responseList"),
     planetFunctionList: list(copy.allPlacementKeys.map(key => phrase(key, "planetFunctionVerbPhrase")), "and", "planetFunctionList"),
-    planetList: capitalize(list(copy.allPlacementKeys.map(key => {
-      const { planetTitle } = sourceFor(key);
-      return { text: planetTitle === "Sun" || planetTitle === "Moon" ? `the ${planetTitle}` : planetTitle, kind: "fact" as const };
-    }), "and", "planetList"))
+    planetList: copy.legacyContext ? capitalize(planetList) : planetList
   };
-  const conditionKey = skyDebilityTemplateKey(snapshot.count === 1 ? "signConditionOne" : "signConditionMany");
   if (snapshot.count === 1) slots.signTitle = facts("signTitle");
-  slots.signConditionClause = template(body(conditionKey), conditionKey, slots);
+  const sentenceKey = skyDebilityTemplateKey(copy.legacyContext
+    ? snapshot.count === 1 ? "signConditionOne" : "signConditionMany"
+    : snapshot.count === 1 ? "dignityExplanationOne" : "dignityExplanationMany");
+  slots[copy.legacyContext ? "signConditionClause" : "dignityExplanationSentence"] = template(body(sentenceKey), sentenceKey, slots);
   const headingKey = skyDebilityTemplateKey("openingHook");
   const heading: SkyDebilityMappedPart[] = [{ text: body(headingKey), kind: "template", sourceKey: headingKey }];
   const countLabel = template(body(skyDebilityTemplateKey("countLabel")), skyDebilityTemplateKey("countLabel"), slots);
@@ -85,7 +88,6 @@ export function buildSkyDebilityComposition(snapshot: TraditionalSkyDebilities, 
   return errors.length ? { ...empty, errors } : { copy, sources, slots, heading, countLabel, countUnit, paragraphs, errors };
 }
 
-/** Template tokens are read from current fields, not from a hardcoded paragraph. */
 export function skyDebilityTemplateTokens(body: string) {
   return [...new Set(Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]))];
 }
