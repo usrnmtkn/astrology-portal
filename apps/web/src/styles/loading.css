@@ -62,10 +62,15 @@
 
 [data-theme="dark"] .loading-illustration img { filter: invert(1); }
 
-.loading-illustration--compact {
+.loading-illustration canvas,
+.loading-illustration__canvas {
+  display: block;
+  width: var(--size-8);
+  height: auto;
+}
+
+.loading-illustration--compact .loading-illustration__canvas {
   width: auto;
-  max-width: none;
-  aspect-ratio: auto;
 }
 
 .app-loading--compact {
