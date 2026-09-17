@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { AdminDraft } from "./GeneratedContentAdminDashboard";
 import { StudioButton, StudioTextarea } from "./StudioControls";
-import { calendarMonthlyEditorialPattern, calendarOverviewFields, calendarOverviewPattern, calendarOverviewPeriod, calendarOverviewWriting, calendarSeasonVariables, calendarVariableColor } from "./calendarOverviewTemplate";
+import { calendarMonthlyCompatibilityPattern, calendarMonthlyEditorialPattern, calendarMonthlySeasonPassageVariables, calendarOverviewFields, calendarOverviewPattern, calendarOverviewPeriod, calendarOverviewWriting, calendarSeasonVariables, calendarVariableColor, calendarWeeklyMoonVariables } from "./calendarOverviewTemplate";
 
 export default function CalendarOverviewEditor({ draft, initialField, onChange }: { draft: AdminDraft; initialField?: string; onChange: (draft: AdminDraft) => void }) {
   const { contentKey, body, sections } = draft;
@@ -33,7 +33,7 @@ export default function CalendarOverviewEditor({ draft, initialField, onChange }
     update(name, starter);
   };
   return <section ref={container} className="admin-editor-guidance" aria-label="Calendar overview writing">
-    <p>{period === "monthly-sky" ? "Monthly opening and season transition are reusable sentence templates. Existing writing stays until you choose a starter. The monthly editorial structure is opt-in and does not convert saved passages." : "Write the overview passages below. Each passage fills its named variable in the template and updates the preview."}</p>
+    <p>{period === "monthly-sky" ? "Monthly opening and season transition are reusable sentence templates. Existing writing stays until you choose a starter. Shared names such as signTitle follow the selected passage: opening season, incoming season, New Moon, Full Moon, or eclipse. The monthly editorial structure is opt-in and does not convert saved passages." : period === "weekly-sky" ? "Write the overview passages below. Monday is Luna's day: its Moon sign and saved weekly Moon passage set the week's emotional tone. The starter is opt-in and does not convert saved writing." : "Write the overview passages below. Each passage fills its named variable in the template and updates the preview."}</p>
     {fields.map(field => <label className="admin-review-copy-editor studio-surface" key={field.name}>
       <span>{field.label} <code className="admin-composition-variable-token" data-variable-name={field.name} data-variable-color={calendarVariableColor(field.name)}>{`{{${field.name}}}`}</code></span>
       <StudioTextarea aria-label={field.label} data-calendar-field={field.name} data-sky-field={`calendarOverview.${field.name}`} value={writing[field.name] ?? ""}
@@ -46,11 +46,20 @@ export default function CalendarOverviewEditor({ draft, initialField, onChange }
     </div>}
     <p>Insert a saved passage variable into the selected field.</p>
     <div className="admin-new-actions">{[{ name: "sunSummary", label: "Use Sun summary" }, { name: "moonWriteup", label: "Use Moon passage" }, { name: "openingZodiacSeason", label: "Use opening season passage" }, { name: "openingZodiacSeasonPolarAxis", label: "Use season axis passage" }].map(item => <StudioButton key={item.name} type="button" data-variable-name={item.name} data-variable-color={calendarVariableColor(item.name)} onClick={() => insert(item.name)}>{item.label}</StudioButton>)}</div>
+    {period === "weekly-sky" && <>
+      <p>Insert Monday's Moon sign, focus tags, or complete weekly Moon passage.</p>
+      <div className="admin-new-actions">{calendarWeeklyMoonVariables.map(name => <StudioButton key={name} type="button" data-variable-name={name} data-variable-color={calendarVariableColor(name)} aria-label={`Insert {{${name}}} into Calendar template`} onClick={() => insert(name)}>{`{{${name}}}`}</StudioButton>)}</div>
+    </>}
     <p>Insert a season variable into the selected field or template pattern.</p>
-    <div className="admin-new-actions">{calendarSeasonVariables.map(name => <StudioButton key={name} type="button" data-variable-name={name} data-variable-color={calendarVariableColor(name)} aria-label={`Insert {{${name}}} into Calendar template`} onClick={() => insert(name)}>{`{{${name}}}`}</StudioButton>)}</div>
+    <div className="admin-new-actions">{(period === "monthly-sky" ? calendarMonthlySeasonPassageVariables : calendarSeasonVariables).map(name => <StudioButton key={name} type="button" data-variable-name={name} data-variable-color={calendarVariableColor(name)} aria-label={`Insert {{${name}}} into Calendar template`} onClick={() => insert(name)}>{`{{${name}}}`}</StudioButton>)}</div>
+    {period === "monthly-sky" && <>
+      <p>Insert a contextual fact. In Seasonal opening it is the opening Sun visit; in Season transition it is the incoming visit; in New Moon, Full Moon, and eclipse passages it is that event.</p>
+      <div className="admin-new-actions">{["signTitle", "entryDate", "exitDate", "eventDate", "eventDescription"].map(name => <StudioButton key={name} type="button" data-variable-name={name} data-variable-color={calendarVariableColor(name)} aria-label={`Insert {{${name}}} into Calendar template`} onClick={() => insert(name)}>{`{{${name}}}`}</StudioButton>)}</div>
+    </>}
     {period !== "daily-sky" && <div className="admin-new-actions"><StudioButton type="button" onClick={() => {
-      if (body !== calendarOverviewPattern(period) && !window.confirm("Replace the pattern with the overview structure?")) return;
-      change(calendarOverviewPattern(period), sections ?? {});
+      const pattern = period === "monthly-sky" ? calendarMonthlyCompatibilityPattern() : calendarOverviewPattern(period);
+      if (body !== pattern && !window.confirm("Replace the pattern with the overview structure?")) return;
+      change(pattern, sections ?? {});
     }}>Use overview structure</StudioButton>
     {period === "monthly-sky" && <StudioButton type="button" onClick={() => {
       if (body !== calendarMonthlyEditorialPattern() && !window.confirm("Replace the pattern with the monthly editorial structure? Existing overview passages stay until you choose a starter.")) return;

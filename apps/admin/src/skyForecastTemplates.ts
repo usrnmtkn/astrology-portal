@@ -11,34 +11,62 @@ export const skyForecastTemplates = {
     title: "Weekly overview template",
     contentKey: "slot-template/calendar/weekly-overview/v1",
     headline: "Calendar · Weekly Overview",
-    description: "Write the week’s main story, zodiac seasons, lunar cycle, planetary changes, daily passages, and closing.",
+    description: "Start from Monday's Moon sign and weekly Moon passage, then write the week's seasons, lunar cycle, planetary changes, daily passages, and closing.",
     body: calendarOverviewPattern("weekly-sky")
   },
   "monthly-sky": {
     title: "Monthly overview template",
     contentKey: "slot-template/calendar/monthly-overview/v1",
     headline: "Calendar · Monthly Overview",
-    description: "Write the month’s main story, zodiac season transition, lunar cycle, planetary changes, and closing.",
+    description: "Write the month’s seasonal opening, selected highlights, lunations, season transition, and closing.",
     body: calendarOverviewPattern("monthly-sky")
   }
 } as const;
 
 export type SkyForecastPeriod = "daily-sky" | "weekly-sky" | "monthly-sky";
 
+/** Previous labeled monthly layout. Existing saved patterns keep it until replaced. */
+export function calendarMonthlyCompatibilityPattern() {
+  return [
+    "{{monthRange}}",
+    "Monthly Overview\n{{monthlyOverview}}",
+    "Zodiac Seasons\n{{openingSeasonSign}}\n\n{{openingZodiacSeason}}\n\n{{openingZodiacSeasonPolarAxis}}",
+    "{{#closingSeasonSign}}\n{{closingSeasonSign}} · {{seasonChangeDate}}\n\n{{closingZodiacSeason}}\n\n{{closingZodiacSeasonPolarAxis}}\n{{/closingSeasonSign}}",
+    "{{seasonOverview}}",
+    "Lunar Cycle\n{{lunationDates}}\n\n{{lunarOverview}}",
+    "Planetary Changes\n{{planetaryChanges}}\n\n{{planetaryAspects}}\n\n{{transitOverview}}",
+    "Closing\n{{monthlyIntegration}}"
+  ].join("\n\n");
+}
+
+/** Default Monthly Sky starter. Saved templates are not rewritten. */
+export function calendarMonthlyEditorialPattern() {
+  return [
+    "{{monthRange}}",
+    "{{seasonOpening}}",
+    "{{#hasPlanetaryHighlights}}\n{{planetaryHighlights}}\n{{/hasPlanetaryHighlights}}",
+    "{{#hasNewMoon}}\n{{newMoonOverview}}\n{{/hasNewMoon}}",
+    "{{#hasFullMoon}}\n{{fullMoonOverview}}\n{{/hasFullMoon}}",
+    "{{#hasLunationConnection}}\n{{lunationConnection}}\n{{/hasLunationConnection}}",
+    "{{#hasSeasonTransition}}\n{{seasonOverview}}\n{{/hasSeasonTransition}}",
+    "{{monthlyIntegration}}"
+  ].join("\n\n");
+}
+
 /** Explicit starter adoption is an editor action, never a saved-template migration. */
 export function calendarOverviewPattern(period: SkyForecastPeriod) {
   if (period === "daily-sky") return "{{date}}\n\n{{sunSummary}}\n\n{{moonWriteup}}";
-  const prefix = period === "weekly-sky" ? "weekly" : "monthly";
+  if (period === "monthly-sky") return calendarMonthlyEditorialPattern();
   const sections = [
-    period === "weekly-sky" ? "{{weekRange}}" : "{{monthRange}}",
-    `${prefix === "weekly" ? "Weekly" : "Monthly"} Overview\n{{${prefix}Overview}}`,
+    "{{weekRange}}",
+    "Weekly Overview\n{{weeklyOverview}}",
     "Zodiac Seasons\n{{openingSeasonSign}}\n\n{{openingZodiacSeason}}\n\n{{openingZodiacSeasonPolarAxis}}",
     "{{#closingSeasonSign}}\n{{closingSeasonSign}} · {{seasonChangeDate}}\n\n{{closingZodiacSeason}}\n\n{{closingZodiacSeasonPolarAxis}}\n{{/closingSeasonSign}}",
     "{{seasonOverview}}",
     "Lunar Cycle\n{{lunationDates}}\n\n{{lunarOverview}}",
     "Planetary Changes\n{{planetaryChanges}}\n\n{{planetaryAspects}}\n\n{{transitOverview}}"
   ];
-  if (period === "weekly-sky") sections.push(...["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map(day => `{{${day}Date}}\n{{${day}Timing}}\n\n{{${day}Writeup}}`));
-  sections.push(`Closing\n{{${prefix}Integration}}`);
+  sections.push(...["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map(day => `{{${day}Date}}\n{{${day}Timing}}\n\n{{${day}Writeup}}`));
+  sections.push("Closing\n{{weeklyIntegration}}");
   return sections.join("\n\n");
 }
