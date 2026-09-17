@@ -86,7 +86,6 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
         <div className="admin-template-reader-copy">
           {view === "template" ? <section className="admin-composition-preview-field field-body" aria-label="Full effort summary template" data-testid="sky-debility-full-template">
             <h4>{rawTemplate("openingHook")}</h4>
-            <p>{rawTemplate("countLabel")} {rawTemplate("countUnit")}</p>
             <p>{rawTemplate("experienceTemplate")}</p>
             <p>{rawTemplate("contextTemplate")}</p>
           </section> : !copy.visible ? <div role="status">
@@ -95,7 +94,6 @@ export function SkyDebilityCompositionMap({ composition, read, onSelectSource, b
           </div> : view === "map" && presentationErrors.length ? <div role="alert">{presentationErrors.map(error => <p key={error}>{error}</p>)}</div> :
             <section className="admin-composition-preview-field field-body" aria-label={view === "reading" ? "Complete effort summary" : "Mapped effort summary"}>
               <h4>{view === "map" ? mapped(composition.heading) : copy.openingHook}</h4>
-              <p>{view === "map" ? <>{mapped(composition.countLabel)} {mapped(composition.countUnit)}</> : `${copy.countLabel} ${copy.countUnit}`}</p>
               {readingParts.map((parts, index) => <p key={index} data-testid={`effort-paragraph-${index}`}>
                 <SkyDebilityInline parts={view === "map" ? mappedParts[index] : parts} linkPrefix="/" linkTarget="_blank"
                   renderText={view === "map" ? part => mapped([part]) : undefined} />

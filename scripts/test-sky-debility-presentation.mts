@@ -18,6 +18,7 @@ const positions = (selected: Record<string, string>, motion: "direct" | "retrogr
 }));
 let combinations = 0, presentations = 0;
 const countCoverage = new Set<number>();
+const headingOnlyCoverage = new Set<number>();
 function verify(selected: Record<string, string>) {
   combinations++;
   for (const motion of ["direct", "retrograde"] as const) {
@@ -28,6 +29,13 @@ function verify(selected: Record<string, string>) {
     assert.deepEqual(map.errors, []);
     countCoverage.add(snapshot.count);
     if (!copy.visible) { assert.equal(snapshot.count, 0); assert.deepEqual(copy.paragraphTemplates, []); continue; }
+    if (!headingOnlyCoverage.has(snapshot.count)) {
+      const markup = renderToStaticMarkup(createElement(SkyDebilityCard, { positions: skyPositions }));
+      assert.equal(markup.match(/<header[^>]*>([\s\S]*?)<\/header>/u)?.[1], `<h3>${copy.openingHook}</h3>`);
+      assert.equal((markup.match(/<p>/gu) ?? []).length, 2);
+      assert(!markup.includes(`${snapshot.count} of 7`));
+      headingOnlyCoverage.add(snapshot.count);
+    }
     const links = skyDebilityPlacementLinks(copy.allPlacementKeys, skyPositions);
     assert.equal(links.length, snapshot.count);
     for (const [index, template] of copy.paragraphTemplates.entries()) {
@@ -61,6 +69,7 @@ all(0, {});
 assert.equal(combinations, 6912);
 assert.equal(presentations, 13822);
 assert.deepEqual([...countCoverage].sort(), [0, 1, 2, 3, 4, 5, 6, 7]);
+assert.deepEqual([...headingOnlyCoverage].sort(), [1, 2, 3, 4, 5, 6, 7]);
 
 const original = positions({ Venus: "Scorpio", Mars: "Cancer", Saturn: "Aries" }).map(row => ({ ...row, motion: row.planet === "Saturn" ? "retrograde" as const : "direct" as const }));
 const snapshot = traditionalSkyDebilities(original), copy = assembleSkyDebilityCopy(snapshot);
@@ -83,13 +92,13 @@ assert.equal(textOf(custom), textOf(presentSkyDebilityParts(skyDebilityTemplateP
 assert.equal(textOf(custom.filter(part => part.emphasized)), "Three out of the seven classical planets are in detriment or fall");
 assert(custom.some(part => part.sourceKey === "cms/sky-debility/contextTemplate"));
 
-// Actual React card markup: two body paragraphs and exactly one inline list.
+// Actual React card markup: heading only, two body paragraphs and one inline list.
 const html = renderToStaticMarkup(createElement(SkyDebilityCard, { positions: original }));
 assert.equal((html.match(/href="#sky\/placement\//gu) ?? []).length, 3);
-assert.equal((html.match(/<p>/gu) ?? []).length, 3); // header + two body paragraphs
+assert.equal((html.match(/<p>/gu) ?? []).length, 2);
 assert(html.includes(`${highlightedCountStatement}</mark>: `));
 assert(html.includes('<mark class="content-highlight"'));
 assert(html.includes("Saturn Rx in Aries</a>"));
 assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: positions({}) })), "");
 assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: original.slice(1) })), "");
-console.log(JSON.stringify({ result: "passed", combinations, directAndRetrogradePresentations: presentations, countCoverage: [...countCoverage].sort(), exactOwnerDisplay: true, inlineLinksOnly: true, sourceMapParity: true }, null, 2));
+console.log(JSON.stringify({ result: "passed", combinations, directAndRetrogradePresentations: presentations, countCoverage: [...countCoverage].sort(), headingOnlyCoverage: [...headingOnlyCoverage].sort(), exactOwnerDisplay: true, inlineLinksOnly: true, sourceMapParity: true }, null, 2));
