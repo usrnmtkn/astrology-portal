@@ -7573,7 +7573,6 @@ export function GeneratedContentAdminDashboard() {
               : "Choose transiting planet, aspect, and natal planet or chart point, including Ascendant and Midheaven. Fill current sign and both houses to save a six-part situation. Leave 4-6 blank to save the three-part aspect only. Shared fallback writing is a separate advanced edit."}</p>
             <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
           </div>
-          {exactKey && <code>{exactKey}</code>}
         </div>
 
         <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three">
@@ -7621,6 +7620,15 @@ export function GeneratedContentAdminDashboard() {
           </label>
         </div>
 
+        {exactKey && <p className="admin-natal-placement-prompt" role="status">
+          <strong>{exactKey.split("/").length === 8 ? "Write-up destination: six-part situation." : "Write-up destination: three-part aspect."}</strong>
+          {" "}
+          <code>{exactKey}</code>
+          {exactKey.split("/").length === 8
+            ? " Fields 1-6 are locked into this save. Clear current sign or a house to write the three-part aspect instead."
+            : " Set current sign and both houses to write the six-part situation for this contact."}
+        </p>}
+
         {exactKey && exactSelection && contact && <Suspense fallback={<PageLoading compact message="Opening this transit…" />}><TransitNatalExactSourceAction
           contentKey={exactKey}
           title={transitNatalLabel(contact)}
@@ -7651,9 +7659,11 @@ export function GeneratedContentAdminDashboard() {
         <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
 
         {!contactReady && <p className="admin-natal-placement-prompt">Choose transiting planet, aspect, and natal planet or chart point to open this transit's You and Friend write-up.</p>}
-        {contactReady && !previewReady && <p className="admin-natal-placement-prompt">This write-up is ready. Choose a current sign only if you want a published-reading preview. Sign and houses do not change the passage.</p>}
-        {selection && contact && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(contact)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
-        {contactReady && <p className="admin-field-hint">The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses are calculated separately and are not part of this write-up.</p>}
+        {contactReady && !previewReady && <p className="admin-natal-placement-prompt">This three-part write-up is ready. Set current sign and both houses only if you want to save a six-part situation, or a current sign if you want a published-reading preview.</p>}
+        {selection && contact && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(exactSelection ?? contact)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
+        {contactReady && <p className="admin-field-hint">{exactKey && exactKey.split("/").length === 8
+          ? "The reader preview uses eligible published writing, not saved drafts. After you save and publish this six-part situation, matching readings can use it. Shared source edits still affect every reading that uses them."
+          : "The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses stay in the preview until you fill all six finder fields, which switches the save destination to the six-part situation."}</p>}
 
       </section>
     );

@@ -3,6 +3,8 @@ import { transitNatalExactActionLabel, transitSourceEditScope, transitExactPassa
 
 assert.equal(transitNatalExactActionLabel(false, "Sun trine your Sun"), "Write Sun trine your Sun");
 assert.equal(transitNatalExactActionLabel(true, "Sun sextile your Sun"), "Edit Sun sextile your Sun");
+assert.equal(transitNatalExactActionLabel(false, "Sun conjunction your Moon", "authored/transit-aspect/sun/moon/conjunction/aries/2/3"), "Write this six-part situation");
+assert.equal(transitNatalExactActionLabel(true, "Sun conjunction your Moon", "authored/transit-aspect/sun/moon/conjunction/aries/2/3"), "Edit this six-part situation");
 assert.throws(() => transitNatalExactActionLabel(false, "  "), /transit title/);
 
 // Identity-shaped synthetic keys only. This tests editing scope, not chart support
@@ -40,6 +42,7 @@ assert.equal(transitSourceEditScope("authored/transit-return/mars", "authored/tr
 assert.equal(transitSourceEditScope("authored/transit-return/mars", "authored/transit-return/venus").kind, "shared");
 
 assert.equal(transitExactPassageState(key, { rows: [] }).exists, false);
+assert.match(transitExactPassageState(situation, { rows: [] }).detail, /six-part situation/);
 assert.equal(transitExactPassageState(key, { rows: [], packageSource: { contentKey: key, body_you: "Synthetic package passage." } }).exists, true);
 for (const status of ["DRAFT", "LIVE", "REVIEWED", "ARCHIVED", "RETIRED", "ERROR", "unknown"]) {
   const payload = { rows: [{ id: "synthetic-row", content_key: key, status, updated_at: "2026-01-01T00:00:00Z" }], packageSource: null };

@@ -1,5 +1,12 @@
-/** Primary Studio action names the selected contact, not a secondary exact-passage path. */
-export function transitNatalExactActionLabel(exists: boolean, title: string) {
+export function isTransitNatalSituationKey(contentKey: string) {
+  return contentKey.startsWith("authored/transit-aspect/") && contentKey.split("/").length === 8;
+}
+
+/** Primary Studio action names the selected destination, not a secondary exact-passage path. */
+export function transitNatalExactActionLabel(exists: boolean, title: string, contentKey?: string) {
+  if (contentKey && isTransitNatalSituationKey(contentKey)) {
+    return exists ? "Edit this six-part situation" : "Write this six-part situation";
+  }
   const name = title.trim();
   if (!name) throw new Error("The transit title could not be verified.");
   return exists ? `Edit ${name}` : `Write ${name}`;
@@ -15,11 +22,11 @@ export type TransitSourceEditScope = {
 export function transitSourceEditScope(exactKey: string | null, sourceKey: string): TransitSourceEditScope {
   if (exactKey && sourceKey === exactKey) return {
     kind: "exact", label: "Aspect-specific source",
-    explanation: exactKey.split("/").length === 8
+    explanation: isTransitNatalSituationKey(exactKey)
       ? "This is the source for the selected six-part situation. You and Friend have separate writing fields."
       : "This is the source for the selected transit and natal contact. You and Friend have separate writing fields."
   };
-  if (exactKey && exactKey.split("/").length === 8) {
+  if (exactKey && isTransitNatalSituationKey(exactKey)) {
     const parent = exactKey.split("/").slice(0, 5).join("/");
     if (sourceKey === parent) return {
       kind: "shared", label: "Three-part aspect source",
@@ -65,7 +72,11 @@ export function transitExactPassageState(contentKey: string, payload: unknown): 
   const row = saved ? { id: saved.id as string, status: typeof saved.status === "string" ? saved.status : null, updated_at: typeof saved.updated_at === "string" ? saved.updated_at : null } : null;
   const savedStatus = row?.status?.toUpperCase() ?? null;
   const exists = Boolean(packaged) || Boolean(row);
-  const detail = !exists ? "No write-up is saved for this exact contact yet. The editor below is for this aspect only; shared fallback writing is not copied or changed."
+  const situation = isTransitNatalSituationKey(contentKey);
+  const detail = !exists
+    ? (situation
+      ? "No write-up is saved for this six-part situation yet. The editor below is for this sign and both houses only; the three-part aspect write-up is not copied or changed."
+      : "No write-up is saved for this exact contact yet. The editor below is for this aspect only; shared fallback writing is not copied or changed.")
     : savedStatus === "DRAFT" ? "A draft is saved for this contact. It does not appear in the reader preview until reviewed and published."
     : savedStatus === "ARCHIVED" || savedStatus === "RETIRED" ? "This aspect-specific passage is archived or retired. Opening it does not restore or publish it."
     : savedStatus === "REVIEWED" ? "The aspect-specific passage has been reviewed. Review alone does not publish it."
