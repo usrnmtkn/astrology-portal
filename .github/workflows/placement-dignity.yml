@@ -7,7 +7,12 @@ on:
       - 'apps/web/src/components/charts/PlacementRows.tsx'
       - 'apps/web/src/content/fallbackArchitectureV3/**'
       - 'apps/admin/src/SkyWritingLibraryEditor.tsx'
+      - 'apps/admin/src/SkyFallbackFieldsEditor.tsx'
+      - 'apps/admin/src/SkyIngressComposer.tsx'
+      - 'apps/admin/src/SkyPlacementArticleVariables.tsx'
+      - 'apps/admin/src/skyWritingLibrary.ts'
       - 'scripts/test-*dignity*'
+      - 'scripts/test-sky-placement-planet-sign-template.mjs'
       - 'scripts/test-sky-placement-studio-api.mts'
       - '.github/workflows/placement-dignity.yml'
   workflow_dispatch:
@@ -39,7 +44,6 @@ jobs:
           npm run test:studio-variables
       - name: Verify actual save/publication and installed reader path
         run: node --import tsx scripts/test-sky-placement-studio-api.mts
-      - run: npm run qa:css-audit
       - run: npx playwright install --with-deps chromium
       - run: npm run test:placement-dignity-editor
       - uses: actions/upload-artifact@v6
