@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { listReportLibrary, type ReportLibraryItem } from "../../services/reportLibrary";
 import { ReportGenerationBeam } from "../../components/reports/ReportGenerationBeam";
+import { LoadingIllustration } from "../../components/LoadingIllustration";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import "../../styles/you-reports.css";
 import type { DailyHoroscopeAssembly, PersonalTimingSummary } from "./YouPage";
@@ -190,11 +191,7 @@ export function YouReportActions({
         }}
       >
         {pending ? (
-          <span className="you-report-actions__loading-dots" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </span>
+          <LoadingIllustration compact />
         ) : buttonLabel}
       </button>
     );

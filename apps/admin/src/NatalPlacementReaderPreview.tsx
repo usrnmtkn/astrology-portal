@@ -1,4 +1,5 @@
 import { StudioButton } from "./StudioControls";
+import { PageLoading } from "../../web/src/components/PageLoading";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
@@ -270,7 +271,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
       </header>
 
       {preview.loading ? (
-        <div className="admin-empty-state" role="status"><strong>Assembling reader preview…</strong></div>
+        <PageLoading compact message="Assembling reader preview…" />
       ) : preview.rendered ? (
         <div className="admin-natal-reader-preview-surface">
           <h3>{preview.rendered.headline}</h3>

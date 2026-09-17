@@ -12,6 +12,7 @@ import {
 } from "../../services/reportLibrary";
 import { createReportShareLink, stopReportSharing } from "../../services/reportSharing";
 import { ReportGenerationBeam } from "./ReportGenerationBeam";
+import { PageLoading } from "../PageLoading";
 
 const reportMonthNames = [
   "Jan", "Feb", "Mar", "Apr", "May", "June",
@@ -413,7 +414,7 @@ export function ReportLibraryView() {
           aria-labelledby={`report-library-tabs-${view}-tab`}
           aria-live="polite"
         >
-          {status === "loading" ? <p className="report-library-loading type-body-muted">Loading your reports…</p> : null}
+          {status === "loading" ? <PageLoading compact message="Loading your reports…" /> : null}
           {status === "error" ? <p className="report-library-loading type-body-muted">Your reports could not be loaded right now.</p> : null}
           {status === "ready" && visible.length === 0 ? <ReportLibraryEmpty view={view} /> : null}
           {status === "ready" ? visible.map((item) => (

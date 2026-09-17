@@ -10,6 +10,7 @@ import type {
   FriendPersonalTransitView,
   FriendTransitsBrief
 } from "./friendTransitsBrief";
+import { PageLoading } from "../../components/PageLoading";
 
 const queuedReadingPollMs = 5_000;
 
@@ -191,9 +192,7 @@ export function FriendTransitsTab({
     <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${friendName} transits`}>
       <div className="friend-profile-copy-column">
         {isLoading ? (
-          <div className="feature-loading-fallback" role="status">
-            Calculating transits for the selected date…
-          </div>
+          <PageLoading message="Calculating transits for the selected date…" />
         ) : null}
         {!isLoading && readingAvailable ? (
           <article className="friends-logic-card friend-transit-reading" aria-label={`What's going on with ${friendName} right now?`} data-report-generating={effectiveReadingStatus === "loading" || undefined}>
@@ -208,7 +207,7 @@ export function FriendTransitsTab({
                 {effectiveReading.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               </>
             ) : effectiveReadingStatus === "loading" ? (
-              <p role="status">Preparing {friendName}&apos;s reading. You can leave this page and come back later.</p>
+              <PageLoading compact message={`Preparing ${friendName}'s reading. You can leave this page and come back later.`} />
             ) : effectiveReadingStatus === "locked" ? (
               <>
                 <p>This reading is unavailable right now. You can try generating it again.</p>

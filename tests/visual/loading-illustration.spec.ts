@@ -1,8 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 
-async function prepare(page: Page, theme: string) {
-  await page.addInitScript(theme => {
+async function prepare(page: Page, theme: string, visual?: 'artwork') {
+  await page.addInitScript(({ theme, visual }) => {
     localStorage.setItem('tldrastro:theme', theme);
+    if (visual) localStorage.setItem('tldrastro:loadingVisual', visual);
     const location = { label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
     localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
     localStorage.setItem('tldrastro:userProfile', JSON.stringify({
@@ -10,7 +11,7 @@ async function prepare(page: Page, theme: string) {
       sun: 'Aquarius', moon: 'Scorpio', rising: 'Gemini', currentLocation: location.label, currentLocationData: location,
       charts: [{ id: 'fixture-chart', name: 'Test Reader', type: 'Birth chart', birthDate: '1990-01-01', birthTime: '12:00 PM', birthCity: location.label, birthLocation: location }]
     }));
-  }, theme);
+  }, { theme, visual });
   await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
     schema: 'content-studio-last-known-good-v1', rows: [], publications: [], rowCount: 0
   } }));
@@ -24,11 +25,22 @@ function hold() {
   return { promise, release };
 }
 
+async function expectAnimatedOrb(frame: ReturnType<Page['locator']>) {
+  const orb = frame.locator('canvas');
+  await expect(orb).toBeVisible({ timeout: 60_000 });
+  await expect(frame.locator('img.is-active')).toHaveCount(0);
+  await expect.poll(() => orb.evaluate(canvas => {
+    const image = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data;
+    return image.some((value, index) => index % 4 === 3 && value > 0);
+  })).toBe(true);
+  const animated = await orb.evaluate(canvas => canvas.toDataURL());
+  await expect.poll(() => orb.evaluate(canvas => canvas.toDataURL())).not.toBe(animated);
+}
+
 for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
-  test(`${screen} illustration cycles without movement at ${width} ${theme}`, async ({ page }, info) => {
+  test(`${screen} thinking orb loads without movement at ${width} ${theme}`, async ({ page }, info) => {
     test.setTimeout(90_000);
     await page.setViewportSize({ width, height: 1000 });
-    await page.clock.setFixedTime(new Date('2026-09-14T16:00:00Z'));
     await prepare(page, theme);
     const blocked = hold();
     const requestPattern = screen === 'sky' ? '**/rest/v1/generated_interpretations*' : /\/assets\/ManualChartsPanel-[^/]+\.js$/;
@@ -47,18 +59,16 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
       await expect(loader).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
       await expect(loader).toHaveCSS('border-width', '0px');
       const frame = loader.locator('.loading-illustration');
-      await expect(frame.locator('img.is-active')).toHaveAttribute('src', '/loading-artwork/sun.png');
-      await expect.poll(() => frame.locator('img.is-active').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(512);
+      await expect(frame.locator('canvas')).toBeVisible();
       const bounds = await frame.boundingBox();
       const loaderBounds = await loader.boundingBox();
       const navigationBounds = await page.locator('.topbar').boundingBox();
       expect(loaderBounds!.y, 'The loading content must clear the fixed navigation').toBeGreaterThanOrEqual(navigationBounds!.y + navigationBounds!.height);
-      await expect(frame.locator('img.is-active')).not.toHaveAttribute('src', '/loading-artwork/sun.png', { timeout: 8000 });
+      await expectAnimatedOrb(frame);
       await page.waitForTimeout(450);
       expect(await frame.boundingBox()).toEqual(bounds);
       expect(await loader.boundingBox()).toEqual(loaderBounds);
-      expect(await frame.locator('img.is-active').evaluate(img => getComputedStyle(img).filter)).toBe(theme === 'dark' ? 'invert(1)' : 'none');
-      await page.screenshot({ path: info.outputPath('illustrated-loading.png') });
+      await page.screenshot({ path: info.outputPath('thinking-orb-loading.png') });
     } finally { blocked.release(); }
     if (screen === 'sky') {
       await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });
@@ -75,7 +85,7 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
   });
 }
 
-test('reduced motion stays still; missing artwork never holds the reading', async ({ page }) => {
+test('reduced motion freezes the thinking orb; the reading still arrives', async ({ page }) => {
   test.setTimeout(90_000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await prepare(page, 'light');
@@ -85,15 +95,11 @@ test('reduced motion stays still; missing artwork never holds the reading', asyn
     await page.goto('/#sky', { waitUntil: 'domcontentloaded' });
     const frame = page.locator('.sky-reading-layout__loading .loading-illustration');
     await expect(frame).toBeVisible({ timeout: 60_000 });
-    const active = frame.locator('img.is-active');
-    await expect(active).toHaveAttribute('src', '/loading-artwork/sun.png');
-    await page.waitForTimeout(4800);
-    await expect(active).toHaveAttribute('src', '/loading-artwork/sun.png');
-    expect(await active.evaluate(img => getComputedStyle(img).transitionDuration)).toBe('0s');
-    await page.route('**/loading-artwork/**', route => route.abort());
-    await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await page.waitForTimeout(4800);
-    await expect(active).toHaveAttribute('src', '/loading-artwork/sun.png');
+    const orb = frame.locator('canvas');
+    await expect(orb).toBeVisible();
+    const still = await orb.evaluate(canvas => canvas.toDataURL());
+    await page.waitForTimeout(350);
+    expect(await orb.evaluate(canvas => canvas.toDataURL())).toBe(still);
   } finally { blocked.release(); }
   await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });
   await expect(page.locator('.sky-reading-layout__loading')).toHaveCount(0);
@@ -101,52 +107,47 @@ test('reduced motion stays still; missing artwork never holds the reading', asyn
   await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });
 });
 
-for (const screen of ['sky', 'friends']) for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
-  test(`${screen} thinking orb backs up unavailable artwork at ${width} ${theme}`, async ({ page }, info) => {
+test('returning to Sky after Calendar does not replay the page loader', async ({ page }) => {
+  test.setTimeout(90_000);
+  await prepare(page, 'light');
+  await page.goto('/?date=2026-09-14#sky');
+  await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator('.sky-reading-layout__loading')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Calendar', exact: true }).first().click();
+  await expect(page.getByRole('region', { name: 'Lunar calendar', exact: true })).toBeVisible({ timeout: 20_000 });
+  await page.getByRole('button', { name: 'Sky', exact: true }).first().click();
+  await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('.sky-reading-layout__loading')).toHaveCount(0);
+  await expect(page.locator('.app-loading--illustrated:visible')).toHaveCount(0);
+});
+
+for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`${screen} sunset artwork option cycles without movement at ${width} ${theme}`, async ({ page }, info) => {
     test.setTimeout(90_000);
     await page.setViewportSize({ width, height: 1000 });
-    await prepare(page, theme);
-    await page.route('**/loading-artwork/**', route => route.abort());
+    await page.clock.setFixedTime(new Date('2026-09-14T16:00:00Z'));
+    await prepare(page, theme, 'artwork');
     const blocked = hold();
-    const pattern = screen === 'sky' ? '**/rest/v1/generated_interpretations*' : /\/assets\/ManualChartsPanel-[^/]+\.js$/;
-    await page.route(pattern, async route => {
+    const requestPattern = screen === 'sky' ? '**/rest/v1/generated_interpretations*' : /\/assets\/ManualChartsPanel-[^/]+\.js$/;
+    await page.route(requestPattern, async route => {
       await blocked.promise;
       if (screen === 'sky') await route.fulfill({ json: [] });
       else await route.continue();
     });
     try {
-      await page.goto(screen === 'sky' ? '/#sky' : '/#friends?tab=charts', { waitUntil: 'domcontentloaded' });
+      await page.goto(screen === 'sky' ? '/?date=2026-09-14#sky' : '/#friends?tab=charts', { waitUntil: 'domcontentloaded' });
       const loader = screen === 'sky' ? page.locator('.sky-reading-layout__loading .app-loading') : page.getByRole('status').filter({ hasText: 'Loading Friends…' });
       const frame = loader.locator('.loading-illustration');
-      const orb = frame.locator('canvas');
-      await expect(orb).toBeVisible({ timeout: 60_000 });
-      await expect(frame.locator('img.is-active')).toHaveCount(0);
+      await expect(frame.locator('img.is-active')).toHaveAttribute('src', '/loading-artwork/sun.png');
+      await expect.poll(() => frame.locator('img.is-active').evaluate((img: HTMLImageElement) => img.naturalWidth)).toBe(512);
       const bounds = await frame.boundingBox();
-      const label = await loader.innerText();
-      await expect.poll(() => orb.evaluate(canvas => {
-        const image = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data;
-        return image.some((value, index) => index % 4 === 3 && value > 0);
-      })).toBe(true);
-      const animated = await orb.evaluate(canvas => canvas.toDataURL());
-      await expect.poll(() => orb.evaluate(canvas => canvas.toDataURL())).not.toBe(animated);
-      await page.emulateMedia({ reducedMotion: 'reduce' });
-      await page.waitForTimeout(100);
-      const still = await orb.evaluate(canvas => canvas.toDataURL());
-      await page.waitForTimeout(350);
-      expect(await orb.evaluate(canvas => canvas.toDataURL())).toBe(still);
+      await expect(frame.locator('img.is-active')).not.toHaveAttribute('src', '/loading-artwork/sun.png', { timeout: 8000 });
       expect(await frame.boundingBox()).toEqual(bounds);
-      expect(await loader.innerText()).toBe(label);
-      await page.screenshot({ path: info.outputPath('thinking-orb-backup.png') });
-      // A later successful image replaces the backup without moving its frame.
-      await page.unroute('**/loading-artwork/**');
-      await page.emulateMedia({ reducedMotion: 'no-preference' });
-      await expect(frame.locator('img.is-active')).toBeVisible({ timeout: 8000 });
-      await expect(orb).toHaveCount(0);
-      expect(await frame.boundingBox()).toEqual(bounds);
+      expect(await frame.locator('img.is-active').evaluate(img => getComputedStyle(img).filter)).toBe(theme === 'dark' ? 'invert(1)' : 'none');
+      await page.screenshot({ path: info.outputPath('illustrated-loading.png') });
     } finally { blocked.release(); }
     if (screen === 'sky') await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });
     else await expect(page.getByRole('heading', { name: 'No charts yet.', exact: true })).toBeVisible({ timeout: 30_000 });
-    await expect(page.locator('.app-loading--illustrated:visible')).toHaveCount(0);
   });
 }
 

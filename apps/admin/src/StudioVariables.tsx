@@ -6,6 +6,7 @@ import { AdminSelect, AdminDisclosureSummary } from './AdminNativeControls';
 import { AdminPaginatedCollection } from './AdminPaginatedCollection';
 import { compositionVariableColors } from './CompositionVariableKey';
 import { decodeStudioVariableCatalog, filterStudioVariables, type StudioVariable, type StudioVariableCatalog } from './studioVariableCatalog';
+import { PageLoading } from '../../web/src/components/PageLoading';
 
 const kindLabels = { readonly: 'Calculated fact', editable: 'Reusable phrase', unmapped: 'Internal token' };
 
@@ -90,8 +91,8 @@ export default function StudioVariables({ onOpenSource, secret, customVariables,
         <StudioButton disabled={!query && !tag && !surface} onClick={reset}>Clear filters</StudioButton>
       </div>
     </div>
-    {custom ? customLoading ? <p role="status">Loading your variables…</p> : customError ? <div role="alert"><p>{customError}</p><StudioButton onClick={onReloadCustom}>Retry my variables</StudioButton></div> : <StudioCustomVariables variables={customVariables} secret={secret} query={query} tag={tag} onChange={onCustomChange} createRequest={createRequest} onCreateHandled={onCreateHandled} /> : error ? <div className="admin-empty-state" role="alert"><p>{error}</p><StudioButton onClick={() => setAttempt(value => value + 1)}>Retry catalog</StudioButton></div>
-      : !catalog ? <p role="status">Loading variables…</p> : <>
+    {custom ? customLoading ? <PageLoading compact message="Loading your variables…" /> : customError ? <div role="alert"><p>{customError}</p><StudioButton onClick={onReloadCustom}>Retry my variables</StudioButton></div> : <StudioCustomVariables variables={customVariables} secret={secret} query={query} tag={tag} onChange={onCustomChange} createRequest={createRequest} onCreateHandled={onCreateHandled} /> : error ? <div className="admin-empty-state" role="alert"><p>{error}</p><StudioButton onClick={() => setAttempt(value => value + 1)}>Retry catalog</StudioButton></div>
+      : !catalog ? <PageLoading compact message="Loading variables…" /> : <>
         {filtered.length ? <AdminPaginatedCollection items={filtered} label="Variables" pageSize={20} resetKey={`${query}|${kind}|${surface}`}>
           {visible => <div className="studio-section studio-variable-list">{visible.map(variable => <VariableCard key={variable.id} variable={variable} color={colors.get(variable.name)} onOpenSource={onOpenSource} />)}</div>}
         </AdminPaginatedCollection> : <div className="admin-empty-state"><h2>No matching variables</h2><p>Try another name or clear the filters.</p><StudioButton onClick={reset}>Show all variables</StudioButton></div>}

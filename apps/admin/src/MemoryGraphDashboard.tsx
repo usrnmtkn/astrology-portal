@@ -4,6 +4,7 @@ import { StudioButton, StudioInput } from "./StudioControls";
 import { memo, useEffect, useRef, useState } from 'react';
 import { MemoryGraph, type DocumentWithMemories } from '@supermemory/memory-graph';
 import { AdminAccessGate } from './AdminStudioPrimitives';
+import { PageLoading } from '../../web/src/components/PageLoading';
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
 import { loadOwnerSessionAccessToken, ownerSessionStorageKey } from './ownerSession';
 
@@ -136,7 +137,7 @@ export default function MemoryGraphDashboard() {
     if (value) { rejectedCredential.current = ''; emergencyCredential.current = value; setCredential(value); setRefresh(value => value + 1); }
   }
   const back = <a className="memory-site-back" href="/admin/content" aria-label="Back to Content Studio"><svg viewBox="0 -960 960 960" aria-hidden="true"><path fill="currentColor" d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" /></svg>Back</a>;
-  if (!credential) return <main className="admin-dashboard memory-access studio-standalone" data-studio-theme={getStudioTheme()}><section className="admin-main">{error && <p className="memory-access-error" role="alert">{error}</p>}<header className="admin-dashboard-header"><div>{back}<h1>Memory graph</h1></div></header>{booting ? <p className="studio-surface" role="status">Checking owner access…</p> : <AdminAccessGate disabled={!normalizeAdminSecret(secret)} onChange={setSecret} onSubmit={submitSecret} value={secret} />}</section></main>;
+  if (!credential) return <main className="admin-dashboard memory-access studio-standalone" data-studio-theme={getStudioTheme()}><section className="admin-main">{error && <p className="memory-access-error" role="alert">{error}</p>}<header className="admin-dashboard-header"><div>{back}<h1>Memory graph</h1></div></header>{booting ? <PageLoading compact message="Checking owner access…" /> : <AdminAccessGate disabled={!normalizeAdminSecret(secret)} onChange={setSecret} onSubmit={submitSecret} value={secret} />}</section></main>;
   return <main className="admin-dashboard memory-is-open studio-standalone" data-studio-theme={getStudioTheme()}>
     <h1 className="memory-sr-only">Memory graph</h1>
     <header className="memory-toolbar">
@@ -150,7 +151,7 @@ export default function MemoryGraphDashboard() {
     </header>
     <section className="memory-workspace" aria-label="Memory graph workspace">
     {!!documents?.length && <GraphCanvas documents={documents} />}
-    {!documents && !error && <div className="memory-loading" role="status">Loading knowledge graph...</div>}
+    {!documents && !error && <PageLoading message="Loading knowledge graph…" />}
     {documents?.length === 0 && !error && <div className="memory-loading" role="status">No project memories available.</div>}
     {payload && payload.total > 0 && <aside className="memory-match-panel" ref={matchesRef} aria-label="Matching memories">
       <div className="memory-match-header"><SearchIcon aria-hidden="true" /><h2>Matching memories:</h2></div>
@@ -168,7 +169,7 @@ export default function MemoryGraphDashboard() {
         <p className="memory-detail-content">{detail.body}</p>
         <details className="memory-provenance"><summary>Source and provenance</summary><p>{detail.role} · {detail.status.replaceAll('_', ' ')}</p>{checkedAt && <p>Memory checked {new Date(checkedAt).toLocaleString()}</p>}<p>{detail.path}{detail.line ? `:${detail.line}` : ''}</p>{detail.sourceUrl && <a href={detail.sourceUrl} target="_blank" rel="noreferrer">Open source</a>}<p>Exact text SHA-256</p><code>{detail.bodySha256}</code>
           {detail.requiredContext.map(record => <details key={record.id}><summary>{record.title}</summary><p className="memory-detail-content">{record.body}</p></details>)}
-        </details></> : <p role="status">Opening memory…</p>}
+        </details></> : <PageLoading compact message="Opening memory…" />}
     </aside>}
     </section>
     <p className="memory-sr-only" role="status">{loading ? 'Searching memories…' : payload ? `${payload.total} matching memories` : ''}</p>

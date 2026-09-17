@@ -1,5 +1,6 @@
 import { planetSignDignity, type EssentialDignity } from "../../services/planetSignDignity.mjs";
 import { CardReadMore } from "../CardReadMore";
+import { PageLoading } from "../PageLoading";
 import type { PlanetPosition, SkySnapshot } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
@@ -713,10 +714,7 @@ export function PlanetPlacementRow({
         {description ? (
           <span className="planet-placement-row__description">{description}</span>
         ) : descriptionLoading ? (
-          <span className="summary-skeleton planet-placement-row__description-loading" aria-hidden="true">
-            <span />
-            <span />
-          </span>
+          <PageLoading compact message="Loading description" />
         ) : null}
         {onClick && !descriptionLoading ? <CardReadMore /> : null}
       </span>

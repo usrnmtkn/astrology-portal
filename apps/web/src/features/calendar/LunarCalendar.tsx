@@ -3,8 +3,9 @@ import { CalendarSummaryText } from "./CalendarSummaryText";
 import { skyDailySummaryFields } from "../../content/skyDailySummaryCatalog";
 import type { SkySnapshot } from "../../types";
 import { CardReadMore } from "../../components/CardReadMore";
+import { PageLoading } from "../../components/PageLoading";
 import { calendarMotionTitle } from "../../content/skyMotionLabels";
-import { CalendarDays, ChevronLeft, ChevronRight, Loader2, MapPin, Search } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, MapPin, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { SegmentedControl } from "../../components/SegmentedControl";
@@ -3106,10 +3107,7 @@ export function LunarCalendar({
       </header>
 
       {(status === "loading" || !moonContentReady) && (
-        <div className="lunar-calendar-loading" role="status">
-          <Loader2 size={18} aria-hidden="true" />
-          <span>Calculating calendar</span>
-        </div>
+        <PageLoading compact message="Calculating calendar" />
       )}
 
       {status === "error" && (
@@ -3515,7 +3513,7 @@ function TransitCard({
         <span className="tx-date">{formatEventDate(event.startsAt, timeZone)} · {formatEventTime(event.startsAt, timeZone)}</span>
       </div>
       {isContentLoading ? (
-        <span className="tx-body tx-body--loading" aria-label="Loading interpretation" role="status" />
+        <PageLoading compact message="Loading interpretation" />
       ) : description ? <p className="tx-body">{description}</p> : null}
       {onOpenTransit && !isContentLoading ? <CardReadMore /> : null}
     </>

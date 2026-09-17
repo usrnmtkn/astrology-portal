@@ -5,6 +5,7 @@ import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementA
 import SkyPlacementVariableKey, { SkyVariableText } from "./SkyPlacementVariableKey";
 import SkyPlacementArticleVariables from "./SkyPlacementArticleVariables";
 import SkyArticleAiWriter from "./SkyArticleAiWriter";
+import { PageLoading } from "../../web/src/components/PageLoading";
 // @ts-ignore Shared article-token validator used by publishing and readers.
 import { isSkyPlacementArticleField, skyPlacementArticleVariableIssues, skyPlacementArticlePhraseNames } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
 import SkyPhraseCompositionEditor from "./SkyPhraseCompositionEditor";
@@ -174,7 +175,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       <p>Nothing is published until you use the existing Save &amp; publish action.</p>
     </div>
     {libraryError && <p role="alert">{libraryError}</p>}
-    {!libraryReady ? <p role="status">{installingLibrary ? `Loading ${initialLibraryField?.label ?? initialLibrarySourceId} for ${title(planet)} in ${title(sign)}…` : `Preparing ${initialLibraryField?.label ?? initialLibrarySourceId}…`}</p>
+    {!libraryReady ? <PageLoading compact message={installingLibrary ? `Loading ${initialLibraryField?.label ?? initialLibrarySourceId} for ${title(planet)} in ${title(sign)}…` : `Preparing ${initialLibraryField?.label ?? initialLibrarySourceId}…`} />
       : <SkyIngressComposer source={{ ...(source ?? {}), contentKey, ingress: activeLibrary }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
         initialField={initialField} onChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />}
   </section>;

@@ -1,3 +1,5 @@
+import { PageLoading } from "../../components/PageLoading";
+
 export type FriendCircleFeedCard = {
   label: string;
   title: string;
@@ -31,21 +33,7 @@ export function FriendCircleFeed({
     <section className="friends-feed-preview friends-feed-view" aria-label="Circle feed">
       <div className="friends-circle-strip" aria-label={isLoading ? "Loading circle feed" : "Circle feed"}>
         {isLoading ? (
-          [0, 1, 2].map((index) => (
-            <article className="friends-feed-card friends-feed-card-loading" key={`circle-loading-${index}`} aria-hidden="true">
-              <span className="friends-feed-card-body">
-                <span className="friends-card-skeleton friends-card-skeleton-label" />
-                <i className="friends-card-skeleton friends-card-skeleton-title" />
-                <i className="friends-card-skeleton friends-card-skeleton-line" />
-                <i className="friends-card-skeleton friends-card-skeleton-line friends-card-skeleton-line-short" />
-              </span>
-              <span className="friends-feed-avatar-stack">
-                <span className="friends-feed-avatar friends-feed-avatar-skeleton" />
-                <span className="friends-feed-avatar friends-feed-avatar-skeleton" />
-              </span>
-              <span className="friends-feed-chevron" />
-            </article>
-          ))
+          <PageLoading compact message="Loading circle feed" />
         ) : (
           cards.map((card, index) => {
             const feedMeta = index === 0

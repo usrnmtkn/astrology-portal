@@ -9,6 +9,7 @@ import {
 } from "../../components/charts/PlacementRows";
 import { NatalAspectPatternsSection } from "../you/NatalAspectPatternsSection";
 import { FriendPlacementTable } from "./FriendPlacementTables";
+import { PageLoading } from "../../components/PageLoading";
 
 export type FriendNatalEmptyHouseRow = {
   house: number;
@@ -68,16 +69,7 @@ export function FriendNatalTab({
         aria-label="Natal"
       >
         <div className="friend-profile-copy-column">
-          <div
-            className="friends-search-skeleton"
-            aria-label={`Completing ${friendName}'s natal chart`}
-            aria-live="polite"
-            role="status"
-          >
-            {Array.from({ length: 6 }, (_, index) => (
-              <span className="friends-search-skeleton-row" key={`friend-natal-repair-${index}`} />
-            ))}
-          </div>
+          <PageLoading message={`Completing ${friendName}'s natal chart`} />
         </div>
       </div>
     );

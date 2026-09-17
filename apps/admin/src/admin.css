@@ -3619,16 +3619,13 @@ body,
   min-height: 220px;
 }
 
-.admin-initial-loading > svg {
+.admin-initial-loading .loading-illustration {
   align-self: center;
-  animation: admin-content-loading-spin 1s linear infinite;
-  color: var(--admin-muted);
 }
 
-@keyframes admin-content-loading-spin {
-  to {
-    transform: rotate(360deg);
-  }
+.admin-initial-loading .app-loading {
+  width: 100%;
+  margin: 0;
 }
 
 .admin-sky-voice-tabs {

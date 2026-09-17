@@ -17,6 +17,44 @@ test("September 8 uses the revised Virgo clause and links planet names", async (
   await page.screenshot({ path: "test-results/sky-summary-september-8.png" });
 });
 
+test("debility card counts traditional detriment and fall under the sky today card", async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width: 390, height: 1000 });
+  await page.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
+  await page.addInitScript(() => {
+    localStorage.setItem("tldrastro:theme", "light");
+    localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" }));
+  });
+  await page.goto("/?date=2026-09-08#sky");
+  const skyToday = page.getByRole("region", { name: "The sky today", exact: true });
+  const debility = page.getByRole("region", { name: "Without their tools", exact: true });
+  await expect(skyToday).toBeVisible({ timeout: 60_000 });
+  await expect(debility).toBeVisible();
+  const summaryCards = page.locator(".today-summary-cards > section");
+  await expect(summaryCards.first()).toHaveAttribute("aria-label", "The sky today");
+  await expect(summaryCards.nth(1)).toHaveAttribute("aria-label", "Without their tools");
+  const heading = debility.getByRole("heading", { level: 3, name: "Without their tools" });
+  await expect(heading).toBeVisible();
+  await expect(heading.locator(":scope > span")).toHaveText(["Without", "their tools"]);
+  await expect(debility.locator(".sky-today-ledger__head p span").first()).toHaveText("2 of 7");
+  await expect(debility.getByRole("link")).toHaveText(["Mars in Cancer", "Saturn in Aries"]);
+  await expect(debility).toContainText("2 of 7 planets are in detriment or fall. They do not have access to their usual tools.");
+  const headingType = await heading.evaluate(el => {
+    const style = getComputedStyle(el);
+    const probe = document.createElement("h3");
+    probe.style.cssText = "font-family:var(--font-display);font-size:var(--sky-ledger-title-size);font-weight:var(--weight-regular);letter-spacing:var(--tracking-tight);line-height:var(--leading-h1)";
+    el.after(probe);
+    const expected = getComputedStyle(probe);
+    const keys = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;
+    const values = Object.fromEntries(keys.map(key => [key, { actual: style[key], expected: expected[key] }]));
+    probe.remove();
+    return values;
+  });
+  for (const value of Object.values(headingType)) expect(value.actual).toBe(value.expected);
+  await debility.getByRole("link", { name: "Read about Mars in Cancer" }).click();
+  await expect(page).toHaveURL(/#sky\/placement\/mars\/cancer/);
+});
+
 for (const theme of ["light", "dark"] as const) {
   for (const width of [390, 768, 1024, 1440]) {
     test(`daily summary ${theme} at ${width}px`, async ({ page }) => {
@@ -73,6 +111,52 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.locator(".retrograde-section")).toHaveCount(0);
       await expect(page.getByRole("region", { name: "Transits", exact: true })).toBeVisible();
       await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+      const summaryCards = page.locator(".today-summary-cards > section");
+      await expect(summaryCards.first()).toHaveAttribute("aria-label", "The sky today");
+      await expect(summaryCards.nth(1)).toHaveAttribute("aria-label", "Without their tools");
+      const debility = page.getByRole("region", { name: "Without their tools" });
+      await expect(debility).toBeVisible();
+      const debilityHeading = debility.getByRole("heading", { level: 3, name: "Without their tools" });
+      await expect(debilityHeading).toBeVisible();
+      await expect(debilityHeading.locator(":scope > span")).toHaveText(["Without", "their tools"]);
+      const countLabel = debility.locator(".sky-today-ledger__head p span").first();
+      await expect(countLabel).toHaveText(/^\d+ of 7$/);
+      const debilitatedCount = Number((await countLabel.innerText()).split(" ")[0]);
+      await expect(debility.getByRole("link")).toHaveCount(debilitatedCount);
+      await expect(debility.getByRole("link", { name: "Read about Saturn in Aries" })).toBeVisible();
+      await expect(debility).toContainText("detriment or fall");
+      await expect(debility).toContainText("usual tools");
+      const headingOrder = await page.evaluate(() => Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6"), node => ({
+        level: Number(node.tagName.slice(1)),
+        text: node.textContent?.replace(/\s+/g, " ").trim() ?? "",
+        visible: (node as HTMLElement).offsetParent !== null || getComputedStyle(node).position === "fixed"
+      })));
+      const visibleHeadings = headingOrder.filter(node => node.visible).map(node => node.text);
+      expect(visibleHeadings.indexOf("Without their tools")).toBeGreaterThan(visibleHeadings.findIndex(text => /The sky today|Today, simple/i.test(text)));
+      const debilityType = await debilityHeading.evaluate(el => {
+        const style = getComputedStyle(el);
+        const probe = document.createElement("h3");
+        probe.style.cssText = "font-family:var(--font-display);font-size:var(--sky-ledger-title-size);font-weight:var(--weight-regular);letter-spacing:var(--tracking-tight);line-height:var(--leading-h1)";
+        el.after(probe);
+        const expected = getComputedStyle(probe);
+        const keys = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;
+        const values = Object.fromEntries(keys.map(key => [key, { actual: style[key], expected: expected[key] }]));
+        probe.remove();
+        return values;
+      });
+      for (const value of Object.values(debilityType)) expect(value.actual).toBe(value.expected);
+      const copyType = await debility.locator(".sky-today-ledger__copy").evaluate(el => {
+        const style = getComputedStyle(el);
+        const probe = document.createElement("p");
+        probe.style.cssText = "font-family:var(--font-body);font-size:var(--text-body);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-body)";
+        el.append(probe);
+        const expected = getComputedStyle(probe);
+        const keys = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;
+        const values = Object.fromEntries(keys.map(key => [key, { actual: style[key], expected: expected[key] }]));
+        probe.remove();
+        return values;
+      });
+      for (const value of Object.values(copyType)) expect(value.actual).toBe(value.expected);
       const typography = await summary.evaluate(el => {
         const style = getComputedStyle(el);
         const probe = document.createElement("p");

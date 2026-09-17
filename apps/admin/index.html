@@ -11,9 +11,9 @@
   </head>
   <body>
     <div id="root">
-      <main id="app-startup" class="app-loading" role="status" aria-live="polite" aria-busy="true">
+      <main id="app-startup" class="app-loading app-loading--illustrated" role="status" aria-live="polite" aria-busy="true">
+        <div class="loading-illustration" aria-hidden="true"><span class="loading-orb"></span></div>
         <span data-startup-message>Loading Content Studio…</span>
-        <div class="app-loading__lines" aria-hidden="true"><span></span><span></span><span></span></div>
         <button type="button" class="app-loading__action" hidden>Reload page</button>
         <noscript>Enable JavaScript to use TLDR Astro.</noscript>
       </main>

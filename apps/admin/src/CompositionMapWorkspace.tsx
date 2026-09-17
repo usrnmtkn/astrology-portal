@@ -21,6 +21,7 @@ import {
   type WritingSurfaceCmsStarter,
   type WritingSurfaceMapItem
 } from "./writingSurfaceSourceMap";
+import { PageLoading } from "../../web/src/components/PageLoading";
 
 type Props = {
   editor: ReactNode;
@@ -368,7 +369,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
   return (
     <section className="admin-template-page admin-composition-map-page">
       {loadError && <div role="alert"><p>{loadError}</p><StudioButton type="button" onClick={() => setRetryLoad(value => value + 1)}>Retry sources</StudioButton></div>}
-      {pendingRows.length > 0 && !loadError && <p role="status">Loading full composition sources…</p>}
+      {pendingRows.length > 0 && !loadError && <PageLoading compact message="Loading full composition sources…" />}
       <StudioTabs label="Composition Map scope" value={scope} onValueChange={setScope} hidden={Boolean(templateKeys)}
         tabs={[{ value: "surfaces", label: <>Surfaces &amp; systems <span>{writingSurfaceSourceMap.length}</span></> },
           { value: "templates", label: <>Template internals <span>{map.length}</span></> }]}>

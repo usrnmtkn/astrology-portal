@@ -3,6 +3,7 @@ import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { CompositionMapRow } from './compositionMap';
 import { lunarContentIdentity, lunarSigns } from './lunarCalendarContent';
+import { PageLoading } from '../../web/src/components/PageLoading';
 const CompositionMapWorkspace = lazy(() => import('./CompositionMapWorkspace'));
 type Row = CompositionMapRow & { inventory_only?: boolean; facts?: Record<string, unknown> | null };
 const isArchived = (row: Row) => row.status === 'ARCHIVED'
@@ -52,7 +53,7 @@ export default function LunarCalendarWorkspace({ rows, editor, query, createRequ
     {adding && <section className="admin-panel" aria-label="Add Moon-in-sign write-up">
       <header className="admin-composition-detail-header"><div><h2>Add Moon-in-sign write-up</h2><p>Create a general Calendar overview for a Moon sign. New Moon and Full Moon horoscopes are separate.</p></div><StudioButton onClick={() => setAdding(false)}>Cancel</StudioButton></header>
       <div className="admin-review-filter-grid"><label><span>Moon sign for the new write-up</span><AdminSelect autoFocus aria-label="Moon sign for the new write-up" value={newSign} onChange={event => setNewSign(event.target.value)}><option value="">Choose a Moon sign</option>{lunarSigns.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}</AdminSelect></label></div>
-      <p role="status">{isLoading ? 'Loading saved write-ups…' : !newSign ? 'Choose the sign before starting a draft.' : !availableVariant ? 'All available alternatives already exist for this sign. Edit or restore a saved write-up.' : existingForSign.length ? `${existingForSign.length} saved write-ups. This creates a separate alternative; your existing writing stays in place.` : 'No saved write-ups for this sign. Start its first draft.'}</p>
+      {isLoading ? <PageLoading compact message="Loading saved write-ups…" /> : <p role="status">{!newSign ? 'Choose the sign before starting a draft.' : !availableVariant ? 'All available alternatives already exist for this sign. Edit or restore a saved write-up.' : existingForSign.length ? `${existingForSign.length} saved write-ups. This creates a separate alternative; your existing writing stays in place.` : 'No saved write-ups for this sign. Start its first draft.'}</p>}
       <div className="admin-new-actions"><StudioButton className="admin-primary-button" disabled={!newSign || !availableVariant || isLoading} onClick={() => {
         setSign(newSign); setFamily('Moon-sign passages'); setStatus('active'); onQuery('');
         setSelectedKey(`authored/calendar-weekly-moon/${newSign}${availableVariant === 1 ? '' : `/variant-${availableVariant}`}`);
@@ -70,7 +71,7 @@ export default function LunarCalendarWorkspace({ rows, editor, query, createRequ
     <StudioTabs label="Lunar workspace views" value={view} onValueChange={setView}
       tabs={[{ value: 'writeups', label: 'Write-ups' }, { value: 'composition', label: 'Composition & variables' }]}>
 
-    {view === 'composition' ? <Suspense fallback={<p>Loading composition…</p>}><CompositionMapWorkspace rows={rows} templateKeys={keys} initialKey={selected?.row.content_key} onEditRow={onEdit} onLoadRow={onLoad} editor={editor} /></Suspense> : <>
+    {view === 'composition' ? <Suspense fallback={<PageLoading message="Loading composition…" />}><CompositionMapWorkspace rows={rows} templateKeys={keys} initialKey={selected?.row.content_key} onEditRow={onEdit} onLoadRow={onLoad} editor={editor} /></Suspense> : <>
       {editor}
       <div className="admin-composition-map-layout">
         <section className="admin-composition-detail" aria-label="Selected lunar passage">{selected && <>
@@ -78,7 +79,7 @@ export default function LunarCalendarWorkspace({ rows, editor, query, createRequ
           <label><span>Selected passage</span><AdminSelect aria-label="Selected passage" value={selected.row.content_key} onChange={event => setSelectedKey(event.target.value)}>{filtered.map(({ row, identity }) => <option key={row.id} value={row.content_key}>{identity.title}</option>)}</AdminSelect></label>
           <header className="admin-composition-detail-header"><div><p className="admin-eyebrow">{selected.identity.destination}</p><h2>{selected.identity.title}</h2></div><StudioButton type="button" disabled={Boolean(error)} onClick={() => onEdit(selected.row)}>Edit passage</StudioButton></header>
           <p>{selected.identity.selection}</p>{selected.identity.excluded && <p role="note">The owner excluded this base Cancer passage. The Calendar selects another approved variant even when this stored row says Published.</p>}
-          {selected.row.inventory_only ? <p role="status">Loading full passage…</p> : <div className="admin-composition-preview-field"><span>Saved passage</span>{(selected.row.body ?? '').split(/\n\n/).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>}
+          {selected.row.inventory_only ? <PageLoading compact message="Loading full passage…" /> : <div className="admin-composition-preview-field"><span>Saved passage</span>{(selected.row.body ?? '').split(/\n\n/).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>}
           <StudioButton type="button" onClick={() => setView('composition')}>Review composition and variables</StudioButton>
           <details className="admin-workspace-details"><AdminDisclosureSummary>Source key and editorial notes</AdminDisclosureSummary><code>{selected.row.content_key}</code><p>{selected.row.summary}</p></details>
         </>}</section>

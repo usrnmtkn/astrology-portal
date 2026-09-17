@@ -4,6 +4,7 @@ import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
+import { PageLoading } from "../../web/src/components/PageLoading";
 
 export type UnresolvedContentItem = {
   id: string;
@@ -511,7 +512,7 @@ export function UnresolvedContentReview({
 
       <section className="admin-list-panel" aria-label="Unresolved content records">
         <div className="admin-content-table-scroll">
-          {!report && (reportState === null || refreshing) && <p className="admin-empty" role="status">Loading unresolved issues…</p>}
+          {!report && (reportState === null || refreshing) && <PageLoading compact message="Loading unresolved issues…" />}
           {reportState === false && !refreshing && <p className="admin-empty" role="alert">Issues could not load. Select Refresh status to try again.</p>}
           {report && filteredIssues.length > 0 && <AdminPaginatedCollection items={filteredIssues} label="Unresolved content" pageSize={25} resetKey={`${query}:${filteredIssues.length}`}>
             {(visibleIssues) => <AdminDataTable label="Unresolved content" columns={["Content", "What it means", "Source records", "Next step"]} className="admin-unresolved-content-table">

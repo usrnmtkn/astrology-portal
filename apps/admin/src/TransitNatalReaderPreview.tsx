@@ -4,6 +4,7 @@ import { Fragment, useEffect, useState } from "react";
 import { renderTransitNatalPreview, transitNatalExactContentKey, type TransitNatalSelection, type TransitNatalReadingContext, type TransitPassageSource } from "./transitNatalSources";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { requestStudioJson } from "./generatedContentClient";
+import { PageLoading } from "../../web/src/components/PageLoading";
 
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { transitNatalExactActionLabel, transitSourceEditScope, transitExactPassageState, type TransitExactPassageState } from "./transitNatalEditorScope";
@@ -28,7 +29,7 @@ export function TransitNatalExactSourceAction({ contentKey, title, secret, disab
       .catch(error => { if (!cancelled) setState({ key: contentKey, error: error.message }); });
     return () => { cancelled = true; controller.abort(); };
   }, [contentKey, secret, revision]);
-  if (state.key !== contentKey || !state.passage && !state.error) return <p role="status">Opening this transit…</p>;
+  if (state.key !== contentKey || !state.passage && !state.error) return <PageLoading compact message="Opening this transit…" />;
   if (state.error) return <p role="alert">{state.error} <StudioButton type="button" onClick={() => setRevision(value => value + 1)}>Retry this transit</StudioButton></p>;
   return <section className="admin-natal-source-group" aria-label="This transit write-up">
     <header>
@@ -123,7 +124,7 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
         <h3>What you see</h3>
         <p>This example uses the reader package and eligible published updates. Drafts are excluded. Use the reading preview options to match a particular transit's motion, repeat pass, variant, and timing.</p>
       </header>
-      {state.loading || loadedIdentity !== identity && !state.error ? <p role="status">Loading reader preview…</p> : state.preview && loadedIdentity === identity ? (
+      {state.loading || loadedIdentity !== identity && !state.error ? <PageLoading compact message="Loading reader preview…" /> : state.preview && loadedIdentity === identity ? (
         <article className="admin-natal-source-card">
           <div className="admin-natal-source-card-copy">
             <div className="admin-natal-source-card-heading"><h4>{state.preview.headline}</h4></div>

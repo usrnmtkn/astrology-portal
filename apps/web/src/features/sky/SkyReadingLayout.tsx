@@ -2,6 +2,7 @@ import { createContext, useContext, useLayoutEffect, useState, type ReactNode } 
 import { PageLoading } from "../../components/PageLoading";
 
 const SummarySettled = createContext<((settled: boolean) => void) | null>(null);
+const revealedSkyReadings = new Set<string>();
 
 export function useSkySummarySettled(settled: boolean) {
   const report = useContext(SummarySettled);
@@ -13,19 +14,25 @@ export function useSkySummarySettled(settled: boolean) {
  * parallel. After reveal, each existing content boundary owns revalidation.
  * This stores presentation readiness only, never another copy of the prose.
  */
-export function SkyReadingLayout({ pending, failed, children }: {
+export function SkyReadingLayout({ persistKey, pending, failed, children }: {
+  persistKey: string;
   pending: boolean;
   failed: boolean;
   children: ReactNode;
 }) {
-  const [summarySettled, setSummarySettled] = useState(false);
-  const [revealed, setRevealed] = useState(false);
+  const previouslyRevealed = revealedSkyReadings.has(persistKey);
+  const [summarySettled, setSummarySettled] = useState(previouslyRevealed);
+  const [revealed, setRevealed] = useState(previouslyRevealed);
   const ready = failed || !pending && summarySettled;
-  useLayoutEffect(() => { if (ready) setRevealed(true); }, [ready]);
+  useLayoutEffect(() => {
+    if (!ready) return;
+    revealedSkyReadings.add(persistKey);
+    setRevealed(true);
+  }, [persistKey, ready]);
   const loading = !revealed && !failed;
   return <SummarySettled.Provider value={setSummarySettled}>
     <div className="sky-reading-layout" aria-busy={loading}>
-      {loading && <div className="sky-reading-layout__loading"><PageLoading illustrated message="Loading the sky…" /></div>}
+      {loading && <div className="sky-reading-layout__loading"><PageLoading message="Loading the sky…" /></div>}
       <div className="sky-reading-layout__content" aria-hidden={loading || undefined}>{children}</div>
     </div>
   </SummarySettled.Provider>;

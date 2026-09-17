@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { loadReportDelivery, resumeReportEntitlement, type ReportDeliveryPayload } from "../../services/reportFulfillment";
 import { ReportArticle, type ReportDocument } from "./ReportArticle";
+import { LoadingIllustration } from "../LoadingIllustration";
 
 function reportIdFromPath() {
   return window.location.pathname.match(/^\/reports\/([^/]+)$/u)?.[1] ?? "";
@@ -50,12 +51,12 @@ export function ReportDeliveryView({ reportId: reportIdProp }: { reportId?: stri
     return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, [reportId]);
   if (error) return <main className="report-delivery-state" data-report-error="unavailable" />;
-  if (!payload?.ready || !payload.report) return <main className="report-delivery-state" role="status"><h1>Preparing your report</h1><p data-report-status={payload?.status ?? "loading"}>{payload?.status ?? "loading"}</p>{payload?.status === "awaiting_birth_data" && <a href="/#you">Add birth information</a>}</main>;
+  if (!payload?.ready || !payload.report) return <main className="report-delivery-state" role="status"><h1>Preparing your report</h1><LoadingIllustration compact /><p data-report-status={payload?.status ?? "loading"}>{payload?.status ?? "loading"}</p>{payload?.status === "awaiting_birth_data" && <a href="/#you">Add birth information</a>}</main>;
   return <ReportArticle report={documentFromDelivery(payload.report)} />;
 }
 
 export function ReportCheckoutResultView({ result }: { result: "success" | "cancel" }) {
   return result === "success"
-    ? <main className="report-delivery-state" data-checkout-result={result}><h1>Preparing your report</h1></main>
+    ? <main className="report-delivery-state" data-checkout-result={result}><h1>Preparing your report</h1><LoadingIllustration compact /></main>
     : <main className="report-delivery-state" data-checkout-result={result} />;
 }

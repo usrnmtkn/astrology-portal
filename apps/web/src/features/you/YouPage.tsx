@@ -4,6 +4,7 @@ import { Fragment, isValidElement, useEffect, useId, useLayoutEffect, useRef, us
 import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
+import { PageLoading } from "../../components/PageLoading";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
@@ -314,7 +315,7 @@ function YouProfileSummary({
             <span><span aria-hidden="true">↑</span>{displayRising}</span>
           </div>
         ) : (
-          <p className="you-profile-status">Calculating chart signatures...</p>
+          <PageLoading compact message="Calculating chart signatures" />
         )}
       </div>
       <div className="you-profile-actions" ref={menuRef}>
@@ -575,7 +576,7 @@ function YouUpdatesTab({
     </section>
   ) : !weeklyHoroscopeAssembly || weeklyHoroscopeAssembly.status === "loading" ? (
     <section className="weekly-horoscope__loading you-horoscope-card" aria-label="Loading weekly transits">
-      <span className="summary-skeleton" aria-hidden="true"><span /><span /></span>
+      <PageLoading compact message="Loading weekly transits…" />
     </section>
   ) : weeklyTransitRows.length === 0 && !weeklyHoroscopeAssembly.macro ? null : (
     <section className="weekly-horoscope weekly-horoscope--embedded" aria-label="This week's transits">
@@ -597,10 +598,7 @@ function YouUpdatesTab({
   return (
     <div className="subpane updates-section" id="sub-transits">
       {hasSavedCurrentCity && transitsLoading && (
-        <div className="you-loading-milestone loading-milestone" role="status" aria-live="polite">
-          <span className="sky-loading-line sky-loading-line--medium" aria-hidden="true" />
-          <span>{transitLoadingMessage}</span>
-        </div>
+        <PageLoading compact message={transitLoadingMessage} />
       )}
       {hasSavedCurrentCity ? (
         <YouReportActions
@@ -618,10 +616,7 @@ function YouUpdatesTab({
           <p>{dailyUpdateSummary.summary}</p>
           {dailyUpdateSummary.secondary ? <p className="daily-horoscope-summary__secondary">{dailyUpdateSummary.secondary}</p> : null}
           {dailyUpdateSummary.status === "loading" ? (
-            <span className="summary-skeleton" aria-hidden="true">
-              <span />
-              <span />
-            </span>
+            <PageLoading compact message="Loading daily update…" />
           ) : null}
           {dailyWriteup.length > 0 && (
             <div className="daily-horoscope-summary__writeup" aria-label="Daily horoscope write-up">
