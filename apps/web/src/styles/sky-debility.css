@@ -1,0 +1,6 @@
+/* The ledger header already supplies the title-to-copy gap. Do not add the
+   standalone summary body's top inset as a second gap on the effort card.
+   Keep the shared side/bottom padding and paragraph spacing unchanged. */
+.sky-debility-ledger > .sky-today-ledger__copy {
+  padding-top: 0;
+}

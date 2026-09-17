@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { linkedThreePlanetContext, highlightedCountStatement } from "../fixtures/sky-effort-count-first";
+import { expectEffortCardSpacing } from "./sky-debility-layout";
 
 // The actual ephemeris supplies sign and motion at the regression instant.
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`inline effort paragraph ${width} ${theme}`, async ({ page }) => {
@@ -15,6 +16,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
   await expect(paragraphs).toHaveCount(2);
   await expect(paragraphs.nth(0)).toContainText("You may want reassurance but find it hard to ask for");
   await expect(paragraphs.nth(1)).toHaveText(linkedThreePlanetContext);
+  await expectEffortCardSpacing(card);
   const head = card.locator(".sky-today-ledger__head");
   await expect(head).toHaveText("Things may take more effort right now");
   await expect(head.locator(":scope > :not(h3)")).toHaveCount(0);

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { linkedThreePlanetContext, highlightedCountStatement } from "../fixtures/sky-effort-count-first";
+import { expectEffortCardSpacing } from "./sky-debility-layout";
 
 // Read-only production verification after the exact merge commit deploys.
 // No mocked responses, credentials, CMS writes, or injected sky positions.
@@ -15,6 +16,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`pu
   await expect(paragraphs).toHaveCount(2);
   await expect(paragraphs.nth(0)).toContainText("You may want reassurance but find it hard to ask for");
   await expect(paragraphs.nth(1)).toHaveText(linkedThreePlanetContext, { timeout: 30_000 });
+  const spacing = await expectEffortCardSpacing(card);
+  await test.info().attach("rendered-effort-spacing", { body: JSON.stringify(spacing, null, 2), contentType: "application/json" });
   await expect(paragraphs.nth(1).getByTestId("effort-count-statement")).toHaveText(highlightedCountStatement);
   const head = card.locator(".sky-today-ledger__head");
   await expect(head).toHaveText("Things may take more effort right now");
