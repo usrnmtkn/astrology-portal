@@ -19,6 +19,6 @@ export function SkyDebilityInline({ parts, renderText, linkPrefix = "", linkTarg
     else groups.push({ emphasized, parts: [part] });
   }
   return <>{groups.map((group, index) => group.emphasized
-    ? <strong key={index} className="type-body-strong" data-testid="effort-count-statement">{group.parts.map(node)}</strong>
+    ? <mark key={index} className="content-highlight" data-testid="effort-count-statement">{group.parts.map(node)}</mark>
     : <Fragment key={index}>{group.parts.map(node)}</Fragment>)}</>;
 }
