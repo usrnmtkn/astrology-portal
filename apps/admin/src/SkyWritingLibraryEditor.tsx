@@ -1,7 +1,7 @@
 // @ts-ignore Shared deterministic dignity resolution and explicit draft migration.
 import { placementDignityForSource, migrateLegacyDignityComposition } from "../../web/src/content/fallbackArchitectureV3/resolver/placementDignityMeaning.mjs";
 import { zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { StudioButton, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import {
@@ -47,6 +47,30 @@ function filledLibraryFields(composition: SkyWritingLibraryComposition) {
 function libraryFieldText(source?: SkyWritingLibrarySource) {
   if (!source || source.reference) return "";
   return typeof source.text === "string" ? source.text : "";
+}
+
+function PhraseReadRow({
+  item,
+  value,
+  disabled,
+  onEdit,
+  extra
+}: {
+  item: { id: string; label: string; description: string; shared?: boolean };
+  value: string;
+  disabled: boolean;
+  onEdit: () => void;
+  extra?: ReactNode;
+}) {
+  return <article className="admin-editor-guidance">
+    <p><strong>{item.label}</strong> <code>{`{{${item.id}}}`}</code></p>
+    <p>{item.description}{item.shared ? " One source per sign is shared across Content Studio." : ""}</p>
+    <p className="studio-variable-value">{value.trim() || "No writing saved yet."}</p>
+    <div className="admin-sky-writing-source-actions">
+      <StudioButton type="button" disabled={disabled} onClick={onEdit}>Edit {item.label.toLowerCase()}</StudioButton>
+      {extra}
+    </div>
+  </article>;
 }
 
 export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sourceRecord, composition, disabled, initialSourceId, onChange, onOpenSource, onLoadSource, onAdvancedSource }: Props) {
@@ -169,11 +193,13 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
       <div className="admin-review-stack" key={group.id}>
         <p><strong>{group.label}</strong></p>
         {group.fields.filter(item => item.id !== initialSourceId).map(item => (
-          <article className="admin-editor-guidance" key={item.id}>
-            <p><strong>{item.label}</strong> <code>{`{{${item.id}}}`}</code></p>
-            <p className="studio-variable-value">{previews[item.id]?.trim() || "No writing saved yet."}</p>
-            <StudioButton type="button" disabled={disabled} onClick={() => openLibraryField(item.id)}>Edit {item.label.toLowerCase()}</StudioButton>
-          </article>
+          <PhraseReadRow
+            key={item.id}
+            item={item}
+            value={previews[item.id] ?? ""}
+            disabled={disabled}
+            onEdit={() => openLibraryField(item.id)}
+          />
         ))}
       </div>
     ))}
@@ -275,50 +301,30 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
       {group.id === "experiences" && <p>An experience can live in the library without appearing in reader copy. Include only manifestations that genuinely belong in this article.</p>}
       <div className="admin-review-stack">
         {group.fields.map(item => {
-          if (item.shared && !workingComposition.sources[item.id]) return <div className="admin-editor-guidance" key={item.id}>
-            <p>{item.label} <code>{`{{${item.id}}}`}</code></p>
-            <p>{item.description} One source per sign is shared across Content Studio.</p>
-            <p className="studio-variable-value">{previews[item.id]?.trim() || "No writing saved yet."}</p>
-            <StudioButton type="button" disabled={disabled} onClick={() => onOpenSource(zodiacSeasonSourceKey(item.id, sign), "body")}>Edit {item.label.toLowerCase()}</StudioButton>
-          </div>;
           const source = workingComposition.sources[item.id];
-          if (!source) return null;
-          const reference = source.reference;
+          if (!source && !item.shared) return null;
           const included = group.id === "experiences" && skyWritingLibrarySourceModuleEnabled(workingComposition, item.id);
-          return <div className="admin-editor-guidance" key={item.id}>
-            <label className="admin-review-copy-editor">
-              <span><strong>{item.label}</strong> <code>{`{{${item.id}}}`}</code></span>
-              <small>{item.description}</small>
-              {reference ? <>
-                <p>Linked source: <code>{reference.contentKey}#{reference.field}</code></p>
-                {previews[item.id]?.trim() ? <p className="studio-variable-value">{previews[item.id]}</p> : null}
-                <div className="admin-sky-writing-source-actions">
-                  <StudioButton type="button" onClick={() => onOpenSource(reference.contentKey, reference.field)}>Edit linked source</StudioButton>
-                  <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(workingComposition, item.id, { kind: source.kind, text: "" }))}>Use local writing</StudioButton>
-                </div>
-              </> : <StudioTextarea
-                rows={item.rows ?? 4}
-                aria-label={`Writing library ${item.label}`}
-                className="admin-copy-field-body"
-                disabled={disabled}
-                value={source.text ?? ""}
-                onChange={event => onChange(updateSource(workingComposition, item.id, { ...source, text: event.target.value }))}
-              />}
-            </label>
-            <div className="admin-sky-writing-source-actions">
+          return <PhraseReadRow
+            key={item.id}
+            item={item}
+            value={previews[item.id] ?? libraryFieldText(source)}
+            disabled={disabled}
+            onEdit={() => openLibraryField(item.id)}
+            extra={<>
+              {source?.reference && <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(workingComposition, item.id, { kind: source.kind, text: "" }))}>Use local writing</StudioButton>}
               {group.id === "experiences" && <StudioButton
                 type="button"
                 aria-pressed={included}
                 disabled={disabled || (!included && workingComposition.modules.length >= 32)}
                 onClick={() => onChange(toggleSkyWritingLibrarySourceModule(workingComposition, item.id, item.label))}
               >{included ? "Remove from fallback" : "Include in fallback"}</StudioButton>}
-              <details className="admin-workspace-details">
+              {!item.shared || source ? <details className="admin-workspace-details">
                 <AdminDisclosureSummary>Source details</AdminDisclosureSummary>
                 <p><code>{contentKey}#ingress.sources.{item.id}</code> · scope: {item.kind}</p>
                 <StudioButton type="button" disabled={disabled} onClick={() => onAdvancedSource(item.id)}>Advanced source tools</StudioButton>
-              </details>
-            </div>
-          </div>;
+              </details> : null}
+            </>}
+          />;
         })}
       </div>
     </details>)}
