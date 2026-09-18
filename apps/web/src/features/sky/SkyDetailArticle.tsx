@@ -399,10 +399,11 @@ export function SkyDetailArticle({
   const residencyContextKey = residencyContext
     ? `${residencyContext.referenceDate}|${residencyContext.timeZone}`
     : "";
+  const hasInlineAspectSections = (detail.sections ?? []).some((section) => section.role === "aspect");
   const [residencyAspectState, setResidencyAspectState] = useState<[string, SkyDetailSection[]] | null>(null);
 
   useEffect(() => {
-    if (!residencyContext) return;
+    if (!residencyContext || hasInlineAspectSections) return;
     let cancelled = false;
     void import("../../services/skyPlacementResidencyAspects")
       .then(({ skyPlacementResidencyAspectSections }) => skyPlacementResidencyAspectSections(residencyContext))
@@ -413,9 +414,9 @@ export function SkyDetailArticle({
     return () => {
       cancelled = true;
     };
-  }, [residencyContextKey]);
+  }, [hasInlineAspectSections, residencyContext, residencyContextKey]);
 
-  const residencyAspectSections = residencyAspectState?.[0] === residencyContextKey
+  const residencyAspectSections = !hasInlineAspectSections && residencyAspectState?.[0] === residencyContextKey
     ? residencyAspectState[1]
     : null;
   const detailSections = residencyAspectSections
@@ -787,7 +788,9 @@ export function SkyDetailArticle({
                                 <p>{southNodeMatch[2]}</p>
                               </Fragment>
                             ) : <p key={`${section.key}-${paragraphIndex}`}>{paragraph}</p>)
-                            : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}
+                            : exactDateLine
+                              ? null
+                              : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}
                         </section>
                       );
                         })}

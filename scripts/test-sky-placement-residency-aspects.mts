@@ -117,6 +117,11 @@ try {
     "September 2 and September 10, 2026",
     "Repeated exact hits must share one natural-language exact-date line."
   );
+  assert.deepEqual(
+    sunVirgo.sections.map((section: { heading: string }) => section.heading),
+    [...new Set((sunVirgo.events as Array<{ heading: string }>).map((event) => event.heading))],
+    "Gifts/Lessons must include every unique in-sign exact heading, including facts-only cards."
+  );
   const firstVirgoEventTimeByHeading = new Map<string, number>();
   for (const event of sunVirgo.events as Array<{ heading: string; occursAt: string }>) {
     const time = new Date(event.occursAt).getTime();
@@ -149,6 +154,27 @@ try {
     unresolvedEventIds: []
   }, "The first implementation must remain Sun-only rather than silently expanding expensive residency scans.");
 
+  const helper = await vite.ssrLoadModule("/src/services/skyPlacementInSignAspectSections.ts");
+  const factsOnly = helper.skyPlacementInSignAspectSections([
+    {
+      id: "facts-only-missing-copy",
+      occursAt: "2026-09-20T16:00:00.000Z",
+      planet: "Sun",
+      aspect: "square",
+      otherPlanet: "Not A Planet"
+    }
+  ], "America/New_York");
+  assert.deepEqual(factsOnly.unresolvedEventIds, ["facts-only-missing-copy"]);
+  assert.equal(factsOnly.sections.length, 1);
+  assert.equal(factsOnly.sections[0].heading, "Sun Square Not A Planet");
+  assert.equal(factsOnly.sections[0].group, "lessons");
+  assert.equal(factsOnly.sections[0].body, "September 20, 2026");
+  assert.match(
+    fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8"),
+    /exactDateLine\s*\?\s*null/u,
+    "Facts-only Gifts/Lessons cards must not reprint the exact date as a second paragraph."
+  );
+
   const canonicalAfter = JSON.parse(fs.readFileSync(canonicalPath, "utf8"));
   const sunScorpioAfter = canonicalAfter.content.continuous.find(
     (row: { contentKey?: string }) => row.contentKey === "sky-placement/article/sun/scorpio"
@@ -163,8 +189,13 @@ try {
   );
   assert.match(
     appSource,
-    /placementResidencyContext:[\s\S]*?normalizeContentIdPart\(position\.planet\) === "sun"/u,
-    "Long-form residency aspect enrichment must remain explicitly Sun-only in the pilot."
+    /skyPlacementInSignAspectSections\(\s*matchingAspectFacts\.inSign,\s*matchingAspectFacts\.timeZone,\s*generatedContent\s*\)/u,
+    "Placement Gifts/Lessons must use the same in-sign exact list as Key dates."
+  );
+  assert.match(
+    appSource,
+    /placementResidencyContext:[\s\S]*?normalizeContentIdPart\(position\.planet\) === "sun"[\s\S]*?inSignAspectSections\.length === 0/u,
+    "Swiss residency rescan remains a Sun-only fallback when the in-sign exact list is empty."
   );
 
   const ephemerisSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/ephemeris.ts"), "utf8");
@@ -178,6 +209,11 @@ try {
 
   const detailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
   assert.match(detailSource, /skyPlacementResidencyAspectSections/u);
+  assert.match(
+    detailSource,
+    /hasInlineAspectSections/u,
+    "Inline in-sign Gifts/Lessons cards must skip the extra Swiss residency scan."
+  );
 assert.match(
   detailSource,
   /residencyAspectSections[\s\S]*?residencyAspectSections\.some/u,
