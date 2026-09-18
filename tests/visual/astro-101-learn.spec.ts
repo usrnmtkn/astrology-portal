@@ -26,4 +26,18 @@ test("Learn uses the shared full-page article layout", async ({ page }) => {
 
   await expect(learnPage.locator(".learn-kicker").first()).toHaveText(/Learn/i);
   await expect(learnPage.getByRole("heading", { level: 1 })).toHaveText("Astro 101");
+
+  const tileGlyph = learnPage.locator(".learn-tile__glyph").first();
+  await expect(tileGlyph).toBeVisible();
+  await expect(tileGlyph).toHaveCSS("font-size", "22px");
+});
+
+test("Learn article copy stays on the prose measure", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/learn/astro-101/aspects");
+  const lede = page.locator(".learn-lede");
+  await expect(lede).toBeVisible({ timeout: 60_000 });
+  const box = await lede.boundingBox();
+  expect(box?.width ?? 0).toBeGreaterThan(480);
+  expect(box?.width ?? 0).toBeLessThanOrEqual(720);
 });
