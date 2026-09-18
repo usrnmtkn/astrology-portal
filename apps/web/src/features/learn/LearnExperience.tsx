@@ -184,9 +184,6 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
           <div>
             <p className="learn-kicker">Learn</p>
             <h1 className="learn-hero__title" id="learn-hub-title">Astro 101</h1>
-            <p className="learn-hero__intro">
-              {chapters.length} short chapters on how a chart works, then a room-by-room tour of the twelve houses. Read in order, or open the house you're curious about.
-            </p>
           </div>
           <ul className="learn-hero__glyphs" aria-hidden="true">
             {LEARN_HERO_GLYPHS.map((glyph) => (
@@ -198,10 +195,7 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
 
       {chapters.length > 0 ? (
         <section className="learn-sheet" aria-labelledby="learn-chapters-title">
-          <header className="learn-sheet__header">
-            <h2 id="learn-chapters-title">Chapters</h2>
-            <p className="learn-kicker">{chapters.length} chapters</p>
-          </header>
+          <h2 className="sr-only" id="learn-chapters-title">Chapters</h2>
           <ol className="learn-chapters">
             {chapters.map((page, index) => (
               <li key={page.contentKey}>
