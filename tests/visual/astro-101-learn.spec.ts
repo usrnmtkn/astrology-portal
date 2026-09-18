@@ -52,3 +52,16 @@ test("Learn article copy stays on the prose measure", async ({ page }) => {
   expect(measure.lede).toBeLessThanOrEqual(720);
   expect(measure.sheet).toBeLessThanOrEqual(720 + measure.padding * 2 + 1);
 });
+
+test("Learn section titles match chapter card titles", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/learn");
+  const cardTitle = page.locator(".learn-chapter__title").first();
+  await expect(cardTitle).toBeVisible({ timeout: 60_000 });
+  const cardTitleSize = await cardTitle.evaluate((node) => getComputedStyle(node).fontSize);
+
+  await page.goto("/learn/astro-101/what-is-a-birth-chart");
+  const sectionTitle = page.locator(".learn-article-body h2").first();
+  await expect(sectionTitle).toBeVisible({ timeout: 60_000 });
+  await expect(sectionTitle).toHaveCSS("font-size", cardTitleSize);
+});
