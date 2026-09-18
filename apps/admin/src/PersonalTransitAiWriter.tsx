@@ -213,6 +213,11 @@ function destinationLabel(input: {
   house: string;
   sign: string;
 }) {
+  if (input.contentKey.startsWith("fallback-hook/bond-effect-")) {
+    const parts = input.contentKey.split("/");
+    const kind = (parts[1] ?? "").slice("bond-effect-".length);
+    return `${title(parts[2] ?? input.transiting)} ${kind} Between you two`;
+  }
   if (input.contentKey.startsWith("authored/transit-house-sign/")) {
     return `${title(input.planet)} in ${title(input.sign)} through the ${houseOrdinal(input.house)} house`;
   }

@@ -25,7 +25,7 @@ const houseOrdinal = (house: string) => house === "1" ? "1st" : house === "2" ? 
 
 export type PersonalTransitAudience = "you" | "friend" | "both";
 export type PersonalTransitContact = {
-  family: "aspect" | "house-intro" | "house-sign" | "house-complete";
+  family: "aspect" | "house-intro" | "house-sign" | "house-complete" | "bond-effect";
   contentKey: string;
   transiting?: string;
   natal?: string;
@@ -49,6 +49,8 @@ export function parsePersonalTransitContact(input: {
 }): PersonalTransitContact {
   const fromKey = typeof input.contentKey === "string" ? input.contentKey.trim() : "";
   const parts = fromKey.split("/");
+  const bondFromKey = parseBondEffectKey(fromKey);
+  if (bondFromKey) return bondFromKey;
   const houseFromKey = parseHouseTransitKey(fromKey);
   if (houseFromKey) return houseFromKey;
   if (fromKey && parts[1] === "transit-return" && isDynamicTransitNatalExactKey(fromKey)) {
@@ -74,7 +76,7 @@ export function parsePersonalTransitContact(input: {
     );
     const contentKey = situationKey || `authored/transit-aspect/${transiting}/${natal}/${aspect}`;
     if (!isDynamicTransitNatalExactKey(contentKey)) {
-      throw new AdminHttpError(400, "Choose one exact transit-to-natal contact or House Transit passage. The writer cannot pick or change the destination.");
+      throw new AdminHttpError(400, "Choose one exact transit-to-natal contact, House Transit passage, or Friends bond-effect write-up. The writer cannot pick or change the destination.");
     }
     return {
       family: "aspect",
@@ -88,7 +90,7 @@ export function parsePersonalTransitContact(input: {
 
   const houseContact = parseHouseTransitParts(input.planet ?? input.transiting, input.house, input.sign);
   if (houseContact) return houseContact;
-  throw new AdminHttpError(400, "Choose one exact transit-to-natal contact or House Transit passage. The writer cannot pick or change the destination.");
+  throw new AdminHttpError(400, "Choose one exact transit-to-natal contact, House Transit passage, or Friends bond-effect write-up. The writer cannot pick or change the destination.");
 }
 
 export function parsePersonalTransitPreview(input: {
@@ -149,8 +151,11 @@ export function personalTransitReviewChecks(input: {
   siblings?: Array<{ contentKey: string; you: string; friend: string }>;
   allowHouses?: boolean;
   allowSigns?: boolean;
+  family?: PersonalTransitContact["family"];
 }) {
   const checks: Array<{ code: string; audience?: "you" | "friend"; detail: string }> = [];
+  const licensed = input.family === "bond-effect" ? new Set(["holder1"]) : allowedVariables;
+  const isBond = input.family === "bond-effect";
   for (const [audience, text] of [["you", input.you], ["friend", input.friend]] as const) {
     if (!text?.trim()) continue;
     if (text.includes("—")) checks.push({ code: "em-dash", audience, detail: "Uses an em dash." });
@@ -159,13 +164,16 @@ export function personalTransitReviewChecks(input: {
     if (!input.allowHouses && houseWord.test(text)) checks.push({ code: "unexpected-house", audience, detail: "Names a house, but this destination did not lock a house." });
     if (!input.allowSigns && signName.test(text)) checks.push({ code: "unexpected-sign", audience, detail: "Names a sign, but this destination did not lock a sign." });
     for (const name of variablesIn(text)) {
-      if (!allowedVariables.has(name)) checks.push({ code: "unknown-variable", audience, detail: `Contains {{${name}}}, which is not a supported personal-transit variable.` });
+      if (!licensed.has(name)) checks.push({ code: "unknown-variable", audience, detail: `Contains {{${name}}}, which is not a supported variable for this destination.` });
+    }
+    if (isBond && !variablesIn(text).has("holder1")) {
+      checks.push({ code: "missing-holder", audience, detail: "Friends Between you two copy should use {{holder1}} for the other person." });
     }
   }
-  if (input.you?.trim() && variablesIn(input.you).has("Name")) {
+  if (!isBond && input.you?.trim() && variablesIn(input.you).has("Name")) {
     checks.push({ code: "name-in-you", audience: "you", detail: "You copy should not use {{Name}}." });
   }
-  if (input.friend?.trim() && !variablesIn(input.friend).has("Name")) {
+  if (!isBond && input.friend?.trim() && !variablesIn(input.friend).has("Name")) {
     checks.push({ code: "missing-name", audience: "friend", detail: "Friend copy should use {{Name}} for the person being read." });
   }
   if (input.you?.trim() && input.friend?.trim() && pronounSwap(input.you, input.friend)) {
@@ -197,7 +205,8 @@ export function reviewPersonalTransitCopy(input: {
       friend: input.friend,
       siblings: siblingFields(input.contact),
       allowHouses: allowsHouses(input.contact) || Boolean(preview.transitHouse || preview.natalHouse),
-      allowSigns: allowsSigns(input.contact) || Boolean(preview.sign)
+      allowSigns: allowsSigns(input.contact) || Boolean(preview.sign),
+      family: input.contact.family
     })
   };
 }
@@ -330,7 +339,9 @@ export async function generatePersonalTransitAudienceDrafts(input: {
     planet: title(input.contact.planet ?? input.contact.transiting ?? ""),
     sign: input.contact.sign ?? preview.sign ?? "base",
     facts: {
-      schema: input.contact.family === "aspect" ? "tldrastro-personal-transit-base-v1" : "tldrastro-personal-transit-house-v1",
+      schema: input.contact.family === "bond-effect"
+        ? "tldrastro-friends-bond-effect-v1"
+        : input.contact.family === "aspect" ? "tldrastro-personal-transit-base-v1" : "tldrastro-personal-transit-house-v1",
       family: input.contact.family,
       transiting: input.contact.transiting ?? input.contact.planet,
       natal: input.contact.natal,
@@ -347,10 +358,10 @@ export async function generatePersonalTransitAudienceDrafts(input: {
       contentKey: input.contact.contentKey
     },
     requestedSlots: slots,
-    licensedVariables: [...allowedVariables],
+    licensedVariables: [...licensedVariablesFor(input.contact)],
     provider: input.provider,
-    surface: "you",
-    eventType: input.contact.family === "aspect" ? "transit-aspect" : "transit-house",
+    surface: input.contact.family === "bond-effect" ? "friends" : "you",
+    eventType: input.contact.family === "bond-effect" ? "bond-effect" : input.contact.family === "aspect" ? "transit-aspect" : "transit-house",
     knowledgeIds: knowledgeIdsFor(input.contact),
     writingMemory: memory as NonNullable<Parameters<typeof generateSkyArticleTemplateSlots>[0]["writingMemory"]>,
     voiceNotes: personalTransitVoiceNotes({ ...input, preview })
@@ -372,7 +383,8 @@ export async function generatePersonalTransitAudienceDrafts(input: {
       friend: friendDraft || undefined,
       siblings,
       allowHouses: allowsHouses(input.contact) || Boolean(preview.transitHouse || preview.natalHouse),
-      allowSigns: allowsSigns(input.contact) || Boolean(preview.sign)
+      allowSigns: allowsSigns(input.contact) || Boolean(preview.sign),
+      family: input.contact.family
     }),
     memoryReceipt: generation.memoryReceipt ?? memory.receipt,
     generation: {
@@ -438,6 +450,16 @@ export function requestedAudiences(
 }
 
 function siblingFields(contact: PersonalTransitContact) {
+  if (contact.family === "bond-effect" && contact.transiting && contact.aspect) {
+    const kinds = ["conjunction", "opposition", "square", "trine", "sextile", "soft", "hard"];
+    return kinds
+      .filter((kind) => kind !== contact.aspect)
+      .map((kind) => {
+        const contentKey = `fallback-hook/bond-effect-${kind}/${contact.transiting}`;
+        return { contentKey, ...packagedAudienceFields(servingPackageRecords.get(contentKey) ?? null) };
+      })
+      .filter((row) => row.you.trim() || row.friend.trim());
+  }
   if (contact.family === "house-sign" && contact.planet && contact.house && contact.sign) {
     return transitNatalSigns
       .filter((sign) => sign !== contact.sign)
@@ -457,6 +479,7 @@ function siblingFields(contact: PersonalTransitContact) {
       })
       .filter((row) => row.you.trim() || row.friend.trim());
   }
+  if (contact.family !== "aspect") return [];
   return transitNatalAspects
     .filter((aspect) => aspect !== contact.aspect)
     .map((aspect) => {
@@ -502,10 +525,16 @@ async function personalTransitWritingMemory(contact: PersonalTransitContact) {
 }
 
 function youSlot(contact: PersonalTransitContact, preview: PersonalTransitPreview = {}) {
+  if (contact.family === "bond-effect") {
+    return `Write the You passage for Friends > Transits > Between you two: transiting ${title(contact.transiting ?? "")} ${contact.aspect}. Second person to the reader. Temporary contact with {{holder1}}, not a standing natal trait. Use {{holder1}} for the other person. Do not use {{Name}}. ${placementScope(contact, preview)}`;
+  }
   return `Write the You passage for ${destinationLabel(contact)}. Second person. Temporary personal transit, not a natal trait. ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
 }
 
 function friendSlot(contact: PersonalTransitContact, preview: PersonalTransitPreview = {}) {
+  if (contact.family === "bond-effect") {
+    return `Write the Friend/they passage for the same Between you two card. The reader is still you; {{holder1}} is the other person. This can reverse who is doing what, as owner-approved bond-effect pairs do. It is not a pronoun swap of the You passage. Use {{holder1}}. Do not use {{Name}}. ${placementScope(contact, preview)}`;
+  }
   return `Write the Friend passage for the same destination. Address the reader about {{Name}} using singular they/them. This is guidance for the person reading about their friend, not a pronoun swap of the You passage. ${placementScope(contact, preview)} {{untilDate}} is allowed.`;
 }
 
@@ -519,16 +548,39 @@ function personalTransitVoiceNotes(input: {
 }) {
   const preview = input.preview ?? {};
   return [
-    "TASK: Fill only the requested Personal Transit audience fields for one locked destination.",
-    "This is not Sky season or planet-in-sign writing unless the locked destination is a House Transit sign passage.",
+    "TASK: Fill only the requested audience fields for one locked destination.",
+    contactRegisterNote(input.contact),
     `LOCKED DESTINATION: ${input.contact.contentKey}. Do not change the planet, natal point, or aspect.`,
-    `REGISTER: personal transit. ${destinationLabel(input.contact)}.`,
+    `REGISTER: ${input.contact.family === "bond-effect" ? "Friends Transits Between you two." : "personal transit."} ${destinationLabel(input.contact)}.`,
     placementScope(input.contact, preview),
     "Do not save, approve, or publish. Return reader-facing prose only.",
     "Never use whether or an em dash.",
     input.instruction.trim() ? `OWNER DIRECTION:\n${input.instruction.trim()}` : "OWNER DIRECTION:\nWrite the missing audience fields for owner review.",
     "If an audience already has writing and was not requested, do not return a replacement for it."
   ].join("\n");
+}
+
+function parseBondEffectKey(contentKey: string): PersonalTransitContact | null {
+  const parts = contentKey.split("/").filter(Boolean);
+  if (parts[0] !== "fallback-hook" || !parts[1]?.startsWith("bond-effect-") || parts.length < 3 || parts.length > 4) return null;
+  const kind = parts[1].slice("bond-effect-".length);
+  const transiting = token(parts[2]);
+  const variant = parts[3] ?? "";
+  const aspectOk = kind === "soft" || kind === "hard" || (transitNatalAspects as readonly string[]).includes(kind);
+  if (!knownPlanet(transiting) || !aspectOk || (variant && !/^variant-\d+$/u.test(variant))) {
+    throw new AdminHttpError(400, "Choose one exact transit-to-natal contact, House Transit passage, or Friends bond-effect write-up. The writer cannot pick or change the destination.");
+  }
+  return { family: "bond-effect", transiting, aspect: kind, contentKey };
+}
+
+function licensedVariablesFor(contact: PersonalTransitContact) {
+  return contact.family === "bond-effect" ? ["holder1"] : [...allowedVariables];
+}
+
+function contactRegisterNote(contact: PersonalTransitContact) {
+  return contact.family === "bond-effect"
+    ? "This is Friends Transits Between you two: a temporary contact between the reader and {{holder1}}. It is not Sky season writing and not a natal standing pattern."
+    : "This is not Sky season or planet-in-sign writing unless the locked destination is a House Transit sign passage.";
 }
 
 function parseHouseTransitKey(contentKey: string): PersonalTransitContact | null {
@@ -564,11 +616,11 @@ function houseDestination(
   const house = houseToken(houseRaw);
   const sign = token(signRaw);
   if (!knownPlanet(planet) || !house) {
-    throw new AdminHttpError(400, "Choose one exact transit-to-natal contact or House Transit passage. The writer cannot pick or change the destination.");
+    throw new AdminHttpError(400, "Choose one exact transit-to-natal contact, House Transit passage, or Friends bond-effect write-up. The writer cannot pick or change the destination.");
   }
   if (family === "house-sign") {
     if (!knownSign(sign)) {
-      throw new AdminHttpError(400, "Choose one exact transit-to-natal contact or House Transit passage. The writer cannot pick or change the destination.");
+      throw new AdminHttpError(400, "Choose one exact transit-to-natal contact, House Transit passage, or Friends bond-effect write-up. The writer cannot pick or change the destination.");
     }
     return { family, planet, house, sign, contentKey: `authored/transit-house-sign/${planet}/${house}/${sign}` };
   }
@@ -577,6 +629,7 @@ function houseDestination(
 }
 
 function allowsHouses(contact: PersonalTransitContact) {
+  if (contact.family === "bond-effect") return false;
   return contact.family !== "aspect" || Boolean(contact.transitHouse || contact.natalHouse);
 }
 
@@ -585,6 +638,9 @@ function allowsSigns(contact: PersonalTransitContact) {
 }
 
 export function knowledgeIdsFor(contact: PersonalTransitContact) {
+  if (contact.family === "bond-effect") {
+    return [`planet/${contact.transiting}`];
+  }
   if (contact.family === "aspect") {
     return [`transit-aspect/${contact.transiting}/${contact.natal}/${contact.aspect}`];
   }
@@ -598,6 +654,9 @@ export function knowledgeIdsFor(contact: PersonalTransitContact) {
 }
 
 function destinationLabel(contact: PersonalTransitContact) {
+  if (contact.family === "bond-effect") {
+    return `${title(contact.transiting ?? "")} ${contact.aspect} Between you two`;
+  }
   if (contact.family === "aspect") {
     return `${title(contact.transiting ?? "")} ${contact.aspect} natal ${title(contact.natal ?? "")}`;
   }
@@ -617,6 +676,7 @@ function aspectPreviewLabel(contact: PersonalTransitContact, preview: PersonalTr
 }
 
 function placementScope(contact: PersonalTransitContact, preview: PersonalTransitPreview = {}) {
+  if (contact.family === "bond-effect") return "Do not name houses or signs. Keep the scene between the reader and {{holder1}}.";
   if (contact.family === "house-sign") return "Name this locked planet, house, and sign. Do not invent another placement.";
   if (contact.family !== "aspect") return `Name the locked ${houseOrdinal(contact.house ?? "")} house when it explains the situation. Do not invent a sign.`;
   const situation = aspectPreviewLabel(contact, preview);

@@ -29,7 +29,11 @@ assert.deepEqual(knowledgeIdsFor(parsePersonalTransitContact({ transiting: "sun"
 assert.doesNotMatch(lib, /ids\.push\(`house\//u);
 assert.equal(parsePersonalTransitContact({ contentKey: "authored/transit-house-intro/sun/4" }).family, "house-intro");
 assert.equal(parsePersonalTransitContact({ planet: "mars", house: "11", sign: "virgo" }).contentKey, "authored/transit-house-sign/mars/11/virgo");
-assert.throws(() => parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "quincunx" }), /exact transit-to-natal contact or House Transit passage/u);
+assert.equal(parsePersonalTransitContact({ contentKey: "fallback-hook/bond-effect-conjunction/chiron" }).contentKey, "fallback-hook/bond-effect-conjunction/chiron");
+assert.equal(parsePersonalTransitContact({ contentKey: "fallback-hook/bond-effect-conjunction/chiron" }).family, "bond-effect");
+assert.equal(parsePersonalTransitContact({ contentKey: "fallback-hook/bond-effect-hard/neptune/variant-2" }).aspect, "hard");
+assert.deepEqual(knowledgeIdsFor(parsePersonalTransitContact({ contentKey: "fallback-hook/bond-effect-conjunction/chiron" })), ["planet/chiron"]);
+assert.throws(() => parsePersonalTransitContact({ transiting: "sun", natal: "sun", aspect: "quincunx" }), /Friends bond-effect write-up/u);
 assert.deepEqual(missingPersonalTransitAudiences({ you: "", friend: "saved" }), ["you"]);
 assert.deepEqual(missingPersonalTransitAudiences({ you: "saved", friend: "saved" }), []);
 assert.deepEqual(requestedAudiences("both", "Starter You.", "{{Name}} starter Friend.", ""), []);
@@ -47,6 +51,15 @@ const checks = personalTransitReviewChecks({
 assert(checks.some((item) => item.code === "unexpected-sign"));
 assert(checks.some((item) => item.code === "missing-name"));
 assert(checks.some((item) => item.code === "near-identical-sibling"));
+assert(!personalTransitReviewChecks({
+  you: "{{holder1}} takes longer to reply than you expected.",
+  friend: "You take longer to reply than {{holder1}} expected.",
+  family: "bond-effect"
+}).some((item) => item.code === "unknown-variable" || item.code === "missing-name" || item.code === "missing-holder"));
+assert(personalTransitReviewChecks({
+  you: "A reply takes longer than you expected.",
+  family: "bond-effect"
+}).some((item) => item.code === "missing-holder"));
 assert(!personalTransitReviewChecks({
   you: "You may defend a plan in the 4th house.",
   allowHouses: true,
@@ -75,7 +88,7 @@ assert.equal(skipped?.contentKey, "authored/transit-aspect/sun/sun/square");
 assert.deepEqual(skipped?.missingAudiences, ["friend"]);
 assert.equal(skipped?.hasStudioDraft, true);
 
-assert.match(ui, /Generate You \+ Friend draft/u);
+assert.match(ui, /Between you two/u);
 assert.match(ui, /Copied into this exact contact/u);
 assert.match(ui, /if \(nextYou\) onUseYou\(nextYou\)/u);
 assert.match(ui, /Run writing checks/u);
@@ -99,7 +112,8 @@ assert.match(dashboard, /nextKey !== draft.contentKey/u);
 assert.match(dashboard, /finderTransitNatalExactKey/u);
 assert.match(dashboard, /transitNatalSelectionRef.current/u);
 assert.match(dashboard, /exactSelection \?\? contact/u);
-assert.match(dashboard, /isExactPersonalTransitDraft && isDynamicTransitNatalExactKey/u);
+assert.match(dashboard, /isBondEffectDraft \|\| \(isExactPersonalTransitDraft && isDynamicTransitNatalExactKey/u);
+assert.match(dashboard, /fallback-hook\/bond-effect-/u);
 assert.match(dashboard, /authored\/transit-return\//u);
 assert.match(dashboard, /defaultOpen/u);
 assert.match(dashboard, /setPackageSectionField\(current, "body_you", text\)/u);
@@ -120,7 +134,8 @@ assert.doesNotMatch(endpoint, /status: "LIVE"/u);
 assert.doesNotMatch(lib, /saveGeneratedInterpretation/u);
 assert.match(lib, /loadStudioTransitRows/u);
 assert.match(lib, /allowFilledRewrite: !saved\.studioPresent/u);
-assert.match(lib, /licensedVariables: \[\.\.\.allowedVariables\]/u);
+assert.match(lib, /licensedVariables: \[\.\.\.licensedVariablesFor\(input.contact\)\]/u);
+assert.match(lib, /family: "bond-effect"/u);
 assert.match(lib, /housesExcluded: !allowsHouses/u);
 assert.match(lib, /previewSituation: aspectPreviewLabel/u);
 assert.match(lib, /Use this chart situation as the scene/u);

@@ -8846,6 +8846,10 @@ export function GeneratedContentAdminDashboard() {
     const isExactTransitReturnDraft = isPackageDraft
       && currentDraft.contentKey.startsWith("authored/transit-return/");
     const isExactPersonalTransitDraft = isAuthoredTransitAspectDraft || isExactTransitReturnDraft;
+    const isBondEffectDraft = currentDraft.contentKey.startsWith("fallback-hook/bond-effect-");
+    const bondEffectParts = isBondEffectDraft ? currentDraft.contentKey.split("/") : [];
+    const bondEffectKind = bondEffectParts[1]?.slice("bond-effect-".length) ?? "";
+    const bondEffectPlanet = bondEffectParts[2] ?? "";
     const showPackageBodyYou = isPackageDraft
       && !isVocabularyDraft
       && !isContinuousSkyPackage
@@ -9630,18 +9634,18 @@ export function GeneratedContentAdminDashboard() {
                 : "This source is shared by matching readings. Edit its words here; signs, houses, and dates come from the calculated chart. Variables opens a preview using the transit selected above."}</p>
             </div>
           )}
-          {isExactPersonalTransitDraft && isDynamicTransitNatalExactKey(currentDraft.contentKey) && <Suspense fallback={null}><PersonalTransitAiWriter
+          {(isBondEffectDraft || (isExactPersonalTransitDraft && isDynamicTransitNatalExactKey(currentDraft.contentKey))) && <Suspense fallback={null}><PersonalTransitAiWriter
             defaultOpen
-            transiting={transitNatalPlanet}
-            natal={transitNatalPoint}
-            aspect={transitNatalAspect}
-            sign={transitNatalSign}
-            transitHouse={transitNatalTransitHouse}
-            natalHouse={transitNatalNatalHouse}
+            transiting={isBondEffectDraft ? bondEffectPlanet : transitNatalPlanet}
+            natal={isBondEffectDraft ? "" : transitNatalPoint}
+            aspect={isBondEffectDraft ? bondEffectKind : transitNatalAspect}
+            sign={isBondEffectDraft ? "" : transitNatalSign}
+            transitHouse={isBondEffectDraft ? "" : transitNatalTransitHouse}
+            natalHouse={isBondEffectDraft ? "" : transitNatalNatalHouse}
             contentKey={currentDraft.contentKey}
             youText={isExactTransitReturnDraft
               ? (packageFieldString(currentDraft, "body_you") || packageFieldString(currentDraft, "body") || currentDraft.body)
-              : packageFieldString(currentDraft, "body_you")}
+              : (packageFieldString(currentDraft, "body_you") || currentDraft.body)}
             friendText={isExactTransitReturnDraft ? "" : packageFieldString(currentDraft, "body_they")}
             disabled={isLoading}
             onUseYou={(text) => setDraft((current) => {
@@ -9654,7 +9658,7 @@ export function GeneratedContentAdminDashboard() {
             onUseFriend={(text) => setDraft((current) => current && !current.contentKey.startsWith("authored/transit-return/")
               ? setPackageSectionField(current, "body_they", text)
               : current)}
-            onOpenNext={(next) => updateTransitNatalSelection({
+            onOpenNext={isBondEffectDraft ? undefined : (next) => updateTransitNatalSelection({
               planet: next.transiting as TransitNatalPlanet,
               aspect: next.aspect as TransitNatalAspect,
               natalPoint: next.natal as TransitNatalPoint
