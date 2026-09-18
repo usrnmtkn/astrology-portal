@@ -26,6 +26,8 @@ test("Learn uses the shared full-page article layout", async ({ page }) => {
 
   await expect(learnPage.locator(".learn-kicker").first()).toHaveText(/Learn/i);
   await expect(learnPage.getByRole("heading", { level: 1 })).toHaveText("Astro 101");
+  await expect(learnPage.locator(".learn-sheet__header h2", { hasText: "Chapters" })).toHaveCount(0);
+  await expect(learnPage.locator(".learn-kicker").filter({ hasText: /chapters/i })).toHaveCount(0);
 
   const tileGlyph = learnPage.locator(".learn-tile__glyph").first();
   await expect(tileGlyph).toBeVisible();

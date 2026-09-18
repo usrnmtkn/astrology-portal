@@ -67,7 +67,7 @@
 }
 
 .learn-hero__title {
-  margin: var(--space-4) 0 var(--space-5);
+  margin: var(--space-4) 0 0;
   color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--type-display-size);
@@ -75,17 +75,6 @@
   letter-spacing: var(--tracking-tight);
   line-height: var(--leading-display);
   text-wrap: balance;
-}
-
-.learn-hero__intro {
-  max-width: 40ch;
-  margin: 0;
-  color: var(--card-body-color);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-body);
-  line-height: var(--leading-body);
 }
 
 .learn-hero__glyphs {
