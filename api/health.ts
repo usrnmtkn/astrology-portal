@@ -1,4 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import {
+  calculationApiBaseUrl,
+  describeCalculationApiFailure,
+  readCalculationApiResponse
+} from "./_lib/calculation-api.js";
 import { getLunarCalendarWeek } from "../apps/web/src/services/ephemeris.js";
 import type { LocationInput } from "../apps/web/src/types.js";
 
@@ -16,6 +21,7 @@ const healthLocation: LocationInput = {
   timeZone: "America/New_York"
 };
 
+const skyCalculationApiTimeoutMs = 2_500;
 const expectedExactAspectStudioRows = 439;
 const expectedNodePoleStudioRows = 60;
 
@@ -149,6 +155,54 @@ async function checkContentStudioExactAspects(): Promise<DependencyResult> {
   }
 }
 
+/**
+ * Current sky, report, and relationship facts all come from the calculation
+ * service, and until now an outage there was invisible until an owner action
+ * failed. This reports the service without gating the overall status, so an
+ * upstream outage stays visible without failing deployments that do not
+ * depend on it.
+ */
+async function checkSkyCalculationApi(): Promise<DependencyResult> {
+  const startedAt = performance.now();
+  const target = `${calculationApiBaseUrl()}/health`;
+
+  try {
+    const response = await fetch(target, {
+      cache: "no-store",
+      signal: AbortSignal.timeout(skyCalculationApiTimeoutMs)
+    });
+    const { body, payload } = await readCalculationApiResponse(response);
+
+    if (!response.ok) {
+      return {
+        ok: false,
+        elapsedMs: elapsedSince(startedAt),
+        error: describeCalculationApiFailure({
+          target,
+          status: response.status,
+          statusText: response.statusText,
+          body,
+          payload
+        })
+      };
+    }
+
+    return {
+      ok: true,
+      elapsedMs: elapsedSince(startedAt),
+      detail: { host: new URL(target).host }
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      elapsedMs: elapsedSince(startedAt),
+      error: error instanceof Error
+        ? `${new URL(target).host} did not answer within ${skyCalculationApiTimeoutMs}ms (${error.message}).`
+        : "Sky calculation service check failed."
+    };
+  }
+}
+
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
   res.setHeader("content-type", "application/json; charset=utf-8");
@@ -166,11 +220,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
 
-  const [ephemeris, contentGeneration, reportFulfillment, contentStudioExactAspects] = await Promise.all([
+  const [ephemeris, contentGeneration, reportFulfillment, contentStudioExactAspects, skyCalculationApi] = await Promise.all([
     checkEphemeris(),
     checkContentGenerationImport(),
     checkReportFulfillment(),
-    checkContentStudioExactAspects()
+    checkContentStudioExactAspects(),
+    checkSkyCalculationApi()
   ]);
   const ok = ephemeris.ok
     && contentGeneration.ok
@@ -185,7 +240,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       ephemeris,
       contentGeneration,
       reportFulfillment,
-      contentStudioExactAspects
+      contentStudioExactAspects,
+      skyCalculationApi
     }
   });
 }

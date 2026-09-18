@@ -142,7 +142,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
 
     const referenceInstant = validDate(body.referenceDate);
-    const snapshot = await currentSkyFacts(referenceInstant);
+    // A calculation outage is an upstream failure, not a writing failure. Name
+    // the service and keep the response body so the cause is readable instead
+    // of surfacing a bare status with no payload to report.
+    const snapshot = await currentSkyFacts(referenceInstant).catch((error: unknown) => {
+      if (error instanceof AdminHttpError) throw error;
+      throw new AdminHttpError(502, `The sky calculation service did not answer, so ${body.referenceDate} could not be validated. Your article was not changed. ${adminErrorMessage(error, 'The calculation request failed.')}`);
+    });
     const position = snapshot.positions.find((candidate) => token(candidate.planet) === planet);
     if (!position) throw new AdminHttpError(422, `The calculation layer did not return ${planet} for ${body.referenceDate}.`);
     const calculatedSign = signToken(position.sign);
