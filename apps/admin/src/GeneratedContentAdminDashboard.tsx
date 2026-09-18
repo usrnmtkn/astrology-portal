@@ -4,6 +4,7 @@ import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
 import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import "./studio-system.css";
 import { StudioTabs, StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { ArticleBlockStyleFields } from "./ArticleBlockStyleFields";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioTheme, saveStudioTheme } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
@@ -8633,6 +8634,13 @@ export function GeneratedContentAdminDashboard() {
     const isAstro101Draft = isAstro101ContentRow({ content_key: currentDraft.contentKey, facts: currentDraft.facts });
     const astro101Blocks = astro101BlocksFromSections(currentDraft.sections);
     const astro101Intro = astro101IntroFromSections(currentDraft.sections);
+    const articleBodyStyle = typeof objectRecord(currentDraft.sections)?.bodyStyle === "string"
+      ? String(objectRecord(currentDraft.sections)?.bodyStyle)
+      : "";
+    const showArticleStyleEditor = isAstro101Draft
+      || isArticleDraft
+      || currentDraft.blockType === "essay"
+      || astro101Blocks.length > 0;
     const isFallbackHookDraft = draftIsFallbackHook(currentDraft);
     const isTemplateDraft = draftIsTemplate(currentDraft) && !(lunarContentIdentity(currentDraft.contentKey) && !currentDraft.body.includes("{{"));
     const isPackageDraft = draftIsFallbackArchitectureV3(currentDraft);
@@ -10367,50 +10375,30 @@ export function GeneratedContentAdminDashboard() {
                 : "This is the exact editable phrase the fallback resolver reads. Saving updates the stored package value and its dashboard copy together."}</small>}
             </label>
           )}
-          {isAstro101Draft && (
-            <section className="admin-review-copy-editor studio-surface" aria-label="Astro 101 sections">
-              <p className="admin-eyebrow">Astro 101 sections</p>
-              {astro101Intro ? (
-                <label className="admin-review-copy-editor">
-                  <span>Intro</span>
-                  <StudioTextarea
-                    aria-label="Astro 101 intro"
-                    value={astro101Intro}
-                    onChange={(event) => {
-                      const sections = { ...(currentDraft.sections ?? {}), intro: event.target.value };
-                      setDraft({ ...currentDraft, sections });
-                    }}
-                  />
-                </label>
-              ) : null}
-              {astro101Blocks.map((block, index) => (
-                <label className="admin-review-copy-editor" key={`${block.heading || "block"}-${index}`}>
-                  <span>{block.heading || `Section ${index + 1}`}</span>
-                  <StudioInput
-                    aria-label={`Astro 101 heading ${index + 1}`}
-                    value={block.heading ?? ""}
-                    onChange={(event) => {
-                      const nextBlocks = astro101Blocks.map((entry, blockIndex) => (
-                        blockIndex === index ? { ...entry, heading: event.target.value } : entry
-                      ));
-                      const sections = { ...(currentDraft.sections ?? {}), blocks: nextBlocks };
-                      setDraft({ ...currentDraft, sections });
-                    }}
-                  />
-                  <StudioTextarea
-                    aria-label={`Astro 101 section ${index + 1}`}
-                    value={block.body ?? ""}
-                    onChange={(event) => {
-                      const nextBlocks = astro101Blocks.map((entry, blockIndex) => (
-                        blockIndex === index ? { ...entry, body: event.target.value } : entry
-                      ));
-                      const sections = { ...(currentDraft.sections ?? {}), blocks: nextBlocks };
-                      setDraft({ ...currentDraft, sections });
-                    }}
-                  />
-                </label>
-              ))}
-            </section>
+          {showArticleStyleEditor && (
+            <ArticleBlockStyleFields
+              allowAdd
+              blocks={astro101Blocks}
+              bodyStyle={articleBodyStyle}
+              intro={astro101Intro}
+              showIntro={isAstro101Draft}
+              onBodyStyleChange={(style) => {
+                const sections = { ...(currentDraft.sections ?? {}), bodyStyle: style };
+                setDraft({ ...currentDraft, sections });
+              }}
+              onBlocksChange={(blocks) => {
+                const sections = { ...(currentDraft.sections ?? {}), blocks };
+                setDraft(isAstro101Draft ? { ...currentDraft, sections } : {
+                  ...currentDraft,
+                  sections,
+                  body: blocks.map((block) => [block.heading, block.body].filter(Boolean).join("\n")).join("\n\n")
+                });
+              }}
+              onIntroChange={(value) => {
+                const sections = { ...(currentDraft.sections ?? {}), intro: value };
+                setDraft({ ...currentDraft, sections });
+              }}
+            />
           )}
           {showNatalFriendEditor && natalPlacementPlanet && natalPlacementSign && (
             <section className="admin-editor-guidance admin-natal-friend-editor" aria-label="Friends natal copy and sources">
