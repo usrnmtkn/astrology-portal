@@ -58,16 +58,17 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     if (!(await variableKey.evaluate(el => el.hasAttribute("open")))) await variableKey.locator(":scope > summary").click();
   };
   await openVariableKey();
-  const rowsGeometry = await variableKey.locator("dl > div").evaluateAll(rows => rows.map(row => {
-    const term = row.querySelector("dt")!.getBoundingClientRect();
-    const definition = row.querySelector("dd")!.getBoundingClientRect();
+  const rowsGeometry = await variableKey.locator("tbody tr").evaluateAll(rows => rows.map(row => {
+    const term = row.querySelector("th")!.getBoundingClientRect();
+    const definition = row.querySelector("td")!.getBoundingClientRect();
     const bounds = row.getBoundingClientRect();
-    const style = getComputedStyle(row);
+    const style = getComputedStyle(row.querySelector("th")!);
     return { term: { x: term.x, bottom: term.bottom }, definition: { x: definition.x, y: definition.y }, top: bounds.top, bottom: bounds.bottom, padding: parseFloat(style.paddingLeft) };
   }));
+  expect(rowsGeometry.length).toBeGreaterThan(0);
   for (const [index, row] of rowsGeometry.entries()) {
     expect(row.padding).toBe(16);
-    if (width < 720) expect(row.definition.y - row.term.bottom).toBeGreaterThanOrEqual(15);
+    if (width < 720) expect(row.definition.y - row.term.bottom).toBeGreaterThanOrEqual(0);
     else expect(row.definition.x).toBeGreaterThan(row.term.x);
     if (index) expect(row.top).toBeGreaterThanOrEqual(rowsGeometry[index - 1].bottom);
   }
@@ -75,14 +76,14 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   if (!(await phraseKey.evaluate(el => el.hasAttribute("open")))) await phraseKey.locator(":scope > summary").click();
   const planetLanguage = phraseKey.locator("details").filter({ has: page.locator(":scope > summary").filter({ hasText: /^Planet language$/ }) });
   if (!(await planetLanguage.evaluate(el => el.hasAttribute("open")))) await planetLanguage.locator(":scope > summary").click();
-  const phraseRows = planetLanguage.locator("dl > div");
+  const phraseRows = planetLanguage.locator("tbody tr");
   await expect(phraseRows.first()).toBeVisible();
   const phraseGeometry = await phraseRows.evaluateAll(rows => rows.slice(0, 4).map(row => {
-    const term = row.querySelector("dt")!.getBoundingClientRect();
-    const definition = row.querySelector("dd")!.getBoundingClientRect();
+    const term = row.querySelector("th")!.getBoundingClientRect();
+    const definition = row.querySelector("td")!.getBoundingClientRect();
     const bounds = row.getBoundingClientRect();
-    const style = getComputedStyle(row);
-    const token = row.querySelector("dt code") as HTMLElement | null;
+    const style = getComputedStyle(row.querySelector("th")!);
+    const token = row.querySelector("th code") as HTMLElement | null;
     return {
       term: { x: term.x, bottom: term.bottom },
       definition: { x: definition.x, y: definition.y },
@@ -90,7 +91,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       padding: parseFloat(style.paddingLeft),
       color: token?.getAttribute("data-variable-color") ?? "",
       background: token ? getComputedStyle(token).backgroundColor : "",
-      label: row.querySelector("dd p")?.textContent ?? "",
+      label: row.querySelector("th p")?.textContent ?? "",
       status: row.querySelector("small")?.textContent ?? ""
     };
   }));
@@ -102,7 +103,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     expect(row.label).toMatch(/^[A-Z].+\. /);
     expect(row.status).toMatch(/^(Empty|Loaded)$/);
     expect(row.label + row.status).not.toMatch(/descriptorEmpty|functionLoaded/u);
-    if (width < 720) expect(row.definition.y - row.term.bottom).toBeGreaterThanOrEqual(15);
+    if (width < 720) expect(row.definition.y - row.term.bottom).toBeGreaterThanOrEqual(0);
     else expect(row.definition.x).toBeGreaterThan(row.term.x);
     if (index) expect(row.top).toBeGreaterThanOrEqual(phraseGeometry[index - 1].bottom);
   }

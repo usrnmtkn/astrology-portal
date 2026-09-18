@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { compositionVariableColors } from "./CompositionVariableKey";
 import { StudioButton } from "./StudioControls";
 import { PageLoading } from "../../web/src/components/PageLoading";
+import { AdminDataTable } from "./AdminBrowseComponents";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import {
   SKY_WRITING_LIBRARY_FIELD_IDS,
@@ -125,12 +126,18 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
         }
       }
 
+      // A shared sign source that is missing or fails to load leaves its own row
+      // empty. It must never blank the rest of the table.
       await Promise.all(ZODIAC_SEASON_VARIABLES.map(async field => {
         if (composition?.sources[field.id]) return;
         const key = zodiacSeasonSourceKey(field.id, phraseSource.sign);
-        const row = await loadSource?.(key);
+        let row: Record<string, any> | undefined;
+        let reason = "";
+        try { row = await loadSource?.(key); } catch (cause) { reason = cause instanceof Error ? cause.message : "could not be loaded"; }
         values[field.id] = typeof row?.body === "string" ? row.body : "";
-        provenance[field.id] = `${key}#body · Shared across sign-aware templates. Publish changes to update references.`;
+        provenance[field.id] = reason
+          ? `${key}#body · ${reason}`
+          : `${key}#body · Shared across sign-aware templates. Publish changes to update references.`;
       }));
       if (!active) return;
       setPhraseValues(values);
@@ -151,14 +158,18 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
     <details className="admin-workspace-details admin-sky-variable-key">
       <AdminDisclosureSummary>Calculated Sky variables</AdminDisclosureSummary>
       <p>Read-only facts supplied by the selected placement or a calculated occurrence. Dates and aspect lists stay unavailable until the calculation exists; Content Studio never invents them.</p>
-      <dl>
-        {SKY_PLACEMENT_VARIABLES.map((variable: { name: string; description: string; availability: string }) => <div key={variable.name}>
-          <dt>{onInsert ? <StudioButton type="button" disabled={disabled} aria-label={`Insert {{${variable.name}}}`} onClick={() => onInsert(`{{${variable.name}}}`)}>
-            <code data-variable-color={variableColors.get(variable.name)}>{`{{${variable.name}}}`}</code>
-          </StudioButton> : <code data-variable-color={variableColors.get(variable.name)}>{`{{${variable.name}}}`}</code>}</dt>
-          <dd><p>{variable.description}</p><div className="admin-sky-variable-value"><span className={facts[variable.name] ? "variable-fact" : "variable-unmapped"}>{facts[variable.name] || "Needs calculated occurrence"}</span><small>{variable.availability}</small></div></dd>
-        </div>)}
-      </dl>
+      <AdminDataTable label="Calculated Sky variable values" columns={["Variable", "Value", "When it is available"]}>
+        {SKY_PLACEMENT_VARIABLES.map((variable: { name: string; description: string; availability: string }) => <tr key={variable.name}>
+          <th scope="row" data-label="Variable">
+            {onInsert ? <StudioButton type="button" disabled={disabled} aria-label={`Insert {{${variable.name}}}`} onClick={() => onInsert(`{{${variable.name}}}`)}>
+              <code data-variable-color={variableColors.get(variable.name)}>{`{{${variable.name}}}`}</code>
+            </StudioButton> : <code data-variable-color={variableColors.get(variable.name)}>{`{{${variable.name}}}`}</code>}
+            <p>{variable.description}</p>
+          </th>
+          <td data-label="Value"><span className={facts[variable.name] ? "variable-fact" : "variable-unmapped"}>{facts[variable.name] || "Needs calculated occurrence"}</span></td>
+          <td data-label="When it is available"><small>{variable.availability}</small></td>
+        </tr>)}
+      </AdminDataTable>
     </details>
 
     <details className="admin-workspace-details admin-sky-variable-key" aria-label="Editable phrase variables" open>
@@ -170,31 +181,35 @@ export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhras
       {SKY_WRITING_LIBRARY_GROUPS.map(group => ({ ...group, fields: group.fields.filter(item => !omitKinds.includes(item.kind)) })).filter(group => group.fields.length).map((group, groupIndex) => <details className="admin-workspace-details" key={group.id} open={groupIndex < 3 || undefined}>
           <AdminDisclosureSummary>{group.label}</AdminDisclosureSummary>
           <p>{group.description}</p>
-          <dl>
+          <AdminDataTable label={`${group.label} phrases for ${contextLabel}`} columns={["Variable", "Writing", "Where it is stored", "Edit"]}>
             {group.fields.map(item => {
               const currentValue = phraseValues[item.id]?.trim() ?? "";
               const sourceLabel = phraseProvenance[item.id] || "No governed source is mapped yet.";
               const insert = onInsertPhrase ?? onInsert;
               const token = <code data-variable-color={variableColors.get(item.id)}>{`{{${item.id}}}`}</code>;
-              return <div key={item.id}>
-                <dt>{insert ? <StudioButton type="button" disabled={disabled} aria-label={`Insert {{${item.id}}}`} onClick={() => insert(`{{${item.id}}}`)}>{token}</StudioButton> : token}</dt>
-                <dd>
+              return <tr key={item.id}>
+                <th scope="row" data-label="Variable">
+                  {insert ? <StudioButton type="button" disabled={disabled} aria-label={`Insert {{${item.id}}}`} onClick={() => insert(`{{${item.id}}}`)}>{token}</StudioButton> : token}
                   <p>{item.label}. {item.description}</p>
-                  <div className="admin-sky-variable-value">
-                    <span className={currentValue ? phraseClass(item.kind) : "variable-unmapped"}>{phraseLoading ? "Loading selected content…" : currentValue || "No writing has been saved for this optional field."}</span>
-                    <small>{currentValue ? "Loaded" : "Empty"}</small>
-                  </div>
+                </th>
+                <td data-label="Writing">
+                  <span className={currentValue ? phraseClass(item.kind) : "variable-unmapped"}>{phraseLoading ? "Loading selected content…" : currentValue || "No writing has been saved for this optional field."}</span>
+                  <small>{currentValue ? "Loaded" : "Empty"}</small>
+                </td>
+                <td data-label="Where it is stored">
+                  <span className="admin-field-hint">{scopeLabel(item.kind)}</span>
                   <details className="admin-workspace-details">
                     <AdminDisclosureSummary>Source and scope</AdminDisclosureSummary>
-                    <p>{scopeLabel(item.kind)}</p>
                     <p><code>{sourceLabel}</code></p>
                     {!phraseInstalled && currentValue && <p>This is governed prefill text. It becomes an editable placement value when the Writing Library is saved.</p>}
                   </details>
+                </td>
+                <td data-label="Edit">
                   {phraseSource?.onEdit && <StudioButton type="button" disabled={disabled || phraseLoading} onClick={() => phraseSource.onEdit?.(item.id)}>Edit {item.label.toLowerCase()}</StudioButton>}
-                </dd>
-              </div>;
+                </td>
+              </tr>;
             })}
-          </dl>
+          </AdminDataTable>
         </details>)}
     </details>
   </>;
