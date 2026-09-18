@@ -494,7 +494,7 @@ export function UnresolvedContentReview({
         </dl>
       </section>
 
-      <section className="admin-filter-toolbar admin-unresolved-filters" aria-label="Unresolved content search">
+      <section className="studio-surface admin-filter-toolbar admin-unresolved-filters" aria-label="Unresolved content search">
         <div className="admin-search-field">
           <label htmlFor="unresolved-content-search">Search issues</label>
           <div className="admin-search-input-shell">
