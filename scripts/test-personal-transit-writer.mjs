@@ -96,6 +96,7 @@ assert.match(dashboard, /sign=\{transitNatalSign\}/u);
 assert.match(dashboard, /Write this six-part situation/u);
 assert.match(dashboard, /Write-up natal house/u);
 assert.match(dashboard, /nextKey !== draft.contentKey/u);
+assert.match(dashboard, /finderTransitNatalExactKey/u);
 assert.match(dashboard, /transitNatalSelectionRef.current/u);
 assert.match(dashboard, /exactSelection \?\? contact/u);
 assert.match(dashboard, /isExactPersonalTransitDraft && isDynamicTransitNatalExactKey/u);

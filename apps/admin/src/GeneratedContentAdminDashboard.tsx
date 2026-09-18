@@ -7445,11 +7445,10 @@ export function GeneratedContentAdminDashboard() {
     if (transitReadingContext.isRetrograde !== undefined) params.set("retrograde", String(transitReadingContext.isRetrograde));
     if (transitReadingContext.window) params.set("window", transitReadingContext.window);
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
-    if (draft && transitNatalContactReady({ planet, aspect, natalPoint })) {
+    const contact = transitNatalContactFromFields(planet, aspect, natalPoint);
+    if (draft && contact) {
       const nextSelection = {
-        planet,
-        aspect,
-        natalPoint,
+        ...contact,
         ...(sign ? { sign } : {}),
         ...(transitHouse ? { transitHouse } : {}),
         ...(natalHouse ? { natalHouse } : {})
@@ -7488,11 +7487,23 @@ export function GeneratedContentAdminDashboard() {
     setMessage(`Opened ${label}. Saving creates the editable Content Studio row; it does not publish unreviewed wording.`);
   }
 
+  function finderTransitNatalExactKey() {
+    const current = transitNatalSelectionRef.current;
+    const contact = transitNatalContactFromFields(current.planet, current.aspect, current.natalPoint);
+    if (!contact) return null;
+    return transitNatalExactContentKey({
+      ...contact,
+      ...(current.sign ? { sign: current.sign } : {}),
+      ...(current.transitHouse ? { transitHouse: current.transitHouse } : {}),
+      ...(current.natalHouse ? { natalHouse: current.natalHouse } : {})
+    });
+  }
+
   async function openPackagedTransitSource(source: Record<string, unknown>, contentKey: string, fieldPath?: string, options?: { skipUnsavedPrompt?: boolean }) {
     const requestId = sourceOpenRequestRef.current;
     const { transitNatalPackagedSourceDraft } = await import("./transitNatalPackagedSource");
     if (requestId !== sourceOpenRequestRef.current) return;
-    if (transitNatalExactContentKey(transitNatalSelectionRef.current) !== contentKey) return;
+    if (finderTransitNatalExactKey() !== contentKey) return;
     const packagedDraft = transitNatalPackagedSourceDraft(source, contentKey);
     if (!options?.skipUnsavedPrompt && !confirmSkyEditorNavigation()) return;
     setSelectedRowId(null);
@@ -7516,7 +7527,7 @@ export function GeneratedContentAdminDashboard() {
       const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
         `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(key)}&limit=1&includePackageSource=true`, secret);
       if (requestId !== sourceOpenRequestRef.current) return;
-      if (transitNatalExactContentKey(transitNatalSelectionRef.current) !== key) return;
+      if (finderTransitNatalExactKey() !== key) return;
       if (!Array.isArray(payload.rows) || payload.rows.some(candidate => candidate.content_key !== key)) throw new Error("The exact passage could not be verified.");
       const row = payload.rows.find(candidate => candidate.content_key === key);
       if (row) { await openRow(row); return; }
@@ -7534,7 +7545,7 @@ export function GeneratedContentAdminDashboard() {
         const starterPayload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
           `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(starterKey)}&limit=1&includePackageSource=true`, secret);
         if (requestId !== sourceOpenRequestRef.current) return;
-        if (transitNatalExactContentKey(transitNatalSelectionRef.current) !== key) return;
+        if (finderTransitNatalExactKey() !== key) return;
         if (!Array.isArray(starterPayload.rows) || starterPayload.rows.some(candidate => candidate.content_key !== starterKey)) {
           throw new Error("The shared fallback passage could not be verified.");
         }
