@@ -14,7 +14,9 @@ for (const source of [startup, boundary]) {
   assert.match(source, /__tldrastroReaderPageRecovery/u, "Reader recovery must use one shared history-state guard.");
   assert.match(source, /2 \* 60 \* 1000/u, "Reader recovery must be cooldown guarded so a real bug cannot reload-loop.");
   assert.match(source, /you\|sky\|calendar\|friends/u, "Reader recovery must cover the primary hash routes.");
-  assert.match(source, /pathname[^\n]*(?:===|!==) "\/"/u, "Automatic recovery must stay on the reader root and exclude admin/report routes.");
+  assert.match(source, /path === "\/learn"/u, "Path-based Learn must get the same one-shot stale-chunk recovery as Sky.");
+  assert.match(source, /path === "\/friends"/u, "Path-based Friends must get the same one-shot stale-chunk recovery as Sky.");
+  assert.match(source, /path !== "\/"/u, "Automatic recovery must stay on reader HTML routes and exclude admin/report paths.");
   assert.match(source, /history\.replaceState/u, "Automatic recovery must be tab-local and survive the one reload it initiates.");
   assert.doesNotMatch(source, /sessionStorage/u, "Reader recovery must not consume the session-storage namespace used by app state.");
 }
@@ -28,7 +30,7 @@ assert.match(boundary, /<summary>Error details<\/summary>/u, "If recovery cannot
 
 const vercelConfig = JSON.parse(vercel);
 assert.ok(Array.isArray(vercelConfig.headers), "Vercel must explicitly control HTML cache freshness.");
-for (const route of ["/", "/index.html", "/admin/(.*)", "/reports/(.*)"]) {
+for (const route of ["/", "/index.html", "/admin/(.*)", "/reports/(.*)", "/learn", "/learn/(.*)", "/friends"]) {
   const rule = vercelConfig.headers.find((entry) => entry.source === route);
   assert.ok(rule, `Missing no-store HTML header rule for ${route}`);
   const cache = rule.headers?.find((header) => header.key.toLowerCase() === "cache-control")?.value ?? "";
