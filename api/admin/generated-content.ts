@@ -662,7 +662,7 @@ function assertFallbackArchitectureV3StructureLocked(row: ExistingGeneratedConte
   for (const [field, next, existing] of structuralChecks) {
     if (next === undefined || next === null) continue;
     if (String(next).trim() !== String(existing ?? "").trim()) {
-      throw new GeneratedContentRequestError(`Package rows cannot change ${field}. Structural changes must come from a package drop.`);
+      throw new GeneratedContentRequestError(`Package rows cannot be changed (${field}). Structural changes must come from a package drop.`, 409);
     }
   }
 

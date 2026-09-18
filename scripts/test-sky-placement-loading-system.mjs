@@ -101,10 +101,15 @@ assert.doesNotMatch(
   /awaitPlacementTiming \? null : detail/,
   "Opening a Sky Placement card must keep the write-up on screen instead of a full-page loader."
 );
+assert.doesNotMatch(
+  app,
+  /renderPlacement\(baseContent, false\)/,
+  "A Sky placement article must not paint bundled copy and then replace it with in-sign Studio keys."
+);
 assert.match(
   app,
-  /renderPlacement\(baseContent, false\);[\s\S]*skyPlacementInSignAspectContentKeys/,
-  "In-sign Studio keys must hydrate after the first placement article paint."
+  /skyPlacementInSignAspectContentKeys[\s\S]*renderPlacement\(mergeGeneratedContentMaps\(baseContent, await loadLiveGeneratedContentForKeys\(inSignKeys\)\)\)/,
+  "In-sign Studio keys must join the first placement article commit."
 );
 assert.match(
   app,
