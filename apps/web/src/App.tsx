@@ -10,6 +10,7 @@ import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from
 import { CardReadMore } from "./components/CardReadMore";
 import { isContentRetired, contentPublication } from "./content/contentPublicationState";
 import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
+import { skyPlacementInSignAspectContentKeys, skyPlacementInSignAspectSections } from "./services/skyPlacementInSignAspectSections";
 import { usePageTransition, readAnimationPreference, animationPreferenceKey } from "./hooks/usePageTransition";
 import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
@@ -5383,6 +5384,18 @@ function currentSkyPlacementDetailArticle({
   const relatedAspectRows = relatedAspectRowsForPlacement({
     aspects, generatedAt, generatedContent, mode: "sky", pointName: position.planet, positions
   });
+  const matchingAspectFacts = aspectFacts
+    && normalizeContentIdPart(aspectFacts.planet) === normalizeContentIdPart(position.planet)
+    && normalizeContentIdPart(aspectFacts.sign) === normalizeContentIdPart(position.sign)
+    ? aspectFacts
+    : null;
+  const inSignAspectSections = matchingAspectFacts
+    ? skyPlacementInSignAspectSections(
+      matchingAspectFacts.inSign,
+      matchingAspectFacts.timeZone,
+      generatedContent
+    ).sections
+    : [];
   const articleSections = (placementSection?.articleSections ?? []).map((section) => ({
     heading: section.heading,
     body: section.body,
@@ -5433,7 +5446,9 @@ function currentSkyPlacementDetailArticle({
     closingCharge: placementSection?.closingCharge,
     tldr: placementSection?.tldr,
     risingHoroscopes: placementSection?.risingHoroscopes,
-    placementResidencyContext: articleMode === "current" && normalizeContentIdPart(position.planet) === "sun"
+    placementResidencyContext: articleMode === "current"
+      && normalizeContentIdPart(position.planet) === "sun"
+      && inSignAspectSections.length === 0
       ? {
           planet: position.planet,
           sign: position.sign,
@@ -5446,8 +5461,13 @@ function currentSkyPlacementDetailArticle({
       && normalized.sections.some((section) => section.layer === "authored"),
     suppressTldr: !placementSection?.tldr && authoredBody.length > 0 && !isRetrograde,
     body: displayArticleSections.length > 0 ? [] : displayBody,
-    sections: displayArticleSections,
-    relatedAspects: { heading: "Aspects", rows: relatedAspectRows.filter((row): row is SkyDetailRelatedAspectRow => row !== null) },
+    sections: [...displayArticleSections, ...inSignAspectSections],
+    relatedAspects: {
+      heading: "Aspects",
+      rows: inSignAspectSections.length
+        ? []
+        : relatedAspectRows.filter((row): row is SkyDetailRelatedAspectRow => row !== null)
+    },
     astrologyDrilldown: null
   };
 }
@@ -12052,7 +12072,17 @@ export function App() {
           commitResolvedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
             skyPlacementPersonalizationTransits, skyDate));
         };
-        renderPlacement(await loadSkyDetailContent(placementSky, availableDetailContent, [], loadLiveGeneratedContentForKeys), true);
+        renderPlacement(await (async () => {
+          const baseContent = await loadSkyDetailContent(placementSky, availableDetailContent, [], loadLiveGeneratedContentForKeys);
+          const inSignKeys = skyPlacementInSignAspectContentKeys(placementSky.placementAspectFacts?.inSign ?? []);
+          if (!inSignKeys.length) return baseContent;
+          try {
+            return mergeGeneratedContentMaps(baseContent, await loadLiveGeneratedContentForKeys(inSignKeys));
+          } catch (error) {
+            console.warn("Sky Placement in-sign aspect copy failed to load; facts-only cards remain visible.", error);
+            return baseContent;
+          }
+        })(), true);
       }).catch(error => { if (!cancelled) { console.warn("Requested placement calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
       return () => { cancelled = true; };
     }

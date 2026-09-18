@@ -250,6 +250,23 @@ export function isSkyAspectRetired(first: string, aspect: string, second: string
   return isContentRetired(`sky.aspect.${a}.${relation}.${b}`) || isContentRetired(`sky.aspect.${b}.${relation}.${a}`);
 }
 
+export function contentStudioExactSkyAspectKeys(first: string, aspect: string, second: string) {
+  const expected = normalizedContentStudioExactSkyAspectFacts({
+    first,
+    second,
+    aspect,
+    firstSign: "",
+    secondSign: ""
+  });
+  if (!expected) return [];
+  const keys = [`sky.aspect.${expected.a}.${expected.aspect}.${expected.b}`];
+  if (expected.a === "north-node") {
+    const southAspect = southNodeAspectForNorthNodeAspect[expected.aspect];
+    if (southAspect) keys.push(`sky.aspect.south-node.${southAspect}.${expected.b}`);
+  }
+  return keys;
+}
+
 export function contentStudioExactRow(
   generatedContent: Map<string, LiveGeneratedContent>,
   expected: Pick<ExpectedSkyAspectFacts, "a" | "b" | "aspect">
