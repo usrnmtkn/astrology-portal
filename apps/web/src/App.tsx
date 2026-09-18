@@ -10841,8 +10841,12 @@ const AccountView = lazy(() =>
   }))
 );
 
+const loadSkyDetailArticle = () => import("./features/sky/SkyDetailArticle");
+const preloadSkyDetailArticle = () => {
+  void loadSkyDetailArticle();
+};
 const SkyDetailArticle = lazy(() =>
-  import("./features/sky/SkyDetailArticle").then((module) => ({
+  loadSkyDetailArticle().then((module) => ({
     default: module.SkyDetailArticle
   }))
 );
@@ -11378,8 +11382,14 @@ export function App() {
       }
     }
     transitionPage(() => {
+      // Keep the opened write-up on screen. Residency Key dates and in-sign
+      // Gifts/Lessons still upgrade in place once the placement snapshot
+      // finishes; blanking here replayed the full-page loader on every click.
+      if (awaitPlacementTiming && skyPlacementFallbackStatus === "ready" && skyPlacementResolvedIdentity) {
+        setSkyDetailResolvedIdentity(skyPlacementResolvedIdentity);
+      }
       setSelectedSkyDetail(personalizedSkyPlacementDetail(
-        awaitPlacementTiming ? null : detail,
+        detail,
         profileNatalSky?.ascendant ?? userProfile?.rising,
         skyPlacementPersonalizationTransits,
         skyDate
@@ -11805,6 +11815,11 @@ export function App() {
 
   const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath });
   useEffect(() => {
+    if (mode === "guest" || mode === "member" || /^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")) {
+      preloadSkyDetailArticle();
+    }
+  }, [mode, skyDetailRoutePath]);
+  useEffect(() => {
     if (
       placementContentNeeded || !shouldHydrateFallbackDashboardContent({
   mode,
@@ -12051,15 +12066,23 @@ export function App() {
     const placementSnapshotRequest = canLoadPlacementArticle && routePlanet && placementSign
       ? requestSkyPlacementArticleSnapshot(sky.location, routePlanet, placementSign, skyDate)
       : null;
-    // Start the article astronomy immediately. Published copy still has to
-    // resolve before the first paint so a later overlay cannot replace it.
+    // Start the article astronomy immediately. Overlay rows still have to
+    // resolve before a first paint that would otherwise show bundled copy
+    // and then replace it. Timing facts and in-sign Studio keys hydrate
+    // after that first paint so navigation is not blocked on them.
     if (routeSurface === "sky" && ["placement", "retrograde"].includes(routeType)
       && skyPlacementFallbackStatus !== "ready") return;
     // Every placement timeline includes exact aspects, even when the author
     // has not used an aspect token in the article.
     if (canLoadPlacementArticle && placementSnapshotRequest) {
       let cancelled = false;
-      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) commitResolvedSkyDetail(null);
+      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) {
+        const provisional = skyDetailFromRoutePath(baseRoute, sky, availableDetailContent, openSkyDetail);
+        commitResolvedSkyDetail(provisional
+          ? personalizedSkyPlacementDetail(provisional, profileNatalSky?.ascendant ?? userProfile?.rising,
+            skyPlacementPersonalizationTransits, skyDate)
+          : null);
+      }
       void placementSnapshotRequest.then(async placementSky => {
         const renderPlacement = (detailContent: GeneratedContentMap, complete = false) => {
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
@@ -12073,17 +12096,19 @@ export function App() {
           commitResolvedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
             skyPlacementPersonalizationTransits, skyDate));
         };
-        renderPlacement(await (async () => {
-          const baseContent = await loadSkyDetailContent(placementSky, availableDetailContent, [], loadLiveGeneratedContentForKeys);
-          const inSignKeys = skyPlacementInSignAspectContentKeys(placementSky.placementAspectFacts?.inSign ?? []);
-          if (!inSignKeys.length) return baseContent;
-          try {
-            return mergeGeneratedContentMaps(baseContent, await loadLiveGeneratedContentForKeys(inSignKeys));
-          } catch (error) {
-            console.warn("Sky Placement in-sign aspect copy failed to load; facts-only cards remain visible.", error);
-            return baseContent;
-          }
-        })(), true);
+        const baseContent = await loadSkyDetailContent(placementSky, availableDetailContent, [], loadLiveGeneratedContentForKeys);
+        renderPlacement(baseContent, false);
+        const inSignKeys = skyPlacementInSignAspectContentKeys(placementSky.placementAspectFacts?.inSign ?? []);
+        if (!inSignKeys.length) {
+          renderPlacement(baseContent, true);
+          return;
+        }
+        try {
+          renderPlacement(mergeGeneratedContentMaps(baseContent, await loadLiveGeneratedContentForKeys(inSignKeys)), true);
+        } catch (error) {
+          console.warn("Sky Placement in-sign aspect copy failed to load; facts-only cards remain visible.", error);
+          renderPlacement(baseContent, true);
+        }
       }).catch(error => { if (!cancelled) { console.warn("Requested placement calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
       return () => { cancelled = true; };
     }
@@ -14517,7 +14542,12 @@ export function App() {
             <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
           </Suspense>
         </>
-      ) : skyDetailRoutePath?.startsWith("sky/") ? (
+      ) : skyDetailRoutePath?.startsWith("sky/") && !(
+        sky
+        && skyPlacementFallbackStatus === "ready"
+        && /^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)
+        && !selectedSkyDetail
+      ) ? (
         skyStatus === "error" ? <PageLoadError message="The sky calculation could not load. Check your connection and try again." onRetry={() => setSkyRefreshKey(value => value + 1)} />
           : skyPlacementFallbackStatus === "error" && /^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)
             ? <PageLoadError message="The placement reading could not load. Please try again." onRetry={() => setSkyPlacementFallbackRetryKey(value => value + 1)} />
@@ -14630,6 +14660,7 @@ export function App() {
                     {isSkyLoading ? null : sky ? (
                       <SkyCards
                         onOpenEvent={openCalendarTransitDetail}
+                        onOpenDetail={openSkyDetail}
                         generatedContent={skyGeneratedContent}
                         sky={sky}
                         dateLabel={formatSkyFullChartDate(skyDate)}
@@ -15957,6 +15988,7 @@ function ChartWheelMini() {
 
 function SkyCards({
   onOpenEvent,
+  onOpenDetail,
   generatedContent,
   sky,
   dateLabel,
@@ -15964,6 +15996,7 @@ function SkyCards({
   onOpenChart
 }: {
   onOpenEvent: (event: LunarCalendarEvent) => void;
+  onOpenDetail: (detail: SkyDetail) => void;
   generatedContent: Map<string, LiveGeneratedContent>;
   sky: SkySnapshot;
   dateLabel: string;
@@ -16083,7 +16116,23 @@ function SkyCards({
             if (placement) {
               return (
                 <a key={index} className="sky-daily-summary__link" href={`#${skyPlacementRoutePath(placement)}`}
-                  aria-label={`Read about ${placement.planet} in ${placement.sign}`}>
+                  aria-label={`Read about ${placement.planet} in ${placement.sign}`}
+                  onClick={click => {
+                    if (click.metaKey || click.ctrlKey || click.shiftKey || click.altKey) return;
+                    click.preventDefault();
+                    onOpenDetail(currentSkyPlacementDetailArticle({
+                      aspects: sky.aspects,
+                      aspectFacts: sky.placementAspectFacts,
+                      generatedAt: sky.generatedAt,
+                      generatedContent,
+                      locationLatitude: sky.location.latitude,
+                      locationTimeZone: sky.location.timeZone,
+                      moonEvent: sky.moonEvent,
+                      onOpenDetail,
+                      position: placement,
+                      positions: skyNodeDisplayPositions(sky.positions)
+                    }));
+                  }}>
                   {part.text}
                 </a>
               );
