@@ -50,7 +50,7 @@ test('Editing a shared planet phrase stays on the placement that was opened', as
     await route.fulfill({ json: { ok: true, rows: url.pathname.endsWith('/generated-content') ? rows : [], statuses: [], nextCursor: null } });
   });
 
-  await page.goto('/#sky-writeups');
+  await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');
   await page.getByLabel('Sky placement planet or point').selectOption('sun');
   await page.getByLabel('Sky placement zodiac sign').selectOption('virgo');
   await page.getByLabel('Sky write-up motion').selectOption('direct');
