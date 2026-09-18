@@ -147,7 +147,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await page.goto('/admin/content/coverage');
     await expect(page.getByRole('heading', { name: 'Placement coverage' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Content coverage', exact: true })).toHaveCSS('font-size', '22px');
-    await expect(page.locator('.studio-surface').first()).toHaveCSS('background-color', theme === 'light' ? 'rgb(250, 253, 250)' : 'rgb(29, 37, 35)');
+    await expect(page.locator('.studio-surface').first()).toHaveCSS('background-color', theme === 'light' ? 'rgb(255, 255, 255)' : 'rgb(21, 23, 26)');
     await page.getByText('Authority chain', { exact: true }).click();
     await expect(page.getByText('Owner authority: Owner')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Refresh', exact: true })).toHaveAttribute('data-studio-component', 'button');
@@ -186,7 +186,7 @@ for (const view of ['attention', 'coverage']) for (const theme of ['light', 'dar
     await expect(alert).toHaveCSS('padding', '16px');
     await expect(alert).toHaveCSS('font-size', '16px');
     await expect(gate).toHaveCSS('padding', '24px');
-    await expect(gate).toHaveCSS('background-color', theme === 'light' ? 'rgb(250, 253, 250)' : 'rgb(29, 37, 35)');
+    await expect(gate).toHaveCSS('background-color', theme === 'light' ? 'rgb(255, 255, 255)' : 'rgb(21, 23, 26)');
     const intro = (await gate.locator('.admin-access-gate-intro').boundingBox())!;
     const actions = (await gate.locator('.admin-access-gate-actions').boundingBox())!;
     if (width === 390) expect(actions.y).toBeGreaterThan(intro.y + intro.height);

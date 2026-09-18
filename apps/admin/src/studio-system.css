@@ -216,8 +216,8 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-content-table-scroll .admin-content-table-scroll { border: 0; }
 #root .admin-dashboard .admin-content-table-scroll .admin-data-table-shell { border: 0; }
 #root .admin-dashboard .admin-content-row { cursor: pointer; }
-#root .admin-dashboard .admin-content-row:hover { background: var(--workspace-hover); }
-#root .admin-dashboard .admin-content-row.selected { background: var(--workspace-selected); }
+#root .admin-dashboard .admin-content-row:hover { background: var(--studio-table-row-hover); }
+#root .admin-dashboard .admin-content-row.selected { background: var(--studio-table-row-selected); }
 #root .admin-dashboard .admin-content-title-cell > :where(span,small) { display: block; }
 #root .admin-dashboard .admin-content-title-cell > small { margin-top: var(--workspace-field-gap); }
 #root .admin-dashboard :is(.admin-col-select,.admin-content-mobile-status) { display: none; }
@@ -491,6 +491,31 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-calendar-variables th:first-child { width: 28%; }
 #root .admin-dashboard .admin-calendar-variables th:last-child { width: 20%; }
 #root .admin-dashboard .admin-calendar-variables th .admin-field-hint { display: block; margin-top: var(--workspace-field-gap); }
+
+#root .admin-dashboard .studio-stack { display: grid; align-content: start; gap: var(--workspace-block-gap); }
+#root .admin-dashboard .studio-inline { display: flex; flex-wrap: wrap; min-width: 0; gap: var(--workspace-field-gap); }
+#root .admin-dashboard :is(.studio-stack,.studio-inline)[data-gap="xs"] { gap: var(--space-1); }
+#root .admin-dashboard :is(.studio-stack,.studio-inline)[data-gap="sm"] { gap: var(--workspace-field-gap); }
+#root .admin-dashboard :is(.studio-stack,.studio-inline)[data-gap="md"] { gap: var(--workspace-panel-inset); }
+#root .admin-dashboard :is(.studio-stack,.studio-inline)[data-gap="lg"] { gap: var(--workspace-block-gap); }
+#root .admin-dashboard :is(.studio-stack,.studio-inline)[data-gap="xl"] { gap: var(--workspace-gutter); }
+#root .admin-dashboard .studio-inline[data-align="start"] { align-items: start; }
+#root .admin-dashboard .studio-inline[data-align="center"] { align-items: center; }
+#root .admin-dashboard .studio-inline[data-justify="between"] { justify-content: space-between; }
+#root .admin-dashboard .studio-inline[data-justify="end"] { justify-content: end; }
+#root .admin-dashboard .studio-box[data-padding="sm"] { padding: var(--workspace-panel-inset); }
+#root .admin-dashboard .studio-box[data-padding="md"] { padding: var(--workspace-card-padding); }
+#root .admin-dashboard .studio-box[data-padding="lg"] { padding: var(--workspace-gutter); }
+#root .admin-dashboard .studio-box[data-radius="sm"] { border-radius: var(--workspace-control-radius); }
+#root .admin-dashboard .studio-box[data-radius="md"] { border-radius: var(--workspace-radius); }
+#root .admin-dashboard .studio-container { width: 100%; min-width: 0; max-width: var(--workspace-max-width); }
+#root .admin-dashboard .studio-text { margin: 0; overflow-wrap: anywhere; }
+#root .admin-dashboard .studio-text[data-size="body"] { font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+#root .admin-dashboard .studio-text[data-size="meta"] { font-family: var(--font-label); font-size: var(--type-meta-size); font-weight: var(--weight-regular); line-height: var(--leading-meta); letter-spacing: var(--tracking-body); }
+#root .admin-dashboard .studio-text[data-size="label"] { font-family: var(--font-label); font-size: var(--type-label-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); }
+#root .admin-dashboard .studio-text[data-tone="primary"] { color: var(--studio-text-primary); }
+#root .admin-dashboard .studio-text[data-tone="secondary"] { color: var(--studio-text-secondary); }
+#root .admin-dashboard .studio-preview-canvas { background: var(--studio-preview-canvas); color: var(--studio-text-primary); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--studio-border-default); border-radius: var(--workspace-control-radius); }
 
 @media (max-width: 720px) {
   #root .admin-dashboard :is(.studio-variable-card,.studio-variable-controls) { padding: var(--workspace-panel-inset); }

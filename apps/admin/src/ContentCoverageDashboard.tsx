@@ -1,8 +1,9 @@
 import { getStudioTheme } from "./studioTheme";
 import "./studio-system.css";
-import { StudioButton } from "./StudioControls";
-import { AdminDisclosureSummary } from "./AdminNativeControls";
-import { AdminDataTable } from "./AdminBrowseComponents";
+import { AdminDataTable, AdminDisclosureSummary, StudioButton } from "./studio-ds/components";
+import { ListPage } from "./studio-ds/page-templates";
+import { MetricCard } from "./studio-ds/patterns";
+import { metricGrid, surfacePanel, surfaceSection, tableScroll } from "./studio-ds/recipes";
 import { AlertTriangle, ArrowLeft, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
@@ -124,7 +125,7 @@ function CoverageDashboard() {
 
   return (
     <main className="admin-dashboard studio-standalone" data-studio-theme={getStudioTheme()} data-theme={getStudioTheme()}>
-      <section className="admin-main" >
+      <ListPage>
         {error && <p role="alert">{error}</p>}
         <header className="admin-dashboard-header">
           <div>
@@ -169,19 +170,19 @@ function CoverageDashboard() {
 
         {payload && (
           <>
-            <section className="studio-surface studio-section" aria-label="Coverage summary">
-              <div className="admin-status-grid">
-                <article className="admin-status-card"><span>Complete corpora</span><strong>{payload.summary.complete}</strong></article>
-                <article className="admin-status-card"><span>Incomplete corpora</span><strong>{payload.summary.incomplete}</strong></article>
-                <article className="admin-status-card"><span>Required decisions</span><strong>{payload.summary.unresolvedIssues}</strong></article>
-                <article className="admin-status-card"><span>Optional enrichment</span><strong>{payload.summary.unresolvedOptionalIssues}</strong></article>
-                <article className="admin-status-card"><span>Required source records</span><strong>{payload.summary.unresolvedQueue}</strong></article>
-                <article className="admin-status-card"><span>Resolved source history</span><strong>{payload.summary.unresolvedShadowed + payload.summary.unresolvedRetired}</strong></article>
+            <section className={surfaceSection} aria-label="Coverage summary">
+              <div className={metricGrid}>
+                <MetricCard label="Complete corpora" value={payload.summary.complete} />
+                <MetricCard label="Incomplete corpora" value={payload.summary.incomplete} />
+                <MetricCard label="Required decisions" value={payload.summary.unresolvedIssues} />
+                <MetricCard label="Optional enrichment" value={payload.summary.unresolvedOptionalIssues} />
+                <MetricCard label="Required source records" value={payload.summary.unresolvedQueue} />
+                <MetricCard label="Resolved source history" value={payload.summary.unresolvedShadowed + payload.summary.unresolvedRetired} />
               </div>
             </section>
 
             {Object.keys(payload.notes.unresolvedWorkload).length > 0 && (
-              <section className="studio-surface" aria-label="Editorial backlog classes">
+              <section className={surfacePanel} aria-label="Editorial backlog classes">
                 <p className="admin-eyebrow">Required editorial work</p>
                 {Object.entries(payload.notes.unresolvedWorkload).map(([workClass, counts]) => (
                   <p key={workClass} >
@@ -195,7 +196,7 @@ function CoverageDashboard() {
             )}
 
             {Object.keys(payload.notes.unresolvedOptionalWorkload).length > 0 && (
-              <section className="studio-surface" aria-label="Optional editorial enrichment">
+              <section className={surfacePanel} aria-label="Optional editorial enrichment">
                 <p className="admin-eyebrow">Optional enrichment</p>
                 {Object.entries(payload.notes.unresolvedOptionalWorkload).map(([workClass, counts]) => (
                   <p key={workClass} >
@@ -209,7 +210,7 @@ function CoverageDashboard() {
             )}
 
             {payload.readerEligibility && (
-              <section className="studio-surface" aria-label="Reader database eligibility">
+              <section className={surfacePanel} aria-label="Reader database eligibility">
                 <p className="admin-eyebrow">Database overlay rule</p>
                 <strong>Actually serving requires all three conditions</strong>
                 <p >
@@ -222,7 +223,7 @@ function CoverageDashboard() {
             )}
 
             {payload.notes.friendsIntentionalGap && (
-              <section className="studio-surface">
+              <section className={surfacePanel}>
                 <AlertTriangle size={18} aria-hidden="true" />
                 <div>
                   <strong>Friends coverage has a visible gap</strong>
@@ -232,7 +233,7 @@ function CoverageDashboard() {
             )}
 
             <section className="admin-list-panel" aria-label="Content corpus coverage">
-              <div className="admin-content-table-scroll">
+              <div className={tableScroll}>
                 {payload.coverage.length > 0 ? (
                   <AdminDataTable label="Content corpus coverage" columns={["Corpus", "State", "Ready", "Detail", "Authority"]}>
                     {payload.coverage.map((row) => (
@@ -264,12 +265,12 @@ function CoverageDashboard() {
               </div>
             </section>
 
-            <p className="studio-surface admin-field-hint">
+            <p className={`${surfacePanel} admin-field-hint`}>
               Authority: {payload.authority}. Calculated {new Date(payload.generatedAt).toLocaleString()}.
             </p>
           </>
         )}
-      </section>
+      </ListPage>
     </main>
   );
 }

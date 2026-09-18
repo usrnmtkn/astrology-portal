@@ -1,6 +1,9 @@
 import { getStudioTheme } from "./studioTheme";
 import "./studio-system.css";
-import { StudioButton } from "./StudioControls";
+import { StudioButton } from "./studio-ds/components";
+import { ListPage } from "./studio-ds/page-templates";
+import { MetricCard } from "./studio-ds/patterns";
+import { emptyState, metricGrid } from "./studio-ds/recipes";
 import { AlertTriangle, ArrowLeft, CheckCircle2, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
@@ -200,7 +203,7 @@ export default function NeedsAttentionDashboard() {
 
   return (
     <main className="admin-dashboard studio-standalone" data-studio-theme={getStudioTheme()} data-theme={getStudioTheme()}>
-      <section className="admin-main">
+      <ListPage>
         {error && <p role="alert">{error}</p>}
         <header className="admin-dashboard-header">
           <div>
@@ -232,15 +235,15 @@ export default function NeedsAttentionDashboard() {
 
         {coverage && (
           <>
-            <section className="admin-status-grid" aria-label="Needs attention summary">
-              <article className="admin-status-card"><span>Needs attention</span><strong>{items.length}</strong></article>
-              <article className="admin-status-card"><span>Healthy corpora</span><strong>{coverage.summary.complete}</strong></article>
-              <article className="admin-status-card"><span>Optional enrichment</span><strong>{coverage.summary.unresolvedOptionalIssues}</strong></article>
-              <article className="admin-status-card"><span>Historical, not actionable</span><strong>{coverage.summary.unresolvedShadowed + coverage.summary.unresolvedRetired}</strong></article>
+            <section className={metricGrid} aria-label="Needs attention summary">
+              <MetricCard label="Needs attention" value={items.length} />
+              <MetricCard label="Healthy corpora" value={coverage.summary.complete} />
+              <MetricCard label="Optional enrichment" value={coverage.summary.unresolvedOptionalIssues} />
+              <MetricCard label="Historical, not actionable" value={coverage.summary.unresolvedShadowed + coverage.summary.unresolvedRetired} />
             </section>
 
             {items.length === 0 ? (
-              <section className="admin-empty-state" aria-label="No required content attention">
+              <section className={emptyState} aria-label="No required content attention">
                 <CheckCircle2 size={20} aria-hidden="true" />
                 <strong>No required content work is waiting.</strong>
                 <p>Required editorial decisions, known publishing errors, published-but-unconnected rows, and required corpus gaps are all clear. Optional enrichment remains available separately.</p>
@@ -289,7 +292,7 @@ export default function NeedsAttentionDashboard() {
             <p className="admin-field-hint">Coverage calculated {new Date(coverage.generatedAt).toLocaleString()}.</p>
           </>
         )}
-      </section>
+      </ListPage>
     </main>
   );
 }
