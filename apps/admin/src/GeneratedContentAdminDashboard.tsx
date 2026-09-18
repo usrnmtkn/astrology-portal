@@ -194,6 +194,7 @@ const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview
 const TransitNatalPreviewOptions = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalPreviewOptions })));
 const TransitNatalExactSourceAction = lazy(() => import("./TransitNatalReaderPreview").then(module => ({ default: module.TransitNatalExactSourceAction })));
 const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
+const BondEffectPagePreview = lazy(() => import("./BondEffectPagePreview"));
 const ImportedArticleHoroscopesEditor = lazy(() => import("./ImportedArticleHoroscopesEditor"));
 const StudioEditorReviewPanels = lazy(() => import('./StudioEditorReviewPanels'));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
@@ -5173,13 +5174,20 @@ export function GeneratedContentAdminDashboard() {
     setIsLoading(true);
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
-        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1${fieldPath ? "&includePackageSource=true" : ""}`,
+        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1&includePackageSource=true`,
         secret
       );
       if (!Array.isArray(payload.rows) || payload.rows.some(candidate => candidate.content_key !== contentKey)) throw new Error("The selected source could not be verified.");
       const row = payload.rows.find(candidate => candidate.content_key === contentKey);
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
-      if (!row && payload.packageSource) { await openPackagedTransitSource(payload.packageSource, contentKey, fieldPath); return; }
+      if (!row && payload.packageSource) {
+        if (isDynamicTransitNatalExactKey(contentKey) || contentKey.startsWith("authored/transit-return/")) {
+          await openPackagedTransitSource(payload.packageSource, contentKey, fieldPath);
+          return;
+        }
+        await openPackagedFallbackSource(payload.packageSource, contentKey, label, fieldPath);
+        return;
+      }
       if (!row) throw new Error(`${label} is not materialized in Content Studio (${contentKey}).`);
       setRows((current) => [row, ...current.filter(candidate => candidate.id !== row.id)]);
       if (!await openRow(row, null, fieldPath)) return;
@@ -7520,6 +7528,17 @@ export function GeneratedContentAdminDashboard() {
     scrollEditorToTop(fieldPath);
   }
 
+  async function openPackagedFallbackSource(source: Record<string, unknown>, contentKey: string, label: string, fieldPath?: string) {
+    const { transitNatalPackagedSourceDraft } = await import("./transitNatalPackagedSource");
+    const packagedDraft = transitNatalPackagedSourceDraft(source, contentKey);
+    if (!confirmSkyEditorNavigation()) return;
+    setSelectedRowId(null);
+    setCompositionEditorContext(null);
+    setDraft(packagedDraft);
+    setMessage(`Opened ${label} from the packaged source. Saving keeps a draft; it does not publish.`);
+    scrollEditorToTop(fieldPath);
+  }
+
   async function openExactTransitNatalSource(selection: TransitNatalContact & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>) {
     const key = transitNatalExactContentKey(selection);
     if (!key) return;
@@ -9801,6 +9820,11 @@ export function GeneratedContentAdminDashboard() {
                       <p>{fallbackEditorGuidance.audienceHint}</p>
                     </div>
                   )}
+                  {isBondEffectDraft && (
+                    <p>
+                      This row is only the opening on the Friends Between you two page. The assembled page below also includes What this activates and a calculated astrology line.
+                    </p>
+                  )}
                 </section>
               )}
               {isAuthoredPackageCard && (
@@ -10363,6 +10387,17 @@ export function GeneratedContentAdminDashboard() {
               {!fallbackEditorGuidance && !isAuthoredTransitAspectDraft && <small className="admin-field-hint">Used when the app describes this person to a friend or another chart viewer.</small>}
               {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
+          )}
+          {isBondEffectDraft && (
+            <Suspense fallback={<PageLoading compact message="Opening the Friends page…" />}>
+              <BondEffectPagePreview
+                contentKey={currentDraft.contentKey}
+                youText={packageFieldString(currentDraft, "body_you")}
+                theyText={packageFieldString(currentDraft, "body_they")}
+                secret={secret}
+                onOpenSource={(sourceKey, label, field) => void openContentKeyRow(sourceKey, label, false, field)}
+              />
+            </Suspense>
           )}
           {selectedRow && <Suspense fallback={<PageLoading message="Loading publication checks…" />}><StudioEditorReviewPanels row={selectedRow} credential={secret} unsaved={draftHasUnsavedChanges} busy={isLoading}
             isPackageDraft={isPackageDraft} articleSaveState={skyArticleEditor?.saveState}
