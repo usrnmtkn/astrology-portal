@@ -202,3 +202,55 @@ test("inventory loading reports progress in the sidebar without an overlay over 
     await expect(page.locator(".admin-save-toast").filter({ hasText: /Loaded \d+.*content records/ })).toHaveCount(0);
   } finally { release(); }
 });
+
+test("Natal Aspect filters sit in a canvas card and transit finders stay flat in the tab panel", async ({ page }) => {
+  await isolate(page);
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await page.goto("/admin/content#exact-content?category=Natal+Aspects");
+  const filters = page.getByRole("region", { name: "Natal aspect filters" });
+  await expect(filters).toBeVisible();
+  await expect(filters).toHaveClass(/studio-surface/);
+  const filterBackground = await filters.evaluate(element => getComputedStyle(element).backgroundColor);
+  const canvasBackground = await page.locator("main.admin-dashboard").evaluate(element => getComputedStyle(element).backgroundColor);
+  expect(filterBackground).not.toEqual(canvasBackground);
+
+  await page.goto(housePath);
+  const house = page.getByRole("region", { name: "House Transits source finder" });
+  await expect(house.getByRole("heading", { level: 3, name: "Sun in Aries through your 1st house", exact: true })).toBeVisible();
+  expect(await house.locator(".admin-natal-placement-finder-heading").evaluate(element => Boolean(element.closest(".studio-surface")))).toBe(false);
+  expect(await house.locator(".admin-natal-placement-selectors").evaluate(element => Boolean(element.closest(".studio-surface")))).toBe(false);
+});
+
+test("open mobile navigation keeps the brand mark free of page titles", async ({ page }) => {
+  await isolate(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/admin/content#exact-content?category=Natal+Aspects");
+  const mark = page.locator(".admin-brand-mark");
+  await expect(mark).toHaveText("TLDR");
+  const toggle = page.getByRole("button", { name: "Open Content Studio navigation" });
+  await expect(toggle).toBeVisible();
+  await expect(toggle).not.toContainText("Write-ups");
+  const markBox = await mark.boundingBox();
+  const toggleBox = await toggle.boundingBox();
+  expect(markBox && toggleBox).toBeTruthy();
+  expect(toggleBox!.x).toBeGreaterThan(markBox!.x + markBox!.width);
+  await toggle.click();
+  await expect(page.getByRole("button", { name: "Hide Content Studio navigation" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Natal Aspects" })).toBeVisible();
+  await expect(mark).toHaveText("TLDR");
+});
+
+test("sidebar can switch green chrome without replacing light and dark", async ({ page }) => {
+  await isolate(page);
+  await page.goto(catalogPath);
+  const dashboard = page.locator("main.admin-dashboard");
+  await expect(dashboard).toHaveAttribute("data-studio-palette", "neutral");
+  await expect(dashboard).toHaveAttribute("data-studio-theme", "light");
+  const canvasBefore = await dashboard.evaluate(element => getComputedStyle(element).backgroundColor);
+  await page.getByRole("button", { name: "Switch to green chrome", exact: true }).click();
+  await expect(dashboard).toHaveAttribute("data-studio-palette", "green");
+  await expect(dashboard).toHaveAttribute("data-studio-theme", "light");
+  expect(await dashboard.evaluate(element => getComputedStyle(element).backgroundColor)).not.toEqual(canvasBefore);
+  await expect(page.getByRole("button", { name: "Switch to black and white chrome", exact: true })).toBeVisible();
+});
+

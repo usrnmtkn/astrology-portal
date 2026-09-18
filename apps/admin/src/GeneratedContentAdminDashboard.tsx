@@ -3,10 +3,10 @@ import { rememberStudioEditorReturn } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
 import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import "./studio-system.css";
-import { StudioTabs, StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { StudioTabs, StudioButton, StudioIconButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { ArticleBlockStyleFields } from "./ArticleBlockStyleFields";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
-import { getStudioTheme, saveStudioTheme } from "./studioTheme";
+import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
@@ -38,8 +38,10 @@ import {
   FileText,
   Flag,
   KeyRound,
+  Menu,
   Moon,
   Orbit,
+  Palette,
   Plus,
   RefreshCw,
   Save,
@@ -2862,10 +2864,16 @@ const aspectContextForRow = memoByObject(aspectContextForRowUncached);
 
 export function GeneratedContentAdminDashboard() {
   const [studioTheme, setStudioTheme] = useState(getStudioTheme);
+  const [studioPalette, setStudioPalette] = useState(getStudioPalette);
   function toggleStudioTheme() {
     const next = studioTheme === "dark" ? "light" : "dark";
     setStudioTheme(next);
     saveStudioTheme(next);
+  }
+  function toggleStudioPalette() {
+    const next = studioPalette === "green" ? "neutral" : "green";
+    setStudioPalette(next);
+    saveStudioPalette(next);
   }
   const [secret, setSecret, setTransientCredential] = useSavedSecret();
   const [variableCreateRequest, setVariableCreateRequest] = useState(0);
@@ -6009,30 +6017,35 @@ export function GeneratedContentAdminDashboard() {
 
   const nav = (
     <aside className="admin-sidebar" data-mobile-open={isMobileNavOpen ? "true" : "false"}>
+      <div className="admin-sidebar-chrome">
       <a className="admin-brand" href="#review-queue" onClick={() => navigateAdminPage("reviewQueue")}>
-        <span className="admin-brand-mark">TL</span>
+        <span className="admin-brand-mark">TLDR</span>
         <span>
           <strong>Content Studio</strong>
           <small>Phrasebank admin</small>
         </span>
       </a>
-      <StudioButton
-        className="admin-mobile-nav-toggle"
-        type="button"
-        aria-controls="admin-content-navigation"
-        aria-expanded={isMobileNavOpen}
-        aria-label={isMobileNavOpen ? "Close Content Studio navigation" : "Open Content Studio navigation"}
-        onClick={() => setIsMobileNavOpen((open) => !open)}
-      >
-        <span>{currentPageTitle}</span>
-        {isMobileNavOpen
-          ? <X size={18} aria-hidden="true" />
-          : <span className="admin-mobile-nav-icon" aria-hidden="true"><i /><i /><i /></span>}
-      </StudioButton>
+      <div className="admin-theme-controls">
       <StudioButton type="button" className="admin-theme-toggle" onClick={toggleStudioTheme} aria-label={`Switch to ${studioTheme === "dark" ? "light" : "dark"} theme`}>
         {studioTheme === "dark" ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
         <span>{studioTheme === "dark" ? "Light theme" : "Dark theme"}</span>
       </StudioButton>
+      <StudioButton type="button" className="admin-palette-toggle" onClick={toggleStudioPalette} aria-label={`Switch to ${studioPalette === "green" ? "black and white" : "green"} chrome`}>
+        <Palette size={16} aria-hidden="true" />
+        <span>{studioPalette === "green" ? "Black and white" : "Green theme"}</span>
+      </StudioButton>
+      <StudioIconButton
+        className="admin-mobile-nav-toggle"
+        type="button"
+        aria-controls="admin-content-navigation"
+        aria-expanded={isMobileNavOpen}
+        aria-label={isMobileNavOpen ? "Hide Content Studio navigation" : "Open Content Studio navigation"}
+        onClick={() => setIsMobileNavOpen((open) => !open)}
+      >
+        {isMobileNavOpen ? <X size={18} aria-hidden="true" /> : <Menu size={18} aria-hidden="true" />}
+      </StudioIconButton>
+      </div>
+      </div>
       <nav id="admin-content-navigation" className="admin-nav" aria-label="Content operations">
         {primaryAdminNavGroups.map((group) => (
         <section className="admin-nav-section" aria-label={group} key={group}>
@@ -6172,7 +6185,7 @@ export function GeneratedContentAdminDashboard() {
 
   return (
     <ContentLiveStatusProvider value={loadLiveStatus}>
-    <main className="admin-dashboard" data-studio-theme={studioTheme} data-theme={studioTheme}>
+    <main className="admin-dashboard" {...studioShellAttributes(studioTheme, studioPalette)}>
       {nav}
       <section className={`admin-main${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
         {message && (

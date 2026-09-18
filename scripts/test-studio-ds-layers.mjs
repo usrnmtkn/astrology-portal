@@ -8,6 +8,12 @@ const recipes = await readFile(path.join(root, "recipes.ts"), "utf8");
 
 assert.doesNotMatch(recipes, /<\w/, "Recipes must not contain JSX");
 assert.doesNotMatch(theme, /Inter|Manrope|JetBrains Mono/, "Studio tokens must not import Ghost fonts");
+assert.match(theme, /--workspace-canvas:\s*light-dark\(#f4f4f5,\s*#111213\)/i, "Default Studio chrome must stay black-and-white");
+assert.match(theme, /\[data-studio-palette="green"\][\s\S]*--workspace-primary:\s*light-dark\(#006b5b,\s*#59dbc1\)/i, "Green chrome must remain a selectable alternative");
+
+const themeModule = await readFile("apps/admin/src/studioTheme.ts", "utf8");
+assert.match(themeModule, /StudioPalette = "neutral" \| "green"/, "Studio palette must be an explicit chrome choice");
+assert.match(themeModule, /tldrastro:studio-palette/, "Green chrome must persist separately from light/dark");
 
 const aliases = [
   ["--studio-surface-page", "--workspace-canvas"],

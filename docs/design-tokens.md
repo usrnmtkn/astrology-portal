@@ -55,3 +55,5 @@ Use the shared spacing primitives before local values:
 | Small display title | 20px | Newsreader |
 | Large fixed title | 24px | Newsreader |
 | Page and hero display | `clamp(...)` | Newsreader |
+
+Reader UI layers, recipes, and the agent-readable `apps/web/DESIGN.md` live in [the live design system](live-design-system.md).

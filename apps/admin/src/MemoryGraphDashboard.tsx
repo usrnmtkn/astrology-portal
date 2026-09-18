@@ -1,4 +1,4 @@
-import { getStudioTheme } from "./studioTheme";
+import { studioShellAttributes } from "./studioTheme";
 import "./studio-system.css";
 import { StudioButton, StudioInput } from "./StudioControls";
 import { memo, useEffect, useRef, useState } from 'react';
@@ -137,8 +137,8 @@ export default function MemoryGraphDashboard() {
     if (value) { rejectedCredential.current = ''; emergencyCredential.current = value; setCredential(value); setRefresh(value => value + 1); }
   }
   const back = <a className="memory-site-back" href="/admin/content" aria-label="Back to Content Studio"><svg viewBox="0 -960 960 960" aria-hidden="true"><path fill="currentColor" d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" /></svg>Back</a>;
-  if (!credential) return <main className="admin-dashboard memory-access studio-standalone" data-studio-theme={getStudioTheme()}><section className="admin-main">{error && <p className="memory-access-error" role="alert">{error}</p>}<header className="admin-dashboard-header"><div>{back}<h1>Memory graph</h1></div></header>{booting ? <PageLoading compact message="Checking owner access…" /> : <AdminAccessGate disabled={!normalizeAdminSecret(secret)} onChange={setSecret} onSubmit={submitSecret} value={secret} />}</section></main>;
-  return <main className="admin-dashboard memory-is-open studio-standalone" data-studio-theme={getStudioTheme()}>
+  if (!credential) return <main className="admin-dashboard memory-access studio-standalone" {...studioShellAttributes()}><section className="admin-main">{error && <p className="memory-access-error" role="alert">{error}</p>}<header className="admin-dashboard-header"><div>{back}<h1>Memory graph</h1></div></header>{booting ? <PageLoading compact message="Checking owner access…" /> : <AdminAccessGate disabled={!normalizeAdminSecret(secret)} onChange={setSecret} onSubmit={submitSecret} value={secret} />}</section></main>;
+  return <main className="admin-dashboard memory-is-open studio-standalone" {...studioShellAttributes()}>
     <h1 className="memory-sr-only">Memory graph</h1>
     <header className="memory-toolbar">
     {error && <div className="memory-error" role="alert"><p>{error}</p><StudioButton type="button" onClick={() => setRefresh(value => value + 1)}>Try again</StudioButton></div>}

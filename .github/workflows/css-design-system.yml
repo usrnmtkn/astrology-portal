@@ -7,7 +7,13 @@ on:
       - "apps/web/src/styles.css"
       - "apps/admin/src/**/*.css"
       - "apps/admin/src/studio-ds/**"
+      - "apps/web/src/ds/**"
+      - "apps/web/DESIGN.md"
+      - "scripts/test-live-ds-layers.mjs"
+      - "scripts/generate-live-ds-design-md.mjs"
       - "scripts/test-studio-ds-layers.mjs"
+      - "scripts/test-studio-theme.mjs"
+      - "apps/admin/src/studioTheme.ts"
       - ".github/workflows/css-design-system.yml"
   push:
     branches:
@@ -17,7 +23,13 @@ on:
       - "apps/web/src/styles.css"
       - "apps/admin/src/**/*.css"
       - "apps/admin/src/studio-ds/**"
+      - "apps/web/src/ds/**"
+      - "apps/web/DESIGN.md"
+      - "scripts/test-live-ds-layers.mjs"
+      - "scripts/generate-live-ds-design-md.mjs"
       - "scripts/test-studio-ds-layers.mjs"
+      - "scripts/test-studio-theme.mjs"
+      - "apps/admin/src/studioTheme.ts"
       - ".github/workflows/css-design-system.yml"
 
 concurrency:
@@ -46,3 +58,5 @@ jobs:
         run: node scripts/test-studio-layer-tokens.mjs
       - name: Verify Studio Shade-shaped layers
         run: node scripts/test-studio-ds-layers.mjs
+      - name: Verify live reader design-system layers
+        run: node scripts/test-live-ds-layers.mjs && node scripts/generate-live-ds-design-md.mjs --check

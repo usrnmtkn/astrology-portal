@@ -2,7 +2,7 @@ import "./studio-system.css";
 import { StudioButton } from "./StudioControls";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
-import { getStudioTheme } from "./studioTheme";
+import { studioShellAttributes } from "./studioTheme";
 import { PageLoading } from "../../web/src/components/PageLoading";
 
 export function AdminPageError({ detail, onRetry, recoveryHref }: {
@@ -10,7 +10,7 @@ export function AdminPageError({ detail, onRetry, recoveryHref }: {
   onRetry: () => void;
   recoveryHref: string;
 }) {
-  return <main className="admin-dashboard admin-page-error" data-studio-theme={getStudioTheme()}>
+  return <main className="admin-dashboard admin-page-error" {...studioShellAttributes()}>
     <section className="admin-page-error-panel" aria-label="Page recovery">
       <p role="alert"><AlertCircle size={18} aria-hidden="true" />This page could not load.</p>
       <div className="admin-page-error-actions">
@@ -27,8 +27,7 @@ export function AdminPageError({ detail, onRetry, recoveryHref }: {
 }
 
 export function AdminPageLoading({ label }: { label: string }) {
-  const theme = getStudioTheme();
-  return <main className="admin-dashboard studio-loading-page" data-studio-theme={theme} data-theme={theme}>
+  return <main className="admin-dashboard studio-loading-page" {...studioShellAttributes()}>
     <PageLoading message={label} />
   </main>;
 }

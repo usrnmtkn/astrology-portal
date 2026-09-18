@@ -30,7 +30,7 @@ assert.match(controls, /Save & return/u, "Nested source publication must expose 
 assert.match(controls, /Save draft & return/u, "Nested source drafts must expose Save draft & return.");
 assert.match(controls, /returnToStudioParentEditor/u, "Nested editor close must return to the parent authoring context.");
 assert.match(controls, /text\.includes\("Not live"\)[\s\S]*"Inactive"/u, "Legacy button statuses must normalize Not live to Inactive.");
-assert.match(controls, /ariaLabel\?\.startsWith\("Close"\)/u, "Visible close buttons must opt into the shared icon-button treatment.");
+assert.match(controls, /ariaLabel\?\.startsWith\("Close"\) && !\/\[A-Za-z\]\/u\.test\(text\)/u, "Labeled close controls with visible words must not shrink to the icon-button treatment.");
 
 assert.match(compatibility, /\.admin-status/u, "Legacy status compatibility must cover old status pills.");
 assert.match(compatibility, /\.admin-editor-save-state/u, "Legacy editor footer state must be normalized before it can surface to an editor.");
@@ -81,6 +81,9 @@ assert.match(css, /\.studio-icon-button/u);
 assert.match(css, /\.admin-editor-close/u);
 assert.match(css, /\.admin-variables-rail-close/u);
 assert.doesNotMatch(css, /button\[aria-label\^="Close/u, "Invisible backdrop dismiss buttons must not receive visible close-button styling.");
+assert.match(dashboard, /StudioIconButton[\s\S]*admin-mobile-nav-toggle/u, "The mobile navigation control must use the shared icon-button component.");
+assert.match(css, /\.admin-mobile-nav-toggle/u, "The mobile navigation toggle must share the icon-button geometry.");
+assert.doesNotMatch(css, /:not\(\.admin-mobile-nav-toggle\)/u, "The mobile navigation toggle must not be excluded from icon-button sizing.");
 assert.match(css, /\.studio-status-badge/u);
 
 for (const token of [

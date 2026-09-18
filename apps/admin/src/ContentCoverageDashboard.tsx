@@ -1,4 +1,4 @@
-import { getStudioTheme } from "./studioTheme";
+import { studioShellAttributes } from "./studioTheme";
 import "./studio-system.css";
 import { AdminDataTable, AdminDisclosureSummary, StudioButton } from "./studio-ds/components";
 import { ListPage } from "./studio-ds/page-templates";
@@ -124,7 +124,7 @@ function CoverageDashboard() {
   }
 
   return (
-    <main className="admin-dashboard studio-standalone" data-studio-theme={getStudioTheme()} data-theme={getStudioTheme()}>
+    <main className="admin-dashboard studio-standalone" {...studioShellAttributes()}>
       <ListPage>
         {error && <p role="alert">{error}</p>}
         <header className="admin-dashboard-header">

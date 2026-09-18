@@ -1,0 +1,70 @@
+.live-ds-stack {
+  display: grid;
+  align-content: start;
+  gap: var(--stack-gap);
+}
+
+.live-ds-inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  gap: var(--inline-gap);
+}
+
+.live-ds-inline[data-align="center"] { align-items: center; }
+.live-ds-inline[data-justify="between"] { justify-content: space-between; }
+.live-ds-inline[data-justify="end"] { justify-content: end; }
+
+.live-ds-stack[data-gap="xs"],
+.live-ds-inline[data-gap="xs"] { gap: var(--space-1); }
+.live-ds-stack[data-gap="sm"],
+.live-ds-inline[data-gap="sm"] { gap: var(--space-2); }
+.live-ds-stack[data-gap="md"],
+.live-ds-inline[data-gap="md"] { gap: var(--space-3); }
+.live-ds-stack[data-gap="lg"],
+.live-ds-inline[data-gap="lg"] { gap: var(--stack-gap); }
+.live-ds-stack[data-gap="xl"],
+.live-ds-inline[data-gap="xl"] { gap: var(--section-gap); }
+
+.live-ds-box { min-width: 0; }
+.live-ds-box[data-padding="sm"] { padding: var(--card-row-padding-compact); }
+.live-ds-box[data-padding="md"] { padding: var(--card-padding); }
+.live-ds-box[data-padding="lg"] { padding: var(--sky-card-padding); }
+.live-ds-box[data-radius="sm"] { border-radius: var(--card-radius); }
+.live-ds-box[data-radius="md"] { border-radius: var(--radius); }
+
+.live-ds-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--card-list-gap);
+}
+
+.live-ds-container {
+  width: min(var(--container-app-wide), 100%);
+  margin-inline: auto;
+}
+
+.live-ds-text {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  color: var(--ink);
+}
+
+.live-ds-text[data-size="meta"] {
+  font-family: var(--font-ui);
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-meta);
+}
+
+.live-ds-text[data-size="label"] {
+  font-family: var(--font-label);
+  font-size: var(--type-label-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.live-ds-text[data-tone="secondary"] { color: var(--ink-2); }

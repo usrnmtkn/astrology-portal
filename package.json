@@ -104,7 +104,7 @@
     "qa:editorial-copy": "node scripts/run-editorial-writing-qa.mjs",
     "qa:article-voice": "npm run test:article-voice-routing -w @tldr/astro-knowledge",
     "test:aspect-warmth-harvest": "npm run test:aspect-warmth-harvest -w @tldr/astro-knowledge",
-    "qa:css-audit": "node scripts/run-css-consistency-audit.mjs && node scripts/run-css-token-integrity-audit.mjs && node scripts/run-studio-css-architecture-audit.mjs && node scripts/test-studio-ds-layers.mjs",
+    "qa:css-audit": "node scripts/run-css-consistency-audit.mjs && node scripts/run-css-token-integrity-audit.mjs && node scripts/run-studio-css-architecture-audit.mjs && node scripts/test-studio-ds-layers.mjs && node --experimental-strip-types scripts/test-studio-theme.mjs && node scripts/test-live-ds-layers.mjs && node scripts/generate-live-ds-design-md.mjs --check",
     "qa:bundle": "node scripts/check-web-bundle-budgets.mjs",
     "qa:form-typography": "node scripts/run-form-typography-audit.mjs",
     "qa:admin-boundary": "node scripts/audit-admin-web-boundaries.mjs && npm run guard:dev-ports",
