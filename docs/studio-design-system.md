@@ -17,11 +17,17 @@ Each layer may use layers below it. A primitive must not import a pattern. New w
 
 `StudioControls.tsx` supplies native button, input, and textarea components; `AdminNativeControls.tsx` supplies native selects and single-chevron disclosures. All controls forward native attributes and refs. Existing editing, review, and publication handlers remain in their owning components. This replacement was explicitly requested on 2026-09-11 after the earlier adapter pass.
 
-This is a desktop adaptation of the [reviewed design reference](https://www.figma.com/design/Bz33AN27vnzcl6ISZOqRd5?node-id=2-154), authorized on 2026-09-11 for type roles, control variants, and shape hierarchy. Owner direction on 2026-09-18 replaces the green chrome with a black-and-white workspace. Reader pages keep their own theme. Desktop spacing and responsive layouts are adaptations, not a pixel-identical mobile screen export. Studio uses system sans-serif and its existing Lucide icons without adding external font dependencies.
+This is a desktop adaptation of the [reviewed design reference](https://www.figma.com/design/Bz33AN27vnzcl6ISZOqRd5?node-id=2-154), authorized on 2026-09-11 for type roles, control variants, and shape hierarchy. Owner direction on 2026-09-18 keeps black-and-white as the default workspace chrome and restores the earlier green chrome as a selectable alternative. Reader pages keep their own theme. Desktop spacing and responsive layouts are adaptations, not a pixel-identical mobile screen export. Studio uses system sans-serif and its existing Lucide icons without adding external font dependencies.
 
-## Verified palette
+## Verified palettes
 
-Chrome values are the 2026-09-18 black-and-white workspace. Error, caution, and valid remain status colors, not brand. Light cards share one white fill; raised and hover steps exist mainly in dark theme.
+Studio chrome has two selectable palettes. Light and dark still come from `data-studio-theme`. The palette lives on `data-studio-palette`. Default is black-and-white (`neutral`). Green restores the pre-#938 workspace chrome. Switch from the sidebar: **Light theme** / **Dark theme** for contrast, and **Green theme** / **Black and white** for palette. Status colors, variable chips, and the reader app theme stay unchanged. The Memory graph keeps its own CSS and fonts.
+
+Error, caution, and valid remain status colors, not brand.
+
+### Black and white (`neutral`)
+
+Light cards share one white fill; raised and hover steps exist mainly in dark theme.
 
 | Role | Light | Dark |
 | --- | --- | --- |
@@ -35,6 +41,18 @@ Chrome values are the 2026-09-18 black-and-white workspace. Error, caution, and 
 | Error / error container / on container | `#BA1A1A` / `#FFDAD6` / `#410002` | `#FFB4AB` / `#93000A` / `#FFDAD6` |
 | Caution / container / on container | `#725B22` / `#FFDF98` / `#251A00` | `#E1C37F` / `#58440B` / `#FFDF98` |
 | Valid | `#2F6A39` | `#96D69A` |
+
+### Green (`green`)
+
+| Role | Light | Dark |
+| --- | --- | --- |
+| Canvas | `#EFF1EF` | `#191C1B` |
+| Surface / raised / highest | `#FAFDFA` | `#1D2523` / `#1F2B28` / `#233732` |
+| Hover | `#FAFDFA` | `#21312D` |
+| Primary / on primary | `#006B5B` / `#FFFFFF` | `#59DBC1` / `#00382E` |
+| Selected / on selected | `#CDE8E0` / `#06201A` | `#334B45` / `#CDE8E0` |
+| Text / secondary text | `#191C1B` / `#57605D` | `#C4C7C5` / `#A3ADA9` |
+| Outline / divider | `#6F7976` / `#BFC9C4` | `#89938F` / `#3F4946` |
 
 ## Foundations
 
@@ -132,13 +150,13 @@ Preview surfaces and assembly slots use the panel inset, canvas surface, thin bo
 
 ## Page and form containment
 
-Every workspace groups its introduction, navigation, filters, forms, and results into explicit surfaces. Add a component to the canonical surface family or use `studio-surface studio-section`; do not add a corrective stylesheet. A connected tab panel already owns its surface and inset, so embedded filter grids remain flat. Collections use one container per meaningful group rather than a card around each label or paragraph.
+Every workspace groups its introduction, navigation, filters, forms, and results into explicit surfaces. Add a component to the canonical surface family or use `studio-surface studio-section`; do not add a corrective stylesheet. A connected tab panel already owns its surface and inset, so embedded filter grids remain flat. Sky Write-up catalog filters already use an inner `studio-surface` inside that panel. Natal Aspect selectors sit on the canvas rather than in a tab panel, so they use `studio-surface studio-section`. Matching natal aspect source groups use the same card, with inner source rows flattened to dividers so cards do not nest. Collections use one container per meaningful group rather than a card around each label or paragraph.
 
 Review Queue groups its command bar, view choices, filter disclosure, and status choices separately with the shared section gap. Library, template, vocabulary, slot, Surface Map, and Connection controls follow the same containment contract. Surface Map source cards and its supporting catalog own their surfaces. Standalone coverage headers and the Memory toolbar use the same surface family as the main Studio.
 
 Page-level errors render before the page header, using the shared alert palette and inset. Success notifications may remain transient toasts. Memory errors occupy the first full-width row of its toolbar. Authentication forms retain their existing access behavior inside the shared access card.
 
-The route inventory regression opens all workspace routes and supported view variants, expands disclosures and hidden filters, and checks all five create editors in light/dark themes at desktop/mobile widths. It asserts visible content and form controls have a surface ancestor and that the page does not overflow horizontally. Standalone coverage and Memory tests verify their separate route shells and recovery states. These checks use isolated fixtures, not production data.
+The route inventory regression opens all workspace routes and supported view variants, expands disclosures and hidden filters, and checks all five create editors in light/dark themes at desktop/mobile widths. These checks use the default black-and-white palette unless a test selects green chrome. It asserts visible content and form controls have a surface ancestor and that the page does not overflow horizontally. Standalone coverage and Memory tests verify their separate route shells and recovery states. These checks use isolated fixtures, not production data.
 
 ## Stylesheet integrity
 

@@ -1,6 +1,7 @@
 import { StudioButton } from "./StudioControls";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { AdminSelect } from "./AdminNativeControls";
+import { surfaceSection } from "./studio-ds/recipes";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import {
   natalAspectDisplayTitle,
@@ -70,29 +71,31 @@ export default function NatalAspectSourceFinder({
   return (
     <section className="admin-natal-placement-finder" aria-label="Find natal aspect source writing">
       <h2 className="sr-only">Natal aspect</h2>
-      <div className="admin-natal-placement-selectors">
-        <label>
-          <span>Planet or point</span>
-          <AdminSelect aria-label="Natal aspect planet or point" value={first} onChange={(event) => onSelectionChange({ first: event.target.value })}>
-            <option value="">Choose planet or point</option>
-            {options.first.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}
-          </AdminSelect>
-        </label>
-        <label>
-          <span>Aspect</span>
-          <AdminSelect aria-label="Natal aspect type" value={aspect} onChange={(event) => onSelectionChange({ aspect: event.target.value })}>
-            <option value="">Choose aspect</option>
-            {options.aspects.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}
-          </AdminSelect>
-        </label>
-        <label>
-          <span>Other planet or point</span>
-          <AdminSelect aria-label="Other natal aspect planet or point" value={second} onChange={(event) => onSelectionChange({ second: event.target.value })}>
-            <option value="">Choose planet or point</option>
-            {options.second.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}
-          </AdminSelect>
-        </label>
-      </div>
+      <section className={surfaceSection} aria-label="Natal aspect filters">
+        <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three">
+          <label>
+            <span>Planet or point</span>
+            <AdminSelect aria-label="Natal aspect planet or point" value={first} onChange={(event) => onSelectionChange({ first: event.target.value })}>
+              <option value="">Choose planet or point</option>
+              {options.first.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}
+            </AdminSelect>
+          </label>
+          <label>
+            <span>Aspect</span>
+            <AdminSelect aria-label="Natal aspect type" value={aspect} onChange={(event) => onSelectionChange({ aspect: event.target.value })}>
+              <option value="">Choose aspect</option>
+              {options.aspects.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}
+            </AdminSelect>
+          </label>
+          <label>
+            <span>Other planet or point</span>
+            <AdminSelect aria-label="Other natal aspect planet or point" value={second} onChange={(event) => onSelectionChange({ second: event.target.value })}>
+              <option value="">Choose planet or point</option>
+              {options.second.map((item) => <option value={item} key={item}>{titleCase(item)}</option>)}
+            </AdminSelect>
+          </label>
+        </div>
+      </section>
 
       {isLoading && exactRows.length === 0 && (
         <PageLoading message="Loading exact natal aspect passages…" />
@@ -120,7 +123,7 @@ export default function NatalAspectSourceFinder({
       )}
 
       {hasSelection && matches.length > 0 && (
-        <section className="admin-natal-source-group" aria-label="Matching natal aspect passages">
+        <section className={`${surfaceSection} admin-natal-source-group`} aria-label="Matching natal aspect passages">
           <header>
             <h3>{matches.length === 1 ? "Exact reader passage" : `${matches.length} matching passages`}</h3>
           </header>

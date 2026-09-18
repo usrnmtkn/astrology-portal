@@ -9194,10 +9194,10 @@ body,
 
 @media (max-width: 860px) {
   .admin-dashboard .admin-sidebar {
-    align-items: center;
-    display: grid;
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
     gap: var(--admin-space-lg);
-    grid-template-columns: minmax(0, 1fr) auto;
     padding: var(--admin-space-xl) var(--admin-space-3xl);
     position: sticky;
     top: 0;
@@ -9209,8 +9209,9 @@ body,
   }
 
   .admin-dashboard .admin-brand-mark {
-    height: 32px;
-    width: 32px;
+    height: auto;
+    min-height: var(--workspace-control-icon-space);
+    width: auto;
   }
 
   .admin-dashboard .admin-brand small {
@@ -9219,14 +9220,6 @@ body,
 
   .admin-dashboard .admin-mobile-nav-toggle {
     display: inline-flex;
-    gap: var(--admin-space-md);
-    max-width: 190px;
-  }
-
-  .admin-dashboard .admin-mobile-nav-toggle span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .admin-dashboard .admin-mobile-nav-icon {

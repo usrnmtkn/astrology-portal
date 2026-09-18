@@ -5308,7 +5308,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(mobileNavigation).toBeVisible();
     const mobileNavRhythm = await readPrimaryNavRhythm();
     expect(mobileNavRhythm).toEqual(desktopNavRhythm);
-    await page.getByRole("button", { name: "Close Content Studio navigation" }).click();
+    await page.getByRole("button", { name: "Hide Content Studio navigation" }).click();
     await expect(mobileNavigation).toBeHidden();
     const mobileFilterToggle = page.getByRole("button", { name: /Filters/ });
     const reviewQueueSearch = page.getByRole("textbox", { name: "Search review queue" });

@@ -133,3 +133,22 @@
   --tracking-label: normal;
   --tracking-pill: normal;
 }
+
+/* Optional pre-#938 green chrome. Light/dark still come from color-scheme. */
+:root .admin-dashboard[data-studio-palette="green"] {
+  --studio-surface-four: light-dark(#fafdfa, #22332f);
+  --workspace-canvas: light-dark(#eff1ef, #191c1b);
+  --workspace-surface: light-dark(#fafdfa, #1d2523);
+  --workspace-raised: light-dark(#fafdfa, #1f2b28);
+  --workspace-hover: light-dark(#fafdfa, #21312d);
+  --workspace-surface-highest: light-dark(#fafdfa, #233732);
+  --workspace-ink: light-dark(#191c1b, #c4c7c5);
+  --workspace-muted: light-dark(#57605d, #a3ada9);
+  --workspace-line: light-dark(#bfc9c4, #3f4946);
+  --workspace-line-strong: light-dark(#6f7976, #89938f);
+  --workspace-primary: light-dark(#006b5b, #59dbc1);
+  --workspace-on-primary: light-dark(#ffffff, #00382e);
+  --workspace-primary-hover: color-mix(in srgb, var(--workspace-primary) 92%, var(--workspace-on-primary));
+  --workspace-selected: light-dark(#cde8e0, #334b45);
+  --workspace-on-selected: light-dark(#06201a, #cde8e0);
+}

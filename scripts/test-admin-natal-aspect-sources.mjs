@@ -78,10 +78,13 @@ const theyCopyFieldIndex = dashboardSource.indexOf('aria-describedby={isExactNat
 assert.ok(theyNameHintIndex >= 0 && theyCopyFieldIndex > theyNameHintIndex, "The exact {{Name}} authoring hint must appear above the They copy field.");
 
 const finderSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalAspectSourceFinder.tsx"), "utf8");
-const firstLabelIndex = finderSource.indexOf("1. Planet or point");
-const aspectLabelIndex = finderSource.indexOf("2. Aspect");
-const secondLabelIndex = finderSource.indexOf("3. Other planet or point");
+const firstLabelIndex = finderSource.indexOf("Planet or point");
+const aspectLabelIndex = finderSource.indexOf(">Aspect<");
+const secondLabelIndex = finderSource.indexOf("Other planet or point");
 assert.ok(firstLabelIndex >= 0 && aspectLabelIndex > firstLabelIndex && secondLabelIndex > aspectLabelIndex, "Natal aspect selector labels must preserve the reader-friendly first body, aspect, second body order.");
+assert.match(finderSource, /className=\{surfaceSection\}|studio-surface studio-section/u, "Natal aspect selectors and matching passages must use the shared Studio card surface.");
+assert.doesNotMatch(dashboardSource, /Personal Transit filters|House Transit filters/u, "Tab-panel transit finders must not add a nested card around heading and fields.");
+assert.doesNotMatch(fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalPlacementSourceFinder.tsx"), "utf8"), /surfaceSection/u, "Natal Chart finders sit in a tab panel and must stay flat.");
 assert.match(finderSource, />Edit source</u, "Every matching exact natal aspect must open the standard editor.");
 assert.match(finderSource, /Write \{selectedTitle\}/u, "A missing exact aspect must offer a contextual writing action.");
 assert.match(finderSource, /onCreateSource\(natalAspectSourceDraft\(\{ first, aspect, second \}\)\)/u, "The contextual action must preserve the selected exact pair.");
