@@ -5,6 +5,7 @@ export type Astro101Block = {
   level?: number;
   body?: string;
   group?: boolean;
+  style?: string;
 };
 
 export type Astro101RelatedLink = {
@@ -47,7 +48,8 @@ export function astro101BlocksFromSections(sections: unknown): Astro101Block[] {
       heading: typeof entry.heading === "string" ? entry.heading : "",
       level: typeof entry.level === "number" ? entry.level : 2,
       body: typeof entry.body === "string" ? entry.body : "",
-      group: entry.group === true
+      group: entry.group === true,
+      style: typeof entry.style === "string" ? entry.style : ""
     };
   });
 }

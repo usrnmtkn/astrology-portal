@@ -13,8 +13,7 @@ test("Learn uses the shared full-page article layout", async ({ page }) => {
   const learnPage = page.locator(".learn-page");
   await expect(learnPage).toBeVisible({ timeout: 60_000 });
   await expect(page.locator(".learn-layout")).toBeVisible();
-  await expect(learnPage).toHaveClass(/article-page/);
-  await expect(learnPage.locator(".article-card").first()).toBeVisible();
+  await expect(learnPage.locator(".learn-sheet").first()).toBeVisible();
 
   const box = await learnPage.boundingBox();
   expect(box?.width ?? 0).toBeGreaterThan(1000);
@@ -25,6 +24,6 @@ test("Learn uses the shared full-page article layout", async ({ page }) => {
   expect(headingTags[0]).toBe("H1");
   expect(headingTags.slice(1).every((tag) => tag !== "H1")).toBeTruthy();
 
-  await expect(learnPage.locator(".article-eyebrow").first()).toHaveText(/Learn/i);
+  await expect(learnPage.locator(".learn-kicker").first()).toHaveText(/Learn/i);
   await expect(learnPage.getByRole("heading", { level: 1 })).toHaveText("Astro 101");
 });

@@ -11656,6 +11656,7 @@ export function App() {
       storePortalMode("learn");
       setLearnPath(normalized.replace(/\/+$/u, "") || "/learn");
       setMode("learn");
+      window.scrollTo(0, 0);
     }, (mode !== "learn" || learnPath !== normalized) && !isSignupMode);
   }
 
