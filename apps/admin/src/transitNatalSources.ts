@@ -202,10 +202,21 @@ export function transitNatalExactContentKey(selection: {
   return transitNatalContactContentKey(contactFields);
 }
 
+const TRANSIT_NATAL_HEAVY = new Set(["saturn", "uranus", "neptune", "pluto", "chiron"]);
+
 export function transitNatalSharedFallbackKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">) {
   if (!transitNatalExactContentKey(selection) || isEligibleTransitReturn(selection.planet, selection.natalPoint, selection.aspect)) return null;
-  const family = selection.aspect === "trine" || selection.aspect === "sextile" ? "soft" : "hard";
-  return `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${family}`;
+  if (selection.aspect === "trine" || selection.aspect === "sextile") {
+    return `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/soft`;
+  }
+  if (selection.aspect === "square" || selection.aspect === "opposition") {
+    return `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/hard`;
+  }
+  if (selection.aspect === "conjunction") {
+    const family = TRANSIT_NATAL_HEAVY.has(selection.planet) || TRANSIT_NATAL_HEAVY.has(selection.natalPoint) ? "hard" : "soft";
+    return `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${family}`;
+  }
+  return null;
 }
 
 export function transitNatalStarterCopy(source: Record<string, unknown> | null | undefined) {

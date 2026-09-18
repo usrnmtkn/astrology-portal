@@ -39,6 +39,7 @@ assert.match(
   "Where it lands must deep-link to House Transits."
 );
 assert.match(dashboard, /key\.includes\("bond-effect"\)/u, "Bond-effect rows must classify under the Friends fallback-hook section.");
+assert.match(dashboard, /matchesFallbackLibrarySearch/u, "Friends library search must accept reader contact titles such as Moon sextile Mars.");
 
 assert.match(friendTransits, /aria-label="Between you two"/u);
 assert.match(friendTransits, /Active for \{friendName\}/u);

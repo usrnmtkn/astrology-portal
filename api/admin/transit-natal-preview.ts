@@ -22,7 +22,8 @@ const manifest = require("../../apps/web/src/content/fallbackArchitectureV3/bund
 export function normalizeTransitNatalPreviewInput(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new AdminHttpError(400, "Choose a transit and natal point.");
   const input = value as Record<string, any>;
-  if (!transitNatalPlanets.includes(input.planet) || !transitNatalSigns.includes(input.sign)
+  const hasSign = input.sign === undefined || input.sign === "" || transitNatalSigns.includes(input.sign);
+  if (!transitNatalPlanets.includes(input.planet) || !hasSign
     || !transitNatalAspects.includes(input.aspect) || !transitNatalPoints.includes(input.natalPoint)
     || input.voice !== undefined && (typeof input.voice !== "string" || input.voice.length > 60)) {
     throw new AdminHttpError(400, "Choose a valid transit and natal point.");
@@ -32,7 +33,7 @@ export function normalizeTransitNatalPreviewInput(value: unknown) {
   }
   if (input.isRetrograde !== undefined && typeof input.isRetrograde !== "boolean") throw new AdminHttpError(400, "Invalid motion.");
   if (input.window !== undefined && (typeof input.window !== "string" || !input.window.trim() || input.window.length > 160 || /[<>{}]/u.test(input.window))) throw new AdminHttpError(400, "Invalid timing label.");
-  return { planet: input.planet, sign: input.sign, aspect: input.aspect, natalPoint: input.natalPoint, voice: input.voice || "you",
+  return { planet: input.planet, sign: transitNatalSigns.includes(input.sign) ? input.sign : "", aspect: input.aspect, natalPoint: input.natalPoint, voice: input.voice || "you",
     ...(input.pass !== undefined ? { pass: input.pass as number } : {}),
     ...(input.variant !== undefined ? { variant: input.variant as number } : {}),
     ...(input.isRetrograde !== undefined ? { isRetrograde: input.isRetrograde as boolean } : {}),

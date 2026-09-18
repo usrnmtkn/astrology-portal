@@ -1,4 +1,5 @@
 import { fallbackHookWords } from "./fallbackHookTitle";
+import { transitNatalAspects, transitNatalPlanets, transitNatalPoints, transitNatalSharedFallbackKey } from "./transitNatalSources";
 
 export type BondEffectContact = {
   planet: string;
@@ -15,9 +16,84 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export function parseBondEffectContentKey(contentKey: string): BondEffectContact | null {
-  const match = /^fallback-hook\/bond-effect-([a-z0-9-]+)\/([a-z0-9-]+)(?:\/variant-\d+)?$/u.exec(contentKey);
+  const normalized = contentKey.startsWith("fallback-hook/") ? contentKey : `fallback-hook/${contentKey}`;
+  const match = /^fallback-hook\/bond-effect-([a-z0-9-]+)\/([a-z0-9-]+)(?:\/variant-\d+)?$/u.exec(normalized);
   if (!match) return null;
   return { aspect: match[1], planet: match[2] };
+}
+
+const contactSearchStopwords = new Set([
+  "a", "an", "the", "your", "you", "natal", "compatibility", "effect", "between", "two", "aspect", "to"
+]);
+
+const contactSearchPoints = new Set<string>([...transitNatalPlanets, ...transitNatalPoints]);
+const contactSearchAspects = new Map<string, string>([
+  ...transitNatalAspects.map((aspect) => [aspect, aspect] as const),
+  ["conjunct", "conjunction"],
+  ["opposite", "opposition"]
+]);
+
+export type AstroContactSearch = {
+  transiting: string | null;
+  aspect: string | null;
+  natal: string | null;
+};
+
+export function parseAstroContactSearch(query: string): AstroContactSearch {
+  let text = ` ${query.toLowerCase()} `;
+  for (const point of [...contactSearchPoints].sort((left, right) => right.length - left.length)) {
+    const spaced = point.replace(/-/gu, " ");
+    text = text.replaceAll(` ${spaced} `, ` ${point} `);
+  }
+  const tokens = text
+    .replace(/[/_.:,"{}[\]]+/gu, " ")
+    .split(/\s+/u)
+    .filter((token) => token && !contactSearchStopwords.has(token));
+  const aspectToken = tokens.find((token) => contactSearchAspects.has(token));
+  const aspect = aspectToken ? contactSearchAspects.get(aspectToken) ?? null : null;
+  const points = tokens.filter((token) => token !== aspectToken && contactSearchPoints.has(token));
+  return { transiting: points[0] ?? null, aspect, natal: points[1] ?? null };
+}
+
+export function matchesBondEffectContactSearch(contentKey: string, query: string) {
+  const bond = parseBondEffectContentKey(contentKey);
+  const contact = parseAstroContactSearch(query);
+  if (!bond || (!contact.transiting && !contact.aspect)) return false;
+  if (contact.transiting && contact.transiting !== bond.planet) return false;
+  if (!contact.aspect) return true;
+  return bond.aspect === contact.aspect || bond.aspect === synastryAspectFamily(contact.aspect);
+}
+
+export function transitNatalSearchSelection(query: string) {
+  const contact = parseAstroContactSearch(query);
+  if (!contact.transiting || !contact.aspect || !contact.natal) return null;
+  if (!transitNatalPlanets.includes(contact.transiting as typeof transitNatalPlanets[number])) return null;
+  if (!transitNatalAspects.includes(contact.aspect as typeof transitNatalAspects[number])) return null;
+  if (!transitNatalPoints.includes(contact.natal as typeof transitNatalPoints[number])) return null;
+  return {
+    planet: contact.transiting as typeof transitNatalPlanets[number],
+    aspect: contact.aspect as typeof transitNatalAspects[number],
+    natalPoint: contact.natal as typeof transitNatalPoints[number]
+  };
+}
+
+export function matchesTransitNatalContactSearch(contentKey: string, query: string) {
+  const wanted = parseAstroContactSearch(query);
+  if (!wanted.transiting && !wanted.aspect) return false;
+  if (!contentKey.startsWith("authored/transit-aspect/")) return false;
+  const [, , planet, natal, aspect] = contentKey.split("/");
+  if (!planet || !natal || !aspect) return false;
+  if (wanted.transiting && wanted.transiting !== planet) return false;
+  if (wanted.natal && wanted.natal !== natal) return false;
+  if (!wanted.aspect) return true;
+  if (wanted.aspect === aspect) return true;
+  if (!wanted.transiting || !wanted.natal) return false;
+  const shared = transitNatalSharedFallbackKey({
+    planet: wanted.transiting as typeof transitNatalPlanets[number],
+    natalPoint: wanted.natal as typeof transitNatalPoints[number],
+    aspect: wanted.aspect as typeof transitNatalAspects[number]
+  });
+  return Boolean(shared && (contentKey === shared || contentKey.startsWith(`${shared}/`)));
 }
 
 export function synastryAspectFamily(aspect: string) {
