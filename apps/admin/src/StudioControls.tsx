@@ -27,8 +27,8 @@ export const StudioButton = forwardRef<HTMLButtonElement, ComponentPropsWithoutR
     const text = nodeText(children).trim();
     const nestedEditorClose = Boolean(returnContext && className.split(/\s+/u).includes("admin-editor-close"));
     const visibleCloseControl = Boolean(children && ariaLabel?.startsWith("Close") && !/[A-Za-z]/u.test(text));
-    const saveAndPublishReturn = Boolean(returnContext && text === "Save & publish");
-    const saveDraftReturn = Boolean(returnContext && text === "Save draft");
+    const saveAndPublishReturn = Boolean(returnContext?.saveReturns && text === "Save & publish");
+    const saveDraftReturn = Boolean(returnContext?.saveReturns && text === "Save draft");
     const saveMode = saveAndPublishReturn ? "published" : saveDraftReturn ? "any" : null;
     const statusNormalizedChildren = text.includes("Not live") ? replaceNodeText(children, "Not live", "Inactive") : children;
     const displayedChildren = saveAndPublishReturn

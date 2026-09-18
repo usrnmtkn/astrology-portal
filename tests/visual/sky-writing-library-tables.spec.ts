@@ -36,7 +36,7 @@ const fixtureRows: Record<string, ReturnType<typeof row>> = {
   }))
 };
 
-test('Editing a shared planet phrase stays on the placement that was opened', async ({ page }) => {
+async function openSunInVirgo(page: import('@playwright/test').Page) {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'library-table-fixture'));
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
@@ -46,7 +46,8 @@ test('Editing a shared planet phrase stays on the placement that was opened', as
       await route.fulfill({ json: { ok: true, variables: [] } });
       return;
     }
-    const rows = (url.searchParams.get('contentKeys') ?? virgoKey).split(',').map(key => fixtureRows[key]).filter(Boolean);
+    const requested = url.searchParams.get('contentKeys') ?? url.searchParams.get('contentKey') ?? virgoKey;
+    const rows = requested.split(',').map(key => fixtureRows[key]).filter(Boolean);
     await route.fulfill({ json: { ok: true, rows: url.pathname.endsWith('/generated-content') ? rows : [], statuses: [], nextCursor: null } });
   });
 
@@ -54,6 +55,11 @@ test('Editing a shared planet phrase stays on the placement that was opened', as
   await page.getByLabel('Sky placement planet or point').selectOption('sun');
   await page.getByLabel('Sky placement zodiac sign').selectOption('virgo');
   await page.getByLabel('Sky write-up motion').selectOption('direct');
+  return errors;
+}
+
+test('Editing a shared planet phrase stays on the placement that was opened', async ({ page }) => {
+  const errors = await openSunInVirgo(page);
 
   const map = page.getByRole('region', { name: 'Sky placement composition map' });
   await map.getByRole('tab', { name: 'Main template', exact: true }).click();
@@ -94,5 +100,34 @@ test('Editing a shared planet phrase stays on the placement that was opened', as
   await field.getByRole('button', { name: 'Write a Virgo version instead', exact: true }).click();
   await expect(field.getByLabel('Writing library Planet function')).toBeVisible();
   await expect(context).toContainText('Sun in Virgo');
+  expect(errors).toEqual([]);
+});
+
+test('Opening the shared source leaves a named way back to the placement', async ({ page }) => {
+  const errors = await openSunInVirgo(page);
+  const virgoHeadline = skyPlacementSourceRecords.get(virgoKey)!.headline;
+
+  const map = page.getByRole('region', { name: 'Sky placement composition map' });
+  await map.getByRole('tab', { name: 'Main template', exact: true }).click();
+  await map.getByLabel('Editable phrase variables').locator('tbody tr')
+    .filter({ has: page.getByText('{{planetFunction}}', { exact: true }) })
+    .getByRole('button', { name: 'Edit planet function', exact: true }).click();
+
+  const editor = page.getByRole('dialog');
+  const phrase = editor.getByRole('region', { name: 'Phrase variable editor' });
+  await phrase.getByRole('region', { name: 'Edit Planet function', exact: true })
+    .getByRole('button', { name: `Open ${ariesKey} to change the shared words`, exact: true }).click();
+
+  // The owner is told where they are, and the close control becomes the way back.
+  await expect(editor.getByRole('heading', { name: /Sun in Aries/u })).toBeVisible();
+  const back = editor.getByRole('button', { name: `Back to ${virgoHeadline}`, exact: true });
+  await expect(back).toBeVisible();
+  // The way back is a route, not a change to saving: the owner can keep working
+  // on the shared source and decide when to go back.
+  await expect(editor.getByRole('button', { name: 'Save & publish', exact: true })).toBeVisible();
+
+  await back.click();
+  await expect(editor.getByRole('heading', { name: /Sun in Virgo/u })).toBeVisible();
+  await expect(editor.getByRole('heading', { name: /Sun in Aries/u })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
