@@ -7,7 +7,7 @@ import { requestStudioJson } from "./generatedContentClient";
 import { PageLoading } from "../../web/src/components/PageLoading";
 
 import ContentLiveStatusBadge from "./ContentLiveStatus";
-import { transitNatalExactActionLabel, transitSourceEditScope, transitExactPassageState, type TransitExactPassageState } from "./transitNatalEditorScope";
+import { transitNatalExactActionLabel, transitNatalLiveServingSource, transitSourceEditScope, transitExactPassageState, type TransitExactPassageState } from "./transitNatalEditorScope";
 
 const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
 
@@ -108,12 +108,13 @@ function TransitSourceEditAction({ source, exactKey, headline, onOpenSource }: {
   </details>;
 }
 
-export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource, onOpenExact }: {
+export default function TransitNatalReaderPreview({ selection, voice, secret, onOpenSource, onOpenExact, onServingPreview }: {
   selection: TransitNatalSelection;
   voice: string;
   secret: string;
   onOpenSource: (contentKey: string, label: string, field?: string) => void;
   onOpenExact?: () => void;
+  onServingPreview?: (source: { contentKey: string; field: string } | null) => void;
 }) {
   const [revision, setRevision] = useState(0);
   const [state, setState] = useState<{ preview: Preview | null; error: string | null; loading: boolean }>({ preview: null, error: null, loading: true });
@@ -126,6 +127,7 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
     let cancelled = false;
     const controller = new AbortController();
     setState({ preview: null, error: null, loading: true });
+    onServingPreview?.(null);
     void (async () => {
       const result = await requestStudioJson("/api/admin/transit-natal-preview", secret, {
         method: "POST", signal: controller.signal, body: identity
@@ -140,8 +142,12 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
       }
       setLoadedIdentity(identity);
       setState({ preview, error: null, loading: false });
+      onServingPreview?.(transitNatalLiveServingSource(preview, voice === "{{Name}}" ? "body_they" : "body_you"));
     })().catch((error) => {
-      if (!cancelled) setState({ preview: null, error: error instanceof Error ? error.message : "Reader preview unavailable.", loading: false });
+      if (!cancelled) {
+        onServingPreview?.(null);
+        setState({ preview: null, error: error instanceof Error ? error.message : "Reader preview unavailable.", loading: false });
+      }
     });
     return () => { cancelled = true; controller.abort(); };
   }, [identity, secret, revision]);

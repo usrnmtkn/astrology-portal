@@ -2,6 +2,43 @@ export function isTransitNatalSituationKey(contentKey: string) {
   return contentKey.startsWith("authored/transit-aspect/") && contentKey.split("/").length === 8;
 }
 
+/** Family soft/hard/any cards. These are shared fallbacks, never the three-part or six-part destination. */
+export function isTransitNatalFamilyKey(contentKey: string) {
+  const parts = contentKey.split("/");
+  return parts[0] === "authored"
+    && parts[1] === "transit-aspect"
+    && parts.length === 5
+    && (parts[4] === "soft" || parts[4] === "hard" || parts[4] === "any");
+}
+
+/** Packaged family and SHARE-served sibling keys must not use the finder exact-key gate. */
+export function packagedTransitOpenMode(finderExactKey: string | null | undefined, contentKey: string): "exact" | "shared" {
+  if (!finderExactKey || finderExactKey !== contentKey || isTransitNatalFamilyKey(contentKey)) return "shared";
+  return "exact";
+}
+
+export function transitNatalLiveServingSource(
+  preview: {
+    paragraphs?: Array<{ sources?: Array<{ contentKey?: string; field?: string }> }>;
+    sourceKeys?: string[];
+  } | null | undefined,
+  preferredField?: string
+) {
+  const sources = (preview?.paragraphs ?? [])
+    .flatMap((paragraph) => paragraph.sources ?? [])
+    .filter((source): source is { contentKey: string; field: string } => (
+      typeof source?.contentKey === "string"
+      && Boolean(source.contentKey)
+      && typeof source.field === "string"
+      && Boolean(source.field)
+    ));
+  if (sources.length) {
+    return (preferredField && sources.find((source) => source.field === preferredField)) || sources[0];
+  }
+  const key = preview?.sourceKeys?.find((candidate) => typeof candidate === "string" && candidate);
+  return key ? { contentKey: key, field: preferredField || "body_you" } : null;
+}
+
 /** Primary Studio action names the selected destination, not a secondary exact-passage path. */
 export function transitNatalExactActionLabel(exists: boolean, title: string, contentKey?: string) {
   if (contentKey && isTransitNatalSituationKey(contentKey)) {

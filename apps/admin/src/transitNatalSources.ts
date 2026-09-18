@@ -237,17 +237,18 @@ export function transitNatalExactSourceDraft(
   const isReturn = contentKey.startsWith("authored/transit-return/");
   const you = typeof starter.body_you === "string" ? starter.body_you : "";
   const they = typeof starter.body_they === "string" ? starter.body_they : "";
+  const headline = isReturn
+    ? `${selection.planet.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")} return`
+    : contentKey.split("/").length === 8
+      ? `${transitNatalLabel(selection)} · ${selection.sign} houses ${selection.transitHouse}/${selection.natalHouse}`
+      : transitNatalLabel(selection);
   return {
     id: null,
     contentKey,
     surface: "you" as const,
     mode: "in_depth" as const,
     status: "DRAFT" as const,
-    headline: isReturn
-      ? `${selection.planet.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")} return`
-      : contentKey.split("/").length === 8
-        ? `${transitNatalLabel(selection)} · ${selection.sign} houses ${selection.transitHouse}/${selection.natalHouse}`
-        : transitNatalLabel(selection),
+    headline,
     summary: "",
     body: you,
     lane: "reference" as const,
@@ -255,7 +256,9 @@ export function transitNatalExactSourceDraft(
     blockType: "fallback_hook" as const,
     promptVersion: "manual-admin",
     sections: { packageRecord: {
-      contentKey, content_role: "full_copy", grammar_frame: "complete_sentence", surface: isReturn ? "transit-return" : "transit-aspect",
+      contentKey,
+      headline,
+      content_role: "full_copy", grammar_frame: "complete_sentence", surface: isReturn ? "transit-return" : "transit-aspect",
       body: you, ...(!isReturn ? { body_you: you, body_they: they } : {}),
       requiredSlots: ["aspectWord", "untilDate"], optionalSlots: ["Name"],
       reader_only: true, render_policy: "personal-transit-exact-v1", review_status: "needs_review"

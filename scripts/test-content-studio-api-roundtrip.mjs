@@ -1076,6 +1076,14 @@ const savedDraftOnlySixPart = await invokeApi('POST', '/api/admin/generated-cont
 });
 assert.equal(savedDraftOnlySixPart.status, 200, JSON.stringify(savedDraftOnlySixPart.payload));
 assert.equal(savedDraftOnlySixPart.payload.rows[0].content_key, draftOnlySixPart.contentKey, 'Six-part saves must keep the eight-part situation key.');
+const stealThreePart = await invokeApi('PATCH', '/api/admin/generated-content', {
+  id: savedDraftOnlySixPart.payload.rows[0].id,
+  expectedUpdatedAt: savedDraftOnlySixPart.payload.rows[0].updated_at,
+  contentKey: 'authored/transit-aspect/venus/moon/conjunction'
+});
+assert.equal(stealThreePart.status, 409, JSON.stringify(stealThreePart.payload));
+assert.match(String(stealThreePart.payload.error), /cannot be changed/);
+assert.equal(row.content_key, draftOnlySixPart.contentKey, 'PATCH must not retarget a six-part row onto a three-part key.');
 assert.equal(savedDraftOnlySixPart.payload.rows[0].status, 'DRAFT');
 assert.equal(savedDraftOnlySixPart.payload.rows[0].sections.packageRecord.approval, undefined, 'Save must not stamp owner approval.');
 assert.equal(savedDraftOnlySixPart.payload.rows[0].facts.review_status, 'needs_review');

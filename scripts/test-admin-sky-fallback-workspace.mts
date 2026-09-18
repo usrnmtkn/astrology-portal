@@ -182,6 +182,23 @@ assert.equal(
   skyFallbackIdentity("fallback-hook/sky-aspect-sign/sun/leo/trine/chiron/taurus")?.title,
   "Sun in Leo Trine Chiron in Taurus"
 );
+assert.deepEqual(skyFallbackIdentity("authored/transit-aspect/venus/ascendant/square"), {
+  title: "Venus Square your Ascendant",
+  typeLabel: "Transit to natal",
+  groupKey: "personal-transits",
+  groupLabel: "Transits to natal"
+});
+assert.deepEqual(skyFallbackIdentity("authored/transit-aspect/venus/ascendant/square/scorpio/10/1"), {
+  title: "Venus Square your Ascendant · Scorpio · 10th House / natal 1st House",
+  typeLabel: "Six-part personal transit",
+  description: "You and Friend copy for this sign and both houses. Saving this row does not change the three-part aspect write-up.",
+  groupKey: "personal-transits",
+  groupLabel: "Transits to natal"
+});
+assert.equal(
+  skyFallbackIdentity("authored/transit-aspect/venus/ascendant/hard")?.title,
+  "Venus Hard your Ascendant"
+);
 
 const packageDraft = setPackageValueAt(structuredClone(original), "development", "The work keeps its own shape.");
 assert.equal(original.development, "The work can keep its own shape.", "The package original must stay immutable.");

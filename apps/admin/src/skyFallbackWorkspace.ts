@@ -268,9 +268,19 @@ function skyFallbackIdentityUncached(contentKey: string): SkyFallbackIdentity | 
 
   const transitAspectIndex = parts.indexOf("transit-aspect");
   if (transitAspectIndex >= 0 && parts.length >= transitAspectIndex + 4) {
-    const [planet, natalPoint, aspect] = parts.slice(transitAspectIndex + 1);
+    const [planet, natalPoint, aspect, sign, transitHouse, natalHouse] = parts.slice(transitAspectIndex + 1);
+    const contactTitle = `${words(planet)} ${words(aspect)} your ${words(natalPoint)}`;
+    if (sign && transitHouse && natalHouse) {
+      return {
+        title: `${contactTitle} · ${words(sign)} · ${ordinalHouse(transitHouse)} / natal ${ordinalHouse(natalHouse)}`,
+        typeLabel: "Six-part personal transit",
+        description: "You and Friend copy for this sign and both houses. Saving this row does not change the three-part aspect write-up.",
+        groupKey: "personal-transits",
+        groupLabel: "Transits to natal"
+      };
+    }
     return {
-      title: `${words(planet)} ${words(aspect)} your ${words(natalPoint)}`,
+      title: contactTitle,
       typeLabel: "Transit to natal",
       groupKey: "personal-transits",
       groupLabel: "Transits to natal"

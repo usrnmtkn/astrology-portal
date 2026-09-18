@@ -1,11 +1,31 @@
 import assert from "node:assert/strict";
-import { transitNatalExactActionLabel, transitSourceEditScope, transitExactPassageState } from "../apps/admin/src/transitNatalEditorScope.ts";
+import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalExactActionLabel, transitNatalLiveServingSource, transitSourceEditScope, transitExactPassageState } from "../apps/admin/src/transitNatalEditorScope.ts";
 
 assert.equal(transitNatalExactActionLabel(false, "Sun trine your Sun"), "Write Sun trine your Sun");
 assert.equal(transitNatalExactActionLabel(true, "Sun sextile your Sun"), "Edit Sun sextile your Sun");
 assert.equal(transitNatalExactActionLabel(false, "Sun conjunction your Moon", "authored/transit-aspect/sun/moon/conjunction/aries/2/3"), "Write this six-part situation");
 assert.equal(transitNatalExactActionLabel(true, "Sun conjunction your Moon", "authored/transit-aspect/sun/moon/conjunction/aries/2/3"), "Edit this six-part situation");
+assert.equal(isTransitNatalSituationKey("authored/transit-aspect/venus/ascendant/square/scorpio/10/1"), true);
+assert.equal(isTransitNatalSituationKey("authored/transit-aspect/venus/ascendant/square"), false);
 assert.throws(() => transitNatalExactActionLabel(false, "  "), /transit title/);
+
+assert.equal(isTransitNatalFamilyKey("authored/transit-aspect/mars/north-node/soft"), true);
+assert.equal(isTransitNatalFamilyKey("authored/transit-aspect/mars/north-node/hard"), true);
+assert.equal(isTransitNatalFamilyKey("authored/transit-aspect/mars/north-node/any"), true);
+assert.equal(isTransitNatalFamilyKey("authored/transit-aspect/mars/north-node/sextile"), false);
+assert.equal(isTransitNatalFamilyKey("authored/transit-aspect/mars/north-node/conjunction"), false);
+assert.equal(packagedTransitOpenMode("authored/transit-aspect/mars/north-node/sextile", "authored/transit-aspect/mars/north-node/soft"), "shared");
+assert.equal(packagedTransitOpenMode("authored/transit-aspect/mars/north-node/sextile", "authored/transit-aspect/mars/north-node/conjunction"), "shared");
+assert.equal(packagedTransitOpenMode("authored/transit-aspect/mars/north-node/sextile", "authored/transit-aspect/mars/north-node/sextile"), "exact");
+assert.equal(packagedTransitOpenMode("authored/transit-aspect/sun/sun/trine", "authored/transit-aspect/sun/sun/soft"), "shared");
+assert.equal(packagedTransitOpenMode("authored/transit-aspect/venus/ascendant/square/scorpio/10/1", "authored/transit-aspect/venus/ascendant/square"), "shared");
+assert.equal(packagedTransitOpenMode("authored/transit-aspect/venus/ascendant/square/scorpio/10/1", "authored/transit-aspect/venus/ascendant/square/scorpio/10/1"), "exact");
+assert.deepEqual(
+  transitNatalLiveServingSource({
+    paragraphs: [{ sources: [{ contentKey: "authored/transit-aspect/mars/north-node/conjunction", field: "body_they" }] }]
+  }, "body_they"),
+  { contentKey: "authored/transit-aspect/mars/north-node/conjunction", field: "body_they" }
+);
 
 // Identity-shaped synthetic keys only. This tests editing scope, not chart support
 // or availability of approved reader copy for every combination.
