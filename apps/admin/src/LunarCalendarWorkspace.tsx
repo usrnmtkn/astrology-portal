@@ -74,7 +74,7 @@ export default function LunarCalendarWorkspace({ rows, editor, query, createRequ
     {view === 'composition' ? <Suspense fallback={<PageLoading message="Loading composition…" />}><CompositionMapWorkspace rows={rows} templateKeys={keys} initialKey={selected?.row.content_key} onEditRow={onEdit} onLoadRow={onLoad} editor={editor} /></Suspense> : <>
       {editor}
       <div className="admin-composition-map-layout">
-        <section className="admin-composition-detail" aria-label="Selected lunar passage">{selected && <>
+        <section className="studio-surface studio-section admin-composition-detail" aria-label="Selected lunar passage">{selected && <>
           {error && <div className="admin-error" role="alert"><p>{error}</p><StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry passage</StudioButton></div>}
           <label><span>Selected passage</span>{filtered.length ? <AdminSelect aria-label="Selected passage" value={selected.row.content_key} onChange={event => setSelectedKey(event.target.value)}>{filtered.map(({ row, identity }) => <option key={row.id} value={row.content_key}>{identity.title}</option>)}</AdminSelect> : <p className="admin-field-hint">No passages match these filters.</p>}</label>
           <header className="admin-composition-detail-header"><div><p className="admin-eyebrow">{selected.identity.destination}</p><h2>{selected.identity.title}</h2></div><StudioButton type="button" disabled={Boolean(error)} onClick={() => onEdit(selected.row)}>Edit passage</StudioButton></header>
@@ -83,7 +83,7 @@ export default function LunarCalendarWorkspace({ rows, editor, query, createRequ
           <StudioButton type="button" onClick={() => setView('composition')}>Review composition and variables</StudioButton>
           <details className="admin-workspace-details"><AdminDisclosureSummary>Source key and editorial notes</AdminDisclosureSummary><code>{selected.row.content_key}</code><p>{selected.row.summary}</p></details>
         </>}</section>
-        <aside className="admin-composition-template-list" aria-label="Lunar passages">
+        <aside className="studio-surface studio-section admin-composition-template-list" aria-label="Lunar passages">
           <header><strong>{filtered.length} {filtered.length === 1 ? 'passage' : 'passages'}</strong></header>
           <div className="studio-grid">{filtered.slice(0, limit).map(({ row, identity }) => <article className="admin-template-card" key={row.id}>
             <StudioButton type="button" aria-pressed={row.id === selected?.row.id} onClick={() => setSelectedKey(row.content_key)}>{identity.title}</StudioButton>

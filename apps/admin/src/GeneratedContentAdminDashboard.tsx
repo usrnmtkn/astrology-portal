@@ -6504,7 +6504,7 @@ export function GeneratedContentAdminDashboard() {
               </>
             ) : (
               <>
-                <section className="admin-content-filters admin-sky-filters" aria-label="Sky write-up filters">
+                <section className="studio-surface studio-section admin-content-filters admin-sky-filters" aria-label="Sky write-up filters">
                   <div className="admin-review-filter-grid admin-filter-form admin-filter-form--three">
                     <label>
                       <span>Planet or point</span>
@@ -6594,13 +6594,13 @@ export function GeneratedContentAdminDashboard() {
                       Clear filters
                     </StudioButton>
                   </div>
+                {(skyPlacementBody === "all" || skyPlacementSign === "all") && <p className="admin-natal-placement-prompt">Choose a planet and zodiac sign above to preview and edit its complete write-up.</p>}
                 </section>
                 {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
                   <Suspense fallback={<PageLoading message="Loading Composition Map…" />}>
                     <SkyPlacementComposition onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)} rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
                   </Suspense>
                 )}
-                {(skyPlacementBody === "all" || skyPlacementSign === "all") && <p className="admin-natal-placement-prompt">Choose a planet and zodiac sign above to preview and edit its complete write-up.</p>}
                 {publishedButUnwiredSkyRows.length > 0 && (
                   <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
                     <div>
@@ -6942,26 +6942,32 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Held Sky aspect source drafts">
-                <div className="admin-fallback-row-list">
-                  {filteredSourceDrafts.map((item) => {
-                    const saved = savedContentKeys.has(item.id) || savedContentKeys.has(item.canonicalId);
-                    return (
-                      <article key={item.id} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => openSourceDraft(item)} onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); openSourceDraft(item); } }}>
-                        <div className="admin-fallback-row-main">
-                          <p className="admin-eyebrow">{item.bodyB} / {item.aspect} / {item.bodyA}</p>
-                          <h3>{titleFromKey(item.bodyB)} {titleFromKey(item.aspect)} {titleFromKey(item.bodyA)}</h3>
-                          <code>{item.id}</code>
-                          <p>{item.body.split("\n")[0]}</p>
-                          <small>{item.sourcePath}</small>
-                        </div>
-                        <div className="admin-fallback-row-actions">
-                          <span className="admin-field-hint">{saved ? "Saved draft" : "Source only"}</span>
-                          <span className="ui-pill admin-status status-draft">Not live</span>
-                          <StudioButton type="button" onClick={(event) => { event.stopPropagation(); openSourceDraft(item); }}>{saved ? "Edit" : "Open draft"}</StudioButton>
-                        </div>
-                      </article>
-                    );
-                  })}
+                <div className="admin-content-table-scroll">
+                  {filteredSourceDrafts.length > 0 ? (
+                    <AdminDataTable label="Held Sky aspect source drafts" columns={["Passage", "Key", "Status", "Source", "Actions"]}>
+                      {filteredSourceDrafts.map((item) => {
+                        const saved = savedContentKeys.has(item.id) || savedContentKeys.has(item.canonicalId);
+                        return (
+                          <tr key={item.id} className="admin-fallback-row">
+                            <td data-label="Passage">
+                              <p className="admin-eyebrow">{item.bodyB} / {item.aspect} / {item.bodyA}</p>
+                              <strong>{titleFromKey(item.bodyB)} {titleFromKey(item.aspect)} {titleFromKey(item.bodyA)}</strong>
+                              <p>{item.body.split("\n")[0]}</p>
+                            </td>
+                            <td data-label="Key"><code>{item.id}</code></td>
+                            <td data-label="Status">
+                              <span className="admin-field-hint">{saved ? "Saved draft" : "Source only"}</span>
+                              <span className="ui-pill admin-status status-draft">Not live</span>
+                            </td>
+                            <td data-label="Source"><small>{item.sourcePath}</small></td>
+                            <td data-label="Actions">
+                              <StudioButton type="button" onClick={() => openSourceDraft(item)}>{saved ? "Edit" : "Open draft"}</StudioButton>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </AdminDataTable>
+                  ) : <p className="admin-empty">No held Sky aspect drafts match this search.</p>}
                 </div>
               </aside>
             </section>
@@ -8407,38 +8413,34 @@ export function GeneratedContentAdminDashboard() {
   function renderLiveOmittedSectionsQueue() {
     return (
       <section className="admin-sky-voice-queue" aria-label="Live with omitted sections">
-        <p className="admin-sky-voice-description">
+        <p className="studio-surface admin-sky-voice-description">
           Read-only runtime QA. Each horoscope listed here stayed live with its approved evergreen copy; only the unavailable conditional section was omitted. {sharedLiveOmittedSectionsLoaded ? "Authenticated observations are shared across production, with this device's local fallback merged in." : "The shared endpoint is unavailable, so this view is showing this device's local fallback."} Review metadata is never exposed to readers.
         </p>
-        <div className="admin-sky-voice-cards">
-          {visibleLiveOmittedSections.map((item) => (
-            <article key={item.queueId} className="admin-sky-voice-card">
-              <header>
-                <div>
-                  <h3>{item.headline || "Horoscope served with an omitted section"}</h3>
-                  <code>{item.omittedContentKey}</code>
-                </div>
-                <div className="admin-review-queue-meta-strip">
-                  <span className="ui-pill admin-status status-live">Horoscope stayed live</span>
-                  <span className="ui-pill admin-status status-reviewed">Needs copy review</span>
-                </div>
-              </header>
-              <dl className="admin-sky-voice-facts">
-                <div><dt>Surface</dt><dd>{liveOmissionSurfaceLabel(item.surface)}</dd></div>
-                <div><dt>Event date</dt><dd>{liveOmissionDateLabel(item)}</dd></div>
-                <div><dt>Section omitted</dt><dd>{item.sectionId}</dd></div>
-                <div><dt>Seen</dt><dd>{item.occurrenceCount} {item.occurrenceCount === 1 ? "time" : "times"}</dd></div>
-                <div><dt>Sign</dt><dd>{item.sign || "Not recorded"}</dd></div>
-                <div><dt>Rising sign</dt><dd>{item.risingSign || "Not recorded"}</dd></div>
-              </dl>
-              <div className="admin-sky-voice-judge">
-                <p><strong>Reason</strong>{item.reason === "missing-or-ineligible" ? "The conditional source row was missing or not reader-eligible." : item.reason}</p>
-                <p><strong>Fallback</strong>{item.fallbackContentKey || "No replacement section was inserted; approved evergreen copy continued without it."}</p>
-                <p><strong>Last seen</strong>{new Date(item.lastSeenAt).toLocaleString()}</p>
-              </div>
-            </article>
-          ))}
-          {visibleLiveOmittedSections.length === 0 && (
+        <div className="admin-content-table-scroll">
+          {visibleLiveOmittedSections.length > 0 ? (
+            <AdminDataTable label="Live horoscopes with omitted sections" columns={["Horoscope", "Surface", "Omitted section", "Seen", "Details"]}>
+              {visibleLiveOmittedSections.map((item) => (
+                <tr key={item.queueId} className="admin-sky-voice-card">
+                  <td data-label="Horoscope">
+                    <strong>{item.headline || "Horoscope served with an omitted section"}</strong>
+                    <code>{item.omittedContentKey}</code>
+                    <div className="admin-review-queue-meta-strip">
+                      <span className="ui-pill admin-status status-live">Horoscope stayed live</span>
+                      <span className="ui-pill admin-status status-reviewed">Needs copy review</span>
+                    </div>
+                  </td>
+                  <td data-label="Surface">{liveOmissionSurfaceLabel(item.surface)} · {liveOmissionDateLabel(item)}</td>
+                  <td data-label="Omitted section">{item.sectionId}</td>
+                  <td data-label="Seen">{item.occurrenceCount} {item.occurrenceCount === 1 ? "time" : "times"} · {item.sign || "Sign not recorded"} · {item.risingSign || "Rising not recorded"}</td>
+                  <td data-label="Details">
+                    <p><strong>Reason</strong> {item.reason === "missing-or-ineligible" ? "The conditional source row was missing or not reader-eligible." : item.reason}</p>
+                    <p><strong>Fallback</strong> {item.fallbackContentKey || "No replacement section was inserted; approved evergreen copy continued without it."}</p>
+                    <p><strong>Last seen</strong> {new Date(item.lastSeenAt).toLocaleString()}</p>
+                  </td>
+                </tr>
+              ))}
+            </AdminDataTable>
+          ) : (
             <p className="admin-empty">No live horoscope has omitted a conditional section in the available review history.</p>
           )}
         </div>
@@ -8449,63 +8451,70 @@ export function GeneratedContentAdminDashboard() {
   function renderSkyVoiceQueue(tableRows: AdminGeneratedContentRow[], description: string) {
     return (
       <section className="admin-sky-voice-queue" aria-label="Sky voice queue">
-        <p className="admin-sky-voice-description">{description}</p>
-        <div className="admin-sky-voice-cards">
-          {tableRows.map((row) => {
-            const source = objectRecord(row.source_snapshot);
-            const isPlacement = row.block_type === "sky_placement";
-            const isPlacementTopper = row.event_type === "collective-placement-topper";
-            const judge = isPlacement
-              ? objectRecord(
-                  isPlacementTopper
-                    ? source?.skyPlacementTopperJudge
-                    : source?.skyPlacementJudge
-                )
-              : objectRecord(source?.skyAspectJudge);
-            const rowFacts = objectRecord(row.facts);
-            const facts = isPlacement
-              ? rowFacts
-              : objectRecord(rowFacts?.cardFacts) ?? objectRecord(source?.cardFacts);
-            const pair = [facts?.a, facts?.b].filter(Boolean).join(" / ");
-            const signs = [facts?.signA, facts?.signB].filter(Boolean).join(" / ");
-            const placement = [facts?.planet, facts?.sign].filter(Boolean).join(" in ");
-            const topperContact = isPlacementTopper
-              ? [facts?.aspect, facts?.other, facts?.otherSign ? `in ${facts.otherSign}` : ""].filter(Boolean).join(" ")
-              : "";
-            const weakest = typeof judge?.weakest === "string" ? judge.weakest : "";
-            return (
-              <article key={row.id} className="admin-sky-voice-card">
-                <header>
-                  <div>
-                    <h3>{row.headline || placement || pair || "Sky voice card"}</h3>
-                    <code>{row.content_key}</code>
-                  </div>
-                  <div className="admin-review-queue-meta-strip">
-                    <ContentLiveStatusBadge row={row} />
-                    <span className="ui-pill admin-status">Judge {row.judge_score ?? "-"}/3</span>
-                  </div>
-                </header>
-                <dl className="admin-sky-voice-facts">
-                  <div><dt>{isPlacement ? "Placement" : "Pair"}</dt><dd>{isPlacement ? placement || "Not recorded" : pair || "Not recorded"}</dd></div>
-                  <div><dt>{isPlacement ? "Kind" : "Aspect"}</dt><dd>{isPlacement ? (isPlacementTopper ? "Current topper" : "Collective placement") : String(facts?.aspect ?? "Not recorded")}</dd></div>
-                  <div><dt>{isPlacement ? "Sign" : "Signs"}</dt><dd>{isPlacement ? String(facts?.sign ?? "Not recorded") : signs || "Not recorded"}</dd></div>
-                  {isPlacementTopper ? <div><dt>Contact</dt><dd>{topperContact || "Not recorded"}</dd></div> : null}
-                </dl>
-                <p className="admin-sky-voice-body">{row.body || "No card body saved."}</p>
-                <div className="admin-sky-voice-judge">
-                  <p><strong>Why</strong>{" "}{row.judge_why || "No judge rationale saved."}</p>
-                  <p><strong>Weakest</strong>{" "}{weakest || "No weakest beat recorded."}</p>
-                </div>
-                <div className="admin-review-queue-actions">
-                  <StudioButton type="button" onClick={() => openRow(row)}>Edit</StudioButton>
-                  {skyWritingIssues(row).length === 0 && ["DRAFT", "REVIEWED"].includes(row.status)
-                    ? <StudioButton type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</StudioButton>
-                    : null}
-                </div>
-              </article>
-            );
-          })}
-          {tableRows.length === 0 && <p className="admin-empty">No sky voice cards are in this view.</p>}
+        <p className="studio-surface admin-sky-voice-description">{description}</p>
+        <div className="admin-content-table-scroll">
+          {tableRows.length > 0 ? (
+            <AdminDataTable label="Sky voice queue" columns={["Card", "Status", "Facts", "Copy", "Actions"]}>
+              {tableRows.map((row) => {
+                const source = objectRecord(row.source_snapshot);
+                const isPlacement = row.block_type === "sky_placement";
+                const isPlacementTopper = row.event_type === "collective-placement-topper";
+                const judge = isPlacement
+                  ? objectRecord(
+                      isPlacementTopper
+                        ? source?.skyPlacementTopperJudge
+                        : source?.skyPlacementJudge
+                    )
+                  : objectRecord(source?.skyAspectJudge);
+                const rowFacts = objectRecord(row.facts);
+                const facts = isPlacement
+                  ? rowFacts
+                  : objectRecord(rowFacts?.cardFacts) ?? objectRecord(source?.cardFacts);
+                const pair = [facts?.a, facts?.b].filter(Boolean).join(" / ");
+                const signs = [facts?.signA, facts?.signB].filter(Boolean).join(" / ");
+                const placement = [facts?.planet, facts?.sign].filter(Boolean).join(" in ");
+                const topperContact = isPlacementTopper
+                  ? [facts?.aspect, facts?.other, facts?.otherSign ? `in ${facts.otherSign}` : ""].filter(Boolean).join(" ")
+                  : "";
+                const weakest = typeof judge?.weakest === "string" ? judge.weakest : "";
+                return (
+                  <tr key={row.id} className="admin-sky-voice-card">
+                    <td data-label="Card">
+                      <h3>{row.headline || placement || pair || "Sky voice card"}</h3>
+                      <code>{row.content_key}</code>
+                    </td>
+                    <td data-label="Status">
+                      <ContentLiveStatusBadge row={row} />
+                      <span className="ui-pill admin-status">Judge {row.judge_score ?? "-"}/3</span>
+                    </td>
+                    <td data-label="Facts">
+                      <dl className="admin-sky-voice-facts">
+                        <div><dt>{isPlacement ? "Placement" : "Pair"}</dt><dd>{isPlacement ? placement || "Not recorded" : pair || "Not recorded"}</dd></div>
+                        <div><dt>{isPlacement ? "Kind" : "Aspect"}</dt><dd>{isPlacement ? (isPlacementTopper ? "Current topper" : "Collective placement") : String(facts?.aspect ?? "Not recorded")}</dd></div>
+                        <div><dt>{isPlacement ? "Sign" : "Signs"}</dt><dd>{isPlacement ? String(facts?.sign ?? "Not recorded") : signs || "Not recorded"}</dd></div>
+                        {isPlacementTopper ? <div><dt>Contact</dt><dd>{topperContact || "Not recorded"}</dd></div> : null}
+                      </dl>
+                    </td>
+                    <td data-label="Copy">
+                      <p className="admin-sky-voice-body">{row.body || "No card body saved."}</p>
+                      <div className="admin-sky-voice-judge">
+                        <p><strong>Why</strong> {row.judge_why || "No judge rationale saved."}</p>
+                        <p><strong>Weakest</strong> {weakest || "No weakest beat recorded."}</p>
+                      </div>
+                    </td>
+                    <td data-label="Actions">
+                      <div className="admin-review-queue-actions">
+                        <StudioButton type="button" onClick={() => openRow(row)}>Edit</StudioButton>
+                        {skyWritingIssues(row).length === 0 && ["DRAFT", "REVIEWED"].includes(row.status)
+                          ? <StudioButton type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</StudioButton>
+                          : null}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </AdminDataTable>
+          ) : <p className="admin-empty">No sky voice cards are in this view.</p>}
         </div>
       </section>
     );
@@ -8533,7 +8542,7 @@ export function GeneratedContentAdminDashboard() {
     };
     return (
       <section className="admin-sky-voice-queue" aria-label="Upcoming 90-day Sky review inventory">
-        <div className="admin-sky-horizon-summary">
+        <div className="studio-surface studio-section admin-sky-horizon-summary">
           <div>
             <p className="admin-eyebrow">Calculated occurrence inventory</p>
             <h3>{skyReviewHorizon.startDate} through {skyReviewHorizon.endDate}</h3>
@@ -8544,50 +8553,51 @@ export function GeneratedContentAdminDashboard() {
             <RefreshCw size={16} aria-hidden="true" /> Recalculate
           </StudioButton>
         </div>
-        <p className="admin-sky-voice-description">This view is inventory and review status only. Loading it makes zero writer or reviewer calls and changes no approval or serving state.</p>
-        <div className="admin-sky-voice-cards">
-          {skyReviewHorizon.occurrences.map((occurrence) => {
-            const row = occurrence.row;
-            const canApprove = row && skyWritingIssues(row).length === 0 && ["DRAFT", "REVIEWED"].includes(row.status);
-            const ownerApprovedArticleKey = ownerApprovedSkyPlacementArticleKey(occurrence.contentKey);
-            const statusLabel = ownerApprovedArticleKey
-              ? ownerApprovedReplacementLabel
-              : statusLabels[occurrence.reviewStatus];
-            return (
-              <article key={occurrence.contentKey} className="admin-sky-voice-card">
-                <header>
-                  <div>
+        <p className="studio-surface admin-sky-voice-description">This view is inventory and review status only. Loading it makes zero writer or reviewer calls and changes no approval or serving state.</p>
+        <div className="admin-content-table-scroll">
+          <AdminDataTable label="Upcoming Sky review inventory" columns={["Occurrence", "Status", "Windows", "Copy", "Actions"]}>
+            {skyReviewHorizon.occurrences.map((occurrence) => {
+              const row = occurrence.row;
+              const canApprove = row && skyWritingIssues(row).length === 0 && ["DRAFT", "REVIEWED"].includes(row.status);
+              const ownerApprovedArticleKey = ownerApprovedSkyPlacementArticleKey(occurrence.contentKey);
+              const statusLabel = ownerApprovedArticleKey
+                ? ownerApprovedReplacementLabel
+                : statusLabels[occurrence.reviewStatus];
+              return (
+                <tr key={occurrence.contentKey} className="admin-sky-voice-card">
+                  <td data-label="Occurrence">
                     <h3>{occurrence.label}</h3>
                     <code>{occurrence.contentKey}</code>
-                  </div>
-                  <div className="admin-review-queue-meta-strip">
+                  </td>
+                  <td data-label="Status">
                     <span className="ui-pill admin-status">{statusLabel}</span>
                     <span className="ui-pill admin-status">{occurrence.kind}</span>
-                  </div>
-                </header>
-                <dl className="admin-sky-voice-facts">
-                  <div><dt>First active</dt><dd>{occurrence.windows[0]?.startDate ?? "Not calculated"}</dd></div>
-                  <div><dt>Last active</dt><dd>{occurrence.windows.at(-1)?.endDate ?? "Not calculated"}</dd></div>
-                  <div><dt>Active days</dt><dd>{occurrence.activeDates.length}</dd></div>
-                  <div><dt>Windows</dt><dd>{occurrence.windows.length}</dd></div>
-                  {ownerApprovedArticleKey
-                    ? <div><dt>Reader source</dt><dd><code>{ownerApprovedArticleKey}</code></dd></div>
-                    : null}
-                </dl>
-                <p className="admin-sky-voice-body">{row?.body || "No writing is saved for this configuration. Generate a draft or write it manually, then review it before publication."}</p>
-                <div className="admin-review-queue-actions">
-                  {ownerApprovedArticleKey ? (
-                    <StudioButton type="button" onClick={() => void openServingFallbackRow(ownerApprovedArticleKey, occurrence)} disabled={isLoading}>
-                      Edit serving article
-                    </StudioButton>
-                  ) : null}
-                  {row ? <StudioButton type="button" onClick={() => openRow(row)}>Edit</StudioButton> : null}
-                  {!row ? <><StudioButton type="button" disabled={isLoading} onClick={() => void runSkyDraftWriting(occurrence.contentKey, "generate")}>Generate draft</StudioButton><StudioButton type="button" onClick={() => openMissingSkyDraft(occurrence)}>Write manually</StudioButton></> : null}
-                  {canApprove ? <StudioButton type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</StudioButton> : null}
-                </div>
-              </article>
-            );
-          })}
+                  </td>
+                  <td data-label="Windows">
+                    <p>First active: {occurrence.windows[0]?.startDate ?? "Not calculated"}</p>
+                    <p>Last active: {occurrence.windows.at(-1)?.endDate ?? "Not calculated"}</p>
+                    <p>{occurrence.activeDates.length} active days · {occurrence.windows.length} windows</p>
+                    {ownerApprovedArticleKey ? <p>Reader source: <code>{ownerApprovedArticleKey}</code></p> : null}
+                  </td>
+                  <td data-label="Copy">
+                    <p className="admin-sky-voice-body">{row?.body || "No writing is saved for this configuration. Generate a draft or write it manually, then review it before publication."}</p>
+                  </td>
+                  <td data-label="Actions">
+                    <div className="admin-review-queue-actions">
+                      {ownerApprovedArticleKey ? (
+                        <StudioButton type="button" onClick={() => void openServingFallbackRow(ownerApprovedArticleKey, occurrence)} disabled={isLoading}>
+                          Edit serving article
+                        </StudioButton>
+                      ) : null}
+                      {row ? <StudioButton type="button" onClick={() => openRow(row)}>Edit</StudioButton> : null}
+                      {!row ? <><StudioButton type="button" disabled={isLoading} onClick={() => void runSkyDraftWriting(occurrence.contentKey, "generate")}>Generate draft</StudioButton><StudioButton type="button" onClick={() => openMissingSkyDraft(occurrence)}>Write manually</StudioButton></> : null}
+                      {canApprove ? <StudioButton type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</StudioButton> : null}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </AdminDataTable>
         </div>
       </section>
     );
