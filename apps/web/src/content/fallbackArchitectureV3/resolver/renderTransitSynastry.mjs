@@ -723,7 +723,8 @@ function renderTransitAspectReference({ transiting, natal, aspect, variant, pass
       const AW = { conjunction: "conjunct", square: "square", opposition: "opposite", trine: "trine", sextile: "sextile" };
       const untilDate = win ? String(win).replace(/^until\s+/i, "") : null;
       const readerBody = c.body_you ?? c.body;
-      if (!readerBody) throw new SourceGapError(`SOURCE_GAP: transit aspect ${c.contentKey} has no body`);
+      // An empty exact overlay must not hide the serving family card.
+      if (!readerBody) continue;
       let aBody = v === "you"
         ? readerBody
         : fillKeep(c.body_they ?? friendVoiceFromReaderCopy(readerBody, voice), { Name: voice });

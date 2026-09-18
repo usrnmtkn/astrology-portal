@@ -26,7 +26,7 @@ function errorDetail(error: unknown) {
  * discarded. The history-entry timestamp survives one reload without leaking
  * the recovery state into other tabs or future sessions.
  */
-function reloadReaderRouteOnce() {
+export function reloadReaderRouteOnce() {
   if (!readerRecoveryRoute()) return false;
   const route = `${window.location.pathname}${window.location.hash}`;
   const now = Date.now();

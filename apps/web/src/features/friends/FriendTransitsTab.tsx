@@ -222,14 +222,14 @@ export function FriendTransitsTab({
             {effectiveReadingStatus === "loading" ? <ReportGenerationBeam /> : null}
           </article>
         ) : null}
-        {daily?.forecast ? (
+        {!isLoading && daily?.forecast ? (
           <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
             <h3>{daily.forecast.headline}</h3>
             <p>{daily.forecast.body}</p>
             <DailyMoonContextTags context={daily.forecast.moonContext} />
           </section>
         ) : null}
-        {daily && daily.doItems.length === 3 && daily.dontItems.length === 3 ? (
+        {!isLoading && daily && daily.doItems.length === 3 && daily.dontItems.length === 3 ? (
           <section className="friend-transit-guidance" aria-label={`${friendName}'s do and don't`}>
             <div className="daily-dodont friend-transit-dodont">
               <div>
@@ -243,7 +243,7 @@ export function FriendTransitsTab({
             </div>
           </section>
         ) : null}
-        {relationshipActivations.length > 0 && (
+        {!isLoading && relationshipActivations.length > 0 && (
           <section className="friend-transit-group" aria-label="Between you two">
             <span className="eyebrow section-label friend-section-label">Between you two</span>
             <div className="updates-aspect-list friend-transit-list">
@@ -270,7 +270,7 @@ export function FriendTransitsTab({
             </div>
           </section>
         )}
-        {primaryThemes.length > 0 ? (
+        {!isLoading && primaryThemes.length > 0 ? (
           <section className="friend-transit-group" aria-label="Short-term themes">
             <span className="eyebrow section-label friend-section-label">Active for {friendName}</span>
             <div className="updates-aspect-list friend-transit-list">
@@ -284,7 +284,7 @@ export function FriendTransitsTab({
             </div>
           </section>
         ) : null}
-        {houseContext.length > 0 && (
+        {!isLoading && houseContext.length > 0 && (
           <section className="friend-transit-group" aria-label="House transits">
             <span className="eyebrow section-label friend-section-label">Where it lands</span>
             <div className="updates-aspect-list friend-transit-list">
@@ -318,7 +318,7 @@ export function FriendTransitsTab({
             </div>
           </section>
         )}
-        {longerCycles.length > 0 ? (
+        {!isLoading && longerCycles.length > 0 ? (
           <section className="friend-transit-group" aria-label="Long-term themes">
             <span className="eyebrow section-label friend-section-label">Longer cycles</span>
             <div className="updates-aspect-list friend-transit-list">
@@ -332,10 +332,12 @@ export function FriendTransitsTab({
             </div>
           </section>
         ) : null}
-        <NatalAspectPatternActivationsSection
-          items={activePatterns}
-          timingOverrides={patternTimingOverrides}
-        />
+        {!isLoading ? (
+          <NatalAspectPatternActivationsSection
+            items={activePatterns}
+            timingOverrides={patternTimingOverrides}
+          />
+        ) : null}
         {!isLoading && !hasAnyTransit && (
           <article className="friends-logic-card">
             <span>Transits</span>

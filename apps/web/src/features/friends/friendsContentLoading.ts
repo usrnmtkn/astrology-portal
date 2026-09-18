@@ -72,3 +72,13 @@ export function shouldStartRelationshipFallbackEnhancement({
   // Explicit chart intent can fetch content while calculations run independently.
   return shouldLoadRelationshipFallbackContent({ mode, friendRelationshipContentRequests });
 }
+
+export function friendTransitsCopyReady({
+  deferredLoaded,
+  relationshipLoaded
+}: {
+  deferredLoaded: boolean;
+  relationshipLoaded: boolean;
+}) {
+  return deferredLoaded && relationshipLoaded;
+}

@@ -84,8 +84,8 @@ assert.match(
 );
 assert.match(
   friendsPanel,
-  /<FriendTransitsTab[\s\S]*isLoading=\{currentSkyLoading\}/u,
-  "The Friends transit tab must receive its selected-date loading state."
+  /<FriendTransitsTab[\s\S]*isLoading=\{currentSkyLoading \|\| transitCopyLoading\}/u,
+  "The Friends transit tab must wait for the selected date and the transit copy packages."
 );
 assert.match(
   friendTransits,

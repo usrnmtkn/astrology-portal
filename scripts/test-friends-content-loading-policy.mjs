@@ -10,7 +10,8 @@ import {
   shouldLoadDeferredFallbackContent,
   shouldLoadEmptyHouseFallbackContent,
   shouldLoadRelationshipFallbackContent,
-  shouldStartRelationshipFallbackEnhancement
+  shouldStartRelationshipFallbackEnhancement,
+  friendTransitsCopyReady
 } from "../apps/web/src/features/friends/friendsContentLoading.ts";
 import {
   initialFriendProfileContentRequest
@@ -284,6 +285,22 @@ assert.equal(
   "A relationship fallback package must enhance Transits as soon as the current sky is ready."
 );
 
+assert.equal(
+  friendTransitsCopyReady({ deferredLoaded: false, relationshipLoaded: false }),
+  false,
+  "Friends transits must wait until both copy packages have loaded."
+);
+assert.equal(
+  friendTransitsCopyReady({ deferredLoaded: true, relationshipLoaded: false }),
+  false,
+  "Friends transits must wait for Between-you-two copy after personal-transit copy arrives."
+);
+assert.equal(
+  friendTransitsCopyReady({ deferredLoaded: true, relationshipLoaded: true }),
+  true,
+  "Friends transits may render cards only after both copy packages are present."
+);
+
 const sourceRows = readJson("source-rows/fallback-source-rows-v3.json").hookRows;
 const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json").rows;
 const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json").rows;
@@ -329,6 +346,27 @@ assert.ok(
 assert.ok(
   sharedPlacementRows.every((row) => row.contentKey.startsWith("fallback-hook/placement-sentence/")),
   "The shared placement partition must contain only placement sentences."
+);
+
+const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const friendTransitsSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/features/friends/FriendTransitsTab.tsx"),
+  "utf8"
+);
+assert.match(
+  appSource,
+  /transitCopyLoading=\{!friendTransitsCopyReady\(\{[\s\S]*deferredLoaded: isDeferredFallbackArchitectureV3BundleLoaded\(\),[\s\S]*relationshipLoaded: isRelationshipFallbackArchitectureV3BundleLoaded\(\)[\s\S]*\}\)\}/u,
+  "Friends must not treat transits as ready until personal-transit and bond-effect copy packages have loaded."
+);
+assert.match(
+  appSource,
+  /reloadReaderRouteOnce\(\);/u,
+  "A stale transit copy chunk after deploy must reload the reader route once."
+);
+assert.match(
+  friendTransitsSource,
+  /\{!isLoading && daily\?\.forecast \?/u,
+  "Friends must not show the daily forecast as a finished page while transit cards are still loading."
 );
 
 console.log("Friends content loading policy passed (on-demand dashboard, domain partitions, byte-identical rows).");
