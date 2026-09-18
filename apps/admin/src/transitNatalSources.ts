@@ -177,18 +177,29 @@ export function transitNatalSituationContentKey(selection: Pick<TransitNatalSele
   return key && isDynamicTransitNatalExactKey(key) ? key : null;
 }
 
-export function transitNatalExactContentKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect"> & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>) {
+export function transitNatalExactContentKey(selection: {
+  planet?: string;
+  natalPoint?: string;
+  aspect?: string;
+  sign?: string;
+  transitHouse?: string;
+  natalHouse?: string;
+}) {
+  const contactFields = {
+    planet: selection.planet,
+    natalPoint: selection.natalPoint,
+    aspect: selection.aspect
+  };
+  if (!transitNatalContactReady(contactFields)) return null;
   if (selection.sign && selection.transitHouse && selection.natalHouse) {
     return transitNatalSituationContentKey({
-      planet: selection.planet,
-      natalPoint: selection.natalPoint,
-      aspect: selection.aspect,
-      sign: selection.sign,
-      transitHouse: selection.transitHouse,
-      natalHouse: selection.natalHouse
-    }) ?? transitNatalContactContentKey(selection);
+      ...contactFields,
+      sign: selection.sign as TransitNatalSign,
+      transitHouse: selection.transitHouse as TransitNatalHouse,
+      natalHouse: selection.natalHouse as TransitNatalHouse
+    }) ?? transitNatalContactContentKey(contactFields);
   }
-  return transitNatalContactContentKey(selection);
+  return transitNatalContactContentKey(contactFields);
 }
 
 export function transitNatalSharedFallbackKey(selection: Pick<TransitNatalSelection, "planet" | "natalPoint" | "aspect">) {

@@ -7445,11 +7445,10 @@ export function GeneratedContentAdminDashboard() {
     if (transitReadingContext.isRetrograde !== undefined) params.set("retrograde", String(transitReadingContext.isRetrograde));
     if (transitReadingContext.window) params.set("window", transitReadingContext.window);
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
-    if (draft && transitNatalContactReady({ planet, aspect, natalPoint })) {
+    const contact = transitNatalContactFromFields(planet, aspect, natalPoint);
+    if (draft && contact) {
       const nextSelection = {
-        planet,
-        aspect,
-        natalPoint,
+        ...contact,
         ...(sign ? { sign } : {}),
         ...(transitHouse ? { transitHouse } : {}),
         ...(natalHouse ? { natalHouse } : {})
