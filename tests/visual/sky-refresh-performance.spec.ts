@@ -21,7 +21,7 @@ test('Sky shell and loading feedback render before the publication service respo
     const started = Date.now();
     if (reload) await page.reload({ waitUntil: 'domcontentloaded' });
     else await page.goto('/#sky', { waitUntil: 'domcontentloaded' });
-    const summary = page.getByLabel('Daily sky summary');
+    const summary = page.getByLabel('Daily sky summary', { exact: true });
     await expect(page.getByText('Loading the sky…', { exact: true })).toBeVisible({ timeout: 5000 });
     expect(Date.now() - started).toBeLessThan(6000);
     console.log(`${reload ? 'Refresh' : 'Initial load'} Sky loading feedback: ${Date.now() - started}ms`);
@@ -48,7 +48,7 @@ test('a cold summary waits for publication identity rather than flashing retired
   });
   await page.route('**/rest/v1/generated_interpretations?**', route => route.fulfill({ json: [] }));
   await page.goto('/#sky');
-  const summary = page.getByLabel('Daily sky summary');
+  const summary = page.getByLabel('Daily sky summary', { exact: true });
   await expect(page.getByText('Loading the sky…', { exact: true })).toBeVisible({ timeout: 5000 });
   await expect(summary).not.toContainText('turns our attention');
   release();

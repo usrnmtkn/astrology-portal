@@ -48,7 +48,7 @@ for (const width of [390, 1440]) {
       await route.fulfill({ json: retired ? [] : [{ id: rowId(), content_key: moonKey, surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving', review_state: null, target_date: null, event_type: null, headline: null, summary: null, body, sections: null, model: null, updated_at: updatedAt() }] });
     });
     const notify = () => page.evaluate(key => window.dispatchEvent(new CustomEvent('tldrastro:content-update', { detail: { contentKey: key, published: true, updatedAt: new Date().toISOString() + Math.random() } })), moonKey);
-    const summary = page.getByLabel('Daily sky summary');
+    const summary = page.getByLabel('Daily sky summary', { exact: true });
     await page.goto('/?date=2026-09-13#sky');
     await expect(page.getByText('Loading the sky…', { exact: true })).toBeVisible({ timeout: 60000 });
     await expect(summary).toContainText(first, { timeout: 60000 });
