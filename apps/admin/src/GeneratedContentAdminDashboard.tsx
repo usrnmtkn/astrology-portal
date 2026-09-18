@@ -1,5 +1,5 @@
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
-import { rememberStudioEditorReturn } from "./studioEditorReturn";
+import { clearStudioEditorReturn, rememberStudioEditorReturn, studioEditorReturnContext } from "./studioEditorReturn";
 import type { HouseTransitEditorSource } from "./HouseTransitWriteupEditor";
 import { ZODIAC_SEASON_SOURCE_STARTERS, isZodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import "./studio-system.css";
@@ -5221,6 +5221,40 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  /**
+   * Opening a different row from inside the editor always leaves a named way back.
+   * Every in-editor Edit and Open control routes through here so no control can
+   * replace the row the owner is writing on without recording its parent.
+   */
+  async function openFromEditor(destinationContentKey: string, open: () => Promise<boolean | void> | boolean | void, options: { parentDraft?: AdminDraft | null; saveReturns?: boolean } = {}): Promise<boolean> {
+    const parentDraft = options.parentDraft ?? draft;
+    if (!parentDraft || parentDraft.contentKey === destinationContentKey) return await open() !== false;
+    const parentBaseline = editorBaselineRef.current;
+    const parentSavedInput = editorSavedInputRef.current;
+    const parentRow = editorSourceRow;
+    const parentSelection = selectedRowId;
+    const parentContext = skyWritingContext;
+    const parentComposition = compositionEditorContext;
+    const parentVariablesOpen = templateVariableReferenceOpen;
+    const parentVariableName = selectedTemplateVariableName;
+    const parentVariableSource = selectedTemplateVariableSourceId;
+    const previousReturn = studioEditorReturnContext();
+    // Registered before the row loads so the destination's first render already
+    // carries the way back instead of waiting for an unrelated re-render.
+    rememberStudioEditorReturn({ childContentKey: destinationContentKey, label: parentDraft.headline || parentDraft.contentKey, saveReturns: options.saveReturns === true, returnToParent: () => {
+      setDraft(parentDraft); editorBaselineRef.current = parentBaseline; editorSavedInputRef.current = parentSavedInput;
+      setEditorSourceRow(parentRow); setSelectedRowId(parentSelection); setSkyWritingContext(parentContext);
+      setCompositionEditorContext(parentComposition); setTemplateVariableReferenceOpen(parentVariablesOpen);
+      setSelectedTemplateVariableName(parentVariableName); setSelectedTemplateVariableSourceId(parentVariableSource);
+      setEditorSaveError(""); editorSessionRef.current += 1;
+    } });
+    if (await open() === false) {
+      if (previousReturn) rememberStudioEditorReturn(previousReturn); else clearStudioEditorReturn();
+      return false;
+    }
+    return true;
+  }
+
   async function createNatalPlacementOverride(contentKey: string, label: string, body: string) {
     const { natalPlacementOverrideDraft } = await import("./NatalPlacementSourceFinder");
     setSelectedRowId(null);
@@ -5604,22 +5638,8 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function openCalendarWritingSource(row: AdminGeneratedContentRow) {
-    const parentDraft = draft;
-    const parentBaseline = editorBaselineRef.current;
-    const parentSavedInput = editorSavedInputRef.current;
-    const parentRow = editorSourceRow;
-    const parentSelection = selectedRowId;
-    const parentContext = skyWritingContext;
-    const parentComposition = compositionEditorContext;
-    const parentVariablesOpen = templateVariableReferenceOpen;
-    if (!await openRow(row, null, "body", undefined, Boolean(parentDraft))) return;
-    if (parentDraft) rememberStudioEditorReturn({ childContentKey: row.content_key, label: parentDraft.headline || "template", returnToParent: () => {
-      setDraft(parentDraft); editorBaselineRef.current = parentBaseline; editorSavedInputRef.current = parentSavedInput;
-      setEditorSourceRow(parentRow); setSelectedRowId(parentSelection); setSkyWritingContext(parentContext);
-      setCompositionEditorContext(parentComposition); setTemplateVariableReferenceOpen(parentVariablesOpen);
-      setEditorSaveError(""); editorSessionRef.current += 1;
-    } });
+  function openCalendarWritingSource(row: AdminGeneratedContentRow) {
+    return openFromEditor(row.content_key, () => openRow(row, null, "body", undefined, Boolean(draft)), { saveReturns: true });
   }
 
   async function openSkyForecastTemplate(period: SkyForecastPeriod, field?: string) {
@@ -9130,24 +9150,10 @@ export function GeneratedContentAdminDashboard() {
       } else updateGenericBody(next);
       requestAnimationFrame(() => { element.focus(); element.setSelectionRange(start + token.length, start + token.length); });
     };
-    const openSharedSeasonSource = async (key: string) => {
-      const parentDraft = currentDraft;
-      const parentBaseline = editorBaselineRef.current;
-      const parentSavedInput = editorSavedInputRef.current;
-      const parentRow = editorSourceRow;
-      const parentSelection = selectedRowId;
-      const parentContext = skyWritingContext;
-      const parentComposition = compositionEditorContext;
-      const parentVariablesOpen = templateVariableReferenceOpen;
-      const opened = await openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, "body", undefined, true);
-      if (!opened) return;
-      rememberStudioEditorReturn({ childContentKey: key, label: parentDraft.headline || "article", returnToParent: () => {
-        setDraft(parentDraft); editorBaselineRef.current = parentBaseline; editorSavedInputRef.current = parentSavedInput;
-        setEditorSourceRow(parentRow); setSelectedRowId(parentSelection); setSkyWritingContext(parentContext);
-        setCompositionEditorContext(parentComposition); setTemplateVariableReferenceOpen(parentVariablesOpen);
-        setEditorSaveError(""); editorSessionRef.current += 1;
-      } });
-    };
+    const openSharedSeasonSource = (key: string) => openFromEditor(key, () => openRow(
+      rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow,
+      null, "body", undefined, true
+    ), { parentDraft: currentDraft, saveReturns: true });
     const updateGenericBody = (body: string) => {
       const nextDraft = invalidateContentStudioReview({ ...currentDraft, body });
       setDraft(isPackageDraft && typeof editablePackageRecord.body === "string"
@@ -9807,7 +9813,7 @@ export function GeneratedContentAdminDashboard() {
               {compatibilityDraftCollision && (
                 <div className="admin-inline-warning" role="alert">
                   <strong>This card already exists.</strong>
-                  <StudioButton type="button" onClick={() => openRow(compatibilityDraftCollision)}>Open saved record</StudioButton>
+                  <StudioButton type="button" onClick={() => void openFromEditor(compatibilityDraftCollision.content_key, () => openRow(compatibilityDraftCollision), { parentDraft: currentDraft })}>Open saved record</StudioButton>
                 </div>
               )}
             </fieldset>
@@ -9838,7 +9844,7 @@ export function GeneratedContentAdminDashboard() {
                   type="button"
                   onClick={() => {
                     if (!reverseCompatibility) return;
-                    openRow(reverseCompatibility);
+                    void openFromEditor(reverseCompatibility.content_key, () => openRow(reverseCompatibility), { parentDraft: currentDraft });
                     setMessage(`${reverseCompatibilityIdentity?.title ?? "Reverse compatibility record"} opened.`);
                   }}
                   disabled={!reverseCompatibility || draftHasUnsavedChanges || isLoading}
@@ -9978,10 +9984,10 @@ export function GeneratedContentAdminDashboard() {
                     return row ? effectivePackageRecord(row.sections) : undefined;
                   }}
                   disabled={isLoading} onChange={updateSkyFallbackField}
-                  onOpenSource={(key, path) => isZodiacSeasonSourceKey(key) ? void openSharedSeasonSource(key) : openRow(
+                  onOpenSource={(key, path) => isZodiacSeasonSourceKey(key) ? void openSharedSeasonSource(key) : void openFromEditor(key, () => openRow(
                     rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow,
                     null, path, skyWritingContext.selection
-                  )} />
+                  ), { parentDraft: currentDraft })} />
               </Suspense>
 
               {isSkyV4StudioRecord && (
@@ -10487,7 +10493,7 @@ export function GeneratedContentAdminDashboard() {
                 youText={packageFieldString(currentDraft, "body_you")}
                 theyText={packageFieldString(currentDraft, "body_they")}
                 secret={secret}
-                onOpenSource={(sourceKey, label, field) => void openContentKeyRow(sourceKey, label, false, field)}
+                onOpenSource={(sourceKey, label, field) => void openFromEditor(sourceKey, () => openContentKeyRow(sourceKey, label, false, field))}
               />
             </Suspense>
           )}
@@ -10555,7 +10561,7 @@ export function GeneratedContentAdminDashboard() {
                   key={`friend-editor-${natalPlacementPlanet}-${natalPlacementSign}-${natalPlacementHouse}-${natalPlacementMotion}`}
                   motion={natalPlacementMotion}
                   onCreateOverride={createNatalPlacementOverride}
-                  onOpenSource={(contentKey, label, previewTemplate) => void openContentKeyRow(contentKey, label, previewTemplate)}
+                  onOpenSource={(contentKey, label, previewTemplate) => void openFromEditor(contentKey, () => openContentKeyRow(contentKey, label, previewTemplate))}
                   planet={natalPlacementPlanet}
                   rows={rows}
                   secret={secret}
@@ -11245,7 +11251,7 @@ export function GeneratedContentAdminDashboard() {
             selectedSourceId={selectedTemplateVariableSourceId}
             onSelectVariable={setSelectedTemplateVariableName}
             onSelectSource={setSelectedTemplateVariableSourceId}
-            onEditSource={(row) => isZodiacSeasonSourceKey(row.content_key) ? void openSharedSeasonSource(row.content_key) : openRow(row as AdminGeneratedContentRow)}
+            onEditSource={(row) => isZodiacSeasonSourceKey(row.content_key) ? void openSharedSeasonSource(row.content_key) : void openFromEditor(row.content_key, () => openRow(row as AdminGeneratedContentRow), { parentDraft: currentDraft, saveReturns: true })}
             onClose={closeVariablesRail}
             onKeyDown={handleEditorKeyDown}
           />

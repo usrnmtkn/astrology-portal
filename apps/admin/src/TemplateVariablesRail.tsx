@@ -7,7 +7,6 @@ import type { CompositionMapRow, CompositionPreviewOptions } from "./composition
 import type { TemplateVariableReference } from "./templateVariableReference";
 import { templateVariableSourceCandidates, templateVariableSourceKeyPrefixes } from "./templateVariableSources";
 import { TemplateVariableReviewPanels, readableCopy, type TemplateVariableSourceRow } from "./TemplateVariableReviewPanels";
-import { rememberStudioEditorReturn } from "./studioEditorReturn";
 import { PageLoading } from "../../web/src/components/PageLoading";
 
 const TemplateReaderDrilldown = lazy(() => import("./TemplateReaderDrilldown"));
@@ -78,26 +77,6 @@ export default function TemplateVariablesRail({
   const selected = selectedVariableName
     ? references.find((reference) => reference.name === selectedVariableName) ?? null
     : null;
-  const parentSourceRow = rows.find((row) => row.content_key === reviewTemplateRow.content_key) ?? null;
-
-  const editVariableSource = (row: TemplateVariableSourceRow) => {
-    if (selected && parentSourceRow) {
-      const selectedName = selected.name;
-      const selectedSource = selectedSourceId;
-      rememberStudioEditorReturn({
-        childContentKey: row.content_key,
-        label: `{{${selectedName}}}`,
-        returnToParent: () => {
-          onEditSource(parentSourceRow);
-          window.requestAnimationFrame(() => {
-            onSelectVariable(selectedName);
-            onSelectSource(selectedSource);
-          });
-        }
-      });
-    }
-    onEditSource(row);
-  };
 
   return (
     <aside
@@ -155,7 +134,7 @@ export default function TemplateVariablesRail({
               onSelectSource(null);
               onSelectVariable(name);
             }}
-            onEditSource={editVariableSource}
+            onEditSource={onEditSource}
           />
         ) : (
           <>

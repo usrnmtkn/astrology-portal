@@ -104,7 +104,11 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await articleField.fill(skyPlacementSourceRecords.get("sky-placement/article/saturn/aries")!.placementArticle);
   await related.getByLabel("Find an aspect passage", { exact: true }).fill("no matching passage");
   await expect(related.getByText("No aspect passages match this search.", { exact: true })).toBeVisible();
+  // Editing the shared placement writing opened a different row, so the close
+  // control is the named way back to the retrograde source it came from.
   page.once("dialog", dialog => dialog.accept());
+  await page.getByRole("dialog").getByRole("button", { name: /^Back to / }).click();
+  await expect(sourceEditor.getByRole("textbox", { name: "Fallback field Retrograde body", exact: true })).toBeVisible();
   await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
   await map.getByLabel("Placement writing path").selectOption("article");
   await map.screenshot({ path: `test-results/saturn-map-${width}-${theme}.png` });

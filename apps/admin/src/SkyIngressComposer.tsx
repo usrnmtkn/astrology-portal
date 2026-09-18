@@ -178,7 +178,7 @@ export default function SkyIngressComposer({ source, motion, disabled = false, i
         </AdminSelect></label>
         <code className="admin-sky-section-reference">{`${source.contentKey}#ingress.sources.${selectedSource}`}</code>
         {selected?.reference ? <div><p>Linked exact revision: {selected.reference.contentKey}#{selected.reference.field}</p>
-          <StudioButton type="button" onClick={() => onOpenSource(selected.reference!.contentKey, selected.reference!.field)}>Edit linked source</StudioButton>
+          <StudioButton type="button" onClick={() => onOpenSource(selected.reference!.contentKey, selected.reference!.field)}>Open {selected.reference.contentKey} to change the shared words</StudioButton>
           <StudioButton type="button" disabled={disabled} onClick={() => updateSource({ kind: selected.kind, text: "" })}>Use local writing</StudioButton></div>
           : selected && <label className="admin-review-copy-editor"><span>{words(selectedSource)}</span>
             <StudioTextarea ref={writing} className="admin-copy-field-body" aria-label={`Ingress source ${selectedSource}`} disabled={disabled} value={selected.text ?? ""} onChange={event => updateSource({ ...selected, text: event.target.value })} />

@@ -28,6 +28,8 @@ assert.match(controls, /StudioStatusBadge/u);
 assert.match(controls, /installStudioStatusCompatibility/u, "The shared Studio control layer must install the legacy-status compatibility boundary.");
 assert.match(controls, /Save & return/u, "Nested source publication must expose Save & return.");
 assert.match(controls, /Save draft & return/u, "Nested source drafts must expose Save draft & return.");
+assert.match(controls, /returnContext\?\.saveReturns && text === "Save & publish"/u, "Only a trip taken to fix one referenced source may turn publishing into a return.");
+assert.match(returnFlow, /saveReturns\?: boolean/u, "A recorded way back must state whether saving returns to the parent.");
 assert.match(controls, /returnToStudioParentEditor/u, "Nested editor close must return to the parent authoring context.");
 assert.match(controls, /text\.includes\("Not live"\)[\s\S]*"Inactive"/u, "Legacy button statuses must normalize Not live to Inactive.");
 assert.match(controls, /ariaLabel\?\.startsWith\("Close"\) && !\/\[A-Za-z\]\/u\.test\(text\)/u, "Labeled close controls with visible words must not shrink to the icon-button treatment.");
@@ -40,10 +42,58 @@ assert.match(compatibility, /Draft saved/u, "Saved draft feedback must not appen
 assert.match(compatibility, /admin-status-guide/u, "The legacy status guide must be rewritten to the canonical vocabulary.");
 assert.doesNotMatch(compatibility, /Not live/u, "The compatibility adapter must construct the transport phrase without adding another raw legacy occurrence.");
 
-assert.match(rail, /rememberStudioEditorReturn/u);
-assert.match(rail, /onEditSource\(parentSourceRow\)/u, "Variable source editing must preserve its parent template row.");
+assert.doesNotMatch(rail, /rememberStudioEditorReturn/u, "One mechanism records the way back. A second copy in the rail loses the template's unsaved writing.");
+assert.match(
+  dashboard,
+  /setSelectedTemplateVariableName\(parentVariableName\); setSelectedTemplateVariableSourceId\(parentVariableSource\)/u,
+  "Returning from a variable's source must restore the parent template row, its unsaved writing, and the selected variable."
+);
 assert.match(rail, /StudioIconButton[\s\S]*admin-variables-rail-close/u, "Variables rail must use the shared icon-button component.");
 assert.match(returnFlow, /notice\.contentKey !== context\.childContentKey/u, "Save-and-return must wait for the exact edited source.");
+
+// Opening another row from inside the editor must record a way back, so no
+// control can silently replace the row the owner is writing on.
+assert.match(dashboard, /async function openFromEditor\(destinationContentKey: string/u, "Content Studio must route in-editor navigation through one guarded helper.");
+assert.match(dashboard, /parentDraft\.contentKey === destinationContentKey/u, "Editing a field on the row already open must not be treated as navigation.");
+assert.match(
+  dashboard,
+  /async function openFromEditor\([\s\S]{0,1400}?rememberStudioEditorReturn\(\{ childContentKey: destinationContentKey/u,
+  "openFromEditor must register the parent editor as the destination's way back."
+);
+const openFromEditorBody = dashboard.slice(
+  dashboard.indexOf("  async function openFromEditor("),
+  dashboard.indexOf("\n  }\n", dashboard.indexOf("  async function openFromEditor("))
+);
+assert.equal(
+  (dashboard.match(/rememberStudioEditorReturn\(/gu) ?? []).length,
+  (openFromEditorBody.match(/rememberStudioEditorReturn\(/gu) ?? []).length,
+  "The dashboard records the way back only inside openFromEditor. Route new navigation through it instead of repeating the parent capture."
+);
+// Controls rendered inside the editor are the ones that can replace the row
+// being written on. Page surfaces stay visible behind the editor and keep their
+// own navigation. Guarded helpers register the way back themselves.
+const editorStart = dashboard.indexOf("  function renderEditor() {");
+assert.ok(editorStart > 0, "The editor render boundary must stay findable for the navigation contract.");
+const editorBody = dashboard.slice(editorStart, dashboard.indexOf("\n  }\n", dashboard.indexOf("</>\n    );", editorStart)));
+const guardedHelpers = /openFromEditor\(|openSharedSeasonSource\(|openCalendarWritingSource\(/u;
+const unguardedNavigation = editorBody
+  .split("\n")
+  .filter((line) => /(?:openRow|openContentKeyRow)\(/u.test(line) && !guardedHelpers.test(line))
+  .map((line) => line.trim().slice(0, 110));
+assert.deepEqual(
+  unguardedNavigation,
+  [],
+  "Every Edit or Open control inside the editor must route through openFromEditor so the owner keeps a named way back."
+);
+assert.ok(
+  (editorBody.match(/openFromEditor\(/gu) ?? []).length >= 5,
+  "The editor's in-place navigation controls must keep routing through openFromEditor."
+);
+assert.doesNotMatch(
+  adminSourceFiles(adminSrc).map((file) => fs.readFileSync(file, "utf8")).join("\n"),
+  /Edit linked source/u,
+  "A control that opens a different content key must name the destination, not say Edit linked source."
+);
 
 for (const label of ["Live", "Ready", "Draft", "Inactive", "Archived", "Retired", "Error", "Unavailable"]) {
   assert.ok(status.includes(`\"${label}\"`) || status.includes(`>${label}<`), `Missing canonical Content Studio status: ${label}`);

@@ -4,6 +4,12 @@ type StudioEditorReturnContext = {
   childContentKey: string;
   label: string;
   returnToParent: () => void;
+  /**
+   * A trip taken to fix one referenced source returns as soon as it is saved.
+   * A plain way back only offers the route; the owner may keep working on the
+   * row they opened and decide when to go back.
+   */
+  saveReturns?: boolean;
 };
 type ReturnAfterSave = "published" | "any" | null;
 
