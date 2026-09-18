@@ -41,7 +41,7 @@ import {
   X,
 } from "lucide-react";
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { PageLoading, PageLoadBoundary, PageLoadError } from "./components/PageLoading";
+import { PageLoading, PageLoadBoundary, PageLoadError, reloadReaderRouteOnce } from "./components/PageLoading";
 import type { FormEvent, MouseEvent as ReactMouseEvent, ReactNode, Ref } from "react";
 import { flushSync } from "react-dom";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
@@ -82,6 +82,8 @@ import {
   installCompatibilityFallbackArchitectureV3Bundle,
   installFallbackArchitectureV3Bundle,
   installSkyPlacementFallbackArchitectureV3Bundle,
+  isDeferredFallbackArchitectureV3BundleLoaded,
+  isRelationshipFallbackArchitectureV3BundleLoaded,
   loadDeferredFallbackArchitectureV3Bundle,
   loadEmptyHouseFallbackArchitectureV3Bundle,
   loadLunationBookFallbackArchitectureV3Bundle,
@@ -149,6 +151,7 @@ import {
 } from "./features/friends/friendCalculationReadiness";
 import { manualChartBigThree } from "./features/friends/friendChartModel";
 import {
+  friendTransitsCopyReady,
   shouldHydrateCompatibilityDashboardContent,
   shouldHydrateFallbackDashboardContent,
   shouldLoadDeferredFallbackContent,
@@ -11718,6 +11721,7 @@ export function App() {
       })
       .catch((error) => {
         console.warn("Deferred transit fallbacks failed to load; core fallbacks remain active.", error);
+        reloadReaderRouteOnce();
       });
 
     return () => {
@@ -11783,6 +11787,7 @@ export function App() {
       })
       .catch((error) => {
         console.warn("Deferred relationship fallbacks failed to load; transit fallbacks remain active.", error);
+        reloadReaderRouteOnce();
       });
 
     return () => {
@@ -14845,6 +14850,10 @@ export function App() {
                     profileHandle={ownSocialProfile?.handle ?? null}
                     currentSky={selectedDateSky}
                     currentSkyLoading={friendCalculationNeeds.currentSky && !selectedDateSky && skyStatus !== "error"}
+                    transitCopyLoading={!friendTransitsCopyReady({
+                      deferredLoaded: isDeferredFallbackArchitectureV3BundleLoaded(),
+                      relationshipLoaded: isRelationshipFallbackArchitectureV3BundleLoaded()
+                    })}
                     transitDateLabel={formatSkyFullChartDate(skyDate)}
                     fallbackArchitectureV3Version={fallbackArchitectureV3Version}
                     profileNatalSky={profileNatalSky}

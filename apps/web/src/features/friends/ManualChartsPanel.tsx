@@ -240,6 +240,7 @@ export function ManualChartsPanel({
   profileHandle,
   currentSky,
   currentSkyLoading,
+  transitCopyLoading = false,
   transitDateLabel,
   fallbackArchitectureV3Version,
   profileNatalSky,
@@ -264,6 +265,7 @@ export function ManualChartsPanel({
   profileHandle: string | null;
   currentSky: SkySnapshot | null;
   currentSkyLoading: boolean;
+  transitCopyLoading?: boolean;
   transitDateLabel: string;
   fallbackArchitectureV3Version: number;
   profileNatalSky: SkySnapshot | null;
@@ -2830,12 +2832,12 @@ export function ManualChartsPanel({
           {friendProfileTab === "transits" && (
             <FriendTransitsTab
               brief={selectedFriendTransitsBrief}
-              isLoading={currentSkyLoading}
+              isLoading={currentSkyLoading || transitCopyLoading}
               onGenerateReading={generateSelectedFriendTransitReading}
               onOpenBondTransit={openBondTransitById}
               onOpenHouseTransit={openFriendHouseTransitById}
               onOpenPersonalTransit={openFriendTransitById}
-              patternTimingOverrides={currentSkyLoading ? {} : selectedFriendNatalAspectPatternTimingOverrides}
+              patternTimingOverrides={currentSkyLoading || transitCopyLoading ? {} : selectedFriendNatalAspectPatternTimingOverrides}
               reading={friendTransitReading}
               readingAvailable={selectedFriendTransitReadingAvailable}
               readingStatus={friendTransitReadingStatus}
