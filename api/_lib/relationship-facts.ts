@@ -1,3 +1,4 @@
+import { calculationApiBaseUrl, calculationApiFailureDetail } from "./calculation-api.js";
 import {
   createReportEnvelope,
   fetchReportEnvelope,
@@ -5,7 +6,7 @@ import {
   type UserReportRow
 } from "./report-envelope.js";
 
-const DEFAULT_TLDRASTRO_API_URL = "https://tldrastro-api-27165565299.us-central1.run.app";
+
 const HARD_ASPECTS = new Set(["opposition", "square"]);
 const HARMONIOUS_ASPECTS = new Set(["sextile", "trine"]);
 const TIME_UNKNOWN = "Time unknown";
@@ -652,8 +653,8 @@ async function jsonPayload(response: Response) {
   return response.json().catch(() => null) as Promise<unknown>;
 }
 
-function fetchFailure(label: string, response: Response, payload: unknown) {
-  return new Error(`${label} failed with ${response.status}: ${JSON.stringify(payload)}`);
+function fetchFailure(label: string, response: Response, payload: unknown, body = "") {
+  return new Error(`${label} failed with ${response.status}: ${calculationApiFailureDetail(body, payload)}`);
 }
 
 export function createSupabaseRelationshipFactsDataSource({
@@ -722,7 +723,7 @@ export function createSupabaseRelationshipFactsDataSource({
 }
 
 export function createTldrAstroRelationshipClient({
-  baseUrl = process.env.TLDRASTRO_API_URL || process.env.VITE_TLDRASTRO_API_URL || DEFAULT_TLDRASTRO_API_URL,
+  baseUrl = calculationApiBaseUrl(),
   fetchImpl = fetch
 }: {
   baseUrl?: string;

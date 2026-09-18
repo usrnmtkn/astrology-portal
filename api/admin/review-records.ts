@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { calculationApiBaseUrl, calculationApiFailureDetail } from "../_lib/calculation-api.js";
 import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { transitToNatalOrbLimit } from "../_lib/astrology-config.js";
@@ -204,7 +205,7 @@ function supabaseUrl() {
 }
 
 function tldrAstroApiUrl() {
-  return (process.env.TLDRASTRO_API_URL || process.env.VITE_TLDRASTRO_API_URL || "https://tldrastro-api-27165565299.us-central1.run.app").replace(/\/$/, "");
+  return calculationApiBaseUrl();
 }
 
 function serviceRoleKey() {
@@ -445,7 +446,7 @@ async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TR
   const payload = response.payload;
 
   if (!response.ok) {
-    throw new Error(`TLDR Astro API ${response.status}: ${JSON.stringify(payload)}`);
+    throw new Error(`TLDR Astro API ${response.status} from ${tldrAstroApiUrl()}${path}: ${calculationApiFailureDetail("", payload)}`);
   }
 
   return payload as TResponse;

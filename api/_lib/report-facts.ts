@@ -1,4 +1,10 @@
 import {
+  calculationApiBaseUrl,
+  calculationApiFailureDetail,
+  describeCalculationApiFailure,
+  readCalculationApiResponse
+} from "./calculation-api.js";
+import {
   createReportEnvelope,
   fetchReportEnvelope,
   type ReportEnvelopeStore,
@@ -11,7 +17,7 @@ import {
   type ReportHorizon
 } from "./report-types.js";
 
-const DEFAULT_TLDRASTRO_API_URL = "https://tldrastro-api-27165565299.us-central1.run.app";
+
 
 type JsonObject = Record<string, unknown>;
 
@@ -216,15 +222,15 @@ export class ReportCalculationApiClientError extends Error {
   readonly code = "CALCULATION_API_CLIENT_ERROR";
   readonly statusCode: number;
 
-  constructor(statusCode: number, payload: unknown) {
-    super(`CALCULATION_API_CLIENT_ERROR: TLDR Astro API request failed with ${statusCode}: ${JSON.stringify(payload)}`);
+  constructor(statusCode: number, payload: unknown, body = "") {
+    super(`CALCULATION_API_CLIENT_ERROR: TLDR Astro API request failed with ${statusCode}: ${calculationApiFailureDetail(body, payload)}`);
     this.name = "ReportCalculationApiClientError";
     this.statusCode = statusCode;
   }
 }
 
 export function createTldrAstroReportFactsClient({
-  baseUrl = process.env.TLDRASTRO_API_URL || process.env.VITE_TLDRASTRO_API_URL || DEFAULT_TLDRASTRO_API_URL,
+  baseUrl = calculationApiBaseUrl(),
   fetchImpl = fetch,
   preflightTimeoutMs = 5_000
 }: {
@@ -254,12 +260,18 @@ export function createTldrAstroReportFactsClient({
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body)
     });
-    const payload = await response.json().catch(() => null);
+    const { body: responseBody, payload } = await readCalculationApiResponse(response as Response);
     if (!response.ok) {
       if (response.status >= 400 && response.status < 500) {
-        throw new ReportCalculationApiClientError(response.status, payload);
+        throw new ReportCalculationApiClientError(response.status, payload, responseBody);
       }
-      throw new Error(`TLDR Astro API request failed with ${response.status}: ${JSON.stringify(payload)}`);
+      throw new Error(`TLDR Astro API request failed with ${describeCalculationApiFailure({
+        target: `${normalizedBaseUrl}${path}`,
+        status: response.status,
+        statusText: response.statusText,
+        body: responseBody,
+        payload
+      })}`);
     }
     return payload as T;
   }

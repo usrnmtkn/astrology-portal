@@ -2,6 +2,11 @@ import {
   calculateSkyAspects,
   canonicalizeNodeAxisAspects
 } from "@tldr/astro-knowledge/sky-aspect-engine";
+import {
+  calculationApiBaseUrl,
+  describeCalculationApiFailure,
+  readCalculationApiResponse
+} from "./calculation-api.js";
 
 export type LocationInput = {
   label: string;
@@ -157,7 +162,7 @@ function dateOnly(date: Date) {
 }
 
 function tldrAstroApiUrl() {
-  return (process.env.TLDRASTRO_API_URL || process.env.VITE_TLDRASTRO_API_URL || "https://tldrastro-api-27165565299.us-central1.run.app").replace(/\/$/, "");
+  return calculationApiBaseUrl();
 }
 
 function themeForPoint(point: string) {
@@ -260,17 +265,24 @@ function southNodePositionFromNorthNode(northNode: PlanetPosition, ascendant: st
 }
 
 async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TResponse> {
-  const response = await fetch(`${tldrAstroApiUrl()}${path}`, {
+  const target = `${tldrAstroApiUrl()}${path}`;
+  const response = await fetch(target, {
     method: "POST",
     headers: {
       "content-type": "application/json"
     },
     body: JSON.stringify(body)
   });
-  const payload = await response.json().catch(() => null);
+  const { body: responseBody, payload } = await readCalculationApiResponse(response);
 
   if (!response.ok) {
-    throw new Error(`TLDR Astro API ${response.status}: ${JSON.stringify(payload)}`);
+    throw new Error(`TLDR Astro API ${describeCalculationApiFailure({
+      target,
+      status: response.status,
+      statusText: response.statusText,
+      body: responseBody,
+      payload
+    })}`);
   }
 
   return payload as TResponse;
