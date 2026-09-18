@@ -62,6 +62,35 @@ try {
     assembly.fillNamedSlots(reverse.body_they, assembly.synastryHolderSlots(false, "Name")),
     "Name may point out problems in how you come across."
   );
+  assert.deepEqual(assembly.parseAstroContactSearch("Moon Sextile Mars"), {
+    transiting: "moon",
+    aspect: "sextile",
+    natal: "mars"
+  });
+  assert.deepEqual(assembly.parseAstroContactSearch("Moon sextile your Mars"), {
+    transiting: "moon",
+    aspect: "sextile",
+    natal: "mars"
+  });
+  assert.equal(assembly.matchesBondEffectContactSearch("fallback-hook/bond-effect-sextile/moon", "Moon sextile Mars"), true);
+  assert.equal(assembly.matchesBondEffectContactSearch("bond-effect-sextile/moon", "Moon Sextile Mars"), true);
+  assert.equal(assembly.matchesBondEffectContactSearch("fallback-hook/bond-effect-trine/moon", "Moon sextile Mars"), false);
+  assert.equal(assembly.matchesBondEffectContactSearch("fallback-hook/bond-effect-sextile/venus", "Moon sextile Mars"), false);
+  assert.deepEqual(assembly.parseAstroContactSearch("Mars conjunct Moon"), {
+    transiting: "mars",
+    aspect: "conjunction",
+    natal: "moon"
+  });
+  assert.deepEqual(assembly.transitNatalSearchSelection("Mars conjunct Moon"), {
+    planet: "mars",
+    aspect: "conjunction",
+    natalPoint: "moon"
+  });
+  assert.equal(assembly.matchesTransitNatalContactSearch("authored/transit-aspect/mars/moon/conjunction", "Mars conjunct Moon"), true);
+  assert.equal(assembly.matchesTransitNatalContactSearch("authored/transit-aspect/mars/moon/soft", "Mars conjunct Moon"), true);
+  assert.equal(assembly.matchesTransitNatalContactSearch("authored/transit-aspect/mars/moon/hard", "Mars conjunct Moon"), false);
+  assert.equal(assembly.matchesTransitNatalContactSearch("authored/transit-aspect/mars/moon/conjunction/cancer/2/2", "Mars conjunct Moon"), true);
+  assert.equal(assembly.matchesTransitNatalContactSearch("authored/transit-aspect/moon/mars/conjunction", "Mars conjunct Moon"), false);
 } finally {
   fs.rmSync(dir, { recursive: true, force: true });
 }
@@ -73,4 +102,8 @@ assert.match(dashboard, /This row is only the opening on the Friends Between you
 assert.match(preview, /Assembled Friends page/u);
 assert.match(preview, /What this activates/u);
 assert.match(preview, /This last line is calculated from the chart/u);
+assert.match(dashboard, /matchesFallbackLibrarySearch/u);
+assert.match(dashboard, /placeholder="Mars conjunct Moon"/u);
+assert.match(dashboard, /Edit live /u);
+assert.match(dashboard, /Live reader write-up/u);
 console.log("Content Studio bond-effect Friends page assembly passed.");

@@ -11,6 +11,7 @@ import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowse
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
+import { matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { isTransitNatalSituationKey } from "./transitNatalEditorScope";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
@@ -1682,6 +1683,12 @@ function matchesAdminSearch(haystack: string, search: string) {
   return tokens.every((token) => normalizedHaystack.includes(token));
 }
 
+function matchesFallbackLibrarySearch(contentKey: string, haystack: string, search: string) {
+  return matchesAdminSearch(haystack, search)
+    || matchesBondEffectContactSearch(contentKey, search)
+    || matchesTransitNatalContactSearch(contentKey, search);
+}
+
 function isCompatibilityRow(row: AdminGeneratedContentRow) {
   const contentKey = row.content_key.toLowerCase();
   return contentKey.startsWith("compatibility.")
@@ -2958,6 +2965,7 @@ export function GeneratedContentAdminDashboard() {
   const [transitNatalAspect, setTransitNatalAspect] = useState<TransitNatalAspect | "">("");
   const [transitNatalPoint, setTransitNatalPoint] = useState<TransitNatalPoint | "">("");
   const [transitNatalNatalHouse, setTransitNatalNatalHouse] = useState<TransitNatalHouse | "">("");
+  const [transitNatalQuery, setTransitNatalQuery] = useState("");
   const [houseTransitPlanet, setHouseTransitPlanet] = useState<TransitNatalPlanet | "">("");
   const [houseTransitSign, setHouseTransitSign] = useState<TransitNatalSign | "">("");
   const [houseTransitHouse, setHouseTransitHouse] = useState<TransitNatalHouse | "">("");
@@ -3272,7 +3280,7 @@ export function GeneratedContentAdminDashboard() {
     && (calendarAspectFilterScopeActive || contentClassFilter === "all" || contentClassForRow(row) === contentClassFilter)
     && (calendarAspectFilterScopeActive || tierFilter === "all" || tierForRow(row) === tierFilter)
     && (categoryFilter === "all" || contentCategoryForRow(row) === categoryFilter)
-    && matchesAdminSearch(visibleRowSearchText(row), query.trim().toLowerCase())
+    && matchesFallbackLibrarySearch(row.content_key, visibleRowSearchText(row), query.trim().toLowerCase())
   ), [visibleRows, contentLibraryView, calendarAspectFilterScopeActive, contentClassFilter, tierFilter, categoryFilter, query]);
   const liveStatusResults = useContentLiveStatusResults(loadLiveStatus, statusCountRows,
     activePage === "content" && (statusFiltersOpen || contentStatusFilter !== "all"));
@@ -3282,7 +3290,9 @@ export function GeneratedContentAdminDashboard() {
     contentStatusFilter === "all" || liveStatusResults?.statuses.get(row.id)?.live === (contentStatusFilter === "LIVE")
   ), [statusCountRows, liveStatusResults, contentStatusFilter]);
   const normalizedContentLibraryQuery = query.trim().toLowerCase();
-  const contentLibraryTransitShortcut: "transits-to-natal" | "house-transits" | null = categoryFilter === "Personal Transits"
+  const contentLibraryTransitContact = transitNatalSearchSelection(query);
+  const contentLibraryTransitShortcut: "transits-to-natal" | "house-transits" | null = contentLibraryTransitContact
+    || categoryFilter === "Personal Transits"
     || /(?:personal[- /]transit|transit[- /]to[- /]natal)/u.test(normalizedContentLibraryQuery)
       ? "transits-to-natal"
       : categoryFilter === "House Transits" || /house[- /]transit/u.test(normalizedContentLibraryQuery)
@@ -3347,7 +3357,7 @@ export function GeneratedContentAdminDashboard() {
   );
   const filteredFallbackRows = useMemo(() => savedFallbackRows.filter((row) => (
     (fallbackSectionFilter === "all" || fallbackSectionForKey(row.content_key, row.surface) === fallbackSectionFilter)
-      && matchesAdminSearch(fallbackHookVisibleSearchText(row), query)
+      && matchesFallbackLibrarySearch(row.content_key, fallbackHookVisibleSearchText(row), query)
   )).sort((left, right) => compareFallbackRows(left, right, fallbackRowSort)), [savedFallbackRows, fallbackSectionFilter, fallbackRowSort, query]);
   const filteredHookCatalog = useMemo(() => {
     const search = query.trim().toLowerCase();
@@ -3360,7 +3370,7 @@ export function GeneratedContentAdminDashboard() {
       return (fallbackSectionFilter === "all" || item.section === fallbackSectionFilter)
         && (surfaceAreaFilter === "all" || itemArea === surfaceAreaFilter)
         && (surfaceStatusFilter === "all" || itemStatus === surfaceStatusFilter)
-        && (!search || matchesAdminSearch(`${item.key} ${item.label} ${item.section} ${item.type}`, search));
+        && (!search || matchesFallbackLibrarySearch(item.key, `${item.key} ${item.label} ${item.section} ${item.type}`, search));
     });
   }, [hookCatalogItems, savedHookKeys, fallbackSectionFilter, surfaceAreaFilter, surfaceStatusFilter, query]);
   const filteredWritingSurfaces = useMemo(() => writingSurfaces.filter((item) => {
@@ -6428,11 +6438,23 @@ export function GeneratedContentAdminDashboard() {
                       <div>
                         <p className="admin-eyebrow">Assembled transit writing</p>
                         <h3>{contentLibraryTransitShortcut === "transits-to-natal" ? "Transit to Natal Charts" : "House Transits"}</h3>
-                        <p>These reader cards are assembled from several reusable rows. Open the dedicated workspace to preview the complete card and edit every passage inside it.</p>
+                        <p>{contentLibraryTransitContact
+                          ? `Open the ${transitNatalLabel(contentLibraryTransitContact)} write-up. The live Friends Active for {{Name}} card uses this three-part aspect unless a six-part situation is published.`
+                          : "These reader cards are assembled from several reusable rows. Open the dedicated workspace to preview the complete card and edit every passage inside it."}</p>
                       </div>
                       <div className="admin-new-actions">
-                        <StudioButton type="button" onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: contentLibraryTransitShortcut }))}>
-                          Open {contentLibraryTransitShortcut === "transits-to-natal" ? "Transit to Natal Charts" : "House Transits"}
+                        <StudioButton type="button" onClick={() => {
+                          const params = new URLSearchParams({ view: contentLibraryTransitShortcut });
+                          if (contentLibraryTransitShortcut === "transits-to-natal" && contentLibraryTransitContact) {
+                            params.set("transit", contentLibraryTransitContact.planet);
+                            params.set("aspect", contentLibraryTransitContact.aspect);
+                            params.set("natal", contentLibraryTransitContact.natalPoint);
+                          }
+                          navigateAdminPage("skyWriteups", params);
+                        }}>
+                          {contentLibraryTransitContact
+                            ? `Open ${transitNatalLabel(contentLibraryTransitContact)}`
+                            : `Open ${contentLibraryTransitShortcut === "transits-to-natal" ? "Transit to Natal Charts" : "House Transits"}`}
                         </StudioButton>
                       </div>
                     </section>
@@ -6780,7 +6802,7 @@ export function GeneratedContentAdminDashboard() {
                 <div className="admin-fallback-library-filter-grid">
                   <label>
                     <span>Search fallback articles and passages</span>
-                    <StudioInput aria-label="Search fallback articles and passages" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Planet, sign, aspect, house, or content key" />
+                    <StudioInput aria-label="Search fallback articles and passages" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={friendsTransitAudience && fallbackSectionFilter === "friends" ? "Moon sextile Mars" : "Planet, sign, aspect, house, or content key"} />
                   </label>
                   <label>
                     <span>Sort rows</span>
@@ -7623,7 +7645,8 @@ export function GeneratedContentAdminDashboard() {
       ...(transitNatalNatalHouse ? { natalHouse: transitNatalNatalHouse } : {})
     } : null;
     const exactKey = exactSelection ? transitNatalExactContentKey(exactSelection) : null;
-    const previewReady = Boolean(contactReady && transitNatalSign);
+    const liveSourceKey = contact ? transitNatalSharedFallbackKey(contact) : null;
+    const previewReady = Boolean(contactReady);
     const selection = previewReady && contact ? {
       ...transitReadingContext,
       ...contact,
@@ -7644,6 +7667,30 @@ export function GeneratedContentAdminDashboard() {
             <p><strong>Editable lifecycle:</strong> Save creates or updates a passage. Archive removes it from active use; Restore reopens it as a draft.</p>
           </div>
         </div>
+
+        <label className="admin-title-field">
+          <span>Search this transit</span>
+          <StudioInput
+            aria-label="Search this transit"
+            value={transitNatalQuery}
+            onChange={(event) => {
+              const value = event.target.value;
+              setTransitNatalQuery(value);
+              const hit = transitNatalSearchSelection(value);
+              if (!hit) return;
+              updateTransitNatalSelection({
+                planet: hit.planet,
+                aspect: hit.aspect,
+                natalPoint: hit.natalPoint,
+                sign: "",
+                transitHouse: "",
+                natalHouse: ""
+              });
+            }}
+            placeholder="Mars conjunct Moon"
+          />
+          <small className="admin-field-hint">Type the reader title, such as Mars conjunct Moon. This selects the three-part aspect. The live Friends card may use a published family write-up until an exact conjunction row is saved.</small>
+        </label>
 
         <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three">
           <label>
@@ -7690,6 +7737,38 @@ export function GeneratedContentAdminDashboard() {
           </label>
         </div>
 
+        {liveSourceKey && contact && (
+          <section className="admin-natal-source-card" aria-label="Live reader write-up">
+            <header className="admin-natal-source-card-heading">
+              <div>
+                <p className="admin-eyebrow">Live reader write-up</p>
+                <strong>{transitNatalLabel(contact)}</strong>
+              </div>
+            </header>
+            <p>
+              The current Friends Active for {"{{Name}}"} card uses this published source. The empty three-part conjunction draft is a new override and does not contain this copy until you save and publish it.
+            </p>
+            <p><code>{liveSourceKey}</code></p>
+            <StudioButton
+              type="button"
+              onClick={() => void openContentKeyRow(
+                liveSourceKey,
+                `Live ${transitNatalLabel(contact)}`,
+                false,
+                friendsTransitAudience ? "body_they" : "body_you"
+              )}
+            >
+              Edit live {transitNatalLabel(contact)}
+            </StudioButton>
+          </section>
+        )}
+        {exactKey && exactKey.split("/").length === 8 && contact && (
+          <p>
+            <StudioButton type="button" onClick={() => updateTransitNatalSelection({ sign: "", transitHouse: "", natalHouse: "" })}>
+              Open three-part {transitNatalLabel(contact)}
+            </StudioButton>
+          </p>
+        )}
         {exactKey && <p className="admin-natal-placement-prompt" role="status">
           <strong>{exactKey.split("/").length === 8 ? "Write-up destination: six-part situation." : "Write-up destination: three-part aspect."}</strong>
           {" "}
@@ -7729,7 +7808,6 @@ export function GeneratedContentAdminDashboard() {
         <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
 
         {!contactReady && <p className="admin-natal-placement-prompt">Choose transiting planet, aspect, and natal planet or chart point to open this transit's You and Friend write-up.</p>}
-        {contactReady && !previewReady && <p className="admin-natal-placement-prompt">This three-part write-up is ready. Set current sign and both houses only if you want to save a six-part situation, or a current sign if you want a published-reading preview.</p>}
         {selection && contact && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(exactSelection ?? contact)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
         {contactReady && <p className="admin-field-hint">{exactKey && exactKey.split("/").length === 8
           ? "The reader preview uses eligible published writing, not saved drafts. After you save and publish this six-part situation, matching readings can use it. Shared source edits still affect every reading that uses them."

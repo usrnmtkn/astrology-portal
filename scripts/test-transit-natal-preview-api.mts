@@ -123,6 +123,8 @@ for (const selection of [
 assert.equal(transitNatalExactContentKey({planet:'sun',natalPoint:'lilith',aspect:'square'}),null);
 assert.equal(transitNatalSharedFallbackKey({planet:'sun',natalPoint:'moon',aspect:'square'}),'authored/transit-aspect/sun/moon/hard');
 assert.equal(transitNatalSharedFallbackKey({planet:'sun',natalPoint:'moon',aspect:'trine'}),'authored/transit-aspect/sun/moon/soft');
+assert.equal(transitNatalSharedFallbackKey({planet:'mars',natalPoint:'moon',aspect:'conjunction'}),'authored/transit-aspect/mars/moon/soft');
+assert.equal(transitNatalSharedFallbackKey({planet:'mars',natalPoint:'saturn',aspect:'conjunction'}),'authored/transit-aspect/mars/saturn/hard');
 assert.equal(transitNatalSharedFallbackKey({planet:'sun',natalPoint:'sun',aspect:'conjunction'}),null);
 {
  const starter=transitNatalStarterCopy({body_you:'You {{aspectWord}}.',body_they:'{{Name}} {{aspectWord}}.'});
