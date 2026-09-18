@@ -27,6 +27,8 @@ type Props = {
   onOpenSource: (key: string, path: string) => void;
 };
 
+const titleWord = (value: string) => value.replace(/(^|[-_])([a-z])/gu, (_match, prefix: string, char: string) => (prefix ? " " : "") + char.toUpperCase());
+
 /** The article stays the authoring surface. Installing its phrase sources is a
  * draft-only operation and never replaces the template with rendered prose. */
 export default function SkyPlacementArticleVariables(props: Props) {
@@ -125,13 +127,20 @@ export default function SkyPlacementArticleVariables(props: Props) {
       <p>{editingField?.label ?? editingPhrase} <code>{`{{${editingPhrase}}}`}</code></p>
       {editingField && <p>{editingField.description}</p>}
       {!editingSource ? <PageLoading compact message="Preparing this phrase in your draft…" /> : editingSource.reference ? <>
-        <p>Linked source: <code>{editingSource.reference.contentKey}#{editingSource.reference.field}</code></p>
-        <StudioButton type="button" disabled={disabled} onClick={() => {
-          const reference = editingSource.reference!;
-          const localName = reference.field.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1];
-          if (reference.contentKey === contentKey && localName) setEditingPhrase(localName);
-          else props.onOpenSource(reference.contentKey, reference.field);
-        }}>Edit linked source</StudioButton>
+        <p>These words are shared with every {titleWord(planet)} sign, so they are stored once, on <code>{editingSource.reference.contentKey}#{editingSource.reference.field}</code>.</p>
+        <div className="admin-sky-writing-source-actions">
+          <StudioButton type="button" disabled={disabled} onClick={() => {
+            const reference = editingSource.reference!;
+            const localName = reference.field.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1];
+            if (reference.contentKey === contentKey && localName) { setEditingPhrase(localName); return; }
+            if (composition) props.onCompositionChange({ ...composition, sources: {
+              ...composition.sources, [editingPhrase]: { kind: editingSource.kind, text: "" }
+            } });
+          }}>Write a {titleWord(sign)} version instead</StudioButton>
+          <StudioButton type="button" onClick={() => props.onOpenSource(editingSource.reference!.contentKey, editingSource.reference!.field)}>
+            Open {editingSource.reference.contentKey} to change the shared words
+          </StudioButton>
+        </div>
       </> : <label className="admin-review-copy-editor">
         <span>Phrase value</span>
         <StudioTextarea ref={phraseEditor} aria-label="Phrase value" rows={editingField?.rows ?? 4} disabled={disabled}

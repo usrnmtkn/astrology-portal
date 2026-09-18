@@ -3,6 +3,7 @@ import { placementDignityForSource, migrateLegacyDignityComposition } from "../.
 import { zodiacSeasonSourceKey } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { StudioButton, StudioTextarea } from "./StudioControls";
+import { AdminDataTable } from "./AdminBrowseComponents";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import {
   SKY_WRITING_LIBRARY_FIELD_IDS,
@@ -49,28 +50,48 @@ function libraryFieldText(source?: SkyWritingLibrarySource) {
   return typeof source.text === "string" ? source.text : "";
 }
 
-function PhraseReadRow({
+const titleWord = (value: string) => value.replace(/(^|[-_])([a-z])/gu, (_match, prefix: string, char: string) => (prefix ? " " : "") + char.toUpperCase());
+
+/** Where the words for this row live, in the reader's terms rather than a key path. */
+function storageLabel(item: { shared?: boolean }, source: SkyWritingLibrarySource | undefined, planet: string) {
+  if (source?.reference) return `Shared with every ${titleWord(planet)} sign`;
+  if (item.shared && !source) return "Shared by every placement in this sign";
+  return "This placement only";
+}
+
+const PHRASE_TABLE_COLUMNS = ["Variable", "Writing", "Where it is stored", "Edit"];
+
+function PhraseTableRow({
   item,
   value,
+  source,
+  planet,
   disabled,
   onEdit,
   extra
 }: {
   item: { id: string; label: string; description: string; shared?: boolean };
   value: string;
+  source?: SkyWritingLibrarySource;
+  planet: string;
   disabled: boolean;
   onEdit: () => void;
   extra?: ReactNode;
 }) {
-  return <article className="admin-editor-guidance">
-    <p><strong>{item.label}</strong> <code>{`{{${item.id}}}`}</code></p>
-    <p>{item.description}{item.shared ? " One source per sign is shared across Content Studio." : ""}</p>
-    <p className="studio-variable-value">{value.trim() || "No writing saved yet."}</p>
-    <div className="admin-sky-writing-source-actions">
-      <StudioButton type="button" disabled={disabled} onClick={onEdit}>Edit {item.label.toLowerCase()}</StudioButton>
-      {extra}
-    </div>
-  </article>;
+  return <tr>
+    <th scope="row" data-label="Variable">
+      <code>{`{{${item.id}}}`}</code>
+      <span className="admin-field-hint">{item.label}. {item.description}</span>
+    </th>
+    <td data-label="Writing"><p className="studio-variable-value">{value.trim() || "No writing saved yet."}</p></td>
+    <td data-label="Where it is stored"><span className="admin-field-hint">{storageLabel(item, source, planet)}</span></td>
+    <td data-label="Edit">
+      <div className="admin-sky-writing-source-actions">
+        <StudioButton type="button" disabled={disabled} onClick={onEdit}>Edit {item.label.toLowerCase()}</StudioButton>
+        {extra}
+      </div>
+    </td>
+  </tr>;
 }
 
 export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sourceRecord, composition, disabled, initialSourceId, onChange, onOpenSource, onLoadSource, onAdvancedSource }: Props) {
@@ -173,6 +194,10 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
     }
   }
 
+  // Editing a phrase keeps the editor on the placement the owner opened. A
+  // planet phrase shared through a reference used to reopen the placement that
+  // stores it, so editing Sun in Virgo landed on Sun in Aries. The shared
+  // source is still reachable, but only from an action that names it.
   function openLibraryField(fieldId: string) {
     const field = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields).find(item => item.id === fieldId);
     const target = workingComposition.sources[fieldId];
@@ -180,27 +205,27 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
       onOpenSource(zodiacSeasonSourceKey(fieldId, sign), "body");
       return;
     }
-    if (target?.reference) {
-      onOpenSource(target.reference.contentKey, target.reference.field);
-      return;
-    }
     onOpenSource(contentKey, `ingress.sources.${fieldId}`);
   }
 
   const phraseCatalog = initialSourceId ? <section className="admin-sky-writing-library-catalog" aria-label="Other writing library phrases">
-    <p>Other phrases for this placement. Read them here; open one only when you need to change it.</p>
+    <p>Every other phrase for {titleWord(planet)} in {titleWord(sign)}. Read the writing in the table; Edit keeps you on this placement.</p>
     {SKY_WRITING_LIBRARY_GROUPS.map(group => (
       <div className="admin-review-stack" key={group.id}>
         <p><strong>{group.label}</strong></p>
-        {group.fields.filter(item => item.id !== initialSourceId).map(item => (
-          <PhraseReadRow
-            key={item.id}
-            item={item}
-            value={previews[item.id] ?? ""}
-            disabled={disabled}
-            onEdit={() => openLibraryField(item.id)}
-          />
-        ))}
+        <AdminDataTable label={`${group.label} phrases`} columns={PHRASE_TABLE_COLUMNS}>
+          {group.fields.filter(item => item.id !== initialSourceId).map(item => (
+            <PhraseTableRow
+              key={item.id}
+              item={item}
+              value={previews[item.id] ?? ""}
+              source={workingComposition.sources[item.id]}
+              planet={planet}
+              disabled={disabled}
+              onEdit={() => openLibraryField(item.id)}
+            />
+          ))}
+        </AdminDataTable>
       </div>
     ))}
   </section> : null;
@@ -245,16 +270,20 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
       </header>
       {initialSourceId.startsWith("placementDignity") && dignityDetails}
       {seedStatus && <p role="status">{seedStatus}</p>}
-      <label className="admin-review-copy-editor">
+      {/* Only the textarea belongs inside a label. Wrapping the shared-source
+        * explanation and its buttons in one made that whole passage the
+        * accessible name of the first button. */}
+      {reference ? <div className="admin-review-copy-editor">
         <span>{initialField.label}</span>
-        {reference ? <>
-          <p>Linked source: <code>{reference.contentKey}#{reference.field}</code></p>
-          {previews[initialSourceId]?.trim() ? <p className="studio-variable-value">{previews[initialSourceId]}</p> : null}
-          <div className="admin-sky-writing-source-actions">
-            <StudioButton type="button" onClick={() => onOpenSource(reference.contentKey, reference.field)}>Edit linked source</StudioButton>
-            <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(workingComposition, initialSourceId, { kind: source.kind, text: "" }))}>Use local writing</StudioButton>
-          </div>
-        </> : <StudioTextarea
+        <p>These words are shared with every {titleWord(planet)} sign, so they are stored once, on <code>{reference.contentKey}#{reference.field}</code>. Changing them here would change every {titleWord(planet)} placement.</p>
+        {previews[initialSourceId]?.trim() ? <p className="studio-variable-value">{previews[initialSourceId]}</p> : null}
+        <div className="admin-sky-writing-source-actions">
+          <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(workingComposition, initialSourceId, { kind: source.kind, text: "" }))}>Write a {titleWord(sign)} version instead</StudioButton>
+          <StudioButton type="button" onClick={() => onOpenSource(reference.contentKey, reference.field)}>Open {reference.contentKey} to change the shared words</StudioButton>
+        </div>
+      </div> : <label className="admin-review-copy-editor">
+        <span>{initialField.label}</span>
+        <StudioTextarea
           ref={initialTextarea}
           rows={initialField.rows ?? 4}
           aria-label={`Writing library ${initialField.label}`}
@@ -262,8 +291,8 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
           disabled={disabled}
           value={source.text ?? ""}
           onChange={event => onChange(updateSource(workingComposition, initialSourceId, { ...source, text: event.target.value }))}
-        />}
-      </label>
+        />
+      </label>}
       {initialField.groupId === "experiences" && <StudioButton
         type="button"
         aria-pressed={skyWritingLibrarySourceModuleEnabled(workingComposition, initialSourceId)}
@@ -299,19 +328,21 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
       <p>{group.description}</p>
       {group.id === "placement" && dignityDetails}
       {group.id === "experiences" && <p>An experience can live in the library without appearing in reader copy. Include only manifestations that genuinely belong in this article.</p>}
-      <div className="admin-review-stack">
+      <AdminDataTable label={`${group.label} phrases`} columns={PHRASE_TABLE_COLUMNS}>
         {group.fields.map(item => {
           const source = workingComposition.sources[item.id];
           if (!source && !item.shared) return null;
           const included = group.id === "experiences" && skyWritingLibrarySourceModuleEnabled(workingComposition, item.id);
-          return <PhraseReadRow
+          return <PhraseTableRow
             key={item.id}
             item={item}
             value={previews[item.id] ?? libraryFieldText(source)}
+            source={source}
+            planet={planet}
             disabled={disabled}
             onEdit={() => openLibraryField(item.id)}
             extra={<>
-              {source?.reference && <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(workingComposition, item.id, { kind: source.kind, text: "" }))}>Use local writing</StudioButton>}
+              {source?.reference && <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(workingComposition, item.id, { kind: source.kind, text: "" }))}>Write a {titleWord(sign)} version instead</StudioButton>}
               {group.id === "experiences" && <StudioButton
                 type="button"
                 aria-pressed={included}
@@ -326,7 +357,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
             </>}
           />;
         })}
-      </div>
+      </AdminDataTable>
     </details>)}
   </section>;
 }
