@@ -5,7 +5,11 @@ on:
     paths:
       - "apps/web/src/styles/**"
       - "apps/web/src/styles.css"
-      - "apps/admin/src/**/*.css"
+      - "apps/admin/src/**"
+      - "scripts/run-studio-css-*.mjs"
+      - "scripts/studio-css-*.mjs"
+      - "scripts/studio-css-unshipped-class-allowlist.json"
+      - "scripts/test-content-studio-typography-system.mjs"
       - ".github/workflows/css-design-system.yml"
   push:
     branches:
@@ -13,7 +17,11 @@ on:
     paths:
       - "apps/web/src/styles/**"
       - "apps/web/src/styles.css"
-      - "apps/admin/src/**/*.css"
+      - "apps/admin/src/**"
+      - "scripts/run-studio-css-*.mjs"
+      - "scripts/studio-css-*.mjs"
+      - "scripts/studio-css-unshipped-class-allowlist.json"
+      - "scripts/test-content-studio-typography-system.mjs"
       - ".github/workflows/css-design-system.yml"
 
 concurrency:

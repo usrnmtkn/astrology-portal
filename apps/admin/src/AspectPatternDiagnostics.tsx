@@ -333,8 +333,8 @@ export function AspectPatternDiagnostics() {
           <p>Inspect detector output, structural relationships, and base ranking before anything reaches reader-facing copy.</p>
         </div>
         <div className="aspect-diagnostics-mode" role="group" aria-label="Diagnostics mode">
-          <StudioButton type="button" aria-pressed={mode === "fixture"} className={mode === "fixture" ? "active" : ""} onClick={() => setMode("fixture")}>Fixture mode</StudioButton>
-          <StudioButton type="button" aria-pressed={mode === "real"} className={mode === "real" ? "active" : ""} onClick={() => setMode("real")}>Real chart mode</StudioButton>
+          <StudioButton type="button" aria-pressed={mode === "fixture"} onClick={() => setMode("fixture")}>Fixture mode</StudioButton>
+          <StudioButton type="button" aria-pressed={mode === "real"} onClick={() => setMode("real")}>Real chart mode</StudioButton>
         </div>
         {mode === "fixture" ? (
           <label className="admin-title-field">

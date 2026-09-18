@@ -12,7 +12,7 @@ function read(relativePath) {
 const component = read("apps/admin/src/AspectPatternDiagnostics.tsx");
 const dashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 const fixtureEndpoint = read("api/admin/aspect-pattern-fixtures.ts");
-const styles = read("apps/admin/src/admin.css");
+const styles = read("apps/admin/src/studio-system.css");
 
 assert.match(component, /function canonicalAspectPatterns\(response: AspectPatternsResponse \| null\) {\n  return response\?\.sky\?\.aspectPatterns \?\? null;\n}/);
 assert.match(component, /includeAspectPatterns=true/);

@@ -19,7 +19,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard :is(h1,h2,h3,h4,h5,h6) :is(strong,b) { font-weight: inherit; }
 #root .admin-dashboard :where(p,li,dd,blockquote) { font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); overflow-wrap: anywhere; }
 #root .admin-dashboard a { color: var(--workspace-primary); text-underline-offset: var(--space-1); overflow-wrap: anywhere; }
-#root .admin-dashboard :is(small,.admin-field-hint:not(p),.admin-content-type-label,.admin-eyebrow,.admin-breadcrumb,.admin-editor-details-summary,.admin-textarea-counter,.admin-text-counter,.admin-unresolved-total,.admin-unresolved-owner,.admin-sidebar-status,.admin-editor-context-line,.admin-editor-save-state,.admin-table-tag,.admin-composition-detail-meta) { font-family: var(--font-label); font-size: var(--type-meta-size); line-height: var(--leading-meta); font-weight: var(--weight-regular); color: var(--workspace-muted); letter-spacing: var(--tracking-body); text-transform: none; }
+#root .admin-dashboard :is(small,.admin-field-hint:not(p),.admin-content-type-label,.admin-eyebrow,.admin-breadcrumb,.admin-editor-details-summary,.admin-textarea-counter,.admin-text-counter,.admin-unresolved-total,.admin-unresolved-owner,.admin-sidebar-status,.admin-editor-context-line,.admin-editor-save-state,.admin-table-tag,.admin-composition-detail-meta,.admin-access-gate-note,.admin-access-secret-note,.admin-breadcrumb-separator,.admin-daily-hook-create-note,.admin-ingress-key,.admin-natal-placement-prompt,.admin-natal-source-key,.admin-sky-writing-count,.admin-stat-value,.admin-summary-template-words,.admin-surface-location,.admin-variable-runtime-note,.admin-variables-rail-count,.admin-variables-rail-kind,.admin-variables-rail-breadcrumb,.admin-variables-rail-token,.admin-evergreen-section-name,.admin-content-row-key,.admin-content-row-title,.admin-sky-related-help,.admin-summary-omitted-variable,.aspect-diagnostics-request,.admin-composition-connector,.memory-detail-title,.memory-provenance,.memory-connection) { font-family: var(--font-label); font-size: var(--type-meta-size); line-height: var(--leading-meta); font-weight: var(--weight-regular); color: var(--workspace-muted); letter-spacing: var(--tracking-body); text-transform: none; }
 #root .admin-dashboard p.admin-field-hint { color: var(--workspace-muted); }
 #root .admin-dashboard :is(summary,label,legend,dt,th,.admin-page-link,.memory-site-back) { font-family: var(--font-label); font-size: var(--type-label-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); text-transform: none; }
 #root .admin-dashboard :is(code,pre) { font-family: var(--font-mono); font-size: var(--type-meta-size); font-weight: var(--weight-regular); line-height: var(--leading-meta); white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
@@ -36,7 +36,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-unresolved-guide dl > div { display: grid; align-content: start; gap: var(--workspace-field-gap); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); }
 #root .admin-dashboard .admin-unresolved-guide :is(p,dd) { color: var(--workspace-muted); }
 #root .admin-dashboard :is(.admin-unresolved-state,.admin-unresolved-action-state) { display: inline-flex; align-items: center; width: fit-content; max-width: 100%; min-height: var(--studio-chip-height); padding: var(--workspace-tag-padding); border-radius: var(--workspace-control-radius); font-family: var(--font-label); font-size: var(--type-meta-size); font-weight: var(--weight-regular); line-height: var(--leading-meta); background: var(--workspace-selected); color: var(--workspace-on-selected); }
-#root .admin-dashboard :is(.admin-unresolved-state,.admin-unresolved-action-state).is-action { background: var(--studio-warning-container); color: var(--studio-on-warning-container); }
+#root .admin-dashboard :is(.admin-unresolved-state,.admin-unresolved-action-state):is(.is-action,.is-waiting) { background: var(--studio-warning-container); color: var(--studio-on-warning-container); }
 #root .admin-dashboard :is(.admin-unresolved-current-step,.admin-unresolved-checks,.admin-unresolved-actions) { display: grid; gap: var(--workspace-field-gap); align-content: start; }
 #root .admin-dashboard .admin-unresolved-progress { display: grid; gap: var(--workspace-field-gap); list-style: none; padding: 0; margin-block: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-unresolved-progress li { display: grid; grid-template-columns: var(--studio-chip-height) minmax(0, 1fr); gap: var(--workspace-field-gap); align-items: center; }
@@ -49,11 +49,11 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-unresolved-filters > button { align-self: end; margin-block-end: var(--workspace-field-gap); }
 
 /* Buttons: filled, tonal, outlined and text. */
-#root .admin-dashboard :where(button,.admin-create-button,.admin-page-error-actions a) { display: inline-flex; align-items: center; justify-content: center; gap: var(--workspace-field-gap); min-height: var(--studio-button-height); max-width: 100%; width: fit-content; align-self: center; justify-self: start; padding: var(--space-2) var(--workspace-card-padding); border: var(--border-width-thin) solid var(--workspace-line-strong); border-radius: var(--radius-pill); background: transparent; color: var(--workspace-primary); font-family: var(--font-label); font-size: var(--type-ui-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); text-decoration: none; white-space: normal; overflow-wrap: anywhere; text-align: center; cursor: pointer; }
-#root .admin-dashboard button:where(:not(:disabled):not([aria-pressed="true"]):not(.admin-secondary-button):not(.admin-create-button):not(.admin-primary-button):not(.admin-publish-button):not([data-variable-color])):hover { background: var(--workspace-hover); }
-#root .admin-dashboard :is(.admin-create-button,.admin-primary-button,.admin-publish-button) { background: var(--workspace-primary); border-color: transparent; color: var(--workspace-on-primary); }
-#root .admin-dashboard :is(.admin-create-button,.admin-primary-button,.admin-publish-button):not(:disabled):hover { background: var(--workspace-primary-hover); }
-#root .admin-dashboard :is(.admin-secondary-button,[aria-pressed="true"]) { background: var(--workspace-selected); color: var(--workspace-on-selected); border-color: transparent; }
+#root .admin-dashboard :where(button,.admin-create-button,.admin-page-error-actions a,.admin-access-owner-signin) { display: inline-flex; align-items: center; justify-content: center; gap: var(--workspace-field-gap); min-height: var(--studio-button-height); max-width: 100%; width: fit-content; align-self: center; justify-self: start; padding: var(--space-2) var(--workspace-card-padding); border: var(--border-width-thin) solid var(--workspace-line-strong); border-radius: var(--radius-pill); background: transparent; color: var(--workspace-primary); font-family: var(--font-label); font-size: var(--type-ui-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); text-decoration: none; white-space: normal; overflow-wrap: anywhere; text-align: center; cursor: pointer; }
+#root .admin-dashboard button:where(:not(:disabled):not([aria-pressed="true"]):not(.admin-secondary-button):not(.admin-create-button):not(.admin-primary-button):not(.admin-publish-button):not(.primary):not(.is-primary):not([data-variable-color])):hover { background: var(--workspace-hover); }
+#root .admin-dashboard :is(.admin-create-button,.admin-primary-button,.admin-publish-button,.admin-access-owner-signin,.primary,.is-primary) { background: var(--workspace-primary); border-color: transparent; color: var(--workspace-on-primary); }
+#root .admin-dashboard :is(.admin-create-button,.admin-primary-button,.admin-publish-button,.admin-access-owner-signin,.primary,.is-primary):not(:disabled):hover { background: var(--workspace-primary-hover); }
+#root .admin-dashboard :is(.admin-secondary-button,[aria-pressed="true"],button.active) { background: var(--workspace-selected); color: var(--workspace-on-selected); border-color: transparent; }
 #root .admin-dashboard .admin-danger-button { color: var(--workspace-danger); border-color: var(--workspace-danger); }
 #root .admin-dashboard button:disabled { background: var(--workspace-raised); border-color: transparent; color: var(--workspace-muted); cursor: not-allowed; opacity: var(--studio-disabled-opacity); }
 #root .admin-dashboard .admin-disclosure-icon { width: var(--workspace-control-icon-space); min-width: var(--workspace-control-icon-space); padding: 0; border: 0; color: var(--workspace-ink); }
@@ -108,6 +108,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-nav button { width: 100%; min-height: var(--studio-nav-height); justify-content: start; text-align: start; padding-inline: var(--workspace-panel-inset); border: 0; color: var(--workspace-muted); }
 #root .admin-dashboard .admin-nav button[aria-current="page"] { background: var(--workspace-selected); color: var(--workspace-on-selected); }
 #root .admin-dashboard .admin-nav-workspace-group { padding-inline-start: var(--workspace-panel-inset); }
+#root .admin-dashboard :is(.admin-reader-destination-line,.admin-editor-reader-destination) { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--workspace-field-gap); margin: 0; color: var(--workspace-muted); }
 #root .admin-dashboard .admin-sidebar-status { flex-shrink: 0; display: flex; align-items: center; flex-wrap: wrap; gap: var(--workspace-field-gap); margin-top: auto; padding: var(--workspace-panel-inset) var(--workspace-control-inset); }
 #root .admin-dashboard .admin-sidebar-status-dot { width: var(--space-2); height: var(--space-2); border-radius: var(--radius-pill); background: var(--workspace-positive); }
 #root .admin-dashboard .admin-sidebar-status-link { border: 0; padding: 0; min-height: 0; font-size: inherit; line-height: inherit; }
@@ -167,6 +168,10 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-hook-pattern-list { width: 100%; grid-template-columns: repeat(4,minmax(0,1fr)); }
 #root .admin-dashboard .admin-natal-source-grid { display: grid; grid-template-columns: minmax(0,1fr); align-content: start; gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-copy-field-body { min-height: var(--studio-body-field-height); }
+#root .admin-dashboard .admin-copy-field-summary { min-height: var(--studio-textarea-height); }
+#root .admin-dashboard .field-body { min-height: var(--studio-body-field-height); }
+#root .admin-dashboard :where(.admin-title-field,.admin-review-copy-editor,.admin-metadata-field) { display: grid; gap: var(--workspace-field-gap); min-width: 0; }
+#root .admin-dashboard :where(.admin-title-field,.admin-review-copy-editor,.admin-metadata-field,.admin-field-wide) > span:first-child { display: block; white-space: normal; }
 #root .admin-dashboard .admin-template-tabs [aria-current="page"] { color: var(--workspace-on-selected); background: var(--workspace-selected); border-color: transparent; }
 #root .admin-dashboard .admin-browse-table { overflow-x: auto; border-radius: var(--workspace-radius); background: var(--workspace-surface); }
 #root .admin-dashboard .admin-edit-row-button { white-space: nowrap; }
@@ -184,8 +189,8 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-daily-glance-pair-list > article > div { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-field-gap); }
 
 /* Chips, segmented selection, and primary/secondary tabs. */
-#root .admin-dashboard :is(.ui-pill,.admin-status,.admin-field-required,.admin-required-marker,.admin-aspect-context-pill,.admin-pill) { display: inline-flex; align-items: center; gap: var(--space-1); width: fit-content; max-width: 100%; min-height: var(--studio-chip-height); padding: var(--workspace-tag-padding); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); background: var(--workspace-raised); color: var(--workspace-muted); font-family: var(--font-label); font-size: var(--type-meta-size); font-weight: var(--weight-regular); line-height: var(--leading-meta); }
-#root .admin-dashboard :is(.status-live,.status-approved,.is-live) { color: var(--workspace-positive); background: var(--workspace-selected); }
+#root .admin-dashboard :is(.ui-pill,.admin-status,.admin-field-required,.admin-required-marker,.admin-aspect-context-pill,.admin-pill,.memory-match-chip) { display: inline-flex; align-items: center; gap: var(--space-1); width: fit-content; max-width: 100%; min-height: var(--studio-chip-height); padding: var(--workspace-tag-padding); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); background: var(--workspace-raised); color: var(--workspace-muted); font-family: var(--font-label); font-size: var(--type-meta-size); font-weight: var(--weight-regular); line-height: var(--leading-meta); }
+#root .admin-dashboard :is(.status-live,.status-approved,.status-reviewed,.is-live) { color: var(--workspace-positive); background: var(--workspace-selected); }
 #root .admin-dashboard :is(.status-draft,.status-needs-review,.status-pending,.admin-field-required,.admin-required-marker,.status-not-live) { color: var(--studio-on-warning-container); background: var(--studio-warning-container); }
 #root .admin-dashboard :is(.status-error,.status-failed,.status-rejected) { color: var(--studio-on-error-container); background: var(--studio-error-container); }
 #root .admin-dashboard .studio-tabs { display: grid; grid-template-columns: minmax(0,1fr); align-content: start; gap: 0; }
@@ -492,6 +497,91 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-calendar-variables th:last-child { width: 20%; }
 #root .admin-dashboard .admin-calendar-variables th .admin-field-hint { display: block; margin-top: var(--workspace-field-gap); }
 
+/* Sky placement template, natal/empty-house previews, and aspect write-ups
+   own their layout here. Disconnected admin sheets must not supply it. */
+#root .admin-dashboard .admin-sky-phrase-list { display: grid; gap: 0; overflow: hidden; background: var(--workspace-raised); border-radius: var(--workspace-control-radius); }
+#root .admin-dashboard .admin-sky-phrase-row { display: grid; gap: var(--workspace-control-inset); padding: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-sky-phrase-row + .admin-sky-phrase-row { border-top: var(--border-width-thin) solid var(--workspace-line); }
+#root .admin-dashboard .admin-sky-phrase-row-header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .admin-sky-phrase-row-header strong { font-family: var(--font-body); font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-body); }
+#root .admin-dashboard .admin-sky-phrase-token { display: inline-flex; max-width: 100%; }
+#root .admin-dashboard :is(.admin-sky-phrase-description,.admin-sky-phrase-source summary,.admin-sky-phrase-source p) { margin: 0; }
+#root .admin-dashboard .admin-sky-phrase-description { color: var(--workspace-muted); }
+#root .admin-dashboard .admin-sky-phrase-current { padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--studio-field-radius); background: var(--workspace-canvas); }
+#root .admin-dashboard .admin-sky-phrase-current p { margin: 0; font-family: var(--font-body); font-size: var(--text-body); line-height: var(--leading-body); white-space: pre-wrap; }
+#root .admin-dashboard .admin-sky-phrase-current.is-empty { color: var(--workspace-muted); background: var(--workspace-surface); }
+#root .admin-dashboard .admin-sky-phrase-source { color: var(--workspace-muted); font-family: var(--font-body); font-size: var(--type-meta-size); line-height: var(--leading-meta); }
+#root .admin-dashboard .admin-sky-phrase-source summary { color: var(--workspace-muted); font-family: var(--font-body); font-size: var(--type-ui-size); font-weight: var(--weight-regular); line-height: var(--leading-label); }
+#root .admin-dashboard .admin-sky-placement-template { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-sky-placement-template > ol { margin: 0; padding-inline-start: var(--workspace-card-padding); }
+#root .admin-dashboard .admin-sky-placement-template > ol > li { padding-block: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-sky-placement-template > ol > li + li { border-top: var(--border-width-thin) solid var(--workspace-line); }
+#root .admin-dashboard .admin-sky-placement-template > ol > li > * + * { margin-top: var(--workspace-field-gap); }
+#root .admin-dashboard .admin-sky-section-reference { display: block; max-width: 100%; width: fit-content; }
+#root .admin-dashboard .admin-sky-template-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--workspace-panel-inset); margin-top: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-sky-template-comparison > div { display: grid; gap: var(--workspace-field-gap); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); background: var(--workspace-canvas); }
+#root .admin-dashboard .admin-sky-placement-sources { display: grid; gap: var(--workspace-control-inset); }
+#root .admin-dashboard .admin-sky-placement-sources > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--workspace-field-gap) var(--workspace-panel-inset); padding: var(--workspace-panel-inset); border-radius: var(--workspace-control-radius); background: var(--workspace-raised); }
+#root .admin-dashboard .admin-sky-placement-sources > div > p { grid-column: 1 / -1; color: var(--workspace-muted); }
+#root .admin-dashboard .admin-sky-placement-writing { max-width: var(--studio-sheet-width); }
+
+#root .admin-dashboard .admin-natal-reader-preview-parts { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-natal-reader-preview-surface { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-natal-reader-preview-part { display: grid; gap: var(--workspace-control-inset); width: 100%; min-width: 0; padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-inline-start: var(--space-1) solid var(--composition-variable-color, var(--workspace-primary)); border-radius: var(--workspace-radius); background: var(--workspace-canvas); color: var(--workspace-ink); text-align: start; }
+#root .admin-dashboard .admin-natal-reader-preview-part p { margin: 0; max-width: 92ch; color: var(--composition-variable-color, var(--workspace-ink)); font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); white-space: pre-wrap; }
+#root .admin-dashboard :is(.admin-natal-reader-preview-part-action,.admin-empty-house-preview-source-action) { justify-self: start; }
+#root .admin-dashboard .admin-natal-reader-preview-provenance { display: flex; flex-wrap: wrap; align-items: center; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .admin-empty-house-context-summary { display: grid; gap: var(--workspace-field-gap); margin-top: var(--workspace-panel-inset); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-radius); background: var(--workspace-raised); }
+#root .admin-dashboard .admin-empty-house-context-summary :is(p, h4) { margin: 0; }
+#root .admin-dashboard .admin-empty-house-preview { margin-top: var(--workspace-block-gap); }
+#root .admin-dashboard .admin-empty-house-assembly-copy { padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-inline-start: var(--space-1) solid var(--workspace-primary); border-radius: var(--workspace-radius); background: var(--workspace-canvas); }
+#root .admin-dashboard .admin-empty-house-assembly-copy p { margin: 0; max-width: 92ch; font-family: var(--font-body); font-size: var(--text-body); line-height: var(--leading-body); white-space: pre-wrap; }
+#root .admin-dashboard .admin-empty-house-preview-source-list { display: grid; gap: var(--workspace-control-inset); padding-top: var(--workspace-panel-inset); border-top: var(--border-width-thin) solid var(--workspace-line); }
+#root .admin-dashboard .admin-empty-house-preview-source-list > p { margin: 0; color: var(--workspace-muted); }
+#root .admin-dashboard .admin-empty-house-preview-source-actions { display: flex; flex-wrap: wrap; gap: var(--workspace-field-gap); }
+
+#root .admin-dashboard :where(.aspect-diagnostics-page,.aspect-writeups-page,.aspect-coverage-page) { display: grid; gap: var(--workspace-block-gap); min-width: 0; }
+#root .admin-dashboard .aspect-writeups-page { container-name: aspect-writeups; container-type: inline-size; }
+#root .admin-dashboard :where(.aspect-writeups-header,.aspect-writeups-editor > header,.aspect-writeups-preview > header) { display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .aspect-writeups-filters { display: grid; align-items: end; gap: var(--workspace-panel-inset); grid-template-columns: repeat(5, minmax(0, 1fr)); }
+#root .admin-dashboard .aspect-writeups-layout { display: grid; align-items: start; gap: var(--workspace-panel-inset); grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr); }
+#root .admin-dashboard :where(.aspect-writeups-list,.aspect-writeups-editor,.aspect-writeups-preview,.aspect-writeups-fields,.aspect-diagnostics-display-order) { display: grid; gap: var(--workspace-panel-inset); min-width: 0; }
+#root .admin-dashboard .aspect-writeups-list button { width: 100%; justify-content: start; text-align: start; }
+#root .admin-dashboard .aspect-writeups-meta-grid,
+#root .admin-dashboard .aspect-writeups-readonly > div,
+#root .admin-dashboard .aspect-writeups-compare { display: grid; gap: var(--workspace-panel-inset); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#root .admin-dashboard :where(.aspect-writeups-meta-grid div,.aspect-writeups-readonly div div,.aspect-writeups-validation) { display: grid; gap: var(--workspace-field-gap); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); background: var(--workspace-raised); }
+#root .admin-dashboard .aspect-writeups-validation.is-error { border-color: var(--workspace-danger); }
+#root .admin-dashboard .aspect-writeups-slots { display: grid; gap: var(--workspace-panel-inset); min-width: 0; padding-top: var(--workspace-panel-inset); border-top: var(--border-width-thin) solid var(--workspace-line); }
+#root .admin-dashboard .aspect-writeups-slots > div { display: flex; flex-wrap: wrap; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .aspect-writeups-preview pre { overflow: auto; max-height: var(--studio-dialog-height); padding: var(--workspace-panel-inset); border-radius: var(--workspace-control-radius); background: var(--workspace-raised); white-space: pre-wrap; }
+#root .admin-dashboard .aspect-pattern-card-grid { display: grid; gap: var(--workspace-panel-inset); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#root .admin-dashboard .aspect-diagnostics-raw pre { overflow: auto; max-height: var(--studio-dialog-height); white-space: pre-wrap; }
+@container aspect-writeups (max-width: 1120px) {
+  #root .admin-dashboard .aspect-writeups-layout { grid-template-columns: minmax(0, 1fr); }
+  #root .admin-dashboard .aspect-writeups-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #root .admin-dashboard .aspect-writeups-search { grid-column: 1 / -1; }
+}
+@container aspect-writeups (max-width: 640px) {
+  #root .admin-dashboard :is(.aspect-writeups-filters,.aspect-writeups-compare,.aspect-writeups-meta-grid,.aspect-writeups-readonly > div) { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Markup families that still used disconnected sheets. Each class has one layout owner. */
+#root .admin-dashboard :where(.admin-authoring-brief,.admin-authoring-steps,.admin-compatibility-identity-preview,.admin-composition-cms-starters,.admin-composition-option,.admin-composition-issues,.admin-composition-layer-order,.admin-composition-source-contract,.admin-composition-source-copy,.admin-composition-surface-flow,.admin-composition-surface-limit,.admin-composition-surface-parts,.admin-composition-surface-provenance,.admin-content-library-toolbar,.admin-contextual-copy-example,.admin-daily-glance-audience,.admin-daily-glance-current,.admin-daily-glance-current-facts,.admin-daily-glance-friend-preview,.admin-daily-glance-name-contract,.admin-daily-glance-pair-editor,.admin-daily-glance-variable,.admin-daily-glance-variable-guide,.admin-daily-hook-guide,.admin-daily-hook-guide-grid,.admin-dependency-map-grid,.admin-diagnostics-details,.admin-display-source-panel,.admin-editor-key-details,.admin-editor-metadata,.admin-editor-settings,.admin-evergreen-sections,.admin-fallback-row-list,.admin-filter-disclosure-content,.admin-hook-catalog-results,.admin-ingress-module-list,.admin-lunar-coverage-row-list,.admin-natal-source-advanced,.admin-natal-source-editor,.admin-package-notes-field,.admin-reader-sentence-context,.admin-review-detail,.admin-review-queue-hero,.admin-review-workspace,.admin-sky-article-diff,.admin-sky-article-editor,.admin-sky-article-review,.admin-sky-horizon-summary,.admin-sky-related-row,.admin-sky-voice-card,.admin-sky-voice-cards,.admin-sky-voice-description,.admin-sky-voice-facts,.admin-sky-voice-judge,.admin-sky-voice-queue,.admin-sky-writing-context,.admin-source-only-row,.admin-summary-assembly-preview,.admin-surface-directory,.admin-template-rendered-preview,.admin-variable-atomic-list,.admin-variable-source-summary,.admin-variables-rail-source,.admin-writing-system-details,.aspect-contained-links,.aspect-derived-points,.aspect-diagnostics-controls,.aspect-diagnostics-real-chart,.aspect-diagnostics-summary,.aspect-pattern-card,.aspect-pattern-card-list,.aspect-reason-list,.aspect-source-aspects,.aspect-warning-list,.admin-calculated-facts,.admin-compatibility-empty,.admin-composition-browse,.admin-composition-map-page,.admin-composition-surface-layout,.admin-empty-house-workspace,.admin-library-guide,.admin-natal-friend-editor,.admin-review-preview,.admin-review-status-checks,.admin-sky-edition-builder,.admin-sky-phrase-composition,.admin-sky-single-variable-editor,.admin-vocabulary-settings,.admin-vocabulary-usage,.aspect-activation-copy-diagnostics,.studio-variable-list,.memory-connections,.memory-access,.admin-error,.admin-load-failure,.admin-loading-state) { display: grid; gap: var(--workspace-panel-inset); min-width: 0; }
+#root .admin-dashboard :where(.admin-fallback-row,.admin-fallback-row-main,.admin-content-level-readout,.admin-review-queue-meta-strip,.admin-variables-rail-source-head,.admin-sky-edition-facts-row,.admin-content-row-check) { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--workspace-panel-inset); align-items: start; min-width: 0; }
+#root .admin-dashboard :where(.admin-compatibility-reverse-actions,.admin-daily-glance-preview-controls,.admin-review-queue-filters,.admin-review-queue-search,.admin-sky-voice-tabs,.admin-composition-tabs,.admin-sky-writeup-back,.admin-library-tools,.admin-review-status-values,.admin-search-field,.admin-sky-related-search,.admin-variables-rail-search,.admin-daily-hook-guide-heading,.admin-source-action,.admin-unresolved-review-action,.aspect-diagnostics-copy-toggle,.aspect-writeups-status,.aspect-writeups-summary,.admin-nav-advanced,.admin-editor-toolbar,.admin-filter-disclosure-toggle,.admin-guided-review-decision,.admin-review-button,.admin-content-toolbar-copy) { display: flex; flex-wrap: wrap; align-items: center; gap: var(--workspace-field-gap); }
+#root .admin-dashboard :where(.admin-sky-voice-card,.admin-authoring-brief,.admin-compatibility-identity-preview,.admin-display-source-panel,.admin-source-repair-approved,.admin-source-repair-error,.memory-access-error,.aspect-pattern-card,.admin-wiring-notice,.admin-surface-warning,.admin-composition-lineage-warning,.admin-editor-audience-note,.aspect-diagnostics-empty,.aspect-diagnostics-error) { padding: var(--workspace-panel-inset); border-radius: var(--workspace-radius); background: var(--workspace-raised); }
+#root .admin-dashboard :is(.admin-content-table,.admin-content-table-head,.admin-unresolved-content-table,.admin-user-content-table,.aspect-relationship-table) { width: 100%; }
+#root .admin-dashboard :is(.variable-fact,.variable-hook,.variable-phrase,.variable-copy,.admin-template-reader-variable) { display: inline; min-width: 0; }
+#root .admin-dashboard .has-passage { min-width: 0; }
+#root .admin-dashboard .admin-create-menu-panel { min-width: 0; }
+#root .admin-dashboard .admin-initial-loading { color: var(--workspace-muted); }
+#root .admin-dashboard .memory-terminal { display: none; }
+#root .admin-dashboard .admin-access-divider { display: flex; align-items: center; gap: var(--workspace-field-gap); color: var(--workspace-muted); }
+#root .admin-dashboard .admin-access-divider::before,
+#root .admin-dashboard .admin-access-divider::after { content: ""; flex: 1 1 auto; height: var(--border-width-thin); background: var(--workspace-line); }
+#root .admin-dashboard .admin-access-owner-signin { width: 100%; }
+
 @media (max-width: 720px) {
   #root .admin-dashboard :is(.studio-variable-card,.studio-variable-controls) { padding: var(--workspace-panel-inset); }
   #root .admin-dashboard .studio-variable-source { grid-template-columns: minmax(0,1fr); }
@@ -554,6 +644,12 @@ body:has(.admin-dashboard) { margin: 0; }
   #root .admin-dashboard .admin-page-utilities { justify-content: start; }
   #root .admin-dashboard .admin-sky-placement-composition > header { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-sky-variable-key dl > div { grid-template-columns: minmax(0,1fr); }
+  #root .admin-dashboard .admin-sky-template-comparison { grid-template-columns: minmax(0, 1fr); }
+  #root .admin-dashboard .admin-sky-placement-sources > div { grid-template-columns: minmax(0, 1fr); }
+  #root .admin-dashboard .aspect-pattern-card-grid,
+  #root .admin-dashboard .aspect-writeups-compare,
+  #root .admin-dashboard .aspect-writeups-meta-grid,
+  #root .admin-dashboard .aspect-writeups-readonly > div { grid-template-columns: minmax(0, 1fr); }
 }
 @media (min-width: 1280px) {
   #root .admin-dashboard .admin-filter-form.admin-filter-form--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }

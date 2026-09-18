@@ -66,7 +66,7 @@ Both themes resolve through the Studio's own `color-scheme`. Reader pages retain
 
 ## CSS maintenance
 
-Shared primitives use low-specificity `:where()` selectors. Each component owns its layout in one base rule; explicit state and responsive variants describe changes in behavior. Do not append corrective rules or assign a component to competing grid and surface groups. Do not add another stylesheet or restore a legacy import. Add a component family to `studio-system.css` and reuse shared role tokens. Structural layout values such as grid tracks and fixed positioning live with the component; visual measurements belong in the shared theme.
+Shared primitives use low-specificity `:where()` selectors. Each component owns its layout in one base rule; explicit state and responsive variants describe changes in behavior. Do not append corrective rules or assign a component to competing grid and surface groups. Do not add another stylesheet or restore a legacy import. Add a component family to `studio-system.css` and reuse shared role tokens. Structural layout values such as grid tracks and fixed positioning live with the component; visual measurements belong in the shared theme. When a Studio class still has rules only in a disconnected sheet, fold those rules into `studio-system.css` with shared tokens. `scripts/studio-css-unshipped-class-allowlist.json` must stay empty: a new unmatched class fails CI.
 
 ## Verification
 
@@ -128,7 +128,7 @@ The route inventory regression opens all workspace routes and supported view var
 
 ## Stylesheet integrity
 
-Both Studio entry points load `studio-system.css`, which imports only the shared `theme.css` tokens. Reader CSS is loaded only on reader routes. The architecture audit rejects duplicate selectors within a breakpoint, repeated properties, repeated breakpoint sections, inline styles, component-local tokens, and legacy stylesheet imports. The only `!important` declarations enforce the HTML hidden attribute and reduced-motion preference; visual styling may not use them.
+Both Studio entry points load `studio-system.css`, which imports only the Studio theme tokens. Reader CSS is loaded only on reader routes. The architecture audit rejects duplicate selectors within a breakpoint, repeated properties, repeated breakpoint sections, inline styles, component-local tokens, and legacy stylesheet imports. The class-coverage audit requires every Studio class in markup to have a rule in `studio-system.css`, or to be listed in the shrinking unshipped allowlist. Tests may not assert layout against disconnected historical sheets. The only `!important` declarations enforce the HTML hidden attribute and reduced-motion preference; visual styling may not use them.
 
 Component layout rules are consolidated for composition sections, preview cards, slots, source grids, editor metadata, and tab containers. Embedded template sections and standalone cards have explicit surface variants. Selected and disabled buttons are excluded from ordinary hover rules. All responsive rules live together at the end of the sheet.
 
