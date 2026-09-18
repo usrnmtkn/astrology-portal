@@ -5,8 +5,8 @@ import { Suspense, lazy } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { CompositionMapRow, CompositionPreviewOptions } from "./compositionMap";
 import type { TemplateVariableReference } from "./templateVariableReference";
-import { templateVariableSourceKeyPrefixes } from "./templateVariableSources";
-import { TemplateVariableReviewPanels, type TemplateVariableSourceRow } from "./TemplateVariableReviewPanels";
+import { templateVariableSourceCandidates, templateVariableSourceKeyPrefixes } from "./templateVariableSources";
+import { TemplateVariableReviewPanels, readableCopy, type TemplateVariableSourceRow } from "./TemplateVariableReviewPanels";
 import { rememberStudioEditorReturn } from "./studioEditorReturn";
 import { PageLoading } from "../../web/src/components/PageLoading";
 
@@ -43,6 +43,17 @@ function variableKind(reference: TemplateVariableReference, templateContentKey: 
   if (prefixes.includes("vocab")) return "phrase";
   if (prefixes.includes("hook")) return "hook";
   return "copy";
+}
+
+function variableListPreview(
+  reference: TemplateVariableReference,
+  kind: VariableKind,
+  rows: RailRow[],
+  templateContentKey: string
+) {
+  if (kind === "fact" || kind === "unmapped") return reference.example?.trim() || "";
+  const source = templateVariableSourceCandidates(reference, rows, templateContentKey)[0];
+  return source ? (readableCopy(source)[0]?.[1] ?? "").trim() : "";
 }
 
 const kindLabels: Record<VariableKind, string> = {
@@ -181,6 +192,7 @@ export default function TemplateVariablesRail({
             <ul className="admin-variables-rail-list" aria-label="Variables used in this row">
               {filteredReferences.map((reference) => {
                 const kind = variableKind(reference, templateContentKey);
+                const preview = variableListPreview(reference, kind, rows, templateContentKey);
                 return (
                   <li key={reference.name}>
                     <StudioButton
@@ -198,6 +210,7 @@ export default function TemplateVariablesRail({
                         {reference.requirement !== "Runtime" && <>{reference.requirement} · </>}
                         {reference.source}
                       </span>
+                      {preview ? <span className="admin-variables-rail-preview">{preview}</span> : null}
                     </StudioButton>
                     {onInsert && <StudioButton type="button" aria-label={`Insert {{${reference.name}}}`} onClick={() => onInsert(`{{${reference.name}}}`)}>Insert</StudioButton>}
                   </li>

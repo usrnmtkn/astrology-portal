@@ -9980,6 +9980,18 @@ body,
   flex-wrap: wrap;
   gap: var(--admin-space-md);
 }
+.admin-dashboard .admin-sky-writing-library-catalog {
+  display: grid;
+  gap: var(--admin-space-lg);
+  min-width: 0;
+}
+.admin-dashboard .admin-sky-writing-library-catalog .studio-variable-value {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+}
 .admin-dashboard .admin-sky-writing-editor p:not(.admin-sky-writing-count),
 #root .admin-dashboard .admin-editor-panel .admin-sky-writing-editor textarea,
 .admin-dashboard details.admin-sky-related-editor p {

@@ -35,7 +35,7 @@ function record(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
 
-function readableCopy(row: TemplateVariableSourceRow) {
+export function readableCopy(row: TemplateVariableSourceRow) {
   const sections = record(row.sections);
   const savedPackage = record(sections.packageDraft ?? sections.packageRecord ?? sections);
   const values = [
