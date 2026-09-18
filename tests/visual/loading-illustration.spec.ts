@@ -121,6 +121,22 @@ test('returning to Sky after Calendar does not replay the page loader', async ({
   await expect(page.locator('.app-loading--illustrated:visible')).toHaveCount(0);
 });
 
+test('opening a Sky Placement article from a revealed reading does not replay the page loader', async ({ page }) => {
+  test.setTimeout(90_000);
+  await prepare(page, 'light');
+  await page.goto('/?date=2026-09-14#sky');
+  await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator('.sky-reading-layout__loading')).toHaveCount(0);
+  await page.getByRole('link', { name: /Read about Sun in /i }).first().click();
+  await expect(page.locator('#sky-detail-title')).toBeVisible({ timeout: 8_000 });
+  await expect(page.getByText('Loading reading…', { exact: true })).toHaveCount(0);
+  await expect(page.locator('.sky-reading-layout__loading')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+  await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 15_000 });
+  await expect(page.locator('.sky-reading-layout__loading')).toHaveCount(0);
+  await expect(page.getByText('Loading reading…', { exact: true })).toHaveCount(0);
+});
+
 for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`${screen} sunset artwork option cycles without movement at ${width} ${theme}`, async ({ page }, info) => {
     test.setTimeout(90_000);

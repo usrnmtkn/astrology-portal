@@ -2,7 +2,8 @@ import { getStudioTheme } from "./studioTheme";
 import "./studio-system.css";
 import { StudioButton } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
-import { AlertTriangle, ArrowLeft, CheckCircle2, RefreshCw } from "lucide-react";
+import { AdminDataTable } from "./AdminBrowseComponents";
+import { AlertTriangle, ArrowLeft, RefreshCw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
 import { AdminAccessGate } from "./AdminStudioPrimitives";
@@ -168,30 +169,14 @@ function CoverageDashboard() {
 
         {payload && (
           <>
-            <section  aria-label="Coverage summary">
-              <div className="studio-surface">
-                <p className="admin-eyebrow">Complete corpora</p>
-                <strong >{payload.summary.complete}</strong>
-              </div>
-              <div className="studio-surface">
-                <p className="admin-eyebrow">Incomplete corpora</p>
-                <strong >{payload.summary.incomplete}</strong>
-              </div>
-              <div className="studio-surface">
-                <p className="admin-eyebrow">Required decisions</p>
-                <strong >{payload.summary.unresolvedIssues}</strong>
-              </div>
-              <div className="studio-surface">
-                <p className="admin-eyebrow">Optional enrichment</p>
-                <strong >{payload.summary.unresolvedOptionalIssues}</strong>
-              </div>
-              <div className="studio-surface">
-                <p className="admin-eyebrow">Required source records</p>
-                <strong >{payload.summary.unresolvedQueue}</strong>
-              </div>
-              <div className="studio-surface">
-                <p className="admin-eyebrow">Resolved source history</p>
-                <strong >{payload.summary.unresolvedShadowed + payload.summary.unresolvedRetired}</strong>
+            <section className="studio-surface studio-section" aria-label="Coverage summary">
+              <div className="admin-status-grid">
+                <article className="admin-status-card"><span>Complete corpora</span><strong>{payload.summary.complete}</strong></article>
+                <article className="admin-status-card"><span>Incomplete corpora</span><strong>{payload.summary.incomplete}</strong></article>
+                <article className="admin-status-card"><span>Required decisions</span><strong>{payload.summary.unresolvedIssues}</strong></article>
+                <article className="admin-status-card"><span>Optional enrichment</span><strong>{payload.summary.unresolvedOptionalIssues}</strong></article>
+                <article className="admin-status-card"><span>Required source records</span><strong>{payload.summary.unresolvedQueue}</strong></article>
+                <article className="admin-status-card"><span>Resolved source history</span><strong>{payload.summary.unresolvedShadowed + payload.summary.unresolvedRetired}</strong></article>
               </div>
             </section>
 
@@ -246,41 +231,40 @@ function CoverageDashboard() {
               </section>
             )}
 
-            <section  aria-label="Content corpus coverage">
-              {payload.coverage.map((row) => (
-                <article id={row.id} key={row.id} className="studio-surface">
-                  <div className="studio-coverage-heading">
-                    <div>
-                      <p className="admin-eyebrow">{row.state === "complete" ? "Complete" : "Needs work"}</p>
-                      <h2 >{row.label}</h2>
-                    </div>
-                    {row.state === "complete"
-                      ? <CheckCircle2 size={20} aria-label="Complete" />
-                      : <AlertTriangle size={20} aria-label="Incomplete" />}
-                  </div>
-                  <div className="studio-coverage-metrics">
-                    <strong >{row.ready}</strong>
-                    <span>/ {row.total}</span>
-                    <span >{row.percent}%</span>
-                  </div>
-                  <p >{row.detail}</p>
-                  <small >Count source: {row.source}</small>
-                  <details >
-                    <AdminDisclosureSummary >Authority chain</AdminDisclosureSummary>
-                    <div >
-                      <p ><strong>Owner authority:</strong> {row.authority.ownerAuthority}</p>
-                      <p ><strong>Studio overlay:</strong> {row.authority.studioOverlay}</p>
-                      <p ><strong>Serving source:</strong> {row.authority.servingSource}</p>
-                      <p ><strong>Resolver:</strong> {row.authority.resolver}</p>
-                      <p ><strong>Reader:</strong> {row.authority.readerDestinations.join(" · ")}</p>
-                      <p ><strong>Fail closed:</strong> {row.authority.failurePolicy}</p>
-                    </div>
-                  </details>
-                </article>
-              ))}
+            <section className="admin-list-panel" aria-label="Content corpus coverage">
+              <div className="admin-content-table-scroll">
+                {payload.coverage.length > 0 ? (
+                  <AdminDataTable label="Content corpus coverage" columns={["Corpus", "State", "Ready", "Detail", "Authority"]}>
+                    {payload.coverage.map((row) => (
+                      <tr id={row.id} key={row.id}>
+                        <td data-label="Corpus">
+                          <h2>{row.label}</h2>
+                          <small>Count source: {row.source}</small>
+                        </td>
+                        <td data-label="State">{row.state === "complete" ? "Complete" : "Needs work"}</td>
+                        <td data-label="Ready">{row.ready} / {row.total} · {row.percent}%</td>
+                        <td data-label="Detail">{row.detail}</td>
+                        <td data-label="Authority">
+                          <details>
+                            <AdminDisclosureSummary>Authority chain</AdminDisclosureSummary>
+                            <div>
+                              <p><strong>Owner authority:</strong> {row.authority.ownerAuthority}</p>
+                              <p><strong>Studio overlay:</strong> {row.authority.studioOverlay}</p>
+                              <p><strong>Serving source:</strong> {row.authority.servingSource}</p>
+                              <p><strong>Resolver:</strong> {row.authority.resolver}</p>
+                              <p><strong>Reader:</strong> {row.authority.readerDestinations.join(" · ")}</p>
+                              <p><strong>Fail closed:</strong> {row.authority.failurePolicy}</p>
+                            </div>
+                          </details>
+                        </td>
+                      </tr>
+                    ))}
+                  </AdminDataTable>
+                ) : <p className="admin-empty">No corpora are listed in this coverage snapshot.</p>}
+              </div>
             </section>
 
-            <p >
+            <p className="studio-surface admin-field-hint">
               Authority: {payload.authority}. Calculated {new Date(payload.generatedAt).toLocaleString()}.
             </p>
           </>

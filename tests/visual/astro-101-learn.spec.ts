@@ -26,4 +26,42 @@ test("Learn uses the shared full-page article layout", async ({ page }) => {
 
   await expect(learnPage.locator(".learn-kicker").first()).toHaveText(/Learn/i);
   await expect(learnPage.getByRole("heading", { level: 1 })).toHaveText("Astro 101");
+
+  const tileGlyph = learnPage.locator(".learn-tile__glyph").first();
+  await expect(tileGlyph).toBeVisible();
+  await expect(tileGlyph).toHaveCSS("font-size", "22px");
+});
+
+test("Learn article copy stays on the prose measure", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/learn/astro-101/aspects");
+  const lede = page.locator(".learn-lede");
+  await expect(lede).toBeVisible({ timeout: 60_000 });
+  const measure = await page.evaluate(() => {
+    const sheet = document.querySelector(".learn-sheet--article");
+    const body = document.querySelector(".learn-article-body");
+    const lead = document.querySelector(".learn-lede");
+    const padding = body ? Number.parseFloat(getComputedStyle(body).paddingLeft) : 0;
+    return {
+      lede: lead?.getBoundingClientRect().width ?? 0,
+      sheet: sheet?.getBoundingClientRect().width ?? 0,
+      padding
+    };
+  });
+  expect(measure.lede).toBeGreaterThan(480);
+  expect(measure.lede).toBeLessThanOrEqual(720);
+  expect(measure.sheet).toBeLessThanOrEqual(720 + measure.padding * 2 + 1);
+});
+
+test("Learn section titles match chapter card titles", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/learn");
+  const cardTitle = page.locator(".learn-chapter__title").first();
+  await expect(cardTitle).toBeVisible({ timeout: 60_000 });
+  const cardTitleSize = await cardTitle.evaluate((node) => getComputedStyle(node).fontSize);
+
+  await page.goto("/learn/astro-101/what-is-a-birth-chart");
+  const sectionTitle = page.locator(".learn-article-body h2").first();
+  await expect(sectionTitle).toBeVisible({ timeout: 60_000 });
+  await expect(sectionTitle).toHaveCSS("font-size", cardTitleSize);
 });

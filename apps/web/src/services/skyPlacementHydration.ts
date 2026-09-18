@@ -1,5 +1,5 @@
 import { loadSkyPlacementFallbackArchitectureV3Bundle } from "../content/fallbackArchitectureV3Runtime";
-import { loadFallbackArchitectureV3DashboardBundle, loadFallbackArchitectureV3SkyPlacementDashboardBundle } from "./generatedContent";
+import { loadContentStudioLastKnownGoodRows, loadFallbackArchitectureV3DashboardBundle, loadFallbackArchitectureV3SkyPlacementDashboardBundle } from "./generatedContent";
 import { contentPublicationsResolved, refreshContentPublications } from "./contentPublications";
 import { missingSkyPlacementPublications, skyPlacementPublicationIdentity } from "./skyPlacementPublicationGuard";
 
@@ -14,6 +14,9 @@ export async function prepareSkyPlacementSources() {
   const prepare = async () => {
     await refreshContentPublications();
     if (!contentPublicationsResolved()) throw new Error("Sky publication state is unavailable.");
+    // Snapshot identity only after the nightly rows have merged. Loading that
+    // file mutates the ledger; capturing identity first made every cold load throw.
+    await loadContentStudioLastKnownGoodRows();
     const identity = skyPlacementPublicationIdentity();
     const [, coreBundle, placementBundle] = await Promise.all([
       loadSkyPlacementFallbackArchitectureV3Bundle(),

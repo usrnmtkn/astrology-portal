@@ -44,12 +44,18 @@ function filledLibraryFields(composition: SkyWritingLibraryComposition) {
   }).length;
 }
 
+function libraryFieldText(source?: SkyWritingLibrarySource) {
+  if (!source || source.reference) return "";
+  return typeof source.text === "string" ? source.text : "";
+}
+
 export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sourceRecord, composition, disabled, initialSourceId, onChange, onOpenSource, onLoadSource, onAdvancedSource }: Props) {
   const installed = skyWritingLibraryInstalled(composition);
   const workingComposition = installed ? installSkyWritingLibrary(composition) : composition;
   const primary = skyWritingLibraryIsPrimary(workingComposition);
   const [seeding, setSeeding] = useState(false);
   const [seedStatus, setSeedStatus] = useState("");
+  const [previews, setPreviews] = useState<Record<string, string>>({});
   const initialTextarea = useRef<HTMLTextAreaElement>(null);
   const initialField = initialSourceId
     ? SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields.map(item => ({ ...item, groupId: group.id, groupLabel: group.label }))).find(item => item.id === initialSourceId)
@@ -63,6 +69,43 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
     });
     return () => cancelAnimationFrame(frame);
   }, [installed, initialSourceId]);
+
+  const loadSourceRef = useRef(onLoadSource);
+  loadSourceRef.current = onLoadSource;
+  const previewKey = JSON.stringify(Object.fromEntries(
+    SKY_WRITING_LIBRARY_FIELD_IDS.map(id => [id, workingComposition.sources[id]?.reference?.contentKey ?? workingComposition.sources[id]?.text ?? ""])
+  ));
+  useEffect(() => {
+    let active = true;
+    const load = loadSourceRef.current;
+    void (async () => {
+      const next: Record<string, string> = {};
+      const linked = new Map<string, RecordValue | undefined>();
+      for (const field of SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields)) {
+        const source = workingComposition.sources[field.id];
+        const local = libraryFieldText(source);
+        if (local) {
+          next[field.id] = local;
+          continue;
+        }
+        const key = source?.reference?.contentKey
+          ?? (field.shared ? zodiacSeasonSourceKey(field.id, sign) : "");
+        if (!key || !load) continue;
+        let row = linked.get(key);
+        if (!linked.has(key)) {
+          try { row = await load(key); } catch { row = undefined; }
+          linked.set(key, row);
+        }
+        const path = source?.reference?.field ?? "body";
+        const nested = path.match(/^ingress\.sources\.([A-Za-z][A-Za-z0-9]*)$/u)?.[1];
+        next[field.id] = nested
+          ? libraryFieldText(row?.ingress?.sources?.[nested])
+          : typeof row?.body === "string" ? row.body : typeof row?.body_you === "string" ? row.body_you : "";
+      }
+      if (active) setPreviews(next);
+    })();
+    return () => { active = false; };
+  }, [previewKey, sign]);
 
   const dignity = placementDignityForSource({ contentKey }, { planet, sign });
   const legacyDignity = workingComposition.sources.dignitySentence;
@@ -106,6 +149,53 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
     }
   }
 
+  function openLibraryField(fieldId: string) {
+    const field = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields).find(item => item.id === fieldId);
+    const target = workingComposition.sources[fieldId];
+    if (field?.shared && !target) {
+      onOpenSource(zodiacSeasonSourceKey(fieldId, sign), "body");
+      return;
+    }
+    if (target?.reference) {
+      onOpenSource(target.reference.contentKey, target.reference.field);
+      return;
+    }
+    onOpenSource(contentKey, `ingress.sources.${fieldId}`);
+  }
+
+  const phraseCatalog = initialSourceId ? <section className="admin-sky-writing-library-catalog" aria-label="Other writing library phrases">
+    <p>Other phrases for this placement. Read them here; open one only when you need to change it.</p>
+    {SKY_WRITING_LIBRARY_GROUPS.map(group => (
+      <div className="admin-review-stack" key={group.id}>
+        <p><strong>{group.label}</strong></p>
+        {group.fields.filter(item => item.id !== initialSourceId).map(item => (
+          <article className="admin-editor-guidance" key={item.id}>
+            <p><strong>{item.label}</strong> <code>{`{{${item.id}}}`}</code></p>
+            <p className="studio-variable-value">{previews[item.id]?.trim() || "No writing saved yet."}</p>
+            <StudioButton type="button" disabled={disabled} onClick={() => openLibraryField(item.id)}>Edit {item.label.toLowerCase()}</StudioButton>
+          </article>
+        ))}
+      </div>
+    ))}
+  </section> : null;
+
+  if (initialField && initialSourceId && initialField.shared && !workingComposition.sources[initialSourceId]) {
+    const sharedKey = zodiacSeasonSourceKey(initialSourceId, sign);
+    return <>
+      <section className="admin-sky-writing-editor admin-sky-single-variable-editor" aria-label={`Edit ${initialField.label}`}>
+        <header className="admin-sky-writing-context">
+          <p className="admin-eyebrow">{initialField.groupLabel}</p>
+          <h4>{initialField.label} <code>{`{{${initialSourceId}}}`}</code></h4>
+          <p>{initialField.description} One source per sign is shared across Content Studio.</p>
+        </header>
+        <p className="studio-variable-value">{previews[initialSourceId]?.trim() || "No writing saved yet."}</p>
+        <p><code>{sharedKey}#body</code></p>
+        <StudioButton type="button" disabled={disabled} onClick={() => onOpenSource(sharedKey, "body")}>Edit {initialField.label.toLowerCase()}</StudioButton>
+      </section>
+      {phraseCatalog}
+    </>;
+  }
+
   if (!installed) return <section className="admin-sky-writing-context" aria-label="Sky writing library">
     <p className="admin-eyebrow">Editable writing library</p>
     <h4>{initialField?.label ?? "Planet · sign · placement · experiences"}</h4>
@@ -120,7 +210,8 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
     const source = workingComposition.sources[initialSourceId];
     if (!source) return <p role="alert">This Writing Library field is not available.</p>;
     const reference = source.reference;
-    return <section className="admin-sky-writing-editor admin-sky-single-variable-editor" aria-label={`Edit ${initialField.label}`}>
+    return <>
+    <section className="admin-sky-writing-editor admin-sky-single-variable-editor" aria-label={`Edit ${initialField.label}`}>
       <header className="admin-sky-writing-context">
         <p className="admin-eyebrow">{initialField.groupLabel}</p>
         <h4>{initialField.label} <code>{`{{${initialSourceId}}}`}</code></h4>
@@ -132,6 +223,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
         <span>{initialField.label}</span>
         {reference ? <>
           <p>Linked source: <code>{reference.contentKey}#{reference.field}</code></p>
+          {previews[initialSourceId]?.trim() ? <p className="studio-variable-value">{previews[initialSourceId]}</p> : null}
           <div className="admin-sky-writing-source-actions">
             <StudioButton type="button" onClick={() => onOpenSource(reference.contentKey, reference.field)}>Edit linked source</StudioButton>
             <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(workingComposition, initialSourceId, { kind: source.kind, text: "" }))}>Use local writing</StudioButton>
@@ -157,7 +249,9 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
         <p><code>{contentKey}#ingress.sources.{initialSourceId}</code></p>
         <StudioButton type="button" disabled={disabled} onClick={() => onAdvancedSource(initialSourceId)}>Advanced source tools</StudioButton>
       </details>
-    </section>;
+    </section>
+    {phraseCatalog}
+    </>;
   }
 
   return <section className="admin-sky-writing-editor" aria-label="Sky writing library">
@@ -184,6 +278,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
           if (item.shared && !workingComposition.sources[item.id]) return <div className="admin-editor-guidance" key={item.id}>
             <p>{item.label} <code>{`{{${item.id}}}`}</code></p>
             <p>{item.description} One source per sign is shared across Content Studio.</p>
+            <p className="studio-variable-value">{previews[item.id]?.trim() || "No writing saved yet."}</p>
             <StudioButton type="button" disabled={disabled} onClick={() => onOpenSource(zodiacSeasonSourceKey(item.id, sign), "body")}>Edit {item.label.toLowerCase()}</StudioButton>
           </div>;
           const source = workingComposition.sources[item.id];
@@ -196,6 +291,7 @@ export default function SkyWritingLibraryEditor({ contentKey, planet, sign, sour
               <small>{item.description}</small>
               {reference ? <>
                 <p>Linked source: <code>{reference.contentKey}#{reference.field}</code></p>
+                {previews[item.id]?.trim() ? <p className="studio-variable-value">{previews[item.id]}</p> : null}
                 <div className="admin-sky-writing-source-actions">
                   <StudioButton type="button" onClick={() => onOpenSource(reference.contentKey, reference.field)}>Edit linked source</StudioButton>
                   <StudioButton type="button" disabled={disabled} onClick={() => onChange(updateSource(workingComposition, item.id, { kind: source.kind, text: "" }))}>Use local writing</StudioButton>

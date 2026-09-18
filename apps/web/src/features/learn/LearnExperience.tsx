@@ -234,7 +234,7 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
                   <button type="button" className="learn-tile" onClick={() => onOpenPath(page.slug)}>
                     <span className="learn-tile__meta">
                       <span>{meta.roman}</span>
-                      <span aria-hidden="true">{meta.naturalGlyph}</span>
+                      <span className="learn-tile__glyph" aria-hidden="true">{meta.naturalGlyph}</span>
                     </span>
                     <span className="learn-tile__name">{meta.name}</span>
                     <span className="learn-tile__ordinal">{meta.ordinal}</span>
@@ -260,7 +260,7 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
                 <li key={page.contentKey}>
                   <button type="button" className="learn-tile" onClick={() => onOpenPath(page.slug)}>
                     <span className="learn-tile__meta">
-                      <span aria-hidden="true">{meta.glyph}</span>
+                      <span className="learn-tile__glyph" aria-hidden="true">{meta.glyph}</span>
                     </span>
                     <span className="learn-tile__name">{meta.name}</span>
                     <span className="learn-tile__ordinal">Placements</span>

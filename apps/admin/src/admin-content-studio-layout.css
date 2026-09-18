@@ -1242,6 +1242,18 @@
   white-space: nowrap;
 }
 
+.admin-dashboard .admin-variables-rail-preview {
+  color: var(--admin-text);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body);
+  grid-column: 1 / -1;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .admin-dashboard .admin-variables-rail-count {
   margin: 0;
 }

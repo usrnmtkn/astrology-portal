@@ -106,7 +106,7 @@ function ReaderSurfaceWorkspace({
 
   return (
     <div className="admin-composition-map-layout admin-composition-surface-layout">
-      <aside className="admin-composition-template-list" aria-label="App surfaces and systems">
+      <aside className="studio-surface studio-section admin-composition-template-list" aria-label="App surfaces and systems">
         <header>
           <div><p className="admin-eyebrow">Choose a surface or system</p><strong>{filtered.length} of {writingSurfaceSourceMap.length}</strong></div>
           <div className="admin-composition-template-tools">
@@ -154,7 +154,7 @@ function ReaderSurfaceWorkspace({
         </details>
       </aside>
 
-      <section className="admin-composition-detail" aria-label="Selected app surface or system">
+      <section className="studio-surface studio-section admin-composition-detail" aria-label="Selected app surface or system">
         {selected && access ? (
           <>
             <header className="admin-composition-detail-header">
@@ -374,7 +374,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
         tabs={[{ value: "surfaces", label: <>Surfaces &amp; systems <span>{writingSurfaceSourceMap.length}</span></> },
           { value: "templates", label: <>Template internals <span>{map.length}</span></> }]}>
       {scope === "surfaces" ? <ReaderSurfaceWorkspace onEditField={onEditField} initialSurfaceId={initialSurfaceId} onStartCmsRow={onStartCmsRow} onLoadRow={onLoadRow} rows={rows} templates={map} onEditRow={onEditRow} onSelectTemplate={(key) => { clearFilters(); selectTemplate(key); setScope("templates"); }} /> : <div className="admin-composition-map-layout">
-        <aside className="admin-composition-template-list" aria-label="Composition templates">
+        <aside className="studio-surface studio-section admin-composition-template-list" aria-label="Composition templates">
           <header>
             <div><p className="admin-eyebrow">{templateKeys ? "Choose a passage or template" : "Choose a template"}</p><strong>{filtered.length} of {map.length}</strong></div>
             <p>Choose one to read its surface.</p>
@@ -430,7 +430,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onEditField
           </div>
         </aside>
 
-        <section className="admin-composition-detail" aria-label="Selected template composition">
+        <section className="studio-surface studio-section admin-composition-detail" aria-label="Selected template composition">
           {selected && !pendingRows.length && !loadError ? (
             <>
               <header className="admin-composition-detail-header">

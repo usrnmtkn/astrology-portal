@@ -38,7 +38,7 @@ async function installObservation(page: Page, theme: string) {
 }
 
 async function assertStableReading(page: Page) {
-  await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 60_000 });
   await expect(page.locator('.planet-placement-row--sky[aria-busy="true"]')).toHaveCount(0, { timeout: 60_000 });
   await page.waitForTimeout(2000);
   const data = await page.evaluate(() => (window as any).__skyLayout);

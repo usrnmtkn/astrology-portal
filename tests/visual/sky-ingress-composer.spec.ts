@@ -4,7 +4,12 @@ const key = 'sky-placement/article/saturn/aries';
 const baseSource = skyPlacementSourceRecords.get(key)!;
 const virtual = (contentKey: string) => {
  const source = skyPlacementSourceRecords.get(contentKey);
- return source ? { id: `package:${contentKey}`, content_key: contentKey, surface: 'sky', mode: 'in_depth', status: 'DRAFT', lane: 'reference', provider: 'tldrastro-fallback-architecture-v3', headline: source.headline, summary: source.summary, body: source.body_you, sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: 'fallback_hook', event_type: 'fallback-hook', package_starter: true } : null;
+ if (source) return { id: `package:${contentKey}`, content_key: contentKey, surface: 'sky', mode: 'in_depth', status: 'DRAFT', lane: 'reference', provider: 'tldrastro-fallback-architecture-v3', headline: source.headline, summary: source.summary, body: source.body_you, sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role }, block_type: 'fallback_hook', event_type: 'fallback-hook', package_starter: true };
+ if (contentKey === 'fallback-hook/zodiac-season-polar-axis/aries') {
+  const body = 'Fixture Aries polar axis.';
+  return { id: `package:${contentKey}`, content_key: contentKey, surface: 'sky', mode: 'in_depth', status: 'LIVE', lane: 'reference', provider: 'tldrastro-fallback-architecture-v3', headline: 'Aries polar axis', summary: null, body, sections: { packageRecord: { contentKey, body } }, facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'fallback_hook' }, block_type: 'fallback_hook', event_type: 'fallback-hook', package_starter: true };
+ }
+ return null;
 };
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
  test(`Placement composition source editing and map ${width} ${theme}`, async ({ page }) => {
@@ -144,9 +149,44 @@ test('Phrase variable from Sky write-ups stays a phrase editor', async ({ page }
   const phrase = editor.getByRole('region', { name: 'Phrase variable editor' });
   await expect(phrase.getByRole('region', { name: 'Edit Planet function', exact: true })).toBeVisible();
   await expect(phrase.getByLabel('Writing library Planet function')).toBeVisible();
-  await expect(phrase.getByRole('heading', { name: /Planet function/ })).toHaveCount(1);
+  await expect(phrase.getByRole('region', { name: 'Edit Planet function', exact: true }).getByRole('heading', { name: /Planet function/ })).toHaveCount(1);
   await expect(editor.getByRole('region', { name: 'Placement composition' })).toHaveCount(0);
   await expect(editor.getByLabel('Insert ingress source slot')).toHaveCount(0);
   await expect(editor.getByLabel('Ingress section template')).toHaveCount(0);
+  const catalog = editor.getByRole('region', { name: 'Other writing library phrases' });
+  await expect(catalog).toBeVisible();
+  await expect(catalog.getByText('{{planetDescriptor}}', { exact: true })).toBeVisible();
+  await expect(catalog.getByText('{{signCoreDrive}}', { exact: true })).toBeVisible();
+  await expect(catalog.getByRole('button', { name: 'Edit planet descriptor' })).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test('Shared zodiac season polar axis stays readable from Sky write-ups', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'ingress-test'));
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.route('**/api/admin/**', async route => {
+   const url = new URL(route.request().url());
+   if (url.searchParams.get('variables') === 'true') {
+    await route.fulfill({ json: { ok: true, variables: [] } });
+    return;
+   }
+   const rows = (url.searchParams.get('contentKeys') ?? key).split(',').map(virtual).filter(Boolean);
+   await route.fulfill({ json: { ok: true, rows: url.pathname.endsWith('/generated-content') ? rows : [], statuses: [], nextCursor: null } });
+  });
+  await page.goto('/#sky-writeups');
+  await page.getByLabel('Sky placement planet or point').selectOption('saturn');
+  await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
+  await page.getByLabel('Sky write-up motion').selectOption('direct');
+  const map = page.getByRole('region', { name: 'Sky placement composition map' });
+  await map.getByRole('tab', { name: 'Main template', exact: true }).click();
+  const phrases = map.getByLabel('Editable phrase variables');
+  await phrases.getByRole('button', { name: 'Edit zodiac season polar axis', exact: true }).click();
+  const editor = page.getByRole('dialog');
+  const phrase = editor.getByRole('region', { name: 'Phrase variable editor' });
+  await expect(phrase.getByRole('region', { name: 'Edit Zodiac season polar axis', exact: true })).toBeVisible();
+  await expect(phrase.getByRole('alert')).toHaveCount(0);
+  await expect(phrase.getByText('Fixture Aries polar axis.')).toBeVisible();
+  await expect(editor.getByRole('region', { name: 'Other writing library phrases' })).toBeVisible();
   expect(errors).toEqual([]);
 });

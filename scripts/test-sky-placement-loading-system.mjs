@@ -96,6 +96,26 @@ assert.match(
   /const placementSnapshotRequest = canLoadPlacementArticle[\s\S]*skyPlacementFallbackStatus !== "ready"\) return/u,
   "A Sky placement article must start its astronomy before published copy finishes resolving."
 );
+assert.doesNotMatch(
+  app,
+  /awaitPlacementTiming \? null : detail/,
+  "Opening a Sky Placement card must keep the write-up on screen instead of a full-page loader."
+);
+assert.match(
+  app,
+  /renderPlacement\(baseContent, false\);[\s\S]*skyPlacementInSignAspectContentKeys/,
+  "In-sign Studio keys must hydrate after the first placement article paint."
+);
+assert.match(
+  app,
+  /preloadSkyDetailArticle\(\)/,
+  "The Sky list must preload the placement article chunk before a card is opened."
+);
+assert.match(
+  app,
+  /onOpenDetail=\{openSkyDetail\}/,
+  "Sky summary placement links must open the article through the same path as placement cards."
+);
 assert.match(
   app,
   /function requestSkyPlacementArticleSnapshot[\s\S]*skyPlacementArticleReferenceDate\(location, date\)/u,

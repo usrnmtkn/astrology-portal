@@ -47,14 +47,17 @@ function reloadReaderRouteOnce() {
 
 export function PageLoading({
   message = "Loading page…",
-  compact = false
+  compact = false,
+  announce = true
 }: {
   message?: string;
   compact?: boolean;
+  /** When false, the visible loader stays inside a parent busy region and must not expose a second accessible name. */
+  announce?: boolean;
   /** @deprecated Orbs are the default loader. Kept so existing call sites typecheck. */
   illustrated?: boolean;
 }) {
-  return <div className={`app-loading app-loading--illustrated${compact ? " app-loading--compact" : ""}`} role="status" aria-label={message} aria-live="polite" aria-busy="true">
+  return <div className={`app-loading app-loading--illustrated${compact ? " app-loading--compact" : ""}`} role={announce ? "status" : undefined} aria-label={announce ? message : undefined} aria-live={announce ? "polite" : undefined} aria-busy={announce ? true : undefined} aria-hidden={announce ? undefined : true}>
     <LoadingIllustration compact={compact} />
     <span>{message}</span>
   </div>;
