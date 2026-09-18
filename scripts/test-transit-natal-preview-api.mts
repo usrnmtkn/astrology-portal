@@ -173,3 +173,21 @@ for (const pair of [{planet:'sun',natalPoint:'sun'}, {planet:'mars',natalPoint:'
  }
 }
 console.log('PASS actual transit preview overlay: exact trine/sextile/square/opposition isolation, three planet pairs, both voices, draft exclusion and variant/pass contexts.');
+
+{
+ const { servingPackageRecords } = await import('../api/_lib/content-live-status.ts');
+ const { transitNatalLiveServingSource } = await import('../apps/admin/src/transitNatalEditorScope.ts');
+ assert.equal(servingPackageRecords.has('authored/transit-aspect/mars/north-node/soft'), false);
+ assert.ok(servingPackageRecords.get('authored/transit-aspect/mars/north-node/conjunction'));
+ for (const input of [
+  {planet:'mars',aspect:'sextile',natalPoint:'north-node',voice:'{{Name}}'},
+  {planet:'mars',sign:'scorpio',aspect:'sextile',natalPoint:'north-node',voice:'{{Name}}'}
+ ] as const) {
+  const preview = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(input));
+  const live = transitNatalLiveServingSource(preview, 'body_they');
+  assert.equal(live?.contentKey, 'authored/transit-aspect/mars/north-node/conjunction', JSON.stringify(input));
+ }
+ const familyPreview = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput({planet:'sun',aspect:'trine',natalPoint:'sun',voice:'you'}));
+ assert.equal(transitNatalLiveServingSource(familyPreview, 'body_you')?.contentKey, 'authored/transit-aspect/sun/sun/soft');
+ console.log('PASS live Edit source is the packaged SHARE or family card, not a missing /soft row.');
+}

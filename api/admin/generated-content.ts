@@ -2725,7 +2725,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   if (typeof body.contentKey === "string") {
-    patch.content_key = body.contentKey.trim();
+    const nextKey = body.contentKey.trim();
+    if (
+      (existing.content_key.startsWith("authored/transit-aspect/") || existing.content_key.startsWith("authored/transit-return/"))
+      && nextKey !== existing.content_key
+    ) {
+      throw new GeneratedContentRequestError("This personal-transit write-up key cannot be changed. Open the six-part or three-part destination you want to edit.", 409);
+    }
+    patch.content_key = nextKey;
   }
 
   if (body.surface) {

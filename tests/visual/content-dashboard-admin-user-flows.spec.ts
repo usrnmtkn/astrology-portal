@@ -2685,6 +2685,53 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("Edit live opens packaged SHARE or family source instead of toasting a missing family key", async ({ page }) => {
+    page.on("dialog", dialog => { dialog.accept().catch(() => undefined); });
+    const noErrors = await expectNoBrowserErrors(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const sharedKey = "authored/transit-aspect/mars/north-node/conjunction";
+    const familyKey = "authored/transit-aspect/sun/sun/soft";
+    const shared = servingPackageRecords.get(sharedKey)!;
+    const family = servingPackageRecords.get(familyKey)!;
+    expect(servingPackageRecords.get("authored/transit-aspect/mars/north-node/soft")).toBeUndefined();
+    expect(shared).toBeTruthy();
+    expect(family).toBeTruthy();
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await seedAdminApi(page, { onGeneratedContentWrite: write => writes.push(write), generatedRows: [] });
+    await page.route("**/rest/v1/generated_interpretations*", route => route.fulfill({ json: [] }));
+    await page.route("**/api/admin/transit-natal-preview", async route => {
+      await route.fulfill({ json: { ok: true, rendered: renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(route.request().postDataJSON())) } });
+    });
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=mars&aspect=sextile&natal=north-node");
+    const finder = page.getByRole("region", { name: "Personal Transits source finder" });
+    const liveCard = finder.getByRole("region", { name: "Live reader write-up" });
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(finder.getByRole("status")).toContainText("authored/transit-aspect/mars/north-node/sextile");
+    await liveCard.getByRole("button", { name: "Edit live Mars sextile your North Node" }).click();
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(sharedKey);
+    await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(shared.body_you ?? shared.body ?? ""));
+    await expect(page.getByRole("status").filter({ hasText: "not materialized" })).toHaveCount(0);
+    await expect(page.getByRole("status").filter({ hasText: "from the packaged source" })).toBeVisible();
+    await expect(finder.getByRole("status")).toContainText("authored/transit-aspect/mars/north-node/sextile");
+    await closeGeneratedEditor(page);
+    await page.getByLabel("Transit zodiac sign", { exact: true }).selectOption("scorpio");
+    await expect(finder.getByRole("status")).toContainText("authored/transit-aspect/mars/north-node/sextile");
+    await liveCard.getByRole("button", { name: "Edit live Mars sextile your North Node" }).click();
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(sharedKey);
+    await closeGeneratedEditor(page);
+    await page.getByLabel("Transiting planet", { exact: true }).selectOption("sun");
+    await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("trine");
+    await page.getByLabel("Natal planet or point", { exact: true }).selectOption("sun");
+    await expect(liveCard.getByRole("button", { name: "Edit live Sun trine your Sun" })).toBeVisible();
+    await liveCard.getByRole("button", { name: "Edit live Sun trine your Sun" }).click();
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(familyKey);
+    await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(family.body_you ?? family.body ?? ""));
+    await expect(page.getByRole("status").filter({ hasText: "not materialized" })).toHaveCount(0);
+    expect(writes).toHaveLength(0);
+    await closeGeneratedEditor(page);
+    await noErrors();
+  });
+
   test("transit preview rejects stale and malformed source responses", async ({ page }) => {
     page.on("dialog", dialog => { dialog.accept().catch(() => undefined); });
     await seedAdminApi(page, { generatedRows: [] });

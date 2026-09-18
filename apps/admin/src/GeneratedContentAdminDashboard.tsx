@@ -13,7 +13,7 @@ import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/conten
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
 import { matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
-import { isTransitNatalSituationKey } from "./transitNatalEditorScope";
+import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
@@ -2973,6 +2973,7 @@ export function GeneratedContentAdminDashboard() {
   const [transitNatalAspect, setTransitNatalAspect] = useState<TransitNatalAspect | "">("");
   const [transitNatalPoint, setTransitNatalPoint] = useState<TransitNatalPoint | "">("");
   const [transitNatalNatalHouse, setTransitNatalNatalHouse] = useState<TransitNatalHouse | "">("");
+  const [transitNatalLiveServing, setTransitNatalLiveServing] = useState<{ contentKey: string; field: string } | null>(null);
   const [transitNatalQuery, setTransitNatalQuery] = useState("");
   const [houseTransitPlanet, setHouseTransitPlanet] = useState<TransitNatalPlanet | "">("");
   const [houseTransitSign, setHouseTransitSign] = useState<TransitNatalSign | "">("");
@@ -5186,7 +5187,29 @@ export function GeneratedContentAdminDashboard() {
     return true;
   }
 
-  async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false, fieldPath?: string) {
+  async function resolveLiveTransitNatalServingSource(preferredField?: string) {
+    const current = transitNatalSelectionRef.current;
+    const contact = transitNatalContactFromFields(current.planet, current.aspect, current.natalPoint);
+    if (!contact) return null;
+    const payload = await adminJsonRequest<{ ok: boolean; rendered?: { paragraphs?: Array<{ sources?: Array<{ contentKey?: string; field?: string }> }>; sourceKeys?: string[] } }>(
+      "/api/admin/transit-natal-preview",
+      secret,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          ...transitReadingContext,
+          ...contact,
+          ...(current.sign ? { sign: current.sign } : {}),
+          ...(current.transitHouse ? { transitHouse: current.transitHouse } : {}),
+          ...(current.natalHouse ? { natalHouse: current.natalHouse } : {}),
+          voice: friendsTransitAudience ? "{{Name}}" : "you"
+        })
+      }
+    );
+    return transitNatalLiveServingSource(payload.rendered, preferredField);
+  }
+
+  async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false, fieldPath?: string, options?: { resolvedLiveSource?: boolean }) {
     const originatingHash = window.location.hash;
     const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
@@ -5199,14 +5222,27 @@ export function GeneratedContentAdminDashboard() {
       const row = payload.rows.find(candidate => candidate.content_key === contentKey);
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       if (!row && payload.packageSource) {
-        if (isDynamicTransitNatalExactKey(contentKey) || contentKey.startsWith("authored/transit-return/")) {
+        if (packagedTransitOpenMode(finderTransitNatalExactKey(), contentKey) === "exact") {
           await openPackagedTransitSource(payload.packageSource, contentKey, fieldPath);
           return;
         }
         await openPackagedFallbackSource(payload.packageSource, contentKey, label, fieldPath);
         return;
       }
-      if (!row) throw new Error(`${label} is not materialized in Content Studio (${contentKey}).`);
+      if (!row) {
+        const current = transitNatalSelectionRef.current;
+        const contact = transitNatalContactFromFields(current.planet, current.aspect, current.natalPoint);
+        const assumedFamily = contact ? transitNatalSharedFallbackKey(contact) : null;
+        if (!options?.resolvedLiveSource && (isTransitNatalFamilyKey(contentKey) || contentKey === assumedFamily)) {
+          const serving = await resolveLiveTransitNatalServingSource(fieldPath);
+          if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+          if (serving?.contentKey && serving.contentKey !== contentKey) {
+            await openContentKeyRow(serving.contentKey, label, false, serving.field || fieldPath, { resolvedLiveSource: true });
+            return;
+          }
+        }
+        throw new Error(`${label} is not materialized in Content Studio (${contentKey}).`);
+      }
       setRows((current) => [row, ...current.filter(candidate => candidate.id !== row.id)]);
       if (!await openRow(row, null, fieldPath)) return;
       if (openTemplatePreview) setTemplateVariableReferenceOpen(true);
@@ -7500,6 +7536,7 @@ export function GeneratedContentAdminDashboard() {
     setTransitNatalAspect(aspect);
     setTransitNatalPoint(natalPoint);
     setTransitNatalNatalHouse(natalHouse);
+    setTransitNatalLiveServing(null);
     transitNatalSelectionRef.current = { planet, aspect, natalPoint, sign, transitHouse, natalHouse };
 
     const params = new URLSearchParams({ view: "transits-to-natal" });
@@ -7573,6 +7610,7 @@ export function GeneratedContentAdminDashboard() {
     const requestId = sourceOpenRequestRef.current;
     const { transitNatalPackagedSourceDraft } = await import("./transitNatalPackagedSource");
     if (requestId !== sourceOpenRequestRef.current) return;
+    // Family soft/hard and SHARE-served sibling keys must use openPackagedFallbackSource.
     if (finderTransitNatalExactKey() !== contentKey) return;
     const packagedDraft = transitNatalPackagedSourceDraft(source, contentKey);
     if (!options?.skipUnsavedPrompt && !confirmSkyEditorNavigation()) return;
@@ -7678,7 +7716,8 @@ export function GeneratedContentAdminDashboard() {
       ...(transitNatalNatalHouse ? { natalHouse: transitNatalNatalHouse } : {})
     } : null;
     const exactKey = exactSelection ? transitNatalExactContentKey(exactSelection) : null;
-    const liveSourceKey = contact ? transitNatalSharedFallbackKey(contact) : null;
+    const liveSourceKey = transitNatalLiveServing?.contentKey ?? (contact ? transitNatalSharedFallbackKey(contact) : null);
+    const liveSourceField = transitNatalLiveServing?.field ?? (friendsTransitAudience ? "body_they" : "body_you");
     const previewReady = Boolean(contactReady);
     const selection = previewReady && contact ? {
       ...transitReadingContext,
@@ -7779,7 +7818,9 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </header>
             <p>
-              The current Friends Active for {"{{Name}}"} card uses this published source. The empty three-part conjunction draft is a new override and does not contain this copy until you save and publish it.
+              {exactKey && exactKey.split("/").length === 8
+                ? "The published Friends card still uses this source. Edit live opens that packaged source. The six-part editor is a separate save and does not overwrite it."
+                : "The current Friends Active for {{Name}} card uses this published source. Edit live opens that packaged source. Saving it does not change the three-part or six-part write-up below."}
             </p>
             <p><code>{liveSourceKey}</code></p>
             <StudioButton
@@ -7788,7 +7829,7 @@ export function GeneratedContentAdminDashboard() {
                 liveSourceKey,
                 `Live ${transitNatalLabel(contact)}`,
                 false,
-                friendsTransitAudience ? "body_they" : "body_you"
+                liveSourceField
               )}
             >
               Edit live {transitNatalLabel(contact)}
@@ -7841,7 +7882,7 @@ export function GeneratedContentAdminDashboard() {
         <Suspense fallback={null}><TransitNatalPreviewOptions context={transitReadingContext} onChange={updateTransitReadingContext} /></Suspense>
 
         {!contactReady && <p className="admin-natal-placement-prompt">Choose transiting planet, aspect, and natal planet or chart point to open this transit's You and Friend write-up.</p>}
-        {selection && contact && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(exactSelection ?? contact)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} /></Suspense>}
+        {selection && contact && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(exactSelection ?? contact)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} onServingPreview={setTransitNatalLiveServing} /></Suspense>}
         {contactReady && <p className="admin-field-hint">{exactKey && exactKey.split("/").length === 8
           ? "The reader preview uses eligible published writing, not saved drafts. After you save and publish this six-part situation, matching readings can use it. Shared source edits still affect every reading that uses them."
           : "The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses stay in the preview until you fill all six finder fields, which switches the save destination to the six-part situation."}</p>}
@@ -8907,7 +8948,9 @@ export function GeneratedContentAdminDashboard() {
       ? {
           ...baseFallbackEditorGuidance,
           area: skyFallbackContentIdentity.groupLabel,
-          title: skyFallbackContentIdentity.title,
+          title: isTransitNatalSituationKey(currentDraft.contentKey)
+            ? (currentDraft.headline.trim() || skyFallbackContentIdentity.title)
+            : skyFallbackContentIdentity.title,
           description: skyFallbackContentIdentity.description
             ?? baseFallbackEditorGuidance.description
         }
