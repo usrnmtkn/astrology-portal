@@ -13,7 +13,8 @@ assert.match(dashboard, /const pageSize = scope === "compatibility" \? 500 : 400
 assert.match(dashboard, /const generatedContentPageRetryDelaysMs = \[350, 1_000\];/u);
 assert.match(dashboard, /const isAuthoredTransitAspectDraft = isPackageDraft[\s\S]{0,180}authored\/transit-aspect\//u);
 assert.match(dashboard, /const isPersonalTransitExactDraft = isPackageDraft[\s\S]{0,220}authored\/transit-return\//u);
-assert.match(dashboard, /const transitNatalCanApprovePublish = isPersonalTransitExactDraft[\s\S]{0,420}fallbackArchitectureV3ReaderEligibleReviews/u);
+assert.match(dashboard, /const transitNatalHasExactOwnerApproval = objectRecord\(draftPackageRecord\(currentDraft\)\.approval\)\?\.approvalLevel === "exact_owner_approved"/u);
+assert.match(dashboard, /const transitNatalCanApprovePublish = isPersonalTransitExactDraft[\s\S]{0,520}!transitNatalHasExactOwnerApproval/u);
 assert.match(dashboard, /Approve & publish/u);
 assert.match(dashboard, /const showPackageBodyThey = isPackageDraft[\s\S]{0,260}isAuthoredTransitAspectDraft/u);
 assert.match(dashboard, /Friends uses this complete third-person passage/u);

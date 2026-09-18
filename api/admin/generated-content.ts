@@ -422,6 +422,20 @@ function validateAndApproveNatalAspectCopy(record: Record<string, unknown>, cont
     approveNatalAspectStudioCopy(record, contentKey);
     return;
   }
+  if (contentKey.startsWith("authored/transit-return/")) {
+    if (![record.body, record.body_you].some((value) => typeof value === "string" && value.trim())) {
+      throw new GeneratedContentRequestError("Write the return passage before publishing. You can save an empty draft for later.", 400);
+    }
+    approveNatalAspectStudioCopy(record, contentKey);
+    return;
+  }
+  if (contentKey.startsWith("authored/transit-aspect/")) {
+    if (![record.body_you, record.body_they].every((value) => typeof value === "string" && value.trim())) {
+      throw new GeneratedContentRequestError("Write both You and Friend passages before publishing. You can save an unfinished draft for later.", 400);
+    }
+    approveNatalAspectStudioCopy(record, contentKey);
+    return;
+  }
   if (!contentKey.startsWith("fallback-hook/natal-aspect-lived/")) return;
   if (![record.body, record.body_you, record.body_they].some((value) => typeof value === "string" && value.trim())) {
     throw new GeneratedContentRequestError("Write the natal aspect passage before publishing. You can save an empty draft for later.", 400);

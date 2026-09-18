@@ -8835,13 +8835,14 @@ export function GeneratedContentAdminDashboard() {
         ? !["body", "body_you"].some((field) => packageFieldString(currentDraft, field).trim())
         : !["body_you", "body_they"].every((field) => packageFieldString(currentDraft, field).trim())
     );
+    const transitNatalHasExactOwnerApproval = objectRecord(draftPackageRecord(currentDraft).approval)?.approvalLevel === "exact_owner_approved";
     const transitNatalCanApprovePublish = isPersonalTransitExactDraft
       && !packageHasProposal
       && !packageCanApproveRevision
       && !isGuidedHeldReview
       && !packageIsSkyV4Governed
       && packageRoleCanServeExactCopy
-      && !fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus);
+      && (!fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus) || !transitNatalHasExactOwnerApproval);
     const seasonSourceRows = ZODIAC_SEASON_SOURCE_STARTERS.map((record: Record<string, any>) => rows.find(row => row.content_key === record.contentKey) ?? {
       id: `package:${record.contentKey}`, content_key: record.contentKey, headline: record.headline, body: "", summary: "", surface: "sky", status: "DRAFT", inventory_only: true, block_type: "fallback_hook", sections: { packageRecord: record }
     } as AdminGeneratedContentRow);
