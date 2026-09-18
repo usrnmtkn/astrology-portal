@@ -37,7 +37,18 @@ test("Learn article copy stays on the prose measure", async ({ page }) => {
   await page.goto("/learn/astro-101/aspects");
   const lede = page.locator(".learn-lede");
   await expect(lede).toBeVisible({ timeout: 60_000 });
-  const box = await lede.boundingBox();
-  expect(box?.width ?? 0).toBeGreaterThan(480);
-  expect(box?.width ?? 0).toBeLessThanOrEqual(720);
+  const measure = await page.evaluate(() => {
+    const sheet = document.querySelector(".learn-sheet--article");
+    const body = document.querySelector(".learn-article-body");
+    const lead = document.querySelector(".learn-lede");
+    const padding = body ? Number.parseFloat(getComputedStyle(body).paddingLeft) : 0;
+    return {
+      lede: lead?.getBoundingClientRect().width ?? 0,
+      sheet: sheet?.getBoundingClientRect().width ?? 0,
+      padding
+    };
+  });
+  expect(measure.lede).toBeGreaterThan(480);
+  expect(measure.lede).toBeLessThanOrEqual(720);
+  expect(measure.sheet).toBeLessThanOrEqual(720 + measure.padding * 2 + 1);
 });
