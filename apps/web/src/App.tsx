@@ -12073,8 +12073,8 @@ export function App() {
       : null;
     // Start the article astronomy immediately. Overlay rows still have to
     // resolve before a first paint that would otherwise show bundled copy
-    // and then replace it. Timing facts and in-sign Studio keys hydrate
-    // after that first paint so navigation is not blocked on them.
+    // and then replace it. In-sign Studio keys join that same commit so the
+    // article body is not painted twice.
     if (routeSurface === "sky" && ["placement", "retrograde"].includes(routeType)
       && skyPlacementFallbackStatus !== "ready") return;
     // Every placement timeline includes exact aspects, even when the author
@@ -12082,37 +12082,30 @@ export function App() {
     if (canLoadPlacementArticle && placementSnapshotRequest) {
       let cancelled = false;
       if (selectedSkyDetail?.routePath !== skyDetailRoutePath) {
-        const provisional = skyDetailFromRoutePath(baseRoute, sky, availableDetailContent, openSkyDetail);
-        commitResolvedSkyDetail(provisional
-          ? personalizedSkyPlacementDetail(provisional, profileNatalSky?.ascendant ?? userProfile?.rising,
-            skyPlacementPersonalizationTransits, skyDate)
-          : null);
+        commitResolvedSkyDetail(null);
       }
       void placementSnapshotRequest.then(async placementSky => {
-        const renderPlacement = (detailContent: GeneratedContentMap, complete = false) => {
+        const renderPlacement = (detailContent: GeneratedContentMap) => {
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
           selectedSkyDetailContentRef.current = detailContent;
+          selectedSkyDetailRefreshKeyRef.current = refreshKey;
+          selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
+          selectedSkyDetailRefreshSkyKeyRef.current = skyArticleIdentityKey;
           const detail = skyDetailFromRoutePath(baseRoute, placementSky, detailContent, openSkyDetail);
-          if (complete) {
-            selectedSkyDetailRefreshKeyRef.current = refreshKey;
-            selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
-            selectedSkyDetailRefreshSkyKeyRef.current = skyArticleIdentityKey;
-          }
           commitResolvedSkyDetail(personalizedSkyPlacementDetail(detail, profileNatalSky?.ascendant ?? userProfile?.rising,
             skyPlacementPersonalizationTransits, skyDate));
         };
         const baseContent = await loadSkyDetailContent(placementSky, availableDetailContent, [], loadLiveGeneratedContentForKeys);
-        renderPlacement(baseContent, false);
         const inSignKeys = skyPlacementInSignAspectContentKeys(placementSky.placementAspectFacts?.inSign ?? []);
         if (!inSignKeys.length) {
-          renderPlacement(baseContent, true);
+          renderPlacement(baseContent);
           return;
         }
         try {
-          renderPlacement(mergeGeneratedContentMaps(baseContent, await loadLiveGeneratedContentForKeys(inSignKeys)), true);
+          renderPlacement(mergeGeneratedContentMaps(baseContent, await loadLiveGeneratedContentForKeys(inSignKeys)));
         } catch (error) {
           console.warn("Sky Placement in-sign aspect copy failed to load; facts-only cards remain visible.", error);
-          renderPlacement(baseContent, true);
+          renderPlacement(baseContent);
         }
       }).catch(error => { if (!cancelled) { console.warn("Requested placement calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
       return () => { cancelled = true; };
@@ -14547,12 +14540,7 @@ export function App() {
             <SkyDetailArticle detail={selectedSkyDetail} onClose={closeSkyDetail} />
           </Suspense>
         </>
-      ) : skyDetailRoutePath?.startsWith("sky/") && !(
-        sky
-        && skyPlacementFallbackStatus === "ready"
-        && /^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)
-        && !selectedSkyDetail
-      ) ? (
+      ) : skyDetailRoutePath?.startsWith("sky/") ? (
         skyStatus === "error" ? <PageLoadError message="The sky calculation could not load. Check your connection and try again." onRetry={() => setSkyRefreshKey(value => value + 1)} />
           : skyPlacementFallbackStatus === "error" && /^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath)
             ? <PageLoadError message="The placement reading could not load. Please try again." onRetry={() => setSkyPlacementFallbackRetryKey(value => value + 1)} />
