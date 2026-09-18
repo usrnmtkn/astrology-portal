@@ -21,10 +21,11 @@ assert.match(endpoint, /content-unresolved-queue-v1\.json/u);
 assert.match(endpoint, /missingJupiterLeo/u);
 
 assert.match(page, /Content coverage/u);
-assert.match(page, /Unresolved queue/u);
+assert.match(page, /unresolvedQueue/u);
+assert.match(page, /ListPage/u);
 assert.match(page, /Friends coverage has a visible gap/u);
 assert.match(page, /\/api\/admin\/content-coverage/u);
 assert.match(main, /\/admin\/content\/coverage/u);
-assert.match(primitives, />\s*Coverage\s*</u);
+assert.match(primitives, /Content coverage/u);
 
 console.log("Content Studio coverage dashboard contract passed.");

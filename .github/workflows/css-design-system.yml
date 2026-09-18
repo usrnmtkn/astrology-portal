@@ -6,6 +6,8 @@ on:
       - "apps/web/src/styles/**"
       - "apps/web/src/styles.css"
       - "apps/admin/src/**/*.css"
+      - "apps/admin/src/studio-ds/**"
+      - "scripts/test-studio-ds-layers.mjs"
       - ".github/workflows/css-design-system.yml"
   push:
     branches:
@@ -14,6 +16,8 @@ on:
       - "apps/web/src/styles/**"
       - "apps/web/src/styles.css"
       - "apps/admin/src/**/*.css"
+      - "apps/admin/src/studio-ds/**"
+      - "scripts/test-studio-ds-layers.mjs"
       - ".github/workflows/css-design-system.yml"
 
 concurrency:
@@ -40,3 +44,5 @@ jobs:
           fi
       - name: Verify approved Studio layer tokens
         run: node scripts/test-studio-layer-tokens.mjs
+      - name: Verify Studio Shade-shaped layers
+        run: node scripts/test-studio-ds-layers.mjs

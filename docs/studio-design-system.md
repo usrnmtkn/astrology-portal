@@ -2,22 +2,36 @@
 
 The Content Studio uses the shared tokens in `apps/web/src/styles/theme.css`, scoped by `.admin-dashboard`. Its only component stylesheet is `apps/admin/src/studio-system.css`. The old admin sheets and adapter are disconnected: they are not imported by the standalone app, lazy dashboards, or the new sheet. Existing class names remain as markup hooks, not as inherited styling.
 
+Studio follows Ghost Shade's layer stack, reimplemented on Studio tokens. Do not import `@tryghost/shade`, Tailwind, or Ghost fonts. Content Studio keeps its own rows, review state, and serving rules.
+
+| Layer | Lives in | Job |
+| --- | --- | --- |
+| Tokens | `admin-theme.css`, `apps/admin/src/studio-ds/tokens.ts` | Named visual roles. Shade names such as surface/page/preview alias existing `--workspace-*` values. |
+| Primitives | `apps/admin/src/studio-ds/primitives.tsx` | Layout vocabulary: `Stack`, `Inline`, `Box`, `Grid`, `Container`, `Text`. |
+| Components | `apps/admin/src/studio-ds/components.ts` | Generic controls already in Studio: buttons, fields, tabs, tables. |
+| Recipes | `apps/admin/src/studio-ds/recipes.ts` | Shared class strings. No JSX. |
+| Patterns | `apps/admin/src/studio-ds/patterns.tsx` | Studio-shaped compositions: `PageHeader`, `Filters`, `MetricCard`. |
+| Page templates | `apps/admin/src/studio-ds/page-templates.tsx` | `ListPage` owns the `admin-main` shell. |
+
+Each layer may use layers below it. A primitive must not import a pattern. New work belongs in the lowest layer that fits; keep one-off markup local until a second surface needs the same shape.
+
 `StudioControls.tsx` supplies native button, input, and textarea components; `AdminNativeControls.tsx` supplies native selects and single-chevron disclosures. All controls forward native attributes and refs. Existing editing, review, and publication handlers remain in their owning components. This replacement was explicitly requested on 2026-09-11 after the earlier adapter pass.
 
-This is a desktop adaptation of the [reviewed design reference](https://www.figma.com/design/Bz33AN27vnzcl6ISZOqRd5?node-id=2-154), authorized on 2026-09-11. The reference provides tonal surfaces, type roles, control variants and shape hierarchy. Its layout board is unfinished. The primary, selected, neutral surface, outline and semantic colors were read directly from the reference’s color-style definitions. Desktop spacing and responsive layouts are adaptations, not a pixel-identical mobile screen export. Google Sans, Google Sans Text and Google Symbols were unavailable in the reference; Studio uses system sans-serif and its existing Lucide icons without adding external font dependencies.
+This is a desktop adaptation of the [reviewed design reference](https://www.figma.com/design/Bz33AN27vnzcl6ISZOqRd5?node-id=2-154), authorized on 2026-09-11 for type roles, control variants, and shape hierarchy. Owner direction on 2026-09-18 replaces the green chrome with a black-and-white workspace. Reader pages keep their own theme. Desktop spacing and responsive layouts are adaptations, not a pixel-identical mobile screen export. Studio uses system sans-serif and its existing Lucide icons without adding external font dependencies.
 
 ## Verified palette
 
-Values read from the design file on 2026-09-11. Light surface levels 1–5 intentionally share one color in the reference.
+Chrome values are the 2026-09-18 black-and-white workspace. Error, caution, and valid remain status colors, not brand. Light cards share one white fill; raised and hover steps exist mainly in dark theme.
 
 | Role | Light | Dark |
 | --- | --- | --- |
-| Canvas | `#EFF1EF` | `#191C1B` |
-| Surface levels 1 / 2 / 3 / 4 / 5 | `#FAFDFA` | `#1D2523` / `#1F2B28` / `#21312D` / `#22332F` / `#233732` |
-| Primary / on primary | `#006B5B` / `#FFFFFF` | `#59DBC1` / `#00382E` |
-| Selected / on selected | `#CDE8E0` / `#06201A` | `#334B45` / `#CDE8E0` |
-| Text / secondary text | `#191C1B` / `#57605D` | `#C4C7C5` / `#A3ADA9` |
-| Outline / divider | `#6F7976` / `#BFC9C4` | `#89938F` / `#3F4946` |
+| Canvas | `#F4F4F5` | `#111213` |
+| Surface / raised / highest | `#FFFFFF` | `#15171A` / `#1D1F21` / `#2A2C2F` |
+| Hover | `#F0F0F1` | `#232529` |
+| Primary / on primary | `#15171A` / `#FFFFFF` | `#E6E9EB` / `#111213` |
+| Selected / on selected | `#EBEBEB` / `#15171A` | `#2A2C2F` / `#E6E9EB` |
+| Text / secondary text | `#15171A` / `#6B6B6B` | `#E6E9EB` / `#A6ADB4` |
+| Outline / divider | `#737373` / `#E5E5E5` | `#8A8F94` / `#2F3337` |
 | Error / error container / on container | `#BA1A1A` / `#FFDAD6` / `#410002` | `#FFB4AB` / `#93000A` / `#FFDAD6` |
 | Caution / container / on container | `#725B22` / `#FFDF98` / `#251A00` | `#E1C37F` / `#58440B` / `#FFDF98` |
 | Valid | `#2F6A39` | `#96D69A` |

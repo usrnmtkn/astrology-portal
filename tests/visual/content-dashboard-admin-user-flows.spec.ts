@@ -6301,7 +6301,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
       for (const preview of await card.locator('.admin-template-reader-surface').all()) {
         await expect(preview).toHaveCSS('padding', '16px');
         await expect(preview).toHaveCSS('border-top-width', '1px');
-        await expect(preview).toHaveCSS('background-color', theme === 'light' ? 'rgb(239, 241, 239)' : 'rgb(25, 28, 27)');
+        await expect(preview).toHaveCSS('background-color', theme === 'light' ? 'rgb(244, 244, 245)' : 'rgb(17, 18, 19)');
       }
     }
     const a = (await assembly.boundingBox())!;
@@ -6728,7 +6728,7 @@ for (const theme of ['dark', 'light']) {
       await expectAdminRouteLoads(page, '/admin/content#surface-map');
       await expect(page.locator('.admin-surface-sources').first()).toHaveCSS('border-top-width', '0px');
       await page.locator('.admin-surface-sources summary').first().click();
-      await expect(page.locator('.admin-surface-sources > p').first()).toHaveCSS('color', theme === 'light' ? 'rgb(87, 96, 93)' : 'rgb(163, 173, 169)');
+      await expect(page.locator('.admin-surface-sources > p').first()).toHaveCSS('color', theme === 'light' ? 'rgb(107, 107, 107)' : 'rgb(166, 173, 180)');
       await page.screenshot({path: `outputs/studio-style/forms-surface-${theme}-${width}.png`});
       await assertNoBrowserErrors();
     });
@@ -6769,7 +6769,7 @@ for (const theme of ['dark', 'light'] as const) {
       const search = editor.getByLabel('Find an aspect passage', {exact:true});
       await expect(search).toBeVisible();
       await expect(search).toHaveCSS('border-top-width', '0px');
-      await expect(editor.getByLabel('TL;DR / summary', {exact:true})).toHaveCSS('border-top-color', theme === 'dark' ? 'rgb(137, 147, 143)' : 'rgb(111, 121, 118)');
+      await expect(editor.getByLabel('TL;DR / summary', {exact:true})).toHaveCSS('border-top-color', theme === 'dark' ? 'rgb(138, 143, 148)' : 'rgb(115, 115, 115)');
       await expect(related.locator('.admin-hook-pattern-list')).toHaveCSS('width', await related.locator('.admin-sky-related-heading').evaluate(e => getComputedStyle(e).width));
       await search.fill('no matching aspect');
       await expect(search).toHaveCSS('outline-style', 'none');
@@ -7054,7 +7054,7 @@ for (const theme of ['dark', 'light']) for (const width of [1440, 390]) {
     const recovery = page.getByRole('region', {name:'Page recovery'});
     await expect(recovery.getByRole('alert')).toHaveText('This page could not load.');
     await expect(page.locator('.admin-page-error')).toHaveAttribute('data-studio-theme',theme);
-    await expect(recovery).toHaveCSS('background-color', theme === 'dark' ? 'rgb(29, 37, 35)' : 'rgb(250, 253, 250)');
+    await expect(recovery).toHaveCSS('background-color', theme === 'dark' ? 'rgb(21, 23, 26)' : 'rgb(255, 255, 255)');
     await expect(recovery.getByRole('button', {name:'Retry page'})).toHaveCSS('font-size','14px');
     const actions = recovery.locator('.admin-page-error-actions');
     if (width === 1440) {
@@ -7170,7 +7170,7 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
     const friends=controls.getByRole('button',{name:'Friends',exact:true});
     await friends.click();
     await friends.hover();
-    await expect(friends).toHaveCSS('background-color',theme==='dark'?'rgb(51, 75, 69)':'rgb(205, 232, 224)');
+    await expect(friends).toHaveCSS('background-color',theme==='dark'?'rgb(42, 44, 47)':'rgb(235, 235, 235)');
     await search.fill('compatibility card');
     const row=page.locator('.admin-content-row').filter({hasText:'fallback-hook/friends.compatibility.planet-card'});
     await expect(row).toHaveCount(1);
@@ -7370,7 +7370,7 @@ for (const theme of ['dark', 'light'] as const) {
       await page.keyboard.press('Enter');
       await expect(next).toHaveAttribute('aria-pressed', 'true');
       await expect(choices.first()).toHaveAttribute('aria-pressed', 'false');
-      await expect(next).toHaveCSS('background-color', theme === 'dark' ? 'rgb(51, 75, 69)' : 'rgb(205, 232, 224)');
+      await expect(next).toHaveCSS('background-color', theme === 'dark' ? 'rgb(42, 44, 47)' : 'rgb(235, 235, 235)');
       await next.screenshot({ path: `outputs/studio-style/secondary-choice-${theme}-${width}.png` });
       await expectStudioTypography(page, 'selected surface choices');
       await expectNoHorizontalOverflow(page, 'selected surface choices');
@@ -7621,8 +7621,8 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     await expect(daily).toHaveAttribute('aria-selected', 'true');
     await expect(daily).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(daily).toHaveCSS('border-bottom-width', '3px');
-    await expect(daily).toHaveCSS('border-bottom-color', theme === 'light' ? 'rgb(0, 107, 91)' : 'rgb(89, 219, 193)');
-    await expect(daily).toHaveCSS('color', theme === 'light' ? 'rgb(25, 28, 27)' : 'rgb(196, 199, 197)');
+    await expect(daily).toHaveCSS('border-bottom-color', theme === 'light' ? 'rgb(21, 23, 26)' : 'rgb(230, 233, 235)');
+    await expect(daily).toHaveCSS('color', theme === 'light' ? 'rgb(21, 23, 26)' : 'rgb(230, 233, 235)');
     for (const tab of await tabs.getByRole('tab').all()) {
       await expect(tab).toHaveCSS('font-weight', '400');
       await expect(tab).toHaveCSS('font-size', '14px');
