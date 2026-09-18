@@ -15,9 +15,13 @@ try {
   }
 } catch { /* The default orb placeholder remains when storage is unavailable. */ }
 
-const readerRecoveryRoute = () => location.pathname === "/" && (
-  location.hash === "" || recoverableReaderHash.test(location.hash)
-);
+const readerPathname = (pathname) => pathname.replace(/\/+$/u, "") || "/";
+const readerRecoveryRoute = () => {
+  const path = readerPathname(location.pathname);
+  if (path === "/learn" || path.startsWith("/learn/") || path === "/friends") return true;
+  if (path !== "/") return false;
+  return location.hash === "" || recoverableReaderHash.test(location.hash);
+};
 
 const reloadReaderRouteOnce = () => {
   if (!readerRecoveryRoute()) return false;

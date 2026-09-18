@@ -6,9 +6,15 @@ const readerRecoveryHistoryKey = "__tldrastroReaderPageRecovery";
 const readerRecoveryCooldownMs = 2 * 60 * 1000;
 const recoverableReaderHash = /^#\/?(?:you|sky|calendar|friends)(?:[/?]|$)/u;
 
+function readerPathname(pathname: string) {
+  return pathname.replace(/\/+$/u, "") || "/";
+}
+
 function readerRecoveryRoute() {
   if (typeof window === "undefined") return false;
-  if (window.location.pathname !== "/") return false;
+  const path = readerPathname(window.location.pathname);
+  if (path === "/learn" || path.startsWith("/learn/") || path === "/friends") return true;
+  if (path !== "/") return false;
   return window.location.hash === "" || recoverableReaderHash.test(window.location.hash);
 }
 
