@@ -114,6 +114,8 @@ assert.match(dashboard, /transitNatalSelectionRef.current/u);
 assert.match(dashboard, /exactSelection \?\? contact/u);
 assert.match(dashboard, /isBondEffectDraft \|\| \(isExactPersonalTransitDraft && isDynamicTransitNatalExactKey/u);
 assert.match(dashboard, /fallback-hook\/bond-effect-/u);
+assert.match(dashboard, /BondEffectPagePreview/u);
+assert.match(dashboard, /openPackagedFallbackSource/u);
 assert.match(dashboard, /authored\/transit-return\//u);
 assert.match(dashboard, /defaultOpen/u);
 assert.match(dashboard, /setPackageSectionField\(current, "body_you", text\)/u);

@@ -27,6 +27,7 @@ assert.doesNotMatch(dashboard, /Choose all six values/u);
 const exactAction = fs.readFileSync(path.join(root, "apps/admin/src/TransitNatalReaderPreview.tsx"), "utf8");
 assert.match(dashboard, /isBondEffectDraft/u);
 assert.match(dashboard, /fallback-hook\/bond-effect-/u);
+assert.match(dashboard, /BondEffectPagePreview/u);
 assert.match(exactAction, /<PersonalTransitAiWriter/u);
 assert.match(exactAction, /youText=""/u);
 console.log("Content Studio Transit to Natal Friends editor contract passed.");
