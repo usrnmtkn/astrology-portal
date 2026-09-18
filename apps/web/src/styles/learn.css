@@ -31,7 +31,7 @@
 
 .learn-page .learn-sheet--article {
   display: block;
-  width: min(var(--container-article), 100%);
+  width: min(calc(var(--container-prose) + var(--space-10) + var(--space-10)), 100%);
   margin-inline: auto;
 }
 
@@ -291,7 +291,7 @@
 }
 
 .learn-article-body > * {
-  width: min(var(--container-prose), 100%);
+  width: 100%;
 }
 
 .learn-article-body p,
