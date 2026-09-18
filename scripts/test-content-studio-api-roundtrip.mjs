@@ -35,7 +35,8 @@ await build({
   stdin: { loader: "ts", resolveDir: process.cwd(), contents: `
     export * from "./apps/web/src/services/generatedContent.ts";
     export { installContentPublications } from "./apps/web/src/content/contentPublicationState.ts";
-    export { installFallbackArchitectureV3Bundle, fallbackRendererV3, loadDeferredFallbackArchitectureV3Bundle, transitSynastryFallbackRendererV3 } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
+    export { installFallbackArchitectureV3Bundle, fallbackRendererV3, fallbackV3ApprovalLevelForContentKey, loadDeferredFallbackArchitectureV3Bundle, transitSynastryFallbackRendererV3 } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
+    export { isFriendsAcceptedApprovalLevel } from "./apps/web/src/content/fallbackApproval.ts";
   ` },
   format: "esm",
   logLevel: "silent",
@@ -948,24 +949,245 @@ const { transitNatalExactSourceDraft } = await import('../apps/admin/src/transit
 for (const selection of [
   { planet: 'sun', natalPoint: 'south-node', aspect: 'opposition' },
   { planet: 'sun', natalPoint: 'sun', aspect: 'conjunction' },
-  { planet: 'uranus', natalPoint: 'uranus', aspect: 'conjunction' }
+  { planet: 'uranus', natalPoint: 'uranus', aspect: 'conjunction' },
+  { planet: 'mars', natalPoint: 'moon', aspect: 'conjunction', sign: 'cancer', transitHouse: '2', natalHouse: '2' }
 ]) {
   const draft = transitNatalExactSourceDraft(selection);
   const copy = `QA exact ${selection.planet} transit opening.\n\nQA exact ${selection.natalPoint} transit ending.`;
-  const record = { ...draft.sections.packageRecord, body: copy, ...(!draft.contentKey.startsWith('authored/transit-return/') ? { body_you: copy, body_they: '{{Name}} receives a complete QA exact transit passage.' } : {}) };
-  row = { ...row, id: `qa-transit-${selection.planet}-${selection.natalPoint}`, content_key: draft.contentKey, provider: 'tldrastro-fallback-architecture-v3', status: 'DRAFT', lane: 'reference', review_state: 'needs-review', mode: 'in_depth', surface: 'you', event_type: 'fallback-hook', block_type: 'fallback_hook', body: copy, sections: { packageRecord: record }, facts: { ...draft.facts, review_status: 'needs_review' }, source_snapshot: draft.sourceSnapshot };
+  const they = '{{Name}} receives a complete QA exact transit passage.';
+  const record = { ...draft.sections.packageRecord, body: copy, ...(!draft.contentKey.startsWith('authored/transit-return/') ? { body_you: copy, body_they: they } : {}) };
+  row = { ...row, id: `qa-transit-${selection.planet}-${selection.natalPoint}${selection.sign ? `-${selection.sign}` : ''}`, content_key: draft.contentKey, provider: 'tldrastro-fallback-architecture-v3', status: 'DRAFT', lane: 'reference', review_state: 'needs-review', mode: 'in_depth', surface: 'you', event_type: 'fallback-hook', block_type: 'fallback_hook', body: copy, sections: { packageRecord: record }, facts: { ...draft.facts, review_status: 'needs_review' }, source_snapshot: draft.sourceSnapshot };
   const approved = await invokeApi('PATCH', '/api/admin/generated-content', { id: row.id, expectedUpdatedAt: row.updated_at, reviewStatus: 'approved' });
   assert.equal(approved.status, 200, JSON.stringify(approved.payload));
+  assert.equal(row.sections.packageRecord.approval?.approvalLevel, 'exact_owner_approved', `${draft.contentKey}: Approve & publish must stamp Friends-accepted approval`);
   globalThis.fetch = async (input, init) => String(input).includes('/rpc/content_runtime_revision') ? Response.json(row.updated_at) : normalFetch(input, init);
   const bundle = await runtime.loadFallbackArchitectureV3DashboardBundle();
   assert.ok(bundle?.transitLib.authoredCards.some(item => item.contentKey === draft.contentKey), `New exact source reaches real reader loader: ${draft.contentKey}`);
   runtime.installFallbackArchitectureV3Bundle(bundle);
   const rendered = draft.contentKey.startsWith('authored/transit-return/')
     ? runtime.transitSynastryFallbackRendererV3.renderTransitReturn({ planet: selection.planet })
-    : runtime.transitSynastryFallbackRendererV3.renderTransitAspect({ transiting: selection.planet, natal: selection.natalPoint, aspect: selection.aspect, voice: 'you', sign: 'virgo' });
+    : runtime.transitSynastryFallbackRendererV3.renderTransitAspect({
+      transiting: selection.planet,
+      natal: selection.natalPoint,
+      aspect: selection.aspect,
+      voice: 'you',
+      sign: selection.sign ?? 'virgo',
+      transitHouse: selection.transitHouse,
+      natalHouse: selection.natalHouse
+    });
   assert.equal(rendered.body, copy);
+  assert.equal(rendered.contentKey, draft.contentKey);
+  assert.equal(runtime.fallbackV3ApprovalLevelForContentKey(draft.contentKey), 'exact_owner_approved');
   globalThis.fetch = normalFetch;
 }
+
+const sixPartDraft = transitNatalExactSourceDraft({
+  planet: 'mars', natalPoint: 'moon', aspect: 'conjunction', sign: 'cancer', transitHouse: '2', natalHouse: '2'
+});
+const sixPartYou = 'QA six-part You opening.\n\nQA six-part You ending.';
+const sixPartThey = '{{Name}} receives the QA six-part Friend passage.';
+const createdApprovedSixPart = await invokeApi('POST', '/api/admin/generated-content', {
+  contentKey: sixPartDraft.contentKey,
+  surface: 'you',
+  mode: 'in_depth',
+  eventType: 'fallback-hook',
+  blockType: 'fallback_hook',
+  headline: sixPartDraft.headline,
+  body: sixPartYou,
+  reviewStatus: 'approved',
+  sections: {
+    packageRecord: {
+      ...sixPartDraft.sections.packageRecord,
+      body: sixPartYou,
+      body_you: sixPartYou,
+      body_they: sixPartThey,
+      review_status: 'approved'
+    }
+  },
+  facts: { ...sixPartDraft.facts, fallbackArchitectureV3: true },
+  sourceSnapshot: { ...sixPartDraft.sourceSnapshot, review_status: 'approved' }
+});
+assert.equal(createdApprovedSixPart.status, 200, JSON.stringify(createdApprovedSixPart.payload));
+assert.equal(createdApprovedSixPart.payload.rows[0].status, 'LIVE', 'Approve & publish on a new six-part situation must publish on first save.');
+assert.equal(createdApprovedSixPart.payload.rows[0].lane, 'serving');
+assert.equal(createdApprovedSixPart.payload.rows[0].sections.packageRecord.approval.approvalLevel, 'exact_owner_approved');
+globalThis.fetch = async (input, init) => String(input).includes('/rpc/content_runtime_revision') ? Response.json(row.updated_at) : normalFetch(input, init);
+const sixPartBundle = await runtime.loadFallbackArchitectureV3DashboardBundle();
+assert.ok(sixPartBundle?.transitLib.authoredCards.some((item) => item.contentKey === sixPartDraft.contentKey));
+runtime.installFallbackArchitectureV3Bundle(sixPartBundle);
+const sixPartRendered = runtime.transitSynastryFallbackRendererV3.renderTransitAspect({
+  transiting: 'mars', natal: 'moon', aspect: 'conjunction', sign: 'cancer', transitHouse: '2', natalHouse: '2', voice: '{{Name}}'
+});
+assert.equal(sixPartRendered.contentKey, sixPartDraft.contentKey);
+assert.match(sixPartRendered.body, /QA six-part Friend passage/);
+assert.equal(runtime.fallbackV3ApprovalLevelForContentKey(sixPartDraft.contentKey), 'exact_owner_approved');
+assert.equal(runtime.isFriendsAcceptedApprovalLevel(runtime.fallbackV3ApprovalLevelForContentKey(sixPartDraft.contentKey)), true);
+globalThis.fetch = normalFetch;
+
+const incompleteSixPart = await invokeApi('POST', '/api/admin/generated-content', {
+  contentKey: 'authored/transit-aspect/mars/moon/conjunction/leo/3/3',
+  surface: 'you',
+  mode: 'in_depth',
+  eventType: 'fallback-hook',
+  blockType: 'fallback_hook',
+  headline: 'Mars conjunct Moon · leo houses 3/3',
+  body: sixPartYou,
+  reviewStatus: 'approved',
+  sections: {
+    packageRecord: {
+      ...sixPartDraft.sections.packageRecord,
+      contentKey: 'authored/transit-aspect/mars/moon/conjunction/leo/3/3',
+      body: sixPartYou,
+      body_you: sixPartYou,
+      body_they: '   ',
+      review_status: 'approved'
+    }
+  },
+  facts: { ...sixPartDraft.facts, fallbackArchitectureV3: true, sign: 'leo', transitHouse: '3', natalHouse: '3' },
+  sourceSnapshot: { ...sixPartDraft.sourceSnapshot, review_status: 'approved' }
+});
+assert.equal(incompleteSixPart.status, 400, JSON.stringify(incompleteSixPart.payload));
+assert.match(String(incompleteSixPart.payload.error), /You and Friend/);
+
+const draftOnlySixPart = transitNatalExactSourceDraft({
+  planet: 'venus', natalPoint: 'moon', aspect: 'conjunction', sign: 'taurus', transitHouse: '1', natalHouse: '1'
+});
+const draftOnlyYou = 'QA draft-only You opening.\n\nQA draft-only You ending.';
+const draftOnlyThey = '{{Name}} receives the QA draft-only Friend passage.';
+const savedDraftOnlySixPart = await invokeApi('POST', '/api/admin/generated-content', {
+  contentKey: draftOnlySixPart.contentKey,
+  surface: 'you',
+  mode: 'in_depth',
+  eventType: 'fallback-hook',
+  blockType: 'fallback_hook',
+  headline: draftOnlySixPart.headline,
+  body: draftOnlyYou,
+  reviewStatus: 'needs_review',
+  sections: {
+    packageRecord: {
+      ...draftOnlySixPart.sections.packageRecord,
+      body: draftOnlyYou,
+      body_you: draftOnlyYou,
+      body_they: draftOnlyThey
+    }
+  },
+  facts: { ...draftOnlySixPart.facts, fallbackArchitectureV3: true },
+  sourceSnapshot: draftOnlySixPart.sourceSnapshot
+});
+assert.equal(savedDraftOnlySixPart.status, 200, JSON.stringify(savedDraftOnlySixPart.payload));
+assert.equal(savedDraftOnlySixPart.payload.rows[0].content_key, draftOnlySixPart.contentKey, 'Six-part saves must keep the eight-part situation key.');
+assert.equal(savedDraftOnlySixPart.payload.rows[0].status, 'DRAFT');
+assert.equal(savedDraftOnlySixPart.payload.rows[0].sections.packageRecord.approval, undefined, 'Save must not stamp owner approval.');
+assert.equal(savedDraftOnlySixPart.payload.rows[0].facts.review_status, 'needs_review');
+
+const approvedSavedSixPart = await invokeApi('PATCH', '/api/admin/generated-content', {
+  id: savedDraftOnlySixPart.payload.rows[0].id,
+  expectedUpdatedAt: savedDraftOnlySixPart.payload.rows[0].updated_at,
+  reviewStatus: 'approved'
+});
+assert.equal(approvedSavedSixPart.status, 200, JSON.stringify(approvedSavedSixPart.payload));
+assert.equal(approvedSavedSixPart.payload.rows[0].status, 'LIVE');
+assert.equal(approvedSavedSixPart.payload.rows[0].content_key.split('/').length, 8);
+assert.equal(approvedSavedSixPart.payload.rows[0].sections.packageRecord.approval.approvalLevel, 'exact_owner_approved');
+
+const proposalSixPart = transitNatalExactSourceDraft({
+  planet: 'jupiter', natalPoint: 'moon', aspect: 'conjunction', sign: 'cancer', transitHouse: '4', natalHouse: '4'
+});
+const proposalYou = 'QA proposal You opening.\n\nQA proposal You ending.';
+const proposalThey = '{{Name}} receives the QA proposal Friend passage.';
+const createdProposalSixPart = await invokeApi('POST', '/api/admin/generated-content', {
+  contentKey: proposalSixPart.contentKey,
+  surface: 'you',
+  mode: 'in_depth',
+  eventType: 'fallback-hook',
+  blockType: 'fallback_hook',
+  headline: proposalSixPart.headline,
+  body: proposalYou,
+  reviewStatus: 'approved',
+  sections: {
+    packageRecord: {
+      ...proposalSixPart.sections.packageRecord,
+      body: proposalYou,
+      body_you: proposalYou,
+      body_they: proposalThey
+    },
+    packageDraft: {
+      ...proposalSixPart.sections.packageRecord,
+      body: proposalYou,
+      body_you: proposalYou,
+      body_they: proposalThey
+    }
+  },
+  facts: { ...proposalSixPart.facts, fallbackArchitectureV3: true },
+  sourceSnapshot: { ...proposalSixPart.sourceSnapshot, review_status: 'approved' }
+});
+assert.equal(createdProposalSixPart.status, 200, JSON.stringify(createdProposalSixPart.payload));
+assert.equal(createdProposalSixPart.payload.rows[0].status, 'DRAFT', 'A packageDraft must not auto-publish.');
+assert.equal(createdProposalSixPart.payload.rows[0].facts.review_status, 'needs_review');
+assert.equal(createdProposalSixPart.payload.rows[0].sections.packageRecord.approval, undefined);
+const publishedProposalSixPart = await invokeApi('PATCH', '/api/admin/generated-content', {
+  id: createdProposalSixPart.payload.rows[0].id,
+  expectedUpdatedAt: createdProposalSixPart.payload.rows[0].updated_at,
+  ownerAction: 'approve-package-revision'
+});
+assert.equal(publishedProposalSixPart.status, 200, JSON.stringify(publishedProposalSixPart.payload));
+assert.equal(publishedProposalSixPart.payload.rows[0].status, 'LIVE');
+assert.equal(publishedProposalSixPart.payload.rows[0].content_key, proposalSixPart.contentKey);
+assert.equal(publishedProposalSixPart.payload.rows[0].sections.packageDraft, undefined);
+assert.equal(publishedProposalSixPart.payload.rows[0].sections.packageRecord.approval.approvalLevel, 'exact_owner_approved');
+
+const liveUngatedKey = 'authored/transit-aspect/saturn/moon/conjunction/cancer/2/2';
+const liveUngatedYou = 'QA restamp You opening.\n\nQA restamp You ending.';
+const liveUngatedThey = '{{Name}} receives the QA restamp Friend passage.';
+row = {
+  ...row,
+  id: 'qa-six-part-live-ungated',
+  content_key: liveUngatedKey,
+  provider: 'tldrastro-fallback-architecture-v3',
+  status: 'LIVE',
+  lane: 'serving',
+  review_state: null,
+  mode: 'in_depth',
+  surface: 'you',
+  event_type: 'fallback-hook',
+  block_type: 'fallback_hook',
+  body: liveUngatedYou,
+  sections: {
+    packageRecord: {
+      contentKey: liveUngatedKey,
+      content_role: 'full_copy',
+      grammar_frame: 'complete_sentence',
+      surface: 'transit-aspect',
+      body: liveUngatedYou,
+      body_you: liveUngatedYou,
+      body_they: liveUngatedThey,
+      reader_only: true,
+      render_policy: 'personal-transit-exact-v1',
+      review_status: 'approved'
+    }
+  },
+  facts: { fallbackArchitectureV3: true, review_status: 'approved', readerServing: true },
+  source_snapshot: { contentType: 'authored-content', contentSystem: 'fallback', content_role: 'full_copy', review_status: 'approved', sourcePackage: 'tldrastro-fallback-architecture-v3' }
+};
+const restampedSixPart = await invokeApi('PATCH', '/api/admin/generated-content', {
+  id: row.id,
+  expectedUpdatedAt: row.updated_at,
+  reviewStatus: 'approved'
+});
+assert.equal(restampedSixPart.status, 200, JSON.stringify(restampedSixPart.payload));
+assert.equal(restampedSixPart.payload.rows[0].content_key, liveUngatedKey);
+assert.equal(restampedSixPart.payload.rows[0].status, 'LIVE');
+assert.equal(restampedSixPart.payload.rows[0].sections.packageRecord.approval.approvalLevel, 'exact_owner_approved');
+globalThis.fetch = async (input, init) => String(input).includes('/rpc/content_runtime_revision') ? Response.json(row.updated_at) : normalFetch(input, init);
+const restampedBundle = await runtime.loadFallbackArchitectureV3DashboardBundle();
+runtime.installFallbackArchitectureV3Bundle(restampedBundle);
+const restampedRendered = runtime.transitSynastryFallbackRendererV3.renderTransitAspect({
+  transiting: 'saturn', natal: 'moon', aspect: 'conjunction', sign: 'cancer', transitHouse: '2', natalHouse: '2', voice: 'Alisa P'
+});
+assert.equal(restampedRendered.contentKey, liveUngatedKey);
+assert.match(restampedRendered.body, /QA restamp Friend passage/);
+assert.equal(runtime.isFriendsAcceptedApprovalLevel(runtime.fallbackV3ApprovalLevelForContentKey(liveUngatedKey)), true);
+globalThis.fetch = normalFetch;
 console.log('PASS: new exact transit and return publication through actual API, reader loader, and shipped resolver.');
 
 // Exact lookup must distinguish a missing record from a complete bundled original.
