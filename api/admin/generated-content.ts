@@ -29,6 +29,7 @@ import path from "node:path";
 import { fileURLToPath, URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
+import { postgrestContentKeyPrefixAnd } from "../_lib/postgrest-content-key-prefix.js";
 import {
   assertCompiledSkyArticleEdition,
   hasExactSkyArticleOwnerApproval,
@@ -1561,7 +1562,7 @@ async function listGeneratedContent(req: IncomingMessage) {
   } else if (!id && contentKeys.length) {
     params.set("content_key", `in.(${contentKeys.join(",")})`);
   } else if (!id && contentKeyPrefix) {
-    params.set("content_key", `like."${contentKeyPrefix}%"`);
+    params.set("and", postgrestContentKeyPrefixAnd(contentKeyPrefix));
   }
 
   if (!id && startDate && endDate) {

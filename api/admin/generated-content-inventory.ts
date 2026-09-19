@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetchJson, adminStorageRows, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
+import { postgrestContentKeyPrefixAnd } from "../_lib/postgrest-content-key-prefix.js";
 
 const inventoryColumns = [
   "id",
@@ -135,7 +136,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!id && mode) params.set("mode", `eq.${mode}`);
     if (!id && contentKey) params.set("content_key", `eq.${contentKey}`);
     else if (!id && contentKeys.length) params.set("content_key", `in.(${contentKeys.join(",")})`);
-    else if (!id && contentKeyPrefix) params.set("content_key", `like."${contentKeyPrefix}%"`);
+    else if (!id && contentKeyPrefix) params.set("and", postgrestContentKeyPrefixAnd(contentKeyPrefix));
 
     const url = supabaseUrl();
     const key = serviceRoleKey();
