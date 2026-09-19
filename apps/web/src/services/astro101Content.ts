@@ -1,11 +1,14 @@
 import { getSupabaseClient } from "./auth";
 import {
   astro101BlocksFromSections,
+  astro101HubTitleFromSections,
   astro101IntroFromSections,
   astro101KindFromSections,
+  astro101PageIsServable,
   astro101RelatedFromFacts,
   astro101SlugFromFacts,
   ASTRO_101_KEY_PREFIX,
+  isAstro101Kind,
   type Astro101Block,
   type Astro101RelatedLink
 } from "../content/astro101";
@@ -17,6 +20,7 @@ export type Astro101Page = {
   summary: string;
   body: string;
   kind: string;
+  hubTitle: string;
   intro: string;
   blocks: Astro101Block[];
   slug: string;
@@ -36,15 +40,17 @@ type Astro101Row = {
 function pageFromRow(row: Astro101Row): Astro101Page | null {
   const slug = astro101SlugFromFacts(row.facts);
   const headline = (row.headline ?? "").trim();
-  const body = (row.body ?? "").trim();
-  if (!slug || !headline || !body) return null;
+  if (!astro101PageIsServable(row)) return null;
+  const kindFromKey = row.content_key.match(/^education\/astro-101\/([^/]+)\//u)?.[1];
+  const kind = astro101KindFromSections(row.sections) || (isAstro101Kind(kindFromKey) ? kindFromKey : "article");
   return {
     id: row.id,
     contentKey: row.content_key,
     headline,
     summary: (row.summary ?? "").trim(),
-    body,
-    kind: astro101KindFromSections(row.sections),
+    body: (row.body ?? "").trim(),
+    kind,
+    hubTitle: astro101HubTitleFromSections(row.sections, kind),
     intro: astro101IntroFromSections(row.sections),
     blocks: astro101BlocksFromSections(row.sections),
     slug,

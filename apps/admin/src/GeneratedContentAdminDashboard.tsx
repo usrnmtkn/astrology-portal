@@ -109,7 +109,24 @@ import {
   skyFallbackWorkspace
 } from "./skyFallbackWorkspace";
 import { articleAppDestination, isAstro101ContentRow, isSkyWriteupContentRow } from "./articleWorkspace";
-import { astro101BlocksFromSections, astro101IntroFromSections } from "../../web/src/content/astro101";
+import {
+  ASTRO_101_KIND_LABELS,
+  ASTRO_101_KINDS,
+  astro101BodyFromSections,
+  astro101BlocksFromSections,
+  astro101ContentKey,
+  astro101HasReaderCopy,
+  astro101HubTitleFromSections,
+  astro101IntroFromSections,
+  astro101KindFromSections,
+  astro101PublicationIssue,
+  astro101ReaderPath,
+  astro101SlugFromFacts,
+  astro101Slugify,
+  astro101SlugTail,
+  isAstro101Kind,
+  type Astro101Kind
+} from "../../web/src/content/astro101";
 import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatus";
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
 import type { FallbackHookEditorGuidanceBuilder } from "./DailyFallbackWorkspaceGuide";
@@ -1176,6 +1193,81 @@ function reviewRecordFromGeneratedRow(row: AdminGeneratedContentRow): AdminRevie
 
 function objectRecord(value: unknown): Record<string, unknown> | null {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
+
+function astro101KindForDraft(draft: Pick<AdminDraft, "contentKey" | "sections">): Astro101Kind {
+  const fromSections = astro101KindFromSections(draft.sections);
+  if (fromSections) return fromSections;
+  const fromKey = draft.contentKey.match(/^education\/astro-101\/([^/]+)\//u)?.[1];
+  return isAstro101Kind(fromKey) ? fromKey : "article";
+}
+
+function withAstro101Placement(draft: AdminDraft, next: {
+  kind?: Astro101Kind;
+  slugTail?: string;
+  hubTitle?: string;
+} = {}): AdminDraft {
+  const kind = next.kind ?? astro101KindForDraft(draft);
+  const existingTail = astro101SlugTail(draft.facts);
+  const slugTail = astro101Slugify(
+    next.slugTail
+    ?? (existingTail && existingTail !== "new-page" ? existingTail : "")
+    || draft.headline
+  ) || "new-page";
+  const readerPath = astro101ReaderPath(kind, slugTail);
+  const sections = { ...(objectRecord(draft.sections) ?? {}), kind };
+  if (next.hubTitle !== undefined) {
+    if (next.hubTitle.trim()) sections.hubTitle = next.hubTitle.trim();
+    else delete sections.hubTitle;
+  }
+  return {
+    ...draft,
+    surface: "education",
+    mode: "article",
+    contentKey: draft.id ? draft.contentKey : astro101ContentKey(kind, slugTail),
+    sections,
+    facts: { ...(objectRecord(draft.facts) ?? {}), slug: readerPath },
+    sourceSnapshot: {
+      ...(draft.sourceSnapshot ?? {}),
+      appDestination: readerPath
+    }
+  };
+}
+
+function finalizeAstro101Draft(draft: AdminDraft): AdminDraft {
+  const placed = withAstro101Placement(draft);
+  const assembled = astro101BodyFromSections(placed.sections);
+  return {
+    ...placed,
+    body: placed.body.trim() || assembled
+  };
+}
+
+function createAstro101Draft(kind: Astro101Kind): AdminDraft {
+  return withAstro101Placement({
+    id: null,
+    contentKey: astro101ContentKey(kind, "new-page"),
+    surface: "education",
+    mode: "article",
+    status: "DRAFT",
+    headline: "",
+    summary: "",
+    body: "",
+    lane: "serving",
+    reviewState: "EDITORIAL_REVIEW_REQUIRED",
+    blockType: "essay",
+    promptVersion: "manual-admin",
+    sections: { kind, intro: "", blocks: [] },
+    facts: { slug: astro101ReaderPath(kind, "new-page") },
+    reviewerNotes: "",
+    sourceSnapshot: {
+      contentType: "authored-article",
+      contentSystem: "authored",
+      content_role: "authored-content",
+      contentLevel: "owner-authored",
+      authoringSource: "admin-dashboard"
+    }
+  }, { kind, slugTail: "new-page" });
 }
 
 function draftPackageRecord(draft: AdminDraft) {
@@ -4734,8 +4826,25 @@ export function GeneratedContentAdminDashboard() {
       setMessage("This source draft still needs an explicit owner decision. Save it as Draft or Reviewed; the general editor cannot make it reader-serving.");
       return null;
     }
+    const astro101Draft = isAstro101ContentRow({ content_key: activeDraft.contentKey, facts: activeDraft.facts })
+      ? finalizeAstro101Draft(activeDraft)
+      : activeDraft;
+    if (status === "LIVE") {
+      const educationIssue = astro101PublicationIssue({
+        contentKey: astro101Draft.contentKey,
+        surface: astro101Draft.surface,
+        headline: astro101Draft.headline,
+        body: astro101Draft.body,
+        sections: astro101Draft.sections,
+        facts: astro101Draft.facts
+      });
+      if (educationIssue) {
+        setMessage(educationIssue);
+        return null;
+      }
+    }
     setIsLoading(true);
-    const draftForSave = { ...activeDraft, status };
+    const draftForSave = { ...astro101Draft, status };
     const isPackageDraft = draftIsFallbackArchitectureV3(draftForSave);
     const isGuidedHeldReview = isPackageDraft && guidedReviewKey === draftForSave.contentKey;
     const persistedRow = draftForSave.id ? rows.find((row) => row.id === draftForSave.id) : null;
@@ -5633,6 +5742,10 @@ export function GeneratedContentAdminDashboard() {
           authoringSource: "admin-dashboard"
         }
       });
+      return;
+    }
+    if (page === "astro101") {
+      setDraft(createAstro101Draft("article"));
       return;
     }
     if (page === "content") {
@@ -6836,6 +6949,26 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-content-toolbar admin-collection-toolbar">
               <div>
                 <span className="admin-field-hint">{filteredAstro101Rows.length} of {astro101Rows.length} Astro 101 pages</span>
+              </div>
+              <div className="admin-new-actions" aria-label="Create Astro 101 pages">
+                <StudioButton type="button" onClick={() => {
+                  navigateAdminPage("astro101", undefined, { keepEditorOpen: true });
+                  setSelectedRowId(null);
+                  setDraft(createAstro101Draft("chapter"));
+                  setMessage("New chapter draft started. It stays a draft until you write and publish it.");
+                }}>
+                  <Plus size={16} aria-hidden="true" />
+                  New chapter
+                </StudioButton>
+                <StudioButton type="button" onClick={() => {
+                  navigateAdminPage("astro101", undefined, { keepEditorOpen: true });
+                  setSelectedRowId(null);
+                  setDraft(createAstro101Draft("article"));
+                  setMessage("New article draft started. It stays a draft until you write and publish it.");
+                }}>
+                  <Plus size={16} aria-hidden="true" />
+                  New article
+                </StudioButton>
               </div>
             </section>
             <AdminFilterBar
@@ -9587,7 +9720,9 @@ export function GeneratedContentAdminDashboard() {
       : null;
     const lunarIdentity = lunarContentIdentity(currentDraft.contentKey);
     const headlineFieldLabel = isSkySummaryDraft ? "Editor name" : lunarIdentity ? "Editor name" : fallbackEditorGuidance?.headlineLabel
-      ?? (isVocabularyDraft
+      ?? (isAstro101Draft
+        ? "Card title"
+        : isVocabularyDraft
         ? "Phrase title"
         : isAuthoredPackageCard || isArticleDraft
           ? "Article title"
@@ -9599,7 +9734,9 @@ export function GeneratedContentAdminDashboard() {
                 ? "Template name"
                 : "Title / headline");
     const summaryFieldLabel = lunarIdentity ? "Source notes (not reader copy)" : fallbackEditorGuidance?.summaryLabel
-      ?? (isVocabularyDraft
+      ?? (isAstro101Draft
+        ? "Card subtitle"
+        : isVocabularyDraft
         ? "Editor note (optional)"
         : isSkyArticleSourceDraft
           ? "TL;DR"
@@ -9635,7 +9772,10 @@ export function GeneratedContentAdminDashboard() {
           : isCompatibilityCardDraft
             ? "Write the complete directional compatibility reading."
             : undefined;
-    const publishReady = Boolean(currentDraft.body.trim()) && (!isNewDraft || isCmsSurfaceDraft);
+    const astro101PublishReady = astro101HasReaderCopy(currentDraft)
+      && Boolean(currentDraft.headline.trim())
+      && Boolean(astro101SlugFromFacts(currentDraft.facts) || astro101Slugify(currentDraft.headline));
+    const publishReady = (isAstro101Draft ? astro101PublishReady : Boolean(currentDraft.body.trim())) && (!isNewDraft || isCmsSurfaceDraft);
     const reviewComplete = currentDraft.status === "REVIEWED" && !draftHasUnsavedChanges;
     const compatibilityNewDraftReady = !isNewDraft || !isCompatibilityWorkspaceDraft || Boolean(
       currentDraft.headline.trim()
@@ -10567,16 +10707,53 @@ export function GeneratedContentAdminDashboard() {
                 <StudioInput aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
                 {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
                 {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
-                {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Title shown to readers."}</small>}
+                {isAstro101Draft && <small className="admin-field-hint">Title on the Learn hub card and at the top of the article.</small>}
+                {!fallbackEditorGuidance && !isVocabularyDraft && !isAstro101Draft && !isAuthoredPackageCard && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Title shown to readers."}</small>}
               </label>
+              {isAstro101Draft && (
+                <>
+                  <label className="admin-title-field">
+                    <span>Card type</span>
+                    <AdminSelect
+                      aria-label="Astro 101 card type"
+                      value={astro101KindForDraft(currentDraft)}
+                      onChange={(event) => setDraft(withAstro101Placement(currentDraft, { kind: event.target.value as Astro101Kind }))}
+                    >
+                      {ASTRO_101_KINDS.map((kind) => (
+                        <option key={kind} value={kind}>{ASTRO_101_KIND_LABELS[kind]}</option>
+                      ))}
+                    </AdminSelect>
+                    <small className="admin-field-hint">Choose where this card sits on Learn. Leave Resources as a draft until the article is written.</small>
+                  </label>
+                  <label className="admin-title-field">
+                    <span>Reader path</span>
+                    <StudioInput
+                      aria-label="Astro 101 reader path"
+                      value={astro101SlugTail(currentDraft.facts)}
+                      onChange={(event) => setDraft(withAstro101Placement(currentDraft, { slugTail: event.target.value }))}
+                    />
+                    <small className="admin-field-hint">{astro101SlugFromFacts(currentDraft.facts) || "Path is generated from this slug when you save."}</small>
+                  </label>
+                  <label className="admin-title-field">
+                    <span>Hub section title</span>
+                    <StudioInput
+                      aria-label="Astro 101 hub section title"
+                      value={astro101HubTitleFromSections(currentDraft.sections, astro101KindForDraft(currentDraft))}
+                      onChange={(event) => setDraft(withAstro101Placement(currentDraft, { hubTitle: event.target.value }))}
+                    />
+                    <small className="admin-field-hint">Heading above this group of cards. Blank groups, including Resources, do not appear on /learn.</small>
+                  </label>
+                </>
+              )}
               {!(isVocabularyDraft && isPackageDraft) && showSummaryField && !isSkySummaryDraft && (
                 <label className="admin-review-copy-editor">
                   <span>{summaryFieldLabel}</span>
                   <StudioTextarea className="admin-copy-field-summary" aria-label={summaryFieldLabel} value={currentDraft.summary} onChange={(event) => updateSummary(event.target.value)} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
                   <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
+                  {isAstro101Draft && <small className="admin-field-hint">Shown under the title on the Learn hub card. Leave blank if the card should have no subtitle.</small>}
                   {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
                   {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
-                  {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Optional short takeaway."}</small>}
+                  {!fallbackEditorGuidance && !isVocabularyDraft && !isAstro101Draft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Optional short takeaway."}</small>}
                 </label>
               )}
             </section>
@@ -11359,7 +11536,7 @@ export function GeneratedContentAdminDashboard() {
               ) : isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {}) ? (
                 <small className="admin-field-hint">Source material cannot be published.</small>
               ) : (
-                <StudioButton className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? "Add the required main copy before publishing." : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
+                <StudioButton className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />
                   Publish to app
                 </StudioButton>

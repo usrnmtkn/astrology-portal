@@ -188,11 +188,15 @@ await test('education astro-101 rows can publish; natal sample rows cannot', asy
   const blocked = await invoke('PATCH', { id: baseline.id, status: 'LIVE' });
   assert.ok(blocked.status >= 400, JSON.stringify(blocked));
   assert.deepEqual(writes, []);
-  reset([{ ...baseline, surface: 'education', content_key: 'education/astro-101/sign/aries', mode: 'article' }]);
+  reset([{ ...baseline, surface: 'education', content_key: 'education/astro-101/sign/aries', mode: 'article', facts: { slug: '/learn/signs/aries' } }]);
   const published = await invoke('PATCH', { id: baseline.id, status: 'LIVE', reviewState: null, lane: 'serving' });
   assert.equal(published.status, 200, JSON.stringify(published));
   assert.equal(rows.get(baseline.id).status, 'LIVE');
   assert.equal(rows.get(baseline.id).surface, 'education');
+  reset([{ ...baseline, surface: 'education', content_key: 'education/astro-101/resources/resources', mode: 'article', body: '', headline: 'Resources', facts: { slug: '/learn/astro-101/resources' } }]);
+  const empty = await invoke('PATCH', { id: baseline.id, status: 'LIVE', reviewState: null, lane: 'serving' });
+  assert.ok(empty.status >= 400, JSON.stringify(empty));
+  assert.deepEqual(writes, []);
 });
 
 await test('unauthorized requests never reach storage', async () => {
