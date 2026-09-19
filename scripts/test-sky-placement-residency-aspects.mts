@@ -189,8 +189,8 @@ try {
   );
   assert.match(
     appSource,
-    /skyPlacementInSignAspectSections\(\s*matchingAspectFacts\.inSign,\s*matchingAspectFacts\.timeZone,\s*generatedContent\s*\)/u,
-    "Placement Gifts/Lessons must use the same in-sign exact list as Key dates."
+    /skyPlacementInSignAspectSections\(\s*timelineAspectEvents,\s*matchingAspectFacts\.timeZone,\s*generatedContent\s*\)/u,
+    "Placement Gifts/Lessons must use the same windowed in-sign exact list as Key dates."
   );
   assert.match(
     appSource,

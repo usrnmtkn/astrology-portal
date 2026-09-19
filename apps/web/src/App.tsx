@@ -10,7 +10,17 @@ import { articleHistoryChangeEvent, pushArticleUrl, returnToArticleParent } from
 import { CardReadMore } from "./components/CardReadMore";
 import { isContentRetired, contentPublication } from "./content/contentPublicationState";
 import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./services/skyPlacementHydration";
-import { skyPlacementInSignAspectContentKeys, skyPlacementInSignAspectSections } from "./services/skyPlacementInSignAspectSections";
+import {
+  skyPlacementInSignAspectContentKeys,
+  skyPlacementInSignAspectSections
+} from "./services/skyPlacementInSignAspectSections";
+import {
+  dateRangeContainedInWindow,
+  filterPlacementTimelineEvents,
+  placementArticleTimelineWindow,
+  timestampInInclusiveWindow,
+  type PlacementArticleTimelineWindow
+} from "./services/skyPlacementArticleTimeline";
 import { usePageTransition, readAnimationPreference, animationPreferenceKey } from "./hooks/usePageTransition";
 import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
@@ -3806,6 +3816,24 @@ export function placementFinalResidencyExit(position: PlanetPosition, fallback: 
   return verifiedPlacementResidencyPasses(position).at(-1)?.end ?? fallback;
 }
 
+export function skyPlacementArticleTimelineWindow(
+  position: PlanetPosition,
+  generatedAt: string,
+  articleMode?: "current" | "archive"
+): PlacementArticleTimelineWindow | null {
+  const visit = placementTransitEndpoints(position, generatedAt);
+  return placementArticleTimelineWindow({
+    articleMode,
+    generatedAt,
+    isRetrograde: articleMode !== "archive" && isDisplayRetrograde(position),
+    visitStart: visit.start,
+    visitEnd: visit.end,
+    retrogradeStart: position.retrogradeStart,
+    retrogradeEnd: position.retrogradeEnd,
+    stations: position.residencyStations
+  });
+}
+
 function placementArticleDateLine(position: PlanetPosition, start: Date, end: Date) {
   const entry = formatPlacementTransitEndpoint(position, start, true);
   const exit = formatPlacementTransitEndpoint(position, end, true);
@@ -4826,10 +4854,17 @@ function skyPlacementShadowPhaseActive(position: PlanetPosition, generatedAt: st
 function skyPlacementKeyDates(
   position: PlanetPosition,
   aspectFacts?: SkySnapshot["placementAspectFacts"],
-  sourceDates?: { date: string; endDate?: string; label: string }[]
+  sourceDates?: { date: string; endDate?: string; label: string }[],
+  options?: {
+    generatedAt?: string;
+    articleMode?: "current" | "archive";
+  }
 ): SkyDetailKeyDate[] {
   const planet = skyDisplayPlanetName(position.planet);
   const sign = position.sign;
+  const timelineWindow = options?.generatedAt
+    ? skyPlacementArticleTimelineWindow(position, options.generatedAt, options.articleMode)
+    : null;
   const candidates: { value?: string | null; endValue?: string; label: string }[] = sourceDates?.map(item => ({
     value: item.date, endValue: item.endDate, label: item.label
   })) ?? [
@@ -4842,9 +4877,10 @@ function skyPlacementKeyDates(
   ];
   if (aspectFacts && normalizeContentIdPart(aspectFacts.planet) === normalizeContentIdPart(position.planet)
     && normalizeContentIdPart(aspectFacts.sign) === normalizeContentIdPart(sign)) {
-    candidates.push(...aspectFacts.inSign
-      .filter(event => normalizeContentIdPart(event.planet) === normalizeContentIdPart(position.planet))
-      .map(event => ({ value: event.occursAt, label: `${planet} ${event.aspect} ${skyDisplayPlanetName(event.otherPlanet)}` })));
+    candidates.push(...filterPlacementTimelineEvents(
+      aspectFacts.inSign.filter(event => normalizeContentIdPart(event.planet) === normalizeContentIdPart(position.planet)),
+      timelineWindow
+    ).map(event => ({ value: event.occursAt, label: `${planet} ${event.aspect} ${skyDisplayPlanetName(event.otherPlanet)}` })));
   }
   const formatter = new Intl.DateTimeFormat("en-US", {
     month: "long",
@@ -4868,6 +4904,9 @@ function skyPlacementKeyDates(
 
       const end = endValue ? new Date(endValue) : null;
       if (end && Number.isNaN(end.getTime())) return [];
+      if (end ? !dateRangeContainedInWindow(date, end, timelineWindow) : !timestampInInclusiveWindow(date, timelineWindow)) {
+        return [];
+      }
       const key = `${date.toISOString()}|${end?.toISOString() ?? ""}|${label}`;
 
       if (seen.has(key)) {
@@ -5166,8 +5205,12 @@ function skyPlacementWritingSection(
     || rendered.contentKey?.startsWith("fallback-hook/sky-placement-sign/")
     || rendered.contentKey?.startsWith("fallback-hook/sky-sign-copy/")
   ) ? "authored" : "fallback";
-  const keyDates = skyPlacementKeyDates(position, articleOptions?.aspectFacts,
-    rendered.keyDates?.length ? rendered.keyDates : undefined);
+  const keyDates = skyPlacementKeyDates(
+    position,
+    articleOptions?.aspectFacts,
+    rendered.keyDates?.length ? rendered.keyDates : undefined,
+    { generatedAt, articleMode: articleOptions?.articleMode ?? "current" }
+  );
 
   return {
     slot: "meaning",
@@ -5392,9 +5435,13 @@ function currentSkyPlacementDetailArticle({
     && normalizeContentIdPart(aspectFacts.sign) === normalizeContentIdPart(position.sign)
     ? aspectFacts
     : null;
+  const timelineWindow = skyPlacementArticleTimelineWindow(position, generatedAt, articleMode);
+  const timelineAspectEvents = matchingAspectFacts
+    ? filterPlacementTimelineEvents(matchingAspectFacts.inSign, timelineWindow)
+    : [];
   const inSignAspectSections = matchingAspectFacts
     ? skyPlacementInSignAspectSections(
-      matchingAspectFacts.inSign,
+      timelineAspectEvents,
       matchingAspectFacts.timeZone,
       generatedContent
     ).sections
@@ -12096,7 +12143,16 @@ export function App() {
             skyPlacementPersonalizationTransits, skyDate));
         };
         const baseContent = await loadSkyDetailContent(placementSky, availableDetailContent, [], loadLiveGeneratedContentForKeys);
-        const inSignKeys = skyPlacementInSignAspectContentKeys(placementSky.placementAspectFacts?.inSign ?? []);
+        const timelinePosition = placementSky.positions.find((candidate) => (
+          routePlanet && skyRoutePartMatches(candidate.planet, routePlanet)
+        )) ?? routePosition;
+        const timelineEvents = filterPlacementTimelineEvents(
+          placementSky.placementAspectFacts?.inSign ?? [],
+          timelinePosition
+            ? skyPlacementArticleTimelineWindow(timelinePosition, placementSky.generatedAt, "current")
+            : null
+        );
+        const inSignKeys = skyPlacementInSignAspectContentKeys(timelineEvents);
         if (!inSignKeys.length) {
           renderPlacement(baseContent);
           return;

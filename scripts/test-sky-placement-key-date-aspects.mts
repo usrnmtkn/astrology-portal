@@ -4,6 +4,7 @@ import path from "node:path";
 import { createServer } from "vite";
 import { fillSkyPlacementVariables, skyPlacementVariableFacts } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 import { fillSkyPlacementArticleVariables } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
+import { timestampInInclusiveWindow } from "../apps/web/src/services/skyPlacementArticleTimeline.ts";
 
 const vite = await createServer({
   root: path.join(process.cwd(), "apps/web"), appType: "custom", logLevel: "silent", server: { middlewareMode: true },
@@ -24,6 +25,7 @@ try {
   const bodies = new Set(["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto", "Chiron", "Lilith", "North Node", "South Node"]);
   const cases = current.positions.filter((position: any) => bodies.has(position.planet)).map((position: any) => ({ planet: position.planet, sign: position.sign, date }));
   cases.push({ planet: "Mercury", sign: "Cancer", date: new Date("2026-07-10T12:00:00Z") });
+  cases.push({ planet: "Chiron", sign: "Aries", date: new Date("2026-09-19T12:00:00Z") });
   const angles: Record<string, number> = { conjunction: 0, sextile: 60, square: 90, trine: 120, opposition: 180 };
   for (const item of cases) {
     const sky = await ephemeris.getSkyPlacementSnapshot(location, item.planet.toLowerCase().replaceAll(" ", "-"), item.sign, item.date, true);
@@ -33,13 +35,31 @@ try {
     events.sort((a, b) => a.occursAt.localeCompare(b.occursAt));
     const format = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: location.timeZone });
     const expected = events.map(event => ({ date: format.format(new Date(event.occursAt)), label: `${item.planet} ${event.aspect} ${event.otherPlanet}` }));
-    const dates = app.skyPlacementKeyDates(position, facts);
-    assert.deepEqual(dates.filter((entry: any) => expected.some(event => event.label === entry.label)), expected, `${item.planet}: every calculated hit appears in order`);
-    assert.deepEqual(app.skyPlacementKeyDates(position, { ...facts, inSign: [...facts.inSign, ...facts.inSign] }), dates, "Repeated input rows deduplicate, distinct exact passes survive");
-    assert.deepEqual(app.skyPlacementKeyDates(position, { ...facts, sign: "wrong" }), app.skyPlacementKeyDates(position), "Facts from another sign cannot leak");
+    const timelineOptions = { generatedAt: sky.generatedAt, articleMode: "current" as const };
+    const timelineWindow = app.skyPlacementArticleTimelineWindow(position, sky.generatedAt, "current");
+    const timelineExpected = expected.filter((_, index) => timestampInInclusiveWindow(events[index].occursAt, timelineWindow));
+    const dates = app.skyPlacementKeyDates(position, facts, undefined, timelineOptions);
+    assert.deepEqual(dates.filter((entry: any) => timelineExpected.some(event => event.label === entry.label)), timelineExpected, `${item.planet}: every article-window hit appears in order`);
+    assert.deepEqual(app.skyPlacementKeyDates(position, { ...facts, inSign: [...facts.inSign, ...facts.inSign] }, undefined, timelineOptions), dates, "Repeated input rows deduplicate, distinct exact passes survive");
+    assert.deepEqual(app.skyPlacementKeyDates(position, { ...facts, sign: "wrong" }, undefined, timelineOptions), app.skyPlacementKeyDates(position, undefined, undefined, timelineOptions), "Facts from another sign cannot leak");
     const detail = app.currentSkyPlacementDetailArticle({ position, positions: sky.positions, aspects: sky.aspects, aspectFacts: facts, generatedAt: sky.generatedAt, generatedContent: new Map() });
-    assert.deepEqual(detail.keyDates.filter((entry: any) => expected.some(event => event.label === entry.label)), expected,
-      `${item.planet}: real app article receives every exact aspect alongside its existing lifecycle dates`);
+    assert.deepEqual(detail.keyDates.filter((entry: any) => timelineExpected.some(event => event.label === entry.label)), timelineExpected,
+      `${item.planet}: real app article receives every exact aspect in the article window`);
+    if (item.planet === "Chiron") {
+      assert.ok(events.length > timelineExpected.length, "Chiron must have exact hits outside the current article window");
+      assert.ok(dates.every((entry: any) => !/,\s*2018$/u.test(entry.date)), "Chiron Key dates must not keep 2018 residency hits");
+      assert.ok((detail.sections ?? []).filter((section: any) => section.role === "aspect")
+        .every((section: any) => !/\b2018\b/u.test(String(section.body))), "Chiron Gifts/Lessons must not list 2018 exact dates");
+    }
+    if (item.planet === "Chiron" && item.sign === "Aries") {
+      assert.ok(position.retrogradeStart && position.retrogradeEnd, "Chiron in Aries on September 19 must expose the current retrograde window.");
+      assert.equal(timelineWindow.start.toISOString(), new Date(position.retrogradeStart).toISOString());
+      assert.equal(timelineWindow.end.toISOString(), new Date(position.retrogradeEnd).toISOString());
+      assert.ok(dates.some((entry: any) => /stations Retrograde/u.test(entry.label)));
+      assert.ok(dates.some((entry: any) => /stations Direct/u.test(entry.label)));
+      assert.ok(!dates.some((entry: any) => /enters Aries/u.test(entry.label)));
+      assert.ok(!dates.some((entry: any) => /completes its passage/u.test(entry.label)));
+    }
     if (item.planet === "Sun") {
       assert.deepEqual(dates, [
         { date: "August 22, 2026", label: "Sun enters Virgo" },
@@ -67,7 +87,7 @@ try {
     if (events.length) assert.equal(article, expected.map(event => `${event.date}: ${event.label}`).join(", "));
     assert.doesNotMatch(article, /(?:^|\n)- /u);
     assert.equal(fillSkyPlacementVariables("{{aspectsInSign}}", variables), variables.aspectsInSign, "Section templates retain multiline fact lists");
-    console.log(`PASS ${item.planet} in ${item.sign}: ${events.length} exact hits, complete article timeline and inline aspect list.`);
+    console.log(`PASS ${item.planet} in ${item.sign}: ${timelineExpected.length} article-window hits of ${events.length} residency hits.`);
   }
-  assert.equal(cases.length, bodies.size + 1);
+  assert.equal(cases.length, bodies.size + 2);
 } finally { await vite.close(); }
