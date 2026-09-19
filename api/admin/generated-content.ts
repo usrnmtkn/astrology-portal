@@ -7,6 +7,7 @@ import { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyB
 import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
 import { packagePublicationAdmissionIssue } from "../_lib/content-studio-package-admission.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
+import { astro101PublicationIssue } from "../../apps/web/src/content/astro101.ts";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 import { skyDebilityTemplateErrors } from "../../apps/web/src/content/skyDebilityCatalog.ts";
@@ -1211,6 +1212,8 @@ function assertReaderEligiblePublication(row: Record<string, any>) {
   if (row.review_state) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
   const admissionIssue = packagePublicationAdmissionIssue(row);
   if (admissionIssue) throw new GeneratedContentRequestError(admissionIssue, 409);
+  const educationIssue = astro101PublicationIssue(row);
+  if (educationIssue) throw new GeneratedContentRequestError(educationIssue, 409);
 }
 
 function adminHeaders() {

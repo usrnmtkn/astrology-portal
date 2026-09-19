@@ -27,6 +27,11 @@ assert.equal(isAstro101ContentRow({
   facts: { slug: "/learn/signs/aries" }
 }), true);
 
+assert.equal(isAstro101ContentRow({
+  content_key: "education/astro-101/chapter/new-page",
+  facts: { slug: "/learn/astro-101/new-page" }
+}), true);
+
 assert.deepEqual(articleAppDestination({
   content_key: "education/astro-101/sign/aries",
   status: "LIVE",

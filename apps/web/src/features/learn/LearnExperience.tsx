@@ -10,7 +10,7 @@ import {
   splitIntroParagraphs,
   type ArticleBlockStyle
 } from "../../content/articleBlockStyle";
-import { astro101LocationState } from "../../content/astro101";
+import { ASTRO_101_KINDS, astro101LocationState } from "../../content/astro101";
 import {
   chapterIndexLabel,
   houseCatalog,
@@ -164,18 +164,24 @@ function LearnArticle({ page, onOpenPath }: { page: Astro101Page; onOpenPath: (p
 }
 
 function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (path: string) => void }) {
-  const chapters = useMemo(
-    () => pages.filter((page) => page.kind === "chapter").sort((left, right) => left.contentKey.localeCompare(right.contentKey)),
-    [pages]
-  );
-  const signs = useMemo(
-    () => pages.filter((page) => page.kind === "sign").sort((left, right) => left.contentKey.localeCompare(right.contentKey)),
-    [pages]
-  );
-  const houses = useMemo(
-    () => pages.filter((page) => page.kind === "house").sort((left, right) => left.contentKey.localeCompare(right.contentKey)),
-    [pages]
-  );
+  const groups = useMemo(() => {
+    const byKind = new Map<string, Astro101Page[]>();
+    for (const page of pages) {
+      const kind = page.kind || "article";
+      const list = byKind.get(kind) ?? [];
+      list.push(page);
+      byKind.set(kind, list);
+    }
+    const order = ["chapter", ...ASTRO_101_KINDS.filter((kind) => kind !== "chapter")];
+    for (const kind of byKind.keys()) {
+      if (!order.includes(kind)) order.push(kind);
+    }
+    return order.flatMap((kind) => {
+      const items = byKind.get(kind);
+      if (!items?.length) return [];
+      return [{ kind, title: items[0].hubTitle, pages: items }];
+    });
+  }, [pages]);
 
   return (
     <div className="learn-hub">
@@ -193,78 +199,57 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
         </div>
       </section>
 
-      {chapters.length > 0 ? (
-        <section className="learn-sheet" aria-labelledby="learn-chapters-title">
-          <h2 className="sr-only" id="learn-chapters-title">Chapters</h2>
-          <ol className="learn-chapters">
-            {chapters.map((page, index) => (
-              <li key={page.contentKey}>
-                <button type="button" className="learn-chapter" onClick={() => onOpenPath(page.slug)}>
-                  <span className="learn-chapter__num">{chapterIndexLabel(index)}</span>
-                  <span className="learn-chapter__copy">
-                    <span className="learn-chapter__title">{page.headline}</span>
-                    {page.summary ? <span className="learn-chapter__blurb">{page.summary}</span> : null}
-                  </span>
-                  <ChevronRight size={20} aria-hidden="true" />
-                </button>
-              </li>
-            ))}
-          </ol>
-        </section>
-      ) : null}
-
-      {houses.length > 0 ? (
-        <section className="learn-sheet" aria-labelledby="learn-houses-title">
-          <header className="learn-sheet__header">
-            <h2 id="learn-houses-title">The twelve houses</h2>
-            <p className="learn-kicker">Where a planet plays out</p>
-          </header>
-          <ul className="learn-tiles">
-            {houses.map((page) => {
-              const meta = houseCatalog(houseNumberFromContentKey(page.contentKey));
-              if (!meta) return null;
-              return (
+      {groups.map((group) => (
+        group.kind === "chapter" ? (
+          <section className="learn-sheet" aria-labelledby="learn-chapters-title" key={group.kind}>
+            <h2 className="sr-only" id="learn-chapters-title">{group.title || "Chapters"}</h2>
+            <ol className="learn-chapters">
+              {group.pages.map((page, index) => (
                 <li key={page.contentKey}>
-                  <button type="button" className="learn-tile" onClick={() => onOpenPath(page.slug)}>
-                    <span className="learn-tile__meta">
-                      <span>{meta.roman}</span>
-                      <span className="learn-tile__glyph" aria-hidden="true">{meta.naturalGlyph}</span>
+                  <button type="button" className="learn-chapter" onClick={() => onOpenPath(page.slug)}>
+                    <span className="learn-chapter__num">{chapterIndexLabel(index)}</span>
+                    <span className="learn-chapter__copy">
+                      <span className="learn-chapter__title">{page.headline}</span>
+                      {page.summary ? <span className="learn-chapter__blurb">{page.summary}</span> : null}
                     </span>
-                    <span className="learn-tile__name">{meta.name}</span>
-                    <span className="learn-tile__ordinal">{meta.ordinal}</span>
+                    <ChevronRight size={20} aria-hidden="true" />
                   </button>
                 </li>
-              );
-            })}
-          </ul>
-        </section>
-      ) : null}
-
-      {signs.length > 0 ? (
-        <section className="learn-sheet" aria-labelledby="learn-signs-title">
-          <header className="learn-sheet__header">
-            <h2 id="learn-signs-title">The twelve signs</h2>
-            <p className="learn-kicker">{signs.length} signs</p>
-          </header>
-          <ul className="learn-tiles">
-            {signs.map((page) => {
-              const meta = signCatalog(signKeyFromContentKey(page.contentKey));
-              if (!meta) return null;
-              return (
-                <li key={page.contentKey}>
-                  <button type="button" className="learn-tile" onClick={() => onOpenPath(page.slug)}>
-                    <span className="learn-tile__meta">
-                      <span className="learn-tile__glyph" aria-hidden="true">{meta.glyph}</span>
-                    </span>
-                    <span className="learn-tile__name">{meta.name}</span>
-                    <span className="learn-tile__ordinal">Placements</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ) : null}
+              ))}
+            </ol>
+          </section>
+        ) : (
+          <section className="learn-sheet" aria-labelledby={`learn-${group.kind}-title`} key={group.kind}>
+            <header className="learn-sheet__header">
+              <h2 id={`learn-${group.kind}-title`}>{group.title}</h2>
+            </header>
+            <ul className="learn-tiles">
+              {group.pages.map((page) => {
+                const house = houseNumberFromContentKey(page.contentKey);
+                const houseMeta = house ? houseCatalog(house) : null;
+                const signMeta = signCatalog(signKeyFromContentKey(page.contentKey));
+                return (
+                  <li key={page.contentKey}>
+                    <button type="button" className="learn-tile" onClick={() => onOpenPath(page.slug)}>
+                      <span className="learn-tile__meta">
+                        {houseMeta ? <span>{houseMeta.roman}</span> : null}
+                        {houseMeta ? <span className="learn-tile__glyph" aria-hidden="true">{houseMeta.naturalGlyph}</span> : null}
+                        {signMeta && !houseMeta ? <span className="learn-tile__glyph" aria-hidden="true">{signMeta.glyph}</span> : null}
+                      </span>
+                      <span className="learn-tile__name">{page.headline || houseMeta?.name || signMeta?.name}</span>
+                      {page.summary ? (
+                        <span className="learn-tile__ordinal">{page.summary}</span>
+                      ) : houseMeta ? (
+                        <span className="learn-tile__ordinal">{houseMeta.ordinal}</span>
+                      ) : null}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )
+      ))}
     </div>
   );
 }
