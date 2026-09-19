@@ -23,7 +23,7 @@ assert.doesNotMatch(inventorySelect, /packageRecord/u, "Inventory projection mus
 assert.doesNotMatch(inventorySelect, /->/u, "Inventory projection must use table columns only.");
 assert.match(api, /inventory_only: true/u);
 assert.match(api, /view === "inventory" && !id && !contentKey && contentKeys\.length === 0/u);
-assert.match(api, /like\."\$\{contentKeyPrefix\}\*"/u);
+assert.match(api, /like\."\$\{contentKeyPrefix\}%"/u);
 assert.match(api, /boundedGeneratedContentLimit\(requestUrl\.searchParams\.get\("limit"\), 50, 80\)/u);
 
 assert.match(dashboard, /inventory_only\?: boolean/u);
