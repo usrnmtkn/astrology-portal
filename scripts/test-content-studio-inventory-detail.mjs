@@ -10,6 +10,9 @@ const inventoryMapStart = api.indexOf("function generatedContentInventoryRow(val
 assert.ok(inventorySelectStart >= 0 && inventoryMapStart > inventorySelectStart, "Inventory projection helpers must exist.");
 const inventorySelect = api.slice(inventorySelectStart, inventoryMapStart);
 assert.doesNotMatch(inventorySelect, /^\s*"body",\s*$/mu, "Inventory projection must not transfer full body copy.");
+assert.doesNotMatch(inventorySelect, /^\s*"summary",\s*$/mu, "Inventory projection must not transfer summaries that can bloat the list payload.");
+assert.doesNotMatch(inventorySelect, /facts->fallbackArchitectureV3/u, "Inventory projection must not transfer facts JSON objects.");
+assert.doesNotMatch(inventorySelect, /source_snapshot->flags/u, "Inventory projection must not transfer source_snapshot JSON objects.");
 assert.doesNotMatch(inventorySelect, /^\s*"sections",\s*$/mu, "Inventory projection must not transfer full sections JSON.");
 assert.doesNotMatch(inventorySelect, /^\s*"facts",\s*$/mu, "Inventory projection must not transfer full facts JSON.");
 assert.doesNotMatch(inventorySelect, /^\s*"source_snapshot",\s*$/mu, "Inventory projection must not transfer full provenance JSON.");
@@ -19,6 +22,10 @@ assert.match(inventorySelect, /source_review_status:source_snapshot->>review_sta
 assert.match(inventorySelect, /package_content_role:sections->packageRecord->>content_role/u);
 assert.match(api, /inventory_only: true/u);
 assert.match(api, /view === "inventory" && !id && !contentKey && contentKeys\.length === 0/u);
+assert.match(api, /like\.\$\{contentKeyPrefix\}\*/u);
+assert.match(api, /boundedGeneratedContentLimit\(requestUrl\.searchParams\.get\("limit"\), 50, 80\)/u);
+assert.match(api, /like\.\$\{contentKeyPrefix\}\*/u);
+assert.match(api, /boundedGeneratedContentLimit\(requestUrl\.searchParams\.get\("limit"\), 50, 80\)/u);
 
 assert.match(dashboard, /inventory_only\?: boolean/u);
 assert.match(dashboard, /studioInventoryRequestPath\(/u);
