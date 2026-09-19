@@ -1,22 +1,29 @@
 import { useEffect, useState } from "react";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import BondEffectPagePreview from "./BondEffectPagePreview";
-import { friendsTransitCardDestinations, synastryBodiesFromPayload } from "./bondEffectPageAssembly";
+import { friendsActivationParam, friendsTransitCardDestinations, friendsTransitReaderTitle, parseFriendsActivationParam, synastryBodiesFromPayload } from "./bondEffectPageAssembly";
 import { requestStudioJson } from "./generatedContentClient";
 import { StudioButton } from "./StudioControls";
 
 export default function FriendsBetweenYouTwoComposition({
   onOpenOpening,
   onOpenSource,
+  onQueryChange,
+  onActivationChange,
+  activationQuery,
   query,
   secret
 }: {
   onOpenOpening: (contentKey: string) => void;
   onOpenSource: (contentKey: string, label: string, field?: string) => void;
+  onQueryChange?: (value: string) => void;
+  onActivationChange?: (value: string) => void;
+  activationQuery?: string;
   query: string;
   secret: string;
 }) {
   const destinations = friendsTransitCardDestinations(query);
+  const activation = parseFriendsActivationParam(activationQuery);
   const openingKey = destinations.betweenYouTwoOpeningKey;
   const [opening, setOpening] = useState<{ you: string; they: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +40,7 @@ export default function FriendsBetweenYouTwoComposition({
     const controller = new AbortController();
     setBusy(true);
     setError(null);
+    setOpening(null);
     void (async () => {
       try {
         const payload = await requestStudioJson(
@@ -75,16 +83,22 @@ export default function FriendsBetweenYouTwoComposition({
           </StudioButton>
         </p>
       ) : null}
-      {opening ? (
-        <BondEffectPagePreview
-          contentKey={openingKey}
-          youText={opening.you}
-          theyText={opening.they}
-          secret={secret}
-          previewNatalPoint={destinations.contact?.natalPoint}
-          onOpenSource={onOpenSource}
-        />
-      ) : null}
+      <BondEffectPagePreview
+        contentKey={openingKey}
+        youText={opening?.you ?? ""}
+        theyText={opening?.they ?? ""}
+        secret={secret}
+        previewNatalPoint={destinations.contact?.natalPoint}
+        previewFriendPoint={activation?.friendPoint}
+        previewActivationAspect={activation?.aspect}
+        onContactChange={onQueryChange
+          ? (contact) => onQueryChange(friendsTransitReaderTitle(contact.planet, contact.aspect, contact.natalPoint))
+          : undefined}
+        onActivationChange={onActivationChange
+          ? (next) => onActivationChange(friendsActivationParam(next.friendPoint, next.aspect))
+          : undefined}
+        onOpenSource={onOpenSource}
+      />
     </section>
   );
 }

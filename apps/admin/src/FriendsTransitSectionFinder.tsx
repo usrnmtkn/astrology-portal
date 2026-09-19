@@ -11,7 +11,8 @@ export default function FriendsTransitSectionFinder({
   onOpenHouseTransit,
   onQueryChange,
   query,
-  variant = "page"
+  variant = "page",
+  parts = "all"
 }: {
   currentSection: FriendsTransitSection;
   onOpenActiveForName: () => void;
@@ -20,6 +21,7 @@ export default function FriendsTransitSectionFinder({
   onQueryChange: (value: string) => void;
   query: string;
   variant?: "page" | "embedded";
+  parts?: "all" | "search" | "destinations";
 }) {
   const destinations = friendsTransitCardDestinations(query);
   const title = destinations.contact
@@ -27,20 +29,24 @@ export default function FriendsTransitSectionFinder({
     : destinations.parsed.transiting && destinations.parsed.aspect
       ? `${titleFromKey(destinations.parsed.transiting)} ${destinations.parsed.aspect}`
       : "Find a Friends transit card";
+  const showSearch = parts !== "destinations";
+  const showDestinations = parts !== "search";
 
   return (
-    <section className="admin-natal-placement-finder admin-transit-finder" aria-label="Find a Friends transit card">
-      {variant === "page" ? (
+    <section className="admin-natal-placement-finder admin-transit-finder" aria-label={showSearch ? "Find a Friends transit card" : "Friends Transits sections"}>
+      {variant === "page" && parts === "all" ? (
         <div className="admin-natal-placement-finder-heading">
           <div>
             <p className="admin-eyebrow">Friends Transits composition map</p>
             <p><strong>{title}</strong></p>
-            <p>Type the live reader title. The compiled write-up below is the Between you two article. Open Active for {"{{Name}}"} or Where it lands only when that is the card you are editing.</p>
+            <p>Type the live reader title. The compiled write-up is the Between you two article. Open Active for {"{{Name}}"} or Where it lands only when that is the card you are editing.</p>
           </div>
         </div>
-      ) : (
+      ) : null}
+      {variant === "embedded" && showSearch ? (
         <p className="admin-field-hint">This title can belong to more than one Friends section. Open the section the reader is on before editing.</p>
-      )}
+      ) : null}
+      {showSearch ? (
       <label className="admin-title-field">
         <span>Find a Friends transit card</span>
         <StudioInput
@@ -51,6 +57,8 @@ export default function FriendsTransitSectionFinder({
         />
         <small className="admin-field-hint">Between you two uses transiting planet plus aspect. Active for {"{{Name}}"} also needs the natal planet or point.</small>
       </label>
+      ) : null}
+      {showDestinations ? (
       <div className="admin-natal-source-group" role="list">
         <article className="admin-natal-source-card" role="listitem">
           <header className="admin-natal-source-card-heading">
@@ -106,6 +114,7 @@ export default function FriendsTransitSectionFinder({
           </StudioButton>
         </article>
       </div>
+      ) : null}
     </section>
   );
 }

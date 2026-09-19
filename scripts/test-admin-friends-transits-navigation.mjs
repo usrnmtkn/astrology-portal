@@ -53,7 +53,15 @@ assert.match(dashboard, /const friendsTransitAudience = parseAdminHash\(\)\.para
 assert.match(dashboard, /Friends Transits · Active for \{\{Name\}\}/u);
 assert.match(dashboard, /Friends Transits · Where it lands/u);
 assert.match(dashboard, /Friends Transits · Between you two/u);
-assert.match(dashboard, /FriendsBetweenYouTwoComposition/u, "Between you two must show the assembled write-up composition.");
+assert.match(dashboard, /onActivationChange/u, "What this activates dropdowns must reload the synastry composition.");
+assert.match(dashboard, /persistBetweenYouTwoRoute/u);
+{
+  const betweenStart = dashboard.indexOf("{friendsBetweenYouTwoWorkspace && (");
+  const betweenBlock = dashboard.slice(betweenStart, dashboard.indexOf("{renderFallbackTabs()}", betweenStart));
+  const compositionAt = betweenBlock.indexOf("FriendsBetweenYouTwoComposition");
+  const destinationsAt = betweenBlock.indexOf('"destinations"');
+  assert.ok(compositionAt >= 0 && destinationsAt > compositionAt, "The compiled composition map must appear above the Friends Transits section cards.");
+}
 assert.match(dashboard, /query=\{transitNatalQuery\}/u, "Active for Name must also load the Between you two compiled write-up from the same search.");
 assert.match(dashboard, /\? "Between you two"/u, "The Between you two workspace must use that reader name instead of Fallback Articles.");
 assert.match(dashboard, /audienceKey = audience === "friends" \? "body_they" : "body_you"/u, "Friends previews must resolve body_they instead of silently showing You copy.");
