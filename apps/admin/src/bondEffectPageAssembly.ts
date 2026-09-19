@@ -179,8 +179,29 @@ function houseOrdinal(house: string) {
   return `${value}${suffix}`;
 }
 
+export function friendsTransitReaderTitle(planet: string, aspect: string, natalPoint?: string | null) {
+  const lead = `${fallbackHookWords(planet)} ${aspectTechnicalVerb(aspect)}`;
+  return natalPoint ? `${lead} your ${fallbackHookWords(natalPoint)}` : lead;
+}
+
+export function friendsActivationParam(friendPoint: string, aspect: string) {
+  return `${friendPoint}/${aspect}`;
+}
+
+export function parseFriendsActivationParam(value: string | null | undefined) {
+  const raw = (value ?? "").trim().toLowerCase();
+  if (!raw) return null;
+  const parts = raw.split("/").map((part) => part.trim()).filter(Boolean);
+  if (parts.length !== 2) return null;
+  const aspectToken = contactSearchAspects.has(parts[1]) ? parts[1] : parts[0];
+  const friendToken = aspectToken === parts[1] ? parts[0] : parts[1];
+  const aspect = contactSearchAspects.get(aspectToken);
+  if (!aspect || !contactSearchPoints.has(friendToken)) return null;
+  return { friendPoint: friendToken, aspect };
+}
+
 export function bondEffectPageHeadline(planet: string, aspect: string, natalPoint: string) {
-  return `${fallbackHookWords(planet)} ${aspectTechnicalVerb(aspect)} your ${fallbackHookWords(natalPoint)}`;
+  return friendsTransitReaderTitle(planet, aspect, natalPoint);
 }
 
 export function bondActivationHeadline(

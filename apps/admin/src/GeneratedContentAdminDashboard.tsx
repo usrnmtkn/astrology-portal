@@ -3042,6 +3042,7 @@ export function GeneratedContentAdminDashboard() {
   const [showReferenceRows, setShowReferenceRows] = useState(false);
   const [showRetiredRows, setShowRetiredRows] = useState(false);
   const [query, setQuery] = useState("");
+  const [friendsActivationQuery, setFriendsActivationQuery] = useState("");
   const [guidedReviewKey, setGuidedReviewKey] = useState<string | null>(() => {
     const { page, params } = parseAdminHash();
     return page === "content" && params.get("from") === "unresolved" ? params.get("q") : null;
@@ -4005,6 +4006,15 @@ export function GeneratedContentAdminDashboard() {
     return () => window.clearTimeout(timeout);
   }, [secret, selectedRow, skyArticleEditionForm?.facts, skyArticleEditionForm?.tldr, skyArticleEditionForm?.slotValues, skyArticleEditionForm?.workspaceId]);
 
+  function persistBetweenYouTwoRoute(nextQuery: string, nextActivate = friendsActivationQuery) {
+    setQuery(nextQuery);
+    setFriendsActivationQuery(nextActivate);
+    const params = new URLSearchParams({ section: "friends", audience: "friends", workspace: "between-you-two" });
+    if (nextQuery.trim()) params.set("q", nextQuery.trim());
+    if (nextActivate.trim()) params.set("activate", nextActivate.trim());
+    setAdminHash(adminHashForPage("knowledge", params), "replace");
+  }
+
   function setAdminHash(nextHash: string, mode: "push" | "replace" = "push") {
     if (window.location.hash === nextHash) return;
     const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
@@ -4058,6 +4068,7 @@ export function GeneratedContentAdminDashboard() {
     guidedReviewOpenedRef.current = "";
     setGuidedReviewKey(openedFromUnresolved ? search : null);
     setQuery(search ?? "");
+    setFriendsActivationQuery(params.get("activate") ?? "");
     setNatalPlacementPlanet(page === "content" && natalPlanet && natalPlacementPlanets.includes(natalPlanet) ? natalPlanet : "");
     setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
     setNatalPlacementHouse(page === "content" && natalHouse && natalPlacementHouses.includes(natalHouse) ? natalHouse : "");
@@ -4235,7 +4246,13 @@ export function GeneratedContentAdminDashboard() {
     navigateAdminPage("skyWriteups", params);
   }
 
-  function renderFriendsTransitSectionFinder(currentSection: "between-you-two" | "active-for-name" | "house-transit", variant: "page" | "embedded", search: string, onSearch: (value: string) => void) {
+  function renderFriendsTransitSectionFinder(
+    currentSection: "between-you-two" | "active-for-name" | "house-transit",
+    variant: "page" | "embedded",
+    search: string,
+    onSearch: (value: string) => void,
+    parts: "all" | "search" | "destinations" = "all"
+  ) {
     return (
       <FriendsTransitSectionFinder
         currentSection={currentSection}
@@ -4258,6 +4275,7 @@ export function GeneratedContentAdminDashboard() {
         onQueryChange={onSearch}
         query={search}
         variant={variant}
+        parts={parts}
       />
     );
   }
@@ -7052,32 +7070,49 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "knowledge" && fallbackSectionFilter !== "lunar-calendar" && (
           <section className="admin-template-page admin-fallback-library">
             <section className="studio-surface studio-section admin-fallback-library-controls" aria-label="Fallback library controls">
+              {!friendsBetweenYouTwoWorkspace && (
               <header className="studio-section-header">
                 <div>
-                  <p className="admin-eyebrow">{friendsBetweenYouTwoWorkspace ? "Friends Transits" : "Reader fallback library"}</p>
-                  <h2 className="sr-only">{friendsBetweenYouTwoWorkspace ? "Between you two" : "Fallback Articles & Passages"}</h2>
-                  <p>{friendsBetweenYouTwoWorkspace
-                    ? "Type the live reader title. This composition map opens each part of the write-up: opening, What this activates, Active for Name, and Where it lands."
-                    : "Find complete articles, house horoscopes, aspects, and supporting fallback rows by their reader-facing astrology title."}</p>
+                  <p className="admin-eyebrow">Reader fallback library</p>
+                  <h2 className="sr-only">Fallback Articles &amp; Passages</h2>
+                  <p>Find complete articles, house horoscopes, aspects, and supporting fallback rows by their reader-facing astrology title.</p>
                 </div>
                 <StudioButton type="button" onClick={() => navigateAdminPage("hooks")}>
                   <KeyRound size={16} aria-hidden="true" />
                   Open Surface Map
                 </StudioButton>
               </header>
+              )}
               {friendsBetweenYouTwoWorkspace && (
                 <>
-                  {renderFriendsTransitSectionFinder("between-you-two", "page", query, setQuery)}
+                  <h2 className="sr-only">Between you two</h2>
+                  {renderFriendsTransitSectionFinder("between-you-two", "page", query, (value) => persistBetweenYouTwoRoute(value), "search")}
                   <Suspense fallback={<PageLoading compact message="Opening the Between you two composition…" />}>
                     <FriendsBetweenYouTwoComposition
                       query={query}
+                      activationQuery={friendsActivationQuery}
                       secret={secret}
+                      onQueryChange={(value) => persistBetweenYouTwoRoute(value)}
+                      onActivationChange={(value) => persistBetweenYouTwoRoute(query, value)}
                       onOpenOpening={(contentKey) => {
                         void openContentKeyRow(contentKey, "Between you two opening", false, "body_they");
                       }}
                       onOpenSource={(sourceKey, label, field) => void openFromEditor(sourceKey, () => openContentKeyRow(sourceKey, label, false, field))}
                     />
                   </Suspense>
+                  <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Open another Friends Transits editor">
+                    <header className="studio-section-header">
+                      <div>
+                        <p className="admin-eyebrow">Friends Transits</p>
+                        <p>Opening, What this activates, Active for {"{{Name}}"}, and Where it lands are different editors. Use these cards after you have read the compiled write-up.</p>
+                      </div>
+                      <StudioButton type="button" onClick={() => navigateAdminPage("hooks")}>
+                        <KeyRound size={16} aria-hidden="true" />
+                        Open Surface Map
+                      </StudioButton>
+                    </header>
+                    {renderFriendsTransitSectionFinder("between-you-two", "page", query, (value) => persistBetweenYouTwoRoute(value), "destinations")}
+                  </section>
                   <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Friends Transits Between you two context">
                     <p className="admin-eyebrow">Friends Transits · Between you two</p>
                     <strong>These passages feed the live “Between you two” transit cards.</strong>
@@ -7983,7 +8018,22 @@ export function GeneratedContentAdminDashboard() {
           <Suspense fallback={<PageLoading compact message="Opening the Between you two composition…" />}>
             <FriendsBetweenYouTwoComposition
               query={transitNatalQuery}
+              activationQuery={friendsActivationQuery}
               secret={secret}
+              onQueryChange={(value) => {
+                setTransitNatalQuery(value);
+                const hit = transitNatalSearchSelection(value);
+                if (!hit) return;
+                updateTransitNatalSelection({
+                  planet: hit.planet,
+                  aspect: hit.aspect,
+                  natalPoint: hit.natalPoint,
+                  sign: "",
+                  transitHouse: "",
+                  natalHouse: ""
+                });
+              }}
+              onActivationChange={setFriendsActivationQuery}
               onOpenOpening={(contentKey) => {
                 const params = new URLSearchParams({ section: "friends", audience: "friends", workspace: "between-you-two" });
                 if (transitNatalQuery.trim()) params.set("q", transitNatalQuery.trim());

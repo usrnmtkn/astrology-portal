@@ -36,10 +36,11 @@ try {
     "fallback-hook/synastry-pair/ascendant/saturn/hard",
     "fallback-hook/synastry-pair/saturn/ascendant/hard"
   ]);
-  assert.equal(
-    assembly.bondEffectPageHeadline("mercury", "trine", "ascendant"),
-    "Mercury trine your Ascendant"
-  );
+  assert.equal(assembly.friendsActivationParam("mercury", "opposition"), "mercury/opposition");
+  assert.deepEqual(assembly.parseFriendsActivationParam("mercury/opposition"), {
+    friendPoint: "mercury",
+    aspect: "opposition"
+  });
   assert.equal(
     assembly.bondActivationHeadline("ascendant", "square", "Name", "saturn"),
     "Your Ascendant square Name's Saturn"
@@ -123,7 +124,14 @@ assert.match(preview, /What this activates/u);
 assert.match(preview, /This last line is calculated from the chart/u);
 assert.match(preview, /Saved preview/u);
 assert.match(preview, /admin-template-reader-copy/u);
-assert.match(preview, /Composition Map/u);
+assert.match(preview, /aria-label="Transiting planet"/u);
+assert.match(preview, /aria-label="Transit aspect"/u);
+assert.match(preview, /onContactChange/u);
+assert.match(preview, /legend>Between you two/u);
+assert.match(preview, /legend>What this activates/u);
+assert.match(preview, /onActivationChange/u);
+assert.match(preview, /Opening · They/u);
+assert.match(preview, /Opening · You/u);
 assert.match(dashboard, /matchesFallbackLibrarySearch/u);
 assert.match(dashboard, /FriendsBetweenYouTwoComposition/u);
 assert.match(finder, /Friends Transits composition map/u);
