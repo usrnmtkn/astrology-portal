@@ -11,7 +11,7 @@ import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowse
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
-import { friendsTransitCardDestinations, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
+import { friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
 import FriendsTransitSectionFinder from "./FriendsTransitSectionFinder";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
@@ -7110,7 +7110,7 @@ export function GeneratedContentAdminDashboard() {
                         Open Surface Map
                       </StudioButton>
                     </header>
-                    {renderFriendsTransitSectionFinder("between-you-two", "page", query, (value) => persistBetweenYouTwoRoute(value), "destinations")}
+                    {renderFriendsTransitSectionFinder("between-you-two", "page", friendsTransitCompositionQuery(query), (value) => persistBetweenYouTwoRoute(value), "destinations")}
                   </section>
                   <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Friends Transits Between you two context">
                     <p className="admin-eyebrow">Friends Transits · Between you two</p>
