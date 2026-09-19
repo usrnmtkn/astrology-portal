@@ -23,6 +23,7 @@ import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import type { SkyForecastPeriod } from "./skyForecastTemplates";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
+import { studioServingStatusRow } from "./studioServingStatus";
 import { mergeContentInventory } from "./contentStudioState";
 import {
   studioInventoryQuery,
@@ -7833,11 +7834,10 @@ export function GeneratedContentAdminDashboard() {
         <div className="admin-natal-source-card-copy">
           <div className="admin-natal-source-card-heading">
             <h4>{source.label}</h4>
-            {resolved?.savedRow
-              ? <ContentLiveStatusBadge row={resolved.savedRow} />
-              : resolved
-                ? <ContentLiveStatusBadge row={{ id: `package:${resolved.contentKey}` }} />
-                : source.optional && <span className="ui-pill admin-status status-draft">Optional</span>}
+            {resolved && (
+              <ContentLiveStatusBadge row={studioServingStatusRow(resolved.savedRow ?? undefined, resolved.contentKey)} />
+            )}
+            {source.optional && !resolved && <span className="ui-pill admin-status status-draft">Optional</span>}
           </div>
           <p>{source.scope}</p>
           <p className="admin-reader-destination-line"><strong>Where readers see this:</strong> {sourceReaderDestination}</p>

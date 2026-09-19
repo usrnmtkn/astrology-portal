@@ -96,8 +96,7 @@ function editorialStatusPresentation(row: StatusRow): { label: string; tone: Stu
 
 function savedStatusPresentation(row: StatusRow, live: LiveStatus): { label: string; tone: StudioStatusTone } {
   if (live.live) return { label: "Live", tone: "live" };
-  // A successful negative serving check overrides a saved LIVE state. The
-  // unavailable branch below still preserves the known editorial state.
+  // A successful negative serving check overrides a saved LIVE state.
   if (row.status?.toUpperCase() === "LIVE") return { label: "Inactive", tone: "inactive" };
   return editorialStatusPresentation(row) ?? { label: "Inactive", tone: "inactive" };
 }
@@ -118,11 +117,7 @@ export default function ContentLiveStatusBadge({ row, unsaved = false, label }: 
     return <StudioStatusBadge aria-label={label} tone="draft" title="These edits have not been saved and published." className="admin-status">Draft</StudioStatusBadge>;
   }
   if (status === "unavailable") {
-    const editorial = editorialStatusPresentation(row);
-    if (editorial) {
-      return <StudioStatusBadge aria-label={label} tone={editorial.tone} title="Reader serving status could not be verified. Showing the saved editorial state." className="admin-status">{editorial.label}</StudioStatusBadge>;
-    }
-    return <StudioStatusBadge aria-label={label} tone="unknown" title="Status unavailable. Refresh rows to retry." className="admin-status">Unavailable</StudioStatusBadge>;
+    return <StudioStatusBadge aria-label={label} tone="unknown" title="Reader serving status could not be verified. Refresh to retry." className="admin-status">Unavailable</StudioStatusBadge>;
   }
   if (!status) {
     return <span aria-label={label} className="admin-field-hint">Checking status…</span>;
