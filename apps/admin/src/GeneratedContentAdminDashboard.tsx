@@ -2806,7 +2806,7 @@ async function loadAllGeneratedContentRows(
   for (let page = 0; page < 125; page += 1) {
     if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
     const result = await loadGeneratedContentPage(
-      `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}${visibility === "editorial" && scope === "all" ? "&view=inventory" : ""}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
+      `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}&view=inventory${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
       secret,
       signal
     );
@@ -3653,9 +3653,10 @@ export function GeneratedContentAdminDashboard() {
       secret,
       "all",
       "all",
-      (loadedRows) => {
+      (loadedRows, complete) => {
         if (cancelled) return;
         setRows((current) => mergeContentInventory(current, loadedRows));
+        if (complete) setAllRowsLoaded(true);
       },
       controller.signal
     )
@@ -4374,9 +4375,10 @@ export function GeneratedContentAdminDashboard() {
           normalizedSecret,
           needsExtendedInventory || loadsCompatibilityFirst ? "all" : "editorial",
           loadsCompatibilityFirst ? "compatibility" : "all",
-          (loadedRows) => {
+          (loadedRows, complete) => {
             if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return;
             setRows((current) => mergeContentInventory(current, loadedRows));
+            if (complete) setAllRowsLoaded(needsExtendedInventory);
           },
           loadController.signal
         ),
