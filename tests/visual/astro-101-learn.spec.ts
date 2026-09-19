@@ -42,6 +42,15 @@ test("Learn hub uses the canvas index card decks", async ({ page }) => {
   const conjunction = learnPage.getByRole("button", { name: /Conjunction/ });
   await expect(conjunction).toContainText("0°");
   await expect(conjunction).toContainText("Fused. Two planets acting as one.");
+  await expect(learnPage).not.toContainText("How planets talk to each other");
+
+  await expect(learnPage.locator(".learn-chapter__num")).toHaveCount(0);
+
+  const mercuryRx = learnPage.getByRole("button", { name: /Mercury Rx/ }).first();
+  await expect(mercuryRx).toBeVisible();
+  await expect(mercuryRx).not.toContainText("3 to 4 times a year");
+  await expect(learnPage.getByRole("button", { name: /Venus Rx/ }).first()).not.toContainText("Every 18 months");
+  await expect(learnPage.getByRole("button", { name: /Mars Rx/ }).first()).not.toContainText("Every 2 years");
 });
 
 test("House article keeps the long title and lede", async ({ page }) => {

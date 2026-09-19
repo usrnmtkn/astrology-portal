@@ -12,9 +12,7 @@ import {
   type ArticleBlockStyle
 } from "../../content/articleBlockStyle";
 import { astro101LocationState, astro101ReaderPath } from "../../content/astro101";
-import { fillAstro101EphemerisSlots } from "../../content/astro101Ephemeris";
 import {
-  chapterIndexLabel,
   houseCatalog,
   houseNumberFromContentKey,
   signCatalog,
@@ -240,7 +238,7 @@ function LearnIndexCard({
 }: {
   lead: string;
   leadExtra?: string;
-  trail: string;
+  trail?: string;
   title: string;
   detail: string;
   pair?: boolean;
@@ -255,7 +253,7 @@ function LearnIndexCard({
           <span>{lead}</span>
           {leadExtra ? <span>{leadExtra}</span> : null}
         </span>
-        <span className="learn-index-card__trail">{trail}</span>
+        {trail ? <span className="learn-index-card__trail">{trail}</span> : null}
       </span>
       <span className="learn-index-card__foot">
         <span className="learn-index-card__title">{title}</span>
@@ -359,10 +357,9 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
         <section className="learn-sheet learn-sheet--chapters" aria-labelledby="learn-chapters-title">
           <h2 className="sr-only" id="learn-chapters-title">Chapters</h2>
           <ol className="learn-chapters">
-            {chapters.map((page, index) => (
+            {chapters.map((page) => (
               <li key={page.contentKey}>
                 <button type="button" className="learn-chapter" onClick={() => onOpenPath(page.slug)}>
-                  <span className="learn-chapter__num">{chapterIndexLabel(index)}</span>
                   <span className="learn-chapter__copy">
                     <span className="learn-chapter__title">{page.headline}</span>
                     {page.summary ? <span className="learn-chapter__blurb">{page.summary}</span> : null}
@@ -464,7 +461,6 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
       <section className="learn-index-section" id="learn-aspects" aria-labelledby="learn-aspects-title">
         <header className="learn-index-section__header">
           <h2 id="learn-aspects-title">The aspects</h2>
-          <p className="learn-index-section__aside">How planets talk to each other</p>
         </header>
         <LearnIndexGrid>
           {LEARN_ASPECT_INDEX.map((aspect) => (
@@ -494,7 +490,6 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
                 lead={item.glyph}
                 onOpen={() => openKey("retrograde", item.id)}
                 title={item.name}
-                trail={fillAstro101EphemerisSlots(item.meta)}
               />
             </li>
           ))}

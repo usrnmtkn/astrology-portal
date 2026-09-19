@@ -415,7 +415,7 @@
 .learn-chapter {
   appearance: none;
   display: grid;
-  grid-template-columns: var(--space-10) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-6);
   width: 100%;
@@ -432,13 +432,6 @@
 
 .learn-chapter:hover {
   background: var(--accent-bg);
-}
-
-.learn-chapter__num {
-  color: var(--faint);
-  font-family: var(--font-label);
-  font-size: var(--type-meta-size);
-  letter-spacing: var(--tracking-number);
 }
 
 .learn-chapter__copy {
@@ -681,7 +674,6 @@
   }
 
   .learn-chapter {
-    grid-template-columns: var(--space-8) minmax(0, 1fr) auto;
     gap: var(--space-4);
   }
 }
