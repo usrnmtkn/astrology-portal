@@ -73,6 +73,19 @@ test("Between you two opens on a saved pairing with dropdowns to change", async 
   expect(Object.keys(savedCopy)).toContain(openingKey);
   await expect(map).toContainText(savedCopy[openingKey]);
 
+  // The title field describes the same selection as the map rather than sitting empty
+  // beside a populated composition.
+  const title = page.getByRole("region", { name: "Find a Friends transit card" })
+    .getByLabel("Find a Friends transit card", { exact: true });
+  await expect(title).toHaveValue(new RegExp(`^${chosen} ${chosenAspect}`, "iu"));
+  await expect(page).toHaveURL(/q=/u);
+
+  // Clearing the field leaves it clear, so it stays usable for typing a new title.
+  await title.fill("");
+  await expect(title).toHaveValue("");
+  await title.fill("Mars");
+  await expect(title).toHaveValue("Mars");
+
   // A pairing the owner chose is never replaced by the default.
   await map.getByLabel("Transiting planet", { exact: true }).selectOption("mars");
   await expect(map.getByLabel("Transiting planet", { exact: true })).toHaveValue("mars");
@@ -80,6 +93,23 @@ test("Between you two opens on a saved pairing with dropdowns to change", async 
 
   expect(errors).toEqual([]);
   await page.screenshot({ path: "test-results/friends-between-you-two-default-pairing.png" });
+});
+
+test("A pairing in the route opens instead of the default", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await isolate(page);
+  await page.goto(`${workspacePath}&q=Mars+trine+your+Sun`);
+
+  // Seeding the field must never overwrite a pairing the owner arrived with.
+  const map = page.getByRole("region", { name: "Between you two composition map" });
+  await expect(map.getByLabel("Transiting planet", { exact: true })).toHaveValue("mars");
+  await expect(map.getByLabel("Transit aspect", { exact: true })).toHaveValue("trine");
+  await expect(map).toContainText("Mars trine fixture opening.");
+  await expect(page.getByRole("region", { name: "Find a Friends transit card" })
+    .getByLabel("Find a Friends transit card", { exact: true })).toHaveValue("Mars trine your Sun");
+
+  expect(errors).toEqual([]);
 });
 
 test("Between you two composition follows its own dropdowns", async ({ page }) => {

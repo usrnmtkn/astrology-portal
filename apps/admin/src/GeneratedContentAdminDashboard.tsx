@@ -3068,6 +3068,21 @@ export function GeneratedContentAdminDashboard() {
   const friendsBetweenYouTwoWorkspace = friendsTransitAudience
     && fallbackSectionFilter === "friends"
     && (parseAdminHash().params.get("workspace") === "between-you-two" || query.includes("bond-effect"));
+  // The title field and the composition describe one selection, so entering the
+  // workspace writes the pairing the map is showing into the route instead of leaving
+  // an empty field beside a populated map. Seeding once per visit keeps a field the
+  // owner clears available for typing, and a pairing already in the route is kept.
+  const betweenYouTwoSeededRef = useRef(false);
+  useEffect(() => {
+    if (!friendsBetweenYouTwoWorkspace) {
+      betweenYouTwoSeededRef.current = false;
+      return;
+    }
+    if (betweenYouTwoSeededRef.current) return;
+    betweenYouTwoSeededRef.current = true;
+    if (query.trim() || parseAdminHash().params.get("q")?.trim()) return;
+    persistBetweenYouTwoRoute(friendsTransitCompositionQuery(query));
+  }, [friendsBetweenYouTwoWorkspace, query]);
   const [fallbackRowSort, setFallbackRowSort] = useState<AdminFallbackRowSort>("type");
   const [surfaceAreaFilter, setSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
   const [surfaceStatusFilter, setSurfaceStatusFilter] = useState<WritingSurfaceStatusFilter>("all");
