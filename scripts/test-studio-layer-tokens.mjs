@@ -6,6 +6,7 @@ const studio = await readFile('apps/admin/src/studio-system.css', 'utf8');
 
 const expected = new Map([
   ['--studio-layer-memory-canvas', '0'],
+  ['--studio-layer-page-header', '4'],
   ['--studio-layer-memory-panel', '6'],
   ['--studio-layer-create-backdrop', '50'],
   ['--studio-layer-create-menu', '51'],

@@ -1,10 +1,11 @@
 # Content Studio layer token decision — 2026-09-16
 
-Phase 1 preserves the existing Content Studio stacking order exactly. No new numeric layer is introduced and no existing surface is reordered.
+Phase 1 preserved the existing Content Studio stacking order. The later Studio layout pass added `--studio-layer-page-header` at `4` for the sticky page header, between the memory canvas and memory panels, without reordering the overlay stack.
 
 | Token | Preserved value | Current role |
 | --- | ---: | --- |
 | `--studio-layer-memory-canvas` | `0` | Memory graph renderer root |
+| `--studio-layer-page-header` | `4` | Sticky Studio page header |
 | `--studio-layer-memory-panel` | `6` | Memory match/detail panels |
 | `--studio-layer-create-backdrop` | `50` | Create-menu dismissal backdrop |
 | `--studio-layer-create-menu` | `51` | Create menu |

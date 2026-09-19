@@ -52,7 +52,7 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
     if (!other) return;
     setEditedLayout(layout.replace(`{${slot}}`, "\u0000").replace(`{${other}}`, `{${slot}}`).replace("\u0000", `{${other}}`));
   }
-  return <section className="admin-template-reader-drilldown admin-sky-summary-composition studio-surface" aria-label="Full summary assembly">
+  return <section className="admin-template-reader-drilldown admin-sky-summary-composition" aria-label="Full summary assembly">
     <header className="admin-section-heading-row"><div>
       <h4>Full summary template</h4>
       <p>Click the white words to edit a sentence around its protected variables. Edit the opening with the Sun and Moon examples below. Paragraph and event controls are available here too.</p>

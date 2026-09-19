@@ -285,7 +285,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           )}
           {groups.filter((group) => group.key !== "structure").map((group) => (
             <section className="admin-natal-source-group" key={`${selectionKey}/${group.key}`}>
-              <header><h3>{group.label}</h3><p>{group.description}</p></header>
+              <header><div><h3>{group.label}</h3><p>{group.description}</p></div></header>
               <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source))}</div>
             </section>
           ))}
@@ -296,12 +296,12 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
             </details>
           ))}
         </> : <section className="admin-empty-house-workspace" aria-label="Empty house writing">
-          <header className="admin-natal-source-group">
+          <header className="admin-page-heading">
             <p className="admin-eyebrow">Empty houses</p>
             <h3>Choose the house, cusp sign, and where its ruler lands</h3>
             <p>The full reader assembly and the source list below update with the selected context.</p>
           </header>
-          <div className="admin-natal-placement-selectors" aria-label="Empty house context">
+          <div className="admin-natal-placement-selectors admin-filter-form" aria-label="Empty house context">
             <label>
               <span>Empty house</span>
               <AdminSelect aria-label="Empty house" value={emptyHouse} onChange={(event) => {
@@ -339,16 +339,18 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           />
           <section className="admin-natal-source-group" aria-label="Sources used by the selected empty house assembly">
             <header>
-              <h3>Edit the assembly sources</h3>
-              <p>These are the exact passages, vocabulary, and template pieces used to build the preview above.</p>
+              <div className="admin-page-heading">
+                <h3>Edit the assembly sources</h3>
+                <p>These are the exact passages, vocabulary, and template pieces used to build the preview above.</p>
+              </div>
             </header>
+            {emptyHouseGroups.map((group) => (
+              <section key={`empty-house/${emptyHouse}/${emptyHouseSign}/${emptyHouseRulerHouse}/${group.id}`}>
+                <div className="admin-page-heading"><h3>{group.label}</h3><p>{group.description}</p></div>
+                <div className="admin-natal-source-grid">{group.keys.map(renderEmptyHouseSource)}</div>
+              </section>
+            ))}
           </section>
-          {emptyHouseGroups.map((group) => (
-            <section className="admin-natal-source-group" key={`empty-house/${emptyHouse}/${emptyHouseSign}/${emptyHouseRulerHouse}/${group.id}`}>
-              <header><h3>{group.label}</h3><p>{group.description}</p></header>
-              <div className="admin-natal-source-grid">{group.keys.map(renderEmptyHouseSource)}</div>
-            </section>
-          ))}
         </section>}
       </StudioTabs>
     </section>

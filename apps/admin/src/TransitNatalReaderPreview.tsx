@@ -50,9 +50,11 @@ export function TransitNatalExactSourceAction({
   if (state.error) return <p role="alert">{state.error} <StudioButton type="button" onClick={() => setRevision(value => value + 1)}>Retry this transit</StudioButton></p>;
   return <section className="admin-natal-source-group" aria-label="This transit write-up">
     <header>
-      <p className="admin-eyebrow">{contentKey.split("/").length === 8 ? "Six-part situation write-up" : "Three-part aspect write-up"}</p>
-      <p><code>{contentKey}</code></p>
-      <p>{state.passage?.detail}</p>
+      <div>
+        <p className="admin-eyebrow">{contentKey.split("/").length === 8 ? "Six-part situation write-up" : "Three-part aspect write-up"}</p>
+        <p><code>{contentKey}</code></p>
+        <p>{state.passage?.detail}</p>
+      </div>
       {state.passage?.row && <ContentLiveStatusBadge row={state.passage.row} />}
     </header>
     <StudioButton type="button" disabled={disabled} onClick={onOpen}>{transitNatalExactActionLabel(Boolean(state.passage?.exists), title, contentKey)}</StudioButton>
@@ -162,9 +164,11 @@ export default function TransitNatalReaderPreview({ selection, voice, secret, on
   return (
     <section className="admin-natal-source-group" aria-label="Effective transit to natal reader preview">
       <header>
-        <p className="admin-eyebrow">Effective reader preview</p>
-        <h3>What you see</h3>
-        <p>This example uses the reader package and eligible published updates. Drafts are excluded. Use the reading preview options to match a particular transit's motion, repeat pass, variant, and timing.</p>
+        <div>
+          <p className="admin-eyebrow">Effective reader preview</p>
+          <h3>What you see</h3>
+          <p>This example uses the reader package and eligible published updates. Drafts are excluded. Use the reading preview options to match a particular transit's motion, repeat pass, variant, and timing.</p>
+        </div>
       </header>
       {state.loading || loadedIdentity !== identity && !state.error ? <PageLoading compact message="Loading reader preview…" /> : state.preview && loadedIdentity === identity ? (
         <article className="admin-natal-source-card">
@@ -198,7 +202,7 @@ export function TransitNatalPreviewOptions({ context, onChange }: {
         <details className="admin-workspace-details">
           <AdminDisclosureSummary>Reading preview options</AdminDisclosureSummary>
           <p className="admin-field-hint">These are example inputs. Match the calculated reading when comparing its exact passage.</p>
-          <div className="admin-natal-placement-selectors">
+          <div className="admin-natal-placement-selectors admin-filter-form">
             <label><span>Copy variant</span><AdminSelect aria-label="Transit copy variant" value={context.variant ?? ""} onChange={event => onChange({ variant: event.target.value ? Number(event.target.value) : undefined })}>
               <option value="">Default</option>{[1, 2, 3, 4].map(value => <option key={value} value={value}>{value}</option>)}
             </AdminSelect></label>
