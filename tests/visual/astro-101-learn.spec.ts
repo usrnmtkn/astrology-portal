@@ -7,16 +7,13 @@ test("Learn hub is reachable from primary navigation", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Astro 101", level: 1 })).toBeVisible({ timeout: 60_000 });
 });
 
-test("Learn uses the shared full-page article layout", async ({ page }) => {
+test("Learn hub uses the canvas index card decks", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/learn");
   const learnPage = page.locator(".learn-page");
   await expect(learnPage).toBeVisible({ timeout: 60_000 });
   await expect(page.locator(".learn-layout")).toBeVisible();
-  await expect(learnPage.locator(".learn-sheet").first()).toBeVisible();
-
-  const box = await learnPage.boundingBox();
-  expect(box?.width ?? 0).toBeGreaterThan(1000);
+  await expect(learnPage.getByRole("heading", { level: 1 })).toHaveText("Astro 101");
 
   const headingTags = await learnPage.locator("h1, h2, h3, h4, h5, h6").evaluateAll((nodes) =>
     nodes.map((node) => node.tagName)
@@ -24,14 +21,64 @@ test("Learn uses the shared full-page article layout", async ({ page }) => {
   expect(headingTags[0]).toBe("H1");
   expect(headingTags.slice(1).every((tag) => tag !== "H1")).toBeTruthy();
 
-  await expect(learnPage.locator(".learn-kicker").first()).toHaveText(/Learn/i);
-  await expect(learnPage.getByRole("heading", { level: 1 })).toHaveText("Astro 101");
-  await expect(learnPage.locator(".learn-sheet__header h2", { hasText: "Chapters" })).toHaveCount(0);
-  await expect(learnPage.locator(".learn-kicker").filter({ hasText: /chapters/i })).toHaveCount(0);
+  await expect(learnPage.getByRole("heading", { name: "The twelve zodiac signs", level: 2 })).toBeVisible();
+  await expect(learnPage.getByRole("heading", { name: "The aspects", level: 2 })).toBeVisible();
+  await expect(learnPage.getByRole("heading", { name: "The twelve houses", level: 2 })).toBeVisible();
+  await expect(learnPage.getByRole("heading", { name: "References", level: 2 })).toBeVisible();
 
-  const tileGlyph = learnPage.locator(".learn-tile__glyph").first();
-  await expect(tileGlyph).toBeVisible();
-  await expect(tileGlyph).toHaveCSS("font-size", "22px");
+  const aries = learnPage.getByRole("button", { name: /Aries/ });
+  await expect(aries).toBeVisible();
+  await expect(aries).toContainText("Cardinal");
+  await expect(aries).toContainText("Fire");
+
+  const firstHouse = learnPage.getByRole("link", { name: /Self/ }).first();
+  await expect(firstHouse).toContainText("I");
+  await expect(firstHouse).not.toContainText("1H");
+  await expect(firstHouse).not.toContainText("What it means");
+  await expect(firstHouse).toContainText("Ruled by Mars");
+  await expect(learnPage.getByRole("link", { name: /Livelihood/ })).toBeVisible();
+  await expect(learnPage.getByRole("link", { name: /Siblings & the daily round/ })).toBeVisible();
+
+  const conjunction = learnPage.getByRole("button", { name: /Conjunction/ });
+  await expect(conjunction).toContainText("0°");
+  await expect(conjunction).toContainText("Fused. Two planets acting as one.");
+});
+
+test("House article keeps the long title and lede", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/learn");
+  await expect(page.getByRole("link", { name: /Livelihood/ })).toBeVisible({ timeout: 60_000 });
+  await page.getByRole("link", { name: /Livelihood/ }).click();
+  await expect(page).toHaveURL(/\/learn\/houses\/0?2\/?/);
+  await expect(page.locator(".learn-article-header .learn-kicker")).toHaveText(/ASTRO 101 \/ 2ND HOUSE/i);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/What it means to have planets in the 2nd house/i);
+  await expect(page.locator(".learn-lede")).toBeVisible();
+  const emptyHouse = page.locator("#an-empty-2nd-house");
+  const southNode = page.locator("#south-node-in-the-2nd-house");
+  await expect(emptyHouse).toHaveClass(/learn-placement/);
+  await expect(southNode).toHaveClass(/learn-placement/);
+  await expect(emptyHouse.getByRole("heading", { name: "An empty 2nd house", level: 2 })).toBeVisible();
+  await expect(southNode.getByRole("heading", { name: "South Node in the 2nd house", level: 2 })).toBeVisible();
+});
+
+test("Learn article chrome uses compact article navigation", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/learn/houses/2");
+  await expect(page.locator(".learn-article-page")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Back to Astro 101" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "TLDR Astro home" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Toggle theme" })).toBeHidden();
+
+  await page.goto("/learn/astro-101/what-is-a-birth-chart");
+  await expect(page.locator(".learn-article-page")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Back to Astro 101" })).toBeVisible();
+
+  await page.goto("/learn/signs/aries");
+  await expect(page.locator(".learn-article-page")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeHidden();
 });
 
 test("Learn article copy stays on the prose measure", async ({ page }) => {

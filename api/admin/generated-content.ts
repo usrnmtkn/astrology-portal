@@ -8,6 +8,7 @@ import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadin
 import { packagePublicationAdmissionIssue } from "../_lib/content-studio-package-admission.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
 import { astro101PublicationIssue } from "../../apps/web/src/content/astro101.ts";
+import { fillAstro101EphemerisSlots } from "../../apps/web/src/content/astro101Ephemeris.ts";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 import { skyDebilityTemplateErrors } from "../../apps/web/src/content/skyDebilityCatalog.ts";
@@ -1205,6 +1206,14 @@ function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T): T {
 
 function assertReaderEligiblePublication(row: Record<string, any>) {
   if (row.status !== "LIVE") return;
+  if (String(row.content_key ?? "").startsWith("education/astro-101/") || row.surface === "education") {
+    const filled = fillAstro101EphemerisSlots(row);
+    row.headline = filled.headline;
+    row.summary = filled.summary;
+    row.body = filled.body;
+    row.sections = filled.sections;
+    row.facts = filled.facts;
+  }
   try { assertCleanReaderCopy(row); } catch (error) {
     throw new GeneratedContentRequestError((error as Error).message, 409);
   }
@@ -1980,9 +1989,20 @@ async function patchGeneratedContentRow(
   if (patch.status === "LIVE") {
     const existing = await fetchExistingRowById(id);
     if (!existing) throw new GeneratedContentRequestError("The source no longer exists. Reload before publishing.", 404);
-    assertReaderEligiblePublication({ ...existing, ...patch });
-    await assertZodiacSeasonPublication({ ...existing, ...patch });
-    await assertStudioVariablePublication(v3PackageRecord({ ...existing, ...patch }), studioVariableStorage);
+    const merged = fillAstro101EphemerisSlots({ ...existing, ...patch });
+    if (String(merged.content_key ?? "").startsWith("education/astro-101/") || merged.surface === "education") {
+      patch = {
+        ...patch,
+        headline: merged.headline,
+        summary: merged.summary,
+        body: merged.body,
+        sections: merged.sections,
+        facts: merged.facts
+      };
+    }
+    assertReaderEligiblePublication(merged);
+    await assertZodiacSeasonPublication(merged);
+    await assertStudioVariablePublication(v3PackageRecord(merged), studioVariableStorage);
   }
   const params = new URLSearchParams();
   params.set("id", `eq.${id}`);
