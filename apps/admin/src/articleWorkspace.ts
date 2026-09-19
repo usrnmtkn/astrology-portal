@@ -1,4 +1,4 @@
-import { astro101ResolvedReaderPath, isAstro101ContentKey } from "../../web/src/content/astro101.ts";
+import { astro101ResolvedReaderPath, isAstro101ContentKey } from "../../web/src/content/astro101";
 
 export type ArticleWorkspaceRow = {
   block_type?: string | null;

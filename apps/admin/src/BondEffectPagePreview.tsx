@@ -149,11 +149,11 @@ export default function BondEffectPagePreview({
   }, [previewNatalPoint]);
 
   useEffect(() => {
-    if (previewFriendPoint) setFriendPoint(previewFriendPoint);
+    if (previewFriendPoint) setFriendPoint(asFriendPoint(previewFriendPoint));
   }, [previewFriendPoint]);
 
   useEffect(() => {
-    if (previewActivationAspect) setActivationAspect(previewActivationAspect);
+    if (previewActivationAspect) setActivationAspect(asActivationAspect(previewActivationAspect));
   }, [previewActivationAspect]);
 
   function commitContact(next: {
