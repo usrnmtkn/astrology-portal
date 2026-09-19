@@ -165,6 +165,7 @@ import {
 } from "./natalPlacementSources";
 import {
   natalAspectContentKeyPrefix,
+  natalAspectResolverDependencyKeys,
   natalAspectTheyNameVariable,
   type NatalAspectSelection,
   type NatalAspectSourceDraft
@@ -3749,6 +3750,30 @@ export function GeneratedContentAdminDashboard() {
     return () => { controller.abort(); setNatalSourcesLoading(false); };
   }, [activePage, categoryFilter, natalPlacementPlanet, natalPlacementSign, natalPlacementHouse, natalPlacementMotion, secret, loadState, allRowsLoaded]);
 
+  useEffect(() => {
+    if (loadState !== "loaded" || activePage !== "content" || categoryFilter !== "Natal Aspects" || !natalAspectFirst || !natalAspectName || !natalAspectSecond || !secret.trim()) return;
+    const controller = new AbortController();
+    setNatalSourcesLoading(true);
+    const params = new URLSearchParams({ status: "all", visibility: "all", limit: "200" });
+    natalAspectResolverDependencyKeys({ first: natalAspectFirst, aspect: natalAspectName, second: natalAspectSecond })
+      .forEach((key) => params.append("contentKeys", key));
+    void adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(`/api/admin/generated-content-inventory?${params}`, secret, { signal: controller.signal })
+      .then((payload) => {
+        if (controller.signal.aborted) return;
+        setRows((current) => {
+          const merged = new Map(current.map((row) => [row.id, row]));
+          for (const row of payload.rows ?? []) {
+            const previous = merged.get(row.id);
+            if (!previous || previous.inventory_only || (row.updated_at ?? "") >= (previous.updated_at ?? "")) merged.set(row.id, row);
+          }
+          return [...merged.values()];
+        });
+      })
+      .catch((error) => { if (!controller.signal.aborted) setMessage(dashboardErrorMessage(error)); })
+      .finally(() => { if (!controller.signal.aborted) setNatalSourcesLoading(false); });
+    return () => { controller.abort(); setNatalSourcesLoading(false); };
+  }, [activePage, categoryFilter, natalAspectFirst, natalAspectName, natalAspectSecond, secret, loadState, allRowsLoaded]);
+
   routeNavigationGuardRef.current = () => confirmNatalNavigation() && closeEditor();
 
   useEffect(() => {
@@ -5454,12 +5479,25 @@ export function GeneratedContentAdminDashboard() {
     const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
     try {
-      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
-        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1&includePackageSource=true`,
+      const inventoryPayload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content-inventory?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1`,
         secret
       );
-      if (!Array.isArray(payload.rows) || payload.rows.some(candidate => candidate.content_key !== contentKey)) throw new Error("The selected source could not be verified.");
-      const row = payload.rows.find(candidate => candidate.content_key === contentKey);
+      const inventoryRows = Array.isArray(inventoryPayload.rows) ? inventoryPayload.rows : [];
+      if (inventoryRows.some((candidate) => candidate.content_key !== contentKey)) throw new Error("The selected source could not be verified.");
+      let row = inventoryRows.find((candidate) => candidate.content_key === contentKey);
+      let payload: { rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null } = {
+        rows: inventoryRows,
+        packageSource: null
+      };
+      if (!row) {
+        payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; packageSource?: Record<string, unknown> | null }>(
+          `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1&includePackageSource=true`,
+          secret
+        );
+        if (!Array.isArray(payload.rows) || payload.rows.some(candidate => candidate.content_key !== contentKey)) throw new Error("The selected source could not be verified.");
+        row = payload.rows.find(candidate => candidate.content_key === contentKey);
+      }
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       if (!row && payload.packageSource) {
         if (packagedTransitOpenMode(finderTransitNatalExactKey(), contentKey) === "exact") {
@@ -7737,7 +7775,7 @@ export function GeneratedContentAdminDashboard() {
         <NatalAspectSourceFinder
           aspect={natalAspectName}
           first={natalAspectFirst}
-          isLoading={isLoading}
+          isLoading={isLoading || natalSourcesLoading}
           onCreateSource={createNatalAspectSource}
           onOpenSource={(contentKey, label) => void openContentKeyRow(contentKey, label)}
           onSelectionChange={updateNatalAspectSelection}

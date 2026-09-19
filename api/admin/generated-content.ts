@@ -1,27 +1,6 @@
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
-import { STUDIO_VARIABLE_PREFIX, resolveStudioVariableCopy } from "../../apps/web/src/content/studioCustomVariables.mjs";
-import { isZodiacSeasonSourceKey, supportsZodiacSeasonVariables, zodiacSeasonVariableNames, zodiacSeasonRecordDependencies, resolveZodiacSeasonVariables } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
-import { separateArticleHoroscopeRow } from "../../apps/web/src/content/skyArticleHoroscopes.mjs";
-// @ts-ignore Shared import and publication boundary.
-import { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
-import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
-import { packagePublicationAdmissionIssue } from "../_lib/content-studio-package-admission.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
-import { astro101PublicationIssue } from "../../apps/web/src/content/astro101.ts";
-import { fillAstro101EphemerisSlots } from "../../apps/web/src/content/astro101Ephemeris.ts";
-import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
-import { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
-import { skyDebilityTemplateErrors } from "../../apps/web/src/content/skyDebilityCatalog.ts";
-// @ts-ignore Shared inline-variable contract for continuous Sky placement prose.
-import { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
-// @ts-ignore Shared article validation and exact source publication checks.
-import { isSkyPlacementArticleField, skyPlacementArticleVariableIssues, skyPlacementArticlePublicationIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementArticleVariables.mjs";
-// @ts-ignore Shared canonical section schema; no database metadata can expand it.
-import { isSkyEvergreenSource, skyEvergreenEditableFields, skyEvergreenFields, skyEvergreenSectionText, skyEvergreenSectionFragments, validateSkyEvergreenSections, SKY_EVERGREEN_SECTIONS_PATH } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
-// @ts-ignore Shared V5 structure and publication checks.
-import { validateSkyIngressComposition, skyIngressPublicationIssues, ingressTextIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
-import { isContentStudioReferenceSource } from "../../apps/web/src/content/contentStudioSourceRole.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createHash } from "node:crypto";
 import fs from "node:fs";
@@ -30,20 +9,24 @@ import { fileURLToPath, URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { postgrestContentKeyPrefixAnd } from "../_lib/postgrest-content-key-prefix.js";
-import {
-  assertCompiledSkyArticleEdition,
-  hasExactSkyArticleOwnerApproval,
-  reviseSkyArticleEdition,
-  skyArticleEditableFields,
-  skyArticleEditionFieldChanges,
-  skyArticleEditionRecord
-} from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
-import { validateCmsTemplate } from "../../apps/web/src/content/cmsTemplateValidation.js";
-import calendarAspectDraftCatalog from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json" with { type: "json" };
-import skyV4ReaderCopyOwnerApproval from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
-import skyV4ReaderCopyServingRelease from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
+import type * as GeneratedContentLibraries from "./generated-content-libraries.js";
 
 loadLocalWebEnv();
+
+type ContentLibraries = typeof GeneratedContentLibraries;
+let contentLibraries: ContentLibraries | undefined;
+
+async function loadGeneratedContentLibraries() {
+  contentLibraries ??= await import("./generated-content-libraries.js");
+  return contentLibraries;
+}
+
+function libs(): ContentLibraries {
+  if (!contentLibraries) {
+    throw new Error("Content libraries were not loaded before a write or publication check.");
+  }
+  return contentLibraries;
+}
 
 const adminStorageTimeoutMs = 8_000;
 
@@ -186,14 +169,14 @@ function assertValidCmsTemplate({
   const allowedSlots = Array.isArray(snapshot.allowedSlots)
     ? snapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
     : [];
-  const validation = validateCmsTemplate({
+  const validation = libs().validateCmsTemplate({
     allowedSlots,
     headline: headline ?? "",
     summary: summary ?? "",
     body: body ?? ""
   });
-  validation.errors.push(...skySummaryTemplateErrors(contentKey ?? "", body ?? ""));
-  validation.errors.push(...skyDebilityTemplateErrors(contentKey ?? "", body ?? ""));
+  validation.errors.push(...libs().skySummaryTemplateErrors(contentKey ?? "", body ?? ""));
+  validation.errors.push(...libs().skyDebilityTemplateErrors(contentKey ?? "", body ?? ""));
   if (validation.errors.length > 0) {
     throw new Error(`CMS template cannot be published: ${validation.errors.join(" ")}`);
   }
@@ -222,10 +205,6 @@ const fallbackArchitectureV3ReviewStatuses = new Set(["needs_review", "approved"
 const skyV4CanonicalStagePackage = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
 const calendarAspectContentStudioStagePackage = "CALENDAR-ASPECT-CONSEQUENCE-FIRST-CONTENT-STUDIO-2026-09-01";
 const calendarAspectBatch2AId = "sky-calendar-batch-2a-venus-saturn-squares-2026-09-01";
-const skyV4OwnerApprovedReaderCopyKeys = new Set(skyV4ReaderCopyOwnerApproval.approved_keys);
-const skyV4ServingReleasedReaderCopyKeys = skyV4ReaderCopyServingRelease.serving_enabled === true
-  ? skyV4OwnerApprovedReaderCopyKeys
-  : new Set<string>();
 const personalizedSampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const sampleOnlyReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
 let contentRoleContractCache: {
@@ -509,8 +488,8 @@ function setPackageValueAt(record: Record<string, unknown>, path: string, value:
 }
 
 function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, unknown>) {
-  if (isSkyEvergreenSource(packageRecord) && (path === "ingress" || path.startsWith("ingress."))) return true;
-  if (isSkyEvergreenSource(packageRecord) && skyEvergreenEditableFields(packageRecord).some((field: { path: string }) => field.path === path)) return true;
+  if (libs().isSkyEvergreenSource(packageRecord) && (path === "ingress" || path.startsWith("ingress."))) return true;
+  if (libs().isSkyEvergreenSource(packageRecord) && libs().skyEvergreenEditableFields(packageRecord).some((field: { path: string }) => field.path === path)) return true;
   const studioPaths = Array.isArray(packageRecord?.studio_editable_fields)
     ? packageRecord.studio_editable_fields
       .filter(isRecord)
@@ -530,20 +509,20 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
     ? record.studio_editable_fields.filter(isRecord).map((field) => stringFrom(field.path)).filter(Boolean)
     : [];
   const sections = isRecord(effective.fallback) && Array.isArray(effective.fallback.sections) ? effective.fallback.sections : [];
-  const copy = [...fields.map((path) => packageValueAt(effective, path)), ...sections.filter(isRecord).map(section => skyEvergreenSectionText(section))]
+  const copy = [...fields.map((path) => packageValueAt(effective, path)), ...sections.filter(isRecord).map(section => libs().skyEvergreenSectionText(section))]
     .filter((value) => typeof value === "string").map(value => seasonSources ? String(value).replace(/\{\{\s*(zodiacSeason|zodiacSeasonPolarAxis)\s*\}\}/gu, (token, name) =>
-      isRecord(effective.ingress) && isRecord(effective.ingress.sources) && effective.ingress.sources[name] ? token : resolveZodiacSeasonVariables(token, effective, seasonSources)) : value).join("\n\n");
+      isRecord(effective.ingress) && isRecord(effective.ingress.sources) && effective.ingress.sources[name] ? token : libs().resolveZodiacSeasonVariables(token, effective, seasonSources)) : value).join("\n\n");
   const hardFailures: string[] = [];
-  if (isSkyEvergreenSource(record)) {
-    validateSkyIngressComposition(effective.ingress, Array.isArray(effective._studioVariables) ? effective._studioVariables.map((item: any) => item.name) : []);
+  if (libs().isSkyEvergreenSource(record)) {
+    libs().validateSkyIngressComposition(effective.ingress, Array.isArray(effective._studioVariables) ? effective._studioVariables.map((item: any) => item.name) : []);
     for (const path of ["placementArticle", "placementArticleDirect", "placementArticleRetrograde", "fallback.hook", "fallback.lived", "fallback.turn"]) {
-      const issues = isSkyPlacementArticleField(record.contentKey, path)
-        ? skyPlacementArticleVariableIssues(packageValueAt(effective, path), effective)
-        : skyPlacementVariableIssues(packageValueAt(effective, path));
+      const issues = libs().isSkyPlacementArticleField(record.contentKey, path)
+        ? libs().skyPlacementArticleVariableIssues(packageValueAt(effective, path), effective)
+        : libs().skyPlacementVariableIssues(packageValueAt(effective, path));
       hardFailures.push(...issues.map((issue: string) => `${path}: ${issue}`));
     }
     for (const section of sections.filter(isRecord)) {
-      hardFailures.push(...skyPlacementVariableIssues(skyEvergreenSectionText(section)).map((issue: string) => `Evergreen section ${section.id}: ${issue}`));
+      hardFailures.push(...libs().skyPlacementVariableIssues(libs().skyEvergreenSectionText(section)).map((issue: string) => `Evergreen section ${section.id}: ${issue}`));
     }
   }
   if (/\byou have (?:a|an) (?:gift|talent|natural ability|instinct)\b/iu.test(copy)) {
@@ -553,9 +532,9 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
     hardFailures.push("STP-01 planet-in-sign identity language");
   }
   if (/\bright now,? you are\b/iu.test(copy)) hardFailures.push("STP-10 time-adverb trait sentence");
-  const hasPlacementBody = !isSkyEvergreenSource(effective) || stringFrom(effective.placementArticle).trim()
-    || skyEvergreenFields(effective).some((section: { value: string }) => section.value.trim());
-  if (record.studio_content_type === "continuous-placement" && hasPlacementBody && !(seasonSources === undefined && zodiacSeasonVariableNames(copy).length) && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
+  const hasPlacementBody = !libs().isSkyEvergreenSource(effective) || stringFrom(effective.placementArticle).trim()
+    || libs().skyEvergreenFields(effective).some((section: { value: string }) => section.value.trim());
+  if (record.studio_content_type === "continuous-placement" && hasPlacementBody && !(seasonSources === undefined && libs().zodiacSeasonVariableNames(copy).length) && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
     hardFailures.push("STP-03 missing current-sky anchor");
   }
   return { passed: hardFailures.length === 0, hardFailures };
@@ -575,15 +554,15 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
   editableFields.push(["body_they", sections.body_they, record.body_they]);
   const packageDraft = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   const proposedRecord = packageDraft ?? (isRecord(sections.packageRecord) ? sections.packageRecord : record);
-  if (isSkyEvergreenSource(record)) {
-    validateSkyIngressComposition(proposedRecord.ingress, Array.isArray(proposedRecord._studioVariables) ? proposedRecord._studioVariables.map((item: any) => item.name) : []);
-    const layout = packageValueAt(proposedRecord, SKY_EVERGREEN_SECTIONS_PATH);
-    validateSkyEvergreenSections(layout);
+  if (libs().isSkyEvergreenSource(record)) {
+    libs().validateSkyIngressComposition(proposedRecord.ingress, Array.isArray(proposedRecord._studioVariables) ? proposedRecord._studioVariables.map((item: any) => item.name) : []);
+    const layout = packageValueAt(proposedRecord, libs().SKY_EVERGREEN_SECTIONS_PATH);
+    libs().validateSkyEvergreenSections(layout);
     if (Array.isArray(layout)) for (const section of layout.filter(isRecord)) {
       if (!section.source) {
-        editableFields.push([`fallback.sections.${section.id}`, skyEvergreenSectionText(section), ""]);
+        editableFields.push([`fallback.sections.${section.id}`, libs().skyEvergreenSectionText(section), ""]);
         // Validate every authored fragment even while the combination is incomplete.
-        for (const fragment of skyEvergreenSectionFragments(section)) {
+        for (const fragment of libs().skyEvergreenSectionFragments(section)) {
           editableFields.push([`fallback.sections.${section.id}`, fragment, ""]);
         }
       }
@@ -617,24 +596,24 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     if (typeof value !== "string") continue;
     // Envelope mirrors remain on the approved source while a separate draft is edited.
     const variableOwner = packageDraft && !field.startsWith("packageDraft.") ? record : proposedRecord;
-    if (isZodiacSeasonSourceKey(row.content_key) && /\{\{|\}\}/u.test(value)) throw new GeneratedContentRequestError("Season sources contain full prose, without nested variables.");
-    const ingressVariableField = isSkyEvergreenSource(record) && /^packageDraft\.ingress\.sources\.[A-Za-z][A-Za-z0-9]*\.text$/u.test(field);
+    if (libs().isZodiacSeasonSourceKey(row.content_key) && /\{\{|\}\}/u.test(value)) throw new GeneratedContentRequestError("Season sources contain full prose, without nested variables.");
+    const ingressVariableField = libs().isSkyEvergreenSource(record) && /^packageDraft\.ingress\.sources\.[A-Za-z][A-Za-z0-9]*\.text$/u.test(field);
     if (ingressVariableField) {
-      const issues = ingressTextIssues(value);
+      const issues = libs().ingressTextIssues(value);
       if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
     }
     const skyVariableField = record.source_package === skyV4CanonicalStagePackage
-      && (isSkyPlacementVariableField(row.content_key, field.replace(/^packageDraft\./u, ""))
+      && (libs().isSkyPlacementVariableField(row.content_key, field.replace(/^packageDraft\./u, ""))
         // Publication mirrors the selected canonical body into these envelope
         // fields. They must accept the same tokens as their source passage.
-        || (isSkyEvergreenSource(record) || /^sky-placement\/retrograde\/[^/]+$/u.test(row.content_key)) && ["body", "body_you"].includes(field));
+        || (libs().isSkyEvergreenSource(record) || /^sky-placement\/retrograde\/[^/]+$/u.test(row.content_key)) && ["body", "body_you"].includes(field));
     if (skyVariableField) {
       // Canonical article mirrors accept the same tokens as their source.
-      const articleField = isSkyPlacementArticleField(row.content_key, field.replace(/^packageDraft\./u, ""))
-        || isSkyEvergreenSource(record) && ["body", "body_you"].includes(field);
+      const articleField = libs().isSkyPlacementArticleField(row.content_key, field.replace(/^packageDraft\./u, ""))
+        || libs().isSkyEvergreenSource(record) && ["body", "body_you"].includes(field);
       const variableCopy = value.replace(/\{\{\s*([A-Za-z][A-Za-z0-9_]*)\s*\}\}/gu, (token, name) => Array.isArray(variableOwner._studioVariables) && variableOwner._studioVariables.some((item: any) => item.name === name) ? "authored phrase" : token);
-      const checkedValue = supportsZodiacSeasonVariables(proposedRecord) ? variableCopy.replace(/\{\{\s*(?:zodiacSeason|zodiacSeasonPolarAxis)\s*\}\}/gu, "") : variableCopy;
-      const issues = articleField ? skyPlacementArticleVariableIssues(variableCopy, variableOwner) : skyPlacementVariableIssues(checkedValue);
+      const checkedValue = libs().supportsZodiacSeasonVariables(proposedRecord) ? variableCopy.replace(/\{\{\s*(?:zodiacSeason|zodiacSeasonPolarAxis)\s*\}\}/gu, "") : variableCopy;
+      const issues = articleField ? libs().skyPlacementArticleVariableIssues(variableCopy, variableOwner) : libs().skyPlacementVariableIssues(checkedValue);
       if (issues.length) throw new GeneratedContentRequestError(`${field}: ${issues.join(" ")}`);
     }
     if (value.includes("—")) {
@@ -662,7 +641,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     for (const slot of packagePlaceholders(value)) {
       if (skyVariableField || ingressVariableField) continue;
       if (Array.isArray(variableOwner._studioVariables) && variableOwner._studioVariables.some((item: any) => slot.replace(/[{}\s]/gu, "") === item.name)) continue;
-      if (supportsZodiacSeasonVariables(proposedRecord) && zodiacSeasonVariableNames(slot).length) continue;
+      if (libs().supportsZodiacSeasonVariables(proposedRecord) && libs().zodiacSeasonVariableNames(slot).length) continue;
       const isAllowedFriendName = (
         row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
         || row.content_key.startsWith("authored/transit-aspect/")
@@ -732,7 +711,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   const isSkyV4CanonicalStage = stageKind === "sky-v4";
   const isCalendarAspectStage = stageKind === "calendar-aspect";
   const isSkyV4OwnerApprovedReaderCopy = isSkyV4CanonicalStage
-    && skyV4OwnerApprovedReaderCopyKeys.has(row.content_key);
+    && libs().skyV4OwnerApprovedReaderCopyKeys.has(row.content_key);
 
   if (!fallbackArchitectureV3ReviewStatuses.has(reviewStatus)) {
     throw new Error("review_status must be needs_review, approved, approved_reuse, or deprecated.");
@@ -769,7 +748,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
         setPackageValueAt(record, field, value);
       }
     }
-    if (isSkyEvergreenSource(record) && Object.hasOwn(incomingRecord, "ingress")) record.ingress = structuredClone(incomingRecord.ingress);
+    if (libs().isSkyEvergreenSource(record) && Object.hasOwn(incomingRecord, "ingress")) record.ingress = structuredClone(incomingRecord.ingress);
   }
 
   // Package rows are rendered from sections.packageRecord, not from the
@@ -906,7 +885,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   if (isSkyV4CanonicalStage) {
     record.owner_approved = isSkyV4OwnerApprovedReaderCopy && reviewStatus === "approved";
     record.serving_enabled = record.owner_approved
-      && skyV4ServingReleasedReaderCopyKeys.has(row.content_key)
+      && libs().skyV4ServingReleasedReaderCopyKeys.has(row.content_key)
       && !hasPackageDraft;
   }
   if (isCalendarAspectStage) {
@@ -1027,11 +1006,11 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
   eventType?: string | null;
   event_type?: string | null;
 }) {
-  if (isRetiredCompositionKey(row.contentKey ?? row.content_key)) {
+  if (libs().isRetiredCompositionKey(row.contentKey ?? row.content_key)) {
     throw new GeneratedContentRequestError("This composition has been retired. Edit the canonical Personal Transit source instead.", 409);
   }
   const snapshot = row.sourceSnapshot ?? row.source_snapshot;
-  if (isContentStudioReferenceSource(row.contentKey ?? row.content_key ?? "", isRecord(snapshot) ? snapshot : {})) {
+  if (libs().isContentStudioReferenceSource(row.contentKey ?? row.content_key ?? "", isRecord(snapshot) ? snapshot : {})) {
     throw new GeneratedContentRequestError("Source notes can be reviewed but cannot be published as reader copy. Publish a finished card instead.", 409);
   }
   if (isLegacyLiveWritingCandidate(row)) {
@@ -1040,12 +1019,12 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
 
   const skyBlockType = row.blockType ?? row.block_type;
   const eventType = row.eventType ?? row.event_type;
-  const edition = isRecord(row.sections) ? skyArticleEditionRecord(row.sections.skyArticleEdition) : null;
+  const edition = isRecord(row.sections) ? libs().skyArticleEditionRecord(row.sections.skyArticleEdition) : null;
   if (eventType === "sky-article-edition" || edition) {
-    const compiled = assertCompiledSkyArticleEdition(edition);
+    const compiled = libs().assertCompiledSkyArticleEdition(edition);
     const snapshot = (row.sourceSnapshot ?? row.source_snapshot) as Record<string, unknown> | null | undefined;
     const approval = isRecord(snapshot?.ownerApproval) ? snapshot.ownerApproval : null;
-    if (approval?.approved !== true || approval?.action !== "approve-sky-article-edition" || !hasExactSkyArticleOwnerApproval(compiled, snapshot)) {
+    if (approval?.approved !== true || approval?.action !== "approve-sky-article-edition" || !libs().hasExactSkyArticleOwnerApproval(compiled, snapshot)) {
       throw new Error("Compiled Sky article editions require the owner's explicit Approve & publish edition action.");
     }
     if (row.contentKey && row.contentKey !== compiled.contentKey) {
@@ -1061,7 +1040,7 @@ function assertCanPublishGeneratedContent(row: Parameters<typeof isLegacyLiveWri
       || check.bodyHash !== createHash("sha256").update(typeof row.body === "string" ? row.body : "").digest("hex"))) {
       throw new GeneratedContentRequestError("The writing changed after its checks. Save and run writing checks again.", 409);
     }
-    const issues = skyWritingIssues({ content_key: row.contentKey ?? row.content_key ?? "", block_type: skyBlockType,
+    const issues = libs().skyWritingIssues({ content_key: row.contentKey ?? row.content_key ?? "", block_type: skyBlockType,
       body: "saved", source_snapshot: sourceSnapshot, judge_score: judgeScore, judge_gate: judgeGate });
     if (issues.length) throw new GeneratedContentRequestError(issues.join(" "), 409);
   }
@@ -1172,8 +1151,8 @@ const generatedContentOwnerActions = new Set([
 ]);
 
 function validateWriteBody(body: Record<string, unknown>) {
-  if (String(body.contentKey ?? "").startsWith(STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
-  try { assertCleanReaderCopy(body); } catch (error) {
+  if (String(body.contentKey ?? "").startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
+  try { libs().assertCleanReaderCopy(body); } catch (error) {
     throw new GeneratedContentRequestError((error as Error).message);
   }
   for (const field of ["id", "contentKey", "surface", "mode", "eventType", "status", "headline", "summary", "body", "reviewStatus", "sourceLifecycleAction", "editorialNotes", "promptVersion", "provider", "model", "reviewerNotes", "expectedUpdatedAt", "ownerAction"]) {
@@ -1201,28 +1180,28 @@ function validateWriteBody(body: Record<string, unknown>) {
 }
 
 function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T): T {
-  try { return separateArticleHoroscopeRow(row); }
+  try { return libs().separateArticleHoroscopeRow(row); }
   catch (error) { throw new GeneratedContentRequestError((error as Error).message, 422); }
 }
 
 function assertReaderEligiblePublication(row: Record<string, any>) {
   if (row.status !== "LIVE") return;
   if (String(row.content_key ?? "").startsWith("education/astro-101/") || row.surface === "education") {
-    const filled = fillAstro101EphemerisSlots(row);
+    const filled = libs().fillAstro101EphemerisSlots(row);
     row.headline = filled.headline;
     row.summary = filled.summary;
     row.body = filled.body;
     row.sections = filled.sections;
     row.facts = filled.facts;
   }
-  try { assertCleanReaderCopy(row); } catch (error) {
+  try { libs().assertCleanReaderCopy(row); } catch (error) {
     throw new GeneratedContentRequestError((error as Error).message, 409);
   }
   if ((row.lane ?? "serving") !== "serving") throw new GeneratedContentRequestError("Published content must use the serving lane.", 409);
   if (row.review_state) throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
-  const admissionIssue = packagePublicationAdmissionIssue(row);
+  const admissionIssue = libs().packagePublicationAdmissionIssue(row);
   if (admissionIssue) throw new GeneratedContentRequestError(admissionIssue, 409);
-  const educationIssue = astro101PublicationIssue(row);
+  const educationIssue = libs().astro101PublicationIssue(row);
   if (educationIssue) throw new GeneratedContentRequestError(educationIssue, 409);
 }
 
@@ -1796,7 +1775,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     if (body.reviewState) {
       throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
     }
-    const requestedEdition = isRecord(body.sections) ? skyArticleEditionRecord(body.sections.skyArticleEdition) : null;
+    const requestedEdition = isRecord(body.sections) ? libs().skyArticleEditionRecord(body.sections.skyArticleEdition) : null;
     if (body.eventType === "sky-article-edition" || requestedEdition) {
       throw new Error("Create compiled Sky article editions as drafts, then use Approve & publish edition.");
     }
@@ -1890,13 +1869,13 @@ function nextGeneratedContentVersion(previous?: string | null) {
 async function assertZodiacSeasonPublication(row: Record<string, any>) {
   if (row.status !== "LIVE") return [];
   const source = v3PackageRecord(row);
-  if (isZodiacSeasonSourceKey(source.contentKey)) {
+  if (libs().isZodiacSeasonSourceKey(source.contentKey)) {
     if (!stringFrom(source.body).trim() || /\{\{|\}\}/u.test(stringFrom(source.body))) throw new GeneratedContentRequestError("Write complete season prose before publishing this source. Nested variables are not supported.");
     return [];
   }
-  const dependencies = zodiacSeasonRecordDependencies(source);
+  const dependencies = libs().zodiacSeasonRecordDependencies(source);
   if (!dependencies.length) return [];
-  if (!supportsZodiacSeasonVariables(source)) throw new GeneratedContentRequestError("This template has no supported sign context for zodiac season variables.");
+  if (!libs().supportsZodiacSeasonVariables(source)) throw new GeneratedContentRequestError("This template has no supported sign context for zodiac season variables.");
   const keys = [...new Set(dependencies.map((item: {contentKey: string}) => item.contentKey))];
   const params = new URLSearchParams({ select: "id,content_key,sections,status,lane,review_state,updated_at", content_key: `in.(${keys.join(",")})`, status: "eq.LIVE", lane: "eq.serving", order: "updated_at.desc", limit: "80" });
   const publicationParams = new URLSearchParams({ select: "content_key,row_id,row_updated_at,state", content_key: `in.(${keys.join(",")})` });
@@ -1912,7 +1891,7 @@ async function assertZodiacSeasonPublication(row: Record<string, any>) {
     if (isPublished && !candidate.review_state && !sources.some(item => item.contentKey === candidate.content_key)) sources.push(v3PackageRecord(candidate));
   }
   for (const dependency of dependencies) {
-    try { resolveZodiacSeasonVariables(`{{${dependency.name}}}`, { sign: dependency.sign }, sources); }
+    try { libs().resolveZodiacSeasonVariables(`{{${dependency.name}}}`, { sign: dependency.sign }, sources); }
     catch (error) { throw new GeneratedContentRequestError(error instanceof Error ? error.message : "Publish the required season source first."); }
   }
   return sources;
@@ -1927,7 +1906,7 @@ async function patchGeneratedContentRow(
   if (patch.status === "LIVE") {
     const existing = await fetchExistingRowById(id);
     if (!existing) throw new GeneratedContentRequestError("The source no longer exists. Reload before publishing.", 404);
-    const merged = fillAstro101EphemerisSlots({ ...existing, ...patch });
+    const merged = libs().fillAstro101EphemerisSlots({ ...existing, ...patch });
     if (String(merged.content_key ?? "").startsWith("education/astro-101/") || merged.surface === "education") {
       patch = {
         ...patch,
@@ -2028,8 +2007,8 @@ function skyArticleRevisionContentKey(contentKey: string) {
 }
 
 function assertSkyArticleRevisionIdentity(
-  base: ReturnType<typeof assertCompiledSkyArticleEdition>,
-  revised: ReturnType<typeof assertCompiledSkyArticleEdition>
+  base: ReturnType<ContentLibraries["assertCompiledSkyArticleEdition"]>,
+  revised: ReturnType<ContentLibraries["assertCompiledSkyArticleEdition"]>
 ) {
   const immutableFields = [
     "contentKey",
@@ -2051,21 +2030,21 @@ function assertSkyArticleRevisionIdentity(
 }
 
 async function verifiedSkyArticleRevision(baseValue: unknown, revisedValue: unknown) {
-  const base = assertCompiledSkyArticleEdition(baseValue);
-  const submitted = assertCompiledSkyArticleEdition(revisedValue);
+  const base = libs().assertCompiledSkyArticleEdition(baseValue);
+  const submitted = libs().assertCompiledSkyArticleEdition(revisedValue);
   assertSkyArticleRevisionIdentity(base, submitted);
-  const canonical = await reviseSkyArticleEdition(base, skyArticleEditableFields(submitted));
+  const canonical = await libs().reviseSkyArticleEdition(base, libs().skyArticleEditableFields(submitted));
   if (canonical.compiledHash !== submitted.compiledHash) {
     throw new Error("Sky article revision hash does not match its exact submitted fields.");
   }
-  const changes = skyArticleEditionFieldChanges(base, skyArticleEditableFields(canonical));
+  const changes = libs().skyArticleEditionFieldChanges(base, libs().skyArticleEditableFields(canonical));
   if (changes.length === 0) throw new Error("Sky article revision contains no changed fields.");
   return { base, revised: canonical, changes };
 }
 
 function skyArticleApprovalSnapshot(
   sourceSnapshot: Record<string, unknown> | null | undefined,
-  edition: ReturnType<typeof assertCompiledSkyArticleEdition>,
+  edition: ReturnType<ContentLibraries["assertCompiledSkyArticleEdition"]>,
   now: string
 ) {
   const snapshot = isRecord(sourceSnapshot) ? { ...sourceSnapshot } : {};
@@ -2224,11 +2203,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (body.expectedUpdatedAt && body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
   }
-  if (existing.content_key.startsWith(STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
+  if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   await prepareStudioVariables(body);
   existing = await recoverPublishedSkyRevision(existing, body);
   const isPackageRow = isFallbackArchitectureV3Row(existing);
-  if (body.status === "LIVE" && isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {})) {
+  if (body.status === "LIVE" && libs().isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {})) {
     throw new GeneratedContentRequestError("Source notes can be reviewed but cannot be published as reader copy. Publish a finished card instead.", 409);
   }
   const editableFields = ["status", "contentKey", "surface", "mode", "eventType", "targetDate", "headline", "summary", "body", "sections", "facts", "knowledgeIds", "sourceSnapshot", "lane", "reviewState", "promptVersion", "blockType", "reviewerNotes", "evergreen"];
@@ -2238,7 +2217,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
   const effectiveContentKey = body.contentKey ?? existing.content_key;
   const effectiveSurface = (body.surface ?? existing.surface) as GeneratedContentSurface | undefined;
-  if (isRetiredCompositionKey(effectiveContentKey) && (body.status === "LIVE" || body.ownerAction?.startsWith("approve-") || body.ownerAction?.startsWith("publish-"))) {
+  if (libs().isRetiredCompositionKey(effectiveContentKey) && (body.status === "LIVE" || body.ownerAction?.startsWith("approve-") || body.ownerAction?.startsWith("publish-"))) {
     throw new GeneratedContentRequestError("This composition has been retired. Edit the canonical Personal Transit source instead.", 409);
   }
 
@@ -2265,7 +2244,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error("The fallback package row targeted by this revision no longer exists.");
     }
 
-    if (isRetiredCompositionKey(target.content_key)) {
+    if (libs().isRetiredCompositionKey(target.content_key)) {
       throw new GeneratedContentRequestError("The revision targets a retired composition.", 409);
     }
 
@@ -2293,11 +2272,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
     const calendarRevision = stringFrom(targetRecord.source_package) === calendarAspectContentStudioStagePackage
       && targetRecord.CalendarSourceKind === "composed-card"
       && targetRecord.contentKey === target.content_key
-      && calendarAspectDraftCatalog.drafts.some(item => item.contentKey === target.content_key);
+      && libs().calendarAspectDraftCatalog.drafts.some(item => item.contentKey === target.content_key);
     if (governedStageKind(targetRecord, targetSnapshot, target.facts ?? {}) === "calendar-aspect" && !calendarRevision) {
       throw new GeneratedContentRequestError("This Calendar source requires its separate owner approval and serving release.", 409);
     }
-    if (canonicalRevision && !skyV4ServingReleasedReaderCopyKeys.has(target.content_key)) {
+    if (canonicalRevision && !libs().skyV4ServingReleasedReaderCopyKeys.has(target.content_key)) {
       throw new Error("This SKY V4 source has not been released for readers.");
     }
     const contentRole = stringFrom(targetRecord.content_role)
@@ -2326,11 +2305,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
       }
     }
     // A composition is one revision: replacing it also removes old references and modules.
-    if (isSkyEvergreenSource(promotedRecord) && Object.hasOwn(packageDraft, "ingress")) {
+    if (libs().isSkyEvergreenSource(promotedRecord) && Object.hasOwn(packageDraft, "ingress")) {
       promotedRecord.ingress = structuredClone(packageDraft.ingress);
     }
     const sharedSources = await assertZodiacSeasonPublication({ status: "LIVE", sections: { packageRecord: promotedRecord } });
-    if (isSkyEvergreenSource(promotedRecord)) {
+    if (libs().isSkyEvergreenSource(promotedRecord)) {
       const composition = isRecord(promotedRecord.ingress) ? promotedRecord.ingress : {};
       const references = Object.values(isRecord(composition.sources) ? composition.sources : {}).filter(isRecord)
         .map(source => isRecord(source.reference) ? stringFrom(source.reference.contentKey) : "").filter(Boolean);
@@ -2343,8 +2322,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
         referencedRecords.push(...response.payload.map((row: ExistingGeneratedContentRow) => v3PackageRecord(row)));
       }
       const issues = [
-        ...skyIngressPublicationIssues(promotedRecord, referencedRecords),
-        ...skyPlacementArticlePublicationIssues(promotedRecord, referencedRecords)
+        ...libs().skyIngressPublicationIssues(promotedRecord, referencedRecords),
+        ...libs().skyPlacementArticlePublicationIssues(promotedRecord, referencedRecords)
       ];
       if (issues.length) throw new GeneratedContentRequestError(issues.join("\n"));
     }
@@ -2352,8 +2331,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
       const bodyPaths = ["placementArticle", "NewMoonArticle", "FullMoonArticle", "EventArticle", "FallbackArticle", "ModifierArticle", "NodeAxisArticle", "ExactIngressCopy", "Article", "LilithArticle", "Body", "OverlayBody", "Copy", "Template"];
       const field = bodyPaths.find(path => typeof promotedRecord[path] === "string");
       if (field) promotedRecord.body_you = promotedRecord[field];
-      if (isSkyEvergreenSource(promotedRecord) && !stringFrom(promotedRecord.placementArticle).trim()) {
-        promotedRecord.body_you = skyEvergreenFields(promotedRecord).map((section: { value: string }) => section.value).filter((value: string) => value.trim()).join("\n\n");
+      if (libs().isSkyEvergreenSource(promotedRecord) && !stringFrom(promotedRecord.placementArticle).trim()) {
+        promotedRecord.body_you = libs().skyEvergreenFields(promotedRecord).map((section: { value: string }) => section.value).filter((value: string) => value.trim()).join("\n\n");
       }
       promotedRecord.summary = promotedRecord.tldrTakeaway ?? promotedRecord.TLDR_Takeaway ?? promotedRecord.CanonicalShort ?? promotedRecord.summary;
     }
@@ -2545,7 +2524,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     if (!target || target.event_type !== "sky-article-edition") {
       throw new Error("The live Sky article targeted by this revision no longer exists.");
     }
-    const current = assertCompiledSkyArticleEdition(target.sections?.skyArticleEdition);
+    const current = libs().assertCompiledSkyArticleEdition(target.sections?.skyArticleEdition);
     if (current.compiledHash !== base.compiledHash) {
       throw new Error("The live Sky article changed after this draft began. Reopen it before publishing.");
     }
@@ -2642,7 +2621,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     if (unexpectedFields.length > 0) {
       throw new Error(`Approve & publish edition cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
     }
-    const edition = assertCompiledSkyArticleEdition(existing.sections?.skyArticleEdition);
+    const edition = libs().assertCompiledSkyArticleEdition(existing.sections?.skyArticleEdition);
     if (
       existing.content_key !== edition.contentKey
       || existing.headline !== edition.headline
@@ -2671,7 +2650,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
 
     if (body.status === "LIVE") {
-      const requestedEdition = isRecord(body.sections) ? skyArticleEditionRecord(body.sections.skyArticleEdition) : null;
+      const requestedEdition = isRecord(body.sections) ? libs().skyArticleEditionRecord(body.sections.skyArticleEdition) : null;
       if (existing?.event_type === "sky-article-edition" || body.eventType === "sky-article-edition" || requestedEdition) {
         throw new GeneratedContentRequestError("Use Approve & publish edition so the exact compiled Sky article receives an owner approval record.", 409);
       }
@@ -2821,7 +2800,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.source_snapshot = { ...(existing.source_snapshot ?? {}), ...(patch.source_snapshot as Record<string, unknown> ?? {}), review_status: "needs_review" };
   }
 
-  const editsReferenceCopy = existing && isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {}) && (
+  const editsReferenceCopy = existing && libs().isContentStudioReferenceSource(existing.content_key, existing.source_snapshot ?? {}) && (
     (body.body !== undefined && body.body !== existing.body) || (body.headline !== undefined && body.headline !== existing.headline)
     || (body.summary !== undefined && body.summary !== existing.summary));
   if (editsReferenceCopy) {
@@ -2878,10 +2857,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     && existing
     && existing.status === "LIVE"
     && stringFrom(existingPackageRecord.source_package) === skyV4CanonicalStagePackage
-    && skyV4ServingReleasedReaderCopyKeys.has(existing.content_key)
+    && libs().skyV4ServingReleasedReaderCopyKeys.has(existing.content_key)
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft)
   );
-  const forksSharedSeasonDraft = Boolean(isPackageRow && existing?.status === "LIVE" && isZodiacSeasonSourceKey(existing.content_key)
+  const forksSharedSeasonDraft = Boolean(isPackageRow && existing?.status === "LIVE" && libs().isZodiacSeasonSourceKey(existing.content_key)
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
   if ((forksGovernedAspectDraft || forksSkyV4ServingDraft || forksSharedSeasonDraft) && existing) {
     const skyV4ReaderDraft = forksSkyV4ServingDraft && !forksGovernedAspectDraft;
@@ -2958,7 +2937,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (!existing) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
   }
-  if (existing.content_key.startsWith(STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
+  if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.status === "LIVE") {
     throw new GeneratedContentRequestError("Published rows cannot be hard-deleted. Demote or archive the row first.", 409);
   }
@@ -3004,6 +2983,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (req.method === "GET") {
       const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
+      if (requestUrl.searchParams.get("includePackageSource") === "true") {
+        await loadGeneratedContentLibraries();
+      }
       if (requestUrl.searchParams.get("sourceDrafts") === "sky-aspects") {
         sendJson(res, 200, { ok: true, rows: listHeldSkyAspectSourceDrafts() });
         return;
@@ -3034,7 +3016,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if (requestUrl.searchParams.get("includePackageSource") === "true") {
         const key = requestUrl.searchParams.get("contentKey");
         if (!key || requestUrl.searchParams.getAll("contentKey").length !== 1 || requestUrl.searchParams.has("contentKeys")) throw new GeneratedContentRequestError("A single contentKey is required for package source lookup.", 400);
-        if (!isRetiredCompositionKey(key)) {
+        if (!libs().isRetiredCompositionKey(key)) {
           const { servingPackageRecords } = await import("../_lib/content-live-status.js");
           packageSource = servingPackageRecords.get(key) ?? null;
         }
@@ -3044,6 +3026,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
 
     if (req.method === "POST") {
+      await loadGeneratedContentLibraries();
       const body = await readJsonBody(req);
       if (Array.isArray(body.rows)) {
         const result = await bulkUpsertGeneratedContent(body);
@@ -3058,6 +3041,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
 
     if (req.method === "PATCH") {
+      await loadGeneratedContentLibraries();
       const rows = await updateGeneratedContent(req);
       if (!Array.isArray(rows) || rows.length === 0) throw new Error("Update completed without returning the saved row.");
       sendJson(res, 200, { ok: true, rows });
@@ -3065,6 +3049,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
 
     if (req.method === "DELETE") {
+      await loadGeneratedContentLibraries();
       const rows = await deleteGeneratedContent(req);
       if (!Array.isArray(rows) || rows.length === 0) throw new Error("Delete completed without returning the removed row.");
       sendJson(res, 200, { ok: true, rows });

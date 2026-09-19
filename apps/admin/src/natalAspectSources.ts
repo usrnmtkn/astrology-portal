@@ -76,6 +76,94 @@ export function natalAspectContentKey(selection: NatalAspectSelection) {
   return `${natalAspectContentKeyPrefix}${selection.first}/${selection.aspect}/${selection.second}`;
 }
 
+const natalAspectComposedGroups: Record<string, string> = {
+  conjunction: "conjunction",
+  square: "hard",
+  opposition: "hard",
+  trine: "soft",
+  sextile: "soft"
+};
+
+function natalAspectKeyPart(value: string) {
+  return value.trim().toLowerCase().replace(/_/g, "-");
+}
+
+function generatedNatalAspectContentKey(first: string, aspect: string, second: string) {
+  const natalAspectBodyOrder = [
+    "sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto",
+    "chiron", "north_node", "south_node", "ascendant", "descendant", "midheaven", "imum_coeli"
+  ];
+  const part = (value: string) => {
+    const slug = natalAspectKeyPart(value);
+    if (slug === "true-node" || slug === "north-node") return "north_node";
+    if (slug === "south-node") return "south_node";
+    return slug.replace(/-/g, "_");
+  };
+  const firstPart = part(first);
+  const secondPart = part(second);
+  const firstIndex = natalAspectBodyOrder.indexOf(firstPart);
+  const secondIndex = natalAspectBodyOrder.indexOf(secondPart);
+  const [left, right] = firstIndex >= 0 && secondIndex >= 0
+    ? (firstIndex <= secondIndex ? [firstPart, secondPart] : [secondPart, firstPart])
+    : (firstPart.localeCompare(secondPart) <= 0 ? [firstPart, secondPart] : [secondPart, firstPart]);
+  return `natal.aspect.${left}.${part(aspect)}.${right}`;
+}
+
+export function natalAspectReaderCandidateKeys(selection: NatalAspectSelection) {
+  const first = natalAspectKeyPart(selection.first);
+  const second = natalAspectKeyPart(selection.second);
+  const aspect = natalAspectKeyPart(selection.aspect);
+  return [...new Set([
+    natalAspectContentKey({ first, aspect, second }),
+    natalAspectContentKey({ first: second, aspect, second: first }),
+    generatedNatalAspectContentKey(first, aspect, second),
+    `natal-${first}-${aspect}-${second}`,
+    `natal-${second}-${aspect}-${first}`
+  ])];
+}
+
+export type NatalAspectComposedSource = {
+  id: string;
+  label: string;
+  scope: string;
+  candidateKeys: string[];
+};
+
+export function natalAspectComposedSources(selection: NatalAspectSelection): NatalAspectComposedSource[] {
+  const first = natalAspectKeyPart(selection.first);
+  const second = natalAspectKeyPart(selection.second);
+  const aspect = natalAspectKeyPart(selection.aspect);
+  const group = natalAspectComposedGroups[aspect];
+  const title = natalAspectDisplayTitle({ first, aspect, second });
+  const sources: NatalAspectComposedSource[] = [];
+  if (group) {
+    const pairKeys = [...new Set([
+      `fallback-hook/aspect-pair/${first}/${second}/${group}`,
+      `fallback-hook/aspect-pair/${second}/${first}/${group}`
+    ])];
+    sources.push({
+      id: "pair-writing",
+      label: `${title} pair writing`,
+      scope: "The You page currently uses this pair writing when no exact natal-aspect-lived passage is saved.",
+      candidateKeys: pairKeys
+    });
+  }
+  sources.push({
+    id: "natal-aspect-template",
+    label: "Natal aspect template",
+    scope: "Shared assembled shape for natal aspects that do not have an exact pair-specific passage.",
+    candidateKeys: ["fallback-template/natal.aspect"]
+  });
+  return sources;
+}
+
+export function natalAspectResolverDependencyKeys(selection: NatalAspectSelection) {
+  return [...new Set([
+    ...natalAspectReaderCandidateKeys(selection),
+    ...natalAspectComposedSources(selection).flatMap((source) => source.candidateKeys)
+  ])];
+}
+
 export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAspectSourceDraft {
   const contentKey = natalAspectContentKey(selection);
   return {

@@ -4,6 +4,7 @@ import { AdminSelect } from "./AdminNativeControls";
 import { surfaceSection } from "./studio-ds/recipes";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import {
+  natalAspectComposedSources,
   natalAspectDisplayTitle,
   natalAspectMatchesSelection,
   natalAspectSelectionOptions,
@@ -67,6 +68,7 @@ export default function NatalAspectSourceFinder({
     : hasSelection
       ? "Choose the remaining values"
       : "Choose a natal aspect";
+  const composedSources = fullSelection ? natalAspectComposedSources({ first, aspect, second }) : [];
 
   return (
     <section className="admin-natal-placement-finder" aria-label="Find natal aspect source writing">
@@ -97,22 +99,54 @@ export default function NatalAspectSourceFinder({
         </div>
       </section>
 
-      {isLoading && exactRows.length === 0 && (
+      {isLoading && (exactRows.length === 0 || (fullSelection && matches.length === 0)) && (
         <PageLoading message="Loading exact natal aspect passages…" />
       )}
 
       {!isLoading && fullSelection && matches.length === 0 && (
-        <div className="admin-empty-state">
-          <strong>No exact passage exists for {selectedTitle}.</strong>
-          <p>The reader requires pair-specific writing. Create the exact You and Friend passages for this selection.</p>
-          <StudioButton
-            type="button"
-            className="primary"
-            onClick={() => onCreateSource(natalAspectSourceDraft({ first, aspect, second }))}
-          >
-            Write {selectedTitle}
-          </StudioButton>
-        </div>
+        <>
+          <div className="admin-empty-state">
+            <strong>No exact pair-specific passage is saved for {selectedTitle}.</strong>
+            <p>The You page currently uses composed natal aspect writing for this pair. Create exact You and Friend passages only if this selection needs its own writing.</p>
+            <StudioButton
+              type="button"
+              className="primary"
+              onClick={() => onCreateSource(natalAspectSourceDraft({ first, aspect, second }))}
+            >
+              Write {selectedTitle}
+            </StudioButton>
+          </div>
+          <section className={`${surfaceSection} admin-natal-source-group`} aria-label="Live composed natal aspect sources">
+            <header>
+              <h3>Live composed sources</h3>
+            </header>
+            <div className="admin-natal-source-grid">
+              {composedSources.map((source) => {
+                const savedRow = source.candidateKeys
+                  .map((contentKey) => rows.find((row) => row.content_key === contentKey))
+                  .find((row): row is PreviewRow => Boolean(row));
+                const contentKey = savedRow?.content_key ?? source.candidateKeys[0];
+                const preview = savedRow ? previewForRow(savedRow) : "";
+                return (
+                  <article className="admin-natal-source-card" key={source.id}>
+                    <div className="admin-natal-source-card-copy">
+                      <div className="admin-natal-source-card-heading">
+                        <h4>{source.label}</h4>
+                        {savedRow && <ContentLiveStatusBadge row={savedRow} />}
+                      </div>
+                      <p>{source.scope}</p>
+                      <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>
+                      {preview && <blockquote>{preview}</blockquote>}
+                    </div>
+                    <StudioButton type="button" onClick={() => onOpenSource(contentKey, source.label)} disabled={isLoading}>
+                      {savedRow ? "Edit source" : "Load and edit"}
+                    </StudioButton>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        </>
       )}
 
       {!isLoading && hasSelection && !fullSelection && matches.length === 0 && (

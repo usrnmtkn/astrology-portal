@@ -16,4 +16,10 @@ assert.match(dashboard, /\/api\/admin\/generated-content-inventory\?/u);
 assert.match(dashboard, /activePage === "sourceDrafts"/u);
 assert.match(vercel, /"api\/admin\/generated-content-inventory\.ts"/u);
 
+const generatedContent = fs.readFileSync("api/admin/generated-content.ts", "utf8");
+assert.doesNotMatch(generatedContent, /from ["']\.\.\/\.\.\/apps\/web/u, "generated-content must not statically import apps/web libraries at boot.");
+assert.match(generatedContent, /await import\("\.\/generated-content-libraries\.js"\)/u, "Write and package-source paths must load content libraries lazily.");
+assert.match(generatedContent, /await loadGeneratedContentLibraries\(\)/u, "POST, PATCH, and DELETE must load content libraries before publication checks.");
+assert.match(fs.readFileSync("api/admin/generated-content-libraries.ts", "utf8"), /packagePublicationAdmissionIssue/u);
+
 console.log("Content Studio fast inventory API contract passed.");
