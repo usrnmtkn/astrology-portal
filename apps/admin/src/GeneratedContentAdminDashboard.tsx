@@ -3010,6 +3010,9 @@ export function GeneratedContentAdminDashboard() {
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
   const friendsTransitAudience = parseAdminHash().params.get("audience") === "friends";
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
+  const rowsRef = useRef<AdminGeneratedContentRow[]>([]);
+  rowsRef.current = rows;
+  const requestedCompositionSourceIdsRef = useRef(new Set<string>());
   const [allRowsLoaded, setAllRowsLoaded] = useState(false);
   const [reviewRows, setReviewRows] = useState<AdminReviewRecord[]>([]);
   const [, setPublicationVersion] = useState(0);
@@ -3185,7 +3188,9 @@ export function GeneratedContentAdminDashboard() {
     transitHouse: "" as TransitNatalHouse | "",
     natalHouse: "" as TransitNatalHouse | ""
   });
-  const transitExactDismissedKeyRef = useRef<string | null>(null);
+  // One slot per key: closing a shared source used to overwrite the dismissal for the transit
+  // write-up, and the editor the owner had already closed opened itself again.
+  const transitExactDismissedKeysRef = useRef(new Set<string>());
   const pendingExactAiCopyRef = useRef<{ key: string; you?: string; friend?: string } | null>(null);
   const editorRef = useRef<HTMLElement | null>(null);
   const variableInsertionRef = useRef<{ element: HTMLTextAreaElement; start: number; end: number } | null>(null);
@@ -3876,7 +3881,7 @@ export function GeneratedContentAdminDashboard() {
     if (!key) return;
     if (draft?.contentKey === key) return;
     if (houseTransitEditor || skyArticleEditor) return;
-    if (transitExactDismissedKeyRef.current === key) return;
+    if (transitExactDismissedKeysRef.current.has(key)) return;
     if (!isTransitNatalSituationKey(key) && !key.startsWith("authored/transit-return/")) return;
     void openExactTransitNatalSourceRef.current(selection);
   }, [
@@ -4264,7 +4269,7 @@ export function GeneratedContentAdminDashboard() {
     if ((hasUnsavedChanges || hasPendingArticleChanges()) && !window.confirm("Discard the unsaved changes in this editor?")) {
       return false;
     }
-    if (draft?.contentKey) transitExactDismissedKeyRef.current = draft.contentKey;
+    if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
     sourceOpenRequestRef.current += 1;
     setTemplateVariableReferenceOpen(false);
     setTemplateVariableQuery("");
@@ -5369,6 +5374,21 @@ export function GeneratedContentAdminDashboard() {
       setIsLoading(false);
     }
   }
+
+  // A composition preview reads its passages from the loaded rows, and the list arrives without
+  // documents, so a source it needs would otherwise render as that row's headline. Each row is
+  // requested once; hydration replaces it in place and the preview rebuilds.
+  const loadCompositionSourceDocuments = useCallback((rowIds: string[]) => {
+    const pending = rowIds.filter((id) => !requestedCompositionSourceIdsRef.current.has(id));
+    if (!pending.length) return;
+    for (const id of pending) requestedCompositionSourceIdsRef.current.add(id);
+    void Promise.all(pending.map((id) => {
+      const row = rowsRef.current.find((candidate) => candidate.id === id);
+      return row ? hydrateGeneratedContentRow(row).catch(() => undefined) : undefined;
+    }));
+    // hydrateGeneratedContentRow is a stable declaration inside this component.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [secret]);
 
   async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false, followPublishedRevision = false) {
     if (!row.inventory_only && !refresh) return row;
@@ -7982,7 +8002,7 @@ export function GeneratedContentAdminDashboard() {
     if (draft && draft.contentKey === key && (selectedRowId || draft.id || draft.body || draft.headline)) {
       return;
     }
-    transitExactDismissedKeyRef.current = null;
+    transitExactDismissedKeysRef.current.delete(key);
     const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
     try {
@@ -11708,6 +11728,7 @@ export function GeneratedContentAdminDashboard() {
               ? rows.filter((row) => natalPlacementResolverDependencyKeys(natalPlacementPlanet as NatalPlacementPlanet, natalPlacementSign as NatalPlacementSign, natalPlacementHouse, natalPlacementMotion).includes(row.content_key))
               : rows).filter(row => !isZodiacSeasonSourceKey(row.content_key)), ...seasonSourceRows]}
             onInsert={insertDraftToken}
+            onLoadSourceDocuments={loadCompositionSourceDocuments}
             templateContentKey={currentDraft.contentKey}
             factExamples={transitFactExamples}
             templatePreviewRow={templatePreviewRow}

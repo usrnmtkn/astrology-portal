@@ -33,6 +33,8 @@ type Props = {
   onClose: () => void;
   onInsert?: (token: string) => void;
   onKeyDown?: (event: ReactKeyboardEvent<HTMLElement>) => void;
+  /** Loads the documents for sources the example write-up needs but the list did not carry. */
+  onLoadSourceDocuments?: (rowIds: string[]) => void;
 };
 
 type VariableKind = "fact" | "phrase" | "hook" | "copy" | "unmapped";
@@ -78,7 +80,7 @@ const kindLabels: Record<VariableKind, string> = {
 export default function TemplateVariablesRail({
   references, filteredReferences, query, onQueryChange, rows, templateContentKey, templatePreviewRow,
   reviewTemplateRow, previewOptions, factExamples = {}, selectedVariableName, selectedSourceId,
-  onSelectVariable, onSelectSource, onEditSource, onClose, onKeyDown, onInsert
+  onSelectVariable, onSelectSource, onEditSource, onClose, onKeyDown, onInsert, onLoadSourceDocuments
 }: Props) {
   const selected = selectedVariableName
     ? references.find((reference) => reference.name === selectedVariableName) ?? null
@@ -156,6 +158,7 @@ export default function TemplateVariablesRail({
                     onSelectVariable(name);
                     onSelectSource(sourceId);
                   }}
+                  onLoadSourceDocuments={onLoadSourceDocuments}
                 />
               </Suspense>
             )}

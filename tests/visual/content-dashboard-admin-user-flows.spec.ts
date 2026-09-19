@@ -552,6 +552,40 @@ async function seedAdminApi(
     });
   });
 
+  // Both the inventory list and the full-document endpoint select and page the same seeded rows.
+  function pageSeededRows(url: URL) {
+    let servedRows = url.searchParams.get("scope") === "compatibility"
+      ? apiGeneratedContentRows.filter((row) => {
+          const key = String(row.content_key ?? "");
+          return key.startsWith("compatibility.")
+            || key.startsWith("compatibility/")
+            || key.startsWith("authored/compat-")
+            || key.startsWith("fallback-hook/friends")
+            || key.startsWith("fallback-hook/relationship")
+            || key.startsWith("fallback-hook/synastry")
+            || key.startsWith("fallback-hook/pair-daily/")
+            || key.startsWith("vocab/relationship/")
+            || key.startsWith("slot-template/compatibility/")
+            || row.event_type === "friends.compatibility.planet-card"
+            || row.block_type === "compatibility_planet_card";
+        })
+      : apiGeneratedContentRows;
+    const requestedId = url.searchParams.get("id");
+    const requestedKeys = url.searchParams.getAll("contentKeys").flatMap((value) => value.split(","))
+      .concat(url.searchParams.get("contentKey") ? [url.searchParams.get("contentKey")!] : []);
+    if (requestedId) servedRows = servedRows.filter((row) => row.id === requestedId);
+    if (requestedKeys.length) servedRows = servedRows.filter((row) => requestedKeys.includes(String(row.content_key)));
+    const limit = Math.max(1, Number(url.searchParams.get("limit") ?? servedRows.length));
+    const cursor = url.searchParams.get("cursor");
+    const cursorIndex = cursor ? servedRows.findIndex((row) => row.id === cursor) : -1;
+    const offset = cursor ? Math.max(0, cursorIndex + 1) : Math.max(0, Number(url.searchParams.get("offset") ?? 0));
+    const pageRows = servedRows.slice(offset, offset + limit);
+    return {
+      pageRows,
+      nextCursor: offset + pageRows.length < servedRows.length ? String(pageRows.at(-1)?.id ?? "") : null
+    };
+  }
+
   await page.route("**/api/admin/**", async (route) => {
     const url = new URL(route.request().url());
     const pathname = url.pathname;
@@ -751,9 +785,10 @@ async function seedAdminApi(
       return;
     }
 
-    if (pathname.endsWith("/generated-content-inventory") || pathname.endsWith("/generated-content")) {
-      const method = route.request().method();
-      if (pathname.endsWith("/generated-content-inventory") && method !== "GET") {
+    // The Studio lists rows without their documents and asks for copy when it needs it, so the
+    // fixture has to answer the inventory endpoint the same way production does.
+    if (pathname.endsWith("/generated-content-inventory")) {
+      if (route.request().method() !== "GET") {
         await route.fulfill({
           status: 405,
           contentType: "application/json",
@@ -761,6 +796,24 @@ async function seedAdminApi(
         });
         return;
       }
+      options.onGeneratedContentRead?.(url);
+      // A request for one row or a named set returns documents; the list view strips them.
+      const detail = Boolean(url.searchParams.get("id") || url.searchParams.get("contentKey") || url.searchParams.getAll("contentKeys").length);
+      const { pageRows, nextCursor } = pageSeededRows(url);
+      await route.fulfill({
+        json: {
+          ok: true,
+          rows: pageRows.map((row) => (detail
+            ? { ...row, inventory_only: false }
+            : { ...row, body: null, summary: null, sections: null, facts: null, source_snapshot: null, inventory_only: true })),
+          nextCursor
+        }
+      });
+      return;
+    }
+
+    if (pathname.endsWith("/generated-content")) {
+      const method = route.request().method();
       if (method === "GET" && url.searchParams.get("variables") === "true") {
         await route.fulfill({ json: { ok: true, variables: [] } });
         return;
@@ -885,34 +938,7 @@ async function seedAdminApi(
         });
         return;
       }
-      let servedRows = url.searchParams.get("scope") === "compatibility"
-        ? apiGeneratedContentRows.filter((row) => {
-            const key = String(row.content_key ?? "");
-            return key.startsWith("compatibility.")
-              || key.startsWith("compatibility/")
-              || key.startsWith("authored/compat-")
-              || key.startsWith("fallback-hook/friends")
-              || key.startsWith("fallback-hook/relationship")
-              || key.startsWith("fallback-hook/synastry")
-              || key.startsWith("fallback-hook/pair-daily/")
-              || key.startsWith("vocab/relationship/")
-              || key.startsWith("slot-template/compatibility/")
-              || row.event_type === "friends.compatibility.planet-card"
-              || row.block_type === "compatibility_planet_card";
-          })
-        : apiGeneratedContentRows;
-      const requestedId = url.searchParams.get("id");
-      const requestedKeys = url.searchParams.get("contentKeys")?.split(",") ?? (url.searchParams.get("contentKey") ? [url.searchParams.get("contentKey")!] : undefined);
-      if (requestedId) servedRows = servedRows.filter((row) => row.id === requestedId);
-      if (requestedKeys) servedRows = servedRows.filter((row) => requestedKeys.includes(row.content_key));
-      const limit = Math.max(1, Number(url.searchParams.get("limit") ?? servedRows.length));
-      const cursor = url.searchParams.get("cursor");
-      const cursorIndex = cursor ? servedRows.findIndex((row) => row.id === cursor) : -1;
-      const offset = cursor ? Math.max(0, cursorIndex + 1) : Math.max(0, Number(url.searchParams.get("offset") ?? 0));
-      const pageRows = servedRows.slice(offset, offset + limit);
-      const nextCursor = offset + pageRows.length < servedRows.length
-        ? String(pageRows.at(-1)?.id ?? "")
-        : null;
+      const { pageRows, nextCursor } = pageSeededRows(url);
       await route.fulfill({
         status: 200,
         contentType: "application/json",
