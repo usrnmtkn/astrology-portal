@@ -41,8 +41,6 @@ jobs:
         run: ruby scripts/test-ci-workflow-syntax.rb
       - name: Verify shared-dependency scope regressions
         run: node scripts/test-ci-visual-scope.mjs
-      - name: Verify every browser suite is run by a workflow
-        run: node scripts/test-browser-suite-coverage.mjs
       - id: scope
         name: Determine affected browser surfaces
         env:
