@@ -1209,13 +1209,10 @@ function withAstro101Placement(draft: AdminDraft, next: {
 } = {}): AdminDraft {
   const kind = next.kind ?? astro101KindForDraft(draft);
   const existingTail = astro101SlugTail(draft.facts);
-  const slugTail = astro101Slugify(
-    next.slugTail
-    ?? (existingTail && existingTail !== "new-page" ? existingTail : "")
-    || draft.headline
-  ) || "new-page";
+  const fallbackTail = existingTail && existingTail !== "new-page" ? existingTail : "";
+  const slugTail = astro101Slugify(next.slugTail ?? (fallbackTail || draft.headline)) || "new-page";
   const readerPath = astro101ReaderPath(kind, slugTail);
-  const sections = { ...(objectRecord(draft.sections) ?? {}), kind };
+  const sections: Record<string, unknown> = { ...(objectRecord(draft.sections) ?? {}), kind };
   if (next.hubTitle !== undefined) {
     if (next.hubTitle.trim()) sections.hubTitle = next.hubTitle.trim();
     else delete sections.hubTitle;
