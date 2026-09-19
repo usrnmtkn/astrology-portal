@@ -10,7 +10,7 @@ const vercel = fs.readFileSync("vercel.json", "utf8");
 assert.doesNotMatch(api, /from "\.\/generated-content/u);
 assert.doesNotMatch(api, /skyArticleTemplateCompiler|astro101|skyV4ReaderCopy/u);
 assert.match(api, /inventory_only: true/u);
-assert.match(api, /like\."\$\{contentKeyPrefix\}%"/u);
+assert.match(api, /postgrestContentKeyPrefixAnd/u);
 assert.match(inventory, /\/api\/admin\/generated-content-inventory\?/u);
 assert.match(dashboard, /\/api\/admin\/generated-content-inventory\?/u);
 assert.match(dashboard, /activePage === "sourceDrafts"/u);
