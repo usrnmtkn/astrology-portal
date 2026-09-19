@@ -58,7 +58,7 @@ function LearnBackButton({ onOpenPath }: { onOpenPath: (path: string) => void })
       onClick={() => onOpenPath("/learn")}
     >
       <ChevronLeft size={18} aria-hidden="true" />
-      <span>Astro 101</span>
+      <span>Back</span>
     </button>
   );
 }
