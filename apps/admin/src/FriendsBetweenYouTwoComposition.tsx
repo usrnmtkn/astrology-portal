@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PageLoading } from "../../web/src/components/PageLoading";
 import BondEffectPagePreview from "./BondEffectPagePreview";
-import { friendsActivationParam, friendsTransitCardDestinations, friendsTransitReaderTitle, parseFriendsActivationParam, synastryBodiesFromPayload } from "./bondEffectPageAssembly";
+import { friendsActivationParam, friendsTransitCardDestinations, friendsTransitCompositionQuery, friendsTransitReaderTitle, parseFriendsActivationParam, synastryBodiesFromPayload } from "./bondEffectPageAssembly";
 import { requestStudioJson } from "./generatedContentClient";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { StudioButton } from "./StudioControls";
@@ -23,7 +23,7 @@ export default function FriendsBetweenYouTwoComposition({
   query: string;
   secret: string;
 }) {
-  const destinations = friendsTransitCardDestinations(query);
+  const destinations = friendsTransitCardDestinations(friendsTransitCompositionQuery(query));
   const activation = parseFriendsActivationParam(activationQuery);
   const openingKey = destinations.betweenYouTwoOpeningKey;
   const [opening, setOpening] = useState<{ you: string; they: string } | null>(null);

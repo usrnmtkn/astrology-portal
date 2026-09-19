@@ -41,6 +41,22 @@ try {
     friendPoint: "mercury",
     aspect: "opposition"
   });
+  assert.deepEqual(assembly.friendsTransitCompositionContact(""), {
+    planet: "chiron",
+    aspect: "sextile",
+    natalPoint: "sun"
+  });
+  assert.equal(assembly.friendsTransitCompositionQuery(""), "Chiron sextile your Sun");
+  assert.equal(assembly.friendsTransitCardDestinations("").betweenYouTwoOpeningKey, null);
+  assert.equal(
+    assembly.friendsTransitCardDestinations(assembly.friendsTransitCompositionQuery("")).betweenYouTwoOpeningKey,
+    "fallback-hook/bond-effect-sextile/chiron"
+  );
+  assert.deepEqual(assembly.friendsTransitCompositionContact("Mars trine your Moon"), {
+    planet: "mars",
+    aspect: "trine",
+    natalPoint: "moon"
+  });
   assert.equal(
     assembly.bondActivationHeadline("ascendant", "square", "Name", "saturn"),
     "Your Ascendant square Name's Saturn"
@@ -152,5 +168,6 @@ for (const [name, source, deps] of [
   assert.match(source, /subscribeToContentUpdates\(\(\) => setRevision\(/u, `${name} must refresh its saved copy when Studio announces a save.`);
   assert.ok(source.includes(deps), `${name} must read its saved copy again on the save signal, so ${deps} stays its fetch dependency list.`);
 }
+assert.match(composition, /friendsTransitCompositionQuery\(query\)/u, "An empty search must still open a compiled map so the dropdowns are on the page.");
 
 console.log("Content Studio bond-effect Friends page assembly passed.");

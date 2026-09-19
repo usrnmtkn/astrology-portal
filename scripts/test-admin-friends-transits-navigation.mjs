@@ -54,7 +54,7 @@ assert.match(dashboard, /Friends Transits · Active for \{\{Name\}\}/u);
 assert.match(dashboard, /Friends Transits · Where it lands/u);
 assert.match(dashboard, /Friends Transits · Between you two/u);
 assert.match(dashboard, /onActivationChange/u, "What this activates dropdowns must reload the synastry composition.");
-assert.match(dashboard, /persistBetweenYouTwoRoute/u);
+assert.match(dashboard, /friendsTransitCompositionQuery\(query\)/u, "Section cards must follow the same default pairing as the compiled map when search is empty.");
 {
   const betweenStart = dashboard.indexOf("{friendsBetweenYouTwoWorkspace && (");
   const betweenBlock = dashboard.slice(betweenStart, dashboard.indexOf("{renderFallbackTabs()}", betweenStart));

@@ -37,6 +37,25 @@ async function isolate(page: Page, openings: Record<string, string> = savedCopy)
   });
 }
 
+test("Between you two map is present before a reader title is typed", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await isolate(page);
+  await page.goto(workspacePath);
+
+  const finder = page.getByRole("region", { name: "Find a Friends transit card" });
+  await expect(finder.getByLabel("Find a Friends transit card", { exact: true })).toHaveValue("");
+
+  const map = page.getByRole("region", { name: "Between you two composition map" });
+  await expect(map.getByLabel("Transiting planet", { exact: true })).toBeVisible();
+  await expect(map.getByLabel("Transit aspect", { exact: true })).toBeVisible();
+  await expect(map.getByRole("heading", { level: 3, name: "Chiron sextile your Sun" })).toBeVisible();
+  await expect(map).toContainText("Chiron sextile fixture opening.");
+  await expect(map.getByRole("heading", { level: 3, name: "Your Sun square Name's Saturn" })).toBeVisible();
+
+  expect(errors).toEqual([]);
+});
+
 test("Between you two composition follows its own dropdowns", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));

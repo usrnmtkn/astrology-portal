@@ -184,6 +184,26 @@ export function friendsTransitReaderTitle(planet: string, aspect: string, natalP
   return natalPoint ? `${lead} your ${fallbackHookWords(natalPoint)}` : lead;
 }
 
+export const FRIENDS_TRANSIT_COMPOSITION_DEFAULT = {
+  planet: "chiron",
+  aspect: "sextile",
+  natalPoint: "sun"
+} as const;
+
+export function friendsTransitCompositionContact(query: string) {
+  const parsed = parseAstroContactSearch(query);
+  return {
+    planet: parsed.transiting ?? FRIENDS_TRANSIT_COMPOSITION_DEFAULT.planet,
+    aspect: parsed.aspect ?? FRIENDS_TRANSIT_COMPOSITION_DEFAULT.aspect,
+    natalPoint: parsed.natal ?? FRIENDS_TRANSIT_COMPOSITION_DEFAULT.natalPoint
+  };
+}
+
+export function friendsTransitCompositionQuery(query: string) {
+  const contact = friendsTransitCompositionContact(query);
+  return friendsTransitReaderTitle(contact.planet, contact.aspect, contact.natalPoint);
+}
+
 export function friendsActivationParam(friendPoint: string, aspect: string) {
   return `${friendPoint}/${aspect}`;
 }
