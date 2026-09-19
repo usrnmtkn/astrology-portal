@@ -45,6 +45,7 @@ for (const requiredSurfaceId of [
   "daily-at-a-glance",
   "generated-reports",
   "friends-pair-daily",
+  "friends-transits-between-you-two",
   "natal-aspect-patterns"
 ]) {
   assert.ok(surfaceIds.has(requiredSurfaceId), `Composition surface coverage must include ${requiredSurfaceId}.`);
@@ -56,6 +57,8 @@ assert.equal(writingSurfaceAdminAccess["generated-reports"].editability, "editab
 assert.ok(writingSurfaceAdminAccess["generated-reports"].routes.some((route) => route.hash === "#report-fulfillment"), "Reports must link to their fulfillment and provenance workspace.");
 assert.equal(writingSurfaceAdminAccess["friends-pair-daily"].editability, "editable", "Today between you two must have an atomic Content Studio editor.");
 assert.ok(writingSurfaceAdminAccess["friends-pair-daily"].routes.some((route) => route.hash.includes("pair-daily")), "Today between you two must open its pair-daily hook family.");
+assert.equal(writingSurfaceAdminAccess["friends-transits-between-you-two"].editability, "editable", "Friends Transits Between you two must have a Content Studio composition map.");
+assert.ok(writingSurfaceAdminAccess["friends-transits-between-you-two"].routes.some((route) => route.hash.includes("workspace=between-you-two")), "Between you two must open its Friends Transits composition map.");
 assert.equal(writingSurfaceAdminAccess["natal-aspect-patterns"].editability, "editable", "Natal aspect-pattern copy must have a dedicated Content Studio editor.");
 
 for (const surface of writingSurfaceSourceMap.filter((candidate) => candidate.area !== "System")) {

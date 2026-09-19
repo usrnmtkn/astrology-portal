@@ -38,6 +38,10 @@ export const readerDestinationPolicyBySurface: Record<string, ReaderDestinationP
     mode: "context-required",
     reason: "Requires the selected friend and that pair's calculated daily drivers."
   },
+  "friends-transits-between-you-two": {
+    mode: "context-required",
+    reason: "Requires the selected friend, the transiting contact, and the synastry pair shown in What this activates."
+  },
   "natal-placement-detail": {
     mode: "exact-context",
     reason: "Planet, sign, and house identify an exact natal placement reader route."
@@ -61,6 +65,10 @@ export const readerDestinationPolicyBySurface: Record<string, ReaderDestinationP
   "sky-retrograde-summary": {
     mode: "context-required",
     reason: "The summary depends on the selected date's calculated retrograde set; a generic Sky link would not preserve that context."
+  },
+  "sky-debility-card": {
+    mode: "context-required",
+    reason: "The Without their tools card depends on the selected date's calculated debilitated planets."
   },
   "personal-transit-detail": {
     mode: "context-required",

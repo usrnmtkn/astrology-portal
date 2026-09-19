@@ -9,6 +9,7 @@ export const compositionSurfaceFamilies: Record<string, RegExp> = {
   "friends-house-overlays": /^(?:fallback-template\/(?:synastry[.]house|friends[.]house)|fallback-hook\/(?:house-meaning|house-glossary)|synastry\/house)/,
   "friends-composite": /^(?:composite\/|fallback-template\/composite[.]|fallback-hook\/(?:bond-effect|planet-mode|planet-grates|natal-core|element-pattern))/,
   "friends-pair-daily": /^fallback-(?:hook|template)\/pair-daily(?:\/|$)/,
+  "friends-transits-between-you-two": /^(?:fallback-hook\/(?:bond-effect|synastry-pair)|authored\/transit-aspect\/)/,
   "natal-placement-detail": /^(?:natal\/placement|fallback-template\/natal[.](?:planet|node|angle)|fallback-hook\/(?:natal-you-placement|planet-intro|planet-best|planet-lived|sign-lived|placement-|house-lived|house-meaning|node-journey|angle-|dignity-line|natal-moon-phase-lived))/,
   "natal-aspect-detail": /^(?:natal\/aspect|fallback-template\/natal[.]aspect|fallback-hook\/(?:aspect-type|aspect-pair|aspect-lived|natal-aspect-lived))/,
   "natal-aspect-patterns": /^(?:authored\/(?:natal-pattern|aspect-pattern)|fallback-hook\/aspect-pattern)/,

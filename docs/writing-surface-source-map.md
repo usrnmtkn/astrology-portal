@@ -8,7 +8,7 @@ The executable source of truth is [`apps/admin/src/writingSurfaceSourceMap.ts`](
 
 The inventory covers prose shown to readers. It does not make calculated chart facts editable. Planet positions, aspects, dates, houses, names, counts, and other runtime facts remain calculated; the templates and saved phrases that surround those facts are editable.
 
-The current contract contains 23 reader-facing surfaces plus one internal composition system. Every reader-facing surface has at least one Content Studio edit route. The focused surface-map gate fails if a reader-facing surface is added without an editable route.
+The current contract contains 25 reader-facing surfaces plus one internal composition system. Every reader-facing surface has at least one Content Studio edit route. The focused surface-map gate fails if a reader-facing surface is added without an editable route.
 
 ## Content Layers
 
@@ -29,6 +29,7 @@ Raw vocabulary, editor instructions, placeholder text, and unrelated source rows
 | `friends-house-overlays` | Friends > Synastry > house overlays | Content Library |
 | `friends-composite` | Friends > Composite chart | Composite Review |
 | `friends-pair-daily` | Friends > selected person > Today between you two | Fallback Articles & Passages > Friends |
+| `friends-transits-between-you-two` | Friends > Transits > Between you two | Friends Transits composition map |
 
 The retired Friends Circle feed and compatibility-highlight prototype are not reader surfaces and must not be presented as editable app coverage.
 
@@ -51,7 +52,7 @@ Soul Roadmap and Career Archetype prototypes are not mounted reader surfaces and
 | `sky-placement-detail` | Sky > placement article and Rising-sign horoscope | Sky Write-ups / Articles |
 | `sky-aspect-detail` | Sky > aspect detail | Sky Write-ups / Content Library |
 | `sky-retrograde-summary` | Sky > retrograde summary | Content Library CMS override |
-| `personal-transit-detail` | Sky/You/Friends > personal transit aspect | Content Library CMS override |
+| `personal-transit-detail` | Sky/You/Friends > personal transit aspect; Friends Transits > Active for Name | Content Library / Friends Transits |
 | `sky-daily-timing` | Today/You > daily timing write-up | Content Library |
 | `daily-at-a-glance` | You/Friends > Daily At-a-Glance | Fallback Articles & Passages / Slots |
 | `sky-calendar-event-cards` | Calendar > event cards | Content Library |
@@ -63,7 +64,7 @@ Soul Roadmap and Career Archetype prototypes are not mounted reader surfaces and
 
 | Surface ID | Reader location | Content Studio owner |
 | --- | --- | --- |
-| `personal-transit-house` | You/Friends > transit-through-house rows | Content Library CMS overrides |
+| `personal-transit-house` | You/Friends > transit-through-house rows; Friends Transits > Where it lands | Content Library CMS overrides / Friends Transits |
 
 ## Purchased Reports
 

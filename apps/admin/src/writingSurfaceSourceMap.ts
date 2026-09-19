@@ -173,6 +173,24 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     ]
   },
   {
+    id: "friends-transits-between-you-two",
+    surface: "Friends Transits: Between You Two",
+    area: "Friends",
+    status: "normalized",
+    requiredSlots: ["opening", "what this activates"],
+    visibleLayerOrder: ["source-grounded"],
+    currentRenderPath: "FriendTransitsTab opens the Between you two article from a bond-effect opening row, then loads What this activates from a synastry pair in the friend's chart. The assembled page is not one saved record.",
+    risk: "The live title names a natal point, but the opening row is transiting planet plus aspect only. Active for Name and Where it lands are separate Friends Transits editors.",
+    nextAction: "Use the Friends Transits composition map: type the reader title, open the opening, then Edit this activation for What this activates.",
+    sources: [
+      { label: "FriendTransitsTab.tsx", path: "apps/web/src/features/friends/FriendTransitsTab.tsx", role: "renderer" },
+      { label: "ManualChartsPanel.tsx", path: "apps/web/src/features/friends/ManualChartsPanel.tsx", role: "renderer" },
+      { label: "renderTransitSynastry.mjs", path: "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs", role: "source-grounded" },
+      { label: "BondEffectPagePreview.tsx", path: "apps/admin/src/BondEffectPagePreview.tsx", role: "stored-source" },
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
+    ]
+  },
+  {
     id: "natal-placement-detail",
     surface: "Natal Placement Detail Pages",
     area: "Natal",
@@ -526,6 +544,15 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
       { label: "Edit Today between you two", hash: "#fallback-hooks?section=daily&q=pair-daily", purpose: "reader-copy", note: "Opens every reviewed opener, personal clause, shared bridge, and closing-advice source used by the pair-daily renderer." }
     ]
   },
+  "friends-transits-between-you-two": {
+    readerLocation: "Friends > Transits > Between you two",
+    editability: "editable",
+    routes: [
+      { label: "Edit Between you two", hash: "#fallback-hooks?section=friends&audience=friends&workspace=between-you-two", purpose: "reader-copy", note: "Opens the Friends Transits composition map for the assembled opening plus What this activates." },
+      { label: "Edit Active for Name", hash: "#sky-writeups?view=transits-to-natal&audience=friends", purpose: "reader-copy", note: "Opens the separate You/Friend transit write-up, not the Between you two opening." },
+      { label: "Edit Where it lands", hash: "#sky-writeups?view=house-transits&audience=friends", purpose: "reader-copy", note: "Opens Friends house transit copy." }
+    ]
+  },
   "natal-placement-detail": {
     readerLocation: "You or Friends > Birth chart > placement detail",
     editability: "editable",
@@ -587,7 +614,10 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
   "personal-transit-detail": {
     readerLocation: "Sky > placement detail > Aspects to the natal chart; You or Friends > personal transit detail",
     editability: "editable",
-    routes: [{ label: "Edit Personal Transits", hash: "#sky-writeups?view=transits-to-natal", purpose: "reader-copy", note: "Opens the canonical transit reader preview and its approved source." }]
+    routes: [
+      { label: "Edit Personal Transits", hash: "#sky-writeups?view=transits-to-natal", purpose: "reader-copy", note: "Opens the canonical transit reader preview and its approved source." },
+      { label: "Edit Active for Name", hash: "#sky-writeups?view=transits-to-natal&audience=friends", purpose: "reader-copy", note: "Opens the Friends Transits You/Friend write-up, which is not the Between you two opening." }
+    ]
   },
   "sky-daily-timing": {
     readerLocation: "Today or You > daily timing writeup",
@@ -658,7 +688,10 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
   "personal-transit-house": {
     readerLocation: "You or Friends > personal transit house rows",
     editability: "editable",
-    routes: [{ label: "Edit transit-house copy", hash: "#exact-content?q=cms%2Fpersonal-transit-house", purpose: "reader-copy", note: "Opens LIVE-first transit-house overrides." }],
+    routes: [
+      { label: "Edit transit-house copy", hash: "#exact-content?q=cms%2Fpersonal-transit-house", purpose: "reader-copy", note: "Opens LIVE-first transit-house overrides." },
+      { label: "Edit Where it lands", hash: "#sky-writeups?view=house-transits&audience=friends", purpose: "reader-copy", note: "Opens the Friends Transits house editor." }
+    ],
     cmsStarters: [
       { label: "Start your transit-house template", contentKey: "cms/personal-transit-house/you/template", surface: "you", headline: "{{planet}} through your {{houseOrdinal}} house", allowedSlots: ["planet", "sign", "house", "houseOrdinal", "motion", "window", "owner", "ownerPossessive"] },
       { label: "Start friend transit-house template", contentKey: "cms/personal-transit-house/they/template", surface: "you", headline: "{{planet}} through {{ownerPossessive}} {{houseOrdinal}} house", allowedSlots: ["planet", "sign", "house", "houseOrdinal", "motion", "window", "owner", "ownerPossessive"] }

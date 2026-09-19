@@ -25,7 +25,7 @@ assert.match(dashboard, /<span>House transit<\/span>/u);
 
 assert.match(
   dashboard,
-  /navigateAdminPage\("knowledge", new URLSearchParams\(\{ section: "friends", q: "bond-effect", audience: "friends" \}\)\)/u,
+  /navigateAdminPage\("knowledge", new URLSearchParams\(\{ section: "friends", audience: "friends", workspace: "between-you-two" \}\)\)/u,
   "Between you two must deep-link to the bond-effect source rows."
 );
 assert.match(
@@ -40,6 +40,8 @@ assert.match(
 );
 assert.match(dashboard, /key\.includes\("bond-effect"\)/u, "Bond-effect rows must classify under the Friends fallback-hook section.");
 assert.match(dashboard, /matchesFallbackLibrarySearch/u, "Friends library search must accept reader contact titles such as Moon sextile Mars.");
+assert.match(dashboard, /FriendsTransitSectionFinder/u, "Friends Transits must expose one finder for Between you two, Active for Name, and house transit.");
+assert.match(dashboard, /hidden=\{!\(activePage === "skyWriteups" \|\| friendsTransitAudience\)\}/u, "Friends Transits section nav must stay visible on Between you two.");
 
 assert.match(friendTransits, /aria-label="Between you two"/u);
 assert.match(friendTransits, /Active for \{friendName\}/u);
@@ -50,7 +52,8 @@ assert.match(transitRenderer, /fallback-hook\/bond-effect-\$\{aspect\}\/\$\{tran
 assert.match(dashboard, /const friendsTransitAudience = parseAdminHash\(\)\.params\.get\("audience"\) === "friends"/u);
 assert.match(dashboard, /Friends Transits · Active for \{\{Name\}\}/u);
 assert.match(dashboard, /Friends Transits · Where it lands/u);
-assert.match(dashboard, /Friends Transits · Between you two/u);
+assert.match(dashboard, /FriendsBetweenYouTwoComposition/u, "Between you two must show the assembled write-up composition.");
+assert.match(dashboard, /\? "Between you two"/u, "The Between you two workspace must use that reader name instead of Fallback Articles.");
 assert.match(dashboard, /audienceKey = audience === "friends" \? "body_they" : "body_you"/u, "Friends previews must resolve body_they instead of silently showing You copy.");
 assert.match(dashboard, /if \(audience === "friends" && hasAudienceField\) continue;/u, "An explicitly blank Friends field must not fall back to the You body in the Studio preview.");
 for (const name of ["updateTransitNatalSelection", "updateHouseTransitSelection"]) {
