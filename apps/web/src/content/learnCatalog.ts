@@ -103,7 +103,3 @@ export function signCatalog(signKey: string) {
   const name = signKey.slice(0, 1).toUpperCase() + signKey.slice(1);
   return { key: signKey, name, glyph };
 }
-
-export function chapterIndexLabel(index: number) {
-  return String(index + 1).padStart(2, "0");
-}
