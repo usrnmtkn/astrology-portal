@@ -18,9 +18,12 @@ async function emit(relative) {
   const text = fs.readFileSync(input, "utf8");
   const destination = path.join(output, relative.replace(/\.tsx?$/u, ".js"));
   fs.mkdirSync(path.dirname(destination), { recursive: true });
-  fs.writeFileSync(destination, /\.tsx?$/u.test(relative)
+  const compiled = /\.tsx?$/u.test(relative)
     ? (await transform(text, { loader: relative.endsWith(".tsx") ? "tsx" : "ts", format: "esm", target: "node22" })).code
-    : text);
+    : text;
+  // Vercel resolves a sibling module named with its .ts extension; this copy is JavaScript, so a
+  // relative .ts specifier is pointed at the module emitted from it rather than reported missing.
+  fs.writeFileSync(destination, compiled.replace(/(\bfrom\s*["']\.[^"']*|\bimport\(\s*["']\.[^"']*)\.tsx?(["'])/gu, "$1.js$2"));
   if (relative.endsWith(".json")) return;
   const dependencies = [
     ...ts.preProcessFile(fs.readFileSync(destination, "utf8"), true, true).importedFiles.map((item) => item.fileName),
@@ -42,6 +45,9 @@ try {
   await emit("api/admin/content-publication.ts");
   await emit("api/admin/natal-placement-preview.ts");
   await emit("api/admin/transit-natal-preview.ts");
+  // The library exports are re-exported from other handlers, and a .ts import specifier here fails
+  // only once Node loads the emitted modules.
+  await emit("api/admin/generated-content-libraries.ts");
   const result = execFileSync(process.execPath, ["--input-type=module", "-e", `
     import assert from "node:assert/strict";
     const { skySummaryTemplateErrors } = await import("./apps/web/src/content/skyDailySummaryCatalog.js");
@@ -62,6 +68,8 @@ try {
     const { default: transitPreviewHandler } = await import("./api/admin/transit-natal-preview.js");
     await transitPreviewHandler({ headers: {}, method: "POST" }, response);
     assert.equal(response.statusCode, 401);
+    const libraries = await import("./api/admin/generated-content-libraries.js");
+    assert.equal(typeof libraries.astro101PublicationIssue, "function");
     console.log("PASS: production-style Node ESM starts Content Live Status and reaches authorization");
   `], { cwd: output, encoding: "utf8", env: { PATH: process.env.PATH }, timeout: 30_000 });
   process.stdout.write(result);
