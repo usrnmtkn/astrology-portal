@@ -1321,94 +1321,31 @@ function generatedContentInventorySelectColumns() {
     "event_type",
     "target_date",
     "headline",
-    "summary",
     "block_type",
     "lane",
     "review_state",
     "evergreen",
-    "judge_score",
-    "judge_gate",
     "prompt_version",
     "provider",
     "updated_at",
-    "source_type:source_snapshot->>sourceType",
     "source_review_status:source_snapshot->>review_status",
     "source_lane:source_snapshot->>lane",
     "source_content_role_camel:source_snapshot->>contentRole",
     "source_content_role:source_snapshot->>content_role",
-    "source_source_role_camel:source_snapshot->>sourceRole",
     "source_source_role:source_snapshot->>source_role",
-    "source_role:source_snapshot->>role",
-    "source_content_type_camel:source_snapshot->>contentType",
     "source_content_type:source_snapshot->>content_type",
-    "source_type_alias:source_snapshot->>type",
-    "source_bucket:source_snapshot->>bucket",
-    "source_target_family:source_snapshot->>targetContentFamily",
     "source_content_system:source_snapshot->>contentSystem",
-    "source_flags:source_snapshot->flags",
     "source_package:source_snapshot->>sourcePackage",
     "source_tier:source_snapshot->>tier",
-    "source_phrasebank_tier:source_snapshot->>phrasebankTier",
-    "source_provenance_tier:source_snapshot->>provenanceTier",
-    "source_source_tier:source_snapshot->>sourceTier",
-    "source_review_priority:source_snapshot->reviewPriority",
-    "source_review_sequence:source_snapshot->reviewSequence",
-    "source_planet:source_snapshot->>planet",
-    "source_body:source_snapshot->>body",
-    "source_point:source_snapshot->>point",
-    "source_angle:source_snapshot->>angle",
-    "source_object:source_snapshot->>object",
-    "source_sign:source_snapshot->>sign",
-    "source_reader_sign:source_snapshot->>readerSign",
-    "source_other_sign:source_snapshot->>otherSign",
-    "source_app_destination_camel:source_snapshot->>appDestination",
-    "source_app_destination:source_snapshot->>app_destination",
     "source_render_policy:source_snapshot->>render_policy",
-    "source_surface:source_snapshot->>surface",
-    "source_destination:source_snapshot->>destination",
+    "source_planet:source_snapshot->>planet",
+    "source_sign:source_snapshot->>sign",
     "source_motion:source_snapshot->>motion",
-    "source_is_retrograde_camel:source_snapshot->isRetrograde",
-    "source_is_retrograde:source_snapshot->is_retrograde",
-    "source_retrograde:source_snapshot->retrograde",
-    "source_direction:source_snapshot->>direction",
-    "source_phase:source_snapshot->>phase",
-    "source_lunation_kind:source_snapshot->>lunationKind",
-    "source_kind:source_snapshot->>kind",
-    "source_eclipse_type_camel:source_snapshot->>eclipseType",
-    "source_eclipse_type:source_snapshot->>eclipse_type",
-    "facts_fallback_v3:facts->fallbackArchitectureV3",
-    "facts_content_role:facts->>content_role",
-    "facts_review_status:facts->>review_status",
-    "facts_planet:facts->>planet",
-    "facts_body:facts->>body",
-    "facts_point:facts->>point",
-    "facts_angle:facts->>angle",
-    "facts_object:facts->>object",
-    "facts_sign:facts->>sign",
-    "facts_reader_sign:facts->>readerSign",
-    "facts_other_sign:facts->>otherSign",
-    "facts_app_destination_camel:facts->>appDestination",
-    "facts_app_destination:facts->>app_destination",
-    "facts_surface:facts->>surface",
-    "facts_destination:facts->>destination",
-    "facts_reader_surface:facts->>readerSurface",
-    "facts_render_policy:facts->>render_policy",
-    "facts_motion:facts->>motion",
-    "facts_is_retrograde_camel:facts->isRetrograde",
-    "facts_is_retrograde:facts->is_retrograde",
-    "facts_retrograde:facts->retrograde",
-    "facts_direction:facts->>direction",
-    "facts_phase:facts->>phase",
-    "facts_lunation_kind:facts->>lunationKind",
     "facts_kind:facts->>kind",
-    "facts_eclipse_type_camel:facts->>eclipseType",
-    "facts_eclipse_type:facts->>eclipse_type",
+    "facts_slug:facts->>slug",
     "package_content_role:sections->packageRecord->>content_role",
     "package_review_status:sections->packageRecord->>review_status",
-    "package_review_category:sections->packageRecord->>studio_review_category",
-    "package_owner_approved:sections->packageRecord->owner_approved",
-    "package_render_policy:sections->packageRecord->>render_policy",
-    "package_source_package:sections->packageRecord->>source_package"
+    "package_render_policy:sections->packageRecord->>render_policy"
   ];
 }
 
@@ -1507,6 +1444,7 @@ function generatedContentInventoryRow(value: unknown) {
     phase: row.facts_phase,
     lunationKind: row.facts_lunation_kind,
     kind: row.facts_kind,
+    slug: row.facts_slug,
     eclipseType: row.facts_eclipse_type_camel,
     eclipse_type: row.facts_eclipse_type
   });
@@ -1574,13 +1512,15 @@ async function listGeneratedContent(req: IncomingMessage) {
   const visibility = requestUrl.searchParams.get("visibility") ?? "all";
   const scope = requestUrl.searchParams.get("scope") ?? "all";
   const cursor = requestUrl.searchParams.get("cursor");
-  const limit = boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
   const view = requestUrl.searchParams.get("view") ?? "detail";
   if (!["detail", "inventory"].includes(view)) throw new GeneratedContentRequestError("view must be detail or inventory.");
   const inventoryView = view === "inventory" && !id && !contentKey && contentKeys.length === 0;
   const supportsUpdatedCursor = !id && scope !== "compatibility" && !startDate && !endDate;
   const offset = supportsUpdatedCursor ? 0 : Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
   const selectColumns = inventoryView ? generatedContentInventorySelectColumns() : generatedContentDetailSelectColumns();
+  const limit = inventoryView
+    ? boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"), 50, 80)
+    : boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
   const params = new URLSearchParams({
     select: selectColumns.join(","),
     order: scope === "compatibility" ? "id.asc" : startDate || endDate ? "target_date.asc.nullslast,id.desc" : "updated_at.desc,id.desc",
@@ -1639,7 +1579,7 @@ async function listGeneratedContent(req: IncomingMessage) {
   } else if (!id && contentKeys.length) {
     params.set("content_key", `in.(${contentKeys.join(",")})`);
   } else if (!id && contentKeyPrefix) {
-    params.set("content_key", `like.${contentKeyPrefix}%`);
+    params.set("content_key", `like.${contentKeyPrefix}*`);
   }
 
   if (!id && startDate && endDate) {
@@ -3091,7 +3031,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
 
       const rows = await listGeneratedContent(req);
-      const requestLimit = boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
+      const inventoryList = (requestUrl.searchParams.get("view") ?? "detail") === "inventory"
+        && !requestUrl.searchParams.get("id")
+        && !requestUrl.searchParams.get("contentKey")
+        && requestUrl.searchParams.getAll("contentKeys").length === 0;
+      const requestLimit = inventoryList
+        ? boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"), 50, 80)
+        : boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
       const scope = requestUrl.searchParams.get("scope") ?? "all";
       const hasDateRange = Boolean(requestUrl.searchParams.get("startDate") || requestUrl.searchParams.get("endDate"));
       const nextCursor = rows.length === requestLimit
