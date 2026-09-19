@@ -414,6 +414,35 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
   };
 }
 
+function isPersonalTransitExactContentKey(contentKey: string) {
+  return contentKey.startsWith("authored/transit-aspect/")
+    || contentKey.startsWith("authored/transit-return/");
+}
+
+function isPersonalTransitSituationContentKey(contentKey: string) {
+  return contentKey.startsWith("authored/transit-aspect/") && contentKey.split("/").length === 8;
+}
+
+function isLicensedPersonalTransitPlaceholder(contentKey: string, slot: string) {
+  if (!isPersonalTransitExactContentKey(contentKey) && !contentKey.startsWith("fallback-hook/natal-aspect-lived/")) {
+    return false;
+  }
+  const name = slot.replace(/[{}\s]/gu, "");
+  return name === "aspectWord" || name === "untilDate" || name === "Name";
+}
+
+function applyPersonalTransitPackageDraft(record: Record<string, unknown>, sections: Record<string, unknown>) {
+  const proposal = isRecord(sections.packageDraft) ? sections.packageDraft : null;
+  if (!proposal) return false;
+  for (const [field, value] of packageLeafFields(proposal)) {
+    if (isEditablePackageCopyPath(field, record) && !field.startsWith("ingress.")) {
+      setPackageValueAt(record, field, value);
+    }
+  }
+  delete sections.packageDraft;
+  return true;
+}
+
 function validateAndApproveNatalAspectCopy(record: Record<string, unknown>, contentKey: string) {
   if (contentKey.startsWith("fallback-hook/synastry-pair/")) {
     if (![record.body_you, record.body_they].every(value => typeof value === "string" && value.trim())) {
@@ -532,11 +561,7 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
 function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
   const record = v3PackageRecord(row);
   const bannedWords = contentRoleContract().styleRules?.bannedWords ?? [];
-  const canonicalPackageBody = typeof record.body === "string"
-    ? record.body
-    : typeof record.body_you === "string"
-      ? record.body_you
-      : undefined;
+  const canonicalPackageBody = stringFrom(record.body) || stringFrom(record.body_you) || undefined;
   const editableFields: Array<[string, unknown, unknown]> = [
     ["headline", patch.headline, record.headline],
     ["summary", patch.summary, record.summary],
@@ -643,8 +668,9 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
         && field.endsWith("body_they")
         && slot === "{{Name}}";
       if (isAllowedFriendName) continue;
+      if (isLicensedPersonalTransitPlaceholder(row.content_key, slot)) continue;
       if (!originalSlots.has(slot) && !inheritedFriendSlots.has(slot)) {
-        throw new Error(`${field} contains unresolved placeholder ${slot} that was not in the package original.`);
+        throw new GeneratedContentRequestError(`${field} contains unresolved placeholder ${slot} that was not in the package original.`, 400);
       }
     }
   }
@@ -690,7 +716,8 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   const packageOriginalRecord = isRecord(storedSections.packageOriginalRecord)
     ? { ...storedSections.packageOriginalRecord }
     : { ...record };
-  const hasPackageDraft = isRecord(sections.packageDraft);
+  const storedTransitProposal = isPersonalTransitSituationContentKey(row.content_key) && isRecord(sections.packageDraft);
+  const hasPackageDraft = isRecord(sections.packageDraft) && !storedTransitProposal;
   const reviewStatus = body.sourceLifecycleAction === "archive"
     ? "deprecated"
     : body.sourceLifecycleAction === "restore"
@@ -777,6 +804,9 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   }
   if (!hasPackageDraft && typeof sections.body_they === "string") {
     record.body_they = sections.body_they;
+  }
+  if (storedTransitProposal && !body.revertToPackageOriginal) {
+    applyPersonalTransitPackageDraft(record, sections);
   }
   if (hasPackageDraft && isRecord(sections.packageDraft)) {
     const normalizedDraftBodyThey = normalizeNatalAspectTheyNameVariable(
@@ -2283,7 +2313,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new GeneratedContentRequestError("The live source changed after this revision was started. Reload it before publishing so newer writing is not overwritten.", 409);
     }
     const proposalSections = isRecord(existing.sections) ? existing.sections : {};
-    const packageDraft = isRecord(proposalSections.packageDraft) ? proposalSections.packageDraft : null;
+    const packageDraft = isRecord(proposalSections.packageDraft)
+      ? proposalSections.packageDraft
+      : isPersonalTransitSituationContentKey(existing.content_key)
+        ? v3PackageRecord(existing)
+        : null;
     if (!packageDraft) {
       throw new Error("Save the copy revision before approving and publishing it.");
     }

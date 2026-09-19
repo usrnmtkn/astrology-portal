@@ -1217,7 +1217,7 @@ function draftIsFallbackArchitectureV3(draft: AdminDraft) {
 
 function packageReviewStatusForDraft(draft: AdminDraft) {
   if (draft.sourceSnapshot?.review_status === "deprecated" || draft.facts?.review_status === "deprecated") return "deprecated";
-  if (objectRecord(objectRecord(draft.sections)?.packageDraft)) return "needs_review";
+  if (objectRecord(objectRecord(draft.sections)?.packageDraft) && !writesPersonalTransitExactCopy(draft)) return "needs_review";
   return sourceSnapshotString(draft.sourceSnapshot, "review_status")
     || (typeof draft.facts?.review_status === "string" ? draft.facts.review_status : "")
     || (typeof draftPackageRecord(draft).review_status === "string" ? draftPackageRecord(draft).review_status as string : "")
@@ -1226,6 +1226,12 @@ function packageReviewStatusForDraft(draft: AdminDraft) {
 
 function draftWithPackageReviewStatus(draft: AdminDraft, reviewStatus: string): AdminDraft {
   const proposal = draftPackageProposal(draft);
+  const sections = { ...(draft.sections ?? {}) };
+  const nextRecord = {
+    ...(proposal && writesPersonalTransitExactCopy(draft) ? proposal : draftPackageRecord(draft)),
+    review_status: reviewStatus
+  };
+  if (writesPersonalTransitExactCopy(draft)) delete sections.packageDraft;
   return {
     ...draft,
     sourceSnapshot: {
@@ -1237,12 +1243,9 @@ function draftWithPackageReviewStatus(draft: AdminDraft, reviewStatus: string): 
       review_status: reviewStatus
     },
     sections: {
-      ...(draft.sections ?? {}),
-      packageRecord: {
-        ...draftPackageRecord(draft),
-        review_status: reviewStatus
-      },
-      ...(proposal ? { packageDraft: { ...proposal, review_status: reviewStatus } } : {})
+      ...sections,
+      packageRecord: nextRecord,
+      ...(proposal && !writesPersonalTransitExactCopy(draft) ? { packageDraft: { ...proposal, review_status: reviewStatus } } : {})
     }
   };
 }
@@ -1270,15 +1273,22 @@ function packageFieldString(draft: AdminDraft, key: string) {
         : "";
 }
 
+function writesPersonalTransitExactCopy(draft: AdminDraft) {
+  return draft.contentKey.startsWith("authored/transit-return/")
+    || (draft.contentKey.startsWith("authored/transit-aspect/") && draft.contentKey.split("/").length === 8);
+}
+
 function setPackageSectionField(draft: AdminDraft, key: string, value: string): AdminDraft {
   draft = invalidateContentStudioReview(draft);
-  const copySection = !draft.id && (draft.contentKey.startsWith(natalAspectContentKeyPrefix) || draftPackageRecord(draft).render_policy === "personal-transit-exact-v1") ? "packageRecord" : "packageDraft";
+  const copySection = writesPersonalTransitExactCopy(draft) || (!draft.id && (draft.contentKey.startsWith(natalAspectContentKeyPrefix) || draftPackageRecord(draft).render_policy === "personal-transit-exact-v1")) ? "packageRecord" : "packageDraft";
   const proposal = draftPackageProposal(draft) ?? structuredClone(draftPackageRecord(draft));
+  const sections = { ...(draft.sections ?? {}) };
+  if (copySection === "packageRecord") delete sections.packageDraft;
   return {
     ...draft,
     body: key === "body_you" ? value : draft.body,
     sections: {
-      ...(draft.sections ?? {}),
+      ...sections,
       [copySection]: {
         ...proposal,
         [key]: value
@@ -1289,12 +1299,14 @@ function setPackageSectionField(draft: AdminDraft, key: string, value: string): 
 
 function setPackageRecordField(draft: AdminDraft, key: string, value: string): AdminDraft {
   draft = invalidateContentStudioReview(draft);
-  const copySection = !draft.id && (draft.contentKey.startsWith(natalAspectContentKeyPrefix) || draftPackageRecord(draft).render_policy === "personal-transit-exact-v1") ? "packageRecord" : "packageDraft";
+  const copySection = writesPersonalTransitExactCopy(draft) || (!draft.id && (draft.contentKey.startsWith(natalAspectContentKeyPrefix) || draftPackageRecord(draft).render_policy === "personal-transit-exact-v1")) ? "packageRecord" : "packageDraft";
   const proposal = draftPackageProposal(draft) ?? structuredClone(draftPackageRecord(draft));
+  const sections = { ...(draft.sections ?? {}) };
+  if (copySection === "packageRecord") delete sections.packageDraft;
   return {
     ...draft,
     sections: {
-      ...(draft.sections ?? {}),
+      ...sections,
       [copySection]: {
         ...proposal,
         [key]: value
@@ -4741,7 +4753,7 @@ export function GeneratedContentAdminDashboard() {
         || (status === "LIVE" && saved.lane !== "serving")
         || (["LIVE", "REVIEWED"].includes(status) && saved.review_state)
         || (["status", "headline", "summary", "body"] as const).some((field) => saved[field] !== draftForSave[field])
-      )) || (isPackageDraft && draftHasPackageProposal(draftForSave) && !draftHasPackageProposal(savedDraft))) {
+      )) || (isPackageDraft && draftHasPackageProposal(draftForSave) && !draftHasPackageProposal(savedDraft) && !writesPersonalTransitExactCopy(draftForSave))) {
         throw new Error("Save did not return the saved row.");
       }
       setRows((current) => {
@@ -4757,6 +4769,22 @@ export function GeneratedContentAdminDashboard() {
         setDraft((current) => {
           // A response acknowledges the submitted version, not newer typing.
           if (current && current !== editorDraftAtSave && current.contentKey === activeDraft.contentKey) {
+            if (writesPersonalTransitExactCopy(current)) {
+              const { packageDraft: _discarded, ...savedSections } = objectRecord(savedDraft.sections) ?? {};
+              const proposal = draftPackageProposal(current);
+              return {
+                ...current,
+                id: savedDraft.id,
+                updatedAt: savedDraft.updatedAt,
+                sections: {
+                  ...savedSections,
+                  packageRecord: {
+                    ...draftPackageRecord(savedDraft),
+                    ...(proposal ?? {})
+                  }
+                }
+              };
+            }
             const proposal = draftPackageProposal(current);
             const savedRecord = draftPackageRecord(savedDraft);
             return { ...current, id: savedDraft.id, updatedAt: savedDraft.updatedAt,
@@ -8888,10 +8916,16 @@ export function GeneratedContentAdminDashboard() {
       ?? ""
     ).trim().toLowerCase().replace(/-/g, "_");
     const packageRoleCanServeExactCopy = !["fallback_source", "source_material"].includes(packageContentRole);
+    const isPersonalTransitExactDraft = isPackageDraft
+      && (currentDraft.contentKey.startsWith("authored/transit-aspect/")
+        || currentDraft.contentKey.startsWith("authored/transit-return/"));
+    const isPersonalTransitSituationDraft = isPersonalTransitExactDraft
+      && currentDraft.contentKey.split("/").length === 8;
     const packageCanApproveRevision = isPackageDraft
       && packageHasProposal
       && !isGuidedHeldReview
-      && packageRoleCanServeExactCopy;
+      && packageRoleCanServeExactCopy
+      && !isPersonalTransitSituationDraft;
     const packageApprovalPublishes = isPackageDraft
       && !packageHasProposal
       && !isGuidedHeldReview
@@ -8901,9 +8935,6 @@ export function GeneratedContentAdminDashboard() {
     const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes || packageCanApproveRevision ? "LIVE" : "DRAFT";
     const packageWillPublishOnSave = packageApprovalPublishes && currentDraft.status !== "LIVE";
     const natalAspectMissingCopy = isExactNatalAspectDraft && !["body", "body_you", "body_they"].some((field) => packageFieldString(currentDraft, field).trim());
-    const isPersonalTransitExactDraft = isPackageDraft
-      && (currentDraft.contentKey.startsWith("authored/transit-aspect/")
-        || currentDraft.contentKey.startsWith("authored/transit-return/"));
     const transitNatalMissingCopy = isPersonalTransitExactDraft && (
       currentDraft.contentKey.startsWith("authored/transit-return/")
         ? !["body", "body_you"].some((field) => packageFieldString(currentDraft, field).trim())
@@ -8911,7 +8942,7 @@ export function GeneratedContentAdminDashboard() {
     );
     const transitNatalHasExactOwnerApproval = objectRecord(draftPackageRecord(currentDraft).approval)?.approvalLevel === "exact_owner_approved";
     const transitNatalCanApprovePublish = isPersonalTransitExactDraft
-      && !packageHasProposal
+      && (!packageHasProposal || isPersonalTransitSituationDraft)
       && !packageCanApproveRevision
       && !isGuidedHeldReview
       && !packageIsSkyV4Governed
@@ -11124,7 +11155,7 @@ export function GeneratedContentAdminDashboard() {
           <span className={`admin-editor-save-state ${isLoading ? "is-saving" : draftHasUnsavedChanges || isNewDraft && !unchangedSkySource || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
             {isLoading
               ? "Saving…"
-              : packageHasProposal
+              : packageHasProposal && !isPersonalTransitSituationDraft
                 ? draftHasUnsavedChanges
                   ? "Unsaved revision"
                   : "Draft saved · Not live"

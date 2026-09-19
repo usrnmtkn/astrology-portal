@@ -12,7 +12,15 @@ const transitSources = fs.readFileSync(path.join(root, "apps/admin/src/transitNa
 assert.match(dashboard, /const pageSize = scope === "compatibility" \? 500 : 400;/u);
 assert.match(dashboard, /const generatedContentPageRetryDelaysMs = \[350, 1_000\];/u);
 assert.match(dashboard, /const isAuthoredTransitAspectDraft = isPackageDraft[\s\S]{0,180}authored\/transit-aspect\//u);
-assert.match(dashboard, /const isPersonalTransitExactDraft = isPackageDraft[\s\S]{0,220}authored\/transit-return\//u);
+assert.match(dashboard, /function writesPersonalTransitExactCopy\(draft: AdminDraft\)/u);
+assert.match(dashboard, /const isPersonalTransitExactDraft = isPackageDraft[\s\S]{0,400}authored\/transit-return\//u);
+assert.match(dashboard, /&& !isPersonalTransitSituationDraft/u);
+assert.match(dashboard, /objectRecord\(objectRecord\(draft\.sections\)\?\.packageDraft\) && !writesPersonalTransitExactCopy\(draft\)/u);
+assert.match(dashboard, /proposal && !writesPersonalTransitExactCopy\(draft\) \? \{ packageDraft:/u);
+assert.match(dashboard, /draftHasPackageProposal\(draftForSave\) && !draftHasPackageProposal\(savedDraft\) && !writesPersonalTransitExactCopy\(draftForSave\)/u);
+assert.match(api, /isPersonalTransitSituationContentKey\(existing\.content_key\)/u);
+assert.match(api, /isLicensedPersonalTransitPlaceholder/u);
+assert.match(api, /applyPersonalTransitPackageDraft/u);
 assert.match(dashboard, /const transitNatalHasExactOwnerApproval = objectRecord\(draftPackageRecord\(currentDraft\)\.approval\)\?\.approvalLevel === "exact_owner_approved"/u);
 assert.match(dashboard, /const transitNatalCanApprovePublish = isPersonalTransitExactDraft[\s\S]{0,520}!transitNatalHasExactOwnerApproval/u);
 assert.match(dashboard, /Approve & publish/u);
