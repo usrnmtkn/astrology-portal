@@ -1554,6 +1554,17 @@ async function listGeneratedContent(req: IncomingMessage) {
   const promptVersion = requestUrl.searchParams.get("promptVersion");
   const contentKey = requestUrl.searchParams.get("contentKey");
   const contentKeyPrefix = requestUrl.searchParams.get("contentKeyPrefix");
+  const contentKeyPrefixes = requestUrl.searchParams.getAll("contentKeyPrefix").filter(Boolean);
+  if (contentKeyPrefixes.length > 1) {
+    throw new GeneratedContentRequestError("Request one contentKeyPrefix per inventory page.");
+  }
+  if (contentKeyPrefix && !/^[a-zA-Z0-9][a-zA-Z0-9_./|-]*$/u.test(contentKeyPrefix)) {
+    throw new GeneratedContentRequestError("contentKeyPrefix is not a valid content-key prefix.");
+  }
+  const mode = requestUrl.searchParams.get("mode");
+  if (mode && !/^[a-z0-9_-]+$/iu.test(mode)) {
+    throw new GeneratedContentRequestError("mode is not a valid generated-content mode.");
+  }
   const contentKeys = requestUrl.searchParams.getAll("contentKeys");
   if (contentKeys.length > 64 || contentKeys.some((key) => !/^[a-zA-Z0-9_./|-]+$/u.test(key))) {
     throw new GeneratedContentRequestError("Provide at most 64 valid content keys.");
@@ -1566,7 +1577,7 @@ async function listGeneratedContent(req: IncomingMessage) {
   const limit = boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
   const view = requestUrl.searchParams.get("view") ?? "detail";
   if (!["detail", "inventory"].includes(view)) throw new GeneratedContentRequestError("view must be detail or inventory.");
-  const inventoryView = view === "inventory" && !id && !contentKey && !contentKeyPrefix && contentKeys.length === 0;
+  const inventoryView = view === "inventory" && !id && !contentKey && contentKeys.length === 0;
   const supportsUpdatedCursor = !id && scope !== "compatibility" && !startDate && !endDate;
   const offset = supportsUpdatedCursor ? 0 : Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
   const selectColumns = inventoryView ? generatedContentInventorySelectColumns() : generatedContentDetailSelectColumns();
@@ -1617,6 +1628,10 @@ async function listGeneratedContent(req: IncomingMessage) {
 
   if (!id && promptVersion) {
     params.set("prompt_version", `eq.${promptVersion}`);
+  }
+
+  if (!id && mode) {
+    params.set("mode", `eq.${mode}`);
   }
 
   if (!id && contentKey) {
