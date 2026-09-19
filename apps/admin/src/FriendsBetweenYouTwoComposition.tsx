@@ -65,16 +65,7 @@ export default function FriendsBetweenYouTwoComposition({
   if (!openingKey) return null;
 
   return (
-    <section className="studio-surface studio-section" aria-label="Between you two composition">
-      <header className="studio-section-header">
-        <div>
-          <p className="admin-eyebrow">Between you two composition</p>
-          <strong>Live write-up</strong>
-          <p>
-            This is the assembled Friends article. The opening is one saved row. What this activates is a separate synastry pair. Use Edit this activation on the composition, or open the opening to change the first passage.
-          </p>
-        </div>
-      </header>
+    <section className="studio-surface studio-section" aria-label="Between you two compiled write-up">
       {busy ? <PageLoading compact message="Opening the Between you two page…" /> : null}
       {error ? (
         <p>

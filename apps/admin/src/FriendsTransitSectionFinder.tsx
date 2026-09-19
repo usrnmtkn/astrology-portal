@@ -34,8 +34,8 @@ export default function FriendsTransitSectionFinder({
         <div className="admin-natal-placement-finder-heading">
           <div>
             <p className="admin-eyebrow">Friends Transits composition map</p>
-            <h3>{title}</h3>
-            <p>Type the live reader title, then open each part of the write-up. Between you two, Active for {"{{Name}}"}, and Where it lands are three different editors.</p>
+            <p><strong>{title}</strong></p>
+            <p>Type the live reader title. The compiled write-up below is the Between you two article. Open Active for {"{{Name}}"} or Where it lands only when that is the card you are editing.</p>
           </div>
         </div>
       ) : (
