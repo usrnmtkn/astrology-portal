@@ -1,0 +1,104 @@
+name: Calculation service availability
+
+on:
+  schedule:
+    - cron: "23 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: calculation-service-availability
+  cancel-in-progress: false
+
+jobs:
+  availability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PRODUCTION_BASE_URL: https://tldrastro.vercel.app
+      CALCULATION_MONITOR_SUMMARY_PATH: artifacts/calculation-service-summary.md
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Verify the monitor itself before trusting its verdict
+        run: node scripts/test-calculation-service-monitor.mjs
+      - name: Check the calculation service through production health
+        id: availability
+        run: node scripts/monitor-calculation-service.mjs
+      - name: Persist status and history in GitHub
+        if: always()
+        uses: actions/github-script@v8
+        env:
+          AVAILABILITY_OUTCOME: ${{ steps.availability.outcome }}
+          SUMMARY_PATH: artifacts/calculation-service-summary.md
+          ALERT_LOGINS: ${{ vars.EPHEMERIS_ALERT_LOGINS || github.repository_owner }}
+        with:
+          script: |
+            const fs = require("fs");
+            const title = "Calculation service availability";
+            const passed = process.env.AVAILABILITY_OUTCOME === "success";
+            const status = passed ? "PASS" : "FAIL";
+            const alertLogins = String(process.env.ALERT_LOGINS || "")
+              .split(/[\s,]+/)
+              .map((login) => login.replace(/^@/, "").trim())
+              .filter(Boolean)
+              .slice(0, 10);
+            const alertMentions = alertLogins.map((login) => `@${login}`).join(" ");
+            const alertMessage = passed || !alertMentions
+              ? ""
+              : `Action required: ${alertMentions} the calculation service is down. Reader sky facts, reports, and Studio generation are failing.`;
+            const summary = fs.existsSync(process.env.SUMMARY_PATH)
+              ? fs.readFileSync(process.env.SUMMARY_PATH, "utf8").trim()
+              : "The check ended before a structured summary was written.";
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              "# Calculation service availability monitor",
+              "",
+              "Current sky placements, report facts, relationship facts, and the Sky generation crons are calculated by the tldrastro-api service. This check reads the calculation dependency reported by production health.",
+              "",
+              `Latest result: **${status}**`,
+              `Latest run: [${context.runId}](${runUrl})`,
+              alertMessage,
+              "",
+              summary,
+              "",
+              "This issue is updated daily. It closes on its own once the service answers again, and each run leaves a dated comment below."
+            ].join("\n");
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "all",
+              per_page: 100
+            });
+            let issue = issues.find((candidate) => !candidate.pull_request && candidate.title === title);
+            if (!issue && passed) return;
+            if (!issue) {
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                assignees: alertLogins
+              });
+              issue = created.data;
+            }
+            const update = {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body,
+              state: passed ? "closed" : "open"
+            };
+            if (!passed && alertLogins.length) update.assignees = alertLogins;
+            await github.rest.issues.update(update);
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `## ${status} — run ${context.runId}\n\n[Open workflow run](${runUrl})\n\n${alertMessage ? `${alertMessage}\n\n` : ""}${summary}`
+            });
