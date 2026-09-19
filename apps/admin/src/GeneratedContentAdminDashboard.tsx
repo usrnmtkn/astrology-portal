@@ -11,7 +11,7 @@ import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowse
 import { PageLoading } from "../../web/src/components/PageLoading";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalExactSourceDraft, transitNatalSharedFallbackKey, transitNatalStarterCopy } from "./transitNatalSources";
-import { friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
+import { aspectTechnicalVerb, friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
 import FriendsTransitSectionFinder from "./FriendsTransitSectionFinder";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
@@ -3159,7 +3159,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
-  const customVariableLibrary = useStudioCustomVariables(secret, Boolean(secret));
+  const customVariableLibrary = useStudioCustomVariables(secret, activePage === "variables" || Boolean(draft));
   const [fallbackHookEditorGuidanceBuilder, setFallbackHookEditorGuidanceBuilder] = useState<FallbackHookEditorGuidanceBuilder | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
@@ -5547,9 +5547,20 @@ export function GeneratedContentAdminDashboard() {
     const parentVariableName = selectedTemplateVariableName;
     const parentVariableSource = selectedTemplateVariableSourceId;
     const previousReturn = studioEditorReturnContext();
+    // Opening the row the current way back leads to is walking back, so the offer is
+    // dropped rather than renewed. Reversing a compatibility record twice otherwise
+    // left a way back to the record already on screen and no plain way to close.
+    if (previousReturn?.parentContentKey === destinationContentKey) {
+      clearStudioEditorReturn();
+      if (await open() === false) {
+        rememberStudioEditorReturn(previousReturn);
+        return false;
+      }
+      return true;
+    }
     // Registered before the row loads so the destination's first render already
     // carries the way back instead of waiting for an unrelated re-render.
-    rememberStudioEditorReturn({ childContentKey: destinationContentKey, label: parentDraft.headline || parentDraft.contentKey, saveReturns: options.saveReturns === true, returnToParent: () => {
+    rememberStudioEditorReturn({ childContentKey: destinationContentKey, parentContentKey: parentDraft.contentKey, label: parentDraft.headline || parentDraft.contentKey, saveReturns: options.saveReturns === true, returnToParent: () => {
       setDraft(parentDraft); editorBaselineRef.current = parentBaseline; editorSavedInputRef.current = parentSavedInput;
       setEditorSourceRow(parentRow); setSelectedRowId(parentSelection); setSkyWritingContext(parentContext);
       setCompositionEditorContext(parentComposition); setTemplateVariableReferenceOpen(parentVariablesOpen);
@@ -9305,6 +9316,19 @@ export function GeneratedContentAdminDashboard() {
         natalPoint: transitNatalPoint || undefined
       });
     const hasTransitTemplatePreviewContext = hasTransitContactContext && Boolean(transitNatalSign);
+    // Variables describing the calculated contact read as the contact being edited. The
+    // dictionary examples name Saturn and Venus, which look like another transit's
+    // write-up while the selected one is on screen.
+    const transitFactExamples: Record<string, string> = hasTransitContactContext
+      ? {
+        transitTitle: titleFromKey(transitNatalPlanet),
+        transitRef: `transiting ${titleFromKey(transitNatalPlanet)}`,
+        natalTitle: `natal ${titleFromKey(transitNatalPoint)}`,
+        aspectName: transitNatalAspect,
+        aspectWord: aspectTechnicalVerb(transitNatalAspect),
+        ...(transitNatalSign ? { signTitle: titleFromKey(transitNatalSign), transitSign: titleFromKey(transitNatalSign) } : {})
+      }
+      : {};
     const variableReferences = buildVariableReferences?.({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
@@ -11685,6 +11709,7 @@ export function GeneratedContentAdminDashboard() {
               : rows).filter(row => !isZodiacSeasonSourceKey(row.content_key)), ...seasonSourceRows]}
             onInsert={insertDraftToken}
             templateContentKey={currentDraft.contentKey}
+            factExamples={transitFactExamples}
             templatePreviewRow={templatePreviewRow}
             reviewTemplateRow={templatePreviewRow ?? {
               id: currentDraft.id ?? "draft-template",

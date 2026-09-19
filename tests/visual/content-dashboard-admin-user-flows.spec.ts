@@ -2435,7 +2435,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/sun/sun/square/virgo/3/3");
     const writer = editor.locator("details").filter({ hasText: "This generator writes the selected destination only" });
     await expect(writer.locator("summary")).toBeVisible();
-    await writer.locator("summary").click();
+    // The panel now opens with the editor, so an unconditional click closed it and hid
+    // the action underneath. What matters is that it is expanded before generating.
+    if (!await writer.evaluate(node => (node as HTMLDetailsElement).open)) await writer.locator("summary").click();
+    await expect(writer.evaluate(node => (node as HTMLDetailsElement).open)).resolves.toBe(true);
     await editor.getByRole("button", { name: "Generate You + Friend draft", exact: true }).click();
     await expect(editor.getByLabel("AI You suggestion")).toHaveValue("Synthetic You draft for the selected contact.");
     await expect(editor.getByLabel("AI Friend suggestion")).toHaveValue("{{Name}} may treat a question about their plan as a verdict until {{untilDate}}.");
@@ -2489,7 +2492,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Transiting planet", { exact: true }).selectOption("sun");
     await page.getByLabel("Transit to natal aspect").selectOption("conjunction");
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("north-node");
-    await expect(finder).toContainText("This write-up is ready. Choose a current sign");
+    // Naming the destination replaced the readiness sentence, so the finder still has to
+    // say the three-part write-up is what this saves and how to reach the six-part one.
+    await expect(finder).toContainText("Write-up destination: three-part aspect");
+    await expect(finder).toContainText("Set current sign and both houses to write the six-part situation for this contact.");
     await page.getByLabel("Transit zodiac sign").selectOption("virgo");
     const preview = finder.getByRole("region", { name: "Effective transit to natal reader preview" });
     await expect(preview).toContainText("You may be offered a role that feels slightly ahead");
@@ -2558,7 +2564,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Transit house", { exact: true }).selectOption("8");
     await page.getByLabel("Natal planet or point", { exact: true }).selectOption("north-node");
     await page.getByLabel("Transit to natal aspect").selectOption("trine");
-    await closeGeneratedEditor(page, true);
+    // Changing the selection no longer opens an editor on its own, so there is nothing to
+    // close here. Opening one is the owner's choice, made through the buttons below.
+    await expect(page.getByRole("dialog", { name: "Generated content editor" })).toHaveCount(0);
     await expect(preview).toContainText("Lilith in Capricorn is trining your natal North Node");
     await expect(preview).not.toContainText("fallback-template/transit.aspect");
     await openSharedTransitSource(preview, "fallback-hook/transit-effect-soft/lilith");
@@ -2574,6 +2582,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await rail.getByRole("button", { name: "Close variables", exact: true }).click();
     await editor.screenshot({ path: path.join(adminScreenshotDir, `lilith-source-${width}-${theme}.png`) });
     await editor.getByRole("button", { name: "Close", exact: true }).click();
+    // Closing the shared source leaves the finder rather than revealing an exact editor
+    // underneath, so the draft for this contact is opened deliberately here.
+    await expect(editor).toHaveCount(0);
+    await transitWriteupButton(finder, "Lilith trine your North Node").click();
     await expect(editor.getByRole("heading", { level: 2 })).toHaveText("Write Lilith trine your North Node");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
     await expect(editor.getByText(/No write-up is saved for this exact contact yet/)).toBeVisible();
@@ -2610,7 +2622,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     for (let reopen = 0; reopen < 2; reopen++) {
       await openSharedTransitSource(preview, keys[0]);
       await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(keys[0]);
-      await expect(editor.getByLabel("Selected transit context")).toContainText("Lilith in Capricorn, 8th house, trine natal North Node, 4th house");
+      // The context now leads with the contact and labels the natal house, so a bare
+      // "4th house" no longer stands for it.
+      await expect(editor.getByLabel("Selected transit context")).toContainText("Lilith trine natal North Node, Lilith in Capricorn, 8th house, natal 4th house");
       await editor.getByRole("button", { name: /Variables/ }).click();
       await expect(rail.getByRole("button", { name: "They", exact: true })).toHaveAttribute("aria-pressed", "true");
       await expect(rail.locator(".admin-composition-preview-chrome")).toContainText("Friends Transits");
@@ -2653,6 +2667,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#sky-writeups?view=transits-to-natal&transit=neptune&sign=aries&transitHouse=8&aspect=opposition&natal=sun&natalHouse=4&audience=friends&variant=1&pass=2&retrograde=true&window=until+October+4");
     const preview = page.getByRole("region", { name: "Effective transit to natal reader preview" });
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const finder = page.getByRole("region", { name: "Personal Transits source finder" });
     await closeGeneratedEditor(page, true);
     const facts = { planet: "neptune", sign: "aries", aspect: "opposition", natalPoint: "sun", voice: "{{Name}}", variant: 1, pass: 2, isRetrograde: true, window: "until October 4" };
     const expected = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(facts));
@@ -2662,7 +2677,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(fog.contentKey);
     await expect(editor.locator(`[data-sky-field="${fog.field}"]`)).toHaveValue(String(servingPackageRecords.get(fog.contentKey)![fog.field]));
     await expect(editor.locator(`[data-sky-field="${fog.field}"]`)).toBeFocused();
-    await expect(editor.getByLabel("Selected transit context")).toContainText("Neptune in Aries, 8th house, opposition natal Sun, 4th house");
+    await expect(editor.getByLabel("Selected transit context")).toContainText("Neptune opposition natal Sun, Neptune in Aries, 8th house, natal 4th house");
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.reload();
     await closeGeneratedEditor(page, true);
@@ -2675,18 +2690,23 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByLabel("Transit preview timing")).toHaveValue("until October 4");
     await page.getByLabel("Transit copy variant").selectOption("4");
     await expect.poll(() => inputs.at(-1)?.variant).toBe(4);
-    await page.getByLabel("Transiting planet", { exact: true }).selectOption("sun");
-    await page.getByLabel("Natal planet or point", { exact: true }).selectOption("midheaven");
-    await closeGeneratedEditor(page, true);
+    // The editor mirrors these contact selects onto the same selection, so the finder's own
+    // row is taken rather than matching a page-wide label that now hits both.
+    await closeGeneratedEditor(page);
+    await finder.getByRole("combobox", { name: "Transiting planet", exact: true }).first().selectOption("sun");
+    await finder.getByRole("combobox", { name: "Natal planet or point", exact: true }).first().selectOption("midheaven");
     const insertKey = "authored/transit-aspect-insert/sun/midheaven/opposition";
     await openSharedTransitSource(preview, insertKey);
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(insertKey);
     const insertSource = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(inputs.at(-1))).paragraphs.flatMap(p => p.sources).find(source => source.contentKey === insertKey)!;
     await expect(editor.locator(`[data-sky-field="${insertSource.field}"]`)).toHaveValue(String(servingPackageRecords.get(insertKey)![insertSource.field]));
     await editor.getByRole("button", { name: "Close", exact: true }).click();
-    await page.getByLabel("Natal planet or point", { exact: true }).selectOption("north-node");
-    await page.getByLabel("Transit to natal aspect").selectOption("conjunction");
+    await finder.getByRole("combobox", { name: "Natal planet or point", exact: true }).first().selectOption("north-node");
+    await finder.getByRole("combobox", { name: "Transit to natal aspect", exact: true }).first().selectOption("conjunction");
     const key = "authored/transit-aspect/sun/north-node/conjunction";
+    // The selection no longer opens an editor by itself, so the write-up is opened here.
+    await expect(editor).toHaveCount(0);
+    await transitWriteupButton(finder, "Sun conjunction your North Node").click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key);
     await expect(editor.getByRole("heading", { level: 2 })).not.toHaveText("Write Sun conjunction your North Node");
     await expect(editor).not.toContainText("This is a new blank draft");
@@ -2731,10 +2751,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(shared.body_you ?? shared.body ?? ""));
     await expect(page.getByRole("status").filter({ hasText: "not materialized" })).toHaveCount(0);
     await expect(page.getByRole("status").filter({ hasText: "from the packaged source" })).toBeVisible();
-    await expect(finder.getByRole("status")).toContainText("authored/transit-aspect/mars/north-node/sextile");
+    // The finder gained a second status when it started naming the write-up destination,
+    // so the key is read from that prompt rather than from whichever status came first.
+    const destination = finder.getByRole("status").filter({ hasText: "Write-up destination" });
+    await expect(destination).toContainText("authored/transit-aspect/mars/north-node/sextile");
     await closeGeneratedEditor(page);
     await page.getByLabel("Transit zodiac sign", { exact: true }).selectOption("scorpio");
-    await expect(finder.getByRole("status")).toContainText("authored/transit-aspect/mars/north-node/sextile");
+    await expect(destination).toContainText("authored/transit-aspect/mars/north-node/sextile");
     await liveCard.getByRole("button", { name: "Edit live Mars sextile your North Node" }).click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(sharedKey);
     await closeGeneratedEditor(page);
@@ -6352,8 +6375,12 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await expectAdminRouteLoads(page, '/admin/content#sky-writeups?view=daily-summary');
     const assembly = page.getByRole('region', { name: 'Full summary assembly', exact: true });
     const composition = page.getByRole('region', { name: 'Sun and Moon composition map', exact: true });
+    // The sections are flat and the workspace grid holds them apart, so the 24px that used
+    // to be each section's top padding is now the gap between them. Asserting that gap on
+    // the workspace keeps an unseparated stack failing.
+    await expect(page.locator('.admin-daily-glance-studio').first()).toHaveCSS('gap', '24px');
     for (const card of [assembly, composition]) {
-      await expect(card).toHaveCSS('padding', '24px 0px 0px');
+      await expect(card).toHaveCSS('padding', '0px');
       await expect(card).toHaveCSS('border-radius', '0px');
       await expect(card).toHaveCSS('gap', '24px');
       await expect(card).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
@@ -6395,8 +6422,23 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await page.getByLabel('Search summary wording', { exact: true }).fill('no-matching-summary-12345');
     await expect(page.getByText('No summary fields match this search.', { exact: true })).toBeVisible();
     await page.getByLabel('Search summary wording', { exact: true }).fill('');
-    const row = page.locator('.admin-daily-glance-pair-list > article').first();
-    await expect(row).toHaveCSS('padding', '24px');
+    // Pair rows are flat and divided now: the first sits flush, and each row after it takes
+    // a rule plus the 24px that used to be every row's own padding.
+    const pairRows = await page.locator('.admin-daily-glance-pair-list > article').evaluateAll(items => items.map(item => {
+      const style = getComputedStyle(item);
+      return { padding: style.padding, divider: parseFloat(style.borderTopWidth), radius: parseFloat(style.borderRadius),
+        background: style.backgroundColor, followsRow: item.previousElementSibling?.tagName === 'ARTICLE' };
+    }));
+    expect(pairRows.length).toBeGreaterThan(1);
+    for (const pairRow of pairRows) {
+      expect(pairRow.radius).toBe(0);
+      expect(pairRow.background).toBe('rgba(0, 0, 0, 0)');
+      if (!pairRow.followsRow) continue;
+      expect(pairRow.padding).toBe('24px 0px 0px');
+      expect(pairRow.divider).toBeGreaterThan(0);
+    }
+    // Without a divided pair the flat treatment would pass on an unseparated list.
+    expect(pairRows.filter(pairRow => pairRow.followsRow).length).toBeGreaterThan(0);
     await expectNoHorizontalOverflow(page, 'Daily summary containers');
     await assertNoBrowserErrors();
   });
@@ -7449,8 +7491,14 @@ for (const theme of ['dark', 'light'] as const) {
 
       const choices = page.locator('.admin-composition-template-items > button');
       await expect(choices.first()).toBeVisible();
-      for (const choice of await choices.all()) {
-        await expect(choice).toHaveCSS('border-radius', '16px');
+      // The choices are a divided list now rather than rounded cards, so the corner radius
+      // is gone and a rule between rows does the separating. The last row closes the list
+      // and carries no rule.
+      const choiceRows = await choices.all();
+      for (const choice of choiceRows.slice(0, -1)) await expect(choice).toHaveCSS('border-bottom-width', '1px');
+      await expect(choiceRows.at(-1)!).toHaveCSS('border-bottom-width', '0px');
+      for (const choice of choiceRows) {
+        await expect(choice).toHaveCSS('border-radius', '0px');
         await expect(choice).toHaveCSS('padding', '16px');
         await expect(choice).toHaveCSS('text-align', 'start');
         await expect(choice.locator('strong')).toHaveCSS('font-weight', '400');
@@ -7473,7 +7521,7 @@ for (const theme of ['dark', 'light'] as const) {
 
       await page.getByRole('tab', { name: /Template internals/ }).click();
       await expect(choices.first()).toBeVisible();
-      await expect(choices.first()).toHaveCSS('border-radius', '16px');
+      await expect(choices.first()).toHaveCSS('border-radius', '0px');
       await expect(choices.first()).toHaveCSS('padding', '16px');
       const filterBox = await page.locator('.admin-composition-search-shell').boundingBox();
       const cardBox = await choices.first().boundingBox();
@@ -7865,6 +7913,11 @@ const containerAuditRoutes = [...new Set([...adminPages.map(item => item.hash),
   'content/aspect-pattern-activation', 'fallback-hooks', 'sky-writeups?view=transits-to-natal&audience=friends',
   'exact-content?category=Calendar+Aspects'])];
 
+/**
+ * The page header is chrome on the canvas by design: the title, breadcrumb, Create action,
+ * and health nav are not a card and are excluded here. Everything below them still has to
+ * sit on a painted surface.
+ */
 async function uncontainedStudioContent(page: Page) {
   return page.locator('.admin-main').evaluate(main => {
     const canvas = getComputedStyle(main.closest('.admin-dashboard')!).backgroundColor;
@@ -7875,7 +7928,7 @@ async function uncontainedStudioContent(page: Page) {
       }
       return false;
     };
-    return [...main.querySelectorAll('input,select,textarea,p,h1,h2,h3,label,nav,span,strong,button')].filter(el => el.checkVisibility({checkVisibilityCSS:true}) && !el.closest('.sr-only,.admin-sr-only,.admin-editor-backdrop,.admin-source-repair-backdrop,.admin-create-menu-backdrop') && !isContained(el)).map(el => ({
+    return [...main.querySelectorAll('input,select,textarea,p,h1,h2,h3,label,nav,span,strong,button')].filter(el => el.checkVisibility({checkVisibilityCSS:true}) && !el.closest('.sr-only,.admin-sr-only,.admin-editor-backdrop,.admin-source-repair-backdrop,.admin-create-menu-backdrop,.admin-dashboard-header') && !isContained(el)).map(el => ({
       tag: el.tagName, text: (el.getAttribute('aria-label') || el.textContent || '').slice(0,70),
       parents: [el.parentElement?.className,el.parentElement?.parentElement?.className,el.parentElement?.parentElement?.parentElement?.className]
     }));
@@ -7893,7 +7946,9 @@ for (const theme of ['light','dark']) for (const width of [1440,390]) {
     for (const route of containerAuditRoutes) {
       await expectAdminRouteLoads(page, `/admin/content#${route}`);
       await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
-      await expect(page.locator('.admin-loaded-workspace')).not.toContainText(/Loading (aspect|report|Lunar|Composition)/);
+      // Any loading line is chrome on the canvas while it waits, so the audit runs after the
+      // workspace has finished. Listing only some waits reported the natal aspect finder's.
+      await expect(page.locator('.admin-loaded-workspace')).not.toContainText(/Loading\b/iu);
       await page.locator('.admin-main details').evaluateAll(items => items.forEach(item => { (item as HTMLDetailsElement).open = true; }));
       for (const toggle of await page.locator('.admin-filter-disclosure-toggle[aria-expanded="false"],.admin-browse-filter-toggle[aria-expanded="false"]').all()) {
         if (await toggle.isVisible()) await toggle.click();

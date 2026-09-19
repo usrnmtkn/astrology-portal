@@ -2,6 +2,11 @@ import { contentUpdateEvent, type ContentUpdateNotice } from "../../web/src/serv
 
 type StudioEditorReturnContext = {
   childContentKey: string;
+  /**
+   * The row the way back leads to. Opening it again is walking back rather than
+   * a new hop, so the offer is dropped instead of pointing at the row on screen.
+   */
+  parentContentKey?: string;
   label: string;
   returnToParent: () => void;
   /**

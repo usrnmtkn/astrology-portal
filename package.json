@@ -193,6 +193,7 @@
     "test:privacy": "node scripts/test-project-privacy.mjs",
     "test:editorial-reference-policy": "node scripts/test-editorial-reference-policy.mjs",
     "test:reader-copy-boundary": "node scripts/test-editorial-copy-boundary.mjs && node scripts/audit-reader-drafting-notes.mjs",
+    "test:browser-suite-coverage": "node scripts/test-browser-suite-coverage.mjs",
     "test:natal-calculation-scope": "node --import tsx scripts/test-natal-calculation-scope.mjs",
     "pretest:placement-dignity": "npm run prepare:app-test-dependencies",
     "test:placement-dignity-editor": "node --import tsx scripts/test-placement-dignity-editor.mts",
