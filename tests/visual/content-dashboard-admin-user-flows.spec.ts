@@ -9,6 +9,7 @@ import path from "node:path";
 import { natalPlacementPackageSources, normalizeNatalPlacementPreviewInput, renderNatalPlacementPreviewState } from "../../api/admin/natal-placement-preview";
 import { natalPlacementResolverDependencyKeys } from "../../apps/admin/src/natalPlacementSources";
 import { contentSourceRepairPlan } from "../../api/admin/content-source-repair-plans";
+import { studioListingFacts, studioListingRow } from "../../api/_lib/studio-listing-facts";
 import { writingSurfaceAdminAccess, writingSurfaceSourceMap } from "../../apps/admin/src/writingSurfaceSourceMap";
 import {
   expectRouteLoadsWithin,
@@ -796,7 +797,19 @@ async function seedAdminApi(
         });
         return;
       }
+      if (options.generatedContentDelayMs) {
+        await new Promise((resolve) => setTimeout(resolve, options.generatedContentDelayMs));
+      }
       options.onGeneratedContentRead?.(url);
+      if (generatedContentFailuresRemaining > 0) {
+        generatedContentFailuresRemaining -= 1;
+        await route.fulfill({
+          status: 503,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: false, error: "Temporary generated-content read failure." })
+        });
+        return;
+      }
       // A request for one row or a named set returns documents; the list view strips them.
       const detail = Boolean(url.searchParams.get("id") || url.searchParams.get("contentKey") || url.searchParams.getAll("contentKeys").length);
       const { pageRows, nextCursor } = pageSeededRows(url);
@@ -805,7 +818,7 @@ async function seedAdminApi(
           ok: true,
           rows: pageRows.map((row) => (detail
             ? { ...row, inventory_only: false }
-            : { ...row, body: null, summary: null, sections: null, facts: null, source_snapshot: null, inventory_only: true })),
+            : studioListingRow(row, studioListingFacts(row)))),
           nextCursor
         }
       });
