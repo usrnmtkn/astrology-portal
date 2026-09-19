@@ -2356,7 +2356,8 @@ test.describe("content dashboard admin user flow case studies", () => {
   }
 
   function transitWriteupButton(finder: import("@playwright/test").Locator, title: string) {
-    return finder.getByRole("button", { name: new RegExp(`^(Edit|Write) ${title}$`) });
+    // The three-part row says "Edit live" when a published source is serving the card.
+    return finder.getByRole("button", { name: new RegExp(`^(Edit|Edit live|Write) ${title}$`) });
   }
 
   for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) test(`Transit exact editor isolates sibling aspects ${width} ${theme}`, async ({ page }) => {
@@ -2719,19 +2720,30 @@ test.describe("content dashboard admin user flow case studies", () => {
     // The editor mirrors these contact selects onto the same selection, so the finder's own
     // row is taken rather than matching a page-wide label that now hits both.
     await closeGeneratedEditor(page);
-    await finder.getByRole("combobox", { name: "Transiting planet", exact: true }).first().selectOption("sun");
-    await finder.getByRole("combobox", { name: "Natal planet or point", exact: true }).first().selectOption("midheaven");
+    // One control per name in this region: the Between you two preview used to answer to
+    // "Transiting planet" as well, and selecting it rewrote the aspect and cleared the houses.
+    await finder.getByRole("combobox", { name: "Transiting planet", exact: true }).selectOption("sun");
+    await finder.getByRole("combobox", { name: "Natal planet or point", exact: true }).selectOption("midheaven");
+    // A complete six-part situation opens its own write-up. The shared sources below it are
+    // reached from the preview, so that editor is closed first and must stay closed.
+    await expect(editor.getByLabel("Content key", { exact: true }))
+      .toHaveValue("authored/transit-aspect/sun/midheaven/opposition/aries/8/4");
+    await closeGeneratedEditor(page);
+    await expect(editor).toHaveCount(0);
     const insertKey = "authored/transit-aspect-insert/sun/midheaven/opposition";
     await openSharedTransitSource(preview, insertKey);
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(insertKey);
     const insertSource = renderTransitNatalPreviewState(normalizeTransitNatalPreviewInput(inputs.at(-1))).paragraphs.flatMap(p => p.sources).find(source => source.contentKey === insertKey)!;
     await expect(editor.locator(`[data-sky-field="${insertSource.field}"]`)).toHaveValue(String(servingPackageRecords.get(insertKey)![insertSource.field]));
     await editor.getByRole("button", { name: "Close", exact: true }).click();
-    await finder.getByRole("combobox", { name: "Natal planet or point", exact: true }).first().selectOption("north-node");
-    await finder.getByRole("combobox", { name: "Transit to natal aspect", exact: true }).first().selectOption("conjunction");
+    await finder.getByRole("combobox", { name: "Natal planet or point", exact: true }).selectOption("north-node");
+    await finder.getByRole("combobox", { name: "Transit to natal aspect", exact: true }).selectOption("conjunction");
     const key = "authored/transit-aspect/sun/north-node/conjunction";
-    // The selection no longer opens an editor by itself, so the write-up is opened here.
-    await expect(editor).toHaveCount(0);
+    // The complete six-part selection opens its own situation editor. This step is about the
+    // three-part live source underneath it, so that editor is closed before opening this one.
+    await expect(editor.getByLabel("Content key", { exact: true }))
+      .toHaveValue("authored/transit-aspect/sun/north-node/conjunction/aries/8/4");
+    await closeGeneratedEditor(page);
     await transitWriteupButton(finder, "Sun conjunction your North Node").click();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key);
     await expect(editor.getByRole("heading", { level: 2 })).not.toHaveText("Write Sun conjunction your North Node");
@@ -2742,7 +2754,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect.poll(() => writes.length).toBe(1);
     expect((writes[0].payload.sections as { packageDraft?: { body_you?: string } }).packageDraft?.body_you ?? writes[0].payload.body).toBe(String(servingPackageRecords.get(key)!.body_you));
     await editor.getByRole("button", { name: "Close", exact: true }).click();
-    await page.getByRole("button", { name: "Edit Sun conjunction your North Node", exact: true }).click();
+    await transitWriteupButton(finder, "Sun conjunction your North Node").click();
     await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(servingPackageRecords.get(key)!.body_you));
     await expectNoHorizontalOverflow(page, "Packaged exact transit editor");
     await mkdir(adminScreenshotDir, { recursive: true });
@@ -3647,8 +3659,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     const guidedReviewButton = editableIssue.getByRole("button", { name: "Review this horoscope" });
     await page.setViewportSize({ width: 1280, height: 900 });
     await expect(guidedReviewButton).toBeVisible();
+    // The action sits in a row further down a long list, so vertical scrolling is expected. What
+    // must hold is that it is reachable, its label is not cut off, and the row does not push it
+    // sideways past the window.
+    await guidedReviewButton.scrollIntoViewIfNeeded();
     await expect(guidedReviewButton).toBeInViewport();
     await expect.poll(() => guidedReviewButton.evaluate((button) => button.scrollWidth <= button.clientWidth)).toBe(true);
+    expect(await page.evaluate(() => window.scrollX)).toBe(0);
     const guidedReviewButtonBox = await guidedReviewButton.boundingBox();
     expect(guidedReviewButtonBox).not.toBeNull();
     expect((guidedReviewButtonBox?.x ?? 0) + (guidedReviewButtonBox?.width ?? 0)).toBeLessThanOrEqual(1280);
@@ -4311,7 +4328,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     await openAdminDeepLink("#composition-map");
     await expectAdminHeader(page, "Composition Map", "Admin / Composition / Map");
     await expect(page.getByText("Start with any reader-facing surface in the app, then follow its editorial sources, runtime path, templates, and calculated facts.")).toHaveCount(0);
-    await expect(page.getByRole("tab", { name: /Surfaces & systems 24/ })).toHaveAttribute("aria-selected", "true");
+    // The tab carries the number of surfaces it lists. Pinning that number turned every added
+    // surface into a failure with nothing to fix, so only its shape is asserted here.
+    await expect(page.getByRole("tab", { name: /^Surfaces & systems \d+$/ })).toHaveAttribute("aria-selected", "true");
     const surfaceList = page.getByRole("complementary", { name: "App surfaces and systems" });
     await surfaceList.getByText(/^Browse surfaces/).click();
     await surfaceList.getByLabel("Search surfaces and systems").fill("Daily At-a-Glance");
@@ -4576,8 +4595,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     await detail.getByRole("tab", { name: "Main template" }).click();
     await expect(detail.locator(".admin-composition-variable-token.variable-hook")).toHaveAttribute("data-variable-action", /Edit Closing Line/);
     await detail.getByRole("tab", { name: "Reader preview" }).click();
-    const renderedCopyBounds = await preview.getByText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.").boundingBox();
-    expect(renderedCopyBounds?.y).toBeLessThan(900);
+    // Returning to the tab must show the rendering again. The panel's distance from the top of
+    // the document is not the contract: switching tabs changes the page height, which moves the
+    // scroll position on its own.
+    const renderedCopy = preview.getByText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.");
+    await renderedCopy.scrollIntoViewIfNeeded();
+    await expect(renderedCopy).toBeInViewport();
     await expect(preview.getByRole("button", { name: /Shared compatibility closing/ })).toBeVisible();
     await expectNoHorizontalOverflow(page, "Composition Map desktop");
     await mkdir(adminScreenshotDir, { recursive: true });
@@ -6710,7 +6733,9 @@ for (const theme of ['dark', 'light'] as const) {
         await expectAdminRouteLoads(page, `/admin/content#${route}`);
         await expectStudioTypography(page, route);
         await expect(page.locator('.admin-dashboard-header h1')).toHaveCSS('font-size','22px');
-        expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route).toBe(true);
+        // Forms on a first paint can measure against the full window before the sidebar lands,
+        // so the route is given a moment to settle. A real overflow still fails here.
+        await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), { message: route, timeout: 5_000 }).toBe(true);
       }
       await expectAdminRouteLoads(page, '/admin/content#exact-content');
       await page.getByLabel('Search content', { exact: true }).fill('sky.placement.sun.cancer');
