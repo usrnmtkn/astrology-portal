@@ -13,7 +13,7 @@ assert.match(dashboard, /\(loadedRows, complete\) => \{[\s\S]{0,320}mergeContent
 assert.match(dashboard, /studioInventoryRequestPath\(/u, "Every CMS inventory page must use the compact section query.");
 assert.match(fs.readFileSync("apps/admin/src/studioSectionInventory.ts", "utf8"), /view: "inventory"/u, "Section lists must stay on the compact inventory projection.");
 assert.match(dashboard, /async function hydrateGeneratedContentRow\(row: AdminGeneratedContentRow/u, "Opening an inventory row must hydrate full document detail.");
-assert.match(dashboard, /generated-content\?id=\$\{encodeURIComponent\(row\.id\)\}/u, "Document detail hydration must use the exact row id.");
+assert.match(dashboard, /generated-content-inventory\?/u, "Document detail hydration must use the fast inventory API.");
 
 for (const fn of [
   "loadFallbackArchitectureV3DashboardBundle",

@@ -3047,7 +3047,12 @@ export function GeneratedContentAdminDashboard() {
   const [skyReviewHorizonError, setSkyReviewHorizonError] = useState<string | null>(null);
   const [contentClassFilter, setContentClassFilter] = useState<AdminContentClassFilter>("all");
   const [tierFilter, setTierFilter] = useState<AdminPhrasebankTierFilter>("all");
-  const [categoryFilter, setCategoryFilter] = useState<AdminContentCategoryFilter>("all");
+  const [categoryFilter, setCategoryFilter] = useState<AdminContentCategoryFilter>(() => {
+    const category = parseAdminHash().params.get("category");
+    return category && categoryFilters.some((filter) => filter.key === category)
+      ? category
+      : "all";
+  });
   const [showReferenceRows, setShowReferenceRows] = useState(false);
   const [showRetiredRows, setShowRetiredRows] = useState(false);
   const [query, setQuery] = useState("");
@@ -3727,7 +3732,7 @@ export function GeneratedContentAdminDashboard() {
     const params = new URLSearchParams({ status: "all", visibility: "all", limit: "200" });
     natalPlacementResolverDependencyKeys(natalPlacementPlanet, natalPlacementSign, natalPlacementHouse, natalPlacementMotion)
       .forEach((key) => params.append("contentKeys", key));
-    void adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(`/api/admin/generated-content?${params}`, secret, { signal: controller.signal })
+    void adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(`/api/admin/generated-content-inventory?${params}`, secret, { signal: controller.signal })
       .then((payload) => {
         if (controller.signal.aborted) return;
         setRows((current) => {
@@ -5337,7 +5342,7 @@ export function GeneratedContentAdminDashboard() {
     if (!row.inventory_only && !refresh) return row;
     const selector = row.id.startsWith("package:") ? `contentKeys=${encodeURIComponent(row.content_key)}` : `id=${encodeURIComponent(row.id)}`;
     const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-      `/api/admin/generated-content?${selector}&status=all&visibility=all&limit=1`,
+      `/api/admin/generated-content-inventory?${selector}&status=all&visibility=all&limit=1`,
       secret
     );
     let hydrated = payload.rows?.find((candidate) => candidate.id === row.id || row.id.startsWith("package:") && candidate.content_key === row.content_key);
@@ -5345,7 +5350,7 @@ export function GeneratedContentAdminDashboard() {
     if ((row.id.startsWith("package:") || followPublishedRevision || refresh && row.status !== "ARCHIVED") && hydrated?.status === "ARCHIVED"
       && hydrated.review_state === "published-revision" && typeof publishedTarget === "string") {
       const target = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
-        `/api/admin/generated-content?id=${encodeURIComponent(publishedTarget)}&status=all&visibility=all&limit=1`, secret);
+        `/api/admin/generated-content-inventory?id=${encodeURIComponent(publishedTarget)}&status=all&visibility=all&limit=1`, secret);
       hydrated = target.rows?.find((candidate) => candidate.id === publishedTarget);
     }
     if (!hydrated || hydrated.inventory_only) {
