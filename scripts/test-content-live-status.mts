@@ -115,6 +115,30 @@ const { approveNatalAspectStudioCopy } = await import("../api/_lib/content-studi
 approveNatalAspectStudioCopy(natal.sections.packageRecord, natal.content_key);
 assert.equal(contentLiveStatuses([natal])[0].live, true, "Approved new natal aspects must reach the reader overlay.");
 assert.equal(contentLiveStatuses([{ ...natal, status: "DRAFT" }])[0].live, false);
+const aspectPairKey = "fallback-hook/aspect-pair/sun/mercury/conjunction";
+const aspectPair = servingPackageRecords.get(aspectPairKey);
+assert.ok(aspectPair, "Sun conjunction Mercury pair writing must be in the installed reader package.");
+const aspectPairDraft = {
+  id: "aspect-pair-draft",
+  content_key: aspectPairKey,
+  status: "DRAFT",
+  lane: "reference",
+  review_state: "needs-review",
+  provider: "tldrastro-fallback-architecture-v3",
+  body: aspectPair.body_you,
+  sections: {
+    packageRecord: {
+      contentKey: aspectPairKey,
+      content_role: "fallback_hook",
+      body: aspectPair.body_you,
+      review_status: "needs_review"
+    }
+  },
+  source_snapshot: { review_status: "needs_review" }
+};
+assert.equal(contentLiveStatuses([aspectPairDraft])[0].live, true, "A Draft Studio mirror of live natal pair writing must still show Live.");
+assert.equal(contentLiveStatuses([aspectPairDraft])[0].source, "package");
+assert.equal(contentLiveStatuses([{ ...aspectPairDraft, body: "Different unpublished pair writing.", sections: { packageRecord: { body: "Different unpublished pair writing." } } }])[0].live, false);
 globalThis.fetch = originalFetch;
 console.log("PASS: authenticated status API, input limits, exact macro copy, virtual package copy, shared reader rejection checks, and new natal aspect eligibility");
 

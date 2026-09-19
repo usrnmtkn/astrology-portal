@@ -5,6 +5,7 @@ import { surfaceSection } from "./studio-ds/recipes";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import {
   natalAspectComposedSources,
+  natalAspectComposedStatusRow,
   natalAspectDisplayTitle,
   natalAspectMatchesSelection,
   natalAspectSelectionOptions,
@@ -20,6 +21,7 @@ type PreviewRow = {
   body: string | null;
   content_key: string;
   headline: string | null;
+  sections?: unknown;
   status: string;
   summary: string | null;
 };
@@ -41,7 +43,13 @@ function titleCase(value: string) {
 
 
 function previewForRow(row: PreviewRow) {
-  return row.body?.trim() || row.summary?.trim() || row.headline?.trim() || "";
+  const sections = row.sections && typeof row.sections === "object" ? row.sections as Record<string, unknown> : null;
+  const packageRecord = sections?.packageRecord && typeof sections.packageRecord === "object"
+    ? sections.packageRecord as Record<string, unknown>
+    : null;
+  const packageYou = typeof packageRecord?.body_you === "string" ? packageRecord.body_you.trim() : "";
+  const packageBody = typeof packageRecord?.body === "string" ? packageRecord.body.trim() : "";
+  return row.body?.trim() || packageYou || packageBody || row.summary?.trim() || row.headline?.trim() || "";
 }
 
 export default function NatalAspectSourceFinder({
@@ -132,7 +140,7 @@ export default function NatalAspectSourceFinder({
                     <div className="admin-natal-source-card-copy">
                       <div className="admin-natal-source-card-heading">
                         <h4>{source.label}</h4>
-                        {savedRow && <ContentLiveStatusBadge row={savedRow} />}
+                        <ContentLiveStatusBadge row={natalAspectComposedStatusRow(savedRow, contentKey)} />
                       </div>
                       <p>{source.scope}</p>
                       <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>

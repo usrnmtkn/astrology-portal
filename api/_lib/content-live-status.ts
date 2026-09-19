@@ -83,9 +83,25 @@ const approved = new Set(["approved", "approved_reuse", "reviewed"]);
 export type LiveStatusRow = { id: string; content_key: string; target_date?: string | null; status?: string | null; lane?: string | null; review_state?: string | null; updated_at?: string | null; provider?: string | null; headline?: string | null; summary?: string | null; body?: string | null; sections?: any; source_snapshot?: any; facts?: any; mode?: string | null; flags?: string[] | null; surface?: string | null; event_type?: string | null };
 export type ContentLiveStatus = { id: string; live: boolean; label: "Live" | "Not live"; detail: string; source: "studio" | "package" | null; updatedAt: string | null; servingRowId?: string | null };
 function record(row: LiveStatusRow) { return row.sections?.packageRecord ?? {}; }
+function nonemptyCopy(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+function withReaderCopyFallbacks(value: Record<string, any>, row?: LiveStatusRow, theyFallback?: Record<string, any>) {
+  const next = { ...value };
+  if (!nonemptyCopy(next.body_you)) next.body_you = nonemptyCopy(next.body) ?? nonemptyCopy(row?.body);
+  if (!nonemptyCopy(next.body)) next.body = nonemptyCopy(next.body_you);
+  if (!nonemptyCopy(next.Body)) next.Body = nonemptyCopy(next.body);
+  if (!nonemptyCopy(next.body_they) && theyFallback) next.body_they = nonemptyCopy(theyFallback.body_they);
+  if (!nonemptyCopy(next.headline) && row) next.headline = nonemptyCopy(row.headline);
+  if (!nonemptyCopy(next.summary) && row) next.summary = nonemptyCopy(row.summary);
+  return next;
+}
 function copyHash(value: Record<string, any>) {
   const fields = ["headline", "summary", "body", "body_you", "body_they", "text", "Headline", "Summary", "Body", "fact_line", "opening", "tension", "development", "close", "era_layer", "tagline", "title", "focus", "strategy", "preview_note", "core_theme", "sign_jurisdiction", "lived_experience", "rulership_twist", "history_echo", "closing_charge", "article_sections", "rising_horoscopes"];
   return createHash("sha256").update(JSON.stringify(fields.map((field) => [field, value[field] ?? null]))).digest("hex");
+}
+function copiesMatch(requested: Record<string, any>, serving: Record<string, any>, row: LiveStatusRow) {
+  return copyHash(withReaderCopyFallbacks(requested, row, serving)) === copyHash(withReaderCopyFallbacks(serving));
 }
 export function isSkyPartitionKey(key: string) {
   return key.startsWith("fallback-hook/sky-sign-copy/") || key.startsWith("fallback-hook/sky-placement-") || key.startsWith("house-horoscope-core/") || key.startsWith("fallback-hook/sky-planet-education/");
@@ -210,7 +226,7 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
         const destination = fallbackArchitectureV3DashboardPackageDestination({ contentKey: row.content_key, role, contentType: row.source_snapshot?.contentType ?? row.source_snapshot?.content_type ?? row.facts?.contentType ?? "" });
         if ((destination === "authored" || row.content_key.startsWith("authored/compat-pair/")) && row.body?.trim()) requested = { ...packageRecord, body: row.body.trim() };
       }
-      if (serving && copyHash(requested) === copyHash(serving)) {
+      if (serving && copiesMatch(requested, serving, row)) {
         source = overlay ? "studio" : "package";
         detail = overlay ? "Readers can receive this saved copy." : "Readers can receive this exact copy from the installed content package.";
       } else if (proposal) detail = "This saved revision is not live. Readers may still receive the previous version.";

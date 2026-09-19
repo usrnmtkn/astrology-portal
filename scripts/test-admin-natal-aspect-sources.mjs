@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   natalAspectComposedSources,
+  natalAspectComposedStatusRow,
   natalAspectContentKey,
   natalAspectContentKeyPrefix,
   natalAspectDisplayTitle,
@@ -97,6 +98,15 @@ assert.doesNotMatch(finderSource, /No exact passage exists/u, "The finder must n
 assert.match(finderSource, /composed natal aspect writing/u, "A missing exact passage must explain that You currently uses composed natal aspect writing.");
 assert.match(finderSource, /Live composed sources/u, "A missing exact passage must surface the live composed sources.");
 assert.match(dashboardSource, /natalAspectResolverDependencyKeys/u, "Natal Aspects must fetch the exact and composed keys the You page actually reads.");
+assert.match(finderSource, /natalAspectComposedStatusRow/u, "Composed natal sources must badge the serving package, not a Draft CMS mirror.");
+assert.equal(
+  natalAspectComposedStatusRow({ id: "cms-draft", status: "DRAFT", content_key: "fallback-hook/aspect-pair/sun/mercury/conjunction" }, "fallback-hook/aspect-pair/sun/mercury/conjunction").id,
+  "package:fallback-hook/aspect-pair/sun/mercury/conjunction"
+);
+assert.equal(
+  natalAspectComposedStatusRow({ id: "cms-live", status: "LIVE", content_key: "fallback-hook/aspect-pair/sun/mercury/conjunction" }, "fallback-hook/aspect-pair/sun/mercury/conjunction").id,
+  "cms-live"
+);
 
 const sunMercuryKeys = natalAspectReaderCandidateKeys({ first: "sun", aspect: "conjunction", second: "mercury" });
 assert.ok(sunMercuryKeys.includes("fallback-hook/natal-aspect-lived/sun/conjunction/mercury"));
