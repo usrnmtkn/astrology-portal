@@ -1327,25 +1327,7 @@ function generatedContentInventorySelectColumns() {
     "evergreen",
     "prompt_version",
     "provider",
-    "updated_at",
-    "source_review_status:source_snapshot->>review_status",
-    "source_lane:source_snapshot->>lane",
-    "source_content_role_camel:source_snapshot->>contentRole",
-    "source_content_role:source_snapshot->>content_role",
-    "source_source_role:source_snapshot->>source_role",
-    "source_content_type:source_snapshot->>content_type",
-    "source_content_system:source_snapshot->>contentSystem",
-    "source_package:source_snapshot->>sourcePackage",
-    "source_tier:source_snapshot->>tier",
-    "source_render_policy:source_snapshot->>render_policy",
-    "source_planet:source_snapshot->>planet",
-    "source_sign:source_snapshot->>sign",
-    "source_motion:source_snapshot->>motion",
-    "facts_kind:facts->>kind",
-    "facts_slug:facts->>slug",
-    "package_content_role:sections->packageRecord->>content_role",
-    "package_review_status:sections->packageRecord->>review_status",
-    "package_render_policy:sections->packageRecord->>render_policy"
+    "updated_at"
   ];
 }
 
@@ -1579,7 +1561,7 @@ async function listGeneratedContent(req: IncomingMessage) {
   } else if (!id && contentKeys.length) {
     params.set("content_key", `in.(${contentKeys.join(",")})`);
   } else if (!id && contentKeyPrefix) {
-    params.set("content_key", `like.${contentKeyPrefix}*`);
+    params.set("content_key", `like."${contentKeyPrefix}*"`);
   }
 
   if (!id && startDate && endDate) {

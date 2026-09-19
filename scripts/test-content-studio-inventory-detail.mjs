@@ -18,13 +18,12 @@ assert.doesNotMatch(inventorySelect, /^\s*"facts",\s*$/mu, "Inventory projection
 assert.doesNotMatch(inventorySelect, /^\s*"source_snapshot",\s*$/mu, "Inventory projection must not transfer full provenance JSON.");
 assert.doesNotMatch(inventorySelect, /^\s*"created_at",\s*$/mu, "Inventory projection must not transfer creation timestamps that are unused by the list contract.");
 assert.doesNotMatch(inventorySelect, /^\s*"published_at",\s*$/mu, "Inventory projection must not transfer publication timestamps that are unused by the list contract.");
-assert.match(inventorySelect, /source_review_status:source_snapshot->>review_status/u);
-assert.match(inventorySelect, /package_content_role:sections->packageRecord->>content_role/u);
+assert.doesNotMatch(inventorySelect, /source_snapshot/u, "Inventory projection must not read source_snapshot JSON.");
+assert.doesNotMatch(inventorySelect, /packageRecord/u, "Inventory projection must not read sections JSON.");
+assert.doesNotMatch(inventorySelect, /->/u, "Inventory projection must use table columns only.");
 assert.match(api, /inventory_only: true/u);
 assert.match(api, /view === "inventory" && !id && !contentKey && contentKeys\.length === 0/u);
-assert.match(api, /like\.\$\{contentKeyPrefix\}\*/u);
-assert.match(api, /boundedGeneratedContentLimit\(requestUrl\.searchParams\.get\("limit"\), 50, 80\)/u);
-assert.match(api, /like\.\$\{contentKeyPrefix\}\*/u);
+assert.match(api, /like\."\$\{contentKeyPrefix\}\*"/u);
 assert.match(api, /boundedGeneratedContentLimit\(requestUrl\.searchParams\.get\("limit"\), 50, 80\)/u);
 
 assert.match(dashboard, /inventory_only\?: boolean/u);
