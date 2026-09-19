@@ -140,4 +140,17 @@ assert.match(finder, /Find a Friends transit card/u);
 assert.match(finder, /Open the opening/u);
 assert.match(dashboard, /Edit live /u);
 assert.match(dashboard, /Live reader write-up/u);
+
+// Saving a passage changes neither the selection nor the synastry lookup, so both
+// maps must re-read on the save signal. Without this the owner sees the copy the
+// map loaded before the edit while the reader already has the new wording.
+const composition = fs.readFileSync(new URL("../apps/admin/src/FriendsBetweenYouTwoComposition.tsx", import.meta.url), "utf8");
+for (const [name, source, deps] of [
+  ["FriendsBetweenYouTwoComposition", composition, "[openingKey, secret, revision]"],
+  ["BondEffectPagePreview", preview, "[lookupKey, secret, revision]"]
+]) {
+  assert.match(source, /subscribeToContentUpdates\(\(\) => setRevision\(/u, `${name} must refresh its saved copy when Studio announces a save.`);
+  assert.ok(source.includes(deps), `${name} must read its saved copy again on the save signal, so ${deps} stays its fetch dependency list.`);
+}
+
 console.log("Content Studio bond-effect Friends page assembly passed.");

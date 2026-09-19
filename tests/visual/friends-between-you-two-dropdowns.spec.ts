@@ -2,16 +2,17 @@ import { expect, test, type Page } from "@playwright/test";
 
 const workspacePath = "/admin/content#fallback-hooks?section=friends&audience=friends&workspace=between-you-two";
 
-// Each opening names its own pairing, so a map left behind by the previous
+// Each passage names its own pairing, so a map left behind by the previous
 // selection is visible rather than merely plausible.
-const openings: Record<string, string> = {
+const savedCopy: Record<string, string> = {
   "fallback-hook/bond-effect-sextile/chiron": "Chiron sextile fixture opening.",
   "fallback-hook/bond-effect-trine/chiron": "Chiron trine fixture opening.",
   "fallback-hook/bond-effect-sextile/mars": "Mars sextile fixture opening.",
-  "fallback-hook/bond-effect-trine/mars": "Mars trine fixture opening."
+  "fallback-hook/bond-effect-trine/mars": "Mars trine fixture opening.",
+  "fallback-hook/synastry-pair/sun/saturn/square": "Sun square Saturn fixture activation."
 };
 
-async function isolate(page: Page) {
+async function isolate(page: Page, openings: Record<string, string> = savedCopy) {
   await page.addInitScript(() => {
     localStorage.setItem("tldrastro:contentAdminSecret", "friends-dropdown-fixture");
     localStorage.setItem("tldrastro:studio-theme", "light");
@@ -76,4 +77,35 @@ test("Between you two composition follows its own dropdowns", async ({ page }) =
 
   expect(errors).toEqual([]);
   await map.screenshot({ path: "test-results/friends-between-you-two-dropdowns.png" });
+});
+
+test("Between you two map re-reads a passage the owner just saved", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  const store = { ...savedCopy };
+  await isolate(page, store);
+  await page.goto(workspacePath);
+  await page.getByRole("region", { name: "Find a Friends transit card" })
+    .getByLabel("Find a Friends transit card", { exact: true }).fill("Chiron sextile your Sun");
+
+  const map = page.getByRole("region", { name: "Between you two composition map" });
+  await expect(map).toContainText("Chiron sextile fixture opening.");
+  await expect(map).toContainText("Sun square Saturn fixture activation.");
+
+  // Saving changes neither the selection nor the lookup, so before this fix the map
+  // kept showing the copy it read on arrival while the reader already had the edit.
+  store["fallback-hook/bond-effect-sextile/chiron"] = "Chiron sextile opening after the edit.";
+  store["fallback-hook/synastry-pair/sun/saturn/square"] = "Sun square Saturn activation after the edit.";
+  await page.evaluate(() => {
+    window.dispatchEvent(new CustomEvent("tldrastro:content-update", {
+      detail: { contentKey: "fallback-hook/synastry-pair/sun/saturn/square", published: true, updatedAt: new Date().toISOString() }
+    }));
+  });
+
+  await expect(map).toContainText("Chiron sextile opening after the edit.");
+  await expect(map).toContainText("Sun square Saturn activation after the edit.");
+  await expect(map).not.toContainText("Chiron sextile fixture opening.");
+  await expect(map).not.toContainText("Sun square Saturn fixture activation.");
+
+  expect(errors).toEqual([]);
 });

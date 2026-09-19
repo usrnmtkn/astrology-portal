@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { PageLoading } from "../../web/src/components/PageLoading";
+import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
 import {
   aspectTechnicalVerb,
@@ -136,6 +137,10 @@ export default function BondEffectPagePreview({
   const [natalSign, setNatalSign] = useState<TransitNatalSign>("gemini");
   const [transitHouse, setTransitHouse] = useState<TransitNatalHouse>("5");
   const [synastry, setSynastry] = useState<{ key: string; load?: SynastryLoad; error?: string }>({ key: "" });
+  // An edited activation keeps the same lookup, so the saved pair is read again
+  // rather than left at the copy this map loaded before the edit.
+  const [revision, setRevision] = useState(0);
+  useEffect(() => subscribeToContentUpdates(() => setRevision((value) => value + 1)), []);
 
   useEffect(() => {
     const next = parseBondEffectContentKey(contentKey);
@@ -223,7 +228,7 @@ export default function BondEffectPagePreview({
       cancelled = true;
       controller.abort();
     };
-  }, [lookupKey, secret]);
+  }, [lookupKey, secret, revision]);
 
   if (!contact && !onContactChange) return null;
 

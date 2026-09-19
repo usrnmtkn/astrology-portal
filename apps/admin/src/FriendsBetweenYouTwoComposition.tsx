@@ -3,6 +3,7 @@ import { PageLoading } from "../../web/src/components/PageLoading";
 import BondEffectPagePreview from "./BondEffectPagePreview";
 import { friendsActivationParam, friendsTransitCardDestinations, friendsTransitReaderTitle, parseFriendsActivationParam, synastryBodiesFromPayload } from "./bondEffectPageAssembly";
 import { requestStudioJson } from "./generatedContentClient";
+import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { StudioButton } from "./StudioControls";
 
 export default function FriendsBetweenYouTwoComposition({
@@ -26,6 +27,10 @@ export default function FriendsBetweenYouTwoComposition({
   const activation = parseFriendsActivationParam(activationQuery);
   const openingKey = destinations.betweenYouTwoOpeningKey;
   const [opening, setOpening] = useState<{ you: string; they: string } | null>(null);
+  // Saving a passage does not change the selection, so without this the map keeps
+  // showing the copy it read before the edit while the reader already has the new one.
+  const [revision, setRevision] = useState(0);
+  useEffect(() => subscribeToContentUpdates(() => setRevision((value) => value + 1)), []);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -68,7 +73,7 @@ export default function FriendsBetweenYouTwoComposition({
       cancelled = true;
       controller.abort();
     };
-  }, [openingKey, secret]);
+  }, [openingKey, secret, revision]);
 
   if (!openingKey) return null;
 
