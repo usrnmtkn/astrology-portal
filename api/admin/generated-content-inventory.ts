@@ -100,20 +100,30 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const contentKeyPrefix = requestUrl.searchParams.get("contentKeyPrefix");
     const contentKeys = requestUrl.searchParams.getAll("contentKeys");
     const visibility = requestUrl.searchParams.get("visibility") ?? "all";
+    const status = requestUrl.searchParams.get("status") ?? "all";
+    const surface = requestUrl.searchParams.get("surface");
     const scope = requestUrl.searchParams.get("scope") ?? "all";
     const cursor = requestUrl.searchParams.get("cursor");
     const mode = requestUrl.searchParams.get("mode");
     const view = requestUrl.searchParams.get("view") ?? (id || contentKey || contentKeys.length ? "detail" : "inventory");
     const inventoryView = view === "inventory" && !id && !contentKey && contentKeys.length === 0;
+    const allowedStatus = new Set(["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"]);
+    const allowedSurface = new Set(["sky", "you", "natal", "synastry", "composite", "relationship", "modifier", "year_ahead", "education"]);
     if (contentKeyPrefix && !/^[a-zA-Z0-9][a-zA-Z0-9_./|-]*$/u.test(contentKeyPrefix)) {
       throw new AdminHttpError(400, "contentKeyPrefix is not a valid content-key prefix.");
     }
     if (mode && !/^[a-z0-9_-]+$/iu.test(mode)) {
       throw new AdminHttpError(400, "mode is not a valid generated-content mode.");
     }
+    if (status !== "all" && !allowedStatus.has(status)) {
+      throw new AdminHttpError(400, "status is not a valid generated-content status.");
+    }
+    if (surface && !allowedSurface.has(surface)) {
+      throw new AdminHttpError(400, "surface is not a valid generated-content surface.");
+    }
     const limit = id ? 1 : inventoryView
       ? boundedLimit(requestUrl.searchParams.get("limit"), 50, 80)
-      : boundedLimit(requestUrl.searchParams.get("limit"), 50, 80);
+      : boundedLimit(requestUrl.searchParams.get("limit"), 50, 200);
     const params = new URLSearchParams({
       select: (inventoryView ? inventoryColumns : detailColumns).join(","),
       order: scope === "compatibility" ? "id.asc" : "updated_at.desc,id.desc",
@@ -126,8 +136,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if (cursor) params.set("id", `gt.${cursor}`);
     } else if (visibility === "editorial") {
       params.set("lane", "eq.serving");
-      params.set("status", "neq.ARCHIVED");
+      if (status === "all") params.set("status", "neq.ARCHIVED");
     }
+    if (!id && status !== "all") params.set("status", `eq.${status}`);
+    if (!id && surface) params.set("surface", `eq.${surface}`);
     if (!id && scope !== "compatibility" && cursor) {
       const decoded = decodeCursor(cursor);
       params.set("updated_at", `lte.${decoded.updatedAt}`);

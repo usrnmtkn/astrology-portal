@@ -270,7 +270,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
   }
 
   async function fetchCurrentStoredRow() {
-    const rows = await generatedContentRows(`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(props.contentKey)}&limit=20`);
+    const rows = await generatedContentRows(`/api/admin/generated-content-inventory?status=all&visibility=all&contentKey=${encodeURIComponent(props.contentKey)}&limit=20`);
     const continuous = uniqueContinuousRows(rows);
     const exact = continuous.find((row) => row.content_key === props.contentKey);
     if (!exact) throw new Error(`Could not load the stored Content Studio row for ${props.contentKey}.`);
@@ -316,7 +316,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
     setBatchLoading(true);
     setBatchError(null);
     try {
-      const rows = await generatedContentRows("/api/admin/generated-content?status=all&visibility=all&surface=sky&limit=1000");
+      const rows = await generatedContentRows("/api/admin/generated-content-inventory?status=all&visibility=all&surface=sky&limit=200");
       const continuous = uniqueContinuousRows(rows);
       setBatchRows(current => continuous.map(row => Object.keys(batchEditsRef.current[row.id] ?? {}).length ? current.find(opened => opened.id === row.id) ?? row : row));
       if (planetFilter === "all" && identity?.planet) setPlanetFilter(identity.planet);

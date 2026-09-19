@@ -33,5 +33,7 @@ assert.match(dashboard, /if \(row\.inventory_only\) \{[\s\S]{0,420}hydrateGenera
 assert.match(dashboard, /generated-content-inventory\?id=\$\{encodeURIComponent\(publishedTarget\)\}/u);
 assert.match(dashboard, /if \(!hydrated \|\| hydrated\.inventory_only\)/u);
 assert.match(dashboard, /async function openDailyGlancePair\(selector: string\)[\s\S]{0,700}hydrateGeneratedContentRow\(pair\.headlineRow/u);
+assert.match(dashboard, /readStudioContentDocument\(/u, "Opening a You-serving source must use inventory then the slim package-source API.");
+assert.doesNotMatch(dashboard, /includePackageSource/u, "Dashboard document open must not boot the fat generated-content GET.");
 
 console.log("Content Studio compact inventory/detail hydration contract passed.");

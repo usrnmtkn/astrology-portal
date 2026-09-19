@@ -206,7 +206,7 @@ test("inventory loading reports progress in the sidebar without an overlay over 
   await isolate(page);
   let release!: () => void;
   const pending = new Promise<void>(resolve => { release = resolve; });
-  await page.route("**/api/admin/generated-content?**", async route => {
+  await page.route("**/api/admin/generated-content-inventory?**", async route => {
     const query = new URL(route.request().url()).searchParams;
     if (query.get("visibility") !== "all") return route.fulfill({ json: { ok: true, rows: fixtureRows, nextCursor: null } });
     if (!query.has("cursor")) return route.fulfill({ json: { ok: true, rows: fixtureRows.slice(0, 1), nextCursor: "next-fixture-page" } });

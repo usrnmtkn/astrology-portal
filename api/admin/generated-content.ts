@@ -1563,7 +1563,7 @@ async function listGeneratedContent(req: IncomingMessage) {
         throw new GeneratedContentRequestError("Content storage returned an invalid row list. Please retry.", 502);
       }
       if (contentKeys.length && Array.isArray(payload)) {
-        const { servingPackageRecords, isSkyPartitionKey } = await import("../_lib/content-live-status.js");
+        const { isSkyPartitionKey, servingPackageRecords } = await import("../_lib/serving-package-records.js");
         const savedKeys = new Set(payload.map((row) => row.content_key));
         const starters = contentKeys.filter((key) => !savedKeys.has(key)).flatMap((key) => servingPackageRecords.has(key) ? [servingPackageRecords.get(key)!] : []).map((record) => ({
           id: `package:${record.contentKey}`, content_key: record.contentKey, surface: record.surface ?? "you", mode: "in_depth",
@@ -2983,9 +2983,6 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (req.method === "GET") {
       const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
-      if (requestUrl.searchParams.get("includePackageSource") === "true") {
-        await loadGeneratedContentLibraries();
-      }
       if (requestUrl.searchParams.get("sourceDrafts") === "sky-aspects") {
         sendJson(res, 200, { ok: true, rows: listHeldSkyAspectSourceDrafts() });
         return;
@@ -3016,8 +3013,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if (requestUrl.searchParams.get("includePackageSource") === "true") {
         const key = requestUrl.searchParams.get("contentKey");
         if (!key || requestUrl.searchParams.getAll("contentKey").length !== 1 || requestUrl.searchParams.has("contentKeys")) throw new GeneratedContentRequestError("A single contentKey is required for package source lookup.", 400);
-        if (!libs().isRetiredCompositionKey(key)) {
-          const { servingPackageRecords } = await import("../_lib/content-live-status.js");
+        const { isRetiredCompositionKey } = await import("../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs");
+        if (!isRetiredCompositionKey(key)) {
+          const { servingPackageRecords } = await import("../_lib/serving-package-records.js");
           packageSource = servingPackageRecords.get(key) ?? null;
         }
       }

@@ -15,7 +15,7 @@ import {
   synastryHolderSlots,
   synastryPairLookupOrder
 } from "./bondEffectPageAssembly";
-import { requestStudioJson } from "./generatedContentClient";
+import { readStudioContentDocument } from "./generatedContentClient";
 import {
   transitNatalAspects,
   transitNatalHouses,
@@ -193,11 +193,7 @@ export default function BondEffectPagePreview({
     void (async () => {
       try {
         for (const candidate of lookup) {
-          const payload = await requestStudioJson(
-            `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(candidate.contentKey)}&limit=1&includePackageSource=true`,
-            secret,
-            { signal: controller.signal }
-          );
+          const payload = await readStudioContentDocument(candidate.contentKey, secret, { signal: controller.signal });
           const bodies = synastryBodiesFromPayload(payload);
           if (bodies && (bodies.body_you.trim() || bodies.body_they.trim())) {
             if (!cancelled) {

@@ -7,7 +7,7 @@ const client = fs.readFileSync(new URL("../apps/admin/src/generatedContentClient
 const status = fs.readFileSync(new URL("../apps/admin/src/ContentLiveStatus.tsx", import.meta.url), "utf8");
 
 assert.match(client, /verifyTimedOutSave/u, "Timed-out saves must be verified before an error is shown.");
-assert.match(client, /contentKey=.*status=DRAFT/u, "Save verification must re-read the exact content key without issuing a second write.");
+assert.match(client, /studioInventoryDocumentPath\(row\.content_key, \{ status: "DRAFT"/u, "Save verification must re-read the exact content key without issuing a second write.");
 assert.match(client, /if \(!saveMayHaveCompleted\(error\)\) throw error/u, "Only ambiguous timeout/interruption failures may enter save verification.");
 assert.match(client, /if \(verified\) return verified/u, "A late successful save must resolve as saved after verification.");
 assert.doesNotMatch(client, /catch[\s\S]{0,300}method:\s*"PATCH"/u, "Timeout recovery must never retry the write itself.");
