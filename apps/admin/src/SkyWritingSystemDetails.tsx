@@ -10,7 +10,7 @@ export default function SkyWritingSystemDetails({ system }: { system: SkyWriting
       <p>{entry.purpose}</p>
       <code>{entry.source}</code>
       <p>Version numbers describe a format or proposal. Live status belongs to a published content source; a draft or newer document does not replace it automatically.</p>
-      {entry.history.map(item => <div key={item.label} className="admin-composition-source-card">
+      {entry.history.map(item => <div key={item.label}>
         <div className="admin-sky-writing-source-actions"><strong>{item.label}</strong><span className="ui-pill">{item.status}</span></div><p>{item.detail}</p>
       </div>)}
       <a href={`https://github.com/usrnmtkn/astrology-portal/blob/main/docs/content-management/${entry.documentation}`} target="_blank" rel="noreferrer">Read the current system contract ↗</a>

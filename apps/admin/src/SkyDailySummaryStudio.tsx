@@ -68,7 +68,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
     </header>
     <SkyWritingSystemDetails system="summary" />
     <SkySummaryAssemblyStudio rows={rows} onEdit={onEdit} busy={busy} sunSign={sunSign} moonSign={moonSign} openingSlots={slots} moonKind={moonKind} />
-    <section className="admin-template-reader-drilldown admin-sky-summary-composition studio-surface" aria-label="Sun and Moon composition map">
+    <section className="admin-template-reader-drilldown admin-sky-summary-composition" aria-label="Sun and Moon composition map">
       <header className="admin-section-heading-row">
         <div>
           <h4>Sun and Moon together</h4>
@@ -110,7 +110,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy }: {
         <p>Click the white words or punctuation to edit the template. Click a green summary to edit its source. Changes reach the app only after Save & publish.</p>
       </div>
     </section>
-    <div className="admin-content-filters">
+    <div className="admin-content-filters admin-filter-form">
       <label><span>Summary section</span><AdminSelect aria-label="Summary section" value={group} onChange={event => setGroup(event.target.value)}>
         <option value="all">Sun, Moon, and timing</option>
         {["Sun summaries", "Moon summaries", "Timing and retrogrades", "Ingress TLDRs"].map(value => <option key={value}>{value}</option>)}

@@ -13,6 +13,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard :is(.sr-only,.admin-sr-only,.memory-sr-only) { position: absolute; width: var(--border-width-thin); height: var(--border-width-thin); padding: 0; margin: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 #root .admin-dashboard :is(h1,h2,h3,h4,h5,h6,p,dl,dd,figure,blockquote) { margin: 0; }
 #root .admin-dashboard :is(h1,h2,h3,h4,h5,h6) { font-family: var(--font-display); letter-spacing: var(--tracking-body); text-transform: none; text-align: start; overflow-wrap: anywhere; }
+#root .admin-dashboard :is(.admin-page-heading h1,.admin-nav button,.admin-dashboard-header button) { overflow-wrap: normal; }
 #root .admin-dashboard :is(h1,h2) { font-size: var(--type-large-title-size); font-weight: var(--weight-medium); line-height: var(--leading-title); }
 #root .admin-dashboard :is(h3,h4,h5,h6) { font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-body); }
 #root .admin-dashboard :is(strong,b) { font-weight: var(--weight-regular); }
@@ -116,7 +117,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-sidebar-status-dot { width: var(--space-2); height: var(--space-2); border-radius: var(--radius-pill); background: var(--workspace-positive); }
 #root .admin-dashboard .admin-sidebar-status-link { border: 0; padding: 0; min-height: 0; font-size: inherit; line-height: inherit; }
 #root .admin-dashboard .admin-main { min-width: 0; width: 100%; max-width: var(--workspace-max-width); margin-inline: auto; padding: var(--workspace-gutter); display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--workspace-block-gap); }
-#root .admin-dashboard .admin-dashboard-header { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-dashboard-header { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: var(--workspace-panel-inset); position: sticky; top: 0; z-index: var(--studio-layer-page-header); background: var(--workspace-canvas); border-radius: 0; }
 #root .admin-dashboard .admin-page-heading { display: grid; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-breadcrumb ol { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-1); }
 #root .admin-dashboard .admin-breadcrumb li { font: inherit; }
@@ -131,9 +132,9 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard [role="menuitem"] small { grid-column: 2; }
 
 /* Tonal sections; one shared rhythm across every workbench. */
-#root .admin-dashboard :where(.admin-loaded-workspace,.admin-template-page,.admin-workspace,.admin-review-queue-layout,.admin-hook-workspace,.admin-post-editor,.admin-editor-details-body,.admin-variables-rail-body,.admin-content-role-panel,.admin-fallback-diagnostic-panel,.admin-natal-source-finder,.admin-natal-source-group,.admin-sky-related-editor,.admin-unresolved-review,.admin-source-repair-body,.admin-workbench,.admin-review-stack,.admin-panel,.admin-list-panel,.admin-natal-placement-finder,.admin-sky-ingress-composer,.admin-sky-writing-editor,.admin-daily-glance-studio,.admin-package-edit-panel,.admin-composition-slot-tree,.admin-composition-template-workbench,.admin-composition-template-fields,.admin-composition-preview-copy,.admin-composition-preview-context,.admin-composition-preview-sources,.admin-template-reader-surface,.admin-template-reader-copy,.admin-unresolved-content-page,.admin-review-queue-commandbar,.admin-filter-disclosure,.admin-surface-card,.admin-phrasebook-panel):not(details) { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--workspace-block-gap); }
-#root .admin-dashboard :where(.admin-surface-supporting-catalog,.admin-status-guide,.admin-review-queue-groups,.admin-dashboard-header,.memory-toolbar,.admin-review-queue-commandbar,.admin-filter-disclosure,.admin-browse-filters:not(.studio-tab-panel .admin-browse-filters),.admin-surface-card,.admin-phrasebook-panel,.admin-template-tabs,.admin-review-view-tabs,.admin-category-nav,.admin-content-toolbar,.admin-template-card,.admin-reader-safety-panel,.admin-natal-reader-preview,.admin-template-preview,.admin-fallback-preview,.admin-page-error-panel,.admin-guided-content-review,.admin-editor-details,.admin-advanced:not(.admin-browse-secondary > .admin-advanced,.admin-editor-details .admin-advanced),.admin-hook-detail-section,.admin-section-packet,.admin-source-repair-dialog-copy,.admin-panel,.admin-list-panel:not(.admin-fallback-library .admin-list-panel),.admin-status-card,.admin-empty-state,.admin-editor-guidance:not(.admin-editor-brief-body > .admin-editor-guidance,.admin-sky-summary-composition > .admin-editor-guidance),.admin-workspace-details:not(.admin-workspace-details .admin-workspace-details),.admin-daily-glance-reader-card,.studio-surface:not(.studio-tab-panel > .admin-daily-glance-studio > .studio-surface)) { padding: var(--workspace-card-padding); border: 0; border-radius: var(--workspace-radius); background: var(--workspace-surface); }
-#root .admin-dashboard :where(.admin-content-toolbar,.admin-section-heading-row,.admin-fallback-diagnostic-heading,.admin-template-card-header,.admin-composition-detail-header,.admin-natal-reader-preview-header) { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard :where(.admin-loaded-workspace,.admin-template-page,.admin-workspace,.admin-review-queue-layout,.admin-hook-workspace,.admin-post-editor,.admin-editor-details-body,.admin-variables-rail-body,.admin-content-role-panel,.admin-fallback-diagnostic-panel,.admin-natal-source-finder,.admin-natal-source-group,.admin-sky-related-editor,.admin-unresolved-review,.admin-source-repair-body,.admin-workbench,.admin-review-stack,.admin-panel,.admin-list-panel,.admin-natal-placement-finder,.admin-empty-house-workspace,.admin-sky-ingress-composer,.admin-sky-writing-editor,.admin-daily-glance-studio,.admin-package-edit-panel,.admin-composition-slot-tree,.admin-composition-template-workbench,.admin-composition-template-fields,.admin-composition-preview-copy,.admin-composition-preview-context,.admin-composition-preview-sources,.admin-template-reader-surface,.admin-template-reader-copy,.admin-unresolved-content-page,.admin-review-queue-commandbar,.admin-filter-disclosure,.admin-surface-card,.admin-phrasebook-panel):not(details) { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--workspace-block-gap); }
+#root .admin-dashboard :where(.admin-surface-supporting-catalog,.admin-status-guide,.admin-review-queue-groups,.admin-dashboard-header,.memory-toolbar,.admin-review-queue-commandbar,.admin-filter-disclosure,.admin-browse-filters:not(.studio-tab-panel .admin-browse-filters),.admin-surface-card:not(.studio-tab-panel .admin-surface-card),.admin-phrasebook-panel,.admin-template-tabs,.admin-review-view-tabs,.admin-category-nav,.admin-content-toolbar,.admin-template-card,.admin-reader-safety-panel,.admin-natal-reader-preview:not(.studio-tab-panel .admin-natal-reader-preview),.admin-template-preview,.admin-fallback-preview,.admin-page-error-panel,.admin-guided-content-review,.admin-editor-details,.admin-advanced:not(.admin-browse-secondary > .admin-advanced,.admin-editor-details .admin-advanced),.admin-hook-detail-section,.admin-section-packet,.admin-source-repair-dialog-copy,.admin-panel,.admin-list-panel:not(.admin-fallback-library .admin-list-panel,.studio-tab-panel .admin-list-panel),.admin-status-card,.admin-empty-state,.admin-editor-guidance:not(.admin-editor-brief-body > .admin-editor-guidance,.admin-sky-summary-composition > .admin-editor-guidance),.admin-workspace-details:not(.admin-workspace-details .admin-workspace-details,.studio-tab-panel .admin-workspace-details),.admin-daily-glance-reader-card,.studio-surface:not(.studio-tab-panel .studio-surface)) { padding: var(--workspace-card-padding); border: 0; border-radius: var(--workspace-radius); background: var(--workspace-surface); }
+#root .admin-dashboard :where(.admin-content-toolbar,.admin-section-heading-row,.admin-fallback-diagnostic-heading,.admin-template-card-header,.admin-composition-detail-header,.admin-natal-reader-preview-header,.admin-natal-reader-preview > header) { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: var(--workspace-panel-inset); }
 #root .admin-dashboard :where(.admin-content-toolbar,.admin-template-card,.admin-hook-detail-section,.admin-natal-source-card,.admin-fallback-diagnostic-panel) > :where(div,header):first-child { min-width: 0; }
 #root .admin-dashboard :where(.admin-content-toolbar,.admin-template-card,.admin-hook-detail-section,.admin-natal-source-card,.admin-fallback-diagnostic-panel) :where(h2,h3,h4) + p { margin-top: var(--workspace-field-gap); }
 #root .admin-dashboard :where(.admin-toolbar-actions,.admin-surface-actions,.admin-browse-actions,.admin-composition-actions,.admin-template-actions,.admin-editor-toolbar-actions,.admin-page-error-actions,.admin-template-workbench-actions,.admin-variables-rail-actions,.admin-review-status-bar,.admin-review-status-actions,.admin-fallback-row-actions,.admin-new-actions,.admin-sky-writing-source-actions,.admin-natal-source-actions,.admin-review-queue-actions,.admin-sky-article-actions,.admin-template-preview-actions) { display: flex; align-items: center; flex-wrap: wrap; gap: var(--workspace-field-gap); }
@@ -182,8 +183,9 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-daily-glance-studio .admin-composition-preview-field { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-sky-summary-composition > .admin-editor-guidance { padding-top: var(--workspace-panel-inset); border-top: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard .admin-sky-summary-composition > .admin-editor-guidance > div { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-field-gap); }
-#root .admin-dashboard .admin-daily-glance-pair-list { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-panel-inset); }
-#root .admin-dashboard .admin-daily-glance-pair-list > article { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-panel-inset); padding: var(--workspace-card-padding); border-radius: var(--workspace-radius); background: var(--workspace-surface); }
+#root .admin-dashboard .admin-daily-glance-pair-list { display: grid; grid-template-columns: minmax(0,1fr); gap: 0; }
+#root .admin-dashboard .admin-daily-glance-pair-list > article { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-panel-inset); padding: var(--workspace-card-padding) 0 0; border-top: var(--border-width-thin) solid var(--workspace-line); border-radius: 0; background: transparent; }
+#root .admin-dashboard .admin-daily-glance-pair-list > article:first-child { padding-top: 0; border-top: 0; }
 #root .admin-dashboard .admin-daily-glance-pair-list > article > div { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-field-gap); }
 
 /* Chips, segmented selection, and primary/secondary tabs. */
@@ -194,7 +196,8 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .studio-tabs { display: grid; grid-template-columns: minmax(0,1fr); align-content: start; gap: 0; }
 #root .admin-dashboard .studio-tab-panel[role="tabpanel"] { padding: var(--workspace-card-padding); background: var(--workspace-surface); border-radius: 0 0 var(--workspace-radius) var(--workspace-radius); }
 #root .admin-dashboard .studio-tab-panel .studio-tab-panel[role="tabpanel"] { padding-inline: 0; border-bottom: var(--border-width-thin) solid var(--workspace-line); border-radius: 0; }
-#root .admin-dashboard .studio-tab-panel > .admin-daily-glance-studio > .studio-surface { padding-top: var(--workspace-card-padding); border-top: var(--border-width-thin) solid var(--workspace-line); }
+#root .admin-dashboard .studio-tab-panel :is(.studio-surface,.admin-natal-reader-preview,.admin-workspace-details,.admin-surface-card,.admin-list-panel):not(.admin-workspace-details .admin-workspace-details) { padding: var(--workspace-card-padding) 0 0; border-top: var(--border-width-thin) solid var(--workspace-line); border-radius: 0; background: transparent; }
+#root .admin-dashboard .studio-tab-panel > :is(.studio-surface,.admin-content-filters):first-child { padding-top: 0; border-top: 0; }
 #root .admin-dashboard [role="tablist"] { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(max-content,1fr); gap: 0; width: 100%; max-width: 100%; overflow-x: auto; background: var(--workspace-surface); }
 #root .admin-dashboard [role="tablist"] > [role="tab"] { width: 100%; border: 0; border-bottom: var(--border-width-thick) solid transparent; border-radius: 0; color: var(--workspace-muted); padding-inline: var(--workspace-panel-inset); min-height: var(--studio-nav-height); background: transparent; font-family: var(--font-label); font-size: var(--type-ui-size); font-weight: var(--weight-regular); line-height: var(--leading-label); white-space: nowrap; }
 #root .admin-dashboard [role="tablist"] > [role="tab"][aria-selected="true"] { color: var(--workspace-ink); border-bottom-color: var(--workspace-primary); background: transparent; }
@@ -239,11 +242,19 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-sky-house-grid > article:last-child { border-bottom: 0; }
 #root .admin-dashboard .admin-sky-house-grid > article > header { padding-block: var(--workspace-field-gap); min-height: var(--studio-nav-height); display: flex; align-items: center; justify-content: space-between; gap: var(--workspace-control-inset); }
 #root .admin-dashboard .admin-natal-source-card { display: grid; gap: var(--workspace-panel-inset); padding: var(--workspace-card-padding); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-radius); background: var(--workspace-surface); }
-#root .admin-dashboard .studio-surface .admin-natal-source-grid { display: grid; gap: 0; }
-#root .admin-dashboard .studio-surface .admin-natal-source-card { border: 0; border-radius: 0; background: transparent; padding-inline: 0; }
-#root .admin-dashboard .studio-surface .admin-natal-source-card + .admin-natal-source-card { border-top: var(--border-width-thin) solid var(--workspace-line); padding-top: var(--workspace-card-padding); }
+#root .admin-dashboard :is(.studio-surface,.studio-tab-panel) .admin-natal-source-grid { display: grid; gap: 0; }
+#root .admin-dashboard :is(.studio-surface,.studio-tab-panel) .admin-natal-source-card { border: 0; border-radius: 0; background: transparent; padding-inline: 0; }
+#root .admin-dashboard :is(.studio-surface,.studio-tab-panel) .admin-natal-source-card + .admin-natal-source-card { border-top: var(--border-width-thin) solid var(--workspace-line); padding-top: var(--workspace-card-padding); }
 #root .admin-dashboard .admin-natal-source-card-copy { display: grid; gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-natal-source-card-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--workspace-field-gap); }
+#root .admin-dashboard :is(.admin-natal-reader-preview-surface,.admin-natal-reader-preview-parts) { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard :is(.admin-natal-reader-preview-part,.admin-empty-house-assembly-copy) { display: grid; gap: var(--workspace-control-inset); min-width: 0; padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-inline-start: var(--space-1) solid var(--workspace-primary); border-radius: var(--workspace-control-radius); background: var(--workspace-canvas); }
+#root .admin-dashboard :is(.admin-natal-reader-preview-part p,.admin-empty-house-assembly-copy p) { margin: 0; white-space: pre-wrap; }
+#root .admin-dashboard :is(.admin-natal-reader-preview-part-action,.admin-empty-house-preview-source-action) { justify-self: start; }
+#root .admin-dashboard .admin-natal-reader-preview-provenance { display: flex; flex-wrap: wrap; align-items: center; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .admin-empty-house-context-summary { display: grid; gap: var(--workspace-field-gap); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); background: var(--workspace-raised); }
+#root .admin-dashboard .admin-empty-house-preview-source-list { display: grid; gap: var(--workspace-control-inset); padding-top: var(--workspace-panel-inset); border-top: var(--border-width-thin) solid var(--workspace-line); }
+#root .admin-dashboard .admin-empty-house-preview-source-actions { display: flex; flex-wrap: wrap; gap: var(--workspace-field-gap); }
 
 
 /* Shared grid: columns share edges, controls retain their intrinsic height. */
@@ -255,7 +266,11 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-browse-secondary > .admin-advanced > summary { padding-inline: 0; }
 #root .admin-dashboard :is(.admin-content-table-scroll,.admin-data-table-shell,.admin-browse-table) > .admin-empty { padding: var(--workspace-panel-inset); }
 #root .admin-dashboard :is(.admin-natal-placement-finder-heading,.admin-sky-placement-composition-header) { display: grid; gap: var(--workspace-panel-inset); }
-#root .admin-dashboard :is(.admin-natal-placement-finder-heading,.admin-sky-placement-composition-header) > div { display: grid; gap: var(--workspace-field-gap); }
+#root .admin-dashboard :is(.admin-natal-placement-finder-heading,.admin-sky-placement-composition-header,.admin-natal-source-group > header) > div { display: grid; gap: var(--workspace-field-gap); min-width: 0; }
+#root .admin-dashboard .admin-natal-source-group > header { display: grid; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .admin-natal-source-group > header:has(> button) { display: flex; align-items: start; justify-content: space-between; flex-wrap: wrap; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-natal-source-group > section { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-natal-source-group > section + section { padding-top: var(--workspace-card-padding); border-top: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard .admin-review-filter-grid > button, #root .admin-dashboard .admin-natal-placement-selectors > button { align-self: end; margin-bottom: var(--workspace-field-gap); }
 
 #root .admin-dashboard .admin-filter-result-count { grid-column: 1 / -1; }
@@ -315,6 +330,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-composition-source-tools > label { grid-column: 1 / -1; }
 #root .admin-dashboard .admin-composition-source-tools > button { align-self: start; }
 #root .admin-dashboard .admin-composition-source-card { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-composition-source-card .admin-composition-source-card { padding-block-start: var(--workspace-panel-inset); border-top: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard .admin-composition-surface-route-list { display: grid; gap: var(--workspace-control-inset); }
 #root .admin-dashboard .admin-composition-surface-route-list a { grid-template-columns: minmax(0,1fr) auto; align-items: center; }
 #root .admin-dashboard .admin-composition-surface-route-list a > div:first-child { display: grid; gap: var(--space-1); }
@@ -476,6 +492,7 @@ body:has(.admin-dashboard) { margin: 0; }
 }
 #root .admin-dashboard .admin-filter-form input { padding-inline-end: var(--workspace-control-inset); }
 #root .admin-dashboard .admin-filter-search { grid-column: 1 / -1; }
+#root .admin-dashboard :is(.admin-filter-form,.admin-natal-placement-selectors) > label > span { overflow-wrap: normal; }
 #root .admin-dashboard :is(.admin-sky-filters, .admin-transit-finder) { gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-filter-options {
   padding: 0;

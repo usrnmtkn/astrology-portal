@@ -163,16 +163,12 @@ test("placement filters keep the composition, keyword results, advanced filters 
   const personal = page.getByRole("region", { name: "Personal Transits source finder" });
   for (const [label, value] of personalControls.map((label, index) => [label, ["saturn", "square", "moon", "aries", "1", "4"][index]])) {
     await personal.getByLabel(label, { exact: true }).selectOption(value);
-    if (label === "Natal planet or point") {
-      const editor = page.getByRole("dialog", { name: "Generated content editor" });
-      await expect(editor).toBeVisible();
-      const close = editor.getByRole("button", { name: "Close", exact: true });
-      await expect(close).toBeEnabled();
-      await close.click();
-      await expect(editor).toHaveCount(0);
-    }
   }
   await expect(personal.getByRole("heading", { level: 3, name: "Saturn square your Moon", exact: true })).toBeVisible();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  await expect(editor).toBeVisible();
+  await editor.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(editor).toHaveCount(0);
   const query = new URLSearchParams(new URL(page.url()).hash.split("?")[1]);
   expect(Object.fromEntries(query)).toMatchObject({ view: "transits-to-natal", transit: "saturn", sign: "aries", transitHouse: "1", aspect: "square", natal: "moon", natalHouse: "4" });
 });
@@ -219,6 +215,39 @@ test("Natal Aspect filters sit in a canvas card and transit finders stay flat in
   await expect(house.getByRole("heading", { level: 3, name: "Sun in Aries through your 1st house", exact: true })).toBeVisible();
   expect(await house.locator(".admin-natal-placement-finder-heading").evaluate(element => Boolean(element.closest(".studio-surface")))).toBe(false);
   expect(await house.locator(".admin-natal-placement-selectors").evaluate(element => Boolean(element.closest(".studio-surface")))).toBe(false);
+});
+
+test("Daily Sky Summary keeps nested disclosures flat in the tab panel", async ({ page }) => {
+  await isolate(page);
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await page.goto("/admin/content#sky-writeups?view=daily-summary");
+  await expect(page.locator(".admin-dashboard-header h1")).toHaveText("Sky Write-ups");
+  const studio = page.getByRole("region", { name: "Daily Sky Summary editor" });
+  await expect(studio.getByRole("heading", { level: 3, name: "Daily Sky Summary", exact: true })).toBeVisible();
+  const assembly = studio.getByRole("region", { name: "Full summary assembly" });
+  await expect(assembly).toBeVisible();
+  expect(await assembly.evaluate(element => element.classList.contains("studio-surface"))).toBe(false);
+  expect(await assembly.evaluate(element => getComputedStyle(element).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
+  const writing = studio.locator("details").filter({ has: page.locator("summary", { hasText: "Writing system" }) });
+  await expect(writing).toBeVisible();
+  expect(await writing.evaluate(element => getComputedStyle(element).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
+});
+
+test("Natal Chart keeps the page header and flattens empty-house sources in the tab panel", async ({ page }) => {
+  await isolate(page);
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await page.goto("/admin/content#exact-content?category=Natal+Chart");
+  const header = page.locator(".admin-dashboard-header h1");
+  await expect(header).toHaveText("Natal Chart Write-ups");
+  await page.getByRole("tab", { name: "Empty houses", exact: true }).click();
+  const workspace = page.getByRole("region", { name: "Empty house writing" });
+  await expect(workspace.getByRole("heading", { level: 3, name: "Choose the house, cusp sign, and where its ruler lands", exact: true })).toBeVisible();
+  await expect(header).toBeVisible();
+  expect(await header.evaluate(element => getComputedStyle(element).overflowWrap)).toBe("normal");
+  const preview = workspace.getByRole("region", { name: /Full empty-house assembly/ });
+  await expect(preview).toBeVisible();
+  expect(await preview.evaluate(element => getComputedStyle(element).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
+  await expect(workspace.getByRole("heading", { level: 3, name: "Edit the assembly sources", exact: true })).toBeVisible();
 });
 
 test("open mobile navigation keeps the brand mark free of page titles", async ({ page }) => {

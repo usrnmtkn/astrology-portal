@@ -6516,7 +6516,7 @@ export function GeneratedContentAdminDashboard() {
             {natalChartWorkspaceActive
               ? (
                 <>
-                  <div className="admin-new-actions studio-surface"><StudioButton type="button" onClick={() => navigateAdminPage("compositionMap", new URLSearchParams({ surface: "natal-empty-house" }))}>Empty houses</StudioButton></div>
+                  <div className="admin-page-utilities"><StudioButton type="button" onClick={() => navigateAdminPage("compositionMap", new URLSearchParams({ surface: "natal-empty-house" }))}>Empty houses</StudioButton></div>
                   {renderNatalPlacementSourceFinder()}
                   {renderEditor()}
                 </>
@@ -6631,7 +6631,7 @@ export function GeneratedContentAdminDashboard() {
               </>
             ) : (
               <>
-                <section className="studio-surface studio-section admin-content-filters admin-sky-filters" aria-label="Sky write-up filters">
+                <section className="studio-section admin-content-filters admin-sky-filters" aria-label="Sky write-up filters">
                   <div className="admin-review-filter-grid admin-filter-form admin-filter-form--three">
                     <label>
                       <span>Planet or point</span>
@@ -8111,14 +8111,14 @@ export function GeneratedContentAdminDashboard() {
 
         {!selection && <p className="admin-natal-placement-prompt">Choose the planet, sign, and house to preview the reader's House Transit and open its exact source rows.</p>}
         {selection && !sourcesReady && (
-          <section className="admin-surface-card" aria-label="House Transit content loading" aria-busy={!loadError}>
+          <section aria-label="House Transit content loading" aria-busy={!loadError}>
             {loadError ? <p role="alert">{loadError}</p> : <PageLoading message="Loading House Transit passages…" />}
             {loadError && <StudioButton type="button" onClick={() => void loadDashboardData()}>Retry</StudioButton>}
           </section>
         )}
         {selection && preview && (
           <section className="admin-natal-source-group" aria-label="Effective House Transit reader preview">
-            <header className="admin-surface-card"><div className="admin-page-heading">
+            <header><div className="admin-page-heading">
               <p className="admin-eyebrow">Effective reader preview</p>
               <h3>What you see</h3>
               <p>The dates and motion are calculated facts. The writing comes from the editable passages listed below.</p>
@@ -8140,7 +8140,7 @@ export function GeneratedContentAdminDashboard() {
 
         {compositionGroup && (
           <section className="admin-natal-source-group">
-            <header className="admin-surface-card"><div className="admin-page-heading">
+            <header><div className="admin-page-heading">
               <h3>{compositionGroup.label}</h3>
               <p>{servingLegacy ? "This reader card is currently stored as one complete editable passage." : compositionGroup.description}</p>
             </div>
