@@ -36,6 +36,10 @@ as $$
       'reviewStatus', source_snapshot->>'reviewStatus',
       'lane', source_snapshot->>'lane',
       'sourceFile', source_snapshot->>'sourceFile',
+      'tier', source_snapshot->>'tier',
+      'phrasebankTier', source_snapshot->>'phrasebankTier',
+      'provenanceTier', source_snapshot->>'provenanceTier',
+      'sourceTier', source_snapshot->>'sourceTier',
       'flags', case when jsonb_typeof(source_snapshot->'flags') = 'array' then source_snapshot->'flags' end
     )), '{}'::jsonb),
     'packageRecord', nullif(jsonb_strip_nulls(jsonb_build_object(

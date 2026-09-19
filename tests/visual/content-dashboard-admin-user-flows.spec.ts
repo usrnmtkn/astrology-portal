@@ -841,6 +841,7 @@ async function seedAdminApi(
       }
       if (method === "POST" || method === "PATCH") {
         const payload = route.request().postDataJSON() as Record<string, unknown>;
+        if (process.env.STATUS_DEBUG) console.log("WRITEDEBUG", JSON.stringify({ method, payload }));
         await options.onGeneratedContentWrite?.({ method, payload });
         const existingRow = apiGeneratedContentRows.find((row) => row.id === payload.id) ?? generatedContentRows[0];
         if (payload.ownerAction === "approve-package-revision") {
@@ -1208,11 +1209,15 @@ test.describe("content dashboard admin user flow case studies", () => {
   });
 
   test("initial CMS load retries a transient generated-content page failure", async ({ page }) => {
+    // The list is read once, fails, and is read again. Requests naming rows are the separate
+    // document loads the surfaces on screen make, so they are not counted as list pages.
     let generatedContentReads = 0;
     await seedAdminApi(page, {
       generatedContentFailuresBeforeSuccess: 1,
-      onGeneratedContentRead: () => {
-        generatedContentReads += 1;
+      onGeneratedContentRead: (url) => {
+        const namesRows = url.searchParams.get("id") || url.searchParams.get("contentKey")
+          || url.searchParams.getAll("contentKeys").length;
+        if (!namesRows) generatedContentReads += 1;
       }
     });
 
@@ -2596,7 +2601,9 @@ test.describe("content dashboard admin user flow case studies", () => {
       ?? (writes[0].payload.sections as { packageDraft?: { body_you?: string } }).packageDraft?.body_you
       ?? writes[0].payload.body).toBe(candidate);
     await closeGeneratedEditor(page);
-    await transitWriteupButton(finder, "Sun opposition your South Node").click();
+    // The finder also offers the published house-event source under the same reader title, so the
+    // reopened three-part write-up is named by its own region.
+    await transitWriteupButton(exactEditor, "Sun opposition your South Node").click();
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue(candidate);
     await closeGeneratedEditor(page);
     await page.getByLabel("Transiting planet", { exact: true }).selectOption("lilith");
@@ -2625,7 +2632,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     // Closing the shared source leaves the finder rather than revealing an exact editor
     // underneath, so the draft for this contact is opened deliberately here.
     await expect(editor).toHaveCount(0);
-    await transitWriteupButton(finder, "Lilith trine your North Node").click();
+    await transitWriteupButton(exactEditor, "Lilith trine your North Node").click();
     await expect(editor.getByRole("heading", { level: 2 })).toHaveText("Write Lilith trine your North Node");
     await expect(editor.getByLabel("Reader phrase · You", { exact: true })).toHaveValue("");
     await expect(editor.getByText(/No write-up is saved for this exact contact yet/)).toBeVisible();
@@ -2763,7 +2770,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor).not.toContainText("This is a new blank draft");
     await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(String(servingPackageRecords.get(key)!.body_you));
     expect(reads.some(url => url.pathname.endsWith("/package-source") && url.searchParams.get("contentKey") === key)).toBe(true);
-    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    // No revision of this packaged source is saved yet, so the first save is offered as Save.
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect((writes[0].payload.sections as { packageDraft?: { body_you?: string } }).packageDraft?.body_you ?? writes[0].payload.body).toBe(String(servingPackageRecords.get(key)!.body_you));
     await editor.getByRole("button", { name: "Close", exact: true }).click();

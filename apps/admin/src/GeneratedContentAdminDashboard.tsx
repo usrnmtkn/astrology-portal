@@ -31,7 +31,8 @@ import {
   studioInventoryRequestPath,
   type StudioInventoryQuery
 } from "./studioSectionInventory";
-import { readStudioContentDocument, studioInventoryDocumentPath } from "./generatedContentClient";
+import { readStudioContentDocument, studioInventoryDocumentPath, studioInventoryDocumentsPath } from "./generatedContentClient";
+import type { StudioListingFacts } from "../../../api/_lib/studio-listing-facts";
 import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
 import {
   ArrowLeft,
@@ -282,6 +283,8 @@ const reviewQueuePageSize = 25;
 const compositeReviewPageSize = 10;
 const compositionSourceBatchSize = 25;
 const skyRelationHydrationLimit = 60;
+const reviewQueueHydrationLimit = 400;
+const dailyGlanceHydrationLimit = 120;
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends" | "year_ahead" | "education";
@@ -436,6 +439,9 @@ type AdminGeneratedContentRow = {
   updated_at?: string | null;
   created_at?: string | null;
   inventory_only?: boolean;
+  // What a list row carries in place of its documents: enough to classify and group it, never
+  // enough to edit or publish it.
+  listing_facts?: StudioListingFacts;
 };
 
 type AdminReviewRecord = {
@@ -1088,8 +1094,17 @@ function contentSystemLabel(system: Exclude<AdminContentSystemFilter, "all">) {
   return "Fallback/supporting";
 }
 
+// A list row arrives without its documents, so where it belongs is read from its listing facts
+// instead. They name the row; they never stand in for its saved writing.
 function sourceSnapshotForRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
-  return "content_key" in row ? row.source_snapshot : row.sourceSnapshot;
+  if (!("content_key" in row)) return row.sourceSnapshot;
+  return row.source_snapshot ?? row.listing_facts?.source ?? null;
+}
+
+function classificationRecordForRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
+  const installed = objectRecord(objectRecord(row.sections)?.packageRecord);
+  if (installed) return installed;
+  return "content_key" in row ? row.listing_facts?.packageRecord ?? {} : {};
 }
 
 function rowContentKey(row: AdminGeneratedContentRow | AdminReviewRecord) {
@@ -1115,8 +1130,9 @@ function sourceSnapshotNumber(snapshot: Record<string, unknown> | null | undefin
 }
 
 function generatedRowNeedsReviewQueue(row: AdminGeneratedContentRow) {
-  const sourceType = sourceSnapshotString(row.source_snapshot, "sourceType");
-  const packageRecord = rowPackageRecord(row);
+  const snapshot = sourceSnapshotForRow(row);
+  const sourceType = sourceSnapshotString(snapshot, "sourceType");
+  const packageRecord = classificationRecordForRow(row);
   const skyV4ReviewCategory = typeof packageRecord.studio_review_category === "string"
     ? packageRecord.studio_review_category
     : "";
@@ -1124,7 +1140,7 @@ function generatedRowNeedsReviewQueue(row: AdminGeneratedContentRow) {
     || (skyV4ReviewCategory === "owner-approved-reader-copy" && packageRecord.owner_approved === true);
 
   return !outsideSkyV4WritingReview && (
-    isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {})
+    isContentStudioReferenceSource(row.content_key, snapshot ?? {})
     || sourceType === "owner-resource-review"
     || (["DRAFT", "REVIEWED"].includes(row.status) && Boolean(row.review_state))
   );
@@ -1137,8 +1153,8 @@ const retiredReviewStates = new Set([
 ]);
 
 function isRetiredAdminRow(row: AdminGeneratedContentRow) {
-  const packageRecord = rowPackageRecord(row);
-  const packageReviewStatus = sourceSnapshotString(row.source_snapshot, "review_status")
+  const packageRecord = classificationRecordForRow(row);
+  const packageReviewStatus = sourceSnapshotString(sourceSnapshotForRow(row), "review_status")
     || (typeof packageRecord.review_status === "string" ? packageRecord.review_status : "");
   return row.status === "ARCHIVED"
     || retiredReviewStates.has(row.review_state ?? "")
@@ -1146,7 +1162,8 @@ function isRetiredAdminRow(row: AdminGeneratedContentRow) {
 }
 
 function isPassiveReferenceAdminRow(row: AdminGeneratedContentRow) {
-  const sourceType = sourceSnapshotString(row.source_snapshot, "sourceType");
+  const snapshot = sourceSnapshotForRow(row);
+  const sourceType = sourceSnapshotString(snapshot, "sourceType");
   const reviewState = (row.review_state ?? "").toLowerCase();
   const isActiveOwnerReview = sourceType === "owner-resource-review"
     || reviewState === "owner-review-required"
@@ -1155,7 +1172,7 @@ function isPassiveReferenceAdminRow(row: AdminGeneratedContentRow) {
   return !isActiveOwnerReview && (
     row.lane === "reference"
     || reviewState === "fallback-system-reference"
-    || sourceSnapshotString(row.source_snapshot, "lane") === "reference"
+    || sourceSnapshotString(snapshot, "lane") === "reference"
   );
 }
 
@@ -1308,7 +1325,8 @@ function rowIsFallbackArchitectureV3(row: AdminGeneratedContentRow | AdminReview
   const facts = "content_key" in row ? row.facts : row.facts;
   return provider === fallbackArchitectureV3Provider
     || sourceSnapshotString(sourceSnapshot, "sourcePackage") === "tldrastro-fallback-architecture-v3"
-    || objectRecord(facts)?.fallbackArchitectureV3 === true;
+    || objectRecord(facts)?.fallbackArchitectureV3 === true
+    || ("content_key" in row && row.listing_facts?.fallbackArchitectureV3 === true);
 }
 
 function draftIsFallbackArchitectureV3(draft: AdminDraft) {
@@ -1743,7 +1761,7 @@ function rowSearchTextUncached(row: AdminGeneratedContentRow) {
     row.prompt_version,
     row.provider,
     JSON.stringify(row.facts ?? {}),
-    JSON.stringify(row.source_snapshot ?? {})
+    JSON.stringify(sourceSnapshotForRow(row) ?? {})
   ].join(" ").toLowerCase();
 }
 
@@ -2130,7 +2148,7 @@ function skyArticleWorkspaceForm(row: AdminGeneratedContentRow | undefined) {
 }
 
 function isApprovedSkyRelationRow(row: AdminGeneratedContentRow) {
-  const reviewStatus = sourceSnapshotString(row.source_snapshot, "review_status");
+  const reviewStatus = sourceSnapshotString(sourceSnapshotForRow(row), "review_status");
   return row.status === "LIVE"
     && (row.lane ?? "serving") === "serving"
     && !row.review_state
@@ -2401,7 +2419,7 @@ function contentClassForRowUncached(row: AdminGeneratedContentRow | AdminReviewR
   const blockType = "content_key" in row ? row.block_type : row.blockType;
   const promptVersion = "content_key" in row ? row.prompt_version : row.promptVersion;
   const provider = "content_key" in row ? row.provider : row.provider;
-  const sourceSnapshot = "content_key" in row ? row.source_snapshot : row.sourceSnapshot;
+  const sourceSnapshot = sourceSnapshotForRow(row);
   const flags = Array.isArray(sourceSnapshot?.flags) ? sourceSnapshot.flags.join(" ") : JSON.stringify(sourceSnapshot ?? {});
   const sourceContentType = normalizedSourceContentType(sourceSnapshot);
   const sourceBucket = sourceSnapshotString(sourceSnapshot, "bucket").toLowerCase();
@@ -2412,7 +2430,7 @@ function contentClassForRowUncached(row: AdminGeneratedContentRow | AdminReviewR
   if (isContentStudioReferenceSource(contentKey, sourceSnapshot ?? {})) return "reference";
   if (provider === "manual" && sourceSnapshotString(sourceSnapshot, "sourceFile").includes("authored-library")) return "phrasebank";
   if (rowIsFallbackArchitectureV3(row)) {
-    const packageRole = sourceRole || String(rowPackageRecord(row).content_role ?? "").toLowerCase().replace(/_/g, "-");
+    const packageRole = sourceRole || String(classificationRecordForRow(row).content_role ?? "").toLowerCase().replace(/_/g, "-");
     if (packageRole === "fallback-hook" || packageRole === "template") return "fallback-hook";
     if (packageRole === "vocabulary") return "vocab";
     if (packageRole === "fallback-source" || packageRole === "source-material") return "reference";
@@ -2561,7 +2579,7 @@ function draftSourceSnapshot(draft: AdminDraft) {
 }
 
 function tierForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminPhrasebankTier {
-  const sourceSnapshot = "content_key" in row ? row.source_snapshot : row.sourceSnapshot;
+  const sourceSnapshot = sourceSnapshotForRow(row);
   const raw = sourceSnapshot?.tier ?? sourceSnapshot?.phrasebankTier ?? sourceSnapshot?.provenanceTier ?? sourceSnapshot?.sourceTier;
   return raw === "CONFIRMED" || raw === "REVIEWED" || raw === "SESSION_APPROVED_DRAFT" ? raw : "none";
 }
@@ -3279,7 +3297,7 @@ export function GeneratedContentAdminDashboard() {
   }, [rows, compositionCatalog]);
   const visibleRows = useMemo(() => rows.filter((row) => (
     (showReferenceRows
-      || (activePage === "reviewQueue" && isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {}))
+      || (activePage === "reviewQueue" && isContentStudioReferenceSource(row.content_key, sourceSnapshotForRow(row) ?? {}))
       || (activePage === "content" && categoryFilter === "Calendar Aspects")
       || (showRetiredRows && isRetiredAdminRow(row))
       || isCompositionPage(activePage)
@@ -5306,7 +5324,7 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
     if (bulkStatus === "LIVE") {
-      const blocked = actionRows.filter(row => isContentStudioReferenceSource(row.content_key, row.source_snapshot ?? {})
+      const blocked = actionRows.filter(row => isContentStudioReferenceSource(row.content_key, sourceSnapshotForRow(row) ?? {})
         || row.block_type === "sky_placement" || skyWritingIssues(row).length > 0);
       if (blocked.length) { setMessage("Some selected rows need writing checks or a separate source/package review. Open those rows and complete their next action before publishing."); return; }
       const nonServingSourceRows = packageRows.filter((row) => {
@@ -5406,11 +5424,9 @@ export function GeneratedContentAdminDashboard() {
     const documents: AdminGeneratedContentRow[] = [];
     for (let start = 0; start < requested.length; start += compositionSourceBatchSize) {
       const batch = requested.slice(start, start + compositionSourceBatchSize);
-      const query = new URLSearchParams({ status: "all", visibility: "all", limit: "80" });
-      for (const row of batch) query.append("contentKeys", row.content_key);
       try {
         const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
-          `/api/admin/generated-content-inventory?${query}`,
+          studioInventoryDocumentsPath(batch.map((row) => row.content_key)),
           secret
         );
         documents.push(...(payload.rows ?? []).filter((candidate) => (
@@ -5457,6 +5473,22 @@ export function GeneratedContentAdminDashboard() {
   const loadVisibleRowDocuments = useCallback((visible: readonly { id: string }[]) => {
     loadSourceDocuments(visible.map((item) => item.id));
   }, [loadSourceDocuments]);
+
+  // The review queue sorts a row by whether its writing is ready to publish, which it reads from the
+  // saved document. A row still waiting for its copy would be filed as needing changes.
+  useEffect(() => {
+    if (activePage !== "reviewQueue") return;
+    loadSourceDocuments(reviewQueueRows.slice(0, reviewQueueHydrationLimit).map((row) => row.id));
+  }, [activePage, reviewQueueRows, loadSourceDocuments]);
+
+  // The Daily At-a-Glance list previews each headline and passage and searches their wording, so the
+  // pairs it lists need their documents before the search can match anything.
+  useEffect(() => {
+    if (fallbackSectionFilter !== "daily") return;
+    loadSourceDocuments(dailyGlanceWriteups
+      .slice(0, dailyGlanceHydrationLimit)
+      .flatMap((pair) => [pair.headlineRow.id, pair.passageRow.id]));
+  }, [fallbackSectionFilter, dailyGlanceWriteups, loadSourceDocuments]);
 
   async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow, refresh = false, followPublishedRevision = false) {
     if (!row.inventory_only && !refresh) return row;

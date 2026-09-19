@@ -23,7 +23,11 @@ export const listingSourceKeys = [
   "review_status",
   "reviewStatus",
   "lane",
-  "sourceFile"
+  "sourceFile",
+  "tier",
+  "phrasebankTier",
+  "provenanceTier",
+  "sourceTier"
 ] as const;
 
 export const listingPackageRecordKeys = [
@@ -76,16 +80,19 @@ export function studioListingFacts(row: {
   return facts;
 }
 
-// A list row: the listing facts in the shape the Studio already reads, and no saved copy.
+// A list row: no saved copy, and the listing facts under their own name. They are kept out of
+// sections, facts, and source_snapshot on purpose. A partial package record in sections would be
+// read as an installed one, and an editor could save a row's copy away.
 export function studioListingRow(row: Record<string, unknown>, facts: StudioListingFacts) {
   const { studio_facts: _stored, ...rest } = row;
   return {
     ...rest,
     body: null,
     summary: null,
-    sections: facts.packageRecord ? { packageRecord: facts.packageRecord } : null,
-    facts: facts.fallbackArchitectureV3 ? { fallbackArchitectureV3: true } : null,
-    source_snapshot: facts.source ?? null,
+    sections: null,
+    facts: null,
+    source_snapshot: null,
+    listing_facts: facts,
     inventory_only: true
   };
 }

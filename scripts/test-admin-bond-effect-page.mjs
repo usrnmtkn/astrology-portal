@@ -140,7 +140,8 @@ assert.match(preview, /What this activates/u);
 assert.match(preview, /This last line is calculated from the chart/u);
 assert.match(preview, /Saved preview/u);
 assert.match(preview, /admin-template-reader-copy/u);
-assert.match(preview, /aria-label="Transiting planet"/u);
+// The preview's planet select is named apart from the finder's, which carries the plain name.
+assert.match(preview, /aria-label="Preview transiting planet"/u);
 assert.match(preview, /aria-label="Transit aspect"/u);
 assert.match(preview, /onContactChange/u);
 assert.match(preview, /legend>Between you two/u);
