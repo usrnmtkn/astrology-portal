@@ -75,6 +75,16 @@ export function specsSelectedByConfig(source, specs) {
   return value.slice(0, end > 0 ? end : undefined).match(/[\w.-]+\.spec\.ts/gu) ?? [];
 }
 
+// Which workflows actually run a browser suite. A workflow that runs one must stay enabled.
+export function workflowsRunningSuites({ configs, workflows, specs, scripts = {} }) {
+  return workflows
+    .filter(item => {
+      const text = expandNpmScripts(expandMatrixValues(item.text), scripts);
+      return [...configs, ...specs].some(name => text.includes(name));
+    })
+    .map(item => item.name);
+}
+
 export function browserSuiteCoverage({ configs, workflows, specs, scripts = {} }) {
   const workflowText = expandNpmScripts(workflows.map(item => expandMatrixValues(item.text)).join('\n'), scripts);
   const orphanConfigs = configs
@@ -118,8 +128,57 @@ function readRepository() {
   };
 }
 
+// A workflow file can carry the right trigger and still run nothing, because a workflow can be
+// disabled in the repository itself. That is how browser QA went quiet: the trigger was removed and
+// the workflow was then disabled, and no file in the repository could show it. The state is read
+// from the API whenever a token is available, and any workflow that runs a suite must be enabled.
+export async function disabledWorkflowProblems(repository, { token, repo, fetchImpl = fetch } = {}) {
+  if (!token || !repo) return [];
+  const response = await fetchImpl(`https://api.github.com/repos/${repo}/actions/workflows?per_page=100`, {
+    headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json' }
+  });
+  if (!response.ok) return [{ workflow: repo, problem: `workflow states could not be read (${response.status})` }];
+  const states = new Map(((await response.json()).workflows ?? [])
+    .map(workflow => [workflow.path.split('/').at(-1), workflow.state]));
+  return workflowsRunningSuites(repository)
+    .filter(name => states.has(name) && states.get(name) !== 'active')
+    .map(name => ({ workflow: name, problem: `the workflow is ${states.get(name)} in this repository, so it runs nothing` }));
+}
+
+// The disabled-workflow question is the reason this check exists, and a repository whose workflows
+// are all enabled cannot demonstrate that the answer still works. It is exercised against a
+// fabricated repository on every run.
+async function checkDisabledWorkflowReporting() {
+  const repository = {
+    configs: ['playwright.qa.config.ts'],
+    specs: [],
+    scripts: {},
+    workflows: [{ name: 'qa.yml', text: 'on:\n  pull_request:\njobs:\n  qa:\n    steps:\n      - run: npx playwright test -c playwright.qa.config.ts\n' }]
+  };
+  const states = { workflows: [{ path: '.github/workflows/qa.yml', state: 'disabled_manually' }] };
+  const problems = await disabledWorkflowProblems(repository, {
+    token: 'coverage-self-check', repo: 'owner/repo',
+    fetchImpl: async () => ({ ok: true, json: async () => states })
+  });
+  if (problems.length !== 1) throw new Error('A disabled workflow that runs a browser suite must be reported.');
+  states.workflows[0].state = 'active';
+  const enabled = await disabledWorkflowProblems(repository, {
+    token: 'coverage-self-check', repo: 'owner/repo',
+    fetchImpl: async () => ({ ok: true, json: async () => states })
+  });
+  if (enabled.length) throw new Error('An enabled workflow must not be reported.');
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const problems = browserSuiteCoverage(readRepository());
+  await checkDisabledWorkflowReporting();
+  const repository = readRepository();
+  const problems = [
+    ...browserSuiteCoverage(repository),
+    ...await disabledWorkflowProblems(repository, {
+      token: process.env.GITHUB_TOKEN || process.env.GH_TOKEN,
+      repo: process.env.GITHUB_REPOSITORY
+    })
+  ];
   if (problems.length) {
     console.error('Browser suite coverage failed:');
     for (const item of problems) console.error(`  ${item.config ?? item.spec ?? item.workflow}: ${item.problem}`);

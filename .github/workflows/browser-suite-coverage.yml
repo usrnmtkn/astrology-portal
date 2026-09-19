@@ -10,6 +10,9 @@ on:
 
 permissions:
   contents: read
+  # A workflow can be disabled in the repository while its file still looks correct, so the check
+  # reads the workflow states as well as the files.
+  actions: read
 
 concurrency:
   group: browser-suite-coverage-${{ github.event.pull_request.number || github.ref }}
@@ -24,5 +27,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: Verify every browser suite is run by a workflow
+      - name: Verify every browser suite is run by an enabled workflow
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/test-browser-suite-coverage.mjs
