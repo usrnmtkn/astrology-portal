@@ -17,13 +17,25 @@ window, building/separating timing, pass count, and historical comparison when
 available. This explicit layout approval supersedes the main-page visibility
 requirements below; content eligibility is unchanged.
 
+## Owner layout update: September 19, 2026
+
+Placement-article Key dates and Gifts/Lessons use the article's shorter
+duration, not the full sign residency. Retrograde articles use
+station-to-station. Short direct visits keep the current visit. Long direct
+stays use the current motion chapter: last station or this-pass ingress through
+next station or this-pass egress. Archive articles keep historical residency
+scope. This is a selection window, not a collapsed disclosure. Writing
+variables `aspectsInSign` and `aspectsWhileRetrograde` remain full calculated
+lists for authors.
+
 ## Product contract
 
 The Sky aspect section is an editorial reading surface, not a calculation
 debugger.
 
-- Every calculated aspect appears in the normal aspect-card list with its
-  engine facts.
+- Every calculated aspect in the article's timeline window appears in the
+  normal aspect-card list with its engine facts. Placement articles do not
+  dump the full multi-year residency.
 - Every visible aspect card is clickable and opens its detail page. An
   interpretation appears only when approved reader copy exists.
 - Aspects keep the established Gifts/Lessons grouping and card treatment.

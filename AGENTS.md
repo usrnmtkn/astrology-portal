@@ -334,6 +334,10 @@ the final verified exit in article body variables that describe the residency.
 Retrograde primary timing describes the station-to-station interval; archived
 articles retain their historical residency scope. Do not reconcile these
 different windows by silently changing approved prose or calculated facts.
+Current placement Key dates and Gifts/Lessons follow that same shorter
+duration: station-to-station while retrograde, the current visit for a short
+direct stay, and the current motion chapter for a long direct stay. Do not
+render the full multi-year residency as the article timeline.
 
 Cover all supported planets and points when changing their shared timing
 adapter. Include a direct placement with multiple visits (Venus in Scorpio in

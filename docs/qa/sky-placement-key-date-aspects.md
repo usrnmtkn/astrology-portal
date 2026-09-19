@@ -4,12 +4,17 @@ The owner requested calculated aspects in every Sky Placement write-up's Key
 dates, and comma-separated aspect facts when used inside a Placement article.
 
 The timeline now merges the placement's calculated exact aspect hits with its
-existing ingress, exit, shadow, station, and residency-range entries. It sorts
-by the actual timestamp and displays dates in the placement's time zone.
-Duplicate inputs are removed; distinct repeat hits remain separate. Facts must
-match the requested planet and sign. Existing aspect coverage is unchanged:
-major aspects to Sun, Mercury through Pluto, and Lilith, excluding Moon as the
-counterpart. Moon, Chiron, Lilith, and both nodes remain supported subjects.
+existing ingress, exit, shadow, station, and residency-range entries, then
+keeps only events inside the article's shorter duration. Retrograde articles
+use station-to-station. Short direct visits keep the current visit. Long
+direct stays use the current motion chapter. Archive articles keep the
+historical residency. It sorts by the actual timestamp and displays dates in
+the placement's time zone. Duplicate inputs are removed; distinct repeat hits
+remain separate. Facts must match the requested planet and sign. Existing
+aspect coverage is unchanged: major aspects to Sun, Mercury through Pluto, and
+Lilith, excluding Moon as the counterpart. Moon, Chiron, Lilith, and both
+nodes remain supported subjects. A multi-year pass range is not a Key date on
+a current article.
 
 Placement and retrograde routes request the full aspect list regardless of
 article token usage. Calendar links into those articles also fetch the matching
@@ -31,18 +36,24 @@ card/article time-zone fix in PR #807.
 
 Verification:
 
+- `scripts/test-sky-placement-article-timeline.mts` checks retrograde,
+  short-visit, long-direct, and archive window selection.
 - `scripts/test-sky-placement-key-date-aspects.mts` checks all 14 Sky bodies plus
-  a second Mercury occurrence. It covers exact-hit inclusion and order, repeated
-  hits, input deduplication, wrong-sign exclusion, actual app adapter delivery,
-  comma output, and preserved section-template lists. Sun and Mercury exact
-  aspect angles/signs are checked against direct ephemeris snapshots.
+  a second Mercury occurrence. It covers exact-hit inclusion and order inside
+  the article window, repeated hits, input deduplication, wrong-sign exclusion,
+  actual app adapter delivery, comma output, and preserved section-template
+  lists. Chiron must drop 2018 residency hits from Key dates and Gifts/Lessons.
+  Sun and Mercury exact aspect angles/signs are checked against direct
+  ephemeris snapshots.
 - The Sun-in-Virgo fixture asserts all eight requested rows, including both
   Sun–Lilith trines on September 2 and September 10.
 - Article-variable tests compare Node, browser source, shipped bundle, and
   Studio preview, including nested phrases and source-hash protection.
 - Fresh reader browser checks cover mobile/desktop, articles with and without
   aspect tokens, date variables, existing aspect cards, navigation, reload, and
-  Calendar ingress entry. The previous card/article time-zone checks remain.
+  Calendar ingress entry. `tests/visual/sky-placement-visit-timeline.spec.ts`
+  checks Chiron Rx against the station-to-station window and keeps Sun in Virgo's
+  complete short-visit Key dates. The previous card/article time-zone checks remain.
 - Full Content Studio API contract, typecheck, CSS/token audit, package/index
   freshness, and repository/staged/built-reader privacy checks are run before
   release. The PR records the tested head and CI result.
